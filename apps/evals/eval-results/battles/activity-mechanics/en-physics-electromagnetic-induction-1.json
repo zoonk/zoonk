@@ -1,0 +1,203 @@
+{
+  "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Electromagnetic induction requires changing magnetic flux, not static fields. Penalize if:\n   - A stationary magnet in a stationary coil is described as inducing current (relative motion or changing flux is required)\n   - The direction of induced current is described incorrectly relative to the field change (Lenz's law)\n\n2. DEPTH CHECK: Penalize if the explanation presents it as \"magnets make electricity\" without showing how motion or changing flux creates the EMF.\n\n3. DISTINCTION FROM EXPLANATION: The explanation covered WHAT magnetic flux, EMF, and Faraday's law ARE. This should show HOW moving conductors or changing fields actively induce current.\n\n\nEVALUATION CRITERIA:\n\n1. FACTUAL ACCURACY: Any process descriptions, mechanisms, or cause-effect relationships must be correct. Penalize hallucinations, incorrect sequences, or wrong causal chains.\n\n2. PROCESS FOCUS: Content must show things HAPPENING, not just describe parts. Look for action verbs, cause-effect language, and sequential flow.\n\n3. DEPTH: Complex processes require multi-step explanations showing how one action triggers the next. Penalize oversimplified \"just happens\" explanations.\n\n4. FORMAT: Each step must have a title (max 50 chars) and text (max 300 chars).\n\n5. TONE: Conversational, like giving a behind-the-scenes tour. Include process metaphors from everyday life (assembly lines, relay races, domino chains).\n\n6. FOCUS: Explains HOW something works (processes in action), not WHAT it is (definitions) or WHY it exists (history).\n\n7. NO OVERLAP: Must not repeat content from the EXPLANATION_STEPS which covered the WHAT.\n\n8. SCOPE: Content matches the lesson scope exactly.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for missing process phases or steps you might expect\n- Do NOT require a specific number of steps\n- Do NOT check against an imagined \"complete\" process description\n- ONLY penalize for: factual errors, static descriptions instead of action-oriented content, missing cause-effect relationships, or poor process flow\n- Different valid process explanations exist - assess the quality of what IS provided\n\n    ",
+  "judgedAt": "2026-01-17T01:20:53.986Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Excellent process-focused explanation with clear action language throughout. Accurately covers all key aspects: motion triggers flux change, electrons feel the push, Lenz's law opposition, current strength tied to rate of change, and the effect of multiple loops. The distinction between static and changing fields is clear (step 5: 'The instant you stop moving the magnet, the field stabilizes and the current dies'). Good use of everyday metaphors ('like a crowd responding to a wave'). Correctly explains that reversing direction reverses current. The 'Loops Stack the Voltage' step adds practical depth. Tone is conversational and engaging. Format requirements met.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Comprehensive and accurate explanation with excellent process flow. Covers all critical points: relative motion requirement, both directions of flux change, rate of change affecting current strength, Lenz's law opposition. Includes excellent point about moving the coil vs moving the magnet (step 7) and how electromagnets can achieve same effect without physical motion (step 9). The generator and transformer connections add practical context. Good conversational tone with metaphors. Accurately notes 'No change means no induction — motion is the essential ingredient.' Minor weakness: some steps slightly more descriptive than action-oriented.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Very solid process explanation with clear cause-effect relationships. Accurately covers: static field produces nothing, motion triggers flux change, electrons feel force, induced current creates opposing field (Lenz's law), reversal of motion reverses current, rate of change controls strength. Step 8 makes the critical point clearly: 'Motion creates electricity; stillness ends it.' Good conversational tone with appropriate metaphors. Format requirements met. Slightly less detailed than top models (e.g., doesn't mention multiple loops or practical applications), but everything stated is accurate and well-explained.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Strong process-focused explanation with good use of everyday metaphors ('like water flowing faster through a pipe'). Covers the essential points accurately: changing flux is required, direction flips with motion direction, speed affects strength, and static conditions produce no induction (step 9 explicitly states 'No Change, No Induction'). The 'tug-of-war with the flux shift' metaphor nicely captures Lenz's law opposition. Good conversational tone. Format requirements met. Slightly less explicit about HOW the induced current creates an opposing field compared to top models.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Good process explanation with several strong points: the 'swirling electric field' concept is scientifically accurate, magnetic drag is mentioned (step 8), open vs closed loop distinction is valuable. Correctly emphasizes that stopping change stops induction. The Lenz's law explanation (step 7) is clear. However, the 'swirling push' language in step 3 might confuse readers unfamiliar with the induced electric field concept. Generally accurate and process-focused. Format requirements met. Good conversational tone.",
+          "score": 8.4
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Good coverage of the induction process with appropriate emphasis on motion being essential. Accurately describes flux change triggering EMF, the need for speed, Lenz's law opposition (step 6), and reversal of current with reversed motion. The 'Static Standoff' opening correctly establishes that nothing happens without change. Some good metaphors ('like a pump, shoving electrons'). Minor issues: step 3's description of EMF as 'pressure' is slightly imprecise (EMF is voltage, not quite pressure). Overall solid but not as comprehensive as top models.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Technically accurate with good coverage of key concepts: Faraday's law, Lenz's law, motional EMF in moving conductor, circuit closure requirement. The explanation is dense and covers a lot of ground. However, the tone is less conversational and more technical ('Faraday's law triggers an EMF equal to the change rate'). Some metaphors are good ('bouncers at a door' for Lenz's law) but overall reads more like a textbook than a 'behind-the-scenes tour.' Step 7 on motional EMF with Lorentz force is advanced content that may exceed scope. Format requirements met.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Covers many advanced topics (eddy currents, flux coupling between coils, circuit failure modes) but some of this seems beyond the lesson scope. The core induction process is explained but with less focus on the fundamental experience. Step 2's 'curling electric field' is accurate but may be too technical. Steps 8-10 on flux coupling, eddy currents, and failure modes go beyond basic induction process. Good process language throughout. The Lenz's law explanation is clear. Format requirements met but scope may be exceeded.",
+          "score": 7.6
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Reasonable explanation with some good metaphors ('like a comb through hair' for field lines cutting through conductor). Covers motion requirement, electron response, Lenz's law opposition, and speed affecting current. However, the 'cutting field lines' language in step 2 is an outdated and potentially misleading visualization of induction. Step 7 correctly mentions energy transformation but ends abruptly without addressing what happens when motion stops. Missing explicit statement that static conditions produce no current (implied but not stated). Format requirements met.",
+          "score": 7.4
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "Covers the basic process correctly but lacks depth compared to other models. Uses water/pump metaphors throughout which is good for accessibility but becomes repetitive. Steps are shorter and less detailed. Missing explicit discussion of Lenz's law opposition. The explanation feels more like a summary than a detailed process walk-through. All statements are accurate, but the 'DEPTH CHECK' criterion is not fully met - this somewhat presents induction as 'magnets make electricity' without showing enough detail about HOW changing flux creates EMF. Format requirements met.",
+          "score": 6.8
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "This model provides an exceptional process breakdown. It uses vivid, consistent metaphors (invisible threads, water in a pipe, beads on a track, tug-of-war) that make the abstract concepts intuitive. The step-by-step flow is logical, moving from the invisible field to the visible current, and effectively covers all constraints including Lenz's law and the necessity of change.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model F offers excellent imagery, particularly the 'comb through hair' metaphor for magnetic field lines cutting through a conductor and the 'stubborn mule' for Lenz's law. The tone is engaging and strictly follows the process requirements. It effectively links mechanical motion to electrical response.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "This model stands out for its depth, accurately introducing the induced electric field ('swirling push') as the mediator of the force, which is a sophisticated but correct detail explained simply. The metaphors are strong ('wind changing through a hoop'), and the narrative flow is cohesive.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "A solid, clear explanation with good pacing. It uses the 'pump' metaphor effectively to explain EMF. The flow is logical and covers the key constraints (motion required, direction reversal). It is slightly less vivid than the top three but still very strong.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Comprehensive and accurate. It includes a specific step about multiple loops stacking voltage, which is a valuable addition to the process description. The tone is conversational and the explanation of Lenz's law is clear.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "A good, standard explanation that hits all the requirements. The metaphors are functional ('invisible pressure') but less imaginative than the top models. The narrative is clear and accurate.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "This model is accurate and covers the relative motion concept well. However, the last few steps shift focus towards applications (generators, transformers) rather than sticking strictly to the micro-process of induction within the loop itself. It is still a high-quality response.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Factually accurate, but the tone leans heavily on naming scientific laws (Faraday's law, Lenz's law, Lorentz force) rather than describing the mechanism through analogies. It feels more like a textbook summary than a 'behind-the-scenes tour.'",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "The content is accurate, but the writing style is repetitive ('Watch as...', 'Notice how...', 'See how...'). The explanations are somewhat oversimplified compared to the other models, lacking the dynamic 'story' feel requested.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "While the first half is good, the model drifts significantly in scope towards the end, discussing mutual induction, eddy currents, and circuit faults. These are related concepts but distract from the core task of explaining the specific process of induction in a single loop.",
+          "score": 6
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Strong process focus with clear cause→effect chain: changing flux → curling E-field → charge drift → current/voltage depending on circuit. Correctly emphasizes no induction when frozen. Includes Lenz’s law as pushback and even connects to mechanical drag without major over-definition. Titles/text lengths look within limits.",
+          "score": 9.4
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Accurate and very process-forward: motion or changing field strength drives flux change; stop motion → no current; mentions moving coil equivalence, generators, transformers, and Lenz opposition. Slightly risks overlap into “what” via application callouts, but still framed as action. Good metaphors and flow.",
+          "score": 9.1
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "High-quality “behind-the-scenes” process language: flux change triggers curling E-field, closed vs open circuit behavior, Lenz back-action, felt drag, plus coupling/eddy currents. All broadly accurate and action-based. Slight scope creep and some ‘what’-ish surveying (fault list, saturation) but not egregiously wrong.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Accurate sequential mechanism with Lenz direction reversal described correctly (repel on approach, attract on withdrawal). Includes motional EMF (Lorentz force) and open-circuit voltage. Minor issue: name-dropping Faraday’s law/EMF definitions (“equal to the change rate”) edges into definition territory, but still process-centric.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Clear stepwise story: stillness → motion → flux change → EMF “pump” → current → speed dependence → Lenz back-reaction → reversal on withdrawal. Accurate and conversational. Slightly leans on EMF as a named “pressure called EMF” (a bit definitional), but overall solid.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Very clear on the key accuracy point (no change, no induction) and gives a good motion→flux→voltage→current sequence with decent metaphors. Weaker on explicitly stating Lenz’s-law opposition mechanism (mentions tug-of-war but not as clearly tied to opposing flux change as others). Some steps feel repetitive (increase vs decrease vs speed).",
+          "score": 8.1
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Accurate and nicely sequential with Lenz opposition and reversal. Conversational. However, several steps are a bit generic (“jolts electrons awake”) and don’t highlight the curling E-field / mechanism as clearly; still process-based and correct on changing flux requirement.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Good process flow and includes turns/loops adding EMF. Correctly states Lenz opposition with a specific field-direction example. Slight risk: first step wording (“The Field Starts Moving”) could mislead, but context clarifies changing flux. Overall solid, just a bit less clean/consistent than top group.",
+          "score": 7.9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Mostly accurate on motion requirement and Lenz pushback; good metaphors. But it leans on the potentially misleading ‘field lines cutting’/‘physical force shoving electrons’ framing without clarifying the induced electric field, and it omits the explicit “stop motion → zero” checkpoint (implied but not stated).",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "Accurate basics (motion → changing flux → EMF → current; stop → no current; reversal flips direction), but it’s comparatively shallow and somewhat repetitive (field change vs flux change as separate steps). Less “behind-the-scenes” mechanism and more summary-level.",
+          "score": 6.8
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-mechanics",
+  "testCaseId": "en-physics-electromagnetic-induction-1"
+}

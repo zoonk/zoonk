@@ -1,0 +1,203 @@
+{
+  "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Garbage collection involves specific phases that must occur in order. Penalize if:\n   - Objects are described as being freed while still reachable (only unreachable objects are collected)\n   - The marking phase is confused with the sweeping phase (marking identifies live objects; sweeping reclaims dead ones)\n\n2. DEPTH CHECK: Penalize if garbage collection is presented as \"automatic memory cleanup\" without showing how the runtime traces references and determines what to keep.\n\n3. DISTINCTION FROM EXPLANATION: The explanation covered WHAT the heap, stack, and references ARE. This should show HOW the garbage collector actively scans, marks, and reclaims memory.\n\n\nEVALUATION CRITERIA:\n\n1. FACTUAL ACCURACY: Any process descriptions, mechanisms, or cause-effect relationships must be correct. Penalize hallucinations, incorrect sequences, or wrong causal chains.\n\n2. PROCESS FOCUS: Content must show things HAPPENING, not just describe parts. Look for action verbs, cause-effect language, and sequential flow.\n\n3. DEPTH: Complex processes require multi-step explanations showing how one action triggers the next. Penalize oversimplified \"just happens\" explanations.\n\n4. FORMAT: Each step must have a title (max 50 chars) and text (max 300 chars).\n\n5. TONE: Conversational, like giving a behind-the-scenes tour. Include process metaphors from everyday life (assembly lines, relay races, domino chains).\n\n6. FOCUS: Explains HOW something works (processes in action), not WHAT it is (definitions) or WHY it exists (history).\n\n7. NO OVERLAP: Must not repeat content from the EXPLANATION_STEPS which covered the WHAT.\n\n8. SCOPE: Content matches the lesson scope exactly.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for missing process phases or steps you might expect\n- Do NOT require a specific number of steps\n- Do NOT check against an imagined \"complete\" process description\n- ONLY penalize for: factual errors, static descriptions instead of action-oriented content, missing cause-effect relationships, or poor process flow\n- Different valid process explanations exist - assess the quality of what IS provided\n\n    ",
+  "judgedAt": "2026-01-17T01:31:40.896Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Exceptional process-oriented explanation with strong action verbs and cause-effect language throughout. Each step shows something HAPPENING with clear triggers and consequences. The flow from object creation → reference shifts → collector awakening → tracing → marking → reclaiming → compacting → pause tax → optimizations is logical and complete. Excellent metaphors ('like a detective asking', 'pulling on a thread', 'ghosts occupying valuable memory'). Strong technical accuracy: correctly describes roots, reachability, marking vs sweeping phases. The 'Pause Tax' and 'Optimizing the Hunt' steps add depth without being overly technical. Conversational tone maintained throughout. All steps within character limits.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Excellent process coverage with strong technical accuracy. Includes sophisticated concepts like write barriers and generational collection that add genuine depth. Good action-oriented language ('trips the alarm', 'shines a flashlight', 'Tossing junk'). The step about preventing re-scanning loops shows algorithmic understanding. Correctly distinguishes marking from sweeping phases. The final step about 'What makes GC feel slow' adds practical understanding. Metaphors are effective (closet, flashlight, sticky notes). Slightly more technical/dense than ideal for conversational tone, but still accessible. All format requirements met.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Very strong process explanation with excellent flow and cause-effect relationships. Clear trigger (allocation failure) → pause → roots → tracing → identifying unreachable → sweeping → compacting → resuming. The 'sticker' metaphor is consistent and effective. Good action verbs ('freezes', 'traverses', 'wipes'). Technical accuracy is solid: correctly describes how unreachable objects become 'islands'. The step about resuming and completing the allocation that originally failed shows understanding of the complete cycle. Slightly less depth than E/F (no generational collection details), but what's covered is excellent.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Strong process explanation with good technical accuracy. Includes advanced concepts: stop-the-world, marking, walking object graph, sweeping, compaction, pointer relocation, and generational promotion. The pointer relocation step shows understanding of compaction's consequences. Good metaphors (overstuffed closet, search party, spider web, Swiss cheese). Clear action-oriented language. One minor issue: the final step on generations feels slightly detached from the main flow. All format requirements met. Solid depth and accurate sequencing of phases.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Highly technical and comprehensive, covering concurrent collection, write barriers, young-gen copy cycles, finalizers, weak references, and tuning. Shows deep expertise. However, the technical density sometimes comes at the expense of clarity and conversational tone. Phrases like 'mutator' and 'remembered set' may be too technical for the intended audience. The step about 'When the collector trips up' and 'Tuning and algorithm trade-offs' are useful but border on explaining WHAT rather than showing HOW. Format is correct. Good process flow but less accessible than top-ranked responses.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Good process coverage with clear flow: orphaning → pause → walking graph → chaining → unmarked identification → sweep → resume → promotion → OOM. Accurate technical content. Good action verbs and metaphors ('freezing time to take a census', 'chain reaction'). The OOM step at the end adds a practical failure mode. However, some steps could be more action-oriented ('Objects Become Orphaned' is somewhat passive). The ordering with orphaning first feels slightly unusual but isn't incorrect. Solid overall but less polished than top responses.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Solid process explanation with correct sequencing: trigger → pause → roots → marking → graph traversal → sweep → coalescing → compaction → resume. Uses vivid language ('relay race baton', 'floods the object graph', 'glow while isolated garbage fades'). Accurate distinction between marking and sweeping. However, some phrasing is overly dramatic/stylized which slightly undercuts clarity. The 'Blocks Coalesce Free' step title is awkward. Missing generational concepts reduces depth. Format requirements met. Good but not exceptional.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Covers the main phases correctly: trigger → walk from roots → marking → identifying unreachable → sweeping → compacting → reclaiming → resuming → cycle repeats. Metaphors are decent (lifeguard, spotlight, warehouse, books on shelf). However, some steps feel slightly repetitive or could be condensed. The distinction between 'Marking Live Objects' and 'Identifying the Unreachable' could be clearer. Step 7 'Reclaiming Free Space' after 'Compacting What Remains' slightly muddles the sequence (reclaiming typically precedes compaction). Minor ordering issue but overall acceptable.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Covers the basic process correctly but with some weaknesses. The flow from accumulation → trigger → marking → tracing → orphan identification → sweeping → resume is logical. The final step about circular references is useful. However, step 6 says the collector 'deallocates the dead objects, compacts remaining ones' which conflates sweeping and compaction as if they're simultaneous. Some language is more passive than ideal ('The Memory Pile Accumulates'). The 'watches silently' metaphor anthropomorphizes oddly. Decent but less precise than better responses.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "This response describes WHAT happens rather than showing HOW it happens in action. Steps like 'Memory Allocation Happens', 'References Keep Objects Alive', and 'GC Roots Are Established' are static descriptions, not processes in action. Language is passive ('are established', 'are identified', 'may follow'). The warehouse metaphor is repeated but doesn't add progressive understanding. Missing cause-effect relationships - steps feel like a list of facts rather than a flowing process. Violates the core expectation of showing processes HAPPENING with action verbs. Technically accurate but fails the process focus requirement.",
+          "score": 5.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "This output is exceptional. It perfectly adheres to the 'process focus' and 'tone' criteria. The metaphors (lifeguard, spotlight, cleanup crew, sliding books) are consistent, vivid, and accurately map to the technical steps of pausing, tracing, sweeping, and compacting. It uses active voice throughout ('The collector walks', 'spotlight hopping') which makes the mechanism easy to visualize.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model A provides a highly accurate and accessible explanation. The 'overstuffed closet' and 'search party' metaphors are effective. It clearly distinguishes between marking live objects and sweeping dead space, ensuring factual accuracy. The flow is logical and the tone is conversational as requested.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "This model balances accessibility with superior technical depth. It explains *why* marking works (preventing infinite loops in cyclic graphs) using a clever 'sticky note' metaphor. It also touches on generational concepts without getting bogged down. It ranks slightly below D and A only because the text is slightly denser, but it is excellent.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "A very strong entry that effectively uses the 'breadcrumbs' metaphor for tracing and 'islands' for unreachable objects. The pacing is good, and it covers all required phases (pause, mark, sweep, compact) accurately. It is equivalent in quality to Model A but the metaphors in A felt slightly more cohesive.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model E adopts a strong narrative persona ('detective'), which works well. It accurately describes the tracing process ('pulling on a thread'). It is ranked slightly lower than the top tier because the transition between steps feels slightly less mechanical/process-oriented than D or A, but it is still a very good output.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Concise and punchy. It uses active verbs ('mutator threads freeze', 'lights them up'). It covers the process accurately but lacks the illustrative depth of the higher-ranked models. It feels more like a summary than a 'tour'.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "A solid, standard explanation. The 'census' metaphor is good. It is factually accurate but feels a bit more generic compared to the vivid imagery in Models D and A. It meets the requirements without exceeding expectations.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "While technically accurate and very detailed, this model suffers from jargon overload ('mutator', 'write barriers', 'finalizers', 'bump pointer'). The tone leans too far into technical documentation rather than the requested 'conversational, behind-the-scenes' style. It is high quality content, but slightly misaligned with the persona requirements.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "This model introduces a slight logical flaw/inaccuracy in step 5, stating that 'orphaned objects get marked as dead.' In a standard mark-and-sweep, unreachable objects cannot be reached to be marked; they are identified effectively by the *absence* of a mark during the sweep. While a minor distinction for laypeople, it represents a lower conceptual accuracy than the top models.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "This is the weakest output. It relies heavily on passive voice ('Memory Allocation Happens', 'Memory Reclamation Occurs'), violating the 'Process Focus' criteria. It lacks the requested conversational tone and vivid metaphors, resulting in a dry, textbook-style definition rather than an explanation of a process in action.",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Strong process focus with clear cause→effect flow: trigger → pause/cooperate → trace/mark from roots → sweep → optional compact + pointer updates → generational + write barriers → resume. Accurate mark vs sweep. Metaphors used. Minimal “what is” overlap. All titles/text within limits.",
+          "score": 9.3
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Very detailed, action-oriented walkthrough including concurrent vs STW, write barriers, generational copying/promotion, sweep, optional compaction with ref patching. Metaphors fit. Slight risk of scope creep (finalizers/weak refs, tuning section) and a bit long-winded, but still accurate and process-centric.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Clean, correctly ordered mark→sweep→optional compaction→resume, with good metaphors and clear tracing from roots. Stays in-bounds and avoids major definitional detours. Less depth than F/G (no pointer-update detail, no barriers), but solid and accurate.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Accurate mark/sweep/compact with pointer relocation mention (good depth). Conversational and metaphor-rich. Minor issues: “stop-the-world event” presented as typical trigger; “Relocating the Pointers” as separate final pass is plausible but phrased as always required; some extra generational content may be beyond scope but still relevant.",
+          "score": 8.4
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Good narrative and metaphors, clear root tracing/marking and reclaiming unreachable objects. Includes pauses and optimizations (concurrent/generational). Some redundancy between “Tracing From the Roots” and “The Marking Phase,” and a bit more “what/why” flavor than others, but overall accurate process.",
+          "score": 8.1
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Accurate mark-then-sweep description with decent process verbs and metaphors. Adds promotion and OOM behavior; mostly fine but slightly scope-expanding. Step 1 leans into describing references/orphans (more ‘what’ than ‘how’) compared to stronger entries.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Generally correct mark→identify→sweep→compact→resume, with good metaphors. Some phrasing is muddy: step 1 implies “pause triggers a full sweep” (conflates trigger with sweep and suggests sweep is the deciding scan). Some repetition between steps 2–3.",
+          "score": 7.4
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Correct basic mark/sweep/optional compact/resume flow with metaphors. But step 7 overclaims: “No fragmentation from stray holes — memory's tidy again” is not generally true without compaction; coalescing alone doesn’t eliminate fragmentation. Otherwise fine.",
+          "score": 7.1
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "Mostly accurate but more static/definitional (warehouse/references/roots) and less ‘behind-the-scenes action’ than required. Doesn’t clearly separate marking vs sweeping (talks about unreachable ‘marked as garbage’ then reclamation) and overall feels like ‘automatic cleanup’ with limited mechanism detail.",
+          "score": 6.6
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Contains a key accuracy flaw: says orphaned objects “get marked as dead” (GC typically marks live, not dead), and lumps “sweeping… deallocates… compacts” as if always part of sweeping (phase confusion). Also more ‘what’ about stack/heap at start. Metaphors OK but process accuracy issues hurt most.",
+          "score": 5.8
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-mechanics",
+  "testCaseId": "en-cs-garbage-collection-1"
+}
