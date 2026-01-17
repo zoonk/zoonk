@@ -1,0 +1,185 @@
+{
+  "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: CRISPR gene editing concepts must be scientifically accurate. Penalize if:\n   - CRISPR is described as directly rewriting DNA (it cuts; cellular repair does the editing)\n   - Off-target effects or guide RNA specificity are misrepresented\n   - Ethical considerations are oversimplified or strawmanned\n\n2. SCENARIO CHECK: The workplace problem should involve realistic biotech challenges like: designing experiments, troubleshooting editing efficiency, addressing off-target concerns, or navigating ethical review.\n\n3. CONCEPTUAL FOCUS: Decisions should require reasoning about the mechanism's limitations and appropriate applications, not just knowing what CRISPR stands for.\n\n\nEVALUATION CRITERIA:\n\n1. STORY AUTHENTICITY: Dialogue must be pure conversation between colleagues with no narrator text, no character name prefixes (like \"Sarah:\"), and no action descriptions. The learner should feel immersed in a real workplace conversation.\n\n2. EDUCATIONAL ALIGNMENT: Every decision point must require applying lesson concepts through reasoning, not memorizing facts. Wrong options should be plausible but flawed for specific conceptual reasons.\n\n3. PLOT COHERENCE: Scenes must flow naturally as a continuous story where each scene builds from the previous dialogue. The second-to-last scene MUST introduce a genuine plot twist (surprise, complication, or revelation). The final scene must resolve the problem AND reinforce the main learning takeaway.\n\n4. FORMAT COMPLIANCE: Verify these constraints:\n   - context: Maximum 500 characters of pure dialogue\n   - question: Maximum 100 characters\n   - options: Exactly 4 objects, each with: text (max 50 chars), isCorrect (boolean), feedback (max 300 chars)\n   - Exactly 1 option must have isCorrect: true, the other 3 must have isCorrect: false\n\n5. PERSONALIZATION: The {{NAME}} placeholder must be used appropriately in dialogue to personalize the experience.\n\n6. FEEDBACK QUALITY: Each option must have feedback explaining WHY it's right (with insight) or WHY it's wrong (and what would be correct). Feedback should help learners understand the reasoning, not just state correctness.\n\n7. SCENE COUNT: Story must have between 7 and 20 scenes. Let problem complexity dictate length.\n\n8. DISTRACTOR QUALITY: All wrong options must be plausible choices someone might consider. Penalize obviously silly or absurd options that no reasonable person would choose.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific plot choices, character names, or scenario settings you might expect\n- Do NOT require specific scenes like \"investigation\" or \"resolution\" by name - focus on whether the story has good flow\n- Do NOT check against an imagined \"ideal\" story structure\n- ONLY penalize for: format violations, narrator/description text in dialogue, decisions that test memorization instead of reasoning, missing plot twist, poor distractor quality, or factually incorrect lesson application\n- Different valid story approaches exist - assess the quality of what IS provided\n\n    ",
+  "judgedAt": "2026-01-17T15:54:28.991Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model E excels across nearly all criteria. STORY AUTHENTICITY: Pure dialogue with no narrator text or character prefixes. SCIENTIFIC ACCURACY: Correctly represents CRISPR mechanisms - guide RNA directing Cas9, cellular repair doing editing, off-target concerns properly explained. HDR vs NHEJ appropriately discussed. EDUCATIONAL ALIGNMENT: Decisions require reasoning about mechanisms (e.g., why near-matches cause off-targets, why HDR needs templates). PLOT COHERENCE: Flows naturally from guide RNA design through off-target discovery to resolution. Scene 8 introduces genuine twist (unexpected off-target mutations found). FORMAT COMPLIANCE: All scenes have proper structure with 4 options each. DISTRACTOR QUALITY: Wrong options are plausible (e.g., 'more Cas9 protein' when dealing with off-targets). FEEDBACK QUALITY: Thorough explanations of why answers are right/wrong. 16 scenes is appropriate for complexity. Minor weakness: Some scenes are slightly longer but within limits.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Model G provides excellent scientific accuracy and educational depth. STORY AUTHENTICITY: Clean dialogue throughout. SCIENTIFIC ACCURACY: Correct treatment of guide RNA specificity, off-target effects, repair pathways, and delivery methods. Properly distinguishes somatic vs germline editing. EDUCATIONAL ALIGNMENT: Questions test reasoning about mechanisms (e.g., why electroporation is transient, why in vivo is harder than ex vivo). PLOT COHERENCE: Strong flow through design, testing, and clinical considerations. Scene 10 (outlier vial discovery) serves as plot twist. Final scenes effectively address in vivo vs ex vivo considerations. 14 scenes with good pacing. DISTRACTOR QUALITY: Plausible wrong options throughout. FEEDBACK QUALITY: Excellent explanations. Minor weaknesses: Some feedback could be more detailed, and the 'plot twist' is less dramatic than ideal.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model D demonstrates strong scientific rigor and realistic biotech challenges. STORY AUTHENTICITY: Pure dialogue without narrator intrusions. SCIENTIFIC ACCURACY: Excellent treatment of allele-specific editing, PAM requirements, and validation strategies. EDUCATIONAL ALIGNMENT: Decisions require understanding mechanisms (e.g., why PAM specificity enables allele discrimination). PLOT COHERENCE: Scene 7 provides good twist (silent SNP creates unexpected PAM). Resolution appropriately emphasizes sequence-first design. 8 scenes is efficient for the problem. DISTRACTOR QUALITY: Strong - options like 'hope mutant cuts more efficiently' are realistically tempting but flawed. FEEDBACK QUALITY: Clear explanations. Minor weakness: Context slightly exceeds 500 char limit in places, and story could use more development.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model A shows solid scientific accuracy and good educational design. STORY AUTHENTICITY: Clean dialogue format. SCIENTIFIC ACCURACY: Correctly addresses high-fidelity Cas9, NHEJ vs HDR, delivery methods, and validation strategies. EDUCATIONAL ALIGNMENT: Decisions test mechanism understanding (e.g., why HDR fails in non-dividing cells). PLOT COHERENCE: Scene 7 provides twist (unexpected off-target discovery). Good resolution emphasizing iterative optimization. 9 scenes appropriate for complexity. DISTRACTOR QUALITY: Generally plausible but some weaker (e.g., 'Abort - this target is impossible'). FEEDBACK QUALITY: Adequate but could be more detailed in places. Some context sections are dialogue-light, reading more like problem statements.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Model I provides strong educational content with good scientific accuracy. STORY AUTHENTICITY: Clean dialogue. SCIENTIFIC ACCURACY: Correctly explains off-target concerns, high-fidelity Cas9, and delivery considerations. EDUCATIONAL ALIGNMENT: Good reasoning-based questions. PLOT COHERENCE: Flows well but the 'plot twist' in scene 8 (Cas9 degrading helper virus) is scientifically questionable - Cas9 without guide RNA doesn't have significant non-specific nuclease activity. This is a scientific accuracy issue. The scenario about helper virus contamination is interesting but somewhat contrived. 10 scenes with decent pacing. FEEDBACK QUALITY: Generally good explanations.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Model B has good flow but some scientific concerns. STORY AUTHENTICITY: Clean dialogue. SCIENTIFIC ACCURACY: Some issues - recommending 'optimize guide RNA length' as the primary solution for off-targets is not the best approach; high-fidelity Cas9 or guide redesign would be preferable. Also, 'testing a higher-fidelity Cas9 variant' is presented as improving cutting efficiency rather than specificity. PLOT COHERENCE: Scene 8 twist (RNase contamination) is reasonable but somewhat mundane for a CRISPR story. DISTRACTOR QUALITY: Some weak distractors (e.g., 'Triple the guide RNA dose'). FEEDBACK QUALITY: Feedback is brief and sometimes lacks depth. 9 scenes is appropriate.",
+          "score": 7.3
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Model F has good technical content but format issues. STORY AUTHENTICITY: Clean dialogue. SCIENTIFIC ACCURACY: Generally accurate treatment of CRISPR concepts. EDUCATIONAL ALIGNMENT: Good mechanism-based questions. PLOT COHERENCE: Scene 10 twist (mouse-specific off-target) is good. FEEDBACK QUALITY: Major issue - feedback is extremely terse ('Wrong. Minor cuts need addressing for safety') without explaining WHY or what would be correct. This significantly undermines educational value. Some feedback is just 'Wrong. [brief statement]' which doesn't help learners understand. FORMAT: 11 scenes is appropriate but feedback quality is a significant weakness.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model C has a realistic scenario but some weaknesses. STORY AUTHENTICITY: Clean dialogue. SCIENTIFIC ACCURACY: Mostly correct, though the CEP290 scenario is reasonable. EDUCATIONAL ALIGNMENT: Some questions test basic knowledge rather than reasoning (e.g., 'What is the term for CRISPR cutting at unintended locations?' is vocabulary, not reasoning). PLOT COHERENCE: Scene 7 twist (patient-specific polymorphism) is good. Only 8 scenes feels slightly rushed. DISTRACTOR QUALITY: Some weak options (e.g., 'Apply a localized heat shock'). FEEDBACK QUALITY: Adequate but brief. The scenario involving eye disease treatment is interesting but the educational depth could be stronger.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Model H has good structure but significant issues. STORY AUTHENTICITY: Clean dialogue. SCIENTIFIC ACCURACY: Generally correct on CRISPR basics. EDUCATIONAL ALIGNMENT: Some questions test memorization rather than reasoning (e.g., 'Which cellular pathway caused these random errors?' - NHEJ). PLOT COHERENCE: The twist in scene 9 (knockout better than repair) is good and pedagogically valuable. However, only 11 scenes and some feel rushed. DISTRACTOR QUALITY: Some very weak distractors (e.g., 'More ATP', 'DNA Polymerase Proofreading'). FEEDBACK QUALITY: Feedback is often minimal ('Wrong. Guide RNA is spot-on; issue elsewhere'). Several feedback entries are dismissive rather than educational. Scene 2 question about guide RNA being complementary vs identical is basic knowledge rather than reasoning.",
+          "score": 6.8
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model F",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "This is the best output. It follows all format constraints perfectly, including the scene count and character limits. The story is highly engaging and technically accurate, moving from in vitro to in vivo challenges. The plot twist (species-specific off-targets) is introduced exactly in the second-to-last scene as requested and serves as a vital educational point about translational research. The feedback is insightful and educational.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "This model provides the most intellectually stimulating scenario, focusing on allele-specific editing and PAM sites. The plot twist (a silent SNP in the wild-type allele) is brilliant and perfectly placed in the second-to-last scene. However, it receives a deduction for a format violation: one option text in the final scene is 56 characters long, exceeding the 50-character limit.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Model B is fully compliant with all formatting and structural constraints. The dialogue is natural and the troubleshooting focus is realistic. However, the plot twist (contaminated reagents/RNases) is less educationally rich regarding CRISPR mechanics compared to Models F and D. It teaches lab hygiene rather than gene editing concepts, placing it slightly below the top tier in content quality.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Model H offers a solid scenario with a clever twist (switching from repair to knockout due to toxicity). However, it misses the structural constraint regarding the twist placement; the twist is revealed in the third-to-last scene (Scene 9 of 11), with the second-to-last scene discussing the implications. The content is otherwise good.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model A has excellent content and realism. However, it suffers from two issues: the twist is introduced in the third-to-last scene rather than the second-to-last, and it violates the option text character limit (one option is 58 characters). These formatting slips drop it below H.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model C follows the format and structural constraints well, including the twist placement. However, it fails the 'Educational Alignment' criteria. The questions often test definition recall (e.g., 'What is the term for...') rather than decision-making or reasoning, making it less effective as a simulation.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "This model has good content but fails on multiple technical fronts. The twist placement is slightly off (third-to-last scene), and it violates the option text length limit (51 characters). The scenario is decent but the execution is sloppy regarding constraints.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model E has a weak narrative structure. The 'twist' is not clearly defined in the second-to-last scene, and the story drags on with a recap and a lesson before ending. The questions are often basic knowledge checks rather than scenario-based decisions.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Model G contains a critical scientific error. In Scene 2, it suggests that using NHEJ to knock out the beta-globin gene is the correct strategy for Sickle Cell Disease. Since SCD is a loss-of-function/toxicity recessive disorder, knocking out the gene entirely would result in Beta-Thalassemia Major, not a cure. This fundamental inaccuracy makes the content unacceptable for an educational tool.",
+          "score": 2
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Meets the core constraints best: pure colleague dialogue with {{NAME}} used naturally; 8 scenes (within 7–20); clear workplace-realistic problem (allele-specific editing in patient-derived liver cells); decision points require mechanism-based reasoning (PAM/allele specificity, NHEJ vs HDR choice for goal, off-target prediction + sequencing, transient delivery tradeoffs). Has a genuine second-to-last-scene plot twist (WT allele has SNP creating PAM) and a resolving final scene that reinforces takeaway. Scientifically solid (Cas9 cuts, repair causes edits; off-target vigilance; transient delivery). Minor issue: a few option texts may be near/over 50 chars (e.g., “Run off-target prediction; redesign if needed”, “LNP delivery with transient Cas9 activity”), but overall strongest.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Strong scientific accuracy and realistic workflow (target context, off-target reduction, HDR vs NHEJ knock-in in non-dividing cells, delivery, validation, ethics). Dialogue-only and uses {{NAME}}. Plot twist present (unexpected off-target in metabolic gene) and resolution reinforces takeaway. However, multiple format violations: many option texts exceed 50 chars (e.g., “Confirm the target DNA sequence and context”, “Use lipid nanoparticles carrying Cas9 RNP”), and several contexts likely exceed 500 characters. Still excellent conceptually.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Good continuous workplace conversation, strong conceptual decision points (risk-benefit between efficiency/off-target, experimental validation, protein vs mRNA time-window, heritability counseling). Has a second-to-last plot twist (apparent off-targets were polymorphisms due to wrong baseline controls) and a final scene resolving with in vivo vs ex vivo risk reasoning. Main weaknesses: several contexts appear >500 characters; some option texts likely >50 chars; a few choices drift toward policy/counseling rather than mechanism (though still applied reasoning). Overall strong and coherent.",
+          "score": 7.9
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Solid realism and ethical-review framing; decisions generally require reasoning (partial match interpretation, acceptable off-target rate, hi-fi Cas9 tradeoff, delivery completeness, contamination handling, long-term monitoring). Twist is present (helper virus appears degraded faster) and resolution gives clear takeaway. Biggest scientific issue: claims Cas9 “even without active guide RNA” degrades helper virus due to “weak, non-specific nuclease activity”—this is dubious/misleading mechanistically. Also likely violates 500-char context and 50-char option limits in places.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Good mechanism coverage (PAM requirement, guide complementarity, chromatin accessibility, NHEJ vs HDR with template, HDR low in non-dividing liver, LNP liver tropism, mismatch tolerance). Includes a genuine twist (control NHEJ knockout outperforms intended HDR fix) and final takeaway fits. Weaknesses: some dialogue feels instructional rather than colleague-real; several contexts likely >500 chars; some options likely >50 chars. Overall accurate and coherent.",
+          "score": 7.1
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Covers key concepts (verify edits by sequencing, off-target prediction/validation, delivery tradeoffs, immune response, species-specific off-targets) with a clear plot twist (mouse-specific perfect-match off-target causing fibrosis) and resolution. Major authenticity violation: contexts include quasi-narration/action descriptions (“gel electrophoresis…”, “Bronchoalveolar lavage shows…”, “histology shows…”) rather than pure conversation. Also some scientific framing is off (knocking out CFTR to treat deltaF508 is not a typical therapeutic goal). Likely format length issues too.",
+          "score": 6.6
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Has 9 scenes and a plot twist (RNase-contaminated LNP batch) with a clean resolution. But several decision points are scientifically weak or mis-prioritized: weak cleavage attributed to predicted off-target “diluting activity” is not a solid mechanism; “higher-fidelity Cas9” is framed as boosting activity (usually trades off activity for specificity); “shortening homology arms” as best fix for microhomology-mediated insertions is questionable. Final decision is also non-substantive (“Wrap up the workflow”). Likely context/option length issues.",
+          "score": 5.8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Rich, coherent, realistic therapeutic review scenario with many scenes and good feedback; includes off-target discovery and a later pivot to in vivo vs ex vivo considerations. However, it fails the required twist placement: the second-to-last scene is reflective and not a genuine complication; the last scene is also reflective rather than resolving a new twist. Also very likely violates the 500-character context limit repeatedly and many option texts exceed 50 characters.",
+          "score": 5.6
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Contains narrator-like instructional phrasing (“Perfect!”, “Exactly”), and some questions test memorization more than applied reasoning (e.g., “What is the term for…”). Several contexts likely exceed 500 characters; some option texts exceed 50. Scenario is somewhat realistic and has a twist (patient-specific polymorphism causing apparent off-target), but overall feels more like a tutorial than authentic colleague dialogue.",
+          "score": 5.1
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-story",
+  "testCaseId": "en-biology-crispr-applications-1"
+}

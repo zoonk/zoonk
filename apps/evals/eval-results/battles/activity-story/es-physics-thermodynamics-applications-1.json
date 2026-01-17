@@ -1,0 +1,185 @@
+{
+  "expectations": "\nLANGUAGE REQUIREMENT: All content must be in Spanish.\n\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Thermodynamics concepts must be physically accurate. Penalize if:\n   - Entropy is described only as \"disorder\" without the energy dispersal aspect\n   - The second law is misrepresented or applied to closed vs. open systems incorrectly\n   - Heat and temperature are confused\n\n2. SCENARIO CHECK: The workplace problem should involve realistic engineering challenges like: heat engine efficiency, thermal management, refrigeration design, or energy system optimization.\n\n3. CONCEPTUAL FOCUS: Decisions should require reasoning about energy flow, efficiency limits, and thermodynamic constraints.\n\n\nEVALUATION CRITERIA:\n\n1. STORY AUTHENTICITY: Dialogue must be pure conversation between colleagues with no narrator text, no character name prefixes (like \"Sarah:\"), and no action descriptions. The learner should feel immersed in a real workplace conversation.\n\n2. EDUCATIONAL ALIGNMENT: Every decision point must require applying lesson concepts through reasoning, not memorizing facts. Wrong options should be plausible but flawed for specific conceptual reasons.\n\n3. PLOT COHERENCE: Scenes must flow naturally as a continuous story where each scene builds from the previous dialogue. The second-to-last scene MUST introduce a genuine plot twist (surprise, complication, or revelation). The final scene must resolve the problem AND reinforce the main learning takeaway.\n\n4. FORMAT COMPLIANCE: Verify these constraints:\n   - context: Maximum 500 characters of pure dialogue\n   - question: Maximum 100 characters\n   - options: Exactly 4 objects, each with: text (max 50 chars), isCorrect (boolean), feedback (max 300 chars)\n   - Exactly 1 option must have isCorrect: true, the other 3 must have isCorrect: false\n\n5. PERSONALIZATION: The {{NAME}} placeholder must be used appropriately in dialogue to personalize the experience.\n\n6. FEEDBACK QUALITY: Each option must have feedback explaining WHY it's right (with insight) or WHY it's wrong (and what would be correct). Feedback should help learners understand the reasoning, not just state correctness.\n\n7. SCENE COUNT: Story must have between 7 and 20 scenes. Let problem complexity dictate length.\n\n8. DISTRACTOR QUALITY: All wrong options must be plausible choices someone might consider. Penalize obviously silly or absurd options that no reasonable person would choose.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific plot choices, character names, or scenario settings you might expect\n- Do NOT require specific scenes like \"investigation\" or \"resolution\" by name - focus on whether the story has good flow\n- Do NOT check against an imagined \"ideal\" story structure\n- ONLY penalize for: format violations, narrator/description text in dialogue, decisions that test memorization instead of reasoning, missing plot twist, poor distractor quality, or factually incorrect lesson application\n- Different valid story approaches exist - assess the quality of what IS provided\n\n    ",
+  "judgedAt": "2026-01-17T15:54:08.360Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model G provides 11 scenes with excellent thermodynamic accuracy throughout. The concepts are physically correct (Carnot efficiency, COP calculations, energy conservation, entropy). The dialogue flows naturally as a continuous conversation between colleagues with appropriate use of {{NAME}}. The plot twist in scene 8 (manager connecting heat rejection directly to refrigerator) is a genuine complication that tests understanding. All 4 options per question are plausible, with distractor quality being high - wrong answers reflect common misconceptions. Feedback is educational and explains WHY options are right/wrong. The final scene reinforces the key learning about thermodynamic limits being absolute. Format appears compliant. Minor issues: some scenes are slightly long but within limits.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model H has 9 well-structured scenes with accurate thermodynamic content covering heat recovery, Carnot limits, COP calculations, and heat pumps. The dialogue is pure conversation without narrator text. Scene 7 introduces a genuine plot twist (provider simulation claiming to exceed Carnot). Decisions require reasoning about thermodynamic constraints, not memorization. Feedback quality is excellent, explaining conceptual errors. All distractors are plausible engineering mistakes. The scenario (industrial heat recovery design) is realistic. Strong educational value with proper application of 1st and 2nd laws. Minor issue: some dialogue could be slightly more natural in places.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Model A presents 9 scenes with a realistic thermal management scenario (server room with hidden heat sources). Thermodynamic concepts are accurately presented - energy conservation, second law direction of heat flow, Carnot limits, and entropy. The plot twist (hidden industrial furnace in basement) is genuine and changes the problem analysis. Dialogue is natural conversation with good {{NAME}} usage. Feedback explains reasoning well. However, some options are slightly less challenging - a few distractor options are more obviously wrong than ideal. Scene 6 correctly identifies the furnace as the hidden heat source. The final scene wraps up with good learning reinforcement about systematic thermodynamic analysis.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Model B offers 8 scenes with an engaging refrigerator prototype scenario. Thermodynamic accuracy is good - correctly covers 1st law balance, 2nd law direction, Carnot limits, entropy. The plot twist in scene 7 (inverted pipe connections making it a heater instead of cooler) is excellent and realistic. Dialogue is conversational without narrator text. Feedback quality is solid. However, scene 3 (leaving door open to cool the lab) is a bit of a trick question that may confuse learners about the actual thermodynamic principle being tested. Some scenes are very short, reducing immersion slightly. Overall strong but slightly less depth than top entries.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Model I has 10 scenes with accurate thermodynamic content covering motor efficiency, Carnot limits, refrigeration, and COP. The dialogue flows as conversation. However, scene 9 is problematic - it's essentially a 'click to continue' scene about reading an email, which breaks the decision-requiring reasoning pattern. Scene 4 has an error in the feedback for the correct answer - it says 'MÁS de 5000 J' but with a good COP (>1), you'd actually need LESS work, not more. This is a significant thermodynamic error. The plot could be more compelling, and the 'twist' is just a humorous email, not a genuine complication. Still, most scenes are well-constructed with plausible distractors.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Model C provides 7 scenes (minimum acceptable). The scenario (heat engine optimization) is realistic. Thermodynamic concepts are generally accurate - Carnot efficiency, energy balance, heat transfer. The twist (microfuga in hot duct) is reasonable but somewhat predictable. Dialogue is conversational. However, feedback is often too brief - doesn't always fully explain WHY wrong answers are wrong. Some decisions feel more like 'what to check next' rather than requiring deep thermodynamic reasoning. The final scene could reinforce learning better. Distractor quality is adequate but not exceptional. Overall competent but lacks depth.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Model D has 9 scenes with solid thermodynamic content including COP, Carnot, entropy analysis. The plot twist (inverted valve configuration) is good. However, there are significant issues: dialogue is often very abbreviated and telegraphic ('Temps ya usadas', 'Ya lo hicimos'), reducing immersion and conversational quality. Some feedback is too brief ('Ya ok', 'Todo alineado'). The context text sometimes reads more like technical notes than natural conversation. While thermodynamically accurate, the presentation suffers from poor dialogue quality. Several options have minimal feedback that doesn't explain reasoning adequately.",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model E presents 7 scenes with a motor design scenario. Thermodynamic concepts are mostly accurate. However, there are issues: the scenario lacks a clear plot twist - scene 6 mentions a 'loop' but it's not developed as a genuine complication that changes the approach. Some dialogue borders on explanatory rather than natural conversation ('¡Esa es la cara que puso el cliente!'). Scene 5 jumps abruptly to refrigeration system issues without smooth transition. The final scene's lesson is good but the journey there lacks cohesion. Feedback quality is adequate. Distractor quality is reasonable but some are slightly weaker.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model F has 8 scenes with a refrigeration diagnostic scenario. Technical content is accurate regarding refrigeration cycles, COP, and troubleshooting. The plot twist (software bug causing bypass valve issue) is a genuine complication. However, the scenario feels more like a technical troubleshooting guide than a thermodynamics lesson - many decisions are about diagnostic procedures rather than thermodynamic reasoning. Some key thermodynamic concepts (entropy, Carnot derivation) receive less emphasis. Dialogue is conversational but context descriptions are sometimes brief. Feedback quality is good. The educational focus on thermodynamics principles could be stronger.",
+          "score": 6.3
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "This model delivered an exceptional output. The scenario (a prototype refrigerator failing) was engaging, and the dialogue felt very natural and immersive. It followed the structural constraints perfectly, placing a genuine and clever plot twist (the pipes were connected in reverse, heating the inside) exactly in the second-to-last scene. The physics were accurate, the options were distinct and plausible, and the feedback was educational. It perfectly balanced the narrative with the technical concepts.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model H provided a highly professional and realistic engineering scenario involving heat recovery and supplier audits. The dialogue was sophisticated, correctly using terms like Carnot limits and COP in a workplace context. It followed the plot twist constraint perfectly (the twist was a data manipulation error by the supplier in the second-to-last scene). The distinction between thermodynamic limits and economic viability was a great educational touch. It ranks slightly below B only because the dialogue in B felt slightly more dynamic.",
+          "score": 9.8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "This model offered a very grounded and realistic maintenance scenario (vaccine chamber). The troubleshooting steps (checking sensors, cleaning condensers, checking charge) were logical and educational. The plot twist (a software bug in the bypass valve) was placed correctly in the second-to-last scene and fit the story well. It was a solid, compliant, and accurate entry.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Model A wrote excellent dialogue and had a very strong narrative flow. The physics explanations regarding the oven as a hidden heat source were top-tier. However, it placed the major revelation (the oven) in Scene 6 of 9. While Scene 8 (the second-to-last) introduced a constraint/complication (owner preferences), it felt less like a climactic twist than the earlier scene. Despite this minor structural pacing issue, the content quality is high.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Model D provided a good technical scenario similar to Model B (reversed cycle). The physics were sound, focusing on entropy and irreversibilities. However, like Model A, the pacing was slightly off regarding the constraints; the twist occurred in Scene 7 of 9, and the second-to-last scene was a confirmation step rather than a new complication. The dialogue was also slightly more textbook-like than the top models.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "This model followed all instructions, including the twist placement (leak found in second-to-last scene). However, the story and dialogue were a bit drier and less immersive than the higher-ranked models. It was a competent output that met the requirements but didn't shine in creativity.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model G had good educational content about misconceptions. However, the plot coherence was weaker; the story felt like a series of disjointed questions from a client rather than a single evolving problem. The 'twist' in the second-to-last scene (a scammer email) was compliant but felt tacked on rather than integral to the main analysis.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model E followed the structure, but the tone was a bit melodramatic for a workplace scenario ('trying to break the laws of physics!'). The scenario was functional but lacked the engineering authenticity of the top models.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "This model failed the 'Plot Coherence' and 'Twist' criteria significantly. The story was split into two separate disconnected problems (an engine, then a fridge). The second-to-last scene was simply reading a 'Thank You' email, which does not constitute a plot twist (surprise, complication, or revelation).",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Cumple muy bien con el escenario de ingeniería (refrigeración), conceptos correctos (1ª ley, 2ª ley, Carnot, COP y entropía local/global), decisiones que requieren razonamiento, y diálogo sin narrador ni acotaciones. Tiene giro real en la penúltima escena (tuberías invertidas) y cierre con takeaway. Formato: 8 escenas (ok), 4 opciones con 1 correcta (ok), longitudes parecen dentro. Pequeños detalles: algún tono exclamativo, pero sigue siendo conversación.",
+          "score": 9.4
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Caso muy realista de cámara de vacunas y diagnóstico HVAC/R (condensador, carga, COP vs Carnot, irreversibilidades). Buen giro (bypass por bug) en la penúltima y resolución final con lección institucional. Conceptos correctos. Sin embargo, viola la autenticidad del “puro diálogo” en una parte: incluye explícitamente “plot twist:” dentro del contexto (meta-narración). Por lo demás, formato y opciones correctas; longitudes parecen aceptables.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Muy sólido en recuperación de calor/bomba de calor con límites de Carnot/COP y entropía (Sgen). Decisiones exigen aplicar restricciones termodinámicas y viabilidad económica. Buen giro: proveedor “milagroso” con error de unidades/sumidero efectivo, y resolución final responsable. Diálogo mayormente conversacional y sin narrador. Posible riesgo de longitud en varios contextos (algunos son largos) y la densidad técnica puede rozar lo “expositivo”, pero sigue siendo conversación.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Coherente y técnicamente razonable para motor térmico, con Carnot y balance de energía. Hay un giro (caída inesperada de Th por fuga) en la escena 6 (penúltima) y resolución en la 7. Sin embargo, el arco es más diagnóstico que diálogo inmersivo (suena a checklist), y en la escena 5 afirma de forma demasiado general que “mayor caudal… aumenta eficiencia” (puede ser cierto aquí, pero está simplificado). Aun así, cumple formato y no introduce narrador.",
+          "score": 7.6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Buena estructura, conceptos avanzados (COP Carnot, generación de entropía, throttling) y giro de líneas/válvulas invertidas en la penúltima con resolución final. Problemas fuertes de formato: muchos contextos exceden claramente 500 caracteres; algunas opciones/textos y feedback también parecen exceder límites. Además, el estilo es muy didáctico y poco conversacional (muchos números y explicaciones en bloque), lo que reduce autenticidad.",
+          "score": 7.1
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Historia coherente, giro real en la penúltima escena (horno industrial oculto) y cierre con lección. Conceptos en general correctos (bomba de calor, Carnot, entropía como dispersión). Pero viola formato: múltiples contextos superan 500 caracteres y varias preguntas superan 100; algunas opciones exceden 50 caracteres. Además, a veces cae en explicaciones largas tipo “mini-ensayo”, reduciendo inmersión conversacional.",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Muy buen tratamiento conceptual (Carnot, exergía implícita, COP de refrigerador, calor vs trabajo) y una cadena de decisiones razonadas. Sin embargo, incumple la autenticidad: el diálogo incluye narración explícita (“Te mando un correo…”, “Le mandé un correo…”), saltos temporales fuertes y no suena a conversación continua entre colegas. También es muy largo (12 escenas) con contextos extensos que probablemente superan 500 caracteres varias veces.",
+          "score": 6.4
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Cubre 1ª ley, 2ª ley, Carnot y entropía, y tiene un giro (sensor mal colocado/bucle de calor) antes del final. Pero el enfoque mezcla motor y refrigeración de forma algo confusa. Presenta frases menos precisas (“energía se vuelve inutilizable” ok, pero “entropía por las nubes” sin cuantificar) y algunas opciones/feedback son más de memorización. Riesgo alto de exceder límites de longitud en contextos/preguntas. Aun así, mantiene diálogo sin narrador.",
+          "score": 6.1
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Conceptos de Carnot y refrigeración mayormente correctos, pero tiene fallos importantes: en una escena afirma que para mover 5000 J de calor se necesita MÁS de 5000 J de trabajo (incorrecto: el COP puede ser >1 y el trabajo suele ser menor que Qc). También rompe el requisito de idioma: incluye un emoji. El “twist” es débil/anticlimático (leer un email) y ese paso final se vuelve meta, no una decisión termodinámica. Además, varias escenas parecen exceder longitudes máximas.",
+          "score": 4.2
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-story",
+  "testCaseId": "es-physics-thermodynamics-applications-1"
+}
