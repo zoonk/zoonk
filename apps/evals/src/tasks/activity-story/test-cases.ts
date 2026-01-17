@@ -5,7 +5,7 @@ EVALUATION CRITERIA:
 
 2. EDUCATIONAL ALIGNMENT: Every decision point must require applying lesson concepts through reasoning, not memorizing facts. Wrong options should be plausible but flawed for specific conceptual reasons.
 
-3. PLOT COHERENCE: Scenes must flow naturally as a continuous story where each scene builds from the previous dialogue. The second-to-last scene MUST introduce a genuine plot twist (surprise, complication, or revelation). The final scene must resolve the problem AND reinforce the main learning takeaway.
+3. PLOT COHERENCE: Steps must flow naturally as a continuous story where each step builds from the previous dialogue. The second-to-last step MUST introduce a genuine plot twist (surprise, complication, or revelation). The final step must resolve the problem AND reinforce the main learning takeaway.
 
 4. FORMAT COMPLIANCE: Verify these constraints:
    - context: Maximum 500 characters of pure dialogue
@@ -17,13 +17,13 @@ EVALUATION CRITERIA:
 
 6. FEEDBACK QUALITY: Each option must have feedback explaining WHY it's right (with insight) or WHY it's wrong (and what would be correct). Feedback should help learners understand the reasoning, not just state correctness.
 
-7. SCENE COUNT: Story must have between 7 and 20 scenes. Let problem complexity dictate length.
+7. STEP COUNT: Story must have between 7 and 20 steps. Let problem complexity dictate length.
 
 8. DISTRACTOR QUALITY: All wrong options must be plausible choices someone might consider. Penalize obviously silly or absurd options that no reasonable person would choose.
 
 ANTI-CHECKLIST GUIDANCE (CRITICAL):
 - Do NOT penalize for specific plot choices, character names, or scenario settings you might expect
-- Do NOT require specific scenes like "investigation" or "resolution" by name - focus on whether the story has good flow
+- Do NOT require specific steps like "investigation" or "resolution" by name - focus on whether the story has good flow
 - Do NOT check against an imagined "ideal" story structure
 - ONLY penalize for: format violations, narrator/description text in dialogue, decisions that test memorization instead of reasoning, missing plot twist, poor distractor quality, or factually incorrect lesson application
 - Different valid story approaches exist - assess the quality of what IS provided
