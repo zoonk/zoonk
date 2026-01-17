@@ -1,0 +1,167 @@
+{
+  "expectations": "\nLANGUAGE REQUIREMENT: Titles and text must be in Portuguese.\n\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Photosynthesis application examples must be scientifically accurate. Penalize if:\n   - Examples overstate or understate photosynthesis's role in specific contexts\n   - Carbon cycle connections are incorrectly described\n\n2. CONTEXT CHECK: Penalize if examples are limited to forests/plants. Photosynthesis impacts food supply, oxygen production, fossil fuel origins, aquatic ecosystems, agriculture, and climate solutions.\n\n3. DISTINCTION FROM EXPLANATION: The explanation covered WHAT photosynthesis is (converting light to chemical energy). This should show WHERE photosynthesis affects human life and global systems.\n\n\nEVALUATION CRITERIA:\n\n1. REAL-WORLD RELEVANCE: Examples must be concrete, recognizable situations from everyday life. Penalize abstract or theoretical applications without clear real-world grounding.\n\n2. CONTEXT DIVERSITY: Content should show the topic across different life domains (daily life, work, entertainment, unexpected places, personal interests). Variety helps different learners connect.\n\n3. RECOGNITION FACTOR: Examples should create \"aha moments\" — helping learners see the topic in familiar places they hadn't noticed before.\n\n4. FORMAT: Each step must have a title (max 50 chars) and text (max 300 chars).\n\n5. TONE: Conversational, like pointing out hidden patterns in everyday life. Include metaphors and analogies from familiar activities.\n\n6. FOCUS: Shows WHERE something appears (real-world contexts), not WHAT it is (definitions) or HOW it works (processes).\n\n7. NO OVERLAP: Must not repeat content from the EXPLANATION_STEPS which covered the WHAT.\n\n8. SCOPE: Content matches the lesson scope exactly.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for missing specific life domains or contexts you might expect\n- Do NOT require a specific number of contexts or examples\n- Do NOT check against an imagined \"complete\" list of applications\n- ONLY penalize for: incorrect real-world claims, abstract examples without concrete situations, overlap with explanation content, or lack of variety in context types\n- Different valid sets of examples exist - assess the quality of what IS provided\n\n    ",
+  "judgedAt": "2026-01-17T14:32:34.950Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Excellent Portuguese content with 8 well-structured steps. Covers diverse contexts: oxygen/breathing, food chain, urban cooling, fossil fuels, aquariums, agriculture, ocean phytoplankton, and climate. Scientific accuracy is strong (phytoplankton claim about producing more O2 than tropical forests is approximately correct). Great metaphors ('Café da Manhã Solar', 'Fazendas de Luz', 'fotossíntese fossilizada'). Creates 'aha moments' effectively. Format adheres to requirements. Conversational tone throughout. Good variety across life domains without repeating explanation content. Minor issue: some examples touch on 'how' (CO2 absorption mechanism) but stays mostly on 'where'.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Strong Portuguese content with 8 diverse steps covering breathing, food, meat chain, fossil fuels, climate/Amazon, aquariums, ocean phytoplankton, and everyday materials (cotton, wood, paper). Scientific accuracy is good. The materials example (camiseta, mesa, caderno) is an excellent unexpected context. Good metaphors like 'luz solar solidificada'. Conversational tone. Format compliant. Creates recognition moments. Slight overlap with explanation in some phrasing about transformation process, but generally focuses on where photosynthesis appears. Good diversity of contexts.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Very comprehensive with 10 steps covering parks, urban heat, food, supermarket prices/seasons, agriculture, artificial lighting in greenhouses, aquariums/lakes, algae blooms in news, climate debates, and personal energy for exercise. Excellent diversity and 'aha moments' (supermarket prices tied to photosynthesis, exercise energy). Scientific accuracy is solid. Great everyday grounding. Format compliant. Conversational Portuguese. The algae bloom example is unique and relevant. Minor weakness: some explanations verge on 'how' rather than 'where'. The exercise/energy example elegantly connects to personal experience.",
+          "score": 8.7
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Good Portuguese content with 6 steps covering food, ocean oxygen, fossil fuels, cotton clothing, space survival (The Martian reference), and climate. Scientifically accurate. The clothing example ('Sua Camiseta Favorita') is excellent and unexpected. Good cultural reference with 'Perdido em Marte'. Strong metaphors ('luz solar antiga', 'termostato gigante'). Conversational tone. Format compliant. Fewer steps than some competitors but each is high quality. The phytoplankton claim is accurate. Creates good recognition moments. Limited number of examples compared to top performers.",
+          "score": 8.4
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Solid Portuguese content with 6 steps covering meals, fossil fuels, indoor plants, ocean oxygen, climate/trees, and farming. Scientifically accurate. Good metaphors ('esponjas de carbono', 'gestor de luz'). The indoor plant decoration example is relatable. Format compliant. Conversational. However, fewer examples and slightly less diversity than top performers. The farming example is good but somewhat abstract. Creates decent recognition moments. Some phrasing leans toward explanation rather than pure application.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Good Portuguese content with 9 steps: morning air, food, park walks, rural areas/plantations, everyday objects (furniture/paper), pop culture, indoor plants, climate conversations, and ocean. The pop culture/movies example and everyday objects are nice additions. Scientific accuracy is reasonable. Format compliant. Conversational tone. The phototropism example (plants leaning toward light) is interesting but somewhat explains process. Some examples feel slightly less concrete. Good variety overall. The ocean microalgae claim is accurate.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Portuguese content with 7 steps covering breathing, food, tropical forests, aquatic ecosystems, climate change, space stations, and solar panel technology. Some issues: the text for step 1 exceeds 300 characters (over limit). The solar panel example verges on 'how' rather than 'where' and is more abstract. Space stations are speculative future rather than everyday life. Scientific content is accurate. Good metaphors. Some examples lack concrete everyday grounding. The format violation (character limit) is a notable penalty.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Portuguese content with 9 steps, but several issues. Many examples are abstract or professional rather than everyday concrete situations: 'Biotecnologia e inovação' (startups/labs), 'Decisões políticas e profissionais' (managers, planners), 'Plantas na cultura e mídia' (documentaries influence society) are quite abstract. The apartment herb example mentions photosynthesis indirectly but focuses more on plant care. Some steps don't clearly connect to photosynthesis specifically (e.g., 'Florestas e clima local' mentions forests but not photosynthesis explicitly). The recognition factor is weaker - less 'aha moment' quality. Professional/policy contexts feel less relatable to general learners.",
+          "score": 7
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model C is the strongest entry because it achieves the highest 'Real-World Relevance' and 'Context Diversity'. It goes beyond the standard examples of food and air to include specific, relatable situations like supermarket seasonality ('Preço e safra'), indoor grow lights ('lâmpadas roxas'), and the negative impact of algal blooms. This creates diverse 'aha moments' that connect biology to economics, technology, and news. The tone is highly conversational and meets all formatting constraints.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Model G is excellent due to its high 'Recognition Factor'. It uses punchy, memorable hooks like the 'Martian' movie reference and the specific example of a cotton shirt ('vestindo fotossíntese'). The metaphor of fossil fuels as 'bottled sunlight' is explained clearly. While it has fewer steps than others, the quality and impact of each example are very high, perfectly meeting the request for 'aha moments'.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model H is a very robust all-rounder. It covers the essential bases (food, air, ocean) but also includes the crucial category of 'everyday materials' (wood, paper, cotton), which helps learners see photosynthesis in their immediate physical environment. The scientific accuracy is good, and the tone is conversational. It creates a strong sense of connection between the user and the topic.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Model F provides great lifestyle connections, specifically highlighting wood furniture, paper, and pop culture scenarios, which differentiates it from the standard biology lesson. The tone is very relatable ('abrir a janela', 'passeando no parque'). It is slightly less punchy than G but covers more ground.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Model A offers a solid list of examples covering urban cooling, fossil fuels, and oceans. The tone is good and the content is accurate. However, it lacks the 'tangible object' examples (like clothing or furniture) found in higher-ranked models, which serve as better physical reminders of the topic for the learner.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Model E includes creative angles like space exploration and biomimicry (solar panels). However, the solar panel example is technically an analogy rather than a direct application of biological photosynthesis affecting life. It is a good response but feels slightly less grounded in immediate daily life compared to the top tier.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model B covers a wide breadth of topics, including policy and biotechnology, but the tone is drier and more professional ('Gestores ambientais', 'Decisões políticas') than the requested conversational style. Some examples feel a bit abstract compared to the tangible 'cotton shirt' or 'supermarket price' examples in other models.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model D provides the most basic set of examples (food, air, fossil fuels). While accurate and clear, it lacks the creativity and specific 'aha moments' found in other outputs. It misses opportunities to connect the topic to non-obvious domains like clothing, materials, or culture.",
+          "score": 5.5
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Cumpre bem o foco em “onde aparece” com situações cotidianas bem reconhecíveis (supermercado e sazonalidade, estufas com LEDs, aquário/lago, notícias de floração de algas, exercício físico). Boa diversidade além de florestas, e conexões clima/CO₂ sem exageros grosseiros. Tom conversacional e com analogias. Pequeno risco: atribuir microclima diretamente à fotossíntese (parte é sombreamento/evapotranspiração), mas não chega a ser erro forte.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Muito forte em relevância e variedade (comida, combustíveis fósseis, aquário, agricultura, fitoplâncton, clima urbano). Bons “aha moments” (fotossíntese fossilizada; bolhas no aquário). Problemas: afirmação de que fitoplâncton produz “mais oxigênio que todas as florestas tropicais juntas” é discutível/arriscada e pode soar absoluta; também microclima urbano ligado à fotossíntese simplifica (sombra/evapotranspiração). Ainda assim, formato e tom estão ótimos.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Boa diversidade de contextos (objetos: papel/móveis; cultura pop; plantas em casa; rural; oceano; clima). Linguagem acessível e “padrões escondidos”. Cientificamente ok no geral. Pequenas simplificações (ar da casa “renovado” por plantas; clima como “sumidouros” sem nuance) e alguns passos ficam mais genéricos/menos “concretos” (passeio no parque).",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Cobre vários domínios e bons exemplos concretos (materiais como algodão/madeira/papel; combustíveis; aquário; oceano). Porém traz um número potencialmente enganoso: “cerca de 21% é oxigênio produzido por fotossíntese” — 21% é a fração de O₂ na atmosfera, não algo “do parque” ou diretamente atribuível naquele momento. Também há repetição parcial entre “Energia no prato” e “De onde vem a carne”.",
+          "score": 7.6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Exemplos relevantes (refeição, fósseis, oceano, agricultura, clima) e dentro do escopo. Mas peca em precisão ao dizer que plantas na sala funcionam como “purificadores de ar” devolvendo O₂ suficiente para o ambiente (efeito em interiores é limitado). “Maior parte do oxigênio da Terra vem dos oceanos” é uma simplificação controversa (produção vs acúmulo líquido). Menos variedade e menos “aha moments” que os melhores.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Boa diversidade (política/profissões, mídia, inovação), mas várias entradas ficam abstratas e pouco ancoradas em situações observáveis do dia a dia (“decisões políticas e profissionais”, “biotecnologia e inovação” sem exemplos específicos). Além disso, alguns passos escorregam para ‘como funciona’/gestão da resposta das plantas ao ambiente, em vez de enfatizar ‘onde aparece’. Ainda atende ao idioma e formato.",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Tem bons exemplos (roupa de algodão; gasolina; oceano; espaço), mas com exageros/afirmações fortes: “sem esse processo contínuo, a temperatura da Terra subiria drasticamente” é especulativo e hiperbólico. Também menos variedade e menos cotidiano (ex.: espaço/filmes) comparado aos melhores. Formato ok.",
+          "score": 6.6
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Inclui exemplos fora de florestas (espaço; tecnologia), mas tem problemas de precisão e foco: “micro-organismos... produzem metade do oxigênio da Terra” dito como se ‘aquela alga no aquário/lagoa’ representasse isso (mistura de escalas e termo ‘micro-organismos’ para alga visível). Passo sobre painéis solares cai em analogia tecnológica que não é aplicação direta da fotossíntese (e pode parecer ‘como funciona’). Também desliza para explicação (glicose) e tem trechos mais genéricos.",
+          "score": 6.1
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-examples",
+  "testCaseId": "pt-biology-photosynthesis-importance-1"
+}

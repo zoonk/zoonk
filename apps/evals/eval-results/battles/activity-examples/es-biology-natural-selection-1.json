@@ -1,0 +1,167 @@
+{
+  "expectations": "\nLANGUAGE REQUIREMENT: Titles and text must be in Spanish.\n\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Natural selection examples must reflect genuine evolutionary dynamics. Penalize if:\n   - Examples suggest intentional evolution or \"design\" (natural selection is blind)\n   - Lamarckian inheritance is implied (giraffes stretching their necks doesn't change genes)\n\n2. CONTEXT CHECK: Penalize if examples are limited to textbook animals. Natural selection is visible in antibiotic resistance, pesticide resistance, dog breeds, crop development, and even cultural evolution.\n\n3. DISTINCTION FROM EXPLANATION: The explanation covered WHAT natural selection is (differential survival and reproduction). This should show WHERE we can observe selection in action today.\n\n\nEVALUATION CRITERIA:\n\n1. REAL-WORLD RELEVANCE: Examples must be concrete, recognizable situations from everyday life. Penalize abstract or theoretical applications without clear real-world grounding.\n\n2. CONTEXT DIVERSITY: Content should show the topic across different life domains (daily life, work, entertainment, unexpected places, personal interests). Variety helps different learners connect.\n\n3. RECOGNITION FACTOR: Examples should create \"aha moments\" — helping learners see the topic in familiar places they hadn't noticed before.\n\n4. FORMAT: Each step must have a title (max 50 chars) and text (max 300 chars).\n\n5. TONE: Conversational, like pointing out hidden patterns in everyday life. Include metaphors and analogies from familiar activities.\n\n6. FOCUS: Shows WHERE something appears (real-world contexts), not WHAT it is (definitions) or HOW it works (processes).\n\n7. NO OVERLAP: Must not repeat content from the EXPLANATION_STEPS which covered the WHAT.\n\n8. SCOPE: Content matches the lesson scope exactly.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for missing specific life domains or contexts you might expect\n- Do NOT require a specific number of contexts or examples\n- Do NOT check against an imagined \"complete\" list of applications\n- ONLY penalize for: incorrect real-world claims, abstract examples without concrete situations, overlap with explanation content, or lack of variety in context types\n- Different valid sets of examples exist - assess the quality of what IS provided\n\n    ",
+  "judgedAt": "2026-01-17T14:32:42.122Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model B excels across all criteria. It provides 10 diverse, concrete examples spanning medicine (antibiotics, hospital resistance), agriculture (herbicides), daily life (mosquitos, mascotas, jardín tras sequía), urban ecology (polillas, refugios), grocery shopping (manzana del súper), and isolated ecosystems (islas). The tone is conversational and personal ('Te recetan', 'Tu repelente', 'En tu jardín'). Examples are accurate scientifically - correctly explaining resistance as survivors reproducing, not design. The selective breeding example correctly distinguishes human selection from natural selection. Strong 'aha moments' like seeing evolution behind the perfect supermarket apple. All titles under 50 chars, text under 300. Focuses on WHERE, not WHAT. No Lamarckian errors.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Excellent diversity: hospitals, tropical stray dogs (unique and clever), agriculture, industrial history (Manchester moths), fishing, urban pigeons, seasonal flu, elephant poaching. The tropical dog example is particularly insightful - a genuinely unexpected 'aha' moment. Accurate scientifically. Good conversational tone with some questions ('¿Por qué...?'). Explains mechanisms briefly but stays focused on contexts. The flu example connects to personal experience (yearly vaccines). All format requirements met. Minor weakness: slightly more explanatory than purely context-focused in places.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Strong examples with good diversity: personal medicine, household pests (cucarachas), lactose tolerance (excellent human evolution example), elephant tusks, Manchester moths, urban bird song. Particularly strong 'aha moments' with the lactose tolerance and ice cream connection. Accurate science throughout. Conversational tone ('¿Has notado...?', 'Si hoy disfrutas de un helado'). The Manchester moths example is a classic but explained well. All format requirements met. Slightly fewer examples (6) than others but all are high quality and diverse.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Good variety: doctor's office, agriculture, urban birds, virus variants, lactose tolerance history, garden lizards. The lactose tolerance/ice cream example is particularly engaging. Accurate scientifically. Strong personal connection ('dentro de tu propio cuerpo'). Good 'aha' factor with the news virus variants. However, some examples lean slightly more toward explaining HOW (mechanisms) than purely WHERE we see it. The garden lizard example is somewhat generic. Still meets format requirements and maintains conversational tone.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Diverse examples: antibiotics, mosquito timing, Manchester moths, dog breeds, sugar-averse cucarachas, contaminated river fish, urban flowers, elephant tusks, NYC rats. Several unique examples (cucarachas avoiding sugar, mosquito schedule changes, NYC rats). Generally accurate. However, some claims need verification (cucarachas avoiding sugar traps, NYC rats metabolizing junk food better - these may be oversimplified or speculative). The tone is more declarative than conversational. Title capitalization inconsistent with Spanish conventions (uses English-style title case). Good 'aha' potential but some examples feel less grounded.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Good variety with 8 examples: antibiotics, mosquitos, urban palomas, agricultural pests, pet breeding, aquarium fish, cautious deer, persistent weeds. Accurate scientifically with proper mechanism explanation. The aquarium fish example is creative and relatable. Good conversational elements. However, some examples overlap conceptually (antibiotics/mosquitos/plagas are all resistance examples). The deer example is less immediately relatable. Title has a typo ('Antibioticos' missing accent). Overall solid but slightly less varied than top performers.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Presents 8 examples across hospitals, agriculture, urban fauna, fishing, high-altitude humans, gardens, birdwatching, and labs. Good diversity including the unique high-altitude adaptation example. However, the tone is more observational/passive than conversational - describes what 'you would see' rather than engaging directly. The laboratory example feels less 'everyday life' and more academic. Some descriptions are vague ('ciertos gérmenes', 'un patrón distinto'). Accurate scientifically but creates fewer 'aha moments'. Meets format requirements.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Provides 10 examples but has significant issues. The giraffe example (#5) implies Lamarckian thinking - describing how giraffes with longer necks 'reach more leaves' as if stretching causes the change, which the task explicitly warns against. Additionally, many examples are textbook classics (polar bears, giraffe necks, jirafas, osos polares) that the guidance says to penalize. Some examples focus heavily on HOW/WHAT rather than WHERE (flowers/pollinators, mouse hearing). Less personal/conversational tone - reads more like a textbook. Title capitalization follows English conventions, not Spanish. The variety is good but quality suffers from accuracy issues and tone.",
+          "score": 6.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "This model is the strongest because it perfectly adopts the requested observational tone. Rather than just stating facts, it frames each step as a location or scenario where the learner can 'see' the process (e.g., 'If you enter a hospital...', 'If you travel to high altitudes...'). It avoids standard textbook clichés in favor of genuine, observable real-world phenomena (urban fauna behavior, fisheries-induced evolution, pest resistance). The distinction between natural selection and artificial breeding is handled well by focusing on unintended evolutionary consequences (e.g., pests adapting to human measures) rather than just intentional breeding.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model B provides excellent, relatable examples that connect directly to daily life (supermarket fruit, pet breeding, garden weeds). It follows the prompt's guidance closely, including the specific requested contexts like dog breeds and crops. The tone is engaging and conversational. It scores slightly lower than Model A only because Model A's framing feels more like a cohesive 'field guide' to observation, whereas B is a list of instances. However, the quality is very high.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "This model offers unique and scientifically sharp examples, such as the morphological changes in stray dogs (pariah dogs) and the size reduction in fish due to harvesting. These are fantastic examples of natural selection occurring in human-dominated environments without intentional breeding. The tone is good, using questions to engage the reader. It is a strong contender, ranked just below A and B due to slightly less variety in domain settings compared to A.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Model D contains some of the most fascinating modern examples (sugar-averse cockroaches, tuskless elephants, urban rats). These concrete examples add significant 'aha' value. However, the tone is slightly more informative/declarative than conversational/observational compared to the top three. Additionally, the Title Case capitalization in Spanish titles is a minor stylistic stylistic deviation from the standard sentence case used in Spanish headers.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Model G provides a solid set of examples with a good conversational tone. The inclusion of lactase persistence and tuskless elephants is good. It is ranked lower simply because it offers fewer steps/contexts than the higher-ranked models, resulting in less diversity, though the quality of the content provided is good.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Similar to Model G, this model has good tone and accurate content but fewer examples. The tone is very friendly ('Tu desayuno...'), but the diversity of contexts is somewhat limited compared to the comprehensive lists in A and B.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Model C meets the requirements but feels a bit generic. The examples (antibiotics, repellents, pigeons) are standard and correct, but the descriptions lack the spark or specific detail found in models D or H. It functions well but doesn't create as many 'aha moments'.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "This model is penalized significantly for relying heavily on textbook clichés explicitly warned against in the prompt context (Giraffes stretching necks, Polar Bears, Manchester Moths). While the scientific explanation of the giraffe example is correct (Darwinian, not Lamarckian), the use of these specific animals makes the content feel like a standard biology textbook rather than a real-world observation guide. It fails to fully meet the 'Context Check' criteria.",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Cumple bien el enfoque de “dónde se ve” con ejemplos cotidianos y variados (antibióticos, hospital, agricultura, mosquitos, mascotas/cría, supermercado, jardín, camuflaje). Tono conversacional con metáforas ligeras y buen “factor aha”. Algunos pasos explican algo del “cómo” (sobrevivir/reproducirse), pero se mantiene en contexto real. Formato: títulos <50; varios textos parecen >300 caracteres, pero en general es de los mejores en relevancia y diversidad.",
+          "score": 8.7
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Variedad alta y muy “observable” hoy: antibióticos, perros callejeros (contexto poco típico), supermalezas, pesca, palomas, gripe, elefantes, polillas. Evita teleología y mantiene ejemplos concretos. A veces explica el mecanismo (“mata susceptibles…”) más de lo pedido y varios textos pueden rozar/superar 300 caracteres, pero globalmente encaja muy bien con el objetivo de reconocer selección en la vida real.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Ejemplos cotidianos y en acción (repelentes, palomas urbanas, pesticidas, acuarios, jardín). Tono cercano y centrado en contextos. Menos diversidad que B/H y algunos ejemplos (venados/guardaparques) son menos “cotidianos” para muchos. También incluye algo de proceso, pero no cae en Lamarckismo ni intención.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Buenos contextos no “solo animales”: hospital/antibióticos, herbicidas, pesca, altitud humana, fauna urbana, observación de aves. Tono más descriptivo que conversacional y algunos pasos se acercan a generalidades (“ajusta”, “huellas visibles”) sin anclar tanto el “aha” inmediato. Varios textos exceden claramente 300 caracteres.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Ejemplos sólidos y reconocibles (antibióticos, resistencia en campo, variantes virales, lactasa, aves urbanas, camuflaje). Sin errores conceptuales graves. Pero varios textos se van mucho a explicación del mecanismo (“mutación… pasaron…”) y exceden 300 caracteres; menor variedad de dominios que los mejores.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Ejemplos claros y relevantes (antibióticos, plagas domésticas, lactasa, elefantes, polillas, canto urbano). Buen tono y “aha”. Menos diversidad y algún lenguaje algo sensacionalista (“superresistentes”, “plaga inmune”) que puede simplificar. También mezcla bastante el “cómo” (mecanismo) y probablemente excede límites de longitud.",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Incluye varios casos reales interesantes (cucarachas anti-azúcar, elefantes sin colmillos, polillas, flores urbanas). Pero varios enunciados hacen afirmaciones fuertes o discutibles por generalización (ratas metabolizando comida chatarra “por genes” en NYC; peces ‘salvando poblaciones enteras’ por tolerancia) y se mete bastante en explicación causal/genética. Además, casi seguro excede 300 caracteres en varios pasos.",
+          "score": 6.2
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Mucho contenido tipo “libro de texto” (oso polar, ratón de campo, flores-polinizadores) y menos anclaje cotidiano/actual; además incluye la jirafa (aunque no lamarckista, sí muy cliché y fuera del énfasis de ‘visible hoy’). Repite bastante el ‘qué/cómo’ (“es selección natural… individuos aptos…”), con menor tono conversacional. Probables excesos de longitud también.",
+          "score": 5.4
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-examples",
+  "testCaseId": "es-biology-natural-selection-1"
+}

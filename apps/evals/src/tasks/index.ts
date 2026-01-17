@@ -1,5 +1,6 @@
 import type { Task } from "@/lib/types";
 import { activityBackgroundTask } from "./activity-background/task";
+import { activityExamplesTask } from "./activity-examples/task";
 import { activityExplanationTask } from "./activity-explanation/task";
 import { activityExplanationQuizTask } from "./activity-explanation-quiz/task";
 import { activityMechanicsTask } from "./activity-mechanics/task";
@@ -26,6 +27,7 @@ export const TASKS: readonly Task[] = [
   activityExplanationTask,
   activityExplanationQuizTask,
   activityMechanicsTask,
+  activityExamplesTask,
   stepVisualTask,
 ];
 

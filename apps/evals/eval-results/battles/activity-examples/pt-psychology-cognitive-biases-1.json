@@ -1,0 +1,167 @@
+{
+  "expectations": "\nLANGUAGE REQUIREMENT: Titles and text must be in Portuguese.\n\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Cognitive bias examples must reflect genuine psychological phenomena. Penalize if:\n   - Examples describe rational behavior and mislabel it as bias\n   - Specific biases are incorrectly named or conflated with each other\n\n2. CONTEXT CHECK: Penalize if examples are limited to business/marketing. Cognitive biases affect relationships, health decisions, politics, self-perception, memory, and everyday judgments.\n\n3. DISTINCTION FROM EXPLANATION: The explanation covered WHAT cognitive biases are (systematic thinking errors). This should show WHERE these biases quietly influence decisions we make daily.\n\n\nEVALUATION CRITERIA:\n\n1. REAL-WORLD RELEVANCE: Examples must be concrete, recognizable situations from everyday life. Penalize abstract or theoretical applications without clear real-world grounding.\n\n2. CONTEXT DIVERSITY: Content should show the topic across different life domains (daily life, work, entertainment, unexpected places, personal interests). Variety helps different learners connect.\n\n3. RECOGNITION FACTOR: Examples should create \"aha moments\" — helping learners see the topic in familiar places they hadn't noticed before.\n\n4. FORMAT: Each step must have a title (max 50 chars) and text (max 300 chars).\n\n5. TONE: Conversational, like pointing out hidden patterns in everyday life. Include metaphors and analogies from familiar activities.\n\n6. FOCUS: Shows WHERE something appears (real-world contexts), not WHAT it is (definitions) or HOW it works (processes).\n\n7. NO OVERLAP: Must not repeat content from the EXPLANATION_STEPS which covered the WHAT.\n\n8. SCOPE: Content matches the lesson scope exactly.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for missing specific life domains or contexts you might expect\n- Do NOT require a specific number of contexts or examples\n- Do NOT check against an imagined \"complete\" list of applications\n- ONLY penalize for: incorrect real-world claims, abstract examples without concrete situations, overlap with explanation content, or lack of variety in context types\n- Different valid sets of examples exist - assess the quality of what IS provided\n\n    ",
+  "judgedAt": "2026-01-17T14:32:31.302Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Excellent variety of contexts (supermarket, promotions, relationships, social pressure, social media, politics, messaging, shopping, entertainment). Strong recognition factor with concrete, everyday situations that create 'aha moments'. Examples are accurate (confirmation bias in politics, anchoring in prices, availability heuristic in reviews, affect heuristic in WhatsApp). Conversational tone with vivid scenarios. Includes unexpected domains like WhatsApp interpretation and series hindsight bias. All examples properly show WHERE biases appear without over-explaining WHAT they are. Title and text lengths are appropriate. No significant issues with accuracy.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Strong variety across contexts (shopping, sports, politics, traffic, dining, investing, work, relationships). Excellent recognition factor with relatable scenarios. Accurately identifies biases (anchoring, attribution error, confirmation bias, fundamental attribution error, cognitive dissonance, hindsight bias, contrast effect, generalization). Conversational and engaging tone. Good balance between showing WHERE biases appear without being too definitional. One minor issue: some examples lean slightly toward explaining HOW biases work rather than purely showing WHERE they appear, but this is minimal.",
+          "score": 8.7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Good diversity of contexts (shopping, sports, social media, relationships, dining, driving, news, investing, entertainment, job interviews). Strong examples with clear bias identifications. Conversational tone works well. However, several examples explicitly name biases and explain what they are (e.g., 'Isso é o viés da autoridade', 'Esse é o viés de autobenefício'), which overlaps with explanation content rather than just showing WHERE biases appear. This explanatory approach is penalized per the guidelines. Examples themselves are accurate and relatable.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Good variety of contexts (supermarket, restaurants, politics, relationships, shopping, sports, traffic, hobbies). Strong recognition factor with relatable everyday situations. Accurate bias portrayals (confirmation bias, bandwagon effect, fundamental attribution error, social comparison). Conversational tone is appropriate. However, some examples are quite similar in theme (supermarket and online shopping both focus on purchasing decisions). The hobby comparison example at the end is less clearly tied to a specific cognitive bias. Good job avoiding definitional explanations.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Fewer examples (only 6) but each is high quality and accurate. Good diversity considering the count (shopping, social media, work, entertainment, sports, fear/travel). Strong concrete examples with excellent recognition factor. Accurately explains anchoring, confirmation bias, halo effect, sunk cost fallacy, hindsight bias, and availability heuristic. Some examples explicitly name biases (e.g., 'viés de confirmação', 'Efeito Halo', 'viés retrospectivo'), which slightly overlaps with explanation content. The movie/sunk cost example is particularly vivid. Limited scope due to fewer examples.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Only 6 examples but they are well-executed. Covers shopping, social media, traffic, entertainment, dining, and social impressions. Accurate bias portrayals. Strong concrete examples with good recognition factor. However, explicitly names biases in several places ('viés do custo irrecuperável', 'Efeito Halo', 'efeito manada'), which overlaps with explanation content. The explanations are detailed but sometimes cross into explaining HOW biases work. Conversational tone is good. Limited diversity due to fewer examples.",
+          "score": 7.3
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Good variety of contexts (car buying, friendships, social media, marketing, work, health, daily decisions, politics, media, stereotypes). However, several examples explicitly name and define biases (e.g., 'Isso é viés de confirmação em ação', 'Fadiga cognitiva viesa suas escolhas'), creating significant overlap with explanation content. The car example incorrectly labels the Baader-Meinhof phenomenon as confirmation bias. Some examples are accurate (framing effect in medical stats, hindsight bias in series). Text is sometimes over 300 characters when counting carefully. The explanatory tone detracts from the 'showing WHERE' focus.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Creative use of analogies and metaphors (tempero, primeiro ingresso, mancha na camisa). Good variety of contexts (shopping, reviews, interviews, relationships, investing, social media, travel planning, medical diagnosis, sports, gaming). However, some examples are too abstract or brief to create strong recognition moments. The medical diagnosis example feels less everyday for most users. Some examples are vague (e.g., 'Nos feeds, vemos sempre opiniões parecidas' doesn't create a specific scenario). The gaming example is a nice unexpected context. Text is sometimes choppy and lacks the conversational flow of better responses.",
+          "score": 7.2
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "This model provides the best balance of variety, modern relevance, and conversational tone. It perfectly adheres to the 'Show, don't tell' rule by describing the experience of the bias in everyday situations (like interpreting a dry WhatsApp message or guessing a villain in a TV series) without resorting to defining the terms or using technical jargon. The examples are recognizable and create strong 'aha moments'.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Excellent output that closely rivals Model B. The examples are concrete and relatable (comparing hobbies, relationship judgments, supermarket behavior). The writing is natural and avoids the trap of explaining definitions, focusing entirely on the situational context. It scores slightly lower only because Model B had a slightly wider range of unique modern contexts (like the WhatsApp example).",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Very strong and creative. It uses metaphors and analogies (e.g., 'like a director insisting on a scene') to explain the biases, which fits the requested conversational tone well. It avoids naming/defining the biases in the text, keeping the focus on real-world application. The variety is excellent (11 steps).",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Contains high-quality, recognizable scenarios (like the 'frequency illusion' when buying a car or 'decision fatigue'). However, the text often explicitly names and defines the bias ('Isso é viés de confirmação em ação...'), which overlaps slightly with the 'Explanation' phase mentioned in the prompt constraints ('Shows WHERE... not WHAT it is').",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Provides a comprehensive list of 10 examples covering various domains. However, the structure is repetitive and formulaic: it presents a scenario and then explicitly defines the bias ('Isso é o viés da autoridade...', 'Esse é o viés de autobenefício...'). This violates the instruction to focus on the context rather than definitions.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Good examples with a conversational tone, but like several others, it falls into the trap of explicitly naming the biases at the end of the text ('viés de atribuição em ação'). The examples are solid, but the presentation is less immersive than the top models.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Adequate examples, but limited in quantity (6 steps) compared to others. The text tends to explain the mechanism ('Seu cérebro usa...', 'É o Efeito Halo...') rather than just describing the real-world occurrence, making it feel more academic.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Meets the basic requirements but is the weakest of the group. It has fewer examples (6), and the writing style is rigid, functioning more as a list of definitions with brief examples rather than a showcase of real-world contexts.",
+          "score": 5.5
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Cumpre bem o foco em “onde aparece” com situações cotidianas bem reconhecíveis (mercado, casal, rolês, WhatsApp, séries, política, preços). Boa diversidade de contextos além de marketing. Tom conversacional e com ganchos de “aha”. Títulos ok e textos parecem ficar dentro do limite. Evita definição técnica direta na maior parte.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Exemplos bem concretos (âncora de preço, bolha, erro fundamental de atribuição no trânsito, custo afundado, manada, halo). Boa precisão psicológica e pouco overlap com “o que é”. Limitação: variedade menor (apenas 6 passos) e mais concentrado em consumo/decisão rápida, embora haja trânsito e social.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Muito sólido e correto nos vieses (âncora, confirmação/bolha, halo, custo afundado, retrospectivo, disponibilidade com medo de voar). Contextos variados (trabalho, cinema, risco/saúde, redes). Textos claros e dentro do foco. Fica um pouco mais explicativo (nomeando vieses e descrevendo mecanismo) do que apenas “onde aparece”, mas ainda aceitável.",
+          "score": 8.4
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Boa diversidade (mercado, restaurante, política, relações, e-commerce, esporte, trânsito, hobbies) e alto fator de reconhecimento. Porém, quase nunca nomeia vieses (ok), mas alguns trechos ficam genéricos (“ativam vieses”) e menos “aha” por não apontar claramente o padrão. Ainda assim, exemplos são reais e bem situados.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Metáforas fortes e tom conversacional; boa variedade (compras, entrevista, namoro, investimento, redes, viagem, medicina, esporte, jogos). Em geral, fenômenos reais (âncora, escassez, prova social, planejamento, fixação/ancoragem em diagnóstico, recência, aversão à perda). Porém, alguns itens ficam mais abstratos/gerais e menos ancorados em uma cena específica; em saúde, “médico que fixa na primeira hipótese” é plausível mas poderia ser mais concreto.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Muitos exemplos bons e variados (torcida, bolha, memória ‘cor-de-rosa’, manada, superconfiança, disponibilidade, custo afundado, halo). Problema principal de acurácia: chamar influenciador de “viés da autoridade” é discutível/errado; isso se encaixa melhor em efeito halo/heurística de atratividade/prova social (autoridade é mais ‘especialista’). Também há leve deriva para explicação do que é em alguns passos.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Cenas cotidianas razoáveis (âncora, atribuição no futebol, trânsito, retrospectiva, ordem/efeito de contraste, relacionamento). Porém há problemas: “viés de generalização” não é um rótulo padrão de viés cognitivo (soa inventado/conflado). Um passo (“Defendendo Sua Escolha”) fica vago e mais sobre racionalização/dissonância sem situar bem o viés. Ainda assim, vários exemplos são reconhecíveis.",
+          "score": 6.6
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Vários exemplos bons e diversos (trabalho, saúde, mídia, estereótipos), mas com falhas importantes: o primeiro exemplo (ver o mesmo modelo de carro em todo lugar) é mais efeito de frequência/ilusão de Baader-Meinhof ou atenção seletiva, não viés de confirmação (rotulagem incorreta). Textos frequentemente entram em “explicar como funciona” e nomear viés, aproximando-se do “o que é”. Também tende a ser mais longo e menos “máx 300 chars” em vários passos.",
+          "score": 5.8
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-examples",
+  "testCaseId": "pt-psychology-cognitive-biases-1"
+}

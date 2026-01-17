@@ -1,0 +1,167 @@
+{
+  "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Supply and demand examples must reflect genuine economic dynamics. Penalize if:\n   - Price changes are attributed to single-cause explanations when multiple factors interact\n   - Examples suggest prices are arbitrarily set rather than emerging from market forces\n\n2. CONTEXT CHECK: Penalize if examples are limited to obvious retail. Supply and demand affects housing, labor markets, dating, time allocation, attention economics, and even social status.\n\n3. DISTINCTION FROM EXPLANATION: The explanation covered WHAT supply and demand curves are. This should show WHERE these forces visibly shape real-world situations.\n\n\nEVALUATION CRITERIA:\n\n1. REAL-WORLD RELEVANCE: Examples must be concrete, recognizable situations from everyday life. Penalize abstract or theoretical applications without clear real-world grounding.\n\n2. CONTEXT DIVERSITY: Content should show the topic across different life domains (daily life, work, entertainment, unexpected places, personal interests). Variety helps different learners connect.\n\n3. RECOGNITION FACTOR: Examples should create \"aha moments\" — helping learners see the topic in familiar places they hadn't noticed before.\n\n4. FORMAT: Each step must have a title (max 50 chars) and text (max 300 chars).\n\n5. TONE: Conversational, like pointing out hidden patterns in everyday life. Include metaphors and analogies from familiar activities.\n\n6. FOCUS: Shows WHERE something appears (real-world contexts), not WHAT it is (definitions) or HOW it works (processes).\n\n7. NO OVERLAP: Must not repeat content from the EXPLANATION_STEPS which covered the WHAT.\n\n8. SCOPE: Content matches the lesson scope exactly.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for missing specific life domains or contexts you might expect\n- Do NOT require a specific number of contexts or examples\n- Do NOT check against an imagined \"complete\" list of applications\n- ONLY penalize for: incorrect real-world claims, abstract examples without concrete situations, overlap with explanation content, or lack of variety in context types\n- Different valid sets of examples exist - assess the quality of what IS provided\n\n    ",
+  "judgedAt": "2026-01-17T14:33:00.276Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Excellent context diversity: covers natural disasters, entertainment (concerts), food trucks, gas stations, tech launches, coffee shops, streaming, agriculture, ride-share, retail strategy, housing, and fashion. Strong recognition factor with familiar scenarios like 'corner gas station wars' and coffee shop price testing. All examples show genuine economic dynamics with multi-factor explanations (e.g., iPhone example shows both initial scarcity AND how prices crash as supply increases). Includes non-obvious contexts (food trucks at events, Black Friday loss leader strategy). Format complies with requirements. Conversational tone throughout. No overlap with explanation content - focuses on WHERE not WHAT. Minor weakness: slightly retail-heavy despite good variety, but each example is concrete and recognizable.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Strong diversity including labor markets (barista wages), personal marketplace selling, housing, grocery prices, tech launches, travel, rideshare, sneakers, storms, and concerts. The wage example and 'selling stuff on marketplace' are particularly strong for creating aha moments in unexpected places. Good multi-factor explanations (eggs example mentions both hen flu AND holiday baking). Personal, conversational tone with 'You notice...' framing. All examples concrete and relatable. Format requirements met. The marketplace selling example is unique among all models and shows personal application. Slightly fewer examples than Model A but quality is high throughout.",
+          "score": 8.9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Good variety: concerts, produce, airlines, gaming consoles, housing, pandemic buying, happy hour, surge pricing, gas stations. The happy hour example is excellent and unique - creates genuine aha moment about time-based pricing. Pandemic hand sanitizer is vivid and memorable. Airline pricing example shows dynamic adjustment well. Format compliant. Conversational tone. Some examples overlap thematically with others (concert tickets, surge pricing common across models), but the happy hour and pandemic examples stand out. Slightly fewer examples but maintains quality. Housing example is solid. Gas station equilibrium explanation is accurate.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Excellent quality on included examples with strong economic accuracy. Labor market inclusion (AI engineers) shows diversity beyond retail. Housing example includes technical term 'inelastic supply' appropriately. All examples have clear multi-factor explanations. However, only 6 examples limits context diversity. Strong recognition factor - surge pricing at bar close, console scalpers are vivid. Format compliant. Conversational but slightly more explanatory in tone. The examples chosen are excellent but the smaller set means less opportunity for varied aha moments. No unexpected contexts beyond the standard categories.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Good variety: pizza rush, concerts, coffee crops, Black Friday, sneakers, gas panic, used cars, restaurants, streaming, housing. The pandemic used car example is excellent and timely. Coffee crop failure shows global supply chain effects. However, some explanations are slightly confused - the Friday pizza example says 'price stays same' which is atypical for supply/demand illustration and weakens the point. Black Friday explanation about 'your brain sees shortage' is slightly inaccurate framing. The streaming example about 'invested time' leans into behavioral economics rather than pure supply/demand. Good conversational tone overall. Format compliant.",
+          "score": 7.9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Good quality examples but only 6 total, limiting diversity. Labor market (salary) example is strong addition. Housing, surge pricing, clearance sales, concerts, and produce covered. All explanations are economically accurate. Format compliant with good conversational tone. The clearance rack explanation about 'finding new equilibrium' is nicely stated. However, the smaller number of examples means fewer opportunities for aha moments and less context variety. No unexpected or unique examples - all fairly standard categories for supply/demand illustration.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Only 8 examples but covers good variety: storms, concerts, rideshare, produce, housing, sneakers, clearance, labor. Labor market example (software engineer) is strong. Writing style is more atmospheric/literary ('feel like a countdown clock', 'stand in that car and you'll feel') which is engaging but occasionally prioritizes style over clarity. The strawberry title doesn't match content about tomatoes - minor error. Housing example is vivid with 'three offers by noon.' Clearance metaphor 'market's spring cleaning' is nice. Some examples lean more toward describing scenarios than clearly showing supply/demand dynamics.",
+          "score": 7.6
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Only 7 examples, which limits context diversity significantly. Covers: produce, concerts, post-storm hardware, tech releases, back-to-school, farming, rideshare. All examples are accurate but somewhat surface-level - they identify supply/demand effects without the depth of exploration seen in other models. Back-to-school example focuses more on retailer behavior than price dynamics. Missing housing, labor markets, or any unexpected contexts. Conversational tone is adequate but less engaging. Format compliant. Examples create some recognition but lack the vivid detail that produces strong aha moments. Economically accurate but pedestrian.",
+          "score": 6.8
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "This model perfectly aligns with all evaluation criteria. It offers excellent volume (10 steps) and superior context diversity, specifically addressing the prompt's request to include labor markets (wages), housing, and personal exchange (selling used items), alongside standard retail and service examples. The tone is highly relatable ('You notice...', 'You sign a lease...'), creating strong 'aha moments'.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model G provides a very strong set of examples with an immersive, second-person tone. It successfully passes the context check by including labor market dynamics (recruiting/salaries) and housing bidding wars. While it has slightly fewer examples than Model E (8 vs 10), the quality and descriptive power of the text are exceptional.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Model A offers the highest volume of examples (12) and excellent real-world specificity (e.g., gas station price wars, taco truck pricing). The examples are distinct and economically accurate. It ranks slightly below E and G only because it misses an explicit 'Labor/Wages' category (though it touches on labor supply via Uber), which was a specific item in the context check guidance.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Model C provides a robust list of 10 examples with good diversity, covering housing, commodities, and psychology. It captures nuances like sticky prices (pizza shortage) well. It ranks below the top tier for missing the labor market context, but its variety keeps it ahead of the remaining models.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "This model delivers high-quality content that meets the context checks (including labor and housing). The examples are accurate and clearly explained. However, with only 6 steps, it lacks the breadth and volume of the higher-ranked models.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Similar to Model H, this model hits the key context requirements (Housing, Labor/Salary) and uses a good conversational tone. It is ranked slightly lower due to the low volume of examples (6) and slightly less specific descriptors compared to H.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model D provides a competent list of 9 examples but leans heavily on standard, oft-repeated illustrations (airline tickets, seasonal produce). While it covers housing, it lacks the labor market context and the 'aha' factor found in the top models. The phrasing 'create demand' in step 7 is also slightly imprecise economically (it creates quantity demanded).",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "This model is the weakest performer. It has limited diversity, focusing almost entirely on retail goods and produce, which the prompt explicitly warned against ('Penalize if examples are limited to obvious retail'). The content is accurate but repetitive and lacks the breadth required for a high score.",
+          "score": 4.5
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Meets format limits, conversational tone, and strong context diversity: groceries, rideshare, sneakers, flights, tech launches, housing, storm prep, concerts, labor wages, and personal resale. Also avoids single-cause claims by explicitly offering multiple plausible drivers (eggs example). Focus stays on where it shows up, not definitions.",
+          "score": 9.4
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "High recognition, good variety beyond retail (airlines, housing, happy hour, pandemic). Claims are generally economically sound and not overly single-cause. Minor drawback: some steps edge toward explanation language (“equilibrium”) and several are common examples (concert/produce/surge).",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Conversational with strong metaphors (“countdown clock,” “auction,” “spring cleaning”), and good domain spread (storm runs, resale tickets, rideshare, seasonal produce, housing bids, sneaker drops, clearance, labor market). Slight issue: one title says “Strawberries” while text says tomatoes (minor mismatch), and some phrasing is a bit abstract (“market pressure”) but still grounded.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Many concrete, recognizable situations and includes housing/streaming/Uber, with generally correct dynamics and some multi-factor interaction. Weaknesses: several steps are retail-price-centric and a bit process/explanation-heavy (price testing, equilibrium framing). Some examples risk normative/overconfident claims (post-hurricane water at $12) without noting legal/price-gouging constraints.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Strong non-retail coverage (labor, housing) and clear everyday scenarios. However, several steps drift into “what/how” explanatory mode with more textbook phrasing, and it’s less diverse than top entries (mostly surge, tickets, labor, produce, housing, consoles).",
+          "score": 7.9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Solid clarity and includes labor and housing (good diversity), but repeatedly uses definitional/explanatory phrasing (“classic example,” “equilibrium”) and leans into “what it is” more than “where you see it.” Context range is also narrower (6 items).",
+          "score": 7.4
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Meets constraints and stays concrete, but context diversity is limited and leans heavily on obvious retail/consumer examples. One step (“Seasonal Shopping Waves”) focuses on retailers stocking up (more about planning/supply response) rather than a visible market outcome learners notice. Less “aha” factor overall.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Several claims are shaky or misleading: Black Friday described as “flood the market with massive supply at rock-bottom prices” and “manipulating both sides” (overstated/incorrect framing); restaurant dish pricing implies price “won’t budge” despite rising demand (market forces typically do). Also more explanatory than observational in places.",
+          "score": 5.8
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-examples",
+  "testCaseId": "en-economics-supply-demand-1"
+}

@@ -1,0 +1,167 @@
+{
+  "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Feedback loop examples must genuinely involve circular causation. Penalize if:\n   - Examples describe simple cause-effect chains without feedback\n   - Positive and negative feedback are conflated or mislabeled\n\n2. CONTEXT CHECK: Penalize if examples are limited to engineering/biology. Feedback loops appear in social media, economics, relationships, climate, habits, and organizational behavior.\n\n3. DISTINCTION FROM EXPLANATION: The explanation covered WHAT feedback loops are (outputs affecting inputs). This should show WHERE feedback dynamics shape systems and behaviors around us.\n\n\nEVALUATION CRITERIA:\n\n1. REAL-WORLD RELEVANCE: Examples must be concrete, recognizable situations from everyday life. Penalize abstract or theoretical applications without clear real-world grounding.\n\n2. CONTEXT DIVERSITY: Content should show the topic across different life domains (daily life, work, entertainment, unexpected places, personal interests). Variety helps different learners connect.\n\n3. RECOGNITION FACTOR: Examples should create \"aha moments\" — helping learners see the topic in familiar places they hadn't noticed before.\n\n4. FORMAT: Each step must have a title (max 50 chars) and text (max 300 chars).\n\n5. TONE: Conversational, like pointing out hidden patterns in everyday life. Include metaphors and analogies from familiar activities.\n\n6. FOCUS: Shows WHERE something appears (real-world contexts), not WHAT it is (definitions) or HOW it works (processes).\n\n7. NO OVERLAP: Must not repeat content from the EXPLANATION_STEPS which covered the WHAT.\n\n8. SCOPE: Content matches the lesson scope exactly.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for missing specific life domains or contexts you might expect\n- Do NOT require a specific number of contexts or examples\n- Do NOT check against an imagined \"complete\" list of applications\n- ONLY penalize for: incorrect real-world claims, abstract examples without concrete situations, overlap with explanation content, or lack of variety in context types\n- Different valid sets of examples exist - assess the quality of what IS provided\n\n    ",
+  "judgedAt": "2026-01-17T14:32:38.428Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "This response excels across all criteria. It provides 12 examples with excellent context diversity spanning: targeted advertising, sleep habits, remote meetings, home thermostats, panic buying, viral music, cruise control, interpersonal communication, neighborhood trends, financial markets, social media psychology, and forest ecology. Each example genuinely demonstrates circular causation. The positive/negative feedback distinction is clear and accurate. Strong 'aha moment' factor with relatable examples like 'The Muted Meeting Mystery' - an unexpected angle. Good conversational tone with second-person address. The only minor issues: thermostat and cruise control are somewhat standard engineering examples, and some text is dense. Format requirements are met.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Excellent diversity across social media, personal finance, productivity psychology, climate, relationships/texting, business/tech growth, exercise habits, and urban development. All examples demonstrate genuine circular causation. Strong 'aha moment' potential with examples like credit score cycles and the texting spiral. Good conversational tone throughout. The Tesla example is specific and memorable. Good balance of positive and negative feedback examples without mislabeling. Minor issue: the Tesla example mentions a specific company which is fine but less universal. Text is clear and within limits. Strong entry.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Good variety: thermostat, social media, financial panic, sleep/energy, group dynamics, social proof (lines), traffic, predator-prey, wildfires, and business cycles. Examples are concrete and relatable. The traffic waves example is a nice unexpected inclusion. Conversational tone works well. All examples demonstrate genuine feedback loops. Minor weaknesses: thermostat and predator-prey are more conventional examples, some examples (like wildfire) are slightly abstract. Format requirements met. Solid, reliable response.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Good context diversity covering social media virality, streaming recommendations, savings, e-commerce ratings, work momentum, habits, sports crowds, climate, and professional loop-spotting. Strong metaphors ('like a magnet', 'like dominoes'). The final step about professionals spotting loops is a nice meta-perspective. However, some examples lean more abstract (e.g., 'Climate Cascades' mentions 'warming factors' vaguely). The savings example focuses more on compound interest as growth rather than true feedback loop dynamics. Format is correct. Good but slightly less concrete than top performers.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Compact and well-executed with 6 examples: cruise control, viral posts, sweating, savings, panic buying, and fruit ripening. Each example clearly demonstrates feedback loops. The 'One Bad Apple' example is creative and memorable. Good conversational tone. However, context diversity is more limited with multiple biology/engineering examples (cruise control, sweating, ethylene). Only 6 steps means less variety overall. All format requirements met. Quality is high but scope is narrower.",
+          "score": 7.4
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "8 examples covering: morning routines, social media, gardening, workplace communication, crowd energy, stress eating, fitness trackers, and neighborhood effects. Good diversity and concrete situations. However, some examples are less clearly circular: the activity tracker 'nudge' example describes a simple intervention more than a feedback loop. The garden example is somewhat abstract about feedback dynamics. Most examples favor positive/amplifying feedback with less attention to negative/stabilizing loops. Format requirements met. Solid but less sharp on feedback loop accuracy.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "10 examples with good variety: shower temperature, social media virality, blood sugar, forest fires, political polarization, exercise habits, business decline, noise-canceling headphones, market crashes, and confidence building. However, there are issues: The shower example may not accurately describe positive feedback (temperature doesn't make you want more heat - that's unclear). The bank air conditioning example is awkwardly constructed and feels forced. Some examples venture into explaining HOW feedback works rather than WHERE it appears. The political polarization example, while valid, is presented abstractly. Format requirements met but tone sometimes shifts away from conversational.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Only 6 examples: TikTok, toilet paper shortage, body temperature, performance reviews, Arctic ice, and productivity momentum. While quality is decent, context diversity is limited. The body's thermostat (sweating) and Arctic ice examples are biology-heavy. Performance reviews example is good but feels more like a standard process than an 'aha' discovery. The 'Internal Thermostat' title and framing overlaps conceptually with explanation content about what feedback loops are. Format requirements met. Needs more variety and recognition factor.",
+          "score": 6.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "This model provides the most insightful and engaging content. It uses excellent metaphors (snowball, groove in a record, magnet) that make the concepts click instantly. The examples are distinct, focusing on behavioral and social patterns (streaming algorithms, habit dominoes) rather than just mechanical ones. It creates strong 'aha moments' and perfectly matches the requested conversational tone.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "A very strong output with highly relatable everyday examples (snooze button, stress-snacking, neighborhood pride). The explanations are clear and accurate, identifying both reinforcing (positive) and balancing (negative) loops correctly. It adheres perfectly to the tone and formatting requirements.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Offers a sophisticated set of examples that look at systemic loops (credit scores, gentrification, tech business models). The 'Texting Spiral' is a particularly good relatable human behavior example. The writing is high quality, though slightly less metaphorical than Model B.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Provides concise, punchy examples with some unique insights, such as 'traffic waves' and 'bank runs', which are classic but often overlooked feedback systems. The tone is direct and effective. It ranks slightly lower than A and D only because the descriptions are a bit briefer, but the content is excellent.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "This model offers a high volume of examples (12 steps), some of which are very creative (Muted Meeting, Miscommunication). However, it includes standard 'textbook' examples (Thermostat, Cruise Control) which are often used to define the concept rather than show novel applications. While accurate, these feel less like 'hidden patterns' and more like standard definitions.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "The examples provided are accurate and well-written, particularly 'Small Wins' and 'Work Performance Reviews'. However, it provides fewer examples (6) than the other top models, resulting in slightly less variety and scope.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "This output relies too heavily on the standard, generic examples often used to explain the mechanics of feedback loops (Cruise Control, Sweating, Compound Interest). While accurate, it lacks the creativity and 'recognition factor' of the other models that highlighted loops in social media, relationships, or urban planning.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "This model contains a significant logic error in its first example ('The Runaway Shower'). It describes the phenomenon as a positive feedback loop of desire ('each degree hotter makes you want it even hotter'), whereas the shower problem is actually a negative feedback loop plagued by time delays causing oscillation. This inaccuracy in identifying the mechanism hurts the score significantly, despite other good examples.",
+          "score": 6
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Strong set of concrete, everyday contexts (thermostat, feeds, bank run, coffee/sleep, group mood, lines, traffic waves, wildfire, business). Most are true circular causation loops; good variety beyond bio/engineering. Minimal definitional overlap, and each step fits title/text limits and conversational tone.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Very recognizable everyday loops across finance (credit score), habits (procrastination/exercise), relationships (texting), climate, and urban development. Clear feedback causation in most cases. Slightly more “how it works” phrasing than “where it appears,” and the Tesla/Elon example is a bit brand-specific/less universally grounded, but still a valid reinforcing loop.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Good everyday recognition (snooze, social posting, stadium cheering, stress-snacking, neighborhood upkeep). Generally accurate feedback structure. A couple are weaker/arguably not well-specified as feedback (fitness tracker nudges; garden shading example is plausible but close to a one-way benefit unless the loop is made explicit). Solid format compliance.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "All examples are concrete and mostly accurate: recommender loop, panic buying, sweating (negative feedback), performance reviews as corrective loop, ice-albedo, “small wins.” Good tone and formatting. Slight context diversity (only 6) isn’t required, but overall variety is moderate and a couple lean a bit explanatory (thermostat analogy, steering wheel).",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Many strong real-world reinforcing loops (viral sharing, recommendations, ratings/visibility, crowd energy, climate). However, “Small savings that grow” is vague and reads more like simple compounding without explicitly making the feedback mechanism concrete; the final “Professionals spotting loops” is meta/abstract and less of a real-world loop example. Still good tone and format.",
+          "score": 7.7
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Clean, concrete examples with good recognition (cruise control, viral post, sweating, compound interest, panic buying, ethylene in apples). Main weakness is context diversity skewing to engineering/biology, and several steps drift toward explaining mechanisms (“biological climate control system”) rather than pointing out hidden everyday appearances.",
+          "score": 7.4
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Has several excellent everyday/social loops (ads/recs spiral, sleep trap, panic buying, TikTok virality, miscommunication spiral, credit/market-like momentum, neighborhood solar). But it repeatedly slips into “WHAT/HOW” explanations (thermostat/cruise control) and includes a flawed/confused item: the muted meeting example isn’t a feedback loop, and calling it a “negative feedback loop failed” is inaccurate. Also multiple engineering-style control examples reduce context balance.",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Several accurate reinforcing loops (viral post, polarization, exercise, market crash, confidence). But multiple items are not well-grounded or drift into definitions/mechanism (explicit input/output sentence in shower example; noise-canceling tech is engineering-heavy). The ‘bank AC breaks → less revenue → can’t fix’ loop is contrived/less recognizable and somewhat questionable causally. Overall less everyday “aha” and more explanatory than requested.",
+          "score": 6.4
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-examples",
+  "testCaseId": "en-systems-feedback-loops-1"
+}
