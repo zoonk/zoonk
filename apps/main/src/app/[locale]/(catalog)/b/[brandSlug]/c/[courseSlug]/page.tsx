@@ -1,6 +1,5 @@
 "use cache";
 
-import { prisma } from "@zoonk/db";
 import { cacheTagCourse } from "@zoonk/utils/cache";
 import type { Metadata } from "next";
 import { cacheTag } from "next/cache";
@@ -9,27 +8,12 @@ import { setRequestLocale } from "next-intl/server";
 import { Suspense } from "react";
 import { listCourseChapters } from "@/data/chapters/list-course-chapters";
 import { getCourse } from "@/data/courses/get-course";
+import { getSampleCourseParams } from "@/data/static-params";
 import { redirect } from "@/i18n/navigation";
 import { ChapterSearchContainer } from "./chapter-search-container";
 import { CourseHeader } from "./course-header";
 
-export async function generateStaticParams() {
-  const course = await prisma.course.findFirst({
-    select: { language: true, slug: true },
-    where: {
-      isPublished: true,
-      organization: { kind: "brand", slug: "ai" },
-    },
-  });
-
-  if (!course) {
-    return [];
-  }
-
-  return [
-    { brandSlug: "ai", courseSlug: course.slug, locale: course.language },
-  ];
-}
+export const generateStaticParams = getSampleCourseParams;
 
 export async function generateMetadata({
   params,
