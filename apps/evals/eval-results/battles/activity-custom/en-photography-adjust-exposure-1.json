@@ -1,0 +1,185 @@
+{
+  "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Exposure adjustment involves specific camera controls. Penalize if:\n   - ISO, aperture, and shutter speed relationship is confused\n   - Steps don't specify which dial or setting to change\n\n2. FEEDBACK CHECK: Penalize if:\n   - No mention of checking the exposure meter or histogram\n   - Steps don't explain how to verify exposure is correct\n\n3. MODE CHECK: Penalize if steps assume wrong camera mode (should specify Manual or appropriate semi-auto mode).\n\n\nANTI-CHECKLIST GUIDANCE (READ THIS FIRST - CRITICAL):\n- Do NOT penalize for missing steps you might expect\n- Do NOT require a specific number of steps - let complexity dictate length\n- Do NOT check against an imagined \"ideal\" procedure\n- Do NOT interpret rules too literally - use common sense\n- Different valid procedures exist - assess the quality of what IS provided\n- ONLY penalize for actual problems: incorrect sequence, factual errors, missing critical safety steps, or truly confusing instructions\n\nEVALUATION CRITERIA:\n\n1. PROCEDURAL ACCURACY: Steps must be in correct sequence. Penalize only if actions are genuinely out of order or skip critical prerequisites.\n\n2. ACTION-ORIENTED LANGUAGE: Each step must use imperative verbs (Click, Type, Add, Place, Turn, etc.). Penalize passive or purely descriptive language.\n\n3. LOGICAL STEP GROUPING: Steps should be coherent units that a user can follow without confusion. This does NOT mean micro-splitting every movement:\n   - ACCEPTABLE: \"Click the File name field and type your document name\" (filling a form field is ONE action)\n   - ACCEPTABLE: \"Pull over safely and turn on hazard lights\" (logically grouped safety actions)\n   - ACCEPTABLE: \"Pour hot water, swirl to warm, then discard\" (continuous motion)\n   - PROBLEMATIC: \"Download the file, install it, configure settings, and restart\" (unrelated actions crammed together)\n   The goal is clarity, not arbitrary splitting. If a step reads naturally and a user can follow it without confusion, it's fine.\n\n4. VERIFICATION POINTS: Where helpful, include confirmation of success. Only penalize if verification is missing for critical/risky actions. Do NOT penalize verification steps as \"padding\" - helping users confirm success is valuable teaching.\n\n5. FORMAT COMPLIANCE:\n   - title: Maximum 50 characters\n   - text: Maximum 300 characters\n\n6. SCOPE ADHERENCE: Content should cover the activity as described. Do not penalize for reasonable setup or verification steps.\n\n7. PRACTICAL FOCUS: Steps should be actionable instructions, not conceptual explanations.\n\nFINAL CHECK: Before penalizing anything, ask yourself: \"Would a reasonable human instructor consider this a genuine problem?\" If not, do not penalize.\n\n    ",
+  "judgedAt": "2026-01-18T04:06:56.325Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Excellent comprehensive coverage. Starts with Manual mode correctly, explains all three exposure controls (ISO, aperture, shutter speed) with specific starting values and educational context. Properly explains checking exposure meter and what it means. Both underexposure and overexposure corrections are addressed with specific remedies. Ends with histogram verification. Action-oriented language throughout. All steps are within character limits. Only minor issue: Step 3 'Access the aperture setting by pressing the mode dial' is slightly confusing since mode dial was already used for Manual mode. Otherwise near-perfect.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Strong procedural guide with excellent specificity. Clear Manual mode setup, proper meter activation, ISO starting values for different conditions, and troubleshooting tips (e.g., 'If ISO won't change, check for Auto ISO'). Separate brighten/darken steps with concrete examples. Histogram verification included. Good action-oriented language. The troubleshooting additions are helpful for real users. Character limits respected. Very thorough without being excessive.",
+          "score": 8.7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Well-structured 9-step guide. Proper sequence starting with Manual mode, then checking meter, setting all three exposure controls with good explanations of effects. Verification with meter centering and histogram check. Clear fine-tuning and adjustment steps. Action-oriented language used consistently. Good educational context (e.g., explaining what different ISO values mean). All within character limits. Solid overall.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Good coverage of the exposure adjustment process. Starts with Manual mode, includes exposure meter explanation, covers all three controls with practical guidance (ISO values for different conditions, aperture for depth of field effects, shutter speed minimum for handheld). Test photo and histogram verification included. Final confirmation step. Action-oriented. Within character limits. Slightly less specific on dial/button locations compared to top performers.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Very thorough 16-step guide - perhaps overly detailed with setup steps like attaching lens and removing cap that may be considered scope creep. However, all technical content is accurate. Covers metering mode selection (nice detail), all exposure controls, meter checking, histogram verification, and even optional bracketing. Some steps could be consolidated (e.g., steps 11-14 are quite granular). Action-oriented language. Within character limits. Good but slightly verbose.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Concise 8-step guide covering essentials. Manual mode, ISO, aperture, shutter speed with meter checking. Histogram verification included (step 6 - proactive before test shot, which is slightly unusual but valid). Missing some detail on how to actually access settings on different cameras. Action-oriented. Within limits. Solid but could use more specificity on controls and what to do if corrections are needed.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Good 8-step guide with clear structure. Starts with preparation, Manual mode, baseline settings, meter location, balancing exposure. Includes review and adjust step. However, missing histogram verification (only mentions LCD review for brightness). Light meter explanation is good. Action-oriented language. Within limits. Adequate but lacks the depth of top performers.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Decent 8-step guide covering Manual mode, meter checking, all three controls, and both over/underexposure corrections. However, missing histogram verification entirely (only meter checking). Steps are somewhat generic - less specific about button locations or starting values. Action-oriented but could be more specific. Within limits. Adequate coverage but lacks verification depth.",
+          "score": 7.3
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Shortest guide at 6 steps. Covers basics: Manual mode, ISO, aperture, meter location, shutter speed balancing, and review. Missing histogram verification (mentioned 'playback screen' but no histogram). Very brief on verification - just 'if too dark/bright' in final step. Action-oriented. Within limits. Functional but minimal - some users may need more guidance on corrections.",
+          "score": 7
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "This is the strongest output. It provides excellent 'user-aware' instructions, such as tapping the display if the meter isn't visible or holding a button if a dial doesn't work. It clearly distinguishes between brightening and darkening with specific actionable examples for each setting. It also wisely notes that the meter can be wrong (Step 9) and to trust the image/histogram, which is expert advice. The procedural logic is flawless.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Technically the most comprehensive model. It is the only one to mention setting the 'Metering Mode' (Evaluative/Matrix), which is critical for accurate exposure. It also includes advanced checks for histogram clipping. It receives a slightly lower score only because it is somewhat overly granular (16 steps, including attaching the lens), which makes it feel less like a quick guide and more like a full manual.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Excellent use of concrete starting values (ISO 400, f/5.6, 1/250) which gives the user a solid baseline to work from. The logic is clear, imperative, and covers the necessary feedback loops (meter and histogram). It strikes a great balance between simplicity and technical accuracy.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "A solid procedure with good practical advice, specifically warning about keeping shutter speed faster than 1/60th for handheld shots. The steps are logical and the 'Adjust while watching the meter' approach is efficient.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Good natural flow. It correctly identifies the relationship between settings and specifically advises watching the meter *while* adjusting, which is how experienced photographers operate. It also helps the user by explaining the consequence of ISO (grain).",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Concise and effective. It strips away the fluff and gives a direct, accurate procedure. It handles the verification loop well ('Refine Exposure'). It is ranked slightly lower than others only because it offers fewer instructional 'tips' (like safe shutter speeds or ISO noise) compared to models E and C.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "A standard, competent response. It follows the classic 'Set ISO -> Set Aperture -> Balance with Shutter' workflow. It lacks the depth of the higher-ranked models (no mention of histogram or specific troubleshooting nuances) but is entirely correct.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Functionally accurate but basic. The review step ('inspect your photo') is a bit vague compared to others that explicitly mention histograms or specific highlight/shadow checks. It gets the job done but offers less guidance.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "The weakest of the group, though still technically accurate. It ends on conditional troubleshooting steps ('If meter leans...') rather than a definitive confirmation or 'Take Photo' step. This leaves the procedure feeling slightly unresolved compared to the others.",
+          "score": 6
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Clear, action-oriented steps with explicit Manual mode, specific controls to adjust ISO/aperture/shutter, and strong verification via both exposure meter and histogram. Also notes turning off Auto ISO—practical and accurate. Minor issue: some steps exceed 300 chars.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Very complete and procedurally sound: sets Manual mode, checks meter, adjusts shutter/ISO logically, verifies with test shot + histogram, and provides corrective actions. Some steps are a bit long/over 300 chars and optional bracketing mentions exposure compensation (fine, but could confuse in full Manual).",
+          "score": 8.4
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Accurate manual-exposure workflow: check meter, adjust ISO/aperture/shutter, recheck meter, test shot and histogram. Imperative language is solid. Minor weakness: histogram guidance (“peaks should be centered”) is a bit simplistic/misleading; some steps may be near/over 300 chars.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Good practical sequence with Manual mode, meter-centered adjustment, and verification using test shot + histogram. Instructions stay actionable and generally accurate. Histogram advice again slightly simplistic; some steps likely exceed the 300-char limit.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Includes Manual mode, exposure meter use, and histogram verification. However, Step 3 is potentially confusing/incorrect (“hold the exposure compensation dial” to set aperture) depending on camera, and histogram guidance is oversimplified. Otherwise coherent and usable.",
+          "score": 7.1
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Correctly specifies Manual mode and uses meter + histogram with test shots. Main drawback: aperture-setting instruction is muddled/possibly wrong (“press the mode dial or menu button”), and it starts with fixed ISO/aperture/shutter values that may not fit the scene. Also clearly violates the 300-char limit per step.",
+          "score": 6.7
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Actionable and accurate on the ISO/aperture/shutter relationship and uses the exposure meter with confirmatory rechecks. Missing histogram/test-shot verification (only meter-based), which is a stated expectation. Otherwise clear.",
+          "score": 6.3
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Reasonable manual-mode workflow and uses the exposure meter plus a playback check. Missing histogram mention, and post-review adjustments focus only on shutter speed (doesn’t mention aperture/ISO adjustments there), reducing quality though not strictly wrong.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Has Manual mode and exposure meter use, but verification is only playback brightness (no histogram). Also the sequence is a bit odd (meter is introduced after aperture) and adjustment guidance focuses mainly on shutter speed after capture, with limited discussion of balancing other parameters.",
+          "score": 5.8
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-custom",
+  "testCaseId": "en-photography-adjust-exposure-1"
+}

@@ -1,0 +1,185 @@
+{
+  "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: French press brewing has critical timing and temperature elements. Penalize if:\n   - Water temperature guidance is missing or incorrect (should be just off boiling, around 200F/93C)\n   - Steep time is not mentioned or is outside the 4-5 minute range\n\n2. RATIO CHECK: Penalize if:\n   - Coffee-to-water ratio is absent or unreasonable\n   - Grind size guidance is missing (coarse grind is essential)\n\n3. SEQUENCE CHECK: Penalize if bloom step is skipped or plunging happens before steeping is complete.\n\n\nANTI-CHECKLIST GUIDANCE (READ THIS FIRST - CRITICAL):\n- Do NOT penalize for missing steps you might expect\n- Do NOT require a specific number of steps - let complexity dictate length\n- Do NOT check against an imagined \"ideal\" procedure\n- Do NOT interpret rules too literally - use common sense\n- Different valid procedures exist - assess the quality of what IS provided\n- ONLY penalize for actual problems: incorrect sequence, factual errors, missing critical safety steps, or truly confusing instructions\n\nEVALUATION CRITERIA:\n\n1. PROCEDURAL ACCURACY: Steps must be in correct sequence. Penalize only if actions are genuinely out of order or skip critical prerequisites.\n\n2. ACTION-ORIENTED LANGUAGE: Each step must use imperative verbs (Click, Type, Add, Place, Turn, etc.). Penalize passive or purely descriptive language.\n\n3. LOGICAL STEP GROUPING: Steps should be coherent units that a user can follow without confusion. This does NOT mean micro-splitting every movement:\n   - ACCEPTABLE: \"Click the File name field and type your document name\" (filling a form field is ONE action)\n   - ACCEPTABLE: \"Pull over safely and turn on hazard lights\" (logically grouped safety actions)\n   - ACCEPTABLE: \"Pour hot water, swirl to warm, then discard\" (continuous motion)\n   - PROBLEMATIC: \"Download the file, install it, configure settings, and restart\" (unrelated actions crammed together)\n   The goal is clarity, not arbitrary splitting. If a step reads naturally and a user can follow it without confusion, it's fine.\n\n4. VERIFICATION POINTS: Where helpful, include confirmation of success. Only penalize if verification is missing for critical/risky actions. Do NOT penalize verification steps as \"padding\" - helping users confirm success is valuable teaching.\n\n5. FORMAT COMPLIANCE:\n   - title: Maximum 50 characters\n   - text: Maximum 300 characters\n\n6. SCOPE ADHERENCE: Content should cover the activity as described. Do not penalize for reasonable setup or verification steps.\n\n7. PRACTICAL FOCUS: Steps should be actionable instructions, not conceptual explanations.\n\nFINAL CHECK: Before penalizing anything, ask yourself: \"Would a reasonable human instructor consider this a genuine problem?\" If not, do not penalize.\n\n    ",
+  "judgedAt": "2026-01-18T04:12:31.590Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Excellent comprehensive guide with all critical elements. Temperature guidance is explicit (boil then cool 30 seconds to 200°F/93°C). Ratio is clear (3 tbsp for 17oz, ~1:15). Coarse grind mentioned ('like breadcrumbs'). Bloom step included with proper timing. Steep time is exactly 4 minutes. All steps use action-oriented language. Includes helpful verification points. Logical sequence with good grouping. The only minor issue is it could mention preheating the press, but this is not a critical error.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Very thorough guide with excellent accuracy. Temperature (195-205°F, cool after boiling), ratio (500ml to 30g = 1:16.7), coarse grind ('like sea salt'), bloom step, and 4-minute steep all present. Includes grinding from beans which is comprehensive. Strong action-oriented language throughout. Good verification points. Logical grouping. Missing preheating step but otherwise excellent.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Highly detailed and accurate. Includes 1:15 ratio, temperature range (195-205°F), coarse grind ('like breadcrumbs'), bloom step with precise water amount, 4-minute total steep time. Very precise with measurements and timing. Strong action language. Includes scale usage and verification. However, somewhat over-detailed which could overwhelm casual users, and doesn't include preheating the press. The 15 steps may be more than necessary for some users.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Solid guide with all critical elements. Temperature (200°F/93°C), ratio (1:15 mentioned), coarse grind ('like sea salt'), bloom step, 4-minute steep. Good action-oriented language. Includes preheating which is a nice touch. The stirring step after adding water is a legitimate technique variation. Clear verification points. Only 9 steps keeps it accessible. Minor issue: doesn't explicitly mention how to get water to 200°F.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Comprehensive guide with all critical elements. Temperature (200-205°F with guidance on achieving without thermometer), ratio (30g to 500g = 1:16.7), coarse grind implied by context, bloom step, 4-minute steep. Strong action-oriented language. Includes preheating. Good verification points throughout. The 15 steps is thorough but may be slightly over-detailed. Splitting 'plunge' into two steps (13 and 14) is a bit excessive.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Good guide with critical elements present. Temperature (200°F/93°C), ratio (1 tbsp per 4oz is reasonable ~1:14), coarse grind mentioned, bloom step, 4-minute steep. Includes preheating which is good. Action-oriented language throughout. However, the ratio format (tbsp per oz) is less precise than weight-based ratios. The 'taste and serve' final step is slightly padding. Overall solid but not as precise as top guides.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Concise and accurate guide. Temperature (200°F/93°C with cooling guidance), coarse grind ('like coarse sea salt'), bloom step, 4-minute steep. Good action language. Only 7 steps which is efficient. However, the ratio could be more explicit - it mentions 30g coffee but doesn't specify water amount until 'pour remaining water until full' which is vague. Missing preheating step. Otherwise solid.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Decent guide with most critical elements. Temperature (200°F/93°C with cooling guidance), ratio (30g to 500ml = 1:16.7), 4-minute steep. However, says 'medium-coarse' grind in step 1 which is less precise than 'coarse' (though step 3 says 'coarse sea salt'). More concerning: NO bloom step - just pours all water at once, which is explicitly called out in the task guidance as a problem. The stirring after pouring all water doesn't compensate for missing bloom. This is a significant omission per the evaluation criteria.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Basic guide but missing critical elements. Temperature mentioned (200°F) but no guidance on how to achieve it. NO ratio provided at all - just says 'scoop the coffee grounds' without any measurement. No grind size mentioned (coarse grind is essential per guidance). Bloom step is present and sequence is correct. 4-minute steep mentioned. However, missing ratio and grind size are significant omissions that would leave a beginner guessing. The 'stream should run clear with no grounds' is somewhat inaccurate for French press which always has some sediment.",
+          "score": 5.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "This model provides the most comprehensive and precise instructions. It includes a specific 1:15 ratio, excellent verification points for every step (e.g., \"Confirm the scale shows...\"), and adheres strictly to all temperature and timing guidelines. The step grouping is logical, and the inclusion of a troubleshooting tip for the grind consistency makes it superior.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Excellent adherence to requirements with specific measurements (30g to 500ml) and clear grind size descriptions. The sequence is correct, including the bloom. It creates a very standard, reliable recipe without the extra level of verification detail found in Model D, but it is effectively flawless.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Very strong output. It correctly identifies the 1:15 ratio and temperature. The instructions are clear and imperative. The logic of adding water and then mentioning the ratio in the text is slightly less optimal than setting it up upfront, but the content is accurate and easy to follow.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "A solid, user-friendly guide. It uses a volumetric ratio (1 tbsp per 4 oz) which is acceptable for general use, though less precise than weight-based ratios and likely yields a slightly weak brew. The procedural flow is accurate, and it follows all formatting constraints.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "The procedure is correct and follows the bloom-steep-plunge sequence. However, the instruction to 'pour... until full' with a fixed 30g of coffee is risky; if the user has a large (1L) press, the coffee will be extremely weak. It lacks the safety of specifying water volume.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "This model provides a good ratio for scale users (30g/500ml) but fails on two counts: it explicitly skips the 'bloom' step (a specific penalty in the prompt instructions), and the alternative measurement (2 tablespoons for 500ml) would result in unacceptably weak coffee.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "While the procedure is safe and follows the correct sequence, the ratio provided (20g for 500ml) creates a 1:25 ratio, which is unreasonably weak for French press. Additionally, it confuses hardware sizes, equating a '3-cup press' (usually 350ml) with 500ml.",
+          "score": 5.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "This model fails a critical topic-specific check: it does not mention grind size. Using fine pre-ground coffee in a French press causes clogging and bitterness. While the ratio is good, this omission makes the instructions functionally risky.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "This output fails multiple critical checks. It provides no specific coffee-to-water ratio ('scoop coffee', 'fill water') and no grind size guidance. It is too vague to reliably produce a good cup of coffee.",
+          "score": 2
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Most accurate and complete: correct water temp guidance (boil then cool/195–205°F), coarse grind, clear 1:15 ratio with scale verification, includes bloom + 30s wait, steep explicitly to 4:00 before plunging, and immediate decant. Strong imperative language and helpful verification points. Minor issue: several titles/texts exceed the very strict 50/300 character limits.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Very solid procedure: preheat, coarse ratio (30g/500g), correct 200–205°F guidance, bloom + 30s, steep to 4:00 before plunging, good plunge guidance, and immediate pour. Action-oriented and coherent. Minor weaknesses: no explicit grind-size instruction (critical) and some steps may exceed the character limits.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Accurate temp (cool to ~200°F), coarse grind stated, bloom + 30s, steep 4 minutes, plunge after steep, immediate pour. Good safety note about resistance. Main gap: ratio is only implicit (20g for 500ml is ~1:25 and may be weak), though not wildly unsafe; also likely exceeds the 300-char text limit in multiple steps.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Strong overall: coarse grind, correct temp window (195–205°F), bloom + wait, steep 4 minutes, plunge after steep, immediate pour. Ratio given (500ml:30g) is reasonable. Deductions: some explanatory sentences reduce “action-only” feel, and format limits likely exceeded.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Hits the critical checkpoints: ~200°F water, coarse grounds, bloom + 30s, steep 4 minutes, plunge after steep, immediate pour. Clear and actionable. Main weakness: no explicit coffee-to-water ratio, so a user can’t reliably scale strength; also likely over character limits.",
+          "score": 7.9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Correct temp (~200°F), coarse grind, includes bloom + 30s, includes 1:15 ratio, steep 4 minutes, plunge after steep, immediate pour. Deductions: ratio is mentioned late (after pouring remaining water), which can confuse execution; text is somewhat explanatory and likely breaks length limits.",
+          "score": 7.7
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Technically sound: correct 200°F/93°C, coarse grind plus a usable ratio (1 Tbsp per 4 oz), bloom + 30s, steep 4 minutes before plunging, immediate pour. Deductions: several steps are long/explanatory and likely violate the strict 50/300 limits; some verification cues are subjective (e.g., “see steam rising”).",
+          "score": 7.6
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Good sequence and timing: 200°F water, bloom + 30s, steep 4 minutes, plunge after steep. Major gap: no coffee-to-water ratio at all, and grind size is never specified (critical). Also has a questionable verification claim (“stream should run clear with no grounds”) which is not reliably true for French press.",
+          "score": 6.6
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Has correct water temp guidance and 4-minute steep, and includes a reasonable 30g/500ml ratio plus medium-coarse note. Critical miss: bloom step is effectively skipped (pours all water at once with no bloom wait), conflicting with the task’s sequence check. Also the “2 tablespoons” equivalence for 30g is inaccurate and can mislead dosing.",
+          "score": 6.1
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-custom",
+  "testCaseId": "en-cooking-brew-coffee-1"
+}
