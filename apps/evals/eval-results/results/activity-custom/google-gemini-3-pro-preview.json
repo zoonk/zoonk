@@ -1,0 +1,326 @@
+{
+  "modelId": "google/gemini-3-pro-preview",
+  "results": [
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Step 4 instructs users to \"Keep clicking 'Next'\", which is accurate for the Windows installer but slightly inaccurate for the macOS installer (which uses 'Continue'). Adding 'or Continue' would make it more inclusive. However, this is a negligible issue as the intent is clear.",
+          "kind": "potentialImprovements",
+          "score": 9.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Git installation involves platform-specific steps. Penalize if:\n   - Steps assume wrong operating system without clarification\n   - Installation verification is missing (checking git version)\n\n2. SAFETY CHECK: Penalize if:\n   - Steps suggest downloading from unofficial sources\n   - PATH configuration is skipped without noting it's handled by installer\n\n3. SPECIFICITY CHECK: Penalize vague instructions like \"install Git\" without specifying what to click, download, or run.\n\n\nANTI-CHECKLIST GUIDANCE (READ THIS FIRST - CRITICAL):\n- Do NOT penalize for missing steps you might expect\n- Do NOT require a specific number of steps - let complexity dictate length\n- Do NOT check against an imagined \"ideal\" procedure\n- Do NOT interpret rules too literally - use common sense\n- Different valid procedures exist - assess the quality of what IS provided\n- ONLY penalize for actual problems: incorrect sequence, factual errors, missing critical safety steps, or truly confusing instructions\n\nEVALUATION CRITERIA:\n\n1. PROCEDURAL ACCURACY: Steps must be in correct sequence. Penalize only if actions are genuinely out of order or skip critical prerequisites.\n\n2. ACTION-ORIENTED LANGUAGE: Each step must use imperative verbs (Click, Type, Add, Place, Turn, etc.). Penalize passive or purely descriptive language.\n\n3. LOGICAL STEP GROUPING: Steps should be coherent units that a user can follow without confusion. This does NOT mean micro-splitting every movement:\n   - ACCEPTABLE: \"Click the File name field and type your document name\" (filling a form field is ONE action)\n   - ACCEPTABLE: \"Pull over safely and turn on hazard lights\" (logically grouped safety actions)\n   - ACCEPTABLE: \"Pour hot water, swirl to warm, then discard\" (continuous motion)\n   - PROBLEMATIC: \"Download the file, install it, configure settings, and restart\" (unrelated actions crammed together)\n   The goal is clarity, not arbitrary splitting. If a step reads naturally and a user can follow it without confusion, it's fine.\n\n4. VERIFICATION POINTS: Where helpful, include confirmation of success. Only penalize if verification is missing for critical/risky actions. Do NOT penalize verification steps as \"padding\" - helping users confirm success is valuable teaching.\n\n5. FORMAT COMPLIANCE:\n   - title: Maximum 50 characters\n   - text: Maximum 300 characters\n\n6. SCOPE ADHERENCE: Content should cover the activity as described. Do not penalize for reasonable setup or verification steps.\n\n7. PRACTICAL FOCUS: Steps should be actionable instructions, not conceptual explanations.\n\nFINAL CHECK: Before penalizing anything, ask yourself: \"Would a reasonable human instructor consider this a genuine problem?\" If not, do not penalize.\n\n    ",
+        "id": "en-tech-install-git-1",
+        "userInput": {
+          "activityDescription": "Download and install Git on your computer, including verification that the installation succeeded",
+          "activityTitle": "Install Git",
+          "chapterTitle": "Getting Started",
+          "courseTitle": "Git Fundamentals",
+          "language": "en",
+          "lessonDescription": "Setting up your development environment by installing and configuring Git version control",
+          "lessonTitle": "How to Set Up Git"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None. The model correctly identifies critical safety steps including engaging the parking brake, using wheel chocks, and loosening lug nuts before jacking up the car. The sequence is procedurally accurate.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None. The titles and texts adhere to the character limits. The language is imperative and specific. The scope matches the activity description perfectly (stopping after removal).",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None. The response effectively groups logical actions (e.g., securing the vehicle involves parking, braking, and lights) without over-splitting, adhering to the expectations. It also includes excellent safety advice like sliding the old tire under the car.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Tire removal requires specific safety sequences. Penalize if:\n   - Loosening lug nuts is described AFTER the car is fully jacked up (must loosen while on ground)\n   - Jack placement doesn't mention finding the correct jack point\n\n2. SAFETY CHECK: Penalize if:\n   - No mention of engaging parking brake or using wheel chocks\n   - Steps allow working under an unsupported vehicle\n\n3. TOOL SPECIFICITY: Penalize if steps don't specify which tools are used for each action (lug wrench, jack, etc.).\n\n\nANTI-CHECKLIST GUIDANCE (READ THIS FIRST - CRITICAL):\n- Do NOT penalize for missing steps you might expect\n- Do NOT require a specific number of steps - let complexity dictate length\n- Do NOT check against an imagined \"ideal\" procedure\n- Do NOT interpret rules too literally - use common sense\n- Different valid procedures exist - assess the quality of what IS provided\n- ONLY penalize for actual problems: incorrect sequence, factual errors, missing critical safety steps, or truly confusing instructions\n\nEVALUATION CRITERIA:\n\n1. PROCEDURAL ACCURACY: Steps must be in correct sequence. Penalize only if actions are genuinely out of order or skip critical prerequisites.\n\n2. ACTION-ORIENTED LANGUAGE: Each step must use imperative verbs (Click, Type, Add, Place, Turn, etc.). Penalize passive or purely descriptive language.\n\n3. LOGICAL STEP GROUPING: Steps should be coherent units that a user can follow without confusion. This does NOT mean micro-splitting every movement:\n   - ACCEPTABLE: \"Click the File name field and type your document name\" (filling a form field is ONE action)\n   - ACCEPTABLE: \"Pull over safely and turn on hazard lights\" (logically grouped safety actions)\n   - ACCEPTABLE: \"Pour hot water, swirl to warm, then discard\" (continuous motion)\n   - PROBLEMATIC: \"Download the file, install it, configure settings, and restart\" (unrelated actions crammed together)\n   The goal is clarity, not arbitrary splitting. If a step reads naturally and a user can follow it without confusion, it's fine.\n\n4. VERIFICATION POINTS: Where helpful, include confirmation of success. Only penalize if verification is missing for critical/risky actions. Do NOT penalize verification steps as \"padding\" - helping users confirm success is valuable teaching.\n\n5. FORMAT COMPLIANCE:\n   - title: Maximum 50 characters\n   - text: Maximum 300 characters\n\n6. SCOPE ADHERENCE: Content should cover the activity as described. Do not penalize for reasonable setup or verification steps.\n\n7. PRACTICAL FOCUS: Steps should be actionable instructions, not conceptual explanations.\n\nFINAL CHECK: Before penalizing anything, ask yourself: \"Would a reasonable human instructor consider this a genuine problem?\" If not, do not penalize.\n\n    ",
+        "id": "en-automotive-remove-flat-tire-1",
+        "userInput": {
+          "activityDescription": "Safely remove a flat tire from your vehicle, including proper jacking and lug nut removal",
+          "activityTitle": "Remove the Flat Tire",
+          "chapterTitle": "Roadside Emergencies",
+          "courseTitle": "Basic Car Maintenance",
+          "language": "en",
+          "lessonDescription": "Step-by-step guide to safely changing a flat tire on the side of the road",
+          "lessonTitle": "Changing a Car Tire"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The instructions specify a fixed amount of coffee (30g) but a variable amount of water (\"until full\"). Since French presses vary significantly in size (from 350ml to 1L+), this could lead to a poor ratio for users with large presses. Specifying a water volume (e.g., \"about 500ml\" or \"17 oz\") or a ratio rule would ensure consistency.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: French press brewing has critical timing and temperature elements. Penalize if:\n   - Water temperature guidance is missing or incorrect (should be just off boiling, around 200F/93C)\n   - Steep time is not mentioned or is outside the 4-5 minute range\n\n2. RATIO CHECK: Penalize if:\n   - Coffee-to-water ratio is absent or unreasonable\n   - Grind size guidance is missing (coarse grind is essential)\n\n3. SEQUENCE CHECK: Penalize if bloom step is skipped or plunging happens before steeping is complete.\n\n\nANTI-CHECKLIST GUIDANCE (READ THIS FIRST - CRITICAL):\n- Do NOT penalize for missing steps you might expect\n- Do NOT require a specific number of steps - let complexity dictate length\n- Do NOT check against an imagined \"ideal\" procedure\n- Do NOT interpret rules too literally - use common sense\n- Different valid procedures exist - assess the quality of what IS provided\n- ONLY penalize for actual problems: incorrect sequence, factual errors, missing critical safety steps, or truly confusing instructions\n\nEVALUATION CRITERIA:\n\n1. PROCEDURAL ACCURACY: Steps must be in correct sequence. Penalize only if actions are genuinely out of order or skip critical prerequisites.\n\n2. ACTION-ORIENTED LANGUAGE: Each step must use imperative verbs (Click, Type, Add, Place, Turn, etc.). Penalize passive or purely descriptive language.\n\n3. LOGICAL STEP GROUPING: Steps should be coherent units that a user can follow without confusion. This does NOT mean micro-splitting every movement:\n   - ACCEPTABLE: \"Click the File name field and type your document name\" (filling a form field is ONE action)\n   - ACCEPTABLE: \"Pull over safely and turn on hazard lights\" (logically grouped safety actions)\n   - ACCEPTABLE: \"Pour hot water, swirl to warm, then discard\" (continuous motion)\n   - PROBLEMATIC: \"Download the file, install it, configure settings, and restart\" (unrelated actions crammed together)\n   The goal is clarity, not arbitrary splitting. If a step reads naturally and a user can follow it without confusion, it's fine.\n\n4. VERIFICATION POINTS: Where helpful, include confirmation of success. Only penalize if verification is missing for critical/risky actions. Do NOT penalize verification steps as \"padding\" - helping users confirm success is valuable teaching.\n\n5. FORMAT COMPLIANCE:\n   - title: Maximum 50 characters\n   - text: Maximum 300 characters\n\n6. SCOPE ADHERENCE: Content should cover the activity as described. Do not penalize for reasonable setup or verification steps.\n\n7. PRACTICAL FOCUS: Steps should be actionable instructions, not conceptual explanations.\n\nFINAL CHECK: Before penalizing anything, ask yourself: \"Would a reasonable human instructor consider this a genuine problem?\" If not, do not penalize.\n\n    ",
+        "id": "en-cooking-brew-coffee-1",
+        "userInput": {
+          "activityDescription": "Brew a perfect cup of coffee using a French press, from measuring grounds to plunging and pouring",
+          "activityTitle": "Brew the Coffee",
+          "chapterTitle": "Coffee Brewing Methods",
+          "courseTitle": "Home Barista Basics",
+          "language": "en",
+          "lessonDescription": "Master the French press method for making rich, full-bodied coffee at home",
+          "lessonTitle": "Making French Press Coffee"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The instructions requested an 'array of steps' as the output format, but the model returned a JSON object with a 'steps' key containing the array. This is a technical format mismatch. Additionally, Step 4 instructs to add bone meal 'per plant spot' which is then mixed into the entire bed in Step 5. Spot-specific amendments should either be broadcast over the whole bed at this stage or added to the planting hole in a later activity, as tilling will displace/dilute the 'spot' application.",
+          "kind": "minorErrors",
+          "score": 8.5
+        },
+        {
+          "conclusion": "To improve the procedural logic in Step 4, either instruct to broadcast the bone meal over the entire bed or remove it from this activity and save it for the specific 'Planting' activity where it can be placed directly in the hole.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Soil preparation involves physical and chemical considerations. Penalize if:\n   - Depth guidance is missing (tomatoes need deep, loose soil)\n   - Steps combine too many amendments without explaining when to add each\n\n2. TIMING CHECK: Penalize if:\n   - No mention of when to prepare soil relative to planting\n   - Watering the prepared bed is omitted\n\n3. SPECIFICITY CHECK: Penalize vague instructions like \"add fertilizer\" without specifying type, amount, or how to incorporate it.\n\n\nANTI-CHECKLIST GUIDANCE (READ THIS FIRST - CRITICAL):\n- Do NOT penalize for missing steps you might expect\n- Do NOT require a specific number of steps - let complexity dictate length\n- Do NOT check against an imagined \"ideal\" procedure\n- Do NOT interpret rules too literally - use common sense\n- Different valid procedures exist - assess the quality of what IS provided\n- ONLY penalize for actual problems: incorrect sequence, factual errors, missing critical safety steps, or truly confusing instructions\n\nEVALUATION CRITERIA:\n\n1. PROCEDURAL ACCURACY: Steps must be in correct sequence. Penalize only if actions are genuinely out of order or skip critical prerequisites.\n\n2. ACTION-ORIENTED LANGUAGE: Each step must use imperative verbs (Click, Type, Add, Place, Turn, etc.). Penalize passive or purely descriptive language.\n\n3. LOGICAL STEP GROUPING: Steps should be coherent units that a user can follow without confusion. This does NOT mean micro-splitting every movement:\n   - ACCEPTABLE: \"Click the File name field and type your document name\" (filling a form field is ONE action)\n   - ACCEPTABLE: \"Pull over safely and turn on hazard lights\" (logically grouped safety actions)\n   - ACCEPTABLE: \"Pour hot water, swirl to warm, then discard\" (continuous motion)\n   - PROBLEMATIC: \"Download the file, install it, configure settings, and restart\" (unrelated actions crammed together)\n   The goal is clarity, not arbitrary splitting. If a step reads naturally and a user can follow it without confusion, it's fine.\n\n4. VERIFICATION POINTS: Where helpful, include confirmation of success. Only penalize if verification is missing for critical/risky actions. Do NOT penalize verification steps as \"padding\" - helping users confirm success is valuable teaching.\n\n5. FORMAT COMPLIANCE:\n   - title: Maximum 50 characters\n   - text: Maximum 300 characters\n\n6. SCOPE ADHERENCE: Content should cover the activity as described. Do not penalize for reasonable setup or verification steps.\n\n7. PRACTICAL FOCUS: Steps should be actionable instructions, not conceptual explanations.\n\nFINAL CHECK: Before penalizing anything, ask yourself: \"Would a reasonable human instructor consider this a genuine problem?\" If not, do not penalize.\n\n    ",
+        "id": "en-gardening-prepare-soil-1",
+        "userInput": {
+          "activityDescription": "Prepare a garden bed for tomato planting by loosening, amending, and conditioning the soil",
+          "activityTitle": "Prepare the Soil",
+          "chapterTitle": "Growing Vegetables",
+          "courseTitle": "Home Gardening",
+          "language": "en",
+          "lessonDescription": "Complete guide to planting and growing healthy tomato plants in your home garden",
+          "lessonTitle": "Planting Tomatoes"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "The dimensions provided in Step 2 and Step 3 (45\" x 21\") are incorrect for a standard pillowcase. A standard US pillow is 20\" x 26\". \n- If 45\" is the width (wrapping around), it folds to 22.5\" (correct width), but the 21\" length is too short to cover a 26\" pillow.\n- If 21\" is the width (wrapping around), it folds to 10.5\" (too narrow).\n- The AI likely confused the *finished* width (approx 21\") with the *cut* width (needs to be ~42\" to wrap around). Correct dimensions for a standard pillowcase (one piece) are typically ~44\" x 32\" (or similar, utilizing the full Width of Fabric).",
+          "kind": "majorErrors",
+          "score": 6.5
+        },
+        {
+          "conclusion": "Step 5 instructs to \"keep the fabric layers stable,\" but previous steps (Step 1: \"Lay your ironed fabric out completely flat,\" Steps 2-4: drafting directly on fabric) imply a single layer of fabric is being used without folding. Pinning a single layer to itself is impossible, and pinning to the table is not standard practice for simple cotton cuts. This creates procedural confusion.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "The instruction to \"pin\" in Step 5 appears to be an attempt to satisfy the prompt's requirement (\"Measure, pin, and cut\") but is misplaced in a \"draft-on-fabric\" method. It would be better to instruct the user to fold the fabric (selvage to selvage) before measuring, which would justify the pinning step and fix the width dimension issue (measuring 21\" on folded fabric = 42\" total).",
+          "kind": "potentialImprovements",
+          "score": 7
+        }
+      ],
+      "testCase": {
+        "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Fabric cutting requires measurement and alignment. Penalize if:\n   - Grain line alignment is ignored (fabric must be cut on grain)\n   - Seam allowance is not mentioned or added\n\n2. TOOL SAFETY: Penalize if:\n   - Sharp tool handling guidance is absent\n   - Fabric is described as being cut while held in air (should be flat on surface)\n\n3. PRECISION CHECK: Penalize if pinning before cutting is skipped or pattern placement is vague.\n\n\nANTI-CHECKLIST GUIDANCE (READ THIS FIRST - CRITICAL):\n- Do NOT penalize for missing steps you might expect\n- Do NOT require a specific number of steps - let complexity dictate length\n- Do NOT check against an imagined \"ideal\" procedure\n- Do NOT interpret rules too literally - use common sense\n- Different valid procedures exist - assess the quality of what IS provided\n- ONLY penalize for actual problems: incorrect sequence, factual errors, missing critical safety steps, or truly confusing instructions\n\nEVALUATION CRITERIA:\n\n1. PROCEDURAL ACCURACY: Steps must be in correct sequence. Penalize only if actions are genuinely out of order or skip critical prerequisites.\n\n2. ACTION-ORIENTED LANGUAGE: Each step must use imperative verbs (Click, Type, Add, Place, Turn, etc.). Penalize passive or purely descriptive language.\n\n3. LOGICAL STEP GROUPING: Steps should be coherent units that a user can follow without confusion. This does NOT mean micro-splitting every movement:\n   - ACCEPTABLE: \"Click the File name field and type your document name\" (filling a form field is ONE action)\n   - ACCEPTABLE: \"Pull over safely and turn on hazard lights\" (logically grouped safety actions)\n   - ACCEPTABLE: \"Pour hot water, swirl to warm, then discard\" (continuous motion)\n   - PROBLEMATIC: \"Download the file, install it, configure settings, and restart\" (unrelated actions crammed together)\n   The goal is clarity, not arbitrary splitting. If a step reads naturally and a user can follow it without confusion, it's fine.\n\n4. VERIFICATION POINTS: Where helpful, include confirmation of success. Only penalize if verification is missing for critical/risky actions. Do NOT penalize verification steps as \"padding\" - helping users confirm success is valuable teaching.\n\n5. FORMAT COMPLIANCE:\n   - title: Maximum 50 characters\n   - text: Maximum 300 characters\n\n6. SCOPE ADHERENCE: Content should cover the activity as described. Do not penalize for reasonable setup or verification steps.\n\n7. PRACTICAL FOCUS: Steps should be actionable instructions, not conceptual explanations.\n\nFINAL CHECK: Before penalizing anything, ask yourself: \"Would a reasonable human instructor consider this a genuine problem?\" If not, do not penalize.\n\n    ",
+        "id": "en-crafts-cut-fabric-1",
+        "userInput": {
+          "activityDescription": "Measure, pin, and cut fabric pieces for a pillowcase following a pattern",
+          "activityTitle": "Cut the Fabric",
+          "chapterTitle": "Basic Sewing Projects",
+          "courseTitle": "Sewing for Beginners",
+          "language": "en",
+          "lessonDescription": "Learn to sew a simple pillowcase from start to finish using basic techniques",
+          "lessonTitle": "Sewing a Pillowcase"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The response is excellent and covers the procedure perfectly. One very minor potential improvement would be to remind the user in Step 3 that 'tightening' usually means turning the peg away from them (on the top side of the headstock) or towards them depending on the guitar type, but since this varies by headstock design (3+3 vs 6-in-line), the generic instruction to 'tighten' based on the tuner feedback is actually safer and more universal.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Guitar tuning follows a specific string order and pitch reference. Penalize if:\n   - String order is incorrect (standard: E-A-D-G-B-E, low to high)\n   - No reference pitch source is mentioned (tuner, app, or reference note)\n\n2. TECHNIQUE CHECK: Penalize if:\n   - Direction to turn tuning pegs is unclear or incorrect\n   - No guidance on whether to tune up or down to pitch\n\n3. VERIFICATION CHECK: Penalize if confirmation of correct pitch is missing for each string.\n\n\nANTI-CHECKLIST GUIDANCE (READ THIS FIRST - CRITICAL):\n- Do NOT penalize for missing steps you might expect\n- Do NOT require a specific number of steps - let complexity dictate length\n- Do NOT check against an imagined \"ideal\" procedure\n- Do NOT interpret rules too literally - use common sense\n- Different valid procedures exist - assess the quality of what IS provided\n- ONLY penalize for actual problems: incorrect sequence, factual errors, missing critical safety steps, or truly confusing instructions\n\nEVALUATION CRITERIA:\n\n1. PROCEDURAL ACCURACY: Steps must be in correct sequence. Penalize only if actions are genuinely out of order or skip critical prerequisites.\n\n2. ACTION-ORIENTED LANGUAGE: Each step must use imperative verbs (Click, Type, Add, Place, Turn, etc.). Penalize passive or purely descriptive language.\n\n3. LOGICAL STEP GROUPING: Steps should be coherent units that a user can follow without confusion. This does NOT mean micro-splitting every movement:\n   - ACCEPTABLE: \"Click the File name field and type your document name\" (filling a form field is ONE action)\n   - ACCEPTABLE: \"Pull over safely and turn on hazard lights\" (logically grouped safety actions)\n   - ACCEPTABLE: \"Pour hot water, swirl to warm, then discard\" (continuous motion)\n   - PROBLEMATIC: \"Download the file, install it, configure settings, and restart\" (unrelated actions crammed together)\n   The goal is clarity, not arbitrary splitting. If a step reads naturally and a user can follow it without confusion, it's fine.\n\n4. VERIFICATION POINTS: Where helpful, include confirmation of success. Only penalize if verification is missing for critical/risky actions. Do NOT penalize verification steps as \"padding\" - helping users confirm success is valuable teaching.\n\n5. FORMAT COMPLIANCE:\n   - title: Maximum 50 characters\n   - text: Maximum 300 characters\n\n6. SCOPE ADHERENCE: Content should cover the activity as described. Do not penalize for reasonable setup or verification steps.\n\n7. PRACTICAL FOCUS: Steps should be actionable instructions, not conceptual explanations.\n\nFINAL CHECK: Before penalizing anything, ask yourself: \"Would a reasonable human instructor consider this a genuine problem?\" If not, do not penalize.\n\n    ",
+        "id": "en-music-tune-guitar-1",
+        "userInput": {
+          "activityDescription": "Tune each string of your guitar to standard tuning using a tuner or reference pitch",
+          "activityTitle": "Tune Your Guitar",
+          "chapterTitle": "Guitar Basics",
+          "courseTitle": "Learn Guitar",
+          "language": "en",
+          "lessonDescription": "Essential setup steps before you start playing guitar, including tuning and posture",
+          "lessonTitle": "Getting Started with Guitar"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The response fails to mention the breathing pattern (e.g., inhaling before lowering, exhaling on the way up). The Expectations specifically state under the 'SAFETY CHECK' section to penalize if the breathing pattern is not mentioned.",
+          "kind": "minorErrors",
+          "score": 8.5
+        },
+        {
+          "conclusion": "Incorporating breathing instructions into the existing steps (e.g., 'Inhale deeply as you engage your core' in step 2 or 'Inhale as you lower' in step 4) would satisfy the safety requirement explicitly requested.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Squat form involves specific body positioning. Penalize if:\n   - Foot placement width and angle are not specified\n   - Knee tracking direction is incorrect or missing\n\n2. SAFETY CHECK: Penalize if:\n   - Breathing pattern is not mentioned\n   - Back position (neutral spine) is not addressed\n   - Depth guidance is missing or unsafe\n\n3. VERIFICATION CHECK: Penalize if no cues for self-checking form are provided (mirror check, how it should feel).\n\n\nANTI-CHECKLIST GUIDANCE (READ THIS FIRST - CRITICAL):\n- Do NOT penalize for missing steps you might expect\n- Do NOT require a specific number of steps - let complexity dictate length\n- Do NOT check against an imagined \"ideal\" procedure\n- Do NOT interpret rules too literally - use common sense\n- Different valid procedures exist - assess the quality of what IS provided\n- ONLY penalize for actual problems: incorrect sequence, factual errors, missing critical safety steps, or truly confusing instructions\n\nEVALUATION CRITERIA:\n\n1. PROCEDURAL ACCURACY: Steps must be in correct sequence. Penalize only if actions are genuinely out of order or skip critical prerequisites.\n\n2. ACTION-ORIENTED LANGUAGE: Each step must use imperative verbs (Click, Type, Add, Place, Turn, etc.). Penalize passive or purely descriptive language.\n\n3. LOGICAL STEP GROUPING: Steps should be coherent units that a user can follow without confusion. This does NOT mean micro-splitting every movement:\n   - ACCEPTABLE: \"Click the File name field and type your document name\" (filling a form field is ONE action)\n   - ACCEPTABLE: \"Pull over safely and turn on hazard lights\" (logically grouped safety actions)\n   - ACCEPTABLE: \"Pour hot water, swirl to warm, then discard\" (continuous motion)\n   - PROBLEMATIC: \"Download the file, install it, configure settings, and restart\" (unrelated actions crammed together)\n   The goal is clarity, not arbitrary splitting. If a step reads naturally and a user can follow it without confusion, it's fine.\n\n4. VERIFICATION POINTS: Where helpful, include confirmation of success. Only penalize if verification is missing for critical/risky actions. Do NOT penalize verification steps as \"padding\" - helping users confirm success is valuable teaching.\n\n5. FORMAT COMPLIANCE:\n   - title: Maximum 50 characters\n   - text: Maximum 300 characters\n\n6. SCOPE ADHERENCE: Content should cover the activity as described. Do not penalize for reasonable setup or verification steps.\n\n7. PRACTICAL FOCUS: Steps should be actionable instructions, not conceptual explanations.\n\nFINAL CHECK: Before penalizing anything, ask yourself: \"Would a reasonable human instructor consider this a genuine problem?\" If not, do not penalize.\n\n    ",
+        "id": "en-fitness-proper-squat-form-1",
+        "userInput": {
+          "activityDescription": "Learn and practice the correct body positioning for a proper bodyweight squat",
+          "activityTitle": "Master Proper Form",
+          "chapterTitle": "Lower Body Exercises",
+          "courseTitle": "Strength Training Basics",
+          "language": "en",
+          "lessonDescription": "Complete guide to performing squats safely and effectively for building lower body strength",
+          "lessonTitle": "How to Do Squats"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\nLANGUAGE REQUIREMENT: Titles and text must be in Portuguese.\n\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Bread dough preparation requires specific techniques. Penalize if:\n   - Ingredient order matters and is wrong (yeast activation before mixing with flour)\n   - Kneading technique or duration guidance is missing\n\n2. TEXTURE CHECK: Penalize if:\n   - No description of what the dough should look/feel like at each stage\n   - Proofing instructions are missing or lack time/visual cues\n\n3. TEMPERATURE CHECK: Penalize if water temperature for yeast is not specified (critical for yeast activation).\n\n\nANTI-CHECKLIST GUIDANCE (READ THIS FIRST - CRITICAL):\n- Do NOT penalize for missing steps you might expect\n- Do NOT require a specific number of steps - let complexity dictate length\n- Do NOT check against an imagined \"ideal\" procedure\n- Do NOT interpret rules too literally - use common sense\n- Different valid procedures exist - assess the quality of what IS provided\n- ONLY penalize for actual problems: incorrect sequence, factual errors, missing critical safety steps, or truly confusing instructions\n\nEVALUATION CRITERIA:\n\n1. PROCEDURAL ACCURACY: Steps must be in correct sequence. Penalize only if actions are genuinely out of order or skip critical prerequisites.\n\n2. ACTION-ORIENTED LANGUAGE: Each step must use imperative verbs (Click, Type, Add, Place, Turn, etc.). Penalize passive or purely descriptive language.\n\n3. LOGICAL STEP GROUPING: Steps should be coherent units that a user can follow without confusion. This does NOT mean micro-splitting every movement:\n   - ACCEPTABLE: \"Click the File name field and type your document name\" (filling a form field is ONE action)\n   - ACCEPTABLE: \"Pull over safely and turn on hazard lights\" (logically grouped safety actions)\n   - ACCEPTABLE: \"Pour hot water, swirl to warm, then discard\" (continuous motion)\n   - PROBLEMATIC: \"Download the file, install it, configure settings, and restart\" (unrelated actions crammed together)\n   The goal is clarity, not arbitrary splitting. If a step reads naturally and a user can follow it without confusion, it's fine.\n\n4. VERIFICATION POINTS: Where helpful, include confirmation of success. Only penalize if verification is missing for critical/risky actions. Do NOT penalize verification steps as \"padding\" - helping users confirm success is valuable teaching.\n\n5. FORMAT COMPLIANCE:\n   - title: Maximum 50 characters\n   - text: Maximum 300 characters\n\n6. SCOPE ADHERENCE: Content should cover the activity as described. Do not penalize for reasonable setup or verification steps.\n\n7. PRACTICAL FOCUS: Steps should be actionable instructions, not conceptual explanations.\n\nFINAL CHECK: Before penalizing anything, ask yourself: \"Would a reasonable human instructor consider this a genuine problem?\" If not, do not penalize.\n\n    ",
+        "id": "pt-cooking-preparar-massa-1",
+        "userInput": {
+          "activityDescription": "Prepare a massa do pao, incluindo ativacao do fermento, mistura dos ingredientes e sova",
+          "activityTitle": "Preparar a Massa",
+          "chapterTitle": "Paes Caseiros",
+          "courseTitle": "Panificacao em Casa",
+          "language": "pt",
+          "lessonDescription": "Aprenda a fazer pao caseiro do zero, desde a preparacao da massa ate o cozimento",
+          "lessonTitle": "Fazendo Pao Caseiro"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The instructions specified the output format to be 'an array of steps'. The model returned a JSON object containing a 'steps' key wrapping the array (`{ \"steps\": [...] }`). While this is a common convention, it technically violates the specific output format instruction to return the array directly. This could cause parsing issues for strict implementations.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "None. The content is excellent, covering the task with clear, actionable steps, appropriate handling of UI variations (like the 'Browse' button), and strong verification cues.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEDGE CASE: SIMPLE ACTIVITY\n\nTOPIC-SPECIFIC GUIDANCE:\n\n1. SCOPE CHECK: This is a straightforward task. Assess whether the steps are:\n   - Clear and followable\n   - Appropriate for the actual complexity of saving a document\n\n2. COMPLETENESS CHECK: Steps should include:\n   - The actual save action (via menu or keyboard shortcut)\n   - Some form of verification that save succeeded\n\n3. WHAT IS NOT PADDING:\n   - Teaching multiple ways to save (menu AND keyboard shortcut) is good pedagogy, not padding\n   - Having the user confirm they have content to save is reasonable guidance\n   - Verification steps that teach users what to look for are valuable\n   - Do NOT penalize for thoroughness that helps beginners\n\n4. The number of steps should match what's needed to clearly explain the process. A few steps or several steps can both be appropriate depending on how the author chooses to break down the task.\n\n\nANTI-CHECKLIST GUIDANCE (READ THIS FIRST - CRITICAL):\n- Do NOT penalize for missing steps you might expect\n- Do NOT require a specific number of steps - let complexity dictate length\n- Do NOT check against an imagined \"ideal\" procedure\n- Do NOT interpret rules too literally - use common sense\n- Different valid procedures exist - assess the quality of what IS provided\n- ONLY penalize for actual problems: incorrect sequence, factual errors, missing critical safety steps, or truly confusing instructions\n\nEVALUATION CRITERIA:\n\n1. PROCEDURAL ACCURACY: Steps must be in correct sequence. Penalize only if actions are genuinely out of order or skip critical prerequisites.\n\n2. ACTION-ORIENTED LANGUAGE: Each step must use imperative verbs (Click, Type, Add, Place, Turn, etc.). Penalize passive or purely descriptive language.\n\n3. LOGICAL STEP GROUPING: Steps should be coherent units that a user can follow without confusion. This does NOT mean micro-splitting every movement:\n   - ACCEPTABLE: \"Click the File name field and type your document name\" (filling a form field is ONE action)\n   - ACCEPTABLE: \"Pull over safely and turn on hazard lights\" (logically grouped safety actions)\n   - ACCEPTABLE: \"Pour hot water, swirl to warm, then discard\" (continuous motion)\n   - PROBLEMATIC: \"Download the file, install it, configure settings, and restart\" (unrelated actions crammed together)\n   The goal is clarity, not arbitrary splitting. If a step reads naturally and a user can follow it without confusion, it's fine.\n\n4. VERIFICATION POINTS: Where helpful, include confirmation of success. Only penalize if verification is missing for critical/risky actions. Do NOT penalize verification steps as \"padding\" - helping users confirm success is valuable teaching.\n\n5. FORMAT COMPLIANCE:\n   - title: Maximum 50 characters\n   - text: Maximum 300 characters\n\n6. SCOPE ADHERENCE: Content should cover the activity as described. Do not penalize for reasonable setup or verification steps.\n\n7. PRACTICAL FOCUS: Steps should be actionable instructions, not conceptual explanations.\n\nFINAL CHECK: Before penalizing anything, ask yourself: \"Would a reasonable human instructor consider this a genuine problem?\" If not, do not penalize.\n\n    ",
+        "id": "en-short-activity-1",
+        "userInput": {
+          "activityDescription": "Save your current document to preserve your work",
+          "activityTitle": "Save the Document",
+          "chapterTitle": "Document Basics",
+          "courseTitle": "Office Software Essentials",
+          "language": "en",
+          "lessonDescription": "Learn fundamental word processing operations including creating, saving, and organizing documents",
+          "lessonTitle": "Basic Word Processing"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The response is excellent and highly accurate to real-world PC building standards (including the 'pro tip' of building outside the case first). A small improvement would be to mention connecting a monitor in the final step so the user can actually verify the 'Post' (display output), rather than just powering on the tower.",
+          "kind": "potentialImprovements",
+          "score": 9.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEDGE CASE: COMPLEX ACTIVITY (15+ steps may be appropriate)\n\nTOPIC-SPECIFIC GUIDANCE:\n\n1. SCOPE CHECK: This is a complex multi-component task. Penalize if:\n   - Critical components are skipped (CPU, RAM, storage, power)\n   - The order of component installation is physically impossible\n\n2. SAFETY CHECK: Penalize if:\n   - ESD (electrostatic discharge) precautions are not mentioned\n   - Power connection sequence is incorrect\n\n3. VERIFICATION CHECK: Penalize if POST (Power-On Self-Test) or initial boot verification is missing at the end.\n\n4. Do NOT penalize for having many steps (15+) - this is appropriate for the task complexity.\n\n\nANTI-CHECKLIST GUIDANCE (READ THIS FIRST - CRITICAL):\n- Do NOT penalize for missing steps you might expect\n- Do NOT require a specific number of steps - let complexity dictate length\n- Do NOT check against an imagined \"ideal\" procedure\n- Do NOT interpret rules too literally - use common sense\n- Different valid procedures exist - assess the quality of what IS provided\n- ONLY penalize for actual problems: incorrect sequence, factual errors, missing critical safety steps, or truly confusing instructions\n\nEVALUATION CRITERIA:\n\n1. PROCEDURAL ACCURACY: Steps must be in correct sequence. Penalize only if actions are genuinely out of order or skip critical prerequisites.\n\n2. ACTION-ORIENTED LANGUAGE: Each step must use imperative verbs (Click, Type, Add, Place, Turn, etc.). Penalize passive or purely descriptive language.\n\n3. LOGICAL STEP GROUPING: Steps should be coherent units that a user can follow without confusion. This does NOT mean micro-splitting every movement:\n   - ACCEPTABLE: \"Click the File name field and type your document name\" (filling a form field is ONE action)\n   - ACCEPTABLE: \"Pull over safely and turn on hazard lights\" (logically grouped safety actions)\n   - ACCEPTABLE: \"Pour hot water, swirl to warm, then discard\" (continuous motion)\n   - PROBLEMATIC: \"Download the file, install it, configure settings, and restart\" (unrelated actions crammed together)\n   The goal is clarity, not arbitrary splitting. If a step reads naturally and a user can follow it without confusion, it's fine.\n\n4. VERIFICATION POINTS: Where helpful, include confirmation of success. Only penalize if verification is missing for critical/risky actions. Do NOT penalize verification steps as \"padding\" - helping users confirm success is valuable teaching.\n\n5. FORMAT COMPLIANCE:\n   - title: Maximum 50 characters\n   - text: Maximum 300 characters\n\n6. SCOPE ADHERENCE: Content should cover the activity as described. Do not penalize for reasonable setup or verification steps.\n\n7. PRACTICAL FOCUS: Steps should be actionable instructions, not conceptual explanations.\n\nFINAL CHECK: Before penalizing anything, ask yourself: \"Would a reasonable human instructor consider this a genuine problem?\" If not, do not penalize.\n\n    ",
+        "id": "en-complex-activity-1",
+        "userInput": {
+          "activityDescription": "Assemble a desktop computer from individual components, including installing CPU, RAM, storage, GPU, and connecting power",
+          "activityTitle": "Assemble the Computer",
+          "chapterTitle": "Hardware Assembly",
+          "courseTitle": "PC Building",
+          "language": "en",
+          "lessonDescription": "Complete guide to building your own desktop computer from scratch",
+          "lessonTitle": "Building a PC"
+        }
+      }
+    }
+  ],
+  "taskId": "activity-custom"
+}

@@ -1,0 +1,185 @@
+{
+  "expectations": "\nEDGE CASE: SIMPLE ACTIVITY\n\nTOPIC-SPECIFIC GUIDANCE:\n\n1. SCOPE CHECK: This is a straightforward task. Assess whether the steps are:\n   - Clear and followable\n   - Appropriate for the actual complexity of saving a document\n\n2. COMPLETENESS CHECK: Steps should include:\n   - The actual save action (via menu or keyboard shortcut)\n   - Some form of verification that save succeeded\n\n3. WHAT IS NOT PADDING:\n   - Teaching multiple ways to save (menu AND keyboard shortcut) is good pedagogy, not padding\n   - Having the user confirm they have content to save is reasonable guidance\n   - Verification steps that teach users what to look for are valuable\n   - Do NOT penalize for thoroughness that helps beginners\n\n4. The number of steps should match what's needed to clearly explain the process. A few steps or several steps can both be appropriate depending on how the author chooses to break down the task.\n\n\nANTI-CHECKLIST GUIDANCE (READ THIS FIRST - CRITICAL):\n- Do NOT penalize for missing steps you might expect\n- Do NOT require a specific number of steps - let complexity dictate length\n- Do NOT check against an imagined \"ideal\" procedure\n- Do NOT interpret rules too literally - use common sense\n- Different valid procedures exist - assess the quality of what IS provided\n- ONLY penalize for actual problems: incorrect sequence, factual errors, missing critical safety steps, or truly confusing instructions\n\nEVALUATION CRITERIA:\n\n1. PROCEDURAL ACCURACY: Steps must be in correct sequence. Penalize only if actions are genuinely out of order or skip critical prerequisites.\n\n2. ACTION-ORIENTED LANGUAGE: Each step must use imperative verbs (Click, Type, Add, Place, Turn, etc.). Penalize passive or purely descriptive language.\n\n3. LOGICAL STEP GROUPING: Steps should be coherent units that a user can follow without confusion. This does NOT mean micro-splitting every movement:\n   - ACCEPTABLE: \"Click the File name field and type your document name\" (filling a form field is ONE action)\n   - ACCEPTABLE: \"Pull over safely and turn on hazard lights\" (logically grouped safety actions)\n   - ACCEPTABLE: \"Pour hot water, swirl to warm, then discard\" (continuous motion)\n   - PROBLEMATIC: \"Download the file, install it, configure settings, and restart\" (unrelated actions crammed together)\n   The goal is clarity, not arbitrary splitting. If a step reads naturally and a user can follow it without confusion, it's fine.\n\n4. VERIFICATION POINTS: Where helpful, include confirmation of success. Only penalize if verification is missing for critical/risky actions. Do NOT penalize verification steps as \"padding\" - helping users confirm success is valuable teaching.\n\n5. FORMAT COMPLIANCE:\n   - title: Maximum 50 characters\n   - text: Maximum 300 characters\n\n6. SCOPE ADHERENCE: Content should cover the activity as described. Do not penalize for reasonable setup or verification steps.\n\n7. PRACTICAL FOCUS: Steps should be actionable instructions, not conceptual explanations.\n\nFINAL CHECK: Before penalizing anything, ask yourself: \"Would a reasonable human instructor consider this a genuine problem?\" If not, do not penalize.\n\n    ",
+  "judgedAt": "2026-01-18T04:12:04.574Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Clear action-oriented steps with imperative verbs throughout. Good logical sequence: File menu → Save As → Location → Name → Save → Verify. All steps have proper titles under 50 chars and text under 300 chars. Verification step is valuable, not padding. The step grouping is appropriate - each step is a coherent unit. No factual errors or sequence problems. Excellent balance of thoroughness without being excessive.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Very similar quality to Model A. Clear imperative language, proper sequence, good verification. Slightly helpful note about Save triggering Save As for new documents. All format requirements met. Steps are well-grouped and logical. Title bar verification is practical. Good pedagogical approach without being padded.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Solid 5-step procedure that covers the essentials. Good pedagogical touch including both menu and keyboard shortcut methods. Clear action-oriented language. Verification is embedded in the final step rather than separate, which is efficient. Format compliant. Slightly more concise than A/E but still complete. Minor issue: 'Choose Save Option' title could be more specific.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Clear, focused procedure for MS Word specifically. Good action-oriented steps with imperative verbs. Proper sequence and verification. Format compliant. The Word-specific focus is fine (saves a document in Word). Step text is clear and concise. Slightly less universal than A/E/F but completely valid approach. Small issue: 'Press Enter if needed to confirm format' is slightly vague.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Concise 5-step procedure that covers the basics adequately. Good action-oriented language with imperative verbs. Correct sequence. Verification included in final step. Format compliant. Slightly less detailed than top models but appropriate for a simple task. Step 2 correctly notes dialog appears on first save. Minor issue: Steps 3-4 reverse the typical order (usually location then name), but this varies by application so not a significant error.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Good procedure with sensible verification steps. The first step about making a small edit is reasonable preparation (ensures there's something to save). Clear imperative language throughout. Format compliant. Good sequence. However, 7 steps for this task is slightly more than needed, and Step 1 could be seen as unnecessary if the user already has content. Still a valid, well-structured guide.",
+          "score": 7.7
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Clear steps with good action-oriented language. Format compliant. Step 4 (Navigate to Documents) is overly prescriptive - assumes user wants Documents folder specifically. Step 3 requiring Browse/This PC click adds an extra step that may not be needed in all applications. 7 steps for this task is acceptable but the specificity about Documents folder is slightly limiting. Otherwise well-structured.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Starts well with keyboard shortcut. Good verification of file format is included. However, Steps 6 and 7 drift from the core task - 'Save future changes' and 'Confirm work is preserved' are more about ongoing document management than completing the initial save. Step 7 about closing the document is beyond scope. These extra steps feel like padding that goes beyond the task of saving a document. Format compliant.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Most comprehensive but arguably over-complicated for a simple save task. 9 steps is excessive. AutoSave step at the end is beyond scope. Multiple conditional paths (if prompted, if you want) add complexity. Covers too many scenarios (Windows/Linux/Mac, different applications, cloud folders). While technically accurate and helpful, it's more of a reference guide than a simple how-to. Good for advanced users but could overwhelm beginners. Format compliant.",
+          "score": 6.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "This model provides the most robust and universally applicable instructions. It adheres perfectly to the standard \"File > Save As\" workflow while intelligently anticipating variations in software (specifically noting that users might need to click \"Browse,\" which covers the modern Microsoft Office behavior without excluding other word processors). The steps are clear, action-oriented, and include excellent verification.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model A is nearly perfect in its clarity and formatting. It presents a clean, linear progression that works for almost any desktop application. It scores slightly lower than E only because it doesn't explicitly mention the potential intermediate \"Browse\" step required in some modern suites, but it is otherwise a flawless generic guide.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "This output is strong and efficiently combines the menu action with the keyboard shortcut, giving the user agency. The steps are logical and clear. It integrates the verification into the final step rather than making it a standalone step, which is acceptable but slightly less emphatic than A or E.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model G includes a helpful setup step (\"type a few words\"), ensuring the user actually has something to save. The flow is logical and the verification is distinct. It is a very practical and user-friendly guide.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "This model provides high-quality instructions specifically for modern Microsoft Word (referencing \"Browse\" and \"This PC\"). While excellent for that specific software, it is less generic than the top models. Instructions like \"Click on 'Save As' in the left-hand sidebar\" may confuse users of other editors (like Google Docs or Notepad).",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Similar to Model I, this focuses heavily on the Microsoft Word interface logic (\"File tab,\" \"Backstage view\"). It is accurate and well-written but suffers from the same lack of generic applicability compared to the top tier.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "This model prioritizes the keyboard shortcut (Ctrl+S). While valid, a menu-driven approach is generally preferred for beginner tutorials on \"simple activities\" as it is more visual. The steps are otherwise accurate and follow a good sequence.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "The instructions are adequate but slightly brief. The sequencing in steps 3 and 4 (entering the name before choosing the folder) is risky; in many file dialogs, navigating to a new folder can sometimes reset or distract focus from the file name field. It is functional but less refined.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "This model introduces confusing conditional logic in steps 2 and 3. It suggests pressing a shortcut, then says \"If prompted... open the Save As dialog by clicking File > Save As.\" If the shortcut prompted the user, the dialog is already open; telling them to navigate the menu afterwards is contradictory and confusing. The flow is disjointed.",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Clear, beginner-friendly sequence with imperative verbs, includes Save vs Save As branch, and explicit verification (title bar + unsaved indicator). Steps are well-grouped and actionable. Titles and texts appear within limits.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Very complete: shortcut + menu path, handles Save As prompts, includes format choice and strong verification options. Slight issues: Step 3 mixes conditions (\"If prompted\" then \"open...\"), and a couple steps are a bit wordy/conditional, but still followable and not confusing. Likely within char limits.",
+          "score": 8.9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Concise, actionable, includes shortcut and verification via title bar. Logical flow and good grouping. Minor gap: no explicit \"if prompted\" handling beyond first-save note; otherwise solid.",
+          "score": 8.4
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Simple and accurate for many apps: File > Save, name, location, save, verify. Imperative language and clear verification. Slight ordering ambiguity for some Save As dialogs (often location/name come together) but generally acceptable.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Clear Save As flow and explicit verification. Minor padding/wordiness in Step 2 explanation (still practical) and assumes Save As as the main route, but not incorrect for first save.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Clear Save As walkthrough with verification. Slightly more descriptive than necessary in a couple steps (explanatory sentences), and assumes top menu bar \"File\" dropdown (not universal), but overall accurate and followable.",
+          "score": 7.7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Good, coherent steps and verification, but more Word-specific (Backstage view) and includes a slightly odd/unclear line about pressing Enter to confirm format. Still largely correct and actionable.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Covers shortcut, location/name/format, and saving again later. However, verification is weaker (mostly descriptive), and the final 'close document to confirm' is indirect and not a clear save-success check. Also claims Ctrl/Cmd+S \"opens the Save dialog\" (not always true if already saved).",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Actionable and includes verification, but overly prescriptive/universalizes specifics (\"Save As\" in left sidebar, \"Browse/This PC,\" and forcing Documents). Adds some conceptual justification. Still workable, but less generally applicable than others.",
+          "score": 6.8
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-custom",
+  "testCaseId": "en-short-activity-1"
+}

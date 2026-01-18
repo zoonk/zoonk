@@ -1,0 +1,185 @@
+{
+  "expectations": "\nLANGUAGE REQUIREMENT: Titles and text must be in Portuguese.\n\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Bread dough preparation requires specific techniques. Penalize if:\n   - Ingredient order matters and is wrong (yeast activation before mixing with flour)\n   - Kneading technique or duration guidance is missing\n\n2. TEXTURE CHECK: Penalize if:\n   - No description of what the dough should look/feel like at each stage\n   - Proofing instructions are missing or lack time/visual cues\n\n3. TEMPERATURE CHECK: Penalize if water temperature for yeast is not specified (critical for yeast activation).\n\n\nANTI-CHECKLIST GUIDANCE (READ THIS FIRST - CRITICAL):\n- Do NOT penalize for missing steps you might expect\n- Do NOT require a specific number of steps - let complexity dictate length\n- Do NOT check against an imagined \"ideal\" procedure\n- Do NOT interpret rules too literally - use common sense\n- Different valid procedures exist - assess the quality of what IS provided\n- ONLY penalize for actual problems: incorrect sequence, factual errors, missing critical safety steps, or truly confusing instructions\n\nEVALUATION CRITERIA:\n\n1. PROCEDURAL ACCURACY: Steps must be in correct sequence. Penalize only if actions are genuinely out of order or skip critical prerequisites.\n\n2. ACTION-ORIENTED LANGUAGE: Each step must use imperative verbs (Click, Type, Add, Place, Turn, etc.). Penalize passive or purely descriptive language.\n\n3. LOGICAL STEP GROUPING: Steps should be coherent units that a user can follow without confusion. This does NOT mean micro-splitting every movement:\n   - ACCEPTABLE: \"Click the File name field and type your document name\" (filling a form field is ONE action)\n   - ACCEPTABLE: \"Pull over safely and turn on hazard lights\" (logically grouped safety actions)\n   - ACCEPTABLE: \"Pour hot water, swirl to warm, then discard\" (continuous motion)\n   - PROBLEMATIC: \"Download the file, install it, configure settings, and restart\" (unrelated actions crammed together)\n   The goal is clarity, not arbitrary splitting. If a step reads naturally and a user can follow it without confusion, it's fine.\n\n4. VERIFICATION POINTS: Where helpful, include confirmation of success. Only penalize if verification is missing for critical/risky actions. Do NOT penalize verification steps as \"padding\" - helping users confirm success is valuable teaching.\n\n5. FORMAT COMPLIANCE:\n   - title: Maximum 50 characters\n   - text: Maximum 300 characters\n\n6. SCOPE ADHERENCE: Content should cover the activity as described. Do not penalize for reasonable setup or verification steps.\n\n7. PRACTICAL FOCUS: Steps should be actionable instructions, not conceptual explanations.\n\nFINAL CHECK: Before penalizing anything, ask yourself: \"Would a reasonable human instructor consider this a genuine problem?\" If not, do not penalize.\n\n    ",
+  "judgedAt": "2026-01-18T04:07:14.595Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model A is comprehensive and well-structured. It specifies water temperature (37°C), includes yeast activation verification with troubleshooting, provides detailed kneading technique with duration (8-10 min), includes the windowpane test, and gives clear proofing instructions with visual cues (double in size, 1 hour). Texture descriptions are present at each stage. All steps use action-oriented language. Title lengths are within 50 chars and text within 300 chars. The only minor issue is not specifying fat quantity in ingredients but this is not critical. Outstanding coverage of all topic-specific requirements.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Model E provides excellent coverage. Specifies water temperature (37°C), includes yeast activation verification with troubleshooting, provides kneading duration (10 min) and technique, includes the windowpane test, and provides proofing instructions with visual cues. All in Portuguese with action-oriented language. Slightly less detailed than Model A on the folding/turning technique during kneading, but includes the important step of oiling the dough before proofing. Very complete and well-organized.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model G is thorough with specific temperatures (38-43°C), includes yeast activation with timing, provides windowpane test, kneading duration (8-10 min) with technique, and proofing instructions with time range (60-90 min). Includes weights for precision. All in Portuguese with good action verbs. Minor issues: some abbreviations ('min', 'g', 'ml') are acceptable but slightly informal; the ingredient list step is somewhat dense. Overall very solid coverage of all requirements.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model C is detailed with good texture descriptions throughout. Includes yeast activation verification, kneading technique and duration (8-12 min), and windowpane test. However, it lacks explicit proofing/rising instructions - it ends after testing the dough point without covering the fermentation rest. This is a notable gap for bread dough preparation. Water temperature guidance is present but vague ('not hot, warm to touch'). Action-oriented language is used throughout. Missing the fermentation step is significant.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Model F provides good coverage with a practical analogy for temperature ('like a baby bottle'), includes yeast activation verification, kneading duration (10-15 min) with technique, and has good texture descriptions. However, it lacks explicit proofing time guidance - says 'prepare for rest' but never includes the actual proofing step with timing. Temperature specification is informal but adequate. Missing the complete proofing instructions is a notable gap.",
+          "score": 7.3
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Model B covers the basic process but has several gaps. Water temperature is vague ('slightly warm to touch'). Yeast activation is present but without verification troubleshooting. Kneading duration (10 min) is mentioned but technique is minimal. Proofing instructions say 'until doubled' but no time estimate. The 'preheat oven light' step is creative but unusual. Texture descriptions are present but minimal. Overall functional but missing specificity on critical temperature and more detailed proofing guidance.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Model I has good structure with water temperature (40°C), yeast activation with verification, and kneading technique with duration (10 min). Includes both a finger test and stretch test. However, it completely lacks proofing/fermentation instructions - ends after testing texture without the crucial rising step. This is a significant omission for bread dough preparation. Otherwise well-written in Portuguese with action-oriented language.",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Model H is concise but too abbreviated for bread-making instruction. Temperature range is given (35-40°C), yeast activation is included, but kneading technique is minimal ('press, fold, repeat') and texture descriptions are sparse. Only 5 steps total means important details are compressed or missing. The proofing step is present with time (1 hour) and visual cue. The brevity sacrifices important guidance that beginners would need. Steps are overly combined, cramming multiple actions together.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model D is incomplete and missing critical elements. Only 7 steps total. No water temperature is specified - just 'água morna' (warm water) without guidance. No proofing/fermentation instructions after kneading is complete. Yeast activation is present with verification. Kneading technique is decent with duration (8-10 min) and elasticity check, plus a finger test. However, the missing temperature specification (critical for yeast) and missing proofing instructions are significant gaps per the evaluation criteria.",
+          "score": 5.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "This output is exceptional. It provides precise metric measurements (500g flour/300ml water) ensuring a correct hydration ratio. It includes critical troubleshooting steps (checking for yeast foam, what to do if it fails). The instructions cover every requirement: water temperature (specified as 37°C), visual/tactile descriptions (foam, elastic, smooth), kneading technique, and the windowpane test for gluten verification. The formatting is perfect, and the imperative language is clear and encouraging.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "An excellent, highly technical guide. It uses metric measurements and even suggests using a thermometer, which ensures high accuracy. It covers all checks (windowpane, proofing). It is ranked slightly below Model A only because the instruction to mix for exactly '10-15 seconds' or separating water portions is slightly more complex/robotic than necessary for a general guide, but the content is practically flawless.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "A very strong output that follows a safe, standard procedure. It includes excellent verification steps (yeast activation check, windowpane test). It is ranked below A and G primarily because it uses volumetric measurements (cups) rather than weight (grams), which is less accurate for baking, though the ratio provided (1:3 water to flour) is functional.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Good output with correct metric quantities and clear instructions. It uses a helpful colloquial comparison for water temperature ('like a baby bottle'). It is ranked lower because the final step is slightly weak—it instructs to 'prepare for rest' but does not explicitly detail the proofing duration or the 'double in size' visual cue in a dedicated step, leaving the process feeling slightly unfinished.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "This model provides accurate metric ingredients and describes the dough-making process well. However, it completely omits the proofing/resting stage, ending immediately after kneading and testing the gluten. While the dough is technically 'made', bread dough preparation standardly includes the bulk fermentation step.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "The procedural steps are logical and include proofing. However, the model fails to list specific quantities for the ingredients (Step 1 just says 'Separate flour, water...'). Without a recipe/amounts, the user cannot actually perform the task. It is a procedure for someone who already has a recipe, which limits its utility compared to the top models.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Similar to Model B, this output lacks specific quantities, relying on a 'feel' method ('add flour gradually, one cup at a time'). While a valid traditional method, it is difficult for beginners. It also omits the proofing stage, ending after kneading.",
+          "score": 3.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "This output suffers from the same issues as B and D but is the least helpful. It lists ingredients without quantities and stops before proofing. It serves more as a checklist of actions than a functional guide.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "This model contains a fatal accuracy error. It instructs using 500ml of water for 500g of flour. This creates a 100% hydration mixture (a batter), which is impossible to knead by hand using the standard push-and-fold technique described. Following these instructions would result in a chaotic mess rather than bread dough.",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Muito completo e bem sequenciado: especifica temperatura da água (37°C), ativa o fermento antes de misturar com a farinha, dá orientação clara de sova (movimento + 8–10 min) e vários pontos de verificação (espuma; teste da membrana). Inclui cues de textura (grudenta → lisa/elástica) e fermentação com tempo e sinal visual (dobrar de tamanho). Títulos em PT e dentro do limite; textos parecem <300 caracteres por passo.",
+          "score": 9.6
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Excelente tecnicamente: temperatura explícita (38–43°C) com termômetro, ativação correta, sova com tempo (8–10 min) e teste da janela. Inclui descanso/prova com tempo e cue (60–90 min até dobrar). Linguagem imperativa e agrupamento lógico. Pequena ressalva: 38–43°C é uma faixa alta; ainda pode funcionar, mas aumenta risco de água quente demais para algumas leveduras.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Muito bom: temperatura (37°C), ativação com verificação, sova com duração (10 min) e testes (janela). Inclui prova/descanso com 1h e “dobrar de tamanho”. Boa descrição de textura em etapas. Sequência correta e linguagem de comando. Sem problemas relevantes.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Bom e bem estruturado: ativa fermento com ~40°C, verifica espuma, descreve mistura e sova (10 min) com teste de ponto. Boa orientação de textura. Falta etapa de fermentação/prova (descanso até dobrar), que é uma instrução crítica de panificação segundo os critérios.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Bom em ativação e sova: indica água morna “como mamadeira”, descreve técnica e 10–15 min, e checagem do ponto. Porém não especifica temperatura numérica da água (exigência crítica), e também não inclui instrução de fermentação/prova (apenas ‘prepare para o descanso’ sem tempo/sinais).",
+          "score": 7.3
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Inclui temperatura (35–40°C), sequência correta, sova com 10 min e fermentação com 1h/dobrar de tamanho. Porém há provável erro de proporção: 500 ml de água para 500 g de farinha tende a virar massa extremamente hidratada para um pão comum, o que pode confundir/atrapalhar. Também não há gordura/salvo na água, mas isso é opcional.",
+          "score": 7.1
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Boa ativação e sinais visuais, e sova com duração (8–12 min) e teste do ponto. Contudo não especifica temperatura da água numericamente (exigência crítica) e não traz instrução de fermentação/prova (tempo e cue de dobrar).",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Sequência razoável e inclui ativação com sinais e sova por 10 min. Mas não especifica temperatura da água (só ‘morna’), e há uma orientação questionável de colocar sal e óleo juntos no centro ‘antes’ do fermento (pode pôr sal em contato mais direto com o fermento ao despejar, e a instrução é confusa/desnecessária). Prova não tem tempo (só ‘até dobrar’).",
+          "score": 6.6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Passos claros e boa orientação de sova (8–10 min) e testes de ponto, mas falha em duas exigências críticas: não especifica temperatura da água e não inclui instruções de fermentação/prova (descanso até dobrar, tempo/cues). Também adiciona sal diretamente aos líquidos com fermento ativado; isso pode funcionar diluído, mas é uma escolha menos robusta.",
+          "score": 6.2
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-custom",
+  "testCaseId": "pt-cooking-preparar-massa-1"
+}
