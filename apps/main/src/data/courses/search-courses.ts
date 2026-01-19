@@ -11,23 +11,21 @@ export type CourseWithOrganization = Course & {
   organization: Organization;
 };
 
-export const searchCourses = cache(
-  async (params: {
-    query: string;
-    language: string;
-    limit?: number;
-  }): Promise<CourseWithOrganization[]> => {
-    const normalizedSearch = normalizeString(params.query);
+const cachedSearchCourses = cache(
+  async (
+    query: string,
+    language: string,
+    limit: number,
+  ): Promise<CourseWithOrganization[]> => {
+    const normalizedSearch = normalizeString(query);
 
     if (!normalizedSearch) {
       return [];
     }
 
-    const limit = clampQueryItems(params.limit ?? DEFAULT_SEARCH_LIMIT);
-
     const baseWhere = {
       isPublished: true,
-      language: params.language,
+      language,
       organization: { kind: "brand" } as const,
     };
 
@@ -53,3 +51,12 @@ export const searchCourses = cache(
     return mergeSearchResults(exactMatch, containsMatches);
   },
 );
+
+export function searchCourses(params: {
+  query: string;
+  language: string;
+  limit?: number;
+}): Promise<CourseWithOrganization[]> {
+  const limit = clampQueryItems(params.limit ?? DEFAULT_SEARCH_LIMIT);
+  return cachedSearchCourses(params.query, params.language, limit);
+}

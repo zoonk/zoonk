@@ -6,25 +6,25 @@ import { AppError, safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
 import { ErrorCode } from "@/lib/app-error";
 
-export const listChapterLessons = cache(
-  async (params: {
-    chapterSlug: string;
-    headers?: Headers;
-    orgSlug: string;
-  }): Promise<{ data: Lesson[]; error: Error | null }> => {
+const cachedListChapterLessons = cache(
+  async (
+    chapterSlug: string,
+    orgSlug: string,
+    headers?: Headers,
+  ): Promise<{ data: Lesson[]; error: Error | null }> => {
     const { data, error } = await safeAsync(() =>
       Promise.all([
         hasCoursePermission({
-          headers: params.headers,
-          orgSlug: params.orgSlug,
+          headers,
+          orgSlug,
           permission: "update",
         }),
         prisma.lesson.findMany({
           orderBy: { position: "asc" },
           where: {
             chapter: {
-              organization: { slug: params.orgSlug },
-              slug: params.chapterSlug,
+              organization: { slug: orgSlug },
+              slug: chapterSlug,
             },
           },
         }),
@@ -44,3 +44,15 @@ export const listChapterLessons = cache(
     return { data: lessons, error: null };
   },
 );
+
+export function listChapterLessons(params: {
+  chapterSlug: string;
+  headers?: Headers;
+  orgSlug: string;
+}): Promise<{ data: Lesson[]; error: Error | null }> {
+  return cachedListChapterLessons(
+    params.chapterSlug,
+    params.orgSlug,
+    params.headers,
+  );
+}

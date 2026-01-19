@@ -4,18 +4,22 @@ import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
 
-export const chapterSlugExists = cache(
-  async (params: { courseId: number; slug: string }): Promise<boolean> => {
+const cachedChapterSlugExists = cache(
+  async (courseId: number, slug: string): Promise<boolean> => {
     const { data } = await safeAsync(() =>
       prisma.chapter.findFirst({
         select: { id: true },
-        where: {
-          courseId: params.courseId,
-          slug: params.slug,
-        },
+        where: { courseId, slug },
       }),
     );
 
     return data !== null;
   },
 );
+
+export function chapterSlugExists(params: {
+  courseId: number;
+  slug: string;
+}): Promise<boolean> {
+  return cachedChapterSlugExists(params.courseId, params.slug);
+}

@@ -90,7 +90,6 @@ function processScoreData(
   rawData: RawDataPoint[],
   period: ScorePeriod,
 ): { date: Date; score: number }[] {
-  // For month view, calculate daily score
   if (period === "month") {
     return rawData.map((point) => ({
       date: point.date,
@@ -98,25 +97,27 @@ function processScoreData(
     }));
   }
 
-  // For 6 months view, aggregate by week
   if (period === "6months") {
     return aggregateScoreByWeek(rawData, calculateScore);
   }
 
-  // For year view, aggregate by month
   return aggregateScoreByMonth(rawData, calculateScore);
 }
 
-export const getScoreHistory = cache(
-  async (params: ScoreHistoryParams): Promise<ScoreHistoryData | null> => {
-    const session = await getSession({ headers: params.headers });
+const cachedGetScoreHistory = cache(
+  async (
+    period: ScorePeriod,
+    offset: number,
+    locale: string,
+    headers?: Headers,
+  ): Promise<ScoreHistoryData | null> => {
+    const session = await getSession({ headers });
 
     if (!session) {
       return null;
     }
 
     const userId = Number(session.user.id);
-    const { period, offset = 0, locale = "en" } = params;
     const { current, previous } = calculateDateRanges(period, offset);
 
     const [currentResult, previousResult] = await Promise.all([
@@ -130,7 +131,6 @@ export const getScoreHistory = cache(
 
     const rawData = currentResult.data;
 
-    // Filter out days with no answers (0 correct + 0 incorrect)
     const validData = rawData.filter(
       (point) => point.correct + point.incorrect > 0,
     );
@@ -149,7 +149,6 @@ export const getScoreHistory = cache(
 
     const average = calculateAverage(currentData);
 
-    // Also process previous period for comparison
     const previousRaw = previousResult.data ?? [];
     const previousValid = previousRaw.filter(
       (point) => point.correct + point.incorrect > 0,
@@ -159,7 +158,6 @@ export const getScoreHistory = cache(
     const previousAverage =
       previousData.length > 0 ? calculateAverage(previousData) : null;
 
-    // Check if there's data before the current period
     const { data: earlierData } = await safeAsync(() =>
       prisma.dailyProgress.findFirst({
         select: { id: true },
@@ -185,3 +183,14 @@ export const getScoreHistory = cache(
     };
   },
 );
+
+export function getScoreHistory(
+  params: ScoreHistoryParams,
+): Promise<ScoreHistoryData | null> {
+  return cachedGetScoreHistory(
+    params.period,
+    params.offset ?? 0,
+    params.locale ?? "en",
+    params.headers,
+  );
+}

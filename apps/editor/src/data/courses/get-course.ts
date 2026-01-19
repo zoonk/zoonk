@@ -6,25 +6,25 @@ import { AppError, type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
 import { ErrorCode } from "@/lib/app-error";
 
-export const getCourse = cache(
-  async (params: {
-    courseSlug: string;
-    language: string;
-    orgSlug: string;
-    headers?: Headers;
-  }): Promise<SafeReturn<Course | null>> => {
+const cachedGetCourse = cache(
+  async (
+    courseSlug: string,
+    language: string,
+    orgSlug: string,
+    headers?: Headers,
+  ): Promise<SafeReturn<Course | null>> => {
     const { data, error } = await safeAsync(() =>
       Promise.all([
         hasCoursePermission({
-          headers: params.headers,
-          orgSlug: params.orgSlug,
+          headers,
+          orgSlug,
           permission: "update",
         }),
         prisma.course.findFirst({
           where: {
-            language: params.language,
-            organization: { slug: params.orgSlug },
-            slug: params.courseSlug,
+            language,
+            organization: { slug: orgSlug },
+            slug: courseSlug,
           },
         }),
       ]),
@@ -47,3 +47,17 @@ export const getCourse = cache(
     return { data: course, error: null };
   },
 );
+
+export function getCourse(params: {
+  courseSlug: string;
+  language: string;
+  orgSlug: string;
+  headers?: Headers;
+}): Promise<SafeReturn<Course | null>> {
+  return cachedGetCourse(
+    params.courseSlug,
+    params.language,
+    params.orgSlug,
+    params.headers,
+  );
+}

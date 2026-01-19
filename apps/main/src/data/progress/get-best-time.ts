@@ -13,21 +13,16 @@ export type BestTimeData = {
 
 export type BestTimeParams = {
   headers?: Headers;
-  /**
-   * Start date for filtering. When provided with endDate,
-   * uses the date range instead of the default 90-day window.
-   */
   startDate?: Date;
-  /**
-   * End date for filtering. When provided with startDate,
-   * uses the date range instead of the default 90-day window.
-   */
   endDate?: Date;
 };
 
-export const getBestTime = cache(
-  async (params?: BestTimeParams): Promise<BestTimeData | null> => {
-    const session = await getSession({ headers: params?.headers });
+const cachedGetBestTime = cache(
+  async (
+    startDateIso: string | undefined,
+    headers?: Headers,
+  ): Promise<BestTimeData | null> => {
+    const session = await getSession({ headers });
 
     if (!session) {
       return null;
@@ -35,11 +30,10 @@ export const getBestTime = cache(
 
     const userId = Number(session.user.id);
 
-    // Use provided date range or default to 90 days
     let startDate: Date;
 
-    if (params?.startDate) {
-      startDate = params.startDate;
+    if (startDateIso) {
+      startDate = new Date(startDateIso);
     } else {
       startDate = new Date();
       startDate.setDate(startDate.getDate() - 90);
@@ -81,3 +75,9 @@ export const getBestTime = cache(
     return bestTime;
   },
 );
+
+export function getBestTime(
+  params?: BestTimeParams,
+): Promise<BestTimeData | null> {
+  return cachedGetBestTime(params?.startDate?.toISOString(), params?.headers);
+}

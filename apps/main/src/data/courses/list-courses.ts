@@ -11,15 +11,13 @@ export type CourseWithOrg = Course & {
   organization: { slug: string };
 };
 
-export const listCourses = cache(
-  async (params: {
-    category?: CourseCategory;
-    cursor?: number;
-    language: string;
-    limit?: number;
-  }): Promise<CourseWithOrg[]> => {
-    const limit = clampQueryItems(params.limit ?? LIST_COURSES_LIMIT);
-
+const cachedListCourses = cache(
+  async (
+    language: string,
+    limit: number,
+    category?: CourseCategory,
+    cursor?: number,
+  ): Promise<CourseWithOrg[]> => {
     const courses = await prisma.course.findMany({
       include: {
         organization: {
@@ -28,16 +26,16 @@ export const listCourses = cache(
       },
       orderBy: [{ users: { _count: "desc" } }, { createdAt: "desc" }],
       take: limit,
-      ...(params.cursor && {
-        cursor: { id: params.cursor },
+      ...(cursor && {
+        cursor: { id: cursor },
         skip: 1,
       }),
       where: {
         isPublished: true,
-        language: params.language,
+        language,
         organization: { kind: "brand" },
-        ...(params.category && {
-          categories: { some: { category: params.category } },
+        ...(category && {
+          categories: { some: { category } },
         }),
       },
     });
@@ -45,3 +43,18 @@ export const listCourses = cache(
     return courses;
   },
 );
+
+export function listCourses(params: {
+  category?: CourseCategory;
+  cursor?: number;
+  language: string;
+  limit?: number;
+}): Promise<CourseWithOrg[]> {
+  const limit = clampQueryItems(params.limit ?? LIST_COURSES_LIMIT);
+  return cachedListCourses(
+    params.language,
+    limit,
+    params.category,
+    params.cursor,
+  );
+}

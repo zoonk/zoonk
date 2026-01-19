@@ -26,14 +26,14 @@ async function getOrganizationId({
   return null;
 }
 
-export const hasCoursePermission = cache(
-  async (opts: {
-    permission: CoursePermission;
-    headers?: Headers;
-    orgId?: number;
-    orgSlug?: string;
-  }): Promise<boolean> => {
-    const organizationId = await getOrganizationId(opts);
+const cachedHasCoursePermission = cache(
+  async (
+    permission: CoursePermission,
+    orgId: number | undefined,
+    orgSlug: string | undefined,
+    reqHeaders?: Headers,
+  ): Promise<boolean> => {
+    const organizationId = await getOrganizationId({ orgId, orgSlug });
 
     if (!organizationId) {
       return false;
@@ -43,9 +43,9 @@ export const hasCoursePermission = cache(
       auth.api.hasPermission({
         body: {
           organizationId: String(organizationId),
-          permissions: { course: [opts.permission] },
+          permissions: { course: [permission] },
         },
-        headers: opts.headers ?? (await headers()),
+        headers: reqHeaders ?? (await headers()),
       }),
     );
 
@@ -56,3 +56,17 @@ export const hasCoursePermission = cache(
     return data.success;
   },
 );
+
+export function hasCoursePermission(opts: {
+  permission: CoursePermission;
+  headers?: Headers;
+  orgId?: number;
+  orgSlug?: string;
+}): Promise<boolean> {
+  return cachedHasCoursePermission(
+    opts.permission,
+    opts.orgId,
+    opts.orgSlug,
+    opts.headers,
+  );
+}

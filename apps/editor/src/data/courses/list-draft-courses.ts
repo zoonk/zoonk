@@ -6,25 +6,25 @@ import { AppError, safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
 import { ErrorCode } from "@/lib/app-error";
 
-export const listDraftCourses = cache(
-  async (params: {
-    orgSlug: string;
-    headers?: Headers;
-    language?: string;
-  }): Promise<{ data: Course[]; error: Error | null }> => {
+const cachedListDraftCourses = cache(
+  async (
+    orgSlug: string,
+    language?: string,
+    headers?: Headers,
+  ): Promise<{ data: Course[]; error: Error | null }> => {
     const { data, error } = await safeAsync(() =>
       Promise.all([
         hasCoursePermission({
-          headers: params.headers,
-          orgSlug: params.orgSlug,
+          headers,
+          orgSlug,
           permission: "update",
         }),
         prisma.course.findMany({
           orderBy: { createdAt: "desc" },
           where: {
             isPublished: false,
-            organization: { slug: params.orgSlug },
-            ...(params.language && { language: params.language }),
+            organization: { slug: orgSlug },
+            ...(language && { language }),
           },
         }),
       ]),
@@ -43,3 +43,15 @@ export const listDraftCourses = cache(
     return { data: courses, error: null };
   },
 );
+
+export function listDraftCourses(params: {
+  orgSlug: string;
+  headers?: Headers;
+  language?: string;
+}): Promise<{ data: Course[]; error: Error | null }> {
+  return cachedListDraftCourses(
+    params.orgSlug,
+    params.language,
+    params.headers,
+  );
+}

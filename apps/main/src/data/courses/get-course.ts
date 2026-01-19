@@ -17,12 +17,12 @@ export type CourseWithDetails = {
   categories: { category: string }[];
 };
 
-export const getCourse = cache(
-  async (params: {
-    brandSlug: string;
-    courseSlug: string;
-    language: string;
-  }): Promise<CourseWithDetails | null> =>
+const cachedGetCourse = cache(
+  async (
+    brandSlug: string,
+    courseSlug: string,
+    language: string,
+  ): Promise<CourseWithDetails | null> =>
     prisma.course.findFirst({
       select: {
         categories: {
@@ -39,12 +39,20 @@ export const getCourse = cache(
       },
       where: {
         isPublished: true,
-        language: params.language,
+        language,
         organization: {
           kind: "brand",
-          slug: params.brandSlug,
+          slug: brandSlug,
         },
-        slug: params.courseSlug,
+        slug: courseSlug,
       },
     }),
 );
+
+export function getCourse(params: {
+  brandSlug: string;
+  courseSlug: string;
+  language: string;
+}): Promise<CourseWithDetails | null> {
+  return cachedGetCourse(params.brandSlug, params.courseSlug, params.language);
+}
