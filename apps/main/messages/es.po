@@ -1022,21 +1022,6 @@ msgctxt "rso9iW"
 msgid "Checking for existing course"
 msgstr "Verificando si el curso existe"
 
-#: src/app/[locale]/generate/l/[id]/generate-lesson-content.tsx
-msgctxt "hbm9cV"
-msgid "This page is under construction."
-msgstr "Esta página está en construcción."
-
-#: src/app/[locale]/generate/l/[id]/generate-lesson-content.tsx
-msgctxt "JILSfe"
-msgid "Lesson ID: {id}"
-msgstr "ID de lección: {id}"
-
-#: src/app/[locale]/generate/l/[id]/generate-lesson-content.tsx
-msgctxt "lNjM4Q"
-msgid "Generate Lesson Activities"
-msgstr "Generar actividades de lección"
-
 #: src/app/[locale]/privacy/page.tsx
 msgctxt "iql85X"
 msgid "Read Zoonk's privacy policy to understand how we collect, use, and protect your personal information."

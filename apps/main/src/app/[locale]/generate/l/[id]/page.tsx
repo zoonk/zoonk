@@ -1,15 +1,5 @@
-import { Suspense } from "react";
-import {
-  GenerateLessonContent,
-  GenerateLessonFallback,
-} from "./generate-lesson-content";
+// biome-ignore-all lint/nursery/noJsxLiterals: placeholder page, no need to localize
 
-export default function GenerateLessonActivitiesPage(
-  props: PageProps<"/[locale]/generate/l/[id]">,
-) {
-  return (
-    <Suspense fallback={<GenerateLessonFallback />}>
-      <GenerateLessonContent params={props.params} />
-    </Suspense>
-  );
+export default function GenerateLessonActivitiesPage() {
+  return <div>placeholder page, this will be updated soon</div>;
 }
