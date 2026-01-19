@@ -1153,6 +1153,11 @@ msgid "A comprehensive quiz covering everything you learned in this lesson."
 msgstr "A comprehensive quiz covering everything you learned in this lesson."
 
 #: src/lib/activities.ts
+msgctxt "f9gZnh"
+msgid "Learn new words and their translations to build your vocabulary."
+msgstr "Learn new words and their translations to build your vocabulary."
+
+#: src/lib/activities.ts
 msgctxt "gyZY3d"
 msgid "Tests analytical thinking through decisions with trade-offs. See how each choice impacts different outcomes."
 msgstr "Tests analytical thinking through decisions with trade-offs. See how each choice impacts different outcomes."
@@ -1161,11 +1166,6 @@ msgstr "Tests analytical thinking through decisions with trade-offs. See how eac
 msgctxt "J9eZ8n"
 msgid "Listen to audio sentences and translate them to practice listening skills."
 msgstr "Listen to audio sentences and translate them to practice listening skills."
-
-#: src/lib/activities.ts
-msgctxt "K+0Eg0"
-msgid "Learn new words with their translations. Includes articles for gendered languages and pronunciation for non-Roman scripts."
-msgstr "Learn new words with their translations. Includes articles for gendered languages and pronunciation for non-Roman scripts."
 
 #: src/lib/activities.ts
 msgctxt "kmCCVm"

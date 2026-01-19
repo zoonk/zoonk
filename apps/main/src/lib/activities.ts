@@ -64,7 +64,7 @@ export async function getActivityKinds(params?: {
     },
     {
       description: t(
-        "Learn new words with their translations. Includes articles for gendered languages and pronunciation for non-Roman scripts.",
+        "Learn new words and their translations to build your vocabulary.",
       ),
       key: "vocabulary",
       label: t("Vocabulary"),
