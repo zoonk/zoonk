@@ -107,6 +107,7 @@ describe("admins", () => {
     expect(result.data?.organizationId).toBe(organization.id);
     expect(result.data?.chapterId).toBe(chapter.id);
     expect(result.data?.language).toBe(chapter.language);
+    expect(result.data?.kind).toBe("custom");
   });
 
   test("normalizes slug", async () => {
