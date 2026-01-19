@@ -19,14 +19,14 @@ export type LessonWithDetails = {
   };
 };
 
-export const getLesson = cache(
-  async (params: {
-    brandSlug: string;
-    chapterSlug: string;
-    courseSlug: string;
-    lessonSlug: string;
-  }): Promise<LessonWithDetails | null> =>
-    prisma.lesson.findFirst({
+const cachedGetLesson = cache(
+  async (
+    brandSlug: string,
+    courseSlug: string,
+    chapterSlug: string,
+    lessonSlug: string,
+  ) => {
+    const data = await prisma.lesson.findFirst({
       select: {
         chapter: {
           select: {
@@ -45,14 +45,31 @@ export const getLesson = cache(
         chapter: {
           course: {
             isPublished: true,
-            organization: { kind: "brand", slug: params.brandSlug },
-            slug: params.courseSlug,
+            organization: { kind: "brand", slug: brandSlug },
+            slug: courseSlug,
           },
           isPublished: true,
-          slug: params.chapterSlug,
+          slug: chapterSlug,
         },
         isPublished: true,
-        slug: params.lessonSlug,
+        slug: lessonSlug,
       },
-    }),
+    });
+
+    return data;
+  },
 );
+
+export function getLesson(params: {
+  brandSlug: string;
+  chapterSlug: string;
+  courseSlug: string;
+  lessonSlug: string;
+}): Promise<LessonWithDetails | null> {
+  return cachedGetLesson(
+    params.brandSlug,
+    params.courseSlug,
+    params.chapterSlug,
+    params.lessonSlug,
+  );
+}
