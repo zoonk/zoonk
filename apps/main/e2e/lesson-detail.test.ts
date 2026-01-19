@@ -79,14 +79,14 @@ test.describe("Lesson Detail Page", () => {
     await expect(
       page.getByRole("link", { name: /background/i }).first(),
     ).toBeVisible();
-    await expect(page.getByText(/explains why this topic exists/i)).toBeVisible();
+    await expect(
+      page.getByText(/explains why this topic exists/i),
+    ).toBeVisible();
 
     await expect(
       page.getByRole("link", { name: /explanation/i }).first(),
     ).toBeVisible();
-    await expect(
-      page.getByText(/explains what this topic is/i),
-    ).toBeVisible();
+    await expect(page.getByText(/explains what this topic is/i)).toBeVisible();
 
     await expect(
       page.getByRole("link", { name: /quiz/i }).first(),
