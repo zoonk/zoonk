@@ -142,6 +142,16 @@ msgctxt "R/6nsx"
 msgid "Subscription"
 msgstr "Suscripción"
 
+#: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/c/[chapterSlug]/l/[lessonSlug]/activity-indicator.tsx
+msgctxt "4o5CAP"
+msgid "Not completed"
+msgstr "No completada"
+
+#: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/c/[chapterSlug]/l/[lessonSlug]/activity-indicator.tsx
+msgctxt "95stPq"
+msgid "Completed"
+msgstr "Completada"
+
 #: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/c/[chapterSlug]/l/[lessonSlug]/lesson-header.tsx
 msgctxt "Dane8c"
 msgid "Lesson {position}"
@@ -1103,6 +1113,11 @@ msgid "Generating content with AI requires an active subscription."
 msgstr "Generar contenido con IA requiere una suscripción activa."
 
 #: src/lib/activities.ts
+msgctxt "/yPM2g"
+msgid "Explains HOW things work under the hood. Shows the processes, sequences, and cause-effect chains in action."
+msgstr "Explica CÓMO funcionan las cosas por dentro. Muestra los procesos, secuencias y cadenas de causa-efecto en acción."
+
+#: src/lib/activities.ts
 msgctxt "1TOMnj"
 msgid "Listening"
 msgstr "Escucha"
@@ -1128,9 +1143,44 @@ msgid "Explanation"
 msgstr "Explicación"
 
 #: src/lib/activities.ts
+msgctxt "EBP23n"
+msgid "Read sentences and translate them to practice reading comprehension."
+msgstr "Lee oraciones y tradúcelas para practicar comprensión de lectura."
+
+#: src/lib/activities.ts
+msgctxt "EUjQSf"
+msgid "A comprehensive quiz covering everything you learned in this lesson."
+msgstr "Un cuestionario completo que cubre todo lo que aprendiste en esta lección."
+
+#: src/lib/activities.ts
+msgctxt "f9gZnh"
+msgid "Learn new words and their translations to build your vocabulary."
+msgstr "Aprende nuevas palabras y sus traducciones para ampliar tu vocabulario."
+
+#: src/lib/activities.ts
+msgctxt "gyZY3d"
+msgid "Tests analytical thinking through decisions with trade-offs. See how each choice impacts different outcomes."
+msgstr "Evalúa el pensamiento analítico a través de decisiones con compensaciones. Ve cómo cada elección impacta diferentes resultados."
+
+#: src/lib/activities.ts
+msgctxt "J9eZ8n"
+msgid "Listen to audio sentences and translate them to practice listening skills."
+msgstr "Escucha oraciones en audio y tradúcelas para practicar habilidades de escucha."
+
+#: src/lib/activities.ts
+msgctxt "kmCCVm"
+msgid "Teaches grammar rules with practical exercises to help you remember and apply them."
+msgstr "Enseña reglas gramaticales con ejercicios prácticos para ayudarte a recordarlas y aplicarlas."
+
+#: src/lib/activities.ts
 msgctxt "lqtP+R"
 msgid "Vocabulary"
 msgstr "Vocabulario"
+
+#: src/lib/activities.ts
+msgctxt "M4zx2O"
+msgid "Shows WHERE this topic appears in real life. Helps you recognize it in daily routines, work, pop culture, and unexpected places."
+msgstr "Muestra DÓNDE aparece este tema en la vida real. Te ayuda a reconocerlo en rutinas diarias, trabajo, cultura popular y lugares inesperados."
 
 #: src/lib/activities.ts
 msgctxt "MOK/yK"
@@ -1158,19 +1208,29 @@ msgid "Review"
 msgstr "Repaso"
 
 #: src/lib/activities.ts
-msgctxt "Sjo1P4"
-msgid "Custom"
-msgstr "Personalizada"
+msgctxt "tzNRA/"
+msgid "Explains WHAT this topic is. Breaks down core concepts and definitions using metaphors and analogies."
+msgstr "Explica QUÉ es este tema. Desglosa conceptos centrales y definiciones usando metáforas y analogías."
 
 #: src/lib/activities.ts
-msgctxt "vuwclE"
-msgid "Pronunciation"
-msgstr "Pronunciación"
+msgctxt "WD76vM"
+msgid "Explains WHY this topic exists. Tells the origin story, the problems it solved, and why it matters today."
+msgstr "Explica POR QUÉ existe este tema. Cuenta la historia de origen, los problemas que resolvió y por qué importa hoy."
 
 #: src/lib/activities.ts
 msgctxt "XQZA8e"
 msgid "Background"
 msgstr "Contexto"
+
+#: src/lib/activities.ts
+msgctxt "y21Ybw"
+msgid "Shows WHEN to apply this topic. A dialogue with a colleague where you solve a real problem together."
+msgstr "Muestra CUÁNDO aplicar este tema. Un diálogo con un colega donde resuelven juntos un problema real."
+
+#: src/lib/activities.ts
+msgctxt "ypy024"
+msgid "Tests your understanding with questions. Uses new scenarios to check if you grasped the concept, not just memorized it."
+msgstr "Evalúa tu comprensión con preguntas. Usa nuevos escenarios para verificar si captaste el concepto, no solo lo memorizaste."
 
 #: src/lib/belt-colors.ts
 msgctxt "1W4okO"
