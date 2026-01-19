@@ -1,0 +1,203 @@
+{
+  "expectations": "\nLANGUAGE: English output required.\n\nTOPIC: German vocabulary for parents and siblings - focused specifically on immediate family members (mother, father, brother, sister, and their variations).\n\nSCRIPT: Roman (romanization should be empty string \"\")\n\nTOPIC SCOPE: This is a narrow, focused lesson. Vocabulary should include:\n- Parents (mother, father, mom, dad, step-parents)\n- Siblings (brother, sister, half-siblings, step-siblings)\n- Related terms (older, younger, twin, only child)\n- Do NOT expect extended family (grandparents, aunts, uncles, cousins) - those belong in separate lessons\n\nACCURACY PITFALLS - Penalize SEVERELY if:\n- Parent/sibling terms are mistranslated (Mutter=mother, Vater=father, Bruder=brother, Schwester=sister)\n- Vocabulary includes extended family members (this lesson is specifically about parents and siblings)\n- German articles (der/die/das) are missing from nouns\n- Romanization contains any text (should be empty string)\n\n\nEVALUATION CRITERIA:\n\n1. TOPIC-APPROPRIATE COVERAGE: The vocabulary list should cover the narrow lesson topic appropriately.\n   - Include words directly relevant to the specific lesson focus\n   - A narrow topic (like \"Ordering Coffee\") needs fewer words than a broad one\n   - Do NOT penalize for vocabulary count - focus on relevance and quality\n   - Do NOT expect exhaustive coverage of the broader domain (e.g., don't expect all food words for a coffee-ordering lesson)\n\n2. TRANSLATION ACCURACY (CRITICAL - highest priority):\n   - Each word-translation pair MUST be linguistically accurate\n   - Consider regional variations (Brazilian Portuguese vs European, Latin American Spanish vs Castilian)\n   - The translation must match the EXACT meaning - not a broader category or related concept\n   - If a translation is incorrect or semantically imprecise, this is a SEVERE error\n   - Grammatical gender must be correct (masculine nouns with masculine articles, feminine with feminine)\n\n3. ROMANIZATION (required field):\n   - For Japanese, Chinese, Korean, Arabic, Russian, Greek, Thai, Hindi, etc.: romanization MUST contain the Roman letter representation\n   - Use standard romanization (romaji for Japanese, pinyin for Chinese, etc.)\n   - For Roman-script languages (Spanish, French, German, etc.): romanization MUST be an empty string \"\"\n   - Penalize if romanization is missing for non-Roman scripts or contains text for Roman scripts\n\n4. TOPIC FOCUS (STRICT BOUNDARY ENFORCEMENT): Words must be INSIDE the lesson's specific scope. Penalize SEVERELY if:\n   - Vocabulary includes words from adjacent but separate topics (e.g., adjectives when the lesson is about nouns)\n   - Words drift to related but out-of-scope categories (e.g., wild animals for a pets lesson)\n   - The output includes vocabulary that belongs in a DIFFERENT lesson on a related topic\n   - Words are \"helpful additions\" that expand beyond the defined lesson boundary\n\n5. VOCABULARY QUALITY: Words should be practical and commonly used. Penalize if:\n   - Words are obscure, archaic, or rarely used in everyday speech\n   - Words include profanity, slurs, or offensive content\n   - Words use non-standard loanwords that are not common in the target language\n\n6. LANGUAGE CORRECTNESS: Output language must match NATIVE_LANGUAGE code.\n   - Translations should be in the learner's native language\n   - Words being tested should be in the target language\n   - Penalize if languages are mixed incorrectly\n\n7. GRAMMATICAL GENDER AND ARTICLES:\n   - For languages with grammatical gender, nouns MUST include articles\n   - German: \"die Mutter\", \"der Vater\", \"das Kind\" (not \"Mutter\", \"Vater\", \"Kind\")\n   - French: \"le pain\", \"la maison\" (not \"pain\", \"maison\")\n   - Spanish: \"el gato\", \"la casa\" (not \"gato\", \"casa\")\n   - Portuguese: \"o livro\", \"a mesa\" (not \"livro\", \"mesa\")\n   - Italian: \"il gatto\", \"la casa\" (not \"gatto\", \"casa\")\n   - Penalize if nouns are shown without their articles in gendered languages\n   - Penalize if the grammatical gender is WRONG (e.g., masculine article with feminine noun)\n\n8. NO DUPLICATES: The `word` field is the unique identifier - duplicates are determined by the word field ONLY, not translations. Penalize if:\n   - The same word appears multiple times in the `word` field (even with different translations)\n   - Near-duplicates exist (same word with minor formatting differences)\n   - Semantic duplicates exist (same concept repeated with different phrasing)\n   - A word appears twice because it has multiple valid translations (should appear once with most common translation)\n\n9. CLEAN WORD FIELD - NO PARENTHETICAL CONTENT: The word field must contain ONLY the vocabulary word. Penalize SEVERELY if:\n   - The word field contains parenthetical disambiguation like \"el cafe (la bebida)\"\n   - The word field contains usage notes, alternative meanings, or pronunciation hints in parentheses\n   - Any text in parentheses appears in the word field (this breaks text-to-speech)\n\n10. NO OVER-ENUMERATION OF VARIANTS: Vocabulary should be representative, not exhaustive. Penalize if:\n   - Multiple variants of the same base item are listed when 1-2 would suffice\n   - The list appears inflated with excessive sub-types of a single category\n   - A base concept is represented by 5+ specific variants instead of the base term plus 1-2 examples\n   - The vocabulary count seems artificially high due to listing every possible variant\n   NOTE: This does NOT mean penalize for having many words - penalize only when those words are redundant variants of the same concept. Distinct vocabulary items are fine.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific word choices - accept ANY valid vocabulary relevant to the topic\n- Do NOT penalize for not including words you might expect - only penalize for actual errors\n- Do NOT require specific vocabulary items by name\n- Do NOT expect a specific number of words - narrow topics naturally have fewer words\n- FOCUS ON: translation accuracy, romanization correctness (when applicable), topic relevance, no duplicates, clean word fields\n- Different valid vocabulary selections exist - assess the quality of what IS provided\n\n    ",
+  "judgedAt": "2026-01-19T18:17:03.294Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Excellent coverage of the topic with all core terms (Mutter, Vater, Bruder, Schwester, Eltern, Geschwister), plus informal variants (Mama, Papa), step-parents (Stiefmutter, Stiefvater), half-siblings (Halbbruder, Halbschwester), and related terms (Zwilling, Einzelkind). All translations are accurate, articles are correct, romanization is properly empty. Includes 'die Familie' which is borderline but acceptable as context. No duplicates, no errors.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Very good coverage including core terms, step-parents, step-siblings, half-siblings, twins. All translations accurate with correct articles. Includes both singular and plural for twins (Zwilling/Zwillinge) and children (Kind/Kinder) which is slightly redundant but not severely penalizable. Missing informal terms like Papa/Mama and Einzelkind (only child). All romanization properly empty. No errors.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Good coverage with core terms, step-parents, and half-siblings. All translations are accurate with correct German articles. Romanization properly empty. Missing informal variants (Papa/Mama), twins, only child, and step-siblings. Includes Kind/Kinder which is appropriate. Clean and accurate but could be more comprehensive.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Good coverage with step-parents, half-siblings, and Einzelkind. However, has a potential error: 'das Geschwister' for singular sibling is unusual - Germans typically use 'die Geschwister' even when referring to one sibling, or use specific terms like Bruder/Schwester. The translation 'the single child' for Einzelkind should be 'the only child'. These are minor issues. Otherwise accurate with proper articles and empty romanization.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Good basic coverage with core terms and informal variants (Papa/Mama). All translations accurate, articles correct, romanization empty. Missing step-parents, half-siblings, twins, and only child which are specifically mentioned in the topic scope. Includes Kind/Kinder which is appropriate. Clean but limited scope for this topic.",
+          "score": 7.3
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Has an error: 'das Geschwister' for singular sibling is problematic - while 'der Elternteil' is correct for singular parent, 'das Geschwister' is unusual usage (Geschwister is typically plural-only in German). The more common term would be 'die Geschwister' or just use Bruder/Schwester. Missing informal variants, step-parents, half-siblings, twins, only child. Otherwise accurate with proper articles.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Basic but accurate coverage with core terms and informal variants. All translations correct, articles proper, romanization empty. Missing step-parents, half-siblings, twins, only child, and 'die Kinder' (children). 'die Familie' is borderline but acceptable. Limited scope compared to topic expectations.",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Minimal coverage - only 8 words with basic parent/sibling terms. Accurate translations and correct articles. Missing informal variants (Papa/Mama), step-parents, half-siblings, twins, only child, Kind/Kinder. While all content is correct, coverage is too limited for the topic scope that specifically mentions step-parents, half-siblings, and related terms.",
+          "score": 6.3
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "Very minimal coverage - only 6 words (Vater, Mutter, Bruder, Schwester, Eltern, Geschwister). While accurate with correct articles and empty romanization, missing too many expected terms: no informal variants, no step-parents, no half-siblings, no twins, no only child, no son/daughter/child. Too sparse for the defined topic scope.",
+          "score": 5.5
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Extremely minimal coverage - only 6 words (Vater, Mutter, Papa, Mama, Bruder, Schwester). Missing Eltern, Geschwister, son, daughter, child, step-parents, half-siblings, twins, only child. While what is included is accurate with correct articles, the coverage is inadequate for this topic.",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "This model followed the instructions most thoroughly. It covers all the specific scope areas requested: parents (including informal 'mom/dad' and 'step-parents'), siblings (including 'half-siblings'), and related terms ('twin', 'only child'). The translations are accurate, articles are correct, and formatting is perfect.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "This model has excellent coverage of the complex relations requested (step-siblings, half-siblings, twins). However, it missed the informal parents ('mom', 'dad') and 'only child' which were explicitly requested in the scope. Otherwise, the quality is very high.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "A strong output that covers the core family plus step-parents and half-siblings. It ranks lower than D and E because it missed 'mom', 'dad', 'twin', and 'only child', resulting in slightly less comprehensive coverage of the requested scope.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Good coverage including step and half siblings. However, it is penalized for a translation error: 'das Einzelkind' is translated as 'the single child' (which implies marital status or a single-parent family context) rather than the correct term 'the only child'.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "This model accurately covers the core family and the informal 'mom/dad' terms. However, it completely ignores the requested scope for step-parents, half-siblings, twins, and only children. While accurate, the coverage is insufficient for the specific prompt requirements.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Very similar to Model C but slightly less comprehensive (missing the plural 'children'). It fails to include the requested complex relationships (step, half, twin).",
+          "score": 5.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "The list is accurate but includes slightly awkward or clinical vocabulary like 'das Geschwister' (singular for sibling) and 'der Elternteil' (parent singular), which are less practical for a basic vocabulary lesson than 'Mom' or 'Dad'. It also misses the step/half scope.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "The translations are correct, but the scope is extremely minimal. It misses almost all specific requests from the prompt (mom, dad, step, half, twin, only child, child/children).",
+          "score": 4.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "Too sparse to be useful. It provides only 6 words, missing even basic terms like 'son', 'daughter', and 'child', as well as all the specific scope requests.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Extremely sparse. While it includes 'mom' and 'dad', it omits 'parents', 'siblings', 'son', 'daughter', and 'child', making it an incomplete lesson even for the basics.",
+          "score": 2.5
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Best overall scope coverage within immediate family: includes parents, siblings, step-/half-siblings, and related term (twin) with correct German articles and accurate translations. Romanization correctly empty. Minor quibble: includes both singular/plural for twins, but not excessive.",
+          "score": 9.4
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Strong coverage: parents (incl. Mama/Papa), siblings, step-/half-parents/siblings, and related term (only child, twin). Articles and translations look correct; romanization empty. Slight scope drift with “die Familie” (more general than immediate family) but still closely related.",
+          "score": 9.1
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Good focused list: parents/siblings plus step-parents and half-siblings; articles and translations correct; romanization empty. Some extra child/children terms are adjacent (still immediate family) but it misses other requested related terms (older/younger/twin/only child).",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Accurate and clean with correct articles; includes Mama/Papa and core parents/siblings. However, it adds several child terms (Kind/Kinder/Sohn/Tochter) while missing step-/half-/twin/only-child/older-younger items expected for this scope.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Accurate core terms with Mama/Papa; correct articles and empty romanization. Coverage is thinner (no step-/half-/twin/only-child/older-younger), and includes “die Familie” which is broader than the lesson focus.",
+          "score": 7.4
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "All translations/articles correct and on-topic, but coverage is limited and includes son/daughter (adjacent) while omitting key requested variations like mom/dad and step-/half- relations and related terms (twin/only child/older/younger).",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "Clean, accurate core set (mother/father/brother/sister/parents/siblings) with correct articles and empty romanization, but misses essentially all requested variations (mom/dad, step-/half-, only child, twin, older/younger).",
+          "score": 6.6
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Accurate basic terms including Mama/Papa, but very incomplete (no parents/plural terms, no step-/half-/related terms).",
+          "score": 6.2
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Contains a critical accuracy error: “das Geschwister” as “the sibling” is not correct standard German usage (Geschwister is plural-only; singular is typically ‘das Geschwisterkind’ or ‘der/die Bruder/Schwester’). Also includes both correct and incorrect forms, which is confusing. Other items are fine.",
+          "score": 4.6
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Same critical error as H: includes incorrect “das Geschwister” for “the sibling.” Despite otherwise good coverage (step-/half-/only child), the presence of that mistranslation/invalid form is a severe issue per criteria.",
+          "score": 4.4
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-vocabulary",
+  "testCaseId": "en-german-parents-siblings-1"
+}
