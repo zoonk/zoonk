@@ -15,89 +15,87 @@ export async function getActivityKinds(params?: {
   return [
     {
       description: t(
-        "The story behind this topic - why it was created and why it matters",
+        "Explains WHY this topic exists. Tells the origin story, the problems it solved, and why it matters today.",
       ),
       key: "background",
       label: t("Background"),
     },
     {
       description: t(
-        "Make strategic decisions in a simulated real-world scenario",
-      ),
-      key: "challenge",
-      label: t("Challenge"),
-    },
-    {
-      description: t("Custom activity"),
-      key: "custom",
-      label: t("Custom"),
-    },
-    {
-      description: t(
-        "Real-world situations where you'll use this in your life",
-      ),
-      key: "examples",
-      label: t("Examples"),
-    },
-    {
-      description: t(
-        "Key concepts explained clearly so you understand how it works",
+        "Explains WHAT this topic is. Breaks down core concepts and definitions using metaphors and analogies.",
       ),
       key: "explanation",
       label: t("Explanation"),
     },
     {
       description: t(
-        "Practical grammar tips with exercises to remember the rules",
+        "Tests your understanding with questions. Uses new scenarios to check if you grasped the concept, not just memorized it.",
+      ),
+      key: "quiz",
+      label: t("Quiz"),
+    },
+    {
+      description: t(
+        "Explains HOW things work under the hood. Shows the processes, sequences, and cause-effect chains in action.",
+      ),
+      key: "mechanics",
+      label: t("Mechanics"),
+    },
+    {
+      description: t(
+        "Shows WHERE this topic appears in real life. Helps you recognize it in daily routines, work, pop culture, and unexpected places.",
+      ),
+      key: "examples",
+      label: t("Examples"),
+    },
+    {
+      description: t(
+        "Shows WHEN to apply this topic. A dialogue with a colleague where you solve a real problem together.",
+      ),
+      key: "story",
+      label: t("Story"),
+    },
+    {
+      description: t(
+        "Tests analytical thinking through decisions with trade-offs. See how each choice impacts different outcomes.",
+      ),
+      key: "challenge",
+      label: t("Challenge"),
+    },
+    {
+      description: t(
+        "Learn new words with their translations. Includes articles for gendered languages and pronunciation for non-Roman scripts.",
+      ),
+      key: "vocabulary",
+      label: t("Vocabulary"),
+    },
+    {
+      description: t(
+        "Teaches grammar rules with practical exercises to help you remember and apply them.",
       ),
       key: "grammar",
       label: t("Grammar"),
     },
     {
       description: t(
-        "Listen to sentences and translate them by arranging words",
+        "Read sentences and translate them to practice reading comprehension.",
+      ),
+      key: "reading",
+      label: t("Reading"),
+    },
+    {
+      description: t(
+        "Listen to audio sentences and translate them to practice listening skills.",
       ),
       key: "listening",
       label: t("Listening"),
     },
     {
       description: t(
-        "How it works under the hood - the processes and systems behind it",
+        "A comprehensive quiz covering everything you learned in this lesson.",
       ),
-      key: "mechanics",
-      label: t("Mechanics"),
-    },
-    {
-      description: t("Learn pronunciation tips to sound more natural"),
-      key: "pronunciation",
-      label: t("Pronunciation"),
-    },
-    {
-      description: t(
-        "Test your understanding with questions based on the explanation",
-      ),
-      key: "quiz",
-      label: t("Quiz"),
-    },
-    {
-      description: t("Practice reading comprehension by translating sentences"),
-      key: "reading",
-      label: t("Reading"),
-    },
-    {
-      description: t("Review everything you learned in this lesson"),
       key: "review",
       label: t("Review"),
-    },
-    {
-      description: t("Work with a colleague to solve a real-world problem"),
-      key: "story",
-      label: t("Story"),
-    },
-    {
-      description: t("Learn new words to expand your vocabulary"),
-      key: "vocabulary",
-      label: t("Vocabulary"),
     },
   ];
 }

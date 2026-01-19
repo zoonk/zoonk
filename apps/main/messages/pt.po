@@ -145,12 +145,12 @@ msgstr "Assinatura"
 #: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/c/[chapterSlug]/l/[lessonSlug]/activity-indicator.tsx
 msgctxt "4o5CAP"
 msgid "Not completed"
-msgstr "Não concluído"
+msgstr "Não concluída"
 
 #: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/c/[chapterSlug]/l/[lessonSlug]/activity-indicator.tsx
 msgctxt "95stPq"
 msgid "Completed"
-msgstr "Concluído"
+msgstr "Concluída"
 
 #: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/c/[chapterSlug]/l/[lessonSlug]/lesson-header.tsx
 msgctxt "Dane8c"
@@ -1113,14 +1113,9 @@ msgid "Generating content with AI requires an active subscription."
 msgstr "Gerar conteúdo com IA requer uma assinatura ativa."
 
 #: src/lib/activities.ts
-msgctxt "00rzo5"
-msgid "Listen to sentences and translate them by arranging words"
-msgstr "Ouça frases e traduza organizando as palavras"
-
-#: src/lib/activities.ts
-msgctxt "0BWH8y"
-msgid "Real-world situations where you'll use this in your life"
-msgstr "Situações do dia a dia onde você vai usar isso na sua vida"
+msgctxt "/yPM2g"
+msgid "Explains HOW things work under the hood. Shows the processes, sequences, and cause-effect chains in action."
+msgstr "Explica COMO as coisas funcionam por dentro. Mostra os processos, sequências e cadeias de causa e efeito em ação."
 
 #: src/lib/activities.ts
 msgctxt "1TOMnj"
@@ -1128,24 +1123,9 @@ msgid "Listening"
 msgstr "Escuta"
 
 #: src/lib/activities.ts
-msgctxt "1WjcBG"
-msgid "Review everything you learned in this lesson"
-msgstr "Revise tudo que você aprendeu nesta aula"
-
-#: src/lib/activities.ts
 msgctxt "3GLH+d"
 msgid "Examples"
 msgstr "Exemplos"
-
-#: src/lib/activities.ts
-msgctxt "898qm0"
-msgid "Work with a colleague to solve a real-world problem"
-msgstr "Trabalhe com um colega para resolver um problema real"
-
-#: src/lib/activities.ts
-msgctxt "8cuyDX"
-msgid "Custom activity"
-msgstr "Atividade personalizada"
 
 #: src/lib/activities.ts
 msgctxt "9MidH4"
@@ -1158,39 +1138,49 @@ msgid "Story"
 msgstr "História"
 
 #: src/lib/activities.ts
-msgctxt "CG2PQV"
-msgid "Make strategic decisions in a simulated real-world scenario"
-msgstr "Tome decisões estratégicas em um cenário real simulado"
-
-#: src/lib/activities.ts
 msgctxt "E1bF/X"
 msgid "Explanation"
 msgstr "Explicação"
 
 #: src/lib/activities.ts
-msgctxt "EVeHIl"
-msgid "Learn pronunciation tips to sound more natural"
-msgstr "Aprenda dicas de pronúncia para soar mais natural"
+msgctxt "EBP23n"
+msgid "Read sentences and translate them to practice reading comprehension."
+msgstr "Leia frases e traduza elas pra praticar compreensão de leitura."
 
 #: src/lib/activities.ts
-msgctxt "GaKduo"
-msgid "How it works under the hood - the processes and systems behind it"
-msgstr "Como funciona por dentro - os processos e sistemas por trás disso"
+msgctxt "EUjQSf"
+msgid "A comprehensive quiz covering everything you learned in this lesson."
+msgstr "Um quiz completo cobrindo tudo que você aprendeu nesta aula."
 
 #: src/lib/activities.ts
-msgctxt "kNLqRs"
-msgid "Learn new words to expand your vocabulary"
-msgstr "Aprenda palavras novas para expandir seu vocabulário"
+msgctxt "gyZY3d"
+msgid "Tests analytical thinking through decisions with trade-offs. See how each choice impacts different outcomes."
+msgstr "Testa pensamento analítico através de decisões com compensações. Veja como cada escolha impacta diferentes resultados."
 
 #: src/lib/activities.ts
-msgctxt "kyzseW"
-msgid "The story behind this topic - why it was created and why it matters"
-msgstr "A história por trás deste tópico - por que foi criado e por que é importante"
+msgctxt "J9eZ8n"
+msgid "Listen to audio sentences and translate them to practice listening skills."
+msgstr "Ouça frases em áudio e traduza elas pra praticar habilidades de escuta."
+
+#: src/lib/activities.ts
+msgctxt "K+0Eg0"
+msgid "Learn new words with their translations. Includes articles for gendered languages and pronunciation for non-Roman scripts."
+msgstr "Aprenda palavras novas com suas traduções. Inclui artigos para idiomas com gênero e pronúncia para escritas não-romanas."
+
+#: src/lib/activities.ts
+msgctxt "kmCCVm"
+msgid "Teaches grammar rules with practical exercises to help you remember and apply them."
+msgstr "Ensina regras gramaticais com exercícios práticos pra te ajudar a lembrar e aplicar elas."
 
 #: src/lib/activities.ts
 msgctxt "lqtP+R"
 msgid "Vocabulary"
 msgstr "Vocabulário"
+
+#: src/lib/activities.ts
+msgctxt "M4zx2O"
+msgid "Shows WHERE this topic appears in real life. Helps you recognize it in daily routines, work, pop culture, and unexpected places."
+msgstr "Mostra ONDE este tópico aparece na vida real. Te ajuda a reconhecer ele em rotinas diárias, trabalho, cultura pop e lugares inesperados."
 
 #: src/lib/activities.ts
 msgctxt "MOK/yK"
@@ -1208,11 +1198,6 @@ msgid "Quiz"
 msgstr "Quiz"
 
 #: src/lib/activities.ts
-msgctxt "PgNkBs"
-msgid "Test your understanding with questions based on the explanation"
-msgstr "Teste seu entendimento com perguntas baseadas na explicação"
-
-#: src/lib/activities.ts
 msgctxt "QzTY8x"
 msgid "Grammar"
 msgstr "Gramática"
@@ -1223,24 +1208,14 @@ msgid "Review"
 msgstr "Revisão"
 
 #: src/lib/activities.ts
-msgctxt "Sjo1P4"
-msgid "Custom"
-msgstr "Personalizada"
+msgctxt "tzNRA/"
+msgid "Explains WHAT this topic is. Breaks down core concepts and definitions using metaphors and analogies."
+msgstr "Explica O QUE é este tópico. Decompõe conceitos centrais e definições usando metáforas e analogias."
 
 #: src/lib/activities.ts
-msgctxt "vuwclE"
-msgid "Pronunciation"
-msgstr "Pronúncia"
-
-#: src/lib/activities.ts
-msgctxt "XBP1U5"
-msgid "Key concepts explained clearly so you understand how it works"
-msgstr "Conceitos-chave explicados de forma clara para você entender como funciona"
-
-#: src/lib/activities.ts
-msgctxt "xFkzcL"
-msgid "Practice reading comprehension by translating sentences"
-msgstr "Pratique compreensão de leitura traduzindo frases"
+msgctxt "WD76vM"
+msgid "Explains WHY this topic exists. Tells the origin story, the problems it solved, and why it matters today."
+msgstr "Explica POR QUE este tópico existe. Conta a história de origem, os problemas que ele resolveu e por que ele importa hoje."
 
 #: src/lib/activities.ts
 msgctxt "XQZA8e"
@@ -1248,9 +1223,14 @@ msgid "Background"
 msgstr "Contexto"
 
 #: src/lib/activities.ts
-msgctxt "ZwH9yc"
-msgid "Practical grammar tips with exercises to remember the rules"
-msgstr "Dicas práticas de gramática com exercícios para lembrar das regras"
+msgctxt "y21Ybw"
+msgid "Shows WHEN to apply this topic. A dialogue with a colleague where you solve a real problem together."
+msgstr "Mostra QUANDO aplicar este tópico. Um diálogo com um colega onde vocês resolvem um problema real juntos."
+
+#: src/lib/activities.ts
+msgctxt "ypy024"
+msgid "Tests your understanding with questions. Uses new scenarios to check if you grasped the concept, not just memorized it."
+msgstr "Testa sua compreensão com perguntas. Usa cenários novos pra verificar se você entendeu o conceito, não só memorizou ele."
 
 #: src/lib/belt-colors.ts
 msgctxt "1W4okO"
