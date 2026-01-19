@@ -203,12 +203,12 @@ checksums:
     Settings/singular: 8df6777277469c1fd88cc18dde2f1cc3
     Support/singular: 55aab5fd0f31a9cb055a2edeeedfaf63
     Subscription/singular: ba9f3675e18987d067d48533c8897343
+    Lesson%20%7Bposition%7D/singular: 2283c16cc7404682a2380fb8318f42e2
     Lessons%20haven't%20been%20generated%20for%20this%20chapter%20yet./singular: ab7a5c1b0cf16f1a8b9cf87487800e3f
     Generate%20lessons/singular: 99814020e2da40d3f3146eaba4e42959
     Search%20chapters%20and%20lessons.../singular: 9efe924871c3c733391ccd1e3c6d044f
     Search%20chapters%20and%20lessons/singular: 1478233cb8fcb9b66cea6661a11d388c
     No%20chapters%20or%20lessons%20found/singular: 2fe297df8b5d61f27245373ef71d1f10
-    This%20content%20was%20generated%20by%20AI.%20It%20may%20contain%20errors%20or%20inaccuracies%20and%20should%20not%20be%20considered%20professional%20advice./singular: 269e7c16a722903b9b434f28aa6cf617
     "%7Bday%7D%20with%20%7Bvalue%7D%25/singular": 6e5416262bf719f632e31ed1a8236801
     Best%20day/singular: c7d1324abc9d2515ec3bbc955b317404
     Past%203%20months/singular: 0784d60565f6812fce36c72252663412
@@ -350,8 +350,6 @@ checksums:
     The%20authentication%20token%20is%20invalid%20or%20expired.%20Please%20try%20logging%20in%20again./singular: 9e23335b29f210d8ae14c265aeb6ab1a
     Need%20help%3F%20Contact%20us%20at%20hello%40zoonk.com/singular: 0053665fad1f58782cc3a6f442b36726
     Complete%20this%20activity%20to%20reinforce%20your%20learning%20and%20track%20your%20progress./singular: ae9411230fe031bbbd7471a8fde4b17d
-    Interactive%20lesson%20with%20exercises%20and%20activities%20to%20help%20you%20learn%20effectively./singular: f74de010a6977351bee6b20c81d90d31
-    Lesson/singular: 0369d21b141f7f54c4586224e7e7ae65
     Generate%20Chapter/singular: 12160bab066da65413de4b511e402446
     Generation%20progress/singular: 4940d589badd32bb89f93989945f68bb
     Try%20again/singular: 33dd8820e743e35a66e6977f69e9d3b5
@@ -375,6 +373,7 @@ checksums:
     Privacy%20Policy/singular: 7459744a63ef8af4e517a09024bd7c08
     Read%20Zoonk's%20terms%20of%20use%20to%20understand%20the%20rules%20and%20conditions%20for%20using%20our%20platform%20and%20services/singular: 4b82898d60691839a1999e4a17199895
     Terms%20of%20Use/singular: 9ac262b2eda552beeecd904c0b9f8fa2
+    This%20content%20was%20generated%20by%20AI.%20It%20may%20contain%20errors%20or%20inaccuracies%20and%20should%20not%20be%20considered%20professional%20advice./singular: 269e7c16a722903b9b434f28aa6cf617
     Please%20provide%20as%20much%20detail%20as%20possible./singular: 3c8b231283c751d4beae059a6ffc3643
     Failed%20to%20send%20message.%20Please%20try%20again%20or%20email%20us%20directly%20at%20hello%40zoonk.com/singular: 7f36bcd5ba5dad4b9981f85488ff794c
     Email%20address/singular: 3ba3f099b1b9be6c35ad797da660cb9f
