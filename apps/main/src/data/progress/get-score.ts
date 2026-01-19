@@ -15,9 +15,13 @@ export type ScoreParams = {
   endDate?: Date;
 };
 
-export const getScore = cache(
-  async (params?: ScoreParams): Promise<ScoreData | null> => {
-    const session = await getSession({ headers: params?.headers });
+const cachedGetScore = cache(
+  async (
+    startDateIso: string | undefined,
+    endDateIso: string | undefined,
+    headers?: Headers,
+  ): Promise<ScoreData | null> => {
+    const session = await getSession({ headers });
 
     if (!session) {
       return null;
@@ -25,13 +29,12 @@ export const getScore = cache(
 
     const userId = Number(session.user.id);
 
-    // Use provided date range or default to 90 days
     let startDate: Date;
     let endDate: Date;
 
-    if (params?.startDate && params?.endDate) {
-      startDate = params.startDate;
-      endDate = params.endDate;
+    if (startDateIso && endDateIso) {
+      startDate = new Date(startDateIso);
+      endDate = new Date(endDateIso);
     } else {
       endDate = new Date();
       startDate = new Date();
@@ -65,8 +68,14 @@ export const getScore = cache(
 
     const score = (correct / total) * 100;
 
-    return {
-      score,
-    };
+    return { score };
   },
 );
+
+export function getScore(params?: ScoreParams): Promise<ScoreData | null> {
+  return cachedGetScore(
+    params?.startDate?.toISOString(),
+    params?.endDate?.toISOString(),
+    params?.headers,
+  );
+}

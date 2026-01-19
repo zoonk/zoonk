@@ -112,6 +112,89 @@ export type EnergyHistoryParams = {
   headers?: Headers;
 };
 
+const cachedGetEnergyHistory = cache(
+  async (
+    period: EnergyPeriod,
+    offset: number,
+    locale: string,
+    headers?: Headers,
+  ): Promise<EnergyHistoryData | null> => {
+    const session = await getSession({ headers });
+
+    if (!session) {
+      return null;
+    }
+
+    const userId = Number(session.user.id);
+    const { current, previous } = calculateDateRanges(period, offset);
+
+    const [currentResult, previousResult] = await Promise.all([
+      fetchDailyData(userId, current.start, current.end),
+      fetchDailyData(userId, previous.start, previous.end),
+    ]);
+
+    if (currentResult.error || !currentResult.data) {
+      return null;
+    }
+
+    const rawData = currentResult.data;
+
+    if (rawData.length === 0) {
+      return null;
+    }
+
+    const currentData = processEnergyData(rawData, period);
+
+    const dataPoints: EnergyDataPoint[] = currentData.map((row) => ({
+      date: row.date,
+      energy: row.energy,
+      label: formatLabel(row.date, period, locale),
+    }));
+
+    const average = calculateAverage(currentData);
+
+    const previousRaw = previousResult.data ?? [];
+    const previousData =
+      previousRaw.length > 0 ? processEnergyData(previousRaw, period) : [];
+    const previousAverage =
+      previousData.length > 0 ? calculateAverage(previousData) : null;
+
+    const { data: earlierData } = await safeAsync(() =>
+      prisma.dailyProgress.findFirst({
+        select: { id: true },
+        where: {
+          date: { lt: current.start },
+          userId,
+        },
+      }),
+    );
+
+    const hasPreviousPeriod = Boolean(earlierData);
+    const hasNextPeriod = offset > 0;
+
+    return {
+      average,
+      dataPoints,
+      hasNextPeriod,
+      hasPreviousPeriod,
+      periodEnd: current.end,
+      periodStart: current.start,
+      previousAverage,
+    };
+  },
+);
+
+export function getEnergyHistory(
+  params: EnergyHistoryParams,
+): Promise<EnergyHistoryData | null> {
+  return cachedGetEnergyHistory(
+    params.period,
+    params.offset ?? 0,
+    params.locale ?? "en",
+    params.headers,
+  );
+}
+
 async function fetchDailyData(
   userId: number,
   start: Date,
@@ -142,10 +225,8 @@ function processEnergyData(
   rawData: RawDataPoint[],
   period: EnergyPeriod,
 ): RawDataPoint[] {
-  // Always apply decay first
   const withDecay = fillGapsWithDecay(rawData);
 
-  // Then aggregate based on period
   if (period === "6months") {
     return aggregateEnergyByWeek(withDecay);
   }
@@ -156,75 +237,3 @@ function processEnergyData(
 
   return withDecay;
 }
-
-export const getEnergyHistory = cache(
-  async (params: EnergyHistoryParams): Promise<EnergyHistoryData | null> => {
-    const session = await getSession({ headers: params.headers });
-
-    if (!session) {
-      return null;
-    }
-
-    const userId = Number(session.user.id);
-    const { period, offset = 0, locale = "en" } = params;
-    const { current, previous } = calculateDateRanges(period, offset);
-
-    // Always fetch daily data, then apply decay and aggregate
-    const [currentResult, previousResult] = await Promise.all([
-      fetchDailyData(userId, current.start, current.end),
-      fetchDailyData(userId, previous.start, previous.end),
-    ]);
-
-    if (currentResult.error || !currentResult.data) {
-      return null;
-    }
-
-    const rawData = currentResult.data;
-
-    if (rawData.length === 0) {
-      return null;
-    }
-
-    // Apply decay first, then aggregate based on period
-    const currentData = processEnergyData(rawData, period);
-
-    const dataPoints: EnergyDataPoint[] = currentData.map((row) => ({
-      date: row.date,
-      energy: row.energy,
-      label: formatLabel(row.date, period, locale),
-    }));
-
-    const average = calculateAverage(currentData);
-
-    // Also apply decay to previous period for consistent comparison
-    const previousRaw = previousResult.data ?? [];
-    const previousData =
-      previousRaw.length > 0 ? processEnergyData(previousRaw, period) : [];
-    const previousAverage =
-      previousData.length > 0 ? calculateAverage(previousData) : null;
-
-    // Check if there's data before the current period
-    const { data: earlierData } = await safeAsync(() =>
-      prisma.dailyProgress.findFirst({
-        select: { id: true },
-        where: {
-          date: { lt: current.start },
-          userId,
-        },
-      }),
-    );
-
-    const hasPreviousPeriod = Boolean(earlierData);
-    const hasNextPeriod = offset > 0;
-
-    return {
-      average,
-      dataPoints,
-      hasNextPeriod,
-      hasPreviousPeriod,
-      periodEnd: current.end,
-      periodStart: current.start,
-      previousAverage,
-    };
-  },
-);

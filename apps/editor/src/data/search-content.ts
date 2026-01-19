@@ -30,18 +30,12 @@ export type SearchResults = {
   lessons: ResultWithPosition[];
 };
 
-/**
- * Search courses, chapters, and lessons in parallel.
- * Returns grouped results for display in the command palette.
- */
-export const searchContent = cache(
-  async (params: {
-    title: string;
-    orgSlug: string;
-    limit?: number;
-  }): Promise<SearchResults> => {
-    const { title, orgSlug, limit } = params;
-
+const cachedSearchContent = cache(
+  async (
+    title: string,
+    orgSlug: string,
+    limit?: number,
+  ): Promise<SearchResults> => {
     if (!title.trim()) {
       return { chapters: [], courses: [], lessons: [] };
     }
@@ -86,3 +80,11 @@ export const searchContent = cache(
     return { chapters, courses, lessons };
   },
 );
+
+export async function searchContent(params: {
+  title: string;
+  orgSlug: string;
+  limit?: number;
+}): Promise<SearchResults> {
+  return cachedSearchContent(params.title, params.orgSlug, params.limit);
+}

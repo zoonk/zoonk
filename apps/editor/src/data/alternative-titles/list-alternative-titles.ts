@@ -7,19 +7,35 @@ type ListAlternativeTitlesParams =
   | { courseId: number }
   | { courseSlug: string };
 
-export const listAlternativeTitles = cache(
-  async (params: ListAlternativeTitlesParams): Promise<string[]> => {
-    const where =
-      "courseId" in params
-        ? { courseId: params.courseId }
-        : { course: { slug: params.courseSlug } };
-
+const cachedListAlternativeTitlesById = cache(
+  async (courseId: number): Promise<string[]> => {
     const results = await prisma.courseAlternativeTitle.findMany({
       orderBy: { slug: "asc" },
       select: { slug: true },
-      where,
+      where: { courseId },
     });
 
     return results.map((r) => r.slug);
   },
 );
+
+const cachedListAlternativeTitlesBySlug = cache(
+  async (courseSlug: string): Promise<string[]> => {
+    const results = await prisma.courseAlternativeTitle.findMany({
+      orderBy: { slug: "asc" },
+      select: { slug: true },
+      where: { course: { slug: courseSlug } },
+    });
+
+    return results.map((r) => r.slug);
+  },
+);
+
+export function listAlternativeTitles(
+  params: ListAlternativeTitlesParams,
+): Promise<string[]> {
+  if ("courseId" in params) {
+    return cachedListAlternativeTitlesById(params.courseId);
+  }
+  return cachedListAlternativeTitlesBySlug(params.courseSlug);
+}

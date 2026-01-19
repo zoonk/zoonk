@@ -6,23 +6,24 @@ import { AppError, type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
 import { ErrorCode } from "@/lib/app-error";
 
-export const getChapter = cache(
-  async (params: {
-    chapterSlug: string;
-    courseSlug: string;
-    headers?: Headers;
-    language: string;
-    orgSlug: string;
-  }): Promise<SafeReturn<Chapter | null>> => {
+const cachedGetChapter = cache(
+  // biome-ignore lint/nursery/useMaxParams: React cache requires individual args for deduplication
+  async (
+    chapterSlug: string,
+    courseSlug: string,
+    language: string,
+    orgSlug: string,
+    headers?: Headers,
+  ): Promise<SafeReturn<Chapter | null>> => {
     const { data: chapter, error: findError } = await safeAsync(() =>
       prisma.chapter.findFirst({
         where: {
           course: {
-            language: params.language,
-            organization: { slug: params.orgSlug },
-            slug: params.courseSlug,
+            language,
+            organization: { slug: orgSlug },
+            slug: courseSlug,
           },
-          slug: params.chapterSlug,
+          slug: chapterSlug,
         },
       }),
     );
@@ -36,7 +37,7 @@ export const getChapter = cache(
     }
 
     const hasPermission = await hasCoursePermission({
-      headers: params.headers,
+      headers,
       orgId: chapter.organizationId,
       permission: "update",
     });
@@ -48,3 +49,19 @@ export const getChapter = cache(
     return { data: chapter, error: null };
   },
 );
+
+export function getChapter(params: {
+  chapterSlug: string;
+  courseSlug: string;
+  headers?: Headers;
+  language: string;
+  orgSlug: string;
+}): Promise<SafeReturn<Chapter | null>> {
+  return cachedGetChapter(
+    params.chapterSlug,
+    params.courseSlug,
+    params.language,
+    params.orgSlug,
+    params.headers,
+  );
+}

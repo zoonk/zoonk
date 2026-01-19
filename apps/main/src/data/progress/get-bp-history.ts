@@ -92,19 +92,22 @@ function sumBp(dataPoints: RawDataPoint[]): number {
   return dataPoints.reduce((acc, point) => acc + point.bp, 0);
 }
 
-export const getBpHistory = cache(
-  async (params: BpHistoryParams): Promise<BpHistoryData | null> => {
-    const session = await getSession({ headers: params.headers });
+const cachedGetBpHistory = cache(
+  async (
+    period: HistoryPeriod,
+    offset: number,
+    locale: string,
+    headers?: Headers,
+  ): Promise<BpHistoryData | null> => {
+    const session = await getSession({ headers });
 
     if (!session) {
       return null;
     }
 
     const userId = Number(session.user.id);
-    const { period, offset = 0, locale = "en" } = params;
     const { current, previous } = calculateDateRanges(period, offset);
 
-    // Fetch daily BP data and user progress in parallel
     const [currentResult, previousResult, progressResult] = await Promise.all([
       fetchDailyBpData(userId, current.start, current.end),
       fetchDailyBpData(userId, previous.start, previous.end),
@@ -126,7 +129,6 @@ export const getBpHistory = cache(
       return null;
     }
 
-    // Aggregate based on period
     const processedData = processBpData(rawData, period);
 
     const dataPoints: BpDataPoint[] = processedData.map((row) => ({
@@ -141,7 +143,6 @@ export const getBpHistory = cache(
     const previousPeriodTotal =
       previousRaw.length > 0 ? sumBp(previousRaw) : null;
 
-    // Check if there's data before the current period
     const { data: earlierData } = await safeAsync(() =>
       prisma.dailyProgress.findFirst({
         select: { id: true },
@@ -171,3 +172,14 @@ export const getBpHistory = cache(
     };
   },
 );
+
+export function getBpHistory(
+  params: BpHistoryParams,
+): Promise<BpHistoryData | null> {
+  return cachedGetBpHistory(
+    params.period,
+    params.offset ?? 0,
+    params.locale ?? "en",
+    params.headers,
+  );
+}

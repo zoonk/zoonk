@@ -13,21 +13,19 @@ export type ChapterWithCourse = Chapter & {
   course: { slug: string; language: string };
 };
 
-export const searchOrgChapters = cache(
-  async (params: {
-    headers?: Headers;
-    orgSlug: string;
-    title: string;
-    limit?: number;
-  }): Promise<{ data: ChapterWithCourse[]; error: Error | null }> => {
-    const { title, orgSlug } = params;
+const cachedSearchOrgChapters = cache(
+  async (
+    orgSlug: string,
+    title: string,
+    limit: number,
+    headers?: Headers,
+  ): Promise<{ data: ChapterWithCourse[]; error: Error | null }> => {
     const normalizedSearch = normalizeString(title);
-    const limit = clampQueryItems(params.limit ?? DEFAULT_SEARCH_LIMIT);
 
     const { data, error } = await safeAsync(() =>
       Promise.all([
         hasCoursePermission({
-          headers: params.headers,
+          headers,
           orgSlug,
           permission: "update",
         }),
@@ -63,3 +61,18 @@ export const searchOrgChapters = cache(
     return { data: chapters, error: null };
   },
 );
+
+export function searchOrgChapters(params: {
+  headers?: Headers;
+  orgSlug: string;
+  title: string;
+  limit?: number;
+}): Promise<{ data: ChapterWithCourse[]; error: Error | null }> {
+  const limit = clampQueryItems(params.limit ?? DEFAULT_SEARCH_LIMIT);
+  return cachedSearchOrgChapters(
+    params.orgSlug,
+    params.title,
+    limit,
+    params.headers,
+  );
+}

@@ -12,19 +12,19 @@ type ExistingCourse = {
   generationStatus: string;
 };
 
-export const findExistingCourse = cache(
-  async (params: {
-    slug: string;
-    language: string;
-  }): Promise<SafeReturn<ExistingCourse | null>> => {
-    const normalizedSlug = toSlug(params.slug);
+const cachedFindExistingCourse = cache(
+  async (
+    slug: string,
+    language: string,
+  ): Promise<SafeReturn<ExistingCourse | null>> => {
+    const normalizedSlug = toSlug(slug);
 
     const { data, error } = await safeAsync(() =>
       Promise.all([
         prisma.course.findFirst({
           select: { generationStatus: true, id: true, slug: true },
           where: {
-            language: params.language,
+            language,
             organization: { slug: AI_ORG_SLUG },
             slug: normalizedSlug,
           },
@@ -36,7 +36,7 @@ export const findExistingCourse = cache(
             },
           },
           where: {
-            languageSlug: { language: params.language, slug: normalizedSlug },
+            languageSlug: { language, slug: normalizedSlug },
           },
         }),
       ]),
@@ -59,3 +59,10 @@ export const findExistingCourse = cache(
     return { data: null, error: null };
   },
 );
+
+export function findExistingCourse(params: {
+  slug: string;
+  language: string;
+}): Promise<SafeReturn<ExistingCourse | null>> {
+  return cachedFindExistingCourse(params.slug, params.language);
+}

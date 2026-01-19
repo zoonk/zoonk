@@ -4,19 +4,15 @@ import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
 
-export const courseSlugExists = cache(
-  async (params: {
-    language: string;
-    orgSlug: string;
-    slug: string;
-  }): Promise<boolean> => {
+const cachedCourseSlugExists = cache(
+  async (language: string, orgSlug: string, slug: string): Promise<boolean> => {
     const { data } = await safeAsync(() =>
       prisma.course.findFirst({
         select: { id: true },
         where: {
-          language: params.language,
-          organization: { slug: params.orgSlug },
-          slug: params.slug,
+          language,
+          organization: { slug: orgSlug },
+          slug,
         },
       }),
     );
@@ -24,3 +20,11 @@ export const courseSlugExists = cache(
     return data !== null;
   },
 );
+
+export function courseSlugExists(params: {
+  language: string;
+  orgSlug: string;
+  slug: string;
+}): Promise<boolean> {
+  return cachedCourseSlugExists(params.language, params.orgSlug, params.slug);
+}

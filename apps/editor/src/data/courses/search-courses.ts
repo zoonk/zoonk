@@ -10,17 +10,16 @@ import { normalizeString } from "@zoonk/utils/string";
 import { cache } from "react";
 import { ErrorCode } from "@/lib/app-error";
 
-export const searchCourses = cache(
-  async (params: {
-    title: string;
-    orgSlug: string;
-    headers?: Headers;
-    language?: string;
-    limit?: number;
-  }): Promise<{ data: Course[]; error: Error | null }> => {
-    const { title, orgSlug, language } = params;
+const cachedSearchCourses = cache(
+  // biome-ignore lint/nursery/useMaxParams: React cache requires individual args for deduplication
+  async (
+    title: string,
+    orgSlug: string,
+    limit: number,
+    language?: string,
+    headers?: Headers,
+  ): Promise<{ data: Course[]; error: Error | null }> => {
     const normalizedSearch = normalizeString(title);
-    const limit = clampQueryItems(params.limit ?? DEFAULT_SEARCH_LIMIT);
 
     const baseWhere = {
       organization: { slug: orgSlug },
@@ -30,7 +29,7 @@ export const searchCourses = cache(
     const { data, error } = await safeAsync(() =>
       Promise.all([
         hasCoursePermission({
-          headers: params.headers,
+          headers,
           orgSlug,
           permission: "update",
         }),
@@ -70,3 +69,20 @@ export const searchCourses = cache(
     };
   },
 );
+
+export function searchCourses(params: {
+  title: string;
+  orgSlug: string;
+  headers?: Headers;
+  language?: string;
+  limit?: number;
+}): Promise<{ data: Course[]; error: Error | null }> {
+  const limit = clampQueryItems(params.limit ?? DEFAULT_SEARCH_LIMIT);
+  return cachedSearchCourses(
+    params.title,
+    params.orgSlug,
+    limit,
+    params.language,
+    params.headers,
+  );
+}

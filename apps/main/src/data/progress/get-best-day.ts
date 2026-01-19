@@ -11,16 +11,15 @@ export type BestDayData = {
 
 export type BestDayParams = {
   headers?: Headers;
-  /**
-   * Start date for filtering. When provided,
-   * uses this date instead of the default 90-day window.
-   */
   startDate?: Date;
 };
 
-export const getBestDay = cache(
-  async (params?: BestDayParams): Promise<BestDayData | null> => {
-    const session = await getSession({ headers: params?.headers });
+const cachedGetBestDay = cache(
+  async (
+    startDateIso: string | undefined,
+    headers?: Headers,
+  ): Promise<BestDayData | null> => {
+    const session = await getSession({ headers });
 
     if (!session) {
       return null;
@@ -28,11 +27,10 @@ export const getBestDay = cache(
 
     const userId = Number(session.user.id);
 
-    // Use provided start date or default to 90 days ago
     let startDate: Date;
 
-    if (params?.startDate) {
-      startDate = params.startDate;
+    if (startDateIso) {
+      startDate = new Date(startDateIso);
     } else {
       startDate = new Date();
       startDate.setDate(startDate.getDate() - 90);
@@ -82,3 +80,9 @@ export const getBestDay = cache(
     return bestDay;
   },
 );
+
+export function getBestDay(
+  params?: BestDayParams,
+): Promise<BestDayData | null> {
+  return cachedGetBestDay(params?.startDate?.toISOString(), params?.headers);
+}
