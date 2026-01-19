@@ -12,7 +12,6 @@ describe("getLesson", () => {
   let publishedChapter: Awaited<ReturnType<typeof chapterFixture>>;
   let publishedLesson: Awaited<ReturnType<typeof lessonFixture>>;
   let draftLesson: Awaited<ReturnType<typeof lessonFixture>>;
-  let schoolLesson: Awaited<ReturnType<typeof lessonFixture>>;
 
   beforeAll(async () => {
     [brandOrg, schoolOrg] = await Promise.all([
@@ -35,7 +34,7 @@ describe("getLesson", () => {
 
     publishedCourse = brandCourse;
 
-    const [brandChapter, schoolChapter] = await Promise.all([
+    const [brandChapter] = await Promise.all([
       chapterFixture({
         courseId: brandCourse.id,
         isPublished: true,
@@ -52,7 +51,7 @@ describe("getLesson", () => {
 
     publishedChapter = brandChapter;
 
-    [publishedLesson, draftLesson, schoolLesson] = await Promise.all([
+    [publishedLesson, draftLesson] = await Promise.all([
       lessonFixture({
         chapterId: brandChapter.id,
         isPublished: true,
@@ -66,13 +65,6 @@ describe("getLesson", () => {
         language: "en",
         organizationId: brandOrg.id,
         position: 2,
-      }),
-      lessonFixture({
-        chapterId: schoolChapter.id,
-        isPublished: true,
-        language: "en",
-        organizationId: schoolOrg.id,
-        position: 1,
       }),
     ]);
   });
