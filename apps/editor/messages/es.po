@@ -57,6 +57,7 @@ msgstr "Error al subir la imagen. Por favor intenta de nuevo."
 
 #: src/app/[orgSlug]/c/[lang]/[courseSlug]/actions.ts
 #: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/actions.ts
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/activity-actions.ts
 msgctxt "lgvvCe"
 msgid "No file provided"
 msgstr "No se proporcionó ningún archivo"
@@ -78,6 +79,7 @@ msgstr "Error al procesar la imagen. Por favor intenta de nuevo."
 
 #: src/app/[orgSlug]/c/[lang]/[courseSlug]/actions.ts
 #: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/actions.ts
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/activity-actions.ts
 msgctxt "sGJpuF"
 msgid "Add a description…"
 msgstr "Agrega una descripción…"
@@ -107,6 +109,76 @@ msgctxt "yNvug5"
 msgid "Chapter title…"
 msgstr "Título del capítulo…"
 
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/a/[activityId]/page.tsx
+msgctxt "PJivSX"
+msgid "Lesson"
+msgstr "Lección"
+
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/a/[activityId]/page.tsx
+msgctxt "Y7nk1I"
+msgid "Activity editor coming soon"
+msgstr "Editor de actividades próximamente"
+
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/activity-actions.ts
+msgctxt "BhBMMj"
+msgid "Untitled activity"
+msgstr "Actividad sin título"
+
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/activity-list.tsx
+msgctxt "30g9Ie"
+msgid "We couldn't load the activities. Please try again."
+msgstr "No pudimos cargar las actividades. Por favor, intenta de nuevo."
+
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/activity-list.tsx
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/chapter-list.tsx
+msgctxt "5CI3KH"
+msgid "Contact support"
+msgstr "Contactar soporte"
+
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/activity-list.tsx
+msgctxt "9IwZ+U"
+msgid "Add activity"
+msgstr "Agregar actividad"
+
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/activity-list.tsx
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/chapter-list.tsx
+msgctxt "aJ/bsX"
+msgid "Drag to reorder"
+msgstr "Arrastra para reordenar"
+
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/activity-list.tsx
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/chapter-list.tsx
+msgctxt "FazwRl"
+msgid "Try again"
+msgstr "Intentar de nuevo"
+
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/activity-list.tsx
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/chapter-list.tsx
+msgctxt "geXvrp"
+msgid "Insert below"
+msgstr "Insertar debajo"
+
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/activity-list.tsx
+msgctxt "ivVUmr"
+msgid "Failed to load activities"
+msgstr "Error al cargar actividades"
+
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/activity-list.tsx
+msgctxt "Lhaog4"
+msgid "Activity actions"
+msgstr "Acciones de actividad"
+
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/activity-list.tsx
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/chapter-list.tsx
+msgctxt "vTz4RU"
+msgid "Insert above"
+msgstr "Insertar arriba"
+
 #: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-content.tsx
 msgctxt "AHvdBa"
 msgid "Edit lesson description"
@@ -133,21 +205,9 @@ msgid "We couldn't load the lessons. Please try again."
 msgstr "No pudimos cargar las lecciones. Por favor, intenta de nuevo."
 
 #: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/chapter-list.tsx
-msgctxt "5CI3KH"
-msgid "Contact support"
-msgstr "Contactar soporte"
-
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
 msgctxt "6ssHZM"
 msgid "Failed to load lessons"
 msgstr "Error al cargar lecciones"
-
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/chapter-list.tsx
-msgctxt "aJ/bsX"
-msgid "Drag to reorder"
-msgstr "Arrastra para reordenar"
 
 #: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
 msgctxt "drUbPJ"
@@ -155,27 +215,9 @@ msgid "Lesson actions"
 msgstr "Acciones de la lección"
 
 #: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/chapter-list.tsx
-msgctxt "FazwRl"
-msgid "Try again"
-msgstr "Intentar de nuevo"
-
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/chapter-list.tsx
-msgctxt "geXvrp"
-msgid "Insert below"
-msgstr "Insertar debajo"
-
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
 msgctxt "RWzfUY"
 msgid "Add lesson"
 msgstr "Agregar lección"
-
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/chapter-list.tsx
-msgctxt "vTz4RU"
-msgid "Insert above"
-msgstr "Insertar arriba"
 
 #: src/app/[orgSlug]/c/[lang]/[courseSlug]/chapter-list.tsx
 msgctxt "BxygZD"
@@ -570,6 +612,11 @@ msgid "Saving…"
 msgstr "Guardando…"
 
 #: src/components/entity-list-actions.tsx
+msgctxt "6P4woA"
+msgid "Upload a JSON file containing activities to import."
+msgstr "Sube un archivo JSON que contenga las actividades a importar."
+
+#: src/components/entity-list-actions.tsx
 msgctxt "8n7YmS"
 msgid "Lessons imported successfully"
 msgstr "Lecciones importadas exitosamente"
@@ -585,9 +632,24 @@ msgid "Lessons exported successfully"
 msgstr "Lecciones exportadas exitosamente"
 
 #: src/components/entity-list-actions.tsx
+msgctxt "JneX6x"
+msgid "Activities imported successfully"
+msgstr "Actividades importadas exitosamente"
+
+#: src/components/entity-list-actions.tsx
+msgctxt "Jva2tZ"
+msgid "Activities exported successfully"
+msgstr "Actividades exportadas exitosamente"
+
+#: src/components/entity-list-actions.tsx
 msgctxt "lwIuOL"
 msgid "Upload a JSON file containing chapters to import."
 msgstr "Sube un archivo JSON que contenga los capítulos a importar."
+
+#: src/components/entity-list-actions.tsx
+msgctxt "m6heoi"
+msgid "Import activities"
+msgstr "Importar actividades"
 
 #: src/components/entity-list-actions.tsx
 msgctxt "TQmijK"
@@ -811,6 +873,11 @@ msgid "This category has already been added to the course"
 msgstr "Esta categoría ya ha sido agregada al curso"
 
 #: src/lib/error-messages.ts
+msgctxt "eyPdgP"
+msgid "Invalid activity format. Each activity must have a kind and position"
+msgstr "Formato de actividad inválido. Cada actividad debe tener un tipo y posición"
+
+#: src/lib/error-messages.ts
 msgctxt "g5WLcA"
 msgid "Please sign in to continue"
 msgstr "Por favor inicia sesión para continuar"
@@ -819,6 +886,11 @@ msgstr "Por favor inicia sesión para continuar"
 msgctxt "gYaLKN"
 msgid "Chapter and course must belong to the same organization"
 msgstr "El capítulo y el curso deben pertenecer a la misma organización"
+
+#: src/lib/error-messages.ts
+msgctxt "lnW7BB"
+msgid "Activity not found"
+msgstr "Actividad no encontrada"
 
 #: src/lib/error-messages.ts
 msgctxt "MqOLCG"
