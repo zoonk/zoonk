@@ -1,15 +1,25 @@
 "use cache";
 
 import { cacheTagLesson } from "@zoonk/utils/cache";
+import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import type { Metadata } from "next";
 import { cacheTag } from "next/cache";
 import { notFound } from "next/navigation";
 import { setRequestLocale } from "next-intl/server";
 import { getLesson } from "@/data/lessons/get-lesson";
-import { getSampleLessonParams } from "@/data/static-params";
 import { LessonHeader } from "./lesson-header";
 
-export const generateStaticParams = getSampleLessonParams;
+export async function generateStaticParams() {
+  return [
+    {
+      brandSlug: AI_ORG_SLUG,
+      chapterSlug: "sample",
+      courseSlug: "sample",
+      lessonSlug: "sample",
+      locale: "en",
+    },
+  ];
+}
 
 export async function generateMetadata({
   params,
