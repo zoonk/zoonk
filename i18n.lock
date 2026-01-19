@@ -203,6 +203,8 @@ checksums:
     Settings/singular: 8df6777277469c1fd88cc18dde2f1cc3
     Support/singular: 55aab5fd0f31a9cb055a2edeeedfaf63
     Subscription/singular: ba9f3675e18987d067d48533c8897343
+    Not%20completed/singular: d011b1ae92a1a8a2676a5d6999bbe6d4
+    Completed/singular: 0e4bbce9985f25eb673d9a054c8d5334
     Lesson%20%7Bposition%7D/singular: 2283c16cc7404682a2380fb8318f42e2
     Lessons%20haven't%20been%20generated%20for%20this%20chapter%20yet./singular: ab7a5c1b0cf16f1a8b9cf87487800e3f
     Generate%20lessons/singular: 99814020e2da40d3f3146eaba4e42959
@@ -369,6 +371,9 @@ checksums:
     Saving%20course%20metadata/singular: 027b0161877e67f73fe1c6a6ea65b08e
     Planning%20chapters/singular: 6b60ca8718a75e4e0f05ee74f042a7ae
     Checking%20for%20existing%20course/singular: f58c4dbf1463586a47a2d031f1eb7642
+    This%20page%20is%20under%20construction./singular: 0937f45c276be4df9e58fe5e66e5f0b7
+    Lesson%20ID%3A%20%7Bid%7D/singular: f6040c5d2155011fa2a76fad8ca8f4f3
+    Generate%20Lesson%20Activities/singular: 0f04dc7a186da7959dbd5e8a0281a3d3
     Read%20Zoonk's%20privacy%20policy%20to%20understand%20how%20we%20collect%2C%20use%2C%20and%20protect%20your%20personal%20information./singular: 044f3586abe7d9915820a6629cef08e4
     Privacy%20Policy/singular: 7459744a63ef8af4e517a09024bd7c08
     Read%20Zoonk's%20terms%20of%20use%20to%20understand%20the%20rules%20and%20conditions%20for%20using%20our%20platform%20and%20services/singular: 4b82898d60691839a1999e4a17199895
@@ -387,20 +392,34 @@ checksums:
     Send%20feedback%2C%20questions%2C%20or%20suggestions%20to%20us.%20Fill%20in%20the%20form%20below%20or%20email%20us%20directly%20at%20hello%40zoonk.com./singular: 6ce5e55ddeeb7de9480b806358aa5b95
     Upgrade%20to%20generate/singular: 9c4baffb6ff3a12a322dfe02735ac35c
     Generating%20content%20with%20AI%20requires%20an%20active%20subscription./singular: ee3e62a18f3437b719f6793dd01d66f8
+    Listen%20to%20sentences%20and%20translate%20them%20by%20arranging%20words/singular: 3159961e51882ade17dfe17d9291753b
+    Real-world%20situations%20where%20you'll%20use%20this%20in%20your%20life/singular: bcf70f4d372ff33355b4e432c6735444
     Listening/singular: 9e680c44cd88a178b953349ed8881ef2
+    Review%20everything%20you%20learned%20in%20this%20lesson/singular: 1702c4236fd7f08d07804f4535ab5069
     Examples/singular: 9dacb7c56bc894e4bcad39f41265e3a0
+    Work%20with%20a%20colleague%20to%20solve%20a%20real-world%20problem/singular: 291fb30b3a6e6db149a16212cfee596d
+    Custom%20activity/singular: c6f661f48123e201392816583cfd2ed9
     Challenge/singular: 7f333a59ee7a3596e27a2f8c3401b764
     Story/singular: fabac3f62af801d429e2cd7115bf14c9
+    Make%20strategic%20decisions%20in%20a%20simulated%20real-world%20scenario/singular: e749d74ef10bc7101f55bdaeef95e02e
     Explanation/singular: f6b595df4ffb1a5b0cbbe1dda5993522
+    Learn%20pronunciation%20tips%20to%20sound%20more%20natural/singular: 34f92a64963d5d128f2856c22bbe45d9
+    How%20it%20works%20under%20the%20hood%20-%20the%20processes%20and%20systems%20behind%20it/singular: f15e58f976a161c6278a3db66a26807a
+    Learn%20new%20words%20to%20expand%20your%20vocabulary/singular: 371e6fbdfbc3f5fd4f972e2a28d8c675
+    The%20story%20behind%20this%20topic%20-%20why%20it%20was%20created%20and%20why%20it%20matters/singular: 80cb20f5d1843246d53c963076e908a6
     Vocabulary/singular: 2c8127af4c194fa05463e82d5e414c62
     Reading/singular: 9d93f1dff4a01a9e1566f23b401b8868
     Mechanics/singular: 9885fd6c35db2bd26affb830d537046b
     Quiz/singular: 22bce287f7a90d3b41b418108eaab43b
+    Test%20your%20understanding%20with%20questions%20based%20on%20the%20explanation/singular: 19b82c9c8ada17b76274908877e2fa47
     Grammar/singular: 1d97aca351a45df1d6eb27adbee04832
     Review/singular: 299f75db25382980b2895622d7712927
     Custom/singular: b7b89901f46267f532600a23cfc54ae2
     Pronunciation/singular: fa10bd7f4b790473afcec2a8cb2d8188
+    Key%20concepts%20explained%20clearly%20so%20you%20understand%20how%20it%20works/singular: 30916a6c4797bb40f198467ad12a877c
+    Practice%20reading%20comprehension%20by%20translating%20sentences/singular: 0e11867335022c80f051f146ff5c160e
     Background/singular: 0ceaed10d99ed4ad83cb0934ab970174
+    Practical%20grammar%20tips%20with%20exercises%20to%20remember%20the%20rules/singular: 402efe5f5e667988d8b1fa6ad0c0a5cd
     Green/singular: 482ff383a4258357ba404f283682471d
     Yellow/singular: 15d533755d35af887dfa584975549fda
     Red/singular: bace0083b78cdb188523bc4abc7b55c6

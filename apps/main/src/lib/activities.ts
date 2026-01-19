@@ -4,6 +4,7 @@ import { getExtracted } from "next-intl/server";
 export type ActivityKindInfo = {
   key: ActivityKind;
   label: string;
+  description: string;
 };
 
 export async function getActivityKinds(params?: {
@@ -12,19 +13,91 @@ export async function getActivityKinds(params?: {
   const t = await getExtracted(params);
 
   return [
-    { key: "background", label: t("Background") },
-    { key: "challenge", label: t("Challenge") },
-    { key: "custom", label: t("Custom") },
-    { key: "examples", label: t("Examples") },
-    { key: "explanation", label: t("Explanation") },
-    { key: "grammar", label: t("Grammar") },
-    { key: "listening", label: t("Listening") },
-    { key: "mechanics", label: t("Mechanics") },
-    { key: "pronunciation", label: t("Pronunciation") },
-    { key: "quiz", label: t("Quiz") },
-    { key: "reading", label: t("Reading") },
-    { key: "review", label: t("Review") },
-    { key: "story", label: t("Story") },
-    { key: "vocabulary", label: t("Vocabulary") },
+    {
+      description: t(
+        "The story behind this topic - why it was created and why it matters",
+      ),
+      key: "background",
+      label: t("Background"),
+    },
+    {
+      description: t(
+        "Make strategic decisions in a simulated real-world scenario",
+      ),
+      key: "challenge",
+      label: t("Challenge"),
+    },
+    {
+      description: t("Custom activity"),
+      key: "custom",
+      label: t("Custom"),
+    },
+    {
+      description: t(
+        "Real-world situations where you'll use this in your life",
+      ),
+      key: "examples",
+      label: t("Examples"),
+    },
+    {
+      description: t(
+        "Key concepts explained clearly so you understand how it works",
+      ),
+      key: "explanation",
+      label: t("Explanation"),
+    },
+    {
+      description: t(
+        "Practical grammar tips with exercises to remember the rules",
+      ),
+      key: "grammar",
+      label: t("Grammar"),
+    },
+    {
+      description: t(
+        "Listen to sentences and translate them by arranging words",
+      ),
+      key: "listening",
+      label: t("Listening"),
+    },
+    {
+      description: t(
+        "How it works under the hood - the processes and systems behind it",
+      ),
+      key: "mechanics",
+      label: t("Mechanics"),
+    },
+    {
+      description: t("Learn pronunciation tips to sound more natural"),
+      key: "pronunciation",
+      label: t("Pronunciation"),
+    },
+    {
+      description: t(
+        "Test your understanding with questions based on the explanation",
+      ),
+      key: "quiz",
+      label: t("Quiz"),
+    },
+    {
+      description: t("Practice reading comprehension by translating sentences"),
+      key: "reading",
+      label: t("Reading"),
+    },
+    {
+      description: t("Review everything you learned in this lesson"),
+      key: "review",
+      label: t("Review"),
+    },
+    {
+      description: t("Work with a colleague to solve a real-world problem"),
+      key: "story",
+      label: t("Story"),
+    },
+    {
+      description: t("Learn new words to expand your vocabulary"),
+      key: "vocabulary",
+      label: t("Vocabulary"),
+    },
   ];
 }

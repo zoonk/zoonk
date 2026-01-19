@@ -6,7 +6,11 @@ import type { Metadata } from "next";
 import { cacheTag } from "next/cache";
 import { notFound } from "next/navigation";
 import { setRequestLocale } from "next-intl/server";
+import { listLessonActivities } from "@/data/activities/list-lesson-activities";
 import { getLesson } from "@/data/lessons/get-lesson";
+import { redirect } from "@/i18n/navigation";
+import { getActivityKinds } from "@/lib/activities";
+import { ActivityList } from "./activity-list";
 import { LessonHeader } from "./lesson-header";
 
 export async function generateStaticParams() {
@@ -62,6 +66,16 @@ export default async function LessonPage({
     notFound();
   }
 
+  const activities = await listLessonActivities({ lessonId: lesson.id });
+
+  if (activities.length === 0) {
+    redirect({ href: `/generate/l/${lesson.id}`, locale });
+  }
+
+  const activityKinds = await getActivityKinds({ locale });
+  const kindMeta = new Map(activityKinds.map((k) => [k.key, k]));
+  const baseHref = `/b/${brandSlug}/c/${courseSlug}/c/${chapterSlug}/l/${lessonSlug}`;
+
   return (
     <main className="flex flex-1 flex-col">
       <LessonHeader
@@ -69,6 +83,14 @@ export default async function LessonPage({
         courseSlug={courseSlug}
         lesson={lesson}
       />
+
+      <div className="mx-auto w-full px-4 py-6 lg:max-w-xl">
+        <ActivityList
+          activities={activities}
+          baseHref={baseHref}
+          kindMeta={kindMeta}
+        />
+      </div>
     </main>
   );
 }

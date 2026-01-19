@@ -142,6 +142,16 @@ msgctxt "R/6nsx"
 msgid "Subscription"
 msgstr "Subscription"
 
+#: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/c/[chapterSlug]/l/[lessonSlug]/activity-indicator.tsx
+msgctxt "4o5CAP"
+msgid "Not completed"
+msgstr "Not completed"
+
+#: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/c/[chapterSlug]/l/[lessonSlug]/activity-indicator.tsx
+msgctxt "95stPq"
+msgid "Completed"
+msgstr "Completed"
+
 #: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/c/[chapterSlug]/l/[lessonSlug]/lesson-header.tsx
 msgctxt "Dane8c"
 msgid "Lesson {position}"
@@ -1012,6 +1022,21 @@ msgctxt "rso9iW"
 msgid "Checking for existing course"
 msgstr "Checking for existing course"
 
+#: src/app/[locale]/generate/l/[id]/generate-lesson-content.tsx
+msgctxt "hbm9cV"
+msgid "This page is under construction."
+msgstr "This page is under construction."
+
+#: src/app/[locale]/generate/l/[id]/generate-lesson-content.tsx
+msgctxt "JILSfe"
+msgid "Lesson ID: {id}"
+msgstr "Lesson ID: {id}"
+
+#: src/app/[locale]/generate/l/[id]/generate-lesson-content.tsx
+msgctxt "lNjM4Q"
+msgid "Generate Lesson Activities"
+msgstr "Generate Lesson Activities"
+
 #: src/app/[locale]/privacy/page.tsx
 msgctxt "iql85X"
 msgid "Read Zoonk's privacy policy to understand how we collect, use, and protect your personal information."
@@ -1103,14 +1128,39 @@ msgid "Generating content with AI requires an active subscription."
 msgstr "Generating content with AI requires an active subscription."
 
 #: src/lib/activities.ts
+msgctxt "00rzo5"
+msgid "Listen to sentences and translate them by arranging words"
+msgstr "Listen to sentences and translate them by arranging words"
+
+#: src/lib/activities.ts
+msgctxt "0BWH8y"
+msgid "Real-world situations where you'll use this in your life"
+msgstr "Real-world situations where you'll use this in your life"
+
+#: src/lib/activities.ts
 msgctxt "1TOMnj"
 msgid "Listening"
 msgstr "Listening"
 
 #: src/lib/activities.ts
+msgctxt "1WjcBG"
+msgid "Review everything you learned in this lesson"
+msgstr "Review everything you learned in this lesson"
+
+#: src/lib/activities.ts
 msgctxt "3GLH+d"
 msgid "Examples"
 msgstr "Examples"
+
+#: src/lib/activities.ts
+msgctxt "898qm0"
+msgid "Work with a colleague to solve a real-world problem"
+msgstr "Work with a colleague to solve a real-world problem"
+
+#: src/lib/activities.ts
+msgctxt "8cuyDX"
+msgid "Custom activity"
+msgstr "Custom activity"
 
 #: src/lib/activities.ts
 msgctxt "9MidH4"
@@ -1123,9 +1173,34 @@ msgid "Story"
 msgstr "Story"
 
 #: src/lib/activities.ts
+msgctxt "CG2PQV"
+msgid "Make strategic decisions in a simulated real-world scenario"
+msgstr "Make strategic decisions in a simulated real-world scenario"
+
+#: src/lib/activities.ts
 msgctxt "E1bF/X"
 msgid "Explanation"
 msgstr "Explanation"
+
+#: src/lib/activities.ts
+msgctxt "EVeHIl"
+msgid "Learn pronunciation tips to sound more natural"
+msgstr "Learn pronunciation tips to sound more natural"
+
+#: src/lib/activities.ts
+msgctxt "GaKduo"
+msgid "How it works under the hood - the processes and systems behind it"
+msgstr "How it works under the hood - the processes and systems behind it"
+
+#: src/lib/activities.ts
+msgctxt "kNLqRs"
+msgid "Learn new words to expand your vocabulary"
+msgstr "Learn new words to expand your vocabulary"
+
+#: src/lib/activities.ts
+msgctxt "kyzseW"
+msgid "The story behind this topic - why it was created and why it matters"
+msgstr "The story behind this topic - why it was created and why it matters"
 
 #: src/lib/activities.ts
 msgctxt "lqtP+R"
@@ -1148,6 +1223,11 @@ msgid "Quiz"
 msgstr "Quiz"
 
 #: src/lib/activities.ts
+msgctxt "PgNkBs"
+msgid "Test your understanding with questions based on the explanation"
+msgstr "Test your understanding with questions based on the explanation"
+
+#: src/lib/activities.ts
 msgctxt "QzTY8x"
 msgid "Grammar"
 msgstr "Grammar"
@@ -1168,9 +1248,24 @@ msgid "Pronunciation"
 msgstr "Pronunciation"
 
 #: src/lib/activities.ts
+msgctxt "XBP1U5"
+msgid "Key concepts explained clearly so you understand how it works"
+msgstr "Key concepts explained clearly so you understand how it works"
+
+#: src/lib/activities.ts
+msgctxt "xFkzcL"
+msgid "Practice reading comprehension by translating sentences"
+msgstr "Practice reading comprehension by translating sentences"
+
+#: src/lib/activities.ts
 msgctxt "XQZA8e"
 msgid "Background"
 msgstr "Background"
+
+#: src/lib/activities.ts
+msgctxt "ZwH9yc"
+msgid "Practical grammar tips with exercises to remember the rules"
+msgstr "Practical grammar tips with exercises to remember the rules"
 
 #: src/lib/belt-colors.ts
 msgctxt "1W4okO"
