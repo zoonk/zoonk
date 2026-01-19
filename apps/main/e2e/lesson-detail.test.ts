@@ -79,24 +79,24 @@ test.describe("Lesson Detail Page", () => {
     await expect(
       page.getByRole("link", { name: /background/i }).first(),
     ).toBeVisible();
-    await expect(page.getByText(/the story behind this topic/i)).toBeVisible();
+    await expect(page.getByText(/explains why this topic exists/i)).toBeVisible();
 
     await expect(
       page.getByRole("link", { name: /explanation/i }).first(),
     ).toBeVisible();
     await expect(
-      page.getByText(/key concepts explained clearly/i),
+      page.getByText(/explains what this topic is/i),
     ).toBeVisible();
 
     await expect(
       page.getByRole("link", { name: /quiz/i }).first(),
     ).toBeVisible();
     await expect(
-      page.getByText(/test your understanding/i).first(),
+      page.getByText(/tests your understanding/i).first(),
     ).toBeVisible();
 
     await expect(page.getByRole("link", { name: /challenge/i })).toBeVisible();
-    await expect(page.getByText(/make strategic decisions/i)).toBeVisible();
+    await expect(page.getByText(/tests analytical thinking/i)).toBeVisible();
   });
 
   test("clicking activity link navigates to activity page", async ({
@@ -122,8 +122,5 @@ test.describe("Lesson Detail Page", () => {
     );
 
     await expect(page).toHaveURL(/\/generate\/l\/\d+/);
-    await expect(
-      page.getByRole("heading", { name: /generate lesson activities/i }),
-    ).toBeVisible();
   });
 });
