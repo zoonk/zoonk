@@ -1,0 +1,203 @@
+{
+  "expectations": "\nLANGUAGE: English output required.\n\nTOPIC: Spanish vocabulary for ordering coffee - focused specifically on coffee drinks, sizes, milk options, and common cafe phrases.\n\nSCRIPT: Roman (romanization should be empty string \"\")\n\nTOPIC SCOPE: This is a narrow, focused lesson. Vocabulary should include:\n- Coffee drink types (espresso, latte, cappuccino, americano, etc.)\n- Size options (small, medium, large)\n- Milk options (with milk, without milk, oat milk, etc.)\n- Basic ordering phrases (I would like, please, to go, for here)\n- Do NOT expect general food vocabulary, restaurant vocabulary, or dining etiquette\n\nACCURACY PITFALLS - Penalize SEVERELY if:\n- Coffee-specific terms are mistranslated\n- Vocabulary drifts to general food/restaurant terms unrelated to coffee ordering\n- Romanization contains any text (should be empty string)\n- Articles are missing from nouns (el cafe, la leche, not cafe, leche)\n\n\nEVALUATION CRITERIA:\n\n1. TOPIC-APPROPRIATE COVERAGE: The vocabulary list should cover the narrow lesson topic appropriately.\n   - Include words directly relevant to the specific lesson focus\n   - A narrow topic (like \"Ordering Coffee\") needs fewer words than a broad one\n   - Do NOT penalize for vocabulary count - focus on relevance and quality\n   - Do NOT expect exhaustive coverage of the broader domain (e.g., don't expect all food words for a coffee-ordering lesson)\n\n2. TRANSLATION ACCURACY (CRITICAL - highest priority):\n   - Each word-translation pair MUST be linguistically accurate\n   - Consider regional variations (Brazilian Portuguese vs European, Latin American Spanish vs Castilian)\n   - The translation must match the EXACT meaning - not a broader category or related concept\n   - If a translation is incorrect or semantically imprecise, this is a SEVERE error\n   - Grammatical gender must be correct (masculine nouns with masculine articles, feminine with feminine)\n\n3. ROMANIZATION (required field):\n   - For Japanese, Chinese, Korean, Arabic, Russian, Greek, Thai, Hindi, etc.: romanization MUST contain the Roman letter representation\n   - Use standard romanization (romaji for Japanese, pinyin for Chinese, etc.)\n   - For Roman-script languages (Spanish, French, German, etc.): romanization MUST be an empty string \"\"\n   - Penalize if romanization is missing for non-Roman scripts or contains text for Roman scripts\n\n4. TOPIC FOCUS (STRICT BOUNDARY ENFORCEMENT): Words must be INSIDE the lesson's specific scope. Penalize SEVERELY if:\n   - Vocabulary includes words from adjacent but separate topics (e.g., adjectives when the lesson is about nouns)\n   - Words drift to related but out-of-scope categories (e.g., wild animals for a pets lesson)\n   - The output includes vocabulary that belongs in a DIFFERENT lesson on a related topic\n   - Words are \"helpful additions\" that expand beyond the defined lesson boundary\n\n5. VOCABULARY QUALITY: Words should be practical and commonly used. Penalize if:\n   - Words are obscure, archaic, or rarely used in everyday speech\n   - Words include profanity, slurs, or offensive content\n   - Words use non-standard loanwords that are not common in the target language\n\n6. LANGUAGE CORRECTNESS: Output language must match NATIVE_LANGUAGE code.\n   - Translations should be in the learner's native language\n   - Words being tested should be in the target language\n   - Penalize if languages are mixed incorrectly\n\n7. GRAMMATICAL GENDER AND ARTICLES:\n   - For languages with grammatical gender, nouns MUST include articles\n   - German: \"die Mutter\", \"der Vater\", \"das Kind\" (not \"Mutter\", \"Vater\", \"Kind\")\n   - French: \"le pain\", \"la maison\" (not \"pain\", \"maison\")\n   - Spanish: \"el gato\", \"la casa\" (not \"gato\", \"casa\")\n   - Portuguese: \"o livro\", \"a mesa\" (not \"livro\", \"mesa\")\n   - Italian: \"il gatto\", \"la casa\" (not \"gatto\", \"casa\")\n   - Penalize if nouns are shown without their articles in gendered languages\n   - Penalize if the grammatical gender is WRONG (e.g., masculine article with feminine noun)\n\n8. NO DUPLICATES: The `word` field is the unique identifier - duplicates are determined by the word field ONLY, not translations. Penalize if:\n   - The same word appears multiple times in the `word` field (even with different translations)\n   - Near-duplicates exist (same word with minor formatting differences)\n   - Semantic duplicates exist (same concept repeated with different phrasing)\n   - A word appears twice because it has multiple valid translations (should appear once with most common translation)\n\n9. CLEAN WORD FIELD - NO PARENTHETICAL CONTENT: The word field must contain ONLY the vocabulary word. Penalize SEVERELY if:\n   - The word field contains parenthetical disambiguation like \"el cafe (la bebida)\"\n   - The word field contains usage notes, alternative meanings, or pronunciation hints in parentheses\n   - Any text in parentheses appears in the word field (this breaks text-to-speech)\n\n10. NO OVER-ENUMERATION OF VARIANTS: Vocabulary should be representative, not exhaustive. Penalize if:\n   - Multiple variants of the same base item are listed when 1-2 would suffice\n   - The list appears inflated with excessive sub-types of a single category\n   - A base concept is represented by 5+ specific variants instead of the base term plus 1-2 examples\n   - The vocabulary count seems artificially high due to listing every possible variant\n   NOTE: This does NOT mean penalize for having many words - penalize only when those words are redundant variants of the same concept. Distinct vocabulary items are fine.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific word choices - accept ANY valid vocabulary relevant to the topic\n- Do NOT penalize for not including words you might expect - only penalize for actual errors\n- Do NOT require specific vocabulary items by name\n- Do NOT expect a specific number of words - narrow topics naturally have fewer words\n- FOCUS ON: translation accuracy, romanization correctness (when applicable), topic relevance, no duplicates, clean word fields\n- Different valid vocabulary selections exist - assess the quality of what IS provided\n\n    ",
+  "judgedAt": "2026-01-19T18:17:20.064Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model I",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Excellent comprehensive coverage with 28 vocabulary items. All coffee drinks correctly translated (el café, el espresso, el café con leche for latte, el capuchino, el americano, el café descafeinado, el café helado). Complete milk options with articles (la leche, la leche entera, la leche descremada, la leche de avena, la leche de almendra, la crema). All sizes covered. Key ordering phrases included (quisiera, por favor, para llevar, para tomar aquí). All romanizations correctly empty. All nouns have correct articles with proper gender. Only minor issue is 'un shot extra' which is a loanword/Spanglish but commonly used in cafes. Clean word fields. Very practical and complete vocabulary set.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Strong coverage with 22 items. Good coffee variety including cortado and mocha which are commonly ordered. Includes key phrases (Quisiera, por favor, para llevar, para aquí). All milk types with correct articles. Sizes covered. Small issue: 'el cappuccino' uses Italian spelling rather than Spanish 'capuchino'. Translations include helpful parenthetical notes which is acceptable in translation field. 'sin lactosa' is a good addition for modern cafes. Minor concern: 'el latte' and 'el mocha' are loanwords that may not be standard in all Spanish-speaking regions. Overall very practical and well-rounded.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Good coverage with 25 items. Coffee drinks well covered (el café, el espresso, el americano, el capuchino, el café con leche, el macchiato, el café helado, el descafeinado). Excellent milk options including oat milk and cream/foam. Sizes covered. Includes useful modifiers (con, sin, caliente, helado). One issue: translations don't include articles ('coffee' instead of 'the coffee') which while technically acceptable, is less consistent for language learning. 'pedir' is good for ordering. Missing key ordering phrases like 'I would like' or 'please' or 'to go/for here' which were specifically mentioned in requirements.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Good coverage with 19 items. Coffee drinks covered (el café, el espresso, el café con leche, el capuchino, el café descafeinado, el café helado). Good milk variety including soy milk. Sizes included. Ordering phrases present (quisiera, para llevar). Includes 'para mí' which is useful. However, 'aquí' alone for 'here' is incomplete - should be 'para aquí' or 'para tomar aquí'. Uses 'almendras' (plural) which is also acceptable. Missing oat milk which was specifically mentioned in task. Overall solid but not as comprehensive as top performers.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Decent coverage with 14 items. Coffee drinks included (el café, el expreso, el café con leche, el capuchino, el café helado). Uses 'el expreso' which is the Hispanicized spelling - acceptable. Sizes covered. Has 'quisiera', 'pedir', 'para llevar' for ordering. Missing some milk options - no oat milk mentioned in requirements. Uses 'almendras' (plural) which is acceptable variant. Missing 'please' and 'for here' from ordering phrases. Missing 'without milk' option. Adequate but less complete than higher-ranked outputs.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Reasonable coverage with 15 items. Coffee drinks included. Uses 'café americano' and 'café con leche' appropriately. Uses 'la leche desnatada' which is European Spanish for skim milk (vs 'descremada' in Latin America) - acceptable regional variant. Includes 'Quisiera...', 'una taza de', 'pedir'. However, 'sin leche' translated as 'black coffee (without milk)' is slightly imprecise - 'sin leche' literally means 'without milk'. Missing several milk options (oat, almond, soy). 'Quisiera...' with ellipsis in word field is slightly problematic. Overall adequate but limited.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Moderate coverage with 17 items. Uses 'el expreso' (Hispanicized spelling) and 'el café americano'. Good milk options. Includes 'para llevar' and 'para tomar aquí' for ordering. However, several nouns are missing from coffee drink variety (no cortado, mocha, iced coffee). 'para tomar aquí' translated as 'to stay' is slightly awkward - 'for here' is more common. Missing 'please' and 'I would like' phrases which were specifically mentioned in requirements. Missing oat milk which was specifically requested. Translations include 'the' articles which is good for learning.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Basic but accurate coverage with 14 items. Coffee drinks covered including cortado. Uses loanwords 'el cappuccino' and 'el latte' which are less standard. Sizes included. Has 'con leche' and 'sin leche'. Milk options limited (only descremada and entera - missing oat milk specifically requested). Missing key ordering phrases like 'I would like', 'please', 'to go', 'for here' which were explicitly mentioned in requirements. Clean and accurate but incomplete for the stated scope.",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Limited coverage with 15 items. Uses 'el latte' as a loanword rather than 'el café con leche'. Missing key ordering phrases like 'please', 'to go', 'for here'. 'ordenar' for 'to order' is more common in Latin America for restaurant ordering but 'pedir' is more universal. 'querer' (to want) is somewhat generic. Includes 'la taza' (cup) which is borderline relevant. Missing oat milk which was specifically mentioned. Missing 'without milk' option. 'la leche de soya' is correct. Overall functional but missing several required phrase categories.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "Significant issues. Uses indefinite articles 'un' instead of definite articles 'el' for coffee drinks - while not wrong, it's inconsistent with the expectation of showing nouns with their definite articles. Multiple nouns lack articles entirely: 'leche' instead of 'la leche', 'azúcar' instead of 'el azúcar', 'leche descremada' instead of 'la leche descremada'. This violates the explicit requirement that nouns should include articles. Also includes off-topic vocabulary: 'un vaso de agua' (glass of water), 'la cuenta' (the bill), and '¿Cuánto cuesta?' (How much does it cost?) drift toward general restaurant vocabulary which was explicitly excluded from scope. Missing ordering phrases like 'I would like' and 'please'.",
+          "score": 5.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model I",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "This is the best output. It fully adheres to all constraints: correct empty romanization, gendered articles included for all nouns, and clean word fields. Crucially, it provides the most comprehensive topic coverage, including all requested categories: specific drinks (espresso, latte, etc.), milk options (including oat/almond), sizes, and the full set of requested ordering phrases ('I would like', 'please', 'to go', 'for here'). The vocabulary choice is standard and accurate (e.g., mapping 'latte' to 'café con leche' while keeping 'espresso' as 'espresso').",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "An excellent output that follows all formatting rules. It stands out for including helpful context in the translation fields (e.g., explaining what an Americano is), which is great for learners. It covers the required phrases perfectly ('Quisiera', 'por favor', 'para llevar'). It is ranked slightly below Model I only because Model I includes a few more useful ordering terms like 'hot', 'cold', and 'extra shot'.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "A very strong list with accurate translations and good adherence to formatting rules (articles included, empty romanization). It covers most of the requested phrases ('Quisiera', 'para llevar', 'aquí') and drink options. It misses 'please', which was a requested phrase, but is otherwise excellent.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "A solid, error-free list. It uses standard Spanish spellings ('el expreso', 'almendras') and follows all grammatical rules. It includes some phrases ('quisiera', 'pedir', 'para llevar') but misses 'please' and 'for here'. The list is a bit shorter than the top models but the quality is high.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "This model provides an extensive list of nouns (drinks, milk types, ingredients) with high accuracy and correct formatting. However, it significantly failed the 'Basic ordering phrases' requirement, missing 'I would like', 'please', 'to go', and 'for here'. It included 'pedir' (to order) and prepositions ('con', 'sin'), but the lack of functional ordering phrases lowers its score despite the high quality of the noun vocabulary.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "This output is accurate and follows the formatting rules. It includes 'to go' and 'to stay', but misses 'please' and 'I would like'. It is ranked lower than Model A because the English translations include the definitive article ('the coffee', 'the espresso'), which is unnecessary and stylistically cluttered, and its vocabulary list is less comprehensive regarding ingredients.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "This model meets the basic formatting requirements but has weaknesses in vocabulary choice. Using 'ordenar' (often 'to organize' in standard Spanish, though 'to order' in Spanglish) instead of 'pedir', and 'querer' (to want) instead of the more polite 'quisiera' makes it less ideal for a lesson. It also misses several requested phrases.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "This model contains a significant semantic error: it translates 'black coffee' as 'sin leche' (without milk). While black coffee is indeed without milk, the terms are not synonymous translations; 'café negro' or 'café solo' would be correct. It covers some phrases but the translation inaccuracy is a notable flaw.",
+          "score": 5.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "The output is linguistically accurate but extremely sparse. It fails to include any of the requested ordering phrases ('please', 'to go', 'I would like', etc.) and misses common options like sugar or sweeteners. It does not minimally satisfy the topic scope requirements.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "This model fails a critical negative constraint: 'Penalize if nouns are shown without their articles'. Many nouns (leche, azúcar, café negro) are listed without 'el' or 'la'. It also drifts out of scope by including 'the bill' and 'glass of water', which borders on general restaurant vocabulary.",
+          "score": 2
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model I",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Best overall fit: solid coffee-drink coverage plus sizes, multiple milk options, and key ordering phrases (quisiera, por favor, para llevar, para tomar aquí). Romanization correctly empty. Mostly accurate translations and clean word fields. Minor issues: includes a couple borderline items (“la taza”, “un shot extra” loanword), and “el americano” is less idiomatic than “el café americano,” but still understandable.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Strong topic focus with drinks, sizes, milk options, and key phrases (quisiera, para llevar). Romanization correct. Minor weaknesses: “para mí” and “aquí” are a bit fragmentary as vocab items; “almond milk” given as “la leche de almendras” is acceptable though “de almendra” is more common for the ingredient-as-type. Slightly less complete than Model I.",
+          "score": 8.4
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Good coverage of drinks, sizes, milk choices, and core phrases (Quisiera, por favor, para llevar). Romanization correct. Main drawbacks: several translations include parenthetical explanations inside the *translation* (not forbidden, but reduces “clean vocab” quality), and “para aquí” for “for here” is less standard than “para tomar aquí/para aquí” depending on region. Uses some English loan spellings in Spanish words (“el cappuccino”, “el mocha”, “el latte”), which are used but less standard than capuchino/moca.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Broad and relevant coffee vocabulary (drinks, milks, sizes, modifiers like con/sin, caliente/helado). Romanization correct and no duplicates. Biggest issue: translation inaccuracy—maps “latte” to “el café con leche” (not equivalent to a latte in many contexts). Also uses several non-adapted loanwords (“macchiato”), and includes adjectives/particles (con/sin) which are okay but less aligned with the requested “common cafe phrases” (missing quisiera/por favor/para llevar).",
+          "score": 7.4
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "On-topic and includes to-go/for-here phrasing. Romanization correct. Issues: “el expreso” is a common variant but less standard than “el espresso”; “to stay” as “para tomar aquí” is fine but the translation label “to stay” is imprecise (it’s ‘to drink here/for here’). Overall narrower coverage (few phrases like ‘please/I would like’ missing).",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Good inclusion of core ordering phrase (quisiera), pedir, and para llevar plus key drinks/sizes. Romanization correct. Issues: “la leche de almendras” acceptable but less common than singular; limited drink variety; otherwise solid and on-scope.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Clean, on-topic list with drinks, sizes, and basic milk inclusion/exclusion. Romanization correct. Main weaknesses: lacks ordering phrases entirely (quisiera/por favor/para llevar/para aquí) and has limited milk-option variety (no alternative milks beyond none). Also uses loanword spellings (“el cappuccino”, “el latte”).",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Mostly on-topic (drinks, milk options, sizes). Romanization correct. Notable issues: “to order” translated as “ordenar,” which in many café contexts is less idiomatic than “pedir”; includes “to want” (querer) which is less directly a café phrase than “quisiera/me pone” etc. Also “el latte” as a Spanish term is loanwordy and less standard than “un café con leche”/“un latte” depending, but acceptable. Missing key phrases like por favor/para llevar.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Decent drinks/sizes/milk set and includes pedir. Romanization correct. Severe accuracy issue: translates “sin leche” as “black coffee (without milk)”—“sin leche” just means ‘without milk’ and could apply to many drinks; black coffee would be “café solo/negro.” Also has punctuation in word field (“Quisiera...”), which harms clean word field expectations.",
+          "score": 5.2
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "Multiple critical violations: many nouns missing required articles (café con leche, leche, azúcar, etc.). Drifts out of scope with “un vaso de agua,” “la cuenta,” and “¿Cuánto cuesta?” (general restaurant/café payment). While some items are relevant, these issues are severe per rubric.",
+          "score": 3
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-vocabulary",
+  "testCaseId": "en-spanish-ordering-coffee-1"
+}
