@@ -59,6 +59,7 @@ export async function createLesson(params: {
           chapterId: params.chapterId,
           description: params.description,
           isPublished: !chapter.isPublished,
+          kind: "custom",
           language: chapter.language,
           normalizedTitle,
           organizationId: chapter.organizationId,
