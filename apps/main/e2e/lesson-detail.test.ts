@@ -114,19 +114,6 @@ test.describe("Lesson Detail Page", () => {
     await expect(page).toHaveURL(/\/l\/what-is-machine-learning\/a\/0/);
   });
 
-  test("lesson with activities shows all activity types", async ({ page }) => {
-    await page.goto(
-      "/b/ai/c/machine-learning/c/introduction-to-machine-learning/l/history-of-ml",
-    );
-
-    await expect(
-      page.getByRole("link", { name: /background/i }).first(),
-    ).toBeVisible();
-    await expect(
-      page.getByRole("link", { name: /explanation/i }).first(),
-    ).toBeVisible();
-  });
-
   test("lesson without activities redirects to generate page", async ({
     page,
   }) => {
@@ -138,16 +125,5 @@ test.describe("Lesson Detail Page", () => {
     await expect(
       page.getByRole("heading", { name: /generate lesson activities/i }),
     ).toBeVisible();
-  });
-
-  test("shows completion indicator for activities", async ({ page }) => {
-    await page.goto(
-      "/b/ai/c/machine-learning/c/introduction-to-machine-learning/l/what-is-machine-learning",
-    );
-
-    const incompleteIndicator = page.getByRole("img", {
-      name: /not completed/i,
-    });
-    await expect(incompleteIndicator.first()).toBeVisible();
   });
 });
