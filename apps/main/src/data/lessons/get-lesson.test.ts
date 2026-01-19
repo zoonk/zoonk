@@ -175,14 +175,21 @@ describe("getLesson", () => {
   });
 
   test("returns null for lesson from non-brand org", async () => {
+    const schoolCourse = await courseFixture({
+      isPublished: true,
+      language: "en",
+      organizationId: schoolOrg.id,
+    });
+
     const schoolChapter = await chapterFixture({
-      courseId: (
-        await courseFixture({
-          isPublished: true,
-          language: "en",
-          organizationId: schoolOrg.id,
-        })
-      ).id,
+      courseId: schoolCourse.id,
+      isPublished: true,
+      language: "en",
+      organizationId: schoolOrg.id,
+    });
+
+    const lessonInSchoolOrg = await lessonFixture({
+      chapterId: schoolChapter.id,
       isPublished: true,
       language: "en",
       organizationId: schoolOrg.id,
@@ -191,8 +198,8 @@ describe("getLesson", () => {
     const result = await getLesson({
       brandSlug: schoolOrg.slug,
       chapterSlug: schoolChapter.slug,
-      courseSlug: schoolChapter.slug,
-      lessonSlug: schoolLesson.slug,
+      courseSlug: schoolCourse.slug,
+      lessonSlug: lessonInSchoolOrg.slug,
     });
 
     expect(result).toBeNull();
