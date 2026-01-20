@@ -1,3 +1,4 @@
+import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { signInAs } from "@zoonk/testing/fixtures/auth";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
@@ -8,7 +9,7 @@ import {
 } from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, describe, expect, test } from "vitest";
 import { ErrorCode } from "@/lib/app-error";
-import { listChapterLessons } from "./list-chapter-lessons";
+import { listLessonActivities } from "./list-lesson-activities";
 
 describe("unauthenticated users", () => {
   test("returns Forbidden", async () => {
@@ -19,10 +20,15 @@ describe("unauthenticated users", () => {
       language: course.language,
       organizationId: organization.id,
     });
-
-    const result = await listChapterLessons({
+    const lesson = await lessonFixture({
       chapterId: chapter.id,
+      language: course.language,
+      organizationId: organization.id,
+    });
+
+    const result = await listLessonActivities({
       headers: new Headers(),
+      lessonId: lesson.id,
       orgId: organization.id,
     });
 
@@ -35,19 +41,24 @@ describe("members", () => {
   test("returns Forbidden", async () => {
     const { organization, user } = await memberFixture({ role: "member" });
     const course = await courseFixture({ organizationId: organization.id });
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      language: course.language,
+      organizationId: organization.id,
+    });
 
-    const [headers, chapter] = await Promise.all([
+    const [headers, lesson] = await Promise.all([
       signInAs(user.email, user.password),
-      chapterFixture({
-        courseId: course.id,
+      lessonFixture({
+        chapterId: chapter.id,
         language: course.language,
         organizationId: organization.id,
       }),
     ]);
 
-    const result = await listChapterLessons({
-      chapterId: chapter.id,
+    const result = await listLessonActivities({
       headers,
+      lessonId: lesson.id,
       orgId: organization.id,
     });
 
@@ -67,64 +78,74 @@ describe("admins", () => {
     headers = await signInAs(fixture.user.email, fixture.user.password);
   });
 
-  test("lists lessons for a chapter ordered by position", async () => {
+  test("lists activities for a lesson ordered by position", async () => {
     const course = await courseFixture({ organizationId: organization.id });
-    const newChapter = await chapterFixture({
+    const chapter = await chapterFixture({
       courseId: course.id,
       language: course.language,
       organizationId: organization.id,
     });
+    const newLesson = await lessonFixture({
+      chapterId: chapter.id,
+      language: course.language,
+      organizationId: organization.id,
+    });
 
-    const [lesson1, lesson2, lesson3] = await Promise.all([
-      lessonFixture({
-        chapterId: newChapter.id,
-        language: newChapter.language,
+    const [activity1, activity2, activity3] = await Promise.all([
+      activityFixture({
+        language: course.language,
+        lessonId: newLesson.id,
         organizationId: organization.id,
         position: 2,
       }),
-      lessonFixture({
-        chapterId: newChapter.id,
-        language: newChapter.language,
+      activityFixture({
+        language: course.language,
+        lessonId: newLesson.id,
         organizationId: organization.id,
         position: 0,
       }),
-      lessonFixture({
-        chapterId: newChapter.id,
-        language: newChapter.language,
+      activityFixture({
+        language: course.language,
+        lessonId: newLesson.id,
         organizationId: organization.id,
         position: 1,
       }),
     ]);
 
-    const result = await listChapterLessons({
-      chapterId: newChapter.id,
+    const result = await listLessonActivities({
       headers,
+      lessonId: newLesson.id,
       orgId: organization.id,
     });
 
-    const expectedLessonCount = 3;
+    const expectedActivityCount = 3;
 
     expect(result.error).toBeNull();
-    expect(result.data.length).toBe(expectedLessonCount);
-    expect(result.data[0]?.id).toBe(lesson2.id);
+    expect(result.data.length).toBe(expectedActivityCount);
+    expect(result.data[0]?.id).toBe(activity2.id);
     expect(result.data[0]?.position).toBe(0);
-    expect(result.data[1]?.id).toBe(lesson3.id);
+    expect(result.data[1]?.id).toBe(activity3.id);
     expect(result.data[1]?.position).toBe(1);
-    expect(result.data[2]?.id).toBe(lesson1.id);
+    expect(result.data[2]?.id).toBe(activity1.id);
     expect(result.data[2]?.position).toBe(2);
   });
 
-  test("returns empty array when chapter has no lessons", async () => {
+  test("returns empty array when lesson has no activities", async () => {
     const course = await courseFixture({ organizationId: organization.id });
-    const emptyChapter = await chapterFixture({
+    const chapter = await chapterFixture({
       courseId: course.id,
       language: course.language,
       organizationId: organization.id,
     });
+    const emptyLesson = await lessonFixture({
+      chapterId: chapter.id,
+      language: course.language,
+      organizationId: organization.id,
+    });
 
-    const result = await listChapterLessons({
-      chapterId: emptyChapter.id,
+    const result = await listLessonActivities({
       headers,
+      lessonId: emptyLesson.id,
       orgId: organization.id,
     });
 
@@ -132,10 +153,10 @@ describe("admins", () => {
     expect(result.data).toEqual([]);
   });
 
-  test("returns empty array when chapterId does not exist", async () => {
-    const result = await listChapterLessons({
-      chapterId: 999_999_999,
+  test("returns empty array when lessonId does not exist", async () => {
+    const result = await listLessonActivities({
       headers,
+      lessonId: 999_999_999,
       orgId: organization.id,
     });
 
@@ -143,7 +164,7 @@ describe("admins", () => {
     expect(result.data).toEqual([]);
   });
 
-  test("returns empty array for chapter in different organization", async () => {
+  test("returns empty array for lesson in different organization", async () => {
     const otherOrg = await organizationFixture();
     const otherCourse = await courseFixture({ organizationId: otherOrg.id });
     const otherChapter = await chapterFixture({
@@ -151,17 +172,22 @@ describe("admins", () => {
       language: otherCourse.language,
       organizationId: otherOrg.id,
     });
-    await lessonFixture({
+    const otherLesson = await lessonFixture({
       chapterId: otherChapter.id,
       language: otherCourse.language,
       organizationId: otherOrg.id,
     });
+    await activityFixture({
+      language: otherCourse.language,
+      lessonId: otherLesson.id,
+      organizationId: otherOrg.id,
+    });
 
-    // Try to access using our org's ID but the other chapter's ID
-    // Should return empty since the lesson belongs to a different org
-    const result = await listChapterLessons({
-      chapterId: otherChapter.id,
+    // Try to access using our org's ID but the other lesson's ID
+    // Should return empty since the activity belongs to a different org
+    const result = await listLessonActivities({
       headers,
+      lessonId: otherLesson.id,
       orgId: organization.id,
     });
 

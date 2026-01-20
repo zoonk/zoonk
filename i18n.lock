@@ -21,19 +21,26 @@ checksums:
     Edit%20chapter%20title/singular: 21c04bd3ed6335df5195d1f2857131bf
     Chapter%20description%E2%80%A6/singular: d394513f90a5c9ad1880d364e8fc5cb8
     Chapter%20title%E2%80%A6/singular: 3ed70a2e64aefe189999ff5899e8a7a2
+    Lesson/singular: 0369d21b141f7f54c4586224e7e7ae65
+    Activity%20editor%20coming%20soon/singular: e02fa050fd72d48f0a50cad81149b8fd
+    Untitled%20activity/singular: 92dccd756c491fc1b61f3eced6b4b96a
+    We%20couldn't%20load%20the%20activities.%20Please%20try%20again./singular: 2f8bcd34b6eb7dc4a2ebccf05311b4c2
+    Contact%20support/singular: 32a4dee2033635e334a5f4d34724e3e0
+    Add%20activity/singular: 69eea4d3afd3c3b3fba0975ff6d9a1d1
+    Drag%20to%20reorder/singular: 42c84478eb582f41d72d5bd7b27bb028
+    Try%20again/singular: 33dd8820e743e35a66e6977f69e9d3b5
+    Insert%20below/singular: 13f5339830c81c2c64a513b4f0a77c2d
+    Failed%20to%20load%20activities/singular: 1d7878e3d09bbbbc244fcca4f846fc0a
+    Activity%20actions/singular: c3253e1c7046f25d280fea09a6d17a31
+    Insert%20above/singular: 24d027b3c1e816c98f5571bb637669bf
     Edit%20lesson%20description/singular: b959f1e2fc7f00f593ae2c1a12fd330d
     Lesson%20description%E2%80%A6/singular: 77ad5a9829eda8182865a46455d5a842
     Lesson%20title%E2%80%A6/singular: d7b981d2734c11f2ee5d58f21c93bd3e
     Edit%20lesson%20title/singular: 15b5a30f4a0365bae4da264383dae889
     We%20couldn't%20load%20the%20lessons.%20Please%20try%20again./singular: f2e68b6dd4d7f2eb0c91f20ade06957d
-    Contact%20support/singular: 32a4dee2033635e334a5f4d34724e3e0
     Failed%20to%20load%20lessons/singular: 427523eb64ddb239d642ca975d6e1dbb
-    Drag%20to%20reorder/singular: 42c84478eb582f41d72d5bd7b27bb028
     Lesson%20actions/singular: e014e6d8a3eb4906b17a79ca0ee96867
-    Try%20again/singular: 33dd8820e743e35a66e6977f69e9d3b5
-    Insert%20below/singular: 13f5339830c81c2c64a513b4f0a77c2d
     Add%20lesson/singular: 101a1880b35c68eed6f80e7574f4ff2d
-    Insert%20above/singular: 24d027b3c1e816c98f5571bb637669bf
     Chapter%20actions/singular: 9f8fd63a1c71839fddbb5b57a1c62f73
     Add%20chapter/singular: af2ea03f1678fcea1fb005f66f28bfa5
     We%20couldn't%20load%20the%20chapters.%20Please%20try%20again./singular: 2bfbac73debefc0d7a4ec5c41af9c415
@@ -109,10 +116,14 @@ checksums:
     Unsaved/singular: ddc9094aecf93ceabe363846756a9925
     Saved/singular: 6554b923011266821d74e06e013a40e6
     Saving%E2%80%A6/singular: ee98ff32f9a585a9108c8cd961d6077e
+    Upload%20a%20JSON%20file%20containing%20activities%20to%20import./singular: 43985544e0dd3f095f4c9b332da33958
     Lessons%20imported%20successfully/singular: 117dcb8f25eb05362ffab7974ecdb5de
     Chapters%20exported%20successfully/singular: c619d46cc34322ce5777a87ec3cc6131
     Lessons%20exported%20successfully/singular: f896c30aab64bfcc43725f8bd3fc02f7
+    Activities%20imported%20successfully/singular: a7d9861227d8a620333036159e9fcb0a
+    Activities%20exported%20successfully/singular: 95dfbf175ca0ad27b473e1a6462909d6
     Upload%20a%20JSON%20file%20containing%20chapters%20to%20import./singular: 7bd7e36f80ba8cdcd19c18f53962f747
+    Import%20activities/singular: a53f1dbd54e4d268f062ef223fbeca7e
     Import%20chapters/singular: 0bf66ec2862c199b95f19512d832ba9b
     Import%20lessons/singular: 8d1fae531b7e8156042321586d18b522
     Chapters%20imported%20successfully/singular: 2a3fda7021d4d81b1cdc6e869f94664f
@@ -147,6 +158,25 @@ checksums:
     Save/singular: f7a2929f33bc420195e59ac5a8bcd454
     This%20URL%20is%20already%20in%20use/singular: dfc6df86970a8fa27f4f4b4c3f2716b1
     URL%20address/singular: e752a4cebaefb0cf38c129ec8edd6b65
+    Category%20not%20found%20in%20this%20course/singular: 32ae23f7913223e56ab7207abfe032bb
+    An%20unexpected%20error%20occurred/singular: fe07b9cdb1fc3f7397f6d89c102c60af
+    Invalid%20category/singular: 5f9195d3e0d1d819cc9d812b712eaca1
+    Chapter%20not%20found/singular: 72d4a8758136678acbae0ec942227f7e
+    Invalid%20chapter%20format.%20Each%20chapter%20must%20have%20a%20title%20and%20description/singular: 6c9dc938c75674b73b61177b55cce86d
+    Lesson%20not%20found/singular: 41c0c0e96242a28b4d90a84b3bf80e94
+    Invalid%20format.%20Please%20provide%20an%20array%20of%20non-empty%20strings/singular: c9dbc954cf099eedbb573d647356f52e
+    Course%20not%20found/singular: 679d024095e9e605246a1928a7e1d87b
+    Invalid%20file%20type.%20Please%20upload%20a%20JSON%20file/singular: 9164c5c1930e61a6037fab99386c02f6
+    This%20category%20has%20already%20been%20added%20to%20the%20course/singular: 5b220e40c0bfc7b3700d1f402697c522
+    Invalid%20activity%20format.%20Each%20activity%20must%20have%20a%20kind%20and%20position/singular: 56d8809184a63043c5a7eda1f86a4b66
+    Please%20sign%20in%20to%20continue/singular: 051e59dd3d3b0bfad95982f982fd6b9d
+    Chapter%20and%20course%20must%20belong%20to%20the%20same%20organization/singular: f3c132074516ccc5cad52c88c86d440d
+    Activity%20not%20found/singular: d4c0726446f5d6a7a7697bf63b9fa577
+    Invalid%20lesson%20format.%20Each%20lesson%20must%20have%20a%20title%20and%20description/singular: e449a82367ccec6680313c4711549e2e
+    You%20don't%20have%20permission%20to%20perform%20this%20action/singular: b99aa4dbc03b5e9b7bf6c64b245a9ab8
+    File%20is%20too%20large.%20Maximum%20size%20is%205MB/singular: 6ee737426f04528c60f84ba1004542b3
+    Invalid%20JSON%20format.%20Please%20check%20your%20file/singular: 2a890d833f49aa36f02433476ca33468
+    Organization%20not%20found/singular: 4cb8c07ec2c599b6f48750e06ffa182b
     History/singular: b0578d6d225f512e42f823fbca2e3c32
     Math/singular: 0a604ffa5ef57408918fe98ef05eb05a
     Arts/singular: 9b1845cec1210e57ea990b1a90823228
@@ -162,23 +192,6 @@ checksums:
     Law/singular: 3f04c791596043e899781f74003b9324
     Business/singular: 7682c7966c6e718836388561e7e68cab
     Geography/singular: fd93fe516c40f1f2dd96f53a507ce95d
-    Category%20not%20found%20in%20this%20course/singular: 32ae23f7913223e56ab7207abfe032bb
-    An%20unexpected%20error%20occurred/singular: fe07b9cdb1fc3f7397f6d89c102c60af
-    Invalid%20category/singular: 5f9195d3e0d1d819cc9d812b712eaca1
-    Chapter%20not%20found/singular: 72d4a8758136678acbae0ec942227f7e
-    Invalid%20chapter%20format.%20Each%20chapter%20must%20have%20a%20title%20and%20description/singular: 6c9dc938c75674b73b61177b55cce86d
-    Lesson%20not%20found/singular: 41c0c0e96242a28b4d90a84b3bf80e94
-    Invalid%20format.%20Please%20provide%20an%20array%20of%20non-empty%20strings/singular: c9dbc954cf099eedbb573d647356f52e
-    Course%20not%20found/singular: 679d024095e9e605246a1928a7e1d87b
-    Invalid%20file%20type.%20Please%20upload%20a%20JSON%20file/singular: 9164c5c1930e61a6037fab99386c02f6
-    This%20category%20has%20already%20been%20added%20to%20the%20course/singular: 5b220e40c0bfc7b3700d1f402697c522
-    Please%20sign%20in%20to%20continue/singular: 051e59dd3d3b0bfad95982f982fd6b9d
-    Chapter%20and%20course%20must%20belong%20to%20the%20same%20organization/singular: f3c132074516ccc5cad52c88c86d440d
-    Invalid%20lesson%20format.%20Each%20lesson%20must%20have%20a%20title%20and%20description/singular: e449a82367ccec6680313c4711549e2e
-    You%20don't%20have%20permission%20to%20perform%20this%20action/singular: b99aa4dbc03b5e9b7bf6c64b245a9ab8
-    File%20is%20too%20large.%20Maximum%20size%20is%205MB/singular: 6ee737426f04528c60f84ba1004542b3
-    Invalid%20JSON%20format.%20Please%20check%20your%20file/singular: 2a890d833f49aa36f02433476ca33468
-    Organization%20not%20found/singular: 4cb8c07ec2c599b6f48750e06ffa182b
   9270df1bc9e10fdb8026bb4ab67061d4:
     Login/singular: f4f219abeb5a465ecb1c7efaf50246de
     Logout/singular: 07948fdf20705e04a7bf68ab197512bf

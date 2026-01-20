@@ -20,6 +20,8 @@ export async function getErrorMessage(error: Error): Promise<string> {
 
   if (isEditorError(error)) {
     switch (error.code) {
+      case ErrorCode.activityNotFound:
+        return t("Activity not found");
       case ErrorCode.categoryAlreadyAdded:
         return t("This category has already been added to the course");
       case ErrorCode.categoryNotInCourse:
@@ -47,6 +49,10 @@ export async function getErrorMessage(error: Error): Promise<string> {
       case ErrorCode.invalidChapterFormat:
         return t(
           "Invalid chapter format. Each chapter must have a title and description",
+        );
+      case ErrorCode.invalidActivityFormat:
+        return t(
+          "Invalid activity format. Each activity must have a kind and position",
         );
       case ErrorCode.invalidAlternativeTitleFormat:
         return t(

@@ -1,10 +1,12 @@
 export const ErrorCode = {
+  activityNotFound: "activityNotFound",
   categoryAlreadyAdded: "categoryAlreadyAdded",
   categoryNotInCourse: "categoryNotInCourse",
   chapterNotFound: "chapterNotFound",
   courseNotFound: "courseNotFound",
   fileTooLarge: "fileTooLarge",
   forbidden: "forbidden",
+  invalidActivityFormat: "invalidActivityFormat",
   invalidAlternativeTitleFormat: "invalidAlternativeTitleFormat",
   invalidCategory: "invalidCategory",
   invalidChapterFormat: "invalidChapterFormat",

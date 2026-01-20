@@ -1,17 +1,17 @@
 import "server-only";
 
 import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
-import { type Lesson, prisma } from "@zoonk/db";
+import { type Activity, prisma } from "@zoonk/db";
 import { AppError, safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
 import { ErrorCode } from "@/lib/app-error";
 
-const cachedListChapterLessons = cache(
+const cachedListLessonActivities = cache(
   async (
-    chapterId: number,
+    lessonId: number,
     orgId: number,
     headers?: Headers,
-  ): Promise<{ data: Lesson[]; error: Error | null }> => {
+  ): Promise<{ data: Activity[]; error: Error | null }> => {
     const { data, error } = await safeAsync(() =>
       Promise.all([
         hasCoursePermission({
@@ -19,9 +19,9 @@ const cachedListChapterLessons = cache(
           orgId,
           permission: "update",
         }),
-        prisma.lesson.findMany({
+        prisma.activity.findMany({
           orderBy: { position: "asc" },
-          where: { chapterId, organizationId: orgId },
+          where: { lessonId, organizationId: orgId },
         }),
       ]),
     );
@@ -30,23 +30,23 @@ const cachedListChapterLessons = cache(
       return { data: [], error };
     }
 
-    const [hasPermission, lessons] = data;
+    const [hasPermission, activities] = data;
 
     if (!hasPermission) {
       return { data: [], error: new AppError(ErrorCode.forbidden) };
     }
 
-    return { data: lessons, error: null };
+    return { data: activities, error: null };
   },
 );
 
-export function listChapterLessons(params: {
-  chapterId: number;
+export function listLessonActivities(params: {
   headers?: Headers;
+  lessonId: number;
   orgId: number;
-}): Promise<{ data: Lesson[]; error: Error | null }> {
-  return cachedListChapterLessons(
-    params.chapterId,
+}): Promise<{ data: Activity[]; error: Error | null }> {
+  return cachedListLessonActivities(
+    params.lessonId,
     params.orgId,
     params.headers,
   );

@@ -2,9 +2,11 @@ import { Container, ContainerBody } from "@zoonk/ui/components/container";
 import { Suspense } from "react";
 import { BackLinkSkeleton } from "@/components/back-link";
 import { ContentEditorSkeleton } from "@/components/content-editor";
+import { EditorListSkeleton } from "@/components/editor-list";
 import { SlugEditorSkeleton } from "@/components/slug-editor";
 import { getChapter } from "@/data/chapters/get-chapter";
 import { getLesson } from "@/data/lessons/get-lesson";
+import { ActivityList } from "./activity-list";
 import { LessonBackLink } from "./lesson-back-link";
 import { LessonContent } from "./lesson-content";
 import { LessonSlug } from "./lesson-slug";
@@ -43,6 +45,10 @@ export default async function LessonPage(props: LessonPageProps) {
           <LessonSlug params={props.params} />
         </Suspense>
       </ContainerBody>
+
+      <Suspense fallback={<EditorListSkeleton />}>
+        <ActivityList params={props.params} />
+      </Suspense>
     </Container>
   );
 }

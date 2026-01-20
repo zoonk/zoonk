@@ -29,9 +29,18 @@ import {
   ImportSubmit,
 } from "./import";
 
-type EntityType = "chapters" | "lessons";
+type EntityType = "activities" | "chapters" | "lessons";
 
 const FORMATS: Record<EntityType, object> = {
+  activities: {
+    activities: [
+      {
+        description: "Activity description",
+        kind: "background",
+        title: "Activity title",
+      },
+    ],
+  },
   chapters: {
     chapters: [
       {
@@ -66,6 +75,14 @@ export function EntityListActions({
   const [pending, startTransition] = useTransition();
 
   const labels = {
+    activities: {
+      exportSuccess: t("Activities exported successfully"),
+      importDescription: t(
+        "Upload a JSON file containing activities to import.",
+      ),
+      importSuccess: t("Activities imported successfully"),
+      importTitle: t("Import activities"),
+    },
     chapters: {
       exportSuccess: t("Chapters exported successfully"),
       importDescription: t("Upload a JSON file containing chapters to import."),
