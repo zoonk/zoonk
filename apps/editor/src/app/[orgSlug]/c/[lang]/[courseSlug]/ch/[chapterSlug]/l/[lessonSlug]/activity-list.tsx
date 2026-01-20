@@ -36,12 +36,15 @@ export async function ActivityList({
   const { chapterSlug, courseSlug, lang, lessonSlug, orgSlug } = await params;
   const t = await getExtracted();
 
-  const [{ data: activities, error }, { data: lesson }] = await Promise.all([
-    listLessonActivities({ lessonSlug, orgSlug }),
-    getLesson({ chapterSlug, courseSlug, language: lang, lessonSlug, orgSlug }),
-  ]);
+  const { data: lesson } = await getLesson({
+    chapterSlug,
+    courseSlug,
+    language: lang,
+    lessonSlug,
+    orgSlug,
+  });
 
-  if (error || !lesson) {
+  if (!lesson) {
     return (
       <ErrorView
         description={t("We couldn't load the activities. Please try again.")}
@@ -54,6 +57,23 @@ export async function ActivityList({
   }
 
   const lessonId = lesson.id;
+
+  const { data: activities, error } = await listLessonActivities({
+    lessonId,
+    orgId: lesson.organizationId,
+  });
+
+  if (error) {
+    return (
+      <ErrorView
+        description={t("We couldn't load the activities. Please try again.")}
+        retryLabel={t("Try again")}
+        supportHref={SUPPORT_URL}
+        supportLabel={t("Contact support")}
+        title={t("Failed to load activities")}
+      />
+    );
+  }
 
   const routeParams = {
     chapterSlug,

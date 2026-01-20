@@ -21,9 +21,9 @@ describe("unauthenticated users", () => {
     });
 
     const result = await listChapterLessons({
-      chapterSlug: chapter.slug,
+      chapterId: chapter.id,
       headers: new Headers(),
-      orgSlug: organization.slug,
+      orgId: organization.id,
     });
 
     expect(result.error?.message).toBe(ErrorCode.forbidden);
@@ -46,9 +46,9 @@ describe("members", () => {
     ]);
 
     const result = await listChapterLessons({
-      chapterSlug: chapter.slug,
+      chapterId: chapter.id,
       headers,
-      orgSlug: organization.slug,
+      orgId: organization.id,
     });
 
     expect(result.error?.message).toBe(ErrorCode.forbidden);
@@ -59,23 +59,12 @@ describe("members", () => {
 describe("admins", () => {
   let organization: Awaited<ReturnType<typeof memberFixture>>["organization"];
   let headers: Headers;
-  let _chapter: Awaited<ReturnType<typeof chapterFixture>>;
 
   beforeAll(async () => {
     const fixture = await memberFixture({ role: "admin" });
     organization = fixture.organization;
-    const course = await courseFixture({
-      organizationId: fixture.organization.id,
-    });
 
-    [headers, _chapter] = await Promise.all([
-      signInAs(fixture.user.email, fixture.user.password),
-      chapterFixture({
-        courseId: course.id,
-        language: course.language,
-        organizationId: fixture.organization.id,
-      }),
-    ]);
+    headers = await signInAs(fixture.user.email, fixture.user.password);
   });
 
   test("lists lessons for a chapter ordered by position", async () => {
@@ -108,9 +97,9 @@ describe("admins", () => {
     ]);
 
     const result = await listChapterLessons({
-      chapterSlug: newChapter.slug,
+      chapterId: newChapter.id,
       headers,
-      orgSlug: organization.slug,
+      orgId: organization.id,
     });
 
     const expectedLessonCount = 3;
@@ -134,27 +123,27 @@ describe("admins", () => {
     });
 
     const result = await listChapterLessons({
-      chapterSlug: emptyChapter.slug,
+      chapterId: emptyChapter.id,
       headers,
-      orgSlug: organization.slug,
+      orgId: organization.id,
     });
 
     expect(result.error).toBeNull();
     expect(result.data).toEqual([]);
   });
 
-  test("returns empty array when chapter not found", async () => {
+  test("returns empty array when chapterId does not exist", async () => {
     const result = await listChapterLessons({
-      chapterSlug: "non-existent-chapter",
+      chapterId: 999_999_999,
       headers,
-      orgSlug: organization.slug,
+      orgId: organization.id,
     });
 
     expect(result.error).toBeNull();
     expect(result.data).toEqual([]);
   });
 
-  test("returns Forbidden for chapter in different organization", async () => {
+  test("returns empty array for chapter in different organization", async () => {
     const otherOrg = await organizationFixture();
     const otherCourse = await courseFixture({ organizationId: otherOrg.id });
     const otherChapter = await chapterFixture({
@@ -162,14 +151,21 @@ describe("admins", () => {
       language: otherCourse.language,
       organizationId: otherOrg.id,
     });
-
-    const result = await listChapterLessons({
-      chapterSlug: otherChapter.slug,
-      headers,
-      orgSlug: otherOrg.slug,
+    await lessonFixture({
+      chapterId: otherChapter.id,
+      language: otherCourse.language,
+      organizationId: otherOrg.id,
     });
 
-    expect(result.error?.message).toBe(ErrorCode.forbidden);
+    // Try to access using our org's ID but the other chapter's ID
+    // Should return empty since the lesson belongs to a different org
+    const result = await listChapterLessons({
+      chapterId: otherChapter.id,
+      headers,
+      orgId: organization.id,
+    });
+
+    expect(result.error).toBeNull();
     expect(result.data).toEqual([]);
   });
 });

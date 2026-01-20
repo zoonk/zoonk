@@ -4,7 +4,6 @@ import { BackLinkSkeleton } from "@/components/back-link";
 import { ContentEditorSkeleton } from "@/components/content-editor";
 import { EditorListSkeleton } from "@/components/editor-list";
 import { SlugEditorSkeleton } from "@/components/slug-editor";
-import { listLessonActivities } from "@/data/activities/list-lesson-activities";
 import { getChapter } from "@/data/chapters/get-chapter";
 import { getLesson } from "@/data/lessons/get-lesson";
 import { ActivityList } from "./activity-list";
@@ -29,7 +28,6 @@ export default async function LessonPage(props: LessonPageProps) {
       lessonSlug,
       orgSlug,
     }),
-    listLessonActivities({ lessonSlug, orgSlug }),
   ]);
 
   return (

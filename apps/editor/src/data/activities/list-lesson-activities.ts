@@ -8,25 +8,20 @@ import { ErrorCode } from "@/lib/app-error";
 
 const cachedListLessonActivities = cache(
   async (
-    lessonSlug: string,
-    orgSlug: string,
+    lessonId: number,
+    orgId: number,
     headers?: Headers,
   ): Promise<{ data: Activity[]; error: Error | null }> => {
     const { data, error } = await safeAsync(() =>
       Promise.all([
         hasCoursePermission({
           headers,
-          orgSlug,
+          orgId,
           permission: "update",
         }),
         prisma.activity.findMany({
           orderBy: { position: "asc" },
-          where: {
-            lesson: {
-              organization: { slug: orgSlug },
-              slug: lessonSlug,
-            },
-          },
+          where: { lessonId, organizationId: orgId },
         }),
       ]),
     );
@@ -46,13 +41,13 @@ const cachedListLessonActivities = cache(
 );
 
 export function listLessonActivities(params: {
-  lessonSlug: string;
   headers?: Headers;
-  orgSlug: string;
+  lessonId: number;
+  orgId: number;
 }): Promise<{ data: Activity[]; error: Error | null }> {
   return cachedListLessonActivities(
-    params.lessonSlug,
-    params.orgSlug,
+    params.lessonId,
+    params.orgId,
     params.headers,
   );
 }

@@ -6,7 +6,6 @@ import { EditorListSkeleton } from "@/components/editor-list";
 import { SlugEditorSkeleton } from "@/components/slug-editor";
 import { getChapter } from "@/data/chapters/get-chapter";
 import { getCourse } from "@/data/courses/get-course";
-import { listChapterLessons } from "@/data/lessons/list-chapter-lessons";
 import { ChapterBackLink } from "./chapter-back-link";
 import { ChapterContent } from "./chapter-content";
 import { ChapterSlug } from "./chapter-slug";
@@ -22,7 +21,6 @@ export default async function ChapterPage(props: ChapterPageProps) {
   void Promise.all([
     getCourse({ courseSlug, language: lang, orgSlug }),
     getChapter({ chapterSlug, courseSlug, language: lang, orgSlug }),
-    listChapterLessons({ chapterSlug, orgSlug }),
   ]);
 
   return (

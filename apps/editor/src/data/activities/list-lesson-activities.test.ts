@@ -28,8 +28,8 @@ describe("unauthenticated users", () => {
 
     const result = await listLessonActivities({
       headers: new Headers(),
-      lessonSlug: lesson.slug,
-      orgSlug: organization.slug,
+      lessonId: lesson.id,
+      orgId: organization.id,
     });
 
     expect(result.error?.message).toBe(ErrorCode.forbidden);
@@ -58,8 +58,8 @@ describe("members", () => {
 
     const result = await listLessonActivities({
       headers,
-      lessonSlug: lesson.slug,
-      orgSlug: organization.slug,
+      lessonId: lesson.id,
+      orgId: organization.id,
     });
 
     expect(result.error?.message).toBe(ErrorCode.forbidden);
@@ -75,24 +75,7 @@ describe("admins", () => {
     const fixture = await memberFixture({ role: "admin" });
     organization = fixture.organization;
 
-    const course = await courseFixture({
-      organizationId: fixture.organization.id,
-    });
-
-    const chapter = await chapterFixture({
-      courseId: course.id,
-      language: course.language,
-      organizationId: fixture.organization.id,
-    });
-
-    [headers] = await Promise.all([
-      signInAs(fixture.user.email, fixture.user.password),
-      lessonFixture({
-        chapterId: chapter.id,
-        language: course.language,
-        organizationId: fixture.organization.id,
-      }),
-    ]);
+    headers = await signInAs(fixture.user.email, fixture.user.password);
   });
 
   test("lists activities for a lesson ordered by position", async () => {
@@ -131,8 +114,8 @@ describe("admins", () => {
 
     const result = await listLessonActivities({
       headers,
-      lessonSlug: newLesson.slug,
-      orgSlug: organization.slug,
+      lessonId: newLesson.id,
+      orgId: organization.id,
     });
 
     const expectedActivityCount = 3;
@@ -162,26 +145,26 @@ describe("admins", () => {
 
     const result = await listLessonActivities({
       headers,
-      lessonSlug: emptyLesson.slug,
-      orgSlug: organization.slug,
+      lessonId: emptyLesson.id,
+      orgId: organization.id,
     });
 
     expect(result.error).toBeNull();
     expect(result.data).toEqual([]);
   });
 
-  test("returns empty array when lesson not found", async () => {
+  test("returns empty array when lessonId does not exist", async () => {
     const result = await listLessonActivities({
       headers,
-      lessonSlug: "non-existent-lesson",
-      orgSlug: organization.slug,
+      lessonId: 999_999_999,
+      orgId: organization.id,
     });
 
     expect(result.error).toBeNull();
     expect(result.data).toEqual([]);
   });
 
-  test("returns Forbidden for lesson in different organization", async () => {
+  test("returns empty array for lesson in different organization", async () => {
     const otherOrg = await organizationFixture();
     const otherCourse = await courseFixture({ organizationId: otherOrg.id });
     const otherChapter = await chapterFixture({
@@ -194,14 +177,21 @@ describe("admins", () => {
       language: otherCourse.language,
       organizationId: otherOrg.id,
     });
-
-    const result = await listLessonActivities({
-      headers,
-      lessonSlug: otherLesson.slug,
-      orgSlug: otherOrg.slug,
+    await activityFixture({
+      language: otherCourse.language,
+      lessonId: otherLesson.id,
+      organizationId: otherOrg.id,
     });
 
-    expect(result.error?.message).toBe(ErrorCode.forbidden);
+    // Try to access using our org's ID but the other lesson's ID
+    // Should return empty since the activity belongs to a different org
+    const result = await listLessonActivities({
+      headers,
+      lessonId: otherLesson.id,
+      orgId: organization.id,
+    });
+
+    expect(result.error).toBeNull();
     expect(result.data).toEqual([]);
   });
 });
