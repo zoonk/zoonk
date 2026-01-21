@@ -74,29 +74,44 @@ When the target language has sounds that don't exist in the native language, use
 
 ## For Portuguese Speakers Learning English
 
-| English Sound                  | Portuguese Approximation | Example                   | Notes                                         |
-| ------------------------------ | ------------------------ | ------------------------- | --------------------------------------------- |
-| "th" (voiced, as in "the")     | "d"                      | "the" → "dâ"              |                                               |
-| "th" (unvoiced, as in "think") | "f" or "s"               | "think" → "fink"          |                                               |
-| Short "i" (as in "bit")        | "i"                      | "bit" → "bit"             |                                               |
-| "r" (American, any position)   | Single "r"               | "car" → "CAR"             | NEVER use 'rr' - see phonotactics section     |
-| "h" at start                   | "rr" or initial "r"      | "hello" → "rre-LOU"       | Initial 'r' and 'rr' both make /h/ in PT      |
-| "k" sound                      | "c" or "qu"              | "cat" → "CAT"             | Prefer 'c'/'qu' over 'k' for naturalness      |
-| Initial s+consonant cluster    | Add 'i' or 'e' before    | "school" → "is-CUL"       | Portuguese requires vowel before s+C clusters |
-| "schwa" + l (as in "-le")      | "eu" or "ou"             | "apple" → "É-pou"         | Avoid 'ol' which implies /ɔw/                 |
+| English Sound                  | Portuguese Approximation | Example             | Notes                                         |
+| ------------------------------ | ------------------------ | ------------------- | --------------------------------------------- |
+| "th" (voiced, as in "the")     | "d"                      | "the" → "dâ"        |                                               |
+| "th" (unvoiced, as in "think") | "f" or "s"               | "think" → "fink"    |                                               |
+| Short "i" (as in "bit")        | "i"                      | "bit" → "bit"       |                                               |
+| "r" (American, any position)   | Single "r"               | "car" → "CAR"       | NEVER use 'rr' - see phonotactics section     |
+| "h" at start                   | "rr" or initial "r"      | "hello" → "rre-LOU" | Initial 'r' and 'rr' both make /h/ in PT      |
+| "k" sound (no /w/)             | "c" or "qu"              | "cat" → "CAT"       | 'qu'+e/i has silent 'u' - see phonotactics    |
+| "kw" sound (/kw/)              | "cu" + vowel             | "queen" → "CU-IN"   | NOT 'qu' - that makes 'u' silent before e/i   |
+| Initial s+consonant cluster    | Add 'i' or 'e' before    | "school" → "is-CUL" | Portuguese requires vowel before s+C clusters |
+| "schwa" + l (as in "-le")      | "eu" or "ou"             | "apple" → "É-pou"   | Avoid 'ol' which implies /ɔw/                 |
 
 ## For Spanish Speakers Learning English
 
-| English Sound   | Spanish Approximation | Example          | Notes                                    |
-| --------------- | --------------------- | ---------------- | ---------------------------------------- |
-| "th" (voiced)   | "d"                   | "the" → "da"     |                                          |
-| "th" (unvoiced) | "z" or "s"            | "think" → "sink" |                                          |
-| Short "i"       | "i"                   | "ship" → "ship"  |                                          |
+| English Sound   | Spanish Approximation | Example          | Notes                                   |
+| --------------- | --------------------- | ---------------- | --------------------------------------- |
+| "th" (voiced)   | "d"                   | "the" → "da"     |                                         |
+| "th" (unvoiced) | "z" or "s"            | "think" → "sink" |                                         |
+| Short "i"       | "i"                   | "ship" → "ship"  |                                         |
 | "j" sound       | "ch" or "y"           | "job" → "chob"   | 'ch' is closer to English /dʒ/ than 'y' |
-| "v" sound       | "b"                   | "very" → "BE-ri" |                                          |
-| Schwa vowel     | "a" or "e"            | "the" → "da"     | Use unstressed short vowel               |
+| "v" sound       | "b"                   | "very" → "BE-ri" |                                         |
+| Schwa vowel     | "a" or "e"            | "the" → "da"     | Use unstressed short vowel              |
 
 ## For English Speakers Learning Portuguese
+
+**Vowel representations** (use English spelling conventions that produce the correct sound):
+
+| Portuguese Vowel | English Spelling | Sounds like    | Example              |
+| ---------------- | ---------------- | -------------- | -------------------- |
+| Open 'a' (/a/)   | "ah"             | "father"       | "casa" → "KAH-zah"   |
+| Closed 'e' (/e/) | "ay" or "eh"     | "say" or "pet" | "mesa" → "MAY-zah"   |
+| Open 'e' (/ɛ/)   | "eh"             | "pet"          | "café" → "kah-FEH"   |
+| 'i' (/i/)        | "ee"             | "see"          | "vida" → "VEE-dah"   |
+| Closed 'o' (/o/) | "oh"             | "go"           | "bolo" → "BOH-loo"   |
+| Open 'o' (/ɔ/)   | "aw"             | "law"          | "porta" → "PAWR-tah" |
+| 'u' (/u/)        | "oo"             | "food"         | "tudo" → "TOO-doo"   |
+
+**CRITICAL**: Use "ah" for Portuguese open 'a', NOT "eh" or plain "a". Writing "peh" would suggest /pɛ/ (like "pet"), but Portuguese 'a' is /a/ (like "father").
 
 | Portuguese Sound | English Approximation | Example                     |
 | ---------------- | --------------------- | --------------------------- |
@@ -133,11 +148,23 @@ The pronunciation guide must respect what syllable structures and letter combina
 - 'rr' and word-initial 'r' both produce the /h/ sound, use them ONLY for English /h/
 - Example: "forest" → "FO-rest" (NOT "FO-rrest")
 
-**The letter 'k'**: While 'k' exists in Portuguese for foreign words, prefer 'c' (before a, o, u) or 'qu' (before e, i) as these are more natural.
+**The letter 'k' and the /kw/ sound**: While 'k' exists in Portuguese for foreign words, prefer 'c' or 'qu' for the /k/ sound. However, be careful with the /kw/ sound:
 
-- "car" → "CAR" (NOT "KAR")
-- "kit" → "QUIT" (NOT "KIT")
-- "keep" → "QUIP" (NOT "KIP")
+**CRITICAL - 'qu' before 'e' or 'i' makes the 'u' SILENT in Portuguese:**
+
+- 'qu' + e/i = /k/ only (u is silent): "querer" = /kerer/, "aqui" = /aki/
+- To represent the /kw/ sound, use 'cu' + vowel: 'CUI' for /kwi/, 'CUA' for /kwa/
+
+Examples for /k/ sound (no /w/):
+
+- "cat" → "CAT" (NOT "KAT")
+- "kit" → "QUIT" (NOT "KIT") - here 'qu' works because we want just /k/
+
+Examples for /kw/ sound (with /w/):
+
+- "queen" → "CU-IN" (NOT "QUIN" - that would be read as /kin/)
+- "quick" → "CUI-que" (NOT "QUI-que" - that would be read as /kike/)
+- "square" → "is-CUÉ-re" (NOT "is-QUÉ-re")
 
 ## Spanish Phonotactics
 
