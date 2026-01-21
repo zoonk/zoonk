@@ -53,15 +53,4 @@ fix(ci): update node version in workflow
 
 # PR Descriptions
 
-Keep descriptions brief. Focus on what changed:
-
-```markdown
-## Summary
-
-Brief description of changes.
-
-**Before**: [previous behavior]
-**After**: [new behavior]
-```
-
-No need to list verification commands run.
+Keep descriptions brief. Focus on what changed. No need to list verification commands run
