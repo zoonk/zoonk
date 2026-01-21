@@ -79,7 +79,8 @@ When the target language has sounds that don't exist in the native language, use
 | "th" (voiced, as in "the")     | "d"                      | "the" → "dâ"        |                                               |
 | "th" (unvoiced, as in "think") | "f" or "s"               | "think" → "fink"    |                                               |
 | Short "i" (as in "bit")        | "i"                      | "bit" → "bit"       |                                               |
-| "r" (American, any position)   | Single "r"               | "car" → "CAR"       | NEVER use 'rr' - see phonotactics section     |
+| "r" (American, non-initial)    | Single "r"               | "car" → "CAR"       | NEVER use 'rr' - see phonotactics section     |
+| "r" (American, word-initial)   | "a-r" or "e-r" prefix    | "run" → "a-RAN"     | Initial 'r' = /h/ in PT; add vowel before     |
 | "h" at start                   | "rr" or initial "r"      | "hello" → "rre-LOU" | Initial 'r' and 'rr' both make /h/ in PT      |
 | "k" sound (no /w/)             | "c" or "qu"              | "cat" → "CAT"       | 'qu'+e/i has silent 'u' - see phonotactics    |
 | "kw" sound (/kw/)              | "cu" + vowel             | "queen" → "CU-IN"   | NOT 'qu' - that makes 'u' silent before e/i   |
@@ -144,7 +145,8 @@ The pronunciation guide must respect what syllable structures and letter combina
 **CRITICAL - The letter 'rr'**: In Brazilian Portuguese, 'rr' between vowels is pronounced as a guttural /h/ sound (like English 'h' in 'house'), NOT as a trill or tap.
 
 - NEVER use 'rr' to represent the English /r/ sound
-- Use single 'r' for English /r/ in all positions: "mirror" → "MI-ror" (NOT "MI-rror" which would sound like "mi-hor")
+- Use single 'r' for English /r/ in non-initial positions: "mirror" → "MI-ror" (NOT "MI-rror" which would sound like "mi-hor")
+- For word-initial English /r/, add a vowel prefix: "run" → "a-RAN", "red" → "é-RED" (puts 'r' between vowels for /ɾ/ sound)
 - 'rr' and word-initial 'r' both produce the /h/ sound, use them ONLY for English /h/
 - Example: "forest" → "FO-rest" (NOT "FO-rrest")
 

@@ -371,7 +371,7 @@ ${SHARED_EXPECTATIONS}
     userInput: {
       nativeLanguage: "en",
       targetLanguage: "Spanish",
-      word: "murcielago",
+      word: "murciélago",
     },
   },
   {
