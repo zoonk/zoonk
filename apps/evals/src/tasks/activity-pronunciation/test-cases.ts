@@ -357,7 +357,7 @@ This Spanish word (bat - the animal) is famous for containing all 5 vowels:
 SOUND CHALLENGES:
 - The "ci" combination sounds like "see"
 - The "g" before "o" is hard
-- Stress is on the third syllable (indicated by accent)
+- Stress is on the second syllable (indicated by accent)
 
 QUALITY CHECK:
 - Should be readable by an English speaker
