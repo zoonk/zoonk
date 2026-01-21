@@ -174,7 +174,7 @@ When committing changes, use the `/commit` skill. This ensures consistent commit
 For detailed guidance on complex workflows, see these skill files:
 
 | Skill                | When to Use                         | File                                           |
-| -------------------- | -------------------- | ---------------------------------------------- |
+| -------------------- | ----------------------------------- | ---------------------------------------------- |
 | Cache Components     | next.js `cacheComponents` is `true` | `.claude/skills/cache-components/SKILL.md`     |
 | Commit               | Writing commit messages, PRs        | `.claude/skills/commit/SKILL.md`               |
 | Compound Components  | Building UI components              | `.claude/skills/compound-components/SKILL.md`  |
