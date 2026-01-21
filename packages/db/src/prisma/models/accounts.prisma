@@ -94,6 +94,8 @@ model Organization {
   stepAttempts     StepAttempt[]
   dailyProgress    DailyProgress[]
   stripeCustomerId String?         @map("stripe_customer_id")
+  words            Word[]
+  sentences        Sentence[]
 
   @@unique([slug])
   @@map("organizations")

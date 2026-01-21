@@ -10,8 +10,10 @@ import { seedCourses } from "./seed/courses";
 import { seedLessons } from "./seed/lessons";
 import { seedOrganizations } from "./seed/orgs";
 import { seedProgress } from "./seed/progress";
+import { seedSentences } from "./seed/sentences";
 import { seedSteps } from "./seed/steps";
 import { seedUsers } from "./seed/users";
+import { seedWords } from "./seed/words";
 
 async function main() {
   const users = await seedUsers(prisma);
@@ -21,6 +23,8 @@ async function main() {
   await seedCategories(prisma, orgs.ai);
   await seedChapters(prisma, orgs.ai);
   await seedLessons(prisma, orgs.ai);
+  await seedWords(prisma, orgs.ai);
+  await seedSentences(prisma, orgs.ai);
   await seedAlternativeTitles(prisma, orgs.ai);
   await seedCourseUsers(prisma, orgs.ai, users);
   await seedActivities(prisma, orgs.ai);

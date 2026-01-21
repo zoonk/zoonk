@@ -19,7 +19,6 @@ const validActivityKinds: ActivityKind[] = [
   "grammar",
   "reading",
   "listening",
-  "pronunciation",
   "review",
 ];
 

@@ -1,0 +1,66 @@
+model Word {
+  id             BigInt       @id @default(autoincrement())
+  organizationId Int          @map("organization_id")
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  targetLanguage String       @map("target_language") @db.VarChar(10)
+  userLanguage   String       @map("user_language") @db.VarChar(10)
+  word           String
+  translation    String
+  pronunciation  String
+  romanization   String?
+  audioUrl       String?      @map("audio_url")
+  createdAt      DateTime     @default(now()) @map("created_at")
+  updatedAt      DateTime     @default(now()) @updatedAt @map("updated_at")
+  lessons        LessonWord[]
+
+  @@unique([organizationId, targetLanguage, userLanguage, word], name: "orgWord")
+  @@index([organizationId, targetLanguage, userLanguage])
+  @@map("words")
+}
+
+model Sentence {
+  id             BigInt           @id @default(autoincrement())
+  organizationId Int              @map("organization_id")
+  organization   Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  targetLanguage String           @map("target_language") @db.VarChar(10)
+  userLanguage   String           @map("user_language") @db.VarChar(10)
+  sentence       String
+  translation    String
+  romanization   String?
+  audioUrl       String?          @map("audio_url")
+  createdAt      DateTime         @default(now()) @map("created_at")
+  updatedAt      DateTime         @default(now()) @updatedAt @map("updated_at")
+  lessons        LessonSentence[]
+
+  @@unique([organizationId, targetLanguage, userLanguage, sentence], name: "orgSentence")
+  @@index([organizationId, targetLanguage, userLanguage])
+  @@map("sentences")
+}
+
+model LessonWord {
+  id        BigInt   @id @default(autoincrement())
+  lessonId  Int      @map("lesson_id")
+  lesson    Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  wordId    BigInt   @map("word_id")
+  word      Word     @relation(fields: [wordId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@unique([lessonId, wordId], name: "lessonWord")
+  @@index([lessonId])
+  @@index([wordId])
+  @@map("lesson_words")
+}
+
+model LessonSentence {
+  id         BigInt   @id @default(autoincrement())
+  lessonId   Int      @map("lesson_id")
+  lesson     Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  sentenceId BigInt   @map("sentence_id")
+  sentence   Sentence @relation(fields: [sentenceId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  @@unique([lessonId, sentenceId], name: "lessonSentence")
+  @@index([lessonId])
+  @@index([sentenceId])
+  @@map("lesson_sentences")
+}
