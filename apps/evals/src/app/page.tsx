@@ -89,6 +89,24 @@ export default function Home() {
           </ItemActions>
         </Item>
 
+        <Item variant="outline">
+          <ItemContent>
+            <ItemTitle>Audio Test</ItemTitle>
+            <ItemDescription>
+              Test AI-generated audio for words and sentences
+            </ItemDescription>
+          </ItemContent>
+
+          <ItemActions>
+            <Link
+              className={buttonVariants({ variant: "outline" })}
+              href="/audio-test"
+            >
+              Test Audio
+            </Link>
+          </ItemActions>
+        </Item>
+
         {TASKS.map((task) => (
           <Item key={task.id} variant="outline">
             <ItemContent>
