@@ -24,7 +24,6 @@ enum ActivityKind {
   grammar
   reading
   listening
-  pronunciation
   review
 }
 
