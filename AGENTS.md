@@ -165,13 +165,18 @@ We're using the new [React Compiler](https://react.dev/learn/react-compiler/intr
 
 - You can't use `export const dynamic = "force-dynamic";` with cache components. Instead, wrap async code in a `Suspense` boundary. grep `Suspense` for examples and search the latest Next.js docs for more information.
 
+## Committing Changes
+
+When committing changes, use the `/commit` skill. This ensures consistent commit message formatting across the project.
+
 ## Specialized Skills
 
 For detailed guidance on complex workflows, see these skill files:
 
 | Skill                | When to Use                         | File                                           |
-| -------------------- | ----------------------------------- | ---------------------------------------------- |
+| -------------------- | -------------------- | ---------------------------------------------- |
 | Cache Components     | next.js `cacheComponents` is `true` | `.claude/skills/cache-components/SKILL.md`     |
+| Commit               | Writing commit messages, PRs        | `.claude/skills/commit/SKILL.md`               |
 | Compound Components  | Building UI components              | `.claude/skills/compound-components/SKILL.md`  |
 | Design               | UI/UX, interactions, a11y           | `.claude/skills/design/SKILL.md`               |
 | React Best Practices | React best practices                | `.claude/skills/react-best-practices/SKILL.md` |
