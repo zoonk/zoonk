@@ -1,0 +1,131 @@
+{
+  "expectations": "\nLANGUAGE: English output required (scenario, questions, feedback).\n\nTOPIC: Ordering coffee and pastries at a cafe in France.\n\nSCRIPT: Roman (ALL romanization fields must be empty strings \"\")\n\nSCENARIO TYPE: Food & Dining - casual cafe interaction\n\nKEY REQUIREMENTS:\n- Scenario describes arriving at a Parisian cafe\n- Native speaker (barista/server) speaks natural French\n- Learner must choose appropriate French phrases for ordering\n- Options show ONLY French text, NO English translations\n- Feedback reveals English translation + explanation\n\nACCURACY PITFALLS - Penalize SEVERELY if:\n- Options include English translations or hints\n- French dialogue is unnatural or overly formal for a cafe\n- Romanization fields contain any text (must be empty string)\n- Feedback doesn't include translation of what the learner said\n- Steps don't follow a logical cafe interaction flow\n\n\nEVALUATION CRITERIA:\n\n1. STRUCTURE - IMMERSIVE STORY FORMAT (CRITICAL):\n   The activity MUST follow the immersive story structure:\n   - A clear scenario description in the NATIVE language\n   - 5-10 dialogue steps with natural progression\n   - Each step has: context (TARGET), contextTranslation (NATIVE), contextRomanization, 4 options\n   - Exactly 1 correct option per step\n   Penalize SEVERELY if any structural element is missing or malformed.\n\n2. SCENARIO QUALITY:\n   - Scenario MUST describe a realistic everyday situation\n   - Should be relevant to the lesson topic\n   - Setting should be clear and immersive\n   - Appropriate for language learners (not overly complex situations)\n   Penalize if scenario is vague, unrealistic, or unrelated to the lesson.\n\n3. CONTEXT DIALOGUE:\n   - Context MUST be in the TARGET language\n   - Context represents what the native speaker says\n   - contextTranslation MUST accurately translate the context to NATIVE language\n   - Dialogue should be natural, not stilted or textbook-like\n   Penalize if context is unnatural or translation is inaccurate.\n\n4. OPTIONS DESIGN (CRITICAL - IMMERSION PRINCIPLE):\n   - Options MUST show only TARGET language text (NO translations)\n   - All 4 options MUST be grammatically correct in TARGET language\n   - Options should represent meaningfully different responses\n   - textRomanization provided for non-Roman scripts, empty string for Roman scripts\n   - Penalize SEVERELY if options include translations or hints in NATIVE language\n   - Penalize if options are grammatically incorrect or nonsensical\n\n5. FEEDBACK DESIGN (CRITICAL):\n   - Every feedback MUST include the translation of what the learner said\n   - Feedback MUST explain why the choice is correct or incorrect\n   - For incorrect options: explain what would be better\n   - Feedback is in NATIVE language\n   - Penalize SEVERELY if feedback is missing translation\n   - Penalize if feedback doesn't explain the reasoning\n\n6. ROMANIZATION (CRITICAL):\n   - For non-Roman scripts (Japanese, Korean, Chinese, Arabic, Russian, Greek, Thai, Hindi, etc.):\n     BOTH contextRomanization AND textRomanization MUST be included and accurate\n   - For Roman-script languages (Spanish, French, German, Portuguese, Italian, etc.):\n     BOTH romanization fields MUST be empty strings \"\"\n   - Penalize SEVERELY if romanization is missing for non-Roman scripts\n   - Penalize SEVERELY if romanization contains text for Roman scripts\n\n7. STORY ARC AND PROGRESSION:\n   - Steps should follow a natural conversation flow\n   - Story should have: opening, building, resolution, closing\n   - Complication is optional but adds realism (e.g., item unavailable, clarification needed)\n   - Each step should logically follow from the previous\n   - The native speaker should acknowledge the learner's previous choice\n   Penalize if steps feel disconnected or conversation doesn't flow naturally.\n\n8. LINGUISTIC ACCURACY (CRITICAL):\n   - ALL target language text must be grammatically correct\n   - ALL translations must be accurate and natural\n   - Register (formal/informal) should be appropriate for the situation\n   - Cultural context should be accurate\n   Penalize SEVERELY for incorrect grammar, mistranslations, or inappropriate register.\n\n9. DISTRACTOR QUALITY (CRITICAL):\n   Wrong options MUST be genuinely wrong - they would cause miscommunication or confusion if used.\n\n   GOOD distractors (genuinely wrong):\n   - Answer a different question (asking about price when asked about quantity)\n   - Request the wrong thing (one-way ticket when you need round-trip)\n   - Are off-topic (asking for the check when you just arrived)\n   - Would cause confusion (saying \"no\" when you mean \"yes\")\n\n   BAD distractors (penalize these):\n   - More/less formal versions of the correct answer that would still work\n   - Slightly different phrasings that communicate the same thing\n   - \"Less polished\" versions that a native speaker would still understand\n\n   Example: If ordering coffee, \"Where is the bathroom?\" is a GOOD distractor (off-topic).\n   \"I would like your finest coffee\" vs \"A coffee please\" are BOTH correct - don't use one as a distractor for the other.\n\n   Penalize SEVERELY if distractors are just stylistic variations that would still accomplish the communication goal.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific dialogue choices - accept ANY natural conversation\n- Do NOT require specific phrases or sentence structures\n- Do NOT penalize for different valid cultural approaches\n- FOCUS ON: structural correctness, immersion principle (no translations in options), feedback quality, romanization correctness\n- The eval model should judge whether the activity creates an immersive language experience, not whether it matches predetermined answers\n\n    ",
+  "judgedAt": "2026-01-21T21:34:01.204Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model A provides an excellent 10-step progression that covers the full cafe experience from greeting through payment. The scenario is clear and appropriate. All romanization fields are correctly empty strings. The French dialogue is natural and appropriate for a casual cafe. Context translations are accurate. Distractors are genuinely wrong (off-topic, wrong timing, etc.) rather than stylistic variations. Feedback consistently includes translations of what the learner said and explains why choices are correct/incorrect. The complication (croissants unavailable) is handled naturally. The flow is logical: greeting → menu → drink order → food order → unavailability → here/to-go → confirmation → receiving order → bill offer → payment method. One minor issue: in step 3, the water option is marked incorrect but asking for tap water could be valid, though the reasoning given is somewhat weak. Overall, this is a high-quality immersive learning activity.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model B provides a 10-step scenario with a charming Parisian setting. All romanization fields are correctly empty. French is natural and appropriate. The progression flows well from greeting through departure. Distractors are genuinely wrong (asking for directions, canceling orders, claiming not to speak French while doing so). Feedback includes translations and explanations. The unavailability complication is handled smoothly. One issue: the payment step asks if card is accepted rather than stating payment method, which is slightly less direct but still valid. The scenario is immersive and engaging. Very similar quality to Model A with a slightly different conversation flow.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model D offers a 7-step scenario that covers the essential cafe experience. All romanization fields are correctly empty. The French is natural and appropriate. The complication (chocolate machine broken) is creative and realistic. Distractors are genuinely wrong (asking for hotel rooms, train tickets, giving your name). Feedback includes translations and explanations. The flow is logical. However, with only 7 steps, it's on the shorter end of the 5-10 range requirement, and some transitions feel slightly rushed. The scenario is solid but less comprehensive than Models A and B.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model E has 8 well-structured steps covering the full cafe experience. All romanization fields are correctly empty. French is natural. The unavailability scenario (quiche not available) is handled well. Feedback consistently includes translations. However, some distractors could be argued as partially valid responses (like asking for the menu when asked about food, or saying the meal was delicious when asked about the bill). The feedback sometimes over-explains why alternatives might not work rather than just marking them wrong. The scenario mentions 'we' at one point despite being for one person. Overall solid but slightly less polished than top models.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Model C provides a 6-step scenario that covers the cafe basics. All romanization fields are correctly empty. French is natural. The unavailability complication is included. Distractors are generally good (asking for the check at arrival, saying goodbye immediately). However, with only 6 steps, it's relatively brief and misses some natural cafe interaction points. Some feedback translations are very minimal (e.g., 'Yes, please - Perfect!'). The step 5 combines bringing food and asking for the bill into one context with '(Later)', which feels slightly artificial. Adequate but less comprehensive than other models.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Model F has a critical issue: in steps 4, 7, and 8, there are TWO correct options marked (isCorrect: true), which violates the requirement of exactly 1 correct option per step. This is a structural error that significantly impacts the activity's usability. Beyond this major issue, the French is natural, romanization is correct (empty strings), and the scenario flows reasonably well. However, the multiple correct answers issue is a severe violation of the structural requirements, and step 4 having two correct answers means the learner doesn't get meaningful practice distinguishing between options. The activity also lacks an unavailability complication, which was mentioned in the task expectations.",
+          "score": 5.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "This model is the strongest. It perfectly adheres to all constraints, including the strict prohibition of romanization text for French. The story flow is highly natural and logical: arrival -> menu -> order -> complication (out of stock) -> resolution -> serving -> check -> payment. The distractors are high quality (genuinely wrong contextual responses rather than just grammar errors). The feedback provides clear translations and useful cultural/contextual explanations.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "This model is excellent and very close in quality to the top rank. The structure is perfect, and the story logic is sound. It introduces a realistic complication (quiche unavailable) and resolves it naturally. The feedback is detailed and educational. It ranks slightly lower only because the scenario description in Model B felt slightly more immersive ('sunny afternoon' vs 'practice getting seated'), but effectively they are equivalent.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "This model followed all structural instructions well. The story makes sense, and the French is natural. The distractors were acceptable but occasionally a bit random or clichéd (e.g., 'I would like a car' or 'I want a train ticket' in a cafe), whereas the higher-ranked models used distractors that were more likely to be actual learner mistakes (timing issues, confusion).",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "This model followed the constraints well. The scenario is a bit shorter (6 steps), which makes the pacing feel slightly rushed compared to the others (eating and asking for the check happens in a single jump). However, it is grammatically correct, follows the JSON schema perfectly, and includes valid distractors.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "This model fails on story continuity logic, which is critical for an immersive scenario. In Step 1, the learner orders a coffee. In Step 2, they ask for a menu. In Step 3, the waiter asks what they want to drink (ignoring the coffee form Step 1), and the learner orders tea. In Step 8, the waiter serves tea. The initial coffee order completely disappears from the narrative, which would confuse a learner. Otherwise, the structure was correct.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "This model committed a critical structural error. The requirements explicitly stated 'Exactly 1 correct option per step'. This model marked multiple options as 'isCorrect: true' in Steps 4, 7, 8, and 9. This makes the JSON unusable for a standard single-choice quiz application. While the French content was acceptable, failing a critical logic constraint results in a very low score.",
+          "score": 2
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Meets the immersive structure cleanly: Paris café arrival, 10 logical steps, natural casual French from the server, options are French-only, romanization fields are correctly empty. Feedback is in English and consistently gives an English translation of the learner’s chosen French plus a brief why/why-not. Flow includes a realistic unavailability (no croissants), ordering, water request, check, paying, goodbye. Minor nit: some feedback is a bit wordy/over-coaching, but it still satisfies requirements.",
+          "score": 9.3
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Strong overall structure and story arc (10 steps) with a good complication (out of croissants) and natural café questions (sur place/à emporter, payment method). Options are French-only and romanization is correctly empty. Main weakness: several feedback lines translate the learner’s choice into English, but not always explicitly/cleanly formatted as a translation of “what you said” (it’s embedded as “X - explanation”), though it’s still present. Also one distractor critique is questionable: asking for tap water is actually a very normal café request, so calling it “dodging” is less accurate.",
+          "score": 8.7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Good Paris café setup, 8 steps with logical progression (seating → drink → food → item unavailable → add water → bill → pay → goodbye). Options are French-only, and romanization fields are empty as required. Feedback is in English and includes translations of the learner’s utterances. Weaknesses: some “incorrect” options are actually plausible/acceptable in real life (e.g., asking for the menu in step 3; asking ingredients in step 4), which violates the distractor-quality requirement (wrong options should be genuinely wrong).",
+          "score": 7.9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Solid scenario and coherent 7-step flow with a realistic complication (machine broken) and natural café language. Options are French-only; romanization fields are empty. Feedback includes English meaning and rationale. Weakness: some French phrasing is slightly off/less idiomatic (e.g., “Je paye par carte bancaire” is okay but a bit clunky vs “par carte”), and distractors sometimes feel like obviously unrelated nonsense rather than plausible wrong turns, reducing learning value.",
+          "score": 7.4
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Meets core structural requirements (scenario, 6 steps, French-only options, empty romanization). Flow is mostly logical and includes unavailability. However, it’s less immersive/natural: step 5 bundles ordering + time skip + check-in into one context, which breaks the dialogue pacing. Some feedback/translation mismatches appear (option described as “Do you have a chocolate croissant?” but the French is “Avez-vous un pain au chocolat ?” which is not phrased as “croissant” and the English label is inaccurate). Overall less polished.",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Fails critical structure rule: multiple steps have more than one correct option (step 4: two marked correct; step 7: two marked correct; step 8: two marked correct; step 9: two marked correct). That violates “Exactly 1 correct option per step.” Otherwise French-only options and empty romanization are fine, but the multiple-correct issue is a severe disqualifier under the requirements.",
+          "score": 2.3
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-story-language",
+  "testCaseId": "en-french-cafe-ordering-1"
+}

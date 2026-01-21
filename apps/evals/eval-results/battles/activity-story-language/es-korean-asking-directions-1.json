@@ -1,0 +1,131 @@
+{
+  "expectations": "\nLANGUAGE: Latin American Spanish output required (NOT English).\n\nTOPIC: Asking for directions in South Korea.\n\nSCRIPT: Non-Roman (romanization MUST be included for ALL Korean text)\n\nSCENARIO TYPE: Transportation - asking for directions\n\nKEY REQUIREMENTS:\n- Scenario IN SPANISH describes being lost and asking for directions\n- Questions and feedback IN SPANISH\n- Helpful local speaks natural Korean\n- Learner must choose appropriate Korean phrases\n- Options show ONLY Korean text with romanization, NO Spanish\n\nROMANIZATION REQUIREMENTS:\n- MUST include romanization for all Korean text\n- Use Revised Romanization of Korean\n- Both contextRomanization and textRomanization must be accurate\n\nACCURACY PITFALLS - Penalize SEVERELY if:\n- Output is in English instead of Spanish\n- Options include Spanish translations\n- Korean is inappropriate register (should use polite 요 forms for strangers)\n- Romanization is missing or uses non-standard system\n- Feedback (in Spanish) doesn't include Korean translation\n- Steps don't follow a logical interaction for asking directions\n\n\nEVALUATION CRITERIA:\n\n1. STRUCTURE - IMMERSIVE STORY FORMAT (CRITICAL):\n   The activity MUST follow the immersive story structure:\n   - A clear scenario description in the NATIVE language\n   - 5-10 dialogue steps with natural progression\n   - Each step has: context (TARGET), contextTranslation (NATIVE), contextRomanization, 4 options\n   - Exactly 1 correct option per step\n   Penalize SEVERELY if any structural element is missing or malformed.\n\n2. SCENARIO QUALITY:\n   - Scenario MUST describe a realistic everyday situation\n   - Should be relevant to the lesson topic\n   - Setting should be clear and immersive\n   - Appropriate for language learners (not overly complex situations)\n   Penalize if scenario is vague, unrealistic, or unrelated to the lesson.\n\n3. CONTEXT DIALOGUE:\n   - Context MUST be in the TARGET language\n   - Context represents what the native speaker says\n   - contextTranslation MUST accurately translate the context to NATIVE language\n   - Dialogue should be natural, not stilted or textbook-like\n   Penalize if context is unnatural or translation is inaccurate.\n\n4. OPTIONS DESIGN (CRITICAL - IMMERSION PRINCIPLE):\n   - Options MUST show only TARGET language text (NO translations)\n   - All 4 options MUST be grammatically correct in TARGET language\n   - Options should represent meaningfully different responses\n   - textRomanization provided for non-Roman scripts, empty string for Roman scripts\n   - Penalize SEVERELY if options include translations or hints in NATIVE language\n   - Penalize if options are grammatically incorrect or nonsensical\n\n5. FEEDBACK DESIGN (CRITICAL):\n   - Every feedback MUST include the translation of what the learner said\n   - Feedback MUST explain why the choice is correct or incorrect\n   - For incorrect options: explain what would be better\n   - Feedback is in NATIVE language\n   - Penalize SEVERELY if feedback is missing translation\n   - Penalize if feedback doesn't explain the reasoning\n\n6. ROMANIZATION (CRITICAL):\n   - For non-Roman scripts (Japanese, Korean, Chinese, Arabic, Russian, Greek, Thai, Hindi, etc.):\n     BOTH contextRomanization AND textRomanization MUST be included and accurate\n   - For Roman-script languages (Spanish, French, German, Portuguese, Italian, etc.):\n     BOTH romanization fields MUST be empty strings \"\"\n   - Penalize SEVERELY if romanization is missing for non-Roman scripts\n   - Penalize SEVERELY if romanization contains text for Roman scripts\n\n7. STORY ARC AND PROGRESSION:\n   - Steps should follow a natural conversation flow\n   - Story should have: opening, building, resolution, closing\n   - Complication is optional but adds realism (e.g., item unavailable, clarification needed)\n   - Each step should logically follow from the previous\n   - The native speaker should acknowledge the learner's previous choice\n   Penalize if steps feel disconnected or conversation doesn't flow naturally.\n\n8. LINGUISTIC ACCURACY (CRITICAL):\n   - ALL target language text must be grammatically correct\n   - ALL translations must be accurate and natural\n   - Register (formal/informal) should be appropriate for the situation\n   - Cultural context should be accurate\n   Penalize SEVERELY for incorrect grammar, mistranslations, or inappropriate register.\n\n9. DISTRACTOR QUALITY (CRITICAL):\n   Wrong options MUST be genuinely wrong - they would cause miscommunication or confusion if used.\n\n   GOOD distractors (genuinely wrong):\n   - Answer a different question (asking about price when asked about quantity)\n   - Request the wrong thing (one-way ticket when you need round-trip)\n   - Are off-topic (asking for the check when you just arrived)\n   - Would cause confusion (saying \"no\" when you mean \"yes\")\n\n   BAD distractors (penalize these):\n   - More/less formal versions of the correct answer that would still work\n   - Slightly different phrasings that communicate the same thing\n   - \"Less polished\" versions that a native speaker would still understand\n\n   Example: If ordering coffee, \"Where is the bathroom?\" is a GOOD distractor (off-topic).\n   \"I would like your finest coffee\" vs \"A coffee please\" are BOTH correct - don't use one as a distractor for the other.\n\n   Penalize SEVERELY if distractors are just stylistic variations that would still accomplish the communication goal.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific dialogue choices - accept ANY natural conversation\n- Do NOT require specific phrases or sentence structures\n- Do NOT penalize for different valid cultural approaches\n- FOCUS ON: structural correctness, immersion principle (no translations in options), feedback quality, romanization correctness\n- The eval model should judge whether the activity creates an immersive language experience, not whether it matches predetermined answers\n\n    ",
+  "judgedAt": "2026-01-21T21:34:30.094Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model A provides excellent structure with 7 steps and a natural scenario about being lost at night in Seoul. All Spanish is correctly used throughout. Korean is grammatically correct with appropriate polite register (요 forms). Romanization is consistently accurate using Revised Romanization. Feedback includes translations of what the learner said. Options are Korean-only with no Spanish. The dialogue progression is natural with a nice complication (bus route detour). Distractors are genuinely wrong (off-topic, wrong direction, inappropriate responses). The story arc includes opening, building, complication, and closing. Minor issues: some feedback could be slightly more detailed, but overall this is a high-quality output.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model E has 8 well-structured steps with a clear scenario about visiting Gyeongbokgung. Spanish is correctly used throughout. Korean uses proper polite forms. Romanization is accurate. All feedback includes Korean translations and explanations. Options are Korean-only. The dialogue has excellent natural flow with the unique feature of the local asking the learner to summarize directions (pedagogically valuable). Distractors are genuinely wrong. One minor issue: the scenario mentions 'no phone signal' which adds nice realism. The step asking 'what would you ask if lost' is creative but slightly breaks immersion. Overall excellent quality.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model D provides 9 steps with good structure. Spanish is correctly used. Korean is grammatically correct with polite register. Romanization is accurate. Feedback includes translations. The scenario includes a complication (construction blocking the way) which adds realism. Options are Korean-only with proper distractors that are genuinely wrong. The conversation flows naturally. Minor weakness: some distractors feel slightly repetitive across steps (asking about right vs left confusion multiple times). The dialogue is comprehensive but could be slightly more varied in its complications.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Model C has 5 well-structured steps in Spanish with correct Korean and romanization. The scenario is clear (Gangnam district, looking for metro). Feedback includes translations. Options are Korean-only with good distractors. Korean register is appropriate. The progression is natural from greeting to directions to farewell. However, with only 5 steps, it's on the shorter end of the 5-10 range and lacks a complication that would add depth. The dialogue is functional but somewhat basic compared to other models.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Model F provides 7 steps with a clear scenario (Hongdae area). Spanish is correct throughout. Korean uses proper polite forms. Romanization is accurate. Feedback includes translations and good explanations. Options are Korean-only with genuinely wrong distractors. The dialogue flows naturally. One concern: some feedback is slightly condescending ('Esto ya es obvio'), and a few distractor explanations are unnecessarily harsh. The scenario lacks a complication. Minor romanization inconsistency noted (Dowa deurilkkayo vs more standard dowadeurilkkayo). Overall solid but with room for improvement in feedback tone.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model B has only 5 steps which is at the minimum. Spanish is correct. Korean is grammatically correct with polite register. Romanization is accurate. Feedback includes translations. Options are Korean-only. However, the scenario feels rushed with minimal depth. There's no complication in the dialogue. Some distractors are good (off-topic phrases like asking for coffee), but the overall experience is less immersive. The conversation ends abruptly after just getting bus information without actually reaching the destination or having additional natural exchange. The feedback is adequate but could be more detailed.",
+          "score": 7.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "This model achieves the highest score by perfectly following all constraints, particularly the 'Immersive Story' and 'Feedback Design' requirements. The feedback format explicitly quotes the learner's Korean choice, provides the Spanish translation, and then explains the reasoning, which is the most pedagogical approach. The Romanization is highly accurate (e.g., 'Giri', 'Hwajangsiri') compared to others. The scenario includes specific details (Gyeongbokgung) and a complex summary step that adds significant learning value.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model B produced a very solid, error-free output that meets all structural requirements. The scenario is clear and standard. It adheres strictly to the rule of no Spanish in the options. It is ranked slightly below Model E due to a minor inconsistency in Romanization in Step 5 ('bon' instead of 'beon' for the number counter) and a slightly less detailed feedback format compared to Model E's explicit quoting style.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model A created the most engaging scenario with a realistic complication (roadworks requiring a change of plans). However, it suffers from systematic Romanization errors regarding the Korean 'Realization of l/r' rule. It consistently transcribed 'ㄹ' as 'l' even before vowels (e.g., 'gili' instead of 'giri', 'Hwajangsil-i' instead of 'Hwajangsiri'), which violates standard Revised Romanization rules based on pronunciation. The content structure is excellent, but these linguistic inaccuracies lower the score.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model D followed the format well but had a slightly disjointed narrative flow (the guide gives full directions, confirms them, and only *then* mentions the road is blocked). Additionally, the Romanization showed signs of non-standard vowel mapping (e.g., 'swiweoyo' instead of the standard 'swiwoyo'). While functionally correct, it lacks the polish of the higher-ranked models.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Model F provided a valid scenario but contained noticeable Romanization hallucinations, particularly with loanwords (e.g., 'Seutabeokeseueseo' instead of 'Seutabeokseu-eseo'). It also used non-standard vowel Romanization ('gakkaweoyo'). These errors could confuse learners regarding correct pronunciation.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Model C is ranked lowest due to significant Romanization errors on core directional vocabulary. It consistently used 'u' instead of 'o' for directions (e.g., 'oreunjjugeuro' instead of 'oreunjjogeuro'). In Korean, distinguishing between 'jjuk' (straight) and 'jjok' (side/direction) is critical, and this error creates semantic confusion for the learner.",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Cumple muy bien la estructura inmersiva (escenario + 7 pasos, cada paso con context/coreano, traducción al español, romanización y 4 opciones con 1 correcta). Las opciones muestran solo coreano + RR (sin español), y los distractores suelen ser realmente equivocados (off-topic, contradicciones, etc.). Registro mayormente apropiado (요/세요) y buen arco con complicación (desvío del bus) y cierre. Pequeños detalles: algún intercambio es algo raro (“어디로 가세요?” como apertura del local) y un par de opciones podrían ser plausibles en la vida real (p.ej., “택시 타고 갈게요.”), pero en general es el más completo y robusto.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Excelente cumplimiento estructural (8 pasos) con progresión clara, confirmaciones y cierre. Coreano con 요/세요 adecuado y distractores mayormente de alta calidad. Romanización presente en todo el coreano y sin español en opciones. Puntos a descontar: el feedback viola el requisito crítico de incluir traducción porque mezcla comillas con coreano y español y a veces presenta la traducción, pero no siempre de forma consistente/limpia; además hay varias romanizaciones con guiones/segmentación extraña y algunos errores de RR (p.ej., “Oreunjjogi eodi-yeyo?”, “Myeongdong-yeogyo” en otros modelos; aquí también se ve “eodi-yeyo”, “geo-yeyo”), lo que afecta el criterio de exactitud de romanización.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Estructura correcta (7 pasos), diálogo natural y relevante (Hongdae → estación), opciones solo en coreano con romanización, y distractores generalmente buenos (off-topic o respuestas inapropiadas). Registro apropiado para desconocidos. Debilidades: romanización con errores/espaciado (p.ej., “Dowa deurilkkayo?” debería ser “Dowadeurilkkayo”; varias formas con segmentación inconsistente), lo que es un punto crítico. Aun así, la experiencia es bastante inmersiva.",
+          "score": 8.1
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Estructura y progresión correctas (5 pasos), buen contexto de direcciones a estación cercana y opciones sin español. Registro generalmente cortés. Problemas: algunos enunciados en coreano suenan poco naturales/telegráficos (p.ej., “아, 편의점에서 직진이요?”), y hay un error claro en el coreano del contexto del paso 4 (“oreunjjugeuro” en el texto coreano debería ser “오른쪽으로”, aunque la romanización también refleja el error). Menos pasos y menos arco que otros.",
+          "score": 7.4
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Cumple estructura (5 pasos) y buen escenario de transporte. Opciones solo coreano + romanización y feedback en español con explicación. Sin embargo, hay un fallo crítico de romanización: “명동역이” está romanizado como “Myeongdong-yeogi” (debería ser “Myeongdong-yeogi” solo si fuera ‘역이’ pero la forma correcta RR es “Myeongdong-yeogi” para ‘역이’ sí, pero el problema es que el propio coreano en la opción está mal: debería ser “명동역이” (correcto) y RR “Myeongdong-yeogi”, ok; aun así aparecen romanizaciones claramente no estándar en números: “Baek-sasipsambon-ina sa-baek-ilbeon-” en vez de “Baeksasipsambeon-ina sabaegilbeon-”, que se penaliza. Además el arco es muy corto (sin cierre extendido) y algunos distractores son algo flojos (p.ej., “한국말 못해요” podría ser una respuesta realista aunque no óptima).",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Tiene la estructura más larga (9 pasos) y un arco con complicación, pero falla en criterios críticos: varias opciones/distractores no son ‘genuinamente incorrectos’ (p.ej., “얼마나 걸려요?” es una pregunta perfectamente natural en ese punto; marcarla como incorrecta va contra el criterio de 1 sola correcta si hay múltiples válidas). Además hay inconsistencias de naturalidad y de progresión (se penaliza una pregunta útil solo por preferencia del guion). Romanización también presenta segmentación no estándar (“malsseum-hae”) y algunos detalles discutibles. Por estas ambigüedades, la actividad no garantiza una única respuesta correcta de forma justa.",
+          "score": 6.3
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-story-language",
+  "testCaseId": "es-korean-asking-directions-1"
+}
