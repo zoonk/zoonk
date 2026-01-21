@@ -1,0 +1,167 @@
+{
+  "expectations": "\nLANGUAGE: Latin American Spanish output required for translations (NOT English).\n\nTOPIC: French sentences for weather - using weather vocabulary.\n\nSCRIPT: Roman (romanization should be empty string \"\")\n\nVOCABULARY WORDS PROVIDED: le soleil, la pluie, le vent, il fait chaud, il fait froid\nThese words/expressions MUST appear in the generated sentences.\n\nACCURACY PITFALLS - Penalize SEVERELY if:\n- Any sentence doesn't use at least one of the provided vocabulary words/expressions\n- Weather expressions are used incorrectly\n- Translations are in English instead of Spanish\n- Romanization contains any text (should be empty string)\n\nCONTEXT EXPECTATIONS:\n- Sentences describing weather conditions\n- Planning activities based on weather\n- Natural weather-related conversations\n\n\nEVALUATION CRITERIA:\n\n1. VOCABULARY WORD USAGE (CRITICAL - highest priority):\n   - Each generated sentence MUST use at least one of the provided vocabulary words\n   - The words should be used in their natural form (conjugated verbs, declined nouns are acceptable)\n   - Penalize SEVERELY if sentences don't incorporate the provided vocabulary\n   - Penalize if words are used incorrectly or out of context\n\n2. TRANSLATION ACCURACY (CRITICAL):\n   - Each sentence-translation pair MUST be linguistically accurate\n   - The translation must convey the same meaning as the original sentence\n   - Consider regional variations (Brazilian Portuguese vs European, Latin American Spanish vs Castilian)\n   - Penalize SEVERELY if translations are incorrect, incomplete, or misleading\n   - Grammatical structures should be appropriately adapted between languages\n\n3. ROMANIZATION (required field):\n   - For Japanese, Chinese, Korean, Arabic, Russian, Greek, Thai, Hindi, etc.: romanization MUST contain the Roman letter representation of the sentence\n   - Use standard romanization systems (romaji for Japanese, pinyin for Chinese, etc.)\n   - For Roman-script languages (Spanish, French, German, etc.): romanization MUST be an empty string \"\"\n   - Penalize if romanization is missing for non-Roman scripts or contains text for Roman scripts\n\n4. GRAMMATICAL CORRECTNESS:\n   - Sentences must be grammatically correct in the target language\n   - Verb conjugations must match the subject\n   - Gender agreement must be correct where applicable\n   - Word order should follow natural patterns of the target language\n   - Penalize for grammar errors, incorrect conjugations, or unnatural constructions\n\n5. SENTENCE NATURALNESS:\n   - Sentences should sound natural to native speakers\n   - Avoid overly literal translations or awkward phrasing\n   - Use appropriate register (formal/informal) for the context\n   - Penalize if sentences sound robotic, unnatural, or like machine translation\n\n6. CONTEXT DIVERSITY:\n   - Sentences should present different contexts or situations\n   - Avoid repetitive sentence structures\n   - Use variety in sentence types (statements, questions, commands where appropriate)\n   - Do NOT penalize for covering similar themes if vocabulary words naturally relate to each other\n\n7. LESSON RELEVANCE:\n   - Sentences should relate to the lesson topic\n   - The contexts should be appropriate for the lesson's educational goals\n   - Avoid straying into unrelated topics\n   - Do NOT require every sentence to explicitly reference the lesson topic - implicit relevance is fine\n\n8. APPROPRIATE DIFFICULTY:\n   - Sentences should be appropriate for language learners\n   - Avoid overly complex grammatical structures unless the lesson specifically targets advanced learners\n   - Vocabulary beyond the provided words should be at a similar or simpler level\n   - Penalize if sentences are incomprehensible to learners or use excessive advanced vocabulary\n\n9. NO DUPLICATES:\n   - Each sentence should be unique\n   - Avoid near-duplicates (same sentence with minor word changes)\n   - Penalize if essentially the same sentence appears multiple times\n\n10. LANGUAGE CORRECTNESS:\n    - Sentences should be in the TARGET language (courseTitle)\n    - Translations should be in the NATIVE language (language code)\n    - Penalize if languages are swapped or mixed incorrectly\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific sentence choices - accept ANY valid sentences that use the vocabulary\n- Do NOT penalize for not including specific contexts you might expect\n- Do NOT require a specific number of sentences\n- Do NOT expect sentences to follow any particular template or pattern\n- Different valid sentence constructions exist - assess the quality of what IS provided\n- FOCUS ON: vocabulary usage, translation accuracy, romanization correctness, grammatical correctness, naturalness\n\n    ",
+  "judgedAt": "2026-01-21T17:29:50.992Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Excellent comprehensive output with 20 sentences. All 5 vocabulary words are used multiple times throughout: le soleil (4), la pluie (4), le vent (4), il fait chaud (4), il fait froid (4). All romanizations are correctly empty strings. French sentences are grammatically correct with natural constructions. Spanish translations are accurate Latin American Spanish (using 'suéter' instead of 'jersey', 'afuera' instead of 'fuera'). Good variety of contexts: beach, weather descriptions, indoor/outdoor activities, questions, commands. Natural sentence flow with appropriate difficulty for learners. No duplicates. Minor note: 'dix-neuf heures' translated as 'siete de la tarde' is a reasonable localization. Overall exceptional quality.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Strong output with 15 well-crafted sentences. All 5 vocabulary words are used: le soleil (4), la pluie (4), le vent (3), il fait chaud (3), il fait froid (3). Empty romanizations are correct. French grammar is accurate. Spanish translations are good Latin American Spanish. Sentence 11 creatively combines 'la pluie' and 'le vent'. Good variety of contexts including weather descriptions, planning activities, questions, and commands. Natural flow and appropriate difficulty. One minor issue: sentence 3 uses 'está demasiado fuerte' - while understandable, 'está muy fuerte' or 'sopla demasiado fuerte' might be more natural for wind.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Very good output with 15 sentences covering all vocabulary words: le soleil (4), la pluie (3), le vent (3), il fait chaud (4), il fait froid (3). All romanizations correctly empty. French sentences are grammatically correct. Spanish translations are accurate Latin American Spanish. Good variety of contexts. Minor issues: 'Hace calor y humedad' in sentence 13 is slightly awkward - 'Hace calor y está húmedo' would be more natural. The sentences are somewhat longer and more complex, which is appropriate but might be slightly advanced for beginners.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Good output with 12 sentences. All vocabulary words used: le soleil (4), la pluie (3), le vent (4), il fait chaud (3), il fait froid (2). Empty romanizations correct. French grammar is accurate with some nice complex structures (sentence 6 with two clauses). Spanish translations are generally good. Minor issues: 'prevé una bufanda' in sentence 9 is grammatically correct but sounds slightly unusual (might prefer 'lleva' or 'trae'). Good sentence variety including conditionals and combining multiple weather elements.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Good quality output with 10 sentences. All vocabulary words present: le soleil (3), la pluie (4), le vent (3), il fait chaud (2), il fait froid (2). Empty romanizations correct. French is natural and grammatically correct with good conversational tone. Spanish translations are accurate Latin American Spanish. Excellent natural flow - sentences sound like real conversations. Good variety of contexts. The sentence 'Quand le soleil tape' with translation 'Cuando el sol pega fuerte' is idiomatic. Slight limitation: fewer sentences than some other models.",
+          "score": 8.7
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Good output with 10 sentences. All 5 vocabulary words used: le soleil (2), la pluie (2), le vent (2), il fait chaud (2), il fait froid (2). Empty romanizations correct. French grammar is good. Spanish translations are accurate. Good variety of sentence types including imperatives. Minor issue: 'cuando hay lluvia' (sentence 6) is grammatically correct but less natural than 'cuando llueve' or 'cuando hay lluvia' - this is acceptable though. Overall solid quality but fewer sentences than top performers.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Good quality output with 10 sentences covering all vocabulary words: le soleil (2), la pluie (2), le vent (2), il fait chaud (2), il fait froid (2). All romanizations correctly empty. French sentences are grammatically correct. Spanish translations are accurate Latin American Spanish. Good variety including questions and statements. Natural sentence construction. The sentences are slightly simpler but appropriate for learners. Minor limitation: fewer sentences and less variety than the best outputs.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Only 5 sentences provided, which is significantly fewer than other models. However, all 5 vocabulary words are used (each exactly once): le soleil (1), la pluie (1), le vent (1), il fait chaud (1), il fait froid (1). Empty romanizations are correct. French and Spanish are both grammatically correct and natural. Translations are accurate Latin American Spanish. The quality of individual sentences is good, but the limited quantity reduces context diversity and overall educational value compared to other outputs.",
+          "score": 7
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model C is the best output because it perfectly balances volume (15 sentences), sentence variety, and naturalness. It adheres strictly to the Latin American Spanish requirement (using terms like 'tomo' for drinking water). The sentences fit the context of weather well, integrating planning and activities naturally without being overly repetitive. The difficulty level is appropriate for the vocabulary provided.",
+          "score": 9.8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Model E provides a strong set of 15 sentences with diverse contexts ('l'eau du lac a gelé', 'la pluie remplit le réservoir'). The translations are accurate and fit the Latin American context well. It follows all negative constraints and formatting rules perfectly. It is slightly ranked below C purely on stylistic preference for C's conversational flow, but they are nearly equivalent.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Model A provides the highest volume of content (20 sentences) and demonstrates excellent adherence to the Latin American Spanish requirement (using 'horas pico'). The sentences are accurate and clear. It is ranked slightly lower than C and E because the sentence structures are somewhat repetitive and drill-like compared to the more natural, varied phrasing in the top two models.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model H excels in naturalness and creates very realistic conversational sentences. However, it only provides 10 sentences compared to the 15-20 of the higher-ranked models. Additionally, the vocabulary complexity (paravent, volets, dunes) is slightly higher than the target level of the provided keywords, though linguistically excellent.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model G offers a solid list of 12 sentences with good translations and context. It follows all instructions well. It is ranked in the middle because while good, it lacks the volume of A/C/E and the distinct natural flair of H.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model D provides 10 accurate sentences that meet all requirements. The content is good but standard, offering less variety and volume than the top performers.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Model B meets the requirements but provides only 10 very simple sentences. The complexity and variety are lower than the other models, making it less useful as a comprehensive resource.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Model F follows the instructions but only provides 5 sentences. While the sentences are correct, the low volume fails to provide the context diversity requested compared to models providing 15-20 sentences.",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "All sentences are on-topic (weather + planning/activities), every sentence includes at least one required vocab item (le soleil/la pluie/le vent/il fait chaud/il fait froid), romanization correctly empty, and French↔Latin American Spanish translations are accurate and natural. Good variety (statements, question, imperatives) with no real errors.",
+          "score": 9.6
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Consistently natural French weather dialogue with activity-planning contexts; every sentence contains at least one required item (soleil/pluie/vent/il fait chaud/il fait froid). Romanization empty. Spanish translations are accurate and LATAM-neutral/natural. Strong cohesion and diversity.",
+          "score": 9.4
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "All sentences use required vocab and remain weather-focused with good contextual variety. Romanization empty. Translations are accurate and natural overall. Minor nit: a couple of phrasings are slightly less idiomatic (e.g., “brilla fuerte”), but still acceptable.",
+          "score": 9.1
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Meets all critical constraints: every sentence includes required vocab, romanization empty, translations accurate and natural. Good variety. Slightly simpler/less rich than top entries but still high quality.",
+          "score": 8.9
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "All sentences include required vocab, are weather-relevant, and romanization is empty. Translations are mostly accurate; one notable issue: “pouvez-vous baisser la climatisation?” is an odd/likely incorrect match for “Il fait froid…” (you’d more naturally ask to turn it down when hot, or turn it up/off when cold). Also “prevé una bufanda” is less natural in LATAM Spanish.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "All sentences include required vocab and are weather-related; romanization empty. Translations generally accurate, but a few Spanish renderings are less natural/idiomatic in LATAM (e.g., “Hace calor y humedad” would be more natural as “Hace calor y hay mucha humedad”). Overall still solid.",
+          "score": 8.1
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Correctly uses required vocab in every sentence, stays on topic, romanization empty, and translations are accurate/natural. Main weakness is limited quantity/variety compared with others (only 5 sentences), but what’s provided is good.",
+          "score": 7.9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Meets the critical requirements (each sentence includes required vocab; romanization empty). Translations are mostly accurate, but some Spanish is awkward/less natural (notably “El sol está muy fuerte esta mañana” is less idiomatic). Overall simpler and slightly less polished.",
+          "score": 7.6
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-sentences",
+  "testCaseId": "es-french-weather-1"
+}

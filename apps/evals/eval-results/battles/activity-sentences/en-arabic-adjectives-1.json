@@ -1,0 +1,167 @@
+{
+  "expectations": "\nLANGUAGE: English output required for translations.\n\nTOPIC: Arabic sentences for common adjectives - using descriptive vocabulary.\n\nSCRIPT: Non-Roman (romanization MUST be included)\n\nVOCABULARY WORDS PROVIDED: كبير, صغير, جميل, جديد, قديم\nThese adjectives MUST appear in the generated sentences.\n\nROMANIZATION REQUIREMENTS:\n- MUST include romanized Arabic for all sentences\n- Standard transliteration\n- Words: كبير (kabir), صغير (saghir), جميل (jamil), جديد (jadid), قديم (qadim)\n- Penalize if romanization is missing or incorrect\n\nACCURACY PITFALLS - Penalize SEVERELY if:\n- Any sentence doesn't use at least one of the provided adjectives\n- Adjective-noun agreement is incorrect (gender, number)\n- Word order is unnatural\n- Translations don't match the Arabic sentences\n- Romanization is missing or uses non-standard systems\n\nCONTEXT EXPECTATIONS:\n- Sentences describing objects, people, or places\n- Comparative contexts where natural\n- Natural Arabic descriptive constructions\n\n\nEVALUATION CRITERIA:\n\n1. VOCABULARY WORD USAGE (CRITICAL - highest priority):\n   - Each generated sentence MUST use at least one of the provided vocabulary words\n   - The words should be used in their natural form (conjugated verbs, declined nouns are acceptable)\n   - Penalize SEVERELY if sentences don't incorporate the provided vocabulary\n   - Penalize if words are used incorrectly or out of context\n\n2. TRANSLATION ACCURACY (CRITICAL):\n   - Each sentence-translation pair MUST be linguistically accurate\n   - The translation must convey the same meaning as the original sentence\n   - Consider regional variations (Brazilian Portuguese vs European, Latin American Spanish vs Castilian)\n   - Penalize SEVERELY if translations are incorrect, incomplete, or misleading\n   - Grammatical structures should be appropriately adapted between languages\n\n3. ROMANIZATION (required field):\n   - For Japanese, Chinese, Korean, Arabic, Russian, Greek, Thai, Hindi, etc.: romanization MUST contain the Roman letter representation of the sentence\n   - Use standard romanization systems (romaji for Japanese, pinyin for Chinese, etc.)\n   - For Roman-script languages (Spanish, French, German, etc.): romanization MUST be an empty string \"\"\n   - Penalize if romanization is missing for non-Roman scripts or contains text for Roman scripts\n\n4. GRAMMATICAL CORRECTNESS:\n   - Sentences must be grammatically correct in the target language\n   - Verb conjugations must match the subject\n   - Gender agreement must be correct where applicable\n   - Word order should follow natural patterns of the target language\n   - Penalize for grammar errors, incorrect conjugations, or unnatural constructions\n\n5. SENTENCE NATURALNESS:\n   - Sentences should sound natural to native speakers\n   - Avoid overly literal translations or awkward phrasing\n   - Use appropriate register (formal/informal) for the context\n   - Penalize if sentences sound robotic, unnatural, or like machine translation\n\n6. CONTEXT DIVERSITY:\n   - Sentences should present different contexts or situations\n   - Avoid repetitive sentence structures\n   - Use variety in sentence types (statements, questions, commands where appropriate)\n   - Do NOT penalize for covering similar themes if vocabulary words naturally relate to each other\n\n7. LESSON RELEVANCE:\n   - Sentences should relate to the lesson topic\n   - The contexts should be appropriate for the lesson's educational goals\n   - Avoid straying into unrelated topics\n   - Do NOT require every sentence to explicitly reference the lesson topic - implicit relevance is fine\n\n8. APPROPRIATE DIFFICULTY:\n   - Sentences should be appropriate for language learners\n   - Avoid overly complex grammatical structures unless the lesson specifically targets advanced learners\n   - Vocabulary beyond the provided words should be at a similar or simpler level\n   - Penalize if sentences are incomprehensible to learners or use excessive advanced vocabulary\n\n9. NO DUPLICATES:\n   - Each sentence should be unique\n   - Avoid near-duplicates (same sentence with minor word changes)\n   - Penalize if essentially the same sentence appears multiple times\n\n10. LANGUAGE CORRECTNESS:\n    - Sentences should be in the TARGET language (courseTitle)\n    - Translations should be in the NATIVE language (language code)\n    - Penalize if languages are swapped or mixed incorrectly\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific sentence choices - accept ANY valid sentences that use the vocabulary\n- Do NOT penalize for not including specific contexts you might expect\n- Do NOT require a specific number of sentences\n- Do NOT expect sentences to follow any particular template or pattern\n- Different valid sentence constructions exist - assess the quality of what IS provided\n- FOCUS ON: vocabulary usage, translation accuracy, romanization correctness, grammatical correctness, naturalness\n\n    ",
+  "judgedAt": "2026-01-21T17:30:22.359Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Excellent vocabulary coverage with all 5 adjectives used correctly (kabīr, ṣaghīr, jamīl, jadīd, qadīm). Romanization is consistent and uses standard academic transliteration with macrons for long vowels. Grammar is mostly correct with proper gender agreement (e.g., 'shaqqatin ṣaghīra' - feminine agreement). Translations are accurate and natural. Good variety of sentence structures including questions. Minor issue: 'الفيلم كان طويلاً ولكن جميل' should have 'جميلاً' for consistency, but this is acceptable in spoken Arabic. Hospital (مستشفى) treated as masculine which is the standard MSA form.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "All 5 vocabulary words used correctly with good variety. Romanization is generally consistent though uses a slightly simplified system (ii for long vowels). Good grammatical accuracy with proper gender agreement. Natural sentences covering diverse contexts (describing houses, pets, gardens, phones, cities, etc.). Minor issues: 'مرتاحة' in the last sentence is a less common choice (مريحة would be more standard), but sentences are overall well-constructed. Sentence 12 uses 'أكبر' (bigger) which is the comparative form of كبير - acceptable. Good learner-appropriate difficulty level.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "All 5 vocabulary words used correctly. Simple, clear sentences appropriate for learners. Romanization is consistent though uses a simplified system without long vowel markers. Good grammatical accuracy with proper gender agreement throughout. Translations are accurate. Good variety of sentence types including questions and requests. Sentences are perhaps slightly simpler than other models but this is appropriate for language learners. Minor note: 'كوب قهوة صغير' word order is natural in spoken Arabic.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "All 5 vocabulary words used correctly with sophisticated sentence structures. Good variety including complex sentences with subordinate clauses. Romanization is simplified but consistent. Good grammatical accuracy overall. Strong translations. Minor issues: Some sentences are quite complex for learners (e.g., sentence 4 with 'لأن هاتفي القديم توقف عن العمل'). Sentence 6 has indirect speech which is natural. Exclamatory sentence at end shows good variety. Slightly higher difficulty level which could be both positive and negative depending on learner level.",
+          "score": 7.7
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "All 5 vocabulary words used correctly. Only 5 sentences provided which is fewer than most other models, limiting context diversity. However, quality is good with accurate grammar and natural constructions. Romanization uses academic transliteration with macrons. Translations are accurate. Minor issue: 'تزال' should be 'لا تزال' or 'ما زالت' for 'still' - this is a noticeable grammatical error. Sentences are well-constructed but the limited number reduces variety and demonstration of vocabulary in different contexts.",
+          "score": 7.3
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "All 5 vocabulary words used correctly with 15 sentences showing good variety. Translations are accurate. However, there are some issues: Romanization uses non-standard 'ee' for long vowels instead of 'ī' which is less standard but acceptable. Sentence 9 uses 'البارك' which is an obvious borrowing/colloquialism that seems out of place with MSA sentences. Some inconsistencies in nunation representation. Grammar is generally correct. Good variety of contexts and structures.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "All 5 vocabulary words used correctly. However, this model uses colloquial/dialectal Arabic (Levantine/Gulf mix) rather than MSA, which may or may not be appropriate depending on learning goals. Examples: 'بس' for 'لكن', 'عندك' for 'لديك', 'خليني', 'عشان', 'بكرة', 'تبغى'. Romanization is consistent with the dialectal pronunciation. Translations are accurate for the dialect used. While the Arabic is natural for spoken contexts, it's inconsistent with expected MSA for formal language learning. Sentences are creative and contextually rich, but the register inconsistency is a concern.",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Uses all 5 vocabulary words. However, there are several notable errors: Sentence 6 has romanization 'al-thalaj al-qadim' which doesn't match 'الثياب القديمة' (clothes). Sentence 7 'المستشفى كبيرة' - hospital is masculine in standard Arabic. Sentence 8 romanization 'al-bintaqa' doesn't match 'الحي'. Sentence 9 has gender disagreement - 'المدرسة' is feminine but 'قريب' is masculine (should be قريبة). Sentence 10 'أهديتها' is a verb form meaning 'I gifted it to her' but translation says 'The gifts are'. Multiple mismatches between Arabic sentences and their romanizations, and grammar errors in gender agreement make this significantly problematic.",
+          "score": 5.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "This model provides the highest quality output. It uses Modern Standard Arabic (MSA) correctly with perfect grammar. It is the only model to provide full, academic-grade romanization with proper diacritics (macrons for long vowels, emphatic dots), which is extremely helpful for learners. The sentences are natural, varied, and perfectly matched with their translations. It meets all vocabulary constraints flawlessly.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "This model provides a flawless set of sentences. While the sentence structures are simpler than Model B and Model H, they are linguistically accurate and use the vocabulary correctly. The romanization is standard and easy to read, though it lacks the precise diacritics found in Model B. It is a very safe, solid response.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model H generates natural, flowing sentences that are slightly more complex and descriptive than Model C, which fits the context expectations well. The grammar is correct. The romanization is accurate but uses a simplified system (e.g., 'ee' for long i) rather than academic standard, which places it slightly below Model B. Overall, excellent work.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model G provides a good variety of sentences (15 total). However, it contains a semantic error in sentence 15, describing an apartment as 'murtaaha' (relieved/relaxed - usually for people) instead of 'muriha' (comfortable). The romanization uses a mix of conventions (capital letters for emphatic sounds, double vowels) which is less professional than B or D, but acceptable.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Model D provides high-quality romanization with macrons, similar to Model B. However, it only provides 5 sentences (the bare minimum to cover the words). Furthermore, sentence 3 contains a subject-verb agreement error ('tuʿjibunī al-lawn' - the verb is feminine but the subject 'al-lawn' is masculine). These issues drop its score despite the high-quality formatting.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "This model meets the basic requirements but uses poor vocabulary choices, specifically 'Al-park' in sentence 9 instead of the standard Arabic 'Al-hadiqa' or 'Al-muntazah'. The romanization is also inconsistent (e.g., 'ashteritu' instead of 'ishtaraytu') and lacks capitalization conventions used in the translation. It is adequate but unpolished.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model E generates sentences in a Spoken Arabic dialect (likely Gulf/Levantine mix) rather than Modern Standard Arabic (MSA). While the sentences are internally consistent and 'natural' for speech, the task implies standard Arabic (MSA) through the request for 'Standard transliteration' and the nature of the vocabulary list. This register mismatch makes it less suitable for general learners expecting standard forms.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Model A fails significantly on accuracy. There are major mismatches between the Arabic script, romanization, and translation (e.g., Sentence 6 mixes 'clothes' in text with 'ice' in romanization; Sentence 8 mixes 'neighborhood' with 'card/region'). There are also basic gender agreement errors (Sentence 8: 'Hadhihi al-hayy', Sentence 9: 'Madrasa... qarib'). These hallucinations and errors make the output unreliable.",
+          "score": 2
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Meets all core requirements: every sentence includes at least one target adjective; Arabic is natural and grammatical with correct agreement (e.g., سيارة قديمة، هدية صغيرة… جميلة). Translations match well. Romanization is consistently present and generally standard with appropriate long vowels/diacritics; minor style inconsistencies don’t impede correctness.",
+          "score": 9.3
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "All sentences include at least one required adjective, with good agreement and natural phrasing. Translations are accurate. Romanization is present for all and understandable; however it uses a less-standard/Englishy system (kabeer/sagheera/jameela/jadeedan/qadeem) rather than the specified kabir/saghir/jamil/jadid/qadim forms, so it should be penalized on the explicit romanization requirement.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "All sentences use required adjectives and are mostly natural with accurate translations. Two notable Arabic issues: “تعجبني اللون” should be “يعجبني اللون” (gender agreement for color), and “ولكن تزال” is missing “لا” (should be “ولكن لا تزال”). Romanization is present and fairly standard.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "All sentences include one of the provided adjectives, and translations are accurate. Arabic is mostly correct, but there are a few naturalness/grammar issues (e.g., “المدير في اجتماع كبير” is acceptable but a bit odd; “أعيش في بيت كبير” missing ʾaʿīshu vowel marking is fine, but romanization is simplistic and not fully standard). Romanization doesn’t follow the specified kabir/saghir/jamil/jadid/qadim spellings consistently (e.g., jamil, kabir ok; but overall lacks standardization/diacritics).",
+          "score": 7.7
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "All sentences include required adjectives and translations are mostly accurate. Main weaknesses: romanization is inconsistent/non-standard (jameel/jadeed/qadeem vs required jamil/jadid/qadim; also “al-park” is code-switching and “البارك” is unnatural for many learner contexts). Some sentences omit final punctuation/diacritics but Arabic is generally grammatical.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "All sentences include target adjectives and translations match. However romanization is highly non-standard/inconsistent (mixed capitalization, doubled vowels like “kabiir”, odd symbols, inconsistent representation of ض/ط/ع, etc.) and does not follow the specified kabir/saghir/jamil/jadid/qadim forms. Arabic is mostly fine, though a few expressions are slightly colloquial/loose (e.g., الشقة كبيرة ومرتاحة).",
+          "score": 6.9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Uses the required adjectives across sentences and translations are mostly faithful, but it is heavily dialectal/colloquial (بس، خلّيني، بكرة، تبغى، عشان), conflicting with “Standard transliteration” expectation. Also includes a grammar issue: “يوافق اللون مع عيونك” is unnatural/incorrect; would be “لونُه يوافق عينيك/يتماشى مع…”. Romanization is present but dialect-driven and not aligned to required forms.",
+          "score": 6.3
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Several serious problems. Romanization frequently does not match the Arabic (e.g., “Hal tuhibb al-thalaj al-qadim?” for “هل تحب الثياب القديمة؟”). Multiple Arabic grammar/agreement errors and unnatural constructions: “المستشفى كبيرة” (should be كبير), “هذه الحي” (حي is masculine; plus sentence itself malformed), “المدرسة القديمة قريب” (should be قريبة), final sentence “أهديتها جميلة وصغيرة للعم” is ungrammatical/meaning unclear and translation doesn’t match. These violate the severe-penalty pitfalls.",
+          "score": 3.2
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-sentences",
+  "testCaseId": "en-arabic-adjectives-1"
+}

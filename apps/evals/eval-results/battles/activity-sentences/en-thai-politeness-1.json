@@ -1,0 +1,167 @@
+{
+  "expectations": "\nLANGUAGE: English output required for translations.\n\nTOPIC: Thai sentences for polite expressions - using politeness vocabulary.\n\nSCRIPT: Non-Roman (romanization MUST be included)\n\nVOCABULARY WORDS PROVIDED: ขอบคุณ, ขอโทษ, ได้โปรด, สวัสดี, ลาก่อน\nThese polite expressions MUST appear in the generated sentences.\n\nROMANIZATION REQUIREMENTS:\n- MUST include romanized Thai for all sentences\n- Standard transliteration with tone indicators where helpful\n- Words: ขอบคุณ (khob khun), ขอโทษ (kho thot), etc.\n- Penalize if romanization is missing or unclear\n\nACCURACY PITFALLS - Penalize SEVERELY if:\n- Any sentence doesn't use at least one of the provided expressions\n- Politeness particles are missing where required (ครับ/คะ)\n- Translations don't match the Thai sentences\n- Romanization is missing or inconsistent\n\nCONTEXT EXPECTATIONS:\n- Sentences demonstrating polite interactions\n- Social situations requiring courtesy\n- Natural Thai politeness conventions\n\n\nEVALUATION CRITERIA:\n\n1. VOCABULARY WORD USAGE (CRITICAL - highest priority):\n   - Each generated sentence MUST use at least one of the provided vocabulary words\n   - The words should be used in their natural form (conjugated verbs, declined nouns are acceptable)\n   - Penalize SEVERELY if sentences don't incorporate the provided vocabulary\n   - Penalize if words are used incorrectly or out of context\n\n2. TRANSLATION ACCURACY (CRITICAL):\n   - Each sentence-translation pair MUST be linguistically accurate\n   - The translation must convey the same meaning as the original sentence\n   - Consider regional variations (Brazilian Portuguese vs European, Latin American Spanish vs Castilian)\n   - Penalize SEVERELY if translations are incorrect, incomplete, or misleading\n   - Grammatical structures should be appropriately adapted between languages\n\n3. ROMANIZATION (required field):\n   - For Japanese, Chinese, Korean, Arabic, Russian, Greek, Thai, Hindi, etc.: romanization MUST contain the Roman letter representation of the sentence\n   - Use standard romanization systems (romaji for Japanese, pinyin for Chinese, etc.)\n   - For Roman-script languages (Spanish, French, German, etc.): romanization MUST be an empty string \"\"\n   - Penalize if romanization is missing for non-Roman scripts or contains text for Roman scripts\n\n4. GRAMMATICAL CORRECTNESS:\n   - Sentences must be grammatically correct in the target language\n   - Verb conjugations must match the subject\n   - Gender agreement must be correct where applicable\n   - Word order should follow natural patterns of the target language\n   - Penalize for grammar errors, incorrect conjugations, or unnatural constructions\n\n5. SENTENCE NATURALNESS:\n   - Sentences should sound natural to native speakers\n   - Avoid overly literal translations or awkward phrasing\n   - Use appropriate register (formal/informal) for the context\n   - Penalize if sentences sound robotic, unnatural, or like machine translation\n\n6. CONTEXT DIVERSITY:\n   - Sentences should present different contexts or situations\n   - Avoid repetitive sentence structures\n   - Use variety in sentence types (statements, questions, commands where appropriate)\n   - Do NOT penalize for covering similar themes if vocabulary words naturally relate to each other\n\n7. LESSON RELEVANCE:\n   - Sentences should relate to the lesson topic\n   - The contexts should be appropriate for the lesson's educational goals\n   - Avoid straying into unrelated topics\n   - Do NOT require every sentence to explicitly reference the lesson topic - implicit relevance is fine\n\n8. APPROPRIATE DIFFICULTY:\n   - Sentences should be appropriate for language learners\n   - Avoid overly complex grammatical structures unless the lesson specifically targets advanced learners\n   - Vocabulary beyond the provided words should be at a similar or simpler level\n   - Penalize if sentences are incomprehensible to learners or use excessive advanced vocabulary\n\n9. NO DUPLICATES:\n   - Each sentence should be unique\n   - Avoid near-duplicates (same sentence with minor word changes)\n   - Penalize if essentially the same sentence appears multiple times\n\n10. LANGUAGE CORRECTNESS:\n    - Sentences should be in the TARGET language (courseTitle)\n    - Translations should be in the NATIVE language (language code)\n    - Penalize if languages are swapped or mixed incorrectly\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific sentence choices - accept ANY valid sentences that use the vocabulary\n- Do NOT penalize for not including specific contexts you might expect\n- Do NOT require a specific number of sentences\n- Do NOT expect sentences to follow any particular template or pattern\n- Different valid sentence constructions exist - assess the quality of what IS provided\n- FOCUS ON: vocabulary usage, translation accuracy, romanization correctness, grammatical correctness, naturalness\n\n    ",
+  "judgedAt": "2026-01-21T17:29:53.756Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Excellent output with 15 sentences covering all 5 vocabulary words multiple times. Thai sentences are grammatically correct and natural. Romanization is consistent and clear (using dashes for multi-syllable words). Translations are accurate. Good variety in contexts (birthday party, airport, speaking slower, exams). Appropriate politeness particles (ครับ/ค่ะ/นะ) used where needed. Some sentences lack explicit particles but this is acceptable in casual speech. Minor issue: 'la korn' should be 'la kon' for ลาก่อน, but this is a minor inconsistency.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Strong output with 10 sentences using all 5 vocabulary words. Thai sentences are grammatically correct and natural. Romanization includes tone indicators in some words (helpful for learners). Good variety of contexts (meal, train station, lost, safe trip). Politeness particles appropriately used. Translations are accurate. 'ได้โปรดอย่าบอกใครเรื่องนี้' uses the vocabulary word correctly. Minor romanization inconsistency (Sawat dee vs sawatdee), but overall very clean.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Good output with 9 sentences covering all vocabulary words. Thai sentences are grammatically correct. Romanization is clear and consistent. Some sentences are more complex (sentence 8 uses two vocab words: ขอบคุณ and ได้โปรด), showing natural usage. Good politeness particles usage. Translations are accurate. One minor issue: sentence 9 is quite long and complex. Overall high quality with good variety of contexts.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Good output with 10 sentences using all vocabulary words. Thai is grammatically correct. Romanization is consistent. Translations are accurate. Good variety of contexts (weather, restroom, keeping clean, appointment). Politeness particles generally well-used though some sentences like 'ได้โปรดรักษาความสะอาด' could use a particle. Minor issue: 'di chang loei' should be 'di jang loei'. Overall solid work.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Good output with 10 sentences covering all vocabulary words. Romanization uses some tone markers (gòn). Translations are mostly accurate. However, sentence 3 has an error: 'ขอบคุณที่ช่วยเธอฉันค้นหาทาง' is grammatically awkward - 'เธอฉัน' doesn't make sense (should be just ฉัน). Some romanization inconsistencies (Sawasdi vs sawasdi, la gòn vs La gòn). Otherwise decent variety and natural contexts.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Output has 8 sentences using all vocabulary words. Romanization includes tone marks (ǎw, ôht, etc.) which is helpful. Thai sentences are mostly correct. However, sentence 4 'วันนี้มีนัดอะไร' has 'นันุam' in romanization that doesn't match. Sentence 7 has awkward Thai: 'มีคุณอยู่เป็นเพื่อน' is understandable but not the most natural phrasing. Missing politeness particles in several sentences where they would be expected. Fewer sentences overall.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Large output with 25 sentences covering all vocabulary words extensively. However, there are several issues: Sentence 4 'ช่วยผ่าน้ำได้โปรดครับ' - 'ผ่า' means 'cut/split', not 'pass'. Sentence 11 'ทำกดหล่น' is gibberish Thai. Sentence 9 uses unnatural word order. Some romanization inconsistencies. Despite good variety and many sentences, the accuracy issues are significant. Translation for sentence 11 doesn't match the Thai at all.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Major accuracy issues throughout. Sentence 2: 'ขอบคุณครับ สักนิดหน่อย' doesn't mean 'Thank you very much' - สักนิดหน่อย means 'a little bit'. Sentence 3: 'ผมไม่ใจสำหรับนั่น' is grammatically incorrect Thai. Sentence 4: 'คุณจะให้ดีไหว' is incorrect. Sentence 10: Romanization doesn't match Thai at all. Sentence 11: Romanization has no relation to Thai text. Sentence 13: 'มาสายโทษทีเด็ด' is gibberish. Multiple translation/Thai mismatches throughout. Severe accuracy problems.",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "This model provides the highest quality output. The sentences are grammatically correct and sound very natural to native speakers, utilizing particles like 'loei' and conjunctions like 'phor-dee' which add authentic flavor. The romanization is clear, consistent, and learner-friendly (using hyphens to separate syllables). It adheres perfectly to the vocabulary requirements.",
+          "score": 9.8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model D offers excellent, grammatically correct sentences that are well-suited for learners. The vocabulary is used correctly, and the translations are accurate. The sentences are slightly more 'textbook' standard compared to Model E's natural flair, but it is a flawless performance otherwise.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Model H provides solid, error-free sentences. The romanization is adequate, and the translations are accurate. While the sentence structures are somewhat simpler than the top two models, they are perfectly valid and effective for the lesson.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model A is a strong performer with rich context in its sentences. It is ranked slightly lower than H because of a minor unnatural preposition usage in sentence 9 ('nai phrung ni chao' instead of just 'phrung ni chao'). However, the overall quality is high, and the romanization is standard.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Model G includes helpful tone markers in the romanization, which is a nice feature. However, it suffers from specific errors where the romanization does not match the script (e.g., 'nânúam' vs 'nat', 'kœ̌œn' vs 'khoei') and some awkward phrasing in the Thai script (Sentence 7).",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model B contains a critical error in the Thai script for sentence 3 ('chuai thuea chan' is incorrect; likely a typo for 'chuai luea' or 'chuai'). It also has awkward grammar in sentence 6 ('khuen khan phit'). While other sentences are okay, these errors significantly impact reliability.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Model F has major issues with mismatches between the Thai script and romanization (Sentence 16). It also includes nonsensical phrasing (Sentence 11 'tham kot lang') and unnatural direct translations. It fails to meet the quality standards for language learning materials.",
+          "score": 3.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Model C is unacceptable. It generates complete gibberish in Thai (e.g., 'My name is Nai cut light please' in sentence 11), nonsensical romanization, and hallucinations. It completely fails the task.",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "All sentences include one of the required polite expressions, and politeness particles (ครับ/ค่ะ) are used appropriately throughout. Thai is natural and grammatically strong; contexts are varied. English translations match well. Romanization is consistently present, though it lacks tone marking and has minor spelling inconsistencies (e.g., “Laa kon” vs “ลา-ก่อน”), but still clear and usable.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Meets the core constraints: every sentence contains one of the target expressions and includes appropriate politeness particles where expected. Thai sentences are natural and varied; translations are accurate. Romanization is present for all and generally clear, though no tone indicators and some minor inconsistencies (e.g., spacing, “ka” vs “kha”).",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Strong overall: every sentence uses a required expression; Thai is mostly natural and correct; translations align well. Politeness particles appear correctly in most sentences, but a few requests could be more consistently softened (some lack ครับ/คะ in the same sentence as the polite expression). Romanization is present but fairly rough/nonstandard and without tone indicators (still intelligible).",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "All sentences include required expressions and translations are accurate. Thai is generally natural and polite. Romanization is clear and syllable-broken, but it is not “standard transliteration with tone indicators” (no tones) and has some inconsistent hyphenation; also a couple lines omit expected particles in the Thai (e.g., “ขอบคุณที่ช่วยฉันยกของนะ” without ครับ/คะ).",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Good coverage of all required expressions across sentences; particles are generally used appropriately and translations are mostly accurate. However, there is a serious Thai grammar/wording issue in sentence 3 (“ขอบคุณที่ช่วยเธอฉันค้นหาทาง” is ungrammatical/incorrect), which also makes the romanization/translation pairing weaker there. Romanization is present but inconsistent and without tone marks.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Uses the required expressions in every sentence and includes clear tone-marked romanization (a plus). However, politeness particles (ครับ/คะ) are mostly missing, which is a critical politeness-convention requirement for this task. Some Thai is awkward/unclear (e.g., “วันนี้มีนัดอะไร” context/translation mismatch; “ได้โปรดรอสักครู่ปิดงานก่อน” is clunky).",
+          "score": 6.4
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "All sentences include at least one required expression and romanization is present, but there are multiple Thai naturalness/grammar issues (e.g., “ช่วยผ่าน้ำได้โปรดครับ” unnatural; “ขอโทษครับ ทำกดหล่น” incorrect/unnatural; “ลาก่อนครับ เดี๋ยวนี้พบกัน” wrong meaning). Several translations don’t match the Thai well. Politeness particles appear often, but overall accuracy is inconsistent.",
+          "score": 5.8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Although it repeatedly includes the target expressions, many Thai sentences are ungrammatical or nonsensical (“ผมไม่ใจสำหรับนั่น”, “คุณจะให้ดีไหว”, “ผมต้องไปไหนครับ” with wrong meaning), and several translations do not match the Thai. Romanization is inconsistent and sometimes doesn’t correspond to the Thai. Politeness particle usage is also inconsistent/incorrect (e.g., “นะค่ะ” in multiple places).",
+          "score": 3.2
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-sentences",
+  "testCaseId": "en-thai-politeness-1"
+}
