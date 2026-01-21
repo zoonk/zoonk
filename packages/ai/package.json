@@ -21,6 +21,7 @@
     "./tasks/activities/core/review": "./src/tasks/activities/core/activity-review.ts",
     "./tasks/activities/core/story": "./src/tasks/activities/core/activity-story.ts",
     "./tasks/activities/custom": "./src/tasks/activities/custom/activity-custom.ts",
+    "./tasks/activities/language/grammar": "./src/tasks/activities/language/activity-grammar.ts",
     "./tasks/activities/language/pronunciation": "./src/tasks/activities/language/activity-pronunciation.ts",
     "./tasks/activities/language/sentences": "./src/tasks/activities/language/activity-sentences.ts",
     "./tasks/activities/language/vocabulary": "./src/tasks/activities/language/activity-vocabulary.ts",

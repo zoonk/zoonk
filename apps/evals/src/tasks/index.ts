@@ -5,6 +5,7 @@ import { activityCustomTask } from "./activity-custom/task";
 import { activityExamplesTask } from "./activity-examples/task";
 import { activityExplanationTask } from "./activity-explanation/task";
 import { activityExplanationQuizTask } from "./activity-explanation-quiz/task";
+import { activityGrammarTask } from "./activity-grammar/task";
 import { activityMechanicsTask } from "./activity-mechanics/task";
 import { activityPronunciationTask } from "./activity-pronunciation/task";
 import { activityReviewTask } from "./activity-review/task";
@@ -22,26 +23,27 @@ import { lessonKindTask } from "./lesson-kind/task";
 import { stepVisualTask } from "./step-visual/task";
 
 export const TASKS: readonly Task[] = [
-  courseCategoriesTask,
-  courseSuggestionsTask,
+  activityBackgroundTask,
+  activityChallengeTask,
+  activityCustomTask,
+  activityExamplesTask,
+  activityExplanationQuizTask,
+  activityExplanationTask,
+  activityGrammarTask,
+  activityMechanicsTask,
+  activityPronunciationTask,
+  activityReviewTask,
+  activitySentencesTask,
+  activityStoryTask,
+  activityVocabularyTask,
   alternativeTitlesTask,
+  chapterLessonsTask,
+  courseCategoriesTask,
   courseChaptersTask,
   courseDescriptionTask,
-  chapterLessonsTask,
-  lessonKindTask,
+  courseSuggestionsTask,
   lessonActivitiesTask,
-  activityBackgroundTask,
-  activityExplanationTask,
-  activityExplanationQuizTask,
-  activityMechanicsTask,
-  activityExamplesTask,
-  activityStoryTask,
-  activityChallengeTask,
-  activityReviewTask,
-  activityCustomTask,
-  activityVocabularyTask,
-  activitySentencesTask,
-  activityPronunciationTask,
+  lessonKindTask,
   stepVisualTask,
 ];
 
