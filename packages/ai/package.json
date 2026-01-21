@@ -22,6 +22,7 @@
     "./tasks/activities/core/story": "./src/tasks/activities/core/activity-story.ts",
     "./tasks/activities/custom": "./src/tasks/activities/custom/activity-custom.ts",
     "./tasks/activities/language/pronunciation": "./src/tasks/activities/language/activity-pronunciation.ts",
+    "./tasks/activities/language/sentences": "./src/tasks/activities/language/activity-sentences.ts",
     "./tasks/activities/language/vocabulary": "./src/tasks/activities/language/activity-vocabulary.ts",
     "./tasks/audio": "./src/tasks/audio/generate-language-audio.ts",
     "./tasks/chapters/lessons": "./src/tasks/chapters/chapter-lessons.ts",

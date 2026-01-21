@@ -1,0 +1,167 @@
+{
+  "expectations": "\nLANGUAGE: English output required for translations.\n\nTOPIC: Russian sentences for places in the city - using location vocabulary.\n\nSCRIPT: Non-Roman (romanization MUST be included)\n\nVOCABULARY WORDS PROVIDED: магазин, ресторан, парк, школа, библиотека\nThese place words MUST appear in the generated sentences.\n\nROMANIZATION REQUIREMENTS:\n- MUST include romanized Russian for all sentences\n- Standard transliteration system\n- Words: магазин (magazin), ресторан (restoran), парк (park), школа (shkola), библиотека (biblioteka)\n- Penalize if romanization is missing or incorrect\n\nACCURACY PITFALLS - Penalize SEVERELY if:\n- Any sentence doesn't use at least one of the provided place words\n- Case endings are incorrect (prepositional for location, accusative for direction)\n- Preposition usage is wrong (в/на)\n- Translations don't match the Russian sentences\n- Romanization is missing or uses non-standard systems\n\nCONTEXT EXPECTATIONS:\n- Sentences about going to places, being at places\n- Giving and asking directions\n- Natural urban/location-related conversations\n\n\nEVALUATION CRITERIA:\n\n1. VOCABULARY WORD USAGE (CRITICAL - highest priority):\n   - Each generated sentence MUST use at least one of the provided vocabulary words\n   - The words should be used in their natural form (conjugated verbs, declined nouns are acceptable)\n   - Penalize SEVERELY if sentences don't incorporate the provided vocabulary\n   - Penalize if words are used incorrectly or out of context\n\n2. TRANSLATION ACCURACY (CRITICAL):\n   - Each sentence-translation pair MUST be linguistically accurate\n   - The translation must convey the same meaning as the original sentence\n   - Consider regional variations (Brazilian Portuguese vs European, Latin American Spanish vs Castilian)\n   - Penalize SEVERELY if translations are incorrect, incomplete, or misleading\n   - Grammatical structures should be appropriately adapted between languages\n\n3. ROMANIZATION (required field):\n   - For Japanese, Chinese, Korean, Arabic, Russian, Greek, Thai, Hindi, etc.: romanization MUST contain the Roman letter representation of the sentence\n   - Use standard romanization systems (romaji for Japanese, pinyin for Chinese, etc.)\n   - For Roman-script languages (Spanish, French, German, etc.): romanization MUST be an empty string \"\"\n   - Penalize if romanization is missing for non-Roman scripts or contains text for Roman scripts\n\n4. GRAMMATICAL CORRECTNESS:\n   - Sentences must be grammatically correct in the target language\n   - Verb conjugations must match the subject\n   - Gender agreement must be correct where applicable\n   - Word order should follow natural patterns of the target language\n   - Penalize for grammar errors, incorrect conjugations, or unnatural constructions\n\n5. SENTENCE NATURALNESS:\n   - Sentences should sound natural to native speakers\n   - Avoid overly literal translations or awkward phrasing\n   - Use appropriate register (formal/informal) for the context\n   - Penalize if sentences sound robotic, unnatural, or like machine translation\n\n6. CONTEXT DIVERSITY:\n   - Sentences should present different contexts or situations\n   - Avoid repetitive sentence structures\n   - Use variety in sentence types (statements, questions, commands where appropriate)\n   - Do NOT penalize for covering similar themes if vocabulary words naturally relate to each other\n\n7. LESSON RELEVANCE:\n   - Sentences should relate to the lesson topic\n   - The contexts should be appropriate for the lesson's educational goals\n   - Avoid straying into unrelated topics\n   - Do NOT require every sentence to explicitly reference the lesson topic - implicit relevance is fine\n\n8. APPROPRIATE DIFFICULTY:\n   - Sentences should be appropriate for language learners\n   - Avoid overly complex grammatical structures unless the lesson specifically targets advanced learners\n   - Vocabulary beyond the provided words should be at a similar or simpler level\n   - Penalize if sentences are incomprehensible to learners or use excessive advanced vocabulary\n\n9. NO DUPLICATES:\n   - Each sentence should be unique\n   - Avoid near-duplicates (same sentence with minor word changes)\n   - Penalize if essentially the same sentence appears multiple times\n\n10. LANGUAGE CORRECTNESS:\n    - Sentences should be in the TARGET language (courseTitle)\n    - Translations should be in the NATIVE language (language code)\n    - Penalize if languages are swapped or mixed incorrectly\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific sentence choices - accept ANY valid sentences that use the vocabulary\n- Do NOT penalize for not including specific contexts you might expect\n- Do NOT require a specific number of sentences\n- Do NOT expect sentences to follow any particular template or pattern\n- Different valid sentence constructions exist - assess the quality of what IS provided\n- FOCUS ON: vocabulary usage, translation accuracy, romanization correctness, grammatical correctness, naturalness\n\n    ",
+  "judgedAt": "2026-01-21T17:29:29.021Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Excellent romanization - complete sentences are romanized accurately using standard transliteration. All 5 vocabulary words are used correctly with proper case endings (prepositional for location 'в ресторане', 'в парке', 'в библиотеке'; accusative for direction 'в магазин', 'в библиотеку'). Grammar is correct throughout. Translations are accurate and natural. Good variety of sentence structures and contexts. Minor issues: 'posmotrel'i' has a typo (should be 'posmotreli'), and sentence 6 translation oddly kept 'метро' in Cyrillic. Sentence 7 has 'chуть' with a mixed Cyrillic character. Overall excellent quality with minor romanization inconsistencies.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Complete and accurate romanization for all sentences using standard transliteration system. All 5 vocabulary words are properly used with correct case endings. Grammar is solid throughout. Translations are accurate and match the Russian sentences well. Good variety in sentence types (questions, statements, imperatives). Natural-sounding sentences appropriate for learners. 12 sentences providing good coverage. Clean execution with no significant errors.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Proper romanization for all 10 sentences using standard system. All 5 vocabulary words used correctly with appropriate case endings. Grammar is correct. Translations are accurate and natural. Good variety in contexts (directions, locations, questions). Minor issue: 'tikho' should be 'tikho' (correct) but 'otkryvayetsya' uses 'ye' which is slightly non-standard (usually 'e'). Overall clean and well-executed with appropriate difficulty level for learners.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Correct romanization using standard system for all 10 sentences. All 5 vocabulary words are used properly with correct cases. Grammar is accurate. Translations match well. Good variety of contexts. Slightly fewer sentences (10) but all are high quality. Clean execution without errors. Natural-sounding sentences suitable for learners.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Good romanization using standard system. All 5 vocabulary words used correctly with proper case endings. Grammar is correct. Translations are accurate. Only 5 sentences provided, which limits context diversity though all are of good quality. Minor issue: 'progulivat'sya' should be 'progulivat'sya' or more commonly 'progulivat'sya'. Overall well-executed but limited in quantity.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Romanization is provided but has multiple significant errors: 'vykhodno-dnyam' for 'выходным', 'Vyezdnym vy khodit' which doesn't match sentence at all, 'pya'tnitsu' with odd apostrophe, 'Devushka tet' (should be 'gulyaet'), 'assémbereya' (completely wrong - should be 'stolovaya' for столовая). Some romanizations don't match the Cyrillic text. All vocabulary words are used. Grammar in Russian sentences is mostly correct. Translations are generally accurate. The romanization errors are severe enough to warrant significant penalty.",
+          "score": 5.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "CRITICAL FAILURE: Romanization field contains Cyrillic text instead of Roman letters for all sentences. This completely fails the romanization requirement which states romanization MUST contain Roman letter representation. The Russian sentences themselves are grammatically correct, vocabulary words are properly used, and translations are accurate. However, the romanization requirement is explicitly marked as critical and must be penalized severely.",
+          "score": 3.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "CRITICAL FAILURE: Romanization field only contains the vocabulary word(s) romanized, not the full sentences. The requirement explicitly states romanization must include 'the Roman letter representation of the sentence.' This completely fails the romanization requirement. The Russian sentences are grammatically excellent, all 5 vocabulary words are used correctly with proper cases, translations are accurate, and there's good variety. However, since romanization is marked as critical and required, this must be penalized severely despite the otherwise high quality content.",
+          "score": 3
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "This model provided the highest quality output. It generated complex, natural-sounding sentences that fit the requested urban context perfectly. The translations are nuanced and accurate (e.g., capturing 'stopped by' for 'забежала'). It strictly adhered to all vocabulary and romanization constraints, providing accurate full-sentence transliteration.",
+          "score": 9.8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model C produced a very strong set of sentences with accurate translations and correct romanization. The sentences are varied and linguistically sound. It followed all instructions, though the sentence structures were slightly less sophisticated than Model B.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model G generated 10 error-free, natural sentences. The grammar is correct, the translations are accurate, and the romanization is standard. It is equivalent in quality to Model F, offering a solid, reliable response.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Model F provided a flawless set of sentences that met all requirements. The vocabulary usage was correct, and the romanization was accurate. It is ranked just alongside Model G as a high-quality, standard output.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Model H followed all instructions and provided accurate sentences with good romanization. It is ranked slightly lower simply because it only provided 5 sentences, whereas other top models provided 10-12, offering more variety for the user.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Model E struggled significantly with the romanization quality, despite generating valid Russian sentences. It contained hallucinations (romanizing 'столовая' as 'assémbereya'), Cyrillic characters left in the romanization ('kupiл'), and mismatched grammar between the Cyrillic and Romanized text. These quality control issues are significant.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Model A failed a critical constraint: the romanization field contained only the transliterated vocabulary words, not the full Romanized sentences as required. While the Russian sentences themselves were good, the failure to follow the romanization format makes the output functionally incomplete for learners.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model D failed the romanization requirement completely by pasting the Cyrillic Russian text into the romanization field. This renders the output useless for the specific purpose of the prompt (providing a script for non-readers of Cyrillic).",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "All sentences include the required place words, with correct case/preposition usage for location (в парке/в школе/в библиотеке) and direction (в магазин/в парк/в ресторан). Translations match well. Romanization is present for every sentence and generally standard/simple and consistent.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Meets core requirements: every sentence uses a target place word, cases and prepositions are correct, translations match. Romanization is present and mostly standard; minor issue: inconsistent capitalization in romanization (\"YA\") but meaning remains clear.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "All five sentences are natural, accurate, and use the target place words with correct grammar/cases. Romanization is present and readable. Minor nit: uses \"vyhodnym\" instead of standard transliteration \"vykhodnym\" for выходным, but overall consistent.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Good variety and generally accurate grammar/case (в магазине/в ресторане/в парке/у школы/в библиотеке). Translations are mostly accurate. Romanization is complete, but it uses a nonstandard transliteration convention (e.g., \"chto\" for что instead of \"chto\", and some inconsistent choices), which violates the “standard transliteration” expectation.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Sentences and translations are accurate and on-topic; all include required vocabulary with correct case usage. However romanization is missing apostrophes/soft sign markers and has inconsistent/less standard forms (e.g., \"zakazat\" rather than \"zakazat'\"), reducing compliance with the stated romanization requirements.",
+          "score": 7.9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Russian sentences and English translations are mostly correct and use the required place words with appropriate cases. Major failure: romanization field is not romanization of full sentences (often only the vocabulary word(s)), which violates the requirement to include romanized Russian for all sentences.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Russian and translations are generally fine and all sentences contain target vocabulary. Critical issue: the “romanization” field is not romanization at all—it repeats Cyrillic sentences. This fails the non-Roman-script romanization requirement.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Contains many romanization errors/nonstandard spellings (gibberish/typos, mixed diacritics, wrong letters), and at least one clear Russian error: \"ассéмберeя\" (nonsense) while the sentence actually contains \"столовая\". Also one sentence has garbled romanization and a Cyrillic typo (\"parkе\"). Despite using required place words, the romanization and quality issues are severe.",
+          "score": 2.5
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-sentences",
+  "testCaseId": "en-russian-places-1"
+}

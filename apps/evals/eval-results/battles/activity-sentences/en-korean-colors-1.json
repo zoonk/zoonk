@@ -1,0 +1,167 @@
+{
+  "expectations": "\nLANGUAGE: English output required for translations.\n\nTOPIC: Korean sentences for colors - using basic color vocabulary.\n\nSCRIPT: Non-Roman (romanization MUST be included)\n\nVOCABULARY WORDS PROVIDED: 빨간색, 파란색, 노란색, 초록색, 검은색\nThese color words MUST appear in the generated sentences.\n\nROMANIZATION REQUIREMENTS:\n- MUST include romanized Korean for all sentences\n- Standard Korean romanization (Revised Romanization preferred)\n- Colors: 빨간색 (ppalgansaek), 파란색 (paransaek), 노란색 (noransaek), etc.\n- Penalize if romanization is missing or incorrect\n\nACCURACY PITFALLS - Penalize SEVERELY if:\n- Any sentence doesn't use at least one of the provided color words\n- Color words are used grammatically incorrectly\n- Translations don't match the Korean sentences\n- Romanization is missing or uses non-standard systems\n\nCONTEXT EXPECTATIONS:\n- Sentences describing objects by color\n- Shopping or everyday situations involving colors\n- Natural Korean sentence structures\n\n\nEVALUATION CRITERIA:\n\n1. VOCABULARY WORD USAGE (CRITICAL - highest priority):\n   - Each generated sentence MUST use at least one of the provided vocabulary words\n   - The words should be used in their natural form (conjugated verbs, declined nouns are acceptable)\n   - Penalize SEVERELY if sentences don't incorporate the provided vocabulary\n   - Penalize if words are used incorrectly or out of context\n\n2. TRANSLATION ACCURACY (CRITICAL):\n   - Each sentence-translation pair MUST be linguistically accurate\n   - The translation must convey the same meaning as the original sentence\n   - Consider regional variations (Brazilian Portuguese vs European, Latin American Spanish vs Castilian)\n   - Penalize SEVERELY if translations are incorrect, incomplete, or misleading\n   - Grammatical structures should be appropriately adapted between languages\n\n3. ROMANIZATION (required field):\n   - For Japanese, Chinese, Korean, Arabic, Russian, Greek, Thai, Hindi, etc.: romanization MUST contain the Roman letter representation of the sentence\n   - Use standard romanization systems (romaji for Japanese, pinyin for Chinese, etc.)\n   - For Roman-script languages (Spanish, French, German, etc.): romanization MUST be an empty string \"\"\n   - Penalize if romanization is missing for non-Roman scripts or contains text for Roman scripts\n\n4. GRAMMATICAL CORRECTNESS:\n   - Sentences must be grammatically correct in the target language\n   - Verb conjugations must match the subject\n   - Gender agreement must be correct where applicable\n   - Word order should follow natural patterns of the target language\n   - Penalize for grammar errors, incorrect conjugations, or unnatural constructions\n\n5. SENTENCE NATURALNESS:\n   - Sentences should sound natural to native speakers\n   - Avoid overly literal translations or awkward phrasing\n   - Use appropriate register (formal/informal) for the context\n   - Penalize if sentences sound robotic, unnatural, or like machine translation\n\n6. CONTEXT DIVERSITY:\n   - Sentences should present different contexts or situations\n   - Avoid repetitive sentence structures\n   - Use variety in sentence types (statements, questions, commands where appropriate)\n   - Do NOT penalize for covering similar themes if vocabulary words naturally relate to each other\n\n7. LESSON RELEVANCE:\n   - Sentences should relate to the lesson topic\n   - The contexts should be appropriate for the lesson's educational goals\n   - Avoid straying into unrelated topics\n   - Do NOT require every sentence to explicitly reference the lesson topic - implicit relevance is fine\n\n8. APPROPRIATE DIFFICULTY:\n   - Sentences should be appropriate for language learners\n   - Avoid overly complex grammatical structures unless the lesson specifically targets advanced learners\n   - Vocabulary beyond the provided words should be at a similar or simpler level\n   - Penalize if sentences are incomprehensible to learners or use excessive advanced vocabulary\n\n9. NO DUPLICATES:\n   - Each sentence should be unique\n   - Avoid near-duplicates (same sentence with minor word changes)\n   - Penalize if essentially the same sentence appears multiple times\n\n10. LANGUAGE CORRECTNESS:\n    - Sentences should be in the TARGET language (courseTitle)\n    - Translations should be in the NATIVE language (language code)\n    - Penalize if languages are swapped or mixed incorrectly\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific sentence choices - accept ANY valid sentences that use the vocabulary\n- Do NOT penalize for not including specific contexts you might expect\n- Do NOT require a specific number of sentences\n- Do NOT expect sentences to follow any particular template or pattern\n- Different valid sentence constructions exist - assess the quality of what IS provided\n- FOCUS ON: vocabulary usage, translation accuracy, romanization correctness, grammatical correctness, naturalness\n\n    ",
+  "judgedAt": "2026-01-21T17:29:56.918Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model D provides 10 well-crafted sentences that correctly use all 5 provided vocabulary words (빨간색, 파란색, 노란색, 초록색, 검은색). Romanization is accurate and follows standard Revised Romanization (e.g., 'Ppalgansaek', 'Paransaegieyo'). Translations are accurate and natural. Sentences cover diverse contexts (food, weather, shopping, health, traffic) with appropriate difficulty for learners. Grammar is correct throughout, and sentence structures vary nicely between statements and questions.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Model C offers 10 good sentences correctly incorporating all 5 vocabulary words. Romanization is generally accurate (e.g., 'Ppalgansaek', 'Paransaek', 'Choroksaek'). Translations are accurate and match the Korean well. Good variety of contexts (cars, clothing, traffic lights, shopping, describing people). Grammar is correct throughout. The sentences are natural and appropriate for learners. Minor issues: 'syeocheu' should be 'syeocheu' (셔츠), which is acceptable.",
+          "score": 8.7
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model A provides 10 sentences using all 5 vocabulary words with good variety and slightly more complex structures. Romanization is mostly accurate with minor inconsistencies (e.g., 'Ppalgan-saek' vs 'ppalgan-saek' - hyphenation varies). Translations are accurate. Sentences are more advanced (e.g., interior design, formal appearance discussions) which may be slightly challenging for beginners but still appropriate. Grammar is correct. Good context diversity with everyday and professional situations.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model B provides 15 sentences using all vocabulary words appropriately. However, there are romanization inconsistencies: uses spaces in color words inconsistently ('ppalgan saek' vs 'geomeun saek' instead of 'ppalgansaek' or 'geomeunsaek'). Also 'ssin-eul' should be 'sineul'. Some minor issues: 'geoyeyo' appears in places where spacing is inconsistent. Translations are accurate. Good variety of contexts and natural sentences. The quantity is good but romanization inconsistencies lower the score.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Model G has 15 sentences but several issues. Major problem: sentence 2 uses '파랗게' (parake) which is an adjective form, not the vocabulary word '파란색'. Romanization errors: 'parансaek' contains Cyrillic characters (mix of Roman and Cyrillic), 'Chorokseok' should be 'Choroksaek'. Sentence 8 says '초록색 물' (green water) but translation says 'paint it green' - mismatch. Sentence 12 '파란색 불' means 'blue fire' but translation says 'blueberries' - incorrect. These translation errors are significant.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model F has 10 sentences with several problems. Romanization inconsistencies: 'ppalkan-saek' instead of 'ppalgansaek', 'Cheorok-saek' instead of 'Choroksaek'. Sentence 6 has grammatical issues ('제일 잘 받는 편지' doesn't make sense contextually - the Korean doesn't match translation well). Sentence 9 translation ('put me at the front') doesn't quite match Korean context naturally. Some sentences are awkward or unnatural. 'Geom-eun-saek' romanization is non-standard.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Model H only provides 5 sentences (much fewer than others). Romanization has errors: 'Ppalgansek' instead of 'Ppalgansaek', 'Norangsek' instead of 'Noransaek'. Sentence 3 is unnatural - barley smelling sweet is odd. Sentence 4 '자엽이' is not standard Korean (should be 잎). Sentence 5 has confusing meaning ('따라가 날리면' doesn't make sense grammatically). Several grammar and naturalness issues. Limited context diversity due to low sentence count.",
+          "score": 4.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Model E has severe issues throughout. Many sentences are grammatically incorrect or nonsensical Korean: Sentence 1 '책끈이써요' is grammatically wrong. Sentence 2 '하늘이 빨리 파란색을 꺼요' is unnatural/incorrect Korean. Sentence 4 doesn't make sense. Sentence 6 uses '검은' not '검은색'. Sentence 7 is incomprehensible. Sentence 9 contains gibberish ('아이블'). Multiple romanization errors and inconsistencies. Translations often don't match the (broken) Korean. This appears to be very low-quality output with fundamental language errors.",
+          "score": 2
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "This model provided the highest quality output. The Korean sentences are natural, varied, and grammatically correct. The vocabulary words are used appropriately in context. The romanization is consistent and follows standard Revised Romanization rules without errors. Translations are accurate and natural.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model A produced excellent sentences with accurate translations. The contexts were diverse and natural. The romanization was largely accurate, though there was slight inconsistency in hyphenating color words (e.g., 'Ppalgan-saek' vs 'Paransaek'). This is a minor stylistic flaw in an otherwise perfect response.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "This model performed very well with natural sentences and good context. However, there was a romanization error in the final sentence ('ipeoyo' instead of 'ibeoyo'), and the romanization style for sound changes (e.g., 'paransaegieyo') while technically correct for pronunciation, might be confusing compared to preserving the noun stem. Still a strong candidate.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model B met all requirements and used the vocabulary correctly. However, the sentences were somewhat repetitive and simple. The romanization contained minor issues, such as starting with lowercase letters, unnecessary spaces within color words ('ppalgan saek'), and a typo ('banane' instead of 'banana').",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model F provided generally good Korean sentences, but suffered from significant quality control issues. There were distinct mismatches between the Korean text and the romanization (e.g., Korean 'sajin' vs Romanization 'sammaejang', 'hago' vs 'haego'). One sentence contained a likely typo in the Korean text ('pyoji'/'pyonji') leading to a confusing translation.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "The output contained broken grammar and unnatural phrasing (e.g., 'smells sweet' translated from a verb meaning 'pay/emit'). The romanization used non-standard vowels ('sek' instead of 'saek') and contained errors. The sentences often lacked logical flow.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "This model hallucinated non-existent words (e.g., 'Nolsaek') and produced sentences that were grammatically nonsensical or had meanings that did not match the translations. Romanization was also poor ('ppallgan').",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "This output is unacceptable because it included Cyrillic characters mixed into the Romanization field ('parансaek'), violating the core requirement for standard romanization. Additionally, it produced nonsense translations (translating 'blue fire' as 'blueberries').",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "All sentences are natural, grammatically correct, and each includes one of the required color words in correct form. Romanization is consistent and close to Revised Romanization (e.g., ppalgansaek, paransaeg/파란색). Translations match well. Good everyday/shopping variety (price question, location question, traffic light, clothing).",
+          "score": 9.4
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Clean, natural Korean with correct required color-word usage in every sentence. Romanization is consistent and essentially RR-friendly (ppalgansaek, paransaek, etc.). Translations are accurate. Slightly less shopping-focused variety than D but still good (traffic light, clothing, looking for an item, fridge question).",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "All sentences correctly use the required color vocabulary and translations are accurate and natural. Context variety is good. Main weakness: romanization often uses hyphens and some nonstandard/uneven forms (e.g., “Ppalgan-saek”, “sinho-il”), which is less compliant with “standard RR preferred,” though still readable and mostly correct.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Meets the core requirements: every sentence uses a provided color word, Korean is mostly natural, translations match. However romanization is lower quality: inconsistent spacing/hyphenation, mostly all-lowercase, and several forms deviate from standard RR conventions (e.g., ‘ppalgan saek’ vs ppalgansaek; various spacing issues). Still understandable overall.",
+          "score": 8.1
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Uses required color words in every sentence and generally accurate translations. But several Korean sentences are awkward or semantically odd (e.g., “빨간색이 제일 잘 받는 편지라서…”, “초록색 차가 온다면 저를 앞에 세워 주세요”, “검은색 카페에서…”), which hurts naturalness and meaning alignment even if not strictly ungrammatical. Romanization is mostly fine but includes nonstandard hyphenation and some misspellings (e.g., ‘Cheorok’ vs ‘Chorok’).",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Major compliance issue: multiple sentences do NOT use the provided required color-word forms (uses 파랗게 instead of 파란색; and likely others). Also romanization contains corrupted non-Latin characters (“parансaek”) and several romanizations/spellings are wrong (“Chorokseok” etc.). Some translations don’t match the Korean (e.g., “파란색 불” translated as blueberries). Overall fails critical vocabulary/romanization/accuracy expectations.",
+          "score": 3.2
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Has required color words, but Korean contains multiple unnatural/incorrect phrases and apparent typos/word choice errors (e.g., “노란색 보리… 달콤하게 내요,” “초록색 자엽이… 행복해죠,” “버스를 따라가 날리면”). Romanization is also inaccurate (“ppalgansek/paransek/norangsek” missing -saek) and nonstandard. Translations often don’t match the odd Korean content. Significant quality issues.",
+          "score": 2.6
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Severely ungrammatical/unnatural Korean throughout with many misspellings and nonsensical phrases; several sentences have incorrect or non-matching translations. Romanization is highly inconsistent and incorrect. Although color words appear sometimes, overall it fails core requirements for grammatical correctness, naturalness, romanization, and translation accuracy.",
+          "score": 1.3
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-sentences",
+  "testCaseId": "en-korean-colors-1"
+}

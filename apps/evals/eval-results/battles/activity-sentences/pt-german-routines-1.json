@@ -1,0 +1,167 @@
+{
+  "expectations": "\nLANGUAGE: Brazilian Portuguese output required for translations (NOT English).\n\nTOPIC: German sentences for daily routines - using routine action vocabulary.\n\nSCRIPT: Roman (romanization should be empty string \"\")\n\nVOCABULARY WORDS PROVIDED: aufstehen, fruhstucken, arbeiten, schlafen, essen\nThese verbs MUST appear in the generated sentences.\n\nACCURACY PITFALLS - Penalize SEVERELY if:\n- Any sentence doesn't use at least one of the provided verbs\n- Separable prefix verbs are handled incorrectly (aufstehen -> ich stehe auf)\n- Verb conjugation is wrong\n- Translations are in English instead of Portuguese\n- Romanization contains any text (should be empty string)\n\nCONTEXT EXPECTATIONS:\n- Sentences about daily activities and schedules\n- Morning, work, and evening routines\n- Natural German verb usage in context\n\n\nEVALUATION CRITERIA:\n\n1. VOCABULARY WORD USAGE (CRITICAL - highest priority):\n   - Each generated sentence MUST use at least one of the provided vocabulary words\n   - The words should be used in their natural form (conjugated verbs, declined nouns are acceptable)\n   - Penalize SEVERELY if sentences don't incorporate the provided vocabulary\n   - Penalize if words are used incorrectly or out of context\n\n2. TRANSLATION ACCURACY (CRITICAL):\n   - Each sentence-translation pair MUST be linguistically accurate\n   - The translation must convey the same meaning as the original sentence\n   - Consider regional variations (Brazilian Portuguese vs European, Latin American Spanish vs Castilian)\n   - Penalize SEVERELY if translations are incorrect, incomplete, or misleading\n   - Grammatical structures should be appropriately adapted between languages\n\n3. ROMANIZATION (required field):\n   - For Japanese, Chinese, Korean, Arabic, Russian, Greek, Thai, Hindi, etc.: romanization MUST contain the Roman letter representation of the sentence\n   - Use standard romanization systems (romaji for Japanese, pinyin for Chinese, etc.)\n   - For Roman-script languages (Spanish, French, German, etc.): romanization MUST be an empty string \"\"\n   - Penalize if romanization is missing for non-Roman scripts or contains text for Roman scripts\n\n4. GRAMMATICAL CORRECTNESS:\n   - Sentences must be grammatically correct in the target language\n   - Verb conjugations must match the subject\n   - Gender agreement must be correct where applicable\n   - Word order should follow natural patterns of the target language\n   - Penalize for grammar errors, incorrect conjugations, or unnatural constructions\n\n5. SENTENCE NATURALNESS:\n   - Sentences should sound natural to native speakers\n   - Avoid overly literal translations or awkward phrasing\n   - Use appropriate register (formal/informal) for the context\n   - Penalize if sentences sound robotic, unnatural, or like machine translation\n\n6. CONTEXT DIVERSITY:\n   - Sentences should present different contexts or situations\n   - Avoid repetitive sentence structures\n   - Use variety in sentence types (statements, questions, commands where appropriate)\n   - Do NOT penalize for covering similar themes if vocabulary words naturally relate to each other\n\n7. LESSON RELEVANCE:\n   - Sentences should relate to the lesson topic\n   - The contexts should be appropriate for the lesson's educational goals\n   - Avoid straying into unrelated topics\n   - Do NOT require every sentence to explicitly reference the lesson topic - implicit relevance is fine\n\n8. APPROPRIATE DIFFICULTY:\n   - Sentences should be appropriate for language learners\n   - Avoid overly complex grammatical structures unless the lesson specifically targets advanced learners\n   - Vocabulary beyond the provided words should be at a similar or simpler level\n   - Penalize if sentences are incomprehensible to learners or use excessive advanced vocabulary\n\n9. NO DUPLICATES:\n   - Each sentence should be unique\n   - Avoid near-duplicates (same sentence with minor word changes)\n   - Penalize if essentially the same sentence appears multiple times\n\n10. LANGUAGE CORRECTNESS:\n    - Sentences should be in the TARGET language (courseTitle)\n    - Translations should be in the NATIVE language (language code)\n    - Penalize if languages are swapped or mixed incorrectly\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific sentence choices - accept ANY valid sentences that use the vocabulary\n- Do NOT penalize for not including specific contexts you might expect\n- Do NOT require a specific number of sentences\n- Do NOT expect sentences to follow any particular template or pattern\n- Different valid sentence constructions exist - assess the quality of what IS provided\n- FOCUS ON: vocabulary usage, translation accuracy, romanization correctness, grammatical correctness, naturalness\n\n    ",
+  "judgedAt": "2026-01-21T17:29:51.877Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Excellent output with 20 sentences covering all 5 vocabulary words multiple times. All romanizations are correctly empty strings. Separable prefix verbs handled correctly (ich stehe auf, du stehst auf). Translations to Brazilian Portuguese are accurate and natural. Good variety of sentence structures including statements, questions, and complex sentences. Minor issue: 'Eu levanto' could be 'Eu me levanto' for reflexive consistency, but this is acceptable in Brazilian Portuguese. Grammar is correct throughout. Great context diversity covering morning routines, work schedules, meals, and sleep patterns.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Strong output with 12 well-constructed sentences using all 5 vocabulary words. Separable prefix verbs correctly handled (ich stehe auf, bevor ich aufstehe). Translations are accurate and natural Brazilian Portuguese. Good variety of contexts and sentence complexity. All romanizations correctly empty. The sentence 'Kinder sollten abends früh schlafen gehen' uses schlafen correctly. One minor issue: 'pãezinhos' should be 'pãezinhos' (correct diminutive form). Overall excellent quality with natural-sounding sentences.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Very good output with 10 sentences covering all 5 vocabulary words. Separable verb 'aufstehen' correctly conjugated (ich stehe auf, wann stehst du auf). Translations to Brazilian Portuguese are accurate. All romanizations correctly empty. Good variety including questions. The translation 'Eu me levanto' is more formally correct than just 'Eu levanto'. Minor note: 'fruhstucken' in vocab is misspelled but Model A correctly uses 'frühstücken'. Natural-sounding sentences appropriate for learners.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Good output with 15 sentences using all vocabulary words. Separable verbs handled correctly. Translations are accurate Brazilian Portuguese. All romanizations empty. Good variety of sentence types. Minor issues: 'Eu levanto' without reflexive 'me' is acceptable but less formal; 'Nach dem Frühstücken' uses the nominalized verb form which is grammatically correct. Some sentences are simpler but appropriate for learners. Overall solid quality.",
+          "score": 8.7
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Good output with 10 sentences using all vocabulary words. Separable verbs correctly handled. Translations are accurate. All romanizations empty. Minor issues: 'Eu levanto' without 'me' is acceptable in casual Brazilian Portuguese. Sentence 'Er frühstückt nur ein Brötchen mit Marmelade' - the translation 'Ele come apenas um pãozinho com geleia no café da manhã' adds context not in the original. Good variety and natural sentences.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Good output with 15 sentences covering all vocabulary words. Separable verbs handled correctly. Translations are mostly accurate. All romanizations empty. Some translations use 'acordo' for 'aufstehen' which means 'wake up' rather than 'get up' - not a major error but slightly less precise. 'geléia' should be 'geleia' in modern Brazilian Portuguese orthography. The sentence about eating before children go to school seems slightly unnatural (usually children eat before school, not with parents before they go). Overall good quality.",
+          "score": 8.4
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Good output with 10 sentences using all vocabulary words. Separable verbs correctly handled. Good use of complex structures. However, some translation issues: 'em movimento' for 'unterwegs' is awkward - 'no caminho' would be more natural. 'Se eu tomo café tarde demais, eu consigo dormir mal' - 'consigo dormir mal' is awkward, should be 'não consigo dormir bem' or 'durmo mal'. The use of 'a gente' is natural Brazilian Portuguese. Some sentences may be slightly advanced for learners. Otherwise good variety and natural German.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "CRITICAL FLAW: Two sentences contain Portuguese words mixed into German sentences: 'cozinha' instead of 'Küche' and 'projeto' instead of 'Projekt'. This is a severe error that violates language correctness. Only 5 sentences provided, which is fewer than most other outputs. The sentences that are correct are well-formed and translations are accurate. Separable verbs handled correctly. Romanizations correctly empty. Despite good quality on correct sentences, the language mixing errors are serious and must be heavily penalized.",
+          "score": 4.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "This model provided the highest quality output. The German sentences are linguistically natural, varied in structure (using main clauses, subordinate clauses, and questions), and demonstrate excellent usage of the required vocabulary in context. The Brazilian Portuguese translations are accurate and capture the nuance of the German text naturally (e.g., 'ab und zu' translated as 'de vez em quando'). Grammar is flawless, and the Romanization is correctly left empty.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "An excellent model that stands out for the naturalness of its Brazilian Portuguese translations (using 'A gente' and 'home office', which fits the daily routine context perfectly). The German sentences are modern and grammatically complex. It ranks slightly below Model H only because the informal register ('A gente') might be less suitable for all educational contexts compared to the standard forms used in Model H, but it is otherwise a top-tier result.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Very strong output with a good quantity of sentences (15). The vocabulary is used correctly, and the sentences cover varied contexts. The translations are accurate. There is a minor orthography point in Portuguese ('geléia' is pre-reform spelling; current is 'geleia'), but this is negligible. The German is natural and grammatically correct.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "This model generated a high volume of sentences (20) with accurate vocabulary usage. The sentences are grammatically correct, though slightly simpler in structure compared to H and C. The translations are natural and accurate. It is a very reliable output.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "A solid, error-free output. The sentences are correct and the translations are good. It ranks lower than the others simply because the sentences are somewhat standard and lack the complexity or conversational flow found in the top models. It meets all requirements perfectly.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "The output is accurate and meets all constraints. However, the sentence structures are quite repetitive (Subject-Verb-Object patterns) and less engaging for a learner compared to the higher-ranked models. The vocabulary usage is correct.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "The sentences are grammatically correct but very simple. There is a slight phrasing issue in German with 'den Bus zu bekommen' (usually 'kriegen', 'erreichen', or 'nehmen' is preferred in this context, though 'bekommen' is understandable). The translations are generally accurate.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "This model failed critically by hallucinating/code-switching Portuguese words into the German sentences (e.g., 'in der cozinha', 'wichtiges projeto'). This makes the output unusable for language learning purposes despite the translations being accurate.",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Cumpre perfeitamente os requisitos críticos: todas as frases contêm pelo menos um dos verbos-alvo (aufstehen, frühstücken, arbeiten, schlafen, essen) com conjugação correta; separável “aufstehen” bem realizado (\"stehe ... auf\", \"stehst ... auf\"); alemão natural e contextual (manhã/trabalho/noite); traduções em PT-BR corretas e naturais; romanization corretamente vazio em todas.",
+          "score": 9.6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Conjunto bem limpo: todas as frases usam ao menos um verbo da lista, com boa gramática (inclui “aufstehen” separável corretamente em “steh... auf”). Traduções PT-BR adequadas e romanization vazio. Menos variedade que A/B/H, mas ainda muito alinhado ao tema.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Muito completo e variado; todas as frases incluem um dos verbos-alvo e “aufstehen” é usado corretamente em forma separável (“stehe ... auf”, “stehst ... auf”). Alemão e traduções em PT-BR geralmente bons. Pequeno deslize de naturalidade/gramática no PT (“às uma hora” seria “à uma”), mas não compromete o essencial.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Alemão natural, boa diversidade e todas as frases contêm pelo menos um verbo da lista; romanization vazio. No entanto, há um uso potencialmente problemático de separável: “Bevor ich aufstehe, …” é aceitável como subordinada (prefixo não separa), mas pode ser considerado armadilha para avaliadores; ainda assim está gramaticalmente correto. Traduções PT-BR boas.",
+          "score": 8.7
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Boa cobertura e variedade; todas as frases contêm verbos-alvo (essen/arbeiten/schlafen/aufstehen/frühstücken) e “stehe ... auf” correto. Traduções PT-BR em geral ok. Pequenas escolhas menos naturais (“geléia”/“geleia” e alguns encaixes), mas sem erros críticos.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Atende aos requisitos principais: todas as frases usam pelo menos um verbo-alvo, gramática alemã boa e romanization vazio. Um ponto fraco: “Nach dem Frühstücken …” soa menos natural (preferível “Nach dem Frühstück”/“Nach dem Frühstücken” é possível mas marcado). Traduções PT-BR ok.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Frases boas e naturais, com rotinas variadas; romanization vazio. Porém há um erro crítico de vocabulário: usa “Nach dem Aufstehen” (substantivo) em vez de usar o verbo fornecido “aufstehen” (como verbo). Se a exigência for o verbo aparecer (mesmo conjugado/infinitivo), isso falha em pelo menos uma frase. O restante usa “auf” corretamente em outras frases, mas esta quebra o critério mais importante.",
+          "score": 6.4
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Falhas importantes: mistura de idiomas dentro do alemão (“cozinha”, “projeto”), o que fere correção/naturalidade e requisito de língua-alvo. Além disso, não usa explicitamente “arbeiten” (usa “arbeiten” sim) e “aufstehen” está ok (“stehe ... auf”), mas a qualidade geral do alemão é comprometida por code-switching. Traduções PT-BR ok, romanization vazio.",
+          "score": 4.8
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-sentences",
+  "testCaseId": "pt-german-routines-1"
+}
