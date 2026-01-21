@@ -105,12 +105,20 @@ All 4 options must be:
 
 ## Distractor Design
 
-Wrong options should represent:
+**CRITICAL**: Wrong options must be genuinely inappropriate for the situation - they should lead to miscommunication or confusion if used. Do NOT create distractors that are merely "less polished" versions of the correct answer.
 
-1. **Register error**: Too formal/informal for the situation
-2. **Context mismatch**: Grammatically correct but wrong for this scenario
-3. **Common mistake**: Something learners typically say incorrectly
-4. **Partial understanding**: Close but missing a key element
+Wrong options should be **clearly wrong** because they:
+
+1. **Answer a different question**: Respond to something the speaker didn't ask (asking about price when asked about quantity)
+2. **Request the wrong thing**: Order/ask for something different than intended (one-way ticket when you need round-trip)
+3. **Are off-topic**: Say something unrelated to the current conversation point (asking for the check when you just arrived)
+4. **Would cause confusion**: Use words that change the meaning entirely (saying "no" when you mean "yes")
+
+**DO NOT** create distractors that are:
+
+- Just more/less formal versions of the correct answer
+- Slightly different phrasings that would still work
+- Grammatically awkward but still understandable
 
 # Feedback Design
 
@@ -135,7 +143,7 @@ For **incorrect** options:
 "[Translation of what they said] - [Why this doesn't work and what would be better]"
 ```
 
-Example: "I would like your finest coffee - This is overly formal for a casual cafe. Try something simpler like 'Un cafe, por favor'."
+Example: "Where is the bathroom? - You're trying to order coffee, not find the restroom. Tell the barista what you'd like to drink."
 
 # Romanization Requirements
 
@@ -177,11 +185,13 @@ Each story should have 5-10 steps following a natural arc:
 
 # Output Format
 
-Return an object with this structure:
+Return an object with this structure (abbreviated examples shown):
+
+**Non-Roman script example (Japanese):**
 
 ```json
 {
-  "scenario": "You're at a train station in Tokyo trying to buy a ticket to Kyoto.",
+  "scenario": "You're at a train station in Tokyo...",
   "steps": [
     {
       "context": "いらっしゃいませ。どちらまで？",
@@ -189,73 +199,19 @@ Return an object with this structure:
       "contextRomanization": "Irasshaimase. Dochira made?",
       "question": "What do you say?",
       "options": [
-        {
-          "text": "京都までお願いします。",
-          "textRomanization": "Kyouto made onegaishimasu.",
-          "isCorrect": true,
-          "feedback": "To Kyoto, please - Perfect! Clear and polite."
-        },
-        {
-          "text": "京都に行きたいです。",
-          "textRomanization": "Kyouto ni ikitai desu.",
-          "isCorrect": false,
-          "feedback": "I want to go to Kyoto - This expresses your desire but doesn't ask for a ticket. 'Made onegaishimasu' is the standard way to request a ticket."
-        },
-        {
-          "text": "京都は遠いですか？",
-          "textRomanization": "Kyouto wa tooi desu ka?",
-          "isCorrect": false,
-          "feedback": "Is Kyoto far? - This asks about distance, not for a ticket. The clerk is waiting for your destination."
-        },
-        {
-          "text": "電車は何時ですか？",
-          "textRomanization": "Densha wa nanji desu ka?",
-          "isCorrect": false,
-          "feedback": "What time is the train? - This asks about timing before stating where you want to go. Give your destination first."
-        }
-      ]
-    },
-    {
-      "context": "片道ですか、往復ですか？",
-      "contextTranslation": "One way or round trip?",
-      "contextRomanization": "Katamichi desu ka, oufuku desu ka?",
-      "question": "You want a round trip ticket. What do you say?",
-      "options": [
-        {
-          "text": "往復でお願いします。",
-          "textRomanization": "Oufuku de onegaishimasu.",
-          "isCorrect": true,
-          "feedback": "Round trip, please - Exactly right! You've answered the question directly and politely."
-        },
-        {
-          "text": "片道でお願いします。",
-          "textRomanization": "Katamichi de onegaishimasu.",
-          "isCorrect": false,
-          "feedback": "One way, please - This is polite but you wanted a round trip, not one way."
-        },
-        {
-          "text": "二枚ください。",
-          "textRomanization": "Nimai kudasai.",
-          "isCorrect": false,
-          "feedback": "Two tickets, please - This asks for quantity, not ticket type. You need to specify round trip."
-        },
-        {
-          "text": "はい、そうです。",
-          "textRomanization": "Hai, sou desu.",
-          "isCorrect": false,
-          "feedback": "Yes, that's right - This confirms something but doesn't answer the either/or question. You need to choose one."
-        }
+        { "text": "京都までお願いします。", "textRomanization": "Kyouto made onegaishimasu.", "isCorrect": true, "feedback": "To Kyoto, please - Perfect! Clear and polite." },
+        { "text": "京都は遠いですか？", "textRomanization": "Kyouto wa tooi desu ka?", "isCorrect": false, "feedback": "Is Kyoto far? - This asks about distance, not for a ticket." }
       ]
     }
   ]
 }
 ```
 
-**Example for Spanish (Roman script - empty romanization):**
+**Roman script example (Spanish) - empty romanization fields:**
 
 ```json
 {
-  "scenario": "You're at a restaurant in Barcelona and ready to order.",
+  "scenario": "You're at a restaurant in Barcelona...",
   "steps": [
     {
       "context": "Buenas noches. Estan listos para pedir?",
@@ -263,35 +219,15 @@ Return an object with this structure:
       "contextRomanization": "",
       "question": "What do you say?",
       "options": [
-        {
-          "text": "Si, me gustaria la paella, por favor.",
-          "textRomanization": "",
-          "isCorrect": true,
-          "feedback": "Yes, I would like the paella, please - Perfect! Polite, clear, and uses the appropriate structure for ordering."
-        },
-        {
-          "text": "Dame la paella.",
-          "textRomanization": "",
-          "isCorrect": false,
-          "feedback": "Give me the paella - This is too direct and sounds demanding. Adding 'por favor' and using 'me gustaria' is more polite in a restaurant."
-        },
-        {
-          "text": "Que es la paella?",
-          "textRomanization": "",
-          "isCorrect": false,
-          "feedback": "What is paella? - While it's good to ask questions, the waiter asked if you're ready to order. If you need more time, say 'Un momento, por favor'."
-        },
-        {
-          "text": "La cuenta, por favor.",
-          "textRomanization": "",
-          "isCorrect": false,
-          "feedback": "The check, please - You haven't eaten yet! This is what you say when you're finished and want to pay."
-        }
+        { "text": "Si, me gustaria la paella, por favor.", "textRomanization": "", "isCorrect": true, "feedback": "Yes, I would like the paella, please - Perfect!" },
+        { "text": "La cuenta, por favor.", "textRomanization": "", "isCorrect": false, "feedback": "The check, please - You haven't eaten yet! This is for when you're finished." }
       ]
     }
   ]
 }
 ```
+
+Note: Examples above are abbreviated. Actual output must have 4 options per step and 5-10 steps total.
 
 # Quality Checklist
 

@@ -61,12 +61,24 @@ EVALUATION CRITERIA:
    - Cultural context should be accurate
    Penalize SEVERELY for incorrect grammar, mistranslations, or inappropriate register.
 
-9. PEDAGOGICAL QUALITY:
-   - Distractors should represent common learner mistakes
-   - Incorrect options should be plausible things a learner might say
-   - Difficulty should be appropriate for learners
-   - Content should reinforce the lesson topic
-   Penalize if distractors are obviously wrong or content is too advanced.
+9. DISTRACTOR QUALITY (CRITICAL):
+   Wrong options MUST be genuinely wrong - they would cause miscommunication or confusion if used.
+
+   GOOD distractors (genuinely wrong):
+   - Answer a different question (asking about price when asked about quantity)
+   - Request the wrong thing (one-way ticket when you need round-trip)
+   - Are off-topic (asking for the check when you just arrived)
+   - Would cause confusion (saying "no" when you mean "yes")
+
+   BAD distractors (penalize these):
+   - More/less formal versions of the correct answer that would still work
+   - Slightly different phrasings that communicate the same thing
+   - "Less polished" versions that a native speaker would still understand
+
+   Example: If ordering coffee, "Where is the bathroom?" is a GOOD distractor (off-topic).
+   "I would like your finest coffee" vs "A coffee please" are BOTH correct - don't use one as a distractor for the other.
+
+   Penalize SEVERELY if distractors are just stylistic variations that would still accomplish the communication goal.
 
 ANTI-CHECKLIST GUIDANCE (CRITICAL):
 - Do NOT penalize for specific dialogue choices - accept ANY natural conversation
