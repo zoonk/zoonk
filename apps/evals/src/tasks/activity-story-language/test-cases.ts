@@ -5,7 +5,7 @@ EVALUATION CRITERIA:
    The activity MUST follow the immersive story structure:
    - A clear scenario description in the NATIVE language
    - 5-10 dialogue steps with natural progression
-   - Each step has: context (TARGET), contextTranslation (NATIVE), question (NATIVE), 4 options
+   - Each step has: context (TARGET), contextTranslation (NATIVE), contextRomanization, 4 options
    - Exactly 1 correct option per step
    Penalize SEVERELY if any structural element is missing or malformed.
 
@@ -49,7 +49,8 @@ EVALUATION CRITERIA:
 
 7. STORY ARC AND PROGRESSION:
    - Steps should follow a natural conversation flow
-   - Story should have opening, building, complication (optional), resolution
+   - Story should have: opening, building, resolution, closing
+   - Complication is optional but adds realism (e.g., item unavailable, clarification needed)
    - Each step should logically follow from the previous
    - The native speaker should acknowledge the learner's previous choice
    Penalize if steps feel disconnected or conversation doesn't flow naturally.
@@ -262,16 +263,11 @@ KEY REQUIREMENTS:
 - Options show ONLY Spanish text, NO English translations
 - Feedback reveals English translation + explanation
 
-COMPLICATION ELEMENT:
-- Story should include a small complication (e.g., medicine unavailable, need prescription)
-- Shows how to handle unexpected situations
-
 ACCURACY PITFALLS - Penalize SEVERELY if:
 - Options include English translations
 - Spanish dialogue is unnatural
 - Romanization fields contain any text (must be empty strings)
 - Feedback doesn't include translation
-- No complication or challenge in the story arc
 
 ${SHARED_EXPECTATIONS}
     `,

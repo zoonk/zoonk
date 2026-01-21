@@ -15,7 +15,6 @@ The activity places learners in a specific scenario (ordering food, asking for d
 Unlike other activities where translations help comprehension, this activity intentionally withholds translations from the options. Learners see:
 
 - **Context**: What the native speaker says (in TARGET language with translation)
-- **Question**: What do you say? (in NATIVE language)
 - **Options**: Four possible responses (in TARGET language ONLY - no translations)
 
 This forces learners to:
@@ -73,7 +72,6 @@ The character in the story is a friendly native speaker who:
 | `context`                    | TARGET       | "Buenos dias, que le pongo?"                              |
 | `contextTranslation`         | NATIVE       | "Good morning, what can I get you?"                       |
 | `contextRomanization`        | Romanization | "" (empty for Roman scripts)                              |
-| `question`                   | NATIVE       | "What do you say?"                                        |
 | `options[].text`             | TARGET       | "Un cafe con leche, por favor."                           |
 | `options[].textRomanization` | Romanization | "" (empty for Roman scripts)                              |
 | `options[].feedback`         | NATIVE       | "A coffee with milk, please - Perfect! Polite and clear." |
@@ -172,9 +170,18 @@ Each story should have 5-10 steps following a natural arc:
 
 1. **Opening** (1-2 steps): Arrive at the location, initial greeting
 2. **Building** (2-4 steps): Main interaction, making requests, clarifying
-3. **Complication** (1-2 steps): A small challenge (item unavailable, misunderstanding)
-4. **Resolution** (1-2 steps): Solve the issue, complete the transaction
+3. **Complication** (0-2 steps): Optional challenge that adds realism
+4. **Resolution** (1-2 steps): Complete the transaction
 5. **Closing** (1 step): Thank and goodbye
+
+## Complication Ideas (Recommended)
+
+Adding a complication makes the story more realistic and teaches learners to handle unexpected situations:
+
+- **Item unavailable**: "Sorry, we're out of that. Would you like something else?"
+- **Misunderstanding**: "Did you say two or twelve?"
+- **Additional requirement**: "I'll need to see your ID for that."
+- **Clarification needed**: "Which size did you want?"
 
 ## Pacing Guidelines
 
@@ -197,13 +204,12 @@ Return an object with this structure (abbreviated examples shown):
       "context": "いらっしゃいませ。どちらまで？",
       "contextTranslation": "Welcome. Where to?",
       "contextRomanization": "Irasshaimase. Dochira made?",
-      "question": "What do you say?",
       "options": [
         {
           "text": "京都までお願いします。",
           "textRomanization": "Kyouto made onegaishimasu.",
           "isCorrect": true,
-          "feedback": "To Kyoto, please - Perfect! Clear and polite."
+          "feedback": "To Kyoto, please - Perfect!"
         },
         {
           "text": "京都は遠いですか？",
@@ -227,7 +233,6 @@ Return an object with this structure (abbreviated examples shown):
       "context": "Buenas noches. Estan listos para pedir?",
       "contextTranslation": "Good evening. Are you ready to order?",
       "contextRomanization": "",
-      "question": "What do you say?",
       "options": [
         {
           "text": "Si, me gustaria la paella, por favor.",
@@ -239,7 +244,7 @@ Return an object with this structure (abbreviated examples shown):
           "text": "La cuenta, por favor.",
           "textRomanization": "",
           "isCorrect": false,
-          "feedback": "The check, please - You haven't eaten yet! This is for when you're finished."
+          "feedback": "The check, please - You haven't eaten yet!"
         }
       ]
     }

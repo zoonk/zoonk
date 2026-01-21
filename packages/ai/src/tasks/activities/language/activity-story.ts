@@ -33,7 +33,6 @@ const schema = z.object({
           }),
         )
         .length(4),
-      question: z.string(),
     }),
   ),
 });
