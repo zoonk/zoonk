@@ -1,0 +1,352 @@
+{
+  "modelId": "xai/grok-4.1-fast-reasoning",
+  "results": [
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None. The pronunciation guide is excellent. It correctly approximates the 'beau' sound as 'BIU', follows Portuguese phonotactics, and effectively handles the stress and syllable separation. The choice of 'ti' is consistent with the provided examples (like 'UÓ-ter') and ensures readability, even if it produces a slight accent compared to the American flap 't' (which would require 'ri').",
+          "kind": "potentialImprovements",
+          "score": 10
+        },
+        {
+          "conclusion": "The response perfectly adheres to all instructions and expectations. It uses only valid Portuguese phonemes, correctly identifies the stressed syllable ('BIU'), separates syllables with hyphens, and provides a highly readable approximation of the target word. The transcription 'BIU-ti-fol' is intuitive for a Brazilian Portuguese speaker and aligns with the style of the few-shot examples provided in the prompt.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\nNATIVE LANGUAGE: Portuguese (Brazilian)\nTARGET LANGUAGE: English\n\nWORD: \"beautiful\"\n\nThis is a complex English word with:\n- The \"beau-\" diphthong (sounds like \"byoo\")\n- The unstressed \"-ti-\" syllable\n- The \"-ful\" ending\n\nSOUND CHALLENGES:\n- The \"eau\" combination needs Portuguese-compatible representation\n- The word has 3 syllables with stress on the first\n\nQUALITY CHECK:\n- Should be readable by a Brazilian Portuguese speaker\n- Should indicate stress on the first syllable\n- Should approximate the \"byoo\" sound using Portuguese phonemes\n- Penalize if it uses letters/combinations that don't exist in Portuguese\n\n\nEVALUATION CRITERIA:\n\n1. NATIVE LANGUAGE PHONEMES ONLY (CRITICAL - highest priority):\n   - The pronunciation MUST use ONLY letters and letter combinations that exist in the native language\n   - A native speaker should be able to read it without any special knowledge\n   - Penalize SEVERELY if IPA symbols, foreign letters, or non-standard diacritics are used\n   - Penalize if letter combinations don't naturally occur in the native language\n\n2. STRESS INDICATION:\n   - Stressed syllable should be marked with CAPITAL letters\n   - For multi-syllable words, exactly one syllable should be capitalized\n   - For single-syllable words, the entire word may be capitalized\n   - Penalize if stress is not indicated at all\n   - Do NOT penalize for different but valid stress placements if linguistically acceptable\n\n3. SYLLABLE SEPARATION:\n   - Multi-syllable words should use hyphens to separate syllables\n   - Single-syllable words do not need hyphens\n   - Penalize if long words are written without syllable breaks\n   - Do NOT penalize for slightly different syllable divisions if they're linguistically reasonable\n\n4. SOUND APPROXIMATION QUALITY:\n   - When target language sounds don't exist in native language, the closest approximation should be used\n   - The approximation should produce a recognizable pronunciation when spoken aloud\n   - Penalize if sounds are simply omitted rather than approximated\n   - Do NOT require specific approximations - accept any reasonable phonetic mapping\n\n5. READABILITY:\n   - The output should look like something a native speaker could naturally pronounce\n   - Avoid awkward letter combinations that would confuse a native reader\n   - The pronunciation should flow naturally when read aloud\n   - Penalize if the output looks unpronounceable or confusing\n\n6. COMPLETENESS:\n   - All sounds in the word should be represented\n   - Silent letters should be appropriately handled (omitted from pronunciation)\n   - Penalize if significant sounds are missing from the pronunciation\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for using different but valid phonetic representations\n- Do NOT require exact matches to any expected pronunciation\n- Do NOT penalize for stylistic choices (e.g., \"ou\" vs \"ow\" for the same sound)\n- Different valid approximations exist for the same sound - assess whether the chosen one is reasonable\n- FOCUS ON: native language compatibility, stress marking, readability, sound completeness\n- The test is whether a native speaker could read this and produce a recognizable approximation of the target word\n\n    ",
+        "id": "pt-english-beautiful-1",
+        "userInput": {
+          "nativeLanguage": "pt",
+          "targetLanguage": "English",
+          "word": "beautiful"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\nNATIVE LANGUAGE: Portuguese (Brazilian)\nTARGET LANGUAGE: English\n\nWORD: \"through\"\n\nThis is a challenging English word with:\n- The \"th\" sound (doesn't exist in Portuguese)\n- The \"ough\" combination (silent letters)\n- Single syllable\n\nSOUND CHALLENGES:\n- \"th\" must be approximated with a Portuguese sound (commonly \"f\", \"s\", or \"t\")\n- The \"ough\" is pronounced as \"oo\" - most letters are silent\n- The \"r\" sound differs between English and Portuguese\n\nQUALITY CHECK:\n- Should be readable by a Brazilian Portuguese speaker\n- Should handle the \"th\" with an appropriate approximation\n- Should NOT include silent letters in pronunciation\n- Penalize if it tries to pronounce the \"gh\"\n\n\nEVALUATION CRITERIA:\n\n1. NATIVE LANGUAGE PHONEMES ONLY (CRITICAL - highest priority):\n   - The pronunciation MUST use ONLY letters and letter combinations that exist in the native language\n   - A native speaker should be able to read it without any special knowledge\n   - Penalize SEVERELY if IPA symbols, foreign letters, or non-standard diacritics are used\n   - Penalize if letter combinations don't naturally occur in the native language\n\n2. STRESS INDICATION:\n   - Stressed syllable should be marked with CAPITAL letters\n   - For multi-syllable words, exactly one syllable should be capitalized\n   - For single-syllable words, the entire word may be capitalized\n   - Penalize if stress is not indicated at all\n   - Do NOT penalize for different but valid stress placements if linguistically acceptable\n\n3. SYLLABLE SEPARATION:\n   - Multi-syllable words should use hyphens to separate syllables\n   - Single-syllable words do not need hyphens\n   - Penalize if long words are written without syllable breaks\n   - Do NOT penalize for slightly different syllable divisions if they're linguistically reasonable\n\n4. SOUND APPROXIMATION QUALITY:\n   - When target language sounds don't exist in native language, the closest approximation should be used\n   - The approximation should produce a recognizable pronunciation when spoken aloud\n   - Penalize if sounds are simply omitted rather than approximated\n   - Do NOT require specific approximations - accept any reasonable phonetic mapping\n\n5. READABILITY:\n   - The output should look like something a native speaker could naturally pronounce\n   - Avoid awkward letter combinations that would confuse a native reader\n   - The pronunciation should flow naturally when read aloud\n   - Penalize if the output looks unpronounceable or confusing\n\n6. COMPLETENESS:\n   - All sounds in the word should be represented\n   - Silent letters should be appropriately handled (omitted from pronunciation)\n   - Penalize if significant sounds are missing from the pronunciation\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for using different but valid phonetic representations\n- Do NOT require exact matches to any expected pronunciation\n- Do NOT penalize for stylistic choices (e.g., \"ou\" vs \"ow\" for the same sound)\n- Different valid approximations exist for the same sound - assess whether the chosen one is reasonable\n- FOCUS ON: native language compatibility, stress marking, readability, sound completeness\n- The test is whether a native speaker could read this and produce a recognizable approximation of the target word\n\n    ",
+        "id": "pt-english-through-1",
+        "userInput": {
+          "nativeLanguage": "pt",
+          "targetLanguage": "English",
+          "word": "through"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The ending \"-el\" is used, which is pronounced /ɛw/ (similar to 'L') in Portuguese. While the instructions suggest using \"eu\" or \"ou\" for the schwa+l sound (as in \"apple\"), using \"-el\" for \"squirrel\" is actually a very good approximation that preserves the distinct quality of the word better than \"-ou\" might (which sounds more like 'oh'). This is a valid stylistic choice.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\nNATIVE LANGUAGE: Portuguese (Brazilian)\nTARGET LANGUAGE: English\n\nWORD: \"squirrel\"\n\nThis is one of the most difficult English words for Portuguese speakers with:\n- The \"squ-\" cluster\n- The American \"r\" sound\n- The unstressed \"-el\" ending\n- Two syllables with complex consonant clusters\n\nSOUND CHALLENGES:\n- The \"qu\" followed by \"i\" creates a challenging sound\n- Double \"r\" in American English\n- The \"-el\" ending is often reduced\n\nQUALITY CHECK:\n- Should be readable by a Brazilian Portuguese speaker\n- Should handle the consonant clusters reasonably\n- Should indicate which syllable is stressed\n- Accept various valid approximations for this difficult word\n\n\nEVALUATION CRITERIA:\n\n1. NATIVE LANGUAGE PHONEMES ONLY (CRITICAL - highest priority):\n   - The pronunciation MUST use ONLY letters and letter combinations that exist in the native language\n   - A native speaker should be able to read it without any special knowledge\n   - Penalize SEVERELY if IPA symbols, foreign letters, or non-standard diacritics are used\n   - Penalize if letter combinations don't naturally occur in the native language\n\n2. STRESS INDICATION:\n   - Stressed syllable should be marked with CAPITAL letters\n   - For multi-syllable words, exactly one syllable should be capitalized\n   - For single-syllable words, the entire word may be capitalized\n   - Penalize if stress is not indicated at all\n   - Do NOT penalize for different but valid stress placements if linguistically acceptable\n\n3. SYLLABLE SEPARATION:\n   - Multi-syllable words should use hyphens to separate syllables\n   - Single-syllable words do not need hyphens\n   - Penalize if long words are written without syllable breaks\n   - Do NOT penalize for slightly different syllable divisions if they're linguistically reasonable\n\n4. SOUND APPROXIMATION QUALITY:\n   - When target language sounds don't exist in native language, the closest approximation should be used\n   - The approximation should produce a recognizable pronunciation when spoken aloud\n   - Penalize if sounds are simply omitted rather than approximated\n   - Do NOT require specific approximations - accept any reasonable phonetic mapping\n\n5. READABILITY:\n   - The output should look like something a native speaker could naturally pronounce\n   - Avoid awkward letter combinations that would confuse a native reader\n   - The pronunciation should flow naturally when read aloud\n   - Penalize if the output looks unpronounceable or confusing\n\n6. COMPLETENESS:\n   - All sounds in the word should be represented\n   - Silent letters should be appropriately handled (omitted from pronunciation)\n   - Penalize if significant sounds are missing from the pronunciation\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for using different but valid phonetic representations\n- Do NOT require exact matches to any expected pronunciation\n- Do NOT penalize for stylistic choices (e.g., \"ou\" vs \"ow\" for the same sound)\n- Different valid approximations exist for the same sound - assess whether the chosen one is reasonable\n- FOCUS ON: native language compatibility, stress marking, readability, sound completeness\n- The test is whether a native speaker could read this and produce a recognizable approximation of the target word\n\n    ",
+        "id": "pt-english-squirrel-1",
+        "userInput": {
+          "nativeLanguage": "pt",
+          "targetLanguage": "English",
+          "word": "squirrel"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "The model failed to follow the core principle of 'Transcribe Actual Pronunciation, Not Spelling or Cognates'. It transcribed the spelling 'ble' directly as 'ble'. In Spanish, 'ble' is pronounced /ble/ (ending with an 'e' vowel), whereas the English suffix '-ble' is pronounced /bəl/ (schwa + L). The prompt explicitly provided 'apple' -> 'A-pol' as an example of how to handle this. The resulting pronunciation 'COM-for-ta-ble' will lead the user to say the word with a strong Spanish accent (rhyming with the Spanish cognate 'confortable'), incorrectly pronouncing the final vowel.",
+          "kind": "majorErrors",
+          "score": 6.5
+        },
+        {
+          "conclusion": "The transcription uses 'COM' and 'for', which suggests full vowels (/o/ and /or/) rather than the English wedge /ʌ/ and schwa /ər/ sounds. A better approximation for a Spanish speaker would be 'CAM' (for 'com') and 'fer' (for 'for'), or a reduced form like 'CAMF-ter-bol'. While less severe than the '-ble' error, this reinforces the spelling-over-sound approach.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "The model should have generated a phonetically accurate transcription such as 'CAM-fer-ta-bol' or the more natural reduced version 'CAMF-ter-bol'. This would accurately represent the vowel sounds and the final syllabic 'L' using Spanish phonemes.",
+          "kind": "potentialImprovements",
+          "score": 6.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\nNATIVE LANGUAGE: Spanish (Latin American)\nTARGET LANGUAGE: English\n\nWORD: \"comfortable\"\n\nThis is a common English word with:\n- Four syllables in careful speech, often reduced to three in casual speech\n- The \"mf\" consonant cluster\n- Stress on the first syllable\n\nSOUND CHALLENGES:\n- The word is often pronounced \"KUMF-ter-bul\" in casual speech\n- The \"o\" in \"-for-\" is often reduced to a schwa\n- Spanish speakers need approximation for reduced vowels\n\nQUALITY CHECK:\n- Should be readable by a Spanish speaker\n- Should indicate stress (typically first syllable)\n- Should handle the consonant cluster \"mf\"\n- Accept either full or reduced pronunciation representations\n\n\nEVALUATION CRITERIA:\n\n1. NATIVE LANGUAGE PHONEMES ONLY (CRITICAL - highest priority):\n   - The pronunciation MUST use ONLY letters and letter combinations that exist in the native language\n   - A native speaker should be able to read it without any special knowledge\n   - Penalize SEVERELY if IPA symbols, foreign letters, or non-standard diacritics are used\n   - Penalize if letter combinations don't naturally occur in the native language\n\n2. STRESS INDICATION:\n   - Stressed syllable should be marked with CAPITAL letters\n   - For multi-syllable words, exactly one syllable should be capitalized\n   - For single-syllable words, the entire word may be capitalized\n   - Penalize if stress is not indicated at all\n   - Do NOT penalize for different but valid stress placements if linguistically acceptable\n\n3. SYLLABLE SEPARATION:\n   - Multi-syllable words should use hyphens to separate syllables\n   - Single-syllable words do not need hyphens\n   - Penalize if long words are written without syllable breaks\n   - Do NOT penalize for slightly different syllable divisions if they're linguistically reasonable\n\n4. SOUND APPROXIMATION QUALITY:\n   - When target language sounds don't exist in native language, the closest approximation should be used\n   - The approximation should produce a recognizable pronunciation when spoken aloud\n   - Penalize if sounds are simply omitted rather than approximated\n   - Do NOT require specific approximations - accept any reasonable phonetic mapping\n\n5. READABILITY:\n   - The output should look like something a native speaker could naturally pronounce\n   - Avoid awkward letter combinations that would confuse a native reader\n   - The pronunciation should flow naturally when read aloud\n   - Penalize if the output looks unpronounceable or confusing\n\n6. COMPLETENESS:\n   - All sounds in the word should be represented\n   - Silent letters should be appropriately handled (omitted from pronunciation)\n   - Penalize if significant sounds are missing from the pronunciation\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for using different but valid phonetic representations\n- Do NOT require exact matches to any expected pronunciation\n- Do NOT penalize for stylistic choices (e.g., \"ou\" vs \"ow\" for the same sound)\n- Different valid approximations exist for the same sound - assess whether the chosen one is reasonable\n- FOCUS ON: native language compatibility, stress marking, readability, sound completeness\n- The test is whether a native speaker could read this and produce a recognizable approximation of the target word\n\n    ",
+        "id": "es-english-comfortable-1",
+        "userInput": {
+          "nativeLanguage": "es",
+          "targetLanguage": "English",
+          "word": "comfortable"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "The response violates the explicit instruction to capitalize 'Exactly one syllable' to indicate primary stress. The result 'BECH-ta-BOL' capitalizes both the first and last syllables, which is confusing and suggests an incorrect stress pattern (English 'vegetable' has stress only on the first syllable).",
+          "kind": "majorErrors",
+          "score": 6.5
+        },
+        {
+          "conclusion": "None. The phonetic transcription itself ('BECH' for 'vedge', 'ta' for 'ta', 'bol' for 'ble') is a good approximation for Spanish speakers, correctly handling the V->B shift and the soft G sound.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Correct the capitalization to 'BECH-ta-bol' to accurately reflect the single primary stress on the first syllable.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\nNATIVE LANGUAGE: Spanish (Latin American)\nTARGET LANGUAGE: English\n\nWORD: \"vegetable\"\n\nThis English word features:\n- The \"v\" sound (often becomes \"b\" in Spanish)\n- The soft \"g\" before \"e\"\n- Reduced vowels in unstressed syllables\n- Four syllables, often reduced\n\nSOUND CHALLENGES:\n- Spanish doesn't distinguish \"v\" from \"b\"\n- The \"-table\" ending has a reduced vowel\n- Stress is on the first syllable\n\nQUALITY CHECK:\n- Should be readable by a Spanish speaker\n- Should indicate stress on first syllable\n- May use \"b\" for \"v\" sound (acceptable in Spanish approximation)\n- Should handle the soft \"g\" sound\n\n\nEVALUATION CRITERIA:\n\n1. NATIVE LANGUAGE PHONEMES ONLY (CRITICAL - highest priority):\n   - The pronunciation MUST use ONLY letters and letter combinations that exist in the native language\n   - A native speaker should be able to read it without any special knowledge\n   - Penalize SEVERELY if IPA symbols, foreign letters, or non-standard diacritics are used\n   - Penalize if letter combinations don't naturally occur in the native language\n\n2. STRESS INDICATION:\n   - Stressed syllable should be marked with CAPITAL letters\n   - For multi-syllable words, exactly one syllable should be capitalized\n   - For single-syllable words, the entire word may be capitalized\n   - Penalize if stress is not indicated at all\n   - Do NOT penalize for different but valid stress placements if linguistically acceptable\n\n3. SYLLABLE SEPARATION:\n   - Multi-syllable words should use hyphens to separate syllables\n   - Single-syllable words do not need hyphens\n   - Penalize if long words are written without syllable breaks\n   - Do NOT penalize for slightly different syllable divisions if they're linguistically reasonable\n\n4. SOUND APPROXIMATION QUALITY:\n   - When target language sounds don't exist in native language, the closest approximation should be used\n   - The approximation should produce a recognizable pronunciation when spoken aloud\n   - Penalize if sounds are simply omitted rather than approximated\n   - Do NOT require specific approximations - accept any reasonable phonetic mapping\n\n5. READABILITY:\n   - The output should look like something a native speaker could naturally pronounce\n   - Avoid awkward letter combinations that would confuse a native reader\n   - The pronunciation should flow naturally when read aloud\n   - Penalize if the output looks unpronounceable or confusing\n\n6. COMPLETENESS:\n   - All sounds in the word should be represented\n   - Silent letters should be appropriately handled (omitted from pronunciation)\n   - Penalize if significant sounds are missing from the pronunciation\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for using different but valid phonetic representations\n- Do NOT require exact matches to any expected pronunciation\n- Do NOT penalize for stylistic choices (e.g., \"ou\" vs \"ow\" for the same sound)\n- Different valid approximations exist for the same sound - assess whether the chosen one is reasonable\n- FOCUS ON: native language compatibility, stress marking, readability, sound completeness\n- The test is whether a native speaker could read this and produce a recognizable approximation of the target word\n\n    ",
+        "id": "es-english-vegetable-1",
+        "userInput": {
+          "nativeLanguage": "es",
+          "targetLanguage": "English",
+          "word": "vegetable"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None. The model correctly identified that the voiced 'th' (/ð/) in 'rhythm' should be approximated by 'd' in Spanish, as per the explicit instructions for difficult sounds. It also correctly recognized that 'rhythm' acts as two syllables (/ˈrɪð.əm/) or requires a vowel insertion to be pronounceable in Spanish, converting the syllabic 'm' into '-am'. This respects the native phonotactic constraints (avoiding the impossible cluster 'thm'). The stress is correctly placed on the first syllable.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None. The choice of 'RID-am' is excellent. In Spanish, a syllable-final 'd' (as in 'Madrid' or 'usted') is often pronounced as a soft fricative [ð], which perfectly mimics the English voiced 'th'. Closing the syllable with 'd' also prevents the vowel 'i' from becoming too tense, offering a reasonable approximation of the English short 'i'.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None. The response is optimal. It adheres strictly to the constraints of Latin American Spanish phonology while providing the closest possible approximation of the target English word.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\nNATIVE LANGUAGE: Spanish (Latin American)\nTARGET LANGUAGE: English\n\nWORD: \"rhythm\"\n\nThis is a difficult English word with:\n- No vowel letters between \"rh\" and \"thm\"\n- The \"th\" sound (doesn't exist in Spanish)\n- Silent \"h\" at the beginning\n- The final \"-thm\" cluster\n\nSOUND CHALLENGES:\n- \"rh\" is pronounced just as \"r\"\n- \"y\" functions as a vowel\n- \"th\" needs Spanish approximation (commonly \"t\", \"d\", or \"z\")\n- The \"-thm\" ending is challenging\n\nQUALITY CHECK:\n- Should be readable by a Spanish speaker\n- Should provide a vowel sound for the \"y\"\n- Should approximate \"th\" with available Spanish sounds\n- Single syllable, so stress marking is straightforward\n\n\nEVALUATION CRITERIA:\n\n1. NATIVE LANGUAGE PHONEMES ONLY (CRITICAL - highest priority):\n   - The pronunciation MUST use ONLY letters and letter combinations that exist in the native language\n   - A native speaker should be able to read it without any special knowledge\n   - Penalize SEVERELY if IPA symbols, foreign letters, or non-standard diacritics are used\n   - Penalize if letter combinations don't naturally occur in the native language\n\n2. STRESS INDICATION:\n   - Stressed syllable should be marked with CAPITAL letters\n   - For multi-syllable words, exactly one syllable should be capitalized\n   - For single-syllable words, the entire word may be capitalized\n   - Penalize if stress is not indicated at all\n   - Do NOT penalize for different but valid stress placements if linguistically acceptable\n\n3. SYLLABLE SEPARATION:\n   - Multi-syllable words should use hyphens to separate syllables\n   - Single-syllable words do not need hyphens\n   - Penalize if long words are written without syllable breaks\n   - Do NOT penalize for slightly different syllable divisions if they're linguistically reasonable\n\n4. SOUND APPROXIMATION QUALITY:\n   - When target language sounds don't exist in native language, the closest approximation should be used\n   - The approximation should produce a recognizable pronunciation when spoken aloud\n   - Penalize if sounds are simply omitted rather than approximated\n   - Do NOT require specific approximations - accept any reasonable phonetic mapping\n\n5. READABILITY:\n   - The output should look like something a native speaker could naturally pronounce\n   - Avoid awkward letter combinations that would confuse a native reader\n   - The pronunciation should flow naturally when read aloud\n   - Penalize if the output looks unpronounceable or confusing\n\n6. COMPLETENESS:\n   - All sounds in the word should be represented\n   - Silent letters should be appropriately handled (omitted from pronunciation)\n   - Penalize if significant sounds are missing from the pronunciation\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for using different but valid phonetic representations\n- Do NOT require exact matches to any expected pronunciation\n- Do NOT penalize for stylistic choices (e.g., \"ou\" vs \"ow\" for the same sound)\n- Different valid approximations exist for the same sound - assess whether the chosen one is reasonable\n- FOCUS ON: native language compatibility, stress marking, readability, sound completeness\n- The test is whether a native speaker could read this and produce a recognizable approximation of the target word\n\n    ",
+        "id": "es-english-rhythm-1",
+        "userInput": {
+          "nativeLanguage": "es",
+          "targetLanguage": "English",
+          "word": "rhythm"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The syllable 'vol' in Portuguese is pronounced with a /w/ sound (similar to English 'w' or 'u') due to L-vocalization in the coda position, sounding like /vow/. The model transcribed this as 'vohl', which implies an English dark 'l' sound. While acoustically similar, this relies on spelling rather than the strict 'actual pronunciation' rule, which would be better approximated as 'voh-oo' or 'voh-w'.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "The transcription could be improved by replacing 'vohl' with 'voh-oo' to capture the correct vowel glide. Additionally, 'deh' (which implies /ɛ/) could be written as 'day' (implies /eɪ/) to closer match the closed /e/ often found in the first syllable, though 'deh' is acceptable under the provided instructions.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\nNATIVE LANGUAGE: English (US)\nTARGET LANGUAGE: Portuguese\n\nWORD: \"desenvolvimento\"\n\nThis is a long Portuguese word meaning \"development\" with:\n- Six syllables\n- The nasal \"en\" sounds\n- The \"lv\" consonant cluster\n- Stress on the penultimate syllable (-MEN-)\n\nSOUND CHALLENGES:\n- Multiple nasal vowels that don't exist in English\n- The \"lh\" would need approximation but this word has \"lv\"\n- Long word requires clear syllable separation\n\nQUALITY CHECK:\n- Should be readable by an English speaker\n- Should clearly mark stress on the -MEN- syllable\n- Should handle nasal sounds with English approximations\n- Should separate all six syllables clearly\n\n\nEVALUATION CRITERIA:\n\n1. NATIVE LANGUAGE PHONEMES ONLY (CRITICAL - highest priority):\n   - The pronunciation MUST use ONLY letters and letter combinations that exist in the native language\n   - A native speaker should be able to read it without any special knowledge\n   - Penalize SEVERELY if IPA symbols, foreign letters, or non-standard diacritics are used\n   - Penalize if letter combinations don't naturally occur in the native language\n\n2. STRESS INDICATION:\n   - Stressed syllable should be marked with CAPITAL letters\n   - For multi-syllable words, exactly one syllable should be capitalized\n   - For single-syllable words, the entire word may be capitalized\n   - Penalize if stress is not indicated at all\n   - Do NOT penalize for different but valid stress placements if linguistically acceptable\n\n3. SYLLABLE SEPARATION:\n   - Multi-syllable words should use hyphens to separate syllables\n   - Single-syllable words do not need hyphens\n   - Penalize if long words are written without syllable breaks\n   - Do NOT penalize for slightly different syllable divisions if they're linguistically reasonable\n\n4. SOUND APPROXIMATION QUALITY:\n   - When target language sounds don't exist in native language, the closest approximation should be used\n   - The approximation should produce a recognizable pronunciation when spoken aloud\n   - Penalize if sounds are simply omitted rather than approximated\n   - Do NOT require specific approximations - accept any reasonable phonetic mapping\n\n5. READABILITY:\n   - The output should look like something a native speaker could naturally pronounce\n   - Avoid awkward letter combinations that would confuse a native reader\n   - The pronunciation should flow naturally when read aloud\n   - Penalize if the output looks unpronounceable or confusing\n\n6. COMPLETENESS:\n   - All sounds in the word should be represented\n   - Silent letters should be appropriately handled (omitted from pronunciation)\n   - Penalize if significant sounds are missing from the pronunciation\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for using different but valid phonetic representations\n- Do NOT require exact matches to any expected pronunciation\n- Do NOT penalize for stylistic choices (e.g., \"ou\" vs \"ow\" for the same sound)\n- Different valid approximations exist for the same sound - assess whether the chosen one is reasonable\n- FOCUS ON: native language compatibility, stress marking, readability, sound completeness\n- The test is whether a native speaker could read this and produce a recognizable approximation of the target word\n\n    ",
+        "id": "en-portuguese-desenvolvimento-1",
+        "userInput": {
+          "nativeLanguage": "en",
+          "targetLanguage": "Portuguese",
+          "word": "desenvolvimento"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\nNATIVE LANGUAGE: English (US)\nTARGET LANGUAGE: Portuguese\n\nWORD: \"parabens\"\n\nThis Portuguese word (congratulations) features:\n- Three syllables\n- Nasal ending \"-ens\"\n- The Portuguese \"r\" sound (different from English)\n- Stress on the last syllable\n\nSOUND CHALLENGES:\n- The nasal \"-ens\" ending is challenging for English speakers\n- The \"a\" vowels are open\n- Portuguese \"r\" between vowels\n\nQUALITY CHECK:\n- Should be readable by an English speaker\n- Should indicate stress on the final syllable\n- Should approximate the nasal ending\n- Accept various representations of the nasal sound\n\n\nEVALUATION CRITERIA:\n\n1. NATIVE LANGUAGE PHONEMES ONLY (CRITICAL - highest priority):\n   - The pronunciation MUST use ONLY letters and letter combinations that exist in the native language\n   - A native speaker should be able to read it without any special knowledge\n   - Penalize SEVERELY if IPA symbols, foreign letters, or non-standard diacritics are used\n   - Penalize if letter combinations don't naturally occur in the native language\n\n2. STRESS INDICATION:\n   - Stressed syllable should be marked with CAPITAL letters\n   - For multi-syllable words, exactly one syllable should be capitalized\n   - For single-syllable words, the entire word may be capitalized\n   - Penalize if stress is not indicated at all\n   - Do NOT penalize for different but valid stress placements if linguistically acceptable\n\n3. SYLLABLE SEPARATION:\n   - Multi-syllable words should use hyphens to separate syllables\n   - Single-syllable words do not need hyphens\n   - Penalize if long words are written without syllable breaks\n   - Do NOT penalize for slightly different syllable divisions if they're linguistically reasonable\n\n4. SOUND APPROXIMATION QUALITY:\n   - When target language sounds don't exist in native language, the closest approximation should be used\n   - The approximation should produce a recognizable pronunciation when spoken aloud\n   - Penalize if sounds are simply omitted rather than approximated\n   - Do NOT require specific approximations - accept any reasonable phonetic mapping\n\n5. READABILITY:\n   - The output should look like something a native speaker could naturally pronounce\n   - Avoid awkward letter combinations that would confuse a native reader\n   - The pronunciation should flow naturally when read aloud\n   - Penalize if the output looks unpronounceable or confusing\n\n6. COMPLETENESS:\n   - All sounds in the word should be represented\n   - Silent letters should be appropriately handled (omitted from pronunciation)\n   - Penalize if significant sounds are missing from the pronunciation\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for using different but valid phonetic representations\n- Do NOT require exact matches to any expected pronunciation\n- Do NOT penalize for stylistic choices (e.g., \"ou\" vs \"ow\" for the same sound)\n- Different valid approximations exist for the same sound - assess whether the chosen one is reasonable\n- FOCUS ON: native language compatibility, stress marking, readability, sound completeness\n- The test is whether a native speaker could read this and produce a recognizable approximation of the target word\n\n    ",
+        "id": "en-portuguese-parabens-1",
+        "userInput": {
+          "nativeLanguage": "en",
+          "targetLanguage": "Portuguese",
+          "word": "parabens"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "The pronunciation guide places the stress on the penultimate syllable (\"KAH\"), but \"ferrocarril\" is an oxytone word (aguda) in Spanish, meaning the stress falls on the final syllable because it ends in a consonant other than 'n' or 's' (specifically 'l'). The correct stress should be on \"reel\".",
+          "kind": "majorErrors",
+          "score": 6.5
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "To correct the stress error, the output should be \"feh-ro-kah-REEL\". Additionally, while \"reel\" is a good approximation for the tense Spanish 'i', the user might interpret it as a long vowel /i:/, though this is a standard approximation limitation.",
+          "kind": "potentialImprovements",
+          "score": 7
+        }
+      ],
+      "testCase": {
+        "expectations": "\nNATIVE LANGUAGE: English (US)\nTARGET LANGUAGE: Spanish\n\nWORD: \"ferrocarril\"\n\nThis Spanish word (railroad) features:\n- Four syllables\n- Double \"rr\" (rolled/trilled r)\n- The Spanish \"j\" sound is not present but the \"rr\" is challenging\n- Stress on the final syllable\n\nSOUND CHALLENGES:\n- The \"rr\" requires a trill that doesn't exist in English\n- Two instances of \"r\" sounds (single and double)\n- Stress on final syllable \"-rril\"\n\nQUALITY CHECK:\n- Should be readable by an English speaker\n- Should indicate stress on the last syllable\n- Should provide some approximation for the rolled \"rr\"\n- Should separate syllables clearly for this four-syllable word\n\n\nEVALUATION CRITERIA:\n\n1. NATIVE LANGUAGE PHONEMES ONLY (CRITICAL - highest priority):\n   - The pronunciation MUST use ONLY letters and letter combinations that exist in the native language\n   - A native speaker should be able to read it without any special knowledge\n   - Penalize SEVERELY if IPA symbols, foreign letters, or non-standard diacritics are used\n   - Penalize if letter combinations don't naturally occur in the native language\n\n2. STRESS INDICATION:\n   - Stressed syllable should be marked with CAPITAL letters\n   - For multi-syllable words, exactly one syllable should be capitalized\n   - For single-syllable words, the entire word may be capitalized\n   - Penalize if stress is not indicated at all\n   - Do NOT penalize for different but valid stress placements if linguistically acceptable\n\n3. SYLLABLE SEPARATION:\n   - Multi-syllable words should use hyphens to separate syllables\n   - Single-syllable words do not need hyphens\n   - Penalize if long words are written without syllable breaks\n   - Do NOT penalize for slightly different syllable divisions if they're linguistically reasonable\n\n4. SOUND APPROXIMATION QUALITY:\n   - When target language sounds don't exist in native language, the closest approximation should be used\n   - The approximation should produce a recognizable pronunciation when spoken aloud\n   - Penalize if sounds are simply omitted rather than approximated\n   - Do NOT require specific approximations - accept any reasonable phonetic mapping\n\n5. READABILITY:\n   - The output should look like something a native speaker could naturally pronounce\n   - Avoid awkward letter combinations that would confuse a native reader\n   - The pronunciation should flow naturally when read aloud\n   - Penalize if the output looks unpronounceable or confusing\n\n6. COMPLETENESS:\n   - All sounds in the word should be represented\n   - Silent letters should be appropriately handled (omitted from pronunciation)\n   - Penalize if significant sounds are missing from the pronunciation\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for using different but valid phonetic representations\n- Do NOT require exact matches to any expected pronunciation\n- Do NOT penalize for stylistic choices (e.g., \"ou\" vs \"ow\" for the same sound)\n- Different valid approximations exist for the same sound - assess whether the chosen one is reasonable\n- FOCUS ON: native language compatibility, stress marking, readability, sound completeness\n- The test is whether a native speaker could read this and produce a recognizable approximation of the target word\n\n    ",
+        "id": "en-spanish-ferrocarril-1",
+        "userInput": {
+          "nativeLanguage": "en",
+          "targetLanguage": "Spanish",
+          "word": "ferrocarril"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The representation \"SYE\" for the stressed syllable \"cié\" (/sje/) is ambiguous and potentially misleading. In English, words ending in \"-ye\" (like \"dye\", \"rye\", \"eye\") are typically pronounced with the /aɪ/ diphthong (rhyming with \"sigh\"). A native English speaker would likely read \"SYE\" as \"sigh\", leading to an incorrect pronunciation of the vowel sound in the stressed syllable.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Replacing \"SYE\" with \"SYEH\" or \"see-EH\" would significantly improve readability and accuracy, ensuring the reader produces the correct /sje/ sound rather than /saɪ/.",
+          "kind": "potentialImprovements",
+          "score": 8.5
+        },
+        {
+          "conclusion": "The response handles the unaccented input correctly by identifying the word \"murciélago\" and applying the correct stress. The approximation \"moor\" for \"mur\" is excellent, as it naturally incorporates the /u/ vowel and the /r/ coda. The syllables \"lah\" and \"go\" are also accurate. The score is held back only by the choice of \"SYE\", which poses a high risk of mispronunciation for the stressed syllable.",
+          "kind": "minorErrors",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\nNATIVE LANGUAGE: English (US)\nTARGET LANGUAGE: Spanish\n\nWORD: \"murciélago\"\n\nThis Spanish word (bat - the animal) is famous for containing all 5 vowels:\n- Four syllables\n- The accent on \"é\" indicates stress\n- The \"c\" before \"i\" is soft (like \"s\" in Latin American Spanish)\n- Contains all five Spanish vowels\n\nSOUND CHALLENGES:\n- The \"ci\" combination sounds like \"see\"\n- The \"g\" before \"o\" is hard\n- Stress is on the third syllable (indicated by accent)\n\nQUALITY CHECK:\n- Should be readable by an English speaker\n- Should indicate stress on the \"-CIÉ-\" syllable\n- Should handle the soft \"c\" before \"i\"\n- Should separate all four syllables\n\n\nEVALUATION CRITERIA:\n\n1. NATIVE LANGUAGE PHONEMES ONLY (CRITICAL - highest priority):\n   - The pronunciation MUST use ONLY letters and letter combinations that exist in the native language\n   - A native speaker should be able to read it without any special knowledge\n   - Penalize SEVERELY if IPA symbols, foreign letters, or non-standard diacritics are used\n   - Penalize if letter combinations don't naturally occur in the native language\n\n2. STRESS INDICATION:\n   - Stressed syllable should be marked with CAPITAL letters\n   - For multi-syllable words, exactly one syllable should be capitalized\n   - For single-syllable words, the entire word may be capitalized\n   - Penalize if stress is not indicated at all\n   - Do NOT penalize for different but valid stress placements if linguistically acceptable\n\n3. SYLLABLE SEPARATION:\n   - Multi-syllable words should use hyphens to separate syllables\n   - Single-syllable words do not need hyphens\n   - Penalize if long words are written without syllable breaks\n   - Do NOT penalize for slightly different syllable divisions if they're linguistically reasonable\n\n4. SOUND APPROXIMATION QUALITY:\n   - When target language sounds don't exist in native language, the closest approximation should be used\n   - The approximation should produce a recognizable pronunciation when spoken aloud\n   - Penalize if sounds are simply omitted rather than approximated\n   - Do NOT require specific approximations - accept any reasonable phonetic mapping\n\n5. READABILITY:\n   - The output should look like something a native speaker could naturally pronounce\n   - Avoid awkward letter combinations that would confuse a native reader\n   - The pronunciation should flow naturally when read aloud\n   - Penalize if the output looks unpronounceable or confusing\n\n6. COMPLETENESS:\n   - All sounds in the word should be represented\n   - Silent letters should be appropriately handled (omitted from pronunciation)\n   - Penalize if significant sounds are missing from the pronunciation\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for using different but valid phonetic representations\n- Do NOT require exact matches to any expected pronunciation\n- Do NOT penalize for stylistic choices (e.g., \"ou\" vs \"ow\" for the same sound)\n- Different valid approximations exist for the same sound - assess whether the chosen one is reasonable\n- FOCUS ON: native language compatibility, stress marking, readability, sound completeness\n- The test is whether a native speaker could read this and produce a recognizable approximation of the target word\n\n    ",
+        "id": "en-spanish-murcielago-1",
+        "userInput": {
+          "nativeLanguage": "en",
+          "targetLanguage": "Spanish",
+          "word": "murcielago"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\nNATIVE LANGUAGE: Portuguese (Brazilian)\nTARGET LANGUAGE: English\n\nWORD: \"cat\"\n\nThis is a simple, single-syllable English word:\n- Short \"a\" vowel sound\n- Simple consonants\n- No complex clusters\n\nSOUND CHALLENGES:\n- The short \"a\" in \"cat\" is between Portuguese \"a\" and \"é\"\n- Very straightforward word\n\nQUALITY CHECK:\n- Should be readable by a Brazilian Portuguese speaker\n- Single syllable, so can be entirely capitalized or just marked appropriately\n- Should be simple and direct\n- This tests handling of easy words (should not overcomplicate)\n\n\nEVALUATION CRITERIA:\n\n1. NATIVE LANGUAGE PHONEMES ONLY (CRITICAL - highest priority):\n   - The pronunciation MUST use ONLY letters and letter combinations that exist in the native language\n   - A native speaker should be able to read it without any special knowledge\n   - Penalize SEVERELY if IPA symbols, foreign letters, or non-standard diacritics are used\n   - Penalize if letter combinations don't naturally occur in the native language\n\n2. STRESS INDICATION:\n   - Stressed syllable should be marked with CAPITAL letters\n   - For multi-syllable words, exactly one syllable should be capitalized\n   - For single-syllable words, the entire word may be capitalized\n   - Penalize if stress is not indicated at all\n   - Do NOT penalize for different but valid stress placements if linguistically acceptable\n\n3. SYLLABLE SEPARATION:\n   - Multi-syllable words should use hyphens to separate syllables\n   - Single-syllable words do not need hyphens\n   - Penalize if long words are written without syllable breaks\n   - Do NOT penalize for slightly different syllable divisions if they're linguistically reasonable\n\n4. SOUND APPROXIMATION QUALITY:\n   - When target language sounds don't exist in native language, the closest approximation should be used\n   - The approximation should produce a recognizable pronunciation when spoken aloud\n   - Penalize if sounds are simply omitted rather than approximated\n   - Do NOT require specific approximations - accept any reasonable phonetic mapping\n\n5. READABILITY:\n   - The output should look like something a native speaker could naturally pronounce\n   - Avoid awkward letter combinations that would confuse a native reader\n   - The pronunciation should flow naturally when read aloud\n   - Penalize if the output looks unpronounceable or confusing\n\n6. COMPLETENESS:\n   - All sounds in the word should be represented\n   - Silent letters should be appropriately handled (omitted from pronunciation)\n   - Penalize if significant sounds are missing from the pronunciation\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for using different but valid phonetic representations\n- Do NOT require exact matches to any expected pronunciation\n- Do NOT penalize for stylistic choices (e.g., \"ou\" vs \"ow\" for the same sound)\n- Different valid approximations exist for the same sound - assess whether the chosen one is reasonable\n- FOCUS ON: native language compatibility, stress marking, readability, sound completeness\n- The test is whether a native speaker could read this and produce a recognizable approximation of the target word\n\n    ",
+        "id": "pt-english-cat-1",
+        "userInput": {
+          "nativeLanguage": "pt",
+          "targetLanguage": "English",
+          "word": "cat"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The English vowel in 'go' is a diphthong (/oʊ/), ending in a 'w' or 'u' sound. The Spanish 'o' is a pure, short vowel. By transcribing it simply as 'GO', the guide misses the diphthong, leading to a strong foreign accent (pure /o/ instead of /oʊ/). While 'GO' is readable, it technically prioritizes spelling over the 'Actual Pronunciation' rule emphasized in the instructions.",
+          "kind": "minorErrors",
+          "score": 8.5
+        },
+        {
+          "conclusion": "The transcription 'GOU' would be a superior approximation in Spanish. The diphthong 'ou' in Spanish (pronounced /ow/) closely mimics the English /oʊ/ sound in 'go', adhering better to the expert persona and the goal of accurate sound representation.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\nNATIVE LANGUAGE: Spanish (Latin American)\nTARGET LANGUAGE: English\n\nWORD: \"go\"\n\nThis is one of the simplest English words:\n- Single syllable\n- Diphthong \"o\" sound (like \"oh\" + slight \"w\")\n- Simple consonant\n\nSOUND CHALLENGES:\n- The English \"o\" is actually a diphthong\n- Very straightforward for Spanish speakers\n\nQUALITY CHECK:\n- Should be readable by a Spanish speaker\n- Single syllable, simple stress handling\n- Should not overcomplicate this easy word\n- Tests that the model doesn't add unnecessary complexity\n\n\nEVALUATION CRITERIA:\n\n1. NATIVE LANGUAGE PHONEMES ONLY (CRITICAL - highest priority):\n   - The pronunciation MUST use ONLY letters and letter combinations that exist in the native language\n   - A native speaker should be able to read it without any special knowledge\n   - Penalize SEVERELY if IPA symbols, foreign letters, or non-standard diacritics are used\n   - Penalize if letter combinations don't naturally occur in the native language\n\n2. STRESS INDICATION:\n   - Stressed syllable should be marked with CAPITAL letters\n   - For multi-syllable words, exactly one syllable should be capitalized\n   - For single-syllable words, the entire word may be capitalized\n   - Penalize if stress is not indicated at all\n   - Do NOT penalize for different but valid stress placements if linguistically acceptable\n\n3. SYLLABLE SEPARATION:\n   - Multi-syllable words should use hyphens to separate syllables\n   - Single-syllable words do not need hyphens\n   - Penalize if long words are written without syllable breaks\n   - Do NOT penalize for slightly different syllable divisions if they're linguistically reasonable\n\n4. SOUND APPROXIMATION QUALITY:\n   - When target language sounds don't exist in native language, the closest approximation should be used\n   - The approximation should produce a recognizable pronunciation when spoken aloud\n   - Penalize if sounds are simply omitted rather than approximated\n   - Do NOT require specific approximations - accept any reasonable phonetic mapping\n\n5. READABILITY:\n   - The output should look like something a native speaker could naturally pronounce\n   - Avoid awkward letter combinations that would confuse a native reader\n   - The pronunciation should flow naturally when read aloud\n   - Penalize if the output looks unpronounceable or confusing\n\n6. COMPLETENESS:\n   - All sounds in the word should be represented\n   - Silent letters should be appropriately handled (omitted from pronunciation)\n   - Penalize if significant sounds are missing from the pronunciation\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for using different but valid phonetic representations\n- Do NOT require exact matches to any expected pronunciation\n- Do NOT penalize for stylistic choices (e.g., \"ou\" vs \"ow\" for the same sound)\n- Different valid approximations exist for the same sound - assess whether the chosen one is reasonable\n- FOCUS ON: native language compatibility, stress marking, readability, sound completeness\n- The test is whether a native speaker could read this and produce a recognizable approximation of the target word\n\n    ",
+        "id": "es-english-go-1",
+        "userInput": {
+          "nativeLanguage": "es",
+          "targetLanguage": "English",
+          "word": "go"
+        }
+      }
+    }
+  ],
+  "taskId": "activity-pronunciation"
+}
