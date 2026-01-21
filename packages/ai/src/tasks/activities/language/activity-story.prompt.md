@@ -31,16 +31,16 @@ The translation appears only in the feedback AFTER selection, revealing whether 
 
 Focus on situations learners will actually encounter:
 
-| Category       | Example Scenarios                                   |
-| -------------- | --------------------------------------------------- |
-| Food & Dining  | Ordering at a restaurant, asking about ingredients  |
-| Transportation | Buying train tickets, asking for directions         |
-| Shopping       | Bargaining at a market, returning an item           |
-| Accommodation  | Checking into a hotel, reporting a problem          |
-| Healthcare     | Describing symptoms at a pharmacy, doctor's visit   |
-| Social         | Meeting neighbors, small talk at a cafe             |
-| Services       | Opening a bank account, getting a phone plan        |
-| Emergencies    | Reporting lost items, asking for help               |
+| Category       | Example Scenarios                                  |
+| -------------- | -------------------------------------------------- |
+| Food & Dining  | Ordering at a restaurant, asking about ingredients |
+| Transportation | Buying train tickets, asking for directions        |
+| Shopping       | Bargaining at a market, returning an item          |
+| Accommodation  | Checking into a hotel, reporting a problem         |
+| Healthcare     | Describing symptoms at a pharmacy, doctor's visit  |
+| Social         | Meeting neighbors, small talk at a cafe            |
+| Services       | Opening a bank account, getting a phone plan       |
+| Emergencies    | Reporting lost items, asking for help              |
 
 ## Supportive Native Speaker
 
@@ -67,16 +67,16 @@ The character in the story is a friendly native speaker who:
 
 ## What Appears in Each Language
 
-| Field                   | Language        | Example (Spanish course, English native)                          |
-| ----------------------- | --------------- | ----------------------------------------------------------------- |
-| `scenario`              | NATIVE          | "You're at a cafe in Madrid and want to order coffee."            |
-| `context`               | TARGET          | "Buenos dias, que le pongo?"                                      |
-| `contextTranslation`    | NATIVE          | "Good morning, what can I get you?"                               |
-| `contextRomanization`   | Romanization    | "" (empty for Roman scripts)                                      |
-| `question`              | NATIVE          | "What do you say?"                                                |
-| `options[].text`        | TARGET          | "Un cafe con leche, por favor."                                   |
-| `options[].textRomanization` | Romanization | "" (empty for Roman scripts)                                      |
-| `options[].feedback`    | NATIVE          | "A coffee with milk, please - Perfect! Polite and clear."         |
+| Field                        | Language     | Example (Spanish course, English native)                  |
+| ---------------------------- | ------------ | --------------------------------------------------------- |
+| `scenario`                   | NATIVE       | "You're at a cafe in Madrid and want to order coffee."    |
+| `context`                    | TARGET       | "Buenos dias, que le pongo?"                              |
+| `contextTranslation`         | NATIVE       | "Good morning, what can I get you?"                       |
+| `contextRomanization`        | Romanization | "" (empty for Roman scripts)                              |
+| `question`                   | NATIVE       | "What do you say?"                                        |
+| `options[].text`             | TARGET       | "Un cafe con leche, por favor."                           |
+| `options[].textRomanization` | Romanization | "" (empty for Roman scripts)                              |
+| `options[].feedback`         | NATIVE       | "A coffee with milk, please - Perfect! Polite and clear." |
 
 # Options Design
 
