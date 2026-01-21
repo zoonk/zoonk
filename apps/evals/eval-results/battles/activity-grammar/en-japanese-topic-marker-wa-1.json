@@ -1,0 +1,149 @@
+{
+  "expectations": "\nLANGUAGE: English output required.\n\nTOPIC: Japanese topic marker particle は (wa) - how it marks the topic of a sentence.\n\nSCRIPT: Non-Roman (romanization MUST be included)\n\nGRAMMAR PATTERN: The particle は (wa) marks the topic of a sentence, indicating what the sentence is about. It attaches to nouns to establish them as the topic of discussion.\n\nROMANIZATION REQUIREMENTS:\n- MUST include romaji for all Japanese text\n- Standard Hepburn romanization system\n- The particle は when used as topic marker is romanized as \"wa\" (not \"ha\")\n\nACCURACY PITFALLS - Penalize SEVERELY if:\n- は is romanized as \"ha\" when functioning as topic marker (should be \"wa\")\n- Examples do not clearly demonstrate は as a topic marker\n- Translations misrepresent what the topic marker does\n- Romanization is missing or uses non-standard systems\n- Discovery question tests vocabulary instead of understanding of topic marking\n- Exercises have は in positions where it would not function as topic marker\n\nEXERCISE TEMPLATE FORMAT - Penalize SEVERELY if:\n- Exercise templates include romanization in parentheses after the Japanese text\n  BAD: \"さくらさん[BLANK]先生です。(Sakura-san [BLANK] sensei desu.)\"\n  GOOD: \"さくらさん[BLANK]先生です。\"\n- Templates should contain ONLY Japanese script and the [BLANK] placeholder\n- Romanization belongs in the romanization field of examples, NOT in exercise templates\n\n\nEVALUATION CRITERIA:\n\n1. STRUCTURE - PATTERN DISCOVERY FORMAT (CRITICAL):\n   The activity MUST follow the Pattern Discovery structure:\n   - 3-4 examples demonstrating the grammar pattern\n   - 1 discovery question with exactly 4 options (exactly 1 correct)\n   - Brief rule summary (maximum 2 sentences)\n   - 2-3 fill-in-the-blank exercises\n   Penalize SEVERELY if any structural element is missing or malformed.\n\n2. EXAMPLES QUALITY:\n   - Each example MUST demonstrate the target grammar pattern\n   - The highlight field MUST isolate the grammar element being taught\n   - Examples should make the pattern discoverable WITHOUT explicit explanation\n   - Translations MUST be accurate and natural in the output language\n   - Sentences should be simple enough for learners to focus on the pattern\n   - Penalize if examples are unrelated to the grammar pattern or too complex\n\n3. DISCOVERY QUESTION:\n   - MUST test pattern recognition, NOT memorization\n   - MUST have exactly 4 options\n   - MUST have exactly 1 correct option (isCorrect: true)\n   - ALL options MUST have feedback explaining why they are correct/incorrect\n   - Distractors should be plausible observations a learner might make\n   - Penalize if the question tests vocabulary instead of grammar understanding\n\n4. RULE SUMMARY:\n   - MUST be maximum 2 sentences\n   - MUST confirm what was discoverable from the examples\n   - Use clear, simple language accessible to learners\n   - Should NOT introduce new information not demonstrated in examples\n   - Penalize if verbose, unclear, or contradicts the examples\n\n5. EXERCISES - FILL-IN-THE-BLANK:\n   - Each exercise MUST have exactly one [BLANK] placeholder\n   - MUST test the same grammar pattern taught in examples\n   - The answers array MUST contain the correct answer(s)\n   - Distractors MUST be plausible wrong answers testing common mistakes\n   - Feedback MUST explain why the correct answer fits the pattern\n   - Penalize if exercises test different grammar or have unclear blanks\n   - **CRITICAL**: Exercise templates must contain ONLY target language text and [BLANK].\n     Do NOT include romanization/transliteration in parentheses after templates.\n     BAD: \"さくらさん[BLANK]先生です。(Sakura-san [BLANK] sensei desu.)\"\n     GOOD: \"さくらさん[BLANK]先生です。\"\n     Penalize SEVERELY if templates include romanization in any form.\n\n6. ROMANIZATION (CRITICAL):\n   - For non-Roman scripts (Japanese, Korean, Chinese, Arabic, Russian, Greek, Thai, Hindi, etc.):\n     romanization MUST be included and accurate using standard systems (romaji, romanization, pinyin, etc.)\n   - For Roman-script languages (Spanish, French, German, Portuguese, Italian, etc.):\n     romanization MUST be empty string \"\"\n   - Penalize SEVERELY if romanization is missing for non-Roman scripts\n   - Penalize SEVERELY if romanization contains text for Roman scripts\n\n7. LINGUISTIC ACCURACY (CRITICAL - highest priority):\n   - ALL sentences must be grammatically correct in the target language\n   - ALL translations must be accurate and natural in the output language\n   - Grammar explanations must be linguistically correct\n   - The grammar pattern described must match what is actually demonstrated\n   - Penalize SEVERELY for incorrect grammar or mistranslations\n\n8. PEDAGOGICAL QUALITY:\n   - Examples should progress from simple to slightly more complex\n   - The discovery question should lead learners to the correct insight\n   - Exercises should reinforce the discovered pattern\n   - Content should be appropriate for language learners\n   - Penalize if content is confusing, misleading, or pedagogically unsound\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific example sentences - accept ANY valid sentences demonstrating the pattern\n- Do NOT penalize for specific vocabulary choices\n- Do NOT require specific phrases or sentence structures\n- Do NOT penalize for different valid approaches to explaining the grammar point\n- FOCUS ON: structural correctness, linguistic accuracy, pattern clarity, romanization correctness\n- Different valid teaching approaches exist - assess the quality of what IS provided\n- The eval model should judge whether the output teaches the pattern effectively, not whether it matches a predetermined answer\n\n    ",
+  "judgedAt": "2026-01-21T20:08:40.438Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Excellent output overall. Structure is complete with 4 examples, discovery question with 4 options, 2-sentence rule summary, and 3 exercises. All romanization is correct (wa, not ha). Examples clearly demonstrate は as topic marker with varied vocabulary. Discovery question tests pattern recognition well with good distractors and feedback. Exercise templates are clean (no romanization in templates). Rule summary is concise and accurate. One minor issue: the translation 'Ms. Tanaka is a teacher' uses 'Ms.' which is fine but slightly less inclusive than 'Mr./Ms.' Minor points: exercises are straightforward and effective. Highlight field correctly isolates は.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Very strong output. Complete structure with 4 examples, discovery question with 4 options, rule summary, and 3 exercises. Romanization is correct throughout. Examples include variety (noun + adjective example with 難しい which adds pedagogical value). Discovery question is good but the second option feedback is slightly confusing ('That's true, but...' - acknowledging a correct observation as wrong can be misleading). Exercise templates are clean without romanization. Rule summary is good but slightly more than 2 sentences when you count both. One issue: feedback mentions 'これは' as an example in discovery but the actual topic there is これ alone. Translation 'Mr./Ms. Tanaka' is appropriately inclusive. Overall excellent quality.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Strong output with complete structure. Has 4 examples with good variety including time expression (今日). Romanization is correct. NOTABLE: Highlight field includes the topic + は together (私は, これは, etc.) rather than just は - this is actually pedagogically valuable as it shows the complete topic phrase, though slightly different from other models. Discovery question and distractors are well-crafted. Exercises are clean without romanization in templates. Rule summary is two sentences and clear. Third distractor about pronunciation is good for addressing common misconceptions. The variation in vocabulary (医者, 学校, 日曜日, 月曜日) adds pedagogical richness.",
+          "score": 8.9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Complete structure with 4 examples, 4-option discovery question, rule summary, and 3 exercises. Romanization is correct. Examples include an adjective predicate (暑い) which adds variety. Discovery question is solid. Exercise templates are clean. One issue: In the correct option feedback, 'これは' is listed as a topic which is incorrect - これ is the topic, は is the marker. Also, the rule summary ending appears to have a formatting issue (extra '}' character). The feedback on exercises using 'As for...' framing is pedagogically helpful. Overall good but minor errors bring it down slightly.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Structure is mostly complete but has only 3 examples instead of the required 3-4 (3 is acceptable but minimum), and only 2 exercises instead of the required 2-3 (again acceptable but minimum). Romanization is correct. Discovery question tests placement/position rather than function, which is slightly less focused on the topic-marking function. Examples are basic but effective. Exercise templates are clean. Rule summary is appropriate. The discovery question asks 'where is it placed' which is more about position than function - this is acceptable but less deep pedagogically. Feedback quality is good. Minor issue: 'Watashi' capitalized in romanization is non-standard (should be lowercase). Overall adequate but minimal.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Complete structure with 3 examples (minimum acceptable), 4-option discovery question, rule summary, and 3 exercises. Romanization is correct. Examples are basic but effective. Discovery question focuses on 'role in sentence structure' which is good. One issue: the last exercise 'あなたはだれですか' asks 'Who are you?' - while grammatically correct with は, this is asking about identity where は works but the sentence is more commonly 'あなたは誰ですか' (same meaning). Exercise templates are clean. Rule summary uses 'as for' framing which is pedagogically helpful. The distractor about changing form is creative. Overall solid but slightly less varied examples.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Excellent comprehensive output. Complete structure with 4 examples including time expression (今日は暑いです), 4-option discovery question with thoughtful distractors, concise rule summary, and 3 exercises. Romanization is all correct. Discovery question has sophisticated distractors including the topic vs. subject distinction, which is pedagogically valuable for Japanese learners. The exercises are varied and include a more complex sentence with verb (日本語を教えます). Exercise templates are clean. Feedback uses 'As for...' framing consistently which reinforces the concept well. The distinction between topic and subject in distractor 4 is particularly valuable for Japanese learners. Minor: one distractor feedback says 'True but superficial' which might seem slightly condescending. Overall excellent quality.",
+          "score": 9.1
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "This model followed all instructions perfectly. The examples are clear, the romanization is correct (standard Hepburn), and the structure adheres exactly to the Pattern Discovery format. The exercises use clear templates without romanization (as requested) and provide varied, plausible distractors with excellent feedback. The highlighting in examples correctly isolates just the particle.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "An excellent output that meets all requirements. The examples and feedback are high quality. It is ranked slightly lower than Model A only because it provided 4 distractors per exercise (creating 5 total options), which is slightly non-standard for this format (usually 3 distractors/4 options), and it reused the exact same set of distractors for every exercise, whereas Model A varied them.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Very strong content. It adheres to all constraints, including clean templates and correct romanization. It is ranked below A and B because the examples chosen (including a transitive verb sentence and a 'suki' sentence) are slightly more complex for a beginner's initial discovery of the topic marker compared to the consistent 'A is B' patterns used by the top models. However, the explanations are accurate and the pedagogical quality is high.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Solid performance. It follows the structure and constraints well. It is ranked lower than the top models because it provided fewer examples (3) compared to others (4), and the explanations were slightly less detailed than Model A or G.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Accurate and follows constraints, but the content volume is minimal. It provided only 3 examples and only 2 exercises, whereas the prompt range allowed for more. While grammatically correct, it is less comprehensive than the higher-ranked models.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "This model failed the specific instruction to 'isolate the grammar element being taught' in the highlight field. Instead of highlighting just the particle 'は', it highlighted the noun + particle (e.g., '私は'), which obscures the constant pattern for learners. Otherwise, the content was accurate.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "This model included a significant typo in the rule summary string ('...pronounced “wa.”}'), appearing to hallucinate a closing brace inside the text. This indicates a lack of quality control in the generation, although the rest of the content was generally acceptable.",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Meets the required Pattern Discovery structure (4 examples, 1 MCQ with 4 options/1 correct + feedback, ≤2-sentence rule, 3 exercises). Romanization is consistently present and uses “wa” correctly. Examples and exercises clearly show は attached to the topic (noun/pronoun/topic phrase), with accurate natural translations and good pattern-recognition distractors.",
+          "score": 9.4
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Fully compliant structure and consistently correct Hepburn romanization with “wa.” Strong discovery question (includes the important topic vs subject distinction as a plausible distractor) and clear examples, including a verb sentence (教えます) showing topic marking beyond です. Minor nit: a couple feedback lines add extra example sentences, but templates are clean and the core requirements are met.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "All structural requirements satisfied (4 examples, correct MCQ format, ≤2-sentence rule, 3 exercises). Romanization uses “wa” correctly and templates contain only Japanese + [BLANK]. Slight pedagogical/accuracy roughness: one discovery distractor says “right after the subject,” which can mislead learners into equating topic with subject; otherwise strong and clear.",
+          "score": 8.9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Good overall compliance: correct structure, accurate examples, correct “wa” romanization, and clean exercise templates. Main issue is a formatting error: the ruleSummary ends with an extra closing brace/quote (\"wa.\"}\") which makes the JSON/content malformed per typical expectations.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Meets structure and keeps exercise templates clean; romanization present and “wa” is correct. Minor pedagogical issues: some option wording is less pattern-focused (e.g., “post-position particle”), and feedback includes English glosses (neko/kyou/anata) but does not violate the template rule. Overall solid.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Structure is present and sentences are grammatical with correct “wa” romanization. However, the example highlight field is inconsistent: it highlights chunks like 「私は」「これは」「今日は」 rather than isolating the grammar element は, violating the requirement that the highlight field isolate the target grammar element.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Mostly accurate and compliant romanization (uses “wa”), and templates are clean. But it fails the required structure by providing only 3 examples (needs 3–4, OK) and only 2 exercises (needs 2–3, OK) — those are fine; the bigger issue is Hepburn consistency: capitalized romaji (“Watashi,” “Kore,” “Tanaka-san”) is atypical but not fatal. Overall slightly less robust pattern discovery than others (question focuses only on placement).",
+          "score": 7
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-grammar",
+  "testCaseId": "en-japanese-topic-marker-wa-1"
+}

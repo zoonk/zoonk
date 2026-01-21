@@ -10,9 +10,10 @@ const DEFAULT_MODEL =
 
 const FALLBACK_MODELS = [
   "openai/gpt-5.2",
+  "google/gemini-3-pro-preview",
+  "anthropic/claude-sonnet-4.5",
   "openai/gpt-5-mini",
   "anthropic/claude-opus-4.5",
-  "google/gemini-3-pro-preview",
 ];
 
 const schema = z.object({
@@ -66,7 +67,7 @@ export async function generateActivityGrammar({
   lessonDescription,
   lessonTitle,
   model = DEFAULT_MODEL,
-  reasoningEffort,
+  reasoningEffort = "high",
   useFallback = true,
 }: ActivityGrammarParams) {
   const userPrompt = `TARGET_LANGUAGE: ${courseTitle}
