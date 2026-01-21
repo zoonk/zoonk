@@ -6,6 +6,7 @@ import { activityExamplesTask } from "./activity-examples/task";
 import { activityExplanationTask } from "./activity-explanation/task";
 import { activityExplanationQuizTask } from "./activity-explanation-quiz/task";
 import { activityMechanicsTask } from "./activity-mechanics/task";
+import { activityPronunciationTask } from "./activity-pronunciation/task";
 import { activityReviewTask } from "./activity-review/task";
 import { activityStoryTask } from "./activity-story/task";
 import { activityVocabularyTask } from "./activity-vocabulary/task";
@@ -38,6 +39,7 @@ export const TASKS: readonly Task[] = [
   activityReviewTask,
   activityCustomTask,
   activityVocabularyTask,
+  activityPronunciationTask,
   stepVisualTask,
 ];
 
