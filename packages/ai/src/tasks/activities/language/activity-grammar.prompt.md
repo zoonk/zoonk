@@ -130,6 +130,7 @@ Provide 2-3 fill-in-the-blank exercises that test the same pattern.
 - Use new sentences (not copies of the examples)
 - Include 1-3 correct answers (for cases with valid variations)
 - Include 2-4 distractors (plausible wrong options)
+- **CRITICAL**: Templates must contain ONLY the target language text and the `[BLANK]` placeholder. Do NOT include romanization, transliteration, or pronunciation guides in templates. Romanization belongs only in the `romanization` field of example sentences, never in exercise templates.
 
 ## CRITICAL: The Blank Must Test the Actual Grammar Concept
 
@@ -196,16 +197,19 @@ Use the standard romanization system for each language:
 When explaining grammar rules, especially for non-Latin scripts, verify your linguistic claims are factually accurate:
 
 **For Korean**:
+
 - When explaining particle selection based on final consonants, correctly identify the actual final consonant/vowel
 - Example: 학생 (haksaeng) ends in the consonant ㅇ (ng sound), NOT ㄴ
 - Example: 사과 (sagwa) ends in a vowel ㅏ
 - The batchim (final consonant) is the bottom component of the final syllable block
 
 **For Japanese**:
+
 - Correctly identify readings (on'yomi vs kun'yomi) when relevant
 - The particle は is pronounced "wa" when marking topic, not "ha"
 
 **For Chinese**:
+
 - Ensure tone marks in pinyin are correct
 - Character stroke counts and radical identification must be accurate
 

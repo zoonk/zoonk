@@ -39,6 +39,11 @@ EVALUATION CRITERIA:
    - Distractors MUST be plausible wrong answers testing common mistakes
    - Feedback MUST explain why the correct answer fits the pattern
    - Penalize if exercises test different grammar or have unclear blanks
+   - **CRITICAL**: Exercise templates must contain ONLY target language text and [BLANK].
+     Do NOT include romanization/transliteration in parentheses after templates.
+     BAD: "さくらさん[BLANK]先生です。(Sakura-san [BLANK] sensei desu.)"
+     GOOD: "さくらさん[BLANK]先生です。"
+     Penalize SEVERELY if templates include romanization in any form.
 
 6. ROMANIZATION (CRITICAL):
    - For non-Roman scripts (Japanese, Korean, Chinese, Arabic, Russian, Greek, Thai, Hindi, etc.):
@@ -96,6 +101,13 @@ ACCURACY PITFALLS - Penalize SEVERELY if:
 - Discovery question tests vocabulary instead of understanding of topic marking
 - Exercises have は in positions where it would not function as topic marker
 
+EXERCISE TEMPLATE FORMAT - Penalize SEVERELY if:
+- Exercise templates include romanization in parentheses after the Japanese text
+  BAD: "さくらさん[BLANK]先生です。(Sakura-san [BLANK] sensei desu.)"
+  GOOD: "さくらさん[BLANK]先生です。"
+- Templates should contain ONLY Japanese script and the [BLANK] placeholder
+- Romanization belongs in the romanization field of examples, NOT in exercise templates
+
 ${SHARED_EXPECTATIONS}
     `,
     id: "en-japanese-topic-marker-wa",
@@ -117,6 +129,15 @@ TOPIC: Spanish present tense conjugation of regular -ar verbs - how verbs ending
 SCRIPT: Roman (romanization should be empty string "")
 
 GRAMMAR PATTERN: Regular -ar verbs in Spanish follow a consistent conjugation pattern in present tense. The -ar ending is replaced with: -o (yo), -as (tu), -a (el/ella), -amos (nosotros), -an (ellos/ellas).
+
+CONJUGATION PARADIGM COMPLETENESS:
+When the lesson is about conjugation patterns, the examples and rule summary should cover the standard
+conjugation paradigm comprehensively. For present tense Spanish -ar verbs, this includes:
+- yo (-o), tu (-as), el/ella/usted (-a), nosotros (-amos), ellos/ellas/ustedes (-an)
+Penalize if a core person like "nosotros" (we) is completely omitted from both examples AND rule summary,
+as this leaves a gap in the learner's understanding of the conjugation paradigm.
+Note: The rule summary should only mention forms demonstrated in examples, but the examples themselves
+should cover the key forms of the paradigm.
 
 ACCURACY PITFALLS - Penalize SEVERELY if:
 - Conjugation endings are incorrect
@@ -220,6 +241,13 @@ ACCURACY PITFALLS - Penalize SEVERELY if:
 - Romanization is missing or incorrect
 - Discovery question tests vocabulary instead of subject marker selection
 - Exercises have markers that do not follow the consonant/vowel pattern
+
+EXERCISE TEMPLATE FORMAT - Penalize SEVERELY if:
+- Exercise templates include romanization in parentheses after the Korean text
+  BAD: "학생[BLANK]공부해요. (haksaeng [BLANK] gongbuhaeyo.)"
+  GOOD: "학생[BLANK]공부해요."
+- Templates should contain ONLY Korean script and the [BLANK] placeholder
+- Romanization belongs in the romanization field of examples, NOT in exercise templates
 
 ${SHARED_EXPECTATIONS}
     `,
