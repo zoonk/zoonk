@@ -36,10 +36,13 @@ The pronunciation guide must use ONLY letters and letter combinations that exist
 
 Indicate the stressed syllable using capital letters. This helps learners know where to put emphasis.
 
+**When the target language word has an accent mark (like Spanish ´ or Portuguese ^), that accent ALWAYS indicates the stressed syllable.** Do not apply default stress rules when an accent is present.
+
 **Examples:**
 
 - "hello" for Portuguese speaker: "rhe-LOU" (stress on second syllable)
 - "apple" for Spanish speaker: "A-pol" (stress on first syllable)
+- "teléfono" (Spanish) for English speaker: "teh-LEH-foh-no" (accent on é indicates stress)
 
 ## 3. Use Hyphens for Syllable Separation
 
@@ -47,8 +50,23 @@ Separate syllables with hyphens to make pronunciation clearer and help learners 
 
 **Examples:**
 
-- "beautiful" for Portuguese speaker: "BIUL-ti-fol"
+- "wonderful" for Portuguese speaker: "UAN-der-fol"
 - "restaurant" for Spanish speaker: "RES-to-rant"
+
+## 4. Transcribe Actual Pronunciation, Not Spelling or Cognates
+
+The pronunciation guide must represent how the word ACTUALLY SOUNDS, not how it's spelled or how similar words are spelled in other languages.
+
+**Common pitfall - Cognate interference**: Words that have similar forms in multiple languages (cognates) can mislead you into inserting sounds that aren't actually pronounced.
+
+**Example - "actually" (English) for Spanish speakers:**
+
+- English "actually" is pronounced /ˈæktʃuəli/ with a "ch" sound in the middle
+- Spanish has "actualmente" which has a hard /t/ followed by /u/, no "ch" sound
+- WRONG: "ac-tu-AL-men-te" (incorrectly follows the Spanish cognate pattern)
+- CORRECT: "AK-chu-a-li" (transcribes actual English pronunciation with "ch" sound)
+
+**Always ask**: "How is this word actually pronounced?" not "How is this word spelled?" or "What does the similar word in another language sound like?"
 
 # Handling Difficult Sounds
 
@@ -56,23 +74,27 @@ When the target language has sounds that don't exist in the native language, use
 
 ## For Portuguese Speakers Learning English
 
-| English Sound                  | Portuguese Approximation | Example             |
-| ------------------------------ | ------------------------ | ------------------- |
-| "th" (voiced, as in "the")     | "d"                      | "the" → "dâ"        |
-| "th" (unvoiced, as in "think") | "f" or "s"               | "think" → "fink"    |
-| Short "i" (as in "bit")        | "i"                      | "bit" → "bit"       |
-| "r" (American)                 | "r" (Brazilian r)        | "car" → "car"       |
-| "h" at start                   | "rr" (Brazilian)         | "hello" → "rre-LOU" |
+| English Sound                  | Portuguese Approximation | Example                   | Notes                                         |
+| ------------------------------ | ------------------------ | ------------------------- | --------------------------------------------- |
+| "th" (voiced, as in "the")     | "d"                      | "the" → "dâ"              |                                               |
+| "th" (unvoiced, as in "think") | "f" or "s"               | "think" → "fink"          |                                               |
+| Short "i" (as in "bit")        | "i"                      | "bit" → "bit"             |                                               |
+| "r" (American, any position)   | Single "r"               | "car" → "CAR"             | NEVER use 'rr' - see phonotactics section     |
+| "h" at start                   | "rr" or initial "r"      | "hello" → "rre-LOU"       | Initial 'r' and 'rr' both make /h/ in PT      |
+| "k" sound                      | "c" or "qu"              | "cat" → "CAT"             | Prefer 'c'/'qu' over 'k' for naturalness      |
+| Initial s+consonant cluster    | Add 'i' or 'e' before    | "school" → "is-CUL"       | Portuguese requires vowel before s+C clusters |
+| "schwa" + l (as in "-le")      | "eu" or "ou"             | "apple" → "É-pou"         | Avoid 'ol' which implies /ɔw/                 |
 
 ## For Spanish Speakers Learning English
 
-| English Sound   | Spanish Approximation | Example          |
-| --------------- | --------------------- | ---------------- |
-| "th" (voiced)   | "d"                   | "the" → "da"     |
-| "th" (unvoiced) | "z" or "s"            | "think" → "sink" |
-| Short "i"       | "i"                   | "ship" → "ship"  |
-| "j" sound       | "y"                   | "job" → "yob"    |
-| "v" sound       | "b"                   | "very" → "BE-ri" |
+| English Sound   | Spanish Approximation | Example          | Notes                                    |
+| --------------- | --------------------- | ---------------- | ---------------------------------------- |
+| "th" (voiced)   | "d"                   | "the" → "da"     |                                          |
+| "th" (unvoiced) | "z" or "s"            | "think" → "sink" |                                          |
+| Short "i"       | "i"                   | "ship" → "ship"  |                                          |
+| "j" sound       | "ch" or "y"           | "job" → "chob"   | 'ch' is closer to English /dʒ/ than 'y' |
+| "v" sound       | "b"                   | "very" → "BE-ri" |                                          |
+| Schwa vowel     | "a" or "e"            | "the" → "da"     | Use unstressed short vowel               |
 
 ## For English Speakers Learning Portuguese
 
@@ -91,6 +113,53 @@ When the target language has sounds that don't exist in the native language, use
 | "j"           | "h" (aspirated)       | "jugar" → "hoo-GAR"  |
 | "ll"          | "y"                   | "llamar" → "yah-MAR" |
 | "ñ"           | "ny"                  | "niño" → "NEE-nyo"   |
+
+# Phonotactic Constraints
+
+The pronunciation guide must respect what syllable structures and letter combinations are actually readable in the native language. A native speaker should be able to read it without any training.
+
+## Portuguese Phonotactics
+
+**Consonant clusters**: Portuguese speakers naturally add an epenthetic vowel before s+consonant clusters at word beginnings. Your transcription should reflect this.
+
+- English "street" → "is-TRIT" or "es-TRIT" (NOT "STRIT")
+- English "spring" → "is-PRIN" or "es-PRIN" (NOT "SPRING")
+- English "smile" → "is-MAI-ou" or "es-MAI-ou" (NOT "SMAIL")
+
+**CRITICAL - The letter 'rr'**: In Brazilian Portuguese, 'rr' between vowels is pronounced as a guttural /h/ sound (like English 'h' in 'house'), NOT as a trill or tap.
+
+- NEVER use 'rr' to represent the English /r/ sound
+- Use single 'r' for English /r/ in all positions: "mirror" → "MI-ror" (NOT "MI-rror" which would sound like "mi-hor")
+- 'rr' and word-initial 'r' both produce the /h/ sound, use them ONLY for English /h/
+- Example: "forest" → "FO-rest" (NOT "FO-rrest")
+
+**The letter 'k'**: While 'k' exists in Portuguese for foreign words, prefer 'c' (before a, o, u) or 'qu' (before e, i) as these are more natural.
+
+- "car" → "CAR" (NOT "KAR")
+- "kit" → "QUIT" (NOT "KIT")
+- "keep" → "QUIP" (NOT "KIP")
+
+## Spanish Phonotactics
+
+**Consonant clusters**: Spanish has strict rules about which consonants can appear together in syllable onsets.
+
+- **Invalid onset clusters** (avoid these): 'yt', 'tl' (in most dialects), 'sr', 'dm', 'tm'
+- **Valid onset clusters**: 'bl', 'br', 'cl', 'cr', 'dr', 'fl', 'fr', 'gl', 'gr', 'pl', 'pr', 'tr'
+
+**The letter 'y'**: In Spanish, 'y' functions as a consonant in syllable onsets. It CANNOT combine with other consonants to form clusters.
+
+- "general" → "CHE-ne-ral" or "YE-ne-ral" (NOT "YE-nral" - 'nr' cluster is awkward)
+- "magic" → "MA-chic" (NOT "MA-yic" - prefer 'ch' for the soft g/j sound)
+- If you need /j/ + consonant, break them into separate syllables or use 'ch' instead
+
+**The letter 'v'**: In most Spanish dialects, 'v' and 'b' are pronounced identically. Either is acceptable, but be consistent.
+
+## English Phonotactics
+
+**Most flexible**: English allows many consonant clusters that other languages don't.
+
+- Valid clusters: 'str', 'spl', 'scr', 'ng', 'nk', 'ld', 'nd', 'nt'
+- When writing for English speakers, these clusters are acceptable
 
 # Silent Letters and Special Cases
 
@@ -118,15 +187,21 @@ Return a JSON object with a single `pronunciation` field containing the phonetic
 
 1. **Native language only**: Every letter and letter combination in the output must be valid in the native language. A native speaker should be able to read it naturally without any learning.
 
-2. **Clear stress marking**: Exactly one syllable should be in CAPITAL letters to indicate primary stress. For monosyllabic words, the entire word can be capitalized.
+2. **Phonotactically valid**: The syllable structures must be pronounceable in the native language. Verify that:
+   - Consonant clusters are valid in the native language (no Spanish 'yt', no Portuguese intervocalic 'rr' for /r/)
+   - Epenthetic vowels are added where the native language requires them (Portuguese s+consonant clusters)
 
-3. **Syllable separation**: Use hyphens to separate syllables for words with more than one syllable.
+3. **Clear stress marking**: Exactly one syllable should be in CAPITAL letters to indicate primary stress. For monosyllabic words, the entire word can be capitalized. **If the target word has an accent mark (´, ^, etc.), that syllable MUST receive the stress.**
 
-4. **Closest approximation**: When exact sounds don't exist, use the closest available sound. Never leave a sound unrepresented.
+4. **Syllable separation**: Use hyphens to separate syllables for words with more than one syllable.
 
-5. **Readable output**: The pronunciation should look like a word or phrase the native speaker could naturally say. Avoid awkward letter combinations that don't occur in the native language.
+5. **Actual pronunciation**: Transcribe the actual sounds of the word, not its spelling. Beware of cognate interference - similar words in other languages may have different pronunciations.
 
-6. **Consistency**: Use consistent representations for the same sounds throughout.
+6. **Closest approximation**: When exact sounds don't exist, use the closest available sound. Never leave a sound unrepresented.
+
+7. **Readable output**: The pronunciation should look like a word or phrase the native speaker could naturally say. Avoid awkward letter combinations that don't occur in the native language.
+
+8. **Consistency**: Use consistent representations for the same sounds throughout.
 
 # Examples
 
