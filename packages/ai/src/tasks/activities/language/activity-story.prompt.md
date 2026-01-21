@@ -199,8 +199,18 @@ Return an object with this structure (abbreviated examples shown):
       "contextRomanization": "Irasshaimase. Dochira made?",
       "question": "What do you say?",
       "options": [
-        { "text": "京都までお願いします。", "textRomanization": "Kyouto made onegaishimasu.", "isCorrect": true, "feedback": "To Kyoto, please - Perfect! Clear and polite." },
-        { "text": "京都は遠いですか？", "textRomanization": "Kyouto wa tooi desu ka?", "isCorrect": false, "feedback": "Is Kyoto far? - This asks about distance, not for a ticket." }
+        {
+          "text": "京都までお願いします。",
+          "textRomanization": "Kyouto made onegaishimasu.",
+          "isCorrect": true,
+          "feedback": "To Kyoto, please - Perfect! Clear and polite."
+        },
+        {
+          "text": "京都は遠いですか？",
+          "textRomanization": "Kyouto wa tooi desu ka?",
+          "isCorrect": false,
+          "feedback": "Is Kyoto far? - This asks about distance, not for a ticket."
+        }
       ]
     }
   ]
@@ -219,8 +229,18 @@ Return an object with this structure (abbreviated examples shown):
       "contextRomanization": "",
       "question": "What do you say?",
       "options": [
-        { "text": "Si, me gustaria la paella, por favor.", "textRomanization": "", "isCorrect": true, "feedback": "Yes, I would like the paella, please - Perfect!" },
-        { "text": "La cuenta, por favor.", "textRomanization": "", "isCorrect": false, "feedback": "The check, please - You haven't eaten yet! This is for when you're finished." }
+        {
+          "text": "Si, me gustaria la paella, por favor.",
+          "textRomanization": "",
+          "isCorrect": true,
+          "feedback": "Yes, I would like the paella, please - Perfect!"
+        },
+        {
+          "text": "La cuenta, por favor.",
+          "textRomanization": "",
+          "isCorrect": false,
+          "feedback": "The check, please - You haven't eaten yet! This is for when you're finished."
+        }
       ]
     }
   ]
