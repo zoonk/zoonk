@@ -119,7 +119,7 @@ const stepsData: ActivitySteps[] = [
           question:
             "What is the main difference between traditional programming and machine learning?",
         },
-        kind: "multipleChoice" as StepKind,
+        kind: "multipleChoice",
       },
       {
         content: {
@@ -135,7 +135,7 @@ const stepsData: ActivitySteps[] = [
             },
           ],
         },
-        kind: "matchColumns" as StepKind,
+        kind: "matchColumns",
       },
       {
         content: {
@@ -146,7 +146,7 @@ const stepsData: ActivitySteps[] = [
             "In {0} learning, the algorithm learns from labeled data, while in {1} learning, it finds patterns without labels.",
           wordBank: ["supervised", "unsupervised", "reinforcement", "deep"],
         },
-        kind: "fillBlank" as StepKind,
+        kind: "fillBlank",
       },
       {
         content: {
@@ -159,7 +159,7 @@ const stepsData: ActivitySteps[] = [
           ],
           question: "Arrange the ML development process in the correct order:",
         },
-        kind: "sortOrder" as StepKind,
+        kind: "sortOrder",
       },
       {
         content: {
@@ -181,7 +181,7 @@ const stepsData: ActivitySteps[] = [
           ],
           question: "Which diagram best represents a neural network?",
         },
-        kind: "selectImage" as StepKind,
+        kind: "selectImage",
       },
     ],
   },
@@ -232,7 +232,7 @@ const stepsData: ActivitySteps[] = [
           question:
             "Your team discovers the training data has quality issues. What do you do?",
         },
-        kind: "multipleChoice" as StepKind,
+        kind: "multipleChoice",
       },
       {
         content: {
@@ -266,7 +266,7 @@ const stepsData: ActivitySteps[] = [
           question:
             "The model is underperforming. A team member suggests using a more complex architecture. What's your decision?",
         },
-        kind: "multipleChoice" as StepKind,
+        kind: "multipleChoice",
       },
     ],
   },
