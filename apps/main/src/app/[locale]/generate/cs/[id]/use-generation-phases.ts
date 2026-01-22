@@ -2,7 +2,7 @@
 
 import { useExtracted } from "next-intl";
 import type { PhaseStatus } from "@/lib/generation-phases";
-import type { StepName } from "@/workflows/course-generation/types";
+import type { CourseWorkflowStepName } from "@/workflows/config";
 import {
   calculateWeightedProgress,
   getPhaseStatus,
@@ -21,8 +21,8 @@ export type PhaseInfo = {
 };
 
 export function useGenerationPhases(
-  completedSteps: StepName[],
-  currentStep: StepName | null,
+  completedSteps: CourseWorkflowStepName[],
+  currentStep: CourseWorkflowStepName | null,
 ) {
   const t = useExtracted();
 

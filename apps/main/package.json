@@ -20,7 +20,7 @@
     "react-dom": "19.2.3",
     "recharts": "3.6.0",
     "server-only": "0.0.1",
-    "workflow": "4.0.1-beta.44"
+    "workflow": "4.0.1-beta.49"
   },
   "devDependencies": {
     "@mdx-js/loader": "3.1.1",

@@ -2,7 +2,6 @@ import { getWorkflowMetadata } from "workflow";
 import { addAlternativeTitlesStep } from "./steps/add-alternative-titles-step";
 import { addCategoriesStep } from "./steps/add-categories-step";
 import { addChaptersStep } from "./steps/add-chapters-step";
-import { addLessonsStep } from "./steps/add-lessons-step";
 import { checkExistingCourseStep } from "./steps/check-existing-course-step";
 import { completeCourseSetupStep } from "./steps/complete-course-setup-step";
 import { generateAlternativeTitlesStep } from "./steps/generate-alternative-titles-step";
@@ -10,13 +9,10 @@ import { generateCategoriesStep } from "./steps/generate-categories-step";
 import { generateChaptersStep } from "./steps/generate-chapters-step";
 import { generateDescriptionStep } from "./steps/generate-description-step";
 import { generateImageStep } from "./steps/generate-image-step";
-import { generateLessonsStep } from "./steps/generate-lessons-step";
 import { getCourseSuggestionStep } from "./steps/get-course-suggestion-step";
-import {
-  handleChapterFailureStep,
-  handleCourseFailureStep,
-} from "./steps/handle-failure-step";
+import { handleCourseFailureStep } from "./steps/handle-failure-step";
 import { initializeCourseStep } from "./steps/initialize-course-step";
+import { startChapterGenerationStep } from "./steps/start-chapter-generation-step";
 import { updateCourseStep } from "./steps/update-course-step";
 
 export async function courseGenerationWorkflow(
@@ -76,22 +72,7 @@ export async function courseGenerationWorkflow(
     const firstChapter = createdChapters[0];
 
     if (firstChapter) {
-      try {
-        const lessons = await generateLessonsStep({
-          chapter: firstChapter,
-          course,
-          generationRunId: workflowRunId,
-        });
-
-        await addLessonsStep({
-          chapter: firstChapter,
-          course,
-          generationRunId: workflowRunId,
-          lessons,
-        });
-      } catch {
-        await handleChapterFailureStep({ chapterId: firstChapter.id });
-      }
+      await startChapterGenerationStep(firstChapter);
     }
   } catch (error) {
     await handleCourseFailureStep({

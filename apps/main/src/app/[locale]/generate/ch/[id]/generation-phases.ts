@@ -5,11 +5,11 @@ import {
   getPhaseStatus as getStatus,
   type PhaseStatus,
 } from "@/lib/generation-phases";
-import type { StepName } from "@/workflows/chapter-generation/types";
+import type { ChapterStepName } from "@/workflows/config";
 
 export type PhaseName = "loadingInfo" | "generatingLessons" | "completing";
 
-const PHASE_STEPS: Record<PhaseName, StepName[]> = {
+const PHASE_STEPS: Record<PhaseName, ChapterStepName[]> = {
   completing: ["setChapterAsCompleted"],
   generatingLessons: ["generateLessons", "addLessons"],
   loadingInfo: ["getChapter", "setChapterAsRunning"],
@@ -35,15 +35,15 @@ const PHASE_WEIGHTS: Record<PhaseName, number> = {
 
 export function getPhaseStatus(
   phase: PhaseName,
-  completedSteps: StepName[],
-  currentStep: StepName | null,
+  completedSteps: ChapterStepName[],
+  currentStep: ChapterStepName | null,
 ): PhaseStatus {
   return getStatus(phase, completedSteps, currentStep, PHASE_STEPS);
 }
 
 export function calculateWeightedProgress(
-  completedSteps: StepName[],
-  currentStep: StepName | null,
+  completedSteps: ChapterStepName[],
+  currentStep: ChapterStepName | null,
 ): number {
   return calculateProgress(completedSteps, currentStep, {
     phaseOrder: PHASE_ORDER,
