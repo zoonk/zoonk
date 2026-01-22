@@ -2,10 +2,10 @@ import {
   type StepStatus,
   streamStatus as sharedStreamStatus,
 } from "@/workflows/_shared/stream-status";
-import type { StepName } from "./types";
+import type { ChapterStepName } from "@/workflows/config";
 
 export async function streamStatus(params: {
-  step: StepName;
+  step: ChapterStepName;
   status: StepStatus;
 }) {
   "use step";

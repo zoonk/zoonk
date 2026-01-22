@@ -1,22 +1,5 @@
 import type { GenerationStatus } from "@zoonk/db";
 
-export type StepName =
-  | "getCourseSuggestion"
-  | "checkExistingCourse"
-  | "initializeCourse"
-  | "generateDescription"
-  | "generateImage"
-  | "generateAlternativeTitles"
-  | "generateCategories"
-  | "generateChapters"
-  | "updateCourse"
-  | "addAlternativeTitles"
-  | "addCategories"
-  | "addChapters"
-  | "completeCourseSetup"
-  | "generateLessons"
-  | "addLessons";
-
 export type CourseSuggestionData = {
   id: number;
   language: string;
@@ -46,9 +29,4 @@ export type CreatedChapter = {
   title: string;
   description: string;
   position: number;
-};
-
-export type GeneratedLesson = {
-  title: string;
-  description: string;
 };

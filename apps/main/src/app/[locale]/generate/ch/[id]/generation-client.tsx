@@ -15,7 +15,7 @@ import {
 } from "@/components/generation/generation-progress";
 import { useCompletionRedirect } from "@/lib/workflow/use-completion-redirect";
 import { useWorkflowGeneration } from "@/lib/workflow/use-workflow-generation";
-import type { StepName } from "@/workflows/chapter-generation/types";
+import type { ChapterStepName } from "@/workflows/config";
 import { useGenerationPhases } from "./use-generation-phases";
 
 export function GenerationClient({
@@ -33,7 +33,7 @@ export function GenerationClient({
 }) {
   const t = useExtracted();
 
-  const generation = useWorkflowGeneration<StepName>({
+  const generation = useWorkflowGeneration<ChapterStepName>({
     completionStep: "setChapterAsCompleted",
     initialRunId: generationRunId,
     initialStatus: generationStatus === "running" ? "streaming" : "idle",

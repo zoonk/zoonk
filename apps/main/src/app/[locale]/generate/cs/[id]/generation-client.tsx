@@ -15,7 +15,10 @@ import {
 } from "@/components/generation/generation-progress";
 import { useCompletionRedirect } from "@/lib/workflow/use-completion-redirect";
 import { useWorkflowGeneration } from "@/lib/workflow/use-workflow-generation";
-import type { StepName } from "@/workflows/course-generation/types";
+import {
+  CHAPTER_COMPLETION_STEP,
+  type CourseWorkflowStepName,
+} from "@/workflows/config";
 import { useGenerationPhases } from "./use-generation-phases";
 
 export function GenerationClient({
@@ -33,8 +36,8 @@ export function GenerationClient({
 }) {
   const t = useExtracted();
 
-  const generation = useWorkflowGeneration<StepName>({
-    completionStep: "addLessons",
+  const generation = useWorkflowGeneration<CourseWorkflowStepName>({
+    completionStep: CHAPTER_COMPLETION_STEP,
     initialRunId: generationRunId,
     initialStatus: generationStatus === "running" ? "streaming" : "idle",
     statusUrl: "/api/workflows/course-generation/status",

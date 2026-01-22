@@ -13,7 +13,7 @@ import {
   getPhaseStatus as getStatus,
   type PhaseStatus,
 } from "@/lib/generation-phases";
-import type { StepName } from "@/workflows/course-generation/types";
+import { CHAPTER_STEPS, type CourseWorkflowStepName } from "@/workflows/config";
 
 export type PhaseName =
   | "loadingInfo"
@@ -24,7 +24,7 @@ export type PhaseName =
   | "planningChapters"
   | "generatingLessons";
 
-const PHASE_STEPS: Record<PhaseName, StepName[]> = {
+const PHASE_STEPS: Record<PhaseName, CourseWorkflowStepName[]> = {
   checkingExisting: ["checkExistingCourse"],
   generatingDetails: [
     "generateDescription",
@@ -32,7 +32,7 @@ const PHASE_STEPS: Record<PhaseName, StepName[]> = {
     "generateAlternativeTitles",
     "generateCategories",
   ],
-  generatingLessons: ["generateLessons", "addLessons"],
+  generatingLessons: [...CHAPTER_STEPS],
   loadingInfo: ["getCourseSuggestion"],
   planningChapters: ["generateChapters", "addChapters", "completeCourseSetup"],
   savingMetadata: ["updateCourse", "addAlternativeTitles", "addCategories"],
@@ -71,15 +71,15 @@ const PHASE_WEIGHTS: Record<PhaseName, number> = {
 
 export function getPhaseStatus(
   phase: PhaseName,
-  completedSteps: StepName[],
-  currentStep: StepName | null,
+  completedSteps: CourseWorkflowStepName[],
+  currentStep: CourseWorkflowStepName | null,
 ): PhaseStatus {
   return getStatus(phase, completedSteps, currentStep, PHASE_STEPS);
 }
 
 export function calculateWeightedProgress(
-  completedSteps: StepName[],
-  currentStep: StepName | null,
+  completedSteps: CourseWorkflowStepName[],
+  currentStep: CourseWorkflowStepName | null,
 ): number {
   return calculateProgress(completedSteps, currentStep, {
     phaseOrder: PHASE_ORDER,
