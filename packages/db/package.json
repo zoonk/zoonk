@@ -1,14 +1,16 @@
 {
   "dependencies": {
-    "@prisma/adapter-pg": "7.2.0",
+    "@prisma/adapter-pg": "7.3.0",
+    "@prisma/client": "7.3.0",
     "@vercel/functions": "3.3.5",
-    "@zoonk/utils": "workspace:*"
+    "@zoonk/utils": "workspace:*",
+    "pg": "8.17.2"
   },
   "devDependencies": {
-    "@types/pg": "8.15.5",
+    "@types/pg": "8.16.0",
     "@zoonk/tsconfig": "workspace:*",
     "dotenv": "17.2.3",
-    "prisma": "7.2.0",
+    "prisma": "7.3.0",
     "tsx": "4.20.6",
     "typescript": "^5"
   },
@@ -20,8 +22,6 @@
   },
   "name": "@zoonk/db",
   "peerDependencies": {
-    "@prisma/client": ">=7.1",
-    "pg": ">=8.16",
     "server-only": ">=0.0.1"
   },
   "private": true,
