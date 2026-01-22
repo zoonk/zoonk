@@ -1,7 +1,8 @@
 {
   "$schema": "https://unpkg.com/knip@5/schema.json",
-  "ignoreBinaries": ["diff", "stripe", "build-and-start"],
+  "ignoreBinaries": ["stripe", "build-and-start"],
   "ignoreDependencies": [
+    "@prisma/client",
     "@tailwindcss/postcss",
     "@types/react",
     "@types/react-dom",
