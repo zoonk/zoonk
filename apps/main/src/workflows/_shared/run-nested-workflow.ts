@@ -17,7 +17,12 @@ export async function runNestedWorkflow<TResult>(
 
   const parentWritable = getWritable<string>();
   const nestedReadable = run.getReadable<string>();
-  nestedReadable.pipeTo(parentWritable, { preventClose: true });
+
+  nestedReadable.pipeTo(parentWritable, { preventClose: true }).catch(() => {
+    // Errors are intentionally swallowed - the nested workflow's returnValue
+    // will propagate any meaningful errors. Stream piping errors are not actionable.
+    // if we `await` here, then the workflow would hang forever.
+  });
 
   return run.returnValue;
 }

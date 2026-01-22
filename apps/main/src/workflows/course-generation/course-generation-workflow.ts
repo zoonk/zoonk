@@ -1,4 +1,4 @@
-import { getWorkflowMetadata } from "workflow";
+import { FatalError, getWorkflowMetadata } from "workflow";
 import { addAlternativeTitlesStep } from "./steps/add-alternative-titles-step";
 import { addCategoriesStep } from "./steps/add-categories-step";
 import { addChaptersStep } from "./steps/add-chapters-step";
@@ -14,6 +14,40 @@ import { handleCourseFailureStep } from "./steps/handle-failure-step";
 import { initializeCourseStep } from "./steps/initialize-course-step";
 import { startChapterGenerationStep } from "./steps/start-chapter-generation-step";
 import { updateCourseStep } from "./steps/update-course-step";
+import type { CourseContext, CreatedChapter } from "./types";
+
+async function setupCourse(
+  course: CourseContext,
+  courseSuggestionId: number,
+): Promise<CreatedChapter[]> {
+  const [
+    description,
+    imageUrl,
+    alternativeTitles,
+    categories,
+    generatedChapters,
+  ] = await Promise.all([
+    generateDescriptionStep(course),
+    generateImageStep(course),
+    generateAlternativeTitlesStep(course),
+    generateCategoriesStep(course),
+    generateChaptersStep(course),
+  ]);
+
+  const [, , , chapters] = await Promise.all([
+    updateCourseStep({ course, description, imageUrl }),
+    addAlternativeTitlesStep({ alternativeTitles, course }),
+    addCategoriesStep({ categories, course }),
+    addChaptersStep({ chapters: generatedChapters, course }),
+  ]);
+
+  await completeCourseSetupStep({
+    courseId: course.courseId,
+    courseSuggestionId,
+  });
+
+  return chapters;
+}
 
 export async function courseGenerationWorkflow(
   courseSuggestionId: number,
@@ -39,46 +73,28 @@ export async function courseGenerationWorkflow(
     workflowRunId,
   });
 
-  try {
-    const [
-      description,
-      imageUrl,
-      alternativeTitles,
-      categories,
-      generatedChapters,
-    ] = await Promise.all([
-      generateDescriptionStep(course),
-      generateImageStep(course),
-      generateAlternativeTitlesStep(course),
-      generateCategoriesStep(course),
-      generateChaptersStep(course),
-    ]);
+  const chapters = await setupCourse(course, courseSuggestionId).catch(
+    async (error) => {
+      await handleCourseFailureStep({
+        courseId: course.courseId,
+        courseSuggestionId,
+      });
 
-    const [, , , createdChapters] = await Promise.all([
-      updateCourseStep({ course, description, imageUrl }),
-      addAlternativeTitlesStep({ alternativeTitles, course }),
-      addCategoriesStep({ categories, course }),
-      addChaptersStep({
-        chapters: generatedChapters,
-        course,
-      }),
-    ]);
+      console.error(
+        `[workflow ${workflowRunId}] Course generation failed`,
+        error,
+      );
 
-    await completeCourseSetupStep({
-      courseId: course.courseId,
-      courseSuggestionId,
-    });
+      throw FatalError;
+    },
+  );
 
-    const firstChapter = createdChapters[0];
+  // Start chapter generation outside the course error handling.
+  // Chapter generation has its own error handling that marks the chapter as failed.
+  // We don't want chapter failures to mark the entire course as failed.
+  const firstChapter = chapters[0];
 
-    if (firstChapter) {
-      await startChapterGenerationStep(firstChapter);
-    }
-  } catch (error) {
-    await handleCourseFailureStep({
-      courseId: course.courseId,
-      courseSuggestionId,
-    });
-    throw error;
+  if (firstChapter) {
+    await startChapterGenerationStep(firstChapter);
   }
 }
