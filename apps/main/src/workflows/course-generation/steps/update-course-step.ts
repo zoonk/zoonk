@@ -1,6 +1,6 @@
 import { updateAICourse } from "@/data/courses/update-ai-course";
 import { streamStatus } from "../stream-status";
-import type { CourseContext } from "../types";
+import { type CourseContext } from "../types";
 
 type UpdateInput = {
   course: CourseContext;

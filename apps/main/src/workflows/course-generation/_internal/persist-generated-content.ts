@@ -2,8 +2,8 @@ import { addAlternativeTitlesStep } from "../steps/add-alternative-titles-step";
 import { addCategoriesStep } from "../steps/add-categories-step";
 import { addChaptersStep } from "../steps/add-chapters-step";
 import { updateCourseStep } from "../steps/update-course-step";
-import type { CourseContext, CreatedChapter, ExistingCourseContent } from "../types";
-import type { GeneratedContent } from "./generate-missing-content";
+import { type CourseContext, type CreatedChapter, type ExistingCourseContent } from "../types";
+import { type GeneratedContent } from "./generate-missing-content";
 
 export async function persistGeneratedContent(
   course: CourseContext,

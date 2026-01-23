@@ -1,5 +1,6 @@
 "use client";
 
+import { type CSSPropertiesWithVariables } from "@zoonk/ui/lib/css-variables";
 import {
   CircleCheckIcon,
   InfoIcon,
@@ -9,7 +10,6 @@ import {
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Toaster as Sonner, type ToasterProps } from "sonner";
-import type { CSSPropertiesWithVariables } from "@zoonk/ui/lib/css-variables";
 
 const VALID_THEMES = ["light", "dark", "system"] as const;
 type ValidTheme = (typeof VALID_THEMES)[number];

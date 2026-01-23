@@ -1,3 +1,4 @@
+import { type ContinueLearningItem } from "@/data/courses/get-continue-learning";
 import { Link } from "@/i18n/navigation";
 import { getActivityKinds } from "@/lib/activities";
 import {
@@ -22,7 +23,6 @@ import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { PlayCircleIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
 import Image from "next/image";
-import type { ContinueLearningItem } from "@/data/courses/get-continue-learning";
 
 export async function ContinueLearningList({ items }: { items: ContinueLearningItem[] }) {
   const t = await getExtracted();

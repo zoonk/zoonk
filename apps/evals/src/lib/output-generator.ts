@@ -1,7 +1,7 @@
 import { RUNS_PER_TEST_CASE } from "@/tasks";
 import { getGatewayModelId, getModelById } from "./models";
 import { loadModelOutputs, saveModelOutputs } from "./output-loader";
-import type { ModelOutputs, OutputEntry, Task, TestCase } from "./types";
+import { type ModelOutputs, type OutputEntry, type Task, type TestCase } from "./types";
 
 async function generateOutputForTestCase(
   task: Task,

@@ -1,9 +1,9 @@
 "use client";
 
+import { type EnergyPeriod } from "@/data/progress/get-energy-history";
 import { Button } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
 import { useQueryState } from "nuqs";
-import type { EnergyPeriod } from "@/data/progress/get-energy-history";
 
 export function PeriodTabs() {
   const t = useExtracted();

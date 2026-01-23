@@ -1,11 +1,11 @@
 import { calculateAverageScore } from "@/lib/leaderboard";
 import { getModelById } from "@/lib/models";
 import { getStatsFromResults } from "@/lib/stats";
+import { type TaskEvalResults } from "@/lib/types";
 import { Accordion } from "@zoonk/ui/components/accordion";
 import { ContainerTitle } from "@zoonk/ui/components/container";
 import { SummaryCard } from "./summary-card";
 import { TestCase } from "./test-case";
-import type { TaskEvalResults } from "@/lib/types";
 
 type EvalResultsProps = {
   results: TaskEvalResults;

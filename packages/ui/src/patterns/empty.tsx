@@ -5,7 +5,7 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@zoonk/ui/components/empty";
-import type { LucideProps } from "lucide-react";
+import { type LucideProps } from "lucide-react";
 
 type EmptyViewProps = {
   title: string;

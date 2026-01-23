@@ -14,8 +14,8 @@ import {
   FeatureCardTitle,
 } from "@zoonk/ui/components/feature";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
+import { type BeltColor } from "@zoonk/utils/belt-level";
 import { getExtracted, getLocale } from "next-intl/server";
-import type { BeltColor } from "@zoonk/utils/belt-level";
 
 type LevelProps = {
   bpToNextLevel: number;

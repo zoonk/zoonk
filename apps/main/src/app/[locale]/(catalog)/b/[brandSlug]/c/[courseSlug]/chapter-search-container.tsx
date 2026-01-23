@@ -1,5 +1,6 @@
 "use client";
 
+import { type ChapterWithLessons } from "@/data/chapters/list-course-chapters";
 import { Input } from "@zoonk/ui/components/input";
 import { normalizeString } from "@zoonk/utils/string";
 import { SearchIcon } from "lucide-react";
@@ -7,7 +8,6 @@ import { useExtracted } from "next-intl";
 import { useQueryState } from "nuqs";
 import { useMemo, useState } from "react";
 import { ChapterList } from "./chapter-list";
-import type { ChapterWithLessons } from "@/data/chapters/list-course-chapters";
 
 function filterChapters(chapters: ChapterWithLessons[], query: string) {
   const filtered: ChapterWithLessons[] = [];

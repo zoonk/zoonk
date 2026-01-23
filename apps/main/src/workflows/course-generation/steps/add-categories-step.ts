@@ -1,6 +1,6 @@
 import { addCourseCategories } from "@/data/courses/add-course-categories";
 import { streamStatus } from "../stream-status";
-import type { CourseContext } from "../types";
+import { type CourseContext } from "../types";
 
 type AddInput = {
   course: CourseContext;

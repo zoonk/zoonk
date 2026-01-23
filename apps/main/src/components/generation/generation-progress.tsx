@@ -5,7 +5,7 @@ import { Button } from "@zoonk/ui/components/button";
 import { Progress, ProgressLabel, ProgressValue } from "@zoonk/ui/components/progress";
 import { cn } from "@zoonk/ui/lib/utils";
 import { AlertCircleIcon, CheckIcon, type LucideIcon } from "lucide-react";
-import type { ReactNode } from "react";
+import { type ReactNode } from "react";
 
 type PhaseStatus = "pending" | "active" | "completed";
 

@@ -1,5 +1,6 @@
 "use client";
 
+import { type ChapterWithLessons } from "@/data/chapters/list-course-chapters";
 import { ClientLink } from "@/i18n/client-link";
 import { Link } from "@/i18n/navigation";
 import {
@@ -11,7 +12,6 @@ import {
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { SparklesIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import type { ChapterWithLessons } from "@/data/chapters/list-course-chapters";
 
 export function ChapterList({
   brandSlug,

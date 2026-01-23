@@ -1,8 +1,8 @@
-import type {
-  ActivityKind,
-  GenerationStatus,
-  Organization,
-  PrismaClient,
+import {
+  type ActivityKind,
+  type GenerationStatus,
+  type Organization,
+  type PrismaClient,
 } from "../../generated/prisma/client";
 
 type ActivitySeedData = {

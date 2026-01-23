@@ -1,4 +1,5 @@
 import { AIWarning } from "@/components/catalog/ai-warning";
+import { type LessonWithDetails } from "@/data/lessons/get-lesson";
 import { Link } from "@/i18n/navigation";
 import {
   MediaCard,
@@ -15,7 +16,6 @@ import {
   MediaCardTrigger,
 } from "@zoonk/ui/components/media-card";
 import { getExtracted } from "next-intl/server";
-import type { LessonWithDetails } from "@/data/lessons/get-lesson";
 
 export async function LessonHeader({
   brandSlug,

@@ -1,8 +1,8 @@
+import { type Metadata } from "next";
 import { getExtracted, setRequestLocale } from "next-intl/server";
 import { Suspense } from "react";
 import { CourseSuggestions } from "./course-suggestions";
 import { CourseSuggestionsFallback } from "./course-suggestions-fallback";
-import type { Metadata } from "next";
 
 export async function generateMetadata({
   params,

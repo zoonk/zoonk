@@ -1,6 +1,6 @@
 import { addAlternativeTitles } from "@zoonk/core/alternative-titles/add";
 import { streamStatus } from "../stream-status";
-import type { CourseContext } from "../types";
+import { type CourseContext } from "../types";
 
 type AddInput = {
   course: CourseContext;

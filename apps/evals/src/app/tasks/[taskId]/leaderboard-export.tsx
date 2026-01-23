@@ -1,5 +1,6 @@
 "use client";
 
+import { type LeaderboardEntry } from "@/lib/leaderboard";
 import { Button } from "@zoonk/ui/components/button";
 import {
   DropdownMenu,
@@ -8,7 +9,6 @@ import {
   DropdownMenuTrigger,
 } from "@zoonk/ui/components/dropdown-menu";
 import { Download } from "lucide-react";
-import type { LeaderboardEntry } from "@/lib/leaderboard";
 
 type LeaderboardExportProps = {
   taskId: string;

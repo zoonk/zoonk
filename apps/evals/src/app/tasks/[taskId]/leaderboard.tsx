@@ -8,6 +8,7 @@ import {
   getLeaderboardEntries,
   sortLeaderboardEntries,
 } from "@/lib/leaderboard";
+import { type TaskEvalResults } from "@/lib/types";
 import {
   Table,
   TableBody,
@@ -19,7 +20,6 @@ import {
 import Link from "next/link";
 import { useState } from "react";
 import { LeaderboardExport } from "./leaderboard-export";
-import type { TaskEvalResults } from "@/lib/types";
 
 type LeaderboardProps = {
   taskId: string;

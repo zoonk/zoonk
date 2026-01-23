@@ -1,7 +1,7 @@
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { ChevronLeft } from "lucide-react";
+import { type Route } from "next";
 import Link from "next/link";
-import type { Route } from "next";
 
 export function BackLink<T extends string>({
   href,

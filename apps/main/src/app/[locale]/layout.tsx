@@ -1,10 +1,10 @@
 import { routing } from "@/i18n/routing";
 import { Analytics } from "@vercel/analytics/next";
+import { type Metadata } from "next";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
-import type { Metadata } from "next";
 import "@zoonk/ui/globals.css";
 
 export const metadata: Metadata = {

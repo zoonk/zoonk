@@ -1,5 +1,5 @@
+import { type Organization, type PrismaClient } from "../../generated/prisma/client";
 import { coursesData } from "./courses";
-import type { Organization, PrismaClient } from "../../generated/prisma/client";
 
 type CourseCategoryData = {
   courseSlug: string;

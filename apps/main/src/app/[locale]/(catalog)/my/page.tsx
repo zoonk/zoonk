@@ -5,10 +5,10 @@ import {
   ContainerHeaderGroup,
   ContainerTitle,
 } from "@zoonk/ui/components/container";
+import { type Metadata } from "next";
 import { getExtracted, setRequestLocale } from "next-intl/server";
 import { Suspense } from "react";
 import { UserCourseList, UserCourseListSkeleton } from "./user-course-list";
-import type { Metadata } from "next";
 
 export async function generateMetadata({ params }: PageProps<"/[locale]/my">): Promise<Metadata> {
   const { locale } = await params;

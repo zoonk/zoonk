@@ -1,5 +1,5 @@
+import { type BeltColor } from "@zoonk/utils/belt-level";
 import { getExtracted } from "next-intl/server";
-import type { BeltColor } from "@zoonk/utils/belt-level";
 
 export type BeltColorInfo = {
   bgClass: string;

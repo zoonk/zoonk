@@ -1,5 +1,5 @@
 import { toSlug } from "@zoonk/utils/string";
-import type { Organization, PrismaClient } from "../../generated/prisma/client";
+import { type Organization, type PrismaClient } from "../../generated/prisma/client";
 
 const alternativeTitlesData = [
   // English - Machine Learning

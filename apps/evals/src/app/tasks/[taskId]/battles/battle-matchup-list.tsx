@@ -1,6 +1,7 @@
 "use client";
 
 import { getModelById, getModelDisplayName } from "@/lib/models";
+import { type BattleMatchup } from "@/lib/types";
 import {
   Accordion,
   AccordionContent,
@@ -8,7 +9,6 @@ import {
   AccordionTrigger,
 } from "@zoonk/ui/components/accordion";
 import { Badge } from "@zoonk/ui/components/badge";
-import type { BattleMatchup } from "@/lib/types";
 
 type BattleMatchupListProps = {
   matchups: BattleMatchup[];

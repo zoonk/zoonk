@@ -1,3 +1,4 @@
+import { type HistoryPeriod } from "@/data/progress/_utils";
 import { getBestDay } from "@/data/progress/get-best-day";
 import { getBestTime } from "@/data/progress/get-best-time";
 import {
@@ -14,7 +15,6 @@ import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { EPOCH_YEAR, FIRST_SUNDAY_OFFSET } from "@zoonk/utils/constants";
 import { CalendarDays, Clock } from "lucide-react";
 import { getExtracted, getLocale } from "next-intl/server";
-import type { HistoryPeriod } from "@/data/progress/_utils";
 
 async function getPeriodLabel(period: HistoryPeriod): Promise<string> {
   const t = await getExtracted();

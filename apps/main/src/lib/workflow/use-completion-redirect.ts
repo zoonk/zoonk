@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useEffectEvent } from "react";
-import type { GenerationStatus } from "./generation-store";
+import { type GenerationStatus } from "./generation-store";
 
 const DEFAULT_REDIRECT_DELAY_MS = 1500;
 

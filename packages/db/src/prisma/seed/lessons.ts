@@ -1,9 +1,9 @@
 import { normalizeString } from "@zoonk/utils/string";
-import type {
-  GenerationStatus,
-  LessonKind,
-  Organization,
-  PrismaClient,
+import {
+  type GenerationStatus,
+  type LessonKind,
+  type Organization,
+  type PrismaClient,
 } from "../../generated/prisma/client";
 
 type LessonSeedData = {

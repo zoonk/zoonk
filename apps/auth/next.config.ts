@@ -1,6 +1,6 @@
 import path from "node:path";
+import { type NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
-import type { NextConfig } from "next";
 
 const isE2E = process.env.E2E_TESTING === "true";
 

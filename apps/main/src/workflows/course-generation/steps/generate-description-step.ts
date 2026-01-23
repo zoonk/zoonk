@@ -1,6 +1,6 @@
 import { generateCourseDescription } from "@zoonk/ai/tasks/courses/description";
 import { streamStatus } from "../stream-status";
-import type { CourseContext } from "../types";
+import { type CourseContext } from "../types";
 
 export async function generateDescriptionStep(course: CourseContext): Promise<string> {
   "use step";

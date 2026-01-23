@@ -13,10 +13,10 @@ import {
 import { useCompletionRedirect } from "@/lib/workflow/use-completion-redirect";
 import { useWorkflowGeneration } from "@/lib/workflow/use-workflow-generation";
 import { CHAPTER_COMPLETION_STEP, type CourseWorkflowStepName } from "@/workflows/config";
+import { type GenerationStatus } from "@zoonk/db";
 import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import { useExtracted } from "next-intl";
 import { useGenerationPhases } from "./use-generation-phases";
-import type { GenerationStatus } from "@zoonk/db";
 
 export function GenerationClient({
   courseSlug,

@@ -1,9 +1,9 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
+import { type Route } from "@zoonk/e2e/fixtures";
 import { courseSuggestionFixture } from "@zoonk/testing/fixtures/course-suggestions";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { expect, test } from "./fixtures";
-import type { Route } from "@zoonk/e2e/fixtures";
 
 const TEST_RUN_ID = "test-run-id-course-detail";
 

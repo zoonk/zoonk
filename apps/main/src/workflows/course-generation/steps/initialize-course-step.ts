@@ -2,7 +2,7 @@ import { createAICourse } from "@/data/courses/create-ai-course";
 import { updateCourseSuggestionStatus } from "@/data/courses/update-course-suggestion-status";
 import { getAIOrganization } from "@/data/orgs/get-ai-organization";
 import { streamStatus } from "../stream-status";
-import type { CourseContext, CourseSuggestionData } from "../types";
+import { type CourseContext, type CourseSuggestionData } from "../types";
 
 type InitializeInput = {
   suggestion: CourseSuggestionData;

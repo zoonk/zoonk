@@ -3,8 +3,8 @@ import { useRender } from "@base-ui/react/use-render";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type VariantProps, cva } from "class-variance-authority";
+import { type LucideIcon } from "lucide-react";
 import { Skeleton } from "./skeleton";
-import type { LucideIcon } from "lucide-react";
 
 const containerVariants = cva("flex w-full flex-col gap-4 antialiased", {
   defaultVariants: {

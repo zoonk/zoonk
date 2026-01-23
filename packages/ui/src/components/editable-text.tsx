@@ -1,6 +1,6 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { type VariantProps, cva } from "class-variance-authority";
-import type { LucideIcon } from "lucide-react";
+import { type LucideIcon } from "lucide-react";
 
 export type EditableLabelProps = React.ComponentProps<"label"> & {
   icon?: LucideIcon;

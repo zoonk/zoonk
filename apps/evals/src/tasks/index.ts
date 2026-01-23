@@ -1,3 +1,4 @@
+import { type Task } from "@/lib/types";
 import { activityBackgroundTask } from "./activity-background/task";
 import { activityChallengeTask } from "./activity-challenge/task";
 import { activityCustomTask } from "./activity-custom/task";
@@ -21,7 +22,6 @@ import { courseSuggestionsTask } from "./course-suggestions/task";
 import { lessonActivitiesTask } from "./lesson-activities/task";
 import { lessonKindTask } from "./lesson-kind/task";
 import { stepVisualTask } from "./step-visual/task";
-import type { Task } from "@/lib/types";
 
 export const TASKS: readonly Task[] = [
   activityBackgroundTask,

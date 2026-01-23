@@ -2,12 +2,12 @@ import { DeleteItemButton } from "@/components/navbar/delete-item-button";
 import { PublishToggle } from "@/components/navbar/publish-toggle";
 import { getChapter } from "@/data/chapters/get-chapter";
 import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
+import { type Route } from "next";
 import { getExtracted } from "next-intl/server";
 import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import { deleteChapterAction, togglePublishAction } from "./actions";
 import { ChapterActionsContainer } from "./chapter-actions-container";
-import type { Route } from "next";
 
 type ChapterNavbarActionsPageProps = PageProps<"/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]">;
 

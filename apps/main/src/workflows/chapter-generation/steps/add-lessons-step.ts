@@ -1,7 +1,7 @@
 import { createLessons } from "@/data/lessons/create-lessons";
 import { streamStatus } from "../stream-status";
-import type { GeneratedLesson } from "./generate-lessons-step";
-import type { ChapterContext } from "./get-chapter-step";
+import { type GeneratedLesson } from "./generate-lessons-step";
+import { type ChapterContext } from "./get-chapter-step";
 
 type AddInput = {
   context: ChapterContext;

@@ -1,6 +1,6 @@
+import { type CourseCategory } from "@zoonk/utils/categories";
 import { getExtracted } from "next-intl/server";
 import { CATEGORY_ICONS, type CategoryInfo } from "./category-icons";
-import type { CourseCategory } from "@zoonk/utils/categories";
 
 export type { CategoryInfo } from "./category-icons";
 

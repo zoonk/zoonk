@@ -1,4 +1,5 @@
 import { tool } from "ai";
+import { type z } from "zod";
 import { chartInputSchema } from "./chart";
 import chartPrompt from "./chart.prompt.md";
 import { codeInputSchema } from "./code";
@@ -13,7 +14,6 @@ import { tableInputSchema } from "./table";
 import tablePrompt from "./table.prompt.md";
 import { timelineInputSchema } from "./timeline";
 import timelinePrompt from "./timeline.prompt.md";
-import type { z } from "zod";
 
 export const visualTools = {
   chart: tool({

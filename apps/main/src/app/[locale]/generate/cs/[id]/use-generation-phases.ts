@@ -1,5 +1,7 @@
 "use client";
 
+import { type PhaseStatus } from "@/lib/generation-phases";
+import { type CourseWorkflowStepName } from "@/workflows/config";
 import { useExtracted } from "next-intl";
 import {
   PHASE_ICONS,
@@ -8,8 +10,6 @@ import {
   calculateWeightedProgress,
   getPhaseStatus,
 } from "./generation-phases";
-import type { PhaseStatus } from "@/lib/generation-phases";
-import type { CourseWorkflowStepName } from "@/workflows/config";
 
 type PhaseLabels = Record<PhaseName, string>;
 

@@ -1,9 +1,9 @@
-import type {
-  Organization,
-  Prisma,
-  PrismaClient,
-  StepKind,
-  StepVisualKind,
+import {
+  type Organization,
+  type Prisma,
+  type PrismaClient,
+  type StepKind,
+  type StepVisualKind,
 } from "../../generated/prisma/client";
 
 type StepSeedData = {

@@ -1,5 +1,9 @@
 import { normalizeString } from "@zoonk/utils/string";
-import type { GenerationStatus, Organization, PrismaClient } from "../../generated/prisma/client";
+import {
+  type GenerationStatus,
+  type Organization,
+  type PrismaClient,
+} from "../../generated/prisma/client";
 
 type ChapterSeedData = {
   description: string;

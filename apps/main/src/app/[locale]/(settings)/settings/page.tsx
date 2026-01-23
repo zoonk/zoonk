@@ -7,9 +7,9 @@ import {
   ContainerHeaderGroup,
   ContainerTitle,
 } from "@zoonk/ui/components/container";
+import { type Metadata } from "next";
 import { getExtracted, setRequestLocale } from "next-intl/server";
 import { SettingsList } from "./settings-list";
-import type { Metadata } from "next";
 
 export async function generateMetadata({
   params,

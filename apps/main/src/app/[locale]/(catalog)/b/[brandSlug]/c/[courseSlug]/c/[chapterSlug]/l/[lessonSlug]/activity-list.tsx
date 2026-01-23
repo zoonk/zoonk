@@ -1,7 +1,7 @@
+import { type ActivityForList } from "@/data/activities/list-lesson-activities";
 import { Link } from "@/i18n/navigation";
+import { type ActivityKindInfo } from "@/lib/activities";
 import { ActivityIndicator } from "./activity-indicator";
-import type { ActivityForList } from "@/data/activities/list-lesson-activities";
-import type { ActivityKindInfo } from "@/lib/activities";
 
 export function ActivityList({
   activities,

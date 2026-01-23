@@ -1,5 +1,5 @@
-import type { PrismaClient } from "../../generated/prisma/client";
-import type { SeedUsers } from "./users";
+import { type PrismaClient } from "../../generated/prisma/client";
+import { type SeedUsers } from "./users";
 
 const TEST_PASSWORD = "password123";
 

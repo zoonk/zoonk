@@ -3,7 +3,7 @@ import path from "node:path";
 import { cache } from "react";
 import { type ModelConfig, getModelById, getModelDisplayName } from "./models";
 import { getAllOutputsForTask } from "./output-loader";
-import type { BattleLeaderboardEntry, BattleMatchup, ModelOutputs } from "./types";
+import { type BattleLeaderboardEntry, type BattleMatchup, type ModelOutputs } from "./types";
 
 const EVAL_RESULTS_DIR = path.join(process.cwd(), "eval-results");
 const BATTLES_DIR = path.join(EVAL_RESULTS_DIR, "battles");

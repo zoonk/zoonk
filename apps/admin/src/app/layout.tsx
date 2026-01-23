@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import { type Metadata } from "next";
 import "@zoonk/ui/globals.css";
 
 export const metadata: Metadata = {

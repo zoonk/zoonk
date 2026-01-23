@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
+import { type Page, type Route } from "@zoonk/e2e/fixtures";
 import { expect, test } from "./fixtures";
-import type { Page, Route } from "@zoonk/e2e/fixtures";
 
 /**
  * Test Architecture for Chapter Generation Page

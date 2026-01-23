@@ -2,7 +2,7 @@ import { updateChapterGenerationStatus } from "@/data/chapters/update-chapter-ge
 import { cacheTagCourse } from "@zoonk/utils/cache";
 import { revalidateTag } from "next/cache";
 import { streamStatus } from "../stream-status";
-import type { ChapterContext } from "./get-chapter-step";
+import { type ChapterContext } from "./get-chapter-step";
 
 type SetCompletedInput = {
   context: ChapterContext;

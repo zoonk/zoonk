@@ -1,7 +1,7 @@
 import { getModelById, getModelDisplayName } from "@/lib/models";
 import { calculateScore } from "@/lib/score";
 import { getStatsFromResults } from "@/lib/stats";
-import type { TaskEvalResults } from "@/lib/types";
+import { type TaskEvalResults } from "@/lib/types";
 
 function roundScoreToFixed(score: number): number {
   return Number(score.toFixed(2));

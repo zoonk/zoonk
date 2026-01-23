@@ -2,7 +2,7 @@ import { getTotalTestCases } from "@/tasks";
 import { getTaskResults } from "./eval-runner";
 import { EVAL_MODELS } from "./models";
 import { getOutputStatus } from "./output-loader";
-import type { TaskEvalResults } from "./types";
+import { type TaskEvalResults } from "./types";
 
 export type ModelStatus = "completed" | "outputsReady" | "incomplete" | "notStarted";
 

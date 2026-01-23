@@ -9,7 +9,7 @@ import { toSlug } from "@zoonk/utils/string";
 import { getExtracted } from "next-intl/server";
 import { redirect } from "next/navigation";
 import { after } from "next/server";
-import type { CourseFormData } from "./use-course-form";
+import { type CourseFormData } from "./use-course-form";
 
 export async function checkSlugExists({
   language,

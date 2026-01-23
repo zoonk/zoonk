@@ -1,5 +1,6 @@
 "use client";
 
+import { type BattleLeaderboardEntry } from "@/lib/types";
 import {
   Table,
   TableBody,
@@ -10,7 +11,6 @@ import {
 } from "@zoonk/ui/components/table";
 import Link from "next/link";
 import { useState } from "react";
-import type { BattleLeaderboardEntry } from "@/lib/types";
 
 type SortKey =
   | "modelName"

@@ -1,9 +1,9 @@
 import "server-only";
 import { generateLanguageAudio as generateAudio } from "@zoonk/ai/tasks/audio";
+import { type TTSVoice } from "@zoonk/utils/constants";
+import { type SafeReturn } from "@zoonk/utils/error";
 import { toSlug } from "@zoonk/utils/string";
 import { uploadAudio } from "./upload-audio";
-import type { TTSVoice } from "@zoonk/utils/constants";
-import type { SafeReturn } from "@zoonk/utils/error";
 
 export type GenerateLanguageAudioParams = {
   language?: string;

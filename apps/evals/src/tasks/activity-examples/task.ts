@@ -1,10 +1,10 @@
+import { type Task } from "@/lib/types";
 import {
   type ActivityExamplesParams,
   type ActivityExamplesSchema,
   generateActivityExamples,
 } from "@zoonk/ai/tasks/activities/core/examples";
 import { TEST_CASES } from "./test-cases";
-import type { Task } from "@/lib/types";
 
 export const activityExamplesTask: Task<ActivityExamplesParams, ActivityExamplesSchema> = {
   description: "Generate an examples activity showing where a topic appears in real-world contexts",

@@ -1,4 +1,5 @@
 import { AIWarning } from "@/components/catalog/ai-warning";
+import { type CourseWithDetails } from "@/data/courses/get-course";
 import { Link } from "@/i18n/navigation";
 import { getCategories } from "@/lib/categories/category-server";
 import { Badge } from "@zoonk/ui/components/badge";
@@ -21,7 +22,6 @@ import {
 import { NotebookPenIcon } from "lucide-react";
 import { getLocale } from "next-intl/server";
 import Image from "next/image";
-import type { CourseWithDetails } from "@/data/courses/get-course";
 
 export async function CourseHeader({
   brandSlug,

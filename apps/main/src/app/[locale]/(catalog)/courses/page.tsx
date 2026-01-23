@@ -9,10 +9,10 @@ import {
   ContainerTitle,
 } from "@zoonk/ui/components/container";
 import { cacheTagCoursesList } from "@zoonk/utils/cache";
+import { type Metadata } from "next";
 import { getExtracted, setRequestLocale } from "next-intl/server";
 import { cacheTag } from "next/cache";
 import { CourseListClient } from "./course-list-client";
-import type { Metadata } from "next";
 
 export async function generateMetadata({
   params,

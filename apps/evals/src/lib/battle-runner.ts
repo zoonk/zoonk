@@ -7,7 +7,7 @@ import {
   getModelsWithCompleteOutputs,
   getOutputForTestCase,
 } from "./output-loader";
-import type { BattleMatchup, ModelOutputs, Task, TestCase } from "./types";
+import { type BattleMatchup, type ModelOutputs, type Task, type TestCase } from "./types";
 
 const EVAL_RESULTS_DIR = path.join(process.cwd(), "eval-results");
 const BATTLES_DIR = path.join(EVAL_RESULTS_DIR, "battles");

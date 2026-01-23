@@ -1,7 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { cache } from "react";
-import type { ModelOutputs, OutputEntry } from "./types";
+import { type ModelOutputs, type OutputEntry } from "./types";
 
 const EVAL_RESULTS_DIR = path.join(process.cwd(), "eval-results");
 const OUTPUTS_DIR = path.join(EVAL_RESULTS_DIR, "outputs");

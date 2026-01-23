@@ -1,5 +1,5 @@
+import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
-import type { Metadata } from "next";
 
 export async function generateMetadata({
   params,

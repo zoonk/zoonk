@@ -1,7 +1,7 @@
+import { type Subscription } from "@better-auth/stripe";
 import { useEffect, useState } from "react";
 import { authClient } from "../client";
 import { findActiveSubscription } from "../subscription";
-import type { Subscription } from "@better-auth/stripe";
 
 async function getActiveSubscription() {
   const { data: subscriptions } = await authClient.subscription.list();

@@ -3,13 +3,13 @@ import path from "node:path";
 import { cache } from "react";
 import { loadModelOutputs } from "./output-loader";
 import { generateScore } from "./score";
-import type {
-  OutputEntry,
-  ScoredResult,
-  ScoredTaskResults,
-  Task,
-  TaskEvalResults,
-  TestCase,
+import {
+  type OutputEntry,
+  type ScoredResult,
+  type ScoredTaskResults,
+  type Task,
+  type TaskEvalResults,
+  type TestCase,
 } from "./types";
 
 const EVAL_RESULTS_DIR = path.join(process.cwd(), "eval-results");

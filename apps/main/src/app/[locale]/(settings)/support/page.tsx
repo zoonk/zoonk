@@ -1,8 +1,8 @@
 "use cache";
 
+import { type Metadata } from "next";
 import { getExtracted, setRequestLocale } from "next-intl/server";
 import { SupportContent } from "./support-content";
-import type { Metadata } from "next";
 
 export async function generateMetadata({
   params,

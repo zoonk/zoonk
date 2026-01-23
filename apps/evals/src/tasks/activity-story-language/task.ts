@@ -1,10 +1,10 @@
+import { type Task } from "@/lib/types";
 import {
   type ActivityStoryLanguageParams,
   type ActivityStoryLanguageSchema,
   generateActivityStoryLanguage,
 } from "@zoonk/ai/tasks/activities/language/story";
 import { TEST_CASES } from "./test-cases";
-import type { Task } from "@/lib/types";
 
 export const activityStoryLanguageTask: Task<
   ActivityStoryLanguageParams,

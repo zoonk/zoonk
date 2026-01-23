@@ -1,11 +1,11 @@
 "use client";
 
 import { calculateScore, getScoreClassName } from "@/lib/score";
+import { type EvalResult, type ScoreStep } from "@/lib/types";
 import { AccordionContent, AccordionItem, AccordionTrigger } from "@zoonk/ui/components/accordion";
 import { Button } from "@zoonk/ui/components/button";
 import { useClipboard } from "@zoonk/ui/hooks/clipboard";
 import { Check, Copy } from "lucide-react";
-import type { EvalResult, ScoreStep } from "@/lib/types";
 
 type TestCaseCardProps = {
   result: EvalResult;

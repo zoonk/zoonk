@@ -1,7 +1,7 @@
 import { getCourseSuggestionById } from "@/data/courses/course-suggestions";
 import { FatalError } from "workflow";
 import { streamStatus } from "../stream-status";
-import type { CourseSuggestionData } from "../types";
+import { type CourseSuggestionData } from "../types";
 
 export async function getCourseSuggestionStep(
   courseSuggestionId: number,

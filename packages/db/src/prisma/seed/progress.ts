@@ -1,5 +1,5 @@
-import type { Organization, PrismaClient, Step } from "../../generated/prisma/client";
-import type { SeedUsers } from "./users";
+import { type Organization, type PrismaClient, type Step } from "../../generated/prisma/client";
+import { type SeedUsers } from "./users";
 
 type E2eAttemptData = {
   answer: { selectedOption: number };
