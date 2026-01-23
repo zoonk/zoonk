@@ -11,6 +11,10 @@ import {
 } from "@zoonk/ui/components/empty";
 import { AlertCircleIcon, RefreshCwIcon } from "lucide-react";
 
+function handleRetry() {
+  window.location.reload();
+}
+
 export function ErrorView({
   title,
   description,
@@ -24,10 +28,6 @@ export function ErrorView({
   supportLabel: string;
   supportHref: string;
 }) {
-  function handleRetry() {
-    window.location.reload();
-  }
-
   return (
     <Empty className="border-none py-8">
       <EmptyHeader>

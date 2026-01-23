@@ -19,6 +19,11 @@
     "jsx-a11y/no-autofocus": "off",
     "oxc/no-map-spread": "off",
     "react/react-in-jsx-scope": "off",
+    "import/no-unassigned-import": "off",
+    "import/no-named-as-default": "off",
+    "typescript/no-unsafe-type-assertion": "off",
+    "typescript/no-confusing-void-expression": "off",
+    "unicorn/prefer-modern-math-apis": "off"
   },
   "ignorePatterns": [
     "node_modules",

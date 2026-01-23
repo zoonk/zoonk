@@ -108,6 +108,18 @@ function ImportProvider({
 
 const BYTES_PER_KB = 1024;
 
+function isJsonFile(f: File): boolean {
+  return f.type === "application/json" || f.name.endsWith(".json");
+}
+
+function handleDragOver(e: React.DragEvent<HTMLLabelElement>) {
+  e.preventDefault();
+}
+
+function formatFileSize(bytes: number): string {
+  return (bytes / BYTES_PER_KB).toFixed(1);
+}
+
 function ImportDropzone({
   children,
   className,
@@ -118,10 +130,6 @@ function ImportDropzone({
 }) {
   const { file, setFile } = useImport();
   const inputRef = useRef<HTMLInputElement>(null);
-
-  function isJsonFile(f: File): boolean {
-    return f.type === "application/json" || f.name.endsWith(".json");
-  }
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const selectedFile = e.target.files?.[0];
@@ -136,14 +144,6 @@ function ImportDropzone({
     if (droppedFile && isJsonFile(droppedFile)) {
       setFile(droppedFile);
     }
-  }
-
-  function handleDragOver(e: React.DragEvent<HTMLLabelElement>) {
-    e.preventDefault();
-  }
-
-  function formatFileSize(bytes: number): string {
-    return (bytes / BYTES_PER_KB).toFixed(1);
   }
 
   return (

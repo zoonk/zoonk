@@ -34,7 +34,9 @@ export const getBattleMatchups = cache(
         }),
       );
 
-      return matchups.toSorted((a, b) => a.testCaseId.localeCompare(b.testCaseId));
+      return matchups.toSorted((a, b) =>
+        a.testCaseId.localeCompare(b.testCaseId),
+      );
     } catch {
       return [];
     }
