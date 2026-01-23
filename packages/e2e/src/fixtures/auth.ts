@@ -1,10 +1,10 @@
 import {
   type Browser,
-  test as baseTest,
   type Fixtures,
   type Page,
   type PlaywrightTestArgs,
   type PlaywrightWorkerArgs,
+  test as baseTest,
 } from "@playwright/test";
 
 export type { Page, Route } from "@playwright/test";

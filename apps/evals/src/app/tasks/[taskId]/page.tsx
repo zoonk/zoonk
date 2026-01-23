@@ -4,7 +4,7 @@ import { getBattleLeaderboard } from "@/lib/battle-loader";
 import { getModelDisplayName } from "@/lib/models";
 import { getModelsWithCompleteOutputs } from "@/lib/output-loader";
 import { getModelsWithResults, getSortedModels } from "@/lib/utils";
-import { getTaskById, RUNS_PER_TEST_CASE } from "@/tasks";
+import { RUNS_PER_TEST_CASE, getTaskById } from "@/tasks";
 import { BreadcrumbSeparator } from "@zoonk/ui/components/breadcrumb";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import {

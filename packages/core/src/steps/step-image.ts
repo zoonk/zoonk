@@ -1,6 +1,6 @@
 import {
-  generateSelectImageStep,
   type SelectImageStepParams,
+  generateSelectImageStep,
 } from "@zoonk/ai/tasks/steps/select-image";
 import { AI_ORG_SLUG, SLUG_MAX_LENGTH } from "@zoonk/utils/constants";
 import { toSlug } from "@zoonk/utils/string";

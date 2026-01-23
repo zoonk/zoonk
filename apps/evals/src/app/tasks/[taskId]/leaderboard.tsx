@@ -1,11 +1,11 @@
 "use client";
 
 import {
-  getDefaultSortDirection,
-  getLeaderboardEntries,
   type LeaderboardEntry,
   type SortDirection,
   type SortKey,
+  getDefaultSortDirection,
+  getLeaderboardEntries,
   sortLeaderboardEntries,
 } from "@/lib/leaderboard";
 import {

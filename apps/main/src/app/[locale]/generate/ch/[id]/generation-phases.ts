@@ -1,7 +1,7 @@
 import {
+  type PhaseStatus,
   calculateWeightedProgress as calculateProgress,
   getPhaseStatus as getStatus,
-  type PhaseStatus,
 } from "@/lib/generation-phases";
 import { BookOpenIcon, CheckCircleIcon, GraduationCapIcon, type LucideIcon } from "lucide-react";
 import type { ChapterStepName } from "@/workflows/config";

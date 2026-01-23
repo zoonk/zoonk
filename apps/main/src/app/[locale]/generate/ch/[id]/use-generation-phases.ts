@@ -2,11 +2,11 @@
 
 import { useExtracted } from "next-intl";
 import {
-  calculateWeightedProgress,
-  getPhaseStatus,
   PHASE_ICONS,
   PHASE_ORDER,
   type PhaseName,
+  calculateWeightedProgress,
+  getPhaseStatus,
 } from "./generation-phases";
 import type { PhaseStatus } from "@/lib/generation-phases";
 import type { ChapterStepName } from "@/workflows/config";

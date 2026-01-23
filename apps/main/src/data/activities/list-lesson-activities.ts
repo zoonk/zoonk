@@ -1,5 +1,5 @@
 import "server-only";
-import { prisma, type ActivityKind } from "@zoonk/db";
+import { type ActivityKind, prisma } from "@zoonk/db";
 import { cache } from "react";
 
 export type ActivityForList = {

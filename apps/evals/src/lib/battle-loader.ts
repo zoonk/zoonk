@@ -1,7 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { cache } from "react";
-import { getModelById, getModelDisplayName, type ModelConfig } from "./models";
+import { type ModelConfig, getModelById, getModelDisplayName } from "./models";
 import { getAllOutputsForTask } from "./output-loader";
 import type { BattleLeaderboardEntry, BattleMatchup, ModelOutputs } from "./types";
 

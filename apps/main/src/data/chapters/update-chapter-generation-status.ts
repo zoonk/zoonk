@@ -1,5 +1,5 @@
 import "server-only";
-import { prisma, type Chapter, type GenerationStatus } from "@zoonk/db";
+import { type Chapter, type GenerationStatus, prisma } from "@zoonk/db";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 
 type UpdateParams = {

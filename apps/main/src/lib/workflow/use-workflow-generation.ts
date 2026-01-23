@@ -3,10 +3,10 @@
 import { useSelector } from "@xstate/store/react";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import {
-  createGenerationStore,
   type GenerationStatus,
-  handleStreamMessage,
   type StreamMessage,
+  createGenerationStore,
+  handleStreamMessage,
 } from "./generation-store";
 import { useSSE } from "./use-sse";
 

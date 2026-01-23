@@ -1,4 +1,4 @@
-import { getModelStatus, type ModelStatus } from "@/lib/utils";
+import { type ModelStatus, getModelStatus } from "@/lib/utils";
 import { Badge } from "@zoonk/ui/components/badge";
 
 type ModelStatusBadgeProps = {

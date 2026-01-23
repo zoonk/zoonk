@@ -4,11 +4,11 @@ import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
 import {
+  type HistoryPeriod,
   aggregateScoreByMonth,
   aggregateScoreByWeek,
   calculateDateRanges,
   formatLabel,
-  type HistoryPeriod,
 } from "./_utils";
 
 export type ScorePeriod = HistoryPeriod;

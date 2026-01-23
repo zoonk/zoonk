@@ -1,4 +1,4 @@
-import { isAppError, type AppError } from "@zoonk/utils/error";
+import { type AppError, isAppError } from "@zoonk/utils/error";
 import { getExtracted } from "next-intl/server";
 import { ErrorCode, type ErrorCodeType } from "./app-error";
 

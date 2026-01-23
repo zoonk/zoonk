@@ -1,4 +1,4 @@
-import { generateText, Output } from "ai";
+import { Output, generateText } from "ai";
 import z from "zod";
 import battleSystemPrompt from "./battle-system-prompt.md";
 import type { ModelRanking } from "./types";

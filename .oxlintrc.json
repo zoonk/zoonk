@@ -30,6 +30,7 @@
     "import/no-named-as-default": "off",
     "eslint/no-ternary": "off",
     "eslint/prefer-destructuring": "off",
+    "eslint/sort-imports": ["error", { "ignoreDeclarationSort": true }],
     "import/no-unassigned-import": [
       "error",
       { "allow": ["**/*.css", "server-only", "dotenv/config"] }

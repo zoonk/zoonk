@@ -2,7 +2,7 @@
 
 import { ContainerHeader, ContainerHeaderGroup } from "@zoonk/ui/components/container";
 import { EditableText, EditableTextarea } from "@zoonk/ui/components/editable-text";
-import { combineSaveStatuses, SaveStatus } from "@zoonk/ui/components/save-status";
+import { SaveStatus, combineSaveStatuses } from "@zoonk/ui/components/save-status";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { useAutoSave } from "@zoonk/ui/hooks/auto-save";
 import { useExtracted } from "next-intl";

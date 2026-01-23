@@ -1,4 +1,4 @@
-import { expect, type Page, test } from "./fixtures";
+import { type Page, expect, test } from "./fixtures";
 
 // Helper to open command palette via click
 async function openCommandPalette(page: Page) {

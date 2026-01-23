@@ -1,4 +1,4 @@
-import { expect, type Page, test } from "./fixtures";
+import { type Page, expect, test } from "./fixtures";
 
 async function openOrgDropdown(page: Page) {
   await page.getByRole("button", { name: /organizations|ai/i }).click();

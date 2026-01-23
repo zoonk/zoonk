@@ -1,4 +1,4 @@
-import { getModelById, type ModelConfig } from "./models";
+import { type ModelConfig, getModelById } from "./models";
 import type { EvalResult, TaskEvalResults } from "./types";
 
 const TOKENS_PER_MILLION = 1_000_000;

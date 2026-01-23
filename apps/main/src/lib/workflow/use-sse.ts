@@ -1,6 +1,6 @@
 "use client";
 
-import { createParser, type EventSourceMessage } from "eventsource-parser";
+import { type EventSourceMessage, createParser } from "eventsource-parser";
 import { useEffect, useRef } from "react";
 
 type UseSSEOptions<T> = {

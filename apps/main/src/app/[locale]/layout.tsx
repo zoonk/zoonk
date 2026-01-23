@@ -1,6 +1,6 @@
 import { routing } from "@/i18n/routing";
 import { Analytics } from "@vercel/analytics/next";
-import { hasLocale, NextIntlClientProvider } from "next-intl";
+import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { NuqsAdapter } from "nuqs/adapters/next/app";

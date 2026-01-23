@@ -1,7 +1,7 @@
 import { routing } from "@/i18n/routing";
 import { Container } from "@zoonk/ui/components/container";
 import { FullPageLoading } from "@zoonk/ui/components/loading";
-import { hasLocale, NextIntlClientProvider } from "next-intl";
+import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { getExtracted, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import "@zoonk/ui/globals.css";

@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { expect, type Page, test } from "./fixtures";
+import { type Page, expect, test } from "./fixtures";
 
 function getModifierKey(): "Meta" | "Control" {
   return process.platform === "darwin" ? "Meta" : "Control";

@@ -16,7 +16,7 @@ import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@zoonk/ui/components/tooltip";
 import { useIsMobile } from "@zoonk/ui/hooks/mobile";
 import { cn } from "@zoonk/ui/lib/utils";
-import { cva, type VariantProps } from "class-variance-authority";
+import { type VariantProps, cva } from "class-variance-authority";
 import { PanelLeftIcon } from "lucide-react";
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import type { CSSPropertiesWithVariables } from "@zoonk/ui/lib/css-variables";

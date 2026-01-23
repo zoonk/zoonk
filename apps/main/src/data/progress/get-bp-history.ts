@@ -1,15 +1,15 @@
 import "server-only";
 import { getSession } from "@zoonk/core/users/session/get";
 import { prisma } from "@zoonk/db";
-import { calculateBeltLevel, type BeltLevelResult } from "@zoonk/utils/belt-level";
+import { type BeltLevelResult, calculateBeltLevel } from "@zoonk/utils/belt-level";
 import { safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
 import {
+  type HistoryPeriod,
   aggregateByMonth,
   aggregateByWeek,
   calculateDateRanges,
   formatLabel,
-  type HistoryPeriod,
 } from "./_utils";
 
 export type BpDataPoint = {

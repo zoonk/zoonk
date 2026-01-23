@@ -4,7 +4,7 @@ import { prisma } from "@zoonk/db";
 import { getPeakTime as getPeakTimeQuery } from "@zoonk/db/peak-time";
 import { safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
-import { findBestByScore, getDefaultStartDate, type ScoredRow } from "./_utils";
+import { type ScoredRow, findBestByScore, getDefaultStartDate } from "./_utils";
 
 export type BestTimeData = {
   score: number;

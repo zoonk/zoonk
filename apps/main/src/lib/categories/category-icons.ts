@@ -7,6 +7,7 @@ import {
   Globe,
   Heart,
   Languages,
+  type LucideIcon,
   Map as MapIcon,
   MessageCircle,
   Palette,
@@ -14,7 +15,6 @@ import {
   TrendingUp,
   Users,
   Wrench,
-  type LucideIcon,
 } from "lucide-react";
 import type { CourseCategory } from "@zoonk/utils/categories";
 

@@ -2,7 +2,7 @@ import "server-only";
 import { getSession } from "@zoonk/core/users/session/get";
 import { prisma } from "@zoonk/db";
 import { cache } from "react";
-import { findBestByScore, getDefaultStartDate, type ScoredRow } from "./_utils";
+import { type ScoredRow, findBestByScore, getDefaultStartDate } from "./_utils";
 
 export type BestDayData = {
   score: number;

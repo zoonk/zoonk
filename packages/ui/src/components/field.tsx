@@ -3,7 +3,7 @@
 import { Label } from "@zoonk/ui/components/label";
 import { Separator } from "@zoonk/ui/components/separator";
 import { cn } from "@zoonk/ui/lib/utils";
-import { cva, type VariantProps } from "class-variance-authority";
+import { type VariantProps, cva } from "class-variance-authority";
 import { useEffect, useMemo, useState } from "react";
 
 const SUCCESS_DISPLAY_TIME = 3000;
