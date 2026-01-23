@@ -24,7 +24,8 @@
     "typescript/no-unsafe-type-assertion": "error",
 
     // style rules
-    "typescript/array-type": "error"
+    "typescript/array-type": "error",
+    "eslint/arrow-body-style": "error"
   },
   "overrides": [
     {
