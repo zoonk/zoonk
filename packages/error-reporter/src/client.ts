@@ -2,8 +2,14 @@ const DEDUPE_WINDOW_MS = 60_000;
 const recentErrors = new Map<string, number>();
 
 function errorToString(error: unknown): string {
-  if (error instanceof Error) return error.message;
-  if (typeof error === "string") return error;
+  if (error instanceof Error) {
+    return error.message;
+  }
+
+  if (typeof error === "string") {
+    return error;
+  }
+
   if (typeof error === "number" || typeof error === "boolean") {
     return String(error);
   }

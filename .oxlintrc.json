@@ -28,7 +28,10 @@
     "oxc/no-map-spread": "off",
     "react/react-in-jsx-scope": "off",
     "typescript/consistent-type-definitions": ["error", "type"],
-    "typescript/no-unsafe-type-assertion": "error"
+    "typescript/no-unsafe-type-assertion": "error",
+
+    // style rules
+    "eslint/curly": "error"
   },
   "overrides": [
     {
