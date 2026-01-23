@@ -17,6 +17,7 @@
       "error",
       { "min": 2, "exceptions": ["i", "j", "x", "y", "z", "_", "a", "b", "t", "T"] }
     ],
+    "eslint/init-declarations": "off",
     "eslint/no-magic-numbers": [
       "error",
       {
