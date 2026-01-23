@@ -1,4 +1,5 @@
 import { FatalError, getWorkflowMetadata } from "workflow";
+import type { ExistingCourse } from "@/data/courses/find-existing-course";
 import { addAlternativeTitlesStep } from "./steps/add-alternative-titles-step";
 import { addCategoriesStep } from "./steps/add-categories-step";
 import { addChaptersStep } from "./steps/add-chapters-step";
@@ -19,6 +20,7 @@ import { startChapterGenerationStep } from "./steps/start-chapter-generation-ste
 import { updateCourseStep } from "./steps/update-course-step";
 import type {
   CourseContext,
+  CourseSuggestionData,
   CreatedChapter,
   ExistingCourseContent,
   GeneratedChapter,
@@ -61,45 +63,35 @@ async function persistGeneratedContent(
   content: GeneratedContent,
   existing: ExistingCourseContent,
 ): Promise<CreatedChapter[]> {
-  let chapters: CreatedChapter[] = [];
-
-  const persistPromises: Promise<unknown>[] = [];
-
   const needsCourseUpdate = !(existing.description && existing.imageUrl);
-  if (needsCourseUpdate) {
-    persistPromises.push(
+  const needsAlternativeTitles =
+    !existing.hasAlternativeTitles && content.alternativeTitles.length > 0;
+  const needsCategories =
+    !existing.hasCategories && content.categories.length > 0;
+  const needsChapters = !existing.hasChapters && content.chapters.length > 0;
+
+  const metadataOps = [
+    needsCourseUpdate &&
       updateCourseStep({
         course,
         description: content.description,
         imageUrl: content.imageUrl,
       }),
-    );
-  }
-
-  if (!existing.hasAlternativeTitles && content.alternativeTitles.length > 0) {
-    persistPromises.push(
+    needsAlternativeTitles &&
       addAlternativeTitlesStep({
         alternativeTitles: content.alternativeTitles,
         course,
       }),
-    );
-  }
-
-  if (!existing.hasCategories && content.categories.length > 0) {
-    persistPromises.push(
+    needsCategories &&
       addCategoriesStep({ categories: content.categories, course }),
-    );
-  }
+  ].filter(Boolean);
 
-  if (!existing.hasChapters && content.chapters.length > 0) {
-    persistPromises.push(
-      addChaptersStep({ chapters: content.chapters, course }).then((ch) => {
-        chapters = ch;
-      }),
-    );
-  }
-
-  await Promise.all(persistPromises);
+  const [chapters] = await Promise.all([
+    needsChapters
+      ? addChaptersStep({ chapters: content.chapters, course })
+      : Promise.resolve<CreatedChapter[]>([]),
+    ...metadataOps,
+  ]);
 
   return chapters;
 }
@@ -141,6 +133,89 @@ async function setupCourse(
   return chapters;
 }
 
+type CourseSetupResult = {
+  course: CourseContext;
+  existing: ExistingCourseContent;
+};
+
+const DEFAULT_EXISTING_CONTENT: ExistingCourseContent = {
+  description: null,
+  hasAlternativeTitles: false,
+  hasCategories: false,
+  hasChapters: false,
+  imageUrl: null,
+};
+
+function buildExistingContent(
+  existingCourse: ExistingCourse,
+): ExistingCourseContent {
+  return {
+    description: existingCourse.description,
+    hasAlternativeTitles: existingCourse._count.alternativeTitles > 0,
+    hasCategories: existingCourse._count.categories > 0,
+    hasChapters: existingCourse._count.chapters > 0,
+    imageUrl: existingCourse.imageUrl,
+  };
+}
+
+async function resumeExistingCourse(
+  existingCourse: ExistingCourse,
+  suggestion: CourseSuggestionData,
+  courseSuggestionId: number,
+  workflowRunId: string,
+): Promise<CourseSetupResult> {
+  const aiOrg = await getAIOrganizationStep();
+
+  const course: CourseContext = {
+    courseId: existingCourse.id,
+    courseSlug: existingCourse.slug,
+    courseTitle: suggestion.title,
+    language: suggestion.language,
+    organizationId: aiOrg.id,
+  };
+
+  await setCourseAsRunningStep({
+    courseId: existingCourse.id,
+    courseSuggestionId,
+    workflowRunId,
+  });
+
+  return {
+    course,
+    existing: buildExistingContent(existingCourse),
+  };
+}
+
+async function createNewCourse(
+  suggestion: CourseSuggestionData,
+  workflowRunId: string,
+): Promise<CourseSetupResult> {
+  const course = await initializeCourseStep({ suggestion, workflowRunId });
+
+  return {
+    course,
+    existing: DEFAULT_EXISTING_CONTENT,
+  };
+}
+
+async function getOrCreateCourse(
+  existingCourse: ExistingCourse | null,
+  suggestion: CourseSuggestionData,
+  courseSuggestionId: number,
+  workflowRunId: string,
+): Promise<CourseSetupResult> {
+  if (existingCourse) {
+    return resumeExistingCourse(
+      existingCourse,
+      suggestion,
+      courseSuggestionId,
+      workflowRunId,
+    );
+  }
+
+  return createNewCourse(suggestion, workflowRunId);
+}
+
 export async function courseGenerationWorkflow(
   courseSuggestionId: number,
 ): Promise<void> {
@@ -164,47 +239,12 @@ export async function courseGenerationWorkflow(
     return;
   }
 
-  let course: CourseContext;
-  let existing: ExistingCourseContent = {
-    description: null,
-    hasAlternativeTitles: false,
-    hasCategories: false,
-    hasChapters: false,
-    imageUrl: null,
-  };
-
-  if (existingCourse) {
-    // Resume existing course (failed or pending)
-    const aiOrg = await getAIOrganizationStep();
-
-    course = {
-      courseId: existingCourse.id,
-      courseSlug: existingCourse.slug,
-      courseTitle: suggestion.title,
-      language: suggestion.language,
-      organizationId: aiOrg.id,
-    };
-
-    existing = {
-      description: existingCourse.description,
-      hasAlternativeTitles: existingCourse._count.alternativeTitles > 0,
-      hasCategories: existingCourse._count.categories > 0,
-      hasChapters: existingCourse._count.chapters > 0,
-      imageUrl: existingCourse.imageUrl,
-    };
-
-    await setCourseAsRunningStep({
-      courseId: existingCourse.id,
-      courseSuggestionId,
-      workflowRunId,
-    });
-  } else {
-    // Create new course
-    course = await initializeCourseStep({
-      suggestion,
-      workflowRunId,
-    });
-  }
+  const { course, existing } = await getOrCreateCourse(
+    existingCourse,
+    suggestion,
+    courseSuggestionId,
+    workflowRunId,
+  );
 
   const chapters = await setupCourse(
     course,
