@@ -37,6 +37,12 @@
       "rules": {
         "typescript/no-unsafe-type-assertion": "off"
       }
+    },
+    {
+      "files": ["*.test.ts"],
+      "rules": {
+        "eslint/max-statements": "off"
+      }
     }
   ],
   "ignorePatterns": [
