@@ -10,6 +10,9 @@
     "jsx-a11y",
     "vitest"
   ],
+  "categories": {
+    "correctness": "error"
+  },
   "rules": {
     "jsx-a11y/no-autofocus": "off"
   },
