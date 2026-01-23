@@ -18,8 +18,6 @@
     "knip": "knip",
     "lint": "oxlint --type-aware --deny-warnings .",
     "lint:fix": "oxlint --type-aware --fix --deny-warnings .",
-    "quality": "turbo quality",
-    "quality:fix": "turbo quality:fix",
     "start": "turbo start",
     "test": "turbo test",
     "test:watch": "turbo test:watch",
