@@ -11,6 +11,7 @@ import {
   IconBrandYoutube,
 } from "@tabler/icons-react";
 
+/* oxlint-disable-next-line eslint/sort-keys */
 const PROFILES = {
   x: {
     en: { handle: "@zoonkcom", url: "https://x.com/zoonkcom" },

@@ -124,8 +124,8 @@ async function hasEarlierScoreData(userId: number, beforeDate: Date): Promise<bo
     prisma.dailyProgress.findFirst({
       select: { id: true },
       where: {
-        date: { lt: beforeDate },
         OR: [{ correctAnswers: { gt: 0 } }, { incorrectAnswers: { gt: 0 } }],
+        date: { lt: beforeDate },
         userId,
       },
     }),

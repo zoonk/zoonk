@@ -44,7 +44,8 @@
     "eslint/curly": "error",
     "eslint/no-continue": "error",
     "eslint/no-duplicate-imports": "error",
-    "eslint/no-nested-ternary": "error"
+    "eslint/no-nested-ternary": "error",
+    "eslint/sort-keys": "error"
   },
   "overrides": [
     {
