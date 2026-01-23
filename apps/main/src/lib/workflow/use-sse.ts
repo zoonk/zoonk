@@ -40,10 +40,12 @@ export function useSSE<T>(url: string | null, options: UseSSEOptions<T>) {
         });
 
         let result = await reader.read();
+        /* eslint-disable no-await-in-loop -- Sequential stream reading is required */
         while (!result.done) {
           parser.feed(decoder.decode(result.value, { stream: true }));
           result = await reader.read();
         }
+        /* eslint-enable no-await-in-loop */
 
         onComplete?.();
       } catch (err) {

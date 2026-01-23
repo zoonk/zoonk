@@ -6,7 +6,7 @@ import { AppError, type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { ErrorCode } from "@/lib/app-error";
 import { parseJsonFile } from "@/lib/parse-json-file";
 
-const validActivityKinds: ActivityKind[] = [
+const validActivityKinds = new Set<ActivityKind>([
   "custom",
   "background",
   "explanation",
@@ -20,7 +20,7 @@ const validActivityKinds: ActivityKind[] = [
   "reading",
   "listening",
   "review",
-];
+]);
 
 export type ActivityImportData = {
   description?: string;
@@ -49,7 +49,7 @@ function validateActivityData(
 
   const hasValidKind =
     typeof a.kind === "string" &&
-    validActivityKinds.includes(a.kind as ActivityKind);
+    validActivityKinds.has(a.kind as ActivityKind);
 
   return hasValidKind;
 }
