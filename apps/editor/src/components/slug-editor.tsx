@@ -88,7 +88,7 @@ export function SlugEditor({
 
       if (result.newSlug) {
         const url = `${redirectPrefix}${result.newSlug}${redirectSuffix}`;
-        router.push(url as Parameters<typeof router.push>[0]);
+        router.push(url as never);
       }
     });
   }

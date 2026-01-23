@@ -67,7 +67,7 @@ export function CommandPalette() {
 
   const handleSelect = (url: string) => {
     onSelectItem();
-    router.push(url as Parameters<typeof router.push>[0]);
+    router.push(url as never);
   };
 
   const staticItems: StaticMenuItem[] = useMemo(
