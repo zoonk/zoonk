@@ -13,7 +13,11 @@ import {
   getPhaseStatus as getStatus,
   type PhaseStatus,
 } from "@/lib/generation-phases";
-import { CHAPTER_STEPS, type CourseWorkflowStepName } from "@/workflows/config";
+import {
+  CHAPTER_STEPS,
+  COURSE_STEPS,
+  type CourseWorkflowStepName,
+} from "@/workflows/config";
 
 export type PhaseName =
   | "loadingInfo"
@@ -34,10 +38,27 @@ const PHASE_STEPS: Record<PhaseName, CourseWorkflowStepName[]> = {
   ],
   generatingLessons: [...CHAPTER_STEPS],
   loadingInfo: ["getCourseSuggestion"],
-  planningChapters: ["generateChapters", "addChapters", "completeCourseSetup"],
+  planningChapters: [
+    "getExistingChapters",
+    "generateChapters",
+    "addChapters",
+    "completeCourseSetup",
+  ],
   savingMetadata: ["updateCourse", "addAlternativeTitles", "addCategories"],
-  settingUp: ["initializeCourse"],
+  settingUp: ["initializeCourse", "setCourseAsRunning"],
 };
+
+// Runtime check: ensure all course steps are assigned to a phase.
+// This runs at module load time and will throw during build if any step is missing.
+const allPhaseSteps = new Set(Object.values(PHASE_STEPS).flat());
+const missingSteps = COURSE_STEPS.filter((step) => !allPhaseSteps.has(step));
+
+if (missingSteps.length > 0) {
+  throw new Error(
+    `Missing course steps in PHASE_STEPS: ${missingSteps.join(", ")}. ` +
+      "Add them to the appropriate phase in generation-phases.ts",
+  );
+}
 
 export const PHASE_ORDER: PhaseName[] = [
   "loadingInfo",

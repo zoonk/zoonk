@@ -9,22 +9,25 @@ export const CHAPTER_STEPS = [
 export type ChapterStepName = (typeof CHAPTER_STEPS)[number];
 export const CHAPTER_COMPLETION_STEP: ChapterStepName = "setChapterAsCompleted";
 
-type CourseStepName =
-  | "getCourseSuggestion"
-  | "checkExistingCourse"
-  | "initializeCourse"
-  | "setCourseAsRunning"
-  | "getExistingChapters"
-  | "generateDescription"
-  | "generateImage"
-  | "generateAlternativeTitles"
-  | "generateCategories"
-  | "generateChapters"
-  | "updateCourse"
-  | "addAlternativeTitles"
-  | "addCategories"
-  | "addChapters"
-  | "completeCourseSetup";
+export const COURSE_STEPS = [
+  "getCourseSuggestion",
+  "checkExistingCourse",
+  "initializeCourse",
+  "setCourseAsRunning",
+  "getExistingChapters",
+  "generateDescription",
+  "generateImage",
+  "generateAlternativeTitles",
+  "generateCategories",
+  "generateChapters",
+  "updateCourse",
+  "addAlternativeTitles",
+  "addCategories",
+  "addChapters",
+  "completeCourseSetup",
+] as const;
+
+export type CourseStepName = (typeof COURSE_STEPS)[number];
 
 // we also generate the first chapter as part of the course workflow
 // so the course generation is only complete after chapter workflow is done
