@@ -30,9 +30,9 @@ export async function organizationFixture(attrs?: Partial<Organization>) {
   return org;
 }
 
-interface MemberFixtureOptions extends Partial<Member> {
+type MemberFixtureOptions = {
   orgKind?: Organization["kind"];
-}
+} & Partial<Member>
 
 export async function memberFixture(attrs?: MemberFixtureOptions) {
   const { orgKind, ...memberAttrs } = attrs || {};
