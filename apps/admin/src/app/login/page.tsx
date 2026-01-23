@@ -1,12 +1,12 @@
+import { externalRedirect } from "@zoonk/next/navigation/external-redirect";
 import { FullPageLoading } from "@zoonk/ui/components/loading";
 import { buildAuthLoginUrl, getBaseUrl } from "@zoonk/utils/url";
-import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
 async function Login() {
   const callbackUrl = `${getBaseUrl()}/auth/callback`;
   const authUrl = buildAuthLoginUrl({ callbackUrl });
-  return redirect(authUrl as never);
+  return externalRedirect(authUrl);
 }
 
 export default function LoginPage() {

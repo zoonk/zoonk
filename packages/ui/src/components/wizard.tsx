@@ -65,7 +65,7 @@ export function WizardLabel({
   ...props
 }: React.ComponentProps<"label">) {
   return (
-    // biome-ignore lint/a11y/noLabelWithoutControl: htmlFor is passed via props when used
+    // oxlint-disable-next-line jsx-a11y/label-has-associated-control -- compound component
     <label
       className={cn(
         "font-medium font-mono text-muted-foreground text-xs uppercase tracking-widest",
@@ -218,7 +218,8 @@ export function useWizard<T extends string>({
 } {
   const [currentStep, setCurrentStep] = useState(initialStep);
 
-  const currentStepName = steps[currentStep] as T;
+  // currentStep is always bounded within [0, steps.length - 1] by goToStep
+  const currentStepName = steps[currentStep]!;
   const isFirstStep = currentStep === 0;
   const isLastStep = currentStep === steps.length - 1;
   const totalSteps = steps.length;

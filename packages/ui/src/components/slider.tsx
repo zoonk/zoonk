@@ -16,8 +16,7 @@ function Slider({
     () =>
       Array.isArray(value)
         ? value
-        : // biome-ignore lint/style/noNestedTernary: generated file
-          Array.isArray(defaultValue)
+        : Array.isArray(defaultValue)
           ? defaultValue
           : [min, max],
     [value, defaultValue, min, max],

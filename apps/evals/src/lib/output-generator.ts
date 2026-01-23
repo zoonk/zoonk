@@ -10,7 +10,7 @@ async function generateOutputForTestCase(
   runNumber: number,
 ): Promise<OutputEntry> {
   const inputSummary = Object.entries(testCase.userInput)
-    .map(([key, value]) => `${key}=${value}`)
+    .map(([key, value]) => `${key}=${String(value)}`)
     .join(", ");
 
   console.info(`Generating output for: ${inputSummary} (run ${runNumber})`);

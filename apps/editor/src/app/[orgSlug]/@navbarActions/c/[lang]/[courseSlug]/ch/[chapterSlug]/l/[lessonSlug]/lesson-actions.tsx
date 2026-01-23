@@ -39,6 +39,7 @@ export async function LessonActions({
   });
 
   const chapterUrl =
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- template literal route types require assertion
     `/${orgSlug}/c/${lang}/${courseSlug}/ch/${chapterSlug}` as Route;
   const lessonUrl = `/${orgSlug}/c/${lang}/${courseSlug}/ch/${chapterSlug}/l/${lessonSlug}`;
 

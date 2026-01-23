@@ -117,7 +117,7 @@ export function sortLeaderboardEntries(
   direction: SortDirection,
 ): LeaderboardEntry[] {
   const sign = direction === "asc" ? 1 : -1;
-  return [...entries].sort(
+  return [...entries].toSorted(
     (left, right) => sign * compareEntries(left, right, key),
   );
 }

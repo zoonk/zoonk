@@ -90,7 +90,7 @@ export function createAuthFixture(storageState: string) {
 
 // Extend test with dynamic baseURL from captured webServer port
 export const test = baseTest.extend({
-  // biome-ignore lint/correctness/noEmptyPattern: Playwright requires destructuring pattern
+  // oxlint-disable-next-line eslint/no-empty-pattern -- Playwright requires destructuring pattern
   baseURL: async ({}, use) => {
     const url = process.env.E2E_BASE_URL;
 

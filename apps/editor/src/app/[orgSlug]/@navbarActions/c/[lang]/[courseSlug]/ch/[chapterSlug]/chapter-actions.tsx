@@ -37,6 +37,7 @@ export async function ChapterActions({
     permission: chapter.isPublished ? "delete" : "update",
   });
 
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- template literal route types require assertion
   const courseUrl = `/${orgSlug}/c/${lang}/${courseSlug}` as Route;
   const chapterUrl = `/${orgSlug}/c/${lang}/${courseSlug}/ch/${chapterSlug}`;
 

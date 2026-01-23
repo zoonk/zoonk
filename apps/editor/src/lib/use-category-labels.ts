@@ -3,6 +3,7 @@
 import {
   COURSE_CATEGORIES,
   type CourseCategory,
+  isValidCategory,
 } from "@zoonk/utils/categories";
 import { useExtracted } from "next-intl";
 
@@ -35,15 +36,15 @@ export function useCategoryLabels(): UseCategoryLabelsResult {
     tech: t("Technology"),
   };
 
-  const sortedCategories = [...COURSE_CATEGORIES].sort((a, b) =>
+  const sortedCategories = [...COURSE_CATEGORIES].toSorted((a, b) =>
     labels[a].localeCompare(labels[b]),
   );
 
   function getLabel(category: string): string | null {
-    if (!COURSE_CATEGORIES.includes(category as CourseCategory)) {
+    if (!isValidCategory(category)) {
       return null;
     }
-    return labels[category as CourseCategory];
+    return labels[category];
   }
 
   return { getLabel, labels, sortedCategories };

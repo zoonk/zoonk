@@ -132,9 +132,10 @@ export function AlternativeTitlesEditor({
     _state: { error: string | null },
     formData: FormData,
   ) {
-    const title = formData.get("title") as string;
+    const titleValue = formData.get("title");
+    const title = typeof titleValue === "string" ? titleValue : "";
 
-    if (!title?.trim()) {
+    if (!title.trim()) {
       return { error: null };
     }
 
@@ -142,7 +143,7 @@ export function AlternativeTitlesEditor({
 
     startTransition(() => {
       updateOptimisticTitles((prev) =>
-        prev.includes(slug) ? prev : [...prev, slug].sort(),
+        prev.includes(slug) ? prev : [...prev, slug].toSorted(),
       );
     });
 

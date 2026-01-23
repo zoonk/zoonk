@@ -67,7 +67,8 @@ export function CommandPalette() {
 
   const handleSelect = (url: string) => {
     onSelectItem();
-    router.push(url as Parameters<typeof router.push>[0]);
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- dynamic internal routes require assertion
+    router.push(url as never);
   };
 
   const staticItems: StaticMenuItem[] = useMemo(

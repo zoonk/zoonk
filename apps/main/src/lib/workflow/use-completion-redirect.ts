@@ -15,6 +15,7 @@ export function useCompletionRedirect(config: CompletionRedirectConfig) {
   const router = useRouter();
 
   const onRedirect = useEffectEvent(() => {
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- dynamic route string requires assertion
     router.push(url as never);
   });
 

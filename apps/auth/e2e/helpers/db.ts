@@ -16,7 +16,7 @@ export async function getOTPForEmail(
   const identifier = `sign-in-otp-${email}`;
 
   for (let i = 0; i < maxRetries; i++) {
-    // biome-ignore lint/performance/noAwaitInLoops: Sequential retry with delay is intentional
+    // eslint-disable-next-line no-await-in-loop -- Intentional retry polling
     const verification = await prisma.verification.findFirst({
       orderBy: { createdAt: "desc" },
       where: { identifier },
@@ -31,6 +31,7 @@ export async function getOTPForEmail(
       }
     }
 
+    // eslint-disable-next-line no-await-in-loop -- Intentional delay between retries
     await setTimeout(500);
   }
 

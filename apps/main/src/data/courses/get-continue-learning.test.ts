@@ -118,7 +118,7 @@ describe("authenticated users", () => {
     const expectedIds = courseData
       .slice(1)
       .map((d) => d.course.id)
-      .reverse();
+      .toReversed();
     expect(resultCourseIds).toEqual(expectedIds);
   });
 

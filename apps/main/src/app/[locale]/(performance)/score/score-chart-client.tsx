@@ -11,6 +11,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { isValidChartPayload } from "../_lib/chart-payload";
 
 type SerializedDataPoint = {
   date: string;
@@ -68,11 +69,13 @@ export function ScoreChartClient({
 
           <Tooltip
             content={({ active, payload }) => {
-              if (!(active && payload?.length > 0)) {
+              if (
+                !(active && isValidChartPayload<SerializedDataPoint>(payload))
+              ) {
                 return null;
               }
 
-              const data = payload[0].payload as SerializedDataPoint;
+              const data = payload[0]!.payload;
               const value = Number(data.score).toFixed(1);
 
               return (

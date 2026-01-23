@@ -22,6 +22,7 @@ async function handlePost(request: Request): Promise<Response> {
     return Response.json({ error: "Forbidden" }, { status: 403 });
   }
 
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- request body is trusted same-origin
   const body = (await request.json()) as Omit<ErrorPayload, "source">;
 
   after(() => sendErrorEmail({ ...body, source: "client" }));

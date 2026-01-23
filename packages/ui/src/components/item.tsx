@@ -25,7 +25,6 @@ type ItemGroupProps = React.ComponentProps<"div"> &
 
 function ItemGroup({ className, layout, ...props }: ItemGroupProps) {
   return (
-    // biome-ignore lint/a11y/useSemanticElements: Stylized grouping component, not an actual list
     <div
       className={cn(itemGroupVariants({ layout }), className)}
       data-slot="item-group"

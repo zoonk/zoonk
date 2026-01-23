@@ -10,9 +10,7 @@ import {
   IconBrandX,
   IconBrandYoutube,
 } from "@tabler/icons-react";
-import { routing } from "@/i18n/routing";
 
-// biome-ignore assist/source/useSortedKeys: custom order
 const PROFILES = {
   x: {
     en: { handle: "@zoonkcom", url: "https://x.com/zoonkcom" },
@@ -74,19 +72,14 @@ const PROFILES = {
 
 type ProfileName = keyof typeof PROFILES;
 
-function getSocialProfile(name: ProfileName, locale: string) {
-  const profile = PROFILES[name];
-  return profile[isLocale(locale) ? locale : "en"];
-}
-
-function isLocale(locale: string): locale is "en" | "pt" {
-  return (routing.locales as readonly string[]).includes(locale);
-}
+// Object.keys returns string[], but we know it matches ProfileName
+// oxlint-disable-next-line typescript/no-unsafe-type-assertion
+const PROFILE_KEYS = Object.keys(PROFILES) as ProfileName[];
 
 export function getSocialProfiles(locale: string) {
-  return Object.entries(PROFILES).map(([name, data]) => ({
-    icon: data.icon,
-    name,
-    ...getSocialProfile(name as ProfileName, locale),
-  }));
+  return PROFILE_KEYS.map((name) => {
+    const profile = PROFILES[name];
+    const localeData = locale === "pt" ? profile.pt : profile.en;
+    return { icon: profile.icon, name, ...localeData };
+  });
 }

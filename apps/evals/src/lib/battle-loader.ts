@@ -34,7 +34,9 @@ export const getBattleMatchups = cache(
         }),
       );
 
-      return matchups.sort((a, b) => a.testCaseId.localeCompare(b.testCaseId));
+      return matchups.toSorted((a, b) =>
+        a.testCaseId.localeCompare(b.testCaseId),
+      );
     } catch {
       return [];
     }
@@ -179,6 +181,6 @@ export const getBattleLeaderboard = cache(
       }
     }
 
-    return entries.sort((a, b) => b.totalScore - a.totalScore);
+    return entries.toSorted((a, b) => b.totalScore - a.totalScore);
   },
 );

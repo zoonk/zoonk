@@ -13,6 +13,7 @@ import { exportLessons } from "@/data/lessons/export-lessons";
 import { importLessons } from "@/data/lessons/import-lessons";
 import { reorderLessons } from "@/data/lessons/reorder-lessons";
 import { getErrorMessage } from "@/lib/error-messages";
+import { isImportMode } from "@/lib/import-mode";
 
 export async function checkChapterSlugExists(params: {
   courseId?: number;
@@ -156,7 +157,8 @@ async function importLessonsAction(
   formData: FormData,
 ): Promise<{ error: string | null }> {
   const file = formData.get("file");
-  const mode = formData.get("mode") as "merge" | "replace";
+  const modeValue = formData.get("mode");
+  const mode = isImportMode(modeValue) ? modeValue : "merge";
 
   if (!(file && file instanceof File)) {
     const t = await getExtracted();

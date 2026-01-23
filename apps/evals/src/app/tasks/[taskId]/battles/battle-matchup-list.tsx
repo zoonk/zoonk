@@ -64,7 +64,7 @@ function MatchupItem({ matchup }: MatchupItemProps) {
   }
 
   // Sort models by total score
-  const sortedModels = [...modelIds].sort((a, b) => {
+  const sortedModels = [...modelIds].toSorted((a, b) => {
     const aTotal =
       modelRankings.get(a)?.reduce((sum, r) => sum + r.score, 0) ?? 0;
     const bTotal =

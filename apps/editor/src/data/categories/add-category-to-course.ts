@@ -3,7 +3,7 @@ import "server-only";
 import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
 import { type CourseCategory, prisma } from "@zoonk/db";
 import { isUniqueConstraintError } from "@zoonk/db/utils";
-import { COURSE_CATEGORIES } from "@zoonk/utils/categories";
+import { isValidCategory } from "@zoonk/utils/categories";
 import { AppError, type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { ErrorCode } from "@/lib/app-error";
 
@@ -12,7 +12,7 @@ export async function addCategoryToCourse(params: {
   courseId: number;
   headers?: Headers;
 }): Promise<SafeReturn<CourseCategory>> {
-  if (!COURSE_CATEGORIES.includes(params.category as never)) {
+  if (!isValidCategory(params.category)) {
     return { data: null, error: new AppError(ErrorCode.invalidCategory) };
   }
 

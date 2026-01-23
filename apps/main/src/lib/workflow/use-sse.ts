@@ -34,17 +34,19 @@ export function useSSE<T>(url: string | null, options: UseSSEOptions<T>) {
         const parser = createParser({
           onEvent: (event: EventSourceMessage) => {
             indexRef.current += 1;
+            // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- SSE data type is validated by consumer
             const data = JSON.parse(event.data) as T;
             onMessage(data);
           },
         });
 
         let result = await reader.read();
+        /* eslint-disable no-await-in-loop -- Sequential stream reading is required */
         while (!result.done) {
           parser.feed(decoder.decode(result.value, { stream: true }));
-          // biome-ignore lint/performance/noAwaitInLoops: Sequential reads required for streaming
           result = await reader.read();
         }
+        /* eslint-enable no-await-in-loop */
 
         onComplete?.();
       } catch (err) {

@@ -32,10 +32,10 @@ export async function CourseHeader({
 }) {
   const locale = await getLocale();
   const categoryLabels = await getCategories({ locale });
-  const courseCategoryKeys = course.categories.map((c) => c.category);
+  const courseCategoryKeys = new Set(course.categories.map((c) => c.category));
 
   const displayCategories = categoryLabels.filter((cat) =>
-    courseCategoryKeys.includes(cat.key),
+    courseCategoryKeys.has(cat.key),
   );
 
   return (

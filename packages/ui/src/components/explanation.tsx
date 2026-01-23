@@ -28,6 +28,7 @@ function ExplanationHeader({
 
 function ExplanationTitle({ className, ...props }: React.ComponentProps<"h3">) {
   return (
+    // oxlint-disable-next-line jsx-a11y/heading-has-content -- content via children
     <h3
       className={cn("font-medium text-sm", className)}
       data-slot="explanation-title"

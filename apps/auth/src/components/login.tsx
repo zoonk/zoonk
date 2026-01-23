@@ -148,7 +148,6 @@ export function LoginField({
 
 export function LoginEmailLabel({
   children,
-  className,
   ...props
 }: React.ComponentProps<"label">) {
   return (
@@ -158,10 +157,7 @@ export function LoginEmailLabel({
   );
 }
 
-export function LoginEmailInput({
-  className,
-  ...props
-}: React.ComponentProps<"input">) {
+export function LoginEmailInput({ ...props }: React.ComponentProps<"input">) {
   return (
     <Input
       autoCapitalize="none"

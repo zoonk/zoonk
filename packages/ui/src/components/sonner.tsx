@@ -1,5 +1,6 @@
 "use client";
 
+import type { CSSPropertiesWithVariables } from "@zoonk/ui/lib/css-variables";
 import {
   CircleCheckIcon,
   InfoIcon,
@@ -10,8 +11,22 @@ import {
 import { useTheme } from "next-themes";
 import { Toaster as Sonner, type ToasterProps } from "sonner";
 
+const VALID_THEMES = ["light", "dark", "system"] as const;
+type ValidTheme = (typeof VALID_THEMES)[number];
+
+function isValidTheme(theme: string): theme is ValidTheme {
+  return VALID_THEMES.some((v) => v === theme);
+}
+
 const Toaster = ({ ...props }: ToasterProps) => {
   const { theme = "system" } = useTheme();
+  const validTheme: ValidTheme = isValidTheme(theme) ? theme : "system";
+  const style: CSSPropertiesWithVariables = {
+    "--border-radius": "var(--radius)",
+    "--normal-bg": "var(--popover)",
+    "--normal-border": "var(--border)",
+    "--normal-text": "var(--popover-foreground)",
+  };
 
   return (
     <Sonner
@@ -23,15 +38,8 @@ const Toaster = ({ ...props }: ToasterProps) => {
         success: <CircleCheckIcon className="size-4" />,
         warning: <TriangleAlertIcon className="size-4" />,
       }}
-      style={
-        {
-          "--border-radius": "var(--radius)",
-          "--normal-bg": "var(--popover)",
-          "--normal-border": "var(--border)",
-          "--normal-text": "var(--popover-foreground)",
-        } as React.CSSProperties
-      }
-      theme={theme as ToasterProps["theme"]}
+      style={style}
+      theme={validTheme}
       toastOptions={{
         classNames: {
           toast: "cn-toast",
@@ -42,6 +50,5 @@ const Toaster = ({ ...props }: ToasterProps) => {
   );
 };
 
-// biome-ignore lint/performance/noBarrelFile: re-exporting toast for consumers
 export { toast } from "sonner";
 export { Toaster };

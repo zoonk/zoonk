@@ -36,7 +36,8 @@ type BeltConfig = {
   startBp: number;
 };
 
-const BELT_CONFIGS: BeltConfig[] = [
+// Non-empty tuple guarantees BELT_CONFIGS[0] is always defined
+const BELT_CONFIGS: readonly [BeltConfig, ...BeltConfig[]] = [
   { bpPerLevel: 250, color: "white", startBp: 0 },
   { bpPerLevel: 500, color: "yellow", startBp: 2500 },
   { bpPerLevel: 1000, color: "orange", startBp: 7500 },
@@ -52,13 +53,7 @@ const BELT_CONFIGS: BeltConfig[] = [
 const LEVELS_PER_COLOR = 10;
 
 function findCurrentBelt(bp: number): BeltConfig {
-  for (let i = BELT_CONFIGS.length - 1; i >= 0; i--) {
-    const belt = BELT_CONFIGS[i];
-    if (belt && bp >= belt.startBp) {
-      return belt;
-    }
-  }
-  return BELT_CONFIGS[0] as BeltConfig;
+  return BELT_CONFIGS.findLast((belt) => bp >= belt.startBp) ?? BELT_CONFIGS[0];
 }
 
 export function calculateBeltLevel(totalBrainPower: number): BeltLevelResult {

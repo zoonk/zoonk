@@ -50,6 +50,7 @@
   "tasks": {
     "//#format": { "cache": false },
     "//#lint": {},
+    "//#lint:fix": {},
     "build": {
       "dependsOn": ["^db:generate", "^build"],
       "outputs": [".next/**", "!.next/cache/**"]

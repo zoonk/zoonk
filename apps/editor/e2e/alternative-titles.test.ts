@@ -205,8 +205,12 @@ test.describe("Alternative Titles Editor", () => {
         .map((slug) => expect(authenticatedPage.getByText(slug)).toBeVisible()),
     );
 
-    const slug11 = slugs[10] as string;
-    const slug12 = slugs[11] as string;
+    const slug11 = slugs[10];
+    const slug12 = slugs[11];
+
+    if (!slug11 || !slug12) {
+      throw new Error("Expected at least 12 slugs");
+    }
 
     await expect(authenticatedPage.getByText(slug11)).not.toBeVisible();
     await expect(authenticatedPage.getByText(slug12)).not.toBeVisible();

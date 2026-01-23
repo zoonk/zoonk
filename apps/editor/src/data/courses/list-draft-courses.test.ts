@@ -99,7 +99,7 @@ describe("org admins", () => {
     expect(result.error).toBeNull();
     expect(result.data).toHaveLength(1);
     expect(result.data[0]?.id).toBe(draftCourse.id);
-    expect(result.data.every((c) => c.isPublished === false)).toBe(true);
+    expect(result.data.every((c) => !c.isPublished)).toBe(true);
   });
 
   test("does not return published courses", async () => {

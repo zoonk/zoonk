@@ -1,0 +1,57 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": [
+    "typescript",
+    "oxc",
+    "react",
+    "nextjs",
+    "import",
+    "unicorn",
+    "jsx-a11y",
+    "vitest"
+  ],
+  "env": {
+    "browser": true,
+    "es2024": true,
+    "node": true
+  },
+  "categories": {
+    "correctness": "error",
+    "perf": "error",
+    "suspicious": "error"
+  },
+  "rules": {
+    "import/no-named-as-default": "off",
+    "import/no-unassigned-import": [
+      "error",
+      { "allow": ["**/*.css", "server-only", "dotenv/config"] }
+    ],
+    "jsx-a11y/no-autofocus": "off",
+    "oxc/no-map-spread": "off",
+    "react/react-in-jsx-scope": "off",
+    "typescript/no-unsafe-type-assertion": "error"
+  },
+  "overrides": [
+    {
+      "files": ["apps/evals/**/*.ts", "apps/evals/**/*.tsx"],
+      "rules": {
+        "typescript/no-unsafe-type-assertion": "off"
+      }
+    }
+  ],
+  "ignorePatterns": [
+    "node_modules",
+    ".next",
+    ".next-e2e",
+    ".agents",
+    ".claude",
+    ".cursor",
+    ".opencode",
+    ".github/skills",
+    "dist",
+    "build",
+    "**/generated/**",
+    "**/messages/**",
+    ".turbo"
+  ]
+}

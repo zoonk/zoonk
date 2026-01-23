@@ -352,13 +352,14 @@ test.describe("Command Palette - Keyboard Navigation", () => {
     const firstOption = dialog.getByRole("option", { selected: true });
     await expect(firstOption).toBeVisible();
     const firstName = await firstOption.textContent();
+    expect(firstName).toBeTruthy();
 
     // Press ArrowDown and wait for selection to change
     await page.keyboard.press("ArrowDown");
 
     // Wait for the selection to move to a DIFFERENT item
     await expect(
-      dialog.getByRole("option", { name: firstName as string, selected: true }),
+      dialog.getByRole("option", { name: firstName!, selected: true }),
     ).not.toBeVisible();
 
     // Verify a new item is selected
@@ -366,6 +367,7 @@ test.describe("Command Palette - Keyboard Navigation", () => {
     await expect(secondOption).toBeVisible();
     const secondName = await secondOption.textContent();
     expect(secondName).not.toBe(firstName);
+    expect(secondName).toBeTruthy();
 
     // Press ArrowUp and wait for selection to change back
     await page.keyboard.press("ArrowUp");
@@ -373,14 +375,14 @@ test.describe("Command Palette - Keyboard Navigation", () => {
     // Wait for selection to move away from second item
     await expect(
       dialog.getByRole("option", {
-        name: secondName as string,
+        name: secondName!,
         selected: true,
       }),
     ).not.toBeVisible();
 
     // Verify we're back on the first item
     await expect(
-      dialog.getByRole("option", { name: firstName as string, selected: true }),
+      dialog.getByRole("option", { name: firstName!, selected: true }),
     ).toBeVisible();
   });
 

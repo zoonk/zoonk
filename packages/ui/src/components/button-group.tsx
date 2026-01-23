@@ -28,7 +28,6 @@ function ButtonGroup({
   ...props
 }: React.ComponentProps<"div"> & VariantProps<typeof buttonGroupVariants>) {
   return (
-    // biome-ignore lint/a11y/useSemanticElements: <div> is required here to allow custom children.
     <div
       className={cn(buttonGroupVariants({ orientation }), className)}
       data-orientation={orientation}

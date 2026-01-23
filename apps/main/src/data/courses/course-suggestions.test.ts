@@ -60,6 +60,7 @@ test("generates a new item", async () => {
     { description: "A course on Vitest basics.", title: "Vitest" },
   ];
 
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- mock return type
   spy.mockResolvedValueOnce({ data: generatedSuggestions } as never);
 
   const result = await generateCourseSuggestions({ language, prompt });
@@ -91,6 +92,7 @@ test("deduplicates suggestions across prompts", async () => {
 
   const suggestions = [{ description: "Learn basics", title: "Common Course" }];
 
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- mock return type
   spy.mockResolvedValue({ data: suggestions } as never);
 
   const result1 = await generateCourseSuggestions({

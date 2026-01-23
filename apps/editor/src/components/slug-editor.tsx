@@ -88,7 +88,8 @@ export function SlugEditor({
 
       if (result.newSlug) {
         const url = `${redirectPrefix}${result.newSlug}${redirectSuffix}`;
-        router.push(url as Parameters<typeof router.push>[0]);
+        // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- dynamic internal routes require assertion
+        router.push(url as never);
       }
     });
   }

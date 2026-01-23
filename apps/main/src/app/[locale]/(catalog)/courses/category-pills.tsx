@@ -43,7 +43,7 @@ export function CategoryPills() {
       </Link>
 
       {categories
-        .sort((a, b) => a.label.localeCompare(b.label))
+        .toSorted((a, b) => a.label.localeCompare(b.label))
         .map((category) => (
           <Link
             className={buttonVariants({

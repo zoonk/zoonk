@@ -11,7 +11,6 @@ import { cache } from "react";
 import { ErrorCode } from "@/lib/app-error";
 
 const cachedSearchCourses = cache(
-  // biome-ignore lint/nursery/useMaxParams: React cache requires individual args for deduplication
   async (
     title: string,
     orgSlug: string,

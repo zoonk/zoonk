@@ -1,11 +1,24 @@
 const DEDUPE_WINDOW_MS = 60_000;
 const recentErrors = new Map<string, number>();
 
-function getErrorKey(error: Error | unknown): string {
+function errorToString(error: unknown): string {
+  if (error instanceof Error) return error.message;
+  if (typeof error === "string") return error;
+  if (typeof error === "number" || typeof error === "boolean") {
+    return String(error);
+  }
+  try {
+    return JSON.stringify(error);
+  } catch {
+    return "[Unknown error]";
+  }
+}
+
+function getErrorKey(error: unknown): string {
   if (error instanceof Error) {
     return `${error.name}:${error.message}`;
   }
-  return String(error);
+  return errorToString(error);
 }
 
 function isDuplicate(key: string): boolean {
@@ -20,7 +33,7 @@ function isDuplicate(key: string): boolean {
   return false;
 }
 
-export function reportError(error: Error | unknown): void {
+export function reportError(error: unknown): void {
   if (!error) {
     return;
   }
@@ -31,7 +44,7 @@ export function reportError(error: Error | unknown): void {
   }
 
   const payload = {
-    message: error instanceof Error ? error.message : String(error),
+    message: errorToString(error),
     name: error instanceof Error ? error.name : "Error",
     stack: error instanceof Error ? error.stack : undefined,
     timestamp: new Date().toISOString(),

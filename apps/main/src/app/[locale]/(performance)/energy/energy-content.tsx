@@ -1,6 +1,6 @@
 import { getSession } from "@zoonk/core/users/session/get";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
-import type { EnergyPeriod } from "@/data/progress/get-energy-history";
+import { validatePeriod } from "@/data/progress/_utils";
 import { getEnergyHistory } from "@/data/progress/get-energy-history";
 import { PerformanceChartSkeleton } from "../_components/performance-chart-skeleton";
 import { PerformanceEmptyState } from "../_components/performance-empty-state";
@@ -16,12 +16,13 @@ export async function EnergyContent({
   searchParams: Promise<{ offset?: string; period?: string }>;
 }) {
   const { offset = "0", period = "month" } = await searchParams;
+  const validPeriod = validatePeriod(period);
 
   const [data, session] = await Promise.all([
     getEnergyHistory({
       locale,
       offset: Number(offset),
-      period: period as EnergyPeriod,
+      period: validPeriod,
     }),
     getSession(),
   ]);
@@ -40,7 +41,7 @@ export async function EnergyContent({
     <div className="flex flex-col gap-8">
       <EnergyStats
         average={data.average}
-        period={period as EnergyPeriod}
+        period={validPeriod}
         periodEnd={data.periodEnd}
         periodStart={data.periodStart}
         previousAverage={data.previousAverage}
@@ -51,7 +52,7 @@ export async function EnergyContent({
         dataPoints={data.dataPoints}
         hasNext={data.hasNextPeriod}
         hasPrevious={data.hasPreviousPeriod}
-        period={period as EnergyPeriod}
+        period={validPeriod}
         periodEnd={data.periodEnd}
         periodStart={data.periodStart}
       />

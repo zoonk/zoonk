@@ -1,10 +1,12 @@
 import "server-only";
 
 import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
-import { type Chapter, prisma } from "@zoonk/db";
+import { type Chapter, prisma, type TransactionClient } from "@zoonk/db";
 import { AppError, type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { normalizeString, toSlug } from "@zoonk/utils/string";
+import { isRecord } from "@/lib/validation";
 import { ErrorCode } from "@/lib/app-error";
+import type { ImportMode } from "@/lib/import-mode";
 import { parseJsonFile } from "@/lib/parse-json-file";
 
 export type ChapterImportData = {
@@ -17,37 +19,28 @@ export type ChaptersImport = {
   chapters: ChapterImportData[];
 };
 
-export type ImportMode = "merge" | "replace";
-
-type TransactionClient = Parameters<
-  Parameters<typeof prisma.$transaction>[0]
->[0];
-
 function validateChapterData(chapter: unknown): chapter is ChapterImportData {
-  if (typeof chapter !== "object" || chapter === null) {
+  if (!isRecord(chapter)) {
     return false;
   }
 
-  const c = chapter as Record<string, unknown>;
-
-  const hasValidTitle = typeof c.title === "string" && c.title.length > 0;
-  const hasValidDescription = typeof c.description === "string";
+  const hasValidTitle =
+    typeof chapter.title === "string" && chapter.title.length > 0;
+  const hasValidDescription = typeof chapter.description === "string";
 
   return hasValidTitle && hasValidDescription;
 }
 
 function validateImportData(data: unknown): data is ChaptersImport {
-  if (typeof data !== "object" || data === null) {
+  if (!isRecord(data)) {
     return false;
   }
 
-  const d = data as Record<string, unknown>;
-
-  if (!Array.isArray(d.chapters)) {
+  if (!Array.isArray(data.chapters)) {
     return false;
   }
 
-  return d.chapters.every(validateChapterData);
+  return data.chapters.every(validateChapterData);
 }
 
 async function removeExistingChapters(

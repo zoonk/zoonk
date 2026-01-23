@@ -13,7 +13,6 @@ function EditableLabel({
   ...props
 }: EditableLabelProps) {
   return (
-    // biome-ignore lint/a11y/noLabelWithoutControl: htmlFor is passed via props
     <label
       className={cn(
         "flex items-center gap-1.5 text-muted-foreground text-xs",

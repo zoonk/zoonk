@@ -1,12 +1,19 @@
 import "server-only";
 
 import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
-import { type Activity, type ActivityKind, prisma } from "@zoonk/db";
+import {
+  type Activity,
+  type ActivityKind,
+  prisma,
+  type TransactionClient,
+} from "@zoonk/db";
 import { AppError, type SafeReturn, safeAsync } from "@zoonk/utils/error";
+import { isRecord } from "@/lib/validation";
 import { ErrorCode } from "@/lib/app-error";
+import type { ImportMode } from "@/lib/import-mode";
 import { parseJsonFile } from "@/lib/parse-json-file";
 
-const validActivityKinds: ActivityKind[] = [
+const validActivityKinds = new Set<ActivityKind>([
   "custom",
   "background",
   "explanation",
@@ -20,7 +27,7 @@ const validActivityKinds: ActivityKind[] = [
   "reading",
   "listening",
   "review",
-];
+]);
 
 export type ActivityImportData = {
   description?: string;
@@ -32,40 +39,34 @@ export type ActivitiesImport = {
   activities: ActivityImportData[];
 };
 
-export type ImportMode = "merge" | "replace";
-
-type TransactionClient = Parameters<
-  Parameters<typeof prisma.$transaction>[0]
->[0];
+function isActivityKind(value: string): value is ActivityKind {
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- type guard pattern
+  return validActivityKinds.has(value as ActivityKind);
+}
 
 function validateActivityData(
   activity: unknown,
 ): activity is ActivityImportData {
-  if (typeof activity !== "object" || activity === null) {
+  if (!isRecord(activity)) {
     return false;
   }
 
-  const a = activity as Record<string, unknown>;
-
   const hasValidKind =
-    typeof a.kind === "string" &&
-    validActivityKinds.includes(a.kind as ActivityKind);
+    typeof activity.kind === "string" && isActivityKind(activity.kind);
 
   return hasValidKind;
 }
 
 function validateImportData(data: unknown): data is ActivitiesImport {
-  if (typeof data !== "object" || data === null) {
+  if (!isRecord(data)) {
     return false;
   }
 
-  const d = data as Record<string, unknown>;
-
-  if (!Array.isArray(d.activities)) {
+  if (!Array.isArray(data.activities)) {
     return false;
   }
 
-  return d.activities.every(validateActivityData);
+  return data.activities.every(validateActivityData);
 }
 
 async function removeExistingActivities(

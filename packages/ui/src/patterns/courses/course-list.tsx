@@ -81,6 +81,7 @@ export function CourseListSkeleton({
 
   return (
     <ItemGroup layout={layout}>
+      {/* eslint-disable react/no-array-index-key -- Static skeleton placeholders */}
       {Array.from({ length: count ?? defaultCount }).map((_, index) => (
         <Item key={index}>
           <ItemMedia

@@ -305,11 +305,10 @@ function EditorSortableList<T extends SortableItem>({
   );
 
   const handleDragStart = useCallback((event: DragStartEvent) => {
-    // Haptic feedback when drag activates
     if (typeof navigator !== "undefined" && navigator.vibrate) {
       navigator.vibrate(10);
     }
-    setActiveId(event.active.id as number);
+    setActiveId(Number(event.active.id));
   }, []);
 
   const handleDragEnd = useCallback(

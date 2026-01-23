@@ -1,5 +1,5 @@
+import { externalRedirect } from "@zoonk/next/navigation/external-redirect";
 import { buildAuthLoginUrl, getBaseUrl } from "@zoonk/utils/url";
-import { redirect } from "next/navigation";
 
 export default async function LoginPage({
   params,
@@ -7,5 +7,5 @@ export default async function LoginPage({
   const { locale } = await params;
   const callbackUrl = `${getBaseUrl()}/${locale}/auth/callback`;
   const authUrl = buildAuthLoginUrl({ callbackUrl, locale });
-  redirect(authUrl as never);
+  externalRedirect(authUrl);
 }

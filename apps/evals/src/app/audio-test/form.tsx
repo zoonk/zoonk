@@ -94,7 +94,7 @@ export function AudioTestForm() {
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-2">
             <p className="font-medium">Generated Audio</p>
-            {/* biome-ignore lint/a11y/useMediaCaption: internal testing tool doesn't need captions */}
+            {/* oxlint-disable-next-line jsx-a11y/media-has-caption -- internal testing tool */}
             <audio controls src={result.audioUrl}>
               Your browser does not support the audio element.
             </audio>

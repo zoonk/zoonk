@@ -42,6 +42,7 @@ export async function SupportContent() {
       <ItemGroup>
         <Item
           render={
+            // oxlint-disable-next-line jsx-a11y/anchor-has-content -- render prop
             <a
               href="https://github.com/zoonk/zoonk/discussions"
               rel="noopener noreferrer"
@@ -87,6 +88,7 @@ export async function SupportContent() {
 
         <div className="flex flex-wrap gap-2">
           {socials.map((social) => (
+            // oxlint-disable-next-line next/no-html-link-for-pages -- external links
             <a
               className={buttonVariants({ size: "icon", variant: "outline" })}
               href={social.url}

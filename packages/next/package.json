@@ -10,7 +10,8 @@
     "@zoonk/tsconfig": "workspace:*"
   },
   "exports": {
-    "./i18n/codec": "./src/i18n/next-intl-codec.ts"
+    "./i18n/codec": "./src/i18n/next-intl-codec.ts",
+    "./navigation/external-redirect": "./src/navigation/external-redirect.ts"
   },
   "name": "@zoonk/next",
   "peerDependencies": {

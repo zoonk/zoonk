@@ -26,8 +26,7 @@ import {
   useState,
   useTransition,
 } from "react";
-
-type ImportMode = "merge" | "replace";
+import { type ImportMode, isImportMode } from "@/lib/import-mode";
 
 type ImportContextValue = {
   file: File | null;
@@ -108,6 +107,18 @@ function ImportProvider({
 
 const BYTES_PER_KB = 1024;
 
+function isJsonFile(f: File): boolean {
+  return f.type === "application/json" || f.name.endsWith(".json");
+}
+
+function handleDragOver(e: React.DragEvent<HTMLLabelElement>) {
+  e.preventDefault();
+}
+
+function formatFileSize(bytes: number): string {
+  return (bytes / BYTES_PER_KB).toFixed(1);
+}
+
 function ImportDropzone({
   children,
   className,
@@ -118,10 +129,6 @@ function ImportDropzone({
 }) {
   const { file, setFile } = useImport();
   const inputRef = useRef<HTMLInputElement>(null);
-
-  function isJsonFile(f: File): boolean {
-    return f.type === "application/json" || f.name.endsWith(".json");
-  }
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const selectedFile = e.target.files?.[0];
@@ -138,16 +145,7 @@ function ImportDropzone({
     }
   }
 
-  function handleDragOver(e: React.DragEvent<HTMLLabelElement>) {
-    e.preventDefault();
-  }
-
-  function formatFileSize(bytes: number): string {
-    return (bytes / BYTES_PER_KB).toFixed(1);
-  }
-
   return (
-    // biome-ignore lint/a11y/noNoninteractiveElementInteractions: label wrapping file input is the accessible pattern for file uploads
     <label
       className={cn(
         "group flex min-h-32 cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border border-input border-dashed bg-muted/30 px-4 py-6 text-center transition-colors hover:border-primary/50 hover:bg-muted/50",
@@ -201,7 +199,7 @@ function ImportModeSelector({
     >
       {label && <Label className="font-medium text-sm">{label}</Label>}
       <RadioGroup
-        onValueChange={(value) => setMode(value as ImportMode)}
+        onValueChange={(value) => isImportMode(value) && setMode(value)}
         value={mode}
       >
         {children}
