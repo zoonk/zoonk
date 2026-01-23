@@ -1,5 +1,4 @@
 import "server-only";
-
 import { getSession } from "@zoonk/core/users/session/get";
 import { prisma } from "@zoonk/db";
 import { getPeakTime as getPeakTimeQuery } from "@zoonk/db/peak-time";
@@ -18,10 +17,7 @@ export type BestTimeParams = {
 };
 
 const cachedGetBestTime = cache(
-  async (
-    startDateIso: string | undefined,
-    headers?: Headers,
-  ): Promise<BestTimeData | null> => {
+  async (startDateIso: string | undefined, headers?: Headers): Promise<BestTimeData | null> => {
     const session = await getSession({ headers });
 
     if (!session) {
@@ -62,9 +58,7 @@ const cachedGetBestTime = cache(
       const score = (correct / total) * 100;
 
       const isBetter =
-        !bestTime ||
-        score > bestTime.score ||
-        (score === bestTime.score && total > bestTimeTotal);
+        !bestTime || score > bestTime.score || (score === bestTime.score && total > bestTimeTotal);
 
       if (isBetter) {
         bestTime = { period: Number(row.period), score };
@@ -76,8 +70,6 @@ const cachedGetBestTime = cache(
   },
 );
 
-export function getBestTime(
-  params?: BestTimeParams,
-): Promise<BestTimeData | null> {
+export function getBestTime(params?: BestTimeParams): Promise<BestTimeData | null> {
   return cachedGetBestTime(params?.startDate?.toISOString(), params?.headers);
 }

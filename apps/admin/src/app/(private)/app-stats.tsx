@@ -1,6 +1,6 @@
-import { UsersIcon } from "lucide-react";
 import { Stats, StatsSkeleton } from "@/components/stats";
 import { countUsers } from "@/data/stats/count-users";
+import { UsersIcon } from "lucide-react";
 
 export async function AppStats() {
   const totalUsers = await countUsers();

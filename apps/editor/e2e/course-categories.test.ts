@@ -1,9 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
-import {
-  courseCategoryFixture,
-  courseFixture,
-} from "@zoonk/testing/fixtures/courses";
+import { courseCategoryFixture, courseFixture } from "@zoonk/testing/fixtures/courses";
 import { expect, type Page, test } from "./fixtures";
 
 async function createTestCourse() {
@@ -20,9 +17,7 @@ async function createTestCourse() {
 async function navigateToCoursePage(page: Page, slug: string) {
   await page.goto(`/ai/c/en/${slug}`);
 
-  await expect(
-    page.getByRole("textbox", { name: /edit course title/i }),
-  ).toBeVisible();
+  await expect(page.getByRole("textbox", { name: /edit course title/i })).toBeVisible();
 }
 
 async function openCategoryPopover(page: Page) {
@@ -36,9 +31,7 @@ function getCategoryOption(page: Page, name: RegExp) {
 }
 
 test.describe("Course Categories Editor", () => {
-  test("displays existing categories as badges", async ({
-    authenticatedPage,
-  }) => {
+  test("displays existing categories as badges", async ({ authenticatedPage }) => {
     const course = await createTestCourse();
 
     await Promise.all([
@@ -52,9 +45,7 @@ test.describe("Course Categories Editor", () => {
     await expect(authenticatedPage.getByText("Science")).toBeVisible();
   });
 
-  test("adds a category and persists after reload", async ({
-    authenticatedPage,
-  }) => {
+  test("adds a category and persists after reload", async ({ authenticatedPage }) => {
     const course = await createTestCourse();
     await navigateToCoursePage(authenticatedPage, course.slug);
 
@@ -82,9 +73,7 @@ test.describe("Course Categories Editor", () => {
     await expect(main.getByText("Technology")).toBeVisible();
   });
 
-  test("removes a category and persists after reload", async ({
-    authenticatedPage,
-  }) => {
+  test("removes a category and persists after reload", async ({ authenticatedPage }) => {
     const course = await createTestCourse();
     await courseCategoryFixture({ category: "tech", courseId: course.id });
 
@@ -119,29 +108,19 @@ test.describe("Course Categories Editor", () => {
 
     await openCategoryPopover(authenticatedPage);
 
-    await expect(
-      getCategoryOption(authenticatedPage, /technology/i),
-    ).toBeVisible();
+    await expect(getCategoryOption(authenticatedPage, /technology/i)).toBeVisible();
 
-    await expect(
-      getCategoryOption(authenticatedPage, /science/i),
-    ).toBeVisible();
+    await expect(getCategoryOption(authenticatedPage, /science/i)).toBeVisible();
 
     await expect(getCategoryOption(authenticatedPage, /arts/i)).toBeVisible();
 
     await authenticatedPage.getByPlaceholder(/search/i).fill("tech");
 
-    await expect(
-      getCategoryOption(authenticatedPage, /technology/i),
-    ).toBeVisible();
+    await expect(getCategoryOption(authenticatedPage, /technology/i)).toBeVisible();
 
-    await expect(
-      getCategoryOption(authenticatedPage, /science/i),
-    ).not.toBeVisible();
+    await expect(getCategoryOption(authenticatedPage, /science/i)).not.toBeVisible();
 
-    await expect(
-      getCategoryOption(authenticatedPage, /arts/i),
-    ).not.toBeVisible();
+    await expect(getCategoryOption(authenticatedPage, /arts/i)).not.toBeVisible();
   });
 
   test("displays multiple categories in alphabetical order for non-English locale", async ({
@@ -158,9 +137,7 @@ test.describe("Course Categories Editor", () => {
     // Set Spanish locale via cookie to test UI translation ordering
     await authenticatedPage
       .context()
-      .addCookies([
-        { domain: "localhost", name: "locale", path: "/", value: "es" },
-      ]);
+      .addCookies([{ domain: "localhost", name: "locale", path: "/", value: "es" }]);
 
     await authenticatedPage.goto(`/ai/c/en/${course.slug}`);
 
@@ -198,9 +175,7 @@ test.describe("Course Categories Editor", () => {
     expect(scienceBox.x).toBeLessThan(businessBox.x);
   });
 
-  test("handles multiple add/remove operations in one session", async ({
-    authenticatedPage,
-  }) => {
+  test("handles multiple add/remove operations in one session", async ({ authenticatedPage }) => {
     const course = await createTestCourse();
     await courseCategoryFixture({ category: "tech", courseId: course.id });
     await courseCategoryFixture({ category: "arts", courseId: course.id });

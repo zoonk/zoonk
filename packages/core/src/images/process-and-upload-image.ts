@@ -1,5 +1,4 @@
 import "server-only";
-
 import { safeAsync } from "@zoonk/utils/error";
 import { optimizeImage } from "./optimize-image";
 import { uploadImage } from "./upload-image";
@@ -7,12 +6,7 @@ import { uploadImage } from "./upload-image";
 const BYTES_PER_MB = 1024 * 1024;
 const DEFAULT_MAX_SIZE = 5 * BYTES_PER_MB;
 
-const DEFAULT_ACCEPTED_TYPES = [
-  "image/jpeg",
-  "image/png",
-  "image/webp",
-  "image/gif",
-];
+const DEFAULT_ACCEPTED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
 
 export type ProcessAndUploadImageParams = {
   file: File;

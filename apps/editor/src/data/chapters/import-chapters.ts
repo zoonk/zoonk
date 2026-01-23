@@ -1,13 +1,12 @@
 import "server-only";
-
+import { ErrorCode } from "@/lib/app-error";
+import { parseJsonFile } from "@/lib/parse-json-file";
+import { isRecord } from "@/lib/validation";
 import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
 import { type Chapter, prisma, type TransactionClient } from "@zoonk/db";
 import { AppError, type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { normalizeString, toSlug } from "@zoonk/utils/string";
-import { isRecord } from "@/lib/validation";
-import { ErrorCode } from "@/lib/app-error";
 import type { ImportMode } from "@/lib/import-mode";
-import { parseJsonFile } from "@/lib/parse-json-file";
 
 export type ChapterImportData = {
   description: string;
@@ -24,8 +23,7 @@ function validateChapterData(chapter: unknown): chapter is ChapterImportData {
     return false;
   }
 
-  const hasValidTitle =
-    typeof chapter.title === "string" && chapter.title.length > 0;
+  const hasValidTitle = typeof chapter.title === "string" && chapter.title.length > 0;
   const hasValidDescription = typeof chapter.description === "string";
 
   return hasValidTitle && hasValidDescription;
@@ -43,10 +41,7 @@ function validateImportData(data: unknown): data is ChaptersImport {
   return data.chapters.every(validateChapterData);
 }
 
-async function removeExistingChapters(
-  tx: TransactionClient,
-  courseId: number,
-): Promise<void> {
+async function removeExistingChapters(tx: TransactionClient, courseId: number): Promise<void> {
   await tx.chapter.deleteMany({
     where: { courseId },
   });
@@ -114,9 +109,7 @@ export async function importChapters(params: {
       const chaptersToImport = importData.chapters.map((chapterData, i) => {
         const hasExplicitSlug = Boolean(chapterData.slug);
 
-        const slug = chapterData.slug
-          ? toSlug(chapterData.slug)
-          : toSlug(chapterData.title);
+        const slug = chapterData.slug ? toSlug(chapterData.slug) : toSlug(chapterData.title);
 
         return {
           chapterData,
@@ -136,9 +129,7 @@ export async function importChapters(params: {
         },
       });
 
-      const existingChapterMap = new Map(
-        existingChaptersInCourse.map((c) => [c.slug, c]),
-      );
+      const existingChapterMap = new Map(existingChaptersInCourse.map((c) => [c.slug, c]));
 
       // Deduplicate slugs within the batch to prevent unique constraint violations
       const slugCounts = new Map<string, number>();
@@ -147,8 +138,7 @@ export async function importChapters(params: {
         slugCounts.set(item.slug, count + 1);
 
         // If this slug already appeared in the batch, make it unique
-        const batchUniqueSlug =
-          count > 0 ? `${item.slug}-${Date.now()}-${item.index}` : item.slug;
+        const batchUniqueSlug = count > 0 ? `${item.slug}-${Date.now()}-${item.index}` : item.slug;
 
         return { ...item, slug: batchUniqueSlug };
       });
@@ -164,9 +154,7 @@ export async function importChapters(params: {
           // If both course and chapter are unpublished, mark chapter as published
           // Otherwise keep current published state
           const isPublished =
-            course.isPublished || existingChapter.isPublished
-              ? existingChapter.isPublished
-              : true;
+            course.isPublished || existingChapter.isPublished ? existingChapter.isPublished : true;
 
           chapter = await tx.chapter.update({
             data: {

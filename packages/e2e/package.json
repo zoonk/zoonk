@@ -1,4 +1,14 @@
 {
+  "name": "@zoonk/e2e",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./base.config": "./src/base.config.ts",
+    "./fixtures": "./src/fixtures/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsgo --noEmit"
+  },
   "dependencies": {
     "@playwright/test": "1.57.0"
   },
@@ -6,15 +16,5 @@
     "@types/node": "^24",
     "@typescript/native-preview": "7.0.0-dev.20260122.4",
     "@zoonk/tsconfig": "workspace:*"
-  },
-  "exports": {
-    "./base.config": "./src/base.config.ts",
-    "./fixtures": "./src/fixtures/index.ts"
-  },
-  "name": "@zoonk/e2e",
-  "private": true,
-  "scripts": {
-    "typecheck": "tsgo --noEmit"
-  },
-  "type": "module"
+  }
 }

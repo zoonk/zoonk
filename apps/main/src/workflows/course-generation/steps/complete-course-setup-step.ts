@@ -7,9 +7,7 @@ type CompleteCourseSetupInput = {
   courseId: number;
 };
 
-export async function completeCourseSetupStep(
-  input: CompleteCourseSetupInput,
-): Promise<void> {
+export async function completeCourseSetupStep(input: CompleteCourseSetupInput): Promise<void> {
   "use step";
 
   await streamStatus({ status: "started", step: "completeCourseSetup" });

@@ -27,19 +27,14 @@ async function createTestCourse() {
 async function navigateToCoursePage(page: Page, slug: string) {
   await page.goto(`/ai/c/en/${slug}`);
 
-  await expect(
-    page.getByRole("textbox", { name: /edit course title/i }),
-  ).toBeVisible();
+  await expect(page.getByRole("textbox", { name: /edit course title/i })).toBeVisible();
 }
 
 async function openAlternativeTitles(page: Page) {
   await page.getByRole("button", { name: /alternative titles/i }).click();
 }
 
-async function createAlternativeTitleFixture(
-  courseId: number,
-  baseSlug: string,
-) {
+async function createAlternativeTitleFixture(courseId: number, baseSlug: string) {
   const slug = `${baseSlug}-${randomUUID().slice(0, 8)}`;
   await prisma.courseAlternativeTitle.create({
     data: { courseId, language: "en", slug },
@@ -47,10 +42,7 @@ async function createAlternativeTitleFixture(
   return slug;
 }
 
-async function createManyAlternativeTitleFixtures(
-  courseId: number,
-  count: number,
-) {
+async function createManyAlternativeTitleFixtures(courseId: number, count: number) {
   const prefix = randomUUID().slice(0, 8);
   const slugs = Array.from(
     { length: count },
@@ -65,9 +57,7 @@ async function createManyAlternativeTitleFixtures(
 }
 
 test.describe("Alternative Titles Editor", () => {
-  test("displays existing titles with count badge", async ({
-    authenticatedPage,
-  }) => {
+  test("displays existing titles with count badge", async ({ authenticatedPage }) => {
     const course = await createTestCourse();
 
     const slug1 = await createAlternativeTitleFixture(course.id, "title-one");
@@ -88,9 +78,7 @@ test.describe("Alternative Titles Editor", () => {
     await expect(authenticatedPage.getByText(slug2)).toBeVisible();
   });
 
-  test("adds a title and persists after reload", async ({
-    authenticatedPage,
-  }) => {
+  test("adds a title and persists after reload", async ({ authenticatedPage }) => {
     const course = await createTestCourse();
     const uniqueId = randomUUID().slice(0, 8);
     const titleInput = `My New Title ${uniqueId}`;
@@ -100,9 +88,7 @@ test.describe("Alternative Titles Editor", () => {
 
     await openAlternativeTitles(authenticatedPage);
 
-    await authenticatedPage
-      .getByPlaceholder(/add alternative title/i)
-      .fill(titleInput);
+    await authenticatedPage.getByPlaceholder(/add alternative title/i).fill(titleInput);
 
     await authenticatedPage.getByRole("button", { name: /^add$/i }).click();
 
@@ -119,9 +105,7 @@ test.describe("Alternative Titles Editor", () => {
     await expect(authenticatedPage.getByText(expectedSlug)).toBeVisible();
   });
 
-  test("removes a title and persists after reload", async ({
-    authenticatedPage,
-  }) => {
+  test("removes a title and persists after reload", async ({ authenticatedPage }) => {
     const course = await createTestCourse();
     const slug = await createAlternativeTitleFixture(course.id, "to-remove");
 
@@ -151,18 +135,9 @@ test.describe("Alternative Titles Editor", () => {
     const course = await createTestCourse();
     const prefix = randomUUID().slice(0, 8);
 
-    const machineSlug = await createAlternativeTitleFixture(
-      course.id,
-      `machine-${prefix}`,
-    );
-    const deepSlug = await createAlternativeTitleFixture(
-      course.id,
-      `deep-${prefix}`,
-    );
-    const dataSlug = await createAlternativeTitleFixture(
-      course.id,
-      `data-${prefix}`,
-    );
+    const machineSlug = await createAlternativeTitleFixture(course.id, `machine-${prefix}`);
+    const deepSlug = await createAlternativeTitleFixture(course.id, `deep-${prefix}`);
+    const dataSlug = await createAlternativeTitleFixture(course.id, `data-${prefix}`);
 
     await navigateToCoursePage(authenticatedPage, course.slug);
     await openAlternativeTitles(authenticatedPage);
@@ -179,9 +154,7 @@ test.describe("Alternative Titles Editor", () => {
 
     await authenticatedPage.getByPlaceholder(/search titles/i).fill("xyz");
 
-    await expect(
-      authenticatedPage.getByText(/no titles match your search/i),
-    ).toBeVisible();
+    await expect(authenticatedPage.getByText(/no titles match your search/i)).toBeVisible();
 
     await authenticatedPage.getByPlaceholder(/search titles/i).clear();
 
@@ -190,9 +163,7 @@ test.describe("Alternative Titles Editor", () => {
     await expect(authenticatedPage.getByText(dataSlug)).toBeVisible();
   });
 
-  test("shows more/less when there are many titles", async ({
-    authenticatedPage,
-  }) => {
+  test("shows more/less when there are many titles", async ({ authenticatedPage }) => {
     const course = await createTestCourse();
     const slugs = await createManyAlternativeTitleFixtures(course.id, 12);
 
@@ -200,9 +171,7 @@ test.describe("Alternative Titles Editor", () => {
     await openAlternativeTitles(authenticatedPage);
 
     await Promise.all(
-      slugs
-        .slice(0, 10)
-        .map((slug) => expect(authenticatedPage.getByText(slug)).toBeVisible()),
+      slugs.slice(0, 10).map((slug) => expect(authenticatedPage.getByText(slug)).toBeVisible()),
     );
 
     const slug11 = slugs[10];
@@ -232,10 +201,7 @@ test.describe("Alternative Titles Editor", () => {
 
   test("imports titles in merge mode", async ({ authenticatedPage }) => {
     const course = await createTestCourse();
-    const existingSlug = await createAlternativeTitleFixture(
-      course.id,
-      "existing",
-    );
+    const existingSlug = await createAlternativeTitleFixture(course.id, "existing");
     const prefix = randomUUID().slice(0, 8);
     const importedSlug1 = `imported-${prefix}-1`;
     const importedSlug2 = `imported-${prefix}-2`;
@@ -319,9 +285,7 @@ test.describe("Alternative Titles Editor", () => {
 
     await expect(authenticatedPage.getByText("(1)")).toBeVisible();
 
-    await authenticatedPage
-      .getByPlaceholder(/add alternative title/i)
-      .fill(`Dup Test ${uniqueId}`);
+    await authenticatedPage.getByPlaceholder(/add alternative title/i).fill(`Dup Test ${uniqueId}`);
 
     await authenticatedPage.getByRole("button", { name: /^add$/i }).click();
 

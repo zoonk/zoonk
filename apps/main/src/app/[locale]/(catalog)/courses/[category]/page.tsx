@@ -1,5 +1,7 @@
 "use cache";
 
+import { LIST_COURSES_LIMIT, listCourses } from "@/data/courses/list-courses";
+import { getCategoryHeader, getCategoryMeta } from "@/lib/categories/category-server";
 import {
   Container,
   ContainerDescription,
@@ -9,16 +11,11 @@ import {
 } from "@zoonk/ui/components/container";
 import { cacheTagCoursesListByCategory } from "@zoonk/utils/cache";
 import { COURSE_CATEGORIES, isValidCategory } from "@zoonk/utils/categories";
-import type { Metadata } from "next";
+import { setRequestLocale } from "next-intl/server";
 import { cacheTag } from "next/cache";
 import { notFound } from "next/navigation";
-import { setRequestLocale } from "next-intl/server";
-import { LIST_COURSES_LIMIT, listCourses } from "@/data/courses/list-courses";
-import {
-  getCategoryHeader,
-  getCategoryMeta,
-} from "@/lib/categories/category-server";
 import { CourseListClient } from "../course-list-client";
+import type { Metadata } from "next";
 
 export async function generateStaticParams() {
   return COURSE_CATEGORIES.map((category) => ({ category }));

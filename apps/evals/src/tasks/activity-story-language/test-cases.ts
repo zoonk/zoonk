@@ -199,8 +199,7 @@ ${SHARED_EXPECTATIONS}
       chapterTitle: "Fazendo Compras",
       courseTitle: "German",
       language: "pt",
-      lessonDescription:
-        "Aprenda a comprar frutas, verduras e outros itens em um mercado alemao",
+      lessonDescription: "Aprenda a comprar frutas, verduras e outros itens em um mercado alemao",
       lessonTitle: "No Mercado",
     },
   },
@@ -241,8 +240,7 @@ ${SHARED_EXPECTATIONS}
       chapterTitle: "Transporte y Direcciones",
       courseTitle: "Korean",
       language: "es",
-      lessonDescription:
-        "Como pedir direcciones y entender indicaciones basicas en coreano",
+      lessonDescription: "Como pedir direcciones y entender indicaciones basicas en coreano",
       lessonTitle: "Pidiendo Direcciones",
     },
   },
@@ -276,8 +274,7 @@ ${SHARED_EXPECTATIONS}
       chapterTitle: "Health and Wellness",
       courseTitle: "Spanish",
       language: "en",
-      lessonDescription:
-        "Learn to describe symptoms and buy medicine at a Spanish pharmacy",
+      lessonDescription: "Learn to describe symptoms and buy medicine at a Spanish pharmacy",
       lessonTitle: "At the Pharmacy",
     },
   },

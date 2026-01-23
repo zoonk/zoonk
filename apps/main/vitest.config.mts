@@ -20,8 +20,7 @@ export default defineConfig({
     },
     env: {
       DATABASE_URL: "postgres://postgres:postgres@localhost:5432/zoonk_test",
-      DATABASE_URL_UNPOOLED:
-        "postgres://postgres:postgres@localhost:5432/zoonk_test",
+      DATABASE_URL_UNPOOLED: "postgres://postgres:postgres@localhost:5432/zoonk_test",
     },
     environment: "node",
     exclude: ["**/node_modules/**", "**/e2e/**"],

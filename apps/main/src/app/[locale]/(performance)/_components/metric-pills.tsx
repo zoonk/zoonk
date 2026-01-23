@@ -1,10 +1,10 @@
 "use client";
 
-import { buttonVariants } from "@zoonk/ui/components/button";
-import { useSelectedLayoutSegment } from "next/navigation";
-import { useExtracted } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { getMenu } from "@/lib/menu";
+import { buttonVariants } from "@zoonk/ui/components/button";
+import { useExtracted } from "next-intl";
+import { useSelectedLayoutSegment } from "next/navigation";
 
 export function MetricPills() {
   const segment = useSelectedLayoutSegment();

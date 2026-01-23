@@ -70,12 +70,7 @@ export function SelectImageTestForm() {
           </div>
           <div className="flex flex-col gap-2">
             <Label htmlFor="imageUrl">Image URL</Label>
-            <Input
-              className="font-mono text-sm"
-              id="imageUrl"
-              readOnly
-              value={result.imageUrl}
-            />
+            <Input className="font-mono text-sm" id="imageUrl" readOnly value={result.imageUrl} />
           </div>
         </div>
       )}

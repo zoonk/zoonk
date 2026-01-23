@@ -27,10 +27,7 @@ function hasAnyModifier(event: KeyboardEvent): boolean {
   return event.metaKey || event.ctrlKey || event.shiftKey || event.altKey;
 }
 
-function getModifierChecks(
-  event: KeyboardEvent,
-  modifiers: KeyboardModifiers,
-): boolean[] {
+function getModifierChecks(event: KeyboardEvent, modifiers: KeyboardModifiers): boolean[] {
   const checks: boolean[] = [];
 
   if (modifiers.altKey !== undefined) {

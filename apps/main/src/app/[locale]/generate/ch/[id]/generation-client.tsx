@@ -1,8 +1,5 @@
 "use client";
 
-import type { GenerationStatus } from "@zoonk/db";
-import { AI_ORG_SLUG } from "@zoonk/utils/constants";
-import { useExtracted } from "next-intl";
 import {
   GenerationProgressCompleted,
   GenerationProgressError,
@@ -15,8 +12,11 @@ import {
 } from "@/components/generation/generation-progress";
 import { useCompletionRedirect } from "@/lib/workflow/use-completion-redirect";
 import { useWorkflowGeneration } from "@/lib/workflow/use-workflow-generation";
-import type { ChapterStepName } from "@/workflows/config";
+import { AI_ORG_SLUG } from "@zoonk/utils/constants";
+import { useExtracted } from "next-intl";
 import { useGenerationPhases } from "./use-generation-phases";
+import type { ChapterStepName } from "@/workflows/config";
+import type { GenerationStatus } from "@zoonk/db";
 
 export function GenerationClient({
   chapterId,
@@ -56,13 +56,8 @@ export function GenerationClient({
     return (
       <GenerationTimeline>
         <GenerationTimelineHeader>
-          <GenerationTimelineTitle>
-            {t("Creating your lessons")}
-          </GenerationTimelineTitle>
-          <GenerationTimelineProgress
-            label={t("Generation progress")}
-            value={progress}
-          />
+          <GenerationTimelineTitle>{t("Creating your lessons")}</GenerationTimelineTitle>
+          <GenerationTimelineProgress label={t("Generation progress")} value={progress} />
         </GenerationTimelineHeader>
 
         <GenerationTimelineSteps>
@@ -83,9 +78,7 @@ export function GenerationClient({
 
   if (generation.status === "completed") {
     return (
-      <GenerationProgressCompleted
-        subtitle={t("Redirecting to your course...")}
-      >
+      <GenerationProgressCompleted subtitle={t("Redirecting to your course...")}>
         {t("Lessons generated")}
       </GenerationProgressCompleted>
     );
@@ -94,9 +87,7 @@ export function GenerationClient({
   if (generation.status === "error") {
     return (
       <GenerationProgressError
-        description={
-          generation.error || t("Something went wrong. Please try again.")
-        }
+        description={generation.error || t("Something went wrong. Please try again.")}
         onRetry={generation.retry}
         retryLabel={t("Try again")}
       >

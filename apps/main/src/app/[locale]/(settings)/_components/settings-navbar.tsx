@@ -1,12 +1,12 @@
 "use client";
 
+import { Link } from "@/i18n/navigation";
+import { getMenu } from "@/lib/menu";
 import { authClient } from "@zoonk/core/auth/client";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { LogOutIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { Suspense } from "react";
-import { Link } from "@/i18n/navigation";
-import { getMenu } from "@/lib/menu";
 import { SettingsNavigation } from "./settings-navigation";
 
 const homeMenu = getMenu("home");
@@ -17,7 +17,7 @@ export function SettingsNavbar() {
   const isLoggedIn = Boolean(session);
 
   return (
-    <nav className="sticky top-0 z-10 flex w-full items-center justify-between gap-2 bg-background/95 px-4 pt-4 backdrop-blur supports-backdrop-filter:bg-background/60">
+    <nav className="bg-background/95 supports-backdrop-filter:bg-background/60 sticky top-0 z-10 flex w-full items-center justify-between gap-2 px-4 pt-4 backdrop-blur">
       <div className="flex items-center gap-2">
         <Link
           className={buttonVariants({

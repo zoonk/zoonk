@@ -6,10 +6,10 @@ import {
   ContainerHeaderGroup,
   ContainerTitle,
 } from "@zoonk/ui/components/container";
-import type { Metadata } from "next";
 import { getExtracted, setRequestLocale } from "next-intl/server";
 import { Suspense } from "react";
 import { EnergyContent, EnergyContentSkeleton } from "./energy-content";
+import type { Metadata } from "next";
 
 export async function generateMetadata({
   params,
@@ -25,10 +25,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function EnergyPage({
-  params,
-  searchParams,
-}: PageProps<"/[locale]/energy">) {
+export default async function EnergyPage({ params, searchParams }: PageProps<"/[locale]/energy">) {
   const { locale } = await params;
   setRequestLocale(locale);
 
@@ -39,9 +36,7 @@ export default async function EnergyPage({
       <ContainerHeader>
         <ContainerHeaderGroup>
           <ContainerTitle>{t("Energy")}</ContainerTitle>
-          <ContainerDescription>
-            {t("Track your learning energy over time")}
-          </ContainerDescription>
+          <ContainerDescription>{t("Track your learning energy over time")}</ContainerDescription>
         </ContainerHeaderGroup>
       </ContainerHeader>
 

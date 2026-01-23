@@ -1,8 +1,8 @@
 import { Wizard } from "@zoonk/ui/components/wizard";
-import type { Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
 import { WizardView } from "./wizard-view";
+import type { Metadata } from "next";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getExtracted();
@@ -10,9 +10,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: t("Create course") };
 }
 
-export default async function NewCoursePage({
-  params,
-}: PageProps<"/[orgSlug]/new-course">) {
+export default async function NewCoursePage({ params }: PageProps<"/[orgSlug]/new-course">) {
   return (
     <Wizard>
       <Suspense fallback={null}>

@@ -46,11 +46,7 @@ describe("listAlternativeTitles", () => {
 
     const result = await listAlternativeTitles({ courseId: course.id });
 
-    expect(result).toEqual([
-      `apple-${suffix}`,
-      `mango-${suffix}`,
-      `zebra-${suffix}`,
-    ]);
+    expect(result).toEqual([`apple-${suffix}`, `mango-${suffix}`, `zebra-${suffix}`]);
   });
 
   test("returns alternative titles by course slug", async () => {

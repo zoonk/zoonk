@@ -30,9 +30,7 @@ async function createTestCourse(imageUrl: string | null = null) {
 async function navigateToCoursePage(page: Page, slug: string) {
   await page.goto(`/ai/c/en/${slug}`);
 
-  await expect(
-    page.getByRole("textbox", { name: /edit course title/i }),
-  ).toBeVisible();
+  await expect(page.getByRole("textbox", { name: /edit course title/i })).toBeVisible();
 }
 
 function getUploadButton(page: Page) {
@@ -52,9 +50,7 @@ async function expectErrorToast(page: Page, message: RegExp) {
 }
 
 test.describe("Course Image - Upload", () => {
-  test("uploads image and persists after reload", async ({
-    authenticatedPage,
-  }) => {
+  test("uploads image and persists after reload", async ({ authenticatedPage }) => {
     const course = await createTestCourse(null);
     await navigateToCoursePage(authenticatedPage, course.slug);
 
@@ -78,9 +74,7 @@ test.describe("Course Image - Upload", () => {
 });
 
 test.describe("Course Image - Replace", () => {
-  test("replaces existing image with new one", async ({
-    authenticatedPage,
-  }) => {
+  test("replaces existing image with new one", async ({ authenticatedPage }) => {
     const course = await createTestCourse("https://example.com/old-image.jpg");
     await navigateToCoursePage(authenticatedPage, course.slug);
 
@@ -114,9 +108,7 @@ test.describe("Course Image - Replace", () => {
 });
 
 test.describe("Course Image - Remove", () => {
-  test("removes image when clicking remove button", async ({
-    authenticatedPage,
-  }) => {
+  test("removes image when clicking remove button", async ({ authenticatedPage }) => {
     const course = await createTestCourse("https://example.com/test-image.jpg");
     await navigateToCoursePage(authenticatedPage, course.slug);
 

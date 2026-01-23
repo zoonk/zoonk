@@ -1,9 +1,8 @@
 import "server-only";
-
+import { ErrorCode } from "@/lib/app-error";
 import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
 import { prisma } from "@zoonk/db";
 import { AppError, type SafeReturn, safeAsync } from "@zoonk/utils/error";
-import { ErrorCode } from "@/lib/app-error";
 
 export type ChapterPosition = {
   chapterId: number;

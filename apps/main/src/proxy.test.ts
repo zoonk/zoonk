@@ -15,31 +15,21 @@ test("doesn't match static files", () => {
 });
 
 test("doesn't match _next paths", () => {
-  expect(doesMiddlewareMatch({ config, url: "/_next/static/file.js" })).toBe(
-    false,
-  );
+  expect(doesMiddlewareMatch({ config, url: "/_next/static/file.js" })).toBe(false);
 });
 
 test("doesn't match _vercel paths", () => {
-  expect(doesMiddlewareMatch({ config, url: "/_vercel/insights/view" })).toBe(
-    false,
-  );
+  expect(doesMiddlewareMatch({ config, url: "/_vercel/insights/view" })).toBe(false);
 });
 
 test("doesn't match .well-known paths", () => {
-  expect(
-    doesMiddlewareMatch({ config, url: "/.well-known/workflow/whatever" }),
-  ).toBe(false);
+  expect(doesMiddlewareMatch({ config, url: "/.well-known/workflow/whatever" })).toBe(false);
 });
 
 test("matches well-known course paths", () => {
-  expect(doesMiddlewareMatch({ config, url: "/c/my-well-known-course" })).toBe(
-    true,
-  );
+  expect(doesMiddlewareMatch({ config, url: "/c/my-well-known-course" })).toBe(true);
 
-  expect(doesMiddlewareMatch({ config, url: "/c/well-known-course/en" })).toBe(
-    true,
-  );
+  expect(doesMiddlewareMatch({ config, url: "/c/well-known-course/en" })).toBe(true);
 });
 
 test("doesn't match paths starting with 149e (BotID paths)", () => {

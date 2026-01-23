@@ -2,11 +2,7 @@ import "server-only";
 import { getSession } from "@zoonk/core/users/session/get";
 import { prisma } from "@zoonk/db";
 
-export async function listCourses(params: {
-  limit: number;
-  offset: number;
-  search?: string;
-}) {
+export async function listCourses(params: { limit: number; offset: number; search?: string }) {
   const session = await getSession();
 
   if (session?.user.role !== "admin") {

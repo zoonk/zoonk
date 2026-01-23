@@ -9,9 +9,7 @@ const nextConfig: NextConfig = {
     typedEnv: true,
   },
   images: {
-    remotePatterns: [
-      new URL("https://to3kaoi21m60hzgu.public.blob.vercel-storage.com/**"),
-    ],
+    remotePatterns: [new URL("https://to3kaoi21m60hzgu.public.blob.vercel-storage.com/**")],
   },
   pageExtensions: ["ts", "tsx"],
   reactCompiler: true,

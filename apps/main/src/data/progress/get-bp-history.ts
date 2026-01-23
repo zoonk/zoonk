@@ -1,8 +1,6 @@
 import "server-only";
-
 import { getSession } from "@zoonk/core/users/session/get";
 import { prisma } from "@zoonk/db";
-import type { BeltLevelResult } from "@zoonk/utils/belt-level";
 import { calculateBeltLevel } from "@zoonk/utils/belt-level";
 import { safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
@@ -13,6 +11,7 @@ import {
   formatLabel,
   type HistoryPeriod,
 } from "./_utils";
+import type { BeltLevelResult } from "@zoonk/utils/belt-level";
 
 export type BpDataPoint = {
   date: Date;
@@ -67,10 +66,7 @@ async function fetchDailyBpData(
   };
 }
 
-function processBpData(
-  rawData: RawDataPoint[],
-  period: HistoryPeriod,
-): RawDataPoint[] {
+function processBpData(rawData: RawDataPoint[], period: HistoryPeriod): RawDataPoint[] {
   if (period === "6months") {
     return aggregateByWeek(rawData, (p) => p.bp, "sum").map((v) => ({
       bp: v.value,
@@ -140,8 +136,7 @@ const cachedGetBpHistory = cache(
     const periodTotal = sumBp(rawData);
 
     const previousRaw = previousResult.data ?? [];
-    const previousPeriodTotal =
-      previousRaw.length > 0 ? sumBp(previousRaw) : null;
+    const previousPeriodTotal = previousRaw.length > 0 ? sumBp(previousRaw) : null;
 
     const { data: earlierData } = await safeAsync(() =>
       prisma.dailyProgress.findFirst({
@@ -173,9 +168,7 @@ const cachedGetBpHistory = cache(
   },
 );
 
-export function getBpHistory(
-  params: BpHistoryParams,
-): Promise<BpHistoryData | null> {
+export function getBpHistory(params: BpHistoryParams): Promise<BpHistoryData | null> {
   return cachedGetBpHistory(
     params.period,
     params.offset ?? 0,

@@ -1,11 +1,11 @@
-import { Accordion } from "@zoonk/ui/components/accordion";
-import { ContainerTitle } from "@zoonk/ui/components/container";
 import { calculateAverageScore } from "@/lib/leaderboard";
 import { getModelById } from "@/lib/models";
 import { getStatsFromResults } from "@/lib/stats";
-import type { TaskEvalResults } from "@/lib/types";
+import { Accordion } from "@zoonk/ui/components/accordion";
+import { ContainerTitle } from "@zoonk/ui/components/container";
 import { SummaryCard } from "./summary-card";
 import { TestCase } from "./test-case";
+import type { TaskEvalResults } from "@/lib/types";
 
 type EvalResultsProps = {
   results: TaskEvalResults;
@@ -35,11 +35,7 @@ export function EvalResults({ results }: EvalResultsProps) {
 
         <Accordion className="w-full">
           {results.results.map((result, index) => (
-            <TestCase
-              index={index}
-              key={result.testCase.id || index}
-              result={result}
-            />
+            <TestCase index={index} key={result.testCase.id || index} result={result} />
           ))}
         </Accordion>
       </div>

@@ -1,5 +1,5 @@
-import type { ActivityKind } from "@zoonk/db";
 import { getExtracted } from "next-intl/server";
+import type { ActivityKind } from "@zoonk/db";
 
 export type ActivityKindInfo = {
   key: ActivityKind;
@@ -7,9 +7,7 @@ export type ActivityKindInfo = {
   description: string;
 };
 
-export async function getActivityKinds(params?: {
-  locale: string;
-}): Promise<ActivityKindInfo[]> {
+export async function getActivityKinds(params?: { locale: string }): Promise<ActivityKindInfo[]> {
   const t = await getExtracted(params);
 
   return [
@@ -63,9 +61,7 @@ export async function getActivityKinds(params?: {
       label: t("Challenge"),
     },
     {
-      description: t(
-        "Learn new words and their translations to build your vocabulary.",
-      ),
+      description: t("Learn new words and their translations to build your vocabulary."),
       key: "vocabulary",
       label: t("Vocabulary"),
     },
@@ -77,23 +73,17 @@ export async function getActivityKinds(params?: {
       label: t("Grammar"),
     },
     {
-      description: t(
-        "Read sentences and translate them to practice reading comprehension.",
-      ),
+      description: t("Read sentences and translate them to practice reading comprehension."),
       key: "reading",
       label: t("Reading"),
     },
     {
-      description: t(
-        "Listen to audio sentences and translate them to practice listening skills.",
-      ),
+      description: t("Listen to audio sentences and translate them to practice listening skills."),
       key: "listening",
       label: t("Listening"),
     },
     {
-      description: t(
-        "A comprehensive quiz covering everything you learned in this lesson.",
-      ),
+      description: t("A comprehensive quiz covering everything you learned in this lesson."),
       key: "review",
       label: t("Review"),
     },

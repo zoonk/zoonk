@@ -27,10 +27,7 @@ function formatErrorHtml(error: ErrorPayload): string {
     { label: "Timestamp", value: error.timestamp ?? new Date().toISOString() },
   ]
     .filter((row) => row.value)
-    .map(
-      (row) =>
-        `<tr><td><strong>${row.label}</strong></td><td>${row.value}</td></tr>`,
-    )
+    .map((row) => `<tr><td><strong>${row.label}</strong></td><td>${row.value}</td></tr>`)
     .join("");
 
   const stackHtml = error.stack
@@ -48,10 +45,7 @@ function formatErrorHtml(error: ErrorPayload): string {
 
 export async function sendErrorEmail(error: ErrorPayload): Promise<void> {
   if (process.env.VERCEL_ENV !== "production") {
-    console.info(
-      "[Error Reporter] Skipping email (non-production):",
-      JSON.stringify(error),
-    );
+    console.info("[Error Reporter] Skipping email (non-production):", JSON.stringify(error));
     return;
   }
 

@@ -1,11 +1,8 @@
-import { notFound } from "next/navigation";
-import { getExtracted } from "next-intl/server";
 import { ContentEditor } from "@/components/content-editor";
 import { getCourse } from "@/data/courses/get-course";
-import {
-  updateCourseDescriptionAction,
-  updateCourseTitleAction,
-} from "./actions";
+import { getExtracted } from "next-intl/server";
+import { notFound } from "next/navigation";
+import { updateCourseDescriptionAction, updateCourseTitleAction } from "./actions";
 
 export async function CourseContent({
   params,

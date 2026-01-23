@@ -8,10 +8,10 @@ import {
   ContainerHeaderGroup,
   ContainerTitle,
 } from "@zoonk/ui/components/container";
-import type { Metadata } from "next";
 import { getExtracted, setRequestLocale } from "next-intl/server";
 import { ProtectedSection } from "../_components/protected-section";
 import { SubscriptionPage } from "./subscription-page";
+import type { Metadata } from "next";
 
 export async function generateMetadata({
   params,
@@ -27,9 +27,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function Subscription({
-  params,
-}: PageProps<"/[locale]/subscription">) {
+export default async function Subscription({ params }: PageProps<"/[locale]/subscription">) {
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getExtracted();

@@ -1,5 +1,4 @@
 import "server-only";
-
 import { prisma } from "@zoonk/db";
 import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
@@ -20,10 +19,7 @@ export type ExistingCourse = {
 };
 
 const cachedFindExistingCourse = cache(
-  async (
-    slug: string,
-    language: string,
-  ): Promise<SafeReturn<ExistingCourse | null>> => {
+  async (slug: string, language: string): Promise<SafeReturn<ExistingCourse | null>> => {
     const normalizedSlug = toSlug(slug);
 
     const courseSelect = {

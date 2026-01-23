@@ -1,10 +1,9 @@
 import "server-only";
-
+import { ErrorCode } from "@/lib/app-error";
 import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
 import { type Course, prisma } from "@zoonk/db";
 import { AppError, safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
-import { ErrorCode } from "@/lib/app-error";
 
 const cachedListDraftCourses = cache(
   async (
@@ -49,9 +48,5 @@ export function listDraftCourses(params: {
   headers?: Headers;
   language?: string;
 }): Promise<{ data: Course[]; error: Error | null }> {
-  return cachedListDraftCourses(
-    params.orgSlug,
-    params.language,
-    params.headers,
-  );
+  return cachedListDraftCourses(params.orgSlug, params.language, params.headers);
 }

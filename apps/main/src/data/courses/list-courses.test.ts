@@ -81,9 +81,7 @@ describe("listCourses", () => {
     expect(result.length).toBeGreaterThan(1);
 
     const userCounts = await Promise.all(
-      result.map((course) =>
-        prisma.courseUser.count({ where: { courseId: course.id } }),
-      ),
+      result.map((course) => prisma.courseUser.count({ where: { courseId: course.id } })),
     );
 
     for (let i = 0; i < userCounts.length - 1; i++) {

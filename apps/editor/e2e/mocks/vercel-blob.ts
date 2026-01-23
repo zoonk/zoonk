@@ -9,8 +9,7 @@ export async function put(
   _body: BodyInit,
   options?: { access?: string; addRandomSuffix?: boolean },
 ) {
-  const suffix =
-    options?.addRandomSuffix !== false ? `-${randomUUID().slice(0, 8)}` : "";
+  const suffix = options?.addRandomSuffix !== false ? `-${randomUUID().slice(0, 8)}` : "";
   const url = `https://e2e-mock-blob.test/${pathname}${suffix}`;
 
   return {

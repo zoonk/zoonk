@@ -1,12 +1,10 @@
 import "server-only";
-
 import { generateText, Output } from "ai";
 import { z } from "zod";
 import { buildProviderOptions, type ReasoningEffort } from "../../../types";
 import systemPrompt from "./activity-review.prompt.md";
 
-const DEFAULT_MODEL =
-  process.env.AI_MODEL_ACTIVITY_REVIEW ?? "anthropic/claude-opus-4.5";
+const DEFAULT_MODEL = process.env.AI_MODEL_ACTIVITY_REVIEW ?? "anthropic/claude-opus-4.5";
 
 const FALLBACK_MODELS = [
   "google/gemini-3-pro-preview",
@@ -49,9 +47,7 @@ export type ActivityReviewParams = {
 };
 
 function formatSteps(steps: Array<{ title: string; text: string }>): string {
-  return steps
-    .map((step, index) => `${index + 1}. ${step.title}: ${step.text}`)
-    .join("\n");
+  return steps.map((step, index) => `${index + 1}. ${step.title}: ${step.text}`).join("\n");
 }
 
 export async function generateActivityReview({

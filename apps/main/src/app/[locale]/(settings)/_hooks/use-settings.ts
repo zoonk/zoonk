@@ -1,5 +1,5 @@
-import { useExtracted } from "next-intl";
 import { getMenu } from "@/lib/menu";
+import { useExtracted } from "next-intl";
 
 export function useSettings() {
   const t = useExtracted();

@@ -48,9 +48,7 @@ async function createStepAttempts(
 
   const allAttempts = [...correctAttempts, ...incorrectAttempts];
 
-  await Promise.all(
-    allAttempts.map((data) => prisma.stepAttempt.create({ data })),
-  );
+  await Promise.all(allAttempts.map((data) => prisma.stepAttempt.create({ data })));
 }
 
 async function createTestStep(orgId: number) {
@@ -96,10 +94,7 @@ describe("authenticated users", () => {
   });
 
   test("returns best time when user has data for multiple periods", async () => {
-    const [user, org] = await Promise.all([
-      userFixture(),
-      organizationFixture(),
-    ]);
+    const [user, org] = await Promise.all([userFixture(), organizationFixture()]);
     const [headers, step] = await Promise.all([
       signInAs(user.email, user.password),
       createTestStep(org.id),
@@ -124,10 +119,7 @@ describe("authenticated users", () => {
   });
 
   test("excludes records older than 90 days", async () => {
-    const [user, org] = await Promise.all([
-      userFixture(),
-      organizationFixture(),
-    ]);
+    const [user, org] = await Promise.all([userFixture(), organizationFixture()]);
     const [headers, step] = await Promise.all([
       signInAs(user.email, user.password),
       createTestStep(org.id),
@@ -143,17 +135,9 @@ describe("authenticated users", () => {
 
     await Promise.all([
       // Recent Morning attempts: 80%
-      createStepAttempts(
-        { answeredAt: now, hourOfDay: 9, orgId, stepId, userId },
-        8,
-        2,
-      ),
+      createStepAttempts({ answeredAt: now, hourOfDay: 9, orgId, stepId, userId }, 8, 2),
       // Old Afternoon attempts: 100% (should be excluded)
-      createStepAttempts(
-        { answeredAt: oldDate, hourOfDay: 15, orgId, stepId, userId },
-        10,
-        0,
-      ),
+      createStepAttempts({ answeredAt: oldDate, hourOfDay: 15, orgId, stepId, userId }, 10, 0),
     ]);
 
     const result = await getBestTime({ headers });
@@ -164,10 +148,7 @@ describe("authenticated users", () => {
   });
 
   test("uses period with most answers as tiebreaker", async () => {
-    const [user, org] = await Promise.all([
-      userFixture(),
-      organizationFixture(),
-    ]);
+    const [user, org] = await Promise.all([userFixture(), organizationFixture()]);
     const [headers, step] = await Promise.all([
       signInAs(user.email, user.password),
       createTestStep(org.id),
@@ -192,10 +173,7 @@ describe("authenticated users", () => {
   });
 
   test("returns correct score calculation", async () => {
-    const [user, org] = await Promise.all([
-      userFixture(),
-      organizationFixture(),
-    ]);
+    const [user, org] = await Promise.all([userFixture(), organizationFixture()]);
     const [headers, step] = await Promise.all([
       signInAs(user.email, user.password),
       createTestStep(org.id),
@@ -216,10 +194,7 @@ describe("authenticated users", () => {
   });
 
   test("correctly maps hours to periods", async () => {
-    const [user, org] = await Promise.all([
-      userFixture(),
-      organizationFixture(),
-    ]);
+    const [user, org] = await Promise.all([userFixture(), organizationFixture()]);
     const [headers, step] = await Promise.all([
       signInAs(user.email, user.password),
       createTestStep(org.id),
@@ -240,10 +215,7 @@ describe("authenticated users", () => {
   });
 
   test("filters by custom date range when startDate is provided", async () => {
-    const [user, org] = await Promise.all([
-      userFixture(),
-      organizationFixture(),
-    ]);
+    const [user, org] = await Promise.all([userFixture(), organizationFixture()]);
     const [headers, step] = await Promise.all([
       signInAs(user.email, user.password),
       createTestStep(org.id),
@@ -261,17 +233,9 @@ describe("authenticated users", () => {
 
     await Promise.all([
       // Recent Morning attempts: 80%
-      createStepAttempts(
-        { answeredAt: now, hourOfDay: 9, orgId, stepId, userId },
-        8,
-        2,
-      ),
+      createStepAttempts({ answeredAt: now, hourOfDay: 9, orgId, stepId, userId }, 8, 2),
       // Older Afternoon attempts: 100% (should be excluded with custom range)
-      createStepAttempts(
-        { answeredAt: twoWeeksAgo, hourOfDay: 15, orgId, stepId, userId },
-        10,
-        0,
-      ),
+      createStepAttempts({ answeredAt: twoWeeksAgo, hourOfDay: 15, orgId, stepId, userId }, 10, 0),
     ]);
 
     // Filter to only include data from the past week

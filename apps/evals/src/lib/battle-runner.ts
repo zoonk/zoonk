@@ -106,10 +106,7 @@ function getMissingJudges(matchup: BattleMatchup): string[] {
   return BATTLE_JUDGES_CONFIG.filter((j) => !existingJudges.has(j));
 }
 
-function hasNewModels(
-  existingMatchup: BattleMatchup,
-  currentModelIds: string[],
-): boolean {
+function hasNewModels(existingMatchup: BattleMatchup, currentModelIds: string[]): boolean {
   const existingModelIds = new Set(
     extractMappingFromMatchup(existingMatchup).map((m) => m.modelId),
   );
@@ -125,8 +122,7 @@ async function runBattleForTestCase(
   const testCaseId = `${testCase.id}-1`; // Assuming RUNS_PER_TEST_CASE = 1
 
   // Collect outputs from all models for this test case
-  const modelOutputsForTestCase: Array<{ modelId: string; output: string }> =
-    [];
+  const modelOutputsForTestCase: Array<{ modelId: string; output: string }> = [];
 
   for (const [modelId, outputs] of allOutputs) {
     const output = getOutputForTestCase(outputs, testCaseId);
@@ -139,20 +135,15 @@ async function runBattleForTestCase(
   }
 
   if (modelOutputsForTestCase.length < 2) {
-    throw new Error(
-      `Need at least 2 models with outputs for test case ${testCaseId}`,
-    );
+    throw new Error(`Need at least 2 models with outputs for test case ${testCaseId}`);
   }
 
   // Check if there are new models since the last run
   const currentModelIds = modelOutputsForTestCase.map((m) => m.modelId);
-  const newModelsDetected =
-    existingMatchup && hasNewModels(existingMatchup, currentModelIds);
+  const newModelsDetected = existingMatchup && hasNewModels(existingMatchup, currentModelIds);
 
   if (newModelsDetected) {
-    console.info(
-      `New models detected for ${testCaseId}, re-running all judges`,
-    );
+    console.info(`New models detected for ${testCaseId}, re-running all judges`);
   }
 
   // If new models detected, we need to re-run with fresh anonymization
@@ -227,10 +218,7 @@ export async function runBattleMode(task: Task): Promise<void> {
   const totalTestCases = task.testCases.length;
 
   // Get all models with complete outputs
-  const completeModels = await getModelsWithCompleteOutputs(
-    task.id,
-    totalTestCases,
-  );
+  const completeModels = await getModelsWithCompleteOutputs(task.id, totalTestCases);
 
   if (completeModels.length < 2) {
     throw new Error(
@@ -260,12 +248,7 @@ export async function runBattleMode(task: Task): Promise<void> {
     task.testCases.map(async (testCase) => {
       const testCaseId = `${testCase.id}-1`;
       const existingMatchup = await loadExistingMatchup(task.id, testCaseId);
-      const result = await runBattleForTestCase(
-        task,
-        testCase,
-        completeOutputs,
-        existingMatchup,
-      );
+      const result = await runBattleForTestCase(task, testCase, completeOutputs, existingMatchup);
 
       completedBattles++;
       const remaining = totalBattles - completedBattles;

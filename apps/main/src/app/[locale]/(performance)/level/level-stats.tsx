@@ -1,11 +1,11 @@
+import { getBeltColorLabel } from "@/lib/belt-colors";
 import { BeltIndicator } from "@zoonk/ui/components/belt-indicator";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
-import type { BeltLevelResult } from "@zoonk/utils/belt-level";
 import { getExtracted, getLocale } from "next-intl/server";
-import type { HistoryPeriod } from "@/data/progress/_utils";
-import { getBeltColorLabel } from "@/lib/belt-colors";
 import { MetricComparison } from "../_components/metric-comparison";
 import { formatPeriodLabel } from "../_utils";
+import type { HistoryPeriod } from "@/data/progress/_utils";
+import type { BeltLevelResult } from "@zoonk/utils/belt-level";
 
 export async function LevelStats({
   currentBelt,
@@ -28,12 +28,8 @@ export async function LevelStats({
   const locale = await getLocale();
 
   const formattedTotalBp = new Intl.NumberFormat(locale).format(totalBp);
-  const formattedPeriodTotal = new Intl.NumberFormat(locale).format(
-    periodTotal,
-  );
-  const formattedBpToNext = new Intl.NumberFormat(locale).format(
-    currentBelt.bpToNextLevel,
-  );
+  const formattedPeriodTotal = new Intl.NumberFormat(locale).format(periodTotal);
+  const formattedBpToNext = new Intl.NumberFormat(locale).format(currentBelt.bpToNextLevel);
   const colorName = await getBeltColorLabel(currentBelt.color);
   const periodLabel = formatPeriodLabel(periodStart, periodEnd, period, locale);
   const beltLabel = t("{color} belt", { color: colorName });
@@ -41,14 +37,10 @@ export async function LevelStats({
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-1">
-        <span className="text-muted-foreground text-sm">
-          {t("Total Brain Power")}
-        </span>
+        <span className="text-muted-foreground text-sm">{t("Total Brain Power")}</span>
         <div className="flex items-baseline gap-2">
-          <span className="font-bold text-5xl tabular-nums tracking-tight">
-            {formattedTotalBp}
-          </span>
-          <span className="text-lg text-muted-foreground">{t("BP")}</span>
+          <span className="text-5xl font-bold tracking-tight tabular-nums">{formattedTotalBp}</span>
+          <span className="text-muted-foreground text-lg">{t("BP")}</span>
         </div>
       </div>
 
@@ -62,9 +54,7 @@ export async function LevelStats({
             })}
           </span>
           {currentBelt.isMaxLevel ? (
-            <span className="text-muted-foreground text-sm">
-              {t("Max level reached")}
-            </span>
+            <span className="text-muted-foreground text-sm">{t("Max level reached")}</span>
           ) : (
             <span className="text-muted-foreground text-sm">
               {t("{value} BP to next level", { value: formattedBpToNext })}
@@ -76,7 +66,7 @@ export async function LevelStats({
       <div className="flex flex-col gap-1">
         <span className="text-muted-foreground text-sm">{periodLabel}</span>
         <div className="flex items-baseline gap-3">
-          <span className="font-semibold text-2xl tabular-nums tracking-tight">
+          <span className="text-2xl font-semibold tracking-tight tabular-nums">
             {t("{value} BP earned", { value: formattedPeriodTotal })}
           </span>
           {previousPeriodTotal !== null && (

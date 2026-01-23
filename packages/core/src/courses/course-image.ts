@@ -3,16 +3,15 @@ import {
   generateCourseThumbnail,
 } from "@zoonk/ai/tasks/courses/thumbnail";
 import { AI_ORG_SLUG } from "@zoonk/utils/constants";
-import type { SafeReturn } from "@zoonk/utils/error";
 import { toSlug } from "@zoonk/utils/string";
 import { optimizeImage } from "../images/optimize-image";
 import { uploadImage } from "../images/upload-image";
+import type { SafeReturn } from "@zoonk/utils/error";
 
 export async function generateCourseImage(
   params: CourseThumbnailParams & { orgSlug?: string },
 ): Promise<SafeReturn<string>> {
-  const { data: image, error: imageGenerationError } =
-    await generateCourseThumbnail(params);
+  const { data: image, error: imageGenerationError } = await generateCourseThumbnail(params);
 
   if (imageGenerationError) {
     return { data: null, error: imageGenerationError };

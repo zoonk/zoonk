@@ -6,10 +6,7 @@ import { Suspense } from "react";
 import { NavbarLinks, NavbarLinksSkeleton } from "./_components/navbar-links";
 import { UserAvatarMenu } from "./_components/user-avatar-menu";
 
-export default async function CatalogLayout({
-  children,
-  params,
-}: LayoutProps<"/[locale]">) {
+export default async function CatalogLayout({ children, params }: LayoutProps<"/[locale]">) {
   const { locale } = await params;
   setRequestLocale(locale);
 

@@ -23,21 +23,9 @@ export function calculateDateRanges(
   const now = new Date();
 
   if (period === "month") {
-    const currentStart = new Date(
-      now.getFullYear(),
-      now.getMonth() - offset,
-      1,
-    );
-    const currentEnd = new Date(
-      now.getFullYear(),
-      now.getMonth() - offset + 1,
-      0,
-    );
-    const previousStart = new Date(
-      now.getFullYear(),
-      now.getMonth() - offset - 1,
-      1,
-    );
+    const currentStart = new Date(now.getFullYear(), now.getMonth() - offset, 1);
+    const currentEnd = new Date(now.getFullYear(), now.getMonth() - offset + 1, 0);
+    const previousStart = new Date(now.getFullYear(), now.getMonth() - offset - 1, 1);
     const previousEnd = new Date(now.getFullYear(), now.getMonth() - offset, 0);
 
     return {
@@ -48,8 +36,7 @@ export function calculateDateRanges(
 
   if (period === "6months") {
     const currentHalf = Math.floor(now.getMonth() / 6) - offset;
-    const currentYear =
-      now.getFullYear() + Math.floor((now.getMonth() - offset * 6) / 12);
+    const currentYear = now.getFullYear() + Math.floor((now.getMonth() - offset * 6) / 12);
     const normalizedHalf = ((currentHalf % 2) + 2) % 2;
 
     const currentStartMonth = normalizedHalf * 6;
@@ -81,11 +68,7 @@ export function calculateDateRanges(
   };
 }
 
-export function formatLabel(
-  date: Date,
-  period: HistoryPeriod,
-  locale: string,
-): string {
+export function formatLabel(date: Date, period: HistoryPeriod, locale: string): string {
   if (period === "month") {
     return new Intl.DateTimeFormat(locale, {
       day: "numeric",
@@ -95,8 +78,7 @@ export function formatLabel(
 
   if (period === "6months") {
     const weekNum = Math.ceil(
-      (date.getTime() - new Date(date.getFullYear(), 0, 1).getTime()) /
-        (7 * 24 * 60 * 60 * 1000),
+      (date.getTime() - new Date(date.getFullYear(), 0, 1).getTime()) / (7 * 24 * 60 * 60 * 1000),
     );
     return `W${weekNum}`;
   }
@@ -200,10 +182,7 @@ export function aggregateScoreByWeek(
   dataPoints: ScoreDataPoint[],
   calculateScore: (correct: number, incorrect: number) => number,
 ): { date: Date; score: number }[] {
-  const map = new Map<
-    string,
-    { correct: number; incorrect: number; date: Date }
-  >();
+  const map = new Map<string, { correct: number; incorrect: number; date: Date }>();
 
   for (const point of dataPoints) {
     const key = getWeekKey(point.date);
@@ -232,10 +211,7 @@ export function aggregateScoreByMonth(
   dataPoints: ScoreDataPoint[],
   calculateScore: (correct: number, incorrect: number) => number,
 ): { date: Date; score: number }[] {
-  const map = new Map<
-    string,
-    { correct: number; incorrect: number; date: Date }
-  >();
+  const map = new Map<string, { correct: number; incorrect: number; date: Date }>();
 
   for (const point of dataPoints) {
     const key = getMonthKey(point.date);

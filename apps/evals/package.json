@@ -1,4 +1,15 @@
 {
+  "name": "evals",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "analyze": "next experimental-analyze",
+    "build": "next build",
+    "build-and-start": "pnpm build && pnpm start",
+    "dev": "next dev -p 3002",
+    "start": "next start -p 3002",
+    "typecheck": "next typegen && tsgo --noEmit"
+  },
   "dependencies": {
     "@zoonk/ai": "workspace:*",
     "@zoonk/core": "workspace:*",
@@ -20,16 +31,5 @@
     "babel-plugin-react-compiler": "1.0.0",
     "raw-loader": "4.0.2",
     "typescript": "^5"
-  },
-  "name": "evals",
-  "private": true,
-  "scripts": {
-    "analyze": "next experimental-analyze",
-    "build": "next build",
-    "build-and-start": "pnpm build && pnpm start",
-    "dev": "next dev -p 3002",
-    "start": "next start -p 3002",
-    "typecheck": "next typegen && tsgo --noEmit"
-  },
-  "type": "module"
+  }
 }

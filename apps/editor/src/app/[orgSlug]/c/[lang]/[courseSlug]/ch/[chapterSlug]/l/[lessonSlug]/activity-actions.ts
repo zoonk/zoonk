@@ -1,17 +1,17 @@
 "use server";
 
-import { revalidateMainApp } from "@zoonk/core/cache/revalidate";
-import { cacheTagLesson } from "@zoonk/utils/cache";
-import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
-import { after } from "next/server";
-import { getExtracted } from "next-intl/server";
 import { createActivity } from "@/data/activities/create-activity";
 import { exportActivities } from "@/data/activities/export-activities";
 import { importActivities } from "@/data/activities/import-activities";
 import { reorderActivities } from "@/data/activities/reorder-activities";
 import { getErrorMessage } from "@/lib/error-messages";
 import { isImportMode } from "@/lib/import-mode";
+import { revalidateMainApp } from "@zoonk/core/cache/revalidate";
+import { cacheTagLesson } from "@zoonk/utils/cache";
+import { getExtracted } from "next-intl/server";
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+import { after } from "next/server";
 
 async function createActivityAction(
   lessonSlug: string,
@@ -98,22 +98,15 @@ export async function insertActivityAction(
   params: ActivityRouteParams,
   position: number,
 ): Promise<void> {
-  const { chapterSlug, courseSlug, lang, lessonId, lessonSlug, orgSlug } =
-    params;
-  const { activityId, error } = await createActivityAction(
-    lessonSlug,
-    lessonId,
-    position,
-  );
+  const { chapterSlug, courseSlug, lang, lessonId, lessonSlug, orgSlug } = params;
+  const { activityId, error } = await createActivityAction(lessonSlug, lessonId, position);
 
   if (error) {
     throw new Error(error);
   }
 
   if (activityId) {
-    revalidatePath(
-      `/${orgSlug}/c/${lang}/${courseSlug}/ch/${chapterSlug}/l/${lessonSlug}`,
-    );
+    revalidatePath(`/${orgSlug}/c/${lang}/${courseSlug}/ch/${chapterSlug}/l/${lessonSlug}`);
     redirect(
       `/${orgSlug}/c/${lang}/${courseSlug}/ch/${chapterSlug}/l/${lessonSlug}/a/${activityId}`,
     );
@@ -124,21 +117,14 @@ export async function handleImportActivitiesAction(
   params: ActivityRouteParams,
   formData: FormData,
 ): Promise<{ error: string | null }> {
-  const { chapterSlug, courseSlug, lang, lessonId, lessonSlug, orgSlug } =
-    params;
-  const { error } = await importActivitiesAction(
-    lessonSlug,
-    lessonId,
-    formData,
-  );
+  const { chapterSlug, courseSlug, lang, lessonId, lessonSlug, orgSlug } = params;
+  const { error } = await importActivitiesAction(lessonSlug, lessonId, formData);
 
   if (error) {
     return { error };
   }
 
-  revalidatePath(
-    `/${orgSlug}/c/${lang}/${courseSlug}/ch/${chapterSlug}/l/${lessonSlug}`,
-  );
+  revalidatePath(`/${orgSlug}/c/${lang}/${courseSlug}/ch/${chapterSlug}/l/${lessonSlug}`);
   return { error: null };
 }
 
@@ -146,8 +132,7 @@ export async function reorderActivitiesAction(
   params: ActivityRouteParams,
   activities: { id: number; position: number }[],
 ): Promise<{ error: string | null }> {
-  const { chapterSlug, courseSlug, lang, lessonId, lessonSlug, orgSlug } =
-    params;
+  const { chapterSlug, courseSlug, lang, lessonId, lessonSlug, orgSlug } = params;
 
   const { error } = await reorderActivities({
     activities: activities.map((a) => ({
@@ -165,8 +150,6 @@ export async function reorderActivitiesAction(
     await revalidateMainApp([cacheTagLesson({ lessonSlug })]);
   });
 
-  revalidatePath(
-    `/${orgSlug}/c/${lang}/${courseSlug}/ch/${chapterSlug}/l/${lessonSlug}`,
-  );
+  revalidatePath(`/${orgSlug}/c/${lang}/${courseSlug}/ch/${chapterSlug}/l/${lessonSlug}`);
   return { error: null };
 }

@@ -1,5 +1,4 @@
 import "server-only";
-
 import { auth } from "@zoonk/core/auth";
 import { findActiveSubscription } from "@zoonk/core/auth/subscription";
 import { headers } from "next/headers";

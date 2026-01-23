@@ -1,3 +1,5 @@
+import { FeedbackDialog } from "@/components/feedback/feedback-dialog";
+import { getSocialProfiles } from "@/lib/social";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import {
   Container,
@@ -18,8 +20,6 @@ import {
 } from "@zoonk/ui/components/item";
 import { Mail, MessagesSquare } from "lucide-react";
 import { getExtracted, getLocale } from "next-intl/server";
-import { FeedbackDialog } from "@/components/feedback/feedback-dialog";
-import { getSocialProfiles } from "@/lib/social";
 
 export async function SupportContent() {
   const t = await getExtracted();
@@ -51,29 +51,25 @@ export async function SupportContent() {
           }
           size="sm"
         >
-          <ItemMedia className="size-10 rounded-full bg-muted" variant="icon">
+          <ItemMedia className="bg-muted size-10 rounded-full" variant="icon">
             <MessagesSquare aria-hidden="true" />
           </ItemMedia>
 
           <ItemContent>
             <ItemTitle>{t("GitHub Discussions")}</ItemTitle>
-            <ItemDescription>
-              {t("Connect with the community and get answers")}
-            </ItemDescription>
+            <ItemDescription>{t("Connect with the community and get answers")}</ItemDescription>
           </ItemContent>
         </Item>
 
         <FeedbackDialog>
           <Item render={<button type="button" />} size="sm">
-            <ItemMedia className="size-10 rounded-full bg-muted" variant="icon">
+            <ItemMedia className="bg-muted size-10 rounded-full" variant="icon">
               <Mail aria-hidden="true" />
             </ItemMedia>
 
             <ItemContent>
               <ItemTitle>{t("Contact Support")}</ItemTitle>
-              <ItemDescription>
-                {t("Email us at hello@zoonk.com")}
-              </ItemDescription>
+              <ItemDescription>{t("Email us at hello@zoonk.com")}</ItemDescription>
             </ItemContent>
           </Item>
         </FeedbackDialog>
@@ -82,7 +78,7 @@ export async function SupportContent() {
       <ItemSeparator />
 
       <ContainerBody>
-        <h2 className="font-medium text-muted-foreground text-xs uppercase tracking-wide">
+        <h2 className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
           {t("Follow us")}
         </h2>
 

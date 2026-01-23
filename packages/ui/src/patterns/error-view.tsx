@@ -50,10 +50,7 @@ export function ErrorView({
           </button>
 
           {/* oxlint-disable-next-line next/no-html-link-for-pages -- external link */}
-          <a
-            className={buttonVariants({ size: "sm", variant: "outline" })}
-            href={supportHref}
-          >
+          <a className={buttonVariants({ size: "sm", variant: "outline" })} href={supportHref}>
             {supportLabel}
           </a>
         </div>

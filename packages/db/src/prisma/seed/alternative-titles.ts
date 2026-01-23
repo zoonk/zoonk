@@ -6,11 +6,7 @@ const alternativeTitlesData = [
   {
     courseSlug: "machine-learning",
     language: "en",
-    titles: [
-      "ML",
-      "Machine Learning Fundamentals",
-      "Intro to Machine Learning",
-    ],
+    titles: ["ML", "Machine Learning Fundamentals", "Intro to Machine Learning"],
   },
   // Portuguese - Machine Learning
   {

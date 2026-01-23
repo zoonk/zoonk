@@ -1,3 +1,4 @@
+import { getCourse } from "@/data/courses/get-course";
 import { ContainerHeader } from "@zoonk/ui/components/container";
 import {
   ImageUploadActionButton,
@@ -14,10 +15,9 @@ import {
   DEFAULT_IMAGE_MAX_SIZE,
 } from "@zoonk/utils/constants";
 import { ImageIcon, Trash2Icon, UploadIcon } from "lucide-react";
+import { getExtracted } from "next-intl/server";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { getExtracted } from "next-intl/server";
-import { getCourse } from "@/data/courses/get-course";
 import { removeCourseImageAction, uploadCourseImageAction } from "./actions";
 
 export async function CourseImage({
@@ -49,10 +49,9 @@ export async function CourseImage({
       <ImageUploadProvider
         currentImageUrl={course.imageUrl}
         messages={{
-          invalidType: t(
-            "Invalid file type. Please upload a {formats} image.",
-            { formats: acceptedFormats },
-          ),
+          invalidType: t("Invalid file type. Please upload a {formats} image.", {
+            formats: acceptedFormats,
+          }),
           removeSuccess: t("Image removed"),
           tooLarge: t("File is too large. Maximum size is {max}MB.", {
             max: String(maxSizeMB),
@@ -63,11 +62,7 @@ export async function CourseImage({
         onUpload={uploadCourseImageAction.bind(null, routeParams)}
       >
         <ImageUploadTrigger
-          aria-label={
-            course.imageUrl
-              ? t("Change course image")
-              : t("Upload course image")
-          }
+          aria-label={course.imageUrl ? t("Change course image") : t("Upload course image")}
         >
           {course.imageUrl ? (
             <Image

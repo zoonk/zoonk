@@ -41,20 +41,13 @@ async function navigateToLessonPage(
 ) {
   await page.goto(`/ai/c/en/${courseSlug}/ch/${chapterSlug}/l/${lessonSlug}`);
 
-  await expect(
-    page.getByRole("textbox", { name: /edit lesson title/i }),
-  ).toBeVisible();
+  await expect(page.getByRole("textbox", { name: /edit lesson title/i })).toBeVisible();
 }
 
 test.describe("Lesson Content Page", () => {
   test("auto-saves and persists title", async ({ authenticatedPage }) => {
     const { chapter, course, lesson } = await createTestLesson();
-    await navigateToLessonPage(
-      authenticatedPage,
-      course.slug,
-      chapter.slug,
-      lesson.slug,
-    );
+    await navigateToLessonPage(authenticatedPage, course.slug, chapter.slug, lesson.slug);
 
     const titleInput = authenticatedPage.getByRole("textbox", {
       name: /edit lesson title/i,
@@ -78,12 +71,7 @@ test.describe("Lesson Content Page", () => {
 
   test("auto-saves and persists description", async ({ authenticatedPage }) => {
     const { chapter, course, lesson } = await createTestLesson();
-    await navigateToLessonPage(
-      authenticatedPage,
-      course.slug,
-      chapter.slug,
-      lesson.slug,
-    );
+    await navigateToLessonPage(authenticatedPage, course.slug, chapter.slug, lesson.slug);
 
     const descriptionInput = authenticatedPage.getByRole("textbox", {
       name: /edit lesson description/i,
@@ -105,9 +93,7 @@ test.describe("Lesson Content Page", () => {
     await expect(descriptionInput).toHaveValue(uniqueDescription);
   });
 
-  test("shows validation error for duplicate slug", async ({
-    authenticatedPage,
-  }) => {
+  test("shows validation error for duplicate slug", async ({ authenticatedPage }) => {
     await navigateToLessonPage(
       authenticatedPage,
       "machine-learning",
@@ -118,9 +104,7 @@ test.describe("Lesson Content Page", () => {
 
     await slugInput.fill("history-of-ml");
 
-    await expect(
-      authenticatedPage.getByText(/this url is already in use/i),
-    ).toBeVisible();
+    await expect(authenticatedPage.getByText(/this url is already in use/i)).toBeVisible();
     await expect(
       authenticatedPage.getByRole("img", {
         name: /this url is already in use/i,
@@ -139,19 +123,12 @@ test.describe("Lesson Content Page", () => {
 
     await slugInput.fill("");
 
-    await expect(
-      authenticatedPage.getByRole("button", { name: /^save$/i }),
-    ).toBeDisabled();
+    await expect(authenticatedPage.getByRole("button", { name: /^save$/i })).toBeDisabled();
   });
 
   test("saves valid slug and redirects", async ({ authenticatedPage }) => {
     const { chapter, course, lesson } = await createTestLesson();
-    await navigateToLessonPage(
-      authenticatedPage,
-      course.slug,
-      chapter.slug,
-      lesson.slug,
-    );
+    await navigateToLessonPage(authenticatedPage, course.slug, chapter.slug, lesson.slug);
 
     const slugInput = authenticatedPage.getByLabel(/url address/i);
     const uniqueSlug = `test-slug-${randomUUID().slice(0, 8)}`;
@@ -187,12 +164,7 @@ test.describe("Lesson Content Page", () => {
 
   test("saves on Enter key", async ({ authenticatedPage }) => {
     const { chapter, course, lesson } = await createTestLesson();
-    await navigateToLessonPage(
-      authenticatedPage,
-      course.slug,
-      chapter.slug,
-      lesson.slug,
-    );
+    await navigateToLessonPage(authenticatedPage, course.slug, chapter.slug, lesson.slug);
 
     const slugInput = authenticatedPage.getByLabel(/url address/i);
     const uniqueSlug = `enter-test-${randomUUID().slice(0, 8)}`;
@@ -226,9 +198,7 @@ test.describe("Lesson Content Page", () => {
     await expect(slugInput).toHaveValue("what-is-machine-learning");
   });
 
-  test("back link shows chapter title and navigates to chapter", async ({
-    authenticatedPage,
-  }) => {
+  test("back link shows chapter title and navigates to chapter", async ({ authenticatedPage }) => {
     await navigateToLessonPage(
       authenticatedPage,
       "machine-learning",
@@ -254,12 +224,7 @@ test.describe("Lesson Content Page", () => {
     authenticatedPage,
   }) => {
     const { chapter, course, lesson } = await createTestLesson();
-    await navigateToLessonPage(
-      authenticatedPage,
-      course.slug,
-      chapter.slug,
-      lesson.slug,
-    );
+    await navigateToLessonPage(authenticatedPage, course.slug, chapter.slug, lesson.slug);
 
     const titleInput = authenticatedPage.getByRole("textbox", {
       name: /edit lesson title/i,
@@ -290,12 +255,7 @@ test.describe("Lesson Content Page", () => {
     authenticatedPage,
   }) => {
     const { chapter, course, lesson } = await createTestLesson();
-    await navigateToLessonPage(
-      authenticatedPage,
-      course.slug,
-      chapter.slug,
-      lesson.slug,
-    );
+    await navigateToLessonPage(authenticatedPage, course.slug, chapter.slug, lesson.slug);
 
     const descriptionInput = authenticatedPage.getByRole("textbox", {
       name: /edit lesson description/i,

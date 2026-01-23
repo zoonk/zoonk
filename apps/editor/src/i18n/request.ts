@@ -1,8 +1,8 @@
 import { match } from "@formatjs/intl-localematcher";
 import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from "@zoonk/utils/locale";
 import Negotiator from "negotiator";
-import { cookies, headers } from "next/headers";
 import { getRequestConfig } from "next-intl/server";
+import { cookies, headers } from "next/headers";
 
 function getLocaleFromHeaders(acceptLanguage: string | null): string {
   if (!acceptLanguage) {
@@ -27,8 +27,7 @@ export default getRequestConfig(async () => {
 
   const cookieLocale = store.get("locale")?.value;
 
-  const locale =
-    cookieLocale || getLocaleFromHeaders(headerStore.get("accept-language"));
+  const locale = cookieLocale || getLocaleFromHeaders(headerStore.get("accept-language"));
 
   return {
     locale,

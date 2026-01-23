@@ -16,10 +16,7 @@ export function calculateAverageScore(results: TaskEvalResults): number {
     return 0;
   }
 
-  const totalScore = results.results.reduce(
-    (acc, result) => acc + calculateScore(result.steps),
-    0,
-  );
+  const totalScore = results.results.reduce((acc, result) => acc + calculateScore(result.steps), 0);
 
   return totalScore / results.results.length;
 }
@@ -33,21 +30,14 @@ export type LeaderboardEntry = {
   totalCost: number;
 };
 
-export type SortKey =
-  | "modelName"
-  | "provider"
-  | "averageScore"
-  | "averageDuration"
-  | "totalCost";
+export type SortKey = "modelName" | "provider" | "averageScore" | "averageDuration" | "totalCost";
 export type SortDirection = "asc" | "desc";
 
 /**
  * Build leaderboard entries from raw task evaluation results.
  * Filters out results whose model cannot be resolved.
  */
-export function getLeaderboardEntries(
-  results: TaskEvalResults[],
-): LeaderboardEntry[] {
+export function getLeaderboardEntries(results: TaskEvalResults[]): LeaderboardEntry[] {
   return results
     .map((result) => {
       const model = getModelById(result.modelId);
@@ -71,9 +61,7 @@ export function getLeaderboardEntries(
 }
 
 export function getDefaultSortDirection(key: SortKey): SortDirection {
-  return key === "averageScore" ||
-    key === "totalCost" ||
-    key === "averageDuration"
+  return key === "averageScore" || key === "totalCost" || key === "averageDuration"
     ? "desc"
     : "asc";
 }
@@ -83,11 +71,7 @@ export function getDefaultSortDirection(key: SortKey): SortDirection {
  * Always returns values for ascending order; caller applies direction.
  * For averageScore: implements tie-breaker using totalCost (lower cost wins ties).
  */
-function compareEntries(
-  a: LeaderboardEntry,
-  b: LeaderboardEntry,
-  key: SortKey,
-): number {
+function compareEntries(a: LeaderboardEntry, b: LeaderboardEntry, key: SortKey): number {
   if (key === "averageScore") {
     const aRounded = roundScoreToFixed(a.averageScore);
     const bRounded = roundScoreToFixed(b.averageScore);
@@ -117,7 +101,5 @@ export function sortLeaderboardEntries(
   direction: SortDirection,
 ): LeaderboardEntry[] {
   const sign = direction === "asc" ? 1 : -1;
-  return [...entries].toSorted(
-    (left, right) => sign * compareEntries(left, right, key),
-  );
+  return [...entries].toSorted((left, right) => sign * compareEntries(left, right, key));
 }

@@ -1,4 +1,18 @@
 {
+  "name": "auth",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "analyze": "next experimental-analyze",
+    "build": "next build",
+    "build:e2e": "env $(cat ../../packages/db/.env.e2e | xargs) next build",
+    "dev": "next dev -p 3004",
+    "e2e": "env $(cat ../../packages/db/.env.e2e | xargs) playwright test",
+    "e2e:ui": "env $(cat ../../packages/db/.env.e2e | xargs) playwright test --ui",
+    "start": "next start -p 3004",
+    "typecheck": "next typegen && tsgo --noEmit"
+  },
   "dependencies": {
     "@tabler/icons-react": "3.35.0",
     "@zoonk/core": "workspace:*",
@@ -22,19 +36,5 @@
     "@zoonk/tsconfig": "workspace:*",
     "babel-plugin-react-compiler": "1.0.0",
     "typescript": "^5"
-  },
-  "name": "auth",
-  "private": true,
-  "scripts": {
-    "analyze": "next experimental-analyze",
-    "build": "next build",
-    "build:e2e": "env $(cat ../../packages/db/.env.e2e | xargs) next build",
-    "dev": "next dev -p 3004",
-    "e2e": "env $(cat ../../packages/db/.env.e2e | xargs) playwright test",
-    "e2e:ui": "env $(cat ../../packages/db/.env.e2e | xargs) playwright test --ui",
-    "start": "next start -p 3004",
-    "typecheck": "next typegen && tsgo --noEmit"
-  },
-  "type": "module",
-  "version": "0.1.0"
+  }
 }

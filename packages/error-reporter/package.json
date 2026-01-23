@@ -1,4 +1,15 @@
 {
+  "name": "@zoonk/error-reporter",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./client": "./src/client.ts",
+    "./next": "./src/next.ts",
+    "./server": "./src/server.ts"
+  },
+  "scripts": {
+    "typecheck": "tsgo --noEmit"
+  },
   "dependencies": {
     "@zoonk/mailer": "workspace:*"
   },
@@ -7,12 +18,6 @@
     "@typescript/native-preview": "7.0.0-dev.20260122.4",
     "@zoonk/tsconfig": "workspace:*"
   },
-  "exports": {
-    "./client": "./src/client.ts",
-    "./next": "./src/next.ts",
-    "./server": "./src/server.ts"
-  },
-  "name": "@zoonk/error-reporter",
   "peerDependencies": {
     "next": ">=16"
   },
@@ -20,10 +25,5 @@
     "next": {
       "optional": true
     }
-  },
-  "private": true,
-  "scripts": {
-    "typecheck": "tsgo --noEmit"
-  },
-  "type": "module"
+  }
 }

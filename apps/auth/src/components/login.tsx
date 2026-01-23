@@ -1,8 +1,4 @@
-import {
-  IconBrandAppleFilled,
-  IconBrandGoogleFilled,
-  type IconProps,
-} from "@tabler/icons-react";
+import { IconBrandAppleFilled, IconBrandGoogleFilled, type IconProps } from "@tabler/icons-react";
 import { Button } from "@zoonk/ui/components/button";
 import { Input, InputError } from "@zoonk/ui/components/input";
 import { Label } from "@zoonk/ui/components/label";
@@ -11,60 +7,32 @@ import { SubmitButton } from "@zoonk/ui/patterns/buttons/submit";
 import { Loader2Icon } from "lucide-react";
 
 export function Login({ children, className }: React.ComponentProps<"div">) {
-  return (
-    <div className={cn("flex w-full flex-col gap-6 p-4", className)}>
-      {children}
-    </div>
-  );
+  return <div className={cn("flex w-full flex-col gap-6 p-4", className)}>{children}</div>;
 }
 
-export function LoginHeader({
-  children,
-  className,
-}: React.ComponentProps<"div">) {
-  return (
-    <header className={cn("flex flex-col items-center gap-2", className)}>
-      {children}
-    </header>
-  );
+export function LoginHeader({ children, className }: React.ComponentProps<"div">) {
+  return <header className={cn("flex flex-col items-center gap-2", className)}>{children}</header>;
 }
 
-export function LoginTitle({
-  children,
-  className,
-}: React.ComponentProps<"h1">) {
-  return <h1 className={cn("font-bold text-xl", className)}>{children}</h1>;
+export function LoginTitle({ children, className }: React.ComponentProps<"h1">) {
+  return <h1 className={cn("text-xl font-bold", className)}>{children}</h1>;
 }
 
-export function LoginDescription({
-  children,
-  className,
-}: React.ComponentProps<"p">) {
+export function LoginDescription({ children, className }: React.ComponentProps<"p">) {
   return <p className={cn("text-center text-sm", className)}>{children}</p>;
 }
 
-export function LoginDivider({
-  children,
-  className,
-}: React.ComponentProps<"div">) {
+export function LoginDivider({ children, className }: React.ComponentProps<"div">) {
   return (
-    <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-border after:border-t">
-      <span
-        className={cn(
-          "relative z-10 bg-background px-2 text-muted-foreground",
-          className,
-        )}
-      >
+    <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
+      <span className={cn("bg-background text-muted-foreground relative z-10 px-2", className)}>
         {children}
       </span>
     </div>
   );
 }
 
-export function LoginSocial({
-  children,
-  className,
-}: React.ComponentProps<"div">) {
+export function LoginSocial({ children, className }: React.ComponentProps<"div">) {
   return <div className={cn("flex flex-col gap-2", className)}>{children}</div>;
 }
 
@@ -81,12 +49,7 @@ function LoginWithProvider({
   ...props
 }: LoginWithProviderProps) {
   return (
-    <Button
-      className={cn("w-full", className)}
-      disabled={isLoading}
-      variant="outline"
-      {...props}
-    >
+    <Button className={cn("w-full", className)} disabled={isLoading} variant="outline" {...props}>
       {isLoading && <Loader2Icon className="animate-spin" />}
       {Icon && <Icon aria-hidden="true" />}
       {children}
@@ -94,10 +57,7 @@ function LoginWithProvider({
   );
 }
 
-export function LoginWithGoogle({
-  children,
-  ...props
-}: LoginWithProviderProps) {
+export function LoginWithGoogle({ children, ...props }: LoginWithProviderProps) {
   return (
     <LoginWithProvider icon={IconBrandGoogleFilled} {...props}>
       {children}
@@ -125,11 +85,7 @@ export function LoginError({
   return <InputError {...props}>{children}</InputError>;
 }
 
-export function LoginForm({
-  children,
-  className,
-  ...props
-}: React.ComponentProps<"form">) {
+export function LoginForm({ children, className, ...props }: React.ComponentProps<"form">) {
   return (
     <form className={cn("flex flex-col gap-6", className)} {...props}>
       {children}
@@ -137,19 +93,11 @@ export function LoginForm({
   );
 }
 
-export function LoginField({
-  children,
-  className,
-}: React.ComponentProps<"fieldset">) {
-  return (
-    <fieldset className={cn("grid gap-3", className)}>{children}</fieldset>
-  );
+export function LoginField({ children, className }: React.ComponentProps<"fieldset">) {
+  return <fieldset className={cn("grid gap-3", className)}>{children}</fieldset>;
 }
 
-export function LoginEmailLabel({
-  children,
-  ...props
-}: React.ComponentProps<"label">) {
+export function LoginEmailLabel({ children, ...props }: React.ComponentProps<"label">) {
   return (
     <Label htmlFor="email" {...props}>
       {children}
@@ -172,10 +120,7 @@ export function LoginEmailInput({ ...props }: React.ComponentProps<"input">) {
   );
 }
 
-export function LoginSubmit({
-  children,
-  ...props
-}: React.ComponentProps<"button">) {
+export function LoginSubmit({ children, ...props }: React.ComponentProps<"button">) {
   return (
     <SubmitButton full {...props}>
       {children}
@@ -183,14 +128,11 @@ export function LoginSubmit({
   );
 }
 
-export function LoginFooter({
-  children,
-  className,
-}: React.ComponentProps<"footer">) {
+export function LoginFooter({ children, className }: React.ComponentProps<"footer">) {
   return (
     <footer
       className={cn(
-        "text-balance text-center text-muted-foreground text-xs *:[a]:underline *:[a]:underline-offset-4 *:[a]:hover:text-primary",
+        "text-muted-foreground *:[a]:hover:text-primary text-center text-xs text-balance *:[a]:underline *:[a]:underline-offset-4",
         className,
       )}
     >

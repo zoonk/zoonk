@@ -1,8 +1,4 @@
-import {
-  Explanation,
-  ExplanationText,
-  ExplanationTitle,
-} from "@zoonk/ui/components/explanation";
+import { Explanation, ExplanationText, ExplanationTitle } from "@zoonk/ui/components/explanation";
 import { getExtracted } from "next-intl/server";
 
 export async function LevelExplanation() {

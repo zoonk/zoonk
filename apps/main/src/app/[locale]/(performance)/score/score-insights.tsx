@@ -1,3 +1,5 @@
+import { getBestDay } from "@/data/progress/get-best-day";
+import { getBestTime } from "@/data/progress/get-best-time";
 import {
   FeatureCard,
   FeatureCardBody,
@@ -12,8 +14,6 @@ import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { CalendarDays, Clock } from "lucide-react";
 import { getExtracted, getLocale } from "next-intl/server";
 import type { HistoryPeriod } from "@/data/progress/_utils";
-import { getBestDay } from "@/data/progress/get-best-day";
-import { getBestTime } from "@/data/progress/get-best-time";
 
 async function getPeriodLabel(period: HistoryPeriod): Promise<string> {
   const t = await getExtracted();
@@ -85,9 +85,7 @@ async function BestDayCard({
 
   const referenceDate = new Date(1970, 0, 4 + dayOfWeek);
 
-  const dayName = new Intl.DateTimeFormat(locale, { weekday: "long" }).format(
-    referenceDate,
-  );
+  const dayName = new Intl.DateTimeFormat(locale, { weekday: "long" }).format(referenceDate);
 
   const formattedScore = new Intl.NumberFormat(locale, {
     maximumFractionDigits: 1,
@@ -130,12 +128,7 @@ async function BestTimeCard({
   const t = await getExtracted();
   const locale = await getLocale();
 
-  const periodNames = [
-    t("Night"),
-    t("Morning"),
-    t("Afternoon"),
-    t("Evening"),
-  ] as const;
+  const periodNames = [t("Night"), t("Morning"), t("Afternoon"), t("Evening")] as const;
 
   const periodName = periodNames[period] ?? periodNames[1];
 

@@ -1,5 +1,5 @@
-import type { Organization, PrismaClient } from "../../generated/prisma/client";
 import { coursesData } from "./courses";
+import type { Organization, PrismaClient } from "../../generated/prisma/client";
 
 type CourseCategoryData = {
   courseSlug: string;
@@ -40,10 +40,7 @@ const categoriesData: CourseCategoryData[] = [
   },
 ];
 
-export async function seedCategories(
-  prisma: PrismaClient,
-  org: Organization,
-): Promise<void> {
+export async function seedCategories(prisma: PrismaClient, org: Organization): Promise<void> {
   const courses = await prisma.course.findMany({
     select: { id: true, language: true, slug: true },
     where: {
@@ -53,9 +50,7 @@ export async function seedCategories(
   });
 
   const categoryRecords = categoriesData.flatMap((data) => {
-    const course = courses.find(
-      (c) => c.slug === data.courseSlug && c.language === data.language,
-    );
+    const course = courses.find((c) => c.slug === data.courseSlug && c.language === data.language);
 
     if (!course) {
       return [];

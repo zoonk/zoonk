@@ -5,14 +5,12 @@ import {
   ContainerHeaderGroup,
   ContainerTitle,
 } from "@zoonk/ui/components/container";
-import type { Metadata } from "next";
 import { getExtracted, setRequestLocale } from "next-intl/server";
 import { Suspense } from "react";
 import { UserCourseList, UserCourseListSkeleton } from "./user-course-list";
+import type { Metadata } from "next";
 
-export async function generateMetadata({
-  params,
-}: PageProps<"/[locale]/my">): Promise<Metadata> {
+export async function generateMetadata({ params }: PageProps<"/[locale]/my">): Promise<Metadata> {
   const { locale } = await params;
   const t = await getExtracted({ locale });
 
@@ -35,9 +33,7 @@ export default async function MyCourses({ params }: PageProps<"/[locale]/my">) {
       <ContainerHeader>
         <ContainerHeaderGroup>
           <ContainerTitle>{t("My Courses")}</ContainerTitle>
-          <ContainerDescription>
-            {t("Continue where you left off")}
-          </ContainerDescription>
+          <ContainerDescription>{t("Continue where you left off")}</ContainerDescription>
         </ContainerHeaderGroup>
       </ContainerHeader>
 

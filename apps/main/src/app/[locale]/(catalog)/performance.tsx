@@ -1,11 +1,11 @@
-import { FeatureCardSectionTitle } from "@zoonk/ui/components/feature";
-import { Skeleton } from "@zoonk/ui/components/skeleton";
-import { getExtracted } from "next-intl/server";
 import { getBeltLevel } from "@/data/progress/get-belt-level";
 import { getBestDay } from "@/data/progress/get-best-day";
 import { getBestTime } from "@/data/progress/get-best-time";
 import { getEnergyLevel } from "@/data/progress/get-energy-level";
 import { getScore } from "@/data/progress/get-score";
+import { FeatureCardSectionTitle } from "@zoonk/ui/components/feature";
+import { Skeleton } from "@zoonk/ui/components/skeleton";
+import { getExtracted } from "next-intl/server";
 import { BestDay, BestDaySkeleton } from "./best-day";
 import { BestTime, BestTimeSkeleton } from "./best-time";
 import { Energy, EnergySkeleton } from "./energy";
@@ -15,20 +15,16 @@ import { Score, ScoreSkeleton } from "./score";
 export async function Performance() {
   const t = await getExtracted();
 
-  const [energyData, beltData, scoreData, bestDayData, bestTimeData] =
-    await Promise.all([
-      getEnergyLevel(),
-      getBeltLevel(),
-      getScore(),
-      getBestDay(),
-      getBestTime(),
-    ]);
+  const [energyData, beltData, scoreData, bestDayData, bestTimeData] = await Promise.all([
+    getEnergyLevel(),
+    getBeltLevel(),
+    getScore(),
+    getBestDay(),
+    getBestTime(),
+  ]);
 
   return (
-    <section
-      aria-labelledby="performance-title"
-      className="flex flex-col gap-3 py-4 md:py-6"
-    >
+    <section aria-labelledby="performance-title" className="flex flex-col gap-3 py-4 md:py-6">
       <FeatureCardSectionTitle className="px-4" id="performance-title">
         {t("Performance")}
       </FeatureCardSectionTitle>
@@ -47,16 +43,9 @@ export async function Performance() {
 
         {scoreData && <Score score={scoreData.score} />}
 
-        {bestDayData && (
-          <BestDay
-            dayOfWeek={bestDayData.dayOfWeek}
-            score={bestDayData.score}
-          />
-        )}
+        {bestDayData && <BestDay dayOfWeek={bestDayData.dayOfWeek} score={bestDayData.score} />}
 
-        {bestTimeData && (
-          <BestTime period={bestTimeData.period} score={bestTimeData.score} />
-        )}
+        {bestTimeData && <BestTime period={bestTimeData.period} score={bestTimeData.score} />}
       </div>
     </section>
   );

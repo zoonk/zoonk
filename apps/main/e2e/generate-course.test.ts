@@ -1,5 +1,5 @@
-import type { Page, Route } from "@zoonk/e2e/fixtures";
 import { expect, test } from "./fixtures";
+import type { Page, Route } from "@zoonk/e2e/fixtures";
 
 /**
  * Test Architecture for Course Generation Page
@@ -34,9 +34,7 @@ type MockApiOptions = {
  * Creates a mock SSE stream response from an array of messages.
  * Each message follows the SSE format: "data: {...}\n\n"
  */
-function createSSEStream(
-  messages: Array<{ step: string; status: string }>,
-): string {
+function createSSEStream(messages: Array<{ step: string; status: string }>): string {
   return messages.map((msg) => `data: ${JSON.stringify(msg)}\n\n`).join("");
 }
 
@@ -56,10 +54,7 @@ function createRouteHandler(options: MockApiOptions) {
     const method = route.request().method();
 
     // Mock trigger API
-    if (
-      url.includes("/api/workflows/course-generation/trigger") &&
-      method === "POST"
-    ) {
+    if (url.includes("/api/workflows/course-generation/trigger") && method === "POST") {
       if (triggerResponse.error) {
         await route.fulfill({
           body: JSON.stringify({ error: triggerResponse.error }),
@@ -103,10 +98,7 @@ function createRouteHandler(options: MockApiOptions) {
  * Only intercepts specific API routes to avoid interfering with page navigation.
  * Must be called BEFORE navigation.
  */
-async function setupMockApis(
-  page: Page,
-  options: MockApiOptions = {},
-): Promise<void> {
+async function setupMockApis(page: Page, options: MockApiOptions = {}): Promise<void> {
   const handler = createRouteHandler(options);
   await page.route("**/api/workflows/course-generation/**", handler);
 }
@@ -117,9 +109,7 @@ async function setupMockApis(
  */
 async function getSuggestionId(page: Page): Promise<string> {
   await page.goto("/learn/test%20prompt");
-  await expect(
-    page.getByRole("heading", { name: /course ideas for/i }),
-  ).toBeVisible();
+  await expect(page.getByRole("heading", { name: /course ideas for/i })).toBeVisible();
 
   const generateLink = page.getByRole("link", { name: /generate/i }).first();
   const href = await generateLink.getAttribute("href");
@@ -137,10 +127,7 @@ async function getSuggestionId(page: Page): Promise<string> {
  * Gets a suggestion ID and then sets up mocks before navigating directly to the page.
  * This ensures route interception works properly for all API calls.
  */
-async function navigateWithMocks(
-  page: Page,
-  options: MockApiOptions,
-): Promise<void> {
+async function navigateWithMocks(page: Page, options: MockApiOptions): Promise<void> {
   // First get the suggestion ID without mocks
   const suggestionId = await getSuggestionId(page);
 
@@ -153,9 +140,7 @@ async function navigateWithMocks(
 
 test.describe("Generate Course Page", () => {
   test.describe("Initial triggering state", () => {
-    test("shows triggering state immediately on page load", async ({
-      page,
-    }) => {
+    test("shows triggering state immediately on page load", async ({ page }) => {
       // Get suggestion ID first, then set up mocks to avoid real API calls
       const suggestionId = await getSuggestionId(page);
 
@@ -174,9 +159,7 @@ test.describe("Generate Course Page", () => {
   });
 
   test.describe("Workflow completion and redirect", () => {
-    test("shows completion state and redirects to course page", async ({
-      page,
-    }) => {
+    test("shows completion state and redirects to course page", async ({ page }) => {
       await navigateWithMocks(page, {
         streamMessages: [
           { status: "started", step: "getCourseSuggestion" },

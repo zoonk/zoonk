@@ -26,11 +26,7 @@ type CourseListItemProps = {
   linkComponent: ItemProps["render"];
 };
 
-export function CourseListItemView({
-  course,
-  image,
-  linkComponent,
-}: CourseListItemProps) {
+export function CourseListItemView({ course, image, linkComponent }: CourseListItemProps) {
   return (
     <Item render={linkComponent}>
       {image ? (
@@ -39,7 +35,7 @@ export function CourseListItemView({
         </ItemMedia>
       ) : (
         <ItemMedia className="size-16" variant="icon">
-          <NotebookPenIcon className="size-6 text-muted-foreground/80" />
+          <NotebookPenIcon className="text-muted-foreground/80 size-6" />
         </ItemMedia>
       )}
 
@@ -48,19 +44,12 @@ export function CourseListItemView({
         <ItemDescription>{course.description}</ItemDescription>
       </ItemContent>
 
-      <ChevronRightIcon
-        aria-hidden="true"
-        className="size-4 text-muted-foreground"
-      />
+      <ChevronRightIcon aria-hidden="true" className="text-muted-foreground size-4" />
     </Item>
   );
 }
 
-export function CourseListGroup({
-  className,
-  layout = "grid",
-  ...props
-}: ItemGroupProps) {
+export function CourseListGroup({ className, layout = "grid", ...props }: ItemGroupProps) {
   return (
     <ItemGroup
       className={cn({ "-mt-4": layout === "grid" }, className)}
@@ -84,10 +73,7 @@ export function CourseListSkeleton({
       {/* eslint-disable react/no-array-index-key -- Static skeleton placeholders */}
       {Array.from({ length: count ?? defaultCount }).map((_, index) => (
         <Item key={index}>
-          <ItemMedia
-            className="size-16 translate-y-0.5 self-start"
-            variant="image"
-          >
+          <ItemMedia className="size-16 translate-y-0.5 self-start" variant="image">
             <Skeleton className="size-full" />
           </ItemMedia>
 

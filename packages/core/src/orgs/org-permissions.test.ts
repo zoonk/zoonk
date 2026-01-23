@@ -1,8 +1,5 @@
 import { signInAs } from "@zoonk/testing/fixtures/auth";
-import {
-  memberFixture,
-  organizationFixture,
-} from "@zoonk/testing/fixtures/orgs";
+import { memberFixture, organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, describe, expect, test } from "vitest";
 import { hasCoursePermission } from "./org-permissions";
 

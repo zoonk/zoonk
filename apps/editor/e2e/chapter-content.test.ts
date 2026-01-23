@@ -25,16 +25,10 @@ async function createTestChapter() {
   return { chapter, course };
 }
 
-async function navigateToChapterPage(
-  page: Page,
-  courseSlug: string,
-  chapterSlug: string,
-) {
+async function navigateToChapterPage(page: Page, courseSlug: string, chapterSlug: string) {
   await page.goto(`/ai/c/en/${courseSlug}/ch/${chapterSlug}`);
 
-  await expect(
-    page.getByRole("textbox", { name: /edit chapter title/i }),
-  ).toBeVisible();
+  await expect(page.getByRole("textbox", { name: /edit chapter title/i })).toBeVisible();
 }
 
 test.describe("Chapter Content Page", () => {
@@ -86,9 +80,7 @@ test.describe("Chapter Content Page", () => {
     await expect(descriptionInput).toHaveValue(uniqueDescription);
   });
 
-  test("shows validation error for duplicate slug", async ({
-    authenticatedPage,
-  }) => {
+  test("shows validation error for duplicate slug", async ({ authenticatedPage }) => {
     await navigateToChapterPage(
       authenticatedPage,
       "machine-learning",
@@ -98,9 +90,7 @@ test.describe("Chapter Content Page", () => {
 
     await slugInput.fill("data-preparation");
 
-    await expect(
-      authenticatedPage.getByText(/this url is already in use/i),
-    ).toBeVisible();
+    await expect(authenticatedPage.getByText(/this url is already in use/i)).toBeVisible();
     await expect(
       authenticatedPage.getByRole("img", {
         name: /this url is already in use/i,
@@ -118,9 +108,7 @@ test.describe("Chapter Content Page", () => {
 
     await slugInput.fill("");
 
-    await expect(
-      authenticatedPage.getByRole("button", { name: /^save$/i }),
-    ).toBeDisabled();
+    await expect(authenticatedPage.getByRole("button", { name: /^save$/i })).toBeDisabled();
   });
 
   test("saves valid slug and redirects", async ({ authenticatedPage }) => {
@@ -193,9 +181,7 @@ test.describe("Chapter Content Page", () => {
     await expect(slugInput).toHaveValue("introduction-to-machine-learning");
   });
 
-  test("back link shows course title and navigates to course", async ({
-    authenticatedPage,
-  }) => {
+  test("back link shows course title and navigates to course", async ({ authenticatedPage }) => {
     await navigateToChapterPage(
       authenticatedPage,
       "machine-learning",
@@ -240,9 +226,7 @@ test.describe("Chapter Content Page", () => {
     });
     await backLink.click();
 
-    await expect(authenticatedPage).toHaveURL(
-      new RegExp(`/ai/c/en/${course.slug}$`),
-    );
+    await expect(authenticatedPage).toHaveURL(new RegExp(`/ai/c/en/${course.slug}$`));
 
     // Verify the updated title shows in the chapter list
     await expect(authenticatedPage.getByText(uniqueTitle)).toBeVisible();
@@ -271,9 +255,7 @@ test.describe("Chapter Content Page", () => {
     });
     await backLink.click();
 
-    await expect(authenticatedPage).toHaveURL(
-      new RegExp(`/ai/c/en/${course.slug}$`),
-    );
+    await expect(authenticatedPage).toHaveURL(new RegExp(`/ai/c/en/${course.slug}$`));
 
     // Verify the updated description shows in the chapter list
     await expect(authenticatedPage.getByText(uniqueDescription)).toBeVisible();

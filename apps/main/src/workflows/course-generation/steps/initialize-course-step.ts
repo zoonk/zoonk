@@ -9,9 +9,7 @@ type InitializeInput = {
   workflowRunId: string;
 };
 
-export async function initializeCourseStep(
-  input: InitializeInput,
-): Promise<CourseContext> {
+export async function initializeCourseStep(input: InitializeInput): Promise<CourseContext> {
   "use step";
 
   await streamStatus({ status: "started", step: "initializeCourse" });

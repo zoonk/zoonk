@@ -3,10 +3,10 @@ import {
   type SelectImageStepParams,
 } from "@zoonk/ai/tasks/steps/select-image";
 import { AI_ORG_SLUG } from "@zoonk/utils/constants";
-import type { SafeReturn } from "@zoonk/utils/error";
 import { toSlug } from "@zoonk/utils/string";
 import { optimizeImage } from "../images/optimize-image";
 import { uploadImage } from "../images/upload-image";
+import type { SafeReturn } from "@zoonk/utils/error";
 
 export type GenerateStepImageParams = SelectImageStepParams & {
   orgSlug?: string;
@@ -17,8 +17,10 @@ export async function generateStepImage({
   prompt,
   ...rest
 }: GenerateStepImageParams): Promise<SafeReturn<string>> {
-  const { data: image, error: imageGenerationError } =
-    await generateSelectImageStep({ prompt, ...rest });
+  const { data: image, error: imageGenerationError } = await generateSelectImageStep({
+    prompt,
+    ...rest,
+  });
 
   if (imageGenerationError) {
     return { data: null, error: imageGenerationError };

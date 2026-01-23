@@ -1,18 +1,8 @@
 "use client";
 
-import {
-  DEFAULT_IMAGE_ACCEPTED_TYPES,
-  DEFAULT_IMAGE_MAX_SIZE,
-} from "@zoonk/utils/constants";
+import { DEFAULT_IMAGE_ACCEPTED_TYPES, DEFAULT_IMAGE_MAX_SIZE } from "@zoonk/utils/constants";
 import { LoaderCircleIcon } from "lucide-react";
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useMemo,
-  useRef,
-  useTransition,
-} from "react";
+import { createContext, useCallback, useContext, useMemo, useRef, useTransition } from "react";
 import { cn } from "../lib/utils";
 import { Skeleton } from "./skeleton";
 import { toast } from "./sonner";
@@ -27,16 +17,12 @@ type ImageUploadContextValue = {
   handleRemove: () => void;
 };
 
-const ImageUploadContext = createContext<ImageUploadContextValue | undefined>(
-  undefined,
-);
+const ImageUploadContext = createContext<ImageUploadContextValue | undefined>(undefined);
 
 function useImageUpload() {
   const context = useContext(ImageUploadContext);
   if (!context) {
-    throw new Error(
-      "ImageUpload components must be used within an ImageUploadProvider.",
-    );
+    throw new Error("ImageUpload components must be used within an ImageUploadProvider.");
   }
   return context;
 }
@@ -187,15 +173,7 @@ function ImageUploadProvider({
       removing,
       uploading,
     }),
-    [
-      currentImageUrl,
-      handleRemove,
-      hasImage,
-      openFilePicker,
-      pending,
-      removing,
-      uploading,
-    ],
+    [currentImageUrl, handleRemove, hasImage, openFilePicker, pending, removing, uploading],
   );
 
   return (
@@ -227,11 +205,7 @@ function ImageUploadTrigger({
     if (e.key === "Enter" || e.key === " ") {
       e.preventDefault();
       openFilePicker();
-    } else if (
-      (e.key === "Delete" || e.key === "Backspace") &&
-      hasImage &&
-      !pending
-    ) {
+    } else if ((e.key === "Delete" || e.key === "Backspace") && hasImage && !pending) {
       e.preventDefault();
       handleRemove();
     }
@@ -242,7 +216,7 @@ function ImageUploadTrigger({
     <div
       aria-disabled={pending}
       className={cn(
-        "group relative flex shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-xl bg-muted transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+        "group bg-muted focus-visible:ring-ring relative flex shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-xl transition-all focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none",
         pending && "pointer-events-none",
         className,
       )}
@@ -260,11 +234,7 @@ function ImageUploadTrigger({
   );
 }
 
-function ImageUploadOverlay({
-  children,
-  className,
-  ...props
-}: React.ComponentProps<"div">) {
+function ImageUploadOverlay({ children, className, ...props }: React.ComponentProps<"div">) {
   const { pending } = useImageUpload();
 
   if (pending) {
@@ -274,7 +244,7 @@ function ImageUploadOverlay({
   return (
     <div
       className={cn(
-        "absolute inset-0 flex items-center justify-center gap-2 bg-background/80 opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100",
+        "bg-background/80 absolute inset-0 flex items-center justify-center gap-2 opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100",
         className,
       )}
       data-slot="image-upload-overlay"
@@ -285,11 +255,7 @@ function ImageUploadOverlay({
   );
 }
 
-function ImageUploadLoading({
-  children,
-  className,
-  ...props
-}: React.ComponentProps<"div">) {
+function ImageUploadLoading({ children, className, ...props }: React.ComponentProps<"div">) {
   const { pending } = useImageUpload();
 
   if (!pending) {
@@ -299,13 +265,13 @@ function ImageUploadLoading({
   return (
     <div
       className={cn(
-        "absolute inset-0 flex items-center justify-center bg-background/80",
+        "bg-background/80 absolute inset-0 flex items-center justify-center",
         className,
       )}
       data-slot="image-upload-loading"
       {...props}
     >
-      <LoaderCircleIcon className="size-6 animate-spin text-muted-foreground" />
+      <LoaderCircleIcon className="text-muted-foreground size-6 animate-spin" />
       {children}
     </div>
   );
@@ -325,7 +291,7 @@ function ImageUploadRemoveButton({
   return (
     <button
       className={cn(
-        "flex size-8 items-center justify-center rounded-full bg-background shadow-sm ring-1 ring-border hover:bg-destructive hover:text-destructive-foreground hover:ring-destructive [&_svg:not([class*='size-'])]:size-4",
+        "bg-background ring-border hover:bg-destructive hover:text-destructive-foreground hover:ring-destructive flex size-8 items-center justify-center rounded-full shadow-sm ring-1 [&_svg:not([class*='size-'])]:size-4",
         className,
       )}
       data-slot="image-upload-remove-button"
@@ -341,15 +307,11 @@ function ImageUploadRemoveButton({
   );
 }
 
-function ImageUploadPlaceholder({
-  children,
-  className,
-  ...props
-}: React.ComponentProps<"span">) {
+function ImageUploadPlaceholder({ children, className, ...props }: React.ComponentProps<"span">) {
   return (
     <span
       className={cn(
-        "size-8 text-muted-foreground transition-colors group-hover:text-foreground [&>svg]:size-full",
+        "text-muted-foreground group-hover:text-foreground size-8 transition-colors [&>svg]:size-full",
         className,
       )}
       data-slot="image-upload-placeholder"
@@ -360,15 +322,11 @@ function ImageUploadPlaceholder({
   );
 }
 
-function ImageUploadActionButton({
-  children,
-  className,
-  ...props
-}: React.ComponentProps<"span">) {
+function ImageUploadActionButton({ children, className, ...props }: React.ComponentProps<"span">) {
   return (
     <span
       className={cn(
-        "flex size-8 items-center justify-center rounded-full bg-background shadow-sm ring-1 ring-border [&_svg:not([class*='size-'])]:size-4",
+        "bg-background ring-border flex size-8 items-center justify-center rounded-full shadow-sm ring-1 [&_svg:not([class*='size-'])]:size-4",
         className,
       )}
       data-slot="image-upload-action-button"

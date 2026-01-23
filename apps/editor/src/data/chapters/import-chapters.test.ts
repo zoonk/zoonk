@@ -1,20 +1,13 @@
+import { ErrorCode } from "@/lib/app-error";
 import { prisma } from "@zoonk/db";
 import { signInAs } from "@zoonk/testing/fixtures/auth";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
-import {
-  memberFixture,
-  organizationFixture,
-} from "@zoonk/testing/fixtures/orgs";
+import { memberFixture, organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, describe, expect, test } from "vitest";
-import { ErrorCode } from "@/lib/app-error";
 import { importChapters } from "./import-chapters";
 
-function createMockFile(
-  content: string,
-  name = "chapters.json",
-  type = "application/json",
-): File {
+function createMockFile(content: string, name = "chapters.json", type = "application/json"): File {
   return new File([content], name, { type });
 }
 
@@ -177,9 +170,7 @@ describe("admins", () => {
       organizationId: organization.id,
     });
 
-    const file = createImportFile([
-      { description: "Desc", title: "My Test Chapter!" },
-    ]);
+    const file = createImportFile([{ description: "Desc", title: "My Test Chapter!" }]);
 
     const result = await importChapters({
       courseId: newCourse.id,
@@ -196,9 +187,7 @@ describe("admins", () => {
       organizationId: organization.id,
     });
 
-    const file = createImportFile([
-      { description: "Desc", title: "Ciência da Computação" },
-    ]);
+    const file = createImportFile([{ description: "Desc", title: "Ciência da Computação" }]);
 
     const result = await importChapters({
       courseId: newCourse.id,
@@ -311,9 +300,7 @@ describe("admins", () => {
         slug: "my-title",
       });
 
-      const file = createImportFile([
-        { description: "Desc", title: "My Title" },
-      ]);
+      const file = createImportFile([{ description: "Desc", title: "My Title" }]);
 
       const result = await importChapters({
         courseId: newCourse.id,
@@ -330,9 +317,7 @@ describe("admins", () => {
         organizationId: organization.id,
       });
 
-      const file = createImportFile([
-        { description: "Desc", title: "Unique Title" },
-      ]);
+      const file = createImportFile([{ description: "Desc", title: "Unique Title" }]);
 
       const result = await importChapters({
         courseId: newCourse.id,
@@ -413,9 +398,7 @@ describe("admins", () => {
         title: "Existing",
       });
 
-      const file = createImportFile([
-        { description: "Desc", title: "New Chapter" },
-      ]);
+      const file = createImportFile([{ description: "Desc", title: "New Chapter" }]);
 
       const result = await importChapters({
         courseId: newCourse.id,
@@ -477,9 +460,7 @@ describe("admins", () => {
         organizationId: organization.id,
       });
 
-      const file = createImportFile([
-        { description: "Desc", title: "New Chapter" },
-      ]);
+      const file = createImportFile([{ description: "Desc", title: "New Chapter" }]);
 
       const result = await importChapters({
         courseId: newCourse.id,
@@ -626,9 +607,7 @@ describe("admins", () => {
         organizationId: organization.id,
       });
 
-      const file = createImportFile([
-        { description: "Desc", title: "Test Chapter" },
-      ]);
+      const file = createImportFile([{ description: "Desc", title: "Test Chapter" }]);
 
       const result = await importChapters({
         courseId: unpublishedCourse.id,
@@ -646,9 +625,7 @@ describe("admins", () => {
         organizationId: organization.id,
       });
 
-      const file = createImportFile([
-        { description: "Desc", title: "Test Chapter" },
-      ]);
+      const file = createImportFile([{ description: "Desc", title: "Test Chapter" }]);
 
       const result = await importChapters({
         courseId: publishedCourse.id,

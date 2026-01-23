@@ -1,14 +1,10 @@
 "use client";
 
-import {
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@zoonk/ui/components/accordion";
+import { calculateScore, getScoreClassName } from "@/lib/score";
+import { AccordionContent, AccordionItem, AccordionTrigger } from "@zoonk/ui/components/accordion";
 import { Button } from "@zoonk/ui/components/button";
 import { useClipboard } from "@zoonk/ui/hooks/clipboard";
 import { Check, Copy } from "lucide-react";
-import { calculateScore, getScoreClassName } from "@/lib/score";
 import type { EvalResult, ScoreStep } from "@/lib/types";
 
 type TestCaseCardProps = {
@@ -66,12 +62,10 @@ function UserInputSection({ userInput }: UserInputSectionProps) {
           const isMultiline = formatted.includes("\n");
 
           return (
-            <div className="font-medium text-sm" key={key}>
+            <div className="text-sm font-medium" key={key}>
               <span className="text-muted-foreground">{key}:</span>{" "}
               {isMultiline ? (
-                <pre className="mt-1 overflow-auto rounded bg-muted p-2 text-xs">
-                  {formatted}
-                </pre>
+                <pre className="bg-muted mt-1 overflow-auto rounded p-2 text-xs">{formatted}</pre>
               ) : (
                 formatted
               )}
@@ -115,12 +109,7 @@ function OutputSection({ output }: OutputSectionProps) {
     <div>
       <div className="mb-2 flex items-center justify-between">
         <p className="text-muted-foreground text-sm">Output</p>
-        <Button
-          className="gap-2"
-          onClick={() => copy(output)}
-          size="sm"
-          variant="ghost"
-        >
+        <Button className="gap-2" onClick={() => copy(output)} size="sm" variant="ghost">
           {isCopied ? (
             <>
               <Check className="size-4" />
@@ -135,9 +124,7 @@ function OutputSection({ output }: OutputSectionProps) {
         </Button>
       </div>
 
-      <pre className="overflow-x-auto rounded-lg bg-muted p-4 text-sm">
-        {output}
-      </pre>
+      <pre className="bg-muted overflow-x-auto rounded-lg p-4 text-sm">{output}</pre>
     </div>
   );
 }
@@ -145,17 +132,13 @@ function OutputSection({ output }: OutputSectionProps) {
 function EvaluationStepsSection({ steps }: EvaluationStepsSectionProps) {
   return (
     <div>
-      <p className="mb-2 text-muted-foreground text-sm">Evaluation Steps</p>
+      <p className="text-muted-foreground mb-2 text-sm">Evaluation Steps</p>
       <div className="flex flex-col gap-2">
         {steps.map((step) => (
           <div className="rounded-lg border p-3" key={step.kind}>
-            <p className="mb-1 font-medium text-sm capitalize">
-              {step.kind.replace(/_/g, " ")}
-            </p>
+            <p className="mb-1 text-sm font-medium capitalize">{step.kind.replace(/_/g, " ")}</p>
             <p className="text-muted-foreground text-sm">{step.conclusion}</p>
-            <p className="mt-1 text-muted-foreground text-sm">
-              Score: {step.score}
-            </p>
+            <p className="text-muted-foreground mt-1 text-sm">Score: {step.score}</p>
           </div>
         ))}
       </div>
@@ -171,9 +154,8 @@ export function TestCase({ result, index }: TestCaseCardProps) {
   return (
     <AccordionItem value={`test-case-${index}`}>
       <AccordionTrigger className="flex w-full items-center justify-between pr-4 hover:no-underline">
-        <span className="font-medium text-base">
-          {testCaseTitle}:{" "}
-          <span className={getScoreClassName(score)}>{scoreDisplay}</span>
+        <span className="text-base font-medium">
+          {testCaseTitle}: <span className={getScoreClassName(score)}>{scoreDisplay}</span>
         </span>
       </AccordionTrigger>
 
@@ -182,10 +164,7 @@ export function TestCase({ result, index }: TestCaseCardProps) {
 
         <ScoreSection score={score} />
 
-        <TokensSection
-          inputTokens={result.inputTokens}
-          outputTokens={result.outputTokens}
-        />
+        <TokensSection inputTokens={result.inputTokens} outputTokens={result.outputTokens} />
 
         <OutputSection output={result.output} />
 

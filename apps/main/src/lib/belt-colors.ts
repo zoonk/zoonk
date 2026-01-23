@@ -1,5 +1,5 @@
-import type { BeltColor } from "@zoonk/utils/belt-level";
 import { getExtracted } from "next-intl/server";
+import type { BeltColor } from "@zoonk/utils/belt-level";
 
 export type BeltColorInfo = {
   bgClass: string;
@@ -20,9 +20,7 @@ export const BELT_BG_CLASSES: Record<BeltColor, string> = {
   yellow: "bg-belt-yellow",
 };
 
-export async function getBeltColors(params?: {
-  locale: string;
-}): Promise<BeltColorInfo[]> {
+export async function getBeltColors(params?: { locale: string }): Promise<BeltColorInfo[]> {
   const t = await getExtracted(params);
 
   return [

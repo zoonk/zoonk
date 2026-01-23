@@ -4,49 +4,37 @@ test.describe("Org Home - Permissions", () => {
   test("returns not found for non-existent org", async ({ ownerPage }) => {
     await ownerPage.goto("/non-existent-org");
 
-    await expect(
-      ownerPage.getByRole("heading", { name: /404/i }),
-    ).toBeVisible();
+    await expect(ownerPage.getByRole("heading", { name: /404/i })).toBeVisible();
   });
 
   test("allows owner to view page", async ({ ownerPage }) => {
     await ownerPage.goto("/ai");
 
-    await expect(
-      ownerPage.getByRole("heading", { name: /draft courses/i }),
-    ).toBeVisible();
+    await expect(ownerPage.getByRole("heading", { name: /draft courses/i })).toBeVisible();
   });
 
   test("allows admin to view page", async ({ authenticatedPage }) => {
     await authenticatedPage.goto("/ai");
 
-    await expect(
-      authenticatedPage.getByRole("heading", { name: /draft courses/i }),
-    ).toBeVisible();
+    await expect(authenticatedPage.getByRole("heading", { name: /draft courses/i })).toBeVisible();
   });
 
   test("denies member access", async ({ memberPage }) => {
     await memberPage.goto("/ai");
 
-    await expect(
-      memberPage.getByRole("heading", { name: /401.*unauthorized/i }),
-    ).toBeVisible();
+    await expect(memberPage.getByRole("heading", { name: /401.*unauthorized/i })).toBeVisible();
   });
 
   test("denies non-org member access", async ({ userWithoutOrg }) => {
     await userWithoutOrg.goto("/ai");
 
-    await expect(
-      userWithoutOrg.getByRole("heading", { name: /401.*unauthorized/i }),
-    ).toBeVisible();
+    await expect(userWithoutOrg.getByRole("heading", { name: /401.*unauthorized/i })).toBeVisible();
   });
 
   test("denies unauthenticated access", async ({ page }) => {
     await page.goto("/ai");
 
-    await expect(
-      page.getByRole("heading", { name: /401.*unauthorized/i }),
-    ).toBeVisible();
+    await expect(page.getByRole("heading", { name: /401.*unauthorized/i })).toBeVisible();
   });
 });
 
@@ -73,9 +61,7 @@ test.describe("Org Home - Course Filtering", () => {
 });
 
 test.describe("Org Home - Navigation", () => {
-  test("clicking create course navigates to creation page", async ({
-    ownerPage,
-  }) => {
+  test("clicking create course navigates to creation page", async ({ ownerPage }) => {
     await ownerPage.goto("/ai");
     await ownerPage.getByRole("link", { name: /create course/i }).click();
 

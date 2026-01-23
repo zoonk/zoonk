@@ -1,17 +1,11 @@
 import "server-only";
-
-import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
-import {
-  type Activity,
-  type ActivityKind,
-  prisma,
-  type TransactionClient,
-} from "@zoonk/db";
-import { AppError, type SafeReturn, safeAsync } from "@zoonk/utils/error";
-import { isRecord } from "@/lib/validation";
 import { ErrorCode } from "@/lib/app-error";
-import type { ImportMode } from "@/lib/import-mode";
 import { parseJsonFile } from "@/lib/parse-json-file";
+import { isRecord } from "@/lib/validation";
+import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
+import { type Activity, type ActivityKind, prisma, type TransactionClient } from "@zoonk/db";
+import { AppError, type SafeReturn, safeAsync } from "@zoonk/utils/error";
+import type { ImportMode } from "@/lib/import-mode";
 
 const validActivityKinds = new Set<ActivityKind>([
   "custom",
@@ -44,15 +38,12 @@ function isActivityKind(value: string): value is ActivityKind {
   return validActivityKinds.has(value as ActivityKind);
 }
 
-function validateActivityData(
-  activity: unknown,
-): activity is ActivityImportData {
+function validateActivityData(activity: unknown): activity is ActivityImportData {
   if (!isRecord(activity)) {
     return false;
   }
 
-  const hasValidKind =
-    typeof activity.kind === "string" && isActivityKind(activity.kind);
+  const hasValidKind = typeof activity.kind === "string" && isActivityKind(activity.kind);
 
   return hasValidKind;
 }
@@ -69,10 +60,7 @@ function validateImportData(data: unknown): data is ActivitiesImport {
   return data.activities.every(validateActivityData);
 }
 
-async function removeExistingActivities(
-  tx: TransactionClient,
-  lessonId: number,
-): Promise<void> {
+async function removeExistingActivities(tx: TransactionClient, lessonId: number): Promise<void> {
   await tx.activity.deleteMany({
     where: { lessonId },
   });
@@ -139,24 +127,22 @@ export async function importActivities(params: {
 
       const imported: Activity[] = [];
 
-      const activityOperations = importData.activities.map(
-        async (activityData, i) => {
-          const activity = await tx.activity.create({
-            data: {
-              description: activityData.description,
-              isPublished: !lesson.isPublished,
-              kind: activityData.kind,
-              language: lesson.language,
-              lessonId: params.lessonId,
-              organizationId: lesson.organizationId,
-              position: startPosition + i,
-              title: activityData.title,
-            },
-          });
+      const activityOperations = importData.activities.map(async (activityData, i) => {
+        const activity = await tx.activity.create({
+          data: {
+            description: activityData.description,
+            isPublished: !lesson.isPublished,
+            kind: activityData.kind,
+            language: lesson.language,
+            lessonId: params.lessonId,
+            organizationId: lesson.organizationId,
+            position: startPosition + i,
+            title: activityData.title,
+          },
+        });
 
-          return { activity, index: i };
-        },
-      );
+        return { activity, index: i };
+      });
 
       const results = await Promise.all(activityOperations);
 

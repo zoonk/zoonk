@@ -34,9 +34,7 @@ export async function courseFixture(attrs?: Partial<Course>) {
   return course;
 }
 
-export async function courseCategoryFixture(
-  attrs: Omit<CourseCategory, "id" | "createdAt">,
-) {
+export async function courseCategoryFixture(attrs: Omit<CourseCategory, "id" | "createdAt">) {
   const courseCategory = await prisma.courseCategory.create({
     data: {
       category: attrs.category,
@@ -46,9 +44,7 @@ export async function courseCategoryFixture(
   return courseCategory;
 }
 
-export async function courseUserFixture(
-  attrs: Omit<CourseUser, "id" | "startedAt">,
-) {
+export async function courseUserFixture(attrs: Omit<CourseUser, "id" | "startedAt">) {
   const courseUser = await prisma.courseUser.create({
     data: {
       courseId: attrs.courseId,

@@ -35,9 +35,7 @@ export function LocaleSwitcher() {
             onClick={() => onLocaleChange(lang)}
           >
             {LOCALE_LABELS[lang]}
-            {lang === locale && (
-              <CheckIcon aria-hidden="true" className="ml-auto" />
-            )}
+            {lang === locale && <CheckIcon aria-hidden="true" className="ml-auto" />}
           </DropdownMenuItem>
         ))}
       </DropdownMenuSubContent>

@@ -1,19 +1,5 @@
 {
-  "devDependencies": {
-    "@biomejs/biome": "2.3.11",
-    "@playwright/test": "1.57.0",
-    "@types/node": "^24",
-    "@typescript/native-preview": "7.0.0-dev.20260122.4",
-    "knip": "5.80.0",
-    "oxlint": "1.41.0",
-    "oxlint-tsgolint": "0.11.1",
-    "turbo": "2.7.4"
-  },
-  "engines": {
-    "node": "^24"
-  },
   "name": "zoonk",
-  "packageManager": "pnpm@10.28.0",
   "private": true,
   "scripts": {
     "auth:generate": "pnpm dlx @better-auth/cli@latest generate --output=./packages/db/src/prisma/models/accounts.prisma --config=./packages/auth/src/auth.ts",
@@ -25,15 +11,32 @@
     "evals": "cd apps/evals && pnpm build-and-start",
     "evals:export": "./apps/evals/scripts/export-test-case.sh",
     "evals:remove": "./apps/evals/scripts/remove-test-cases.sh",
-    "format": "biome format --write",
+    "format": "oxfmt --check",
+    "format:fix": "oxfmt .",
     "i18n": "pnpm dlx lingo.dev@latest run",
     "i18n:check": "./scripts/i18n.sh",
     "knip": "knip",
     "lint": "oxlint --type-aware --deny-warnings .",
     "lint:fix": "oxlint --type-aware --fix --deny-warnings .",
+    "quality": "turbo quality",
+    "quality:fix": "turbo quality:fix",
     "start": "turbo start",
     "test": "turbo test",
     "test:watch": "turbo test:watch",
     "typecheck": "turbo typecheck"
-  }
+  },
+  "devDependencies": {
+    "@playwright/test": "1.57.0",
+    "@types/node": "^24",
+    "@typescript/native-preview": "7.0.0-dev.20260122.4",
+    "knip": "5.80.0",
+    "oxfmt": "0.26.0",
+    "oxlint": "1.41.0",
+    "oxlint-tsgolint": "0.11.1",
+    "turbo": "2.7.4"
+  },
+  "engines": {
+    "node": "^24"
+  },
+  "packageManager": "pnpm@10.28.0"
 }

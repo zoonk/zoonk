@@ -36,10 +36,7 @@ interface MemberFixtureOptions extends Partial<Member> {
 
 export async function memberFixture(attrs?: MemberFixtureOptions) {
   const { orgKind, ...memberAttrs } = attrs || {};
-  const [user, org] = await Promise.all([
-    userFixture(),
-    organizationFixture({ kind: orgKind }),
-  ]);
+  const [user, org] = await Promise.all([userFixture(), organizationFixture({ kind: orgKind })]);
 
   const member = await prisma.member.create({
     data: {

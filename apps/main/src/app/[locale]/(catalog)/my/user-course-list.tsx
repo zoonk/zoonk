@@ -1,3 +1,5 @@
+import { listUserCourses, type UserCourse } from "@/data/courses/list-user-courses";
+import { Link } from "@/i18n/navigation";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import {
   Empty,
@@ -13,13 +15,8 @@ import {
   CourseListSkeleton,
 } from "@zoonk/ui/patterns/courses/list";
 import { NotebookPenIcon } from "lucide-react";
-import Image from "next/image";
 import { getExtracted } from "next-intl/server";
-import {
-  listUserCourses,
-  type UserCourse,
-} from "@/data/courses/list-user-courses";
-import { Link } from "@/i18n/navigation";
+import Image from "next/image";
 
 function toCourseListItem(course: UserCourse) {
   return {
@@ -43,16 +40,11 @@ export async function UserCourseList() {
             <NotebookPenIcon aria-hidden="true" />
           </EmptyMedia>
           <EmptyTitle>{t("No courses yet")}</EmptyTitle>
-          <EmptyDescription>
-            {t("Start learning something new today.")}
-          </EmptyDescription>
+          <EmptyDescription>{t("Start learning something new today.")}</EmptyDescription>
         </EmptyHeader>
 
         <EmptyContent>
-          <Link
-            className={buttonVariants({ variant: "outline" })}
-            href="/courses"
-          >
+          <Link className={buttonVariants({ variant: "outline" })} href="/courses">
             {t("Explore courses")}
           </Link>
         </EmptyContent>
@@ -67,20 +59,12 @@ export async function UserCourseList() {
           course={toCourseListItem(course)}
           image={
             course.imageUrl ? (
-              <Image
-                alt={course.title}
-                height={64}
-                src={course.imageUrl}
-                width={64}
-              />
+              <Image alt={course.title} height={64} src={course.imageUrl} width={64} />
             ) : undefined
           }
           key={course.id}
           linkComponent={
-            <Link
-              href={`/b/${course.organization.slug}/c/${course.slug}`}
-              prefetch={false}
-            />
+            <Link href={`/b/${course.organization.slug}/c/${course.slug}`} prefetch={false} />
           }
         />
       ))}

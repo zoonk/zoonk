@@ -1,11 +1,8 @@
+import { ErrorCode } from "@/lib/app-error";
 import { signInAs } from "@zoonk/testing/fixtures/auth";
 import { courseAttrs } from "@zoonk/testing/fixtures/courses";
-import {
-  memberFixture,
-  organizationFixture,
-} from "@zoonk/testing/fixtures/orgs";
+import { memberFixture, organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, describe, expect, test } from "vitest";
-import { ErrorCode } from "@/lib/app-error";
 import { createCourse } from "./create-course";
 
 describe("unauthenticated users", () => {

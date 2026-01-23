@@ -1,6 +1,3 @@
-import { ErrorView } from "@zoonk/ui/patterns/error";
-import { SUPPORT_URL } from "@zoonk/utils/constants";
-import { getExtracted } from "next-intl/server";
 import {
   EditorDragHandle,
   EditorListAddButton,
@@ -17,6 +14,9 @@ import {
 import { EntityListActions } from "@/components/entity-list-actions";
 import { listLessonActivities } from "@/data/activities/list-lesson-activities";
 import { getLesson } from "@/data/lessons/get-lesson";
+import { ErrorView } from "@zoonk/ui/patterns/error";
+import { SUPPORT_URL } from "@zoonk/utils/constants";
+import { getExtracted } from "next-intl/server";
 import {
   exportActivitiesAction,
   handleImportActivitiesAction,
@@ -28,11 +28,7 @@ import { ActivityListItemLink } from "./activity-list-item-link";
 type LessonPageProps =
   PageProps<"/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]">;
 
-export async function ActivityList({
-  params,
-}: {
-  params: LessonPageProps["params"];
-}) {
+export async function ActivityList({ params }: { params: LessonPageProps["params"] }) {
   const { chapterSlug, courseSlug, lang, lessonSlug, orgSlug } = await params;
   const t = await getExtracted();
 
@@ -92,9 +88,7 @@ export async function ActivityList({
       <EditorListSpinner />
 
       <EditorListHeader>
-        <EditorListAddButton position={endPosition}>
-          {t("Add activity")}
-        </EditorListAddButton>
+        <EditorListAddButton position={endPosition}>{t("Add activity")}</EditorListAddButton>
 
         <EntityListActions
           entityType="activities"
@@ -110,10 +104,7 @@ export async function ActivityList({
         >
           <EditorListContent>
             {activities.map((activity, index) => (
-              <EditorSortableItem
-                id={Number(activity.id)}
-                key={String(activity.id)}
-              >
+              <EditorSortableItem id={Number(activity.id)} key={String(activity.id)}>
                 <EditorListItem>
                   <EditorSortableItemRow>
                     <EditorDragHandle aria-label={t("Drag to reorder")}>

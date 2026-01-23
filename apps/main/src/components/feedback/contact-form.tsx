@@ -49,9 +49,7 @@ export function ContactForm() {
             required
             type="email"
           />
-          <FieldDescription>
-            {t("We'll use this email to contact you.")}
-          </FieldDescription>
+          <FieldDescription>{t("We'll use this email to contact you.")}</FieldDescription>
         </FieldContent>
       </Field>
 

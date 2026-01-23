@@ -1,9 +1,9 @@
 import path from "node:path";
 import createMDX from "@next/mdx";
 import { withBotId } from "botid/next/config";
-import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
 import { withWorkflow } from "workflow/next";
+import type { NextConfig } from "next";
 
 const CACHE_IMAGE_DAYS = 30;
 const CACHE_EXPIRE_DAYS = 365;

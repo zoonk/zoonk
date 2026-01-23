@@ -25,9 +25,7 @@ export async function dailyProgressFixture(input: DailyProgressFixtureInput) {
   });
 }
 
-export async function dailyProgressFixtureMany(
-  inputs: DailyProgressFixtureInput[],
-) {
+export async function dailyProgressFixtureMany(inputs: DailyProgressFixtureInput[]) {
   return prisma.dailyProgress.createMany({
     data: inputs.map((input) => ({
       brainPowerEarned: input.brainPowerEarned ?? 0,

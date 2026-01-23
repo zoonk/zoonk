@@ -7,18 +7,12 @@ test.describe("Locale Behavior - English", () => {
     const nav = page.getByRole("navigation");
 
     // Navbar should be in English (scoped to navigation to avoid hero links)
-    await expect(
-      nav.getByRole("link", { exact: true, name: "Courses" }),
-    ).toBeVisible();
+    await expect(nav.getByRole("link", { exact: true, name: "Courses" })).toBeVisible();
 
-    await expect(
-      nav.getByRole("link", { exact: true, name: "Learn" }),
-    ).toBeVisible();
+    await expect(nav.getByRole("link", { exact: true, name: "Learn" })).toBeVisible();
 
     // Hero heading should be in English
-    await expect(
-      page.getByRole("heading", { name: /learn anything with ai/i }),
-    ).toBeVisible();
+    await expect(page.getByRole("heading", { name: /learn anything with ai/i })).toBeVisible();
   });
 });
 
@@ -34,33 +28,22 @@ test.describe("Locale Behavior - Portuguese", () => {
     ).toBeVisible();
 
     // Navbar should be in Portuguese (scoped to navigation to avoid hero links)
-    await expect(
-      nav.getByRole("link", { exact: true, name: "Cursos" }),
-    ).toBeVisible();
+    await expect(nav.getByRole("link", { exact: true, name: "Cursos" })).toBeVisible();
 
-    await expect(
-      nav.getByRole("link", { exact: true, name: "Aprender" }),
-    ).toBeVisible();
+    await expect(nav.getByRole("link", { exact: true, name: "Aprender" })).toBeVisible();
   });
 });
 
 test.describe("Locale Navigation", () => {
-  test("clicking navbar links from /pt keeps user in Portuguese", async ({
-    page,
-  }) => {
+  test("clicking navbar links from /pt keeps user in Portuguese", async ({ page }) => {
     await page.goto("/pt");
 
     // Click Courses link in navbar (scoped to navigation to avoid hero links)
-    await page
-      .getByRole("navigation")
-      .getByRole("link", { exact: true, name: "Cursos" })
-      .click();
+    await page.getByRole("navigation").getByRole("link", { exact: true, name: "Cursos" }).click();
 
     // Should be on Portuguese courses page
     await expect(page).toHaveURL(/\/pt\/courses/);
 
-    await expect(
-      page.getByRole("heading", { name: /explorar cursos/i }),
-    ).toBeVisible();
+    await expect(page.getByRole("heading", { name: /explorar cursos/i })).toBeVisible();
   });
 });

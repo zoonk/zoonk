@@ -1,14 +1,8 @@
 "use client";
 
-import {
-  Item,
-  ItemContent,
-  ItemGroup,
-  ItemMedia,
-  ItemTitle,
-} from "@zoonk/ui/components/item";
-import { ChevronRight } from "lucide-react";
 import { Link } from "@/i18n/navigation";
+import { Item, ItemContent, ItemGroup, ItemMedia, ItemTitle } from "@zoonk/ui/components/item";
+import { ChevronRight } from "lucide-react";
 import { useSettings } from "../_hooks/use-settings";
 
 export function SettingsList() {
@@ -26,10 +20,7 @@ export function SettingsList() {
             <ItemTitle>{page.label}</ItemTitle>
           </ItemContent>
 
-          <ChevronRight
-            aria-hidden="true"
-            className="size-4 text-muted-foreground"
-          />
+          <ChevronRight aria-hidden="true" className="text-muted-foreground size-4" />
         </Item>
       ))}
     </ItemGroup>

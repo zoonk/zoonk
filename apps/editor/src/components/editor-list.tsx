@@ -1,6 +1,5 @@
 "use client";
 
-import type { DragEndEvent, DragStartEvent } from "@dnd-kit/core";
 import {
   closestCenter,
   DndContext,
@@ -43,22 +42,19 @@ import {
   useState,
   useTransition,
 } from "react";
+import type { DragEndEvent, DragStartEvent } from "@dnd-kit/core";
 
 type EditorListContextValue = {
   pending: boolean;
   handleInsert: (position: number) => void;
 };
 
-const EditorListContext = createContext<EditorListContextValue | undefined>(
-  undefined,
-);
+const EditorListContext = createContext<EditorListContextValue | undefined>(undefined);
 
 function useEditorList() {
   const context = useContext(EditorListContext);
   if (!context) {
-    throw new Error(
-      "EditorList components must be used within an EditorListProvider.",
-    );
+    throw new Error("EditorList components must be used within an EditorListProvider.");
   }
   return context;
 }
@@ -79,10 +75,7 @@ function EditorListProvider({
           await onInsert(position);
         } catch (error) {
           if (!isNextRedirectError(error)) {
-            console.error(
-              `Failed to insert item at position ${position}:`,
-              error,
-            );
+            console.error(`Failed to insert item at position ${position}:`, error);
 
             toast.error(error instanceof Error ? error.message : String(error));
           }
@@ -109,10 +102,7 @@ function EditorListProvider({
   );
 }
 
-function EditorListSpinner({
-  className,
-  ...props
-}: React.ComponentProps<"div">) {
+function EditorListSpinner({ className, ...props }: React.ComponentProps<"div">) {
   const { pending } = useEditorList();
 
   if (!pending) {
@@ -122,21 +112,18 @@ function EditorListSpinner({
   return (
     <div
       className={cn(
-        "absolute inset-0 z-20 flex items-center justify-center bg-background/60",
+        "bg-background/60 absolute inset-0 z-20 flex items-center justify-center",
         className,
       )}
       data-slot="editor-list-spinner"
       {...props}
     >
-      <LoaderCircleIcon className="size-5 animate-spin text-muted-foreground" />
+      <LoaderCircleIcon className="text-muted-foreground size-5 animate-spin" />
     </div>
   );
 }
 
-function EditorListHeader({
-  className,
-  ...props
-}: React.ComponentProps<"div">) {
+function EditorListHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       className={cn("flex items-center justify-end gap-2 px-4 pb-2", className)}
@@ -172,26 +159,15 @@ function EditorListAddButton({
   );
 }
 
-function EditorListContent({
-  className,
-  ...props
-}: React.ComponentProps<"ul">) {
-  return (
-    <ul className={cn(className)} data-slot="editor-list-content" {...props} />
-  );
+function EditorListContent({ className, ...props }: React.ComponentProps<"ul">) {
+  return <ul className={cn(className)} data-slot="editor-list-content" {...props} />;
 }
 
 function EditorListItem({ className, ...props }: React.ComponentProps<"li">) {
-  return (
-    <li className={cn(className)} data-slot="editor-list-item" {...props} />
-  );
+  return <li className={cn(className)} data-slot="editor-list-item" {...props} />;
 }
 
-function EditorListItemLink({
-  className,
-  render,
-  ...props
-}: useRender.ComponentProps<"a">) {
+function EditorListItemLink({ className, render, ...props }: useRender.ComponentProps<"a">) {
   return useRender({
     defaultTagName: "a",
     props: mergeProps<"a">(
@@ -207,10 +183,7 @@ function EditorListItemLink({
   });
 }
 
-function EditorListItemContent({
-  className,
-  ...props
-}: React.ComponentProps<"div">) {
+function EditorListItemContent({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       className={cn("min-w-0 flex-1", className)}
@@ -220,29 +193,20 @@ function EditorListItemContent({
   );
 }
 
-function EditorListItemTitle({
-  className,
-  ...props
-}: React.ComponentProps<"p">) {
+function EditorListItemTitle({ className, ...props }: React.ComponentProps<"p">) {
   return (
     <p
-      className={cn("font-medium leading-tight", className)}
+      className={cn("leading-tight font-medium", className)}
       data-slot="editor-list-item-title"
       {...props}
     />
   );
 }
 
-function EditorListItemDescription({
-  className,
-  ...props
-}: React.ComponentProps<"p">) {
+function EditorListItemDescription({ className, ...props }: React.ComponentProps<"p">) {
   return (
     <p
-      className={cn(
-        "mt-0.5 line-clamp-2 text-muted-foreground text-sm",
-        className,
-      )}
+      className={cn("text-muted-foreground mt-0.5 line-clamp-2 text-sm", className)}
       data-slot="editor-list-item-description"
       {...props}
     />
@@ -259,9 +223,7 @@ type EditorSortableContextValue = {
   isDragging: boolean;
 };
 
-const EditorSortableContext = createContext<
-  EditorSortableContextValue | undefined
->(undefined);
+const EditorSortableContext = createContext<EditorSortableContextValue | undefined>(undefined);
 
 function EditorSortableList<T extends SortableItem>({
   children,
@@ -271,9 +233,7 @@ function EditorSortableList<T extends SortableItem>({
 }: {
   children: React.ReactNode;
   items: T[];
-  onReorder: (
-    items: { id: number; position: number }[],
-  ) => Promise<{ error: string | null }>;
+  onReorder: (items: { id: number; position: number }[]) => Promise<{ error: string | null }>;
   renderOverlay?: (activeItem: T) => React.ReactNode;
 }) {
   const dndId = useId();
@@ -320,9 +280,7 @@ function EditorSortableList<T extends SortableItem>({
         return;
       }
 
-      const oldIndex = optimisticItems.findIndex(
-        (item) => item.id === active.id,
-      );
+      const oldIndex = optimisticItems.findIndex((item) => item.id === active.id);
       const newIndex = optimisticItems.findIndex((item) => item.id === over.id);
 
       if (oldIndex === -1 || newIndex === -1) {
@@ -330,12 +288,10 @@ function EditorSortableList<T extends SortableItem>({
       }
 
       const reorderedItems = arrayMove(optimisticItems, oldIndex, newIndex);
-      const newPositions = reorderedItems.map(
-        (item: SortableItem, index: number) => ({
-          id: item.id,
-          position: index,
-        }),
-      );
+      const newPositions = reorderedItems.map((item: SortableItem, index: number) => ({
+        id: item.id,
+        position: index,
+      }));
 
       startTransition(async () => {
         setOptimisticItems(reorderedItems);
@@ -354,9 +310,7 @@ function EditorSortableList<T extends SortableItem>({
     setActiveId(null);
   }, []);
 
-  const activeItem = activeId
-    ? optimisticItems.find((item) => item.id === activeId)
-    : null;
+  const activeItem = activeId ? optimisticItems.find((item) => item.id === activeId) : null;
 
   const contextValue = useMemo<EditorSortableContextValue>(
     () => ({
@@ -366,10 +320,7 @@ function EditorSortableList<T extends SortableItem>({
     [activeId],
   );
 
-  const itemIds = useMemo(
-    () => optimisticItems.map((item) => item.id),
-    [optimisticItems],
-  );
+  const itemIds = useMemo(() => optimisticItems.map((item) => item.id), [optimisticItems]);
 
   if (!mounted) {
     return <div data-slot="editor-sortable-list">{children}</div>;
@@ -397,7 +348,7 @@ function EditorSortableList<T extends SortableItem>({
         <DragOverlay>
           {activeItem && renderOverlay ? (
             <div
-              className="rounded-md border bg-background shadow-md"
+              className="bg-background rounded-md border shadow-md"
               data-slot="editor-drag-overlay"
             >
               {renderOverlay(activeItem)}
@@ -414,25 +365,12 @@ type SortableItemContextValue = {
   listeners: ReturnType<typeof useSortable>["listeners"];
 };
 
-const EditorSortableItemContext = createContext<
-  SortableItemContextValue | undefined
->(undefined);
+const EditorSortableItemContext = createContext<SortableItemContextValue | undefined>(undefined);
 
-function EditorSortableItem({
-  children,
-  id,
-}: {
-  children: React.ReactNode;
-  id: number;
-}) {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({ id });
+function EditorSortableItem({ children, id }: { children: React.ReactNode; id: number }) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id,
+  });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -459,14 +397,11 @@ function EditorSortableItem({
   );
 }
 
-function EditorSortableItemRow({
-  className,
-  ...props
-}: React.ComponentProps<"div">) {
+function EditorSortableItemRow({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       className={cn(
-        "group/row flex items-start gap-2 px-4 py-3 transition-colors hover:bg-muted/50",
+        "group/row hover:bg-muted/50 flex items-start gap-2 px-4 py-3 transition-colors",
         className,
       )}
       data-slot="editor-sortable-item-row"
@@ -475,23 +410,17 @@ function EditorSortableItemRow({
   );
 }
 
-function EditorDragHandle({
-  children,
-  className,
-  ...props
-}: React.ComponentProps<"button">) {
+function EditorDragHandle({ children, className, ...props }: React.ComponentProps<"button">) {
   const context = useContext(EditorSortableItemContext);
 
   if (!context) {
-    throw new Error(
-      "EditorDragHandle must be used within an EditorSortableItem.",
-    );
+    throw new Error("EditorDragHandle must be used within an EditorSortableItem.");
   }
 
   return (
     <button
       className={cn(
-        "relative flex min-h-11 min-w-11 shrink-0 cursor-grab touch-none select-none items-start justify-center rounded-md pt-0.5 font-mono text-muted-foreground text-sm tabular-nums transition-colors before:absolute before:top-1/2 before:left-1/2 before:size-full before:min-h-11 before:min-w-11 before:-translate-x-1/2 before:-translate-y-1/2 hover:bg-muted hover:text-foreground focus-visible:bg-muted focus-visible:text-foreground focus-visible:outline-none active:cursor-grabbing active:bg-muted",
+        "text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:bg-muted focus-visible:text-foreground active:bg-muted relative flex min-h-11 min-w-11 shrink-0 cursor-grab touch-none items-start justify-center rounded-md pt-0.5 font-mono text-sm tabular-nums transition-colors select-none before:absolute before:top-1/2 before:left-1/2 before:size-full before:min-h-11 before:min-w-11 before:-translate-x-1/2 before:-translate-y-1/2 focus-visible:outline-none active:cursor-grabbing",
         className,
       )}
       data-slot="editor-drag-handle"
@@ -500,9 +429,7 @@ function EditorDragHandle({
       {...context.listeners}
       {...props}
     >
-      {typeof children === "number"
-        ? String(children).padStart(2, "0")
-        : children}
+      {typeof children === "number" ? String(children).padStart(2, "0") : children}
     </button>
   );
 }
@@ -524,7 +451,7 @@ function EditorListItemActions({
     <DropdownMenu>
       <DropdownMenuTrigger
         aria-label={ariaLabel}
-        className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-md text-muted-foreground opacity-0 transition-opacity hover:bg-muted hover:text-foreground focus:opacity-100 group-hover/row:opacity-100 [@media(hover:none)]:opacity-100"
+        className="text-muted-foreground hover:bg-muted hover:text-foreground mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-md opacity-0 transition-opacity group-hover/row:opacity-100 focus:opacity-100 [@media(hover:none)]:opacity-100"
         disabled={pending}
       >
         <EllipsisIcon className="size-4" />
@@ -554,10 +481,7 @@ function EditorListSkeleton({ count = 3 }: { count?: number }) {
 
       <ul>
         {Array.from({ length: count }).map((_, i) => (
-          <li
-            className="flex items-center gap-2 border-border border-t px-4 py-3"
-            key={i}
-          >
+          <li className="border-border flex items-center gap-2 border-t px-4 py-3" key={i}>
             <Skeleton className="size-4" />
 
             <div className="flex min-w-0 flex-1 items-start gap-4">

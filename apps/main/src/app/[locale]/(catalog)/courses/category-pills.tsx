@@ -1,11 +1,11 @@
 "use client";
 
-import { buttonVariants } from "@zoonk/ui/components/button";
-import { Skeleton } from "@zoonk/ui/components/skeleton";
-import { useSelectedLayoutSegment } from "next/navigation";
-import { useExtracted } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { useCategories } from "@/lib/categories/category-client";
+import { buttonVariants } from "@zoonk/ui/components/button";
+import { Skeleton } from "@zoonk/ui/components/skeleton";
+import { useExtracted } from "next-intl";
+import { useSelectedLayoutSegment } from "next/navigation";
 
 export function CategoryPillsSkeleton() {
   return (

@@ -1,13 +1,13 @@
 {
   "extensions": {
     "recommendations": [
-      "biomejs.biome",
+      "oxc.oxc-vscode",
       "bradlc.vscode-tailwindcss",
       "mrorz.language-gettext",
       "prisma.prisma",
       "unifiedjs.vscode-mdx",
-      "vercel.turbo-vsc"
-    ]
+      "vercel.turbo-vsc",
+    ],
   },
   "folders": [
     { "path": "." },
@@ -22,22 +22,22 @@
     { "path": "./packages/mailer" },
     { "path": "./packages/tsconfig" },
     { "path": "./packages/ui" },
-    { "path": "./packages/utils" }
+    { "path": "./packages/utils" },
   ],
   "settings": {
-    "[css]": { "editor.defaultFormatter": "biomejs.biome" },
-    "[javascript]": { "editor.defaultFormatter": "biomejs.biome" },
-    "[json]": { "editor.defaultFormatter": "biomejs.biome" },
-    "[jsonc]": { "editor.defaultFormatter": "biomejs.biome" },
-    "[typescript]": { "editor.defaultFormatter": "biomejs.biome" },
-    "[typescriptreact]": { "editor.defaultFormatter": "biomejs.biome" },
+    "[css]": { "editor.defaultFormatter": "oxc.oxc-vscode" },
+    "[javascript]": { "editor.defaultFormatter": "oxc.oxc-vscode" },
+    "[json]": { "editor.defaultFormatter": "oxc.oxc-vscode" },
+    "[jsonc]": { "editor.defaultFormatter": "oxc.oxc-vscode" },
+    "[typescript]": { "editor.defaultFormatter": "oxc.oxc-vscode" },
+    "[typescriptreact]": { "editor.defaultFormatter": "oxc.oxc-vscode" },
     "search.exclude": {
       "*.tsbuildinfo": true,
       "**/.next": true,
       "**/.turbo": true,
-      "**/.vercel": true
+      "**/.vercel": true,
     },
     "search.useIgnoreFiles": true,
-    "typescript.tsdk": "./apps/main/node_modules/typescript/lib"
-  }
+    "typescript.tsdk": "./apps/main/node_modules/typescript/lib",
+  },
 }

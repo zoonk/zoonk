@@ -1,5 +1,4 @@
 import { describe, expect, test } from "vitest";
-
 import { normalizeString, parseNumericId, removeAccents } from "./string";
 
 describe("removeAccents", () => {
@@ -23,9 +22,7 @@ describe("removeAccents", () => {
 
   test("handles mixed characters", () => {
     expect(removeAccents("Olá, tudo bem?")).toBe("Ola, tudo bem?");
-    expect(removeAccents("Français, Español, Português")).toBe(
-      "Francais, Espanol, Portugues",
-    );
+    expect(removeAccents("Français, Español, Português")).toBe("Francais, Espanol, Portugues");
   });
 });
 

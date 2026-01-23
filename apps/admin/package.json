@@ -1,4 +1,14 @@
 {
+  "name": "admin",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "analyze": "next experimental-analyze",
+    "build": "next build",
+    "dev": "next dev -p 3001",
+    "start": "next start -p 3001",
+    "typecheck": "next typegen && tsgo --noEmit"
+  },
   "dependencies": {
     "@zoonk/core": "workspace:*",
     "@zoonk/db": "workspace:*",
@@ -20,15 +30,5 @@
     "@zoonk/tsconfig": "workspace:*",
     "babel-plugin-react-compiler": "1.0.0",
     "typescript": "^5"
-  },
-  "name": "admin",
-  "private": true,
-  "scripts": {
-    "analyze": "next experimental-analyze",
-    "build": "next build",
-    "dev": "next dev -p 3001",
-    "start": "next start -p 3001",
-    "typecheck": "next typegen && tsgo --noEmit"
-  },
-  "version": "0.1.0"
+  }
 }

@@ -1,7 +1,4 @@
-import {
-  courseCategoryFixture,
-  courseFixture,
-} from "@zoonk/testing/fixtures/courses";
+import { courseCategoryFixture, courseFixture } from "@zoonk/testing/fixtures/courses";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, describe, expect, test } from "vitest";
 import { getCourse } from "./get-course";

@@ -1,11 +1,11 @@
-import type { LucideIcon } from "lucide-react";
-import { BookOpenIcon, CheckCircleIcon, GraduationCapIcon } from "lucide-react";
 import {
   calculateWeightedProgress as calculateProgress,
   getPhaseStatus as getStatus,
   type PhaseStatus,
 } from "@/lib/generation-phases";
+import { BookOpenIcon, CheckCircleIcon, GraduationCapIcon } from "lucide-react";
 import type { ChapterStepName } from "@/workflows/config";
+import type { LucideIcon } from "lucide-react";
 
 export type PhaseName = "loadingInfo" | "generatingLessons" | "completing";
 
@@ -15,11 +15,7 @@ const PHASE_STEPS: Record<PhaseName, ChapterStepName[]> = {
   loadingInfo: ["getChapter", "setChapterAsRunning"],
 };
 
-export const PHASE_ORDER: PhaseName[] = [
-  "loadingInfo",
-  "generatingLessons",
-  "completing",
-];
+export const PHASE_ORDER: PhaseName[] = ["loadingInfo", "generatingLessons", "completing"];
 
 export const PHASE_ICONS: Record<PhaseName, LucideIcon> = {
   completing: CheckCircleIcon,

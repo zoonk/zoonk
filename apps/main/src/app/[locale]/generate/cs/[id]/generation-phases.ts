@@ -1,4 +1,9 @@
-import type { LucideIcon } from "lucide-react";
+import {
+  calculateWeightedProgress as calculateProgress,
+  getPhaseStatus as getStatus,
+  type PhaseStatus,
+} from "@/lib/generation-phases";
+import { CHAPTER_STEPS, COURSE_STEPS, type CourseWorkflowStepName } from "@/workflows/config";
 import {
   BookOpenIcon,
   GraduationCapIcon,
@@ -8,16 +13,7 @@ import {
   SettingsIcon,
   SparklesIcon,
 } from "lucide-react";
-import {
-  calculateWeightedProgress as calculateProgress,
-  getPhaseStatus as getStatus,
-  type PhaseStatus,
-} from "@/lib/generation-phases";
-import {
-  CHAPTER_STEPS,
-  COURSE_STEPS,
-  type CourseWorkflowStepName,
-} from "@/workflows/config";
+import type { LucideIcon } from "lucide-react";
 
 export type PhaseName =
   | "loadingInfo"

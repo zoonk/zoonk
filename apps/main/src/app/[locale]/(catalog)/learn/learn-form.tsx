@@ -46,11 +46,7 @@ export function LearnForm() {
   const queryId = useId();
 
   return (
-    <form
-      action={learnFormAction}
-      aria-labelledby="learn-title"
-      className="w-full"
-    >
+    <form action={learnFormAction} aria-labelledby="learn-title" className="w-full">
       <Label className="sr-only" htmlFor={queryId}>
         {t("Enter a subject")}
       </Label>

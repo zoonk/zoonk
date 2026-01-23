@@ -1,3 +1,11 @@
+import {
+  AppBreadcrumb,
+  BattlesPageBreadcrumb,
+  HomeLinkBreadcrumb,
+  TaskLinkBreadcrumb,
+} from "@/components/breadcrumb";
+import { getBattleMatchups } from "@/lib/battle-loader";
+import { getTaskById } from "@/tasks";
 import { BreadcrumbSeparator } from "@zoonk/ui/components/breadcrumb";
 import {
   ContainerBody,
@@ -7,14 +15,6 @@ import {
   ContainerTitle,
 } from "@zoonk/ui/components/container";
 import { notFound } from "next/navigation";
-import {
-  AppBreadcrumb,
-  BattlesPageBreadcrumb,
-  HomeLinkBreadcrumb,
-  TaskLinkBreadcrumb,
-} from "@/components/breadcrumb";
-import { getBattleMatchups } from "@/lib/battle-loader";
-import { getTaskById } from "@/tasks";
 import { BattleMatchupList } from "./battle-matchup-list";
 
 type BattlesPageProps = {

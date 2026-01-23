@@ -1,5 +1,4 @@
 import "server-only";
-
 import { auth } from "@zoonk/auth";
 
 export async function sendVerificationOTP(email: string) {

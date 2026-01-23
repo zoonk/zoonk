@@ -1,3 +1,6 @@
+import { LoginRequired } from "@/components/auth/login-required";
+import { SubscriptionGate } from "@/components/subscription/subscription-gate";
+import { getChapterForGeneration } from "@/data/chapters/get-chapter-for-generation";
 import { getSession } from "@zoonk/core/users/session/get";
 import {
   Container,
@@ -10,20 +13,15 @@ import {
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import { parseNumericId } from "@zoonk/utils/string";
-import { notFound, redirect } from "next/navigation";
 import { getExtracted } from "next-intl/server";
-import { LoginRequired } from "@/components/auth/login-required";
-import { SubscriptionGate } from "@/components/subscription/subscription-gate";
-import { getChapterForGeneration } from "@/data/chapters/get-chapter-for-generation";
+import { notFound, redirect } from "next/navigation";
 import { GenerationClient } from "./generation-client";
 
 type GenerateChapterContentProps = {
   params: Promise<{ id: string; locale: string }>;
 };
 
-export async function GenerateChapterContent({
-  params,
-}: GenerateChapterContentProps) {
+export async function GenerateChapterContent({ params }: GenerateChapterContentProps) {
   const { id, locale } = await params;
   const chapterId = parseNumericId(id);
 
@@ -31,10 +29,7 @@ export async function GenerateChapterContent({
     notFound();
   }
 
-  const [session, chapter] = await Promise.all([
-    getSession(),
-    getChapterForGeneration(chapterId),
-  ]);
+  const [session, chapter] = await Promise.all([getSession(), getChapterForGeneration(chapterId)]);
 
   if (!chapter) {
     notFound();

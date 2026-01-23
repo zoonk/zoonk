@@ -1,13 +1,10 @@
+import { ErrorCode } from "@/lib/app-error";
 import { signInAs } from "@zoonk/testing/fixtures/auth";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
-import {
-  memberFixture,
-  organizationFixture,
-} from "@zoonk/testing/fixtures/orgs";
+import { memberFixture, organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, describe, expect, test } from "vitest";
-import { ErrorCode } from "@/lib/app-error";
 import { searchOrgLessons } from "./search-org-lessons";
 
 describe("unauthenticated users", () => {
@@ -117,9 +114,7 @@ describe("admins", () => {
 
     expect(result.error).toBeNull();
     expect(result.data.length).toBeGreaterThanOrEqual(1);
-    expect(
-      result.data.some((l) => l.title === "Introdução à Programação"),
-    ).toBe(true);
+    expect(result.data.some((l) => l.title === "Introdução à Programação")).toBe(true);
   });
 
   test("returns empty array when no matches", async () => {
@@ -197,9 +192,7 @@ describe("admins", () => {
 
     expect(result.error).toBeNull();
     expect(result.data.length).toBeGreaterThanOrEqual(1);
-    expect(
-      result.data.some((l) => l.title === "Very Long Lesson Title For Testing"),
-    ).toBe(true);
+    expect(result.data.some((l) => l.title === "Very Long Lesson Title For Testing")).toBe(true);
   });
 
   test("includes chapter info in results", async () => {
@@ -227,9 +220,7 @@ describe("admins", () => {
     expect(result.error).toBeNull();
     expect(result.data.length).toBeGreaterThanOrEqual(1);
 
-    const lesson = result.data.find(
-      (l) => l.title === "Lesson With Chapter Info",
-    );
+    const lesson = result.data.find((l) => l.title === "Lesson With Chapter Info");
 
     expect(lesson?.chapter).toBeDefined();
     expect(lesson?.chapter.slug).toBe(chapter.slug);

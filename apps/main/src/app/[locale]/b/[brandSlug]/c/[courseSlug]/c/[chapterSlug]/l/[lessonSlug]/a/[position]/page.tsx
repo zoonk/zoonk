@@ -1,5 +1,5 @@
-import type { Metadata } from "next";
 import { getExtracted } from "next-intl/server";
+import type { Metadata } from "next";
 
 export async function generateMetadata({
   params,
@@ -8,9 +8,7 @@ export async function generateMetadata({
   const t = await getExtracted({ locale });
 
   return {
-    description: t(
-      "Complete this activity to reinforce your learning and track your progress.",
-    ),
+    description: t("Complete this activity to reinforce your learning and track your progress."),
     title: t("Activity"),
   };
 }

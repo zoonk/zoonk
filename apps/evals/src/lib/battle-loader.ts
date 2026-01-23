@@ -3,11 +3,7 @@ import path from "node:path";
 import { cache } from "react";
 import { getModelById, getModelDisplayName, type ModelConfig } from "./models";
 import { getAllOutputsForTask } from "./output-loader";
-import type {
-  BattleLeaderboardEntry,
-  BattleMatchup,
-  ModelOutputs,
-} from "./types";
+import type { BattleLeaderboardEntry, BattleMatchup, ModelOutputs } from "./types";
 
 const EVAL_RESULTS_DIR = path.join(process.cwd(), "eval-results");
 const BATTLES_DIR = path.join(EVAL_RESULTS_DIR, "battles");
@@ -16,32 +12,26 @@ const TOKENS_PER_MILLION = 1_000_000;
 const COST_MULTIPLIER = 1000;
 const MS_TO_SECONDS = 1000;
 
-export const getBattleMatchups = cache(
-  async (taskId: string): Promise<BattleMatchup[]> => {
-    const taskDir = path.join(BATTLES_DIR, taskId);
+export const getBattleMatchups = cache(async (taskId: string): Promise<BattleMatchup[]> => {
+  const taskDir = path.join(BATTLES_DIR, taskId);
 
-    try {
-      const files = await fs.readdir(taskDir);
-      const matchupFiles = files.filter(
-        (f) => f.endsWith(".json") && f !== "leaderboard.json",
-      );
+  try {
+    const files = await fs.readdir(taskDir);
+    const matchupFiles = files.filter((f) => f.endsWith(".json") && f !== "leaderboard.json");
 
-      const matchups = await Promise.all(
-        matchupFiles.map(async (file) => {
-          const filePath = path.join(taskDir, file);
-          const data = await fs.readFile(filePath, "utf-8");
-          return JSON.parse(data) as BattleMatchup;
-        }),
-      );
+    const matchups = await Promise.all(
+      matchupFiles.map(async (file) => {
+        const filePath = path.join(taskDir, file);
+        const data = await fs.readFile(filePath, "utf-8");
+        return JSON.parse(data) as BattleMatchup;
+      }),
+    );
 
-      return matchups.toSorted((a, b) =>
-        a.testCaseId.localeCompare(b.testCaseId),
-      );
-    } catch {
-      return [];
-    }
-  },
-);
+    return matchups.toSorted((a, b) => a.testCaseId.localeCompare(b.testCaseId));
+  } catch {
+    return [];
+  }
+});
 
 function calculateCost(
   inputTokens: number,
@@ -49,10 +39,8 @@ function calculateCost(
   inputCost: number,
   outputCost: number,
 ): number {
-  const totalInputCost =
-    (inputTokens / TOKENS_PER_MILLION) * inputCost * COST_MULTIPLIER;
-  const totalOutputCost =
-    (outputTokens / TOKENS_PER_MILLION) * outputCost * COST_MULTIPLIER;
+  const totalInputCost = (inputTokens / TOKENS_PER_MILLION) * inputCost * COST_MULTIPLIER;
+  const totalOutputCost = (outputTokens / TOKENS_PER_MILLION) * outputCost * COST_MULTIPLIER;
   return totalInputCost + totalOutputCost;
 }
 
@@ -103,16 +91,11 @@ function calculateModelMetrics(
     return { averageCost: 0, averageDuration: 0 };
   }
 
-  const totalDurationMs = outputs.outputs.reduce(
-    (sum, o) => sum + o.duration,
-    0,
-  );
+  const totalDurationMs = outputs.outputs.reduce((sum, o) => sum + o.duration, 0);
   const averageDuration = totalDurationMs / numOutputs / MS_TO_SECONDS;
 
-  const avgInputTokens =
-    outputs.outputs.reduce((sum, o) => sum + o.inputTokens, 0) / numOutputs;
-  const avgOutputTokens =
-    outputs.outputs.reduce((sum, o) => sum + o.outputTokens, 0) / numOutputs;
+  const avgInputTokens = outputs.outputs.reduce((sum, o) => sum + o.inputTokens, 0) / numOutputs;
+  const avgOutputTokens = outputs.outputs.reduce((sum, o) => sum + o.outputTokens, 0) / numOutputs;
 
   const averageCost = calculateCost(
     avgInputTokens,
@@ -136,10 +119,7 @@ function buildLeaderboardEntry(
   }
 
   const outputs = allOutputs.get(modelId);
-  const { averageCost, averageDuration } = calculateModelMetrics(
-    outputs,
-    model,
-  );
+  const { averageCost, averageDuration } = calculateModelMetrics(outputs, model);
 
   return {
     averageCost,
@@ -170,12 +150,7 @@ export const getBattleLeaderboard = cache(
     const entries: BattleLeaderboardEntry[] = [];
 
     for (const [modelId, scores] of modelScores) {
-      const entry = buildLeaderboardEntry(
-        modelId,
-        scores,
-        allOutputs,
-        matchups.length,
-      );
+      const entry = buildLeaderboardEntry(modelId, scores, allOutputs, matchups.length);
       if (entry) {
         entries.push(entry);
       }

@@ -1,7 +1,4 @@
-import {
-  type ExistingCourse,
-  findExistingCourse,
-} from "@/data/courses/find-existing-course";
+import { type ExistingCourse, findExistingCourse } from "@/data/courses/find-existing-course";
 import { streamStatus } from "../stream-status";
 import type { CourseSuggestionData } from "../types";
 

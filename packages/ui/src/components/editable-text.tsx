@@ -6,18 +6,10 @@ export type EditableLabelProps = React.ComponentProps<"label"> & {
   icon?: LucideIcon;
 };
 
-function EditableLabel({
-  children,
-  className,
-  icon: Icon,
-  ...props
-}: EditableLabelProps) {
+function EditableLabel({ children, className, icon: Icon, ...props }: EditableLabelProps) {
   return (
     <label
-      className={cn(
-        "flex items-center gap-1.5 text-muted-foreground text-xs",
-        className,
-      )}
+      className={cn("text-muted-foreground flex items-center gap-1.5 text-xs", className)}
       {...props}
     >
       {Icon && <Icon aria-hidden="true" className="size-3" />}
@@ -29,7 +21,7 @@ function EditableLabel({
 const editableTextVariants = cva(
   [
     "w-full border-none bg-transparent px-0 outline-none",
-    "cursor-text placeholder:text-muted-foreground/50",
+    "placeholder:text-muted-foreground/50 cursor-text",
     "focus-visible:ring-0",
     "transition-colors duration-150",
   ],
@@ -40,11 +32,10 @@ const editableTextVariants = cva(
     variants: {
       variant: {
         default: "text-foreground",
-        description:
-          "text-pretty text-muted-foreground leading-tight tracking-tight",
+        description: "text-muted-foreground leading-tight tracking-tight text-pretty",
         muted: "text-muted-foreground",
         title:
-          "scroll-m-20 text-balance font-semibold text-foreground/90 text-lg leading-none tracking-tight",
+          "text-foreground/90 scroll-m-20 text-lg leading-none font-semibold tracking-tight text-balance",
       },
     },
   },
@@ -68,7 +59,7 @@ const editableTextareaVariants = cva(
   [
     "w-full border-none bg-transparent px-0 outline-none",
     "field-sizing-content min-h-6 resize-none",
-    "cursor-text placeholder:text-muted-foreground/50",
+    "placeholder:text-muted-foreground/50 cursor-text",
     "focus-visible:ring-0",
     "transition-colors duration-150",
   ],
@@ -79,8 +70,7 @@ const editableTextareaVariants = cva(
     variants: {
       variant: {
         default: "text-foreground",
-        description:
-          "text-pretty text-muted-foreground leading-tight tracking-tight",
+        description: "text-muted-foreground leading-tight tracking-tight text-pretty",
         muted: "text-muted-foreground",
       },
     },
@@ -90,12 +80,7 @@ const editableTextareaVariants = cva(
 export type EditableTextareaProps = React.ComponentProps<"textarea"> &
   VariantProps<typeof editableTextareaVariants>;
 
-function EditableTextarea({
-  className,
-  variant,
-  rows = 1,
-  ...props
-}: EditableTextareaProps) {
+function EditableTextarea({ className, variant, rows = 1, ...props }: EditableTextareaProps) {
   return (
     <textarea
       className={cn(editableTextareaVariants({ variant }), className)}

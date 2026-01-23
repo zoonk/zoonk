@@ -1,6 +1,3 @@
-import { ErrorView } from "@zoonk/ui/patterns/error";
-import { SUPPORT_URL } from "@zoonk/utils/constants";
-import { getExtracted } from "next-intl/server";
 import {
   EditorDragHandle,
   EditorListAddButton,
@@ -17,6 +14,9 @@ import {
 import { EntityListActions } from "@/components/entity-list-actions";
 import { getChapter } from "@/data/chapters/get-chapter";
 import { listChapterLessons } from "@/data/lessons/list-chapter-lessons";
+import { ErrorView } from "@zoonk/ui/patterns/error";
+import { SUPPORT_URL } from "@zoonk/utils/constants";
+import { getExtracted } from "next-intl/server";
 import {
   exportLessonsAction,
   handleImportLessonsAction,
@@ -25,14 +25,9 @@ import {
 } from "./actions";
 import { LessonListItemLink } from "./lesson-list-item-link";
 
-type ChapterPageProps =
-  PageProps<"/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]">;
+type ChapterPageProps = PageProps<"/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]">;
 
-export async function LessonList({
-  params,
-}: {
-  params: ChapterPageProps["params"];
-}) {
+export async function LessonList({ params }: { params: ChapterPageProps["params"] }) {
   const { chapterSlug, courseSlug, lang, orgSlug } = await params;
   const t = await getExtracted();
 
@@ -84,9 +79,7 @@ export async function LessonList({
       <EditorListSpinner />
 
       <EditorListHeader>
-        <EditorListAddButton position={endPosition}>
-          {t("Add lesson")}
-        </EditorListAddButton>
+        <EditorListAddButton position={endPosition}>{t("Add lesson")}</EditorListAddButton>
 
         <EntityListActions
           entityType="lessons"

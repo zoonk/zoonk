@@ -1,10 +1,6 @@
 "use client";
 
-import {
-  COURSE_CATEGORIES,
-  type CourseCategory,
-  isValidCategory,
-} from "@zoonk/utils/categories";
+import { COURSE_CATEGORIES, type CourseCategory, isValidCategory } from "@zoonk/utils/categories";
 import { useExtracted } from "next-intl";
 
 type CategoryLabels = Record<CourseCategory, string>;

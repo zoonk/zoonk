@@ -1,8 +1,8 @@
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { getExtracted, getLocale } from "next-intl/server";
-import type { HistoryPeriod } from "@/data/progress/_utils";
 import { MetricComparison } from "../_components/metric-comparison";
 import { formatPeriodLabel } from "../_utils";
+import type { HistoryPeriod } from "@/data/progress/_utils";
 
 export async function EnergyStats({
   average,
@@ -32,16 +32,12 @@ export async function EnergyStats({
       <span className="text-muted-foreground text-sm">{periodLabel}</span>
 
       <div className="flex items-baseline gap-3">
-        <span className="font-bold text-5xl text-energy tabular-nums tracking-tight">
+        <span className="text-energy text-5xl font-bold tracking-tight tabular-nums">
           {t("{value}%", { value: formattedAverage })}
         </span>
 
         {previousAverage !== null && (
-          <MetricComparison
-            current={average}
-            period={period}
-            previous={previousAverage}
-          />
+          <MetricComparison current={average} period={period} previous={previousAverage} />
         )}
       </div>
     </div>

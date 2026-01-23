@@ -1,10 +1,9 @@
 import "server-only";
-
+import { ErrorCode } from "@/lib/app-error";
 import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
 import { type Lesson, prisma } from "@zoonk/db";
 import { AppError, safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
-import { ErrorCode } from "@/lib/app-error";
 
 const cachedListChapterLessons = cache(
   async (
@@ -45,9 +44,5 @@ export function listChapterLessons(params: {
   headers?: Headers;
   orgId: number;
 }): Promise<{ data: Lesson[]; error: Error | null }> {
-  return cachedListChapterLessons(
-    params.chapterId,
-    params.orgId,
-    params.headers,
-  );
+  return cachedListChapterLessons(params.chapterId, params.orgId, params.headers);
 }

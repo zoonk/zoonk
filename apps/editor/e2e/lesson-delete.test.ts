@@ -43,9 +43,7 @@ async function navigateToLessonPage(
 ) {
   await page.goto(`/ai/c/en/${courseSlug}/ch/${chapterSlug}/l/${lessonSlug}`);
 
-  await expect(
-    page.getByRole("textbox", { name: /edit lesson title/i }),
-  ).toBeVisible();
+  await expect(page.getByRole("textbox", { name: /edit lesson title/i })).toBeVisible();
 }
 
 function getDeleteButton(page: Page) {
@@ -87,12 +85,7 @@ test.describe("Lesson Delete", () => {
   test.describe("Happy Path", () => {
     test("admin deletes unpublished lesson", async ({ authenticatedPage }) => {
       const { course, chapter, lesson } = await createTestLesson(false);
-      await navigateToLessonPage(
-        authenticatedPage,
-        course.slug,
-        chapter.slug,
-        lesson.slug,
-      );
+      await navigateToLessonPage(authenticatedPage, course.slug, chapter.slug, lesson.slug);
 
       await expect(getDeleteButton(authenticatedPage)).toBeVisible();
       await openDeleteDialog(authenticatedPage);
@@ -106,52 +99,31 @@ test.describe("Lesson Delete", () => {
 
     test("owner deletes unpublished lesson", async ({ ownerPage }) => {
       const { course, chapter, lesson } = await createTestLesson(false);
-      await navigateToLessonPage(
-        ownerPage,
-        course.slug,
-        chapter.slug,
-        lesson.slug,
-      );
+      await navigateToLessonPage(ownerPage, course.slug, chapter.slug, lesson.slug);
 
       await openDeleteDialog(ownerPage);
       await confirmDelete(ownerPage);
 
-      await expect(ownerPage).toHaveURL(
-        new RegExp(`/ai/c/en/${course.slug}/ch/${chapter.slug}$`),
-      );
+      await expect(ownerPage).toHaveURL(new RegExp(`/ai/c/en/${course.slug}/ch/${chapter.slug}$`));
       await verifyLessonDeleted(lesson.id);
     });
 
     test("owner deletes published lesson", async ({ ownerPage }) => {
       const { course, chapter, lesson } = await createTestLesson(true);
-      await navigateToLessonPage(
-        ownerPage,
-        course.slug,
-        chapter.slug,
-        lesson.slug,
-      );
+      await navigateToLessonPage(ownerPage, course.slug, chapter.slug, lesson.slug);
 
       await openDeleteDialog(ownerPage);
       await confirmDelete(ownerPage);
 
-      await expect(ownerPage).toHaveURL(
-        new RegExp(`/ai/c/en/${course.slug}/ch/${chapter.slug}$`),
-      );
+      await expect(ownerPage).toHaveURL(new RegExp(`/ai/c/en/${course.slug}/ch/${chapter.slug}$`));
       await verifyLessonDeleted(lesson.id);
     });
   });
 
   test.describe("Permissions", () => {
-    test("admin cannot see delete button for published lesson", async ({
-      authenticatedPage,
-    }) => {
+    test("admin cannot see delete button for published lesson", async ({ authenticatedPage }) => {
       const { course, chapter, lesson } = await createTestLesson(true);
-      await navigateToLessonPage(
-        authenticatedPage,
-        course.slug,
-        chapter.slug,
-        lesson.slug,
-      );
+      await navigateToLessonPage(authenticatedPage, course.slug, chapter.slug, lesson.slug);
 
       await expect(getDeleteButton(authenticatedPage)).not.toBeVisible();
       await verifyLessonExists(lesson.id);
@@ -159,16 +131,9 @@ test.describe("Lesson Delete", () => {
   });
 
   test.describe("Dialog Interaction", () => {
-    test("cancel button closes dialog without deleting", async ({
-      authenticatedPage,
-    }) => {
+    test("cancel button closes dialog without deleting", async ({ authenticatedPage }) => {
       const { course, chapter, lesson } = await createTestLesson(false);
-      await navigateToLessonPage(
-        authenticatedPage,
-        course.slug,
-        chapter.slug,
-        lesson.slug,
-      );
+      await navigateToLessonPage(authenticatedPage, course.slug, chapter.slug, lesson.slug);
 
       await openDeleteDialog(authenticatedPage);
       await getCancelButton(authenticatedPage).click();
@@ -177,16 +142,9 @@ test.describe("Lesson Delete", () => {
       await verifyLessonExists(lesson.id);
     });
 
-    test("escape key closes dialog without deleting", async ({
-      authenticatedPage,
-    }) => {
+    test("escape key closes dialog without deleting", async ({ authenticatedPage }) => {
       const { course, chapter, lesson } = await createTestLesson(false);
-      await navigateToLessonPage(
-        authenticatedPage,
-        course.slug,
-        chapter.slug,
-        lesson.slug,
-      );
+      await navigateToLessonPage(authenticatedPage, course.slug, chapter.slug, lesson.slug);
 
       await openDeleteDialog(authenticatedPage);
       await authenticatedPage.keyboard.press("Escape");

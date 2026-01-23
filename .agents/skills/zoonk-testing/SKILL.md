@@ -109,9 +109,7 @@ test("persists title after reload", async ({ page }) => {
   await page.getByRole("textbox", { name: /title/i }).fill("New Title");
   await expect(page.getByText(/saved/i)).toBeVisible();
   await page.reload();
-  await expect(page.getByRole("textbox", { name: /title/i })).toHaveValue(
-    "New Title",
-  );
+  await expect(page.getByRole("textbox", { name: /title/i })).toHaveValue("New Title");
 });
 
 // GOOD: Single test that implicitly verifies auto-save through persistence
@@ -255,9 +253,7 @@ test("creates item and redirects to item page", async ({ page }) => {
 
   // Verify destination page shows the created content
   // For editable fields, use toHaveValue:
-  await expect(page.getByRole("textbox", { name: /edit title/i })).toHaveValue(
-    itemTitle,
-  );
+  await expect(page.getByRole("textbox", { name: /edit title/i })).toHaveValue(itemTitle);
 
   // For static text, use toBeVisible:
   await expect(page.getByText(itemDescription)).toBeVisible();
@@ -273,9 +269,7 @@ test("creates item and redirects to item page", async ({ page }) => {
 ```typescript
 // BAD: Trying to intercept server action (won't work)
 test("shows error on failure", async ({ page }) => {
-  await page.route("**/api/endpoint", (route) =>
-    route.fulfill({ status: 500 }),
-  );
+  await page.route("**/api/endpoint", (route) => route.fulfill({ status: 500 }));
   // This won't affect server actions - they don't go through the browser
 });
 
@@ -335,9 +329,7 @@ import { expect, test } from "./fixtures";
 
 test("authenticated user sees dashboard", async ({ authenticatedPage }) => {
   await authenticatedPage.goto("/");
-  await expect(
-    authenticatedPage.getByRole("heading", { name: "Dashboard" }),
-  ).toBeVisible();
+  await expect(authenticatedPage.getByRole("heading", { name: "Dashboard" })).toBeVisible();
 });
 
 test("new user sees onboarding", async ({ userWithoutProgress }) => {

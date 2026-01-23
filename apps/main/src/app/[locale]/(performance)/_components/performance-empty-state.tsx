@@ -1,6 +1,6 @@
+import { Link } from "@/i18n/navigation";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { getExtracted } from "next-intl/server";
-import { Link } from "@/i18n/navigation";
 
 export async function PerformanceEmptyState({
   isAuthenticated,
@@ -13,7 +13,7 @@ export async function PerformanceEmptyState({
 
   return (
     <div className="flex flex-col gap-8">
-      <div className="flex h-64 flex-col items-center justify-center gap-4 rounded-xl border border-dashed p-4 text-muted-foreground">
+      <div className="text-muted-foreground flex h-64 flex-col items-center justify-center gap-4 rounded-xl border border-dashed p-4">
         {isAuthenticated ? (
           t("Start learning to track your progress")
         ) : (

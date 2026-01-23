@@ -1,13 +1,10 @@
+import { ErrorCode } from "@/lib/app-error";
 import { prisma } from "@zoonk/db";
 import { signInAs } from "@zoonk/testing/fixtures/auth";
-import {
-  courseFixture,
-  courseUserFixture,
-} from "@zoonk/testing/fixtures/courses";
+import { courseFixture, courseUserFixture } from "@zoonk/testing/fixtures/courses";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeAll, describe, expect, test } from "vitest";
-import { ErrorCode } from "@/lib/app-error";
 import { listUserCourses } from "./list-user-courses";
 
 describe("unauthenticated users", () => {
@@ -25,10 +22,7 @@ describe("authenticated users", () => {
   let headers: Headers;
 
   beforeAll(async () => {
-    [organization, user] = await Promise.all([
-      organizationFixture(),
-      userFixture(),
-    ]);
+    [organization, user] = await Promise.all([organizationFixture(), userFixture()]);
 
     headers = await signInAs(user.email, user.password);
   });
@@ -131,10 +125,7 @@ describe("authenticated users", () => {
   });
 
   test("does not return other users courses", async () => {
-    const [otherUser, testUser] = await Promise.all([
-      userFixture(),
-      userFixture(),
-    ]);
+    const [otherUser, testUser] = await Promise.all([userFixture(), userFixture()]);
 
     const testHeaders = await signInAs(testUser.email, testUser.password);
 

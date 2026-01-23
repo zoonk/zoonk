@@ -54,15 +54,8 @@ export function DeleteItemButton({
 
   return (
     <AlertDialog onOpenChange={setIsOpen} open={isOpen}>
-      <AlertDialogTrigger
-        disabled={isPending}
-        render={<Button size="icon-sm" variant="ghost" />}
-      >
-        {isPending ? (
-          <Spinner />
-        ) : (
-          <Trash2Icon className="text-muted-foreground" />
-        )}
+      <AlertDialogTrigger disabled={isPending} render={<Button size="icon-sm" variant="ghost" />}>
+        {isPending ? <Spinner /> : <Trash2Icon className="text-muted-foreground" />}
         <span className="sr-only">{resolvedSrLabel}</span>
       </AlertDialogTrigger>
 
@@ -74,15 +67,9 @@ export function DeleteItemButton({
         </AlertDialogHeader>
 
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={isPending}>
-            {t("Cancel")}
-          </AlertDialogCancel>
+          <AlertDialogCancel disabled={isPending}>{t("Cancel")}</AlertDialogCancel>
 
-          <AlertDialogAction
-            disabled={isPending}
-            onClick={handleDelete}
-            variant="destructive"
-          >
+          <AlertDialogAction disabled={isPending} onClick={handleDelete} variant="destructive">
             {isPending ? <Spinner /> : t("Delete")}
           </AlertDialogAction>
         </AlertDialogFooter>

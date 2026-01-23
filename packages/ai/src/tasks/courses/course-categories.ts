@@ -1,13 +1,11 @@
 import "server-only";
-
 import { COURSE_CATEGORIES } from "@zoonk/utils/categories";
 import { generateText, Output } from "ai";
 import { z } from "zod";
 import { buildProviderOptions, type ReasoningEffort } from "../../types";
 import systemPrompt from "./course-categories.prompt.md";
 
-const DEFAULT_MODEL =
-  process.env.AI_MODEL_COURSE_CATEGORIES ?? "google/gemini-3-flash";
+const DEFAULT_MODEL = process.env.AI_MODEL_COURSE_CATEGORIES ?? "google/gemini-3-flash";
 
 const FALLBACK_MODELS = [
   "meta/llama-4-scout",

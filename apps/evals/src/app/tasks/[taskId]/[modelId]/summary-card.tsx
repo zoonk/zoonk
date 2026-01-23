@@ -1,9 +1,4 @@
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@zoonk/ui/components/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@zoonk/ui/components/card";
 
 type SummaryCardProps = {
   averageScore: number;
@@ -22,7 +17,7 @@ function StatItem({ label, value }: StatItemProps) {
   return (
     <div>
       <p className="text-muted-foreground text-sm">{label}</p>
-      <p className="font-bold text-2xl">{value}</p>
+      <p className="text-2xl font-bold">{value}</p>
     </div>
   );
 }
@@ -43,20 +38,11 @@ export function SummaryCard({
       <CardContent className="grid grid-cols-2 gap-4 md:grid-cols-5">
         <StatItem label="Average Score" value={averageScore.toFixed(2)} />
 
-        <StatItem
-          label="Avg Input Tokens"
-          value={Math.round(averageInputTokens)}
-        />
+        <StatItem label="Avg Input Tokens" value={Math.round(averageInputTokens)} />
 
-        <StatItem
-          label="Avg Output Tokens"
-          value={Math.round(averageOutputTokens)}
-        />
+        <StatItem label="Avg Output Tokens" value={Math.round(averageOutputTokens)} />
 
-        <StatItem
-          label="Avg Duration"
-          value={`${averageDuration.toFixed(2)}s`}
-        />
+        <StatItem label="Avg Duration" value={`${averageDuration.toFixed(2)}s`} />
 
         <StatItem label="Cost (1000 runs)" value={`$${totalCost.toFixed(2)}`} />
       </CardContent>

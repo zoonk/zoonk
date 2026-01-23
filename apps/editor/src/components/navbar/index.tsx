@@ -4,9 +4,9 @@ import { buttonVariants } from "@zoonk/ui/components/button";
 import { Navbar } from "@zoonk/ui/components/navbar";
 import { cn } from "@zoonk/ui/lib/utils";
 import { HomeIcon } from "lucide-react";
+import { useExtracted } from "next-intl";
 import Link from "next/link";
 import { useParams, useSelectedLayoutSegments } from "next/navigation";
-import { useExtracted } from "next-intl";
 import { CommandPalette } from "./command-palette";
 
 export function EditorNavbar({ children }: React.PropsWithChildren) {

@@ -1,7 +1,5 @@
-import {
-  BreadcrumbItem,
-  BreadcrumbPage,
-} from "@zoonk/ui/components/breadcrumb";
+import { AppBreadcrumb, HomeLinkBreadcrumb } from "@/components/breadcrumb";
+import { BreadcrumbItem, BreadcrumbPage } from "@zoonk/ui/components/breadcrumb";
 import {
   Container,
   ContainerBody,
@@ -10,7 +8,6 @@ import {
   ContainerHeaderGroup,
   ContainerTitle,
 } from "@zoonk/ui/components/container";
-import { AppBreadcrumb, HomeLinkBreadcrumb } from "@/components/breadcrumb";
 import { ImageTestForm } from "./form";
 
 export default function ImageTestPage() {
@@ -26,9 +23,7 @@ export default function ImageTestPage() {
       <ContainerHeader>
         <ContainerHeaderGroup>
           <ContainerTitle>Course Thumbnail Generator</ContainerTitle>
-          <ContainerDescription>
-            Test AI-generated course thumbnails
-          </ContainerDescription>
+          <ContainerDescription>Test AI-generated course thumbnails</ContainerDescription>
         </ContainerHeaderGroup>
       </ContainerHeader>
 

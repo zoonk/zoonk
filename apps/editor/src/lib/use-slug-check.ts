@@ -31,14 +31,12 @@ export function useSlugCheck({
 
   const debouncedSlug = useDebounce(slug);
 
-  const handleSlugCheck = useEffectEvent(
-    (checkedSlug: string, exists: boolean) => {
-      // Only update if response is for the current slug to avoid stale results
-      if (checkedSlug === debouncedSlug) {
-        setSlugExists(exists);
-      }
-    },
-  );
+  const handleSlugCheck = useEffectEvent((checkedSlug: string, exists: boolean) => {
+    // Only update if response is for the current slug to avoid stale results
+    if (checkedSlug === debouncedSlug) {
+      setSlugExists(exists);
+    }
+  });
 
   useEffect(() => {
     // Skip check if empty or if it matches the current entity's slug
@@ -58,15 +56,7 @@ export function useSlugCheck({
 
       handleSlugCheck(debouncedSlug, exists);
     });
-  }, [
-    chapterId,
-    checkFn,
-    courseId,
-    debouncedSlug,
-    initialSlug,
-    language,
-    orgSlug,
-  ]);
+  }, [chapterId, checkFn, courseId, debouncedSlug, initialSlug, language, orgSlug]);
 
   return slugExists;
 }

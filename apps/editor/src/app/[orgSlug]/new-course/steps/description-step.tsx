@@ -21,9 +21,7 @@ export function DescriptionStep({
 
   return (
     <WizardField>
-      <WizardLabel htmlFor={descriptionId}>
-        {t("Course description")}
-      </WizardLabel>
+      <WizardLabel htmlFor={descriptionId}>{t("Course description")}</WizardLabel>
 
       <WizardDescription>
         {t("A short summary that helps learners understand what they'll learn")}

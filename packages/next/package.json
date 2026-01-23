@@ -1,4 +1,15 @@
 {
+  "name": "@zoonk/next",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./i18n/codec": "./src/i18n/next-intl-codec.ts",
+    "./navigation/external-redirect": "./src/navigation/external-redirect.ts"
+  },
+  "scripts": {
+    "typecheck": "tsgo --noEmit"
+  },
   "dependencies": {
     "po-parser": "2.1.1"
   },
@@ -9,11 +20,6 @@
     "@typescript/native-preview": "7.0.0-dev.20260122.4",
     "@zoonk/tsconfig": "workspace:*"
   },
-  "exports": {
-    "./i18n/codec": "./src/i18n/next-intl-codec.ts",
-    "./navigation/external-redirect": "./src/navigation/external-redirect.ts"
-  },
-  "name": "@zoonk/next",
   "peerDependencies": {
     "next": ">=16",
     "next-intl": ">=4.6",
@@ -24,11 +30,5 @@
     "next-intl": {
       "optional": true
     }
-  },
-  "private": true,
-  "scripts": {
-    "typecheck": "tsgo --noEmit"
-  },
-  "type": "module",
-  "version": "0.0.0"
+  }
 }

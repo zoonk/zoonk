@@ -8,49 +8,29 @@ import { useCallback, useEffect, useState } from "react";
 
 export function Wizard({ className, ...props }: React.ComponentProps<"main">) {
   return (
-    <main
-      className={cn("flex min-h-dvh flex-col", className)}
-      data-slot="wizard"
-      {...props}
-    />
+    <main className={cn("flex min-h-dvh flex-col", className)} data-slot="wizard" {...props} />
   );
 }
 
-export function WizardContent({
-  className,
-  children,
-  ...props
-}: React.ComponentProps<"section">) {
+export function WizardContent({ className, children, ...props }: React.ComponentProps<"section">) {
   return (
     <section
       className="flex flex-1 flex-col items-start p-4 md:items-center md:justify-center lg:pt-0"
       data-slot="wizard-content"
       {...props}
     >
-      <div className={cn("flex w-full max-w-xl flex-col gap-4", className)}>
-        {children}
-      </div>
+      <div className={cn("flex w-full max-w-xl flex-col gap-4", className)}>{children}</div>
     </section>
   );
 }
 
-export function WizardGroup({
-  className,
-  ...props
-}: React.ComponentProps<"div">) {
+export function WizardGroup({ className, ...props }: React.ComponentProps<"div">) {
   return (
-    <div
-      className={cn("flex flex-col gap-4", className)}
-      data-slot="wizard-group"
-      {...props}
-    />
+    <div className={cn("flex flex-col gap-4", className)} data-slot="wizard-group" {...props} />
   );
 }
 
-export function WizardField({
-  className,
-  ...props
-}: React.ComponentProps<"fieldset">) {
+export function WizardField({ className, ...props }: React.ComponentProps<"fieldset">) {
   return (
     <fieldset
       className={cn("flex flex-col gap-2", className)}
@@ -60,15 +40,12 @@ export function WizardField({
   );
 }
 
-export function WizardLabel({
-  className,
-  ...props
-}: React.ComponentProps<"label">) {
+export function WizardLabel({ className, ...props }: React.ComponentProps<"label">) {
   return (
     // oxlint-disable-next-line jsx-a11y/label-has-associated-control -- compound component
     <label
       className={cn(
-        "font-medium font-mono text-muted-foreground text-xs uppercase tracking-widest",
+        "text-muted-foreground font-mono text-xs font-medium tracking-widest uppercase",
         className,
       )}
       data-slot="wizard-label"
@@ -77,10 +54,7 @@ export function WizardLabel({
   );
 }
 
-export function WizardDescription({
-  className,
-  ...props
-}: React.ComponentProps<"p">) {
+export function WizardDescription({ className, ...props }: React.ComponentProps<"p">) {
   return (
     <p
       className={cn("text-muted-foreground text-sm", className)}
@@ -90,23 +64,17 @@ export function WizardDescription({
   );
 }
 
-export function WizardError({
-  className,
-  ...props
-}: React.ComponentProps<"p">) {
+export function WizardError({ className, ...props }: React.ComponentProps<"p">) {
   return (
     <p
-      className={cn("min-h-5 text-destructive text-sm", className)}
+      className={cn("text-destructive min-h-5 text-sm", className)}
       data-slot="wizard-error"
       {...props}
     />
   );
 }
 
-export function WizardInputGroup({
-  className,
-  ...props
-}: React.ComponentProps<"div">) {
+export function WizardInputGroup({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       className={cn("flex items-baseline gap-2", className)}
@@ -116,10 +84,7 @@ export function WizardInputGroup({
   );
 }
 
-export function WizardInputPrefix({
-  className,
-  ...props
-}: React.ComponentProps<"span">) {
+export function WizardInputPrefix({ className, ...props }: React.ComponentProps<"span">) {
   return (
     <span
       className={cn("text-muted-foreground", className)}
@@ -129,14 +94,11 @@ export function WizardInputPrefix({
   );
 }
 
-export function WizardInput({
-  className,
-  ...props
-}: React.ComponentProps<"input">) {
+export function WizardInput({ className, ...props }: React.ComponentProps<"input">) {
   return (
     <input
       className={cn(
-        "w-full border-0 bg-transparent font-bold text-3xl outline-none transition-colors placeholder:text-muted-foreground/50 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50",
+        "placeholder:text-muted-foreground/50 w-full border-0 bg-transparent text-3xl font-bold transition-colors outline-none focus:outline-none disabled:cursor-not-allowed disabled:opacity-50",
         className,
       )}
       data-slot="wizard-input"
@@ -145,14 +107,11 @@ export function WizardInput({
   );
 }
 
-export function WizardTextarea({
-  className,
-  ...props
-}: React.ComponentProps<"textarea">) {
+export function WizardTextarea({ className, ...props }: React.ComponentProps<"textarea">) {
   return (
     <textarea
       className={cn(
-        "field-sizing-content min-h-24 w-full resize-none border-0 bg-transparent text-xl outline-none transition-colors placeholder:text-muted-foreground/50 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50",
+        "placeholder:text-muted-foreground/50 field-sizing-content min-h-24 w-full resize-none border-0 bg-transparent text-xl transition-colors outline-none focus:outline-none disabled:cursor-not-allowed disabled:opacity-50",
         className,
       )}
       data-slot="wizard-textarea"
@@ -161,10 +120,7 @@ export function WizardTextarea({
   );
 }
 
-export function WizardRadioGroup({
-  className,
-  ...props
-}: RadioGroupPrimitive.Props) {
+export function WizardRadioGroup({ className, ...props }: RadioGroupPrimitive.Props) {
   return (
     <RadioGroupPrimitive
       className={cn("flex flex-col", className)}
@@ -174,18 +130,14 @@ export function WizardRadioGroup({
   );
 }
 
-export function WizardRadioGroupItem({
-  children,
-  className,
-  ...props
-}: RadioPrimitive.Root.Props) {
+export function WizardRadioGroupItem({ children, className, ...props }: RadioPrimitive.Root.Props) {
   return (
     <RadioPrimitive.Root
       className={cn(
-        "flex cursor-pointer items-center justify-between rounded-lg px-4 py-4 text-left font-semibold text-lg transition-colors",
+        "flex cursor-pointer items-center justify-between rounded-lg px-4 py-4 text-left text-lg font-semibold transition-colors",
         "hover:bg-muted",
         "data-checked:bg-foreground data-checked:text-background",
-        "outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50",
+        "focus-visible:ring-ring/50 outline-none focus-visible:ring-[3px]",
         className,
       )}
       data-slot="wizard-radio-group-item"

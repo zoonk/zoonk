@@ -18,9 +18,7 @@ async function createTestCourse(isPublished: boolean) {
 async function navigateToCoursePage(page: Page, slug: string) {
   await page.goto(`/ai/c/en/${slug}`);
 
-  await expect(
-    page.getByRole("textbox", { name: /edit course title/i }),
-  ).toBeVisible();
+  await expect(page.getByRole("textbox", { name: /edit course title/i })).toBeVisible();
 }
 
 function getDeleteButton(page: Page) {
@@ -96,9 +94,7 @@ test.describe("Course Delete", () => {
   });
 
   test.describe("Permissions", () => {
-    test("admin cannot see delete button for published course", async ({
-      authenticatedPage,
-    }) => {
+    test("admin cannot see delete button for published course", async ({ authenticatedPage }) => {
       const course = await createTestCourse(true);
       await navigateToCoursePage(authenticatedPage, course.slug);
 
@@ -108,9 +104,7 @@ test.describe("Course Delete", () => {
   });
 
   test.describe("Dialog Interaction", () => {
-    test("cancel button closes dialog without deleting", async ({
-      authenticatedPage,
-    }) => {
+    test("cancel button closes dialog without deleting", async ({ authenticatedPage }) => {
       const course = await createTestCourse(false);
       await navigateToCoursePage(authenticatedPage, course.slug);
 
@@ -121,9 +115,7 @@ test.describe("Course Delete", () => {
       await verifyCourseExists(course.id);
     });
 
-    test("escape key closes dialog without deleting", async ({
-      authenticatedPage,
-    }) => {
+    test("escape key closes dialog without deleting", async ({ authenticatedPage }) => {
       const course = await createTestCourse(false);
       await navigateToCoursePage(authenticatedPage, course.slug);
 

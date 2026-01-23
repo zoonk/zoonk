@@ -1,17 +1,14 @@
 "use client";
 
+import { useSlugCheck } from "@/lib/use-slug-check";
 import { Button } from "@zoonk/ui/components/button";
-import {
-  EditableLabel,
-  EditableText,
-} from "@zoonk/ui/components/editable-text";
+import { EditableLabel, EditableText } from "@zoonk/ui/components/editable-text";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { toast } from "@zoonk/ui/components/sonner";
 import { Check, CircleAlert, Link as LinkIcon, X } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { useExtracted } from "next-intl";
+import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import { useSlugCheck } from "@/lib/use-slug-check";
 
 export function SlugEditorSkeleton() {
   return <Skeleton className="mx-4 h-5 w-32" />;
@@ -131,7 +128,7 @@ export function SlugEditor({
               className="flex size-5 items-center justify-center"
               role="img"
             >
-              <CircleAlert className="size-4 text-destructive" />
+              <CircleAlert className="text-destructive size-4" />
             </span>
           ) : (
             <Button
@@ -157,11 +154,7 @@ export function SlugEditor({
         </div>
       </div>
 
-      {showError && (
-        <p className="text-destructive text-xs">
-          {t("This URL is already in use")}
-        </p>
-      )}
+      {showError && <p className="text-destructive text-xs">{t("This URL is already in use")}</p>}
     </div>
   );
 }

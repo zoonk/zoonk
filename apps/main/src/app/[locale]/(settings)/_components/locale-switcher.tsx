@@ -1,15 +1,12 @@
 "use client";
 
-import { Field, FieldContent, FieldLabel } from "@zoonk/ui/components/field";
-import {
-  NativeSelect,
-  NativeSelectOption,
-} from "@zoonk/ui/components/native-select";
-import { LOCALE_LABELS, SUPPORTED_LOCALES } from "@zoonk/utils/locale";
-import { useParams } from "next/navigation";
-import { useExtracted, useLocale } from "next-intl";
-import { useTransition } from "react";
 import { usePathname, useRouter } from "@/i18n/navigation";
+import { Field, FieldContent, FieldLabel } from "@zoonk/ui/components/field";
+import { NativeSelect, NativeSelectOption } from "@zoonk/ui/components/native-select";
+import { LOCALE_LABELS, SUPPORTED_LOCALES } from "@zoonk/utils/locale";
+import { useExtracted, useLocale } from "next-intl";
+import { useParams } from "next/navigation";
+import { useTransition } from "react";
 
 export default function LocaleSwitcher() {
   const t = useExtracted();

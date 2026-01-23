@@ -5,9 +5,7 @@ import { LessonActionsSkeleton } from "./lesson-actions-skeleton";
 type LessonNavbarActionsPageProps =
   PageProps<"/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]">;
 
-export default async function LessonNavbarActions(
-  props: LessonNavbarActionsPageProps,
-) {
+export default async function LessonNavbarActions(props: LessonNavbarActionsPageProps) {
   return (
     <Suspense fallback={<LessonActionsSkeleton />}>
       <LessonActions params={props.params} />

@@ -1,12 +1,9 @@
+import { ErrorCode } from "@/lib/app-error";
 import { prisma } from "@zoonk/db";
 import { signInAs } from "@zoonk/testing/fixtures/auth";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
-import {
-  memberFixture,
-  organizationFixture,
-} from "@zoonk/testing/fixtures/orgs";
+import { memberFixture, organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, describe, expect, test } from "vitest";
-import { ErrorCode } from "@/lib/app-error";
 import { toggleCoursePublished } from "./publish-course";
 
 describe("unauthenticated users", () => {

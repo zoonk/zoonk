@@ -15,9 +15,7 @@ test.describe("Display name settings page", () => {
     await nameInput.clear();
     await nameInput.fill("New Test Name");
 
-    await authenticatedPage
-      .getByRole("button", { name: /update name/i })
-      .click();
+    await authenticatedPage.getByRole("button", { name: /update name/i }).click();
 
     await expect(
       authenticatedPage.getByText(/your name has been updated successfully/i),
@@ -26,14 +24,10 @@ test.describe("Display name settings page", () => {
     // Verify name persists after reload
     await authenticatedPage.reload();
 
-    await expect(authenticatedPage.getByLabel(/name/i)).toHaveValue(
-      "New Test Name",
-    );
+    await expect(authenticatedPage.getByLabel(/name/i)).toHaveValue("New Test Name");
   });
 
-  test("shows error for whitespace-only name", async ({
-    authenticatedPage,
-  }) => {
+  test("shows error for whitespace-only name", async ({ authenticatedPage }) => {
     await authenticatedPage.goto("/name");
 
     const nameInput = authenticatedPage.getByLabel(/name/i);
@@ -42,19 +36,13 @@ test.describe("Display name settings page", () => {
     await nameInput.clear();
     await nameInput.fill("   "); // Whitespace passes HTML5 required but fails server validation
 
-    await authenticatedPage
-      .getByRole("button", { name: /update name/i })
-      .click();
+    await authenticatedPage.getByRole("button", { name: /update name/i }).click();
 
-    await expect(
-      authenticatedPage.getByText(/failed to update your name/i),
-    ).toBeVisible();
+    await expect(authenticatedPage.getByText(/failed to update your name/i)).toBeVisible();
 
     // Verify name wasn't updated after reload
     await authenticatedPage.reload();
 
-    await expect(authenticatedPage.getByLabel(/name/i)).toHaveValue(
-      originalName,
-    );
+    await expect(authenticatedPage.getByLabel(/name/i)).toHaveValue(originalName);
   });
 });

@@ -1,7 +1,7 @@
-import type { AppError } from "@zoonk/utils/error";
 import { isAppError } from "@zoonk/utils/error";
 import { getExtracted } from "next-intl/server";
 import { ErrorCode, type ErrorCodeType } from "./app-error";
+import type { AppError } from "@zoonk/utils/error";
 
 // ensures that we don't have missing translations for error codes
 function assertNever(x: never): never {
@@ -50,21 +50,13 @@ export async function getErrorMessage(error: Error): Promise<string> {
       case ErrorCode.invalidCategory:
         return t("Invalid category");
       case ErrorCode.invalidChapterFormat:
-        return t(
-          "Invalid chapter format. Each chapter must have a title and description",
-        );
+        return t("Invalid chapter format. Each chapter must have a title and description");
       case ErrorCode.invalidActivityFormat:
-        return t(
-          "Invalid activity format. Each activity must have a kind and position",
-        );
+        return t("Invalid activity format. Each activity must have a kind and position");
       case ErrorCode.invalidAlternativeTitleFormat:
-        return t(
-          "Invalid format. Please provide an array of non-empty strings",
-        );
+        return t("Invalid format. Please provide an array of non-empty strings");
       case ErrorCode.invalidLessonFormat:
-        return t(
-          "Invalid lesson format. Each lesson must have a title and description",
-        );
+        return t("Invalid lesson format. Each lesson must have a title and description");
       case ErrorCode.lessonNotFound:
         return t("Lesson not found");
       default:

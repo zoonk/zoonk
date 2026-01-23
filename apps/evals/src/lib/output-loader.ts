@@ -63,9 +63,7 @@ export async function getOutputStatus(
   return { completedTestCases, status: "complete", totalTestCases };
 }
 
-export async function getAllOutputsForTask(
-  taskId: string,
-): Promise<Map<string, ModelOutputs>> {
+export async function getAllOutputsForTask(taskId: string): Promise<Map<string, ModelOutputs>> {
   const outputsMap = new Map<string, ModelOutputs>();
   const taskDir = path.join(OUTPUTS_DIR, taskId);
 

@@ -10,11 +10,7 @@ type EmailProps = {
   text: string;
 };
 
-export async function sendEmail({
-  to,
-  subject,
-  text,
-}: EmailProps): Promise<SafeReturn<Response>> {
+export async function sendEmail({ to, subject, text }: EmailProps): Promise<SafeReturn<Response>> {
   if (sendEmailDisabled) {
     console.info("Email sending is disabled.");
     console.info({ subject, text, to });

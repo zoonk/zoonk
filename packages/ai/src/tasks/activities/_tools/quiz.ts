@@ -1,6 +1,4 @@
 import { tool } from "ai";
-import type { z } from "zod";
-
 import { fillBlankInputSchema } from "./fill-blank";
 import fillBlankPrompt from "./fill-blank.prompt.md";
 import { matchColumnsInputSchema } from "./match-columns";
@@ -11,6 +9,7 @@ import { selectImageInputSchema } from "./select-image";
 import selectImagePrompt from "./select-image.prompt.md";
 import { sortOrderInputSchema } from "./sort-order";
 import sortOrderPrompt from "./sort-order.prompt.md";
+import type { z } from "zod";
 
 export const quizTools = {
   fillBlank: tool({

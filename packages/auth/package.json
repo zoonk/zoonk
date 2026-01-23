@@ -1,4 +1,21 @@
 {
+  "name": "@zoonk/auth",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/auth.ts",
+    "./client": "./src/client.ts",
+    "./e2e": "./src/e2e.ts",
+    "./hooks/auth-state": "./src/hooks/use-auth-state.ts",
+    "./hooks/subscription": "./src/hooks/use-subscription.ts",
+    "./next": "./src/next.ts",
+    "./subscription": "./src/subscription.ts",
+    "./testing": "./src/testing.ts",
+    "./types": "./src/types.ts"
+  },
+  "scripts": {
+    "typecheck": "tsgo --noEmit"
+  },
   "dependencies": {
     "@better-auth/stripe": "1.4.13",
     "@zoonk/db": "workspace:*",
@@ -15,25 +32,8 @@
     "@typescript/native-preview": "7.0.0-dev.20260122.4",
     "@zoonk/tsconfig": "workspace:*"
   },
-  "exports": {
-    ".": "./src/auth.ts",
-    "./client": "./src/client.ts",
-    "./e2e": "./src/e2e.ts",
-    "./hooks/auth-state": "./src/hooks/use-auth-state.ts",
-    "./hooks/subscription": "./src/hooks/use-subscription.ts",
-    "./next": "./src/next.ts",
-    "./subscription": "./src/subscription.ts",
-    "./testing": "./src/testing.ts",
-    "./types": "./src/types.ts"
-  },
-  "name": "@zoonk/auth",
   "peerDependencies": {
     "next": ">=16",
     "react": ">=19"
-  },
-  "private": true,
-  "scripts": {
-    "typecheck": "tsgo --noEmit"
-  },
-  "type": "module"
+  }
 }

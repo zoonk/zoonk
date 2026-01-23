@@ -1,12 +1,12 @@
 "use client";
 
-import Link from "next/link";
 import {
   EditorListItemContent,
   EditorListItemDescription,
   EditorListItemLink,
   EditorListItemTitle,
 } from "@/components/editor-list";
+import Link from "next/link";
 
 export function ChapterListItemLink({
   chapterSlug,
@@ -25,16 +25,12 @@ export function ChapterListItemLink({
 }) {
   return (
     <EditorListItemLink
-      render={
-        <Link href={`/${orgSlug}/c/${lang}/${courseSlug}/ch/${chapterSlug}`} />
-      }
+      render={<Link href={`/${orgSlug}/c/${lang}/${courseSlug}/ch/${chapterSlug}`} />}
     >
       <EditorListItemContent>
         <EditorListItemTitle>{title}</EditorListItemTitle>
 
-        {description && (
-          <EditorListItemDescription>{description}</EditorListItemDescription>
-        )}
+        {description && <EditorListItemDescription>{description}</EditorListItemDescription>}
       </EditorListItemContent>
     </EditorListItemLink>
   );

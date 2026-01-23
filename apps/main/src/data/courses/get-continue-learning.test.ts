@@ -1,22 +1,13 @@
 import { prisma } from "@zoonk/db";
-import {
-  activityFixture,
-  activityProgressFixture,
-} from "@zoonk/testing/fixtures/activities";
+import { activityFixture, activityProgressFixture } from "@zoonk/testing/fixtures/activities";
 import { signInAs } from "@zoonk/testing/fixtures/auth";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
-import {
-  courseFixture,
-  courseUserFixture,
-} from "@zoonk/testing/fixtures/courses";
+import { courseFixture, courseUserFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeAll, describe, expect, test } from "vitest";
-import {
-  getContinueLearning,
-  MAX_CONTINUE_LEARNING_ITEMS,
-} from "./get-continue-learning";
+import { getContinueLearning, MAX_CONTINUE_LEARNING_ITEMS } from "./get-continue-learning";
 
 async function createCourseWithActivity(organizationId: number) {
   const course = await courseFixture({
@@ -74,8 +65,7 @@ describe("authenticated users", () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);
 
-    const { activity, chapter, course, lesson } =
-      await createCourseWithActivity(organization.id);
+    const { activity, chapter, course, lesson } = await createCourseWithActivity(organization.id);
 
     await courseUserFixture({
       courseId: course.id,

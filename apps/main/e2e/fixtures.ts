@@ -1,8 +1,4 @@
-import {
-  type AuthFixtures,
-  test as base,
-  createStorageStateFixtures,
-} from "@zoonk/e2e/fixtures";
+import { type AuthFixtures, test as base, createStorageStateFixtures } from "@zoonk/e2e/fixtures";
 
 export const test = base.extend<AuthFixtures>(
   createStorageStateFixtures({

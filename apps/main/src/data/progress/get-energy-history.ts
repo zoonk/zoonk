@@ -1,5 +1,4 @@
 import "server-only";
-
 import { getSession } from "@zoonk/core/users/session/get";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
@@ -50,9 +49,7 @@ function fillGapsWithDecay(dataPoints: RawDataPoint[]): RawDataPoint[] {
   }
 
   // Sort data points by date
-  const sorted = [...dataPoints].toSorted(
-    (a, b) => a.date.getTime() - b.date.getTime(),
-  );
+  const sorted = [...dataPoints].toSorted((a, b) => a.date.getTime() - b.date.getTime());
 
   // Create a map of existing data points by date (YYYY-MM-DD)
   const dataMap = new Map<string, number>();
@@ -154,10 +151,8 @@ const cachedGetEnergyHistory = cache(
     const average = calculateAverage(currentData);
 
     const previousRaw = previousResult.data ?? [];
-    const previousData =
-      previousRaw.length > 0 ? processEnergyData(previousRaw, period) : [];
-    const previousAverage =
-      previousData.length > 0 ? calculateAverage(previousData) : null;
+    const previousData = previousRaw.length > 0 ? processEnergyData(previousRaw, period) : [];
+    const previousAverage = previousData.length > 0 ? calculateAverage(previousData) : null;
 
     const { data: earlierData } = await safeAsync(() =>
       prisma.dailyProgress.findFirst({
@@ -184,9 +179,7 @@ const cachedGetEnergyHistory = cache(
   },
 );
 
-export function getEnergyHistory(
-  params: EnergyHistoryParams,
-): Promise<EnergyHistoryData | null> {
+export function getEnergyHistory(params: EnergyHistoryParams): Promise<EnergyHistoryData | null> {
   return cachedGetEnergyHistory(
     params.period,
     params.offset ?? 0,
@@ -221,10 +214,7 @@ async function fetchDailyData(
   };
 }
 
-function processEnergyData(
-  rawData: RawDataPoint[],
-  period: EnergyPeriod,
-): RawDataPoint[] {
+function processEnergyData(rawData: RawDataPoint[], period: EnergyPeriod): RawDataPoint[] {
   const withDecay = fillGapsWithDecay(rawData);
 
   if (period === "6months") {

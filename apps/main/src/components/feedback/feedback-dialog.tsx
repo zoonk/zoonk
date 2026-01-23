@@ -10,8 +10,8 @@ import {
   DialogTrigger,
 } from "@zoonk/ui/components/dialog";
 import { useExtracted } from "next-intl";
-import type { ReactElement } from "react";
 import { ContactForm } from "./contact-form";
+import type { ReactElement } from "react";
 
 type FeedbackDialogProps = {
   children: ReactElement;

@@ -1,5 +1,4 @@
 import "server-only";
-
 import { getSession } from "@zoonk/core/users/session/get";
 import { prisma } from "@zoonk/db";
 import { cache } from "react";
@@ -15,10 +14,7 @@ export type BestDayParams = {
 };
 
 const cachedGetBestDay = cache(
-  async (
-    startDateIso: string | undefined,
-    headers?: Headers,
-  ): Promise<BestDayData | null> => {
+  async (startDateIso: string | undefined, headers?: Headers): Promise<BestDayData | null> => {
     const session = await getSession({ headers });
 
     if (!session) {
@@ -67,9 +63,7 @@ const cachedGetBestDay = cache(
       const score = (correct / total) * 100;
 
       const isBetter =
-        !bestDay ||
-        score > bestDay.score ||
-        (score === bestDay.score && total > bestDayTotal);
+        !bestDay || score > bestDay.score || (score === bestDay.score && total > bestDayTotal);
 
       if (isBetter) {
         bestDay = { dayOfWeek: row.dayOfWeek, score };
@@ -81,8 +75,6 @@ const cachedGetBestDay = cache(
   },
 );
 
-export function getBestDay(
-  params?: BestDayParams,
-): Promise<BestDayData | null> {
+export function getBestDay(params?: BestDayParams): Promise<BestDayData | null> {
   return cachedGetBestDay(params?.startDate?.toISOString(), params?.headers);
 }

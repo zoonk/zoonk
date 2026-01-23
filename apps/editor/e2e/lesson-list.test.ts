@@ -8,9 +8,7 @@ import tmp from "tmp";
 import { expect, type Page, test } from "./fixtures";
 import { getMoreOptionsButton, importFlow } from "./helpers/import-dialog";
 
-function createImportFile(
-  lessons: { title: string; description: string }[],
-): string {
+function createImportFile(lessons: { title: string; description: string }[]): string {
   const content = JSON.stringify({ lessons }, null, 2);
   const tmpFile = tmp.fileSync({ postfix: ".json", prefix: "lessons-" });
   fs.writeFileSync(tmpFile.name, content);
@@ -54,22 +52,13 @@ async function createTestChapter(lessonCount = 0) {
   return { chapter, course, lessons, org };
 }
 
-async function navigateToChapterPage(
-  page: Page,
-  courseSlug: string,
-  chapterSlug: string,
-) {
+async function navigateToChapterPage(page: Page, courseSlug: string, chapterSlug: string) {
   await page.goto(`/ai/c/en/${courseSlug}/ch/${chapterSlug}`);
 
-  await expect(
-    page.getByRole("textbox", { name: /edit chapter title/i }),
-  ).toBeVisible();
+  await expect(page.getByRole("textbox", { name: /edit chapter title/i })).toBeVisible();
 }
 
-async function expectLessonsVisible(
-  page: Page,
-  lessons: { position: number; title: string }[],
-) {
+async function expectLessonsVisible(page: Page, lessons: { position: number; title: string }[]) {
   await Promise.all(
     lessons.map(async ({ position, title }) => {
       // Find the listitem containing both the position number and title link
@@ -78,24 +67,18 @@ async function expectLessonsVisible(
         hasText: new RegExp(String(position).padStart(2, "0")),
       });
 
-      await expect(
-        listItem.getByRole("link", { name: new RegExp(title, "i") }),
-      ).toBeVisible();
+      await expect(listItem.getByRole("link", { name: new RegExp(title, "i") })).toBeVisible();
     }),
   );
 }
 
 async function expectLessonNotVisible(page: Page, title: string) {
-  await expect(
-    page.getByRole("link", { name: new RegExp(title, "i") }),
-  ).not.toBeVisible();
+  await expect(page.getByRole("link", { name: new RegExp(title, "i") })).not.toBeVisible();
 }
 
 test.describe("Lesson List", () => {
   test.describe("Display", () => {
-    test("displays existing lessons with position and title", async ({
-      authenticatedPage,
-    }) => {
+    test("displays existing lessons with position and title", async ({ authenticatedPage }) => {
       const { chapter, course } = await createTestChapter(3);
 
       await navigateToChapterPage(authenticatedPage, course.slug, chapter.slug);
@@ -107,9 +90,7 @@ test.describe("Lesson List", () => {
       ]);
     });
 
-    test("displays lesson description when available", async ({
-      authenticatedPage,
-    }) => {
+    test("displays lesson description when available", async ({ authenticatedPage }) => {
       const { chapter, course, org } = await createTestChapter();
       const uniqueDesc = `Description ${randomUUID().slice(0, 8)}`;
 
@@ -129,16 +110,12 @@ test.describe("Lesson List", () => {
   });
 
   test.describe("Add Lesson", () => {
-    test("adds a lesson and shows lesson edit page", async ({
-      authenticatedPage,
-    }) => {
+    test("adds a lesson and shows lesson edit page", async ({ authenticatedPage }) => {
       const { chapter, course } = await createTestChapter();
 
       await navigateToChapterPage(authenticatedPage, course.slug, chapter.slug);
 
-      await authenticatedPage
-        .getByRole("button", { name: /add lesson/i })
-        .click();
+      await authenticatedPage.getByRole("button", { name: /add lesson/i }).click();
 
       // Verify destination page content (not just URL)
       await expect(
@@ -186,9 +163,7 @@ test.describe("Lesson List", () => {
       ).toBeVisible();
 
       // Navigate back to chapter page to verify insertion
-      await authenticatedPage.goto(
-        `/ai/c/en/${course.slug}/ch/${chapter.slug}`,
-      );
+      await authenticatedPage.goto(`/ai/c/en/${course.slug}/ch/${chapter.slug}`);
 
       await expect(
         authenticatedPage.getByRole("textbox", { name: /edit chapter title/i }),
@@ -206,9 +181,7 @@ test.describe("Lesson List", () => {
   });
 
   test.describe("Reorder", () => {
-    test("reorders lessons and persists after reload", async ({
-      authenticatedPage,
-    }) => {
+    test("reorders lessons and persists after reload", async ({ authenticatedPage }) => {
       const { chapter, course } = await createTestChapter(3);
 
       await navigateToChapterPage(authenticatedPage, course.slug, chapter.slug);
@@ -258,11 +231,9 @@ test.describe("Lesson List", () => {
         { steps: 5 },
       );
 
-      await authenticatedPage.mouse.move(
-        boxes.first.x + boxes.first.width / 2,
-        targetY,
-        { steps: 10 },
-      );
+      await authenticatedPage.mouse.move(boxes.first.x + boxes.first.width / 2, targetY, {
+        steps: 10,
+      });
 
       await authenticatedPage.mouse.up();
 
@@ -296,9 +267,7 @@ test.describe("Lesson List", () => {
 
       const downloadPromise = authenticatedPage.waitForEvent("download");
 
-      await authenticatedPage
-        .getByRole("menuitem", { name: /export/i })
-        .click();
+      await authenticatedPage.getByRole("menuitem", { name: /export/i }).click();
 
       const download = await downloadPromise;
 
@@ -314,9 +283,7 @@ test.describe("Lesson List", () => {
       expect(json.lessons).toHaveLength(lessons.length);
 
       // Verify actual content, not just count
-      const exportedTitles = json.lessons.map(
-        (l: { title: string }) => l.title,
-      );
+      const exportedTitles = json.lessons.map((l: { title: string }) => l.title);
       expect(exportedTitles).toContain("Lesson 1");
       expect(exportedTitles).toContain("Lesson 2");
     });
@@ -335,30 +302,18 @@ test.describe("Lesson List", () => {
       ]);
 
       try {
-        await navigateToChapterPage(
-          authenticatedPage,
-          course.slug,
-          chapter.slug,
-        );
+        await navigateToChapterPage(authenticatedPage, course.slug, chapter.slug);
 
-        await expect(
-          authenticatedPage.getByRole("link", { name: existingTitle }),
-        ).toBeVisible();
+        await expect(authenticatedPage.getByRole("link", { name: existingTitle })).toBeVisible();
 
         await importFlow(authenticatedPage, importFile, "merge");
 
         // Verify all lessons are visible (existing + imported)
-        await expect(
-          authenticatedPage.getByRole("link", { name: existingTitle }),
-        ).toBeVisible();
+        await expect(authenticatedPage.getByRole("link", { name: existingTitle })).toBeVisible();
 
-        await expect(
-          authenticatedPage.getByRole("link", { name: importedTitle1 }),
-        ).toBeVisible();
+        await expect(authenticatedPage.getByRole("link", { name: importedTitle1 })).toBeVisible();
 
-        await expect(
-          authenticatedPage.getByRole("link", { name: importedTitle2 }),
-        ).toBeVisible();
+        await expect(authenticatedPage.getByRole("link", { name: importedTitle2 })).toBeVisible();
 
         // Verify persistence after reload
         await authenticatedPage.reload();
@@ -369,17 +324,11 @@ test.describe("Lesson List", () => {
           }),
         ).toBeVisible();
 
-        await expect(
-          authenticatedPage.getByRole("link", { name: existingTitle }),
-        ).toBeVisible();
+        await expect(authenticatedPage.getByRole("link", { name: existingTitle })).toBeVisible();
 
-        await expect(
-          authenticatedPage.getByRole("link", { name: importedTitle1 }),
-        ).toBeVisible();
+        await expect(authenticatedPage.getByRole("link", { name: importedTitle1 })).toBeVisible();
 
-        await expect(
-          authenticatedPage.getByRole("link", { name: importedTitle2 }),
-        ).toBeVisible();
+        await expect(authenticatedPage.getByRole("link", { name: importedTitle2 })).toBeVisible();
       } finally {
         fs.unlinkSync(importFile);
       }
@@ -399,15 +348,9 @@ test.describe("Lesson List", () => {
       ]);
 
       try {
-        await navigateToChapterPage(
-          authenticatedPage,
-          course.slug,
-          chapter.slug,
-        );
+        await navigateToChapterPage(authenticatedPage, course.slug, chapter.slug);
 
-        await expect(
-          authenticatedPage.getByRole("link", { name: existingTitle }),
-        ).toBeVisible();
+        await expect(authenticatedPage.getByRole("link", { name: existingTitle })).toBeVisible();
 
         await importFlow(authenticatedPage, importFile, "replace");
 
@@ -415,13 +358,9 @@ test.describe("Lesson List", () => {
         await expectLessonNotVisible(authenticatedPage, existingTitle);
 
         // Only imported lessons should be visible
-        await expect(
-          authenticatedPage.getByRole("link", { name: importedTitle1 }),
-        ).toBeVisible();
+        await expect(authenticatedPage.getByRole("link", { name: importedTitle1 })).toBeVisible();
 
-        await expect(
-          authenticatedPage.getByRole("link", { name: importedTitle2 }),
-        ).toBeVisible();
+        await expect(authenticatedPage.getByRole("link", { name: importedTitle2 })).toBeVisible();
 
         // Verify persistence after reload
         await authenticatedPage.reload();
@@ -434,13 +373,9 @@ test.describe("Lesson List", () => {
 
         await expectLessonNotVisible(authenticatedPage, existingTitle);
 
-        await expect(
-          authenticatedPage.getByRole("link", { name: importedTitle1 }),
-        ).toBeVisible();
+        await expect(authenticatedPage.getByRole("link", { name: importedTitle1 })).toBeVisible();
 
-        await expect(
-          authenticatedPage.getByRole("link", { name: importedTitle2 }),
-        ).toBeVisible();
+        await expect(authenticatedPage.getByRole("link", { name: importedTitle2 })).toBeVisible();
       } finally {
         fs.unlinkSync(importFile);
       }

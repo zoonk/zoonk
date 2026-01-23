@@ -7,9 +7,7 @@ type AddInput = {
   chapters: GeneratedChapter[];
 };
 
-export async function addChaptersStep(
-  input: AddInput,
-): Promise<CreatedChapter[]> {
+export async function addChaptersStep(input: AddInput): Promise<CreatedChapter[]> {
   "use step";
 
   await streamStatus({ status: "started", step: "addChapters" });

@@ -8,8 +8,8 @@ import {
   ContainerHeaderGroup,
   ContainerTitle,
 } from "@zoonk/ui/components/container";
-import Link from "next/link";
 import { getExtracted } from "next-intl/server";
+import Link from "next/link";
 
 export default async function Unauthorized() {
   const t = await getExtracted();

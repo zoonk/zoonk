@@ -1,6 +1,6 @@
 import { generateChapterLessons } from "@zoonk/ai/tasks/chapters/lessons";
-import type { Task } from "@/lib/types";
 import { TEST_CASES } from "./test-cases";
+import type { Task } from "@/lib/types";
 
 export const chapterLessonsTask: Task<
   Parameters<typeof generateChapterLessons>[0],

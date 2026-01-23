@@ -1,13 +1,13 @@
 "use server";
 
+import { deleteCourse } from "@/data/courses/delete-course";
+import { toggleCoursePublished } from "@/data/courses/publish-course";
+import { getErrorMessage } from "@/lib/error-messages";
 import { revalidateMainApp } from "@zoonk/core/cache/revalidate";
 import { cacheTagCourse, cacheTagOrgCourses } from "@zoonk/utils/cache";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { after } from "next/server";
-import { deleteCourse } from "@/data/courses/delete-course";
-import { toggleCoursePublished } from "@/data/courses/publish-course";
-import { getErrorMessage } from "@/lib/error-messages";
 
 type TogglePublishParams = {
   courseId: number;

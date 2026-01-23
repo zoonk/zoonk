@@ -1,11 +1,11 @@
+import { ClientLink } from "@/i18n/client-link";
+import { getMenu } from "@/lib/menu";
 import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from "@zoonk/ui/components/dropdown-menu";
 import { getExtracted } from "next-intl/server";
-import { ClientLink } from "@/i18n/client-link";
-import { getMenu } from "@/lib/menu";
 import { LogoutDropdownItem } from "./logout-dropdown-item";
 
 export async function UserDropdownMenu() {
@@ -22,10 +22,7 @@ export async function UserDropdownMenu() {
   return (
     <DropdownMenuContent align="end" className="w-56">
       {catalogMenu.map((menu) => (
-        <DropdownMenuItem
-          key={menu.key}
-          render={<ClientLink href={menu.url} />}
-        >
+        <DropdownMenuItem key={menu.key} render={<ClientLink href={menu.url} />}>
           <menu.icon aria-hidden="true" />
           {menu.key}
         </DropdownMenuItem>
@@ -34,10 +31,7 @@ export async function UserDropdownMenu() {
       <DropdownMenuSeparator />
 
       {accountMenu.map((menu) => (
-        <DropdownMenuItem
-          key={menu.key}
-          render={<ClientLink href={menu.url} />}
-        >
+        <DropdownMenuItem key={menu.key} render={<ClientLink href={menu.url} />}>
           <menu.icon aria-hidden="true" />
           {menu.key}
         </DropdownMenuItem>

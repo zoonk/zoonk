@@ -1,5 +1,6 @@
 "use client";
 
+import { ClientLink } from "@/i18n/client-link";
 import { useInfiniteList } from "@zoonk/ui/hooks/infinite-list";
 import {
   CourseListGroup,
@@ -7,13 +8,12 @@ import {
   CourseListItemView,
 } from "@zoonk/ui/patterns/courses/list";
 import { EmptyView } from "@zoonk/ui/patterns/empty";
-import type { CourseCategory } from "@zoonk/utils/categories";
 import { Loader2Icon, NotebookPenIcon } from "lucide-react";
-import Image from "next/image";
 import { useExtracted } from "next-intl";
-import type { CourseWithOrg } from "@/data/courses/list-courses";
-import { ClientLink } from "@/i18n/client-link";
+import Image from "next/image";
 import { loadMoreCourses } from "./actions";
+import type { CourseWithOrg } from "@/data/courses/list-courses";
+import type { CourseCategory } from "@zoonk/utils/categories";
 
 function toCourseListItem(course: CourseWithOrg): CourseListItem {
   return {
@@ -68,20 +68,11 @@ export function CourseListClient({
             course={toCourseListItem(course)}
             image={
               course.imageUrl ? (
-                <Image
-                  alt={course.title}
-                  height={64}
-                  src={course.imageUrl}
-                  width={64}
-                />
+                <Image alt={course.title} height={64} src={course.imageUrl} width={64} />
               ) : undefined
             }
             key={course.id}
-            linkComponent={
-              <ClientLink
-                href={`/b/${course.organization.slug}/c/${course.slug}`}
-              />
-            }
+            linkComponent={<ClientLink href={`/b/${course.organization.slug}/c/${course.slug}`} />}
           />
         ))}
       </CourseListGroup>
@@ -90,7 +81,7 @@ export function CourseListClient({
         {isLoading && (
           <Loader2Icon
             aria-label={t("Loading more courses…")}
-            className="size-5 animate-spin text-muted-foreground"
+            className="text-muted-foreground size-5 animate-spin"
           />
         )}
       </div>

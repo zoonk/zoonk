@@ -1,12 +1,10 @@
 import "server-only";
-
 import { generateText, Output } from "ai";
 import { z } from "zod";
 import { buildProviderOptions, type ReasoningEffort } from "../../types";
 import systemPrompt from "./lesson-kind.prompt.md";
 
-const DEFAULT_MODEL =
-  process.env.AI_MODEL_LESSON_KIND ?? "google/gemini-2.5-flash-lite";
+const DEFAULT_MODEL = process.env.AI_MODEL_LESSON_KIND ?? "google/gemini-2.5-flash-lite";
 
 const FALLBACK_MODELS = [
   "meta/llama-4-scout",

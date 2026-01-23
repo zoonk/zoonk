@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
-import type { Page, Route } from "@zoonk/e2e/fixtures";
 import { expect, test } from "./fixtures";
+import type { Page, Route } from "@zoonk/e2e/fixtures";
 
 /**
  * Test Architecture for Chapter Generation Page
@@ -28,9 +28,7 @@ type MockApiOptions = {
 /**
  * Creates a mock SSE stream response from an array of messages.
  */
-function createSSEStream(
-  messages: Array<{ step: string; status: string }>,
-): string {
+function createSSEStream(messages: Array<{ step: string; status: string }>): string {
   return messages.map((msg) => `data: ${JSON.stringify(msg)}\n\n`).join("");
 }
 
@@ -49,10 +47,7 @@ function createRouteHandler(options: MockApiOptions) {
     const method = route.request().method();
 
     // Mock trigger API
-    if (
-      url.includes("/api/workflows/chapter-generation/trigger") &&
-      method === "POST"
-    ) {
+    if (url.includes("/api/workflows/chapter-generation/trigger") && method === "POST") {
       if (triggerResponse.error) {
         await route.fulfill({
           body: JSON.stringify({ error: triggerResponse.error }),
@@ -94,10 +89,7 @@ function createRouteHandler(options: MockApiOptions) {
 /**
  * Sets up route interception for chapter generation APIs.
  */
-async function setupMockApis(
-  page: Page,
-  options: MockApiOptions = {},
-): Promise<void> {
+async function setupMockApis(page: Page, options: MockApiOptions = {}): Promise<void> {
   const handler = createRouteHandler(options);
   await page.route("**/api/workflows/**", handler);
 }
@@ -149,9 +141,7 @@ test.describe("Generate Chapter Page - Unauthenticated", () => {
     const chapterId = await getPendingChapterId();
     await page.goto(`/generate/ch/${chapterId}`);
 
-    await expect(
-      page.getByRole("alert").filter({ hasText: /logged in/i }),
-    ).toBeVisible();
+    await expect(page.getByRole("alert").filter({ hasText: /logged in/i })).toBeVisible();
 
     const loginLink = page.getByRole("link", { name: /login/i });
     await expect(loginLink).toBeVisible();
@@ -166,18 +156,12 @@ test.describe("Generate Chapter Page - No Subscription", () => {
     const chapterId = await getPendingChapterId();
     await authenticatedPage.goto(`/generate/ch/${chapterId}`);
 
-    await expect(
-      authenticatedPage.getByText(/upgrade to generate/i),
-    ).toBeVisible();
+    await expect(authenticatedPage.getByText(/upgrade to generate/i)).toBeVisible();
 
-    await expect(
-      authenticatedPage.getByRole("button", { name: /upgrade/i }),
-    ).toBeVisible();
+    await expect(authenticatedPage.getByRole("button", { name: /upgrade/i })).toBeVisible();
   });
 
-  test("upgrade button shows loading state when clicked", async ({
-    authenticatedPage,
-  }) => {
+  test("upgrade button shows loading state when clicked", async ({ authenticatedPage }) => {
     const chapterId = await getPendingChapterId();
     await authenticatedPage.goto(`/generate/ch/${chapterId}`);
 
@@ -191,9 +175,7 @@ test.describe("Generate Chapter Page - No Subscription", () => {
 });
 
 test.describe("Generate Chapter Page - With Subscription", () => {
-  test("shows generation UI and completes workflow", async ({
-    userWithoutProgress,
-  }) => {
+  test("shows generation UI and completes workflow", async ({ userWithoutProgress }) => {
     const subscription = await createTestSubscription();
 
     try {
@@ -217,13 +199,11 @@ test.describe("Generate Chapter Page - With Subscription", () => {
       await userWithoutProgress.goto(`/generate/ch/${chapterId}`);
 
       // Should show completion message
-      await expect(
-        userWithoutProgress.getByText(/lessons generated/i),
-      ).toBeVisible({ timeout: 10_000 });
+      await expect(userWithoutProgress.getByText(/lessons generated/i)).toBeVisible({
+        timeout: 10_000,
+      });
 
-      await expect(
-        userWithoutProgress.getByText(/redirecting to your course/i),
-      ).toBeVisible();
+      await expect(userWithoutProgress.getByText(/redirecting to your course/i)).toBeVisible();
 
       // Should redirect to course page
       await userWithoutProgress.waitForURL(/\/b\/ai\/c\//, { timeout: 10_000 });
@@ -232,9 +212,7 @@ test.describe("Generate Chapter Page - With Subscription", () => {
     }
   });
 
-  test("shows error when stream returns error status", async ({
-    userWithoutProgress,
-  }) => {
+  test("shows error when stream returns error status", async ({ userWithoutProgress }) => {
     const subscription = await createTestSubscription();
 
     try {
@@ -249,9 +227,9 @@ test.describe("Generate Chapter Page - With Subscription", () => {
 
       await userWithoutProgress.goto(`/generate/ch/${chapterId}`);
 
-      await expect(
-        userWithoutProgress.getByText(/generation failed/i),
-      ).toBeVisible({ timeout: 10_000 });
+      await expect(userWithoutProgress.getByText(/generation failed/i)).toBeVisible({
+        timeout: 10_000,
+      });
     } finally {
       await prisma.subscription.delete({ where: { id: subscription.id } });
     }

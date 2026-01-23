@@ -7,9 +7,7 @@ type HandleCourseFailureInput = {
   courseSuggestionId: number;
 };
 
-export async function handleCourseFailureStep(
-  input: HandleCourseFailureInput,
-): Promise<void> {
+export async function handleCourseFailureStep(input: HandleCourseFailureInput): Promise<void> {
   "use step";
 
   await Promise.all([
@@ -25,9 +23,7 @@ type HandleChapterFailureInput = {
   chapterId: number;
 };
 
-export async function handleChapterFailureStep(
-  input: HandleChapterFailureInput,
-): Promise<void> {
+export async function handleChapterFailureStep(input: HandleChapterFailureInput): Promise<void> {
   "use step";
 
   await updateChapterGenerationStatus({

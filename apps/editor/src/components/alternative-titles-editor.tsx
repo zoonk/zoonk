@@ -112,26 +112,18 @@ export function AlternativeTitlesEditor({
 
   const filteredTitles = useMemo(() => {
     if (!search.trim()) {
-      return showAll
-        ? optimisticTitles
-        : optimisticTitles.slice(0, MAX_VISIBLE_ITEMS);
+      return showAll ? optimisticTitles : optimisticTitles.slice(0, MAX_VISIBLE_ITEMS);
     }
 
     const searchLower = search.toLowerCase();
 
-    return optimisticTitles.filter((title) =>
-      title.toLowerCase().includes(searchLower),
-    );
+    return optimisticTitles.filter((title) => title.toLowerCase().includes(searchLower));
   }, [optimisticTitles, search, showAll]);
 
-  const hasMore =
-    !(search.trim() || showAll) && optimisticTitles.length > MAX_VISIBLE_ITEMS;
+  const hasMore = !(search.trim() || showAll) && optimisticTitles.length > MAX_VISIBLE_ITEMS;
   const hiddenCount = optimisticTitles.length - MAX_VISIBLE_ITEMS;
 
-  async function handleAdd(
-    _state: { error: string | null },
-    formData: FormData,
-  ) {
+  async function handleAdd(_state: { error: string | null }, formData: FormData) {
     const titleValue = formData.get("title");
     const title = typeof titleValue === "string" ? titleValue : "";
 
@@ -142,9 +134,7 @@ export function AlternativeTitlesEditor({
     const slug = toSlug(title);
 
     startTransition(() => {
-      updateOptimisticTitles((prev) =>
-        prev.includes(slug) ? prev : [...prev, slug].toSorted(),
-      );
+      updateOptimisticTitles((prev) => (prev.includes(slug) ? prev : [...prev, slug].toSorted()));
     });
 
     const result = await onAdd(title);
@@ -167,7 +157,7 @@ export function AlternativeTitlesEditor({
   return (
     <>
       <Collapsible onOpenChange={setIsOpen} open={isOpen}>
-        <CollapsibleTrigger className="group flex w-full items-center gap-2 py-2 text-muted-foreground text-sm hover:text-foreground">
+        <CollapsibleTrigger className="group text-muted-foreground hover:text-foreground flex w-full items-center gap-2 py-2 text-sm">
           {isOpen ? (
             <ChevronDownIcon className="size-4" />
           ) : (
@@ -217,14 +207,12 @@ export function AlternativeTitlesEditor({
             </DropdownMenu>
           </form>
 
-          {addState.error && (
-            <p className="text-destructive text-sm">{addState.error}</p>
-          )}
+          {addState.error && <p className="text-destructive text-sm">{addState.error}</p>}
 
           {optimisticTitles.length > 0 && (
             <>
               <div className="relative">
-                <SearchIcon className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+                <SearchIcon className="text-muted-foreground absolute top-1/2 left-3 size-4 -translate-y-1/2" />
                 <Input
                   className="h-8 pl-9 text-sm"
                   onChange={(e) => setSearch(e.target.value)}
@@ -235,15 +223,11 @@ export function AlternativeTitlesEditor({
 
               <div className="flex flex-wrap gap-2">
                 {filteredTitles.map((slug) => (
-                  <Badge
-                    className="gap-1 pr-1 font-normal"
-                    key={slug}
-                    variant="outline"
-                  >
+                  <Badge className="gap-1 pr-1 font-normal" key={slug} variant="outline">
                     {slug}
                     <button
                       aria-label={t("Remove {title}", { title: slug })}
-                      className="rounded-full p-0.5 hover:bg-muted"
+                      className="hover:bg-muted rounded-full p-0.5"
                       onClick={() => handleDelete(slug)}
                       type="button"
                     >
@@ -255,7 +239,7 @@ export function AlternativeTitlesEditor({
 
               {hasMore && (
                 <button
-                  className="text-muted-foreground text-xs hover:text-foreground hover:underline"
+                  className="text-muted-foreground hover:text-foreground text-xs hover:underline"
                   onClick={() => setShowAll(true)}
                   type="button"
                 >
@@ -265,7 +249,7 @@ export function AlternativeTitlesEditor({
 
               {showAll && !search.trim() && hiddenCount > 0 && (
                 <button
-                  className="text-muted-foreground text-xs hover:text-foreground hover:underline"
+                  className="text-muted-foreground hover:text-foreground text-xs hover:underline"
                   onClick={() => setShowAll(false)}
                   type="button"
                 >
@@ -274,9 +258,7 @@ export function AlternativeTitlesEditor({
               )}
 
               {search && filteredTitles.length === 0 && (
-                <p className="text-muted-foreground text-sm">
-                  {t("No titles match your search")}
-                </p>
+                <p className="text-muted-foreground text-sm">{t("No titles match your search")}</p>
               )}
             </>
           )}
@@ -289,36 +271,25 @@ export function AlternativeTitlesEditor({
             <DialogHeader>
               <DialogTitle>{t("Import alternative titles")}</DialogTitle>
               <DialogDescription>
-                {t(
-                  "Upload a JSON file containing alternative titles to import.",
-                )}
+                {t("Upload a JSON file containing alternative titles to import.")}
               </DialogDescription>
             </DialogHeader>
 
             <div className="grid min-w-0 gap-6">
-              <ImportDropzone>
-                {t("Drop file or click to select")}
-              </ImportDropzone>
+              <ImportDropzone>{t("Drop file or click to select")}</ImportDropzone>
 
               <ImportModeSelector label={t("Import mode")}>
-                <ImportModeOption value="merge">
-                  {t("Merge (add to existing)")}
-                </ImportModeOption>
+                <ImportModeOption value="merge">{t("Merge (add to existing)")}</ImportModeOption>
                 <ImportModeOption value="replace">
                   {t("Replace (remove existing first)")}
                 </ImportModeOption>
               </ImportModeSelector>
 
-              <ImportFormatPreview
-                format={IMPORT_FORMAT}
-                label={t("Show expected format")}
-              />
+              <ImportFormatPreview format={IMPORT_FORMAT} label={t("Show expected format")} />
             </div>
 
             <DialogFooter>
-              <ImportCancel onClick={() => setImportOpen(false)}>
-                {t("Cancel")}
-              </ImportCancel>
+              <ImportCancel onClick={() => setImportOpen(false)}>{t("Cancel")}</ImportCancel>
               <ImportSubmit>{t("Import")}</ImportSubmit>
             </DialogFooter>
           </DialogContent>

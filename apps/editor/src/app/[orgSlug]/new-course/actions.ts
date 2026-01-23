@@ -1,14 +1,14 @@
 "use server";
 
-import { revalidateMainApp } from "@zoonk/core/cache/revalidate";
-import { cacheTagOrgCourses } from "@zoonk/utils/cache";
-import { toSlug } from "@zoonk/utils/string";
-import { redirect } from "next/navigation";
-import { after } from "next/server";
-import { getExtracted } from "next-intl/server";
 import { courseSlugExists } from "@/data/courses/course-slug";
 import { createCourse } from "@/data/courses/create-course";
 import { getErrorMessage } from "@/lib/error-messages";
+import { revalidateMainApp } from "@zoonk/core/cache/revalidate";
+import { cacheTagOrgCourses } from "@zoonk/utils/cache";
+import { toSlug } from "@zoonk/utils/string";
+import { getExtracted } from "next-intl/server";
+import { redirect } from "next/navigation";
+import { after } from "next/server";
 import type { CourseFormData } from "./use-course-form";
 
 export async function checkSlugExists({
@@ -27,10 +27,7 @@ export async function checkSlugExists({
   return courseSlugExists({ language, orgSlug, slug: toSlug(slug) });
 }
 
-export async function createCourseAction(
-  formData: CourseFormData,
-  orgSlug: string,
-) {
+export async function createCourseAction(formData: CourseFormData, orgSlug: string) {
   const title = formData.title.trim();
   const description = formData.description.trim();
   const language = formData.language;

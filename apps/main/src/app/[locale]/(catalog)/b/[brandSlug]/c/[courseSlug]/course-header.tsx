@@ -1,3 +1,6 @@
+import { AIWarning } from "@/components/catalog/ai-warning";
+import { Link } from "@/i18n/navigation";
+import { getCategories } from "@/lib/categories/category-server";
 import { Badge } from "@zoonk/ui/components/badge";
 import {
   MediaCard,
@@ -16,12 +19,9 @@ import {
   MediaCardTrigger,
 } from "@zoonk/ui/components/media-card";
 import { NotebookPenIcon } from "lucide-react";
-import Image from "next/image";
 import { getLocale } from "next-intl/server";
-import { AIWarning } from "@/components/catalog/ai-warning";
+import Image from "next/image";
 import type { CourseWithDetails } from "@/data/courses/get-course";
-import { Link } from "@/i18n/navigation";
-import { getCategories } from "@/lib/categories/category-server";
 
 export async function CourseHeader({
   brandSlug,
@@ -34,9 +34,7 @@ export async function CourseHeader({
   const categoryLabels = await getCategories({ locale });
   const courseCategoryKeys = new Set(course.categories.map((c) => c.category));
 
-  const displayCategories = categoryLabels.filter((cat) =>
-    courseCategoryKeys.has(cat.key),
-  );
+  const displayCategories = categoryLabels.filter((cat) => courseCategoryKeys.has(cat.key));
 
   return (
     <MediaCard>
@@ -53,10 +51,7 @@ export async function CourseHeader({
           </MediaCardImage>
         ) : (
           <MediaCardIcon aria-label={course.title} role="img">
-            <NotebookPenIcon
-              aria-hidden="true"
-              className="size-8 text-muted-foreground/80"
-            />
+            <NotebookPenIcon aria-hidden="true" className="text-muted-foreground/80 size-8" />
           </MediaCardIcon>
         )}
 
@@ -75,9 +70,7 @@ export async function CourseHeader({
         <MediaCardPopoverText>{course.description}</MediaCardPopoverText>
 
         <MediaCardPopoverMeta>
-          <MediaCardPopoverSource>
-            {course.organization.name}
-          </MediaCardPopoverSource>
+          <MediaCardPopoverSource>{course.organization.name}</MediaCardPopoverSource>
 
           {displayCategories.length > 0 && (
             <MediaCardPopoverBadges>

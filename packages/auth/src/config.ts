@@ -1,23 +1,15 @@
 import { prisma } from "@zoonk/db";
-import {
-  getDevTrustedOrigins,
-  getVercelTrustedOrigins,
-} from "@zoonk/utils/url";
+import { getDevTrustedOrigins, getVercelTrustedOrigins } from "@zoonk/utils/url";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { nextCookies } from "better-auth/next-js";
-import {
-  admin as adminPlugin,
-  emailOTP,
-  oneTimeToken,
-  organization,
-} from "better-auth/plugins";
-import type { BetterAuthOptions } from "better-auth/types";
+import { admin as adminPlugin, emailOTP, oneTimeToken, organization } from "better-auth/plugins";
 import { ac, admin, member, owner } from "./permissions";
 import { sendVerificationOTP } from "./plugins/otp";
 import { stripePlugin } from "./plugins/stripe";
 import { trustedOriginPlugin } from "./plugins/trusted-origin";
 import { appleProvider } from "./providers/apple";
 import { googleProvider } from "./providers/google";
+import type { BetterAuthOptions } from "better-auth/types";
 
 const SESSION_EXPIRES_IN_DAYS = 30;
 const COOKIE_CACHE_MINUTES = 60;

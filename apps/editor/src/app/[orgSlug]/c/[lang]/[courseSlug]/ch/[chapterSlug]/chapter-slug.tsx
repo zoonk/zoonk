@@ -2,14 +2,9 @@ import { SlugEditor } from "@/components/slug-editor";
 import { getChapter } from "@/data/chapters/get-chapter";
 import { checkChapterSlugExists, updateChapterSlugAction } from "./actions";
 
-type ChapterPageProps =
-  PageProps<"/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]">;
+type ChapterPageProps = PageProps<"/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]">;
 
-export async function ChapterSlug({
-  params,
-}: {
-  params: ChapterPageProps["params"];
-}) {
+export async function ChapterSlug({ params }: { params: ChapterPageProps["params"] }) {
   const { chapterSlug, courseSlug, lang, orgSlug } = await params;
 
   const { data: chapter } = await getChapter({

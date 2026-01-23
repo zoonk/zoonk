@@ -1,10 +1,9 @@
 import "server-only";
-
+import { ErrorCode } from "@/lib/app-error";
 import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
 import { type Activity, prisma } from "@zoonk/db";
 import { AppError, safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
-import { ErrorCode } from "@/lib/app-error";
 
 const cachedListLessonActivities = cache(
   async (
@@ -45,9 +44,5 @@ export function listLessonActivities(params: {
   lessonId: number;
   orgId: number;
 }): Promise<{ data: Activity[]; error: Error | null }> {
-  return cachedListLessonActivities(
-    params.lessonId,
-    params.orgId,
-    params.headers,
-  );
+  return cachedListLessonActivities(params.lessonId, params.orgId, params.headers);
 }

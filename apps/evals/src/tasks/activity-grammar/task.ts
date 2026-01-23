@@ -3,15 +3,11 @@ import {
   type ActivityGrammarSchema,
   generateActivityGrammar,
 } from "@zoonk/ai/tasks/activities/language/grammar";
-import type { Task } from "@/lib/types";
 import { TEST_CASES } from "./test-cases";
+import type { Task } from "@/lib/types";
 
-export const activityGrammarTask: Task<
-  ActivityGrammarParams,
-  ActivityGrammarSchema
-> = {
-  description:
-    "Generate Pattern Discovery grammar activities for language learning lessons",
+export const activityGrammarTask: Task<ActivityGrammarParams, ActivityGrammarSchema> = {
+  description: "Generate Pattern Discovery grammar activities for language learning lessons",
   generate: generateActivityGrammar,
   id: "activity-grammar",
   name: "Activity Grammar",

@@ -1,9 +1,7 @@
 import { z } from "zod";
 
 export const chartInputSchema = z.object({
-  chartType: z
-    .enum(["bar", "line", "pie"])
-    .describe("Chart type: bar, line, or pie"),
+  chartType: z.enum(["bar", "line", "pie"]).describe("Chart type: bar, line, or pie"),
   data: z
     .array(
       z.object({

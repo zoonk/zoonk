@@ -13,9 +13,7 @@ function getModifierKey(): "Meta" | "Control" {
 test.describe("Command Palette - Open/Close", () => {
   test.beforeEach(async ({ ownerPage }) => {
     await ownerPage.goto("/ai");
-    await expect(
-      ownerPage.getByRole("button", { name: /search/i }),
-    ).toBeVisible();
+    await expect(ownerPage.getByRole("button", { name: /search/i })).toBeVisible();
   });
 
   test("opens when clicking search button", async ({ ownerPage }) => {
@@ -57,9 +55,7 @@ test.describe("Command Palette - Open/Close", () => {
 });
 
 test.describe("Command Palette - Static Items", () => {
-  test("shows Pages group with Home, Create course, Logout", async ({
-    ownerPage,
-  }) => {
+  test("shows Pages group with Home, Create course, Logout", async ({ ownerPage }) => {
     await ownerPage.goto("/ai");
     await openCommandPalette(ownerPage);
 
@@ -83,9 +79,7 @@ test.describe("Command Palette - Static Items", () => {
     await expect(ownerPage).toHaveURL(/\/ai$/);
   });
 
-  test("selecting Create course navigates to new course page", async ({
-    ownerPage,
-  }) => {
+  test("selecting Create course navigates to new course page", async ({ ownerPage }) => {
     await ownerPage.goto("/ai");
     await openCommandPalette(ownerPage);
 
@@ -120,9 +114,7 @@ test.describe("Command Palette - Course Search", () => {
     await openCommandPalette(ownerPage);
   });
 
-  test("does not search with fewer than 2 characters", async ({
-    ownerPage,
-  }) => {
+  test("does not search with fewer than 2 characters", async ({ ownerPage }) => {
     const dialog = ownerPage.getByRole("dialog");
     await dialog.getByPlaceholder(/search/i).fill("M");
 
@@ -158,9 +150,7 @@ test.describe("Command Palette - Course Search", () => {
     await expect(ownerPage).toHaveURL(/\/ai\/c\/en\/python-programming/);
   });
 
-  test("shows No results found for non-matching query", async ({
-    ownerPage,
-  }) => {
+  test("shows No results found for non-matching query", async ({ ownerPage }) => {
     const dialog = ownerPage.getByRole("dialog");
     await dialog.getByPlaceholder(/search/i).fill("xyznonexistent");
 
@@ -170,9 +160,7 @@ test.describe("Command Palette - Course Search", () => {
   test("handles rapid typing correctly", async ({ ownerPage }) => {
     const dialog = ownerPage.getByRole("dialog");
 
-    await dialog
-      .getByPlaceholder(/search/i)
-      .pressSequentially("Machi", { delay: 50 });
+    await dialog.getByPlaceholder(/search/i).pressSequentially("Machi", { delay: 50 });
 
     await dialog.getByPlaceholder(/search/i).fill("Machine");
 
@@ -189,9 +177,7 @@ test.describe("Command Palette - Chapter Search", () => {
     await dialog.getByPlaceholder(/search/i).fill("introduction");
 
     await expect(dialog.getByText("Chapters")).toBeVisible();
-    await expect(
-      dialog.getByText("Introduction to Machine Learning").first(),
-    ).toBeVisible();
+    await expect(dialog.getByText("Introduction to Machine Learning").first()).toBeVisible();
   });
 
   test("shows chapter position badge", async ({ ownerPage }) => {
@@ -232,9 +218,7 @@ test.describe("Command Palette - Lesson Search", () => {
     await dialog.getByPlaceholder(/search/i).fill("history");
 
     await expect(dialog.getByText("Lessons")).toBeVisible();
-    await expect(
-      dialog.getByText("History of Machine Learning").first(),
-    ).toBeVisible();
+    await expect(dialog.getByText("History of Machine Learning").first()).toBeVisible();
   });
 
   test("clicking lesson navigates to lesson page", async ({ ownerPage }) => {
@@ -281,9 +265,7 @@ test.describe("Command Palette - Keyboard Navigation", () => {
     }
 
     // Wait for the selection to move to a DIFFERENT item
-    await expect(
-      dialog.getByRole("option", { name: firstName, selected: true }),
-    ).not.toBeVisible();
+    await expect(dialog.getByRole("option", { name: firstName, selected: true })).not.toBeVisible();
 
     // Verify a new item is selected
     const secondOption = dialog.getByRole("option", { selected: true });
@@ -307,9 +289,7 @@ test.describe("Command Palette - Keyboard Navigation", () => {
     ).not.toBeVisible();
 
     // Verify we're back on the first item
-    await expect(
-      dialog.getByRole("option", { name: firstName, selected: true }),
-    ).toBeVisible();
+    await expect(dialog.getByRole("option", { name: firstName, selected: true })).toBeVisible();
   });
 
   test("Enter to select navigates correctly", async ({ ownerPage }) => {
@@ -341,9 +321,7 @@ test.describe("Command Palette - Keyboard Navigation", () => {
 test.describe("Command Palette - Mobile Viewport", () => {
   test.use({ viewport: { height: 667, width: 375 } });
 
-  test("command palette opens and functions on mobile", async ({
-    ownerPage,
-  }) => {
+  test("command palette opens and functions on mobile", async ({ ownerPage }) => {
     await ownerPage.goto("/ai");
     await ownerPage.getByRole("button", { name: /search/i }).click();
 
@@ -368,8 +346,7 @@ test.describe("Command Palette - Accessibility", () => {
 
     const dialog = ownerPage.getByRole("dialog");
     const hasLabel = await dialog.evaluate(
-      (el) =>
-        el.hasAttribute("aria-label") || el.hasAttribute("aria-labelledby"),
+      (el) => el.hasAttribute("aria-label") || el.hasAttribute("aria-labelledby"),
     );
     expect(hasLabel).toBe(true);
   });
@@ -396,9 +373,7 @@ test.describe("Command Palette - Accessibility", () => {
 
     const input = page.getByPlaceholder(/search/i);
 
-    const fontSize = await input.evaluate((el) =>
-      Number.parseFloat(getComputedStyle(el).fontSize),
-    );
+    const fontSize = await input.evaluate((el) => Number.parseFloat(getComputedStyle(el).fontSize));
 
     expect(fontSize).toBeGreaterThanOrEqual(16);
 

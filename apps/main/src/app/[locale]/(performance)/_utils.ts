@@ -18,9 +18,7 @@ export function formatPeriodLabel(
       month: "short",
     }).format(periodStart);
 
-    const endMonth = new Intl.DateTimeFormat(locale, { month: "short" }).format(
-      periodEnd,
-    );
+    const endMonth = new Intl.DateTimeFormat(locale, { month: "short" }).format(periodEnd);
 
     const year = periodStart.getFullYear();
 

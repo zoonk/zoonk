@@ -1,50 +1,34 @@
+import { BELT_BG_CLASSES, getBeltColorLabel, getBeltColors } from "@/lib/belt-colors";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
-import {
-  BELT_COLORS_ORDER,
-  type BeltLevelResult,
-} from "@zoonk/utils/belt-level";
+import { BELT_COLORS_ORDER, type BeltLevelResult } from "@zoonk/utils/belt-level";
 import { getExtracted, getLocale } from "next-intl/server";
-import {
-  BELT_BG_CLASSES,
-  getBeltColorLabel,
-  getBeltColors,
-} from "@/lib/belt-colors";
 
-export async function LevelProgression({
-  currentBelt,
-}: {
-  currentBelt: BeltLevelResult;
-}) {
+export async function LevelProgression({ currentBelt }: { currentBelt: BeltLevelResult }) {
   const t = await getExtracted();
   const locale = await getLocale();
 
   const beltColors = await getBeltColors();
   const currentIndex = BELT_COLORS_ORDER.indexOf(currentBelt.color);
   const colorName = await getBeltColorLabel(currentBelt.color);
-  const formattedBpToNext = new Intl.NumberFormat(locale).format(
-    currentBelt.bpToNextLevel,
-  );
+  const formattedBpToNext = new Intl.NumberFormat(locale).format(currentBelt.bpToNextLevel);
 
   const progressLabel = currentBelt.isMaxLevel
     ? t("{color} Belt, Level {level} of 10. Maximum level achieved.", {
         color: colorName,
         level: String(currentBelt.level),
       })
-    : t(
-        "{color} Belt, Level {level} of 10. {bp} brain power until next level.",
-        {
-          bp: formattedBpToNext,
-          color: colorName,
-          level: String(currentBelt.level),
-        },
-      );
+    : t("{color} Belt, Level {level} of 10. {bp} brain power until next level.", {
+        bp: formattedBpToNext,
+        color: colorName,
+        level: String(currentBelt.level),
+      });
 
   const progressPercentage = (currentBelt.level / 10) * 100;
 
   return (
     <div className="flex flex-col gap-4">
-      <h3 className="font-medium text-sm">{t("Belt Progression")}</h3>
+      <h3 className="text-sm font-medium">{t("Belt Progression")}</h3>
 
       <div
         aria-label={progressLabel}
@@ -61,10 +45,7 @@ export async function LevelProgression({
             const isFuture = index > currentIndex;
 
             return (
-              <div
-                className="flex min-w-0 flex-1 flex-col items-center gap-1.5"
-                key={belt.key}
-              >
+              <div className="flex min-w-0 flex-1 flex-col items-center gap-1.5" key={belt.key}>
                 <div className="flex h-6 items-center justify-center">
                   <div
                     aria-hidden
@@ -73,7 +54,7 @@ export async function LevelProgression({
                       "ring-1 ring-black/10 ring-inset dark:ring-white/10",
                       belt.bgClass,
                       isPast && "opacity-50",
-                      isCurrent && "size-5 ring-2 ring-primary",
+                      isCurrent && "ring-primary size-5 ring-2",
                       isFuture && "opacity-25",
                     )}
                     title={belt.label}
@@ -83,7 +64,7 @@ export async function LevelProgression({
                 <span
                   className={cn(
                     "text-xs tabular-nums",
-                    isCurrent && "font-medium text-foreground",
+                    isCurrent && "text-foreground font-medium",
                     isPast && "text-muted-foreground/50",
                     isFuture && "invisible",
                   )}
@@ -99,12 +80,9 @@ export async function LevelProgression({
 
         {!currentBelt.isMaxLevel && (
           <div className="flex flex-col gap-1">
-            <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
+            <div className="bg-muted h-1.5 w-full overflow-hidden rounded-full">
               <div
-                className={cn(
-                  "h-full transition-all",
-                  BELT_BG_CLASSES[currentBelt.color],
-                )}
+                className={cn("h-full transition-all", BELT_BG_CLASSES[currentBelt.color])}
                 style={{ width: `${progressPercentage}%` }}
               />
             </div>
@@ -129,10 +107,7 @@ export function LevelProgressionSkeleton() {
       <div className="flex flex-col gap-3">
         <div className="flex items-start justify-between gap-2">
           {Array.from({ length: 10 }).map((_, index) => (
-            <div
-              className="flex min-w-0 flex-1 flex-col items-center gap-1.5"
-              key={index}
-            >
+            <div className="flex min-w-0 flex-1 flex-col items-center gap-1.5" key={index}>
               <div className="flex h-6 items-center justify-center">
                 <Skeleton className="size-3.5 rounded-full" />
               </div>

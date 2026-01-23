@@ -5,9 +5,7 @@ export const matchColumnsInputSchema = z.object({
     .array(
       z.object({
         left: z.string().describe("Real-world item, scenario, or phenomenon"),
-        right: z
-          .string()
-          .describe("The concept, principle, or outcome it connects to"),
+        right: z.string().describe("The concept, principle, or outcome it connects to"),
       }),
     )
     .describe("3-5 pairs to match"),

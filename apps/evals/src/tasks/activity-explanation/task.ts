@@ -3,13 +3,10 @@ import {
   type ActivityExplanationSchema,
   generateActivityExplanation,
 } from "@zoonk/ai/tasks/activities/core/explanation";
-import type { Task } from "@/lib/types";
 import { TEST_CASES } from "./test-cases";
+import type { Task } from "@/lib/types";
 
-export const activityExplanationTask: Task<
-  ActivityExplanationParams,
-  ActivityExplanationSchema
-> = {
+export const activityExplanationTask: Task<ActivityExplanationParams, ActivityExplanationSchema> = {
   description:
     "Generate an explanation activity for a lesson that explains what a topic is and how it works conceptually",
   generate: generateActivityExplanation,

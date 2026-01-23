@@ -1,15 +1,9 @@
+import { ErrorCode } from "@/lib/app-error";
 import { prisma } from "@zoonk/db";
 import { signInAs } from "@zoonk/testing/fixtures/auth";
-import {
-  courseCategoryFixture,
-  courseFixture,
-} from "@zoonk/testing/fixtures/courses";
-import {
-  memberFixture,
-  organizationFixture,
-} from "@zoonk/testing/fixtures/orgs";
+import { courseCategoryFixture, courseFixture } from "@zoonk/testing/fixtures/courses";
+import { memberFixture, organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, describe, expect, test } from "vitest";
-import { ErrorCode } from "@/lib/app-error";
 import { removeCategoryFromCourse } from "./remove-category-from-course";
 
 describe("unauthenticated users", () => {

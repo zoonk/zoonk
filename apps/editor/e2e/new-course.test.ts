@@ -44,26 +44,17 @@ test.describe("Course Creation Wizard - Navigation & Entry Points", () => {
   test("navigates directly to wizard", async ({ authenticatedPage }) => {
     await authenticatedPage.goto("/ai/new-course");
 
-    await expect(
-      authenticatedPage.getByText(/course title/i).first(),
-    ).toBeVisible();
+    await expect(authenticatedPage.getByText(/course title/i).first()).toBeVisible();
 
-    await expect(getProgressBar(authenticatedPage)).toHaveAttribute(
-      "aria-valuenow",
-      "1",
-    );
+    await expect(getProgressBar(authenticatedPage)).toHaveAttribute("aria-valuenow", "1");
   });
 
   test("enters from org home header button", async ({ authenticatedPage }) => {
     await authenticatedPage.goto("/ai");
-    await authenticatedPage
-      .getByRole("link", { name: /create course/i })
-      .click();
+    await authenticatedPage.getByRole("link", { name: /create course/i }).click();
 
     await expect(authenticatedPage).toHaveURL(/\/ai\/new-course/);
-    await expect(
-      authenticatedPage.getByText(/course title/i).first(),
-    ).toBeVisible();
+    await expect(authenticatedPage.getByText(/course title/i).first()).toBeVisible();
   });
 
   test("enters from command palette", async ({ authenticatedPage }) => {
@@ -76,94 +67,63 @@ test.describe("Course Creation Wizard - Navigation & Entry Points", () => {
       .click();
 
     await expect(authenticatedPage).toHaveURL(/\/ai\/new-course/);
-    await expect(
-      authenticatedPage.getByText(/course title/i).first(),
-    ).toBeVisible();
+    await expect(authenticatedPage.getByText(/course title/i).first()).toBeVisible();
   });
 });
 
 test.describe("Course Creation Wizard - Step Navigation", () => {
   test.beforeEach(async ({ authenticatedPage }) => {
     await authenticatedPage.goto("/ai/new-course");
-    await expect(
-      authenticatedPage.getByText(/course title/i).first(),
-    ).toBeVisible();
+    await expect(authenticatedPage.getByText(/course title/i).first()).toBeVisible();
   });
 
   test("shows title step on initial load", async ({ authenticatedPage }) => {
-    await expect(
-      authenticatedPage.getByPlaceholder(/course title/i),
-    ).toBeVisible();
+    await expect(authenticatedPage.getByPlaceholder(/course title/i)).toBeVisible();
 
-    await expect(getProgressBar(authenticatedPage)).toHaveAttribute(
-      "aria-label",
-      "Step 1 of 4",
-    );
+    await expect(getProgressBar(authenticatedPage)).toHaveAttribute("aria-label", "Step 1 of 4");
   });
 
-  test("progress dots update as steps advance", async ({
-    authenticatedPage,
-  }) => {
+  test("progress dots update as steps advance", async ({ authenticatedPage }) => {
     const progressBar = getProgressBar(authenticatedPage);
 
     await expect(progressBar).toHaveAttribute("aria-valuenow", "1");
 
-    await authenticatedPage
-      .getByPlaceholder(/course title/i)
-      .fill("Test Course");
+    await authenticatedPage.getByPlaceholder(/course title/i).fill("Test Course");
     await authenticatedPage.getByRole("button", { name: /next/i }).click();
 
     await expect(progressBar).toHaveAttribute("aria-valuenow", "2");
     await expect(progressBar).toHaveAttribute("aria-label", "Step 2 of 4");
   });
 
-  test("next button advances when step is valid", async ({
-    authenticatedPage,
-  }) => {
+  test("next button advances when step is valid", async ({ authenticatedPage }) => {
     await authenticatedPage.getByPlaceholder(/course title/i).fill("My Course");
 
-    await expect(
-      authenticatedPage.getByRole("button", { name: /next/i }),
-    ).toBeEnabled();
+    await expect(authenticatedPage.getByRole("button", { name: /next/i })).toBeEnabled();
 
     await authenticatedPage.getByRole("button", { name: /next/i }).click();
 
     await expect(authenticatedPage.getByText(/course language/i)).toBeVisible();
   });
 
-  test("next button disabled when step is invalid", async ({
-    authenticatedPage,
-  }) => {
-    await expect(
-      authenticatedPage.getByPlaceholder(/course title/i),
-    ).toHaveValue("");
+  test("next button disabled when step is invalid", async ({ authenticatedPage }) => {
+    await expect(authenticatedPage.getByPlaceholder(/course title/i)).toHaveValue("");
 
-    await expect(
-      authenticatedPage.getByRole("button", { name: /next/i }),
-    ).toBeDisabled();
+    await expect(authenticatedPage.getByRole("button", { name: /next/i })).toBeDisabled();
   });
 
-  test("back button navigates to previous step", async ({
-    authenticatedPage,
-  }) => {
-    await authenticatedPage
-      .getByPlaceholder(/course title/i)
-      .fill("Test Course");
+  test("back button navigates to previous step", async ({ authenticatedPage }) => {
+    await authenticatedPage.getByPlaceholder(/course title/i).fill("Test Course");
     await authenticatedPage.getByRole("button", { name: /next/i }).click();
 
     await expect(authenticatedPage.getByText(/course language/i)).toBeVisible();
 
     await authenticatedPage.getByRole("button", { name: /back/i }).click();
 
-    await expect(
-      authenticatedPage.getByPlaceholder(/course title/i),
-    ).toBeVisible();
+    await expect(authenticatedPage.getByPlaceholder(/course title/i)).toBeVisible();
   });
 
   test("back button disabled on first step", async ({ authenticatedPage }) => {
-    await expect(
-      authenticatedPage.getByRole("button", { name: /back/i }),
-    ).toBeDisabled();
+    await expect(authenticatedPage.getByRole("button", { name: /back/i })).toBeDisabled();
   });
 
   test("shows Create button on last step", async ({ authenticatedPage }) => {
@@ -173,13 +133,9 @@ test.describe("Course Creation Wizard - Step Navigation", () => {
       title: "Test Course",
     });
 
-    await expect(
-      authenticatedPage.getByRole("button", { name: /create/i }),
-    ).toBeVisible();
+    await expect(authenticatedPage.getByRole("button", { name: /create/i })).toBeVisible();
 
-    await expect(
-      authenticatedPage.getByRole("button", { name: /next/i }),
-    ).not.toBeVisible();
+    await expect(authenticatedPage.getByRole("button", { name: /next/i })).not.toBeVisible();
   });
 });
 
@@ -187,29 +143,19 @@ test.describe("Course Creation Wizard - Keyboard Shortcuts", () => {
   test.beforeEach(async ({ authenticatedPage }) => {
     await authenticatedPage.goto("/ai/new-course");
 
-    await expect(
-      authenticatedPage.getByText(/course title/i).first(),
-    ).toBeVisible();
+    await expect(authenticatedPage.getByText(/course title/i).first()).toBeVisible();
   });
 
-  test("Escape closes wizard and returns to org home", async ({
-    authenticatedPage,
-  }) => {
+  test("Escape closes wizard and returns to org home", async ({ authenticatedPage }) => {
     await authenticatedPage.keyboard.press("Escape");
 
     await expect(authenticatedPage).toHaveURL(/\/ai$/);
 
-    await expect(
-      authenticatedPage.getByRole("heading", { name: /draft courses/i }),
-    ).toBeVisible();
+    await expect(authenticatedPage.getByRole("heading", { name: /draft courses/i })).toBeVisible();
   });
 
-  test("ArrowRight navigates forward when valid", async ({
-    authenticatedPage,
-  }) => {
-    await authenticatedPage
-      .getByPlaceholder(/course title/i)
-      .fill("Test Course");
+  test("ArrowRight navigates forward when valid", async ({ authenticatedPage }) => {
+    await authenticatedPage.getByPlaceholder(/course title/i).fill("Test Course");
 
     await authenticatedPage.getByPlaceholder(/course title/i).blur();
     await authenticatedPage.keyboard.press("ArrowRight");
@@ -217,68 +163,48 @@ test.describe("Course Creation Wizard - Keyboard Shortcuts", () => {
     await expect(authenticatedPage.getByText(/course language/i)).toBeVisible();
   });
 
-  test("ArrowRight does nothing when step is invalid", async ({
-    authenticatedPage,
-  }) => {
+  test("ArrowRight does nothing when step is invalid", async ({ authenticatedPage }) => {
     await authenticatedPage.getByPlaceholder(/course title/i).blur();
     await authenticatedPage.keyboard.press("ArrowRight");
 
-    await expect(
-      authenticatedPage.getByPlaceholder(/course title/i),
-    ).toBeVisible();
+    await expect(authenticatedPage.getByPlaceholder(/course title/i)).toBeVisible();
   });
 
   test("ArrowLeft navigates back", async ({ authenticatedPage }) => {
-    await authenticatedPage
-      .getByPlaceholder(/course title/i)
-      .fill("Test Course");
+    await authenticatedPage.getByPlaceholder(/course title/i).fill("Test Course");
     await authenticatedPage.keyboard.press("Enter");
 
     await expect(authenticatedPage.getByText(/course language/i)).toBeVisible();
 
     await authenticatedPage.keyboard.press("ArrowLeft");
 
-    await expect(
-      authenticatedPage.getByPlaceholder(/course title/i),
-    ).toBeVisible();
+    await expect(authenticatedPage.getByPlaceholder(/course title/i)).toBeVisible();
   });
 
-  test("ArrowLeft does nothing on first step", async ({
-    authenticatedPage,
-  }) => {
+  test("ArrowLeft does nothing on first step", async ({ authenticatedPage }) => {
     await authenticatedPage.keyboard.press("ArrowLeft");
 
-    await expect(
-      authenticatedPage.getByPlaceholder(/course title/i),
-    ).toBeVisible();
+    await expect(authenticatedPage.getByPlaceholder(/course title/i)).toBeVisible();
   });
 
   test("Enter advances to next step", async ({ authenticatedPage }) => {
-    await authenticatedPage
-      .getByPlaceholder(/course title/i)
-      .fill("Test Course");
+    await authenticatedPage.getByPlaceholder(/course title/i).fill("Test Course");
 
     await authenticatedPage.keyboard.press("Enter");
 
     await expect(authenticatedPage.getByText(/course language/i)).toBeVisible();
   });
 
-  test("keyboard navigation ignores modifier keys", async ({
-    authenticatedPage,
-  }) => {
+  test("keyboard navigation ignores modifier keys", async ({ authenticatedPage }) => {
     const modifier = getModifierKey();
 
-    await authenticatedPage
-      .getByPlaceholder(/course title/i)
-      .fill("Test Course");
+    await authenticatedPage.getByPlaceholder(/course title/i).fill("Test Course");
 
     await authenticatedPage.getByPlaceholder(/course title/i).blur();
 
     await authenticatedPage.keyboard.press(`${modifier}+ArrowRight`);
 
-    await expect(
-      authenticatedPage.getByPlaceholder(/course title/i),
-    ).toBeVisible();
+    await expect(authenticatedPage.getByPlaceholder(/course title/i)).toBeVisible();
   });
 });
 
@@ -288,43 +214,25 @@ test.describe("Course Creation Wizard - Form Validation", () => {
   });
 
   test("title step requires non-empty title", async ({ authenticatedPage }) => {
-    await expect(
-      authenticatedPage.getByRole("button", { name: /next/i }),
-    ).toBeDisabled();
+    await expect(authenticatedPage.getByRole("button", { name: /next/i })).toBeDisabled();
 
     await authenticatedPage.getByPlaceholder(/course title/i).fill("   ");
-    await expect(
-      authenticatedPage.getByRole("button", { name: /next/i }),
-    ).toBeDisabled();
+    await expect(authenticatedPage.getByRole("button", { name: /next/i })).toBeDisabled();
 
-    await authenticatedPage
-      .getByPlaceholder(/course title/i)
-      .fill("Valid Title");
-    await expect(
-      authenticatedPage.getByRole("button", { name: /next/i }),
-    ).toBeEnabled();
+    await authenticatedPage.getByPlaceholder(/course title/i).fill("Valid Title");
+    await expect(authenticatedPage.getByRole("button", { name: /next/i })).toBeEnabled();
   });
 
-  test("language step proceeds with default selection", async ({
-    authenticatedPage,
-  }) => {
-    await authenticatedPage
-      .getByPlaceholder(/course title/i)
-      .fill("Test Course");
+  test("language step proceeds with default selection", async ({ authenticatedPage }) => {
+    await authenticatedPage.getByPlaceholder(/course title/i).fill("Test Course");
     await authenticatedPage.keyboard.press("Enter");
 
     await expect(authenticatedPage.getByText(/course language/i)).toBeVisible();
-    await expect(
-      authenticatedPage.getByRole("button", { name: /next/i }),
-    ).toBeEnabled();
+    await expect(authenticatedPage.getByRole("button", { name: /next/i })).toBeEnabled();
   });
 
-  test("language step allows clicking to change selection", async ({
-    authenticatedPage,
-  }) => {
-    await authenticatedPage
-      .getByPlaceholder(/course title/i)
-      .fill("Test Course");
+  test("language step allows clicking to change selection", async ({ authenticatedPage }) => {
+    await authenticatedPage.getByPlaceholder(/course title/i).fill("Test Course");
     await authenticatedPage.keyboard.press("Enter");
 
     await expect(authenticatedPage.getByText(/course language/i)).toBeVisible();
@@ -352,40 +260,24 @@ test.describe("Course Creation Wizard - Form Validation", () => {
     await expect(portugueseRadio).not.toBeChecked();
   });
 
-  test("description step requires non-empty description", async ({
-    authenticatedPage,
-  }) => {
-    await authenticatedPage
-      .getByPlaceholder(/course title/i)
-      .fill("Test Course");
+  test("description step requires non-empty description", async ({ authenticatedPage }) => {
+    await authenticatedPage.getByPlaceholder(/course title/i).fill("Test Course");
 
     await authenticatedPage.keyboard.press("Enter");
     await authenticatedPage.keyboard.press("Enter");
 
-    await expect(
-      authenticatedPage.getByText(/course description/i),
-    ).toBeVisible();
+    await expect(authenticatedPage.getByText(/course description/i)).toBeVisible();
 
-    await expect(
-      authenticatedPage.getByRole("button", { name: /next/i }),
-    ).toBeDisabled();
+    await expect(authenticatedPage.getByRole("button", { name: /next/i })).toBeDisabled();
 
     await authenticatedPage.getByPlaceholder(/brief description/i).fill("   ");
-    await expect(
-      authenticatedPage.getByRole("button", { name: /next/i }),
-    ).toBeDisabled();
+    await expect(authenticatedPage.getByRole("button", { name: /next/i })).toBeDisabled();
 
-    await authenticatedPage
-      .getByPlaceholder(/brief description/i)
-      .fill("A valid description");
-    await expect(
-      authenticatedPage.getByRole("button", { name: /next/i }),
-    ).toBeEnabled();
+    await authenticatedPage.getByPlaceholder(/brief description/i).fill("A valid description");
+    await expect(authenticatedPage.getByRole("button", { name: /next/i })).toBeEnabled();
   });
 
-  test("slug step shows error for existing slug", async ({
-    authenticatedPage,
-  }) => {
+  test("slug step shows error for existing slug", async ({ authenticatedPage }) => {
     await fillCourseForm(authenticatedPage, {
       description: "Test description",
       slug: "machine-learning",
@@ -396,9 +288,7 @@ test.describe("Course Creation Wizard - Form Validation", () => {
       authenticatedPage.getByText(/a course with this url already exists/i),
     ).toBeVisible();
 
-    await expect(
-      authenticatedPage.getByRole("button", { name: /create/i }),
-    ).toBeDisabled();
+    await expect(authenticatedPage.getByRole("button", { name: /create/i })).toBeDisabled();
   });
 
   test("slug step allows unique slug", async ({ authenticatedPage }) => {
@@ -410,43 +300,31 @@ test.describe("Course Creation Wizard - Form Validation", () => {
       title: "Test Course",
     });
 
-    await expect(
-      authenticatedPage.getByRole("button", { name: /create/i }),
-    ).toBeEnabled();
+    await expect(authenticatedPage.getByRole("button", { name: /create/i })).toBeEnabled();
 
     await expect(
       authenticatedPage.getByText(/a course with this url already exists/i),
     ).not.toBeVisible();
   });
 
-  test("slug step cannot submit with empty slug", async ({
-    authenticatedPage,
-  }) => {
-    await authenticatedPage
-      .getByPlaceholder(/course title/i)
-      .fill("Test Course");
+  test("slug step cannot submit with empty slug", async ({ authenticatedPage }) => {
+    await authenticatedPage.getByPlaceholder(/course title/i).fill("Test Course");
 
     await authenticatedPage.keyboard.press("Enter");
     await authenticatedPage.keyboard.press("Enter");
 
-    await authenticatedPage
-      .getByPlaceholder(/brief description/i)
-      .fill("Description");
+    await authenticatedPage.getByPlaceholder(/brief description/i).fill("Description");
 
     await authenticatedPage.keyboard.press("Enter");
 
     await authenticatedPage.getByPlaceholder(/course-title/i).clear();
 
-    await expect(
-      authenticatedPage.getByRole("button", { name: /create/i }),
-    ).toBeDisabled();
+    await expect(authenticatedPage.getByRole("button", { name: /create/i })).toBeDisabled();
   });
 });
 
 test.describe("Course Creation Wizard - Successful Creation", () => {
-  test("creates course and redirects to course page", async ({
-    authenticatedPage,
-  }) => {
+  test("creates course and redirects to course page", async ({ authenticatedPage }) => {
     const uniqueSlug = `e2e-test-${randomUUID()}`;
     const courseTitle = "E2E Test Course";
     const courseDescription = "A course created during E2E testing";
@@ -481,22 +359,18 @@ test.describe("Course Creation Wizard - Successful Creation", () => {
   test("auto-fills slug from title", async ({ authenticatedPage }) => {
     await authenticatedPage.goto("/ai/new-course");
 
-    await authenticatedPage
-      .getByPlaceholder(/course title/i)
-      .fill("My Amazing Course");
+    await authenticatedPage.getByPlaceholder(/course title/i).fill("My Amazing Course");
 
     await authenticatedPage.keyboard.press("Enter");
     await authenticatedPage.keyboard.press("Enter");
 
-    await authenticatedPage
-      .getByPlaceholder(/brief description/i)
-      .fill("Description");
+    await authenticatedPage.getByPlaceholder(/brief description/i).fill("Description");
 
     await authenticatedPage.keyboard.press("Enter");
 
-    await expect(
-      authenticatedPage.getByPlaceholder(/course-title/i),
-    ).toHaveValue("my-amazing-course");
+    await expect(authenticatedPage.getByPlaceholder(/course-title/i)).toHaveValue(
+      "my-amazing-course",
+    );
   });
 });
 
@@ -540,45 +414,31 @@ test.describe("Course Creation Wizard - Input Auto-focus", () => {
   test("title input is auto-focused on load", async ({ authenticatedPage }) => {
     await authenticatedPage.goto("/ai/new-course");
 
-    await expect(
-      authenticatedPage.getByPlaceholder(/course title/i),
-    ).toBeFocused();
+    await expect(authenticatedPage.getByPlaceholder(/course title/i)).toBeFocused();
   });
 
-  test("description textarea is auto-focused on step", async ({
-    authenticatedPage,
-  }) => {
+  test("description textarea is auto-focused on step", async ({ authenticatedPage }) => {
     await authenticatedPage.goto("/ai/new-course");
 
-    await authenticatedPage
-      .getByPlaceholder(/course title/i)
-      .fill("Test Course");
+    await authenticatedPage.getByPlaceholder(/course title/i).fill("Test Course");
     await authenticatedPage.keyboard.press("Enter");
     await authenticatedPage.keyboard.press("Enter");
 
-    await expect(
-      authenticatedPage.getByPlaceholder(/brief description/i),
-    ).toBeFocused();
+    await expect(authenticatedPage.getByPlaceholder(/brief description/i)).toBeFocused();
   });
 
   test("slug input is auto-focused on step", async ({ authenticatedPage }) => {
     await authenticatedPage.goto("/ai/new-course");
 
-    await authenticatedPage
-      .getByPlaceholder(/course title/i)
-      .fill("Test Course");
+    await authenticatedPage.getByPlaceholder(/course title/i).fill("Test Course");
 
     await authenticatedPage.keyboard.press("Enter");
     await authenticatedPage.keyboard.press("Enter");
 
-    await authenticatedPage
-      .getByPlaceholder(/brief description/i)
-      .fill("Description");
+    await authenticatedPage.getByPlaceholder(/brief description/i).fill("Description");
 
     await authenticatedPage.keyboard.press("Enter");
 
-    await expect(
-      authenticatedPage.getByPlaceholder(/course-title/i),
-    ).toBeFocused();
+    await expect(authenticatedPage.getByPlaceholder(/course-title/i)).toBeFocused();
   });
 });

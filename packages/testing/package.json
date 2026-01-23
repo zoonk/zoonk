@@ -1,14 +1,7 @@
 {
-  "dependencies": {
-    "@zoonk/auth": "workspace:*",
-    "@zoonk/db": "workspace:*",
-    "@zoonk/utils": "workspace:*"
-  },
-  "devDependencies": {
-    "@types/node": "^24",
-    "@typescript/native-preview": "7.0.0-dev.20260122.4",
-    "@zoonk/tsconfig": "workspace:*"
-  },
+  "name": "@zoonk/testing",
+  "private": true,
+  "type": "module",
   "exports": {
     "./fixtures/activities": "./src/fixtures/activities.ts",
     "./fixtures/auth": "./src/fixtures/auth.ts",
@@ -21,7 +14,14 @@
     "./fixtures/progress": "./src/fixtures/progress.ts",
     "./fixtures/users": "./src/fixtures/users.ts"
   },
-  "name": "@zoonk/testing",
-  "private": true,
-  "type": "module"
+  "dependencies": {
+    "@zoonk/auth": "workspace:*",
+    "@zoonk/db": "workspace:*",
+    "@zoonk/utils": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^24",
+    "@typescript/native-preview": "7.0.0-dev.20260122.4",
+    "@zoonk/tsconfig": "workspace:*"
+  }
 }

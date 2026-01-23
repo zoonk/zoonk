@@ -29,11 +29,7 @@ function calculateCost(tokens: number, cost: number): number {
   return (tokens / TOKENS_PER_MILLION) * cost * COST_MULTIPLIER;
 }
 
-function calculateTotalCost(
-  inputTokens: number,
-  outputTokens: number,
-  model: ModelConfig,
-): number {
+function calculateTotalCost(inputTokens: number, outputTokens: number, model: ModelConfig): number {
   const { inputCost, outputCost } = model;
 
   const totalInputCost = calculateCost(inputTokens, inputCost);
@@ -54,11 +50,7 @@ function calculateStats(results: EvalResult[], modelId: string): TaskStats {
   const averageDurationMs = calculateAverage(results, "duration");
   const averageDuration = averageDurationMs / MS_TO_SECONDS;
 
-  const totalCost = calculateTotalCost(
-    averageInputTokens,
-    averageOutputTokens,
-    model,
-  );
+  const totalCost = calculateTotalCost(averageInputTokens, averageOutputTokens, model);
 
   return {
     averageDuration,

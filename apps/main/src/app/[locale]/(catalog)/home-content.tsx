@@ -1,9 +1,6 @@
-import { Suspense } from "react";
 import { getContinueLearning } from "@/data/courses/get-continue-learning";
-import {
-  ContinueLearningList,
-  ContinueLearningSkeleton,
-} from "./continue-learning";
+import { Suspense } from "react";
+import { ContinueLearningList, ContinueLearningSkeleton } from "./continue-learning";
 import { Hero } from "./hero";
 import { Performance, PerformanceSkeleton } from "./performance";
 

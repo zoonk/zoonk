@@ -232,8 +232,7 @@ ${SHARED_EXPECTATIONS}
       chapterTitle: "Camera Controls",
       courseTitle: "Photography Fundamentals",
       language: "en",
-      lessonDescription:
-        "Understanding and using manual camera settings to control exposure",
+      lessonDescription: "Understanding and using manual camera settings to control exposure",
       lessonTitle: "Manual Camera Settings",
     },
   },
@@ -324,8 +323,7 @@ ${SHARED_EXPECTATIONS}
       chapterTitle: "Reparaciones de Plomeria",
       courseTitle: "Mantenimiento del Hogar",
       language: "es",
-      lessonDescription:
-        "Guia paso a paso para reparar fugas de agua comunes en tu hogar",
+      lessonDescription: "Guia paso a paso para reparar fugas de agua comunes en tu hogar",
       lessonTitle: "Arreglar una Fuga de Agua",
     },
   },
@@ -393,8 +391,7 @@ ${SHARED_EXPECTATIONS}
       chapterTitle: "Hardware Assembly",
       courseTitle: "PC Building",
       language: "en",
-      lessonDescription:
-        "Complete guide to building your own desktop computer from scratch",
+      lessonDescription: "Complete guide to building your own desktop computer from scratch",
       lessonTitle: "Building a PC",
     },
   },

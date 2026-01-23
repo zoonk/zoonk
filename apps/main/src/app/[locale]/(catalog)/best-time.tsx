@@ -1,3 +1,4 @@
+import { ClientLink } from "@/i18n/client-link";
 import {
   FeatureCard,
   FeatureCardBody,
@@ -13,7 +14,6 @@ import {
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { Clock } from "lucide-react";
 import { getExtracted, getLocale } from "next-intl/server";
-import { ClientLink } from "@/i18n/client-link";
 
 type BestTimeProps = {
   score: number;
@@ -24,12 +24,7 @@ export async function BestTime({ score, period }: BestTimeProps) {
   const t = await getExtracted();
   const locale = await getLocale();
 
-  const periodNames = [
-    t("Night"),
-    t("Morning"),
-    t("Afternoon"),
-    t("Evening"),
-  ] as const;
+  const periodNames = [t("Night"), t("Morning"), t("Afternoon"), t("Evening")] as const;
 
   const periodName = periodNames[period] ?? periodNames[1];
 

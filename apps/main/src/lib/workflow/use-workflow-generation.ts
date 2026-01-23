@@ -23,22 +23,14 @@ type WorkflowConfig<TStep extends string> = {
 export function useWorkflowGeneration<TStep extends string = string>(
   config: WorkflowConfig<TStep>,
 ) {
-  const {
-    autoTrigger = true,
-    completionStep,
-    statusUrl,
-    triggerBody,
-    triggerUrl,
-  } = config;
+  const { autoTrigger = true, completionStep, statusUrl, triggerBody, triggerUrl } = config;
   const hasTriggeredRef = useRef(false);
 
   const store = useMemo(
     () =>
       createGenerationStore<TStep>({
         runId: config.initialRunId ?? null,
-        status: config.initialRunId
-          ? "streaming"
-          : (config.initialStatus ?? "idle"),
+        status: config.initialRunId ? "streaming" : (config.initialStatus ?? "idle"),
       }),
     [config.initialRunId, config.initialStatus],
   );
@@ -50,15 +42,11 @@ export function useWorkflowGeneration<TStep extends string = string>(
   const status = useSelector(store, (s) => s.context.status);
 
   const handleMessage = useCallback(
-    (msg: StreamMessage<TStep>) =>
-      handleStreamMessage(msg, store, completionStep),
+    (msg: StreamMessage<TStep>) => handleStreamMessage(msg, store, completionStep),
     [store, completionStep],
   );
 
-  const handleComplete = useCallback(
-    () => store.send({ type: "workflowCompleted" }),
-    [store],
-  );
+  const handleComplete = useCallback(() => store.send({ type: "workflowCompleted" }), [store]);
 
   const handleError = useCallback(
     (err: Error) => store.send({ error: err.message, type: "setError" }),

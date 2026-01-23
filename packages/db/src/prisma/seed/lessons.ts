@@ -43,8 +43,7 @@ const lessonsData: ChapterLessons[] = [
         title: "History of Machine Learning",
       },
       {
-        description:
-          "Understand supervised, unsupervised, and reinforcement learning approaches.",
+        description: "Understand supervised, unsupervised, and reinforcement learning approaches.",
         generationStatus: "completed",
         isPublished: false,
         kind: "custom",
@@ -66,8 +65,7 @@ const lessonsData: ChapterLessons[] = [
         title: "Understanding Datasets",
       },
       {
-        description:
-          "Master techniques for cleaning and preprocessing raw data before training.",
+        description: "Master techniques for cleaning and preprocessing raw data before training.",
         generationStatus: "pending",
         isPublished: true,
         slug: "data-cleaning",
@@ -80,16 +78,14 @@ const lessonsData: ChapterLessons[] = [
     language: "en",
     lessons: [
       {
-        description:
-          "Learn the Spanish alphabet, vowel sounds, and basic pronunciation rules.",
+        description: "Learn the Spanish alphabet, vowel sounds, and basic pronunciation rules.",
         generationStatus: "completed",
         isPublished: true,
         slug: "spanish-alphabet",
         title: "The Spanish Alphabet",
       },
       {
-        description:
-          "Master common greetings and introductions for everyday conversations.",
+        description: "Master common greetings and introductions for everyday conversations.",
         generationStatus: "pending",
         isPublished: true,
         slug: "greetings-introductions",
@@ -102,16 +98,14 @@ const lessonsData: ChapterLessons[] = [
     language: "en",
     lessons: [
       {
-        description:
-          "Learn about the Sun, its structure, and its importance to our solar system.",
+        description: "Learn about the Sun, its structure, and its importance to our solar system.",
         generationStatus: "completed",
         isPublished: true,
         slug: "the-sun",
         title: "The Sun",
       },
       {
-        description:
-          "Explore the inner planets: Mercury, Venus, Earth, and Mars.",
+        description: "Explore the inner planets: Mercury, Venus, Earth, and Mars.",
         generationStatus: "pending",
         isPublished: true,
         slug: "inner-planets",
@@ -124,16 +118,14 @@ const lessonsData: ChapterLessons[] = [
     language: "en",
     lessons: [
       {
-        description:
-          "Set up Python on your computer and write your first Hello World program.",
+        description: "Set up Python on your computer and write your first Hello World program.",
         generationStatus: "completed",
         isPublished: true,
         slug: "getting-started-python",
         title: "Getting Started with Python",
       },
       {
-        description:
-          "Understand variables, data types, and basic operations in Python.",
+        description: "Understand variables, data types, and basic operations in Python.",
         generationStatus: "pending",
         isPublished: true,
         slug: "variables-data-types",
@@ -187,10 +179,7 @@ const lessonsData: ChapterLessons[] = [
   },
 ];
 
-export async function seedLessons(
-  prisma: PrismaClient,
-  org: Organization,
-): Promise<void> {
+export async function seedLessons(prisma: PrismaClient, org: Organization): Promise<void> {
   const allLessonPromises = lessonsData.flatMap((data) =>
     prisma.chapter
       .findFirst({

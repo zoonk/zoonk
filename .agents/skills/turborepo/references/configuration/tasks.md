@@ -11,9 +11,9 @@ Controls task execution order.
   "tasks": {
     "build": {
       "dependsOn": [
-        "^build",        // Dependencies' build tasks first
-        "codegen",       // Same package's codegen task first
-        "shared#build"   // Specific package's build task
+        "^build", // Dependencies' build tasks first
+        "codegen", // Same package's codegen task first
+        "shared#build" // Specific package's build task
       ]
     }
   }
@@ -104,11 +104,7 @@ Files considered when calculating task hash. Defaults to all tracked files in pa
 {
   "tasks": {
     "build": {
-      "inputs": [
-        "$TURBO_DEFAULT$",
-        "!README.md",
-        "$TURBO_ROOT$/tsconfig.base.json"
-      ]
+      "inputs": ["$TURBO_DEFAULT$", "!README.md", "$TURBO_ROOT$/tsconfig.base.json"]
     }
   }
 }
@@ -124,8 +120,8 @@ Environment variables to include in task hash.
     "build": {
       "env": [
         "API_URL",
-        "NEXT_PUBLIC_*",  // Wildcard matching
-        "!DEBUG"          // Exclude from hash
+        "NEXT_PUBLIC_*", // Wildcard matching
+        "!DEBUG" // Exclude from hash
       ]
     }
   }
@@ -189,7 +185,7 @@ Control when logs are shown. Options: `full`, `hash-only`, `new-only`, `errors-o
 {
   "tasks": {
     "build": {
-      "outputLogs": "new-only"  // Only show logs on cache miss
+      "outputLogs": "new-only" // Only show logs on cache miss
     }
   }
 }
@@ -273,7 +269,7 @@ Control task inheritance in Package Configurations.
   "extends": ["//"],
   "tasks": {
     "lint": {
-      "extends": false  // Exclude from this package
+      "extends": false // Exclude from this package
     }
   }
 }

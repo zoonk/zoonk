@@ -1,9 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
-import {
-  courseAlternativeTitleFixture,
-  courseFixture,
-} from "@zoonk/testing/fixtures/courses";
+import { courseAlternativeTitleFixture, courseFixture } from "@zoonk/testing/fixtures/courses";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import { toSlug } from "@zoonk/utils/string";
@@ -23,10 +20,7 @@ describe("findExistingCourse", () => {
   let nonAiOrg: Awaited<ReturnType<typeof organizationFixture>>;
 
   beforeAll(async () => {
-    [aiOrg, nonAiOrg] = await Promise.all([
-      getOrCreateAIOrg(),
-      organizationFixture(),
-    ]);
+    [aiOrg, nonAiOrg] = await Promise.all([getOrCreateAIOrg(), organizationFixture()]);
   });
 
   test("returns null when no course exists with slug/language", async () => {

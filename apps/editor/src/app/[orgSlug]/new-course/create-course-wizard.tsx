@@ -1,10 +1,6 @@
 "use client";
 
-import {
-  useWizard,
-  useWizardKeyboard,
-  WizardContent,
-} from "@zoonk/ui/components/wizard";
+import { useWizard, useWizardKeyboard, WizardContent } from "@zoonk/ui/components/wizard";
 import { toSlug } from "@zoonk/utils/string";
 import { useRouter } from "next/navigation";
 import { useCallback, useState, useTransition } from "react";
@@ -25,8 +21,7 @@ export function CreateCourseWizard({ orgSlug }: { orgSlug: string }) {
   const [isPending, startTransition] = useTransition();
   const [submitError, setSubmitError] = useState<string | null>(null);
 
-  const { formData, updateField, canProceedFromStep, getStepError } =
-    useCourseForm({ orgSlug });
+  const { formData, updateField, canProceedFromStep, getStepError } = useCourseForm({ orgSlug });
 
   const canProceed = canProceedFromStep(wizard.currentStepName);
 
@@ -90,17 +85,11 @@ export function CreateCourseWizard({ orgSlug }: { orgSlug: string }) {
 
       <WizardContent>
         {wizard.currentStepName === "title" && (
-          <TitleStep
-            onChange={(v) => updateField("title", v)}
-            value={formData.title}
-          />
+          <TitleStep onChange={(v) => updateField("title", v)} value={formData.title} />
         )}
 
         {wizard.currentStepName === "language" && (
-          <LanguageStep
-            onChange={(v) => updateField("language", v)}
-            value={formData.language}
-          />
+          <LanguageStep onChange={(v) => updateField("language", v)} value={formData.language} />
         )}
 
         {wizard.currentStepName === "description" && (

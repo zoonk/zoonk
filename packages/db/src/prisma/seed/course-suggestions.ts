@@ -1,9 +1,7 @@
 import { normalizeString, toSlug } from "@zoonk/utils/string";
 import type { PrismaClient } from "../../generated/prisma/client";
 
-export async function seedCourseSuggestions(
-  prisma: PrismaClient,
-): Promise<void> {
+export async function seedCourseSuggestions(prisma: PrismaClient): Promise<void> {
   // English suggestions
   const enSuggestions = [
     {

@@ -1,5 +1,4 @@
 import "server-only";
-
 import { getSession } from "@zoonk/core/users/session/get";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";

@@ -6,10 +6,10 @@ import {
   ContainerHeaderGroup,
   ContainerTitle,
 } from "@zoonk/ui/components/container";
-import type { Metadata } from "next";
 import { Suspense } from "react";
 import UserList from "./user-list";
 import { UserSearch } from "./user-search";
+import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Users",
@@ -21,9 +21,7 @@ export default function UsersPage({ searchParams }: PageProps<"/users">) {
       <ContainerHeader variant="sidebar">
         <ContainerHeaderGroup>
           <ContainerTitle>Users</ContainerTitle>
-          <ContainerDescription>
-            Manage all users in the system.
-          </ContainerDescription>
+          <ContainerDescription>Manage all users in the system.</ContainerDescription>
         </ContainerHeaderGroup>
       </ContainerHeader>
 

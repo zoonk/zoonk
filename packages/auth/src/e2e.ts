@@ -1,11 +1,6 @@
 import { betterAuth } from "better-auth/minimal";
 import { emailOTP } from "better-auth/plugins";
-import {
-  baseAuthConfig,
-  baseAuthPlugins,
-  fullPlugins,
-  socialProviders,
-} from "./config";
+import { baseAuthConfig, baseAuthPlugins, fullPlugins, socialProviders } from "./config";
 import { sendVerificationOTP } from "./plugins/otp";
 
 /**
@@ -20,8 +15,7 @@ export const auth = betterAuth({
     enabled: true,
     password: {
       hash: async (password: string) => password,
-      verify: async ({ hash, password }: { hash: string; password: string }) =>
-        hash === password,
+      verify: async ({ hash, password }: { hash: string; password: string }) => hash === password,
     },
   },
   plugins: [

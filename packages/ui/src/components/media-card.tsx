@@ -1,40 +1,24 @@
 "use client";
 
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@zoonk/ui/components/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@zoonk/ui/components/popover";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronRightIcon, SparklesIcon } from "lucide-react";
 
-export function MediaCard({
-  children,
-  className,
-}: React.ComponentProps<"div">) {
+export function MediaCard({ children, className }: React.ComponentProps<"div">) {
   return (
     <Popover>
-      <div
-        className={cn("mx-auto w-full px-4 lg:max-w-xl", className)}
-        data-slot="media-card"
-      >
+      <div className={cn("mx-auto w-full px-4 lg:max-w-xl", className)} data-slot="media-card">
         {children}
       </div>
     </Popover>
   );
 }
 
-export function MediaCardTrigger({
-  children,
-  className,
-}: React.ComponentProps<"header">) {
+export function MediaCardTrigger({ children, className }: React.ComponentProps<"header">) {
   return (
     <PopoverTrigger
-      className={cn(
-        "flex w-full cursor-pointer flex-row items-start gap-4 text-left",
-        className,
-      )}
+      className={cn("flex w-full cursor-pointer flex-row items-start gap-4 text-left", className)}
       data-slot="media-card-trigger"
       nativeButton={false}
       render={<header />}
@@ -44,16 +28,10 @@ export function MediaCardTrigger({
   );
 }
 
-export function MediaCardImage({
-  children,
-  className,
-}: React.ComponentProps<"div">) {
+export function MediaCardImage({ children, className }: React.ComponentProps<"div">) {
   return (
     <div
-      className={cn(
-        "relative size-20 shrink-0 overflow-hidden rounded-xl sm:size-24",
-        className,
-      )}
+      className={cn("relative size-20 shrink-0 overflow-hidden rounded-xl sm:size-24", className)}
       data-slot="media-card-image"
     >
       {children}
@@ -61,15 +39,11 @@ export function MediaCardImage({
   );
 }
 
-export function MediaCardIcon({
-  children,
-  className,
-  ...props
-}: React.ComponentProps<"div">) {
+export function MediaCardIcon({ children, className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       className={cn(
-        "flex size-20 shrink-0 items-center justify-center rounded-xl bg-muted/70 sm:size-24",
+        "bg-muted/70 flex size-20 shrink-0 items-center justify-center rounded-xl sm:size-24",
         className,
       )}
       data-slot="media-card-icon"
@@ -80,30 +54,18 @@ export function MediaCardIcon({
   );
 }
 
-export function MediaCardContent({
-  children,
-  className,
-}: React.ComponentProps<"div">) {
+export function MediaCardContent({ children, className }: React.ComponentProps<"div">) {
   return (
-    <div
-      className={cn("flex min-w-0 flex-1 flex-col", className)}
-      data-slot="media-card-content"
-    >
+    <div className={cn("flex min-w-0 flex-1 flex-col", className)} data-slot="media-card-content">
       {children}
     </div>
   );
 }
 
-export function MediaCardHeader({
-  children,
-  className,
-}: React.ComponentProps<"div">) {
+export function MediaCardHeader({ children, className }: React.ComponentProps<"div">) {
   return (
     <div
-      className={cn(
-        "grid grid-cols-[1fr_auto] items-center gap-1 pb-1",
-        className,
-      )}
+      className={cn("grid grid-cols-[1fr_auto] items-center gap-1 pb-1", className)}
       data-slot="media-card-header"
     >
       {children}
@@ -111,14 +73,11 @@ export function MediaCardHeader({
   );
 }
 
-export function MediaCardTitle({
-  children,
-  className,
-}: React.ComponentProps<"h1">) {
+export function MediaCardTitle({ children, className }: React.ComponentProps<"h1">) {
   return (
     <h1
       className={cn(
-        "text-balance font-semibold text-base text-foreground/90 leading-none tracking-tight sm:text-lg md:text-xl",
+        "text-foreground/90 text-base leading-none font-semibold tracking-tight text-balance sm:text-lg md:text-xl",
         className,
       )}
       data-slot="media-card-title"
@@ -128,14 +87,11 @@ export function MediaCardTitle({
   );
 }
 
-export function MediaCardDescription({
-  children,
-  className,
-}: React.ComponentProps<"p">) {
+export function MediaCardDescription({ children, className }: React.ComponentProps<"p">) {
   return (
     <p
       className={cn(
-        "mt-0.5 line-clamp-3 text-pretty text-muted-foreground text-sm leading-snug md:leading-relaxed",
+        "text-muted-foreground mt-0.5 line-clamp-3 text-sm leading-snug text-pretty md:leading-relaxed",
         className,
       )}
       data-slot="media-card-description"
@@ -149,16 +105,13 @@ export function MediaCardIndicator({ className }: { className?: string }) {
   return (
     <ChevronRightIcon
       aria-hidden="true"
-      className={cn("size-4 shrink-0 text-muted-foreground/40", className)}
+      className={cn("text-muted-foreground/40 size-4 shrink-0", className)}
       data-slot="media-card-indicator"
     />
   );
 }
 
-export function MediaCardPopover({
-  children,
-  className,
-}: React.ComponentProps<"div">) {
+export function MediaCardPopover({ children, className }: React.ComponentProps<"div">) {
   return (
     <PopoverContent
       align="start"
@@ -179,13 +132,10 @@ export function MediaCardPopover({
   );
 }
 
-export function MediaCardPopoverText({
-  children,
-  className,
-}: React.ComponentProps<"p">) {
+export function MediaCardPopoverText({ children, className }: React.ComponentProps<"p">) {
   return (
     <p
-      className={cn("text-pretty text-sm leading-relaxed", className)}
+      className={cn("text-sm leading-relaxed text-pretty", className)}
       data-slot="media-card-popover-text"
     >
       {children}
@@ -193,10 +143,7 @@ export function MediaCardPopoverText({
   );
 }
 
-export function MediaCardPopoverMeta({
-  children,
-  className,
-}: React.ComponentProps<"div">) {
+export function MediaCardPopoverMeta({ children, className }: React.ComponentProps<"div">) {
   return (
     <div
       className={cn("mt-3 flex flex-col gap-2 border-t pt-3", className)}
@@ -207,10 +154,7 @@ export function MediaCardPopoverMeta({
   );
 }
 
-export function MediaCardPopoverSource({
-  children,
-  className,
-}: React.ComponentProps<"span">) {
+export function MediaCardPopoverSource({ children, className }: React.ComponentProps<"span">) {
   return (
     <span
       className={cn("text-muted-foreground text-xs", className)}
@@ -221,28 +165,19 @@ export function MediaCardPopoverSource({
   );
 }
 
-export function MediaCardPopoverBadges({
-  children,
-  className,
-}: React.ComponentProps<"div">) {
+export function MediaCardPopoverBadges({ children, className }: React.ComponentProps<"div">) {
   return (
-    <div
-      className={cn("flex flex-wrap gap-1.5", className)}
-      data-slot="media-card-popover-badges"
-    >
+    <div className={cn("flex flex-wrap gap-1.5", className)} data-slot="media-card-popover-badges">
       {children}
     </div>
   );
 }
 
-export function MediaCardPopoverAIWarning({
-  children,
-  className,
-}: React.ComponentProps<"p">) {
+export function MediaCardPopoverAIWarning({ children, className }: React.ComponentProps<"p">) {
   return (
     <p
       className={cn(
-        "flex items-start gap-2 rounded-md bg-muted/50 p-2.5 text-muted-foreground text-xs leading-relaxed",
+        "bg-muted/50 text-muted-foreground flex items-start gap-2 rounded-md p-2.5 text-xs leading-relaxed",
         className,
       )}
       data-slot="media-card-popover-ai-warning"
@@ -255,14 +190,8 @@ export function MediaCardPopoverAIWarning({
 
 export function MediaCardSkeleton({ className }: { className?: string }) {
   return (
-    <div
-      className={cn("mx-auto w-full px-4 lg:max-w-xl", className)}
-      data-slot="media-card"
-    >
-      <header
-        className="flex w-full flex-row items-start gap-4"
-        data-slot="media-card-trigger"
-      >
+    <div className={cn("mx-auto w-full px-4 lg:max-w-xl", className)} data-slot="media-card">
+      <header className="flex w-full flex-row items-start gap-4" data-slot="media-card-trigger">
         <Skeleton className="size-20 shrink-0 rounded-xl sm:size-24" />
         <div className="flex min-w-0 flex-1 flex-col">
           <div className="grid grid-cols-[1fr_auto] items-center gap-1">

@@ -1,13 +1,10 @@
 import "server-only";
-
 import { generateText, stepCountIs } from "ai";
 import { buildProviderOptions, type ReasoningEffort } from "../../types";
-
 import { type StepVisualResource, visualTools } from "./_tools/visual";
 import systemPrompt from "./step-visual.prompt.md";
 
-const DEFAULT_MODEL =
-  process.env.AI_MODEL_STEP_VISUAL ?? "google/gemini-3-flash";
+const DEFAULT_MODEL = process.env.AI_MODEL_STEP_VISUAL ?? "google/gemini-3-flash";
 
 const FALLBACK_MODELS = [
   "openai/gpt-5.2",

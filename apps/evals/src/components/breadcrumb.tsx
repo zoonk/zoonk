@@ -8,11 +8,7 @@ import {
 import { cn } from "@zoonk/ui/lib/utils";
 import Link from "next/link";
 
-function AppBreadcrumb({
-  children,
-  className,
-  ...props
-}: React.ComponentProps<"nav">) {
+function AppBreadcrumb({ children, className, ...props }: React.ComponentProps<"nav">) {
   return (
     <Breadcrumb className={cn("px-4 pt-4", className)} {...props}>
       <BreadcrumbList>{children}</BreadcrumbList>
@@ -44,18 +40,10 @@ function TaskPageBreadcrumb({ taskName }: { taskName: string }) {
   );
 }
 
-function TaskLinkBreadcrumb({
-  taskId,
-  taskName,
-}: {
-  taskId: string;
-  taskName: string;
-}) {
+function TaskLinkBreadcrumb({ taskId, taskName }: { taskId: string; taskName: string }) {
   return (
     <BreadcrumbItem>
-      <BreadcrumbLink render={<Link href={`/tasks/${taskId}`} />}>
-        {taskName}
-      </BreadcrumbLink>
+      <BreadcrumbLink render={<Link href={`/tasks/${taskId}`} />}>{taskName}</BreadcrumbLink>
     </BreadcrumbItem>
   );
 }

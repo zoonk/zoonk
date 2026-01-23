@@ -1,18 +1,17 @@
-import { Container, ContainerBody } from "@zoonk/ui/components/container";
-import { Suspense } from "react";
 import { BackLinkSkeleton } from "@/components/back-link";
 import { ContentEditorSkeleton } from "@/components/content-editor";
 import { EditorListSkeleton } from "@/components/editor-list";
 import { SlugEditorSkeleton } from "@/components/slug-editor";
 import { getChapter } from "@/data/chapters/get-chapter";
 import { getCourse } from "@/data/courses/get-course";
+import { Container, ContainerBody } from "@zoonk/ui/components/container";
+import { Suspense } from "react";
 import { ChapterBackLink } from "./chapter-back-link";
 import { ChapterContent } from "./chapter-content";
 import { ChapterSlug } from "./chapter-slug";
 import { LessonList } from "./lesson-list";
 
-type ChapterPageProps =
-  PageProps<"/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]">;
+type ChapterPageProps = PageProps<"/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]">;
 
 export default async function ChapterPage(props: ChapterPageProps) {
   const { chapterSlug, courseSlug, lang, orgSlug } = await props.params;

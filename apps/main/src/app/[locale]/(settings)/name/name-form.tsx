@@ -12,7 +12,6 @@ import { Input } from "@zoonk/ui/components/input";
 import { SubmitButton } from "@zoonk/ui/patterns/buttons/submit";
 import { useExtracted } from "next-intl";
 import { useActionState } from "react";
-
 import { nameFormAction } from "./actions";
 
 type NameFormState = {
@@ -52,9 +51,7 @@ export function NameForm() {
 
           <FieldDynamicDescription
             successMessage={
-              state.status === "success"
-                ? t("Your name has been updated successfully!")
-                : null
+              state.status === "success" ? t("Your name has been updated successfully!") : null
             }
           >
             {t("This name will be visible to other users.")}
@@ -62,9 +59,7 @@ export function NameForm() {
 
           {hasError && (
             <FieldError>
-              {t(
-                "Failed to update your name. Please try again or contact hello@zoonk.com",
-              )}
+              {t("Failed to update your name. Please try again or contact hello@zoonk.com")}
             </FieldError>
           )}
         </FieldContent>

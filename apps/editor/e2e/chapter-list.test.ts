@@ -7,9 +7,7 @@ import tmp from "tmp";
 import { expect, type Page, test } from "./fixtures";
 import { getMoreOptionsButton, importFlow } from "./helpers/import-dialog";
 
-function createImportFile(
-  chapters: { title: string; description: string }[],
-): string {
+function createImportFile(chapters: { title: string; description: string }[]): string {
   const content = JSON.stringify({ chapters }, null, 2);
   const tmpFile = tmp.fileSync({ postfix: ".json", prefix: "chapters-" });
   fs.writeFileSync(tmpFile.name, content);
@@ -47,15 +45,10 @@ async function createTestCourse(chapterCount = 0) {
 async function navigateToCoursePage(page: Page, slug: string) {
   await page.goto(`/ai/c/en/${slug}`);
 
-  await expect(
-    page.getByRole("textbox", { name: /edit course title/i }),
-  ).toBeVisible();
+  await expect(page.getByRole("textbox", { name: /edit course title/i })).toBeVisible();
 }
 
-async function expectChaptersVisible(
-  page: Page,
-  chapters: { position: number; title: string }[],
-) {
+async function expectChaptersVisible(page: Page, chapters: { position: number; title: string }[]) {
   await Promise.all(
     chapters.map(async ({ position, title }) => {
       // Find the listitem containing both the position number and title link
@@ -64,24 +57,18 @@ async function expectChaptersVisible(
         hasText: new RegExp(String(position).padStart(2, "0")),
       });
 
-      await expect(
-        listItem.getByRole("link", { name: new RegExp(title, "i") }),
-      ).toBeVisible();
+      await expect(listItem.getByRole("link", { name: new RegExp(title, "i") })).toBeVisible();
     }),
   );
 }
 
 async function expectChapterNotVisible(page: Page, title: string) {
-  await expect(
-    page.getByRole("link", { name: new RegExp(title, "i") }),
-  ).not.toBeVisible();
+  await expect(page.getByRole("link", { name: new RegExp(title, "i") })).not.toBeVisible();
 }
 
 test.describe("Chapter List", () => {
   test.describe("Display", () => {
-    test("displays existing chapters with position and title", async ({
-      authenticatedPage,
-    }) => {
+    test("displays existing chapters with position and title", async ({ authenticatedPage }) => {
       const { course } = await createTestCourse(3);
 
       await navigateToCoursePage(authenticatedPage, course.slug);
@@ -93,9 +80,7 @@ test.describe("Chapter List", () => {
       ]);
     });
 
-    test("displays chapter description when available", async ({
-      authenticatedPage,
-    }) => {
+    test("displays chapter description when available", async ({ authenticatedPage }) => {
       const { course, org } = await createTestCourse();
       const uniqueDesc = `Description ${randomUUID().slice(0, 8)}`;
 
@@ -115,16 +100,12 @@ test.describe("Chapter List", () => {
   });
 
   test.describe("Add Chapter", () => {
-    test("adds a chapter and shows chapter edit page", async ({
-      authenticatedPage,
-    }) => {
+    test("adds a chapter and shows chapter edit page", async ({ authenticatedPage }) => {
       const { course } = await createTestCourse();
 
       await navigateToCoursePage(authenticatedPage, course.slug);
 
-      await authenticatedPage
-        .getByRole("button", { name: /add chapter/i })
-        .click();
+      await authenticatedPage.getByRole("button", { name: /add chapter/i }).click();
 
       // Verify destination page content (not just URL)
       await expect(
@@ -137,9 +118,7 @@ test.describe("Chapter List", () => {
       ).toHaveValue(/untitled chapter/i);
     });
 
-    test("inserts chapter at middle position", async ({
-      authenticatedPage,
-    }) => {
+    test("inserts chapter at middle position", async ({ authenticatedPage }) => {
       const { course } = await createTestCourse(4);
 
       await navigateToCoursePage(authenticatedPage, course.slug);
@@ -192,9 +171,7 @@ test.describe("Chapter List", () => {
   });
 
   test.describe("Reorder", () => {
-    test("reorders chapters and persists after reload", async ({
-      authenticatedPage,
-    }) => {
+    test("reorders chapters and persists after reload", async ({ authenticatedPage }) => {
       const { course } = await createTestCourse(3);
 
       await navigateToCoursePage(authenticatedPage, course.slug);
@@ -244,11 +221,9 @@ test.describe("Chapter List", () => {
         { steps: 5 },
       );
 
-      await authenticatedPage.mouse.move(
-        boxes.first.x + boxes.first.width / 2,
-        targetY,
-        { steps: 10 },
-      );
+      await authenticatedPage.mouse.move(boxes.first.x + boxes.first.width / 2, targetY, {
+        steps: 10,
+      });
 
       await authenticatedPage.mouse.up();
 
@@ -282,9 +257,7 @@ test.describe("Chapter List", () => {
 
       const downloadPromise = authenticatedPage.waitForEvent("download");
 
-      await authenticatedPage
-        .getByRole("menuitem", { name: /export/i })
-        .click();
+      await authenticatedPage.getByRole("menuitem", { name: /export/i }).click();
 
       const download = await downloadPromise;
 
@@ -300,9 +273,7 @@ test.describe("Chapter List", () => {
       expect(json.chapters).toHaveLength(chapters.length);
 
       // Verify actual content, not just count
-      const exportedTitles = json.chapters.map(
-        (c: { title: string }) => c.title,
-      );
+      const exportedTitles = json.chapters.map((c: { title: string }) => c.title);
       expect(exportedTitles).toContain("Chapter 1");
       expect(exportedTitles).toContain("Chapter 2");
     });
@@ -323,24 +294,16 @@ test.describe("Chapter List", () => {
       try {
         await navigateToCoursePage(authenticatedPage, course.slug);
 
-        await expect(
-          authenticatedPage.getByRole("link", { name: existingTitle }),
-        ).toBeVisible();
+        await expect(authenticatedPage.getByRole("link", { name: existingTitle })).toBeVisible();
 
         await importFlow(authenticatedPage, importFile, "merge");
 
         // Verify all chapters are visible (existing + imported)
-        await expect(
-          authenticatedPage.getByRole("link", { name: existingTitle }),
-        ).toBeVisible();
+        await expect(authenticatedPage.getByRole("link", { name: existingTitle })).toBeVisible();
 
-        await expect(
-          authenticatedPage.getByRole("link", { name: importedTitle1 }),
-        ).toBeVisible();
+        await expect(authenticatedPage.getByRole("link", { name: importedTitle1 })).toBeVisible();
 
-        await expect(
-          authenticatedPage.getByRole("link", { name: importedTitle2 }),
-        ).toBeVisible();
+        await expect(authenticatedPage.getByRole("link", { name: importedTitle2 })).toBeVisible();
 
         // Verify persistence after reload
         await authenticatedPage.reload();
@@ -351,17 +314,11 @@ test.describe("Chapter List", () => {
           }),
         ).toBeVisible();
 
-        await expect(
-          authenticatedPage.getByRole("link", { name: existingTitle }),
-        ).toBeVisible();
+        await expect(authenticatedPage.getByRole("link", { name: existingTitle })).toBeVisible();
 
-        await expect(
-          authenticatedPage.getByRole("link", { name: importedTitle1 }),
-        ).toBeVisible();
+        await expect(authenticatedPage.getByRole("link", { name: importedTitle1 })).toBeVisible();
 
-        await expect(
-          authenticatedPage.getByRole("link", { name: importedTitle2 }),
-        ).toBeVisible();
+        await expect(authenticatedPage.getByRole("link", { name: importedTitle2 })).toBeVisible();
       } finally {
         fs.unlinkSync(importFile);
       }
@@ -383,9 +340,7 @@ test.describe("Chapter List", () => {
       try {
         await navigateToCoursePage(authenticatedPage, course.slug);
 
-        await expect(
-          authenticatedPage.getByRole("link", { name: existingTitle }),
-        ).toBeVisible();
+        await expect(authenticatedPage.getByRole("link", { name: existingTitle })).toBeVisible();
 
         await importFlow(authenticatedPage, importFile, "replace");
 
@@ -393,13 +348,9 @@ test.describe("Chapter List", () => {
         await expectChapterNotVisible(authenticatedPage, existingTitle);
 
         // Only imported chapters should be visible
-        await expect(
-          authenticatedPage.getByRole("link", { name: importedTitle1 }),
-        ).toBeVisible();
+        await expect(authenticatedPage.getByRole("link", { name: importedTitle1 })).toBeVisible();
 
-        await expect(
-          authenticatedPage.getByRole("link", { name: importedTitle2 }),
-        ).toBeVisible();
+        await expect(authenticatedPage.getByRole("link", { name: importedTitle2 })).toBeVisible();
 
         // Verify persistence after reload
         await authenticatedPage.reload();
@@ -412,13 +363,9 @@ test.describe("Chapter List", () => {
 
         await expectChapterNotVisible(authenticatedPage, existingTitle);
 
-        await expect(
-          authenticatedPage.getByRole("link", { name: importedTitle1 }),
-        ).toBeVisible();
+        await expect(authenticatedPage.getByRole("link", { name: importedTitle1 })).toBeVisible();
 
-        await expect(
-          authenticatedPage.getByRole("link", { name: importedTitle2 }),
-        ).toBeVisible();
+        await expect(authenticatedPage.getByRole("link", { name: importedTitle2 })).toBeVisible();
       } finally {
         fs.unlinkSync(importFile);
       }

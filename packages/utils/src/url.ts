@@ -1,7 +1,6 @@
 import { DEFAULT_LOCALE } from "./locale";
 
-const AUTH_APP_URL =
-  process.env.NEXT_PUBLIC_AUTH_APP_URL || "https://auth.zoonk.com";
+const AUTH_APP_URL = process.env.NEXT_PUBLIC_AUTH_APP_URL || "https://auth.zoonk.com";
 
 const isProduction = process.env.NODE_ENV === "production";
 const isE2E = process.env.E2E_TESTING === "true";
@@ -97,14 +96,10 @@ export function getDevTrustedOrigins(): string[] {
     return [];
   }
 
-  const localhostOrigins = Array.from(
-    { length: 10 },
-    (_, i) => `http://localhost:${3000 + i}`,
-  );
+  const localhostOrigins = Array.from({ length: 10 }, (_, i) => `http://localhost:${3000 + i}`);
 
   const customOrigins =
-    process.env.TRUSTED_ORIGINS?.split(",").map((origin) => origin.trim()) ??
-    [];
+    process.env.TRUSTED_ORIGINS?.split(",").map((origin) => origin.trim()) ?? [];
 
   return [...localhostOrigins, ...customOrigins];
 }

@@ -36,9 +36,7 @@ export function ProtectedSection({
           <Spinner />
         </ProtectedPendingMedia>
 
-        {pendingTitle && (
-          <ProtectedPendingTitle>{pendingTitle}</ProtectedPendingTitle>
-        )}
+        {pendingTitle && <ProtectedPendingTitle>{pendingTitle}</ProtectedPendingTitle>}
       </ProtectedPending>
     );
   }

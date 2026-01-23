@@ -5,8 +5,8 @@ import { Navbar } from "@zoonk/ui/components/navbar";
 import { ProgressDots } from "@zoonk/ui/components/progress-dots";
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { ChevronLeftIcon, ChevronRightIcon, XIcon } from "lucide-react";
-import Link from "next/link";
 import { useExtracted } from "next-intl";
+import Link from "next/link";
 
 export function CreateCourseNavbar({
   currentStep,
@@ -45,12 +45,7 @@ export function CreateCourseNavbar({
           <span className="sr-only">{t("Close")}</span>
         </Link>
 
-        <Button
-          disabled={isFirstStep}
-          onClick={onBack}
-          size="icon"
-          variant="outline"
-        >
+        <Button disabled={isFirstStep} onClick={onBack} size="icon" variant="outline">
           <ChevronLeftIcon aria-hidden="true" />
           <span className="sr-only">{t("Back")}</span>
         </Button>

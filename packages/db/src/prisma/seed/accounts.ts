@@ -3,10 +3,7 @@ import type { SeedUsers } from "./users";
 
 const TEST_PASSWORD = "password123";
 
-export async function seedAccounts(
-  prisma: PrismaClient,
-  users: SeedUsers,
-): Promise<void> {
+export async function seedAccounts(prisma: PrismaClient, users: SeedUsers): Promise<void> {
   const accountData = Object.values(users).map((user) => ({
     accountId: user.email,
     password: TEST_PASSWORD,

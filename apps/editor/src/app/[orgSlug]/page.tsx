@@ -1,14 +1,12 @@
 import { getOrganization } from "@zoonk/core/orgs/get";
 import { Container } from "@zoonk/ui/components/container";
 import { CourseListSkeleton } from "@zoonk/ui/patterns/courses/list";
-import type { Metadata } from "next";
 import { Suspense } from "react";
 import { HomeContainerHeader } from "./home-container-header";
 import { ListCourses } from "./list-courses";
+import type { Metadata } from "next";
 
-export async function generateMetadata({
-  params,
-}: PageProps<"/[orgSlug]">): Promise<Metadata> {
+export async function generateMetadata({ params }: PageProps<"/[orgSlug]">): Promise<Metadata> {
   const { orgSlug } = await params;
   const { data: org } = await getOrganization(orgSlug);
 

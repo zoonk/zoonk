@@ -1,17 +1,8 @@
 "use client";
 
-import {
-  ContainerHeader,
-  ContainerHeaderGroup,
-} from "@zoonk/ui/components/container";
-import {
-  EditableText,
-  EditableTextarea,
-} from "@zoonk/ui/components/editable-text";
-import {
-  combineSaveStatuses,
-  SaveStatus,
-} from "@zoonk/ui/components/save-status";
+import { ContainerHeader, ContainerHeaderGroup } from "@zoonk/ui/components/container";
+import { EditableText, EditableTextarea } from "@zoonk/ui/components/editable-text";
+import { combineSaveStatuses, SaveStatus } from "@zoonk/ui/components/save-status";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { useAutoSave } from "@zoonk/ui/hooks/auto-save";
 import { useExtracted } from "next-intl";
@@ -32,10 +23,7 @@ type ContentEditorProps = {
   entityId: number;
   initialTitle: string;
   initialDescription: string;
-  onSaveTitle: (
-    id: number,
-    data: { title: string },
-  ) => Promise<{ error: string | null }>;
+  onSaveTitle: (id: number, data: { title: string }) => Promise<{ error: string | null }>;
   onSaveDescription: (
     id: number,
     data: { description: string },

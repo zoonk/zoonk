@@ -1,13 +1,7 @@
-import {
-  Table,
-  TableBody,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@zoonk/ui/components/table";
 import { AdminPagination } from "@/components/pagination";
 import { listCourses } from "@/data/courses/list-courses";
 import { parseSearchParams } from "@/lib/parse-search-params";
+import { Table, TableBody, TableHead, TableHeader, TableRow } from "@zoonk/ui/components/table";
 import { CourseRow } from "./course-row";
 
 export default async function CourseList({

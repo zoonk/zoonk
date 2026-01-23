@@ -1,9 +1,5 @@
 import { normalizeString } from "@zoonk/utils/string";
-import type {
-  GenerationStatus,
-  Organization,
-  PrismaClient,
-} from "../../generated/prisma/client";
+import type { GenerationStatus, Organization, PrismaClient } from "../../generated/prisma/client";
 
 type ChapterSeedData = {
   description: string;
@@ -123,8 +119,7 @@ const chaptersData: CourseChapters[] = [
         title: "Spanish Basics",
       },
       {
-        description:
-          "Build essential vocabulary for travel, food, family, and daily activities.",
+        description: "Build essential vocabulary for travel, food, family, and daily activities.",
         generationStatus: "pending",
         isPublished: true,
         slug: "essential-vocabulary",
@@ -159,8 +154,7 @@ const chaptersData: CourseChapters[] = [
   {
     chapters: [
       {
-        description:
-          "Learn Python syntax, variables, data types, and write your first programs.",
+        description: "Learn Python syntax, variables, data types, and write your first programs.",
         generationStatus: "completed",
         isPublished: true,
         slug: "python-fundamentals",
@@ -175,8 +169,7 @@ const chaptersData: CourseChapters[] = [
         title: "Data Structures",
       },
       {
-        description:
-          "A chapter with no lessons for E2E testing generation status.",
+        description: "A chapter with no lessons for E2E testing generation status.",
         generationStatus: "pending",
         isPublished: true,
         slug: "e2e-no-lessons-chapter",
@@ -276,13 +269,8 @@ async function seedChaptersForCourse(
   await Promise.all(chapterPromises);
 }
 
-export async function seedChapters(
-  prisma: PrismaClient,
-  org: Organization,
-): Promise<void> {
-  const seedPromises = chaptersData.map((data) =>
-    seedChaptersForCourse(prisma, org, data),
-  );
+export async function seedChapters(prisma: PrismaClient, org: Organization): Promise<void> {
+  const seedPromises = chaptersData.map((data) => seedChaptersForCourse(prisma, org, data));
 
   await Promise.all(seedPromises);
 }

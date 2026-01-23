@@ -4,19 +4,13 @@ test.describe("Support page", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/support");
 
-    await expect(
-      page.getByRole("heading", { name: /help & support/i }),
-    ).toBeVisible();
+    await expect(page.getByRole("heading", { name: /help & support/i })).toBeVisible();
   });
 
   test("shows page content with support options", async ({ page }) => {
-    await expect(
-      page.getByRole("link", { name: /github discussions/i }),
-    ).toBeVisible();
+    await expect(page.getByRole("link", { name: /github discussions/i })).toBeVisible();
 
-    await expect(
-      page.getByRole("button", { name: /contact support/i }),
-    ).toBeVisible();
+    await expect(page.getByRole("button", { name: /contact support/i })).toBeVisible();
   });
 
   test("submit with valid data shows success message", async ({ page }) => {
@@ -67,18 +61,12 @@ test.describe("Support page", () => {
 });
 
 test.describe("Support page - Authenticated", () => {
-  test("email field shows authenticated user's email", async ({
-    authenticatedPage,
-  }) => {
+  test("email field shows authenticated user's email", async ({ authenticatedPage }) => {
     await authenticatedPage.goto("/support");
 
-    await authenticatedPage
-      .getByRole("button", { name: /contact support/i })
-      .click();
+    await authenticatedPage.getByRole("button", { name: /contact support/i }).click();
 
-    const emailInput = authenticatedPage
-      .getByRole("dialog")
-      .getByLabel(/email/i);
+    const emailInput = authenticatedPage.getByRole("dialog").getByLabel(/email/i);
 
     await expect(emailInput).toBeEnabled();
 

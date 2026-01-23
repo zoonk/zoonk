@@ -1,19 +1,12 @@
-import {
-  CourseListGroup,
-  CourseListItemView,
-} from "@zoonk/ui/patterns/courses/list";
+import { listDraftCourses } from "@/data/courses/list-draft-courses";
+import { CourseListGroup, CourseListItemView } from "@zoonk/ui/patterns/courses/list";
 import { EmptyView } from "@zoonk/ui/patterns/empty";
 import { NotebookPenIcon } from "lucide-react";
+import { getExtracted } from "next-intl/server";
 import Image from "next/image";
 import Link from "next/link";
-import { getExtracted } from "next-intl/server";
-import { listDraftCourses } from "@/data/courses/list-draft-courses";
 
-export async function ListCourses({
-  params,
-}: {
-  params: PageProps<"/[orgSlug]">["params"];
-}) {
+export async function ListCourses({ params }: { params: PageProps<"/[orgSlug]">["params"] }) {
   const { orgSlug } = await params;
   const { data: courses } = await listDraftCourses({ orgSlug });
 
@@ -36,20 +29,12 @@ export async function ListCourses({
           course={course}
           image={
             course.imageUrl ? (
-              <Image
-                alt={course.title}
-                height={64}
-                src={course.imageUrl}
-                width={64}
-              />
+              <Image alt={course.title} height={64} src={course.imageUrl} width={64} />
             ) : undefined
           }
           key={course.id}
           linkComponent={
-            <Link
-              href={`/${orgSlug}/c/${course.language}/${course.slug}`}
-              prefetch={true}
-            />
+            <Link href={`/${orgSlug}/c/${course.language}/${course.slug}`} prefetch={true} />
           }
         />
       ))}

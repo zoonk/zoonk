@@ -10,9 +10,7 @@ export type TokenResult =
   | { success: true; url: string }
   | { success: false; error: "UNTRUSTED_ORIGIN" };
 
-export async function createOneTimeTokenAction(
-  redirectTo: string,
-): Promise<TokenResult> {
+export async function createOneTimeTokenAction(redirectTo: string): Promise<TokenResult> {
   const reqHeaders = await headers();
 
   // First, validate that the redirect URL is a trusted origin

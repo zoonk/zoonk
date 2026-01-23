@@ -1,5 +1,6 @@
 "use cache";
 
+import { LIST_COURSES_LIMIT, listCourses } from "@/data/courses/list-courses";
 import {
   Container,
   ContainerDescription,
@@ -8,11 +9,10 @@ import {
   ContainerTitle,
 } from "@zoonk/ui/components/container";
 import { cacheTagCoursesList } from "@zoonk/utils/cache";
-import type { Metadata } from "next";
-import { cacheTag } from "next/cache";
 import { getExtracted, setRequestLocale } from "next-intl/server";
-import { LIST_COURSES_LIMIT, listCourses } from "@/data/courses/list-courses";
+import { cacheTag } from "next/cache";
 import { CourseListClient } from "./course-list-client";
+import type { Metadata } from "next";
 
 export async function generateMetadata({
   params,
@@ -28,9 +28,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function Courses({
-  params,
-}: PageProps<"/[locale]/courses">) {
+export default async function Courses({ params }: PageProps<"/[locale]/courses">) {
   const { locale } = await params;
   setRequestLocale(locale);
   cacheTag(cacheTagCoursesList({ language: locale }));
@@ -43,17 +41,11 @@ export default async function Courses({
       <ContainerHeader>
         <ContainerHeaderGroup>
           <ContainerTitle>{t("Explore courses")}</ContainerTitle>
-          <ContainerDescription>
-            {t("Start learning something new today")}
-          </ContainerDescription>
+          <ContainerDescription>{t("Start learning something new today")}</ContainerDescription>
         </ContainerHeaderGroup>
       </ContainerHeader>
 
-      <CourseListClient
-        initialCourses={courses}
-        language={locale}
-        limit={LIST_COURSES_LIMIT}
-      />
+      <CourseListClient initialCourses={courses} language={locale} limit={LIST_COURSES_LIMIT} />
     </Container>
   );
 }

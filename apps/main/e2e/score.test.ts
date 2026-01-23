@@ -6,74 +6,49 @@ test.describe("Score Page", () => {
       await page.goto("/score");
 
       // User sees prompt to log in
-      await expect(
-        page.getByText(/log in to track your progress/i),
-      ).toBeVisible();
+      await expect(page.getByText(/log in to track your progress/i)).toBeVisible();
 
       // Login link points to correct destination
-      await expect(page.getByRole("link", { name: /login/i })).toHaveAttribute(
-        "href",
-        "/login",
-      );
+      await expect(page.getByRole("link", { name: /login/i })).toHaveAttribute("href", "/login");
     });
   });
 
   test.describe("Authenticated Users", () => {
-    test("navigates to score page and sees score details", async ({
-      authenticatedPage,
-    }) => {
+    test("navigates to score page and sees score details", async ({ authenticatedPage }) => {
       await authenticatedPage.goto("/score");
 
       // User sees the score page heading
-      await expect(
-        authenticatedPage.getByRole("heading", { name: /^score$/i }),
-      ).toBeVisible();
+      await expect(authenticatedPage.getByRole("heading", { name: /^score$/i })).toBeVisible();
 
       // User sees comparison to previous month (proves dynamic data loaded)
       await expect(authenticatedPage.getByText(/vs last month/i)).toBeVisible();
     });
 
-    test("sees best day and best time insights", async ({
-      authenticatedPage,
-    }) => {
+    test("sees best day and best time insights", async ({ authenticatedPage }) => {
       await authenticatedPage.goto("/score");
 
-      await expect(
-        authenticatedPage.getByRole("heading", { name: /best day/i }),
-      ).toBeVisible();
+      await expect(authenticatedPage.getByRole("heading", { name: /best day/i })).toBeVisible();
 
-      await expect(
-        authenticatedPage.getByRole("heading", { name: /best time/i }),
-      ).toBeVisible();
+      await expect(authenticatedPage.getByRole("heading", { name: /best time/i })).toBeVisible();
     });
 
-    test("switching to 6 months shows different comparison text", async ({
-      authenticatedPage,
-    }) => {
+    test("switching to 6 months shows different comparison text", async ({ authenticatedPage }) => {
       await authenticatedPage.goto("/score");
 
       // Verify we start with month comparison
       await expect(authenticatedPage.getByText(/vs last month/i)).toBeVisible();
 
       // Switch to 6 months
-      await authenticatedPage
-        .getByRole("button", { name: /6 months/i })
-        .click();
+      await authenticatedPage.getByRole("button", { name: /6 months/i }).click();
 
       // Comparison text changes to reference 6 months
-      await expect(
-        authenticatedPage.getByText(/vs last 6 months/i),
-      ).toBeVisible();
+      await expect(authenticatedPage.getByText(/vs last 6 months/i)).toBeVisible();
 
       // The month comparison should no longer be visible
-      await expect(
-        authenticatedPage.getByText(/vs last month/i),
-      ).not.toBeVisible();
+      await expect(authenticatedPage.getByText(/vs last month/i)).not.toBeVisible();
     });
 
-    test("switching to year shows different comparison text", async ({
-      authenticatedPage,
-    }) => {
+    test("switching to year shows different comparison text", async ({ authenticatedPage }) => {
       await authenticatedPage.goto("/score");
 
       // Switch directly to year
@@ -83,17 +58,11 @@ test.describe("Score Page", () => {
       await expect(authenticatedPage.getByText(/vs last year/i)).toBeVisible();
 
       // Other comparison texts should not be visible
-      await expect(
-        authenticatedPage.getByText(/vs last month/i),
-      ).not.toBeVisible();
-      await expect(
-        authenticatedPage.getByText(/vs last 6 months/i),
-      ).not.toBeVisible();
+      await expect(authenticatedPage.getByText(/vs last month/i)).not.toBeVisible();
+      await expect(authenticatedPage.getByText(/vs last 6 months/i)).not.toBeVisible();
     });
 
-    test("resets offset when switching periods", async ({
-      authenticatedPage,
-    }) => {
+    test("resets offset when switching periods", async ({ authenticatedPage }) => {
       await authenticatedPage.goto("/score");
 
       // Verify we see the comparison initially
@@ -108,17 +77,13 @@ test.describe("Score Page", () => {
       await authenticatedPage.waitForURL(/offset=1/);
 
       // Now switch to "6 Months" - should reset offset and show data
-      await authenticatedPage
-        .getByRole("button", { name: /6 months/i })
-        .click();
+      await authenticatedPage.getByRole("button", { name: /6 months/i }).click();
 
       // URL should not contain offset anymore (or should be reset to 0)
       await expect(authenticatedPage).not.toHaveURL(/offset=1/);
 
       // Should see the comparison for 6 months (not "Start learning" message)
-      await expect(
-        authenticatedPage.getByText(/vs last 6 months/i),
-      ).toBeVisible();
+      await expect(authenticatedPage.getByText(/vs last 6 months/i)).toBeVisible();
 
       // Should NOT see the "start learning" prompt
       await expect(
@@ -126,9 +91,7 @@ test.describe("Score Page", () => {
       ).not.toBeVisible();
     });
 
-    test("displays score explanation section", async ({
-      authenticatedPage,
-    }) => {
+    test("displays score explanation section", async ({ authenticatedPage }) => {
       await authenticatedPage.goto("/score");
 
       // User sees the explanation about score
@@ -136,9 +99,7 @@ test.describe("Score Page", () => {
 
       // User sees the explanation text
       await expect(
-        authenticatedPage.getByText(
-          /percentage of questions you answered correctly/i,
-        ),
+        authenticatedPage.getByText(/percentage of questions you answered correctly/i),
       ).toBeVisible();
     });
   });

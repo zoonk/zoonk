@@ -1,13 +1,7 @@
-import {
-  Table,
-  TableBody,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@zoonk/ui/components/table";
 import { AdminPagination } from "@/components/pagination";
 import { listUsers } from "@/data/users/list-users";
 import { parseSearchParams } from "@/lib/parse-search-params";
+import { Table, TableBody, TableHead, TableHeader, TableRow } from "@zoonk/ui/components/table";
 import { UserRow } from "./user-row";
 
 export default async function UserList({

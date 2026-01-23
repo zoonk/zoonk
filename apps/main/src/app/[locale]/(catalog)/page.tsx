@@ -1,17 +1,15 @@
-import type { Metadata } from "next";
-import { getExtracted, setRequestLocale } from "next-intl/server";
-import { Suspense } from "react";
 import { getContinueLearning } from "@/data/courses/get-continue-learning";
 import { getBeltLevel } from "@/data/progress/get-belt-level";
 import { getBestDay } from "@/data/progress/get-best-day";
 import { getBestTime } from "@/data/progress/get-best-time";
 import { getEnergyLevel } from "@/data/progress/get-energy-level";
 import { getScore } from "@/data/progress/get-score";
+import { getExtracted, setRequestLocale } from "next-intl/server";
+import { Suspense } from "react";
 import { HomeContent, HomeContentSkeleton } from "./home-content";
+import type { Metadata } from "next";
 
-export async function generateMetadata({
-  params,
-}: PageProps<"/[locale]">): Promise<Metadata> {
+export async function generateMetadata({ params }: PageProps<"/[locale]">): Promise<Metadata> {
   const { locale } = await params;
   const t = await getExtracted({ locale });
 

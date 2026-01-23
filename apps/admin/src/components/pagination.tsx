@@ -33,15 +33,10 @@ function buildPageUrl(
   return `${basePath}?${params.toString()}`;
 }
 
-function getVisiblePageNumbers(
-  currentPage: number,
-  totalPages: number,
-): number[] {
+function getVisiblePageNumbers(currentPage: number, totalPages: number): number[] {
   return Array.from({ length: totalPages }, (_, index) => index + 1).filter(
     (pageNumber) =>
-      pageNumber === 1 ||
-      pageNumber === totalPages ||
-      Math.abs(pageNumber - currentPage) <= 1,
+      pageNumber === 1 || pageNumber === totalPages || Math.abs(pageNumber - currentPage) <= 1,
   );
 }
 
@@ -76,11 +71,7 @@ export function AdminPagination({
           <PaginationPrevious
             aria-disabled={isFirstPage}
             className={isFirstPage ? "pointer-events-none opacity-50" : ""}
-            href={
-              isFirstPage
-                ? "#"
-                : buildPageUrl(basePath, page - 1, limit, search)
-            }
+            href={isFirstPage ? "#" : buildPageUrl(basePath, page - 1, limit, search)}
           />
         </PaginationItem>
 
@@ -107,9 +98,7 @@ export function AdminPagination({
           <PaginationNext
             aria-disabled={isLastPage}
             className={isLastPage ? "pointer-events-none opacity-50" : ""}
-            href={
-              isLastPage ? "#" : buildPageUrl(basePath, page + 1, limit, search)
-            }
+            href={isLastPage ? "#" : buildPageUrl(basePath, page + 1, limit, search)}
           />
         </PaginationItem>
       </PaginationContent>

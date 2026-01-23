@@ -1,16 +1,14 @@
-import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
-import { headers } from "next/headers";
-import { notFound } from "next/navigation";
-import { getExtracted } from "next-intl/server";
 import { DeleteItemButton } from "@/components/navbar/delete-item-button";
 import { PublishToggle } from "@/components/navbar/publish-toggle";
 import { getCourse } from "@/data/courses/get-course";
+import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
+import { getExtracted } from "next-intl/server";
+import { headers } from "next/headers";
+import { notFound } from "next/navigation";
 import { deleteCourseAction, togglePublishAction } from "./actions";
 import { CourseActionsContainer } from "./course-actions-container";
 
-export async function CourseActions({
-  params,
-}: PageProps<"/[orgSlug]/c/[lang]/[courseSlug]">) {
+export async function CourseActions({ params }: PageProps<"/[orgSlug]/c/[lang]/[courseSlug]">) {
   const { courseSlug, lang, orgSlug } = await params;
   const t = await getExtracted();
   const courseUrl = `/${orgSlug}/c/${lang}/${courseSlug}`;
@@ -45,12 +43,7 @@ export async function CourseActions({
 
       {canDelete && (
         <DeleteItemButton
-          onDelete={deleteCourseAction.bind(
-            null,
-            courseSlug,
-            orgSlug,
-            course.id,
-          )}
+          onDelete={deleteCourseAction.bind(null, courseSlug, orgSlug, course.id)}
           srLabel={t("Delete course")}
           title={t("Delete course?")}
         />

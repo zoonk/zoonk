@@ -1,8 +1,8 @@
 "use client";
 
+import { useSlugCheck } from "@/lib/use-slug-check";
 import { useExtracted, useLocale } from "next-intl";
 import { useState } from "react";
-import { useSlugCheck } from "@/lib/use-slug-check";
 import { checkSlugExists } from "./actions";
 
 export type CourseFormData = {
@@ -34,10 +34,7 @@ export function useCourseForm({ orgSlug }: { orgSlug: string }) {
     slug: formData.slug,
   });
 
-  const updateField = <K extends keyof CourseFormData>(
-    field: K,
-    value: CourseFormData[K],
-  ) => {
+  const updateField = <K extends keyof CourseFormData>(field: K, value: CourseFormData[K]) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 

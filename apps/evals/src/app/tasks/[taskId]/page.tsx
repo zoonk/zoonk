@@ -1,3 +1,10 @@
+import { AppBreadcrumb, HomeLinkBreadcrumb, TaskPageBreadcrumb } from "@/components/breadcrumb";
+import { ModelStatusBadge } from "@/components/model-status-badge";
+import { getBattleLeaderboard } from "@/lib/battle-loader";
+import { getModelDisplayName } from "@/lib/models";
+import { getModelsWithCompleteOutputs } from "@/lib/output-loader";
+import { getModelsWithResults, getSortedModels } from "@/lib/utils";
+import { getTaskById, RUNS_PER_TEST_CASE } from "@/tasks";
 import { BreadcrumbSeparator } from "@zoonk/ui/components/breadcrumb";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import {
@@ -18,17 +25,6 @@ import { SubmitButton } from "@zoonk/ui/patterns/buttons/submit";
 import { MessageSquareTextIcon, SwordsIcon } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import {
-  AppBreadcrumb,
-  HomeLinkBreadcrumb,
-  TaskPageBreadcrumb,
-} from "@/components/breadcrumb";
-import { ModelStatusBadge } from "@/components/model-status-badge";
-import { getBattleLeaderboard } from "@/lib/battle-loader";
-import { getModelDisplayName } from "@/lib/models";
-import { getModelsWithCompleteOutputs } from "@/lib/output-loader";
-import { getModelsWithResults, getSortedModels } from "@/lib/utils";
-import { getTaskById, RUNS_PER_TEST_CASE } from "@/tasks";
 import { runBattleModeAction } from "./actions";
 import { LeaderboardTabs } from "./leaderboard-tabs";
 
@@ -44,13 +40,12 @@ export default async function TaskPage({ params }: TaskPageProps) {
     notFound();
   }
 
-  const [sortedModels, modelsWithResults, battleEntries, modelsReadyForBattle] =
-    await Promise.all([
-      getSortedModels(taskId),
-      getModelsWithResults(taskId),
-      getBattleLeaderboard(taskId),
-      getModelsWithCompleteOutputs(taskId, task.testCases.length),
-    ]);
+  const [sortedModels, modelsWithResults, battleEntries, modelsReadyForBattle] = await Promise.all([
+    getSortedModels(taskId),
+    getModelsWithResults(taskId),
+    getBattleLeaderboard(taskId),
+    getModelsWithCompleteOutputs(taskId, task.testCases.length),
+  ]);
 
   const canRunBattle = modelsReadyForBattle.length >= 2;
 
@@ -66,8 +61,8 @@ export default async function TaskPage({ params }: TaskPageProps) {
         <ContainerHeaderGroup>
           <ContainerTitle>{task.name}</ContainerTitle>
           <ContainerDescription>
-            Choose a model to run evaluations on {task.testCases.length} test
-            cases ({RUNS_PER_TEST_CASE} runs each)
+            Choose a model to run evaluations on {task.testCases.length} test cases (
+            {RUNS_PER_TEST_CASE} runs each)
           </ContainerDescription>
         </ContainerHeaderGroup>
 

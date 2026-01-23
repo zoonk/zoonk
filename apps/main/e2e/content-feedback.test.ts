@@ -85,18 +85,12 @@ test.describe("Content Feedback", () => {
 });
 
 test.describe("Content Feedback - Authenticated", () => {
-  test("email field shows authenticated user's email", async ({
-    authenticatedPage,
-  }) => {
+  test("email field shows authenticated user's email", async ({ authenticatedPage }) => {
     await authenticatedPage.goto("/learn/test%20prompt");
     // Wait for content to load
-    await expect(
-      authenticatedPage.getByText("Introduction to Testing"),
-    ).toBeVisible();
+    await expect(authenticatedPage.getByText("Introduction to Testing")).toBeVisible();
 
-    await authenticatedPage
-      .getByRole("button", { name: /send feedback/i })
-      .click();
+    await authenticatedPage.getByRole("button", { name: /send feedback/i }).click();
 
     const emailInput = authenticatedPage.getByLabel(/email/i);
 

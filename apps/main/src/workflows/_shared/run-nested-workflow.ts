@@ -10,9 +10,7 @@ type WorkflowRun<TResult> = {
  * Use this when you need the nested workflow's status updates to appear
  * in the parent workflow's stream.
  */
-export async function runNestedWorkflow<TResult>(
-  run: WorkflowRun<TResult>,
-): Promise<TResult> {
+export async function runNestedWorkflow<TResult>(run: WorkflowRun<TResult>): Promise<TResult> {
   "use step";
 
   const parentWritable = getWritable<string>();

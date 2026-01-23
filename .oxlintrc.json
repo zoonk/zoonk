@@ -1,15 +1,6 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": [
-    "typescript",
-    "oxc",
-    "react",
-    "nextjs",
-    "import",
-    "unicorn",
-    "jsx-a11y",
-    "vitest"
-  ],
+  "plugins": ["typescript", "oxc", "react", "nextjs", "import", "unicorn", "jsx-a11y", "vitest"],
   "env": {
     "browser": true,
     "es2024": true,
@@ -43,15 +34,15 @@
     "node_modules",
     ".next",
     ".next-e2e",
-    ".agents",
-    ".claude",
-    ".cursor",
-    ".opencode",
+    ".claude/skills",
+    ".cursor/skills",
+    ".opencode/skills",
     ".github/skills",
     "dist",
     "build",
     "**/generated/**",
     "**/messages/**",
-    ".turbo"
+    ".turbo",
+    "pnpm-lock.yaml"
   ]
 }

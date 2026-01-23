@@ -1,10 +1,6 @@
-import type { BetterAuthPlugin } from "better-auth";
-import {
-  APIError,
-  createAuthEndpoint,
-  sessionMiddleware,
-} from "better-auth/api";
+import { APIError, createAuthEndpoint, sessionMiddleware } from "better-auth/api";
 import { z } from "zod";
+import type { BetterAuthPlugin } from "better-auth";
 
 export function trustedOriginPlugin() {
   return {

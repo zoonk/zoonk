@@ -1,10 +1,9 @@
 import "server-only";
-
+import { ErrorCode } from "@/lib/app-error";
 import { getSession } from "@zoonk/core/users/session/get";
 import { type Course, type Organization, prisma } from "@zoonk/db";
 import { AppError, type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
-import { ErrorCode } from "@/lib/app-error";
 
 export type UserCourse = Course & { organization: Organization };
 

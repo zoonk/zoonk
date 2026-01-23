@@ -496,10 +496,7 @@ const testOrgCoursesData = [
   },
 ];
 
-export async function seedCourses(
-  prisma: PrismaClient,
-  orgs: SeedOrganizations,
-): Promise<void> {
+export async function seedCourses(prisma: PrismaClient, orgs: SeedOrganizations): Promise<void> {
   await Promise.all([
     ...coursesData.map((course) =>
       prisma.course.upsert({

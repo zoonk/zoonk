@@ -8,13 +8,9 @@ export default async function HomePage() {
 
   const firstOrg = orgs.data[0];
 
-  const activeOrganizationId =
-    userSession?.session.activeOrganizationId ?? firstOrg?.id;
+  const activeOrganizationId = userSession?.session.activeOrganizationId ?? firstOrg?.id;
 
-  const activeOrganization = findOrganizationById(
-    orgs.data,
-    activeOrganizationId,
-  );
+  const activeOrganization = findOrganizationById(orgs.data, activeOrganizationId);
 
   if (activeOrganization) {
     redirect(`/${activeOrganization.slug}`);
