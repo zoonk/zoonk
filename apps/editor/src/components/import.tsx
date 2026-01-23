@@ -147,7 +147,6 @@ function ImportDropzone({
   }
 
   return (
-    // biome-ignore lint/a11y/noNoninteractiveElementInteractions: label wrapping file input is the accessible pattern for file uploads
     <label
       className={cn(
         "group flex min-h-32 cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border border-input border-dashed bg-muted/30 px-4 py-6 text-center transition-colors hover:border-primary/50 hover:bg-muted/50",

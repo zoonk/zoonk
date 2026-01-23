@@ -1,7 +1,3 @@
-// biome-ignore-all lint/suspicious/noDocumentCookie: generated file, we can refactor later
-// biome-ignore-all lint/nursery/noShadow: generated file, we can refactor later
-// biome-ignore-all lint/style/noMagicNumbers: generated file, we can refactor later
-
 "use client";
 
 import { mergeProps } from "@base-ui/react/merge-props";

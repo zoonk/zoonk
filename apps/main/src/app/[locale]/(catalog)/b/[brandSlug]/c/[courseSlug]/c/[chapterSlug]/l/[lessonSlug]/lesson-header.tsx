@@ -63,7 +63,6 @@ export async function LessonHeader({
             >
               {lesson.chapter.course.title}
             </Link>
-            {/* biome-ignore lint/nursery/noJsxLiterals: visual separator */}
             <span className="mx-1.5 text-muted-foreground/40">/</span>
             <span>{lesson.chapter.title}</span>
           </MediaCardPopoverSource>

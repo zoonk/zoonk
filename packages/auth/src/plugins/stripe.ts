@@ -13,13 +13,11 @@ export function stripePlugin() {
     subscription: {
       enabled: true,
       getCheckoutSessionParams: () => ({
-        // biome-ignore-start lint/style/useNamingConvention: stripe api
         params: {
           allow_promotion_codes: true,
           billing_address_collection: "required",
           tax_id_collection: { enabled: true },
         },
-        // biome-ignore-end lint/style/useNamingConvention: stripe api
       }),
       plans: [
         {

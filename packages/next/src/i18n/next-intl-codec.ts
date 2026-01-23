@@ -135,7 +135,6 @@ export default defineCodec(() => {
       return POParser.serialize({
         messages: encodedMessages,
         meta: {
-          // biome-ignore lint/style/useNamingConvention: next-intl uses 'Language' as per PO file spec
           Language: context.locale,
           ...DefaultMetadata,
           ...metadataByLocale.get(context.locale),

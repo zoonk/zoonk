@@ -65,7 +65,6 @@ export function WizardLabel({
   ...props
 }: React.ComponentProps<"label">) {
   return (
-    // biome-ignore lint/a11y/noLabelWithoutControl: htmlFor is passed via props when used
     <label
       className={cn(
         "font-medium font-mono text-muted-foreground text-xs uppercase tracking-widest",

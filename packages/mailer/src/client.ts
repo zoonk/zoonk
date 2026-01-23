@@ -1,5 +1,3 @@
-// biome-ignore-all lint/style/useNamingConvention: external API requirement
-
 import { type SafeReturn, toError } from "@zoonk/utils/error";
 
 const apiUrl = "https://api.zeptomail.com/v1.1/email";

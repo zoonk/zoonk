@@ -238,7 +238,6 @@ function ImageUploadTrigger({
   }
 
   return (
-    // biome-ignore lint/a11y/useSemanticElements: Using div with role="button" because we need to nest a button (delete) inside
     <div
       aria-disabled={pending}
       className={cn(

@@ -42,7 +42,6 @@ export function useSSE<T>(url: string | null, options: UseSSEOptions<T>) {
         let result = await reader.read();
         while (!result.done) {
           parser.feed(decoder.decode(result.value, { stream: true }));
-          // biome-ignore lint/performance/noAwaitInLoops: Sequential reads required for streaming
           result = await reader.read();
         }
 

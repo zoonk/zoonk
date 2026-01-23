@@ -12,7 +12,6 @@ import {
 } from "@tabler/icons-react";
 import { routing } from "@/i18n/routing";
 
-// biome-ignore assist/source/useSortedKeys: custom order
 const PROFILES = {
   x: {
     en: { handle: "@zoonkcom", url: "https://x.com/zoonkcom" },

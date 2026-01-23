@@ -42,6 +42,5 @@ const Toaster = ({ ...props }: ToasterProps) => {
   );
 };
 
-// biome-ignore lint/performance/noBarrelFile: re-exporting toast for consumers
 export { toast } from "sonner";
 export { Toaster };

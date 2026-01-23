@@ -7,7 +7,6 @@ import { cache } from "react";
 import { ErrorCode } from "@/lib/app-error";
 
 const cachedGetChapter = cache(
-  // biome-ignore lint/nursery/useMaxParams: React cache requires individual args for deduplication
   async (
     chapterSlug: string,
     courseSlug: string,
