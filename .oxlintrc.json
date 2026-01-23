@@ -12,6 +12,7 @@
     "suspicious": "error"
   },
   "rules": {
+    "eslint/func-style": ["error", "declaration", { "allowArrowFunctions": true }],
     "eslint/no-magic-numbers": [
       "error",
       {
@@ -31,8 +32,7 @@
     "typescript/no-unsafe-type-assertion": "error",
 
     // style rules
-    "eslint/curly": "error",
-    "eslint/func-style": ["error", "declaration", { "allowArrowFunctions": true }]
+    "eslint/curly": "error"
   },
   "overrides": [
     {
