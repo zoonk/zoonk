@@ -39,7 +39,7 @@ export async function generateMissingContent(
     alternativeTitles,
     categories,
     chapters,
-    description: existing.description ?? generatedDescription ?? "",
-    imageUrl: existing.imageUrl ?? generatedImageUrl ?? "",
+    description: existing.description || generatedDescription || "",
+    imageUrl: existing.imageUrl || generatedImageUrl || "",
   };
 }
