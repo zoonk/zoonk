@@ -82,7 +82,7 @@ test.describe("Course Chapters Accordion", () => {
     await expect(page.getByRole("button", { name: /Tree-Based Models/i })).not.toBeVisible();
 
     // Position number 04 (for Tree-Based Models) should not exist
-    // since only 3 chapters are published
+    // Since only 3 chapters are published
     await expect(page.getByText("04", { exact: true })).not.toBeVisible();
   });
 });

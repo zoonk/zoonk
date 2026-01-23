@@ -25,7 +25,7 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
   const { locale } = await params;
   setRequestLocale(locale);
 
-  // preload data for Suspense boundaries
+  // Preload data for Suspense boundaries
   void Promise.all([
     getContinueLearning(),
     getEnergyLevel(),

@@ -80,7 +80,7 @@ function compareEntries(a: LeaderboardEntry, b: LeaderboardEntry, key: SortKey):
     if (byScore !== 0) {
       return byScore;
     }
-    // tie-breaker: lower total cost first
+    // Tie-breaker: lower total cost first
     return b.totalCost - a.totalCost;
   }
 
@@ -88,7 +88,7 @@ function compareEntries(a: LeaderboardEntry, b: LeaderboardEntry, key: SortKey):
     return a[key] - b[key];
   }
 
-  // localeCompare for string fields
+  // LocaleCompare for string fields
   return String(a[key]).localeCompare(String(b[key]));
 }
 

@@ -3,7 +3,7 @@ import { getExtracted } from "next-intl/server";
 import { ErrorCode, type ErrorCodeType } from "./app-error";
 import type { AppError } from "@zoonk/utils/error";
 
-// ensures that we don't have missing translations for error codes
+// Ensures that we don't have missing translations for error codes
 function assertNever(x: never): never {
   throw new Error(`Unhandled error code: ${String(x)}`);
 }

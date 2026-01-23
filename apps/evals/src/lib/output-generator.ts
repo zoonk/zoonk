@@ -78,7 +78,7 @@ export async function generateOutputs(task: Task, modelId: string): Promise<Mode
 
   if (testCaseRunsToExecute.length === 0) {
     console.info("All outputs already generated");
-    // existingOutputs is guaranteed to exist here since existingEntries was derived from it
+    // ExistingOutputs is guaranteed to exist here since existingEntries was derived from it
     return (
       existingOutputs ?? {
         generatedAt: new Date().toISOString(),

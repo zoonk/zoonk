@@ -25,7 +25,8 @@
 
     // style rules
     "typescript/array-type": "error",
-    "eslint/arrow-body-style": "error"
+    "eslint/arrow-body-style": "error",
+    "eslint/capitalized-comments": "error"
   },
   "overrides": [
     {

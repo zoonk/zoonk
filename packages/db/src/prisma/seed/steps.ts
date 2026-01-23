@@ -22,7 +22,7 @@ type ActivitySteps = {
 
 const stepsData: ActivitySteps[] = [
   {
-    activityPosition: 0, // background activity
+    activityPosition: 0, // Background activity
     language: "en",
     lessonSlug: "what-is-machine-learning",
     steps: [
@@ -87,7 +87,7 @@ const stepsData: ActivitySteps[] = [
     ],
   },
   {
-    activityPosition: 2, // explanation_quiz activity
+    activityPosition: 2, // Explanation_quiz activity
     language: "en",
     lessonSlug: "what-is-machine-learning",
     steps: [
@@ -180,7 +180,7 @@ const stepsData: ActivitySteps[] = [
     ],
   },
   {
-    activityPosition: 6, // challenge activity
+    activityPosition: 6, // Challenge activity
     language: "en",
     lessonSlug: "what-is-machine-learning",
     steps: [

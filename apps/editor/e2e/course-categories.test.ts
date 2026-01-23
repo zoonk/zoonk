@@ -210,7 +210,7 @@ test.describe("Course Categories Editor", () => {
     await expect(authenticatedPage.getByText("Math")).toBeVisible();
   });
 
-  // track a regression where the category is not selected after the server action completes
+  // Track a regression where the category is not selected after the server action completes
   test("keeps category selected after server action completes - regression", async ({
     authenticatedPage,
   }) => {
@@ -235,7 +235,7 @@ test.describe("Course Categories Editor", () => {
 
     // Verify the badge is still visible after transition completed
     // This is the key assertion - if revalidatePath is missing,
-    // the optimistic update reverts and the badge disappears
+    // The optimistic update reverts and the badge disappears
     const main = authenticatedPage.getByRole("main");
     await expect(main.getByText("Technology")).toBeVisible();
 

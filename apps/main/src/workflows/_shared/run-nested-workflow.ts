@@ -18,8 +18,8 @@ export async function runNestedWorkflow<TResult>(run: WorkflowRun<TResult>): Pro
 
   nestedReadable.pipeTo(parentWritable, { preventClose: true }).catch(() => {
     // Errors are intentionally swallowed - the nested workflow's returnValue
-    // will propagate any meaningful errors. Stream piping errors are not actionable.
-    // if we `await` here, then the workflow would hang forever.
+    // Will propagate any meaningful errors. Stream piping errors are not actionable.
+    // If we `await` here, then the workflow would hang forever.
   });
 
   return run.returnValue;

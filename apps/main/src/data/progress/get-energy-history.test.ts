@@ -441,7 +441,7 @@ describe("authenticated users", () => {
 
       expect(result).not.toBeNull();
 
-      // day1=90, day2=89, day3=95 → avg = (90+89+95)/3 = 91.33
+      // Day1=90, day2=89, day3=95 → avg = (90+89+95)/3 = 91.33
       expect(result?.average).toBeCloseTo(91.33, 1);
     });
 
@@ -489,7 +489,7 @@ describe("authenticated users", () => {
       expect(result).not.toBeNull();
 
       // All 3 days are in the same week:
-      // day1(Tue)=80, day2(Wed)=79 (decayed), day3(Thu)=90
+      // Day1(Tue)=80, day2(Wed)=79 (decayed), day3(Thu)=90
       // Weekly average: (80 + 79 + 90) / 3 = 83
       expect(result?.average).toBeCloseTo(83, 0);
     });
@@ -530,7 +530,7 @@ describe("authenticated users", () => {
       expect(result).not.toBeNull();
 
       // Monthly average should include decayed days 2 and 3:
-      // day1=100, day2=99, day3=98, day4=100 → avg = (100+99+98+100)/4 = 99.25
+      // Day1=100, day2=99, day3=98, day4=100 → avg = (100+99+98+100)/4 = 99.25
       expect(result?.average).toBeCloseTo(99.25, 1);
     });
   });
