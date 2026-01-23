@@ -68,7 +68,7 @@ function MenubarContent({
       align={align}
       alignOffset={alignOffset}
       className={cn(
-        "data-open:fade-in-0 data-open:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 bg-popover text-popover-foreground ring-foreground/5 data-open:animate-in min-w-48 rounded-2xl p-1 shadow-2xl ring-1 duration-100",
+        "data-open:fade-in-0 data-open:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-[side=inline-start]:slide-in-from-right-2 data-[side=inline-end]:slide-in-from-left-2 bg-popover text-popover-foreground ring-foreground/5 data-open:animate-in min-w-48 rounded-2xl p-1 shadow-2xl ring-1 duration-100",
         className,
       )}
       data-slot="menubar-content"
