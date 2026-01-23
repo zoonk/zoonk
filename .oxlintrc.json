@@ -27,8 +27,7 @@
     "typescript/no-unsafe-type-assertion": "off",
 
     // temporary disables
-    "typescript/no-confusing-void-expression": "off",
-    "unicorn/prefer-modern-math-apis": "off"
+    "typescript/no-confusing-void-expression": "off"
   },
   "ignorePatterns": [
     "node_modules",
