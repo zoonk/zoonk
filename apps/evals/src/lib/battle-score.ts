@@ -22,7 +22,7 @@ export async function generateBattleRankings(params: {
   judgeId: string;
   expectations: string;
   anonymizedOutputs: AnonymizedOutput[];
-  mapping: Array<{ anonymousId: string; modelId: string }>;
+  mapping: { anonymousId: string; modelId: string }[];
 }): Promise<ModelRanking[]> {
   const { judgeId, expectations, anonymizedOutputs, mapping } = params;
 

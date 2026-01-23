@@ -30,13 +30,13 @@ function MatchupItem({ matchup }: MatchupItemProps) {
   // Build a map of model rankings by model ID
   const modelRankings = new Map<
     string,
-    Array<{
+    {
       judgeId: string;
       judgeName: string;
       score: number;
       reasoning: string;
       anonymousId: string;
-    }>
+    }[]
   >();
 
   for (const modelId of modelIds) {

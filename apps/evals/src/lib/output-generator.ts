@@ -61,10 +61,10 @@ export async function generateOutputs(task: Task, modelId: string): Promise<Mode
   const existingEntries = existingOutputs?.outputs ?? [];
   console.info(`Found ${existingEntries.length} existing outputs`);
 
-  const testCaseRunsToExecute: Array<{
+  const testCaseRunsToExecute: {
     testCase: TestCase;
     runNumber: number;
-  }> = [];
+  }[] = [];
 
   for (const testCase of task.testCases) {
     for (let runNumber = 1; runNumber <= RUNS_PER_TEST_CASE; runNumber++) {

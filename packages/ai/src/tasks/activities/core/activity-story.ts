@@ -40,7 +40,7 @@ export type ActivityStoryParams = {
   chapterTitle: string;
   courseTitle: string;
   language: string;
-  explanationSteps: Array<{ title: string; text: string }>;
+  explanationSteps: { title: string; text: string }[];
   model?: string;
   useFallback?: boolean;
   reasoningEffort?: ReasoningEffort;

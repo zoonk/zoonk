@@ -31,7 +31,7 @@ export type ActivityExplanationParams = {
   chapterTitle: string;
   courseTitle: string;
   language: string;
-  backgroundSteps: Array<{ title: string; text: string }>;
+  backgroundSteps: { title: string; text: string }[];
   model?: string;
   useFallback?: boolean;
   reasoningEffort?: ReasoningEffort;

@@ -26,7 +26,7 @@ const TEST_RUN_ID = "test-run-id-12345";
 
 type MockApiOptions = {
   triggerResponse?: { runId?: string; error?: string; status?: number };
-  streamMessages?: Array<{ step: string; status: string }>;
+  streamMessages?: { step: string; status: string }[];
   streamError?: boolean;
 };
 
@@ -34,7 +34,7 @@ type MockApiOptions = {
  * Creates a mock SSE stream response from an array of messages.
  * Each message follows the SSE format: "data: {...}\n\n"
  */
-function createSSEStream(messages: Array<{ step: string; status: string }>): string {
+function createSSEStream(messages: { step: string; status: string }[]): string {
   return messages.map((msg) => `data: ${JSON.stringify(msg)}\n\n`).join("");
 }
 

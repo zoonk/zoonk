@@ -29,8 +29,8 @@ function getMatchupFilePath(taskId: string, testCaseId: string): string {
 }
 
 type AnonymizationResult = {
-  anonymizedOutputs: Array<{ anonymousId: string; output: string }>;
-  mapping: Array<{ anonymousId: string; modelId: string }>;
+  anonymizedOutputs: { anonymousId: string; output: string }[];
+  mapping: { anonymousId: string; modelId: string }[];
 };
 
 function shuffleArray<T>(array: T[]): T[] {
@@ -45,13 +45,13 @@ function shuffleArray<T>(array: T[]): T[] {
 }
 
 function anonymizeOutputs(
-  outputs: Array<{ modelId: string; output: string }>,
+  outputs: { modelId: string; output: string }[],
 ): AnonymizationResult {
   const shuffled = shuffleArray(outputs);
   const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-  const anonymizedOutputs: Array<{ anonymousId: string; output: string }> = [];
-  const mapping: Array<{ anonymousId: string; modelId: string }> = [];
+  const anonymizedOutputs: { anonymousId: string; output: string }[] = [];
+  const mapping: { anonymousId: string; modelId: string }[] = [];
 
   shuffled.forEach((item, index) => {
     const anonymousId = `Model ${letters[index]}`;
@@ -89,7 +89,7 @@ async function saveMatchup(matchup: BattleMatchup): Promise<void> {
 
 function extractMappingFromMatchup(
   matchup: BattleMatchup,
-): Array<{ anonymousId: string; modelId: string }> {
+): { anonymousId: string; modelId: string }[] {
   const firstJudgment = matchup.judgments[0];
   if (!firstJudgment) {
     return [];
@@ -122,7 +122,7 @@ async function runBattleForTestCase(
   const testCaseId = `${testCase.id}-1`; // Assuming RUNS_PER_TEST_CASE = 1
 
   // Collect outputs from all models for this test case
-  const modelOutputsForTestCase: Array<{ modelId: string; output: string }> = [];
+  const modelOutputsForTestCase: { modelId: string; output: string }[] = [];
 
   for (const [modelId, outputs] of allOutputs) {
     const output = getOutputForTestCase(outputs, testCaseId);
@@ -150,8 +150,8 @@ async function runBattleForTestCase(
   const effectiveExistingMatchup = newModelsDetected ? null : existingMatchup;
 
   // Use existing mapping or create new one
-  let mapping: Array<{ anonymousId: string; modelId: string }>;
-  let anonymizedOutputs: Array<{ anonymousId: string; output: string }>;
+  let mapping: { anonymousId: string; modelId: string }[];
+  let anonymizedOutputs: { anonymousId: string; output: string }[];
 
   if (effectiveExistingMatchup) {
     mapping = extractMappingFromMatchup(effectiveExistingMatchup);

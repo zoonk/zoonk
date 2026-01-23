@@ -18,7 +18,7 @@ function createMockFile(
 }
 
 function createImportFile(
-  activities: Array<{ description?: string; kind: string; title?: string }>,
+  activities: { description?: string; kind: string; title?: string }[],
 ): File {
   return createMockFile(JSON.stringify({ activities }));
 }

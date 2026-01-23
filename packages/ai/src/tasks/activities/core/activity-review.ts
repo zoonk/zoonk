@@ -37,16 +37,16 @@ export type ActivityReviewParams = {
   chapterTitle: string;
   courseTitle: string;
   language: string;
-  backgroundSteps: Array<{ title: string; text: string }>;
-  explanationSteps: Array<{ title: string; text: string }>;
-  mechanicsSteps: Array<{ title: string; text: string }>;
-  examplesSteps: Array<{ title: string; text: string }>;
+  backgroundSteps: { title: string; text: string }[];
+  explanationSteps: { title: string; text: string }[];
+  mechanicsSteps: { title: string; text: string }[];
+  examplesSteps: { title: string; text: string }[];
   model?: string;
   useFallback?: boolean;
   reasoningEffort?: ReasoningEffort;
 };
 
-function formatSteps(steps: Array<{ title: string; text: string }>): string {
+function formatSteps(steps: { title: string; text: string }[]): string {
   return steps.map((step, index) => `${index + 1}. ${step.title}: ${step.text}`).join("\n");
 }
 

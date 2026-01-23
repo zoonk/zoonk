@@ -12,7 +12,7 @@ function createMockFile(content: string, name = "chapters.json", type = "applica
 }
 
 function createImportFile(
-  chapters: Array<{ description: string; slug?: string; title: string }>,
+  chapters: { description: string; slug?: string; title: string }[],
 ): File {
   return createMockFile(JSON.stringify({ chapters }));
 }

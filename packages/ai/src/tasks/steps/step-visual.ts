@@ -25,7 +25,7 @@ export type StepVisualParams = {
   chapterTitle: string;
   courseTitle: string;
   language: string;
-  steps: Array<{ title: string; text: string }>;
+  steps: { title: string; text: string }[];
   model?: string;
   useFallback?: boolean;
   reasoningEffort?: ReasoningEffort;
