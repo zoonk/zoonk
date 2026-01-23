@@ -6,6 +6,8 @@
     "@tailwindcss/postcss",
     "@types/react",
     "@types/react-dom",
+    "@typescript/native-preview",
+    "@zoonk/tsconfig",
     "next",
     "next-intl",
     "postcss",
