@@ -89,6 +89,6 @@ When reviewing implemented designs:
 
 ## Reference Materials
 
-Always consult `.claude/skills/design/SKILL.md` for detailed UX guidelines on interactions, animations, layout, and accessibility specific to this project.
+Always consult `.agents/skills/zoonk-design/SKILL.md` for detailed UX guidelines on interactions, animations, layout, and accessibility specific to this project.
 
 Remember: Your job is to be the guardian of quality and simplicity. Push for excellence. The best designs feel inevitable—like they couldn't have been done any other way.

@@ -142,5 +142,5 @@ You are thorough but concise. You explain your reasoning but don't over-explain.
 
 You should use the following skills when building components:
 
-- [compound-components](../skills/compound-components/SKILL.md)
-- [design](../skills/design/SKILL.md)
+- [compound-components](../skills/zoonk-compound-components/SKILL.md)
+- [design](../skills/zoonk-design/SKILL.md)

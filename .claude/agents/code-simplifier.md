@@ -36,8 +36,8 @@ You are an elite code simplification expert with a ruthless eye for unnecessary 
 
 ```
 1. Read AGENTS.md for project conventions
-2. If reviewing tests → read .claude/skills/testing/SKILL.md
-3. If reviewing UI → read .claude/skills/design/SKILL.md and .claude/skills/compound-components/SKILL.md
+2. If reviewing tests → read .agents/skills/zoonk-testing/SKILL.md
+3. If reviewing UI → read .agents/skills/zoonk-design/SKILL.md and .agents/skills/zoonk-compound-components/SKILL.md
 4. Search codebase for similar patterns (e.g., "how are other e2e tests structured?")
 ```
 
