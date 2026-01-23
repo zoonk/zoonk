@@ -1,3 +1,4 @@
+import { DEFAULT_IMAGE_QUALITY } from "@zoonk/utils/constants";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import sharp from "sharp";
 
@@ -10,7 +11,7 @@ export type OptimizeImageParams = {
 export async function optimizeImage({
   image,
   format = "webp",
-  quality = 80,
+  quality = DEFAULT_IMAGE_QUALITY,
 }: OptimizeImageParams): Promise<SafeReturn<Buffer>> {
   const { data, error } = await safeAsync(() => {
     const pipeline = sharp(image);

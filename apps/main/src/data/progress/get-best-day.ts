@@ -1,6 +1,7 @@
 import "server-only";
 import { getSession } from "@zoonk/core/users/session/get";
 import { prisma } from "@zoonk/db";
+import { DEFAULT_PROGRESS_LOOKBACK_DAYS } from "@zoonk/utils/constants";
 import { cache } from "react";
 
 export type BestDayData = {
@@ -29,7 +30,7 @@ const cachedGetBestDay = cache(
       startDate = new Date(startDateIso);
     } else {
       startDate = new Date();
-      startDate.setDate(startDate.getDate() - 90);
+      startDate.setDate(startDate.getDate() - DEFAULT_PROGRESS_LOOKBACK_DAYS);
     }
 
     const results = await prisma.dailyProgress.groupBy({

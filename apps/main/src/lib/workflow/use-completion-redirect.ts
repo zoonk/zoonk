@@ -4,6 +4,8 @@ import { useRouter } from "next/navigation";
 import { useEffect, useEffectEvent } from "react";
 import type { GenerationStatus } from "./generation-store";
 
+const DEFAULT_REDIRECT_DELAY_MS = 1500;
+
 type CompletionRedirectConfig = {
   delay?: number;
   status: GenerationStatus;
@@ -11,7 +13,7 @@ type CompletionRedirectConfig = {
 };
 
 export function useCompletionRedirect(config: CompletionRedirectConfig) {
-  const { delay = 1500, status, url } = config;
+  const { delay = DEFAULT_REDIRECT_DELAY_MS, status, url } = config;
   const router = useRouter();
 
   const onRedirect = useEffectEvent(() => {

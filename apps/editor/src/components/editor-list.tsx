@@ -472,7 +472,9 @@ function EditorListItemActions({
   );
 }
 
-function EditorListSkeleton({ count = 3 }: { count?: number }) {
+const DEFAULT_SKELETON_COUNT = 3;
+
+function EditorListSkeleton({ count = DEFAULT_SKELETON_COUNT }: { count?: number }) {
   return (
     <div data-slot="editor-list">
       <div className="flex items-center justify-end gap-2 px-4 pb-2">

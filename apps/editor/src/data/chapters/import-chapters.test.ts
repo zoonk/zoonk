@@ -11,9 +11,7 @@ function createMockFile(content: string, name = "chapters.json", type = "applica
   return new File([content], name, { type });
 }
 
-function createImportFile(
-  chapters: { description: string; slug?: string; title: string }[],
-): File {
+function createImportFile(chapters: { description: string; slug?: string; title: string }[]): File {
   return createMockFile(JSON.stringify({ chapters }));
 }
 

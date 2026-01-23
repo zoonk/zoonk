@@ -1,12 +1,12 @@
 import "server-only";
+import {
+  DEFAULT_IMAGE_ACCEPTED_TYPES,
+  DEFAULT_IMAGE_MAX_SIZE,
+  DEFAULT_IMAGE_QUALITY,
+} from "@zoonk/utils/constants";
 import { safeAsync } from "@zoonk/utils/error";
 import { optimizeImage } from "./optimize-image";
 import { uploadImage } from "./upload-image";
-
-const BYTES_PER_MB = 1024 * 1024;
-const DEFAULT_MAX_SIZE = 5 * BYTES_PER_MB;
-
-const DEFAULT_ACCEPTED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
 
 export type ProcessAndUploadImageParams = {
   file: File;
@@ -31,11 +31,11 @@ export type ProcessAndUploadImageResult =
 export async function processAndUploadImage({
   file,
   fileName,
-  acceptedTypes = DEFAULT_ACCEPTED_TYPES,
+  acceptedTypes = DEFAULT_IMAGE_ACCEPTED_TYPES,
   addRandomSuffix = true,
   format = "webp",
-  maxSize = DEFAULT_MAX_SIZE,
-  quality = 80,
+  maxSize = DEFAULT_IMAGE_MAX_SIZE,
+  quality = DEFAULT_IMAGE_QUALITY,
 }: ProcessAndUploadImageParams): Promise<ProcessAndUploadImageResult> {
   if (!acceptedTypes.includes(file.type)) {
     return { data: null, error: "invalidType" };

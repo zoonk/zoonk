@@ -1,6 +1,11 @@
 import "server-only";
 
 const HISTORY_PERIODS = ["month", "6months", "year"] as const;
+
+const MONTHS_PER_HALF_YEAR = 6;
+const DECEMBER_INDEX = 11;
+const LAST_DAY_OF_DECEMBER = 31;
+const SUNDAY_TO_MONDAY_OFFSET = -6;
 export type HistoryPeriod = (typeof HISTORY_PERIODS)[number];
 
 function isHistoryPeriod(value: string): value is HistoryPeriod {
@@ -35,19 +40,20 @@ export function calculateDateRanges(
   }
 
   if (period === "6months") {
-    const currentHalf = Math.floor(now.getMonth() / 6) - offset;
-    const currentYear = now.getFullYear() + Math.floor((now.getMonth() - offset * 6) / 12);
+    const currentHalf = Math.floor(now.getMonth() / MONTHS_PER_HALF_YEAR) - offset;
+    const currentYear =
+      now.getFullYear() + Math.floor((now.getMonth() - offset * MONTHS_PER_HALF_YEAR) / 12);
     const normalizedHalf = ((currentHalf % 2) + 2) % 2;
 
-    const currentStartMonth = normalizedHalf * 6;
+    const currentStartMonth = normalizedHalf * MONTHS_PER_HALF_YEAR;
     const currentStart = new Date(currentYear, currentStartMonth, 1);
-    const currentEnd = new Date(currentYear, currentStartMonth + 6, 0);
+    const currentEnd = new Date(currentYear, currentStartMonth + MONTHS_PER_HALF_YEAR, 0);
 
     const previousHalf = normalizedHalf === 0 ? 1 : 0;
     const previousYear = normalizedHalf === 0 ? currentYear - 1 : currentYear;
-    const previousStartMonth = previousHalf * 6;
+    const previousStartMonth = previousHalf * MONTHS_PER_HALF_YEAR;
     const previousStart = new Date(previousYear, previousStartMonth, 1);
-    const previousEnd = new Date(previousYear, previousStartMonth + 6, 0);
+    const previousEnd = new Date(previousYear, previousStartMonth + MONTHS_PER_HALF_YEAR, 0);
 
     return {
       current: { end: currentEnd, start: currentStart },
@@ -58,9 +64,9 @@ export function calculateDateRanges(
   // Year
   const currentYear = now.getFullYear() - offset;
   const currentStart = new Date(currentYear, 0, 1);
-  const currentEnd = new Date(currentYear, 11, 31);
+  const currentEnd = new Date(currentYear, DECEMBER_INDEX, LAST_DAY_OF_DECEMBER);
   const previousStart = new Date(currentYear - 1, 0, 1);
-  const previousEnd = new Date(currentYear - 1, 11, 31);
+  const previousEnd = new Date(currentYear - 1, DECEMBER_INDEX, LAST_DAY_OF_DECEMBER);
 
   return {
     current: { end: currentEnd, start: currentStart },
@@ -92,7 +98,7 @@ function getWeekKey(date: Date): string {
   d.setHours(0, 0, 0, 0);
   // Get Monday of this week
   const day = d.getDay();
-  const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+  const diff = d.getDate() - day + (day === 0 ? SUNDAY_TO_MONDAY_OFFSET : 1);
   d.setDate(diff);
   return d.toISOString().substring(0, 10);
 }
@@ -104,7 +110,7 @@ function getMonthKey(date: Date): string {
 function getMondayOfWeek(date: Date): Date {
   const monday = new Date(date);
   const day = monday.getDay();
-  const diff = monday.getDate() - day + (day === 0 ? -6 : 1);
+  const diff = monday.getDate() - day + (day === 0 ? SUNDAY_TO_MONDAY_OFFSET : 1);
   monday.setDate(diff);
   monday.setHours(0, 0, 0, 0);
   return monday;

@@ -1,6 +1,7 @@
 import "server-only";
 import { getSession } from "@zoonk/core/users/session/get";
 import { prisma } from "@zoonk/db";
+import { DEFAULT_PROGRESS_LOOKBACK_DAYS } from "@zoonk/utils/constants";
 import { safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
 
@@ -37,7 +38,7 @@ const cachedGetScore = cache(
     } else {
       endDate = new Date();
       startDate = new Date();
-      startDate.setDate(startDate.getDate() - 90);
+      startDate.setDate(startDate.getDate() - DEFAULT_PROGRESS_LOOKBACK_DAYS);
     }
 
     const { data: result, error } = await safeAsync(() =>

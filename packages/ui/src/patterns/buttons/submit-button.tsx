@@ -8,7 +8,7 @@ import { useFormStatus } from "react-dom";
 type SubmitButtonProps = {
   icon?: React.ReactNode;
   full?: boolean;
-} & React.ComponentProps<"button">
+} & React.ComponentProps<"button">;
 
 export function SubmitButton({ children, icon, className, full, ...props }: SubmitButtonProps) {
   const status = useFormStatus();

@@ -12,9 +12,7 @@ function createMockFile(content: string, name = "lessons.json", type = "applicat
   return new File([content], name, { type });
 }
 
-function createImportFile(
-  lessons: { description: string; slug?: string; title: string }[],
-): File {
+function createImportFile(lessons: { description: string; slug?: string; title: string }[]): File {
   return createMockFile(JSON.stringify({ lessons }));
 }
 

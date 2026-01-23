@@ -44,9 +44,7 @@ function shuffleArray<T>(array: T[]): T[] {
   return shuffled;
 }
 
-function anonymizeOutputs(
-  outputs: { modelId: string; output: string }[],
-): AnonymizationResult {
+function anonymizeOutputs(outputs: { modelId: string; output: string }[]): AnonymizationResult {
   const shuffled = shuffleArray(outputs);
   const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 

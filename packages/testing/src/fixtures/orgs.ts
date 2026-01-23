@@ -32,7 +32,7 @@ export async function organizationFixture(attrs?: Partial<Organization>) {
 
 type MemberFixtureOptions = {
   orgKind?: Organization["kind"];
-} & Partial<Member>
+} & Partial<Member>;
 
 export async function memberFixture(attrs?: MemberFixtureOptions) {
   const { orgKind, ...memberAttrs } = attrs || {};

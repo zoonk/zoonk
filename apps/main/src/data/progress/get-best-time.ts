@@ -2,6 +2,7 @@ import "server-only";
 import { getSession } from "@zoonk/core/users/session/get";
 import { prisma } from "@zoonk/db";
 import { getPeakTime as getPeakTimeQuery } from "@zoonk/db/peak-time";
+import { DEFAULT_PROGRESS_LOOKBACK_DAYS } from "@zoonk/utils/constants";
 import { safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
 
@@ -32,7 +33,7 @@ const cachedGetBestTime = cache(
       startDate = new Date(startDateIso);
     } else {
       startDate = new Date();
-      startDate.setDate(startDate.getDate() - 90);
+      startDate.setDate(startDate.getDate() - DEFAULT_PROGRESS_LOOKBACK_DAYS);
     }
 
     const { data: results, error } = await safeAsync(() =>
