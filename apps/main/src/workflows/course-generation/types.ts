@@ -1,5 +1,13 @@
 import type { GenerationStatus } from "@zoonk/db";
 
+export type ExistingCourseContent = {
+  description: string | null;
+  imageUrl: string | null;
+  hasAlternativeTitles: boolean;
+  hasCategories: boolean;
+  hasChapters: boolean;
+};
+
 export type CourseSuggestionData = {
   id: number;
   language: string;

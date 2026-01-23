@@ -1,6 +1,4 @@
 import { createAICourse } from "@/data/courses/create-ai-course";
-import { deleteAICourse } from "@/data/courses/delete-ai-course";
-import { findExistingCourse } from "@/data/courses/find-existing-course";
 import { updateCourseSuggestionStatus } from "@/data/courses/update-course-suggestion-status";
 import { getAIOrganization } from "@/data/orgs/get-ai-organization";
 import { streamStatus } from "../stream-status";
@@ -20,25 +18,7 @@ export async function initializeCourseStep(
 
   const { suggestion, workflowRunId } = input;
 
-  // Fetch AI org and check for existing course in parallel
-  const [aiOrg, existingCourseResult] = await Promise.all([
-    getAIOrganization(),
-    findExistingCourse({
-      language: suggestion.language,
-      slug: suggestion.slug,
-    }),
-  ]);
-
-  if (existingCourseResult.error) {
-    await streamStatus({ status: "error", step: "initializeCourse" });
-    throw existingCourseResult.error;
-  }
-
-  const existingCourse = existingCourseResult.data;
-
-  if (existingCourse && existingCourse.generationStatus === "failed") {
-    await deleteAICourse(existingCourse.id);
-  }
+  const aiOrg = await getAIOrganization();
 
   // Update course suggestion status to running
   const { error: updateError } = await updateCourseSuggestionStatus({
