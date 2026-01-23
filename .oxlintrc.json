@@ -3,5 +3,6 @@
   "plugins": [
     "typescript",
     "oxc",
+    "react",
   ]
 }
