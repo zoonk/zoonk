@@ -4,7 +4,6 @@ import { cache } from "react";
 import { loadModelOutputs } from "./output-loader";
 import { generateScore } from "./score";
 import type {
-  EvalResult,
   OutputEntry,
   ScoredResult,
   ScoredTaskResults,
@@ -149,23 +148,21 @@ function combineOutputsAndResults(
   outputs: OutputEntry[],
   scoredResults: ScoredResult[],
 ): TaskEvalResults {
-  const results: EvalResult[] = [];
-
-  for (const scored of scoredResults) {
+  const results = scoredResults.flatMap((scored) => {
     const output = outputs.find((entry) => entry.testCaseId === scored.testCase.id);
     if (!output) {
-      continue;
+      return [];
     }
 
-    results.push({
+    return {
       duration: output.duration,
       inputTokens: output.inputTokens,
       output: output.output,
       outputTokens: output.outputTokens,
       steps: scored.steps,
       testCase: scored.testCase,
-    });
-  }
+    };
+  });
 
   return {
     modelId,
@@ -186,23 +183,21 @@ export const getTaskResults = cache(
       return null;
     }
 
-    const results: EvalResult[] = [];
-
-    for (const scored of scoredResults) {
+    const results = scoredResults.flatMap((scored) => {
       const output = modelOutputs.outputs.find((entry) => entry.testCaseId === scored.testCase.id);
       if (!output) {
-        continue;
+        return [];
       }
 
-      results.push({
+      return {
         duration: output.duration,
         inputTokens: output.inputTokens,
         output: output.output,
         outputTokens: output.outputTokens,
         steps: scored.steps,
         testCase: scored.testCase,
-      });
-    }
+      };
+    });
 
     return {
       modelId,

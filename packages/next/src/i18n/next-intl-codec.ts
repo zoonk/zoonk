@@ -11,14 +11,11 @@ type ExtractedMessage = {
 };
 
 function setNestedProperty(obj: Record<string, unknown>, keyPath: string, value: unknown): void {
-  const keys = keyPath.split(".");
+  const keys = keyPath.split(".").filter(Boolean);
   let current = obj;
 
   for (let i = 0; i < keys.length - 1; i++) {
-    const key = keys[i];
-    if (!key) {
-      continue;
-    }
+    const key = keys[i]!;
 
     if (!(key in current) || typeof current[key] !== "object" || current[key] === null) {
       current[key] = {};

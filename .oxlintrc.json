@@ -39,7 +39,8 @@
     "typescript/no-unsafe-type-assertion": "error",
 
     // style rules
-    "eslint/curly": "error"
+    "eslint/curly": "error",
+    "eslint/no-continue": "error"
   },
   "overrides": [
     {

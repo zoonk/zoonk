@@ -75,39 +75,36 @@ function seededRandom(seed: number) {
 }
 
 function buildOwnerDailyProgress(today: Date, orgId: number, userId: number): DailyProgressInput[] {
-  const data: DailyProgressInput[] = [];
+  const indices = Array.from({ length: 90 }, (_, i) => 89 - i);
 
-  for (let i = 89; i >= 0; i--) {
-    const date = new Date(today.getTime() - i * 24 * 60 * 60 * 1000);
-    // Add base offset of 1 to avoid seed=0 when i=0 (sin(0)=0 would always skip today)
-    const seed = (i + 1) * 12_345;
-    const isActiveDay = seededRandom(seed) > 0.15;
+  return indices
+    .filter((i) => {
+      // Add base offset of 1 to avoid seed=0 when i=0 (sin(0)=0 would always skip today)
+      const seed = (i + 1) * 12_345;
+      return seededRandom(seed) > 0.15;
+    })
+    .map((i) => {
+      const date = new Date(today.getTime() - i * 24 * 60 * 60 * 1000);
+      const seed = (i + 1) * 12_345;
+      const monthsAgo = Math.floor(i / 30);
+      const baseEnergy = 72 - monthsAgo * 5;
+      const energyVariation = (seededRandom(seed + 1) - 0.5) * 15;
 
-    if (!isActiveDay) {
-      continue;
-    }
-
-    const monthsAgo = Math.floor(i / 30);
-    const baseEnergy = 72 - monthsAgo * 5;
-    const energyVariation = (seededRandom(seed + 1) - 0.5) * 15;
-
-    data.push({
-      brainPowerEarned: 150 + Math.floor(seededRandom(seed + 2) * 350),
-      challengesCompleted: seededRandom(seed + 3) > 0.7 ? 1 : 0,
-      correctAnswers: 12 + Math.floor(seededRandom(seed + 4) * 25),
-      date,
-      dayOfWeek: date.getDay(),
-      energyAtEnd: Math.max(20, Math.min(95, baseEnergy + energyVariation)),
-      incorrectAnswers: 1 + Math.floor(seededRandom(seed + 5) * 6),
-      interactiveCompleted: 6 + Math.floor(seededRandom(seed + 6) * 12),
-      organizationId: orgId,
-      staticCompleted: 3 + Math.floor(seededRandom(seed + 7) * 10),
-      timeSpentSeconds: 900 + Math.floor(seededRandom(seed + 8) * 2100),
-      userId,
+      return {
+        brainPowerEarned: 150 + Math.floor(seededRandom(seed + 2) * 350),
+        challengesCompleted: seededRandom(seed + 3) > 0.7 ? 1 : 0,
+        correctAnswers: 12 + Math.floor(seededRandom(seed + 4) * 25),
+        date,
+        dayOfWeek: date.getDay(),
+        energyAtEnd: Math.max(20, Math.min(95, baseEnergy + energyVariation)),
+        incorrectAnswers: 1 + Math.floor(seededRandom(seed + 5) * 6),
+        interactiveCompleted: 6 + Math.floor(seededRandom(seed + 6) * 12),
+        organizationId: orgId,
+        staticCompleted: 3 + Math.floor(seededRandom(seed + 7) * 10),
+        timeSpentSeconds: 900 + Math.floor(seededRandom(seed + 8) * 2100),
+        userId,
+      };
     });
-  }
-
-  return data;
 }
 
 function buildE2eDailyProgress(today: Date, orgId: number, userId: number): DailyProgressInput[] {

@@ -265,12 +265,10 @@ export function findBestByScore(rows: ScoredRow[]): { key: number; score: number
   let best: { key: number; score: number } | null = null;
   let bestTotal = 0;
 
-  for (const row of rows) {
-    const total = row.correct + row.incorrect;
-    if (total === 0) {
-      continue;
-    }
+  const rowsWithData = rows.filter((row) => row.correct + row.incorrect > 0);
 
+  for (const row of rowsWithData) {
+    const total = row.correct + row.incorrect;
     const score = (row.correct / total) * 100;
     const isBetter = !best || score > best.score || (score === best.score && total > bestTotal);
 
