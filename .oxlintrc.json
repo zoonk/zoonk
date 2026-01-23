@@ -28,6 +28,7 @@
       }
     ],
     "import/no-named-as-default": "off",
+    "eslint/no-ternary": "off",
     "import/no-unassigned-import": [
       "error",
       { "allow": ["**/*.css", "server-only", "dotenv/config"] }
