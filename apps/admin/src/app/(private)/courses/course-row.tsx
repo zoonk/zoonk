@@ -15,6 +15,7 @@ export function CourseRow({
   return (
     <TableRow>
       <TableCell className="font-medium">
+        {/* oxlint-disable-next-line next/no-html-link-for-pages -- cross-app link */}
         <a href={getCourseUrl(course)}>{course.title}</a>
       </TableCell>
       <TableCell>{course.organization.name}</TableCell>

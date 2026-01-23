@@ -49,6 +49,7 @@ export function ErrorView({
             {retryLabel}
           </button>
 
+          {/* oxlint-disable-next-line next/no-html-link-for-pages -- external link */}
           <a
             className={buttonVariants({ size: "sm", variant: "outline" })}
             href={supportHref}

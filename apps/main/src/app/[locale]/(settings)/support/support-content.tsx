@@ -87,6 +87,7 @@ export async function SupportContent() {
 
         <div className="flex flex-wrap gap-2">
           {socials.map((social) => (
+            // oxlint-disable-next-line next/no-html-link-for-pages -- external links
             <a
               className={buttonVariants({ size: "icon", variant: "outline" })}
               href={social.url}
