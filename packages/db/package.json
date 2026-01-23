@@ -8,11 +8,11 @@
   },
   "devDependencies": {
     "@types/pg": "8.16.0",
+    "@typescript/native-preview": "7.0.0-dev.20260122.4",
     "@zoonk/tsconfig": "workspace:*",
     "dotenv": "17.2.3",
     "prisma": "7.3.0",
-    "tsx": "4.20.6",
-    "@typescript/native-preview": "7.0.0-dev.20260122.4"
+    "tsx": "4.20.6"
   },
   "exports": {
     ".": "./src/index.ts",

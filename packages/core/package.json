@@ -9,9 +9,9 @@
   },
   "devDependencies": {
     "@types/react": "^19",
+    "@typescript/native-preview": "7.0.0-dev.20260122.4",
     "@zoonk/testing": "workspace:*",
     "@zoonk/tsconfig": "workspace:*",
-    "@typescript/native-preview": "7.0.0-dev.20260122.4",
     "vite-tsconfig-paths": "6.0.3",
     "vitest": "4.0.16"
   },

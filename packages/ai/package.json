@@ -7,8 +7,8 @@
   },
   "devDependencies": {
     "@types/node": "^24",
-    "@zoonk/tsconfig": "workspace:*",
-    "@typescript/native-preview": "7.0.0-dev.20260122.4"
+    "@typescript/native-preview": "7.0.0-dev.20260122.4",
+    "@zoonk/tsconfig": "workspace:*"
   },
   "exports": {
     "./gateway": "./src/gateway.ts",

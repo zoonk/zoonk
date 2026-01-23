@@ -78,6 +78,9 @@ importers:
       babel-plugin-react-compiler:
         specifier: 1.0.0
         version: 1.0.0
+      typescript:
+        specifier: ^5
+        version: 5.9.3
 
   apps/auth:
     dependencies:
@@ -140,7 +143,7 @@ importers:
         specifier: 1.0.0
         version: 1.0.0
       typescript:
-        specifier: 5.9.3
+        specifier: ^5
         version: 5.9.3
 
   apps/editor:
@@ -236,6 +239,9 @@ importers:
       tmp:
         specifier: 0.2.5
         version: 0.2.5
+      typescript:
+        specifier: ^5
+        version: 5.9.3
       vite-tsconfig-paths:
         specifier: 6.0.3
         version: 6.0.3(typescript@5.9.3)(vite@7.3.1(@types/node@24.10.8)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.20.6))
@@ -297,6 +303,9 @@ importers:
       raw-loader:
         specifier: 4.0.2
         version: 4.0.2(webpack@5.104.1)
+      typescript:
+        specifier: ^5
+        version: 5.9.3
 
   apps/main:
     dependencies:
@@ -412,6 +421,9 @@ importers:
       tsx:
         specifier: 4.20.5
         version: 4.20.5
+      typescript:
+        specifier: ^5
+        version: 5.9.3
       vite-tsconfig-paths:
         specifier: 6.0.3
         version: 6.0.3(typescript@5.9.3)(vite@7.3.1(@types/node@24.10.8)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.20.5))

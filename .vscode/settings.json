@@ -37,14 +37,14 @@
   "editor.formatOnPaste": true,
   "editor.formatOnSave": true,
   "emmet.showExpandedAbbreviation": "never",
-  "typescript.experimental.useTsgo": true,
   "search.exclude": {
-    "**/eval-results/**": true,
-    "pnpm-lock.yaml": true,
     ".agents": true,
     ".claude": true,
     ".codex": true,
     ".github/skills": true,
-    ".opencode": true
-  }
+    ".opencode": true,
+    "**/eval-results/**": true,
+    "pnpm-lock.yaml": true
+  },
+  "typescript.experimental.useTsgo": true
 }
