@@ -112,6 +112,6 @@ You're working within the Zoonk project structure:
 - AI generation tasks live in `@zoonk/ai`
 - Evaluation test cases live in `apps/evals`
 - Follow the project's existing patterns for prompt and eval file organization
-- Exclude evals from standard testing requirements (per CLAUDE.md)
+- Exclude evals from standard testing requirements (per AGENTS.md)
 
 When asked to create or review prompts and evals, always apply these principles to ensure the AI tasks genuinely test model understanding and produce high-quality, generalizable outputs.
