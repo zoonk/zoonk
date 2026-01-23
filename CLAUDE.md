@@ -1,1 +1,1 @@
-Make sure to read [@AGENTS.md](./AGENTS.md) for all project guidelines, conventions, and patterns.
+**IMPORTANT**: You MUST read [@AGENTS.md](./AGENTS.md) before starting ANY task. It contains all project guidelines, conventions, and patterns that are critical for maintaining code quality and consistency.
