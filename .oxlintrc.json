@@ -7,7 +7,8 @@
     "nextjs",
     "import",
     "unicorn",
-    "jsx-a11y"
+    "jsx-a11y",
+    "vitest"
   ],
   "rules": {
     "jsx-a11y/no-autofocus": "off"
