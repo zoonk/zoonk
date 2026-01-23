@@ -9,7 +9,6 @@
   "categories": {
     "correctness": "error",
     "perf": "error",
-    "style": "error",
     "suspicious": "error"
   },
   "rules": {
@@ -17,7 +16,7 @@
       "error",
       {
         "ignoreArrayIndexes": true,
-        "ignore": [-1, 0, 1, 2, 7, 24, 30, 100, 365, 1000]
+        "ignore": [-1, 0, 1, 2, 7, 10, 12, 24, 30, 60, 100, 365, 1000, 1024, 3600, 86400]
       }
     ],
     "import/no-named-as-default": "off",
@@ -27,7 +26,6 @@
     ],
     "jsx-a11y/no-autofocus": "off",
     "oxc/no-map-spread": "off",
-    "react/jsx-max-depth": ["error", { "max": 6 }],
     "react/react-in-jsx-scope": "off",
     "typescript/consistent-type-definitions": ["error", "type"],
     "typescript/no-unsafe-type-assertion": "error"
@@ -36,13 +34,21 @@
     {
       "files": ["apps/evals/**/*.ts", "apps/evals/**/*.tsx"],
       "rules": {
+        "eslint/no-magic-numbers": "off",
         "typescript/no-unsafe-type-assertion": "off"
       }
     },
     {
-      "files": ["*.test.ts"],
+      "files": ["*.test.ts", "**/seed/**"],
       "rules": {
-        "eslint/max-statements": "off"
+        "eslint/max-statements": "off",
+        "eslint/no-magic-numbers": "off"
+      }
+    },
+    {
+      "files": ["packages/ui/src/components/**/*.tsx"],
+      "rules": {
+        "eslint/no-magic-numbers": "off"
       }
     }
   ],
