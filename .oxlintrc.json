@@ -24,10 +24,7 @@
     "jsx-a11y/no-autofocus": "off",
     "oxc/no-map-spread": "off",
     "react/react-in-jsx-scope": "off",
-    "typescript/no-unsafe-type-assertion": "off",
-
-    // temporary disables
-    "typescript/no-confusing-void-expression": "off"
+    "typescript/no-unsafe-type-assertion": "off"
   },
   "ignorePatterns": [
     "node_modules",
