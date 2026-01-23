@@ -3,6 +3,10 @@ export const DEFAULT_LOCALE = "en";
 
 export type SupportedLocale = (typeof SUPPORTED_LOCALES)[number];
 
+export function isValidLocale(value: string): value is SupportedLocale {
+  return SUPPORTED_LOCALES.some((v) => v === value);
+}
+
 /**
  * Locale labels in their native language.
  * These should NOT be translated since they represent

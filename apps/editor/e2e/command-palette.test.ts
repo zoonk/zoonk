@@ -276,9 +276,13 @@ test.describe("Command Palette - Keyboard Navigation", () => {
     // Press ArrowDown and wait for selection to change
     await ownerPage.keyboard.press("ArrowDown");
 
+    if (!firstName) {
+      throw new Error("Expected first option to have text content");
+    }
+
     // Wait for the selection to move to a DIFFERENT item
     await expect(
-      dialog.getByRole("option", { name: firstName as string, selected: true }),
+      dialog.getByRole("option", { name: firstName, selected: true }),
     ).not.toBeVisible();
 
     // Verify a new item is selected
@@ -290,17 +294,21 @@ test.describe("Command Palette - Keyboard Navigation", () => {
     // Press ArrowUp and wait for selection to change back
     await ownerPage.keyboard.press("ArrowUp");
 
+    if (!secondName) {
+      throw new Error("Expected second option to have text content");
+    }
+
     // Wait for selection to move away from second item
     await expect(
       dialog.getByRole("option", {
-        name: secondName as string,
+        name: secondName,
         selected: true,
       }),
     ).not.toBeVisible();
 
     // Verify we're back on the first item
     await expect(
-      dialog.getByRole("option", { name: firstName as string, selected: true }),
+      dialog.getByRole("option", { name: firstName, selected: true }),
     ).toBeVisible();
   });
 

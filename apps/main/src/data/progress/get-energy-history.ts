@@ -57,7 +57,7 @@ function fillGapsWithDecay(dataPoints: RawDataPoint[]): RawDataPoint[] {
   // Create a map of existing data points by date (YYYY-MM-DD)
   const dataMap = new Map<string, number>();
   for (const point of sorted) {
-    const key = point.date.toISOString().split("T")[0] as string;
+    const key = point.date.toISOString().substring(0, 10);
     dataMap.set(key, point.energy);
   }
 
@@ -73,7 +73,7 @@ function fillGapsWithDecay(dataPoints: RawDataPoint[]): RawDataPoint[] {
   let previousEnergy: number | null = null;
 
   while (current <= lastDate) {
-    const key = current.toISOString().split("T")[0] as string;
+    const key = current.toISOString().substring(0, 10);
     const existingEnergy = dataMap.get(key);
 
     if (existingEnergy !== undefined) {

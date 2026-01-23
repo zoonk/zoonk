@@ -75,6 +75,8 @@ Generate one visual resource for each step. Use the stepIndex field to match eac
     tools: visualTools,
   });
 
+  // Tool calls are typed by Vercel AI SDK but output structure matches StepVisualResource
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- AI tool outputs match expected schema
   const visuals = generationSteps.flatMap((step) =>
     step.toolCalls
       .filter((call) => !call.dynamic)

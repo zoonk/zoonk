@@ -88,6 +88,7 @@ export function SlugEditor({
 
       if (result.newSlug) {
         const url = `${redirectPrefix}${result.newSlug}${redirectSuffix}`;
+        // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- dynamic internal routes require assertion
         router.push(url as never);
       }
     });

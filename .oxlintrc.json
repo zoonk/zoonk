@@ -24,8 +24,16 @@
     "jsx-a11y/no-autofocus": "off",
     "oxc/no-map-spread": "off",
     "react/react-in-jsx-scope": "off",
-    "typescript/no-unsafe-type-assertion": "off"
+    "typescript/no-unsafe-type-assertion": "error"
   },
+  "overrides": [
+    {
+      "files": ["apps/evals/**/*.ts", "apps/evals/**/*.tsx"],
+      "rules": {
+        "typescript/no-unsafe-type-assertion": "off"
+      }
+    }
+  ],
   "ignorePatterns": [
     "node_modules",
     ".next",

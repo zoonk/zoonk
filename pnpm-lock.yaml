@@ -41,6 +41,9 @@ importers:
       '@zoonk/db':
         specifier: workspace:*
         version: link:../../packages/db
+      '@zoonk/next':
+        specifier: workspace:*
+        version: link:../../packages/next
       '@zoonk/ui':
         specifier: workspace:*
         version: link:../../packages/ui

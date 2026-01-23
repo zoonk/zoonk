@@ -1,10 +1,12 @@
 import "server-only";
 
 import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
-import { type Lesson, prisma } from "@zoonk/db";
+import { type Lesson, prisma, type TransactionClient } from "@zoonk/db";
 import { AppError, type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { normalizeString, toSlug } from "@zoonk/utils/string";
+import { isRecord } from "@/lib/validation";
 import { ErrorCode } from "@/lib/app-error";
+import type { ImportMode } from "@/lib/import-mode";
 import { parseJsonFile } from "@/lib/parse-json-file";
 
 export type LessonImportData = {
@@ -17,37 +19,28 @@ export type LessonsImport = {
   lessons: LessonImportData[];
 };
 
-export type ImportMode = "merge" | "replace";
-
-type TransactionClient = Parameters<
-  Parameters<typeof prisma.$transaction>[0]
->[0];
-
 function validateLessonData(lesson: unknown): lesson is LessonImportData {
-  if (typeof lesson !== "object" || lesson === null) {
+  if (!isRecord(lesson)) {
     return false;
   }
 
-  const l = lesson as Record<string, unknown>;
-
-  const hasValidTitle = typeof l.title === "string" && l.title.length > 0;
-  const hasValidDescription = typeof l.description === "string";
+  const hasValidTitle =
+    typeof lesson.title === "string" && lesson.title.length > 0;
+  const hasValidDescription = typeof lesson.description === "string";
 
   return hasValidTitle && hasValidDescription;
 }
 
 function validateImportData(data: unknown): data is LessonsImport {
-  if (typeof data !== "object" || data === null) {
+  if (!isRecord(data)) {
     return false;
   }
 
-  const d = data as Record<string, unknown>;
-
-  if (!Array.isArray(d.lessons)) {
+  if (!Array.isArray(data.lessons)) {
     return false;
   }
 
-  return d.lessons.every(validateLessonData);
+  return data.lessons.every(validateLessonData);
 }
 
 async function removeExistingLessons(

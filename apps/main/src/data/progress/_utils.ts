@@ -1,6 +1,15 @@
 import "server-only";
 
-export type HistoryPeriod = "month" | "6months" | "year";
+const HISTORY_PERIODS = ["month", "6months", "year"] as const;
+export type HistoryPeriod = (typeof HISTORY_PERIODS)[number];
+
+function isHistoryPeriod(value: string): value is HistoryPeriod {
+  return HISTORY_PERIODS.some((v) => v === value);
+}
+
+export function validatePeriod(value: string): HistoryPeriod {
+  return isHistoryPeriod(value) ? value : "month";
+}
 
 export type DateRange = {
   start: Date;
@@ -103,7 +112,7 @@ function getWeekKey(date: Date): string {
   const day = d.getDay();
   const diff = d.getDate() - day + (day === 0 ? -6 : 1);
   d.setDate(diff);
-  return d.toISOString().split("T")[0] as string;
+  return d.toISOString().substring(0, 10);
 }
 
 function getMonthKey(date: Date): string {

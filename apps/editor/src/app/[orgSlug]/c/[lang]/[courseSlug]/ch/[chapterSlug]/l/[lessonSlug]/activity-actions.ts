@@ -11,6 +11,7 @@ import { exportActivities } from "@/data/activities/export-activities";
 import { importActivities } from "@/data/activities/import-activities";
 import { reorderActivities } from "@/data/activities/reorder-activities";
 import { getErrorMessage } from "@/lib/error-messages";
+import { isImportMode } from "@/lib/import-mode";
 
 async function createActivityAction(
   lessonSlug: string,
@@ -46,7 +47,8 @@ async function importActivitiesAction(
   formData: FormData,
 ): Promise<{ error: string | null }> {
   const file = formData.get("file");
-  const mode = formData.get("mode") as "merge" | "replace";
+  const modeValue = formData.get("mode");
+  const mode = isImportMode(modeValue) ? modeValue : "merge";
 
   if (!(file && file instanceof File)) {
     const t = await getExtracted();

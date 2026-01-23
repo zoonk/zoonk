@@ -1,10 +1,12 @@
-const clientId = process.env.GOOGLE_CLIENT_ID as string;
-const clientSecret = process.env.GOOGLE_CLIENT_SECRET as string;
+const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } = process.env;
 
-function isGoogleEnabled() {
-  return Boolean(clientId) && Boolean(clientSecret);
-}
-
-export const googleProvider = isGoogleEnabled()
-  ? { google: { clientId, clientSecret, prompt: "select_account" } as const }
-  : {};
+export const googleProvider =
+  GOOGLE_CLIENT_ID && GOOGLE_CLIENT_SECRET
+    ? {
+        google: {
+          clientId: GOOGLE_CLIENT_ID,
+          clientSecret: GOOGLE_CLIENT_SECRET,
+          prompt: "select_account",
+        } as const,
+      }
+    : {};

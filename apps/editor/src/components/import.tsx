@@ -26,8 +26,7 @@ import {
   useState,
   useTransition,
 } from "react";
-
-type ImportMode = "merge" | "replace";
+import { type ImportMode, isImportMode } from "@/lib/import-mode";
 
 type ImportContextValue = {
   file: File | null;
@@ -200,7 +199,7 @@ function ImportModeSelector({
     >
       {label && <Label className="font-medium text-sm">{label}</Label>}
       <RadioGroup
-        onValueChange={(value) => setMode(value as ImportMode)}
+        onValueChange={(value) => isImportMode(value) && setMode(value)}
         value={mode}
       >
         {children}

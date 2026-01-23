@@ -3,31 +3,29 @@ import "server-only";
 import { prisma } from "@zoonk/db";
 import { AppError, type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { toSlug } from "@zoonk/utils/string";
+import { isRecord } from "@/lib/validation";
 import { ErrorCode } from "@/lib/app-error";
+import type { ImportMode } from "@/lib/import-mode";
 import { parseJsonFile } from "@/lib/parse-json-file";
 
 export type AlternativeTitlesImport = {
   alternativeTitles: string[];
 };
 
-export type ImportMode = "merge" | "replace";
-
 function validateTitleData(title: unknown): title is string {
   return typeof title === "string" && title.trim().length > 0;
 }
 
 function validateImportData(data: unknown): data is AlternativeTitlesImport {
-  if (typeof data !== "object" || data === null) {
+  if (!isRecord(data)) {
     return false;
   }
 
-  const d = data as Record<string, unknown>;
-
-  if (!Array.isArray(d.alternativeTitles)) {
+  if (!Array.isArray(data.alternativeTitles)) {
     return false;
   }
 
-  return d.alternativeTitles.every(validateTitleData);
+  return data.alternativeTitles.every(validateTitleData);
 }
 
 export async function importAlternativeTitles(params: {

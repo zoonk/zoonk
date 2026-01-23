@@ -74,7 +74,8 @@ Generate quiz questions that test understanding of these concepts. Use the avail
     tools: quizTools,
   });
 
-  // Collect all tool calls as questions
+  // Tool calls are typed by Vercel AI SDK but output structure matches QuizQuestion
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- AI tool outputs match expected schema
   const questions = steps.flatMap((step) =>
     step.toolCalls
       .filter((call) => !call.dynamic)

@@ -31,6 +31,8 @@ function setNestedProperty(
     ) {
       current[key] = {};
     }
+    // After the check above, current[key] is guaranteed to be an object
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- needed for TypeScript to narrow index access
     current = current[key] as Record<string, unknown>;
   }
 
@@ -83,8 +85,7 @@ export default defineCodec(() => {
       if (catalog.meta) {
         metadataByLocale.set(context.locale, catalog.meta);
       }
-      const messages =
-        catalog.messages || ([] as NonNullable<typeof catalog.messages>);
+      const messages = catalog.messages ?? [];
 
       return messages.map((msg) => {
         const { extractedComments, msgctxt, msgid, msgstr, ...rest } = msg;

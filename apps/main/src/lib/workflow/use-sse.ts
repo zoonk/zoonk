@@ -34,6 +34,7 @@ export function useSSE<T>(url: string | null, options: UseSSEOptions<T>) {
         const parser = createParser({
           onEvent: (event: EventSourceMessage) => {
             indexRef.current += 1;
+            // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- SSE data type is validated by consumer
             const data = JSON.parse(event.data) as T;
             onMessage(data);
           },

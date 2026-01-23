@@ -1,6 +1,6 @@
 import { getSession } from "@zoonk/core/users/session/get";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
-import type { ScorePeriod } from "@/data/progress/get-score-history";
+import { validatePeriod } from "@/data/progress/_utils";
 import { getScoreHistory } from "@/data/progress/get-score-history";
 import { PerformanceChartSkeleton } from "../_components/performance-chart-skeleton";
 import { PerformanceEmptyState } from "../_components/performance-empty-state";
@@ -17,12 +17,13 @@ export async function ScoreContent({
   searchParams: Promise<{ offset?: string; period?: string }>;
 }) {
   const { offset = "0", period = "month" } = await searchParams;
+  const validPeriod = validatePeriod(period);
 
   const [data, session] = await Promise.all([
     getScoreHistory({
       locale,
       offset: Number(offset),
-      period: period as ScorePeriod,
+      period: validPeriod,
     }),
     getSession(),
   ]);
@@ -41,7 +42,7 @@ export async function ScoreContent({
     <div className="flex flex-col gap-8">
       <ScoreStats
         average={data.average}
-        period={period as ScorePeriod}
+        period={validPeriod}
         periodEnd={data.periodEnd}
         periodStart={data.periodStart}
         previousAverage={data.previousAverage}
@@ -52,15 +53,12 @@ export async function ScoreContent({
         dataPoints={data.dataPoints}
         hasNext={data.hasNextPeriod}
         hasPrevious={data.hasPreviousPeriod}
-        period={period as ScorePeriod}
+        period={validPeriod}
         periodEnd={data.periodEnd}
         periodStart={data.periodStart}
       />
 
-      <ScoreInsights
-        period={period as ScorePeriod}
-        periodStart={data.periodStart}
-      />
+      <ScoreInsights period={validPeriod} periodStart={data.periodStart} />
 
       <ScoreExplanation />
     </div>

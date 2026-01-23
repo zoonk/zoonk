@@ -8,11 +8,14 @@ function assertNever(x: never): never {
   throw new Error(`Unhandled error code: ${String(x)}`);
 }
 
+const ERROR_CODE_VALUES = Object.values(ErrorCode);
+
+function isErrorCode(code: unknown): code is ErrorCodeType {
+  return typeof code === "string" && ERROR_CODE_VALUES.some((v) => v === code);
+}
+
 function isEditorError(error: Error): error is AppError<ErrorCodeType> {
-  return (
-    isAppError(error) &&
-    Object.values(ErrorCode).includes(error.code as ErrorCodeType)
-  );
+  return isAppError(error) && isErrorCode(error.code);
 }
 
 export async function getErrorMessage(error: Error): Promise<string> {

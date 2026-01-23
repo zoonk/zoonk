@@ -9,6 +9,7 @@ import { redirect } from "next/navigation";
 import { after } from "next/server";
 import { getExtracted } from "next-intl/server";
 import { deleteAlternativeTitles } from "@/data/alternative-titles/delete-alternative-titles";
+import { isImportMode } from "@/lib/import-mode";
 import { exportAlternativeTitles } from "@/data/alternative-titles/export-alternative-titles";
 import { importAlternativeTitles } from "@/data/alternative-titles/import-alternative-titles";
 import { addCategoryToCourse } from "@/data/categories/add-category-to-course";
@@ -130,7 +131,8 @@ async function importChaptersAction(
   formData: FormData,
 ): Promise<{ error: string | null }> {
   const file = formData.get("file");
-  const mode = formData.get("mode") as "merge" | "replace";
+  const modeValue = formData.get("mode");
+  const mode = isImportMode(modeValue) ? modeValue : "merge";
 
   if (!(file && file instanceof File)) {
     const t = await getExtracted();
@@ -347,7 +349,8 @@ export async function importAlternativeTitlesAction(
 ): Promise<{ error: string | null }> {
   const { courseId, courseSlug, lang, orgSlug } = params;
   const file = formData.get("file");
-  const mode = formData.get("mode") as "merge" | "replace";
+  const modeValue = formData.get("mode");
+  const mode = isImportMode(modeValue) ? modeValue : "merge";
 
   if (!(file && file instanceof File)) {
     const t = await getExtracted();

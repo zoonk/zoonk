@@ -3,6 +3,7 @@
 import { Toggle as TogglePrimitive } from "@base-ui/react/toggle";
 import { ToggleGroup as ToggleGroupPrimitive } from "@base-ui/react/toggle-group";
 import { toggleVariants } from "@zoonk/ui/components/toggle";
+import type { CSSPropertiesWithVariables } from "@zoonk/ui/lib/css-variables";
 import { cn } from "@zoonk/ui/lib/utils";
 import type { VariantProps } from "class-variance-authority";
 import { createContext, useContext } from "react";
@@ -43,7 +44,7 @@ function ToggleGroup({
       data-slot="toggle-group"
       data-spacing={spacing}
       data-variant={variant}
-      style={{ "--gap": spacing } as React.CSSProperties}
+      style={{ "--gap": spacing } as CSSPropertiesWithVariables}
       {...props}
     >
       <ToggleGroupContext.Provider

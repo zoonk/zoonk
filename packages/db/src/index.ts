@@ -3,16 +3,19 @@ import { attachDatabasePool } from "@vercel/functions";
 import { Pool } from "pg";
 import { PrismaClient } from "./generated/prisma/client";
 
+declare global {
+  var prisma: PrismaClient | undefined;
+}
+
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 
 attachDatabasePool(pool);
 
 const adapter = new PrismaPg(pool);
-const globalForPrisma = global as unknown as { prisma: PrismaClient };
-const prisma = globalForPrisma.prisma || new PrismaClient({ adapter });
+const prisma = globalThis.prisma ?? new PrismaClient({ adapter });
 
 if (process.env.NODE_ENV !== "production") {
-  globalForPrisma.prisma = prisma;
+  globalThis.prisma = prisma;
 }
 
 export type {
@@ -49,3 +52,7 @@ export type {
 export type { BatchPayload } from "./generated/prisma/internal/prismaNamespace";
 
 export { prisma };
+
+export type TransactionClient = Parameters<
+  Parameters<typeof prisma.$transaction>[0]
+>[0];

@@ -1,6 +1,6 @@
 import { getSession } from "@zoonk/core/users/session/get";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
-import type { HistoryPeriod } from "@/data/progress/_utils";
+import { validatePeriod } from "@/data/progress/_utils";
 import { getBpHistory } from "@/data/progress/get-bp-history";
 import { PerformanceChartSkeleton } from "../_components/performance-chart-skeleton";
 import { PerformanceEmptyState } from "../_components/performance-empty-state";
@@ -20,12 +20,13 @@ export async function LevelContent({
   searchParams: Promise<{ offset?: string; period?: string }>;
 }) {
   const { offset = "0", period = "month" } = await searchParams;
+  const validPeriod = validatePeriod(period);
 
   const [data, session] = await Promise.all([
     getBpHistory({
       locale,
       offset: Number(offset),
-      period: period as HistoryPeriod,
+      period: validPeriod,
     }),
     getSession(),
   ]);
@@ -44,7 +45,7 @@ export async function LevelContent({
     <div className="flex flex-col gap-8">
       <LevelStats
         currentBelt={data.currentBelt}
-        period={period as HistoryPeriod}
+        period={validPeriod}
         periodEnd={data.periodEnd}
         periodStart={data.periodStart}
         periodTotal={data.periodTotal}
@@ -56,7 +57,7 @@ export async function LevelContent({
         dataPoints={data.dataPoints}
         hasNext={data.hasNextPeriod}
         hasPrevious={data.hasPreviousPeriod}
-        period={period as HistoryPeriod}
+        period={validPeriod}
         periodEnd={data.periodEnd}
         periodStart={data.periodStart}
         periodTotal={data.periodTotal}

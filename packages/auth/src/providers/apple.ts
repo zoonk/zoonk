@@ -1,48 +1,28 @@
 import { importPKCS8, SignJWT } from "jose";
 
-type CachedToken = {
-  token: string;
-  exp: number;
-};
+let cached: { token: string; exp: number } | null = null;
 
-const MS_IN_SECOND = 1000;
+const { APPLE_TEAM_ID, APPLE_CLIENT_ID, APPLE_KEY_ID, APPLE_PRIVATE_KEY } =
+  process.env;
 
-let cached: CachedToken | null = null;
-
-const teamId = process.env.APPLE_TEAM_ID as string;
-const clientId = process.env.APPLE_CLIENT_ID as string;
-const keyId = process.env.APPLE_KEY_ID as string;
-
-function isAppleEnabled() {
-  return (
-    Boolean(teamId) &&
-    Boolean(clientId) &&
-    Boolean(keyId) &&
-    Boolean(process.env.APPLE_PRIVATE_KEY)
-  );
-}
+const hasAppleConfig =
+  APPLE_TEAM_ID && APPLE_CLIENT_ID && APPLE_KEY_ID && APPLE_PRIVATE_KEY;
 
 async function getAppleClientSecret(): Promise<string> {
-  const now = Math.floor(Date.now() / MS_IN_SECOND);
-  const isTokenValid = cached && cached.exp - 60 > now;
+  const now = Math.floor(Date.now() / 1000);
 
-  if (cached && isTokenValid) {
+  if (cached && cached.exp - 60 > now) {
     return cached.token;
   }
 
   const ttlSec = 2_592_000; // 1 month
-
-  const privateKeyPEM = (process.env.APPLE_PRIVATE_KEY as string).replace(
-    /\\n/g,
-    "\n",
-  );
-
+  const privateKeyPEM = APPLE_PRIVATE_KEY!.replace(/\\n/g, "\n");
   const key = await importPKCS8(privateKeyPEM, "ES256");
 
   const token = await new SignJWT({})
-    .setProtectedHeader({ alg: "ES256", kid: keyId })
-    .setIssuer(teamId)
-    .setSubject(clientId)
+    .setProtectedHeader({ alg: "ES256", kid: APPLE_KEY_ID! })
+    .setIssuer(APPLE_TEAM_ID!)
+    .setSubject(APPLE_CLIENT_ID!)
     .setAudience("https://appleid.apple.com")
     .setIssuedAt(now)
     .setExpirationTime(now + ttlSec)
@@ -53,10 +33,11 @@ async function getAppleClientSecret(): Promise<string> {
   return token;
 }
 
-const APPLE_CLIENT_SECRET = isAppleEnabled()
-  ? await getAppleClientSecret()
-  : "";
-
-export const appleProvider = isAppleEnabled()
-  ? { apple: { clientId, clientSecret: APPLE_CLIENT_SECRET } }
+export const appleProvider = hasAppleConfig
+  ? {
+      apple: {
+        clientId: APPLE_CLIENT_ID,
+        clientSecret: await getAppleClientSecret(),
+      },
+    }
   : {};
