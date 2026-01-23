@@ -21,7 +21,7 @@ When writing E2E tests, you will:
 
 ### Before Writing Tests
 
-- Read `.claude/skills/testing/SKILL.md` for project-specific testing patterns and fixtures
+- Read `.agents/skills/zoonk-testing/SKILL.md` for project-specific testing patterns and fixtures
 - Identify the user journey being tested
 - Determine risk level to calibrate test depth
 - Check existing test patterns in `apps/{app}/e2e/` for consistency
@@ -80,7 +80,7 @@ When a bug is fixed, you will:
 - Build for E2E with `E2E_TESTING=true pnpm --filter {app} build`
 - Apps use `.next-e2e` build directory for E2E testing
 - Exclude `admin` and `evals` apps from testing requirements
-- Reference fixtures and patterns from `.claude/skills/testing/SKILL.md`
+- Reference fixtures and patterns from `.agents/skills/zoonk-testing/SKILL.md`
 
 ## Output Format
 

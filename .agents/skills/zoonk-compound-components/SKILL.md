@@ -1,6 +1,10 @@
 ---
-name: compound-components
+name: zoonk-compound-components
 description: Build UI components using the compound component pattern. Use when creating new React components, building UI elements, refactoring components, or when the user mentions compound components, composable components, component patterns, or UI building blocks.
+license: MIT
+metadata:
+  author: zoonk
+  version: "1.0.0"
 ---
 
 # Compound Components Pattern
@@ -19,7 +23,7 @@ For more information, see the [components.build docs](https://www.components.bui
 2. **Use `children` for content** - Never use props like `title`, `description`, `label` - pass content as children
 3. **Use `className` for customization** - Allow consumers to override styles
 4. **Use `data-slot` for CSS coordination** - Style child components based on parent context using `data-slot` attributes and Tailwind's `has-*` or `group-*` selectors
-5. **Make components generic** - Name components for what they ARE, not what they're FOR. A component used for courses, users, and brands should be in the UI package with a generic name like `MediaCard`, not `CourseHeader`
+5. **Make components generic** - Name components for what they ARE, not what they're FOR. A component used for multiple domains should have a generic name like `MediaCard`, not `CourseHeader`
 
 ## Context/Provider - LAST RESORT
 
@@ -72,7 +76,7 @@ If you find yourself reaching for Context, first ask: "Can I solve this with jus
 </CourseHeaderProvider>
 
 // BAD: Domain-specific naming for generic patterns
-<CourseHeaderImage /> // Should be <MediaCardImage /> in UI package
+<CourseHeaderImage /> // Should be <MediaCardImage /> in a shared package
 ```
 
 ## Using data-slot for CSS Coordination
@@ -94,7 +98,7 @@ function MediaCardTitle({ children, className }) {
         "font-semibold",
         // Contextual styles using Tailwind's group/has selectors
         "group-data-[size=sm]/media-card:text-sm",
-        className
+        className,
       )}
       data-slot="media-card-title"
     >
@@ -112,16 +116,7 @@ function MediaCardTitle({ children, className }) {
 4. **Easy to extend** - Add new child components without changing existing ones
 5. **Testable** - Each small component is easy to test in isolation
 
-## Reference Examples
-
-Look at these existing components for guidance:
-
-- `packages/ui/src/components/item.tsx` - Item/list compound components
-- `packages/ui/src/components/container.tsx` - Container compound components
-- `packages/ui/src/components/sidebar.tsx` - Sidebar compound components
-- `packages/ui/src/components/dialog.tsx` - Dialog compound components
-
 ## Component Placement
 
-- **Generic UI patterns** (MediaCard, Item, Container): `packages/ui/src/components/`
+- **Generic UI patterns** (MediaCard, Item, Container): Shared packages like `packages/ui/`
 - **Domain-specific compositions**: `apps/{app}/src/components/{domain}/`

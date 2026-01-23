@@ -60,7 +60,7 @@ Some design preferences:
 - For buttons, prefer `outline` variant for most buttons and links. Use the default one only for active/selected states or for submit buttons. Use the `secondary` variant for buttons you want to emphasize a bit more
 - Prefer using existing components from `@zoonk/ui` instead of creating new ones. If a component doesn't exist, search the `shadcn` registry before creating a new one
 
-For detailed UX guidelines (interactions, animation, layout, accessibility), see [.claude/skills/design/SKILL.md](.claude/skills/design/SKILL.md)
+For detailed UX guidelines (interactions, animation, layout, accessibility), see [.agents/skills/zoonk-design/SKILL.md](.agents/skills/zoonk-design/SKILL.md)
 
 ## Conventions
 
@@ -101,13 +101,13 @@ For detailed UX guidelines (interactions, animation, layout, accessibility), see
 
 **Do NOT use React Context by default.** Most compound components don't need it.
 
-For detailed examples and patterns, see `.claude/skills/compound-components/SKILL.md`
+For detailed examples and patterns, see `.agents/skills/zoonk-compound-components/SKILL.md`
 
 ## Testing
 
 **CRITICAL**: Before writing ANY test, you MUST:
 
-1. **Read `.claude/skills/testing/SKILL.md`** - Contains mandatory patterns and anti-patterns
+1. **Read `.agents/skills/zoonk-testing/SKILL.md`** - Contains mandatory patterns and anti-patterns
 2. **Use the `e2e-test-architect` agent** if available - It knows the testing patterns
 3. **Invoke the `/testing` skill** - Use `Skill(testing)` to get guidance
 
@@ -139,7 +139,7 @@ page.getByLabel(/email/i);
 
 **E2E builds**: Apps use separate build directories for E2E testing (e.g., `.next-e2e` instead of `.next`). When running E2E tests, build with `E2E_TESTING=true pnpm --filter {app} build` to ensure the correct build directory is used.
 
-For detailed testing patterns, fixtures, and best practices, see `.claude/skills/testing/SKILL.md`
+For detailed testing patterns, fixtures, and best practices, see `.agents/skills/zoonk-testing/SKILL.md`
 
 ## i18n
 
@@ -147,7 +147,7 @@ For detailed testing patterns, fixtures, and best practices, see `.claude/skills
 - **IMPORTANT**: The `t` function does NOT support dynamic keys. Use string literals: `t("Arts courses")`, not `t(someVariable)`
 - **CRITICAL: NEVER pass `t` as a function argument**. This is a common mistake that breaks i18n extraction. Instead of passing `t` to a function, create an async function that calls `getExtracted()` internally (see `@apps/main/src/lib/categories.ts` and `@apps/main/src/lib/belt-colors.ts` for examples)
 - **CRITICAL: NEVER call `getExtracted()` inside `Promise.all()`**
-- Always read the [translations skill](.claude/skills/translations/SKILL.md) when using `next-intl`.
+- Always read the [translations skill](.agents/skills/zoonk-translations/SKILL.md) when using `next-intl`.
 
 ## CSS
 
@@ -173,20 +173,6 @@ We're using the new [React Compiler](https://react.dev/learn/react-compiler/intr
 ## Committing Changes
 
 When committing changes, use the `/commit` skill. This ensures consistent commit message formatting across the project.
-
-## Specialized Skills
-
-For detailed guidance on complex workflows, see these skill files:
-
-| Skill                | When to Use                         | File                                           |
-| -------------------- | ----------------------------------- | ---------------------------------------------- |
-| Cache Components     | next.js `cacheComponents` is `true` | `.claude/skills/cache-components/SKILL.md`     |
-| Commit               | Writing commit messages, PRs        | `.claude/skills/commit/SKILL.md`               |
-| Compound Components  | Building UI components              | `.claude/skills/compound-components/SKILL.md`  |
-| Design               | UI/UX, interactions, a11y           | `.claude/skills/design/SKILL.md`               |
-| React Best Practices | React best practices                | `.claude/skills/react-best-practices/SKILL.md` |
-| Testing              | Bug fixes, new features, TDD        | `.claude/skills/testing/SKILL.md`              |
-| Translations         | Working with i18n, PO files         | `.claude/skills/translations/SKILL.md`         |
 
 ## Updating this document
 

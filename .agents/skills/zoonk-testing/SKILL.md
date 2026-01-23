@@ -1,13 +1,15 @@
 ---
-name: testing
+name: zoonk-testing
 description: Write tests following TDD principles. Use when implementing features, fixing bugs, or adding test coverage. Covers e2e, integration, and unit testing patterns.
+license: MIT
+metadata:
+  author: zoonk
+  version: "1.0.0"
 ---
 
 # Testing Guidelines
 
 Follow TDD (Test-Driven Development) for all features and bug fixes. **Always write failing tests first.**
-
-**Note**: Exclude `admin` and `evals` apps from testing requirements (internal tools).
 
 ## TDD Workflow
 
@@ -25,11 +27,11 @@ Follow TDD (Test-Driven Development) for all features and bug fixes. **Always wr
 
 ## Test Types
 
-| When                    | Test Type   | Framework  | Location                                                |
-| ----------------------- | ----------- | ---------- | ------------------------------------------------------- |
-| Apps/UI features        | E2E         | Playwright | `apps/{app}/e2e/`                                       |
-| Data functions (Prisma) | Integration | Vitest     | `apps/{app}/src/data/` or `packages/core/src/{domain}/` |
-| Utils/helpers           | Unit        | Vitest     | `packages/{pkg}/*.test.ts`                              |
+| When                    | Test Type   | Framework  | Location                              |
+| ----------------------- | ----------- | ---------- | ------------------------------------- |
+| Apps/UI features        | E2E         | Playwright | `apps/{app}/e2e/`                     |
+| Data functions (Prisma) | Integration | Vitest     | `apps/{app}/src/data/` or `packages/` |
+| Utils/helpers           | Unit        | Vitest     | `packages/{pkg}/*.test.ts`            |
 
 ## E2E Testing (Playwright)
 
@@ -108,7 +110,7 @@ test("persists title after reload", async ({ page }) => {
   await expect(page.getByText(/saved/i)).toBeVisible();
   await page.reload();
   await expect(page.getByRole("textbox", { name: /title/i })).toHaveValue(
-    "New Title"
+    "New Title",
   );
 });
 
@@ -120,26 +122,6 @@ test("auto-saves and persists title", async ({ page }) => {
 
   await page.reload();
   await expect(titleInput).toHaveValue("New Title");
-});
-```
-
-```typescript
-// BAD: Visibility test is redundant when interaction test exists
-test("shows feedback buttons", async ({ page }) => {
-  await expect(page.getByRole("button", { name: /like/i })).toBeVisible();
-});
-
-test("clicking feedback button marks it as pressed", async ({ page }) => {
-  const likeButton = page.getByRole("button", { name: /like/i });
-  await likeButton.click();
-  await expect(likeButton).toHaveAttribute("aria-pressed", "true");
-});
-
-// GOOD: Interaction test implicitly verifies visibility
-test("clicking feedback button marks it as pressed", async ({ page }) => {
-  const likeButton = page.getByRole("button", { name: /like/i });
-  await likeButton.click();
-  await expect(likeButton).toHaveAttribute("aria-pressed", "true");
 });
 ```
 
@@ -185,7 +167,7 @@ test("shows fallback icon", async ({ page }) => {
 // In the component: <MediaCardIcon role="img" aria-label={title}>
 // Then test with semantic queries:
 test("shows fallback icon", async ({ page }) => {
-  const fallbackIcon = page.getByRole("img", { name: /course title/i }).first();
+  const fallbackIcon = page.getByRole("img", { name: /post title/i }).first();
   await expect(fallbackIcon).toBeVisible();
   await expect(fallbackIcon).not.toHaveAttribute("src"); // Distinguishes from <img>
 });
@@ -257,15 +239,15 @@ test("switches locale", async ({ page }) => {
 
 ```typescript
 // BAD: Only checks URL - will pass even if page is broken or moved
-test("creates course and redirects", async ({ page }) => {
+test("creates item and redirects", async ({ page }) => {
   await page.getByRole("button", { name: /create/i }).click();
-  await expect(page).toHaveURL(/\/courses\/new-course/);
+  await expect(page).toHaveURL(/\/items\/new-item/);
 });
 
 // GOOD: Verifies destination content exists
-test("creates course and redirects to course page", async ({ page }) => {
-  const courseTitle = "My New Course";
-  const courseDescription = "Course description";
+test("creates item and redirects to item page", async ({ page }) => {
+  const itemTitle = "My New Item";
+  const itemDescription = "Item description";
 
   // ... fill form with title and description ...
 
@@ -274,19 +256,13 @@ test("creates course and redirects to course page", async ({ page }) => {
   // Verify destination page shows the created content
   // For editable fields, use toHaveValue:
   await expect(page.getByRole("textbox", { name: /edit title/i })).toHaveValue(
-    courseTitle
+    itemTitle,
   );
 
   // For static text, use toBeVisible:
-  await expect(page.getByText(courseDescription)).toBeVisible();
+  await expect(page.getByText(itemDescription)).toBeVisible();
 });
 ```
-
-This ensures:
-
-- The redirect goes to the correct page
-- The page actually renders (not a 404 or error)
-- The created data is properly displayed
 
 ### Testing Server Actions
 
@@ -298,7 +274,7 @@ This ensures:
 // BAD: Trying to intercept server action (won't work)
 test("shows error on failure", async ({ page }) => {
   await page.route("**/api/endpoint", (route) =>
-    route.fulfill({ status: 500 })
+    route.fulfill({ status: 500 }),
   );
   // This won't affect server actions - they don't go through the browser
 });
@@ -352,7 +328,7 @@ await expect(nameInput).toHaveValue(originalName);
 
 ### Authentication Fixtures
 
-Use pre-configured fixtures from `apps/{app}/e2e/fixtures.ts`:
+Use pre-configured fixtures from your test setup:
 
 ```typescript
 import { expect, test } from "./fixtures";
@@ -360,7 +336,7 @@ import { expect, test } from "./fixtures";
 test("authenticated user sees dashboard", async ({ authenticatedPage }) => {
   await authenticatedPage.goto("/");
   await expect(
-    authenticatedPage.getByRole("heading", { name: "Dashboard" })
+    authenticatedPage.getByRole("heading", { name: "Dashboard" }),
   ).toBeVisible();
 });
 
@@ -384,24 +360,22 @@ Choose the right approach based on what you're testing:
 **Use Prisma fixtures when tests mutate data:**
 
 ```typescript
-import { prisma } from "@zoonk/db";
-import { courseFixture } from "@zoonk/testing/fixtures/courses";
+import { prisma } from "@/lib/db";
+import { postFixture } from "@/tests/fixtures/posts";
 
-async function createTestCourse() {
-  const org = await prisma.organization.findUniqueOrThrow({
-    where: { slug: "ai" },
-  });
+async function createTestPost() {
+  const user = await prisma.user.findFirstOrThrow();
 
-  return courseFixture({
+  return postFixture({
     isPublished: true,
-    organizationId: org.id,
+    userId: user.id,
     slug: `e2e-${randomUUID().slice(0, 8)}`,
   });
 }
 
-test("edits course title", async ({ authenticatedPage }) => {
-  const course = await createTestCourse();
-  await authenticatedPage.goto(`/ai/c/en/${course.slug}`);
+test("edits post title", async ({ authenticatedPage }) => {
+  const post = await createTestPost();
+  await authenticatedPage.goto(`/posts/${post.slug}`);
   // ... test editing behavior
 });
 ```
@@ -416,20 +390,18 @@ test("edits course title", async ({ authenticatedPage }) => {
 **Use seeded data for read-only tests:**
 
 ```typescript
-// GOOD: Read-only test uses seeded "machine-learning" course
-test("shows course details", async ({ page }) => {
-  await page.goto("/ai/c/en/machine-learning");
+// GOOD: Read-only test uses seeded "welcome-post" post
+test("shows post details", async ({ page }) => {
+  await page.goto("/posts/welcome-post");
 
-  await expect(
-    page.getByRole("heading", { name: /machine learning/i })
-  ).toBeVisible();
+  await expect(page.getByRole("heading", { name: /welcome/i })).toBeVisible();
 });
 
-// GOOD: Validation test uses seeded course as duplicate target
+// GOOD: Validation test uses seeded post as duplicate target
 test("shows error for duplicate slug", async ({ authenticatedPage }) => {
-  const course = await createTestCourse();
-  await authenticatedPage.goto(`/ai/c/en/${course.slug}`);
-  await authenticatedPage.getByLabel(/url/i).fill("spanish"); // seeded course
+  const post = await createTestPost();
+  await authenticatedPage.goto(`/posts/${post.slug}/edit`);
+  await authenticatedPage.getByLabel(/url/i).fill("welcome-post"); // seeded post
   await expect(authenticatedPage.getByText(/already in use/i)).toBeVisible();
 });
 ```
@@ -437,7 +409,7 @@ test("shows error for duplicate slug", async ({ authenticatedPage }) => {
 ### Test Organization
 
 ```typescript
-test.describe("Course Page", () => {
+test.describe("Post Page", () => {
   test.describe("unauthenticated users", () => {
     test("shows sign-in prompt", async ({ page }) => {
       // ...
@@ -445,7 +417,7 @@ test.describe("Course Page", () => {
   });
 
   test.describe("authenticated users", () => {
-    test("can enroll in course", async ({ authenticatedPage }) => {
+    test("can bookmark post", async ({ authenticatedPage }) => {
       // ...
     });
   });
@@ -459,20 +431,16 @@ However, avoid nesting too deeply. You shouldn't have more than 2 `test.describe
 ### Using Fixtures
 
 ```typescript
-import { prisma } from "@zoonk/db";
-import {
-  courseFixture,
-  memberFixture,
-  signInAs,
-} from "@zoonk/testing/fixtures";
+import { prisma } from "@/lib/db";
+import { postFixture, memberFixture, signInAs } from "@/tests/fixtures";
 
-describe("createChapter", () => {
+describe("createComment", () => {
   describe("unauthenticated users", () => {
     test("returns unauthorized error", async () => {
-      const result = await createChapter({
+      const result = await createComment({
         headers: new Headers(),
-        courseId: 1,
-        title: "Test",
+        postId: 1,
+        content: "Test",
       });
 
       expect(result.error?.message).toBe(ErrorCode.unauthorized);
@@ -481,7 +449,7 @@ describe("createChapter", () => {
 
   describe("admin users", () => {
     let organization: Organization;
-    let course: Course;
+    let post: Post;
     let headers: Headers;
 
     beforeAll(async () => {
@@ -489,25 +457,25 @@ describe("createChapter", () => {
         role: "admin",
       });
 
-      course = await courseFixture({ organizationId: organization.id });
+      post = await postFixture({ organizationId: organization.id });
       headers = await signInAs(user.email, user.password);
     });
 
-    test("creates chapter successfully", async () => {
-      const result = await createChapter({
+    test("creates comment successfully", async () => {
+      const result = await createComment({
         headers,
-        courseId: course.id,
-        title: "New Chapter",
+        postId: post.id,
+        content: "New Comment",
       });
 
-      expect(result.data?.title).toBe("New Chapter");
+      expect(result.data?.content).toBe("New Comment");
 
       // Verify in database
-      const chapter = await prisma.chapter.findFirst({
-        where: { courseId: course.id },
+      const comment = await prisma.comment.findFirst({
+        where: { postId: post.id },
       });
 
-      expect(chapter?.title).toBe("New Chapter");
+      expect(comment?.content).toBe("New Comment");
     });
   });
 });
@@ -521,7 +489,7 @@ const [org, user] = await Promise.all([organizationFixture(), userFixture()]);
 
 // Dependent fixtures (when order matters)
 const { organization, user } = await memberFixture({ role: "admin" });
-const course = await courseFixture({ organizationId: organization.id });
+const post = await postFixture({ organizationId: organization.id });
 ```
 
 ### Test All Permission Levels
@@ -573,30 +541,8 @@ describe("removeAccents", () => {
 pnpm test                    # Run all tests once
 
 # Run specific test file
-pnpm --filter @zoonk/editor test -- --run src/data/chapters/create-chapter.test.ts
+pnpm test -- --run src/data/posts/create-post.test.ts
 
 # E2E tests using Playwright
-E2E_TESTING=true pnpm --filter main build  # Build for E2E (uses .next-e2e directory)
-pnpm e2e                                    # Run all e2e tests
+pnpm e2e                     # Run all e2e tests
 ```
-
-### E2E Build Directory
-
-Apps use separate build directories for E2E testing. For example, `apps/main` uses `.next-e2e` when `E2E_TESTING=true` is set (configured in `next.config.ts`).
-
-**Important**: If E2E tests fail after making component changes, ensure you've rebuilt with the E2E flag:
-
-```bash
-E2E_TESTING=true pnpm --filter main build
-```
-
-The regular `pnpm build` creates a production build in `.next`, which E2E tests don't use.
-
-## Reference Files
-
-- E2E fixtures: `apps/{app}/e2e/fixtures.ts`
-- E2E config: `apps/{app}/playwright.config.ts`
-- Test fixtures: `packages/testing/src/fixtures/`
-- Vitest config: `apps/{app}/vitest.config.mts`
-- Example e2e tests: `apps/main/e2e/`
-- Example integration tests: `apps/editor/src/data/chapters/`
