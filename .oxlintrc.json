@@ -16,10 +16,15 @@
     "suspicious": "error"
   },
   "rules": {
+    "import/no-unassigned-import": [
+      "error",
+      { "allow": ["**/*.css", "server-only", "dotenv/config"] }
+    ],
     "jsx-a11y/no-autofocus": "off",
     "oxc/no-map-spread": "off",
     "react/react-in-jsx-scope": "off",
-    "import/no-unassigned-import": "off",
+
+    // temporary disables
     "import/no-named-as-default": "off",
     "typescript/no-unsafe-type-assertion": "off",
     "typescript/no-confusing-void-expression": "off",
