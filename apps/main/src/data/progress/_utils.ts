@@ -1,4 +1,5 @@
 import "server-only";
+import { DEFAULT_PROGRESS_LOOKBACK_DAYS } from "@zoonk/utils/constants";
 
 const HISTORY_PERIODS = ["month", "6months", "year"] as const;
 
@@ -21,47 +22,43 @@ export type DateRange = {
   end: Date;
 };
 
-export function calculateDateRanges(
-  period: HistoryPeriod,
-  offset: number,
-): { current: DateRange; previous: DateRange } {
-  const now = new Date();
+type DateRanges = { current: DateRange; previous: DateRange };
 
-  if (period === "month") {
-    const currentStart = new Date(now.getFullYear(), now.getMonth() - offset, 1);
-    const currentEnd = new Date(now.getFullYear(), now.getMonth() - offset + 1, 0);
-    const previousStart = new Date(now.getFullYear(), now.getMonth() - offset - 1, 1);
-    const previousEnd = new Date(now.getFullYear(), now.getMonth() - offset, 0);
+function getMonthDateRanges(now: Date, offset: number): DateRanges {
+  const currentStart = new Date(now.getFullYear(), now.getMonth() - offset, 1);
+  const currentEnd = new Date(now.getFullYear(), now.getMonth() - offset + 1, 0);
+  const previousStart = new Date(now.getFullYear(), now.getMonth() - offset - 1, 1);
+  const previousEnd = new Date(now.getFullYear(), now.getMonth() - offset, 0);
 
-    return {
-      current: { end: currentEnd, start: currentStart },
-      previous: { end: previousEnd, start: previousStart },
-    };
-  }
+  return {
+    current: { end: currentEnd, start: currentStart },
+    previous: { end: previousEnd, start: previousStart },
+  };
+}
 
-  if (period === "6months") {
-    const currentHalf = Math.floor(now.getMonth() / MONTHS_PER_HALF_YEAR) - offset;
-    const currentYear =
-      now.getFullYear() + Math.floor((now.getMonth() - offset * MONTHS_PER_HALF_YEAR) / 12);
-    const normalizedHalf = ((currentHalf % 2) + 2) % 2;
+function getHalfYearDateRanges(now: Date, offset: number): DateRanges {
+  const currentHalf = Math.floor(now.getMonth() / MONTHS_PER_HALF_YEAR) - offset;
+  const currentYear =
+    now.getFullYear() + Math.floor((now.getMonth() - offset * MONTHS_PER_HALF_YEAR) / 12);
+  const normalizedHalf = ((currentHalf % 2) + 2) % 2;
 
-    const currentStartMonth = normalizedHalf * MONTHS_PER_HALF_YEAR;
-    const currentStart = new Date(currentYear, currentStartMonth, 1);
-    const currentEnd = new Date(currentYear, currentStartMonth + MONTHS_PER_HALF_YEAR, 0);
+  const currentStartMonth = normalizedHalf * MONTHS_PER_HALF_YEAR;
+  const currentStart = new Date(currentYear, currentStartMonth, 1);
+  const currentEnd = new Date(currentYear, currentStartMonth + MONTHS_PER_HALF_YEAR, 0);
 
-    const previousHalf = normalizedHalf === 0 ? 1 : 0;
-    const previousYear = normalizedHalf === 0 ? currentYear - 1 : currentYear;
-    const previousStartMonth = previousHalf * MONTHS_PER_HALF_YEAR;
-    const previousStart = new Date(previousYear, previousStartMonth, 1);
-    const previousEnd = new Date(previousYear, previousStartMonth + MONTHS_PER_HALF_YEAR, 0);
+  const previousHalf = normalizedHalf === 0 ? 1 : 0;
+  const previousYear = normalizedHalf === 0 ? currentYear - 1 : currentYear;
+  const previousStartMonth = previousHalf * MONTHS_PER_HALF_YEAR;
+  const previousStart = new Date(previousYear, previousStartMonth, 1);
+  const previousEnd = new Date(previousYear, previousStartMonth + MONTHS_PER_HALF_YEAR, 0);
 
-    return {
-      current: { end: currentEnd, start: currentStart },
-      previous: { end: previousEnd, start: previousStart },
-    };
-  }
+  return {
+    current: { end: currentEnd, start: currentStart },
+    previous: { end: previousEnd, start: previousStart },
+  };
+}
 
-  // Year
+function getYearDateRanges(now: Date, offset: number): DateRanges {
   const currentYear = now.getFullYear() - offset;
   const currentStart = new Date(currentYear, 0, 1);
   const currentEnd = new Date(currentYear, DECEMBER_INDEX, LAST_DAY_OF_DECEMBER);
@@ -72,6 +69,17 @@ export function calculateDateRanges(
     current: { end: currentEnd, start: currentStart },
     previous: { end: previousEnd, start: previousStart },
   };
+}
+
+export function calculateDateRanges(period: HistoryPeriod, offset: number): DateRanges {
+  const now = new Date();
+  if (period === "month") {
+    return getMonthDateRanges(now, offset);
+  }
+  if (period === "6months") {
+    return getHalfYearDateRanges(now, offset);
+  }
+  return getYearDateRanges(now, offset);
 }
 
 export function formatLabel(date: Date, period: HistoryPeriod, locale: string): string {
@@ -240,4 +248,37 @@ export function aggregateScoreByMonth(
       score: calculateScore(item.correct, item.incorrect),
     }))
     .toSorted((a, b) => a.date.getTime() - b.date.getTime());
+}
+
+export function getDefaultStartDate(startDateIso: string | undefined): Date {
+  if (startDateIso) {
+    return new Date(startDateIso);
+  }
+  const date = new Date();
+  date.setDate(date.getDate() - DEFAULT_PROGRESS_LOOKBACK_DAYS);
+  return date;
+}
+
+export type ScoredRow = { key: number; correct: number; incorrect: number };
+
+export function findBestByScore(rows: ScoredRow[]): { key: number; score: number } | null {
+  let best: { key: number; score: number } | null = null;
+  let bestTotal = 0;
+
+  for (const row of rows) {
+    const total = row.correct + row.incorrect;
+    if (total === 0) {
+      continue;
+    }
+
+    const score = (row.correct / total) * 100;
+    const isBetter = !best || score > best.score || (score === best.score && total > bestTotal);
+
+    if (isBetter) {
+      best = { key: row.key, score };
+      bestTotal = total;
+    }
+  }
+
+  return best;
 }

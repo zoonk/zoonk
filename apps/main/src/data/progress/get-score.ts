@@ -15,6 +15,27 @@ export type ScoreParams = {
   endDate?: Date;
 };
 
+function getDateRange(
+  startDateIso: string | undefined,
+  endDateIso: string | undefined,
+): { startDate: Date; endDate: Date } {
+  if (startDateIso && endDateIso) {
+    return { endDate: new Date(endDateIso), startDate: new Date(startDateIso) };
+  }
+  const endDate = new Date();
+  const startDate = new Date();
+  startDate.setDate(startDate.getDate() - DEFAULT_PROGRESS_LOOKBACK_DAYS);
+  return { endDate, startDate };
+}
+
+function calculateScoreFromTotals(correct: number, incorrect: number): number | null {
+  const total = correct + incorrect;
+  if (total === 0) {
+    return null;
+  }
+  return (correct / total) * 100;
+}
+
 const cachedGetScore = cache(
   async (
     startDateIso: string | undefined,
@@ -22,35 +43,17 @@ const cachedGetScore = cache(
     headers?: Headers,
   ): Promise<ScoreData | null> => {
     const session = await getSession({ headers });
-
     if (!session) {
       return null;
     }
 
     const userId = Number(session.user.id);
-
-    let startDate: Date;
-    let endDate: Date;
-
-    if (startDateIso && endDateIso) {
-      startDate = new Date(startDateIso);
-      endDate = new Date(endDateIso);
-    } else {
-      endDate = new Date();
-      startDate = new Date();
-      startDate.setDate(startDate.getDate() - DEFAULT_PROGRESS_LOOKBACK_DAYS);
-    }
+    const { startDate, endDate } = getDateRange(startDateIso, endDateIso);
 
     const { data: result, error } = await safeAsync(() =>
       prisma.dailyProgress.aggregate({
-        _sum: {
-          correctAnswers: true,
-          incorrectAnswers: true,
-        },
-        where: {
-          date: { gte: startDate, lte: endDate },
-          userId,
-        },
+        _sum: { correctAnswers: true, incorrectAnswers: true },
+        where: { date: { gte: startDate, lte: endDate }, userId },
       }),
     );
 
@@ -58,17 +61,12 @@ const cachedGetScore = cache(
       return null;
     }
 
-    const correct = result._sum.correctAnswers ?? 0;
-    const incorrect = result._sum.incorrectAnswers ?? 0;
-    const total = correct + incorrect;
+    const score = calculateScoreFromTotals(
+      result._sum.correctAnswers ?? 0,
+      result._sum.incorrectAnswers ?? 0,
+    );
 
-    if (total === 0) {
-      return null;
-    }
-
-    const score = (correct / total) * 100;
-
-    return { score };
+    return score !== null ? { score } : null;
   },
 );
 

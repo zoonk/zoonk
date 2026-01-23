@@ -129,7 +129,9 @@ export async function importLessons(params: {
         },
       });
 
-      const existingLessonMap = new Map(existingLessonsInChapter.map((lesson) => [lesson.slug, lesson]));
+      const existingLessonMap = new Map(
+        existingLessonsInChapter.map((lesson) => [lesson.slug, lesson]),
+      );
 
       // Deduplicate slugs within the batch to prevent unique constraint violations
       const slugCounts = new Map<string, number>();

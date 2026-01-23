@@ -88,6 +88,23 @@ function sumBp(dataPoints: RawDataPoint[]): number {
   return dataPoints.reduce((acc, point) => acc + point.bp, 0);
 }
 
+function getPreviousPeriodTotal(previousData: RawDataPoint[] | null): number | null {
+  if (!previousData || previousData.length === 0) {
+    return null;
+  }
+  return sumBp(previousData);
+}
+
+async function hasEarlierData(userId: number, beforeDate: Date): Promise<boolean> {
+  const { data } = await safeAsync(() =>
+    prisma.dailyProgress.findFirst({
+      select: { id: true },
+      where: { date: { lt: beforeDate }, userId },
+    }),
+  );
+  return Boolean(data);
+}
+
 const cachedGetBpHistory = cache(
   async (
     period: HistoryPeriod,
@@ -96,7 +113,6 @@ const cachedGetBpHistory = cache(
     headers?: Headers,
   ): Promise<BpHistoryData | null> => {
     const session = await getSession({ headers });
-
     if (!session) {
       return null;
     }
@@ -115,54 +131,28 @@ const cachedGetBpHistory = cache(
       ),
     ]);
 
-    if (currentResult.error || !currentResult.data) {
+    if (currentResult.error || !currentResult.data || currentResult.data.length === 0) {
       return null;
     }
 
-    const rawData = currentResult.data;
-
-    if (rawData.length === 0) {
-      return null;
-    }
-
-    const processedData = processBpData(rawData, period);
-
+    const processedData = processBpData(currentResult.data, period);
     const dataPoints: BpDataPoint[] = processedData.map((row) => ({
       bp: row.bp,
       date: row.date,
       label: formatLabel(row.date, period, locale),
     }));
 
-    const periodTotal = sumBp(rawData);
-
-    const previousRaw = previousResult.data ?? [];
-    const previousPeriodTotal = previousRaw.length > 0 ? sumBp(previousRaw) : null;
-
-    const { data: earlierData } = await safeAsync(() =>
-      prisma.dailyProgress.findFirst({
-        select: { id: true },
-        where: {
-          date: { lt: current.start },
-          userId,
-        },
-      }),
-    );
-
-    const hasPreviousPeriod = Boolean(earlierData);
-    const hasNextPeriod = offset > 0;
-
     const totalBp = Number(progressResult.data?.totalBrainPower ?? 0);
-    const currentBelt = calculateBeltLevel(totalBp);
 
     return {
-      currentBelt,
+      currentBelt: calculateBeltLevel(totalBp),
       dataPoints,
-      hasNextPeriod,
-      hasPreviousPeriod,
+      hasNextPeriod: offset > 0,
+      hasPreviousPeriod: await hasEarlierData(userId, current.start),
       periodEnd: current.end,
       periodStart: current.start,
-      periodTotal,
-      previousPeriodTotal,
+      periodTotal: sumBp(currentResult.data),
+      previousPeriodTotal: getPreviousPeriodTotal(previousResult.data),
       totalBp,
     };
   },

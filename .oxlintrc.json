@@ -19,6 +19,7 @@
     ],
     "eslint/init-declarations": "off",
     "eslint/max-params": "off",
+    "eslint/max-statements": ["error", { "ignoreTopLevelFunctions": true, "max": 20 }],
     "eslint/no-magic-numbers": [
       "error",
       {
@@ -49,7 +50,7 @@
       }
     },
     {
-      "files": ["*.test.ts", "**/seed/**"],
+      "files": ["*.test.ts", "**/seed/**", "**/seed.ts"],
       "rules": {
         "eslint/max-statements": "off",
         "eslint/no-magic-numbers": "off"
