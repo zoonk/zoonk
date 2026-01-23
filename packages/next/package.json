@@ -7,7 +7,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@zoonk/tsconfig": "workspace:*",
-    "typescript": "^5"
+    "@typescript/native-preview": "7.0.0-dev.20260122.4"
   },
   "exports": {
     "./i18n/codec": "./src/i18n/next-intl-codec.ts"
@@ -26,7 +26,7 @@
   },
   "private": true,
   "scripts": {
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsgo --noEmit"
   },
   "type": "module",
   "version": "0.0.0"

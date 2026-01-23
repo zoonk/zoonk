@@ -39,6 +39,11 @@
   "emmet.showExpandedAbbreviation": "never",
   "search.exclude": {
     "**/eval-results/**": true,
-    "pnpm-lock.yaml": true
+    "pnpm-lock.yaml": true,
+    ".agents": true,
+    ".claude": true,
+    ".codex": true,
+    ".github/skills": true,
+    ".opencode": true
   }
 }

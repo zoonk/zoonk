@@ -16,6 +16,7 @@
     "@types/node": "^24",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@typescript/native-preview": "7.0.0-dev.20260122.4",
     "@zoonk/db": "workspace:*",
     "@zoonk/e2e": "workspace:*",
     "@zoonk/tsconfig": "workspace:*",
@@ -32,7 +33,7 @@
     "e2e": "env $(cat ../../packages/db/.env.e2e | xargs) playwright test",
     "e2e:ui": "env $(cat ../../packages/db/.env.e2e | xargs) playwright test --ui",
     "start": "next start -p 3004",
-    "typecheck": "next typegen && tsc --noEmit"
+    "typecheck": "next typegen && tsgo --noEmit"
   },
   "type": "module",
   "version": "0.1.0"

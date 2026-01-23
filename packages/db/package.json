@@ -12,7 +12,7 @@
     "dotenv": "17.2.3",
     "prisma": "7.3.0",
     "tsx": "4.20.6",
-    "typescript": "^5"
+    "@typescript/native-preview": "7.0.0-dev.20260122.4"
   },
   "exports": {
     ".": "./src/index.ts",
@@ -37,7 +37,7 @@
     "db:setup:e2e": "env $(cat .env.e2e | xargs) prisma migrate deploy",
     "db:setup:test": "env $(cat .env.test | xargs) prisma migrate deploy",
     "db:studio": "prisma studio",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsgo --noEmit"
   },
   "type": "module"
 }

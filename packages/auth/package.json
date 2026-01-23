@@ -13,7 +13,7 @@
     "@types/node": "^24",
     "@types/react": ">=19.2.3",
     "@zoonk/tsconfig": "workspace:*",
-    "typescript": "^5"
+    "@typescript/native-preview": "7.0.0-dev.20260122.4"
   },
   "exports": {
     ".": "./src/auth.ts",
@@ -33,7 +33,7 @@
   },
   "private": true,
   "scripts": {
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsgo --noEmit"
   },
   "type": "module"
 }

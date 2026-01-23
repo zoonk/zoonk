@@ -15,6 +15,7 @@
     "@types/node": "^24",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@typescript/native-preview": "7.0.0-dev.20260122.4",
     "@zoonk/tsconfig": "workspace:*",
     "babel-plugin-react-compiler": "1.0.0",
     "typescript": "^5"
@@ -26,7 +27,7 @@
     "build": "next build",
     "dev": "next dev -p 3001",
     "start": "next start -p 3001",
-    "typecheck": "next typegen && tsc --noEmit"
+    "typecheck": "next typegen && tsgo --noEmit"
   },
   "version": "0.1.0"
 }
