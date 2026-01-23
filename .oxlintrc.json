@@ -32,6 +32,7 @@
     "eslint/prefer-destructuring": "off",
     "eslint/sort-imports": ["error", { "ignoreDeclarationSort": true }],
     "import/consistent-type-specifier-style": ["error", "prefer-inline"],
+    "import/exports-last": "off",
     "import/no-unassigned-import": [
       "error",
       { "allow": ["**/*.css", "server-only", "dotenv/config"] }
