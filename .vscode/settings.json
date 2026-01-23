@@ -37,6 +37,7 @@
   "editor.formatOnPaste": true,
   "editor.formatOnSave": true,
   "emmet.showExpandedAbbreviation": "never",
+  "typescript.experimental.useTsgo": true,
   "search.exclude": {
     "**/eval-results/**": true,
     "pnpm-lock.yaml": true,
