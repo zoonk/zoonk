@@ -29,6 +29,7 @@
     ],
     "import/no-named-as-default": "off",
     "eslint/no-ternary": "off",
+    "eslint/prefer-destructuring": "off",
     "import/no-unassigned-import": [
       "error",
       { "allow": ["**/*.css", "server-only", "dotenv/config"] }
