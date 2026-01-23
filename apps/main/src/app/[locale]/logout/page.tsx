@@ -11,7 +11,7 @@ export default function LogoutPage() {
   });
 
   useEffect(() => {
-    authClient.signOut({ fetchOptions: { onSuccess: handleSuccess } });
+    void authClient.signOut({ fetchOptions: { onSuccess: handleSuccess } });
   }, []);
 
   return <FullPageLoading />;

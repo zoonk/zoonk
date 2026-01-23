@@ -6,14 +6,14 @@ import { useRouter } from "next/navigation";
 import { useEffect, useEffectEvent } from "react";
 
 export default function LogoutPage() {
-  const { push } = useRouter();
+  const router = useRouter();
 
   const handleSuccess = useEffectEvent(() => {
-    push("/login");
+    router.push("/login");
   });
 
   useEffect(() => {
-    authClient.signOut({ fetchOptions: { onSuccess: handleSuccess } });
+    void authClient.signOut({ fetchOptions: { onSuccess: handleSuccess } });
   }, []);
 
   return <FullPageLoading />;

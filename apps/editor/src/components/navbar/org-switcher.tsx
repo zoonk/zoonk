@@ -35,7 +35,7 @@ export function OrgSwitcher({ children }: React.PropsWithChildren) {
 
   function handleOrgClick(orgSlug: string) {
     // Set active org fire-and-forget (don't block navigation)
-    authClient.organization.setActive({ organizationSlug: orgSlug });
+    void authClient.organization.setActive({ organizationSlug: orgSlug });
   }
 
   return (

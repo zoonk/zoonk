@@ -5,7 +5,7 @@ import { ErrorCode, type ErrorCodeType } from "./app-error";
 
 // ensures that we don't have missing translations for error codes
 function assertNever(x: never): never {
-  throw new Error(`Unhandled error code: ${x}`);
+  throw new Error(`Unhandled error code: ${String(x)}`);
 }
 
 function isEditorError(error: Error): error is AppError<ErrorCodeType> {
