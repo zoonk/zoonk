@@ -5,6 +5,8 @@
     "@types/node": "^24",
     "@typescript/native-preview": "7.0.0-dev.20260122.4",
     "knip": "5.80.0",
+    "oxlint": "1.41.0",
+    "oxlint-tsgolint": "0.11.1",
     "turbo": "2.7.4"
   },
   "engines": {
@@ -27,7 +29,8 @@
     "i18n": "pnpm dlx lingo.dev@latest run",
     "i18n:check": "./scripts/i18n.sh",
     "knip": "knip",
-    "lint": "biome check",
+    "lint": "oxlint --type-aware .",
+    "lint:fix": "oxlint --type-aware --fix .",
     "start": "turbo start",
     "test": "turbo test",
     "test:watch": "turbo test:watch",

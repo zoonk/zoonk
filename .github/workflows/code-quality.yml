@@ -63,8 +63,8 @@ jobs:
       - name: Generate Prisma client
         run: pnpm db:generate
 
-      - name: Run Biome
-        run: pnpm biome ci --error-on-warnings
+      - name: Run linter
+        run: pnpm turbo lint
 
       - name: Run knip
         run: pnpm knip
