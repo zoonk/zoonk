@@ -1,0 +1,39 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "tabWidth": 2,
+  "useTabs": false,
+  "printWidth": 100,
+  "semi": true,
+  "singleQuote": false,
+  "trailingComma": "all",
+  "bracketSpacing": true,
+  "arrowParens": "always",
+  "endOfLine": "lf",
+  "experimentalSortImports": {
+    "groups": ["builtin", "external", "internal", "parent", "sibling", "index", "type"],
+    "internalPattern": ["@zoonk/*", "@/*", "~/"],
+    "ignoreCase": true,
+    "order": "asc",
+    "newlinesBetween": false
+  },
+  "experimentalSortPackageJson": true,
+  "experimentalTailwindcss": {
+    "attributes": ["class", "className"],
+    "functions": ["clsx", "cva", "tw", "cn"]
+  },
+  "ignorePatterns": [
+    "node_modules",
+    ".next",
+    ".next-e2e",
+    ".claude/skills",
+    ".cursor/skills",
+    ".opencode/skills",
+    ".github/skills",
+    "dist",
+    "build",
+    "**/generated/**",
+    "**/messages/**",
+    ".turbo",
+    "pnpm-lock.yaml"
+  ]
+}

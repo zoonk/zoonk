@@ -1,7 +1,7 @@
 {
   "extensions": {
     "recommendations": [
-      "biomejs.biome",
+      "oxc.oxc-vscode",
       "bradlc.vscode-tailwindcss",
       "mrorz.language-gettext",
       "prisma.prisma",
@@ -25,12 +25,12 @@
     { "path": "./packages/utils" }
   ],
   "settings": {
-    "[css]": { "editor.defaultFormatter": "biomejs.biome" },
-    "[javascript]": { "editor.defaultFormatter": "biomejs.biome" },
-    "[json]": { "editor.defaultFormatter": "biomejs.biome" },
-    "[jsonc]": { "editor.defaultFormatter": "biomejs.biome" },
-    "[typescript]": { "editor.defaultFormatter": "biomejs.biome" },
-    "[typescriptreact]": { "editor.defaultFormatter": "biomejs.biome" },
+    "[css]": { "editor.defaultFormatter": "oxc.oxc-vscode" },
+    "[javascript]": { "editor.defaultFormatter": "oxc.oxc-vscode" },
+    "[json]": { "editor.defaultFormatter": "oxc.oxc-vscode" },
+    "[jsonc]": { "editor.defaultFormatter": "oxc.oxc-vscode" },
+    "[typescript]": { "editor.defaultFormatter": "oxc.oxc-vscode" },
+    "[typescriptreact]": { "editor.defaultFormatter": "oxc.oxc-vscode" },
     "search.exclude": {
       "*.tsbuildinfo": true,
       "**/.next": true,

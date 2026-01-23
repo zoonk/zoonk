@@ -48,9 +48,16 @@
     "VERCEL_URL"
   ],
   "tasks": {
-    "//#format": { "cache": false },
+    "//#format": {},
+    "//#format:fix": {},
     "//#lint": {},
     "//#lint:fix": {},
+    "//#quality": {
+      "dependsOn": ["//#lint", "//#format"]
+    },
+    "//#quality:fix": {
+      "dependsOn": ["//#lint:fix", "//#format:fix"]
+    },
     "build": {
       "dependsOn": ["^db:generate", "^build"],
       "outputs": [".next/**", "!.next/cache/**"]
