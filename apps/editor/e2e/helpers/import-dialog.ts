@@ -4,11 +4,7 @@ export function getMoreOptionsButton(page: Page) {
   return page.getByRole("button", { name: /more options/i }).first();
 }
 
-export async function importFlow(
-  page: Page,
-  importFile: string,
-  mode: "merge" | "replace",
-) {
+export async function importFlow(page: Page, importFile: string, mode: "merge" | "replace") {
   await getMoreOptionsButton(page).click();
   await page.getByRole("menuitem", { name: /import/i }).click();
 

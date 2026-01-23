@@ -1,10 +1,10 @@
+import { ErrorCode } from "@/lib/app-error";
 import { prisma } from "@zoonk/db";
 import { signInAs } from "@zoonk/testing/fixtures/auth";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeAll, describe, expect, test } from "vitest";
-import { ErrorCode } from "@/lib/app-error";
 import { addCourseUser } from "./add-course-user";
 
 describe("unauthenticated users", () => {
@@ -32,10 +32,7 @@ describe("authenticated users", () => {
   let course: Awaited<ReturnType<typeof courseFixture>>;
 
   beforeAll(async () => {
-    [organization, user] = await Promise.all([
-      organizationFixture(),
-      userFixture(),
-    ]);
+    [organization, user] = await Promise.all([organizationFixture(), userFixture()]);
 
     [headers, course] = await Promise.all([
       signInAs(user.email, user.password),

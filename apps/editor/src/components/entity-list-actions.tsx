@@ -77,9 +77,7 @@ export function EntityListActions({
   const labels = {
     activities: {
       exportSuccess: t("Activities exported successfully"),
-      importDescription: t(
-        "Upload a JSON file containing activities to import.",
-      ),
+      importDescription: t("Upload a JSON file containing activities to import."),
       importSuccess: t("Activities imported successfully"),
       importTitle: t("Import activities"),
     },
@@ -132,10 +130,7 @@ export function EntityListActions({
   return (
     <>
       <DropdownMenu>
-        <DropdownMenuTrigger
-          disabled={pending}
-          render={<Button size="icon-sm" variant="ghost" />}
-        >
+        <DropdownMenuTrigger disabled={pending} render={<Button size="icon-sm" variant="ghost" />}>
           <EllipsisVerticalIcon />
           <span className="sr-only">{t("More options")}</span>
         </DropdownMenuTrigger>
@@ -158,35 +153,24 @@ export function EntityListActions({
           <DialogContent className="max-h-[calc(100vh-4rem)] overflow-y-auto sm:max-w-lg">
             <DialogHeader>
               <DialogTitle>{entityLabels.importTitle}</DialogTitle>
-              <DialogDescription>
-                {entityLabels.importDescription}
-              </DialogDescription>
+              <DialogDescription>{entityLabels.importDescription}</DialogDescription>
             </DialogHeader>
 
             <div className="grid min-w-0 gap-6">
-              <ImportDropzone>
-                {t("Drop file or click to select")}
-              </ImportDropzone>
+              <ImportDropzone>{t("Drop file or click to select")}</ImportDropzone>
 
               <ImportModeSelector label={t("Import mode")}>
-                <ImportModeOption value="merge">
-                  {t("Merge (add to existing)")}
-                </ImportModeOption>
+                <ImportModeOption value="merge">{t("Merge (add to existing)")}</ImportModeOption>
                 <ImportModeOption value="replace">
                   {t("Replace (remove existing first)")}
                 </ImportModeOption>
               </ImportModeSelector>
 
-              <ImportFormatPreview
-                format={FORMATS[entityType]}
-                label={t("Show expected format")}
-              />
+              <ImportFormatPreview format={FORMATS[entityType]} label={t("Show expected format")} />
             </div>
 
             <DialogFooter>
-              <ImportCancel onClick={() => setImportOpen(false)}>
-                {t("Cancel")}
-              </ImportCancel>
+              <ImportCancel onClick={() => setImportOpen(false)}>{t("Cancel")}</ImportCancel>
               <ImportSubmit>{t("Import")}</ImportSubmit>
             </DialogFooter>
           </DialogContent>

@@ -1,5 +1,4 @@
 import "server-only";
-
 import { type Course, type Organization, prisma } from "@zoonk/db";
 import { clampQueryItems } from "@zoonk/db/utils";
 import { DEFAULT_SEARCH_LIMIT } from "@zoonk/utils/constants";
@@ -12,11 +11,7 @@ export type CourseWithOrganization = Course & {
 };
 
 const cachedSearchCourses = cache(
-  async (
-    query: string,
-    language: string,
-    limit: number,
-  ): Promise<CourseWithOrganization[]> => {
+  async (query: string, language: string, limit: number): Promise<CourseWithOrganization[]> => {
     const normalizedSearch = normalizeString(query);
 
     if (!normalizedSearch) {

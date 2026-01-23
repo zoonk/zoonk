@@ -101,12 +101,7 @@ export function AudioTestForm() {
           </div>
           <div className="flex flex-col gap-2">
             <Label htmlFor="audioUrl">Audio URL</Label>
-            <Input
-              className="font-mono text-sm"
-              id="audioUrl"
-              readOnly
-              value={result.audioUrl}
-            />
+            <Input className="font-mono text-sm" id="audioUrl" readOnly value={result.audioUrl} />
           </div>
         </div>
       )}

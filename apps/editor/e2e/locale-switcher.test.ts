@@ -24,9 +24,7 @@ test.describe("Locale Switcher", () => {
     await authenticatedPage.goto("/ai");
   });
 
-  test("switching locale updates page content", async ({
-    authenticatedPage,
-  }) => {
+  test("switching locale updates page content", async ({ authenticatedPage }) => {
     await openLanguageSubmenu(authenticatedPage);
 
     // Switch to Portuguese - force click since submenu animations may cause instability
@@ -40,14 +38,10 @@ test.describe("Locale Switcher", () => {
     // Reopen to verify the Language menu item text changed
     await openOrgDropdown(authenticatedPage);
 
-    await expect(
-      authenticatedPage.getByRole("menuitem", { name: /idioma/i }),
-    ).toBeVisible();
+    await expect(authenticatedPage.getByRole("menuitem", { name: /idioma/i })).toBeVisible();
   });
 
-  test("marks currently selected locale with aria-current", async ({
-    authenticatedPage,
-  }) => {
+  test("marks currently selected locale with aria-current", async ({ authenticatedPage }) => {
     await openLanguageSubmenu(authenticatedPage);
 
     // English should be marked as current (default locale)
@@ -63,9 +57,7 @@ test.describe("Locale Switcher", () => {
     await expect(portugueseItem).not.toHaveAttribute("aria-current", "true");
   });
 
-  test("persists locale selection after page refresh", async ({
-    authenticatedPage,
-  }) => {
+  test("persists locale selection after page refresh", async ({ authenticatedPage }) => {
     await openLanguageSubmenu(authenticatedPage);
 
     // Switch to Spanish - force click since submenu animations may cause instability
@@ -82,8 +74,6 @@ test.describe("Locale Switcher", () => {
     // Verify the locale persisted by checking the Language menu text
     await openOrgDropdown(authenticatedPage);
 
-    await expect(
-      authenticatedPage.getByRole("menuitem", { name: /idioma/i }),
-    ).toBeVisible();
+    await expect(authenticatedPage.getByRole("menuitem", { name: /idioma/i })).toBeVisible();
   });
 });

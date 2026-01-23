@@ -1,6 +1,14 @@
 "use client";
 
 import {
+  getDefaultSortDirection,
+  getLeaderboardEntries,
+  type LeaderboardEntry,
+  type SortDirection,
+  type SortKey,
+  sortLeaderboardEntries,
+} from "@/lib/leaderboard";
+import {
   Table,
   TableBody,
   TableCell,
@@ -10,16 +18,8 @@ import {
 } from "@zoonk/ui/components/table";
 import Link from "next/link";
 import { useState } from "react";
-import {
-  getDefaultSortDirection,
-  getLeaderboardEntries,
-  type LeaderboardEntry,
-  type SortDirection,
-  type SortKey,
-  sortLeaderboardEntries,
-} from "@/lib/leaderboard";
-import type { TaskEvalResults } from "@/lib/types";
 import { LeaderboardExport } from "./leaderboard-export";
+import type { TaskEvalResults } from "@/lib/types";
 
 type LeaderboardProps = {
   taskId: string;
@@ -50,53 +50,31 @@ export function Leaderboard({ taskId, results }: LeaderboardProps) {
   return (
     <div className="flex flex-col gap-2">
       <div className="flex items-center justify-between">
-        <h2 className="font-semibold text-lg">Leaderboard</h2>
+        <h2 className="text-lg font-semibold">Leaderboard</h2>
         <LeaderboardExport entries={sortedEntries} taskId={taskId} />
       </div>
 
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead
-              className="cursor-pointer"
-              onClick={() => handleSort("modelName")}
-            >
-              Model{" "}
-              {sortKey === "modelName" && (sortDirection === "asc" ? "↑" : "↓")}
+            <TableHead className="cursor-pointer" onClick={() => handleSort("modelName")}>
+              Model {sortKey === "modelName" && (sortDirection === "asc" ? "↑" : "↓")}
             </TableHead>
 
-            <TableHead
-              className="cursor-pointer"
-              onClick={() => handleSort("provider")}
-            >
-              Provider{" "}
-              {sortKey === "provider" && (sortDirection === "asc" ? "↑" : "↓")}
+            <TableHead className="cursor-pointer" onClick={() => handleSort("provider")}>
+              Provider {sortKey === "provider" && (sortDirection === "asc" ? "↑" : "↓")}
             </TableHead>
 
-            <TableHead
-              className="cursor-pointer"
-              onClick={() => handleSort("averageScore")}
-            >
-              Avg Score{" "}
-              {sortKey === "averageScore" &&
-                (sortDirection === "asc" ? "↑" : "↓")}
+            <TableHead className="cursor-pointer" onClick={() => handleSort("averageScore")}>
+              Avg Score {sortKey === "averageScore" && (sortDirection === "asc" ? "↑" : "↓")}
             </TableHead>
 
-            <TableHead
-              className="cursor-pointer"
-              onClick={() => handleSort("averageDuration")}
-            >
-              Avg Duration{" "}
-              {sortKey === "averageDuration" &&
-                (sortDirection === "asc" ? "↑" : "↓")}
+            <TableHead className="cursor-pointer" onClick={() => handleSort("averageDuration")}>
+              Avg Duration {sortKey === "averageDuration" && (sortDirection === "asc" ? "↑" : "↓")}
             </TableHead>
 
-            <TableHead
-              className="cursor-pointer"
-              onClick={() => handleSort("totalCost")}
-            >
-              Cost{" "}
-              {sortKey === "totalCost" && (sortDirection === "asc" ? "↑" : "↓")}
+            <TableHead className="cursor-pointer" onClick={() => handleSort("totalCost")}>
+              Cost {sortKey === "totalCost" && (sortDirection === "asc" ? "↑" : "↓")}
             </TableHead>
           </TableRow>
         </TableHeader>
@@ -105,9 +83,7 @@ export function Leaderboard({ taskId, results }: LeaderboardProps) {
           {sortedEntries.map((entry) => (
             <TableRow key={entry.modelId}>
               <TableCell>
-                <Link
-                  href={`/tasks/${taskId}/${encodeURIComponent(entry.modelId)}`}
-                >
+                <Link href={`/tasks/${taskId}/${encodeURIComponent(entry.modelId)}`}>
                   {entry.modelName}
                 </Link>
               </TableCell>

@@ -1,5 +1,4 @@
 import "server-only";
-
 import { getSession } from "@zoonk/core/users/session/get";
 import {
   type Activity,
@@ -15,22 +14,13 @@ import { cache } from "react";
 
 export const MAX_CONTINUE_LEARNING_ITEMS = 4;
 
-export type ContinueLearningActivity = Pick<
-  Activity,
-  "id" | "kind" | "title" | "position"
->;
+export type ContinueLearningActivity = Pick<Activity, "id" | "kind" | "title" | "position">;
 
-export type ContinueLearningLesson = Pick<
-  Lesson,
-  "id" | "slug" | "title" | "description"
->;
+export type ContinueLearningLesson = Pick<Lesson, "id" | "slug" | "title" | "description">;
 
 export type ContinueLearningChapter = Pick<Chapter, "id" | "slug">;
 
-export type ContinueLearningCourse = Pick<
-  Course,
-  "id" | "slug" | "title" | "imageUrl"
-> & {
+export type ContinueLearningCourse = Pick<Course, "id" | "slug" | "title" | "imageUrl"> & {
   organization: Pick<Organization, "slug">;
 };
 
@@ -52,9 +42,7 @@ export const getContinueLearning = cache(
     const userId = Number(session.user.id);
 
     const { data: rows, error } = await safeAsync(() =>
-      prisma.$queryRawTyped(
-        getContinueLearningQuery(userId, MAX_CONTINUE_LEARNING_ITEMS),
-      ),
+      prisma.$queryRawTyped(getContinueLearningQuery(userId, MAX_CONTINUE_LEARNING_ITEMS)),
     );
 
     if (error || !rows) {

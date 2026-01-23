@@ -190,10 +190,7 @@ const activitiesData: LessonActivities[] = [
   },
 ];
 
-export async function seedActivities(
-  prisma: PrismaClient,
-  org: Organization,
-): Promise<void> {
+export async function seedActivities(prisma: PrismaClient, org: Organization): Promise<void> {
   const allActivityPromises = activitiesData.flatMap((data) =>
     prisma.lesson
       .findFirst({

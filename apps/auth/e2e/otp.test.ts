@@ -1,9 +1,5 @@
 import { expect, test } from "./fixtures";
-import {
-  cleanupVerifications,
-  disconnectDb,
-  getOTPForEmail,
-} from "./helpers/db";
+import { cleanupVerifications, disconnectDb, getOTPForEmail } from "./helpers/db";
 
 const TEST_EMAIL = `e2e-otp-${Date.now()}@zoonk.test`;
 const REDIRECT_URL = "http://localhost:3000/test";
@@ -20,9 +16,7 @@ test.describe("OTP Login Flow", () => {
     await page.getByRole("button", { name: /^continue$/i }).click();
     await page.waitForURL(/\/otp/);
 
-    await expect(
-      page.getByRole("heading", { name: /check your email/i }),
-    ).toBeVisible();
+    await expect(page.getByRole("heading", { name: /check your email/i })).toBeVisible();
 
     await expect(page.getByText(TEST_EMAIL)).toBeVisible();
   });
@@ -82,13 +76,9 @@ test.describe("OTP Login Flow", () => {
     ).toBeVisible();
   });
 
-  test("handles redirect URL with trailing slash without double slashes", async ({
-    page,
-  }) => {
+  test("handles redirect URL with trailing slash without double slashes", async ({ page }) => {
     const trailingSlashUrl = "http://localhost:3000/test/";
-    await page.goto(
-      `/en/login?redirectTo=${encodeURIComponent(trailingSlashUrl)}`,
-    );
+    await page.goto(`/en/login?redirectTo=${encodeURIComponent(trailingSlashUrl)}`);
     await page.getByLabel(/email/i).fill(TEST_EMAIL);
     await page.getByRole("button", { name: /^continue$/i }).click();
     await page.waitForURL(/\/otp/);

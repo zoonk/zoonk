@@ -31,10 +31,7 @@ export function ScoreChartClient({
   return (
     <figure aria-label={t("Score chart")} className="h-64 w-full">
       <ResponsiveContainer height="100%" width="100%">
-        <AreaChart
-          data={dataPoints}
-          margin={{ bottom: 0, left: 0, right: 0, top: 10 }}
-        >
+        <AreaChart data={dataPoints} margin={{ bottom: 0, left: 0, right: 0, top: 10 }}>
           <defs>
             <linearGradient id="scoreGradient" x1="0" x2="0" y1="0" y2="1">
               <stop offset="5%" stopColor="var(--score)" stopOpacity={0.3} />
@@ -42,11 +39,7 @@ export function ScoreChartClient({
             </linearGradient>
           </defs>
 
-          <CartesianGrid
-            stroke="var(--border)"
-            strokeDasharray="3 3"
-            vertical={false}
-          />
+          <CartesianGrid stroke="var(--border)" strokeDasharray="3 3" vertical={false} />
 
           <XAxis
             axisLine={false}
@@ -69,9 +62,7 @@ export function ScoreChartClient({
 
           <Tooltip
             content={({ active, payload }) => {
-              if (
-                !(active && isValidChartPayload<SerializedDataPoint>(payload))
-              ) {
+              if (!(active && isValidChartPayload<SerializedDataPoint>(payload))) {
                 return null;
               }
 
@@ -79,11 +70,9 @@ export function ScoreChartClient({
               const value = Number(data.score).toFixed(1);
 
               return (
-                <div className="rounded-lg border bg-background px-3 py-2 shadow-sm">
+                <div className="bg-background rounded-lg border px-3 py-2 shadow-sm">
                   <p className="text-muted-foreground text-xs">{data.label}</p>
-                  <p className="font-medium text-score text-sm">
-                    {t("{value}%", { value })}
-                  </p>
+                  <p className="text-score text-sm font-medium">{t("{value}%", { value })}</p>
                 </div>
               );
             }}

@@ -1,8 +1,8 @@
 "use cache";
 
-import type { Metadata } from "next";
 import { getExtracted, setRequestLocale } from "next-intl/server";
 import { LearnForm } from "./learn-form";
+import type { Metadata } from "next";
 
 export async function generateMetadata({
   params,
@@ -27,7 +27,7 @@ export default async function Learn({ params }: PageProps<"/[locale]/learn">) {
   return (
     <main className="mx-auto flex w-full max-w-xl flex-1 flex-col items-center justify-center gap-4 p-4">
       <h1
-        className="pt-4 text-center font-semibold text-2xl text-foreground/90 -tracking-wide md:pt-8 md:text-3xl md:-tracking-wider md:tracking-tightest"
+        className="text-foreground/90 md:tracking-tightest pt-4 text-center text-2xl font-semibold -tracking-wide md:pt-8 md:text-3xl md:-tracking-wider"
         id="learn-title"
       >
         {t("What do you want to learn?")}

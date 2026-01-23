@@ -1,5 +1,4 @@
 import "server-only";
-
 import { prisma } from "@zoonk/db";
 import { cache } from "react";
 
@@ -19,11 +18,7 @@ export type ChapterWithLessons = {
 };
 
 const cachedListCourseChapters = cache(
-  async (
-    brandSlug: string,
-    courseSlug: string,
-    language: string,
-  ): Promise<ChapterWithLessons[]> =>
+  async (brandSlug: string, courseSlug: string, language: string): Promise<ChapterWithLessons[]> =>
     prisma.chapter.findMany({
       orderBy: { position: "asc" },
       select: {
@@ -64,9 +59,5 @@ export function listCourseChapters(params: {
   courseSlug: string;
   language: string;
 }): Promise<ChapterWithLessons[]> {
-  return cachedListCourseChapters(
-    params.brandSlug,
-    params.courseSlug,
-    params.language,
-  );
+  return cachedListCourseChapters(params.brandSlug, params.courseSlug, params.language);
 }

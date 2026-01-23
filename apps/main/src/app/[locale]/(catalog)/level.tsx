@@ -1,3 +1,6 @@
+import { ClientLink } from "@/i18n/client-link";
+import { getBeltColorLabel } from "@/lib/belt-colors";
+import { getMenu } from "@/lib/menu";
 import { BeltIndicator } from "@zoonk/ui/components/belt-indicator";
 import {
   FeatureCard,
@@ -11,11 +14,8 @@ import {
   FeatureCardTitle,
 } from "@zoonk/ui/components/feature";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
-import type { BeltColor } from "@zoonk/utils/belt-level";
 import { getExtracted, getLocale } from "next-intl/server";
-import { ClientLink } from "@/i18n/client-link";
-import { getBeltColorLabel } from "@/lib/belt-colors";
-import { getMenu } from "@/lib/menu";
+import type { BeltColor } from "@zoonk/utils/belt-level";
 
 type LevelProps = {
   bpToNextLevel: number;
@@ -24,12 +24,7 @@ type LevelProps = {
   level: number;
 };
 
-export async function Level({
-  bpToNextLevel,
-  color,
-  isMaxLevel,
-  level,
-}: LevelProps) {
+export async function Level({ bpToNextLevel, color, isMaxLevel, level }: LevelProps) {
   const t = await getExtracted();
   const locale = await getLocale();
   const levelMenu = getMenu("level");

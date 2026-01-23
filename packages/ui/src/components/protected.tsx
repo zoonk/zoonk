@@ -25,10 +25,7 @@ function ProtectedPendingMedia({ children, ...props }: ItemMediaProps) {
   return <ItemMedia {...props}>{children}</ItemMedia>;
 }
 
-function ProtectedPendingTitle({
-  children,
-  ...props
-}: React.ComponentProps<"div">) {
+function ProtectedPendingTitle({ children, ...props }: React.ComponentProps<"div">) {
   return (
     <ItemContent>
       <ItemTitle {...props}>{children}</ItemTitle>
@@ -36,11 +33,7 @@ function ProtectedPendingTitle({
   );
 }
 
-function ProtectedAlert({
-  children,
-  className,
-  ...props
-}: React.ComponentProps<"section">) {
+function ProtectedAlert({ children, className, ...props }: React.ComponentProps<"section">) {
   return (
     <section
       className={cn("flex max-w-md flex-col gap-4", className)}
@@ -60,18 +53,11 @@ function ProtectedAlertHeader({ children, className, ...props }: AlertProps) {
   );
 }
 
-function ProtectedAlertTitle({
-  children,
-  ...props
-}: React.ComponentProps<"div">) {
+function ProtectedAlertTitle({ children, ...props }: React.ComponentProps<"div">) {
   return <AlertTitle {...props}>{children}</AlertTitle>;
 }
 
-function ProtectedAlertActions({
-  children,
-  className,
-  ...props
-}: React.ComponentProps<"div">) {
+function ProtectedAlertActions({ children, className, ...props }: React.ComponentProps<"div">) {
   return (
     <div className={cn("flex gap-2", className)} {...props}>
       {children}

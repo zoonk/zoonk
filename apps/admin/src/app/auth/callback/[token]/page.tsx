@@ -34,24 +34,17 @@ function CallbackError({ type }: { type: CallbackErrorType }) {
         </EmptyHeader>
 
         <EmptyContent>
-          <Link
-            className={buttonVariants({ variant: "outline" })}
-            href="/login"
-          >
+          <Link className={buttonVariants({ variant: "outline" })} href="/login">
             Return to login
           </Link>
-          <p className="text-muted-foreground text-sm">
-            Need help? Contact us at hello@zoonk.com
-          </p>
+          <p className="text-muted-foreground text-sm">Need help? Contact us at hello@zoonk.com</p>
         </EmptyContent>
       </Empty>
     </div>
   );
 }
 
-export default function AuthCallbackPage(
-  props: PageProps<"/auth/callback/[token]">,
-) {
+export default function AuthCallbackPage(props: PageProps<"/auth/callback/[token]">) {
   const { token } = use(props.params);
   const [error, setError] = useState<CallbackErrorType | null>(null);
 

@@ -1,8 +1,4 @@
-import type {
-  Organization,
-  PrismaClient,
-  Step,
-} from "../../generated/prisma/client";
+import type { Organization, PrismaClient, Step } from "../../generated/prisma/client";
 import type { SeedUsers } from "./users";
 
 type E2eAttemptData = {
@@ -61,15 +57,12 @@ function buildE2eStepAttempts(
       isCorrect: true,
     }));
 
-    const incorrectAttempts = Array.from(
-      { length: config.incorrect },
-      (_, i) => ({
-        ...base,
-        answer: { selectedOption: 0 },
-        answeredAt: new Date(now.getTime() - (config.correct + i) * 60 * 1000),
-        isCorrect: false,
-      }),
-    );
+    const incorrectAttempts = Array.from({ length: config.incorrect }, (_, i) => ({
+      ...base,
+      answer: { selectedOption: 0 },
+      answeredAt: new Date(now.getTime() - (config.correct + i) * 60 * 1000),
+      isCorrect: false,
+    }));
 
     return [...correctAttempts, ...incorrectAttempts];
   });
@@ -81,11 +74,7 @@ function seededRandom(seed: number) {
   return x - Math.floor(x);
 }
 
-function buildOwnerDailyProgress(
-  today: Date,
-  orgId: number,
-  userId: number,
-): DailyProgressInput[] {
+function buildOwnerDailyProgress(today: Date, orgId: number, userId: number): DailyProgressInput[] {
   const data: DailyProgressInput[] = [];
 
   for (let i = 89; i >= 0; i--) {
@@ -121,11 +110,7 @@ function buildOwnerDailyProgress(
   return data;
 }
 
-function buildE2eDailyProgress(
-  today: Date,
-  orgId: number,
-  userId: number,
-): DailyProgressInput[] {
+function buildE2eDailyProgress(today: Date, orgId: number, userId: number): DailyProgressInput[] {
   const data: DailyProgressInput[] = [];
 
   // 60 days: current month (75% energy), previous month (65% energy)
@@ -155,11 +140,7 @@ function buildE2eDailyProgress(
   return data;
 }
 
-async function seedUserProgress(
-  prisma: PrismaClient,
-  users: SeedUsers,
-  now: Date,
-) {
+async function seedUserProgress(prisma: PrismaClient, users: SeedUsers, now: Date) {
   await Promise.all([
     prisma.userProgress.upsert({
       create: {
@@ -252,12 +233,7 @@ async function seedStepAttempts(
     userId: users.owner.id,
   }));
 
-  const e2eAttemptData = buildE2eStepAttempts(
-    firstStep,
-    org,
-    users.e2eWithProgress.id,
-    now,
-  );
+  const e2eAttemptData = buildE2eStepAttempts(firstStep, org, users.e2eWithProgress.id, now);
 
   await prisma.stepAttempt.createMany({
     data: [...attemptData, ...e2eAttemptData],

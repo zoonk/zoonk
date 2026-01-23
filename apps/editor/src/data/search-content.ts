@@ -1,10 +1,10 @@
 "use server";
 
-import { headers } from "next/headers";
-import { cache } from "react";
 import { searchOrgChapters } from "@/data/chapters/search-org-chapters";
 import { searchCourses } from "@/data/courses/search-courses";
 import { searchOrgLessons } from "@/data/lessons/search-org-lessons";
+import { headers } from "next/headers";
+import { cache } from "react";
 
 export type ResultWithImage = {
   id: number;
@@ -31,11 +31,7 @@ export type SearchResults = {
 };
 
 const cachedSearchContent = cache(
-  async (
-    title: string,
-    orgSlug: string,
-    limit?: number,
-  ): Promise<SearchResults> => {
+  async (title: string, orgSlug: string, limit?: number): Promise<SearchResults> => {
     if (!title.trim()) {
       return { chapters: [], courses: [], lessons: [] };
     }
@@ -57,16 +53,14 @@ const cachedSearchContent = cache(
       url: `/${orgSlug}/c/${course.language}/${course.slug}`,
     }));
 
-    const chapters: ResultWithPosition[] = chaptersResult.data.map(
-      (chapter) => ({
-        description: chapter.description,
-        id: chapter.id,
-        position: chapter.position,
-        title: chapter.title,
-        type: "chapter",
-        url: `/${orgSlug}/c/${chapter.course.language}/${chapter.course.slug}/ch/${chapter.slug}`,
-      }),
-    );
+    const chapters: ResultWithPosition[] = chaptersResult.data.map((chapter) => ({
+      description: chapter.description,
+      id: chapter.id,
+      position: chapter.position,
+      title: chapter.title,
+      type: "chapter",
+      url: `/${orgSlug}/c/${chapter.course.language}/${chapter.course.slug}/ch/${chapter.slug}`,
+    }));
 
     const lessons: ResultWithPosition[] = lessonsResult.data.map((lesson) => ({
       description: lesson.description,

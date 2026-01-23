@@ -1,5 +1,4 @@
 import "server-only";
-
 import { prisma } from "@zoonk/db";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";

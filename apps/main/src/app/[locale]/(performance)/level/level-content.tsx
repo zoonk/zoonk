@@ -1,15 +1,12 @@
-import { getSession } from "@zoonk/core/users/session/get";
-import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { validatePeriod } from "@/data/progress/_utils";
 import { getBpHistory } from "@/data/progress/get-bp-history";
+import { getSession } from "@zoonk/core/users/session/get";
+import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { PerformanceChartSkeleton } from "../_components/performance-chart-skeleton";
 import { PerformanceEmptyState } from "../_components/performance-empty-state";
 import { LevelChart } from "./level-chart";
 import { LevelExplanation } from "./level-explanation";
-import {
-  LevelProgression,
-  LevelProgressionSkeleton,
-} from "./level-progression";
+import { LevelProgression, LevelProgressionSkeleton } from "./level-progression";
 import { LevelStats, LevelStatsSkeleton } from "./level-stats";
 
 export async function LevelContent({

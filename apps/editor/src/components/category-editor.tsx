@@ -1,22 +1,18 @@
 "use client";
 
+import { useCategoryLabels } from "@/lib/use-category-labels";
 import { Badge } from "@zoonk/ui/components/badge";
 import { Button } from "@zoonk/ui/components/button";
 import { Checkbox } from "@zoonk/ui/components/checkbox";
 import { EditableLabel } from "@zoonk/ui/components/editable-text";
 import { Input } from "@zoonk/ui/components/input";
 import { Label } from "@zoonk/ui/components/label";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@zoonk/ui/components/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@zoonk/ui/components/popover";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { toast } from "@zoonk/ui/components/sonner";
 import { PlusIcon, TagsIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useMemo, useOptimistic, useState, useTransition } from "react";
-import { useCategoryLabels } from "@/lib/use-category-labels";
 
 export function CategoryEditorSkeleton() {
   return (
@@ -37,21 +33,11 @@ type CategoryEditorProps = {
   onRemove: (category: string) => Promise<{ error: string | null }>;
 };
 
-type OptimisticAction =
-  | { type: "add"; category: string }
-  | { type: "remove"; category: string };
+type OptimisticAction = { type: "add"; category: string } | { type: "remove"; category: string };
 
-export function CategoryEditor({
-  categories,
-  onAdd,
-  onRemove,
-}: CategoryEditorProps) {
+export function CategoryEditor({ categories, onAdd, onRemove }: CategoryEditorProps) {
   const t = useExtracted();
-  const {
-    labels: categoryLabels,
-    sortedCategories,
-    getLabel,
-  } = useCategoryLabels();
+  const { labels: categoryLabels, sortedCategories, getLabel } = useCategoryLabels();
 
   const [isPending, startTransition] = useTransition();
   const [search, setSearch] = useState("");
@@ -67,13 +53,11 @@ export function CategoryEditor({
     },
   );
 
-  const sortedOptimisticCategories = [...optimisticCategories].toSorted(
-    (a, b) => {
-      const labelA = getLabel(a) ?? a;
-      const labelB = getLabel(b) ?? b;
-      return labelA.localeCompare(labelB);
-    },
-  );
+  const sortedOptimisticCategories = [...optimisticCategories].toSorted((a, b) => {
+    const labelA = getLabel(a) ?? a;
+    const labelB = getLabel(b) ?? b;
+    return labelA.localeCompare(labelB);
+  });
 
   const filteredCategories = useMemo(() => {
     if (!search.trim()) {
@@ -142,11 +126,7 @@ export function CategoryEditor({
             <PlusIcon />
           </PopoverTrigger>
 
-          <PopoverContent
-            align="start"
-            aria-label={t("Category options")}
-            className="w-56 p-2"
-          >
+          <PopoverContent align="start" aria-label={t("Category options")} className="w-56 p-2">
             <Input
               className="mb-2"
               onChange={(e) => setSearch(e.target.value)}
@@ -162,7 +142,7 @@ export function CategoryEditor({
 
                 return (
                   <Label
-                    className="cursor-pointer rounded-lg px-2 py-1.5 hover:bg-muted"
+                    className="hover:bg-muted cursor-pointer rounded-lg px-2 py-1.5"
                     key={category}
                   >
                     <Checkbox

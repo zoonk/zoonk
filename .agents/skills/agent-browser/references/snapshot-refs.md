@@ -5,14 +5,18 @@ The core innovation of agent-browser: compact element references that reduce con
 ## How It Works
 
 ### The Problem
+
 Traditional browser automation sends full DOM to AI agents:
+
 ```
 Full DOM/HTML sent → AI parses → Generates CSS selector → Executes action
 ~3000-5000 tokens per interaction
 ```
 
 ### The Solution
+
 agent-browser uses compact snapshots with refs:
+
 ```
 Compact snapshot → @refs assigned → Direct ref interaction
 ~200-400 tokens per interaction

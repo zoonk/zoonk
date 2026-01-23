@@ -66,8 +66,7 @@ export function calculateBeltLevel(totalBrainPower: number): BeltLevelResult {
     Math.floor(bpInCurrentBelt / currentBelt.bpPerLevel) + 1,
   );
 
-  const isMaxLevel =
-    currentBelt.color === "black" && level === LEVELS_PER_COLOR;
+  const isMaxLevel = currentBelt.color === "black" && level === LEVELS_PER_COLOR;
 
   if (isMaxLevel) {
     return {
@@ -79,8 +78,7 @@ export function calculateBeltLevel(totalBrainPower: number): BeltLevelResult {
   }
 
   const bpForCurrentLevel = (level - 1) * currentBelt.bpPerLevel;
-  const bpToNextLevel =
-    currentBelt.bpPerLevel - (bpInCurrentBelt - bpForCurrentLevel);
+  const bpToNextLevel = currentBelt.bpPerLevel - (bpInCurrentBelt - bpForCurrentLevel);
 
   return {
     bpToNextLevel,

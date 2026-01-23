@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
-import type { Route } from "@zoonk/e2e/fixtures";
 import { courseSuggestionFixture } from "@zoonk/testing/fixtures/course-suggestions";
 import { expect, test } from "./fixtures";
+import type { Route } from "@zoonk/e2e/fixtures";
 
 const TEST_RUN_ID = "test-run-id-redirect";
 
@@ -13,10 +13,7 @@ async function mockWorkflowApis(route: Route) {
   const url = route.request().url();
   const method = route.request().method();
 
-  if (
-    url.includes("/api/workflows/course-generation/trigger") &&
-    method === "POST"
-  ) {
+  if (url.includes("/api/workflows/course-generation/trigger") && method === "POST") {
     await route.fulfill({
       body: JSON.stringify({ message: "Workflow started", runId: TEST_RUN_ID }),
       contentType: "application/json",
@@ -39,9 +36,7 @@ async function mockWorkflowApis(route: Route) {
 }
 
 test.describe("Generate Course Redirect", () => {
-  test("redirects to generate/cs/[id] when course suggestion exists", async ({
-    page,
-  }) => {
+  test("redirects to generate/cs/[id] when course suggestion exists", async ({ page }) => {
     const slug = `e2e-redirect-${randomUUID().slice(0, 8)}`;
     const suggestion = await courseSuggestionFixture({
       generationStatus: "running",

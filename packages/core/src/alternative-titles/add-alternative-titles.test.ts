@@ -15,10 +15,7 @@ describe("addAlternativeTitles", () => {
     await addAlternativeTitles({
       courseId: course.id,
       language: "en",
-      titles: [
-        `Frontend Development ${suffix}`,
-        `Frontend Engineering ${suffix}`,
-      ],
+      titles: [`Frontend Development ${suffix}`, `Frontend Engineering ${suffix}`],
     });
 
     const titles = await prisma.courseAlternativeTitle.findMany({

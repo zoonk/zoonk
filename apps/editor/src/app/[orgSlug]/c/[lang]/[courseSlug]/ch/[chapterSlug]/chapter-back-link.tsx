@@ -1,14 +1,9 @@
 import { BackLink } from "@/components/back-link";
 import { getCourse } from "@/data/courses/get-course";
 
-type ChapterPageProps =
-  PageProps<"/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]">;
+type ChapterPageProps = PageProps<"/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]">;
 
-export async function ChapterBackLink({
-  params,
-}: {
-  params: ChapterPageProps["params"];
-}) {
+export async function ChapterBackLink({ params }: { params: ChapterPageProps["params"] }) {
   const { courseSlug, lang, orgSlug } = await params;
   const { data: course } = await getCourse({
     courseSlug,
@@ -20,9 +15,5 @@ export async function ChapterBackLink({
     return null;
   }
 
-  return (
-    <BackLink href={`/${orgSlug}/c/${lang}/${courseSlug}`}>
-      {course.title}
-    </BackLink>
-  );
+  return <BackLink href={`/${orgSlug}/c/${lang}/${courseSlug}`}>{course.title}</BackLink>;
 }

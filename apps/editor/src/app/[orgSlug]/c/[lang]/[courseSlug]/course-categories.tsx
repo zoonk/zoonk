@@ -1,7 +1,7 @@
-import { notFound } from "next/navigation";
 import { CategoryEditor } from "@/components/category-editor";
 import { listCourseCategories } from "@/data/categories/list-course-categories";
 import { getCourse } from "@/data/courses/get-course";
+import { notFound } from "next/navigation";
 import { addCourseCategoryAction, removeCourseCategoryAction } from "./actions";
 
 export async function CourseCategories({

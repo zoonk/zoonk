@@ -1,5 +1,4 @@
 import "server-only";
-
 import { prisma } from "@zoonk/db";
 import { cache } from "react";
 
@@ -20,12 +19,7 @@ export type LessonWithDetails = {
 };
 
 const cachedGetLesson = cache(
-  async (
-    brandSlug: string,
-    courseSlug: string,
-    chapterSlug: string,
-    lessonSlug: string,
-  ) => {
+  async (brandSlug: string, courseSlug: string, chapterSlug: string, lessonSlug: string) => {
     const data = await prisma.lesson.findFirst({
       select: {
         chapter: {

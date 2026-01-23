@@ -1,3 +1,5 @@
+import { ClientLink } from "@/i18n/client-link";
+import { getMenu } from "@/lib/menu";
 import {
   FeatureCard,
   FeatureCardBody,
@@ -12,8 +14,6 @@ import {
 } from "@zoonk/ui/components/feature";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { getExtracted, getLocale } from "next-intl/server";
-import { ClientLink } from "@/i18n/client-link";
-import { getMenu } from "@/lib/menu";
 
 export async function Score({ score }: { score: number }) {
   const t = await getExtracted();

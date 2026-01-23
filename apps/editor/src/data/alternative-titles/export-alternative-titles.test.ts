@@ -1,9 +1,9 @@
 import { randomUUID } from "node:crypto";
+import { ErrorCode } from "@/lib/app-error";
 import { prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { describe, expect, test } from "vitest";
-import { ErrorCode } from "@/lib/app-error";
 import { exportAlternativeTitles } from "./export-alternative-titles";
 
 describe("exportAlternativeTitles", () => {

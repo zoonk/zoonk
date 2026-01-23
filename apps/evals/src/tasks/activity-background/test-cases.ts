@@ -105,8 +105,7 @@ export const TEST_CASES = [
       chapterTitle: "Conceitos Básicos",
       courseTitle: "Economia para Iniciantes",
       language: "pt",
-      lessonDescription:
-        "Entendendo por que os preços sobem e como isso afeta a vida das pessoas",
+      lessonDescription: "Entendendo por que os preços sobem e como isso afeta a vida das pessoas",
       lessonTitle: "O que é Inflação?",
     },
   },

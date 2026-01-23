@@ -1,20 +1,12 @@
-import { notFound } from "next/navigation";
-import { getExtracted } from "next-intl/server";
 import { ContentEditor } from "@/components/content-editor";
 import { getChapter } from "@/data/chapters/get-chapter";
-import {
-  updateChapterDescriptionAction,
-  updateChapterTitleAction,
-} from "./actions";
+import { getExtracted } from "next-intl/server";
+import { notFound } from "next/navigation";
+import { updateChapterDescriptionAction, updateChapterTitleAction } from "./actions";
 
-type ChapterPageProps =
-  PageProps<"/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]">;
+type ChapterPageProps = PageProps<"/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]">;
 
-export async function ChapterContent({
-  params,
-}: {
-  params: ChapterPageProps["params"];
-}) {
+export async function ChapterContent({ params }: { params: ChapterPageProps["params"] }) {
   const { chapterSlug, courseSlug, lang, orgSlug } = await params;
   const t = await getExtracted();
 

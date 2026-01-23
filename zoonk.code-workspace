@@ -6,8 +6,8 @@
       "mrorz.language-gettext",
       "prisma.prisma",
       "unifiedjs.vscode-mdx",
-      "vercel.turbo-vsc"
-    ]
+      "vercel.turbo-vsc",
+    ],
   },
   "folders": [
     { "path": "." },
@@ -22,7 +22,7 @@
     { "path": "./packages/mailer" },
     { "path": "./packages/tsconfig" },
     { "path": "./packages/ui" },
-    { "path": "./packages/utils" }
+    { "path": "./packages/utils" },
   ],
   "settings": {
     "[css]": { "editor.defaultFormatter": "oxc.oxc-vscode" },
@@ -35,9 +35,9 @@
       "*.tsbuildinfo": true,
       "**/.next": true,
       "**/.turbo": true,
-      "**/.vercel": true
+      "**/.vercel": true,
     },
     "search.useIgnoreFiles": true,
-    "typescript.tsdk": "./apps/main/node_modules/typescript/lib"
-  }
+    "typescript.tsdk": "./apps/main/node_modules/typescript/lib",
+  },
 }

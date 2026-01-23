@@ -1,6 +1,6 @@
+import { updateChapterGenerationStatus } from "@/data/chapters/update-chapter-generation-status";
 import { cacheTagCourse } from "@zoonk/utils/cache";
 import { revalidateTag } from "next/cache";
-import { updateChapterGenerationStatus } from "@/data/chapters/update-chapter-generation-status";
 import { streamStatus } from "../stream-status";
 import type { ChapterContext } from "./get-chapter-step";
 
@@ -9,9 +9,7 @@ type SetCompletedInput = {
   workflowRunId: string;
 };
 
-export async function setChapterAsCompletedStep(
-  input: SetCompletedInput,
-): Promise<void> {
+export async function setChapterAsCompletedStep(input: SetCompletedInput): Promise<void> {
   "use step";
 
   await streamStatus({ status: "started", step: "setChapterAsCompleted" });
@@ -27,10 +25,7 @@ export async function setChapterAsCompletedStep(
     throw error;
   }
 
-  revalidateTag(
-    cacheTagCourse({ courseSlug: input.context.course.slug }),
-    "max",
-  );
+  revalidateTag(cacheTagCourse({ courseSlug: input.context.course.slug }), "max");
 
   await streamStatus({ status: "completed", step: "setChapterAsCompleted" });
 }

@@ -1,11 +1,5 @@
 "use server";
 
-import { revalidateMainApp } from "@zoonk/core/cache/revalidate";
-import { cacheTagChapter, cacheTagCourse } from "@zoonk/utils/cache";
-import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
-import { after } from "next/server";
-import { getExtracted } from "next-intl/server";
 import { chapterSlugExists } from "@/data/chapters/chapter-slug";
 import { updateChapter } from "@/data/chapters/update-chapter";
 import { createLesson } from "@/data/lessons/create-lesson";
@@ -14,6 +8,12 @@ import { importLessons } from "@/data/lessons/import-lessons";
 import { reorderLessons } from "@/data/lessons/reorder-lessons";
 import { getErrorMessage } from "@/lib/error-messages";
 import { isImportMode } from "@/lib/import-mode";
+import { revalidateMainApp } from "@zoonk/core/cache/revalidate";
+import { cacheTagChapter, cacheTagCourse } from "@zoonk/utils/cache";
+import { getExtracted } from "next-intl/server";
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+import { after } from "next/server";
 
 export async function checkChapterSlugExists(params: {
   courseId?: number;
@@ -49,10 +49,7 @@ export async function updateChapterTitleAction(
   }
 
   after(async () => {
-    await revalidateMainApp([
-      cacheTagChapter({ chapterSlug }),
-      cacheTagCourse({ courseSlug }),
-    ]);
+    await revalidateMainApp([cacheTagChapter({ chapterSlug }), cacheTagCourse({ courseSlug })]);
   });
 
   revalidatePath(`/${orgSlug}/c/${lang}/${courseSlug}`);
@@ -81,10 +78,7 @@ export async function updateChapterDescriptionAction(
   }
 
   after(async () => {
-    await revalidateMainApp([
-      cacheTagChapter({ chapterSlug }),
-      cacheTagCourse({ courseSlug }),
-    ]);
+    await revalidateMainApp([cacheTagChapter({ chapterSlug }), cacheTagCourse({ courseSlug })]);
   });
 
   revalidatePath(`/${orgSlug}/c/${lang}/${courseSlug}`);
@@ -141,10 +135,7 @@ async function createLessonAction(
   }
 
   after(async () => {
-    await revalidateMainApp([
-      cacheTagChapter({ chapterSlug }),
-      cacheTagCourse({ courseSlug }),
-    ]);
+    await revalidateMainApp([cacheTagChapter({ chapterSlug }), cacheTagCourse({ courseSlug })]);
   });
 
   return { error: null, slug: data.slug };
@@ -176,10 +167,7 @@ async function importLessonsAction(
   }
 
   after(async () => {
-    await revalidateMainApp([
-      cacheTagChapter({ chapterSlug }),
-      cacheTagCourse({ courseSlug }),
-    ]);
+    await revalidateMainApp([cacheTagChapter({ chapterSlug }), cacheTagCourse({ courseSlug })]);
   });
 
   return { error: null };
@@ -211,12 +199,7 @@ export async function insertLessonAction(
   position: number,
 ): Promise<void> {
   const { chapterId, chapterSlug, courseSlug, lang, orgSlug } = params;
-  const { slug, error } = await createLessonAction(
-    chapterSlug,
-    courseSlug,
-    chapterId,
-    position,
-  );
+  const { slug, error } = await createLessonAction(chapterSlug, courseSlug, chapterId, position);
 
   if (error) {
     throw new Error(error);
@@ -233,12 +216,7 @@ export async function handleImportLessonsAction(
   formData: FormData,
 ): Promise<{ error: string | null }> {
   const { chapterId, chapterSlug, courseSlug, lang, orgSlug } = params;
-  const { error } = await importLessonsAction(
-    chapterSlug,
-    courseSlug,
-    chapterId,
-    formData,
-  );
+  const { error } = await importLessonsAction(chapterSlug, courseSlug, chapterId, formData);
 
   if (error) {
     return { error };
@@ -264,10 +242,7 @@ export async function reorderLessonsAction(
   }
 
   after(async () => {
-    await revalidateMainApp([
-      cacheTagChapter({ chapterSlug }),
-      cacheTagCourse({ courseSlug }),
-    ]);
+    await revalidateMainApp([cacheTagChapter({ chapterSlug }), cacheTagCourse({ courseSlug })]);
   });
 
   revalidatePath(`/${orgSlug}/c/${lang}/${courseSlug}/ch/${chapterSlug}`);

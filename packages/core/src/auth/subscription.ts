@@ -1,4 +1,1 @@
-export {
-  findActiveSubscription,
-  isActiveSubscription,
-} from "@zoonk/auth/subscription";
+export { findActiveSubscription, isActiveSubscription } from "@zoonk/auth/subscription";

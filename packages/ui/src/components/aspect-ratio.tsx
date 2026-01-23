@@ -1,5 +1,5 @@
-import type { CSSPropertiesWithVariables } from "@zoonk/ui/lib/css-variables";
 import { cn } from "@zoonk/ui/lib/utils";
+import type { CSSPropertiesWithVariables } from "@zoonk/ui/lib/css-variables";
 
 function AspectRatio({
   ratio,

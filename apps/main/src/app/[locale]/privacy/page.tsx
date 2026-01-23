@@ -1,7 +1,7 @@
 "use cache";
 
-import type { Metadata } from "next";
 import { getExtracted } from "next-intl/server";
+import type { Metadata } from "next";
 
 export async function generateMetadata({
   params,
@@ -17,9 +17,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function Privacy({
-  params,
-}: PageProps<"/[locale]/privacy">) {
+export default async function Privacy({ params }: PageProps<"/[locale]/privacy">) {
   const { locale } = await params;
   const { default: PrivacyPolicy } = await import(`./${locale}.mdx`);
 

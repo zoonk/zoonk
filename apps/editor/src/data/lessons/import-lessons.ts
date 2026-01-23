@@ -1,13 +1,12 @@
 import "server-only";
-
+import { ErrorCode } from "@/lib/app-error";
+import { parseJsonFile } from "@/lib/parse-json-file";
+import { isRecord } from "@/lib/validation";
 import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
 import { type Lesson, prisma, type TransactionClient } from "@zoonk/db";
 import { AppError, type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { normalizeString, toSlug } from "@zoonk/utils/string";
-import { isRecord } from "@/lib/validation";
-import { ErrorCode } from "@/lib/app-error";
 import type { ImportMode } from "@/lib/import-mode";
-import { parseJsonFile } from "@/lib/parse-json-file";
 
 export type LessonImportData = {
   description: string;
@@ -24,8 +23,7 @@ function validateLessonData(lesson: unknown): lesson is LessonImportData {
     return false;
   }
 
-  const hasValidTitle =
-    typeof lesson.title === "string" && lesson.title.length > 0;
+  const hasValidTitle = typeof lesson.title === "string" && lesson.title.length > 0;
   const hasValidDescription = typeof lesson.description === "string";
 
   return hasValidTitle && hasValidDescription;
@@ -43,10 +41,7 @@ function validateImportData(data: unknown): data is LessonsImport {
   return data.lessons.every(validateLessonData);
 }
 
-async function removeExistingLessons(
-  tx: TransactionClient,
-  chapterId: number,
-): Promise<void> {
+async function removeExistingLessons(tx: TransactionClient, chapterId: number): Promise<void> {
   await tx.lesson.deleteMany({
     where: { chapterId },
   });
@@ -114,9 +109,7 @@ export async function importLessons(params: {
       const lessonsToImport = importData.lessons.map((lessonData, i) => {
         const hasExplicitSlug = Boolean(lessonData.slug);
 
-        const slug = lessonData.slug
-          ? toSlug(lessonData.slug)
-          : toSlug(lessonData.title);
+        const slug = lessonData.slug ? toSlug(lessonData.slug) : toSlug(lessonData.title);
 
         return {
           hasExplicitSlug,
@@ -136,9 +129,7 @@ export async function importLessons(params: {
         },
       });
 
-      const existingLessonMap = new Map(
-        existingLessonsInChapter.map((l) => [l.slug, l]),
-      );
+      const existingLessonMap = new Map(existingLessonsInChapter.map((l) => [l.slug, l]));
 
       // Deduplicate slugs within the batch to prevent unique constraint violations
       const slugCounts = new Map<string, number>();
@@ -147,8 +138,7 @@ export async function importLessons(params: {
         slugCounts.set(item.slug, count + 1);
 
         // If this slug already appeared in the batch, make it unique
-        const batchUniqueSlug =
-          count > 0 ? `${item.slug}-${Date.now()}-${item.index}` : item.slug;
+        const batchUniqueSlug = count > 0 ? `${item.slug}-${Date.now()}-${item.index}` : item.slug;
 
         return { ...item, slug: batchUniqueSlug };
       });

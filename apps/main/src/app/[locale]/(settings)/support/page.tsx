@@ -1,8 +1,8 @@
 "use cache";
 
-import type { Metadata } from "next";
 import { getExtracted, setRequestLocale } from "next-intl/server";
 import { SupportContent } from "./support-content";
+import type { Metadata } from "next";
 
 export async function generateMetadata({
   params,
@@ -18,9 +18,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function Support({
-  params,
-}: PageProps<"/[locale]/support">) {
+export default async function Support({ params }: PageProps<"/[locale]/support">) {
   const { locale } = await params;
   setRequestLocale(locale);
 

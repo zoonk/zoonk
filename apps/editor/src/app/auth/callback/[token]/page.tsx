@@ -12,9 +12,9 @@ import {
 } from "@zoonk/ui/components/empty";
 import { FullPageLoading } from "@zoonk/ui/components/loading";
 import { AlertCircleIcon } from "lucide-react";
+import { useExtracted } from "next-intl";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { useExtracted } from "next-intl";
 import { use, useEffect, useEffectEvent, useState } from "react";
 
 type CallbackErrorType = "invalid";
@@ -32,17 +32,12 @@ function CallbackError({ type }: { type: CallbackErrorType }) {
           <EmptyTitle>{t("Authentication Error")}</EmptyTitle>
           <EmptyDescription>
             {type === "invalid" &&
-              t(
-                "The authentication token is invalid or expired. Please try logging in again.",
-              )}
+              t("The authentication token is invalid or expired. Please try logging in again.")}
           </EmptyDescription>
         </EmptyHeader>
 
         <EmptyContent>
-          <Link
-            className={buttonVariants({ variant: "outline" })}
-            href="/login"
-          >
+          <Link className={buttonVariants({ variant: "outline" })} href="/login">
             {t("Return to login")}
           </Link>
           <p className="text-muted-foreground text-sm">
@@ -54,9 +49,7 @@ function CallbackError({ type }: { type: CallbackErrorType }) {
   );
 }
 
-export default function AuthCallbackPage(
-  props: PageProps<"/auth/callback/[token]">,
-) {
+export default function AuthCallbackPage(props: PageProps<"/auth/callback/[token]">) {
   const { token } = use(props.params);
   const [error, setError] = useState<CallbackErrorType | null>(null);
 

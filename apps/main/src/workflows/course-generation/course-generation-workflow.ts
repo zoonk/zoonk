@@ -6,9 +6,7 @@ import { getCourseSuggestionStep } from "./steps/get-course-suggestion-step";
 import { handleCourseFailureStep } from "./steps/handle-failure-step";
 import { startChapterGenerationStep } from "./steps/start-chapter-generation-step";
 
-export async function courseGenerationWorkflow(
-  courseSuggestionId: number,
-): Promise<void> {
+export async function courseGenerationWorkflow(courseSuggestionId: number): Promise<void> {
   "use workflow";
 
   const { workflowRunId } = getWorkflowMetadata();
@@ -36,20 +34,13 @@ export async function courseGenerationWorkflow(
     workflowRunId,
   );
 
-  const chapters = await setupCourse(
-    course,
-    courseSuggestionId,
-    existing,
-  ).catch(async (error) => {
+  const chapters = await setupCourse(course, courseSuggestionId, existing).catch(async (error) => {
     await handleCourseFailureStep({
       courseId: course.courseId,
       courseSuggestionId,
     });
 
-    console.error(
-      `[workflow ${workflowRunId}] Course generation failed`,
-      error,
-    );
+    console.error(`[workflow ${workflowRunId}] Course generation failed`, error);
 
     throw FatalError;
   });

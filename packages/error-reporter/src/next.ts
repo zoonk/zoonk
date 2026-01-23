@@ -1,5 +1,4 @@
 import { after } from "next/server";
-
 import { type ErrorPayload, sendErrorEmail } from "./server";
 
 function isSameOrigin(request: Request): boolean {

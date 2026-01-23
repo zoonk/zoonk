@@ -1,7 +1,7 @@
 "use server";
 
-import type { CourseCategory } from "@zoonk/utils/categories";
 import { listCourses } from "@/data/courses/list-courses";
+import type { CourseCategory } from "@zoonk/utils/categories";
 
 export async function loadMoreCourses(params: {
   category?: CourseCategory;

@@ -1,9 +1,9 @@
 import { randomUUID } from "node:crypto";
+import { ErrorCode } from "@/lib/app-error";
 import { prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { describe, expect, test } from "vitest";
-import { ErrorCode } from "@/lib/app-error";
 import { importAlternativeTitles } from "./import-alternative-titles";
 
 function createMockFile(
@@ -24,10 +24,7 @@ describe("importAlternativeTitles", () => {
     const organization = await organizationFixture();
     const course = await courseFixture({ organizationId: organization.id });
 
-    const file = createImportFile([
-      `Machine Learning ${suffix}`,
-      `ML Basics ${suffix}`,
-    ]);
+    const file = createImportFile([`Machine Learning ${suffix}`, `ML Basics ${suffix}`]);
 
     const result = await importAlternativeTitles({
       courseId: course.id,
@@ -76,10 +73,7 @@ describe("importAlternativeTitles", () => {
       },
     });
 
-    const file = createImportFile([
-      `Existing Title ${suffix}`,
-      `New Title ${suffix}`,
-    ]);
+    const file = createImportFile([`Existing Title ${suffix}`, `New Title ${suffix}`]);
 
     const result = await importAlternativeTitles({
       courseId: course.id,
@@ -289,9 +283,7 @@ describe("importAlternativeTitles", () => {
         language: "en",
       });
 
-      expect(result.error?.message).toBe(
-        ErrorCode.invalidAlternativeTitleFormat,
-      );
+      expect(result.error?.message).toBe(ErrorCode.invalidAlternativeTitleFormat);
     });
 
     test("rejects non-string titles", async () => {
@@ -310,9 +302,7 @@ describe("importAlternativeTitles", () => {
         language: "en",
       });
 
-      expect(result.error?.message).toBe(
-        ErrorCode.invalidAlternativeTitleFormat,
-      );
+      expect(result.error?.message).toBe(ErrorCode.invalidAlternativeTitleFormat);
     });
 
     test("rejects empty string titles", async () => {
@@ -331,9 +321,7 @@ describe("importAlternativeTitles", () => {
         language: "en",
       });
 
-      expect(result.error?.message).toBe(
-        ErrorCode.invalidAlternativeTitleFormat,
-      );
+      expect(result.error?.message).toBe(ErrorCode.invalidAlternativeTitleFormat);
     });
 
     test("rejects whitespace-only titles", async () => {
@@ -352,9 +340,7 @@ describe("importAlternativeTitles", () => {
         language: "en",
       });
 
-      expect(result.error?.message).toBe(
-        ErrorCode.invalidAlternativeTitleFormat,
-      );
+      expect(result.error?.message).toBe(ErrorCode.invalidAlternativeTitleFormat);
     });
 
     test("accepts JSON file by name when type is empty", async () => {

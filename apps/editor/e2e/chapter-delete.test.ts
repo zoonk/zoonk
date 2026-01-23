@@ -26,16 +26,10 @@ async function createTestChapter(isPublished: boolean) {
   return { chapter, course };
 }
 
-async function navigateToChapterPage(
-  page: Page,
-  courseSlug: string,
-  chapterSlug: string,
-) {
+async function navigateToChapterPage(page: Page, courseSlug: string, chapterSlug: string) {
   await page.goto(`/ai/c/en/${courseSlug}/ch/${chapterSlug}`);
 
-  await expect(
-    page.getByRole("textbox", { name: /edit chapter title/i }),
-  ).toBeVisible();
+  await expect(page.getByRole("textbox", { name: /edit chapter title/i })).toBeVisible();
 }
 
 function getDeleteButton(page: Page) {
@@ -83,9 +77,7 @@ test.describe("Chapter Delete", () => {
       await openDeleteDialog(authenticatedPage);
       await confirmDelete(authenticatedPage);
 
-      await expect(authenticatedPage).toHaveURL(
-        new RegExp(`/ai/c/en/${course.slug}$`),
-      );
+      await expect(authenticatedPage).toHaveURL(new RegExp(`/ai/c/en/${course.slug}$`));
       await verifyChapterDeleted(chapter.id);
     });
 
@@ -113,9 +105,7 @@ test.describe("Chapter Delete", () => {
   });
 
   test.describe("Permissions", () => {
-    test("admin cannot see delete button for published chapter", async ({
-      authenticatedPage,
-    }) => {
+    test("admin cannot see delete button for published chapter", async ({ authenticatedPage }) => {
       const { course, chapter } = await createTestChapter(true);
       await navigateToChapterPage(authenticatedPage, course.slug, chapter.slug);
 
@@ -125,9 +115,7 @@ test.describe("Chapter Delete", () => {
   });
 
   test.describe("Dialog Interaction", () => {
-    test("cancel button closes dialog without deleting", async ({
-      authenticatedPage,
-    }) => {
+    test("cancel button closes dialog without deleting", async ({ authenticatedPage }) => {
       const { course, chapter } = await createTestChapter(false);
       await navigateToChapterPage(authenticatedPage, course.slug, chapter.slug);
 
@@ -138,9 +126,7 @@ test.describe("Chapter Delete", () => {
       await verifyChapterExists(chapter.id);
     });
 
-    test("escape key closes dialog without deleting", async ({
-      authenticatedPage,
-    }) => {
+    test("escape key closes dialog without deleting", async ({ authenticatedPage }) => {
       const { course, chapter } = await createTestChapter(false);
       await navigateToChapterPage(authenticatedPage, course.slug, chapter.slug);
 

@@ -1,17 +1,16 @@
-import type { Task } from "@/lib/types";
 import { activityBackgroundTask } from "./activity-background/task";
 import { activityChallengeTask } from "./activity-challenge/task";
 import { activityCustomTask } from "./activity-custom/task";
 import { activityExamplesTask } from "./activity-examples/task";
-import { activityExplanationTask } from "./activity-explanation/task";
 import { activityExplanationQuizTask } from "./activity-explanation-quiz/task";
+import { activityExplanationTask } from "./activity-explanation/task";
 import { activityGrammarTask } from "./activity-grammar/task";
 import { activityMechanicsTask } from "./activity-mechanics/task";
 import { activityPronunciationTask } from "./activity-pronunciation/task";
 import { activityReviewTask } from "./activity-review/task";
 import { activitySentencesTask } from "./activity-sentences/task";
-import { activityStoryTask } from "./activity-story/task";
 import { activityStoryLanguageTask } from "./activity-story-language/task";
+import { activityStoryTask } from "./activity-story/task";
 import { activityVocabularyTask } from "./activity-vocabulary/task";
 import { alternativeTitlesTask } from "./alternative-titles/task";
 import { chapterLessonsTask } from "./chapter-lessons/task";
@@ -22,6 +21,7 @@ import { courseSuggestionsTask } from "./course-suggestions/task";
 import { lessonActivitiesTask } from "./lesson-activities/task";
 import { lessonKindTask } from "./lesson-kind/task";
 import { stepVisualTask } from "./step-visual/task";
+import type { Task } from "@/lib/types";
 
 export const TASKS: readonly Task[] = [
   activityBackgroundTask,

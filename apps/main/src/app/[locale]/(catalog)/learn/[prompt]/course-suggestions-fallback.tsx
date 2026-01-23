@@ -1,3 +1,4 @@
+import { Link } from "@/i18n/navigation";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import {
   Empty,
@@ -9,7 +10,6 @@ import {
 } from "@zoonk/ui/components/empty";
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { getExtracted } from "next-intl/server";
-import { Link } from "@/i18n/navigation";
 
 export async function CourseSuggestionsFallback() {
   const t = await getExtracted();
@@ -31,10 +31,7 @@ export async function CourseSuggestionsFallback() {
       </EmptyHeader>
 
       <EmptyContent>
-        <Link
-          className={buttonVariants({ size: "sm", variant: "outline" })}
-          href="/learn"
-        >
+        <Link className={buttonVariants({ size: "sm", variant: "outline" })} href="/learn">
           {t("Cancel")}
         </Link>
       </EmptyContent>

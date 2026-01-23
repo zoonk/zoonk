@@ -1,5 +1,4 @@
 import "server-only";
-
 import { prisma } from "@zoonk/db";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { normalizeString, toSlug } from "@zoonk/utils/string";
@@ -16,9 +15,7 @@ type CreateParams = {
   organizationId: number;
 };
 
-export async function createLessons(
-  params: CreateParams,
-): Promise<SafeReturn<void>> {
+export async function createLessons(params: CreateParams): Promise<SafeReturn<void>> {
   const lessonsData = params.lessons.map((lesson, index) => ({
     chapterId: params.chapterId,
     description: lesson.description,
@@ -32,9 +29,7 @@ export async function createLessons(
     title: lesson.title,
   }));
 
-  const { error } = await safeAsync(() =>
-    prisma.lesson.createMany({ data: lessonsData }),
-  );
+  const { error } = await safeAsync(() => prisma.lesson.createMany({ data: lessonsData }));
 
   if (error) {
     return { data: null, error };

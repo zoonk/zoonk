@@ -7,9 +7,7 @@ export type GeneratedLesson = {
   description: string;
 };
 
-export async function generateLessonsStep(
-  context: ChapterContext,
-): Promise<GeneratedLesson[]> {
+export async function generateLessonsStep(context: ChapterContext): Promise<GeneratedLesson[]> {
   "use step";
 
   await streamStatus({ status: "started", step: "generateLessons" });

@@ -3,13 +3,10 @@ import {
   type CourseCategoriesSchema,
   generateCourseCategories,
 } from "@zoonk/ai/tasks/courses/categories";
-import type { Task } from "@/lib/types";
 import { TEST_CASES } from "./test-cases";
+import type { Task } from "@/lib/types";
 
-export const courseCategoriesTask: Task<
-  CourseCategoriesParams,
-  CourseCategoriesSchema
-> = {
+export const courseCategoriesTask: Task<CourseCategoriesParams, CourseCategoriesSchema> = {
   description: "Assign one or more categories to a course",
   generate: generateCourseCategories,
   id: "course-categories",

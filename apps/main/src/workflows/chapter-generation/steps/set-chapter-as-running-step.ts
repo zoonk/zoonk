@@ -6,9 +6,7 @@ type SetRunningInput = {
   workflowRunId: string;
 };
 
-export async function setChapterAsRunningStep(
-  input: SetRunningInput,
-): Promise<void> {
+export async function setChapterAsRunningStep(input: SetRunningInput): Promise<void> {
   "use step";
 
   await streamStatus({ status: "started", step: "setChapterAsRunning" });

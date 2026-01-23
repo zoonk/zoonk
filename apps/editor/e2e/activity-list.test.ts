@@ -72,9 +72,7 @@ async function navigateToLessonPage(
 ) {
   await page.goto(`/ai/c/en/${courseSlug}/ch/${chapterSlug}/l/${lessonSlug}`);
 
-  await expect(
-    page.getByRole("textbox", { name: /edit lesson title/i }),
-  ).toBeVisible();
+  await expect(page.getByRole("textbox", { name: /edit lesson title/i })).toBeVisible();
 }
 
 async function expectActivitiesVisible(
@@ -87,32 +85,21 @@ async function expectActivitiesVisible(
         hasText: new RegExp(String(position).padStart(2, "0")),
       });
 
-      await expect(
-        listItem.getByRole("link", { name: new RegExp(title, "i") }),
-      ).toBeVisible();
+      await expect(listItem.getByRole("link", { name: new RegExp(title, "i") })).toBeVisible();
     }),
   );
 }
 
 async function expectActivityNotVisible(page: Page, title: string) {
-  await expect(
-    page.getByRole("link", { name: new RegExp(title, "i") }),
-  ).not.toBeVisible();
+  await expect(page.getByRole("link", { name: new RegExp(title, "i") })).not.toBeVisible();
 }
 
 test.describe("Activity List", () => {
   test.describe("Display", () => {
-    test("displays existing activities with position and title", async ({
-      authenticatedPage,
-    }) => {
+    test("displays existing activities with position and title", async ({ authenticatedPage }) => {
       const { chapter, course, lesson } = await createTestLesson(3);
 
-      await navigateToLessonPage(
-        authenticatedPage,
-        course.slug,
-        chapter.slug,
-        lesson.slug,
-      );
+      await navigateToLessonPage(authenticatedPage, course.slug, chapter.slug, lesson.slug);
 
       await expectActivitiesVisible(authenticatedPage, [
         { position: 1, title: "Activity 1" },
@@ -121,9 +108,7 @@ test.describe("Activity List", () => {
       ]);
     });
 
-    test("displays activity description when available", async ({
-      authenticatedPage,
-    }) => {
+    test("displays activity description when available", async ({ authenticatedPage }) => {
       const { chapter, course, lesson, org } = await createTestLesson();
       const uniqueDesc = `Description ${randomUUID().slice(0, 8)}`;
 
@@ -136,50 +121,27 @@ test.describe("Activity List", () => {
         title: "Activity with description",
       });
 
-      await navigateToLessonPage(
-        authenticatedPage,
-        course.slug,
-        chapter.slug,
-        lesson.slug,
-      );
+      await navigateToLessonPage(authenticatedPage, course.slug, chapter.slug, lesson.slug);
 
       await expect(authenticatedPage.getByText(uniqueDesc)).toBeVisible();
     });
   });
 
   test.describe("Add Activity", () => {
-    test("adds an activity and shows activity edit page", async ({
-      authenticatedPage,
-    }) => {
+    test("adds an activity and shows activity edit page", async ({ authenticatedPage }) => {
       const { chapter, course, lesson } = await createTestLesson();
 
-      await navigateToLessonPage(
-        authenticatedPage,
-        course.slug,
-        chapter.slug,
-        lesson.slug,
-      );
+      await navigateToLessonPage(authenticatedPage, course.slug, chapter.slug, lesson.slug);
 
-      await authenticatedPage
-        .getByRole("button", { name: /add activity/i })
-        .click();
+      await authenticatedPage.getByRole("button", { name: /add activity/i }).click();
 
-      await expect(
-        authenticatedPage.getByText(/activity editor coming soon/i),
-      ).toBeVisible();
+      await expect(authenticatedPage.getByText(/activity editor coming soon/i)).toBeVisible();
     });
 
-    test("inserts activity at middle position", async ({
-      authenticatedPage,
-    }) => {
+    test("inserts activity at middle position", async ({ authenticatedPage }) => {
       const { chapter, course, lesson } = await createTestLesson(4);
 
-      await navigateToLessonPage(
-        authenticatedPage,
-        course.slug,
-        chapter.slug,
-        lesson.slug,
-      );
+      await navigateToLessonPage(authenticatedPage, course.slug, chapter.slug, lesson.slug);
 
       await expectActivitiesVisible(authenticatedPage, [
         { position: 1, title: "Activity 1" },
@@ -201,13 +163,9 @@ test.describe("Activity List", () => {
       await insertBelowItem.waitFor({ state: "visible" });
       await insertBelowItem.click();
 
-      await expect(
-        authenticatedPage.getByText(/activity editor coming soon/i),
-      ).toBeVisible();
+      await expect(authenticatedPage.getByText(/activity editor coming soon/i)).toBeVisible();
 
-      await authenticatedPage.goto(
-        `/ai/c/en/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`,
-      );
+      await authenticatedPage.goto(`/ai/c/en/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
 
       await expect(
         authenticatedPage.getByRole("textbox", { name: /edit lesson title/i }),
@@ -224,17 +182,10 @@ test.describe("Activity List", () => {
   });
 
   test.describe("Reorder", () => {
-    test("reorders activities and persists after reload", async ({
-      authenticatedPage,
-    }) => {
+    test("reorders activities and persists after reload", async ({ authenticatedPage }) => {
       const { chapter, course, lesson } = await createTestLesson(3);
 
-      await navigateToLessonPage(
-        authenticatedPage,
-        course.slug,
-        chapter.slug,
-        lesson.slug,
-      );
+      await navigateToLessonPage(authenticatedPage, course.slug, chapter.slug, lesson.slug);
 
       await expectActivitiesVisible(authenticatedPage, [
         { position: 1, title: "Activity 1" },
@@ -278,11 +229,9 @@ test.describe("Activity List", () => {
         { steps: 5 },
       );
 
-      await authenticatedPage.mouse.move(
-        boxes.first.x + boxes.first.width / 2,
-        targetY,
-        { steps: 10 },
-      );
+      await authenticatedPage.mouse.move(boxes.first.x + boxes.first.width / 2, targetY, {
+        steps: 10,
+      });
 
       await authenticatedPage.mouse.up();
 
@@ -308,20 +257,13 @@ test.describe("Activity List", () => {
     test("exports activities as JSON file", async ({ authenticatedPage }) => {
       const { activities, chapter, course, lesson } = await createTestLesson(2);
 
-      await navigateToLessonPage(
-        authenticatedPage,
-        course.slug,
-        chapter.slug,
-        lesson.slug,
-      );
+      await navigateToLessonPage(authenticatedPage, course.slug, chapter.slug, lesson.slug);
 
       await getMoreOptionsButton(authenticatedPage).click();
 
       const downloadPromise = authenticatedPage.waitForEvent("download");
 
-      await authenticatedPage
-        .getByRole("menuitem", { name: /export/i })
-        .click();
+      await authenticatedPage.getByRole("menuitem", { name: /export/i }).click();
 
       const download = await downloadPromise;
 
@@ -336,9 +278,7 @@ test.describe("Activity List", () => {
       const json = JSON.parse(fs.readFileSync(downloadPath, "utf-8"));
       expect(json.activities).toHaveLength(activities.length);
 
-      const exportedTitles = json.activities.map(
-        (a: { title: string }) => a.title,
-      );
+      const exportedTitles = json.activities.map((a: { title: string }) => a.title);
       expect(exportedTitles).toContain("Activity 1");
       expect(exportedTitles).toContain("Activity 2");
     });
@@ -357,30 +297,17 @@ test.describe("Activity List", () => {
       ]);
 
       try {
-        await navigateToLessonPage(
-          authenticatedPage,
-          course.slug,
-          chapter.slug,
-          lesson.slug,
-        );
+        await navigateToLessonPage(authenticatedPage, course.slug, chapter.slug, lesson.slug);
 
-        await expect(
-          authenticatedPage.getByRole("link", { name: existingTitle }),
-        ).toBeVisible();
+        await expect(authenticatedPage.getByRole("link", { name: existingTitle })).toBeVisible();
 
         await importFlow(authenticatedPage, importFile, "merge");
 
-        await expect(
-          authenticatedPage.getByRole("link", { name: existingTitle }),
-        ).toBeVisible();
+        await expect(authenticatedPage.getByRole("link", { name: existingTitle })).toBeVisible();
 
-        await expect(
-          authenticatedPage.getByRole("link", { name: importedTitle1 }),
-        ).toBeVisible();
+        await expect(authenticatedPage.getByRole("link", { name: importedTitle1 })).toBeVisible();
 
-        await expect(
-          authenticatedPage.getByRole("link", { name: importedTitle2 }),
-        ).toBeVisible();
+        await expect(authenticatedPage.getByRole("link", { name: importedTitle2 })).toBeVisible();
 
         await authenticatedPage.reload();
 
@@ -390,25 +317,17 @@ test.describe("Activity List", () => {
           }),
         ).toBeVisible();
 
-        await expect(
-          authenticatedPage.getByRole("link", { name: existingTitle }),
-        ).toBeVisible();
+        await expect(authenticatedPage.getByRole("link", { name: existingTitle })).toBeVisible();
 
-        await expect(
-          authenticatedPage.getByRole("link", { name: importedTitle1 }),
-        ).toBeVisible();
+        await expect(authenticatedPage.getByRole("link", { name: importedTitle1 })).toBeVisible();
 
-        await expect(
-          authenticatedPage.getByRole("link", { name: importedTitle2 }),
-        ).toBeVisible();
+        await expect(authenticatedPage.getByRole("link", { name: importedTitle2 })).toBeVisible();
       } finally {
         fs.unlinkSync(importFile);
       }
     });
 
-    test("imports activities in replace mode", async ({
-      authenticatedPage,
-    }) => {
+    test("imports activities in replace mode", async ({ authenticatedPage }) => {
       const { activities, chapter, course, lesson } = await createTestLesson(1);
       const existingTitle = activities[0]?.title ?? "";
 
@@ -422,28 +341,17 @@ test.describe("Activity List", () => {
       ]);
 
       try {
-        await navigateToLessonPage(
-          authenticatedPage,
-          course.slug,
-          chapter.slug,
-          lesson.slug,
-        );
+        await navigateToLessonPage(authenticatedPage, course.slug, chapter.slug, lesson.slug);
 
-        await expect(
-          authenticatedPage.getByRole("link", { name: existingTitle }),
-        ).toBeVisible();
+        await expect(authenticatedPage.getByRole("link", { name: existingTitle })).toBeVisible();
 
         await importFlow(authenticatedPage, importFile, "replace");
 
         await expectActivityNotVisible(authenticatedPage, existingTitle);
 
-        await expect(
-          authenticatedPage.getByRole("link", { name: importedTitle1 }),
-        ).toBeVisible();
+        await expect(authenticatedPage.getByRole("link", { name: importedTitle1 })).toBeVisible();
 
-        await expect(
-          authenticatedPage.getByRole("link", { name: importedTitle2 }),
-        ).toBeVisible();
+        await expect(authenticatedPage.getByRole("link", { name: importedTitle2 })).toBeVisible();
 
         await authenticatedPage.reload();
 
@@ -455,13 +363,9 @@ test.describe("Activity List", () => {
 
         await expectActivityNotVisible(authenticatedPage, existingTitle);
 
-        await expect(
-          authenticatedPage.getByRole("link", { name: importedTitle1 }),
-        ).toBeVisible();
+        await expect(authenticatedPage.getByRole("link", { name: importedTitle1 })).toBeVisible();
 
-        await expect(
-          authenticatedPage.getByRole("link", { name: importedTitle2 }),
-        ).toBeVisible();
+        await expect(authenticatedPage.getByRole("link", { name: importedTitle2 })).toBeVisible();
       } finally {
         fs.unlinkSync(importFile);
       }

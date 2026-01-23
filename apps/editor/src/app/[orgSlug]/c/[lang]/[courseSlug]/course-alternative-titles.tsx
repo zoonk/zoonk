@@ -1,7 +1,7 @@
-import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import { AlternativeTitlesEditor } from "@/components/alternative-titles-editor";
 import { listAlternativeTitles } from "@/data/alternative-titles/list-alternative-titles";
 import { getCourse } from "@/data/courses/get-course";
+import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import {
   addAlternativeTitleAction,
   deleteAlternativeTitleAction,

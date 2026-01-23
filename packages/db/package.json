@@ -1,4 +1,27 @@
 {
+  "name": "@zoonk/db",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./continue-learning": "./src/generated/prisma/sql/getContinueLearning.ts",
+    "./peak-time": "./src/generated/prisma/sql/getPeakTime.ts",
+    "./utils": "./src/utils.ts"
+  },
+  "scripts": {
+    "db:deploy": "prisma migrate deploy",
+    "db:generate": "prisma generate --sql",
+    "db:generate:e2e": "env $(cat .env.e2e | xargs) prisma generate --sql",
+    "db:migrate": "prisma migrate dev",
+    "db:reset": "prisma migrate reset",
+    "db:reset:e2e": "env $(cat .env.e2e | xargs) prisma migrate reset",
+    "db:seed": "prisma db seed",
+    "db:seed:e2e": "env $(cat .env.e2e | xargs) prisma db seed",
+    "db:setup:e2e": "env $(cat .env.e2e | xargs) prisma migrate deploy",
+    "db:setup:test": "env $(cat .env.test | xargs) prisma migrate deploy",
+    "db:studio": "prisma studio",
+    "typecheck": "tsgo --noEmit"
+  },
   "dependencies": {
     "@prisma/adapter-pg": "7.3.0",
     "@prisma/client": "7.3.0",
@@ -14,30 +37,7 @@
     "prisma": "7.3.0",
     "tsx": "4.20.6"
   },
-  "exports": {
-    ".": "./src/index.ts",
-    "./continue-learning": "./src/generated/prisma/sql/getContinueLearning.ts",
-    "./peak-time": "./src/generated/prisma/sql/getPeakTime.ts",
-    "./utils": "./src/utils.ts"
-  },
-  "name": "@zoonk/db",
   "peerDependencies": {
     "server-only": ">=0.0.1"
-  },
-  "private": true,
-  "scripts": {
-    "db:deploy": "prisma migrate deploy",
-    "db:generate": "prisma generate --sql",
-    "db:generate:e2e": "env $(cat .env.e2e | xargs) prisma generate --sql",
-    "db:migrate": "prisma migrate dev",
-    "db:reset": "prisma migrate reset",
-    "db:reset:e2e": "env $(cat .env.e2e | xargs) prisma migrate reset",
-    "db:seed": "prisma db seed",
-    "db:seed:e2e": "env $(cat .env.e2e | xargs) prisma db seed",
-    "db:setup:e2e": "env $(cat .env.e2e | xargs) prisma migrate deploy",
-    "db:setup:test": "env $(cat .env.test | xargs) prisma migrate deploy",
-    "db:studio": "prisma studio",
-    "typecheck": "tsgo --noEmit"
-  },
-  "type": "module"
+  }
 }

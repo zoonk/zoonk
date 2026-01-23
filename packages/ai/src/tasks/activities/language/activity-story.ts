@@ -1,12 +1,10 @@
 import "server-only";
-
 import { generateText, Output } from "ai";
 import { z } from "zod";
 import { buildProviderOptions, type ReasoningEffort } from "../../../types";
 import systemPrompt from "./activity-story.prompt.md";
 
-const DEFAULT_MODEL =
-  process.env.AI_MODEL_ACTIVITY_STORY_LANGUAGE ?? "anthropic/claude-opus-4.5";
+const DEFAULT_MODEL = process.env.AI_MODEL_ACTIVITY_STORY_LANGUAGE ?? "anthropic/claude-opus-4.5";
 
 const FALLBACK_MODELS = [
   "openai/gpt-5.2",

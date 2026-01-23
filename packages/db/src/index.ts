@@ -53,6 +53,4 @@ export type { BatchPayload } from "./generated/prisma/internal/prismaNamespace";
 
 export { prisma };
 
-export type TransactionClient = Parameters<
-  Parameters<typeof prisma.$transaction>[0]
->[0];
+export type TransactionClient = Parameters<Parameters<typeof prisma.$transaction>[0]>[0];

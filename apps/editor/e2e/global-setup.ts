@@ -51,9 +51,5 @@ async function authenticateUser(
 export default async function globalSetup(): Promise<void> {
   await mkdir("e2e/.auth", { recursive: true });
 
-  await Promise.all(
-    Object.entries(E2E_USERS).map(([name, user]) =>
-      authenticateUser(name, user),
-    ),
-  );
+  await Promise.all(Object.entries(E2E_USERS).map(([name, user]) => authenticateUser(name, user)));
 }

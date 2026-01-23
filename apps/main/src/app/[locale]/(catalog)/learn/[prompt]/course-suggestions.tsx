@@ -1,3 +1,5 @@
+import { generateCourseSuggestions } from "@/data/courses/course-suggestions";
+import { Link } from "@/i18n/navigation";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import {
   Container,
@@ -19,8 +21,6 @@ import {
 import { SparklesIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
 import { Fragment } from "react/jsx-runtime";
-import { generateCourseSuggestions } from "@/data/courses/course-suggestions";
-import { Link } from "@/i18n/navigation";
 import { ContentFeedback } from "./content-feedback";
 
 type CourseSuggestionsProps = {
@@ -28,10 +28,7 @@ type CourseSuggestionsProps = {
   prompt: string;
 };
 
-export async function CourseSuggestions({
-  locale,
-  prompt,
-}: CourseSuggestionsProps) {
+export async function CourseSuggestions({ locale, prompt }: CourseSuggestionsProps) {
   const t = await getExtracted();
   const { suggestions } = await generateCourseSuggestions({
     language: locale,
@@ -42,9 +39,7 @@ export async function CourseSuggestions({
     <Container variant="narrow">
       <ContainerHeader>
         <ContainerHeaderGroup>
-          <ContainerTitle>
-            {t("Course ideas for {prompt}", { prompt })}
-          </ContainerTitle>
+          <ContainerTitle>{t("Course ideas for {prompt}", { prompt })}</ContainerTitle>
 
           <Link href="/learn">
             <ContainerDescription className="text-sm hover:underline">

@@ -1,12 +1,11 @@
 import "server-only";
-
+import { ErrorCode } from "@/lib/app-error";
 import { getOrganization } from "@zoonk/core/orgs/get";
 import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
 import { getSession } from "@zoonk/core/users/session/get";
 import { type Course, prisma } from "@zoonk/db";
 import { AppError, type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { normalizeString, toSlug } from "@zoonk/utils/string";
-import { ErrorCode } from "@/lib/app-error";
 
 export async function createCourse(params: {
   description: string;

@@ -102,12 +102,7 @@ async function seedSentence(
   await Promise.all(lessonSentencePromises);
 }
 
-export async function seedSentences(
-  prisma: PrismaClient,
-  org: Organization,
-): Promise<void> {
-  const sentencePromises = sentencesData.map((data) =>
-    seedSentence(prisma, org, data),
-  );
+export async function seedSentences(prisma: PrismaClient, org: Organization): Promise<void> {
+  const sentencePromises = sentencesData.map((data) => seedSentence(prisma, org, data));
   await Promise.all(sentencePromises);
 }

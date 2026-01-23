@@ -1,3 +1,4 @@
+import { ClientLink } from "@/i18n/client-link";
 import {
   FeatureCard,
   FeatureCardBody,
@@ -13,7 +14,6 @@ import {
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { CalendarDays } from "lucide-react";
 import { getExtracted, getLocale } from "next-intl/server";
-import { ClientLink } from "@/i18n/client-link";
 
 type BestDayProps = {
   score: number;
@@ -26,9 +26,7 @@ export async function BestDay({ score, dayOfWeek }: BestDayProps) {
 
   const referenceDate = new Date(1970, 0, 4 + dayOfWeek);
 
-  const dayName = new Intl.DateTimeFormat(locale, { weekday: "long" }).format(
-    referenceDate,
-  );
+  const dayName = new Intl.DateTimeFormat(locale, { weekday: "long" }).format(referenceDate);
 
   const formattedScore = new Intl.NumberFormat(locale, {
     maximumFractionDigits: 1,

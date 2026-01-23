@@ -1,3 +1,5 @@
+import { AIWarning } from "@/components/catalog/ai-warning";
+import { Link } from "@/i18n/navigation";
 import {
   MediaCard,
   MediaCardContent,
@@ -13,9 +15,7 @@ import {
   MediaCardTrigger,
 } from "@zoonk/ui/components/media-card";
 import { getExtracted } from "next-intl/server";
-import { AIWarning } from "@/components/catalog/ai-warning";
 import type { LessonWithDetails } from "@/data/lessons/get-lesson";
-import { Link } from "@/i18n/navigation";
 
 export async function LessonHeader({
   brandSlug,
@@ -32,11 +32,8 @@ export async function LessonHeader({
   return (
     <MediaCard>
       <MediaCardTrigger>
-        <MediaCardIcon
-          aria-label={t("Lesson {position}", { position: lessonPosition })}
-          role="img"
-        >
-          <span className="font-mono text-2xl text-muted-foreground/60 tabular-nums tracking-tight">
+        <MediaCardIcon aria-label={t("Lesson {position}", { position: lessonPosition })} role="img">
+          <span className="text-muted-foreground/60 font-mono text-2xl tracking-tight tabular-nums">
             {lessonPosition}
           </span>
         </MediaCardIcon>
@@ -58,12 +55,12 @@ export async function LessonHeader({
         <MediaCardPopoverMeta>
           <MediaCardPopoverSource>
             <Link
-              className="text-muted-foreground transition-colors hover:text-foreground"
+              className="text-muted-foreground hover:text-foreground transition-colors"
               href={`/b/${brandSlug}/c/${courseSlug}`}
             >
               {lesson.chapter.course.title}
             </Link>
-            <span className="mx-1.5 text-muted-foreground/40">/</span>
+            <span className="text-muted-foreground/40 mx-1.5">/</span>
             <span>{lesson.chapter.title}</span>
           </MediaCardPopoverSource>
         </MediaCardPopoverMeta>

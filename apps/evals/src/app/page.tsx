@@ -1,3 +1,6 @@
+import { AppBreadcrumb, HomePageBreadcrumb } from "@/components/breadcrumb";
+import { TASKS } from "@/tasks";
+import { buttonVariants } from "@zoonk/ui/components/button";
 import {
   ContainerBody,
   ContainerDescription,
@@ -5,6 +8,7 @@ import {
   ContainerHeaderGroup,
   ContainerTitle,
 } from "@zoonk/ui/components/container";
+import "@zoonk/ui/globals.css";
 import {
   Item,
   ItemActions,
@@ -13,10 +17,6 @@ import {
   ItemTitle,
 } from "@zoonk/ui/components/item";
 import Link from "next/link";
-import { TASKS } from "@/tasks";
-import "@zoonk/ui/globals.css";
-import { buttonVariants } from "@zoonk/ui/components/button";
-import { AppBreadcrumb, HomePageBreadcrumb } from "@/components/breadcrumb";
 
 export default function Home() {
   return (
@@ -28,9 +28,7 @@ export default function Home() {
       <ContainerHeader>
         <ContainerHeaderGroup>
           <ContainerTitle>Evals Dashboard</ContainerTitle>
-          <ContainerDescription>
-            Run and monitor evaluations for AI tasks
-          </ContainerDescription>
+          <ContainerDescription>Run and monitor evaluations for AI tasks</ContainerDescription>
         </ContainerHeaderGroup>
       </ContainerHeader>
 
@@ -38,16 +36,11 @@ export default function Home() {
         <Item variant="outline">
           <ItemContent>
             <ItemTitle>Image Test</ItemTitle>
-            <ItemDescription>
-              Test AI-generated course thumbnails
-            </ItemDescription>
+            <ItemDescription>Test AI-generated course thumbnails</ItemDescription>
           </ItemContent>
 
           <ItemActions>
-            <Link
-              className={buttonVariants({ variant: "outline" })}
-              href="/image-test"
-            >
+            <Link className={buttonVariants({ variant: "outline" })} href="/image-test">
               Test Images
             </Link>
           </ItemActions>
@@ -56,16 +49,11 @@ export default function Home() {
         <Item variant="outline">
           <ItemContent>
             <ItemTitle>Select Image Test</ItemTitle>
-            <ItemDescription>
-              Test AI-generated images for selectImage quiz steps
-            </ItemDescription>
+            <ItemDescription>Test AI-generated images for selectImage quiz steps</ItemDescription>
           </ItemContent>
 
           <ItemActions>
-            <Link
-              className={buttonVariants({ variant: "outline" })}
-              href="/select-image-test"
-            >
+            <Link className={buttonVariants({ variant: "outline" })} href="/select-image-test">
               Test Images
             </Link>
           </ItemActions>
@@ -74,16 +62,11 @@ export default function Home() {
         <Item variant="outline">
           <ItemContent>
             <ItemTitle>Visual Image Test</ItemTitle>
-            <ItemDescription>
-              Test AI-generated images for step visual resources
-            </ItemDescription>
+            <ItemDescription>Test AI-generated images for step visual resources</ItemDescription>
           </ItemContent>
 
           <ItemActions>
-            <Link
-              className={buttonVariants({ variant: "outline" })}
-              href="/visual-image-test"
-            >
+            <Link className={buttonVariants({ variant: "outline" })} href="/visual-image-test">
               Test Images
             </Link>
           </ItemActions>
@@ -92,16 +75,11 @@ export default function Home() {
         <Item variant="outline">
           <ItemContent>
             <ItemTitle>Audio Test</ItemTitle>
-            <ItemDescription>
-              Test AI-generated audio for words and sentences
-            </ItemDescription>
+            <ItemDescription>Test AI-generated audio for words and sentences</ItemDescription>
           </ItemContent>
 
           <ItemActions>
-            <Link
-              className={buttonVariants({ variant: "outline" })}
-              href="/audio-test"
-            >
+            <Link className={buttonVariants({ variant: "outline" })} href="/audio-test">
               Test Audio
             </Link>
           </ItemActions>
@@ -115,10 +93,7 @@ export default function Home() {
             </ItemContent>
 
             <ItemActions>
-              <Link
-                className={buttonVariants({ variant: "outline" })}
-                href={`/tasks/${task.id}`}
-              >
+              <Link className={buttonVariants({ variant: "outline" })} href={`/tasks/${task.id}`}>
                 View Task
               </Link>
             </ItemActions>

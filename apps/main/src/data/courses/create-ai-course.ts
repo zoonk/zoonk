@@ -1,9 +1,8 @@
 import "server-only";
-
-import type { Course } from "@zoonk/db";
 import { prisma } from "@zoonk/db";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { normalizeString, toSlug } from "@zoonk/utils/string";
+import type { Course } from "@zoonk/db";
 
 type CreateParams = {
   generationRunId: string;
@@ -14,9 +13,7 @@ type CreateParams = {
 
 type CreatedCourse = Pick<Course, "id" | "slug">;
 
-export async function createAICourse(
-  params: CreateParams,
-): Promise<SafeReturn<CreatedCourse>> {
+export async function createAICourse(params: CreateParams): Promise<SafeReturn<CreatedCourse>> {
   const slug = toSlug(params.title);
   const normalizedTitle = normalizeString(params.title);
 

@@ -1,20 +1,7 @@
 {
-  "dependencies": {
-    "@vercel/blob": "2.0.0",
-    "@zoonk/ai": "workspace:*",
-    "@zoonk/auth": "workspace:*",
-    "@zoonk/db": "workspace:*",
-    "@zoonk/mailer": "workspace:*",
-    "@zoonk/utils": "workspace:*"
-  },
-  "devDependencies": {
-    "@types/react": "^19",
-    "@typescript/native-preview": "7.0.0-dev.20260122.4",
-    "@zoonk/testing": "workspace:*",
-    "@zoonk/tsconfig": "workspace:*",
-    "vite-tsconfig-paths": "6.0.3",
-    "vitest": "4.0.16"
-  },
+  "name": "@zoonk/core",
+  "private": true,
+  "type": "module",
   "exports": {
     "./ai": "./src/ai.ts",
     "./alternative-titles/add": "./src/alternative-titles/add-alternative-titles.ts",
@@ -42,18 +29,31 @@
     "./users/otp/send": "./src/users/send-otp.ts",
     "./users/session/get": "./src/users/get-user-session.ts"
   },
-  "name": "@zoonk/core",
-  "peerDependencies": {
-    "next": ">=16",
-    "react": ">=19",
-    "server-only": ">=0.0.1",
-    "sharp": ">=0.34"
-  },
-  "private": true,
   "scripts": {
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "tsgo --noEmit"
   },
-  "type": "module"
+  "dependencies": {
+    "@vercel/blob": "2.0.0",
+    "@zoonk/ai": "workspace:*",
+    "@zoonk/auth": "workspace:*",
+    "@zoonk/db": "workspace:*",
+    "@zoonk/mailer": "workspace:*",
+    "@zoonk/utils": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/react": "^19",
+    "@typescript/native-preview": "7.0.0-dev.20260122.4",
+    "@zoonk/testing": "workspace:*",
+    "@zoonk/tsconfig": "workspace:*",
+    "vite-tsconfig-paths": "6.0.3",
+    "vitest": "4.0.16"
+  },
+  "peerDependencies": {
+    "next": ">=16",
+    "react": ">=19",
+    "server-only": ">=0.0.1",
+    "sharp": ">=0.34"
+  }
 }

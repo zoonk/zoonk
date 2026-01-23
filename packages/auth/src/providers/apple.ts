@@ -2,11 +2,9 @@ import { importPKCS8, SignJWT } from "jose";
 
 let cached: { token: string; exp: number } | null = null;
 
-const { APPLE_TEAM_ID, APPLE_CLIENT_ID, APPLE_KEY_ID, APPLE_PRIVATE_KEY } =
-  process.env;
+const { APPLE_TEAM_ID, APPLE_CLIENT_ID, APPLE_KEY_ID, APPLE_PRIVATE_KEY } = process.env;
 
-const hasAppleConfig =
-  APPLE_TEAM_ID && APPLE_CLIENT_ID && APPLE_KEY_ID && APPLE_PRIVATE_KEY;
+const hasAppleConfig = APPLE_TEAM_ID && APPLE_CLIENT_ID && APPLE_KEY_ID && APPLE_PRIVATE_KEY;
 
 async function getAppleClientSecret(): Promise<string> {
   const now = Math.floor(Date.now() / 1000);

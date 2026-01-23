@@ -1,12 +1,10 @@
-import type { CourseCategory } from "@zoonk/utils/categories";
 import { getExtracted } from "next-intl/server";
 import { CATEGORY_ICONS, type CategoryInfo } from "./category-icons";
+import type { CourseCategory } from "@zoonk/utils/categories";
 
 export type { CategoryInfo } from "./category-icons";
 
-export async function getCategories(params?: {
-  locale: string;
-}): Promise<CategoryInfo[]> {
+export async function getCategories(params?: { locale: string }): Promise<CategoryInfo[]> {
   const t = await getExtracted(params);
 
   return [
@@ -59,10 +57,7 @@ async function getCategoryLabel(
   return categories.find((cat) => cat.key === category)?.label ?? "";
 }
 
-export async function getCategoryMeta(params: {
-  locale: string;
-  category: CourseCategory;
-}) {
+export async function getCategoryMeta(params: { locale: string; category: CourseCategory }) {
   const t = await getExtracted(params);
   const label = await getCategoryLabel(params.category, params);
 

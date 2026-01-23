@@ -1,14 +1,11 @@
 import "server-only";
-
 import { generateText, stepCountIs } from "ai";
 import { buildProviderOptions, type ReasoningEffort } from "../../../types";
-
 import { type QuizQuestion, quizTools } from "../_tools/quiz";
 import systemPrompt from "./activity-explanation-quiz.prompt.md";
 
 const DEFAULT_MODEL =
-  process.env.AI_MODEL_ACTIVITY_EXPLANATION_QUIZ ??
-  "anthropic/claude-sonnet-4.5";
+  process.env.AI_MODEL_ACTIVITY_EXPLANATION_QUIZ ?? "anthropic/claude-sonnet-4.5";
 
 const FALLBACK_MODELS = [
   "anthropic/claude-opus-4.5",

@@ -6,8 +6,8 @@ import { SearchIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useQueryState } from "nuqs";
 import { useMemo, useState } from "react";
-import type { ChapterWithLessons } from "@/data/chapters/list-course-chapters";
 import { ChapterList } from "./chapter-list";
+import type { ChapterWithLessons } from "@/data/chapters/list-course-chapters";
 
 function filterChapters(chapters: ChapterWithLessons[], query: string) {
   const filtered: ChapterWithLessons[] = [];
@@ -15,9 +15,7 @@ function filterChapters(chapters: ChapterWithLessons[], query: string) {
 
   for (const chapter of chapters) {
     const chapterMatches = normalizeString(chapter.title).includes(query);
-    const matchingLessons = chapter.lessons.filter((l) =>
-      normalizeString(l.title).includes(query),
-    );
+    const matchingLessons = chapter.lessons.filter((l) => normalizeString(l.title).includes(query));
 
     if (chapterMatches || matchingLessons.length > 0) {
       filtered.push({
@@ -65,10 +63,10 @@ export function ChapterSearchContainer({
   return (
     <>
       <div className="relative mb-4">
-        <SearchIcon className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground/60" />
+        <SearchIcon className="text-muted-foreground/60 absolute top-1/2 left-3 size-4 -translate-y-1/2" />
         <Input
           aria-label={t("Search chapters and lessons")}
-          className="h-10 border-border/40 bg-transparent pl-9 placeholder:text-muted-foreground/50 focus-visible:border-border focus-visible:ring-0"
+          className="border-border/40 placeholder:text-muted-foreground/50 focus-visible:border-border h-10 bg-transparent pl-9 focus-visible:ring-0"
           onChange={(e) => setSearch(e.target.value || null)}
           placeholder={t("Search chapters and lessons...")}
           type="search"

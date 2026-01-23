@@ -1,5 +1,6 @@
 "use client";
 
+import { type ImportMode, isImportMode } from "@/lib/import-mode";
 import { Button } from "@zoonk/ui/components/button";
 import {
   Collapsible,
@@ -26,7 +27,6 @@ import {
   useState,
   useTransition,
 } from "react";
-import { type ImportMode, isImportMode } from "@/lib/import-mode";
 
 type ImportContextValue = {
   file: File | null;
@@ -100,9 +100,7 @@ function ImportProvider({
     [file, handleImport, mode, pending, reset],
   );
 
-  return (
-    <ImportContext.Provider value={value}>{children}</ImportContext.Provider>
-  );
+  return <ImportContext.Provider value={value}>{children}</ImportContext.Provider>;
 }
 
 const BYTES_PER_KB = 1024;
@@ -148,7 +146,7 @@ function ImportDropzone({
   return (
     <label
       className={cn(
-        "group flex min-h-32 cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border border-input border-dashed bg-muted/30 px-4 py-6 text-center transition-colors hover:border-primary/50 hover:bg-muted/50",
+        "group border-input bg-muted/30 hover:border-primary/50 hover:bg-muted/50 flex min-h-32 cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border border-dashed px-4 py-6 text-center transition-colors",
         className,
       )}
       data-slot="import-dropzone"
@@ -158,15 +156,15 @@ function ImportDropzone({
     >
       {file ? (
         <>
-          <FileIcon className="size-8 text-muted-foreground" />
-          <span className="font-medium text-sm">{file.name}</span>
+          <FileIcon className="text-muted-foreground size-8" />
+          <span className="text-sm font-medium">{file.name}</span>
           <span className="text-muted-foreground text-xs">
             {formatFileSize(file.size)} {fileSizeUnit}
           </span>
         </>
       ) : (
         <>
-          <UploadIcon className="size-8 text-muted-foreground transition-colors group-hover:text-foreground" />
+          <UploadIcon className="text-muted-foreground group-hover:text-foreground size-8 transition-colors" />
           <span className="text-muted-foreground text-sm">{children}</span>
         </>
       )}
@@ -192,16 +190,9 @@ function ImportModeSelector({
   const { mode, setMode } = useImport();
 
   return (
-    <div
-      className={cn("grid gap-3", className)}
-      data-slot="import-mode-selector"
-      {...props}
-    >
-      {label && <Label className="font-medium text-sm">{label}</Label>}
-      <RadioGroup
-        onValueChange={(value) => isImportMode(value) && setMode(value)}
-        value={mode}
-      >
+    <div className={cn("grid gap-3", className)} data-slot="import-mode-selector" {...props}>
+      {label && <Label className="text-sm font-medium">{label}</Label>}
+      <RadioGroup onValueChange={(value) => isImportMode(value) && setMode(value)} value={mode}>
         {children}
       </RadioGroup>
     </div>
@@ -218,10 +209,7 @@ function ImportModeOption({
 }) {
   return (
     <Label
-      className={cn(
-        "flex cursor-pointer items-center gap-3 font-normal",
-        className,
-      )}
+      className={cn("flex cursor-pointer items-center gap-3 font-normal", className)}
       data-slot="import-mode-option"
       {...props}
     >
@@ -250,16 +238,12 @@ function ImportFormatPreview({
       open={open}
       {...props}
     >
-      <CollapsibleTrigger className="flex items-center gap-2 text-muted-foreground text-sm transition-colors hover:text-foreground">
-        {open ? (
-          <ChevronDownIcon className="size-4" />
-        ) : (
-          <ChevronRightIcon className="size-4" />
-        )}
+      <CollapsibleTrigger className="text-muted-foreground hover:text-foreground flex items-center gap-2 text-sm transition-colors">
+        {open ? <ChevronDownIcon className="size-4" /> : <ChevronRightIcon className="size-4" />}
         {label}
       </CollapsibleTrigger>
       <CollapsibleContent>
-        <pre className="wrap-break-word mt-3 max-h-48 overflow-auto whitespace-pre-wrap rounded-xl bg-muted/50 p-4 font-mono text-xs">
+        <pre className="bg-muted/50 mt-3 max-h-48 overflow-auto rounded-xl p-4 font-mono text-xs wrap-break-word whitespace-pre-wrap">
           {JSON.stringify(format, null, 2)}
         </pre>
       </CollapsibleContent>
@@ -267,11 +251,7 @@ function ImportFormatPreview({
   );
 }
 
-function ImportSubmit({
-  children,
-  className,
-  ...props
-}: React.ComponentProps<typeof Button>) {
+function ImportSubmit({ children, className, ...props }: React.ComponentProps<typeof Button>) {
   const { file, pending, handleImport } = useImport();
 
   return (

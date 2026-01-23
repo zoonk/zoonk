@@ -1,3 +1,5 @@
+import { Link } from "@/i18n/navigation";
+import { getActivityKinds } from "@/lib/activities";
 import {
   FeatureCard,
   FeatureCardBody,
@@ -18,39 +20,28 @@ import {
 import { ScrollArea, ScrollBar } from "@zoonk/ui/components/scroll-area";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { PlayCircleIcon } from "lucide-react";
-import Image from "next/image";
 import { getExtracted } from "next-intl/server";
+import Image from "next/image";
 import type { ContinueLearningItem } from "@/data/courses/get-continue-learning";
-import { Link } from "@/i18n/navigation";
-import { getActivityKinds } from "@/lib/activities";
 
-export async function ContinueLearningList({
-  items,
-}: {
-  items: ContinueLearningItem[];
-}) {
+export async function ContinueLearningList({ items }: { items: ContinueLearningItem[] }) {
   const t = await getExtracted();
   const activityKinds = await getActivityKinds();
 
-  const kindLabels = new Map<string, string>(
-    activityKinds.map((k) => [k.key, k.label]),
-  );
+  const kindLabels = new Map<string, string>(activityKinds.map((k) => [k.key, k.label]));
 
   const defaultLabel = t("Activity");
 
   return (
     <section className="flex flex-col gap-3 py-4 md:py-6">
-      <FeatureCardSectionTitle className="px-4">
-        {t("Continue learning")}
-      </FeatureCardSectionTitle>
+      <FeatureCardSectionTitle className="px-4">{t("Continue learning")}</FeatureCardSectionTitle>
 
       <ScrollArea className="w-full px-4 pb-2">
         <div className="flex snap-x snap-mandatory gap-4">
           {items.map((item) => {
             const { activity, chapter, course, lesson } = item;
 
-            const activityLabel =
-              activity.title ?? kindLabels.get(activity.kind) ?? defaultLabel;
+            const activityLabel = activity.title ?? kindLabels.get(activity.kind) ?? defaultLabel;
 
             const nextLabel = t("Next: {activity}", {
               activity: activityLabel,
@@ -82,12 +73,7 @@ export async function ContinueLearningList({
                     <FeatureCardThumbnail size="lg">
                       {course.imageUrl ? (
                         <FeatureCardThumbnailImage>
-                          <Image
-                            alt={course.title}
-                            height={96}
-                            src={course.imageUrl}
-                            width={96}
-                          />
+                          <Image alt={course.title} height={96} src={course.imageUrl} width={96} />
                         </FeatureCardThumbnailImage>
                       ) : (
                         <FeatureCardThumbnailPlaceholder>
@@ -106,9 +92,7 @@ export async function ContinueLearningList({
                       <Link href={courseHref}>{course.title}</Link>
                     </FeatureCardSubtitle>
 
-                    <FeatureCardDescription>
-                      {lesson.description}
-                    </FeatureCardDescription>
+                    <FeatureCardDescription>{lesson.description}</FeatureCardDescription>
                   </FeatureCardBody>
                 </FeatureCardContent>
               </FeatureCard>

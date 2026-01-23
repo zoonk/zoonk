@@ -1,5 +1,5 @@
 import "server-only";
-
+import { ErrorCode } from "@/lib/app-error";
 import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
 import { type Chapter, prisma } from "@zoonk/db";
 import { clampQueryItems } from "@zoonk/db/utils";
@@ -7,7 +7,6 @@ import { DEFAULT_SEARCH_LIMIT } from "@zoonk/utils/constants";
 import { AppError, safeAsync } from "@zoonk/utils/error";
 import { normalizeString } from "@zoonk/utils/string";
 import { cache } from "react";
-import { ErrorCode } from "@/lib/app-error";
 
 export type ChapterWithCourse = Chapter & {
   course: { slug: string; language: string };
@@ -69,10 +68,5 @@ export function searchOrgChapters(params: {
   limit?: number;
 }): Promise<{ data: ChapterWithCourse[]; error: Error | null }> {
   const limit = clampQueryItems(params.limit ?? DEFAULT_SEARCH_LIMIT);
-  return cachedSearchOrgChapters(
-    params.orgSlug,
-    params.title,
-    limit,
-    params.headers,
-  );
+  return cachedSearchOrgChapters(params.orgSlug, params.title, limit, params.headers);
 }

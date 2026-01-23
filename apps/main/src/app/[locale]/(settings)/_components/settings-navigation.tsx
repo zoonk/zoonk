@@ -1,5 +1,7 @@
 "use client";
 
+import { Link, usePathname } from "@/i18n/navigation";
+import { getMenu } from "@/lib/menu";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import {
   DropdownMenu,
@@ -9,8 +11,6 @@ import {
 } from "@zoonk/ui/components/dropdown-menu";
 import { ChevronDownIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { Link, usePathname } from "@/i18n/navigation";
-import { getMenu } from "@/lib/menu";
 import { useSettings } from "../_hooks/use-settings";
 
 export function SettingsNavigation() {
@@ -35,9 +35,7 @@ export function SettingsNavigation() {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger
-        className={buttonVariants({ size: "default", variant: "outline" })}
-      >
+      <DropdownMenuTrigger className={buttonVariants({ size: "default", variant: "outline" })}>
         <CurrentIcon aria-hidden="true" className="size-4" />
         <span>{currentItem?.label ?? t("Settings")}</span>
         <ChevronDownIcon aria-hidden="true" className="size-4" />

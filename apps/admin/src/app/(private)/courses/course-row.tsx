@@ -1,5 +1,5 @@
-import type { Course, Organization } from "@zoonk/db";
 import { TableCell, TableRow } from "@zoonk/ui/components/table";
+import type { Course, Organization } from "@zoonk/db";
 
 const EDITOR_URL = process.env.NEXT_PUBLIC_EDITOR_APP_URL;
 
@@ -7,11 +7,7 @@ function getCourseUrl(course: Course & { organization: Organization }) {
   return `${EDITOR_URL}/${course.organization.slug}/c/${course.language}/${course.slug}`;
 }
 
-export function CourseRow({
-  course,
-}: {
-  course: Course & { organization: Organization };
-}) {
+export function CourseRow({ course }: { course: Course & { organization: Organization } }) {
   return (
     <TableRow>
       <TableCell className="font-medium">

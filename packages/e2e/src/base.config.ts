@@ -6,8 +6,7 @@ type BaseConfigOptions = {
   webServerEnv?: Record<string, string>;
 };
 
-const E2E_DATABASE_URL =
-  "postgres://postgres:postgres@localhost:5432/zoonk_e2e";
+const E2E_DATABASE_URL = "postgres://postgres:postgres@localhost:5432/zoonk_e2e";
 
 export function createBaseConfig(options: BaseConfigOptions) {
   return defineConfig({
@@ -20,9 +19,7 @@ export function createBaseConfig(options: BaseConfigOptions) {
         use: { ...devices["Desktop Chrome"] },
       },
     ],
-    reporter: process.env.CI
-      ? [["github"], ["html", { open: "never" }]]
-      : [["list"]],
+    reporter: process.env.CI ? [["github"], ["html", { open: "never" }]] : [["list"]],
     retries: process.env.CI ? 2 : 0,
     testDir: options.testDir,
     use: {
@@ -41,8 +38,7 @@ export function createBaseConfig(options: BaseConfigOptions) {
       timeout: 120_000,
       // Capture port from Next.js stdout: "- Local: http://localhost:12345"
       wait: {
-        stdout:
-          /-\s+Local:\s+(?<E2E_BASE_URL>http:\/\/localhost:(?<E2E_PORT>\d+))/,
+        stdout: /-\s+Local:\s+(?<E2E_BASE_URL>http:\/\/localhost:(?<E2E_PORT>\d+))/,
       },
     },
   });

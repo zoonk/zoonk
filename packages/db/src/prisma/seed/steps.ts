@@ -46,8 +46,7 @@ const stepsData: ActivitySteps[] = [
             },
             {
               date: "2012",
-              description:
-                "Neural networks achieve breakthrough in image recognition.",
+              description: "Neural networks achieve breakthrough in image recognition.",
               title: "Deep Learning Revolution",
             },
           ],
@@ -94,12 +93,10 @@ const stepsData: ActivitySteps[] = [
     steps: [
       {
         content: {
-          context:
-            "Traditional programming requires explicit rules for every scenario.",
+          context: "Traditional programming requires explicit rules for every scenario.",
           options: [
             {
-              feedback:
-                "Both use electricity. Think about how they solve problems.",
+              feedback: "Both use electricity. Think about how they solve problems.",
               isCorrect: false,
               text: "Traditional programming uses electricity, ML uses batteries",
             },
@@ -140,8 +137,7 @@ const stepsData: ActivitySteps[] = [
       {
         content: {
           answers: ["supervised", "unsupervised"],
-          feedback:
-            "Great! You understand the difference between these learning types.",
+          feedback: "Great! You understand the difference between these learning types.",
           template:
             "In {0} learning, the algorithm learns from labeled data, while in {1} learning, it finds patterns without labels.",
           wordBank: ["supervised", "unsupervised", "reinforcement", "deep"],
@@ -166,15 +162,13 @@ const stepsData: ActivitySteps[] = [
           images: [
             {
               alt: "Connected layers of nodes",
-              feedback:
-                "Correct! Neural networks have interconnected layers of nodes.",
+              feedback: "Correct! Neural networks have interconnected layers of nodes.",
               isCorrect: true,
               url: "https://to3kaoi21m60hzgu.public.blob.vercel-storage.com/courses/machine_learning-jmaDwiS0MptNV2EGCZzYWU7RBJs3Qg.webp",
             },
             {
               alt: "Simple flowchart",
-              feedback:
-                "This is a flowchart, not a neural network architecture.",
+              feedback: "This is a flowchart, not a neural network architecture.",
               isCorrect: false,
               url: "https://to3kaoi21m60hzgu.public.blob.vercel-storage.com/courses/astronomy-OfBov0VHGQPk98amhfAPg4UVrJH114.webp",
             },
@@ -202,8 +196,7 @@ const stepsData: ActivitySteps[] = [
           options: [
             {
               effects: { dataQuality: -10, modelAccuracy: -15, teamMorale: -5 },
-              feedback:
-                "Garbage in, garbage out. Poor data quality leads to poor models.",
+              feedback: "Garbage in, garbage out. Poor data quality leads to poor models.",
               isCorrect: false,
               text: "Ignore it and proceed with training",
             },
@@ -213,8 +206,7 @@ const stepsData: ActivitySteps[] = [
                 dataQuality: 20,
                 modelAccuracy: 10,
               },
-              feedback:
-                "Good choice! Clean data is the foundation of good ML models.",
+              feedback: "Good choice! Clean data is the foundation of good ML models.",
               isCorrect: true,
               text: "Spend time cleaning and validating the data",
             },
@@ -229,8 +221,7 @@ const stepsData: ActivitySteps[] = [
               text: "Collect entirely new data from scratch",
             },
           ],
-          question:
-            "Your team discovers the training data has quality issues. What do you do?",
+          question: "Your team discovers the training data has quality issues. What do you do?",
         },
         kind: "multipleChoice",
       },
@@ -243,22 +234,19 @@ const stepsData: ActivitySteps[] = [
                 modelAccuracy: 5,
                 teamMorale: 5,
               },
-              feedback:
-                "Complex models need more compute and may overfit. Start simple!",
+              feedback: "Complex models need more compute and may overfit. Start simple!",
               isCorrect: false,
               text: "Immediately switch to the complex model",
             },
             {
               effects: { dataQuality: 5, modelAccuracy: 15, teamMorale: 10 },
-              feedback:
-                "Smart! Understanding the problem helps choose the right solution.",
+              feedback: "Smart! Understanding the problem helps choose the right solution.",
               isCorrect: true,
               text: "First analyze why the current model is failing",
             },
             {
               effects: { teamMorale: -20 },
-              feedback:
-                "Ignoring team input hurts morale and misses opportunities.",
+              feedback: "Ignoring team input hurts morale and misses opportunities.",
               isCorrect: false,
               text: "Dismiss the suggestion without discussion",
             },
@@ -272,10 +260,7 @@ const stepsData: ActivitySteps[] = [
   },
 ];
 
-export async function seedSteps(
-  prisma: PrismaClient,
-  org: Organization,
-): Promise<void> {
+export async function seedSteps(prisma: PrismaClient, org: Organization): Promise<void> {
   const stepCreationPromises = stepsData.map(async (data) => {
     const lesson = await prisma.lesson.findFirst({
       where: {

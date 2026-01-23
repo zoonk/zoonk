@@ -48,16 +48,11 @@ function shouldSkipTestCase(
   return existingOutputs.some((o) => o.testCaseId === runId);
 }
 
-export async function generateOutputs(
-  task: Task,
-  modelId: string,
-): Promise<ModelOutputs> {
+export async function generateOutputs(task: Task, modelId: string): Promise<ModelOutputs> {
   const safeModelId = String(modelId).replace(/[\r\n]/g, "");
   const totalRuns = task.testCases.length * RUNS_PER_TEST_CASE;
 
-  console.info(
-    `\nGenerating outputs for task: ${task.name}, model: [${safeModelId}]`,
-  );
+  console.info(`\nGenerating outputs for task: ${task.name}, model: [${safeModelId}]`);
   console.info(
     `Total test cases: ${task.testCases.length} (${totalRuns} runs with ${RUNS_PER_TEST_CASE} iterations each)`,
   );

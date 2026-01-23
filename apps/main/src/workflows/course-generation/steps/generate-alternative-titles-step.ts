@@ -2,9 +2,7 @@ import { generateAlternativeTitles } from "@zoonk/ai/tasks/courses/alternative-t
 import { streamStatus } from "../stream-status";
 import type { CourseContext } from "../types";
 
-export async function generateAlternativeTitlesStep(
-  course: CourseContext,
-): Promise<string[]> {
+export async function generateAlternativeTitlesStep(course: CourseContext): Promise<string[]> {
   "use step";
 
   await streamStatus({ status: "started", step: "generateAlternativeTitles" });

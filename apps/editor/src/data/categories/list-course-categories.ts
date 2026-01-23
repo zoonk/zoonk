@@ -1,5 +1,4 @@
 import "server-only";
-
 import { type CourseCategory, prisma } from "@zoonk/db";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
@@ -36,9 +35,5 @@ export function listCourseCategories(params: {
   language: string;
   orgSlug: string;
 }): Promise<SafeReturn<CourseCategory[]>> {
-  return cachedListCourseCategories(
-    params.courseSlug,
-    params.language,
-    params.orgSlug,
-  );
+  return cachedListCourseCategories(params.courseSlug, params.language, params.orgSlug);
 }

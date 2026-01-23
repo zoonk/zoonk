@@ -1,14 +1,10 @@
+import { EditorNavbar } from "@/components/navbar";
 import { getOrganization } from "@zoonk/core/orgs/get";
 import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
 import { notFound, unauthorized } from "next/navigation";
 import { Suspense } from "react";
-import { EditorNavbar } from "@/components/navbar";
 
-async function LayoutPermissions({
-  children,
-  navbarActions,
-  params,
-}: LayoutProps<"/[orgSlug]">) {
+async function LayoutPermissions({ children, navbarActions, params }: LayoutProps<"/[orgSlug]">) {
   const { orgSlug } = await params;
 
   const [org, canViewPage] = await Promise.all([
@@ -33,10 +29,7 @@ async function LayoutPermissions({
   );
 }
 
-export default async function OrgHomeLayout({
-  children,
-  ...props
-}: LayoutProps<"/[orgSlug]">) {
+export default async function OrgHomeLayout({ children, ...props }: LayoutProps<"/[orgSlug]">) {
   return (
     <Suspense>
       <LayoutPermissions {...props}>{children}</LayoutPermissions>

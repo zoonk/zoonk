@@ -18,9 +18,7 @@ async function createTestCourse() {
 async function navigateToCoursePage(page: Page, slug: string) {
   await page.goto(`/ai/c/en/${slug}`);
 
-  await expect(
-    page.getByRole("textbox", { name: /edit course title/i }),
-  ).toBeVisible();
+  await expect(page.getByRole("textbox", { name: /edit course title/i })).toBeVisible();
 }
 
 test.describe("Course Content Page", () => {
@@ -72,17 +70,13 @@ test.describe("Course Content Page", () => {
     await expect(descriptionInput).toHaveValue(uniqueDescription);
   });
 
-  test("shows validation error for duplicate slug", async ({
-    authenticatedPage,
-  }) => {
+  test("shows validation error for duplicate slug", async ({ authenticatedPage }) => {
     await navigateToCoursePage(authenticatedPage, "machine-learning");
     const slugInput = authenticatedPage.getByLabel(/url address/i);
 
     await slugInput.fill("spanish");
 
-    await expect(
-      authenticatedPage.getByText(/this url is already in use/i),
-    ).toBeVisible();
+    await expect(authenticatedPage.getByText(/this url is already in use/i)).toBeVisible();
     await expect(
       authenticatedPage.getByRole("img", {
         name: /this url is already in use/i,
@@ -96,9 +90,7 @@ test.describe("Course Content Page", () => {
 
     await slugInput.fill("");
 
-    await expect(
-      authenticatedPage.getByRole("button", { name: /^save$/i }),
-    ).toBeDisabled();
+    await expect(authenticatedPage.getByRole("button", { name: /^save$/i })).toBeDisabled();
   });
 
   test("saves valid slug and redirects", async ({ authenticatedPage }) => {
@@ -116,9 +108,7 @@ test.describe("Course Content Page", () => {
     await expect(saveButton).toBeEnabled();
     await saveButton.click();
 
-    await expect(authenticatedPage).toHaveURL(
-      new RegExp(`/ai/c/en/${uniqueSlug}`),
-    );
+    await expect(authenticatedPage).toHaveURL(new RegExp(`/ai/c/en/${uniqueSlug}`));
     await expect(slugInput).toHaveValue(uniqueSlug);
   });
 
@@ -148,9 +138,7 @@ test.describe("Course Content Page", () => {
     await expect(saveButton).toBeEnabled();
     await slugInput.press("Enter");
 
-    await expect(authenticatedPage).toHaveURL(
-      new RegExp(`/ai/c/en/${uniqueSlug}`),
-    );
+    await expect(authenticatedPage).toHaveURL(new RegExp(`/ai/c/en/${uniqueSlug}`));
   });
 
   test("cancels on Escape key", async ({ authenticatedPage }) => {

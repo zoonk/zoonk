@@ -1,16 +1,14 @@
+import { routing } from "@/i18n/routing";
 import { Container } from "@zoonk/ui/components/container";
-import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { FullPageLoading } from "@zoonk/ui/components/loading";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getExtracted, setRequestLocale } from "next-intl/server";
-import { routing } from "@/i18n/routing";
+import { notFound } from "next/navigation";
 import "@zoonk/ui/globals.css";
-import { FullPageLoading } from "@zoonk/ui/components/loading";
 import { Suspense } from "react";
+import type { Metadata } from "next";
 
-export async function generateMetadata({
-  params,
-}: LayoutProps<"/[locale]">): Promise<Metadata> {
+export async function generateMetadata({ params }: LayoutProps<"/[locale]">): Promise<Metadata> {
   const { locale } = await params;
   const t = await getExtracted({ locale });
 
@@ -23,10 +21,7 @@ export async function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
 }
 
-export default async function RootLayout({
-  children,
-  params,
-}: LayoutProps<"/[locale]">) {
+export default async function RootLayout({ children, params }: LayoutProps<"/[locale]">) {
   const { locale } = await params;
 
   if (!hasLocale(routing.locales, locale)) {

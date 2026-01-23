@@ -1,9 +1,7 @@
 import { expect, test } from "./fixtures";
 
 test.describe("Login Page", () => {
-  test("displays login form with email input and social buttons", async ({
-    page,
-  }) => {
+  test("displays login form with email input and social buttons", async ({ page }) => {
     await page.goto("/en/login");
 
     // Verify heading
@@ -14,17 +12,11 @@ test.describe("Login Page", () => {
     // Verify email form elements
     await expect(page.getByLabel(/email/i)).toBeVisible();
 
-    await expect(
-      page.getByRole("button", { name: /^continue$/i }),
-    ).toBeVisible();
+    await expect(page.getByRole("button", { name: /^continue$/i })).toBeVisible();
 
     // Verify social login buttons
-    await expect(
-      page.getByRole("button", { name: /continue with google/i }),
-    ).toBeVisible();
+    await expect(page.getByRole("button", { name: /continue with google/i })).toBeVisible();
 
-    await expect(
-      page.getByRole("button", { name: /continue with apple/i }),
-    ).toBeVisible();
+    await expect(page.getByRole("button", { name: /continue with apple/i })).toBeVisible();
   });
 });

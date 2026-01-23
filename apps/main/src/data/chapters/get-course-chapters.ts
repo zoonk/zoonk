@@ -1,5 +1,4 @@
 import "server-only";
-
 import { prisma } from "@zoonk/db";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 
@@ -11,9 +10,7 @@ type CourseChapter = {
   position: number;
 };
 
-export async function getCourseChapters(
-  courseId: number,
-): Promise<SafeReturn<CourseChapter[]>> {
+export async function getCourseChapters(courseId: number): Promise<SafeReturn<CourseChapter[]>> {
   return safeAsync(() =>
     prisma.chapter.findMany({
       orderBy: { position: "asc" },

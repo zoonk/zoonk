@@ -1,5 +1,5 @@
-import type { UserWithRole } from "@zoonk/core/types";
 import { TableCell, TableRow } from "@zoonk/ui/components/table";
+import type { UserWithRole } from "@zoonk/core/types";
 
 export function UserRow({ user }: { user: UserWithRole }) {
   return (

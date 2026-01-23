@@ -41,65 +41,36 @@ async function navigateToLessonPage(
 ) {
   await page.goto(`/ai/c/en/${courseSlug}/ch/${chapterSlug}/l/${lessonSlug}`);
 
-  await expect(
-    page.getByRole("textbox", { name: /edit lesson title/i }),
-  ).toBeVisible();
+  await expect(page.getByRole("textbox", { name: /edit lesson title/i })).toBeVisible();
 }
 
 test.describe("Lesson Publish Toggle", () => {
-  test("displays Draft for unpublished lesson", async ({
-    authenticatedPage,
-  }) => {
+  test("displays Draft for unpublished lesson", async ({ authenticatedPage }) => {
     const { course, chapter, lesson } = await createTestLesson(false);
-    await navigateToLessonPage(
-      authenticatedPage,
-      course.slug,
-      chapter.slug,
-      lesson.slug,
-    );
+    await navigateToLessonPage(authenticatedPage, course.slug, chapter.slug, lesson.slug);
 
     const publishToggle = authenticatedPage.getByRole("switch");
-    const publishLabel = authenticatedPage
-      .locator("label")
-      .filter({ has: publishToggle });
+    const publishLabel = authenticatedPage.locator("label").filter({ has: publishToggle });
     await expect(publishLabel.getByText(/^draft$/i)).toBeVisible();
     await expect(publishToggle).not.toBeChecked();
   });
 
-  test("displays Published for published lesson", async ({
-    authenticatedPage,
-  }) => {
+  test("displays Published for published lesson", async ({ authenticatedPage }) => {
     const { course, chapter, lesson } = await createTestLesson(true);
-    await navigateToLessonPage(
-      authenticatedPage,
-      course.slug,
-      chapter.slug,
-      lesson.slug,
-    );
+    await navigateToLessonPage(authenticatedPage, course.slug, chapter.slug, lesson.slug);
 
     const publishToggle = authenticatedPage.getByRole("switch");
-    const publishLabel = authenticatedPage
-      .locator("label")
-      .filter({ has: publishToggle });
+    const publishLabel = authenticatedPage.locator("label").filter({ has: publishToggle });
     await expect(publishLabel.getByText(/^published$/i)).toBeVisible();
     await expect(publishToggle).toBeChecked();
   });
 
-  test("publishes a draft lesson and persists", async ({
-    authenticatedPage,
-  }) => {
+  test("publishes a draft lesson and persists", async ({ authenticatedPage }) => {
     const { course, chapter, lesson } = await createTestLesson(false);
-    await navigateToLessonPage(
-      authenticatedPage,
-      course.slug,
-      chapter.slug,
-      lesson.slug,
-    );
+    await navigateToLessonPage(authenticatedPage, course.slug, chapter.slug, lesson.slug);
 
     const toggle = authenticatedPage.getByRole("switch");
-    const publishLabel = authenticatedPage
-      .locator("label")
-      .filter({ has: toggle });
+    const publishLabel = authenticatedPage.locator("label").filter({ has: toggle });
 
     await expect(publishLabel.getByText(/^draft$/i)).toBeVisible();
     await expect(toggle).toBeEnabled();
@@ -119,28 +90,17 @@ test.describe("Lesson Publish Toggle", () => {
       authenticatedPage.getByRole("textbox", { name: /edit lesson title/i }),
     ).toBeVisible();
     const reloadedToggle = authenticatedPage.getByRole("switch");
-    const reloadedLabel = authenticatedPage
-      .locator("label")
-      .filter({ has: reloadedToggle });
+    const reloadedLabel = authenticatedPage.locator("label").filter({ has: reloadedToggle });
     await expect(reloadedLabel.getByText(/^published$/i)).toBeVisible();
     await expect(reloadedToggle).toBeChecked();
   });
 
-  test("unpublishes a published lesson and persists", async ({
-    authenticatedPage,
-  }) => {
+  test("unpublishes a published lesson and persists", async ({ authenticatedPage }) => {
     const { course, chapter, lesson } = await createTestLesson(true);
-    await navigateToLessonPage(
-      authenticatedPage,
-      course.slug,
-      chapter.slug,
-      lesson.slug,
-    );
+    await navigateToLessonPage(authenticatedPage, course.slug, chapter.slug, lesson.slug);
 
     const toggle = authenticatedPage.getByRole("switch");
-    const publishLabel = authenticatedPage
-      .locator("label")
-      .filter({ has: toggle });
+    const publishLabel = authenticatedPage.locator("label").filter({ has: toggle });
 
     await expect(publishLabel.getByText(/^published$/i)).toBeVisible();
     await expect(toggle).toBeEnabled();
@@ -160,9 +120,7 @@ test.describe("Lesson Publish Toggle", () => {
       authenticatedPage.getByRole("textbox", { name: /edit lesson title/i }),
     ).toBeVisible();
     const reloadedToggle = authenticatedPage.getByRole("switch");
-    const reloadedLabel = authenticatedPage
-      .locator("label")
-      .filter({ has: reloadedToggle });
+    const reloadedLabel = authenticatedPage.locator("label").filter({ has: reloadedToggle });
     await expect(reloadedLabel.getByText(/^draft$/i)).toBeVisible();
     await expect(reloadedToggle).not.toBeChecked();
   });

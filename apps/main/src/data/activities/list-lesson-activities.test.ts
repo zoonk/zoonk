@@ -38,39 +38,37 @@ describe("listLessonActivities", () => {
       organizationId: org.id,
     });
 
-    [publishedActivity1, publishedActivity2, draftActivity] = await Promise.all(
-      [
-        activityFixture({
-          description: "First activity description",
-          isPublished: true,
-          kind: "background",
-          language: "en",
-          lessonId: lesson.id,
-          organizationId: org.id,
-          position: 1,
-          title: "Activity 1",
-        }),
-        activityFixture({
-          description: "Second activity (but position 0)",
-          isPublished: true,
-          kind: "explanation",
-          language: "en",
-          lessonId: lesson.id,
-          organizationId: org.id,
-          position: 0,
-          title: "Activity 2",
-        }),
-        activityFixture({
-          isPublished: false,
-          kind: "quiz",
-          language: "en",
-          lessonId: lesson.id,
-          organizationId: org.id,
-          position: 2,
-          title: "Draft Activity",
-        }),
-      ],
-    );
+    [publishedActivity1, publishedActivity2, draftActivity] = await Promise.all([
+      activityFixture({
+        description: "First activity description",
+        isPublished: true,
+        kind: "background",
+        language: "en",
+        lessonId: lesson.id,
+        organizationId: org.id,
+        position: 1,
+        title: "Activity 1",
+      }),
+      activityFixture({
+        description: "Second activity (but position 0)",
+        isPublished: true,
+        kind: "explanation",
+        language: "en",
+        lessonId: lesson.id,
+        organizationId: org.id,
+        position: 0,
+        title: "Activity 2",
+      }),
+      activityFixture({
+        isPublished: false,
+        kind: "quiz",
+        language: "en",
+        lessonId: lesson.id,
+        organizationId: org.id,
+        position: 2,
+        title: "Draft Activity",
+      }),
+    ]);
   });
 
   test("returns published activities for a lesson", async () => {

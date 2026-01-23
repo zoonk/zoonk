@@ -1,20 +1,11 @@
 "use client";
 
-import {
-  Alert,
-  AlertAction,
-  AlertDescription,
-  AlertTitle,
-} from "@zoonk/ui/components/alert";
+import { Alert, AlertAction, AlertDescription, AlertTitle } from "@zoonk/ui/components/alert";
 import { Button } from "@zoonk/ui/components/button";
-import {
-  Progress,
-  ProgressLabel,
-  ProgressValue,
-} from "@zoonk/ui/components/progress";
+import { Progress, ProgressLabel, ProgressValue } from "@zoonk/ui/components/progress";
 import { cn } from "@zoonk/ui/lib/utils";
-import type { LucideIcon } from "lucide-react";
 import { AlertCircleIcon, CheckIcon } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
 
 type PhaseStatus = "pending" | "active" | "completed";
@@ -41,19 +32,13 @@ function GenerationTimelineHeader({ children }: { children: ReactNode }) {
 
 function GenerationTimelineTitle({ children }: { children: ReactNode }) {
   return (
-    <h2 className="font-semibold text-lg" data-slot="generation-timeline-title">
+    <h2 className="text-lg font-semibold" data-slot="generation-timeline-title">
       {children}
     </h2>
   );
 }
 
-function GenerationTimelineProgress({
-  label,
-  value,
-}: {
-  label: string;
-  value: number;
-}) {
+function GenerationTimelineProgress({ label, value }: { label: string; value: number }) {
   return (
     <Progress className="**:data-[slot=progress-track]:h-2" value={value}>
       <ProgressLabel className="sr-only">{label}</ProgressLabel>
@@ -64,10 +49,7 @@ function GenerationTimelineProgress({
 
 function GenerationTimelineSteps({ children }: { children: ReactNode }) {
   return (
-    <div
-      className="relative flex flex-col gap-0"
-      data-slot="generation-timeline-steps"
-    >
+    <div className="relative flex flex-col gap-0" data-slot="generation-timeline-steps">
       {children}
     </div>
   );
@@ -82,8 +64,8 @@ function GenerationTimelineStepIndicator({
 }) {
   if (status === "completed") {
     return (
-      <div className="flex size-6 shrink-0 items-center justify-center rounded-full bg-foreground">
-        <CheckIcon aria-hidden="true" className="size-3.5 text-background" />
+      <div className="bg-foreground flex size-6 shrink-0 items-center justify-center rounded-full">
+        <CheckIcon aria-hidden="true" className="text-background size-3.5" />
       </div>
     );
   }
@@ -91,17 +73,17 @@ function GenerationTimelineStepIndicator({
   if (status === "active") {
     return (
       <div className="relative flex size-6 shrink-0 items-center justify-center">
-        <div className="absolute inset-0 animate-breathe rounded-full border-2 border-foreground/30 motion-reduce:animate-none motion-reduce:opacity-50" />
-        <div className="flex size-6 items-center justify-center rounded-full border-2 border-foreground">
-          <Icon aria-hidden="true" className="size-3 text-foreground" />
+        <div className="animate-breathe border-foreground/30 absolute inset-0 rounded-full border-2 motion-reduce:animate-none motion-reduce:opacity-50" />
+        <div className="border-foreground flex size-6 items-center justify-center rounded-full border-2">
+          <Icon aria-hidden="true" className="text-foreground size-3" />
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex size-6 shrink-0 items-center justify-center rounded-full border-2 border-muted-foreground/40 border-dashed">
-      <Icon aria-hidden="true" className="size-3 text-muted-foreground/40" />
+    <div className="border-muted-foreground/40 flex size-6 shrink-0 items-center justify-center rounded-full border-2 border-dashed">
+      <Icon aria-hidden="true" className="text-muted-foreground/40 size-3" />
     </div>
   );
 }
@@ -118,10 +100,7 @@ function GenerationTimelineStep({
   status: PhaseStatus;
 }) {
   return (
-    <div
-      className="flex items-start gap-3"
-      data-slot="generation-timeline-step"
-    >
+    <div className="flex items-start gap-3" data-slot="generation-timeline-step">
       <div className="flex flex-col items-center">
         <GenerationTimelineStepIndicator icon={icon} status={status} />
         {!isLast && (
@@ -129,9 +108,7 @@ function GenerationTimelineStep({
             aria-hidden="true"
             className={cn(
               "h-8 w-px",
-              status === "completed"
-                ? "bg-foreground"
-                : "bg-muted-foreground/20",
+              status === "completed" ? "bg-foreground" : "bg-muted-foreground/20",
             )}
           />
         )}
@@ -141,7 +118,7 @@ function GenerationTimelineStep({
           "pt-0.5 text-sm",
           status === "completed" && "text-muted-foreground",
           status === "active" &&
-            "animate-shimmer-text bg-[linear-gradient(90deg,var(--foreground)_0%,var(--foreground)_40%,var(--muted-foreground)_50%,var(--foreground)_60%,var(--foreground)_100%)] bg-size-[200%_100%] bg-clip-text font-medium text-transparent motion-reduce:animate-none motion-reduce:bg-none motion-reduce:text-foreground",
+            "animate-shimmer-text motion-reduce:text-foreground bg-[linear-gradient(90deg,var(--foreground)_0%,var(--foreground)_40%,var(--muted-foreground)_50%,var(--foreground)_60%,var(--foreground)_100%)] bg-size-[200%_100%] bg-clip-text font-medium text-transparent motion-reduce:animate-none motion-reduce:bg-none",
           status === "pending" && "text-muted-foreground/60",
         )}
       >
@@ -156,19 +133,14 @@ type GenerationProgressCompletedProps = {
   subtitle?: ReactNode;
 };
 
-function GenerationProgressCompleted({
-  children,
-  subtitle,
-}: GenerationProgressCompletedProps) {
+function GenerationProgressCompleted({ children, subtitle }: GenerationProgressCompletedProps) {
   return (
     <div aria-live="polite" className="flex flex-col items-center gap-3 py-8">
-      <div className="flex size-12 items-center justify-center rounded-full bg-muted">
+      <div className="bg-muted flex size-12 items-center justify-center rounded-full">
         <CheckIcon aria-hidden="true" className="size-5" />
       </div>
-      <span className="font-medium text-foreground">{children}</span>
-      {subtitle && (
-        <span className="text-muted-foreground text-sm">{subtitle}</span>
-      )}
+      <span className="text-foreground font-medium">{children}</span>
+      {subtitle && <span className="text-muted-foreground text-sm">{subtitle}</span>}
     </div>
   );
 }

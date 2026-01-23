@@ -13,9 +13,7 @@ export function parseSearchParams(params: SearchParams): ParsedSearchParams {
   const page = Number(params.page) || 1;
   const limit = Number(params.limit) || DEFAULT_PAGE_SIZE;
   const offset = (page - 1) * limit;
-  const search = Array.isArray(params.search)
-    ? params.search[0]
-    : params.search;
+  const search = Array.isArray(params.search) ? params.search[0] : params.search;
 
   return { limit, offset, page, search };
 }

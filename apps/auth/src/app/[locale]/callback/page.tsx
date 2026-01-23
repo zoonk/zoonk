@@ -18,9 +18,7 @@ async function CallbackHandler({
   return redirect(result.url);
 }
 
-export default async function CallbackPage(
-  props: PageProps<"/[locale]/callback">,
-) {
+export default async function CallbackPage(props: PageProps<"/[locale]/callback">) {
   return (
     <Suspense fallback={<FullPageLoading />}>
       <CallbackHandler searchParams={props.searchParams} />

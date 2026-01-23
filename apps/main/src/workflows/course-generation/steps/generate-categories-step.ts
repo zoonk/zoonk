@@ -2,9 +2,7 @@ import { generateCourseCategories } from "@zoonk/ai/tasks/courses/categories";
 import { streamStatus } from "../stream-status";
 import type { CourseContext } from "../types";
 
-export async function generateCategoriesStep(
-  course: CourseContext,
-): Promise<string[]> {
+export async function generateCategoriesStep(course: CourseContext): Promise<string[]> {
   "use step";
 
   await streamStatus({ status: "started", step: "generateCategories" });

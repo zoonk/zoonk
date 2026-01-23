@@ -1,23 +1,19 @@
 "use client";
 
+import { FeedbackDialog } from "@/components/feedback/feedback-dialog";
 import { track } from "@vercel/analytics";
 import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { MessageSquareIcon, ThumbsDownIcon, ThumbsUpIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
-import { FeedbackDialog } from "@/components/feedback/feedback-dialog";
 
 type ContentFeedbackProps = {
   kind: "courseSuggestions";
   contentId: string;
 } & React.ComponentProps<"footer">;
 
-export function ContentFeedback({
-  kind,
-  contentId,
-  className,
-}: ContentFeedbackProps) {
+export function ContentFeedback({ kind, contentId, className }: ContentFeedbackProps) {
   const t = useExtracted();
   const [feedback, setFeedback] = useState<"upvote" | "downvote" | null>(null);
 
@@ -30,12 +26,8 @@ export function ContentFeedback({
   };
 
   return (
-    <footer
-      className={cn("flex flex-col items-center gap-1 text-center", className)}
-    >
-      <h6 className="text-muted-foreground text-sm">
-        {t("Did you like this content?")}
-      </h6>
+    <footer className={cn("flex flex-col items-center gap-1 text-center", className)}>
+      <h6 className="text-muted-foreground text-sm">{t("Did you like this content?")}</h6>
 
       <div className="flex gap-1">
         <Button

@@ -1,12 +1,7 @@
 "use client";
 
 import { authClient } from "@zoonk/core/auth/client";
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-  AvatarSkeleton,
-} from "@zoonk/ui/components/avatar";
+import { Avatar, AvatarFallback, AvatarImage, AvatarSkeleton } from "@zoonk/ui/components/avatar";
 import { User } from "lucide-react";
 
 export function UserAvatar() {
@@ -21,7 +16,7 @@ export function UserAvatar() {
   const fallback = userName?.[0] || <User size={16} />;
 
   return (
-    <Avatar className="cursor-pointer focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+    <Avatar className="focus-visible:ring-ring cursor-pointer focus-visible:ring-2 focus-visible:ring-offset-2">
       <AvatarImage src={userAvatar} />
       <AvatarFallback>{fallback}</AvatarFallback>
     </Avatar>

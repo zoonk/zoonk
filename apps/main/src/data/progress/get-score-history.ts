@@ -1,5 +1,4 @@
 import "server-only";
-
 import { getSession } from "@zoonk/core/users/session/get";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
@@ -131,9 +130,7 @@ const cachedGetScoreHistory = cache(
 
     const rawData = currentResult.data;
 
-    const validData = rawData.filter(
-      (point) => point.correct + point.incorrect > 0,
-    );
+    const validData = rawData.filter((point) => point.correct + point.incorrect > 0);
 
     if (validData.length === 0) {
       return null;
@@ -150,13 +147,9 @@ const cachedGetScoreHistory = cache(
     const average = calculateAverage(currentData);
 
     const previousRaw = previousResult.data ?? [];
-    const previousValid = previousRaw.filter(
-      (point) => point.correct + point.incorrect > 0,
-    );
-    const previousData =
-      previousValid.length > 0 ? processScoreData(previousValid, period) : [];
-    const previousAverage =
-      previousData.length > 0 ? calculateAverage(previousData) : null;
+    const previousValid = previousRaw.filter((point) => point.correct + point.incorrect > 0);
+    const previousData = previousValid.length > 0 ? processScoreData(previousValid, period) : [];
+    const previousAverage = previousData.length > 0 ? calculateAverage(previousData) : null;
 
     const { data: earlierData } = await safeAsync(() =>
       prisma.dailyProgress.findFirst({
@@ -184,9 +177,7 @@ const cachedGetScoreHistory = cache(
   },
 );
 
-export function getScoreHistory(
-  params: ScoreHistoryParams,
-): Promise<ScoreHistoryData | null> {
+export function getScoreHistory(params: ScoreHistoryParams): Promise<ScoreHistoryData | null> {
   return cachedGetScoreHistory(
     params.period,
     params.offset ?? 0,

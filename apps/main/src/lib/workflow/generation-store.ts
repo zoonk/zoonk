@@ -1,12 +1,7 @@
 import { createStore } from "@xstate/store";
 
 export type StepStatus = "started" | "completed" | "error";
-export type GenerationStatus =
-  | "idle"
-  | "triggering"
-  | "streaming"
-  | "completed"
-  | "error";
+export type GenerationStatus = "idle" | "triggering" | "streaming" | "completed" | "error";
 
 export type StreamMessage<TStep extends string = string> = {
   step: TStep;

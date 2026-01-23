@@ -58,8 +58,7 @@ export function SubscriptionPage() {
     }
   };
 
-  const handleAction = () =>
-    subscription ? manageSubscription() : subscribe();
+  const handleAction = () => (subscription ? manageSubscription() : subscribe());
 
   if (isPending) {
     return (
@@ -92,9 +91,7 @@ export function SubscriptionPage() {
 
       {hasError && (
         <ItemFooter className="text-destructive">
-          {t(
-            "Unable to update your subscription. Contact us at hello@zoonk.com",
-          )}
+          {t("Unable to update your subscription. Contact us at hello@zoonk.com")}
         </ItemFooter>
       )}
     </Item>

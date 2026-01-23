@@ -30,9 +30,7 @@ export function SlugStep({
     <WizardField>
       <WizardLabel htmlFor={slugId}>{t("Course URL")}</WizardLabel>
 
-      <WizardDescription>
-        {t("This will be the URL path for your course")}
-      </WizardDescription>
+      <WizardDescription>{t("This will be the URL path for your course")}</WizardDescription>
 
       <WizardInputGroup>
         <WizardInputPrefix>{COURSE_URL_PREFIX}</WizardInputPrefix>

@@ -1,19 +1,5 @@
 {
-  "devDependencies": {
-    "@playwright/test": "1.57.0",
-    "@types/node": "^24",
-    "@typescript/native-preview": "7.0.0-dev.20260122.4",
-    "knip": "5.80.0",
-    "oxfmt": "0.26.0",
-    "oxlint": "1.41.0",
-    "oxlint-tsgolint": "0.11.1",
-    "turbo": "2.7.4"
-  },
-  "engines": {
-    "node": "^24"
-  },
   "name": "zoonk",
-  "packageManager": "pnpm@10.28.0",
   "private": true,
   "scripts": {
     "auth:generate": "pnpm dlx @better-auth/cli@latest generate --output=./packages/db/src/prisma/models/accounts.prisma --config=./packages/auth/src/auth.ts",
@@ -38,5 +24,19 @@
     "test": "turbo test",
     "test:watch": "turbo test:watch",
     "typecheck": "turbo typecheck"
-  }
+  },
+  "devDependencies": {
+    "@playwright/test": "1.57.0",
+    "@types/node": "^24",
+    "@typescript/native-preview": "7.0.0-dev.20260122.4",
+    "knip": "5.80.0",
+    "oxfmt": "0.26.0",
+    "oxlint": "1.41.0",
+    "oxlint-tsgolint": "0.11.1",
+    "turbo": "2.7.4"
+  },
+  "engines": {
+    "node": "^24"
+  },
+  "packageManager": "pnpm@10.28.0"
 }

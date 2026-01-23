@@ -1,12 +1,9 @@
+import { ErrorCode } from "@/lib/app-error";
 import { signInAs } from "@zoonk/testing/fixtures/auth";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
-import {
-  memberFixture,
-  organizationFixture,
-} from "@zoonk/testing/fixtures/orgs";
+import { memberFixture, organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, describe, expect, test } from "vitest";
-import { ErrorCode } from "@/lib/app-error";
 import { searchOrgChapters } from "./search-org-chapters";
 
 describe("unauthenticated users", () => {
@@ -106,9 +103,7 @@ describe("admins", () => {
 
     expect(result.error).toBeNull();
     expect(result.data.length).toBeGreaterThanOrEqual(1);
-    expect(
-      result.data.some((c) => c.title === "Introdução à Programação"),
-    ).toBe(true);
+    expect(result.data.some((c) => c.title === "Introdução à Programação")).toBe(true);
   });
 
   test("returns empty array when no matches", async () => {
@@ -176,11 +171,7 @@ describe("admins", () => {
 
     expect(result.error).toBeNull();
     expect(result.data.length).toBeGreaterThanOrEqual(1);
-    expect(
-      result.data.some(
-        (c) => c.title === "Very Long Chapter Title For Testing",
-      ),
-    ).toBe(true);
+    expect(result.data.some((c) => c.title === "Very Long Chapter Title For Testing")).toBe(true);
   });
 
   test("includes course info in results", async () => {
@@ -203,9 +194,7 @@ describe("admins", () => {
     expect(result.error).toBeNull();
     expect(result.data.length).toBeGreaterThanOrEqual(1);
 
-    const chapter = result.data.find(
-      (c) => c.title === "Chapter With Course Info",
-    );
+    const chapter = result.data.find((c) => c.title === "Chapter With Course Info");
 
     expect(chapter?.course).toBeDefined();
     expect(chapter?.course.slug).toBe(course.slug);

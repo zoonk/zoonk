@@ -1,5 +1,7 @@
 "use client";
 
+import { useRouter } from "@/i18n/navigation";
+import { getMenu } from "@/lib/menu";
 import { authClient } from "@zoonk/core/auth/client";
 import { Button } from "@zoonk/ui/components/button";
 import {
@@ -12,15 +14,10 @@ import {
 } from "@zoonk/ui/components/command";
 import { useCommandPaletteSearch } from "@zoonk/ui/hooks/command-palette-search";
 import { BookOpenIcon, Search } from "lucide-react";
-import Image from "next/image";
 import { useExtracted, useLocale } from "next-intl";
+import Image from "next/image";
 import { useCallback } from "react";
-import { useRouter } from "@/i18n/navigation";
-import { getMenu } from "@/lib/menu";
-import {
-  type CourseSearchResult,
-  searchCoursesAction,
-} from "./search-courses-action";
+import { type CourseSearchResult, searchCoursesAction } from "./search-courses-action";
 
 export function CommandPalette() {
   const { push } = useRouter();
@@ -31,8 +28,7 @@ export function CommandPalette() {
   const isLoggedIn = Boolean(session);
 
   const handleSearch = useCallback(
-    (searchQuery: string) =>
-      searchCoursesAction({ language: locale, query: searchQuery }),
+    (searchQuery: string) => searchCoursesAction({ language: locale, query: searchQuery }),
     [locale],
   );
 
@@ -80,12 +76,7 @@ export function CommandPalette() {
 
   return (
     <>
-      <Button
-        aria-keyshortcuts="Meta+K Control+K"
-        onClick={open}
-        size="icon"
-        variant="outline"
-      >
+      <Button aria-keyshortcuts="Meta+K Control+K" onClick={open} size="icon" variant="outline">
         <Search aria-hidden="true" />
         <span className="sr-only">{t("Search")}</span>
       </Button>
@@ -110,10 +101,7 @@ export function CommandPalette() {
 
           <CommandGroup heading={t("Pages")}>
             {getStarted.map((item) => (
-              <CommandItem
-                key={item.key}
-                onSelect={() => handleSelect(item.url)}
-              >
+              <CommandItem key={item.key} onSelect={() => handleSelect(item.url)}>
                 <item.icon aria-hidden="true" />
                 {item.key}
               </CommandItem>
@@ -123,10 +111,7 @@ export function CommandPalette() {
           <CommandGroup heading={t("My account")}>
             {!isLoggedIn &&
               accountPublic.map((item) => (
-                <CommandItem
-                  key={item.key}
-                  onSelect={() => handleSelect(item.url)}
-                >
+                <CommandItem key={item.key} onSelect={() => handleSelect(item.url)}>
                   <item.icon aria-hidden="true" />
                   {item.key}
                 </CommandItem>
@@ -134,10 +119,7 @@ export function CommandPalette() {
 
             {isLoggedIn &&
               accountPrivate.map((item) => (
-                <CommandItem
-                  key={item.key}
-                  onSelect={() => handleSelect(item.url)}
-                >
+                <CommandItem key={item.key} onSelect={() => handleSelect(item.url)}>
                   <item.icon aria-hidden="true" />
                   {item.key}
                 </CommandItem>
@@ -146,10 +128,7 @@ export function CommandPalette() {
 
           <CommandGroup heading={t("Contact us")}>
             {contactUs.map((item) => (
-              <CommandItem
-                key={item.key}
-                onSelect={() => handleSelect(item.url)}
-              >
+              <CommandItem key={item.key} onSelect={() => handleSelect(item.url)}>
                 <item.icon aria-hidden="true" />
                 {item.key}
               </CommandItem>
@@ -159,11 +138,7 @@ export function CommandPalette() {
           {hasCourses && (
             <CommandGroup heading={t("Courses")}>
               {courses.map((course) => (
-                <CourseItem
-                  course={course}
-                  key={course.id}
-                  onSelect={handleSelect}
-                />
+                <CourseItem course={course} key={course.id} onSelect={handleSelect} />
               ))}
             </CommandGroup>
           )}
@@ -197,7 +172,7 @@ function CourseItem({
           width={32}
         />
       ) : (
-        <div className="flex size-8 shrink-0 items-center justify-center rounded-md bg-muted">
+        <div className="bg-muted flex size-8 shrink-0 items-center justify-center rounded-md">
           <BookOpenIcon aria-hidden="true" className="size-4" />
         </div>
       )}
@@ -205,9 +180,7 @@ function CourseItem({
       <div className="min-w-0 flex-1">
         <p className="truncate font-medium">{course.title}</p>
         {course.description && (
-          <p className="truncate text-muted-foreground text-xs">
-            {course.description}
-          </p>
+          <p className="text-muted-foreground truncate text-xs">{course.description}</p>
         )}
       </div>
     </CommandItem>

@@ -27,10 +27,7 @@ export async function generateBattleRankings(params: {
   const { judgeId, expectations, anonymizedOutputs, mapping } = params;
 
   const outputsSection = anonymizedOutputs
-    .map(
-      (output) =>
-        `### ${output.anonymousId}\n\`\`\`json\n${output.output}\n\`\`\``,
-    )
+    .map((output) => `### ${output.anonymousId}\n\`\`\`json\n${output.output}\n\`\`\``)
     .join("\n\n");
 
   const evalPrompt = `
@@ -53,9 +50,7 @@ Ties are allowed if outputs are truly equivalent in quality.
 
   // Map anonymous IDs back to model IDs
   const rankings: ModelRanking[] = result.rankings.map((ranking) => {
-    const modelMapping = mapping.find(
-      (m) => m.anonymousId === ranking.anonymousId,
-    );
+    const modelMapping = mapping.find((m) => m.anonymousId === ranking.anonymousId);
     return {
       anonymousId: ranking.anonymousId,
       modelId: modelMapping?.modelId ?? ranking.anonymousId,

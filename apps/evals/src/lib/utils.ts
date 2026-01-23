@@ -4,16 +4,9 @@ import { EVAL_MODELS } from "./models";
 import { getOutputStatus } from "./output-loader";
 import type { TaskEvalResults } from "./types";
 
-export type ModelStatus =
-  | "completed"
-  | "outputsReady"
-  | "incomplete"
-  | "notStarted";
+export type ModelStatus = "completed" | "outputsReady" | "incomplete" | "notStarted";
 
-export async function getModelStatus(
-  taskId: string,
-  modelId: string,
-): Promise<ModelStatus> {
+export async function getModelStatus(taskId: string, modelId: string): Promise<ModelStatus> {
   const totalTestCases = getTotalTestCases(taskId);
   const [results, outputStatus] = await Promise.all([
     getTaskResults(taskId, modelId),
@@ -69,9 +62,7 @@ export async function getSortedModels(taskId: string) {
 }
 
 // Filter out models without any results
-export async function getModelsWithResults(
-  taskId: string,
-): Promise<TaskEvalResults[]> {
+export async function getModelsWithResults(taskId: string): Promise<TaskEvalResults[]> {
   const results = await Promise.all(
     EVAL_MODELS.map(async (model) => {
       const res = await getTaskResults(taskId, model.id);

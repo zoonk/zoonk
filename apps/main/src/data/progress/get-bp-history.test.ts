@@ -27,10 +27,7 @@ describe("authenticated users", () => {
 
   describe("month period", () => {
     test("returns daily data points with BP values", async () => {
-      const [user, org] = await Promise.all([
-        userFixture(),
-        organizationFixture(),
-      ]);
+      const [user, org] = await Promise.all([userFixture(), organizationFixture()]);
       const headers = await signInAs(user.email, user.password);
 
       const today = createSafeDate(0);
@@ -63,10 +60,7 @@ describe("authenticated users", () => {
     });
 
     test("calculates period total correctly", async () => {
-      const [user, org] = await Promise.all([
-        userFixture(),
-        organizationFixture(),
-      ]);
+      const [user, org] = await Promise.all([userFixture(), organizationFixture()]);
       const headers = await signInAs(user.email, user.password);
 
       const today = createSafeDate(0);
@@ -98,10 +92,7 @@ describe("authenticated users", () => {
     });
 
     test("includes current belt level", async () => {
-      const [user, org] = await Promise.all([
-        userFixture(),
-        organizationFixture(),
-      ]);
+      const [user, org] = await Promise.all([userFixture(), organizationFixture()]);
       const headers = await signInAs(user.email, user.password);
 
       await prisma.userProgress.upsert({
@@ -134,10 +125,7 @@ describe("authenticated users", () => {
     });
 
     test("calculates comparison with previous month", async () => {
-      const [user, org] = await Promise.all([
-        userFixture(),
-        organizationFixture(),
-      ]);
+      const [user, org] = await Promise.all([userFixture(), organizationFixture()]);
       const headers = await signInAs(user.email, user.password);
 
       const currentMonth = createSafeDate(0);
@@ -170,10 +158,7 @@ describe("authenticated users", () => {
     });
 
     test("navigates to previous month with offset", async () => {
-      const [user, org] = await Promise.all([
-        userFixture(),
-        organizationFixture(),
-      ]);
+      const [user, org] = await Promise.all([userFixture(), organizationFixture()]);
       const headers = await signInAs(user.email, user.password);
 
       const currentMonth = createSafeDate(0);
@@ -212,10 +197,7 @@ describe("authenticated users", () => {
 
   describe("6months period", () => {
     test("returns weekly aggregated data points", async () => {
-      const [user, org] = await Promise.all([
-        userFixture(),
-        organizationFixture(),
-      ]);
+      const [user, org] = await Promise.all([userFixture(), organizationFixture()]);
       const headers = await signInAs(user.email, user.password);
 
       const today = createSafeDate(0);
@@ -250,10 +232,7 @@ describe("authenticated users", () => {
 
   describe("year period", () => {
     test("returns monthly aggregated data points", async () => {
-      const [user, org] = await Promise.all([
-        userFixture(),
-        organizationFixture(),
-      ]);
+      const [user, org] = await Promise.all([userFixture(), organizationFixture()]);
       const headers = await signInAs(user.email, user.password);
 
       const today = createSafeDate(0);
@@ -288,10 +267,7 @@ describe("authenticated users", () => {
 
   describe("navigation flags", () => {
     test("hasPreviousPeriod is true when historical data exists", async () => {
-      const [user, org] = await Promise.all([
-        userFixture(),
-        organizationFixture(),
-      ]);
+      const [user, org] = await Promise.all([userFixture(), organizationFixture()]);
       const headers = await signInAs(user.email, user.password);
 
       const currentMonth = createSafeDate(0);
@@ -323,10 +299,7 @@ describe("authenticated users", () => {
     });
 
     test("hasNextPeriod is false when on current period (offset=0)", async () => {
-      const [user, org] = await Promise.all([
-        userFixture(),
-        organizationFixture(),
-      ]);
+      const [user, org] = await Promise.all([userFixture(), organizationFixture()]);
       const headers = await signInAs(user.email, user.password);
 
       const date = createSafeDate(0);
@@ -347,10 +320,7 @@ describe("authenticated users", () => {
     });
 
     test("hasNextPeriod is true when offset > 0", async () => {
-      const [user, org] = await Promise.all([
-        userFixture(),
-        organizationFixture(),
-      ]);
+      const [user, org] = await Promise.all([userFixture(), organizationFixture()]);
       const headers = await signInAs(user.email, user.password);
 
       const lastMonth = createSafeDate(1);

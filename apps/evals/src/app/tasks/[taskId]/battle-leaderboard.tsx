@@ -50,9 +50,7 @@ function sortEntries(
     const bValue = b[sortKey];
 
     if (typeof aValue === "string" && typeof bValue === "string") {
-      return sortDirection === "asc"
-        ? aValue.localeCompare(bValue)
-        : bValue.localeCompare(aValue);
+      return sortDirection === "asc" ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
     }
 
     if (typeof aValue === "number" && typeof bValue === "number") {
@@ -81,7 +79,7 @@ export function BattleLeaderboard({ taskId, entries }: BattleLeaderboardProps) {
 
   if (sortedEntries.length === 0) {
     return (
-      <div className="py-8 text-center text-muted-foreground">
+      <div className="text-muted-foreground py-8 text-center">
         No battle results yet. Run Battle Mode to compare models.
       </div>
     );
@@ -93,54 +91,28 @@ export function BattleLeaderboard({ taskId, entries }: BattleLeaderboardProps) {
         <TableRow>
           <TableHead className="w-10">#</TableHead>
 
-          <TableHead
-            className="cursor-pointer"
-            onClick={() => handleSort("modelName")}
-          >
-            Model{" "}
-            {sortKey === "modelName" && (sortDirection === "asc" ? "↑" : "↓")}
+          <TableHead className="cursor-pointer" onClick={() => handleSort("modelName")}>
+            Model {sortKey === "modelName" && (sortDirection === "asc" ? "↑" : "↓")}
           </TableHead>
 
-          <TableHead
-            className="cursor-pointer"
-            onClick={() => handleSort("provider")}
-          >
-            Provider{" "}
-            {sortKey === "provider" && (sortDirection === "asc" ? "↑" : "↓")}
+          <TableHead className="cursor-pointer" onClick={() => handleSort("provider")}>
+            Provider {sortKey === "provider" && (sortDirection === "asc" ? "↑" : "↓")}
           </TableHead>
 
-          <TableHead
-            className="cursor-pointer"
-            onClick={() => handleSort("totalScore")}
-          >
-            Total Points{" "}
-            {sortKey === "totalScore" && (sortDirection === "asc" ? "↑" : "↓")}
+          <TableHead className="cursor-pointer" onClick={() => handleSort("totalScore")}>
+            Total Points {sortKey === "totalScore" && (sortDirection === "asc" ? "↑" : "↓")}
           </TableHead>
 
-          <TableHead
-            className="cursor-pointer"
-            onClick={() => handleSort("averageScore")}
-          >
-            Avg Score{" "}
-            {sortKey === "averageScore" &&
-              (sortDirection === "asc" ? "↑" : "↓")}
+          <TableHead className="cursor-pointer" onClick={() => handleSort("averageScore")}>
+            Avg Score {sortKey === "averageScore" && (sortDirection === "asc" ? "↑" : "↓")}
           </TableHead>
 
-          <TableHead
-            className="cursor-pointer"
-            onClick={() => handleSort("averageDuration")}
-          >
-            Avg Duration{" "}
-            {sortKey === "averageDuration" &&
-              (sortDirection === "asc" ? "↑" : "↓")}
+          <TableHead className="cursor-pointer" onClick={() => handleSort("averageDuration")}>
+            Avg Duration {sortKey === "averageDuration" && (sortDirection === "asc" ? "↑" : "↓")}
           </TableHead>
 
-          <TableHead
-            className="cursor-pointer"
-            onClick={() => handleSort("averageCost")}
-          >
-            Avg Cost{" "}
-            {sortKey === "averageCost" && (sortDirection === "asc" ? "↑" : "↓")}
+          <TableHead className="cursor-pointer" onClick={() => handleSort("averageCost")}>
+            Avg Cost {sortKey === "averageCost" && (sortDirection === "asc" ? "↑" : "↓")}
           </TableHead>
         </TableRow>
       </TableHeader>
@@ -150,16 +122,12 @@ export function BattleLeaderboard({ taskId, entries }: BattleLeaderboardProps) {
           <TableRow key={entry.modelId}>
             <TableCell className="font-medium">{index + 1}</TableCell>
             <TableCell>
-              <Link
-                href={`/tasks/${taskId}/${encodeURIComponent(entry.modelId)}`}
-              >
+              <Link href={`/tasks/${taskId}/${encodeURIComponent(entry.modelId)}`}>
                 {entry.modelName}
               </Link>
             </TableCell>
             <TableCell>{entry.provider}</TableCell>
-            <TableCell className="font-semibold">
-              {entry.totalScore.toFixed(1)}
-            </TableCell>
+            <TableCell className="font-semibold">{entry.totalScore.toFixed(1)}</TableCell>
             <TableCell>{entry.averageScore.toFixed(2)}</TableCell>
             <TableCell>{entry.averageDuration.toFixed(2)}s</TableCell>
             <TableCell>${entry.averageCost.toFixed(2)}</TableCell>

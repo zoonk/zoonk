@@ -1,17 +1,17 @@
 "use cache";
 
-import { cacheTagLesson } from "@zoonk/utils/cache";
-import { AI_ORG_SLUG } from "@zoonk/utils/constants";
-import type { Metadata } from "next";
-import { cacheTag } from "next/cache";
-import { notFound } from "next/navigation";
-import { setRequestLocale } from "next-intl/server";
 import { listLessonActivities } from "@/data/activities/list-lesson-activities";
 import { getLesson } from "@/data/lessons/get-lesson";
 import { redirect } from "@/i18n/navigation";
 import { getActivityKinds } from "@/lib/activities";
+import { cacheTagLesson } from "@zoonk/utils/cache";
+import { AI_ORG_SLUG } from "@zoonk/utils/constants";
+import { setRequestLocale } from "next-intl/server";
+import { cacheTag } from "next/cache";
+import { notFound } from "next/navigation";
 import { ActivityList } from "./activity-list";
 import { LessonHeader } from "./lesson-header";
+import type { Metadata } from "next";
 
 export async function generateStaticParams() {
   return [
@@ -49,8 +49,7 @@ export async function generateMetadata({
 export default async function LessonPage({
   params,
 }: PageProps<"/[locale]/b/[brandSlug]/c/[courseSlug]/c/[chapterSlug]/l/[lessonSlug]">) {
-  const { brandSlug, chapterSlug, courseSlug, lessonSlug, locale } =
-    await params;
+  const { brandSlug, chapterSlug, courseSlug, lessonSlug, locale } = await params;
   setRequestLocale(locale);
 
   const lesson = await getLesson({
@@ -78,18 +77,10 @@ export default async function LessonPage({
 
   return (
     <main className="flex flex-1 flex-col">
-      <LessonHeader
-        brandSlug={brandSlug}
-        courseSlug={courseSlug}
-        lesson={lesson}
-      />
+      <LessonHeader brandSlug={brandSlug} courseSlug={courseSlug} lesson={lesson} />
 
       <div className="mx-auto w-full px-4 py-6 lg:max-w-xl">
-        <ActivityList
-          activities={activities}
-          baseHref={baseHref}
-          kindMeta={kindMeta}
-        />
+        <ActivityList activities={activities} baseHref={baseHref} kindMeta={kindMeta} />
       </div>
     </main>
   );

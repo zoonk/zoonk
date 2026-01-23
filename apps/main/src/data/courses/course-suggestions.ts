@@ -1,5 +1,4 @@
 import "server-only";
-
 import { generateCourseSuggestions as generateTask } from "@zoonk/ai/tasks/courses/suggestions";
 import { type CourseSuggestion, prisma } from "@zoonk/db";
 import { normalizeString, toSlug } from "@zoonk/utils/string";
@@ -111,12 +110,7 @@ export async function getCourseSuggestionById(
   id: number,
 ): Promise<Pick<
   CourseSuggestion,
-  | "description"
-  | "generationRunId"
-  | "generationStatus"
-  | "language"
-  | "slug"
-  | "title"
+  "description" | "generationRunId" | "generationStatus" | "language" | "slug" | "title"
 > | null> {
   return prisma.courseSuggestion.findUnique({
     select: {

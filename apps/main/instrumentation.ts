@@ -6,11 +6,7 @@ export async function register() {
   globalThis.AI_SDK_DEFAULT_PROVIDER = zoonkGateway;
 }
 
-export const onRequestError: Instrumentation.onRequestError = async (
-  error,
-  request,
-  context,
-) => {
+export const onRequestError: Instrumentation.onRequestError = async (error, request, context) => {
   const isError = error instanceof Error;
 
   await sendErrorEmail({

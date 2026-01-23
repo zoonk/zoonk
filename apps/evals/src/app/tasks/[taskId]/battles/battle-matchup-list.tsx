@@ -1,5 +1,6 @@
 "use client";
 
+import { getModelById, getModelDisplayName } from "@/lib/models";
 import {
   Accordion,
   AccordionContent,
@@ -7,7 +8,6 @@ import {
   AccordionTrigger,
 } from "@zoonk/ui/components/accordion";
 import { Badge } from "@zoonk/ui/components/badge";
-import { getModelById, getModelDisplayName } from "@/lib/models";
 import type { BattleMatchup } from "@/lib/types";
 
 type BattleMatchupListProps = {
@@ -45,9 +45,7 @@ function MatchupItem({ matchup }: MatchupItemProps) {
 
   for (const judgment of matchup.judgments) {
     const judgeModel = getModelById(judgment.judgeId);
-    const judgeName = judgeModel
-      ? getModelDisplayName(judgeModel)
-      : judgment.judgeId;
+    const judgeName = judgeModel ? getModelDisplayName(judgeModel) : judgment.judgeId;
 
     for (const ranking of judgment.rankings) {
       const rankings = modelRankings.get(ranking.modelId);
@@ -65,10 +63,8 @@ function MatchupItem({ matchup }: MatchupItemProps) {
 
   // Sort models by total score
   const sortedModels = [...modelIds].toSorted((a, b) => {
-    const aTotal =
-      modelRankings.get(a)?.reduce((sum, r) => sum + r.score, 0) ?? 0;
-    const bTotal =
-      modelRankings.get(b)?.reduce((sum, r) => sum + r.score, 0) ?? 0;
+    const aTotal = modelRankings.get(a)?.reduce((sum, r) => sum + r.score, 0) ?? 0;
+    const bTotal = modelRankings.get(b)?.reduce((sum, r) => sum + r.score, 0) ?? 0;
     return bTotal - aTotal;
   });
 
@@ -78,8 +74,8 @@ function MatchupItem({ matchup }: MatchupItemProps) {
         <div className="flex flex-col items-start gap-1">
           <span className="font-semibold">{matchup.testCaseId}</span>
           <span className="text-muted-foreground text-sm">
-            {matchup.judgments.length} judge(s) &bull;{" "}
-            {matchup.judgments[0]?.rankings.length ?? 0} models ranked
+            {matchup.judgments.length} judge(s) &bull; {matchup.judgments[0]?.rankings.length ?? 0}{" "}
+            models ranked
           </span>
         </div>
       </AccordionTrigger>
@@ -92,7 +88,7 @@ function MatchupItem({ matchup }: MatchupItemProps) {
           const totalScore = rankings.reduce((sum, r) => sum + r.score, 0);
 
           return (
-            <div className="rounded-lg border border-border p-4" key={modelId}>
+            <div className="border-border rounded-lg border p-4" key={modelId}>
               <div className="mb-4 flex items-center justify-between">
                 <div>
                   <h3 className="font-semibold">{modelName}</h3>
@@ -105,20 +101,15 @@ function MatchupItem({ matchup }: MatchupItemProps) {
 
               <div className="flex flex-col gap-3">
                 {rankings.map((ranking) => (
-                  <div
-                    className="rounded-lg bg-muted p-3"
-                    key={ranking.judgeId}
-                  >
+                  <div className="bg-muted rounded-lg p-3" key={ranking.judgeId}>
                     <div className="mb-2 flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <span className="font-medium text-sm">
-                          {ranking.judgeName}
-                        </span>
+                        <span className="text-sm font-medium">{ranking.judgeName}</span>
                         <Badge variant="outline">{ranking.anonymousId}</Badge>
                       </div>
                       <Badge>{ranking.score.toFixed(1)}</Badge>
                     </div>
-                    <p className="whitespace-pre-wrap text-muted-foreground text-sm">
+                    <p className="text-muted-foreground text-sm whitespace-pre-wrap">
                       {ranking.reasoning}
                     </p>
                   </div>
@@ -129,10 +120,10 @@ function MatchupItem({ matchup }: MatchupItemProps) {
         })}
 
         <details>
-          <summary className="cursor-pointer text-muted-foreground text-sm hover:underline">
+          <summary className="text-muted-foreground cursor-pointer text-sm hover:underline">
             View test case expectations
           </summary>
-          <pre className="mt-2 overflow-auto rounded-lg bg-muted p-4 text-xs">
+          <pre className="bg-muted mt-2 overflow-auto rounded-lg p-4 text-xs">
             {matchup.expectations}
           </pre>
         </details>
@@ -144,7 +135,7 @@ function MatchupItem({ matchup }: MatchupItemProps) {
 export function BattleMatchupList({ matchups }: BattleMatchupListProps) {
   if (matchups.length === 0) {
     return (
-      <p className="py-8 text-center text-muted-foreground">
+      <p className="text-muted-foreground py-8 text-center">
         No battle results yet. Run Battle Mode first.
       </p>
     );

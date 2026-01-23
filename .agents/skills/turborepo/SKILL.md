@@ -542,7 +542,7 @@ When `incremental: true` in tsconfig.json, `tsc --noEmit` writes `.tsbuildinfo` 
 {
   "tasks": {
     "typecheck": {
-      "outputs": ["node_modules/.cache/tsbuildinfo.json"]  // or wherever tsBuildInfoFile points
+      "outputs": ["node_modules/.cache/tsbuildinfo.json"] // or wherever tsBuildInfoFile points
     }
   }
 }
@@ -689,10 +689,10 @@ packages/
 
 ```typescript
 // WRONG: Reaching into another package's internals
-import { Button } from '../../packages/ui/src/button';
+import { Button } from "../../packages/ui/src/button";
 
 // CORRECT: Install and import properly
-import { Button } from '@repo/ui/button';
+import { Button } from "@repo/ui/button";
 ```
 
 ### Too Many Root Dependencies

@@ -1,13 +1,13 @@
-import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
-import type { Route } from "next";
-import { headers } from "next/headers";
-import { notFound } from "next/navigation";
-import { getExtracted } from "next-intl/server";
 import { DeleteItemButton } from "@/components/navbar/delete-item-button";
 import { PublishToggle } from "@/components/navbar/publish-toggle";
 import { getLesson } from "@/data/lessons/get-lesson";
+import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
+import { getExtracted } from "next-intl/server";
+import { headers } from "next/headers";
+import { notFound } from "next/navigation";
 import { deleteLessonAction, togglePublishAction } from "./actions";
 import { LessonActionsContainer } from "./lesson-actions-container";
+import type { Route } from "next";
 
 type LessonNavbarActionsPageProps =
   PageProps<"/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]">;

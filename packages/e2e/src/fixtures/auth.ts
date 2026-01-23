@@ -77,10 +77,7 @@ export function createStorageStateFixtures(
  * Use this to reduce boilerplate when defining multiple user fixtures.
  */
 export function createAuthFixture(storageState: string) {
-  return async (
-    { browser }: { browser: Browser },
-    use: (page: Page) => Promise<void>,
-  ) => {
+  return async ({ browser }: { browser: Browser }, use: (page: Page) => Promise<void>) => {
     const context = await browser.newContext({ storageState });
     const page = await context.newPage();
     await use(page);

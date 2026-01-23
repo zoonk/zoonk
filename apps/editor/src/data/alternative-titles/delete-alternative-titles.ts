@@ -1,5 +1,4 @@
 import "server-only";
-
 import { prisma } from "@zoonk/db";
 import { toSlug } from "@zoonk/utils/string";
 

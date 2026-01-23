@@ -3,10 +3,7 @@
 import { sendEmail } from "@zoonk/core/mailer/send";
 import { parseFormField } from "@zoonk/utils/form";
 
-export async function contactFormAction(
-  _prevState: unknown,
-  formData: FormData,
-) {
+export async function contactFormAction(_prevState: unknown, formData: FormData) {
   const email = parseFormField(formData, "email");
   const message = parseFormField(formData, "message");
 

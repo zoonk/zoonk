@@ -18,15 +18,9 @@ const STEP_WEIGHTS = {
  * Major errors have 3x weight, minor errors 2x, and potential improvements 1x.
  */
 export function calculateScore(steps: ScoreStep[]): number {
-  const weightedTotal = steps.reduce(
-    (acc, step) => acc + step.score * STEP_WEIGHTS[step.kind],
-    0,
-  );
+  const weightedTotal = steps.reduce((acc, step) => acc + step.score * STEP_WEIGHTS[step.kind], 0);
 
-  const totalWeight = steps.reduce(
-    (acc, step) => acc + STEP_WEIGHTS[step.kind],
-    0,
-  );
+  const totalWeight = steps.reduce((acc, step) => acc + STEP_WEIGHTS[step.kind], 0);
 
   return weightedTotal / totalWeight;
 }

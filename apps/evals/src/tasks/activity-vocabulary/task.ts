@@ -3,15 +3,11 @@ import {
   type ActivityVocabularySchema,
   generateActivityVocabulary,
 } from "@zoonk/ai/tasks/activities/language/vocabulary";
-import type { Task } from "@/lib/types";
 import { TEST_CASES } from "./test-cases";
+import type { Task } from "@/lib/types";
 
-export const activityVocabularyTask: Task<
-  ActivityVocabularyParams,
-  ActivityVocabularySchema
-> = {
-  description:
-    "Generate vocabulary quiz questions for language learning lessons",
+export const activityVocabularyTask: Task<ActivityVocabularyParams, ActivityVocabularySchema> = {
+  description: "Generate vocabulary quiz questions for language learning lessons",
   generate: generateActivityVocabulary,
   id: "activity-vocabulary",
   name: "Activity Vocabulary",

@@ -56,9 +56,7 @@ export function UpgradeCTA({ returnUrl }: { returnUrl: string }) {
 
         {state === "error" && (
           <p className="text-destructive text-sm">
-            {t(
-              "Unable to update your subscription. Contact us at hello@zoonk.com",
-            )}
+            {t("Unable to update your subscription. Contact us at hello@zoonk.com")}
           </p>
         )}
       </EmptyContent>

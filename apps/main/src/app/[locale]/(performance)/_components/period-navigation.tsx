@@ -43,9 +43,7 @@ export function PeriodNavigation({
         <ChevronLeftIcon aria-hidden />
       </Button>
 
-      <span className="min-w-32 text-center font-medium text-sm">
-        {periodLabel}
-      </span>
+      <span className="min-w-32 text-center text-sm font-medium">{periodLabel}</span>
 
       <Button
         aria-label={t("Next period")}

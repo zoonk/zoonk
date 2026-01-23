@@ -31,8 +31,7 @@ export const TEST_CASES = [
       chapterTitle: "Italian Classics",
       courseTitle: "Home Cooking Basics",
       language: "en",
-      lessonDescription:
-        "Step-by-step guide to making authentic spaghetti carbonara from scratch",
+      lessonDescription: "Step-by-step guide to making authentic spaghetti carbonara from scratch",
       lessonTitle: "Making Spaghetti Carbonara",
     },
   },
@@ -82,8 +81,7 @@ export const TEST_CASES = [
       chapterTitle: "Portrait Photography",
       courseTitle: "Photography Fundamentals",
       language: "en",
-      lessonDescription:
-        "How to take a professional-looking portrait photo using natural light",
+      lessonDescription: "How to take a professional-looking portrait photo using natural light",
       lessonTitle: "Taking Portrait Photos",
     },
   },
@@ -99,8 +97,7 @@ export const TEST_CASES = [
       chapterTitle: "Lower Body",
       courseTitle: "Strength Training Basics",
       language: "en",
-      lessonDescription:
-        "How to perform a proper barbell squat with correct form and technique",
+      lessonDescription: "How to perform a proper barbell squat with correct form and technique",
       lessonTitle: "The Barbell Squat",
     },
   },
@@ -167,8 +164,7 @@ export const TEST_CASES = [
       chapterTitle: "Chemistry at Home",
       courseTitle: "Fun Science Experiments",
       language: "en",
-      lessonDescription:
-        "How to build and activate a baking soda volcano for a science project",
+      lessonDescription: "How to build and activate a baking soda volcano for a science project",
       lessonTitle: "Making a Baking Soda Volcano",
     },
   },
@@ -188,8 +184,7 @@ export const TEST_CASES = [
       chapterTitle: "Kitchen Basics",
       courseTitle: "Cooking 101",
       language: "en",
-      lessonDescription:
-        "How to properly crack an egg without getting shell in the bowl",
+      lessonDescription: "How to properly crack an egg without getting shell in the bowl",
       lessonTitle: "Cracking an Egg",
     },
   },
@@ -226,8 +221,7 @@ export const TEST_CASES = [
       chapterTitle: "Primeiros Passos",
       courseTitle: "Git e GitHub",
       language: "pt",
-      lessonDescription:
-        "Guia passo a passo para instalar e configurar o Git no seu computador",
+      lessonDescription: "Guia passo a passo para instalar e configurar o Git no seu computador",
       lessonTitle: "Configurando o Git",
     },
   },

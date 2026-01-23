@@ -1,27 +1,19 @@
 import { expect, test } from "./fixtures";
 
 test.describe("Home Page - Unauthenticated", () => {
-  test("shows hero with CTAs that navigate to correct pages", async ({
-    page,
-  }) => {
+  test("shows hero with CTAs that navigate to correct pages", async ({ page }) => {
     await page.goto("/");
 
     await expect(page.getByText(/continue learning/i)).not.toBeVisible();
 
     const hero = page.getByRole("main");
 
-    await expect(
-      hero.getByRole("heading", { name: /learn anything with ai/i }),
-    ).toBeVisible();
+    await expect(hero.getByRole("heading", { name: /learn anything with ai/i })).toBeVisible();
 
     // Test Learn anything CTA
-    await hero
-      .getByRole("link", { exact: true, name: "Learn anything" })
-      .click();
+    await hero.getByRole("link", { exact: true, name: "Learn anything" }).click();
 
-    await expect(
-      page.getByRole("heading", { name: /what do you want to learn/i }),
-    ).toBeVisible();
+    await expect(page.getByRole("heading", { name: /what do you want to learn/i })).toBeVisible();
   });
 
   test("does not show performance section", async ({ page }) => {
@@ -39,9 +31,7 @@ test.describe("Home Page - Authenticated", () => {
 
     // Use .first() to handle potential duplicates during streaming/hydration
     await expect(
-      authenticatedPage
-        .getByRole("heading", { name: /continue learning/i })
-        .first(),
+      authenticatedPage.getByRole("heading", { name: /continue learning/i }).first(),
     ).toBeVisible();
 
     await expect(
@@ -51,14 +41,10 @@ test.describe("Home Page - Authenticated", () => {
     ).not.toBeVisible();
   });
 
-  test("user without progress sees hero section", async ({
-    userWithoutProgress,
-  }) => {
+  test("user without progress sees hero section", async ({ userWithoutProgress }) => {
     await userWithoutProgress.goto("/");
 
-    await expect(
-      userWithoutProgress.getByText(/continue learning/i),
-    ).not.toBeVisible();
+    await expect(userWithoutProgress.getByText(/continue learning/i)).not.toBeVisible();
 
     await expect(
       userWithoutProgress.getByRole("heading", {
@@ -69,54 +55,38 @@ test.describe("Home Page - Authenticated", () => {
 });
 
 test.describe("Home Page - Performance Section", () => {
-  test("authenticated user with progress sees energy level", async ({
-    authenticatedPage,
-  }) => {
+  test("authenticated user with progress sees energy level", async ({ authenticatedPage }) => {
     await authenticatedPage.goto("/");
 
     // Wait for Suspense content to load - Performance section only renders when data is available
     await expect(authenticatedPage.getByText(/^performance$/i)).toBeVisible();
 
     // Use regex to match "Your energy is X%" where X can be any number
-    await expect(
-      authenticatedPage.getByText(/your energy is \d+%/i),
-    ).toBeVisible();
+    await expect(authenticatedPage.getByText(/your energy is \d+%/i)).toBeVisible();
   });
 
-  test("authenticated user with progress sees belt level", async ({
-    authenticatedPage,
-  }) => {
+  test("authenticated user with progress sees belt level", async ({ authenticatedPage }) => {
     await authenticatedPage.goto("/");
 
     await expect(authenticatedPage.getByText(/^performance$/i)).toBeVisible();
 
     // Use regex to match belt level pattern (e.g., "Orange Belt - Level 8")
-    await expect(
-      authenticatedPage.getByText(/belt - level \d+/i),
-    ).toBeVisible();
+    await expect(authenticatedPage.getByText(/belt - level \d+/i)).toBeVisible();
 
     // Use regex to match BP to next level pattern
-    await expect(
-      authenticatedPage.getByText(/\d+ bp to next level/i),
-    ).toBeVisible();
+    await expect(authenticatedPage.getByText(/\d+ bp to next level/i)).toBeVisible();
   });
 
-  test("authenticated user with progress sees score", async ({
-    authenticatedPage,
-  }) => {
+  test("authenticated user with progress sees score", async ({ authenticatedPage }) => {
     await authenticatedPage.goto("/");
 
     await expect(authenticatedPage.getByText(/^performance$/i)).toBeVisible();
 
     // Use regex to match any percentage of correct answers (e.g., "75%" or "75.2%")
-    await expect(
-      authenticatedPage.getByText(/\d+(\.\d+)?% correct answers/i),
-    ).toBeVisible();
+    await expect(authenticatedPage.getByText(/\d+(\.\d+)?% correct answers/i)).toBeVisible();
   });
 
-  test("authenticated user with progress sees best day", async ({
-    authenticatedPage,
-  }) => {
+  test("authenticated user with progress sees best day", async ({ authenticatedPage }) => {
     await authenticatedPage.goto("/");
 
     await expect(authenticatedPage.getByText(/^performance$/i)).toBeVisible();
@@ -130,9 +100,7 @@ test.describe("Home Page - Performance Section", () => {
     ).toBeVisible();
   });
 
-  test("authenticated user with progress sees best time", async ({
-    authenticatedPage,
-  }) => {
+  test("authenticated user with progress sees best time", async ({ authenticatedPage }) => {
     await authenticatedPage.goto("/");
 
     await expect(authenticatedPage.getByText(/^performance$/i)).toBeVisible();
@@ -140,9 +108,7 @@ test.describe("Home Page - Performance Section", () => {
 
     // Use regex to match time period with percentage (e.g., "Morning with 90%")
     await expect(
-      authenticatedPage.getByText(
-        /(morning|afternoon|evening|night) with \d+%/i,
-      ),
+      authenticatedPage.getByText(/(morning|afternoon|evening|night) with \d+%/i),
     ).toBeVisible();
   });
 
@@ -151,8 +117,6 @@ test.describe("Home Page - Performance Section", () => {
   }) => {
     await userWithoutProgress.goto("/");
 
-    await expect(
-      userWithoutProgress.getByText(/^performance$/i),
-    ).not.toBeVisible();
+    await expect(userWithoutProgress.getByText(/^performance$/i)).not.toBeVisible();
   });
 });

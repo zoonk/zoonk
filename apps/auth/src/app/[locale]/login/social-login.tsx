@@ -1,14 +1,9 @@
 "use client";
 
+import { LoginError, LoginSocial, LoginWithApple, LoginWithGoogle } from "@/components/login";
 import { authClient } from "@zoonk/core/auth/client";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
-import {
-  LoginError,
-  LoginSocial,
-  LoginWithApple,
-  LoginWithGoogle,
-} from "@/components/login";
 
 type SocialState = "initial" | "loadingGoogle" | "loadingApple" | "error";
 
@@ -40,24 +35,16 @@ export function SocialLogin({ redirectTo }: { redirectTo?: string }) {
 
   return (
     <LoginSocial>
-      <LoginWithGoogle
-        isLoading={state === "loadingGoogle"}
-        onClick={() => signIn("google")}
-      >
+      <LoginWithGoogle isLoading={state === "loadingGoogle"} onClick={() => signIn("google")}>
         {t("Continue with Google")}
       </LoginWithGoogle>
 
-      <LoginWithApple
-        isLoading={state === "loadingApple"}
-        onClick={() => signIn("apple")}
-      >
+      <LoginWithApple isLoading={state === "loadingApple"} onClick={() => signIn("apple")}>
         {t("Continue with Apple")}
       </LoginWithApple>
 
       <LoginError hasError={state === "error"}>
-        {t(
-          "There was an error signing you in. Please try again or contact hello@zoonk.com",
-        )}
+        {t("There was an error signing you in. Please try again or contact hello@zoonk.com")}
       </LoginError>
     </LoginSocial>
   );

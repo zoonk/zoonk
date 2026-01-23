@@ -166,13 +166,7 @@ ${SHARED_EXPECTATIONS}
       courseTitle: "German",
       language: "en",
       lessonTitle: "Family Members",
-      words: [
-        "die Mutter",
-        "der Vater",
-        "die Schwester",
-        "der Bruder",
-        "die Familie",
-      ],
+      words: ["die Mutter", "der Vater", "die Schwester", "der Bruder", "die Familie"],
     },
   },
   {
@@ -282,13 +276,7 @@ ${SHARED_EXPECTATIONS}
       courseTitle: "Italian",
       language: "pt",
       lessonTitle: "Viagens e Transporte",
-      words: [
-        "il treno",
-        "l'aereo",
-        "la macchina",
-        "il biglietto",
-        "la stazione",
-      ],
+      words: ["il treno", "l'aereo", "la macchina", "il biglietto", "la stazione"],
     },
   },
   {
@@ -353,13 +341,7 @@ ${SHARED_EXPECTATIONS}
       courseTitle: "French",
       language: "es",
       lessonTitle: "El Clima",
-      words: [
-        "le soleil",
-        "la pluie",
-        "le vent",
-        "il fait chaud",
-        "il fait froid",
-      ],
+      words: ["le soleil", "la pluie", "le vent", "il fait chaud", "il fait froid"],
     },
   },
   {

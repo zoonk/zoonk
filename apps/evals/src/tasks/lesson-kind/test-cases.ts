@@ -51,8 +51,7 @@ export const TEST_CASES = [
       chapterTitle: "Getting Started",
       courseTitle: "Spanish for Beginners",
       language: "en",
-      lessonDescription:
-        "Learn how to say hello, goodbye, and common greetings in Spanish",
+      lessonDescription: "Learn how to say hello, goodbye, and common greetings in Spanish",
       lessonTitle: "Basic Greetings in Spanish",
     },
   },
@@ -83,8 +82,7 @@ export const TEST_CASES = [
       chapterTitle: "Getting Started",
       courseTitle: "Git and GitHub",
       language: "en",
-      lessonDescription:
-        "Step-by-step guide to installing and configuring Git on your computer",
+      lessonDescription: "Step-by-step guide to installing and configuring Git on your computer",
       lessonTitle: "How to Set Up Git",
     },
   },
@@ -99,8 +97,7 @@ export const TEST_CASES = [
       chapterTitle: "Project Setup",
       courseTitle: "React Development",
       language: "en",
-      lessonDescription:
-        "Follow along to create a new React application from scratch",
+      lessonDescription: "Follow along to create a new React application from scratch",
       lessonTitle: "Creating Your First React App",
     },
   },
@@ -117,8 +114,7 @@ export const TEST_CASES = [
       chapterTitle: "Foundations",
       courseTitle: "Linguistics 101",
       language: "en",
-      lessonDescription:
-        "Explore the scientific study of language structure and meaning",
+      lessonDescription: "Explore the scientific study of language structure and meaning",
       lessonTitle: "Introduction to Linguistics",
     },
   },
@@ -134,8 +130,7 @@ export const TEST_CASES = [
       chapterTitle: "History of English",
       courseTitle: "English Language History",
       language: "en",
-      lessonDescription:
-        "Discover how English words evolved from Latin, Greek, and Germanic roots",
+      lessonDescription: "Discover how English words evolved from Latin, Greek, and Germanic roots",
       lessonTitle: "Word Origins and Etymology",
     },
   },
@@ -151,8 +146,7 @@ export const TEST_CASES = [
       chapterTitle: "Configuración",
       courseTitle: "Desarrollo Web",
       language: "es",
-      lessonDescription:
-        "Guía paso a paso para instalar Node.js en tu computadora",
+      lessonDescription: "Guía paso a paso para instalar Node.js en tu computadora",
       lessonTitle: "Instalando Node.js",
     },
   },

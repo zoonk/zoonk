@@ -1,3 +1,5 @@
+import { getCourseSuggestionById } from "@/data/courses/course-suggestions";
+import { findExistingCourse } from "@/data/courses/find-existing-course";
 import {
   Container,
   ContainerBody,
@@ -11,8 +13,6 @@ import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import { parseNumericId } from "@zoonk/utils/string";
 import { notFound, redirect } from "next/navigation";
-import { getCourseSuggestionById } from "@/data/courses/course-suggestions";
-import { findExistingCourse } from "@/data/courses/find-existing-course";
 import { GenerationClient } from "./generation-client";
 
 type GenerateCourseSuggestionContentProps = {

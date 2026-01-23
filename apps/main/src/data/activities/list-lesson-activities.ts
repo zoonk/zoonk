@@ -1,8 +1,7 @@
 import "server-only";
-
-import type { ActivityKind } from "@zoonk/db";
 import { prisma } from "@zoonk/db";
 import { cache } from "react";
+import type { ActivityKind } from "@zoonk/db";
 
 export type ActivityForList = {
   id: bigint;
@@ -27,8 +26,6 @@ const cachedListLessonActivities = cache(
     }),
 );
 
-export function listLessonActivities(params: {
-  lessonId: number;
-}): Promise<ActivityForList[]> {
+export function listLessonActivities(params: { lessonId: number }): Promise<ActivityForList[]> {
   return cachedListLessonActivities(params.lessonId);
 }

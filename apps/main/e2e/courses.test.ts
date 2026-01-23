@@ -21,9 +21,7 @@ test.describe("Courses Page - Basic", () => {
   test("clicking course card navigates to course detail", async ({ page }) => {
     await page.goto("/courses");
 
-    await expect(
-      page.getByRole("heading", { name: /explore courses/i }),
-    ).toBeVisible();
+    await expect(page.getByRole("heading", { name: /explore courses/i })).toBeVisible();
 
     // Get the first course link (order is non-deterministic, so we don't target a specific course)
     const courseLink = page.getByRole("list").getByRole("link").first();
@@ -49,9 +47,7 @@ test.describe("Courses Page - Locale", () => {
     await page.goto("/pt/courses");
 
     // Page title should be translated
-    await expect(
-      page.getByRole("heading", { name: /explorar cursos/i }),
-    ).toBeVisible();
+    await expect(page.getByRole("heading", { name: /explorar cursos/i })).toBeVisible();
 
     await expect(page.getByText("Machine Learning").first()).toBeVisible();
   });

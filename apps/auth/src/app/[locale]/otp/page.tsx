@@ -1,12 +1,10 @@
-import { buttonVariants } from "@zoonk/ui/components/button";
-import { getExtracted } from "next-intl/server";
 import { OTP, OTPDescription, OTPHeader, OTPTitle } from "@/components/otp";
 import { Link } from "@/i18n/navigation";
+import { buttonVariants } from "@zoonk/ui/components/button";
+import { getExtracted } from "next-intl/server";
 import { OTPForm } from "./otp-form";
 
-export default async function OTPPage({
-  searchParams,
-}: PageProps<"/[locale]/otp">) {
+export default async function OTPPage({ searchParams }: PageProps<"/[locale]/otp">) {
   const { email, redirectTo } = await searchParams;
   const t = await getExtracted();
 

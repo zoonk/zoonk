@@ -1,5 +1,4 @@
 import "server-only";
-
 import { prisma } from "@zoonk/db";
 
 export async function getChapterForGeneration(chapterId: number) {

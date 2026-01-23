@@ -1,12 +1,10 @@
 import "server-only";
-
 import { generateText, Output } from "ai";
 import { z } from "zod";
 import { buildProviderOptions, type ReasoningEffort } from "../../../types";
 import systemPrompt from "./activity-grammar.prompt.md";
 
-const DEFAULT_MODEL =
-  process.env.AI_MODEL_ACTIVITY_GRAMMAR ?? "google/gemini-3-flash";
+const DEFAULT_MODEL = process.env.AI_MODEL_ACTIVITY_GRAMMAR ?? "google/gemini-3-flash";
 
 const FALLBACK_MODELS = [
   "openai/gpt-5.2",

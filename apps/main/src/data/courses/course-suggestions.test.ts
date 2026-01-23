@@ -56,9 +56,7 @@ test("generates a new item", async () => {
   const language = "en";
   const prompt = `vitest-${randomUUID()}`;
 
-  const generatedSuggestions = [
-    { description: "A course on Vitest basics.", title: "Vitest" },
-  ];
+  const generatedSuggestions = [{ description: "A course on Vitest basics.", title: "Vitest" }];
 
   // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- mock return type
   spy.mockResolvedValueOnce({ data: generatedSuggestions } as never);

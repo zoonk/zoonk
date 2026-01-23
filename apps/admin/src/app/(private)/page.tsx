@@ -6,9 +6,9 @@ import {
   ContainerHeaderGroup,
   ContainerTitle,
 } from "@zoonk/ui/components/container";
-import type { Metadata } from "next";
 import { Suspense } from "react";
 import { AppStats, AppStatsFallback } from "./app-stats";
+import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Zoonk Admin",
@@ -20,9 +20,7 @@ export default function Home() {
       <ContainerHeader variant="sidebar">
         <ContainerHeaderGroup>
           <ContainerTitle>Admin Dashboard</ContainerTitle>
-          <ContainerDescription>
-            Manage users and system settings
-          </ContainerDescription>
+          <ContainerDescription>Manage users and system settings</ContainerDescription>
         </ContainerHeaderGroup>
       </ContainerHeader>
 

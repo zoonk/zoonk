@@ -1,20 +1,13 @@
-import { notFound } from "next/navigation";
-import { getExtracted } from "next-intl/server";
 import { ContentEditor } from "@/components/content-editor";
 import { getLesson } from "@/data/lessons/get-lesson";
-import {
-  updateLessonDescriptionAction,
-  updateLessonTitleAction,
-} from "./actions";
+import { getExtracted } from "next-intl/server";
+import { notFound } from "next/navigation";
+import { updateLessonDescriptionAction, updateLessonTitleAction } from "./actions";
 
 type LessonPageProps =
   PageProps<"/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]">;
 
-export async function LessonContent({
-  params,
-}: {
-  params: LessonPageProps["params"];
-}) {
+export async function LessonContent({ params }: { params: LessonPageProps["params"] }) {
   const { chapterSlug, courseSlug, lang, lessonSlug, orgSlug } = await params;
   const t = await getExtracted();
 

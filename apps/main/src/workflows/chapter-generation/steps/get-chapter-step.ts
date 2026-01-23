@@ -1,14 +1,10 @@
-import { FatalError } from "workflow";
 import { getChapterForGeneration } from "@/data/chapters/get-chapter-for-generation";
+import { FatalError } from "workflow";
 import { streamStatus } from "../stream-status";
 
-export type ChapterContext = NonNullable<
-  Awaited<ReturnType<typeof getChapterForGeneration>>
->;
+export type ChapterContext = NonNullable<Awaited<ReturnType<typeof getChapterForGeneration>>>;
 
-export async function getChapterStep(
-  chapterId: number,
-): Promise<ChapterContext> {
+export async function getChapterStep(chapterId: number): Promise<ChapterContext> {
   "use step";
 
   await streamStatus({ status: "started", step: "getChapter" });

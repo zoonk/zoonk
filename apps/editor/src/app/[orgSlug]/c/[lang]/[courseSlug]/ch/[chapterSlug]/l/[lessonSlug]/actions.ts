@@ -1,16 +1,12 @@
 "use server";
 
-import { revalidateMainApp } from "@zoonk/core/cache/revalidate";
-import {
-  cacheTagChapter,
-  cacheTagCourse,
-  cacheTagLesson,
-} from "@zoonk/utils/cache";
-import { revalidatePath } from "next/cache";
-import { after } from "next/server";
 import { lessonSlugExists } from "@/data/lessons/lesson-slug";
 import { updateLesson } from "@/data/lessons/update-lesson";
 import { getErrorMessage } from "@/lib/error-messages";
+import { revalidateMainApp } from "@zoonk/core/cache/revalidate";
+import { cacheTagChapter, cacheTagCourse, cacheTagLesson } from "@zoonk/utils/cache";
+import { revalidatePath } from "next/cache";
+import { after } from "next/server";
 
 export async function checkLessonSlugExists(params: {
   chapterId?: number;

@@ -1,7 +1,7 @@
-import { getSession } from "@zoonk/core/users/session/get";
-import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { validatePeriod } from "@/data/progress/_utils";
 import { getScoreHistory } from "@/data/progress/get-score-history";
+import { getSession } from "@zoonk/core/users/session/get";
+import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { PerformanceChartSkeleton } from "../_components/performance-chart-skeleton";
 import { PerformanceEmptyState } from "../_components/performance-empty-state";
 import { ScoreChart } from "./score-chart";

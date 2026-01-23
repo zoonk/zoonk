@@ -1,15 +1,6 @@
 "use server";
 
-import { addAlternativeTitles } from "@zoonk/core/alternative-titles/add";
-import { revalidateMainApp } from "@zoonk/core/cache/revalidate";
-import { processAndUploadImage } from "@zoonk/core/images/process-and-upload";
-import { cacheTagCourse } from "@zoonk/utils/cache";
-import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
-import { after } from "next/server";
-import { getExtracted } from "next-intl/server";
 import { deleteAlternativeTitles } from "@/data/alternative-titles/delete-alternative-titles";
-import { isImportMode } from "@/lib/import-mode";
 import { exportAlternativeTitles } from "@/data/alternative-titles/export-alternative-titles";
 import { importAlternativeTitles } from "@/data/alternative-titles/import-alternative-titles";
 import { addCategoryToCourse } from "@/data/categories/add-category-to-course";
@@ -21,6 +12,15 @@ import { reorderChapters } from "@/data/chapters/reorder-chapters";
 import { courseSlugExists } from "@/data/courses/course-slug";
 import { updateCourse } from "@/data/courses/update-course";
 import { getErrorMessage } from "@/lib/error-messages";
+import { isImportMode } from "@/lib/import-mode";
+import { addAlternativeTitles } from "@zoonk/core/alternative-titles/add";
+import { revalidateMainApp } from "@zoonk/core/cache/revalidate";
+import { processAndUploadImage } from "@zoonk/core/images/process-and-upload";
+import { cacheTagCourse } from "@zoonk/utils/cache";
+import { getExtracted } from "next-intl/server";
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+import { after } from "next/server";
 
 export async function checkCourseSlugExists(params: {
   language: string;
@@ -181,11 +181,7 @@ export async function insertChapterAction(
   position: number,
 ): Promise<void> {
   const { courseId, courseSlug, lang, orgSlug } = params;
-  const { slug, error } = await createChapterAction(
-    courseSlug,
-    courseId,
-    position,
-  );
+  const { slug, error } = await createChapterAction(courseSlug, courseId, position);
 
   if (error) {
     throw new Error(error);
@@ -254,9 +250,7 @@ export async function uploadCourseImageAction(
 
   if (uploadError) {
     const errorMessages: Record<typeof uploadError, string> = {
-      invalidType: t(
-        "Invalid file type. Please upload a JPEG, PNG, WebP, or GIF image.",
-      ),
+      invalidType: t("Invalid file type. Please upload a JPEG, PNG, WebP, or GIF image."),
       optimizeFailed: t("Failed to process image. Please try again."),
       tooLarge: t("File is too large. Maximum size is 5MB."),
       uploadFailed: t("Failed to upload image. Please try again."),

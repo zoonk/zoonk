@@ -10,11 +10,7 @@ type ExtractedMessage = {
   [key: string]: unknown;
 };
 
-function setNestedProperty(
-  obj: Record<string, unknown>,
-  keyPath: string,
-  value: unknown,
-): void {
+function setNestedProperty(obj: Record<string, unknown>, keyPath: string, value: unknown): void {
   const keys = keyPath.split(".");
   let current = obj;
 
@@ -24,11 +20,7 @@ function setNestedProperty(
       continue;
     }
 
-    if (
-      !(key in current) ||
-      typeof current[key] !== "object" ||
-      current[key] === null
-    ) {
+    if (!(key in current) || typeof current[key] !== "object" || current[key] === null) {
       current[key] = {};
     }
     // After the check above, current[key] is guaranteed to be an object
@@ -59,9 +51,7 @@ function localeCompare(a: string, b: string) {
   return a.localeCompare(b, "en");
 }
 
-function getUniqueReferences(
-  references: Entry["references"],
-): Array<{ path: string }> | undefined {
+function getUniqueReferences(references: Entry["references"]): Array<{ path: string }> | undefined {
   if (!references || references.length === 0) {
     return;
   }

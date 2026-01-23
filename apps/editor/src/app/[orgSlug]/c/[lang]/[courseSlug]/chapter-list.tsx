@@ -1,6 +1,3 @@
-import { ErrorView } from "@zoonk/ui/patterns/error";
-import { SUPPORT_URL } from "@zoonk/utils/constants";
-import { getExtracted } from "next-intl/server";
 import {
   EditorDragHandle,
   EditorListAddButton,
@@ -17,6 +14,9 @@ import {
 import { EntityListActions } from "@/components/entity-list-actions";
 import { listCourseChapters } from "@/data/chapters/list-course-chapters";
 import { getCourse } from "@/data/courses/get-course";
+import { ErrorView } from "@zoonk/ui/patterns/error";
+import { SUPPORT_URL } from "@zoonk/utils/constants";
+import { getExtracted } from "next-intl/server";
 import {
   exportChaptersAction,
   handleImportChaptersAction,
@@ -62,9 +62,7 @@ export async function ChapterList({
       <EditorListSpinner />
 
       <EditorListHeader>
-        <EditorListAddButton position={endPosition}>
-          {t("Add chapter")}
-        </EditorListAddButton>
+        <EditorListAddButton position={endPosition}>{t("Add chapter")}</EditorListAddButton>
 
         <EntityListActions
           entityType="chapters"

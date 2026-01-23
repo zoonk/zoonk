@@ -2,9 +2,7 @@ import { getCourseChapters } from "@/data/chapters/get-course-chapters";
 import { streamStatus } from "../stream-status";
 import type { CreatedChapter } from "../types";
 
-export async function getCourseChaptersStep(
-  courseId: number,
-): Promise<CreatedChapter[]> {
+export async function getCourseChaptersStep(courseId: number): Promise<CreatedChapter[]> {
   "use step";
 
   await streamStatus({ status: "started", step: "getExistingChapters" });

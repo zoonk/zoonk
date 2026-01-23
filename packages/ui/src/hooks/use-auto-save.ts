@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import type { SaveStatusType } from "../components/save-status";
 import { toast } from "../components/sonner";
 import { useDebounce } from "./use-debounce";
+import type { SaveStatusType } from "../components/save-status";
 
 const AUTO_SAVE_DEBOUNCE_MS = 500;
 const SAVED_VISIBLE_DURATION_MS = 2500;
@@ -86,8 +86,7 @@ export function useAutoSave({
           return;
         }
 
-        const message =
-          error instanceof Error ? error.message : "Failed to save";
+        const message = error instanceof Error ? error.message : "Failed to save";
         toast.error(message);
         setStatus("unsaved");
       });

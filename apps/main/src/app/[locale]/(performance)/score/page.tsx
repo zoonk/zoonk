@@ -6,10 +6,10 @@ import {
   ContainerHeaderGroup,
   ContainerTitle,
 } from "@zoonk/ui/components/container";
-import type { Metadata } from "next";
 import { getExtracted, setRequestLocale } from "next-intl/server";
 import { Suspense } from "react";
 import { ScoreContent, ScoreContentSkeleton } from "./score-content";
+import type { Metadata } from "next";
 
 export async function generateMetadata({
   params,
@@ -18,17 +18,12 @@ export async function generateMetadata({
   const t = await getExtracted({ locale });
 
   return {
-    description: t(
-      "Track your score over time and see your best days and times.",
-    ),
+    description: t("Track your score over time and see your best days and times."),
     title: t("Score"),
   };
 }
 
-export default async function ScorePage({
-  params,
-  searchParams,
-}: PageProps<"/[locale]/score">) {
+export default async function ScorePage({ params, searchParams }: PageProps<"/[locale]/score">) {
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getExtracted();

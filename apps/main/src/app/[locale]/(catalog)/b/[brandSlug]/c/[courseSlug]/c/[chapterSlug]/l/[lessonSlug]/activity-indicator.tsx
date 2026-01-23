@@ -8,7 +8,7 @@ export async function ActivityIndicator({ completed }: { completed: boolean }) {
     return (
       <div
         aria-label={t("Completed")}
-        className="flex size-3.5 shrink-0 items-center justify-center rounded-full bg-success/60 text-background"
+        className="bg-success/60 text-background flex size-3.5 shrink-0 items-center justify-center rounded-full"
         role="img"
       >
         <CheckIcon aria-hidden="true" className="size-3" />
@@ -19,7 +19,7 @@ export async function ActivityIndicator({ completed }: { completed: boolean }) {
   return (
     <div
       aria-label={t("Not completed")}
-      className="size-3.5 shrink-0 rounded-full border-2 border-muted-foreground/30"
+      className="border-muted-foreground/30 size-3.5 shrink-0 rounded-full border-2"
       role="img"
     />
   );

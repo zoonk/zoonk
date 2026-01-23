@@ -1,18 +1,14 @@
 "use server";
 
-import { revalidateMainApp } from "@zoonk/core/cache/revalidate";
-import {
-  cacheTagChapter,
-  cacheTagCourse,
-  cacheTagLesson,
-} from "@zoonk/utils/cache";
-import type { Route } from "next";
-import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
-import { after } from "next/server";
 import { deleteLesson } from "@/data/lessons/delete-lesson";
 import { toggleLessonPublished } from "@/data/lessons/publish-lesson";
 import { getErrorMessage } from "@/lib/error-messages";
+import { revalidateMainApp } from "@zoonk/core/cache/revalidate";
+import { cacheTagChapter, cacheTagCourse, cacheTagLesson } from "@zoonk/utils/cache";
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+import { after } from "next/server";
+import type { Route } from "next";
 
 export async function togglePublishAction(
   slugs: { lessonSlug: string; chapterSlug: string; courseSlug: string },

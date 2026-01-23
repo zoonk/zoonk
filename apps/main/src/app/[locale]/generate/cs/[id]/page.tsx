@@ -4,9 +4,7 @@ import {
   GenerateCourseSuggestionFallback,
 } from "./generate-course-suggestion-content";
 
-export default function GenerateCoursePage(
-  props: PageProps<"/[locale]/generate/cs/[id]">,
-) {
+export default function GenerateCoursePage(props: PageProps<"/[locale]/generate/cs/[id]">) {
   return (
     <Suspense fallback={<GenerateCourseSuggestionFallback />}>
       <GenerateCourseSuggestionContent params={props.params} />

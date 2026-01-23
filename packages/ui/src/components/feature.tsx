@@ -4,17 +4,10 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { cva, type VariantProps } from "class-variance-authority";
 import { ChevronRightIcon } from "lucide-react";
 
-function FeatureCardSectionTitle({
-  children,
-  className,
-  ...props
-}: React.ComponentProps<"h2">) {
+function FeatureCardSectionTitle({ children, className, ...props }: React.ComponentProps<"h2">) {
   return (
     <h2
-      className={cn(
-        "font-medium text-muted-foreground text-xs uppercase tracking-wide",
-        className,
-      )}
+      className={cn("text-muted-foreground text-xs font-medium tracking-wide uppercase", className)}
       data-slot="feature-card-section-title"
       {...props}
     >
@@ -23,17 +16,9 @@ function FeatureCardSectionTitle({
   );
 }
 
-function FeatureCard({
-  children,
-  className,
-  ...props
-}: React.ComponentProps<"article">) {
+function FeatureCard({ children, className, ...props }: React.ComponentProps<"article">) {
   return (
-    <article
-      className={cn("flex flex-col gap-2", className)}
-      data-slot="feature-card"
-      {...props}
-    >
+    <article className={cn("flex flex-col gap-2", className)} data-slot="feature-card" {...props}>
       {children}
     </article>
   );
@@ -41,17 +26,13 @@ function FeatureCard({
 
 type FeatureCardLinkProps = useRender.ComponentProps<"a">;
 
-function FeatureCardLink({
-  className,
-  render,
-  ...props
-}: FeatureCardLinkProps) {
+function FeatureCardLink({ className, render, ...props }: FeatureCardLinkProps) {
   return useRender({
     defaultTagName: "a",
     props: mergeProps<"a">(
       {
         className: cn(
-          "-m-2 block rounded-lg p-2 transition-colors hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+          "hover:bg-muted/50 focus-visible:ring-ring -m-2 block rounded-lg p-2 transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none",
           className,
         ),
       },
@@ -64,17 +45,10 @@ function FeatureCardLink({
   });
 }
 
-function FeatureCardHeader({
-  children,
-  className,
-  ...props
-}: React.ComponentProps<"div">) {
+function FeatureCardHeader({ children, className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
-      className={cn(
-        "flex items-center justify-between text-muted-foreground",
-        className,
-      )}
+      className={cn("text-muted-foreground flex items-center justify-between", className)}
       data-slot="feature-card-header"
       {...props}
     >
@@ -83,11 +57,7 @@ function FeatureCardHeader({
   );
 }
 
-function FeatureCardHeaderContent({
-  children,
-  className,
-  ...props
-}: React.ComponentProps<"div">) {
+function FeatureCardHeaderContent({ children, className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       className={cn("flex items-center gap-1.5", className)}
@@ -99,11 +69,7 @@ function FeatureCardHeaderContent({
   );
 }
 
-function FeatureCardIcon({
-  children,
-  className,
-  ...props
-}: React.ComponentProps<"span">) {
+function FeatureCardIcon({ children, className, ...props }: React.ComponentProps<"span">) {
   return (
     <span
       aria-hidden="true"
@@ -116,17 +82,10 @@ function FeatureCardIcon({
   );
 }
 
-function FeatureCardLabel({
-  children,
-  className,
-  ...props
-}: React.ComponentProps<"h3">) {
+function FeatureCardLabel({ children, className, ...props }: React.ComponentProps<"h3">) {
   return (
     <h3
-      className={cn(
-        "truncate font-medium text-sm transition-colors",
-        className,
-      )}
+      className={cn("truncate text-sm font-medium transition-colors", className)}
       data-slot="feature-card-label"
       {...props}
     >
@@ -145,17 +104,9 @@ function FeatureCardIndicator({ className }: { className?: string }) {
   );
 }
 
-function FeatureCardContent({
-  children,
-  className,
-  ...props
-}: React.ComponentProps<"div">) {
+function FeatureCardContent({ children, className, ...props }: React.ComponentProps<"div">) {
   return (
-    <div
-      className={cn("flex gap-3", className)}
-      data-slot="feature-card-content"
-      {...props}
-    >
+    <div className={cn("flex gap-3", className)} data-slot="feature-card-content" {...props}>
       {children}
     </div>
   );
@@ -201,11 +152,7 @@ function FeatureCardThumbnail({
   );
 }
 
-function FeatureCardThumbnailImage({
-  children,
-  className,
-  ...props
-}: React.ComponentProps<"div">) {
+function FeatureCardThumbnailImage({ children, className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       className={cn(
@@ -228,7 +175,7 @@ function FeatureCardThumbnailPlaceholder({
   return (
     <div
       className={cn(
-        "flex size-full items-center justify-center bg-muted transition-transform duration-300 ease-out [&>svg]:size-6 [&>svg]:text-muted-foreground/60",
+        "bg-muted [&>svg]:text-muted-foreground/60 flex size-full items-center justify-center transition-transform duration-300 ease-out [&>svg]:size-6",
         className,
       )}
       data-slot="feature-card-thumbnail-placeholder"
@@ -239,11 +186,7 @@ function FeatureCardThumbnailPlaceholder({
   );
 }
 
-function FeatureCardBody({
-  children,
-  className,
-  ...props
-}: React.ComponentProps<"div">) {
+function FeatureCardBody({ children, className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       className={cn("flex min-w-0 flex-1 flex-col gap-0.5", className)}
@@ -255,15 +198,11 @@ function FeatureCardBody({
   );
 }
 
-function FeatureCardTitle({
-  children,
-  className,
-  ...props
-}: React.ComponentProps<"div">) {
+function FeatureCardTitle({ children, className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       className={cn(
-        "truncate font-semibold text-base text-foreground/90 leading-none [&>a]:underline-offset-1 [&>a]:transition-colors [&>a]:hover:text-foreground [&>a]:hover:underline",
+        "text-foreground/90 [&>a]:hover:text-foreground truncate text-base leading-none font-semibold [&>a]:underline-offset-1 [&>a]:transition-colors [&>a]:hover:underline",
         className,
       )}
       data-slot="feature-card-title"
@@ -274,15 +213,11 @@ function FeatureCardTitle({
   );
 }
 
-function FeatureCardSubtitle({
-  children,
-  className,
-  ...props
-}: React.ComponentProps<"div">) {
+function FeatureCardSubtitle({ children, className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       className={cn(
-        "mb-0.5 truncate text-muted-foreground text-sm tracking-tight [&>a]:underline-offset-2 [&>a]:transition-colors [&>a]:hover:text-muted-foreground/80 [&>a]:hover:underline",
+        "text-muted-foreground [&>a]:hover:text-muted-foreground/80 mb-0.5 truncate text-sm tracking-tight [&>a]:underline-offset-2 [&>a]:transition-colors [&>a]:hover:underline",
         className,
       )}
       data-slot="feature-card-subtitle"
@@ -293,14 +228,10 @@ function FeatureCardSubtitle({
   );
 }
 
-function FeatureCardDescription({
-  children,
-  className,
-  ...props
-}: React.ComponentProps<"p">) {
+function FeatureCardDescription({ children, className, ...props }: React.ComponentProps<"p">) {
   return (
     <p
-      className={cn("line-clamp-3 text-muted-foreground/80 text-xs", className)}
+      className={cn("text-muted-foreground/80 line-clamp-3 text-xs", className)}
       data-slot="feature-card-description"
       {...props}
     >

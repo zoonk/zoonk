@@ -1,5 +1,5 @@
 import "server-only";
-
+import { ErrorCode } from "@/lib/app-error";
 import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
 import { type Course, prisma } from "@zoonk/db";
 import { clampQueryItems } from "@zoonk/db/utils";
@@ -8,7 +8,6 @@ import { AppError, safeAsync } from "@zoonk/utils/error";
 import { mergeSearchResults } from "@zoonk/utils/search";
 import { normalizeString } from "@zoonk/utils/string";
 import { cache } from "react";
-import { ErrorCode } from "@/lib/app-error";
 
 const cachedSearchCourses = cache(
   async (
@@ -77,11 +76,5 @@ export function searchCourses(params: {
   limit?: number;
 }): Promise<{ data: Course[]; error: Error | null }> {
   const limit = clampQueryItems(params.limit ?? DEFAULT_SEARCH_LIMIT);
-  return cachedSearchCourses(
-    params.title,
-    params.orgSlug,
-    limit,
-    params.language,
-    params.headers,
-  );
+  return cachedSearchCourses(params.title, params.orgSlug, limit, params.language, params.headers);
 }

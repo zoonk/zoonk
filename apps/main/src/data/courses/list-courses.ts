@@ -1,9 +1,8 @@
 import "server-only";
-
 import { type Course, prisma } from "@zoonk/db";
 import { clampQueryItems } from "@zoonk/db/utils";
-import type { CourseCategory } from "@zoonk/utils/categories";
 import { cache } from "react";
+import type { CourseCategory } from "@zoonk/utils/categories";
 
 export const LIST_COURSES_LIMIT = 20;
 
@@ -51,10 +50,5 @@ export function listCourses(params: {
   limit?: number;
 }): Promise<CourseWithOrg[]> {
   const limit = clampQueryItems(params.limit ?? LIST_COURSES_LIMIT);
-  return cachedListCourses(
-    params.language,
-    limit,
-    params.category,
-    params.cursor,
-  );
+  return cachedListCourses(params.language, limit, params.category, params.cursor);
 }

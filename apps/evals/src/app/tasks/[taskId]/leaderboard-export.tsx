@@ -54,9 +54,7 @@ export function LeaderboardExport({ taskId, entries }: LeaderboardExportProps) {
         Export
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => exportAsMarkdown(false)}>
-          Export All Data
-        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => exportAsMarkdown(false)}>Export All Data</DropdownMenuItem>
         <DropdownMenuItem onClick={() => exportAsMarkdown(true)}>
           Export Anonymous Data
         </DropdownMenuItem>

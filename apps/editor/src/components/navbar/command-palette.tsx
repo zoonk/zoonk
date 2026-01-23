@@ -1,5 +1,6 @@
 "use client";
 
+import { type ResultWithImage, type SearchResults, searchContent } from "@/data/search-content";
 import { Button } from "@zoonk/ui/components/button";
 import {
   CommandDialog,
@@ -20,15 +21,10 @@ import {
   PlusIcon,
   SearchIcon,
 } from "lucide-react";
+import { useExtracted } from "next-intl";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
-import { useExtracted } from "next-intl";
 import { useCallback, useMemo } from "react";
-import {
-  type ResultWithImage,
-  type SearchResults,
-  searchContent,
-} from "@/data/search-content";
 
 type StaticMenuItem = {
   icon: LucideIcon;
@@ -104,12 +100,7 @@ export function CommandPalette() {
 
   return (
     <>
-      <Button
-        aria-keyshortcuts="Meta+K Control+K"
-        onClick={open}
-        size="icon"
-        variant="outline"
-      >
+      <Button aria-keyshortcuts="Meta+K Control+K" onClick={open} size="icon" variant="outline">
         <SearchIcon aria-hidden="true" />
         <span className="sr-only">{t("Search")}</span>
       </Button>
@@ -151,11 +142,7 @@ export function CommandPalette() {
           {hasCourses && (
             <CommandGroup heading={t("Courses")}>
               {results.courses.map((course) => (
-                <CourseItem
-                  course={course}
-                  key={course.id}
-                  onSelect={handleSelect}
-                />
+                <CourseItem course={course} key={course.id} onSelect={handleSelect} />
               ))}
             </CommandGroup>
           )}
@@ -219,16 +206,14 @@ function CourseItem({
           width={32}
         />
       ) : (
-        <div className="flex size-8 shrink-0 items-center justify-center rounded-md bg-muted">
+        <div className="bg-muted flex size-8 shrink-0 items-center justify-center rounded-md">
           <BookOpenIcon aria-hidden="true" className="size-4" />
         </div>
       )}
       <div className="min-w-0 flex-1">
         <p className="truncate font-medium">{course.title}</p>
         {course.description && (
-          <p className="truncate text-muted-foreground text-xs">
-            {course.description}
-          </p>
+          <p className="text-muted-foreground truncate text-xs">{course.description}</p>
         )}
       </div>
     </CommandItem>
@@ -255,12 +240,8 @@ function PositionedItem({
   title: string;
 }) {
   return (
-    <CommandItem
-      className="flex items-start gap-3"
-      onSelect={onSelect}
-      value={`${title}-${id}`}
-    >
-      <div className="flex size-8 shrink-0 items-center justify-center rounded-md bg-muted font-medium text-sm">
+    <CommandItem className="flex items-start gap-3" onSelect={onSelect} value={`${title}-${id}`}>
+      <div className="bg-muted flex size-8 shrink-0 items-center justify-center rounded-md text-sm font-medium">
         {position}
       </div>
 
@@ -270,11 +251,7 @@ function PositionedItem({
           <p className="truncate font-medium">{title}</p>
         </div>
 
-        {description && (
-          <p className="truncate text-muted-foreground text-xs">
-            {description}
-          </p>
-        )}
+        {description && <p className="text-muted-foreground truncate text-xs">{description}</p>}
       </div>
     </CommandItem>
   );

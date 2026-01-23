@@ -1,7 +1,7 @@
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { ChevronLeft } from "lucide-react";
-import type { Route } from "next";
 import Link from "next/link";
+import type { Route } from "next";
 
 export function BackLink<T extends string>({
   href,
@@ -12,7 +12,7 @@ export function BackLink<T extends string>({
 }) {
   return (
     <Link
-      className="-mt-4 inline-flex items-center gap-1 px-4 text-muted-foreground text-sm transition-colors hover:text-foreground"
+      className="text-muted-foreground hover:text-foreground -mt-4 inline-flex items-center gap-1 px-4 text-sm transition-colors"
       href={href}
     >
       <ChevronLeft aria-hidden="true" className="size-4" />

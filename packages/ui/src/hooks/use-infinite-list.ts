@@ -33,9 +33,7 @@ export function useInfiniteList<T, C>({
 
   // Use ref to track the latest cursor to avoid stale closures
   const lastItem = initialItems.at(-1);
-  const cursorRef = useRef<C | undefined>(
-    lastItem ? getCursor(lastItem) : undefined,
-  );
+  const cursorRef = useRef<C | undefined>(lastItem ? getCursor(lastItem) : undefined);
 
   const loadMore = useCallback(async () => {
     if (cursorRef.current === undefined) {
@@ -60,9 +58,7 @@ export function useInfiniteList<T, C>({
       setItems((prev) => {
         // Dedupe by key to prevent duplicates from race conditions
         const existingKeys = new Set(prev.map(getKey));
-        const uniqueNewItems = newItems.filter(
-          (item) => !existingKeys.has(getKey(item)),
-        );
+        const uniqueNewItems = newItems.filter((item) => !existingKeys.has(getKey(item)));
 
         return [...prev, ...uniqueNewItems];
       });

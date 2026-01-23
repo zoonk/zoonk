@@ -1,16 +1,13 @@
 "use client";
 
+import { Link, usePathname } from "@/i18n/navigation";
+import { getMenu } from "@/lib/menu";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { useExtracted } from "next-intl";
-import { Link, usePathname } from "@/i18n/navigation";
-import { getMenu } from "@/lib/menu";
 import { CommandPalette } from "./command-palette";
 
-function getVariant(
-  href: string,
-  pathname: string,
-): "outline" | "secondary" | "default" {
+function getVariant(href: string, pathname: string): "outline" | "secondary" | "default" {
   if (href === pathname) {
     return "default";
   }

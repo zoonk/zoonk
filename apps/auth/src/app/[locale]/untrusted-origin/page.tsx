@@ -1,17 +1,8 @@
-import {
-  Alert,
-  AlertDescription,
-  AlertTitle,
-} from "@zoonk/ui/components/alert";
+import { Login, LoginDescription, LoginHeader, LoginTitle } from "@/components/login";
+import { Alert, AlertDescription, AlertTitle } from "@zoonk/ui/components/alert";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { TriangleAlertIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
-import {
-  Login,
-  LoginDescription,
-  LoginHeader,
-  LoginTitle,
-} from "@/components/login";
 
 export default async function UntrustedOriginPage() {
   const t = await getExtracted();
@@ -21,9 +12,7 @@ export default async function UntrustedOriginPage() {
       <LoginHeader>
         <LoginTitle>{t("Unable to redirect")}</LoginTitle>
         <LoginDescription>
-          {t(
-            "The destination URL is not recognized as a trusted Zoonk application.",
-          )}
+          {t("The destination URL is not recognized as a trusted Zoonk application.")}
         </LoginDescription>
       </LoginHeader>
 
@@ -31,9 +20,7 @@ export default async function UntrustedOriginPage() {
         <TriangleAlertIcon />
         <AlertTitle>{t("Security warning")}</AlertTitle>
         <AlertDescription>
-          {t(
-            "For your safety, we cannot redirect you to an unrecognized destination.",
-          )}
+          {t("For your safety, we cannot redirect you to an unrecognized destination.")}
         </AlertDescription>
       </Alert>
 

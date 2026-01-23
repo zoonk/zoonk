@@ -49,8 +49,7 @@ export function reportError(error: unknown): void {
     stack: error instanceof Error ? error.stack : undefined,
     timestamp: new Date().toISOString(),
     url: typeof window !== "undefined" ? window.location.href : undefined,
-    userAgent:
-      typeof navigator !== "undefined" ? navigator.userAgent : undefined,
+    userAgent: typeof navigator !== "undefined" ? navigator.userAgent : undefined,
   };
 
   fetch("/api/errors", {

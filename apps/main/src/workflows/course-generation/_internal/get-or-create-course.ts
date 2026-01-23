@@ -1,12 +1,8 @@
-import type { ExistingCourse } from "@/data/courses/find-existing-course";
 import { getAIOrganizationStep } from "../steps/get-ai-organization-step";
 import { initializeCourseStep } from "../steps/initialize-course-step";
 import { setCourseAsRunningStep } from "../steps/set-course-as-running-step";
-import type {
-  CourseContext,
-  CourseSuggestionData,
-  ExistingCourseContent,
-} from "../types";
+import type { CourseContext, CourseSuggestionData, ExistingCourseContent } from "../types";
+import type { ExistingCourse } from "@/data/courses/find-existing-course";
 
 export type CourseSetupResult = {
   course: CourseContext;

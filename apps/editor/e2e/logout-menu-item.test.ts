@@ -5,9 +5,7 @@ async function openOrgDropdown(page: Page) {
 }
 
 test.describe("Logout Menu Item", () => {
-  test("logs out user and shows login button", async ({
-    authenticatedPage,
-  }) => {
+  test("logs out user and shows login button", async ({ authenticatedPage }) => {
     await authenticatedPage.goto("/ai");
 
     await openOrgDropdown(authenticatedPage);
@@ -15,8 +13,6 @@ test.describe("Logout Menu Item", () => {
 
     // After logout (hard navigation), user should see the login button
     await authenticatedPage.waitForURL("/");
-    await expect(
-      authenticatedPage.getByRole("link", { name: /login/i }),
-    ).toBeVisible();
+    await expect(authenticatedPage.getByRole("link", { name: /login/i })).toBeVisible();
   });
 });

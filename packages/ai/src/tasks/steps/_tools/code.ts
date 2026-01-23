@@ -11,10 +11,6 @@ export const codeInputSchema = z.object({
     .optional()
     .describe("Optional annotations for specific lines"),
   code: z.string().describe("The code snippet (max 500 chars)"),
-  language: z
-    .string()
-    .describe(
-      "Programming language: 'python', 'javascript', 'typescript', etc.",
-    ),
+  language: z.string().describe("Programming language: 'python', 'javascript', 'typescript', etc."),
   stepIndex: z.number().describe("The step index (0-based) this visual is for"),
 });

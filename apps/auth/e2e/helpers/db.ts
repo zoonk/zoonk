@@ -9,10 +9,7 @@ import { prisma } from "@zoonk/db";
  * Note: Better Auth stores the identifier as `sign-in-otp-{email}` and
  * the value as `{otp}:{attemptCount}`.
  */
-export async function getOTPForEmail(
-  email: string,
-  maxRetries = 10,
-): Promise<string | null> {
+export async function getOTPForEmail(email: string, maxRetries = 10): Promise<string | null> {
   const identifier = `sign-in-otp-${email}`;
 
   for (let i = 0; i < maxRetries; i++) {

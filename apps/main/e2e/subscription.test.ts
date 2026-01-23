@@ -5,9 +5,7 @@ import { expect, test } from "./fixtures";
 test.describe("Subscription Page - Unauthenticated", () => {
   test("shows login prompt with link to login page", async ({ page }) => {
     await page.goto("/subscription");
-    await expect(
-      page.getByRole("alert").filter({ hasText: /logged in/i }),
-    ).toBeVisible();
+    await expect(page.getByRole("alert").filter({ hasText: /logged in/i })).toBeVisible();
 
     const loginLink = page.getByRole("link", { name: /login/i });
     await expect(loginLink).toBeVisible();
@@ -27,14 +25,10 @@ test.describe("Subscription Page - No Subscription", () => {
     ).toBeVisible();
 
     // Wait for content to load (skeleton disappears)
-    await expect(
-      authenticatedPage.getByRole("button", { name: /upgrade/i }),
-    ).toBeVisible();
+    await expect(authenticatedPage.getByRole("button", { name: /upgrade/i })).toBeVisible();
   });
 
-  test("upgrade button shows loading state when clicked", async ({
-    authenticatedPage,
-  }) => {
+  test("upgrade button shows loading state when clicked", async ({ authenticatedPage }) => {
     await authenticatedPage.goto("/subscription");
 
     const upgradeButton = authenticatedPage.getByRole("button", {
@@ -70,17 +64,13 @@ test.describe("Subscription Page - With Subscription", () => {
     return subscription;
   }
 
-  test("manage button shows loading state when clicked", async ({
-    userWithoutProgress,
-  }) => {
+  test("manage button shows loading state when clicked", async ({ userWithoutProgress }) => {
     const subscription = await createTestSubscription();
 
     try {
       await userWithoutProgress.goto("/subscription");
 
-      await expect(
-        userWithoutProgress.getByText(/your subscription is active/i),
-      ).toBeVisible();
+      await expect(userWithoutProgress.getByText(/your subscription is active/i)).toBeVisible();
 
       const manageButton = userWithoutProgress.getByRole("button", {
         name: /manage subscription/i,

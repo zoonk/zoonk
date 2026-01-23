@@ -1,14 +1,12 @@
-import { getWorkflowMetadata } from "workflow";
 import { handleChapterFailureStep } from "@/workflows/course-generation/steps/handle-failure-step";
+import { getWorkflowMetadata } from "workflow";
 import { addLessonsStep } from "./steps/add-lessons-step";
 import { generateLessonsStep } from "./steps/generate-lessons-step";
 import { getChapterStep } from "./steps/get-chapter-step";
 import { setChapterAsCompletedStep } from "./steps/set-chapter-as-completed-step";
 import { setChapterAsRunningStep } from "./steps/set-chapter-as-running-step";
 
-export async function chapterGenerationWorkflow(
-  chapterId: number,
-): Promise<void> {
+export async function chapterGenerationWorkflow(chapterId: number): Promise<void> {
   "use workflow";
 
   const { workflowRunId } = getWorkflowMetadata();
@@ -17,10 +15,7 @@ export async function chapterGenerationWorkflow(
   const context = await getChapterStep(chapterId);
 
   // Skip if already running or completed
-  if (
-    context.generationStatus === "running" ||
-    context.generationStatus === "completed"
-  ) {
+  if (context.generationStatus === "running" || context.generationStatus === "completed") {
     return;
   }
 

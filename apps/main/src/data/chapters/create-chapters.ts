@@ -1,9 +1,8 @@
 import "server-only";
-
-import type { Chapter } from "@zoonk/db";
 import { prisma } from "@zoonk/db";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { normalizeString, toSlug } from "@zoonk/utils/string";
+import type { Chapter } from "@zoonk/db";
 
 type ChapterInput = {
   title: string;
@@ -17,14 +16,9 @@ type CreateParams = {
   organizationId: number;
 };
 
-type CreatedChapter = Pick<
-  Chapter,
-  "id" | "slug" | "title" | "description" | "position"
->;
+type CreatedChapter = Pick<Chapter, "id" | "slug" | "title" | "description" | "position">;
 
-export async function createChapters(
-  params: CreateParams,
-): Promise<SafeReturn<CreatedChapter[]>> {
+export async function createChapters(params: CreateParams): Promise<SafeReturn<CreatedChapter[]>> {
   const chaptersData = params.chapters.map((chapter, index) => ({
     courseId: params.courseId,
     description: chapter.description,

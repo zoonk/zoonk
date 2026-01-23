@@ -3,10 +3,10 @@ import {
   type StepVisualImageParams,
 } from "@zoonk/ai/tasks/steps/visual-image";
 import { AI_ORG_SLUG } from "@zoonk/utils/constants";
-import type { SafeReturn } from "@zoonk/utils/error";
 import { toSlug } from "@zoonk/utils/string";
 import { optimizeImage } from "../images/optimize-image";
 import { uploadImage } from "../images/upload-image";
+import type { SafeReturn } from "@zoonk/utils/error";
 
 export type GenerateVisualStepImageParams = StepVisualImageParams & {
   orgSlug?: string;
@@ -17,8 +17,10 @@ export async function generateVisualStepImage({
   prompt,
   ...rest
 }: GenerateVisualStepImageParams): Promise<SafeReturn<string>> {
-  const { data: image, error: imageGenerationError } =
-    await generateStepVisualImage({ prompt, ...rest });
+  const { data: image, error: imageGenerationError } = await generateStepVisualImage({
+    prompt,
+    ...rest,
+  });
 
   if (imageGenerationError) {
     return { data: null, error: imageGenerationError };

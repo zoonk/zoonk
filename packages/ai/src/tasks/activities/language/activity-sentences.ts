@@ -1,12 +1,10 @@
 import "server-only";
-
 import { generateText, Output } from "ai";
 import { z } from "zod";
 import { buildProviderOptions, type ReasoningEffort } from "../../../types";
 import systemPrompt from "./activity-sentences.prompt.md";
 
-const DEFAULT_MODEL =
-  process.env.AI_MODEL_ACTIVITY_SENTENCES ?? "google/gemini-3-flash";
+const DEFAULT_MODEL = process.env.AI_MODEL_ACTIVITY_SENTENCES ?? "google/gemini-3-flash";
 
 const FALLBACK_MODELS = [
   "google/gemini-3-pro-preview",

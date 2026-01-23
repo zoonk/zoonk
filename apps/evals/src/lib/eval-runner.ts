@@ -26,10 +26,7 @@ function getResultsFilePath(taskId: string, modelId: string): string {
   return path.join(RESULTS_DIR, taskId, `${modelPath}.json`);
 }
 
-async function loadExistingScoredResults(
-  taskId: string,
-  modelId: string,
-): Promise<ScoredResult[]> {
+async function loadExistingScoredResults(taskId: string, modelId: string): Promise<ScoredResult[]> {
   const filePath = getResultsFilePath(taskId, modelId);
   try {
     const data = await fs.readFile(filePath, "utf-8");
@@ -40,11 +37,7 @@ async function loadExistingScoredResults(
   }
 }
 
-async function saveScoredResults(
-  taskId: string,
-  modelId: string,
-  results: ScoredResult[],
-) {
+async function saveScoredResults(taskId: string, modelId: string, results: ScoredResult[]) {
   await ensureResultsDir(taskId);
 
   const taskResults: ScoredTaskResults = {
@@ -57,20 +50,14 @@ async function saveScoredResults(
   await fs.writeFile(filePath, JSON.stringify(taskResults, null, 2));
 }
 
-function findTestCaseForOutput(
-  task: Task,
-  testCaseId: string,
-): TestCase | undefined {
+function findTestCaseForOutput(task: Task, testCaseId: string): TestCase | undefined {
   // testCaseId format is "{baseId}-{runNumber}"
   const lastDashIndex = testCaseId.lastIndexOf("-");
   const baseId = testCaseId.substring(0, lastDashIndex);
   return task.testCases.find((tc) => tc.id === baseId);
 }
 
-async function scoreOutput(
-  output: OutputEntry,
-  testCase: TestCase,
-): Promise<ScoredResult> {
+async function scoreOutput(output: OutputEntry, testCase: TestCase): Promise<ScoredResult> {
   console.info(`Scoring output: ${output.testCaseId}`);
 
   const scoreResult = await generateScore({
@@ -93,29 +80,19 @@ async function scoreOutput(
   };
 }
 
-function isAlreadyScored(
-  existingResults: ScoredResult[],
-  testCaseId: string,
-): boolean {
+function isAlreadyScored(existingResults: ScoredResult[], testCaseId: string): boolean {
   return existingResults.some((r) => r.testCase.id === testCaseId);
 }
 
-export async function runEval(
-  task: Task,
-  modelId: string,
-): Promise<TaskEvalResults> {
+export async function runEval(task: Task, modelId: string): Promise<TaskEvalResults> {
   const safeModelId = String(modelId).replace(/[\r\n]/g, "");
 
-  console.info(
-    `\nStarting eval for task: ${task.name}, model: [${safeModelId}]`,
-  );
+  console.info(`\nStarting eval for task: ${task.name}, model: [${safeModelId}]`);
 
   // Load pre-generated outputs
   const modelOutputs = await loadModelOutputs(task.id, modelId);
   if (!modelOutputs || modelOutputs.outputs.length === 0) {
-    throw new Error(
-      `No outputs found for model ${modelId}. Generate outputs first.`,
-    );
+    throw new Error(`No outputs found for model ${modelId}. Generate outputs first.`);
   }
 
   console.info(`Found ${modelOutputs.outputs.length} outputs to score`);
@@ -133,21 +110,14 @@ export async function runEval(
 
   if (outputsToScore.length === 0) {
     console.info("All outputs already scored");
-    return combineOutputsAndResults(
-      task.id,
-      modelId,
-      modelOutputs.outputs,
-      existingResults,
-    );
+    return combineOutputsAndResults(task.id, modelId, modelOutputs.outputs, existingResults);
   }
 
   const results = await Promise.allSettled(
     outputsToScore.map((output) => {
       const testCase = findTestCaseForOutput(task, output.testCaseId);
       if (!testCase) {
-        return Promise.reject(
-          new Error(`Test case not found for output: ${output.testCaseId}`),
-        );
+        return Promise.reject(new Error(`Test case not found for output: ${output.testCaseId}`));
       }
       return scoreOutput(output, testCase);
     }),
@@ -170,12 +140,7 @@ export async function runEval(
   await saveScoredResults(task.id, modelId, allScoredResults);
   console.info(`Saved ${allScoredResults.length} total scored results`);
 
-  return combineOutputsAndResults(
-    task.id,
-    modelId,
-    modelOutputs.outputs,
-    allScoredResults,
-  );
+  return combineOutputsAndResults(task.id, modelId, modelOutputs.outputs, allScoredResults);
 }
 
 function combineOutputsAndResults(
@@ -224,9 +189,7 @@ export const getTaskResults = cache(
     const results: EvalResult[] = [];
 
     for (const scored of scoredResults) {
-      const output = modelOutputs.outputs.find(
-        (o) => o.testCaseId === scored.testCase.id,
-      );
+      const output = modelOutputs.outputs.find((o) => o.testCaseId === scored.testCase.id);
       if (!output) {
         continue;
       }

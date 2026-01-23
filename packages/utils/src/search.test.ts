@@ -1,5 +1,4 @@
 import { describe, expect, test } from "vitest";
-
 import { mergeSearchResults } from "./search";
 
 type TestItem = { id: string; title: string };

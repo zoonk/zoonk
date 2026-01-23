@@ -1,3 +1,14 @@
+import {
+  AppBreadcrumb,
+  HomeLinkBreadcrumb,
+  ModelPageBreadcrumb,
+  TaskLinkBreadcrumb,
+} from "@/components/breadcrumb";
+import { ModelStatusBadge } from "@/components/model-status-badge";
+import { getTaskResults } from "@/lib/eval-runner";
+import { EVAL_MODELS, getModelDisplayName } from "@/lib/models";
+import { getOutputStatus } from "@/lib/output-loader";
+import { TASKS } from "@/tasks";
 import { BreadcrumbSeparator } from "@zoonk/ui/components/breadcrumb";
 import { Button } from "@zoonk/ui/components/button";
 import {
@@ -18,23 +29,10 @@ import { SubmitButton } from "@zoonk/ui/patterns/buttons/submit";
 import { PlayIcon, SparklesIcon } from "lucide-react";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import {
-  AppBreadcrumb,
-  HomeLinkBreadcrumb,
-  ModelPageBreadcrumb,
-  TaskLinkBreadcrumb,
-} from "@/components/breadcrumb";
-import { ModelStatusBadge } from "@/components/model-status-badge";
-import { getTaskResults } from "@/lib/eval-runner";
-import { EVAL_MODELS, getModelDisplayName } from "@/lib/models";
-import { getOutputStatus } from "@/lib/output-loader";
-import { TASKS } from "@/tasks";
 import { generateOutputsAction, runEvalAction } from "./actions";
 import { EvalResults } from "./eval-results";
 
-export default async function TaskModelPage({
-  params,
-}: PageProps<"/tasks/[taskId]/[modelId]">) {
+export default async function TaskModelPage({ params }: PageProps<"/tasks/[taskId]/[modelId]">) {
   const { taskId, modelId: rawModelId } = await params;
   const task = TASKS.find((t) => t.id === taskId);
 
@@ -83,9 +81,7 @@ export default async function TaskModelPage({
               Actions
               <ModelStatusBadge modelId={modelId} taskId={taskId} />
             </CardTitle>
-            <CardDescription>
-              Evaluating with {model?.name || modelId}
-            </CardDescription>
+            <CardDescription>Evaluating with {model?.name || modelId}</CardDescription>
           </CardHeader>
 
           <CardContent className="flex flex-col gap-4">
@@ -93,18 +89,14 @@ export default async function TaskModelPage({
               <form action={generateOutputsAction}>
                 <input name="taskId" type="hidden" value={taskId} />
                 <input name="modelId" type="hidden" value={modelId} />
-                <SubmitButton
-                  disabled={hasCompleteOutputs}
-                  icon={<SparklesIcon />}
-                >
+                <SubmitButton disabled={hasCompleteOutputs} icon={<SparklesIcon />}>
                   Generate Outputs
                 </SubmitButton>
               </form>
 
               {hasOutputs && (
                 <span className="text-muted-foreground text-sm">
-                  {outputStatus.completedTestCases}/
-                  {outputStatus.totalTestCases} outputs generated
+                  {outputStatus.completedTestCases}/{outputStatus.totalTestCases} outputs generated
                 </span>
               )}
             </div>

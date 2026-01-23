@@ -33,10 +33,7 @@ export function LevelChartClient({
   return (
     <figure aria-label={t("Brain Power chart")} className="h-64 w-full">
       <ResponsiveContainer height="100%" width="100%">
-        <AreaChart
-          data={dataPoints}
-          margin={{ bottom: 0, left: 0, right: 0, top: 10 }}
-        >
+        <AreaChart data={dataPoints} margin={{ bottom: 0, left: 0, right: 0, top: 10 }}>
           <defs>
             <linearGradient id="bpGradient" x1="0" x2="0" y1="0" y2="1">
               <stop offset="5%" stopColor="var(--primary)" stopOpacity={0.3} />
@@ -44,11 +41,7 @@ export function LevelChartClient({
             </linearGradient>
           </defs>
 
-          <CartesianGrid
-            stroke="var(--border)"
-            strokeDasharray="3 3"
-            vertical={false}
-          />
+          <CartesianGrid stroke="var(--border)" strokeDasharray="3 3" vertical={false} />
 
           <XAxis
             axisLine={false}
@@ -63,9 +56,7 @@ export function LevelChartClient({
             fontSize={12}
             stroke="var(--muted-foreground)"
             tickFormatter={(value: number) =>
-              new Intl.NumberFormat(locale, { notation: "compact" }).format(
-                value,
-              )
+              new Intl.NumberFormat(locale, { notation: "compact" }).format(value)
             }
             tickLine={false}
             width={48}
@@ -73,21 +64,17 @@ export function LevelChartClient({
 
           <Tooltip
             content={({ active, payload }) => {
-              if (
-                !(active && isValidChartPayload<SerializedDataPoint>(payload))
-              ) {
+              if (!(active && isValidChartPayload<SerializedDataPoint>(payload))) {
                 return null;
               }
 
               const data = payload[0]!.payload;
-              const formattedValue = new Intl.NumberFormat(locale).format(
-                data.bp,
-              );
+              const formattedValue = new Intl.NumberFormat(locale).format(data.bp);
 
               return (
-                <div className="rounded-lg border bg-background px-3 py-2 shadow-sm">
+                <div className="bg-background rounded-lg border px-3 py-2 shadow-sm">
                   <p className="text-muted-foreground text-xs">{data.label}</p>
-                  <p className="font-medium text-sm">
+                  <p className="text-sm font-medium">
                     {t("{value} BP", { value: formattedValue })}
                   </p>
                 </div>

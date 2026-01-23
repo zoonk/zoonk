@@ -27,10 +27,7 @@ describe("authenticated users", () => {
 
   describe("month period", () => {
     test("returns daily data points for current month", async () => {
-      const [user, org] = await Promise.all([
-        userFixture(),
-        organizationFixture(),
-      ]);
+      const [user, org] = await Promise.all([userFixture(), organizationFixture()]);
       const headers = await signInAs(user.email, user.password);
 
       const today = new Date();
@@ -64,10 +61,7 @@ describe("authenticated users", () => {
     });
 
     test("calculates average correctly", async () => {
-      const [user, org] = await Promise.all([
-        userFixture(),
-        organizationFixture(),
-      ]);
+      const [user, org] = await Promise.all([userFixture(), organizationFixture()]);
       const headers = await signInAs(user.email, user.password);
 
       const today = new Date();
@@ -98,10 +92,7 @@ describe("authenticated users", () => {
     });
 
     test("calculates comparison with previous month", async () => {
-      const [user, org] = await Promise.all([
-        userFixture(),
-        organizationFixture(),
-      ]);
+      const [user, org] = await Promise.all([userFixture(), organizationFixture()]);
       const headers = await signInAs(user.email, user.password);
 
       const currentMonth = createSafeDate(0);
@@ -134,10 +125,7 @@ describe("authenticated users", () => {
     });
 
     test("navigates to previous month with offset", async () => {
-      const [user, org] = await Promise.all([
-        userFixture(),
-        organizationFixture(),
-      ]);
+      const [user, org] = await Promise.all([userFixture(), organizationFixture()]);
       const headers = await signInAs(user.email, user.password);
 
       const currentMonth = createSafeDate(0);
@@ -176,10 +164,7 @@ describe("authenticated users", () => {
 
   describe("6months period", () => {
     test("returns weekly aggregated data points", async () => {
-      const [user, org] = await Promise.all([
-        userFixture(),
-        organizationFixture(),
-      ]);
+      const [user, org] = await Promise.all([userFixture(), organizationFixture()]);
       const headers = await signInAs(user.email, user.password);
 
       const today = new Date();
@@ -214,10 +199,7 @@ describe("authenticated users", () => {
 
   describe("year period", () => {
     test("returns monthly aggregated data points", async () => {
-      const [user, org] = await Promise.all([
-        userFixture(),
-        organizationFixture(),
-      ]);
+      const [user, org] = await Promise.all([userFixture(), organizationFixture()]);
       const headers = await signInAs(user.email, user.password);
 
       const currentMonth = createSafeDate(0);
@@ -251,10 +233,7 @@ describe("authenticated users", () => {
 
   describe("navigation flags", () => {
     test("hasPreviousPeriod is true when historical data exists", async () => {
-      const [user, org] = await Promise.all([
-        userFixture(),
-        organizationFixture(),
-      ]);
+      const [user, org] = await Promise.all([userFixture(), organizationFixture()]);
       const headers = await signInAs(user.email, user.password);
 
       const currentMonth = createSafeDate(0);
@@ -286,10 +265,7 @@ describe("authenticated users", () => {
     });
 
     test("hasNextPeriod is false when on current period (offset=0)", async () => {
-      const [user, org] = await Promise.all([
-        userFixture(),
-        organizationFixture(),
-      ]);
+      const [user, org] = await Promise.all([userFixture(), organizationFixture()]);
       const headers = await signInAs(user.email, user.password);
 
       await prisma.dailyProgress.create({
@@ -309,10 +285,7 @@ describe("authenticated users", () => {
     });
 
     test("hasNextPeriod is true when offset > 0", async () => {
-      const [user, org] = await Promise.all([
-        userFixture(),
-        organizationFixture(),
-      ]);
+      const [user, org] = await Promise.all([userFixture(), organizationFixture()]);
       const headers = await signInAs(user.email, user.password);
 
       const lastMonth = createSafeDate(1);
@@ -340,10 +313,7 @@ describe("authenticated users", () => {
 
   describe("daily decay for month period", () => {
     test("fills gaps between data points with -1 decay per day", async () => {
-      const [user, org] = await Promise.all([
-        userFixture(),
-        organizationFixture(),
-      ]);
+      const [user, org] = await Promise.all([userFixture(), organizationFixture()]);
 
       const headers = await signInAs(user.email, user.password);
 
@@ -392,10 +362,7 @@ describe("authenticated users", () => {
     });
 
     test("decay never goes below 0", async () => {
-      const [user, org] = await Promise.all([
-        userFixture(),
-        organizationFixture(),
-      ]);
+      const [user, org] = await Promise.all([userFixture(), organizationFixture()]);
 
       const headers = await signInAs(user.email, user.password);
 
@@ -442,10 +409,7 @@ describe("authenticated users", () => {
     });
 
     test("average includes decayed values", async () => {
-      const [user, org] = await Promise.all([
-        userFixture(),
-        organizationFixture(),
-      ]);
+      const [user, org] = await Promise.all([userFixture(), organizationFixture()]);
 
       const headers = await signInAs(user.email, user.password);
 
@@ -482,10 +446,7 @@ describe("authenticated users", () => {
     });
 
     test("applies decay and aggregates by week for 6months period", async () => {
-      const [user, org] = await Promise.all([
-        userFixture(),
-        organizationFixture(),
-      ]);
+      const [user, org] = await Promise.all([userFixture(), organizationFixture()]);
       const headers = await signInAs(user.email, user.password);
 
       // Create data with a 2-day gap, ensuring all dates are in the same week
@@ -534,10 +495,7 @@ describe("authenticated users", () => {
     });
 
     test("applies decay and aggregates by month for year period", async () => {
-      const [user, org] = await Promise.all([
-        userFixture(),
-        organizationFixture(),
-      ]);
+      const [user, org] = await Promise.all([userFixture(), organizationFixture()]);
 
       const headers = await signInAs(user.email, user.password);
 
