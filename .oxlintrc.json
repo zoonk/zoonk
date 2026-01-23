@@ -9,9 +9,17 @@
   "categories": {
     "correctness": "error",
     "perf": "error",
+    "style": "error",
     "suspicious": "error"
   },
   "rules": {
+    "eslint/no-magic-numbers": [
+      "error",
+      {
+        "ignoreArrayIndexes": true,
+        "ignore": [-1, 0, 1, 2, 7, 24, 30, 100, 365, 1000]
+      }
+    ],
     "import/no-named-as-default": "off",
     "import/no-unassigned-import": [
       "error",
@@ -21,13 +29,7 @@
     "oxc/no-map-spread": "off",
     "react/react-in-jsx-scope": "off",
     "typescript/consistent-type-definitions": ["error", "type"],
-    "typescript/no-unsafe-type-assertion": "error",
-
-    // style rules
-    "typescript/array-type": "error",
-    "eslint/arrow-body-style": "error",
-    "eslint/capitalized-comments": "error",
-    "unicorn/catch-error-name": "error"
+    "typescript/no-unsafe-type-assertion": "error"
   },
   "overrides": [
     {
