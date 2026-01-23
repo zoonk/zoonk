@@ -57,8 +57,15 @@ describe("findExistingCourse", () => {
     expect(result.error).toBeNull();
 
     expect(result.data).toEqual({
+      _count: {
+        alternativeTitles: 0,
+        categories: 0,
+        chapters: 0,
+      },
+      description: course.description,
       generationStatus: course.generationStatus,
       id: course.id,
+      imageUrl: course.imageUrl,
       slug: course.slug,
     });
   });
@@ -88,8 +95,15 @@ describe("findExistingCourse", () => {
     expect(result.error).toBeNull();
 
     expect(result.data).toEqual({
+      _count: {
+        alternativeTitles: 1,
+        categories: 0,
+        chapters: 0,
+      },
+      description: course.description,
       generationStatus: course.generationStatus,
       id: course.id,
+      imageUrl: course.imageUrl,
       slug: course.slug,
     });
   });

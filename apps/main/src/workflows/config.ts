@@ -13,6 +13,8 @@ type CourseStepName =
   | "getCourseSuggestion"
   | "checkExistingCourse"
   | "initializeCourse"
+  | "setCourseAsRunning"
+  | "getExistingChapters"
   | "generateDescription"
   | "generateImage"
   | "generateAlternativeTitles"

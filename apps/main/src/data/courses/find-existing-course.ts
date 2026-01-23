@@ -6,10 +6,17 @@ import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { toSlug } from "@zoonk/utils/string";
 import { cache } from "react";
 
-type ExistingCourse = {
+export type ExistingCourse = {
   id: number;
   slug: string;
   generationStatus: string;
+  description: string | null;
+  imageUrl: string | null;
+  _count: {
+    alternativeTitles: number;
+    categories: number;
+    chapters: number;
+  };
 };
 
 const cachedFindExistingCourse = cache(
@@ -19,10 +26,25 @@ const cachedFindExistingCourse = cache(
   ): Promise<SafeReturn<ExistingCourse | null>> => {
     const normalizedSlug = toSlug(slug);
 
+    const courseSelect = {
+      _count: {
+        select: {
+          alternativeTitles: true,
+          categories: true,
+          chapters: true,
+        },
+      },
+      description: true,
+      generationStatus: true,
+      id: true,
+      imageUrl: true,
+      slug: true,
+    } as const;
+
     const { data, error } = await safeAsync(() =>
       Promise.all([
         prisma.course.findFirst({
-          select: { generationStatus: true, id: true, slug: true },
+          select: courseSelect,
           where: {
             language,
             organization: { slug: AI_ORG_SLUG },
@@ -32,7 +54,7 @@ const cachedFindExistingCourse = cache(
         prisma.courseAlternativeTitle.findUnique({
           select: {
             course: {
-              select: { generationStatus: true, id: true, slug: true },
+              select: courseSelect,
             },
           },
           where: {
