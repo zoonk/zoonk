@@ -27,7 +27,7 @@ export async function CourseCategories({
     orgSlug,
   };
 
-  const categoryStrings = categories?.map((c) => c.category) ?? [];
+  const categoryStrings = categories?.map((item) => item.category) ?? [];
 
   return (
     <CategoryEditor

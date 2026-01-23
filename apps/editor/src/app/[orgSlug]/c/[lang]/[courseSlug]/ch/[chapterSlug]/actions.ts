@@ -234,7 +234,7 @@ export async function reorderLessonsAction(
 
   const { error } = await reorderLessons({
     chapterId,
-    lessons: lessons.map((l) => ({ lessonId: l.id, position: l.position })),
+    lessons: lessons.map((lesson) => ({ lessonId: lesson.id, position: lesson.position })),
   });
 
   if (error) {

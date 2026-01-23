@@ -45,7 +45,7 @@ function shouldSkipTestCase(
   runNumber: number,
 ): boolean {
   const runId = `${baseTestCaseId}-${runNumber}`;
-  return existingOutputs.some((o) => o.testCaseId === runId);
+  return existingOutputs.some((output) => output.testCaseId === runId);
 }
 
 export async function generateOutputs(task: Task, modelId: string): Promise<ModelOutputs> {

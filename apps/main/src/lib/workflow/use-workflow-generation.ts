@@ -35,11 +35,11 @@ export function useWorkflowGeneration<TStep extends string = string>(
     [config.initialRunId, config.initialStatus],
   );
 
-  const completedSteps = useSelector(store, (s) => s.context.completedSteps);
-  const currentStep = useSelector(store, (s) => s.context.currentStep);
-  const error = useSelector(store, (s) => s.context.error);
-  const runId = useSelector(store, (s) => s.context.runId);
-  const status = useSelector(store, (s) => s.context.status);
+  const completedSteps = useSelector(store, (state) => state.context.completedSteps);
+  const currentStep = useSelector(store, (state) => state.context.currentStep);
+  const error = useSelector(store, (state) => state.context.error);
+  const runId = useSelector(store, (state) => state.context.runId);
+  const status = useSelector(store, (state) => state.context.status);
 
   const handleMessage = useCallback(
     (msg: StreamMessage<TStep>) => handleStreamMessage(msg, store, completionStep),

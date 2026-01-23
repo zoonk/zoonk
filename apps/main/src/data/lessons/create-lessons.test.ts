@@ -47,8 +47,8 @@ describe("createLessons", () => {
       where: { chapterId: chapter.id },
     });
 
-    const createdLessons = dbLessons.filter((l) =>
-      lessons.some((lesson) => lesson.title === l.title),
+    const createdLessons = dbLessons.filter((dbLesson) =>
+      lessons.some((lesson) => lesson.title === dbLesson.title),
     );
 
     expect(createdLessons).toHaveLength(2);

@@ -132,7 +132,7 @@ describe("listCourseChapters", () => {
     });
 
     // Chapter at position 1 has lessons
-    const chapterWithLessons = result.find((c) => c.id === publishedChapter1.id);
+    const chapterWithLessons = result.find((chapter) => chapter.id === publishedChapter1.id);
     expect(chapterWithLessons?.lessons).toHaveLength(2);
 
     // Lesson at position 0 should come first
@@ -153,7 +153,7 @@ describe("listCourseChapters", () => {
       language: "en",
     });
 
-    const draftChapterInResult = result.find((c) => c.id === draftChapter.id);
+    const draftChapterInResult = result.find((chapter) => chapter.id === draftChapter.id);
     expect(draftChapterInResult).toBeUndefined();
   });
 
@@ -164,8 +164,10 @@ describe("listCourseChapters", () => {
       language: "en",
     });
 
-    const chapterWithLessons = result.find((c) => c.id === publishedChapter1.id);
-    const draftLessonInResult = chapterWithLessons?.lessons.find((l) => l.id === draftLesson.id);
+    const chapterWithLessons = result.find((chapter) => chapter.id === publishedChapter1.id);
+    const draftLessonInResult = chapterWithLessons?.lessons.find(
+      (lesson) => lesson.id === draftLesson.id,
+    );
     expect(draftLessonInResult).toBeUndefined();
   });
 

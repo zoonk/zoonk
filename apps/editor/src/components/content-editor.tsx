@@ -72,7 +72,7 @@ export function ContentEditor({
       <ContainerHeaderGroup className="flex-1">
         <EditableText
           aria-label={titleLabel}
-          onChange={(e) => setTitle(e.target.value)}
+          onChange={(event) => setTitle(event.target.value)}
           placeholder={titlePlaceholder}
           value={title}
           variant="title"
@@ -80,7 +80,7 @@ export function ContentEditor({
 
         <EditableTextarea
           aria-label={descriptionLabel}
-          onChange={(e) => setDescription(e.target.value)}
+          onChange={(event) => setDescription(event.target.value)}
           placeholder={descriptionPlaceholder}
           value={description}
           variant="description"

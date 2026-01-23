@@ -68,16 +68,16 @@ async function fetchDailyBpData(
 
 function processBpData(rawData: RawDataPoint[], period: HistoryPeriod): RawDataPoint[] {
   if (period === "6months") {
-    return aggregateByWeek(rawData, (p) => p.bp, "sum").map((v) => ({
-      bp: v.value,
-      date: v.date,
+    return aggregateByWeek(rawData, (point) => point.bp, "sum").map((item) => ({
+      bp: item.value,
+      date: item.date,
     }));
   }
 
   if (period === "year") {
-    return aggregateByMonth(rawData, (p) => p.bp, "sum").map((v) => ({
-      bp: v.value,
-      date: v.date,
+    return aggregateByMonth(rawData, (point) => point.bp, "sum").map((item) => ({
+      bp: item.value,
+      date: item.date,
     }));
   }
 

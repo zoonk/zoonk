@@ -42,5 +42,5 @@ export async function getBeltColorLabel(
   opts?: { locale: string },
 ): Promise<string> {
   const colors = await getBeltColors(opts);
-  return colors.find((c) => c.key === color)?.label ?? "";
+  return colors.find((item) => item.key === color)?.label ?? "";
 }

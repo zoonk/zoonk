@@ -89,16 +89,16 @@ function fillGapsWithDecay(dataPoints: RawDataPoint[]): RawDataPoint[] {
 }
 
 function aggregateEnergyByWeek(dataPoints: RawDataPoint[]): RawDataPoint[] {
-  return aggregateByWeek(dataPoints, (p) => p.energy, "average").map((v) => ({
-    date: v.date,
-    energy: v.value,
+  return aggregateByWeek(dataPoints, (point) => point.energy, "average").map((item) => ({
+    date: item.date,
+    energy: item.value,
   }));
 }
 
 function aggregateEnergyByMonth(dataPoints: RawDataPoint[]): RawDataPoint[] {
-  return aggregateByMonth(dataPoints, (p) => p.energy, "average").map((v) => ({
-    date: v.date,
-    energy: v.value,
+  return aggregateByMonth(dataPoints, (point) => point.energy, "average").map((item) => ({
+    date: item.date,
+    energy: item.value,
   }));
 }
 

@@ -215,7 +215,7 @@ export function AlternativeTitlesEditor({
                 <SearchIcon className="text-muted-foreground absolute top-1/2 left-3 size-4 -translate-y-1/2" />
                 <Input
                   className="h-8 pl-9 text-sm"
-                  onChange={(e) => setSearch(e.target.value)}
+                  onChange={(event) => setSearch(event.target.value)}
                   placeholder={t("Search titles…")}
                   value={search}
                 />

@@ -215,7 +215,7 @@ export async function reorderChaptersAction(
   const { courseId, courseSlug, lang, orgSlug } = params;
 
   const { error } = await reorderChapters({
-    chapters: chapters.map((c) => ({ chapterId: c.id, position: c.position })),
+    chapters: chapters.map((chapter) => ({ chapterId: chapter.id, position: chapter.position })),
     courseId,
   });
 

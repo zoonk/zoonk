@@ -54,7 +54,7 @@ function findTestCaseForOutput(task: Task, testCaseId: string): TestCase | undef
   // TestCaseId format is "{baseId}-{runNumber}"
   const lastDashIndex = testCaseId.lastIndexOf("-");
   const baseId = testCaseId.substring(0, lastDashIndex);
-  return task.testCases.find((tc) => tc.id === baseId);
+  return task.testCases.find((testCase) => testCase.id === baseId);
 }
 
 async function scoreOutput(output: OutputEntry, testCase: TestCase): Promise<ScoredResult> {
@@ -81,7 +81,7 @@ async function scoreOutput(output: OutputEntry, testCase: TestCase): Promise<Sco
 }
 
 function isAlreadyScored(existingResults: ScoredResult[], testCaseId: string): boolean {
-  return existingResults.some((r) => r.testCase.id === testCaseId);
+  return existingResults.some((result) => result.testCase.id === testCaseId);
 }
 
 export async function runEval(task: Task, modelId: string): Promise<TaskEvalResults> {
@@ -152,7 +152,7 @@ function combineOutputsAndResults(
   const results: EvalResult[] = [];
 
   for (const scored of scoredResults) {
-    const output = outputs.find((o) => o.testCaseId === scored.testCase.id);
+    const output = outputs.find((entry) => entry.testCaseId === scored.testCase.id);
     if (!output) {
       continue;
     }
@@ -189,7 +189,7 @@ export const getTaskResults = cache(
     const results: EvalResult[] = [];
 
     for (const scored of scoredResults) {
-      const output = modelOutputs.outputs.find((o) => o.testCaseId === scored.testCase.id);
+      const output = modelOutputs.outputs.find((entry) => entry.testCaseId === scored.testCase.id);
       if (!output) {
         continue;
       }

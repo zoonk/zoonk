@@ -49,7 +49,7 @@ export function CategoryEditor({ categories, onAdd, onRemove }: CategoryEditorPr
         return [...state, action.category];
       }
 
-      return state.filter((c) => c !== action.category);
+      return state.filter((item) => item !== action.category);
     },
   );
 
@@ -129,7 +129,7 @@ export function CategoryEditor({ categories, onAdd, onRemove }: CategoryEditorPr
           <PopoverContent align="start" aria-label={t("Category options")} className="w-56 p-2">
             <Input
               className="mb-2"
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(event) => setSearch(event.target.value)}
               placeholder={`${t("Search")}…`}
               type="search"
               value={search}

@@ -9,7 +9,7 @@ const SUNDAY_TO_MONDAY_OFFSET = -6;
 export type HistoryPeriod = (typeof HISTORY_PERIODS)[number];
 
 function isHistoryPeriod(value: string): value is HistoryPeriod {
-  return HISTORY_PERIODS.some((v) => v === value);
+  return HISTORY_PERIODS.some((period) => period === value);
 }
 
 export function validatePeriod(value: string): HistoryPeriod {
@@ -94,13 +94,13 @@ export function formatLabel(date: Date, period: HistoryPeriod, locale: string): 
 }
 
 function getWeekKey(date: Date): string {
-  const d = new Date(date);
-  d.setHours(0, 0, 0, 0);
+  const normalizedDate = new Date(date);
+  normalizedDate.setHours(0, 0, 0, 0);
   // Get Monday of this week
-  const day = d.getDay();
-  const diff = d.getDate() - day + (day === 0 ? SUNDAY_TO_MONDAY_OFFSET : 1);
-  d.setDate(diff);
-  return d.toISOString().substring(0, 10);
+  const day = normalizedDate.getDay();
+  const diff = normalizedDate.getDate() - day + (day === 0 ? SUNDAY_TO_MONDAY_OFFSET : 1);
+  normalizedDate.setDate(diff);
+  return normalizedDate.toISOString().substring(0, 10);
 }
 
 function getMonthKey(date: Date): string {
@@ -145,9 +145,9 @@ export function aggregateByWeek<T extends { date: Date }>(
   }
 
   return Array.from(map.values())
-    .map((v) => ({
-      date: v.date,
-      value: strategy === "sum" ? v.total : v.total / v.count,
+    .map((item) => ({
+      date: item.date,
+      value: strategy === "sum" ? item.total : item.total / item.count,
     }))
     .toSorted((a, b) => a.date.getTime() - b.date.getTime());
 }
@@ -175,9 +175,9 @@ export function aggregateByMonth<T extends { date: Date }>(
   }
 
   return Array.from(map.values())
-    .map((v) => ({
-      date: v.date,
-      value: strategy === "sum" ? v.total : v.total / v.count,
+    .map((item) => ({
+      date: item.date,
+      value: strategy === "sum" ? item.total : item.total / item.count,
     }))
     .toSorted((a, b) => a.date.getTime() - b.date.getTime());
 }
@@ -206,9 +206,9 @@ export function aggregateScoreByWeek(
   }
 
   return Array.from(map.values())
-    .map((v) => ({
-      date: v.date,
-      score: calculateScore(v.correct, v.incorrect),
+    .map((item) => ({
+      date: item.date,
+      score: calculateScore(item.correct, item.incorrect),
     }))
     .toSorted((a, b) => a.date.getTime() - b.date.getTime());
 }
@@ -235,9 +235,9 @@ export function aggregateScoreByMonth(
   }
 
   return Array.from(map.values())
-    .map((v) => ({
-      date: v.date,
-      score: calculateScore(v.correct, v.incorrect),
+    .map((item) => ({
+      date: item.date,
+      score: calculateScore(item.correct, item.incorrect),
     }))
     .toSorted((a, b) => a.date.getTime() - b.date.getTime());
 }

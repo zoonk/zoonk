@@ -63,8 +63,8 @@ function MatchupItem({ matchup }: MatchupItemProps) {
 
   // Sort models by total score
   const sortedModels = [...modelIds].toSorted((a, b) => {
-    const aTotal = modelRankings.get(a)?.reduce((sum, r) => sum + r.score, 0) ?? 0;
-    const bTotal = modelRankings.get(b)?.reduce((sum, r) => sum + r.score, 0) ?? 0;
+    const aTotal = modelRankings.get(a)?.reduce((sum, ranking) => sum + ranking.score, 0) ?? 0;
+    const bTotal = modelRankings.get(b)?.reduce((sum, ranking) => sum + ranking.score, 0) ?? 0;
     return bTotal - aTotal;
   });
 
@@ -85,7 +85,7 @@ function MatchupItem({ matchup }: MatchupItemProps) {
           const model = getModelById(modelId);
           const modelName = model ? getModelDisplayName(model) : modelId;
           const rankings = modelRankings.get(modelId) ?? [];
-          const totalScore = rankings.reduce((sum, r) => sum + r.score, 0);
+          const totalScore = rankings.reduce((sum, ranking) => sum + ranking.score, 0);
 
           return (
             <div className="border-border rounded-lg border p-4" key={modelId}>

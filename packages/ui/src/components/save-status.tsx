@@ -40,19 +40,19 @@ function SaveStatus({ status, labels, className, ...props }: SaveStatusProps) {
 }
 
 function combineSaveStatuses(...statuses: SaveStatusType[]): SaveStatusType {
-  if (statuses.some((s) => s === "saving")) {
+  if (statuses.some((status) => status === "saving")) {
     return "saving";
   }
 
-  if (statuses.some((s) => s === "unsaved")) {
+  if (statuses.some((status) => status === "unsaved")) {
     return "unsaved";
   }
 
-  if (statuses.some((s) => s === "saved")) {
+  if (statuses.some((status) => status === "saved")) {
     return "saved";
   }
 
-  if (statuses.some((s) => s === "fading")) {
+  if (statuses.some((status) => status === "fading")) {
     return "fading";
   }
 

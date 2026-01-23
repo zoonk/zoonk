@@ -97,8 +97,8 @@ function ImageUploadProvider({
   }, [resolvedMessages.tooLarge]);
 
   const handleFileSelect = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const file = e.target.files?.[0];
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const file = event.target.files?.[0];
       if (
         !(
           file &&
@@ -201,12 +201,12 @@ function ImageUploadTrigger({
 }) {
   const { hasImage, pending, openFilePicker, handleRemove } = useImageUpload();
 
-  function handleKeyDown(e: React.KeyboardEvent<HTMLDivElement>) {
-    if (e.key === "Enter" || e.key === " ") {
-      e.preventDefault();
+  function handleKeyDown(event: React.KeyboardEvent<HTMLDivElement>) {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
       openFilePicker();
-    } else if ((e.key === "Delete" || e.key === "Backspace") && hasImage && !pending) {
-      e.preventDefault();
+    } else if ((event.key === "Delete" || event.key === "Backspace") && hasImage && !pending) {
+      event.preventDefault();
       handleRemove();
     }
   }
@@ -295,8 +295,8 @@ function ImageUploadRemoveButton({
         className,
       )}
       data-slot="image-upload-remove-button"
-      onClick={(e) => {
-        e.stopPropagation();
+      onClick={(event) => {
+        event.stopPropagation();
         handleRemove();
       }}
       type="button"

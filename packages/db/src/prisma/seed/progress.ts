@@ -221,7 +221,7 @@ async function seedStepAttempts(
     return;
   }
 
-  const attemptData = steps.slice(0, 3).map((s, index) => ({
+  const attemptData = steps.slice(0, 3).map((step, index) => ({
     answer: { selectedOption: index === 1 ? 0 : 1 },
     answeredAt: new Date(now.getTime() - (3 - index) * 60 * 1000),
     dayOfWeek: now.getDay(),
@@ -229,7 +229,7 @@ async function seedStepAttempts(
     hourOfDay: now.getHours(),
     isCorrect: index !== 1,
     organizationId: org.id,
-    stepId: s.id,
+    stepId: step.id,
     userId: users.owner.id,
   }));
 

@@ -27,7 +27,9 @@ describe("addCourseCategories", () => {
     });
 
     expect(courseCategories).toHaveLength(2);
-    expect(courseCategories.map((c) => c.category)).toEqual(expect.arrayContaining(categories));
+    expect(courseCategories.map((item) => item.category)).toEqual(
+      expect.arrayContaining(categories),
+    );
   });
 
   test("skips duplicates", async () => {

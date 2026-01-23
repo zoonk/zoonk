@@ -72,7 +72,7 @@ export default async function LessonPage({
   }
 
   const activityKinds = await getActivityKinds({ locale });
-  const kindMeta = new Map(activityKinds.map((k) => [k.key, k]));
+  const kindMeta = new Map(activityKinds.map((kind) => [kind.key, kind]));
   const baseHref = `/b/${brandSlug}/c/${courseSlug}/c/${chapterSlug}/l/${lessonSlug}`;
 
   return (

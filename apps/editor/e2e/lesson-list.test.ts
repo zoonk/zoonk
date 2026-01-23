@@ -283,7 +283,7 @@ test.describe("Lesson List", () => {
       expect(json.lessons).toHaveLength(lessons.length);
 
       // Verify actual content, not just count
-      const exportedTitles = json.lessons.map((l: { title: string }) => l.title);
+      const exportedTitles = json.lessons.map((lesson: { title: string }) => lesson.title);
       expect(exportedTitles).toContain("Lesson 1");
       expect(exportedTitles).toContain("Lesson 2");
     });

@@ -96,7 +96,7 @@ describe("org admins", () => {
     expect(result.error).toBeNull();
     expect(result.data).toHaveLength(1);
     expect(result.data[0]?.id).toBe(draftCourse.id);
-    expect(result.data.every((c) => !c.isPublished)).toBe(true);
+    expect(result.data.every((course) => !course.isPublished)).toBe(true);
   });
 
   test("does not return published courses", async () => {
@@ -106,7 +106,7 @@ describe("org admins", () => {
     });
 
     expect(result.error).toBeNull();
-    expect(result.data.find((c) => c.id === publishedCourse.id)).toBeUndefined();
+    expect(result.data.find((course) => course.id === publishedCourse.id)).toBeUndefined();
   });
 
   test("filters by language", async () => {

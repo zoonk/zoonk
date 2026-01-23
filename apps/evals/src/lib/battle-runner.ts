@@ -93,20 +93,20 @@ function extractMappingFromMatchup(
     return [];
   }
 
-  return firstJudgment.rankings.map((r) => ({
-    anonymousId: r.anonymousId,
-    modelId: r.modelId,
+  return firstJudgment.rankings.map((ranking) => ({
+    anonymousId: ranking.anonymousId,
+    modelId: ranking.modelId,
   }));
 }
 
 function getMissingJudges(matchup: BattleMatchup): string[] {
-  const existingJudges = new Set(matchup.judgments.map((j) => j.judgeId));
-  return BATTLE_JUDGES_CONFIG.filter((j) => !existingJudges.has(j));
+  const existingJudges = new Set(matchup.judgments.map((judgment) => judgment.judgeId));
+  return BATTLE_JUDGES_CONFIG.filter((judgeId) => !existingJudges.has(judgeId));
 }
 
 function hasNewModels(existingMatchup: BattleMatchup, currentModelIds: string[]): boolean {
   const existingModelIds = new Set(
-    extractMappingFromMatchup(existingMatchup).map((m) => m.modelId),
+    extractMappingFromMatchup(existingMatchup).map((item) => item.modelId),
   );
   return currentModelIds.some((modelId) => !existingModelIds.has(modelId));
 }
@@ -137,7 +137,7 @@ async function runBattleForTestCase(
   }
 
   // Check if there are new models since the last run
-  const currentModelIds = modelOutputsForTestCase.map((m) => m.modelId);
+  const currentModelIds = modelOutputsForTestCase.map((item) => item.modelId);
   const newModelsDetected = existingMatchup && hasNewModels(existingMatchup, currentModelIds);
 
   if (newModelsDetected) {
@@ -154,7 +154,7 @@ async function runBattleForTestCase(
   if (effectiveExistingMatchup) {
     mapping = extractMappingFromMatchup(effectiveExistingMatchup);
     anonymizedOutputs = modelOutputsForTestCase.map((item) => {
-      const mapEntry = mapping.find((m) => m.modelId === item.modelId);
+      const mapEntry = mapping.find((entry) => entry.modelId === item.modelId);
       return {
         anonymousId: mapEntry?.anonymousId ?? item.modelId,
         output: item.output,

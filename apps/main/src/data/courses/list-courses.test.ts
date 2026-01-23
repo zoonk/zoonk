@@ -33,7 +33,7 @@ describe("listCourses", () => {
 
   test("excludes draft courses and non-brand orgs", async () => {
     const result = await listCourses({ language: "en", limit: 100 });
-    const ids = result.map((c) => c.id);
+    const ids = result.map((course) => course.id);
 
     expect(ids).not.toContain(draftCourse.id);
     expect(ids).not.toContain(privateCourse.id);
@@ -49,8 +49,8 @@ describe("listCourses", () => {
     const enResult = await listCourses({ language: "en", limit: 100 });
     const ptResult = await listCourses({ language: "pt", limit: 100 });
 
-    const enIds = enResult.map((c) => c.id);
-    const ptIds = ptResult.map((c) => c.id);
+    const enIds = enResult.map((course) => course.id);
+    const ptIds = ptResult.map((course) => course.id);
 
     expect(enIds).not.toContain(ptCourse.id);
     expect(ptIds).toContain(ptCourse.id);

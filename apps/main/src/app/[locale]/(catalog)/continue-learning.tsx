@@ -28,7 +28,7 @@ export async function ContinueLearningList({ items }: { items: ContinueLearningI
   const t = await getExtracted();
   const activityKinds = await getActivityKinds();
 
-  const kindLabels = new Map<string, string>(activityKinds.map((k) => [k.key, k.label]));
+  const kindLabels = new Map<string, string>(activityKinds.map((kind) => [kind.key, kind.label]));
 
   const defaultLabel = t("Activity");
 

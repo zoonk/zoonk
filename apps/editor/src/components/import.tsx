@@ -105,12 +105,12 @@ function ImportProvider({
 
 const BYTES_PER_KB = 1024;
 
-function isJsonFile(f: File): boolean {
-  return f.type === "application/json" || f.name.endsWith(".json");
+function isJsonFile(file: File): boolean {
+  return file.type === "application/json" || file.name.endsWith(".json");
 }
 
-function handleDragOver(e: React.DragEvent<HTMLLabelElement>) {
-  e.preventDefault();
+function handleDragOver(event: React.DragEvent<HTMLLabelElement>) {
+  event.preventDefault();
 }
 
 function formatFileSize(bytes: number): string {
@@ -128,16 +128,16 @@ function ImportDropzone({
   const { file, setFile } = useImport();
   const inputRef = useRef<HTMLInputElement>(null);
 
-  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const selectedFile = e.target.files?.[0];
+  function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const selectedFile = event.target.files?.[0];
     if (selectedFile && isJsonFile(selectedFile)) {
       setFile(selectedFile);
     }
   }
 
-  function handleDrop(e: React.DragEvent<HTMLLabelElement>) {
-    e.preventDefault();
-    const droppedFile = e.dataTransfer.files[0];
+  function handleDrop(event: React.DragEvent<HTMLLabelElement>) {
+    event.preventDefault();
+    const droppedFile = event.dataTransfer.files[0];
     if (droppedFile && isJsonFile(droppedFile)) {
       setFile(droppedFile);
     }
@@ -281,9 +281,9 @@ function ImportCancel({
       className={className}
       data-slot="import-cancel"
       disabled={pending}
-      onClick={(e) => {
+      onClick={(event) => {
         reset();
-        onClick?.(e);
+        onClick?.(event);
       }}
       variant="outline"
       {...props}

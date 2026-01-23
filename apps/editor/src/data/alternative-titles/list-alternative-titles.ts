@@ -11,7 +11,7 @@ const cachedListAlternativeTitlesById = cache(async (courseId: number): Promise<
     where: { courseId },
   });
 
-  return results.map((r) => r.slug);
+  return results.map((result) => result.slug);
 });
 
 const cachedListAlternativeTitlesBySlug = cache(async (courseSlug: string): Promise<string[]> => {
@@ -21,7 +21,7 @@ const cachedListAlternativeTitlesBySlug = cache(async (courseSlug: string): Prom
     where: { course: { slug: courseSlug } },
   });
 
-  return results.map((r) => r.slug);
+  return results.map((result) => result.slug);
 });
 
 export function listAlternativeTitles(params: ListAlternativeTitlesParams): Promise<string[]> {

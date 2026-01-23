@@ -17,7 +17,9 @@ export const getBattleMatchups = cache(async (taskId: string): Promise<BattleMat
 
   try {
     const files = await fs.readdir(taskDir);
-    const matchupFiles = files.filter((f) => f.endsWith(".json") && f !== "leaderboard.json");
+    const matchupFiles = files.filter(
+      (file) => file.endsWith(".json") && file !== "leaderboard.json",
+    );
 
     const matchups = await Promise.all(
       matchupFiles.map(async (file) => {
@@ -91,11 +93,13 @@ function calculateModelMetrics(
     return { averageCost: 0, averageDuration: 0 };
   }
 
-  const totalDurationMs = outputs.outputs.reduce((sum, o) => sum + o.duration, 0);
+  const totalDurationMs = outputs.outputs.reduce((sum, output) => sum + output.duration, 0);
   const averageDuration = totalDurationMs / numOutputs / MS_TO_SECONDS;
 
-  const avgInputTokens = outputs.outputs.reduce((sum, o) => sum + o.inputTokens, 0) / numOutputs;
-  const avgOutputTokens = outputs.outputs.reduce((sum, o) => sum + o.outputTokens, 0) / numOutputs;
+  const avgInputTokens =
+    outputs.outputs.reduce((sum, output) => sum + output.inputTokens, 0) / numOutputs;
+  const avgOutputTokens =
+    outputs.outputs.reduce((sum, output) => sum + output.outputTokens, 0) / numOutputs;
 
   const averageCost = calculateCost(
     avgInputTokens,

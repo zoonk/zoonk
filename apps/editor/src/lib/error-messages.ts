@@ -11,7 +11,7 @@ function assertNever(x: never): never {
 const ERROR_CODE_VALUES = Object.values(ErrorCode);
 
 function isErrorCode(code: unknown): code is ErrorCodeType {
-  return typeof code === "string" && ERROR_CODE_VALUES.some((v) => v === code);
+  return typeof code === "string" && ERROR_CODE_VALUES.some((errorCode) => errorCode === code);
 }
 
 function isEditorError(error: Error): error is AppError<ErrorCodeType> {

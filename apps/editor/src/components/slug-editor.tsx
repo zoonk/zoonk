@@ -91,12 +91,12 @@ export function SlugEditor({
     });
   }
 
-  function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
-    if (e.key === "Enter" && canSave) {
-      e.preventDefault();
+  function handleKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
+    if (event.key === "Enter" && canSave) {
+      event.preventDefault();
       handleSave();
-    } else if (e.key === "Escape") {
-      e.preventDefault();
+    } else if (event.key === "Escape") {
+      event.preventDefault();
       handleCancel();
     }
   }
@@ -112,7 +112,7 @@ export function SlugEditor({
           className="max-w-48 text-sm"
           disabled={isPending}
           id="slug-editor"
-          onChange={(e) => setSlug(e.target.value)}
+          onChange={(event) => setSlug(event.target.value)}
           onKeyDown={handleKeyDown}
           placeholder={t("your-custom-url")}
           value={slug}

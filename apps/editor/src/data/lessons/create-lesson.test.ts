@@ -450,7 +450,7 @@ describe("admins", () => {
 
     expect(lessons.length).toBe(5);
 
-    const positions = lessons.map((l) => l.position);
+    const positions = lessons.map((lesson) => lesson.position);
     const uniquePositions = new Set(positions);
     expect(uniquePositions.size).toBe(5);
 

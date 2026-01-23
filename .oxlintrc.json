@@ -13,6 +13,10 @@
   },
   "rules": {
     "eslint/func-style": ["error", "declaration", { "allowArrowFunctions": true }],
+    "eslint/id-length": [
+      "error",
+      { "min": 2, "exceptions": ["i", "j", "x", "y", "z", "_", "a", "b", "t", "T"] }
+    ],
     "eslint/no-magic-numbers": [
       "error",
       {

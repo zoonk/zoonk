@@ -15,7 +15,7 @@ const VALID_THEMES = ["light", "dark", "system"] as const;
 type ValidTheme = (typeof VALID_THEMES)[number];
 
 function isValidTheme(theme: string): theme is ValidTheme {
-  return VALID_THEMES.some((v) => v === theme);
+  return VALID_THEMES.some((item) => item === theme);
 }
 
 const Toaster = ({ ...props }: ToasterProps) => {

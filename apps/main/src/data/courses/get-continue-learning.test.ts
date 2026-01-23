@@ -104,10 +104,10 @@ describe("authenticated users", () => {
 
     expect(result).toHaveLength(MAX_CONTINUE_LEARNING_ITEMS);
 
-    const resultCourseIds = result.map((r) => r.course.id);
+    const resultCourseIds = result.map((item) => item.course.id);
     const expectedIds = courseData
       .slice(1)
-      .map((d) => d.course.id)
+      .map((data) => data.course.id)
       .toReversed();
     expect(resultCourseIds).toEqual(expectedIds);
   });

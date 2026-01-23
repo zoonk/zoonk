@@ -52,7 +52,7 @@ describe("authenticated users", () => {
 
     expect(result.error).toBeNull();
     expect(result.data).toBeDefined();
-    expect(result.data?.some((c) => c.id === course.id)).toBe(true);
+    expect(result.data?.some((item) => item.id === course.id)).toBe(true);
   });
 
   test("includes the organization in the response", async () => {
@@ -74,7 +74,7 @@ describe("authenticated users", () => {
     expect(result.error).toBeNull();
     expect(result.data).toBeDefined();
 
-    const returnedCourse = result.data?.find((c) => c.id === course.id);
+    const returnedCourse = result.data?.find((item) => item.id === course.id);
     expect(returnedCourse?.organization).toBeDefined();
     expect(returnedCourse?.organization.id).toBe(organization.id);
     expect(returnedCourse?.organization.slug).toBe(organization.slug);
@@ -120,7 +120,7 @@ describe("authenticated users", () => {
     expect(result.error).toBeNull();
     expect(result.data).toHaveLength(3);
 
-    const courseIds = result.data?.map((c) => c.id);
+    const courseIds = result.data?.map((item) => item.id);
     expect(courseIds).toEqual([course2.id, course3.id, course1.id]);
   });
 
@@ -148,7 +148,7 @@ describe("authenticated users", () => {
     const result = await listUserCourses({ headers: testHeaders });
 
     expect(result.error).toBeNull();
-    expect(result.data?.some((c) => c.id === testUserCourse.id)).toBe(true);
-    expect(result.data?.some((c) => c.id === otherUserCourse.id)).toBe(false);
+    expect(result.data?.some((item) => item.id === testUserCourse.id)).toBe(true);
+    expect(result.data?.some((item) => item.id === otherUserCourse.id)).toBe(false);
   });
 });

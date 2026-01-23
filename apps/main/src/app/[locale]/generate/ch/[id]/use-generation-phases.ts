@@ -40,7 +40,7 @@ export function useGenerationPhases(
   }));
 
   const progress = calculateWeightedProgress(completedSteps, currentStep);
-  const activePhase = phases.find((p) => p.status === "active");
+  const activePhase = phases.find((phase) => phase.status === "active");
 
   return { activePhase, phases, progress };
 }

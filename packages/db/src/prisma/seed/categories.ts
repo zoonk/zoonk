@@ -45,12 +45,14 @@ export async function seedCategories(prisma: PrismaClient, org: Organization): P
     select: { id: true, language: true, slug: true },
     where: {
       organizationId: org.id,
-      slug: { in: coursesData.map((c) => c.slug) },
+      slug: { in: coursesData.map((course) => course.slug) },
     },
   });
 
   const categoryRecords = categoriesData.flatMap((data) => {
-    const course = courses.find((c) => c.slug === data.courseSlug && c.language === data.language);
+    const course = courses.find(
+      (item) => item.slug === data.courseSlug && item.language === data.language,
+    );
 
     if (!course) {
       return [];

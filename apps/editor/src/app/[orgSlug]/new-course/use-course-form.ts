@@ -34,7 +34,7 @@ export function useCourseForm({ orgSlug }: { orgSlug: string }) {
     slug: formData.slug,
   });
 
-  const updateField = <K extends keyof CourseFormData>(field: K, value: CourseFormData[K]) => {
+  const updateField = <TKey extends keyof CourseFormData>(field: TKey, value: CourseFormData[TKey]) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 

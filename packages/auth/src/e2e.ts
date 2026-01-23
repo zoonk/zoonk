@@ -20,7 +20,7 @@ export const auth = betterAuth({
   },
   plugins: [
     ...baseAuthPlugins,
-    ...fullPlugins.filter((p) => p.id !== "email-otp"),
+    ...fullPlugins.filter((plugin) => plugin.id !== "email-otp"),
     emailOTP({
       overrideDefaultEmailVerification: true,
       sendVerificationOTP,

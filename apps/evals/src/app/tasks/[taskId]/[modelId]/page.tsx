@@ -34,14 +34,14 @@ import { EvalResults } from "./eval-results";
 
 export default async function TaskModelPage({ params }: PageProps<"/tasks/[taskId]/[modelId]">) {
   const { taskId, modelId: rawModelId } = await params;
-  const task = TASKS.find((t) => t.id === taskId);
+  const task = TASKS.find((item) => item.id === taskId);
 
   if (!task) {
     notFound();
   }
 
   const modelId = decodeURIComponent(rawModelId);
-  const model = EVAL_MODELS.find((m) => m.id === modelId);
+  const model = EVAL_MODELS.find((item) => item.id === modelId);
 
   if (!model) {
     redirect(`/tasks/${taskId}`);

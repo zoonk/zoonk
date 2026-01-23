@@ -399,7 +399,7 @@ describe("admins", () => {
 
     expect(chapters.length).toBe(5);
 
-    const positions = chapters.map((c) => c.position);
+    const positions = chapters.map((chapter) => chapter.position);
     const uniquePositions = new Set(positions);
     expect(uniquePositions.size).toBe(5);
 

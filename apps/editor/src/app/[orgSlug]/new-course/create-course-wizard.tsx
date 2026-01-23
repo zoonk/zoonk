@@ -85,16 +85,19 @@ export function CreateCourseWizard({ orgSlug }: { orgSlug: string }) {
 
       <WizardContent>
         {wizard.currentStepName === "title" && (
-          <TitleStep onChange={(v) => updateField("title", v)} value={formData.title} />
+          <TitleStep onChange={(value) => updateField("title", value)} value={formData.title} />
         )}
 
         {wizard.currentStepName === "language" && (
-          <LanguageStep onChange={(v) => updateField("language", v)} value={formData.language} />
+          <LanguageStep
+            onChange={(value) => updateField("language", value)}
+            value={formData.language}
+          />
         )}
 
         {wizard.currentStepName === "description" && (
           <DescriptionStep
-            onChange={(v) => updateField("description", v)}
+            onChange={(value) => updateField("description", value)}
             value={formData.description}
           />
         )}
@@ -102,7 +105,7 @@ export function CreateCourseWizard({ orgSlug }: { orgSlug: string }) {
         {wizard.currentStepName === "slug" && (
           <SlugStep
             error={submitError || getStepError("slug")}
-            onChange={(v) => updateField("slug", v)}
+            onChange={(value) => updateField("slug", value)}
             value={formData.slug}
           />
         )}

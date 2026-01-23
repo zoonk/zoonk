@@ -120,7 +120,7 @@ export async function importChapters(params: {
         };
       });
 
-      const allSlugs = chaptersToImport.map((c) => c.slug);
+      const allSlugs = chaptersToImport.map((item) => item.slug);
 
       const existingChaptersInCourse = await tx.chapter.findMany({
         where: {
@@ -129,7 +129,9 @@ export async function importChapters(params: {
         },
       });
 
-      const existingChapterMap = new Map(existingChaptersInCourse.map((c) => [c.slug, c]));
+      const existingChapterMap = new Map(
+        existingChaptersInCourse.map((chapter) => [chapter.slug, chapter]),
+      );
 
       // Deduplicate slugs within the batch to prevent unique constraint violations
       const slugCounts = new Map<string, number>();

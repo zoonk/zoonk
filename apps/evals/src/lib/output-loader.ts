@@ -69,7 +69,7 @@ export async function getAllOutputsForTask(taskId: string): Promise<Map<string, 
 
   try {
     const files = await fs.readdir(taskDir);
-    const jsonFiles = files.filter((f) => f.endsWith(".json"));
+    const jsonFiles = files.filter((file) => file.endsWith(".json"));
 
     const fileContents = await Promise.all(
       jsonFiles.map(async (file) => {
@@ -109,5 +109,5 @@ export function getOutputForTestCase(
   outputs: ModelOutputs,
   testCaseId: string,
 ): OutputEntry | undefined {
-  return outputs.outputs.find((o) => o.testCaseId === testCaseId);
+  return outputs.outputs.find((output) => output.testCaseId === testCaseId);
 }
