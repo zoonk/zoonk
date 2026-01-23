@@ -65,6 +65,7 @@ export function WizardLabel({
   ...props
 }: React.ComponentProps<"label">) {
   return (
+    // oxlint-disable-next-line jsx-a11y/label-has-associated-control -- compound component
     <label
       className={cn(
         "font-medium font-mono text-muted-foreground text-xs uppercase tracking-widest",

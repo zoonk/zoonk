@@ -42,6 +42,7 @@ export async function SupportContent() {
       <ItemGroup>
         <Item
           render={
+            // oxlint-disable-next-line jsx-a11y/anchor-has-content -- render prop
             <a
               href="https://github.com/zoonk/zoonk/discussions"
               rel="noopener noreferrer"

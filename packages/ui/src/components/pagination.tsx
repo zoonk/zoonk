@@ -51,6 +51,7 @@ function PaginationLink({
       className={cn(className)}
       nativeButton={false}
       render={
+        // oxlint-disable-next-line jsx-a11y/anchor-has-content -- render prop
         <a
           aria-current={isActive ? "page" : undefined}
           data-active={isActive}

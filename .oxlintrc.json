@@ -1,4 +1,15 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["typescript", "oxc", "react", "nextjs", "import", "unicorn"]
+  "plugins": [
+    "typescript",
+    "oxc",
+    "react",
+    "nextjs",
+    "import",
+    "unicorn",
+    "jsx-a11y"
+  ],
+  "rules": {
+    "jsx-a11y/no-autofocus": "off"
+  }
 }

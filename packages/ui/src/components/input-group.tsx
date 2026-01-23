@@ -48,6 +48,7 @@ function InputGroupAddon({
   ...props
 }: React.ComponentProps<"div"> & VariantProps<typeof inputGroupAddonVariants>) {
   return (
+    // oxlint-disable-next-line jsx-a11y/click-events-have-key-events -- convenience click, input is keyboard accessible
     <div
       className={cn(inputGroupAddonVariants({ align }), className)}
       data-align={align}
