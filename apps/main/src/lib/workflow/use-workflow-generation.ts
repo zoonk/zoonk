@@ -82,9 +82,9 @@ export function useWorkflowGeneration<TStep extends string = string>(
         }
         const data = await response.json();
         store.send({ runId: data.runId, type: "triggerSuccess" });
-      } catch (err) {
+      } catch (error) {
         store.send({
-          error: err instanceof Error ? err.message : "Failed to start",
+          error: error instanceof Error ? error.message : "Failed to start",
           type: "setError",
         });
       }

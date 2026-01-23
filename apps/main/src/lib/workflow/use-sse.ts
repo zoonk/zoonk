@@ -49,9 +49,9 @@ export function useSSE<T>(url: string | null, options: UseSSEOptions<T>) {
         /* eslint-enable no-await-in-loop */
 
         onComplete?.();
-      } catch (err) {
-        if (err instanceof Error && err.name !== "AbortError") {
-          onError?.(err);
+      } catch (error) {
+        if (error instanceof Error && error.name !== "AbortError") {
+          onError?.(error);
         }
       }
     })();

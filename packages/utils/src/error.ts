@@ -49,7 +49,7 @@ export async function safeAsync<T>(fn: () => Promise<T>): Promise<SafeReturn<T>>
   try {
     const data = await fn();
     return { data, error: null };
-  } catch (e) {
-    return { data: null, error: toError(e) };
+  } catch (error) {
+    return { data: null, error: toError(error) };
   }
 }
