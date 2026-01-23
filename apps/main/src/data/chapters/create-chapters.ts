@@ -1,8 +1,7 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { prisma, type Chapter } from "@zoonk/db";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { normalizeString, toSlug } from "@zoonk/utils/string";
-import type { Chapter } from "@zoonk/db";
 
 type ChapterInput = {
   title: string;

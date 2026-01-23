@@ -1,10 +1,9 @@
 import "server-only";
 import { getSession } from "@zoonk/core/users/session/get";
 import { prisma } from "@zoonk/db";
-import { calculateBeltLevel } from "@zoonk/utils/belt-level";
+import { calculateBeltLevel, type BeltLevelResult } from "@zoonk/utils/belt-level";
 import { safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
-import type { BeltLevelResult } from "@zoonk/utils/belt-level";
 
 export type BeltLevelData = BeltLevelResult;
 

@@ -9,6 +9,8 @@ import {
   TouchSensor,
   useSensor,
   useSensors,
+  type DragEndEvent,
+  type DragStartEvent,
 } from "@dnd-kit/core";
 import {
   arrayMove,
@@ -42,7 +44,6 @@ import {
   useState,
   useTransition,
 } from "react";
-import type { DragEndEvent, DragStartEvent } from "@dnd-kit/core";
 
 type EditorListContextValue = {
   pending: boolean;

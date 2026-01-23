@@ -40,7 +40,8 @@
 
     // style rules
     "eslint/curly": "error",
-    "eslint/no-continue": "error"
+    "eslint/no-continue": "error",
+    "eslint/no-duplicate-imports": "error"
   },
   "overrides": [
     {

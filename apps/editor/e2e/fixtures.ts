@@ -1,5 +1,4 @@
-import { test as base, createAuthFixture } from "@zoonk/e2e/fixtures";
-import type { Page } from "@zoonk/e2e/fixtures";
+import { test as base, createAuthFixture, type Page } from "@zoonk/e2e/fixtures";
 
 export type EditorAuthFixtures = {
   authenticatedPage: Page;

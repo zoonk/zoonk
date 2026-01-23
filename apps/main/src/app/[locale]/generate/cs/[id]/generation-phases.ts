@@ -12,8 +12,8 @@ import {
   SearchIcon,
   SettingsIcon,
   SparklesIcon,
+  type LucideIcon,
 } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
 
 export type PhaseName =
   | "loadingInfo"
