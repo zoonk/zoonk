@@ -79,7 +79,7 @@ Generate one visual resource for each step. Use the stepIndex field to match eac
     step.toolCalls
       .filter((call) => !call.dynamic)
       .map((call) => ({
-        kind: call.toolName as StepVisualResource["kind"],
+        kind: call.toolName,
         ...call.input,
       })),
   ) as StepVisualResource[];
