@@ -45,7 +45,7 @@ function sortEntries(
   sortKey: SortKey,
   sortDirection: SortDirection,
 ): BattleLeaderboardEntry[] {
-  return [...entries].sort((a, b) => {
+  return [...entries].toSorted((a, b) => {
     const aValue = a[sortKey];
     const bValue = b[sortKey];
 

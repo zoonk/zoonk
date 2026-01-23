@@ -79,7 +79,7 @@ Generate quiz questions that test understanding of these concepts. Use the avail
     step.toolCalls
       .filter((call) => !call.dynamic)
       .map((call) => ({
-        format: call.toolName as QuizQuestion["format"],
+        format: call.toolName,
         ...call.input,
       })),
   ) as QuizQuestion[];

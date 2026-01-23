@@ -391,7 +391,7 @@ describe("admins", () => {
     const uniquePositions = new Set(positions);
     expect(uniquePositions.size).toBe(5);
 
-    const sortedPositions = [...positions].sort((a, b) => a - b);
+    const sortedPositions = [...positions].toSorted((a, b) => a - b);
     expect(sortedPositions).toEqual([0, 1, 2, 3, 4]);
   });
 

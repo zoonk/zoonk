@@ -50,7 +50,7 @@ function fillGapsWithDecay(dataPoints: RawDataPoint[]): RawDataPoint[] {
   }
 
   // Sort data points by date
-  const sorted = [...dataPoints].sort(
+  const sorted = [...dataPoints].toSorted(
     (a, b) => a.date.getTime() - b.date.getTime(),
   );
 

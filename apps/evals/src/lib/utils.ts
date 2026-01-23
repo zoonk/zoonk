@@ -58,9 +58,9 @@ export async function getSortedModels(taskId: string) {
 
   const sortedModels = modelWithStatus
     .filter((x) => x.status !== "completed")
-    .sort((a, b) => {
-      const aStatus = a.status as ModelStatus;
-      const bStatus = b.status as ModelStatus;
+    .toSorted((a, b) => {
+      const aStatus = a.status;
+      const bStatus = b.status;
       return order[aStatus] - order[bStatus];
     })
     .map((x) => x.model);

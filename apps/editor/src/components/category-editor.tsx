@@ -67,7 +67,7 @@ export function CategoryEditor({
     },
   );
 
-  const sortedOptimisticCategories = [...optimisticCategories].sort((a, b) => {
+  const sortedOptimisticCategories = [...optimisticCategories].toSorted((a, b) => {
     const labelA = getLabel(a) ?? a;
     const labelB = getLabel(b) ?? b;
     return labelA.localeCompare(labelB);

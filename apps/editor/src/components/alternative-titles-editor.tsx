@@ -142,7 +142,7 @@ export function AlternativeTitlesEditor({
 
     startTransition(() => {
       updateOptimisticTitles((prev) =>
-        prev.includes(slug) ? prev : [...prev, slug].sort(),
+        prev.includes(slug) ? prev : [...prev, slug].toSorted(),
       );
     });
 

@@ -35,7 +35,7 @@ export function useCategoryLabels(): UseCategoryLabelsResult {
     tech: t("Technology"),
   };
 
-  const sortedCategories = [...COURSE_CATEGORIES].sort((a, b) =>
+  const sortedCategories = [...COURSE_CATEGORIES].toSorted((a, b) =>
     labels[a].localeCompare(labels[b]),
   );
 

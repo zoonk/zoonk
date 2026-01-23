@@ -152,7 +152,7 @@ export function aggregateByWeek<T extends { date: Date }>(
       date: v.date,
       value: strategy === "sum" ? v.total : v.total / v.count,
     }))
-    .sort((a, b) => a.date.getTime() - b.date.getTime());
+    .toSorted((a, b) => a.date.getTime() - b.date.getTime());
 }
 
 export function aggregateByMonth<T extends { date: Date }>(
@@ -182,7 +182,7 @@ export function aggregateByMonth<T extends { date: Date }>(
       date: v.date,
       value: strategy === "sum" ? v.total : v.total / v.count,
     }))
-    .sort((a, b) => a.date.getTime() - b.date.getTime());
+    .toSorted((a, b) => a.date.getTime() - b.date.getTime());
 }
 
 type ScoreDataPoint = { date: Date; correct: number; incorrect: number };
@@ -216,7 +216,7 @@ export function aggregateScoreByWeek(
       date: v.date,
       score: calculateScore(v.correct, v.incorrect),
     }))
-    .sort((a, b) => a.date.getTime() - b.date.getTime());
+    .toSorted((a, b) => a.date.getTime() - b.date.getTime());
 }
 
 export function aggregateScoreByMonth(
@@ -248,5 +248,5 @@ export function aggregateScoreByMonth(
       date: v.date,
       score: calculateScore(v.correct, v.incorrect),
     }))
-    .sort((a, b) => a.date.getTime() - b.date.getTime());
+    .toSorted((a, b) => a.date.getTime() - b.date.getTime());
 }

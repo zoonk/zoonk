@@ -12,11 +12,13 @@
   ],
   "categories": {
     "correctness": "error",
-    "perf": "error"
+    "perf": "error",
+    "suspicious": "error"
   },
   "rules": {
     "jsx-a11y/no-autofocus": "off",
-    "oxc/no-map-spread": "off"
+    "oxc/no-map-spread": "off",
+    "react/react-in-jsx-scope": "off",
   },
   "ignorePatterns": [
     "node_modules",
