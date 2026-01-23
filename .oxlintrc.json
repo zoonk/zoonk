@@ -11,5 +11,20 @@
   ],
   "rules": {
     "jsx-a11y/no-autofocus": "off"
-  }
+  },
+  "ignorePatterns": [
+    "node_modules",
+    ".next",
+    ".next-e2e",
+    ".agents",
+    ".claude",
+    ".cursor",
+    ".opencode",
+    ".github/skills",
+    "dist",
+    "build",
+    "**/generated/**",
+    "**/messages/**",
+    ".turbo"
+  ]
 }
