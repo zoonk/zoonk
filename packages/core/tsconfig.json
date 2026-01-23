@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
     "paths": {
       "@/fixtures/*": ["./test/fixtures/*"]
     }

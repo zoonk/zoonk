@@ -38,7 +38,13 @@
   "editor.formatOnSave": true,
   "emmet.showExpandedAbbreviation": "never",
   "search.exclude": {
+    ".agents": true,
+    ".claude": true,
+    ".codex": true,
+    ".github/skills": true,
+    ".opencode": true,
     "**/eval-results/**": true,
     "pnpm-lock.yaml": true
-  }
+  },
+  "typescript.experimental.useTsgo": true
 }

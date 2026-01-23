@@ -4,8 +4,8 @@
   },
   "devDependencies": {
     "@types/node": "^24",
-    "@zoonk/tsconfig": "workspace:*",
-    "typescript": "^5"
+    "@typescript/native-preview": "7.0.0-dev.20260122.4",
+    "@zoonk/tsconfig": "workspace:*"
   },
   "exports": {
     "./base.config": "./src/base.config.ts",
@@ -14,7 +14,7 @@
   "name": "@zoonk/e2e",
   "private": true,
   "scripts": {
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsgo --noEmit"
   },
   "type": "module"
 }

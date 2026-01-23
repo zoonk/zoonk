@@ -18,10 +18,10 @@
     "@types/node": "^24",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@typescript/native-preview": "7.0.0-dev.20260122.4",
     "@zoonk/tsconfig": "workspace:*",
     "tailwindcss": "^4",
-    "tw-animate-css": "1.3.8",
-    "typescript": "^5"
+    "tw-animate-css": "1.3.8"
   },
   "exports": {
     "./components/*": "./src/components/*.tsx",
@@ -50,7 +50,7 @@
   },
   "private": true,
   "scripts": {
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsgo --noEmit"
   },
   "type": "module",
   "version": "0.0.0"

@@ -3,8 +3,8 @@
     "slugify": "1.6.6"
   },
   "devDependencies": {
+    "@typescript/native-preview": "7.0.0-dev.20260122.4",
     "@zoonk/tsconfig": "workspace:*",
-    "typescript": "^5",
     "vite-tsconfig-paths": "6.0.3",
     "vitest": "4.0.16"
   },
@@ -25,7 +25,7 @@
   "scripts": {
     "test": "vitest run",
     "test:watch": "vitest",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsgo --noEmit"
   },
   "type": "module"
 }
