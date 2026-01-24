@@ -20,13 +20,15 @@ export type CourseListItem = {
   title: string;
 };
 
-type CourseListItemProps = {
+export function CourseListItemView({
+  course,
+  image,
+  linkComponent,
+}: {
   course: CourseListItem;
   image?: React.ReactNode;
   linkComponent: ItemProps["render"];
-};
-
-export function CourseListItemView({ course, image, linkComponent }: CourseListItemProps) {
+}) {
   return (
     <Item render={linkComponent}>
       {image ? (

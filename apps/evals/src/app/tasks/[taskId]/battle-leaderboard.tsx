@@ -22,11 +22,6 @@ type SortKey =
 
 type SortDirection = "asc" | "desc";
 
-type BattleLeaderboardProps = {
-  taskId: string;
-  entries: BattleLeaderboardEntry[];
-};
-
 const DEFAULT_SORT_DIRECTIONS: Record<SortKey, SortDirection> = {
   averageCost: "desc",
   averageDuration: "desc",
@@ -61,7 +56,13 @@ function sortEntries(
   });
 }
 
-export function BattleLeaderboard({ taskId, entries }: BattleLeaderboardProps) {
+export function BattleLeaderboard({
+  taskId,
+  entries,
+}: {
+  taskId: string;
+  entries: BattleLeaderboardEntry[];
+}) {
   const [sortKey, setSortKey] = useState<SortKey>("totalScore");
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
 

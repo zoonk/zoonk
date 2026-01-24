@@ -28,12 +28,15 @@ function PaginationItem({ ...props }: React.ComponentProps<"li">) {
   return <li data-slot="pagination-item" {...props} />;
 }
 
-type PaginationLinkProps = {
+function PaginationLink({
+  className,
+  isActive,
+  size = "icon",
+  ...props
+}: {
   isActive?: boolean;
 } & Pick<React.ComponentProps<typeof Button>, "size"> &
-  React.ComponentProps<"a">;
-
-function PaginationLink({ className, isActive, size = "icon", ...props }: PaginationLinkProps) {
+  React.ComponentProps<"a">) {
   return (
     <Button
       className={cn(className)}

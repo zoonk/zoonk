@@ -16,12 +16,7 @@ import { EPOCH_YEAR, FIRST_SUNDAY_OFFSET } from "@zoonk/utils/constants";
 import { CalendarDays } from "lucide-react";
 import { getExtracted, getLocale } from "next-intl/server";
 
-type BestDayProps = {
-  score: number;
-  dayOfWeek: number;
-};
-
-export async function BestDay({ score, dayOfWeek }: BestDayProps) {
+export async function BestDay({ score, dayOfWeek }: { score: number; dayOfWeek: number }) {
   const t = await getExtracted();
   const locale = await getLocale();
 

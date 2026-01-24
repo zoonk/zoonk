@@ -3,15 +3,11 @@ import { type BatchPayload, prisma } from "@zoonk/db";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { toSlug } from "@zoonk/utils/string";
 
-type AddParams = {
+export async function addAlternativeTitles(params: {
   courseId: number;
   titles: string[];
   language: string;
-};
-
-export async function addAlternativeTitles(
-  params: AddParams,
-): Promise<SafeReturn<BatchPayload | null>> {
+}): Promise<SafeReturn<BatchPayload | null>> {
   const slugs = params.titles.map((title) => toSlug(title));
   const uniqueSlugs = [...new Set(slugs)].filter(Boolean);
 

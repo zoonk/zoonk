@@ -127,12 +127,13 @@ function GenerationTimelineStep({
   );
 }
 
-type GenerationProgressCompletedProps = {
+function GenerationProgressCompleted({
+  children,
+  subtitle,
+}: {
   children: ReactNode;
   subtitle?: ReactNode;
-};
-
-function GenerationProgressCompleted({ children, subtitle }: GenerationProgressCompletedProps) {
+}) {
   return (
     <div aria-live="polite" className="flex flex-col items-center gap-3 py-8">
       <div className="bg-muted flex size-12 items-center justify-center rounded-full">
@@ -144,19 +145,17 @@ function GenerationProgressCompleted({ children, subtitle }: GenerationProgressC
   );
 }
 
-type GenerationProgressErrorProps = {
-  children: ReactNode;
-  description?: ReactNode;
-  onRetry?: () => void;
-  retryLabel?: string;
-};
-
 function GenerationProgressError({
   children,
   description,
   onRetry,
   retryLabel = "Try again",
-}: GenerationProgressErrorProps) {
+}: {
+  children: ReactNode;
+  description?: ReactNode;
+  onRetry?: () => void;
+  retryLabel?: string;
+}) {
   return (
     <Alert variant="destructive">
       <AlertCircleIcon aria-hidden="true" />

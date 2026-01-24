@@ -10,15 +10,13 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { after } from "next/server";
 
-type TogglePublishParams = {
-  chapterId: number;
-  chapterSlug: string;
-  chapterUrl: string;
-  courseSlug: string;
-};
-
 export async function togglePublishAction(
-  params: TogglePublishParams,
+  params: {
+    chapterId: number;
+    chapterSlug: string;
+    chapterUrl: string;
+    courseSlug: string;
+  },
   isPublished: boolean,
 ): Promise<{ error: string | null }> {
   const { chapterId, chapterSlug, chapterUrl, courseSlug } = params;

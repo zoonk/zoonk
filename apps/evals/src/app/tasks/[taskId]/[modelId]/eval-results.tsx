@@ -7,11 +7,7 @@ import { ContainerTitle } from "@zoonk/ui/components/container";
 import { SummaryCard } from "./summary-card";
 import { TestCase } from "./test-case";
 
-type EvalResultsProps = {
-  results: TaskEvalResults;
-};
-
-export function EvalResults({ results }: EvalResultsProps) {
+export function EvalResults({ results }: { results: TaskEvalResults }) {
   const model = getModelById(results.modelId);
   const stats = getStatsFromResults(results);
   const averageScore = calculateAverageScore(results);

@@ -15,14 +15,12 @@ import { useState, useTransition } from "react";
 import { ImportProvider } from "../import";
 import { EntityImportDialog } from "./entity-import-dialog";
 
-type EntityType = "activities" | "chapters" | "lessons";
-
 export function EntityListActions({
   entityType,
   onExport,
   onImport,
 }: {
-  entityType: EntityType;
+  entityType: "activities" | "chapters" | "lessons";
   onExport: () => Promise<{ data: object | null; error: Error | null }>;
   onImport: (formData: FormData) => Promise<{ error: string | null }>;
 }) {

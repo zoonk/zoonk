@@ -10,12 +10,13 @@ import {
 } from "@zoonk/ui/components/dropdown-menu";
 import { Download } from "lucide-react";
 
-type LeaderboardExportProps = {
+export function LeaderboardExport({
+  taskId,
+  entries,
+}: {
   taskId: string;
   entries: LeaderboardEntry[];
-};
-
-export function LeaderboardExport({ taskId, entries }: LeaderboardExportProps) {
+}) {
   function exportAsMarkdown(anonymous: boolean) {
     let markdown = "";
 

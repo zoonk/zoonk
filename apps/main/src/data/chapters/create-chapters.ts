@@ -3,21 +3,15 @@ import { type Chapter, prisma } from "@zoonk/db";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { normalizeString, toSlug } from "@zoonk/utils/string";
 
-type ChapterInput = {
-  title: string;
-  description: string;
-};
-
-type CreateParams = {
-  chapters: ChapterInput[];
+export async function createChapters(params: {
+  chapters: {
+    title: string;
+    description: string;
+  }[];
   courseId: number;
   language: string;
   organizationId: number;
-};
-
-type CreatedChapter = Pick<Chapter, "id" | "slug" | "title" | "description" | "position">;
-
-export async function createChapters(params: CreateParams): Promise<SafeReturn<CreatedChapter[]>> {
+}): Promise<SafeReturn<Pick<Chapter, "id" | "slug" | "title" | "description" | "position">[]>> {
   const chaptersData = params.chapters.map((chapter, index) => ({
     courseId: params.courseId,
     description: chapter.description,

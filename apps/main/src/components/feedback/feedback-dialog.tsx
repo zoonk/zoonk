@@ -13,11 +13,7 @@ import { useExtracted } from "next-intl";
 import { type ReactElement } from "react";
 import { ContactForm } from "./contact-form";
 
-type FeedbackDialogProps = {
-  children: ReactElement;
-};
-
-export function FeedbackDialog({ children }: FeedbackDialogProps) {
+export function FeedbackDialog({ children }: { children: ReactElement }) {
   const t = useExtracted();
 
   return (

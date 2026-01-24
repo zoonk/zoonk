@@ -12,12 +12,13 @@ import { SparklesIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
 import { Fragment } from "react/jsx-runtime";
 
-type CourseSuggestionItemProps = {
+export async function CourseSuggestionItem({
+  course,
+  isLast,
+}: {
   course: { id: number; title: string; description: string };
   isLast: boolean;
-};
-
-export async function CourseSuggestionItem({ course, isLast }: CourseSuggestionItemProps) {
+}) {
   const t = await getExtracted();
 
   return (

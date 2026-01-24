@@ -1,13 +1,11 @@
 import { type Organization, type PrismaClient } from "../../generated/prisma/client";
 import { coursesData } from "./courses";
 
-type CourseCategoryData = {
+const categoriesData: {
   courseSlug: string;
   language: string;
   categories: string[];
-};
-
-const categoriesData: CourseCategoryData[] = [
+}[] = [
   {
     categories: ["tech", "math", "science"],
     courseSlug: "machine-learning",

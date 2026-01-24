@@ -1,18 +1,6 @@
 import { type Organization, type PrismaClient, type Step } from "../../generated/prisma/client";
 import { type SeedUsers } from "./users";
 
-type E2eAttemptData = {
-  answer: { selectedOption: number };
-  answeredAt: Date;
-  dayOfWeek: number;
-  durationSeconds: number;
-  hourOfDay: number;
-  isCorrect: boolean;
-  organizationId: number;
-  stepId: bigint;
-  userId: number;
-};
-
 type DailyProgressInput = {
   brainPowerEarned: number;
   challengesCompleted: number;
@@ -33,7 +21,17 @@ function buildE2eStepAttempts(
   org: Organization,
   userId: number,
   now: Date,
-): E2eAttemptData[] {
+): {
+  answer: { selectedOption: number };
+  answeredAt: Date;
+  dayOfWeek: number;
+  durationSeconds: number;
+  hourOfDay: number;
+  isCorrect: boolean;
+  organizationId: number;
+  stepId: bigint;
+  userId: number;
+}[] {
   const configs = [
     { correct: 9, hourOfDay: 9, incorrect: 1 }, // Morning: 90%
     { correct: 8, hourOfDay: 15, incorrect: 2 }, // Afternoon: 80%

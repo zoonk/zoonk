@@ -1,19 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@zoonk/ui/components/card";
 
-type SummaryCardProps = {
-  averageScore: number;
-  averageInputTokens: number;
-  averageOutputTokens: number;
-  averageDuration: number;
-  totalCost: number;
-};
-
-type StatItemProps = {
-  label: string;
-  value: string | number;
-};
-
-function StatItem({ label, value }: StatItemProps) {
+function StatItem({ label, value }: { label: string; value: string | number }) {
   return (
     <div>
       <p className="text-muted-foreground text-sm">{label}</p>
@@ -28,7 +15,13 @@ export function SummaryCard({
   averageOutputTokens,
   averageDuration,
   totalCost,
-}: SummaryCardProps) {
+}: {
+  averageScore: number;
+  averageInputTokens: number;
+  averageOutputTokens: number;
+  averageDuration: number;
+  totalCost: number;
+}) {
   return (
     <Card>
       <CardHeader>

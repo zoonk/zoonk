@@ -5,22 +5,18 @@ import {
   type PrismaClient,
 } from "../../generated/prisma/client";
 
-type ActivitySeedData = {
-  generationStatus: GenerationStatus;
-  isPublished: boolean;
-  kind: ActivityKind;
-  title?: string;
-  description?: string;
-  content?: { intro?: string; reflection?: string };
-};
-
-type LessonActivities = {
+const activitiesData: {
   lessonSlug: string;
   language: string;
-  activities: ActivitySeedData[];
-};
-
-const activitiesData: LessonActivities[] = [
+  activities: {
+    generationStatus: GenerationStatus;
+    isPublished: boolean;
+    kind: ActivityKind;
+    title?: string;
+    description?: string;
+    content?: { intro?: string; reflection?: string };
+  }[];
+}[] = [
   {
     activities: [
       {

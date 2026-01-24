@@ -11,15 +11,7 @@ import {
 import { Badge } from "@zoonk/ui/components/badge";
 import { RankingItem } from "./ranking-item";
 
-type BattleMatchupListProps = {
-  matchups: BattleMatchup[];
-};
-
-type MatchupItemProps = {
-  matchup: BattleMatchup;
-};
-
-function MatchupItem({ matchup }: MatchupItemProps) {
+function MatchupItem({ matchup }: { matchup: BattleMatchup }) {
   // Get all unique models from the matchup
   const modelIds = new Set<string>();
   for (const judgment of matchup.judgments) {
@@ -128,7 +120,7 @@ function MatchupItem({ matchup }: MatchupItemProps) {
   );
 }
 
-export function BattleMatchupList({ matchups }: BattleMatchupListProps) {
+export function BattleMatchupList({ matchups }: { matchups: BattleMatchup[] }) {
   if (matchups.length === 0) {
     return (
       <p className="text-muted-foreground py-8 text-center">

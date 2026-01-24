@@ -4,12 +4,13 @@ import { Badge } from "@zoonk/ui/components/badge";
 import { XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 
-type AlternativeTitleBadgeProps = {
+export function AlternativeTitleBadge({
+  onDelete,
+  slug,
+}: {
   onDelete: (slug: string) => void;
   slug: string;
-};
-
-export function AlternativeTitleBadge({ onDelete, slug }: AlternativeTitleBadgeProps) {
+}) {
   const t = useExtracted();
 
   return (

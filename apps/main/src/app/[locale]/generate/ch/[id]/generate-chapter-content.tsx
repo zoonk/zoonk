@@ -17,11 +17,11 @@ import { getExtracted } from "next-intl/server";
 import { notFound, redirect } from "next/navigation";
 import { GenerationClient } from "./generation-client";
 
-type GenerateChapterContentProps = {
+export async function GenerateChapterContent({
+  params,
+}: {
   params: Promise<{ id: string; locale: string }>;
-};
-
-export async function GenerateChapterContent({ params }: GenerateChapterContentProps) {
+}) {
   const { id, locale } = await params;
   const chapterId = parseNumericId(id);
 

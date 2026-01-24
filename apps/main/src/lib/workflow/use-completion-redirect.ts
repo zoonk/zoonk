@@ -6,13 +6,11 @@ import { type GenerationStatus } from "./generation-store";
 
 const DEFAULT_REDIRECT_DELAY_MS = 1500;
 
-type CompletionRedirectConfig = {
+export function useCompletionRedirect(config: {
   delay?: number;
   status: GenerationStatus;
   url: string;
-};
-
-export function useCompletionRedirect(config: CompletionRedirectConfig) {
+}) {
   const { delay = DEFAULT_REDIRECT_DELAY_MS, status, url } = config;
   const router = useRouter();
 

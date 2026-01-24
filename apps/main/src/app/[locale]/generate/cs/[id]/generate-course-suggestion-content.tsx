@@ -15,13 +15,11 @@ import { parseNumericId } from "@zoonk/utils/string";
 import { notFound, redirect } from "next/navigation";
 import { GenerationClient } from "./generation-client";
 
-type GenerateCourseSuggestionContentProps = {
-  params: Promise<{ id: string; locale: string }>;
-};
-
 export async function GenerateCourseSuggestionContent({
   params,
-}: GenerateCourseSuggestionContentProps) {
+}: {
+  params: Promise<{ id: string; locale: string }>;
+}) {
   const { id, locale } = await params;
   const suggestionId = parseNumericId(id);
 

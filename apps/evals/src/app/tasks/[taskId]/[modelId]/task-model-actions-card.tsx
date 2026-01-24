@@ -14,19 +14,17 @@ import { PlayIcon, SparklesIcon } from "lucide-react";
 import Link from "next/link";
 import { generateOutputsAction, runEvalAction } from "./actions";
 
-type TaskModelActionsCardProps = {
-  model: ModelConfig;
-  modelId: string;
-  outputStatus: { status: OutputStatus; completedTestCases: number; totalTestCases: number };
-  taskId: string;
-};
-
 export function TaskModelActionsCard({
   model,
   modelId,
   outputStatus,
   taskId,
-}: TaskModelActionsCardProps) {
+}: {
+  model: ModelConfig;
+  modelId: string;
+  outputStatus: { status: OutputStatus; completedTestCases: number; totalTestCases: number };
+  taskId: string;
+}) {
   const hasOutputs = outputStatus.status !== "missing";
   const hasCompleteOutputs = outputStatus.status === "complete";
 

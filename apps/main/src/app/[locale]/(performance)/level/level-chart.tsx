@@ -5,12 +5,6 @@ import { PerformanceChartLayout } from "../_components/performance-chart-layout"
 import { formatPeriodLabel } from "../_utils";
 import { LevelChartClient } from "./level-chart-client";
 
-type SerializedDataPoint = {
-  date: string;
-  bp: number;
-  label: string;
-};
-
 export async function LevelChart({
   dataPoints,
   hasNext,
@@ -31,7 +25,11 @@ export async function LevelChart({
   const locale = await getLocale();
   const periodLabel = formatPeriodLabel(periodStart, periodEnd, period, locale);
 
-  const serializedDataPoints: SerializedDataPoint[] = dataPoints.map((point) => ({
+  const serializedDataPoints: {
+    date: string;
+    bp: number;
+    label: string;
+  }[] = dataPoints.map((point) => ({
     bp: point.bp,
     date: point.date.toISOString(),
     label: point.label,

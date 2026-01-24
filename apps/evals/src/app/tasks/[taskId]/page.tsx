@@ -20,11 +20,7 @@ import { runBattleModeAction } from "./actions";
 import { LeaderboardTabs } from "./leaderboard-tabs";
 import { ModelCard } from "./model-card";
 
-type TaskPageProps = {
-  params: Promise<{ taskId: string }>;
-};
-
-export default async function TaskPage({ params }: TaskPageProps) {
+export default async function TaskPage({ params }: { params: Promise<{ taskId: string }> }) {
   const { taskId } = await params;
   const task = getTaskById(taskId);
 

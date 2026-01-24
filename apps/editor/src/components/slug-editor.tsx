@@ -14,30 +14,6 @@ export function SlugEditorSkeleton() {
   return <Skeleton className="mx-4 h-5 w-32" />;
 }
 
-type SlugCheckParams = {
-  chapterId?: number;
-  courseId?: number;
-  language: string;
-  orgSlug: string;
-  slug: string;
-};
-
-type SlugEditorProps = {
-  chapterId?: number;
-  checkFn: (params: SlugCheckParams) => Promise<boolean>;
-  courseId?: number;
-  entityId: number;
-  initialSlug: string;
-  language: string;
-  onSave: (
-    id: number,
-    data: { slug: string },
-  ) => Promise<{ error: string | null; newSlug?: string }>;
-  orgSlug: string;
-  redirectPrefix: string;
-  redirectSuffix?: string;
-};
-
 export function SlugEditor({
   chapterId,
   checkFn,
@@ -49,7 +25,27 @@ export function SlugEditor({
   orgSlug,
   redirectPrefix,
   redirectSuffix = "",
-}: SlugEditorProps) {
+}: {
+  chapterId?: number;
+  checkFn: (params: {
+    chapterId?: number;
+    courseId?: number;
+    language: string;
+    orgSlug: string;
+    slug: string;
+  }) => Promise<boolean>;
+  courseId?: number;
+  entityId: number;
+  initialSlug: string;
+  language: string;
+  onSave: (
+    id: number,
+    data: { slug: string },
+  ) => Promise<{ error: string | null; newSlug?: string }>;
+  orgSlug: string;
+  redirectPrefix: string;
+  redirectSuffix?: string;
+}) {
   const t = useExtracted();
   const router = useRouter();
   const [isPending, startTransition] = useTransition();

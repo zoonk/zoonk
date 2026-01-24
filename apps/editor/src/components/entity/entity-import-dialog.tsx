@@ -49,19 +49,17 @@ const FORMATS: Record<EntityType, object> = {
   },
 };
 
-type EntityImportDialogProps = {
-  entityType: EntityType;
-  importDescription: string;
-  importTitle: string;
-  onClose: () => void;
-};
-
 export function EntityImportDialog({
   entityType,
   importDescription,
   importTitle,
   onClose,
-}: EntityImportDialogProps) {
+}: {
+  entityType: EntityType;
+  importDescription: string;
+  importTitle: string;
+  onClose: () => void;
+}) {
   const t = useExtracted();
 
   return (

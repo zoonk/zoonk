@@ -3,14 +3,15 @@
 import { type EventSourceMessage, createParser } from "eventsource-parser";
 import { useEffect, useRef } from "react";
 
-type UseSSEOptions<T> = {
-  onComplete?: () => void;
-  onError?: (error: Error) => void;
-  onMessage: (data: T) => void;
-  startIndex?: number;
-};
-
-export function useSSE<T>(url: string | null, options: UseSSEOptions<T>) {
+export function useSSE<T>(
+  url: string | null,
+  options: {
+    onComplete?: () => void;
+    onError?: (error: Error) => void;
+    onMessage: (data: T) => void;
+    startIndex?: number;
+  },
+) {
   const indexRef = useRef(options.startIndex ?? 0);
   const { onComplete, onError, onMessage } = options;
 

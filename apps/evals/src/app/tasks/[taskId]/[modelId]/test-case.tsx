@@ -7,32 +7,6 @@ import { Button } from "@zoonk/ui/components/button";
 import { useClipboard } from "@zoonk/ui/hooks/clipboard";
 import { Check, Copy } from "lucide-react";
 
-type TestCaseCardProps = {
-  result: EvalResult;
-  index: number;
-};
-
-type UserInputSectionProps = {
-  userInput: Record<string, unknown>;
-};
-
-type ScoreSectionProps = {
-  score: number;
-};
-
-type TokensSectionProps = {
-  inputTokens: number;
-  outputTokens: number;
-};
-
-type OutputSectionProps = {
-  output: string;
-};
-
-type EvaluationStepsSectionProps = {
-  steps: ScoreStep[];
-};
-
 function formatValue(value: unknown): string {
   if (typeof value === "string") {
     return value;
@@ -51,7 +25,7 @@ function formatValue(value: unknown): string {
   return JSON.stringify(value);
 }
 
-function UserInputSection({ userInput }: UserInputSectionProps) {
+function UserInputSection({ userInput }: { userInput: Record<string, unknown> }) {
   return (
     <div>
       <p className="text-muted-foreground text-sm">User Input</p>
@@ -77,7 +51,7 @@ function UserInputSection({ userInput }: UserInputSectionProps) {
   );
 }
 
-function ScoreSection({ score }: ScoreSectionProps) {
+function ScoreSection({ score }: { score: number }) {
   return (
     <div>
       <p className="text-muted-foreground text-sm">Score</p>
@@ -86,7 +60,13 @@ function ScoreSection({ score }: ScoreSectionProps) {
   );
 }
 
-function TokensSection({ inputTokens, outputTokens }: TokensSectionProps) {
+function TokensSection({
+  inputTokens,
+  outputTokens,
+}: {
+  inputTokens: number;
+  outputTokens: number;
+}) {
   return (
     <div className="grid gap-4 md:grid-cols-2">
       <div>
@@ -102,7 +82,7 @@ function TokensSection({ inputTokens, outputTokens }: TokensSectionProps) {
   );
 }
 
-function OutputSection({ output }: OutputSectionProps) {
+function OutputSection({ output }: { output: string }) {
   const { isCopied, copy } = useClipboard();
 
   return (
@@ -129,7 +109,7 @@ function OutputSection({ output }: OutputSectionProps) {
   );
 }
 
-function EvaluationStepsSection({ steps }: EvaluationStepsSectionProps) {
+function EvaluationStepsSection({ steps }: { steps: ScoreStep[] }) {
   return (
     <div>
       <p className="text-muted-foreground mb-2 text-sm">Evaluation Steps</p>
@@ -146,7 +126,7 @@ function EvaluationStepsSection({ steps }: EvaluationStepsSectionProps) {
   );
 }
 
-export function TestCase({ result, index }: TestCaseCardProps) {
+export function TestCase({ result, index }: { result: EvalResult; index: number }) {
   const testCaseTitle = result.testCase.id || `Test Case ${index + 1}`;
   const score = calculateScore(result.steps);
   const scoreDisplay = score.toFixed(2);

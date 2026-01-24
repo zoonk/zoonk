@@ -2,14 +2,10 @@ import "server-only";
 import { type BatchPayload, prisma } from "@zoonk/db";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 
-type AddParams = {
+export async function addCourseCategories(params: {
   courseId: number;
   categories: string[];
-};
-
-export async function addCourseCategories(
-  params: AddParams,
-): Promise<SafeReturn<BatchPayload | null>> {
+}): Promise<SafeReturn<BatchPayload | null>> {
   const categories = params.categories.map((category) => ({
     category,
     courseId: params.courseId,

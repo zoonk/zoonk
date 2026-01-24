@@ -2,19 +2,17 @@
 
 import { ClientLink } from "@/i18n/client-link";
 
-type ChapterLessonListProps = {
-  brandSlug: string;
-  chapterSlug: string;
-  courseSlug: string;
-  lessons: { id: number; slug: string; title: string }[];
-};
-
 export function ChapterLessonList({
   brandSlug,
   chapterSlug,
   courseSlug,
   lessons,
-}: ChapterLessonListProps) {
+}: {
+  brandSlug: string;
+  chapterSlug: string;
+  courseSlug: string;
+  lessons: { id: number; slug: string; title: string }[];
+}) {
   return (
     <ul className="flex flex-col">
       {lessons.map((lesson) => (

@@ -11,10 +11,9 @@ import { LessonBackLink } from "./lesson-back-link";
 import { LessonContent } from "./lesson-content";
 import { LessonSlug } from "./lesson-slug";
 
-type LessonPageProps =
-  PageProps<"/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]">;
-
-export default async function LessonPage(props: LessonPageProps) {
+export default async function LessonPage(
+  props: PageProps<"/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]">,
+) {
   const { chapterSlug, courseSlug, lang, lessonSlug, orgSlug } = await props.params;
 
   // Preload data in parallel (cached, so child components get the same promise)

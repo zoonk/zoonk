@@ -26,15 +26,15 @@ export function CategoryEditorSkeleton() {
   );
 }
 
-type CategoryEditorProps = {
+export function CategoryEditor({
+  categories,
+  onAdd,
+  onRemove,
+}: {
   categories: string[];
   onAdd: (category: string) => Promise<{ error: string | null }>;
   onRemove: (category: string) => Promise<{ error: string | null }>;
-};
-
-type OptimisticAction = { type: "add"; category: string } | { type: "remove"; category: string };
-
-export function CategoryEditor({ categories, onAdd, onRemove }: CategoryEditorProps) {
+}) {
   const t = useExtracted();
   const { labels: categoryLabels, sortedCategories, getLabel } = useCategoryLabels();
 
@@ -43,7 +43,7 @@ export function CategoryEditor({ categories, onAdd, onRemove }: CategoryEditorPr
 
   const [optimisticCategories, updateOptimistic] = useOptimistic(
     categories,
-    (state, action: OptimisticAction) => {
+    (state, action: { type: "add"; category: string } | { type: "remove"; category: string }) => {
       if (action.type === "add") {
         return [...state, action.category];
       }

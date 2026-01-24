@@ -6,9 +6,7 @@ const translations = {
   pt: () => import("./pt.json").then((module) => module.default),
 };
 
-type TranslationLocale = keyof typeof translations;
-
 export function getTranslation(locale: string) {
-  const safeLocale: TranslationLocale = isValidLocale(locale) ? locale : "en";
+  const safeLocale: keyof typeof translations = isValidLocale(locale) ? locale : "en";
   return translations[safeLocale]();
 }

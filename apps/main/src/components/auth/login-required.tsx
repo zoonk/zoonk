@@ -11,11 +11,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { ProtectedSection } from "@zoonk/ui/patterns/auth/protected";
 import { getExtracted } from "next-intl/server";
 
-type LoginRequiredProps = {
-  title: string;
-};
-
-export async function LoginRequired({ title }: LoginRequiredProps) {
+export async function LoginRequired({ title }: { title: string }) {
   const t = await getExtracted();
 
   return (

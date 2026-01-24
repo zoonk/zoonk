@@ -16,11 +16,9 @@ import { useExtracted } from "next-intl";
 import { useActionState, useId } from "react";
 import { contactFormAction } from "./contact-form-action";
 
-type ContactFormState = {
+const initialState: {
   status: "idle" | "error" | "success";
-};
-
-const initialState: ContactFormState = {
+} = {
   status: "idle",
 };
 

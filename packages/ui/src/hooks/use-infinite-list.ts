@@ -3,22 +3,6 @@
 import { useCallback, useRef, useState } from "react";
 import useInfiniteScroll from "react-infinite-scroll-hook";
 
-type UseInfiniteListOptions<TItem, TCursor> = {
-  initialItems: TItem[];
-  limit: number;
-  getCursor: (item: TItem) => TCursor;
-  fetchMore: (cursor: TCursor) => Promise<TItem[]>;
-  getKey: (item: TItem) => string | number;
-  rootMargin?: string;
-};
-
-type UseInfiniteListReturn<TItem> = {
-  hasNextPage: boolean;
-  isLoading: boolean;
-  items: TItem[];
-  sentryRef: (node: Element | null) => void;
-};
-
 export function useInfiniteList<TItem, TCursor>({
   fetchMore,
   getCursor,
@@ -26,7 +10,19 @@ export function useInfiniteList<TItem, TCursor>({
   initialItems,
   limit,
   rootMargin = "0px 0px 200px 0px",
-}: UseInfiniteListOptions<TItem, TCursor>): UseInfiniteListReturn<TItem> {
+}: {
+  initialItems: TItem[];
+  limit: number;
+  getCursor: (item: TItem) => TCursor;
+  fetchMore: (cursor: TCursor) => Promise<TItem[]>;
+  getKey: (item: TItem) => string | number;
+  rootMargin?: string;
+}): {
+  hasNextPage: boolean;
+  isLoading: boolean;
+  items: TItem[];
+  sentryRef: (node: Element | null) => void;
+} {
   const [items, setItems] = useState(initialItems);
   const [isLoading, setIsLoading] = useState(false);
   const [hasNextPage, setHasNextPage] = useState(initialItems.length >= limit);

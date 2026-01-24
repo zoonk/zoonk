@@ -3,19 +3,15 @@ import { prisma } from "@zoonk/db";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { normalizeString, toSlug } from "@zoonk/utils/string";
 
-type LessonInput = {
-  title: string;
-  description: string;
-};
-
-type CreateParams = {
+export async function createLessons(params: {
   chapterId: number;
   language: string;
-  lessons: LessonInput[];
+  lessons: {
+    title: string;
+    description: string;
+  }[];
   organizationId: number;
-};
-
-export async function createLessons(params: CreateParams): Promise<SafeReturn<void>> {
+}): Promise<SafeReturn<void>> {
   const lessonsData = params.lessons.map((lesson, index) => ({
     chapterId: params.chapterId,
     description: lesson.description,

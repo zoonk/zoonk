@@ -8,21 +8,19 @@ import {
 import { getExtracted } from "next-intl/server";
 import { ChapterListItemLink } from "./chapter-list-item-link";
 
-type ChapterListRowProps = {
-  chapter: { id: number; slug: string; title: string; description: string | null };
-  courseSlug: string;
-  index: number;
-  lang: string;
-  orgSlug: string;
-};
-
 export async function ChapterListRow({
   chapter,
   courseSlug,
   index,
   lang,
   orgSlug,
-}: ChapterListRowProps) {
+}: {
+  chapter: { id: number; slug: string; title: string; description: string | null };
+  courseSlug: string;
+  index: number;
+  lang: string;
+  orgSlug: string;
+}) {
   const t = await getExtracted();
 
   return (

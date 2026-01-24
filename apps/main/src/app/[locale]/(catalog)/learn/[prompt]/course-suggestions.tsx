@@ -13,12 +13,7 @@ import { getExtracted } from "next-intl/server";
 import { ContentFeedback } from "./content-feedback";
 import { CourseSuggestionItem } from "./course-suggestion-item";
 
-type CourseSuggestionsProps = {
-  locale: string;
-  prompt: string;
-};
-
-export async function CourseSuggestions({ locale, prompt }: CourseSuggestionsProps) {
+export async function CourseSuggestions({ locale, prompt }: { locale: string; prompt: string }) {
   const t = await getExtracted();
   const { suggestions } = await generateCourseSuggestions({
     language: locale,

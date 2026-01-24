@@ -28,11 +28,6 @@ function getMatchupFilePath(taskId: string, testCaseId: string): string {
   return path.join(BATTLES_DIR, taskId, `${testCaseId}.json`);
 }
 
-type AnonymizationResult = {
-  anonymizedOutputs: { anonymousId: string; output: string }[];
-  mapping: { anonymousId: string; modelId: string }[];
-};
-
 function shuffleArray<T>(array: T[]): T[] {
   const shuffled = [...array];
   for (let i = shuffled.length - 1; i > 0; i--) {
@@ -44,7 +39,10 @@ function shuffleArray<T>(array: T[]): T[] {
   return shuffled;
 }
 
-function anonymizeOutputs(outputs: { modelId: string; output: string }[]): AnonymizationResult {
+function anonymizeOutputs(outputs: { modelId: string; output: string }[]): {
+  anonymizedOutputs: { anonymousId: string; output: string }[];
+  mapping: { anonymousId: string; modelId: string }[];
+} {
   const shuffled = shuffleArray(outputs);
   const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 

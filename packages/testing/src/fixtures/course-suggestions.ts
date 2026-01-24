@@ -1,9 +1,9 @@
 import { randomUUID } from "node:crypto";
 import { type CourseSuggestion, prisma } from "@zoonk/db";
 
-type CourseSuggestionAttrs = Omit<CourseSuggestion, "id" | "createdAt" | "updatedAt">;
-
-export function courseSuggestionAttrs(attrs?: Partial<CourseSuggestion>): CourseSuggestionAttrs {
+export function courseSuggestionAttrs(
+  attrs?: Partial<CourseSuggestion>,
+): Omit<CourseSuggestion, "id" | "createdAt" | "updatedAt"> {
   return {
     description: "Test course suggestion description",
     generationRunId: null,

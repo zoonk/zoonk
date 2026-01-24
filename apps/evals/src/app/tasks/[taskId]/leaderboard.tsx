@@ -21,12 +21,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { LeaderboardExport } from "./leaderboard-export";
 
-type LeaderboardProps = {
-  taskId: string;
-  results: TaskEvalResults[];
-};
-
-export function Leaderboard({ taskId, results }: LeaderboardProps) {
+export function Leaderboard({ taskId, results }: { taskId: string; results: TaskEvalResults[] }) {
   const [sortKey, setSortKey] = useState<SortKey>("averageScore");
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
 

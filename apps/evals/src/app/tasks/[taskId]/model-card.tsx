@@ -10,12 +10,7 @@ import {
 } from "@zoonk/ui/components/item";
 import Link from "next/link";
 
-type ModelCardProps = {
-  model: ModelConfig;
-  taskId: string;
-};
-
-export function ModelCard({ model, taskId }: ModelCardProps) {
+export function ModelCard({ model, taskId }: { model: ModelConfig; taskId: string }) {
   return (
     <Item variant="outline">
       <ItemContent>

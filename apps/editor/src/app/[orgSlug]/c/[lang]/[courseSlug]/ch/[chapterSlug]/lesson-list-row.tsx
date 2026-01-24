@@ -8,15 +8,6 @@ import {
 import { getExtracted } from "next-intl/server";
 import { LessonListItemLink } from "./lesson-list-item-link";
 
-type LessonListRowProps = {
-  chapterSlug: string;
-  courseSlug: string;
-  index: number;
-  lang: string;
-  lesson: { id: number; slug: string; title: string; description: string | null };
-  orgSlug: string;
-};
-
 export async function LessonListRow({
   chapterSlug,
   courseSlug,
@@ -24,7 +15,14 @@ export async function LessonListRow({
   lang,
   lesson,
   orgSlug,
-}: LessonListRowProps) {
+}: {
+  chapterSlug: string;
+  courseSlug: string;
+  index: number;
+  lang: string;
+  lesson: { id: number; slug: string; title: string; description: string | null };
+  orgSlug: string;
+}) {
   const t = await getExtracted();
 
   return (

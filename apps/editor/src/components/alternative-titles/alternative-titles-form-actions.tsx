@@ -10,17 +10,15 @@ import {
 import { DownloadIcon, EllipsisVerticalIcon, UploadIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 
-type AlternativeTitlesFormActionsProps = {
-  disabled: boolean;
-  onExport: () => void;
-  onImport: () => void;
-};
-
 export function AlternativeTitlesFormActions({
   disabled,
   onExport,
   onImport,
-}: AlternativeTitlesFormActionsProps) {
+}: {
+  disabled: boolean;
+  onExport: () => void;
+  onImport: () => void;
+}) {
   const t = useExtracted();
 
   return (

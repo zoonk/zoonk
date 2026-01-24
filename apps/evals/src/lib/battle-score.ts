@@ -13,15 +13,13 @@ const battleRankingSchema = z.object({
   rankings: z.array(modelRankingSchema),
 });
 
-type AnonymizedOutput = {
-  anonymousId: string;
-  output: string;
-};
-
 export async function generateBattleRankings(params: {
   judgeId: string;
   expectations: string;
-  anonymizedOutputs: AnonymizedOutput[];
+  anonymizedOutputs: {
+    anonymousId: string;
+    output: string;
+  }[];
   mapping: { anonymousId: string; modelId: string }[];
 }): Promise<ModelRanking[]> {
   const { judgeId, expectations, anonymizedOutputs, mapping } = params;

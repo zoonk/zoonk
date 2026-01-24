@@ -4,12 +4,10 @@ import { getAIOrganization } from "@/data/orgs/get-ai-organization";
 import { streamStatus } from "../stream-status";
 import { type CourseContext, type CourseSuggestionData } from "../types";
 
-type InitializeInput = {
+export async function initializeCourseStep(input: {
   suggestion: CourseSuggestionData;
   workflowRunId: string;
-};
-
-export async function initializeCourseStep(input: InitializeInput): Promise<CourseContext> {
+}): Promise<CourseContext> {
   "use step";
 
   await streamStatus({ status: "started", step: "initializeCourse" });

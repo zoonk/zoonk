@@ -19,7 +19,17 @@ export function ContentEditorSkeleton() {
   );
 }
 
-type ContentEditorProps = {
+export function ContentEditor({
+  entityId,
+  initialTitle,
+  initialDescription,
+  onSaveTitle,
+  onSaveDescription,
+  titlePlaceholder,
+  descriptionPlaceholder,
+  titleLabel,
+  descriptionLabel,
+}: {
   entityId: number;
   initialTitle: string;
   initialDescription: string;
@@ -32,19 +42,7 @@ type ContentEditorProps = {
   descriptionPlaceholder: string;
   titleLabel: string;
   descriptionLabel: string;
-};
-
-export function ContentEditor({
-  entityId,
-  initialTitle,
-  initialDescription,
-  onSaveTitle,
-  onSaveDescription,
-  titlePlaceholder,
-  descriptionPlaceholder,
-  titleLabel,
-  descriptionLabel,
-}: ContentEditorProps) {
+}) {
   const t = useExtracted();
 
   const {

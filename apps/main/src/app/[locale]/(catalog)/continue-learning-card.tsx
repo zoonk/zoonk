@@ -20,12 +20,13 @@ import { PlayCircleIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
 import Image from "next/image";
 
-type ContinueLearningCardProps = {
+export async function ContinueLearningCard({
+  item,
+  kindLabels,
+}: {
   item: ContinueLearningItem;
   kindLabels: Map<string, string>;
-};
-
-export async function ContinueLearningCard({ item, kindLabels }: ContinueLearningCardProps) {
+}) {
   const t = await getExtracted();
   const { activity, chapter, course, lesson } = item;
 

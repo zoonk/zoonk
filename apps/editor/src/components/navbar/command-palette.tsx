@@ -26,14 +26,6 @@ import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import { useCallback, useMemo } from "react";
 
-type StaticMenuItem = {
-  icon: LucideIcon;
-  id: string;
-  keywords: string[];
-  label: string;
-  url: string;
-};
-
 const emptyResults: SearchResults = {
   chapters: [],
   courses: [],
@@ -67,7 +59,13 @@ export function CommandPalette() {
     router.push(url as never);
   };
 
-  const staticItems: StaticMenuItem[] = useMemo(
+  const staticItems: {
+    icon: LucideIcon;
+    id: string;
+    keywords: string[];
+    label: string;
+    url: string;
+  }[] = useMemo(
     () => [
       {
         icon: HomeIcon,

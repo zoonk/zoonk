@@ -8,12 +8,14 @@ import { MessageSquareIcon, ThumbsDownIcon, ThumbsUpIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 
-type ContentFeedbackProps = {
+export function ContentFeedback({
+  kind,
+  contentId,
+  className,
+}: {
   kind: "courseSuggestions";
   contentId: string;
-} & React.ComponentProps<"footer">;
-
-export function ContentFeedback({ kind, contentId, className }: ContentFeedbackProps) {
+} & React.ComponentProps<"footer">) {
   const t = useExtracted();
   const [feedback, setFeedback] = useState<"upvote" | "downvote" | null>(null);
 

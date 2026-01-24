@@ -2,14 +2,17 @@
 
 import { Badge } from "@zoonk/ui/components/badge";
 
-type RankingItemProps = {
+export function RankingItem({
+  anonymousId,
+  judgeName,
+  reasoning,
+  score,
+}: {
   anonymousId: string;
   judgeName: string;
   reasoning: string;
   score: number;
-};
-
-export function RankingItem({ anonymousId, judgeName, reasoning, score }: RankingItemProps) {
+}) {
   return (
     <div className="bg-muted rounded-lg p-3">
       <div className="mb-2 flex items-center justify-between">

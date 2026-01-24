@@ -9,12 +9,10 @@ import { notFound } from "next/navigation";
 import { deleteChapterAction, togglePublishAction } from "./actions";
 import { ChapterActionsContainer } from "./chapter-actions-container";
 
-type ChapterNavbarActionsPageProps = PageProps<"/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]">;
-
 export async function ChapterActions({
   params,
 }: {
-  params: ChapterNavbarActionsPageProps["params"];
+  params: PageProps<"/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]">["params"];
 }) {
   const { chapterSlug, courseSlug, lang, orgSlug } = await params;
   const t = await getExtracted();

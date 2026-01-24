@@ -11,8 +11,6 @@ import {
   getPhaseStatus,
 } from "./generation-phases";
 
-type PhaseLabels = Record<PhaseName, string>;
-
 export type PhaseInfo = {
   name: PhaseName;
   label: string;
@@ -26,7 +24,7 @@ export function useGenerationPhases(
 ) {
   const t = useExtracted();
 
-  const labels: PhaseLabels = {
+  const labels: Record<PhaseName, string> = {
     completing: t("Finishing up"),
     generatingLessons: t("Generating lessons"),
     loadingInfo: t("Loading chapter information"),

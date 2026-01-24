@@ -5,11 +5,7 @@ import { buttonVariants } from "@zoonk/ui/components/button";
 import { SparklesIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 
-type ChapterEmptyStateProps = {
-  chapterId: number;
-};
-
-export function ChapterEmptyState({ chapterId }: ChapterEmptyStateProps) {
+export function ChapterEmptyState({ chapterId }: { chapterId: number }) {
   const t = useExtracted();
 
   return (

@@ -20,9 +20,11 @@ import {
 } from "./actions";
 import { LessonListRow } from "./lesson-list-row";
 
-type ChapterPageProps = PageProps<"/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]">;
-
-export async function LessonList({ params }: { params: ChapterPageProps["params"] }) {
+export async function LessonList({
+  params,
+}: {
+  params: PageProps<"/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]">["params"];
+}) {
   const { chapterSlug, courseSlug, lang, orgSlug } = await params;
   const t = await getExtracted();
 

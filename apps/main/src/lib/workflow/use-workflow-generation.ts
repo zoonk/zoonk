@@ -10,7 +10,7 @@ import {
 } from "./generation-store";
 import { useSSE } from "./use-sse";
 
-type WorkflowConfig<TStep extends string> = {
+export function useWorkflowGeneration<TStep extends string = string>(config: {
   autoTrigger?: boolean;
   completionStep?: TStep;
   initialRunId?: string | null;
@@ -18,11 +18,7 @@ type WorkflowConfig<TStep extends string> = {
   statusUrl: string;
   triggerBody: Record<string, unknown>;
   triggerUrl: string;
-};
-
-export function useWorkflowGeneration<TStep extends string = string>(
-  config: WorkflowConfig<TStep>,
-) {
+}) {
   const { autoTrigger = true, completionStep, statusUrl, triggerBody, triggerUrl } = config;
   const hasTriggeredRef = useRef(false);
 

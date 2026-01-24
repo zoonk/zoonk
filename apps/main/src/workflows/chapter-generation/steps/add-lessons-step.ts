@@ -3,12 +3,10 @@ import { streamStatus } from "../stream-status";
 import { type GeneratedLesson } from "./generate-lessons-step";
 import { type ChapterContext } from "./get-chapter-step";
 
-type AddInput = {
+export async function addLessonsStep(input: {
   context: ChapterContext;
   lessons: GeneratedLesson[];
-};
-
-export async function addLessonsStep(input: AddInput): Promise<void> {
+}): Promise<void> {
   "use step";
 
   await streamStatus({ status: "started", step: "addLessons" });

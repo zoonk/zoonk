@@ -6,21 +6,17 @@ import {
   type StepVisualKind,
 } from "../../generated/prisma/client";
 
-type StepSeedData = {
-  kind: StepKind;
-  content: Prisma.InputJsonValue;
-  visualKind?: StepVisualKind;
-  visualContent?: Prisma.InputJsonValue;
-};
-
-type ActivitySteps = {
+const stepsData: {
   lessonSlug: string;
   language: string;
   activityPosition: number;
-  steps: StepSeedData[];
-};
-
-const stepsData: ActivitySteps[] = [
+  steps: {
+    kind: StepKind;
+    content: Prisma.InputJsonValue;
+    visualKind?: StepVisualKind;
+    visualContent?: Prisma.InputJsonValue;
+  }[];
+}[] = [
   {
     activityPosition: 0, // Background activity
     language: "en",

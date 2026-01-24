@@ -2,13 +2,11 @@ import { updateAICourse } from "@/data/courses/update-ai-course";
 import { updateCourseSuggestionStatus } from "@/data/courses/update-course-suggestion-status";
 import { streamStatus } from "../stream-status";
 
-type SetRunningInput = {
+export async function setCourseAsRunningStep(input: {
   courseId: number;
   courseSuggestionId: number;
   workflowRunId: string;
-};
-
-export async function setCourseAsRunningStep(input: SetRunningInput): Promise<void> {
+}): Promise<void> {
   "use step";
 
   await streamStatus({ status: "started", step: "setCourseAsRunning" });

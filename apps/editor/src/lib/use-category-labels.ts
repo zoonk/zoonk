@@ -3,15 +3,11 @@
 import { COURSE_CATEGORIES, type CourseCategory, isValidCategory } from "@zoonk/utils/categories";
 import { useExtracted } from "next-intl";
 
-type CategoryLabels = Record<CourseCategory, string>;
-
-type UseCategoryLabelsResult = {
-  labels: CategoryLabels;
+export function useCategoryLabels(): {
+  labels: Record<CourseCategory, string>;
   sortedCategories: CourseCategory[];
   getLabel: (category: string) => string | null;
-};
-
-export function useCategoryLabels(): UseCategoryLabelsResult {
+} {
   const t = useExtracted();
 
   const labels = {

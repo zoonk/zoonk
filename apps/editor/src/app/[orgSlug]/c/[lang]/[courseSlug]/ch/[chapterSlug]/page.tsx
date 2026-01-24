@@ -11,9 +11,9 @@ import { ChapterContent } from "./chapter-content";
 import { ChapterSlug } from "./chapter-slug";
 import { LessonList } from "./lesson-list";
 
-type ChapterPageProps = PageProps<"/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]">;
-
-export default async function ChapterPage(props: ChapterPageProps) {
+export default async function ChapterPage(
+  props: PageProps<"/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]">,
+) {
   const { chapterSlug, courseSlug, lang, orgSlug } = await props.params;
 
   // Preload data in parallel (cached, so child components get the same promise)

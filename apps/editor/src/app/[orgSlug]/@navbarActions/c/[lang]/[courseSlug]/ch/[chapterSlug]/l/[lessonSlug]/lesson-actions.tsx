@@ -9,13 +9,10 @@ import { notFound } from "next/navigation";
 import { deleteLessonAction, togglePublishAction } from "./actions";
 import { LessonActionsContainer } from "./lesson-actions-container";
 
-type LessonNavbarActionsPageProps =
-  PageProps<"/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]">;
-
 export async function LessonActions({
   params,
 }: {
-  params: LessonNavbarActionsPageProps["params"];
+  params: PageProps<"/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]">["params"];
 }) {
   const { chapterSlug, courseSlug, lang, lessonSlug, orgSlug } = await params;
   const t = await getExtracted();

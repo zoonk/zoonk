@@ -4,12 +4,10 @@ import { revalidateTag } from "next/cache";
 import { streamStatus } from "../stream-status";
 import { type ChapterContext } from "./get-chapter-step";
 
-type SetCompletedInput = {
+export async function setChapterAsCompletedStep(input: {
   context: ChapterContext;
   workflowRunId: string;
-};
-
-export async function setChapterAsCompletedStep(input: SetCompletedInput): Promise<void> {
+}): Promise<void> {
   "use step";
 
   await streamStatus({ status: "started", step: "setChapterAsCompleted" });

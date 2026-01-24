@@ -21,11 +21,7 @@ const IMPORT_FORMAT = {
   alternativeTitles: ["title-slug-1", "title-slug-2"],
 };
 
-type AlternativeTitlesImportDialogProps = {
-  onClose: () => void;
-};
-
-export function AlternativeTitlesImportDialog({ onClose }: AlternativeTitlesImportDialogProps) {
+export function AlternativeTitlesImportDialog({ onClose }: { onClose: () => void }) {
   const t = useExtracted();
 
   return (

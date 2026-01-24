@@ -11,8 +11,6 @@ type SlugCheckParams = {
   slug: string;
 };
 
-type SlugCheckFn = (params: SlugCheckParams) => Promise<boolean>;
-
 /**
  * Hook to check if a slug already exists with debouncing.
  * Works with any entity type (course, chapter, lesson) by accepting a check function.
@@ -25,7 +23,10 @@ export function useSlugCheck({
   language,
   orgSlug,
   slug,
-}: SlugCheckParams & { checkFn: SlugCheckFn; initialSlug: string }) {
+}: SlugCheckParams & {
+  checkFn: (params: SlugCheckParams) => Promise<boolean>;
+  initialSlug: string;
+}) {
   const [_isPending, startTransition] = useTransition();
   const [slugExists, setSlugExists] = useState(false);
 

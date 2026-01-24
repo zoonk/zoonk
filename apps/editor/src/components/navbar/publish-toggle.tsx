@@ -6,12 +6,13 @@ import { Switch } from "@zoonk/ui/components/switch";
 import { useExtracted } from "next-intl";
 import { useOptimistic, useTransition } from "react";
 
-type PublishToggleProps = {
+export function PublishToggle({
+  isPublished,
+  onToggle,
+}: {
   isPublished: boolean;
   onToggle?: (isPublished: boolean) => Promise<{ error: string | null }>;
-};
-
-export function PublishToggle({ isPublished, onToggle }: PublishToggleProps) {
+}) {
   const t = useExtracted();
   const [isPending, startTransition] = useTransition();
   const [optimisticPublished, setOptimisticPublished] = useOptimistic(isPublished);

@@ -2,12 +2,10 @@ import { createChapters } from "@/data/chapters/create-chapters";
 import { streamStatus } from "../stream-status";
 import { type CourseContext, type CreatedChapter, type GeneratedChapter } from "../types";
 
-type AddInput = {
+export async function addChaptersStep(input: {
   course: CourseContext;
   chapters: GeneratedChapter[];
-};
-
-export async function addChaptersStep(input: AddInput): Promise<CreatedChapter[]> {
+}): Promise<CreatedChapter[]> {
   "use step";
 
   await streamStatus({ status: "started", step: "addChapters" });

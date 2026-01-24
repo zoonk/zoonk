@@ -6,13 +6,15 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { BattleLeaderboard } from "./battle-leaderboard";
 import { Leaderboard } from "./leaderboard";
 
-type LeaderboardTabsProps = {
+export function LeaderboardTabs({
+  taskId,
+  results,
+  battleEntries,
+}: {
   taskId: string;
   results: TaskEvalResults[];
   battleEntries: BattleLeaderboardEntry[];
-};
-
-export function LeaderboardTabs({ taskId, results, battleEntries }: LeaderboardTabsProps) {
+}) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const currentTab = searchParams.get("tab") ?? "battle";

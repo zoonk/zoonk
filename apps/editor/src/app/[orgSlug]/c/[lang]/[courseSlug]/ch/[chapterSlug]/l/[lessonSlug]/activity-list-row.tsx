@@ -8,7 +8,15 @@ import {
 import { getExtracted } from "next-intl/server";
 import { ActivityListItemLink } from "./activity-list-item-link";
 
-type ActivityListRowProps = {
+export async function ActivityListRow({
+  activity,
+  chapterSlug,
+  courseSlug,
+  index,
+  lang,
+  lessonSlug,
+  orgSlug,
+}: {
   activity: {
     id: bigint;
     kind: string;
@@ -21,17 +29,7 @@ type ActivityListRowProps = {
   lang: string;
   lessonSlug: string;
   orgSlug: string;
-};
-
-export async function ActivityListRow({
-  activity,
-  chapterSlug,
-  courseSlug,
-  index,
-  lang,
-  lessonSlug,
-  orgSlug,
-}: ActivityListRowProps) {
+}) {
   const t = await getExtracted();
 
   return (

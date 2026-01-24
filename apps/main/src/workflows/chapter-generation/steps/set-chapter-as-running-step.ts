@@ -1,12 +1,10 @@
 import { updateChapterGenerationStatus } from "@/data/chapters/update-chapter-generation-status";
 import { streamStatus } from "../stream-status";
 
-type SetRunningInput = {
+export async function setChapterAsRunningStep(input: {
   chapterId: number;
   workflowRunId: string;
-};
-
-export async function setChapterAsRunningStep(input: SetRunningInput): Promise<void> {
+}): Promise<void> {
   "use step";
 
   await streamStatus({ status: "started", step: "setChapterAsRunning" });
