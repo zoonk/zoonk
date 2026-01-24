@@ -453,10 +453,15 @@ msgctxt "G5e8UX"
 msgid "Remove {title}"
 msgstr "Remove {title}"
 
-#: src/components/alternative-titles/alternative-titles-editor.tsx
+#: src/components/alternative-titles/alternative-titles-add-form.tsx
 msgctxt "2/2yg+"
 msgid "Add"
 msgstr "Add"
+
+#: src/components/alternative-titles/alternative-titles-add-form.tsx
+msgctxt "jQY6mT"
+msgid "Add alternative title…"
+msgstr "Add alternative title…"
 
 #: src/components/alternative-titles/alternative-titles-editor.tsx
 msgctxt "6MeYja"
@@ -464,34 +469,9 @@ msgid "Alternative titles exported successfully"
 msgstr "Alternative titles exported successfully"
 
 #: src/components/alternative-titles/alternative-titles-editor.tsx
-msgctxt "cvL4Xs"
-msgid "Search titles…"
-msgstr "Search titles…"
-
-#: src/components/alternative-titles/alternative-titles-editor.tsx
 msgctxt "iQDWe6"
 msgid "Alternative titles"
 msgstr "Alternative titles"
-
-#: src/components/alternative-titles/alternative-titles-editor.tsx
-msgctxt "jQY6mT"
-msgid "Add alternative title…"
-msgstr "Add alternative title…"
-
-#: src/components/alternative-titles/alternative-titles-editor.tsx
-msgctxt "n2FbaN"
-msgid "No titles match your search"
-msgstr "No titles match your search"
-
-#: src/components/alternative-titles/alternative-titles-editor.tsx
-msgctxt "oDI/Rp"
-msgid "and {count} more"
-msgstr "and {count} more"
-
-#: src/components/alternative-titles/alternative-titles-editor.tsx
-msgctxt "qyJtWy"
-msgid "Show less"
-msgstr "Show less"
 
 #: src/components/alternative-titles/alternative-titles-editor.tsx
 msgctxt "R6KURz"
@@ -576,6 +556,26 @@ msgstr "Merge (add to existing)"
 msgctxt "Ws/LkY"
 msgid "Upload a JSON file containing alternative titles to import."
 msgstr "Upload a JSON file containing alternative titles to import."
+
+#: src/components/alternative-titles/alternative-titles-list.tsx
+msgctxt "cvL4Xs"
+msgid "Search titles…"
+msgstr "Search titles…"
+
+#: src/components/alternative-titles/alternative-titles-list.tsx
+msgctxt "n2FbaN"
+msgid "No titles match your search"
+msgstr "No titles match your search"
+
+#: src/components/alternative-titles/alternative-titles-list.tsx
+msgctxt "oDI/Rp"
+msgid "and {count} more"
+msgstr "and {count} more"
+
+#: src/components/alternative-titles/alternative-titles-list.tsx
+msgctxt "qyJtWy"
+msgid "Show less"
+msgstr "Show less"
 
 #: src/components/category/category-editor.tsx
 msgctxt "HzJbix"

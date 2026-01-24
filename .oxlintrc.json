@@ -20,6 +20,10 @@
       { "min": 2, "exceptions": ["i", "j", "x", "y", "z", "_", "a", "b", "t", "T"] }
     ],
     "eslint/init-declarations": "off",
+    "eslint/max-lines-per-function": [
+      "error",
+      { "skipComments": true, "skipBlankLines": true, "max": 150 }
+    ],
     "eslint/max-params": "off",
     "eslint/max-statements": ["error", { "ignoreTopLevelFunctions": true, "max": 20 }],
     "eslint/no-magic-numbers": [
@@ -64,6 +68,8 @@
     // custom rules
     "zoonk/no-object-params-in-cache": ["error", { "exceptions": ["headers"] }],
     "zoonk/no-single-use-type-alias": "error"
+
+    // temporary pedantic rules
   },
   "overrides": [
     {
@@ -84,6 +90,7 @@
     {
       "files": ["*.test.ts"],
       "rules": {
+        "eslint/max-lines-per-function": "off",
         "eslint/max-statements": "off",
         "eslint/no-magic-numbers": "off",
         "import/no-namespace": "off",

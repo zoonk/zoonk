@@ -453,10 +453,15 @@ msgctxt "G5e8UX"
 msgid "Remove {title}"
 msgstr "Eliminar {title}"
 
-#: src/components/alternative-titles/alternative-titles-editor.tsx
+#: src/components/alternative-titles/alternative-titles-add-form.tsx
 msgctxt "2/2yg+"
 msgid "Add"
 msgstr "Agregar"
+
+#: src/components/alternative-titles/alternative-titles-add-form.tsx
+msgctxt "jQY6mT"
+msgid "Add alternative title…"
+msgstr "Agregar título alternativo…"
 
 #: src/components/alternative-titles/alternative-titles-editor.tsx
 msgctxt "6MeYja"
@@ -464,34 +469,9 @@ msgid "Alternative titles exported successfully"
 msgstr "Títulos alternativos exportados exitosamente"
 
 #: src/components/alternative-titles/alternative-titles-editor.tsx
-msgctxt "cvL4Xs"
-msgid "Search titles…"
-msgstr "Buscar títulos…"
-
-#: src/components/alternative-titles/alternative-titles-editor.tsx
 msgctxt "iQDWe6"
 msgid "Alternative titles"
 msgstr "Títulos alternativos"
-
-#: src/components/alternative-titles/alternative-titles-editor.tsx
-msgctxt "jQY6mT"
-msgid "Add alternative title…"
-msgstr "Agregar título alternativo…"
-
-#: src/components/alternative-titles/alternative-titles-editor.tsx
-msgctxt "n2FbaN"
-msgid "No titles match your search"
-msgstr "No hay títulos que coincidan con tu búsqueda"
-
-#: src/components/alternative-titles/alternative-titles-editor.tsx
-msgctxt "oDI/Rp"
-msgid "and {count} more"
-msgstr "y {count} más"
-
-#: src/components/alternative-titles/alternative-titles-editor.tsx
-msgctxt "qyJtWy"
-msgid "Show less"
-msgstr "Mostrar menos"
 
 #: src/components/alternative-titles/alternative-titles-editor.tsx
 msgctxt "R6KURz"
@@ -576,6 +556,26 @@ msgstr "Combinar (agregar a existente)"
 msgctxt "Ws/LkY"
 msgid "Upload a JSON file containing alternative titles to import."
 msgstr "Sube un archivo JSON que contenga los títulos alternativos para importar."
+
+#: src/components/alternative-titles/alternative-titles-list.tsx
+msgctxt "cvL4Xs"
+msgid "Search titles…"
+msgstr "Buscar títulos…"
+
+#: src/components/alternative-titles/alternative-titles-list.tsx
+msgctxt "n2FbaN"
+msgid "No titles match your search"
+msgstr "No hay títulos que coincidan con tu búsqueda"
+
+#: src/components/alternative-titles/alternative-titles-list.tsx
+msgctxt "oDI/Rp"
+msgid "and {count} more"
+msgstr "y {count} más"
+
+#: src/components/alternative-titles/alternative-titles-list.tsx
+msgctxt "qyJtWy"
+msgid "Show less"
+msgstr "Mostrar menos"
 
 #: src/components/category/category-editor.tsx
 msgctxt "HzJbix"
