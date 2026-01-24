@@ -35,54 +35,56 @@ msgctxt "ZFXb/x"
 msgid "Delete course?"
 msgstr "Delete course?"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/actions.ts
-msgctxt "BAkmPD"
-msgid "Untitled chapter"
-msgstr "Untitled chapter"
-
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/actions.ts
-msgctxt "E+/68R"
-msgid "Invalid file type. Please upload a JPEG, PNG, WebP, or GIF image."
-msgstr "Invalid file type. Please upload a JPEG, PNG, WebP, or GIF image."
-
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/actions.ts
-msgctxt "in2TjU"
-msgid "File is too large. Maximum size is 5MB."
-msgstr "File is too large. Maximum size is 5MB."
-
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/actions.ts
-msgctxt "JkrKUt"
-msgid "Failed to upload image. Please try again."
-msgstr "Failed to upload image. Please try again."
-
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/actions.ts
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/_actions/alternative-titles.ts
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/_actions/chapters.ts
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/_actions/image.ts
 #: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/actions.ts
 #: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/activity-actions.ts
 msgctxt "lgvvCe"
 msgid "No file provided"
 msgstr "No file provided"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/actions.ts
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/_actions/alternative-titles.ts
 msgctxt "Lp3DO2"
 msgid "Title is required"
 msgstr "Title is required"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/actions.ts
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/_actions/alternative-titles.ts
 msgctxt "PAqOAW"
 msgid "Failed to add alternative title"
 msgstr "Failed to add alternative title"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/actions.ts
-msgctxt "Q1jVC0"
-msgid "Failed to process image. Please try again."
-msgstr "Failed to process image. Please try again."
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/_actions/chapters.ts
+msgctxt "BAkmPD"
+msgid "Untitled chapter"
+msgstr "Untitled chapter"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/actions.ts
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/_actions/chapters.ts
 #: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/actions.ts
 #: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/activity-actions.ts
 msgctxt "sGJpuF"
 msgid "Add a description…"
 msgstr "Add a description…"
+
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/_actions/image.ts
+msgctxt "E+/68R"
+msgid "Invalid file type. Please upload a JPEG, PNG, WebP, or GIF image."
+msgstr "Invalid file type. Please upload a JPEG, PNG, WebP, or GIF image."
+
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/_actions/image.ts
+msgctxt "in2TjU"
+msgid "File is too large. Maximum size is 5MB."
+msgstr "File is too large. Maximum size is 5MB."
+
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/_actions/image.ts
+msgctxt "JkrKUt"
+msgid "Failed to upload image. Please try again."
+msgstr "Failed to upload image. Please try again."
+
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/_actions/image.ts
+msgctxt "Q1jVC0"
+msgid "Failed to process image. Please try again."
+msgstr "Failed to process image. Please try again."
 
 #: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/actions.ts
 msgctxt "oUJv8w"

@@ -7,7 +7,7 @@ import {
   deleteAlternativeTitleAction,
   exportAlternativeTitlesAction,
   importAlternativeTitlesAction,
-} from "./actions";
+} from "./_actions/alternative-titles";
 
 export async function CourseAlternativeTitles({
   params,

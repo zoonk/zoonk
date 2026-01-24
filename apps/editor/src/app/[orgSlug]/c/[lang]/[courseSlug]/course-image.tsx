@@ -18,7 +18,7 @@ import { ImageIcon, Trash2Icon, UploadIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { removeCourseImageAction, uploadCourseImageAction } from "./actions";
+import { removeCourseImageAction, uploadCourseImageAction } from "./_actions/image";
 
 export async function CourseImage({
   params,
