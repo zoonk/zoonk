@@ -8,7 +8,7 @@ export function trustedOriginPlugin() {
       validateTrustedOrigin: createAuthEndpoint(
         "/trusted-origin/validate",
         {
-          body: z.object({ url: z.string().url() }),
+          body: z.object({ url: z.url() }),
           method: "POST",
           use: [sessionMiddleware],
         },
