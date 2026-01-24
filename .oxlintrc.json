@@ -44,6 +44,7 @@
     "jest/no-untyped-mock-factory": "off",
     "jsx-max-depth": ["error", { "max": 5 }],
     "jsx-a11y/no-autofocus": "off",
+    "oxc/no-barrel-file": ["error", { "threshold": 0 }],
     "oxc/no-map-spread": "off",
     "react/jsx-handler-names": "off",
     "react/jsx-props-no-spreading": "off",
