@@ -8,8 +8,8 @@ import { cache } from "react";
 export type UserCourse = Course & { organization: Organization };
 
 export const listUserCourses = cache(
-  async (params?: { headers?: Headers }): Promise<SafeReturn<UserCourse[]>> => {
-    const session = await getSession({ headers: params?.headers });
+  async (headers?: Headers): Promise<SafeReturn<UserCourse[]>> => {
+    const session = await getSession(headers);
 
     if (!session) {
       return { data: null, error: new AppError(ErrorCode.unauthorized) };

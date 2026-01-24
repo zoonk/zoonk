@@ -150,7 +150,7 @@ const cachedGetEnergyHistory = cache(
     locale: string,
     headers?: Headers,
   ): Promise<EnergyHistoryData | null> => {
-    const session = await getSession({ headers });
+    const session = await getSession(headers);
     if (!session) {
       return null;
     }

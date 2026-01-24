@@ -3,9 +3,9 @@ import { auth } from "@zoonk/auth";
 import { headers } from "next/headers";
 import { cache } from "react";
 
-export const getSession = cache(async (params?: { headers?: Headers }) => {
+export const getSession = cache(async (reqHeaders?: Headers) => {
   const session = await auth.api.getSession({
-    headers: params?.headers ?? (await headers()),
+    headers: reqHeaders ?? (await headers()),
   });
 
   return session;

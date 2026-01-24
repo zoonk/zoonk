@@ -140,7 +140,7 @@ const cachedGetScoreHistory = cache(
     locale: string,
     headers?: Headers,
   ): Promise<ScoreHistoryData | null> => {
-    const session = await getSession({ headers });
+    const session = await getSession(headers);
     if (!session) {
       return null;
     }

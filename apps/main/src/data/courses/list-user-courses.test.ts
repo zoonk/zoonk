@@ -9,7 +9,7 @@ import { listUserCourses } from "./list-user-courses";
 
 describe("unauthenticated users", () => {
   test("returns Unauthorized", async () => {
-    const result = await listUserCourses({ headers: new Headers() });
+    const result = await listUserCourses(new Headers());
 
     expect(result.error?.message).toBe(ErrorCode.unauthorized);
     expect(result.data).toBeNull();
@@ -31,7 +31,7 @@ describe("authenticated users", () => {
     const newUser = await userFixture();
     const newHeaders = await signInAs(newUser.email, newUser.password);
 
-    const result = await listUserCourses({ headers: newHeaders });
+    const result = await listUserCourses(newHeaders);
 
     expect(result.error).toBeNull();
     expect(result.data).toEqual([]);
@@ -48,7 +48,7 @@ describe("authenticated users", () => {
       userId: Number(user.id),
     });
 
-    const result = await listUserCourses({ headers });
+    const result = await listUserCourses(headers);
 
     expect(result.error).toBeNull();
     expect(result.data).toBeDefined();
@@ -69,7 +69,7 @@ describe("authenticated users", () => {
       userId: Number(testUser.id),
     });
 
-    const result = await listUserCourses({ headers: testHeaders });
+    const result = await listUserCourses(testHeaders);
 
     expect(result.error).toBeNull();
     expect(result.data).toBeDefined();
@@ -115,7 +115,7 @@ describe("authenticated users", () => {
       ],
     });
 
-    const result = await listUserCourses({ headers: testHeaders });
+    const result = await listUserCourses(testHeaders);
 
     expect(result.error).toBeNull();
     expect(result.data).toHaveLength(3);
@@ -145,7 +145,7 @@ describe("authenticated users", () => {
       }),
     ]);
 
-    const result = await listUserCourses({ headers: testHeaders });
+    const result = await listUserCourses(testHeaders);
 
     expect(result.error).toBeNull();
     expect(result.data?.some((item) => item.id === testUserCourse.id)).toBeTruthy();

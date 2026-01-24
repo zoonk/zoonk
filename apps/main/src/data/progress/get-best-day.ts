@@ -16,7 +16,7 @@ export type BestDayParams = {
 
 const cachedGetBestDay = cache(
   async (startDateIso: string | undefined, headers?: Headers): Promise<BestDayData | null> => {
-    const session = await getSession({ headers });
+    const session = await getSession(headers);
     if (!session) {
       return null;
     }

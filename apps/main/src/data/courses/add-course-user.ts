@@ -8,7 +8,7 @@ export async function addCourseUser(params: {
   courseId: number;
   headers?: Headers;
 }): Promise<SafeReturn<CourseUser>> {
-  const session = await getSession({ headers: params.headers });
+  const session = await getSession(params.headers);
 
   if (!session) {
     return { data: null, error: new AppError(ErrorCode.unauthorized) };

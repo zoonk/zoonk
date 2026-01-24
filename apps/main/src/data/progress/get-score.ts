@@ -42,7 +42,7 @@ const cachedGetScore = cache(
     endDateIso: string | undefined,
     headers?: Headers,
   ): Promise<ScoreData | null> => {
-    const session = await getSession({ headers });
+    const session = await getSession(headers);
     if (!session) {
       return null;
     }

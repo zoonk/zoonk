@@ -19,7 +19,7 @@ export type BestTimeParams = {
 
 const cachedGetBestTime = cache(
   async (startDateIso: string | undefined, headers?: Headers): Promise<BestTimeData | null> => {
-    const session = await getSession({ headers });
+    const session = await getSession(headers);
     if (!session) {
       return null;
     }

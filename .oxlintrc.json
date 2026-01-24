@@ -55,6 +55,7 @@
     "vitest/require-top-level-describe": "off",
 
     // custom rules
+    "zoonk/no-object-params-in-cache": ["error", { "exceptions": ["headers"] }],
     "zoonk/no-single-use-type-alias": "error",
 
     // style rules

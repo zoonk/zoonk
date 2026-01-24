@@ -6,12 +6,10 @@ import { cache } from "react";
 import { type AuthOrganization } from "../types";
 
 export const listUserOrgs = cache(
-  async (params?: {
-    headers?: Headers;
-  }): Promise<{ data: AuthOrganization[]; error: Error | null }> => {
+  async (reqHeaders?: Headers): Promise<{ data: AuthOrganization[]; error: Error | null }> => {
     const { data, error } = await safeAsync(async () =>
       auth.api.listOrganizations({
-        headers: params?.headers ?? (await headers()),
+        headers: reqHeaders ?? (await headers()),
       }),
     );
 

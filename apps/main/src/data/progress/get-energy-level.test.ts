@@ -6,7 +6,7 @@ import { getEnergyLevel } from "./get-energy-level";
 
 describe("unauthenticated users", () => {
   test("returns null", async () => {
-    const result = await getEnergyLevel({ headers: new Headers() });
+    const result = await getEnergyLevel(new Headers());
     expect(result).toBeNull();
   });
 });
@@ -16,7 +16,7 @@ describe("authenticated users", () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);
 
-    const result = await getEnergyLevel({ headers });
+    const result = await getEnergyLevel(headers);
     expect(result).toBeNull();
   });
 
@@ -31,7 +31,7 @@ describe("authenticated users", () => {
       },
     });
 
-    const result = await getEnergyLevel({ headers });
+    const result = await getEnergyLevel(headers);
     expect(result).toEqual({ currentEnergy: 85.5 });
   });
 });

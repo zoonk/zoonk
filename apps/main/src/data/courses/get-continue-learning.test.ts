@@ -41,7 +41,7 @@ async function createCourseWithActivity(organizationId: number) {
 
 describe("unauthenticated users", () => {
   test("returns empty array", async () => {
-    const result = await getContinueLearning({ headers: new Headers() });
+    const result = await getContinueLearning(new Headers());
     expect(result).toEqual([]);
   });
 });
@@ -57,7 +57,7 @@ describe("authenticated users", () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);
 
-    const result = await getContinueLearning({ headers });
+    const result = await getContinueLearning(headers);
     expect(result).toEqual([]);
   });
 
@@ -72,7 +72,7 @@ describe("authenticated users", () => {
       userId: Number(user.id),
     });
 
-    const result = await getContinueLearning({ headers });
+    const result = await getContinueLearning(headers);
 
     expect(result).toHaveLength(1);
     expect(result[0]?.course.id).toBe(course.id);
@@ -100,7 +100,7 @@ describe("authenticated users", () => {
       })),
     });
 
-    const result = await getContinueLearning({ headers });
+    const result = await getContinueLearning(headers);
 
     expect(result).toHaveLength(MAX_CONTINUE_LEARNING_ITEMS);
 
@@ -168,7 +168,7 @@ describe("authenticated users", () => {
       userId: Number(user.id),
     });
 
-    const result = await getContinueLearning({ headers });
+    const result = await getContinueLearning(headers);
 
     expect(result).toHaveLength(1);
     expect(result[0]?.activity.id).toBe(activity2.id);
@@ -237,7 +237,7 @@ describe("authenticated users", () => {
       userId: Number(user.id),
     });
 
-    const result = await getContinueLearning({ headers });
+    const result = await getContinueLearning(headers);
 
     expect(result).toHaveLength(1);
     expect(result[0]?.activity.id).toBe(activity2.id);

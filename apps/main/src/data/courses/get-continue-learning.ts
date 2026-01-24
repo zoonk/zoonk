@@ -32,8 +32,8 @@ export type ContinueLearningItem = {
 };
 
 export const getContinueLearning = cache(
-  async (params?: { headers?: Headers }): Promise<ContinueLearningItem[]> => {
-    const session = await getSession({ headers: params?.headers });
+  async (headers?: Headers): Promise<ContinueLearningItem[]> => {
+    const session = await getSession(headers);
 
     if (!session) {
       return [];
