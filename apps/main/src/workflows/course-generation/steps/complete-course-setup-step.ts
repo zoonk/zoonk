@@ -21,7 +21,7 @@ export async function completeCourseSetupStep(input: {
     }),
   ]);
 
-  const error = courseResult.error ?? suggestionResult.error;
+  const error = courseResult.error || suggestionResult.error;
 
   if (error) {
     await streamStatus({ status: "error", step: "completeCourseSetup" });

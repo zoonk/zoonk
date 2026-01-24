@@ -87,7 +87,7 @@ export function GenerationClient({
   if (generation.status === "error") {
     return (
       <GenerationProgressError
-        description={generation.error ?? t("Something went wrong. Please try again.")}
+        description={generation.error || t("Something went wrong. Please try again.")}
         onRetry={generation.retry}
         retryLabel={t("Try again")}
       >

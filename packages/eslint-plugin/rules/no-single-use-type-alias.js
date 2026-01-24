@@ -106,7 +106,7 @@ export default defineRule({
 
         for (const [name, aliasNode] of typeAliases) {
           const isExported = exportedIdentifiers.has(name);
-          const references = typeReferences.get(name) ?? [];
+          const references = typeReferences.get(name) || [];
           const isSingleUse = !isExported && references.length === 1;
 
           if (isSingleUse) {

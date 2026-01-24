@@ -28,7 +28,7 @@ export function NameForm() {
 
   const [state, formAction] = useActionState(nameFormAction, initialState);
 
-  const currentName = state.name ?? session?.user.name ?? "";
+  const currentName = state.name || session?.user.name || "";
   const hasError = state.status === "error";
 
   return (

@@ -9,7 +9,7 @@ export const sendVerificationOTP: EmailOTPOptions["sendVerificationOTP"] = async
   _request,
 ) => {
   const cookieStore = await cookies();
-  const locale = cookieStore.get("NEXT_LOCALE")?.value ?? "en";
+  const locale = cookieStore.get("NEXT_LOCALE")?.value || "en";
   const t = await getTranslation(locale);
 
   const subject = t.otpSubject;

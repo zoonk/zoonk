@@ -10,10 +10,10 @@ type UserAttrs = {
 
 export function userAttrs(attrs?: Partial<UserAttrs>): UserAttrs {
   return {
-    email: attrs?.email ?? `testuser${randomUUID()}@example.test`,
-    name: attrs?.name ?? "Test User",
-    password: attrs?.password ?? "Testuser123!",
-    role: attrs?.role ?? "user",
+    email: attrs?.email || `testuser${randomUUID()}@example.test`,
+    name: attrs?.name || "Test User",
+    password: attrs?.password || "Testuser123!",
+    role: attrs?.role || "user",
     ...attrs,
   };
 }

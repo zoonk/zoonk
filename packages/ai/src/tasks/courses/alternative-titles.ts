@@ -4,7 +4,7 @@ import { z } from "zod";
 import { type ReasoningEffort, buildProviderOptions } from "../../types";
 import systemPrompt from "./alternative-titles.prompt.md";
 
-const DEFAULT_MODEL = process.env.AI_MODEL_ALTERNATIVE_TITLES ?? "google/gemini-3-flash";
+const DEFAULT_MODEL = process.env.AI_MODEL_ALTERNATIVE_TITLES || "google/gemini-3-flash";
 
 const FALLBACK_MODELS = [
   "xai/grok-4-fast-reasoning",
