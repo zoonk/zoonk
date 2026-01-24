@@ -1,13 +1,14 @@
 import { chapterGenerationWorkflow } from "@/workflows/chapter-generation/chapter-generation-workflow";
 import { auth } from "@zoonk/core/auth";
 import { findActiveSubscription } from "@zoonk/core/auth/subscription";
+import { getNumericString } from "@zoonk/utils/json";
 import { parseNumericId } from "@zoonk/utils/string";
 import { headers } from "next/headers";
 import { start } from "workflow/api";
 
 export async function POST(request: Request) {
-  const body = await request.json();
-  const chapterId = parseNumericId(String(body.chapterId ?? ""));
+  const body: unknown = await request.json();
+  const chapterId = parseNumericId(getNumericString(body, "chapterId"));
 
   if (!chapterId) {
     return Response.json({ error: "Missing or invalid chapterId" }, { status: 400 });

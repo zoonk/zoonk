@@ -1,6 +1,7 @@
 "use client";
 
 import { useSelector } from "@xstate/store/react";
+import { getString } from "@zoonk/utils/json";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import {
   type GenerationStatus,
@@ -76,8 +77,12 @@ export function useWorkflowGeneration<TStep extends string = string>(config: {
         if (!response.ok) {
           throw new Error("Failed to start generation");
         }
-        const data = await response.json();
-        store.send({ runId: data.runId, type: "triggerSuccess" });
+        const data: unknown = await response.json();
+        const runId = getString(data, "runId");
+        if (!runId) {
+          throw new Error("Invalid response: missing runId");
+        }
+        store.send({ runId, type: "triggerSuccess" });
       } catch (error) {
         store.send({
           error: error instanceof Error ? error.message : "Failed to start",

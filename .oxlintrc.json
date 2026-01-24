@@ -88,7 +88,8 @@
     "typescript/no-deprecated": "error",
     "no-negated-condition": "error",
     "typescript/no-unsafe-argument": "error",
-    "typescript/no-unsafe-call": "error"
+    "typescript/no-unsafe-call": "error",
+    "typescript/no-unsafe-member-access": "error"
   },
   "overrides": [
     {
@@ -96,6 +97,13 @@
       "rules": {
         "eslint/max-lines": "off",
         "eslint/no-magic-numbers": "off",
+        "typescript/no-unsafe-type-assertion": "off"
+      }
+    },
+    {
+      "files": ["**/i18n/request.ts"],
+      "rules": {
+        "typescript/no-unsafe-member-access": "off",
         "typescript/no-unsafe-type-assertion": "off"
       }
     },
@@ -117,6 +125,7 @@
         "eslint/no-magic-numbers": "off",
         "import/no-namespace": "off",
         "typescript/no-unsafe-call": "off",
+        "typescript/no-unsafe-member-access": "off",
         "unicorn/prefer-dom-node-text-content": "off",
         "vitest/require-hook": "error",
         "vitest/require-top-level-describe": "error"
@@ -137,7 +146,8 @@
         "eslint/no-magic-numbers": "off",
         "eslint/sort-keys": "off",
         "typescript/no-unsafe-argument": "off",
-        "typescript/no-unsafe-call": "off"
+        "typescript/no-unsafe-call": "off",
+        "typescript/no-unsafe-member-access": "off"
       }
     },
     {
