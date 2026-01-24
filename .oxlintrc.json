@@ -9,6 +9,7 @@
   },
   "categories": {
     "correctness": "error",
+    "pedantic": "error",
     "perf": "error",
     "style": "error",
     "suspicious": "error"
@@ -77,30 +78,7 @@
 
     // custom rules
     "zoonk/no-object-params-in-cache": ["error", { "exceptions": ["headers"] }],
-    "zoonk/no-single-use-type-alias": "error",
-
-    // temporary pedantic rules
-    "eslint/no-useless-return": "error",
-    "jsx-no-useless-fragment": "error",
-    "unicorn/escape-case": "error",
-    "unicorn/no-array-callback-reference": "error",
-    "unicorn/no-useless-promise-resolve-reject": "error",
-    "unicorn/prefer-dom-node-append": "error",
-    "unicorn/prefer-dom-node-remove": "error",
-    "unicorn/prefer-string-replace-all": "error",
-    "typescript/no-deprecated": "error",
-    "no-negated-condition": "error",
-    "typescript/no-unsafe-argument": "error",
-    "typescript/no-unsafe-call": "error",
-    "typescript/no-unsafe-member-access": "error",
-    "typescript/no-unsafe-return": "error",
-    "typescript/only-throw-error": "error",
-    "react/rules-of-hooks": "error",
-    "unicorn/no-typeof-undefined": "error",
-    "unicorn/no-useless-undefined": "error",
-    "unicorn/prefer-string-slice": "error",
-    "unicorn/prefer-top-level-await": "error",
-    "typescript/no-unsafe-assignment": "error"
+    "zoonk/no-single-use-type-alias": "error"
   },
   "overrides": [
     {
