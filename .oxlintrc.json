@@ -94,7 +94,8 @@
     "typescript/only-throw-error": "error",
     "typescript/prefer-nullish-coalescing": "error",
     "react/rules-of-hooks": "error",
-    "unicorn/no-typeof-undefined": "error"
+    "unicorn/no-typeof-undefined": "error",
+    "unicorn/no-useless-undefined": "error"
   },
   "overrides": [
     {
