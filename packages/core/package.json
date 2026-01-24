@@ -35,7 +35,7 @@
     "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
-    "@vercel/blob": "2.0.0",
+    "@vercel/blob": "2.0.1",
     "@zoonk/ai": "workspace:*",
     "@zoonk/auth": "workspace:*",
     "@zoonk/db": "workspace:*",
@@ -44,7 +44,7 @@
   },
   "devDependencies": {
     "@types/react": "^19",
-    "@typescript/native-preview": "7.0.0-dev.20260122.4",
+    "@typescript/native-preview": "7.0.0-dev.20260123.3",
     "@zoonk/testing": "workspace:*",
     "@zoonk/tsconfig": "workspace:*",
     "vite-tsconfig-paths": "6.0.3",
