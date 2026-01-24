@@ -1,39 +1,17 @@
 "use client";
 
-import { Badge } from "@zoonk/ui/components/badge";
 import { Button } from "@zoonk/ui/components/button";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@zoonk/ui/components/collapsible";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@zoonk/ui/components/dialog";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@zoonk/ui/components/dropdown-menu";
+import { Dialog } from "@zoonk/ui/components/dialog";
 import { Input } from "@zoonk/ui/components/input";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { toast } from "@zoonk/ui/components/sonner";
 import { toSlug } from "@zoonk/utils/string";
-import {
-  ChevronDownIcon,
-  ChevronRightIcon,
-  DownloadIcon,
-  EllipsisVerticalIcon,
-  SearchIcon,
-  UploadIcon,
-  XIcon,
-} from "lucide-react";
+import { ChevronDownIcon, ChevronRightIcon, SearchIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import {
   startTransition,
@@ -43,21 +21,12 @@ import {
   useState,
   useTransition,
 } from "react";
-import {
-  ImportCancel,
-  ImportDropzone,
-  ImportFormatPreview,
-  ImportModeOption,
-  ImportModeSelector,
-  ImportProvider,
-  ImportSubmit,
-} from "./import";
+import { ImportProvider } from "../import";
+import { AlternativeTitleBadge } from "./alternative-title-badge";
+import { AlternativeTitlesFormActions } from "./alternative-titles-form-actions";
+import { AlternativeTitlesImportDialog } from "./alternative-titles-import-dialog";
 
 const MAX_VISIBLE_ITEMS = 10;
-
-const IMPORT_FORMAT = {
-  alternativeTitles: ["title-slug-1", "title-slug-2"],
-};
 
 export function AlternativeTitlesEditor({
   titles,
@@ -184,27 +153,11 @@ export function AlternativeTitlesEditor({
               {t("Add")}
             </Button>
 
-            <DropdownMenu>
-              <DropdownMenuTrigger
-                disabled={exportPending}
-                render={<Button size="icon-sm" variant="ghost" />}
-              >
-                <EllipsisVerticalIcon />
-                <span className="sr-only">{t("More options")}</span>
-              </DropdownMenuTrigger>
-
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => setImportOpen(true)}>
-                  <UploadIcon />
-                  {t("Import")}
-                </DropdownMenuItem>
-
-                <DropdownMenuItem onClick={handleExport}>
-                  <DownloadIcon />
-                  {t("Export")}
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <AlternativeTitlesFormActions
+              disabled={exportPending}
+              onExport={handleExport}
+              onImport={() => setImportOpen(true)}
+            />
           </form>
 
           {addState.error && <p className="text-destructive text-sm">{addState.error}</p>}
@@ -223,17 +176,7 @@ export function AlternativeTitlesEditor({
 
               <div className="flex flex-wrap gap-2">
                 {filteredTitles.map((slug) => (
-                  <Badge className="gap-1 pr-1 font-normal" key={slug} variant="outline">
-                    {slug}
-                    <button
-                      aria-label={t("Remove {title}", { title: slug })}
-                      className="hover:bg-muted rounded-full p-0.5"
-                      onClick={() => handleDelete(slug)}
-                      type="button"
-                    >
-                      <XIcon className="size-3" />
-                    </button>
-                  </Badge>
+                  <AlternativeTitleBadge key={slug} onDelete={handleDelete} slug={slug} />
                 ))}
               </div>
 
@@ -267,32 +210,7 @@ export function AlternativeTitlesEditor({
 
       <ImportProvider onImport={onImport} onSuccess={handleImportSuccess}>
         <Dialog onOpenChange={setImportOpen} open={importOpen}>
-          <DialogContent className="max-h-[calc(100vh-4rem)] overflow-y-auto sm:max-w-lg">
-            <DialogHeader>
-              <DialogTitle>{t("Import alternative titles")}</DialogTitle>
-              <DialogDescription>
-                {t("Upload a JSON file containing alternative titles to import.")}
-              </DialogDescription>
-            </DialogHeader>
-
-            <div className="grid min-w-0 gap-6">
-              <ImportDropzone>{t("Drop file or click to select")}</ImportDropzone>
-
-              <ImportModeSelector label={t("Import mode")}>
-                <ImportModeOption value="merge">{t("Merge (add to existing)")}</ImportModeOption>
-                <ImportModeOption value="replace">
-                  {t("Replace (remove existing first)")}
-                </ImportModeOption>
-              </ImportModeSelector>
-
-              <ImportFormatPreview format={IMPORT_FORMAT} label={t("Show expected format")} />
-            </div>
-
-            <DialogFooter>
-              <ImportCancel onClick={() => setImportOpen(false)}>{t("Cancel")}</ImportCancel>
-              <ImportSubmit>{t("Import")}</ImportSubmit>
-            </DialogFooter>
-          </DialogContent>
+          <AlternativeTitlesImportDialog onClose={() => setImportOpen(false)} />
         </Dialog>
       </ImportProvider>
     </>

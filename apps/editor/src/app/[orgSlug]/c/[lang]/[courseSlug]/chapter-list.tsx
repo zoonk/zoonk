@@ -1,17 +1,12 @@
 import {
-  EditorDragHandle,
   EditorListAddButton,
   EditorListContent,
   EditorListHeader,
-  EditorListItem,
-  EditorListItemActions,
   EditorListProvider,
   EditorListSpinner,
-  EditorSortableItem,
-  EditorSortableItemRow,
   EditorSortableList,
 } from "@/components/editor-list";
-import { EntityListActions } from "@/components/entity-list-actions";
+import { EntityListActions } from "@/components/entity/entity-list-actions";
 import { listCourseChapters } from "@/data/chapters/list-course-chapters";
 import { getCourse } from "@/data/courses/get-course";
 import { ErrorView } from "@zoonk/ui/patterns/error";
@@ -23,7 +18,7 @@ import {
   insertChapterAction,
   reorderChaptersAction,
 } from "./actions";
-import { ChapterListItemLink } from "./chapter-list-item-link";
+import { ChapterListRow } from "./chapter-list-row";
 
 export async function ChapterList({
   params,
@@ -78,31 +73,14 @@ export async function ChapterList({
         >
           <EditorListContent>
             {chapters.map((chapter, index) => (
-              <EditorSortableItem id={chapter.id} key={chapter.slug}>
-                <EditorListItem>
-                  <EditorSortableItemRow>
-                    <EditorDragHandle aria-label={t("Drag to reorder")}>
-                      {index + 1}
-                    </EditorDragHandle>
-
-                    <ChapterListItemLink
-                      chapterSlug={chapter.slug}
-                      courseSlug={courseSlug}
-                      description={chapter.description}
-                      lang={lang}
-                      orgSlug={orgSlug}
-                      title={chapter.title}
-                    />
-
-                    <EditorListItemActions
-                      aria-label={t("Chapter actions")}
-                      insertAboveLabel={t("Insert above")}
-                      insertBelowLabel={t("Insert below")}
-                      position={index}
-                    />
-                  </EditorSortableItemRow>
-                </EditorListItem>
-              </EditorSortableItem>
+              <ChapterListRow
+                chapter={chapter}
+                courseSlug={courseSlug}
+                index={index}
+                key={chapter.slug}
+                lang={lang}
+                orgSlug={orgSlug}
+              />
             ))}
           </EditorListContent>
         </EditorSortableList>

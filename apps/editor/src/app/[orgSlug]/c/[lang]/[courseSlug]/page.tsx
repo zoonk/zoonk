@@ -1,5 +1,5 @@
-import { AlternativeTitlesSkeleton } from "@/components/alternative-titles-editor";
-import { CategoryEditorSkeleton } from "@/components/category-editor";
+import { AlternativeTitlesSkeleton } from "@/components/alternative-titles/alternative-titles-editor";
+import { CategoryEditorSkeleton } from "@/components/category/category-editor";
 import { ContentEditorSkeleton } from "@/components/content-editor";
 import { EditorListSkeleton } from "@/components/editor-list";
 import { SlugEditorSkeleton } from "@/components/slug-editor";

@@ -157,12 +157,12 @@ msgctxt "Dane8c"
 msgid "Lesson {position}"
 msgstr "Lesson {position}"
 
-#: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/chapter-list.tsx
+#: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/chapter-empty-state.tsx
 msgctxt "8AbgQ7"
 msgid "Lessons haven't been generated for this chapter yet."
 msgstr "Lessons haven't been generated for this chapter yet."
 
-#: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/chapter-list.tsx
+#: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/chapter-empty-state.tsx
 msgctxt "DG7kYp"
 msgid "Generate lessons"
 msgstr "Generate lessons"
@@ -237,21 +237,21 @@ msgctxt "vG7kPp"
 msgid "{period} with {value}%"
 msgstr "{period} with {value}%"
 
-#: src/app/[locale]/(catalog)/continue-learning.tsx
-msgctxt "0X+xfW"
-msgid "Continue learning"
-msgstr "Continue learning"
-
-#: src/app/[locale]/(catalog)/continue-learning.tsx
+#: src/app/[locale]/(catalog)/continue-learning-card.tsx
 msgctxt "TyANVg"
 msgid "Next: {activity}"
 msgstr "Next: {activity}"
 
-#: src/app/[locale]/(catalog)/continue-learning.tsx
+#: src/app/[locale]/(catalog)/continue-learning-card.tsx
 #: src/app/[locale]/b/[brandSlug]/c/[courseSlug]/c/[chapterSlug]/l/[lessonSlug]/a/[position]/page.tsx
 msgctxt "ZmlNQ3"
 msgid "Activity"
 msgstr "Activity"
+
+#: src/app/[locale]/(catalog)/continue-learning.tsx
+msgctxt "0X+xfW"
+msgid "Continue learning"
+msgstr "Continue learning"
 
 #: src/app/[locale]/(catalog)/courses/category-pills.tsx
 msgctxt "tuZsq+"
@@ -357,6 +357,11 @@ msgctxt "rTFrsw"
 msgid "I liked it"
 msgstr "I liked it"
 
+#: src/app/[locale]/(catalog)/learn/[prompt]/course-suggestion-item.tsx
+msgctxt "Pc+tM3"
+msgid "Generate"
+msgstr "Generate"
+
 #: src/app/[locale]/(catalog)/learn/[prompt]/course-suggestions-fallback.tsx
 msgctxt "47FYwb"
 msgid "Cancel"
@@ -376,11 +381,6 @@ msgstr "We're putting together a few course suggestions for you. This may take a
 msgctxt "7x4411"
 msgid "Course ideas for {prompt}"
 msgstr "Course ideas for {prompt}"
-
-#: src/app/[locale]/(catalog)/learn/[prompt]/course-suggestions.tsx
-msgctxt "Pc+tM3"
-msgid "Generate"
-msgstr "Generate"
 
 #: src/app/[locale]/(catalog)/learn/[prompt]/course-suggestions.tsx
 msgctxt "RbslnC"

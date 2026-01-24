@@ -7,13 +7,11 @@ import {
   SidebarGroupContent,
   SidebarHeader,
   SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
   SidebarTrigger,
 } from "@zoonk/ui/components/sidebar";
 import { BookOpen, HomeIcon, Users } from "lucide-react";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { AppSidebarMenuItem } from "./app-sidebar-menu-item";
 
 const menuItems = [
   { icon: HomeIcon, label: "Home", url: "/" },
@@ -43,15 +41,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarGroupContent>
             <SidebarMenu>
               {menuItems.map((item) => (
-                <SidebarMenuItem key={item.label}>
-                  <SidebarMenuButton
-                    isActive={isActive(pathname, item.url)}
-                    render={<Link href={item.url} />}
-                  >
-                    <item.icon aria-hidden="true" />
-                    <span>{item.label}</span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
+                <AppSidebarMenuItem
+                  icon={item.icon}
+                  isActive={isActive(pathname, item.url)}
+                  key={item.label}
+                  label={item.label}
+                  url={item.url}
+                />
               ))}
             </SidebarMenu>
           </SidebarGroupContent>

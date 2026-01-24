@@ -9,6 +9,7 @@ import {
   AccordionTrigger,
 } from "@zoonk/ui/components/accordion";
 import { Badge } from "@zoonk/ui/components/badge";
+import { RankingItem } from "./ranking-item";
 
 type BattleMatchupListProps = {
   matchups: BattleMatchup[];
@@ -101,18 +102,13 @@ function MatchupItem({ matchup }: MatchupItemProps) {
 
               <div className="flex flex-col gap-3">
                 {rankings.map((ranking) => (
-                  <div className="bg-muted rounded-lg p-3" key={ranking.judgeId}>
-                    <div className="mb-2 flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm font-medium">{ranking.judgeName}</span>
-                        <Badge variant="outline">{ranking.anonymousId}</Badge>
-                      </div>
-                      <Badge>{ranking.score.toFixed(1)}</Badge>
-                    </div>
-                    <p className="text-muted-foreground text-sm whitespace-pre-wrap">
-                      {ranking.reasoning}
-                    </p>
-                  </div>
+                  <RankingItem
+                    anonymousId={ranking.anonymousId}
+                    judgeName={ranking.judgeName}
+                    key={ranking.judgeId}
+                    reasoning={ranking.reasoning}
+                    score={ranking.score}
+                  />
                 ))}
               </div>
             </div>

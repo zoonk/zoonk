@@ -3,16 +3,15 @@
 import { useCategoryLabels } from "@/lib/use-category-labels";
 import { Badge } from "@zoonk/ui/components/badge";
 import { Button } from "@zoonk/ui/components/button";
-import { Checkbox } from "@zoonk/ui/components/checkbox";
 import { EditableLabel } from "@zoonk/ui/components/editable-text";
 import { Input } from "@zoonk/ui/components/input";
-import { Label } from "@zoonk/ui/components/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@zoonk/ui/components/popover";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { toast } from "@zoonk/ui/components/sonner";
 import { PlusIcon, TagsIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useMemo, useOptimistic, useState, useTransition } from "react";
+import { CategoryOption } from "./category-option";
 
 export function CategoryEditorSkeleton() {
   return (
@@ -136,23 +135,15 @@ export function CategoryEditor({ categories, onAdd, onRemove }: CategoryEditorPr
             />
 
             <div className="flex max-h-64 flex-col gap-1 overflow-y-auto overscroll-contain">
-              {filteredCategories.map((category) => {
-                const isSelected = optimisticCategories.includes(category);
-                const label = categoryLabels[category];
-
-                return (
-                  <Label
-                    className="hover:bg-muted cursor-pointer rounded-lg px-2 py-1.5"
-                    key={category}
-                  >
-                    <Checkbox
-                      checked={isSelected}
-                      onCheckedChange={() => handleToggle(category, isSelected)}
-                    />
-                    {label}
-                  </Label>
-                );
-              })}
+              {filteredCategories.map((category) => (
+                <CategoryOption
+                  category={category}
+                  isSelected={optimisticCategories.includes(category)}
+                  key={category}
+                  label={categoryLabels[category]}
+                  onToggle={handleToggle}
+                />
+              ))}
             </div>
           </PopoverContent>
         </Popover>

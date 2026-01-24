@@ -1,6 +1,5 @@
 import { generateCourseSuggestions } from "@/data/courses/course-suggestions";
 import { Link } from "@/i18n/navigation";
-import { buttonVariants } from "@zoonk/ui/components/button";
 import {
   Container,
   ContainerBody,
@@ -9,19 +8,10 @@ import {
   ContainerHeaderGroup,
   ContainerTitle,
 } from "@zoonk/ui/components/container";
-import {
-  Item,
-  ItemActions,
-  ItemContent,
-  ItemDescription,
-  ItemGroup,
-  ItemSeparator,
-  ItemTitle,
-} from "@zoonk/ui/components/item";
-import { SparklesIcon } from "lucide-react";
+import { ItemGroup } from "@zoonk/ui/components/item";
 import { getExtracted } from "next-intl/server";
-import { Fragment } from "react/jsx-runtime";
 import { ContentFeedback } from "./content-feedback";
+import { CourseSuggestionItem } from "./course-suggestion-item";
 
 type CourseSuggestionsProps = {
   locale: string;
@@ -52,31 +42,11 @@ export async function CourseSuggestions({ locale, prompt }: CourseSuggestionsPro
       <ContainerBody>
         <ItemGroup>
           {suggestions.map((course, index) => (
-            <Fragment key={course.id}>
-              <Item className="px-0 py-2">
-                <ItemContent className="gap-0.5">
-                  <ItemTitle>{course.title}</ItemTitle>
-                  <ItemDescription>{course.description}</ItemDescription>
-                </ItemContent>
-
-                <ItemActions>
-                  <Link
-                    className={buttonVariants({
-                      className: "gap-1.5",
-                      size: "sm",
-                      variant: "outline",
-                    })}
-                    href={`/generate/cs/${course.id}`}
-                    prefetch={false}
-                  >
-                    <SparklesIcon aria-hidden="true" className="size-4" />
-                    {t("Generate")}
-                  </Link>
-                </ItemActions>
-              </Item>
-
-              {index !== suggestions.length - 1 && <ItemSeparator />}
-            </Fragment>
+            <CourseSuggestionItem
+              course={course}
+              isLast={index === suggestions.length - 1}
+              key={course.id}
+            />
           ))}
         </ItemGroup>
       </ContainerBody>
