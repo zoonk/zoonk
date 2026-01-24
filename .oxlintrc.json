@@ -87,7 +87,8 @@
     "unicorn/prefer-string-replace-all": "error",
     "typescript/no-deprecated": "error",
     "no-negated-condition": "error",
-    "typescript/no-unsafe-argument": "error"
+    "typescript/no-unsafe-argument": "error",
+    "typescript/no-unsafe-call": "error"
   },
   "overrides": [
     {
@@ -115,6 +116,7 @@
         "eslint/max-statements": "off",
         "eslint/no-magic-numbers": "off",
         "import/no-namespace": "off",
+        "typescript/no-unsafe-call": "off",
         "unicorn/prefer-dom-node-text-content": "off",
         "vitest/require-hook": "error",
         "vitest/require-top-level-describe": "error"
@@ -134,7 +136,8 @@
         "eslint/max-statements": "off",
         "eslint/no-magic-numbers": "off",
         "eslint/sort-keys": "off",
-        "typescript/no-unsafe-argument": "off"
+        "typescript/no-unsafe-argument": "off",
+        "typescript/no-unsafe-call": "off"
       }
     },
     {
