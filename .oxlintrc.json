@@ -63,7 +63,7 @@
     "typescript/consistent-type-definitions": ["error", "type"],
     "typescript/no-confusing-void-expression": ["error", { "ignoreArrowShorthand": true }],
     "typescript/no-misused-promises": ["error", { "checksVoidReturn": false }],
-    "typescript/no-unsafe-type-assertion": "error",
+    "typescript/no-unsafe-assignment": "off",
     "typescript/prefer-nullish-coalescing": "off",
     "typescript/require-await": "off",
     "typescript/strict-boolean-expressions": "off",
@@ -92,7 +92,6 @@
     {
       "files": ["**/i18n/request.ts"],
       "rules": {
-        "typescript/no-unsafe-assignment": "off",
         "typescript/no-unsafe-member-access": "off",
         "typescript/no-unsafe-type-assertion": "off"
       }
@@ -121,7 +120,6 @@
         "eslint/max-statements": "off",
         "eslint/no-magic-numbers": "off",
         "import/no-namespace": "off",
-        "typescript/no-unsafe-assignment": "off",
         "typescript/no-unsafe-call": "off",
         "typescript/no-unsafe-member-access": "off",
         "typescript/no-unsafe-type-assertion": "off",

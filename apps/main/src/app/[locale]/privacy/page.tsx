@@ -19,7 +19,6 @@ export async function generateMetadata({
 
 export default async function Privacy({ params }: PageProps<"/[locale]/privacy">) {
   const { locale } = await params;
-  // oxlint-disable-next-line typescript/no-unsafe-assignment -- dynamic import returns any
   const { default: PrivacyPolicy } = await import(`./${locale}.mdx`);
 
   return (
