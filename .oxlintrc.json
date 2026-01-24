@@ -91,7 +91,8 @@
     "typescript/no-unsafe-call": "error",
     "typescript/no-unsafe-member-access": "error",
     "typescript/no-unsafe-return": "error",
-    "typescript/only-throw-error": "error"
+    "typescript/only-throw-error": "error",
+    "typescript/prefer-nullish-coalescing": "error"
   },
   "overrides": [
     {

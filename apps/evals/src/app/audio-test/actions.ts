@@ -7,7 +7,7 @@ import { parseFormField } from "@zoonk/utils/form";
 export async function generateAudioAction(formData: FormData) {
   const text = parseFormField(formData, "text");
   const voice = parseFormField(formData, "voice") as TTSVoice | undefined;
-  const language = parseFormField(formData, "language") || undefined;
+  const language = parseFormField(formData, "language") ?? undefined;
 
   if (!text) {
     return { error: "Text is required." };

@@ -6,7 +6,7 @@ export function UserRow({ user }: { user: UserWithRole }) {
     <TableRow>
       <TableCell className="font-medium">{user.name || "—"}</TableCell>
       <TableCell>{user.email}</TableCell>
-      <TableCell className="capitalize">{user.role || "user"}</TableCell>
+      <TableCell className="capitalize">{user.role ?? "user"}</TableCell>
 
       <TableCell>
         {user.emailVerified ? (

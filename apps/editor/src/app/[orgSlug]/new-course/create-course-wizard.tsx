@@ -104,7 +104,7 @@ export function CreateCourseWizard({ orgSlug }: { orgSlug: string }) {
 
         {wizard.currentStepName === "slug" && (
           <SlugStep
-            error={submitError || getStepError("slug")}
+            error={submitError ?? getStepError("slug")}
             onChange={(value) => updateField("slug", value)}
             value={formData.slug}
           />

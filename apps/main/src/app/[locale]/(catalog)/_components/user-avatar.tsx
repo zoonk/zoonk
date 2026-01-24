@@ -11,9 +11,9 @@ export function UserAvatar() {
     return <AvatarSkeleton />;
   }
 
-  const userAvatar = session?.user.image || undefined;
-  const userName = session?.user.name || session?.user.email;
-  const fallback = userName?.[0] || <User size={16} />;
+  const userAvatar = session?.user.image ?? undefined;
+  const userName = session?.user.name ?? session?.user.email;
+  const fallback = userName?.[0] ?? <User size={16} />;
 
   return (
     <Avatar className="focus-visible:ring-ring cursor-pointer focus-visible:ring-2 focus-visible:ring-offset-2">
