@@ -21,9 +21,11 @@ export async function completeCourseSetupStep(input: {
     }),
   ]);
 
-  if (courseResult.error || suggestionResult.error) {
+  const error = courseResult.error || suggestionResult.error;
+
+  if (error) {
     await streamStatus({ status: "error", step: "completeCourseSetup" });
-    throw courseResult.error || suggestionResult.error;
+    throw error;
   }
 
   await streamStatus({ status: "completed", step: "completeCourseSetup" });
