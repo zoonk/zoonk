@@ -8,6 +8,7 @@ import {
 import { Dialog } from "@zoonk/ui/components/dialog";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { toast } from "@zoonk/ui/components/sonner";
+import { downloadJson } from "@zoonk/utils/download";
 import { toSlug } from "@zoonk/utils/string";
 import { ChevronDownIcon, ChevronRightIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -56,18 +57,7 @@ export function AlternativeTitlesEditor({
         return;
       }
 
-      const blob = new Blob([JSON.stringify(data, null, 2)], {
-        type: "application/json",
-      });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "alternative-titles.json";
-      document.body.append(a);
-      a.click();
-      a.remove();
-      URL.revokeObjectURL(url);
-
+      downloadJson(data, "alternative-titles.json");
       toast.success(t("Alternative titles exported successfully"));
     });
   }

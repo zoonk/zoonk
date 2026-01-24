@@ -8,6 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@zoonk/ui/components/dropdown-menu";
+import { downloadFile } from "@zoonk/utils/download";
 import { Download } from "lucide-react";
 
 export function LeaderboardExport({
@@ -36,16 +37,11 @@ export function LeaderboardExport({
       }
     }
 
-    // Create a blob and download it
-    const blob = new Blob([markdown], { type: "text/markdown" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `leaderboard-${taskId}${anonymous ? "-anonymous" : ""}.md`;
-    document.body.append(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(url);
+    downloadFile(
+      markdown,
+      `leaderboard-${taskId}${anonymous ? "-anonymous" : ""}.md`,
+      "text/markdown",
+    );
   }
 
   return (
