@@ -99,7 +99,8 @@
       "persistent": true
     },
     "typecheck": {
-      "dependsOn": ["^typecheck"]
+      "dependsOn": ["^typecheck"],
+      "outputs": [".next/types/**"]
     }
   },
   "ui": "tui"
