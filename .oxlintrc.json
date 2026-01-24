@@ -46,6 +46,7 @@
     "react/react-in-jsx-scope": "off",
     "typescript/consistent-type-definitions": ["error", "type"],
     "typescript/no-unsafe-type-assertion": "error",
+    "vitest/require-hook": "off",
 
     // style rules
     "eslint/curly": "error",
@@ -64,11 +65,20 @@
       }
     },
     {
-      "files": ["*.test.ts", "**/seed/**", "**/seed.ts"],
+      "files": ["**/seed/**", "**/seed.ts"],
       "rules": {
         "eslint/max-statements": "off",
         "eslint/no-magic-numbers": "off",
         "import/no-namespace": "off"
+      }
+    },
+    {
+      "files": ["*.test.ts"],
+      "rules": {
+        "eslint/max-statements": "off",
+        "eslint/no-magic-numbers": "off",
+        "import/no-namespace": "off",
+        "vitest/require-hook": "error"
       }
     },
     {
