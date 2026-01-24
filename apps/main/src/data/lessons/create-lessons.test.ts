@@ -6,7 +6,7 @@ import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, describe, expect, test } from "vitest";
 import { createLessons } from "./create-lessons";
 
-describe("createLessons", () => {
+describe(createLessons, () => {
   let organizationId: number;
   let course: Awaited<ReturnType<typeof courseFixture>>;
   let chapter: Awaited<ReturnType<typeof chapterFixture>>;

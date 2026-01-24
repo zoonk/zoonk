@@ -6,7 +6,7 @@ import { normalizeString } from "@zoonk/utils/string";
 import { beforeAll, describe, expect, test } from "vitest";
 import { searchCourses } from "./search-courses";
 
-describe("searchCourses", () => {
+describe(searchCourses, () => {
   let brandOrg: Awaited<ReturnType<typeof organizationFixture>>;
   let schoolOrg: Awaited<ReturnType<typeof organizationFixture>>;
   let publishedCourse: Awaited<ReturnType<typeof courseFixture>>;

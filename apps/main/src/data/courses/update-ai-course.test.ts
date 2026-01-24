@@ -5,7 +5,7 @@ import { normalizeString, toSlug } from "@zoonk/utils/string";
 import { beforeAll, describe, expect, test } from "vitest";
 import { updateAICourse } from "./update-ai-course";
 
-describe("updateAICourse", () => {
+describe(updateAICourse, () => {
   let organizationId: number;
 
   beforeAll(async () => {

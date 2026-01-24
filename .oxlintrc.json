@@ -56,7 +56,8 @@
     "eslint/no-duplicate-imports": "error",
     "eslint/no-nested-ternary": "error",
     "eslint/sort-keys": "error",
-    "import/no-namespace": "error"
+    "import/no-namespace": "error",
+    "vitest/prefer-describe-function-title": "error"
   },
   "overrides": [
     {

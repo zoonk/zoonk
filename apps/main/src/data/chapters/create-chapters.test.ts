@@ -6,7 +6,7 @@ import { toSlug } from "@zoonk/utils/string";
 import { beforeAll, describe, expect, test } from "vitest";
 import { createChapters } from "./create-chapters";
 
-describe("createChapters", () => {
+describe(createChapters, () => {
   let organizationId: number;
 
   beforeAll(async () => {

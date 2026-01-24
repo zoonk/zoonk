@@ -6,7 +6,7 @@ import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { describe, expect, test } from "vitest";
 import { exportAlternativeTitles } from "./export-alternative-titles";
 
-describe("exportAlternativeTitles", () => {
+describe(exportAlternativeTitles, () => {
   test("returns courseNotFound for non-existent course", async () => {
     const result = await exportAlternativeTitles({
       courseId: 999_999,

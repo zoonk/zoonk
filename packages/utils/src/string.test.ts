@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest";
 import { normalizeString, parseNumericId, removeAccents } from "./string";
 
-describe("removeAccents", () => {
+describe(removeAccents, () => {
   test("removes diacritics from string", () => {
     expect(removeAccents("café")).toBe("cafe");
     expect(removeAccents("naïve")).toBe("naive");
@@ -26,7 +26,7 @@ describe("removeAccents", () => {
   });
 });
 
-describe("normalizeString", () => {
+describe(normalizeString, () => {
   test("removes accents and converts to lowercase", () => {
     expect(normalizeString("CAFÉ")).toBe("cafe");
     expect(normalizeString("São Paulo")).toBe("sao paulo");
@@ -62,7 +62,7 @@ describe("normalizeString", () => {
   });
 });
 
-describe("parseNumericId", () => {
+describe(parseNumericId, () => {
   test("parses valid numeric strings", () => {
     expect(parseNumericId("123")).toBe(123);
     expect(parseNumericId("0")).toBe(0);

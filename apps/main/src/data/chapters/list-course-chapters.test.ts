@@ -5,7 +5,7 @@ import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, describe, expect, test } from "vitest";
 import { listCourseChapters } from "./list-course-chapters";
 
-describe("listCourseChapters", () => {
+describe(listCourseChapters, () => {
   let brandOrg: Awaited<ReturnType<typeof organizationFixture>>;
   let schoolOrg: Awaited<ReturnType<typeof organizationFixture>>;
   let publishedCourse: Awaited<ReturnType<typeof courseFixture>>;

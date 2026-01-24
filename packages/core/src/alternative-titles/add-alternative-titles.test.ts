@@ -5,7 +5,7 @@ import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { describe, expect, test } from "vitest";
 import { addAlternativeTitles } from "./add-alternative-titles";
 
-describe("addAlternativeTitles", () => {
+describe(addAlternativeTitles, () => {
   test("adds alternative titles to a course", async () => {
     const org = await organizationFixture();
     const course = await courseFixture({ organizationId: org.id });

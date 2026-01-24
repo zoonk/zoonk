@@ -5,7 +5,7 @@ import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, describe, expect, test } from "vitest";
 import { getChapterForGeneration } from "./get-chapter-for-generation";
 
-describe("getChapterForGeneration", () => {
+describe(getChapterForGeneration, () => {
   let organizationId: number;
   let course: Awaited<ReturnType<typeof courseFixture>>;
 

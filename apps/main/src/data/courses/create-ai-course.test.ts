@@ -5,7 +5,7 @@ import { toSlug } from "@zoonk/utils/string";
 import { beforeAll, describe, expect, test } from "vitest";
 import { createAICourse } from "./create-ai-course";
 
-describe("createAICourse", () => {
+describe(createAICourse, () => {
   let organizationId: number;
 
   beforeAll(async () => {

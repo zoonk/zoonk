@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest";
 import { calculateBeltLevel } from "./belt-level";
 
-describe("calculateBeltLevel", () => {
+describe(calculateBeltLevel, () => {
   describe("white belt (250 BP per level)", () => {
     test("0 BP returns White 1 with 250 BP to next", () => {
       const result = calculateBeltLevel(0);

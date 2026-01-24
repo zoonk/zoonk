@@ -3,7 +3,7 @@ import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { describe, expect, test } from "vitest";
 import { listCourseCategories } from "./list-course-categories";
 
-describe("listCourseCategories", () => {
+describe(listCourseCategories, () => {
   test("returns empty array when course has no categories", async () => {
     const organization = await organizationFixture();
     const course = await courseFixture({ organizationId: organization.id });

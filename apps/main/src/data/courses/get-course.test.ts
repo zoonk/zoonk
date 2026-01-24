@@ -3,7 +3,7 @@ import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, describe, expect, test } from "vitest";
 import { getCourse } from "./get-course";
 
-describe("getCourse", () => {
+describe(getCourse, () => {
   let brandOrg: Awaited<ReturnType<typeof organizationFixture>>;
   let schoolOrg: Awaited<ReturnType<typeof organizationFixture>>;
   let publishedCourse: Awaited<ReturnType<typeof courseFixture>>;
