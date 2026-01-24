@@ -16,6 +16,6 @@ export const config = {
      * - if they start with `/api`, `/_next` or `/_vercel`
      * - the ones containing a dot (e.g. `favicon.ico`)
      */
-    "/((?!api|_next|_vercel|149e|.*\\..*).*)",
+    String.raw`/((?!api|_next|_vercel|149e|.*\..*).*)`,
   ],
 };
