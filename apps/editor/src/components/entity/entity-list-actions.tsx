@@ -67,7 +67,7 @@ export function EntityListActions({
       const a = document.createElement("a");
       a.href = url;
       a.download = `${entityType}.json`;
-      document.body.appendChild(a);
+      document.body.append(a);
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);

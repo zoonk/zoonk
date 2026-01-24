@@ -78,7 +78,8 @@
     "jsx-no-useless-fragment": "error",
     "unicorn/escape-case": "error",
     "unicorn/no-array-callback-reference": "error",
-    "unicorn/no-useless-promise-resolve-reject": "error"
+    "unicorn/no-useless-promise-resolve-reject": "error",
+    "unicorn/prefer-dom-node-append": "error"
   },
   "overrides": [
     {

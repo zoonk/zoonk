@@ -63,7 +63,7 @@ export function AlternativeTitlesEditor({
       const a = document.createElement("a");
       a.href = url;
       a.download = "alternative-titles.json";
-      document.body.appendChild(a);
+      document.body.append(a);
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
