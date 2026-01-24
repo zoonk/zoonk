@@ -346,7 +346,7 @@ describe("authenticated users", () => {
       const result = await getScoreHistory({ headers, period: "month" });
 
       expect(result).not.toBeNull();
-      expect(result?.hasNextPeriod).toBe(false);
+      expect(result?.hasNextPeriod).toBeFalsy();
     });
 
     test("hasNextPeriod is true when offset > 0", async () => {

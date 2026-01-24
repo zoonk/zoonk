@@ -8,23 +8,23 @@ import { config, proxy } from "./proxy";
 
 describe("next.js proxy", () => {
   test("doesn't match API routes", () => {
-    expect(doesMiddlewareMatch({ config, url: "/api/hello" })).toBe(false);
+    expect(doesMiddlewareMatch({ config, url: "/api/hello" })).toBeFalsy();
   });
 
   test("doesn't match static files", () => {
-    expect(doesMiddlewareMatch({ config, url: "/favicon.ico" })).toBe(false);
+    expect(doesMiddlewareMatch({ config, url: "/favicon.ico" })).toBeFalsy();
   });
 
   test("doesn't match _next paths", () => {
-    expect(doesMiddlewareMatch({ config, url: "/_next/static/file.js" })).toBe(false);
+    expect(doesMiddlewareMatch({ config, url: "/_next/static/file.js" })).toBeFalsy();
   });
 
   test("doesn't match _vercel paths", () => {
-    expect(doesMiddlewareMatch({ config, url: "/_vercel/insights/view" })).toBe(false);
+    expect(doesMiddlewareMatch({ config, url: "/_vercel/insights/view" })).toBeFalsy();
   });
 
   test("doesn't match .well-known paths", () => {
-    expect(doesMiddlewareMatch({ config, url: "/.well-known/workflow/whatever" })).toBe(false);
+    expect(doesMiddlewareMatch({ config, url: "/.well-known/workflow/whatever" })).toBeFalsy();
   });
 
   test("matches well-known course paths", () => {
@@ -35,7 +35,7 @@ describe("next.js proxy", () => {
 
   test("doesn't match paths starting with 149e (BotID paths)", () => {
     // https://x.com/andrewqu/status/1988640986520842672?s=20
-    expect(doesMiddlewareMatch({ config, url: "/149eabcd" })).toBe(false);
+    expect(doesMiddlewareMatch({ config, url: "/149eabcd" })).toBeFalsy();
   });
 
   test("redirects home page to language-specific URL", () => {

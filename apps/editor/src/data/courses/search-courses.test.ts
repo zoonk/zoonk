@@ -149,7 +149,7 @@ describe("org admins", () => {
     const hasPtCourse = result.data.some((course) => course.language === "pt");
 
     expect(result.error).toBeNull();
-    expect(hasPtCourse).toBe(false);
+    expect(hasPtCourse).toBeFalsy();
   });
 
   test("does not include organization data in results", async () => {

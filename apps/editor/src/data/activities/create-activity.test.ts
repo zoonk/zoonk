@@ -440,7 +440,7 @@ describe("admins", () => {
       });
 
       expect(result.error).toBeNull();
-      expect(result.data?.isPublished).toBe(false);
+      expect(result.data?.isPublished).toBeFalsy();
     });
   });
 });

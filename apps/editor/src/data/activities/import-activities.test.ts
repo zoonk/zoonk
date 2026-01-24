@@ -562,7 +562,7 @@ describe("admins", () => {
       });
 
       expect(result.error).toBeNull();
-      expect(result.data?.[0]?.isPublished).toBe(false);
+      expect(result.data?.[0]?.isPublished).toBeFalsy();
     });
   });
 

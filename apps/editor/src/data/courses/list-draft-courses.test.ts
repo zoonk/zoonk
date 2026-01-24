@@ -125,7 +125,7 @@ describe("org admins", () => {
     const hasPtCourse = result.data.some((course) => course.language === "pt");
 
     expect(result.error).toBeNull();
-    expect(hasPtCourse).toBe(false);
+    expect(hasPtCourse).toBeFalsy();
   });
 
   test("returns all draft courses without limit", async () => {

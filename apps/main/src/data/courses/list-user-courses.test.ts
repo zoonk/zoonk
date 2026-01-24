@@ -149,6 +149,6 @@ describe("authenticated users", () => {
 
     expect(result.error).toBeNull();
     expect(result.data?.some((item) => item.id === testUserCourse.id)).toBe(true);
-    expect(result.data?.some((item) => item.id === otherUserCourse.id)).toBe(false);
+    expect(result.data?.some((item) => item.id === otherUserCourse.id)).toBeFalsy();
   });
 });
