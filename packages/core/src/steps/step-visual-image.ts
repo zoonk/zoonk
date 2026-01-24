@@ -34,7 +34,7 @@ export async function generateVisualStepImage({
     return { data: null, error: optimizeError };
   }
 
-  const slug = toSlug(prompt.substring(0, SLUG_MAX_LENGTH));
+  const slug = toSlug(prompt.slice(0, SLUG_MAX_LENGTH));
   const org = orgSlug ?? AI_ORG_SLUG;
   const fileName = `steps/${org}/visual-${slug}.webp`;
 

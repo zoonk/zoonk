@@ -96,7 +96,8 @@
     "typescript/prefer-nullish-coalescing": "error",
     "react/rules-of-hooks": "error",
     "unicorn/no-typeof-undefined": "error",
-    "unicorn/no-useless-undefined": "error"
+    "unicorn/no-useless-undefined": "error",
+    "unicorn/prefer-string-slice": "error"
   },
   "overrides": [
     {

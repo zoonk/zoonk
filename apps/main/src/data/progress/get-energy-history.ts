@@ -44,7 +44,7 @@ type RawDataPoint = { date: Date; energy: number };
 function buildDateEnergyMap(dataPoints: RawDataPoint[]): Map<string, number> {
   const map = new Map<string, number>();
   for (const point of dataPoints) {
-    map.set(point.date.toISOString().substring(0, 10), point.energy);
+    map.set(point.date.toISOString().slice(0, 10), point.energy);
   }
   return map;
 }
@@ -68,7 +68,7 @@ function fillDateRange(
   let previousEnergy: number | null = null;
 
   while (current <= lastDate) {
-    const key = current.toISOString().substring(0, 10);
+    const key = current.toISOString().slice(0, 10);
     const existingEnergy = dataMap.get(key);
 
     if (existingEnergy !== undefined) {

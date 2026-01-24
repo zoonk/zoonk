@@ -52,7 +52,7 @@ async function saveScoredResults(taskId: string, modelId: string, results: Score
 function findTestCaseForOutput(task: Task, testCaseId: string): TestCase | undefined {
   // TestCaseId format is "{baseId}-{runNumber}"
   const lastDashIndex = testCaseId.lastIndexOf("-");
-  const baseId = testCaseId.substring(0, lastDashIndex);
+  const baseId = testCaseId.slice(0, lastDashIndex);
   return task.testCases.find((testCase) => testCase.id === baseId);
 }
 
