@@ -97,7 +97,8 @@
     "react/rules-of-hooks": "error",
     "unicorn/no-typeof-undefined": "error",
     "unicorn/no-useless-undefined": "error",
-    "unicorn/prefer-string-slice": "error"
+    "unicorn/prefer-string-slice": "error",
+    "unicorn/prefer-top-level-await": "error"
   },
   "overrides": [
     {
@@ -121,7 +122,8 @@
         "eslint/max-lines": "off",
         "eslint/max-statements": "off",
         "eslint/no-magic-numbers": "off",
-        "import/no-namespace": "off"
+        "import/no-namespace": "off",
+        "unicorn/prefer-top-level-await": "off"
       }
     },
     {
