@@ -28,6 +28,7 @@
     ],
     "eslint/max-params": "off",
     "eslint/max-statements": ["error", { "ignoreTopLevelFunctions": true, "max": 20 }],
+    "eslint/no-console": ["error", { "allow": ["error", "info"] }],
     "eslint/no-inline-comments": "off",
     "eslint/no-magic-numbers": [
       "error",
@@ -62,6 +63,7 @@
     "react/react-in-jsx-scope": "off",
     "typescript/consistent-type-definitions": ["error", "type"],
     "typescript/explicit-function-return-type": "off",
+    "typescript/explicit-module-boundary-types": "off",
     "typescript/no-confusing-void-expression": ["error", { "ignoreArrowShorthand": true }],
     "typescript/no-import-type-side-effects": "off",
     "typescript/no-misused-promises": ["error", { "checksVoidReturn": false }],
