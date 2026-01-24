@@ -53,6 +53,9 @@
     "vitest/require-hook": "off",
     "vitest/require-top-level-describe": "off",
 
+    // custom rules
+    "zoonk/no-single-use-type-alias": "error",
+
     // style rules
     "eslint/curly": "error",
     "eslint/no-continue": "error",
@@ -63,8 +66,7 @@
     "vitest/prefer-describe-function-title": "error",
     "vitest/prefer-to-be-falsy": "error",
     "vitest/prefer-to-be-truthy": "error",
-    "react/jsx-boolean-value": "error",
-    "zoonk/no-single-use-type-alias": "error"
+    "react/jsx-boolean-value": "error"
   },
   "overrides": [
     {
