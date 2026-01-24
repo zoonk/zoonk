@@ -17,7 +17,7 @@ export function LocaleSwitcher() {
 
   function onLocaleChange(nextLocale: string) {
     Cookies.set("locale", nextLocale, { expires: 365, sameSite: "lax" });
-    window.location.reload();
+    globalThis.location.reload();
   }
 
   return (

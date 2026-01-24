@@ -12,7 +12,7 @@ import {
 import { AlertCircleIcon, RefreshCwIcon } from "lucide-react";
 
 function handleRetry() {
-  window.location.reload();
+  globalThis.location.reload();
 }
 
 export function ErrorView({

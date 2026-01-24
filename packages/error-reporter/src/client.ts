@@ -54,7 +54,7 @@ export function reportError(error: unknown): void {
     name: error instanceof Error ? error.name : "Error",
     stack: error instanceof Error ? error.stack : undefined,
     timestamp: new Date().toISOString(),
-    url: typeof window !== "undefined" ? window.location.href : undefined,
+    url: typeof globalThis.window !== "undefined" ? globalThis.location.href : undefined,
     userAgent: typeof navigator !== "undefined" ? navigator.userAgent : undefined,
   };
 

@@ -74,7 +74,8 @@
     "react/jsx-boolean-value": "error",
     "unicorn/no-await-expression-member": "error",
     "unicorn/no-zero-fractions": "error",
-    "unicorn/prefer-dom-node-text-content": "error"
+    "unicorn/prefer-dom-node-text-content": "error",
+    "unicorn/prefer-global-this": "error"
   },
   "overrides": [
     {

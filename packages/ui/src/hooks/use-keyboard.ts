@@ -127,7 +127,7 @@ export function useKeyboardCallback(
       }
     }
 
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    globalThis.addEventListener("keydown", handleKeyDown);
+    return () => globalThis.removeEventListener("keydown", handleKeyDown);
   }, [key, mode, altKey, ctrlKey, metaKey, shiftKey]);
 }
