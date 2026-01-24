@@ -12,7 +12,7 @@ export async function put(
   options?: { access?: string; addRandomSuffix?: boolean },
 ) {
   const suffix =
-    options?.addRandomSuffix !== false ? `-${randomUUID().slice(0, UUID_SUFFIX_LENGTH)}` : "";
+    options?.addRandomSuffix === false ? "" : `-${randomUUID().slice(0, UUID_SUFFIX_LENGTH)}`;
   const url = `https://e2e-mock-blob.test/${pathname}${suffix}`;
 
   return {

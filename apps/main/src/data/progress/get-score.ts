@@ -66,7 +66,7 @@ const cachedGetScore = cache(
       result._sum.incorrectAnswers ?? 0,
     );
 
-    return score !== null ? { score } : null;
+    return score === null ? null : { score };
   },
 );
 
