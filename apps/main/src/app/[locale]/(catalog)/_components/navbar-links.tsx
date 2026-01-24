@@ -55,7 +55,7 @@ export function NavbarLinks() {
           variant: homeVariant,
         })}
         href={homeMenu.url}
-        prefetch={true}
+        prefetch
       >
         <homeMenu.icon aria-hidden="true" />
         <span className="sr-only">{t("Home page")}</span>

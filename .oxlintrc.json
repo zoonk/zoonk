@@ -59,7 +59,8 @@
     "import/no-namespace": "error",
     "vitest/prefer-describe-function-title": "error",
     "vitest/prefer-to-be-falsy": "error",
-    "vitest/prefer-to-be-truthy": "error"
+    "vitest/prefer-to-be-truthy": "error",
+    "react/jsx-boolean-value": "error"
   },
   "overrides": [
     {
