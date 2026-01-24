@@ -28,9 +28,9 @@ describe("next.js proxy", () => {
   });
 
   test("matches well-known course paths", () => {
-    expect(doesMiddlewareMatch({ config, url: "/c/my-well-known-course" })).toBe(true);
+    expect(doesMiddlewareMatch({ config, url: "/c/my-well-known-course" })).toBeTruthy();
 
-    expect(doesMiddlewareMatch({ config, url: "/c/well-known-course/en" })).toBe(true);
+    expect(doesMiddlewareMatch({ config, url: "/c/well-known-course/en" })).toBeTruthy();
   });
 
   test("doesn't match paths starting with 149e (BotID paths)", () => {

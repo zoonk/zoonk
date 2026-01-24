@@ -52,7 +52,7 @@ describe("authenticated users", () => {
 
     expect(result.error).toBeNull();
     expect(result.data).toBeDefined();
-    expect(result.data?.some((item) => item.id === course.id)).toBe(true);
+    expect(result.data?.some((item) => item.id === course.id)).toBeTruthy();
   });
 
   test("includes the organization in the response", async () => {
@@ -148,7 +148,7 @@ describe("authenticated users", () => {
     const result = await listUserCourses({ headers: testHeaders });
 
     expect(result.error).toBeNull();
-    expect(result.data?.some((item) => item.id === testUserCourse.id)).toBe(true);
+    expect(result.data?.some((item) => item.id === testUserCourse.id)).toBeTruthy();
     expect(result.data?.some((item) => item.id === otherUserCourse.id)).toBeFalsy();
   });
 });

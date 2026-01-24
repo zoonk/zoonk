@@ -82,7 +82,7 @@ describe(listCourseCategories, () => {
 
     expect(result.error).toBeNull();
     expect(result.data?.length).toBe(2);
-    expect(result.data?.every((category) => category.courseId === course1.id)).toBe(true);
+    expect(result.data?.every((category) => category.courseId === course1.id)).toBeTruthy();
   });
 
   test("returns empty array for non-existent course", async () => {

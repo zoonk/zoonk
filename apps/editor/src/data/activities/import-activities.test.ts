@@ -536,7 +536,7 @@ describe("admins", () => {
       });
 
       expect(result.error).toBeNull();
-      expect(result.data?.[0]?.isPublished).toBe(true);
+      expect(result.data?.[0]?.isPublished).toBeTruthy();
     });
 
     test("imported activities are unpublished when lesson is published", async () => {

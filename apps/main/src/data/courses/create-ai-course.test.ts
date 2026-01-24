@@ -35,7 +35,7 @@ describe(createAICourse, () => {
     expect(course?.organizationId).toBe(organizationId);
     expect(course?.generationStatus).toBe("running");
     expect(course?.generationRunId).toBe(runId);
-    expect(course?.isPublished).toBe(true);
+    expect(course?.isPublished).toBeTruthy();
     expect(course?.title).toBe(title);
   });
 

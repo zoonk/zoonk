@@ -31,7 +31,7 @@ describe("lessonSlugExists()", () => {
       slug: lesson.slug,
     });
 
-    expect(exists).toBe(true);
+    expect(exists).toBeTruthy();
   });
 
   test("returns false when slug does not exist", async () => {

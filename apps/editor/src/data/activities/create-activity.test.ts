@@ -415,7 +415,7 @@ describe("admins", () => {
       });
 
       expect(result.error).toBeNull();
-      expect(result.data?.isPublished).toBe(true);
+      expect(result.data?.isPublished).toBeTruthy();
     });
 
     test("activity is unpublished when lesson is published", async () => {

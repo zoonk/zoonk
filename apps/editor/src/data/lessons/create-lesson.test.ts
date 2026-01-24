@@ -479,7 +479,7 @@ describe("admins", () => {
       });
 
       expect(result.error).toBeNull();
-      expect(result.data?.isPublished).toBe(true);
+      expect(result.data?.isPublished).toBeTruthy();
     });
 
     test("lesson is unpublished when chapter is published", async () => {

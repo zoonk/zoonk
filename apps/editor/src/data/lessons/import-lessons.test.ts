@@ -577,7 +577,7 @@ describe("admins", () => {
       });
 
       expect(result.error).toBeNull();
-      expect(result.data?.[0]?.isPublished).toBe(true);
+      expect(result.data?.[0]?.isPublished).toBeTruthy();
     });
 
     test("imported lessons are unpublished when chapter is published", async () => {
@@ -635,7 +635,7 @@ describe("admins", () => {
         where: { id: existingLesson.id },
       });
 
-      expect(updatedLesson?.isPublished).toBe(true);
+      expect(updatedLesson?.isPublished).toBeTruthy();
     });
   });
 

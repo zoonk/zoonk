@@ -86,6 +86,6 @@ describe(createLessons, () => {
 
     expect(dbLesson?.organizationId).toBe(organizationId);
     expect(dbLesson?.generationStatus).toBe("pending");
-    expect(dbLesson?.isPublished).toBe(true);
+    expect(dbLesson?.isPublished).toBeTruthy();
   });
 });

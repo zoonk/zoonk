@@ -75,8 +75,8 @@ describe(listLessonActivities, () => {
     const result = await listLessonActivities({ lessonId: lesson.id });
 
     expect(result).toHaveLength(2);
-    expect(result.some((a) => a.id === publishedActivity1.id)).toBe(true);
-    expect(result.some((a) => a.id === publishedActivity2.id)).toBe(true);
+    expect(result.some((a) => a.id === publishedActivity1.id)).toBeTruthy();
+    expect(result.some((a) => a.id === publishedActivity2.id)).toBeTruthy();
   });
 
   test("orders activities by position ascending", async () => {

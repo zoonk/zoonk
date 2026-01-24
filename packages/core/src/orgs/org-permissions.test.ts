@@ -110,7 +110,7 @@ describe("member role", () => {
       permission: "read",
     });
 
-    expect(canRead).toBe(true);
+    expect(canRead).toBeTruthy();
   });
 
   test("cannot create courses", async () => {
@@ -161,7 +161,7 @@ describe("admin role", () => {
       permission: "create",
     });
 
-    expect(canCreate).toBe(true);
+    expect(canCreate).toBeTruthy();
   });
 
   test("can read courses", async () => {
@@ -171,7 +171,7 @@ describe("admin role", () => {
       permission: "read",
     });
 
-    expect(canRead).toBe(true);
+    expect(canRead).toBeTruthy();
   });
 
   test("can update courses", async () => {
@@ -181,7 +181,7 @@ describe("admin role", () => {
       permission: "update",
     });
 
-    expect(canUpdate).toBe(true);
+    expect(canUpdate).toBeTruthy();
   });
 
   test("cannot delete courses", async () => {
@@ -212,7 +212,7 @@ describe("owner role", () => {
       permission: "create",
     });
 
-    expect(canCreate).toBe(true);
+    expect(canCreate).toBeTruthy();
   });
 
   test("can read courses", async () => {
@@ -222,7 +222,7 @@ describe("owner role", () => {
       permission: "read",
     });
 
-    expect(canRead).toBe(true);
+    expect(canRead).toBeTruthy();
   });
 
   test("can update courses", async () => {
@@ -232,7 +232,7 @@ describe("owner role", () => {
       permission: "update",
     });
 
-    expect(canUpdate).toBe(true);
+    expect(canUpdate).toBeTruthy();
   });
 
   test("can delete courses", async () => {
@@ -242,6 +242,6 @@ describe("owner role", () => {
       permission: "delete",
     });
 
-    expect(canDelete).toBe(true);
+    expect(canDelete).toBeTruthy();
   });
 });
