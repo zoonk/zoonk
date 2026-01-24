@@ -10,7 +10,6 @@ import {
 } from "@zoonk/ui/components/item";
 import { SparklesIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
-import { Fragment } from "react/jsx-runtime";
 
 export async function CourseSuggestionItem({
   course,
@@ -22,7 +21,7 @@ export async function CourseSuggestionItem({
   const t = await getExtracted();
 
   return (
-    <Fragment>
+    <>
       <Item className="px-0 py-2">
         <ItemContent className="gap-0.5">
           <ItemTitle>{course.title}</ItemTitle>
@@ -46,6 +45,6 @@ export async function CourseSuggestionItem({
       </Item>
 
       {!isLast && <ItemSeparator />}
-    </Fragment>
+    </>
   );
 }

@@ -10,6 +10,7 @@
   "categories": {
     "correctness": "error",
     "perf": "error",
+    "style": "error",
     "suspicious": "error"
   },
   "rules": {
@@ -62,26 +63,7 @@
 
     // custom rules
     "zoonk/no-object-params-in-cache": ["error", { "exceptions": ["headers"] }],
-    "zoonk/no-single-use-type-alias": "error",
-
-    // style rules
-    "eslint/curly": "error",
-    "eslint/no-continue": "error",
-    "eslint/no-duplicate-imports": "error",
-    "eslint/no-nested-ternary": "error",
-    "eslint/sort-keys": "error",
-    "import/no-namespace": "error",
-    "vitest/prefer-describe-function-title": "error",
-    "vitest/prefer-to-be-falsy": "error",
-    "vitest/prefer-to-be-truthy": "error",
-    "react/jsx-boolean-value": "error",
-    "unicorn/no-await-expression-member": "error",
-    "unicorn/no-zero-fractions": "error",
-    "unicorn/prefer-dom-node-text-content": "error",
-    "unicorn/prefer-global-this": "error",
-    "unicorn/prefer-spread": "error",
-    "unicorn/prefer-string-raw": "error",
-    "text-encoding-identifier-case": "error"
+    "zoonk/no-single-use-type-alias": "error"
   },
   "overrides": [
     {
