@@ -42,6 +42,7 @@
     "import/consistent-type-specifier-style": ["error", "prefer-inline"],
     "import/exports-last": "off",
     "import/group-exports": "off",
+    "import/max-dependencies": "off",
     "import/no-named-export": "off",
     "import/no-unassigned-import": [
       "error",
