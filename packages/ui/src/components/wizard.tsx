@@ -170,8 +170,13 @@ export function useWizard<T extends string>({
 } {
   const [currentStep, setCurrentStep] = useState(initialStep);
 
-  // CurrentStep is always bounded within [0, steps.length - 1] by goToStep
-  const currentStepName = steps[currentStep]!;
+  const currentStepEntry = steps[currentStep];
+
+  if (currentStepEntry === undefined) {
+    throw new Error("Invalid wizard step index");
+  }
+
+  const currentStepName = currentStepEntry;
   const isFirstStep = currentStep === 0;
   const isLastStep = currentStep === steps.length - 1;
   const totalSteps = steps.length;

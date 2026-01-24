@@ -66,7 +66,7 @@ export function EnergyChartClient({
                 return null;
               }
 
-              const data = payload[0]!.payload;
+              const data = payload[0].payload;
               const value = Number(data.energy).toFixed(1);
 
               return (

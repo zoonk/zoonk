@@ -14,9 +14,8 @@ function setNestedProperty(obj: Record<string, unknown>, keyPath: string, value:
   const keys = keyPath.split(".").filter(Boolean);
   let current = obj;
 
-  for (let i = 0; i < keys.length - 1; i++) {
-    const key = keys[i]!;
-
+  const keysToTraverse = keys.slice(0, -1);
+  for (const key of keysToTraverse) {
     if (!(key in current) || typeof current[key] !== "object" || current[key] === null) {
       current[key] = {};
     }
