@@ -39,6 +39,7 @@
       "error",
       { "allow": ["**/*.css", "server-only", "dotenv/config"] }
     ],
+    "import/prefer-default-export": "off",
     "jsx-a11y/no-autofocus": "off",
     "oxc/no-map-spread": "off",
     "react/react-in-jsx-scope": "off",
