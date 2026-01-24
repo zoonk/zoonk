@@ -1,3 +1,5 @@
+import { defineRule } from "oxlint";
+
 function getRemovalRange(sourceCode, aliasNode) {
   const tokenBefore = sourceCode.getTokenBefore(aliasNode);
   const tokenAfter = sourceCode.getTokenAfter(aliasNode);
@@ -71,14 +73,19 @@ function expandTypeDefinition(sourceCode, aliasNode, violationMap, visited = new
   return definition;
 }
 
-/** @type {import('eslint').Rule.RuleModule} */
-module.exports = {
-  create(context) {
-    const typeAliases = new Map();
-    const typeReferences = new Map();
-    const exportedIdentifiers = new Set();
+export default defineRule({
+  createOnce(context) {
+    let typeAliases;
+    let typeReferences;
+    let exportedIdentifiers;
 
     return {
+      before() {
+        typeAliases = new Map();
+        typeReferences = new Map();
+        exportedIdentifiers = new Set();
+      },
+
       ExportNamedDeclaration(node) {
         if (node.declaration && node.declaration.type === "TSTypeAliasDeclaration") {
           exportedIdentifiers.add(node.declaration.id.name);
@@ -213,4 +220,4 @@ module.exports = {
     schema: [],
     type: "suggestion",
   },
-};
+});

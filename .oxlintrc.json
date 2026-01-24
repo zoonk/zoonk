@@ -1,7 +1,7 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
   "plugins": ["typescript", "oxc", "react", "nextjs", "import", "unicorn", "jsx-a11y", "vitest"],
-  "jsPlugins": ["./eslint-plugin-zoonk/index.js"],
+  "jsPlugins": ["./packages/eslint-plugin/index.js"],
   "env": {
     "browser": true,
     "es2024": true,
@@ -97,6 +97,14 @@
       "rules": {
         "eslint/no-magic-numbers": "off",
         "import/no-namespace": "off"
+      }
+    },
+    {
+      "files": ["packages/eslint-plugin/**/*.js"],
+      "rules": {
+        "eslint/max-statements": "off",
+        "eslint/no-magic-numbers": "off",
+        "eslint/sort-keys": "off"
       }
     }
   ],

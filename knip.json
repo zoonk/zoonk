@@ -1,6 +1,6 @@
 {
   "$schema": "https://unpkg.com/knip@5/schema.json",
-  "ignore": ["eslint-plugin-zoonk/**"],
+  "ignore": [],
   "ignoreBinaries": ["stripe", "build-and-start"],
   "ignoreDependencies": [
     "@prisma/client",
