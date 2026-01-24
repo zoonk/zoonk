@@ -7,7 +7,7 @@ const EVAL_RESULTS_DIR = path.join(process.cwd(), "eval-results");
 const OUTPUTS_DIR = path.join(EVAL_RESULTS_DIR, "outputs");
 
 function getOutputsFilePath(taskId: string, modelId: string): string {
-  const modelPath = modelId.replace(/\//g, "-");
+  const modelPath = modelId.replaceAll("/", "-");
   return path.join(OUTPUTS_DIR, taskId, `${modelPath}.json`);
 }
 

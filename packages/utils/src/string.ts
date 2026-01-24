@@ -3,7 +3,7 @@ import slugify from "slugify";
 const NUMERIC_ID_PATTERN = /^\d+$/;
 
 export function removeAccents(str: string): string {
-  return str.normalize("NFD").replace(/[\u0300-\u036F]/g, "");
+  return str.normalize("NFD").replaceAll(/[\u0300-\u036F]/g, "");
 }
 
 export function parseNumericId(value: string): number | null {
@@ -14,7 +14,7 @@ export function parseNumericId(value: string): number | null {
 }
 
 export function normalizeString(str: string): string {
-  return removeAccents(str).toLowerCase().replace(/\s+/g, " ").trim();
+  return removeAccents(str).toLowerCase().replaceAll(/\s+/g, " ").trim();
 }
 
 export function toSlug(str: string): string {

@@ -16,7 +16,7 @@ export async function contactFormAction(_prevState: unknown, formData: FormData)
     text: `
         <p><strong>From:</strong> ${email}</p>
         <p><strong>Message:</strong></p>
-        <p>${message.replace(/\n/g, "<br>")}</p>
+        <p>${message.replaceAll("\n", "<br>")}</p>
       `,
     to: "hello@zoonk.com",
   });

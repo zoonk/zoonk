@@ -14,7 +14,7 @@ async function getAppleClientSecret(): Promise<string> {
   }
 
   const ttlSec = 2_592_000; // 1 month
-  const privateKeyPEM = APPLE_PRIVATE_KEY!.replace(/\\n/g, "\n");
+  const privateKeyPEM = APPLE_PRIVATE_KEY!.replaceAll(String.raw`\n`, "\n");
   const key = await importPKCS8(privateKeyPEM, "ES256");
 
   const token = await new SignJWT({})
