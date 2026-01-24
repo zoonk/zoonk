@@ -77,7 +77,8 @@
     "eslint/no-useless-return": "error",
     "jsx-no-useless-fragment": "error",
     "unicorn/escape-case": "error",
-    "unicorn/no-array-callback-reference": "error"
+    "unicorn/no-array-callback-reference": "error",
+    "unicorn/no-useless-promise-resolve-reject": "error"
   },
   "overrides": [
     {

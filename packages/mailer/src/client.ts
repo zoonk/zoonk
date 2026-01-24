@@ -16,7 +16,7 @@ export async function sendEmail({
   if (sendEmailDisabled) {
     console.info("Email sending is disabled.");
     console.info({ subject, text, to });
-    return Promise.resolve({ data: Response.json({ ok: true }), error: null });
+    return { data: Response.json({ ok: true }), error: null };
   }
 
   try {
