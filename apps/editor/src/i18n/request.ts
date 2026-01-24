@@ -29,8 +29,10 @@ export default getRequestConfig(async () => {
 
   const locale = cookieLocale || getLocaleFromHeaders(headerStore.get("accept-language"));
 
+  const translations = await import(`../../messages/${locale}.po`);
+
   return {
     locale,
-    messages: (await import(`../../messages/${locale}.po`)).default,
+    messages: translations.default,
   };
 });
