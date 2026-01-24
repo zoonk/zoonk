@@ -74,7 +74,8 @@
     "zoonk/no-single-use-type-alias": "error",
 
     // temporary pedantic rules
-    "eslint/no-useless-return": "error"
+    "eslint/no-useless-return": "error",
+    "jsx-no-useless-fragment": "error"
   },
   "overrides": [
     {

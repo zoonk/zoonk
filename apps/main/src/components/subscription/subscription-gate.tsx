@@ -19,5 +19,5 @@ export async function SubscriptionGate({
     return <UpgradeCTA returnUrl={returnUrl} />;
   }
 
-  return <>{children}</>;
+  return children;
 }
