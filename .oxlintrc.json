@@ -1,6 +1,7 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
   "plugins": ["typescript", "oxc", "react", "nextjs", "import", "unicorn", "jsx-a11y", "vitest"],
+  "jsPlugins": ["./eslint-plugin-zoonk/index.js"],
   "env": {
     "browser": true,
     "es2024": true,
@@ -62,7 +63,8 @@
     "vitest/prefer-describe-function-title": "error",
     "vitest/prefer-to-be-falsy": "error",
     "vitest/prefer-to-be-truthy": "error",
-    "react/jsx-boolean-value": "error"
+    "react/jsx-boolean-value": "error",
+    "zoonk/no-single-use-type-alias": "error"
   },
   "overrides": [
     {

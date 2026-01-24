@@ -71,11 +71,9 @@ const PROFILES = {
   },
 } as const;
 
-type ProfileName = keyof typeof PROFILES;
-
 // Object.keys returns string[], but we know it matches ProfileName
 // oxlint-disable-next-line typescript/no-unsafe-type-assertion
-const PROFILE_KEYS = Object.keys(PROFILES) as ProfileName[];
+const PROFILE_KEYS = Object.keys(PROFILES) as (keyof typeof PROFILES)[];
 
 export function getSocialProfiles(locale: string) {
   return PROFILE_KEYS.map((name) => {
