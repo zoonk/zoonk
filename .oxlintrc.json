@@ -76,7 +76,8 @@
     // temporary pedantic rules
     "eslint/no-useless-return": "error",
     "jsx-no-useless-fragment": "error",
-    "unicorn/escape-case": "error"
+    "unicorn/escape-case": "error",
+    "unicorn/no-array-callback-reference": "error"
   },
   "overrides": [
     {

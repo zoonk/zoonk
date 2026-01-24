@@ -53,7 +53,7 @@ export function useInfiniteList<TItem, TCursor>({
 
       setItems((prev) => {
         // Dedupe by key to prevent duplicates from race conditions
-        const existingKeys = new Set(prev.map(getKey));
+        const existingKeys = new Set(prev.map((item) => getKey(item)));
         const uniqueNewItems = newItems.filter((item) => !existingKeys.has(getKey(item)));
 
         return [...prev, ...uniqueNewItems];
