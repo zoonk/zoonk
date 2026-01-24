@@ -55,6 +55,7 @@
     "unicorn/no-null": "off",
     "unicorn/prefer-bigint-literals": "off",
     "unicorn/switch-case-braces": ["error", "avoid"],
+    "vitest/no-hooks": "off",
     "vitest/prefer-called-times": "off",
     "vitest/require-hook": "off",
     "vitest/require-top-level-describe": "off",
