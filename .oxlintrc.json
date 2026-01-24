@@ -61,7 +61,9 @@
     "react/jsx-pascal-case": ["error", { "allowAllCaps": true }],
     "react/react-in-jsx-scope": "off",
     "typescript/consistent-type-definitions": ["error", "type"],
+    "typescript/explicit-function-return-type": "off",
     "typescript/no-confusing-void-expression": ["error", { "ignoreArrowShorthand": true }],
+    "typescript/no-import-type-side-effects": "off",
     "typescript/no-misused-promises": ["error", { "checksVoidReturn": false }],
     "typescript/no-unsafe-type-assertion": "error",
     "typescript/prefer-nullish-coalescing": "off",
@@ -78,7 +80,10 @@
 
     // custom rules
     "zoonk/no-object-params-in-cache": ["error", { "exceptions": ["headers"] }],
-    "zoonk/no-single-use-type-alias": "error"
+    "zoonk/no-single-use-type-alias": "error",
+
+    // temporary rules
+    "eslint/default-case": "error"
   },
   "overrides": [
     {

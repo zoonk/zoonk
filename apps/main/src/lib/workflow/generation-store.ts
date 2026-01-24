@@ -99,5 +99,9 @@ export function handleStreamMessage<TStep extends string>(
     case "error":
       store.send({ error: "Step failed", type: "setError" });
       break;
+    default: {
+      const exhaustiveCheck: never = message.status;
+      throw new Error(`Unexpected status: ${String(exhaustiveCheck)}`);
+    }
   }
 }
