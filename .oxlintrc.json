@@ -64,6 +64,7 @@
     "typescript/no-misused-promises": ["error", { "checksVoidReturn": false }],
     "typescript/no-unsafe-type-assertion": "error",
     "typescript/prefer-nullish-coalescing": "off",
+    "typescript/require-await": "off",
     "typescript/strict-boolean-expressions": "off",
     "unicorn/no-null": "off",
     "unicorn/prefer-bigint-literals": "off",
@@ -98,7 +99,8 @@
     "unicorn/no-typeof-undefined": "error",
     "unicorn/no-useless-undefined": "error",
     "unicorn/prefer-string-slice": "error",
-    "unicorn/prefer-top-level-await": "error"
+    "unicorn/prefer-top-level-await": "error",
+    "typescript/no-unsafe-assignment": "error"
   },
   "overrides": [
     {
@@ -112,6 +114,7 @@
     {
       "files": ["**/i18n/request.ts"],
       "rules": {
+        "typescript/no-unsafe-assignment": "off",
         "typescript/no-unsafe-member-access": "off",
         "typescript/no-unsafe-type-assertion": "off"
       }
@@ -140,8 +143,10 @@
         "eslint/max-statements": "off",
         "eslint/no-magic-numbers": "off",
         "import/no-namespace": "off",
+        "typescript/no-unsafe-assignment": "off",
         "typescript/no-unsafe-call": "off",
         "typescript/no-unsafe-member-access": "off",
+        "typescript/no-unsafe-type-assertion": "off",
         "unicorn/prefer-dom-node-text-content": "off",
         "vitest/require-hook": "error",
         "vitest/require-top-level-describe": "error"
@@ -169,7 +174,8 @@
         "typescript/no-unsafe-argument": "off",
         "typescript/no-unsafe-call": "off",
         "typescript/no-unsafe-member-access": "off",
-        "typescript/no-unsafe-return": "off"
+        "typescript/no-unsafe-return": "off",
+        "typescript/no-unsafe-assignment": "off"
       }
     },
     {
