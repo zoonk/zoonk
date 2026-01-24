@@ -159,7 +159,7 @@ async function seedUserProgress(prisma: PrismaClient, users: SeedUsers, now: Dat
     }),
     prisma.userProgress.upsert({
       create: {
-        currentEnergy: 15.0,
+        currentEnergy: 15,
         lastActiveAt: new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000),
         totalBrainPower: BigInt(2100),
         userId: users.member.id,
@@ -169,7 +169,7 @@ async function seedUserProgress(prisma: PrismaClient, users: SeedUsers, now: Dat
     }),
     prisma.userProgress.upsert({
       create: {
-        currentEnergy: 75.0,
+        currentEnergy: 75,
         lastActiveAt: now,
         totalBrainPower: BigInt(15_000),
         userId: users.e2eWithProgress.id,

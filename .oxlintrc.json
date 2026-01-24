@@ -71,7 +71,8 @@
     "vitest/prefer-to-be-falsy": "error",
     "vitest/prefer-to-be-truthy": "error",
     "react/jsx-boolean-value": "error",
-    "unicorn/no-await-expression-member": "error"
+    "unicorn/no-await-expression-member": "error",
+    "unicorn/no-zero-fractions": "error"
   },
   "overrides": [
     {

@@ -46,7 +46,7 @@ describe("authenticated users", () => {
           {
             date: yesterday,
             dayOfWeek: yesterday.getDay(),
-            energyAtEnd: 80.0,
+            energyAtEnd: 80,
             organizationId: org.id,
             userId: Number(user.id),
           },
