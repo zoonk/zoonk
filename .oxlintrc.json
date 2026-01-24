@@ -73,7 +73,8 @@
     "vitest/prefer-to-be-truthy": "error",
     "react/jsx-boolean-value": "error",
     "unicorn/no-await-expression-member": "error",
-    "unicorn/no-zero-fractions": "error"
+    "unicorn/no-zero-fractions": "error",
+    "unicorn/prefer-dom-node-text-content": "error"
   },
   "overrides": [
     {
@@ -97,6 +98,7 @@
         "eslint/max-statements": "off",
         "eslint/no-magic-numbers": "off",
         "import/no-namespace": "off",
+        "unicorn/prefer-dom-node-text-content": "off",
         "vitest/require-hook": "error",
         "vitest/require-top-level-describe": "error"
       }
