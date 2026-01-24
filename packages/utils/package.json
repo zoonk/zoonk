@@ -10,6 +10,7 @@
     "./constants": "./src/constants.ts",
     "./error": "./src/error.ts",
     "./form": "./src/form.ts",
+    "./json": "./src/json.ts",
     "./locale": "./src/locale.ts",
     "./search": "./src/search.ts",
     "./string": "./src/string.ts",

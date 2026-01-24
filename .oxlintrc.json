@@ -85,7 +85,8 @@
     "unicorn/prefer-dom-node-remove": "error",
     "unicorn/prefer-string-replace-all": "error",
     "typescript/no-deprecated": "error",
-    "no-negated-condition": "error"
+    "no-negated-condition": "error",
+    "typescript/no-unsafe-argument": "error"
   },
   "overrides": [
     {
@@ -131,7 +132,8 @@
       "rules": {
         "eslint/max-statements": "off",
         "eslint/no-magic-numbers": "off",
-        "eslint/sort-keys": "off"
+        "eslint/sort-keys": "off",
+        "typescript/no-unsafe-argument": "off"
       }
     },
     {
