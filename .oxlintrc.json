@@ -63,6 +63,7 @@
     "typescript/no-confusing-void-expression": ["error", { "ignoreArrowShorthand": true }],
     "typescript/no-misused-promises": ["error", { "checksVoidReturn": false }],
     "typescript/no-unsafe-type-assertion": "error",
+    "typescript/strict-boolean-expressions": "off",
     "unicorn/no-null": "off",
     "unicorn/prefer-bigint-literals": "off",
     "unicorn/switch-case-braces": ["error", "avoid"],
