@@ -9,6 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@zoonk/ui/components/dropdown-menu";
 import { toast } from "@zoonk/ui/components/sonner";
+import { downloadJson } from "@zoonk/utils/download";
 import { DownloadIcon, EllipsisVerticalIcon, UploadIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
@@ -60,18 +61,7 @@ export function EntityListActions({
         return;
       }
 
-      const blob = new Blob([JSON.stringify(data, null, 2)], {
-        type: "application/json",
-      });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `${entityType}.json`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-
+      downloadJson(data, `${entityType}.json`);
       toast.success(entityLabels.exportSuccess);
     });
   }

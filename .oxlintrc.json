@@ -9,6 +9,7 @@
   },
   "categories": {
     "correctness": "error",
+    "pedantic": "error",
     "perf": "error",
     "style": "error",
     "suspicious": "error"
@@ -20,8 +21,14 @@
       { "min": 2, "exceptions": ["i", "j", "x", "y", "z", "_", "a", "b", "t", "T"] }
     ],
     "eslint/init-declarations": "off",
+    "eslint/max-lines": ["error", { "skipComments": true, "skipBlankLines": true, "max": 300 }],
+    "eslint/max-lines-per-function": [
+      "error",
+      { "skipComments": true, "skipBlankLines": true, "max": 150 }
+    ],
     "eslint/max-params": "off",
     "eslint/max-statements": ["error", { "ignoreTopLevelFunctions": true, "max": 20 }],
+    "eslint/no-inline-comments": "off",
     "eslint/no-magic-numbers": [
       "error",
       {
@@ -32,10 +39,12 @@
     "import/no-named-as-default": "off",
     "eslint/no-ternary": "off",
     "eslint/prefer-destructuring": "off",
+    "eslint/require-await": "off",
     "eslint/sort-imports": ["error", { "ignoreDeclarationSort": true }],
     "import/consistent-type-specifier-style": ["error", "prefer-inline"],
     "import/exports-last": "off",
     "import/group-exports": "off",
+    "import/max-dependencies": "off",
     "import/no-named-export": "off",
     "import/no-unassigned-import": [
       "error",
@@ -52,9 +61,15 @@
     "react/jsx-pascal-case": ["error", { "allowAllCaps": true }],
     "react/react-in-jsx-scope": "off",
     "typescript/consistent-type-definitions": ["error", "type"],
+    "typescript/no-confusing-void-expression": ["error", { "ignoreArrowShorthand": true }],
+    "typescript/no-misused-promises": ["error", { "checksVoidReturn": false }],
     "typescript/no-unsafe-type-assertion": "error",
+    "typescript/prefer-nullish-coalescing": "off",
+    "typescript/require-await": "off",
+    "typescript/strict-boolean-expressions": "off",
     "unicorn/no-null": "off",
     "unicorn/prefer-bigint-literals": "off",
+    "unicorn/prefer-native-coercion-functions": "off",
     "unicorn/switch-case-braces": ["error", "avoid"],
     "vitest/no-hooks": "off",
     "vitest/prefer-called-times": "off",
@@ -69,24 +84,47 @@
     {
       "files": ["apps/evals/**/*.ts", "apps/evals/**/*.tsx"],
       "rules": {
+        "eslint/max-lines": "off",
         "eslint/no-magic-numbers": "off",
+        "typescript/no-unsafe-type-assertion": "off"
+      }
+    },
+    {
+      "files": ["**/i18n/request.ts"],
+      "rules": {
+        "typescript/no-unsafe-assignment": "off",
+        "typescript/no-unsafe-member-access": "off",
         "typescript/no-unsafe-type-assertion": "off"
       }
     },
     {
       "files": ["**/seed/**", "**/seed.ts"],
       "rules": {
+        "eslint/max-lines": "off",
         "eslint/max-statements": "off",
         "eslint/no-magic-numbers": "off",
-        "import/no-namespace": "off"
+        "import/no-namespace": "off",
+        "unicorn/prefer-top-level-await": "off"
+      }
+    },
+    {
+      "files": ["**/e2e/**"],
+      "rules": {
+        "react/rules-of-hooks": "off"
       }
     },
     {
       "files": ["*.test.ts"],
       "rules": {
+        "eslint/max-lines": "off",
+        "eslint/max-lines-per-function": "off",
         "eslint/max-statements": "off",
         "eslint/no-magic-numbers": "off",
         "import/no-namespace": "off",
+        "typescript/no-unsafe-assignment": "off",
+        "typescript/no-unsafe-call": "off",
+        "typescript/no-unsafe-member-access": "off",
+        "typescript/no-unsafe-type-assertion": "off",
         "unicorn/prefer-dom-node-text-content": "off",
         "vitest/require-hook": "error",
         "vitest/require-top-level-describe": "error"
@@ -95,6 +133,7 @@
     {
       "files": ["packages/ui/src/components/**/*.tsx"],
       "rules": {
+        "eslint/max-lines": "off",
         "eslint/no-magic-numbers": "off",
         "import/no-namespace": "off"
       }
@@ -105,6 +144,16 @@
         "eslint/max-statements": "off",
         "eslint/no-magic-numbers": "off",
         "eslint/sort-keys": "off"
+      }
+    },
+    {
+      "files": ["**/*.js"],
+      "rules": {
+        "typescript/no-unsafe-argument": "off",
+        "typescript/no-unsafe-call": "off",
+        "typescript/no-unsafe-member-access": "off",
+        "typescript/no-unsafe-return": "off",
+        "typescript/no-unsafe-assignment": "off"
       }
     },
     {

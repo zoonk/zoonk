@@ -3,7 +3,7 @@ export function isValidChartPayload<T>(payload: unknown): payload is { payload: 
     return false;
   }
 
-  const first = payload[0];
+  const first: unknown = payload[0];
 
   return typeof first === "object" && first !== null && "payload" in first;
 }

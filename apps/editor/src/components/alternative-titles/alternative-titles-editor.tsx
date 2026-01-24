@@ -1,17 +1,16 @@
 "use client";
 
-import { Button } from "@zoonk/ui/components/button";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@zoonk/ui/components/collapsible";
 import { Dialog } from "@zoonk/ui/components/dialog";
-import { Input } from "@zoonk/ui/components/input";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { toast } from "@zoonk/ui/components/sonner";
+import { downloadJson } from "@zoonk/utils/download";
 import { toSlug } from "@zoonk/utils/string";
-import { ChevronDownIcon, ChevronRightIcon, SearchIcon } from "lucide-react";
+import { ChevronDownIcon, ChevronRightIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import {
   startTransition,
@@ -22,9 +21,9 @@ import {
   useTransition,
 } from "react";
 import { ImportProvider } from "../import";
-import { AlternativeTitleBadge } from "./alternative-title-badge";
-import { AlternativeTitlesFormActions } from "./alternative-titles-form-actions";
+import { AlternativeTitlesAddForm } from "./alternative-titles-add-form";
 import { AlternativeTitlesImportDialog } from "./alternative-titles-import-dialog";
+import { AlternativeTitlesList } from "./alternative-titles-list";
 
 const MAX_VISIBLE_ITEMS = 10;
 
@@ -58,18 +57,7 @@ export function AlternativeTitlesEditor({
         return;
       }
 
-      const blob = new Blob([JSON.stringify(data, null, 2)], {
-        type: "application/json",
-      });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "alternative-titles.json";
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-
+      downloadJson(data, "alternative-titles.json");
       toast.success(t("Alternative titles exported successfully"));
     });
   }
@@ -141,69 +129,27 @@ export function AlternativeTitlesEditor({
         </CollapsibleTrigger>
 
         <CollapsibleContent className="space-y-3 pb-4">
-          <form action={addAction} className="flex gap-2">
-            <Input
-              className="h-8 text-sm"
-              disabled={isAdding}
-              key={isAdding ? "adding" : "idle"}
-              name="title"
-              placeholder={t("Add alternative title…")}
-            />
-            <Button disabled={isAdding} size="sm" type="submit">
-              {t("Add")}
-            </Button>
-
-            <AlternativeTitlesFormActions
-              disabled={exportPending}
-              onExport={handleExport}
-              onImport={() => setImportOpen(true)}
-            />
-          </form>
-
-          {addState.error && <p className="text-destructive text-sm">{addState.error}</p>}
+          <AlternativeTitlesAddForm
+            addAction={addAction}
+            error={addState.error}
+            exportPending={exportPending}
+            isAdding={isAdding}
+            onExport={handleExport}
+            onImport={() => setImportOpen(true)}
+          />
 
           {optimisticTitles.length > 0 && (
-            <>
-              <div className="relative">
-                <SearchIcon className="text-muted-foreground absolute top-1/2 left-3 size-4 -translate-y-1/2" />
-                <Input
-                  className="h-8 pl-9 text-sm"
-                  onChange={(event) => setSearch(event.target.value)}
-                  placeholder={t("Search titles…")}
-                  value={search}
-                />
-              </div>
-
-              <div className="flex flex-wrap gap-2">
-                {filteredTitles.map((slug) => (
-                  <AlternativeTitleBadge key={slug} onDelete={handleDelete} slug={slug} />
-                ))}
-              </div>
-
-              {hasMore && (
-                <button
-                  className="text-muted-foreground hover:text-foreground text-xs hover:underline"
-                  onClick={() => setShowAll(true)}
-                  type="button"
-                >
-                  {t("and {count} more", { count: String(hiddenCount) })}
-                </button>
-              )}
-
-              {showAll && !search.trim() && hiddenCount > 0 && (
-                <button
-                  className="text-muted-foreground hover:text-foreground text-xs hover:underline"
-                  onClick={() => setShowAll(false)}
-                  type="button"
-                >
-                  {t("Show less")}
-                </button>
-              )}
-
-              {search && filteredTitles.length === 0 && (
-                <p className="text-muted-foreground text-sm">{t("No titles match your search")}</p>
-              )}
-            </>
+            <AlternativeTitlesList
+              filteredTitles={filteredTitles}
+              hasMore={hasMore}
+              hiddenCount={hiddenCount}
+              onDelete={handleDelete}
+              onSearch={setSearch}
+              onShowAll={() => setShowAll(true)}
+              onShowLess={() => setShowAll(false)}
+              search={search}
+              showAll={showAll}
+            />
           )}
         </CollapsibleContent>
       </Collapsible>

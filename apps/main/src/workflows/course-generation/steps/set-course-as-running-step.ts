@@ -23,9 +23,11 @@ export async function setCourseAsRunningStep(input: {
     }),
   ]);
 
-  if (courseResult.error || suggestionResult.error) {
+  const error = courseResult.error || suggestionResult.error;
+
+  if (error) {
     await streamStatus({ status: "error", step: "setCourseAsRunning" });
-    throw courseResult.error || suggestionResult.error;
+    throw error;
   }
 
   await streamStatus({ status: "completed", step: "setCourseAsRunning" });

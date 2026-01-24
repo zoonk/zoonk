@@ -116,7 +116,7 @@ function EvaluationStepsSection({ steps }: { steps: ScoreStep[] }) {
       <div className="flex flex-col gap-2">
         {steps.map((step) => (
           <div className="rounded-lg border p-3" key={step.kind}>
-            <p className="mb-1 text-sm font-medium capitalize">{step.kind.replace(/_/g, " ")}</p>
+            <p className="mb-1 text-sm font-medium capitalize">{step.kind.replaceAll("_", " ")}</p>
             <p className="text-muted-foreground text-sm">{step.conclusion}</p>
             <p className="text-muted-foreground mt-1 text-sm">Score: {step.score}</p>
           </div>

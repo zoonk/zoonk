@@ -2,7 +2,7 @@ import { CategoryEditor } from "@/components/category/category-editor";
 import { listCourseCategories } from "@/data/categories/list-course-categories";
 import { getCourse } from "@/data/courses/get-course";
 import { notFound } from "next/navigation";
-import { addCourseCategoryAction, removeCourseCategoryAction } from "./actions";
+import { addCourseCategoryAction, removeCourseCategoryAction } from "./_actions/categories";
 
 export async function CourseCategories({
   params,

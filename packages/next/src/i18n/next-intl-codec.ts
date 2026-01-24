@@ -64,7 +64,7 @@ export default defineCodec(() => {
     "X-Generator": "next-intl",
   };
 
-  const metadataByLocale = new Map();
+  const metadataByLocale = new Map<string, Record<string, string>>();
 
   return {
     decode(content, context) {

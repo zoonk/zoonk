@@ -2,7 +2,7 @@ import { ContentEditor } from "@/components/content-editor";
 import { getCourse } from "@/data/courses/get-course";
 import { getExtracted } from "next-intl/server";
 import { notFound } from "next/navigation";
-import { updateCourseDescriptionAction, updateCourseTitleAction } from "./actions";
+import { updateCourseDescriptionAction, updateCourseTitleAction } from "./_actions/content";
 
 export async function CourseContent({
   params,

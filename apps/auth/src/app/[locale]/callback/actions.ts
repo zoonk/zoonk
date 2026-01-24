@@ -14,12 +14,11 @@ export async function createOneTimeTokenAction(redirectTo: string): Promise<Toke
   const reqHeaders = await headers();
 
   // First, validate that the redirect URL is a trusted origin
-  const { error: validationError } = await safeAsync(
-    async () =>
-      await auth.api.validateTrustedOrigin({
-        body: { url: redirectTo },
-        headers: reqHeaders,
-      }),
+  const { error: validationError } = await safeAsync(async () =>
+    auth.api.validateTrustedOrigin({
+      body: { url: redirectTo },
+      headers: reqHeaders,
+    }),
   );
 
   if (validationError) {
@@ -28,11 +27,10 @@ export async function createOneTimeTokenAction(redirectTo: string): Promise<Toke
   }
 
   // If trusted, generate the one-time token
-  const { data, error } = await safeAsync(
-    async () =>
-      await auth.api.generateOneTimeToken({
-        headers: reqHeaders,
-      }),
+  const { data, error } = await safeAsync(async () =>
+    auth.api.generateOneTimeToken({
+      headers: reqHeaders,
+    }),
   );
 
   if (error) {

@@ -1,6 +1,6 @@
 import { SlugEditor } from "@/components/slug-editor";
 import { getCourse } from "@/data/courses/get-course";
-import { checkCourseSlugExists, updateCourseSlugAction } from "./actions";
+import { checkCourseSlugExists, updateCourseSlugAction } from "./_actions/slug";
 
 export async function CourseSlug({
   params,

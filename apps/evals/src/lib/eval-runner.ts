@@ -21,7 +21,7 @@ async function ensureResultsDir(taskId: string) {
 }
 
 function getResultsFilePath(taskId: string, modelId: string): string {
-  const modelPath = modelId.replace(/\//g, "-");
+  const modelPath = modelId.replaceAll("/", "-");
   return path.join(RESULTS_DIR, taskId, `${modelPath}.json`);
 }
 
@@ -52,7 +52,7 @@ async function saveScoredResults(taskId: string, modelId: string, results: Score
 function findTestCaseForOutput(task: Task, testCaseId: string): TestCase | undefined {
   // TestCaseId format is "{baseId}-{runNumber}"
   const lastDashIndex = testCaseId.lastIndexOf("-");
-  const baseId = testCaseId.substring(0, lastDashIndex);
+  const baseId = testCaseId.slice(0, lastDashIndex);
   return task.testCases.find((testCase) => testCase.id === baseId);
 }
 
@@ -84,7 +84,7 @@ function isAlreadyScored(existingResults: ScoredResult[], testCaseId: string): b
 }
 
 export async function runEval(task: Task, modelId: string): Promise<TaskEvalResults> {
-  const safeModelId = String(modelId).replace(/[\r\n]/g, "");
+  const safeModelId = String(modelId).replaceAll(/[\r\n]/g, "");
 
   console.info(`\nStarting eval for task: ${task.name}, model: [${safeModelId}]`);
 

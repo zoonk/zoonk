@@ -28,6 +28,4 @@ export const sendVerificationOTP: EmailOTPOptions["sendVerificationOTP"] = async
       to: email,
     });
   });
-
-  return;
 };

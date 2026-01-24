@@ -4,11 +4,13 @@
   "type": "module",
   "exports": {
     "./belt-level": "./src/belt-level.ts",
+    "./download": "./src/download.ts",
     "./cache": "./src/cache.ts",
     "./categories": "./src/categories.ts",
     "./constants": "./src/constants.ts",
     "./error": "./src/error.ts",
     "./form": "./src/form.ts",
+    "./json": "./src/json.ts",
     "./locale": "./src/locale.ts",
     "./search": "./src/search.ts",
     "./string": "./src/string.ts",

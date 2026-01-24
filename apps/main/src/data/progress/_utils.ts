@@ -108,7 +108,7 @@ function getWeekKey(date: Date): string {
   const day = normalizedDate.getDay();
   const diff = normalizedDate.getDate() - day + (day === 0 ? SUNDAY_TO_MONDAY_OFFSET : 1);
   normalizedDate.setDate(diff);
-  return normalizedDate.toISOString().substring(0, 10);
+  return normalizedDate.toISOString().slice(0, 10);
 }
 
 function getMonthKey(date: Date): string {

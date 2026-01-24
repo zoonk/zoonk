@@ -17,7 +17,7 @@ import {
   handleImportChaptersAction,
   insertChapterAction,
   reorderChaptersAction,
-} from "./actions";
+} from "./_actions/chapters";
 import { ChapterListRow } from "./chapter-list-row";
 
 export async function ChapterList({

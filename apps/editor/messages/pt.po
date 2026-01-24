@@ -35,54 +35,56 @@ msgctxt "ZFXb/x"
 msgid "Delete course?"
 msgstr "Excluir curso?"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/actions.ts
-msgctxt "BAkmPD"
-msgid "Untitled chapter"
-msgstr "Capítulo sem título"
-
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/actions.ts
-msgctxt "E+/68R"
-msgid "Invalid file type. Please upload a JPEG, PNG, WebP, or GIF image."
-msgstr "Tipo de arquivo inválido. Por favor, envie uma imagem JPEG, PNG, WebP ou GIF."
-
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/actions.ts
-msgctxt "in2TjU"
-msgid "File is too large. Maximum size is 5MB."
-msgstr "O arquivo é muito grande. O tamanho máximo é 5MB."
-
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/actions.ts
-msgctxt "JkrKUt"
-msgid "Failed to upload image. Please try again."
-msgstr "Falha ao enviar a imagem. Por favor, tente novamente."
-
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/actions.ts
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/_actions/alternative-titles.ts
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/_actions/chapters.ts
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/_actions/image.ts
 #: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/actions.ts
 #: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/activity-actions.ts
 msgctxt "lgvvCe"
 msgid "No file provided"
 msgstr "Nenhum arquivo fornecido"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/actions.ts
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/_actions/alternative-titles.ts
 msgctxt "Lp3DO2"
 msgid "Title is required"
 msgstr "Título é obrigatório"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/actions.ts
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/_actions/alternative-titles.ts
 msgctxt "PAqOAW"
 msgid "Failed to add alternative title"
 msgstr "Falha ao adicionar título alternativo"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/actions.ts
-msgctxt "Q1jVC0"
-msgid "Failed to process image. Please try again."
-msgstr "Falha ao processar a imagem. Por favor, tente novamente."
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/_actions/chapters.ts
+msgctxt "BAkmPD"
+msgid "Untitled chapter"
+msgstr "Capítulo sem título"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/actions.ts
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/_actions/chapters.ts
 #: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/actions.ts
 #: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/activity-actions.ts
 msgctxt "sGJpuF"
 msgid "Add a description…"
 msgstr "Adicione uma descrição…"
+
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/_actions/image.ts
+msgctxt "E+/68R"
+msgid "Invalid file type. Please upload a JPEG, PNG, WebP, or GIF image."
+msgstr "Tipo de arquivo inválido. Por favor, envie uma imagem JPEG, PNG, WebP ou GIF."
+
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/_actions/image.ts
+msgctxt "in2TjU"
+msgid "File is too large. Maximum size is 5MB."
+msgstr "O arquivo é muito grande. O tamanho máximo é 5MB."
+
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/_actions/image.ts
+msgctxt "JkrKUt"
+msgid "Failed to upload image. Please try again."
+msgstr "Falha ao enviar a imagem. Por favor, tente novamente."
+
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/_actions/image.ts
+msgctxt "Q1jVC0"
+msgid "Failed to process image. Please try again."
+msgstr "Falha ao processar a imagem. Por favor, tente novamente."
 
 #: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/actions.ts
 msgctxt "oUJv8w"
@@ -453,10 +455,15 @@ msgctxt "G5e8UX"
 msgid "Remove {title}"
 msgstr "Remover {title}"
 
-#: src/components/alternative-titles/alternative-titles-editor.tsx
+#: src/components/alternative-titles/alternative-titles-add-form.tsx
 msgctxt "2/2yg+"
 msgid "Add"
 msgstr "Adicionar"
+
+#: src/components/alternative-titles/alternative-titles-add-form.tsx
+msgctxt "jQY6mT"
+msgid "Add alternative title…"
+msgstr "Adicionar título alternativo…"
 
 #: src/components/alternative-titles/alternative-titles-editor.tsx
 msgctxt "6MeYja"
@@ -464,34 +471,9 @@ msgid "Alternative titles exported successfully"
 msgstr "Títulos alternativos exportados com sucesso"
 
 #: src/components/alternative-titles/alternative-titles-editor.tsx
-msgctxt "cvL4Xs"
-msgid "Search titles…"
-msgstr "Buscar títulos…"
-
-#: src/components/alternative-titles/alternative-titles-editor.tsx
 msgctxt "iQDWe6"
 msgid "Alternative titles"
 msgstr "Títulos alternativos"
-
-#: src/components/alternative-titles/alternative-titles-editor.tsx
-msgctxt "jQY6mT"
-msgid "Add alternative title…"
-msgstr "Adicionar título alternativo…"
-
-#: src/components/alternative-titles/alternative-titles-editor.tsx
-msgctxt "n2FbaN"
-msgid "No titles match your search"
-msgstr "Nenhum título corresponde à sua busca"
-
-#: src/components/alternative-titles/alternative-titles-editor.tsx
-msgctxt "oDI/Rp"
-msgid "and {count} more"
-msgstr "e mais {count}"
-
-#: src/components/alternative-titles/alternative-titles-editor.tsx
-msgctxt "qyJtWy"
-msgid "Show less"
-msgstr "Mostrar menos"
 
 #: src/components/alternative-titles/alternative-titles-editor.tsx
 msgctxt "R6KURz"
@@ -576,6 +558,26 @@ msgstr "Mesclar (adicionar aos existentes)"
 msgctxt "Ws/LkY"
 msgid "Upload a JSON file containing alternative titles to import."
 msgstr "Envie um arquivo JSON contendo os títulos alternativos para importar."
+
+#: src/components/alternative-titles/alternative-titles-list.tsx
+msgctxt "cvL4Xs"
+msgid "Search titles…"
+msgstr "Buscar títulos…"
+
+#: src/components/alternative-titles/alternative-titles-list.tsx
+msgctxt "n2FbaN"
+msgid "No titles match your search"
+msgstr "Nenhum título corresponde à sua busca"
+
+#: src/components/alternative-titles/alternative-titles-list.tsx
+msgctxt "oDI/Rp"
+msgid "and {count} more"
+msgstr "e mais {count}"
+
+#: src/components/alternative-titles/alternative-titles-list.tsx
+msgctxt "qyJtWy"
+msgid "Show less"
+msgstr "Mostrar menos"
 
 #: src/components/category/category-editor.tsx
 msgctxt "HzJbix"

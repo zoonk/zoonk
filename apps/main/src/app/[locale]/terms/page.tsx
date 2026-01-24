@@ -19,6 +19,7 @@ export async function generateMetadata({
 
 export default async function Terms({ params }: PageProps<"/[locale]/terms">) {
   const { locale } = await params;
+  // oxlint-disable-next-line typescript/no-unsafe-assignment -- dynamic import returns any
   const { default: TermsOfService } = await import(`./${locale}.mdx`);
 
   return (
