@@ -70,7 +70,7 @@ async function loadExistingMatchup(
 ): Promise<BattleMatchup | null> {
   const filePath = getMatchupFilePath(taskId, testCaseId);
   try {
-    const data = await fs.readFile(filePath, "utf-8");
+    const data = await fs.readFile(filePath, "utf8");
     return JSON.parse(data) as BattleMatchup;
   } catch {
     return null;

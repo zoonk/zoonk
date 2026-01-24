@@ -275,7 +275,7 @@ test.describe("Activity List", () => {
         throw new Error("Download path should exist");
       }
 
-      const json = JSON.parse(fs.readFileSync(downloadPath, "utf-8"));
+      const json = JSON.parse(fs.readFileSync(downloadPath, "utf8"));
       expect(json.activities).toHaveLength(activities.length);
 
       const exportedTitles = json.activities.map((a: { title: string }) => a.title);

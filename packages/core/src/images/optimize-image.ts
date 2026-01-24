@@ -23,9 +23,8 @@ export async function optimizeImage({
         return pipeline.jpeg({ quality }).toBuffer();
       case "png":
         return pipeline.png({ quality }).toBuffer();
-      default: 
+      default:
         return pipeline.webp({ quality }).toBuffer();
-      
     }
   });
 

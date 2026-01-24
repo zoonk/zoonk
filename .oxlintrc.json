@@ -78,7 +78,8 @@
     "unicorn/prefer-dom-node-text-content": "error",
     "unicorn/prefer-global-this": "error",
     "unicorn/prefer-spread": "error",
-    "unicorn/prefer-string-raw": "error"
+    "unicorn/prefer-string-raw": "error",
+    "text-encoding-identifier-case": "error"
   },
   "overrides": [
     {

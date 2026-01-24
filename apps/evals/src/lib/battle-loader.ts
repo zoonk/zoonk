@@ -24,7 +24,7 @@ export const getBattleMatchups = cache(async (taskId: string): Promise<BattleMat
     const matchups = await Promise.all(
       matchupFiles.map(async (file) => {
         const filePath = path.join(taskDir, file);
-        const data = await fs.readFile(filePath, "utf-8");
+        const data = await fs.readFile(filePath, "utf8");
         return JSON.parse(data) as BattleMatchup;
       }),
     );

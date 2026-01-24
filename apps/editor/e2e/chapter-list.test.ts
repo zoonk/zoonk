@@ -269,7 +269,7 @@ test.describe("Chapter List", () => {
         throw new Error("Download path should exist");
       }
 
-      const json = JSON.parse(fs.readFileSync(downloadPath, "utf-8"));
+      const json = JSON.parse(fs.readFileSync(downloadPath, "utf8"));
       expect(json.chapters).toHaveLength(chapters.length);
 
       // Verify actual content, not just count

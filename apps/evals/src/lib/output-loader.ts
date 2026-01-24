@@ -30,7 +30,7 @@ export const loadModelOutputs = cache(
   async (taskId: string, modelId: string): Promise<ModelOutputs | null> => {
     const filePath = getOutputsFilePath(taskId, modelId);
     try {
-      const data = await fs.readFile(filePath, "utf-8");
+      const data = await fs.readFile(filePath, "utf8");
       return JSON.parse(data) as ModelOutputs;
     } catch {
       return null;
@@ -74,7 +74,7 @@ export async function getAllOutputsForTask(taskId: string): Promise<Map<string, 
     const fileContents = await Promise.all(
       jsonFiles.map(async (file) => {
         const filePath = path.join(taskDir, file);
-        const data = await fs.readFile(filePath, "utf-8");
+        const data = await fs.readFile(filePath, "utf8");
         return JSON.parse(data) as ModelOutputs;
       }),
     );

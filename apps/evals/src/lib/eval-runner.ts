@@ -28,7 +28,7 @@ function getResultsFilePath(taskId: string, modelId: string): string {
 async function loadExistingScoredResults(taskId: string, modelId: string): Promise<ScoredResult[]> {
   const filePath = getResultsFilePath(taskId, modelId);
   try {
-    const data = await fs.readFile(filePath, "utf-8");
+    const data = await fs.readFile(filePath, "utf8");
     const parsed = JSON.parse(data) as ScoredTaskResults;
     return parsed.results;
   } catch {
