@@ -51,6 +51,7 @@
     "react/react-in-jsx-scope": "off",
     "typescript/consistent-type-definitions": ["error", "type"],
     "typescript/no-unsafe-type-assertion": "error",
+    "unicorn/no-null": "off",
     "vitest/prefer-called-times": "off",
     "vitest/require-hook": "off",
     "vitest/require-top-level-describe": "off",
