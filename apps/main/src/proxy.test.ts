@@ -3,75 +3,77 @@ import {
   getRedirectUrl,
 } from "next/experimental/testing/server";
 import { NextRequest } from "next/server";
-import { expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 import { config, proxy } from "./proxy";
 
-test("doesn't match API routes", () => {
-  expect(doesMiddlewareMatch({ config, url: "/api/hello" })).toBe(false);
-});
+describe("next.js proxy", () => {
+  test("doesn't match API routes", () => {
+    expect(doesMiddlewareMatch({ config, url: "/api/hello" })).toBe(false);
+  });
 
-test("doesn't match static files", () => {
-  expect(doesMiddlewareMatch({ config, url: "/favicon.ico" })).toBe(false);
-});
+  test("doesn't match static files", () => {
+    expect(doesMiddlewareMatch({ config, url: "/favicon.ico" })).toBe(false);
+  });
 
-test("doesn't match _next paths", () => {
-  expect(doesMiddlewareMatch({ config, url: "/_next/static/file.js" })).toBe(false);
-});
+  test("doesn't match _next paths", () => {
+    expect(doesMiddlewareMatch({ config, url: "/_next/static/file.js" })).toBe(false);
+  });
 
-test("doesn't match _vercel paths", () => {
-  expect(doesMiddlewareMatch({ config, url: "/_vercel/insights/view" })).toBe(false);
-});
+  test("doesn't match _vercel paths", () => {
+    expect(doesMiddlewareMatch({ config, url: "/_vercel/insights/view" })).toBe(false);
+  });
 
-test("doesn't match .well-known paths", () => {
-  expect(doesMiddlewareMatch({ config, url: "/.well-known/workflow/whatever" })).toBe(false);
-});
+  test("doesn't match .well-known paths", () => {
+    expect(doesMiddlewareMatch({ config, url: "/.well-known/workflow/whatever" })).toBe(false);
+  });
 
-test("matches well-known course paths", () => {
-  expect(doesMiddlewareMatch({ config, url: "/c/my-well-known-course" })).toBe(true);
+  test("matches well-known course paths", () => {
+    expect(doesMiddlewareMatch({ config, url: "/c/my-well-known-course" })).toBe(true);
 
-  expect(doesMiddlewareMatch({ config, url: "/c/well-known-course/en" })).toBe(true);
-});
+    expect(doesMiddlewareMatch({ config, url: "/c/well-known-course/en" })).toBe(true);
+  });
 
-test("doesn't match paths starting with 149e (BotID paths)", () => {
-  // https://x.com/andrewqu/status/1988640986520842672?s=20
-  expect(doesMiddlewareMatch({ config, url: "/149eabcd" })).toBe(false);
-});
+  test("doesn't match paths starting with 149e (BotID paths)", () => {
+    // https://x.com/andrewqu/status/1988640986520842672?s=20
+    expect(doesMiddlewareMatch({ config, url: "/149eabcd" })).toBe(false);
+  });
 
-test("redirects home page to language-specific URL", () => {
-  const request = new NextRequest("https://zoonk.com");
-  request.cookies.set("NEXT_LOCALE", "pt");
-  const response = proxy(request);
+  test("redirects home page to language-specific URL", () => {
+    const request = new NextRequest("https://zoonk.com");
+    request.cookies.set("NEXT_LOCALE", "pt");
+    const response = proxy(request);
 
-  expect(getRedirectUrl(response)).toBe("https://zoonk.com/pt");
-});
+    expect(getRedirectUrl(response)).toBe("https://zoonk.com/pt");
+  });
 
-test("redirects nested page to language-specific URL", () => {
-  const request = new NextRequest("https://zoonk.com/some/page");
-  request.cookies.set("NEXT_LOCALE", "pt");
-  const response = proxy(request);
+  test("redirects nested page to language-specific URL", () => {
+    const request = new NextRequest("https://zoonk.com/some/page");
+    request.cookies.set("NEXT_LOCALE", "pt");
+    const response = proxy(request);
 
-  expect(getRedirectUrl(response)).toBe("https://zoonk.com/pt/some/page");
-});
+    expect(getRedirectUrl(response)).toBe("https://zoonk.com/pt/some/page");
+  });
 
-test("don't redirect home page if using default locale", () => {
-  const request = new NextRequest("https://zoonk.com");
-  request.cookies.set("NEXT_LOCALE", "en");
-  const response = proxy(request);
+  test("don't redirect home page if using default locale", () => {
+    const request = new NextRequest("https://zoonk.com");
+    request.cookies.set("NEXT_LOCALE", "en");
+    const response = proxy(request);
 
-  expect(getRedirectUrl(response)).toBeFalsy();
-});
+    expect(getRedirectUrl(response)).toBeFalsy();
+  });
 
-test("don't redirect nested page if using default locale", () => {
-  const request = new NextRequest("https://zoonk.com/some/page");
-  request.cookies.set("NEXT_LOCALE", "en");
-  const response = proxy(request);
+  test("don't redirect nested page if using default locale", () => {
+    const request = new NextRequest("https://zoonk.com/some/page");
+    request.cookies.set("NEXT_LOCALE", "en");
+    const response = proxy(request);
 
-  expect(getRedirectUrl(response)).toBeFalsy();
-});
+    expect(getRedirectUrl(response)).toBeFalsy();
+  });
 
-test("remove default locale from URL", () => {
-  const request = new NextRequest("https://zoonk.com/en/some/page");
-  const response = proxy(request);
+  test("remove default locale from URL", () => {
+    const request = new NextRequest("https://zoonk.com/en/some/page");
+    const response = proxy(request);
 
-  expect(getRedirectUrl(response)).toBe("https://zoonk.com/some/page");
+    expect(getRedirectUrl(response)).toBe("https://zoonk.com/some/page");
+  });
 });
