@@ -92,7 +92,8 @@
     "typescript/no-unsafe-member-access": "error",
     "typescript/no-unsafe-return": "error",
     "typescript/only-throw-error": "error",
-    "typescript/prefer-nullish-coalescing": "error"
+    "typescript/prefer-nullish-coalescing": "error",
+    "react/rules-of-hooks": "error"
   },
   "overrides": [
     {
@@ -117,6 +118,12 @@
         "eslint/max-statements": "off",
         "eslint/no-magic-numbers": "off",
         "import/no-namespace": "off"
+      }
+    },
+    {
+      "files": ["**/e2e/**"],
+      "rules": {
+        "react/rules-of-hooks": "off"
       }
     },
     {
