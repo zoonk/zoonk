@@ -69,7 +69,7 @@ export function EntityListActions({
       a.download = `${entityType}.json`;
       document.body.append(a);
       a.click();
-      document.body.removeChild(a);
+      a.remove();
       URL.revokeObjectURL(url);
 
       toast.success(entityLabels.exportSuccess);

@@ -44,7 +44,7 @@ export function LeaderboardExport({
     a.download = `leaderboard-${taskId}${anonymous ? "-anonymous" : ""}.md`;
     document.body.append(a);
     a.click();
-    document.body.removeChild(a);
+    a.remove();
     URL.revokeObjectURL(url);
   }
 

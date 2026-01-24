@@ -79,7 +79,8 @@
     "unicorn/escape-case": "error",
     "unicorn/no-array-callback-reference": "error",
     "unicorn/no-useless-promise-resolve-reject": "error",
-    "unicorn/prefer-dom-node-append": "error"
+    "unicorn/prefer-dom-node-append": "error",
+    "unicorn/prefer-dom-node-remove": "error"
   },
   "overrides": [
     {

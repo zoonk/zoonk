@@ -65,7 +65,7 @@ export function AlternativeTitlesEditor({
       a.download = "alternative-titles.json";
       document.body.append(a);
       a.click();
-      document.body.removeChild(a);
+      a.remove();
       URL.revokeObjectURL(url);
 
       toast.success(t("Alternative titles exported successfully"));
