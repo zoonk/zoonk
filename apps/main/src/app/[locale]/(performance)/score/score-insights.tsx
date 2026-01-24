@@ -1,3 +1,4 @@
+import { type HistoryPeriod } from "@/data/progress/_utils";
 import { getBestDay } from "@/data/progress/get-best-day";
 import { getBestTime } from "@/data/progress/get-best-time";
 import {
@@ -11,9 +12,9 @@ import {
   FeatureCardTitle,
 } from "@zoonk/ui/components/feature";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
+import { EPOCH_YEAR, FIRST_SUNDAY_OFFSET } from "@zoonk/utils/constants";
 import { CalendarDays, Clock } from "lucide-react";
 import { getExtracted, getLocale } from "next-intl/server";
-import type { HistoryPeriod } from "@/data/progress/_utils";
 
 async function getPeriodLabel(period: HistoryPeriod): Promise<string> {
   const t = await getExtracted();
@@ -83,7 +84,7 @@ async function BestDayCard({
 }) {
   const t = await getExtracted();
 
-  const referenceDate = new Date(1970, 0, 4 + dayOfWeek);
+  const referenceDate = new Date(EPOCH_YEAR, 0, FIRST_SUNDAY_OFFSET + dayOfWeek);
 
   const dayName = new Intl.DateTimeFormat(locale, { weekday: "long" }).format(referenceDate);
 

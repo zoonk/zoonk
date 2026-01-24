@@ -7,7 +7,7 @@ import {
   getModelsWithCompleteOutputs,
   getOutputForTestCase,
 } from "./output-loader";
-import type { BattleMatchup, ModelOutputs, Task, TestCase } from "./types";
+import { type BattleMatchup, type ModelOutputs, type Task, type TestCase } from "./types";
 
 const EVAL_RESULTS_DIR = path.join(process.cwd(), "eval-results");
 const BATTLES_DIR = path.join(EVAL_RESULTS_DIR, "battles");
@@ -28,11 +28,6 @@ function getMatchupFilePath(taskId: string, testCaseId: string): string {
   return path.join(BATTLES_DIR, taskId, `${testCaseId}.json`);
 }
 
-type AnonymizationResult = {
-  anonymizedOutputs: Array<{ anonymousId: string; output: string }>;
-  mapping: Array<{ anonymousId: string; modelId: string }>;
-};
-
 function shuffleArray<T>(array: T[]): T[] {
   const shuffled = [...array];
   for (let i = shuffled.length - 1; i > 0; i--) {
@@ -44,14 +39,15 @@ function shuffleArray<T>(array: T[]): T[] {
   return shuffled;
 }
 
-function anonymizeOutputs(
-  outputs: Array<{ modelId: string; output: string }>,
-): AnonymizationResult {
+function anonymizeOutputs(outputs: { modelId: string; output: string }[]): {
+  anonymizedOutputs: { anonymousId: string; output: string }[];
+  mapping: { anonymousId: string; modelId: string }[];
+} {
   const shuffled = shuffleArray(outputs);
   const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-  const anonymizedOutputs: Array<{ anonymousId: string; output: string }> = [];
-  const mapping: Array<{ anonymousId: string; modelId: string }> = [];
+  const anonymizedOutputs: { anonymousId: string; output: string }[] = [];
+  const mapping: { anonymousId: string; modelId: string }[] = [];
 
   shuffled.forEach((item, index) => {
     const anonymousId = `Model ${letters[index]}`;
@@ -74,7 +70,7 @@ async function loadExistingMatchup(
 ): Promise<BattleMatchup | null> {
   const filePath = getMatchupFilePath(taskId, testCaseId);
   try {
-    const data = await fs.readFile(filePath, "utf-8");
+    const data = await fs.readFile(filePath, "utf8");
     return JSON.parse(data) as BattleMatchup;
   } catch {
     return null;
@@ -89,28 +85,76 @@ async function saveMatchup(matchup: BattleMatchup): Promise<void> {
 
 function extractMappingFromMatchup(
   matchup: BattleMatchup,
-): Array<{ anonymousId: string; modelId: string }> {
+): { anonymousId: string; modelId: string }[] {
   const firstJudgment = matchup.judgments[0];
   if (!firstJudgment) {
     return [];
   }
 
-  return firstJudgment.rankings.map((r) => ({
-    anonymousId: r.anonymousId,
-    modelId: r.modelId,
+  return firstJudgment.rankings.map((ranking) => ({
+    anonymousId: ranking.anonymousId,
+    modelId: ranking.modelId,
   }));
 }
 
 function getMissingJudges(matchup: BattleMatchup): string[] {
-  const existingJudges = new Set(matchup.judgments.map((j) => j.judgeId));
-  return BATTLE_JUDGES_CONFIG.filter((j) => !existingJudges.has(j));
+  const existingJudges = new Set(matchup.judgments.map((judgment) => judgment.judgeId));
+  return BATTLE_JUDGES_CONFIG.filter((judgeId) => !existingJudges.has(judgeId));
 }
 
 function hasNewModels(existingMatchup: BattleMatchup, currentModelIds: string[]): boolean {
   const existingModelIds = new Set(
-    extractMappingFromMatchup(existingMatchup).map((m) => m.modelId),
+    extractMappingFromMatchup(existingMatchup).map((item) => item.modelId),
   );
   return currentModelIds.some((modelId) => !existingModelIds.has(modelId));
+}
+
+type ModelOutput = { modelId: string; output: string };
+type Mapping = { anonymousId: string; modelId: string }[];
+type AnonymizedOutput = { anonymousId: string; output: string }[];
+
+function collectModelOutputsForTestCase(
+  testCaseId: string,
+  allOutputs: Map<string, ModelOutputs>,
+): ModelOutput[] {
+  const outputs: ModelOutput[] = [];
+  for (const [modelId, modelOutputs] of allOutputs) {
+    const output = getOutputForTestCase(modelOutputs, testCaseId);
+    if (output) {
+      outputs.push({ modelId, output: output.output });
+    }
+  }
+  return outputs;
+}
+
+function getAnonymizationForBattle(
+  modelOutputs: ModelOutput[],
+  existingMatchup: BattleMatchup | null,
+): { mapping: Mapping; anonymizedOutputs: AnonymizedOutput } {
+  if (!existingMatchup) {
+    return anonymizeOutputs(modelOutputs);
+  }
+
+  const mapping = extractMappingFromMatchup(existingMatchup);
+  const anonymizedOutputs = modelOutputs.map((item) => {
+    const mapEntry = mapping.find((entry) => entry.modelId === item.modelId);
+    return { anonymousId: mapEntry?.anonymousId ?? item.modelId, output: item.output };
+  });
+  return { anonymizedOutputs, mapping };
+}
+
+async function runJudges(
+  judgesToRun: readonly string[],
+  anonymizedOutputs: AnonymizedOutput,
+  expectations: string,
+  mapping: Mapping,
+): Promise<BattleMatchup["judgments"]> {
+  return Promise.all(
+    judgesToRun.map(async (judgeId) => ({
+      judgeId,
+      rankings: await generateBattleRankings({ anonymizedOutputs, expectations, judgeId, mapping }),
+    })),
+  );
 }
 
 async function runBattleForTestCase(
@@ -119,84 +163,37 @@ async function runBattleForTestCase(
   allOutputs: Map<string, ModelOutputs>,
   existingMatchup: BattleMatchup | null,
 ): Promise<BattleMatchup> {
-  const testCaseId = `${testCase.id}-1`; // Assuming RUNS_PER_TEST_CASE = 1
+  const testCaseId = `${testCase.id}-1`;
+  const modelOutputs = collectModelOutputsForTestCase(testCaseId, allOutputs);
 
-  // Collect outputs from all models for this test case
-  const modelOutputsForTestCase: Array<{ modelId: string; output: string }> = [];
-
-  for (const [modelId, outputs] of allOutputs) {
-    const output = getOutputForTestCase(outputs, testCaseId);
-    if (output) {
-      modelOutputsForTestCase.push({
-        modelId,
-        output: output.output,
-      });
-    }
-  }
-
-  if (modelOutputsForTestCase.length < 2) {
+  if (modelOutputs.length < 2) {
     throw new Error(`Need at least 2 models with outputs for test case ${testCaseId}`);
   }
 
-  // Check if there are new models since the last run
-  const currentModelIds = modelOutputsForTestCase.map((m) => m.modelId);
+  const currentModelIds = modelOutputs.map((item) => item.modelId);
   const newModelsDetected = existingMatchup && hasNewModels(existingMatchup, currentModelIds);
-
   if (newModelsDetected) {
     console.info(`New models detected for ${testCaseId}, re-running all judges`);
   }
 
-  // If new models detected, we need to re-run with fresh anonymization
-  const effectiveExistingMatchup = newModelsDetected ? null : existingMatchup;
+  const effectiveExisting = newModelsDetected ? null : existingMatchup;
+  const { mapping, anonymizedOutputs } = getAnonymizationForBattle(modelOutputs, effectiveExisting);
 
-  // Use existing mapping or create new one
-  let mapping: Array<{ anonymousId: string; modelId: string }>;
-  let anonymizedOutputs: Array<{ anonymousId: string; output: string }>;
-
-  if (effectiveExistingMatchup) {
-    mapping = extractMappingFromMatchup(effectiveExistingMatchup);
-    anonymizedOutputs = modelOutputsForTestCase.map((item) => {
-      const mapEntry = mapping.find((m) => m.modelId === item.modelId);
-      return {
-        anonymousId: mapEntry?.anonymousId ?? item.modelId,
-        output: item.output,
-      };
-    });
-  } else {
-    const result = anonymizeOutputs(modelOutputsForTestCase);
-    mapping = result.mapping;
-    anonymizedOutputs = result.anonymizedOutputs;
-  }
-
-  // Determine which judges need to run
-  const judgesToRun = effectiveExistingMatchup
-    ? getMissingJudges(effectiveExistingMatchup)
+  const judgesToRun = effectiveExisting
+    ? getMissingJudges(effectiveExisting)
     : [...BATTLE_JUDGES_CONFIG];
-
-  if (judgesToRun.length === 0 && effectiveExistingMatchup) {
-    return effectiveExistingMatchup;
+  if (judgesToRun.length === 0 && effectiveExisting) {
+    return effectiveExisting;
   }
 
-  // Get rankings from each judge in parallel
-  const newJudgments = await Promise.all(
-    judgesToRun.map(async (judgeId) => {
-      const rankings = await generateBattleRankings({
-        anonymizedOutputs,
-        expectations: testCase.expectations,
-        judgeId,
-        mapping,
-      });
-
-      return {
-        judgeId,
-        rankings,
-      };
-    }),
+  const newJudgments = await runJudges(
+    judgesToRun,
+    anonymizedOutputs,
+    testCase.expectations,
+    mapping,
   );
-
-  // Merge with existing judgments (only if we're not re-running due to new models)
-  const allJudgments = effectiveExistingMatchup
-    ? [...effectiveExistingMatchup.judgments, ...newJudgments]
+  const allJudgments = effectiveExisting
+    ? [...effectiveExisting.judgments, ...newJudgments]
     : newJudgments;
 
   const matchup: BattleMatchup = {
@@ -208,7 +205,6 @@ async function runBattleForTestCase(
   };
 
   await saveMatchup(matchup);
-
   return matchup;
 }
 

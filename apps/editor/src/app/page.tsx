@@ -16,6 +16,6 @@ export default async function HomePage() {
     redirect(`/${activeOrganization.slug}`);
   }
 
-  // restrict access when they don't belong to any organization
+  // Restrict access when they don't belong to any organization
   return unauthorized();
 }

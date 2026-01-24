@@ -1,5 +1,5 @@
 import { cn } from "@zoonk/ui/lib/utils";
-import type { BeltColor } from "@zoonk/utils/belt-level";
+import { type BeltColor } from "@zoonk/utils/belt-level";
 
 const beltColorClasses: Record<BeltColor, string> = {
   black: "bg-belt-black",

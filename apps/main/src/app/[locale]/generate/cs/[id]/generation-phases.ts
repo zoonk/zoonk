@@ -1,19 +1,19 @@
 import {
+  type PhaseStatus,
   calculateWeightedProgress as calculateProgress,
   getPhaseStatus as getStatus,
-  type PhaseStatus,
 } from "@/lib/generation-phases";
 import { CHAPTER_STEPS, COURSE_STEPS, type CourseWorkflowStepName } from "@/workflows/config";
 import {
   BookOpenIcon,
   GraduationCapIcon,
   LayoutListIcon,
+  type LucideIcon,
   SaveIcon,
   SearchIcon,
   SettingsIcon,
   SparklesIcon,
 } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
 
 export type PhaseName =
   | "loadingInfo"

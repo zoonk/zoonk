@@ -1,8 +1,8 @@
 import "server-only";
 import { openai } from "@ai-sdk/openai";
+import { type TTSVoice } from "@zoonk/utils/constants";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { experimental_generateSpeech as generateSpeech } from "ai";
-import type { TTSVoice } from "@zoonk/utils/constants";
 
 const DEFAULT_MODEL = openai.speech("gpt-4o-mini-tts");
 

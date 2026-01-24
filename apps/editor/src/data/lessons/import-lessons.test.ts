@@ -12,9 +12,7 @@ function createMockFile(content: string, name = "lessons.json", type = "applicat
   return new File([content], name, { type });
 }
 
-function createImportFile(
-  lessons: Array<{ description: string; slug?: string; title: string }>,
-): File {
+function createImportFile(lessons: { description: string; slug?: string; title: string }[]): File {
   return createMockFile(JSON.stringify({ lessons }));
 }
 
@@ -579,7 +577,7 @@ describe("admins", () => {
       });
 
       expect(result.error).toBeNull();
-      expect(result.data?.[0]?.isPublished).toBe(true);
+      expect(result.data?.[0]?.isPublished).toBeTruthy();
     });
 
     test("imported lessons are unpublished when chapter is published", async () => {
@@ -600,7 +598,7 @@ describe("admins", () => {
       });
 
       expect(result.error).toBeNull();
-      expect(result.data?.[0]?.isPublished).toBe(false);
+      expect(result.data?.[0]?.isPublished).toBeFalsy();
     });
 
     test("existing lesson becomes published when imported to unpublished chapter", async () => {
@@ -637,7 +635,7 @@ describe("admins", () => {
         where: { id: existingLesson.id },
       });
 
-      expect(updatedLesson?.isPublished).toBe(true);
+      expect(updatedLesson?.isPublished).toBeTruthy();
     });
   });
 

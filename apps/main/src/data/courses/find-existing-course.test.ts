@@ -15,7 +15,7 @@ async function getOrCreateAIOrg() {
   });
 }
 
-describe("findExistingCourse", () => {
+describe(findExistingCourse, () => {
   let aiOrg: Awaited<ReturnType<typeof getOrCreateAIOrg>>;
   let nonAiOrg: Awaited<ReturnType<typeof organizationFixture>>;
 

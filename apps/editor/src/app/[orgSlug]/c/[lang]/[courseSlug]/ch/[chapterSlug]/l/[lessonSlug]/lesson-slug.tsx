@@ -2,10 +2,11 @@ import { SlugEditor } from "@/components/slug-editor";
 import { getLesson } from "@/data/lessons/get-lesson";
 import { checkLessonSlugExists, updateLessonSlugAction } from "./actions";
 
-type LessonPageProps =
-  PageProps<"/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]">;
-
-export async function LessonSlug({ params }: { params: LessonPageProps["params"] }) {
+export async function LessonSlug({
+  params,
+}: {
+  params: PageProps<"/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]">["params"];
+}) {
   const { chapterSlug, courseSlug, lang, lessonSlug, orgSlug } = await params;
 
   const { data: lesson } = await getLesson({

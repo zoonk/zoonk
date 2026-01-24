@@ -92,7 +92,7 @@ describe("org admins", () => {
     expect(result.error).toBeNull();
     expect(result.data).toHaveLength(2);
 
-    const ids = result.data.map((c) => c.id);
+    const ids = result.data.map((course) => course.id);
     expect(ids).toContain(draftCourse.id);
     expect(ids).toContain(publishedCourse.id);
   });
@@ -149,7 +149,7 @@ describe("org admins", () => {
     const hasPtCourse = result.data.some((course) => course.language === "pt");
 
     expect(result.error).toBeNull();
-    expect(hasPtCourse).toBe(false);
+    expect(hasPtCourse).toBeFalsy();
   });
 
   test("does not include organization data in results", async () => {
@@ -241,7 +241,7 @@ describe("org admins", () => {
 
     expect(result.error).toBeNull();
 
-    const ids = result.data.map((c) => c.id);
+    const ids = result.data.map((course) => course.id);
 
     expect(ids).toContain(exactMatch.id);
     expect(ids).toContain(containsMatch1.id);

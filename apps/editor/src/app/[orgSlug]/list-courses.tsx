@@ -33,9 +33,7 @@ export async function ListCourses({ params }: { params: PageProps<"/[orgSlug]">[
             ) : undefined
           }
           key={course.id}
-          linkComponent={
-            <Link href={`/${orgSlug}/c/${course.language}/${course.slug}`} prefetch={true} />
-          }
+          linkComponent={<Link href={`/${orgSlug}/c/${course.language}/${course.slug}`} prefetch />}
         />
       ))}
     </CourseListGroup>

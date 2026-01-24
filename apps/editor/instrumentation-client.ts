@@ -1,9 +1,9 @@
 import { reportError } from "@zoonk/error-reporter/client";
 
-window.addEventListener("error", (event) => {
+globalThis.addEventListener("error", (event) => {
   reportError(event.error);
 });
 
-window.addEventListener("unhandledrejection", (event) => {
+globalThis.addEventListener("unhandledrejection", (event) => {
   reportError(event.reason);
 });

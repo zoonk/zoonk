@@ -1,8 +1,8 @@
+import { type EnergyDataPoint, type EnergyPeriod } from "@/data/progress/get-energy-history";
 import { getLocale } from "next-intl/server";
 import { PerformanceChartLayout } from "../_components/performance-chart-layout";
 import { formatPeriodLabel } from "../_utils";
 import { EnergyChartClient } from "./energy-chart-client";
-import type { EnergyDataPoint, EnergyPeriod } from "@/data/progress/get-energy-history";
 
 export async function EnergyChart({
   average,

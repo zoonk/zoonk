@@ -450,7 +450,7 @@ describe("admins", () => {
 
     expect(lessons.length).toBe(5);
 
-    const positions = lessons.map((l) => l.position);
+    const positions = lessons.map((lesson) => lesson.position);
     const uniquePositions = new Set(positions);
     expect(uniquePositions.size).toBe(5);
 
@@ -479,7 +479,7 @@ describe("admins", () => {
       });
 
       expect(result.error).toBeNull();
-      expect(result.data?.isPublished).toBe(true);
+      expect(result.data?.isPublished).toBeTruthy();
     });
 
     test("lesson is unpublished when chapter is published", async () => {
@@ -502,7 +502,7 @@ describe("admins", () => {
       });
 
       expect(result.error).toBeNull();
-      expect(result.data?.isPublished).toBe(false);
+      expect(result.data?.isPublished).toBeFalsy();
     });
   });
 });

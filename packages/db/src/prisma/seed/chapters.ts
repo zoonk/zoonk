@@ -1,18 +1,20 @@
 import { normalizeString } from "@zoonk/utils/string";
-import type { GenerationStatus, Organization, PrismaClient } from "../../generated/prisma/client";
-
-type ChapterSeedData = {
-  description: string;
-  generationStatus: GenerationStatus;
-  isPublished: boolean;
-  slug: string;
-  title: string;
-};
+import {
+  type GenerationStatus,
+  type Organization,
+  type PrismaClient,
+} from "../../generated/prisma/client";
 
 type CourseChapters = {
   courseSlug: string;
   language: string;
-  chapters: ChapterSeedData[];
+  chapters: {
+    description: string;
+    generationStatus: GenerationStatus;
+    isPublished: boolean;
+    slug: string;
+    title: string;
+  }[];
 };
 
 const chaptersData: CourseChapters[] = [

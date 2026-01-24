@@ -19,7 +19,7 @@ describe("courseSlugExists()", () => {
       slug: course.slug,
     });
 
-    expect(exists).toBe(true);
+    expect(exists).toBeTruthy();
   });
 
   test("returns false when slug does not exist", async () => {
@@ -29,7 +29,7 @@ describe("courseSlugExists()", () => {
       slug: "non-existent-slug",
     });
 
-    expect(exists).toBe(false);
+    expect(exists).toBeFalsy();
   });
 
   test("returns false when slug exists but language differs", async () => {
@@ -44,7 +44,7 @@ describe("courseSlugExists()", () => {
       slug: course.slug,
     });
 
-    expect(exists).toBe(false);
+    expect(exists).toBeFalsy();
   });
 
   test("returns false when slug exists but organization differs", async () => {
@@ -57,6 +57,6 @@ describe("courseSlugExists()", () => {
       slug: course.slug,
     });
 
-    expect(exists).toBe(false);
+    expect(exists).toBeFalsy();
   });
 });

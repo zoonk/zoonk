@@ -1,7 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { cache } from "react";
-import type { ModelOutputs, OutputEntry } from "./types";
+import { type ModelOutputs, type OutputEntry } from "./types";
 
 const EVAL_RESULTS_DIR = path.join(process.cwd(), "eval-results");
 const OUTPUTS_DIR = path.join(EVAL_RESULTS_DIR, "outputs");
@@ -30,7 +30,7 @@ export const loadModelOutputs = cache(
   async (taskId: string, modelId: string): Promise<ModelOutputs | null> => {
     const filePath = getOutputsFilePath(taskId, modelId);
     try {
-      const data = await fs.readFile(filePath, "utf-8");
+      const data = await fs.readFile(filePath, "utf8");
       return JSON.parse(data) as ModelOutputs;
     } catch {
       return null;
@@ -69,12 +69,12 @@ export async function getAllOutputsForTask(taskId: string): Promise<Map<string, 
 
   try {
     const files = await fs.readdir(taskDir);
-    const jsonFiles = files.filter((f) => f.endsWith(".json"));
+    const jsonFiles = files.filter((file) => file.endsWith(".json"));
 
     const fileContents = await Promise.all(
       jsonFiles.map(async (file) => {
         const filePath = path.join(taskDir, file);
-        const data = await fs.readFile(filePath, "utf-8");
+        const data = await fs.readFile(filePath, "utf8");
         return JSON.parse(data) as ModelOutputs;
       }),
     );
@@ -109,5 +109,5 @@ export function getOutputForTestCase(
   outputs: ModelOutputs,
   testCaseId: string,
 ): OutputEntry | undefined {
-  return outputs.outputs.find((o) => o.testCaseId === testCaseId);
+  return outputs.outputs.find((output) => output.testCaseId === testCaseId);
 }

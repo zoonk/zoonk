@@ -1,17 +1,12 @@
 import {
-  EditorDragHandle,
   EditorListAddButton,
   EditorListContent,
   EditorListHeader,
-  EditorListItem,
-  EditorListItemActions,
   EditorListProvider,
   EditorListSpinner,
-  EditorSortableItem,
-  EditorSortableItemRow,
   EditorSortableList,
 } from "@/components/editor-list";
-import { EntityListActions } from "@/components/entity-list-actions";
+import { EntityListActions } from "@/components/entity/entity-list-actions";
 import { listLessonActivities } from "@/data/activities/list-lesson-activities";
 import { getLesson } from "@/data/lessons/get-lesson";
 import { ErrorView } from "@zoonk/ui/patterns/error";
@@ -23,12 +18,13 @@ import {
   insertActivityAction,
   reorderActivitiesAction,
 } from "./activity-actions";
-import { ActivityListItemLink } from "./activity-list-item-link";
+import { ActivityListRow } from "./activity-list-row";
 
-type LessonPageProps =
-  PageProps<"/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]">;
-
-export async function ActivityList({ params }: { params: LessonPageProps["params"] }) {
+export async function ActivityList({
+  params,
+}: {
+  params: PageProps<"/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]">["params"];
+}) {
   const { chapterSlug, courseSlug, lang, lessonSlug, orgSlug } = await params;
   const t = await getExtracted();
 
@@ -104,34 +100,16 @@ export async function ActivityList({ params }: { params: LessonPageProps["params
         >
           <EditorListContent>
             {activities.map((activity, index) => (
-              <EditorSortableItem id={Number(activity.id)} key={String(activity.id)}>
-                <EditorListItem>
-                  <EditorSortableItemRow>
-                    <EditorDragHandle aria-label={t("Drag to reorder")}>
-                      {index + 1}
-                    </EditorDragHandle>
-
-                    <ActivityListItemLink
-                      activityId={activity.id}
-                      chapterSlug={chapterSlug}
-                      courseSlug={courseSlug}
-                      description={activity.description}
-                      kind={activity.kind}
-                      lang={lang}
-                      lessonSlug={lessonSlug}
-                      orgSlug={orgSlug}
-                      title={activity.title}
-                    />
-
-                    <EditorListItemActions
-                      aria-label={t("Activity actions")}
-                      insertAboveLabel={t("Insert above")}
-                      insertBelowLabel={t("Insert below")}
-                      position={index}
-                    />
-                  </EditorSortableItemRow>
-                </EditorListItem>
-              </EditorSortableItem>
+              <ActivityListRow
+                activity={activity}
+                chapterSlug={chapterSlug}
+                courseSlug={courseSlug}
+                index={index}
+                key={String(activity.id)}
+                lang={lang}
+                lessonSlug={lessonSlug}
+                orgSlug={orgSlug}
+              />
             ))}
           </EditorListContent>
         </EditorSortableList>

@@ -5,12 +5,16 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { Loader2Icon } from "lucide-react";
 import { useFormStatus } from "react-dom";
 
-interface SubmitButtonProps extends React.ComponentProps<"button"> {
+export function SubmitButton({
+  children,
+  icon,
+  className,
+  full,
+  ...props
+}: {
   icon?: React.ReactNode;
   full?: boolean;
-}
-
-export function SubmitButton({ children, icon, className, full, ...props }: SubmitButtonProps) {
+} & React.ComponentProps<"button">) {
   const status = useFormStatus();
 
   return (

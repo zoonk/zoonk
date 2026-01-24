@@ -1,5 +1,5 @@
+import { type ActivityKind } from "@zoonk/db";
 import { getExtracted } from "next-intl/server";
-import type { ActivityKind } from "@zoonk/db";
 
 export type ActivityKindInfo = {
   key: ActivityKind;

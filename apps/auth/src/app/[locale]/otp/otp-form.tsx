@@ -7,12 +7,10 @@ import { parseFormField } from "@zoonk/utils/form";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 
-type FormState = "idle" | "pending" | "error";
-
 export function OTPForm({ email, redirectTo }: { email: string; redirectTo: string }) {
   const { push } = useRouter();
   const t = useExtracted();
-  const [state, setState] = useState<FormState>("idle");
+  const [state, setState] = useState<"idle" | "pending" | "error">("idle");
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();

@@ -4,9 +4,8 @@ import { Alert, AlertAction, AlertDescription, AlertTitle } from "@zoonk/ui/comp
 import { Button } from "@zoonk/ui/components/button";
 import { Progress, ProgressLabel, ProgressValue } from "@zoonk/ui/components/progress";
 import { cn } from "@zoonk/ui/lib/utils";
-import { AlertCircleIcon, CheckIcon } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
-import type { ReactNode } from "react";
+import { AlertCircleIcon, CheckIcon, type LucideIcon } from "lucide-react";
+import { type ReactNode } from "react";
 
 type PhaseStatus = "pending" | "active" | "completed";
 
@@ -128,12 +127,13 @@ function GenerationTimelineStep({
   );
 }
 
-type GenerationProgressCompletedProps = {
+function GenerationProgressCompleted({
+  children,
+  subtitle,
+}: {
   children: ReactNode;
   subtitle?: ReactNode;
-};
-
-function GenerationProgressCompleted({ children, subtitle }: GenerationProgressCompletedProps) {
+}) {
   return (
     <div aria-live="polite" className="flex flex-col items-center gap-3 py-8">
       <div className="bg-muted flex size-12 items-center justify-center rounded-full">
@@ -145,19 +145,17 @@ function GenerationProgressCompleted({ children, subtitle }: GenerationProgressC
   );
 }
 
-type GenerationProgressErrorProps = {
-  children: ReactNode;
-  description?: ReactNode;
-  onRetry?: () => void;
-  retryLabel?: string;
-};
-
 function GenerationProgressError({
   children,
   description,
   onRetry,
   retryLabel = "Try again",
-}: GenerationProgressErrorProps) {
+}: {
+  children: ReactNode;
+  description?: ReactNode;
+  onRetry?: () => void;
+  retryLabel?: string;
+}) {
   return (
     <Alert variant="destructive">
       <AlertCircleIcon aria-hidden="true" />

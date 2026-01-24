@@ -1,11 +1,11 @@
 import "server-only";
 import { ErrorCode } from "@/lib/app-error";
+import { type ImportMode } from "@/lib/import-mode";
 import { parseJsonFile } from "@/lib/parse-json-file";
 import { isRecord } from "@/lib/validation";
 import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
-import { type Activity, type ActivityKind, prisma, type TransactionClient } from "@zoonk/db";
+import { type Activity, type ActivityKind, type TransactionClient, prisma } from "@zoonk/db";
 import { AppError, type SafeReturn, safeAsync } from "@zoonk/utils/error";
-import type { ImportMode } from "@/lib/import-mode";
 
 const validActivityKinds = new Set<ActivityKind>([
   "custom",

@@ -1,5 +1,5 @@
+import { type Course, type Organization } from "@zoonk/db";
 import { TableCell, TableRow } from "@zoonk/ui/components/table";
-import type { Course, Organization } from "@zoonk/db";
 
 const EDITOR_URL = process.env.NEXT_PUBLIC_EDITOR_APP_URL;
 

@@ -6,7 +6,7 @@ import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, describe, expect, test } from "vitest";
 import { createLessons } from "./create-lessons";
 
-describe("createLessons", () => {
+describe(createLessons, () => {
   let organizationId: number;
   let course: Awaited<ReturnType<typeof courseFixture>>;
   let chapter: Awaited<ReturnType<typeof chapterFixture>>;
@@ -47,8 +47,8 @@ describe("createLessons", () => {
       where: { chapterId: chapter.id },
     });
 
-    const createdLessons = dbLessons.filter((l) =>
-      lessons.some((lesson) => lesson.title === l.title),
+    const createdLessons = dbLessons.filter((dbLesson) =>
+      lessons.some((lesson) => lesson.title === dbLesson.title),
     );
 
     expect(createdLessons).toHaveLength(2);
@@ -86,6 +86,6 @@ describe("createLessons", () => {
 
     expect(dbLesson?.organizationId).toBe(organizationId);
     expect(dbLesson?.generationStatus).toBe("pending");
-    expect(dbLesson?.isPublished).toBe(true);
+    expect(dbLesson?.isPublished).toBeTruthy();
   });
 });

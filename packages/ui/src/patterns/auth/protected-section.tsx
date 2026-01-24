@@ -12,14 +12,6 @@ import { Spinner } from "@zoonk/ui/components/spinner";
 import { cn } from "@zoonk/ui/lib/utils";
 import { LockIcon } from "lucide-react";
 
-type ProtectedSectionProps = {
-  state: "pending" | "unauthenticated" | "authenticated";
-  pendingTitle?: string;
-  alertTitle: string;
-  actions?: React.ReactNode;
-  centered?: boolean;
-} & React.ComponentProps<"section">;
-
 export function ProtectedSection({
   state,
   pendingTitle,
@@ -28,7 +20,13 @@ export function ProtectedSection({
   children,
   centered,
   ...props
-}: ProtectedSectionProps) {
+}: {
+  state: "pending" | "unauthenticated" | "authenticated";
+  pendingTitle?: string;
+  alertTitle: string;
+  actions?: React.ReactNode;
+  centered?: boolean;
+} & React.ComponentProps<"section">) {
   if (state === "pending") {
     return (
       <ProtectedPending>

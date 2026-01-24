@@ -15,12 +15,7 @@ import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { Clock } from "lucide-react";
 import { getExtracted, getLocale } from "next-intl/server";
 
-type BestTimeProps = {
-  score: number;
-  period: number;
-};
-
-export async function BestTime({ score, period }: BestTimeProps) {
+export async function BestTime({ score, period }: { score: number; period: number }) {
   const t = await getExtracted();
   const locale = await getLocale();
 

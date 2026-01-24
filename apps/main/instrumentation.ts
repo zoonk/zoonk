@@ -1,6 +1,6 @@
 import { zoonkGateway } from "@zoonk/core/ai";
 import { sendErrorEmail } from "@zoonk/error-reporter/server";
-import type { Instrumentation } from "next";
+import { type Instrumentation } from "next";
 
 export async function register() {
   globalThis.AI_SDK_DEFAULT_PROVIDER = zoonkGateway;

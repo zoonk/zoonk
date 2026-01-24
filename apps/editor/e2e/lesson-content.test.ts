@@ -3,7 +3,7 @@ import { prisma } from "@zoonk/db";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
-import { expect, type Page, test } from "./fixtures";
+import { type Page, expect, test } from "./fixtures";
 
 async function createTestLesson() {
   const org = await prisma.organization.findUniqueOrThrow({

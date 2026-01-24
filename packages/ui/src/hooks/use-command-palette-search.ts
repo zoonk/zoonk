@@ -3,13 +3,19 @@
 import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 import { useKeyboardCallback } from "./use-keyboard";
 
-type UseCommandPaletteSearchOptions<TResults> = {
+/**
+ * A hook that handles common command palette search logic:
+ * - Open/close state with Cmd+K keyboard shortcut
+ * - Query state with controlled input
+ * - Search with useTransition and race condition handling
+ * - Minimum query length before searching
+ * - Reset on close
+ */
+export function useCommandPaletteSearch<TResults>(options: {
   emptyResults: TResults;
   minQueryLength?: number;
   onSearch: (query: string) => Promise<TResults>;
-};
-
-type UseCommandPaletteSearchReturn<TResults> = {
+}): {
   closePalette: () => void;
   isOpen: boolean;
   isPending: boolean;
@@ -19,19 +25,7 @@ type UseCommandPaletteSearchReturn<TResults> = {
   results: TResults;
   setQuery: (query: string) => void;
   toggle: () => void;
-};
-
-/**
- * A hook that handles common command palette search logic:
- * - Open/close state with Cmd+K keyboard shortcut
- * - Query state with controlled input
- * - Search with useTransition and race condition handling
- * - Minimum query length before searching
- * - Reset on close
- */
-export function useCommandPaletteSearch<TResults>(
-  options: UseCommandPaletteSearchOptions<TResults>,
-): UseCommandPaletteSearchReturn<TResults> {
+} {
   const { emptyResults, minQueryLength = 2, onSearch } = options;
 
   const [isOpen, setIsOpen] = useState(false);

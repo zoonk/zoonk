@@ -1,5 +1,5 @@
 import { sendErrorEmail } from "@zoonk/error-reporter/server";
-import type { Instrumentation } from "next";
+import { type Instrumentation } from "next";
 
 export const onRequestError: Instrumentation.onRequestError = async (error, request, context) => {
   const isError = error instanceof Error;

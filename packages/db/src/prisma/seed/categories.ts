@@ -1,13 +1,11 @@
+import { type Organization, type PrismaClient } from "../../generated/prisma/client";
 import { coursesData } from "./courses";
-import type { Organization, PrismaClient } from "../../generated/prisma/client";
 
-type CourseCategoryData = {
+const categoriesData: {
   courseSlug: string;
   language: string;
   categories: string[];
-};
-
-const categoriesData: CourseCategoryData[] = [
+}[] = [
   {
     categories: ["tech", "math", "science"],
     courseSlug: "machine-learning",
@@ -45,12 +43,14 @@ export async function seedCategories(prisma: PrismaClient, org: Organization): P
     select: { id: true, language: true, slug: true },
     where: {
       organizationId: org.id,
-      slug: { in: coursesData.map((c) => c.slug) },
+      slug: { in: coursesData.map((course) => course.slug) },
     },
   });
 
   const categoryRecords = categoriesData.flatMap((data) => {
-    const course = courses.find((c) => c.slug === data.courseSlug && c.language === data.language);
+    const course = courses.find(
+      (item) => item.slug === data.courseSlug && item.language === data.language,
+    );
 
     if (!course) {
       return [];

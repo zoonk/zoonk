@@ -1,7 +1,7 @@
 import { getCourseSuggestionById } from "@/data/courses/course-suggestions";
 import { FatalError } from "workflow";
 import { streamStatus } from "../stream-status";
-import type { CourseSuggestionData } from "../types";
+import { type CourseSuggestionData } from "../types";
 
 export async function getCourseSuggestionStep(
   courseSuggestionId: number,
@@ -18,7 +18,7 @@ export async function getCourseSuggestionStep(
   }
 
   // When the generation is running or already completed, we return null to skip the workflow,
-  // avoiding this running multiple times for the same course suggestion.
+  // Avoiding this running multiple times for the same course suggestion.
   if (suggestion.generationStatus === "running" || suggestion.generationStatus === "completed") {
     await streamStatus({ status: "completed", step: "getCourseSuggestion" });
     return null;

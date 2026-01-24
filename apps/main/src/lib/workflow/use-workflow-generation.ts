@@ -3,14 +3,14 @@
 import { useSelector } from "@xstate/store/react";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import {
-  createGenerationStore,
   type GenerationStatus,
-  handleStreamMessage,
   type StreamMessage,
+  createGenerationStore,
+  handleStreamMessage,
 } from "./generation-store";
 import { useSSE } from "./use-sse";
 
-type WorkflowConfig<TStep extends string> = {
+export function useWorkflowGeneration<TStep extends string = string>(config: {
   autoTrigger?: boolean;
   completionStep?: TStep;
   initialRunId?: string | null;
@@ -18,11 +18,7 @@ type WorkflowConfig<TStep extends string> = {
   statusUrl: string;
   triggerBody: Record<string, unknown>;
   triggerUrl: string;
-};
-
-export function useWorkflowGeneration<TStep extends string = string>(
-  config: WorkflowConfig<TStep>,
-) {
+}) {
   const { autoTrigger = true, completionStep, statusUrl, triggerBody, triggerUrl } = config;
   const hasTriggeredRef = useRef(false);
 
@@ -35,11 +31,11 @@ export function useWorkflowGeneration<TStep extends string = string>(
     [config.initialRunId, config.initialStatus],
   );
 
-  const completedSteps = useSelector(store, (s) => s.context.completedSteps);
-  const currentStep = useSelector(store, (s) => s.context.currentStep);
-  const error = useSelector(store, (s) => s.context.error);
-  const runId = useSelector(store, (s) => s.context.runId);
-  const status = useSelector(store, (s) => s.context.status);
+  const completedSteps = useSelector(store, (state) => state.context.completedSteps);
+  const currentStep = useSelector(store, (state) => state.context.currentStep);
+  const error = useSelector(store, (state) => state.context.error);
+  const runId = useSelector(store, (state) => state.context.runId);
+  const status = useSelector(store, (state) => state.context.status);
 
   const handleMessage = useCallback(
     (msg: StreamMessage<TStep>) => handleStreamMessage(msg, store, completionStep),
@@ -82,9 +78,9 @@ export function useWorkflowGeneration<TStep extends string = string>(
         }
         const data = await response.json();
         store.send({ runId: data.runId, type: "triggerSuccess" });
-      } catch (err) {
+      } catch (error) {
         store.send({
-          error: err instanceof Error ? err.message : "Failed to start",
+          error: error instanceof Error ? error.message : "Failed to start",
           type: "setError",
         });
       }

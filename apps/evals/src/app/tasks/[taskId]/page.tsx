@@ -1,10 +1,8 @@
 import { AppBreadcrumb, HomeLinkBreadcrumb, TaskPageBreadcrumb } from "@/components/breadcrumb";
-import { ModelStatusBadge } from "@/components/model-status-badge";
 import { getBattleLeaderboard } from "@/lib/battle-loader";
-import { getModelDisplayName } from "@/lib/models";
 import { getModelsWithCompleteOutputs } from "@/lib/output-loader";
 import { getModelsWithResults, getSortedModels } from "@/lib/utils";
-import { getTaskById, RUNS_PER_TEST_CASE } from "@/tasks";
+import { RUNS_PER_TEST_CASE, getTaskById } from "@/tasks";
 import { BreadcrumbSeparator } from "@zoonk/ui/components/breadcrumb";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import {
@@ -14,25 +12,15 @@ import {
   ContainerHeaderGroup,
   ContainerTitle,
 } from "@zoonk/ui/components/container";
-import {
-  Item,
-  ItemActions,
-  ItemContent,
-  ItemDescription,
-  ItemTitle,
-} from "@zoonk/ui/components/item";
 import { SubmitButton } from "@zoonk/ui/patterns/buttons/submit";
 import { MessageSquareTextIcon, SwordsIcon } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { runBattleModeAction } from "./actions";
 import { LeaderboardTabs } from "./leaderboard-tabs";
+import { ModelCard } from "./model-card";
 
-type TaskPageProps = {
-  params: Promise<{ taskId: string }>;
-};
-
-export default async function TaskPage({ params }: TaskPageProps) {
+export default async function TaskPage({ params }: { params: Promise<{ taskId: string }> }) {
   const { taskId } = await params;
   const task = getTaskById(taskId);
 
@@ -93,26 +81,7 @@ export default async function TaskPage({ params }: TaskPageProps) {
 
         <section className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {sortedModels.map((model) => (
-            <Item key={model.id} variant="outline">
-              <ItemContent>
-                <ItemTitle>
-                  {getModelDisplayName(model)}
-                  <ModelStatusBadge modelId={model.id} taskId={taskId} />
-                </ItemTitle>
-                <ItemDescription>
-                  ${model.inputCost}/M input · ${model.outputCost}/M output
-                </ItemDescription>
-              </ItemContent>
-
-              <ItemActions>
-                <Link
-                  className={buttonVariants({ variant: "outline" })}
-                  href={`/tasks/${taskId}/${encodeURIComponent(model.id)}`}
-                >
-                  See Evals
-                </Link>
-              </ItemActions>
-            </Item>
+            <ModelCard key={model.id} model={model} taskId={taskId} />
           ))}
         </section>
       </ContainerBody>

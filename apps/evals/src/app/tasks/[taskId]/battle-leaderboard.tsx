@@ -1,5 +1,6 @@
 "use client";
 
+import { type BattleLeaderboardEntry } from "@/lib/types";
 import {
   Table,
   TableBody,
@@ -10,7 +11,6 @@ import {
 } from "@zoonk/ui/components/table";
 import Link from "next/link";
 import { useState } from "react";
-import type { BattleLeaderboardEntry } from "@/lib/types";
 
 type SortKey =
   | "modelName"
@@ -21,11 +21,6 @@ type SortKey =
   | "averageCost";
 
 type SortDirection = "asc" | "desc";
-
-type BattleLeaderboardProps = {
-  taskId: string;
-  entries: BattleLeaderboardEntry[];
-};
 
 const DEFAULT_SORT_DIRECTIONS: Record<SortKey, SortDirection> = {
   averageCost: "desc",
@@ -61,7 +56,13 @@ function sortEntries(
   });
 }
 
-export function BattleLeaderboard({ taskId, entries }: BattleLeaderboardProps) {
+export function BattleLeaderboard({
+  taskId,
+  entries,
+}: {
+  taskId: string;
+  entries: BattleLeaderboardEntry[];
+}) {
   const [sortKey, setSortKey] = useState<SortKey>("totalScore");
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
 

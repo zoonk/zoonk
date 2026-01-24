@@ -1,9 +1,8 @@
-import { isAppError } from "@zoonk/utils/error";
+import { type AppError, isAppError } from "@zoonk/utils/error";
 import { getExtracted } from "next-intl/server";
 import { ErrorCode, type ErrorCodeType } from "./app-error";
-import type { AppError } from "@zoonk/utils/error";
 
-// ensures that we don't have missing translations for error codes
+// Ensures that we don't have missing translations for error codes
 function assertNever(x: never): never {
   throw new Error(`Unhandled error code: ${String(x)}`);
 }
@@ -11,7 +10,7 @@ function assertNever(x: never): never {
 const ERROR_CODE_VALUES = Object.values(ErrorCode);
 
 function isErrorCode(code: unknown): code is ErrorCodeType {
-  return typeof code === "string" && ERROR_CODE_VALUES.some((v) => v === code);
+  return typeof code === "string" && ERROR_CODE_VALUES.some((errorCode) => errorCode === code);
 }
 
 function isEditorError(error: Error): error is AppError<ErrorCodeType> {

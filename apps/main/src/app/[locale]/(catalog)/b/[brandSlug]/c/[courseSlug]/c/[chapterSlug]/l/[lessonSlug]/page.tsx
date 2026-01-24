@@ -6,12 +6,12 @@ import { redirect } from "@/i18n/navigation";
 import { getActivityKinds } from "@/lib/activities";
 import { cacheTagLesson } from "@zoonk/utils/cache";
 import { AI_ORG_SLUG } from "@zoonk/utils/constants";
+import { type Metadata } from "next";
 import { setRequestLocale } from "next-intl/server";
 import { cacheTag } from "next/cache";
 import { notFound } from "next/navigation";
 import { ActivityList } from "./activity-list";
 import { LessonHeader } from "./lesson-header";
-import type { Metadata } from "next";
 
 export async function generateStaticParams() {
   return [
@@ -72,7 +72,7 @@ export default async function LessonPage({
   }
 
   const activityKinds = await getActivityKinds({ locale });
-  const kindMeta = new Map(activityKinds.map((k) => [k.key, k]));
+  const kindMeta = new Map(activityKinds.map((kind) => [kind.key, kind]));
   const baseHref = `/b/${brandSlug}/c/${courseSlug}/c/${chapterSlug}/l/${lessonSlug}`;
 
   return (

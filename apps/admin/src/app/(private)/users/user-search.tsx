@@ -16,7 +16,7 @@ export function UserSearch() {
       <Search className="text-muted-foreground absolute top-1/2 left-3 size-4 -translate-y-1/2" />
       <Input
         className="pl-9"
-        onChange={(e) => setSearch(e.target.value)}
+        onChange={(event) => setSearch(event.target.value)}
         placeholder="Search by email..."
         type="search"
         value={search}

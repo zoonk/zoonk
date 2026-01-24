@@ -1,8 +1,8 @@
+import { type HistoryPeriod } from "@/data/progress/_utils";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { getExtracted, getLocale } from "next-intl/server";
 import { MetricComparison } from "../_components/metric-comparison";
 import { formatPeriodLabel } from "../_utils";
-import type { HistoryPeriod } from "@/data/progress/_utils";
 
 export async function EnergyStats({
   average,

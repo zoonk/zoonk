@@ -27,10 +27,7 @@ export async function HomeContainerHeader({
       </ContainerHeaderGroup>
 
       <ContainerActions>
-        <ContainerAction
-          icon={PlusIcon}
-          render={<Link href={`/${orgSlug}/new-course`} prefetch={true} />}
-        >
+        <ContainerAction icon={PlusIcon} render={<Link href={`/${orgSlug}/new-course`} prefetch />}>
           {t("Create course")}
         </ContainerAction>
       </ContainerActions>

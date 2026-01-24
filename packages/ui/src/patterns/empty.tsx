@@ -5,15 +5,17 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@zoonk/ui/components/empty";
-import type { LucideProps } from "lucide-react";
+import { type LucideProps } from "lucide-react";
 
-type EmptyViewProps = {
+export function EmptyView({
+  title,
+  description,
+  icon: Icon,
+}: {
   title: string;
   description: string;
   icon: React.ForwardRefExoticComponent<LucideProps>;
-};
-
-export function EmptyView({ title, description, icon: Icon }: EmptyViewProps) {
+}) {
   return (
     <Empty>
       <EmptyHeader>

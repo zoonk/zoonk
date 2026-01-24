@@ -1,6 +1,6 @@
 import { generateAlternativeTitles } from "@zoonk/ai/tasks/courses/alternative-titles";
 import { streamStatus } from "../stream-status";
-import type { CourseContext } from "../types";
+import { type CourseContext } from "../types";
 
 export async function generateAlternativeTitlesStep(course: CourseContext): Promise<string[]> {
   "use step";

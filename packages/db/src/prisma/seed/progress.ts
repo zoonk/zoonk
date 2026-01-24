@@ -1,17 +1,5 @@
-import type { Organization, PrismaClient, Step } from "../../generated/prisma/client";
-import type { SeedUsers } from "./users";
-
-type E2eAttemptData = {
-  answer: { selectedOption: number };
-  answeredAt: Date;
-  dayOfWeek: number;
-  durationSeconds: number;
-  hourOfDay: number;
-  isCorrect: boolean;
-  organizationId: number;
-  stepId: bigint;
-  userId: number;
-};
+import { type Organization, type PrismaClient, type Step } from "../../generated/prisma/client";
+import { type SeedUsers } from "./users";
 
 type DailyProgressInput = {
   brainPowerEarned: number;
@@ -33,7 +21,17 @@ function buildE2eStepAttempts(
   org: Organization,
   userId: number,
   now: Date,
-): E2eAttemptData[] {
+): {
+  answer: { selectedOption: number };
+  answeredAt: Date;
+  dayOfWeek: number;
+  durationSeconds: number;
+  hourOfDay: number;
+  isCorrect: boolean;
+  organizationId: number;
+  stepId: bigint;
+  userId: number;
+}[] {
   const configs = [
     { correct: 9, hourOfDay: 9, incorrect: 1 }, // Morning: 90%
     { correct: 8, hourOfDay: 15, incorrect: 2 }, // Afternoon: 80%
@@ -75,39 +73,36 @@ function seededRandom(seed: number) {
 }
 
 function buildOwnerDailyProgress(today: Date, orgId: number, userId: number): DailyProgressInput[] {
-  const data: DailyProgressInput[] = [];
+  const indices = Array.from({ length: 90 }, (_, i) => 89 - i);
 
-  for (let i = 89; i >= 0; i--) {
-    const date = new Date(today.getTime() - i * 24 * 60 * 60 * 1000);
-    // Add base offset of 1 to avoid seed=0 when i=0 (sin(0)=0 would always skip today)
-    const seed = (i + 1) * 12_345;
-    const isActiveDay = seededRandom(seed) > 0.15;
+  return indices
+    .filter((i) => {
+      // Add base offset of 1 to avoid seed=0 when i=0 (sin(0)=0 would always skip today)
+      const seed = (i + 1) * 12_345;
+      return seededRandom(seed) > 0.15;
+    })
+    .map((i) => {
+      const date = new Date(today.getTime() - i * 24 * 60 * 60 * 1000);
+      const seed = (i + 1) * 12_345;
+      const monthsAgo = Math.floor(i / 30);
+      const baseEnergy = 72 - monthsAgo * 5;
+      const energyVariation = (seededRandom(seed + 1) - 0.5) * 15;
 
-    if (!isActiveDay) {
-      continue;
-    }
-
-    const monthsAgo = Math.floor(i / 30);
-    const baseEnergy = 72 - monthsAgo * 5;
-    const energyVariation = (seededRandom(seed + 1) - 0.5) * 15;
-
-    data.push({
-      brainPowerEarned: 150 + Math.floor(seededRandom(seed + 2) * 350),
-      challengesCompleted: seededRandom(seed + 3) > 0.7 ? 1 : 0,
-      correctAnswers: 12 + Math.floor(seededRandom(seed + 4) * 25),
-      date,
-      dayOfWeek: date.getDay(),
-      energyAtEnd: Math.max(20, Math.min(95, baseEnergy + energyVariation)),
-      incorrectAnswers: 1 + Math.floor(seededRandom(seed + 5) * 6),
-      interactiveCompleted: 6 + Math.floor(seededRandom(seed + 6) * 12),
-      organizationId: orgId,
-      staticCompleted: 3 + Math.floor(seededRandom(seed + 7) * 10),
-      timeSpentSeconds: 900 + Math.floor(seededRandom(seed + 8) * 2100),
-      userId,
+      return {
+        brainPowerEarned: 150 + Math.floor(seededRandom(seed + 2) * 350),
+        challengesCompleted: seededRandom(seed + 3) > 0.7 ? 1 : 0,
+        correctAnswers: 12 + Math.floor(seededRandom(seed + 4) * 25),
+        date,
+        dayOfWeek: date.getDay(),
+        energyAtEnd: Math.max(20, Math.min(95, baseEnergy + energyVariation)),
+        incorrectAnswers: 1 + Math.floor(seededRandom(seed + 5) * 6),
+        interactiveCompleted: 6 + Math.floor(seededRandom(seed + 6) * 12),
+        organizationId: orgId,
+        staticCompleted: 3 + Math.floor(seededRandom(seed + 7) * 10),
+        timeSpentSeconds: 900 + Math.floor(seededRandom(seed + 8) * 2100),
+        userId,
+      };
     });
-  }
-
-  return data;
 }
 
 function buildE2eDailyProgress(today: Date, orgId: number, userId: number): DailyProgressInput[] {
@@ -164,7 +159,7 @@ async function seedUserProgress(prisma: PrismaClient, users: SeedUsers, now: Dat
     }),
     prisma.userProgress.upsert({
       create: {
-        currentEnergy: 15.0,
+        currentEnergy: 15,
         lastActiveAt: new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000),
         totalBrainPower: BigInt(2100),
         userId: users.member.id,
@@ -174,7 +169,7 @@ async function seedUserProgress(prisma: PrismaClient, users: SeedUsers, now: Dat
     }),
     prisma.userProgress.upsert({
       create: {
-        currentEnergy: 75.0,
+        currentEnergy: 75,
         lastActiveAt: now,
         totalBrainPower: BigInt(15_000),
         userId: users.e2eWithProgress.id,
@@ -221,7 +216,7 @@ async function seedStepAttempts(
     return;
   }
 
-  const attemptData = steps.slice(0, 3).map((s, index) => ({
+  const attemptData = steps.slice(0, 3).map((step, index) => ({
     answer: { selectedOption: index === 1 ? 0 : 1 },
     answeredAt: new Date(now.getTime() - (3 - index) * 60 * 1000),
     dayOfWeek: now.getDay(),
@@ -229,7 +224,7 @@ async function seedStepAttempts(
     hourOfDay: now.getHours(),
     isCorrect: index !== 1,
     organizationId: org.id,
-    stepId: s.id,
+    stepId: step.id,
     userId: users.owner.id,
   }));
 

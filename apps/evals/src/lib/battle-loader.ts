@@ -1,9 +1,9 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { cache } from "react";
-import { getModelById, getModelDisplayName, type ModelConfig } from "./models";
+import { type ModelConfig, getModelById, getModelDisplayName } from "./models";
 import { getAllOutputsForTask } from "./output-loader";
-import type { BattleLeaderboardEntry, BattleMatchup, ModelOutputs } from "./types";
+import { type BattleLeaderboardEntry, type BattleMatchup, type ModelOutputs } from "./types";
 
 const EVAL_RESULTS_DIR = path.join(process.cwd(), "eval-results");
 const BATTLES_DIR = path.join(EVAL_RESULTS_DIR, "battles");
@@ -17,12 +17,14 @@ export const getBattleMatchups = cache(async (taskId: string): Promise<BattleMat
 
   try {
     const files = await fs.readdir(taskDir);
-    const matchupFiles = files.filter((f) => f.endsWith(".json") && f !== "leaderboard.json");
+    const matchupFiles = files.filter(
+      (file) => file.endsWith(".json") && file !== "leaderboard.json",
+    );
 
     const matchups = await Promise.all(
       matchupFiles.map(async (file) => {
         const filePath = path.join(taskDir, file);
-        const data = await fs.readFile(filePath, "utf-8");
+        const data = await fs.readFile(filePath, "utf8");
         return JSON.parse(data) as BattleMatchup;
       }),
     );
@@ -91,11 +93,13 @@ function calculateModelMetrics(
     return { averageCost: 0, averageDuration: 0 };
   }
 
-  const totalDurationMs = outputs.outputs.reduce((sum, o) => sum + o.duration, 0);
+  const totalDurationMs = outputs.outputs.reduce((sum, output) => sum + output.duration, 0);
   const averageDuration = totalDurationMs / numOutputs / MS_TO_SECONDS;
 
-  const avgInputTokens = outputs.outputs.reduce((sum, o) => sum + o.inputTokens, 0) / numOutputs;
-  const avgOutputTokens = outputs.outputs.reduce((sum, o) => sum + o.outputTokens, 0) / numOutputs;
+  const avgInputTokens =
+    outputs.outputs.reduce((sum, output) => sum + output.inputTokens, 0) / numOutputs;
+  const avgOutputTokens =
+    outputs.outputs.reduce((sum, output) => sum + output.outputTokens, 0) / numOutputs;
 
   const averageCost = calculateCost(
     avgInputTokens,

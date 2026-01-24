@@ -1,6 +1,6 @@
 import { routing } from "@/i18n/routing";
 import createMiddleware from "next-intl/middleware";
-import type { NextRequest } from "next/server";
+import { type NextRequest } from "next/server";
 
 export function proxy(request: NextRequest) {
   const handleI18nRouting = createMiddleware(routing);

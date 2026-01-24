@@ -1,6 +1,6 @@
 import { normalizeString } from "@zoonk/utils/string";
-import type { PrismaClient } from "../../generated/prisma/client";
-import type { SeedOrganizations } from "./orgs";
+import { type PrismaClient } from "../../generated/prisma/client";
+import { type SeedOrganizations } from "./orgs";
 
 export const coursesData = [
   // English courses

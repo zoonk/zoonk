@@ -2,8 +2,14 @@ const DEDUPE_WINDOW_MS = 60_000;
 const recentErrors = new Map<string, number>();
 
 function errorToString(error: unknown): string {
-  if (error instanceof Error) return error.message;
-  if (typeof error === "string") return error;
+  if (error instanceof Error) {
+    return error.message;
+  }
+
+  if (typeof error === "string") {
+    return error;
+  }
+
   if (typeof error === "number" || typeof error === "boolean") {
     return String(error);
   }
@@ -48,7 +54,7 @@ export function reportError(error: unknown): void {
     name: error instanceof Error ? error.name : "Error",
     stack: error instanceof Error ? error.stack : undefined,
     timestamp: new Date().toISOString(),
-    url: typeof window !== "undefined" ? window.location.href : undefined,
+    url: typeof globalThis.window !== "undefined" ? globalThis.location.href : undefined,
     userAgent: typeof navigator !== "undefined" ? navigator.userAgent : undefined,
   };
 

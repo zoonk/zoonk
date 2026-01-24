@@ -5,20 +5,18 @@ import { toggleChapterPublished } from "@/data/chapters/publish-chapter";
 import { getErrorMessage } from "@/lib/error-messages";
 import { revalidateMainApp } from "@zoonk/core/cache/revalidate";
 import { cacheTagChapter, cacheTagCourse } from "@zoonk/utils/cache";
+import { type Route } from "next";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { after } from "next/server";
-import type { Route } from "next";
-
-type TogglePublishParams = {
-  chapterId: number;
-  chapterSlug: string;
-  chapterUrl: string;
-  courseSlug: string;
-};
 
 export async function togglePublishAction(
-  params: TogglePublishParams,
+  params: {
+    chapterId: number;
+    chapterSlug: string;
+    chapterUrl: string;
+    courseSlug: string;
+  },
   isPublished: boolean,
 ): Promise<{ error: string | null }> {
   const { chapterId, chapterSlug, chapterUrl, courseSlug } = params;

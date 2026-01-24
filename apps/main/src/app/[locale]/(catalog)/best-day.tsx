@@ -12,19 +12,15 @@ import {
   FeatureCardTitle,
 } from "@zoonk/ui/components/feature";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
+import { EPOCH_YEAR, FIRST_SUNDAY_OFFSET } from "@zoonk/utils/constants";
 import { CalendarDays } from "lucide-react";
 import { getExtracted, getLocale } from "next-intl/server";
 
-type BestDayProps = {
-  score: number;
-  dayOfWeek: number;
-};
-
-export async function BestDay({ score, dayOfWeek }: BestDayProps) {
+export async function BestDay({ score, dayOfWeek }: { score: number; dayOfWeek: number }) {
   const t = await getExtracted();
   const locale = await getLocale();
 
-  const referenceDate = new Date(1970, 0, 4 + dayOfWeek);
+  const referenceDate = new Date(EPOCH_YEAR, 0, FIRST_SUNDAY_OFFSET + dayOfWeek);
 
   const dayName = new Intl.DateTimeFormat(locale, { weekday: "long" }).format(referenceDate);
 

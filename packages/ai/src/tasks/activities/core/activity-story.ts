@@ -1,7 +1,8 @@
 import "server-only";
-import { generateText, Output } from "ai";
+import { Output, generateText } from "ai";
 import { z } from "zod";
-import { buildProviderOptions, type ReasoningEffort } from "../../../types";
+import { type ReasoningEffort, buildProviderOptions } from "../../../types";
+import { ACTIVITY_OPTIONS_COUNT } from "../constants";
 import systemPrompt from "./activity-story.prompt.md";
 
 const DEFAULT_MODEL = process.env.AI_MODEL_ACTIVITY_STORY ?? "openai/gpt-5.2";
@@ -26,7 +27,7 @@ const schema = z.object({
             text: z.string(),
           }),
         )
-        .length(4),
+        .length(ACTIVITY_OPTIONS_COUNT),
       question: z.string(),
     }),
   ),
@@ -40,7 +41,7 @@ export type ActivityStoryParams = {
   chapterTitle: string;
   courseTitle: string;
   language: string;
-  explanationSteps: Array<{ title: string; text: string }>;
+  explanationSteps: { title: string; text: string }[];
   model?: string;
   useFallback?: boolean;
   reasoningEffort?: ReasoningEffort;

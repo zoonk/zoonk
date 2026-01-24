@@ -1,4 +1,4 @@
-import { listUserCourses, type UserCourse } from "@/data/courses/list-user-courses";
+import { type UserCourse, listUserCourses } from "@/data/courses/list-user-courses";
 import { Link } from "@/i18n/navigation";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import {

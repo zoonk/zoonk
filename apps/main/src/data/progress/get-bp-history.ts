@@ -1,17 +1,16 @@
 import "server-only";
 import { getSession } from "@zoonk/core/users/session/get";
 import { prisma } from "@zoonk/db";
-import { calculateBeltLevel } from "@zoonk/utils/belt-level";
+import { type BeltLevelResult, calculateBeltLevel } from "@zoonk/utils/belt-level";
 import { safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
 import {
+  type HistoryPeriod,
   aggregateByMonth,
   aggregateByWeek,
   calculateDateRanges,
   formatLabel,
-  type HistoryPeriod,
 } from "./_utils";
-import type { BeltLevelResult } from "@zoonk/utils/belt-level";
 
 export type BpDataPoint = {
   date: Date;
@@ -68,16 +67,16 @@ async function fetchDailyBpData(
 
 function processBpData(rawData: RawDataPoint[], period: HistoryPeriod): RawDataPoint[] {
   if (period === "6months") {
-    return aggregateByWeek(rawData, (p) => p.bp, "sum").map((v) => ({
-      bp: v.value,
-      date: v.date,
+    return aggregateByWeek(rawData, (point) => point.bp, "sum").map((item) => ({
+      bp: item.value,
+      date: item.date,
     }));
   }
 
   if (period === "year") {
-    return aggregateByMonth(rawData, (p) => p.bp, "sum").map((v) => ({
-      bp: v.value,
-      date: v.date,
+    return aggregateByMonth(rawData, (point) => point.bp, "sum").map((item) => ({
+      bp: item.value,
+      date: item.date,
     }));
   }
 
@@ -88,6 +87,23 @@ function sumBp(dataPoints: RawDataPoint[]): number {
   return dataPoints.reduce((acc, point) => acc + point.bp, 0);
 }
 
+function getPreviousPeriodTotal(previousData: RawDataPoint[] | null): number | null {
+  if (!previousData || previousData.length === 0) {
+    return null;
+  }
+  return sumBp(previousData);
+}
+
+async function hasEarlierData(userId: number, beforeDate: Date): Promise<boolean> {
+  const { data } = await safeAsync(() =>
+    prisma.dailyProgress.findFirst({
+      select: { id: true },
+      where: { date: { lt: beforeDate }, userId },
+    }),
+  );
+  return Boolean(data);
+}
+
 const cachedGetBpHistory = cache(
   async (
     period: HistoryPeriod,
@@ -95,8 +111,7 @@ const cachedGetBpHistory = cache(
     locale: string,
     headers?: Headers,
   ): Promise<BpHistoryData | null> => {
-    const session = await getSession({ headers });
-
+    const session = await getSession(headers);
     if (!session) {
       return null;
     }
@@ -115,54 +130,28 @@ const cachedGetBpHistory = cache(
       ),
     ]);
 
-    if (currentResult.error || !currentResult.data) {
+    if (currentResult.error || !currentResult.data || currentResult.data.length === 0) {
       return null;
     }
 
-    const rawData = currentResult.data;
-
-    if (rawData.length === 0) {
-      return null;
-    }
-
-    const processedData = processBpData(rawData, period);
-
+    const processedData = processBpData(currentResult.data, period);
     const dataPoints: BpDataPoint[] = processedData.map((row) => ({
       bp: row.bp,
       date: row.date,
       label: formatLabel(row.date, period, locale),
     }));
 
-    const periodTotal = sumBp(rawData);
-
-    const previousRaw = previousResult.data ?? [];
-    const previousPeriodTotal = previousRaw.length > 0 ? sumBp(previousRaw) : null;
-
-    const { data: earlierData } = await safeAsync(() =>
-      prisma.dailyProgress.findFirst({
-        select: { id: true },
-        where: {
-          date: { lt: current.start },
-          userId,
-        },
-      }),
-    );
-
-    const hasPreviousPeriod = Boolean(earlierData);
-    const hasNextPeriod = offset > 0;
-
     const totalBp = Number(progressResult.data?.totalBrainPower ?? 0);
-    const currentBelt = calculateBeltLevel(totalBp);
 
     return {
-      currentBelt,
+      currentBelt: calculateBeltLevel(totalBp),
       dataPoints,
-      hasNextPeriod,
-      hasPreviousPeriod,
+      hasNextPeriod: offset > 0,
+      hasPreviousPeriod: await hasEarlierData(userId, current.start),
       periodEnd: current.end,
       periodStart: current.start,
-      periodTotal,
-      previousPeriodTotal,
+      periodTotal: sumBp(currentResult.data),
+      previousPeriodTotal: getPreviousPeriodTotal(previousResult.data),
       totalBp,
     };
   },

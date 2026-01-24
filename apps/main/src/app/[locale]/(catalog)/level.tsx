@@ -14,17 +14,20 @@ import {
   FeatureCardTitle,
 } from "@zoonk/ui/components/feature";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
+import { type BeltColor } from "@zoonk/utils/belt-level";
 import { getExtracted, getLocale } from "next-intl/server";
-import type { BeltColor } from "@zoonk/utils/belt-level";
 
-type LevelProps = {
+export async function Level({
+  bpToNextLevel,
+  color,
+  isMaxLevel,
+  level,
+}: {
   bpToNextLevel: number;
   color: BeltColor;
   isMaxLevel: boolean;
   level: number;
-};
-
-export async function Level({ bpToNextLevel, color, isMaxLevel, level }: LevelProps) {
+}) {
   const t = await getExtracted();
   const locale = await getLocale();
   const levelMenu = getMenu("level");

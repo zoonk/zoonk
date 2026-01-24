@@ -1,7 +1,8 @@
 import "server-only";
-import { generateText, Output } from "ai";
+import { Output, generateText } from "ai";
 import { z } from "zod";
-import { buildProviderOptions, type ReasoningEffort } from "../../../types";
+import { type ReasoningEffort, buildProviderOptions } from "../../../types";
+import { ACTIVITY_OPTIONS_COUNT } from "../constants";
 import systemPrompt from "./activity-story.prompt.md";
 
 const DEFAULT_MODEL = process.env.AI_MODEL_ACTIVITY_STORY_LANGUAGE ?? "anthropic/claude-opus-4.5";
@@ -30,7 +31,7 @@ const schema = z.object({
             textRomanization: z.string(),
           }),
         )
-        .length(4),
+        .length(ACTIVITY_OPTIONS_COUNT),
     }),
   ),
 });

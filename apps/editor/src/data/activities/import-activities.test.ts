@@ -18,7 +18,7 @@ function createMockFile(
 }
 
 function createImportFile(
-  activities: Array<{ description?: string; kind: string; title?: string }>,
+  activities: { description?: string; kind: string; title?: string }[],
 ): File {
   return createMockFile(JSON.stringify({ activities }));
 }
@@ -536,7 +536,7 @@ describe("admins", () => {
       });
 
       expect(result.error).toBeNull();
-      expect(result.data?.[0]?.isPublished).toBe(true);
+      expect(result.data?.[0]?.isPublished).toBeTruthy();
     });
 
     test("imported activities are unpublished when lesson is published", async () => {
@@ -562,7 +562,7 @@ describe("admins", () => {
       });
 
       expect(result.error).toBeNull();
-      expect(result.data?.[0]?.isPublished).toBe(false);
+      expect(result.data?.[0]?.isPublished).toBeFalsy();
     });
   });
 

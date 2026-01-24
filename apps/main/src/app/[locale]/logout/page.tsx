@@ -7,7 +7,7 @@ import { useEffect, useEffectEvent } from "react";
 export default function LogoutPage() {
   const handleSuccess = useEffectEvent(() => {
     // Use hard navigation to ensure all client-side state (including useSession) is reset
-    window.location.href = "/";
+    globalThis.location.href = "/";
   });
 
   useEffect(() => {

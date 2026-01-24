@@ -1,4 +1,4 @@
-import { expect, type Page } from "../fixtures";
+import { type Page, expect } from "../fixtures";
 
 export function getMoreOptionsButton(page: Page) {
   return page.getByRole("button", { name: /more options/i }).first();

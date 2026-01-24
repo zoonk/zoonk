@@ -1,4 +1,4 @@
-import { expect, type Page, test } from "./fixtures";
+import { type Page, expect, test } from "./fixtures";
 
 // Helper to open command palette via click (reliable for tests that don't test keyboard shortcuts)
 // Scoped to navigation to avoid strict mode violation when multiple search buttons exist during streaming
@@ -423,7 +423,7 @@ test.describe("Command Palette - Accessibility", () => {
   });
 
   /**
-   * iOS Safari automatically zooms when focusing inputs with font-size < 16px.
+   * IOS Safari automatically zooms when focusing inputs with font-size < 16px.
    * This test verifies the input meets the 16px threshold on mobile to prevent this behavior.
    */
   test("search input has font-size >= 16px on mobile to prevent iOS Safari zoom", async ({

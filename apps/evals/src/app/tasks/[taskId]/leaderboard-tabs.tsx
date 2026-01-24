@@ -1,18 +1,20 @@
 "use client";
 
+import { type BattleLeaderboardEntry, type TaskEvalResults } from "@/lib/types";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@zoonk/ui/components/tabs";
 import { useRouter, useSearchParams } from "next/navigation";
 import { BattleLeaderboard } from "./battle-leaderboard";
 import { Leaderboard } from "./leaderboard";
-import type { BattleLeaderboardEntry, TaskEvalResults } from "@/lib/types";
 
-type LeaderboardTabsProps = {
+export function LeaderboardTabs({
+  taskId,
+  results,
+  battleEntries,
+}: {
   taskId: string;
   results: TaskEvalResults[];
   battleEntries: BattleLeaderboardEntry[];
-};
-
-export function LeaderboardTabs({ taskId, results, battleEntries }: LeaderboardTabsProps) {
+}) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const currentTab = searchParams.get("tab") ?? "battle";

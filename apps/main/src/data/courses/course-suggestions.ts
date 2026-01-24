@@ -23,7 +23,7 @@ async function findSearchPrompt(params: { language: string; prompt: string }) {
 async function upsertSearchPromptWithSuggestions(input: {
   language: string;
   prompt: string;
-  suggestions: Array<{ title: string; description: string }>;
+  suggestions: { title: string; description: string }[];
 }): Promise<{ id: number; suggestions: SuggestionResult[] }> {
   const { language, prompt: rawPrompt, suggestions } = input;
   const prompt = normalizeString(rawPrompt);

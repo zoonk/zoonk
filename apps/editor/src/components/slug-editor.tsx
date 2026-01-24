@@ -14,30 +14,6 @@ export function SlugEditorSkeleton() {
   return <Skeleton className="mx-4 h-5 w-32" />;
 }
 
-type SlugCheckParams = {
-  chapterId?: number;
-  courseId?: number;
-  language: string;
-  orgSlug: string;
-  slug: string;
-};
-
-type SlugEditorProps = {
-  chapterId?: number;
-  checkFn: (params: SlugCheckParams) => Promise<boolean>;
-  courseId?: number;
-  entityId: number;
-  initialSlug: string;
-  language: string;
-  onSave: (
-    id: number,
-    data: { slug: string },
-  ) => Promise<{ error: string | null; newSlug?: string }>;
-  orgSlug: string;
-  redirectPrefix: string;
-  redirectSuffix?: string;
-};
-
 export function SlugEditor({
   chapterId,
   checkFn,
@@ -49,7 +25,27 @@ export function SlugEditor({
   orgSlug,
   redirectPrefix,
   redirectSuffix = "",
-}: SlugEditorProps) {
+}: {
+  chapterId?: number;
+  checkFn: (params: {
+    chapterId?: number;
+    courseId?: number;
+    language: string;
+    orgSlug: string;
+    slug: string;
+  }) => Promise<boolean>;
+  courseId?: number;
+  entityId: number;
+  initialSlug: string;
+  language: string;
+  onSave: (
+    id: number,
+    data: { slug: string },
+  ) => Promise<{ error: string | null; newSlug?: string }>;
+  orgSlug: string;
+  redirectPrefix: string;
+  redirectSuffix?: string;
+}) {
   const t = useExtracted();
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -91,12 +87,12 @@ export function SlugEditor({
     });
   }
 
-  function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
-    if (e.key === "Enter" && canSave) {
-      e.preventDefault();
+  function handleKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
+    if (event.key === "Enter" && canSave) {
+      event.preventDefault();
       handleSave();
-    } else if (e.key === "Escape") {
-      e.preventDefault();
+    } else if (event.key === "Escape") {
+      event.preventDefault();
       handleCancel();
     }
   }
@@ -112,7 +108,7 @@ export function SlugEditor({
           className="max-w-48 text-sm"
           disabled={isPending}
           id="slug-editor"
-          onChange={(e) => setSlug(e.target.value)}
+          onChange={(event) => setSlug(event.target.value)}
           onKeyDown={handleKeyDown}
           placeholder={t("your-custom-url")}
           value={slug}

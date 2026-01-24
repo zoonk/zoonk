@@ -1,6 +1,6 @@
 import "server-only";
 import { generateText, stepCountIs } from "ai";
-import { buildProviderOptions, type ReasoningEffort } from "../../types";
+import { type ReasoningEffort, buildProviderOptions } from "../../types";
 import { type StepVisualResource, visualTools } from "./_tools/visual";
 import systemPrompt from "./step-visual.prompt.md";
 
@@ -25,7 +25,7 @@ export type StepVisualParams = {
   chapterTitle: string;
   courseTitle: string;
   language: string;
-  steps: Array<{ title: string; text: string }>;
+  steps: { title: string; text: string }[];
   model?: string;
   useFallback?: boolean;
   reasoningEffort?: ReasoningEffort;

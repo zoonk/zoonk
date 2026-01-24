@@ -1,4 +1,4 @@
-import type { PrismaClient, User } from "../../generated/prisma/client";
+import { type PrismaClient, type User } from "../../generated/prisma/client";
 
 export type SeedUsers = {
   admin: User;

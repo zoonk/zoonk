@@ -103,7 +103,9 @@ describe("admins", () => {
 
     expect(result.error).toBeNull();
     expect(result.data.length).toBeGreaterThanOrEqual(1);
-    expect(result.data.some((c) => c.title === "Introdução à Programação")).toBe(true);
+    expect(
+      result.data.some((chapter) => chapter.title === "Introdução à Programação"),
+    ).toBeTruthy();
   });
 
   test("returns empty array when no matches", async () => {
@@ -149,7 +151,7 @@ describe("admins", () => {
 
     expect(result.error).toBeNull();
     expect(result.data.length).toBeGreaterThanOrEqual(1);
-    expect(result.data.some((c) => c.title === "UPPERCASE TITLE")).toBe(true);
+    expect(result.data.some((chapter) => chapter.title === "UPPERCASE TITLE")).toBeTruthy();
   });
 
   test("partial match search", async () => {
@@ -171,7 +173,9 @@ describe("admins", () => {
 
     expect(result.error).toBeNull();
     expect(result.data.length).toBeGreaterThanOrEqual(1);
-    expect(result.data.some((c) => c.title === "Very Long Chapter Title For Testing")).toBe(true);
+    expect(
+      result.data.some((chapter) => chapter.title === "Very Long Chapter Title For Testing"),
+    ).toBeTruthy();
   });
 
   test("includes course info in results", async () => {
@@ -194,7 +198,7 @@ describe("admins", () => {
     expect(result.error).toBeNull();
     expect(result.data.length).toBeGreaterThanOrEqual(1);
 
-    const chapter = result.data.find((c) => c.title === "Chapter With Course Info");
+    const chapter = result.data.find((item) => item.title === "Chapter With Course Info");
 
     expect(chapter?.course).toBeDefined();
     expect(chapter?.course.slug).toBe(course.slug);

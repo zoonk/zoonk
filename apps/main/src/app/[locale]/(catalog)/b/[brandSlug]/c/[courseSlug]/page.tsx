@@ -5,13 +5,13 @@ import { getCourse } from "@/data/courses/get-course";
 import { redirect } from "@/i18n/navigation";
 import { cacheTagCourse } from "@zoonk/utils/cache";
 import { AI_ORG_SLUG } from "@zoonk/utils/constants";
+import { type Metadata } from "next";
 import { setRequestLocale } from "next-intl/server";
 import { cacheTag } from "next/cache";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { ChapterSearchContainer } from "./chapter-search-container";
 import { CourseHeader } from "./course-header";
-import type { Metadata } from "next";
 
 export async function generateStaticParams() {
   return [{ brandSlug: AI_ORG_SLUG, courseSlug: "sample", locale: "en" }];

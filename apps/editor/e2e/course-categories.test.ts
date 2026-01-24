@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { courseCategoryFixture, courseFixture } from "@zoonk/testing/fixtures/courses";
-import { expect, type Page, test } from "./fixtures";
+import { type Page, expect, test } from "./fixtures";
 
 async function createTestCourse() {
   const org = await prisma.organization.findUniqueOrThrow({
@@ -210,7 +210,7 @@ test.describe("Course Categories Editor", () => {
     await expect(authenticatedPage.getByText("Math")).toBeVisible();
   });
 
-  // track a regression where the category is not selected after the server action completes
+  // Track a regression where the category is not selected after the server action completes
   test("keeps category selected after server action completes - regression", async ({
     authenticatedPage,
   }) => {
@@ -235,7 +235,7 @@ test.describe("Course Categories Editor", () => {
 
     // Verify the badge is still visible after transition completed
     // This is the key assertion - if revalidatePath is missing,
-    // the optimistic update reverts and the badge disappears
+    // The optimistic update reverts and the badge disappears
     const main = authenticatedPage.getByRole("main");
     await expect(main.getByText("Technology")).toBeVisible();
 

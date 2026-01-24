@@ -36,7 +36,7 @@ export default async function Unauthorized() {
             {t("Logout")}
           </Link>
         ) : (
-          <Link className={buttonVariants()} href="/login" prefetch={true}>
+          <Link className={buttonVariants()} href="/login" prefetch>
             {t("Login")}
           </Link>
         )}

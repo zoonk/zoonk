@@ -30,7 +30,7 @@ export function DescriptionStep({
       <WizardTextarea
         autoFocus
         id={descriptionId}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={(event) => onChange(event.target.value)}
         placeholder={t("A brief description of your course…")}
         value={value}
       />

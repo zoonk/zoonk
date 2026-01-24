@@ -41,7 +41,7 @@ export function SlugStep({
           autoFocus
           className="text-muted-foreground"
           id={slugId}
-          onChange={(e) => onChange(e.target.value)}
+          onChange={(event) => onChange(event.target.value)}
           placeholder={t("course-title")}
           spellCheck="false"
           value={value}

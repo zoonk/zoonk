@@ -3,11 +3,11 @@ import { redirect } from "@/i18n/navigation";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { notFound } from "next/navigation";
 
-type GenerateCourseContentProps = {
+export async function GenerateCourseContent({
+  params,
+}: {
   params: Promise<{ locale: string; slug: string }>;
-};
-
-export async function GenerateCourseContent({ params }: GenerateCourseContentProps) {
+}) {
   const { locale, slug } = await params;
 
   const suggestion = await getCourseSuggestionBySlug({

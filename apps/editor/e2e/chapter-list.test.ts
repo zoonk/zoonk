@@ -4,7 +4,7 @@ import { prisma } from "@zoonk/db";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import tmp from "tmp";
-import { expect, type Page, test } from "./fixtures";
+import { type Page, expect, test } from "./fixtures";
 import { getMoreOptionsButton, importFlow } from "./helpers/import-dialog";
 
 function createImportFile(chapters: { title: string; description: string }[]): string {
@@ -269,11 +269,11 @@ test.describe("Chapter List", () => {
         throw new Error("Download path should exist");
       }
 
-      const json = JSON.parse(fs.readFileSync(downloadPath, "utf-8"));
+      const json = JSON.parse(fs.readFileSync(downloadPath, "utf8"));
       expect(json.chapters).toHaveLength(chapters.length);
 
       // Verify actual content, not just count
-      const exportedTitles = json.chapters.map((c: { title: string }) => c.title);
+      const exportedTitles = json.chapters.map((chapter: { title: string }) => chapter.title);
       expect(exportedTitles).toContain("Chapter 1");
       expect(exportedTitles).toContain("Chapter 2");
     });

@@ -1,6 +1,7 @@
 "use client";
 
 import { getModelById, getModelDisplayName } from "@/lib/models";
+import { type BattleMatchup } from "@/lib/types";
 import {
   Accordion,
   AccordionContent,
@@ -8,17 +9,9 @@ import {
   AccordionTrigger,
 } from "@zoonk/ui/components/accordion";
 import { Badge } from "@zoonk/ui/components/badge";
-import type { BattleMatchup } from "@/lib/types";
+import { RankingItem } from "./ranking-item";
 
-type BattleMatchupListProps = {
-  matchups: BattleMatchup[];
-};
-
-type MatchupItemProps = {
-  matchup: BattleMatchup;
-};
-
-function MatchupItem({ matchup }: MatchupItemProps) {
+function MatchupItem({ matchup }: { matchup: BattleMatchup }) {
   // Get all unique models from the matchup
   const modelIds = new Set<string>();
   for (const judgment of matchup.judgments) {
@@ -30,13 +23,13 @@ function MatchupItem({ matchup }: MatchupItemProps) {
   // Build a map of model rankings by model ID
   const modelRankings = new Map<
     string,
-    Array<{
+    {
       judgeId: string;
       judgeName: string;
       score: number;
       reasoning: string;
       anonymousId: string;
-    }>
+    }[]
   >();
 
   for (const modelId of modelIds) {
@@ -63,8 +56,8 @@ function MatchupItem({ matchup }: MatchupItemProps) {
 
   // Sort models by total score
   const sortedModels = [...modelIds].toSorted((a, b) => {
-    const aTotal = modelRankings.get(a)?.reduce((sum, r) => sum + r.score, 0) ?? 0;
-    const bTotal = modelRankings.get(b)?.reduce((sum, r) => sum + r.score, 0) ?? 0;
+    const aTotal = modelRankings.get(a)?.reduce((sum, ranking) => sum + ranking.score, 0) ?? 0;
+    const bTotal = modelRankings.get(b)?.reduce((sum, ranking) => sum + ranking.score, 0) ?? 0;
     return bTotal - aTotal;
   });
 
@@ -85,7 +78,7 @@ function MatchupItem({ matchup }: MatchupItemProps) {
           const model = getModelById(modelId);
           const modelName = model ? getModelDisplayName(model) : modelId;
           const rankings = modelRankings.get(modelId) ?? [];
-          const totalScore = rankings.reduce((sum, r) => sum + r.score, 0);
+          const totalScore = rankings.reduce((sum, ranking) => sum + ranking.score, 0);
 
           return (
             <div className="border-border rounded-lg border p-4" key={modelId}>
@@ -101,18 +94,13 @@ function MatchupItem({ matchup }: MatchupItemProps) {
 
               <div className="flex flex-col gap-3">
                 {rankings.map((ranking) => (
-                  <div className="bg-muted rounded-lg p-3" key={ranking.judgeId}>
-                    <div className="mb-2 flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm font-medium">{ranking.judgeName}</span>
-                        <Badge variant="outline">{ranking.anonymousId}</Badge>
-                      </div>
-                      <Badge>{ranking.score.toFixed(1)}</Badge>
-                    </div>
-                    <p className="text-muted-foreground text-sm whitespace-pre-wrap">
-                      {ranking.reasoning}
-                    </p>
-                  </div>
+                  <RankingItem
+                    anonymousId={ranking.anonymousId}
+                    judgeName={ranking.judgeName}
+                    key={ranking.judgeId}
+                    reasoning={ranking.reasoning}
+                    score={ranking.score}
+                  />
                 ))}
               </div>
             </div>
@@ -132,7 +120,7 @@ function MatchupItem({ matchup }: MatchupItemProps) {
   );
 }
 
-export function BattleMatchupList({ matchups }: BattleMatchupListProps) {
+export function BattleMatchupList({ matchups }: { matchups: BattleMatchup[] }) {
   if (matchups.length === 0) {
     return (
       <p className="text-muted-foreground py-8 text-center">

@@ -1,12 +1,14 @@
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 
-type StatsProps = {
+export function Stats({
+  title,
+  value,
+  icon,
+}: {
   title: string;
   value: string | number;
   icon?: React.ReactNode;
-};
-
-export function Stats({ title, value, icon }: StatsProps) {
+}) {
   return (
     <div className="flex w-full flex-wrap items-baseline justify-between gap-x-4 gap-y-2">
       <header className="text-muted-foreground flex items-center gap-1.5">

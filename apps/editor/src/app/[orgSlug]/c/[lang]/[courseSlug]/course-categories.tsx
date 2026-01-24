@@ -1,4 +1,4 @@
-import { CategoryEditor } from "@/components/category-editor";
+import { CategoryEditor } from "@/components/category/category-editor";
 import { listCourseCategories } from "@/data/categories/list-course-categories";
 import { getCourse } from "@/data/courses/get-course";
 import { notFound } from "next/navigation";
@@ -27,7 +27,7 @@ export async function CourseCategories({
     orgSlug,
   };
 
-  const categoryStrings = categories?.map((c) => c.category) ?? [];
+  const categoryStrings = categories?.map((item) => item.category) ?? [];
 
   return (
     <CategoryEditor

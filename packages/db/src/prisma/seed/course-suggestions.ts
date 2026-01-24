@@ -1,5 +1,5 @@
 import { normalizeString, toSlug } from "@zoonk/utils/string";
-import type { PrismaClient } from "../../generated/prisma/client";
+import { type PrismaClient } from "../../generated/prisma/client";
 
 export async function seedCourseSuggestions(prisma: PrismaClient): Promise<void> {
   // English suggestions

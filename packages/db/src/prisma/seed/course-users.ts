@@ -1,5 +1,5 @@
-import type { Organization, PrismaClient } from "../../generated/prisma/client";
-import type { SeedUsers } from "./users";
+import { type Organization, type PrismaClient } from "../../generated/prisma/client";
+import { type SeedUsers } from "./users";
 
 export async function seedCourseUsers(
   prisma: PrismaClient,
@@ -17,7 +17,7 @@ export async function seedCourseUsers(
   }
 
   // Enroll owner in all 5 courses with different startedAt times
-  // so they appear in order in the continue learning section
+  // So they appear in order in the continue learning section
   const now = new Date();
   await Promise.all(
     courses.map((course, index) =>

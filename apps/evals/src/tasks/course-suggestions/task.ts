@@ -1,10 +1,10 @@
+import { type Task } from "@/lib/types";
 import {
   type CourseSuggestionSchema,
   type CourseSuggestionsParams,
   generateCourseSuggestions,
 } from "@zoonk/ai/tasks/courses/suggestions";
 import { TEST_CASES } from "./test-cases";
-import type { Task } from "@/lib/types";
 
 export const courseSuggestionsTask: Task<
   CourseSuggestionsParams,

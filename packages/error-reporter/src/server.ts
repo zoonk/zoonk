@@ -1,4 +1,5 @@
 import { sendEmail } from "@zoonk/mailer";
+import { EMAIL_SUBJECT_MAX_LENGTH } from "@zoonk/utils/constants";
 
 export type ErrorPayload = {
   digest?: string;
@@ -49,7 +50,7 @@ export async function sendErrorEmail(error: ErrorPayload): Promise<void> {
     return;
   }
 
-  const subject = `[${error.source}] ${error.message?.slice(0, 50) ?? "Unknown error"}`;
+  const subject = `[${error.source}] ${error.message?.slice(0, EMAIL_SUBJECT_MAX_LENGTH) ?? "Unknown error"}`;
 
   await sendEmail({
     subject,

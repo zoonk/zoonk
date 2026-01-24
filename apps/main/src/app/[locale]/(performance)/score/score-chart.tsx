@@ -1,8 +1,8 @@
+import { type ScoreDataPoint, type ScorePeriod } from "@/data/progress/get-score-history";
 import { getLocale } from "next-intl/server";
 import { PerformanceChartLayout } from "../_components/performance-chart-layout";
 import { formatPeriodLabel } from "../_utils";
 import { ScoreChartClient } from "./score-chart-client";
-import type { ScoreDataPoint, ScorePeriod } from "@/data/progress/get-score-history";
 
 export async function ScoreChart({
   average,

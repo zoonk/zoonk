@@ -1,14 +1,12 @@
 import { defineConfig, devices } from "@playwright/test";
 
-type BaseConfigOptions = {
+const E2E_DATABASE_URL = "postgres://postgres:postgres@localhost:5432/zoonk_e2e";
+
+export function createBaseConfig(options: {
   globalSetup?: string;
   testDir: string;
   webServerEnv?: Record<string, string>;
-};
-
-const E2E_DATABASE_URL = "postgres://postgres:postgres@localhost:5432/zoonk_e2e";
-
-export function createBaseConfig(options: BaseConfigOptions) {
+}) {
   return defineConfig({
     forbidOnly: Boolean(process.env.CI),
     fullyParallel: true,

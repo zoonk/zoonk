@@ -2,7 +2,7 @@
 
 import { ContainerHeader, ContainerHeaderGroup } from "@zoonk/ui/components/container";
 import { EditableText, EditableTextarea } from "@zoonk/ui/components/editable-text";
-import { combineSaveStatuses, SaveStatus } from "@zoonk/ui/components/save-status";
+import { SaveStatus, combineSaveStatuses } from "@zoonk/ui/components/save-status";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { useAutoSave } from "@zoonk/ui/hooks/auto-save";
 import { useExtracted } from "next-intl";
@@ -19,7 +19,17 @@ export function ContentEditorSkeleton() {
   );
 }
 
-type ContentEditorProps = {
+export function ContentEditor({
+  entityId,
+  initialTitle,
+  initialDescription,
+  onSaveTitle,
+  onSaveDescription,
+  titlePlaceholder,
+  descriptionPlaceholder,
+  titleLabel,
+  descriptionLabel,
+}: {
   entityId: number;
   initialTitle: string;
   initialDescription: string;
@@ -32,19 +42,7 @@ type ContentEditorProps = {
   descriptionPlaceholder: string;
   titleLabel: string;
   descriptionLabel: string;
-};
-
-export function ContentEditor({
-  entityId,
-  initialTitle,
-  initialDescription,
-  onSaveTitle,
-  onSaveDescription,
-  titlePlaceholder,
-  descriptionPlaceholder,
-  titleLabel,
-  descriptionLabel,
-}: ContentEditorProps) {
+}) {
   const t = useExtracted();
 
   const {
@@ -72,7 +70,7 @@ export function ContentEditor({
       <ContainerHeaderGroup className="flex-1">
         <EditableText
           aria-label={titleLabel}
-          onChange={(e) => setTitle(e.target.value)}
+          onChange={(event) => setTitle(event.target.value)}
           placeholder={titlePlaceholder}
           value={title}
           variant="title"
@@ -80,7 +78,7 @@ export function ContentEditor({
 
         <EditableTextarea
           aria-label={descriptionLabel}
-          onChange={(e) => setDescription(e.target.value)}
+          onChange={(event) => setDescription(event.target.value)}
           placeholder={descriptionPlaceholder}
           value={description}
           variant="description"

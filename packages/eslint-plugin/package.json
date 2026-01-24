@@ -1,0 +1,8 @@
+{
+  "name": "@zoonk/eslint-plugin",
+  "private": true,
+  "type": "module",
+  "devDependencies": {
+    "oxlint": "1.41.0"
+  }
+}

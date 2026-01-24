@@ -1,14 +1,7 @@
 "use client";
 
 import { Button } from "@zoonk/ui/components/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@zoonk/ui/components/dialog";
+import { Dialog } from "@zoonk/ui/components/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,54 +12,15 @@ import { toast } from "@zoonk/ui/components/sonner";
 import { DownloadIcon, EllipsisVerticalIcon, UploadIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
-import {
-  ImportCancel,
-  ImportDropzone,
-  ImportFormatPreview,
-  ImportModeOption,
-  ImportModeSelector,
-  ImportProvider,
-  ImportSubmit,
-} from "./import";
-
-type EntityType = "activities" | "chapters" | "lessons";
-
-const FORMATS: Record<EntityType, object> = {
-  activities: {
-    activities: [
-      {
-        description: "Activity description",
-        kind: "background",
-        title: "Activity title",
-      },
-    ],
-  },
-  chapters: {
-    chapters: [
-      {
-        description: "Chapter description",
-        slug: "optional-slug",
-        title: "Chapter title",
-      },
-    ],
-  },
-  lessons: {
-    lessons: [
-      {
-        description: "Lesson description",
-        slug: "optional-slug",
-        title: "Lesson title",
-      },
-    ],
-  },
-};
+import { ImportProvider } from "../import";
+import { EntityImportDialog } from "./entity-import-dialog";
 
 export function EntityListActions({
   entityType,
   onExport,
   onImport,
 }: {
-  entityType: EntityType;
+  entityType: "activities" | "chapters" | "lessons";
   onExport: () => Promise<{ data: object | null; error: Error | null }>;
   onImport: (formData: FormData) => Promise<{ error: string | null }>;
 }) {
@@ -150,30 +104,12 @@ export function EntityListActions({
 
       <ImportProvider onImport={onImport} onSuccess={handleImportSuccess}>
         <Dialog onOpenChange={setImportOpen} open={importOpen}>
-          <DialogContent className="max-h-[calc(100vh-4rem)] overflow-y-auto sm:max-w-lg">
-            <DialogHeader>
-              <DialogTitle>{entityLabels.importTitle}</DialogTitle>
-              <DialogDescription>{entityLabels.importDescription}</DialogDescription>
-            </DialogHeader>
-
-            <div className="grid min-w-0 gap-6">
-              <ImportDropzone>{t("Drop file or click to select")}</ImportDropzone>
-
-              <ImportModeSelector label={t("Import mode")}>
-                <ImportModeOption value="merge">{t("Merge (add to existing)")}</ImportModeOption>
-                <ImportModeOption value="replace">
-                  {t("Replace (remove existing first)")}
-                </ImportModeOption>
-              </ImportModeSelector>
-
-              <ImportFormatPreview format={FORMATS[entityType]} label={t("Show expected format")} />
-            </div>
-
-            <DialogFooter>
-              <ImportCancel onClick={() => setImportOpen(false)}>{t("Cancel")}</ImportCancel>
-              <ImportSubmit>{t("Import")}</ImportSubmit>
-            </DialogFooter>
-          </DialogContent>
+          <EntityImportDialog
+            entityType={entityType}
+            importDescription={entityLabels.importDescription}
+            importTitle={entityLabels.importTitle}
+            onClose={() => setImportOpen(false)}
+          />
         </Dialog>
       </ImportProvider>
     </>

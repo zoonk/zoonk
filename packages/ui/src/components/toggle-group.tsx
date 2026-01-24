@@ -3,10 +3,10 @@
 import { Toggle as TogglePrimitive } from "@base-ui/react/toggle";
 import { ToggleGroup as ToggleGroupPrimitive } from "@base-ui/react/toggle-group";
 import { toggleVariants } from "@zoonk/ui/components/toggle";
+import { type CSSPropertiesWithVariables } from "@zoonk/ui/lib/css-variables";
 import { cn } from "@zoonk/ui/lib/utils";
+import { type VariantProps } from "class-variance-authority";
 import { createContext, useContext } from "react";
-import type { CSSPropertiesWithVariables } from "@zoonk/ui/lib/css-variables";
-import type { VariantProps } from "class-variance-authority";
 
 const ToggleGroupContext = createContext<
   VariantProps<typeof toggleVariants> & {

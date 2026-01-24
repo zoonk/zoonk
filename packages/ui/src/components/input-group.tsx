@@ -4,7 +4,7 @@ import { Button } from "@zoonk/ui/components/button";
 import { Input } from "@zoonk/ui/components/input";
 import { Textarea } from "@zoonk/ui/components/textarea";
 import { cn } from "@zoonk/ui/lib/utils";
-import { cva, type VariantProps } from "class-variance-authority";
+import { type VariantProps, cva } from "class-variance-authority";
 import type * as React from "react";
 
 function InputGroup({ className, ...props }: React.ComponentProps<"div">) {
@@ -51,11 +51,11 @@ function InputGroupAddon({
       className={cn(inputGroupAddonVariants({ align }), className)}
       data-align={align}
       data-slot="input-group-addon"
-      onClick={(e) => {
-        if (e.target instanceof HTMLElement && e.target.closest("button")) {
+      onClick={(event) => {
+        if (event.target instanceof HTMLElement && event.target.closest("button")) {
           return;
         }
-        e.currentTarget.parentElement?.querySelector("input")?.focus();
+        event.currentTarget.parentElement?.querySelector("input")?.focus();
       }}
       role="group"
       {...props}

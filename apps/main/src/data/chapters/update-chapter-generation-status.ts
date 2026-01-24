@@ -1,19 +1,12 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { type Chapter, type GenerationStatus, prisma } from "@zoonk/db";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
-import type { Chapter, GenerationStatus } from "@zoonk/db";
 
-type UpdateParams = {
+export async function updateChapterGenerationStatus(params: {
   chapterId: number;
   generationStatus: GenerationStatus;
   generationRunId?: string;
-};
-
-type UpdatedChapter = Pick<Chapter, "id" | "generationStatus">;
-
-export async function updateChapterGenerationStatus(
-  params: UpdateParams,
-): Promise<SafeReturn<UpdatedChapter>> {
+}): Promise<SafeReturn<Pick<Chapter, "id" | "generationStatus">>> {
   const { data, error } = await safeAsync(() =>
     prisma.chapter.update({
       data: {

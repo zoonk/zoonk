@@ -1,4 +1,4 @@
-import type { Organization, PrismaClient } from "../../generated/prisma/client";
+import { type Organization, type PrismaClient } from "../../generated/prisma/client";
 
 type WordSeedData = {
   targetLanguage: string;

@@ -1,28 +1,24 @@
-import type {
-  Organization,
-  Prisma,
-  PrismaClient,
-  StepKind,
-  StepVisualKind,
+import {
+  type Organization,
+  type Prisma,
+  type PrismaClient,
+  type StepKind,
+  type StepVisualKind,
 } from "../../generated/prisma/client";
 
-type StepSeedData = {
-  kind: StepKind;
-  content: Prisma.InputJsonValue;
-  visualKind?: StepVisualKind;
-  visualContent?: Prisma.InputJsonValue;
-};
-
-type ActivitySteps = {
+const stepsData: {
   lessonSlug: string;
   language: string;
   activityPosition: number;
-  steps: StepSeedData[];
-};
-
-const stepsData: ActivitySteps[] = [
+  steps: {
+    kind: StepKind;
+    content: Prisma.InputJsonValue;
+    visualKind?: StepVisualKind;
+    visualContent?: Prisma.InputJsonValue;
+  }[];
+}[] = [
   {
-    activityPosition: 0, // background activity
+    activityPosition: 0, // Background activity
     language: "en",
     lessonSlug: "what-is-machine-learning",
     steps: [
@@ -87,7 +83,7 @@ const stepsData: ActivitySteps[] = [
     ],
   },
   {
-    activityPosition: 2, // explanation_quiz activity
+    activityPosition: 2, // Explanation_quiz activity
     language: "en",
     lessonSlug: "what-is-machine-learning",
     steps: [
@@ -180,7 +176,7 @@ const stepsData: ActivitySteps[] = [
     ],
   },
   {
-    activityPosition: 6, // challenge activity
+    activityPosition: 6, // Challenge activity
     language: "en",
     lessonSlug: "what-is-machine-learning",
     steps: [

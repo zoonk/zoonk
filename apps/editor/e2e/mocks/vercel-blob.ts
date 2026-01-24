@@ -1,5 +1,7 @@
 import { randomUUID } from "node:crypto";
 
+const UUID_SUFFIX_LENGTH = 8;
+
 /**
  * Mock implementation of @vercel/blob for E2E testing.
  * Returns fake URLs without making actual blob storage requests.
@@ -9,7 +11,8 @@ export async function put(
   _body: BodyInit,
   options?: { access?: string; addRandomSuffix?: boolean },
 ) {
-  const suffix = options?.addRandomSuffix !== false ? `-${randomUUID().slice(0, 8)}` : "";
+  const suffix =
+    options?.addRandomSuffix !== false ? `-${randomUUID().slice(0, UUID_SUFFIX_LENGTH)}` : "";
   const url = `https://e2e-mock-blob.test/${pathname}${suffix}`;
 
   return {

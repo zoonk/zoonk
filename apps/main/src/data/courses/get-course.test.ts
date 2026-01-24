@@ -3,7 +3,7 @@ import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, describe, expect, test } from "vitest";
 import { getCourse } from "./get-course";
 
-describe("getCourse", () => {
+describe(getCourse, () => {
   let brandOrg: Awaited<ReturnType<typeof organizationFixture>>;
   let schoolOrg: Awaited<ReturnType<typeof organizationFixture>>;
   let publishedCourse: Awaited<ReturnType<typeof courseFixture>>;
@@ -60,8 +60,8 @@ describe("getCourse", () => {
     expect(result?.organization.name).toBe(brandOrg.name);
     expect(result?.organization.slug).toBe(brandOrg.slug);
     expect(result?.categories).toHaveLength(2);
-    expect(result?.categories.map((c) => c.category)).toContain("tech");
-    expect(result?.categories.map((c) => c.category)).toContain("science");
+    expect(result?.categories.map((item) => item.category)).toContain("tech");
+    expect(result?.categories.map((item) => item.category)).toContain("science");
   });
 
   test("returns null for non-existent course", async () => {

@@ -1,3 +1,4 @@
+import { type CourseCategory } from "@zoonk/utils/categories";
 import {
   Briefcase,
   Calculator,
@@ -7,6 +8,7 @@ import {
   Globe,
   Heart,
   Languages,
+  type LucideIcon,
   Map as MapIcon,
   MessageCircle,
   Palette,
@@ -15,8 +17,6 @@ import {
   Users,
   Wrench,
 } from "lucide-react";
-import type { CourseCategory } from "@zoonk/utils/categories";
-import type { LucideIcon } from "lucide-react";
 
 export type CategoryInfo = {
   icon: LucideIcon;

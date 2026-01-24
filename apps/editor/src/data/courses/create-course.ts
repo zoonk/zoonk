@@ -15,7 +15,7 @@ export async function createCourse(params: {
   slug: string;
   title: string;
 }): Promise<SafeReturn<Course>> {
-  const session = await getSession({ headers: params.headers });
+  const session = await getSession(params.headers);
 
   if (!session) {
     return { data: null, error: new AppError(ErrorCode.unauthorized) };

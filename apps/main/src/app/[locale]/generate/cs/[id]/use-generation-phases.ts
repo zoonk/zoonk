@@ -1,17 +1,15 @@
 "use client";
 
+import { type PhaseStatus } from "@/lib/generation-phases";
+import { type CourseWorkflowStepName } from "@/workflows/config";
 import { useExtracted } from "next-intl";
 import {
-  calculateWeightedProgress,
-  getPhaseStatus,
   PHASE_ICONS,
   PHASE_ORDER,
   type PhaseName,
+  calculateWeightedProgress,
+  getPhaseStatus,
 } from "./generation-phases";
-import type { PhaseStatus } from "@/lib/generation-phases";
-import type { CourseWorkflowStepName } from "@/workflows/config";
-
-type PhaseLabels = Record<PhaseName, string>;
 
 export type PhaseInfo = {
   name: PhaseName;
@@ -26,7 +24,7 @@ export function useGenerationPhases(
 ) {
   const t = useExtracted();
 
-  const labels: PhaseLabels = {
+  const labels: Record<PhaseName, string> = {
     checkingExisting: t("Checking for existing course"),
     generatingDetails: t("Generating course details"),
     generatingLessons: t("Generating lessons"),
@@ -44,7 +42,7 @@ export function useGenerationPhases(
   }));
 
   const progress = calculateWeightedProgress(completedSteps, currentStep);
-  const activePhase = phases.find((p) => p.status === "active");
+  const activePhase = phases.find((phase) => phase.status === "active");
 
   return { activePhase, phases, progress };
 }

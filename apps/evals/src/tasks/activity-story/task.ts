@@ -1,10 +1,10 @@
+import { type Task } from "@/lib/types";
 import {
   type ActivityStoryParams,
   type ActivityStorySchema,
   generateActivityStory,
 } from "@zoonk/ai/tasks/activities/core/story";
 import { TEST_CASES } from "./test-cases";
-import type { Task } from "@/lib/types";
 
 export const activityStoryTask: Task<ActivityStoryParams, ActivityStorySchema> = {
   description:

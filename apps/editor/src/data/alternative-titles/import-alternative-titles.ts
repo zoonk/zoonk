@@ -1,11 +1,11 @@
 import "server-only";
 import { ErrorCode } from "@/lib/app-error";
+import { type ImportMode } from "@/lib/import-mode";
 import { parseJsonFile } from "@/lib/parse-json-file";
 import { isRecord } from "@/lib/validation";
 import { prisma } from "@zoonk/db";
 import { AppError, type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { toSlug } from "@zoonk/utils/string";
-import type { ImportMode } from "@/lib/import-mode";
 
 export type AlternativeTitlesImport = {
   alternativeTitles: string[];

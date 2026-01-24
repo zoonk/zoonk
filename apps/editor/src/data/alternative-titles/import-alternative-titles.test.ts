@@ -18,7 +18,7 @@ function createImportFile(alternativeTitles: string[]): File {
   return createMockFile(JSON.stringify({ alternativeTitles }));
 }
 
-describe("importAlternativeTitles", () => {
+describe(importAlternativeTitles, () => {
   test("imports titles successfully", async () => {
     const suffix = randomUUID().slice(0, 8);
     const organization = await organizationFixture();

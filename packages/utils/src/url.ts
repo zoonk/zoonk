@@ -91,12 +91,17 @@ export function getVercelTrustedOrigins(): string[] {
  * - Localhost ports 3000-3009 when E2E_TESTING=true
  * - Custom origins from TRUSTED_ORIGINS env var (comma-separated, non-production only)
  */
+const LOCALHOST_PORT_START = 3000;
+
 export function getDevTrustedOrigins(): string[] {
   if (!isE2E && isProduction) {
     return [];
   }
 
-  const localhostOrigins = Array.from({ length: 10 }, (_, i) => `http://localhost:${3000 + i}`);
+  const localhostOrigins = Array.from(
+    { length: 10 },
+    (_, i) => `http://localhost:${LOCALHOST_PORT_START + i}`,
+  );
 
   const customOrigins =
     process.env.TRUSTED_ORIGINS?.split(",").map((origin) => origin.trim()) ?? [];

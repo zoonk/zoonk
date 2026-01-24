@@ -1,4 +1,4 @@
-import type { auth } from "@zoonk/auth";
+import { type auth } from "@zoonk/auth";
 
 export type AuthOrganization = typeof auth.$Infer.Organization;
 

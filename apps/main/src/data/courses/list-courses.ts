@@ -1,8 +1,8 @@
 import "server-only";
 import { type Course, prisma } from "@zoonk/db";
 import { clampQueryItems } from "@zoonk/db/utils";
+import { type CourseCategory } from "@zoonk/utils/categories";
 import { cache } from "react";
-import type { CourseCategory } from "@zoonk/utils/categories";
 
 export const LIST_COURSES_LIMIT = 20;
 

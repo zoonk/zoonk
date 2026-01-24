@@ -3,37 +3,33 @@
 import { useCallback, useRef, useState } from "react";
 import useInfiniteScroll from "react-infinite-scroll-hook";
 
-type UseInfiniteListOptions<T, C> = {
-  initialItems: T[];
-  limit: number;
-  getCursor: (item: T) => C;
-  fetchMore: (cursor: C) => Promise<T[]>;
-  getKey: (item: T) => string | number;
-  rootMargin?: string;
-};
-
-type UseInfiniteListReturn<T> = {
-  hasNextPage: boolean;
-  isLoading: boolean;
-  items: T[];
-  sentryRef: (node: Element | null) => void;
-};
-
-export function useInfiniteList<T, C>({
+export function useInfiniteList<TItem, TCursor>({
   fetchMore,
   getCursor,
   getKey,
   initialItems,
   limit,
   rootMargin = "0px 0px 200px 0px",
-}: UseInfiniteListOptions<T, C>): UseInfiniteListReturn<T> {
+}: {
+  initialItems: TItem[];
+  limit: number;
+  getCursor: (item: TItem) => TCursor;
+  fetchMore: (cursor: TCursor) => Promise<TItem[]>;
+  getKey: (item: TItem) => string | number;
+  rootMargin?: string;
+}): {
+  hasNextPage: boolean;
+  isLoading: boolean;
+  items: TItem[];
+  sentryRef: (node: Element | null) => void;
+} {
   const [items, setItems] = useState(initialItems);
   const [isLoading, setIsLoading] = useState(false);
   const [hasNextPage, setHasNextPage] = useState(initialItems.length >= limit);
 
   // Use ref to track the latest cursor to avoid stale closures
   const lastItem = initialItems.at(-1);
-  const cursorRef = useRef<C | undefined>(lastItem ? getCursor(lastItem) : undefined);
+  const cursorRef = useRef<TCursor | undefined>(lastItem ? getCursor(lastItem) : undefined);
 
   const loadMore = useCallback(async () => {
     if (cursorRef.current === undefined) {

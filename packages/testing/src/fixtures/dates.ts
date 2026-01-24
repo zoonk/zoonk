@@ -1,3 +1,5 @@
+const MID_MONTH_DAY = 15;
+
 /**
  * Creates a date safely in the middle of a month to avoid edge cases.
  * Using day 15 prevents issues when subtracting months (e.g., March 31 - 1 month
@@ -7,7 +9,7 @@
  */
 export function createSafeDate(monthsAgo = 0, daysOffset = 0): Date {
   const date = new Date();
-  date.setDate(15 - daysOffset);
+  date.setDate(MID_MONTH_DAY - daysOffset);
   date.setMonth(date.getMonth() - monthsAgo);
   return date;
 }

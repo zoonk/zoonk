@@ -4,10 +4,10 @@ import { getBestDay } from "@/data/progress/get-best-day";
 import { getBestTime } from "@/data/progress/get-best-time";
 import { getEnergyLevel } from "@/data/progress/get-energy-level";
 import { getScore } from "@/data/progress/get-score";
+import { type Metadata } from "next";
 import { getExtracted, setRequestLocale } from "next-intl/server";
 import { Suspense } from "react";
 import { HomeContent, HomeContentSkeleton } from "./home-content";
-import type { Metadata } from "next";
 
 export async function generateMetadata({ params }: PageProps<"/[locale]">): Promise<Metadata> {
   const { locale } = await params;
@@ -25,7 +25,7 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
   const { locale } = await params;
   setRequestLocale(locale);
 
-  // preload data for Suspense boundaries
+  // Preload data for Suspense boundaries
   void Promise.all([
     getContinueLearning(),
     getEnergyLevel(),

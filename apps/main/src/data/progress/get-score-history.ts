@@ -4,11 +4,11 @@ import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
 import {
+  type HistoryPeriod,
   aggregateScoreByMonth,
   aggregateScoreByWeek,
   calculateDateRanges,
   formatLabel,
-  type HistoryPeriod,
 } from "./_utils";
 
 export type ScorePeriod = HistoryPeriod;
@@ -103,6 +103,36 @@ function processScoreData(
   return aggregateScoreByMonth(rawData, calculateScore);
 }
 
+function filterValidData(data: RawDataPoint[]): RawDataPoint[] {
+  return data.filter((point) => point.correct + point.incorrect > 0);
+}
+
+function getPreviousAverage(
+  previousData: RawDataPoint[] | null,
+  period: ScorePeriod,
+): number | null {
+  const valid = filterValidData(previousData ?? []);
+  if (valid.length === 0) {
+    return null;
+  }
+  const processed = processScoreData(valid, period);
+  return processed.length > 0 ? calculateAverage(processed) : null;
+}
+
+async function hasEarlierScoreData(userId: number, beforeDate: Date): Promise<boolean> {
+  const { data } = await safeAsync(() =>
+    prisma.dailyProgress.findFirst({
+      select: { id: true },
+      where: {
+        OR: [{ correctAnswers: { gt: 0 } }, { incorrectAnswers: { gt: 0 } }],
+        date: { lt: beforeDate },
+        userId,
+      },
+    }),
+  );
+  return Boolean(data);
+}
+
 const cachedGetScoreHistory = cache(
   async (
     period: ScorePeriod,
@@ -110,8 +140,7 @@ const cachedGetScoreHistory = cache(
     locale: string,
     headers?: Headers,
   ): Promise<ScoreHistoryData | null> => {
-    const session = await getSession({ headers });
-
+    const session = await getSession(headers);
     if (!session) {
       return null;
     }
@@ -128,51 +157,26 @@ const cachedGetScoreHistory = cache(
       return null;
     }
 
-    const rawData = currentResult.data;
-
-    const validData = rawData.filter((point) => point.correct + point.incorrect > 0);
-
+    const validData = filterValidData(currentResult.data);
     if (validData.length === 0) {
       return null;
     }
 
     const currentData = processScoreData(validData, period);
-
     const dataPoints: ScoreDataPoint[] = currentData.map((row) => ({
       date: row.date,
       label: formatLabel(row.date, period, locale),
       score: row.score,
     }));
 
-    const average = calculateAverage(currentData);
-
-    const previousRaw = previousResult.data ?? [];
-    const previousValid = previousRaw.filter((point) => point.correct + point.incorrect > 0);
-    const previousData = previousValid.length > 0 ? processScoreData(previousValid, period) : [];
-    const previousAverage = previousData.length > 0 ? calculateAverage(previousData) : null;
-
-    const { data: earlierData } = await safeAsync(() =>
-      prisma.dailyProgress.findFirst({
-        select: { id: true },
-        where: {
-          date: { lt: current.start },
-          OR: [{ correctAnswers: { gt: 0 } }, { incorrectAnswers: { gt: 0 } }],
-          userId,
-        },
-      }),
-    );
-
-    const hasPreviousPeriod = Boolean(earlierData);
-    const hasNextPeriod = offset > 0;
-
     return {
-      average,
+      average: calculateAverage(currentData),
       dataPoints,
-      hasNextPeriod,
-      hasPreviousPeriod,
+      hasNextPeriod: offset > 0,
+      hasPreviousPeriod: await hasEarlierScoreData(userId, current.start),
       periodEnd: current.end,
       periodStart: current.start,
-      previousAverage,
+      previousAverage: getPreviousAverage(previousResult.data, period),
     };
   },
 );

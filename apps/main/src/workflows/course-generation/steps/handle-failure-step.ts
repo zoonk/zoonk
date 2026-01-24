@@ -2,12 +2,10 @@ import { updateChapterGenerationStatus } from "@/data/chapters/update-chapter-ge
 import { updateAICourse } from "@/data/courses/update-ai-course";
 import { updateCourseSuggestionStatus } from "@/data/courses/update-course-suggestion-status";
 
-type HandleCourseFailureInput = {
+export async function handleCourseFailureStep(input: {
   courseId: number;
   courseSuggestionId: number;
-};
-
-export async function handleCourseFailureStep(input: HandleCourseFailureInput): Promise<void> {
+}): Promise<void> {
   "use step";
 
   await Promise.all([
@@ -19,11 +17,7 @@ export async function handleCourseFailureStep(input: HandleCourseFailureInput): 
   ]);
 }
 
-type HandleChapterFailureInput = {
-  chapterId: number;
-};
-
-export async function handleChapterFailureStep(input: HandleChapterFailureInput): Promise<void> {
+export async function handleChapterFailureStep(input: { chapterId: number }): Promise<void> {
   "use step";
 
   await updateChapterGenerationStatus({

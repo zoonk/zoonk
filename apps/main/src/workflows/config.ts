@@ -29,6 +29,6 @@ export const COURSE_STEPS = [
 
 export type CourseStepName = (typeof COURSE_STEPS)[number];
 
-// we also generate the first chapter as part of the course workflow
-// so the course generation is only complete after chapter workflow is done
+// We also generate the first chapter as part of the course workflow
+// So the course generation is only complete after chapter workflow is done
 export type CourseWorkflowStepName = CourseStepName | ChapterStepName;

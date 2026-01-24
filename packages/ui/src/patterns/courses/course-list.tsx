@@ -20,13 +20,15 @@ export type CourseListItem = {
   title: string;
 };
 
-type CourseListItemProps = {
+export function CourseListItemView({
+  course,
+  image,
+  linkComponent,
+}: {
   course: CourseListItem;
   image?: React.ReactNode;
   linkComponent: ItemProps["render"];
-};
-
-export function CourseListItemView({ course, image, linkComponent }: CourseListItemProps) {
+}) {
   return (
     <Item render={linkComponent}>
       {image ? (
@@ -59,6 +61,8 @@ export function CourseListGroup({ className, layout = "grid", ...props }: ItemGr
   );
 }
 
+const DEFAULT_LIST_COUNT = 5;
+
 export function CourseListSkeleton({
   count,
   layout = "list",
@@ -66,7 +70,7 @@ export function CourseListSkeleton({
   count?: number;
   layout?: ItemGroupProps["layout"];
 }) {
-  const defaultCount = layout === "list" ? 5 : 12;
+  const defaultCount = layout === "list" ? DEFAULT_LIST_COUNT : 12;
 
   return (
     <ItemGroup layout={layout}>

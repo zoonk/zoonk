@@ -1,6 +1,6 @@
 import "server-only";
 import { generateText, stepCountIs } from "ai";
-import { buildProviderOptions, type ReasoningEffort } from "../../../types";
+import { type ReasoningEffort, buildProviderOptions } from "../../../types";
 import { type QuizQuestion, quizTools } from "../_tools/quiz";
 import systemPrompt from "./activity-explanation-quiz.prompt.md";
 
@@ -24,7 +24,7 @@ export type ActivityExplanationQuizParams = {
   chapterTitle: string;
   courseTitle: string;
   language: string;
-  explanationSteps: Array<{ title: string; text: string }>;
+  explanationSteps: { title: string; text: string }[];
   model?: string;
   useFallback?: boolean;
   reasoningEffort?: ReasoningEffort;

@@ -5,7 +5,7 @@ import { toSlug } from "@zoonk/utils/string";
 import { beforeAll, describe, expect, test } from "vitest";
 import { createAICourse } from "./create-ai-course";
 
-describe("createAICourse", () => {
+describe(createAICourse, () => {
   let organizationId: number;
 
   beforeAll(async () => {
@@ -35,7 +35,7 @@ describe("createAICourse", () => {
     expect(course?.organizationId).toBe(organizationId);
     expect(course?.generationStatus).toBe("running");
     expect(course?.generationRunId).toBe(runId);
-    expect(course?.isPublished).toBe(true);
+    expect(course?.isPublished).toBeTruthy();
     expect(course?.title).toBe(title);
   });
 

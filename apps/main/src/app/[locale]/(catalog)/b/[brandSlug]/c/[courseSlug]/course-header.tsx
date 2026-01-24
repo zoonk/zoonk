@@ -1,4 +1,5 @@
 import { AIWarning } from "@/components/catalog/ai-warning";
+import { type CourseWithDetails } from "@/data/courses/get-course";
 import { Link } from "@/i18n/navigation";
 import { getCategories } from "@/lib/categories/category-server";
 import { Badge } from "@zoonk/ui/components/badge";
@@ -21,7 +22,6 @@ import {
 import { NotebookPenIcon } from "lucide-react";
 import { getLocale } from "next-intl/server";
 import Image from "next/image";
-import type { CourseWithDetails } from "@/data/courses/get-course";
 
 export async function CourseHeader({
   brandSlug,
@@ -32,7 +32,7 @@ export async function CourseHeader({
 }) {
   const locale = await getLocale();
   const categoryLabels = await getCategories({ locale });
-  const courseCategoryKeys = new Set(course.categories.map((c) => c.category));
+  const courseCategoryKeys = new Set(course.categories.map((item) => item.category));
 
   const displayCategories = categoryLabels.filter((cat) => courseCategoryKeys.has(cat.key));
 

@@ -1,13 +1,14 @@
 "use client";
 
 import {
-  getDefaultSortDirection,
-  getLeaderboardEntries,
   type LeaderboardEntry,
   type SortDirection,
   type SortKey,
+  getDefaultSortDirection,
+  getLeaderboardEntries,
   sortLeaderboardEntries,
 } from "@/lib/leaderboard";
+import { type TaskEvalResults } from "@/lib/types";
 import {
   Table,
   TableBody,
@@ -19,14 +20,8 @@ import {
 import Link from "next/link";
 import { useState } from "react";
 import { LeaderboardExport } from "./leaderboard-export";
-import type { TaskEvalResults } from "@/lib/types";
 
-type LeaderboardProps = {
-  taskId: string;
-  results: TaskEvalResults[];
-};
-
-export function Leaderboard({ taskId, results }: LeaderboardProps) {
+export function Leaderboard({ taskId, results }: { taskId: string; results: TaskEvalResults[] }) {
   const [sortKey, setSortKey] = useState<SortKey>("averageScore");
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
 

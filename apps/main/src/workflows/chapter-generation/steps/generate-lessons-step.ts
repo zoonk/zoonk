@@ -1,6 +1,6 @@
 import { generateChapterLessons } from "@zoonk/ai/tasks/chapters/lessons";
 import { streamStatus } from "../stream-status";
-import type { ChapterContext } from "./get-chapter-step";
+import { type ChapterContext } from "./get-chapter-step";
 
 export type GeneratedLesson = {
   title: string;

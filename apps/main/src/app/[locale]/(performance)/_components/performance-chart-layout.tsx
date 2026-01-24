@@ -1,7 +1,7 @@
 import { getExtracted } from "next-intl/server";
+import { type ReactNode } from "react";
 import { PeriodNavigation } from "./period-navigation";
 import { PeriodTabs } from "./period-tabs";
-import type { ReactNode } from "react";
 
 export async function PerformanceChartLayout({
   children,

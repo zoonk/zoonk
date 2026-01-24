@@ -3,7 +3,7 @@ import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { describe, expect, test } from "vitest";
 import { listCourseCategories } from "./list-course-categories";
 
-describe("listCourseCategories", () => {
+describe(listCourseCategories, () => {
   test("returns empty array when course has no categories", async () => {
     const organization = await organizationFixture();
     const course = await courseFixture({ organizationId: organization.id });
@@ -82,7 +82,7 @@ describe("listCourseCategories", () => {
 
     expect(result.error).toBeNull();
     expect(result.data?.length).toBe(2);
-    expect(result.data?.every((c) => c.courseId === course1.id)).toBe(true);
+    expect(result.data?.every((category) => category.courseId === course1.id)).toBeTruthy();
   });
 
   test("returns empty array for non-existent course", async () => {

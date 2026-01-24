@@ -1,14 +1,12 @@
 import { updateAICourse } from "@/data/courses/update-ai-course";
 import { streamStatus } from "../stream-status";
-import type { CourseContext } from "../types";
+import { type CourseContext } from "../types";
 
-type UpdateInput = {
+export async function updateCourseStep(input: {
   course: CourseContext;
   description: string;
   imageUrl: string | null;
-};
-
-export async function updateCourseStep(input: UpdateInput): Promise<void> {
+}): Promise<void> {
   "use step";
 
   await streamStatus({ status: "started", step: "updateCourse" });

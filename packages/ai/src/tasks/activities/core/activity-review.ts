@@ -1,7 +1,12 @@
 import "server-only";
-import { generateText, Output } from "ai";
+import { Output, generateText } from "ai";
 import { z } from "zod";
-import { buildProviderOptions, type ReasoningEffort } from "../../../types";
+import { type ReasoningEffort, buildProviderOptions } from "../../../types";
+import {
+  ACTIVITY_OPTIONS_COUNT,
+  ACTIVITY_REVIEW_MAX_QUESTIONS,
+  ACTIVITY_REVIEW_MIN_QUESTIONS,
+} from "../constants";
 import systemPrompt from "./activity-review.prompt.md";
 
 const DEFAULT_MODEL = process.env.AI_MODEL_ACTIVITY_REVIEW ?? "anthropic/claude-opus-4.5";
@@ -21,12 +26,15 @@ const optionSchema = z.object({
 
 const questionSchema = z.object({
   context: z.string(),
-  options: z.array(optionSchema).length(4),
+  options: z.array(optionSchema).length(ACTIVITY_OPTIONS_COUNT),
   question: z.string(),
 });
 
 const schema = z.object({
-  questions: z.array(questionSchema).min(15).max(20),
+  questions: z
+    .array(questionSchema)
+    .min(ACTIVITY_REVIEW_MIN_QUESTIONS)
+    .max(ACTIVITY_REVIEW_MAX_QUESTIONS),
 });
 
 export type ActivityReviewSchema = z.infer<typeof schema>;
@@ -37,16 +45,16 @@ export type ActivityReviewParams = {
   chapterTitle: string;
   courseTitle: string;
   language: string;
-  backgroundSteps: Array<{ title: string; text: string }>;
-  explanationSteps: Array<{ title: string; text: string }>;
-  mechanicsSteps: Array<{ title: string; text: string }>;
-  examplesSteps: Array<{ title: string; text: string }>;
+  backgroundSteps: { title: string; text: string }[];
+  explanationSteps: { title: string; text: string }[];
+  mechanicsSteps: { title: string; text: string }[];
+  examplesSteps: { title: string; text: string }[];
   model?: string;
   useFallback?: boolean;
   reasoningEffort?: ReasoningEffort;
 };
 
-function formatSteps(steps: Array<{ title: string; text: string }>): string {
+function formatSteps(steps: { title: string; text: string }[]): string {
   return steps.map((step, index) => `${index + 1}. ${step.title}: ${step.text}`).join("\n");
 }
 

@@ -6,7 +6,7 @@ import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { describe, expect, test } from "vitest";
 import { deleteAlternativeTitles } from "./delete-alternative-titles";
 
-describe("deleteAlternativeTitles", () => {
+describe(deleteAlternativeTitles, () => {
   test("deletes specific alternative titles from a course", async () => {
     const org = await organizationFixture();
     const course = await courseFixture({ organizationId: org.id });

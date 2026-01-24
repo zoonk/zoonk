@@ -399,7 +399,7 @@ describe("admins", () => {
 
     expect(chapters.length).toBe(5);
 
-    const positions = chapters.map((c) => c.position);
+    const positions = chapters.map((chapter) => chapter.position);
     const uniquePositions = new Set(positions);
     expect(uniquePositions.size).toBe(5);
 
@@ -425,7 +425,7 @@ describe("admins", () => {
       });
 
       expect(result.error).toBeNull();
-      expect(result.data?.isPublished).toBe(true);
+      expect(result.data?.isPublished).toBeTruthy();
     });
 
     test("chapter is unpublished when course is published", async () => {
@@ -445,7 +445,7 @@ describe("admins", () => {
       });
 
       expect(result.error).toBeNull();
-      expect(result.data?.isPublished).toBe(false);
+      expect(result.data?.isPublished).toBeFalsy();
     });
   });
 });

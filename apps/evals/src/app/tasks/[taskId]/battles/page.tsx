@@ -17,11 +17,7 @@ import {
 import { notFound } from "next/navigation";
 import { BattleMatchupList } from "./battle-matchup-list";
 
-type BattlesPageProps = {
-  params: Promise<{ taskId: string }>;
-};
-
-export default async function BattlesPage({ params }: BattlesPageProps) {
+export default async function BattlesPage({ params }: { params: Promise<{ taskId: string }> }) {
   const { taskId } = await params;
   const task = getTaskById(taskId);
 

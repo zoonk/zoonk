@@ -4,7 +4,7 @@ import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, describe, expect, test } from "vitest";
 import { addCourseCategories } from "./add-course-categories";
 
-describe("addCourseCategories", () => {
+describe(addCourseCategories, () => {
   let org: Awaited<ReturnType<typeof organizationFixture>>;
 
   beforeAll(async () => {
@@ -27,7 +27,9 @@ describe("addCourseCategories", () => {
     });
 
     expect(courseCategories).toHaveLength(2);
-    expect(courseCategories.map((c) => c.category)).toEqual(expect.arrayContaining(categories));
+    expect(courseCategories.map((item) => item.category)).toEqual(
+      expect.arrayContaining(categories),
+    );
   });
 
   test("skips duplicates", async () => {

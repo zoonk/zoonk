@@ -3,7 +3,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
-import { expect, type Page, test } from "./fixtures";
+import { type Page, expect, test } from "./fixtures";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 

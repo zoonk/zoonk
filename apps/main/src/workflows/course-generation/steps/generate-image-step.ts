@@ -1,6 +1,6 @@
 import { generateCourseImage } from "@zoonk/core/courses/image";
 import { streamStatus } from "../stream-status";
-import type { CourseContext } from "../types";
+import { type CourseContext } from "../types";
 
 export async function generateImageStep(course: CourseContext): Promise<string | null> {
   "use step";

@@ -9,20 +9,6 @@ type KeyboardModifiers = {
 
 type ModifierMode = "all" | "any" | "none";
 
-type KeyboardOptions = {
-  /**
-   * How to match modifiers:
-   * - "all": ALL specified modifiers must be pressed (AND) — default
-   * - "any": ANY specified modifier triggers (OR)
-   * - "none": NO modifier keys can be pressed
-   */
-  mode?: ModifierMode;
-  /**
-   * Modifiers to check. If undefined/empty, modifiers are ignored (just the key matters).
-   */
-  modifiers?: KeyboardModifiers;
-};
-
 function hasAnyModifier(event: KeyboardEvent): boolean {
   return event.metaKey || event.ctrlKey || event.shiftKey || event.altKey;
 }
@@ -106,7 +92,19 @@ function checkModifiers(
 export function useKeyboardCallback(
   key: string,
   callback: () => void,
-  options: KeyboardOptions = {},
+  options: {
+    /**
+     * How to match modifiers:
+     * - "all": ALL specified modifiers must be pressed (AND) — default
+     * - "any": ANY specified modifier triggers (OR)
+     * - "none": NO modifier keys can be pressed
+     */
+    mode?: ModifierMode;
+    /**
+     * Modifiers to check. If undefined/empty, modifiers are ignored (just the key matters).
+     */
+    modifiers?: KeyboardModifiers;
+  } = {},
 ) {
   const { mode = "all", modifiers } = options;
   const { altKey, ctrlKey, metaKey, shiftKey } = modifiers ?? {};
@@ -129,7 +127,7 @@ export function useKeyboardCallback(
       }
     }
 
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    globalThis.addEventListener("keydown", handleKeyDown);
+    return () => globalThis.removeEventListener("keydown", handleKeyDown);
   }, [key, mode, altKey, ctrlKey, metaKey, shiftKey]);
 }

@@ -1,10 +1,5 @@
-import { getModelStatus, type ModelStatus } from "@/lib/utils";
+import { type ModelStatus, getModelStatus } from "@/lib/utils";
 import { Badge } from "@zoonk/ui/components/badge";
-
-type ModelStatusBadgeProps = {
-  taskId: string;
-  modelId: string;
-};
 
 const labelMap: Record<ModelStatus, string> = {
   completed: "Evaluated",
@@ -20,7 +15,7 @@ const variantMap: Record<ModelStatus, "default" | "secondary" | "destructive" | 
   outputsReady: "secondary",
 };
 
-export async function ModelStatusBadge({ taskId, modelId }: ModelStatusBadgeProps) {
+export async function ModelStatusBadge({ taskId, modelId }: { taskId: string; modelId: string }) {
   const status = await getModelStatus(taskId, modelId);
 
   return <Badge variant={variantMap[status]}>{labelMap[status]}</Badge>;

@@ -1,7 +1,7 @@
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
 import { cn } from "@zoonk/ui/lib/utils";
-import { cva, type VariantProps } from "class-variance-authority";
+import { type VariantProps, cva } from "class-variance-authority";
 import { ChevronRightIcon } from "lucide-react";
 
 function FeatureCardSectionTitle({ children, className, ...props }: React.ComponentProps<"h2">) {

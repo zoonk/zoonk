@@ -4,7 +4,7 @@ import { toSlug } from "@zoonk/utils/string";
 import { describe, expect, test } from "vitest";
 import { updateCourseSuggestionStatus } from "./update-course-suggestion-status";
 
-describe("updateCourseSuggestionStatus", () => {
+describe(updateCourseSuggestionStatus, () => {
   test("updates generation status", async () => {
     const title = `test-course-${randomUUID()}`;
     const suggestion = await prisma.courseSuggestion.create({

@@ -1,10 +1,10 @@
+import { type Task } from "@/lib/types";
 import {
-  generateStepVisuals,
   type StepVisualParams,
   type StepVisualSchema,
+  generateStepVisuals,
 } from "@zoonk/ai/tasks/steps/visual";
 import { TEST_CASES } from "./test-cases";
-import type { Task } from "@/lib/types";
 
 export const stepVisualTask: Task<StepVisualParams, StepVisualSchema> = {
   description:

@@ -1,4 +1,4 @@
-import type { NextConfig } from "next";
+import { type NextConfig } from "next";
 
 const CACHE_IMAGE_DAYS = 30;
 

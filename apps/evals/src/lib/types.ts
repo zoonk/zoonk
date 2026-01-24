@@ -1,6 +1,6 @@
+import { type ReasoningEffort } from "@zoonk/ai/types";
+import { type LanguageModelUsage } from "ai";
 import z from "zod";
-import type { ReasoningEffort } from "@zoonk/ai/types";
-import type { LanguageModelUsage } from "ai";
 
 const MIN_SCORE = 6;
 
@@ -50,7 +50,7 @@ export type Task<TInput = unknown, TOutput = unknown> = {
   description: string;
   testCases: TestCase[];
   // Using method signature instead of property signature makes this bivariant,
-  // allowing Task<SpecificInput> to be assignable to Task<unknown>
+  // Allowing Task<SpecificInput> to be assignable to Task<unknown>
   generate(
     input: TInput & {
       model: string;

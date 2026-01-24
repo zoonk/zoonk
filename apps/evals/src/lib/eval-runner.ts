@@ -3,14 +3,13 @@ import path from "node:path";
 import { cache } from "react";
 import { loadModelOutputs } from "./output-loader";
 import { generateScore } from "./score";
-import type {
-  EvalResult,
-  OutputEntry,
-  ScoredResult,
-  ScoredTaskResults,
-  Task,
-  TaskEvalResults,
-  TestCase,
+import {
+  type OutputEntry,
+  type ScoredResult,
+  type ScoredTaskResults,
+  type Task,
+  type TaskEvalResults,
+  type TestCase,
 } from "./types";
 
 const EVAL_RESULTS_DIR = path.join(process.cwd(), "eval-results");
@@ -29,7 +28,7 @@ function getResultsFilePath(taskId: string, modelId: string): string {
 async function loadExistingScoredResults(taskId: string, modelId: string): Promise<ScoredResult[]> {
   const filePath = getResultsFilePath(taskId, modelId);
   try {
-    const data = await fs.readFile(filePath, "utf-8");
+    const data = await fs.readFile(filePath, "utf8");
     const parsed = JSON.parse(data) as ScoredTaskResults;
     return parsed.results;
   } catch {
@@ -51,10 +50,10 @@ async function saveScoredResults(taskId: string, modelId: string, results: Score
 }
 
 function findTestCaseForOutput(task: Task, testCaseId: string): TestCase | undefined {
-  // testCaseId format is "{baseId}-{runNumber}"
+  // TestCaseId format is "{baseId}-{runNumber}"
   const lastDashIndex = testCaseId.lastIndexOf("-");
   const baseId = testCaseId.substring(0, lastDashIndex);
-  return task.testCases.find((tc) => tc.id === baseId);
+  return task.testCases.find((testCase) => testCase.id === baseId);
 }
 
 async function scoreOutput(output: OutputEntry, testCase: TestCase): Promise<ScoredResult> {
@@ -81,7 +80,7 @@ async function scoreOutput(output: OutputEntry, testCase: TestCase): Promise<Sco
 }
 
 function isAlreadyScored(existingResults: ScoredResult[], testCaseId: string): boolean {
-  return existingResults.some((r) => r.testCase.id === testCaseId);
+  return existingResults.some((result) => result.testCase.id === testCaseId);
 }
 
 export async function runEval(task: Task, modelId: string): Promise<TaskEvalResults> {
@@ -149,23 +148,21 @@ function combineOutputsAndResults(
   outputs: OutputEntry[],
   scoredResults: ScoredResult[],
 ): TaskEvalResults {
-  const results: EvalResult[] = [];
-
-  for (const scored of scoredResults) {
-    const output = outputs.find((o) => o.testCaseId === scored.testCase.id);
+  const results = scoredResults.flatMap((scored) => {
+    const output = outputs.find((entry) => entry.testCaseId === scored.testCase.id);
     if (!output) {
-      continue;
+      return [];
     }
 
-    results.push({
+    return {
       duration: output.duration,
       inputTokens: output.inputTokens,
       output: output.output,
       outputTokens: output.outputTokens,
       steps: scored.steps,
       testCase: scored.testCase,
-    });
-  }
+    };
+  });
 
   return {
     modelId,
@@ -186,23 +183,21 @@ export const getTaskResults = cache(
       return null;
     }
 
-    const results: EvalResult[] = [];
-
-    for (const scored of scoredResults) {
-      const output = modelOutputs.outputs.find((o) => o.testCaseId === scored.testCase.id);
+    const results = scoredResults.flatMap((scored) => {
+      const output = modelOutputs.outputs.find((entry) => entry.testCaseId === scored.testCase.id);
       if (!output) {
-        continue;
+        return [];
       }
 
-      results.push({
+      return {
         duration: output.duration,
         inputTokens: output.inputTokens,
         output: output.output,
         outputTokens: output.outputTokens,
         steps: scored.steps,
         testCase: scored.testCase,
-      });
-    }
+      };
+    });
 
     return {
       modelId,

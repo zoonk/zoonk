@@ -1,5 +1,6 @@
 "use client";
 
+import { type LeaderboardEntry } from "@/lib/leaderboard";
 import { Button } from "@zoonk/ui/components/button";
 import {
   DropdownMenu,
@@ -8,14 +9,14 @@ import {
   DropdownMenuTrigger,
 } from "@zoonk/ui/components/dropdown-menu";
 import { Download } from "lucide-react";
-import type { LeaderboardEntry } from "@/lib/leaderboard";
 
-type LeaderboardExportProps = {
+export function LeaderboardExport({
+  taskId,
+  entries,
+}: {
   taskId: string;
   entries: LeaderboardEntry[];
-};
-
-export function LeaderboardExport({ taskId, entries }: LeaderboardExportProps) {
+}) {
   function exportAsMarkdown(anonymous: boolean) {
     let markdown = "";
 

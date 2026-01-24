@@ -1,5 +1,6 @@
 "use client";
 
+import { type CourseWithOrg } from "@/data/courses/list-courses";
 import { ClientLink } from "@/i18n/client-link";
 import { useInfiniteList } from "@zoonk/ui/hooks/infinite-list";
 import {
@@ -8,12 +9,11 @@ import {
   CourseListItemView,
 } from "@zoonk/ui/patterns/courses/list";
 import { EmptyView } from "@zoonk/ui/patterns/empty";
+import { type CourseCategory } from "@zoonk/utils/categories";
 import { Loader2Icon, NotebookPenIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import Image from "next/image";
 import { loadMoreCourses } from "./actions";
-import type { CourseWithOrg } from "@/data/courses/list-courses";
-import type { CourseCategory } from "@zoonk/utils/categories";
 
 function toCourseListItem(course: CourseWithOrg): CourseListItem {
   return {

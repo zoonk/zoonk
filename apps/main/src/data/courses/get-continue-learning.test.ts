@@ -7,7 +7,7 @@ import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeAll, describe, expect, test } from "vitest";
-import { getContinueLearning, MAX_CONTINUE_LEARNING_ITEMS } from "./get-continue-learning";
+import { MAX_CONTINUE_LEARNING_ITEMS, getContinueLearning } from "./get-continue-learning";
 
 async function createCourseWithActivity(organizationId: number) {
   const course = await courseFixture({
@@ -41,7 +41,7 @@ async function createCourseWithActivity(organizationId: number) {
 
 describe("unauthenticated users", () => {
   test("returns empty array", async () => {
-    const result = await getContinueLearning({ headers: new Headers() });
+    const result = await getContinueLearning(new Headers());
     expect(result).toEqual([]);
   });
 });
@@ -57,7 +57,7 @@ describe("authenticated users", () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);
 
-    const result = await getContinueLearning({ headers });
+    const result = await getContinueLearning(headers);
     expect(result).toEqual([]);
   });
 
@@ -72,7 +72,7 @@ describe("authenticated users", () => {
       userId: Number(user.id),
     });
 
-    const result = await getContinueLearning({ headers });
+    const result = await getContinueLearning(headers);
 
     expect(result).toHaveLength(1);
     expect(result[0]?.course.id).toBe(course.id);
@@ -100,14 +100,14 @@ describe("authenticated users", () => {
       })),
     });
 
-    const result = await getContinueLearning({ headers });
+    const result = await getContinueLearning(headers);
 
     expect(result).toHaveLength(MAX_CONTINUE_LEARNING_ITEMS);
 
-    const resultCourseIds = result.map((r) => r.course.id);
+    const resultCourseIds = result.map((item) => item.course.id);
     const expectedIds = courseData
       .slice(1)
-      .map((d) => d.course.id)
+      .map((data) => data.course.id)
       .toReversed();
     expect(resultCourseIds).toEqual(expectedIds);
   });
@@ -168,7 +168,7 @@ describe("authenticated users", () => {
       userId: Number(user.id),
     });
 
-    const result = await getContinueLearning({ headers });
+    const result = await getContinueLearning(headers);
 
     expect(result).toHaveLength(1);
     expect(result[0]?.activity.id).toBe(activity2.id);
@@ -237,7 +237,7 @@ describe("authenticated users", () => {
       userId: Number(user.id),
     });
 
-    const result = await getContinueLearning({ headers });
+    const result = await getContinueLearning(headers);
 
     expect(result).toHaveLength(1);
     expect(result[0]?.activity.id).toBe(activity2.id);

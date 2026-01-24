@@ -1,5 +1,6 @@
 "use client";
 
+import { type ChapterWithLessons } from "@/data/chapters/list-course-chapters";
 import { Input } from "@zoonk/ui/components/input";
 import { normalizeString } from "@zoonk/utils/string";
 import { SearchIcon } from "lucide-react";
@@ -7,7 +8,6 @@ import { useExtracted } from "next-intl";
 import { useQueryState } from "nuqs";
 import { useMemo, useState } from "react";
 import { ChapterList } from "./chapter-list";
-import type { ChapterWithLessons } from "@/data/chapters/list-course-chapters";
 
 function filterChapters(chapters: ChapterWithLessons[], query: string) {
   const filtered: ChapterWithLessons[] = [];
@@ -15,7 +15,9 @@ function filterChapters(chapters: ChapterWithLessons[], query: string) {
 
   for (const chapter of chapters) {
     const chapterMatches = normalizeString(chapter.title).includes(query);
-    const matchingLessons = chapter.lessons.filter((l) => normalizeString(l.title).includes(query));
+    const matchingLessons = chapter.lessons.filter((lesson) =>
+      normalizeString(lesson.title).includes(query),
+    );
 
     if (chapterMatches || matchingLessons.length > 0) {
       filtered.push({
@@ -67,7 +69,7 @@ export function ChapterSearchContainer({
         <Input
           aria-label={t("Search chapters and lessons")}
           className="border-border/40 placeholder:text-muted-foreground/50 focus-visible:border-border h-10 bg-transparent pl-9 focus-visible:ring-0"
-          onChange={(e) => setSearch(e.target.value || null)}
+          onChange={(event) => setSearch(event.target.value || null)}
           placeholder={t("Search chapters and lessons...")}
           type="search"
           value={search}

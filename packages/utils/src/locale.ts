@@ -4,7 +4,7 @@ export const DEFAULT_LOCALE = "en";
 export type SupportedLocale = (typeof SUPPORTED_LOCALES)[number];
 
 export function isValidLocale(value: string): value is SupportedLocale {
-  return SUPPORTED_LOCALES.some((v) => v === value);
+  return SUPPORTED_LOCALES.some((locale) => locale === value);
 }
 
 /**

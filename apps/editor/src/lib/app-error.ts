@@ -14,8 +14,8 @@ export const ErrorCode = {
   invalidJsonFormat: "invalidJsonFormat",
   invalidLessonFormat: "invalidLessonFormat",
   lessonNotFound: "lessonNotFound",
-  organizationNotFound: "organizationNotFound",
   orgMismatch: "orgMismatch",
+  organizationNotFound: "organizationNotFound",
   unauthorized: "unauthorized",
 } as const;
 

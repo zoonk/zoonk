@@ -2,12 +2,10 @@ import { updateAICourse } from "@/data/courses/update-ai-course";
 import { updateCourseSuggestionStatus } from "@/data/courses/update-course-suggestion-status";
 import { streamStatus } from "../stream-status";
 
-type CompleteCourseSetupInput = {
+export async function completeCourseSetupStep(input: {
   courseSuggestionId: number;
   courseId: number;
-};
-
-export async function completeCourseSetupStep(input: CompleteCourseSetupInput): Promise<void> {
+}): Promise<void> {
   "use step";
 
   await streamStatus({ status: "started", step: "completeCourseSetup" });

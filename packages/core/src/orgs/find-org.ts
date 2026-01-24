@@ -1,4 +1,4 @@
-import type { AuthOrganization, Organization } from "../types";
+import { type AuthOrganization, type Organization } from "../types";
 
 export function findOrganizationById(
   orgs: Organization[] | AuthOrganization[],

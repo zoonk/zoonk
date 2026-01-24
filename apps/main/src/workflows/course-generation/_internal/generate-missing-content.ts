@@ -3,7 +3,7 @@ import { generateCategoriesStep } from "../steps/generate-categories-step";
 import { generateChaptersStep } from "../steps/generate-chapters-step";
 import { generateDescriptionStep } from "../steps/generate-description-step";
 import { generateImageStep } from "../steps/generate-image-step";
-import type { CourseContext, ExistingCourseContent, GeneratedChapter } from "../types";
+import { type CourseContext, type ExistingCourseContent, type GeneratedChapter } from "../types";
 
 export type GeneratedContent = {
   description: string;

@@ -30,11 +30,11 @@ export async function organizationFixture(attrs?: Partial<Organization>) {
   return org;
 }
 
-interface MemberFixtureOptions extends Partial<Member> {
-  orgKind?: Organization["kind"];
-}
-
-export async function memberFixture(attrs?: MemberFixtureOptions) {
+export async function memberFixture(
+  attrs?: {
+    orgKind?: Organization["kind"];
+  } & Partial<Member>,
+) {
   const { orgKind, ...memberAttrs } = attrs || {};
   const [user, org] = await Promise.all([userFixture(), organizationFixture({ kind: orgKind })]);
 

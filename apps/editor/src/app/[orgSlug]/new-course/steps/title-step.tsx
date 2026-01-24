@@ -30,7 +30,7 @@ export function TitleStep({
       <WizardInput
         autoFocus
         id={titleId}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={(event) => onChange(event.target.value)}
         placeholder={t("course title")}
         value={value}
       />

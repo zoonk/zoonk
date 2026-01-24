@@ -1,6 +1,8 @@
 import { setTimeout } from "node:timers/promises";
 import { prisma } from "@zoonk/db";
 
+const RETRY_DELAY_MS = 500;
+
 /**
  * Get the latest OTP for an email from the Verification table.
  * Only works when emailOTP plugin is configured with `storeOTP: "plain"`.
@@ -29,7 +31,7 @@ export async function getOTPForEmail(email: string, maxRetries = 10): Promise<st
     }
 
     // eslint-disable-next-line no-await-in-loop -- Intentional delay between retries
-    await setTimeout(500);
+    await setTimeout(RETRY_DELAY_MS);
   }
 
   return null;

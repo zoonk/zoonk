@@ -11,9 +11,7 @@ function createMockFile(content: string, name = "chapters.json", type = "applica
   return new File([content], name, { type });
 }
 
-function createImportFile(
-  chapters: Array<{ description: string; slug?: string; title: string }>,
-): File {
+function createImportFile(chapters: { description: string; slug?: string; title: string }[]): File {
   return createMockFile(JSON.stringify({ chapters }));
 }
 
@@ -616,7 +614,7 @@ describe("admins", () => {
       });
 
       expect(result.error).toBeNull();
-      expect(result.data?.[0]?.isPublished).toBe(true);
+      expect(result.data?.[0]?.isPublished).toBeTruthy();
     });
 
     test("imported chapters are unpublished when course is published", async () => {
@@ -634,7 +632,7 @@ describe("admins", () => {
       });
 
       expect(result.error).toBeNull();
-      expect(result.data?.[0]?.isPublished).toBe(false);
+      expect(result.data?.[0]?.isPublished).toBeFalsy();
     });
 
     test("existing chapter becomes published when imported to unpublished course", async () => {
@@ -668,7 +666,7 @@ describe("admins", () => {
         where: { id: existingChapter.id },
       });
 
-      expect(updatedChapter?.isPublished).toBe(true);
+      expect(updatedChapter?.isPublished).toBeTruthy();
     });
   });
 });

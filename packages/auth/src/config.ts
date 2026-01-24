@@ -3,19 +3,19 @@ import { getDevTrustedOrigins, getVercelTrustedOrigins } from "@zoonk/utils/url"
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { nextCookies } from "better-auth/next-js";
 import { admin as adminPlugin, emailOTP, oneTimeToken, organization } from "better-auth/plugins";
+import { type BetterAuthOptions } from "better-auth/types";
 import { ac, admin, member, owner } from "./permissions";
 import { sendVerificationOTP } from "./plugins/otp";
 import { stripePlugin } from "./plugins/stripe";
 import { trustedOriginPlugin } from "./plugins/trusted-origin";
 import { appleProvider } from "./providers/apple";
 import { googleProvider } from "./providers/google";
-import type { BetterAuthOptions } from "better-auth/types";
 
 const SESSION_EXPIRES_IN_DAYS = 30;
 const COOKIE_CACHE_MINUTES = 60;
 
 // We don't want to limit the number of memberships or organizations
-// so we use the maximum safe integer because Better Auth doesn't support infinity.
+// So we use the maximum safe integer because Better Auth doesn't support infinity.
 const AUTH_MEMBERSHIP_LIMIT = Number.MAX_SAFE_INTEGER;
 const AUTH_ORGANIZATION_LIMIT = Number.MAX_SAFE_INTEGER;
 
@@ -55,8 +55,8 @@ export const baseAuthPlugins = [
   adminPlugin(),
   organization({
     ac,
-    // temporarily disable organization creation
-    // we'll support this in the future
+    // Temporarily disable organization creation
+    // We'll support this in the future
     allowUserToCreateOrganization: false,
     membershipLimit: AUTH_MEMBERSHIP_LIMIT,
     organizationLimit: AUTH_ORGANIZATION_LIMIT,
@@ -82,7 +82,7 @@ export const fullPlugins = [
   }),
   stripePlugin(),
   trustedOriginPlugin(),
-  // nextCookies should be the last plugin in the array
+  // NextCookies should be the last plugin in the array
   nextCookies(),
 ] as const;
 

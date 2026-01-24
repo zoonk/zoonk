@@ -1,4 +1,4 @@
-import type { GenerationStatus } from "@zoonk/db";
+import { type GenerationStatus } from "@zoonk/db";
 
 export type ExistingCourseContent = {
   description: string | null;

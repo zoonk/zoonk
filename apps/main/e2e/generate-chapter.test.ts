@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
+import { type Page, type Route } from "@zoonk/e2e/fixtures";
 import { expect, test } from "./fixtures";
-import type { Page, Route } from "@zoonk/e2e/fixtures";
 
 /**
  * Test Architecture for Chapter Generation Page
@@ -21,14 +21,14 @@ const TEST_USER_EMAIL = "e2e-new@zoonk.test";
 
 type MockApiOptions = {
   triggerResponse?: { runId?: string; error?: string; status?: number };
-  streamMessages?: Array<{ step: string; status: string }>;
+  streamMessages?: { step: string; status: string }[];
   streamError?: boolean;
 };
 
 /**
  * Creates a mock SSE stream response from an array of messages.
  */
-function createSSEStream(messages: Array<{ step: string; status: string }>): string {
+function createSSEStream(messages: { step: string; status: string }[]): string {
   return messages.map((msg) => `data: ${JSON.stringify(msg)}\n\n`).join("");
 }
 

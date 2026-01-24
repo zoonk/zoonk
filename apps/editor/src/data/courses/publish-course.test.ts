@@ -79,7 +79,7 @@ describe("admins", () => {
     });
 
     expect(result.error).toBeNull();
-    expect(result.data?.isPublished).toBe(true);
+    expect(result.data?.isPublished).toBeTruthy();
   });
 
   test("unpublishes a published course", async () => {
@@ -95,7 +95,7 @@ describe("admins", () => {
     });
 
     expect(result.error).toBeNull();
-    expect(result.data?.isPublished).toBe(false);
+    expect(result.data?.isPublished).toBeFalsy();
   });
 
   test("returns Forbidden for course in different organization", async () => {
@@ -119,6 +119,6 @@ describe("admins", () => {
       where: { id: course.id },
     });
 
-    expect(unchangedCourse?.isPublished).toBe(false);
+    expect(unchangedCourse?.isPublished).toBeFalsy();
   });
 });

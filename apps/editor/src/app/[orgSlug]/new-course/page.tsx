@@ -1,8 +1,8 @@
 import { Wizard } from "@zoonk/ui/components/wizard";
+import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
 import { WizardView } from "./wizard-view";
-import type { Metadata } from "next";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getExtracted();

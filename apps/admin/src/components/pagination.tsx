@@ -8,14 +8,6 @@ import {
   PaginationPrevious,
 } from "@zoonk/ui/components/pagination";
 
-type AdminPaginationProps = {
-  basePath: string;
-  page: number;
-  limit: number;
-  totalPages: number;
-  search?: string;
-};
-
 function buildPageUrl(
   basePath: string,
   pageNumber: number,
@@ -54,7 +46,13 @@ export function AdminPagination({
   limit,
   totalPages,
   search,
-}: AdminPaginationProps) {
+}: {
+  basePath: string;
+  page: number;
+  limit: number;
+  totalPages: number;
+  search?: string;
+}) {
   if (totalPages <= 1) {
     return null;
   }

@@ -4,11 +4,11 @@ import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
 import {
+  type HistoryPeriod,
   aggregateByMonth,
   aggregateByWeek,
   calculateDateRanges,
   formatLabel,
-  type HistoryPeriod,
 } from "./_utils";
 
 export type EnergyPeriod = HistoryPeriod;
@@ -41,31 +41,29 @@ const DAILY_DECAY = 1;
 
 type RawDataPoint = { date: Date; energy: number };
 
-function fillGapsWithDecay(dataPoints: RawDataPoint[]): RawDataPoint[] {
-  const first = dataPoints[0];
-  const last = dataPoints.at(-1);
-  if (!(first && last)) {
-    return [];
+function buildDateEnergyMap(dataPoints: RawDataPoint[]): Map<string, number> {
+  const map = new Map<string, number>();
+  for (const point of dataPoints) {
+    map.set(point.date.toISOString().substring(0, 10), point.energy);
   }
+  return map;
+}
 
-  // Sort data points by date
-  const sorted = [...dataPoints].toSorted((a, b) => a.date.getTime() - b.date.getTime());
-
-  // Create a map of existing data points by date (YYYY-MM-DD)
-  const dataMap = new Map<string, number>();
-  for (const point of sorted) {
-    const key = point.date.toISOString().substring(0, 10);
-    dataMap.set(key, point.energy);
+function getDateBounds(sorted: RawDataPoint[]): { firstDate: Date; lastDate: Date } | null {
+  const first = sorted[0];
+  const last = sorted.at(-1);
+  if (!first || !last) {
+    return null;
   }
+  return { firstDate: first.date, lastDate: last.date };
+}
 
+function fillDateRange(
+  firstDate: Date,
+  lastDate: Date,
+  dataMap: Map<string, number>,
+): RawDataPoint[] {
   const result: RawDataPoint[] = [];
-  const firstSorted = sorted[0];
-  const lastSorted = sorted.at(-1);
-  if (!(firstSorted && lastSorted)) {
-    return [];
-  }
-  const firstDate = firstSorted.date;
-  const lastDate = lastSorted.date;
   const current = new Date(firstDate);
   let previousEnergy: number | null = null;
 
@@ -88,17 +86,32 @@ function fillGapsWithDecay(dataPoints: RawDataPoint[]): RawDataPoint[] {
   return result;
 }
 
+function fillGapsWithDecay(dataPoints: RawDataPoint[]): RawDataPoint[] {
+  if (dataPoints.length === 0) {
+    return [];
+  }
+
+  const sorted = [...dataPoints].toSorted((a, b) => a.date.getTime() - b.date.getTime());
+  const bounds = getDateBounds(sorted);
+  if (!bounds) {
+    return [];
+  }
+
+  const dataMap = buildDateEnergyMap(sorted);
+  return fillDateRange(bounds.firstDate, bounds.lastDate, dataMap);
+}
+
 function aggregateEnergyByWeek(dataPoints: RawDataPoint[]): RawDataPoint[] {
-  return aggregateByWeek(dataPoints, (p) => p.energy, "average").map((v) => ({
-    date: v.date,
-    energy: v.value,
+  return aggregateByWeek(dataPoints, (point) => point.energy, "average").map((item) => ({
+    date: item.date,
+    energy: item.value,
   }));
 }
 
 function aggregateEnergyByMonth(dataPoints: RawDataPoint[]): RawDataPoint[] {
-  return aggregateByMonth(dataPoints, (p) => p.energy, "average").map((v) => ({
-    date: v.date,
-    energy: v.value,
+  return aggregateByMonth(dataPoints, (point) => point.energy, "average").map((item) => ({
+    date: item.date,
+    energy: item.value,
   }));
 }
 
@@ -109,6 +122,27 @@ export type EnergyHistoryParams = {
   headers?: Headers;
 };
 
+function getPreviousAverage(
+  previousData: RawDataPoint[] | null,
+  period: EnergyPeriod,
+): number | null {
+  if (!previousData || previousData.length === 0) {
+    return null;
+  }
+  const processed = processEnergyData(previousData, period);
+  return processed.length > 0 ? calculateAverage(processed) : null;
+}
+
+async function hasEarlierData(userId: number, beforeDate: Date): Promise<boolean> {
+  const { data } = await safeAsync(() =>
+    prisma.dailyProgress.findFirst({
+      select: { id: true },
+      where: { date: { lt: beforeDate }, userId },
+    }),
+  );
+  return Boolean(data);
+}
+
 const cachedGetEnergyHistory = cache(
   async (
     period: EnergyPeriod,
@@ -116,8 +150,7 @@ const cachedGetEnergyHistory = cache(
     locale: string,
     headers?: Headers,
   ): Promise<EnergyHistoryData | null> => {
-    const session = await getSession({ headers });
-
+    const session = await getSession(headers);
     if (!session) {
       return null;
     }
@@ -130,51 +163,25 @@ const cachedGetEnergyHistory = cache(
       fetchDailyData(userId, previous.start, previous.end),
     ]);
 
-    if (currentResult.error || !currentResult.data) {
+    if (currentResult.error || !currentResult.data || currentResult.data.length === 0) {
       return null;
     }
 
-    const rawData = currentResult.data;
-
-    if (rawData.length === 0) {
-      return null;
-    }
-
-    const currentData = processEnergyData(rawData, period);
-
+    const currentData = processEnergyData(currentResult.data, period);
     const dataPoints: EnergyDataPoint[] = currentData.map((row) => ({
       date: row.date,
       energy: row.energy,
       label: formatLabel(row.date, period, locale),
     }));
 
-    const average = calculateAverage(currentData);
-
-    const previousRaw = previousResult.data ?? [];
-    const previousData = previousRaw.length > 0 ? processEnergyData(previousRaw, period) : [];
-    const previousAverage = previousData.length > 0 ? calculateAverage(previousData) : null;
-
-    const { data: earlierData } = await safeAsync(() =>
-      prisma.dailyProgress.findFirst({
-        select: { id: true },
-        where: {
-          date: { lt: current.start },
-          userId,
-        },
-      }),
-    );
-
-    const hasPreviousPeriod = Boolean(earlierData);
-    const hasNextPeriod = offset > 0;
-
     return {
-      average,
+      average: calculateAverage(currentData),
       dataPoints,
-      hasNextPeriod,
-      hasPreviousPeriod,
+      hasNextPeriod: offset > 0,
+      hasPreviousPeriod: await hasEarlierData(userId, current.start),
       periodEnd: current.end,
       periodStart: current.start,
-      previousAverage,
+      previousAverage: getPreviousAverage(previousResult.data, period),
     };
   },
 );

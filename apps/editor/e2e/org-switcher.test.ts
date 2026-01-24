@@ -14,7 +14,7 @@ test.describe("Org Switcher - Multi-org user", () => {
 
     await expect(menu.getByRole("menuitem", { name: /test org/i })).toBeVisible();
 
-    // current org should not be shown in the dropdown
+    // Current org should not be shown in the dropdown
     await expect(menu.getByRole("menuitem", { name: /zoonk ai/i })).not.toBeVisible();
   });
 });

@@ -1,5 +1,5 @@
 import { cn } from "@zoonk/ui/lib/utils";
-import { generateText, Output } from "ai";
+import { Output, generateText } from "ai";
 import systemPrompt from "./system-prompt.md";
 import { type ScoreStep, scoreSchema } from "./types";
 

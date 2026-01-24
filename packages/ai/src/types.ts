@@ -2,12 +2,6 @@ export type { GeneratedFile } from "ai";
 
 export type ReasoningEffort = "auto" | "low" | "medium" | "high";
 
-type ProviderOptionsParams = {
-  useFallback: boolean;
-  fallbackModels: string[];
-  reasoningEffort?: ReasoningEffort;
-};
-
 type ProviderOptionsResult = {
   gateway: { models: string[] };
   openai?: { reasoningEffort: ReasoningEffort };
@@ -17,7 +11,11 @@ export function buildProviderOptions({
   useFallback,
   fallbackModels,
   reasoningEffort,
-}: ProviderOptionsParams): ProviderOptionsResult {
+}: {
+  useFallback: boolean;
+  fallbackModels: string[];
+  reasoningEffort?: ReasoningEffort;
+}): ProviderOptionsResult {
   const options: ProviderOptionsResult = {
     gateway: { models: useFallback ? fallbackModels : [] },
   };

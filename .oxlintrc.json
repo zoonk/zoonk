@@ -1,6 +1,7 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
   "plugins": ["typescript", "oxc", "react", "nextjs", "import", "unicorn", "jsx-a11y", "vitest"],
+  "jsPlugins": ["./packages/eslint-plugin/index.js"],
   "env": {
     "browser": true,
     "es2024": true,
@@ -9,24 +10,113 @@
   "categories": {
     "correctness": "error",
     "perf": "error",
+    "style": "error",
     "suspicious": "error"
   },
   "rules": {
+    "eslint/func-style": ["error", "declaration", { "allowArrowFunctions": true }],
+    "eslint/id-length": [
+      "error",
+      { "min": 2, "exceptions": ["i", "j", "x", "y", "z", "_", "a", "b", "t", "T"] }
+    ],
+    "eslint/init-declarations": "off",
+    "eslint/max-params": "off",
+    "eslint/max-statements": ["error", { "ignoreTopLevelFunctions": true, "max": 20 }],
+    "eslint/no-magic-numbers": [
+      "error",
+      {
+        "ignoreArrayIndexes": true,
+        "ignore": [-1, 0, 1, 2, 7, 10, 12, 24, 30, 60, 100, 365, 1000, 1024, 3600, 86400]
+      }
+    ],
     "import/no-named-as-default": "off",
+    "eslint/no-ternary": "off",
+    "eslint/prefer-destructuring": "off",
+    "eslint/sort-imports": ["error", { "ignoreDeclarationSort": true }],
+    "import/consistent-type-specifier-style": ["error", "prefer-inline"],
+    "import/exports-last": "off",
+    "import/group-exports": "off",
+    "import/no-named-export": "off",
     "import/no-unassigned-import": [
       "error",
       { "allow": ["**/*.css", "server-only", "dotenv/config"] }
     ],
+    "import/prefer-default-export": "off",
+    "jest/no-untyped-mock-factory": "off",
+    "jsx-max-depth": ["error", { "max": 5 }],
     "jsx-a11y/no-autofocus": "off",
+    "oxc/no-barrel-file": ["error", { "threshold": 0 }],
     "oxc/no-map-spread": "off",
+    "react/jsx-handler-names": "off",
+    "react/jsx-props-no-spreading": "off",
+    "react/jsx-pascal-case": ["error", { "allowAllCaps": true }],
     "react/react-in-jsx-scope": "off",
-    "typescript/no-unsafe-type-assertion": "error"
+    "typescript/consistent-type-definitions": ["error", "type"],
+    "typescript/no-unsafe-type-assertion": "error",
+    "unicorn/no-null": "off",
+    "unicorn/prefer-bigint-literals": "off",
+    "unicorn/switch-case-braces": ["error", "avoid"],
+    "vitest/no-hooks": "off",
+    "vitest/prefer-called-times": "off",
+    "vitest/require-hook": "off",
+    "vitest/require-top-level-describe": "off",
+
+    // custom rules
+    "zoonk/no-object-params-in-cache": ["error", { "exceptions": ["headers"] }],
+    "zoonk/no-single-use-type-alias": "error"
   },
   "overrides": [
     {
       "files": ["apps/evals/**/*.ts", "apps/evals/**/*.tsx"],
       "rules": {
+        "eslint/no-magic-numbers": "off",
         "typescript/no-unsafe-type-assertion": "off"
+      }
+    },
+    {
+      "files": ["**/seed/**", "**/seed.ts"],
+      "rules": {
+        "eslint/max-statements": "off",
+        "eslint/no-magic-numbers": "off",
+        "import/no-namespace": "off"
+      }
+    },
+    {
+      "files": ["*.test.ts"],
+      "rules": {
+        "eslint/max-statements": "off",
+        "eslint/no-magic-numbers": "off",
+        "import/no-namespace": "off",
+        "unicorn/prefer-dom-node-text-content": "off",
+        "vitest/require-hook": "error",
+        "vitest/require-top-level-describe": "error"
+      }
+    },
+    {
+      "files": ["packages/ui/src/components/**/*.tsx"],
+      "rules": {
+        "eslint/no-magic-numbers": "off",
+        "import/no-namespace": "off"
+      }
+    },
+    {
+      "files": ["packages/eslint-plugin/**/*.js"],
+      "rules": {
+        "eslint/max-statements": "off",
+        "eslint/no-magic-numbers": "off",
+        "eslint/sort-keys": "off"
+      }
+    },
+    {
+      "files": ["**/error-messages.ts"],
+      "rules": {
+        "eslint/max-statements": "off"
+      }
+    },
+    {
+      "files": ["**/proxy.ts"],
+      "rules": {
+        "unicorn/prefer-string-raw": "off"
       }
     }
   ],

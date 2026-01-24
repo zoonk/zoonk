@@ -1,10 +1,8 @@
 import { getAIOrganization } from "@/data/orgs/get-ai-organization";
 
-type AIOrganization = {
+export async function getAIOrganizationStep(): Promise<{
   id: number;
-};
-
-export async function getAIOrganizationStep(): Promise<AIOrganization> {
+}> {
   "use step";
 
   return getAIOrganization();

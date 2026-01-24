@@ -6,7 +6,7 @@ import { toSlug } from "@zoonk/utils/string";
 import { beforeAll, describe, expect, test } from "vitest";
 import { createChapters } from "./create-chapters";
 
-describe("createChapters", () => {
+describe(createChapters, () => {
   let organizationId: number;
 
   beforeAll(async () => {
@@ -73,6 +73,6 @@ describe("createChapters", () => {
     expect(dbChapter?.organizationId).toBe(organizationId);
     expect(dbChapter?.generationRunId).toBeNull();
     expect(dbChapter?.generationStatus).toBe("pending");
-    expect(dbChapter?.isPublished).toBe(true);
+    expect(dbChapter?.isPublished).toBeTruthy();
   });
 });

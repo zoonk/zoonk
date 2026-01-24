@@ -6,7 +6,7 @@ import { getBeltLevel } from "./get-belt-level";
 
 describe("unauthenticated users", () => {
   test("returns null", async () => {
-    const result = await getBeltLevel({ headers: new Headers() });
+    const result = await getBeltLevel(new Headers());
     expect(result).toBeNull();
   });
 });
@@ -16,7 +16,7 @@ describe("authenticated users", () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);
 
-    const result = await getBeltLevel({ headers });
+    const result = await getBeltLevel(headers);
     expect(result).toBeNull();
   });
 
@@ -31,7 +31,7 @@ describe("authenticated users", () => {
       },
     });
 
-    const result = await getBeltLevel({ headers });
+    const result = await getBeltLevel(headers);
     expect(result).toEqual({
       bpToNextLevel: 500,
       color: "orange",
@@ -51,7 +51,7 @@ describe("authenticated users", () => {
       },
     });
 
-    const result = await getBeltLevel({ headers });
+    const result = await getBeltLevel(headers);
 
     expect(result).toEqual({
       bpToNextLevel: 250,

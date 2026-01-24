@@ -14,12 +14,10 @@ import { useExtracted } from "next-intl";
 import { useActionState } from "react";
 import { nameFormAction } from "./actions";
 
-type NameFormState = {
+const initialState: {
   status: "idle" | "error" | "success";
   name: string;
-};
-
-const initialState: NameFormState = {
+} = {
   name: "",
   status: "idle",
 };

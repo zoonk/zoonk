@@ -5,7 +5,7 @@ import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import tmp from "tmp";
-import { expect, type Page, test } from "./fixtures";
+import { type Page, expect, test } from "./fixtures";
 import { getMoreOptionsButton, importFlow } from "./helpers/import-dialog";
 
 function createImportFile(lessons: { title: string; description: string }[]): string {
@@ -279,11 +279,11 @@ test.describe("Lesson List", () => {
         throw new Error("Download path should exist");
       }
 
-      const json = JSON.parse(fs.readFileSync(downloadPath, "utf-8"));
+      const json = JSON.parse(fs.readFileSync(downloadPath, "utf8"));
       expect(json.lessons).toHaveLength(lessons.length);
 
       // Verify actual content, not just count
-      const exportedTitles = json.lessons.map((l: { title: string }) => l.title);
+      const exportedTitles = json.lessons.map((lesson: { title: string }) => lesson.title);
       expect(exportedTitles).toContain("Lesson 1");
       expect(exportedTitles).toContain("Lesson 2");
     });

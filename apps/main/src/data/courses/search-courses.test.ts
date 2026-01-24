@@ -6,7 +6,7 @@ import { normalizeString } from "@zoonk/utils/string";
 import { beforeAll, describe, expect, test } from "vitest";
 import { searchCourses } from "./search-courses";
 
-describe("searchCourses", () => {
+describe(searchCourses, () => {
   let brandOrg: Awaited<ReturnType<typeof organizationFixture>>;
   let schoolOrg: Awaited<ReturnType<typeof organizationFixture>>;
   let publishedCourse: Awaited<ReturnType<typeof courseFixture>>;
@@ -56,7 +56,7 @@ describe("searchCourses", () => {
 
   test("returns courses matching partial title", async () => {
     const result = await searchCourses({ language: "en", query: "JavaScript" });
-    const ids = result.map((c) => c.id);
+    const ids = result.map((course) => course.id);
 
     expect(ids).toContain(publishedCourse.id);
   });
@@ -75,9 +75,9 @@ describe("searchCourses", () => {
       query: "JaVaScRiPt",
     });
 
-    const uppercaseIds = uppercaseResult.map((c) => c.id);
-    const lowercaseIds = lowercaseResult.map((c) => c.id);
-    const mixedIds = mixedResult.map((c) => c.id);
+    const uppercaseIds = uppercaseResult.map((course) => course.id);
+    const lowercaseIds = lowercaseResult.map((course) => course.id);
+    const mixedIds = mixedResult.map((course) => course.id);
 
     expect(uppercaseIds).toContain(publishedCourse.id);
     expect(lowercaseIds).toContain(publishedCourse.id);
@@ -103,8 +103,8 @@ describe("searchCourses", () => {
       query: "Programacao",
     });
 
-    const withAccentIds = withAccent.map((c) => c.id);
-    const withoutAccentIds = withoutAccent.map((c) => c.id);
+    const withAccentIds = withAccent.map((course) => course.id);
+    const withoutAccentIds = withoutAccent.map((course) => course.id);
 
     expect(withAccentIds).toContain(accentedCourse.id);
     expect(withoutAccentIds).toContain(accentedCourse.id);
@@ -128,8 +128,8 @@ describe("searchCourses", () => {
       query: "JavaScript",
     });
 
-    const enIds = enResult.map((c) => c.id);
-    const ptIds = ptResult.map((c) => c.id);
+    const enIds = enResult.map((course) => course.id);
+    const ptIds = ptResult.map((course) => course.id);
 
     expect(enIds).toContain(publishedCourse.id);
     expect(enIds).not.toContain(ptCourse.id);
@@ -143,7 +143,7 @@ describe("searchCourses", () => {
       query: "JavaScript",
     });
 
-    const ids = result.map((c) => c.id);
+    const ids = result.map((course) => course.id);
 
     expect(ids).toContain(publishedCourse.id);
     expect(ids).not.toContain(draftCourse.id);
@@ -228,7 +228,7 @@ describe("searchCourses", () => {
       query: searchTerm,
     });
 
-    const ids = result.map((c) => c.id);
+    const ids = result.map((course) => course.id);
 
     expect(ids).toContain(exactMatch.id);
     expect(ids).toContain(containsMatch1.id);

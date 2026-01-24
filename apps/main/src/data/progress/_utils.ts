@@ -1,10 +1,16 @@
 import "server-only";
+import { DEFAULT_PROGRESS_LOOKBACK_DAYS } from "@zoonk/utils/constants";
 
 const HISTORY_PERIODS = ["month", "6months", "year"] as const;
+
+const MONTHS_PER_HALF_YEAR = 6;
+const DECEMBER_INDEX = 11;
+const LAST_DAY_OF_DECEMBER = 31;
+const SUNDAY_TO_MONDAY_OFFSET = -6;
 export type HistoryPeriod = (typeof HISTORY_PERIODS)[number];
 
 function isHistoryPeriod(value: string): value is HistoryPeriod {
-  return HISTORY_PERIODS.some((v) => v === value);
+  return HISTORY_PERIODS.some((period) => period === value);
 }
 
 export function validatePeriod(value: string): HistoryPeriod {
@@ -16,56 +22,64 @@ export type DateRange = {
   end: Date;
 };
 
-export function calculateDateRanges(
-  period: HistoryPeriod,
-  offset: number,
-): { current: DateRange; previous: DateRange } {
-  const now = new Date();
+type DateRanges = { current: DateRange; previous: DateRange };
 
-  if (period === "month") {
-    const currentStart = new Date(now.getFullYear(), now.getMonth() - offset, 1);
-    const currentEnd = new Date(now.getFullYear(), now.getMonth() - offset + 1, 0);
-    const previousStart = new Date(now.getFullYear(), now.getMonth() - offset - 1, 1);
-    const previousEnd = new Date(now.getFullYear(), now.getMonth() - offset, 0);
-
-    return {
-      current: { end: currentEnd, start: currentStart },
-      previous: { end: previousEnd, start: previousStart },
-    };
-  }
-
-  if (period === "6months") {
-    const currentHalf = Math.floor(now.getMonth() / 6) - offset;
-    const currentYear = now.getFullYear() + Math.floor((now.getMonth() - offset * 6) / 12);
-    const normalizedHalf = ((currentHalf % 2) + 2) % 2;
-
-    const currentStartMonth = normalizedHalf * 6;
-    const currentStart = new Date(currentYear, currentStartMonth, 1);
-    const currentEnd = new Date(currentYear, currentStartMonth + 6, 0);
-
-    const previousHalf = normalizedHalf === 0 ? 1 : 0;
-    const previousYear = normalizedHalf === 0 ? currentYear - 1 : currentYear;
-    const previousStartMonth = previousHalf * 6;
-    const previousStart = new Date(previousYear, previousStartMonth, 1);
-    const previousEnd = new Date(previousYear, previousStartMonth + 6, 0);
-
-    return {
-      current: { end: currentEnd, start: currentStart },
-      previous: { end: previousEnd, start: previousStart },
-    };
-  }
-
-  // Year
-  const currentYear = now.getFullYear() - offset;
-  const currentStart = new Date(currentYear, 0, 1);
-  const currentEnd = new Date(currentYear, 11, 31);
-  const previousStart = new Date(currentYear - 1, 0, 1);
-  const previousEnd = new Date(currentYear - 1, 11, 31);
+function getMonthDateRanges(now: Date, offset: number): DateRanges {
+  const currentStart = new Date(now.getFullYear(), now.getMonth() - offset, 1);
+  const currentEnd = new Date(now.getFullYear(), now.getMonth() - offset + 1, 0);
+  const previousStart = new Date(now.getFullYear(), now.getMonth() - offset - 1, 1);
+  const previousEnd = new Date(now.getFullYear(), now.getMonth() - offset, 0);
 
   return {
     current: { end: currentEnd, start: currentStart },
     previous: { end: previousEnd, start: previousStart },
   };
+}
+
+function getHalfYearDateRanges(now: Date, offset: number): DateRanges {
+  const currentHalf = Math.floor(now.getMonth() / MONTHS_PER_HALF_YEAR) - offset;
+  const currentYear =
+    now.getFullYear() + Math.floor((now.getMonth() - offset * MONTHS_PER_HALF_YEAR) / 12);
+  const normalizedHalf = ((currentHalf % 2) + 2) % 2;
+
+  const currentStartMonth = normalizedHalf * MONTHS_PER_HALF_YEAR;
+  const currentStart = new Date(currentYear, currentStartMonth, 1);
+  const currentEnd = new Date(currentYear, currentStartMonth + MONTHS_PER_HALF_YEAR, 0);
+
+  const previousHalf = normalizedHalf === 0 ? 1 : 0;
+  const previousYear = normalizedHalf === 0 ? currentYear - 1 : currentYear;
+  const previousStartMonth = previousHalf * MONTHS_PER_HALF_YEAR;
+  const previousStart = new Date(previousYear, previousStartMonth, 1);
+  const previousEnd = new Date(previousYear, previousStartMonth + MONTHS_PER_HALF_YEAR, 0);
+
+  return {
+    current: { end: currentEnd, start: currentStart },
+    previous: { end: previousEnd, start: previousStart },
+  };
+}
+
+function getYearDateRanges(now: Date, offset: number): DateRanges {
+  const currentYear = now.getFullYear() - offset;
+  const currentStart = new Date(currentYear, 0, 1);
+  const currentEnd = new Date(currentYear, DECEMBER_INDEX, LAST_DAY_OF_DECEMBER);
+  const previousStart = new Date(currentYear - 1, 0, 1);
+  const previousEnd = new Date(currentYear - 1, DECEMBER_INDEX, LAST_DAY_OF_DECEMBER);
+
+  return {
+    current: { end: currentEnd, start: currentStart },
+    previous: { end: previousEnd, start: previousStart },
+  };
+}
+
+export function calculateDateRanges(period: HistoryPeriod, offset: number): DateRanges {
+  const now = new Date();
+  if (period === "month") {
+    return getMonthDateRanges(now, offset);
+  }
+  if (period === "6months") {
+    return getHalfYearDateRanges(now, offset);
+  }
+  return getYearDateRanges(now, offset);
 }
 
 export function formatLabel(date: Date, period: HistoryPeriod, locale: string): string {
@@ -88,13 +102,13 @@ export function formatLabel(date: Date, period: HistoryPeriod, locale: string): 
 }
 
 function getWeekKey(date: Date): string {
-  const d = new Date(date);
-  d.setHours(0, 0, 0, 0);
+  const normalizedDate = new Date(date);
+  normalizedDate.setHours(0, 0, 0, 0);
   // Get Monday of this week
-  const day = d.getDay();
-  const diff = d.getDate() - day + (day === 0 ? -6 : 1);
-  d.setDate(diff);
-  return d.toISOString().substring(0, 10);
+  const day = normalizedDate.getDay();
+  const diff = normalizedDate.getDate() - day + (day === 0 ? SUNDAY_TO_MONDAY_OFFSET : 1);
+  normalizedDate.setDate(diff);
+  return normalizedDate.toISOString().substring(0, 10);
 }
 
 function getMonthKey(date: Date): string {
@@ -104,7 +118,7 @@ function getMonthKey(date: Date): string {
 function getMondayOfWeek(date: Date): Date {
   const monday = new Date(date);
   const day = monday.getDay();
-  const diff = monday.getDate() - day + (day === 0 ? -6 : 1);
+  const diff = monday.getDate() - day + (day === 0 ? SUNDAY_TO_MONDAY_OFFSET : 1);
   monday.setDate(diff);
   monday.setHours(0, 0, 0, 0);
   return monday;
@@ -138,10 +152,10 @@ export function aggregateByWeek<T extends { date: Date }>(
     }
   }
 
-  return Array.from(map.values())
-    .map((v) => ({
-      date: v.date,
-      value: strategy === "sum" ? v.total : v.total / v.count,
+  return [...map.values()]
+    .map((item) => ({
+      date: item.date,
+      value: strategy === "sum" ? item.total : item.total / item.count,
     }))
     .toSorted((a, b) => a.date.getTime() - b.date.getTime());
 }
@@ -168,10 +182,10 @@ export function aggregateByMonth<T extends { date: Date }>(
     }
   }
 
-  return Array.from(map.values())
-    .map((v) => ({
-      date: v.date,
-      value: strategy === "sum" ? v.total : v.total / v.count,
+  return [...map.values()]
+    .map((item) => ({
+      date: item.date,
+      value: strategy === "sum" ? item.total : item.total / item.count,
     }))
     .toSorted((a, b) => a.date.getTime() - b.date.getTime());
 }
@@ -199,10 +213,10 @@ export function aggregateScoreByWeek(
     }
   }
 
-  return Array.from(map.values())
-    .map((v) => ({
-      date: v.date,
-      score: calculateScore(v.correct, v.incorrect),
+  return [...map.values()]
+    .map((item) => ({
+      date: item.date,
+      score: calculateScore(item.correct, item.incorrect),
     }))
     .toSorted((a, b) => a.date.getTime() - b.date.getTime());
 }
@@ -228,10 +242,41 @@ export function aggregateScoreByMonth(
     }
   }
 
-  return Array.from(map.values())
-    .map((v) => ({
-      date: v.date,
-      score: calculateScore(v.correct, v.incorrect),
+  return [...map.values()]
+    .map((item) => ({
+      date: item.date,
+      score: calculateScore(item.correct, item.incorrect),
     }))
     .toSorted((a, b) => a.date.getTime() - b.date.getTime());
+}
+
+export function getDefaultStartDate(startDateIso: string | undefined): Date {
+  if (startDateIso) {
+    return new Date(startDateIso);
+  }
+  const date = new Date();
+  date.setDate(date.getDate() - DEFAULT_PROGRESS_LOOKBACK_DAYS);
+  return date;
+}
+
+export type ScoredRow = { key: number; correct: number; incorrect: number };
+
+export function findBestByScore(rows: ScoredRow[]): { key: number; score: number } | null {
+  let best: { key: number; score: number } | null = null;
+  let bestTotal = 0;
+
+  const rowsWithData = rows.filter((row) => row.correct + row.incorrect > 0);
+
+  for (const row of rowsWithData) {
+    const total = row.correct + row.incorrect;
+    const score = (row.correct / total) * 100;
+    const isBetter = !best || score > best.score || (score === best.score && total > bestTotal);
+
+    if (isBetter) {
+      best = { key: row.key, score };
+      bestTotal = total;
+    }
+  }
+
+  return best;
 }

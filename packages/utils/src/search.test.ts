@@ -3,7 +3,7 @@ import { mergeSearchResults } from "./search";
 
 type TestItem = { id: string; title: string };
 
-describe("mergeSearchResults", () => {
+describe(mergeSearchResults, () => {
   test("returns exact match first when it exists", () => {
     const exactMatch: TestItem = { id: "1", title: "Law" };
     const containsMatches: TestItem[] = [

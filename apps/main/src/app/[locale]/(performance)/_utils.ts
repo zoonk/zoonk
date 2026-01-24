@@ -1,4 +1,4 @@
-import type { HistoryPeriod } from "@/data/progress/_utils";
+import { type HistoryPeriod } from "@/data/progress/_utils";
 
 export function formatPeriodLabel(
   periodStart: Date,

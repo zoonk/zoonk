@@ -1,8 +1,8 @@
 import { completeCourseSetupStep } from "../steps/complete-course-setup-step";
 import { getCourseChaptersStep } from "../steps/get-course-chapters-step";
+import { type CourseContext, type CreatedChapter, type ExistingCourseContent } from "../types";
 import { generateMissingContent } from "./generate-missing-content";
 import { persistGeneratedContent } from "./persist-generated-content";
-import type { CourseContext, CreatedChapter, ExistingCourseContent } from "../types";
 
 export async function setupCourse(
   course: CourseContext,

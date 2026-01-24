@@ -1,10 +1,10 @@
+import { type Task } from "@/lib/types";
 import {
   type ActivityPronunciationParams,
   type ActivityPronunciationSchema,
   generateActivityPronunciation,
 } from "@zoonk/ai/tasks/activities/language/pronunciation";
 import { TEST_CASES } from "./test-cases";
-import type { Task } from "@/lib/types";
 
 export const activityPronunciationTask: Task<
   ActivityPronunciationParams,

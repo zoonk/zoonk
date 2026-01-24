@@ -179,7 +179,7 @@ describe("authenticated users", () => {
 
       expect(result).not.toBeNull();
       expect(result?.average).toBe(60);
-      expect(result?.hasNextPeriod).toBe(true);
+      expect(result?.hasNextPeriod).toBeTruthy();
     });
   });
 
@@ -325,7 +325,7 @@ describe("authenticated users", () => {
       const result = await getScoreHistory({ headers, period: "month" });
 
       expect(result).not.toBeNull();
-      expect(result?.hasPreviousPeriod).toBe(true);
+      expect(result?.hasPreviousPeriod).toBeTruthy();
     });
 
     test("hasNextPeriod is false when on current period (offset=0)", async () => {
@@ -346,7 +346,7 @@ describe("authenticated users", () => {
       const result = await getScoreHistory({ headers, period: "month" });
 
       expect(result).not.toBeNull();
-      expect(result?.hasNextPeriod).toBe(false);
+      expect(result?.hasNextPeriod).toBeFalsy();
     });
 
     test("hasNextPeriod is true when offset > 0", async () => {
@@ -373,7 +373,7 @@ describe("authenticated users", () => {
       });
 
       expect(result).not.toBeNull();
-      expect(result?.hasNextPeriod).toBe(true);
+      expect(result?.hasNextPeriod).toBeTruthy();
     });
   });
 

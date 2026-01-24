@@ -32,7 +32,7 @@ export function EditorNavbar({ children }: React.PropsWithChildren) {
             }),
           )}
           href={`/${orgSlug}`}
-          prefetch={true}
+          prefetch
         >
           <HomeIcon aria-hidden="true" />
           <span className="sr-only">{t("Home page")}</span>
