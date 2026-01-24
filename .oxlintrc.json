@@ -69,9 +69,10 @@
 
     // custom rules
     "zoonk/no-object-params-in-cache": ["error", { "exceptions": ["headers"] }],
-    "zoonk/no-single-use-type-alias": "error"
+    "zoonk/no-single-use-type-alias": "error",
 
     // temporary pedantic rules
+    "eslint/no-useless-return": "error"
   },
   "overrides": [
     {
