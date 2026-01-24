@@ -38,6 +38,7 @@
     "import/no-named-as-default": "off",
     "eslint/no-ternary": "off",
     "eslint/prefer-destructuring": "off",
+    "eslint/require-await": "off",
     "eslint/sort-imports": ["error", { "ignoreDeclarationSort": true }],
     "import/consistent-type-specifier-style": ["error", "prefer-inline"],
     "import/exports-last": "off",
