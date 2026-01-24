@@ -75,7 +75,8 @@
     "unicorn/no-await-expression-member": "error",
     "unicorn/no-zero-fractions": "error",
     "unicorn/prefer-dom-node-text-content": "error",
-    "unicorn/prefer-global-this": "error"
+    "unicorn/prefer-global-this": "error",
+    "unicorn/prefer-spread": "error"
   },
   "overrides": [
     {

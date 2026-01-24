@@ -152,7 +152,7 @@ export function aggregateByWeek<T extends { date: Date }>(
     }
   }
 
-  return Array.from(map.values())
+  return [...map.values()]
     .map((item) => ({
       date: item.date,
       value: strategy === "sum" ? item.total : item.total / item.count,
@@ -182,7 +182,7 @@ export function aggregateByMonth<T extends { date: Date }>(
     }
   }
 
-  return Array.from(map.values())
+  return [...map.values()]
     .map((item) => ({
       date: item.date,
       value: strategy === "sum" ? item.total : item.total / item.count,
@@ -213,7 +213,7 @@ export function aggregateScoreByWeek(
     }
   }
 
-  return Array.from(map.values())
+  return [...map.values()]
     .map((item) => ({
       date: item.date,
       score: calculateScore(item.correct, item.incorrect),
@@ -242,7 +242,7 @@ export function aggregateScoreByMonth(
     }
   }
 
-  return Array.from(map.values())
+  return [...map.values()]
     .map((item) => ({
       date: item.date,
       score: calculateScore(item.correct, item.incorrect),
