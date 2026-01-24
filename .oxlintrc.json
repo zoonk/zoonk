@@ -112,6 +112,12 @@
       "rules": {
         "eslint/max-statements": "off"
       }
+    },
+    {
+      "files": ["**/proxy.ts"],
+      "rules": {
+        "unicorn/prefer-string-raw": "off"
+      }
     }
   ],
   "ignorePatterns": [
