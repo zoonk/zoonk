@@ -37,7 +37,9 @@ export async function parseJsonFile<T>(params: {
     return { data: null, error: readError };
   }
 
-  const { data: parsed, error: parseError } = await safeAsync(async () => JSON.parse(text));
+  const { data: parsed, error: parseError } = await safeAsync(
+    async (): Promise<unknown> => JSON.parse(text) as unknown,
+  );
 
   if (parseError) {
     return {

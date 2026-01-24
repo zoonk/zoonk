@@ -89,7 +89,8 @@
     "no-negated-condition": "error",
     "typescript/no-unsafe-argument": "error",
     "typescript/no-unsafe-call": "error",
-    "typescript/no-unsafe-member-access": "error"
+    "typescript/no-unsafe-member-access": "error",
+    "typescript/no-unsafe-return": "error"
   },
   "overrides": [
     {
@@ -144,10 +145,16 @@
       "rules": {
         "eslint/max-statements": "off",
         "eslint/no-magic-numbers": "off",
-        "eslint/sort-keys": "off",
+        "eslint/sort-keys": "off"
+      }
+    },
+    {
+      "files": ["**/*.js"],
+      "rules": {
         "typescript/no-unsafe-argument": "off",
         "typescript/no-unsafe-call": "off",
-        "typescript/no-unsafe-member-access": "off"
+        "typescript/no-unsafe-member-access": "off",
+        "typescript/no-unsafe-return": "off"
       }
     },
     {
