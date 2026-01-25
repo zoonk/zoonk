@@ -76,6 +76,7 @@
     "typescript/promise-function-async": "off",
     "typescript/require-await": "off",
     "typescript/strict-boolean-expressions": "off",
+    "unicorn/no-array-for-each": "off",
     "unicorn/no-null": "off",
     "unicorn/prefer-bigint-literals": "off",
     "unicorn/prefer-native-coercion-functions": "off",
