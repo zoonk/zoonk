@@ -8,7 +8,7 @@ import {
 } from "@zoonk/ui/components/container";
 import { type Metadata } from "next";
 import { Suspense } from "react";
-import CourseList from "./course-list";
+import { CourseList } from "./course-list";
 import { CourseSearch } from "./course-search";
 
 export const metadata: Metadata = {

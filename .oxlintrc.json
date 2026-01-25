@@ -92,7 +92,8 @@
     "typescript/no-non-null-assertion": "error",
     "eslint/no-param-reassign": "error",
     "eslint/no-plusplus": "error",
-    "typescript/use-unknown-in-catch-callback-variable": "error"
+    "typescript/use-unknown-in-catch-callback-variable": "error",
+    "import/no-default-export": "error"
   },
   "overrides": [
     {
@@ -181,6 +182,27 @@
       "files": ["**/proxy.ts"],
       "rules": {
         "unicorn/prefer-string-raw": "off"
+      }
+    },
+    {
+      "files": [
+        "**/page.tsx",
+        "**/layout.tsx",
+        "**/error.tsx",
+        "**/loading.tsx",
+        "**/unauthorized.tsx",
+        "**/not-found.tsx",
+        "**/global-error.tsx",
+        "**/*codec.ts",
+        "**/request.ts",
+        "**/*.config.ts",
+        "**/*.mjs",
+        "**/*.mts",
+        "**/*.js",
+        "**/e2e/**/*.ts"
+      ],
+      "rules": {
+        "import/no-default-export": "off"
       }
     }
   ],

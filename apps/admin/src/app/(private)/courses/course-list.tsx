@@ -4,7 +4,7 @@ import { parseSearchParams } from "@/lib/parse-search-params";
 import { Table, TableBody, TableHead, TableHeader, TableRow } from "@zoonk/ui/components/table";
 import { CourseRow } from "./course-row";
 
-export default async function CourseList({
+export async function CourseList({
   searchParams,
 }: {
   searchParams: PageProps<"/courses">["searchParams"];

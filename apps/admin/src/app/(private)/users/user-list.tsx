@@ -4,7 +4,7 @@ import { parseSearchParams } from "@/lib/parse-search-params";
 import { Table, TableBody, TableHead, TableHeader, TableRow } from "@zoonk/ui/components/table";
 import { UserRow } from "./user-row";
 
-export default async function UserList({
+export async function UserList({
   searchParams,
 }: {
   searchParams: PageProps<"/users">["searchParams"];

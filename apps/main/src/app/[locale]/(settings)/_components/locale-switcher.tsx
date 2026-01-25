@@ -8,7 +8,7 @@ import { useExtracted, useLocale } from "next-intl";
 import { useParams } from "next/navigation";
 import { useTransition } from "react";
 
-export default function LocaleSwitcher() {
+export function LocaleSwitcher() {
   const t = useExtracted();
   const locale = useLocale();
   const router = useRouter();
