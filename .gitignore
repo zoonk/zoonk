@@ -54,3 +54,6 @@ debug.log
 
 # Tasks for AI agents
 /tasks/
+
+# pnpm
+.pnpm-store/
