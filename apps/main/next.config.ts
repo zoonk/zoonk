@@ -34,7 +34,6 @@ const nextConfig: NextConfig = {
     staleTimes: {
       dynamic: 300,
     },
-    turbopackFileSystemCacheForBuild: true,
     typedEnv: true,
   },
   images: {

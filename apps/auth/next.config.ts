@@ -16,7 +16,6 @@ const nextConfig: NextConfig = {
   distDir: isE2E ? ".next-e2e" : ".next",
   experimental: {
     authInterrupts: true,
-    turbopackFileSystemCacheForBuild: true,
     typedEnv: true,
   },
   reactCompiler: true,
