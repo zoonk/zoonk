@@ -11,6 +11,7 @@
     "correctness": "error",
     "pedantic": "error",
     "perf": "error",
+    "restriction": "error",
     "style": "error",
     "suspicious": "error"
   },
@@ -61,6 +62,7 @@
     "oxc/no-barrel-file": ["error", { "threshold": 0 }],
     "oxc/no-map-spread": "off",
     "oxc/no-optional-chaining": "off",
+    "oxc/no-rest-spread-properties": "off",
     "react/jsx-filename-extension": ["error", { "extensions": ["tsx"] }],
     "react/jsx-handler-names": "off",
     "react/jsx-props-no-spreading": "off",
@@ -90,19 +92,7 @@
 
     // custom rules
     "zoonk/no-object-params-in-cache": ["error", { "exceptions": ["headers"] }],
-    "zoonk/no-single-use-type-alias": "error",
-
-    // temporary rules
-    "eslint/default-case": "error",
-    "typescript/no-non-null-assertion": "error",
-    "eslint/no-param-reassign": "error",
-    "eslint/no-plusplus": "error",
-    "typescript/use-unknown-in-catch-callback-variable": "error",
-    "import/no-default-export": "error",
-    "import/unambiguous": "error",
-    "react/button-has-type": "error",
-    "unicorn/no-process-exit": "error",
-    "unicorn/no-document-cookie": "error"
+    "zoonk/no-single-use-type-alias": "error"
   },
   "overrides": [
     {
