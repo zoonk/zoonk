@@ -11,6 +11,7 @@
     "correctness": "error",
     "pedantic": "error",
     "perf": "error",
+    "restriction": "error",
     "style": "error",
     "suspicious": "error"
   },
@@ -28,6 +29,7 @@
     ],
     "eslint/max-params": "off",
     "eslint/max-statements": ["error", { "ignoreTopLevelFunctions": true, "max": 20 }],
+    "eslint/no-console": ["error", { "allow": ["error", "info"] }],
     "eslint/no-inline-comments": "off",
     "eslint/no-magic-numbers": [
       "error",
@@ -38,6 +40,8 @@
     ],
     "import/no-named-as-default": "off",
     "eslint/no-ternary": "off",
+    "eslint/no-undefined": "off",
+    "eslint/no-void": "off",
     "eslint/prefer-destructuring": "off",
     "eslint/require-await": "off",
     "eslint/sort-imports": ["error", { "ignoreDeclarationSort": true }],
@@ -54,19 +58,29 @@
     "jest/no-untyped-mock-factory": "off",
     "jsx-max-depth": ["error", { "max": 5 }],
     "jsx-a11y/no-autofocus": "off",
+    "oxc/no-async-await": "off",
     "oxc/no-barrel-file": ["error", { "threshold": 0 }],
     "oxc/no-map-spread": "off",
+    "oxc/no-optional-chaining": "off",
+    "oxc/no-rest-spread-properties": "off",
+    "react/jsx-filename-extension": ["error", { "extensions": ["tsx"] }],
     "react/jsx-handler-names": "off",
     "react/jsx-props-no-spreading": "off",
     "react/jsx-pascal-case": ["error", { "allowAllCaps": true }],
+    "react/only-export-components": "off",
     "react/react-in-jsx-scope": "off",
     "typescript/consistent-type-definitions": ["error", "type"],
+    "typescript/explicit-function-return-type": "off",
+    "typescript/explicit-module-boundary-types": "off",
     "typescript/no-confusing-void-expression": ["error", { "ignoreArrowShorthand": true }],
+    "typescript/no-import-type-side-effects": "off",
     "typescript/no-misused-promises": ["error", { "checksVoidReturn": false }],
     "typescript/no-unsafe-type-assertion": "error",
     "typescript/prefer-nullish-coalescing": "off",
+    "typescript/promise-function-async": "off",
     "typescript/require-await": "off",
     "typescript/strict-boolean-expressions": "off",
+    "unicorn/no-array-for-each": "off",
     "unicorn/no-null": "off",
     "unicorn/prefer-bigint-literals": "off",
     "unicorn/prefer-native-coercion-functions": "off",
@@ -104,6 +118,7 @@
         "eslint/max-statements": "off",
         "eslint/no-magic-numbers": "off",
         "import/no-namespace": "off",
+        "unicorn/no-process-exit": "off",
         "unicorn/prefer-top-level-await": "off"
       }
     },
@@ -121,6 +136,7 @@
         "eslint/max-statements": "off",
         "eslint/no-magic-numbers": "off",
         "import/no-namespace": "off",
+        "typescript/no-non-null-assertion": "off",
         "typescript/no-unsafe-assignment": "off",
         "typescript/no-unsafe-call": "off",
         "typescript/no-unsafe-member-access": "off",
@@ -166,6 +182,33 @@
       "files": ["**/proxy.ts"],
       "rules": {
         "unicorn/prefer-string-raw": "off"
+      }
+    },
+    {
+      "files": [
+        "**/page.tsx",
+        "**/layout.tsx",
+        "**/error.tsx",
+        "**/loading.tsx",
+        "**/unauthorized.tsx",
+        "**/not-found.tsx",
+        "**/global-error.tsx",
+        "**/*codec.ts",
+        "**/request.ts",
+        "**/*.config.ts",
+        "**/*.mjs",
+        "**/*.mts",
+        "**/*.js",
+        "**/e2e/**/*.ts"
+      ],
+      "rules": {
+        "import/no-default-export": "off"
+      }
+    },
+    {
+      "files": ["**/*.d.ts"],
+      "rules": {
+        "import/unambiguous": "off"
       }
     }
   ],

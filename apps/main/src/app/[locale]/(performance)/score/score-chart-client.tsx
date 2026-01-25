@@ -66,7 +66,7 @@ export function ScoreChartClient({
                 return null;
               }
 
-              const data = payload[0]!.payload;
+              const data = payload[0].payload;
               const value = Number(data.score).toFixed(1);
 
               return (

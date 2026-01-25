@@ -4,9 +4,24 @@ let cached: { token: string; exp: number } | null = null;
 
 const { APPLE_TEAM_ID, APPLE_CLIENT_ID, APPLE_KEY_ID, APPLE_PRIVATE_KEY } = process.env;
 
-const hasAppleConfig = APPLE_TEAM_ID && APPLE_CLIENT_ID && APPLE_KEY_ID && APPLE_PRIVATE_KEY;
+type AppleConfig = {
+  clientId: string;
+  keyId: string;
+  privateKey: string;
+  teamId: string;
+};
 
-async function getAppleClientSecret(): Promise<string> {
+const appleConfig: AppleConfig | null =
+  APPLE_TEAM_ID && APPLE_CLIENT_ID && APPLE_KEY_ID && APPLE_PRIVATE_KEY
+    ? {
+        clientId: APPLE_CLIENT_ID,
+        keyId: APPLE_KEY_ID,
+        privateKey: APPLE_PRIVATE_KEY,
+        teamId: APPLE_TEAM_ID,
+      }
+    : null;
+
+async function getAppleClientSecret(config: AppleConfig): Promise<string> {
   const now = Math.floor(Date.now() / 1000);
 
   if (cached && cached.exp - 60 > now) {
@@ -14,13 +29,13 @@ async function getAppleClientSecret(): Promise<string> {
   }
 
   const ttlSec = 2_592_000; // 1 month
-  const privateKeyPEM = APPLE_PRIVATE_KEY!.replaceAll(String.raw`\n`, "\n");
+  const privateKeyPEM = config.privateKey.replaceAll(String.raw`\n`, "\n");
   const key = await importPKCS8(privateKeyPEM, "ES256");
 
   const token = await new SignJWT({})
-    .setProtectedHeader({ alg: "ES256", kid: APPLE_KEY_ID! })
-    .setIssuer(APPLE_TEAM_ID!)
-    .setSubject(APPLE_CLIENT_ID!)
+    .setProtectedHeader({ alg: "ES256", kid: config.keyId })
+    .setIssuer(config.teamId)
+    .setSubject(config.clientId)
     .setAudience("https://appleid.apple.com")
     .setIssuedAt(now)
     .setExpirationTime(now + ttlSec)
@@ -31,11 +46,11 @@ async function getAppleClientSecret(): Promise<string> {
   return token;
 }
 
-export const appleProvider = hasAppleConfig
+export const appleProvider = appleConfig
   ? {
       apple: {
-        clientId: APPLE_CLIENT_ID,
-        clientSecret: await getAppleClientSecret(),
+        clientId: appleConfig.clientId,
+        clientSecret: await getAppleClientSecret(appleConfig),
       },
     }
   : {};

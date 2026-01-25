@@ -8,7 +8,7 @@ import {
 } from "@zoonk/ui/components/container";
 import { type Metadata } from "next";
 import { Suspense } from "react";
-import UserList from "./user-list";
+import { UserList } from "./user-list";
 import { UserSearch } from "./user-search";
 
 export const metadata: Metadata = {

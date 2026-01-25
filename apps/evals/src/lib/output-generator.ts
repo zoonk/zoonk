@@ -53,7 +53,7 @@ type TestCaseRun = { testCase: TestCase; runNumber: number };
 function collectTestCaseRuns(testCases: TestCase[], existingEntries: OutputEntry[]): TestCaseRun[] {
   const runs: TestCaseRun[] = [];
   for (const testCase of testCases) {
-    for (let runNumber = 1; runNumber <= RUNS_PER_TEST_CASE; runNumber++) {
+    for (let runNumber = 1; runNumber <= RUNS_PER_TEST_CASE; runNumber += 1) {
       if (!shouldSkipTestCase(existingEntries, testCase.id, runNumber)) {
         runs.push({ runNumber, testCase });
       }

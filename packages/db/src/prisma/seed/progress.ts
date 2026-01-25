@@ -109,7 +109,7 @@ function buildE2eDailyProgress(today: Date, orgId: number, userId: number): Dail
   const data: DailyProgressInput[] = [];
 
   // 60 days: current month (75% energy), previous month (65% energy)
-  for (let i = 59; i >= 0; i--) {
+  for (let i = 59; i >= 0; i -= 1) {
     const date = new Date(today.getTime() - i * 24 * 60 * 60 * 1000);
     const isCurrentMonth = i < 30;
     const energy = isCurrentMonth ? 75 : 65;

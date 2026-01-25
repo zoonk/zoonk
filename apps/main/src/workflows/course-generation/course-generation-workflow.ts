@@ -34,16 +34,18 @@ export async function courseGenerationWorkflow(courseSuggestionId: number): Prom
     workflowRunId,
   );
 
-  const chapters = await setupCourse(course, courseSuggestionId, existing).catch(async (error) => {
-    await handleCourseFailureStep({
-      courseId: course.courseId,
-      courseSuggestionId,
-    });
+  const chapters = await setupCourse(course, courseSuggestionId, existing).catch(
+    async (error: unknown) => {
+      await handleCourseFailureStep({
+        courseId: course.courseId,
+        courseSuggestionId,
+      });
 
-    console.error(`[workflow ${workflowRunId}] Course generation failed`, error);
+      console.error(`[workflow ${workflowRunId}] Course generation failed`, error);
 
-    throw FatalError;
-  });
+      throw FatalError;
+    },
+  );
 
   // Start chapter generation outside the course error handling.
   // Chapter generation has its own error handling that marks the chapter as failed.

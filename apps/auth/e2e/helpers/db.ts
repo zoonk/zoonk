@@ -14,7 +14,7 @@ const RETRY_DELAY_MS = 500;
 export async function getOTPForEmail(email: string, maxRetries = 10): Promise<string | null> {
   const identifier = `sign-in-otp-${email}`;
 
-  for (let i = 0; i < maxRetries; i++) {
+  for (let i = 0; i < maxRetries; i += 1) {
     // eslint-disable-next-line no-await-in-loop -- Intentional retry polling
     const verification = await prisma.verification.findFirst({
       orderBy: { createdAt: "desc" },

@@ -68,7 +68,7 @@ export function LevelChartClient({
                 return null;
               }
 
-              const data = payload[0]!.payload;
+              const data = payload[0].payload;
               const formattedValue = new Intl.NumberFormat(locale).format(data.bp);
 
               return (

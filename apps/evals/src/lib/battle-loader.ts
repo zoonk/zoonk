@@ -61,7 +61,7 @@ function aggregateScoresFromMatchups(matchups: BattleMatchup[]): {
 
   for (const matchup of matchups) {
     for (const judgment of matchup.judgments) {
-      totalJudgments++;
+      totalJudgments += 1;
       for (const ranking of judgment.rankings) {
         const existing = modelScores.get(ranking.modelId) ?? {
           scoresByJudge: {},

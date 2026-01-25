@@ -41,7 +41,8 @@ export function useAutoSave({
       statusTimeoutRef.current = null;
     }
 
-    const currentRequest = ++saveRequestRef.current;
+    saveRequestRef.current += 1;
+    const currentRequest = saveRequestRef.current;
     const valueToSave = debouncedValue;
 
     // Only show "saving" if the request takes longer than the delay

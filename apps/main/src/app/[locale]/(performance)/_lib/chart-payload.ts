@@ -1,4 +1,6 @@
-export function isValidChartPayload<T>(payload: unknown): payload is { payload: T }[] {
+export function isValidChartPayload<T>(
+  payload: unknown,
+): payload is [{ payload: T }, ...{ payload: T }[]] {
   if (!Array.isArray(payload) || payload.length === 0) {
     return false;
   }
