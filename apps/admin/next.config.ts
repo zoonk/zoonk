@@ -6,7 +6,6 @@ const nextConfig: NextConfig = {
   devIndicators: false,
   experimental: {
     authInterrupts: true,
-    turbopackFileSystemCacheForBuild: true,
     typedEnv: true,
   },
   images: {
