@@ -63,6 +63,7 @@
     "react/jsx-handler-names": "off",
     "react/jsx-props-no-spreading": "off",
     "react/jsx-pascal-case": ["error", { "allowAllCaps": true }],
+    "react/only-export-components": "off",
     "react/react-in-jsx-scope": "off",
     "typescript/consistent-type-definitions": ["error", "type"],
     "typescript/explicit-function-return-type": "off",
