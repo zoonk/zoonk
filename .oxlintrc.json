@@ -87,7 +87,8 @@
     // temporary rules
     "eslint/default-case": "error",
     "typescript/no-non-null-assertion": "error",
-    "eslint/no-param-reassign": "error"
+    "eslint/no-param-reassign": "error",
+    "eslint/no-plusplus": "error"
   },
   "overrides": [
     {

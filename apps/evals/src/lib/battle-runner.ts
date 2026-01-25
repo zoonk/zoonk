@@ -30,7 +30,7 @@ function getMatchupFilePath(taskId: string, testCaseId: string): string {
 
 function shuffleArray<T>(array: T[]): T[] {
   const shuffled = [...array];
-  for (let i = shuffled.length - 1; i > 0; i--) {
+  for (let i = shuffled.length - 1; i > 0; i -= 1) {
     const j = Math.floor(Math.random() * (i + 1));
     const temp = shuffled[i];
     shuffled[i] = shuffled[j] as T;
@@ -246,7 +246,7 @@ export async function runBattleMode(task: Task): Promise<void> {
       const existingMatchup = await loadExistingMatchup(task.id, testCaseId);
       const result = await runBattleForTestCase(task, testCase, completeOutputs, existingMatchup);
 
-      completedBattles++;
+      completedBattles += 1;
       const remaining = totalBattles - completedBattles;
       console.info(`Battle complete for ${testCaseId}, ${remaining} remaining`);
 

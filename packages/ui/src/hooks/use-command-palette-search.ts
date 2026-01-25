@@ -63,7 +63,8 @@ export function useCommandPaletteSearch<TResults>(options: {
     }
 
     // Increment request ID to handle race conditions
-    const currentRequestId = ++requestIdRef.current;
+    requestIdRef.current += 1;
+    const currentRequestId = requestIdRef.current;
 
     startTransition(async () => {
       try {

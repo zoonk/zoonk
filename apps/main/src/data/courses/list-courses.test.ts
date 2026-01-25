@@ -84,7 +84,7 @@ describe(listCourses, () => {
       result.map((course) => prisma.courseUser.count({ where: { courseId: course.id } })),
     );
 
-    for (let i = 0; i < userCounts.length - 1; i++) {
+    for (let i = 0; i < userCounts.length - 1; i += 1) {
       const current = userCounts[i] ?? 0;
       const next = userCounts[i + 1] ?? 0;
       expect(current).toBeGreaterThanOrEqual(next);
