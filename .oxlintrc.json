@@ -60,6 +60,7 @@
     "oxc/no-async-await": "off",
     "oxc/no-barrel-file": ["error", { "threshold": 0 }],
     "oxc/no-map-spread": "off",
+    "oxc/no-optional-chaining": "off",
     "react/jsx-filename-extension": ["error", { "extensions": ["tsx"] }],
     "react/jsx-handler-names": "off",
     "react/jsx-props-no-spreading": "off",
