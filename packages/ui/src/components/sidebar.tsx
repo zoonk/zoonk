@@ -17,6 +17,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@zoonk/ui/components/to
 import { useIsMobile } from "@zoonk/ui/hooks/mobile";
 import { type CSSPropertiesWithVariables } from "@zoonk/ui/lib/css-variables";
 import { cn } from "@zoonk/ui/lib/utils";
+import { setCookie } from "@zoonk/utils/cookies";
 import { type VariantProps, cva } from "class-variance-authority";
 import { PanelLeftIcon } from "lucide-react";
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
@@ -79,7 +80,7 @@ function SidebarProvider({
       }
 
       // This sets the cookie to keep the sidebar state.
-      document.cookie = `${SIDEBAR_COOKIE_NAME}=${openState}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`;
+      setCookie(SIDEBAR_COOKIE_NAME, String(openState), { maxAge: SIDEBAR_COOKIE_MAX_AGE });
     },
     [setOpenProp, open],
   );

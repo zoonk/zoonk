@@ -6,8 +6,8 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
 } from "@zoonk/ui/components/dropdown-menu";
+import { setCookie } from "@zoonk/utils/cookies";
 import { LOCALE_LABELS, SUPPORTED_LOCALES } from "@zoonk/utils/locale";
-import Cookies from "js-cookie";
 import { CheckIcon, LanguagesIcon } from "lucide-react";
 import { useExtracted, useLocale } from "next-intl";
 
@@ -16,7 +16,7 @@ export function LocaleSwitcher() {
   const locale = useLocale();
 
   function onLocaleChange(nextLocale: string) {
-    Cookies.set("locale", nextLocale, { expires: 365, sameSite: "lax" });
+    setCookie("locale", nextLocale, { expires: 365, sameSite: "lax" });
     globalThis.location.reload();
   }
 

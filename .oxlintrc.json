@@ -99,7 +99,8 @@
     "import/no-default-export": "error",
     "import/unambiguous": "error",
     "react/button-has-type": "error",
-    "unicorn/no-process-exit": "error"
+    "unicorn/no-process-exit": "error",
+    "unicorn/no-document-cookie": "error"
   },
   "overrides": [
     {
