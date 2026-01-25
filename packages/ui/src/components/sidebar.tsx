@@ -299,6 +299,7 @@ function SidebarRail({ className, ...props }: React.ComponentProps<"button">) {
       onClick={toggleSidebar}
       tabIndex={-1}
       title="Toggle Sidebar"
+      type="button"
       {...props}
     />
   );

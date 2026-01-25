@@ -94,7 +94,8 @@
     "eslint/no-plusplus": "error",
     "typescript/use-unknown-in-catch-callback-variable": "error",
     "import/no-default-export": "error",
-    "import/unambiguous": "error"
+    "import/unambiguous": "error",
+    "react/button-has-type": "error"
   },
   "overrides": [
     {
