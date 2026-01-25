@@ -98,7 +98,8 @@
     "typescript/use-unknown-in-catch-callback-variable": "error",
     "import/no-default-export": "error",
     "import/unambiguous": "error",
-    "react/button-has-type": "error"
+    "react/button-has-type": "error",
+    "unicorn/no-process-exit": "error"
   },
   "overrides": [
     {
@@ -124,6 +125,7 @@
         "eslint/max-statements": "off",
         "eslint/no-magic-numbers": "off",
         "import/no-namespace": "off",
+        "unicorn/no-process-exit": "off",
         "unicorn/prefer-top-level-await": "off"
       }
     },
