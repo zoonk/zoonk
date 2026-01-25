@@ -91,7 +91,8 @@
     "eslint/default-case": "error",
     "typescript/no-non-null-assertion": "error",
     "eslint/no-param-reassign": "error",
-    "eslint/no-plusplus": "error"
+    "eslint/no-plusplus": "error",
+    "typescript/use-unknown-in-catch-callback-variable": "error"
   },
   "overrides": [
     {
