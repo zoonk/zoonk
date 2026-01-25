@@ -39,6 +39,7 @@
     ],
     "import/no-named-as-default": "off",
     "eslint/no-ternary": "off",
+    "eslint/no-undefined": "off",
     "eslint/prefer-destructuring": "off",
     "eslint/require-await": "off",
     "eslint/sort-imports": ["error", { "ignoreDeclarationSort": true }],
