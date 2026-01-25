@@ -179,15 +179,16 @@ Skills are reusable knowledge modules that agents can reference for domain-speci
 
 ### Core Skills
 
-| Skill                       | Purpose                                                                                   |
-| --------------------------- | ----------------------------------------------------------------------------------------- |
-| `zoonk-business`            | Business decision-making framework - mission, values, trade-offs, and strategic alignment |
-| `zoonk-design`              | Design philosophy and UI/UX guidelines (Apple, Linear, Vercel-inspired)                   |
-| `zoonk-compound-components` | Required pattern for building UI components                                               |
-| `zoonk-testing`             | TDD patterns, e2e testing, and test architecture                                          |
-| `zoonk-translations`        | i18n patterns with next-intl                                                              |
-| `zoonk-commit`              | Commit message and PR description guidelines                                              |
-| `zoonk-code-simplification` | Code simplification and anti-overengineering patterns                                     |
+| Skill                       | Purpose                                                                                      |
+| --------------------------- | -------------------------------------------------------------------------------------------- |
+| `zoonk-business`            | Business decision-making framework - mission, values, trade-offs, and strategic alignment    |
+| `zoonk-technical`           | Technical decision-making framework - architecture, implementation, and technical trade-offs |
+| `zoonk-design`              | Design philosophy and UI/UX guidelines (Apple, Linear, Vercel-inspired)                      |
+| `zoonk-compound-components` | Required pattern for building UI components                                                  |
+| `zoonk-testing`             | TDD patterns, e2e testing, and test architecture                                             |
+| `zoonk-translations`        | i18n patterns with next-intl                                                                 |
+| `zoonk-commit`              | Commit message and PR description guidelines                                                 |
+| `zoonk-code-simplification` | Code simplification and anti-overengineering patterns                                        |
 
 ### When to Use Business Skill
 
