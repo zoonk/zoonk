@@ -71,6 +71,7 @@
     "typescript/no-misused-promises": ["error", { "checksVoidReturn": false }],
     "typescript/no-unsafe-type-assertion": "error",
     "typescript/prefer-nullish-coalescing": "off",
+    "typescript/promise-function-async": "off",
     "typescript/require-await": "off",
     "typescript/strict-boolean-expressions": "off",
     "unicorn/no-null": "off",
