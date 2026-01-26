@@ -107,6 +107,7 @@ export function LevelProgressionSkeleton() {
       <div className="flex flex-col gap-3">
         <div className="flex items-start justify-between gap-2">
           {Array.from({ length: 10 }).map((_, index) => (
+            // eslint-disable-next-line react/no-array-index-key -- static skeleton
             <div className="flex min-w-0 flex-1 flex-col items-center gap-1.5" key={index}>
               <div className="flex h-6 items-center justify-center">
                 <Skeleton className="size-3.5 rounded-full" />

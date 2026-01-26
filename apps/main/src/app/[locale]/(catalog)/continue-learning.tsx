@@ -42,6 +42,7 @@ export function ContinueLearningSkeleton() {
 
       <div className="flex gap-6 overflow-hidden px-4 pb-2">
         {Array.from({ length: 5 }).map((_, i) => (
+          // eslint-disable-next-line react/no-array-index-key -- static skeleton
           <FeatureCard className="w-72 shrink-0 md:w-80" key={i}>
             <Skeleton className="h-5 w-full" />
 
