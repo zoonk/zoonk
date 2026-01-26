@@ -52,34 +52,34 @@ All examples use the `run()` wrapper from `lib/run.ts` which:
 ### Basic Template
 
 ```typescript
-import { providerName } from "@ai-sdk/provider-name";
-import { generateText } from "ai";
-import { run } from "../lib/run";
+import { providerName } from '@ai-sdk/provider-name';
+import { generateText } from 'ai';
+import { run } from '../lib/run';
 
 run(async () => {
   const result = await generateText({
-    model: providerName("model-id"),
-    prompt: "Your prompt here.",
+    model: providerName('model-id'),
+    prompt: 'Your prompt here.',
   });
 
   console.log(result.text);
-  console.log("Token usage:", result.usage);
-  console.log("Finish reason:", result.finishReason);
+  console.log('Token usage:', result.usage);
+  console.log('Finish reason:', result.finishReason);
 });
 ```
 
 ### Streaming Template
 
 ```typescript
-import { providerName } from "@ai-sdk/provider-name";
-import { streamText } from "ai";
-import { printFullStream } from "../lib/print-full-stream";
-import { run } from "../lib/run";
+import { providerName } from '@ai-sdk/provider-name';
+import { streamText } from 'ai';
+import { printFullStream } from '../lib/print-full-stream';
+import { run } from '../lib/run';
 
 run(async () => {
   const result = streamText({
-    model: providerName("model-id"),
-    prompt: "Your prompt here.",
+    model: providerName('model-id'),
+    prompt: 'Your prompt here.',
   });
 
   await printFullStream({ result });
@@ -89,26 +89,26 @@ run(async () => {
 ### Tool Calling Template
 
 ```typescript
-import { providerName } from "@ai-sdk/provider-name";
-import { generateText, tool } from "ai";
-import { z } from "zod";
-import { run } from "../lib/run";
+import { providerName } from '@ai-sdk/provider-name';
+import { generateText, tool } from 'ai';
+import { z } from 'zod';
+import { run } from '../lib/run';
 
 run(async () => {
   const result = await generateText({
-    model: providerName("model-id"),
+    model: providerName('model-id'),
     tools: {
       myTool: tool({
-        description: "Tool description",
+        description: 'Tool description',
         inputSchema: z.object({
-          param: z.string().describe("Parameter description"),
+          param: z.string().describe('Parameter description'),
         }),
         execute: async ({ param }) => {
           return { result: `Processed: ${param}` };
         },
       }),
     },
-    prompt: "Use the tool to...",
+    prompt: 'Use the tool to...',
   });
 
   console.log(JSON.stringify(result, null, 2));
@@ -118,23 +118,23 @@ run(async () => {
 ### Structured Output Template
 
 ```typescript
-import { providerName } from "@ai-sdk/provider-name";
-import { generateObject } from "ai";
-import { z } from "zod";
-import { run } from "../lib/run";
+import { providerName } from '@ai-sdk/provider-name';
+import { generateObject } from 'ai';
+import { z } from 'zod';
+import { run } from '../lib/run';
 
 run(async () => {
   const result = await generateObject({
-    model: providerName("model-id"),
+    model: providerName('model-id'),
     schema: z.object({
       name: z.string(),
       items: z.array(z.string()),
     }),
-    prompt: "Generate a...",
+    prompt: 'Generate a...',
   });
 
   console.log(JSON.stringify(result.object, null, 2));
-  console.log("Token usage:", result.usage);
+  console.log('Token usage:', result.usage);
 });
 ```
 
@@ -178,11 +178,11 @@ The `lib/` directory contains shared utilities:
 ### Using print utilities
 
 ```typescript
-import { print } from "../lib/print";
+import { print } from '../lib/print';
 
 // Pretty print objects without undefined values
-print("Result:", result);
-print("Usage:", result.usage, { depth: 2 });
+print('Result:', result);
+print('Usage:', result.usage, { depth: 2 });
 ```
 
 ### Using printFullStream
@@ -199,12 +199,12 @@ await printFullStream({ result }); // Colored output for text, tool calls, reaso
 The `tools/` directory contains reusable tool definitions:
 
 ```typescript
-import { weatherTool } from "../tools/weather-tool";
+import { weatherTool } from '../tools/weather-tool';
 
 const result = await generateText({
-  model: openai("gpt-4o"),
+  model: openai('gpt-4o'),
   tools: { weather: weatherTool },
-  prompt: "What is the weather in San Francisco?",
+  prompt: 'What is the weather in San Francisco?',
 });
 ```
 
