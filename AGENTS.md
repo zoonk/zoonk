@@ -189,6 +189,9 @@ Skills are reusable knowledge modules that agents can reference for domain-speci
 | `zoonk-translations`        | i18n patterns with next-intl                                                                 |
 | `zoonk-commit`              | Commit message and PR description guidelines                                                 |
 | `zoonk-code-simplification` | Code simplification and anti-overengineering patterns                                        |
+| `zoonk-issue-planning`      | Break down implementation plans into small, manageable GitHub issues                         |
+| `zoonk-issue-writer`        | Write detailed user stories from plans (product owner layer) before posting to GitHub        |
+| `zoonk-github-issues`       | Create GitHub issues with types, dependencies, and sub-issues                                |
 
 ### When to Use Business Skill
 
