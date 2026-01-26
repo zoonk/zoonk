@@ -21,7 +21,7 @@
   },
   "devDependencies": {
     "@types/node": "^24",
-    "@typescript/native-preview": "7.0.0-dev.20260123.3",
+    "@typescript/native-preview": "7.0.0-dev.20260126.1",
     "@zoonk/tsconfig": "workspace:*"
   }
 }
