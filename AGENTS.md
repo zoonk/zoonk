@@ -173,6 +173,36 @@ We're using the new [React Compiler](https://react.dev/learn/react-compiler/intr
 
 When committing changes, use the `/commit` skill. This ensures consistent commit message formatting across the project.
 
+## Specialized Skills
+
+Skills are reusable knowledge modules that agents can reference for domain-specific guidance. They're located in `.agents/skills/` and symlinked to each agent's skills directory.
+
+### Core Skills
+
+| Skill                       | Purpose                                                                                      |
+| --------------------------- | -------------------------------------------------------------------------------------------- |
+| `zoonk-business`            | Business decision-making framework - mission, values, trade-offs, and strategic alignment    |
+| `zoonk-technical`           | Technical decision-making framework - architecture, implementation, and technical trade-offs |
+| `zoonk-design`              | Design philosophy and UI/UX guidelines (Apple, Linear, Vercel-inspired)                      |
+| `zoonk-compound-components` | Required pattern for building UI components                                                  |
+| `zoonk-testing`             | TDD patterns, e2e testing, and test architecture                                             |
+| `zoonk-translations`        | i18n patterns with next-intl                                                                 |
+| `zoonk-commit`              | Commit message and PR description guidelines                                                 |
+| `zoonk-code-simplification` | Code simplification and anti-overengineering patterns                                        |
+| `zoonk-issue-planning`      | Break down implementation plans into small, manageable GitHub issues                         |
+| `zoonk-issue-writer`        | Write detailed user stories from plans (product owner layer) before posting to GitHub        |
+| `zoonk-github-issues`       | Create GitHub issues with types, dependencies, and sub-issues                                |
+
+### When to Use Business Skill
+
+Reference the `zoonk-business` skill when:
+
+- Making strategic decisions about features or direction
+- Evaluating trade-offs (speed vs quality, features vs simplicity)
+- Ensuring decisions align with mission and values
+- Understanding what requires human approval
+- Determining priorities when facing conflicts
+
 ## Updating this document
 
 Update this file whenever you learn something new about this project that future tasks might need to take into account. Keeping the guidelines current helps everyone work more effectively.
