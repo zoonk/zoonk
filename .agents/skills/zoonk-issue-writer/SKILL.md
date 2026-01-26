@@ -259,6 +259,70 @@ Add Google and GitHub OAuth as login options alongside existing email/password.
 - [ ] Auth flow works on mobile browsers
 ```
 
+## Advanced Patterns
+
+### Writing Specs to Files (Pre-Review Workflow)
+
+For large projects, write specs to files for review before creating GitHub issues:
+
+**Directory structure:**
+
+```
+/tasks/specs/
+├── PATTERNS.md                    # Shared patterns for similar issues
+├── epic-name/
+│   ├── 01-first-issue.md
+│   ├── 02-second-issue.md
+│   └── 03-third-issue.md
+└── another-epic/
+    └── ...
+```
+
+**Benefits:**
+
+- Enables batch review before GitHub creation
+- Allows easy editing via pull request
+- Keeps related issues organized by epic
+
+### Shared Pattern Documents
+
+When writing specs for similar issues (e.g., CRUD endpoints, API resources), create a `PATTERNS.md` that defines:
+
+- Common URL structures
+- Standard request/response formats
+- Error handling patterns
+- Permission models
+
+Individual specs then reference patterns: "See PATTERNS.md for CRUD pattern."
+
+**Example reference in spec:**
+
+```markdown
+## Technical Notes
+
+See PATTERNS.md for CRUD pattern.
+
+- Requires `create` permission in org
+- Generate slug from title (unique within parent)
+```
+
+### Acceptance Criteria Guidelines
+
+**DO include:**
+
+- [ ] Testable behavioral outcomes
+- [ ] API response formats and status codes
+- [ ] Permission/error handling requirements
+- [ ] OpenAPI schema requirements
+
+**DON'T include:**
+
+- [ ] "Tests exist" or "Integration test written" (testing is implicit)
+- [ ] Implementation steps disguised as criteria
+- [ ] Vague criteria like "works correctly"
+
+Testing is an implicit requirement for all issues. Don't add acceptance criteria like "unit tests written" or "e2e tests pass" - that's assumed.
+
 ## References
 
 - **Issue Breakdown**: Use `zoonk-issue-planning` skill first to structure the breakdown

@@ -123,27 +123,45 @@ gh api graphql -f query='
 
 ## Dependencies (Blocked-By)
 
-Dependencies track when one issue blocks another. Use the REST API.
+Dependencies track when one issue blocks another. Use the REST API with **database IDs** (integers), not node IDs.
+
+### Get Issue Database ID
+
+The REST API for dependencies requires the integer database ID, not the GraphQL node ID:
+
+```bash
+# Get database ID for an issue
+gh api repos/zoonk/zoonk/issues/123 --jq '.id'
+# Returns something like: 3858025102
+```
 
 ### Add Dependency (Issue A blocks Issue B)
 
-First get the blocking issue's node ID, then:
+First get the blocking issue's database ID, then use `-F` (uppercase) to pass it as an integer:
 
 ```bash
+# Get the blocking issue's database ID
+BLOCKING_DB_ID=$(gh api repos/zoonk/zoonk/issues/BLOCKING_NUMBER --jq '.id')
+
+# Add dependency: BLOCKED_NUMBER is blocked by BLOCKING_NUMBER
 gh api repos/zoonk/zoonk/issues/BLOCKED_NUMBER/dependencies/blocked_by \
-  --method POST -f issue_id="BLOCKING_NODE_ID"
+  --method POST \
+  -F issue_id=$BLOCKING_DB_ID
 ```
 
-### List Dependencies
+**Important**: Use `-F` (uppercase) not `-f` (lowercase). The `-F` flag passes the value as a raw integer, while `-f` passes it as a string which will cause a 422 error.
+
+### Verify Dependencies
 
 ```bash
-gh api repos/zoonk/zoonk/issues/ISSUE_NUMBER/dependencies
+gh api repos/zoonk/zoonk/issues/ISSUE_NUMBER --jq '.issue_dependencies_summary'
+# Returns: {"blocked_by":1,"blocking":0,"total_blocked_by":1,"total_blocking":0}
 ```
 
 ### Remove Dependency
 
 ```bash
-gh api repos/zoonk/zoonk/issues/BLOCKED_NUMBER/dependencies/blocked_by/BLOCKING_NODE_ID \
+gh api repos/zoonk/zoonk/issues/BLOCKED_NUMBER/dependencies/blocked_by/BLOCKING_DB_ID \
   --method DELETE
 ```
 
@@ -261,8 +279,10 @@ gh api graphql -f query='
   }' -f parentId="$EPIC_ID" -f childId="$TASK2_ID"
 
 # 6. Add dependency (Task 2 blocked by Task 1)
+# Note: Dependencies use database ID (integer), not node ID
+TASK1_DB_ID=$(gh api repos/zoonk/zoonk/issues/$TASK1_NUM --jq '.id')
 gh api repos/zoonk/zoonk/issues/$TASK2_NUM/dependencies/blocked_by \
-  --method POST -f issue_id="$TASK1_ID"
+  --method POST -F issue_id=$TASK1_DB_ID
 ```
 
 ### Get Issue Node ID Helper
@@ -295,6 +315,13 @@ get_issue_id() {
 | Add sub-issue     | `gh api graphql ... addSubIssue(input: ...)`                      |
 | List sub-issues   | `gh api graphql ... issue(number: N) { subIssues ... }`           |
 
+## Common Mistakes
+
+- Use GitHub sub-issues feature, which automatically lists sub-issues, no need to list all sub-issues manually in the issue body
+- Similarly, when we add issue dependencies, it automatically adds that dependency to the UI, so you don't need to add `Parent: #ISSUE_NUMBER` - GitHub already does that when you add the relationship
+- Plus, you shouldn't add references to our temporary files to the GitHub issue body like this: `specs, see /tasks/specs/whatever`. Instead write the full spec to the issue body
+- When you have multiple issues to add, you may want to create a temporary bash script to process them in batch instead of running each command individually
+
 ## Troubleshooting
 
 ### "Resource not accessible by integration"
@@ -320,3 +347,10 @@ get_issue_id() {
 - Node IDs are base64-encoded and version-specific
 - Always fetch fresh node IDs before mutations
 - Don't cache node IDs across sessions
+
+### "Invalid property /issue_id: is not of type integer" (HTTP 422)
+
+- The REST API for dependencies requires the **database ID** (integer), not the GraphQL node ID
+- Use `-F` (uppercase) to pass integers: `-F issue_id=$DB_ID`
+- Don't use `-f` (lowercase) which passes strings: `-f issue_id="..."` will fail
+- Get database ID with: `gh api repos/zoonk/zoonk/issues/NUMBER --jq '.id'`
