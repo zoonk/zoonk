@@ -562,11 +562,7 @@ export function generateStaticParams() {
 // app/[slug]/page.tsx
 import { Suspense } from "react";
 
-export default function Page({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
+export default function Page({ params }: { params: Promise<{ slug: string }> }) {
   return (
     <Suspense fallback={<PageSkeleton />}>
       <DynamicContent params={params} />
@@ -709,7 +705,7 @@ cacheTag(
   "posts", // All posts
   `category-${category}`, // Posts in category
   `post-${id}`, // Specific post
-  `author-${authorId}` // Author's posts
+  `author-${authorId}`, // Author's posts
 );
 
 // Invalidate at appropriate level

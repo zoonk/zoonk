@@ -443,10 +443,7 @@ import { revalidateTag } from "next/cache";
 ### Signature
 
 ```tsx
-function revalidateTag(
-  tag: string,
-  profile: string | { expire?: number }
-): void;
+function revalidateTag(tag: string, profile: string | { expire?: number }): void;
 ```
 
 ### Parameters
@@ -919,11 +916,7 @@ export async function generateStaticParams() {
   return posts.map((post) => ({ slug: post.slug }));
 }
 
-export default async function BlogPost({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
+export default async function BlogPost({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const post = await getPost(slug);
   return <Article post={post} />;
@@ -952,11 +945,7 @@ export async function getPost(slug: string) {
 }
 
 // app/blog/[slug]/page.tsx
-export default async function BlogPost({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
+export default async function BlogPost({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const post = await getPost(slug);
   return <Article post={post} />;

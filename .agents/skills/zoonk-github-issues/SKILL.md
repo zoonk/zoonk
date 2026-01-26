@@ -1,6 +1,17 @@
+---
+name: zoonk-github-issues
+description: "Create and manage GitHub issues with advanced features: issue types, dependencies, and sub-issues. Use this skill after planning issues with zoonk-issue-planning."
+license: MIT
+metadata:
+  author: zoonk
+  version: "1.0.0"
+---
+
 # GitHub Issues Skill
 
 Create and manage GitHub issues with advanced features: issue types, dependencies, and sub-issues.
+
+For **planning** what issues to create, see [zoonk-issue-planning](./../zoonk-issue-planning/SKILL.md).
 
 ## Quick Start
 
