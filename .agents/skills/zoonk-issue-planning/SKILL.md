@@ -32,23 +32,59 @@ For actually **creating** issues in GitHub, see [zoonk-github-issues](./../zoonk
 These contribute to the size calculation:
 
 - Application code
-- Test code
 - Configuration changes
 
 ### What Doesn't Count
 
 These do NOT contribute to the size calculation:
 
+- **Test code** (tests are required but don't count toward LOC limit)
 - Generated code (Prisma client, etc.)
 - Translation files (PO files)
 - Lock files (pnpm-lock.yaml, etc.)
 - Type definitions from codegen
-- Test files
 - Comments and documentation
 
 ### When Uncertain
 
 Split smaller. It's easier to combine issues later than to split them mid-implementation.
+
+## Critical Rules
+
+### Tests Are Always Included
+
+Every issue that adds functionality MUST include its tests in the same issue. Never create separate "testing" issues.
+
+**Good:**
+
+- "Add course search endpoint" (includes endpoint + tests)
+
+**Bad:**
+
+- "Add course search endpoint" + "Add tests for course search endpoint"
+
+### Verification Is Part of Every Issue
+
+Every issue implicitly includes verification. Don't create separate "verify X works" issues. An issue isn't complete until it's verified to work.
+
+### One Endpoint = One Issue
+
+For API work, each endpoint (or small group of related endpoints) should be its own issue with tests included. Don't group many endpoints into one issue, then create a separate testing issue.
+
+**Good:**
+
+```
+1. Add GET /courses/:slug endpoint
+2. Add POST /courses endpoint
+3. Add PATCH /courses/:slug endpoint
+```
+
+**Bad:**
+
+```
+1. Add course CRUD endpoints (GET, POST, PATCH, DELETE)
+2. Add tests for course endpoints
+```
 
 ## Breaking Down Process
 
@@ -125,6 +161,46 @@ For large implementations spanning multiple apps or domains:
     - **Tasks**: Implementation pieces within that domain
 
 Dependencies can exist between epics, not just between tasks.
+
+### When to Use Sub-Epics
+
+Sub-epics are for **substantial** groupings, not small collections of tasks. If you have isolated tasks that don't belong to an epic, just make them sub-issues under the main epic. You can have sub-issues and sub-epics side-by-side. Not everything under an epic needs to be a sub-epic.
+
+**Use a sub-epic when:**
+
+- The domain has 5+ related issues
+- The work is complex enough to warrant its own tracking
+- Multiple people might work on different parts
+
+**Don't use a sub-epic when:**
+
+- There are only 1-3 issues (just make them top-level tasks)
+- The "sub-epic" is really just a single task with verification
+
+**Example - Too Granular:**
+
+```
+Sub-Epic: Main App Migration (2 issues)
+1. Migrate main app to SDK
+2. Verify migration works
+```
+
+**Better:**
+
+```
+Task: Migrate main app to SDK
+(verification is implicit in the task)
+```
+
+**Example - Good Sub-Epic:**
+
+```
+Sub-Epic: Organization Content API (12 issues)
+1. Add GET /orgs/:slug/courses endpoint
+2. Add POST /orgs/:slug/courses endpoint
+3. Add PATCH /orgs/:slug/courses/:slug endpoint
+...
+```
 
 ## Dependency Guidelines
 
