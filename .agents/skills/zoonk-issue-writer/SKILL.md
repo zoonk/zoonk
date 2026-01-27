@@ -93,6 +93,32 @@ Use this adaptive template. Required sections appear in every issue. Optional se
 | Technical Notes     | Planning revealed specific insights | Generic implementation |
 | Acceptance Criteria | Always                              | Never                  |
 
+## Issue References in Specs
+
+### During Spec Writing (Before GitHub Issues Exist)
+
+When writing specs that will become GitHub issues later:
+
+1. **Never use `#NUMBER` format in specs** - These aren't GitHub issues yet
+2. **Reference other specs by file name** instead:
+   - BAD: `See issue #18 for details`
+   - GOOD: `See spec 18-get-org-courses.md for details`
+
+3. **Never add relationship metadata** - GitHub handles these:
+   - No "Blocked by: #X" lines (use GitHub API)
+   - No "Parent: #X" lines (use sub-issue feature)
+   - No sub-issue lists (GitHub shows these automatically)
+   - No summary tables (GitHub UI displays this)
+
+### After GitHub Issues Exist
+
+Cross-references to **real GitHub issues** are fine when providing context:
+
+- "Out of scope, handled by #1234"
+- "See #1234 for the course endpoint this depends on"
+
+**But verify the reference first** - never trust #NUMBER from specs. Check GitHub to confirm the issue exists and is the correct one.
+
 ## Writing Guidelines
 
 ### 1. Context Over Commands
