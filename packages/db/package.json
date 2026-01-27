@@ -25,13 +25,13 @@
   "dependencies": {
     "@prisma/adapter-pg": "7.3.0",
     "@prisma/client": "7.3.0",
-    "@vercel/functions": "3.3.5",
+    "@vercel/functions": "3.3.6",
     "@zoonk/utils": "workspace:*",
     "pg": "8.17.2"
   },
   "devDependencies": {
     "@types/pg": "8.16.0",
-    "@typescript/native-preview": "7.0.0-dev.20260126.1",
+    "@typescript/native-preview": "7.0.0-dev.20260127.1",
     "@zoonk/tsconfig": "workspace:*",
     "dotenv": "17.2.3",
     "prisma": "7.3.0",

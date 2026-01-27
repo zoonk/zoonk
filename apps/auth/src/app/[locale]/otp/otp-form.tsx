@@ -12,7 +12,7 @@ export function OTPForm({ email, redirectTo }: { email: string; redirectTo: stri
   const t = useExtracted();
   const [state, setState] = useState<"idle" | "pending" | "error">("idle");
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
     setState("pending");
 
