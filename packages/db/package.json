@@ -25,7 +25,7 @@
   "dependencies": {
     "@prisma/adapter-pg": "7.3.0",
     "@prisma/client": "7.3.0",
-    "@vercel/functions": "3.3.5",
+    "@vercel/functions": "3.3.6",
     "@zoonk/utils": "workspace:*",
     "pg": "8.17.2"
   },
