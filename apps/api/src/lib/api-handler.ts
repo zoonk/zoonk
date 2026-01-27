@@ -16,24 +16,39 @@ type UserInfo = {
   sessionId: number;
 };
 
-type ApiContextWithUser = {
+type ApiContextBase = {
   req: NextRequest;
   params: Record<string, string>;
   apiKey: ApiKeyInfo;
-  user: UserInfo;
 };
 
-type ApiContextOptionalUser = {
-  req: NextRequest;
-  params: Record<string, string>;
-  apiKey: ApiKeyInfo;
+type ApiContextWithUser<TBody = never> = ApiContextBase & { user: UserInfo } & BodyContext<TBody>;
+
+type ApiContextOptionalUser<TBody = never> = ApiContextBase & {
   user: UserInfo | null;
+} & BodyContext<TBody>;
+
+type BodyContext<TBody> = [TBody] extends [never] ? object : { body: TBody };
+
+type RouteParams = { params: Promise<Record<string, string>> };
+
+type ConfigWithAuth<TBody = never> = {
+  skipAuth?: false;
+  skipApiKey?: boolean;
+  body?: z.ZodType<TBody>;
+};
+
+type ConfigWithoutAuth<TBody = never> = {
+  skipAuth: true;
+  skipApiKey?: boolean;
+  body?: z.ZodType<TBody>;
 };
 
 const apiKeyMetadataSchema = z.object({ orgSlug: z.string().optional() }).optional();
 
 async function validateApiKey(req: NextRequest): Promise<ApiKeyInfo | null> {
   const key = req.headers.get("x-api-key");
+
   if (!key) {
     return null;
   }
@@ -46,23 +61,30 @@ async function validateApiKey(req: NextRequest): Promise<ApiKeyInfo | null> {
   const parseResult = apiKeyMetadataSchema.safeParse(result.key.metadata);
   const orgSlug = parseResult.success ? (parseResult.data?.orgSlug ?? null) : null;
 
-  return {
-    isSystemKey: orgSlug === AI_ORG_SLUG,
-    key,
-    orgSlug,
-  };
+  return { isSystemKey: orgSlug === AI_ORG_SLUG, key, orgSlug };
+}
+
+async function resolveApiKey(
+  req: NextRequest,
+  skip?: boolean,
+): Promise<{ apiKey: ApiKeyInfo } | { error: NextResponse }> {
+  if (skip) {
+    return { apiKey: { isSystemKey: false, key: "", orgSlug: null } };
+  }
+
+  const apiKey = await validateApiKey(req);
+
+  return apiKey ? { apiKey } : { error: errors.invalidApiKey() };
 }
 
 async function getUser(req: NextRequest): Promise<UserInfo | null> {
   const { data: session } = await safeAsync(() => auth.api.getSession({ headers: req.headers }));
+
   if (!session?.user) {
     return null;
   }
 
-  return {
-    id: Number(session.user.id),
-    sessionId: Number(session.session.id),
-  };
+  return { id: Number(session.user.id), sessionId: Number(session.session.id) };
 }
 
 async function parseBody<TBody>(
@@ -71,6 +93,7 @@ async function parseBody<TBody>(
 ): Promise<{ data: TBody; success: true } | { error: z.ZodError; success: false }> {
   // oxlint-disable-next-line typescript/no-unsafe-assignment -- JSON parsing returns unknown
   const { data: json, error } = await safeAsync(() => req.json());
+
   if (error) {
     return {
       error: new z.ZodError([{ code: "custom", message: "Invalid JSON body", path: [] }]),
@@ -79,118 +102,64 @@ async function parseBody<TBody>(
   }
 
   const result = schema.safeParse(json);
-  if (!result.success) {
-    return { error: result.error, success: false };
-  }
-  return { data: result.data, success: true };
+
+  return result.success
+    ? { data: result.data, success: true }
+    : { error: result.error, success: false };
 }
 
-type RouteParams = { params: Promise<Record<string, string>> };
-
-type ConfigWithAuth = {
-  skipAuth?: false;
-  skipApiKey?: boolean;
-};
-
-type ConfigWithoutAuth = {
-  skipAuth: true;
-  skipApiKey?: boolean;
-};
-
-export function apiHandler(
-  config: ConfigWithAuth,
-  handler: (ctx: ApiContextWithUser) => Promise<NextResponse> | NextResponse,
+export function apiHandler<TBody = never>(
+  config: ConfigWithAuth<TBody>,
+  handler: (ctx: ApiContextWithUser<TBody>) => Promise<NextResponse> | NextResponse,
 ): (req: NextRequest, opts: RouteParams) => Promise<NextResponse>;
 
-export function apiHandler(
-  config: ConfigWithoutAuth,
-  handler: (ctx: ApiContextOptionalUser) => Promise<NextResponse> | NextResponse,
+export function apiHandler<TBody = never>(
+  config: ConfigWithoutAuth<TBody>,
+  handler: (ctx: ApiContextOptionalUser<TBody>) => Promise<NextResponse> | NextResponse,
 ): (req: NextRequest, opts: RouteParams) => Promise<NextResponse>;
 
-export function apiHandler(
-  config: ConfigWithAuth | ConfigWithoutAuth,
+export function apiHandler<TBody = never>(
+  config: ConfigWithAuth<TBody> | ConfigWithoutAuth<TBody>,
   handler:
-    | ((ctx: ApiContextWithUser) => Promise<NextResponse> | NextResponse)
-    | ((ctx: ApiContextOptionalUser) => Promise<NextResponse> | NextResponse),
+    | ((ctx: ApiContextWithUser<TBody>) => Promise<NextResponse> | NextResponse)
+    | ((ctx: ApiContextOptionalUser<TBody>) => Promise<NextResponse> | NextResponse),
 ): (req: NextRequest, opts: RouteParams) => Promise<NextResponse> {
   return async (req: NextRequest, { params }: RouteParams): Promise<NextResponse> => {
     const resolvedParams = await params;
 
-    let apiKey: ApiKeyInfo = { isSystemKey: false, key: "", orgSlug: null };
-    if (!config.skipApiKey) {
-      const validatedKey = await validateApiKey(req);
-      if (!validatedKey) {
-        return errors.invalidApiKey();
-      }
-      apiKey = validatedKey;
+    const apiKeyResult = await resolveApiKey(req, config.skipApiKey);
+
+    if ("error" in apiKeyResult) {
+      return apiKeyResult.error;
     }
 
+    const { apiKey } = apiKeyResult;
+
     const user = await getUser(req);
+
     if (!config.skipAuth && !user) {
       return errors.unauthorized();
     }
 
-    const ctx: ApiContextOptionalUser = {
-      apiKey,
-      params: resolvedParams,
-      req,
-      user,
-    };
+    const baseCtx: ApiContextOptionalUser = { apiKey, params: resolvedParams, req, user };
 
-    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- function overloads ensure type safety at call sites
-    return (handler as (ctx: ApiContextOptionalUser) => Promise<NextResponse> | NextResponse)(ctx);
-  };
-}
+    if (config.body) {
+      const bodyResult = await parseBody(req, config.body);
 
-export function apiHandlerWithBody<TBody>(
-  config: ConfigWithAuth & { body: z.ZodType<TBody> },
-  handler: (ctx: ApiContextWithUser & { body: TBody }) => Promise<NextResponse> | NextResponse,
-): (req: NextRequest, opts: RouteParams) => Promise<NextResponse>;
-
-export function apiHandlerWithBody<TBody>(
-  config: ConfigWithoutAuth & { body: z.ZodType<TBody> },
-  handler: (ctx: ApiContextOptionalUser & { body: TBody }) => Promise<NextResponse> | NextResponse,
-): (req: NextRequest, opts: RouteParams) => Promise<NextResponse>;
-
-export function apiHandlerWithBody<TBody>(
-  config: (ConfigWithAuth | ConfigWithoutAuth) & { body: z.ZodType<TBody> },
-  handler:
-    | ((ctx: ApiContextWithUser & { body: TBody }) => Promise<NextResponse> | NextResponse)
-    | ((ctx: ApiContextOptionalUser & { body: TBody }) => Promise<NextResponse> | NextResponse),
-): (req: NextRequest, opts: RouteParams) => Promise<NextResponse> {
-  return async (req: NextRequest, { params }: RouteParams): Promise<NextResponse> => {
-    const resolvedParams = await params;
-
-    let apiKey: ApiKeyInfo = { isSystemKey: false, key: "", orgSlug: null };
-    if (!config.skipApiKey) {
-      const validatedKey = await validateApiKey(req);
-      if (!validatedKey) {
-        return errors.invalidApiKey();
+      if (!bodyResult.success) {
+        return errors.validation(bodyResult.error);
       }
-      apiKey = validatedKey;
-    }
 
-    const user = await getUser(req);
-    if (!config.skipAuth && !user) {
-      return errors.unauthorized();
+      // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- function overloads ensure type safety at call sites
+      return (handler as (ctx: ApiContextOptionalUser<TBody>) => Promise<NextResponse>)({
+        ...baseCtx,
+        body: bodyResult.data,
+      } as ApiContextOptionalUser<TBody>);
     }
-
-    const bodyResult = await parseBody(req, config.body);
-    if (!bodyResult.success) {
-      return errors.validation(bodyResult.error);
-    }
-
-    const ctx: ApiContextOptionalUser & { body: TBody } = {
-      apiKey,
-      body: bodyResult.data,
-      params: resolvedParams,
-      req,
-      user,
-    };
 
     // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- function overloads ensure type safety at call sites
-    return (handler as (ctx: ApiContextOptionalUser & { body: TBody }) => Promise<NextResponse>)(
-      ctx,
-    );
+    const ctx = baseCtx as ApiContextOptionalUser<TBody>;
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- function overloads ensure type safety at call sites
+    return (handler as (ctx: ApiContextOptionalUser<TBody>) => Promise<NextResponse>)(ctx);
   };
 }
