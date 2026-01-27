@@ -372,6 +372,38 @@ test.describe("Course Creation Wizard - Successful Creation", () => {
       "my-amazing-course",
     );
   });
+
+  test("new course appears on home page after navigating back", async ({ authenticatedPage }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const uniqueSlug = `e2e-home-${uniqueId}`;
+    const courseTitle = `Revalidation Test ${uniqueId}`;
+
+    await authenticatedPage.goto("/ai/new-course");
+
+    await fillCourseForm(authenticatedPage, {
+      description: "Testing cache revalidation",
+      slug: uniqueSlug,
+      title: courseTitle,
+    });
+
+    const createButton = authenticatedPage.getByRole("button", { name: /create/i });
+    await expect(createButton).toBeEnabled();
+    await createButton.click();
+
+    // Wait for redirect to course page
+    await expect(
+      authenticatedPage.getByRole("textbox", { name: /edit course title/i }),
+    ).toBeVisible();
+
+    // Navigate back to home via the home button (soft navigation, uses router cache)
+    await authenticatedPage.getByRole("link", { name: /home page/i }).click();
+
+    // Verify we're on the home page
+    await expect(authenticatedPage.getByRole("heading", { name: /draft courses/i })).toBeVisible();
+
+    // The new course should appear WITHOUT hard refresh (unique title ensures we're testing revalidation)
+    await expect(authenticatedPage.getByRole("link", { name: courseTitle })).toBeVisible();
+  });
 });
 
 test.describe("Course Creation Wizard - Close Button", () => {

@@ -25,6 +25,49 @@ Follow TDD (Test-Driven Development) for all features and bug fixes. **Always wr
 - **New feature**: Write a test showing the feature doesn't exist yet
 - **Refactoring**: Ensure tests exist before changing code
 
+### CRITICAL: Verify the Test Fails First
+
+**You MUST run the test before implementing the fix to confirm it fails.** This is non-negotiable.
+
+If the test passes before you write the fix, **the test is wrong**. A passing test means one of:
+
+1. The bug doesn't exist (investigate further)
+2. The test is matching existing/seeded data instead of new behavior
+3. The test assertion is too loose
+
+**Never use workarounds to make a failing test pass.** Common anti-patterns:
+
+```typescript
+// BAD: Using .first() to avoid "strict mode violation" with multiple matches
+await expect(page.getByText(courseTitle).first()).toBeVisible();
+// This passes even if the item existed before your fix!
+
+// BAD: Using loose assertions that match existing data
+const courseTitle = "Test Course"; // Generic name that might exist
+await expect(page.getByText(courseTitle)).toBeVisible();
+
+// GOOD: Use unique identifiers to ensure you're testing NEW behavior
+const uniqueId = randomUUID().slice(0, 8);
+const courseTitle = `Test Course ${uniqueId}`;
+await expect(page.getByText(courseTitle)).toBeVisible();
+// This ONLY passes if your code actually created this specific item
+```
+
+**When you see "strict mode violation: resolved to N elements":**
+
+1. Don't add `.first()` - that masks the real issue
+2. Ask: "Why are there multiple matches?"
+3. Make your test data unique so only ONE element can match but DO NOT use locators to make it unique, still use accessible queries like `getByRole` or `getByText`, just make the content unique
+4. The test should fail before the fix and pass after
+
+**TDD verification checklist:**
+
+1. ✅ Write the test
+2. ✅ Run the test - **it MUST fail**
+3. ✅ If it passes, the test is wrong - fix the test first
+4. ✅ Write the implementation
+5. ✅ Run the test - it should now pass
+
 ## Test Types
 
 | When                    | Test Type   | Framework  | Location                              |

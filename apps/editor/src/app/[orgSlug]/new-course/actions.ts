@@ -7,6 +7,7 @@ import { revalidateMainApp } from "@zoonk/core/cache/revalidate";
 import { cacheTagOrgCourses } from "@zoonk/utils/cache";
 import { toSlug } from "@zoonk/utils/string";
 import { getExtracted } from "next-intl/server";
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { after } from "next/server";
 import { type CourseFormData } from "./use-course-form";
@@ -55,5 +56,6 @@ export async function createCourseAction(formData: CourseFormData, orgSlug: stri
     await revalidateMainApp([cacheTagOrgCourses({ orgSlug })]);
   });
 
+  revalidatePath(`/${orgSlug}`);
   redirect(`/${orgSlug}/c/${course.language}/${course.slug}`);
 }
