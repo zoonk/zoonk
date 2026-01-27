@@ -1,10 +1,10 @@
+import { chapterGenerationWorkflow } from "@/workflows/chapter-generation/chapter-generation-workflow";
 import { FatalError, getWorkflowMetadata } from "workflow";
 import { getOrCreateCourse } from "./_internal/get-or-create-course";
 import { setupCourse } from "./_internal/setup-course";
 import { checkExistingCourseStep } from "./steps/check-existing-course-step";
 import { getCourseSuggestionStep } from "./steps/get-course-suggestion-step";
 import { handleCourseFailureStep } from "./steps/handle-failure-step";
-import { startChapterGenerationStep } from "./steps/start-chapter-generation-step";
 
 export async function courseGenerationWorkflow(courseSuggestionId: number): Promise<void> {
   "use workflow";
@@ -53,6 +53,6 @@ export async function courseGenerationWorkflow(courseSuggestionId: number): Prom
   const firstChapter = chapters[0];
 
   if (firstChapter) {
-    await startChapterGenerationStep(firstChapter);
+    await chapterGenerationWorkflow(firstChapter.id);
   }
 }
