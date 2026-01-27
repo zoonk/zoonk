@@ -22,6 +22,10 @@
   },
   "tags": ["-lintignore"],
   "workspaces": {
+    "apps/api": {
+      "ignore": ["src/lib/**"],
+      "ignoreDependencies": ["@zoonk/auth", "@zoonk/core", "@zoonk/db", "@zoonk/utils", "zod"]
+    },
     "apps/auth": {
       "entry": ["src/i18n/codec.ts"]
     },

@@ -23,6 +23,8 @@ model User {
   progress         UserProgress?
   dailyProgress    DailyProgress[]
 
+  apikeys Apikey[]
+
   @@unique([email])
   @@map("users")
 }
@@ -159,4 +161,43 @@ model RateLimit {
   lastRequest BigInt? @map("last_request")
 
   @@map("rate_limits")
+}
+
+model Jwks {
+  id         Int       @id @default(autoincrement())
+  publicKey  String    @map("public_key")
+  privateKey String    @map("private_key")
+  createdAt  DateTime  @default(now()) @map("created_at")
+  expiresAt  DateTime? @map("expires_at")
+
+  @@map("jwks")
+}
+
+model Apikey {
+  id                  Int       @id @default(autoincrement())
+  name                String?
+  start               String?
+  prefix              String?
+  key                 String
+  userId              Int       @map("user_id")
+  user                User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  refillInterval      Int?      @map("refill_interval")
+  refillAmount        Int?      @map("refill_amount")
+  lastRefillAt        DateTime? @map("last_refill_at")
+  enabled             Boolean?  @default(true)
+  rateLimitEnabled    Boolean?  @default(true) @map("rate_limit_enabled")
+  rateLimitTimeWindow Int?      @default(86400000) @map("rate_limit_time_window")
+  rateLimitMax        Int?      @default(10) @map("rate_limit_max")
+  requestCount        Int?      @default(0) @map("request_count")
+  remaining           Int?
+  lastRequest         DateTime? @map("last_request")
+  expiresAt           DateTime? @map("expires_at")
+  createdAt           DateTime  @default(now()) @map("created_at")
+  updatedAt           DateTime  @updatedAt @map("updated_at")
+  permissions         String?
+  metadata            String?
+
+  @@index([key])
+  @@index([userId])
+  @@map("api_keys")
 }
