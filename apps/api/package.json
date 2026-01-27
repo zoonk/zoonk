@@ -1,0 +1,23 @@
+{
+  "name": "api",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "analyze": "next experimental-analyze",
+    "build": "next build",
+    "dev": "next dev -p 3005",
+    "start": "next start -p 3005",
+    "typecheck": "next typegen && tsgo --noEmit"
+  },
+  "dependencies": {
+    "next": "16.1.5"
+  },
+  "devDependencies": {
+    "@types/node": "^24",
+    "@types/react": "^19",
+    "@typescript/native-preview": "7.0.0-dev.20260127.1",
+    "@zoonk/tsconfig": "workspace:*",
+    "typescript": "^5"
+  }
+}
