@@ -6,8 +6,7 @@ export async function parseBody<TBody>(
   req: NextRequest,
   schema: z.ZodType<TBody>,
 ): Promise<{ data: TBody; success: true } | { error: z.ZodError; success: false }> {
-  // oxlint-disable-next-line typescript/no-unsafe-assignment -- JSON parsing returns unknown
-  const { data: json, error } = await safeAsync(() => req.json());
+  const { data: json, error } = await safeAsync<unknown>(() => req.json());
 
   if (error) {
     return {
