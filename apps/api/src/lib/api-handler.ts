@@ -1,20 +1,9 @@
-import { auth } from "@zoonk/auth";
-import { AI_ORG_SLUG } from "@zoonk/utils/constants";
-import { safeAsync } from "@zoonk/utils/error";
 import { type NextRequest, type NextResponse } from "next/server";
-import { z } from "zod";
+import { type z } from "zod";
+import { type ApiKeyInfo, resolveApiKey } from "./_utils/api-key";
+import { parseBody } from "./_utils/body-parser";
+import { type UserInfo, getUser } from "./_utils/session";
 import { errors } from "./api-errors";
-
-type ApiKeyInfo = {
-  key: string;
-  orgSlug: string | null;
-  isSystemKey: boolean;
-};
-
-type UserInfo = {
-  id: number;
-  sessionId: number;
-};
 
 type ApiContextBase = {
   req: NextRequest;
@@ -43,70 +32,6 @@ type ConfigWithoutAuth<TBody = never> = {
   skipApiKey?: boolean;
   body?: z.ZodType<TBody>;
 };
-
-const apiKeyMetadataSchema = z.object({ orgSlug: z.string().optional() }).optional();
-
-async function validateApiKey(req: NextRequest): Promise<ApiKeyInfo | null> {
-  const key = req.headers.get("x-api-key");
-
-  if (!key) {
-    return null;
-  }
-
-  const { data: result } = await safeAsync(() => auth.api.verifyApiKey({ body: { key } }));
-  if (!result?.valid || !result.key) {
-    return null;
-  }
-
-  const parseResult = apiKeyMetadataSchema.safeParse(result.key.metadata);
-  const orgSlug = parseResult.success ? (parseResult.data?.orgSlug ?? null) : null;
-
-  return { isSystemKey: orgSlug === AI_ORG_SLUG, key, orgSlug };
-}
-
-async function resolveApiKey(
-  req: NextRequest,
-  skip?: boolean,
-): Promise<{ apiKey: ApiKeyInfo } | { error: NextResponse }> {
-  if (skip) {
-    return { apiKey: { isSystemKey: false, key: "", orgSlug: null } };
-  }
-
-  const apiKey = await validateApiKey(req);
-
-  return apiKey ? { apiKey } : { error: errors.invalidApiKey() };
-}
-
-async function getUser(req: NextRequest): Promise<UserInfo | null> {
-  const { data: session } = await safeAsync(() => auth.api.getSession({ headers: req.headers }));
-
-  if (!session?.user) {
-    return null;
-  }
-
-  return { id: Number(session.user.id), sessionId: Number(session.session.id) };
-}
-
-async function parseBody<TBody>(
-  req: NextRequest,
-  schema: z.ZodType<TBody>,
-): Promise<{ data: TBody; success: true } | { error: z.ZodError; success: false }> {
-  // oxlint-disable-next-line typescript/no-unsafe-assignment -- JSON parsing returns unknown
-  const { data: json, error } = await safeAsync(() => req.json());
-
-  if (error) {
-    return {
-      error: new z.ZodError([{ code: "custom", message: "Invalid JSON body", path: [] }]),
-      success: false,
-    };
-  }
-
-  const result = schema.safeParse(json);
-
-  return result.success
-    ? { data: result.data, success: true }
-    : { error: result.error, success: false };
-}
 
 export function apiHandler<TBody = never>(
   config: ConfigWithAuth<TBody>,
