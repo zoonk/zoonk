@@ -93,9 +93,24 @@ importers:
 
   apps/api:
     dependencies:
+      '@zoonk/auth':
+        specifier: workspace:*
+        version: link:../../packages/auth
+      '@zoonk/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+      '@zoonk/db':
+        specifier: workspace:*
+        version: link:../../packages/db
+      '@zoonk/utils':
+        specifier: workspace:*
+        version: link:../../packages/utils
       next:
         specifier: 16.1.5
         version: 16.1.5(@opentelemetry/api@1.9.0)(@playwright/test@1.58.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      zod:
+        specifier: 4.3.5
+        version: 4.3.5
     devDependencies:
       '@types/node':
         specifier: ^24

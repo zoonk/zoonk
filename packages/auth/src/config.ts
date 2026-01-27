@@ -2,7 +2,15 @@ import { prisma } from "@zoonk/db";
 import { getDevTrustedOrigins, getVercelTrustedOrigins } from "@zoonk/utils/url";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { nextCookies } from "better-auth/next-js";
-import { admin as adminPlugin, emailOTP, oneTimeToken, organization } from "better-auth/plugins";
+import {
+  admin as adminPlugin,
+  apiKey,
+  bearer,
+  emailOTP,
+  jwt,
+  oneTimeToken,
+  organization,
+} from "better-auth/plugins";
 import { type BetterAuthOptions } from "better-auth/types";
 import { ac, admin, member, owner } from "./permissions";
 import { sendVerificationOTP } from "./plugins/otp";
@@ -80,6 +88,9 @@ export const fullPlugins = [
   oneTimeToken({
     storeToken: "hashed",
   }),
+  jwt(),
+  apiKey({ enableMetadata: true }),
+  bearer(),
   stripePlugin(),
   trustedOriginPlugin(),
   // NextCookies should be the last plugin in the array
