@@ -110,7 +110,7 @@ For detailed examples and patterns, see `.agents/skills/zoonk-compound-component
 2. **Use the `e2e-test-architect` agent** if available - It knows the testing patterns
 3. **Invoke the `/testing` skill** - Use `Skill(testing)` to get guidance
 
-**Always follow TDD (Test-Driven Development)**: Write a failing test first, then write the code to make it pass.
+**VERY IMPORTANT**: **Always follow TDD (Test-Driven Development)**: Write a failing test first, **run the test to confirm it fails**, then write the code to make it pass. If the test passes before your fix, the test is wrong—never use workarounds like `.first()` or loose assertions to make tests pass. Use unique test data (e.g., UUIDs in titles) to ensure tests catch regressions.
 
 - **E2E tests**: For app/UI features, use Playwright (`apps/{app}/e2e/`)
 - **Integration tests**: For data functions with Prisma (`apps/{app}/src/data/`)
