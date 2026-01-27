@@ -26,6 +26,7 @@ Zoonk is a web app where users can learn anything using AI. This app uses AI to 
 - Code must be modular, following SOLID and DRY principles
 - Avoid nested conditionals and complex logic
 - Prefer short and composable functions
+- **Split files with multiple concerns.** If a file has distinct responsibilities (e.g., utils, validation, parsing, main logic), extract them into a `_utils/` folder (if internal) or separate files. A file should have one clear purpose, avoid doing too many things in a single file
 - Prefer functional programming over OOP
 - Avoid mutations: return new values instead of modifying existing data or state
 - Use `[condition && value, ...].filter(Boolean)` instead of `let` + `.push()` for conditional arrays
