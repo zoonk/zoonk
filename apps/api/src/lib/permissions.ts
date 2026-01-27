@@ -11,6 +11,7 @@ export function canAccessOrg(
   if (apiKey.isSystemKey) {
     return true;
   }
+
   return apiKey.orgSlug === targetOrgSlug;
 }
 

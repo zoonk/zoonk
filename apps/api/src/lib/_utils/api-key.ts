@@ -33,13 +33,7 @@ async function validateApiKey(req: NextRequest): Promise<ApiKeyInfo | null> {
 
 export async function resolveApiKey(
   req: NextRequest,
-  skip?: boolean,
 ): Promise<{ apiKey: ApiKeyInfo } | { error: NextResponse }> {
-  if (skip) {
-    return { apiKey: { isSystemKey: false, key: "", orgSlug: null } };
-  }
-
   const apiKey = await validateApiKey(req);
-
   return apiKey ? { apiKey } : { error: errors.invalidApiKey() };
 }
