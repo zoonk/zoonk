@@ -167,7 +167,7 @@ model Jwks {
   id         Int       @id @default(autoincrement())
   publicKey  String    @map("public_key")
   privateKey String    @map("private_key")
-  createdAt  DateTime  @map("created_at")
+  createdAt  DateTime  @default(now()) @map("created_at")
   expiresAt  DateTime? @map("expires_at")
 
   @@map("jwks")
@@ -193,7 +193,7 @@ model Apikey {
   lastRequest         DateTime? @map("last_request")
   expiresAt           DateTime? @map("expires_at")
   createdAt           DateTime  @default(now()) @map("created_at")
-  updatedAt           DateTime  @default(now()) @map("updated_at")
+  updatedAt           DateTime  @updatedAt @map("updated_at")
   permissions         String?
   metadata            String?
 
