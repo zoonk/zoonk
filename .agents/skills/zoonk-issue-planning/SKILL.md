@@ -51,6 +51,22 @@ Split smaller. It's easier to combine issues later than to split them mid-implem
 
 ## Critical Rules
 
+### Spec Numbers Are NOT GitHub Issue Numbers
+
+When breaking down work, you use local numbering (1, 2, 3...) for organization. These numbers are NOT GitHub issue numbers.
+
+**Never use `#NUMBER` format in specs or breakdowns:**
+
+- BAD: "This is blocked by #5"
+- GOOD: "This is blocked by spec 05-add-auth-middleware.md"
+
+When specs reference each other, use **file names**, not numbers:
+
+- BAD: "See issue #18 for details"
+- GOOD: "See spec `18-get-org-courses.md` for details"
+
+GitHub issue numbers are assigned when issues are created - you cannot know them in advance during the planning phase.
+
 ### Tests Are Always Included
 
 Every issue that adds functionality MUST include its tests in the same issue. Never create separate "testing" issues.

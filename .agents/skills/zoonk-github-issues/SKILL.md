@@ -322,6 +322,37 @@ get_issue_id() {
 - Plus, you shouldn't add references to our temporary files to the GitHub issue body like this: `specs, see /tasks/specs/whatever`. Instead write the full spec to the issue body
 - When you have multiple issues to add, you may want to create a temporary bash script to process them in batch instead of running each command individually
 
+### Never Trust #NUMBER References from Specs
+
+When creating issues from specs:
+
+1. **Spec numbers are NOT GitHub issue numbers** - A spec named `18-get-org-courses.md` does NOT correspond to GitHub issue #18
+
+2. **Handle #NUMBER references carefully**:
+   - Remove "Blocked by: #X" lines entirely (use GitHub API instead)
+   - For context references like "Out of scope, see #X":
+     - If creating issues fresh: don't keep those spec references in the issue body, those are our internal spec numbers
+     - If issue already exists: verify the GitHub issue number is correct first
+
+3. **Build a mapping as you create issues**:
+   - Track: Spec filename → GitHub issue number
+   - Use this mapping to fix cross-references in issue bodies
+
+4. **Cross-references ARE okay** when they're verified GitHub issues:
+   - GOOD: "Out of scope, handled by #1234" (verified this is a real issue)
+   - BAD: "See #18 for details" (spec number, not verified)
+
+### Content That Should NOT Be in Issue Bodies
+
+Remove before creating (GitHub handles these automatically):
+
+- `**Blocked by**: #X` - Use GitHub blocked-by relationship
+- `**Type**: Feature` - Use GitHub issue type
+- Summary tables listing sub-issues - Use GitHub sub-issue feature
+- Numbered lists of child issues - Use GitHub sub-issue feature
+- `Parent: #X` - GitHub shows parent automatically
+- Don't add any metadata that GitHub manages or displays in the UI already, focus only on the task
+
 ## Troubleshooting
 
 ### "Resource not accessible by integration"
