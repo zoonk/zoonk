@@ -1,9 +1,5 @@
 {
   "mcpServers": {
-    "better-auth": {
-      "type": "http",
-      "url": "https://mcp.chonkie.ai/better-auth/better-auth-builder/mcp"
-    },
     "context7": {
       "type": "http",
       "url": "https://mcp.context7.com/mcp"
