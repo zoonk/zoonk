@@ -1,8 +1,14 @@
 {
   "mcpServers": {
-    "better-auth": {
+    "better-auth-docs": {
       "type": "http",
       "url": "https://mcp.chonkie.ai/better-auth/better-auth-builder/mcp"
+    },
+    "better-auth": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["@better-auth/mcp"],
+      "env": {}
     },
     "context7": {
       "type": "http",
