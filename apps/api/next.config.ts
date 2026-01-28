@@ -5,7 +5,10 @@ import createNextIntlPlugin from "next-intl/plugin";
 const isE2E = process.env.E2E_TESTING === "true";
 
 const e2eAliases: Record<string, string> = isE2E
-  ? { "@zoonk/auth": "../../packages/auth/src/e2e.ts" }
+  ? {
+      "@zoonk/auth": "../../packages/auth/src/e2e.ts",
+      "@zoonk/auth/client": "../../packages/auth/src/e2e-client.ts",
+    }
   : {};
 
 const nextConfig: NextConfig = {
