@@ -40,7 +40,8 @@
     "@zoonk/auth": "workspace:*",
     "@zoonk/db": "workspace:*",
     "@zoonk/mailer": "workspace:*",
-    "@zoonk/utils": "workspace:*"
+    "@zoonk/utils": "workspace:*",
+    "better-auth": "1.4.17"
   },
   "devDependencies": {
     "@types/react": "^19",

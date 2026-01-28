@@ -1,7 +1,7 @@
 import "server-only";
 import { Output, generateText } from "ai";
 import { z } from "zod";
-import { type ReasoningEffort, buildProviderOptions } from "../../types";
+import { type ReasoningEffort, buildProviderOptions } from "../../provider-options";
 import systemPrompt from "./course-suggestions.prompt.md";
 
 const DEFAULT_MODEL = process.env.AI_MODEL_COURSE_SUGGESTIONS || "google/gemini-3-flash";
