@@ -54,3 +54,5 @@ debug.log
 
 # Tasks for AI agents
 /tasks/
+# next-agents-md
+.next-docs/
