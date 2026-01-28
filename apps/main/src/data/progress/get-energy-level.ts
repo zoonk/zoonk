@@ -4,11 +4,9 @@ import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
 
-type EnergyLevelData = {
+export const getEnergyLevel = cache(async (headers?: Headers): Promise<{
   currentEnergy: number;
-};
-
-export const getEnergyLevel = cache(async (headers?: Headers): Promise<EnergyLevelData | null> => {
+} | null> => {
   const session = await getSession(headers);
 
   if (!session) {

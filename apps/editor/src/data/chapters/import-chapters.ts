@@ -14,10 +14,6 @@ type ChapterImportData = {
   title: string;
 };
 
-type ChaptersImport = {
-  chapters: ChapterImportData[];
-};
-
 function validateChapterData(chapter: unknown): chapter is ChapterImportData {
   if (!isRecord(chapter)) {
     return false;
@@ -29,7 +25,9 @@ function validateChapterData(chapter: unknown): chapter is ChapterImportData {
   return hasValidTitle && hasValidDescription;
 }
 
-function validateImportData(data: unknown): data is ChaptersImport {
+function validateImportData(data: unknown): data is {
+  chapters: ChapterImportData[];
+} {
   if (!isRecord(data)) {
     return false;
   }

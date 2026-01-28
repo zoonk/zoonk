@@ -14,10 +14,6 @@ type LessonImportData = {
   title: string;
 };
 
-type LessonsImport = {
-  lessons: LessonImportData[];
-};
-
 function validateLessonData(lesson: unknown): lesson is LessonImportData {
   if (!isRecord(lesson)) {
     return false;
@@ -29,7 +25,9 @@ function validateLessonData(lesson: unknown): lesson is LessonImportData {
   return hasValidTitle && hasValidDescription;
 }
 
-function validateImportData(data: unknown): data is LessonsImport {
+function validateImportData(data: unknown): data is {
+  lessons: LessonImportData[];
+} {
   if (!isRecord(data)) {
     return false;
   }

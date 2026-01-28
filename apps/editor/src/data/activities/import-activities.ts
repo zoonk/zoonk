@@ -29,10 +29,6 @@ type ActivityImportData = {
   title?: string;
 };
 
-type ActivitiesImport = {
-  activities: ActivityImportData[];
-};
-
 function isActivityKind(value: string): value is ActivityKind {
   // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- type guard pattern
   return validActivityKinds.has(value as ActivityKind);
@@ -48,7 +44,9 @@ function validateActivityData(activity: unknown): activity is ActivityImportData
   return hasValidKind;
 }
 
-function validateImportData(data: unknown): data is ActivitiesImport {
+function validateImportData(data: unknown): data is {
+  activities: ActivityImportData[];
+} {
   if (!isRecord(data)) {
     return false;
   }
