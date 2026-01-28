@@ -39,6 +39,7 @@ const withNextIntl = createNextIntlPlugin({
       },
       locales: "infer",
       path: "./messages",
+      precompile: true,
     },
     srcPath: "./src",
   },

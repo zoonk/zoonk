@@ -29,7 +29,7 @@
     "lucide-react": "0.562.0",
     "negotiator": "1.0.0",
     "next": "16.1.5",
-    "next-intl": "4.7.0",
+    "next-intl": "4.8.0",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "server-only": "0.0.1"
@@ -40,7 +40,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@types/tmp": "0.2.6",
-    "@typescript/native-preview": "7.0.0-dev.20260127.1",
+    "@typescript/native-preview": "7.0.0-dev.20260128.1",
     "@zoonk/e2e": "workspace:*",
     "@zoonk/testing": "workspace:*",
     "@zoonk/tsconfig": "workspace:*",
