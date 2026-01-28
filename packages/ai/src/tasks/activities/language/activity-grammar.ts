@@ -1,7 +1,7 @@
 import "server-only";
 import { Output, generateText } from "ai";
 import { z } from "zod";
-import { type ReasoningEffort, buildProviderOptions } from "../../../types";
+import { type ReasoningEffort, buildProviderOptions } from "../../../provider-options";
 import systemPrompt from "./activity-grammar.prompt.md";
 
 const DEFAULT_MODEL = process.env.AI_MODEL_ACTIVITY_GRAMMAR ?? "google/gemini-3-flash";

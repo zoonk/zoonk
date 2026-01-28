@@ -11,7 +11,7 @@
     "./next": "./src/next.ts",
     "./subscription": "./src/subscription.ts",
     "./testing": "./src/testing.ts",
-    "./types": "./src/types.ts"
+    "./permissions": "./src/permissions.ts"
   },
   "scripts": {
     "typecheck": "tsgo --noEmit"

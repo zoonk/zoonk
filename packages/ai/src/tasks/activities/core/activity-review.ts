@@ -1,7 +1,7 @@
 import "server-only";
 import { Output, generateText } from "ai";
 import { z } from "zod";
-import { type ReasoningEffort, buildProviderOptions } from "../../../types";
+import { type ReasoningEffort, buildProviderOptions } from "../../../provider-options";
 import {
   ACTIVITY_OPTIONS_COUNT,
   ACTIVITY_REVIEW_MAX_QUESTIONS,

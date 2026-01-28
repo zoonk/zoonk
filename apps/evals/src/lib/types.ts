@@ -1,4 +1,4 @@
-import { type ReasoningEffort } from "@zoonk/ai/types";
+import { type ReasoningEffort } from "@zoonk/ai/provider-options";
 import { type LanguageModelUsage } from "ai";
 import z from "zod";
 

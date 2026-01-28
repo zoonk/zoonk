@@ -1,4 +1,4 @@
-import { type CoursePermission } from "@zoonk/auth/types";
+import { type CoursePermission } from "@zoonk/auth/permissions";
 import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
 
 export function canAccessOrg(

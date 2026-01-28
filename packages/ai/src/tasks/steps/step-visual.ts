@@ -1,6 +1,6 @@
 import "server-only";
 import { generateText, stepCountIs } from "ai";
-import { type ReasoningEffort, buildProviderOptions } from "../../types";
+import { type ReasoningEffort, buildProviderOptions } from "../../provider-options";
 import { type StepVisualResource, visualTools } from "./_tools/visual";
 import systemPrompt from "./step-visual.prompt.md";
 
