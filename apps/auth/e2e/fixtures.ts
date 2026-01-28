@@ -1,1 +1,1 @@
-export { expect, type Page, test } from "@zoonk/e2e/fixtures";
+export { expect, test } from "@zoonk/e2e/fixtures";

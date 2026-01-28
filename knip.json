@@ -16,10 +16,6 @@
     "raw-loader",
     "tsx"
   ],
-  "ignoreExportsUsedInFile": {
-    "interface": true,
-    "type": true
-  },
   "tags": ["-lintignore"],
   "workspaces": {
     "apps/api": {

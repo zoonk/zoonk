@@ -23,13 +23,13 @@ const validActivityKinds = new Set<ActivityKind>([
   "review",
 ]);
 
-export type ActivityImportData = {
+type ActivityImportData = {
   description?: string;
   kind: ActivityKind;
   title?: string;
 };
 
-export type ActivitiesImport = {
+type ActivitiesImport = {
   activities: ActivityImportData[];
 };
 

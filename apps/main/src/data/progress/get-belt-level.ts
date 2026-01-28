@@ -5,9 +5,7 @@ import { type BeltLevelResult, calculateBeltLevel } from "@zoonk/utils/belt-leve
 import { safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
 
-export type BeltLevelData = BeltLevelResult;
-
-export const getBeltLevel = cache(async (headers?: Headers): Promise<BeltLevelData | null> => {
+export const getBeltLevel = cache(async (headers?: Headers): Promise<BeltLevelResult | null> => {
   const session = await getSession(headers);
 
   if (!session) {

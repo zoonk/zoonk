@@ -8,13 +8,13 @@ import { type Chapter, type TransactionClient, prisma } from "@zoonk/db";
 import { AppError, type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { normalizeString, toSlug } from "@zoonk/utils/string";
 
-export type ChapterImportData = {
+type ChapterImportData = {
   description: string;
   slug?: string;
   title: string;
 };
 
-export type ChaptersImport = {
+type ChaptersImport = {
   chapters: ChapterImportData[];
 };
 

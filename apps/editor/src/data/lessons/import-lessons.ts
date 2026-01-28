@@ -8,13 +8,13 @@ import { type Lesson, type TransactionClient, prisma } from "@zoonk/db";
 import { AppError, type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { normalizeString, toSlug } from "@zoonk/utils/string";
 
-export type LessonImportData = {
+type LessonImportData = {
   description: string;
   slug?: string;
   title: string;
 };
 
-export type LessonsImport = {
+type LessonsImport = {
   lessons: LessonImportData[];
 };
 

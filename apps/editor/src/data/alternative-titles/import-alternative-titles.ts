@@ -7,7 +7,7 @@ import { prisma } from "@zoonk/db";
 import { AppError, type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { toSlug } from "@zoonk/utils/string";
 
-export type AlternativeTitlesImport = {
+type AlternativeTitlesImport = {
   alternativeTitles: string[];
 };
 

@@ -1,6 +1,6 @@
 import { type Page, test as base, createAuthFixture } from "@zoonk/e2e/fixtures";
 
-export type EditorAuthFixtures = {
+type EditorAuthFixtures = {
   authenticatedPage: Page;
   memberPage: Page;
   multiOrgPage: Page;
