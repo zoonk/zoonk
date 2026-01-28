@@ -1,6 +1,6 @@
 import "server-only";
+import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-options";
 import { generateText, stepCountIs } from "ai";
-import { type ReasoningEffort, buildProviderOptions } from "../../../provider-options";
 import { type QuizQuestion, quizTools } from "../_tools/quiz";
 import systemPrompt from "./activity-explanation-quiz.prompt.md";
 

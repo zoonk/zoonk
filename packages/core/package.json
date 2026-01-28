@@ -38,10 +38,10 @@
     "@vercel/blob": "2.0.1",
     "@zoonk/ai": "workspace:*",
     "@zoonk/auth": "workspace:*",
-    "better-auth": "1.4.17",
     "@zoonk/db": "workspace:*",
     "@zoonk/mailer": "workspace:*",
-    "@zoonk/utils": "workspace:*"
+    "@zoonk/utils": "workspace:*",
+    "better-auth": "1.4.17"
   },
   "devDependencies": {
     "@types/react": "^19",

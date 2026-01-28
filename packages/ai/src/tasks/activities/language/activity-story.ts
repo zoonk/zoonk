@@ -1,7 +1,7 @@
 import "server-only";
+import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-options";
 import { Output, generateText } from "ai";
 import { z } from "zod";
-import { type ReasoningEffort, buildProviderOptions } from "../../../provider-options";
 import { ACTIVITY_OPTIONS_COUNT } from "../constants";
 import systemPrompt from "./activity-story.prompt.md";
 

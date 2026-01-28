@@ -1,4 +1,9 @@
 {
+  "compilerOptions": {
+    "paths": {
+      "@zoonk/ai/*": ["./src/*"]
+    }
+  },
   "exclude": ["node_modules", "dist"],
   "extends": "@zoonk/tsconfig/base.json",
   "include": ["src", "markdown.d.ts"]
