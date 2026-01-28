@@ -26,11 +26,11 @@
   "devDependencies": {
     "@playwright/test": "1.58.0",
     "@types/node": "^24",
-    "@typescript/native-preview": "7.0.0-dev.20260127.1",
+    "@typescript/native-preview": "7.0.0-dev.20260128.1",
     "knip": "5.82.1",
     "oxfmt": "0.27.0",
     "oxlint": "1.42.0",
-    "oxlint-tsgolint": "0.11.2",
+    "oxlint-tsgolint": "0.11.3",
     "turbo": "2.7.6"
   },
   "engines": {
