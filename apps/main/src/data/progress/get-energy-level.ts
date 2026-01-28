@@ -4,29 +4,33 @@ import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
 
-export const getEnergyLevel = cache(async (headers?: Headers): Promise<{
-  currentEnergy: number;
-} | null> => {
-  const session = await getSession(headers);
+export const getEnergyLevel = cache(
+  async (
+    headers?: Headers,
+  ): Promise<{
+    currentEnergy: number;
+  } | null> => {
+    const session = await getSession(headers);
 
-  if (!session) {
-    return null;
-  }
+    if (!session) {
+      return null;
+    }
 
-  const userId = Number(session.user.id);
+    const userId = Number(session.user.id);
 
-  const { data: progress, error } = await safeAsync(() =>
-    prisma.userProgress.findUnique({
-      select: { currentEnergy: true },
-      where: { userId },
-    }),
-  );
+    const { data: progress, error } = await safeAsync(() =>
+      prisma.userProgress.findUnique({
+        select: { currentEnergy: true },
+        where: { userId },
+      }),
+    );
 
-  if (error || !progress) {
-    return null;
-  }
+    if (error || !progress) {
+      return null;
+    }
 
-  return {
-    currentEnergy: progress.currentEnergy,
-  };
-});
+    return {
+      currentEnergy: progress.currentEnergy,
+    };
+  },
+);
