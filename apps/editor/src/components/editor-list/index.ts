@@ -14,4 +14,3 @@ export { EditorListSpinner } from "./editor-list-spinner";
 export { EditorSortableItem } from "./editor-sortable-item";
 export { EditorSortableItemRow } from "./editor-sortable-item-row";
 export { EditorSortableList } from "./editor-sortable-list";
-export type { SortableItem } from "./editor-sortable-context";

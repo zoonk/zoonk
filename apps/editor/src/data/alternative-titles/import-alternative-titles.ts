@@ -7,15 +7,13 @@ import { prisma } from "@zoonk/db";
 import { AppError, type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { toSlug } from "@zoonk/utils/string";
 
-export type AlternativeTitlesImport = {
-  alternativeTitles: string[];
-};
-
 function validateTitleData(title: unknown): title is string {
   return typeof title === "string" && title.trim().length > 0;
 }
 
-function validateImportData(data: unknown): data is AlternativeTitlesImport {
+function validateImportData(data: unknown): data is {
+  alternativeTitles: string[];
+} {
   if (!isRecord(data)) {
     return false;
   }

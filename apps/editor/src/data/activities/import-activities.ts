@@ -23,14 +23,10 @@ const validActivityKinds = new Set<ActivityKind>([
   "review",
 ]);
 
-export type ActivityImportData = {
+type ActivityImportData = {
   description?: string;
   kind: ActivityKind;
   title?: string;
-};
-
-export type ActivitiesImport = {
-  activities: ActivityImportData[];
 };
 
 function isActivityKind(value: string): value is ActivityKind {
@@ -48,7 +44,9 @@ function validateActivityData(activity: unknown): activity is ActivityImportData
   return hasValidKind;
 }
 
-function validateImportData(data: unknown): data is ActivitiesImport {
+function validateImportData(data: unknown): data is {
+  activities: ActivityImportData[];
+} {
   if (!isRecord(data)) {
     return false;
   }

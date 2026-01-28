@@ -17,7 +17,7 @@ export function validatePeriod(value: string): HistoryPeriod {
   return isHistoryPeriod(value) ? value : "month";
 }
 
-export type DateRange = {
+type DateRange = {
   start: Date;
   end: Date;
 };

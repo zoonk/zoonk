@@ -1,4 +1,26 @@
 {
+  "permissions": {
+    "deny": [
+      "Edit(knip.json)",
+      "Edit(.oxlintrc.json)",
+      "Edit(.oxfmtrc.json)",
+      "Write(knip.json)",
+      "Write(.oxlintrc.json)",
+      "Write(.oxfmtrc.json)",
+      "Read(.env)",
+      "Read(**/.env)",
+      "Read(.env.local)",
+      "Read(**/.env.local)",
+      "Read(.env.*.local)",
+      "Read(**/.env.*.local)",
+      "Read(.env.development)",
+      "Read(**/.env.development)",
+      "Read(.env.production)",
+      "Read(**/.env.production)",
+      "Read(.env.staging)",
+      "Read(**/.env.staging)"
+    ]
+  },
   "enabledPlugins": {
     "cache-components@nextjs": true,
     "code-review@claude-plugins-official": true,

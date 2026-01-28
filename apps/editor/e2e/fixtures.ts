@@ -1,14 +1,12 @@
 import { type Page, test as base, createAuthFixture } from "@zoonk/e2e/fixtures";
 
-export type EditorAuthFixtures = {
+export const test = base.extend<{
   authenticatedPage: Page;
   memberPage: Page;
   multiOrgPage: Page;
   ownerPage: Page;
   userWithoutOrg: Page;
-};
-
-export const test = base.extend<EditorAuthFixtures>({
+}>({
   authenticatedPage: createAuthFixture("e2e/.auth/admin.json"),
   memberPage: createAuthFixture("e2e/.auth/member.json"),
   multiOrgPage: createAuthFixture("e2e/.auth/multiOrg.json"),
