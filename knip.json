@@ -19,11 +19,9 @@
   "tags": ["-lintignore"],
   "workspaces": {
     "apps/api": {
+      "entry": ["src/i18n/codec.ts"],
       "ignore": ["src/lib/**"],
-      "ignoreDependencies": ["@zoonk/auth", "@zoonk/core", "@zoonk/db", "@zoonk/utils", "zod"]
-    },
-    "apps/auth": {
-      "entry": ["src/i18n/codec.ts"]
+      "ignoreDependencies": ["@zoonk/auth", "zod"]
     },
     "apps/editor": {
       "entry": ["src/i18n/codec.ts", "e2e/mocks/vercel-blob.ts"]

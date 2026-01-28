@@ -1,4 +1,4 @@
-name: E2E Tests (Auth App)
+name: E2E Tests (API App)
 
 on: push
 
@@ -17,8 +17,8 @@ jobs:
       DATABASE_URL: postgres://postgres:postgres@localhost:5432/zoonk_e2e
       DATABASE_URL_UNPOOLED: postgres://postgres:postgres@localhost:5432/zoonk_e2e
       E2E_TESTING: "true"
-      NEXT_PUBLIC_APP_DOMAIN: localhost:3004
-      NEXT_PUBLIC_AUTH_APP_URL: http://localhost:3004
+      NEXT_PUBLIC_APP_DOMAIN: localhost:3005
+      NEXT_PUBLIC_API_URL: http://localhost:3005
       TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
       TURBO_TEAM: ${{ vars.TURBO_TEAM }}
 
@@ -51,11 +51,11 @@ jobs:
       - name: Cache Next.js build
         uses: actions/cache@v4
         with:
-          path: apps/auth/.next-e2e/cache
-          key: ${{ runner.os }}-nextjs-auth-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ hashFiles('apps/auth/**/*.ts', 'apps/auth/**/*.tsx', 'packages/**/*.ts', 'packages/**/*.tsx') }}
+          path: apps/api/.next-e2e/cache
+          key: ${{ runner.os }}-nextjs-api-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ hashFiles('apps/api/**/*.ts', 'apps/api/**/*.tsx', 'packages/**/*.ts', 'packages/**/*.tsx') }}
           restore-keys: |
-            ${{ runner.os }}-nextjs-auth-${{ hashFiles('**/pnpm-lock.yaml') }}-
-            ${{ runner.os }}-nextjs-auth-
+            ${{ runner.os }}-nextjs-api-${{ hashFiles('**/pnpm-lock.yaml') }}-
+            ${{ runner.os }}-nextjs-api-
 
       - name: Setup pnpm
         uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061
@@ -84,7 +84,7 @@ jobs:
         run: pnpm --filter @zoonk/db db:seed:e2e
 
       - name: Build app
-        run: pnpm build:e2e --filter auth
+        run: pnpm build:e2e --filter api
 
       - name: Run E2E tests
-        run: pnpm e2e --filter auth
+        run: pnpm e2e --filter api

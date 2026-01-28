@@ -2,7 +2,7 @@ import { expect, test } from "./fixtures";
 
 test.describe("Login Page", () => {
   test("displays login form with email input and social buttons", async ({ page }) => {
-    await page.goto("/en/login");
+    await page.goto("/auth/login");
 
     // Verify heading
     await expect(

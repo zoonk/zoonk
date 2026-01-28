@@ -19,8 +19,8 @@ export function SocialLogin({ redirectTo }: { redirectTo?: string }) {
     setState(getLoadingState(provider));
 
     const callbackURL = redirectTo
-      ? `/callback?redirectTo=${encodeURIComponent(redirectTo)}`
-      : "/callback";
+      ? `/auth/callback?redirectTo=${encodeURIComponent(redirectTo)}`
+      : "/auth/callback";
 
     const { error } = await authClient.signIn.social({
       callbackURL,

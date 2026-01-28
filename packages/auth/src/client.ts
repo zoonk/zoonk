@@ -12,6 +12,8 @@ import { type auth } from "./auth";
 import { ac, admin, member, owner } from "./permissions";
 
 export const authClient = createAuthClient({
+  basePath: "/v1/auth",
+  baseURL: process.env.NEXT_PUBLIC_API_URL || "https://api.zoonk.com",
   plugins: [
     adminClient(),
     apiKeyClient(),

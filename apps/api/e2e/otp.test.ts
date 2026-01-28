@@ -11,10 +11,10 @@ test.describe("OTP Login Flow", () => {
   });
 
   test("completes email submission and shows OTP page", async ({ page }) => {
-    await page.goto(`/en/login?redirectTo=${encodeURIComponent(REDIRECT_URL)}`);
+    await page.goto(`/auth/login?redirectTo=${encodeURIComponent(REDIRECT_URL)}`);
     await page.getByLabel(/email/i).fill(TEST_EMAIL);
     await page.getByRole("button", { name: /^continue$/i }).click();
-    await page.waitForURL(/\/otp/);
+    await page.waitForURL(/\/auth\/otp/);
 
     await expect(page.getByRole("heading", { name: /check your email/i })).toBeVisible();
 
@@ -22,10 +22,10 @@ test.describe("OTP Login Flow", () => {
   });
 
   test("validates OTP and redirects with token", async ({ page }) => {
-    await page.goto(`/en/login?redirectTo=${encodeURIComponent(REDIRECT_URL)}`);
+    await page.goto(`/auth/login?redirectTo=${encodeURIComponent(REDIRECT_URL)}`);
     await page.getByLabel(/email/i).fill(TEST_EMAIL);
     await page.getByRole("button", { name: /^continue$/i }).click();
-    await page.waitForURL(/\/otp/);
+    await page.waitForURL(/\/auth\/otp/);
 
     const otp = await getOTPForEmail(TEST_EMAIL);
 
@@ -52,10 +52,10 @@ test.describe("OTP Login Flow", () => {
   });
 
   test("shows error for invalid OTP", async ({ page }) => {
-    await page.goto(`/en/login?redirectTo=${encodeURIComponent(REDIRECT_URL)}`);
+    await page.goto(`/auth/login?redirectTo=${encodeURIComponent(REDIRECT_URL)}`);
     await page.getByLabel(/email/i).fill(TEST_EMAIL);
     await page.getByRole("button", { name: /^continue$/i }).click();
-    await page.waitForURL(/\/otp/);
+    await page.waitForURL(/\/auth\/otp/);
 
     await page.getByRole("textbox").click();
     await page.keyboard.type("000000");
@@ -66,10 +66,10 @@ test.describe("OTP Login Flow", () => {
 
   test("allows changing email (back to login)", async ({ page }) => {
     await page.goto(
-      `/en/otp?email=${encodeURIComponent(TEST_EMAIL)}&redirectTo=${encodeURIComponent(REDIRECT_URL)}`,
+      `/auth/otp?email=${encodeURIComponent(TEST_EMAIL)}&redirectTo=${encodeURIComponent(REDIRECT_URL)}`,
     );
     await page.getByRole("link", { name: /change email/i }).click();
-    await page.waitForURL(/\/login/);
+    await page.waitForURL(/\/auth\/login/);
 
     await expect(
       page.getByRole("heading", { name: /sign in or create an account/i }),
@@ -78,10 +78,10 @@ test.describe("OTP Login Flow", () => {
 
   test("handles redirect URL with trailing slash without double slashes", async ({ page }) => {
     const trailingSlashUrl = "http://localhost:3000/test/";
-    await page.goto(`/en/login?redirectTo=${encodeURIComponent(trailingSlashUrl)}`);
+    await page.goto(`/auth/login?redirectTo=${encodeURIComponent(trailingSlashUrl)}`);
     await page.getByLabel(/email/i).fill(TEST_EMAIL);
     await page.getByRole("button", { name: /^continue$/i }).click();
-    await page.waitForURL(/\/otp/);
+    await page.waitForURL(/\/auth\/otp/);
 
     const otp = await getOTPForEmail(TEST_EMAIL);
 

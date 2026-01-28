@@ -19,13 +19,16 @@ import { Suspense } from "react";
 import { sendVerificationOTPAction } from "./actions";
 import { SocialLogin } from "./social-login";
 
-async function LoginView({ searchParams }: PageProps<"/[locale]/login">) {
+type LoginPageProps = {
+  searchParams: Promise<{ redirectTo?: string }>;
+};
+
+async function LoginView({ searchParams }: LoginPageProps) {
   const { redirectTo } = await searchParams;
 
-  // If user already has a session, skip login and redirect with a one-time token
   const session = await getSession();
   if (session && redirectTo) {
-    redirect(`/callback?redirectTo=${encodeURIComponent(String(redirectTo))}`);
+    redirect(`/auth/callback?redirectTo=${encodeURIComponent(String(redirectTo))}`);
   }
 
   const t = await getExtracted();
@@ -65,7 +68,7 @@ async function LoginView({ searchParams }: PageProps<"/[locale]/login">) {
   );
 }
 
-export default async function LoginPage(props: PageProps<"/[locale]/login">) {
+export default async function LoginPage(props: LoginPageProps) {
   return (
     <Login>
       <Suspense fallback={<FullPageLoading />}>

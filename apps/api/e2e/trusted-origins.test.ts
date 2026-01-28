@@ -11,11 +11,11 @@ test.describe("Trusted Origin Validation", () => {
   });
 
   test("shows error page for untrusted external URL", async ({ page }) => {
-    await page.goto(`/en/login?redirectTo=${encodeURIComponent(UNTRUSTED_URL)}`);
+    await page.goto(`/auth/login?redirectTo=${encodeURIComponent(UNTRUSTED_URL)}`);
 
     await page.getByLabel(/email/i).fill(TEST_EMAIL);
     await page.getByRole("button", { name: /^continue$/i }).click();
-    await page.waitForURL(/\/otp/);
+    await page.waitForURL(/\/auth\/otp/);
 
     const otp = await getOTPForEmail(TEST_EMAIL);
 
@@ -27,7 +27,7 @@ test.describe("Trusted Origin Validation", () => {
     await page.keyboard.type(otp);
     await page.getByRole("button", { name: /^continue$/i }).click();
 
-    await page.waitForURL(/\/untrusted-origin/);
+    await page.waitForURL(/\/auth\/untrusted-origin/);
 
     await expect(page.getByRole("heading", { name: /unable to redirect/i })).toBeVisible();
 

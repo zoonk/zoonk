@@ -1,6 +1,4 @@
-import { DEFAULT_LOCALE } from "./locale";
-
-const AUTH_APP_URL = process.env.NEXT_PUBLIC_AUTH_APP_URL || "https://auth.zoonk.com";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://api.zoonk.com";
 
 const isProduction = process.env.NODE_ENV === "production";
 const isE2E = process.env.E2E_TESTING === "true";
@@ -46,31 +44,19 @@ export function getBaseUrl(): string {
 /**
  * Builds the login URL for the centralized auth app.
  * @param callbackUrl - The URL to redirect to after successful authentication
- * @param locale - Optional locale for the auth app
  */
-export function buildAuthLoginUrl({
-  callbackUrl,
-  locale,
-}: {
-  callbackUrl: string;
-  locale?: string;
-}): string {
-  const authUrl = new URL("/login", AUTH_APP_URL);
+export function buildAuthLoginUrl({ callbackUrl }: { callbackUrl: string }): string {
+  const authUrl = new URL("/auth/login", API_URL);
   authUrl.searchParams.set("redirectTo", callbackUrl);
-
-  if (locale && locale !== DEFAULT_LOCALE) {
-    // Prepend locale to path for non-default locales
-    authUrl.pathname = `/${locale}/login`;
-  }
 
   return authUrl.toString();
 }
 
 /**
- * Returns the base URL of the auth app.
+ * Returns the base URL of the API app.
  */
-export function getAuthAppUrl(): string {
-  return AUTH_APP_URL;
+export function getApiUrl(): string {
+  return API_URL;
 }
 
 /**

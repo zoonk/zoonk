@@ -39,6 +39,8 @@ export const baseAuthConfig: Omit<BetterAuthOptions, "rateLimit"> = {
     database: { generateId: "serial" },
   },
   appName: "Zoonk",
+  basePath: "/v1/auth",
+  baseURL: process.env.NEXT_PUBLIC_API_URL || "https://api.zoonk.com",
   database: prismaAdapter(prisma, { provider: "postgresql" }),
   experimental: {
     joins: true,
