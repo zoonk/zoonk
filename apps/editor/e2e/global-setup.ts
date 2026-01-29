@@ -1,5 +1,5 @@
 import { mkdir } from "node:fs/promises";
-import { getBaseURL, request } from "@zoonk/e2e/fixtures";
+import { E2E_API_URL, request } from "@zoonk/e2e/fixtures";
 
 export const E2E_USERS = {
   admin: {
@@ -28,9 +28,9 @@ async function authenticateUser(
   name: string,
   user: { email: string; password: string },
 ): Promise<void> {
-  const context = await request.newContext({ baseURL: getBaseURL() });
+  const context = await request.newContext({ baseURL: E2E_API_URL });
 
-  const response = await context.post("/api/auth/sign-in/email", {
+  const response = await context.post("/v1/auth/sign-in/email", {
     data: {
       email: user.email,
       password: user.password,
