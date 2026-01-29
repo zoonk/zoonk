@@ -94,3 +94,65 @@ export function getDevTrustedOrigins(): string[] {
 
   return [...localhostOrigins, ...customOrigins];
 }
+
+/**
+ * Matches an origin against a wildcard pattern.
+ * Pattern: "https://*-zoonk.vercel.app"
+ * Origin:  "https://my-branch-zoonk.vercel.app"
+ */
+function matchWildcardOrigin(origin: string, pattern: string): boolean {
+  const wildcardIndex = pattern.indexOf("*");
+  if (wildcardIndex === -1) {
+    return origin === pattern;
+  }
+
+  const prefix = pattern.slice(0, wildcardIndex);
+  const suffix = pattern.slice(wildcardIndex + 1);
+
+  return origin.startsWith(prefix) && origin.endsWith(suffix);
+}
+
+const HTTPS_PREFIX = "https://";
+const ZOONK_DOMAIN_SUFFIX = ".zoonk.com";
+const SUBDOMAIN_PATTERN = /^[a-z0-9-]+$/;
+
+/**
+ * Checks if an origin is trusted for CORS.
+ * Uses simple string matching (not full URL validation).
+ * For security-critical validation, use Better Auth's HTTP endpoint.
+ *
+ * Handles:
+ * - Production: https://zoonk.com, https://*.zoonk.com
+ * - Development: localhost:3000-3009 (via getDevTrustedOrigins)
+ * - Vercel previews: https://*-zoonk.vercel.app (via getVercelTrustedOrigins)
+ */
+export function isTrustedOrigin(origin: string): boolean {
+  // Exact match: zoonk.com
+  if (origin === "https://zoonk.com") {
+    return true;
+  }
+
+  // Wildcard: *.zoonk.com (simple endsWith check)
+  if (origin.startsWith(HTTPS_PREFIX) && origin.endsWith(ZOONK_DOMAIN_SUFFIX)) {
+    // Extract subdomain by removing prefix and suffix
+    const subdomain = origin.slice(HTTPS_PREFIX.length, -ZOONK_DOMAIN_SUFFIX.length);
+    if (SUBDOMAIN_PATTERN.test(subdomain)) {
+      return true;
+    }
+  }
+
+  // Dev/E2E origins: localhost:3000-3009, custom TRUSTED_ORIGINS
+  if (getDevTrustedOrigins().includes(origin)) {
+    return true;
+  }
+
+  // Vercel preview deployments: https://*-zoonk.vercel.app
+  const vercelPatterns = getVercelTrustedOrigins();
+  for (const pattern of vercelPatterns) {
+    if (matchWildcardOrigin(origin, pattern)) {
+      return true;
+    }
+  }
+
+  return false;
+}

@@ -1,5 +1,4 @@
 import { type NextRequest, type NextResponse } from "next/server";
-import { type ApiKeyInfo, resolveApiKey } from "./_utils/api-key";
 import { type UserInfo, getUser } from "./_utils/session";
 import { errors } from "./api-errors";
 
@@ -8,47 +7,38 @@ type RouteParams = { params: Promise<Record<string, string>> };
 export type ApiContext = {
   req: NextRequest;
   params: Record<string, string>;
-  apiKey: ApiKeyInfo;
+  user: UserInfo | null;
 };
 
-export type ApiContextWithUser = ApiContext & { user: UserInfo };
+export type ApiContextWithUser = Omit<ApiContext, "user"> & { user: UserInfo };
 
 /**
- * Handler for public API routes.
- * Requires API key only.
+ * API handler with optional authentication.
+ * User is populated if authenticated, null otherwise.
+ * Never rejects for missing auth.
  */
 export function apiHandler(
   handler: (ctx: ApiContext) => Promise<NextResponse> | NextResponse,
 ): (req: NextRequest, opts: RouteParams) => Promise<NextResponse> {
   return async (req, { params }) => {
-    const apiKeyResult = await resolveApiKey(req);
-
-    if ("error" in apiKeyResult) {
-      return apiKeyResult.error;
-    }
+    const user = await getUser(req);
 
     return handler({
-      apiKey: apiKeyResult.apiKey,
       params: await params,
       req,
+      user,
     });
   };
 }
 
 /**
  * Handler for protected API routes.
- * Requires API key AND auth.
+ * Requires authentication.
  */
 export function apiHandlerWithAuth(
   handler: (ctx: ApiContextWithUser) => Promise<NextResponse> | NextResponse,
 ): (req: NextRequest, opts: RouteParams) => Promise<NextResponse> {
   return async (req, { params }) => {
-    const apiKeyResult = await resolveApiKey(req);
-
-    if ("error" in apiKeyResult) {
-      return apiKeyResult.error;
-    }
-
     const user = await getUser(req);
 
     if (!user) {
@@ -56,7 +46,6 @@ export function apiHandlerWithAuth(
     }
 
     return handler({
-      apiKey: apiKeyResult.apiKey,
       params: await params,
       req,
       user,
