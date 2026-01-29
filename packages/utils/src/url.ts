@@ -91,18 +91,19 @@ export function getDevTrustedOrigins(): string[] {
 const ZOONK_DOMAINS = [".zoonk.com", ".zoonk.app", ".zoonk.school", ".zoonk.team"];
 
 /**
- * Checks if an origin is trusted for CORS.
+ * Checks if an origin is allowed for CORS.
+ * This is separate from Better Auth's trustedOrigins validation.
  *
  * Allows:
  * - Any subdomain of zoonk.com, zoonk.app, zoonk.school, zoonk.team
  * - localhost (any port)
  * - Vercel preview deployments (*-zoonk.vercel.app) when not in production
  */
-export function isTrustedOrigin(origin: string): boolean {
-  // Zoonk domains (apex and subdomains)
+export function isCorsAllowedOrigin(origin: string): boolean {
+  // Zoonk domains (apex and subdomains) - require https
   for (const domain of ZOONK_DOMAINS) {
     const apex = `https://${domain.slice(1)}`; // E.g., https://zoonk.com
-    if (origin === apex || origin.endsWith(domain)) {
+    if (origin === apex || (origin.startsWith("https://") && origin.endsWith(domain))) {
       return true;
     }
   }

@@ -1,4 +1,4 @@
-import { isTrustedOrigin } from "@zoonk/utils/url";
+import { isCorsAllowedOrigin } from "@zoonk/utils/url";
 import { type NextRequest, NextResponse } from "next/server";
 
 const corsHeaders = {
@@ -15,7 +15,7 @@ export function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const isAllowed = isTrustedOrigin(origin);
+  const isAllowed = isCorsAllowedOrigin(origin);
 
   // Handle preflight (OPTIONS)
   if (request.method === "OPTIONS") {
