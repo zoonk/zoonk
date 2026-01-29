@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { isCorsAllowedOrigin } from "./url";
 
 describe(isCorsAllowedOrigin, () => {
@@ -41,11 +41,11 @@ describe(isCorsAllowedOrigin, () => {
   });
 
   describe("localhost", () => {
-    it("allows any localhost port", () => {
+    it("allows valid localhost ports in dev", () => {
       expect(isCorsAllowedOrigin("http://localhost:3000")).toBeTruthy();
       expect(isCorsAllowedOrigin("http://localhost:3005")).toBeTruthy();
       expect(isCorsAllowedOrigin("http://localhost:8080")).toBeTruthy();
-      expect(isCorsAllowedOrigin("http://localhost:65527")).toBeTruthy();
+      expect(isCorsAllowedOrigin("http://localhost:65535")).toBeTruthy();
     });
 
     it("rejects https localhost", () => {
@@ -54,6 +54,43 @@ describe(isCorsAllowedOrigin, () => {
 
     it("rejects localhost without port", () => {
       expect(isCorsAllowedOrigin("http://localhost")).toBeFalsy();
+    });
+
+    it("rejects invalid port values", () => {
+      expect(isCorsAllowedOrigin("http://localhost:")).toBeFalsy();
+      expect(isCorsAllowedOrigin("http://localhost:abc")).toBeFalsy();
+      expect(isCorsAllowedOrigin("http://localhost:3000/path")).toBeFalsy();
+      expect(isCorsAllowedOrigin("http://localhost:3000@evil.com")).toBeFalsy();
+    });
+  });
+
+  describe("localhost in production", () => {
+    const originalNodeEnv = process.env.NODE_ENV;
+    const originalE2E = process.env.E2E_TESTING;
+
+    beforeEach(() => {
+      vi.resetModules();
+    });
+
+    afterEach(() => {
+      process.env.NODE_ENV = originalNodeEnv;
+      process.env.E2E_TESTING = originalE2E;
+    });
+
+    it("rejects localhost in production (non-e2e)", async () => {
+      process.env.NODE_ENV = "production";
+      process.env.E2E_TESTING = "false";
+
+      const { isCorsAllowedOrigin: prodFn } = await import("./url");
+      expect(prodFn("http://localhost:3000")).toBeFalsy();
+    });
+
+    it("allows localhost in production when E2E_TESTING is true", async () => {
+      process.env.NODE_ENV = "production";
+      process.env.E2E_TESTING = "true";
+
+      const { isCorsAllowedOrigin: e2eFn } = await import("./url");
+      expect(e2eFn("http://localhost:3000")).toBeTruthy();
     });
   });
 
@@ -66,6 +103,29 @@ describe(isCorsAllowedOrigin, () => {
     it("rejects vercel apps that don't end with -zoonk", () => {
       expect(isCorsAllowedOrigin("https://other-project.vercel.app")).toBeFalsy();
       expect(isCorsAllowedOrigin("https://zoonk.vercel.app")).toBeFalsy();
+    });
+
+    it("rejects http vercel preview deployments", () => {
+      expect(isCorsAllowedOrigin("http://my-branch-zoonk.vercel.app")).toBeFalsy();
+    });
+  });
+
+  describe("vercel previews in production", () => {
+    const originalVercelEnv = process.env.VERCEL_ENV;
+
+    beforeEach(() => {
+      vi.resetModules();
+    });
+
+    afterEach(() => {
+      process.env.VERCEL_ENV = originalVercelEnv;
+    });
+
+    it("rejects vercel preview deployments in production", async () => {
+      process.env.VERCEL_ENV = "production";
+
+      const { isCorsAllowedOrigin: prodFn } = await import("./url");
+      expect(prodFn("https://my-branch-zoonk.vercel.app")).toBeFalsy();
     });
   });
 

@@ -1,5 +1,6 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://api.zoonk.com";
 
+const isVercelProduction = process.env.VERCEL_ENV === "production";
 const isProduction = process.env.NODE_ENV === "production";
 const isE2E = process.env.E2E_TESTING === "true";
 const repoOwner = process.env.GIT_REPO_OWNER || "zoonk";
@@ -63,7 +64,7 @@ export function getApiUrl(): string {
  * Returns trusted origins for Vercel preview deployments.
  */
 export function getVercelTrustedOrigins(): string[] {
-  if (isRepoOwner) {
+  if (isRepoOwner && !isVercelProduction) {
     return [`https://*-${repoOwner}.vercel.app`];
   }
 
@@ -92,12 +93,12 @@ const ZOONK_DOMAINS = [".zoonk.com", ".zoonk.app", ".zoonk.school", ".zoonk.team
 
 /**
  * Checks if an origin is allowed for CORS.
- * This is separate from Better Auth's trustedOrigins validation.
+ *
  *
  * Allows:
- * - Any subdomain of zoonk.com, zoonk.app, zoonk.school, zoonk.team
- * - localhost (any port)
- * - Vercel preview deployments (*-zoonk.vercel.app) when not in production
+ * - Any subdomain of zoonk.com, zoonk.app, zoonk.school, zoonk.team (https only)
+ * - localhost with valid port (dev/e2e only)
+ * - Vercel preview deployments (*-zoonk.vercel.app, https only, non-production only)
  */
 export function isCorsAllowedOrigin(origin: string): boolean {
   // Zoonk domains (apex and subdomains) - require https
@@ -108,13 +109,23 @@ export function isCorsAllowedOrigin(origin: string): boolean {
     }
   }
 
-  // Localhost (any port)
-  if (origin.startsWith("http://localhost:")) {
-    return true;
+  // Localhost (any valid port) - dev/e2e only
+  const isLocalhost = origin.startsWith("http://localhost:");
+
+  if ((!isProduction || isE2E) && isLocalhost) {
+    const port = origin.slice("http://localhost:".length);
+
+    if (/^\d+$/.test(port)) {
+      return true;
+    }
   }
 
-  // Vercel preview deployments (not in production)
-  if (process.env.VERCEL_ENV !== "production" && origin.endsWith("-zoonk.vercel.app")) {
+  // Vercel preview deployments (not in production) - require https
+  if (
+    !isVercelProduction &&
+    origin.startsWith("https://") &&
+    origin.endsWith("-zoonk.vercel.app")
+  ) {
     return true;
   }
 
