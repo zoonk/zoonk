@@ -23,6 +23,7 @@ const nextConfig: NextConfig = {
     resolveAlias: { ...e2eAliases },
     root: path.resolve(import.meta.dirname, "../.."),
   },
+  typedRoutes: true,
 };
 
 const withNextIntl = createNextIntlPlugin({

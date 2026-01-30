@@ -1,13 +1,14 @@
+import { externalRedirect } from "@zoonk/next/navigation/external-redirect";
 import { FullPageLoading } from "@zoonk/ui/components/loading";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { createOneTimeTokenAction } from "./actions";
 
-type CallbackPageProps = {
-  searchParams: Promise<{ redirectTo?: string }>;
-};
-
-async function CallbackHandler({ searchParams }: CallbackPageProps) {
+async function CallbackHandler({
+  searchParams,
+}: {
+  searchParams: PageProps<"/auth/callback">["searchParams"];
+}) {
   const { redirectTo } = await searchParams;
   const result = await createOneTimeTokenAction(String(redirectTo));
 
@@ -15,10 +16,10 @@ async function CallbackHandler({ searchParams }: CallbackPageProps) {
     return redirect("/auth/untrusted-origin");
   }
 
-  return redirect(result.url);
+  return externalRedirect(result.url);
 }
 
-export default async function CallbackPage(props: CallbackPageProps) {
+export default async function CallbackPage(props: PageProps<"/auth/callback">) {
   return (
     <Suspense fallback={<FullPageLoading />}>
       <CallbackHandler searchParams={props.searchParams} />
