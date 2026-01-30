@@ -3,6 +3,7 @@ import Negotiator from "negotiator";
 
 export const SUPPORTED_LOCALES = ["en", "es", "pt"] as const;
 export const DEFAULT_LOCALE = "en";
+export const LOCALE_COOKIE = "NEXT_LOCALE";
 
 export type SupportedLocale = (typeof SUPPORTED_LOCALES)[number];
 

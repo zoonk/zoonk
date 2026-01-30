@@ -1,4 +1,5 @@
 import { sendEmail } from "@zoonk/mailer";
+import { LOCALE_COOKIE } from "@zoonk/utils/locale";
 import { type EmailOTPOptions } from "better-auth/plugins";
 import { cookies } from "next/headers";
 import { after } from "next/server";
@@ -9,7 +10,7 @@ export const sendVerificationOTP: EmailOTPOptions["sendVerificationOTP"] = async
   _request,
 ) => {
   const cookieStore = await cookies();
-  const locale = cookieStore.get("NEXT_LOCALE")?.value || "en";
+  const locale = cookieStore.get(LOCALE_COOKIE)?.value || "en";
   const t = await getTranslation(locale);
 
   const subject = t.otpSubject;
