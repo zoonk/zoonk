@@ -96,12 +96,6 @@ importers:
       '@tabler/icons-react':
         specifier: 3.35.0
         version: 3.35.0(react@19.2.4)
-      '@zoonk/ai':
-        specifier: workspace:*
-        version: link:../../packages/ai
-      '@zoonk/auth':
-        specifier: workspace:*
-        version: link:../../packages/auth
       '@zoonk/core':
         specifier: workspace:*
         version: link:../../packages/core

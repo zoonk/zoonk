@@ -21,7 +21,7 @@
     "apps/api": {
       "entry": ["src/i18n/codec.ts"],
       "ignore": ["src/lib/**"],
-      "ignoreDependencies": ["@zoonk/auth", "zod"]
+      "ignoreDependencies": ["zod"]
     },
     "apps/editor": {
       "entry": ["src/i18n/codec.ts", "e2e/mocks/vercel-blob.ts"]

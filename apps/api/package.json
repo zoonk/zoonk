@@ -15,8 +15,6 @@
   },
   "dependencies": {
     "@tabler/icons-react": "3.35.0",
-    "@zoonk/ai": "workspace:*",
-    "@zoonk/auth": "workspace:*",
     "@zoonk/core": "workspace:*",
     "@zoonk/db": "workspace:*",
     "@zoonk/error-reporter": "workspace:*",
