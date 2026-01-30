@@ -17,8 +17,6 @@ export const errors = {
   forbidden: (msg = "Access denied") => errorResponse("FORBIDDEN", msg, HTTP_FORBIDDEN),
   internal: (msg = "Internal server error") =>
     errorResponse("INTERNAL_ERROR", msg, HTTP_INTERNAL_ERROR),
-  invalidApiKey: () =>
-    errorResponse("UNAUTHORIZED", "Invalid or missing API key", HTTP_UNAUTHORIZED),
   notFound: (msg = "Resource not found") => errorResponse("NOT_FOUND", msg, HTTP_NOT_FOUND),
   unauthorized: (msg = "Authentication required") =>
     errorResponse("UNAUTHORIZED", msg, HTTP_UNAUTHORIZED),
