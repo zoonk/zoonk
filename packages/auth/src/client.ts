@@ -1,7 +1,6 @@
 import { stripeClient } from "@better-auth/stripe/client";
 import {
   adminClient,
-  apiKeyClient,
   emailOTPClient,
   inferOrgAdditionalFields,
   oneTimeTokenClient,
@@ -17,7 +16,6 @@ import { ac, admin, member, owner } from "./permissions";
  */
 const plugins = [
   adminClient(),
-  apiKeyClient(),
   emailOTPClient(),
   oneTimeTokenClient(),
   organizationClient({

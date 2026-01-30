@@ -4,7 +4,6 @@ import { prismaAdapter } from "better-auth/adapters/prisma";
 import { nextCookies } from "better-auth/next-js";
 import {
   admin as adminPlugin,
-  apiKey,
   bearer,
   emailOTP,
   jwt,
@@ -97,7 +96,6 @@ export const fullPlugins = [
     storeToken: "hashed",
   }),
   jwt(),
-  apiKey({ enableMetadata: true }),
   bearer(),
   stripePlugin(),
   trustedOriginPlugin(),
