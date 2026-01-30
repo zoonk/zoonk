@@ -19,5 +19,9 @@ initBotId({
       method: "GET",
       path: "/v1/*",
     },
+    {
+      method: "PATCH",
+      path: "/v1/*",
+    },
   ],
 });
