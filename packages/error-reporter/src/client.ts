@@ -58,7 +58,9 @@ export function reportError(error: unknown): void {
     userAgent: typeof navigator === "undefined" ? undefined : navigator.userAgent,
   };
 
-  fetch("/api/errors", {
+  const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || "https://api.zoonk.com";
+
+  fetch(`${apiBaseUrl}/v1/errors`, {
     body: JSON.stringify(payload),
     headers: { "Content-Type": "application/json" },
     method: "POST",
