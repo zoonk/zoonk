@@ -4,11 +4,7 @@ import { getExtracted } from "next-intl/server";
 import Link from "next/link";
 import { OTPForm } from "./otp-form";
 
-export default async function OTPPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ email?: string; redirectTo?: string }>;
-}) {
+export default async function OTPPage({ searchParams }: PageProps<"/auth/otp">) {
   const { email, redirectTo } = await searchParams;
   const t = await getExtracted();
 
