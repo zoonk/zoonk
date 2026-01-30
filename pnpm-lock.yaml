@@ -96,6 +96,9 @@ importers:
       '@tabler/icons-react':
         specifier: 3.35.0
         version: 3.35.0(react@19.2.4)
+      '@zoonk/ai':
+        specifier: workspace:*
+        version: link:../../packages/ai
       '@zoonk/auth':
         specifier: workspace:*
         version: link:../../packages/auth
@@ -105,6 +108,9 @@ importers:
       '@zoonk/db':
         specifier: workspace:*
         version: link:../../packages/db
+      '@zoonk/error-reporter':
+        specifier: workspace:*
+        version: link:../../packages/error-reporter
       '@zoonk/next':
         specifier: workspace:*
         version: link:../../packages/next
@@ -114,6 +120,9 @@ importers:
       '@zoonk/utils':
         specifier: workspace:*
         version: link:../../packages/utils
+      botid:
+        specifier: 1.5.10
+        version: 1.5.10(next@16.1.5(@opentelemetry/api@1.9.0)(@playwright/test@1.58.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)
       lucide-react:
         specifier: 0.562.0
         version: 0.562.0(react@19.2.4)
