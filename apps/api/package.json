@@ -7,10 +7,10 @@
     "analyze": "next experimental-analyze",
     "build": "next build",
     "build:e2e": "env $(cat ../../packages/db/.env.e2e | xargs) next build",
-    "dev": "next dev -p 3005",
+    "dev": "next dev -p 4000",
     "e2e": "env $(cat ../../packages/db/.env.e2e | xargs) playwright test",
     "e2e:ui": "env $(cat ../../packages/db/.env.e2e | xargs) playwright test --ui",
-    "start": "next start -p 3005",
+    "start": "next start -p 4000",
     "typecheck": "next typegen && tsgo --noEmit"
   },
   "dependencies": {

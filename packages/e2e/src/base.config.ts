@@ -1,7 +1,7 @@
 import { defineConfig, devices } from "@playwright/test";
 
 const E2E_DATABASE_URL = "postgres://postgres:postgres@localhost:5432/zoonk_e2e";
-const API_PORT = 3005;
+const API_PORT = 4000;
 const API_URL = `http://localhost:${API_PORT}`;
 
 export function createBaseConfig(options: {

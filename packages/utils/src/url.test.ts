@@ -43,7 +43,7 @@ describe(isCorsAllowedOrigin, () => {
   describe("localhost", () => {
     it("allows valid localhost ports in dev", () => {
       expect(isCorsAllowedOrigin("http://localhost:3000")).toBeTruthy();
-      expect(isCorsAllowedOrigin("http://localhost:3005")).toBeTruthy();
+      expect(isCorsAllowedOrigin("http://localhost:4000")).toBeTruthy();
       expect(isCorsAllowedOrigin("http://localhost:8080")).toBeTruthy();
       expect(isCorsAllowedOrigin("http://localhost:65535")).toBeTruthy();
     });

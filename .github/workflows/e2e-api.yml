@@ -17,8 +17,8 @@ jobs:
       DATABASE_URL: postgres://postgres:postgres@localhost:5432/zoonk_e2e
       DATABASE_URL_UNPOOLED: postgres://postgres:postgres@localhost:5432/zoonk_e2e
       E2E_TESTING: "true"
-      NEXT_PUBLIC_APP_DOMAIN: localhost:3005
-      NEXT_PUBLIC_API_URL: http://localhost:3005
+      NEXT_PUBLIC_APP_DOMAIN: localhost:4000
+      NEXT_PUBLIC_API_URL: http://localhost:4000
       TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
       TURBO_TEAM: ${{ vars.TURBO_TEAM }}
 
