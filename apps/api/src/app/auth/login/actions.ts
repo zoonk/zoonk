@@ -15,6 +15,7 @@ export async function sendVerificationOTPAction(formData: FormData) {
   await sendVerificationOTP(email);
 
   const params = new URLSearchParams({ email });
+
   if (redirectTo) {
     params.set("redirectTo", redirectTo);
   }

@@ -19,11 +19,7 @@ import { Suspense } from "react";
 import { sendVerificationOTPAction } from "./actions";
 import { SocialLogin } from "./social-login";
 
-type LoginPageProps = {
-  searchParams: Promise<{ redirectTo?: string }>;
-};
-
-async function LoginView({ searchParams }: LoginPageProps) {
+async function LoginView({ searchParams }: PageProps<"/auth/login">) {
   const { redirectTo } = await searchParams;
 
   const session = await getSession();
@@ -68,7 +64,7 @@ async function LoginView({ searchParams }: LoginPageProps) {
   );
 }
 
-export default async function LoginPage(props: LoginPageProps) {
+export default async function LoginPage(props: PageProps<"/auth/login">) {
   return (
     <Login>
       <Suspense fallback={<FullPageLoading />}>
