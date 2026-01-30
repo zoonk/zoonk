@@ -44,14 +44,7 @@ function formatErrorHtml(error: ErrorPayload): string {
   `;
 }
 
-// Next.js internal errors that are expected behavior
-const IGNORED_ERRORS = ["NEXT_REDIRECT", "NEXT_NOT_FOUND"];
-
 export async function sendErrorEmail(error: ErrorPayload): Promise<void> {
-  if (error.message && IGNORED_ERRORS.includes(error.message)) {
-    return;
-  }
-
   if (process.env.VERCEL_ENV !== "production") {
     console.info("[Error Reporter] Skipping email (non-production):", JSON.stringify(error));
     return;
