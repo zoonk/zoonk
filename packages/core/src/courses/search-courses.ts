@@ -1,6 +1,6 @@
 import "server-only";
 import { type Course, type Organization, prisma } from "@zoonk/db";
-import { clampQueryItems } from "@zoonk/db/utils";
+import { MAX_QUERY_ITEMS, clampQueryItems } from "@zoonk/db/utils";
 import { DEFAULT_SEARCH_LIMIT } from "@zoonk/utils/constants";
 import { mergeSearchResults } from "@zoonk/utils/search";
 import { normalizeString } from "@zoonk/utils/string";
@@ -16,7 +16,7 @@ export async function searchCourses(params: {
   offset?: number;
 }): Promise<CourseWithOrganization[]> {
   const limit = clampQueryItems(params.limit ?? DEFAULT_SEARCH_LIMIT);
-  const offset = params.offset ?? 0;
+  const offset = Math.min(params.offset ?? 0, MAX_QUERY_ITEMS);
   const normalizedSearch = normalizeString(params.query);
 
   if (!normalizedSearch) {

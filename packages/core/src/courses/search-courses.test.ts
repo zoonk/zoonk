@@ -307,4 +307,28 @@ describe(searchCourses, () => {
 
     expect(result).toEqual([]);
   });
+
+  test("clamps offset to prevent unbounded database queries", async () => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const searchTerm = `clampoffset${uniqueId}`;
+
+    await courseFixture({
+      isPublished: true,
+      language: "en",
+      normalizedTitle: searchTerm,
+      organizationId: brandOrg.id,
+      title: searchTerm,
+    });
+
+    // A very large offset should be clamped to 100
+    // and not cause the query to fetch millions of rows
+    const result = await searchCourses({
+      language: "en",
+      offset: 1_000_000,
+      query: searchTerm,
+    });
+
+    // With offset clamped to 100 and only 1 result, we get empty array
+    expect(result).toEqual([]);
+  });
 });
