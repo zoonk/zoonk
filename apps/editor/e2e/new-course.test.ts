@@ -147,6 +147,10 @@ test.describe("Course Creation Wizard - Keyboard Shortcuts", () => {
   });
 
   test("Escape closes wizard and returns to org home", async ({ authenticatedPage }) => {
+    // Wait for the input to be focused, ensuring the component is fully interactive
+    // And the keyboard handler is attached via useEffect
+    await expect(authenticatedPage.getByPlaceholder(/course title/i)).toBeFocused();
+
     await authenticatedPage.keyboard.press("Escape");
 
     await expect(authenticatedPage).toHaveURL(/\/ai$/);
