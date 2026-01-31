@@ -11,6 +11,16 @@ metadata:
 
 This is the **REQUIRED** pattern for ALL UI components. Always use compound components by default.
 
+## When to Use This Pattern
+
+Use this pattern for **simple, presentational components** where:
+
+- Children don't need to share or modify state
+- CSS coordination is the main concern
+- Components are purely visual building blocks
+
+For **complex, stateful compound components** (forms, dialogs with external actions, components where siblings need shared state), see the `vercel-composition-patterns` skill.
+
 ## What are Compound Components?
 
 Compound components are small, single-purpose components that compose together. Each component wraps exactly ONE HTML element and has ONE responsibility. They are combined like building blocks.
@@ -25,14 +35,35 @@ For more information, see the [components.build docs](https://www.components.bui
 4. **Use `data-slot` for CSS coordination** - Style child components based on parent context using `data-slot` attributes and Tailwind's `has-*` or `group-*` selectors
 5. **Make components generic** - Name components for what they ARE, not what they're FOR. A component used for multiple domains should have a generic name like `MediaCard`, not `CourseHeader`
 
-## Context/Provider - LAST RESORT
+## Naming Convention
 
-**Do NOT use React Context by default.** Most compound components don't need it. Context is only for:
+We use **flat naming** for compound components, not namespaced exports:
 
-- Shared state that MULTIPLE children need to read/write (like form state, open/close state)
-- When props would need to pass through 3+ levels
+```tsx
+// We use flat naming (consistent with shadcn/ui, Radix)
+<ComposerFrame>
+  <ComposerInput />
+</ComposerFrame>
 
-If you find yourself reaching for Context, first ask: "Can I solve this with just composition and CSS?" Usually the answer is yes.
+// NOT namespaced (Vercel style - we don't use this)
+<Composer.Frame>
+  <Composer.Input />
+</Composer.Frame>
+```
+
+When following Vercel patterns from the `vercel-composition-patterns` skill, translate their examples to our flat naming style.
+
+## Context/Provider - Use When Siblings Need Shared State
+
+**Most simple UI components don't need Context.** If you're building a MediaCard, Item, or Container pattern - stick to pure composition with CSS coordination.
+
+**Use Context when:**
+
+- Multiple sibling components need to read/write the same state
+- Components outside the main Frame need access to state/actions (e.g., dialog buttons)
+- You need dependency injection (same UI, different state implementations)
+
+For Context patterns, see the `vercel-composition-patterns` skill which covers state/actions/meta interface and provider patterns.
 
 ## Example: The Right Way
 
