@@ -1,6 +1,6 @@
 "use server";
 
-import { searchCourses } from "@/data/courses/search-courses";
+import { searchCourses } from "@zoonk/core/courses/search";
 
 export type CourseSearchResult = {
   id: number;
