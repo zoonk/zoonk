@@ -11,6 +11,7 @@ import {
   organization,
 } from "better-auth/plugins";
 import { type BetterAuthOptions } from "better-auth/types";
+import { BETTER_AUTH_BASE_PATH } from "./constants";
 import { ac, admin, member, owner } from "./permissions";
 import { sendVerificationOTP } from "./plugins/otp";
 import { stripePlugin } from "./plugins/stripe";
@@ -26,10 +27,6 @@ const COOKIE_CACHE_MINUTES = 60;
 const AUTH_MEMBERSHIP_LIMIT = Number.MAX_SAFE_INTEGER;
 const AUTH_ORGANIZATION_LIMIT = Number.MAX_SAFE_INTEGER;
 
-// When using Better Auth from apps, we use the default `api/auth` base path.
-// However, in the API, we use a different base path, so this value can be overridden
-export const basePath = process.env.NEXT_PUBLIC_AUTH_BASE_PATH || "/api/auth";
-
 /**
  * Base auth config shared between production and E2E.
  * Does NOT include rateLimit or emailAndPassword - those differ per environment.
@@ -42,7 +39,7 @@ export const baseAuthConfig: Omit<BetterAuthOptions, "rateLimit"> = {
     database: { generateId: "serial" },
   },
   appName: "Zoonk",
-  basePath,
+  basePath: BETTER_AUTH_BASE_PATH,
   database: prismaAdapter(prisma, { provider: "postgresql" }),
   experimental: {
     joins: true,
