@@ -6,8 +6,8 @@
     "analyze": "next experimental-analyze",
     "build": "next build",
     "build-and-start": "pnpm build && pnpm start",
-    "dev": "next dev -p 3002",
-    "start": "next start -p 3002",
+    "dev": "next dev -p 3201",
+    "start": "next start -p 3201",
     "typecheck": "next typegen && tsgo --noEmit"
   },
   "dependencies": {
