@@ -1,7 +1,6 @@
-import { DEFAULT_LOCALE } from "./locale";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://api.zoonk.com";
 
-const AUTH_APP_URL = process.env.NEXT_PUBLIC_AUTH_APP_URL || "https://auth.zoonk.com";
-
+const isVercelProduction = process.env.VERCEL_ENV === "production";
 const isProduction = process.env.NODE_ENV === "production";
 const isE2E = process.env.E2E_TESTING === "true";
 const repoOwner = process.env.GIT_REPO_OWNER || "zoonk";
@@ -46,38 +45,26 @@ export function getBaseUrl(): string {
 /**
  * Builds the login URL for the centralized auth app.
  * @param callbackUrl - The URL to redirect to after successful authentication
- * @param locale - Optional locale for the auth app
  */
-export function buildAuthLoginUrl({
-  callbackUrl,
-  locale,
-}: {
-  callbackUrl: string;
-  locale?: string;
-}): string {
-  const authUrl = new URL("/login", AUTH_APP_URL);
+export function buildAuthLoginUrl({ callbackUrl }: { callbackUrl: string }): string {
+  const authUrl = new URL("/auth/login", API_URL);
   authUrl.searchParams.set("redirectTo", callbackUrl);
-
-  if (locale && locale !== DEFAULT_LOCALE) {
-    // Prepend locale to path for non-default locales
-    authUrl.pathname = `/${locale}/login`;
-  }
 
   return authUrl.toString();
 }
 
 /**
- * Returns the base URL of the auth app.
+ * Returns the base URL of the API app.
  */
-export function getAuthAppUrl(): string {
-  return AUTH_APP_URL;
+export function getApiUrl(): string {
+  return API_URL;
 }
 
 /**
  * Returns trusted origins for Vercel preview deployments.
  */
 export function getVercelTrustedOrigins(): string[] {
-  if (isRepoOwner) {
+  if (isRepoOwner && !isVercelProduction) {
     return [`https://*-${repoOwner}.vercel.app`];
   }
 
@@ -88,23 +75,59 @@ export function getVercelTrustedOrigins(): string[] {
  * Returns trusted origins for development/testing environments.
  *
  * Includes:
- * - Localhost ports 3000-3009 when E2E_TESTING=true
+ * - Any localhost port (http://localhost:*)
  * - Custom origins from TRUSTED_ORIGINS env var (comma-separated, non-production only)
  */
-const LOCALHOST_PORT_START = 3000;
-
 export function getDevTrustedOrigins(): string[] {
   if (!isE2E && isProduction) {
     return [];
   }
 
-  const localhostOrigins = Array.from(
-    { length: 10 },
-    (_, i) => `http://localhost:${LOCALHOST_PORT_START + i}`,
-  );
-
   const customOrigins =
     process.env.TRUSTED_ORIGINS?.split(",").map((origin) => origin.trim()) ?? [];
 
-  return [...localhostOrigins, ...customOrigins];
+  return ["http://localhost:*", ...customOrigins];
+}
+
+const ZOONK_DOMAINS = [".zoonk.com", ".zoonk.app", ".zoonk.school", ".zoonk.team"];
+
+/**
+ * Checks if an origin is allowed for CORS.
+ *
+ *
+ * Allows:
+ * - Any subdomain of zoonk.com, zoonk.app, zoonk.school, zoonk.team (https only)
+ * - localhost with valid port (dev/e2e only)
+ * - Vercel preview deployments (*-zoonk.vercel.app, https only, non-production only)
+ */
+export function isCorsAllowedOrigin(origin: string): boolean {
+  // Zoonk domains (apex and subdomains) - require https
+  for (const domain of ZOONK_DOMAINS) {
+    const apex = `https://${domain.slice(1)}`; // E.g., https://zoonk.com
+    if (origin === apex || (origin.startsWith("https://") && origin.endsWith(domain))) {
+      return true;
+    }
+  }
+
+  // Localhost (any valid port) - dev/e2e only
+  const isLocalhost = origin.startsWith("http://localhost:");
+
+  if ((!isProduction || isE2E) && isLocalhost) {
+    const port = origin.slice("http://localhost:".length);
+
+    if (/^\d+$/.test(port)) {
+      return true;
+    }
+  }
+
+  // Vercel preview deployments (not in production) - require https
+  if (
+    !isVercelProduction &&
+    origin.startsWith("https://") &&
+    origin.endsWith("-zoonk.vercel.app")
+  ) {
+    return true;
+  }
+
+  return false;
 }

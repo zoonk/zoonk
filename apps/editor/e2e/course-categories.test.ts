@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { courseCategoryFixture, courseFixture } from "@zoonk/testing/fixtures/courses";
+import { LOCALE_COOKIE } from "@zoonk/utils/locale";
 import { type Page, expect, test } from "./fixtures";
 
 async function createTestCourse() {
@@ -137,7 +138,7 @@ test.describe("Course Categories Editor", () => {
     // Set Spanish locale via cookie to test UI translation ordering
     await authenticatedPage
       .context()
-      .addCookies([{ domain: "localhost", name: "locale", path: "/", value: "es" }]);
+      .addCookies([{ domain: "localhost", name: LOCALE_COOKIE, path: "/", value: "es" }]);
 
     await authenticatedPage.goto(`/ai/c/en/${course.slug}`);
 

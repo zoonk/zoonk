@@ -3,7 +3,7 @@
   "buckets": {
     "po": {
       "include": [
-        "apps/auth/messages/[locale].po",
+        "apps/api/messages/[locale].po",
         "apps/editor/messages/[locale].po",
         "apps/main/messages/[locale].po"
       ]

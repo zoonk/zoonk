@@ -6,23 +6,39 @@
   "scripts": {
     "analyze": "next experimental-analyze",
     "build": "next build",
-    "dev": "next dev -p 3005",
-    "start": "next start -p 3005",
+    "build:e2e": "env $(cat ../../packages/db/.env.e2e | xargs) next build",
+    "dev": "next dev -p 4000",
+    "e2e": "env $(cat ../../packages/db/.env.e2e | xargs) playwright test",
+    "e2e:ui": "env $(cat ../../packages/db/.env.e2e | xargs) playwright test --ui",
+    "start": "next start -p 4000",
     "typecheck": "next typegen && tsgo --noEmit"
   },
   "dependencies": {
-    "@zoonk/auth": "workspace:*",
+    "@tabler/icons-react": "3.35.0",
     "@zoonk/core": "workspace:*",
     "@zoonk/db": "workspace:*",
+    "@zoonk/error-reporter": "workspace:*",
+    "@zoonk/next": "workspace:*",
+    "@zoonk/ui": "workspace:*",
     "@zoonk/utils": "workspace:*",
+    "botid": "1.5.10",
+    "lucide-react": "0.562.0",
     "next": "16.1.5",
+    "next-intl": "4.8.0",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "server-only": "0.0.1",
     "zod": "4.3.5"
   },
   "devDependencies": {
     "@types/node": "^24",
     "@types/react": "^19",
+    "@types/react-dom": "^19",
     "@typescript/native-preview": "7.0.0-dev.20260128.1",
+    "@zoonk/db": "workspace:*",
+    "@zoonk/e2e": "workspace:*",
     "@zoonk/tsconfig": "workspace:*",
+    "babel-plugin-react-compiler": "1.0.0",
     "typescript": "^5"
   }
 }

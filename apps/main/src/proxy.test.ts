@@ -1,3 +1,4 @@
+import { LOCALE_COOKIE } from "@zoonk/utils/locale";
 import {
   unstable_doesMiddlewareMatch as doesMiddlewareMatch,
   getRedirectUrl,
@@ -40,7 +41,7 @@ describe("next.js proxy", () => {
 
   test("redirects home page to language-specific URL", () => {
     const request = new NextRequest("https://zoonk.com");
-    request.cookies.set("NEXT_LOCALE", "pt");
+    request.cookies.set(LOCALE_COOKIE, "pt");
     const response = proxy(request);
 
     expect(getRedirectUrl(response)).toBe("https://zoonk.com/pt");
@@ -48,7 +49,7 @@ describe("next.js proxy", () => {
 
   test("redirects nested page to language-specific URL", () => {
     const request = new NextRequest("https://zoonk.com/some/page");
-    request.cookies.set("NEXT_LOCALE", "pt");
+    request.cookies.set(LOCALE_COOKIE, "pt");
     const response = proxy(request);
 
     expect(getRedirectUrl(response)).toBe("https://zoonk.com/pt/some/page");
@@ -56,7 +57,7 @@ describe("next.js proxy", () => {
 
   test("don't redirect home page if using default locale", () => {
     const request = new NextRequest("https://zoonk.com");
-    request.cookies.set("NEXT_LOCALE", "en");
+    request.cookies.set(LOCALE_COOKIE, "en");
     const response = proxy(request);
 
     expect(getRedirectUrl(response)).toBeFalsy();
@@ -64,7 +65,7 @@ describe("next.js proxy", () => {
 
   test("don't redirect nested page if using default locale", () => {
     const request = new NextRequest("https://zoonk.com/some/page");
-    request.cookies.set("NEXT_LOCALE", "en");
+    request.cookies.set(LOCALE_COOKIE, "en");
     const response = proxy(request);
 
     expect(getRedirectUrl(response)).toBeFalsy();

@@ -93,49 +93,18 @@ importers:
 
   apps/api:
     dependencies:
-      '@zoonk/auth':
-        specifier: workspace:*
-        version: link:../../packages/auth
-      '@zoonk/core':
-        specifier: workspace:*
-        version: link:../../packages/core
-      '@zoonk/db':
-        specifier: workspace:*
-        version: link:../../packages/db
-      '@zoonk/utils':
-        specifier: workspace:*
-        version: link:../../packages/utils
-      next:
-        specifier: 16.1.5
-        version: 16.1.5(@opentelemetry/api@1.9.0)(@playwright/test@1.58.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      zod:
-        specifier: 4.3.5
-        version: 4.3.5
-    devDependencies:
-      '@types/node':
-        specifier: ^24
-        version: 24.10.9
-      '@types/react':
-        specifier: ^19
-        version: 19.2.10
-      '@typescript/native-preview':
-        specifier: 7.0.0-dev.20260128.1
-        version: 7.0.0-dev.20260128.1
-      '@zoonk/tsconfig':
-        specifier: workspace:*
-        version: link:../../packages/tsconfig
-      typescript:
-        specifier: ^5
-        version: 5.9.3
-
-  apps/auth:
-    dependencies:
       '@tabler/icons-react':
         specifier: 3.35.0
         version: 3.35.0(react@19.2.4)
       '@zoonk/core':
         specifier: workspace:*
         version: link:../../packages/core
+      '@zoonk/db':
+        specifier: workspace:*
+        version: link:../../packages/db
+      '@zoonk/error-reporter':
+        specifier: workspace:*
+        version: link:../../packages/error-reporter
       '@zoonk/next':
         specifier: workspace:*
         version: link:../../packages/next
@@ -145,6 +114,9 @@ importers:
       '@zoonk/utils':
         specifier: workspace:*
         version: link:../../packages/utils
+      botid:
+        specifier: 1.5.10
+        version: 1.5.10(next@16.1.5(@opentelemetry/api@1.9.0)(@playwright/test@1.58.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)
       lucide-react:
         specifier: 0.562.0
         version: 0.562.0(react@19.2.4)
@@ -163,6 +135,9 @@ importers:
       server-only:
         specifier: 0.0.1
         version: 0.0.1
+      zod:
+        specifier: 4.3.5
+        version: 4.3.5
     devDependencies:
       '@types/node':
         specifier: ^24
@@ -176,9 +151,6 @@ importers:
       '@typescript/native-preview':
         specifier: 7.0.0-dev.20260128.1
         version: 7.0.0-dev.20260128.1
-      '@zoonk/db':
-        specifier: workspace:*
-        version: link:../../packages/db
       '@zoonk/e2e':
         specifier: workspace:*
         version: link:../../packages/e2e
@@ -203,9 +175,6 @@ importers:
       '@dnd-kit/utilities':
         specifier: 3.2.2
         version: 3.2.2(react@19.2.4)
-      '@formatjs/intl-localematcher':
-        specifier: 0.7.3
-        version: 0.7.3
       '@zoonk/core':
         specifier: workspace:*
         version: link:../../packages/core
@@ -227,9 +196,6 @@ importers:
       lucide-react:
         specifier: 0.562.0
         version: 0.562.0(react@19.2.4)
-      negotiator:
-        specifier: 1.0.0
-        version: 1.0.0
       next:
         specifier: 16.1.5
         version: 16.1.5(@opentelemetry/api@1.9.0)(@playwright/test@1.58.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
@@ -246,9 +212,6 @@ importers:
         specifier: 0.0.1
         version: 0.0.1
     devDependencies:
-      '@types/negotiator':
-        specifier: 0.6.4
-        version: 0.6.4
       '@types/node':
         specifier: ^24
         version: 24.10.9
@@ -839,10 +802,19 @@ importers:
 
   packages/utils:
     dependencies:
+      '@formatjs/intl-localematcher':
+        specifier: 0.6.1
+        version: 0.6.1
+      negotiator:
+        specifier: 1.0.0
+        version: 1.0.0
       slugify:
         specifier: 1.6.6
         version: 1.6.6
     devDependencies:
+      '@types/negotiator':
+        specifier: 0.6.4
+        version: 0.6.4
       '@typescript/native-preview':
         specifier: 7.0.0-dev.20260128.1
         version: 7.0.0-dev.20260128.1
@@ -1517,9 +1489,6 @@ packages:
   '@formatjs/fast-memoize@2.2.7':
     resolution: {integrity: sha512-Yabmi9nSvyOMrlSeGGWDiH7rf3a7sIwplbvo/dlz9WCIjzIQAfy1RMf4S0X3yG724n5Ghu2GmEl5NJIV6O9sZQ==}
 
-  '@formatjs/fast-memoize@3.0.1':
-    resolution: {integrity: sha512-kzk635kEmsxrrEWQXY7uKRocFCVXR4es5OQqcqCGg2NPtQztG/OBkE9THHu6UOTxpfyIkZhh6DjPBZGRp7y3og==}
-
   '@formatjs/fast-memoize@3.1.0':
     resolution: {integrity: sha512-b5mvSWCI+XVKiz5WhnBCY3RJ4ZwfjAidU0yVlKa3d3MSgKmH1hC3tBGEAtYyN5mqL7N0G5x0BOUYyO8CEupWgg==}
 
@@ -1538,11 +1507,11 @@ packages:
   '@formatjs/intl-localematcher@0.5.10':
     resolution: {integrity: sha512-af3qATX+m4Rnd9+wHcjJ4w2ijq+rAVP3CCinJQvFv1kgSu1W6jypUmvleJxcewdxmutM8dmIRZFxO/IQBZmP2Q==}
 
+  '@formatjs/intl-localematcher@0.6.1':
+    resolution: {integrity: sha512-ePEgLgVCqi2BBFnTMWPfIghu6FkbZnnBVhO2sSxvLfrdFw7wCHAHiDoM2h4NRgjbaY7+B7HgOLZGkK187pZTZg==}
+
   '@formatjs/intl-localematcher@0.6.2':
     resolution: {integrity: sha512-XOMO2Hupl0wdd172Y06h6kLpBz6Dv+J4okPLl4LPtzbr8f66WbIoy4ev98EBuZ6ZK4h5ydTN6XneT4QVpD7cdA==}
-
-  '@formatjs/intl-localematcher@0.7.3':
-    resolution: {integrity: sha512-NaeABectKdTCOnlH9VFGmMS3K0JuR7Soc2t5R2MCkBrM3H/hlKVYh0XSrcjjPkbjIdrF7L/Bzx9JtGuVaSfYlA==}
 
   '@formatjs/intl-localematcher@0.8.0':
     resolution: {integrity: sha512-zgMYWdUlmEZpX2Io+v3LHrfq9xZ6khpQVf9UAw2xYWhGerGgI9XgH1HvL/A34jWiruUJpYlP5pk4g8nIcaDrXQ==}
@@ -6931,10 +6900,6 @@ snapshots:
     dependencies:
       tslib: 2.8.1
 
-  '@formatjs/fast-memoize@3.0.1':
-    dependencies:
-      tslib: 2.8.1
-
   '@formatjs/fast-memoize@3.1.0':
     dependencies:
       tslib: 2.8.1
@@ -6965,13 +6930,12 @@ snapshots:
     dependencies:
       tslib: 2.8.1
 
-  '@formatjs/intl-localematcher@0.6.2':
+  '@formatjs/intl-localematcher@0.6.1':
     dependencies:
       tslib: 2.8.1
 
-  '@formatjs/intl-localematcher@0.7.3':
+  '@formatjs/intl-localematcher@0.6.2':
     dependencies:
-      '@formatjs/fast-memoize': 3.0.1
       tslib: 2.8.1
 
   '@formatjs/intl-localematcher@0.8.0':

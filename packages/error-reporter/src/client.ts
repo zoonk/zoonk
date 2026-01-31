@@ -1,6 +1,9 @@
 const DEDUPE_WINDOW_MS = 60_000;
 const recentErrors = new Map<string, number>();
 
+// Next.js internal errors that are expected behavior
+const IGNORED_ERRORS = new Set(["NEXT_REDIRECT", "NEXT_NOT_FOUND"]);
+
 function errorToString(error: unknown): string {
   if (error instanceof Error) {
     return error.message;
@@ -44,13 +47,20 @@ export function reportError(error: unknown): void {
     return;
   }
 
+  const message = errorToString(error);
+
+  if (IGNORED_ERRORS.has(message)) {
+    return;
+  }
+
   const key = getErrorKey(error);
+
   if (isDuplicate(key)) {
     return;
   }
 
   const payload = {
-    message: errorToString(error),
+    message,
     name: error instanceof Error ? error.name : "Error",
     stack: error instanceof Error ? error.stack : undefined,
     timestamp: new Date().toISOString(),
@@ -58,7 +68,9 @@ export function reportError(error: unknown): void {
     userAgent: typeof navigator === "undefined" ? undefined : navigator.userAgent,
   };
 
-  fetch("/api/errors", {
+  const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || "https://api.zoonk.com";
+
+  fetch(`${apiBaseUrl}/v1/errors`, {
     body: JSON.stringify(payload),
     headers: { "Content-Type": "application/json" },
     method: "POST",

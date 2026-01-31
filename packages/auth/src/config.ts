@@ -4,7 +4,6 @@ import { prismaAdapter } from "better-auth/adapters/prisma";
 import { nextCookies } from "better-auth/next-js";
 import {
   admin as adminPlugin,
-  apiKey,
   bearer,
   emailOTP,
   jwt,
@@ -12,6 +11,7 @@ import {
   organization,
 } from "better-auth/plugins";
 import { type BetterAuthOptions } from "better-auth/types";
+import { BETTER_AUTH_BASE_PATH } from "./constants";
 import { ac, admin, member, owner } from "./permissions";
 import { sendVerificationOTP } from "./plugins/otp";
 import { stripePlugin } from "./plugins/stripe";
@@ -39,6 +39,7 @@ export const baseAuthConfig: Omit<BetterAuthOptions, "rateLimit"> = {
     database: { generateId: "serial" },
   },
   appName: "Zoonk",
+  basePath: BETTER_AUTH_BASE_PATH,
   database: prismaAdapter(prisma, { provider: "postgresql" }),
   experimental: {
     joins: true,
@@ -54,6 +55,12 @@ export const baseAuthConfig: Omit<BetterAuthOptions, "rateLimit"> = {
     "https://appleid.apple.com",
     "https://zoonk.com",
     "https://*.zoonk.com",
+    "https://zoonk.app",
+    "https://*.zoonk.app",
+    "https://zoonk.school",
+    "https://*.zoonk.school",
+    "https://zoonk.team",
+    "https://*.zoonk.team",
     ...getDevTrustedOrigins(),
     ...getVercelTrustedOrigins(),
   ],
@@ -89,7 +96,6 @@ export const fullPlugins = [
     storeToken: "hashed",
   }),
   jwt(),
-  apiKey({ enableMetadata: true }),
   bearer(),
   stripePlugin(),
   trustedOriginPlugin(),
