@@ -11,8 +11,6 @@ import { sendVerificationOTP } from "./plugins/otp";
  */
 export const auth = betterAuth({
   ...baseAuthConfig,
-  // Don't set baseURL in E2E - infer from request/current origin
-  baseURL: undefined,
   emailAndPassword: {
     enabled: true,
     password: {

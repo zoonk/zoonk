@@ -26,6 +26,10 @@ const COOKIE_CACHE_MINUTES = 60;
 const AUTH_MEMBERSHIP_LIMIT = Number.MAX_SAFE_INTEGER;
 const AUTH_ORGANIZATION_LIMIT = Number.MAX_SAFE_INTEGER;
 
+// When using Better Auth from apps, we use the default `api/auth` base path.
+// However, in the API, we use a different base path, so this value can be overridden
+export const basePath = process.env.NEXT_PUBLIC_AUTH_BASE_PATH || "/api/auth";
+
 /**
  * Base auth config shared between production and E2E.
  * Does NOT include rateLimit or emailAndPassword - those differ per environment.
@@ -38,8 +42,7 @@ export const baseAuthConfig: Omit<BetterAuthOptions, "rateLimit"> = {
     database: { generateId: "serial" },
   },
   appName: "Zoonk",
-  basePath: "/v1/auth",
-  baseURL: process.env.NEXT_PUBLIC_API_URL || "https://api.zoonk.com",
+  basePath,
   database: prismaAdapter(prisma, { provider: "postgresql" }),
   experimental: {
     joins: true,

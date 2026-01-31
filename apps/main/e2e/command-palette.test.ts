@@ -213,7 +213,7 @@ test.describe("Command Palette - Authenticated", () => {
     await Promise.all([
       logoutPage.waitForURL(/^[^?]*\/$/),
       logoutPage.waitForResponse(
-        (response) => response.url().includes("/v1/auth/get-session") && response.status() === 200,
+        (response) => response.url().includes("/api/auth/get-session") && response.status() === 200,
       ),
       logoutPage
         .getByRole("dialog")

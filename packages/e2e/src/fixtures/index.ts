@@ -10,5 +10,3 @@ export {
   type StorageStateConfig,
   test,
 } from "./auth";
-
-export { E2E_API_URL } from "../base.config";
