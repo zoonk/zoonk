@@ -19,6 +19,7 @@ jobs:
       E2E_TESTING: "true"
       NEXT_PUBLIC_APP_DOMAIN: localhost:4000
       NEXT_PUBLIC_API_URL: http://localhost:4000
+      NEXT_PUBLIC_AUTH_BASE_PATH: /v1/auth
       TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
       TURBO_TEAM: ${{ vars.TURBO_TEAM }}
 
