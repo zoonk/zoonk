@@ -5,8 +5,8 @@
   "scripts": {
     "analyze": "next experimental-analyze",
     "build": "next build",
-    "dev": "next dev -p 3001",
-    "start": "next start -p 3001",
+    "dev": "next dev -p 3200",
+    "start": "next start -p 3200",
     "typecheck": "next typegen && tsgo --noEmit"
   },
   "dependencies": {
