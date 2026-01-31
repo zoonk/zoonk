@@ -123,6 +123,7 @@ describe(searchCourses, () => {
       language: "en",
       query: "JavaScript",
     });
+
     const ptResult = await searchCourses({
       language: "pt",
       query: "JavaScript",
@@ -234,5 +235,100 @@ describe(searchCourses, () => {
     expect(ids).toContain(containsMatch1.id);
     expect(ids).toContain(containsMatch2.id);
     expect(result[0]?.id).toBe(exactMatch.id);
+  });
+
+  test("respects offset parameter for pagination", async () => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const searchTerm = `paginationtest${uniqueId}`;
+
+    await prisma.course.createMany({
+      data: Array.from({ length: 5 }, (_, i) => ({
+        description: `Pagination test course ${i}`,
+        imageUrl: "https://example.com/image.jpg",
+        isPublished: true,
+        language: "en",
+        normalizedTitle: `${searchTerm} course ${i}`,
+        organizationId: brandOrg.id,
+        slug: `pagination-test-${uniqueId}-${i}`,
+        title: `${searchTerm} Course ${i}`,
+      })),
+    });
+
+    const firstPage = await searchCourses({
+      language: "en",
+      limit: 2,
+      query: searchTerm,
+    });
+
+    const secondPage = await searchCourses({
+      language: "en",
+      limit: 2,
+      offset: 2,
+      query: searchTerm,
+    });
+
+    const thirdPage = await searchCourses({
+      language: "en",
+      limit: 2,
+      offset: 4,
+      query: searchTerm,
+    });
+
+    expect(firstPage).toHaveLength(2);
+    expect(secondPage).toHaveLength(2);
+    expect(thirdPage).toHaveLength(1);
+
+    const firstPageIds = firstPage.map((course) => course.id);
+    const secondPageIds = secondPage.map((course) => course.id);
+    const thirdPageIds = thirdPage.map((course) => course.id);
+
+    const allIds = [...firstPageIds, ...secondPageIds, ...thirdPageIds];
+    const uniqueIds = new Set(allIds);
+    expect(uniqueIds.size).toBe(5);
+  });
+
+  test("returns empty array when offset exceeds results", async () => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const searchTerm = `offsetexceed${uniqueId}`;
+
+    await courseFixture({
+      isPublished: true,
+      language: "en",
+      normalizedTitle: searchTerm,
+      organizationId: brandOrg.id,
+      title: searchTerm,
+    });
+
+    const result = await searchCourses({
+      language: "en",
+      offset: 100,
+      query: searchTerm,
+    });
+
+    expect(result).toEqual([]);
+  });
+
+  test("clamps offset to prevent unbounded database queries", async () => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const searchTerm = `clampoffset${uniqueId}`;
+
+    await courseFixture({
+      isPublished: true,
+      language: "en",
+      normalizedTitle: searchTerm,
+      organizationId: brandOrg.id,
+      title: searchTerm,
+    });
+
+    // A very large offset should be clamped to 100
+    // and not cause the query to fetch millions of rows
+    const result = await searchCourses({
+      language: "en",
+      offset: 1_000_000,
+      query: searchTerm,
+    });
+
+    // With offset clamped to 100 and only 1 result, we get empty array
+    expect(result).toEqual([]);
   });
 });

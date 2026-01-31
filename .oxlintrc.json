@@ -16,6 +16,7 @@
     "suspicious": "error"
   },
   "rules": {
+    "eslint/capitalized-comments": "off",
     "eslint/func-style": ["error", "declaration", { "allowArrowFunctions": true }],
     "eslint/id-length": [
       "error",

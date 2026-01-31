@@ -20,8 +20,7 @@
   "workspaces": {
     "apps/api": {
       "entry": ["src/i18n/codec.ts"],
-      "ignore": ["src/lib/**"],
-      "ignoreDependencies": ["zod"]
+      "ignore": ["src/lib/body-parser.ts"]
     },
     "apps/editor": {
       "entry": ["src/i18n/codec.ts", "e2e/mocks/vercel-blob.ts"]

@@ -15,6 +15,7 @@
     "./auth/subscription": "./src/auth/subscription.ts",
     "./cache/revalidate": "./src/cache/revalidate-main-app.ts",
     "./courses/image": "./src/courses/course-image.ts",
+    "./courses/search": "./src/courses/search-courses.ts",
     "./images/optimize": "./src/images/optimize-image.ts",
     "./images/process-and-upload": "./src/images/process-and-upload-image.ts",
     "./images/upload": "./src/images/upload-image.ts",
