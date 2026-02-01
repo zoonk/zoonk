@@ -14,7 +14,7 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export async function AuthLayoutContent({ children }: LayoutProps<"/auth">) {
+async function AuthLayoutContent({ children }: LayoutProps<"/auth">) {
   const locale = await getLocale();
 
   return (
