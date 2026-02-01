@@ -258,6 +258,9 @@ test.describe("Chapter Content Page", () => {
     await expect(authenticatedPage).toHaveURL(new RegExp(`/ai/c/en/${course.slug}$`));
 
     // Verify the updated description shows in the chapter list
-    await expect(authenticatedPage.getByText(uniqueDescription)).toBeVisible();
+    // Scope to the chapter's link element since getByRole filters by visibility
+    await expect(
+      authenticatedPage.getByRole("link", { name: chapter.title }).getByText(uniqueDescription),
+    ).toBeVisible();
   });
 });

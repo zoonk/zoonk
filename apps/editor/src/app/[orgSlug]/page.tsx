@@ -1,5 +1,6 @@
 import { getOrganization } from "@zoonk/core/orgs/get";
-import { Container } from "@zoonk/ui/components/container";
+import { Container, ContainerHeader } from "@zoonk/ui/components/container";
+import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { CourseListSkeleton } from "@zoonk/ui/patterns/courses/list";
 import { type Metadata } from "next";
 import { Suspense } from "react";
@@ -17,10 +18,20 @@ export async function generateMetadata({ params }: PageProps<"/[orgSlug]">): Pro
   return { title: org.name };
 }
 
-export default async function OrgHomePage({ params }: PageProps<"/[orgSlug]">) {
+function HomeContainerHeaderSkeleton() {
+  return (
+    <ContainerHeader>
+      <Skeleton className="h-7 w-32" />
+    </ContainerHeader>
+  );
+}
+
+export default function OrgHomePage({ params }: PageProps<"/[orgSlug]">) {
   return (
     <Container variant="list">
-      <HomeContainerHeader params={params} />
+      <Suspense fallback={<HomeContainerHeaderSkeleton />}>
+        <HomeContainerHeader params={params} />
+      </Suspense>
 
       <Suspense fallback={<CourseListSkeleton />}>
         <ListCourses params={params} />

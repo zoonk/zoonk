@@ -1,6 +1,7 @@
 import { EditorNavbar } from "@/components/navbar";
 import { getOrganization } from "@zoonk/core/orgs/get";
 import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
+import { FullPageLoading } from "@zoonk/ui/components/loading";
 import { notFound, unauthorized } from "next/navigation";
 import { Suspense } from "react";
 
@@ -31,7 +32,7 @@ async function LayoutPermissions({ children, navbarActions, params }: LayoutProp
 
 export default async function OrgHomeLayout({ children, ...props }: LayoutProps<"/[orgSlug]">) {
   return (
-    <Suspense>
+    <Suspense fallback={<FullPageLoading />}>
       <LayoutPermissions {...props}>{children}</LayoutPermissions>
     </Suspense>
   );

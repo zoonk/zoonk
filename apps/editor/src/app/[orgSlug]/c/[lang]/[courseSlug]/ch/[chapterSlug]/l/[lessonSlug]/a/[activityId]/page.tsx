@@ -1,6 +1,7 @@
 import { BackLink, BackLinkSkeleton } from "@/components/back-link";
 import { getLesson } from "@/data/lessons/get-lesson";
 import { Container, ContainerBody } from "@zoonk/ui/components/container";
+import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
 
@@ -37,17 +38,15 @@ async function ActivityPlaceholder() {
   );
 }
 
-export default async function ActivityPage(props: ActivityPageProps) {
-  const { chapterSlug, courseSlug, lang, lessonSlug, orgSlug } = await props.params;
+function ActivityPlaceholderSkeleton() {
+  return (
+    <div className="py-12 text-center">
+      <Skeleton className="mx-auto h-5 w-48" />
+    </div>
+  );
+}
 
-  void getLesson({
-    chapterSlug,
-    courseSlug,
-    language: lang,
-    lessonSlug,
-    orgSlug,
-  });
-
+export default function ActivityPage(props: ActivityPageProps) {
   return (
     <Container variant="narrow">
       <Suspense fallback={<BackLinkSkeleton />}>
@@ -55,7 +54,9 @@ export default async function ActivityPage(props: ActivityPageProps) {
       </Suspense>
 
       <ContainerBody>
-        <ActivityPlaceholder />
+        <Suspense fallback={<ActivityPlaceholderSkeleton />}>
+          <ActivityPlaceholder />
+        </Suspense>
       </ContainerBody>
     </Container>
   );

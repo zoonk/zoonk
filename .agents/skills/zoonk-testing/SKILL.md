@@ -194,6 +194,36 @@ page.locator("button.bg-blue-500");
 
 **If you can't use `getByRole`, the component likely has accessibility issues.** Refactor to make it more accessible instead of using implementation-detail selectors.
 
+### Cache Components and Activity (Next.js 16+)
+
+With `cacheComponents: true`, Next.js uses React's `<Activity>` component for client-side navigation. Instead of unmounting the previous route, it sets the Activity mode to `"hidden"`. This means **previous pages remain in the DOM but hidden**.
+
+**This causes "strict mode violation" errors when navigating back**, because the same content exists in both the hidden (previous) page and the visible (current) page:
+
+```typescript
+// BAD: Finds 2 elements - one visible in list, one hidden in edit form
+await expect(page.getByText(uniqueDescription)).toBeVisible();
+// Error: strict mode violation: resolved to 2 elements
+
+// BAD: Using .first() is a workaround that masks the issue
+await expect(page.getByText(uniqueDescription).first()).toBeVisible();
+```
+
+**Solution: Use `getByRole` which filters by visibility**, or scope searches to visible containers:
+
+```typescript
+// GOOD: getByRole filters by visibility, then search within that element
+await expect(
+  page.getByRole("link", { name: chapter.title }).getByText(uniqueDescription),
+).toBeVisible();
+
+// GOOD: Find visible container first, then search within it
+const visibleList = page.getByRole("list", { name: /chapters/i });
+await expect(visibleList.getByText(uniqueDescription)).toBeVisible();
+```
+
+**Key insight**: `getByRole` naturally filters by visibility (hidden elements don't have accessible roles). Chain it with other queries to scope your search to visible content.
+
 ### Fix Accessibility First, Then Test
 
 When a component lacks semantic markup, fix the component before writing tests:
