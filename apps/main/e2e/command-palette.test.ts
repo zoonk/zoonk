@@ -141,7 +141,6 @@ test.describe("Command Palette - Authenticated", () => {
     const dialog = authenticatedPage.getByRole("dialog");
     await expect(dialog.getByText(/^my courses$/i)).toBeVisible();
     await expect(dialog.getByText(/manage subscription/i)).toBeVisible();
-    await expect(dialog.getByText(/manage settings/i)).toBeVisible();
     await expect(dialog.getByText(/update language/i)).toBeVisible();
     await expect(dialog.getByText(/update display name/i)).toBeVisible();
     await expect(dialog.getByText(/^logout$/i)).toBeVisible();
@@ -183,21 +182,6 @@ test.describe("Command Palette - Authenticated", () => {
         level: 1,
         name: /subscription/i,
       }),
-    ).toBeVisible();
-  });
-
-  test("selecting Settings shows settings content", async ({ authenticatedPage }) => {
-    await authenticatedPage.goto("/");
-    await openCommandPalette(authenticatedPage);
-
-    await authenticatedPage
-      .getByRole("dialog")
-      .getByText(/manage settings/i)
-      .click();
-
-    // Verify user sees settings page
-    await expect(
-      authenticatedPage.getByRole("heading", { level: 1, name: /settings/i }),
     ).toBeVisible();
   });
 

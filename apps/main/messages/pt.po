@@ -58,11 +58,6 @@ msgid "My courses"
 msgstr "Meus cursos"
 
 #: src/app/[locale]/(catalog)/_components/command-palette.tsx
-msgctxt "KwsmcD"
-msgid "Manage settings"
-msgstr "Gerenciar configurações"
-
-#: src/app/[locale]/(catalog)/_components/command-palette.tsx
 msgctxt "L6kaJv"
 msgid "Learn something"
 msgstr "Aprenda algo"
@@ -106,7 +101,7 @@ msgstr "Pesquisar"
 
 #: src/app/[locale]/(catalog)/_components/command-palette.tsx
 #: src/app/[locale]/(settings)/_components/locale-switcher.tsx
-#: src/app/[locale]/(settings)/_hooks/use-settings.ts
+#: src/app/[locale]/(settings)/_components/settings-pills.tsx
 #: src/app/[locale]/(settings)/language/page.tsx
 msgctxt "y1Z3or"
 msgid "Language"
@@ -123,20 +118,13 @@ msgid "User menu"
 msgstr "Menu do usuário"
 
 #: src/app/[locale]/(catalog)/_components/user-dropdown-menu.tsx
-#: src/app/[locale]/(settings)/_components/settings-navigation.tsx
-#: src/app/[locale]/(settings)/settings/page.tsx
-msgctxt "D3idYv"
-msgid "Settings"
-msgstr "Configurações"
-
-#: src/app/[locale]/(catalog)/_components/user-dropdown-menu.tsx
-#: src/app/[locale]/(settings)/_hooks/use-settings.ts
+#: src/app/[locale]/(settings)/_components/settings-pills.tsx
 msgctxt "HqRNN8"
 msgid "Support"
 msgstr "Suporte"
 
 #: src/app/[locale]/(catalog)/_components/user-dropdown-menu.tsx
-#: src/app/[locale]/(settings)/_hooks/use-settings.ts
+#: src/app/[locale]/(settings)/_components/settings-pills.tsx
 #: src/app/[locale]/(settings)/subscription/page.tsx
 msgctxt "R/6nsx"
 msgid "Subscription"
@@ -751,7 +739,7 @@ msgctxt "yOFm9C"
 msgid "You need to be logged in to access this page."
 msgstr "Você precisa estar conectado para acessar esta página."
 
-#: src/app/[locale]/(settings)/_hooks/use-settings.ts
+#: src/app/[locale]/(settings)/_components/settings-pills.tsx
 #: src/app/[locale]/(settings)/name/page.tsx
 msgctxt "dOQCL8"
 msgid "Display name"
@@ -806,16 +794,6 @@ msgstr "Atualizar nome de exibição"
 msgctxt "Pj/oEx"
 msgid "This is the name others may see and the one we'll use to refer to you in activities."
 msgstr "Este é o nome que outros podem ver e o que usaremos para nos referir a você nas atividades."
-
-#: src/app/[locale]/(settings)/settings/page.tsx
-msgctxt "FMLZiG"
-msgid "Customize your Zoonk learning experience. Manage account settings, profile, and preferences to get the most out of our education platform."
-msgstr "Personalize sua experiência de aprendizado no Zoonk. Gerencie configurações da conta, perfil e preferências para aproveitar ao máximo nossa plataforma educacional."
-
-#: src/app/[locale]/(settings)/settings/page.tsx
-msgctxt "v9T5Oi"
-msgid "Manage your account settings, profile, and preferences."
-msgstr "Gerencie as configurações da sua conta, perfil e preferências."
 
 #: src/app/[locale]/(settings)/subscription/page.tsx
 msgctxt "9vk07U"

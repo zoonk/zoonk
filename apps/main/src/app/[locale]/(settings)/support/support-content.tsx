@@ -27,7 +27,7 @@ export async function SupportContent() {
   const socials = getSocialProfiles(locale);
 
   return (
-    <Container variant="narrow">
+    <Container>
       <ContainerHeader>
         <ContainerHeaderGroup>
           <ContainerTitle>{t("Help & Support")}</ContainerTitle>

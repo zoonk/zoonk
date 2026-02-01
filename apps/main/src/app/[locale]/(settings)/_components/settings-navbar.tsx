@@ -6,8 +6,7 @@ import { authClient } from "@zoonk/core/auth/client";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { LogOutIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { Suspense } from "react";
-import { SettingsNavigation } from "./settings-navigation";
+import { SettingsPills } from "./settings-pills";
 
 const homeMenu = getMenu("home");
 
@@ -18,7 +17,7 @@ export function SettingsNavbar() {
 
   return (
     <nav className="bg-background/95 supports-backdrop-filter:bg-background/60 sticky top-0 z-10 flex w-full items-center justify-between gap-2 px-4 pt-4 backdrop-blur">
-      <div className="flex items-center gap-2">
+      <div className="flex min-w-0 items-center gap-2">
         <Link
           className={buttonVariants({
             size: "icon",
@@ -30,9 +29,7 @@ export function SettingsNavbar() {
           <span className="sr-only">{t("Home page")}</span>
         </Link>
 
-        <Suspense>
-          <SettingsNavigation />
-        </Suspense>
+        <SettingsPills />
       </div>
 
       {isLoggedIn && (

@@ -8,7 +8,7 @@ export default async function Layout({ children, params }: LayoutProps<"/[locale
   setRequestLocale(locale);
 
   return (
-    <div className="flex min-h-dvh flex-col">
+    <div className="flex min-h-dvh flex-col gap-4 overflow-x-hidden">
       <SettingsNavbar />
       {children}
     </div>

@@ -31,7 +31,7 @@ export default async function Name({ params }: PageProps<"/[locale]/name">) {
   const t = await getExtracted();
 
   return (
-    <Container variant="narrow">
+    <Container>
       <ContainerHeader>
         <ContainerHeaderGroup>
           <ContainerTitle>{t("Display name")}</ContainerTitle>

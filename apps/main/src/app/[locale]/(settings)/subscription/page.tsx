@@ -33,7 +33,7 @@ export default async function Subscription({ params }: PageProps<"/[locale]/subs
   const t = await getExtracted();
 
   return (
-    <Container variant="narrow">
+    <Container>
       <ContainerHeader>
         <ContainerHeaderGroup>
           <ContainerTitle>{t("Subscription")}</ContainerTitle>
