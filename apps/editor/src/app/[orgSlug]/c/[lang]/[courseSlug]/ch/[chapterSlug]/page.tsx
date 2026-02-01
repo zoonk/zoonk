@@ -11,10 +11,12 @@ import { ChapterContent } from "./chapter-content";
 import { ChapterSlug } from "./chapter-slug";
 import { LessonList } from "./lesson-list";
 
-export default async function ChapterPage(
-  props: PageProps<"/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]">,
-) {
-  const { chapterSlug, courseSlug, lang, orgSlug } = await props.params;
+async function ChapterPagePreload({
+  params,
+}: {
+  params: PageProps<"/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]">["params"];
+}) {
+  const { chapterSlug, courseSlug, lang, orgSlug } = await params;
 
   // Preload data in parallel (cached, so child components get the same promise)
   void Promise.all([
@@ -22,8 +24,18 @@ export default async function ChapterPage(
     getChapter({ chapterSlug, courseSlug, language: lang, orgSlug }),
   ]);
 
+  return null;
+}
+
+export default function ChapterPage(
+  props: PageProps<"/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]">,
+) {
   return (
     <Container variant="narrow">
+      <Suspense>
+        <ChapterPagePreload params={props.params} />
+      </Suspense>
+
       <Suspense fallback={<BackLinkSkeleton />}>
         <ChapterBackLink params={props.params} />
       </Suspense>

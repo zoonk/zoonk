@@ -11,10 +11,12 @@ import { LessonBackLink } from "./lesson-back-link";
 import { LessonContent } from "./lesson-content";
 import { LessonSlug } from "./lesson-slug";
 
-export default async function LessonPage(
-  props: PageProps<"/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]">,
-) {
-  const { chapterSlug, courseSlug, lang, lessonSlug, orgSlug } = await props.params;
+async function LessonPagePreload({
+  params,
+}: {
+  params: PageProps<"/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]">["params"];
+}) {
+  const { chapterSlug, courseSlug, lang, lessonSlug, orgSlug } = await params;
 
   // Preload data in parallel (cached, so child components get the same promise)
   void Promise.all([
@@ -28,8 +30,18 @@ export default async function LessonPage(
     }),
   ]);
 
+  return null;
+}
+
+export default function LessonPage(
+  props: PageProps<"/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]">,
+) {
   return (
     <Container variant="narrow">
+      <Suspense>
+        <LessonPagePreload params={props.params} />
+      </Suspense>
+
       <Suspense fallback={<BackLinkSkeleton />}>
         <LessonBackLink params={props.params} />
       </Suspense>

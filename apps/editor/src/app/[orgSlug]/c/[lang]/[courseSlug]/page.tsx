@@ -16,8 +16,12 @@ import { CourseContent } from "./course-content";
 import { CourseImage } from "./course-image";
 import { CourseSlug } from "./course-slug";
 
-export default async function CoursePage(props: PageProps<"/[orgSlug]/c/[lang]/[courseSlug]">) {
-  const { courseSlug, lang, orgSlug } = await props.params;
+async function CoursePagePreload({
+  params,
+}: {
+  params: PageProps<"/[orgSlug]/c/[lang]/[courseSlug]">["params"];
+}) {
+  const { courseSlug, lang, orgSlug } = await params;
 
   // Preload data in parallel (cached, so child components get the same promise)
   void Promise.all([
@@ -26,8 +30,16 @@ export default async function CoursePage(props: PageProps<"/[orgSlug]/c/[lang]/[
     listCourseChapters({ courseSlug, language: lang, orgSlug }),
   ]);
 
+  return null;
+}
+
+export default function CoursePage(props: PageProps<"/[orgSlug]/c/[lang]/[courseSlug]">) {
   return (
     <Container variant="narrow">
+      <Suspense>
+        <CoursePagePreload params={props.params} />
+      </Suspense>
+
       <Suspense fallback={<ImageUploadSkeleton />}>
         <CourseImage params={props.params} />
       </Suspense>

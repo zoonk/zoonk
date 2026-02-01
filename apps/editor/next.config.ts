@@ -15,6 +15,7 @@ const e2eAliases: Record<string, string> = isE2E
   : {};
 
 const nextConfig: NextConfig = {
+  cacheComponents: true,
   devIndicators: false,
   // Use separate build directories so E2E and production builds don't conflict
   distDir: isE2E ? ".next-e2e" : ".next",

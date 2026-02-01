@@ -12,6 +12,7 @@ const e2eAliases: Record<string, string> = isE2E
   : {};
 
 const nextConfig: NextConfig = {
+  cacheComponents: true,
   devIndicators: false,
   distDir: isE2E ? ".next-e2e" : ".next",
   experimental: {

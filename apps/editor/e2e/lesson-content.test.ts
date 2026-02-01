@@ -279,6 +279,9 @@ test.describe("Lesson Content Page", () => {
     );
 
     // Verify the updated description shows in the lesson list
-    await expect(authenticatedPage.getByText(uniqueDescription)).toBeVisible();
+    // Scope to the lesson's link element since getByRole filters by visibility
+    await expect(
+      authenticatedPage.getByRole("link", { name: lesson.title }).getByText(uniqueDescription),
+    ).toBeVisible();
   });
 });

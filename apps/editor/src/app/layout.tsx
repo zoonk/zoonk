@@ -1,8 +1,9 @@
+import { FullPageLoading } from "@zoonk/ui/components/loading";
 import { Toaster } from "@zoonk/ui/components/sonner";
 import { type Metadata } from "next";
 import { NextIntlClientProvider } from "next-intl";
+import { Suspense } from "react";
 import "@zoonk/ui/globals.css";
-import { getLocale } from "next-intl/server";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://editor.zoonk.com"),
@@ -12,13 +13,13 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function LocaleLayout({ children }: LayoutProps<"/">) {
-  const locale = await getLocale();
-
+export default function LocaleLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang={locale}>
+    <html lang="en">
       <body className="font-sans antialiased">
-        <NextIntlClientProvider>{children}</NextIntlClientProvider>
+        <Suspense fallback={<FullPageLoading />}>
+          <NextIntlClientProvider>{children}</NextIntlClientProvider>
+        </Suspense>
         <Toaster />
       </body>
     </html>

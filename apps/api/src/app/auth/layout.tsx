@@ -2,7 +2,7 @@ import { Container } from "@zoonk/ui/components/container";
 import { FullPageLoading } from "@zoonk/ui/components/loading";
 import { type Metadata } from "next";
 import { NextIntlClientProvider } from "next-intl";
-import { getExtracted, getLocale } from "next-intl/server";
+import { getExtracted } from "next-intl/server";
 import "@zoonk/ui/globals.css";
 import { Suspense } from "react";
 
@@ -14,11 +14,9 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default async function AuthLayout({ children }: LayoutProps<"/auth">) {
-  const locale = await getLocale();
-
+export default function AuthLayout({ children }: LayoutProps<"/auth">) {
   return (
-    <html lang={locale}>
+    <html lang="en">
       <body className="font-sans antialiased">
         <Suspense fallback={<FullPageLoading />}>
           <NextIntlClientProvider>

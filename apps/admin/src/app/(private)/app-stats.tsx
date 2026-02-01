@@ -1,8 +1,13 @@
 import { Stats, StatsSkeleton } from "@/components/stats";
 import { countUsers } from "@/data/stats/count-users";
 import { UsersIcon } from "lucide-react";
+import { cacheLife } from "next/cache";
 
 export async function AppStats() {
+  "use cache";
+
+  cacheLife("minutes");
+
   const totalUsers = await countUsers();
 
   return (
