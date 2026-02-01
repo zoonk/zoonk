@@ -46,27 +46,9 @@ function ActivityPlaceholderSkeleton() {
   );
 }
 
-async function ActivityPagePreload({ params }: { params: ActivityPageProps["params"] }) {
-  const { chapterSlug, courseSlug, lang, lessonSlug, orgSlug } = await params;
-
-  void getLesson({
-    chapterSlug,
-    courseSlug,
-    language: lang,
-    lessonSlug,
-    orgSlug,
-  });
-
-  return null;
-}
-
 export default function ActivityPage(props: ActivityPageProps) {
   return (
     <Container variant="narrow">
-      <Suspense>
-        <ActivityPagePreload params={props.params} />
-      </Suspense>
-
       <Suspense fallback={<BackLinkSkeleton />}>
         <ActivityBackLink params={props.params} />
       </Suspense>
