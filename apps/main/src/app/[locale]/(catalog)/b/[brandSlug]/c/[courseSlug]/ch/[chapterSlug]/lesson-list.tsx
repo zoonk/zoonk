@@ -10,45 +10,47 @@ import {
   CatalogListItemTitle,
   CatalogListSearch,
 } from "@/components/catalog/catalog-list";
-import { type ChapterWithLessons } from "@/data/chapters/list-course-chapters";
+import { type LessonForList } from "@/data/lessons/list-chapter-lessons";
 
-export function ChapterList({
+export function LessonList({
   brandSlug,
-  chapters,
+  chapterSlug,
   courseSlug,
   emptyMessage,
+  lessons,
   placeholder,
   searchLabel,
 }: {
   brandSlug: string;
-  chapters: ChapterWithLessons[];
+  chapterSlug: string;
   courseSlug: string;
   emptyMessage: string;
+  lessons: LessonForList[];
   placeholder: string;
   searchLabel: string;
 }) {
-  if (chapters.length === 0) {
+  if (lessons.length === 0) {
     return null;
   }
 
   return (
     <CatalogList>
-      <CatalogListSearch ariaLabel={searchLabel} items={chapters} placeholder={placeholder}>
+      <CatalogListSearch ariaLabel={searchLabel} items={lessons} placeholder={placeholder}>
         <CatalogListContent emptyMessage={emptyMessage}>
-          {chapters.map((chapter) => (
+          {lessons.map((lesson) => (
             <CatalogListItem
-              href={`/b/${brandSlug}/c/${courseSlug}/ch/${chapter.slug}`}
-              id={chapter.id}
-              key={chapter.id}
+              href={`/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}/l/${lesson.slug}`}
+              id={lesson.id}
+              key={lesson.id}
             >
               <CatalogListItemPosition>
-                {String(chapter.position + 1).padStart(2, "0")}
+                {String(lesson.position + 1).padStart(2, "0")}
               </CatalogListItemPosition>
 
               <CatalogListItemContent>
-                <CatalogListItemTitle>{chapter.title}</CatalogListItemTitle>
-                {chapter.description && (
-                  <CatalogListItemDescription>{chapter.description}</CatalogListItemDescription>
+                <CatalogListItemTitle>{lesson.title}</CatalogListItemTitle>
+                {lesson.description && (
+                  <CatalogListItemDescription>{lesson.description}</CatalogListItemDescription>
                 )}
               </CatalogListItemContent>
             </CatalogListItem>

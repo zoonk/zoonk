@@ -75,8 +75,9 @@ async function createTestLessonWithActivities() {
 
 test.describe("Lesson Detail Page", () => {
   test("shows lesson content with title, description, and position", async ({ page }) => {
-    const { chapter, course, lesson } = await createTestLessonWithActivities();
-    await page.goto(`/b/ai/c/${course.slug}/c/${chapter.slug}/l/${lesson.slug}`);
+    await page.goto(
+      "/b/ai/c/machine-learning/ch/introduction-to-machine-learning/l/what-is-machine-learning",
+    );
 
     await expect(
       page.getByRole("heading", {
@@ -93,7 +94,7 @@ test.describe("Lesson Detail Page", () => {
 
   test("non-existent lesson shows 404 page", async ({ page }) => {
     await page.goto(
-      "/b/ai/c/machine-learning/c/introduction-to-machine-learning/l/nonexistent-lesson",
+      "/b/ai/c/machine-learning/ch/introduction-to-machine-learning/l/nonexistent-lesson",
     );
 
     await expect(page.getByText(/not found|404/i)).toBeVisible();
@@ -101,36 +102,45 @@ test.describe("Lesson Detail Page", () => {
 
   test("unpublished lesson shows 404 page", async ({ page }) => {
     await page.goto(
-      "/b/ai/c/machine-learning/c/introduction-to-machine-learning/l/types-of-learning",
+      "/b/ai/c/machine-learning/ch/introduction-to-machine-learning/l/types-of-learning",
     );
 
     await expect(page.getByText(/not found|404/i)).toBeVisible();
   });
 
-  test("clicking course link in popover navigates to course page", async ({ page }) => {
-    const { chapter, course, lesson } = await createTestLessonWithActivities();
-    await page.goto(`/b/ai/c/${course.slug}/c/${chapter.slug}/l/${lesson.slug}`);
+  test("clicking links in popover navigates correctly", async ({ page }) => {
+    await page.goto(
+      "/b/ai/c/machine-learning/ch/introduction-to-machine-learning/l/what-is-machine-learning",
+    );
 
     const triggerButton = page.getByRole("button", {
       name: lesson.title,
     });
     await triggerButton.click();
 
-    await expect(page.getByRole("link", { name: course.title })).toBeVisible();
+    // Verify course link is visible
+    await expect(page.getByRole("link", { name: /^Machine Learning$/i })).toBeVisible();
 
-    await expect(page.getByText(chapter.title)).toBeVisible();
+    // Verify chapter link is visible
+    await expect(
+      page.getByRole("link", { name: /Introduction to Machine Learning/i }),
+    ).toBeVisible();
 
-    const courseLink = page.getByRole("link", { name: course.title });
+    // Click the course link
+    const courseLink = page.getByRole("link", { name: /^Machine Learning$/i });
     await courseLink.click({ force: true });
 
-    await expect(page).toHaveURL(new RegExp(`/b/ai/c/${course.slug}`));
+    // Verify URL is correct
+    await expect(page).toHaveURL(/\/b\/ai\/c\/machine-learning$/);
 
-    await expect(page.getByRole("heading", { level: 1, name: course.title })).toBeVisible();
+    // Verify we're on the course page
+    await expect(page.getByRole("heading", { level: 1, name: /Machine Learning/i })).toBeVisible();
   });
 
   test("displays activity list with titles and descriptions", async ({ page }) => {
-    const { chapter, course, lesson } = await createTestLessonWithActivities();
-    await page.goto(`/b/ai/c/${course.slug}/c/${chapter.slug}/l/${lesson.slug}`);
+    await page.goto(
+      "/b/ai/c/machine-learning/ch/introduction-to-machine-learning/l/what-is-machine-learning",
+    );
 
     // Scope to the activity list for precise queries
     const activityList = page.getByRole("list", { name: /activities/i });
@@ -149,8 +159,9 @@ test.describe("Lesson Detail Page", () => {
   });
 
   test("clicking activity link navigates to activity page", async ({ page }) => {
-    const { chapter, course, lesson } = await createTestLessonWithActivities();
-    await page.goto(`/b/ai/c/${course.slug}/c/${chapter.slug}/l/${lesson.slug}`);
+    await page.goto(
+      "/b/ai/c/machine-learning/ch/introduction-to-machine-learning/l/what-is-machine-learning",
+    );
 
     // Scope to the activity list for precise query
     const activityList = page.getByRole("list", { name: /activities/i });
@@ -161,7 +172,7 @@ test.describe("Lesson Detail Page", () => {
   });
 
   test("lesson without activities redirects to generate page", async ({ page }) => {
-    await page.goto("/b/ai/c/machine-learning/c/data-preparation/l/understanding-datasets");
+    await page.goto("/b/ai/c/machine-learning/ch/data-preparation/l/understanding-datasets");
 
     await expect(page).toHaveURL(/\/generate\/l\/\d+/);
   });

@@ -34,7 +34,7 @@ export async function ContinueLearningCard({
   const activityLabel = activity.title ?? kindLabels.get(activity.kind) ?? defaultLabel;
   const nextLabel = t("Next: {activity}", { activity: activityLabel });
 
-  const lessonHref = `/b/${course.organization.slug}/c/${course.slug}/c/${chapter.slug}/l/${lesson.slug}`;
+  const lessonHref = `/b/${course.organization.slug}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`;
   const activityHref = `${lessonHref}/a/${activity.position}`;
   const courseHref = `/b/${course.organization.slug}/c/${course.slug}`;
 

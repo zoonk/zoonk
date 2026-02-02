@@ -130,50 +130,55 @@ msgctxt "R/6nsx"
 msgid "Subscription"
 msgstr "Assinatura"
 
-#: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/c/[chapterSlug]/l/[lessonSlug]/activity-indicator.tsx
+#: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/chapter-header.tsx
+msgctxt "B9hCYt"
+msgid "Chapter {position}"
+msgstr ""
+
+#: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/activity-list.tsx
 msgctxt "4o5CAP"
 msgid "Not completed"
 msgstr "Não concluída"
 
-#: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/c/[chapterSlug]/l/[lessonSlug]/activity-indicator.tsx
+#: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/activity-list.tsx
 msgctxt "95stPq"
 msgid "Completed"
 msgstr "Concluída"
 
-#: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/c/[chapterSlug]/l/[lessonSlug]/activity-list.tsx
-msgctxt "UmEsZF"
-msgid "Activities"
-msgstr "Atividades"
-
-#: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/c/[chapterSlug]/l/[lessonSlug]/lesson-header.tsx
+#: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-header.tsx
 msgctxt "Dane8c"
 msgid "Lesson {position}"
 msgstr "Aula {position}"
 
-#: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/chapter-empty-state.tsx
-msgctxt "8AbgQ7"
-msgid "Lessons haven't been generated for this chapter yet."
-msgstr "As aulas ainda não foram geradas para este capítulo."
+#: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/page.tsx
+msgctxt "FuT9vz"
+msgid "No lessons found"
+msgstr ""
 
-#: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/chapter-empty-state.tsx
-msgctxt "DG7kYp"
-msgid "Generate lessons"
-msgstr "Gerar aulas"
+#: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/page.tsx
+msgctxt "n+IpeF"
+msgid "Search lessons"
+msgstr ""
 
-#: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/chapter-search-container.tsx
-msgctxt "ai9FYU"
-msgid "Search chapters and lessons..."
-msgstr "Buscar capítulos e aulas..."
+#: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/page.tsx
+msgctxt "ssvp3R"
+msgid "Search lessons..."
+msgstr ""
 
-#: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/chapter-search-container.tsx
-msgctxt "p8Tezk"
-msgid "Search chapters and lessons"
-msgstr "Buscar capítulos e aulas"
+#: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/page.tsx
+msgctxt "3SOcGR"
+msgid "Search chapters..."
+msgstr ""
 
-#: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/chapter-search-container.tsx
-msgctxt "SxedrD"
-msgid "No chapters or lessons found"
-msgstr "Nenhum capítulo ou aula encontrado"
+#: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/page.tsx
+msgctxt "8udPa+"
+msgid "No chapters found"
+msgstr ""
+
+#: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/page.tsx
+msgctxt "CIyfOW"
+msgid "Search chapters"
+msgstr ""
 
 #: src/app/[locale]/(catalog)/best-day.tsx
 #: src/app/[locale]/(performance)/score/score-insights.tsx
@@ -236,7 +241,7 @@ msgid "Next: {activity}"
 msgstr "Próximo: {activity}"
 
 #: src/app/[locale]/(catalog)/continue-learning-card.tsx
-#: src/app/[locale]/b/[brandSlug]/c/[courseSlug]/c/[chapterSlug]/l/[lessonSlug]/a/[position]/page.tsx
+#: src/app/[locale]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/a/[position]/page.tsx
 msgctxt "ZmlNQ3"
 msgid "Activity"
 msgstr "Atividade"
@@ -899,7 +904,7 @@ msgctxt "vQjckV"
 msgid "Need help? Contact us at hello@zoonk.com"
 msgstr "Precisa de ajuda? Entre em contato com a gente em contato@zoonk.com"
 
-#: src/app/[locale]/b/[brandSlug]/c/[courseSlug]/c/[chapterSlug]/l/[lessonSlug]/a/[position]/page.tsx
+#: src/app/[locale]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/a/[position]/page.tsx
 msgctxt "qtQJTV"
 msgid "Complete this activity to reinforce your learning and track your progress."
 msgstr "Complete esta atividade para reforçar seu aprendizado e acompanhar seu progresso."

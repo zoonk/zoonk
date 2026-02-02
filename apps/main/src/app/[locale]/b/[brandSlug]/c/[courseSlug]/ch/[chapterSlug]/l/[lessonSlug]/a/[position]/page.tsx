@@ -3,7 +3,7 @@ import { getExtracted } from "next-intl/server";
 
 export async function generateMetadata({
   params,
-}: PageProps<"/[locale]/b/[brandSlug]/c/[courseSlug]/c/[chapterSlug]/l/[lessonSlug]/a/[position]">): Promise<Metadata> {
+}: PageProps<"/[locale]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/a/[position]">): Promise<Metadata> {
   const { locale } = await params;
   const t = await getExtracted({ locale });
 
