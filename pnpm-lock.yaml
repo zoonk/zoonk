@@ -96,6 +96,9 @@ importers:
       '@tabler/icons-react':
         specifier: 3.35.0
         version: 3.35.0(react@19.2.4)
+      '@zoonk/ai':
+        specifier: workspace:*
+        version: link:../../packages/ai
       '@zoonk/core':
         specifier: workspace:*
         version: link:../../packages/core
@@ -135,6 +138,9 @@ importers:
       server-only:
         specifier: 0.0.1
         version: 0.0.1
+      workflow:
+        specifier: 4.0.1-beta.50
+        version: 4.0.1-beta.50(@aws-sdk/client-sts@3.975.0)(@opentelemetry/api@1.9.0)(@playwright/test@1.58.0)(babel-plugin-react-compiler@1.0.0)(next@16.1.5(@opentelemetry/api@1.9.0)(@playwright/test@1.58.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(typescript@5.9.3)
       zod:
         specifier: 4.3.5
         version: 4.3.5
@@ -160,6 +166,9 @@ importers:
       babel-plugin-react-compiler:
         specifier: 1.0.0
         version: 1.0.0
+      raw-loader:
+        specifier: 4.0.2
+        version: 4.0.2(webpack@5.104.1(@swc/core@1.15.3))
       typescript:
         specifier: ^5
         version: 5.9.3
@@ -372,19 +381,16 @@ importers:
       server-only:
         specifier: 0.0.1
         version: 0.0.1
-      workflow:
-        specifier: 4.0.1-beta.50
-        version: 4.0.1-beta.50(@aws-sdk/client-sts@3.975.0)(@opentelemetry/api@1.9.0)(@playwright/test@1.58.0)(babel-plugin-react-compiler@1.0.0)(next@16.1.5(@opentelemetry/api@1.9.0)(@playwright/test@1.58.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(typescript@5.9.3)
     devDependencies:
       '@mdx-js/loader':
         specifier: 3.1.1
-        version: 3.1.1(webpack@5.104.1(@swc/core@1.15.3))
+        version: 3.1.1(webpack@5.104.1)
       '@mdx-js/react':
         specifier: 3.1.1
         version: 3.1.1(@types/react@19.2.10)(react@19.2.4)
       '@next/mdx':
         specifier: 16.1.5
-        version: 16.1.5(@mdx-js/loader@3.1.1(webpack@5.104.1(@swc/core@1.15.3)))(@mdx-js/react@3.1.1(@types/react@19.2.10)(react@19.2.4))
+        version: 16.1.5(@mdx-js/loader@3.1.1(webpack@5.104.1))(@mdx-js/react@3.1.1(@types/react@19.2.10)(react@19.2.4))
       '@tailwindcss/postcss':
         specifier: 4.1.17
         version: 4.1.17
@@ -420,7 +426,7 @@ importers:
         version: 27.0.0
       raw-loader:
         specifier: 4.0.2
-        version: 4.0.2(webpack@5.104.1(@swc/core@1.15.3))
+        version: 4.0.2(webpack@5.104.1)
       tsx:
         specifier: 4.20.5
         version: 4.20.5
@@ -7067,12 +7073,12 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
 
-  '@mdx-js/loader@3.1.1(webpack@5.104.1(@swc/core@1.15.3))':
+  '@mdx-js/loader@3.1.1(webpack@5.104.1)':
     dependencies:
       '@mdx-js/mdx': 3.1.1
       source-map: 0.7.6
     optionalDependencies:
-      webpack: 5.104.1(@swc/core@1.15.3)
+      webpack: 5.104.1
     transitivePeerDependencies:
       - supports-color
 
@@ -7128,11 +7134,11 @@ snapshots:
 
   '@next/env@16.1.5': {}
 
-  '@next/mdx@16.1.5(@mdx-js/loader@3.1.1(webpack@5.104.1(@swc/core@1.15.3)))(@mdx-js/react@3.1.1(@types/react@19.2.10)(react@19.2.4))':
+  '@next/mdx@16.1.5(@mdx-js/loader@3.1.1(webpack@5.104.1))(@mdx-js/react@3.1.1(@types/react@19.2.10)(react@19.2.4))':
     dependencies:
       source-map: 0.7.6
     optionalDependencies:
-      '@mdx-js/loader': 3.1.1(webpack@5.104.1(@swc/core@1.15.3))
+      '@mdx-js/loader': 3.1.1(webpack@5.104.1)
       '@mdx-js/react': 3.1.1(@types/react@19.2.10)(react@19.2.4)
 
   '@next/swc-darwin-arm64@16.0.10':

@@ -14,7 +14,7 @@ import { useCompletionRedirect } from "@/lib/workflow/use-completion-redirect";
 import { useWorkflowGeneration } from "@/lib/workflow/use-workflow-generation";
 import { CHAPTER_COMPLETION_STEP, type CourseWorkflowStepName } from "@/workflows/config";
 import { type GenerationStatus } from "@zoonk/db";
-import { AI_ORG_SLUG } from "@zoonk/utils/constants";
+import { AI_ORG_SLUG, API_BASE_URL } from "@zoonk/utils/constants";
 import { useExtracted } from "next-intl";
 import { useGenerationPhases } from "./use-generation-phases";
 
@@ -37,9 +37,9 @@ export function GenerationClient({
     completionStep: CHAPTER_COMPLETION_STEP,
     initialRunId: generationRunId,
     initialStatus: generationStatus === "running" ? "streaming" : "idle",
-    statusUrl: "/api/workflows/course-generation/status",
+    statusUrl: `${API_BASE_URL}/v1/workflows/course-generation/status`,
     triggerBody: { courseSuggestionId: suggestionId },
-    triggerUrl: "/api/workflows/course-generation/trigger",
+    triggerUrl: `${API_BASE_URL}/v1/workflows/course-generation/trigger`,
   });
 
   const { phases, progress } = useGenerationPhases(

@@ -471,6 +471,67 @@ test("shows error for duplicate slug", async ({ authenticatedPage }) => {
 });
 ```
 
+**Create unique users for user-specific state:**
+
+When testing features that depend on user state (subscriptions, permissions, settings), create a unique user per test instead of sharing a seeded test user. This ensures true test isolation—no cleanup code needed, and tests can run in parallel without interference.
+
+```typescript
+// BAD: Shared user requires cleanup to avoid interfering with other tests
+test("works with subscription", async () => {
+  let subscriptionId: number;
+  try {
+    subscriptionId = await createSubscriptionForSharedUser();
+    // ... test
+  } finally {
+    // Must clean up or other tests using this user will fail
+    await prisma.subscription.delete({ where: { id: subscriptionId } });
+  }
+});
+
+// GOOD: Unique user per test, no cleanup needed
+test("works with subscription", async () => {
+  const uniqueId = randomUUID().slice(0, 8);
+  const email = `e2e-test-${uniqueId}@zoonk.test`;
+  const password = "password123";
+
+  // Create unique user via sign-up API
+  const signupContext = await request.newContext({ baseURL });
+  await signupContext.post("/v1/auth/sign-up/email", {
+    data: { email, name: `E2E User ${uniqueId}`, password },
+  });
+  await signupContext.dispose();
+
+  // Create user-specific state (subscription, settings, etc.)
+  const user = await prisma.user.findUniqueOrThrow({ where: { email } });
+  await prisma.subscription.create({
+    data: {
+      referenceId: String(user.id),
+      status: "active",
+      plan: "hobby",
+      stripeCustomerId: `cus_test_${uniqueId}`,
+      stripeSubscriptionId: `sub_test_${uniqueId}`,
+    },
+  });
+
+  // Sign in and test - no cleanup needed, user is unique to this test
+  const apiContext = await request.newContext({ baseURL });
+  await apiContext.post("/v1/auth/sign-in/email", {
+    data: { email, password },
+  });
+
+  // ... test with authenticated context
+  await apiContext.dispose();
+});
+```
+
+**When to create unique users vs use seeded users:**
+
+| Scenario                                    | Approach        | Why                                      |
+| ------------------------------------------- | --------------- | ---------------------------------------- |
+| Testing user-specific state (subscriptions) | Unique user     | Avoid cleanup, enable parallel execution |
+| Testing authenticated UI flows              | Seeded fixtures | Faster, fixtures handle auth setup       |
+| Testing permission levels (admin vs member) | Seeded fixtures | Roles are stable, no interference risk   |
+
 ### Test Organization
 
 ```typescript

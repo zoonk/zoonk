@@ -2,6 +2,7 @@ import path from "node:path";
 import { withBotId } from "botid/next/config";
 import { type NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
+import { withWorkflow } from "workflow/next";
 
 const isE2E = process.env.E2E_TESTING === "true";
 
@@ -23,6 +24,13 @@ const nextConfig: NextConfig = {
   turbopack: {
     resolveAlias: { ...e2eAliases },
     root: path.resolve(import.meta.dirname, "../.."),
+    rules: {
+      // Allow to import MDX files used for AI prompts
+      "*.md": {
+        as: "*.js",
+        loaders: ["raw-loader"],
+      },
+    },
   },
   typedRoutes: true,
 };
@@ -40,4 +48,4 @@ const withNextIntl = createNextIntlPlugin({
   },
 });
 
-export default withBotId(withNextIntl(nextConfig));
+export default withWorkflow(withBotId(withNextIntl(nextConfig)));

@@ -11,10 +11,13 @@
     "e2e": "env $(cat ../../packages/db/.env.e2e | xargs) playwright test",
     "e2e:ui": "env $(cat ../../packages/db/.env.e2e | xargs) playwright test --ui",
     "start": "next start -p 4000",
-    "typecheck": "next typegen && tsgo --noEmit"
+    "typecheck": "next typegen && tsgo --noEmit",
+    "workflow:inspect": "workflow inspect runs",
+    "workflow:web": "workflow web"
   },
   "dependencies": {
     "@tabler/icons-react": "3.35.0",
+    "@zoonk/ai": "workspace:*",
     "@zoonk/core": "workspace:*",
     "@zoonk/db": "workspace:*",
     "@zoonk/error-reporter": "workspace:*",
@@ -28,6 +31,7 @@
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "server-only": "0.0.1",
+    "workflow": "4.0.1-beta.50",
     "zod": "4.3.5"
   },
   "devDependencies": {
@@ -39,6 +43,7 @@
     "@zoonk/e2e": "workspace:*",
     "@zoonk/tsconfig": "workspace:*",
     "babel-plugin-react-compiler": "1.0.0",
+    "raw-loader": "4.0.2",
     "typescript": "^5"
   }
 }
