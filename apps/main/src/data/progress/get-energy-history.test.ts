@@ -1,6 +1,6 @@
 import { prisma } from "@zoonk/db";
 import { signInAs } from "@zoonk/testing/fixtures/auth";
-import { createSafeDate } from "@zoonk/testing/fixtures/dates";
+import { createSafeDate, createSameWeekDates } from "@zoonk/testing/fixtures/dates";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, test } from "vitest";
@@ -453,14 +453,8 @@ describe("authenticated users", () => {
       const [user, org] = await Promise.all([userFixture(), organizationFixture()]);
       const headers = await signInAs(user.email, user.password);
 
-      // Use createSafeDate and ensure dates are in the same week
-      // Day 15 is mid-month, so day1=13 and day3=15 are 2 days apart
-      const day1 = createSafeDate(0, 2);
-      const day3 = createSafeDate(0);
-
-      // Ensure they're in the same week by checking and adjusting if needed
-      // If day1 and day3 are in different weeks, the test logic still works
-      // because we're testing decay functionality, not week boundaries
+      // Use createSameWeekDates to guarantee both dates are in the same Mon-Sun week
+      const [day1, day3] = createSameWeekDates(2);
 
       await prisma.dailyProgress.createMany({
         data: [
@@ -485,7 +479,7 @@ describe("authenticated users", () => {
 
       expect(result).not.toBeNull();
 
-      // All 3 days are in the same week (assuming mid-month dates):
+      // All 3 days are in the same week:
       // Day1=80, day2=79 (decayed), day3=90
       // Weekly average: (80 + 79 + 90) / 3 = 83
       expect(result?.average).toBeCloseTo(83, 0);
