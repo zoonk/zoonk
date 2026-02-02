@@ -15,13 +15,18 @@ export function createSafeDate(monthsAgo = 0, daysOffset = 0): Date {
   return date;
 }
 
+const MAX_DAYS_BETWEEN_SAME_WEEK = 5;
+
 /**
  * Creates two dates guaranteed to be in the same week (Monday-Sunday).
  * Useful for testing weekly aggregation without flakiness.
- * @param daysBetween - Number of days between the two dates (max 6)
+ * @param daysBetween - Number of days between the two dates (0-5, clamped)
  * @returns Tuple of [earlierDate, laterDate] in the same week
  */
 export function createSameWeekDates(daysBetween = 2): [Date, Date] {
+  // Clamp to 0-5: day1=Tuesday, day2=Tuesday+daysBetween must be ≤ Sunday
+  const clampedDays = Math.max(0, Math.min(daysBetween, MAX_DAYS_BETWEEN_SAME_WEEK));
+
   const baseDate = createSafeDate(0);
   const day = baseDate.getDay();
   const diff = baseDate.getDate() - day + (day === 0 ? SUNDAY_TO_MONDAY_OFFSET : 1);
@@ -30,13 +35,11 @@ export function createSameWeekDates(daysBetween = 2): [Date, Date] {
   monday.setDate(diff);
   monday.setHours(12, 0, 0, 0);
 
-  // Use Tuesday and Thursday (or other days based on daysBetween)
-  // to ensure both dates are within the same Mon-Sun week
   const day1 = new Date(monday);
   day1.setDate(monday.getDate() + 1); // Tuesday
 
   const day2 = new Date(monday);
-  day2.setDate(monday.getDate() + 1 + daysBetween); // Tuesday + daysBetween
+  day2.setDate(monday.getDate() + 1 + clampedDays); // Tuesday + clampedDays (max Sunday)
 
   return [day1, day2];
 }
