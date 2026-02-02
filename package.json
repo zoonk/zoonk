@@ -29,8 +29,8 @@
     "@types/node": "^24",
     "@typescript/native-preview": "7.0.0-dev.20260202.1",
     "knip": "5.83.0",
-    "oxfmt": "0.27.0",
-    "oxlint": "1.42.0",
+    "oxfmt": "0.28.0",
+    "oxlint": "1.43.0",
     "oxlint-tsgolint": "0.11.4",
     "turbo": "2.8.1"
   },
