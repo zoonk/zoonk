@@ -34,6 +34,7 @@ Zoonk is a web app where users can learn anything using AI. This app uses AI to 
 - Use meaningful variable names and avoid abbreviations
 - Never guess at imports, table names, or conventions—always search for existing patterns first
 - Before writing code, check for existing patterns, agents, and skills that could help execute the task better
+- Don't be afraid to refactor existing code to improve quality, clarity, or simplicity. Always leave the codebase better than you found it
 
 **IMPORTANT**: Before completing a task, make sure to run the following commands:
 
