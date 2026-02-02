@@ -39,7 +39,6 @@
         "ignore": [-1, 0, 1, 2, 7, 10, 12, 24, 30, 60, 100, 365, 1000, 1024, 3600, 86400]
       }
     ],
-    "import/no-named-as-default": "off",
     "eslint/no-ternary": "off",
     "eslint/no-undefined": "off",
     "eslint/no-void": "off",
@@ -50,7 +49,10 @@
     "import/exports-last": "off",
     "import/group-exports": "off",
     "import/max-dependencies": "off",
+    "import/no-named-as-default": "off",
     "import/no-named-export": "off",
+    "import/no-nodejs-modules": "off",
+    "import/no-relative-parent-imports": "off",
     "import/no-unassigned-import": [
       "error",
       { "allow": ["**/*.css", "server-only", "dotenv/config"] }
@@ -68,6 +70,7 @@
     "react/jsx-handler-names": "off",
     "react/jsx-props-no-spreading": "off",
     "react/jsx-pascal-case": ["error", { "allowAllCaps": true }],
+    "react/no-multi-comp": "off",
     "react/only-export-components": "off",
     "react/react-in-jsx-scope": "off",
     "typescript/consistent-type-definitions": ["error", "type"],
