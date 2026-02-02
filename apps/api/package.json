@@ -11,6 +11,8 @@
     "e2e": "env $(cat ../../packages/db/.env.e2e | xargs) playwright test",
     "e2e:ui": "env $(cat ../../packages/db/.env.e2e | xargs) playwright test --ui",
     "start": "next start -p 4000",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "typecheck": "next typegen && tsgo --noEmit",
     "workflow:inspect": "workflow inspect runs",
     "workflow:web": "workflow web"
@@ -41,9 +43,12 @@
     "@typescript/native-preview": "7.0.0-dev.20260202.1",
     "@zoonk/db": "workspace:*",
     "@zoonk/e2e": "workspace:*",
+    "@zoonk/testing": "workspace:*",
     "@zoonk/tsconfig": "workspace:*",
     "babel-plugin-react-compiler": "1.0.0",
     "raw-loader": "4.0.2",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vite-tsconfig-paths": "6.0.3",
+    "vitest": "4.0.16"
   }
 }
