@@ -116,6 +116,9 @@ test.describe("Course Detail Page - Locale", () => {
 
     await expect(page).toHaveURL(/\/pt\/b\/ai\/c\/machine-learning/);
 
+    // Wait for the course detail page to fully render
+    await page.waitForLoadState("domcontentloaded");
+
     await expect(page.getByText(/permite que computadores identifiquem/i).first()).toBeVisible();
   });
 });

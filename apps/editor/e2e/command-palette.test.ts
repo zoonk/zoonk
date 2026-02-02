@@ -257,39 +257,33 @@ test.describe("Command Palette - Keyboard Navigation", () => {
     await expect(firstOption).toBeVisible();
     const firstName = await firstOption.textContent();
 
-    // Press ArrowDown and wait for selection to change
-    await ownerPage.keyboard.press("ArrowDown");
-
     if (!firstName) {
       throw new Error("Expected first option to have text content");
     }
 
-    // Wait for the selection to move to a DIFFERENT item
-    await expect(dialog.getByRole("option", { name: firstName, selected: true })).not.toBeVisible();
+    // Press ArrowDown and poll until selection changes to a different item
+    await ownerPage.keyboard.press("ArrowDown");
+    await expect(async () => {
+      const currentSelected = dialog.getByRole("option", { selected: true });
+      const currentName = await currentSelected.textContent();
+      expect(currentName).not.toBe(firstName);
+    }).toPass();
 
-    // Verify a new item is selected
+    // Get the second item's name for the ArrowUp test
     const secondOption = dialog.getByRole("option", { selected: true });
-    await expect(secondOption).toBeVisible();
     const secondName = await secondOption.textContent();
-    expect(secondName).not.toBe(firstName);
-
-    // Press ArrowUp and wait for selection to change back
-    await ownerPage.keyboard.press("ArrowUp");
 
     if (!secondName) {
       throw new Error("Expected second option to have text content");
     }
 
-    // Wait for selection to move away from second item
-    await expect(
-      dialog.getByRole("option", {
-        name: secondName,
-        selected: true,
-      }),
-    ).not.toBeVisible();
-
-    // Verify we're back on the first item
-    await expect(dialog.getByRole("option", { name: firstName, selected: true })).toBeVisible();
+    // Press ArrowUp and poll until selection changes back to first item
+    await ownerPage.keyboard.press("ArrowUp");
+    await expect(async () => {
+      const currentSelected = dialog.getByRole("option", { selected: true });
+      const currentName = await currentSelected.textContent();
+      expect(currentName).toBe(firstName);
+    }).toPass();
   });
 
   test("Enter to select navigates correctly", async ({ ownerPage }) => {
