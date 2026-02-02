@@ -32,7 +32,7 @@ export function NameForm() {
   const hasError = state.status === "error";
 
   return (
-    <form action={formAction} className="flex flex-col gap-6">
+    <form action={formAction} className="flex flex-col gap-6 lg:max-w-md">
       <Field>
         <FieldContent>
           <FieldLabel htmlFor="name">{t("Name")}</FieldLabel>

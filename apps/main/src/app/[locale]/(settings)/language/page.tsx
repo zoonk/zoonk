@@ -33,7 +33,7 @@ export default async function Language({ params }: PageProps<"/[locale]/language
   const t = await getExtracted();
 
   return (
-    <Container variant="narrow">
+    <Container>
       <ContainerHeader>
         <ContainerHeaderGroup>
           <ContainerTitle>{t("Language")}</ContainerTitle>

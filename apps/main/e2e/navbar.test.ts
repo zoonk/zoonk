@@ -68,15 +68,27 @@ test.describe("Navbar - Authenticated", () => {
     await expect(authenticatedPage.getByRole("heading", { name: /my courses/i })).toBeVisible();
   });
 
-  test("Settings menu item navigates to settings page", async ({ authenticatedPage }) => {
+  test("Subscription menu item navigates to subscription page", async ({ authenticatedPage }) => {
     await authenticatedPage.goto("/");
 
     await authenticatedPage.getByRole("button", { name: /user menu/i }).click();
 
-    await authenticatedPage.getByRole("menuitem", { name: /settings/i }).click();
+    await authenticatedPage.getByRole("menuitem", { name: /subscription/i }).click();
 
     await expect(
-      authenticatedPage.getByRole("heading", { level: 1, name: /settings/i }),
+      authenticatedPage.getByRole("heading", { level: 1, name: /subscription/i }),
+    ).toBeVisible();
+  });
+
+  test("Support menu item navigates to support page", async ({ authenticatedPage }) => {
+    await authenticatedPage.goto("/");
+
+    await authenticatedPage.getByRole("button", { name: /user menu/i }).click();
+
+    await authenticatedPage.getByRole("menuitem", { name: /support/i }).click();
+
+    await expect(
+      authenticatedPage.getByRole("heading", { level: 1, name: /help.*support/i }),
     ).toBeVisible();
   });
 });

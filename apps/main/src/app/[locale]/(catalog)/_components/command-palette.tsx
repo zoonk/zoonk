@@ -64,7 +64,6 @@ export function CommandPalette() {
   const accountPrivate = [
     { key: t("My courses"), ...getMenu("myCourses") },
     { key: t("Manage subscription"), ...getMenu("subscription") },
-    { key: t("Manage settings"), ...getMenu("settings") },
     { key: t("Update language"), ...getMenu("language") },
     { key: t("Update display name"), ...getMenu("displayName") },
     { key: t("Logout"), ...getMenu("logout") },
