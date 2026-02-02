@@ -31,7 +31,7 @@
     "knip": "5.82.1",
     "oxfmt": "0.27.0",
     "oxlint": "1.42.0",
-    "oxlint-tsgolint": "0.11.3",
+    "oxlint-tsgolint": "0.11.4",
     "turbo": "2.8.1"
   },
   "engines": {
