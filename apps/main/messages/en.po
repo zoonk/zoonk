@@ -150,32 +150,32 @@ msgctxt "Dane8c"
 msgid "Lesson {position}"
 msgstr "Lesson {position}"
 
-#: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/page.tsx
+#: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
 msgctxt "FuT9vz"
 msgid "No lessons found"
 msgstr "No lessons found"
 
-#: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/page.tsx
+#: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
 msgctxt "n+IpeF"
 msgid "Search lessons"
 msgstr "Search lessons"
 
-#: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/page.tsx
+#: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
 msgctxt "ssvp3R"
 msgid "Search lessons..."
 msgstr "Search lessons..."
 
-#: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/page.tsx
+#: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/chapter-list.tsx
 msgctxt "3SOcGR"
 msgid "Search chapters..."
 msgstr "Search chapters..."
 
-#: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/page.tsx
+#: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/chapter-list.tsx
 msgctxt "8udPa+"
 msgid "No chapters found"
 msgstr "No chapters found"
 
-#: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/page.tsx
+#: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/chapter-list.tsx
 msgctxt "CIyfOW"
 msgid "Search chapters"
 msgstr "Search chapters"

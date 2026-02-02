@@ -1,5 +1,3 @@
-"use client";
-
 import {
   CatalogList,
   CatalogListContent,
@@ -11,32 +9,33 @@ import {
   CatalogListSearch,
 } from "@/components/catalog/catalog-list";
 import { type LessonForList } from "@/data/lessons/list-chapter-lessons";
+import { getExtracted } from "next-intl/server";
 
-export function LessonList({
+export async function LessonList({
   brandSlug,
   chapterSlug,
   courseSlug,
-  emptyMessage,
   lessons,
-  placeholder,
-  searchLabel,
 }: {
   brandSlug: string;
   chapterSlug: string;
   courseSlug: string;
-  emptyMessage: string;
   lessons: LessonForList[];
-  placeholder: string;
-  searchLabel: string;
 }) {
   if (lessons.length === 0) {
     return null;
   }
 
+  const t = await getExtracted();
+
   return (
     <CatalogList>
-      <CatalogListSearch ariaLabel={searchLabel} items={lessons} placeholder={placeholder}>
-        <CatalogListContent emptyMessage={emptyMessage}>
+      <CatalogListSearch
+        ariaLabel={t("Search lessons")}
+        items={lessons}
+        placeholder={t("Search lessons...")}
+      >
+        <CatalogListContent emptyMessage={t("No lessons found")}>
           {lessons.map((lesson) => (
             <CatalogListItem
               href={`/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}/l/${lesson.slug}`}

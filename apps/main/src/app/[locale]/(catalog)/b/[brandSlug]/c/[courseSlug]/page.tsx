@@ -6,7 +6,7 @@ import { redirect } from "@/i18n/navigation";
 import { cacheTagCourse } from "@zoonk/utils/cache";
 import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import { type Metadata } from "next";
-import { getExtracted, setRequestLocale } from "next-intl/server";
+import { setRequestLocale } from "next-intl/server";
 import { cacheTag } from "next/cache";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
@@ -44,8 +44,6 @@ export default async function CoursePage({
     listCourseChapters({ brandSlug, courseSlug, language: locale }),
   ]);
 
-  const t = await getExtracted();
-
   cacheTag(cacheTagCourse({ courseSlug }));
 
   if (!course) {
@@ -62,14 +60,7 @@ export default async function CoursePage({
 
       <div className="mx-auto w-full px-4 py-8 md:py-10 lg:max-w-xl">
         <Suspense>
-          <ChapterList
-            brandSlug={brandSlug}
-            chapters={chapters}
-            courseSlug={courseSlug}
-            emptyMessage={t("No chapters found")}
-            placeholder={t("Search chapters...")}
-            searchLabel={t("Search chapters")}
-          />
+          <ChapterList brandSlug={brandSlug} chapters={chapters} courseSlug={courseSlug} />
         </Suspense>
       </div>
     </main>

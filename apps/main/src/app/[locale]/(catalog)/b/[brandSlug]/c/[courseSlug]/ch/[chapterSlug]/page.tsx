@@ -6,7 +6,7 @@ import { redirect } from "@/i18n/navigation";
 import { cacheTagChapter } from "@zoonk/utils/cache";
 import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import { type Metadata } from "next";
-import { getExtracted, setRequestLocale } from "next-intl/server";
+import { setRequestLocale } from "next-intl/server";
 import { cacheTag } from "next/cache";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
@@ -59,7 +59,6 @@ export default async function ChapterPage({
   }
 
   const lessons = await listChapterLessons({ chapterId: chapter.id });
-  const t = await getExtracted();
 
   if (lessons.length === 0) {
     redirect({ href: `/generate/ch/${chapter.id}`, locale });
@@ -75,10 +74,7 @@ export default async function ChapterPage({
             brandSlug={brandSlug}
             chapterSlug={chapterSlug}
             courseSlug={courseSlug}
-            emptyMessage={t("No lessons found")}
             lessons={lessons}
-            placeholder={t("Search lessons...")}
-            searchLabel={t("Search lessons")}
           />
         </Suspense>
       </div>

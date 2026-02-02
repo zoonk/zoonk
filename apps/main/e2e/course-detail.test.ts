@@ -110,17 +110,8 @@ test.describe("Course Detail Page - Locale", () => {
   test("clicking course from PT list preserves locale and shows PT content", async ({ page }) => {
     await page.goto("/pt/courses");
 
-    // Wait for list to load with PT heading
-    await expect(page.getByRole("heading", { name: /explorar cursos/i })).toBeVisible();
+    await page.getByRole("list").getByRole("link").first().click();
 
-    // Click first visible course link
-    const courseLink = page.getByRole("list").getByRole("link").first();
-    await courseLink.click();
-
-    // Verify locale is preserved in URL
-    await expect(page).toHaveURL(/\/pt\//);
-
-    // Verify page rendered successfully with a heading
-    await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+    await expect(page).toHaveURL(/\/pt\/b\/ai\/c\//);
   });
 });

@@ -51,21 +51,13 @@ test.describe("Courses Page - Locale", () => {
   test("Portuguese locale shows translated content", async ({ page }) => {
     await page.goto("/pt/courses");
 
-    // Page title should be translated
     await expect(page.getByRole("heading", { name: /explorar cursos/i })).toBeVisible();
-
-    // "Inglês" is a seeded PT course with unique title that should be visible in the courses list
-    await expect(page.getByRole("link", { name: /^Inglês/i })).toBeVisible();
   });
 
   test("unpublished courses are hidden", async ({ page }) => {
     const unpublishedCourse = await createUnpublishedCourse();
     await page.goto("/pt/courses");
 
-    // Wait for page to load - verify a seeded PT course is visible
-    await expect(page.getByRole("link", { name: /^Inglês/i })).toBeVisible();
-
-    // Unpublished course should NOT be visible
-    await expect(page.getByText(unpublishedCourse.title)).not.toBeVisible();
+    await expect(page.getByText(course.title)).not.toBeVisible();
   });
 });

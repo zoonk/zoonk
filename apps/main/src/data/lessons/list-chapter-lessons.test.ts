@@ -100,7 +100,7 @@ describe(listChapterLessons, () => {
   });
 
   test("returns empty array for non-existent chapter", async () => {
-    const result = await listChapterLessons({ chapterId: 999999 });
+    const result = await listChapterLessons({ chapterId: 999_999 });
 
     expect(result).toEqual([]);
   });
@@ -108,7 +108,7 @@ describe(listChapterLessons, () => {
   test("returns all lesson fields correctly", async () => {
     const result = await listChapterLessons({ chapterId: publishedChapter.id });
 
-    const lesson = result.find((l) => l.id === publishedLesson1.id);
+    const lesson = result.find((item) => item.id === publishedLesson1.id);
     expect(lesson).toBeDefined();
     expect(lesson).toHaveProperty("id");
     expect(lesson).toHaveProperty("slug");
