@@ -15,8 +15,8 @@ importers:
         specifier: ^24
         version: 24.10.9
       '@typescript/native-preview':
-        specifier: 7.0.0-dev.20260128.1
-        version: 7.0.0-dev.20260128.1
+        specifier: 7.0.0-dev.20260202.1
+        version: 7.0.0-dev.20260202.1
       knip:
         specifier: 5.82.1
         version: 5.82.1(@types/node@24.10.9)(typescript@5.9.3)
@@ -79,8 +79,8 @@ importers:
         specifier: ^19
         version: 19.2.3(@types/react@19.2.10)
       '@typescript/native-preview':
-        specifier: 7.0.0-dev.20260128.1
-        version: 7.0.0-dev.20260128.1
+        specifier: 7.0.0-dev.20260202.1
+        version: 7.0.0-dev.20260202.1
       '@zoonk/tsconfig':
         specifier: workspace:*
         version: link:../../packages/tsconfig
@@ -155,8 +155,8 @@ importers:
         specifier: ^19
         version: 19.2.3(@types/react@19.2.10)
       '@typescript/native-preview':
-        specifier: 7.0.0-dev.20260128.1
-        version: 7.0.0-dev.20260128.1
+        specifier: 7.0.0-dev.20260202.1
+        version: 7.0.0-dev.20260202.1
       '@zoonk/e2e':
         specifier: workspace:*
         version: link:../../packages/e2e
@@ -234,8 +234,8 @@ importers:
         specifier: 0.2.6
         version: 0.2.6
       '@typescript/native-preview':
-        specifier: 7.0.0-dev.20260128.1
-        version: 7.0.0-dev.20260128.1
+        specifier: 7.0.0-dev.20260202.1
+        version: 7.0.0-dev.20260202.1
       '@zoonk/e2e':
         specifier: workspace:*
         version: link:../../packages/e2e
@@ -304,8 +304,8 @@ importers:
         specifier: ^19
         version: 19.2.3(@types/react@19.2.10)
       '@typescript/native-preview':
-        specifier: 7.0.0-dev.20260128.1
-        version: 7.0.0-dev.20260128.1
+        specifier: 7.0.0-dev.20260202.1
+        version: 7.0.0-dev.20260202.1
       '@zoonk/tsconfig':
         specifier: workspace:*
         version: link:../../packages/tsconfig
@@ -407,8 +407,8 @@ importers:
         specifier: ^19
         version: 19.2.3(@types/react@19.2.10)
       '@typescript/native-preview':
-        specifier: 7.0.0-dev.20260128.1
-        version: 7.0.0-dev.20260128.1
+        specifier: 7.0.0-dev.20260202.1
+        version: 7.0.0-dev.20260202.1
       '@zoonk/e2e':
         specifier: workspace:*
         version: link:../../packages/e2e
@@ -465,8 +465,8 @@ importers:
         specifier: ^24
         version: 24.10.9
       '@typescript/native-preview':
-        specifier: 7.0.0-dev.20260128.1
-        version: 7.0.0-dev.20260128.1
+        specifier: 7.0.0-dev.20260202.1
+        version: 7.0.0-dev.20260202.1
       '@zoonk/tsconfig':
         specifier: workspace:*
         version: link:../tsconfig
@@ -511,8 +511,8 @@ importers:
         specifier: ^19
         version: 19.2.10
       '@typescript/native-preview':
-        specifier: 7.0.0-dev.20260128.1
-        version: 7.0.0-dev.20260128.1
+        specifier: 7.0.0-dev.20260202.1
+        version: 7.0.0-dev.20260202.1
       '@zoonk/tsconfig':
         specifier: workspace:*
         version: link:../tsconfig
@@ -557,8 +557,8 @@ importers:
         specifier: ^19
         version: 19.2.10
       '@typescript/native-preview':
-        specifier: 7.0.0-dev.20260128.1
-        version: 7.0.0-dev.20260128.1
+        specifier: 7.0.0-dev.20260202.1
+        version: 7.0.0-dev.20260202.1
       '@zoonk/testing':
         specifier: workspace:*
         version: link:../testing
@@ -597,8 +597,8 @@ importers:
         specifier: 8.16.0
         version: 8.16.0
       '@typescript/native-preview':
-        specifier: 7.0.0-dev.20260128.1
-        version: 7.0.0-dev.20260128.1
+        specifier: 7.0.0-dev.20260202.1
+        version: 7.0.0-dev.20260202.1
       '@zoonk/tsconfig':
         specifier: workspace:*
         version: link:../tsconfig
@@ -622,8 +622,8 @@ importers:
         specifier: ^24
         version: 24.10.9
       '@typescript/native-preview':
-        specifier: 7.0.0-dev.20260128.1
-        version: 7.0.0-dev.20260128.1
+        specifier: 7.0.0-dev.20260202.1
+        version: 7.0.0-dev.20260202.1
       '@zoonk/tsconfig':
         specifier: workspace:*
         version: link:../tsconfig
@@ -644,8 +644,8 @@ importers:
         specifier: ^24
         version: 24.10.9
       '@typescript/native-preview':
-        specifier: 7.0.0-dev.20260128.1
-        version: 7.0.0-dev.20260128.1
+        specifier: 7.0.0-dev.20260202.1
+        version: 7.0.0-dev.20260202.1
       '@zoonk/tsconfig':
         specifier: workspace:*
         version: link:../tsconfig
@@ -666,8 +666,8 @@ importers:
         specifier: ^24
         version: 24.10.9
       '@typescript/native-preview':
-        specifier: 7.0.0-dev.20260128.1
-        version: 7.0.0-dev.20260128.1
+        specifier: 7.0.0-dev.20260202.1
+        version: 7.0.0-dev.20260202.1
       '@zoonk/tsconfig':
         specifier: workspace:*
         version: link:../tsconfig
@@ -700,8 +700,8 @@ importers:
         specifier: ^19
         version: 19.2.3(@types/react@19.2.10)
       '@typescript/native-preview':
-        specifier: 7.0.0-dev.20260128.1
-        version: 7.0.0-dev.20260128.1
+        specifier: 7.0.0-dev.20260202.1
+        version: 7.0.0-dev.20260202.1
       '@zoonk/tsconfig':
         specifier: workspace:*
         version: link:../tsconfig
@@ -722,8 +722,8 @@ importers:
         specifier: ^24
         version: 24.10.9
       '@typescript/native-preview':
-        specifier: 7.0.0-dev.20260128.1
-        version: 7.0.0-dev.20260128.1
+        specifier: 7.0.0-dev.20260202.1
+        version: 7.0.0-dev.20260202.1
       '@zoonk/tsconfig':
         specifier: workspace:*
         version: link:../tsconfig
@@ -794,8 +794,8 @@ importers:
         specifier: ^19
         version: 19.2.3(@types/react@19.2.10)
       '@typescript/native-preview':
-        specifier: 7.0.0-dev.20260128.1
-        version: 7.0.0-dev.20260128.1
+        specifier: 7.0.0-dev.20260202.1
+        version: 7.0.0-dev.20260202.1
       '@zoonk/tsconfig':
         specifier: workspace:*
         version: link:../tsconfig
@@ -822,8 +822,8 @@ importers:
         specifier: 0.6.4
         version: 0.6.4
       '@typescript/native-preview':
-        specifier: 7.0.0-dev.20260128.1
-        version: 7.0.0-dev.20260128.1
+        specifier: 7.0.0-dev.20260202.1
+        version: 7.0.0-dev.20260202.1
       '@zoonk/tsconfig':
         specifier: workspace:*
         version: link:../tsconfig
@@ -3191,43 +3191,43 @@ packages:
   '@types/use-sync-external-store@0.0.6':
     resolution: {integrity: sha512-zFDAD+tlpf2r4asuHEj0XH6pY6i0g5NeAHPn+15wk3BV6JA69eERFXC1gyGThDkVa1zCyKr5jox1+2LbV/AMLg==}
 
-  '@typescript/native-preview-darwin-arm64@7.0.0-dev.20260128.1':
-    resolution: {integrity: sha512-rPyH+d+M8NnYA9FOOB9xPtllB2jtDiB7vnLDGYVjE7y8j3XNMEHFYlwoZ5HLS2yLCgwmmcmEUgurJX94V9Iqeg==}
+  '@typescript/native-preview-darwin-arm64@7.0.0-dev.20260202.1':
+    resolution: {integrity: sha512-a5ts3Z5+HeMS6PJgGkEuQyvzivZJ5bXQ+shzajbfojR+OzOALzTh9sBtFaD54e010e6S1k5QoWHlL/KQ8tgBrA==}
     cpu: [arm64]
     os: [darwin]
 
-  '@typescript/native-preview-darwin-x64@7.0.0-dev.20260128.1':
-    resolution: {integrity: sha512-8zVZNktu8n6+kvWp9x6vb4J2uD51q58mB497ki0Fxf1q2WPTsPFjBUanFZc8K5hltmaoijF1214lN/KNmhVSqg==}
+  '@typescript/native-preview-darwin-x64@7.0.0-dev.20260202.1':
+    resolution: {integrity: sha512-bFnY6l7oJ2oDFQWAI1smKOm42KOBaEGNBGC84b9YpdWHJ1GlUwbKz0nM/oWI9NndbVJrYbrSqkifl19Oux60kQ==}
     cpu: [x64]
     os: [darwin]
 
-  '@typescript/native-preview-linux-arm64@7.0.0-dev.20260128.1':
-    resolution: {integrity: sha512-xcf3OW/bh6gA+urfG3ofHnfIBhKSqHtFolk2Akd/ZGLiUJik4mimhwlrqx9qus8tGFI3BepdCgfSNhW61fTrhw==}
+  '@typescript/native-preview-linux-arm64@7.0.0-dev.20260202.1':
+    resolution: {integrity: sha512-LB6DfiqKWM3vf2kLzY7gbHHsVY9fLU2cUpaDpaX9VGBZjNy4bX3t5ZCj+yryCy8ybMxn2seagjG9lydZ4gHlNw==}
     cpu: [arm64]
     os: [linux]
 
-  '@typescript/native-preview-linux-arm@7.0.0-dev.20260128.1':
-    resolution: {integrity: sha512-ZOKLNjuT5QFkbuJvS3cBTruV22gAllWRqhgFaMYIorT7WcTzEci2S5RfEz1NzYPYZeY4vJssMmr/O8wdPoMpMA==}
+  '@typescript/native-preview-linux-arm@7.0.0-dev.20260202.1':
+    resolution: {integrity: sha512-GU4zJ29o3f0ZEHeApdgiK+TFDBzJwTMedWLHhZlFbU3svUwhftuBBWBQjg2isLLYnZBXsAPuL90J+Ng2hF/ktg==}
     cpu: [arm]
     os: [linux]
 
-  '@typescript/native-preview-linux-x64@7.0.0-dev.20260128.1':
-    resolution: {integrity: sha512-qr9gTFYXCS83Sro+rBnw3fZIPRMBR9j/9FS5KtPRBOqn4jpiAR64CAE1NDHtTIBYwgPbpd6kvt8Ay5c+S4zxPQ==}
+  '@typescript/native-preview-linux-x64@7.0.0-dev.20260202.1':
+    resolution: {integrity: sha512-ldIj+xiEq+VwCs8pwn8UlZdD8CsL52jeEN/i5qTOVtSOmFHHk2KbBR+8YHAD0jaTv4vZDn3/7BRH1g9gYV+FMg==}
     cpu: [x64]
     os: [linux]
 
-  '@typescript/native-preview-win32-arm64@7.0.0-dev.20260128.1':
-    resolution: {integrity: sha512-8Ke5A+MNaiUqaX6nEDpXXmQqfQBBq4CtN6mGEQs5a5QCnyqcnjy13QlJuCxzRd/nvob7lWIxR6kz43Fdn8l5ig==}
+  '@typescript/native-preview-win32-arm64@7.0.0-dev.20260202.1':
+    resolution: {integrity: sha512-aGpOCUh6suYFztiXBmsNtqfsViIz1E0bvV/Wa3UrUHPsJPx9cm7+yvvLIChe5OzzggjDOa+dRTDGfbXFGlDXPQ==}
     cpu: [arm64]
     os: [win32]
 
-  '@typescript/native-preview-win32-x64@7.0.0-dev.20260128.1':
-    resolution: {integrity: sha512-+r0hFY/fnQUY5z3lcVNWz5j2G2RBxkQVzRAvbQyl2esGt0scy/6dPeP/PrvHFADWoVJkV9DTSBhbmsJfL1inKw==}
+  '@typescript/native-preview-win32-x64@7.0.0-dev.20260202.1':
+    resolution: {integrity: sha512-IH40xp560GZ0Ko46Pz/G9aCCVNsAn/KnYLusZRH+iQSs4E641Oh5rKG0q7iIFDpIcw5m5SWKEYC2YZxOULBntg==}
     cpu: [x64]
     os: [win32]
 
-  '@typescript/native-preview@7.0.0-dev.20260128.1':
-    resolution: {integrity: sha512-P7JZ3NpFdH1FqA8TbAKTsufOvykywFAW36H+3ZzUo9PRz/wmTPGkzn/CQ1QM2/YqxWwqLkU96CLeh8onIpj4nw==}
+  '@typescript/native-preview@7.0.0-dev.20260202.1':
+    resolution: {integrity: sha512-y88eLksVZDxSCvt/02cgaYGhYYvROS+vjOWGLQH7QvfLiMtrH+q8jFPgoDsCm85+H5ctWBtoCATZwwpY3/hYSw==}
     hasBin: true
 
   '@ungap/structured-clone@1.3.0':
@@ -8381,36 +8381,36 @@ snapshots:
 
   '@types/use-sync-external-store@0.0.6': {}
 
-  '@typescript/native-preview-darwin-arm64@7.0.0-dev.20260128.1':
+  '@typescript/native-preview-darwin-arm64@7.0.0-dev.20260202.1':
     optional: true
 
-  '@typescript/native-preview-darwin-x64@7.0.0-dev.20260128.1':
+  '@typescript/native-preview-darwin-x64@7.0.0-dev.20260202.1':
     optional: true
 
-  '@typescript/native-preview-linux-arm64@7.0.0-dev.20260128.1':
+  '@typescript/native-preview-linux-arm64@7.0.0-dev.20260202.1':
     optional: true
 
-  '@typescript/native-preview-linux-arm@7.0.0-dev.20260128.1':
+  '@typescript/native-preview-linux-arm@7.0.0-dev.20260202.1':
     optional: true
 
-  '@typescript/native-preview-linux-x64@7.0.0-dev.20260128.1':
+  '@typescript/native-preview-linux-x64@7.0.0-dev.20260202.1':
     optional: true
 
-  '@typescript/native-preview-win32-arm64@7.0.0-dev.20260128.1':
+  '@typescript/native-preview-win32-arm64@7.0.0-dev.20260202.1':
     optional: true
 
-  '@typescript/native-preview-win32-x64@7.0.0-dev.20260128.1':
+  '@typescript/native-preview-win32-x64@7.0.0-dev.20260202.1':
     optional: true
 
-  '@typescript/native-preview@7.0.0-dev.20260128.1':
+  '@typescript/native-preview@7.0.0-dev.20260202.1':
     optionalDependencies:
-      '@typescript/native-preview-darwin-arm64': 7.0.0-dev.20260128.1
-      '@typescript/native-preview-darwin-x64': 7.0.0-dev.20260128.1
-      '@typescript/native-preview-linux-arm': 7.0.0-dev.20260128.1
-      '@typescript/native-preview-linux-arm64': 7.0.0-dev.20260128.1
-      '@typescript/native-preview-linux-x64': 7.0.0-dev.20260128.1
-      '@typescript/native-preview-win32-arm64': 7.0.0-dev.20260128.1
-      '@typescript/native-preview-win32-x64': 7.0.0-dev.20260128.1
+      '@typescript/native-preview-darwin-arm64': 7.0.0-dev.20260202.1
+      '@typescript/native-preview-darwin-x64': 7.0.0-dev.20260202.1
+      '@typescript/native-preview-linux-arm': 7.0.0-dev.20260202.1
+      '@typescript/native-preview-linux-arm64': 7.0.0-dev.20260202.1
+      '@typescript/native-preview-linux-x64': 7.0.0-dev.20260202.1
+      '@typescript/native-preview-win32-arm64': 7.0.0-dev.20260202.1
+      '@typescript/native-preview-win32-x64': 7.0.0-dev.20260202.1
 
   '@ungap/structured-clone@1.3.0': {}
 

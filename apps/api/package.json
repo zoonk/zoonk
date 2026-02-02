@@ -38,7 +38,7 @@
     "@types/node": "^24",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@typescript/native-preview": "7.0.0-dev.20260128.1",
+    "@typescript/native-preview": "7.0.0-dev.20260202.1",
     "@zoonk/db": "workspace:*",
     "@zoonk/e2e": "workspace:*",
     "@zoonk/tsconfig": "workspace:*",
