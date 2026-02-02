@@ -20,12 +20,14 @@ import { useGenerationPhases } from "./use-generation-phases";
 
 export function GenerationClient({
   chapterId,
+  chapterSlug,
   courseSlug,
   generationRunId,
   generationStatus,
   locale,
 }: {
   chapterId: number;
+  chapterSlug: string;
   courseSlug: string;
   generationRunId: string | null;
   generationStatus: GenerationStatus;
@@ -49,7 +51,7 @@ export function GenerationClient({
 
   useCompletionRedirect({
     status: generation.status,
-    url: `/${locale}/b/${AI_ORG_SLUG}/c/${courseSlug}`,
+    url: `/${locale}/b/${AI_ORG_SLUG}/c/${courseSlug}/ch/${chapterSlug}`,
   });
 
   if (generation.status === "triggering" || generation.status === "streaming") {
@@ -78,7 +80,7 @@ export function GenerationClient({
 
   if (generation.status === "completed") {
     return (
-      <GenerationProgressCompleted subtitle={t("Redirecting to your course...")}>
+      <GenerationProgressCompleted subtitle={t("Redirecting to your chapter...")}>
         {t("Lessons generated")}
       </GenerationProgressCompleted>
     );

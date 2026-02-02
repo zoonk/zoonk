@@ -918,12 +918,6 @@ msgstr "Try again"
 
 #: src/app/[locale]/generate/ch/[id]/generation-client.tsx
 #: src/app/[locale]/generate/cs/[id]/generation-client.tsx
-msgctxt "IEv8EV"
-msgid "Redirecting to your course..."
-msgstr "Redirecting to your course..."
-
-#: src/app/[locale]/generate/ch/[id]/generation-client.tsx
-#: src/app/[locale]/generate/cs/[id]/generation-client.tsx
 msgctxt "ssRq8D"
 msgid "Generation failed"
 msgstr "Generation failed"
@@ -943,6 +937,11 @@ msgstr "Creating your lessons"
 msgctxt "W/5hwr"
 msgid "Something went wrong. Please try again."
 msgstr "Something went wrong. Please try again."
+
+#: src/app/[locale]/generate/ch/[id]/generation-client.tsx
+msgctxt "X7COCl"
+msgid "Redirecting to your chapter..."
+msgstr "Redirecting to your chapter..."
 
 #: src/app/[locale]/generate/ch/[id]/use-generation-phases.ts
 #: src/app/[locale]/generate/cs/[id]/use-generation-phases.ts
@@ -964,6 +963,11 @@ msgstr "Loading chapter information"
 msgctxt "DFlapX"
 msgid "Creating your course"
 msgstr "Creating your course"
+
+#: src/app/[locale]/generate/cs/[id]/generation-client.tsx
+msgctxt "IEv8EV"
+msgid "Redirecting to your course..."
+msgstr "Redirecting to your course..."
 
 #: src/app/[locale]/generate/cs/[id]/generation-client.tsx
 msgctxt "TKVQj2"
