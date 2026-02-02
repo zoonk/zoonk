@@ -156,11 +156,6 @@ msgid "No lessons found"
 msgstr "Nenhuma aula encontrada"
 
 #: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
-msgctxt "n+IpeF"
-msgid "Search lessons"
-msgstr "Buscar aulas"
-
-#: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
 msgctxt "ssvp3R"
 msgid "Search lessons..."
 msgstr "Buscar aulas..."
@@ -174,11 +169,6 @@ msgstr "Buscar capítulos..."
 msgctxt "8udPa+"
 msgid "No chapters found"
 msgstr "Nenhum capítulo encontrado"
-
-#: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/chapter-list.tsx
-msgctxt "CIyfOW"
-msgid "Search chapters"
-msgstr "Buscar capítulos"
 
 #: src/app/[locale]/(catalog)/best-day.tsx
 #: src/app/[locale]/(performance)/score/score-insights.tsx

@@ -13,11 +13,9 @@ const CatalogListContext = createContext<{
   isSearchActive: boolean;
 } | null>(null);
 
-export function CatalogList({ children, className }: { children: ReactNode; className?: string }) {
+export function CatalogList({ className, ...props }: React.ComponentProps<"div">) {
   return (
-    <div className={cn("flex flex-col gap-4", className)} data-slot="catalog-list">
-      {children}
-    </div>
+    <div {...props} className={cn("flex flex-col gap-4", className)} data-slot="catalog-list" />
   );
 }
 
@@ -25,13 +23,11 @@ export function CatalogListSearch<T extends { id: string | number; title: string
   className,
   items,
   placeholder,
-  ariaLabel,
   children,
 }: {
   className?: string;
   items: T[];
   placeholder: string;
-  ariaLabel: string;
   children: ReactNode;
 }) {
   const [search, setSearch] = useQueryState("q", {
@@ -58,7 +54,7 @@ export function CatalogListSearch<T extends { id: string | number; title: string
       <div className={cn("relative", className)} data-slot="catalog-list-search">
         <SearchIcon className="text-muted-foreground/60 absolute top-1/2 left-3 size-4 -translate-y-1/2" />
         <Input
-          aria-label={ariaLabel}
+          aria-label={placeholder}
           className="border-border/40 placeholder:text-muted-foreground/50 focus-visible:border-border h-10 bg-transparent pl-9 focus-visible:ring-0"
           onChange={(event) => setSearch(event.target.value || null)}
           placeholder={placeholder}
@@ -71,33 +67,34 @@ export function CatalogListSearch<T extends { id: string | number; title: string
   );
 }
 
-export function CatalogListContent({
-  children,
-  className,
-  emptyMessage,
-}: {
-  children: ReactNode;
-  className?: string;
-  emptyMessage?: string;
-}) {
+export function CatalogListEmpty({ className, ...props }: React.ComponentProps<"p">) {
   const context = use(CatalogListContext);
   const filteredIds = context?.filteredIds ?? null;
   const isSearchActive = context?.isSearchActive ?? false;
 
   const isEmpty = isSearchActive && filteredIds?.size === 0;
 
-  if (isEmpty && emptyMessage) {
-    return (
-      <p className="text-muted-foreground py-8 text-center text-sm" data-slot="catalog-list-empty">
-        {emptyMessage}
-      </p>
-    );
+  if (!isEmpty) {
+    return null;
   }
 
   return (
-    <ul className={cn("flex flex-col", className)} data-slot="catalog-list-content" role="list">
-      {children}
-    </ul>
+    <p
+      {...props}
+      className={cn("text-muted-foreground py-8 text-center text-sm", className)}
+      data-slot="catalog-list-empty"
+    />
+  );
+}
+
+export function CatalogListContent({ className, ...props }: React.ComponentProps<"ul">) {
+  return (
+    <ul
+      {...props}
+      className={cn("flex flex-col", className)}
+      data-slot="catalog-list-content"
+      role="list"
+    />
   );
 }
 
@@ -134,23 +131,16 @@ export function CatalogListItem({
   );
 }
 
-export function CatalogListItemPosition({
-  children,
-  className,
-}: {
-  children: ReactNode;
-  className?: string;
-}) {
+export function CatalogListItemPosition({ className, ...props }: React.ComponentProps<"span">) {
   return (
     <span
+      {...props}
       className={cn(
         "text-muted-foreground/40 w-6 shrink-0 pt-0.5 font-mono text-sm leading-snug tabular-nums",
         className,
       )}
       data-slot="catalog-list-item-position"
-    >
-      {children}
-    </span>
+    />
   );
 }
 
@@ -194,53 +184,32 @@ export function CatalogListItemIndicator({
   );
 }
 
-export function CatalogListItemContent({
-  children,
-  className,
-}: {
-  children: ReactNode;
-  className?: string;
-}) {
+export function CatalogListItemContent({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
+      {...props}
       className={cn("flex min-w-0 flex-1 flex-col gap-0.5", className)}
       data-slot="catalog-list-item-content"
-    >
-      {children}
-    </div>
+    />
   );
 }
 
-export function CatalogListItemTitle({
-  children,
-  className,
-}: {
-  children: ReactNode;
-  className?: string;
-}) {
+export function CatalogListItemTitle({ className, ...props }: React.ComponentProps<"span">) {
   return (
     <span
+      {...props}
       className={cn("text-foreground/90 text-sm leading-snug font-medium", className)}
       data-slot="catalog-list-item-title"
-    >
-      {children}
-    </span>
+    />
   );
 }
 
-export function CatalogListItemDescription({
-  children,
-  className,
-}: {
-  children: ReactNode;
-  className?: string;
-}) {
+export function CatalogListItemDescription({ className, ...props }: React.ComponentProps<"span">) {
   return (
     <span
+      {...props}
       className={cn("text-muted-foreground line-clamp-2 pt-0.5 text-sm leading-snug", className)}
       data-slot="catalog-list-item-description"
-    >
-      {children}
-    </span>
+    />
   );
 }

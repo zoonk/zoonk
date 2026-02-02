@@ -1,6 +1,7 @@
 import {
   CatalogList,
   CatalogListContent,
+  CatalogListEmpty,
   CatalogListItem,
   CatalogListItemContent,
   CatalogListItemDescription,
@@ -30,12 +31,9 @@ export async function LessonList({
 
   return (
     <CatalogList>
-      <CatalogListSearch
-        ariaLabel={t("Search lessons")}
-        items={lessons}
-        placeholder={t("Search lessons...")}
-      >
-        <CatalogListContent emptyMessage={t("No lessons found")}>
+      <CatalogListSearch items={lessons} placeholder={t("Search lessons...")}>
+        <CatalogListEmpty>{t("No lessons found")}</CatalogListEmpty>
+        <CatalogListContent>
           {lessons.map((lesson) => (
             <CatalogListItem
               href={`/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}/l/${lesson.slug}`}

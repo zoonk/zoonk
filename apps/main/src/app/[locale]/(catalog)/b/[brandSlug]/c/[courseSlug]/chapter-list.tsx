@@ -1,6 +1,7 @@
 import {
   CatalogList,
   CatalogListContent,
+  CatalogListEmpty,
   CatalogListItem,
   CatalogListItemContent,
   CatalogListItemDescription,
@@ -28,12 +29,9 @@ export async function ChapterList({
 
   return (
     <CatalogList>
-      <CatalogListSearch
-        ariaLabel={t("Search chapters")}
-        items={chapters}
-        placeholder={t("Search chapters...")}
-      >
-        <CatalogListContent emptyMessage={t("No chapters found")}>
+      <CatalogListSearch items={chapters} placeholder={t("Search chapters...")}>
+        <CatalogListEmpty>{t("No chapters found")}</CatalogListEmpty>
+        <CatalogListContent>
           {chapters.map((chapter) => (
             <CatalogListItem
               href={`/b/${brandSlug}/c/${courseSlug}/ch/${chapter.slug}`}
