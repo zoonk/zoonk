@@ -49,9 +49,9 @@
   ],
   "tasks": {
     "//#format": {},
-    "//#format:fix": {},
+    "//#format:fix": { "cache": false },
     "//#lint": {},
-    "//#lint:fix": {},
+    "//#lint:fix": { "cache": false },
     "//#quality": {
       "dependsOn": ["//#lint", "//#format"]
     },
