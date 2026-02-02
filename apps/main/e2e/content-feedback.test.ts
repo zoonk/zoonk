@@ -32,13 +32,15 @@ test.describe("Content Feedback", () => {
     await page.getByRole("button", { name: /send feedback/i }).click();
 
     const dialog = page.getByRole("dialog");
-    const emailInput = dialog.getByLabel(/email/i);
+    const emailInput = dialog.getByRole("textbox", { name: /email address/i });
+    const messageInput = dialog.getByRole("textbox", { name: /^message$/i });
 
-    // Wait for dialog to be fully visible and email input to be enabled
+    // Wait for dialog to be fully visible and inputs to be enabled
     await expect(emailInput).toBeEnabled();
+    await expect(messageInput).toBeEnabled();
 
     await emailInput.fill("test@example.com");
-    await dialog.getByLabel(/message/i).fill("This is test feedback");
+    await messageInput.fill("This is test feedback");
     await dialog.getByRole("button", { name: /send message/i }).click();
 
     await expect(dialog.getByText(/message sent successfully/i)).toBeVisible();
@@ -48,13 +50,15 @@ test.describe("Content Feedback", () => {
     await page.getByRole("button", { name: /send feedback/i }).click();
 
     const dialog = page.getByRole("dialog");
-    const emailInput = dialog.getByLabel(/email/i);
+    const emailInput = dialog.getByRole("textbox", { name: /email address/i });
+    const messageInput = dialog.getByRole("textbox", { name: /^message$/i });
 
-    // Wait for dialog to be fully visible and email input to be enabled
+    // Wait for dialog to be fully visible and inputs to be enabled
     await expect(emailInput).toBeEnabled();
+    await expect(messageInput).toBeEnabled();
 
     await emailInput.fill("invalid-email");
-    await dialog.getByLabel(/message/i).fill("This is test feedback");
+    await messageInput.fill("This is test feedback");
     await dialog.getByRole("button", { name: /send message/i }).click();
 
     // Browser validation prevents submission - verify semantically:
@@ -69,15 +73,17 @@ test.describe("Content Feedback", () => {
     await page.getByRole("button", { name: /send feedback/i }).click();
 
     const dialog = page.getByRole("dialog");
-    const emailInput = dialog.getByLabel(/email/i);
+    const emailInput = dialog.getByRole("textbox", { name: /email address/i });
+    const messageInput = dialog.getByRole("textbox", { name: /^message$/i });
 
-    // Wait for dialog to be fully visible and email input to be enabled
+    // Wait for dialog to be fully visible and inputs to be enabled
     await expect(emailInput).toBeEnabled();
+    await expect(messageInput).toBeEnabled();
 
     await emailInput.fill("test@example.com");
 
     // Whitespace passes HTML5 "required" but fails server-side when trimmed
-    await dialog.getByLabel(/message/i).fill("   ");
+    await messageInput.fill("   ");
     await dialog.getByRole("button", { name: /send message/i }).click();
 
     await expect(dialog.getByText(/failed to send message/i)).toBeVisible();
@@ -92,7 +98,7 @@ test.describe("Content Feedback - Authenticated", () => {
 
     await authenticatedPage.getByRole("button", { name: /send feedback/i }).click();
 
-    const emailInput = authenticatedPage.getByLabel(/email/i);
+    const emailInput = authenticatedPage.getByRole("textbox", { name: /email address/i });
 
     // Wait for dialog to be fully visible and email input to be enabled
     await expect(emailInput).toBeEnabled();

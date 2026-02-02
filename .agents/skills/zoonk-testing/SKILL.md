@@ -93,14 +93,15 @@ for i in {1..5}; do pnpm e2e -- -g "test name" --reporter=line; done
 
 **High-risk scenarios that commonly cause flakiness:**
 
-| Scenario                         | Risk                          | Prevention                                         |
-| -------------------------------- | ----------------------------- | -------------------------------------------------- |
-| Clicking dropdown/menu items     | Animations cause instability  | Wait for item visibility, use `force: true`        |
-| Actions that trigger navigation  | Page reload detaches elements | Use `waitForLoadState` or `waitForURL` after click |
-| Form submissions                 | Async save operations         | Wait for success indicator before next action      |
-| Clicking items in lists          | List may still be loading     | Wait for specific item with `toBeVisible()` first  |
-| Keyboard navigation              | Focus state transitions       | Wait for focused element before next key press     |
-| Inputs with debounced validation | State changes between actions | Use `waitForLoadState("networkidle")` after fill   |
+| Scenario                         | Risk                                | Prevention                                         |
+| -------------------------------- | ----------------------------------- | -------------------------------------------------- |
+| Clicking dropdown/menu items     | Animations cause instability        | Wait for item visibility, use `force: true`        |
+| Actions that trigger navigation  | Page reload detaches elements       | Use `waitForLoadState` or `waitForURL` after click |
+| Form submissions                 | Async save operations               | Wait for success indicator before next action      |
+| Clicking items in lists          | List may still be loading           | Wait for specific item with `toBeVisible()` first  |
+| Keyboard navigation              | Focus state transitions             | Wait for focused element before next key press     |
+| Inputs with debounced validation | State changes between actions       | Use `waitForLoadState("networkidle")` after fill   |
+| Filling multiple form fields     | Loose selectors match wrong element | Use `getByRole` with exact names, anchored regex   |
 
 **Defensive patterns for common interactions:**
 
@@ -193,6 +194,46 @@ page.locator("button.bg-blue-500");
 ```
 
 **If you can't use `getByRole`, the component likely has accessibility issues.** Refactor to make it more accessible instead of using implementation-detail selectors.
+
+### Avoid Loose Regex Patterns in Selectors
+
+**Loose regex patterns with `getByLabel` can cause flaky tests** due to partial matches across multiple elements. This is especially problematic in forms where labels and descriptions may contain overlapping words.
+
+```typescript
+// BAD: Loose regex can match multiple elements intermittently
+const emailInput = dialog.getByLabel(/email/i); // Matches "Email address" AND description "We'll use this email..."
+const messageInput = dialog.getByLabel(/message/i); // Could match "Message" or error "Failed to send message"
+
+await emailInput.fill("test@example.com");
+await messageInput.fill("Hello"); // May fill the wrong field!
+
+// GOOD: Use getByRole with specific accessible names
+const emailInput = dialog.getByRole("textbox", { name: /email address/i });
+const messageInput = dialog.getByRole("textbox", { name: /^message$/i }); // Anchored regex for exact match
+
+// Wait for both to be ready before filling
+await expect(emailInput).toBeEnabled();
+await expect(messageInput).toBeEnabled();
+
+await emailInput.fill("test@example.com");
+await messageInput.fill("Hello");
+```
+
+**Why this causes flakiness:**
+
+- `getByLabel` searches labels, descriptions, and ARIA associations
+- Timing variations can cause different elements to match first
+- The test passes most of the time but fails intermittently (10% failure rate is common)
+
+**Prevention patterns:**
+
+| Instead of               | Use                                                | Why                                     |
+| ------------------------ | -------------------------------------------------- | --------------------------------------- |
+| `getByLabel(/email/i)`   | `getByRole("textbox", { name: /email address/i })` | More specific, filters by role          |
+| `getByLabel(/message/i)` | `getByRole("textbox", { name: /^message$/i })`     | Anchored regex prevents partial matches |
+| `getByText(/submit/i)`   | `getByRole("button", { name: /submit/i })`         | Role + name is more precise             |
+
+**When you see text appearing in the wrong field in failure screenshots**, suspect loose regex patterns as the root cause.
 
 ### Cache Components and Activity (Next.js 16+)
 
