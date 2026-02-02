@@ -5,12 +5,12 @@ import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 export async function updateChapterGenerationStatus(params: {
   chapterId: number;
   generationStatus: GenerationStatus;
-  generationRunId?: string;
+  generationRunId?: string | null;
 }): Promise<SafeReturn<Pick<Chapter, "id" | "generationStatus">>> {
   const { data, error } = await safeAsync(() =>
     prisma.chapter.update({
       data: {
-        generationRunId: params.generationRunId ?? null,
+        generationRunId: params.generationRunId,
         generationStatus: params.generationStatus,
       },
       select: { generationStatus: true, id: true },

@@ -29,6 +29,12 @@ export function useSSE<T>(
           credentials: "include",
           signal: controller.signal,
         });
+
+        if (!response.ok) {
+          onError?.(new Error(`HTTP ${response.status}`));
+          return;
+        }
+
         const reader = response.body?.getReader();
         if (!reader) {
           return;
