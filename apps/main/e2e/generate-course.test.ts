@@ -1,4 +1,6 @@
+import { randomUUID } from "node:crypto";
 import { type Page, type Route } from "@zoonk/e2e/fixtures";
+import { courseSuggestionFixture } from "@zoonk/testing/fixtures/course-suggestions";
 import { expect, test } from "./fixtures";
 
 /**
@@ -141,17 +143,24 @@ async function navigateWithMocks(page: Page, options: MockApiOptions): Promise<v
 test.describe("Generate Course Page", () => {
   test.describe("Initial triggering state", () => {
     test("shows triggering state immediately on page load", async ({ page }) => {
-      // Get suggestion ID first, then set up mocks to avoid real API calls
-      const suggestionId = await getSuggestionId(page);
+      // Create a unique suggestion to avoid PPR caching issues with seeded data
+      const slug = `e2e-trigger-${randomUUID().slice(0, 8)}`;
+      const suggestion = await courseSuggestionFixture({
+        generationStatus: "running",
+        language: "en",
+        slug,
+        title: "E2E Triggering Test",
+      });
 
-      // Set up mocks with a stream that stays in "started" state
+      // Set up route mocking before navigation
       await setupMockApis(page, {
         streamMessages: [{ status: "started", step: "getCourseSuggestion" }],
       });
 
-      await page.goto(`/generate/cs/${suggestionId}`);
+      // Navigate directly to the generate page with the unique suggestion
+      await page.goto(`/generate/cs/${suggestion.id}`);
 
-      // Should immediately show triggering or streaming state (no idle state)
+      // Should show triggering or streaming state (no idle state)
       await expect(page.getByText(/creating your course/i)).toBeVisible({
         timeout: 10_000,
       });
