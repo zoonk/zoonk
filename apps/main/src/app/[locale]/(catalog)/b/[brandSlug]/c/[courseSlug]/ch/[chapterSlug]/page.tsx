@@ -50,18 +50,16 @@ export default async function ChapterPage({
   const { brandSlug, chapterSlug, courseSlug, locale } = await params;
   setRequestLocale(locale);
 
-  const [chapter, lessons] = await Promise.all([
-    getChapter({ brandSlug, chapterSlug, courseSlug }),
-    listChapterLessons({ brandSlug, chapterSlug, courseSlug }),
-  ]);
-
-  const t = await getExtracted();
+  const chapter = await getChapter({ brandSlug, chapterSlug, courseSlug });
 
   cacheTag(cacheTagChapter({ chapterSlug }));
 
   if (!chapter) {
     notFound();
   }
+
+  const lessons = await listChapterLessons({ chapterId: chapter.id });
+  const t = await getExtracted();
 
   if (lessons.length === 0) {
     redirect({ href: `/generate/ch/${chapter.id}`, locale });
