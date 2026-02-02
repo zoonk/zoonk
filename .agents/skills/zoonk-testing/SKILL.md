@@ -11,62 +11,138 @@ metadata:
 
 Follow TDD (Test-Driven Development) for all features and bug fixes. **Always write failing tests first.**
 
+## How to Think About Tests
+
+Before writing any test, answer these questions:
+
+### 1. What behavior am I verifying?
+
+State it in one sentence. If you can't, the test is too complex.
+
+- ✅ "Verify locale persists when navigating between pages"
+- ✅ "Verify users can create a course with a title"
+- ❌ "Verify the course description popover opens in the correct language when clicking from a Portuguese page"
+- ❌ "Verify the sidebar collapses, remembers state, and shows tooltips on hover when collapsed"
+
+### 2. What's the simplest proof?
+
+Find the minimum actions to verify the behavior:
+
+| Behavior             | Simplest Proof                                     | NOT This                                                           |
+| -------------------- | -------------------------------------------------- | ------------------------------------------------------------------ |
+| Locale persistence   | Navigate → click link → check URL contains `/pt`   | Navigate → click course → open popover → verify translation        |
+| Course creation      | Fill title → submit → verify title appears         | Fill all fields → verify each field → check database → verify list |
+| Login works          | Enter credentials → submit → see dashboard heading | Enter credentials → verify button enabled → submit → check cookie  |
+| Item appears in list | Create item → verify it's visible                  | Create item → scroll list → filter → sort → find item              |
+
+### 3. Am I testing the right thing?
+
+Ask: "If this test passes, am I confident the feature works?"
+
+- If "yes" requires trusting other unrelated UI mechanics, you're testing the wrong thing
+- If the test could pass with broken code, it's too loose
+- If the test could fail with working code, it's testing implementation details
+
+**Example**: To test locale preservation, you don't need to verify translated content renders correctly. That's a translation test, not a locale persistence test. Just verify the URL maintains the locale segment.
+
 ## TDD Workflow
 
 1. **Write a failing test** that describes the expected behavior
-2. **Run the test** to confirm it fails (red)
+2. **Run the test to confirm it fails** - this is non-negotiable
 3. **Write the minimum code** to make the test pass
-4. **Run the test** to confirm it passes (green)
+4. **Run the test** to confirm it passes
 5. **Refactor** while keeping tests green
 
-### When to Apply TDD
+### If the Test Passes Before Your Fix
 
-- **Bug fix**: Write a test that reproduces the bug first
-- **New feature**: Write a test showing the feature doesn't exist yet
-- **Refactoring**: Ensure tests exist before changing code
-
-### CRITICAL: Verify the Test Fails First
-
-**You MUST run the test before implementing the fix to confirm it fails.** This is non-negotiable.
-
-If the test passes before you write the fix, **the test is wrong**. A passing test means one of:
+The test is wrong. A passing test means one of:
 
 1. The bug doesn't exist (investigate further)
 2. The test is matching existing/seeded data instead of new behavior
 3. The test assertion is too loose
 
-**Never use workarounds to make a failing test pass.** Common anti-patterns:
+**Never use workarounds to make a "failing" test pass:**
 
 ```typescript
-// BAD: Using .first() to avoid "strict mode violation" with multiple matches
+// BAD: Using .first() to avoid multiple matches
 await expect(page.getByText(courseTitle).first()).toBeVisible();
 // This passes even if the item existed before your fix!
 
-// BAD: Using loose assertions that match existing data
-const courseTitle = "Test Course"; // Generic name that might exist
-await expect(page.getByText(courseTitle)).toBeVisible();
-
-// GOOD: Use unique identifiers to ensure you're testing NEW behavior
+// GOOD: Use unique identifiers so only ONE element can match
 const uniqueId = randomUUID().slice(0, 8);
 const courseTitle = `Test Course ${uniqueId}`;
 await expect(page.getByText(courseTitle)).toBeVisible();
 // This ONLY passes if your code actually created this specific item
 ```
 
-**When you see "strict mode violation: resolved to N elements":**
+## Test Isolation Principle
 
-1. Don't add `.first()` - that masks the real issue
-2. Ask: "Why are there multiple matches?"
-3. Make your test data unique so only ONE element can match but DO NOT use locators to make it unique, still use accessible queries like `getByRole` or `getByText`, just make the content unique
-4. The test should fail before the fix and pass after
+**Core Rule: Tests must be completely self-contained.**
 
-**TDD verification checklist:**
+This means:
 
-1. ✅ Write the test
-2. ✅ Run the test - **it MUST fail**
-3. ✅ If it passes, the test is wrong - fix the test first
-4. ✅ Write the implementation
-5. ✅ Run the test - it should now pass
+1. **Create your own data** - Don't rely on seed data existing or having specific values
+2. **No cleanup needed** - If you need `afterEach` cleanup, your test isn't isolated
+3. **Parallel safe** - Tests should run in any order, even simultaneously
+
+### Why Not Seed Data?
+
+Seed data creates hidden dependencies:
+
+- Tests break when seed data changes
+- Tests pass locally but fail in CI (different seeds)
+- Tests can't run in parallel (shared state)
+- Debugging requires knowing what's seeded
+
+### The Pattern
+
+Every test that needs data should create it:
+
+```typescript
+// Create unique data for THIS test
+const uniqueId = randomUUID().slice(0, 8);
+const course = await courseFixture({
+  slug: `e2e-${uniqueId}`,
+  title: `E2E Course ${uniqueId}`,
+});
+
+// Test uses only data it created
+await page.goto(`/courses/${course.slug}`);
+```
+
+### Exception: Structural Dependencies
+
+Using a seeded organization as a container is acceptable because:
+
+1. It's a structural dependency, not a content assertion
+2. Tests create their own content within it
+3. The org is guaranteed to exist in all environments
+
+```typescript
+// ACCEPTABLE: Using seeded org as container
+const org = await prisma.organization.findUniqueOrThrow({
+  where: { slug: "ai" },
+});
+const course = await courseFixture({ organizationId: org.id });
+```
+
+### Exception: Read-Only Route Verification
+
+For verifying that a page renders at all (not specific content), you may use known paths:
+
+```typescript
+// OK: Just verifying the route works
+test("course detail page renders", async ({ page }) => {
+  await page.goto("/b/ai/c/machine-learning"); // Seeded course
+  await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+});
+
+// NOT OK: Relying on specific seeded content
+test("shows machine learning description", async ({ page }) => {
+  await page.goto("/b/ai/c/machine-learning");
+  await expect(page.getByText("patterns|predictions")).toBeVisible(); // Fragile!
+});
+```
 
 ## Test Types
 
@@ -77,101 +153,6 @@ await expect(page.getByText(courseTitle)).toBeVisible();
 | Utils/helpers           | Unit        | Vitest     | `packages/{pkg}/*.test.ts`            |
 
 ## E2E Testing (Playwright)
-
-### Core Principle: Test User Behavior
-
-Test what users see and do, not implementation details. If your test breaks when you refactor CSS or rename a class, it's testing the wrong thing.
-
-### Preventing Flaky Tests
-
-**CRITICAL: Run new tests multiple times before considering them done.** Flaky tests often pass 90% of the time but fail intermittently. After writing a new E2E test:
-
-```bash
-# Run the test 5+ times to catch flakiness
-for i in {1..5}; do pnpm e2e -- -g "test name" --reporter=line; done
-```
-
-**High-risk scenarios that commonly cause flakiness:**
-
-| Scenario                         | Risk                                | Prevention                                         |
-| -------------------------------- | ----------------------------------- | -------------------------------------------------- |
-| Clicking dropdown/menu items     | Animations cause instability        | Wait for item visibility, use `force: true`        |
-| Actions that trigger navigation  | Page reload detaches elements       | Use `waitForLoadState` or `waitForURL` after click |
-| Form submissions                 | Async save operations               | Wait for success indicator before next action      |
-| Clicking items in lists          | List may still be loading           | Wait for specific item with `toBeVisible()` first  |
-| Keyboard navigation              | Focus state transitions             | Wait for focused element before next key press     |
-| Inputs with debounced validation | State changes between actions       | Use `waitForLoadState("networkidle")` after fill   |
-| Filling multiple form fields     | Loose selectors match wrong element | Use `getByRole` with exact names, anchored regex   |
-
-**Defensive patterns for common interactions:**
-
-```typescript
-// RISKY: Dropdown item click without animation handling
-await page.getByRole("menuitem", { name: /settings/i }).click();
-await page.getByRole("menuitem", { name: "Dark mode" }).click();
-
-// SAFE: Wait for submenu, then force click
-await page.getByRole("menuitem", { name: /settings/i }).click();
-await expect(page.getByRole("menuitem", { name: "Dark mode" })).toBeVisible();
-await page.getByRole("menuitem", { name: "Dark mode" }).click({ force: true });
-
-// RISKY: Click that triggers navigation without waiting
-await page.getByRole("button", { name: /save/i }).click();
-await page.getByRole("link", { name: /home/i }).click(); // May fail if save triggers reload
-
-// SAFE: Wait for navigation to complete
-await page.getByRole("button", { name: /save/i }).click();
-await page.waitForLoadState("domcontentloaded");
-await page.getByRole("link", { name: /home/i }).click();
-```
-
-**Before marking a test as complete, ask:**
-
-1. Does this test interact with animated elements (dropdowns, modals, tooltips)?
-2. Does any action trigger navigation or page reload?
-3. Does the test depend on async operations completing?
-4. Have I run this test multiple times to verify it's stable?
-
-### Avoid Redundant Tests
-
-**Don't write separate tests when a higher-level test already covers the behavior.** If a test proves the final outcome, intermediate steps are implicitly verified.
-
-**Examples of redundancy to avoid:**
-
-1. **Visibility + interaction**: If you click a button, don't also test that it's visible—the click would fail if it weren't.
-2. **Intermediate + final states**: If "data persists after reload" passes, "auto-save works" is already proven—don't test both.
-3. **Multiple steps in a flow**: If "user completes checkout" passes, you don't need separate tests for each form field.
-
-```typescript
-// BAD: Two redundant tests - persistence proves auto-save worked
-test("auto-saves title changes", async ({ page }) => {
-  await page.getByRole("textbox", { name: /title/i }).fill("New Title");
-  await expect(page.getByText(/saved/i)).toBeVisible();
-});
-
-test("persists title after reload", async ({ page }) => {
-  await page.getByRole("textbox", { name: /title/i }).fill("New Title");
-  await expect(page.getByText(/saved/i)).toBeVisible();
-  await page.reload();
-  await expect(page.getByRole("textbox", { name: /title/i })).toHaveValue("New Title");
-});
-
-// GOOD: Single test that implicitly verifies auto-save through persistence
-test("auto-saves and persists title", async ({ page }) => {
-  const titleInput = page.getByRole("textbox", { name: /title/i });
-  await titleInput.fill("New Title");
-  await expect(page.getByText(/saved/i)).toBeVisible();
-
-  await page.reload();
-  await expect(titleInput).toHaveValue("New Title");
-});
-```
-
-**When separate tests ARE useful:**
-
-- Testing conditional rendering (element appears/disappears based on state)
-- Testing error states that require different setup than success states
-- Testing independent behaviors that don't share a logical flow
 
 ### Query Priority
 
@@ -185,116 +166,19 @@ page.getByLabel("Email address");
 page.getByText("Sign up for free");
 page.getByPlaceholder("Search...");
 
-// BAD: Implementation details (including data-slot, data-testid, CSS classes)
+// BAD: Implementation details
 page.locator(".btn-primary");
 page.locator("#submit-button");
 page.locator("[data-testid='submit']");
 page.locator("[data-slot='media-card-icon']");
-page.locator("button.bg-blue-500");
 ```
 
-**If you can't use `getByRole`, the component likely has accessibility issues.** Refactor to make it more accessible instead of using implementation-detail selectors.
-
-### Avoid Loose Regex Patterns in Selectors
-
-**Loose regex patterns with `getByLabel` can cause flaky tests** due to partial matches across multiple elements. This is especially problematic in forms where labels and descriptions may contain overlapping words.
-
-```typescript
-// BAD: Loose regex can match multiple elements intermittently
-const emailInput = dialog.getByLabel(/email/i); // Matches "Email address" AND description "We'll use this email..."
-const messageInput = dialog.getByLabel(/message/i); // Could match "Message" or error "Failed to send message"
-
-await emailInput.fill("test@example.com");
-await messageInput.fill("Hello"); // May fill the wrong field!
-
-// GOOD: Use getByRole with specific accessible names
-const emailInput = dialog.getByRole("textbox", { name: /email address/i });
-const messageInput = dialog.getByRole("textbox", { name: /^message$/i }); // Anchored regex for exact match
-
-// Wait for both to be ready before filling
-await expect(emailInput).toBeEnabled();
-await expect(messageInput).toBeEnabled();
-
-await emailInput.fill("test@example.com");
-await messageInput.fill("Hello");
-```
-
-**Why this causes flakiness:**
-
-- `getByLabel` searches labels, descriptions, and ARIA associations
-- Timing variations can cause different elements to match first
-- The test passes most of the time but fails intermittently (10% failure rate is common)
-
-**Prevention patterns:**
-
-| Instead of               | Use                                                | Why                                     |
-| ------------------------ | -------------------------------------------------- | --------------------------------------- |
-| `getByLabel(/email/i)`   | `getByRole("textbox", { name: /email address/i })` | More specific, filters by role          |
-| `getByLabel(/message/i)` | `getByRole("textbox", { name: /^message$/i })`     | Anchored regex prevents partial matches |
-| `getByText(/submit/i)`   | `getByRole("button", { name: /submit/i })`         | Role + name is more precise             |
-
-**When you see text appearing in the wrong field in failure screenshots**, suspect loose regex patterns as the root cause.
-
-### Cache Components and Activity (Next.js 16+)
-
-With `cacheComponents: true`, Next.js uses React's `<Activity>` component for client-side navigation. Instead of unmounting the previous route, it sets the Activity mode to `"hidden"`. This means **previous pages remain in the DOM but hidden**.
-
-**This causes "strict mode violation" errors when navigating back**, because the same content exists in both the hidden (previous) page and the visible (current) page:
-
-```typescript
-// BAD: Finds 2 elements - one visible in list, one hidden in edit form
-await expect(page.getByText(uniqueDescription)).toBeVisible();
-// Error: strict mode violation: resolved to 2 elements
-
-// BAD: Using .first() is a workaround that masks the issue
-await expect(page.getByText(uniqueDescription).first()).toBeVisible();
-```
-
-**Solution: Use `getByRole` which filters by visibility**, or scope searches to visible containers:
-
-```typescript
-// GOOD: getByRole filters by visibility, then search within that element
-await expect(
-  page.getByRole("link", { name: chapter.title }).getByText(uniqueDescription),
-).toBeVisible();
-
-// GOOD: Find visible container first, then search within it
-const visibleList = page.getByRole("list", { name: /chapters/i });
-await expect(visibleList.getByText(uniqueDescription)).toBeVisible();
-```
-
-**Key insight**: `getByRole` naturally filters by visibility (hidden elements don't have accessible roles). Chain it with other queries to scope your search to visible content.
-
-### Fix Accessibility First, Then Test
-
-When a component lacks semantic markup, fix the component before writing tests:
-
-```typescript
-// BAD: Using implementation details because component lacks accessibility
-test("shows fallback icon", async ({ page }) => {
-  await expect(page.locator("[data-slot='media-card-icon']")).toBeVisible();
-});
-
-// GOOD: First fix the component to be accessible
-// In the component: <MediaCardIcon role="img" aria-label={title}>
-// Then test with semantic queries:
-test("shows fallback icon", async ({ page }) => {
-  const fallbackIcon = page.getByRole("img", { name: /post title/i }).first();
-  await expect(fallbackIcon).toBeVisible();
-  await expect(fallbackIcon).not.toHaveAttribute("src"); // Distinguishes from <img>
-});
-```
-
-Common accessibility fixes:
-
-- Decorative icons acting as image placeholders → add `role="img"` and `aria-label`
-- Interactive elements without labels → add `aria-label` or visible text
-- Custom controls → add appropriate ARIA roles
+**If you can't use `getByRole`, the component likely has accessibility issues.** Fix the component first.
 
 ### Wait Patterns
 
 ```typescript
-// GOOD: Wait for visible state with timeout
+// GOOD: Wait for visible state
 await expect(page.getByRole("heading")).toBeVisible();
 await expect(page.getByText("Success")).toBeVisible();
 
@@ -305,38 +189,15 @@ await page.waitForURL(/\/dashboard/);
 await page.waitForTimeout(2000);
 ```
 
-### Animated Elements (Dropdowns, Modals, Submenus)
+### Animated Elements
 
-Animated elements with CSS transitions (`slide-in-from-*`, `zoom-in-*`, `fade-in-*`) can cause flaky tests because Playwright considers moving elements "not stable" and won't click them.
-
-**Pattern**: Wait for content to be visible, then use `force: true` to bypass stability checks:
+Elements with CSS transitions can cause "element is not stable" errors. Pattern: wait for visibility, then use `force: true`:
 
 ```typescript
-// BAD: Click immediately - element may still be animating
-async function openLanguageSubmenu(page: Page) {
-  await page.getByRole("button", { name: /menu/i }).click();
-  await page.getByRole("menuitem", { name: /language/i }).click();
-}
-
-test("switches locale", async ({ page }) => {
-  await openLanguageSubmenu(page);
-  // This fails intermittently with "element is not stable"
-  await page.getByRole("menuitem", { name: "Español" }).click();
-});
-
-// GOOD: Wait for animation to complete, then force click
-async function openLanguageSubmenu(page: Page) {
-  await page.getByRole("button", { name: /menu/i }).click();
-  await page.getByRole("menuitem", { name: /language/i }).click();
-  // Wait for submenu content to be visible (animation complete)
-  await expect(page.getByRole("menuitem", { name: "English" })).toBeVisible();
-}
-
-test("switches locale", async ({ page }) => {
-  await openLanguageSubmenu(page);
-  // Force click bypasses stability check - safe because we confirmed visibility
-  await page.getByRole("menuitem", { name: "Español" }).click({ force: true });
-});
+// Wait for submenu content to be visible (animation complete)
+await expect(page.getByRole("menuitem", { name: "English" })).toBeVisible();
+// Force click bypasses stability check - safe because we confirmed visibility
+await page.getByRole("menuitem", { name: "Español" }).click({ force: true });
 ```
 
 **When to use `force: true`**:
@@ -344,95 +205,6 @@ test("switches locale", async ({ page }) => {
 - After confirming the element is visible via `toBeVisible()`
 - When CSS animations cause repeated "element is not stable" errors
 - Never as a first resort—always investigate why the element is unstable first
-
-### Verify Destination Content, Not Just URLs
-
-**Never rely solely on `toHaveURL` for navigation tests.** If a route is moved or broken, URL-only tests will pass even when the destination is wrong. Always verify the destination page renders expected content.
-
-```typescript
-// BAD: Only checks URL - will pass even if page is broken or moved
-test("creates item and redirects", async ({ page }) => {
-  await page.getByRole("button", { name: /create/i }).click();
-  await expect(page).toHaveURL(/\/items\/new-item/);
-});
-
-// GOOD: Verifies destination content exists
-test("creates item and redirects to item page", async ({ page }) => {
-  const itemTitle = "My New Item";
-  const itemDescription = "Item description";
-
-  // ... fill form with title and description ...
-
-  await page.getByRole("button", { name: /create/i }).click();
-
-  // Verify destination page shows the created content
-  // For editable fields, use toHaveValue:
-  await expect(page.getByRole("textbox", { name: /edit title/i })).toHaveValue(itemTitle);
-
-  // For static text, use toBeVisible:
-  await expect(page.getByText(itemDescription)).toBeVisible();
-});
-```
-
-### Testing Server Actions
-
-**Server Actions run server-side, so `page.route()` cannot intercept them.** Don't try to mock server action failures with route interception—it only works for client-side HTTP requests.
-
-**To test error states, trigger real validation errors through user input:**
-
-```typescript
-// BAD: Trying to intercept server action (won't work)
-test("shows error on failure", async ({ page }) => {
-  await page.route("**/api/endpoint", (route) => route.fulfill({ status: 500 }));
-  // This won't affect server actions - they don't go through the browser
-});
-
-// GOOD: Trigger real validation error
-test("shows error for whitespace-only name", async ({ authenticatedPage }) => {
-  const nameInput = authenticatedPage.getByLabel(/name/i);
-  const originalName = await nameInput.inputValue();
-
-  // Whitespace passes HTML5 "required" but fails server-side when trimmed
-  await nameInput.clear();
-  await nameInput.fill("   ");
-
-  await authenticatedPage.getByRole("button", { name: /submit/i }).click();
-
-  await expect(authenticatedPage.getByRole("alert")).toBeVisible();
-
-  // Verify data wasn't corrupted
-  await authenticatedPage.reload();
-  await expect(nameInput).toHaveValue(originalName);
-});
-```
-
-**Common ways to trigger real server-side errors:**
-
-| Error Type            | How to Trigger                                       |
-| --------------------- | ---------------------------------------------------- |
-| Empty/invalid input   | Whitespace-only `"   "` (passes HTML5, fails server) |
-| Duplicate values      | Use existing slug/email from seeded data             |
-| Invalid file          | Upload wrong type or oversized file                  |
-| Missing required data | Remove required field via JavaScript before submit   |
-
-**Always verify persistence after mutations:**
-
-```typescript
-// Success test: verify new data persisted
-await nameInput.fill("New Name");
-await submitButton.click();
-await expect(page.getByText(/success/i)).toBeVisible();
-await page.reload();
-await expect(nameInput).toHaveValue("New Name");
-
-// Error test: verify original data wasn't corrupted
-const originalName = await nameInput.inputValue();
-await nameInput.fill("   "); // Invalid
-await submitButton.click();
-await expect(page.getByRole("alert")).toBeVisible();
-await page.reload();
-await expect(nameInput).toHaveValue(originalName);
-```
 
 ### Authentication Fixtures
 
@@ -445,37 +217,20 @@ test("authenticated user sees dashboard", async ({ authenticatedPage }) => {
   await authenticatedPage.goto("/");
   await expect(authenticatedPage.getByRole("heading", { name: "Dashboard" })).toBeVisible();
 });
-
-test("new user sees onboarding", async ({ userWithoutProgress }) => {
-  await userWithoutProgress.goto("/");
-  await expect(userWithoutProgress.getByText("Get started")).toBeVisible();
-});
 ```
 
-### E2E Test Data Setup
+### Creating Test Data
 
-Choose the right approach based on what you're testing:
-
-| Scenario                              | Approach            | Why                                        |
-| ------------------------------------- | ------------------- | ------------------------------------------ |
-| Testing a creation wizard/form        | Use UI              | You're testing the creation flow itself    |
-| Testing edit/mutation behavior        | Use Prisma fixtures | Faster, isolated, focused on edit behavior |
-| Testing read-only pages               | Use seeded data     | No isolation needed, seeded data is stable |
-| Testing validation against duplicates | Use seeded data     | Need known duplicates to validate against  |
-
-**Use Prisma fixtures when tests mutate data:**
+**Use Prisma fixtures for tests that need specific data states:**
 
 ```typescript
-import { prisma } from "@/lib/db";
 import { postFixture } from "@/tests/fixtures/posts";
 
 async function createTestPost() {
-  const user = await prisma.user.findFirstOrThrow();
-
+  const uniqueId = randomUUID().slice(0, 8);
   return postFixture({
-    isPublished: true,
-    userId: user.id,
-    slug: `e2e-${randomUUID().slice(0, 8)}`,
+    slug: `e2e-${uniqueId}`,
+    title: `E2E Post ${uniqueId}`,
   });
 }
 
@@ -486,116 +241,159 @@ test("edits post title", async ({ authenticatedPage }) => {
 });
 ```
 
-**Benefits over UI-based setup:**
-
-- ~100x faster (50ms vs 5s per record)
-- Tests only what you intend to test
-- Failures are isolated to the behavior under test
-- Clear arrange/act/assert structure
-
-**Use seeded data for read-only tests:**
-
-```typescript
-// GOOD: Read-only test uses seeded "welcome-post" post
-test("shows post details", async ({ page }) => {
-  await page.goto("/posts/welcome-post");
-
-  await expect(page.getByRole("heading", { name: /welcome/i })).toBeVisible();
-});
-
-// GOOD: Validation test uses seeded post as duplicate target
-test("shows error for duplicate slug", async ({ authenticatedPage }) => {
-  const post = await createTestPost();
-  await authenticatedPage.goto(`/posts/${post.slug}/edit`);
-  await authenticatedPage.getByLabel(/url/i).fill("welcome-post"); // seeded post
-  await expect(authenticatedPage.getByText(/already in use/i)).toBeVisible();
-});
-```
-
 **Create unique users for user-specific state:**
 
-When testing features that depend on user state (subscriptions, permissions, settings), create a unique user per test instead of sharing a seeded test user. This ensures true test isolation—no cleanup code needed, and tests can run in parallel without interference.
+When testing features that depend on user state (subscriptions, permissions), create a unique user per test:
 
 ```typescript
-// BAD: Shared user requires cleanup to avoid interfering with other tests
-test("works with subscription", async () => {
-  let subscriptionId: number;
-  try {
-    subscriptionId = await createSubscriptionForSharedUser();
-    // ... test
-  } finally {
-    // Must clean up or other tests using this user will fail
-    await prisma.subscription.delete({ where: { id: subscriptionId } });
-  }
-});
-
-// GOOD: Unique user per test, no cleanup needed
 test("works with subscription", async () => {
   const uniqueId = randomUUID().slice(0, 8);
   const email = `e2e-test-${uniqueId}@zoonk.test`;
-  const password = "password123";
 
   // Create unique user via sign-up API
   const signupContext = await request.newContext({ baseURL });
   await signupContext.post("/v1/auth/sign-up/email", {
-    data: { email, name: `E2E User ${uniqueId}`, password },
+    data: { email, name: `E2E User ${uniqueId}`, password: "password123" },
   });
-  await signupContext.dispose();
 
-  // Create user-specific state (subscription, settings, etc.)
+  // Create user-specific state
   const user = await prisma.user.findUniqueOrThrow({ where: { email } });
   await prisma.subscription.create({
-    data: {
-      referenceId: String(user.id),
-      status: "active",
-      plan: "hobby",
-      stripeCustomerId: `cus_test_${uniqueId}`,
-      stripeSubscriptionId: `sub_test_${uniqueId}`,
-    },
+    data: { referenceId: String(user.id), status: "active", plan: "hobby" },
   });
 
-  // Sign in and test - no cleanup needed, user is unique to this test
-  const apiContext = await request.newContext({ baseURL });
-  await apiContext.post("/v1/auth/sign-in/email", {
-    data: { email, password },
-  });
-
-  // ... test with authenticated context
-  await apiContext.dispose();
+  // No cleanup needed - user is unique to this test
 });
 ```
 
-**When to create unique users vs use seeded users:**
+### Preventing Flaky Tests
 
-| Scenario                                    | Approach        | Why                                      |
-| ------------------------------------------- | --------------- | ---------------------------------------- |
-| Testing user-specific state (subscriptions) | Unique user     | Avoid cleanup, enable parallel execution |
-| Testing authenticated UI flows              | Seeded fixtures | Faster, fixtures handle auth setup       |
-| Testing permission levels (admin vs member) | Seeded fixtures | Roles are stable, no interference risk   |
+**Run new tests multiple times before considering them done:**
 
-### Test Organization
+```bash
+for i in {1..5}; do pnpm e2e -- -g "test name" --reporter=line; done
+```
+
+**High-risk scenarios:**
+
+| Scenario                         | Prevention                                         |
+| -------------------------------- | -------------------------------------------------- |
+| Clicking dropdown items          | Wait for visibility, use `force: true`             |
+| Actions triggering navigation    | Use `waitForLoadState` or `waitForURL` after click |
+| Form submissions                 | Wait for success indicator before next action      |
+| Inputs with debounced validation | Use `waitForLoadState("networkidle")` after fill   |
+
+### Server Actions
+
+**Server Actions run server-side, so `page.route()` cannot intercept them.** To test error states, trigger real validation errors:
 
 ```typescript
-test.describe("Post Page", () => {
-  test.describe("unauthenticated users", () => {
-    test("shows sign-in prompt", async ({ page }) => {
-      // ...
-    });
-  });
+// Whitespace passes HTML5 "required" but fails server-side when trimmed
+await nameInput.fill("   ");
+await page.getByRole("button", { name: /submit/i }).click();
+await expect(page.getByRole("alert")).toBeVisible();
+```
 
-  test.describe("authenticated users", () => {
-    test("can bookmark post", async ({ authenticatedPage }) => {
-      // ...
-    });
-  });
+## Common Thinking Mistakes
+
+### Over-Testing Through UI Mechanics
+
+**Mistake**: Testing locale preservation by opening popovers and verifying their content.
+
+**Why it's wrong**: You're testing popover behavior, not locale persistence.
+
+**Fix**: Test the simplest proof - URL changes preserve locale.
+
+```typescript
+// BAD: Tests translation rendering, not locale persistence
+test("preserves locale", async ({ page }) => {
+  await page.goto("/pt/courses/intro");
+  await page.getByRole("button", { name: /detalhes/i }).click();
+  await expect(page.getByText(/descrição em português/i)).toBeVisible();
+});
+
+// GOOD: Tests actual locale persistence
+test("preserves locale when navigating", async ({ page }) => {
+  await page.goto("/pt/courses");
+  await page.getByRole("link", { name: /machine learning/i }).click();
+  await expect(page).toHaveURL(/^\/pt\//);
 });
 ```
 
-However, avoid nesting too deeply. You shouldn't have more than 2 `test.describe` blocks.
+### Testing Implementation Instead of Behavior
+
+**Mistake**: `await expect(page.locator('[data-slot="badge"]')).toBeVisible()`
+
+**Why it's wrong**: You're testing that an attribute exists, not user-visible behavior.
+
+**Fix**: What does the user see? Test that.
+
+```typescript
+// BAD: Testing CSS implementation
+await expect(page.locator('[data-slot="badge"]')).toBeVisible();
+
+// GOOD: Testing what user sees
+await expect(page.getByRole("img", { name: /course thumbnail/i })).toBeVisible();
+```
+
+### Relying on Seed Data Content
+
+**Mistake**: Asserting specific seeded values appear in results.
+
+**Why it's wrong**: Test breaks if seed data changes; can't run in parallel.
+
+**Fix**: Create test data with unique identifiers.
+
+```typescript
+// BAD: Depends on seed data
+test("finds course by title", async ({ page }) => {
+  await page.getByRole("textbox").fill("Machine Learning");
+  await expect(page.getByText("Introduction to ML")).toBeVisible();
+});
+
+// GOOD: Creates its own data
+test("finds course by title", async ({ page }) => {
+  const uniqueId = randomUUID().slice(0, 8);
+  await courseFixture({ title: `Search Test ${uniqueId}` });
+
+  await page.getByRole("textbox").fill(`Search Test ${uniqueId}`);
+  await expect(page.getByText(`Search Test ${uniqueId}`)).toBeVisible();
+});
+```
+
+### Redundant Tests
+
+**Mistake**: Writing separate tests when a higher-level test already covers the behavior.
+
+**Why it's wrong**: More tests to maintain without more confidence.
+
+**Fix**: If a test proves the final outcome, intermediate steps are implicitly verified.
+
+```typescript
+// BAD: Two redundant tests
+test("auto-saves title changes", async ({ page }) => {
+  await page.getByRole("textbox").fill("New Title");
+  await expect(page.getByText(/saved/i)).toBeVisible();
+});
+
+test("persists title after reload", async ({ page }) => {
+  await page.getByRole("textbox").fill("New Title");
+  await page.reload();
+  await expect(page.getByRole("textbox")).toHaveValue("New Title");
+});
+
+// GOOD: Single test proves both
+test("auto-saves and persists title", async ({ page }) => {
+  await page.getByRole("textbox").fill("New Title");
+  await expect(page.getByText(/saved/i)).toBeVisible();
+  await page.reload();
+  await expect(page.getByRole("textbox")).toHaveValue("New Title");
+});
+```
 
 ## Integration Testing (Vitest + Prisma)
 
-### Using Fixtures
+### Structure
 
 ```typescript
 import { prisma } from "@/lib/db";
@@ -604,59 +402,27 @@ import { postFixture, memberFixture, signInAs } from "@/tests/fixtures";
 describe("createComment", () => {
   describe("unauthenticated users", () => {
     test("returns unauthorized error", async () => {
-      const result = await createComment({
-        headers: new Headers(),
-        postId: 1,
-        content: "Test",
-      });
-
+      const result = await createComment({ headers: new Headers(), postId: 1, content: "Test" });
       expect(result.error?.message).toBe(ErrorCode.unauthorized);
     });
   });
 
   describe("admin users", () => {
-    let organization: Organization;
     let post: Post;
     let headers: Headers;
 
     beforeAll(async () => {
-      const { organization, user } = await memberFixture({
-        role: "admin",
-      });
-
+      const { organization, user } = await memberFixture({ role: "admin" });
       post = await postFixture({ organizationId: organization.id });
       headers = await signInAs(user.email, user.password);
     });
 
     test("creates comment successfully", async () => {
-      const result = await createComment({
-        headers,
-        postId: post.id,
-        content: "New Comment",
-      });
-
+      const result = await createComment({ headers, postId: post.id, content: "New Comment" });
       expect(result.data?.content).toBe("New Comment");
-
-      // Verify in database
-      const comment = await prisma.comment.findFirst({
-        where: { postId: post.id },
-      });
-
-      expect(comment?.content).toBe("New Comment");
     });
   });
 });
-```
-
-### Fixture Patterns
-
-```typescript
-// Parallel fixture creation (faster)
-const [org, user] = await Promise.all([organizationFixture(), userFixture()]);
-
-// Dependent fixtures (when order matters)
-const { organization, user } = await memberFixture({ role: "admin" });
-const post = await postFixture({ organizationId: organization.id });
 ```
 
 ### Test All Permission Levels
@@ -665,24 +431,21 @@ const post = await postFixture({ organizationId: organization.id });
 describe("unauthenticated users", () => {
   /* ... */
 });
-
 describe("members", () => {
   /* ... */
 });
-
 describe("admins", () => {
-  /* ... */
-});
-
-// if owners have the same permissions as admins, you can skip this test
-describe("owners", () => {
   /* ... */
 });
 ```
 
 ## Unit Testing (Vitest)
 
-### Pure Functions
+### When to Add Unit Tests
+
+- Edge cases not covered by e2e tests
+- Complex utility functions
+- Error boundary conditions
 
 ```typescript
 import { removeAccents } from "./string";
@@ -695,21 +458,14 @@ describe("removeAccents", () => {
 });
 ```
 
-### When to Add Unit Tests
-
-- Edge cases not covered by e2e tests
-- Complex utility functions
-- Error boundary conditions
-
 ## Commands
 
 ```bash
-# Unit/Integration tests using Vitest
+# Unit/Integration tests
 pnpm test                    # Run all tests once
+pnpm test -- --run src/data/posts/create-post.test.ts  # Run specific file
 
-# Run specific test file
-pnpm test -- --run src/data/posts/create-post.test.ts
-
-# E2E tests using Playwright
-pnpm e2e                     # Run all e2e tests
+# E2E tests
+pnpm --filter {app} build:e2e  # Always run before e2e tests
+pnpm --filter {app} e2e        # Run all e2e tests
 ```
