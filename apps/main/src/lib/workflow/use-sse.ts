@@ -25,7 +25,16 @@ export function useSSE<T>(
     void (async () => {
       try {
         const fullUrl = `${url}&startIndex=${indexRef.current}`;
-        const response = await fetch(fullUrl, { signal: controller.signal });
+        const response = await fetch(fullUrl, {
+          credentials: "include",
+          signal: controller.signal,
+        });
+
+        if (!response.ok) {
+          onError?.(new Error(`HTTP ${response.status}`));
+          return;
+        }
+
         const reader = response.body?.getReader();
         if (!reader) {
           return;

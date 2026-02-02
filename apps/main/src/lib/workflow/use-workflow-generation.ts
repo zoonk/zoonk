@@ -70,6 +70,7 @@ export function useWorkflowGeneration<TStep extends string = string>(config: {
       try {
         const response = await fetch(triggerUrl, {
           body: JSON.stringify(triggerBody),
+          credentials: "include",
           headers: { "Content-Type": "application/json" },
           method: "POST",
         });

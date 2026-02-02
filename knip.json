@@ -20,7 +20,7 @@
   "workspaces": {
     "apps/api": {
       "entry": ["src/i18n/codec.ts"],
-      "ignore": ["src/lib/body-parser.ts"]
+      "ignore": ["src/app/.well-known/workflow/**"]
     },
     "apps/editor": {
       "entry": ["src/i18n/codec.ts", "e2e/mocks/vercel-blob.ts"]
@@ -30,8 +30,7 @@
         "src/i18n/codec.ts",
         "src/app/[locale]/privacy/*.mdx",
         "src/app/[locale]/terms/*.mdx"
-      ],
-      "ignore": ["src/app/.well-known/workflow/**"]
+      ]
     },
     "packages/db": {
       "entry": ["prisma.config.ts", "src/prisma/seed.ts"],

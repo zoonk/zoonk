@@ -11,9 +11,9 @@ import { expect, test } from "./fixtures";
  * 2. Authenticated without subscription - Shows upgrade CTA
  * 3. Authenticated with subscription - Shows generation UI
  *
- * The generation flow interacts with 2 APIs:
- * 1. POST /api/workflows/chapter-generation/trigger - Starts the workflow, returns { runId: string }
- * 2. GET /api/workflows/status?runId=X&startIndex=N - Returns SSE stream of step updates
+ * The generation flow interacts with 2 APIs on the API server:
+ * 1. POST ${API_BASE_URL}/v1/workflows/chapter-generation/trigger - Starts the workflow, returns { runId: string }
+ * 2. GET ${API_BASE_URL}/v1/workflows/chapter-generation/status?runId=X&startIndex=N - Returns SSE stream of step updates
  */
 
 const TEST_RUN_ID = "test-run-id-chapter-12345";
@@ -47,7 +47,7 @@ function createRouteHandler(options: MockApiOptions) {
     const method = route.request().method();
 
     // Mock trigger API
-    if (url.includes("/api/workflows/chapter-generation/trigger") && method === "POST") {
+    if (url.includes("/v1/workflows/chapter-generation/trigger") && method === "POST") {
       if (triggerResponse.error) {
         await route.fulfill({
           body: JSON.stringify({ error: triggerResponse.error }),
@@ -68,7 +68,7 @@ function createRouteHandler(options: MockApiOptions) {
     }
 
     // Mock status stream API
-    if (url.includes("/api/workflows/status")) {
+    if (url.includes("/v1/workflows/chapter-generation/status")) {
       if (streamError) {
         await route.abort("failed");
         return;
@@ -91,7 +91,7 @@ function createRouteHandler(options: MockApiOptions) {
  */
 async function setupMockApis(page: Page, options: MockApiOptions = {}): Promise<void> {
   const handler = createRouteHandler(options);
-  await page.route("**/api/workflows/**", handler);
+  await page.route("**/v1/workflows/chapter-generation/**", handler);
 }
 
 /**

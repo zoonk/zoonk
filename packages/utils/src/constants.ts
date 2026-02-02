@@ -1,4 +1,5 @@
 export const AI_ORG_SLUG = "ai";
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 export const SUPPORT_URL = "https://www.zoonk.com/help";
 
 export const BYTES_PER_MB = 1024 * 1024;

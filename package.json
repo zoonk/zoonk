@@ -19,6 +19,7 @@
     "lint": "oxlint --type-aware --deny-warnings .",
     "lint:fix": "oxlint --type-aware --fix --deny-warnings .",
     "start": "turbo start",
+    "stripe:listen": "stripe listen --forward-to http://localhost:4000/v1/auth/stripe/webhook",
     "test": "turbo test",
     "test:watch": "turbo test:watch",
     "typecheck": "turbo typecheck"
