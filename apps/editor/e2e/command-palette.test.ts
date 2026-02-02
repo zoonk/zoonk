@@ -1,4 +1,89 @@
+import { randomUUID } from "node:crypto";
+import { prisma } from "@zoonk/db";
+import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
+import { courseFixture } from "@zoonk/testing/fixtures/courses";
+import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
+import { normalizeString } from "@zoonk/utils/string";
 import { type Page, expect, test } from "./fixtures";
+
+async function createTestCourse() {
+  const org = await prisma.organization.findUniqueOrThrow({
+    where: { slug: "ai" },
+  });
+
+  const uniqueId = randomUUID().slice(0, 8);
+  const title = `E2E Course ${uniqueId}`;
+
+  return courseFixture({
+    description: `E2E test course description ${uniqueId}`,
+    isPublished: true,
+    normalizedTitle: normalizeString(title),
+    organizationId: org.id,
+    slug: `e2e-${uniqueId}`,
+    title,
+  });
+}
+
+async function createTestChapter() {
+  const org = await prisma.organization.findUniqueOrThrow({
+    where: { slug: "ai" },
+  });
+
+  const course = await courseFixture({
+    isPublished: true,
+    organizationId: org.id,
+    slug: `e2e-course-${randomUUID().slice(0, 8)}`,
+  });
+
+  const uniqueId = randomUUID().slice(0, 8);
+  const title = `E2E Chapter ${uniqueId}`;
+
+  const chapter = await chapterFixture({
+    courseId: course.id,
+    description: `E2E test chapter description ${uniqueId}`,
+    isPublished: true,
+    normalizedTitle: normalizeString(title),
+    organizationId: org.id,
+    slug: `e2e-chapter-${uniqueId}`,
+    title,
+  });
+
+  return { chapter, course };
+}
+
+async function createTestLesson() {
+  const org = await prisma.organization.findUniqueOrThrow({
+    where: { slug: "ai" },
+  });
+
+  const course = await courseFixture({
+    isPublished: true,
+    organizationId: org.id,
+    slug: `e2e-course-${randomUUID().slice(0, 8)}`,
+  });
+
+  const chapter = await chapterFixture({
+    courseId: course.id,
+    isPublished: true,
+    organizationId: org.id,
+    slug: `e2e-chapter-${randomUUID().slice(0, 8)}`,
+  });
+
+  const uniqueId = randomUUID().slice(0, 8);
+  const title = `E2E Lesson ${uniqueId}`;
+
+  const lesson = await lessonFixture({
+    chapterId: chapter.id,
+    description: `E2E test lesson description ${uniqueId}`,
+    isPublished: true,
+    normalizedTitle: normalizeString(title),
+    organizationId: org.id,
+    slug: `e2e-lesson-${uniqueId}`,
+    title,
+  });
+
+  return { chapter, course, lesson };
+}
 
 // Helper to open command palette via click
 async function openCommandPalette(page: Page) {
@@ -109,48 +194,59 @@ test.describe("Command Palette - Static Items", () => {
 });
 
 test.describe("Command Palette - Course Search", () => {
-  test.beforeEach(async ({ ownerPage }) => {
+  test("does not search with fewer than 2 characters", async ({ ownerPage }) => {
+    const course = await createTestCourse();
     await ownerPage.goto("/ai");
     await openCommandPalette(ownerPage);
-  });
 
-  test("does not search with fewer than 2 characters", async ({ ownerPage }) => {
     const dialog = ownerPage.getByRole("dialog");
-    await dialog.getByPlaceholder(/search/i).fill("M");
+    await dialog.getByPlaceholder(/search/i).fill(course.title.charAt(0));
 
     // Should not show course results with single character
     await expect(dialog.getByText("Courses")).not.toBeVisible();
   });
 
   test("shows courses in results", async ({ ownerPage }) => {
+    const course = await createTestCourse();
+    await ownerPage.goto("/ai");
+    await openCommandPalette(ownerPage);
+
     const dialog = ownerPage.getByRole("dialog");
-    await dialog.getByPlaceholder(/search/i).fill("machine");
+    await dialog.getByPlaceholder(/search/i).fill(course.title);
 
     await expect(dialog.getByText("Courses")).toBeVisible();
-    await expect(dialog.getByText("Machine Learning").first()).toBeVisible();
+    await expect(dialog.getByText(course.title)).toBeVisible();
   });
 
   test("shows course description in results", async ({ ownerPage }) => {
-    const dialog = ownerPage.getByRole("dialog");
-    await dialog.getByPlaceholder(/search/i).fill("machine");
+    const course = await createTestCourse();
+    await ownerPage.goto("/ai");
+    await openCommandPalette(ownerPage);
 
-    await expect(dialog.getByText("Machine Learning").first()).toBeVisible();
-    await expect(
-      dialog.getByText(/patterns|predictions|computers|identify/i).first(),
-    ).toBeVisible();
+    const dialog = ownerPage.getByRole("dialog");
+    await dialog.getByPlaceholder(/search/i).fill(course.title);
+
+    await expect(dialog.getByText(course.title)).toBeVisible();
+    await expect(dialog.getByText(course.description!)).toBeVisible();
   });
 
   test("clicking course navigates to course page", async ({ ownerPage }) => {
+    const course = await createTestCourse();
+    await ownerPage.goto("/ai");
+    await openCommandPalette(ownerPage);
+
     const dialog = ownerPage.getByRole("dialog");
-    // Search for Python which only exists in English
-    await dialog.getByPlaceholder(/search/i).fill("python");
+    await dialog.getByPlaceholder(/search/i).fill(course.title);
 
-    await dialog.getByText("Python Programming").first().click();
+    await dialog.getByText(course.title).click();
 
-    await expect(ownerPage).toHaveURL(/\/ai\/c\/en\/python-programming/);
+    await expect(ownerPage).toHaveURL(new RegExp(`/ai/c/en/${course.slug}`));
   });
 
   test("shows No results found for non-matching query", async ({ ownerPage }) => {
+    await ownerPage.goto("/ai");
+    await openCommandPalette(ownerPage);
+
     const dialog = ownerPage.getByRole("dialog");
     await dialog.getByPlaceholder(/search/i).fill("xyznonexistent");
 
@@ -158,80 +254,87 @@ test.describe("Command Palette - Course Search", () => {
   });
 
   test("handles rapid typing correctly", async ({ ownerPage }) => {
+    const course = await createTestCourse();
+    await ownerPage.goto("/ai");
+    await openCommandPalette(ownerPage);
+
     const dialog = ownerPage.getByRole("dialog");
 
-    await dialog.getByPlaceholder(/search/i).pressSequentially("Machi", { delay: 50 });
+    const partialTitle = course.title.slice(0, 5);
+    await dialog.getByPlaceholder(/search/i).pressSequentially(partialTitle, { delay: 50 });
 
-    await dialog.getByPlaceholder(/search/i).fill("Machine");
+    await dialog.getByPlaceholder(/search/i).fill(course.title);
 
-    await expect(dialog.getByText("Machine Learning").first()).toBeVisible();
+    await expect(dialog.getByText(course.title)).toBeVisible();
   });
 });
 
 test.describe("Command Palette - Chapter Search", () => {
   test("shows chapters in search results", async ({ ownerPage }) => {
+    const { chapter } = await createTestChapter();
     await ownerPage.goto("/ai");
     await openCommandPalette(ownerPage);
 
     const dialog = ownerPage.getByRole("dialog");
-    await dialog.getByPlaceholder(/search/i).fill("introduction");
+    await dialog.getByPlaceholder(/search/i).fill(chapter.title);
 
     await expect(dialog.getByText("Chapters")).toBeVisible();
-    await expect(dialog.getByText("Introduction to Machine Learning").first()).toBeVisible();
+    await expect(dialog.getByText(chapter.title)).toBeVisible();
   });
 
   test("shows chapter position badge", async ({ ownerPage }) => {
+    const { chapter } = await createTestChapter();
     await ownerPage.goto("/ai");
     await openCommandPalette(ownerPage);
 
     const dialog = ownerPage.getByRole("dialog");
-    await dialog.getByPlaceholder(/search/i).fill("data preparation");
+    await dialog.getByPlaceholder(/search/i).fill(chapter.title);
 
-    // Data Preparation is position 1 (second chapter, 0-indexed position)
     const chapterItem = dialog.getByRole("option").filter({
-      hasText: "Data Preparation",
+      hasText: chapter.title,
     });
     await expect(chapterItem).toBeVisible();
   });
 
   test("clicking chapter navigates to chapter page", async ({ ownerPage }) => {
+    const { chapter, course } = await createTestChapter();
     await ownerPage.goto("/ai");
     await openCommandPalette(ownerPage);
 
     const dialog = ownerPage.getByRole("dialog");
-    await dialog.getByPlaceholder(/search/i).fill("introduction");
+    await dialog.getByPlaceholder(/search/i).fill(chapter.title);
 
-    await dialog.getByText("Introduction to Machine Learning").first().click();
+    await dialog.getByText(chapter.title).click();
 
-    await expect(ownerPage).toHaveURL(
-      /\/ai\/c\/en\/machine-learning\/ch\/introduction-to-machine-learning/,
-    );
+    await expect(ownerPage).toHaveURL(new RegExp(`/ai/c/en/${course.slug}/ch/${chapter.slug}`));
   });
 });
 
 test.describe("Command Palette - Lesson Search", () => {
   test("shows lessons in search results", async ({ ownerPage }) => {
+    const { lesson } = await createTestLesson();
     await ownerPage.goto("/ai");
     await openCommandPalette(ownerPage);
 
     const dialog = ownerPage.getByRole("dialog");
-    await dialog.getByPlaceholder(/search/i).fill("history");
+    await dialog.getByPlaceholder(/search/i).fill(lesson.title);
 
     await expect(dialog.getByText("Lessons")).toBeVisible();
-    await expect(dialog.getByText("History of Machine Learning").first()).toBeVisible();
+    await expect(dialog.getByText(lesson.title)).toBeVisible();
   });
 
   test("clicking lesson navigates to lesson page", async ({ ownerPage }) => {
+    const { chapter, course, lesson } = await createTestLesson();
     await ownerPage.goto("/ai");
     await openCommandPalette(ownerPage);
 
     const dialog = ownerPage.getByRole("dialog");
-    await dialog.getByPlaceholder(/search/i).fill("history");
+    await dialog.getByPlaceholder(/search/i).fill(lesson.title);
 
-    await dialog.getByText("History of Machine Learning").first().click();
+    await dialog.getByText(lesson.title).click();
 
     await expect(ownerPage).toHaveURL(
-      /\/ai\/c\/en\/machine-learning\/ch\/introduction-to-machine-learning\/l\/history-of-ml/,
+      new RegExp(`/ai/c/en/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`),
     );
   });
 });

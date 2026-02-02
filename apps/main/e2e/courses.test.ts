@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
+import { normalizeString } from "@zoonk/utils/string";
 import { expect, test } from "./fixtures";
 
 async function createUnpublishedCourse() {
@@ -8,12 +9,16 @@ async function createUnpublishedCourse() {
     where: { slug: "ai" },
   });
 
+  const uniqueId = randomUUID().slice(0, 8);
+  const title = `E2E Curso Não Publicado ${uniqueId}`;
+
   return courseFixture({
     isPublished: false,
     language: "pt",
+    normalizedTitle: normalizeString(title),
     organizationId: org.id,
-    slug: `e2e-unpublished-${randomUUID().slice(0, 8)}`,
-    title: `Curso Não Publicado ${randomUUID().slice(0, 8)}`,
+    slug: `e2e-unpublished-${uniqueId}`,
+    title,
   });
 }
 
@@ -49,17 +54,18 @@ test.describe("Courses Page - Locale", () => {
     // Page title should be translated
     await expect(page.getByRole("heading", { name: /explorar cursos/i })).toBeVisible();
 
-    await expect(page.getByText("Machine Learning").first()).toBeVisible();
+    // "Inglês" is a seeded PT course with unique title that should be visible in the courses list
+    await expect(page.getByRole("link", { name: /^Inglês/i })).toBeVisible();
   });
 
   test("unpublished courses are hidden", async ({ page }) => {
-    const course = await createUnpublishedCourse();
+    const unpublishedCourse = await createUnpublishedCourse();
     await page.goto("/pt/courses");
 
-    // Wait for page to load with expected content
-    await expect(page.getByText("Machine Learning").first()).toBeVisible();
+    // Wait for page to load - verify a seeded PT course is visible
+    await expect(page.getByRole("link", { name: /^Inglês/i })).toBeVisible();
 
     // Unpublished course should NOT be visible
-    await expect(page.getByText(course.title)).not.toBeVisible();
+    await expect(page.getByText(unpublishedCourse.title)).not.toBeVisible();
   });
 });

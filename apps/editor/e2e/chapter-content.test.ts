@@ -86,7 +86,7 @@ test.describe("Chapter Content Page", () => {
       "machine-learning",
       "introduction-to-machine-learning",
     );
-    const slugInput = authenticatedPage.getByLabel(/url address/i);
+    const slugInput = authenticatedPage.getByRole("textbox", { name: /url address/i });
 
     await slugInput.fill("data-preparation");
 
@@ -104,7 +104,7 @@ test.describe("Chapter Content Page", () => {
       "machine-learning",
       "introduction-to-machine-learning",
     );
-    const slugInput = authenticatedPage.getByLabel(/url address/i);
+    const slugInput = authenticatedPage.getByRole("textbox", { name: /url address/i });
 
     await slugInput.fill("");
 
@@ -115,7 +115,7 @@ test.describe("Chapter Content Page", () => {
     const { chapter, course } = await createTestChapter();
     await navigateToChapterPage(authenticatedPage, course.slug, chapter.slug);
 
-    const slugInput = authenticatedPage.getByLabel(/url address/i);
+    const slugInput = authenticatedPage.getByRole("textbox", { name: /url address/i });
     const uniqueSlug = `test-slug-${randomUUID().slice(0, 8)}`;
 
     await slugInput.fill(uniqueSlug);
@@ -138,7 +138,7 @@ test.describe("Chapter Content Page", () => {
       "machine-learning",
       "introduction-to-machine-learning",
     );
-    const slugInput = authenticatedPage.getByLabel(/url address/i);
+    const slugInput = authenticatedPage.getByRole("textbox", { name: /url address/i });
 
     await slugInput.fill("some-other-slug");
     await authenticatedPage.getByRole("button", { name: /cancel/i }).click();
@@ -150,7 +150,7 @@ test.describe("Chapter Content Page", () => {
     const { chapter, course } = await createTestChapter();
     await navigateToChapterPage(authenticatedPage, course.slug, chapter.slug);
 
-    const slugInput = authenticatedPage.getByLabel(/url address/i);
+    const slugInput = authenticatedPage.getByRole("textbox", { name: /url address/i });
     const uniqueSlug = `enter-test-${randomUUID().slice(0, 8)}`;
 
     await slugInput.fill(uniqueSlug);
@@ -173,7 +173,7 @@ test.describe("Chapter Content Page", () => {
       "machine-learning",
       "introduction-to-machine-learning",
     );
-    const slugInput = authenticatedPage.getByLabel(/url address/i);
+    const slugInput = authenticatedPage.getByRole("textbox", { name: /url address/i });
 
     await slugInput.fill("escape-test-slug");
     await slugInput.press("Escape");

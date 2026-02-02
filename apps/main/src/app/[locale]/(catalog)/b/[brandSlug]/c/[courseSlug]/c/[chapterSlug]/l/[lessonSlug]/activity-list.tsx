@@ -1,9 +1,10 @@
 import { type ActivityForList } from "@/data/activities/list-lesson-activities";
 import { Link } from "@/i18n/navigation";
 import { type ActivityKindInfo } from "@/lib/activities";
+import { getExtracted } from "next-intl/server";
 import { ActivityIndicator } from "./activity-indicator";
 
-export function ActivityList({
+export async function ActivityList({
   activities,
   baseHref,
   kindMeta,
@@ -12,12 +13,14 @@ export function ActivityList({
   baseHref: string;
   kindMeta: Map<string, ActivityKindInfo>;
 }) {
+  const t = await getExtracted();
+
   if (activities.length === 0) {
     return null;
   }
 
   return (
-    <ul className="flex flex-col gap-1">
+    <ul aria-label={t("Activities")} className="flex flex-col gap-1">
       {activities.map((activity) => {
         const meta = kindMeta.get(activity.kind);
 

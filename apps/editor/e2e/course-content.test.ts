@@ -72,7 +72,7 @@ test.describe("Course Content Page", () => {
 
   test("shows validation error for duplicate slug", async ({ authenticatedPage }) => {
     await navigateToCoursePage(authenticatedPage, "machine-learning");
-    const slugInput = authenticatedPage.getByLabel(/url address/i);
+    const slugInput = authenticatedPage.getByRole("textbox", { name: /url address/i });
 
     await slugInput.fill("spanish");
 
@@ -86,7 +86,7 @@ test.describe("Course Content Page", () => {
 
   test("disables save for empty slug", async ({ authenticatedPage }) => {
     await navigateToCoursePage(authenticatedPage, "machine-learning");
-    const slugInput = authenticatedPage.getByLabel(/url address/i);
+    const slugInput = authenticatedPage.getByRole("textbox", { name: /url address/i });
 
     await slugInput.fill("");
 
@@ -97,7 +97,7 @@ test.describe("Course Content Page", () => {
     const course = await createTestCourse();
     await navigateToCoursePage(authenticatedPage, course.slug);
 
-    const slugInput = authenticatedPage.getByLabel(/url address/i);
+    const slugInput = authenticatedPage.getByRole("textbox", { name: /url address/i });
     const uniqueSlug = `test-slug-${randomUUID().slice(0, 8)}`;
 
     await slugInput.fill(uniqueSlug);
@@ -114,7 +114,7 @@ test.describe("Course Content Page", () => {
 
   test("reverts changes on cancel", async ({ authenticatedPage }) => {
     await navigateToCoursePage(authenticatedPage, "machine-learning");
-    const slugInput = authenticatedPage.getByLabel(/url address/i);
+    const slugInput = authenticatedPage.getByRole("textbox", { name: /url address/i });
 
     await slugInput.fill("some-other-slug");
     await authenticatedPage.getByRole("button", { name: /cancel/i }).click();
@@ -126,7 +126,7 @@ test.describe("Course Content Page", () => {
     const course = await createTestCourse();
     await navigateToCoursePage(authenticatedPage, course.slug);
 
-    const slugInput = authenticatedPage.getByLabel(/url address/i);
+    const slugInput = authenticatedPage.getByRole("textbox", { name: /url address/i });
     const uniqueSlug = `enter-test-${randomUUID().slice(0, 8)}`;
 
     await slugInput.fill(uniqueSlug);
@@ -143,7 +143,7 @@ test.describe("Course Content Page", () => {
 
   test("cancels on Escape key", async ({ authenticatedPage }) => {
     await navigateToCoursePage(authenticatedPage, "machine-learning");
-    const slugInput = authenticatedPage.getByLabel(/url address/i);
+    const slugInput = authenticatedPage.getByRole("textbox", { name: /url address/i });
 
     await slugInput.fill("escape-test-slug");
     await slugInput.press("Escape");
