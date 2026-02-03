@@ -46,9 +46,7 @@ export async function LessonList({
 
               <CatalogListItemContent>
                 <CatalogListItemTitle>{lesson.title}</CatalogListItemTitle>
-                {lesson.description && (
-                  <CatalogListItemDescription>{lesson.description}</CatalogListItemDescription>
-                )}
+                <CatalogListItemDescription>{lesson.description}</CatalogListItemDescription>
               </CatalogListItemContent>
             </CatalogListItem>
           ))}
