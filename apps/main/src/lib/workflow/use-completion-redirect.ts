@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useEffect, useEffectEvent } from "react";
 import { type GenerationStatus } from "./generation-store";
 
@@ -12,11 +11,9 @@ export function useCompletionRedirect(config: {
   url: string;
 }) {
   const { delay = DEFAULT_REDIRECT_DELAY_MS, status, url } = config;
-  const router = useRouter();
 
   const onRedirect = useEffectEvent(() => {
-    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- dynamic route string requires assertion
-    router.push(url as never);
+    globalThis.location.href = url;
   });
 
   useEffect(() => {

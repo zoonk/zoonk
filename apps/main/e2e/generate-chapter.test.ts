@@ -1,6 +1,10 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { type Page, type Route } from "@zoonk/e2e/fixtures";
+import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
+import { courseFixture } from "@zoonk/testing/fixtures/courses";
+import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
+import { normalizeString } from "@zoonk/utils/string";
 import { expect, test } from "./fixtures";
 
 /**
@@ -96,6 +100,7 @@ async function setupMockApis(page: Page, options: MockApiOptions = {}): Promise<
 
 /**
  * Gets a chapter ID with pending generation status for testing.
+ * Uses the seeded e2e-no-lessons-chapter for tests that don't need isolation.
  */
 async function getPendingChapterId(): Promise<number> {
   const chapter = await prisma.chapter.findFirst({
@@ -111,6 +116,39 @@ async function getPendingChapterId(): Promise<number> {
   }
 
   return chapter.id;
+}
+
+/**
+ * Creates a chapter with pending generation status for testing the generation workflow.
+ */
+async function createPendingChapter() {
+  const org = await prisma.organization.findUniqueOrThrow({
+    where: { slug: "ai" },
+  });
+
+  const uniqueId = randomUUID().slice(0, 8);
+  const courseTitle = `E2E Generation Course ${uniqueId}`;
+  const chapterTitle = `E2E Generation Chapter ${uniqueId}`;
+
+  const course = await courseFixture({
+    isPublished: true,
+    normalizedTitle: normalizeString(courseTitle),
+    organizationId: org.id,
+    slug: `e2e-gen-course-${uniqueId}`,
+    title: courseTitle,
+  });
+
+  const chapter = await chapterFixture({
+    courseId: course.id,
+    generationStatus: "pending",
+    isPublished: true,
+    normalizedTitle: normalizeString(chapterTitle),
+    organizationId: org.id,
+    slug: `e2e-gen-chapter-${uniqueId}`,
+    title: chapterTitle,
+  });
+
+  return { chapter, course, organizationId: org.id };
 }
 
 /**
@@ -176,63 +214,69 @@ test.describe("Generate Chapter Page - No Subscription", () => {
 
 test.describe("Generate Chapter Page - With Subscription", () => {
   test("shows generation UI and completes workflow", async ({ userWithoutProgress }) => {
-    const subscription = await createTestSubscription();
+    await createTestSubscription();
+    const { chapter, organizationId } = await createPendingChapter();
 
-    try {
-      const chapterId = await getPendingChapterId();
+    // Create a lesson so the chapter page doesn't redirect back to /generate
+    const uniqueId = randomUUID().slice(0, 8);
+    await lessonFixture({
+      chapterId: chapter.id,
+      isPublished: true,
+      organizationId,
+      slug: `e2e-generated-lesson-${uniqueId}`,
+      title: `E2E Generated Lesson ${uniqueId}`,
+    });
 
-      await setupMockApis(userWithoutProgress, {
-        streamMessages: [
-          { status: "started", step: "getChapter" },
-          { status: "completed", step: "getChapter" },
-          { status: "started", step: "setChapterAsRunning" },
-          { status: "completed", step: "setChapterAsRunning" },
-          { status: "started", step: "generateLessons" },
-          { status: "completed", step: "generateLessons" },
-          { status: "started", step: "addLessons" },
-          { status: "completed", step: "addLessons" },
-          { status: "started", step: "setChapterAsCompleted" },
-          { status: "completed", step: "setChapterAsCompleted" },
-        ],
-      });
+    await setupMockApis(userWithoutProgress, {
+      streamMessages: [
+        { status: "started", step: "getChapter" },
+        { status: "completed", step: "getChapter" },
+        { status: "started", step: "setChapterAsRunning" },
+        { status: "completed", step: "setChapterAsRunning" },
+        { status: "started", step: "generateLessons" },
+        { status: "completed", step: "generateLessons" },
+        { status: "started", step: "addLessons" },
+        { status: "completed", step: "addLessons" },
+        { status: "started", step: "setChapterAsCompleted" },
+        { status: "completed", step: "setChapterAsCompleted" },
+      ],
+    });
 
-      await userWithoutProgress.goto(`/generate/ch/${chapterId}`);
+    await userWithoutProgress.goto(`/generate/ch/${chapter.id}`);
 
-      // Should show completion message
-      await expect(userWithoutProgress.getByText(/lessons generated/i)).toBeVisible({
-        timeout: 10_000,
-      });
+    // Should show completion message
+    await expect(userWithoutProgress.getByText(/lessons generated/i)).toBeVisible({
+      timeout: 10_000,
+    });
 
-      await expect(userWithoutProgress.getByText(/redirecting to your chapter/i)).toBeVisible();
+    await expect(userWithoutProgress.getByText(/redirecting to your chapter/i)).toBeVisible();
 
-      // Should redirect to course page
-      await userWithoutProgress.waitForURL(/\/b\/ai\/c\//, { timeout: 10_000 });
-    } finally {
-      await prisma.subscription.delete({ where: { id: subscription.id } });
-    }
+    // Update chapter status - the redirect will happen in ~1.5s via location.href
+    await prisma.chapter.update({
+      data: { generationStatus: "completed" },
+      where: { id: chapter.id },
+    });
+
+    // Should redirect to chapter page
+    await userWithoutProgress.waitForURL(/\/b\/ai\/c\//, { timeout: 10_000 });
   });
 
   test("shows error when stream returns error status", async ({ userWithoutProgress }) => {
-    const subscription = await createTestSubscription();
+    await createTestSubscription();
+    const chapterId = await getPendingChapterId();
 
-    try {
-      const chapterId = await getPendingChapterId();
+    await setupMockApis(userWithoutProgress, {
+      streamMessages: [
+        { status: "started", step: "getChapter" },
+        { status: "error", step: "getChapter" },
+      ],
+    });
 
-      await setupMockApis(userWithoutProgress, {
-        streamMessages: [
-          { status: "started", step: "getChapter" },
-          { status: "error", step: "getChapter" },
-        ],
-      });
+    await userWithoutProgress.goto(`/generate/ch/${chapterId}`);
 
-      await userWithoutProgress.goto(`/generate/ch/${chapterId}`);
-
-      await expect(userWithoutProgress.getByText(/generation failed/i)).toBeVisible({
-        timeout: 10_000,
-      });
-    } finally {
-      await prisma.subscription.delete({ where: { id: subscription.id } });
-    }
+    await expect(userWithoutProgress.getByText(/generation failed/i)).toBeVisible({
+      timeout: 10_000,
+    });
   });
 });
 
