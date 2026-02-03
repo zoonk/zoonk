@@ -301,29 +301,63 @@ test.describe("Command Palette - Course Search", () => {
   });
 
   test("shows exact match first when searching", async ({ page }) => {
+    const org = await prisma.organization.findUniqueOrThrow({
+      where: { slug: "ai" },
+    });
+
+    // Create test courses with a unique prefix to avoid conflicts
+    const uniqueId = randomUUID().slice(0, 8);
+    const exactMatchTitle = `Zlaw ${uniqueId}`;
+    const partialMatchTitles = [
+      `Criminal Zlaw ${uniqueId}`,
+      `Tax Zlaw ${uniqueId}`,
+      `Civil Zlaw ${uniqueId}`,
+    ];
+
+    // Create exact match course
+    await courseFixture({
+      description: `Exact match course ${uniqueId}`,
+      isPublished: true,
+      normalizedTitle: normalizeString(exactMatchTitle),
+      organizationId: org.id,
+      slug: `zlaw-${uniqueId}`,
+      title: exactMatchTitle,
+    });
+
+    // Create partial match courses
+    await Promise.all(
+      partialMatchTitles.map((title) =>
+        courseFixture({
+          description: `Partial match course ${uniqueId}`,
+          isPublished: true,
+          normalizedTitle: normalizeString(title),
+          organizationId: org.id,
+          slug: `${title.toLowerCase().replaceAll(/\s+/g, "-")}-${uniqueId}`,
+          title,
+        }),
+      ),
+    );
+
     await page.goto("/");
     await openCommandPalette(page);
 
     const dialog = page.getByRole("dialog");
-    await dialog.getByPlaceholder(/search/i).fill("law");
+    await dialog.getByPlaceholder(/search/i).fill(`zlaw ${uniqueId}`);
 
-    // Wait for results to load - multiple law courses exist (Law, Criminal Law, Tax Law, Civil Law)
-    // The first option should be the exact match "Law", not a partial match
+    // Wait for results to load
     const options = dialog.getByRole("option");
     await expect(options.first()).toBeVisible();
 
-    // The first result should be the exact match "Law", not "Criminal Law", "Tax Law", or "Civil Law"
-    // Text format is "TitleDescription" (concatenated), so we check it starts with "Law" followed
-    // by the description, not by another word like "Criminal"
+    // The first result should be the exact match, not a partial match
     const firstOption = options.first();
     const firstOptionText = await firstOption.textContent();
 
-    // Should start with "Law" but NOT with partial matches like "Criminal Law", "Tax Law", "Civil Law"
     expect(firstOptionText).toBeTruthy();
-    expect(firstOptionText!.startsWith("Law")).toBe(true);
-    expect(firstOptionText!.startsWith("Criminal Law")).toBe(false);
-    expect(firstOptionText!.startsWith("Tax Law")).toBe(false);
-    expect(firstOptionText!.startsWith("Civil Law")).toBe(false);
+    expect(firstOptionText!.startsWith(exactMatchTitle)).toBe(true);
+    // Should NOT start with any partial matches
+    for (const partialTitle of partialMatchTitles) {
+      expect(firstOptionText!.startsWith(partialTitle)).toBe(false);
+    }
   });
 });
 
