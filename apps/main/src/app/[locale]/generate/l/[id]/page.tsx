@@ -1,3 +1,10 @@
-export default function GenerateLessonActivitiesPage() {
-  return <div>placeholder page, this will be updated soon</div>;
+import { Suspense } from "react";
+import { GenerateLessonContent, GenerateLessonFallback } from "./generate-lesson-content";
+
+export default function GenerateLessonPage(props: PageProps<"/[locale]/generate/l/[id]">) {
+  return (
+    <Suspense fallback={<GenerateLessonFallback />}>
+      <GenerateLessonContent params={props.params} />
+    </Suspense>
+  );
 }

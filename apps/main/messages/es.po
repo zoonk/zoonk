@@ -911,18 +911,21 @@ msgstr "Generar capítulo"
 
 #: src/app/[locale]/generate/ch/[id]/generation-client.tsx
 #: src/app/[locale]/generate/cs/[id]/generation-client.tsx
+#: src/app/[locale]/generate/l/[id]/generation-client.tsx
 msgctxt "/Nrb/0"
 msgid "Generation progress"
 msgstr "Progreso de generación"
 
 #: src/app/[locale]/generate/ch/[id]/generation-client.tsx
 #: src/app/[locale]/generate/cs/[id]/generation-client.tsx
+#: src/app/[locale]/generate/l/[id]/generation-client.tsx
 msgctxt "FazwRl"
 msgid "Try again"
 msgstr "Intentar de nuevo"
 
 #: src/app/[locale]/generate/ch/[id]/generation-client.tsx
 #: src/app/[locale]/generate/cs/[id]/generation-client.tsx
+#: src/app/[locale]/generate/l/[id]/generation-client.tsx
 msgctxt "ssRq8D"
 msgid "Generation failed"
 msgstr "La generación falló"
@@ -939,6 +942,7 @@ msgstr "Creando tus lecciones"
 
 #: src/app/[locale]/generate/ch/[id]/generation-client.tsx
 #: src/app/[locale]/generate/cs/[id]/generation-client.tsx
+#: src/app/[locale]/generate/l/[id]/generation-client.tsx
 msgctxt "W/5hwr"
 msgid "Something went wrong. Please try again."
 msgstr "Algo salió mal. Por favor, intenta de nuevo."
@@ -956,11 +960,13 @@ msgstr "Generando lecciones"
 
 #: src/app/[locale]/generate/ch/[id]/use-generation-phases.ts
 #: src/app/[locale]/generate/cs/[id]/use-generation-phases.ts
+#: src/app/[locale]/generate/l/[id]/use-generation-phases.ts
 msgctxt "fY0l+a"
 msgid "Generating activities"
 msgstr "Generando actividades"
 
 #: src/app/[locale]/generate/ch/[id]/use-generation-phases.ts
+#: src/app/[locale]/generate/l/[id]/use-generation-phases.ts
 msgctxt "V4F+/7"
 msgid "Finishing up"
 msgstr "Finalizando"
@@ -1014,6 +1020,36 @@ msgstr "Planeando capítulos"
 msgctxt "rso9iW"
 msgid "Checking for existing course"
 msgstr "Verificando si el curso existe"
+
+#: src/app/[locale]/generate/l/[id]/generate-lesson-content.tsx
+msgctxt "GG4VCc"
+msgid "Generate Lesson"
+msgstr "Generar lección"
+
+#: src/app/[locale]/generate/l/[id]/generation-client.tsx
+msgctxt "dO1XtE"
+msgid "Creating your activities"
+msgstr "Creando tus actividades"
+
+#: src/app/[locale]/generate/l/[id]/generation-client.tsx
+msgctxt "FYb23f"
+msgid "Activities generated"
+msgstr "Actividades generadas"
+
+#: src/app/[locale]/generate/l/[id]/generation-client.tsx
+msgctxt "hkEZZA"
+msgid "Redirecting to your lesson..."
+msgstr "Redirigiendo a tu lección..."
+
+#: src/app/[locale]/generate/l/[id]/use-generation-phases.ts
+msgctxt "C5CAfi"
+msgid "Loading lesson information"
+msgstr "Cargando información de la lección"
+
+#: src/app/[locale]/generate/l/[id]/use-generation-phases.ts
+msgctxt "cYDCI+"
+msgid "Determining lesson type"
+msgstr "Determinando tipo de lección"
 
 #: src/app/[locale]/privacy/page.tsx
 msgctxt "iql85X"
