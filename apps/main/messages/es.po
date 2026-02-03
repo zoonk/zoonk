@@ -133,7 +133,7 @@ msgstr "Suscripción"
 #: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/chapter-header.tsx
 msgctxt "B9hCYt"
 msgid "Chapter {position}"
-msgstr ""
+msgstr "Capítulo {position}"
 
 #: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/activity-list.tsx
 msgctxt "4o5CAP"
@@ -153,22 +153,22 @@ msgstr "Lección {position}"
 #: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
 msgctxt "FuT9vz"
 msgid "No lessons found"
-msgstr ""
+msgstr "No se encontraron lecciones"
 
 #: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
 msgctxt "ssvp3R"
 msgid "Search lessons..."
-msgstr ""
+msgstr "Buscar lecciones..."
 
 #: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/chapter-list.tsx
 msgctxt "3SOcGR"
 msgid "Search chapters..."
-msgstr ""
+msgstr "Buscar capítulos..."
 
 #: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/chapter-list.tsx
 msgctxt "8udPa+"
 msgid "No chapters found"
-msgstr ""
+msgstr "No se encontraron capítulos"
 
 #: src/app/[locale]/(catalog)/best-day.tsx
 #: src/app/[locale]/(performance)/score/score-insights.tsx
@@ -941,7 +941,7 @@ msgstr "Algo salió mal. Por favor, intenta de nuevo."
 #: src/app/[locale]/generate/ch/[id]/generation-client.tsx
 msgctxt "X7COCl"
 msgid "Redirecting to your chapter..."
-msgstr ""
+msgstr "Redirigiendo a tu capítulo..."
 
 #: src/app/[locale]/generate/ch/[id]/use-generation-phases.ts
 #: src/app/[locale]/generate/cs/[id]/use-generation-phases.ts

@@ -214,15 +214,14 @@ checksums:
     User%20menu/singular: ee471ecb3870493792e60d1b41fcce86
     Support/singular: 55aab5fd0f31a9cb055a2edeeedfaf63
     Subscription/singular: ba9f3675e18987d067d48533c8897343
+    Chapter%20%7Bposition%7D/singular: f6459365d5d8413a99fa97bc803f9024
     Not%20completed/singular: d011b1ae92a1a8a2676a5d6999bbe6d4
     Completed/singular: 0e4bbce9985f25eb673d9a054c8d5334
-    Activities/singular: 1c01b2fc4db670ab174e2220cf5e79f8
     Lesson%20%7Bposition%7D/singular: 2283c16cc7404682a2380fb8318f42e2
-    Lessons%20haven't%20been%20generated%20for%20this%20chapter%20yet./singular: ab7a5c1b0cf16f1a8b9cf87487800e3f
-    Generate%20lessons/singular: 99814020e2da40d3f3146eaba4e42959
-    Search%20chapters%20and%20lessons.../singular: 9efe924871c3c733391ccd1e3c6d044f
-    Search%20chapters%20and%20lessons/singular: 1478233cb8fcb9b66cea6661a11d388c
-    No%20chapters%20or%20lessons%20found/singular: 2fe297df8b5d61f27245373ef71d1f10
+    No%20lessons%20found/singular: 39a13337bf7998816b2841143d8891e8
+    Search%20lessons.../singular: fad37eaa75cdc3a12e9d13b4974c91d7
+    Search%20chapters.../singular: 6ffe1deeaba59c7a7883c416c1aff611
+    No%20chapters%20found/singular: df124bf6f027ecb93afa5941531a3f39
     "%7Bday%7D%20with%20%7Bvalue%7D%25/singular": 6e5416262bf719f632e31ed1a8236801
     Best%20day/singular: c7d1324abc9d2515ec3bbc955b317404
     Past%203%20months/singular: 0784d60565f6812fce36c72252663412
@@ -365,15 +364,16 @@ checksums:
     Generate%20Chapter/singular: 12160bab066da65413de4b511e402446
     Generation%20progress/singular: 4940d589badd32bb89f93989945f68bb
     Try%20again/singular: 33dd8820e743e35a66e6977f69e9d3b5
-    Redirecting%20to%20your%20course.../singular: 9f268e497368578b98d0125f5ac95902
     Generation%20failed/singular: 70cc0b7e6093afa33e32e6ac474d1fc7
     Lessons%20generated/singular: 7c32079f95da198e0d7f5351e47eb64f
     Creating%20your%20lessons/singular: 93571965dc04dcef0bf92f212b3b34d3
     Something%20went%20wrong.%20Please%20try%20again./singular: c62a7718d9a1e9c4ffb707807550f836
+    Redirecting%20to%20your%20chapter.../singular: 1187b3b828d92daa195cc8d103ecbcc4
     Generating%20lessons/singular: c4cd98341fd568b3cc5ab0daff85f483
     Finishing%20up/singular: 5db7ffd9f1807c8e5936ddca2fe8d1b7
     Loading%20chapter%20information/singular: 7a310c88460ccc1d8eb14885361dcfa6
     Creating%20your%20course/singular: 02c33db1106e7478e5cbd00fa5f20532
+    Redirecting%20to%20your%20course.../singular: 9f268e497368578b98d0125f5ac95902
     Course%20generated/singular: fc6cbef2e4b3ac26d4125c8f67bbb99d
     Loading%20course%20information/singular: f2873300c0715a6fc4b3e050d7176037
     Setting%20up%20course/singular: 03144d8ba4e9c555d82e95014047a203

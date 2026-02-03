@@ -133,7 +133,7 @@ msgstr "Assinatura"
 #: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/chapter-header.tsx
 msgctxt "B9hCYt"
 msgid "Chapter {position}"
-msgstr ""
+msgstr "Capítulo {position}"
 
 #: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/activity-list.tsx
 msgctxt "4o5CAP"
@@ -941,7 +941,7 @@ msgstr "Algo deu errado. Por favor, tente novamente."
 #: src/app/[locale]/generate/ch/[id]/generation-client.tsx
 msgctxt "X7COCl"
 msgid "Redirecting to your chapter..."
-msgstr ""
+msgstr "Redirecionando para o seu capítulo..."
 
 #: src/app/[locale]/generate/ch/[id]/use-generation-phases.ts
 #: src/app/[locale]/generate/cs/[id]/use-generation-phases.ts
