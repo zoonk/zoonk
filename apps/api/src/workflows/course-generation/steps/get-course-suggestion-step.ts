@@ -1,4 +1,4 @@
-import { getCourseSuggestionById } from "@/data/courses/course-suggestions";
+import { prisma } from "@zoonk/db";
 import { FatalError } from "workflow";
 import { streamStatus } from "../stream-status";
 import { type CourseSuggestionData } from "../types";
@@ -10,7 +10,17 @@ export async function getCourseSuggestionStep(
 
   await streamStatus({ status: "started", step: "getCourseSuggestion" });
 
-  const suggestion = await getCourseSuggestionById(courseSuggestionId);
+  const suggestion = await prisma.courseSuggestion.findUnique({
+    select: {
+      description: true,
+      generationRunId: true,
+      generationStatus: true,
+      language: true,
+      slug: true,
+      title: true,
+    },
+    where: { id: courseSuggestionId },
+  });
 
   if (!suggestion) {
     await streamStatus({ status: "error", step: "getCourseSuggestion" });

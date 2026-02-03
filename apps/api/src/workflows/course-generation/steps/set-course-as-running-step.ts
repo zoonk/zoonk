@@ -1,5 +1,5 @@
-import { updateAICourse } from "@/data/courses/update-ai-course";
-import { updateCourseSuggestionStatus } from "@/data/courses/update-course-suggestion-status";
+import { prisma } from "@zoonk/db";
+import { safeAsync } from "@zoonk/utils/error";
 import { streamStatus } from "../stream-status";
 
 export async function setCourseAsRunningStep(input: {
@@ -12,15 +12,21 @@ export async function setCourseAsRunningStep(input: {
   await streamStatus({ status: "started", step: "setCourseAsRunning" });
 
   const [courseResult, suggestionResult] = await Promise.all([
-    updateAICourse({
-      courseId: input.courseId,
-      generationStatus: "running",
-    }),
-    updateCourseSuggestionStatus({
-      generationRunId: input.workflowRunId,
-      generationStatus: "running",
-      id: input.courseSuggestionId,
-    }),
+    safeAsync(() =>
+      prisma.course.update({
+        data: { generationStatus: "running" },
+        where: { id: input.courseId },
+      }),
+    ),
+    safeAsync(() =>
+      prisma.courseSuggestion.update({
+        data: {
+          generationRunId: input.workflowRunId,
+          generationStatus: "running",
+        },
+        where: { id: input.courseSuggestionId },
+      }),
+    ),
   ]);
 
   const error = courseResult.error || suggestionResult.error;
