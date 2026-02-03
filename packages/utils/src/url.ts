@@ -1,4 +1,4 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://api.zoonk.com";
+import { API_URL } from "./constants";
 
 const isVercelProduction = process.env.VERCEL_ENV === "production";
 const isProduction = process.env.NODE_ENV === "production";
@@ -51,13 +51,6 @@ export function buildAuthLoginUrl({ callbackUrl }: { callbackUrl: string }): str
   authUrl.searchParams.set("redirectTo", callbackUrl);
 
   return authUrl.toString();
-}
-
-/**
- * Returns the base URL of the API app.
- */
-export function getApiUrl(): string {
-  return API_URL;
 }
 
 /**
