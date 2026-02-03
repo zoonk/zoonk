@@ -11,6 +11,8 @@ import {
   MediaCardPopover,
   MediaCardPopoverMeta,
   MediaCardPopoverSource,
+  MediaCardPopoverSourceLink,
+  MediaCardPopoverSourceSeparator,
   MediaCardPopoverText,
   MediaCardTitle,
   MediaCardTrigger,
@@ -56,19 +58,17 @@ export async function LessonHeader({
 
         <MediaCardPopoverMeta>
           <MediaCardPopoverSource>
-            <Link
-              className="text-muted-foreground hover:text-foreground transition-colors"
-              href={`/b/${brandSlug}/c/${courseSlug}`}
+            <MediaCardPopoverSourceLink
+              render={<Link href={`/b/${brandSlug}/c/${courseSlug}`} />}
             >
               {lesson.chapter.course.title}
-            </Link>
-            <span className="text-muted-foreground/40 mx-1.5">/</span>
-            <Link
-              className="text-muted-foreground hover:text-foreground transition-colors"
-              href={`/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}`}
+            </MediaCardPopoverSourceLink>
+            <MediaCardPopoverSourceSeparator />
+            <MediaCardPopoverSourceLink
+              render={<Link href={`/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}`} />}
             >
               {lesson.chapter.title}
-            </Link>
+            </MediaCardPopoverSourceLink>
           </MediaCardPopoverSource>
         </MediaCardPopoverMeta>
       </MediaCardPopover>

@@ -15,6 +15,7 @@ import {
   MediaCardPopoverBadges,
   MediaCardPopoverMeta,
   MediaCardPopoverSource,
+  MediaCardPopoverSourceLink,
   MediaCardPopoverText,
   MediaCardTitle,
   MediaCardTrigger,
@@ -70,7 +71,11 @@ export async function CourseHeader({
         <MediaCardPopoverText>{course.description}</MediaCardPopoverText>
 
         <MediaCardPopoverMeta>
-          <MediaCardPopoverSource>{course.organization.name}</MediaCardPopoverSource>
+          <MediaCardPopoverSource>
+            <MediaCardPopoverSourceLink render={<Link href={`/b/${brandSlug}`} />}>
+              {course.organization.name}
+            </MediaCardPopoverSourceLink>
+          </MediaCardPopoverSource>
 
           {displayCategories.length > 0 && (
             <MediaCardPopoverBadges>
