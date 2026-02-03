@@ -201,10 +201,18 @@ export async function seedActivities(prisma: PrismaClient, org: Organization): P
           return;
         }
 
+        const existingCount = await prisma.activity.count({
+          where: { lessonId: lesson.id },
+        });
+
+        if (existingCount > 0) {
+          return;
+        }
+
         await Promise.all(
           data.activities.map((activityData, position) =>
-            prisma.activity.upsert({
-              create: {
+            prisma.activity.create({
+              data: {
                 content: activityData.content,
                 description: activityData.description,
                 generationStatus: activityData.generationStatus,
@@ -215,10 +223,6 @@ export async function seedActivities(prisma: PrismaClient, org: Organization): P
                 organizationId: org.id,
                 position,
                 title: activityData.title,
-              },
-              update: {},
-              where: {
-                id: -1, // Force create since there's no unique constraint
               },
             }),
           ),

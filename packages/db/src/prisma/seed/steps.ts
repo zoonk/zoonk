@@ -281,6 +281,14 @@ export async function seedSteps(prisma: PrismaClient, org: Organization): Promis
       return;
     }
 
+    const existingCount = await prisma.step.count({
+      where: { activityId: activity.id },
+    });
+
+    if (existingCount > 0) {
+      return;
+    }
+
     await Promise.all(
       data.steps.map((stepData, position) =>
         prisma.step.create({
