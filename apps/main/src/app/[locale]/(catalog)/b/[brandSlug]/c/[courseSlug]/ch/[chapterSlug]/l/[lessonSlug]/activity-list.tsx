@@ -53,9 +53,7 @@ export async function ActivityList({
 
               <CatalogListItemContent>
                 <CatalogListItemTitle>{title}</CatalogListItemTitle>
-                {description && (
-                  <CatalogListItemDescription>{description}</CatalogListItemDescription>
-                )}
+                <CatalogListItemDescription>{description}</CatalogListItemDescription>
               </CatalogListItemContent>
             </CatalogListItem>
           );
