@@ -56,6 +56,20 @@ export function MediaCardIcon({ children, className, ...props }: React.Component
   );
 }
 
+export function MediaCardIconText({ children, className }: React.ComponentProps<"span">) {
+  return (
+    <span
+      className={cn(
+        "text-muted-foreground/60 font-mono text-2xl tracking-tight tabular-nums",
+        className,
+      )}
+      data-slot="media-card-icon-text"
+    >
+      {children}
+    </span>
+  );
+}
+
 export function MediaCardContent({ children, className }: React.ComponentProps<"div">) {
   return (
     <div className={cn("flex min-w-0 flex-1 flex-col", className)} data-slot="media-card-content">

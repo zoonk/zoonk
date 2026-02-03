@@ -7,6 +7,7 @@ import {
   MediaCardDescription,
   MediaCardHeader,
   MediaCardIcon,
+  MediaCardIconText,
   MediaCardIndicator,
   MediaCardPopover,
   MediaCardPopoverMeta,
@@ -37,9 +38,7 @@ export async function ChapterHeader({
           aria-label={t("Chapter {position}", { position: chapterPosition })}
           role="img"
         >
-          <span className="text-muted-foreground/60 font-mono text-2xl tracking-tight tabular-nums">
-            {chapterPosition}
-          </span>
+          <MediaCardIconText>{chapterPosition}</MediaCardIconText>
         </MediaCardIcon>
 
         <MediaCardContent>
@@ -58,9 +57,7 @@ export async function ChapterHeader({
 
         <MediaCardPopoverMeta>
           <MediaCardPopoverSource>
-            <MediaCardPopoverSourceLink
-              render={<Link href={`/b/${brandSlug}/c/${courseSlug}`} />}
-            >
+            <MediaCardPopoverSourceLink render={<Link href={`/b/${brandSlug}/c/${courseSlug}`} />}>
               {chapter.course.title}
             </MediaCardPopoverSourceLink>
           </MediaCardPopoverSource>

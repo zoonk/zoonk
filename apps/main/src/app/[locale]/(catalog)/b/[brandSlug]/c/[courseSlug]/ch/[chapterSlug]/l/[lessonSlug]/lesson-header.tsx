@@ -7,6 +7,7 @@ import {
   MediaCardDescription,
   MediaCardHeader,
   MediaCardIcon,
+  MediaCardIconText,
   MediaCardIndicator,
   MediaCardPopover,
   MediaCardPopoverMeta,
@@ -37,9 +38,7 @@ export async function LessonHeader({
     <MediaCard>
       <MediaCardTrigger>
         <MediaCardIcon aria-label={t("Lesson {position}", { position: lessonPosition })} role="img">
-          <span className="text-muted-foreground/60 font-mono text-2xl tracking-tight tabular-nums">
-            {lessonPosition}
-          </span>
+          <MediaCardIconText>{lessonPosition}</MediaCardIconText>
         </MediaCardIcon>
 
         <MediaCardContent>
