@@ -148,6 +148,7 @@ For detailed testing patterns, fixtures, and best practices, see `.agents/skills
 - **IMPORTANT**: The `t` function does NOT support dynamic keys. Use string literals: `t("Arts courses")`, not `t(someVariable)`
 - **CRITICAL: NEVER pass `t` as a function argument**. This is a common mistake that breaks i18n extraction. Instead of passing `t` to a function, create an async function that calls `getExtracted()` internally (see `@apps/main/src/lib/categories.ts` and `@apps/main/src/lib/belt-colors.ts` for examples)
 - **CRITICAL: NEVER call `getExtracted()` inside `Promise.all()`**
+- When using `render` prop with base-ui components (e.g., `useRender`), use `ClientLink` instead of `Link` since the render prop requires a client component
 - Always read the [translations skill](.agents/skills/zoonk-translations/SKILL.md) when using `next-intl`.
 
 ## CSS

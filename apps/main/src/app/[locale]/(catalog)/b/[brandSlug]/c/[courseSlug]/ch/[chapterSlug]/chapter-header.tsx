@@ -1,6 +1,6 @@
 import { AIWarning } from "@/components/catalog/ai-warning";
 import { type ChapterWithDetails } from "@/data/chapters/get-chapter";
-import { Link } from "@/i18n/navigation";
+import { ClientLink } from "@/i18n/client-link";
 import {
   MediaCard,
   MediaCardContent,
@@ -57,7 +57,9 @@ export async function ChapterHeader({
 
         <MediaCardPopoverMeta>
           <MediaCardPopoverSource>
-            <MediaCardPopoverSourceLink render={<Link href={`/b/${brandSlug}/c/${courseSlug}`} />}>
+            <MediaCardPopoverSourceLink
+              render={<ClientLink href={`/b/${brandSlug}/c/${courseSlug}`} />}
+            >
               {chapter.course.title}
             </MediaCardPopoverSourceLink>
           </MediaCardPopoverSource>

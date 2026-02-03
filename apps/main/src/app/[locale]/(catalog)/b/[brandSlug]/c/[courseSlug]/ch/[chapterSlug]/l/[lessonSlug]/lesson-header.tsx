@@ -1,6 +1,6 @@
 import { AIWarning } from "@/components/catalog/ai-warning";
 import { type LessonWithDetails } from "@/data/lessons/get-lesson";
-import { Link } from "@/i18n/navigation";
+import { ClientLink } from "@/i18n/client-link";
 import {
   MediaCard,
   MediaCardContent,
@@ -58,13 +58,13 @@ export async function LessonHeader({
         <MediaCardPopoverMeta>
           <MediaCardPopoverSource>
             <MediaCardPopoverSourceLink
-              render={<Link href={`/b/${brandSlug}/c/${courseSlug}`} />}
+              render={<ClientLink href={`/b/${brandSlug}/c/${courseSlug}`} />}
             >
               {lesson.chapter.course.title}
             </MediaCardPopoverSourceLink>
             <MediaCardPopoverSourceSeparator />
             <MediaCardPopoverSourceLink
-              render={<Link href={`/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}`} />}
+              render={<ClientLink href={`/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}`} />}
             >
               {lesson.chapter.title}
             </MediaCardPopoverSourceLink>
