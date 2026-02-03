@@ -21,6 +21,7 @@ Zoonk is a web app where users can learn anything using AI. This app uses AI to 
 ## Principles
 
 - Always prefer the **simplest solution**. If something feels complex, refactor
+- **Simplicity ≠ laziness.** Creating a reusable component for repeated patterns IS the simple solution—it maintains consistency and quality. Leaving duplication "because it's only N files" leads to inconsistency (bugs). DRY is about having a single source of truth, not just reducing typing. When you see the same pattern repeated, extract it
 - Favor **clarity and minimalism** in both code and UI
 - Follow design inspirations from Apple, Linear, Vercel
 - Code must be modular, following SOLID and DRY principles
@@ -34,13 +35,14 @@ Zoonk is a web app where users can learn anything using AI. This app uses AI to 
 - Use meaningful variable names and avoid abbreviations
 - Never guess at imports, table names, or conventions—always search for existing patterns first
 - Before writing code, check for existing patterns, agents, and skills that could help execute the task better
+- Don't be afraid to refactor existing code to improve quality, clarity, or simplicity. Always leave the codebase better than you found it
 
 **IMPORTANT**: Before completing a task, make sure to run the following commands:
 
 - `pnpm turbo quality:fix`
 - `pnpm db:generate` (always run this from the root of the monorepo)
 - `pnpm typecheck`
-- `pnpm knip --production`
+- `pnpm knip`
 - `pnpm test`
 - `pnpm --filter {app} build` (eg `pnpm --filter main build`)
 - `pnpm --filter {app} build:e2e` (always run this before running e2e tests)
@@ -147,6 +149,7 @@ For detailed testing patterns, fixtures, and best practices, see `.agents/skills
 - **IMPORTANT**: The `t` function does NOT support dynamic keys. Use string literals: `t("Arts courses")`, not `t(someVariable)`
 - **CRITICAL: NEVER pass `t` as a function argument**. This is a common mistake that breaks i18n extraction. Instead of passing `t` to a function, create an async function that calls `getExtracted()` internally (see `@apps/main/src/lib/categories.ts` and `@apps/main/src/lib/belt-colors.ts` for examples)
 - **CRITICAL: NEVER call `getExtracted()` inside `Promise.all()`**
+- When using `render` prop with base-ui components (e.g., `useRender`), use `ClientLink` instead of `Link` since the render prop requires a client component
 - Always read the [translations skill](.agents/skills/zoonk-translations/SKILL.md) when using `next-intl`.
 
 ## CSS

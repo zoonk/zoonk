@@ -1,5 +1,7 @@
 "use client";
 
+import { mergeProps } from "@base-ui/react/merge-props";
+import { useRender } from "@base-ui/react/use-render";
 import { Popover, PopoverContent, PopoverTrigger } from "@zoonk/ui/components/popover";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -51,6 +53,20 @@ export function MediaCardIcon({ children, className, ...props }: React.Component
     >
       {children}
     </div>
+  );
+}
+
+export function MediaCardIconText({ children, className }: React.ComponentProps<"span">) {
+  return (
+    <span
+      className={cn(
+        "text-muted-foreground/60 font-mono text-2xl tracking-tight tabular-nums",
+        className,
+      )}
+      data-slot="media-card-icon-text"
+    >
+      {children}
+    </span>
   );
 }
 
@@ -157,10 +173,45 @@ export function MediaCardPopoverMeta({ children, className }: React.ComponentPro
 export function MediaCardPopoverSource({ children, className }: React.ComponentProps<"span">) {
   return (
     <span
-      className={cn("text-muted-foreground text-xs", className)}
+      className={cn("text-muted-foreground flex flex-wrap items-center text-xs", className)}
       data-slot="media-card-popover-source"
     >
       {children}
+    </span>
+  );
+}
+
+export function MediaCardPopoverSourceLink({
+  className,
+  render,
+  ...props
+}: useRender.ComponentProps<"a">) {
+  return useRender({
+    defaultTagName: "a",
+    props: mergeProps<"a">(
+      {
+        className: cn("hover:text-foreground transition-colors", className),
+      },
+      props,
+    ),
+    render,
+    state: {
+      slot: "media-card-popover-source-link",
+    },
+  });
+}
+
+export function MediaCardPopoverSourceSeparator({
+  children,
+  className,
+}: React.ComponentProps<"span">) {
+  return (
+    <span
+      aria-hidden="true"
+      className={cn("text-muted-foreground/40 mx-1.5", className)}
+      data-slot="media-card-popover-source-separator"
+    >
+      {children ?? "/"}
     </span>
   );
 }

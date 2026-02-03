@@ -1,41 +1,45 @@
 import { AIWarning } from "@/components/catalog/ai-warning";
 import { type LessonWithDetails } from "@/data/lessons/get-lesson";
-import { Link } from "@/i18n/navigation";
+import { ClientLink } from "@/i18n/client-link";
 import {
   MediaCard,
   MediaCardContent,
   MediaCardDescription,
   MediaCardHeader,
   MediaCardIcon,
+  MediaCardIconText,
   MediaCardIndicator,
   MediaCardPopover,
   MediaCardPopoverMeta,
   MediaCardPopoverSource,
+  MediaCardPopoverSourceLink,
+  MediaCardPopoverSourceSeparator,
   MediaCardPopoverText,
   MediaCardTitle,
   MediaCardTrigger,
 } from "@zoonk/ui/components/media-card";
+import { formatPosition } from "@zoonk/utils/string";
 import { getExtracted } from "next-intl/server";
 
 export async function LessonHeader({
   brandSlug,
+  chapterSlug,
   courseSlug,
   lesson,
 }: {
   brandSlug: string;
+  chapterSlug: string;
   courseSlug: string;
   lesson: LessonWithDetails;
 }) {
   const t = await getExtracted();
-  const lessonPosition = String(lesson.position + 1).padStart(2, "0");
+  const lessonPosition = formatPosition(lesson.position);
 
   return (
     <MediaCard>
       <MediaCardTrigger>
         <MediaCardIcon aria-label={t("Lesson {position}", { position: lessonPosition })} role="img">
-          <span className="text-muted-foreground/60 font-mono text-2xl tracking-tight tabular-nums">
-            {lessonPosition}
-          </span>
+          <MediaCardIconText>{lessonPosition}</MediaCardIconText>
         </MediaCardIcon>
 
         <MediaCardContent>
@@ -54,14 +58,17 @@ export async function LessonHeader({
 
         <MediaCardPopoverMeta>
           <MediaCardPopoverSource>
-            <Link
-              className="text-muted-foreground hover:text-foreground transition-colors"
-              href={`/b/${brandSlug}/c/${courseSlug}`}
+            <MediaCardPopoverSourceLink
+              render={<ClientLink href={`/b/${brandSlug}/c/${courseSlug}`} />}
             >
               {lesson.chapter.course.title}
-            </Link>
-            <span className="text-muted-foreground/40 mx-1.5">/</span>
-            <span>{lesson.chapter.title}</span>
+            </MediaCardPopoverSourceLink>
+            <MediaCardPopoverSourceSeparator />
+            <MediaCardPopoverSourceLink
+              render={<ClientLink href={`/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}`} />}
+            >
+              {lesson.chapter.title}
+            </MediaCardPopoverSourceLink>
           </MediaCardPopoverSource>
         </MediaCardPopoverMeta>
       </MediaCardPopover>

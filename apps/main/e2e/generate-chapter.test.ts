@@ -203,7 +203,7 @@ test.describe("Generate Chapter Page - With Subscription", () => {
         timeout: 10_000,
       });
 
-      await expect(userWithoutProgress.getByText(/redirecting to your course/i)).toBeVisible();
+      await expect(userWithoutProgress.getByText(/redirecting to your chapter/i)).toBeVisible();
 
       // Should redirect to course page
       await userWithoutProgress.waitForURL(/\/b\/ai\/c\//, { timeout: 10_000 });

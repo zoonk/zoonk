@@ -42,7 +42,7 @@ export async function GenerateChapterContent({
   }
 
   if (chapter.generationStatus === "completed") {
-    redirect(`/${locale}/b/${AI_ORG_SLUG}/c/${chapter.course.slug}`);
+    redirect(`/${locale}/b/${AI_ORG_SLUG}/c/${chapter.course.slug}/ch/${chapter.slug}`);
   }
 
   const returnUrl = `/generate/ch/${chapterId}`;
@@ -62,6 +62,7 @@ export async function GenerateChapterContent({
         <SubscriptionGate returnUrl={returnUrl}>
           <GenerationClient
             chapterId={chapterId}
+            chapterSlug={chapter.slug}
             courseSlug={chapter.course.slug}
             generationRunId={chapter.generationRunId}
             generationStatus={chapter.generationStatus}

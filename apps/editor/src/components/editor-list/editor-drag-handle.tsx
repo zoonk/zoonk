@@ -1,6 +1,7 @@
 "use client";
 
 import { cn } from "@zoonk/ui/lib/utils";
+import { formatPosition } from "@zoonk/utils/string";
 import { useContext } from "react";
 import { EditorSortableItemContext } from "./editor-sortable-item-context";
 
@@ -27,7 +28,7 @@ export function EditorDragHandle({
       {...context.listeners}
       {...props}
     >
-      {typeof children === "number" ? String(children).padStart(2, "0") : children}
+      {typeof children === "number" ? formatPosition(children - 1) : children}
     </button>
   );
 }

@@ -1,5 +1,6 @@
 import { AIWarning } from "@/components/catalog/ai-warning";
 import { type CourseWithDetails } from "@/data/courses/get-course";
+import { ClientLink } from "@/i18n/client-link";
 import { Link } from "@/i18n/navigation";
 import { getCategories } from "@/lib/categories/category-server";
 import { Badge } from "@zoonk/ui/components/badge";
@@ -15,6 +16,7 @@ import {
   MediaCardPopoverBadges,
   MediaCardPopoverMeta,
   MediaCardPopoverSource,
+  MediaCardPopoverSourceLink,
   MediaCardPopoverText,
   MediaCardTitle,
   MediaCardTrigger,
@@ -70,7 +72,11 @@ export async function CourseHeader({
         <MediaCardPopoverText>{course.description}</MediaCardPopoverText>
 
         <MediaCardPopoverMeta>
-          <MediaCardPopoverSource>{course.organization.name}</MediaCardPopoverSource>
+          <MediaCardPopoverSource>
+            <MediaCardPopoverSourceLink render={<ClientLink href={`/b/${brandSlug}`} />}>
+              {course.organization.name}
+            </MediaCardPopoverSourceLink>
+          </MediaCardPopoverSource>
 
           {displayCategories.length > 0 && (
             <MediaCardPopoverBadges>

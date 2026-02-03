@@ -1,6 +1,6 @@
 import { updateChapterGenerationStatus } from "@/data/chapters/update-chapter-generation-status";
 import { revalidateMainApp } from "@zoonk/core/cache/revalidate";
-import { cacheTagCourse } from "@zoonk/utils/cache";
+import { cacheTagChapter } from "@zoonk/utils/cache";
 import { streamStatus } from "../stream-status";
 import { type ChapterContext } from "./get-chapter-step";
 
@@ -23,7 +23,7 @@ export async function setChapterAsCompletedStep(input: {
     throw error;
   }
 
-  await revalidateMainApp([cacheTagCourse({ courseSlug: input.context.course.slug })]);
+  await revalidateMainApp([cacheTagChapter({ chapterSlug: input.context.slug })]);
 
   await streamStatus({ status: "completed", step: "setChapterAsCompleted" });
 }

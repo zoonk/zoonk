@@ -1,5 +1,6 @@
 "use cache";
 
+import { CatalogContainer } from "@/components/catalog/catalog-list";
 import { listLessonActivities } from "@/data/activities/list-lesson-activities";
 import { getLesson } from "@/data/lessons/get-lesson";
 import { redirect } from "@/i18n/navigation";
@@ -27,7 +28,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({
   params,
-}: PageProps<"/[locale]/b/[brandSlug]/c/[courseSlug]/c/[chapterSlug]/l/[lessonSlug]">): Promise<Metadata> {
+}: PageProps<"/[locale]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]">): Promise<Metadata> {
   const { brandSlug, chapterSlug, courseSlug, lessonSlug } = await params;
   const lesson = await getLesson({
     brandSlug,
@@ -48,7 +49,7 @@ export async function generateMetadata({
 
 export default async function LessonPage({
   params,
-}: PageProps<"/[locale]/b/[brandSlug]/c/[courseSlug]/c/[chapterSlug]/l/[lessonSlug]">) {
+}: PageProps<"/[locale]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]">) {
   const { brandSlug, chapterSlug, courseSlug, lessonSlug, locale } = await params;
   setRequestLocale(locale);
 
@@ -73,15 +74,20 @@ export default async function LessonPage({
 
   const activityKinds = await getActivityKinds({ locale });
   const kindMeta = new Map(activityKinds.map((kind) => [kind.key, kind]));
-  const baseHref = `/b/${brandSlug}/c/${courseSlug}/c/${chapterSlug}/l/${lessonSlug}`;
+  const baseHref = `/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}/l/${lessonSlug}`;
 
   return (
     <main className="flex flex-1 flex-col">
-      <LessonHeader brandSlug={brandSlug} courseSlug={courseSlug} lesson={lesson} />
+      <LessonHeader
+        brandSlug={brandSlug}
+        chapterSlug={chapterSlug}
+        courseSlug={courseSlug}
+        lesson={lesson}
+      />
 
-      <div className="mx-auto w-full px-4 py-6 lg:max-w-xl">
+      <CatalogContainer>
         <ActivityList activities={activities} baseHref={baseHref} kindMeta={kindMeta} />
-      </div>
+      </CatalogContainer>
     </main>
   );
 }

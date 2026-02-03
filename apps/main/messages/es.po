@@ -130,50 +130,50 @@ msgctxt "R/6nsx"
 msgid "Subscription"
 msgstr "Suscripción"
 
-#: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/c/[chapterSlug]/l/[lessonSlug]/activity-indicator.tsx
+#: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/chapter-header.tsx
+msgctxt "B9hCYt"
+msgid "Chapter {position}"
+msgstr "Capítulo {position}"
+
+#: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/activity-list.tsx
 msgctxt "4o5CAP"
 msgid "Not completed"
 msgstr "No completada"
 
-#: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/c/[chapterSlug]/l/[lessonSlug]/activity-indicator.tsx
+#: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/activity-list.tsx
 msgctxt "95stPq"
 msgid "Completed"
 msgstr "Completada"
 
-#: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/c/[chapterSlug]/l/[lessonSlug]/activity-list.tsx
+#: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/activity-list.tsx
 msgctxt "UmEsZF"
 msgid "Activities"
 msgstr "Actividades"
 
-#: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/c/[chapterSlug]/l/[lessonSlug]/lesson-header.tsx
+#: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-header.tsx
 msgctxt "Dane8c"
 msgid "Lesson {position}"
 msgstr "Lección {position}"
 
-#: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/chapter-empty-state.tsx
-msgctxt "8AbgQ7"
-msgid "Lessons haven't been generated for this chapter yet."
-msgstr "Las lecciones aún no se han generado para este capítulo."
+#: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
+msgctxt "FuT9vz"
+msgid "No lessons found"
+msgstr "No se encontraron lecciones"
 
-#: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/chapter-empty-state.tsx
-msgctxt "DG7kYp"
-msgid "Generate lessons"
-msgstr "Generar lecciones"
+#: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
+msgctxt "ssvp3R"
+msgid "Search lessons..."
+msgstr "Buscar lecciones..."
 
-#: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/chapter-search-container.tsx
-msgctxt "ai9FYU"
-msgid "Search chapters and lessons..."
-msgstr "Buscar capítulos y lecciones..."
+#: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/chapter-list.tsx
+msgctxt "3SOcGR"
+msgid "Search chapters..."
+msgstr "Buscar capítulos..."
 
-#: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/chapter-search-container.tsx
-msgctxt "p8Tezk"
-msgid "Search chapters and lessons"
-msgstr "Buscar capítulos y lecciones"
-
-#: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/chapter-search-container.tsx
-msgctxt "SxedrD"
-msgid "No chapters or lessons found"
-msgstr "No se encontraron capítulos o lecciones"
+#: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/chapter-list.tsx
+msgctxt "8udPa+"
+msgid "No chapters found"
+msgstr "No se encontraron capítulos"
 
 #: src/app/[locale]/(catalog)/best-day.tsx
 #: src/app/[locale]/(performance)/score/score-insights.tsx
@@ -236,7 +236,7 @@ msgid "Next: {activity}"
 msgstr "Siguiente: {activity}"
 
 #: src/app/[locale]/(catalog)/continue-learning-card.tsx
-#: src/app/[locale]/b/[brandSlug]/c/[courseSlug]/c/[chapterSlug]/l/[lessonSlug]/a/[position]/page.tsx
+#: src/app/[locale]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/a/[position]/page.tsx
 msgctxt "ZmlNQ3"
 msgid "Activity"
 msgstr "Actividad"
@@ -899,7 +899,7 @@ msgctxt "vQjckV"
 msgid "Need help? Contact us at hello@zoonk.com"
 msgstr "¿Necesitas ayuda? Contáctanos en contacto@zoonk.com"
 
-#: src/app/[locale]/b/[brandSlug]/c/[courseSlug]/c/[chapterSlug]/l/[lessonSlug]/a/[position]/page.tsx
+#: src/app/[locale]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/a/[position]/page.tsx
 msgctxt "qtQJTV"
 msgid "Complete this activity to reinforce your learning and track your progress."
 msgstr "Completa esta actividad para reforzar tu aprendizaje y seguir tu progreso."
@@ -923,12 +923,6 @@ msgstr "Intentar de nuevo"
 
 #: src/app/[locale]/generate/ch/[id]/generation-client.tsx
 #: src/app/[locale]/generate/cs/[id]/generation-client.tsx
-msgctxt "IEv8EV"
-msgid "Redirecting to your course..."
-msgstr "Redirigiendo a tu curso..."
-
-#: src/app/[locale]/generate/ch/[id]/generation-client.tsx
-#: src/app/[locale]/generate/cs/[id]/generation-client.tsx
 msgctxt "ssRq8D"
 msgid "Generation failed"
 msgstr "La generación falló"
@@ -948,6 +942,11 @@ msgstr "Creando tus lecciones"
 msgctxt "W/5hwr"
 msgid "Something went wrong. Please try again."
 msgstr "Algo salió mal. Por favor, intenta de nuevo."
+
+#: src/app/[locale]/generate/ch/[id]/generation-client.tsx
+msgctxt "X7COCl"
+msgid "Redirecting to your chapter..."
+msgstr "Redirigiendo a tu capítulo..."
 
 #: src/app/[locale]/generate/ch/[id]/use-generation-phases.ts
 #: src/app/[locale]/generate/cs/[id]/use-generation-phases.ts
@@ -969,6 +968,11 @@ msgstr "Cargando información del capítulo"
 msgctxt "DFlapX"
 msgid "Creating your course"
 msgstr "Creando tu curso"
+
+#: src/app/[locale]/generate/cs/[id]/generation-client.tsx
+msgctxt "IEv8EV"
+msgid "Redirecting to your course..."
+msgstr "Redirigiendo a tu curso..."
 
 #: src/app/[locale]/generate/cs/[id]/generation-client.tsx
 msgctxt "TKVQj2"

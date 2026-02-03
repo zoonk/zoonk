@@ -1,5 +1,6 @@
 "use cache";
 
+import { CatalogContainer } from "@/components/catalog/catalog-list";
 import { listCourseChapters } from "@/data/chapters/list-course-chapters";
 import { getCourse } from "@/data/courses/get-course";
 import { redirect } from "@/i18n/navigation";
@@ -10,7 +11,7 @@ import { setRequestLocale } from "next-intl/server";
 import { cacheTag } from "next/cache";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import { ChapterSearchContainer } from "./chapter-search-container";
+import { ChapterList } from "./chapter-list";
 import { CourseHeader } from "./course-header";
 
 export async function generateStaticParams() {
@@ -58,15 +59,11 @@ export default async function CoursePage({
     <main className="flex flex-1 flex-col">
       <CourseHeader brandSlug={brandSlug} course={course} />
 
-      <div className="mx-auto w-full px-4 py-8 md:py-10 lg:max-w-xl">
+      <CatalogContainer>
         <Suspense>
-          <ChapterSearchContainer
-            brandSlug={brandSlug}
-            chapters={chapters}
-            courseSlug={courseSlug}
-          />
+          <ChapterList brandSlug={brandSlug} chapters={chapters} courseSlug={courseSlug} />
         </Suspense>
-      </div>
+      </CatalogContainer>
     </main>
   );
 }

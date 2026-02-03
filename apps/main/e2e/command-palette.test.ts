@@ -343,40 +343,22 @@ test.describe("Command Palette - Keyboard Navigation", () => {
     const dialog = page.getByRole("dialog");
     await expect(dialog).toBeVisible();
 
-    // Wait for cmdk to initialize and auto-select first item
-    const firstOption = dialog.getByRole("option", { selected: true });
-    await expect(firstOption).toBeVisible();
-    const firstName = await firstOption.textContent();
-    expect(firstName).toBeTruthy();
+    // Wait for cmdk to initialize - first item "Home page" should be selected
+    const homeOption = dialog.getByRole("option", { name: /home page/i });
+    await expect(homeOption).toHaveAttribute("aria-selected", "true");
 
-    // Press ArrowDown and wait for selection to change
+    // Press ArrowDown - "Courses" should now be selected
     await page.keyboard.press("ArrowDown");
 
-    // Wait for the selection to move to a DIFFERENT item
-    await expect(
-      dialog.getByRole("option", { name: firstName!, selected: true }),
-    ).not.toBeVisible();
+    const coursesOption = dialog.getByRole("option", { name: /^courses$/i });
+    await expect(coursesOption).toHaveAttribute("aria-selected", "true");
+    await expect(homeOption).toHaveAttribute("aria-selected", "false");
 
-    // Verify a new item is selected
-    const secondOption = dialog.getByRole("option", { selected: true });
-    await expect(secondOption).toBeVisible();
-    const secondName = await secondOption.textContent();
-    expect(secondName).not.toBe(firstName);
-    expect(secondName).toBeTruthy();
-
-    // Press ArrowUp and wait for selection to change back
+    // Press ArrowUp - "Home page" should be selected again
     await page.keyboard.press("ArrowUp");
 
-    // Wait for selection to move away from second item
-    await expect(
-      dialog.getByRole("option", {
-        name: secondName!,
-        selected: true,
-      }),
-    ).not.toBeVisible();
-
-    // Verify we're back on the first item
-    await expect(dialog.getByRole("option", { name: firstName!, selected: true })).toBeVisible();
+    await expect(homeOption).toHaveAttribute("aria-selected", "true");
+    await expect(coursesOption).toHaveAttribute("aria-selected", "false");
   });
 
   test("Enter to select navigates correctly", async ({ page }) => {

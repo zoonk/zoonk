@@ -21,6 +21,7 @@ export async function getChapterForGeneration(chapterId: number) {
       id: true,
       language: true,
       organizationId: true,
+      slug: true,
       title: true,
     },
     where: { id: chapterId },

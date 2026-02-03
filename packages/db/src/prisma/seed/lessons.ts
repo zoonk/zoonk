@@ -49,6 +49,28 @@ const lessonsData: {
     ],
   },
   {
+    chapterSlug: "introducao-ao-machine-learning",
+    language: "pt",
+    lessons: [
+      {
+        description:
+          "Aprenda o que é machine learning e como ele difere da programação tradicional.",
+        generationStatus: "completed",
+        isPublished: true,
+        slug: "o-que-e-machine-learning",
+        title: "O que é Machine Learning?",
+      },
+      {
+        description:
+          "Explore a história do machine learning desde suas origens até os desenvolvimentos modernos.",
+        generationStatus: "completed",
+        isPublished: true,
+        slug: "historia-do-machine-learning",
+        title: "História do Machine Learning",
+      },
+    ],
+  },
+  {
     chapterSlug: "data-preparation",
     language: "en",
     lessons: [

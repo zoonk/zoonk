@@ -1,79 +1,56 @@
-"use client";
-
-import { type ChapterWithLessons } from "@/data/chapters/list-course-chapters";
 import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@zoonk/ui/components/accordion";
-import { ChapterEmptyState } from "./chapter-empty-state";
-import { ChapterLessonList } from "./chapter-lesson-list";
+  CatalogList,
+  CatalogListContent,
+  CatalogListEmpty,
+  CatalogListItem,
+  CatalogListItemContent,
+  CatalogListItemDescription,
+  CatalogListItemPosition,
+  CatalogListItemTitle,
+  CatalogListSearch,
+} from "@/components/catalog/catalog-list";
+import { type ChapterWithLessons } from "@/data/chapters/list-course-chapters";
+import { formatPosition } from "@zoonk/utils/string";
+import { getExtracted } from "next-intl/server";
 
-export function ChapterList({
+export async function ChapterList({
   brandSlug,
   chapters,
   courseSlug,
-  emptyStateText,
-  expandedValues,
-  onExpandedChange,
 }: {
   brandSlug: string;
   chapters: ChapterWithLessons[];
   courseSlug: string;
-  emptyStateText?: string;
-  expandedValues?: string[];
-  onExpandedChange?: (values: string[]) => void;
 }) {
   if (chapters.length === 0) {
-    if (!emptyStateText) {
-      return null;
-    }
-    return <p className="text-muted-foreground py-8 text-center text-sm">{emptyStateText}</p>;
+    return null;
   }
 
+  const t = await getExtracted();
+
   return (
-    <section>
-      <Accordion
-        onValueChange={(values) => onExpandedChange?.(values as string[])}
-        value={expandedValues}
-        variant="ghost"
-      >
-        {chapters.map((chapter, index) => (
-          <AccordionItem key={chapter.id} value={chapter.slug} variant="ghost">
-            <AccordionTrigger className="px-0 py-3 hover:no-underline">
-              <div className="flex items-baseline gap-1">
-                <span className="text-muted-foreground/40 w-5 shrink-0 font-mono leading-snug tabular-nums sm:w-6">
-                  {String(index + 1).padStart(2, "0")}
-                </span>
+    <CatalogList>
+      <CatalogListSearch items={chapters} placeholder={t("Search chapters...")}>
+        <CatalogListEmpty>{t("No chapters found")}</CatalogListEmpty>
+        <CatalogListContent>
+          {chapters.map((chapter) => (
+            <CatalogListItem
+              href={`/b/${brandSlug}/c/${courseSlug}/ch/${chapter.slug}`}
+              id={chapter.id}
+              key={chapter.id}
+            >
+              <CatalogListItemPosition>{formatPosition(chapter.position)}</CatalogListItemPosition>
 
-                <span className="text-left leading-snug font-medium">{chapter.title}</span>
-              </div>
-            </AccordionTrigger>
-
-            <AccordionContent className="pb-2 [&_a]:no-underline">
-              <div className="ml-4 flex flex-col gap-3 sm:ml-6">
+              <CatalogListItemContent>
+                <CatalogListItemTitle>{chapter.title}</CatalogListItemTitle>
                 {chapter.description && (
-                  <p className="text-muted-foreground max-w-prose text-sm leading-relaxed">
-                    {chapter.description}
-                  </p>
+                  <CatalogListItemDescription>{chapter.description}</CatalogListItemDescription>
                 )}
-
-                {chapter.lessons.length === 0 ? (
-                  <ChapterEmptyState chapterId={chapter.id} />
-                ) : (
-                  <ChapterLessonList
-                    brandSlug={brandSlug}
-                    chapterSlug={chapter.slug}
-                    courseSlug={courseSlug}
-                    lessons={chapter.lessons}
-                  />
-                )}
-              </div>
-            </AccordionContent>
-          </AccordionItem>
-        ))}
-      </Accordion>
-    </section>
+              </CatalogListItemContent>
+            </CatalogListItem>
+          ))}
+        </CatalogListContent>
+      </CatalogListSearch>
+    </CatalogList>
   );
 }
