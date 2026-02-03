@@ -263,7 +263,7 @@ test.describe("Command Palette - Course Search", () => {
     const courseOption = dialog.getByRole("option").filter({ hasText: courseName });
     await expect(courseOption).toBeVisible();
 
-    // Course description should be visible within the option
+    // Course description should be visible
     await expect(courseOption.getByText(courseDescription, { exact: false })).toBeVisible();
 
     // Click the course option to navigate
