@@ -58,6 +58,8 @@ test.describe("API Documentation", () => {
     expect(spec.paths).toHaveProperty("/workflows/course-generation/status");
     expect(spec.paths).toHaveProperty("/workflows/chapter-generation/trigger");
     expect(spec.paths).toHaveProperty("/workflows/chapter-generation/status");
+    expect(spec.paths).toHaveProperty("/workflows/lesson-generation/trigger");
+    expect(spec.paths).toHaveProperty("/workflows/lesson-generation/status");
 
     await apiContext.dispose();
   });

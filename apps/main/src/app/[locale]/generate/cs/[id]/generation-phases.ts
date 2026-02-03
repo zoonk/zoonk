@@ -3,7 +3,12 @@ import {
   calculateWeightedProgress as calculateProgress,
   getPhaseStatus as getStatus,
 } from "@/lib/generation-phases";
-import { CHAPTER_STEPS, COURSE_STEPS, type CourseWorkflowStepName } from "@/workflows/config";
+import {
+  CHAPTER_STEPS,
+  COURSE_STEPS,
+  type CourseWorkflowStepName,
+  LESSON_STEPS,
+} from "@/workflows/config";
 import {
   BookOpenIcon,
   GraduationCapIcon,
@@ -13,6 +18,7 @@ import {
   SearchIcon,
   SettingsIcon,
   SparklesIcon,
+  ZapIcon,
 } from "lucide-react";
 
 export type PhaseName =
@@ -22,10 +28,12 @@ export type PhaseName =
   | "generatingDetails"
   | "savingMetadata"
   | "planningChapters"
-  | "generatingLessons";
+  | "generatingLessons"
+  | "generatingActivities";
 
 const PHASE_STEPS: Record<PhaseName, CourseWorkflowStepName[]> = {
   checkingExisting: ["checkExistingCourse"],
+  generatingActivities: [...LESSON_STEPS],
   generatingDetails: [
     "generateDescription",
     "generateImage",
@@ -64,10 +72,12 @@ export const PHASE_ORDER: PhaseName[] = [
   "savingMetadata",
   "planningChapters",
   "generatingLessons",
+  "generatingActivities",
 ];
 
 export const PHASE_ICONS: Record<PhaseName, LucideIcon> = {
   checkingExisting: SearchIcon,
+  generatingActivities: ZapIcon,
   generatingDetails: SparklesIcon,
   generatingLessons: GraduationCapIcon,
   loadingInfo: BookOpenIcon,
@@ -78,8 +88,9 @@ export const PHASE_ICONS: Record<PhaseName, LucideIcon> = {
 
 const PHASE_WEIGHTS: Record<PhaseName, number> = {
   checkingExisting: 1,
+  generatingActivities: 19,
   generatingDetails: 19,
-  generatingLessons: 38,
+  generatingLessons: 19,
   loadingInfo: 1,
   planningChapters: 38,
   savingMetadata: 2,

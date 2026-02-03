@@ -30,6 +30,18 @@ vi.mock("@zoonk/ai/tasks/chapters/lessons", () => ({
   }),
 }));
 
+vi.mock("@zoonk/ai/tasks/lessons/kind", () => ({
+  generateLessonKind: vi.fn().mockResolvedValue({
+    data: { kind: "core" },
+  }),
+}));
+
+vi.mock("@zoonk/ai/tasks/lessons/activities", () => ({
+  generateLessonActivities: vi.fn().mockResolvedValue({
+    data: { activities: [] },
+  }),
+}));
+
 vi.mock("@zoonk/core/cache/revalidate", () => ({
   revalidateMainApp: vi.fn().mockResolvedValue(null),
 }));

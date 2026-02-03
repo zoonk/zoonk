@@ -3,42 +3,66 @@ import {
   calculateWeightedProgress as calculateProgress,
   getPhaseStatus as getStatus,
 } from "@/lib/generation-phases";
-import { type ChapterStepName } from "@/workflows/config";
-import { BookOpenIcon, CheckCircleIcon, GraduationCapIcon, type LucideIcon } from "lucide-react";
+import { CHAPTER_STEPS, type ChapterWorkflowStepName, LESSON_STEPS } from "@/workflows/config";
+import {
+  BookOpenIcon,
+  CheckCircleIcon,
+  GraduationCapIcon,
+  type LucideIcon,
+  SparklesIcon,
+} from "lucide-react";
 
-export type PhaseName = "loadingInfo" | "generatingLessons" | "completing";
+export type PhaseName = "loadingInfo" | "generatingLessons" | "generatingActivities" | "completing";
 
-const PHASE_STEPS: Record<PhaseName, ChapterStepName[]> = {
+const PHASE_STEPS: Record<PhaseName, ChapterWorkflowStepName[]> = {
   completing: ["setChapterAsCompleted"],
+  generatingActivities: [...LESSON_STEPS],
   generatingLessons: ["generateLessons", "addLessons"],
   loadingInfo: ["getChapter", "setChapterAsRunning"],
 };
 
-export const PHASE_ORDER: PhaseName[] = ["loadingInfo", "generatingLessons", "completing"];
+const allPhaseSteps = new Set(Object.values(PHASE_STEPS).flat());
+const missingChapterSteps = CHAPTER_STEPS.filter((step) => !allPhaseSteps.has(step));
+
+if (missingChapterSteps.length > 0) {
+  throw new Error(
+    `Missing chapter steps in PHASE_STEPS: ${missingChapterSteps.join(", ")}. ` +
+      "Add them to the appropriate phase in generation-phases.ts",
+  );
+}
+
+export const PHASE_ORDER: PhaseName[] = [
+  "loadingInfo",
+  "generatingLessons",
+  "generatingActivities",
+  "completing",
+];
 
 export const PHASE_ICONS: Record<PhaseName, LucideIcon> = {
   completing: CheckCircleIcon,
+  generatingActivities: SparklesIcon,
   generatingLessons: GraduationCapIcon,
   loadingInfo: BookOpenIcon,
 };
 
 const PHASE_WEIGHTS: Record<PhaseName, number> = {
   completing: 5,
-  generatingLessons: 90,
+  generatingActivities: 45,
+  generatingLessons: 45,
   loadingInfo: 5,
 };
 
 export function getPhaseStatus(
   phase: PhaseName,
-  completedSteps: ChapterStepName[],
-  currentStep: ChapterStepName | null,
+  completedSteps: ChapterWorkflowStepName[],
+  currentStep: ChapterWorkflowStepName | null,
 ): PhaseStatus {
   return getStatus(phase, completedSteps, currentStep, PHASE_STEPS);
 }
 
 export function calculateWeightedProgress(
-  completedSteps: ChapterStepName[],
-  currentStep: ChapterStepName | null,
+  completedSteps: ChapterWorkflowStepName[],
+  currentStep: ChapterWorkflowStepName | null,
 ): number {
   return calculateProgress(completedSteps, currentStep, {
     phaseOrder: PHASE_ORDER,

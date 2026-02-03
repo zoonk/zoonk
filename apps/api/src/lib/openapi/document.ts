@@ -1,12 +1,16 @@
 import { z } from "zod";
 import { createDocument } from "zod-openapi";
-import { errorSchema, paginationSchema } from "./schemas/common";
+import { paginationSchema } from "./schemas/common";
 import { courseResultSchema, courseSearchQuerySchema } from "./schemas/courses";
+import {
+  validationErrorResponse,
+  workflowStatusEndpoint,
+  workflowTriggerEndpoint,
+} from "./schemas/responses";
 import {
   chapterGenerationTriggerSchema,
   courseGenerationTriggerSchema,
-  workflowStatusQuerySchema,
-  workflowTriggerResponseSchema,
+  lessonGenerationTriggerSchema,
 } from "./schemas/workflows";
 
 export const openAPIDocument = createDocument({
@@ -48,86 +52,35 @@ export const openAPIDocument = createDocument({
             },
             description: "Paginated course results",
           },
-          "400": {
-            content: { "application/json": { schema: errorSchema } },
-            description: "Validation error",
-          },
+          "400": validationErrorResponse,
         },
         summary: "Search published courses",
         tags: ["Courses"],
       },
     },
-    "/workflows/chapter-generation/status": {
-      get: {
-        description: "Returns a Server-Sent Events stream with workflow status updates.",
-        requestParams: { query: workflowStatusQuerySchema },
-        responses: {
-          "200": {
-            content: { "text/event-stream": { schema: z.string() } },
-            description: "SSE stream of workflow status",
-          },
-        },
-        summary: "Stream chapter generation status (SSE)",
-        tags: ["Workflows"],
-      },
-    },
-    "/workflows/chapter-generation/trigger": {
-      post: {
-        description: "Requires active subscription.",
-        requestBody: {
-          content: { "application/json": { schema: chapterGenerationTriggerSchema } },
-        },
-        responses: {
-          "200": {
-            content: { "application/json": { schema: workflowTriggerResponseSchema } },
-            description: "Workflow started",
-          },
-          "400": {
-            content: { "application/json": { schema: errorSchema } },
-            description: "Validation error",
-          },
-          "402": {
-            content: { "application/json": { schema: errorSchema } },
-            description: "Subscription required",
-          },
-        },
-        summary: "Trigger chapter generation workflow",
-        tags: ["Workflows"],
-      },
-    },
-    "/workflows/course-generation/status": {
-      get: {
-        description: "Returns a Server-Sent Events stream with workflow status updates.",
-        requestParams: { query: workflowStatusQuerySchema },
-        responses: {
-          "200": {
-            content: { "text/event-stream": { schema: z.string() } },
-            description: "SSE stream of workflow status",
-          },
-        },
-        summary: "Stream course generation status (SSE)",
-        tags: ["Workflows"],
-      },
-    },
-    "/workflows/course-generation/trigger": {
-      post: {
-        requestBody: {
-          content: { "application/json": { schema: courseGenerationTriggerSchema } },
-        },
-        responses: {
-          "200": {
-            content: { "application/json": { schema: workflowTriggerResponseSchema } },
-            description: "Workflow started",
-          },
-          "400": {
-            content: { "application/json": { schema: errorSchema } },
-            description: "Validation error",
-          },
-        },
-        summary: "Trigger course generation workflow",
-        tags: ["Workflows"],
-      },
-    },
+    "/workflows/chapter-generation/status": workflowStatusEndpoint(
+      "Stream chapter generation status (SSE)",
+    ),
+    "/workflows/chapter-generation/trigger": workflowTriggerEndpoint({
+      requiresSubscription: true,
+      schema: chapterGenerationTriggerSchema,
+      summary: "Trigger chapter generation workflow",
+    }),
+    "/workflows/course-generation/status": workflowStatusEndpoint(
+      "Stream course generation status (SSE)",
+    ),
+    "/workflows/course-generation/trigger": workflowTriggerEndpoint({
+      schema: courseGenerationTriggerSchema,
+      summary: "Trigger course generation workflow",
+    }),
+    "/workflows/lesson-generation/status": workflowStatusEndpoint(
+      "Stream lesson generation status (SSE)",
+    ),
+    "/workflows/lesson-generation/trigger": workflowTriggerEndpoint({
+      requiresSubscription: true,
+      schema: lessonGenerationTriggerSchema,
+      summary: "Trigger lesson generation workflow",
+    }),
   },
   servers: [{ description: "API v1", url: "/v1" }],
 });
