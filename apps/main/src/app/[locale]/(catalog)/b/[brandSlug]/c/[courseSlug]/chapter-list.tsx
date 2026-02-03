@@ -10,6 +10,7 @@ import {
   CatalogListSearch,
 } from "@/components/catalog/catalog-list";
 import { type ChapterWithLessons } from "@/data/chapters/list-course-chapters";
+import { formatPosition } from "@zoonk/utils/string";
 import { getExtracted } from "next-intl/server";
 
 export async function ChapterList({
@@ -38,9 +39,7 @@ export async function ChapterList({
               id={chapter.id}
               key={chapter.id}
             >
-              <CatalogListItemPosition>
-                {String(chapter.position + 1).padStart(2, "0")}
-              </CatalogListItemPosition>
+              <CatalogListItemPosition>{formatPosition(chapter.position)}</CatalogListItemPosition>
 
               <CatalogListItemContent>
                 <CatalogListItemTitle>{chapter.title}</CatalogListItemTitle>

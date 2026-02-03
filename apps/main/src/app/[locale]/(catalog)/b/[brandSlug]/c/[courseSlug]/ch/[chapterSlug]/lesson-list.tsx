@@ -10,6 +10,7 @@ import {
   CatalogListSearch,
 } from "@/components/catalog/catalog-list";
 import { type LessonForList } from "@/data/lessons/list-chapter-lessons";
+import { formatPosition } from "@zoonk/utils/string";
 import { getExtracted } from "next-intl/server";
 
 export async function LessonList({
@@ -41,7 +42,7 @@ export async function LessonList({
               key={lesson.id}
             >
               <CatalogListItemPosition>
-                {String(lesson.position + 1).padStart(2, "0")}
+                {formatPosition(lesson.position)}
               </CatalogListItemPosition>
 
               <CatalogListItemContent>

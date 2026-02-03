@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { normalizeString, parseNumericId, removeAccents } from "./string";
+import { formatPosition, normalizeString, parseNumericId, removeAccents } from "./string";
 
 describe(removeAccents, () => {
   test("removes diacritics from string", () => {
@@ -92,5 +92,17 @@ describe(parseNumericId, () => {
 
   test("returns null for empty string", () => {
     expect(parseNumericId("")).toBeNull();
+  });
+});
+
+describe(formatPosition, () => {
+  test("formats single digit positions with leading zero", () => {
+    expect(formatPosition(0)).toBe("01");
+    expect(formatPosition(8)).toBe("09");
+  });
+
+  test("formats double digit positions without leading zero", () => {
+    expect(formatPosition(9)).toBe("10");
+    expect(formatPosition(99)).toBe("100");
   });
 });

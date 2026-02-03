@@ -18,6 +18,7 @@ import {
   MediaCardTitle,
   MediaCardTrigger,
 } from "@zoonk/ui/components/media-card";
+import { formatPosition } from "@zoonk/utils/string";
 import { getExtracted } from "next-intl/server";
 
 export async function LessonHeader({
@@ -32,7 +33,7 @@ export async function LessonHeader({
   lesson: LessonWithDetails;
 }) {
   const t = await getExtracted();
-  const lessonPosition = String(lesson.position + 1).padStart(2, "0");
+  const lessonPosition = formatPosition(lesson.position);
 
   return (
     <MediaCard>

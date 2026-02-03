@@ -17,6 +17,7 @@ import {
   MediaCardTitle,
   MediaCardTrigger,
 } from "@zoonk/ui/components/media-card";
+import { formatPosition } from "@zoonk/utils/string";
 import { getExtracted } from "next-intl/server";
 
 export async function ChapterHeader({
@@ -29,7 +30,7 @@ export async function ChapterHeader({
   courseSlug: string;
 }) {
   const t = await getExtracted();
-  const chapterPosition = String(chapter.position + 1).padStart(2, "0");
+  const chapterPosition = formatPosition(chapter.position);
 
   return (
     <MediaCard>
