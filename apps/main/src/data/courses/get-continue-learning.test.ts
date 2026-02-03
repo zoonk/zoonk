@@ -7,7 +7,9 @@ import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeAll, describe, expect, test } from "vitest";
-import { MAX_CONTINUE_LEARNING_ITEMS, getContinueLearning } from "./get-continue-learning";
+import { getContinueLearning } from "./get-continue-learning";
+
+const MAX_CONTINUE_LEARNING_ITEMS = 4;
 
 async function createCourseWithActivity(organizationId: number) {
   const course = await courseFixture({

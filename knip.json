@@ -1,7 +1,7 @@
 {
   "$schema": "https://unpkg.com/knip@5/schema.json",
   "ignore": [],
-  "ignoreBinaries": ["stripe", "build-and-start"],
+  "ignoreBinaries": ["stripe", "build-and-start", "turbo"],
   "ignoreDependencies": [
     "@prisma/client",
     "@tailwindcss/postcss",
@@ -20,21 +20,27 @@
   "workspaces": {
     "apps/api": {
       "entry": ["src/i18n/codec.ts"],
-      "ignore": ["src/app/.well-known/workflow/**"]
+      "ignore": ["src/app/.well-known/workflow/**", "e2e/**", "setup-tests.ts", "mocks/**"]
     },
     "apps/editor": {
-      "entry": ["src/i18n/codec.ts", "e2e/mocks/vercel-blob.ts"]
+      "entry": ["src/i18n/codec.ts", "e2e/mocks/vercel-blob.ts"],
+      "ignore": ["e2e/**", "setup-tests.ts"]
     },
     "apps/main": {
       "entry": [
         "src/i18n/codec.ts",
         "src/app/[locale]/privacy/*.mdx",
         "src/app/[locale]/terms/*.mdx"
-      ]
+      ],
+      "ignore": ["e2e/**", "setup-tests.ts"]
+    },
+    "packages/core": {
+      "ignore": ["setup-tests.ts"]
     },
     "packages/db": {
-      "entry": ["prisma.config.ts", "src/prisma/seed.ts"],
-      "ignore": ["src/prisma/**/*.prisma"],
+      "entry": ["prisma.config.ts"],
+      "ignore": ["src/prisma/**/*.prisma", "src/prisma/seed.ts", "src/prisma/seed/**"],
+      "ignoreDependencies": ["@zoonk/utils"],
       "prisma": false
     },
     "packages/ui": {

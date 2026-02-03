@@ -34,7 +34,7 @@ Execute the following commands in order and report any failures:
 pnpm turbo quality:fix
 pnpm db:generate
 pnpm typecheck
-pnpm knip
+pnpm knip --production
 pnpm test
 pnpm --filter {app} build
 pnpm --filter {app} build:e2e

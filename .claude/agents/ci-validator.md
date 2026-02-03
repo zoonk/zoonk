@@ -11,7 +11,7 @@ You are an expert CI/CD validation specialist with deep knowledge of monorepo to
 1. **Execute Validation Suite**: Run the following commands in order (adjust based on what you find in the workflows):
    - `pnpm format` - Check/fix code formatting
    - `pnpm lint:fix` - Run linting from the root of the monorepo (this is a global setup)
-   - `pnpm knip` - Check for unused exports/dependencies
+   - `pnpm knip --production` - Check for unused exports/dependencies
    - `pnpm typecheck` - Verify TypeScript types
    - `pnpm build` - Ensure all apps and packages compile (also extracts translations)
    - `pnpm test` - Run unit and integration tests

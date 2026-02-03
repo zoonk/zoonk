@@ -12,7 +12,7 @@ import { getContinueLearning as getContinueLearningQuery } from "@zoonk/db/conti
 import { safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
 
-export const MAX_CONTINUE_LEARNING_ITEMS = 4;
+const MAX_CONTINUE_LEARNING_ITEMS = 4;
 
 export type ContinueLearningActivity = Pick<Activity, "id" | "kind" | "title" | "position">;
 
