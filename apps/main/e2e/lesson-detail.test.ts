@@ -1,21 +1,93 @@
+import { randomUUID } from "node:crypto";
+import { prisma } from "@zoonk/db";
+import { activityFixture } from "@zoonk/testing/fixtures/activities";
+import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
+import { courseFixture } from "@zoonk/testing/fixtures/courses";
+import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { expect, test } from "./fixtures";
+
+async function createTestLessonWithActivities() {
+  const org = await prisma.organization.findUniqueOrThrow({
+    where: { slug: "ai" },
+  });
+
+  const uniqueId = randomUUID().slice(0, 8);
+
+  const course = await courseFixture({
+    isPublished: true,
+    organizationId: org.id,
+    slug: `e2e-course-${uniqueId}`,
+    title: `E2E Course ${uniqueId}`,
+  });
+
+  const chapter = await chapterFixture({
+    courseId: course.id,
+    isPublished: true,
+    organizationId: org.id,
+    slug: `e2e-chapter-${uniqueId}`,
+    title: `E2E Chapter ${uniqueId}`,
+  });
+
+  const lesson = await lessonFixture({
+    chapterId: chapter.id,
+    description: `E2E lesson description ${uniqueId}`,
+    isPublished: true,
+    organizationId: org.id,
+    slug: `e2e-lesson-${uniqueId}`,
+    title: `E2E Lesson ${uniqueId}`,
+  });
+
+  // Create activities for the lesson
+  await activityFixture({
+    isPublished: true,
+    kind: "background",
+    lessonId: lesson.id,
+    organizationId: org.id,
+    position: 0,
+  });
+
+  await activityFixture({
+    isPublished: true,
+    kind: "explanation",
+    lessonId: lesson.id,
+    organizationId: org.id,
+    position: 1,
+  });
+
+  await activityFixture({
+    isPublished: true,
+    kind: "quiz",
+    lessonId: lesson.id,
+    organizationId: org.id,
+    position: 2,
+  });
+
+  await activityFixture({
+    isPublished: true,
+    kind: "challenge",
+    lessonId: lesson.id,
+    organizationId: org.id,
+    position: 3,
+  });
+
+  return { chapter, course, lesson };
+}
 
 test.describe("Lesson Detail Page", () => {
   test("shows lesson content with title, description, and position", async ({ page }) => {
-    await page.goto(
-      "/b/ai/c/machine-learning/c/introduction-to-machine-learning/l/what-is-machine-learning",
-    );
+    const { chapter, course, lesson } = await createTestLessonWithActivities();
+    await page.goto(`/b/ai/c/${course.slug}/c/${chapter.slug}/l/${lesson.slug}`);
 
     await expect(
       page.getByRole("heading", {
         level: 1,
-        name: /what is machine learning/i,
+        name: lesson.title,
       }),
     ).toBeVisible();
 
-    await expect(page.getByText(/differs from traditional programming/i).first()).toBeVisible();
+    await expect(page.getByText(lesson.description)).toBeVisible();
 
-    const positionIcon = page.getByRole("img", { name: /lesson 01/i }).first();
+    const positionIcon = page.getByRole("img", { name: /lesson 01/i });
     await expect(positionIcon).toBeVisible();
   });
 
@@ -36,54 +108,56 @@ test.describe("Lesson Detail Page", () => {
   });
 
   test("clicking course link in popover navigates to course page", async ({ page }) => {
-    await page.goto(
-      "/b/ai/c/machine-learning/c/introduction-to-machine-learning/l/what-is-machine-learning",
-    );
+    const { chapter, course, lesson } = await createTestLessonWithActivities();
+    await page.goto(`/b/ai/c/${course.slug}/c/${chapter.slug}/l/${lesson.slug}`);
 
     const triggerButton = page.getByRole("button", {
-      name: /what is machine learning/i,
+      name: lesson.title,
     });
     await triggerButton.click();
 
-    await expect(page.getByRole("link", { name: /machine learning/i })).toBeVisible();
+    await expect(page.getByRole("link", { name: course.title })).toBeVisible();
 
-    await expect(page.getByText(/introduction to machine learning/i)).toBeVisible();
+    await expect(page.getByText(chapter.title)).toBeVisible();
 
-    const courseLink = page.getByRole("link", { name: /machine learning/i });
+    const courseLink = page.getByRole("link", { name: course.title });
     await courseLink.click({ force: true });
 
-    await expect(page).toHaveURL(/\/b\/ai\/c\/machine-learning/);
+    await expect(page).toHaveURL(new RegExp(`/b/ai/c/${course.slug}`));
 
-    await expect(page.getByRole("heading", { level: 1, name: /machine learning/i })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: course.title })).toBeVisible();
   });
 
   test("displays activity list with titles and descriptions", async ({ page }) => {
-    await page.goto(
-      "/b/ai/c/machine-learning/c/introduction-to-machine-learning/l/what-is-machine-learning",
-    );
+    const { chapter, course, lesson } = await createTestLessonWithActivities();
+    await page.goto(`/b/ai/c/${course.slug}/c/${chapter.slug}/l/${lesson.slug}`);
 
-    await expect(page.getByRole("link", { name: /background/i }).first()).toBeVisible();
-    await expect(page.getByText(/explains why this topic exists/i).first()).toBeVisible();
+    // Scope to the activity list for precise queries
+    const activityList = page.getByRole("list", { name: /activities/i });
 
-    await expect(page.getByRole("link", { name: /explanation/i }).first()).toBeVisible();
-    await expect(page.getByText(/explains what this topic is/i).first()).toBeVisible();
+    await expect(activityList.getByRole("link", { name: /background/i })).toBeVisible();
+    await expect(activityList.getByText(/explains why this topic exists/i)).toBeVisible();
 
-    await expect(page.getByRole("link", { name: /quiz/i }).first()).toBeVisible();
-    await expect(page.getByText(/tests your understanding/i).first()).toBeVisible();
+    await expect(activityList.getByRole("link", { name: /explanation/i })).toBeVisible();
+    await expect(activityList.getByText(/explains what this topic is/i)).toBeVisible();
 
-    await expect(page.getByRole("link", { name: /challenge/i }).first()).toBeVisible();
-    await expect(page.getByText(/tests analytical thinking/i).first()).toBeVisible();
+    await expect(activityList.getByRole("link", { name: /quiz/i })).toBeVisible();
+    await expect(activityList.getByText(/tests your understanding/i)).toBeVisible();
+
+    await expect(activityList.getByRole("link", { name: /challenge/i })).toBeVisible();
+    await expect(activityList.getByText(/tests analytical thinking/i)).toBeVisible();
   });
 
   test("clicking activity link navigates to activity page", async ({ page }) => {
-    await page.goto(
-      "/b/ai/c/machine-learning/c/introduction-to-machine-learning/l/what-is-machine-learning",
-    );
+    const { chapter, course, lesson } = await createTestLessonWithActivities();
+    await page.goto(`/b/ai/c/${course.slug}/c/${chapter.slug}/l/${lesson.slug}`);
 
-    const activityLink = page.getByRole("link", { name: /background/i }).first();
+    // Scope to the activity list for precise query
+    const activityList = page.getByRole("list", { name: /activities/i });
+    const activityLink = activityList.getByRole("link", { name: /background/i });
     await activityLink.click();
 
-    await expect(page).toHaveURL(/\/l\/what-is-machine-learning\/a\/0/);
+    await expect(page).toHaveURL(new RegExp(`/l/${lesson.slug}/a/0`));
   });
 
   test("lesson without activities redirects to generate page", async ({ page }) => {

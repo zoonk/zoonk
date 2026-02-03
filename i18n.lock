@@ -202,7 +202,6 @@ checksums:
     Search%20courses%20or%20pages.../singular: d059e326784d4e9b074d82e7957a3eef
     No%20results%20found/singular: 5518f2865757dc73900aa03ef8be6934
     My%20courses/singular: d97cf4146d15d6ff06df054f89cf2bbd
-    Manage%20settings/singular: 72d60ef4e53cd4eb8c041576b9382b51
     Learn%20something/singular: 2b9c846ff3fe4df7416deac9aa405e30
     Update%20language/singular: 578f6d1e35422e5fdc38bf8c85126585
     Manage%20subscription/singular: b83a75127b8eabc21dfa1e0f7104db56
@@ -213,11 +212,11 @@ checksums:
     Language/singular: 277fd1a41cc237a437cd1d5e4a80463b
     Learn/singular: 6559e2075ab6947a1d4fa43e19a5d66b
     User%20menu/singular: ee471ecb3870493792e60d1b41fcce86
-    Settings/singular: 8df6777277469c1fd88cc18dde2f1cc3
     Support/singular: 55aab5fd0f31a9cb055a2edeeedfaf63
     Subscription/singular: ba9f3675e18987d067d48533c8897343
     Not%20completed/singular: d011b1ae92a1a8a2676a5d6999bbe6d4
     Completed/singular: 0e4bbce9985f25eb673d9a054c8d5334
+    Activities/singular: 1c01b2fc4db670ab174e2220cf5e79f8
     Lesson%20%7Bposition%7D/singular: 2283c16cc7404682a2380fb8318f42e2
     Lessons%20haven't%20been%20generated%20for%20this%20chapter%20yet./singular: ab7a5c1b0cf16f1a8b9cf87487800e3f
     Generate%20lessons/singular: 99814020e2da40d3f3146eaba4e42959
@@ -233,9 +232,9 @@ checksums:
     Afternoon/singular: b34f73070b6ce5e811f2aeec93798d7d
     Evening/singular: d401caa89963f8017a148bcdd1749c2d
     "%7Bperiod%7D%20with%20%7Bvalue%7D%25/singular": 958bc2c65d9a6823edee6f2585fd6501
-    Continue%20learning/singular: ff5ff528cbacf657af36fb9b711431d6
     Next%3A%20%7Bactivity%7D/singular: 9208679843466247d2161793249e5eda
     Activity/singular: 1948763de8e531483a798b68195e297e
+    Continue%20learning/singular: ff5ff528cbacf657af36fb9b711431d6
     Course%20categories/singular: 3c86af7c305be0c0f5b65077fb06708d
     All/singular: 5e2e93f8e2a5f315b6fecdd0a0e6f55f
     Loading%20more%20courses%E2%80%A6/singular: 290733f8b53c88f64b385ba9dd320acf
@@ -256,11 +255,11 @@ checksums:
     Send%20feedback/singular: 9631cc08d49da04475b30a0d320ce97c
     I%20didn't%20like%20it/singular: 9761a96b22323e7db7d7176b77cf7caa
     I%20liked%20it/singular: ed20592186f53abcc526360869bd0f55
+    Generate/singular: 0345bf322c191e70d01fd6607ec5c2f8
     Cancel/singular: 2e2a849c2223911717de8caa2c71bade
     Cooking%20up%20some%20course%20ideas/singular: a42520f96dbac3580a2ccae4bd6ceb31
     We're%20putting%20together%20a%20few%20course%20suggestions%20for%20you.%20This%20may%20take%20a%20few%20seconds./singular: 8467af30434eb8bfb2f13e109b1d9334
     Course%20ideas%20for%20%7Bprompt%7D/singular: 23f94da8ce9272d654ff40bb80e6a352
-    Generate/singular: 0345bf322c191e70d01fd6607ec5c2f8
     Change%20subject/singular: 8585bb703ba2d857dd9a7b36f97be507
     Discover%20personalized%20courses%20and%20resources%20to%20learn%20%7Bprompt%7D.%20Zoonk%20uses%20AI%20to%20generate%20interactive%20lessons%20and%20activities%20tailored%20to%20you./singular: 7d54c62a9c8d49b713626fa25edff820
     Learn%20%7Bprompt%7D%20with%20AI/singular: 5a8a8ee7f52faf0cb790e0f0cfbcce7d
@@ -343,8 +342,6 @@ checksums:
     Set%20or%20update%20your%20Zoonk%20display%20name.%20This%20name%20may%20be%20visible%20to%20others%20and%20will%20be%20used%20when%20referring%20to%20you%20in%20lessons%20and%20activities./singular: 27a489da570cb0d40c7b47d81d271213
     Update%20Display%20Name/singular: 6583c6a89e7dfe4373ba2e6033547b69
     This%20is%20the%20name%20others%20may%20see%20and%20the%20one%20we'll%20use%20to%20refer%20to%20you%20in%20activities./singular: 84084520f32cbe01700e2f32c43558aa
-    Customize%20your%20Zoonk%20learning%20experience.%20Manage%20account%20settings%2C%20profile%2C%20and%20preferences%20to%20get%20the%20most%20out%20of%20our%20education%20platform./singular: 36a3ad216744e032858a6279929bd37b
-    Manage%20your%20account%20settings%2C%20profile%2C%20and%20preferences./singular: fb026dbc30e3549c3d15e6c254e7d70e
     Manage%20Subscription/singular: 31cafd367fc70d656d8dd979d537dc96
     Manage%20your%20Zoonk%20subscription.%20View%20your%20current%20plan%2C%20upgrade%20or%20downgrade%2C%20and%20see%20available%20benefits./singular: 47f6b6e7b8217ffc7b8135863f626906
     Check%20your%20plan%20details%20and%20manage%20your%20subscription./singular: b9c54ab5f7759daa9fde43d201b05a3d
@@ -410,9 +407,9 @@ checksums:
     Explanation/singular: f6b595df4ffb1a5b0cbbe1dda5993522
     Read%20sentences%20and%20translate%20them%20to%20practice%20reading%20comprehension./singular: b084920876df6266904d73e2ddfc6f19
     A%20comprehensive%20quiz%20covering%20everything%20you%20learned%20in%20this%20lesson./singular: bd46bf5022b53951436d9facacacf673
+    Learn%20new%20words%20and%20their%20translations%20to%20build%20your%20vocabulary./singular: edf41f5213749b375ab5057e14707380
     Tests%20analytical%20thinking%20through%20decisions%20with%20trade-offs.%20See%20how%20each%20choice%20impacts%20different%20outcomes./singular: 6d49ad51d42b986411df06b5ceb48067
     Listen%20to%20audio%20sentences%20and%20translate%20them%20to%20practice%20listening%20skills./singular: c7f37f13c3e2d3cb1f23c9cc5eee4e1d
-    Learn%20new%20words%20with%20their%20translations.%20Includes%20articles%20for%20gendered%20languages%20and%20pronunciation%20for%20non-Roman%20scripts./singular: b8169ec164159b9d0beb9676e2fcb3d0
     Teaches%20grammar%20rules%20with%20practical%20exercises%20to%20help%20you%20remember%20and%20apply%20them./singular: b1250dcf530d4320d730ad2744d37221
     Vocabulary/singular: 2c8127af4c194fa05463e82d5e414c62
     Shows%20WHERE%20this%20topic%20appears%20in%20real%20life.%20Helps%20you%20recognize%20it%20in%20daily%20routines%2C%20work%2C%20pop%20culture%2C%20and%20unexpected%20places./singular: bd7cdd212990640d3e21ae67a305379f

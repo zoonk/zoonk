@@ -1,4 +1,26 @@
+import { randomUUID } from "node:crypto";
+import { prisma } from "@zoonk/db";
+import { courseFixture } from "@zoonk/testing/fixtures/courses";
+import { normalizeString } from "@zoonk/utils/string";
 import { type Page, expect, test } from "./fixtures";
+
+async function createTestCourse() {
+  const org = await prisma.organization.findUniqueOrThrow({
+    where: { slug: "ai" },
+  });
+
+  const uniqueId = randomUUID().slice(0, 8);
+  const title = `E2E Course ${uniqueId}`;
+
+  return courseFixture({
+    description: `E2E test course description ${uniqueId}`,
+    isPublished: true,
+    normalizedTitle: normalizeString(title),
+    organizationId: org.id,
+    slug: `e2e-${uniqueId}`,
+    title,
+  });
+}
 
 // Helper to open command palette via click (reliable for tests that don't test keyboard shortcuts)
 // Scoped to navigation to avoid strict mode violation when multiple search buttons exist during streaming
@@ -212,39 +234,49 @@ test.describe("Command Palette - Authenticated", () => {
 });
 
 test.describe("Command Palette - Course Search", () => {
-  test.beforeEach(async ({ page }) => {
+  test("does not search with fewer than 2 characters", async ({ page }) => {
+    const course = await createTestCourse();
     await page.goto("/");
     await openCommandPalette(page);
-  });
 
-  test("does not search with fewer than 2 characters", async ({ page }) => {
     const dialog = page.getByRole("dialog");
-    await dialog.getByPlaceholder(/search/i).fill("M");
+    // Type single character from unique course title
+    await dialog.getByPlaceholder(/search/i).fill(course.title.charAt(0));
 
     // Should not show course search results with single character
-    await expect(dialog.getByText("Machine Learning")).not.toBeVisible();
+    await expect(dialog.getByText(course.title)).not.toBeVisible();
   });
 
-  test("shows course in results", async ({ page }) => {
-    const dialog = page.getByRole("dialog");
-    await dialog.getByPlaceholder(/search/i).fill("machine");
+  test("shows course in results and navigates to detail page", async ({ page }) => {
+    // Use a seeded course (Machine Learning) that is pre-rendered for navigation testing
+    // New courses created via fixtures won't have their detail pages pre-rendered
+    const courseName = "Machine Learning";
+    const courseDescription = "Machine learning enables computers";
 
-    // Wait for results
-    await expect(dialog.getByText("Machine Learning").first()).toBeVisible();
+    await page.goto("/");
+    await openCommandPalette(page);
+
+    const dialog = page.getByRole("dialog");
+    await dialog.getByPlaceholder(/search/i).fill(courseName);
+
+    // Wait for the course option to appear in results
+    const courseOption = dialog.getByRole("option").filter({ hasText: courseName });
+    await expect(courseOption).toBeVisible();
 
     // Course description should be visible
-    await expect(
-      dialog.getByText(/patterns|predictions|computers|identify/i).first(),
-    ).toBeVisible();
+    await expect(courseOption.getByText(courseDescription, { exact: false })).toBeVisible();
 
-    // Wait for and click the course result
-    await dialog.getByText("Machine Learning").first().click();
+    // Click the course option to navigate
+    await courseOption.click();
 
-    // Verify user sees course detail page (level: 1 for main title, not chapter headings)
-    await expect(page.getByRole("heading", { level: 1, name: /machine learning/i })).toBeVisible();
+    // Verify user sees course detail page
+    await expect(page.getByRole("heading", { level: 1, name: courseName })).toBeVisible();
   });
 
   test("shows No results found for non-matching query", async ({ page }) => {
+    await page.goto("/");
+    await openCommandPalette(page);
+
     const dialog = page.getByRole("dialog");
     await dialog.getByPlaceholder(/search/i).fill("xyznonexistent");
 
@@ -252,33 +284,46 @@ test.describe("Command Palette - Course Search", () => {
   });
 
   test("handles rapid typing correctly", async ({ page }) => {
+    const course = await createTestCourse();
+    await page.goto("/");
+    await openCommandPalette(page);
+
     const dialog = page.getByRole("dialog");
 
-    // Type rapidly with corrections
-    await dialog.getByPlaceholder(/search/i).pressSequentially("Machi", { delay: 50 });
+    // Type rapidly with corrections using unique title
+    const partialTitle = course.title.slice(0, 5);
+    await dialog.getByPlaceholder(/search/i).pressSequentially(partialTitle, { delay: 50 });
 
-    await dialog.getByPlaceholder(/search/i).fill("Machine");
+    await dialog.getByPlaceholder(/search/i).fill(course.title);
 
     // Should show correct results after debounce
-    await expect(dialog.getByText("Machine Learning").first()).toBeVisible();
+    await expect(dialog.getByText(course.title)).toBeVisible();
   });
 
   test("shows exact match first when searching", async ({ page }) => {
+    await page.goto("/");
+    await openCommandPalette(page);
+
     const dialog = page.getByRole("dialog");
     await dialog.getByPlaceholder(/search/i).fill("law");
 
-    // Wait for results to load
-    await expect(dialog.getByText("Law").first()).toBeVisible();
-
-    // Get all course results - they should be in listbox options
+    // Wait for results to load - multiple law courses exist (Law, Criminal Law, Tax Law, Civil Law)
+    // The first option should be the exact match "Law", not a partial match
     const options = dialog.getByRole("option");
-    const firstOption = options.first();
+    await expect(options.first()).toBeVisible();
 
-    // The first result should be the exact match "Law", not "Criminal Law" or others
-    await expect(firstOption).toContainText("Law");
-    await expect(firstOption).not.toContainText("Criminal Law");
-    await expect(firstOption).not.toContainText("Tax Law");
-    await expect(firstOption).not.toContainText("Civil Law");
+    // The first result should be the exact match "Law", not "Criminal Law", "Tax Law", or "Civil Law"
+    // Text format is "TitleDescription" (concatenated), so we check it starts with "Law" followed
+    // by the description, not by another word like "Criminal"
+    const firstOption = options.first();
+    const firstOptionText = await firstOption.textContent();
+
+    // Should start with "Law" but NOT with partial matches like "Criminal Law", "Tax Law", "Civil Law"
+    expect(firstOptionText).toBeTruthy();
+    expect(firstOptionText!.startsWith("Law")).toBe(true);
+    expect(firstOptionText!.startsWith("Criminal Law")).toBe(false);
+    expect(firstOptionText!.startsWith("Tax Law")).toBe(false);
+    expect(firstOptionText!.startsWith("Civil Law")).toBe(false);
   });
 });
 

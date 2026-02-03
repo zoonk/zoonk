@@ -140,6 +140,11 @@ msgctxt "95stPq"
 msgid "Completed"
 msgstr "Completada"
 
+#: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/c/[chapterSlug]/l/[lessonSlug]/activity-list.tsx
+msgctxt "UmEsZF"
+msgid "Activities"
+msgstr "Actividades"
+
 #: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/c/[chapterSlug]/l/[lessonSlug]/lesson-header.tsx
 msgctxt "Dane8c"
 msgid "Lesson {position}"
