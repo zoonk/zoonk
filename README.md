@@ -54,7 +54,7 @@ We recommend using [mise](https://mise.jdx.dev/) to manage your Node.js and pnpm
 - `pnpm build` to create a production build
 - `pnpm lint` to run linting
 - `pnpm typecheck` to run TypeScript type checking
-- `pnpm knip --production` to check for unused code
+- `pnpm knip` to check for unused code
 - `pnpm test` to run tests with Vitest
 - `pnpm e2e` to run end-to-end tests with Playwright
 
