@@ -12,6 +12,7 @@ import { toast } from "@zoonk/ui/components/sonner";
 import { downloadJson } from "@zoonk/utils/download";
 import { DownloadIcon, EllipsisVerticalIcon, UploadIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { ImportProvider } from "../import";
 import { EntityImportDialog } from "./entity-import-dialog";
@@ -26,6 +27,7 @@ export function EntityListActions({
   onImport: (formData: FormData) => Promise<{ error: string | null }>;
 }) {
   const t = useExtracted();
+  const router = useRouter();
   const [importOpen, setImportOpen] = useState(false);
   const [pending, startTransition] = useTransition();
 
@@ -67,6 +69,7 @@ export function EntityListActions({
   }
 
   function handleImportSuccess() {
+    router.refresh();
     toast.success(entityLabels.importSuccess);
     setImportOpen(false);
   }
