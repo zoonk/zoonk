@@ -5,10 +5,17 @@ import { streamStatus } from "../stream-status";
 import { type GeneratedLesson } from "./generate-lessons-step";
 import { type ChapterContext } from "./get-chapter-step";
 
+export type CreatedLesson = {
+  id: number;
+  position: number;
+  slug: string;
+  title: string;
+};
+
 export async function addLessonsStep(input: {
   context: ChapterContext;
   lessons: GeneratedLesson[];
-}): Promise<void> {
+}): Promise<CreatedLesson[]> {
   "use step";
 
   await streamStatus({ status: "started", step: "addLessons" });
@@ -26,7 +33,12 @@ export async function addLessonsStep(input: {
     title: lesson.title,
   }));
 
-  const { error } = await safeAsync(() => prisma.lesson.createMany({ data: lessonsData }));
+  const { data: createdLessons, error } = await safeAsync(() =>
+    prisma.lesson.createManyAndReturn({
+      data: lessonsData,
+      select: { id: true, position: true, slug: true, title: true },
+    }),
+  );
 
   if (error) {
     await streamStatus({ status: "error", step: "addLessons" });
@@ -34,4 +46,6 @@ export async function addLessonsStep(input: {
   }
 
   await streamStatus({ status: "completed", step: "addLessons" });
+
+  return createdLessons;
 }

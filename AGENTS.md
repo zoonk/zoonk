@@ -88,6 +88,7 @@ For detailed UX guidelines (interactions, animation, layout, accessibility), see
 - When writing a plan, don't include "manual verification" steps. We always do manual verification, you don't need to do it. Just ensure you add the necessary e2e tests for the task
 - Don't create migration files manually. Run `pnpm --filter @zoonk/db db:migrate --name <migration-name>` to generate migration
 - Workflow files (`"use workflow"`) can't call Node APIs directly; wrap them in `"use step"` functions
+- When adding a new endpoint, add docs for it in `document.ts`
 
 ## Component Organization
 

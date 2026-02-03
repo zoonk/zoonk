@@ -1,7 +1,7 @@
 "use client";
 
 import { type PhaseStatus } from "@/lib/generation-phases";
-import { type ChapterStepName } from "@/workflows/config";
+import { type ChapterWorkflowStepName } from "@/workflows/config";
 import { useExtracted } from "next-intl";
 import {
   PHASE_ICONS,
@@ -19,13 +19,14 @@ export type PhaseInfo = {
 };
 
 export function useGenerationPhases(
-  completedSteps: ChapterStepName[],
-  currentStep: ChapterStepName | null,
+  completedSteps: ChapterWorkflowStepName[],
+  currentStep: ChapterWorkflowStepName | null,
 ) {
   const t = useExtracted();
 
   const labels: Record<PhaseName, string> = {
     completing: t("Finishing up"),
+    generatingActivities: t("Generating activities"),
     generatingLessons: t("Generating lessons"),
     loadingInfo: t("Loading chapter information"),
   };

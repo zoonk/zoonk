@@ -1,4 +1,5 @@
 import { handleChapterFailureStep } from "@/workflows/course-generation/steps/handle-failure-step";
+import { lessonGenerationWorkflow } from "@/workflows/lesson-generation/lesson-generation-workflow";
 import { getWorkflowMetadata } from "workflow";
 import { addLessonsStep } from "./steps/add-lessons-step";
 import { generateLessonsStep } from "./steps/generate-lessons-step";
@@ -30,7 +31,14 @@ export async function chapterGenerationWorkflow(chapterId: number): Promise<void
 
   try {
     const lessons = await generateLessonsStep(context);
-    await addLessonsStep({ context, lessons });
+    const createdLessons = await addLessonsStep({ context, lessons });
+
+    const firstLesson = createdLessons[0];
+
+    if (firstLesson) {
+      await lessonGenerationWorkflow(firstLesson.id);
+    }
+
     await setChapterAsCompletedStep({ context, workflowRunId });
   } catch (error) {
     await handleChapterFailureStep({ chapterId });

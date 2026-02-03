@@ -20,6 +20,16 @@ export const chapterGenerationTriggerSchema = z
   })
   .meta({ id: "ChapterGenerationTrigger" });
 
+export const lessonGenerationTriggerSchema = z
+  .object({
+    lessonId: z
+      .number()
+      .int()
+      .positive()
+      .meta({ description: "Lesson ID to generate activities for" }),
+  })
+  .meta({ id: "LessonGenerationTrigger" });
+
 export const workflowTriggerResponseSchema = z
   .object({
     message: z.string().meta({ example: "Workflow started" }),

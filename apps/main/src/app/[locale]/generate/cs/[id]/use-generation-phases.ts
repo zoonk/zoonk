@@ -26,6 +26,7 @@ export function useGenerationPhases(
 
   const labels: Record<PhaseName, string> = {
     checkingExisting: t("Checking for existing course"),
+    generatingActivities: t("Generating activities"),
     generatingDetails: t("Generating course details"),
     generatingLessons: t("Generating lessons"),
     loadingInfo: t("Loading course information"),
