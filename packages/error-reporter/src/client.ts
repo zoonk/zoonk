@@ -1,3 +1,5 @@
+import { API_URL } from "@zoonk/utils/constants";
+
 const DEDUPE_WINDOW_MS = 60_000;
 const recentErrors = new Map<string, number>();
 
@@ -68,9 +70,7 @@ export function reportError(error: unknown): void {
     userAgent: typeof navigator === "undefined" ? undefined : navigator.userAgent,
   };
 
-  const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || "https://api.zoonk.com";
-
-  fetch(`${apiBaseUrl}/v1/errors`, {
+  fetch(`${API_URL}/v1/errors`, {
     body: JSON.stringify(payload),
     headers: { "Content-Type": "application/json" },
     method: "POST",
