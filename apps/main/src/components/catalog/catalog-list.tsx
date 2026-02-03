@@ -160,7 +160,7 @@ export function CatalogListItemIndicator({
       <div
         aria-label={completedLabel}
         className={cn(
-          "bg-success/60 text-background mt-0.5 flex size-3.5 shrink-0 items-center justify-center rounded-full",
+          "bg-success/60 text-background mt-0.5 flex size-4 shrink-0 items-center justify-center rounded-full",
           className,
         )}
         data-slot="catalog-list-item-indicator"
@@ -175,7 +175,7 @@ export function CatalogListItemIndicator({
     <div
       aria-label={notCompletedLabel}
       className={cn(
-        "border-muted-foreground/30 mt-0.5 size-3.5 shrink-0 rounded-full border-2",
+        "border-muted-foreground/30 mt-0.5 size-4 shrink-0 rounded-full border-2",
         className,
       )}
       data-slot="catalog-list-item-indicator"
