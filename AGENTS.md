@@ -48,6 +48,12 @@ Zoonk is a web app where users can learn anything using AI. This app uses AI to 
 - `pnpm --filter {app} build:e2e` (always run this before running e2e tests)
 - `pnpm --filter {app} e2e`
 
+## Engineering Mindset
+
+- **Build for growth, not current size.** "We only have N of X" is NEVER a valid reason to skip proper patterns. Early-stage projects grow. Build infrastructure that scales with the project from the start.
+- **Single source of truth always wins.** If two things must stay in sync (schemas + docs, types + validation), generate one from the other. Manual duplication WILL drift.
+- **Setup cost is amortized.** The effort to set up reusable code and automations always pays off. Don't optimize for today's sprint. Focus on long-term velocity.
+
 ## Design Style
 
 Whenever you're designing something, follow this design style:
