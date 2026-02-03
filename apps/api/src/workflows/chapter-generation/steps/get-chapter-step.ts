@@ -1,6 +1,33 @@
-import { getChapterForGeneration } from "@/data/chapters/get-chapter-for-generation";
+import { prisma } from "@zoonk/db";
 import { FatalError } from "workflow";
 import { streamStatus } from "../stream-status";
+
+async function getChapterForGeneration(chapterId: number) {
+  return prisma.chapter.findUnique({
+    select: {
+      _count: {
+        select: {
+          lessons: true,
+        },
+      },
+      course: {
+        select: {
+          slug: true,
+          title: true,
+        },
+      },
+      description: true,
+      generationRunId: true,
+      generationStatus: true,
+      id: true,
+      language: true,
+      organizationId: true,
+      slug: true,
+      title: true,
+    },
+    where: { id: chapterId },
+  });
+}
 
 export type ChapterContext = NonNullable<Awaited<ReturnType<typeof getChapterForGeneration>>>;
 

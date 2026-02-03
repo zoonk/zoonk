@@ -1,6 +1,7 @@
-import { createAICourse } from "@/data/courses/create-ai-course";
-import { updateCourseSuggestionStatus } from "@/data/courses/update-course-suggestion-status";
-import { getAIOrganization } from "@/data/orgs/get-ai-organization";
+import { prisma } from "@zoonk/db";
+import { AI_ORG_SLUG } from "@zoonk/utils/constants";
+import { safeAsync } from "@zoonk/utils/error";
+import { normalizeString, toSlug } from "@zoonk/utils/string";
 import { streamStatus } from "../stream-status";
 import { type CourseContext, type CourseSuggestionData } from "../types";
 
@@ -14,14 +15,21 @@ export async function initializeCourseStep(input: {
 
   const { suggestion, workflowRunId } = input;
 
-  const aiOrg = await getAIOrganization();
+  const aiOrg = await prisma.organization.findUniqueOrThrow({
+    select: { id: true },
+    where: { slug: AI_ORG_SLUG },
+  });
 
   // Update course suggestion status to running
-  const { error: updateError } = await updateCourseSuggestionStatus({
-    generationRunId: workflowRunId,
-    generationStatus: "running",
-    id: suggestion.id,
-  });
+  const { error: updateError } = await safeAsync(() =>
+    prisma.courseSuggestion.update({
+      data: {
+        generationRunId: workflowRunId,
+        generationStatus: "running",
+      },
+      where: { id: suggestion.id },
+    }),
+  );
 
   if (updateError) {
     await streamStatus({ status: "error", step: "initializeCourse" });
@@ -29,12 +37,24 @@ export async function initializeCourseStep(input: {
   }
 
   // Create the course
-  const { data: course, error: createError } = await createAICourse({
-    generationRunId: workflowRunId,
-    language: suggestion.language,
-    organizationId: aiOrg.id,
-    title: suggestion.title,
-  });
+  const slug = toSlug(suggestion.title);
+  const normalizedTitle = normalizeString(suggestion.title);
+
+  const { data: course, error: createError } = await safeAsync(() =>
+    prisma.course.create({
+      data: {
+        generationRunId: workflowRunId,
+        generationStatus: "running",
+        isPublished: true,
+        language: suggestion.language,
+        normalizedTitle,
+        organizationId: aiOrg.id,
+        slug,
+        title: suggestion.title,
+      },
+      select: { id: true, slug: true },
+    }),
+  );
 
   if (createError || !course) {
     await streamStatus({ status: "error", step: "initializeCourse" });

@@ -1,4 +1,5 @@
-import { updateChapterGenerationStatus } from "@/data/chapters/update-chapter-generation-status";
+import { prisma } from "@zoonk/db";
+import { safeAsync } from "@zoonk/utils/error";
 import { streamStatus } from "../stream-status";
 
 export async function setChapterAsRunningStep(input: {
@@ -9,11 +10,16 @@ export async function setChapterAsRunningStep(input: {
 
   await streamStatus({ status: "started", step: "setChapterAsRunning" });
 
-  const { error } = await updateChapterGenerationStatus({
-    chapterId: input.chapterId,
-    generationRunId: input.workflowRunId,
-    generationStatus: "running",
-  });
+  const { error } = await safeAsync(() =>
+    prisma.chapter.update({
+      data: {
+        generationRunId: input.workflowRunId,
+        generationStatus: "running",
+      },
+      select: { generationStatus: true, id: true },
+      where: { id: input.chapterId },
+    }),
+  );
 
   if (error) {
     await streamStatus({ status: "error", step: "setChapterAsRunning" });

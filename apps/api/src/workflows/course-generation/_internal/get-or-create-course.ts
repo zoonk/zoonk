@@ -1,4 +1,4 @@
-import { type ExistingCourse } from "@/data/courses/find-existing-course";
+import { type ExistingCourse } from "../steps/check-existing-course-step";
 import { getAIOrganizationStep } from "../steps/get-ai-organization-step";
 import { initializeCourseStep } from "../steps/initialize-course-step";
 import { setCourseAsRunningStep } from "../steps/set-course-as-running-step";

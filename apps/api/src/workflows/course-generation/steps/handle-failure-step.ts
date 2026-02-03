@@ -1,6 +1,5 @@
-import { updateChapterGenerationStatus } from "@/data/chapters/update-chapter-generation-status";
-import { updateAICourse } from "@/data/courses/update-ai-course";
-import { updateCourseSuggestionStatus } from "@/data/courses/update-course-suggestion-status";
+import { prisma } from "@zoonk/db";
+import { safeAsync } from "@zoonk/utils/error";
 
 export async function handleCourseFailureStep(input: {
   courseId: number;
@@ -9,19 +8,29 @@ export async function handleCourseFailureStep(input: {
   "use step";
 
   await Promise.all([
-    updateAICourse({ courseId: input.courseId, generationStatus: "failed" }),
-    updateCourseSuggestionStatus({
-      generationStatus: "failed",
-      id: input.courseSuggestionId,
-    }),
+    safeAsync(() =>
+      prisma.course.update({
+        data: { generationStatus: "failed" },
+        where: { id: input.courseId },
+      }),
+    ),
+    safeAsync(() =>
+      prisma.courseSuggestion.update({
+        data: { generationStatus: "failed" },
+        where: { id: input.courseSuggestionId },
+      }),
+    ),
   ]);
 }
 
 export async function handleChapterFailureStep(input: { chapterId: number }): Promise<void> {
   "use step";
 
-  await updateChapterGenerationStatus({
-    chapterId: input.chapterId,
-    generationStatus: "failed",
-  });
+  await safeAsync(() =>
+    prisma.chapter.update({
+      data: { generationStatus: "failed" },
+      select: { generationStatus: true, id: true },
+      where: { id: input.chapterId },
+    }),
+  );
 }
