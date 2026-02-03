@@ -89,6 +89,7 @@ For detailed UX guidelines (interactions, animation, layout, accessibility), see
 - Don't create migration files manually. Run `pnpm --filter @zoonk/db db:migrate --name <migration-name>` to generate migration
 - Workflow files (`"use workflow"`) can't call Node APIs directly; wrap them in `"use step"` functions
 - When adding a new endpoint, add docs for it in `document.ts`
+- When adding e2e tests, use `*Fixture()` functions to create unique test data per test - do not modify seed files
 
 ## Component Organization
 
