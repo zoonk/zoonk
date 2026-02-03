@@ -145,6 +145,11 @@ msgctxt "95stPq"
 msgid "Completed"
 msgstr "Completed"
 
+#: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/activity-list.tsx
+msgctxt "UmEsZF"
+msgid "Activities"
+msgstr "Activities"
+
 #: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-header.tsx
 msgctxt "Dane8c"
 msgid "Lesson {position}"

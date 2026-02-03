@@ -28,7 +28,7 @@ export async function ActivityList({
 
   return (
     <CatalogList>
-      <CatalogListContent>
+      <CatalogListContent aria-label={t("Activities")}>
         {activities.map((activity) => {
           const meta = kindMeta.get(activity.kind);
 
