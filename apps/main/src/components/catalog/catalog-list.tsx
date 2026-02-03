@@ -13,6 +13,16 @@ const CatalogListContext = createContext<{
   isSearchActive: boolean;
 } | null>(null);
 
+export function CatalogContainer({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      {...props}
+      className={cn("mx-auto w-full px-4 py-8 md:py-10 lg:max-w-xl", className)}
+      data-slot="catalog-container"
+    />
+  );
+}
+
 export function CatalogList({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div {...props} className={cn("flex flex-col gap-4", className)} data-slot="catalog-list" />

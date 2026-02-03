@@ -1,5 +1,6 @@
 "use cache";
 
+import { CatalogContainer } from "@/components/catalog/catalog-list";
 import { getChapter } from "@/data/chapters/get-chapter";
 import { listChapterLessons } from "@/data/lessons/list-chapter-lessons";
 import { redirect } from "@/i18n/navigation";
@@ -68,7 +69,7 @@ export default async function ChapterPage({
     <main className="flex flex-1 flex-col">
       <ChapterHeader brandSlug={brandSlug} chapter={chapter} courseSlug={courseSlug} />
 
-      <div className="mx-auto w-full px-4 py-8 md:py-10 lg:max-w-xl">
+      <CatalogContainer>
         <Suspense>
           <LessonList
             brandSlug={brandSlug}
@@ -77,7 +78,7 @@ export default async function ChapterPage({
             lessons={lessons}
           />
         </Suspense>
-      </div>
+      </CatalogContainer>
     </main>
   );
 }

@@ -1,5 +1,6 @@
 "use cache";
 
+import { CatalogContainer } from "@/components/catalog/catalog-list";
 import { listLessonActivities } from "@/data/activities/list-lesson-activities";
 import { getLesson } from "@/data/lessons/get-lesson";
 import { redirect } from "@/i18n/navigation";
@@ -84,9 +85,9 @@ export default async function LessonPage({
         lesson={lesson}
       />
 
-      <div className="mx-auto w-full px-4 py-6 lg:max-w-xl">
+      <CatalogContainer>
         <ActivityList activities={activities} baseHref={baseHref} kindMeta={kindMeta} />
-      </div>
+      </CatalogContainer>
     </main>
   );
 }
