@@ -1,17 +1,12 @@
 import { errors } from "@/lib/api-errors";
+import { workflowStatusQuerySchema } from "@/lib/openapi/schemas/workflows";
 import { parseQueryParams } from "@/lib/query-params";
 import { getRun } from "workflow/api";
-import { z } from "zod";
-
-const schema = z.object({
-  runId: z.string().min(1),
-  startIndex: z.coerce.number().int().optional(),
-});
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
 
-  const parsed = parseQueryParams(searchParams, schema);
+  const parsed = parseQueryParams(searchParams, workflowStatusQuerySchema);
 
   if (!parsed.success) {
     return errors.validation(parsed.error);

@@ -37,6 +37,7 @@
     "zod": "4.3.5"
   },
   "devDependencies": {
+    "@scalar/nextjs-api-reference": "0.9.18",
     "@types/node": "^24",
     "@types/react": "^19",
     "@types/react-dom": "^19",
@@ -49,6 +50,7 @@
     "raw-loader": "4.0.2",
     "typescript": "^5",
     "vite-tsconfig-paths": "6.0.3",
-    "vitest": "4.0.16"
+    "vitest": "4.0.16",
+    "zod-openapi": "5.4.6"
   }
 }

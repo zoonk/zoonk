@@ -1,16 +1,9 @@
 import { errors } from "@/lib/api-errors";
+import { courseSearchQuerySchema } from "@/lib/openapi/schemas/courses";
 import { type PaginatedResponse, createPaginatedResponse, decodeCursor } from "@/lib/pagination";
 import { parseQueryParams } from "@/lib/query-params";
 import { searchCourses } from "@zoonk/core/courses/search";
 import { NextResponse } from "next/server";
-import { z } from "zod";
-
-const searchParamsSchema = z.object({
-  cursor: z.string().optional(),
-  language: z.string().min(2, "Language code is required"),
-  limit: z.coerce.number().int().min(1).max(100).optional().default(10),
-  query: z.string().min(1, "Search query is required"),
-});
 
 export async function GET(request: Request): Promise<
   | NextResponse<
@@ -33,7 +26,7 @@ export async function GET(request: Request): Promise<
 > {
   const { searchParams } = new URL(request.url);
 
-  const parsed = parseQueryParams(searchParams, searchParamsSchema);
+  const parsed = parseQueryParams(searchParams, courseSearchQuerySchema);
 
   if (!parsed.success) {
     return errors.validation(parsed.error);

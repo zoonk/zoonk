@@ -8,6 +8,7 @@ import {
   emailOTP,
   jwt,
   oneTimeToken,
+  openAPI,
   organization,
 } from "better-auth/plugins";
 import { type BetterAuthOptions } from "better-auth/types";
@@ -99,6 +100,7 @@ export const fullPlugins = [
   bearer(),
   stripePlugin(),
   trustedOriginPlugin(),
+  openAPI({ disableDefaultReference: true }),
   // NextCookies should be the last plugin in the array
   nextCookies(),
 ] as const;
