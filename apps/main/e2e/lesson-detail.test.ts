@@ -1,77 +1,4 @@
-import { randomUUID } from "node:crypto";
-import { prisma } from "@zoonk/db";
-import { activityFixture } from "@zoonk/testing/fixtures/activities";
-import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
-import { courseFixture } from "@zoonk/testing/fixtures/courses";
-import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { expect, test } from "./fixtures";
-
-async function createTestLessonWithActivities() {
-  const org = await prisma.organization.findUniqueOrThrow({
-    where: { slug: "ai" },
-  });
-
-  const uniqueId = randomUUID().slice(0, 8);
-
-  const course = await courseFixture({
-    isPublished: true,
-    organizationId: org.id,
-    slug: `e2e-course-${uniqueId}`,
-    title: `E2E Course ${uniqueId}`,
-  });
-
-  const chapter = await chapterFixture({
-    courseId: course.id,
-    isPublished: true,
-    organizationId: org.id,
-    slug: `e2e-chapter-${uniqueId}`,
-    title: `E2E Chapter ${uniqueId}`,
-  });
-
-  const lesson = await lessonFixture({
-    chapterId: chapter.id,
-    description: `E2E lesson description ${uniqueId}`,
-    isPublished: true,
-    organizationId: org.id,
-    slug: `e2e-lesson-${uniqueId}`,
-    title: `E2E Lesson ${uniqueId}`,
-  });
-
-  // Create activities for the lesson
-  await activityFixture({
-    isPublished: true,
-    kind: "background",
-    lessonId: lesson.id,
-    organizationId: org.id,
-    position: 0,
-  });
-
-  await activityFixture({
-    isPublished: true,
-    kind: "explanation",
-    lessonId: lesson.id,
-    organizationId: org.id,
-    position: 1,
-  });
-
-  await activityFixture({
-    isPublished: true,
-    kind: "quiz",
-    lessonId: lesson.id,
-    organizationId: org.id,
-    position: 2,
-  });
-
-  await activityFixture({
-    isPublished: true,
-    kind: "challenge",
-    lessonId: lesson.id,
-    organizationId: org.id,
-    position: 3,
-  });
-
-  return { chapter, course, lesson };
-}
 
 test.describe("Lesson Detail Page", () => {
   test("shows lesson content with title, description, and position", async ({ page }) => {
@@ -82,11 +9,15 @@ test.describe("Lesson Detail Page", () => {
     await expect(
       page.getByRole("heading", {
         level: 1,
-        name: lesson.title,
+        name: /What is Machine Learning\?/i,
       }),
     ).toBeVisible();
 
-    await expect(page.getByText(lesson.description)).toBeVisible();
+    await expect(
+      page.getByText(
+        /Learn what machine learning is and how it differs from traditional programming/i,
+      ),
+    ).toBeVisible();
 
     const positionIcon = page.getByRole("img", { name: /lesson 01/i });
     await expect(positionIcon).toBeVisible();
@@ -114,7 +45,7 @@ test.describe("Lesson Detail Page", () => {
     );
 
     const triggerButton = page.getByRole("button", {
-      name: lesson.title,
+      name: /What is Machine Learning\?/i,
     });
     await triggerButton.click();
 
@@ -168,7 +99,7 @@ test.describe("Lesson Detail Page", () => {
     const activityLink = activityList.getByRole("link", { name: /background/i });
     await activityLink.click();
 
-    await expect(page).toHaveURL(new RegExp(`/l/${lesson.slug}/a/0`));
+    await expect(page).toHaveURL(/\/l\/what-is-machine-learning\/a\/0/);
   });
 
   test("lesson without activities redirects to generate page", async ({ page }) => {

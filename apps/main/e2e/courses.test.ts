@@ -58,6 +58,6 @@ test.describe("Courses Page - Locale", () => {
     const unpublishedCourse = await createUnpublishedCourse();
     await page.goto("/pt/courses");
 
-    await expect(page.getByText(course.title)).not.toBeVisible();
+    await expect(page.getByText(unpublishedCourse.title)).not.toBeVisible();
   });
 });

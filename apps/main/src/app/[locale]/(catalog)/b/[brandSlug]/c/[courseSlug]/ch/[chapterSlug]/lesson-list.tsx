@@ -41,9 +41,7 @@ export async function LessonList({
               id={lesson.id}
               key={lesson.id}
             >
-              <CatalogListItemPosition>
-                {formatPosition(lesson.position)}
-              </CatalogListItemPosition>
+              <CatalogListItemPosition>{formatPosition(lesson.position)}</CatalogListItemPosition>
 
               <CatalogListItemContent>
                 <CatalogListItemTitle>{lesson.title}</CatalogListItemTitle>
