@@ -1,4 +1,5 @@
 import { prisma } from "@zoonk/db";
+import { safeAsync } from "@zoonk/utils/error";
 import { FatalError } from "workflow";
 import { streamStatus } from "../stream-status";
 
@@ -48,7 +49,12 @@ export async function getActivityStep(activityId: bigint): Promise<ActivityConte
 
   await streamStatus({ status: "started", step: "getActivity" });
 
-  const activity = await getActivityForGeneration(activityId);
+  const { data: activity, error } = await safeAsync(() => getActivityForGeneration(activityId));
+
+  if (error) {
+    await streamStatus({ status: "error", step: "getActivity" });
+    throw error;
+  }
 
   if (!activity) {
     await streamStatus({ status: "error", step: "getActivity" });

@@ -329,6 +329,50 @@ describe(activityGenerationWorkflow, () => {
         prompt: "A visual prompt for step 1",
       });
     });
+
+    test("marks activity as 'failed' when visual generation throws", async () => {
+      vi.mocked(generateStepVisuals).mockRejectedValueOnce(new Error("Visual generation failed"));
+
+      const activity = await activityFixture({
+        generationStatus: "pending",
+        kind: "background",
+        lessonId: lesson.id,
+        organizationId,
+        title: `Activity Visual Fail ${randomUUID()}`,
+      });
+
+      await expect(activityGenerationWorkflow(activity.id)).rejects.toThrow(
+        "Visual generation failed",
+      );
+
+      const dbActivity = await prisma.activity.findUnique({
+        where: { id: activity.id },
+      });
+
+      expect(dbActivity?.generationStatus).toBe("failed");
+    });
+
+    test("marks activity as 'failed' when visual images generation throws unexpectedly", async () => {
+      vi.mocked(generateVisualStepImage).mockRejectedValueOnce(new Error("Unexpected image error"));
+
+      const activity = await activityFixture({
+        generationStatus: "pending",
+        kind: "background",
+        lessonId: lesson.id,
+        organizationId,
+        title: `Activity Unexpected Image Fail ${randomUUID()}`,
+      });
+
+      await expect(activityGenerationWorkflow(activity.id)).rejects.toThrow(
+        "Unexpected image error",
+      );
+
+      const dbActivity = await prisma.activity.findUnique({
+        where: { id: activity.id },
+      });
+
+      expect(dbActivity?.generationStatus).toBe("failed");
+    });
   });
 
   describe("status transitions", () => {

@@ -1,5 +1,6 @@
 import { type StepVisualSchema } from "@zoonk/ai/tasks/steps/visual";
 import { generateVisualStepImage } from "@zoonk/core/steps/visual-image";
+import { safeAsync } from "@zoonk/utils/error";
 import { streamStatus } from "../stream-status";
 import { type ActivityContext } from "./get-activity-step";
 
@@ -32,14 +33,21 @@ export async function generateVisualImagesStep(
 
   const orgSlug = context.lesson.chapter.course.organization.slug;
 
-  const results = await Promise.all(
-    visuals.map((visual) => {
-      if (visual.kind === "image") {
-        return processImageVisual(visual, orgSlug);
-      }
-      return Promise.resolve(visual as VisualWithUrl);
-    }),
+  const { data: results, error } = await safeAsync(() =>
+    Promise.all(
+      visuals.map((visual) => {
+        if (visual.kind === "image") {
+          return processImageVisual(visual, orgSlug);
+        }
+        return Promise.resolve(visual as VisualWithUrl);
+      }),
+    ),
   );
+
+  if (error) {
+    await streamStatus({ status: "error", step: "generateVisualImages" });
+    throw error;
+  }
 
   await streamStatus({ status: "completed", step: "generateVisualImages" });
 
