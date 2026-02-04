@@ -1,3 +1,5 @@
+export type { Subscription } from "@better-auth/stripe";
+
 type SubscriptionStatus = { status?: string | null };
 
 export function isActiveSubscription<T extends SubscriptionStatus>(sub: T): boolean {
