@@ -1,7 +1,7 @@
 import "server-only";
 import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-options";
 import { generateText, stepCountIs } from "ai";
-import { type QuizQuestion, quizTools } from "../_tools/quiz";
+import { type QuizQuestion, type SelectImageQuestion, quizTools } from "../_tools/quiz";
 import systemPrompt from "./activity-explanation-quiz.prompt.md";
 
 const DEFAULT_MODEL =
@@ -84,3 +84,5 @@ Generate quiz questions that test understanding of these concepts. Use the avail
 
   return { data: { questions }, systemPrompt, usage, userPrompt };
 }
+
+export type { QuizQuestion, SelectImageQuestion };

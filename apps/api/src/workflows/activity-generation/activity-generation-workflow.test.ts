@@ -1,7 +1,9 @@
 import { randomUUID } from "node:crypto";
 import { generateActivityBackground } from "@zoonk/ai/tasks/activities/core/background";
 import { generateActivityExplanation } from "@zoonk/ai/tasks/activities/core/explanation";
+import { generateActivityExplanationQuiz } from "@zoonk/ai/tasks/activities/core/explanation-quiz";
 import { generateStepVisuals } from "@zoonk/ai/tasks/steps/visual";
+import { generateStepImage } from "@zoonk/core/steps/image";
 import { generateVisualStepImage } from "@zoonk/core/steps/visual-image";
 import { prisma } from "@zoonk/db";
 import { activityFixture } from "@zoonk/testing/fixtures/activities";
@@ -60,6 +62,39 @@ vi.mock("@zoonk/ai/tasks/steps/visual", () => ({
 vi.mock("@zoonk/core/steps/visual-image", () => ({
   generateVisualStepImage: vi.fn().mockResolvedValue({
     data: "https://example.com/image.webp",
+    error: null,
+  }),
+}));
+
+vi.mock("@zoonk/ai/tasks/activities/core/explanation-quiz", () => ({
+  generateActivityExplanationQuiz: vi.fn().mockResolvedValue({
+    data: {
+      questions: [
+        {
+          context: "Testing context",
+          format: "multipleChoice",
+          options: [
+            { feedback: "Correct!", isCorrect: true, text: "Option A" },
+            { feedback: "Incorrect", isCorrect: false, text: "Option B" },
+          ],
+          question: "What is the correct answer?",
+        },
+        {
+          format: "selectImage",
+          options: [
+            { feedback: "This is correct", isCorrect: true, prompt: "A cat sitting" },
+            { feedback: "This is incorrect", isCorrect: false, prompt: "A dog running" },
+          ],
+          question: "Which image shows a cat?",
+        },
+      ],
+    },
+  }),
+}));
+
+vi.mock("@zoonk/core/steps/image", () => ({
+  generateStepImage: vi.fn().mockResolvedValue({
+    data: "https://example.com/quiz-image.webp",
     error: null,
   }),
 }));
@@ -834,8 +869,604 @@ describe(activityGenerationWorkflow, () => {
     });
   });
 
+  describe("quiz generation", () => {
+    test("doesn't call generateActivityExplanationQuiz if lesson has no quiz activity", async () => {
+      const testLesson = await lessonFixture({
+        chapterId: chapter.id,
+        organizationId,
+        title: `No Quiz Lesson ${randomUUID()}`,
+      });
+
+      await Promise.all([
+        activityFixture({
+          generationStatus: "pending",
+          kind: "background",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Background ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Explanation ${randomUUID()}`,
+        }),
+      ]);
+
+      await activityGenerationWorkflow(testLesson.id);
+
+      expect(generateActivityExplanationQuiz).not.toHaveBeenCalled();
+    });
+
+    test("doesn't call generateActivityExplanationQuiz if quiz status is 'running'", async () => {
+      const testLesson = await lessonFixture({
+        chapterId: chapter.id,
+        organizationId,
+        title: `Quiz Running Lesson ${randomUUID()}`,
+      });
+
+      await Promise.all([
+        activityFixture({
+          generationStatus: "pending",
+          kind: "background",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Background ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Explanation ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "running",
+          kind: "quiz",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Running Quiz ${randomUUID()}`,
+        }),
+      ]);
+
+      await activityGenerationWorkflow(testLesson.id);
+
+      expect(generateActivityExplanationQuiz).not.toHaveBeenCalled();
+    });
+
+    test("doesn't call generateActivityExplanationQuiz if quiz status is 'completed'", async () => {
+      const testLesson = await lessonFixture({
+        chapterId: chapter.id,
+        organizationId,
+        title: `Quiz Completed Lesson ${randomUUID()}`,
+      });
+
+      await Promise.all([
+        activityFixture({
+          generationStatus: "pending",
+          kind: "background",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Background ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Explanation ${randomUUID()}`,
+        }),
+      ]);
+
+      const quizActivity = await activityFixture({
+        generationStatus: "completed",
+        kind: "quiz",
+        lessonId: testLesson.id,
+        organizationId,
+        title: `Completed Quiz ${randomUUID()}`,
+      });
+
+      await stepFixture({
+        activityId: quizActivity.id,
+        kind: "multipleChoice",
+        position: 0,
+      });
+
+      await activityGenerationWorkflow(testLesson.id);
+
+      expect(generateActivityExplanationQuiz).not.toHaveBeenCalled();
+    });
+
+    test("doesn't call generateActivityExplanationQuiz if explanation steps are empty", async () => {
+      vi.mocked(generateActivityExplanation).mockResolvedValueOnce({
+        data: { steps: [] },
+        systemPrompt: "test",
+        usage: {} as Awaited<ReturnType<typeof generateActivityExplanation>>["usage"],
+        userPrompt: "test",
+      });
+
+      const testLesson = await lessonFixture({
+        chapterId: chapter.id,
+        organizationId,
+        title: `Empty Exp Steps Lesson ${randomUUID()}`,
+      });
+
+      await Promise.all([
+        activityFixture({
+          generationStatus: "pending",
+          kind: "background",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Background ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Explanation ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "quiz",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Quiz ${randomUUID()}`,
+        }),
+      ]);
+
+      await activityGenerationWorkflow(testLesson.id);
+
+      expect(generateActivityExplanationQuiz).not.toHaveBeenCalled();
+    });
+
+    test("passes explanation steps to generateActivityExplanationQuiz", async () => {
+      const testLesson = await lessonFixture({
+        chapterId: chapter.id,
+        organizationId,
+        title: `Exp Steps Pass Quiz Lesson ${randomUUID()}`,
+      });
+
+      await Promise.all([
+        activityFixture({
+          generationStatus: "pending",
+          kind: "background",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Background ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Explanation ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "quiz",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Quiz ${randomUUID()}`,
+        }),
+      ]);
+
+      await activityGenerationWorkflow(testLesson.id);
+
+      expect(generateActivityExplanationQuiz).toHaveBeenCalledWith(
+        expect.objectContaining({
+          explanationSteps: [
+            { text: "Explanation step 1 text", title: "Explanation Step 1" },
+            { text: "Explanation step 2 text", title: "Explanation Step 2" },
+          ],
+        }),
+      );
+    });
+
+    test("sets quiz status to 'running' when generation starts", async () => {
+      const testLesson = await lessonFixture({
+        chapterId: chapter.id,
+        organizationId,
+        title: `Quiz Running Status Lesson ${randomUUID()}`,
+      });
+
+      const activities = await Promise.all([
+        activityFixture({
+          generationStatus: "pending",
+          kind: "background",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Background ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Explanation ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "quiz",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Pending Quiz ${randomUUID()}`,
+        }),
+      ]);
+
+      const quizActivity = activities[2];
+
+      let capturedStatus: string | null = null;
+
+      vi.mocked(generateActivityExplanationQuiz).mockImplementationOnce(async () => {
+        const dbActivity = await prisma.activity.findUnique({
+          where: { id: quizActivity?.id },
+        });
+        capturedStatus = dbActivity?.generationStatus ?? null;
+
+        return {
+          data: {
+            questions: [
+              {
+                context: "Test",
+                format: "multipleChoice" as const,
+                options: [{ feedback: "Test", isCorrect: true, text: "Option" }],
+                question: "Test?",
+              },
+            ],
+          },
+          systemPrompt: "test",
+          usage: {} as Awaited<ReturnType<typeof generateActivityExplanationQuiz>>["usage"],
+          userPrompt: "test",
+        };
+      });
+
+      await activityGenerationWorkflow(testLesson.id);
+
+      expect(capturedStatus).toBe("running");
+    });
+
+    test("sets quiz status to 'failed' when generateActivityExplanationQuiz throws", async () => {
+      vi.mocked(generateActivityExplanationQuiz).mockRejectedValueOnce(
+        new Error("Quiz generation failed"),
+      );
+
+      const testLesson = await lessonFixture({
+        chapterId: chapter.id,
+        organizationId,
+        title: `Quiz Error Lesson ${randomUUID()}`,
+      });
+
+      const activities = await Promise.all([
+        activityFixture({
+          generationStatus: "pending",
+          kind: "background",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Background ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Explanation ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "quiz",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Error Quiz ${randomUUID()}`,
+        }),
+      ]);
+
+      const quizActivity = activities[2];
+
+      await expect(activityGenerationWorkflow(testLesson.id)).rejects.toThrow(
+        "Quiz generation failed",
+      );
+
+      const dbActivity = await prisma.activity.findUnique({
+        where: { id: quizActivity?.id },
+      });
+      expect(dbActivity?.generationStatus).toBe("failed");
+    });
+
+    test("creates quiz steps in database with correct kind", async () => {
+      const testLesson = await lessonFixture({
+        chapterId: chapter.id,
+        organizationId,
+        title: `Quiz Steps Lesson ${randomUUID()}`,
+      });
+
+      const activities = await Promise.all([
+        activityFixture({
+          generationStatus: "pending",
+          kind: "background",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Background ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Explanation ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "quiz",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Quiz ${randomUUID()}`,
+        }),
+      ]);
+
+      const quizActivity = activities[2];
+
+      await activityGenerationWorkflow(testLesson.id);
+
+      const quizSteps = await prisma.step.findMany({
+        orderBy: { position: "asc" },
+        where: { activityId: quizActivity?.id },
+      });
+
+      expect(quizSteps).toHaveLength(2);
+      expect(quizSteps[0]?.kind).toBe("multipleChoice");
+      expect(quizSteps[1]?.kind).toBe("selectImage");
+    });
+
+    test("creates quiz steps with correct content structure", async () => {
+      const testLesson = await lessonFixture({
+        chapterId: chapter.id,
+        organizationId,
+        title: `Quiz Content Lesson ${randomUUID()}`,
+      });
+
+      const activities = await Promise.all([
+        activityFixture({
+          generationStatus: "pending",
+          kind: "background",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Background ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Explanation ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "quiz",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Quiz ${randomUUID()}`,
+        }),
+      ]);
+
+      const quizActivity = activities[2];
+
+      await activityGenerationWorkflow(testLesson.id);
+
+      const quizSteps = await prisma.step.findMany({
+        orderBy: { position: "asc" },
+        where: { activityId: quizActivity?.id },
+      });
+
+      // Multiple choice step content (format excluded)
+      expect(quizSteps[0]?.content).toEqual({
+        context: "Testing context",
+        options: [
+          { feedback: "Correct!", isCorrect: true, text: "Option A" },
+          { feedback: "Incorrect", isCorrect: false, text: "Option B" },
+        ],
+        question: "What is the correct answer?",
+      });
+
+      // SelectImage step content includes URLs from image generation
+      expect(quizSteps[1]?.content).toEqual({
+        options: [
+          {
+            feedback: "This is correct",
+            isCorrect: true,
+            prompt: "A cat sitting",
+            url: "https://example.com/quiz-image.webp",
+          },
+          {
+            feedback: "This is incorrect",
+            isCorrect: false,
+            prompt: "A dog running",
+            url: "https://example.com/quiz-image.webp",
+          },
+        ],
+        question: "Which image shows a cat?",
+      });
+    });
+
+    test("creates selectImage steps without URL when image generation fails", async () => {
+      vi.mocked(generateStepImage).mockResolvedValue({
+        data: null,
+        error: new Error("Image generation failed"),
+      });
+
+      const testLesson = await lessonFixture({
+        chapterId: chapter.id,
+        organizationId,
+        title: `Quiz Image Fail Lesson ${randomUUID()}`,
+      });
+
+      const activities = await Promise.all([
+        activityFixture({
+          generationStatus: "pending",
+          kind: "background",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Background ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Explanation ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "quiz",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Quiz ${randomUUID()}`,
+        }),
+      ]);
+
+      const quizActivity = activities[2];
+
+      await activityGenerationWorkflow(testLesson.id);
+
+      const dbActivity = await prisma.activity.findUnique({
+        where: { id: quizActivity?.id },
+      });
+      expect(dbActivity?.generationStatus).toBe("completed");
+
+      const quizSteps = await prisma.step.findMany({
+        orderBy: { position: "asc" },
+        where: { activityId: quizActivity?.id },
+      });
+
+      // SelectImage step content should not have URL
+      expect(quizSteps[1]?.content).toEqual({
+        options: [
+          { feedback: "This is correct", isCorrect: true, prompt: "A cat sitting" },
+          { feedback: "This is incorrect", isCorrect: false, prompt: "A dog running" },
+        ],
+        question: "Which image shows a cat?",
+      });
+    });
+
+    test("continues processing other images when one throws", async () => {
+      vi.mocked(generateStepImage)
+        .mockRejectedValueOnce(new Error("First image failed"))
+        .mockResolvedValueOnce({
+          data: "https://example.com/second-quiz-image.webp",
+          error: null,
+        });
+
+      const testLesson = await lessonFixture({
+        chapterId: chapter.id,
+        organizationId,
+        title: `Quiz Partial Image Fail Lesson ${randomUUID()}`,
+      });
+
+      const activities = await Promise.all([
+        activityFixture({
+          generationStatus: "pending",
+          kind: "background",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Background ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Explanation ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "quiz",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Quiz ${randomUUID()}`,
+        }),
+      ]);
+
+      const quizActivity = activities[2];
+
+      await activityGenerationWorkflow(testLesson.id);
+
+      const dbActivity = await prisma.activity.findUnique({
+        where: { id: quizActivity?.id },
+      });
+      expect(dbActivity?.generationStatus).toBe("completed");
+
+      const quizSteps = await prisma.step.findMany({
+        orderBy: { position: "asc" },
+        where: { activityId: quizActivity?.id },
+      });
+
+      // First option should have no URL (image generation threw)
+      // Second option should have URL (image generation succeeded)
+      expect(quizSteps[1]?.content).toEqual({
+        options: [
+          { feedback: "This is correct", isCorrect: true, prompt: "A cat sitting" },
+          {
+            feedback: "This is incorrect",
+            isCorrect: false,
+            prompt: "A dog running",
+            url: "https://example.com/second-quiz-image.webp",
+          },
+        ],
+        question: "Which image shows a cat?",
+      });
+    });
+
+    test("sets quiz status to 'completed' after saving steps", async () => {
+      const testLesson = await lessonFixture({
+        chapterId: chapter.id,
+        organizationId,
+        title: `Quiz Completed Status Lesson ${randomUUID()}`,
+      });
+
+      const activities = await Promise.all([
+        activityFixture({
+          generationStatus: "pending",
+          kind: "background",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Background ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Explanation ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "quiz",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Quiz ${randomUUID()}`,
+        }),
+      ]);
+
+      const quizActivity = activities[2];
+
+      const initialActivity = await prisma.activity.findUnique({
+        where: { id: quizActivity?.id },
+      });
+      expect(initialActivity?.generationStatus).toBe("pending");
+
+      await activityGenerationWorkflow(testLesson.id);
+
+      const finalActivity = await prisma.activity.findUnique({
+        where: { id: quizActivity?.id },
+      });
+      expect(finalActivity?.generationStatus).toBe("completed");
+      expect(finalActivity?.generationRunId).toBe("test-run-id");
+    });
+  });
+
   describe("unsupported activity kinds", () => {
-    test("skips unsupported activity kinds (quiz, mechanics, etc.)", async () => {
+    test("skips unsupported activity kinds (mechanics, etc.)", async () => {
       const testLesson = await lessonFixture({
         chapterId: chapter.id,
         organizationId,
@@ -844,16 +1475,17 @@ describe(activityGenerationWorkflow, () => {
 
       await activityFixture({
         generationStatus: "pending",
-        kind: "quiz",
+        kind: "mechanics",
         lessonId: testLesson.id,
         organizationId,
-        title: `Quiz Activity ${randomUUID()}`,
+        title: `Mechanics Activity ${randomUUID()}`,
       });
 
       await activityGenerationWorkflow(testLesson.id);
 
       expect(generateActivityBackground).not.toHaveBeenCalled();
       expect(generateActivityExplanation).not.toHaveBeenCalled();
+      expect(generateActivityExplanationQuiz).not.toHaveBeenCalled();
     });
   });
 });
