@@ -24,9 +24,12 @@ const ACTIVITY_STEPS = [
   "getLessonActivities",
   "generateBackgroundContent",
   "generateExplanationContent",
+  "generateQuizContent",
   "generateVisuals",
   "generateImages",
+  "generateQuizImages",
   "saveActivity",
+  "saveQuizActivity",
   "setActivityAsRunning",
   "setActivityAsCompleted",
 ] as const;
