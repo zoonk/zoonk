@@ -4,31 +4,6 @@ import { streamStatus } from "../stream-status";
 import { type VisualWithUrl } from "./generate-visual-images-step";
 import { type ActivityContext } from "./get-activity-step";
 
-const VALID_VISUAL_KINDS: Record<StepVisualKind, true> = {
-  audio: true,
-  chart: true,
-  code: true,
-  diagram: true,
-  image: true,
-  quote: true,
-  table: true,
-  timeline: true,
-  video: true,
-};
-
-function isValidVisualKind(kind: string): kind is StepVisualKind {
-  return kind in VALID_VISUAL_KINDS;
-}
-
-function mapVisualKind(kind: string): StepVisualKind {
-  return isValidVisualKind(kind) ? kind : "image";
-}
-
-function extractVisualContent(visual: VisualWithUrl) {
-  const { kind: _kind, stepIndex: _stepIndex, ...rest } = visual;
-  return rest;
-}
-
 export async function addStepsStep(input: {
   context: ActivityContext;
   steps: {
@@ -55,10 +30,12 @@ export async function addStepsStep(input: {
       return baseData;
     }
 
+    const { kind, stepIndex: _stepIndex, ...visualContent } = visual;
+
     return {
       ...baseData,
-      visualContent: extractVisualContent(visual),
-      visualKind: mapVisualKind(visual.kind),
+      visualContent,
+      visualKind: kind as StepVisualKind,
     };
   });
 
