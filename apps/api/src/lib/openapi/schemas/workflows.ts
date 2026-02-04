@@ -32,11 +32,11 @@ export const lessonGenerationTriggerSchema = z
 
 export const activityGenerationTriggerSchema = z
   .object({
-    activityId: z
+    lessonId: z
       .number()
       .int()
       .positive()
-      .meta({ description: "Activity ID to generate content for" }),
+      .meta({ description: "Lesson ID to generate activities for" }),
   })
   .meta({ id: "ActivityGenerationTrigger" });
 

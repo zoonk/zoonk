@@ -1,55 +1,46 @@
 import { getWorkflowMetadata } from "workflow";
-import { addStepsStep } from "./steps/add-steps-step";
-import { generateBackgroundStep } from "./steps/generate-background-step";
-import { generateVisualImagesStep } from "./steps/generate-visual-images-step";
+import { generateBackgroundContentStep } from "./steps/generate-background-content-step";
+import { generateExplanationContentStep } from "./steps/generate-explanation-content-step";
+import { generateImagesStep } from "./steps/generate-images-step";
 import { generateVisualsStep } from "./steps/generate-visuals-step";
-import { getActivityStep } from "./steps/get-activity-step";
-import { handleActivityFailureStep } from "./steps/handle-failure-step";
-import { setActivityAsCompletedStep } from "./steps/set-activity-as-completed-step";
-import { setActivityAsRunningStep } from "./steps/set-activity-as-running-step";
+import { getLessonActivitiesStep } from "./steps/get-lesson-activities-step";
+import { saveActivityStep } from "./steps/save-activity-step";
 
-export async function activityGenerationWorkflow(activityId: bigint): Promise<void> {
+export async function activityGenerationWorkflow(lessonId: number): Promise<void> {
   "use workflow";
 
   const { workflowRunId } = getWorkflowMetadata();
 
-  const context = await getActivityStep(activityId);
+  const activities = await getLessonActivitiesStep(lessonId);
 
-  if (context.generationStatus === "running") {
-    return;
-  }
+  const backgroundContent = await generateBackgroundContentStep(activities, workflowRunId);
 
-  if (context.generationStatus === "completed" && context._count.steps > 0) {
-    return;
-  }
+  const [backgroundVisuals, explanationContent] = await Promise.all([
+    generateVisualsStep(activities, backgroundContent.steps, "background"),
+    generateExplanationContentStep(activities, backgroundContent.steps, workflowRunId),
+  ]);
 
-  // Only handle "background" activity kind for now
-  // Other kinds will be implemented in future tasks
-  if (context.kind !== "background") {
-    return;
-  }
+  const [backgroundImages, explanationVisuals] = await Promise.all([
+    generateImagesStep(activities, backgroundVisuals.visuals, "background"),
+    generateVisualsStep(activities, explanationContent.steps, "explanation"),
+  ]);
 
-  if (context._count.steps > 0) {
-    await setActivityAsCompletedStep({ context, workflowRunId });
-    return;
-  }
+  const [, explanationImages] = await Promise.all([
+    saveActivityStep(
+      activities,
+      backgroundContent.steps,
+      backgroundImages,
+      workflowRunId,
+      "background",
+    ),
+    generateImagesStep(activities, explanationVisuals.visuals, "explanation"),
+  ]);
 
-  await setActivityAsRunningStep({ activityId: context.id, workflowRunId });
-
-  try {
-    const backgroundData = await generateBackgroundStep(context);
-    const visuals = await generateVisualsStep(context, backgroundData.steps);
-    const visualsWithUrls = await generateVisualImagesStep(context, visuals.visuals);
-
-    await addStepsStep({
-      context,
-      steps: backgroundData.steps,
-      visuals: visualsWithUrls,
-    });
-
-    await setActivityAsCompletedStep({ context, workflowRunId });
-  } catch (error) {
-    await handleActivityFailureStep({ activityId: context.id });
-    throw error;
-  }
+  await saveActivityStep(
+    activities,
+    explanationContent.steps,
+    explanationImages,
+    workflowRunId,
+    "explanation",
+  );
 }
