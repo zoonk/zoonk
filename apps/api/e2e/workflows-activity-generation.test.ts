@@ -27,7 +27,7 @@ test.describe("Activity Generation Workflow API", () => {
     await prisma.$disconnect();
   });
 
-  test("returns validation error when activityId is missing", async () => {
+  test("returns validation error when lessonId is missing", async () => {
     const apiContext = await request.newContext({ baseURL });
     const response = await apiContext.post("/v1/workflows/activity-generation/trigger", {
       data: {},
@@ -43,10 +43,10 @@ test.describe("Activity Generation Workflow API", () => {
     await apiContext.dispose();
   });
 
-  test("returns validation error when activityId is invalid type", async () => {
+  test("returns validation error when lessonId is invalid type", async () => {
     const apiContext = await request.newContext({ baseURL });
     const response = await apiContext.post("/v1/workflows/activity-generation/trigger", {
-      data: { activityId: "invalid" },
+      data: { lessonId: "invalid" },
     });
 
     expect(response.status()).toBe(400);
@@ -59,10 +59,10 @@ test.describe("Activity Generation Workflow API", () => {
     await apiContext.dispose();
   });
 
-  test("returns validation error when activityId is negative", async () => {
+  test("returns validation error when lessonId is negative", async () => {
     const apiContext = await request.newContext({ baseURL });
     const response = await apiContext.post("/v1/workflows/activity-generation/trigger", {
-      data: { activityId: -1 },
+      data: { lessonId: -1 },
     });
 
     expect(response.status()).toBe(400);
@@ -119,7 +119,7 @@ test.describe("Activity Generation Workflow API", () => {
       },
     });
 
-    const activity = await prisma.activity.create({
+    await prisma.activity.create({
       data: {
         description: "Test activity description",
         isPublished: true,
@@ -134,7 +134,7 @@ test.describe("Activity Generation Workflow API", () => {
 
     const apiContext = await request.newContext({ baseURL });
     const response = await apiContext.post("/v1/workflows/activity-generation/trigger", {
-      data: { activityId: Number(activity.id) },
+      data: { lessonId: lesson.id },
     });
 
     expect(response.status()).toBe(402);
@@ -145,7 +145,6 @@ test.describe("Activity Generation Workflow API", () => {
     expect(body.error.code).toBe("PAYMENT_REQUIRED");
     expect(body.error.message).toBe("Active subscription required");
 
-    await prisma.activity.delete({ where: { id: activity.id } });
     await prisma.lesson.delete({ where: { id: lesson.id } });
     await prisma.chapter.delete({ where: { id: chapter.id } });
     await prisma.course.delete({ where: { id: course.id } });
@@ -230,7 +229,7 @@ test.describe("Activity Generation Workflow API", () => {
       },
     });
 
-    const activity = await prisma.activity.create({
+    await prisma.activity.create({
       data: {
         description: "Test activity for workflow success",
         isPublished: true,
@@ -251,7 +250,7 @@ test.describe("Activity Generation Workflow API", () => {
     expect(signInResponse.ok()).toBe(true);
 
     const response = await apiContext.post("/v1/workflows/activity-generation/trigger", {
-      data: { activityId: Number(activity.id) },
+      data: { lessonId: lesson.id },
     });
 
     expect(response.status()).toBe(200);

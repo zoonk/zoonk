@@ -21,12 +21,13 @@ const LESSON_STEPS = [
 export type LessonStepName = (typeof LESSON_STEPS)[number];
 
 const ACTIVITY_STEPS = [
-  "getActivity",
-  "setActivityAsRunning",
-  "generateBackground",
+  "getLessonActivities",
+  "generateBackgroundContent",
+  "generateExplanationContent",
   "generateVisuals",
-  "generateVisualImages",
-  "addSteps",
+  "generateImages",
+  "saveActivity",
+  "setActivityAsRunning",
   "setActivityAsCompleted",
 ] as const;
 

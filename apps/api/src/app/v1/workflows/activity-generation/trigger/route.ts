@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
     return errors.paymentRequired();
   }
 
-  const run = await start(activityGenerationWorkflow, [BigInt(parsed.data.activityId)]);
+  const run = await start(activityGenerationWorkflow, [parsed.data.lessonId]);
 
   return NextResponse.json({
     message: "Workflow started",

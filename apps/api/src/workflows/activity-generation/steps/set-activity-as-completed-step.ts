@@ -3,10 +3,9 @@ import { prisma } from "@zoonk/db";
 import { cacheTagActivity } from "@zoonk/utils/cache";
 import { safeAsync } from "@zoonk/utils/error";
 import { streamStatus } from "../stream-status";
-import { type ActivityContext } from "./get-activity-step";
 
 export async function setActivityAsCompletedStep(input: {
-  context: ActivityContext;
+  activityId: bigint;
   workflowRunId: string;
 }): Promise<void> {
   "use step";
@@ -20,7 +19,7 @@ export async function setActivityAsCompletedStep(input: {
         generationStatus: "completed",
       },
       select: { generationStatus: true, id: true },
-      where: { id: input.context.id },
+      where: { id: input.activityId },
     }),
   );
 
@@ -29,7 +28,7 @@ export async function setActivityAsCompletedStep(input: {
     throw error;
   }
 
-  await revalidateMainApp([cacheTagActivity({ activityId: input.context.id })]);
+  await revalidateMainApp([cacheTagActivity({ activityId: input.activityId })]);
 
   await streamStatus({ status: "completed", step: "setActivityAsCompleted" });
 }
