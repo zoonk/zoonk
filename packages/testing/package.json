@@ -12,6 +12,7 @@
     "./fixtures/lessons": "./src/fixtures/lessons.ts",
     "./fixtures/orgs": "./src/fixtures/orgs.ts",
     "./fixtures/progress": "./src/fixtures/progress.ts",
+    "./fixtures/steps": "./src/fixtures/steps.ts",
     "./fixtures/users": "./src/fixtures/users.ts"
   },
   "dependencies": {

@@ -43,6 +43,7 @@ export type {
   Step,
   StepAttempt,
   StepKind,
+  StepVisualKind,
   Subscription,
   User,
   UserProgress,

@@ -20,6 +20,18 @@ const LESSON_STEPS = [
 
 export type LessonStepName = (typeof LESSON_STEPS)[number];
 
+const ACTIVITY_STEPS = [
+  "getActivity",
+  "setActivityAsRunning",
+  "generateBackground",
+  "generateVisuals",
+  "generateVisualImages",
+  "addSteps",
+  "setActivityAsCompleted",
+] as const;
+
+export type ActivityStepName = (typeof ACTIVITY_STEPS)[number];
+
 const COURSE_STEPS = [
   "getCourseSuggestion",
   "checkExistingCourse",

@@ -8,6 +8,7 @@ import {
   workflowTriggerEndpoint,
 } from "./schemas/responses";
 import {
+  activityGenerationTriggerSchema,
   chapterGenerationTriggerSchema,
   courseGenerationTriggerSchema,
   lessonGenerationTriggerSchema,
@@ -58,6 +59,14 @@ export const openAPIDocument = createDocument({
         tags: ["Courses"],
       },
     },
+    "/workflows/activity-generation/status": workflowStatusEndpoint(
+      "Stream activity generation status (SSE)",
+    ),
+    "/workflows/activity-generation/trigger": workflowTriggerEndpoint({
+      requiresSubscription: true,
+      schema: activityGenerationTriggerSchema,
+      summary: "Trigger activity generation workflow",
+    }),
     "/workflows/chapter-generation/status": workflowStatusEndpoint(
       "Stream chapter generation status (SSE)",
     ),
