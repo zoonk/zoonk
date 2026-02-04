@@ -1,5 +1,6 @@
 import "server-only";
 import { ErrorCode } from "@/lib/app-error";
+import { getLessonKind } from "@/lib/lesson-kind";
 import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
 import { type Lesson, prisma } from "@zoonk/db";
 import { AppError, type SafeReturn, safeAsync } from "@zoonk/utils/error";
@@ -15,6 +16,12 @@ export async function createLesson(params: {
 }): Promise<SafeReturn<Lesson>> {
   const { data: chapter, error: findError } = await safeAsync(() =>
     prisma.chapter.findUnique({
+      include: {
+        course: {
+          select: { categories: { select: { category: true } } },
+        },
+        organization: { select: { slug: true } },
+      },
       where: { id: params.chapterId },
     }),
   );
@@ -40,6 +47,11 @@ export async function createLesson(params: {
   const lessonSlug = toSlug(params.slug);
   const normalizedTitle = normalizeString(params.title);
 
+  const kind = getLessonKind({
+    courseCategories: chapter.course.categories.map((cat) => cat.category),
+    orgSlug: chapter.organization.slug,
+  });
+
   const { data: lesson, error } = await safeAsync(() =>
     prisma.$transaction(async (tx) => {
       // Lock chapter row to prevent race conditions with concurrent position updates
@@ -58,7 +70,7 @@ export async function createLesson(params: {
           chapterId: params.chapterId,
           description: params.description,
           isPublished: !chapter.isPublished,
-          kind: "custom",
+          kind,
           language: chapter.language,
           normalizedTitle,
           organizationId: chapter.organizationId,
