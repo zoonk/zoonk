@@ -52,13 +52,27 @@ export async function memberFixture(
 }
 
 export async function aiOrganizationFixture() {
-  return prisma.organization.upsert({
-    create: {
-      kind: "brand",
-      name: "Zoonk AI",
-      slug: AI_ORG_SLUG,
-    },
-    update: {},
-    where: { slug: AI_ORG_SLUG },
-  });
+  try {
+    return await prisma.organization.upsert({
+      create: {
+        kind: "brand",
+        name: "Zoonk AI",
+        slug: AI_ORG_SLUG,
+      },
+      update: {},
+      where: { slug: AI_ORG_SLUG },
+    });
+  } catch (error) {
+    // Handle upsert race condition - another test may have created the org concurrently
+    if (error instanceof Error && "code" in error && error.code === "P2002") {
+      const existing = await prisma.organization.findUnique({
+        where: { slug: AI_ORG_SLUG },
+      });
+
+      if (existing) {
+        return existing;
+      }
+    }
+    throw error;
+  }
 }
