@@ -1,4 +1,5 @@
 import { generateChapterLessons } from "@zoonk/ai/tasks/chapters/lessons";
+import { safeAsync } from "@zoonk/utils/error";
 import { streamStatus } from "../stream-status";
 import { type ChapterContext } from "./get-chapter-step";
 
@@ -12,19 +13,21 @@ export async function generateLessonsStep(context: ChapterContext): Promise<Gene
 
   await streamStatus({ status: "started", step: "generateLessons" });
 
-  try {
-    const { data } = await generateChapterLessons({
+  const { data: result, error } = await safeAsync(() =>
+    generateChapterLessons({
       chapterDescription: context.description,
       chapterTitle: context.title,
       courseTitle: context.course.title,
       language: context.language,
-    });
+    }),
+  );
 
-    await streamStatus({ status: "completed", step: "generateLessons" });
-
-    return data.lessons;
-  } catch (error) {
+  if (error) {
     await streamStatus({ status: "error", step: "generateLessons" });
     throw error;
   }
+
+  await streamStatus({ status: "completed", step: "generateLessons" });
+
+  return result.data.lessons;
 }

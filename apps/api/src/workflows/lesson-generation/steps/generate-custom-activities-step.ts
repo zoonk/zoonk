@@ -1,4 +1,5 @@
 import { generateLessonActivities } from "@zoonk/ai/tasks/lessons/activities";
+import { safeAsync } from "@zoonk/utils/error";
 import { streamStatus } from "../stream-status";
 import { type LessonContext } from "./get-lesson-step";
 
@@ -14,20 +15,22 @@ export async function generateCustomActivitiesStep(
 
   await streamStatus({ status: "started", step: "generateCustomActivities" });
 
-  try {
-    const { data } = await generateLessonActivities({
+  const { data: result, error } = await safeAsync(() =>
+    generateLessonActivities({
       chapterTitle: context.chapter.title,
       courseTitle: context.chapter.course.title,
       language: context.language,
       lessonDescription: context.description,
       lessonTitle: context.title,
-    });
+    }),
+  );
 
-    await streamStatus({ status: "completed", step: "generateCustomActivities" });
-
-    return data.activities;
-  } catch (error) {
+  if (error) {
     await streamStatus({ status: "error", step: "generateCustomActivities" });
     throw error;
   }
+
+  await streamStatus({ status: "completed", step: "generateCustomActivities" });
+
+  return result.data.activities;
 }

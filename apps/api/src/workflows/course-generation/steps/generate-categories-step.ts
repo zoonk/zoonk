@@ -1,4 +1,5 @@
 import { generateCourseCategories } from "@zoonk/ai/tasks/courses/categories";
+import { safeAsync } from "@zoonk/utils/error";
 import { streamStatus } from "../stream-status";
 import { type CourseContext } from "../types";
 
@@ -7,11 +8,18 @@ export async function generateCategoriesStep(course: CourseContext): Promise<str
 
   await streamStatus({ status: "started", step: "generateCategories" });
 
-  const { data } = await generateCourseCategories({
-    courseTitle: course.courseTitle,
-  });
+  const { data: result, error } = await safeAsync(() =>
+    generateCourseCategories({
+      courseTitle: course.courseTitle,
+    }),
+  );
+
+  if (error) {
+    await streamStatus({ status: "error", step: "generateCategories" });
+    throw error;
+  }
 
   await streamStatus({ status: "completed", step: "generateCategories" });
 
-  return data.categories;
+  return result.data.categories;
 }
