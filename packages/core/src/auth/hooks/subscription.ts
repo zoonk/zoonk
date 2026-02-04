@@ -1,3 +1,5 @@
+"use client";
+
 import { authClient } from "@zoonk/auth/client";
 import { type Subscription, findActiveSubscription } from "@zoonk/auth/subscription";
 import { useEffect, useState } from "react";
