@@ -305,6 +305,34 @@ describe(lessonGenerationWorkflow, () => {
       expect(dbLesson?.generationStatus).toBe("failed");
     });
 
+    test("marks lesson as 'failed' when custom activities generation throws", async () => {
+      vi.mocked(generateLessonKind).mockResolvedValueOnce({
+        data: { kind: "custom" },
+      } as Awaited<ReturnType<typeof generateLessonKind>>);
+
+      vi.mocked(generateLessonActivities).mockRejectedValueOnce(
+        new Error("Activities generation failed"),
+      );
+
+      const title = `Custom Error Lesson ${randomUUID()}`;
+      const lesson = await lessonFixture({
+        chapterId: chapter.id,
+        generationStatus: "pending",
+        organizationId,
+        title,
+      });
+
+      await expect(lessonGenerationWorkflow(lesson.id)).rejects.toThrow(
+        "Activities generation failed",
+      );
+
+      const dbLesson = await prisma.lesson.findUnique({
+        where: { id: lesson.id },
+      });
+
+      expect(dbLesson?.generationStatus).toBe("failed");
+    });
+
     test("throws FatalError when lesson not found", async () => {
       const nonExistentId = 999_999_999;
 

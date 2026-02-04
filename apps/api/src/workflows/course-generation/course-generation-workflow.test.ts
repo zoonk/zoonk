@@ -447,6 +447,90 @@ describe(courseGenerationWorkflow, () => {
       expect(dbSuggestion?.generationStatus).toBe("failed");
     });
 
+    test("marks course and suggestion as 'failed' when generateCourseCategories throws", async () => {
+      vi.mocked(generateCourseCategories).mockRejectedValueOnce(
+        new Error("Categories generation failed"),
+      );
+
+      const title = `Error Course Categories ${randomUUID()}`;
+      const slug = toSlug(title);
+
+      const suggestion = await courseSuggestionFixture({
+        generationStatus: "pending",
+        slug,
+        title,
+      });
+
+      await expect(courseGenerationWorkflow(suggestion.id)).rejects.toThrow();
+
+      const course = await prisma.course.findFirst({
+        where: { slug },
+      });
+
+      const dbSuggestion = await prisma.courseSuggestion.findUnique({
+        where: { id: suggestion.id },
+      });
+
+      expect(course?.generationStatus).toBe("failed");
+      expect(dbSuggestion?.generationStatus).toBe("failed");
+    });
+
+    test("marks course and suggestion as 'failed' when generateAlternativeTitles throws", async () => {
+      vi.mocked(generateAlternativeTitles).mockRejectedValueOnce(
+        new Error("Alternative titles generation failed"),
+      );
+
+      const title = `Error Course Alt Titles ${randomUUID()}`;
+      const slug = toSlug(title);
+
+      const suggestion = await courseSuggestionFixture({
+        generationStatus: "pending",
+        slug,
+        title,
+      });
+
+      await expect(courseGenerationWorkflow(suggestion.id)).rejects.toThrow();
+
+      const course = await prisma.course.findFirst({
+        where: { slug },
+      });
+
+      const dbSuggestion = await prisma.courseSuggestion.findUnique({
+        where: { id: suggestion.id },
+      });
+
+      expect(course?.generationStatus).toBe("failed");
+      expect(dbSuggestion?.generationStatus).toBe("failed");
+    });
+
+    test("marks course and suggestion as 'failed' when generateCourseChapters throws", async () => {
+      vi.mocked(generateCourseChapters).mockRejectedValueOnce(
+        new Error("Chapters generation failed"),
+      );
+
+      const title = `Error Course Chapters ${randomUUID()}`;
+      const slug = toSlug(title);
+
+      const suggestion = await courseSuggestionFixture({
+        generationStatus: "pending",
+        slug,
+        title,
+      });
+
+      await expect(courseGenerationWorkflow(suggestion.id)).rejects.toThrow();
+
+      const course = await prisma.course.findFirst({
+        where: { slug },
+      });
+
+      const dbSuggestion = await prisma.courseSuggestion.findUnique({
+        where: { id: suggestion.id },
+      });
+
+      expect(course?.generationStatus).toBe("failed");
+      expect(dbSuggestion?.generationStatus).toBe("failed");
+    });
+
     test("chapter generation errors don't mark course as failed", async () => {
       vi.mocked(generateChapterLessons).mockRejectedValueOnce(
         new Error("Chapter generation failed"),
