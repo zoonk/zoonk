@@ -421,6 +421,63 @@ describe(activityGenerationWorkflow, () => {
       });
     });
 
+    test("continues processing other images when one throws", async () => {
+      vi.mocked(generateStepVisuals).mockResolvedValueOnce({
+        data: {
+          visuals: [
+            { kind: "image", prompt: "First image prompt", stepIndex: 0 },
+            { kind: "image", prompt: "Second image prompt", stepIndex: 1 },
+          ],
+        },
+      } as Awaited<ReturnType<typeof generateStepVisuals>>);
+
+      vi.mocked(generateVisualStepImage)
+        .mockRejectedValueOnce(new Error("First image failed"))
+        .mockResolvedValueOnce({
+          data: "https://example.com/second-image.webp",
+          error: null,
+        });
+
+      const testLesson = await lessonFixture({
+        chapterId: chapter.id,
+        organizationId,
+        title: `Partial Image Fail Lesson ${randomUUID()}`,
+      });
+
+      const activity = await activityFixture({
+        generationStatus: "pending",
+        kind: "background",
+        lessonId: testLesson.id,
+        organizationId,
+        title: `Partial Image Fail ${randomUUID()}`,
+      });
+
+      await activityGenerationWorkflow(testLesson.id);
+
+      const dbActivity = await prisma.activity.findUnique({
+        where: { id: activity.id },
+      });
+      expect(dbActivity?.generationStatus).toBe("completed");
+
+      const steps = await prisma.step.findMany({
+        orderBy: { position: "asc" },
+        where: { activityId: activity.id },
+      });
+
+      // First step should have no URL (image generation threw)
+      expect(steps[0]?.visualKind).toBe("image");
+      expect(steps[0]?.visualContent).toEqual({
+        prompt: "First image prompt",
+      });
+
+      // Second step should have URL (image generation succeeded)
+      expect(steps[1]?.visualKind).toBe("image");
+      expect(steps[1]?.visualContent).toEqual({
+        prompt: "Second image prompt",
+        url: "https://example.com/second-image.webp",
+      });
+    });
+
     test("sets background status to 'completed' after saving steps", async () => {
       const testLesson = await lessonFixture({
         chapterId: chapter.id,

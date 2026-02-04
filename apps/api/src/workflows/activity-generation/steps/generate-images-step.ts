@@ -1,10 +1,8 @@
 import { generateVisualStepImage } from "@zoonk/core/steps/visual-image";
 import { type ActivityKind } from "@zoonk/db";
-import { safeAsync } from "@zoonk/utils/error";
 import { streamStatus } from "../stream-status";
 import { type StepVisual } from "./generate-visuals-step";
 import { type LessonActivity } from "./get-lesson-activities-step";
-import { handleActivityFailureStep } from "./handle-failure-step";
 
 export type StepVisualWithUrl = StepVisual & { url?: string };
 
@@ -45,22 +43,25 @@ export async function generateImagesStep(
 
   const orgSlug = activity.lesson.chapter.course.organization.slug;
 
-  const { data: results, error } = await safeAsync(() =>
-    Promise.all(
-      visuals.map((visual) => {
-        if (visual.kind === "image") {
-          return processImageVisual(visual, orgSlug);
-        }
-        return Promise.resolve(visual as StepVisualWithUrl);
-      }),
-    ),
+  const settledResults = await Promise.allSettled(
+    visuals.map((visual) => {
+      if (visual.kind === "image") {
+        return processImageVisual(visual, orgSlug);
+      }
+      return Promise.resolve(visual as StepVisualWithUrl);
+    }),
   );
 
-  if (error) {
-    await streamStatus({ status: "error", step: "generateImages" });
-    await handleActivityFailureStep({ activityId: activity.id });
-    throw error;
-  }
+  const results = visuals.map((visual, index) => {
+    const result = settledResults[index];
+
+    if (result?.status === "fulfilled") {
+      return result.value;
+    }
+
+    // If rejected, return original visual without URL
+    return { ...visual };
+  });
 
   await streamStatus({ status: "completed", step: "generateImages" });
 
