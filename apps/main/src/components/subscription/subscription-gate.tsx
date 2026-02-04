@@ -1,6 +1,5 @@
 import "server-only";
-import { auth } from "@zoonk/core/auth";
-import { findActiveSubscription } from "@zoonk/core/auth/subscription";
+import { hasActiveSubscription } from "@zoonk/core/auth/subscription";
 import { headers } from "next/headers";
 import { UpgradeCTA } from "./upgrade-cta";
 
@@ -11,11 +10,9 @@ export async function SubscriptionGate({
   children: React.ReactNode;
   returnUrl: string;
 }) {
-  const subscriptions = await auth.api.listActiveSubscriptions({
-    headers: await headers(),
-  });
+  const hasSubscription = await hasActiveSubscription(await headers());
 
-  if (!findActiveSubscription(subscriptions)) {
+  if (!hasSubscription) {
     return <UpgradeCTA returnUrl={returnUrl} />;
   }
 

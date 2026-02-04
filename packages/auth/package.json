@@ -7,11 +7,10 @@
     "./client": "./src/client.ts",
     "./e2e": "./src/e2e.ts",
     "./hooks/auth-state": "./src/hooks/use-auth-state.ts",
-    "./hooks/subscription": "./src/hooks/use-subscription.ts",
     "./next": "./src/next.ts",
-    "./subscription": "./src/subscription.ts",
     "./testing": "./src/testing.ts",
-    "./permissions": "./src/permissions.ts"
+    "./permissions": "./src/permissions.ts",
+    "./subscription": "./src/subscription.ts"
   },
   "scripts": {
     "typecheck": "tsgo --noEmit"
