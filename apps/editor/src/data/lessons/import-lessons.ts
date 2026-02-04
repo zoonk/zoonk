@@ -1,6 +1,7 @@
 import "server-only";
 import { ErrorCode } from "@/lib/app-error";
 import { type ImportMode } from "@/lib/import-mode";
+import { getLessonKind } from "@/lib/lesson-kind";
 import { parseJsonFile } from "@/lib/parse-json-file";
 import { isRecord } from "@/lib/validation";
 import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
@@ -65,6 +66,12 @@ export async function importLessons(params: {
 
   const { data: chapter, error: findError } = await safeAsync(() =>
     prisma.chapter.findUnique({
+      include: {
+        course: {
+          select: { categories: { select: { category: true } } },
+        },
+        organization: { select: { slug: true } },
+      },
       where: { id: params.chapterId },
     }),
   );
@@ -86,6 +93,11 @@ export async function importLessons(params: {
   if (!hasPermission) {
     return { data: null, error: new AppError(ErrorCode.forbidden) };
   }
+
+  const kind = getLessonKind({
+    courseCategories: chapter.course.categories.map((cat) => cat.category),
+    orgSlug: chapter.organization.slug,
+  });
 
   const { data: result, error: importError } = await safeAsync(() =>
     prisma.$transaction(async (tx) => {
@@ -170,6 +182,7 @@ export async function importLessons(params: {
               chapterId: params.chapterId,
               description: item.lessonData.description,
               isPublished: !chapter.isPublished,
+              kind,
               language: chapter.language,
               normalizedTitle: item.normalizedTitle,
               organizationId: chapter.organizationId,

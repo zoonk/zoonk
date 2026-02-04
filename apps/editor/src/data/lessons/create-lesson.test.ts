@@ -2,9 +2,13 @@ import { ErrorCode } from "@/lib/app-error";
 import { prisma } from "@zoonk/db";
 import { signInAs } from "@zoonk/testing/fixtures/auth";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
-import { courseFixture } from "@zoonk/testing/fixtures/courses";
+import { courseCategoryFixture, courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonAttrs, lessonFixture } from "@zoonk/testing/fixtures/lessons";
-import { memberFixture, organizationFixture } from "@zoonk/testing/fixtures/orgs";
+import {
+  aiOrganizationFixture,
+  memberFixture,
+  organizationFixture,
+} from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, describe, expect, test } from "vitest";
 import { createLesson } from "./create-lesson";
 
@@ -105,6 +109,130 @@ describe("admins", () => {
     expect(result.data?.chapterId).toBe(chapter.id);
     expect(result.data?.language).toBe(chapter.language);
     expect(result.data?.kind).toBe("custom");
+  });
+
+  describe("lesson kind based on org and category", () => {
+    let aiOrg: Awaited<ReturnType<typeof aiOrganizationFixture>>;
+    let aiHeaders: Headers;
+
+    beforeAll(async () => {
+      const [org, fixture] = await Promise.all([
+        aiOrganizationFixture(),
+        memberFixture({ role: "admin" }),
+      ]);
+
+      aiOrg = org;
+
+      const [, testHeaders] = await Promise.all([
+        prisma.member.create({
+          data: {
+            organizationId: aiOrg.id,
+            role: "admin",
+            userId: Number(fixture.user.id),
+          },
+        }),
+        signInAs(fixture.user.email, fixture.user.password),
+      ]);
+
+      aiHeaders = testHeaders;
+    });
+
+    test("sets kind to 'custom' for non-AI org", async () => {
+      const course = await courseFixture({ organizationId: organization.id });
+      const newChapter = await chapterFixture({
+        courseId: course.id,
+        language: course.language,
+        organizationId: organization.id,
+      });
+
+      const result = await createLesson({
+        ...lessonAttrs({
+          chapterId: newChapter.id,
+          organizationId: organization.id,
+        }),
+        chapterId: newChapter.id,
+        headers,
+        position: 0,
+      });
+
+      expect(result.error).toBeNull();
+      expect(result.data?.kind).toBe("custom");
+    });
+
+    test("sets kind to 'language' for AI org with languages category", async () => {
+      const aiCourse = await courseFixture({ organizationId: aiOrg.id });
+
+      const [, aiChapter] = await Promise.all([
+        courseCategoryFixture({ category: "languages", courseId: aiCourse.id }),
+        chapterFixture({
+          courseId: aiCourse.id,
+          language: aiCourse.language,
+          organizationId: aiOrg.id,
+        }),
+      ]);
+
+      const result = await createLesson({
+        ...lessonAttrs({
+          chapterId: aiChapter.id,
+          organizationId: aiOrg.id,
+        }),
+        chapterId: aiChapter.id,
+        headers: aiHeaders,
+        position: 0,
+      });
+
+      expect(result.error).toBeNull();
+      expect(result.data?.kind).toBe("language");
+    });
+
+    test("sets kind to 'core' for AI org without languages category", async () => {
+      const aiCourse = await courseFixture({ organizationId: aiOrg.id });
+
+      const [, aiChapter] = await Promise.all([
+        courseCategoryFixture({ category: "programming", courseId: aiCourse.id }),
+        chapterFixture({
+          courseId: aiCourse.id,
+          language: aiCourse.language,
+          organizationId: aiOrg.id,
+        }),
+      ]);
+
+      const result = await createLesson({
+        ...lessonAttrs({
+          chapterId: aiChapter.id,
+          organizationId: aiOrg.id,
+        }),
+        chapterId: aiChapter.id,
+        headers: aiHeaders,
+        position: 0,
+      });
+
+      expect(result.error).toBeNull();
+      expect(result.data?.kind).toBe("core");
+    });
+
+    test("sets kind to 'core' for AI org with no categories", async () => {
+      const aiCourse = await courseFixture({ organizationId: aiOrg.id });
+
+      const aiChapter = await chapterFixture({
+        courseId: aiCourse.id,
+        language: aiCourse.language,
+        organizationId: aiOrg.id,
+      });
+
+      const result = await createLesson({
+        ...lessonAttrs({
+          chapterId: aiChapter.id,
+          organizationId: aiOrg.id,
+        }),
+        chapterId: aiChapter.id,
+        headers: aiHeaders,
+        position: 0,
+      });
+
+      expect(result.error).toBeNull();
+      expect(result.data?.kind).toBe("core");
+    });
   });
 
   test("normalizes slug", async () => {

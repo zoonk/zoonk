@@ -2,9 +2,13 @@ import { ErrorCode } from "@/lib/app-error";
 import { prisma } from "@zoonk/db";
 import { signInAs } from "@zoonk/testing/fixtures/auth";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
-import { courseFixture } from "@zoonk/testing/fixtures/courses";
+import { courseCategoryFixture, courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
-import { memberFixture, organizationFixture } from "@zoonk/testing/fixtures/orgs";
+import {
+  aiOrganizationFixture,
+  memberFixture,
+  organizationFixture,
+} from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, describe, expect, test } from "vitest";
 import { importLessons } from "./import-lessons";
 
@@ -665,6 +669,122 @@ describe("admins", () => {
       });
 
       expect(updatedChapter?.generationStatus).toBe("completed");
+    });
+  });
+
+  describe("lesson kind based on org and category", () => {
+    let aiOrg: Awaited<ReturnType<typeof aiOrganizationFixture>>;
+    let aiHeaders: Headers;
+
+    beforeAll(async () => {
+      const [org, fixture] = await Promise.all([
+        aiOrganizationFixture(),
+        memberFixture({ role: "admin" }),
+      ]);
+
+      aiOrg = org;
+
+      const [, testHeaders] = await Promise.all([
+        prisma.member.create({
+          data: {
+            organizationId: aiOrg.id,
+            role: "admin",
+            userId: Number(fixture.user.id),
+          },
+        }),
+        signInAs(fixture.user.email, fixture.user.password),
+      ]);
+
+      aiHeaders = testHeaders;
+    });
+
+    test("sets kind to 'custom' for non-AI org", async () => {
+      const course = await courseFixture({ organizationId: organization.id });
+      const newChapter = await chapterFixture({
+        courseId: course.id,
+        language: course.language,
+        organizationId: organization.id,
+      });
+
+      const file = createImportFile([{ description: "Desc", title: "Test Lesson" }]);
+
+      const result = await importLessons({
+        chapterId: newChapter.id,
+        file,
+        headers,
+      });
+
+      expect(result.error).toBeNull();
+      expect(result.data?.[0]?.kind).toBe("custom");
+    });
+
+    test("sets kind to 'language' for AI org with languages category", async () => {
+      const aiCourse = await courseFixture({ organizationId: aiOrg.id });
+
+      const [, aiChapter] = await Promise.all([
+        courseCategoryFixture({ category: "languages", courseId: aiCourse.id }),
+        chapterFixture({
+          courseId: aiCourse.id,
+          language: aiCourse.language,
+          organizationId: aiOrg.id,
+        }),
+      ]);
+
+      const file = createImportFile([{ description: "Desc", title: "Test Lesson" }]);
+
+      const result = await importLessons({
+        chapterId: aiChapter.id,
+        file,
+        headers: aiHeaders,
+      });
+
+      expect(result.error).toBeNull();
+      expect(result.data?.[0]?.kind).toBe("language");
+    });
+
+    test("sets kind to 'core' for AI org without languages category", async () => {
+      const aiCourse = await courseFixture({ organizationId: aiOrg.id });
+
+      const [, aiChapter] = await Promise.all([
+        courseCategoryFixture({ category: "programming", courseId: aiCourse.id }),
+        chapterFixture({
+          courseId: aiCourse.id,
+          language: aiCourse.language,
+          organizationId: aiOrg.id,
+        }),
+      ]);
+
+      const file = createImportFile([{ description: "Desc", title: "Test Lesson" }]);
+
+      const result = await importLessons({
+        chapterId: aiChapter.id,
+        file,
+        headers: aiHeaders,
+      });
+
+      expect(result.error).toBeNull();
+      expect(result.data?.[0]?.kind).toBe("core");
+    });
+
+    test("sets kind to 'core' for AI org with no categories", async () => {
+      const aiCourse = await courseFixture({ organizationId: aiOrg.id });
+
+      const aiChapter = await chapterFixture({
+        courseId: aiCourse.id,
+        language: aiCourse.language,
+        organizationId: aiOrg.id,
+      });
+
+      const file = createImportFile([{ description: "Desc", title: "Test Lesson" }]);
+
+      const result = await importLessons({
+        chapterId: aiChapter.id,
+        file,
+        headers: aiHeaders,
+      });
+
+      expect(result.error).toBeNull();
+      expect(result.data?.[0]?.kind).toBe("core");
     });
   });
 });
