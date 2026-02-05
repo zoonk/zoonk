@@ -37,16 +37,8 @@ function getPhaseSteps(activityKind: ActivityKind): Record<PhaseName, ActivitySt
       "generateExplanationContent",
       "generateMechanicsContent",
       "generateQuizContent",
-      "getDependencyContent",
-      "notifyDependents",
     ],
-    generatingVisuals: [
-      "generateVisuals",
-      "generateImages",
-      "generateQuizImages",
-      "saveActivity",
-      "saveQuizActivity",
-    ],
+    generatingVisuals: ["generateVisuals", "generateImages", "generateQuizImages"],
     loadingInfo: ["getLessonActivities", "setActivityAsRunning"],
   };
 }
@@ -59,16 +51,8 @@ const validationPhaseSteps: Record<PhaseName, ActivityStepName[]> = {
     "generateExplanationContent",
     "generateMechanicsContent",
     "generateQuizContent",
-    "getDependencyContent",
-    "notifyDependents",
   ],
-  generatingVisuals: [
-    "generateVisuals",
-    "generateImages",
-    "generateQuizImages",
-    "saveActivity",
-    "saveQuizActivity",
-  ],
+  generatingVisuals: ["generateVisuals", "generateImages", "generateQuizImages"],
   loadingInfo: ["getLessonActivities", "setActivityAsRunning"],
 };
 

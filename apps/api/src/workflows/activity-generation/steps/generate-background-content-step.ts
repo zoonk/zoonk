@@ -1,16 +1,35 @@
 import { generateActivityBackground } from "@zoonk/ai/tasks/activities/core/background";
+import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { streamStatus } from "../stream-status";
-import { type ActivitySteps } from "./_utils/get-activity-steps";
+import { type ActivitySteps, parseActivitySteps } from "./_utils/get-activity-steps";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
 import { setActivityAsRunningStep } from "./set-activity-as-running-step";
 
 export async function generateBackgroundContentStep(
-  activity: LessonActivity,
+  activities: LessonActivity[],
   workflowRunId: string,
 ): Promise<{ steps: ActivitySteps }> {
   "use step";
+
+  const activity = activities.find((a) => a.kind === "background");
+  if (!activity) {
+    return { steps: [] };
+  }
+
+  // Resume: check if steps already exist in DB
+  const { data: existingSteps } = await safeAsync(() =>
+    prisma.step.findMany({
+      orderBy: { position: "asc" },
+      select: { content: true },
+      where: { activityId: activity.id },
+    }),
+  );
+
+  if (existingSteps && existingSteps.length > 0) {
+    return { steps: parseActivitySteps(existingSteps) };
+  }
 
   await streamStatus({ status: "started", step: "generateBackgroundContent" });
   await setActivityAsRunningStep({ activityId: activity.id, workflowRunId });
@@ -25,13 +44,39 @@ export async function generateBackgroundContentStep(
     }),
   );
 
-  if (error) {
+  if (error || !result) {
     await streamStatus({ status: "error", step: "generateBackgroundContent" });
     await handleActivityFailureStep({ activityId: activity.id });
-    throw error;
+    return { steps: [] };
+  }
+
+  const steps = result.data.steps;
+
+  if (steps.length === 0) {
+    await streamStatus({ status: "error", step: "generateBackgroundContent" });
+    await handleActivityFailureStep({ activityId: activity.id });
+    return { steps: [] };
+  }
+
+  // Save steps to DB immediately
+  const { error: saveError } = await safeAsync(() =>
+    prisma.step.createMany({
+      data: steps.map((step, index) => ({
+        activityId: activity.id,
+        content: { text: step.text, title: step.title },
+        kind: "static" as const,
+        position: index,
+      })),
+    }),
+  );
+
+  if (saveError) {
+    await handleActivityFailureStep({ activityId: activity.id });
+    await streamStatus({ status: "error", step: "generateBackgroundContent" });
+    return { steps: [] };
   }
 
   await streamStatus({ status: "completed", step: "generateBackgroundContent" });
 
-  return { steps: result.data.steps };
+  return { steps };
 }

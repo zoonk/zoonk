@@ -8,6 +8,10 @@ const stepContentSchema = z.object({
   title: z.string(),
 });
 
+export function parseActivitySteps(steps: { content: unknown }[]): ActivitySteps {
+  return steps.map((s) => stepContentSchema.parse(s.content));
+}
+
 export async function getActivitySteps(activityId: bigint): Promise<ActivitySteps> {
   const steps = await prisma.step.findMany({
     orderBy: { position: "asc" },
@@ -15,8 +19,5 @@ export async function getActivitySteps(activityId: bigint): Promise<ActivityStep
     where: { activityId },
   });
 
-  return steps.map((step) => {
-    const content = stepContentSchema.parse(step.content);
-    return { text: content.text, title: content.title };
-  });
+  return parseActivitySteps(steps);
 }

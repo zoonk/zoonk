@@ -3,59 +3,17 @@ import {
   type SelectImageQuestion,
 } from "@zoonk/ai/tasks/activities/core/explanation-quiz";
 import { generateStepImage } from "@zoonk/core/steps/image";
+import { prisma } from "@zoonk/db";
+import { safeAsync } from "@zoonk/utils/error";
 import { streamStatus } from "../stream-status";
 import { type LessonActivity } from "./get-lesson-activities-step";
-
-type SelectImageOption = SelectImageQuestion["options"][number];
-type SelectImageOptionWithUrl = SelectImageOption & { url?: string };
-type SelectImageQuestionWithUrls = Omit<SelectImageQuestion, "options"> & {
-  options: SelectImageOptionWithUrl[];
-};
+import { handleActivityFailureStep } from "./handle-failure-step";
 
 export type QuizQuestionWithUrls =
   | Exclude<QuizQuestion, SelectImageQuestion>
-  | SelectImageQuestionWithUrls;
-
-async function processSelectImageOption(
-  option: SelectImageOption,
-  orgSlug: string,
-): Promise<SelectImageOptionWithUrl> {
-  const { data: url, error } = await generateStepImage({
-    orgSlug,
-    prompt: option.prompt,
-  });
-
-  if (error) {
-    return option;
-  }
-
-  return { ...option, url };
-}
-
-async function processSelectImageQuestion(
-  question: SelectImageQuestion,
-  orgSlug: string,
-): Promise<SelectImageQuestionWithUrls> {
-  const settledOptions = await Promise.allSettled(
-    question.options.map((option) => processSelectImageOption(option, orgSlug)),
-  );
-
-  const optionsWithUrls = question.options.map((option, index): SelectImageOptionWithUrl => {
-    const result = settledOptions[index];
-
-    if (result?.status === "fulfilled") {
-      return result.value;
-    }
-
-    return option;
-  });
-
-  return { ...question, options: optionsWithUrls };
-}
-
-function isSelectImageQuestion(question: QuizQuestion): question is SelectImageQuestion {
-  return question.format === "selectImage";
-}
+  | (Omit<SelectImageQuestion, "options"> & {
+      options: SelectImageQuestion["options"][number] & { url?: string }[];
+    });
 
 export async function generateQuizImagesStep(
   activities: LessonActivity[],
@@ -69,35 +27,90 @@ export async function generateQuizImagesStep(
     return [];
   }
 
-  if (activity.generationStatus === "completed") {
-    return [];
+  // Query selectImage steps from DB for incremental resume
+  const dbSteps = await prisma.step.findMany({
+    orderBy: { position: "asc" },
+    select: { content: true, id: true },
+    where: { activityId: activity.id, kind: "selectImage" },
+  });
+
+  if (dbSteps.length === 0) {
+    // No selectImage questions - return questions as-is
+    return questions;
   }
 
   await streamStatus({ status: "started", step: "generateQuizImages" });
 
   const orgSlug = activity.lesson.chapter.course.organization.slug;
+  let hadFailure = false;
 
-  const settledResults = await Promise.allSettled(
-    questions.map(async (question): Promise<QuizQuestionWithUrls> => {
-      if (!isSelectImageQuestion(question)) {
-        return question;
+  // For each selectImage step, find options missing URLs, generate, update DB
+  const stepResults = await Promise.allSettled(
+    dbSteps.map(async (step) => {
+      const content = step.content as { options: { prompt: string; url?: string }[] } & Record<
+        string,
+        unknown
+      >;
+      const missingIndices = content.options
+        .map((o, i) => ({ index: i, option: o }))
+        .filter(({ option }) => !option.url);
+
+      if (missingIndices.length === 0) {
+        return;
       }
 
-      return processSelectImageQuestion(question, orgSlug);
+      const results = await Promise.allSettled(
+        missingIndices.map(({ option }) => generateStepImage({ orgSlug, prompt: option.prompt })),
+      );
+
+      const updatedOptions = [...content.options];
+      let anyFailed = false;
+
+      missingIndices.forEach(({ index }, resultIndex) => {
+        const result = results[resultIndex];
+        if (result?.status === "fulfilled" && !result.value.error) {
+          updatedOptions[index] = { ...updatedOptions[index]!, url: result.value.data };
+        } else {
+          anyFailed = true;
+        }
+      });
+
+      if (anyFailed) {
+        hadFailure = true;
+      }
+
+      const { error } = await safeAsync(() =>
+        prisma.step.update({
+          data: { content: { ...content, options: updatedOptions } },
+          where: { id: step.id },
+        }),
+      );
+
+      if (error) {
+        hadFailure = true;
+      }
     }),
   );
 
-  const processedQuestions = questions.map((question, index): QuizQuestionWithUrls => {
-    const result = settledResults[index];
+  if (stepResults.some((r) => r.status === "rejected")) {
+    hadFailure = true;
+  }
 
-    if (result?.status === "fulfilled") {
-      return result.value;
-    }
-
-    return question;
-  });
+  if (hadFailure) {
+    await handleActivityFailureStep({ activityId: activity.id });
+  }
 
   await streamStatus({ status: "completed", step: "generateQuizImages" });
 
-  return processedQuestions;
+  // Re-read DB to return current state
+  const updatedSteps = await prisma.step.findMany({
+    orderBy: { position: "asc" },
+    select: { content: true, kind: true },
+    where: { activityId: activity.id },
+  });
+
+  return updatedSteps.map((s) => {
+    const content = s.content as Record<string, unknown>;
+    return { format: s.kind, ...content } as QuizQuestionWithUrls;
+  });
 }

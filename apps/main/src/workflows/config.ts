@@ -30,15 +30,11 @@ export const ACTIVITY_STEPS = [
   "generateVisuals",
   "generateImages",
   "generateQuizImages",
-  "saveActivity",
-  "saveQuizActivity",
   "setActivityAsRunning",
   "setBackgroundAsCompleted",
   "setExplanationAsCompleted",
   "setMechanicsAsCompleted",
   "setQuizAsCompleted",
-  "notifyDependents",
-  "getDependencyContent",
 ] as const;
 
 export type ActivityStepName = (typeof ACTIVITY_STEPS)[number];
