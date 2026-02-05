@@ -4,6 +4,7 @@ import { getActivity } from "@/data/activities/get-activity";
 import { getLesson } from "@/data/lessons/get-lesson";
 import { cacheTagActivity } from "@zoonk/utils/cache";
 import { AI_ORG_SLUG } from "@zoonk/utils/constants";
+import { parseNumericId } from "@zoonk/utils/string";
 import { type Metadata } from "next";
 import { getExtracted, setRequestLocale } from "next-intl/server";
 import { cacheTag } from "next/cache";
@@ -46,9 +47,9 @@ export default async function ActivityPage({ params }: Props) {
     notFound();
   }
 
-  const activityPosition = Number.parseInt(position, 10);
+  const activityPosition = parseNumericId(position);
 
-  if (Number.isNaN(activityPosition)) {
+  if (activityPosition === null) {
     notFound();
   }
 

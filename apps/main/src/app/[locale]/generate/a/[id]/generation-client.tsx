@@ -55,6 +55,7 @@ export function GenerationClient({
   const { phases, progress } = useGenerationPhases(
     generation.completedSteps,
     generation.currentStep,
+    activityKind,
   );
 
   useCompletionRedirect({

@@ -2,6 +2,7 @@
 
 import { type PhaseStatus } from "@/lib/generation-phases";
 import { type ActivityStepName } from "@/workflows/config";
+import { type ActivityKind } from "@zoonk/db";
 import { useExtracted } from "next-intl";
 import {
   PHASE_ICONS,
@@ -21,6 +22,7 @@ export type PhaseInfo = {
 export function useGenerationPhases(
   completedSteps: ActivityStepName[],
   currentStep: ActivityStepName | null,
+  activityKind: ActivityKind,
 ) {
   const t = useExtracted();
 
@@ -35,10 +37,10 @@ export function useGenerationPhases(
     icon: PHASE_ICONS[phase],
     label: labels[phase],
     name: phase,
-    status: getPhaseStatus(phase, completedSteps, currentStep),
+    status: getPhaseStatus(phase, completedSteps, currentStep, activityKind),
   }));
 
-  const progress = calculateWeightedProgress(completedSteps, currentStep);
+  const progress = calculateWeightedProgress(completedSteps, currentStep, activityKind);
   const activePhase = phases.find((phase) => phase.status === "active");
 
   return { activePhase, phases, progress };

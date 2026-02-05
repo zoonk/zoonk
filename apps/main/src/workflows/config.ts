@@ -56,6 +56,14 @@ const activityCompletionSteps: Partial<Record<string, ActivityCompletionStep>> =
   quiz: "setQuizAsCompleted",
 };
 
+/**
+ * Get the completion step name for an activity kind.
+ * Used by the UI to detect when generation is complete.
+ *
+ * For unsupported kinds (story, examples, etc.), returns a fallback.
+ * These kinds shouldn't reach the generation page, but if they do,
+ * the UI won't redirect until the correct step is emitted.
+ */
 export function getActivityCompletionStep(kind: string): ActivityCompletionStep {
   return activityCompletionSteps[kind] ?? "setBackgroundAsCompleted";
 }

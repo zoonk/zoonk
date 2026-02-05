@@ -3,7 +3,13 @@ import {
   calculateWeightedProgress as calculateProgress,
   getPhaseStatus as getStatus,
 } from "@/lib/generation-phases";
-import { ACTIVITY_STEPS, type ActivityStepName } from "@/workflows/config";
+import {
+  ACTIVITY_STEPS,
+  type ActivityCompletionStep,
+  type ActivityStepName,
+  getActivityCompletionStep,
+} from "@/workflows/config";
+import { type ActivityKind } from "@zoonk/db";
 import {
   BookOpenIcon,
   CheckCircleIcon,
@@ -14,13 +20,40 @@ import {
 
 export type PhaseName = "loadingInfo" | "generatingContent" | "generatingVisuals" | "completing";
 
-const PHASE_STEPS: Record<PhaseName, ActivityStepName[]> = {
-  completing: [
-    "setBackgroundAsCompleted",
-    "setExplanationAsCompleted",
-    "setMechanicsAsCompleted",
-    "setQuizAsCompleted",
-  ],
+const ALL_COMPLETION_STEPS: ActivityCompletionStep[] = [
+  "setBackgroundAsCompleted",
+  "setExplanationAsCompleted",
+  "setMechanicsAsCompleted",
+  "setQuizAsCompleted",
+];
+
+function getPhaseSteps(activityKind: ActivityKind): Record<PhaseName, ActivityStepName[]> {
+  const completionStep = getActivityCompletionStep(activityKind);
+
+  return {
+    completing: [completionStep],
+    generatingContent: [
+      "generateBackgroundContent",
+      "generateExplanationContent",
+      "generateMechanicsContent",
+      "generateQuizContent",
+      "getDependencyContent",
+      "notifyDependents",
+    ],
+    generatingVisuals: [
+      "generateVisuals",
+      "generateImages",
+      "generateQuizImages",
+      "saveActivity",
+      "saveQuizActivity",
+    ],
+    loadingInfo: ["getLessonActivities", "setActivityAsRunning"],
+  };
+}
+
+// Verify all ACTIVITY_STEPS are covered (using all completion steps for validation)
+const validationPhaseSteps: Record<PhaseName, ActivityStepName[]> = {
+  completing: ALL_COMPLETION_STEPS,
   generatingContent: [
     "generateBackgroundContent",
     "generateExplanationContent",
@@ -39,7 +72,7 @@ const PHASE_STEPS: Record<PhaseName, ActivityStepName[]> = {
   loadingInfo: ["getLessonActivities", "setActivityAsRunning"],
 };
 
-const allPhaseSteps = new Set(Object.values(PHASE_STEPS).flat());
+const allPhaseSteps = new Set(Object.values(validationPhaseSteps).flat());
 const missingActivitySteps = ACTIVITY_STEPS.filter((step) => !allPhaseSteps.has(step));
 
 if (missingActivitySteps.length > 0) {
@@ -74,17 +107,21 @@ export function getPhaseStatus(
   phase: PhaseName,
   completedSteps: ActivityStepName[],
   currentStep: ActivityStepName | null,
+  activityKind: ActivityKind,
 ): PhaseStatus {
-  return getStatus(phase, completedSteps, currentStep, PHASE_STEPS);
+  const phaseSteps = getPhaseSteps(activityKind);
+  return getStatus(phase, completedSteps, currentStep, phaseSteps);
 }
 
 export function calculateWeightedProgress(
   completedSteps: ActivityStepName[],
   currentStep: ActivityStepName | null,
+  activityKind: ActivityKind,
 ): number {
+  const phaseSteps = getPhaseSteps(activityKind);
   return calculateProgress(completedSteps, currentStep, {
     phaseOrder: PHASE_ORDER,
-    phaseSteps: PHASE_STEPS,
+    phaseSteps,
     phaseWeights: PHASE_WEIGHTS,
   });
 }

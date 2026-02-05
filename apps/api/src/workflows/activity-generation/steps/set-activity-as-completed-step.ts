@@ -55,6 +55,13 @@ export async function setActivityAsCompletedStep(
 ): Promise<void> {
   "use step";
 
-  const stepName = kindToStepName[kind] ?? "setBackgroundAsCompleted";
+  const stepName = kindToStepName[kind];
+
+  // Unsupported activity kinds should not reach this point in the workflow.
+  // If they do, skip silently - the activity was already processed.
+  if (!stepName) {
+    return;
+  }
+
   await setActivityAsCompletedBase(input, stepName);
 }
