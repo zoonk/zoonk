@@ -25,6 +25,13 @@ export async function getExistingContentSteps(activityId: bigint): Promise<Activ
 }
 
 /**
+ * Delete all steps for an activity (used when retrying a failed activity).
+ */
+export async function deleteActivitySteps(activityId: bigint): Promise<void> {
+  await prisma.step.deleteMany({ where: { activityId } });
+}
+
+/**
  * Save generated steps to DB and stream status.
  * Returns the steps on success, empty array on failure.
  */

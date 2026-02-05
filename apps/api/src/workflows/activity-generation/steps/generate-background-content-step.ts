@@ -1,7 +1,11 @@
 import { generateActivityBackground } from "@zoonk/ai/tasks/activities/core/background";
 import { safeAsync } from "@zoonk/utils/error";
 import { streamStatus } from "../stream-status";
-import { getExistingContentSteps, saveContentSteps } from "./_utils/content-step-helpers";
+import {
+  deleteActivitySteps,
+  getExistingContentSteps,
+  saveContentSteps,
+} from "./_utils/content-step-helpers";
 import { type ActivitySteps } from "./_utils/get-activity-steps";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
@@ -18,9 +22,16 @@ export async function generateBackgroundContentStep(
     return { steps: [] };
   }
 
-  const existing = await getExistingContentSteps(activity.id);
-  if (existing) {
-    return { steps: existing };
+  if (activity.generationStatus === "completed") {
+    return { steps: (await getExistingContentSteps(activity.id)) ?? [] };
+  }
+
+  if (activity.generationStatus === "running") {
+    return { steps: [] };
+  }
+
+  if (activity.generationStatus === "failed") {
+    await deleteActivitySteps(activity.id);
   }
 
   await streamStatus({ status: "started", step: "generateBackgroundContent" });

@@ -1,7 +1,11 @@
 import { generateActivityExplanation } from "@zoonk/ai/tasks/activities/core/explanation";
 import { safeAsync } from "@zoonk/utils/error";
 import { streamStatus } from "../stream-status";
-import { getExistingContentSteps, saveContentSteps } from "./_utils/content-step-helpers";
+import {
+  deleteActivitySteps,
+  getExistingContentSteps,
+  saveContentSteps,
+} from "./_utils/content-step-helpers";
 import { type ActivitySteps } from "./_utils/get-activity-steps";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
@@ -19,14 +23,19 @@ export async function generateExplanationContentStep(
     return { steps: [] };
   }
 
-  if (backgroundSteps.length === 0) {
-    await handleActivityFailureStep({ activityId: activity.id });
+  if (activity.generationStatus === "completed") {
+    return { steps: (await getExistingContentSteps(activity.id)) ?? [] };
+  }
+
+  if (activity.generationStatus === "running" || backgroundSteps.length === 0) {
+    if (backgroundSteps.length === 0) {
+      await handleActivityFailureStep({ activityId: activity.id });
+    }
     return { steps: [] };
   }
 
-  const existing = await getExistingContentSteps(activity.id);
-  if (existing) {
-    return { steps: existing };
+  if (activity.generationStatus === "failed") {
+    await deleteActivitySteps(activity.id);
   }
 
   await streamStatus({ status: "started", step: "generateExplanationContent" });
@@ -49,11 +58,7 @@ export async function generateExplanationContentStep(
     return { steps: [] };
   }
 
-  const steps = await saveContentSteps(
-    activity.id,
-    result.data.steps,
-    "generateExplanationContent",
-  );
-
-  return { steps };
+  return {
+    steps: await saveContentSteps(activity.id, result.data.steps, "generateExplanationContent"),
+  };
 }

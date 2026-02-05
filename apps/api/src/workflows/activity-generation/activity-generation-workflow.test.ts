@@ -1746,7 +1746,7 @@ describe(activityGenerationWorkflow, () => {
   });
 
   describe("status integrity", () => {
-    test("status is 'completed' but no steps in DB → regenerates content", async () => {
+    test("status is 'completed' but no steps in DB → returns empty without regenerating", async () => {
       const testLesson = await lessonFixture({
         chapterId: chapter.id,
         organizationId,
@@ -1763,18 +1763,18 @@ describe(activityGenerationWorkflow, () => {
 
       await activityGenerationWorkflow(testLesson.id);
 
-      // Should regenerate because no steps found
-      expect(generateActivityBackground).toHaveBeenCalled();
+      // Should NOT regenerate - completed means done
+      expect(generateActivityBackground).not.toHaveBeenCalled();
     });
 
-    test("status is NOT 'completed' but steps exist → uses existing steps and proceeds", async () => {
+    test("status is 'running' → skips without using existing steps", async () => {
       const testLesson = await lessonFixture({
         chapterId: chapter.id,
         organizationId,
         title: `Running With Steps Lesson ${randomUUID()}`,
       });
 
-      const backgroundActivity = await activityFixture({
+      await activityFixture({
         generationStatus: "running",
         kind: "background",
         lessonId: testLesson.id,
@@ -1782,25 +1782,13 @@ describe(activityGenerationWorkflow, () => {
         title: `Running With Steps ${randomUUID()}`,
       });
 
-      await stepFixture({
-        activityId: backgroundActivity.id,
-        content: { text: "Existing step text", title: "Existing Step" },
-        position: 0,
-      });
-
       await activityGenerationWorkflow(testLesson.id);
 
-      // Should use existing steps without calling AI
+      // Running means another workflow is handling it - skip entirely
       expect(generateActivityBackground).not.toHaveBeenCalled();
-
-      // Save step should mark it as completed
-      const dbActivity = await prisma.activity.findUnique({
-        where: { id: backgroundActivity.id },
-      });
-      expect(dbActivity?.generationStatus).toBe("completed");
     });
 
-    test("failed status but steps exist → uses existing steps and marks completed", async () => {
+    test("failed status with existing steps → deletes steps and regenerates", async () => {
       const testLesson = await lessonFixture({
         chapterId: chapter.id,
         organizationId,
@@ -1823,8 +1811,18 @@ describe(activityGenerationWorkflow, () => {
 
       await activityGenerationWorkflow(testLesson.id);
 
-      // Should use existing steps without calling AI
-      expect(generateActivityBackground).not.toHaveBeenCalled();
+      // Should delete old steps and regenerate
+      expect(generateActivityBackground).toHaveBeenCalled();
+
+      // Old steps should be replaced by new ones
+      const steps = await prisma.step.findMany({
+        where: { activityId: backgroundActivity.id },
+      });
+      expect(steps).toHaveLength(2);
+      expect(steps[0]?.content).toEqual({
+        text: "Background step 1 text",
+        title: "Background Step 1",
+      });
     });
   });
 });

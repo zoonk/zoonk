@@ -36,27 +36,19 @@ function toQuizQuestion(step: { content: unknown; kind: string }): QuizQuestionW
   return { format: step.kind, ...toRecord(step.content) } as QuizQuestionWithUrls;
 }
 
-async function generateMissingOptionImages(
+async function generateOptionImages(
   options: SelectImageOption[],
   orgSlug: string,
 ): Promise<{ hadFailure: boolean; updatedOptions: SelectImageOption[] }> {
-  const missingIndices = options
-    .map((opt, idx) => ({ index: idx, option: opt }))
-    .filter(({ option }) => !option.url);
-
-  if (missingIndices.length === 0) {
-    return { hadFailure: false, updatedOptions: options };
-  }
-
   const results = await Promise.allSettled(
-    missingIndices.map(({ option }) => generateStepImage({ orgSlug, prompt: option.prompt })),
+    options.map(({ prompt }) => generateStepImage({ orgSlug, prompt })),
   );
 
   const updatedOptions = [...options];
   let hadFailure = false;
 
-  missingIndices.forEach(({ index }, resultIndex) => {
-    const result = results[resultIndex];
+  options.forEach((_, index) => {
+    const result = results[index];
     if (result?.status === "fulfilled" && !result.value.error) {
       const existing = updatedOptions[index];
       updatedOptions[index] = {
@@ -84,7 +76,10 @@ export async function generateQuizImagesStep(
     return [];
   }
 
-  // Query selectImage steps from DB for incremental resume
+  if (activity.generationStatus === "completed" || activity.generationStatus === "running") {
+    return [];
+  }
+
   const dbSteps = await prisma.step.findMany({
     orderBy: { position: "asc" },
     select: { content: true, id: true },
@@ -92,7 +87,6 @@ export async function generateQuizImagesStep(
   });
 
   if (dbSteps.length === 0) {
-    // No selectImage steps in DB - questions don't need URL enrichment
     // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- QuizQuestion is a subtype; url? is optional
     return questions as QuizQuestionWithUrls[];
   }
@@ -109,7 +103,7 @@ export async function generateQuizImagesStep(
         return;
       }
 
-      const { hadFailure: imageFailed, updatedOptions } = await generateMissingOptionImages(
+      const { hadFailure: imageFailed, updatedOptions } = await generateOptionImages(
         options,
         orgSlug,
       );
@@ -118,19 +112,16 @@ export async function generateQuizImagesStep(
         hadFailure = true;
       }
 
-      // Only update if we had missing images
-      if (options.some((opt) => !opt.url)) {
-        const stepContent = toRecord(step.content);
-        const { error } = await safeAsync(() =>
-          prisma.step.update({
-            data: { content: { ...stepContent, options: updatedOptions } },
-            where: { id: step.id },
-          }),
-        );
+      const stepContent = toRecord(step.content);
+      const { error } = await safeAsync(() =>
+        prisma.step.update({
+          data: { content: { ...stepContent, options: updatedOptions } },
+          where: { id: step.id },
+        }),
+      );
 
-        if (error) {
-          hadFailure = true;
-        }
+      if (error) {
+        hadFailure = true;
       }
     }),
   );
@@ -145,7 +136,6 @@ export async function generateQuizImagesStep(
 
   await streamStatus({ status: "completed", step: "generateQuizImages" });
 
-  // Re-read DB to return current state
   const updatedSteps = await prisma.step.findMany({
     orderBy: { position: "asc" },
     select: { content: true, kind: true },

@@ -8,8 +8,75 @@ import { handleActivityFailureStep } from "./handle-failure-step";
 
 export type StepVisualWithUrl = StepVisual & { url?: string };
 
-function hasImageUrl(content: unknown): boolean {
-  return getString(content, "url") !== null;
+type ImageStep = { id: bigint; visualContent: unknown; visualKind: string | null };
+
+async function generateAndSaveImages(
+  imageSteps: ImageStep[],
+  orgSlug: string,
+): Promise<{
+  hadFailure: boolean;
+  results: PromiseSettledResult<{ data: string | null; error: Error | null }>[];
+}> {
+  const results = await Promise.allSettled(
+    imageSteps.map((step) => {
+      const prompt = getString(step.visualContent, "prompt");
+      if (!prompt) {
+        return Promise.reject(new Error("Missing prompt"));
+      }
+      return generateVisualStepImage({ orgSlug, prompt });
+    }),
+  );
+
+  let hadFailure = false;
+
+  const updateResults = await Promise.allSettled(
+    imageSteps.map((step, idx) => {
+      const result = results[idx];
+      if (result?.status !== "fulfilled" || result.value.error) {
+        hadFailure = true;
+        return Promise.resolve();
+      }
+      return prisma.step.update({
+        data: { visualContent: { ...toRecord(step.visualContent), url: result.value.data } },
+        where: { id: step.id },
+      });
+    }),
+  );
+
+  if (updateResults.some((result) => result.status === "rejected")) {
+    hadFailure = true;
+  }
+
+  return { hadFailure, results };
+}
+
+function buildVisualsWithUrls(
+  visuals: StepVisual[],
+  imageSteps: ImageStep[],
+  results: PromiseSettledResult<{ data: string | null; error: Error | null }>[],
+): StepVisualWithUrl[] {
+  return visuals.map((visual) => {
+    if (visual.kind !== "image") {
+      return visual;
+    }
+
+    const dbStep = imageSteps.find(
+      (step) => getString(step.visualContent, "prompt") === visual.prompt,
+    );
+
+    if (!dbStep) {
+      return visual;
+    }
+
+    const idx = imageSteps.indexOf(dbStep);
+    const result = results[idx];
+
+    if (result?.status === "fulfilled" && !result.value.error && result.value.data) {
+      return { ...visual, url: result.value.data };
+    }
+
+    return visual;
+  });
 }
 
 export async function generateImagesStep(
@@ -25,73 +92,28 @@ export async function generateImagesStep(
     return [];
   }
 
-  // Query current DB state for incremental resume
+  if (activity.generationStatus === "completed" || activity.generationStatus === "running") {
+    return [];
+  }
+
   const dbSteps = await prisma.step.findMany({
     orderBy: { position: "asc" },
     select: { id: true, visualContent: true, visualKind: true },
     where: { activityId: activity.id },
   });
 
-  if (dbSteps.length === 0) {
-    return [];
-  }
+  const imageSteps = dbSteps.filter((step) => step.visualKind === "image");
 
-  // Find image steps missing URLs (incremental)
-  const needingImages = dbSteps.filter(
-    (step) => step.visualKind === "image" && !hasImageUrl(step.visualContent),
-  );
-
-  // All images already have URLs - return existing visuals as-is
-  if (needingImages.length === 0) {
-    return visuals.map((visual) => {
-      const dbStep = dbSteps[visual.stepIndex];
-      const url = dbStep ? getString(dbStep.visualContent, "url") : null;
-      if (visual.kind === "image" && url) {
-        return { ...visual, url };
-      }
-      return visual;
-    });
+  if (imageSteps.length === 0) {
+    return visuals;
   }
 
   await streamStatus({ status: "started", step: "generateImages" });
 
-  const orgSlug = activity.lesson.chapter.course.organization.slug;
-  let hadFailure = false;
-
-  // Phase 1: Generate missing images in parallel
-  const imageResults = await Promise.allSettled(
-    needingImages.map((step) => {
-      const prompt = getString(step.visualContent, "prompt");
-      if (!prompt) {
-        return Promise.reject(new Error("Missing prompt"));
-      }
-      return generateVisualStepImage({ orgSlug, prompt });
-    }),
+  const { hadFailure, results } = await generateAndSaveImages(
+    imageSteps,
+    activity.lesson.chapter.course.organization.slug,
   );
-
-  // Phase 2: Update DB with generated URLs in parallel
-  const updateResults = await Promise.allSettled(
-    needingImages.map((step, idx) => {
-      const result = imageResults[idx];
-      if (result?.status !== "fulfilled" || result.value.error) {
-        hadFailure = true;
-        return Promise.resolve();
-      }
-      return prisma.step.update({
-        data: {
-          visualContent: {
-            ...toRecord(step.visualContent),
-            url: result.value.data,
-          },
-        },
-        where: { id: step.id },
-      });
-    }),
-  );
-
-  if (updateResults.some((result) => result.status === "rejected")) {
-    hadFailure = true;
-  }
 
   if (hadFailure) {
     await handleActivityFailureStep({ activityId: activity.id });
@@ -99,27 +121,5 @@ export async function generateImagesStep(
 
   await streamStatus({ status: "completed", step: "generateImages" });
 
-  // Build return visuals with URLs where available
-  return visuals.map((visual) => {
-    if (visual.kind !== "image") {
-      return visual;
-    }
-
-    const dbStep = needingImages.find(
-      (step) => getString(step.visualContent, "prompt") === visual.prompt,
-    );
-
-    if (!dbStep) {
-      return visual;
-    }
-
-    const idx = needingImages.indexOf(dbStep);
-    const result = imageResults[idx];
-
-    if (result?.status === "fulfilled" && !result.value.error) {
-      return { ...visual, url: result.value.data };
-    }
-
-    return visual;
-  });
+  return buildVisualsWithUrls(visuals, imageSteps, results);
 }

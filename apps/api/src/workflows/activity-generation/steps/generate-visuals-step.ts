@@ -1,58 +1,12 @@
 import { type StepVisualSchema, generateStepVisuals } from "@zoonk/ai/tasks/steps/visual";
 import { type ActivityKind, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
-import { isJsonObject } from "@zoonk/utils/json";
 import { streamStatus } from "../stream-status";
 import { type ActivitySteps } from "./_utils/get-activity-steps";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
 
 export type StepVisual = StepVisualSchema["visuals"][number];
-
-function isValidVisualContent(content: unknown): boolean {
-  return isJsonObject(content) && Object.keys(content).length > 0;
-}
-
-function mapToStepVisual(
-  step: {
-    id: bigint;
-    visualContent: unknown;
-    visualKind: string | null;
-  },
-  index: number,
-): StepVisual {
-  const content = isJsonObject(step.visualContent) ? step.visualContent : {};
-  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- reconstructing StepVisual union from DB fields; shape validated by isValidVisualContent guard
-  return { ...content, kind: step.visualKind, stepIndex: index } as StepVisual;
-}
-
-async function getDbStepsForResume(activityId: bigint): Promise<{
-  dbSteps: { id: bigint; visualContent: unknown; visualKind: string | null }[];
-  existingVisuals: StepVisual[] | null;
-}> {
-  const dbSteps = await prisma.step.findMany({
-    orderBy: { position: "asc" },
-    select: { id: true, visualContent: true, visualKind: true },
-    where: { activityId },
-  });
-
-  if (dbSteps.length === 0) {
-    return { dbSteps: [], existingVisuals: null };
-  }
-
-  const allHaveVisuals = dbSteps.every(
-    (step) => step.visualKind !== null && isValidVisualContent(step.visualContent),
-  );
-
-  if (allHaveVisuals) {
-    return {
-      dbSteps,
-      existingVisuals: dbSteps.map((step, index) => mapToStepVisual(step, index)),
-    };
-  }
-
-  return { dbSteps, existingVisuals: null };
-}
 
 async function saveVisualsToDB(
   visuals: StepVisual[],
@@ -75,6 +29,12 @@ async function saveVisualsToDB(
   );
 }
 
+async function handleVisualsError(activityId: bigint): Promise<{ visuals: StepVisual[] }> {
+  await streamStatus({ status: "error", step: "generateVisuals" });
+  await handleActivityFailureStep({ activityId });
+  return { visuals: [] };
+}
+
 export async function generateVisualsStep(
   activities: LessonActivity[],
   steps: ActivitySteps,
@@ -88,10 +48,18 @@ export async function generateVisualsStep(
     return { visuals: [] };
   }
 
-  const { dbSteps, existingVisuals } = await getDbStepsForResume(activity.id);
+  if (activity.generationStatus === "completed" || activity.generationStatus === "running") {
+    return { visuals: [] };
+  }
 
-  if (dbSteps.length === 0 || existingVisuals) {
-    return { visuals: existingVisuals ?? [] };
+  const dbSteps = await prisma.step.findMany({
+    orderBy: { position: "asc" },
+    select: { id: true },
+    where: { activityId: activity.id },
+  });
+
+  if (dbSteps.length === 0) {
+    return { visuals: [] };
   }
 
   await streamStatus({ status: "started", step: "generateVisuals" });
@@ -108,17 +76,13 @@ export async function generateVisualsStep(
   );
 
   if (error || !result) {
-    await streamStatus({ status: "error", step: "generateVisuals" });
-    await handleActivityFailureStep({ activityId: activity.id });
-    return { visuals: [] };
+    return handleVisualsError(activity.id);
   }
 
   const { error: saveError } = await saveVisualsToDB(result.data.visuals, dbSteps);
 
   if (saveError) {
-    await handleActivityFailureStep({ activityId: activity.id });
-    await streamStatus({ status: "error", step: "generateVisuals" });
-    return { visuals: [] };
+    return handleVisualsError(activity.id);
   }
 
   await streamStatus({ status: "completed", step: "generateVisuals" });
