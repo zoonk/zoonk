@@ -361,18 +361,29 @@ checksums:
     Return%20to%20login/singular: a73bc2aa109b100645c49a3eab040dbf
     The%20authentication%20token%20is%20invalid%20or%20expired.%20Please%20try%20logging%20in%20again./singular: 9e23335b29f210d8ae14c265aeb6ab1a
     Need%20help%3F%20Contact%20us%20at%20hello%40zoonk.com/singular: 0053665fad1f58782cc3a6f442b36726
+    Generate%20activity/singular: 4fbbc27fc1d296a0414ed0d7f57e4ba0
+    Activity%20not%20available/singular: a76f6331aa0aad825903108429b132a0
+    This%20activity%20hasn't%20been%20generated%20yet./singular: 631d7c5e190d95c7697df1f6a4bb9a1c
     Complete%20this%20activity%20to%20reinforce%20your%20learning%20and%20track%20your%20progress./singular: ae9411230fe031bbbd7471a8fde4b17d
-    Generate%20Chapter/singular: 12160bab066da65413de4b511e402446
+    Generate%20content%20for%20this%20activity/singular: 0ac20ea56d4391004d976cd8f377a645
+    Generate%20Activity/singular: e386c80be3da0ee0b54a940afc4de373
     Generation%20progress/singular: 4940d589badd32bb89f93989945f68bb
     Try%20again/singular: 33dd8820e743e35a66e6977f69e9d3b5
+    Activity%20generated/singular: 6f57ab1f24f506ddf2b199971a831b75
+    Creating%20your%20activity/singular: cac8f88defaeee245484bd91660d32d6
     Generation%20failed/singular: 70cc0b7e6093afa33e32e6ac474d1fc7
+    Something%20went%20wrong.%20Please%20try%20again./singular: c62a7718d9a1e9c4ffb707807550f836
+    Redirecting%20to%20your%20activity.../singular: bef7d60407cb6f6982c0b430f6ff49ac
+    Loading%20activity%20information/singular: 1c448814eac1af61d7966f2bdb906b39
+    Generating%20visuals/singular: 4dcb0c0c2707371b69af42a6e5afea98
+    Generating%20content/singular: 5d8fd5d4162bf21d523d4a80b5cccc24
+    Finishing%20up/singular: 5db7ffd9f1807c8e5936ddca2fe8d1b7
+    Generate%20Chapter/singular: 12160bab066da65413de4b511e402446
     Lessons%20generated/singular: 7c32079f95da198e0d7f5351e47eb64f
     Creating%20your%20lessons/singular: 93571965dc04dcef0bf92f212b3b34d3
-    Something%20went%20wrong.%20Please%20try%20again./singular: c62a7718d9a1e9c4ffb707807550f836
     Redirecting%20to%20your%20chapter.../singular: 1187b3b828d92daa195cc8d103ecbcc4
     Generating%20lessons/singular: c4cd98341fd568b3cc5ab0daff85f483
     Generating%20activities/singular: ee132df58cd4c770e5ef3fd77c6187b8
-    Finishing%20up/singular: 5db7ffd9f1807c8e5936ddca2fe8d1b7
     Loading%20chapter%20information/singular: 7a310c88460ccc1d8eb14885361dcfa6
     Creating%20your%20course/singular: 02c33db1106e7478e5cbd00fa5f20532
     Redirecting%20to%20your%20course.../singular: 9f268e497368578b98d0125f5ac95902

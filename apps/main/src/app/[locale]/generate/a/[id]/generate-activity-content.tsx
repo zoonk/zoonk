@@ -1,6 +1,6 @@
 import { LoginRequired } from "@/components/auth/login-required";
 import { SubscriptionGate } from "@/components/subscription/subscription-gate";
-import { getLessonForGeneration } from "@/data/lessons/get-lesson-for-generation";
+import { getActivityForGeneration } from "@/data/activities/get-activity-for-generation";
 import { redirect } from "@/i18n/navigation";
 import { getSession } from "@zoonk/core/users/session/get";
 import {
@@ -13,63 +13,68 @@ import {
 } from "@zoonk/ui/components/container";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { AI_ORG_SLUG } from "@zoonk/utils/constants";
-import { parseNumericId } from "@zoonk/utils/string";
+import { parseBigIntId } from "@zoonk/utils/string";
 import { getExtracted } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { GenerationClient } from "./generation-client";
 
-export async function GenerateLessonContent({
+export async function GenerateActivityContent({
   params,
 }: {
   params: Promise<{ id: string; locale: string }>;
 }) {
   const { id, locale } = await params;
-  const lessonId = parseNumericId(id);
+  const activityId = parseBigIntId(id);
 
-  if (lessonId === null) {
+  if (activityId === null) {
     notFound();
   }
 
-  const [session, lesson] = await Promise.all([getSession(), getLessonForGeneration(lessonId)]);
+  const [session, activity] = await Promise.all([
+    getSession(),
+    getActivityForGeneration(activityId),
+  ]);
 
-  if (!lesson) {
+  if (!activity || !activity.lesson) {
     notFound();
   }
 
   const t = await getExtracted();
 
   if (!session) {
-    return <LoginRequired title={t("Generate Lesson")} />;
+    return <LoginRequired title={t("Generate Activity")} />;
   }
 
-  if (lesson.generationStatus === "completed") {
+  if (activity.generationStatus === "completed") {
     redirect({
-      href: `/b/${AI_ORG_SLUG}/c/${lesson.chapter.course.slug}/ch/${lesson.chapter.slug}/l/${lesson.slug}`,
+      href: `/b/${AI_ORG_SLUG}/c/${activity.lesson.chapter.course.slug}/ch/${activity.lesson.chapter.slug}/l/${activity.lesson.slug}/a/${activity.position}`,
       locale,
     });
   }
 
-  const returnUrl = `/generate/l/${lessonId}`;
+  const returnUrl = `/generate/a/${activityId}`;
 
   return (
     <Container variant="narrow">
       <ContainerHeader>
         <ContainerHeaderGroup>
-          <ContainerTitle>{lesson.title}</ContainerTitle>
-          <ContainerDescription>{lesson.description}</ContainerDescription>
+          <ContainerTitle>{activity.title ?? t("Activity")}</ContainerTitle>
+          <ContainerDescription>{t("Generate content for this activity")}</ContainerDescription>
         </ContainerHeaderGroup>
       </ContainerHeader>
 
       <ContainerBody>
         <SubscriptionGate returnUrl={returnUrl}>
           <GenerationClient
-            chapterSlug={lesson.chapter.slug}
-            courseSlug={lesson.chapter.course.slug}
-            generationRunId={lesson.generationRunId}
-            generationStatus={lesson.generationStatus}
-            lessonId={lessonId}
-            lessonSlug={lesson.slug}
+            activityKind={activity.kind}
+            chapterSlug={activity.lesson.chapter.slug}
+            courseSlug={activity.lesson.chapter.course.slug}
+            generationRunId={activity.generationRunId}
+            generationStatus={activity.generationStatus}
+            lessonId={activity.lesson.id}
+            lessonSlug={activity.lesson.slug}
             locale={locale}
+            position={activity.position}
           />
         </SubscriptionGate>
       </ContainerBody>
@@ -77,7 +82,7 @@ export async function GenerateLessonContent({
   );
 }
 
-export function GenerateLessonFallback() {
+export function GenerateActivityFallback() {
   return (
     <Container variant="narrow">
       <ContainerHeader>
