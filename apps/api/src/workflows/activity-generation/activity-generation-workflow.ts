@@ -2,6 +2,7 @@ import { getWorkflowMetadata } from "workflow";
 import { generateBackgroundContentStep } from "./steps/generate-background-content-step";
 import { generateExplanationContentStep } from "./steps/generate-explanation-content-step";
 import { generateImagesStep } from "./steps/generate-images-step";
+import { generateMechanicsContentStep } from "./steps/generate-mechanics-content-step";
 import { generateQuizContentStep } from "./steps/generate-quiz-content-step";
 import { generateQuizImagesStep } from "./steps/generate-quiz-images-step";
 import { generateVisualsStep } from "./steps/generate-visuals-step";
@@ -23,12 +24,14 @@ export async function activityGenerationWorkflow(lessonId: number): Promise<void
     generateExplanationContentStep(activities, backgroundContent.steps, workflowRunId),
   ]);
 
-  const [backgroundImages, explanationVisuals] = await Promise.all([
+  const [backgroundImages, explanationVisuals, mechanicsContent, quizContent] = await Promise.all([
     generateImagesStep(activities, backgroundVisuals.visuals, "background"),
     generateVisualsStep(activities, explanationContent.steps, "explanation"),
+    generateMechanicsContentStep(activities, explanationContent.steps, workflowRunId),
+    generateQuizContentStep(activities, explanationContent.steps, workflowRunId),
   ]);
 
-  const [, explanationImages] = await Promise.all([
+  const [, explanationImages, mechanicsVisuals, quizWithImages] = await Promise.all([
     saveActivityStep(
       activities,
       backgroundContent.steps,
@@ -37,9 +40,11 @@ export async function activityGenerationWorkflow(lessonId: number): Promise<void
       "background",
     ),
     generateImagesStep(activities, explanationVisuals.visuals, "explanation"),
+    generateVisualsStep(activities, mechanicsContent.steps, "mechanics"),
+    generateQuizImagesStep(activities, quizContent.questions),
   ]);
 
-  const [, quizContent] = await Promise.all([
+  const [, mechanicsImages] = await Promise.all([
     saveActivityStep(
       activities,
       explanationContent.steps,
@@ -47,10 +52,15 @@ export async function activityGenerationWorkflow(lessonId: number): Promise<void
       workflowRunId,
       "explanation",
     ),
-    generateQuizContentStep(activities, explanationContent.steps, workflowRunId),
+    generateImagesStep(activities, mechanicsVisuals.visuals, "mechanics"),
+    saveQuizActivityStep(activities, quizWithImages, workflowRunId),
   ]);
 
-  const quizWithImages = await generateQuizImagesStep(activities, quizContent.questions);
-
-  await saveQuizActivityStep(activities, quizWithImages, workflowRunId);
+  await saveActivityStep(
+    activities,
+    mechanicsContent.steps,
+    mechanicsImages,
+    workflowRunId,
+    "mechanics",
+  );
 }
