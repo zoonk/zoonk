@@ -1,18 +1,35 @@
 import { getWorkflowMetadata } from "workflow";
-import { getDependencyContentStep } from "../steps/_shared/get-dependency-content-step";
 import { notifyDependentsStep } from "../steps/_shared/notify-dependents-step";
+import { getWorkflowAction } from "../steps/_utils/should-run-workflow";
+import { waitForDependencyWithTimeout } from "../steps/_utils/wait-for-dependency-with-timeout";
 import { generateExplanationContentStep } from "../steps/generate-explanation-content-step";
 import { generateImagesStep } from "../steps/generate-images-step";
 import { generateVisualsStep } from "../steps/generate-visuals-step";
 import { type LessonActivity } from "../steps/get-lesson-activities-step";
+import { handleActivityFailureStep } from "../steps/handle-failure-step";
 import { saveActivityStep } from "../steps/save-activity-step";
+
+async function handleExplanationFailure(activity: { id: bigint }, lessonId: number): Promise<void> {
+  await notifyDependentsStep({
+    activityId: activity.id,
+    activityKind: "explanation",
+    lessonId,
+    steps: [],
+  });
+  await handleActivityFailureStep({ activityId: activity.id });
+}
 
 /**
  * Explanation activity workflow.
  * Depends on: background
  *
  * Flow: wait for background → content → notify dependents → visuals → images → save
- * Notifies after content so mechanics and quiz can start in parallel with visuals.
+ *
+ * Design decisions:
+ * - Uses 10m timeout to prevent infinite hanging on hook waits
+ * - Notifies after content so dependents (mechanics, quiz) can start in parallel with visuals
+ * - Always notifies dependents even on failure so they don't hang waiting
+ * - Marks activity as "failed" when AI returns empty steps (generation error)
  */
 export async function explanationWorkflow(
   activities: LessonActivity[],
@@ -22,45 +39,28 @@ export async function explanationWorkflow(
 
   const { workflowRunId } = getWorkflowMetadata();
   const activity = activities.find((a) => a.kind === "explanation");
+  const action = getWorkflowAction(activity);
 
-  if (!activity) {
+  if (action === "skip" || !activity) {
     return;
   }
 
-  // Already completed - just notify dependents (they might be waiting)
-  if (activity.generationStatus === "completed" && activity._count.steps > 0) {
-    await notifyDependentsStep({
-      activityId: activity.id,
-      activityKind: "explanation",
-      lessonId,
-    });
+  if (action === "notifyOnly") {
+    await notifyDependentsStep({ activityId: activity.id, activityKind: "explanation", lessonId });
     return;
   }
 
-  // Already running - skip to avoid duplicate work
-  if (activity.generationStatus === "running") {
-    return;
-  }
-
-  // Get or wait for background content (suspends if not ready)
-  const backgroundSteps = await getDependencyContentStep({
+  const backgroundSteps = await waitForDependencyWithTimeout({
     activities,
     dependencyKind: "background",
     lessonId,
   });
 
-  // If background has no steps, notify dependents with empty and exit
   if (backgroundSteps.length === 0) {
-    await notifyDependentsStep({
-      activityId: activity.id,
-      activityKind: "explanation",
-      lessonId,
-      steps: [],
-    });
+    await handleExplanationFailure(activity, lessonId);
     return;
   }
 
-  // Generate content
   const content = await generateExplanationContentStep(activity, backgroundSteps, workflowRunId);
 
   // Always notify dependents so they don't hang waiting (even with empty steps)
@@ -72,10 +72,10 @@ export async function explanationWorkflow(
   });
 
   if (content.steps.length === 0) {
+    await handleActivityFailureStep({ activityId: activity.id });
     return;
   }
 
-  // Continue with visuals and images
   const visuals = await generateVisualsStep(activities, content.steps, "explanation");
   const images = await generateImagesStep(activities, visuals.visuals, "explanation");
 

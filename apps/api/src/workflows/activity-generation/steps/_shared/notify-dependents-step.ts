@@ -30,7 +30,8 @@ export async function notifyDependentsStep(params: {
 
   // Resume the hook - all workflows waiting for this activity kind will wake up
   // Using safeAsync because hook might not exist if no workflows are waiting
-  await safeAsync(() =>
+  // (e.g., no dependents were spawned, or they already completed)
+  const { error } = await safeAsync(() =>
     activityContentCompletedHook.resume(token, {
       activityId: params.activityId,
       activityKind: params.activityKind,
@@ -38,6 +39,15 @@ export async function notifyDependentsStep(params: {
       steps,
     }),
   );
+
+  // Log errors for debugging, but don't fail the workflow
+  // Hook might not exist if no workflows are waiting, which is valid
+  if (error) {
+    console.error(
+      `Failed to notify dependents for ${params.activityKind}:${params.lessonId}:`,
+      error.message,
+    );
+  }
 
   await streamStatus({ status: "completed", step: "notifyDependents" });
 }

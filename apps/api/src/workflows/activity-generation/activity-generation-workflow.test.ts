@@ -51,6 +51,9 @@ vi.mock("workflow", () => ({
       write: vi.fn().mockResolvedValue(null),
     }),
   }),
+  // sleep returns a promise that never resolves in tests (timeout race won't win)
+  // eslint-disable-next-line no-empty-function -- intentional for mock
+  sleep: vi.fn().mockImplementation(() => new Promise(() => {})),
 }));
 
 vi.mock("@zoonk/ai/tasks/activities/core/background", () => ({
@@ -2353,12 +2356,12 @@ describe(activityGenerationWorkflow, () => {
       // Explanation was not called because it received empty steps
       expect(generateActivityExplanation).not.toHaveBeenCalled();
 
-      // Verify background status (no steps to save means not completed with saveActivityStep)
+      // Verify background status (empty steps = AI generation error = failed)
       const dbBackground = await prisma.activity.findUnique({
         where: { id: backgroundActivity.id },
       });
-      // Status remains running since empty steps exit early (before saveActivityStep marks completed)
-      expect(dbBackground?.generationStatus).toBe("running");
+      // Empty steps indicates AI generation error - marked as failed
+      expect(dbBackground?.generationStatus).toBe("failed");
     });
 
     test("explanation receiving empty from background notifies mechanics/quiz with empty", async () => {

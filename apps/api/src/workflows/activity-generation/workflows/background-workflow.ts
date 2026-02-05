@@ -1,9 +1,11 @@
 import { getWorkflowMetadata } from "workflow";
 import { notifyDependentsStep } from "../steps/_shared/notify-dependents-step";
+import { getWorkflowAction } from "../steps/_utils/should-run-workflow";
 import { generateBackgroundContentStep } from "../steps/generate-background-content-step";
 import { generateImagesStep } from "../steps/generate-images-step";
 import { generateVisualsStep } from "../steps/generate-visuals-step";
 import { type LessonActivity } from "../steps/get-lesson-activities-step";
+import { handleActivityFailureStep } from "../steps/handle-failure-step";
 import { saveActivityStep } from "../steps/save-activity-step";
 
 /**
@@ -11,7 +13,11 @@ import { saveActivityStep } from "../steps/save-activity-step";
  * No dependencies - runs immediately.
  *
  * Flow: content → notify dependents → visuals → images → save
- * Notifies after content so explanation can start in parallel with visuals.
+ *
+ * Design decisions:
+ * - Notifies after content so dependents (explanation) can start in parallel with visuals
+ * - Always notifies dependents even on failure so they don't hang waiting
+ * - Marks activity as "failed" when AI returns empty steps (generation error)
  */
 export async function backgroundWorkflow(
   activities: LessonActivity[],
@@ -21,23 +27,18 @@ export async function backgroundWorkflow(
 
   const { workflowRunId } = getWorkflowMetadata();
   const activity = activities.find((a) => a.kind === "background");
+  const action = getWorkflowAction(activity);
 
-  if (!activity) {
+  if (action === "skip" || !activity) {
     return;
   }
 
-  // Already completed - just notify dependents (they might be waiting)
-  if (activity.generationStatus === "completed" && activity._count.steps > 0) {
+  if (action === "notifyOnly") {
     await notifyDependentsStep({
       activityId: activity.id,
       activityKind: "background",
       lessonId,
     });
-    return;
-  }
-
-  // Already running - skip to avoid duplicate work
-  if (activity.generationStatus === "running") {
     return;
   }
 
@@ -52,7 +53,9 @@ export async function backgroundWorkflow(
     steps: content.steps,
   });
 
+  // Empty steps indicates AI generation error - mark as failed
   if (content.steps.length === 0) {
+    await handleActivityFailureStep({ activityId: activity.id });
     return;
   }
 
