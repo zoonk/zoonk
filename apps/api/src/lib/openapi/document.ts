@@ -8,7 +8,6 @@ import {
   workflowTriggerEndpoint,
 } from "./schemas/responses";
 import {
-  activityGenerationRetrySchema,
   activityGenerationTriggerSchema,
   chapterGenerationTriggerSchema,
   courseGenerationTriggerSchema,
@@ -60,11 +59,6 @@ export const openAPIDocument = createDocument({
         tags: ["Courses"],
       },
     },
-    "/workflows/activity-generation/retry": workflowTriggerEndpoint({
-      requiresSubscription: true,
-      schema: activityGenerationRetrySchema,
-      summary: "Retry generation for a single activity",
-    }),
     "/workflows/activity-generation/status": workflowStatusEndpoint(
       "Stream activity generation status (SSE)",
     ),
