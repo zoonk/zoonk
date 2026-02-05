@@ -903,17 +903,17 @@ msgstr "Precisa de ajuda? Entre em contato com a gente em contato@zoonk.com"
 #: src/app/[locale]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/a/[position]/activity-not-generated.tsx
 msgctxt "Sum1l9"
 msgid "Generate activity"
-msgstr ""
+msgstr "Gerar atividade"
 
 #: src/app/[locale]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/a/[position]/activity-not-generated.tsx
 msgctxt "tOYeUQ"
 msgid "Activity not available"
-msgstr ""
+msgstr "Atividade não disponível"
 
 #: src/app/[locale]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/a/[position]/activity-not-generated.tsx
 msgctxt "U7Ymq9"
 msgid "This activity hasn't been generated yet."
-msgstr ""
+msgstr "Esta atividade ainda não foi gerada."
 
 #: src/app/[locale]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/a/[position]/page.tsx
 msgctxt "qtQJTV"
@@ -923,12 +923,12 @@ msgstr "Complete esta atividade para reforçar seu aprendizado e acompanhar seu 
 #: src/app/[locale]/generate/a/[id]/generate-activity-content.tsx
 msgctxt "eG5JXd"
 msgid "Generate content for this activity"
-msgstr ""
+msgstr "Gerar conteúdo para esta atividade"
 
 #: src/app/[locale]/generate/a/[id]/generate-activity-content.tsx
 msgctxt "ksrnIj"
 msgid "Generate Activity"
-msgstr ""
+msgstr "Gerar atividade"
 
 #: src/app/[locale]/generate/a/[id]/generation-client.tsx
 #: src/app/[locale]/generate/ch/[id]/generation-client.tsx
@@ -949,12 +949,12 @@ msgstr "Tentar novamente"
 #: src/app/[locale]/generate/a/[id]/generation-client.tsx
 msgctxt "hCsaxB"
 msgid "Activity generated"
-msgstr ""
+msgstr "Atividade gerada"
 
 #: src/app/[locale]/generate/a/[id]/generation-client.tsx
 msgctxt "OtCoDP"
 msgid "Creating your activity"
-msgstr ""
+msgstr "Criando sua atividade"
 
 #: src/app/[locale]/generate/a/[id]/generation-client.tsx
 #: src/app/[locale]/generate/ch/[id]/generation-client.tsx
@@ -975,22 +975,22 @@ msgstr "Algo deu errado. Por favor, tente novamente."
 #: src/app/[locale]/generate/a/[id]/generation-client.tsx
 msgctxt "YZ5vzR"
 msgid "Redirecting to your activity..."
-msgstr ""
+msgstr "Redirecionando para sua atividade..."
 
 #: src/app/[locale]/generate/a/[id]/use-generation-phases.ts
 msgctxt "AIe0x0"
 msgid "Loading activity information"
-msgstr ""
+msgstr "Carregando informações da atividade"
 
 #: src/app/[locale]/generate/a/[id]/use-generation-phases.ts
 msgctxt "DRWyeH"
 msgid "Generating visuals"
-msgstr ""
+msgstr "Gerando elementos visuais"
 
 #: src/app/[locale]/generate/a/[id]/use-generation-phases.ts
 msgctxt "oIm5O7"
 msgid "Generating content"
-msgstr ""
+msgstr "Gerando conteúdo"
 
 #: src/app/[locale]/generate/a/[id]/use-generation-phases.ts
 #: src/app/[locale]/generate/ch/[id]/use-generation-phases.ts
