@@ -59,6 +59,6 @@ export async function saveActivityStep(
     throw error;
   }
 
-  await setActivityAsCompletedStep({ activityId: activity.id, workflowRunId });
+  await setActivityAsCompletedStep({ activityId: activity.id, workflowRunId }, activityKind);
   await streamStatus({ status: "completed", step: "saveActivity" });
 }

@@ -1,16 +1,32 @@
+import { type ActivityStepName } from "@/workflows/config";
 import { revalidateMainApp } from "@zoonk/core/cache/revalidate";
-import { prisma } from "@zoonk/db";
+import { type ActivityKind, prisma } from "@zoonk/db";
 import { cacheTagActivity } from "@zoonk/utils/cache";
 import { safeAsync } from "@zoonk/utils/error";
 import { streamStatus } from "../stream-status";
 
-export async function setActivityAsCompletedStep(input: {
-  activityId: bigint;
-  workflowRunId: string;
-}): Promise<void> {
+const kindToStepName: Partial<
+  Record<
+    ActivityKind,
+    | "setBackgroundAsCompleted"
+    | "setExplanationAsCompleted"
+    | "setMechanicsAsCompleted"
+    | "setQuizAsCompleted"
+  >
+> = {
+  background: "setBackgroundAsCompleted",
+  explanation: "setExplanationAsCompleted",
+  mechanics: "setMechanicsAsCompleted",
+  quiz: "setQuizAsCompleted",
+};
+
+async function setActivityAsCompletedBase(
+  input: { activityId: bigint; workflowRunId: string },
+  stepName: ActivityStepName,
+): Promise<void> {
   "use step";
 
-  await streamStatus({ status: "started", step: "setActivityAsCompleted" });
+  await streamStatus({ status: "started", step: stepName });
 
   const { error } = await safeAsync(() =>
     prisma.activity.update({
@@ -24,11 +40,21 @@ export async function setActivityAsCompletedStep(input: {
   );
 
   if (error) {
-    await streamStatus({ status: "error", step: "setActivityAsCompleted" });
+    await streamStatus({ status: "error", step: stepName });
     throw error;
   }
 
   await revalidateMainApp([cacheTagActivity({ activityId: input.activityId })]);
 
-  await streamStatus({ status: "completed", step: "setActivityAsCompleted" });
+  await streamStatus({ status: "completed", step: stepName });
+}
+
+export async function setActivityAsCompletedStep(
+  input: { activityId: bigint; workflowRunId: string },
+  kind: ActivityKind,
+): Promise<void> {
+  "use step";
+
+  const stepName = kindToStepName[kind] ?? "setBackgroundAsCompleted";
+  await setActivityAsCompletedBase(input, stepName);
 }

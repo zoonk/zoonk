@@ -32,7 +32,10 @@ const ACTIVITY_STEPS = [
   "saveActivity",
   "saveQuizActivity",
   "setActivityAsRunning",
-  "setActivityAsCompleted",
+  "setBackgroundAsCompleted",
+  "setExplanationAsCompleted",
+  "setMechanicsAsCompleted",
+  "setQuizAsCompleted",
   "notifyDependents",
   "getDependencyContent",
 ] as const;

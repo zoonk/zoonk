@@ -13,6 +13,13 @@ export function parseNumericId(value: string): number | null {
   return Number.parseInt(value, 10);
 }
 
+export function parseBigIntId(value: string): bigint | null {
+  if (!NUMERIC_ID_PATTERN.test(value)) {
+    return null;
+  }
+  return BigInt(value);
+}
+
 export function normalizeString(str: string): string {
   return removeAccents(str).toLowerCase().replaceAll(/\s+/g, " ").trim();
 }

@@ -21,6 +21,45 @@ export const LESSON_STEPS = [
 export type LessonStepName = (typeof LESSON_STEPS)[number];
 export const LESSON_COMPLETION_STEP: LessonStepName = "setLessonAsCompleted";
 
+export const ACTIVITY_STEPS = [
+  "getLessonActivities",
+  "generateBackgroundContent",
+  "generateExplanationContent",
+  "generateMechanicsContent",
+  "generateQuizContent",
+  "generateVisuals",
+  "generateImages",
+  "generateQuizImages",
+  "saveActivity",
+  "saveQuizActivity",
+  "setActivityAsRunning",
+  "setBackgroundAsCompleted",
+  "setExplanationAsCompleted",
+  "setMechanicsAsCompleted",
+  "setQuizAsCompleted",
+  "notifyDependents",
+  "getDependencyContent",
+] as const;
+
+export type ActivityStepName = (typeof ACTIVITY_STEPS)[number];
+
+export type ActivityCompletionStep =
+  | "setBackgroundAsCompleted"
+  | "setExplanationAsCompleted"
+  | "setMechanicsAsCompleted"
+  | "setQuizAsCompleted";
+
+const activityCompletionSteps: Partial<Record<string, ActivityCompletionStep>> = {
+  background: "setBackgroundAsCompleted",
+  explanation: "setExplanationAsCompleted",
+  mechanics: "setMechanicsAsCompleted",
+  quiz: "setQuizAsCompleted",
+};
+
+export function getActivityCompletionStep(kind: string): ActivityCompletionStep {
+  return activityCompletionSteps[kind] ?? "setBackgroundAsCompleted";
+}
+
 export const COURSE_STEPS = [
   "getCourseSuggestion",
   "checkExistingCourse",

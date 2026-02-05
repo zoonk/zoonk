@@ -44,6 +44,6 @@ export async function saveQuizActivityStep(
     throw error;
   }
 
-  await setActivityAsCompletedStep({ activityId: activity.id, workflowRunId });
+  await setActivityAsCompletedStep({ activityId: activity.id, workflowRunId }, "quiz");
   await streamStatus({ status: "completed", step: "saveQuizActivity" });
 }
