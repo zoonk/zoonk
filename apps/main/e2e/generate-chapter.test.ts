@@ -239,6 +239,8 @@ test.describe("Generate Chapter Page - With Subscription", () => {
         { status: "completed", step: "addLessons" },
         { status: "started", step: "setChapterAsCompleted" },
         { status: "completed", step: "setChapterAsCompleted" },
+        { status: "started", step: "setLessonAsCompleted" },
+        { status: "completed", step: "setLessonAsCompleted" },
       ],
     });
 

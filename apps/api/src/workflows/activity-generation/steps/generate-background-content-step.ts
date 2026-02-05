@@ -1,16 +1,25 @@
 import { generateActivityBackground } from "@zoonk/ai/tasks/activities/core/background";
 import { safeAsync } from "@zoonk/utils/error";
 import { streamStatus } from "../stream-status";
+import { resolveActivityForGeneration, saveContentSteps } from "./_utils/content-step-helpers";
 import { type ActivitySteps } from "./_utils/get-activity-steps";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
 import { setActivityAsRunningStep } from "./set-activity-as-running-step";
 
 export async function generateBackgroundContentStep(
-  activity: LessonActivity,
+  activities: LessonActivity[],
   workflowRunId: string,
 ): Promise<{ steps: ActivitySteps }> {
   "use step";
+
+  const resolved = await resolveActivityForGeneration(activities, "background");
+
+  if (!resolved.shouldGenerate) {
+    return { steps: resolved.existingSteps };
+  }
+
+  const { activity } = resolved;
 
   await streamStatus({ status: "started", step: "generateBackgroundContent" });
   await setActivityAsRunningStep({ activityId: activity.id, workflowRunId });
@@ -25,13 +34,20 @@ export async function generateBackgroundContentStep(
     }),
   );
 
-  if (error) {
+  if (error || !result) {
     await streamStatus({ status: "error", step: "generateBackgroundContent" });
     await handleActivityFailureStep({ activityId: activity.id });
-    throw error;
+    return { steps: [] };
+  }
+
+  const { error: saveError } = await saveContentSteps(activity.id, result.data.steps);
+
+  if (saveError) {
+    await streamStatus({ status: "error", step: "generateBackgroundContent" });
+    await handleActivityFailureStep({ activityId: activity.id });
+    return { steps: [] };
   }
 
   await streamStatus({ status: "completed", step: "generateBackgroundContent" });
-
   return { steps: result.data.steps };
 }

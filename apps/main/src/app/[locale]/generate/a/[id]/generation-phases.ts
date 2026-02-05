@@ -37,16 +37,8 @@ function getPhaseSteps(activityKind: ActivityKind): Record<PhaseName, ActivitySt
       "generateExplanationContent",
       "generateMechanicsContent",
       "generateQuizContent",
-      "getDependencyContent",
-      "notifyDependents",
     ],
-    generatingVisuals: [
-      "generateVisuals",
-      "generateImages",
-      "generateQuizImages",
-      "saveActivity",
-      "saveQuizActivity",
-    ],
+    generatingVisuals: ["generateVisuals", "generateImages", "generateQuizImages"],
     loadingInfo: ["getLessonActivities", "setActivityAsRunning"],
   };
 }
@@ -59,21 +51,16 @@ const validationPhaseSteps: Record<PhaseName, ActivityStepName[]> = {
     "generateExplanationContent",
     "generateMechanicsContent",
     "generateQuizContent",
-    "getDependencyContent",
-    "notifyDependents",
   ],
-  generatingVisuals: [
-    "generateVisuals",
-    "generateImages",
-    "generateQuizImages",
-    "saveActivity",
-    "saveQuizActivity",
-  ],
+  generatingVisuals: ["generateVisuals", "generateImages", "generateQuizImages"],
   loadingInfo: ["getLessonActivities", "setActivityAsRunning"],
 };
 
 const allPhaseSteps = new Set(Object.values(validationPhaseSteps).flat());
-const missingActivitySteps = ACTIVITY_STEPS.filter((step) => !allPhaseSteps.has(step));
+// workflowError is a meta-step for error handling, not a UI phase step
+const missingActivitySteps = ACTIVITY_STEPS.filter(
+  (step) => step !== "workflowError" && !allPhaseSteps.has(step),
+);
 
 if (missingActivitySteps.length > 0) {
   throw new Error(

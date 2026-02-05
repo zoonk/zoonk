@@ -175,10 +175,12 @@ test.describe("Generate Course Page", () => {
           { status: "completed", step: "getCourseSuggestion" },
           { status: "started", step: "addLessons" },
           { status: "completed", step: "addLessons" },
+          { status: "started", step: "setLessonAsCompleted" },
+          { status: "completed", step: "setLessonAsCompleted" },
         ],
       });
 
-      // Should show completion message (stream ended = workflow completed)
+      // Should show completion message
       await expect(page.getByText(/course generated/i)).toBeVisible({
         timeout: 10_000,
       });

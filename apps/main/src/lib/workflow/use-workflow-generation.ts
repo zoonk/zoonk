@@ -43,7 +43,25 @@ export function useWorkflowGeneration<TStep extends string = string>(config: {
     [store, completionStep],
   );
 
-  const handleComplete = useCallback(() => store.send({ type: "workflowCompleted" }), [store]);
+  const handleComplete = useCallback(() => {
+    const snapshot = store.getSnapshot();
+
+    // If handleStreamMessage already transitioned to completed or error, do nothing.
+    if (snapshot.context.status === "completed" || snapshot.context.status === "error") {
+      return;
+    }
+
+    // Stream ended without the completion step — premature close.
+    if (completionStep && !snapshot.context.completedSteps.includes(completionStep)) {
+      store.send({
+        error: "Generation ended unexpectedly. Please try again.",
+        type: "setError",
+      });
+      return;
+    }
+
+    store.send({ type: "workflowCompleted" });
+  }, [store, completionStep]);
 
   const handleError = useCallback(
     (err: Error) => store.send({ error: err.message, type: "setError" }),
