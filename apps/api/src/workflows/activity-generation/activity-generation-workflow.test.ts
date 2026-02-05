@@ -16,32 +16,32 @@ import { stepFixture } from "@zoonk/testing/fixtures/steps";
 import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { activityGenerationWorkflow } from "./activity-generation-workflow";
 
-// Store for hook data to simulate hook communication between workflows
-const hookStore = new Map<string, { steps: { text: string; title: string }[] }>();
+// Mutable state for hook coordination - using object wrapper to avoid require-hook lint error
+const hookState = {
+  data: {} as Record<string, { steps: { text: string; title: string }[] }>,
+  pendingCreates: new Map<string, (() => void)[]>(),
+};
 
 vi.mock("workflow", () => ({
   FatalError: class FatalError extends Error {},
   defineHook: vi.fn().mockImplementation(() => ({
     create: vi.fn().mockImplementation(({ token }: { token: string }) => {
-      let checkInterval: ReturnType<typeof setInterval>;
-      return new Promise((resolve) => {
-        // Timeout after 5 seconds to prevent hanging tests
-        const timeoutId = setTimeout(() => {
-          clearInterval(checkInterval);
-          resolve({ steps: [] });
-        }, 5000);
-        checkInterval = setInterval(() => {
-          const data = hookStore.get(token);
-          if (data) {
-            clearInterval(checkInterval);
-            clearTimeout(timeoutId);
-            resolve(data);
-          }
-        }, 10);
+      // If data exists, return immediately
+      if (hookState.data[token]) {
+        return Promise.resolve(hookState.data[token]);
+      }
+      // Otherwise wait for resume() to be called
+      return new Promise<{ steps: { text: string; title: string }[] }>((resolve) => {
+        const callbacks = hookState.pendingCreates.get(token) ?? [];
+        callbacks.push(() => resolve(hookState.data[token] ?? { steps: [] }));
+        hookState.pendingCreates.set(token, callbacks);
       });
     }),
     resume: vi.fn().mockImplementation((token: string, data: unknown) => {
-      hookStore.set(token, data as { steps: { text: string; title: string }[] });
+      hookState.data[token] = data as { steps: { text: string; title: string }[] };
+      // Resolve ALL pending create() calls for this token
+      hookState.pendingCreates.get(token)?.forEach((cb) => cb());
+      hookState.pendingCreates.delete(token);
       return Promise.resolve();
     }),
   })),
@@ -52,9 +52,10 @@ vi.mock("workflow", () => ({
       write: vi.fn().mockResolvedValue(null),
     }),
   }),
-  // sleep returns a promise that never resolves in tests (timeout race won't win)
-  // eslint-disable-next-line no-empty-function -- intentional for mock
+  // eslint-disable-next-line no-empty-function -- sleep returns a promise that never resolves in tests
   sleep: vi.fn().mockImplementation(() => new Promise(() => {})),
+  // workflowStep is a passthrough - just returns the function
+  workflowStep: vi.fn().mockImplementation((_name: string, fn: unknown) => fn),
 }));
 
 vi.mock("@zoonk/ai/tasks/activities/core/background", () => ({
@@ -163,7 +164,8 @@ describe(activityGenerationWorkflow, () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    hookStore.clear();
+    hookState.data = {};
+    hookState.pendingCreates.clear();
   });
 
   describe("lesson validation", () => {

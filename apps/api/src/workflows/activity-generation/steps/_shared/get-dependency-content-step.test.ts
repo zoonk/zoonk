@@ -10,31 +10,20 @@ import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { type LessonActivity } from "../get-lesson-activities-step";
 import { getDependencyContentStep } from "./get-dependency-content-step";
 
-// Store for hook data to simulate workflow coordination
-const hookStore = new Map<string, { steps: { text: string; title: string }[] }>();
+// Mutable state for hook data - using object wrapper to avoid require-hook lint error
+const hookState = {
+  data: {} as Record<string, { steps: { text: string; title: string }[] }>,
+};
 
 vi.mock("workflow", () => ({
   defineHook: vi.fn().mockImplementation(() => ({
-    create: vi.fn().mockImplementation(({ token }: { token: string }) => {
-      let checkInterval: ReturnType<typeof setInterval>;
-      return new Promise((resolve) => {
-        // Timeout after 1 second to prevent hanging tests
-        const timeoutId = setTimeout(() => {
-          clearInterval(checkInterval);
-          resolve({ steps: [] });
-        }, 1000);
-        checkInterval = setInterval(() => {
-          const data = hookStore.get(token);
-          if (data) {
-            clearInterval(checkInterval);
-            clearTimeout(timeoutId);
-            resolve(data);
-          }
-        }, 10);
-      });
-    }),
+    create: vi
+      .fn()
+      .mockImplementation(({ token }: { token: string }) =>
+        Promise.resolve(hookState.data[token] ?? { steps: [] }),
+      ),
     resume: vi.fn().mockImplementation((token: string, data: unknown) => {
-      hookStore.set(token, data as { steps: { text: string; title: string }[] });
+      hookState.data[token] = data as { steps: { text: string; title: string }[] };
       return Promise.resolve();
     }),
   })),
@@ -96,7 +85,7 @@ describe(getDependencyContentStep, () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    hookStore.clear();
+    hookState.data = {};
   });
 
   describe("dependency already completed (DB path)", () => {
@@ -159,25 +148,30 @@ describe(getDependencyContentStep, () => {
 
       await stepFixture({
         activityId: backgroundActivity.id,
-        content: { text: "No hook step", title: "No Hook" },
+        content: { text: "DB step content", title: "DB Step" },
         position: 0,
       });
 
       const activities = await getLessonActivities(testLesson.id);
 
-      await getDependencyContentStep({
+      // Pre-populate hook with DIFFERENT data - if hook is used, this would be returned
+      hookState.data[`activity:content:background:${testLesson.id}`] = {
+        steps: [{ text: "Hook step content", title: "Hook Step" }],
+      };
+
+      const result = await getDependencyContentStep({
         activities,
         dependencyKind: "background",
         lessonId: testLesson.id,
       });
 
-      // Hook store should remain empty since hook was not used
-      expect(hookStore.size).toBe(0);
+      // Should return DB data, not hook data - proving DB path was taken
+      expect(result).toEqual([{ text: "DB step content", title: "DB Step" }]);
     });
   });
 
   describe("dependency not ready (hook path)", () => {
-    test("creates hook and waits when dependency not completed", async () => {
+    test("returns hook data when dependency not completed", async () => {
       const testLesson = await lessonFixture({
         chapterId: chapter.id,
         organizationId,
@@ -194,17 +188,15 @@ describe(getDependencyContentStep, () => {
 
       const activities = await getLessonActivities(testLesson.id);
 
-      // Simulate background workflow completing after a delay
+      // Pre-populate hook data (simulating resume was called by another workflow)
       const expectedSteps = [
-        { text: "Async step 1", title: "Async Title 1" },
-        { text: "Async step 2", title: "Async Title 2" },
+        { text: "Hook step 1", title: "Hook Title 1" },
+        { text: "Hook step 2", title: "Hook Title 2" },
       ];
 
-      setTimeout(() => {
-        hookStore.set(`activity:content:background:${testLesson.id}`, {
-          steps: expectedSteps,
-        });
-      }, 50);
+      hookState.data[`activity:content:background:${testLesson.id}`] = {
+        steps: expectedSteps,
+      };
 
       const result = await getDependencyContentStep({
         activities,
@@ -234,10 +226,10 @@ describe(getDependencyContentStep, () => {
 
       const resumedSteps = [{ text: "Resumed content", title: "Resumed" }];
 
-      // Pre-populate hook store (simulating hook.resume was called)
-      hookStore.set(`activity:content:background:${testLesson.id}`, {
+      // Pre-populate hook data (simulating hook.resume was called)
+      hookState.data[`activity:content:background:${testLesson.id}`] = {
         steps: resumedSteps,
-      });
+      };
 
       const result = await getDependencyContentStep({
         activities,
@@ -325,13 +317,8 @@ describe(getDependencyContentStep, () => {
 
       const activities = await getLessonActivities(testLesson.id);
 
-      // Should wait for hook since steps count is 0 (edge case)
-      // Simulate hook resume with empty steps
-      setTimeout(() => {
-        hookStore.set(`activity:content:background:${testLesson.id}`, {
-          steps: [],
-        });
-      }, 50);
+      // Hook returns empty steps (no data available)
+      // hookData is empty, so create() returns { steps: [] }
 
       const result = await getDependencyContentStep({
         activities,
@@ -342,7 +329,7 @@ describe(getDependencyContentStep, () => {
       expect(result).toEqual([]);
     });
 
-    test("handles failed dependency by waiting for hook", async () => {
+    test("handles failed dependency by returning hook data", async () => {
       const testLesson = await lessonFixture({
         chapterId: chapter.id,
         organizationId,
@@ -359,12 +346,10 @@ describe(getDependencyContentStep, () => {
 
       const activities = await getLessonActivities(testLesson.id);
 
-      // Failed activity waits for hook (in case it's retried)
-      setTimeout(() => {
-        hookStore.set(`activity:content:background:${testLesson.id}`, {
-          steps: [{ text: "Retried content", title: "Retried" }],
-        });
-      }, 50);
+      // Pre-populate hook data (simulating dependency was retried and completed)
+      hookState.data[`activity:content:background:${testLesson.id}`] = {
+        steps: [{ text: "Retried content", title: "Retried" }],
+      };
 
       const result = await getDependencyContentStep({
         activities,
