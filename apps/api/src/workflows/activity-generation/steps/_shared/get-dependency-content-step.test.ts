@@ -15,23 +15,24 @@ const hookStore = new Map<string, { steps: { text: string; title: string }[] }>(
 
 vi.mock("workflow", () => ({
   defineHook: vi.fn().mockImplementation(() => ({
-    create: vi.fn().mockImplementation(
-      ({ token }: { token: string }) =>
-        new Promise((resolve) => {
-          const checkInterval = setInterval(() => {
-            const data = hookStore.get(token);
-            if (data) {
-              clearInterval(checkInterval);
-              resolve(data);
-            }
-          }, 10);
-          // Timeout after 1 second to prevent hanging tests
-          setTimeout(() => {
+    create: vi.fn().mockImplementation(({ token }: { token: string }) => {
+      let checkInterval: ReturnType<typeof setInterval>;
+      return new Promise((resolve) => {
+        // Timeout after 1 second to prevent hanging tests
+        const timeoutId = setTimeout(() => {
+          clearInterval(checkInterval);
+          resolve({ steps: [] });
+        }, 1000);
+        checkInterval = setInterval(() => {
+          const data = hookStore.get(token);
+          if (data) {
             clearInterval(checkInterval);
-            resolve({ steps: [] });
-          }, 1000);
-        }),
-    ),
+            clearTimeout(timeoutId);
+            resolve(data);
+          }
+        }, 10);
+      });
+    }),
     resume: vi.fn().mockImplementation((token: string, data: unknown) => {
       hookStore.set(token, data as { steps: { text: string; title: string }[] });
       return Promise.resolve();

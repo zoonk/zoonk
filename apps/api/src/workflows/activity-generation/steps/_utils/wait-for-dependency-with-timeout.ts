@@ -18,9 +18,7 @@ export function waitForDependencyWithTimeout(params: {
 }): Promise<ActivitySteps> {
   return Promise.race([
     getDependencyContentStep(params),
-    sleep("10m").then(() => {
-      console.error(`Dependency ${params.dependencyKind} timed out for lesson ${params.lessonId}`);
-      return [];
-    }),
+    // Timeout returns empty steps, which causes the workflow to mark activity as failed
+    sleep("10m").then(() => []),
   ]);
 }
