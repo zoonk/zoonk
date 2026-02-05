@@ -1,7 +1,9 @@
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 
-export async function handleActivityFailureStep(input: { activityId: bigint }): Promise<void> {
+export async function handleActivityFailureStep(input: {
+  activityId: bigint | number;
+}): Promise<void> {
   "use step";
 
   await safeAsync(() =>

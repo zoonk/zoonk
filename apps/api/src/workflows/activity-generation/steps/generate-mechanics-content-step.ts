@@ -1,7 +1,7 @@
 import { generateActivityMechanics } from "@zoonk/ai/tasks/activities/core/mechanics";
 import { safeAsync } from "@zoonk/utils/error";
 import { streamStatus } from "../stream-status";
-import { deleteActivitySteps, saveContentSteps } from "./_utils/content-step-helpers";
+import { resolveActivityForGeneration, saveContentSteps } from "./_utils/content-step-helpers";
 import { type ActivitySteps } from "./_utils/get-activity-steps";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
@@ -14,22 +14,17 @@ export async function generateMechanicsContentStep(
 ): Promise<{ steps: ActivitySteps }> {
   "use step";
 
-  const activity = activities.find((act) => act.kind === "mechanics");
-  if (!activity) {
-    return { steps: [] };
+  const resolved = await resolveActivityForGeneration(activities, "mechanics");
+
+  if (!resolved.shouldGenerate) {
+    return { steps: resolved.existingSteps };
   }
 
-  if (activity.generationStatus === "completed" || activity.generationStatus === "running") {
-    return { steps: [] };
-  }
+  const { activity } = resolved;
 
   if (explanationSteps.length === 0) {
     await handleActivityFailureStep({ activityId: activity.id });
     return { steps: [] };
-  }
-
-  if (activity.generationStatus === "failed") {
-    await deleteActivitySteps(activity.id);
   }
 
   await streamStatus({ status: "started", step: "generateMechanicsContent" });
@@ -52,7 +47,21 @@ export async function generateMechanicsContentStep(
     return { steps: [] };
   }
 
-  const steps = await saveContentSteps(activity.id, result.data.steps, "generateMechanicsContent");
+  return saveAndStreamResult(activity.id, result.data.steps);
+}
 
+async function saveAndStreamResult(
+  activityId: bigint | number,
+  steps: ActivitySteps,
+): Promise<{ steps: ActivitySteps }> {
+  const { error } = await saveContentSteps(activityId, steps);
+
+  if (error) {
+    await streamStatus({ status: "error", step: "generateMechanicsContent" });
+    await handleActivityFailureStep({ activityId });
+    return { steps: [] };
+  }
+
+  await streamStatus({ status: "completed", step: "generateMechanicsContent" });
   return { steps };
 }

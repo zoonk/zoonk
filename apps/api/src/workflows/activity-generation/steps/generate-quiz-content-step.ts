@@ -6,14 +6,14 @@ import {
 import { prisma } from "@zoonk/db";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { streamStatus } from "../stream-status";
-import { deleteActivitySteps } from "./_utils/content-step-helpers";
+import { resolveActivityForGeneration } from "./_utils/content-step-helpers";
 import { type ActivitySteps } from "./_utils/get-activity-steps";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
 import { setActivityAsRunningStep } from "./set-activity-as-running-step";
 
 async function saveQuizSteps(
-  activityId: bigint,
+  activityId: bigint | number,
   questions: QuizQuestion[],
 ): Promise<{ error: Error | null }> {
   return safeAsync(() =>
@@ -31,14 +31,14 @@ async function saveQuizSteps(
   );
 }
 
-async function handleQuizError(activityId: bigint): Promise<{ questions: [] }> {
+async function handleQuizError(activityId: bigint | number): Promise<{ questions: [] }> {
   await streamStatus({ status: "error", step: "generateQuizContent" });
   await handleActivityFailureStep({ activityId });
   return { questions: [] };
 }
 
 async function saveAndCompleteQuiz(
-  activityId: bigint,
+  activityId: bigint | number,
   questions: QuizQuestion[],
 ): Promise<{ questions: QuizQuestion[] }> {
   const { error } = await saveQuizSteps(activityId, questions);
@@ -58,22 +58,17 @@ export async function generateQuizContentStep(
 ): Promise<{ questions: QuizQuestion[] }> {
   "use step";
 
-  const activity = activities.find((act) => act.kind === "quiz");
-  if (!activity) {
+  const resolved = await resolveActivityForGeneration(activities, "quiz");
+
+  if (!resolved.shouldGenerate) {
     return { questions: [] };
   }
 
-  if (activity.generationStatus === "completed" || activity.generationStatus === "running") {
-    return { questions: [] };
-  }
+  const { activity } = resolved;
 
   if (explanationSteps.length === 0) {
     await handleActivityFailureStep({ activityId: activity.id });
     return { questions: [] };
-  }
-
-  if (activity.generationStatus === "failed") {
-    await deleteActivitySteps(activity.id);
   }
 
   await streamStatus({ status: "started", step: "generateQuizContent" });

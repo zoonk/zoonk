@@ -1,14 +1,12 @@
-import { prisma } from "@zoonk/db";
+import { type ActivityKind, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
-import { type ActivityStepName } from "../../../config";
-import { streamStatus } from "../../stream-status";
-import { handleActivityFailureStep } from "../handle-failure-step";
+import { type LessonActivity } from "../get-lesson-activities-step";
 import { type ActivitySteps, parseActivitySteps } from "./get-activity-steps";
 
 /**
  * Resume from DB: returns existing steps if found, null otherwise.
  */
-export async function getExistingContentSteps(activityId: bigint): Promise<ActivitySteps | null> {
+async function getExistingContentSteps(activityId: bigint | number): Promise<ActivitySteps | null> {
   const { data: existingSteps } = await safeAsync(() =>
     prisma.step.findMany({
       orderBy: { position: "asc" },
@@ -25,28 +23,54 @@ export async function getExistingContentSteps(activityId: bigint): Promise<Activ
 }
 
 /**
- * Delete all steps for an activity (used when retrying a failed activity).
+ * Resolves the activity for a given kind and handles status-based branching.
+ * Returns `shouldGenerate: true` when the step should proceed with AI generation,
+ * or `shouldGenerate: false` with existing steps (possibly empty) when it should skip.
  */
-export async function deleteActivitySteps(activityId: bigint): Promise<void> {
-  await prisma.step.deleteMany({ where: { activityId } });
+export async function resolveActivityForGeneration(
+  activities: LessonActivity[],
+  kind: ActivityKind,
+): Promise<
+  | { activity: LessonActivity; shouldGenerate: true; existingSteps?: undefined }
+  | { activity?: undefined; shouldGenerate: false; existingSteps: ActivitySteps }
+> {
+  const activity = activities.find((act) => act.kind === kind);
+
+  if (!activity) {
+    return { existingSteps: [], shouldGenerate: false };
+  }
+
+  if (activity.generationStatus === "completed") {
+    return {
+      existingSteps: (await getExistingContentSteps(activity.id)) ?? [],
+      shouldGenerate: false,
+    };
+  }
+
+  if (activity.generationStatus === "running") {
+    return { existingSteps: [], shouldGenerate: false };
+  }
+
+  if (activity.generationStatus === "failed") {
+    await prisma.step.deleteMany({ where: { activityId: activity.id } });
+  }
+
+  return { activity, shouldGenerate: true };
 }
 
 /**
- * Save generated steps to DB and stream status.
- * Returns the steps on success, empty array on failure.
+ * Save generated steps to DB.
+ * Returns null on success, error on failure.
  */
 export async function saveContentSteps(
-  activityId: bigint,
+  activityId: bigint | number,
   steps: ActivitySteps,
-  stepName: ActivityStepName,
-): Promise<ActivitySteps> {
+): Promise<{ error: Error | null }> {
   if (steps.length === 0) {
-    await streamStatus({ status: "error", step: stepName });
-    await handleActivityFailureStep({ activityId });
-    return [];
+    return { error: new Error("No steps to save") };
   }
 
-  const { error } = await safeAsync(() =>
+  return safeAsync(() =>
     prisma.step.createMany({
       data: steps.map((step, index) => ({
         activityId,
@@ -56,13 +80,4 @@ export async function saveContentSteps(
       })),
     }),
   );
-
-  if (error) {
-    await handleActivityFailureStep({ activityId });
-    await streamStatus({ status: "error", step: stepName });
-    return [];
-  }
-
-  await streamStatus({ status: "completed", step: stepName });
-  return steps;
 }

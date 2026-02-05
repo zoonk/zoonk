@@ -1,11 +1,7 @@
 import { generateActivityBackground } from "@zoonk/ai/tasks/activities/core/background";
 import { safeAsync } from "@zoonk/utils/error";
 import { streamStatus } from "../stream-status";
-import {
-  deleteActivitySteps,
-  getExistingContentSteps,
-  saveContentSteps,
-} from "./_utils/content-step-helpers";
+import { resolveActivityForGeneration, saveContentSteps } from "./_utils/content-step-helpers";
 import { type ActivitySteps } from "./_utils/get-activity-steps";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
@@ -17,22 +13,13 @@ export async function generateBackgroundContentStep(
 ): Promise<{ steps: ActivitySteps }> {
   "use step";
 
-  const activity = activities.find((act) => act.kind === "background");
-  if (!activity) {
-    return { steps: [] };
+  const resolved = await resolveActivityForGeneration(activities, "background");
+
+  if (!resolved.shouldGenerate) {
+    return { steps: resolved.existingSteps };
   }
 
-  if (activity.generationStatus === "completed") {
-    return { steps: (await getExistingContentSteps(activity.id)) ?? [] };
-  }
-
-  if (activity.generationStatus === "running") {
-    return { steps: [] };
-  }
-
-  if (activity.generationStatus === "failed") {
-    await deleteActivitySteps(activity.id);
-  }
+  const { activity } = resolved;
 
   await streamStatus({ status: "started", step: "generateBackgroundContent" });
   await setActivityAsRunningStep({ activityId: activity.id, workflowRunId });
@@ -53,7 +40,14 @@ export async function generateBackgroundContentStep(
     return { steps: [] };
   }
 
-  const steps = await saveContentSteps(activity.id, result.data.steps, "generateBackgroundContent");
+  const { error: saveError } = await saveContentSteps(activity.id, result.data.steps);
 
-  return { steps };
+  if (saveError) {
+    await streamStatus({ status: "error", step: "generateBackgroundContent" });
+    await handleActivityFailureStep({ activityId: activity.id });
+    return { steps: [] };
+  }
+
+  await streamStatus({ status: "completed", step: "generateBackgroundContent" });
+  return { steps: result.data.steps };
 }

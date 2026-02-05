@@ -1,11 +1,7 @@
 import { generateActivityExplanation } from "@zoonk/ai/tasks/activities/core/explanation";
 import { safeAsync } from "@zoonk/utils/error";
 import { streamStatus } from "../stream-status";
-import {
-  deleteActivitySteps,
-  getExistingContentSteps,
-  saveContentSteps,
-} from "./_utils/content-step-helpers";
+import { resolveActivityForGeneration, saveContentSteps } from "./_utils/content-step-helpers";
 import { type ActivitySteps } from "./_utils/get-activity-steps";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
@@ -18,24 +14,17 @@ export async function generateExplanationContentStep(
 ): Promise<{ steps: ActivitySteps }> {
   "use step";
 
-  const activity = activities.find((act) => act.kind === "explanation");
-  if (!activity) {
+  const resolved = await resolveActivityForGeneration(activities, "explanation");
+
+  if (!resolved.shouldGenerate) {
+    return { steps: resolved.existingSteps };
+  }
+
+  const { activity } = resolved;
+
+  if (backgroundSteps.length === 0) {
+    await handleActivityFailureStep({ activityId: activity.id });
     return { steps: [] };
-  }
-
-  if (activity.generationStatus === "completed") {
-    return { steps: (await getExistingContentSteps(activity.id)) ?? [] };
-  }
-
-  if (activity.generationStatus === "running" || backgroundSteps.length === 0) {
-    if (backgroundSteps.length === 0) {
-      await handleActivityFailureStep({ activityId: activity.id });
-    }
-    return { steps: [] };
-  }
-
-  if (activity.generationStatus === "failed") {
-    await deleteActivitySteps(activity.id);
   }
 
   await streamStatus({ status: "started", step: "generateExplanationContent" });
@@ -58,7 +47,21 @@ export async function generateExplanationContentStep(
     return { steps: [] };
   }
 
-  return {
-    steps: await saveContentSteps(activity.id, result.data.steps, "generateExplanationContent"),
-  };
+  return saveAndStreamResult(activity.id, result.data.steps);
+}
+
+async function saveAndStreamResult(
+  activityId: bigint | number,
+  steps: ActivitySteps,
+): Promise<{ steps: ActivitySteps }> {
+  const { error } = await saveContentSteps(activityId, steps);
+
+  if (error) {
+    await streamStatus({ status: "error", step: "generateExplanationContent" });
+    await handleActivityFailureStep({ activityId });
+    return { steps: [] };
+  }
+
+  await streamStatus({ status: "completed", step: "generateExplanationContent" });
+  return { steps };
 }

@@ -35,6 +35,7 @@ export const ACTIVITY_STEPS = [
   "setExplanationAsCompleted",
   "setMechanicsAsCompleted",
   "setQuizAsCompleted",
+  "workflowError",
 ] as const;
 
 export type ActivityStepName = (typeof ACTIVITY_STEPS)[number];

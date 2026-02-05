@@ -4,7 +4,7 @@ import { FatalError } from "workflow";
 import { streamStatus } from "../stream-status";
 
 async function getLessonActivities(lessonId: number) {
-  return prisma.activity.findMany({
+  const activities = await prisma.activity.findMany({
     orderBy: { position: "asc" },
     select: {
       _count: { select: { steps: true } },
@@ -32,6 +32,9 @@ async function getLessonActivities(lessonId: number) {
     },
     where: { lessonId },
   });
+
+  // Convert bigint IDs to number for JSON serialization in workflow steps
+  return activities.map((activity) => ({ ...activity, id: Number(activity.id) }));
 }
 
 export type LessonActivity = Awaited<ReturnType<typeof getLessonActivities>>[number];

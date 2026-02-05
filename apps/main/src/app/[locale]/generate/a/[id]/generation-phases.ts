@@ -57,7 +57,10 @@ const validationPhaseSteps: Record<PhaseName, ActivityStepName[]> = {
 };
 
 const allPhaseSteps = new Set(Object.values(validationPhaseSteps).flat());
-const missingActivitySteps = ACTIVITY_STEPS.filter((step) => !allPhaseSteps.has(step));
+// workflowError is a meta-step for error handling, not a UI phase step
+const missingActivitySteps = ACTIVITY_STEPS.filter(
+  (step) => step !== "workflowError" && !allPhaseSteps.has(step),
+);
 
 if (missingActivitySteps.length > 0) {
   throw new Error(

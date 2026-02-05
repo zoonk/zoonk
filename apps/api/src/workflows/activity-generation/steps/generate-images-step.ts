@@ -8,7 +8,7 @@ import { handleActivityFailureStep } from "./handle-failure-step";
 
 export type StepVisualWithUrl = StepVisual & { url?: string };
 
-type ImageStep = { id: bigint; visualContent: unknown; visualKind: string | null };
+type ImageStep = { id: bigint | number; visualContent: unknown; visualKind: string | null };
 
 async function generateAndSaveImages(
   imageSteps: ImageStep[],

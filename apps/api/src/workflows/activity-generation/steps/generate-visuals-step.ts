@@ -10,7 +10,7 @@ export type StepVisual = StepVisualSchema["visuals"][number];
 
 async function saveVisualsToDB(
   visuals: StepVisual[],
-  dbSteps: { id: bigint }[],
+  dbSteps: { id: bigint | number }[],
 ): Promise<{ error: Error | null }> {
   return safeAsync(() =>
     Promise.all(
@@ -29,7 +29,7 @@ async function saveVisualsToDB(
   );
 }
 
-async function handleVisualsError(activityId: bigint): Promise<{ visuals: StepVisual[] }> {
+async function handleVisualsError(activityId: bigint | number): Promise<{ visuals: StepVisual[] }> {
   await streamStatus({ status: "error", step: "generateVisuals" });
   await handleActivityFailureStep({ activityId });
   return { visuals: [] };

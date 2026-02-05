@@ -3,7 +3,7 @@ import { safeAsync } from "@zoonk/utils/error";
 import { streamStatus } from "../stream-status";
 
 export async function setActivityAsRunningStep(input: {
-  activityId: bigint;
+  activityId: bigint | number;
   workflowRunId: string;
 }): Promise<void> {
   "use step";
