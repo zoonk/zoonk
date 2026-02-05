@@ -1,66 +1,34 @@
-import { getWorkflowMetadata } from "workflow";
-import { generateBackgroundContentStep } from "./steps/generate-background-content-step";
-import { generateExplanationContentStep } from "./steps/generate-explanation-content-step";
-import { generateImagesStep } from "./steps/generate-images-step";
-import { generateMechanicsContentStep } from "./steps/generate-mechanics-content-step";
-import { generateQuizContentStep } from "./steps/generate-quiz-content-step";
-import { generateQuizImagesStep } from "./steps/generate-quiz-images-step";
-import { generateVisualsStep } from "./steps/generate-visuals-step";
 import { getLessonActivitiesStep } from "./steps/get-lesson-activities-step";
-import { saveActivityStep } from "./steps/save-activity-step";
-import { saveQuizActivityStep } from "./steps/save-quiz-activity-step";
+import { backgroundWorkflow } from "./workflows/background-workflow";
+import { explanationWorkflow } from "./workflows/explanation-workflow";
+import { mechanicsWorkflow } from "./workflows/mechanics-workflow";
+import { quizWorkflow } from "./workflows/quiz-workflow";
 
+/**
+ * Activity generation workflow.
+ *
+ * Starts all activity workflows in parallel. Each workflow handles its own
+ * dependency waiting via hooks. Workflows that need to wait for dependencies
+ * suspend (no resource usage) until the dependency notifies them.
+ *
+ * Dependency graph:
+ * background (no deps) → explanation → mechanics
+ *                                   → quiz
+ *
+ * Using Promise.allSettled so one activity failing doesn't prevent others
+ * from completing (isolation).
+ */
 export async function activityGenerationWorkflow(lessonId: number): Promise<void> {
   "use workflow";
 
-  const { workflowRunId } = getWorkflowMetadata();
-
   const activities = await getLessonActivitiesStep(lessonId);
 
-  const backgroundContent = await generateBackgroundContentStep(activities, workflowRunId);
-
-  const [backgroundVisuals, explanationContent] = await Promise.all([
-    generateVisualsStep(activities, backgroundContent.steps, "background"),
-    generateExplanationContentStep(activities, backgroundContent.steps, workflowRunId),
+  // Start ALL workflows in parallel via direct await (workflow composition)
+  // Each workflow handles its own dependency waiting via hooks
+  await Promise.allSettled([
+    backgroundWorkflow(activities, lessonId),
+    explanationWorkflow(activities, lessonId),
+    mechanicsWorkflow(activities, lessonId),
+    quizWorkflow(activities, lessonId),
   ]);
-
-  const [backgroundImages, explanationVisuals, mechanicsContent, quizContent] = await Promise.all([
-    generateImagesStep(activities, backgroundVisuals.visuals, "background"),
-    generateVisualsStep(activities, explanationContent.steps, "explanation"),
-    generateMechanicsContentStep(activities, explanationContent.steps, workflowRunId),
-    generateQuizContentStep(activities, explanationContent.steps, workflowRunId),
-  ]);
-
-  const [, explanationImages, mechanicsVisuals, quizWithImages] = await Promise.all([
-    saveActivityStep(
-      activities,
-      backgroundContent.steps,
-      backgroundImages,
-      workflowRunId,
-      "background",
-    ),
-    generateImagesStep(activities, explanationVisuals.visuals, "explanation"),
-    generateVisualsStep(activities, mechanicsContent.steps, "mechanics"),
-    generateQuizImagesStep(activities, quizContent.questions),
-  ]);
-
-  const [, mechanicsImages] = await Promise.all([
-    saveActivityStep(
-      activities,
-      explanationContent.steps,
-      explanationImages,
-      workflowRunId,
-      "explanation",
-    ),
-    generateImagesStep(activities, mechanicsVisuals.visuals, "mechanics"),
-    saveQuizActivityStep(activities, quizWithImages, workflowRunId),
-  ]);
-
-  await saveActivityStep(
-    activities,
-    mechanicsContent.steps,
-    mechanicsImages,
-    workflowRunId,
-    "mechanics",
-  );
 }

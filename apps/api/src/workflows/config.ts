@@ -33,6 +33,8 @@ const ACTIVITY_STEPS = [
   "saveQuizActivity",
   "setActivityAsRunning",
   "setActivityAsCompleted",
+  "notifyDependents",
+  "getDependencyContent",
 ] as const;
 
 export type ActivityStepName = (typeof ACTIVITY_STEPS)[number];

@@ -11,29 +11,11 @@ import { handleActivityFailureStep } from "./handle-failure-step";
 import { setActivityAsRunningStep } from "./set-activity-as-running-step";
 
 export async function generateQuizContentStep(
-  activities: LessonActivity[],
+  activity: LessonActivity,
   explanationSteps: ActivitySteps,
   workflowRunId: string,
 ): Promise<{ questions: QuizQuestion[] }> {
   "use step";
-
-  const activity = activities.find((a) => a.kind === "quiz");
-
-  if (!activity) {
-    return { questions: [] };
-  }
-
-  if (activity.generationStatus === "completed" && activity._count.steps > 0) {
-    return { questions: [] };
-  }
-
-  if (activity.generationStatus === "running") {
-    return { questions: [] };
-  }
-
-  if (explanationSteps.length === 0) {
-    return { questions: [] };
-  }
 
   await streamStatus({ status: "started", step: "generateQuizContent" });
   await setActivityAsRunningStep({ activityId: activity.id, workflowRunId });

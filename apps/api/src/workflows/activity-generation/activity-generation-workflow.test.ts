@@ -16,8 +16,34 @@ import { stepFixture } from "@zoonk/testing/fixtures/steps";
 import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { activityGenerationWorkflow } from "./activity-generation-workflow";
 
+// Store for hook data to simulate hook communication between workflows
+const hookStore = new Map<string, { steps: { text: string; title: string }[] }>();
+
 vi.mock("workflow", () => ({
   FatalError: class FatalError extends Error {},
+  defineHook: vi.fn().mockImplementation(() => ({
+    create: vi.fn().mockImplementation(
+      ({ token }: { token: string }) =>
+        new Promise((resolve) => {
+          const checkInterval = setInterval(() => {
+            const data = hookStore.get(token);
+            if (data) {
+              clearInterval(checkInterval);
+              resolve(data);
+            }
+          }, 10);
+          // Timeout after 5 seconds to prevent hanging tests
+          setTimeout(() => {
+            clearInterval(checkInterval);
+            resolve({ steps: [] });
+          }, 5000);
+        }),
+    ),
+    resume: vi.fn().mockImplementation((token: string, data: unknown) => {
+      hookStore.set(token, data as { steps: { text: string; title: string }[] });
+      return Promise.resolve();
+    }),
+  })),
   getWorkflowMetadata: vi.fn().mockReturnValue({ workflowRunId: "test-run-id" }),
   getWritable: vi.fn().mockReturnValue({
     getWriter: () => ({
@@ -133,6 +159,7 @@ describe(activityGenerationWorkflow, () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    hookStore.clear();
   });
 
   describe("lesson validation", () => {
@@ -276,9 +303,8 @@ describe(activityGenerationWorkflow, () => {
         title: `Error Activity ${randomUUID()}`,
       });
 
-      await expect(activityGenerationWorkflow(testLesson.id)).rejects.toThrow(
-        "AI generation failed",
-      );
+      // With Promise.allSettled, launcher doesn't throw - just marks activity as failed
+      await activityGenerationWorkflow(testLesson.id);
 
       const dbActivity = await prisma.activity.findUnique({
         where: { id: activity.id },
@@ -303,9 +329,8 @@ describe(activityGenerationWorkflow, () => {
         title: `Visual Fail ${randomUUID()}`,
       });
 
-      await expect(activityGenerationWorkflow(testLesson.id)).rejects.toThrow(
-        "Visual generation failed",
-      );
+      // With Promise.allSettled, launcher doesn't throw - just marks activity as failed
+      await activityGenerationWorkflow(testLesson.id);
 
       const dbActivity = await prisma.activity.findUnique({
         where: { id: activity.id },
@@ -790,9 +815,8 @@ describe(activityGenerationWorkflow, () => {
         }),
       ]);
 
-      await expect(activityGenerationWorkflow(testLesson.id)).rejects.toThrow(
-        "Explanation generation failed",
-      );
+      // With Promise.allSettled, launcher doesn't throw - just marks activity as failed
+      await activityGenerationWorkflow(testLesson.id);
 
       const dbActivity = await prisma.activity.findUnique({
         where: { id: explanationActivity.id },
@@ -1176,9 +1200,8 @@ describe(activityGenerationWorkflow, () => {
 
       const quizActivity = activities[2];
 
-      await expect(activityGenerationWorkflow(testLesson.id)).rejects.toThrow(
-        "Quiz generation failed",
-      );
+      // With Promise.allSettled, launcher doesn't throw - just marks activity as failed
+      await activityGenerationWorkflow(testLesson.id);
 
       const dbActivity = await prisma.activity.findUnique({
         where: { id: quizActivity?.id },
@@ -1765,9 +1788,8 @@ describe(activityGenerationWorkflow, () => {
 
       const mechanicsActivity = activities[2];
 
-      await expect(activityGenerationWorkflow(testLesson.id)).rejects.toThrow(
-        "Mechanics generation failed",
-      );
+      // With Promise.allSettled, launcher doesn't throw - just marks activity as failed
+      await activityGenerationWorkflow(testLesson.id);
 
       const dbActivity = await prisma.activity.findUnique({
         where: { id: mechanicsActivity?.id },

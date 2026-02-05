@@ -57,3 +57,13 @@ export const workflowStatusQuerySchema = z
       .meta({ description: "Event index to start from" }),
   })
   .meta({ id: "WorkflowStatusQuery" });
+
+export const activityGenerationRetrySchema = z
+  .object({
+    activityId: z
+      .number()
+      .int()
+      .positive()
+      .meta({ description: "Activity ID to retry generation for" }),
+  })
+  .meta({ id: "ActivityGenerationRetry" });
