@@ -1825,4 +1825,107 @@ describe(activityGenerationWorkflow, () => {
       });
     });
   });
+
+  describe("workflow failure handling", () => {
+    test("marks running activities as failed and re-throws on workflow crash", async () => {
+      const testLesson = await lessonFixture({
+        chapterId: chapter.id,
+        organizationId,
+        title: `Failure Handling Lesson ${randomUUID()}`,
+      });
+
+      const runningActivity = await activityFixture({
+        generationRunId: "test-run-id",
+        generationStatus: "running",
+        kind: "background",
+        lessonId: testLesson.id,
+        organizationId,
+        title: `Running Activity ${randomUUID()}`,
+      });
+
+      const completedActivity = await activityFixture({
+        generationRunId: "test-run-id",
+        generationStatus: "completed",
+        kind: "explanation",
+        lessonId: testLesson.id,
+        organizationId,
+        title: `Completed Activity ${randomUUID()}`,
+      });
+
+      const pendingActivity = await activityFixture({
+        generationStatus: "pending",
+        kind: "mechanics",
+        lessonId: testLesson.id,
+        organizationId,
+        title: `Pending Activity ${randomUUID()}`,
+      });
+
+      const originalFindMany = prisma.activity.findMany.bind(prisma.activity);
+      let callCount = 0;
+
+      prisma.activity.findMany = ((...args: Parameters<typeof originalFindMany>) => {
+        callCount += 1;
+
+        if (callCount === 1) {
+          return Promise.reject(new Error("DB connection lost"));
+        }
+
+        return originalFindMany(...args);
+      }) as typeof originalFindMany;
+
+      await expect(activityGenerationWorkflow(testLesson.id)).rejects.toThrow("DB connection lost");
+
+      prisma.activity.findMany = originalFindMany;
+
+      const [running, completed, pending] = await Promise.all([
+        prisma.activity.findUnique({ where: { id: runningActivity.id } }),
+        prisma.activity.findUnique({ where: { id: completedActivity.id } }),
+        prisma.activity.findUnique({ where: { id: pendingActivity.id } }),
+      ]);
+
+      expect(running?.generationStatus).toBe("failed");
+      expect(completed?.generationStatus).toBe("completed");
+      expect(pending?.generationStatus).toBe("pending");
+    });
+
+    test("only marks activities matching the current workflowRunId", async () => {
+      const testLesson = await lessonFixture({
+        chapterId: chapter.id,
+        organizationId,
+        title: `Wrong RunId Lesson ${randomUUID()}`,
+      });
+
+      const otherRunActivity = await activityFixture({
+        generationRunId: "different-run-id",
+        generationStatus: "running",
+        kind: "background",
+        lessonId: testLesson.id,
+        organizationId,
+        title: `Other Run Activity ${randomUUID()}`,
+      });
+
+      const originalFindMany = prisma.activity.findMany.bind(prisma.activity);
+      let callCount = 0;
+
+      prisma.activity.findMany = ((...args: Parameters<typeof originalFindMany>) => {
+        callCount += 1;
+
+        if (callCount === 1) {
+          return Promise.reject(new Error("DB connection lost"));
+        }
+
+        return originalFindMany(...args);
+      }) as typeof originalFindMany;
+
+      await expect(activityGenerationWorkflow(testLesson.id)).rejects.toThrow("DB connection lost");
+
+      prisma.activity.findMany = originalFindMany;
+
+      const activity = await prisma.activity.findUnique({
+        where: { id: otherRunActivity.id },
+      });
+
+      expect(activity?.generationStatus).toBe("running");
+    });
+  });
 });
