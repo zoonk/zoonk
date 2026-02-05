@@ -4,7 +4,6 @@ import { generateActivityExplanation } from "@zoonk/ai/tasks/activities/core/exp
 import { generateActivityExplanationQuiz } from "@zoonk/ai/tasks/activities/core/explanation-quiz";
 import { generateActivityMechanics } from "@zoonk/ai/tasks/activities/core/mechanics";
 import { generateStepVisuals } from "@zoonk/ai/tasks/steps/visual";
-import { generateStepImage } from "@zoonk/core/steps/image";
 import { generateVisualStepImage } from "@zoonk/core/steps/visual-image";
 import { prisma } from "@zoonk/db";
 import { activityFixture } from "@zoonk/testing/fixtures/activities";
@@ -996,7 +995,8 @@ describe(activityGenerationWorkflow, () => {
         where: { activityId: quizActivity?.id },
       });
 
-      const selectImageStep = quizSteps.find((s) => s.kind === "selectImage");
+      const selectImageStep = quizSteps.find((step) => step.kind === "selectImage");
+      // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- test assertion on Prisma JSON field
       const content = selectImageStep?.content as { options: { url?: string }[] };
 
       expect(content.options[0]?.url).toBe("https://example.com/quiz-image.webp");

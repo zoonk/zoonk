@@ -1,6 +1,6 @@
 import { generateVisualStepImage } from "@zoonk/core/steps/visual-image";
 import { type ActivityKind, prisma } from "@zoonk/db";
-import { safeAsync } from "@zoonk/utils/error";
+import { getString, toRecord } from "@zoonk/utils/json";
 import { streamStatus } from "../stream-status";
 import { type StepVisual } from "./generate-visuals-step";
 import { type LessonActivity } from "./get-lesson-activities-step";
@@ -9,7 +9,7 @@ import { handleActivityFailureStep } from "./handle-failure-step";
 export type StepVisualWithUrl = StepVisual & { url?: string };
 
 function hasImageUrl(content: unknown): boolean {
-  return typeof (content as Record<string, unknown>)?.url === "string";
+  return getString(content, "url") !== null;
 }
 
 export async function generateImagesStep(
@@ -19,7 +19,7 @@ export async function generateImagesStep(
 ): Promise<StepVisualWithUrl[]> {
   "use step";
 
-  const activity = activities.find((a) => a.kind === activityKind);
+  const activity = activities.find((act) => act.kind === activityKind);
 
   if (!activity || visuals.length === 0) {
     return [];
@@ -38,18 +38,18 @@ export async function generateImagesStep(
 
   // Find image steps missing URLs (incremental)
   const needingImages = dbSteps.filter(
-    (s) => s.visualKind === "image" && !hasImageUrl(s.visualContent),
+    (step) => step.visualKind === "image" && !hasImageUrl(step.visualContent),
   );
 
   // All images already have URLs - return existing visuals as-is
   if (needingImages.length === 0) {
-    return visuals.map((v) => {
-      const dbStep = dbSteps[v.stepIndex];
-      if (v.kind === "image" && dbStep && hasImageUrl(dbStep.visualContent)) {
-        const content = dbStep.visualContent as Record<string, unknown>;
-        return { ...v, url: content.url as string };
+    return visuals.map((visual) => {
+      const dbStep = dbSteps[visual.stepIndex];
+      const url = dbStep ? getString(dbStep.visualContent, "url") : null;
+      if (visual.kind === "image" && url) {
+        return { ...visual, url };
       }
-      return v;
+      return visual;
     });
   }
 
@@ -60,16 +60,19 @@ export async function generateImagesStep(
 
   // Phase 1: Generate missing images in parallel
   const imageResults = await Promise.allSettled(
-    needingImages.map((s) => {
-      const content = s.visualContent as Record<string, unknown>;
-      return generateVisualStepImage({ orgSlug, prompt: content.prompt as string });
+    needingImages.map((step) => {
+      const prompt = getString(step.visualContent, "prompt");
+      if (!prompt) {
+        return Promise.reject(new Error("Missing prompt"));
+      }
+      return generateVisualStepImage({ orgSlug, prompt });
     }),
   );
 
   // Phase 2: Update DB with generated URLs in parallel
   const updateResults = await Promise.allSettled(
-    needingImages.map((s, i) => {
-      const result = imageResults[i];
+    needingImages.map((step, idx) => {
+      const result = imageResults[idx];
       if (result?.status !== "fulfilled" || result.value.error) {
         hadFailure = true;
         return Promise.resolve();
@@ -77,17 +80,16 @@ export async function generateImagesStep(
       return prisma.step.update({
         data: {
           visualContent: {
-            ...(s.visualContent as Record<string, unknown>),
+            ...toRecord(step.visualContent),
             url: result.value.data,
           },
         },
-        where: { id: s.id },
+        where: { id: step.id },
       });
     }),
   );
 
-  // Check for update failures too
-  if (updateResults.some((r) => r.status === "rejected")) {
+  if (updateResults.some((result) => result.status === "rejected")) {
     hadFailure = true;
   }
 
@@ -98,27 +100,26 @@ export async function generateImagesStep(
   await streamStatus({ status: "completed", step: "generateImages" });
 
   // Build return visuals with URLs where available
-  return visuals.map((visual, _index) => {
+  return visuals.map((visual) => {
     if (visual.kind !== "image") {
-      return visual as StepVisualWithUrl;
+      return visual;
     }
 
-    const dbStep = needingImages.find((s) => {
-      const content = s.visualContent as Record<string, unknown>;
-      return content.prompt === visual.prompt;
-    });
+    const dbStep = needingImages.find(
+      (step) => getString(step.visualContent, "prompt") === visual.prompt,
+    );
 
     if (!dbStep) {
-      return visual as StepVisualWithUrl;
+      return visual;
     }
 
     const idx = needingImages.indexOf(dbStep);
     const result = imageResults[idx];
 
     if (result?.status === "fulfilled" && !result.value.error) {
-      return { ...visual, url: result.value.data } as StepVisualWithUrl;
+      return { ...visual, url: result.value.data };
     }
 
-    return visual as StepVisualWithUrl;
+    return visual;
   });
 }

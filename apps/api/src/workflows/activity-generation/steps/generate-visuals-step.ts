@@ -1,6 +1,7 @@
 import { type StepVisualSchema, generateStepVisuals } from "@zoonk/ai/tasks/steps/visual";
 import { type ActivityKind, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
+import { isJsonObject } from "@zoonk/utils/json";
 import { streamStatus } from "../stream-status";
 import { type ActivitySteps } from "./_utils/get-activity-steps";
 import { type LessonActivity } from "./get-lesson-activities-step";
@@ -9,7 +10,7 @@ import { handleActivityFailureStep } from "./handle-failure-step";
 export type StepVisual = StepVisualSchema["visuals"][number];
 
 function isValidVisualContent(content: unknown): boolean {
-  return content !== null && typeof content === "object" && Object.keys(content).length > 0;
+  return isJsonObject(content) && Object.keys(content).length > 0;
 }
 
 function mapToStepVisual(
@@ -20,8 +21,58 @@ function mapToStepVisual(
   },
   index: number,
 ): StepVisual {
-  const content = step.visualContent as Record<string, unknown>;
-  return { ...content, kind: step.visualKind, stepIndex: index } as unknown as StepVisual;
+  const content = isJsonObject(step.visualContent) ? step.visualContent : {};
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- reconstructing StepVisual union from DB fields; shape validated by isValidVisualContent guard
+  return { ...content, kind: step.visualKind, stepIndex: index } as StepVisual;
+}
+
+async function getDbStepsForResume(activityId: bigint): Promise<{
+  dbSteps: { id: bigint; visualContent: unknown; visualKind: string | null }[];
+  existingVisuals: StepVisual[] | null;
+}> {
+  const dbSteps = await prisma.step.findMany({
+    orderBy: { position: "asc" },
+    select: { id: true, visualContent: true, visualKind: true },
+    where: { activityId },
+  });
+
+  if (dbSteps.length === 0) {
+    return { dbSteps: [], existingVisuals: null };
+  }
+
+  const allHaveVisuals = dbSteps.every(
+    (step) => step.visualKind !== null && isValidVisualContent(step.visualContent),
+  );
+
+  if (allHaveVisuals) {
+    return {
+      dbSteps,
+      existingVisuals: dbSteps.map((step, index) => mapToStepVisual(step, index)),
+    };
+  }
+
+  return { dbSteps, existingVisuals: null };
+}
+
+async function saveVisualsToDB(
+  visuals: StepVisual[],
+  dbSteps: { id: bigint }[],
+): Promise<{ error: Error | null }> {
+  return safeAsync(() =>
+    Promise.all(
+      visuals.map((visual) => {
+        const dbStep = dbSteps[visual.stepIndex];
+        if (!dbStep) {
+          return Promise.resolve();
+        }
+        const { stepIndex: _, kind: __, ...visualContent } = visual;
+        return prisma.step.update({
+          data: { visualContent, visualKind: visual.kind },
+          where: { id: dbStep.id },
+        });
+      }),
+    ),
+  );
 }
 
 export async function generateVisualsStep(
@@ -31,31 +82,20 @@ export async function generateVisualsStep(
 ): Promise<{ visuals: StepVisual[] }> {
   "use step";
 
-  const activity = activities.find((a) => a.kind === activityKind);
+  const activity = activities.find((act) => act.kind === activityKind);
 
   if (!activity || steps.length === 0) {
     return { visuals: [] };
   }
 
-  // Query current DB state for resume check
-  const dbSteps = await prisma.step.findMany({
-    orderBy: { position: "asc" },
-    select: { id: true, visualContent: true, visualKind: true },
-    where: { activityId: activity.id },
-  });
+  const { dbSteps, existingVisuals } = await getDbStepsForResume(activity.id);
 
-  if (dbSteps.length === 0) {
-    return { visuals: [] };
-  }
-
-  // Resume: ALL steps already have visuals
-  if (dbSteps.every((s) => s.visualKind !== null && isValidVisualContent(s.visualContent))) {
-    return { visuals: dbSteps.map(mapToStepVisual) };
+  if (dbSteps.length === 0 || existingVisuals) {
+    return { visuals: existingVisuals ?? [] };
   }
 
   await streamStatus({ status: "started", step: "generateVisuals" });
 
-  // Generate ALL visuals (all-or-nothing)
   const { data: result, error } = await safeAsync(() =>
     generateStepVisuals({
       chapterTitle: activity.lesson.chapter.title,
@@ -73,22 +113,7 @@ export async function generateVisualsStep(
     return { visuals: [] };
   }
 
-  // Save ALL visuals to DB (all-or-nothing with Promise.all + safeAsync)
-  const { error: saveError } = await safeAsync(() =>
-    Promise.all(
-      result.data.visuals.map((visual) => {
-        const dbStep = dbSteps[visual.stepIndex];
-        if (!dbStep) {
-          return Promise.resolve();
-        }
-        const { stepIndex: _, kind: __, ...visualContent } = visual;
-        return prisma.step.update({
-          data: { visualContent, visualKind: visual.kind },
-          where: { id: dbStep.id },
-        });
-      }),
-    ),
-  );
+  const { error: saveError } = await saveVisualsToDB(result.data.visuals, dbSteps);
 
   if (saveError) {
     await handleActivityFailureStep({ activityId: activity.id });

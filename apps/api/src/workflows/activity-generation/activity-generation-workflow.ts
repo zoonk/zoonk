@@ -51,20 +51,19 @@ export async function activityGenerationWorkflow(lessonId: number): Promise<void
   const bgVisuals = settled(bgVisualsResult, { visuals: [] });
 
   // Wave 3: mechanics + quiz content (need explanation) + explanation visuals + background images (parallel)
-  const [mechContentResult, quizContentResult, expVisualsResult, bgImagesResult] =
-    await Promise.allSettled([
-      generateMechanicsContentStep(activities, expContent.steps, workflowRunId),
-      generateQuizContentStep(activities, expContent.steps, workflowRunId),
-      generateVisualsStep(activities, expContent.steps, "explanation"),
-      generateImagesStep(activities, bgVisuals.visuals, "background"),
-    ]);
+  const [mechContentResult, quizContentResult, expVisualsResult] = await Promise.allSettled([
+    generateMechanicsContentStep(activities, expContent.steps, workflowRunId),
+    generateQuizContentStep(activities, expContent.steps, workflowRunId),
+    generateVisualsStep(activities, expContent.steps, "explanation"),
+    generateImagesStep(activities, bgVisuals.visuals, "background"),
+  ]);
 
   const mechContent = settled(mechContentResult, { steps: [] });
   const quizContent = settled(quizContentResult, { questions: [] });
   const expVisuals = settled(expVisualsResult, { visuals: [] });
 
   // Wave 4: mechanics visuals + quiz images + explanation images + save background (parallel)
-  const [mechVisualsResult, , expImagesResult] = await Promise.allSettled([
+  const [mechVisualsResult] = await Promise.allSettled([
     generateVisualsStep(activities, mechContent.steps, "mechanics"),
     generateQuizImagesStep(activities, quizContent.questions),
     generateImagesStep(activities, expVisuals.visuals, "explanation"),

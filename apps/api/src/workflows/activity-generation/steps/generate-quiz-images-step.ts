@@ -5,6 +5,7 @@ import {
 import { generateStepImage } from "@zoonk/core/steps/image";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
+import { isJsonObject, toRecord } from "@zoonk/utils/json";
 import { streamStatus } from "../stream-status";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
@@ -15,13 +16,69 @@ export type QuizQuestionWithUrls =
       options: SelectImageQuestion["options"][number] & { url?: string }[];
     });
 
+type SelectImageOption = { prompt: string; url?: string };
+
+function parseSelectImageOptions(content: unknown): SelectImageOption[] | null {
+  if (!isJsonObject(content)) {
+    return null;
+  }
+  const { options } = content;
+  if (!Array.isArray(options)) {
+    return null;
+  }
+  return options.filter(
+    (opt): opt is SelectImageOption => isJsonObject(opt) && typeof opt.prompt === "string",
+  );
+}
+
+function toQuizQuestion(step: { content: unknown; kind: string }): QuizQuestionWithUrls {
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- reconstructing QuizQuestion union from DB; kind discriminates the shape
+  return { format: step.kind, ...toRecord(step.content) } as QuizQuestionWithUrls;
+}
+
+async function generateMissingOptionImages(
+  options: SelectImageOption[],
+  orgSlug: string,
+): Promise<{ hadFailure: boolean; updatedOptions: SelectImageOption[] }> {
+  const missingIndices = options
+    .map((opt, idx) => ({ index: idx, option: opt }))
+    .filter(({ option }) => !option.url);
+
+  if (missingIndices.length === 0) {
+    return { hadFailure: false, updatedOptions: options };
+  }
+
+  const results = await Promise.allSettled(
+    missingIndices.map(({ option }) => generateStepImage({ orgSlug, prompt: option.prompt })),
+  );
+
+  const updatedOptions = [...options];
+  let hadFailure = false;
+
+  missingIndices.forEach(({ index }, resultIndex) => {
+    const result = results[resultIndex];
+    if (result?.status === "fulfilled" && !result.value.error) {
+      const existing = updatedOptions[index];
+      updatedOptions[index] = {
+        ...existing,
+        prompt: existing?.prompt ?? "",
+        url: result.value.data,
+      };
+    } else {
+      hadFailure = true;
+    }
+  });
+
+  return { hadFailure, updatedOptions };
+}
+
 export async function generateQuizImagesStep(
   activities: LessonActivity[],
   questions: QuizQuestion[],
 ): Promise<QuizQuestionWithUrls[]> {
   "use step";
 
-  const activity = activities.find((a) => a.kind === "quiz");
+  const activity = activities.find((act) => act.kind === "quiz");
 
   if (!activity || questions.length === 0) {
     return [];
@@ -35,8 +92,9 @@ export async function generateQuizImagesStep(
   });
 
   if (dbSteps.length === 0) {
-    // No selectImage questions - return questions as-is
-    return questions;
+    // No selectImage steps in DB - questions don't need URL enrichment
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- QuizQuestion is a subtype; url? is optional
+    return questions as QuizQuestionWithUrls[];
   }
 
   await streamStatus({ status: "started", step: "generateQuizImages" });
@@ -44,55 +102,40 @@ export async function generateQuizImagesStep(
   const orgSlug = activity.lesson.chapter.course.organization.slug;
   let hadFailure = false;
 
-  // For each selectImage step, find options missing URLs, generate, update DB
   const stepResults = await Promise.allSettled(
     dbSteps.map(async (step) => {
-      const content = step.content as { options: { prompt: string; url?: string }[] } & Record<
-        string,
-        unknown
-      >;
-      const missingIndices = content.options
-        .map((o, i) => ({ index: i, option: o }))
-        .filter(({ option }) => !option.url);
-
-      if (missingIndices.length === 0) {
+      const options = parseSelectImageOptions(step.content);
+      if (!options) {
         return;
       }
 
-      const results = await Promise.allSettled(
-        missingIndices.map(({ option }) => generateStepImage({ orgSlug, prompt: option.prompt })),
+      const { hadFailure: imageFailed, updatedOptions } = await generateMissingOptionImages(
+        options,
+        orgSlug,
       );
 
-      const updatedOptions = [...content.options];
-      let anyFailed = false;
-
-      missingIndices.forEach(({ index }, resultIndex) => {
-        const result = results[resultIndex];
-        if (result?.status === "fulfilled" && !result.value.error) {
-          updatedOptions[index] = { ...updatedOptions[index]!, url: result.value.data };
-        } else {
-          anyFailed = true;
-        }
-      });
-
-      if (anyFailed) {
+      if (imageFailed) {
         hadFailure = true;
       }
 
-      const { error } = await safeAsync(() =>
-        prisma.step.update({
-          data: { content: { ...content, options: updatedOptions } },
-          where: { id: step.id },
-        }),
-      );
+      // Only update if we had missing images
+      if (options.some((opt) => !opt.url)) {
+        const stepContent = toRecord(step.content);
+        const { error } = await safeAsync(() =>
+          prisma.step.update({
+            data: { content: { ...stepContent, options: updatedOptions } },
+            where: { id: step.id },
+          }),
+        );
 
-      if (error) {
-        hadFailure = true;
+        if (error) {
+          hadFailure = true;
+        }
       }
     }),
   );
 
-  if (stepResults.some((r) => r.status === "rejected")) {
+  if (stepResults.some((result) => result.status === "rejected")) {
     hadFailure = true;
   }
 
@@ -109,8 +152,5 @@ export async function generateQuizImagesStep(
     where: { activityId: activity.id },
   });
 
-  return updatedSteps.map((s) => {
-    const content = s.content as Record<string, unknown>;
-    return { format: s.kind, ...content } as QuizQuestionWithUrls;
-  });
+  return updatedSteps.map((step) => toQuizQuestion(step));
 }
