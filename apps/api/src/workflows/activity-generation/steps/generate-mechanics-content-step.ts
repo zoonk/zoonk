@@ -1,35 +1,17 @@
 import { generateActivityMechanics } from "@zoonk/ai/tasks/activities/core/mechanics";
 import { safeAsync } from "@zoonk/utils/error";
 import { streamStatus } from "../stream-status";
-import { type ActivitySteps, getActivitySteps } from "./_utils/get-activity-steps";
+import { type ActivitySteps } from "./_utils/get-activity-steps";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
 import { setActivityAsRunningStep } from "./set-activity-as-running-step";
 
 export async function generateMechanicsContentStep(
-  activities: LessonActivity[],
+  activity: LessonActivity,
   explanationSteps: ActivitySteps,
   workflowRunId: string,
 ): Promise<{ steps: ActivitySteps }> {
   "use step";
-
-  const activity = activities.find((a) => a.kind === "mechanics");
-
-  if (!activity) {
-    return { steps: [] };
-  }
-
-  if (activity.generationStatus === "completed" && activity._count.steps > 0) {
-    return { steps: await getActivitySteps(activity.id) };
-  }
-
-  if (activity.generationStatus === "running") {
-    return { steps: [] };
-  }
-
-  if (explanationSteps.length === 0) {
-    return { steps: [] };
-  }
 
   await streamStatus({ status: "started", step: "generateMechanicsContent" });
   await setActivityAsRunningStep({ activityId: activity.id, workflowRunId });
