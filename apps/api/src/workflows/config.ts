@@ -24,6 +24,7 @@ const ACTIVITY_STEPS = [
   "getLessonActivities",
   "generateBackgroundContent",
   "generateExplanationContent",
+  "generateMechanicsContent",
   "generateQuizContent",
   "generateVisuals",
   "generateImages",
