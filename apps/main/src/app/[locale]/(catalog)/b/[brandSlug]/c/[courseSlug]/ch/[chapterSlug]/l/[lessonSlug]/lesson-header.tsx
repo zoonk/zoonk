@@ -45,19 +45,19 @@ export async function LessonHeader({
 
       <MediaCardContent>
         <MediaCardBreadcrumb>
-          <BreadcrumbList className="text-xs">
-            <BreadcrumbItem>
+          <BreadcrumbList className="flex-nowrap text-xs">
+            <BreadcrumbItem className="min-w-0">
               <Link
-                className="hover:text-foreground transition-colors"
+                className="hover:text-foreground truncate transition-colors"
                 href={`/b/${brandSlug}/c/${courseSlug}`}
               >
                 {lesson.chapter.course.title}
               </Link>
             </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
+            <BreadcrumbSeparator className="shrink-0" />
+            <BreadcrumbItem className="min-w-0">
               <Link
-                className="hover:text-foreground transition-colors"
+                className="hover:text-foreground truncate transition-colors"
                 href={`/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}`}
               >
                 {lesson.chapter.title}

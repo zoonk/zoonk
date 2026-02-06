@@ -39,7 +39,7 @@ export async function ChapterHeader({
       <MediaCardContent>
         <MediaCardBreadcrumb>
           <Link
-            className="hover:text-foreground transition-colors"
+            className="hover:text-foreground truncate transition-colors"
             href={`/b/${brandSlug}/c/${courseSlug}`}
           >
             {chapter.course.title}
