@@ -49,7 +49,6 @@ function getPhaseSteps(kind: ActivityKind): Record<PhaseName, ActivityStepName[]
     return {
       ...shared,
       finishing: [
-        "setActivityAsRunning",
         "generateExplanationContent",
         "generateMechanicsContent",
         "generateQuizContent",
@@ -60,7 +59,7 @@ function getPhaseSteps(kind: ActivityKind): Record<PhaseName, ActivityStepName[]
         "setActivityAsCompleted",
       ],
       processingDependencies: [],
-      writingContent: ["generateBackgroundContent"],
+      writingContent: ["setActivityAsRunning", "generateBackgroundContent"],
     };
   }
 
@@ -68,7 +67,6 @@ function getPhaseSteps(kind: ActivityKind): Record<PhaseName, ActivityStepName[]
     return {
       ...shared,
       finishing: [
-        "setActivityAsRunning",
         "generateMechanicsContent",
         "generateQuizContent",
         "setBackgroundAsCompleted",
@@ -77,7 +75,7 @@ function getPhaseSteps(kind: ActivityKind): Record<PhaseName, ActivityStepName[]
         "setQuizAsCompleted",
         "setActivityAsCompleted",
       ],
-      processingDependencies: ["generateBackgroundContent"],
+      processingDependencies: ["setActivityAsRunning", "generateBackgroundContent"],
       writingContent: ["generateExplanationContent"],
     };
   }
@@ -86,7 +84,6 @@ function getPhaseSteps(kind: ActivityKind): Record<PhaseName, ActivityStepName[]
     return {
       ...shared,
       finishing: [
-        "setActivityAsRunning",
         "generateQuizContent",
         "setBackgroundAsCompleted",
         "setExplanationAsCompleted",
@@ -94,7 +91,11 @@ function getPhaseSteps(kind: ActivityKind): Record<PhaseName, ActivityStepName[]
         "setQuizAsCompleted",
         "setActivityAsCompleted",
       ],
-      processingDependencies: ["generateBackgroundContent", "generateExplanationContent"],
+      processingDependencies: [
+        "setActivityAsRunning",
+        "generateBackgroundContent",
+        "generateExplanationContent",
+      ],
       writingContent: ["generateMechanicsContent"],
     };
   }
@@ -103,7 +104,6 @@ function getPhaseSteps(kind: ActivityKind): Record<PhaseName, ActivityStepName[]
   return {
     ...shared,
     finishing: [
-      "setActivityAsRunning",
       "generateMechanicsContent",
       "setBackgroundAsCompleted",
       "setExplanationAsCompleted",
@@ -111,7 +111,11 @@ function getPhaseSteps(kind: ActivityKind): Record<PhaseName, ActivityStepName[]
       "setQuizAsCompleted",
       "setActivityAsCompleted",
     ],
-    processingDependencies: ["generateBackgroundContent", "generateExplanationContent"],
+    processingDependencies: [
+      "setActivityAsRunning",
+      "generateBackgroundContent",
+      "generateExplanationContent",
+    ],
     writingContent: ["generateQuizContent"],
   };
 }

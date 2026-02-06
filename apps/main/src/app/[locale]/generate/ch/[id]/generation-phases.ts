@@ -38,7 +38,6 @@ const PHASE_STEPS: Record<PhaseName, ChapterWorkflowStepName[]> = {
     "updateLessonKind",
   ],
   finishing: [
-    "setActivityAsRunning",
     "setBackgroundAsCompleted",
     "setExplanationAsCompleted",
     "setMechanicsAsCompleted",
@@ -60,6 +59,7 @@ const PHASE_STEPS: Record<PhaseName, ChapterWorkflowStepName[]> = {
     "getLessonActivities",
   ],
   writingContent: [
+    "setActivityAsRunning",
     "generateBackgroundContent",
     "generateExplanationContent",
     "generateMechanicsContent",
