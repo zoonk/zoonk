@@ -39,7 +39,10 @@ function GenerationTimelineTitle({ children }: { children: ReactNode }) {
 
 function GenerationTimelineProgress({ label, value }: { label: string; value: number }) {
   return (
-    <Progress className="**:data-[slot=progress-track]:h-2" value={value}>
+    <Progress
+      className="**:data-[slot=progress-indicator]:duration-700 **:data-[slot=progress-indicator]:ease-out **:data-[slot=progress-track]:h-2"
+      value={value}
+    >
       <ProgressLabel className="sr-only">{label}</ProgressLabel>
       <ProgressValue />
     </Progress>
