@@ -2,41 +2,36 @@
 
 import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 function HorizontalScroll({ className, children, ...props }: React.ComponentProps<"div">) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
 
-  const checkScroll = useCallback(() => {
-    const el = scrollRef.current;
-    if (!el) {
-      return;
-    }
-
-    setCanScrollLeft(el.scrollLeft > 1);
-    setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 1);
-  }, []);
-
   useEffect(() => {
     const el = scrollRef.current;
+
     if (!el) {
       return;
     }
+
+    const checkScroll = () => {
+      setCanScrollLeft(el.scrollLeft > 1);
+      setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 1);
+    };
 
     checkScroll();
 
     const observer = new ResizeObserver(checkScroll);
     observer.observe(el);
-
     el.addEventListener("scroll", checkScroll, { passive: true });
 
     return () => {
       observer.disconnect();
       el.removeEventListener("scroll", checkScroll);
     };
-  }, [checkScroll]);
+  }, []);
 
   function scroll(direction: "left" | "right") {
     scrollRef.current?.scrollBy({
@@ -45,27 +40,21 @@ function HorizontalScroll({ className, children, ...props }: React.ComponentProp
     });
   }
 
-  const showOverflow = canScrollLeft || canScrollRight;
-
   return (
     <div className={cn("relative", className)} data-slot="horizontal-scroll" {...props}>
       <div
         className={cn(
           "overflow-x-auto [-webkit-overflow-scrolling:touch] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
-          showOverflow &&
-            canScrollLeft &&
+          canScrollLeft &&
             canScrollRight &&
             "mask-[linear-gradient(to_right,transparent,black_64px,black_calc(100%-64px),transparent)]",
-          showOverflow &&
-            canScrollLeft &&
+          canScrollLeft &&
             !canScrollRight &&
             "mask-[linear-gradient(to_right,transparent,black_64px)]",
-          showOverflow &&
-            !canScrollLeft &&
+          !canScrollLeft &&
             canScrollRight &&
             "mask-[linear-gradient(to_right,black_calc(100%-64px),transparent)]",
         )}
-        onScroll={checkScroll}
         ref={scrollRef}
       >
         {children}
