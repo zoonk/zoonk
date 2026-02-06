@@ -28,6 +28,10 @@ export function getPhaseOrder(kind: ActivityKind): PhaseName[] {
     return ["gettingStarted", "writingContent", "preparingVisuals", "creatingImages", "finishing"];
   }
 
+  if (kind === "story") {
+    return ["gettingStarted", "processingDependencies", "writingContent", "finishing"];
+  }
+
   return [
     "gettingStarted",
     "processingDependencies",
@@ -53,11 +57,13 @@ function getPhaseSteps(kind: ActivityKind): Record<PhaseName, ActivityStepName[]
         "generateExplanationContent",
         "generateMechanicsContent",
         "generateQuizContent",
+        "generateStoryContent",
         "setBackgroundAsCompleted",
         "setExamplesAsCompleted",
         "setExplanationAsCompleted",
         "setMechanicsAsCompleted",
         "setQuizAsCompleted",
+        "setStoryAsCompleted",
         "setActivityAsCompleted",
       ],
       processingDependencies: [],
@@ -72,11 +78,13 @@ function getPhaseSteps(kind: ActivityKind): Record<PhaseName, ActivityStepName[]
         "generateExamplesContent",
         "generateMechanicsContent",
         "generateQuizContent",
+        "generateStoryContent",
         "setBackgroundAsCompleted",
         "setExamplesAsCompleted",
         "setExplanationAsCompleted",
         "setMechanicsAsCompleted",
         "setQuizAsCompleted",
+        "setStoryAsCompleted",
         "setActivityAsCompleted",
       ],
       processingDependencies: ["setActivityAsRunning", "generateBackgroundContent"],
@@ -90,11 +98,13 @@ function getPhaseSteps(kind: ActivityKind): Record<PhaseName, ActivityStepName[]
       finishing: [
         "generateExamplesContent",
         "generateQuizContent",
+        "generateStoryContent",
         "setBackgroundAsCompleted",
         "setExamplesAsCompleted",
         "setExplanationAsCompleted",
         "setMechanicsAsCompleted",
         "setQuizAsCompleted",
+        "setStoryAsCompleted",
         "setActivityAsCompleted",
       ],
       processingDependencies: [
@@ -112,11 +122,13 @@ function getPhaseSteps(kind: ActivityKind): Record<PhaseName, ActivityStepName[]
       finishing: [
         "generateMechanicsContent",
         "generateQuizContent",
+        "generateStoryContent",
         "setBackgroundAsCompleted",
         "setExamplesAsCompleted",
         "setExplanationAsCompleted",
         "setMechanicsAsCompleted",
         "setQuizAsCompleted",
+        "setStoryAsCompleted",
         "setActivityAsCompleted",
       ],
       processingDependencies: [
@@ -128,17 +140,43 @@ function getPhaseSteps(kind: ActivityKind): Record<PhaseName, ActivityStepName[]
     };
   }
 
+  if (kind === "story") {
+    return {
+      ...shared,
+      finishing: [
+        "generateExamplesContent",
+        "generateMechanicsContent",
+        "generateQuizContent",
+        "setBackgroundAsCompleted",
+        "setExamplesAsCompleted",
+        "setExplanationAsCompleted",
+        "setMechanicsAsCompleted",
+        "setQuizAsCompleted",
+        "setStoryAsCompleted",
+        "setActivityAsCompleted",
+      ],
+      processingDependencies: [
+        "setActivityAsRunning",
+        "generateBackgroundContent",
+        "generateExplanationContent",
+      ],
+      writingContent: ["generateStoryContent"],
+    };
+  }
+
   // quiz (and fallback for other kinds)
   return {
     ...shared,
     finishing: [
       "generateExamplesContent",
       "generateMechanicsContent",
+      "generateStoryContent",
       "setBackgroundAsCompleted",
       "setExamplesAsCompleted",
       "setExplanationAsCompleted",
       "setMechanicsAsCompleted",
       "setQuizAsCompleted",
+      "setStoryAsCompleted",
       "setActivityAsCompleted",
     ],
     processingDependencies: [
@@ -162,6 +200,17 @@ function getPhaseWeights(kind: ActivityKind): Record<PhaseName, number> {
     };
   }
 
+  if (kind === "story") {
+    return {
+      creatingImages: 0,
+      finishing: 10,
+      gettingStarted: 5,
+      preparingVisuals: 0,
+      processingDependencies: 40,
+      writingContent: 45,
+    };
+  }
+
   return {
     creatingImages: 35,
     finishing: 9,
@@ -178,6 +227,7 @@ const SUPPORTED_KINDS: ActivityKind[] = [
   "explanation",
   "mechanics",
   "quiz",
+  "story",
 ];
 
 for (const kind of SUPPORTED_KINDS) {

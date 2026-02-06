@@ -29,6 +29,7 @@ export const ACTIVITY_STEPS = [
   "generateExamplesContent",
   "generateMechanicsContent",
   "generateQuizContent",
+  "generateStoryContent",
   "generateVisuals",
   "generateImages",
   "generateQuizImages",
@@ -38,6 +39,7 @@ export const ACTIVITY_STEPS = [
   "setExplanationAsCompleted",
   "setMechanicsAsCompleted",
   "setQuizAsCompleted",
+  "setStoryAsCompleted",
   "setActivityAsCompleted",
   "workflowError",
 ] as const;
@@ -49,7 +51,8 @@ export type ActivityCompletionStep =
   | "setExamplesAsCompleted"
   | "setExplanationAsCompleted"
   | "setMechanicsAsCompleted"
-  | "setQuizAsCompleted";
+  | "setQuizAsCompleted"
+  | "setStoryAsCompleted";
 
 const activityCompletionSteps: Partial<Record<string, ActivityCompletionStep>> = {
   background: "setBackgroundAsCompleted",
@@ -57,13 +60,14 @@ const activityCompletionSteps: Partial<Record<string, ActivityCompletionStep>> =
   explanation: "setExplanationAsCompleted",
   mechanics: "setMechanicsAsCompleted",
   quiz: "setQuizAsCompleted",
+  story: "setStoryAsCompleted",
 };
 
 /**
  * Get the completion step name for an activity kind.
  * Used by the UI to detect when generation is complete.
  *
- * For unsupported kinds (story, etc.), returns a fallback.
+ * For unsupported kinds, returns a fallback.
  * These kinds shouldn't reach the generation page, but if they do,
  * the UI won't redirect until the correct step is emitted.
  */
