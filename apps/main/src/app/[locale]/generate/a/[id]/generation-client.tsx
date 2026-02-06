@@ -10,6 +10,7 @@ import {
   GenerationTimelineSteps,
   GenerationTimelineTitle,
 } from "@/components/generation/generation-progress";
+import { useAnimatedProgress } from "@/lib/workflow/use-animated-progress";
 import { useCompletionRedirect } from "@/lib/workflow/use-completion-redirect";
 import { useWorkflowGeneration } from "@/lib/workflow/use-workflow-generation";
 import { type ActivityStepName, getActivityCompletionStep } from "@/workflows/config";
@@ -58,6 +59,11 @@ export function GenerationClient({
     activityKind,
   );
 
+  const displayProgress = useAnimatedProgress(
+    progress,
+    generation.status === "triggering" || generation.status === "streaming",
+  );
+
   useCompletionRedirect({
     status: generation.status,
     url: `/${locale}/b/${AI_ORG_SLUG}/c/${courseSlug}/ch/${chapterSlug}/l/${lessonSlug}/a/${position}`,
@@ -68,7 +74,7 @@ export function GenerationClient({
       <GenerationTimeline>
         <GenerationTimelineHeader>
           <GenerationTimelineTitle>{t("Creating your activity")}</GenerationTimelineTitle>
-          <GenerationTimelineProgress label={t("Progress")} value={progress} />
+          <GenerationTimelineProgress label={t("Progress")} value={displayProgress} />
         </GenerationTimelineHeader>
 
         <GenerationTimelineSteps>

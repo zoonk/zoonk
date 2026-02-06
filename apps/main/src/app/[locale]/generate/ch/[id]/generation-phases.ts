@@ -119,13 +119,13 @@ export const PHASE_ICONS: Record<PhaseName, LucideIcon> = {
 };
 
 const PHASE_WEIGHTS: Record<PhaseName, number> = {
-  creatingImages: 20,
-  figuringOutApproach: 3,
-  finishing: 1,
-  preparingLessons: 5,
-  preparingVisuals: 22,
-  settingUpActivities: 3,
-  writingContent: 20,
+  creatingImages: 24,
+  figuringOutApproach: 2,
+  finishing: 2,
+  preparingLessons: 24,
+  preparingVisuals: 11,
+  settingUpActivities: 4,
+  writingContent: 33,
 };
 
 export function getPhaseStatus(
