@@ -1,5 +1,6 @@
 import { getWorkflowMetadata } from "workflow";
 import { generateBackgroundContentStep } from "./steps/generate-background-content-step";
+import { generateExamplesContentStep } from "./steps/generate-examples-content-step";
 import { generateExplanationContentStep } from "./steps/generate-explanation-content-step";
 import { generateImagesStep } from "./steps/generate-images-step";
 import { generateMechanicsContentStep } from "./steps/generate-mechanics-content-step";
@@ -24,14 +25,15 @@ function settled<T>(result: PromiseSettledResult<T>, fallback: T): T {
  * Dependency graph:
  * background (no deps) → explanation → mechanics
  *                                   → quiz
+ *                                   → examples
  *
  * Wave structure:
  * 1. background content
  * 2. explanation content + background visuals (parallel)
- * 3. mechanics content + quiz content + explanation visuals + background images (parallel)
- * 4. mechanics visuals + quiz images + explanation images + save background (parallel)
- * 5. mechanics images + save explanation + save quiz (parallel)
- * 6. save mechanics
+ * 3. mechanics content + quiz content + examples content + explanation visuals + background images (parallel)
+ * 4. mechanics visuals + examples visuals + quiz images + explanation images + save background (parallel)
+ * 5. mechanics images + examples images + save explanation + save quiz (parallel)
+ * 6. save mechanics + save examples
  */
 export async function activityGenerationWorkflow(lessonId: number): Promise<void> {
   "use workflow";
@@ -53,37 +55,46 @@ export async function activityGenerationWorkflow(lessonId: number): Promise<void
     const expContent = settled(expContentResult, { steps: [] });
     const bgVisuals = settled(bgVisualsResult, { visuals: [] });
 
-    // Wave 3: mechanics + quiz content (need explanation) + explanation visuals + background images (parallel)
-    const [mechContentResult, quizContentResult, expVisualsResult] = await Promise.allSettled([
-      generateMechanicsContentStep(activities, expContent.steps, workflowRunId),
-      generateQuizContentStep(activities, expContent.steps, workflowRunId),
-      generateVisualsStep(activities, expContent.steps, "explanation"),
-      generateImagesStep(activities, bgVisuals.visuals, "background"),
-    ]);
+    // Wave 3: mechanics + quiz + examples content (need explanation) + explanation visuals + background images (parallel)
+    const [mechContentResult, quizContentResult, examplesContentResult, expVisualsResult] =
+      await Promise.allSettled([
+        generateMechanicsContentStep(activities, expContent.steps, workflowRunId),
+        generateQuizContentStep(activities, expContent.steps, workflowRunId),
+        generateExamplesContentStep(activities, expContent.steps, workflowRunId),
+        generateVisualsStep(activities, expContent.steps, "explanation"),
+        generateImagesStep(activities, bgVisuals.visuals, "background"),
+      ]);
 
     const mechContent = settled(mechContentResult, { steps: [] });
     const quizContent = settled(quizContentResult, { questions: [] });
+    const examplesContent = settled(examplesContentResult, { steps: [] });
     const expVisuals = settled(expVisualsResult, { visuals: [] });
 
-    // Wave 4: mechanics visuals + quiz images + explanation images + save background (parallel)
-    const [mechVisualsResult] = await Promise.allSettled([
+    // Wave 4: mechanics visuals + examples visuals + quiz images + explanation images + save background (parallel)
+    const [mechVisualsResult, examplesVisualsResult] = await Promise.allSettled([
       generateVisualsStep(activities, mechContent.steps, "mechanics"),
+      generateVisualsStep(activities, examplesContent.steps, "examples"),
       generateQuizImagesStep(activities, quizContent.questions),
       generateImagesStep(activities, expVisuals.visuals, "explanation"),
       saveActivityStep(activities, workflowRunId, "background"),
     ]);
 
     const mechVisuals = settled(mechVisualsResult, { visuals: [] });
+    const examplesVisuals = settled(examplesVisualsResult, { visuals: [] });
 
-    // Wave 5: mechanics images + save explanation + save quiz (parallel)
+    // Wave 5: mechanics images + examples images + save explanation + save quiz (parallel)
     await Promise.allSettled([
       generateImagesStep(activities, mechVisuals.visuals, "mechanics"),
+      generateImagesStep(activities, examplesVisuals.visuals, "examples"),
       saveActivityStep(activities, workflowRunId, "explanation"),
       saveActivityStep(activities, workflowRunId, "quiz"),
     ]);
 
-    // Wave 6: save mechanics
-    await saveActivityStep(activities, workflowRunId, "mechanics");
+    // Wave 6: save mechanics + save examples
+    await Promise.allSettled([
+      saveActivityStep(activities, workflowRunId, "mechanics"),
+      saveActivityStep(activities, workflowRunId, "examples"),
+    ]);
   } catch (error) {
     await handleWorkflowFailureStep(lessonId, workflowRunId);
     throw error;

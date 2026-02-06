@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { generateActivityBackground } from "@zoonk/ai/tasks/activities/core/background";
+import { generateActivityExamples } from "@zoonk/ai/tasks/activities/core/examples";
 import { generateActivityExplanation } from "@zoonk/ai/tasks/activities/core/explanation";
 import { generateActivityExplanationQuiz } from "@zoonk/ai/tasks/activities/core/explanation-quiz";
 import { generateActivityMechanics } from "@zoonk/ai/tasks/activities/core/mechanics";
@@ -25,6 +26,17 @@ vi.mock("workflow", () => ({
     }),
   }),
   workflowStep: vi.fn().mockImplementation((_name: string, fn: unknown) => fn),
+}));
+
+vi.mock("@zoonk/ai/tasks/activities/core/examples", () => ({
+  generateActivityExamples: vi.fn().mockResolvedValue({
+    data: {
+      steps: [
+        { text: "Examples step 1 text", title: "Examples Step 1" },
+        { text: "Examples step 2 text", title: "Examples Step 2" },
+      ],
+    },
+  }),
 }));
 
 vi.mock("@zoonk/ai/tasks/activities/core/background", () => ({
@@ -1132,6 +1144,261 @@ describe(activityGenerationWorkflow, () => {
     });
   });
 
+  describe("examples generation", () => {
+    test("doesn't call generateActivityExamples if lesson has no examples activity", async () => {
+      const testLesson = await lessonFixture({
+        chapterId: chapter.id,
+        organizationId,
+        title: `No Examples Lesson ${randomUUID()}`,
+      });
+
+      await Promise.all([
+        activityFixture({
+          generationStatus: "pending",
+          kind: "background",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Background ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Explanation ${randomUUID()}`,
+        }),
+      ]);
+
+      await activityGenerationWorkflow(testLesson.id);
+
+      expect(generateActivityExamples).not.toHaveBeenCalled();
+    });
+
+    test("doesn't call generateActivityExamples if explanation steps are empty", async () => {
+      vi.mocked(generateActivityExplanation).mockResolvedValueOnce({
+        data: { steps: [] },
+        systemPrompt: "test",
+        usage: {} as Awaited<ReturnType<typeof generateActivityExplanation>>["usage"],
+        userPrompt: "test",
+      });
+
+      const testLesson = await lessonFixture({
+        chapterId: chapter.id,
+        organizationId,
+        title: `Empty Exp For Examples Lesson ${randomUUID()}`,
+      });
+
+      await Promise.all([
+        activityFixture({
+          generationStatus: "pending",
+          kind: "background",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Background ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Explanation ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "examples",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Examples ${randomUUID()}`,
+        }),
+      ]);
+
+      await activityGenerationWorkflow(testLesson.id);
+
+      expect(generateActivityExamples).not.toHaveBeenCalled();
+    });
+
+    test("passes explanation steps to generateActivityExamples", async () => {
+      const testLesson = await lessonFixture({
+        chapterId: chapter.id,
+        organizationId,
+        title: `Examples Steps Lesson ${randomUUID()}`,
+      });
+
+      await Promise.all([
+        activityFixture({
+          generationStatus: "pending",
+          kind: "background",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Background ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Explanation ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "examples",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Examples ${randomUUID()}`,
+        }),
+      ]);
+
+      await activityGenerationWorkflow(testLesson.id);
+
+      expect(generateActivityExamples).toHaveBeenCalledWith(
+        expect.objectContaining({
+          explanationSteps: [
+            { text: "Explanation step 1 text", title: "Explanation Step 1" },
+            { text: "Explanation step 2 text", title: "Explanation Step 2" },
+          ],
+        }),
+      );
+    });
+
+    test("sets examples status to 'failed' when generateActivityExamples throws", async () => {
+      vi.mocked(generateActivityExamples).mockRejectedValueOnce(
+        new Error("Examples generation failed"),
+      );
+
+      const testLesson = await lessonFixture({
+        chapterId: chapter.id,
+        organizationId,
+        title: `Examples Error Lesson ${randomUUID()}`,
+      });
+
+      const activities = await Promise.all([
+        activityFixture({
+          generationStatus: "pending",
+          kind: "background",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Background ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Explanation ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "examples",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Error Examples ${randomUUID()}`,
+        }),
+      ]);
+
+      const examplesActivity = activities[2];
+
+      await activityGenerationWorkflow(testLesson.id);
+
+      const dbActivity = await prisma.activity.findUnique({
+        where: { id: examplesActivity?.id },
+      });
+      expect(dbActivity?.generationStatus).toBe("failed");
+    });
+
+    test("creates examples steps in database", async () => {
+      const testLesson = await lessonFixture({
+        chapterId: chapter.id,
+        organizationId,
+        title: `Examples DB Steps Lesson ${randomUUID()}`,
+      });
+
+      const activities = await Promise.all([
+        activityFixture({
+          generationStatus: "pending",
+          kind: "background",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Background ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Explanation ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "examples",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Examples ${randomUUID()}`,
+        }),
+      ]);
+
+      const examplesActivity = activities[2];
+
+      await activityGenerationWorkflow(testLesson.id);
+
+      const examplesSteps = await prisma.step.findMany({
+        orderBy: { position: "asc" },
+        where: { activityId: examplesActivity?.id },
+      });
+
+      expect(examplesSteps).toHaveLength(2);
+      expect(examplesSteps[0]?.content).toEqual({
+        text: "Examples step 1 text",
+        title: "Examples Step 1",
+      });
+      expect(examplesSteps[1]?.content).toEqual({
+        text: "Examples step 2 text",
+        title: "Examples Step 2",
+      });
+    });
+
+    test("sets examples status to 'completed' after full pipeline", async () => {
+      const testLesson = await lessonFixture({
+        chapterId: chapter.id,
+        organizationId,
+        title: `Examples Complete Lesson ${randomUUID()}`,
+      });
+
+      const activities = await Promise.all([
+        activityFixture({
+          generationStatus: "pending",
+          kind: "background",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Background ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Explanation ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "examples",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Examples ${randomUUID()}`,
+        }),
+      ]);
+
+      const examplesActivity = activities[2];
+
+      await activityGenerationWorkflow(testLesson.id);
+
+      const dbActivity = await prisma.activity.findUnique({
+        where: { id: examplesActivity?.id },
+      });
+      expect(dbActivity?.generationStatus).toBe("completed");
+      expect(dbActivity?.generationRunId).toBe("test-run-id");
+    });
+  });
+
   describe("resumption", () => {
     test("skips content generation if steps already exist in DB", async () => {
       const testLesson = await lessonFixture({
@@ -1511,7 +1778,7 @@ describe(activityGenerationWorkflow, () => {
       expect(generateActivityExplanation).not.toHaveBeenCalled();
     });
 
-    test("explanation returns empty → mechanics and quiz marked as failed", async () => {
+    test("explanation returns empty → mechanics, quiz, and examples marked as failed", async () => {
       vi.mocked(generateActivityExplanation).mockResolvedValueOnce({
         data: { steps: [] },
         systemPrompt: "test",
@@ -1525,7 +1792,7 @@ describe(activityGenerationWorkflow, () => {
         title: `Exp Empty Cascade Lesson ${randomUUID()}`,
       });
 
-      const [, expActivity, mechActivity, quizActivity] = await Promise.all([
+      const [, expActivity, mechActivity, quizActivity, examplesActivity] = await Promise.all([
         activityFixture({
           generationStatus: "pending",
           kind: "background",
@@ -1554,6 +1821,13 @@ describe(activityGenerationWorkflow, () => {
           organizationId,
           title: `Quiz ${randomUUID()}`,
         }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "examples",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Examples ${randomUUID()}`,
+        }),
       ]);
 
       await activityGenerationWorkflow(testLesson.id);
@@ -1567,8 +1841,12 @@ describe(activityGenerationWorkflow, () => {
       const dbQuiz = await prisma.activity.findUnique({ where: { id: quizActivity.id } });
       expect(dbQuiz?.generationStatus).toBe("failed");
 
+      const dbExamples = await prisma.activity.findUnique({ where: { id: examplesActivity.id } });
+      expect(dbExamples?.generationStatus).toBe("failed");
+
       expect(generateActivityMechanics).not.toHaveBeenCalled();
       expect(generateActivityExplanationQuiz).not.toHaveBeenCalled();
+      expect(generateActivityExamples).not.toHaveBeenCalled();
     });
   });
 
@@ -1610,75 +1888,90 @@ describe(activityGenerationWorkflow, () => {
   });
 
   describe("full pipeline", () => {
-    test("generates all 4 activities end to end", async () => {
+    test("generates all 5 activities end to end", async () => {
       const testLesson = await lessonFixture({
         chapterId: chapter.id,
         organizationId,
         title: `Full Pipeline Lesson ${randomUUID()}`,
       });
 
-      const [bgActivity, expActivity, mechActivity, quizActivity] = await Promise.all([
-        activityFixture({
-          generationStatus: "pending",
-          kind: "background",
-          lessonId: testLesson.id,
-          organizationId,
-          title: `Background ${randomUUID()}`,
-        }),
-        activityFixture({
-          generationStatus: "pending",
-          kind: "explanation",
-          lessonId: testLesson.id,
-          organizationId,
-          title: `Explanation ${randomUUID()}`,
-        }),
-        activityFixture({
-          generationStatus: "pending",
-          kind: "mechanics",
-          lessonId: testLesson.id,
-          organizationId,
-          title: `Mechanics ${randomUUID()}`,
-        }),
-        activityFixture({
-          generationStatus: "pending",
-          kind: "quiz",
-          lessonId: testLesson.id,
-          organizationId,
-          title: `Quiz ${randomUUID()}`,
-        }),
-      ]);
+      const [bgActivity, expActivity, mechActivity, quizActivity, examplesActivity] =
+        await Promise.all([
+          activityFixture({
+            generationStatus: "pending",
+            kind: "background",
+            lessonId: testLesson.id,
+            organizationId,
+            title: `Background ${randomUUID()}`,
+          }),
+          activityFixture({
+            generationStatus: "pending",
+            kind: "explanation",
+            lessonId: testLesson.id,
+            organizationId,
+            title: `Explanation ${randomUUID()}`,
+          }),
+          activityFixture({
+            generationStatus: "pending",
+            kind: "mechanics",
+            lessonId: testLesson.id,
+            organizationId,
+            title: `Mechanics ${randomUUID()}`,
+          }),
+          activityFixture({
+            generationStatus: "pending",
+            kind: "quiz",
+            lessonId: testLesson.id,
+            organizationId,
+            title: `Quiz ${randomUUID()}`,
+          }),
+          activityFixture({
+            generationStatus: "pending",
+            kind: "examples",
+            lessonId: testLesson.id,
+            organizationId,
+            title: `Examples ${randomUUID()}`,
+          }),
+        ]);
 
       await activityGenerationWorkflow(testLesson.id);
 
-      // All 4 activities should be completed
-      const [dbBg, dbExp, dbMech, dbQuiz] = await Promise.all([
+      // All 5 activities should be completed
+      const [dbBg, dbExp, dbMech, dbQuiz, dbExamples] = await Promise.all([
         prisma.activity.findUnique({ where: { id: bgActivity.id } }),
         prisma.activity.findUnique({ where: { id: expActivity.id } }),
         prisma.activity.findUnique({ where: { id: mechActivity.id } }),
         prisma.activity.findUnique({ where: { id: quizActivity.id } }),
+        prisma.activity.findUnique({ where: { id: examplesActivity.id } }),
       ]);
 
       expect(dbBg?.generationStatus).toBe("completed");
       expect(dbExp?.generationStatus).toBe("completed");
       expect(dbMech?.generationStatus).toBe("completed");
       expect(dbQuiz?.generationStatus).toBe("completed");
+      expect(dbExamples?.generationStatus).toBe("completed");
 
       // All AI tasks should have been called
       expect(generateActivityBackground).toHaveBeenCalledOnce();
       expect(generateActivityExplanation).toHaveBeenCalledOnce();
       expect(generateActivityMechanics).toHaveBeenCalledOnce();
       expect(generateActivityExplanationQuiz).toHaveBeenCalledOnce();
+      expect(generateActivityExamples).toHaveBeenCalledOnce();
 
       // Steps should be in DB
       const bgSteps = await prisma.step.findMany({ where: { activityId: bgActivity.id } });
       const expSteps = await prisma.step.findMany({ where: { activityId: expActivity.id } });
       const mechSteps = await prisma.step.findMany({ where: { activityId: mechActivity.id } });
       const quizSteps = await prisma.step.findMany({ where: { activityId: quizActivity.id } });
+      const examplesSteps = await prisma.step.findMany({
+        where: { activityId: examplesActivity.id },
+      });
 
       expect(bgSteps.length).toBeGreaterThan(0);
       expect(expSteps.length).toBeGreaterThan(0);
       expect(mechSteps.length).toBeGreaterThan(0);
       expect(quizSteps.length).toBeGreaterThan(0);
+      expect(examplesSteps.length).toBeGreaterThan(0);
     });
   });
 

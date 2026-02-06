@@ -54,6 +54,7 @@ Zoonk is a web app where users can learn anything using AI. This app uses AI to 
 - **Single source of truth always wins.** If two things must stay in sync (schemas + docs, types + validation), generate one from the other. Manual duplication WILL drift.
 - **Setup cost is amortized.** The effort to set up reusable code and automations always pays off. Don't optimize for today's sprint. Focus on long-term velocity.
 - **Principles override plans.** If a plan marks something as "optional" but skipping it would violate core principles (like single source of truth), do it anyway. Plans are guidance; principles are non-negotiable. When in doubt, ask: "Does skipping this create duplicate sources of truth or technical debt?"
+- **Plans must include tests.** Every implementation plan should identify which tests need to be added or updated — integration tests for data/workflow logic, e2e tests for UI flows, and unit tests for utilities. If a plan doesn't mention tests, it's incomplete. Tests must give us the confidence that everything is working as expected and help prevent regressions in the future.
 
 ## Design Style
 
