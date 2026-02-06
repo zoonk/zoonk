@@ -1816,8 +1816,8 @@ describe(activityGenerationWorkflow, () => {
 
       // Old steps should be replaced by new ones
       const steps = await prisma.step.findMany({
-        where: { activityId: backgroundActivity.id },
         orderBy: { position: "asc" },
+        where: { activityId: backgroundActivity.id },
       });
       expect(steps).toHaveLength(2);
       expect(steps[0]?.content).toEqual({
