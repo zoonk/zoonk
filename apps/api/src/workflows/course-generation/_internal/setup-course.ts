@@ -5,6 +5,19 @@ import { type CourseContext, type CreatedChapter, type ExistingCourseContent } f
 import { generateMissingContent } from "./generate-missing-content";
 import { persistGeneratedContent } from "./persist-generated-content";
 
+async function getChapters(
+  courseId: number,
+  createdChapters: CreatedChapter[],
+  hasChapters: boolean,
+): Promise<CreatedChapter[]> {
+  if (hasChapters) {
+    return getCourseChaptersStep(courseId);
+  }
+
+  await streamStatus({ status: "completed", step: "getExistingChapters" });
+  return createdChapters;
+}
+
 export async function setupCourse(
   course: CourseContext,
   courseSuggestionId: number,
@@ -14,14 +27,7 @@ export async function setupCourse(
 
   const createdChapters = await persistGeneratedContent(course, content, existing);
 
-  let chapters: CreatedChapter[];
-
-  if (existing.hasChapters) {
-    chapters = await getCourseChaptersStep(course.courseId);
-  } else {
-    await streamStatus({ status: "completed", step: "getExistingChapters" });
-    chapters = createdChapters;
-  }
+  const chapters = await getChapters(course.courseId, createdChapters, existing.hasChapters);
 
   await completeCourseSetupStep({
     courseId: course.courseId,

@@ -9,21 +9,25 @@ import { setLessonAsRunningStep } from "./steps/set-lesson-as-running-step";
 import { updateLessonKindStep } from "./steps/update-lesson-kind-step";
 import { streamStatus } from "./stream-status";
 
+async function getCustomActivities(
+  context: Awaited<ReturnType<typeof getLessonStep>>,
+  lessonKind: string,
+): Promise<Awaited<ReturnType<typeof generateCustomActivitiesStep>>> {
+  if (lessonKind === "custom") {
+    return generateCustomActivitiesStep(context);
+  }
+
+  await streamStatus({ status: "completed", step: "generateCustomActivities" });
+  return [];
+}
+
 async function generateActivities(
   context: Awaited<ReturnType<typeof getLessonStep>>,
   lessonId: number,
 ) {
   const lessonKind = await determineLessonKindStep(context);
   await updateLessonKindStep({ kind: lessonKind, lessonId });
-
-  let customActivities: Awaited<ReturnType<typeof generateCustomActivitiesStep>> = [];
-
-  if (lessonKind === "custom") {
-    customActivities = await generateCustomActivitiesStep(context);
-  } else {
-    await streamStatus({ status: "completed", step: "generateCustomActivities" });
-  }
-
+  const customActivities = await getCustomActivities(context, lessonKind);
   await addActivitiesStep({ context, customActivities, lessonKind });
 }
 
