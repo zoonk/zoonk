@@ -4,6 +4,8 @@ import {
   getPhaseStatus as getStatus,
 } from "@/lib/generation-phases";
 import {
+  ACTIVITY_STEPS,
+  type ActivityStepName,
   CHAPTER_STEPS,
   COURSE_STEPS,
   type CourseWorkflowStepName,
@@ -31,16 +33,20 @@ export type PhaseName =
   | "generatingLessons"
   | "generatingActivities";
 
+const activityPhaseSteps: ActivityStepName[] = ACTIVITY_STEPS.filter(
+  (step) => step !== "workflowError",
+);
+
 const PHASE_STEPS: Record<PhaseName, CourseWorkflowStepName[]> = {
   checkingExisting: ["checkExistingCourse"],
-  generatingActivities: [...LESSON_STEPS],
+  generatingActivities: activityPhaseSteps,
   generatingDetails: [
     "generateDescription",
     "generateImage",
     "generateAlternativeTitles",
     "generateCategories",
   ],
-  generatingLessons: [...CHAPTER_STEPS],
+  generatingLessons: [...CHAPTER_STEPS, ...LESSON_STEPS],
   loadingInfo: ["getCourseSuggestion"],
   planningChapters: [
     "getExistingChapters",
@@ -55,11 +61,31 @@ const PHASE_STEPS: Record<PhaseName, CourseWorkflowStepName[]> = {
 // Runtime check: ensure all course steps are assigned to a phase.
 // This runs at module load time and will throw during build if any step is missing.
 const allPhaseSteps = new Set(Object.values(PHASE_STEPS).flat());
-const missingSteps = COURSE_STEPS.filter((step) => !allPhaseSteps.has(step));
+const missingCourseSteps = COURSE_STEPS.filter((step) => !allPhaseSteps.has(step));
 
-if (missingSteps.length > 0) {
+if (missingCourseSteps.length > 0) {
   throw new Error(
-    `Missing course steps in PHASE_STEPS: ${missingSteps.join(", ")}. ` +
+    `Missing course steps in PHASE_STEPS: ${missingCourseSteps.join(", ")}. ` +
+      "Add them to the appropriate phase in generation-phases.ts",
+  );
+}
+
+const missingLessonSteps = LESSON_STEPS.filter((step) => !allPhaseSteps.has(step));
+
+if (missingLessonSteps.length > 0) {
+  throw new Error(
+    `Missing lesson steps in PHASE_STEPS: ${missingLessonSteps.join(", ")}. ` +
+      "Add them to the appropriate phase in generation-phases.ts",
+  );
+}
+
+const missingActivitySteps = ACTIVITY_STEPS.filter(
+  (step) => step !== "workflowError" && !allPhaseSteps.has(step),
+);
+
+if (missingActivitySteps.length > 0) {
+  throw new Error(
+    `Missing activity steps in PHASE_STEPS: ${missingActivitySteps.join(", ")}. ` +
       "Add them to the appropriate phase in generation-phases.ts",
   );
 }
@@ -88,11 +114,11 @@ export const PHASE_ICONS: Record<PhaseName, LucideIcon> = {
 
 const PHASE_WEIGHTS: Record<PhaseName, number> = {
   checkingExisting: 1,
-  generatingActivities: 19,
-  generatingDetails: 19,
-  generatingLessons: 19,
+  generatingActivities: 30,
+  generatingDetails: 15,
+  generatingLessons: 15,
   loadingInfo: 1,
-  planningChapters: 38,
+  planningChapters: 35,
   savingMetadata: 2,
   settingUp: 1,
 };

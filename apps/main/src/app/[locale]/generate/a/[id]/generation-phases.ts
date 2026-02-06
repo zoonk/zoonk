@@ -31,7 +31,7 @@ function getPhaseSteps(activityKind: ActivityKind): Record<PhaseName, ActivitySt
   const completionStep = getActivityCompletionStep(activityKind);
 
   return {
-    completing: [completionStep],
+    completing: [completionStep, "setActivityAsCompleted"],
     generatingContent: [
       "generateBackgroundContent",
       "generateExplanationContent",
@@ -45,7 +45,7 @@ function getPhaseSteps(activityKind: ActivityKind): Record<PhaseName, ActivitySt
 
 // Verify all ACTIVITY_STEPS are covered (using all completion steps for validation)
 const validationPhaseSteps: Record<PhaseName, ActivityStepName[]> = {
-  completing: ALL_COMPLETION_STEPS,
+  completing: [...ALL_COMPLETION_STEPS, "setActivityAsCompleted"],
   generatingContent: [
     "generateBackgroundContent",
     "generateExplanationContent",

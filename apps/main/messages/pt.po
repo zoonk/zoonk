@@ -993,7 +993,6 @@ msgid "Generating content"
 msgstr "Gerando conteúdo"
 
 #: src/app/[locale]/generate/a/[id]/use-generation-phases.ts
-#: src/app/[locale]/generate/ch/[id]/use-generation-phases.ts
 #: src/app/[locale]/generate/l/[id]/use-generation-phases.ts
 msgctxt "V4F+/7"
 msgid "Finishing up"
@@ -1005,11 +1004,6 @@ msgid "Generate Chapter"
 msgstr "Gerar capítulo"
 
 #: src/app/[locale]/generate/ch/[id]/generation-client.tsx
-msgctxt "TFEFX2"
-msgid "Lessons generated"
-msgstr "Aulas geradas"
-
-#: src/app/[locale]/generate/ch/[id]/generation-client.tsx
 msgctxt "ViO6Dt"
 msgid "Creating your lessons"
 msgstr "Criando suas aulas"
@@ -1018,6 +1012,11 @@ msgstr "Criando suas aulas"
 msgctxt "X7COCl"
 msgid "Redirecting to your chapter..."
 msgstr "Redirecionando para o seu capítulo..."
+
+#: src/app/[locale]/generate/ch/[id]/generation-client.tsx
+msgctxt "Zzxe/0"
+msgid "Chapter generated"
+msgstr "Capítulo gerado"
 
 #: src/app/[locale]/generate/ch/[id]/use-generation-phases.ts
 #: src/app/[locale]/generate/cs/[id]/use-generation-phases.ts
@@ -1031,6 +1030,11 @@ msgstr "Gerando aulas"
 msgctxt "fY0l+a"
 msgid "Generating activities"
 msgstr "Gerando atividades"
+
+#: src/app/[locale]/generate/ch/[id]/use-generation-phases.ts
+msgctxt "NcACsR"
+msgid "Setting up activities"
+msgstr "Configurando atividades"
 
 #: src/app/[locale]/generate/ch/[id]/use-generation-phases.ts
 msgctxt "Z2/Dlq"

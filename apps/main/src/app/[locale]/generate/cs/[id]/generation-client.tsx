@@ -12,7 +12,10 @@ import {
 } from "@/components/generation/generation-progress";
 import { useCompletionRedirect } from "@/lib/workflow/use-completion-redirect";
 import { useWorkflowGeneration } from "@/lib/workflow/use-workflow-generation";
-import { type CourseWorkflowStepName, LESSON_COMPLETION_STEP } from "@/workflows/config";
+import {
+  ACTIVITY_GENERATION_COMPLETION_STEP,
+  type CourseWorkflowStepName,
+} from "@/workflows/config";
 import { type GenerationStatus } from "@zoonk/db";
 import { AI_ORG_SLUG, API_URL } from "@zoonk/utils/constants";
 import { useExtracted } from "next-intl";
@@ -34,7 +37,7 @@ export function GenerationClient({
   const t = useExtracted();
 
   const generation = useWorkflowGeneration<CourseWorkflowStepName>({
-    completionStep: LESSON_COMPLETION_STEP,
+    completionStep: ACTIVITY_GENERATION_COMPLETION_STEP,
     initialRunId: generationRunId,
     initialStatus: generationStatus === "running" ? "streaming" : "idle",
     statusUrl: `${API_URL}/v1/workflows/course-generation/status`,

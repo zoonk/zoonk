@@ -34,6 +34,7 @@ const ACTIVITY_STEPS = [
   "setExplanationAsCompleted",
   "setMechanicsAsCompleted",
   "setQuizAsCompleted",
+  "setActivityAsCompleted",
   "workflowError",
 ] as const;
 
@@ -58,7 +59,7 @@ const COURSE_STEPS = [
 ] as const;
 
 // Chapter workflow includes lesson steps since we generate the first lesson
-export type ChapterWorkflowStepName = ChapterStepName | LessonStepName;
+export type ChapterWorkflowStepName = ChapterStepName | LessonStepName | ActivityStepName;
 
 // We also generate the first chapter as part of the course workflow
 // So the course generation is only complete after chapter and lesson workflow is done

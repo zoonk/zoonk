@@ -21,12 +21,9 @@ export async function saveActivityStep(
   "use step";
 
   const activity = activities.find((a) => a.kind === activityKind);
-  if (!activity) {
-    return;
-  }
-
   const stepName = kindToStepName[activityKind];
-  if (!stepName) {
+
+  if (!activity || !stepName) {
     return;
   }
 
@@ -35,14 +32,15 @@ export async function saveActivityStep(
     where: { id: activity.id },
   });
 
-  if (current?.generationStatus === "completed") {
-    return;
-  }
-  if (current?.generationStatus === "failed") {
+  const isCompleted = current?.generationStatus === "completed";
+  const isFailed = current?.generationStatus === "failed";
+
+  if (isCompleted || isFailed) {
     return;
   }
 
   await streamStatus({ status: "started", step: stepName });
+  await streamStatus({ status: "started", step: "setActivityAsCompleted" });
 
   const { error } = await safeAsync(() =>
     prisma.activity.update({
@@ -53,9 +51,12 @@ export async function saveActivityStep(
 
   if (error) {
     await streamStatus({ status: "error", step: stepName });
+    await streamStatus({ status: "error", step: "setActivityAsCompleted" });
     return;
   }
 
   await revalidateMainApp([cacheTagActivity({ activityId: BigInt(activity.id) })]);
+
   await streamStatus({ status: "completed", step: stepName });
+  await streamStatus({ status: "completed", step: "setActivityAsCompleted" });
 }

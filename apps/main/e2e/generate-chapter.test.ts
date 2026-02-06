@@ -241,13 +241,15 @@ test.describe("Generate Chapter Page - With Subscription", () => {
         { status: "completed", step: "setChapterAsCompleted" },
         { status: "started", step: "setLessonAsCompleted" },
         { status: "completed", step: "setLessonAsCompleted" },
+        { status: "started", step: "setActivityAsCompleted" },
+        { status: "completed", step: "setActivityAsCompleted" },
       ],
     });
 
     await userWithoutProgress.goto(`/generate/ch/${chapter.id}`);
 
     // Should show completion message
-    await expect(userWithoutProgress.getByText(/lessons generated/i)).toBeVisible({
+    await expect(userWithoutProgress.getByText(/chapter generated/i)).toBeVisible({
       timeout: 10_000,
     });
 
