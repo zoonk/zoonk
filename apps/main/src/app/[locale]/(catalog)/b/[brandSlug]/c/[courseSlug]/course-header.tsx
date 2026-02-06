@@ -39,31 +39,31 @@ export async function CourseHeader({
 
   return (
     <MediaCard>
-      <MediaCardTrigger>
-        {course.imageUrl ? (
-          <MediaCardImage>
-            <Image
-              alt={course.title}
-              className="size-full object-cover"
-              fill
-              sizes="(max-width: 640px) 80px, 96px"
-              src={course.imageUrl}
-            />
-          </MediaCardImage>
-        ) : (
-          <MediaCardIcon aria-label={course.title} role="img">
-            <NotebookPenIcon aria-hidden="true" className="text-muted-foreground/80 size-8" />
-          </MediaCardIcon>
-        )}
+      {course.imageUrl ? (
+        <MediaCardImage>
+          <Image
+            alt={course.title}
+            className="size-full object-cover"
+            fill
+            sizes="(max-width: 640px) 80px, 96px"
+            src={course.imageUrl}
+          />
+        </MediaCardImage>
+      ) : (
+        <MediaCardIcon aria-label={course.title} role="img">
+          <NotebookPenIcon aria-hidden="true" className="text-muted-foreground/80 size-8" />
+        </MediaCardIcon>
+      )}
 
-        <MediaCardContent>
+      <MediaCardContent>
+        <MediaCardTrigger>
           <MediaCardHeader>
             <MediaCardTitle>{course.title}</MediaCardTitle>
             <MediaCardIndicator />
           </MediaCardHeader>
           <MediaCardDescription>{course.description}</MediaCardDescription>
-        </MediaCardContent>
-      </MediaCardTrigger>
+        </MediaCardTrigger>
+      </MediaCardContent>
 
       <MediaCardPopover>
         <AIWarning brandSlug={brandSlug} />

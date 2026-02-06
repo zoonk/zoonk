@@ -1,8 +1,9 @@
 import { AIWarning } from "@/components/catalog/ai-warning";
 import { type ChapterWithDetails } from "@/data/chapters/get-chapter";
-import { ClientLink } from "@/i18n/client-link";
+import { Link } from "@/i18n/navigation";
 import {
   MediaCard,
+  MediaCardBreadcrumb,
   MediaCardContent,
   MediaCardDescription,
   MediaCardHeader,
@@ -10,9 +11,6 @@ import {
   MediaCardIconText,
   MediaCardIndicator,
   MediaCardPopover,
-  MediaCardPopoverMeta,
-  MediaCardPopoverSource,
-  MediaCardPopoverSourceLink,
   MediaCardPopoverText,
   MediaCardTitle,
   MediaCardTrigger,
@@ -34,37 +32,32 @@ export async function ChapterHeader({
 
   return (
     <MediaCard>
-      <MediaCardTrigger>
-        <MediaCardIcon
-          aria-label={t("Chapter {position}", { position: chapterPosition })}
-          role="img"
-        >
-          <MediaCardIconText>{chapterPosition}</MediaCardIconText>
-        </MediaCardIcon>
+      <MediaCardIcon aria-label={t("Chapter {position}", { position: chapterPosition })} role="img">
+        <MediaCardIconText>{chapterPosition}</MediaCardIconText>
+      </MediaCardIcon>
 
-        <MediaCardContent>
+      <MediaCardContent>
+        <MediaCardBreadcrumb>
+          <Link
+            className="hover:text-foreground truncate transition-colors"
+            href={`/b/${brandSlug}/c/${courseSlug}`}
+          >
+            {chapter.course.title}
+          </Link>
+        </MediaCardBreadcrumb>
+
+        <MediaCardTrigger>
           <MediaCardHeader>
             <MediaCardTitle>{chapter.title}</MediaCardTitle>
             <MediaCardIndicator />
           </MediaCardHeader>
           <MediaCardDescription>{chapter.description}</MediaCardDescription>
-        </MediaCardContent>
-      </MediaCardTrigger>
+        </MediaCardTrigger>
+      </MediaCardContent>
 
       <MediaCardPopover>
         <AIWarning brandSlug={brandSlug} />
-
         <MediaCardPopoverText>{chapter.description}</MediaCardPopoverText>
-
-        <MediaCardPopoverMeta>
-          <MediaCardPopoverSource>
-            <MediaCardPopoverSourceLink
-              render={<ClientLink href={`/b/${brandSlug}/c/${courseSlug}`} />}
-            >
-              {chapter.course.title}
-            </MediaCardPopoverSourceLink>
-          </MediaCardPopoverSource>
-        </MediaCardPopoverMeta>
       </MediaCardPopover>
     </MediaCard>
   );
