@@ -227,11 +227,11 @@ test.describe("Generate Activity Page - With Subscription", () => {
     await userWithoutProgress.goto(`/generate/a/${activity.id}`);
 
     // Should show completion message
-    await expect(userWithoutProgress.getByText(/activity generated/i)).toBeVisible({
+    await expect(userWithoutProgress.getByText(/your activity is ready/i)).toBeVisible({
       timeout: 10_000,
     });
 
-    await expect(userWithoutProgress.getByText(/redirecting to your activity/i)).toBeVisible();
+    await expect(userWithoutProgress.getByText(/taking you to your activity/i)).toBeVisible();
 
     // Update activity status so redirect works
     await prisma.activity.update({
@@ -261,7 +261,7 @@ test.describe("Generate Activity Page - With Subscription", () => {
 
     await userWithoutProgress.goto(`/generate/a/${activity.id}`);
 
-    await expect(userWithoutProgress.getByText(/generation failed/i)).toBeVisible({
+    await expect(userWithoutProgress.getByText(/something went wrong/i)).toBeVisible({
       timeout: 10_000,
     });
   });
@@ -286,7 +286,7 @@ test.describe("Generate Activity Page - With Subscription", () => {
 
     // Should show error because completion step was never received
     await expect(
-      userWithoutProgress.getByRole("alert").filter({ hasText: /generation failed/i }),
+      userWithoutProgress.getByRole("alert").filter({ hasText: /something went wrong/i }),
     ).toBeVisible({ timeout: 10_000 });
   });
 
@@ -300,7 +300,7 @@ test.describe("Generate Activity Page - With Subscription", () => {
 
     await userWithoutProgress.goto(`/generate/a/${activity.id}`);
 
-    await expect(userWithoutProgress.getByText(/generation failed/i)).toBeVisible({
+    await expect(userWithoutProgress.getByText(/something went wrong/i)).toBeVisible({
       timeout: 10_000,
     });
   });
@@ -318,7 +318,7 @@ test.describe("Generate Activity Page - With Subscription", () => {
 
     await userWithoutProgress.goto(`/generate/a/${activity.id}`);
 
-    await expect(userWithoutProgress.getByText(/generation failed/i)).toBeVisible({
+    await expect(userWithoutProgress.getByText(/something went wrong/i)).toBeVisible({
       timeout: 10_000,
     });
 

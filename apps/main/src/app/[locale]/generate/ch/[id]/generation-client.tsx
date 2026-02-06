@@ -62,7 +62,7 @@ export function GenerationClient({
       <GenerationTimeline>
         <GenerationTimelineHeader>
           <GenerationTimelineTitle>{t("Creating your lessons")}</GenerationTimelineTitle>
-          <GenerationTimelineProgress label={t("Generation progress")} value={progress} />
+          <GenerationTimelineProgress label={t("Progress")} value={progress} />
         </GenerationTimelineHeader>
 
         <GenerationTimelineSteps>
@@ -83,8 +83,8 @@ export function GenerationClient({
 
   if (generation.status === "completed") {
     return (
-      <GenerationProgressCompleted subtitle={t("Redirecting to your chapter...")}>
-        {t("Chapter generated")}
+      <GenerationProgressCompleted subtitle={t("Taking you to your chapter...")}>
+        {t("Your lessons are ready")}
       </GenerationProgressCompleted>
     );
   }
@@ -96,7 +96,7 @@ export function GenerationClient({
         onRetry={generation.retry}
         retryLabel={t("Try again")}
       >
-        {t("Generation failed")}
+        {t("Something went wrong")}
       </GenerationProgressError>
     );
   }

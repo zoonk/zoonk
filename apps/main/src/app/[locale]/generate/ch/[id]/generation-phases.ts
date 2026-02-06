@@ -5,34 +5,66 @@ import {
 } from "@/lib/generation-phases";
 import {
   ACTIVITY_STEPS,
-  type ActivityStepName,
   CHAPTER_STEPS,
   type ChapterWorkflowStepName,
   LESSON_STEPS,
 } from "@/workflows/config";
 import {
   BookOpenIcon,
-  GraduationCapIcon,
+  CheckCircleIcon,
+  CompassIcon,
+  ImageIcon,
   LayoutListIcon,
   type LucideIcon,
-  SparklesIcon,
+  PaletteIcon,
+  PenLineIcon,
 } from "lucide-react";
 
 export type PhaseName =
-  | "loadingInfo"
-  | "generatingLessons"
+  | "preparingLessons"
+  | "figuringOutApproach"
   | "settingUpActivities"
-  | "generatingActivities";
-
-const activityPhaseSteps: ActivityStepName[] = ACTIVITY_STEPS.filter(
-  (step) => step !== "workflowError",
-);
+  | "writingContent"
+  | "preparingVisuals"
+  | "creatingImages"
+  | "finishing";
 
 const PHASE_STEPS: Record<PhaseName, ChapterWorkflowStepName[]> = {
-  generatingActivities: activityPhaseSteps,
-  generatingLessons: ["generateLessons", "addLessons", "setChapterAsCompleted"],
-  loadingInfo: ["getChapter", "setChapterAsRunning"],
-  settingUpActivities: [...LESSON_STEPS],
+  creatingImages: ["generateImages", "generateQuizImages"],
+  figuringOutApproach: [
+    "getLesson",
+    "setLessonAsRunning",
+    "determineLessonKind",
+    "updateLessonKind",
+  ],
+  finishing: [
+    "setActivityAsRunning",
+    "setBackgroundAsCompleted",
+    "setExplanationAsCompleted",
+    "setMechanicsAsCompleted",
+    "setQuizAsCompleted",
+    "setActivityAsCompleted",
+  ],
+  preparingLessons: [
+    "getChapter",
+    "setChapterAsRunning",
+    "generateLessons",
+    "addLessons",
+    "setChapterAsCompleted",
+  ],
+  preparingVisuals: ["generateVisuals"],
+  settingUpActivities: [
+    "generateCustomActivities",
+    "addActivities",
+    "setLessonAsCompleted",
+    "getLessonActivities",
+  ],
+  writingContent: [
+    "generateBackgroundContent",
+    "generateExplanationContent",
+    "generateMechanicsContent",
+    "generateQuizContent",
+  ],
 };
 
 // Runtime check: ensure all steps are assigned to a phase.
@@ -67,24 +99,33 @@ if (missingActivitySteps.length > 0) {
 }
 
 export const PHASE_ORDER: PhaseName[] = [
-  "loadingInfo",
-  "generatingLessons",
+  "preparingLessons",
+  "figuringOutApproach",
   "settingUpActivities",
-  "generatingActivities",
+  "writingContent",
+  "preparingVisuals",
+  "creatingImages",
+  "finishing",
 ];
 
 export const PHASE_ICONS: Record<PhaseName, LucideIcon> = {
-  generatingActivities: SparklesIcon,
-  generatingLessons: GraduationCapIcon,
-  loadingInfo: BookOpenIcon,
+  creatingImages: ImageIcon,
+  figuringOutApproach: CompassIcon,
+  finishing: CheckCircleIcon,
+  preparingLessons: BookOpenIcon,
+  preparingVisuals: PaletteIcon,
   settingUpActivities: LayoutListIcon,
+  writingContent: PenLineIcon,
 };
 
 const PHASE_WEIGHTS: Record<PhaseName, number> = {
-  generatingActivities: 75,
-  generatingLessons: 8,
-  loadingInfo: 2,
-  settingUpActivities: 15,
+  creatingImages: 20,
+  figuringOutApproach: 3,
+  finishing: 1,
+  preparingLessons: 5,
+  preparingVisuals: 22,
+  settingUpActivities: 3,
+  writingContent: 20,
 };
 
 export function getPhaseStatus(

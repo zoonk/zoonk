@@ -2,6 +2,7 @@ import { type ExistingCourse } from "../steps/check-existing-course-step";
 import { getAIOrganizationStep } from "../steps/get-ai-organization-step";
 import { initializeCourseStep } from "../steps/initialize-course-step";
 import { setCourseAsRunningStep } from "../steps/set-course-as-running-step";
+import { streamStatus } from "../stream-status";
 import {
   type CourseContext,
   type CourseSuggestionData,
@@ -29,9 +30,11 @@ export async function getOrCreateCourse(
 ): Promise<CourseSetupResult> {
   if (!existingCourse) {
     const course = await initializeCourseStep({ suggestion, workflowRunId });
+    await streamStatus({ status: "completed", step: "setCourseAsRunning" });
     return { course, existing: DEFAULT_EXISTING_CONTENT };
   }
 
+  await streamStatus({ status: "completed", step: "initializeCourse" });
   const aiOrg = await getAIOrganizationStep();
 
   const course: CourseContext = {

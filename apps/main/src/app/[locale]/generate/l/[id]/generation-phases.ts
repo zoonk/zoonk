@@ -12,13 +12,17 @@ import {
   SparklesIcon,
 } from "lucide-react";
 
-export type PhaseName = "loadingInfo" | "determiningKind" | "generatingActivities" | "completing";
+export type PhaseName =
+  | "gettingStarted"
+  | "figuringOutApproach"
+  | "settingUpActivities"
+  | "finishing";
 
 const PHASE_STEPS: Record<PhaseName, LessonStepName[]> = {
-  completing: ["setLessonAsCompleted"],
-  determiningKind: ["determineLessonKind", "updateLessonKind"],
-  generatingActivities: ["generateCustomActivities", "addActivities"],
-  loadingInfo: ["getLesson", "setLessonAsRunning"],
+  figuringOutApproach: ["determineLessonKind", "updateLessonKind"],
+  finishing: ["setLessonAsCompleted"],
+  gettingStarted: ["getLesson", "setLessonAsRunning"],
+  settingUpActivities: ["generateCustomActivities", "addActivities"],
 };
 
 const allPhaseSteps = new Set(Object.values(PHASE_STEPS).flat());
@@ -32,24 +36,24 @@ if (missingLessonSteps.length > 0) {
 }
 
 export const PHASE_ORDER: PhaseName[] = [
-  "loadingInfo",
-  "determiningKind",
-  "generatingActivities",
-  "completing",
+  "gettingStarted",
+  "figuringOutApproach",
+  "settingUpActivities",
+  "finishing",
 ];
 
 export const PHASE_ICONS: Record<PhaseName, LucideIcon> = {
-  completing: CheckCircleIcon,
-  determiningKind: SearchIcon,
-  generatingActivities: SparklesIcon,
-  loadingInfo: BookOpenIcon,
+  figuringOutApproach: SearchIcon,
+  finishing: CheckCircleIcon,
+  gettingStarted: BookOpenIcon,
+  settingUpActivities: SparklesIcon,
 };
 
 const PHASE_WEIGHTS: Record<PhaseName, number> = {
-  completing: 5,
-  determiningKind: 25,
-  generatingActivities: 65,
-  loadingInfo: 5,
+  figuringOutApproach: 25,
+  finishing: 5,
+  gettingStarted: 5,
+  settingUpActivities: 65,
 };
 
 export function getPhaseStatus(

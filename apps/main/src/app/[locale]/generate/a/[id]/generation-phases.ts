@@ -3,91 +3,165 @@ import {
   calculateWeightedProgress as calculateProgress,
   getPhaseStatus as getStatus,
 } from "@/lib/generation-phases";
-import {
-  ACTIVITY_STEPS,
-  type ActivityCompletionStep,
-  type ActivityStepName,
-  getActivityCompletionStep,
-} from "@/workflows/config";
+import { ACTIVITY_STEPS, type ActivityStepName } from "@/workflows/config";
 import { type ActivityKind } from "@zoonk/db";
 import {
   BookOpenIcon,
   CheckCircleIcon,
   ImageIcon,
+  LayersIcon,
   type LucideIcon,
-  SparklesIcon,
+  PaletteIcon,
+  PenLineIcon,
 } from "lucide-react";
 
-export type PhaseName = "loadingInfo" | "generatingContent" | "generatingVisuals" | "completing";
+export type PhaseName =
+  | "gettingStarted"
+  | "processingDependencies"
+  | "writingContent"
+  | "preparingVisuals"
+  | "creatingImages"
+  | "finishing";
 
-const ALL_COMPLETION_STEPS: ActivityCompletionStep[] = [
-  "setBackgroundAsCompleted",
-  "setExplanationAsCompleted",
-  "setMechanicsAsCompleted",
-  "setQuizAsCompleted",
-];
+export function getPhaseOrder(kind: ActivityKind): PhaseName[] {
+  if (kind === "background") {
+    return ["gettingStarted", "writingContent", "preparingVisuals", "creatingImages", "finishing"];
+  }
 
-function getPhaseSteps(activityKind: ActivityKind): Record<PhaseName, ActivityStepName[]> {
-  const completionStep = getActivityCompletionStep(activityKind);
+  return [
+    "gettingStarted",
+    "processingDependencies",
+    "writingContent",
+    "preparingVisuals",
+    "creatingImages",
+    "finishing",
+  ];
+}
 
+function getPhaseSteps(kind: ActivityKind): Record<PhaseName, ActivityStepName[]> {
+  const shared = {
+    creatingImages: ["generateImages", "generateQuizImages"] as ActivityStepName[],
+    gettingStarted: ["getLessonActivities"] as ActivityStepName[],
+    preparingVisuals: ["generateVisuals"] as ActivityStepName[],
+  };
+
+  if (kind === "background") {
+    return {
+      ...shared,
+      finishing: [
+        "setActivityAsRunning",
+        "generateExplanationContent",
+        "generateMechanicsContent",
+        "generateQuizContent",
+        "setBackgroundAsCompleted",
+        "setExplanationAsCompleted",
+        "setMechanicsAsCompleted",
+        "setQuizAsCompleted",
+        "setActivityAsCompleted",
+      ],
+      processingDependencies: [],
+      writingContent: ["generateBackgroundContent"],
+    };
+  }
+
+  if (kind === "explanation") {
+    return {
+      ...shared,
+      finishing: [
+        "setActivityAsRunning",
+        "generateMechanicsContent",
+        "generateQuizContent",
+        "setBackgroundAsCompleted",
+        "setExplanationAsCompleted",
+        "setMechanicsAsCompleted",
+        "setQuizAsCompleted",
+        "setActivityAsCompleted",
+      ],
+      processingDependencies: ["generateBackgroundContent"],
+      writingContent: ["generateExplanationContent"],
+    };
+  }
+
+  if (kind === "mechanics") {
+    return {
+      ...shared,
+      finishing: [
+        "setActivityAsRunning",
+        "generateQuizContent",
+        "setBackgroundAsCompleted",
+        "setExplanationAsCompleted",
+        "setMechanicsAsCompleted",
+        "setQuizAsCompleted",
+        "setActivityAsCompleted",
+      ],
+      processingDependencies: ["generateBackgroundContent", "generateExplanationContent"],
+      writingContent: ["generateMechanicsContent"],
+    };
+  }
+
+  // quiz (and fallback for other kinds)
   return {
-    completing: [completionStep, "setActivityAsCompleted"],
-    generatingContent: [
-      "generateBackgroundContent",
-      "generateExplanationContent",
+    ...shared,
+    finishing: [
+      "setActivityAsRunning",
       "generateMechanicsContent",
-      "generateQuizContent",
+      "setBackgroundAsCompleted",
+      "setExplanationAsCompleted",
+      "setMechanicsAsCompleted",
+      "setQuizAsCompleted",
+      "setActivityAsCompleted",
     ],
-    generatingVisuals: ["generateVisuals", "generateImages", "generateQuizImages"],
-    loadingInfo: ["getLessonActivities", "setActivityAsRunning"],
+    processingDependencies: ["generateBackgroundContent", "generateExplanationContent"],
+    writingContent: ["generateQuizContent"],
   };
 }
 
-// Verify all ACTIVITY_STEPS are covered (using all completion steps for validation)
-const validationPhaseSteps: Record<PhaseName, ActivityStepName[]> = {
-  completing: [...ALL_COMPLETION_STEPS, "setActivityAsCompleted"],
-  generatingContent: [
-    "generateBackgroundContent",
-    "generateExplanationContent",
-    "generateMechanicsContent",
-    "generateQuizContent",
-  ],
-  generatingVisuals: ["generateVisuals", "generateImages", "generateQuizImages"],
-  loadingInfo: ["getLessonActivities", "setActivityAsRunning"],
-};
+function getPhaseWeights(kind: ActivityKind): Record<PhaseName, number> {
+  if (kind === "background") {
+    return {
+      creatingImages: 43,
+      finishing: 7,
+      gettingStarted: 3,
+      preparingVisuals: 22,
+      processingDependencies: 0,
+      writingContent: 25,
+    };
+  }
 
-const allPhaseSteps = new Set(Object.values(validationPhaseSteps).flat());
-// workflowError is a meta-step for error handling, not a UI phase step
-const missingActivitySteps = ACTIVITY_STEPS.filter(
-  (step) => step !== "workflowError" && !allPhaseSteps.has(step),
-);
-
-if (missingActivitySteps.length > 0) {
-  throw new Error(
-    `Missing activity steps in PHASE_STEPS: ${missingActivitySteps.join(", ")}. ` +
-      "Add them to the appropriate phase in generation-phases.ts",
-  );
+  return {
+    creatingImages: 35,
+    finishing: 9,
+    gettingStarted: 3,
+    preparingVisuals: 18,
+    processingDependencies: 15,
+    writingContent: 20,
+  };
 }
 
-export const PHASE_ORDER: PhaseName[] = [
-  "loadingInfo",
-  "generatingContent",
-  "generatingVisuals",
-  "completing",
-];
+const SUPPORTED_KINDS: ActivityKind[] = ["background", "explanation", "mechanics", "quiz"];
+
+for (const kind of SUPPORTED_KINDS) {
+  const phaseSteps = getPhaseSteps(kind);
+  const allPhaseSteps = new Set(Object.values(phaseSteps).flat());
+  const missingSteps = ACTIVITY_STEPS.filter(
+    (step) => step !== "workflowError" && !allPhaseSteps.has(step),
+  );
+
+  if (missingSteps.length > 0) {
+    throw new Error(
+      `Missing activity steps for kind "${kind}": ${missingSteps.join(", ")}. ` +
+        "Add them to the appropriate phase in generation-phases.ts",
+    );
+  }
+}
 
 export const PHASE_ICONS: Record<PhaseName, LucideIcon> = {
-  completing: CheckCircleIcon,
-  generatingContent: SparklesIcon,
-  generatingVisuals: ImageIcon,
-  loadingInfo: BookOpenIcon,
-};
-
-const PHASE_WEIGHTS: Record<PhaseName, number> = {
-  completing: 5,
-  generatingContent: 30,
-  generatingVisuals: 60,
-  loadingInfo: 5,
+  creatingImages: ImageIcon,
+  finishing: CheckCircleIcon,
+  gettingStarted: BookOpenIcon,
+  preparingVisuals: PaletteIcon,
+  processingDependencies: LayersIcon,
+  writingContent: PenLineIcon,
 };
 
 export function getPhaseStatus(
@@ -106,9 +180,7 @@ export function calculateWeightedProgress(
   activityKind: ActivityKind,
 ): number {
   const phaseSteps = getPhaseSteps(activityKind);
-  return calculateProgress(completedSteps, currentStep, {
-    phaseOrder: PHASE_ORDER,
-    phaseSteps,
-    phaseWeights: PHASE_WEIGHTS,
-  });
+  const phaseOrder = getPhaseOrder(activityKind);
+  const phaseWeights = getPhaseWeights(activityKind);
+  return calculateProgress(completedSteps, currentStep, { phaseOrder, phaseSteps, phaseWeights });
 }
