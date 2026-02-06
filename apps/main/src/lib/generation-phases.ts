@@ -35,21 +35,27 @@ export function calculateWeightedProgress<TPhase extends string, TStep extends s
   currentStep: TStep | null,
   config: PhaseConfig<TPhase, TStep>,
 ): number {
-  let totalProgress = 0;
+  const totalWeight = config.phaseOrder.reduce((sum, phase) => sum + config.phaseWeights[phase], 0);
+
+  if (totalWeight === 0) {
+    return 0;
+  }
+
+  let weightedSum = 0;
 
   for (const phase of config.phaseOrder) {
     const status = getPhaseStatus(phase, completedSteps, currentStep, config.phaseSteps);
     const weight = config.phaseWeights[phase];
 
     if (status === "completed") {
-      totalProgress += weight;
+      weightedSum += weight;
     } else if (status === "active") {
       const steps = config.phaseSteps[phase];
       const completedCount = steps.filter((step) => completedSteps.includes(step)).length;
       const partialProgress = (completedCount / steps.length) * weight;
-      totalProgress += partialProgress;
+      weightedSum += partialProgress;
     }
   }
 
-  return Math.round(totalProgress);
+  return Math.round((weightedSum / totalWeight) * 100);
 }

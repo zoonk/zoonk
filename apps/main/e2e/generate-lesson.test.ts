@@ -240,11 +240,11 @@ test.describe("Generate Lesson Page - With Subscription", () => {
     await userWithoutProgress.goto(`/generate/l/${lesson.id}`);
 
     // Should show completion message
-    await expect(userWithoutProgress.getByText(/activities generated/i)).toBeVisible({
+    await expect(userWithoutProgress.getByText(/your lesson is ready/i)).toBeVisible({
       timeout: 10_000,
     });
 
-    await expect(userWithoutProgress.getByText(/redirecting to your lesson/i)).toBeVisible();
+    await expect(userWithoutProgress.getByText(/taking you to your lesson/i)).toBeVisible();
 
     // Update lesson status - the redirect will happen in ~1.5s via location.href
     await prisma.lesson.update({
@@ -269,7 +269,7 @@ test.describe("Generate Lesson Page - With Subscription", () => {
 
     await userWithoutProgress.goto(`/generate/l/${lesson.id}`);
 
-    await expect(userWithoutProgress.getByText(/generation failed/i)).toBeVisible({
+    await expect(userWithoutProgress.getByText(/something went wrong/i)).toBeVisible({
       timeout: 10_000,
     });
   });

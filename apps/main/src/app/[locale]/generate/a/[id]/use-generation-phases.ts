@@ -6,9 +6,9 @@ import { type ActivityKind } from "@zoonk/db";
 import { useExtracted } from "next-intl";
 import {
   PHASE_ICONS,
-  PHASE_ORDER,
   type PhaseName,
   calculateWeightedProgress,
+  getPhaseOrder,
   getPhaseStatus,
 } from "./generation-phases";
 
@@ -27,13 +27,17 @@ export function useGenerationPhases(
   const t = useExtracted();
 
   const labels: Record<PhaseName, string> = {
-    completing: t("Finishing up"),
-    generatingContent: t("Generating content"),
-    generatingVisuals: t("Generating visuals"),
-    loadingInfo: t("Loading activity information"),
+    creatingImages: t("Creating images"),
+    finishing: t("Almost done"),
+    gettingStarted: t("Getting started"),
+    preparingVisuals: t("Preparing illustrations"),
+    processingDependencies: t("Processing earlier activities"),
+    writingContent: t("Writing the content"),
   };
 
-  const phases: PhaseInfo[] = PHASE_ORDER.map((phase) => ({
+  const phaseOrder = getPhaseOrder(activityKind);
+
+  const phases: PhaseInfo[] = phaseOrder.map((phase) => ({
     icon: PHASE_ICONS[phase],
     label: labels[phase],
     name: phase,

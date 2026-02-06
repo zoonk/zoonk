@@ -249,11 +249,11 @@ test.describe("Generate Chapter Page - With Subscription", () => {
     await userWithoutProgress.goto(`/generate/ch/${chapter.id}`);
 
     // Should show completion message
-    await expect(userWithoutProgress.getByText(/chapter generated/i)).toBeVisible({
+    await expect(userWithoutProgress.getByText(/your lessons are ready/i)).toBeVisible({
       timeout: 10_000,
     });
 
-    await expect(userWithoutProgress.getByText(/redirecting to your chapter/i)).toBeVisible();
+    await expect(userWithoutProgress.getByText(/taking you to your chapter/i)).toBeVisible();
 
     // Update chapter status - the redirect will happen in ~1.5s via location.href
     await prisma.chapter.update({
@@ -278,7 +278,7 @@ test.describe("Generate Chapter Page - With Subscription", () => {
 
     await userWithoutProgress.goto(`/generate/ch/${chapterId}`);
 
-    await expect(userWithoutProgress.getByText(/generation failed/i)).toBeVisible({
+    await expect(userWithoutProgress.getByText(/something went wrong/i)).toBeVisible({
       timeout: 10_000,
     });
   });

@@ -2,8 +2,29 @@ import { addAlternativeTitlesStep } from "../steps/add-alternative-titles-step";
 import { addCategoriesStep } from "../steps/add-categories-step";
 import { addChaptersStep } from "../steps/add-chapters-step";
 import { updateCourseStep } from "../steps/update-course-step";
+import { streamStatus } from "../stream-status";
 import { type CourseContext, type CreatedChapter, type ExistingCourseContent } from "../types";
 import { type GeneratedContent } from "./generate-missing-content";
+
+async function emitSkippedPersistSteps(
+  needsCourseUpdate: boolean,
+  needsAlternativeTitles: boolean,
+  needsCategories: boolean,
+  needsChapters: boolean,
+) {
+  if (!needsCourseUpdate) {
+    await streamStatus({ status: "completed", step: "updateCourse" });
+  }
+  if (!needsAlternativeTitles) {
+    await streamStatus({ status: "completed", step: "addAlternativeTitles" });
+  }
+  if (!needsCategories) {
+    await streamStatus({ status: "completed", step: "addCategories" });
+  }
+  if (!needsChapters) {
+    await streamStatus({ status: "completed", step: "addChapters" });
+  }
+}
 
 export async function persistGeneratedContent(
   course: CourseContext,
@@ -18,6 +39,13 @@ export async function persistGeneratedContent(
   const needsCategories = !existing.hasCategories && content.categories.length > 0;
 
   const needsChapters = !existing.hasChapters && content.chapters.length > 0;
+
+  await emitSkippedPersistSteps(
+    needsCourseUpdate,
+    needsAlternativeTitles,
+    needsCategories,
+    needsChapters,
+  );
 
   const metadataOps = [
     needsCourseUpdate &&

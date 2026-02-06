@@ -25,14 +25,19 @@ export function useGenerationPhases(
   const t = useExtracted();
 
   const labels: Record<PhaseName, string> = {
-    checkingExisting: t("Checking for existing course"),
-    generatingActivities: t("Generating activities"),
-    generatingDetails: t("Generating course details"),
-    generatingLessons: t("Generating lessons"),
-    loadingInfo: t("Loading course information"),
-    planningChapters: t("Planning chapters"),
-    savingMetadata: t("Saving course metadata"),
-    settingUp: t("Setting up course"),
+    categorizingCourse: t("Categorizing your course"),
+    creatingCoverImage: t("Creating the cover image"),
+    creatingImages: t("Creating images"),
+    figuringOutApproach: t("Figuring out the best approach"),
+    finishing: t("Almost done"),
+    gettingReady: t("Getting things ready"),
+    outliningChapters: t("Outlining chapters"),
+    planningLessons: t("Planning your first lesson"),
+    preparingVisuals: t("Preparing illustrations"),
+    savingCourseInfo: t("Saving your course"),
+    settingUpActivities: t("Setting up activities"),
+    writingContent: t("Writing the lesson content"),
+    writingDescription: t("Writing your course description"),
   };
 
   const phases: PhaseInfo[] = PHASE_ORDER.map((phase) => ({

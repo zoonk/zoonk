@@ -183,10 +183,10 @@ test.describe("Generate Course Page", () => {
       });
 
       // Should show completion message
-      await expect(page.getByText(/course generated/i)).toBeVisible({
+      await expect(page.getByText(/your course is ready/i)).toBeVisible({
         timeout: 10_000,
       });
-      await expect(page.getByText(/redirecting to your course/i)).toBeVisible();
+      await expect(page.getByText(/taking you to your course/i)).toBeVisible();
 
       // Should redirect to course page
       await page.waitForURL(/\/b\/ai\/c\//, { timeout: 10_000 });
@@ -203,7 +203,7 @@ test.describe("Generate Course Page", () => {
       });
 
       // Should show error message when a step errors
-      await expect(page.getByText(/generation failed/i)).toBeVisible({
+      await expect(page.getByText(/something went wrong/i)).toBeVisible({
         timeout: 10_000,
       });
     });

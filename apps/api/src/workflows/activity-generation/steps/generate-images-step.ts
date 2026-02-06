@@ -27,13 +27,10 @@ async function generateAndSaveImages(
     }),
   );
 
-  let hadFailure = false;
-
   const updateResults = await Promise.allSettled(
     imageSteps.map((step, idx) => {
       const result = results[idx];
       if (result?.status !== "fulfilled" || result.value.error) {
-        hadFailure = true;
         return Promise.resolve();
       }
       return prisma.step.update({
@@ -43,9 +40,9 @@ async function generateAndSaveImages(
     }),
   );
 
-  if (updateResults.some((result) => result.status === "rejected")) {
-    hadFailure = true;
-  }
+  const hadFailure =
+    results.some((result) => result.status === "rejected" || result.value.error) ||
+    updateResults.some((result) => result.status === "rejected");
 
   return { hadFailure, results };
 }

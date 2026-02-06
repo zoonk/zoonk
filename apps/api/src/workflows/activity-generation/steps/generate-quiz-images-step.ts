@@ -44,22 +44,15 @@ async function generateOptionImages(
     options.map(({ prompt }) => generateStepImage({ orgSlug, prompt })),
   );
 
-  const updatedOptions = [...options];
-  let hadFailure = false;
-
-  options.forEach((_, index) => {
+  const updatedOptions = options.map((option, index) => {
     const result = results[index];
     if (result?.status === "fulfilled" && !result.value.error) {
-      const existing = updatedOptions[index];
-      updatedOptions[index] = {
-        ...existing,
-        prompt: existing?.prompt ?? "",
-        url: result.value.data,
-      };
-    } else {
-      hadFailure = true;
+      return { ...option, url: result.value.data };
     }
+    return option;
   });
+
+  const hadFailure = results.some((result) => result.status === "rejected" || result.value.error);
 
   return { hadFailure, updatedOptions };
 }
@@ -94,23 +87,18 @@ export async function generateQuizImagesStep(
   await streamStatus({ status: "started", step: "generateQuizImages" });
 
   const orgSlug = activity.lesson.chapter.course.organization.slug;
-  let hadFailure = false;
 
   const stepResults = await Promise.allSettled(
     dbSteps.map(async (step) => {
       const options = parseSelectImageOptions(step.content);
       if (!options) {
-        return;
+        return { imageFailed: false, updateFailed: false };
       }
 
       const { hadFailure: imageFailed, updatedOptions } = await generateOptionImages(
         options,
         orgSlug,
       );
-
-      if (imageFailed) {
-        hadFailure = true;
-      }
 
       const stepContent = toRecord(step.content);
       const { error } = await safeAsync(() =>
@@ -120,15 +108,16 @@ export async function generateQuizImagesStep(
         }),
       );
 
-      if (error) {
-        hadFailure = true;
-      }
+      return { imageFailed, updateFailed: Boolean(error) };
     }),
   );
 
-  if (stepResults.some((result) => result.status === "rejected")) {
-    hadFailure = true;
-  }
+  const hadFailure = stepResults.some(
+    (result) =>
+      result.status === "rejected" ||
+      (result.status === "fulfilled" && result.value?.imageFailed) ||
+      (result.status === "fulfilled" && result.value?.updateFailed),
+  );
 
   if (hadFailure) {
     await handleActivityFailureStep({ activityId: activity.id });

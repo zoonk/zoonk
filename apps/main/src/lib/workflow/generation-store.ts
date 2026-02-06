@@ -48,7 +48,7 @@ export function createGenerationStore<TStep extends string = string>(
         completedSteps: ctx.completedSteps.includes(event.step)
           ? ctx.completedSteps
           : [...ctx.completedSteps, event.step],
-        currentStep: null,
+        currentStep: ctx.currentStep === event.step ? null : ctx.currentStep,
       }),
 
       stepStarted: (ctx, event: { step: TStep }) => ({

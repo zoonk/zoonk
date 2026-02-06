@@ -25,10 +25,10 @@ export function useGenerationPhases(
   const t = useExtracted();
 
   const labels: Record<PhaseName, string> = {
-    completing: t("Finishing up"),
-    determiningKind: t("Determining lesson type"),
-    generatingActivities: t("Generating activities"),
-    loadingInfo: t("Loading lesson information"),
+    figuringOutApproach: t("Figuring out the best approach"),
+    finishing: t("Almost done"),
+    gettingStarted: t("Getting started"),
+    settingUpActivities: t("Setting up activities"),
   };
 
   const phases: PhaseInfo[] = PHASE_ORDER.map((phase) => ({

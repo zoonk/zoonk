@@ -7,12 +7,34 @@ import { handleLessonFailureStep } from "./steps/handle-failure-step";
 import { setLessonAsCompletedStep } from "./steps/set-lesson-as-completed-step";
 import { setLessonAsRunningStep } from "./steps/set-lesson-as-running-step";
 import { updateLessonKindStep } from "./steps/update-lesson-kind-step";
+import { streamStatus } from "./stream-status";
+
+async function getCustomActivities(
+  context: Awaited<ReturnType<typeof getLessonStep>>,
+  lessonKind: string,
+): Promise<Awaited<ReturnType<typeof generateCustomActivitiesStep>>> {
+  if (lessonKind === "custom") {
+    return generateCustomActivitiesStep(context);
+  }
+
+  await streamStatus({ status: "completed", step: "generateCustomActivities" });
+  return [];
+}
+
+async function generateActivities(
+  context: Awaited<ReturnType<typeof getLessonStep>>,
+  lessonId: number,
+) {
+  const lessonKind = await determineLessonKindStep(context);
+  await updateLessonKindStep({ kind: lessonKind, lessonId });
+  const customActivities = await getCustomActivities(context, lessonKind);
+  await addActivitiesStep({ context, customActivities, lessonKind });
+}
 
 export async function lessonGenerationWorkflow(lessonId: number): Promise<void> {
   "use workflow";
 
   const { workflowRunId } = getWorkflowMetadata();
-
   const context = await getLessonStep(lessonId);
 
   if (context.generationStatus === "running") {
@@ -31,13 +53,7 @@ export async function lessonGenerationWorkflow(lessonId: number): Promise<void> 
   await setLessonAsRunningStep({ lessonId, workflowRunId });
 
   try {
-    const lessonKind = await determineLessonKindStep(context);
-    await updateLessonKindStep({ kind: lessonKind, lessonId });
-
-    const customActivities =
-      lessonKind === "custom" ? await generateCustomActivitiesStep(context) : [];
-
-    await addActivitiesStep({ context, customActivities, lessonKind });
+    await generateActivities(context, lessonId);
     await setLessonAsCompletedStep({ context, workflowRunId });
   } catch (error) {
     await handleLessonFailureStep({ lessonId });

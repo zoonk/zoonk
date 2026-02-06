@@ -367,40 +367,41 @@ checksums:
     Complete%20this%20activity%20to%20reinforce%20your%20learning%20and%20track%20your%20progress./singular: ae9411230fe031bbbd7471a8fde4b17d
     Generate%20content%20for%20this%20activity/singular: 0ac20ea56d4391004d976cd8f377a645
     Generate%20Activity/singular: e386c80be3da0ee0b54a940afc4de373
-    Generation%20progress/singular: 4940d589badd32bb89f93989945f68bb
+    Your%20activity%20is%20ready/singular: e7385c4096b843839bb9a96023f0eea9
     Try%20again/singular: 33dd8820e743e35a66e6977f69e9d3b5
-    Activity%20generated/singular: 6f57ab1f24f506ddf2b199971a831b75
+    Something%20went%20wrong/singular: a3cd2f01c073f1f5ff436d4b132d39cf
+    Taking%20you%20to%20your%20activity.../singular: c6714da27762cce70a0e2465878abaed
     Creating%20your%20activity/singular: cac8f88defaeee245484bd91660d32d6
-    Generation%20failed/singular: 70cc0b7e6093afa33e32e6ac474d1fc7
+    Progress/singular: dd0200d5849ebb7d64c15098ae91d229
     Something%20went%20wrong.%20Please%20try%20again./singular: c62a7718d9a1e9c4ffb707807550f836
-    Redirecting%20to%20your%20activity.../singular: bef7d60407cb6f6982c0b430f6ff49ac
-    Loading%20activity%20information/singular: 1c448814eac1af61d7966f2bdb906b39
-    Generating%20visuals/singular: 4dcb0c0c2707371b69af42a6e5afea98
-    Generating%20content/singular: 5d8fd5d4162bf21d523d4a80b5cccc24
-    Finishing%20up/singular: 5db7ffd9f1807c8e5936ddca2fe8d1b7
+    Creating%20images/singular: ab6fe5010daa5a4deb52eabed6ca071f
+    Getting%20started/singular: 8e5e7bd026b5bec46bbfdce02ab9e0b8
+    Almost%20done/singular: fa5f270ea4b185be8dd47cfb91b87810
+    Processing%20earlier%20activities/singular: 162ae4b3d730c56cf76023bb37004e59
+    Preparing%20illustrations/singular: ebb0d8d739dd029c1ac7327ab6adf8b7
+    Writing%20the%20content/singular: 8c98570945250d1750e3b95270cbecae
     Generate%20Chapter/singular: 12160bab066da65413de4b511e402446
+    Your%20lessons%20are%20ready/singular: fe8d9df59ba42f451b249fd750813cba
+    Taking%20you%20to%20your%20chapter.../singular: fc59b426c3d393ec40f534253309ee9f
     Creating%20your%20lessons/singular: 93571965dc04dcef0bf92f212b3b34d3
-    Redirecting%20to%20your%20chapter.../singular: 1187b3b828d92daa195cc8d103ecbcc4
-    Chapter%20generated/singular: 8aeed5b0a222dfd13585f52d56071966
-    Generating%20lessons/singular: c4cd98341fd568b3cc5ab0daff85f483
-    Generating%20activities/singular: ee132df58cd4c770e5ef3fd77c6187b8
     Setting%20up%20activities/singular: a644864fddf71801feef8c789333456a
-    Loading%20chapter%20information/singular: 7a310c88460ccc1d8eb14885361dcfa6
+    Figuring%20out%20the%20best%20approach/singular: 0cbd8e2d3c43eb874e25dd6b30fff474
+    Preparing%20lessons/singular: efa9d3dc1167beadeae4a660574c8696
+    Taking%20you%20to%20your%20course.../singular: f1522561681357abdaad3936d36fdfe7
+    Your%20course%20is%20ready/singular: b54659084218a9b9bcf7b5f1cfcf3fbf
     Creating%20your%20course/singular: 02c33db1106e7478e5cbd00fa5f20532
-    Redirecting%20to%20your%20course.../singular: 9f268e497368578b98d0125f5ac95902
-    Course%20generated/singular: fc6cbef2e4b3ac26d4125c8f67bbb99d
-    Loading%20course%20information/singular: f2873300c0715a6fc4b3e050d7176037
-    Setting%20up%20course/singular: 03144d8ba4e9c555d82e95014047a203
-    Generating%20course%20details/singular: 49c28d908a8cb876f14406452c59f05b
-    Saving%20course%20metadata/singular: 027b0161877e67f73fe1c6a6ea65b08e
-    Planning%20chapters/singular: 6b60ca8718a75e4e0f05ee74f042a7ae
-    Checking%20for%20existing%20course/singular: f58c4dbf1463586a47a2d031f1eb7642
+    Writing%20the%20lesson%20content/singular: 2b3243b19b65a83cfe355bef089b7ce8
+    Getting%20things%20ready/singular: eeb67bd061dfaf280e6971c00e7b7999
+    Planning%20your%20first%20lesson/singular: 7f427574ea313b46b889fdef3253d5c6
+    Saving%20your%20course/singular: 52dd36a207730a97e851bd6571fffd85
+    Creating%20the%20cover%20image/singular: f58c3380093e8204ad6ade3b6a0a2691
+    Writing%20your%20course%20description/singular: 0d9406e9cd2914a068892907337cae61
+    Categorizing%20your%20course/singular: a7ff108a5a4721c5550cec3cc67acede
+    Outlining%20chapters/singular: c18531fa3b5a68df4e28cab77650db8f
     Generate%20Lesson/singular: 741a967eb90694565df5e9b44991f58e
+    Your%20lesson%20is%20ready/singular: 3d745fd67b57e47ed10851f1e5404ccc
     Creating%20your%20activities/singular: 6651e663a48e18486f5f873e614cd512
-    Activities%20generated/singular: 7c425103a6496b0de828a631f6bed8b4
-    Redirecting%20to%20your%20lesson.../singular: 625a270c33c5da6f757bd6a95de1d80f
-    Loading%20lesson%20information/singular: afa5291c65d23ee739d273e859f8d261
-    Determining%20lesson%20type/singular: 8ba4c5600d99ae8a0ae05905265e1dfd
+    Taking%20you%20to%20your%20lesson.../singular: 7a47c8664a900646ef51c9f27e2886e0
     Read%20Zoonk's%20privacy%20policy%20to%20understand%20how%20we%20collect%2C%20use%2C%20and%20protect%20your%20personal%20information./singular: 044f3586abe7d9915820a6629cef08e4
     Privacy%20Policy/singular: 7459744a63ef8af4e517a09024bd7c08
     Read%20Zoonk's%20terms%20of%20use%20to%20understand%20the%20rules%20and%20conditions%20for%20using%20our%20platform%20and%20services/singular: 4b82898d60691839a1999e4a17199895
