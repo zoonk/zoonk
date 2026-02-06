@@ -69,4 +69,26 @@ describe(calculateWeightedProgress, () => {
     const progress = calculateWeightedProgress(["stepA", "stepB", "stepC"], null, testConfig);
     expect(progress).toBe(50);
   });
+
+  it("normalizes weights that do not sum to 100", () => {
+    const config: PhaseConfig<TestPhase, TestStep> = {
+      phaseOrder: ["phase1", "phase2", "phase3"],
+      phaseSteps: testPhaseSteps,
+      phaseWeights: { phase1: 10, phase2: 15, phase3: 25 },
+    };
+
+    const allSteps: TestStep[] = ["stepA", "stepB", "stepC", "stepD", "stepE"];
+    expect(calculateWeightedProgress(allSteps, null, config)).toBe(100);
+  });
+
+  it("returns correct partial progress with non-100 weights", () => {
+    const config: PhaseConfig<TestPhase, TestStep> = {
+      phaseOrder: ["phase1", "phase2", "phase3"],
+      phaseSteps: testPhaseSteps,
+      phaseWeights: { phase1: 10, phase2: 15, phase3: 25 },
+    };
+
+    // phase1 complete (10/50 = 20%) + phase2 complete (15/50 = 30%) = 50%
+    expect(calculateWeightedProgress(["stepA", "stepB", "stepC"], null, config)).toBe(50);
+  });
 });
