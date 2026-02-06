@@ -49,10 +49,12 @@ function getPhaseSteps(kind: ActivityKind): Record<PhaseName, ActivityStepName[]
     return {
       ...shared,
       finishing: [
+        "generateExamplesContent",
         "generateExplanationContent",
         "generateMechanicsContent",
         "generateQuizContent",
         "setBackgroundAsCompleted",
+        "setExamplesAsCompleted",
         "setExplanationAsCompleted",
         "setMechanicsAsCompleted",
         "setQuizAsCompleted",
@@ -67,9 +69,11 @@ function getPhaseSteps(kind: ActivityKind): Record<PhaseName, ActivityStepName[]
     return {
       ...shared,
       finishing: [
+        "generateExamplesContent",
         "generateMechanicsContent",
         "generateQuizContent",
         "setBackgroundAsCompleted",
+        "setExamplesAsCompleted",
         "setExplanationAsCompleted",
         "setMechanicsAsCompleted",
         "setQuizAsCompleted",
@@ -84,8 +88,10 @@ function getPhaseSteps(kind: ActivityKind): Record<PhaseName, ActivityStepName[]
     return {
       ...shared,
       finishing: [
+        "generateExamplesContent",
         "generateQuizContent",
         "setBackgroundAsCompleted",
+        "setExamplesAsCompleted",
         "setExplanationAsCompleted",
         "setMechanicsAsCompleted",
         "setQuizAsCompleted",
@@ -100,12 +106,36 @@ function getPhaseSteps(kind: ActivityKind): Record<PhaseName, ActivityStepName[]
     };
   }
 
+  if (kind === "examples") {
+    return {
+      ...shared,
+      finishing: [
+        "generateMechanicsContent",
+        "generateQuizContent",
+        "setBackgroundAsCompleted",
+        "setExamplesAsCompleted",
+        "setExplanationAsCompleted",
+        "setMechanicsAsCompleted",
+        "setQuizAsCompleted",
+        "setActivityAsCompleted",
+      ],
+      processingDependencies: [
+        "setActivityAsRunning",
+        "generateBackgroundContent",
+        "generateExplanationContent",
+      ],
+      writingContent: ["generateExamplesContent"],
+    };
+  }
+
   // quiz (and fallback for other kinds)
   return {
     ...shared,
     finishing: [
+      "generateExamplesContent",
       "generateMechanicsContent",
       "setBackgroundAsCompleted",
+      "setExamplesAsCompleted",
       "setExplanationAsCompleted",
       "setMechanicsAsCompleted",
       "setQuizAsCompleted",
@@ -142,7 +172,13 @@ function getPhaseWeights(kind: ActivityKind): Record<PhaseName, number> {
   };
 }
 
-const SUPPORTED_KINDS: ActivityKind[] = ["background", "explanation", "mechanics", "quiz"];
+const SUPPORTED_KINDS: ActivityKind[] = [
+  "background",
+  "examples",
+  "explanation",
+  "mechanics",
+  "quiz",
+];
 
 for (const kind of SUPPORTED_KINDS) {
   const phaseSteps = getPhaseSteps(kind);
