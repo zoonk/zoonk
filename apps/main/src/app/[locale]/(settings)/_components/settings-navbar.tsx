@@ -4,9 +4,10 @@ import { Link } from "@/i18n/navigation";
 import { getMenu } from "@/lib/menu";
 import { authClient } from "@zoonk/core/auth/client";
 import { buttonVariants } from "@zoonk/ui/components/button";
+import { HorizontalScroll, HorizontalScrollContent } from "@zoonk/ui/components/horizontal-scroll";
 import { LogOutIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { SettingsPills } from "./settings-pills";
+import { SettingsPillLinks } from "./settings-pills";
 
 const homeMenu = getMenu("home");
 
@@ -16,35 +17,35 @@ export function SettingsNavbar() {
   const isLoggedIn = Boolean(session);
 
   return (
-    <nav className="bg-background/95 supports-backdrop-filter:bg-background/60 sticky top-0 z-10 flex w-full items-center justify-between gap-2 px-4 pt-4 backdrop-blur">
-      <div className="flex min-w-0 items-center gap-2">
-        <Link
-          className={buttonVariants({
-            size: "icon",
-            variant: "outline",
-          })}
-          href={homeMenu.url}
-        >
-          <homeMenu.icon aria-hidden="true" />
-          <span className="sr-only">{t("Home page")}</span>
-        </Link>
+    <nav className="bg-background/95 supports-backdrop-filter:bg-background/60 sticky top-0 z-10 pt-4 backdrop-blur">
+      <HorizontalScroll>
+        <HorizontalScrollContent className="px-4">
+          <Link
+            className={buttonVariants({ size: "icon", variant: "outline" })}
+            href={homeMenu.url}
+          >
+            <homeMenu.icon aria-hidden="true" />
+            <span className="sr-only">{t("Home page")}</span>
+          </Link>
 
-        <SettingsPills />
-      </div>
+          <SettingsPillLinks />
 
-      {isLoggedIn && (
-        <Link
-          className={buttonVariants({
-            size: "icon",
-            variant: "secondary",
-          })}
-          href="/logout"
-          prefetch={false}
-        >
-          <LogOutIcon aria-hidden="true" />
-          <span className="sr-only">{t("Logout")}</span>
-        </Link>
-      )}
+          {isLoggedIn && (
+            <Link
+              className={buttonVariants({
+                className: "ml-auto",
+                size: "icon",
+                variant: "secondary",
+              })}
+              href="/logout"
+              prefetch={false}
+            >
+              <LogOutIcon aria-hidden="true" />
+              <span className="sr-only">{t("Logout")}</span>
+            </Link>
+          )}
+        </HorizontalScrollContent>
+      </HorizontalScroll>
     </nav>
   );
 }
