@@ -25,6 +25,7 @@ export const ACTIVITY_GENERATION_COMPLETION_STEP: ActivityStepName = "setActivit
 export const ACTIVITY_STEPS = [
   "getLessonActivities",
   "generateBackgroundContent",
+  "generateChallengeContent",
   "generateExplanationContent",
   "generateExamplesContent",
   "generateMechanicsContent",
@@ -35,6 +36,7 @@ export const ACTIVITY_STEPS = [
   "generateQuizImages",
   "setActivityAsRunning",
   "setBackgroundAsCompleted",
+  "setChallengeAsCompleted",
   "setExamplesAsCompleted",
   "setExplanationAsCompleted",
   "setMechanicsAsCompleted",
@@ -48,6 +50,7 @@ export type ActivityStepName = (typeof ACTIVITY_STEPS)[number];
 
 export type ActivityCompletionStep =
   | "setBackgroundAsCompleted"
+  | "setChallengeAsCompleted"
   | "setExamplesAsCompleted"
   | "setExplanationAsCompleted"
   | "setMechanicsAsCompleted"
@@ -56,6 +59,7 @@ export type ActivityCompletionStep =
 
 const activityCompletionSteps: Partial<Record<string, ActivityCompletionStep>> = {
   background: "setBackgroundAsCompleted",
+  challenge: "setChallengeAsCompleted",
   examples: "setExamplesAsCompleted",
   explanation: "setExplanationAsCompleted",
   mechanics: "setMechanicsAsCompleted",

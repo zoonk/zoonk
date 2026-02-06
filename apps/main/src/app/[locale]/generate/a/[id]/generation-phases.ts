@@ -28,7 +28,7 @@ export function getPhaseOrder(kind: ActivityKind): PhaseName[] {
     return ["gettingStarted", "writingContent", "preparingVisuals", "creatingImages", "finishing"];
   }
 
-  if (kind === "story") {
+  if (kind === "story" || kind === "challenge") {
     return ["gettingStarted", "processingDependencies", "writingContent", "finishing"];
   }
 
@@ -42,6 +42,42 @@ export function getPhaseOrder(kind: ActivityKind): PhaseName[] {
   ];
 }
 
+const ALL_CONTENT_STEPS: ActivityStepName[] = [
+  "generateBackgroundContent",
+  "generateChallengeContent",
+  "generateExamplesContent",
+  "generateExplanationContent",
+  "generateMechanicsContent",
+  "generateQuizContent",
+  "generateStoryContent",
+];
+
+const ALL_COMPLETION_STEPS: ActivityStepName[] = [
+  "setBackgroundAsCompleted",
+  "setChallengeAsCompleted",
+  "setExamplesAsCompleted",
+  "setExplanationAsCompleted",
+  "setMechanicsAsCompleted",
+  "setQuizAsCompleted",
+  "setStoryAsCompleted",
+  "setActivityAsCompleted",
+];
+
+/**
+ * Builds a finishing array that includes all content and completion steps
+ * except the ones assigned to other phases for this kind.
+ */
+function getFinishingSteps(exclude: ActivityStepName[]): ActivityStepName[] {
+  const excluded = new Set(exclude);
+  return [...ALL_CONTENT_STEPS.filter((step) => !excluded.has(step)), ...ALL_COMPLETION_STEPS];
+}
+
+const EXPLANATION_DEPS: ActivityStepName[] = [
+  "setActivityAsRunning",
+  "generateBackgroundContent",
+  "generateExplanationContent",
+];
+
 function getPhaseSteps(kind: ActivityKind): Record<PhaseName, ActivityStepName[]> {
   const shared = {
     creatingImages: ["generateImages", "generateQuizImages"] as ActivityStepName[],
@@ -52,20 +88,7 @@ function getPhaseSteps(kind: ActivityKind): Record<PhaseName, ActivityStepName[]
   if (kind === "background") {
     return {
       ...shared,
-      finishing: [
-        "generateExamplesContent",
-        "generateExplanationContent",
-        "generateMechanicsContent",
-        "generateQuizContent",
-        "generateStoryContent",
-        "setBackgroundAsCompleted",
-        "setExamplesAsCompleted",
-        "setExplanationAsCompleted",
-        "setMechanicsAsCompleted",
-        "setQuizAsCompleted",
-        "setStoryAsCompleted",
-        "setActivityAsCompleted",
-      ],
+      finishing: getFinishingSteps(["generateBackgroundContent"]),
       processingDependencies: [],
       writingContent: ["setActivityAsRunning", "generateBackgroundContent"],
     };
@@ -74,117 +97,31 @@ function getPhaseSteps(kind: ActivityKind): Record<PhaseName, ActivityStepName[]
   if (kind === "explanation") {
     return {
       ...shared,
-      finishing: [
-        "generateExamplesContent",
-        "generateMechanicsContent",
-        "generateQuizContent",
-        "generateStoryContent",
-        "setBackgroundAsCompleted",
-        "setExamplesAsCompleted",
-        "setExplanationAsCompleted",
-        "setMechanicsAsCompleted",
-        "setQuizAsCompleted",
-        "setStoryAsCompleted",
-        "setActivityAsCompleted",
-      ],
+      finishing: getFinishingSteps(["generateBackgroundContent", "generateExplanationContent"]),
       processingDependencies: ["setActivityAsRunning", "generateBackgroundContent"],
       writingContent: ["generateExplanationContent"],
     };
   }
 
-  if (kind === "mechanics") {
-    return {
-      ...shared,
-      finishing: [
-        "generateExamplesContent",
-        "generateQuizContent",
-        "generateStoryContent",
-        "setBackgroundAsCompleted",
-        "setExamplesAsCompleted",
-        "setExplanationAsCompleted",
-        "setMechanicsAsCompleted",
-        "setQuizAsCompleted",
-        "setStoryAsCompleted",
-        "setActivityAsCompleted",
-      ],
-      processingDependencies: [
-        "setActivityAsRunning",
-        "generateBackgroundContent",
-        "generateExplanationContent",
-      ],
-      writingContent: ["generateMechanicsContent"],
-    };
-  }
+  const contentStepMap: Partial<Record<ActivityKind, ActivityStepName>> = {
+    challenge: "generateChallengeContent",
+    examples: "generateExamplesContent",
+    mechanics: "generateMechanicsContent",
+    quiz: "generateQuizContent",
+    story: "generateStoryContent",
+  };
 
-  if (kind === "examples") {
-    return {
-      ...shared,
-      finishing: [
-        "generateMechanicsContent",
-        "generateQuizContent",
-        "generateStoryContent",
-        "setBackgroundAsCompleted",
-        "setExamplesAsCompleted",
-        "setExplanationAsCompleted",
-        "setMechanicsAsCompleted",
-        "setQuizAsCompleted",
-        "setStoryAsCompleted",
-        "setActivityAsCompleted",
-      ],
-      processingDependencies: [
-        "setActivityAsRunning",
-        "generateBackgroundContent",
-        "generateExplanationContent",
-      ],
-      writingContent: ["generateExamplesContent"],
-    };
-  }
+  const writingStep = contentStepMap[kind] ?? "generateQuizContent";
 
-  if (kind === "story") {
-    return {
-      ...shared,
-      finishing: [
-        "generateExamplesContent",
-        "generateMechanicsContent",
-        "generateQuizContent",
-        "setBackgroundAsCompleted",
-        "setExamplesAsCompleted",
-        "setExplanationAsCompleted",
-        "setMechanicsAsCompleted",
-        "setQuizAsCompleted",
-        "setStoryAsCompleted",
-        "setActivityAsCompleted",
-      ],
-      processingDependencies: [
-        "setActivityAsRunning",
-        "generateBackgroundContent",
-        "generateExplanationContent",
-      ],
-      writingContent: ["generateStoryContent"],
-    };
-  }
-
-  // quiz (and fallback for other kinds)
   return {
     ...shared,
-    finishing: [
-      "generateExamplesContent",
-      "generateMechanicsContent",
-      "generateStoryContent",
-      "setBackgroundAsCompleted",
-      "setExamplesAsCompleted",
-      "setExplanationAsCompleted",
-      "setMechanicsAsCompleted",
-      "setQuizAsCompleted",
-      "setStoryAsCompleted",
-      "setActivityAsCompleted",
-    ],
-    processingDependencies: [
-      "setActivityAsRunning",
+    finishing: getFinishingSteps([
       "generateBackgroundContent",
       "generateExplanationContent",
-    ],
-    writingContent: ["generateQuizContent"],
+      writingStep,
+    ]),
+    processingDependencies: EXPLANATION_DEPS,
+    writingContent: [writingStep],
   };
 }
 
@@ -200,7 +137,7 @@ function getPhaseWeights(kind: ActivityKind): Record<PhaseName, number> {
     };
   }
 
-  if (kind === "story") {
+  if (kind === "story" || kind === "challenge") {
     return {
       creatingImages: 0,
       finishing: 10,
@@ -223,6 +160,7 @@ function getPhaseWeights(kind: ActivityKind): Record<PhaseName, number> {
 
 const SUPPORTED_KINDS: ActivityKind[] = [
   "background",
+  "challenge",
   "examples",
   "explanation",
   "mechanics",

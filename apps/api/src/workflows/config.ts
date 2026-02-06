@@ -23,6 +23,7 @@ export type LessonStepName = (typeof LESSON_STEPS)[number];
 const ACTIVITY_STEPS = [
   "getLessonActivities",
   "generateBackgroundContent",
+  "generateChallengeContent",
   "generateExplanationContent",
   "generateExamplesContent",
   "generateMechanicsContent",
@@ -33,6 +34,7 @@ const ACTIVITY_STEPS = [
   "generateQuizImages",
   "setActivityAsRunning",
   "setBackgroundAsCompleted",
+  "setChallengeAsCompleted",
   "setExamplesAsCompleted",
   "setExplanationAsCompleted",
   "setMechanicsAsCompleted",

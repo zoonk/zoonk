@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { generateActivityBackground } from "@zoonk/ai/tasks/activities/core/background";
+import { generateActivityChallenge } from "@zoonk/ai/tasks/activities/core/challenge";
 import { generateActivityExamples } from "@zoonk/ai/tasks/activities/core/examples";
 import { generateActivityExplanation } from "@zoonk/ai/tasks/activities/core/explanation";
 import { generateActivityExplanationQuiz } from "@zoonk/ai/tasks/activities/core/explanation-quiz";
@@ -104,6 +105,38 @@ vi.mock("@zoonk/ai/tasks/activities/core/story", () => ({
             { feedback: "Nope.", isCorrect: false, text: "Option D" },
           ],
           question: "What should you do?",
+        },
+      ],
+    },
+  }),
+}));
+
+vi.mock("@zoonk/ai/tasks/activities/core/challenge", () => ({
+  generateActivityChallenge: vi.fn().mockResolvedValue({
+    data: {
+      intro: "Welcome to the challenge scenario...",
+      reflection: "Every decision involves trade-offs...",
+      steps: [
+        {
+          context: "Your team lead asks you to choose...",
+          options: [
+            {
+              consequence: "Great outcome",
+              effects: [{ dimension: "Quality", impact: "positive" }],
+              text: "Option A",
+            },
+            {
+              consequence: "Mixed outcome",
+              effects: [{ dimension: "Speed", impact: "positive" }],
+              text: "Option B",
+            },
+            {
+              consequence: "Poor outcome",
+              effects: [{ dimension: "Quality", impact: "negative" }],
+              text: "Option C",
+            },
+          ],
+          question: "What approach do you take?",
         },
       ],
     },
@@ -1675,6 +1708,320 @@ describe(activityGenerationWorkflow, () => {
     });
   });
 
+  describe("challenge generation", () => {
+    test("doesn't call generateActivityChallenge if lesson has no challenge activity", async () => {
+      const testLesson = await lessonFixture({
+        chapterId: chapter.id,
+        organizationId,
+        title: `No Challenge Lesson ${randomUUID()}`,
+      });
+
+      await Promise.all([
+        activityFixture({
+          generationStatus: "pending",
+          kind: "background",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Background ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Explanation ${randomUUID()}`,
+        }),
+      ]);
+
+      await activityGenerationWorkflow(testLesson.id);
+
+      expect(generateActivityChallenge).not.toHaveBeenCalled();
+    });
+
+    test("doesn't call generateActivityChallenge if explanation steps are empty", async () => {
+      vi.mocked(generateActivityExplanation).mockResolvedValueOnce({
+        data: { steps: [] },
+        systemPrompt: "test",
+        usage: {} as Awaited<ReturnType<typeof generateActivityExplanation>>["usage"],
+        userPrompt: "test",
+      });
+
+      const testLesson = await lessonFixture({
+        chapterId: chapter.id,
+        organizationId,
+        title: `Empty Exp For Challenge Lesson ${randomUUID()}`,
+      });
+
+      await Promise.all([
+        activityFixture({
+          generationStatus: "pending",
+          kind: "background",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Background ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Explanation ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "challenge",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Challenge ${randomUUID()}`,
+        }),
+      ]);
+
+      await activityGenerationWorkflow(testLesson.id);
+
+      expect(generateActivityChallenge).not.toHaveBeenCalled();
+    });
+
+    test("passes explanation steps to generateActivityChallenge", async () => {
+      const testLesson = await lessonFixture({
+        chapterId: chapter.id,
+        organizationId,
+        title: `Challenge Steps Lesson ${randomUUID()}`,
+      });
+
+      await Promise.all([
+        activityFixture({
+          generationStatus: "pending",
+          kind: "background",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Background ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Explanation ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "challenge",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Challenge ${randomUUID()}`,
+        }),
+      ]);
+
+      await activityGenerationWorkflow(testLesson.id);
+
+      expect(generateActivityChallenge).toHaveBeenCalledWith(
+        expect.objectContaining({
+          explanationSteps: [
+            { text: "Explanation step 1 text", title: "Explanation Step 1" },
+            { text: "Explanation step 2 text", title: "Explanation Step 2" },
+          ],
+        }),
+      );
+    });
+
+    test("sets challenge status to 'failed' when generateActivityChallenge throws", async () => {
+      vi.mocked(generateActivityChallenge).mockRejectedValueOnce(
+        new Error("Challenge generation failed"),
+      );
+
+      const testLesson = await lessonFixture({
+        chapterId: chapter.id,
+        organizationId,
+        title: `Challenge Error Lesson ${randomUUID()}`,
+      });
+
+      const activities = await Promise.all([
+        activityFixture({
+          generationStatus: "pending",
+          kind: "background",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Background ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Explanation ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "challenge",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Error Challenge ${randomUUID()}`,
+        }),
+      ]);
+
+      const challengeActivity = activities[2];
+
+      await activityGenerationWorkflow(testLesson.id);
+
+      const dbActivity = await prisma.activity.findUnique({
+        where: { id: challengeActivity?.id },
+      });
+      expect(dbActivity?.generationStatus).toBe("failed");
+    });
+
+    test("creates steps in DB with multipleChoice kind and correct content", async () => {
+      const testLesson = await lessonFixture({
+        chapterId: chapter.id,
+        organizationId,
+        title: `Challenge Steps DB Lesson ${randomUUID()}`,
+      });
+
+      const activities = await Promise.all([
+        activityFixture({
+          generationStatus: "pending",
+          kind: "background",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Background ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Explanation ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "challenge",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Challenge ${randomUUID()}`,
+        }),
+      ]);
+
+      const challengeActivity = activities[2];
+
+      await activityGenerationWorkflow(testLesson.id);
+
+      const challengeSteps = await prisma.step.findMany({
+        orderBy: { position: "asc" },
+        where: { activityId: challengeActivity?.id },
+      });
+
+      expect(challengeSteps).toHaveLength(1);
+      expect(challengeSteps[0]?.kind).toBe("multipleChoice");
+      expect(challengeSteps[0]?.content).toEqual({
+        context: "Your team lead asks you to choose...",
+        options: [
+          {
+            consequence: "Great outcome",
+            effects: [{ dimension: "Quality", impact: "positive" }],
+            text: "Option A",
+          },
+          {
+            consequence: "Mixed outcome",
+            effects: [{ dimension: "Speed", impact: "positive" }],
+            text: "Option B",
+          },
+          {
+            consequence: "Poor outcome",
+            effects: [{ dimension: "Quality", impact: "negative" }],
+            text: "Option C",
+          },
+        ],
+        question: "What approach do you take?",
+      });
+    });
+
+    test("saves intro and reflection to activity content", async () => {
+      const testLesson = await lessonFixture({
+        chapterId: chapter.id,
+        organizationId,
+        title: `Challenge Content Lesson ${randomUUID()}`,
+      });
+
+      const activities = await Promise.all([
+        activityFixture({
+          generationStatus: "pending",
+          kind: "background",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Background ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Explanation ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "challenge",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Challenge ${randomUUID()}`,
+        }),
+      ]);
+
+      const challengeActivity = activities[2];
+
+      await activityGenerationWorkflow(testLesson.id);
+
+      const dbActivity = await prisma.activity.findUnique({
+        where: { id: challengeActivity?.id },
+      });
+
+      expect(dbActivity?.content).toEqual({
+        intro: "Welcome to the challenge scenario...",
+        reflection: "Every decision involves trade-offs...",
+      });
+    });
+
+    test("sets challenge status to 'completed' after saving", async () => {
+      const testLesson = await lessonFixture({
+        chapterId: chapter.id,
+        organizationId,
+        title: `Challenge Complete Lesson ${randomUUID()}`,
+      });
+
+      const activities = await Promise.all([
+        activityFixture({
+          generationStatus: "pending",
+          kind: "background",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Background ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Explanation ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "challenge",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Challenge ${randomUUID()}`,
+        }),
+      ]);
+
+      const challengeActivity = activities[2];
+
+      await activityGenerationWorkflow(testLesson.id);
+
+      const dbActivity = await prisma.activity.findUnique({
+        where: { id: challengeActivity?.id },
+      });
+      expect(dbActivity?.generationStatus).toBe("completed");
+      expect(dbActivity?.generationRunId).toBe("test-run-id");
+    });
+  });
+
   describe("resumption", () => {
     test("skips content generation if steps already exist in DB", async () => {
       const testLesson = await lessonFixture({
@@ -2054,7 +2401,7 @@ describe(activityGenerationWorkflow, () => {
       expect(generateActivityExplanation).not.toHaveBeenCalled();
     });
 
-    test("explanation returns empty → mechanics, quiz, examples, and story marked as failed", async () => {
+    test("explanation returns empty → mechanics, quiz, examples, story, and challenge marked as failed", async () => {
       vi.mocked(generateActivityExplanation).mockResolvedValueOnce({
         data: { steps: [] },
         systemPrompt: "test",
@@ -2068,51 +2415,65 @@ describe(activityGenerationWorkflow, () => {
         title: `Exp Empty Cascade Lesson ${randomUUID()}`,
       });
 
-      const [, expActivity, mechActivity, quizActivity, examplesActivity, storyActivity] =
-        await Promise.all([
-          activityFixture({
-            generationStatus: "pending",
-            kind: "background",
-            lessonId: testLesson.id,
-            organizationId,
-            title: `Background ${randomUUID()}`,
-          }),
-          activityFixture({
-            generationStatus: "pending",
-            kind: "explanation",
-            lessonId: testLesson.id,
-            organizationId,
-            title: `Explanation ${randomUUID()}`,
-          }),
-          activityFixture({
-            generationStatus: "pending",
-            kind: "mechanics",
-            lessonId: testLesson.id,
-            organizationId,
-            title: `Mechanics ${randomUUID()}`,
-          }),
-          activityFixture({
-            generationStatus: "pending",
-            kind: "quiz",
-            lessonId: testLesson.id,
-            organizationId,
-            title: `Quiz ${randomUUID()}`,
-          }),
-          activityFixture({
-            generationStatus: "pending",
-            kind: "examples",
-            lessonId: testLesson.id,
-            organizationId,
-            title: `Examples ${randomUUID()}`,
-          }),
-          activityFixture({
-            generationStatus: "pending",
-            kind: "story",
-            lessonId: testLesson.id,
-            organizationId,
-            title: `Story ${randomUUID()}`,
-          }),
-        ]);
+      const [
+        ,
+        expActivity,
+        mechActivity,
+        quizActivity,
+        examplesActivity,
+        storyActivity,
+        challengeActivity,
+      ] = await Promise.all([
+        activityFixture({
+          generationStatus: "pending",
+          kind: "background",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Background ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Explanation ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "mechanics",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Mechanics ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "quiz",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Quiz ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "examples",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Examples ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "story",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Story ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "challenge",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Challenge ${randomUUID()}`,
+        }),
+      ]);
 
       await activityGenerationWorkflow(testLesson.id);
 
@@ -2131,10 +2492,16 @@ describe(activityGenerationWorkflow, () => {
       const dbStory = await prisma.activity.findUnique({ where: { id: storyActivity.id } });
       expect(dbStory?.generationStatus).toBe("failed");
 
+      const dbChallenge = await prisma.activity.findUnique({
+        where: { id: challengeActivity.id },
+      });
+      expect(dbChallenge?.generationStatus).toBe("failed");
+
       expect(generateActivityMechanics).not.toHaveBeenCalled();
       expect(generateActivityExplanationQuiz).not.toHaveBeenCalled();
       expect(generateActivityExamples).not.toHaveBeenCalled();
       expect(generateActivityStory).not.toHaveBeenCalled();
+      expect(generateActivityChallenge).not.toHaveBeenCalled();
     });
   });
 
@@ -2176,69 +2543,84 @@ describe(activityGenerationWorkflow, () => {
   });
 
   describe("full pipeline", () => {
-    test("generates all 6 activities end to end", async () => {
+    test("generates all 7 activities end to end", async () => {
       const testLesson = await lessonFixture({
         chapterId: chapter.id,
         organizationId,
         title: `Full Pipeline Lesson ${randomUUID()}`,
       });
 
-      const [bgActivity, expActivity, mechActivity, quizActivity, examplesActivity, storyActivity] =
-        await Promise.all([
-          activityFixture({
-            generationStatus: "pending",
-            kind: "background",
-            lessonId: testLesson.id,
-            organizationId,
-            title: `Background ${randomUUID()}`,
-          }),
-          activityFixture({
-            generationStatus: "pending",
-            kind: "explanation",
-            lessonId: testLesson.id,
-            organizationId,
-            title: `Explanation ${randomUUID()}`,
-          }),
-          activityFixture({
-            generationStatus: "pending",
-            kind: "mechanics",
-            lessonId: testLesson.id,
-            organizationId,
-            title: `Mechanics ${randomUUID()}`,
-          }),
-          activityFixture({
-            generationStatus: "pending",
-            kind: "quiz",
-            lessonId: testLesson.id,
-            organizationId,
-            title: `Quiz ${randomUUID()}`,
-          }),
-          activityFixture({
-            generationStatus: "pending",
-            kind: "examples",
-            lessonId: testLesson.id,
-            organizationId,
-            title: `Examples ${randomUUID()}`,
-          }),
-          activityFixture({
-            generationStatus: "pending",
-            kind: "story",
-            lessonId: testLesson.id,
-            organizationId,
-            title: `Story ${randomUUID()}`,
-          }),
-        ]);
+      const [
+        bgActivity,
+        expActivity,
+        mechActivity,
+        quizActivity,
+        examplesActivity,
+        storyActivity,
+        challengeActivity,
+      ] = await Promise.all([
+        activityFixture({
+          generationStatus: "pending",
+          kind: "background",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Background ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Explanation ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "mechanics",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Mechanics ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "quiz",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Quiz ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "examples",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Examples ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "story",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Story ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "challenge",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Challenge ${randomUUID()}`,
+        }),
+      ]);
 
       await activityGenerationWorkflow(testLesson.id);
 
-      // All 6 activities should be completed
-      const [dbBg, dbExp, dbMech, dbQuiz, dbExamples, dbStory] = await Promise.all([
+      // All 7 activities should be completed
+      const [dbBg, dbExp, dbMech, dbQuiz, dbExamples, dbStory, dbChallenge] = await Promise.all([
         prisma.activity.findUnique({ where: { id: bgActivity.id } }),
         prisma.activity.findUnique({ where: { id: expActivity.id } }),
         prisma.activity.findUnique({ where: { id: mechActivity.id } }),
         prisma.activity.findUnique({ where: { id: quizActivity.id } }),
         prisma.activity.findUnique({ where: { id: examplesActivity.id } }),
         prisma.activity.findUnique({ where: { id: storyActivity.id } }),
+        prisma.activity.findUnique({ where: { id: challengeActivity.id } }),
       ]);
 
       expect(dbBg?.generationStatus).toBe("completed");
@@ -2247,6 +2629,7 @@ describe(activityGenerationWorkflow, () => {
       expect(dbQuiz?.generationStatus).toBe("completed");
       expect(dbExamples?.generationStatus).toBe("completed");
       expect(dbStory?.generationStatus).toBe("completed");
+      expect(dbChallenge?.generationStatus).toBe("completed");
 
       // All AI tasks should have been called
       expect(generateActivityBackground).toHaveBeenCalledOnce();
@@ -2255,6 +2638,7 @@ describe(activityGenerationWorkflow, () => {
       expect(generateActivityExplanationQuiz).toHaveBeenCalledOnce();
       expect(generateActivityExamples).toHaveBeenCalledOnce();
       expect(generateActivityStory).toHaveBeenCalledOnce();
+      expect(generateActivityChallenge).toHaveBeenCalledOnce();
 
       // Steps should be in DB
       const bgSteps = await prisma.step.findMany({ where: { activityId: bgActivity.id } });
@@ -2267,6 +2651,9 @@ describe(activityGenerationWorkflow, () => {
       const storySteps = await prisma.step.findMany({
         where: { activityId: storyActivity.id },
       });
+      const challengeSteps = await prisma.step.findMany({
+        where: { activityId: challengeActivity.id },
+      });
 
       expect(bgSteps.length).toBeGreaterThan(0);
       expect(expSteps.length).toBeGreaterThan(0);
@@ -2274,6 +2661,7 @@ describe(activityGenerationWorkflow, () => {
       expect(quizSteps.length).toBeGreaterThan(0);
       expect(examplesSteps.length).toBeGreaterThan(0);
       expect(storySteps.length).toBeGreaterThan(0);
+      expect(challengeSteps.length).toBeGreaterThan(0);
     });
   });
 
