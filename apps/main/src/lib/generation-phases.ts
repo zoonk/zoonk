@@ -35,10 +35,7 @@ export function calculateWeightedProgress<TPhase extends string, TStep extends s
   currentStep: TStep | null,
   config: PhaseConfig<TPhase, TStep>,
 ): number {
-  const totalWeight = config.phaseOrder.reduce(
-    (sum, phase) => sum + config.phaseWeights[phase],
-    0,
-  );
+  const totalWeight = config.phaseOrder.reduce((sum, phase) => sum + config.phaseWeights[phase], 0);
 
   if (totalWeight === 0) {
     return 0;
