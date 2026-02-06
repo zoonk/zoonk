@@ -27,6 +27,7 @@ const ACTIVITY_STEPS = [
   "generateExamplesContent",
   "generateMechanicsContent",
   "generateQuizContent",
+  "generateStoryContent",
   "generateVisuals",
   "generateImages",
   "generateQuizImages",
@@ -36,6 +37,7 @@ const ACTIVITY_STEPS = [
   "setExplanationAsCompleted",
   "setMechanicsAsCompleted",
   "setQuizAsCompleted",
+  "setStoryAsCompleted",
   "setActivityAsCompleted",
   "workflowError",
 ] as const;

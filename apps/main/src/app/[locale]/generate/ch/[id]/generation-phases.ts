@@ -44,6 +44,7 @@ const PHASE_STEPS = {
     "setExplanationAsCompleted",
     "setMechanicsAsCompleted",
     "setQuizAsCompleted",
+    "setStoryAsCompleted",
     "setActivityAsCompleted",
   ],
   preparingLessons: [
@@ -67,6 +68,7 @@ const PHASE_STEPS = {
     "generateExplanationContent",
     "generateMechanicsContent",
     "generateQuizContent",
+    "generateStoryContent",
   ],
 } as const satisfies Record<PhaseName, readonly ChapterWorkflowStepName[]>;
 
