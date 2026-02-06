@@ -16,21 +16,22 @@ async function saveChallengeSteps(
   steps: ActivityChallengeSchema["steps"][number][],
   activityContent: { intro: string; reflection: string },
 ): Promise<{ error: Error | null }> {
-  return safeAsync(async () => {
-    await prisma.step.createMany({
-      data: steps.map((step, index) => ({
-        activityId,
-        content: { context: step.context, options: step.options, question: step.question },
-        kind: "multipleChoice",
-        position: index,
-      })),
-    });
-
-    await prisma.activity.update({
-      data: { content: activityContent },
-      where: { id: activityId },
-    });
-  });
+  return safeAsync(() =>
+    prisma.$transaction([
+      prisma.step.createMany({
+        data: steps.map((step, index) => ({
+          activityId,
+          content: { context: step.context, options: step.options, question: step.question },
+          kind: "multipleChoice",
+          position: index,
+        })),
+      }),
+      prisma.activity.update({
+        data: { content: activityContent },
+        where: { id: activityId },
+      }),
+    ]),
+  );
 }
 
 async function handleChallengeError(activityId: bigint | number): Promise<void> {
