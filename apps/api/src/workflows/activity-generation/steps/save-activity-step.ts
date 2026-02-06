@@ -58,4 +58,7 @@ export async function saveActivityStep(
 
   await revalidateMainApp([cacheTagActivity({ activityId: BigInt(activity.id) })]);
   await streamStatus({ status: "completed", step: stepName });
+
+  await streamStatus({ status: "started", step: "setActivityAsCompleted" });
+  await streamStatus({ status: "completed", step: "setActivityAsCompleted" });
 }

@@ -177,6 +177,8 @@ test.describe("Generate Course Page", () => {
           { status: "completed", step: "addLessons" },
           { status: "started", step: "setLessonAsCompleted" },
           { status: "completed", step: "setLessonAsCompleted" },
+          { status: "started", step: "setActivityAsCompleted" },
+          { status: "completed", step: "setActivityAsCompleted" },
         ],
       });
 

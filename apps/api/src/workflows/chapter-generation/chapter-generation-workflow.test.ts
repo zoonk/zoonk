@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { activityGenerationWorkflow } from "@/workflows/activity-generation/activity-generation-workflow";
 import { generateChapterLessons } from "@zoonk/ai/tasks/chapters/lessons";
 import { prisma } from "@zoonk/db";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
@@ -34,6 +35,10 @@ vi.mock("@zoonk/ai/tasks/lessons/kind", () => ({
   generateLessonKind: vi.fn().mockResolvedValue({
     data: { kind: "core" },
   }),
+}));
+
+vi.mock("@/workflows/activity-generation/activity-generation-workflow", () => ({
+  activityGenerationWorkflow: vi.fn().mockResolvedValue(undefined),
 }));
 
 vi.mock("@zoonk/ai/tasks/lessons/activities", () => ({
@@ -168,6 +173,48 @@ describe(chapterGenerationWorkflow, () => {
       expect(lessons[1]?.position).toBe(1);
     });
 
+    test("calls activityGenerationWorkflow with first lesson's ID", async () => {
+      const title = `Activity Gen Chapter ${randomUUID()}`;
+      const chapter = await chapterFixture({
+        courseId: course.id,
+        generationStatus: "pending",
+        organizationId,
+        title,
+      });
+
+      await chapterGenerationWorkflow(chapter.id);
+
+      const lessons = await prisma.lesson.findMany({
+        orderBy: { position: "asc" },
+        where: { chapterId: chapter.id },
+      });
+
+      expect(activityGenerationWorkflow).toHaveBeenCalledWith(lessons[0]?.id);
+    });
+
+    test("sets chapter as completed BEFORE lesson/activity generation runs", async () => {
+      const title = `Completed Before Lesson Gen ${randomUUID()}`;
+      const chapter = await chapterFixture({
+        courseId: course.id,
+        generationStatus: "pending",
+        organizationId,
+        title,
+      });
+
+      let chapterStatusDuringActivityGen: string | null = null;
+
+      vi.mocked(activityGenerationWorkflow).mockImplementationOnce(async () => {
+        const dbChapter = await prisma.chapter.findUnique({
+          where: { id: chapter.id },
+        });
+        chapterStatusDuringActivityGen = dbChapter?.generationStatus ?? null;
+      });
+
+      await chapterGenerationWorkflow(chapter.id);
+
+      expect(chapterStatusDuringActivityGen).toBe("completed");
+    });
+
     test("updates chapter status: pending → running → completed", async () => {
       const title = `Status Transition Chapter ${randomUUID()}`;
       const chapter = await chapterFixture({
@@ -192,6 +239,30 @@ describe(chapterGenerationWorkflow, () => {
   });
 
   describe("error handling", () => {
+    test("chapter stays completed when activity generation throws", async () => {
+      vi.mocked(activityGenerationWorkflow).mockRejectedValueOnce(
+        new Error("Activity generation failed"),
+      );
+
+      const title = `Activity Fail Chapter ${randomUUID()}`;
+      const chapter = await chapterFixture({
+        courseId: course.id,
+        generationStatus: "pending",
+        organizationId,
+        title,
+      });
+
+      await expect(chapterGenerationWorkflow(chapter.id)).rejects.toThrow(
+        "Activity generation failed",
+      );
+
+      const dbChapter = await prisma.chapter.findUnique({
+        where: { id: chapter.id },
+      });
+
+      expect(dbChapter?.generationStatus).toBe("completed");
+    });
+
     test("marks chapter as 'failed' when AI generation throws", async () => {
       vi.mocked(generateChapterLessons).mockRejectedValueOnce(new Error("AI generation failed"));
 
