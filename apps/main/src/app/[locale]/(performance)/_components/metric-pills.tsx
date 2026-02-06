@@ -6,7 +6,7 @@ import { buttonVariants } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
 import { useSelectedLayoutSegment } from "next/navigation";
 
-export function MetricPills() {
+export function MetricPillLinks() {
   const segment = useSelectedLayoutSegment();
   const t = useExtracted();
 
@@ -15,7 +15,7 @@ export function MetricPills() {
   const score = getMenu("score");
 
   return (
-    <div className="flex gap-2 overflow-x-auto overflow-y-hidden pb-1 [-webkit-overflow-scrolling:touch] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+    <>
       <Link
         className={buttonVariants({
           size: "sm",
@@ -48,6 +48,6 @@ export function MetricPills() {
         <score.icon aria-hidden className="size-4" />
         {t("Score")}
       </Link>
-    </div>
+    </>
   );
 }

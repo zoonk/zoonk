@@ -3,6 +3,7 @@
 import { Link } from "@/i18n/navigation";
 import { useCategories } from "@/lib/categories/category-client";
 import { buttonVariants } from "@zoonk/ui/components/button";
+import { HorizontalScroll, HorizontalScrollContent } from "@zoonk/ui/components/horizontal-scroll";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { useExtracted } from "next-intl";
 import { useSelectedLayoutSegment } from "next/navigation";
@@ -28,35 +29,38 @@ export function CategoryPills() {
   const t = useExtracted();
 
   return (
-    <nav
-      aria-label={t("Course categories")}
-      className="flex w-full gap-2 overflow-x-auto overflow-y-hidden px-4 pb-4 [-webkit-overflow-scrolling:touch] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-    >
-      <Link
-        className={buttonVariants({
-          size: "sm",
-          variant: segment === null ? "default" : "outline",
-        })}
-        href="/courses"
+    <HorizontalScroll className="pb-4">
+      <HorizontalScrollContent
+        aria-label={t("Course categories")}
+        className="px-4"
+        role="navigation"
       >
-        {t("All")}
-      </Link>
+        <Link
+          className={buttonVariants({
+            size: "sm",
+            variant: segment === null ? "default" : "outline",
+          })}
+          href="/courses"
+        >
+          {t("All")}
+        </Link>
 
-      {categories
-        .toSorted((a, b) => a.label.localeCompare(b.label))
-        .map((category) => (
-          <Link
-            className={buttonVariants({
-              size: "sm",
-              variant: segment === category.key ? "default" : "outline",
-            })}
-            href={`/courses/${category.key}`}
-            key={category.key}
-          >
-            <category.icon aria-hidden className="size-4" />
-            {category.label}
-          </Link>
-        ))}
-    </nav>
+        {categories
+          .toSorted((a, b) => a.label.localeCompare(b.label))
+          .map((category) => (
+            <Link
+              className={buttonVariants({
+                size: "sm",
+                variant: segment === category.key ? "default" : "outline",
+              })}
+              href={`/courses/${category.key}`}
+              key={category.key}
+            >
+              <category.icon aria-hidden className="size-4" />
+              {category.label}
+            </Link>
+          ))}
+      </HorizontalScrollContent>
+    </HorizontalScroll>
   );
 }
