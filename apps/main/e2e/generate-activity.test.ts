@@ -428,6 +428,94 @@ test.describe("Generate Activity Page - With Subscription", () => {
     );
   });
 
+  test("completes workflow for challenge activity kind", async ({ userWithoutProgress }) => {
+    await createTestSubscription();
+
+    const org = await prisma.organization.findUniqueOrThrow({
+      where: { slug: "ai" },
+    });
+
+    const uniqueId = randomUUID().slice(0, 8);
+    const courseTitle = `E2E Challenge Course ${uniqueId}`;
+    const chapterTitle = `E2E Challenge Chapter ${uniqueId}`;
+    const lessonTitle = `E2E Challenge Lesson ${uniqueId}`;
+    const activityTitle = `E2E Challenge Activity ${uniqueId}`;
+
+    const course = await courseFixture({
+      isPublished: true,
+      normalizedTitle: normalizeString(courseTitle),
+      organizationId: org.id,
+      slug: `e2e-challenge-course-${uniqueId}`,
+      title: courseTitle,
+    });
+
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      generationStatus: "completed",
+      isPublished: true,
+      normalizedTitle: normalizeString(chapterTitle),
+      organizationId: org.id,
+      slug: `e2e-challenge-chapter-${uniqueId}`,
+      title: chapterTitle,
+    });
+
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      generationStatus: "completed",
+      isPublished: true,
+      normalizedTitle: normalizeString(lessonTitle),
+      organizationId: org.id,
+      slug: `e2e-challenge-lesson-${uniqueId}`,
+      title: lessonTitle,
+    });
+
+    const activity = await activityFixture({
+      generationStatus: "pending",
+      isPublished: true,
+      kind: "challenge",
+      lessonId: lesson.id,
+      organizationId: org.id,
+      title: activityTitle,
+    });
+
+    await setupMockApis(userWithoutProgress, {
+      streamMessages: [
+        { status: "started", step: "getLessonActivities" },
+        { status: "completed", step: "getLessonActivities" },
+        { status: "started", step: "setActivityAsRunning" },
+        { status: "completed", step: "setActivityAsRunning" },
+        { status: "started", step: "generateBackgroundContent" },
+        { status: "completed", step: "generateBackgroundContent" },
+        { status: "started", step: "generateExplanationContent" },
+        { status: "completed", step: "generateExplanationContent" },
+        { status: "started", step: "generateChallengeContent" },
+        { status: "completed", step: "generateChallengeContent" },
+        { status: "started", step: "setChallengeAsCompleted" },
+        { status: "completed", step: "setChallengeAsCompleted" },
+      ],
+    });
+
+    await userWithoutProgress.goto(`/generate/a/${activity.id}`);
+
+    await expect(userWithoutProgress.getByText(/your activity is ready/i)).toBeVisible({
+      timeout: 10_000,
+    });
+
+    await expect(userWithoutProgress.getByText(/taking you to your activity/i)).toBeVisible();
+
+    await prisma.activity.update({
+      data: { generationStatus: "completed" },
+      where: { id: activity.id },
+    });
+
+    await userWithoutProgress.waitForURL(
+      new RegExp(
+        `/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}/a/${activity.position}`,
+      ),
+      { timeout: 10_000 },
+    );
+  });
+
   test("shows error when stream returns error status", async ({ userWithoutProgress }) => {
     await createTestSubscription();
     const { activity } = await createPendingActivity();
