@@ -1,14 +1,15 @@
 import {
+  type AssertAllCovered,
   type PhaseStatus,
   calculateWeightedProgress as calculateProgress,
   getPhaseStatus as getStatus,
 } from "@/lib/generation-phases";
 import {
-  ACTIVITY_STEPS,
-  CHAPTER_STEPS,
-  COURSE_STEPS,
+  type ActivityStepName,
+  type ChapterStepName,
+  type CourseStepName,
   type CourseWorkflowStepName,
-  LESSON_STEPS,
+  type LessonStepName,
 } from "@/workflows/config";
 import {
   BookOpenIcon,
@@ -40,7 +41,7 @@ export type PhaseName =
   | "creatingImages"
   | "finishing";
 
-const PHASE_STEPS: Record<PhaseName, CourseWorkflowStepName[]> = {
+const PHASE_STEPS = {
   categorizingCourse: ["generateAlternativeTitles", "generateCategories"],
   creatingCoverImage: ["generateImage"],
   creatingImages: ["generateImages", "generateQuizImages"],
@@ -96,48 +97,16 @@ const PHASE_STEPS: Record<PhaseName, CourseWorkflowStepName[]> = {
     "generateQuizContent",
   ],
   writingDescription: ["generateDescription"],
-};
+} as const satisfies Record<PhaseName, readonly CourseWorkflowStepName[]>;
 
-// Runtime check: ensure all course steps are assigned to a phase.
-// This runs at module load time and will throw during build if any step is missing.
-const allPhaseSteps = new Set(Object.values(PHASE_STEPS).flat());
-const missingCourseSteps = COURSE_STEPS.filter((step) => !allPhaseSteps.has(step));
-
-if (missingCourseSteps.length > 0) {
-  throw new Error(
-    `Missing course steps in PHASE_STEPS: ${missingCourseSteps.join(", ")}. ` +
-      "Add them to the appropriate phase in generation-phases.ts",
-  );
-}
-
-const missingChapterSteps = CHAPTER_STEPS.filter((step) => !allPhaseSteps.has(step));
-
-if (missingChapterSteps.length > 0) {
-  throw new Error(
-    `Missing chapter steps in PHASE_STEPS: ${missingChapterSteps.join(", ")}. ` +
-      "Add them to the appropriate phase in generation-phases.ts",
-  );
-}
-
-const missingLessonSteps = LESSON_STEPS.filter((step) => !allPhaseSteps.has(step));
-
-if (missingLessonSteps.length > 0) {
-  throw new Error(
-    `Missing lesson steps in PHASE_STEPS: ${missingLessonSteps.join(", ")}. ` +
-      "Add them to the appropriate phase in generation-phases.ts",
-  );
-}
-
-const missingActivitySteps = ACTIVITY_STEPS.filter(
-  (step) => step !== "workflowError" && !allPhaseSteps.has(step),
-);
-
-if (missingActivitySteps.length > 0) {
-  throw new Error(
-    `Missing activity steps in PHASE_STEPS: ${missingActivitySteps.join(", ")}. ` +
-      "Add them to the appropriate phase in generation-phases.ts",
-  );
-}
+// Compile-time check: typecheck fails with the exact missing step names.
+type AssignedSteps = (typeof PHASE_STEPS)[PhaseName][number];
+type _ValidateCourse = AssertAllCovered<Exclude<CourseStepName, AssignedSteps>>;
+type _ValidateChapter = AssertAllCovered<Exclude<ChapterStepName, AssignedSteps>>;
+type _ValidateLesson = AssertAllCovered<Exclude<LessonStepName, AssignedSteps>>;
+type _ValidateActivity = AssertAllCovered<
+  Exclude<ActivityStepName, AssignedSteps | "workflowError">
+>;
 
 export const PHASE_ORDER: PhaseName[] = [
   "gettingReady",

@@ -1,9 +1,10 @@
 import {
+  type AssertAllCovered,
   type PhaseStatus,
   calculateWeightedProgress as calculateProgress,
   getPhaseStatus as getStatus,
 } from "@/lib/generation-phases";
-import { LESSON_STEPS, type LessonStepName } from "@/workflows/config";
+import { type LessonStepName } from "@/workflows/config";
 import {
   BookOpenIcon,
   CheckCircleIcon,
@@ -18,22 +19,17 @@ export type PhaseName =
   | "settingUpActivities"
   | "finishing";
 
-const PHASE_STEPS: Record<PhaseName, LessonStepName[]> = {
+const PHASE_STEPS = {
   figuringOutApproach: ["determineLessonKind", "updateLessonKind"],
   finishing: ["setLessonAsCompleted"],
   gettingStarted: ["getLesson", "setLessonAsRunning"],
   settingUpActivities: ["generateCustomActivities", "addActivities"],
-};
+} as const satisfies Record<PhaseName, readonly LessonStepName[]>;
 
-const allPhaseSteps = new Set(Object.values(PHASE_STEPS).flat());
-const missingLessonSteps = LESSON_STEPS.filter((step) => !allPhaseSteps.has(step));
-
-if (missingLessonSteps.length > 0) {
-  throw new Error(
-    `Missing lesson steps in PHASE_STEPS: ${missingLessonSteps.join(", ")}. ` +
-      "Add them to the appropriate phase in generation-phases.ts",
-  );
-}
+// Compile-time check: typecheck fails with the exact missing step names.
+type _ValidateLesson = AssertAllCovered<
+  Exclude<LessonStepName, (typeof PHASE_STEPS)[PhaseName][number]>
+>;
 
 export const PHASE_ORDER: PhaseName[] = [
   "gettingStarted",

@@ -1,8 +1,16 @@
 export type PhaseStatus = "pending" | "active" | "completed";
 
+/**
+ * Compile-time check that all steps are assigned to a phase.
+ * If any step is missing, TypeScript errors showing the exact missing step names.
+ *
+ * Usage: `type _Validate = AssertAllCovered<Exclude<StepName, AssignedSteps>>`
+ */
+export type AssertAllCovered<T extends never> = T;
+
 export type PhaseConfig<TPhase extends string, TStep extends string> = {
-  phaseSteps: Record<TPhase, TStep[]>;
-  phaseOrder: TPhase[];
+  phaseSteps: Record<TPhase, readonly TStep[]>;
+  phaseOrder: readonly TPhase[];
   phaseWeights: Record<TPhase, number>;
 };
 
@@ -10,7 +18,7 @@ export function getPhaseStatus<TPhase extends string, TStep extends string>(
   phase: TPhase,
   completedSteps: TStep[],
   currentStep: TStep | null,
-  phaseSteps: Record<TPhase, TStep[]>,
+  phaseSteps: Record<TPhase, readonly TStep[]>,
 ): PhaseStatus {
   const steps = phaseSteps[phase];
   const completedCount = steps.filter((step) => completedSteps.includes(step)).length;
