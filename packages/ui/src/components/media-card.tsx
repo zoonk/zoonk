@@ -7,23 +7,26 @@ import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronRightIcon, SparklesIcon } from "lucide-react";
 
-export function MediaCard({ children, className }: React.ComponentProps<"div">) {
+export function MediaCard({ children, className }: React.ComponentProps<"header">) {
   return (
     <Popover>
-      <div className={cn("mx-auto w-full px-4 lg:max-w-xl", className)} data-slot="media-card">
+      <header
+        className={cn("mx-auto flex w-full items-start gap-4 px-4 lg:max-w-xl", className)}
+        data-slot="media-card"
+      >
         {children}
-      </div>
+      </header>
     </Popover>
   );
 }
 
-export function MediaCardTrigger({ children, className }: React.ComponentProps<"header">) {
+export function MediaCardTrigger({ children, className }: React.ComponentProps<"div">) {
   return (
     <PopoverTrigger
-      className={cn("flex w-full cursor-pointer flex-row items-start gap-4 text-left", className)}
+      className={cn("w-full cursor-pointer text-left", className)}
       data-slot="media-card-trigger"
       nativeButton={false}
-      render={<header />}
+      render={<div />}
     >
       {children}
     </PopoverTrigger>
@@ -78,6 +81,18 @@ export function MediaCardContent({ children, className }: React.ComponentProps<"
   );
 }
 
+export function MediaCardBreadcrumb({ children, className }: React.ComponentProps<"nav">) {
+  return (
+    <nav
+      aria-label="breadcrumb"
+      className={cn("text-muted-foreground pb-1 text-xs", className)}
+      data-slot="media-card-breadcrumb"
+    >
+      {children}
+    </nav>
+  );
+}
+
 export function MediaCardHeader({ children, className }: React.ComponentProps<"div">) {
   return (
     <div
@@ -107,7 +122,7 @@ export function MediaCardDescription({ children, className }: React.ComponentPro
   return (
     <p
       className={cn(
-        "text-muted-foreground mt-0.5 line-clamp-3 text-sm leading-snug text-pretty md:leading-relaxed",
+        "text-muted-foreground mt-0.5 line-clamp-2 text-sm leading-snug text-pretty md:leading-relaxed",
         className,
       )}
       data-slot="media-card-description"
@@ -241,17 +256,18 @@ export function MediaCardPopoverAIWarning({ children, className }: React.Compone
 
 export function MediaCardSkeleton({ className }: { className?: string }) {
   return (
-    <div className={cn("mx-auto w-full px-4 lg:max-w-xl", className)} data-slot="media-card">
-      <header className="flex w-full flex-row items-start gap-4" data-slot="media-card-trigger">
-        <Skeleton className="size-20 shrink-0 rounded-xl sm:size-24" />
-        <div className="flex min-w-0 flex-1 flex-col">
-          <div className="grid grid-cols-[1fr_auto] items-center gap-1">
-            <Skeleton className="h-5 w-3/4 sm:h-6" />
-            <Skeleton className="size-4 shrink-0 rounded-full" />
-          </div>
-          <Skeleton className="mt-1 h-12 w-full sm:h-14" />
+    <header
+      className={cn("mx-auto flex w-full items-start gap-4 px-4 lg:max-w-xl", className)}
+      data-slot="media-card"
+    >
+      <Skeleton className="size-20 shrink-0 rounded-xl sm:size-24" />
+      <div className="flex min-w-0 flex-1 flex-col">
+        <div className="grid grid-cols-[1fr_auto] items-center gap-1">
+          <Skeleton className="h-5 w-3/4 sm:h-6" />
+          <Skeleton className="size-4 shrink-0 rounded-full" />
         </div>
-      </header>
-    </div>
+        <Skeleton className="mt-1 h-12 w-full sm:h-14" />
+      </div>
+    </header>
   );
 }

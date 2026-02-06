@@ -1,8 +1,14 @@
 import { AIWarning } from "@/components/catalog/ai-warning";
 import { type LessonWithDetails } from "@/data/lessons/get-lesson";
-import { ClientLink } from "@/i18n/client-link";
+import { Link } from "@/i18n/navigation";
+import {
+  BreadcrumbItem,
+  BreadcrumbList,
+  BreadcrumbSeparator,
+} from "@zoonk/ui/components/breadcrumb";
 import {
   MediaCard,
+  MediaCardBreadcrumb,
   MediaCardContent,
   MediaCardDescription,
   MediaCardHeader,
@@ -10,10 +16,6 @@ import {
   MediaCardIconText,
   MediaCardIndicator,
   MediaCardPopover,
-  MediaCardPopoverMeta,
-  MediaCardPopoverSource,
-  MediaCardPopoverSourceLink,
-  MediaCardPopoverSourceSeparator,
   MediaCardPopoverText,
   MediaCardTitle,
   MediaCardTrigger,
@@ -37,40 +39,45 @@ export async function LessonHeader({
 
   return (
     <MediaCard>
-      <MediaCardTrigger>
-        <MediaCardIcon aria-label={t("Lesson {position}", { position: lessonPosition })} role="img">
-          <MediaCardIconText>{lessonPosition}</MediaCardIconText>
-        </MediaCardIcon>
+      <MediaCardIcon aria-label={t("Lesson {position}", { position: lessonPosition })} role="img">
+        <MediaCardIconText>{lessonPosition}</MediaCardIconText>
+      </MediaCardIcon>
 
-        <MediaCardContent>
+      <MediaCardContent>
+        <MediaCardBreadcrumb>
+          <BreadcrumbList className="text-xs">
+            <BreadcrumbItem>
+              <Link
+                className="hover:text-foreground transition-colors"
+                href={`/b/${brandSlug}/c/${courseSlug}`}
+              >
+                {lesson.chapter.course.title}
+              </Link>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <Link
+                className="hover:text-foreground transition-colors"
+                href={`/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}`}
+              >
+                {lesson.chapter.title}
+              </Link>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </MediaCardBreadcrumb>
+
+        <MediaCardTrigger>
           <MediaCardHeader>
             <MediaCardTitle>{lesson.title}</MediaCardTitle>
             <MediaCardIndicator />
           </MediaCardHeader>
           <MediaCardDescription>{lesson.description}</MediaCardDescription>
-        </MediaCardContent>
-      </MediaCardTrigger>
+        </MediaCardTrigger>
+      </MediaCardContent>
 
       <MediaCardPopover>
         <AIWarning brandSlug={brandSlug} />
-
         <MediaCardPopoverText>{lesson.description}</MediaCardPopoverText>
-
-        <MediaCardPopoverMeta>
-          <MediaCardPopoverSource>
-            <MediaCardPopoverSourceLink
-              render={<ClientLink href={`/b/${brandSlug}/c/${courseSlug}`} />}
-            >
-              {lesson.chapter.course.title}
-            </MediaCardPopoverSourceLink>
-            <MediaCardPopoverSourceSeparator />
-            <MediaCardPopoverSourceLink
-              render={<ClientLink href={`/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}`} />}
-            >
-              {lesson.chapter.title}
-            </MediaCardPopoverSourceLink>
-          </MediaCardPopoverSource>
-        </MediaCardPopoverMeta>
       </MediaCardPopover>
     </MediaCard>
   );
