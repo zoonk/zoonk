@@ -40,7 +40,7 @@ export async function saveActivityStep(
   }
 
   await streamStatus({ status: "started", step: stepName });
-  await streamStatus({ status: "completed", step: "setActivityAsCompleted" });
+  await streamStatus({ status: "started", step: "setActivityAsCompleted" });
 
   const { error } = await safeAsync(() =>
     prisma.activity.update({
