@@ -2757,14 +2757,12 @@ describe(activityGenerationWorkflow, () => {
 
       await activityGenerationWorkflow(testLesson.id);
 
-      const dbFailing = await prisma.activity.findUnique({
-        where: { id: failingCustom.id },
-      });
-      expect(dbFailing?.generationStatus).toBe("failed");
+      const [dbFailing, dbSucceeding] = await Promise.all([
+        prisma.activity.findUnique({ where: { id: failingCustom.id } }),
+        prisma.activity.findUnique({ where: { id: succeedingCustom.id } }),
+      ]);
 
-      const dbSucceeding = await prisma.activity.findUnique({
-        where: { id: succeedingCustom.id },
-      });
+      expect(dbFailing?.generationStatus).toBe("failed");
       expect(dbSucceeding?.generationStatus).toBe("completed");
     });
 
@@ -2805,10 +2803,12 @@ describe(activityGenerationWorkflow, () => {
 
       await activityGenerationWorkflow(testLesson.id);
 
-      const dbBg = await prisma.activity.findUnique({ where: { id: bgActivity.id } });
-      expect(dbBg?.generationStatus).toBe("completed");
+      const [dbBg, dbCustom] = await Promise.all([
+        prisma.activity.findUnique({ where: { id: bgActivity.id } }),
+        prisma.activity.findUnique({ where: { id: customActivity.id } }),
+      ]);
 
-      const dbCustom = await prisma.activity.findUnique({ where: { id: customActivity.id } });
+      expect(dbBg?.generationStatus).toBe("completed");
       expect(dbCustom?.generationStatus).toBe("failed");
     });
   });
@@ -3137,14 +3137,12 @@ describe(activityGenerationWorkflow, () => {
       );
       expect(generateActivityExplanationQuiz).toHaveBeenCalled();
 
-      const dbExplanation = await prisma.activity.findUnique({
-        where: { id: explanationActivity.id },
-      });
-      expect(dbExplanation?.generationStatus).toBe("completed");
+      const [dbExplanation, dbQuiz] = await Promise.all([
+        prisma.activity.findUnique({ where: { id: explanationActivity.id } }),
+        prisma.activity.findUnique({ where: { id: quizActivity.id } }),
+      ]);
 
-      const dbQuiz = await prisma.activity.findUnique({
-        where: { id: quizActivity.id },
-      });
+      expect(dbExplanation?.generationStatus).toBe("completed");
       expect(dbQuiz?.generationStatus).toBe("completed");
     });
   });
@@ -3183,12 +3181,13 @@ describe(activityGenerationWorkflow, () => {
 
       await activityGenerationWorkflow(testLesson.id);
 
-      const dbBg = await prisma.activity.findUnique({ where: { id: bgActivity.id } });
+      const [dbBg, dbExp] = await Promise.all([
+        prisma.activity.findUnique({ where: { id: bgActivity.id } }),
+        prisma.activity.findUnique({ where: { id: expActivity.id } }),
+      ]);
+
       expect(dbBg?.generationStatus).toBe("failed");
-
-      const dbExp = await prisma.activity.findUnique({ where: { id: expActivity.id } });
       expect(dbExp?.generationStatus).toBe("failed");
-
       expect(generateActivityExplanation).not.toHaveBeenCalled();
     });
 
@@ -3268,24 +3267,20 @@ describe(activityGenerationWorkflow, () => {
 
       await activityGenerationWorkflow(testLesson.id);
 
-      const dbExp = await prisma.activity.findUnique({ where: { id: expActivity.id } });
+      const [dbExp, dbMech, dbQuiz, dbExamples, dbStory, dbChallenge] = await Promise.all([
+        prisma.activity.findUnique({ where: { id: expActivity.id } }),
+        prisma.activity.findUnique({ where: { id: mechActivity.id } }),
+        prisma.activity.findUnique({ where: { id: quizActivity.id } }),
+        prisma.activity.findUnique({ where: { id: examplesActivity.id } }),
+        prisma.activity.findUnique({ where: { id: storyActivity.id } }),
+        prisma.activity.findUnique({ where: { id: challengeActivity.id } }),
+      ]);
+
       expect(dbExp?.generationStatus).toBe("failed");
-
-      const dbMech = await prisma.activity.findUnique({ where: { id: mechActivity.id } });
       expect(dbMech?.generationStatus).toBe("failed");
-
-      const dbQuiz = await prisma.activity.findUnique({ where: { id: quizActivity.id } });
       expect(dbQuiz?.generationStatus).toBe("failed");
-
-      const dbExamples = await prisma.activity.findUnique({ where: { id: examplesActivity.id } });
       expect(dbExamples?.generationStatus).toBe("failed");
-
-      const dbStory = await prisma.activity.findUnique({ where: { id: storyActivity.id } });
       expect(dbStory?.generationStatus).toBe("failed");
-
-      const dbChallenge = await prisma.activity.findUnique({
-        where: { id: challengeActivity.id },
-      });
       expect(dbChallenge?.generationStatus).toBe("failed");
 
       expect(generateActivityMechanics).not.toHaveBeenCalled();
@@ -3325,10 +3320,12 @@ describe(activityGenerationWorkflow, () => {
 
       await activityGenerationWorkflow(testLesson.id);
 
-      const dbBg = await prisma.activity.findUnique({ where: { id: bgActivity.id } });
-      expect(dbBg?.generationStatus).toBe("completed");
+      const [dbBg, dbExp] = await Promise.all([
+        prisma.activity.findUnique({ where: { id: bgActivity.id } }),
+        prisma.activity.findUnique({ where: { id: expActivity.id } }),
+      ]);
 
-      const dbExp = await prisma.activity.findUnique({ where: { id: expActivity.id } });
+      expect(dbBg?.generationStatus).toBe("completed");
       expect(dbExp?.generationStatus).toBe("failed");
     });
   });
@@ -3432,19 +3429,16 @@ describe(activityGenerationWorkflow, () => {
       expect(generateActivityChallenge).toHaveBeenCalledOnce();
 
       // Steps should be in DB
-      const bgSteps = await prisma.step.findMany({ where: { activityId: bgActivity.id } });
-      const expSteps = await prisma.step.findMany({ where: { activityId: expActivity.id } });
-      const mechSteps = await prisma.step.findMany({ where: { activityId: mechActivity.id } });
-      const quizSteps = await prisma.step.findMany({ where: { activityId: quizActivity.id } });
-      const examplesSteps = await prisma.step.findMany({
-        where: { activityId: examplesActivity.id },
-      });
-      const storySteps = await prisma.step.findMany({
-        where: { activityId: storyActivity.id },
-      });
-      const challengeSteps = await prisma.step.findMany({
-        where: { activityId: challengeActivity.id },
-      });
+      const [bgSteps, expSteps, mechSteps, quizSteps, examplesSteps, storySteps, challengeSteps] =
+        await Promise.all([
+          prisma.step.findMany({ where: { activityId: bgActivity.id } }),
+          prisma.step.findMany({ where: { activityId: expActivity.id } }),
+          prisma.step.findMany({ where: { activityId: mechActivity.id } }),
+          prisma.step.findMany({ where: { activityId: quizActivity.id } }),
+          prisma.step.findMany({ where: { activityId: examplesActivity.id } }),
+          prisma.step.findMany({ where: { activityId: storyActivity.id } }),
+          prisma.step.findMany({ where: { activityId: challengeActivity.id } }),
+        ]);
 
       expect(bgSteps.length).toBeGreaterThan(0);
       expect(expSteps.length).toBeGreaterThan(0);
