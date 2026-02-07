@@ -2851,7 +2851,7 @@ describe(activityGenerationWorkflow, () => {
           return Promise.reject(new Error("Save update failed"));
         }
         return originalUpdate(...args);
-      }) as typeof originalUpdate;
+      }) as unknown as typeof originalUpdate;
 
       await activityGenerationWorkflow(testLesson.id);
 
