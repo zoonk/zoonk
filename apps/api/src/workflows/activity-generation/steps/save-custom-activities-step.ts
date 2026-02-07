@@ -1,8 +1,34 @@
 import { revalidateMainApp } from "@zoonk/core/cache/revalidate";
 import { prisma } from "@zoonk/db";
 import { cacheTagActivity } from "@zoonk/utils/cache";
+import { safeAsync } from "@zoonk/utils/error";
 import { streamStatus } from "../stream-status";
 import { type LessonActivity } from "./get-lesson-activities-step";
+
+async function saveActivity(activity: LessonActivity, workflowRunId: string): Promise<boolean> {
+  const current = await prisma.activity.findUnique({
+    select: { generationStatus: true },
+    where: { id: activity.id },
+  });
+
+  if (current?.generationStatus !== "running") {
+    return true;
+  }
+
+  const { error } = await safeAsync(() =>
+    prisma.activity.update({
+      data: { generationRunId: workflowRunId, generationStatus: "completed" },
+      where: { id: activity.id },
+    }),
+  );
+
+  if (error) {
+    return false;
+  }
+
+  await revalidateMainApp([cacheTagActivity({ activityId: BigInt(activity.id) })]);
+  return true;
+}
 
 export async function saveCustomActivitiesStep(
   activities: LessonActivity[],
@@ -19,25 +45,19 @@ export async function saveCustomActivitiesStep(
   await streamStatus({ status: "started", step: "setCustomAsCompleted" });
   await streamStatus({ status: "started", step: "setActivityAsCompleted" });
 
-  await Promise.allSettled(
-    customActivities.map(async (activity) => {
-      const current = await prisma.activity.findUnique({
-        select: { generationStatus: true },
-        where: { id: activity.id },
-      });
-
-      if (current?.generationStatus !== "running") {
-        return;
-      }
-
-      await prisma.activity.update({
-        data: { generationRunId: workflowRunId, generationStatus: "completed" },
-        where: { id: activity.id },
-      });
-
-      await revalidateMainApp([cacheTagActivity({ activityId: BigInt(activity.id) })]);
-    }),
+  const results = await Promise.allSettled(
+    customActivities.map((act) => saveActivity(act, workflowRunId)),
   );
+
+  const hasFailure = results.some(
+    (result) => result.status === "rejected" || (result.status === "fulfilled" && !result.value),
+  );
+
+  if (hasFailure) {
+    await streamStatus({ status: "error", step: "setCustomAsCompleted" });
+    await streamStatus({ status: "error", step: "setActivityAsCompleted" });
+    return;
+  }
 
   await streamStatus({ status: "completed", step: "setCustomAsCompleted" });
   await streamStatus({ status: "completed", step: "setActivityAsCompleted" });
