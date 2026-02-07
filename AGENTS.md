@@ -185,7 +185,7 @@ We're using the new [React Compiler](https://react.dev/learn/react-compiler/intr
 
 ## Committing Changes
 
-When committing changes, use the `/commit` skill. This ensures consistent commit message formatting across the project.
+When committing changes, use the `/zoonk-commit` skill. This ensures consistent commit message formatting across the project.
 
 ## Specialized Skills
 

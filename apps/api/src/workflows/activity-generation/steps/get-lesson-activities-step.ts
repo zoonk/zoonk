@@ -8,6 +8,7 @@ async function getLessonActivities(lessonId: number) {
     orderBy: { position: "asc" },
     select: {
       _count: { select: { steps: true } },
+      description: true,
       generationStatus: true,
       id: true,
       kind: true,
@@ -30,6 +31,7 @@ async function getLessonActivities(lessonId: number) {
           title: true,
         },
       },
+      title: true,
     },
     where: { lessonId },
   });
