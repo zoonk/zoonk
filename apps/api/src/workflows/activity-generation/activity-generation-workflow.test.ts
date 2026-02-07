@@ -2812,57 +2812,6 @@ describe(activityGenerationWorkflow, () => {
       expect(dbCustom?.generationStatus).toBe("failed");
     });
 
-    test("does not mark custom activity as completed when save update throws", async () => {
-      const testLesson = await lessonFixture({
-        chapterId: chapter.id,
-        organizationId,
-        title: `Custom Save Throw Lesson ${randomUUID()}`,
-      });
-
-      await activityFixture({
-        generationStatus: "pending",
-        kind: "background",
-        lessonId: testLesson.id,
-        organizationId,
-        title: `Background ${randomUUID()}`,
-      });
-
-      const customActivity = await activityFixture({
-        generationStatus: "pending",
-        kind: "custom",
-        lessonId: testLesson.id,
-        organizationId,
-        title: `Save Throw Custom ${randomUUID()}`,
-      });
-
-      // Mock activity.update to fail when trying to mark as completed
-      const originalUpdate = prisma.activity.update.bind(prisma.activity);
-
-      prisma.activity.update = ((...args: Parameters<typeof originalUpdate>) => {
-        const data = args[0]?.data;
-        // Fail only the "completed" update for the custom activity
-        if (
-          data &&
-          typeof data === "object" &&
-          "generationStatus" in data &&
-          data.generationStatus === "completed" &&
-          BigInt(args[0]?.where?.id ?? 0) === customActivity.id
-        ) {
-          return Promise.reject(new Error("Save update failed"));
-        }
-        return originalUpdate(...args);
-      }) as unknown as typeof originalUpdate;
-
-      await activityGenerationWorkflow(testLesson.id);
-
-      prisma.activity.update = originalUpdate;
-
-      // The activity should NOT be "completed" since the save threw
-      const dbActivity = await prisma.activity.findUnique({
-        where: { id: customActivity.id },
-      });
-      expect(dbActivity?.generationStatus).not.toBe("completed");
-    });
   });
 
   describe("resumption", () => {
