@@ -38,8 +38,9 @@ export async function saveActivityStep(
 
   const isCompleted = current?.generationStatus === "completed";
   const isFailed = current?.generationStatus === "failed";
+  const isPending = current?.generationStatus === "pending";
 
-  if (isCompleted || isFailed) {
+  if (isCompleted || isFailed || isPending) {
     return;
   }
 

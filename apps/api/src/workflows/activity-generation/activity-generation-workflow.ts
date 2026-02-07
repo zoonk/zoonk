@@ -38,8 +38,8 @@ function settled<T>(result: PromiseSettledResult<T>, fallback: T): T {
  * 2. explanation content + background visuals (parallel)
  * 3. mechanics content + quiz content + examples content + story content + challenge content + explanation visuals + background images (parallel)
  * 4. review content + mechanics visuals + examples visuals + quiz images + explanation images + save background + save story + save challenge (parallel)
- * 5. mechanics images + examples images + save explanation + save quiz (parallel)
- * 6. save mechanics + save examples + save review
+ * 5. mechanics images + examples images + save explanation + save quiz + save review (parallel)
+ * 6. save mechanics + save examples
  */
 export async function activityGenerationWorkflow(lessonId: number): Promise<void> {
   "use workflow";
@@ -99,19 +99,19 @@ export async function activityGenerationWorkflow(lessonId: number): Promise<void
     const mechVisuals = settled(mechVisualsResult, { visuals: [] });
     const examplesVisuals = settled(examplesVisualsResult, { visuals: [] });
 
-    // Wave 5: mechanics images + examples images + save explanation + save quiz (parallel)
+    // Wave 5: mechanics images + examples images + save explanation + save quiz + save review (parallel)
     await Promise.allSettled([
       generateImagesStep(activities, mechVisuals.visuals, "mechanics"),
       generateImagesStep(activities, examplesVisuals.visuals, "examples"),
       saveActivityStep(activities, workflowRunId, "explanation"),
       saveActivityStep(activities, workflowRunId, "quiz"),
+      saveActivityStep(activities, workflowRunId, "review"),
     ]);
 
-    // Wave 6: save mechanics + save examples + save review
+    // Wave 6: save mechanics + save examples
     await Promise.allSettled([
       saveActivityStep(activities, workflowRunId, "mechanics"),
       saveActivityStep(activities, workflowRunId, "examples"),
-      saveActivityStep(activities, workflowRunId, "review"),
     ]);
   } catch (error) {
     await handleWorkflowFailureStep(lessonId, workflowRunId);

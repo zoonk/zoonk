@@ -62,6 +62,11 @@ export async function generateReviewContentStep(
 ): Promise<void> {
   "use step";
 
+  // Language lessons use a different review generation function (added separately)
+  if (activities[0]?.lesson.kind === "language") {
+    return;
+  }
+
   const resolved = await resolveActivityForGeneration(activities, "review");
 
   if (!resolved.shouldGenerate) {
@@ -69,12 +74,6 @@ export async function generateReviewContentStep(
   }
 
   const { activity } = resolved;
-
-  // Language lessons use a different review generation function (added separately)
-  if (activity.lesson.kind === "language") {
-    await handleActivityFailureStep({ activityId: activity.id });
-    return;
-  }
 
   if (
     backgroundSteps.length === 0 ||

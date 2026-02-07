@@ -2126,7 +2126,7 @@ describe(activityGenerationWorkflow, () => {
       const dbActivity = await prisma.activity.findUnique({
         where: { id: reviewActivity?.id },
       });
-      expect(dbActivity?.generationStatus).toBe("failed");
+      expect(dbActivity?.generationStatus).toBe("pending");
     });
 
     test("passes all dependency steps to generateActivityReview", async () => {
