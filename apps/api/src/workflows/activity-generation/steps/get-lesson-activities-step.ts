@@ -26,6 +26,7 @@ async function getLessonActivities(lessonId: number) {
             },
           },
           description: true,
+          kind: true,
           title: true,
         },
       },

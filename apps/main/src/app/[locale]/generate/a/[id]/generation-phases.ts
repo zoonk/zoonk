@@ -28,7 +28,7 @@ export function getPhaseOrder(kind: ActivityKind): PhaseName[] {
     return ["gettingStarted", "writingContent", "preparingVisuals", "creatingImages", "finishing"];
   }
 
-  if (kind === "story" || kind === "challenge") {
+  if (kind === "story" || kind === "challenge" || kind === "review") {
     return ["gettingStarted", "processingDependencies", "writingContent", "finishing"];
   }
 
@@ -49,6 +49,7 @@ const ALL_CONTENT_STEPS: ActivityStepName[] = [
   "generateExplanationContent",
   "generateMechanicsContent",
   "generateQuizContent",
+  "generateReviewContent",
   "generateStoryContent",
 ];
 
@@ -59,6 +60,7 @@ const ALL_COMPLETION_STEPS: ActivityStepName[] = [
   "setExplanationAsCompleted",
   "setMechanicsAsCompleted",
   "setQuizAsCompleted",
+  "setReviewAsCompleted",
   "setStoryAsCompleted",
   "setActivityAsCompleted",
 ];
@@ -108,6 +110,7 @@ function getPhaseSteps(kind: ActivityKind): Record<PhaseName, ActivityStepName[]
     examples: "generateExamplesContent",
     mechanics: "generateMechanicsContent",
     quiz: "generateQuizContent",
+    review: "generateReviewContent",
     story: "generateStoryContent",
   };
 
@@ -137,7 +140,7 @@ function getPhaseWeights(kind: ActivityKind): Record<PhaseName, number> {
     };
   }
 
-  if (kind === "story" || kind === "challenge") {
+  if (kind === "story" || kind === "challenge" || kind === "review") {
     return {
       creatingImages: 0,
       finishing: 10,
@@ -165,6 +168,7 @@ const SUPPORTED_KINDS: ActivityKind[] = [
   "explanation",
   "mechanics",
   "quiz",
+  "review",
   "story",
 ];
 

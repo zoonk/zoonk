@@ -13,6 +13,7 @@ const kindToStepName: Partial<Record<ActivityKind, ActivityStepName>> = {
   explanation: "setExplanationAsCompleted",
   mechanics: "setMechanicsAsCompleted",
   quiz: "setQuizAsCompleted",
+  review: "setReviewAsCompleted",
   story: "setStoryAsCompleted",
 };
 
@@ -37,8 +38,9 @@ export async function saveActivityStep(
 
   const isCompleted = current?.generationStatus === "completed";
   const isFailed = current?.generationStatus === "failed";
+  const isPending = current?.generationStatus === "pending";
 
-  if (isCompleted || isFailed) {
+  if (isCompleted || isFailed || isPending) {
     return;
   }
 
