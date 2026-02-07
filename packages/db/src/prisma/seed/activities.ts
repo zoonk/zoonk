@@ -109,12 +109,32 @@ const activitiesData: {
       {
         generationStatus: "pending",
         isPublished: true,
-        kind: "background",
+        kind: "vocabulary",
       },
       {
         generationStatus: "pending",
         isPublished: true,
-        kind: "explanation",
+        kind: "grammar",
+      },
+      {
+        generationStatus: "pending",
+        isPublished: true,
+        kind: "reading",
+      },
+      {
+        generationStatus: "pending",
+        isPublished: true,
+        kind: "listening",
+      },
+      {
+        generationStatus: "pending",
+        isPublished: true,
+        kind: "languageStory",
+      },
+      {
+        generationStatus: "pending",
+        isPublished: true,
+        kind: "languageReview",
       },
     ],
     language: "en",
