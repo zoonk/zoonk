@@ -36,11 +36,7 @@ export async function saveActivityStep(
     where: { id: activity.id },
   });
 
-  const isCompleted = current?.generationStatus === "completed";
-  const isFailed = current?.generationStatus === "failed";
-  const isPending = current?.generationStatus === "pending";
-
-  if (isCompleted || isFailed || isPending) {
+  if (current?.generationStatus !== "running") {
     return;
   }
 
