@@ -7,6 +7,7 @@ import { generateActivityExplanationQuiz } from "@zoonk/ai/tasks/activities/core
 import { generateActivityMechanics } from "@zoonk/ai/tasks/activities/core/mechanics";
 import { generateActivityReview } from "@zoonk/ai/tasks/activities/core/review";
 import { generateActivityStory } from "@zoonk/ai/tasks/activities/core/story";
+import { generateActivityCustom } from "@zoonk/ai/tasks/activities/custom";
 import { generateStepVisuals } from "@zoonk/ai/tasks/steps/visual";
 import { generateVisualStepImage } from "@zoonk/core/steps/visual-image";
 import { prisma } from "@zoonk/db";
@@ -184,6 +185,17 @@ vi.mock("@zoonk/ai/tasks/activities/core/explanation-quiz", () => ({
           ],
           question: "Which image shows a cat?",
         },
+      ],
+    },
+  }),
+}));
+
+vi.mock("@zoonk/ai/tasks/activities/custom", () => ({
+  generateActivityCustom: vi.fn().mockResolvedValue({
+    data: {
+      steps: [
+        { text: "Custom step 1 text", title: "Custom Step 1" },
+        { text: "Custom step 2 text", title: "Custom Step 2" },
       ],
     },
   }),
@@ -2379,6 +2391,425 @@ describe(activityGenerationWorkflow, () => {
       });
       expect(dbActivity?.generationStatus).toBe("completed");
       expect(dbActivity?.generationRunId).toBe("test-run-id");
+    });
+  });
+
+  describe("custom activity generation", () => {
+    test("doesn't call generateActivityCustom if lesson has no custom activities", async () => {
+      const testLesson = await lessonFixture({
+        chapterId: chapter.id,
+        organizationId,
+        title: `No Custom Lesson ${randomUUID()}`,
+      });
+
+      await activityFixture({
+        generationStatus: "pending",
+        kind: "background",
+        lessonId: testLesson.id,
+        organizationId,
+        title: `Background ${randomUUID()}`,
+      });
+
+      await activityGenerationWorkflow(testLesson.id);
+
+      expect(generateActivityCustom).not.toHaveBeenCalled();
+    });
+
+    test("generates content for a single custom activity with correct params", async () => {
+      const testLesson = await lessonFixture({
+        chapterId: chapter.id,
+        organizationId,
+        title: `Single Custom Lesson ${randomUUID()}`,
+      });
+
+      await activityFixture({
+        generationStatus: "pending",
+        kind: "background",
+        lessonId: testLesson.id,
+        organizationId,
+        title: `Background ${randomUUID()}`,
+      });
+
+      await activityFixture({
+        description: "Learn the fundamentals of testing",
+        generationStatus: "pending",
+        kind: "custom",
+        lessonId: testLesson.id,
+        organizationId,
+        title: `Practice Testing ${randomUUID()}`,
+      });
+
+      await activityGenerationWorkflow(testLesson.id);
+
+      expect(generateActivityCustom).toHaveBeenCalledOnce();
+      expect(generateActivityCustom).toHaveBeenCalledWith(
+        expect.objectContaining({
+          activityDescription: "Learn the fundamentals of testing",
+          activityTitle: expect.stringContaining("Practice Testing"),
+        }),
+      );
+    });
+
+    test("generates content for multiple custom activities in parallel", async () => {
+      const testLesson = await lessonFixture({
+        chapterId: chapter.id,
+        organizationId,
+        title: `Multi Custom Lesson ${randomUUID()}`,
+      });
+
+      await activityFixture({
+        generationStatus: "pending",
+        kind: "background",
+        lessonId: testLesson.id,
+        organizationId,
+        title: `Background ${randomUUID()}`,
+      });
+
+      await activityFixture({
+        description: "First custom description",
+        generationStatus: "pending",
+        kind: "custom",
+        lessonId: testLesson.id,
+        organizationId,
+        title: `Custom One ${randomUUID()}`,
+      });
+
+      await activityFixture({
+        description: "Second custom description",
+        generationStatus: "pending",
+        kind: "custom",
+        lessonId: testLesson.id,
+        organizationId,
+        title: `Custom Two ${randomUUID()}`,
+      });
+
+      await activityGenerationWorkflow(testLesson.id);
+
+      expect(generateActivityCustom).toHaveBeenCalledTimes(2);
+      expect(generateActivityCustom).toHaveBeenCalledWith(
+        expect.objectContaining({ activityDescription: "First custom description" }),
+      );
+      expect(generateActivityCustom).toHaveBeenCalledWith(
+        expect.objectContaining({ activityDescription: "Second custom description" }),
+      );
+    });
+
+    test("sets custom status to 'failed' when generateActivityCustom throws", async () => {
+      vi.mocked(generateActivityCustom).mockRejectedValueOnce(
+        new Error("Custom generation failed"),
+      );
+
+      const testLesson = await lessonFixture({
+        chapterId: chapter.id,
+        organizationId,
+        title: `Custom Error Lesson ${randomUUID()}`,
+      });
+
+      await activityFixture({
+        generationStatus: "pending",
+        kind: "background",
+        lessonId: testLesson.id,
+        organizationId,
+        title: `Background ${randomUUID()}`,
+      });
+
+      const customActivity = await activityFixture({
+        generationStatus: "pending",
+        kind: "custom",
+        lessonId: testLesson.id,
+        organizationId,
+        title: `Error Custom ${randomUUID()}`,
+      });
+
+      await activityGenerationWorkflow(testLesson.id);
+
+      const dbActivity = await prisma.activity.findUnique({
+        where: { id: customActivity.id },
+      });
+      expect(dbActivity?.generationStatus).toBe("failed");
+    });
+
+    test("creates custom steps in database with static kind and correct content", async () => {
+      const testLesson = await lessonFixture({
+        chapterId: chapter.id,
+        organizationId,
+        title: `Custom Steps DB Lesson ${randomUUID()}`,
+      });
+
+      await activityFixture({
+        generationStatus: "pending",
+        kind: "background",
+        lessonId: testLesson.id,
+        organizationId,
+        title: `Background ${randomUUID()}`,
+      });
+
+      const customActivity = await activityFixture({
+        generationStatus: "pending",
+        kind: "custom",
+        lessonId: testLesson.id,
+        organizationId,
+        title: `Custom ${randomUUID()}`,
+      });
+
+      await activityGenerationWorkflow(testLesson.id);
+
+      const customSteps = await prisma.step.findMany({
+        orderBy: { position: "asc" },
+        where: { activityId: customActivity.id },
+      });
+
+      expect(customSteps).toHaveLength(2);
+      expect(customSteps[0]?.kind).toBe("static");
+      expect(customSteps[0]?.content).toEqual({
+        text: "Custom step 1 text",
+        title: "Custom Step 1",
+      });
+      expect(customSteps[1]?.content).toEqual({
+        text: "Custom step 2 text",
+        title: "Custom Step 2",
+      });
+    });
+
+    test("creates steps with visuals for custom activities", async () => {
+      const testLesson = await lessonFixture({
+        chapterId: chapter.id,
+        organizationId,
+        title: `Custom Visuals Lesson ${randomUUID()}`,
+      });
+
+      await activityFixture({
+        generationStatus: "pending",
+        kind: "background",
+        lessonId: testLesson.id,
+        organizationId,
+        title: `Background ${randomUUID()}`,
+      });
+
+      const customActivity = await activityFixture({
+        generationStatus: "pending",
+        kind: "custom",
+        lessonId: testLesson.id,
+        organizationId,
+        title: `Custom ${randomUUID()}`,
+      });
+
+      await activityGenerationWorkflow(testLesson.id);
+
+      const customSteps = await prisma.step.findMany({
+        orderBy: { position: "asc" },
+        where: { activityId: customActivity.id },
+      });
+
+      // generateStepVisuals mock returns image for step 0 and code for step 1
+      expect(customSteps[0]?.visualKind).toBe("image");
+      expect(customSteps[1]?.visualKind).toBe("code");
+    });
+
+    test("generates images for custom activity steps", async () => {
+      const testLesson = await lessonFixture({
+        chapterId: chapter.id,
+        organizationId,
+        title: `Custom Images Lesson ${randomUUID()}`,
+      });
+
+      await activityFixture({
+        generationStatus: "pending",
+        kind: "background",
+        lessonId: testLesson.id,
+        organizationId,
+        title: `Background ${randomUUID()}`,
+      });
+
+      const customActivity = await activityFixture({
+        generationStatus: "pending",
+        kind: "custom",
+        lessonId: testLesson.id,
+        organizationId,
+        title: `Custom ${randomUUID()}`,
+      });
+
+      await activityGenerationWorkflow(testLesson.id);
+
+      const customSteps = await prisma.step.findMany({
+        orderBy: { position: "asc" },
+        where: { activityId: customActivity.id },
+      });
+
+      // Step 0 has image visual — should have url from generateVisualStepImage mock
+      const imageStep = customSteps[0];
+      expect(imageStep?.visualKind).toBe("image");
+      expect(imageStep?.visualContent).toEqual(
+        expect.objectContaining({ url: "https://example.com/image.webp" }),
+      );
+    });
+
+    test("sets custom status to 'completed' after saving", async () => {
+      const testLesson = await lessonFixture({
+        chapterId: chapter.id,
+        organizationId,
+        title: `Custom Complete Lesson ${randomUUID()}`,
+      });
+
+      await activityFixture({
+        generationStatus: "pending",
+        kind: "background",
+        lessonId: testLesson.id,
+        organizationId,
+        title: `Background ${randomUUID()}`,
+      });
+
+      const customActivity = await activityFixture({
+        generationStatus: "pending",
+        kind: "custom",
+        lessonId: testLesson.id,
+        organizationId,
+        title: `Custom ${randomUUID()}`,
+      });
+
+      await activityGenerationWorkflow(testLesson.id);
+
+      const dbActivity = await prisma.activity.findUnique({
+        where: { id: customActivity.id },
+      });
+      expect(dbActivity?.generationStatus).toBe("completed");
+      expect(dbActivity?.generationRunId).toBe("test-run-id");
+    });
+
+    test("skips custom generation if already completed", async () => {
+      const testLesson = await lessonFixture({
+        chapterId: chapter.id,
+        organizationId,
+        title: `Custom Resume Lesson ${randomUUID()}`,
+      });
+
+      await activityFixture({
+        generationStatus: "pending",
+        kind: "background",
+        lessonId: testLesson.id,
+        organizationId,
+        title: `Background ${randomUUID()}`,
+      });
+
+      const customActivity = await activityFixture({
+        generationStatus: "completed",
+        kind: "custom",
+        lessonId: testLesson.id,
+        organizationId,
+        title: `Completed Custom ${randomUUID()}`,
+      });
+
+      await stepFixture({
+        activityId: customActivity.id,
+        content: { text: "Existing custom text", title: "Existing Custom" },
+        position: 0,
+      });
+
+      await activityGenerationWorkflow(testLesson.id);
+
+      expect(generateActivityCustom).not.toHaveBeenCalled();
+    });
+
+    test("one custom activity fails while others still complete", async () => {
+      vi.mocked(generateActivityCustom)
+        .mockRejectedValueOnce(new Error("First custom failed"))
+        .mockResolvedValueOnce({
+          data: {
+            steps: [{ text: "Second succeeds", title: "Second Custom" }],
+          },
+          systemPrompt: "test",
+          usage: {} as Awaited<ReturnType<typeof generateActivityCustom>>["usage"],
+          userPrompt: "test",
+        });
+
+      const testLesson = await lessonFixture({
+        chapterId: chapter.id,
+        organizationId,
+        title: `Custom Isolation Lesson ${randomUUID()}`,
+      });
+
+      await activityFixture({
+        generationStatus: "pending",
+        kind: "background",
+        lessonId: testLesson.id,
+        organizationId,
+        title: `Background ${randomUUID()}`,
+      });
+
+      const [failingCustom, succeedingCustom] = await Promise.all([
+        activityFixture({
+          generationStatus: "pending",
+          kind: "custom",
+          lessonId: testLesson.id,
+          organizationId,
+          position: 0,
+          title: `Failing Custom ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "custom",
+          lessonId: testLesson.id,
+          organizationId,
+          position: 1,
+          title: `Succeeding Custom ${randomUUID()}`,
+        }),
+      ]);
+
+      await activityGenerationWorkflow(testLesson.id);
+
+      const dbFailing = await prisma.activity.findUnique({
+        where: { id: failingCustom.id },
+      });
+      expect(dbFailing?.generationStatus).toBe("failed");
+
+      const dbSucceeding = await prisma.activity.findUnique({
+        where: { id: succeedingCustom.id },
+      });
+      expect(dbSucceeding?.generationStatus).toBe("completed");
+    });
+
+    test("custom activity failure does not affect core activities", async () => {
+      vi.mocked(generateActivityCustom).mockRejectedValueOnce(
+        new Error("Custom failed completely"),
+      );
+
+      const testLesson = await lessonFixture({
+        chapterId: chapter.id,
+        organizationId,
+        title: `Custom Core Isolation Lesson ${randomUUID()}`,
+      });
+
+      const [bgActivity, , customActivity] = await Promise.all([
+        activityFixture({
+          generationStatus: "pending",
+          kind: "background",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Background ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Explanation ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "custom",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Custom ${randomUUID()}`,
+        }),
+      ]);
+
+      await activityGenerationWorkflow(testLesson.id);
+
+      const dbBg = await prisma.activity.findUnique({ where: { id: bgActivity.id } });
+      expect(dbBg?.generationStatus).toBe("completed");
+
+      const dbCustom = await prisma.activity.findUnique({ where: { id: customActivity.id } });
+      expect(dbCustom?.generationStatus).toBe("failed");
     });
   });
 

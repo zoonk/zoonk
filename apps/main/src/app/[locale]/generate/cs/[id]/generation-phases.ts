@@ -54,6 +54,7 @@ const PHASE_STEPS = {
   finishing: [
     "setBackgroundAsCompleted",
     "setChallengeAsCompleted",
+    "setCustomAsCompleted",
     "setExamplesAsCompleted",
     "setExplanationAsCompleted",
     "setMechanicsAsCompleted",
@@ -95,6 +96,7 @@ const PHASE_STEPS = {
     "setActivityAsRunning",
     "generateBackgroundContent",
     "generateChallengeContent",
+    "generateCustomContent",
     "generateExamplesContent",
     "generateExplanationContent",
     "generateMechanicsContent",

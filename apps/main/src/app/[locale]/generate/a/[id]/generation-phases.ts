@@ -24,7 +24,7 @@ export type PhaseName =
   | "finishing";
 
 export function getPhaseOrder(kind: ActivityKind): PhaseName[] {
-  if (kind === "background") {
+  if (kind === "background" || kind === "custom") {
     return ["gettingStarted", "writingContent", "preparingVisuals", "creatingImages", "finishing"];
   }
 
@@ -45,6 +45,7 @@ export function getPhaseOrder(kind: ActivityKind): PhaseName[] {
 const ALL_CONTENT_STEPS: ActivityStepName[] = [
   "generateBackgroundContent",
   "generateChallengeContent",
+  "generateCustomContent",
   "generateExamplesContent",
   "generateExplanationContent",
   "generateMechanicsContent",
@@ -56,6 +57,7 @@ const ALL_CONTENT_STEPS: ActivityStepName[] = [
 const ALL_COMPLETION_STEPS: ActivityStepName[] = [
   "setBackgroundAsCompleted",
   "setChallengeAsCompleted",
+  "setCustomAsCompleted",
   "setExamplesAsCompleted",
   "setExplanationAsCompleted",
   "setMechanicsAsCompleted",
@@ -96,6 +98,15 @@ function getPhaseSteps(kind: ActivityKind): Record<PhaseName, ActivityStepName[]
     };
   }
 
+  if (kind === "custom") {
+    return {
+      ...shared,
+      finishing: getFinishingSteps(["generateCustomContent"]),
+      processingDependencies: [],
+      writingContent: ["setActivityAsRunning", "generateCustomContent"],
+    };
+  }
+
   if (kind === "explanation") {
     return {
       ...shared,
@@ -129,7 +140,7 @@ function getPhaseSteps(kind: ActivityKind): Record<PhaseName, ActivityStepName[]
 }
 
 function getPhaseWeights(kind: ActivityKind): Record<PhaseName, number> {
-  if (kind === "background") {
+  if (kind === "background" || kind === "custom") {
     return {
       creatingImages: 43,
       finishing: 7,
@@ -164,6 +175,7 @@ function getPhaseWeights(kind: ActivityKind): Record<PhaseName, number> {
 const SUPPORTED_KINDS: ActivityKind[] = [
   "background",
   "challenge",
+  "custom",
   "examples",
   "explanation",
   "mechanics",
