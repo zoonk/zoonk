@@ -30,6 +30,7 @@ export const ACTIVITY_STEPS = [
   "generateExamplesContent",
   "generateMechanicsContent",
   "generateQuizContent",
+  "generateReviewContent",
   "generateStoryContent",
   "generateVisuals",
   "generateImages",
@@ -41,6 +42,7 @@ export const ACTIVITY_STEPS = [
   "setExplanationAsCompleted",
   "setMechanicsAsCompleted",
   "setQuizAsCompleted",
+  "setReviewAsCompleted",
   "setStoryAsCompleted",
   "setActivityAsCompleted",
   "workflowError",
@@ -55,6 +57,7 @@ export type ActivityCompletionStep =
   | "setExplanationAsCompleted"
   | "setMechanicsAsCompleted"
   | "setQuizAsCompleted"
+  | "setReviewAsCompleted"
   | "setStoryAsCompleted";
 
 const activityCompletionSteps: Partial<Record<string, ActivityCompletionStep>> = {
@@ -64,6 +67,7 @@ const activityCompletionSteps: Partial<Record<string, ActivityCompletionStep>> =
   explanation: "setExplanationAsCompleted",
   mechanics: "setMechanicsAsCompleted",
   quiz: "setQuizAsCompleted",
+  review: "setReviewAsCompleted",
   story: "setStoryAsCompleted",
 };
 
