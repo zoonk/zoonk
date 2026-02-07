@@ -2711,16 +2711,21 @@ describe(activityGenerationWorkflow, () => {
     });
 
     test("one custom activity fails while others still complete", async () => {
-      vi.mocked(generateActivityCustom)
-        .mockRejectedValueOnce(new Error("First custom failed"))
-        .mockResolvedValueOnce({
+      vi.mocked(generateActivityCustom).mockImplementation(({ activityTitle }) => {
+        if (activityTitle.startsWith("Failing Custom")) {
+          return Promise.reject(new Error("First custom failed"));
+        }
+
+        return Promise.resolve({
           data: {
             steps: [{ text: "Second succeeds", title: "Second Custom" }],
           },
           systemPrompt: "test",
+          // oxlint-disable-next-line no-unsafe-type-assertion -- test mock
           usage: {} as Awaited<ReturnType<typeof generateActivityCustom>>["usage"],
           userPrompt: "test",
         });
+      });
 
       const testLesson = await lessonFixture({
         chapterId: chapter.id,
