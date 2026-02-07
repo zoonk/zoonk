@@ -2811,7 +2811,6 @@ describe(activityGenerationWorkflow, () => {
       expect(dbBg?.generationStatus).toBe("completed");
       expect(dbCustom?.generationStatus).toBe("failed");
     });
-
   });
 
   describe("resumption", () => {
