@@ -1,0 +1,167 @@
+{
+  "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Should break down hiragana by character groups (vowels, k-row, s-row, etc.)\n      - Should cover stroke order and pronunciation for each group\n      - Should not go beyond hiragana into katakana or kanji\n\n      \n  - Each lesson should cover a SINGLE, SPECIFIC concept that can be explained within 10 short tweets\n  - Break down topics into the smallest, most manageable units possible, so that each lesson can be learned in 2-3 minutes\n  - If a topic is too broad, split it into multiple lessons\n  - Each lesson should be extremely focused on a SINGLE concept\n  - If you find yourself using \"AND\", \"OR\", or \"VS\" in a title, you should split it into separate lessons\n  - ALL lessons must be about pure language acquisition (vocabulary, grammar, pronunciation, sentences, conjugations, dialogues)\n  - NO culture lessons (history, traditions, cuisine, festivals)\n  - NO career or professional lessons\n  - NO proficiency exam preparation lessons\n  - NO literature or media analysis lessons\n  - Lesson titles should be short and specific to the exact concept covered\n  - Build a logical progression from basic to advanced concepts\n  - Ensure lessons build on knowledge from previous lessons\n  - Focus lessons for this specific chapter, not the entire course\n  - Don't include summary or review lessons\n  - Don't include assessment or quiz lessons\n  - Should follow the language specified by language parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Descriptions should be concise, no fluff (avoid \"learn\", \"understand\", \"explore\", etc.)\n  - You don't need to evaluate the output format here, just focus on the lesson content quality\n  - Include an extensive list of lessons to cover all the concepts needed for the chapter\n\n    ",
+  "judgedAt": "2026-02-08T20:43:26.241Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model C provides the most comprehensive and well-structured lesson plan. It covers all hiragana character groups systematically, includes dedicated pronunciation lessons for irregular sounds (し, ち, つ, ふ, R, ん), addresses particle usage (は, へ, を), covers dakuten/handakuten thoroughly, includes all yōon combinations, and adds practical lessons on confusing similar characters. The stroke order lessons are appropriately grouped by rows rather than individual characters. Descriptions are concise and in Brazilian Portuguese. The progression is logical from basic vowels through to advanced concepts like similar character differentiation.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model A provides excellent coverage with good granularity. It splits character groups (e.g., か, き, く and け, こ separately), which allows for smaller, focused lessons as required. It covers dakuten, handakuten, all yōon families, sokuon, and long vowels systematically. The descriptions use appropriate Portuguese terminology (e.g., 'base gutural', 'base fricativa'). However, splitting vowel lessons unnecessarily (5 vowels into 2 lessons each with 2-3 characters) seems overly granular, and it lacks stroke order lessons and similar character comparison lessons that would help learners.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model G has good overall structure with character groups, stroke order by row, dakuten/handakuten, yōon combinations, sokuon, long vowels, and similar character comparisons. It also includes helpful particle usage lessons (は, へ, を). However, the first lesson 'O que é Hiragana' about origin and function may be considered cultural rather than pure language acquisition. The coverage is solid but slightly less comprehensive than Model C in terms of pronunciation nuances.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Model B covers all basic rows, dakuten/handakuten, combinations (yōon), tsu pequeno, and stroke order lessons organized by rows. The structure is clean and progressive. However, it includes some redundancy (e.g., 'Combinações DY' for ぢ which is rarely used). It lacks lessons on long vowels, particle usage differences, and similar character comparisons. The 'Combinações: Conceito' lesson adds useful context. Descriptions are appropriately concise in Portuguese.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model D is extremely granular with individual stroke order lessons for each of the 46 basic hiragana characters (46 separate lessons just for stroke order), which may be excessive and could make the course tedious. While comprehensive, this level of granularity conflicts with the requirement for 'manageable units' that can be learned in 2-3 minutes - having 46 single-character stroke lessons seems impractical. It does cover dakuten, handakuten, yōon, and includes helpful visual confusion lessons. The overall structure is good but the extreme granularity of stroke order is a weakness.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model F has good content coverage including gojūon order, all character rows, dakuten/handakuten, yōon, sokuon, long vowels, and pronunciation distinctions. However, it mixes English terminology ('K-row', 'S-row') with Portuguese text, which violates the Brazilian Portuguese requirement. Some lessons try to cover too much content in one lesson (e.g., 'Yōon: N/H/M/R rows' combines multiple rows). The structure is logical but the language mixing and some overly broad lessons reduce the score.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Model E covers the basic hiragana structure adequately with character rows, dakuten, handakuten, sokuon, long vowels, and yōon combinations. However, it's notably missing stroke order lessons entirely, which was a specific requirement. The descriptions are in Portuguese but titles like 'Família do K' are acceptable. The coverage is less comprehensive than other models - no similar character lessons, no particle usage lessons, and missing stroke order is a significant gap.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model H is extremely granular with individual lessons for each hiragana character AND each yōon combination as separate lessons, resulting in an excessive number of lessons (130+). This level of granularity is impractical - having a separate lesson for each single character (きゃ, きゅ, きょ as 3 separate lessons) goes beyond 'manageable units.' While thorough, this approach would make the course overwhelming. It includes some useful introductory lessons on mora and stroke order principles, but the extreme fragmentation is a significant weakness. Small kana (ぁ, ぃ, ぅ, ぇ, ぉ) lessons may be beyond typical hiragana scope.",
+          "score": 5.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model C provides the most comprehensive and pedagogically sound list. It goes beyond the basic rows to include specific lessons for difficult pronunciations (shi, chi, tsu, fu), reading rules for particles (wa, e, o), and visual distinctions between similar characters. The granularity is excellent, dedicating specific lessons to concepts that often trip up beginners. While separating the stroke order lessons to the end is a minor flow drawback, the content quality and specific focus on 'pure language acquisition' nuances make it the best output. It follows the Portuguese language constraint perfectly.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model G offers a very solid, standard curriculum. It covers all the rows, followed by a writing section, then modifications (dakuten/yoon), and finally important nuances like similar characters and particle readings. It is nearly as complete as Model C but lacks the specific pronunciation focus lessons (e.g., 'Pronúncia de tsu'). It is a high-quality, safe output that meets all constraints well.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model A has a very interesting structural approach, splitting the standard 5-character rows into smaller groups (2-3 characters) to strictly adhere to the 'short lesson' constraint while integrating reading and writing. This ensures a good pace. However, it fails to include lessons on particle readings (reading 'ha' as 'wa', etc.), which is a critical part of a Hiragana chapter. It also dedicates perhaps too many lessons to long vowels (5 separate lessons) while missing those other key concepts.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Model B provides a standard, adequate list. It covers the basics (rows, dakuten, yoon) and separates reading from writing. However, it lacks the depth of Models C and G regarding special pronunciations, particles, or similar characters. It meets the requirements but doesn't excel in content richness.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model D includes excellent content regarding visual confusion (10 specific lessons), which is very valuable. However, it creates a separate lesson for the stroke order of *every single character* (Lessons 12-58). This results in a bloated list that might be tedious for a user to scroll through, rather than grouping writing by rows. While granular, it pushes the definition of 'manageable units' too far in the writing section.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Model E meets the basic requirements but is the least detailed of the acceptable models. The titles are somewhat generic ('Combinação K' vs 'Combinação KY' or 'Yoon'), and it doesn't explicitly mention writing or stroke order in the titles (though mentioned in descriptions). It misses particles and nuances.",
+          "score": 5.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model F has high-quality descriptions that explain phonetic nuances well. However, it violates the negative constraint 'MUST be in Brazilian Portuguese' by using English terms in the titles ('K-row', 'S-row', 'M-row'). This significant formatting error lowers its score despite good content.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model H takes granularity to an extreme that harms the learning experience. By creating a separate lesson for every single character and every single combination (over 100 lessons), it ignores the instruction to break down by 'character groups'. It fails to consolidate related items into manageable chunks.",
+          "score": 3
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Cumpre bem o requisito de PT-BR e organiza por linhas (vogais, K, S, etc.). Cobre pronúncia e inclui um bloco muito granular de ordem de traços (até por caractere), além de dakuten/handakuten, yōon e confusões visuais — tudo ainda dentro de hiragana. Progressão lógica e lista extensa. Ponto fraco: várias “lições” parecem exceder o espírito de “10 tweets” por serem micro-lições repetitivas (um kana por lição) e algumas descrições ficam genéricas (“leitura e escrita”) sem detalhar pronúncia/traçado de fato, mas no conjunto é o mais alinhado ao pedido de stroke order + grupos.",
+          "score": 8.9
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Boa cobertura: linhas do gojūon, blocos separados para ordem de traços por linha, dakuten/handakuten, yōon, sokuon, vogais longas e até exceções de partículas は/へ/を (ainda hiragana). Em geral, cada lição é focada e títulos são curtos. Fraqueza: não explicita pronúncia/stroke order “para cada grupo” dentro de cada lição (muitas descrições só dizem que existe), e inclui “origem e função” (tangencia cultura/história), além de algumas lições de “caracteres similares” que são mais caligrafia/ortografia do que aquisição linguística.",
+          "score": 8.4
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Estrutura clara por linhas e inclui um conjunto específico de lições de “Escrita: …” cobrindo ordem de traços, o que atende diretamente ao requisito de stroke order. Mantém-se em hiragana e é bem segmentado. Porém, é menos “extenso” que outros (não traz vogais longas, nem detalhes de pronúncia fora das romanizações; yōon não está completo/limpo pois inclui uma lição para ぢゃ etc. que é rara). Também não descreve pronúncia e traçado por grupo com muita orientação além da lista de sílabas.",
+          "score": 7.9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Muito bem organizado por famílias e também separa conceitos avançados (dakuten/handakuten, yōon, sokuon, vogais longas). Progressão boa e lições bem focadas. Grande falha vs. requisitos: não cobre ordem de traços (stroke order) de forma explícita, apesar de o pedido exigir isso para cada grupo. Pequenos problemas de precisão/consistência (ex.: “ま, mi e む” mistura romaji; algumas descrições fonéticas como “pausa glotal” para sokuon podem induzir).",
+          "score": 7.3
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Cobertura bem extensa: linhas, pronúncias irregulares (し/ち/つ/ふ), ん contextual, dakuten/handakuten, yōon, sokuon, vogais longas, diferença de caracteres pequenos, ordem de traços por coluna e confusões visuais. Problema importante: viola a restrição de não ir além de hiragana ao mencionar explicitamente katakana (“シ (shi katakana) vs し”) e ainda há inconsistência/erro de título vs descrição em um item de “caracteres parecidos” (fala de katakana mas o título é “ぬ e め”). Algumas lições também entram em “tabela gojūon” (meta-organização) e várias de confusão visual são mais ortografia do que aquisição linguística.",
+          "score": 7.1
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Boa seleção de tópicos e progressão; cobre gojūon, linhas, dakuten/handakuten, yōon, sokuon, vogais longas e confusões visuais. Contudo, títulos e descrições misturam muito PT com termos em inglês (“K-row”, “S-row”), contrariando a exigência de estar em PT-BR. Também inclui “vogais pequenas … para estrangeirismos”, que é parcialmente metalinguístico e pode puxar para além do escopo de aquisição básica; e não traz lições claras de ordem de traços por grupo, só regras gerais.",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Extremamente completo em cobertura de pronúncia + traçado (até por caractere) e mantém-se em hiragana. Porém, fere o formato esperado: em vez de agrupar por “vowels, k-row, s-row…”, fragmenta em centenas de micro-lições por kana, tornando a progressão pouco eficiente para ‘um conceito em até 10 tweets’ e ficando desproporcional. Também inclui várias lições de “hiragana pequeno ぁ/ぃ/…” com explicações que tocam em usos como efeitos sonoros/contrações, o que pode ser avançado e menos essencial para o capítulo. Falta a organização por grupos como unidade didática principal.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Cobre as linhas principais e diacríticos, yōon, sokuon e vogais longas de forma enxuta. Porém, não inclui ordem de traços (stroke order) e nem escreve os caracteres em hiragana na maioria das lições (usa só romaji), indo contra a expectativa de “quebrar hiragana por grupos” com foco no sistema de escrita. Também é menos extensa e menos detalhada em pronúncia por grupo.",
+          "score": 6.2
+        }
+      ]
+    }
+  ],
+  "taskId": "language-chapter-lessons",
+  "testCaseId": "pt-japanese-hiragana-1"
+}

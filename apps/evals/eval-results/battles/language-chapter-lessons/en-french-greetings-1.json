@@ -1,0 +1,167 @@
+{
+  "expectations": "\n      - MUST be in US English\n      - Should separate formal and informal greetings\n      - Should cover common phrases individually\n      - Should include time-of-day greetings as separate lessons\n\n      \n  - Each lesson should cover a SINGLE, SPECIFIC concept that can be explained within 10 short tweets\n  - Break down topics into the smallest, most manageable units possible, so that each lesson can be learned in 2-3 minutes\n  - If a topic is too broad, split it into multiple lessons\n  - Each lesson should be extremely focused on a SINGLE concept\n  - If you find yourself using \"AND\", \"OR\", or \"VS\" in a title, you should split it into separate lessons\n  - ALL lessons must be about pure language acquisition (vocabulary, grammar, pronunciation, sentences, conjugations, dialogues)\n  - NO culture lessons (history, traditions, cuisine, festivals)\n  - NO career or professional lessons\n  - NO proficiency exam preparation lessons\n  - NO literature or media analysis lessons\n  - Lesson titles should be short and specific to the exact concept covered\n  - Build a logical progression from basic to advanced concepts\n  - Ensure lessons build on knowledge from previous lessons\n  - Focus lessons for this specific chapter, not the entire course\n  - Don't include summary or review lessons\n  - Don't include assessment or quiz lessons\n  - Should follow the language specified by language parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Descriptions should be concise, no fluff (avoid \"learn\", \"understand\", \"explore\", etc.)\n  - You don't need to evaluate the output format here, just focus on the lesson content quality\n  - Include an extensive list of lessons to cover all the concepts needed for the chapter\n\n    ",
+  "judgedAt": "2026-02-08T20:42:55.660Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model F provides the most comprehensive and well-structured lesson set. It extensively covers formal/informal greetings separately, time-of-day greetings as separate lessons (Bonjour, Bonsoir, Bonne journée, Bonne soirée, Bonne nuit), common phrases individually, and includes pronunciation lessons. The lessons are highly focused on single concepts (e.g., separate lessons for 'Enchanté' vs 'Enchantée', 'Salut: Hi' vs 'Salut: Goodbye'). Descriptions are concise and practical. It has 88 lessons covering all expected concepts comprehensively with clear progression from basic to advanced. Minor weakness: some lessons like pronunciation-focused ones (nasal vowels) could be seen as slightly peripheral to the core greetings/introductions topic.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model A has 36 well-structured lessons that clearly separate formal and informal greetings, cover time-of-day greetings separately, and address common phrases individually. The lessons on Tu/Vous usage (Tutoyer/Vouvoyer) are excellent additions. Descriptions are informative and concise. It covers nationality adjectives and origin phrases which extend beyond basic greetings. Each lesson is focused on a single concept. The separation of formal/informal 'please', 'you're welcome', and name-asking phrases is well done. It includes good coverage of farewells (Bonne journée, Bonne soirée). Missing some elements like phone greetings (Allô) and some variant expressions, but overall solid coverage.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model E provides 72 lessons with good coverage of greetings, introductions, and polite phrases. It properly separates formal/informal greetings and time-of-day greetings. It includes pronunciation-focused lessons (nasal vowels, liaison, intonation) which add value. Common phrases are covered individually. Good progression from basic greetings to more complex phrases. Some lessons combine concepts that could be separate (e.g., 'Bonjour, ça va?' combines greeting and check-in). The inclusion of classroom/learning phrases (Je ne comprends pas, Pouvez-vous répéter) is useful. Descriptions mention pronunciation which is helpful. Some lessons feel slightly redundant (multiple 'repeat please' variations).",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Model C has 54 lessons with good separation of concepts. It covers formal/informal greetings separately, time-of-day greetings, and common phrases individually. Good inclusion of less common but useful phrases (Allô, Ciao, Avec plaisir). The separation of Enchanté (Masculine) and Enchantée (Feminine) is excellent for focused learning. It properly separates 'How are you' responses. Good coverage of apologies and attention-getting phrases. Some descriptions are slightly brief but still informative. Missing explicit Tu/Vous usage lessons as separate concepts. The lessons on 'Parlez-Vous Anglais?' and 'Je Ne Comprends Pas' extend usefully to practical communication needs.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model D has 45 lessons covering greetings, introductions, and politeness. It separates formal/informal greetings and time-of-day greetings adequately. However, lesson 41 'Formal vs Informal: Vous and Tu' violates the guideline about not using 'VS' in titles and should be split. Some lessons have vague descriptions ('Common ways to start a conversation after greeting someone'). It includes useful practical phrases like 'Do You Speak English' and 'I Speak a Little French'. The coverage is decent but less comprehensive than top models. Some descriptions are too generic (e.g., 'The standard polite way to say goodbye').",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Model G provides 35 lessons that are well-focused and concise. It covers formal/informal greetings, time-of-day greetings, and common politeness phrases. Each lesson is properly focused on a single concept. The descriptions are brief but adequate. However, it's less comprehensive than other models - missing some important phrases like Allô, Ciao, variations of thank you responses beyond De rien and Je vous en prie. It lacks pronunciation-focused lessons. The coverage of introductions is basic. Missing Mademoiselle in titles. Overall solid but not as extensive as needed for comprehensive coverage.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model H has 47 lessons but violates the single-concept guideline in multiple places. Lesson 5 'Informal Goodbye Expressions' combines salut, ciao, and à plus. Lesson 7 'See You Soon' combines À bientôt, À plus tard, and À demain. Lesson 25 'Tu vs. Vous' uses 'vs' in title. It includes off-topic lessons like 'Asking What Someone Does' and 'Stating Your Occupation' which extend beyond greetings/introductions to career/professional territory. Some lessons on verb conjugations (Être, S'appeler) may be too grammar-heavy for a greetings chapter. Subject pronoun lessons feel out of place. Despite these issues, the coverage of core greeting phrases is adequate.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model B has only 25 lessons which is notably less comprehensive than other models. While it covers basic greetings and introductions, it misses many important concepts: no Tu/Vous usage lessons, no titles (Monsieur/Madame), limited farewell expressions (missing Bonne journée/soirée), no apology phrases (Désolé, Je suis désolé), minimal politeness phrase coverage. The descriptions are very brief and lack practical guidance. Lessons like 'Voici' and 'C'est' feel out of place without proper context. It doesn't adequately separate formal/informal contexts for all phrase types. Missing nationality/origin phrases. The coverage is too minimal to meet expectations for a comprehensive chapter.",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model F is the strongest output. It adheres strictly to all constraints, including the separation of formal/informal greetings and breaking topics down into the smallest manageable units (e.g., separating 'Bonjour Madame' from 'Bonjour Monsieur'). Crucially, it is one of the few models to include specific lessons on pronunciation, intonation, liaisons, and silent letters, which are essential 'concepts needed for the chapter' in language acquisition. The descriptions are functional and provide context without fluff. The list is extensive (55 lessons) and follows a logical progression.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model E is excellent and follows closely behind Model F. It includes vital pronunciation and phonetics lessons (e.g., 'Nasal Vowels', 'Silent Endings') and has a very extensive list. It uses communicative titles that are helpful for learners. It ranks slightly lower than F only because it combines some gendered concepts (e.g., 'Enchanté(e)') into single lessons, whereas F splits them, aligning slightly better with the 'smallest manageable unit' constraint.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Model C provides a very extensive and highly granular list, strictly adhering to the separation constraints (even splitting gendered adjectives into separate lessons). It avoids all negative constraints (no 'VS' or 'AND' in titles). However, it lacks specific dedicated lessons for pronunciation or phonetics (only mentioning them in descriptions), making it slightly less comprehensive as a full language acquisition chapter compared to F and E.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Model G is a solid, compliant output. It follows the 'single concept' rule well and avoids prohibited terms in titles. However, the list is less extensive than the top models and lacks the depth of phonetic instruction found in F and E. It covers the basics competently but doesn't go the extra mile.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model B follows the rules well, with concise titles and descriptions. However, it is significantly shorter (25 lessons) than the others, failing to provide the 'extensive list' requested to cover the chapter fully. It adheres to constraints but offers less utility due to its brevity.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model A has good content coverage but violates the negative constraints regarding titles. Several titles combine concepts using slashes or the word 'and' (e.g., 'Monsieur / Madame / Mademoiselle', 'Apologizing and gender agreement', 'Excuse me / getting attention'), which contradicts the instruction to split topics if 'AND/OR' is used.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model D provides a decent list but commits a direct violation of the negative constraints by using 'VS' in a title ('Formal vs Informal: Vous and Tu'), which was explicitly forbidden. It also uses slashes to combine concepts in other titles ('Et vous / Et toi').",
+          "score": 4.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model H is the weakest output. It frequently groups multiple distinct words or concepts into single lessons using commas in the titles (e.g., 'Yes, No, Maybe: Oui, Non, Peut-être', 'Titles: Monsieur, Madame, Mademoiselle'). This fundamentally fails the requirement to break topics into single, specific concepts.",
+          "score": 3
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Best adherence to the constraints: very granular, single-concept lesson titles, strong logical progression (greetings → pronunciation building blocks → politeness/apologies → “how are you” → names/introductions → leave-taking). It clearly separates formal vs informal across multiple micro-lessons and includes time-of-day greetings (bonjour/bonsoir/bonne nuit) as separate lessons. Mostly avoids overly broad titles. Minor drawback: a few lessons lean a bit beyond “greetings chapter” breadth (e.g., Moi aussi/Moi non), but still language-acquisition and tightly scoped.",
+          "score": 9.4
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Very strong chapter-like scope with tight, single-concept lessons and clear formal/informal separation (please, you’re welcome, name, where from, tu/vous, closings). Time-of-day greetings are separated (bonjour/bonsoir) and day/evening farewells included. Biggest issue: several titles include “/” or multi-concept framing (e.g., “Bonjour: Hello / Good morning”, “Excusez-moi: Excuse me / getting attention”, “Monsieur / Madame / Mademoiselle”), which violates the “no AND/OR/VS (split lessons)” expectation. Still overall high quality and focused.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Extensive and generally well-scaffolded; separates many items into individual phrases and includes time-of-day greetings and leave-takings. Also adds pronunciation-focused micro-lessons, which fits “pure language acquisition.” However, it starts to drift into mini-dialogue patterns and bundled items that are not single concepts (“Bonjour, ça va ?”, “Bonjour, je m’appelle…”, “Et vous, vous ?” which is also unnatural/incorrect), and a few titles are awkward (e.g., “S’il vous plaît as Attention-Getter”). Some lessons feel less “single phrase” and more pattern-based, and there’s occasional lack of strict formal/informal separation in titles.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Good coverage with many individually separated phrases, including phone greeting and formal/informal splits for several functions. But it expands into “survival phrases” (repeat, speak slowly, do you speak English) that may be beyond a greetings-focused chapter; also includes some cultural-ish commentary (“declining modern usage”) and a few redundancies/overlaps (multiple similar response lessons). Still mostly single-concept per lesson and time-of-day greetings are separated.",
+          "score": 7.7
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Clear, mostly single-concept lessons and a reasonable progression; includes time-of-day greetings and formal/informal where relevant. Weaknesses: not very extensive relative to “extensive list” requirement; some lessons bundle concepts (“Response: Positive” includes two phrases; similar for negative), which conflicts with “common phrases individually.” Overall solid but incomplete and slightly too coarse-grained.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Covers key basics with concise, single-item titles, and includes time-of-day greetings plus “bonne nuit.” However, it’s not extensive enough, lacks systematic formal/informal separation beyond a few items, and includes grammar-ish items (“C’est”) without enough surrounding progression. Also capitalization inconsistencies (Au Revoir, À Bientôt) and limited depth.",
+          "score": 6.6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Includes many relevant items, but frequently violates the “no AND/OR/VS in a title” rule (e.g., “Et vous / Et toi”, “Formal vs Informal: Vous and Tu”). Several lesson titles are broad categories (“Opening Lines,” “Closing Phrases”) rather than single specific concepts. Also not clearly focused on time-of-day greetings as separate lessons beyond bonjour/bonsoir/bonne nuit, and overall scope becomes diffuse.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Most problematic for the given expectations: many titles bundle multiple phrases (informal goodbyes; see-you phrases; thank-you responses; excuse-me forms), directly violating “common phrases individually” and single-concept micro-lessons. It also includes career/professional content (asking/stating occupation), which is explicitly disallowed. Additionally, multiple “vs”/multi-item titles break the splitting rule. رغم it’s extensive, it’s misaligned with key constraints.",
+          "score": 3.4
+        }
+      ]
+    }
+  ],
+  "taskId": "language-chapter-lessons",
+  "testCaseId": "en-french-greetings-1"
+}
