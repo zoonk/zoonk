@@ -183,14 +183,21 @@ describe(lessonGenerationWorkflow, () => {
   });
 
   describe("language lesson flow", () => {
-    test("generates 6 fixed activities for language lesson", async () => {
+    test("generates 6 fixed activities for TTS-supported language lesson", async () => {
+      const ttsCourse = await courseFixture({ organizationId, targetLanguage: "es" });
+      const ttsChapter = await chapterFixture({
+        courseId: ttsCourse.id,
+        organizationId,
+        title: `TTS Chapter ${randomUUID()}`,
+      });
+
       vi.mocked(generateLessonKind).mockResolvedValueOnce({
         data: { kind: "language" },
       } as Awaited<ReturnType<typeof generateLessonKind>>);
 
       const title = `Language Lesson ${randomUUID()}`;
       const lesson = await lessonFixture({
-        chapterId: chapter.id,
+        chapterId: ttsChapter.id,
         generationStatus: "pending",
         organizationId,
         title,
@@ -212,11 +219,65 @@ describe(lessonGenerationWorkflow, () => {
 
       expect(activities).toHaveLength(6);
 
-      expect(activities.map((a) => a.kind)).toEqual([
+      expect(activities.map((act) => act.kind)).toEqual([
         "vocabulary",
         "grammar",
         "reading",
         "listening",
+        "languageStory",
+        "languageReview",
+      ]);
+
+      for (const activity of activities) {
+        expect(activity.generationStatus).toBe("pending");
+        expect(activity.isPublished).toBeTruthy();
+        expect(activity.title).toBeNull();
+        expect(activity.description).toBeNull();
+      }
+
+      expect(generateLessonActivities).not.toHaveBeenCalled();
+    });
+
+    test("generates 5 activities without listening for non-TTS language lesson", async () => {
+      const nonTtsCourse = await courseFixture({ organizationId, targetLanguage: "am" });
+      const nonTtsChapter = await chapterFixture({
+        courseId: nonTtsCourse.id,
+        organizationId,
+        title: `Non-TTS Chapter ${randomUUID()}`,
+      });
+
+      vi.mocked(generateLessonKind).mockResolvedValueOnce({
+        data: { kind: "language" },
+      } as Awaited<ReturnType<typeof generateLessonKind>>);
+
+      const title = `Non-TTS Language Lesson ${randomUUID()}`;
+      const lesson = await lessonFixture({
+        chapterId: nonTtsChapter.id,
+        generationStatus: "pending",
+        organizationId,
+        title,
+      });
+
+      await lessonGenerationWorkflow(lesson.id);
+
+      const dbLesson = await prisma.lesson.findUnique({
+        where: { id: lesson.id },
+      });
+
+      expect(dbLesson?.generationStatus).toBe("completed");
+      expect(dbLesson?.kind).toBe("language");
+
+      const activities = await prisma.activity.findMany({
+        orderBy: { position: "asc" },
+        where: { lessonId: lesson.id },
+      });
+
+      expect(activities).toHaveLength(5);
+
+      expect(activities.map((act) => act.kind)).toEqual([
+        "vocabulary",
+        "grammar",
+        "reading",
         "languageStory",
         "languageReview",
       ]);

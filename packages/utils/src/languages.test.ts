@@ -1,29 +1,29 @@
 import { describe, expect, test } from "vitest";
-import { SUPPORTED_LANGUAGE_CODES, getLanguageName, isSupportedLanguage } from "./languages";
+import { TTS_SUPPORTED_LANGUAGE_CODES, getLanguageName, isTTSSupportedLanguage } from "./languages";
 
-describe(isSupportedLanguage, () => {
+describe(isTTSSupportedLanguage, () => {
   test("supported language codes has exactly 57 entries", () => {
-    expect(SUPPORTED_LANGUAGE_CODES).toHaveLength(57);
+    expect(TTS_SUPPORTED_LANGUAGE_CODES).toHaveLength(57);
   });
 
   test("returns true for a valid language code", () => {
-    expect(isSupportedLanguage("es")).toBeTruthy();
+    expect(isTTSSupportedLanguage("es")).toBeTruthy();
   });
 
   test("returns true for another valid language code", () => {
-    expect(isSupportedLanguage("ja")).toBeTruthy();
+    expect(isTTSSupportedLanguage("ja")).toBeTruthy();
   });
 
   test("returns false for an invalid language code", () => {
-    expect(isSupportedLanguage("xx")).toBeFalsy();
+    expect(isTTSSupportedLanguage("xx")).toBeFalsy();
   });
 
   test("returns false for null", () => {
-    expect(isSupportedLanguage(null)).toBeFalsy();
+    expect(isTTSSupportedLanguage(null)).toBeFalsy();
   });
 
   test("returns false for a number", () => {
-    expect(isSupportedLanguage(42)).toBeFalsy();
+    expect(isTTSSupportedLanguage(42)).toBeFalsy();
   });
 });
 

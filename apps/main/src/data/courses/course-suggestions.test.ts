@@ -172,17 +172,17 @@ describe("course-suggestions", () => {
     expect(result.suggestions[0]?.targetLanguage).toBe("en");
   });
 
-  test("keeps AI title for unsupported targetLanguageCode", async () => {
+  test("accepts non-TTS language and uses Intl-derived title", async () => {
     const spy = vi.spyOn(courseSuggestions, "generateCourseSuggestions");
 
     const language = "en";
-    const prompt = `unsupported-lang-${randomUUID()}`;
+    const prompt = `non-tts-lang-${randomUUID()}`;
 
     const generatedSuggestions = [
       {
-        description: "Learn this language.",
-        targetLanguageCode: "xx",
-        title: "Unknown Language",
+        description: "Learn Amharic.",
+        targetLanguageCode: "am",
+        title: "Amharic Course",
       },
     ];
 
@@ -191,8 +191,8 @@ describe("course-suggestions", () => {
 
     const result = await generateCourseSuggestions({ language, prompt });
 
-    expect(result.suggestions[0]?.title).toBe("Unknown Language");
-    expect(result.suggestions[0]?.targetLanguage).toBeNull();
+    expect(result.suggestions[0]?.title).toBe("Amharic");
+    expect(result.suggestions[0]?.targetLanguage).toBe("am");
   });
 
   test("deduplicates suggestions with the same targetLanguageCode", async () => {
