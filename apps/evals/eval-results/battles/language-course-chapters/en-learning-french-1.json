@@ -1,0 +1,167 @@
+{
+  "expectations": "\n      - MUST be in US English (teaching French)\n      - Should cover French-specific grammar (gender/articles, subjunctive, past tenses, etc.)\n      - Should cover vocabulary themes for everyday French situations (food, travel, etc.)\n      - Should cover communication scenarios (greetings, shopping, etc.)\n\n      \n  - Chapters should follow CEFR progression from A1 (beginner) to C2 (mastery)\n  - ALL chapters must be content-domain chapters: grammar structures, vocabulary themes, or communication scenarios\n  - NO skill-based chapters (pronunciation, listening, reading, writing) — those skills are built into every lesson automatically\n  - NO culture chapters (history, traditions, cuisine, music, festivals, customs)\n  - NO career or professional chapters (business language, workplace communication)\n  - NO proficiency exam preparation chapters (DELE, JLPT, DELF, HSK, etc.)\n  - NO literature or media chapters (books, films, songs, poetry)\n  - Should cover grammar structures (verb tenses, nouns, articles, etc.) and vocabulary themes (food, travel, health, etc.)\n  - Should follow the language specified by language parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Titles should be concise, no filler words\n  - Descriptions should be concise, no fluff (avoid \"learn\", \"understand\", \"explore\", etc.)\n  - You don't need to evaluate the output format here, just focus on the chapter content quality\n  - Don't add capstone/final projects, assessments, or exercises\n\n    ",
+  "judgedAt": "2026-02-08T20:24:01.221Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model D provides 96 well-structured chapters that follow excellent CEFR progression from A1 to C2. The grammar coverage is comprehensive and French-specific (passé composé, imparfait, subjunctive, si clauses, plus-que-parfait, etc.). Vocabulary themes are practical (food, travel, health, home, technology). Communication scenarios are well-integrated. No culture, exam prep, literature, or career-focused chapters. Titles and descriptions are concise without fluff - they describe content directly. Strong balance between grammar structures, vocabulary, and communication. Minor weakness: a few chapters like 'Civic & Administrative Language' and 'Money & Consumer Situations' edge slightly toward professional territory but remain acceptable as everyday vocabulary.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model E has 82 well-organized chapters with excellent CEFR progression. Strong French-specific grammar coverage (articles with gender, subjunctive vs indicative, passé composé/imparfait contrast, ne explétif). Good vocabulary themes and communication scenarios integrated naturally. No forbidden chapter types. Titles and descriptions are concise and avoid filler words. Good coverage of advanced features like causative faire, perception verbs, and discourse cohesion. The chapter on 'Everyday Formal Writing' is slightly borderline but focuses on everyday administrative needs rather than career contexts. Very natural progression and practical focus.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model C provides 71 chapters with solid CEFR progression. Good French-specific grammar coverage (articles, passé composé/imparfait, subjunctive, pronouns y/en). Vocabulary themes are comprehensive. However, some chapters edge toward forbidden territory: 'Law, Bureaucracy & Official Documents', 'Finance, Banking & Real Estate Vocabulary', and 'Academic & Scientific Vocabulary and Constructions' lean toward professional/specialized content. The chapter 'Health, Medicine & Administrative Procedures' mentions 'administrative steps' which edges toward workplace contexts. Descriptions are generally concise but some are slightly longer than ideal. Otherwise good structure and progression.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Model B has 112 chapters - quite comprehensive but perhaps too many. Good CEFR progression and French-specific grammar. However, several chapters violate the guidelines: 'Academic Writing' is skill-based/career-focused, 'Professional Registers', 'Diplomatic Language', 'Law & Legal Terms', 'Healthcare System', 'Science & Research', 'Politics & Governance' are career/specialized topics. 'Historical Language' and 'Regional Variations' edge toward cultural content. Some descriptions have slight filler ('for complete linguistic competence'). The sheer number of chapters and inclusion of forbidden content types reduces the score despite overall good quality.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Model A has 91 chapters with good progression. French-specific grammar is well covered (articles with gender, passé composé/imparfait, subjunctive). Good vocabulary themes. However, some chapters are too vague or thin on description: 'Advanced Style', 'Complex Tenses', 'Registers', 'Connectors' lack specificity. Chapter 'Work and Occupations' is included (acceptable as vocabulary). Some later chapters like 'Abstract Topics' and 'Debates' are borderline. Titles are concise but some descriptions are overly brief to the point of being unclear. Good overall structure but less precise than top models.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model F provides 82 chapters with decent CEFR progression. Good French grammar coverage. However, several chapters violate guidelines: 'Economy & Business' is career-focused, 'Public Speaking & Oratory' is skill-based and career-oriented, 'Academic & Analytical Language' is academic-focused, 'Regional & Francophone Varieties' edges toward cultural content. The chapter 'Colloquial & Informal French' with 'slang' and 'youth language' is borderline cultural. 'Formal Writing & Style' is skill-based. Descriptions are generally good but some have mild filler. The violations are significant enough to lower the score.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Model H has 77 chapters with reasonable progression. French grammar is covered appropriately. However, 'Arts & Culture' explicitly mentions 'cinema, music, literature, theater, and cultural events' - this is a culture chapter and violates guidelines. 'Philosophy & Abstract Ideas' with 'ideologies and intellectual discourse' is borderline. 'Law & Justice' and 'Science & Innovation' are specialized/professional. 'Politics & Society' includes 'current affairs vocabulary' which can edge toward culture. The explicit culture chapter is a significant violation. Descriptions are generally concise.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model G has only 53 chapters - significantly fewer than others, suggesting incomplete CEFR progression to C2 mastery. While the existing chapters are well-structured with good French-specific grammar, the coverage is limited. Some problematic chapters: 'Work & Professional Life' mentions 'office environments' and 'administrative tasks' which edges toward career content, but is framed as general vocabulary. The progression stops short of comprehensive C2 coverage - missing many advanced grammar structures and vocabulary themes that other models include. Titles and descriptions are concise. The incomplete progression is the main issue.",
+          "score": 7
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "This model provides the highest quality curriculum. It adheres strictly to all negative constraints (no culture, professional, or skill-based chapters) while offering exceptional depth in grammar and semantics for the advanced levels (C1/C2), such as 'Nominal Style', 'Information Focus', and 'Implicature'. The titles and descriptions are concise and precise. It effectively covers vocabulary and communication scenarios without crossing into banned territories.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Model A follows the instructions very well. It provides a solid progression from A1 to C2 and respects the negative constraints. The content is standard and comprehensive. It is ranked slightly lower than Model D because its advanced (C-level) chapters are a bit more generic ('Complex Tenses', 'Advanced Style') compared to the specific linguistic focus found in Model D.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "This model produces a good curriculum but veers slightly into skill-based territory with chapters like 'Everyday Formal Writing' and 'Conversation Management'. While these focus on language patterns, they border on the banned 'writing' and 'speaking' skill chapters. Otherwise, the progression and content are good.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model C includes explicit skill-based chapters such as 'Precision & Style Editing' and 'Paraphrase & Precision Strategies', which violate the 'NO skill-based chapters' rule. However, it smartly handles the professional constraint by explicitly noting that the Work chapter focuses on vocabulary rather than workplace communication.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "This model violates the negative constraints by including a 'Professional Registers' chapter (violating the 'NO professional chapters' rule) and an 'Academic Writing' chapter (violating the 'NO skill-based chapters' rule). It also includes 'Regional Variations' which borders on culture.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model F includes explicit violations of the 'NO skill-based chapters' rule with titles like 'Formal Writing & Style' and 'Public Speaking & Oratory'. These are expressly forbidden by the prompt expectations.",
+          "score": 3.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "This model violates the 'NO culture chapters' and 'NO literature or media chapters' constraints by including a chapter titled 'Arts & Culture' covering cinema, music, and literature. The prompt explicitly banned these topics.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Like Model H, this model includes an 'Arts & Culture' chapter, which is a direct violation of the negative constraints regarding culture, literature, and media. The content otherwise is acceptable but the violation is significant.",
+          "score": 3
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Best overall match to constraints and CEFR-like progression. Strong coverage of French-specific grammar (articles/gender, tense system, pronouns including order, subjunctive, si-clauses, reported speech, participles/gérondif, agreement, focus structures). Also includes everyday communication scenarios (greetings, dining, directions, calls/messages, complaints/consumer situations) and practical vocabulary themes without drifting into culture/literature/exam prep. Minor issues: a few meta-ish chapters like “Structured Expression” border on skill-writing, but still framed as discourse structures; otherwise very compliant.",
+          "score": 9.3
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Very strong and compliant: clear grammar+vocab+scenario chapters, good A1→C2 ramp, includes key French grammar (articles nuance, pronoun clusters, subjunctive contrasts, tense/mood nuance, clause reduction, ne explétif, etc.) and everyday themes (shopping, directions, health, phone). Small violations/risks: “Everyday Formal Writing” leans skill-based (writing), and “Variation for Comprehension” is close to a varieties/culture-type chapter (though framed as comprehension). Still largely within the rules.",
+          "score": 8.9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Solid core curriculum with everyday vocab/scenarios and major grammar (past tenses, future, conditional, subjunctive, pronouns, passive, reported speech). However it includes disallowed professional/career content (“Work & Professions,” “Economy & Business,” “Public Speaking & Oratory” with professional framing) and some skill-based framing (“Academic & Analytical Language,” “Mastery & Refinement”). Also “Regional & Francophone Varieties” drifts toward culture/varieties. Overall good content but several constraint violations.",
+          "score": 7.4
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Broad coverage and many appropriate domain chapters (A1 basics through advanced grammar like passive, reported speech, relative clauses, subjunctive, conditionals; plus everyday themes like food, travel, shopping, health). Key problems: includes clearly disallowed career/professional chapter (“Work and Occupations,” plus some workplace language), and a few redundant/unclear chapters (e.g., multiple future chapters, “Imperfect Subjunctive” mislabeled/incorrectly described as “Past subjunctive,” while “Past Subjunctive” appears separately). Also ends with “Advanced Style” which veers toward skill/writing style rather than a pure language domain.",
+          "score": 7.1
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Reasonably well-structured with core grammar and everyday themes, and includes subjunctive/conditionals/relative pronouns. But it contains an explicit disallowed career/professional chapter (“Work & Professional Life”) and also includes “Literary Tenses,” which conflicts with the ‘no literature/media’ expectation. Coverage is less deep at higher levels than the best models.",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Good grammar and everyday scenario coverage early/mid, but several clear violations later: includes law/bureaucracy/finance/real-estate-heavy chapters and “Academic & Scientific Vocabulary,” which lean professional/specialized; includes “Literary Past Tenses” and “Historic & Formal Constructions (archaisms)” (literature/media-adjacent). Also some titles/descriptions get wordy and meta (e.g., “Paraphrase & Precision Strategies” feels skill-based).",
+          "score": 6.4
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Starts strong with appropriate A1–B2-ish content, but then heavily violates constraints: many professional/specialized domains (law, healthcare system, science & research, diplomatic language, professional registers), culture/varieties (“Regional Variations,” “Historical Language”), and even “Academic Writing” (skill-based) plus very broad, fluffy mastery chapters (“Comprehensive Vocabulary Mastery,” “Native-like Expression”). Too much off-spec content despite breadth.",
+          "score": 5.6
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Decent foundational grammar/vocab, but contains an explicit culture/media chapter (“Arts & Culture”), plus politics/law/science domains that drift into specialized/professional territory. Also includes “Education & Schooling” with exams mentioned, and several late-stage chapters skew toward academic/intellectual discourse. Overall more constraint violations than the better lists.",
+          "score": 5.3
+        }
+      ]
+    }
+  ],
+  "taskId": "language-course-chapters",
+  "testCaseId": "en-learning-french-1"
+}
