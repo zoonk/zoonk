@@ -49,7 +49,7 @@ Chapters should cover **content domains**, such as:
 - **Grammar structures**: verb tenses (present, past, future, subjunctive, conditional, imperative), noun/article systems, pronouns, adjectives, adverbs, prepositions, conjunctions, sentence structure, word order, relative clauses, passive voice, reported speech
 - **Vocabulary themes**: greetings, numbers, family, food & dining, travel & directions, health & body, home & daily life, shopping, transportation, weather & nature, technology, education, emotions & feelings, time & dates, clothing, work & occupations, sports & hobbies
 - **Communication scenarios**: introductions, ordering food, asking directions, making appointments, phone calls, small talk, expressing opinions, agreeing/disagreeing, making requests, giving advice, telling stories, describing experiences, formal vs informal register
-- **Writing systems**: if `TARGET_LANGUAGE` uses a non-Latin script (e.g., Japanese hiragana/katakana/kanji, Arabic script, Cyrillic, Hangul, etc.), include dedicated chapters for learning the writing system
+- **Writing systems** (non-Latin scripts ONLY): if `TARGET_LANGUAGE` uses a non-Latin script (e.g., Japanese hiragana/katakana/kanji, Arabic script, Cyrillic, Hangul, etc.), include dedicated chapters for learning the writing system. Do NOT create alphabet or writing system chapters for Latin-script languages (Spanish, French, Portuguese, Italian, German, etc.) — pronunciation of letters and unique sounds is handled by every lesson's built-in pronunciation activity
 
 ## Scope & Granularity
 
@@ -62,7 +62,7 @@ Chapters should cover **content domains**, such as:
 
 These topics must **NOT** appear as chapters:
 
-- **NO skill-based chapters** — no "Pronunciation", "Listening Comprehension", "Reading Practice", "Writing Skills" (these are built into every lesson automatically)
+- **NO skill-based chapters** — no "Pronunciation", "Phonetics", "Alphabet", "Alphabet and Sounds", "Listening Comprehension", "Reading Practice", "Writing Skills", or any variation of these (these are built into every lesson automatically). This applies even for beginner chapters — do NOT create a first chapter about the alphabet or sound system for Latin-script languages
 - **NO culture chapters** — no history, traditions, customs, cuisine culture, music, festivals, holidays, etiquette
 - **NO career/professional chapters** — no business language courses, workplace communication, job interviews
 - **NO proficiency exam preparation** — no DELE, JLPT, DELF, DALF, HSK, TOEFL, IELTS, or any test prep
@@ -88,6 +88,8 @@ Good chapter titles include:
 Bad chapter titles:
 
 - ❌ "Pronunciation & Phonetics" (skill, not content — pronunciation is in every lesson)
+- ❌ "Spanish Alphabet and Phonetics" (skill — alphabet/sounds for Latin-script languages are covered in every lesson's pronunciation activity)
+- ❌ "The Sound System" (skill, not content)
 - ❌ "Reading Comprehension" (skill, not content)
 - ❌ "Listening Practice" (skill, not content)
 - ❌ "Writing Skills" (skill, not content)
@@ -110,7 +112,7 @@ Before finishing this course, review the entire content and ask yourself:
 
 - "Does this curriculum cover **all CEFR levels** from A1 to C2?" If the answer is "no," identify the gaps and add the necessary content.
 - "Are there any **non-language chapters** (culture, career, exam prep, literature)?" If the answer is "yes," remove them immediately.
-- "Are there any **skill-based chapters** (pronunciation, reading, listening, writing)?" If the answer is "yes," remove them — those skills are practiced in every lesson automatically.
+- "Are there any **skill-based chapters** (alphabet, phonetics, pronunciation, sounds, reading, listening, writing)?" If the answer is "yes," remove them — those skills are practiced in every lesson automatically.
 - "Does this cover all major grammar structures and vocabulary domains needed for mastery?" If the answer is "no," add the missing areas.
 
 Make sure this is the **BEST** possible language learning curriculum. No other curriculum should be able to surpass this one.
