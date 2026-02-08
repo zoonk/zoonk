@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { activityGenerationWorkflow } from "@/workflows/activity-generation/activity-generation-workflow";
+import { generateLanguageChapterLessons } from "@zoonk/ai/tasks/chapters/language-lessons";
 import { generateChapterLessons } from "@zoonk/ai/tasks/chapters/lessons";
 import { prisma } from "@zoonk/db";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
@@ -26,6 +27,17 @@ vi.mock("@zoonk/ai/tasks/chapters/lessons", () => ({
       lessons: [
         { description: "Lesson 1 description", title: "Lesson 1" },
         { description: "Lesson 2 description", title: "Lesson 2" },
+      ],
+    },
+  }),
+}));
+
+vi.mock("@zoonk/ai/tasks/chapters/language-lessons", () => ({
+  generateLanguageChapterLessons: vi.fn().mockResolvedValue({
+    data: {
+      lessons: [
+        { description: "Lang Lesson 1 description", title: "Lang Lesson 1" },
+        { description: "Lang Lesson 2 description", title: "Lang Lesson 2" },
       ],
     },
   }),
@@ -235,6 +247,41 @@ describe(chapterGenerationWorkflow, () => {
         where: { id: chapter.id },
       });
       expect(finalChapter?.generationStatus).toBe("completed");
+    });
+  });
+
+  describe("language branching", () => {
+    test("language course calls generateLanguageChapterLessons", async () => {
+      const languageCourse = await courseFixture({
+        organizationId,
+        targetLanguage: "es",
+      });
+
+      const chapter = await chapterFixture({
+        courseId: languageCourse.id,
+        generationStatus: "pending",
+        organizationId,
+        title: `Language Chapter ${randomUUID()}`,
+      });
+
+      await chapterGenerationWorkflow(chapter.id);
+
+      expect(generateLanguageChapterLessons).toHaveBeenCalled();
+      expect(generateChapterLessons).not.toHaveBeenCalled();
+    });
+
+    test("non-language course calls generateChapterLessons", async () => {
+      const chapter = await chapterFixture({
+        courseId: course.id,
+        generationStatus: "pending",
+        organizationId,
+        title: `Generic Chapter ${randomUUID()}`,
+      });
+
+      await chapterGenerationWorkflow(chapter.id);
+
+      expect(generateChapterLessons).toHaveBeenCalled();
+      expect(generateLanguageChapterLessons).not.toHaveBeenCalled();
     });
   });
 

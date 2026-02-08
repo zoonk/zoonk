@@ -103,24 +103,6 @@ export const TEST_CASES = [
   {
     expectations: `
       - MUST be in US English
-      - Language learning chapter - should break down each grammar structure separately
-      - Should cover each tense/mood individually
-      - Should not combine multiple grammatical concepts
-      
-      ${SHARED_EXPECTATIONS}
-    `,
-    id: "en-spanish-subjunctive",
-    userInput: {
-      chapterDescription:
-        "Influence, doubt, emotion, denial, volition, and impersonal expressions with triggers.",
-      chapterTitle: "Subjunctive: Noun Clauses",
-      courseTitle: "Spanish",
-      language: "en",
-    },
-  },
-  {
-    expectations: `
-      - MUST be in US English
       - Legal topic requiring careful breakdown of each legal concept
       - Should cover Brazilian-specific law separately from general principles
       - Should break down constitutional vs civil vs criminal law topics individually
