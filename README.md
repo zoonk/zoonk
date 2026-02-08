@@ -76,7 +76,7 @@ We recommend using [mise](https://mise.jdx.dev/) to manage your Node.js and pnpm
 
 - [main](./apps/main): Public web app (`zoonk.com`)
 - [admin](./apps/admin): Dashboard for managing users and organizations (`admin.zoonk.com`)
-- [auth](./apps/auth): Centralized authentication for all apps
+- [api](./apps/api): Centralized API and authentication UI (`api.zoonk.com`)
 - [editor](./apps/editor): Visual editor for building courses and activities (`editor.zoonk.com`)
 - [evals](./apps/evals): Local-only tool for evaluating AI-generated content
 
@@ -86,6 +86,9 @@ We recommend using [mise](https://mise.jdx.dev/) to manage your Node.js and pnpm
 - [auth](./packages/auth): Shared Better Auth setup and plugins
 - [core](./packages/core): Shared server utilities
 - [db](./packages/db): Prisma schema and client
+- [e2e](./packages/e2e): Shared Playwright config and test fixtures
+- [error-reporter](./packages/error-reporter): Error reporting utilities
+- [eslint-plugin](./packages/eslint-plugin): Custom ESLint rules
 - [mailer](./packages/mailer): Email-sending utilities
 - [next](./packages/next): Shared Next.js utilities
 - [testing](./packages/testing): Shared testing utilities
