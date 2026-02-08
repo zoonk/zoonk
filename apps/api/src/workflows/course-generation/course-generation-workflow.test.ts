@@ -4,6 +4,7 @@ import { generateAlternativeTitles } from "@zoonk/ai/tasks/courses/alternative-t
 import { generateCourseCategories } from "@zoonk/ai/tasks/courses/categories";
 import { generateCourseChapters } from "@zoonk/ai/tasks/courses/chapters";
 import { generateCourseDescription } from "@zoonk/ai/tasks/courses/description";
+import { generateLessonKind } from "@zoonk/ai/tasks/lessons/kind";
 import { generateCourseImage } from "@zoonk/core/courses/image";
 import { prisma } from "@zoonk/db";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
@@ -569,6 +570,10 @@ describe(courseGenerationWorkflow, () => {
     test("creates language course with correct title and targetLanguage", async () => {
       // The data layer resolves "es" to "Spanish" via Intl before persisting the suggestion.
       // The workflow should propagate both the Intl-derived title and targetLanguage to the course.
+      vi.mocked(generateLessonKind).mockResolvedValueOnce({
+        data: { kind: "language" },
+      } as Awaited<ReturnType<typeof generateLessonKind>>);
+
       const title = `Spanish ${randomUUID()}`;
       const slug = toSlug(title);
 
@@ -612,6 +617,10 @@ describe(courseGenerationWorkflow, () => {
     });
 
     test("language course gets 'languages' category without AI call", async () => {
+      vi.mocked(generateLessonKind).mockResolvedValueOnce({
+        data: { kind: "language" },
+      } as Awaited<ReturnType<typeof generateLessonKind>>);
+
       const title = `Spanish Lang Course ${randomUUID()}`;
       const slug = toSlug(title);
 

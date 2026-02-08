@@ -13,6 +13,7 @@ const LESSON_STEPS = [
   "setLessonAsRunning",
   "determineLessonKind",
   "updateLessonKind",
+  "removeNonLanguageLesson",
   "generateCustomActivities",
   "addActivities",
   "setLessonAsCompleted",
