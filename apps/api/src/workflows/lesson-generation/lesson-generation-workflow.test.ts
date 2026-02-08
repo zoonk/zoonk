@@ -403,6 +403,119 @@ describe(lessonGenerationWorkflow, () => {
     });
   });
 
+  describe("language course filtering", () => {
+    test("deletes lesson when language course gets core kind", async () => {
+      const langCourse = await courseFixture({ organizationId, targetLanguage: "es" });
+      const langChapter = await chapterFixture({
+        courseId: langCourse.id,
+        organizationId,
+        title: `Lang Core Filter Chapter ${randomUUID()}`,
+      });
+
+      vi.mocked(generateLessonKind).mockResolvedValueOnce({
+        data: { kind: "core" },
+      } as Awaited<ReturnType<typeof generateLessonKind>>);
+
+      const lesson = await lessonFixture({
+        chapterId: langChapter.id,
+        generationStatus: "pending",
+        organizationId,
+        title: `Lang Core Filter Lesson ${randomUUID()}`,
+      });
+
+      await lessonGenerationWorkflow(lesson.id);
+
+      const dbLesson = await prisma.lesson.findUnique({
+        where: { id: lesson.id },
+      });
+
+      expect(dbLesson).toBeNull();
+
+      const activities = await prisma.activity.findMany({
+        where: { lessonId: lesson.id },
+      });
+
+      expect(activities).toHaveLength(0);
+    });
+
+    test("deletes lesson when language course gets custom kind", async () => {
+      const langCourse = await courseFixture({ organizationId, targetLanguage: "fr" });
+      const langChapter = await chapterFixture({
+        courseId: langCourse.id,
+        organizationId,
+        title: `Lang Custom Filter Chapter ${randomUUID()}`,
+      });
+
+      vi.mocked(generateLessonKind).mockResolvedValueOnce({
+        data: { kind: "custom" },
+      } as Awaited<ReturnType<typeof generateLessonKind>>);
+
+      const lesson = await lessonFixture({
+        chapterId: langChapter.id,
+        generationStatus: "pending",
+        organizationId,
+        title: `Lang Custom Filter Lesson ${randomUUID()}`,
+      });
+
+      await lessonGenerationWorkflow(lesson.id);
+
+      const dbLesson = await prisma.lesson.findUnique({
+        where: { id: lesson.id },
+      });
+
+      expect(dbLesson).toBeNull();
+    });
+
+    test("keeps lesson when language course gets language kind", async () => {
+      const langCourse = await courseFixture({ organizationId, targetLanguage: "de" });
+      const langChapter = await chapterFixture({
+        courseId: langCourse.id,
+        organizationId,
+        title: `Lang Keep Chapter ${randomUUID()}`,
+      });
+
+      vi.mocked(generateLessonKind).mockResolvedValueOnce({
+        data: { kind: "language" },
+      } as Awaited<ReturnType<typeof generateLessonKind>>);
+
+      const lesson = await lessonFixture({
+        chapterId: langChapter.id,
+        generationStatus: "pending",
+        organizationId,
+        title: `Lang Keep Lesson ${randomUUID()}`,
+      });
+
+      await lessonGenerationWorkflow(lesson.id);
+
+      const dbLesson = await prisma.lesson.findUnique({
+        where: { id: lesson.id },
+      });
+
+      expect(dbLesson?.generationStatus).toBe("completed");
+    });
+
+    test("keeps lesson when non-language course gets core kind", async () => {
+      vi.mocked(generateLessonKind).mockResolvedValueOnce({
+        data: { kind: "core" },
+      } as Awaited<ReturnType<typeof generateLessonKind>>);
+
+      const lesson = await lessonFixture({
+        chapterId: chapter.id,
+        generationStatus: "pending",
+        organizationId,
+        title: `Non-Lang Core Lesson ${randomUUID()}`,
+      });
+
+      await lessonGenerationWorkflow(lesson.id);
+
+      const dbLesson = await prisma.lesson.findUnique({
+        where: { id: lesson.id },
+      });
+
+      expect(dbLesson?.generationStatus).toBe("completed");
+    });
+  });
+
   describe("status transitions", () => {
     test("updates lesson status: pending → running → completed", async () => {
       vi.mocked(generateLessonKind).mockResolvedValueOnce({
