@@ -6,12 +6,13 @@ model Word {
   userLanguage   String       @map("user_language") @db.VarChar(10)
   word           String
   translation    String
-  pronunciation  String
+  pronunciation  String?
   romanization   String?
   audioUrl       String?      @map("audio_url")
   createdAt      DateTime     @default(now()) @map("created_at")
   updatedAt      DateTime     @default(now()) @updatedAt @map("updated_at")
   lessons        LessonWord[]
+  steps          Step[]
 
   @@unique([organizationId, targetLanguage, userLanguage, word], name: "orgWord")
   @@index([organizationId, targetLanguage, userLanguage])
@@ -31,6 +32,7 @@ model Sentence {
   createdAt      DateTime         @default(now()) @map("created_at")
   updatedAt      DateTime         @default(now()) @updatedAt @map("updated_at")
   lessons        LessonSentence[]
+  steps          Step[]
 
   @@unique([organizationId, targetLanguage, userLanguage, sentence], name: "orgSentence")
   @@index([organizationId, targetLanguage, userLanguage])
