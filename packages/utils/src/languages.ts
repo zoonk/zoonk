@@ -2,7 +2,7 @@
  * ISO 639-1 codes for languages supported by OpenAI TTS (gpt-4o-mini-tts).
  * Source: https://platform.openai.com/docs/guides/text-to-speech
  */
-export const SUPPORTED_LANGUAGE_CODES = [
+export const TTS_SUPPORTED_LANGUAGE_CODES = [
   "af",
   "ar",
   "hy",
@@ -62,12 +62,12 @@ export const SUPPORTED_LANGUAGE_CODES = [
   "cy",
 ] as const;
 
-export type SupportedLanguageCode = (typeof SUPPORTED_LANGUAGE_CODES)[number];
+export type TTSSupportedLanguageCode = (typeof TTS_SUPPORTED_LANGUAGE_CODES)[number];
 
-const SUPPORTED_LANGUAGE_SET: ReadonlySet<string> = new Set(SUPPORTED_LANGUAGE_CODES);
+const TTS_SUPPORTED_LANGUAGE_SET: ReadonlySet<string> = new Set(TTS_SUPPORTED_LANGUAGE_CODES);
 
-export function isSupportedLanguage(code: unknown): code is SupportedLanguageCode {
-  return typeof code === "string" && SUPPORTED_LANGUAGE_SET.has(code);
+export function isTTSSupportedLanguage(code: unknown): code is TTSSupportedLanguageCode {
+  return typeof code === "string" && TTS_SUPPORTED_LANGUAGE_SET.has(code);
 }
 
 /**

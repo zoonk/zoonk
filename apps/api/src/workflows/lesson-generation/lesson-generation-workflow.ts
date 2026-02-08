@@ -28,7 +28,12 @@ async function generateActivities(
   const lessonKind = await determineLessonKindStep(context);
   await updateLessonKindStep({ kind: lessonKind, lessonId });
   const customActivities = await getCustomActivities(context, lessonKind);
-  await addActivitiesStep({ context, customActivities, lessonKind });
+  await addActivitiesStep({
+    context,
+    customActivities,
+    lessonKind,
+    targetLanguage: context.chapter.course.targetLanguage,
+  });
 }
 
 export async function lessonGenerationWorkflow(lessonId: number): Promise<void> {

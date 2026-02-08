@@ -1,7 +1,7 @@
 import "server-only";
 import { generateCourseSuggestions as generateTask } from "@zoonk/ai/tasks/courses/suggestions";
 import { type CourseSuggestion, prisma } from "@zoonk/db";
-import { getLanguageName, isSupportedLanguage } from "@zoonk/utils/languages";
+import { getLanguageName } from "@zoonk/utils/languages";
 import { normalizeString, toSlug } from "@zoonk/utils/string";
 
 type SuggestionResult = Pick<CourseSuggestion, "id" | "title" | "description" | "targetLanguage">;
@@ -90,12 +90,8 @@ function resolveLanguageSuggestion(
   suggestion: { title: string; description: string; targetLanguageCode: string | null },
   language: string,
 ): SuggestionInput {
-  if (!isSupportedLanguage(suggestion.targetLanguageCode)) {
-    return {
-      description: suggestion.description,
-      targetLanguage: null,
-      title: suggestion.title,
-    };
+  if (!suggestion.targetLanguageCode) {
+    return { description: suggestion.description, targetLanguage: null, title: suggestion.title };
   }
 
   const title = getLanguageName({

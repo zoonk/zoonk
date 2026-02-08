@@ -14,6 +14,7 @@ async function getLessonForGeneration(lessonId: number) {
         select: {
           course: {
             select: {
+              targetLanguage: true,
               title: true,
             },
           },

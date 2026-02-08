@@ -1,5 +1,6 @@
 import { type ActivityKind, type LessonKind, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
+import { isTTSSupportedLanguage } from "@zoonk/utils/languages";
 import { streamStatus } from "../stream-status";
 import { type GeneratedActivity } from "./generate-custom-activities-step";
 import { type LessonContext } from "./get-lesson-step";
@@ -24,9 +25,18 @@ const LANGUAGE_ACTIVITY_KINDS: ActivityKind[] = [
   "languageReview",
 ];
 
+function getLanguageActivities(targetLanguage: string | null): ActivityKind[] {
+  if (isTTSSupportedLanguage(targetLanguage)) {
+    return LANGUAGE_ACTIVITY_KINDS;
+  }
+
+  return LANGUAGE_ACTIVITY_KINDS.filter((kind) => kind !== "listening");
+}
+
 function getActivitiesForKind(
   lessonKind: LessonKind,
   customActivities: GeneratedActivity[],
+  targetLanguage: string | null,
 ): {
   kind: ActivityKind;
   title: string | null;
@@ -41,7 +51,7 @@ function getActivitiesForKind(
   }
 
   if (lessonKind === "language") {
-    return LANGUAGE_ACTIVITY_KINDS.map((kind) => ({
+    return getLanguageActivities(targetLanguage).map((kind) => ({
       description: null,
       kind,
       title: null,
@@ -59,12 +69,17 @@ export async function addActivitiesStep(input: {
   context: LessonContext;
   lessonKind: LessonKind;
   customActivities: GeneratedActivity[];
+  targetLanguage: string | null;
 }): Promise<void> {
   "use step";
 
   await streamStatus({ status: "started", step: "addActivities" });
 
-  const activitiesToCreate = getActivitiesForKind(input.lessonKind, input.customActivities);
+  const activitiesToCreate = getActivitiesForKind(
+    input.lessonKind,
+    input.customActivities,
+    input.targetLanguage,
+  );
 
   const activitiesData = activitiesToCreate.map((activity, index) => ({
     description: activity.description,
