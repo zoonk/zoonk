@@ -15,9 +15,21 @@
 >
 > ## Early Development Notice
 >
-> This project is still in early development and **not ready for use**. We’re actively working to make it available as soon as possible.
->
-> As we progress, we’ll open it for testing and contributions. Star this repository or follow us on social media to stay updated.
+> This project is still in early development and **not ready for use**. There will be breaking changes before stable that won't be backwards compatible. Star this repository or follow us on social media to stay updated.
+
+### Project Status
+
+| Feature                  | Not Started | In Progress | Beta | Stable |
+| ------------------------ | :---------: | :---------: | :--: | :----: |
+| Learn Anything (Catalog) |             |  :hammer:   |      |        |
+| Personalized Lessons     | :calendar:  |             |      |        |
+| Editor                   |             |  :hammer:   |      |        |
+| Teams                    | :calendar:  |             |      |        |
+| Schools                  | :calendar:  |             |      |        |
+| White-Label (Creators)   | :calendar:  |             |      |        |
+| iOS App                  | :calendar:  |             |      |        |
+| Android App              | :calendar:  |             |      |        |
+| API                      |             |  :hammer:   |      |        |
 
 ## Table of Contents
 
