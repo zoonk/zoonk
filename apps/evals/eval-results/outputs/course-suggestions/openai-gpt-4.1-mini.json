@@ -1,465 +1,159 @@
 {
-  "generatedAt": "2026-01-15T19:15:16.557Z",
+  "generatedAt": "2026-02-08T18:05:19.238Z",
   "modelId": "openai/gpt-4.1-mini",
   "outputs": [
     {
-      "duration": 4179.918666999962,
-      "inputTokens": 941,
-      "output": "[\n  {\n    \"title\": \"Programação de Computadores\",\n    \"description\": \"Aprenda a desenvolver habilidades essenciais para escrever programas de computador.\"\n  },\n  {\n    \"title\": \"Desenvolvimento de Software\",\n    \"description\": \"Explore os princípios para construir aplicações eficazes e robustas.\"\n  },\n  {\n    \"title\": \"Ciência da Computação\",\n    \"description\": \"Entenda os conceitos fundamentais que sustentam a programação e a tecnologia.\"\n  },\n  {\n    \"title\": \"Desenvolvimento Web\",\n    \"description\": \"Domine a criação de sites e aplicativos para a internet.\"\n  }\n]",
-      "outputTokens": 99,
-      "systemPrompt": "",
+      "duration": 3150.9516670000157,
+      "inputTokens": 975,
+      "output": "[\n  {\n    \"description\": \"Aprenda a escrever códigos eficazes em diversas linguagens de programação.\",\n    \"targetLanguageCode\": null,\n    \"title\": \"Programação de Computadores\"\n  },\n  {\n    \"description\": \"Descubra como construir e gerenciar aplicativos web modernos.\",\n    \"targetLanguageCode\": null,\n    \"title\": \"Desenvolvimento Web\"\n  },\n  {\n    \"description\": \"Explore técnicas de desenvolvimento de software para projetos profissionais.\",\n    \"targetLanguageCode\": null,\n    \"title\": \"Engenharia de Software\"\n  },\n  {\n    \"description\": \"Entenda os princípios para criar software funcional e eficiente.\",\n    \"targetLanguageCode\": null,\n    \"title\": \"Ciência da Computação\"\n  }\n]",
+      "outputTokens": 114,
+      "systemPrompt": "You generate course suggestions from a user input.\n\n## Rules\n\n- Generate as many course suggestions as you think are relevant, except for language courses, which must suggest only the language they want to learn\n\n### Language\n\n- Use the `LANGUAGE` value set by the user for both `title` and `description`, no matter what's the language used in `USER_INPUT`\n- For `en`, default to US English unless the content is about a different region\n- For `pt`, default to Brazilian Portuguese unless the content is about a different region\n- For `es`, default to Latin American Spanish unless the content is about a different region\n\n### Title\n\n- Titles must look like real courses\n- NEVER use levels such as (but not limited to) \"Basics\", \"Beginner\", \"Advanced\", \"Intro\", \"Introduction\", \"101\", \"Mastery\", \"Fundamentals\", etc.\n- Don't use variant markers in titles (e.g., '101', 'Beginner', exam levels like `B1`, or variants like 'Academic')\n- Single-topic titles: NEVER use \"and\", \"or\", \"&\", \"/\" and commas joining topics\n- For vague inputs, include the broad canonical title itself and related courses (e.g., \"Computer Science\", \"Software Engineering\", \"Web Development\")\n- If a user's input includes a jusrisdiction (e.g. \"California Law\", \"UK History\", \"Brazilian Politics\"), all suggestions must include that jurisdiction\n- If a user's input is very specific (e.g. \"Quantum Field Theory\", \"Renaissance Art in Florence\", \"German Law\", etc), include that title as the first suggestion\n\n### Description\n\n- Should be EXACTLY one sentence\n- Highlights why it may be useful or relevant to the learner\n- No need to prefix with \"This course is useful for...\", just say why it's useful.\n  For example, instead of \"This course is useful for understanding the basics of economics.\", say \"Understand the basics of economics.\"\n\n### Target Language Code\n\n- For language learning courses, include `targetLanguageCode` with the ISO 639-1 code (e.g., \"es\" for Spanish, \"ja\" for Japanese)\n- For non-language learning courses, set `targetLanguageCode` to null\n\n### Edge cases\n\n#### Language learning\n\n- If the user's goal is to learn a language (or pass a language exam like TOEFL, IELTS, HSK, etc.), return EXACTLY ONE suggestion with the language name and the correct `targetLanguageCode`\n- Do not add a \"language\" suffix to the language name (e.g., \"French\", not \"French Language\")\n- Do not add extra suggestions for language learning/exams (no exam prep, writing, culture add-ons, just the name of the language they want to learn)\n\n#### Intellectual Property\n\n- If the input targets a specific book/topic/IP include that exact topic as the first suggestion. For example:\n  - Topics: \"World War II\", \"Quantum Mechanics\", \"States of Matter\"\n  - Books: \"1984\", \"To Kill a Mockingbird\", \"The Great Gatsby\"\n  - Series: \"Harry Potter\", \"The Lord of the Rings\", \"Game of Thrones\"\n- For books/movies/IP, use the **official** name (e.g., \"The Great Gatsby\", not \"Great Gatsby\" or \"Gatsby\")\n  - This doesn't apply to general topics (e.g., \"General Relativity\" is correct, we wouldn't say \"The General Relativity Theory\")\n- Fixes any typos (e.g. \"Rolling Stones\" instead of \"roling stone\")\n- You should add other related suggestions to this subject\n\n#### Abbreviations\n\n- Avoid abbreviations in titles unless the abbreviated form is universally recognized. For example:\n  - Use \"Machine Learning\" instead of \"ML\" and \"Computer Science\" instead of \"CS\"\n  - However, words like DNA, GDP, NASA, UK, EU, SAT, HTML, SQL, etc. are more often used in their abbreviated forms and are acceptable\n- Think of this:\n  - People will never say \"HyperText Markup Language\", they will say \"HTML\"\n  - However, even though \"NLP\" is widely used, people will more often say \"Natural Language Processing\" when naming a course\n",
       "testCaseId": "pt-want-to-code-1",
-      "userPrompt": ""
+      "userPrompt": "\n    LANGUAGE: pt\n    USER_INPUT: I want to code\n  "
     },
     {
-      "duration": 2490.9183750000084,
-      "inputTokens": 941,
-      "output": "[\n  {\n    \"title\": \"Programação de Software\",\n    \"description\": \"Aprenda a escrever código eficiente para desenvolver programas de computador.\"\n  },\n  {\n    \"title\": \"Desenvolvimento Web\",\n    \"description\": \"Crie websites e aplicações web utilizando linguagens de programação modernas.\"\n  },\n  {\n    \"title\": \"Ciência da Computação\",\n    \"description\": \"Entenda os fundamentos teóricos e práticos da computação.\"\n  },\n  {\n    \"title\": \"Engenharia de Software\",\n    \"description\": \"Explore métodos para projetar e manter sistemas de software de qualidade.\"\n  }\n]",
-      "outputTokens": 98,
-      "systemPrompt": "",
-      "testCaseId": "pt-want-to-code-2",
-      "userPrompt": ""
-    },
-    {
-      "duration": 2248.727292000025,
-      "inputTokens": 941,
-      "output": "[\n  {\n    \"title\": \"Programação de Software\",\n    \"description\": \"Aprenda técnicas essenciais para desenvolver software eficiente e funcional.\"\n  },\n  {\n    \"title\": \"Desenvolvimento Web\",\n    \"description\": \"Domine a criação de sites e aplicações para a internet.\"\n  },\n  {\n    \"title\": \"Ciência da Computação\",\n    \"description\": \"Entenda os fundamentos teóricos e práticos da computação.\"\n  }\n]",
-      "outputTokens": 73,
-      "systemPrompt": "",
-      "testCaseId": "pt-want-to-code-3",
-      "userPrompt": ""
-    },
-    {
-      "duration": 2286.8456250000163,
-      "inputTokens": 943,
-      "output": "[\n  {\n    \"title\": \"Black Holes\",\n    \"description\": \"Explore the physics and mysteries behind black holes and their significance in the universe.\"\n  },\n  {\n    \"title\": \"Astrophysics\",\n    \"description\": \"Understand the fundamental principles governing celestial bodies including black holes.\"\n  },\n  {\n    \"title\": \"Cosmology\",\n    \"description\": \"Learn about the origin and evolution of the universe with a focus on black holes and dark matter.\"\n  }\n]",
-      "outputTokens": 78,
-      "systemPrompt": "",
+      "duration": 1904.437957999995,
+      "inputTokens": 977,
+      "output": "[\n  {\n    \"description\": \"Explore the mysteries and physics of black holes in the universe.\",\n    \"targetLanguageCode\": null,\n    \"title\": \"Black Holes\"\n  }\n]",
+      "outputTokens": 32,
+      "systemPrompt": "You generate course suggestions from a user input.\n\n## Rules\n\n- Generate as many course suggestions as you think are relevant, except for language courses, which must suggest only the language they want to learn\n\n### Language\n\n- Use the `LANGUAGE` value set by the user for both `title` and `description`, no matter what's the language used in `USER_INPUT`\n- For `en`, default to US English unless the content is about a different region\n- For `pt`, default to Brazilian Portuguese unless the content is about a different region\n- For `es`, default to Latin American Spanish unless the content is about a different region\n\n### Title\n\n- Titles must look like real courses\n- NEVER use levels such as (but not limited to) \"Basics\", \"Beginner\", \"Advanced\", \"Intro\", \"Introduction\", \"101\", \"Mastery\", \"Fundamentals\", etc.\n- Don't use variant markers in titles (e.g., '101', 'Beginner', exam levels like `B1`, or variants like 'Academic')\n- Single-topic titles: NEVER use \"and\", \"or\", \"&\", \"/\" and commas joining topics\n- For vague inputs, include the broad canonical title itself and related courses (e.g., \"Computer Science\", \"Software Engineering\", \"Web Development\")\n- If a user's input includes a jusrisdiction (e.g. \"California Law\", \"UK History\", \"Brazilian Politics\"), all suggestions must include that jurisdiction\n- If a user's input is very specific (e.g. \"Quantum Field Theory\", \"Renaissance Art in Florence\", \"German Law\", etc), include that title as the first suggestion\n\n### Description\n\n- Should be EXACTLY one sentence\n- Highlights why it may be useful or relevant to the learner\n- No need to prefix with \"This course is useful for...\", just say why it's useful.\n  For example, instead of \"This course is useful for understanding the basics of economics.\", say \"Understand the basics of economics.\"\n\n### Target Language Code\n\n- For language learning courses, include `targetLanguageCode` with the ISO 639-1 code (e.g., \"es\" for Spanish, \"ja\" for Japanese)\n- For non-language learning courses, set `targetLanguageCode` to null\n\n### Edge cases\n\n#### Language learning\n\n- If the user's goal is to learn a language (or pass a language exam like TOEFL, IELTS, HSK, etc.), return EXACTLY ONE suggestion with the language name and the correct `targetLanguageCode`\n- Do not add a \"language\" suffix to the language name (e.g., \"French\", not \"French Language\")\n- Do not add extra suggestions for language learning/exams (no exam prep, writing, culture add-ons, just the name of the language they want to learn)\n\n#### Intellectual Property\n\n- If the input targets a specific book/topic/IP include that exact topic as the first suggestion. For example:\n  - Topics: \"World War II\", \"Quantum Mechanics\", \"States of Matter\"\n  - Books: \"1984\", \"To Kill a Mockingbird\", \"The Great Gatsby\"\n  - Series: \"Harry Potter\", \"The Lord of the Rings\", \"Game of Thrones\"\n- For books/movies/IP, use the **official** name (e.g., \"The Great Gatsby\", not \"Great Gatsby\" or \"Gatsby\")\n  - This doesn't apply to general topics (e.g., \"General Relativity\" is correct, we wouldn't say \"The General Relativity Theory\")\n- Fixes any typos (e.g. \"Rolling Stones\" instead of \"roling stone\")\n- You should add other related suggestions to this subject\n\n#### Abbreviations\n\n- Avoid abbreviations in titles unless the abbreviated form is universally recognized. For example:\n  - Use \"Machine Learning\" instead of \"ML\" and \"Computer Science\" instead of \"CS\"\n  - However, words like DNA, GDP, NASA, UK, EU, SAT, HTML, SQL, etc. are more often used in their abbreviated forms and are acceptable\n- Think of this:\n  - People will never say \"HyperText Markup Language\", they will say \"HTML\"\n  - However, even though \"NLP\" is widely used, people will more often say \"Natural Language Processing\" when naming a course\n",
       "testCaseId": "en-black-holes-1",
-      "userPrompt": ""
+      "userPrompt": "\n    LANGUAGE: en\n    USER_INPUT: quero aprender sobre buracos negros\n  "
     },
     {
-      "duration": 2230.7200000000303,
-      "inputTokens": 943,
-      "output": "[\n  {\n    \"title\": \"Black Holes\",\n    \"description\": \"Explore the nature, formation, and properties of black holes in the universe.\"\n  },\n  {\n    \"title\": \"Astrophysics\",\n    \"description\": \"Understand the physical principles governing celestial bodies and phenomena.\"\n  },\n  {\n    \"title\": \"General Relativity\",\n    \"description\": \"Examine the theory of gravity that explains the structure of spacetime around massive objects.\"\n  }\n]",
-      "outputTokens": 75,
-      "systemPrompt": "",
-      "testCaseId": "en-black-holes-2",
-      "userPrompt": ""
-    },
-    {
-      "duration": 1653.9916669999948,
-      "inputTokens": 943,
-      "output": "[\n  {\n    \"title\": \"Black Holes\",\n    \"description\": \"Explore the nature and mysteries of black holes in the universe.\"\n  },\n  {\n    \"title\": \"Astrophysics\",\n    \"description\": \"Understand the physical principles governing celestial bodies and phenomena.\"\n  },\n  {\n    \"title\": \"General Relativity\",\n    \"description\": \"Learn the fundamentals of Einstein's theory explaining gravity and spacetime.\"\n  }\n]",
-      "outputTokens": 68,
-      "systemPrompt": "",
-      "testCaseId": "en-black-holes-3",
-      "userPrompt": ""
-    },
-    {
-      "duration": 2704.5979170000064,
-      "inputTokens": 939,
-      "output": "[\n  {\n    \"title\": \"Derecho Penal\",\n    \"description\": \"Aprende los principios fundamentales del derecho penal y su aplicación en sistemas jurídicos.\"\n  },\n  {\n    \"title\": \"Procedimiento Penal\",\n    \"description\": \"Comprende los procesos y etapas del procedimiento penal en el sistema judicial.\"\n  },\n  {\n    \"title\": \"Delitos y Penas\",\n    \"description\": \"Estudia las diferentes categorías de delitos y las correspondientes penas establecidas por la ley.\"\n  },\n  {\n    \"title\": \"Derechos Humanos y Derecho Penal\",\n    \"description\": \"Analiza la relación entre los derechos humanos y la legislación penal.\"\n  }\n]",
-      "outputTokens": 107,
-      "systemPrompt": "",
+      "duration": 3918.9671249999956,
+      "inputTokens": 973,
+      "output": "[\n  {\n    \"description\": \"Explora los principios fundamentales y las aplicaciones del derecho penal.\",\n    \"targetLanguageCode\": null,\n    \"title\": \"Derecho penal\"\n  },\n  {\n    \"description\": \"Entiende el sistema judicial y las normas que regulan los comportamientos criminales.\",\n    \"targetLanguageCode\": null,\n    \"title\": \"Derecho procesal penal\"\n  },\n  {\n    \"description\": \"Estudia las sanciones y penas aplicadas en casos de infracciones penales.\",\n    \"targetLanguageCode\": null,\n    \"title\": \"Penas y sanciones en derecho penal\"\n  },\n  {\n    \"description\": \"Analiza las bases legales para la prevención y persecución del delito.\",\n    \"targetLanguageCode\": null,\n    \"title\": \"Política criminal\"\n  },\n  {\n    \"description\": \"Examina los derechos y garantías de las víctimas en procesos penales.\",\n    \"targetLanguageCode\": null,\n    \"title\": \"Victimología y derechos de las víctimas\"\n  }\n]",
+      "outputTokens": 162,
+      "systemPrompt": "You generate course suggestions from a user input.\n\n## Rules\n\n- Generate as many course suggestions as you think are relevant, except for language courses, which must suggest only the language they want to learn\n\n### Language\n\n- Use the `LANGUAGE` value set by the user for both `title` and `description`, no matter what's the language used in `USER_INPUT`\n- For `en`, default to US English unless the content is about a different region\n- For `pt`, default to Brazilian Portuguese unless the content is about a different region\n- For `es`, default to Latin American Spanish unless the content is about a different region\n\n### Title\n\n- Titles must look like real courses\n- NEVER use levels such as (but not limited to) \"Basics\", \"Beginner\", \"Advanced\", \"Intro\", \"Introduction\", \"101\", \"Mastery\", \"Fundamentals\", etc.\n- Don't use variant markers in titles (e.g., '101', 'Beginner', exam levels like `B1`, or variants like 'Academic')\n- Single-topic titles: NEVER use \"and\", \"or\", \"&\", \"/\" and commas joining topics\n- For vague inputs, include the broad canonical title itself and related courses (e.g., \"Computer Science\", \"Software Engineering\", \"Web Development\")\n- If a user's input includes a jusrisdiction (e.g. \"California Law\", \"UK History\", \"Brazilian Politics\"), all suggestions must include that jurisdiction\n- If a user's input is very specific (e.g. \"Quantum Field Theory\", \"Renaissance Art in Florence\", \"German Law\", etc), include that title as the first suggestion\n\n### Description\n\n- Should be EXACTLY one sentence\n- Highlights why it may be useful or relevant to the learner\n- No need to prefix with \"This course is useful for...\", just say why it's useful.\n  For example, instead of \"This course is useful for understanding the basics of economics.\", say \"Understand the basics of economics.\"\n\n### Target Language Code\n\n- For language learning courses, include `targetLanguageCode` with the ISO 639-1 code (e.g., \"es\" for Spanish, \"ja\" for Japanese)\n- For non-language learning courses, set `targetLanguageCode` to null\n\n### Edge cases\n\n#### Language learning\n\n- If the user's goal is to learn a language (or pass a language exam like TOEFL, IELTS, HSK, etc.), return EXACTLY ONE suggestion with the language name and the correct `targetLanguageCode`\n- Do not add a \"language\" suffix to the language name (e.g., \"French\", not \"French Language\")\n- Do not add extra suggestions for language learning/exams (no exam prep, writing, culture add-ons, just the name of the language they want to learn)\n\n#### Intellectual Property\n\n- If the input targets a specific book/topic/IP include that exact topic as the first suggestion. For example:\n  - Topics: \"World War II\", \"Quantum Mechanics\", \"States of Matter\"\n  - Books: \"1984\", \"To Kill a Mockingbird\", \"The Great Gatsby\"\n  - Series: \"Harry Potter\", \"The Lord of the Rings\", \"Game of Thrones\"\n- For books/movies/IP, use the **official** name (e.g., \"The Great Gatsby\", not \"Great Gatsby\" or \"Gatsby\")\n  - This doesn't apply to general topics (e.g., \"General Relativity\" is correct, we wouldn't say \"The General Relativity Theory\")\n- Fixes any typos (e.g. \"Rolling Stones\" instead of \"roling stone\")\n- You should add other related suggestions to this subject\n\n#### Abbreviations\n\n- Avoid abbreviations in titles unless the abbreviated form is universally recognized. For example:\n  - Use \"Machine Learning\" instead of \"ML\" and \"Computer Science\" instead of \"CS\"\n  - However, words like DNA, GDP, NASA, UK, EU, SAT, HTML, SQL, etc. are more often used in their abbreviated forms and are acceptable\n- Think of this:\n  - People will never say \"HyperText Markup Language\", they will say \"HTML\"\n  - However, even though \"NLP\" is widely used, people will more often say \"Natural Language Processing\" when naming a course\n",
       "testCaseId": "es-derecho-penal-1",
-      "userPrompt": ""
+      "userPrompt": "\n    LANGUAGE: es\n    USER_INPUT: derecho penal\n  "
     },
     {
-      "duration": 2585.8294999999925,
-      "inputTokens": 939,
-      "output": "[\n  {\n    \"title\": \"Derecho Penal\",\n    \"description\": \"Comprende las bases y aplicaciones del derecho penal para la administración de justicia.\"\n  },\n  {\n    \"title\": \"Derecho Procesal Penal\",\n    \"description\": \"Estudia los procedimientos legales y normativas en los procesos penales.\"\n  },\n  {\n    \"title\": \"Criminología\",\n    \"description\": \"Analiza las causas y consecuencias del delito desde una perspectiva sociológica y legal.\"\n  },\n  {\n    \"title\": \"Derechos Humanos y Derecho Penal\",\n    \"description\": \"Explora la protección de los derechos humanos en el contexto del derecho penal.\"\n  }\n]",
-      "outputTokens": 107,
-      "systemPrompt": "",
-      "testCaseId": "es-derecho-penal-2",
-      "userPrompt": ""
-    },
-    {
-      "duration": 1758.4876659999718,
-      "inputTokens": 939,
-      "output": "[\n  {\n    \"title\": \"Derecho penal\",\n    \"description\": \"Comprende los fundamentos y principios del derecho penal para aplicar la justicia penal correctamente.\"\n  },\n  {\n    \"title\": \"Derecho procesal penal\",\n    \"description\": \"Aprende los procedimientos y normas para llevar a cabo procesos penales de forma eficaz.\"\n  },\n  {\n    \"title\": \"Derechos humanos en derecho penal\",\n    \"description\": \"Explora la protección de los derechos humanos en el contexto del derecho penal.\"\n  }\n]",
-      "outputTokens": 86,
-      "systemPrompt": "",
-      "testCaseId": "es-derecho-penal-3",
-      "userPrompt": ""
-    },
-    {
-      "duration": 1998.0521249999874,
-      "inputTokens": 940,
-      "output": "[\n  {\n    \"title\": \"Derecho Chileno\",\n    \"description\": \"Conozca las bases y particularidades del sistema jurídico chileno para interpretar y aplicar la ley en Chile.\"\n  },\n  {\n    \"title\": \"Derecho Constitucional Chileno\",\n    \"description\": \"Explore los principios y normas que rigen la Constitución de Chile y su impacto en el ordenamiento jurídico.\"\n  },\n  {\n    \"title\": \"Derecho Penal Chileno\",\n    \"description\": \"Analice las normas que regulan los delitos y penas en Chile para comprender la justicia penal.\"\n  },\n  {\n    \"title\": \"Derecho Civil Chileno\",\n    \"description\": \"Estudie las reglas que regulan las relaciones privadas en Chile, como contratos, familia y propiedad.\"\n  }\n]",
-      "outputTokens": 132,
-      "systemPrompt": "",
-      "testCaseId": "es-derecho-chileno-1",
-      "userPrompt": ""
-    },
-    {
-      "duration": 2604.7329170000157,
-      "inputTokens": 940,
-      "output": "[\n  {\n    \"title\": \"Derecho chileno\",\n    \"description\": \"Explora el sistema jurídico de Chile para comprender sus leyes y normativas.\"\n  },\n  {\n    \"title\": \"Derecho constitucional chileno\",\n    \"description\": \"Analiza la estructura y principios constitucionales que rigen en Chile.\"\n  },\n  {\n    \"title\": \"Derecho penal chileno\",\n    \"description\": \"Comprende las normas y procedimientos relacionados con los delitos y sanciones en Chile.\"\n  },\n  {\n    \"title\": \"Derecho civil chileno\",\n    \"description\": \"Estudia las leyes que regulan las relaciones privadas entre personas en Chile.\"\n  }\n]",
-      "outputTokens": 109,
-      "systemPrompt": "",
-      "testCaseId": "es-derecho-chileno-2",
-      "userPrompt": ""
-    },
-    {
-      "duration": 2155.7264999999898,
-      "inputTokens": 940,
-      "output": "[\n  {\n    \"title\": \"Derecho chileno\",\n    \"description\": \"Comprende el sistema jurídico y las normativas específicas de Chile.\"\n  },\n  {\n    \"title\": \"Derecho constitucional chileno\",\n    \"description\": \"Explora los principios fundamentales que rigen la Constitución de Chile.\"\n  },\n  {\n    \"title\": \"Derecho penal chileno\",\n    \"description\": \"Estudia las leyes relacionadas con los delitos y las sanciones en Chile.\"\n  },\n  {\n    \"title\": \"Derecho civil chileno\",\n    \"description\": \"Analiza las leyes civiles aplicables en las relaciones entre personas en Chile.\"\n  }\n]",
-      "outputTokens": 105,
-      "systemPrompt": "",
-      "testCaseId": "es-derecho-chileno-3",
-      "userPrompt": ""
-    },
-    {
-      "duration": 1460.2201249999925,
-      "inputTokens": 942,
-      "output": "[\n  {\n    \"title\": \"TOEFL\",\n    \"description\": \"Prepare-se para o exame TOEFL com estratégias eficazes e prática direcionada.\"\n  },\n  {\n    \"title\": \"Inglês\",\n    \"description\": \"Aprenda inglês para melhorar sua fluência e desempenho no TOEFL.\"\n  }\n]",
-      "outputTokens": 54,
-      "systemPrompt": "",
-      "testCaseId": "pt-toefl-1",
-      "userPrompt": ""
-    },
-    {
-      "duration": 1443.690208999964,
-      "inputTokens": 942,
-      "output": "[\n  {\n    \"title\": \"TOEFL\",\n    \"description\": \"Prepare-se para o exame TOEFL para demonstrar proficiência em inglês acadêmico.\"\n  },\n  {\n    \"title\": \"Inglês\",\n    \"description\": \"Desenvolva habilidades abrangentes na língua inglesa para comunicação eficaz.\"\n  }\n]",
-      "outputTokens": 54,
-      "systemPrompt": "",
-      "testCaseId": "pt-toefl-2",
-      "userPrompt": ""
-    },
-    {
-      "duration": 2076.1112909999792,
-      "inputTokens": 942,
-      "output": "[\n  {\n    \"title\": \"TOEFL\",\n    \"description\": \"Aprenda estratégias essenciais para se sair bem no exame TOEFL.\"\n  },\n  {\n    \"title\": \"Inglês\",\n    \"description\": \"Desenvolva habilidades em inglês para melhorar seu desempenho no TOEFL.\"\n  }\n]",
-      "outputTokens": 51,
-      "systemPrompt": "",
-      "testCaseId": "pt-toefl-3",
-      "userPrompt": ""
-    },
-    {
-      "duration": 1909.2702500000014,
-      "inputTokens": 940,
-      "output": "[\n  {\n    \"title\": \"Física\",\n    \"description\": \"Explore os princípios fundamentais da física para entender o mundo natural.\"\n  },\n  {\n    \"title\": \"Química\",\n    \"description\": \"Aprenda sobre a composição, estrutura e propriedades das substâncias químicas.\"\n  }\n]",
-      "outputTokens": 49,
-      "systemPrompt": "",
-      "testCaseId": "pt-physics-and-chemistry-1",
-      "userPrompt": ""
-    },
-    {
-      "duration": 1580.0127910000156,
-      "inputTokens": 940,
-      "output": "[\n  {\n    \"title\": \"Física\",\n    \"description\": \"Explore os princípios fundamentais da física para compreender o funcionamento do universo.\"\n  },\n  {\n    \"title\": \"Química\",\n    \"description\": \"Aprenda os conceitos essenciais de química para entender as transformações da matéria.\"\n  }\n]",
-      "outputTokens": 50,
-      "systemPrompt": "",
-      "testCaseId": "pt-physics-and-chemistry-2",
-      "userPrompt": ""
-    },
-    {
-      "duration": 1646.9327920000069,
-      "inputTokens": 940,
-      "output": "[\n  {\n    \"title\": \"Física\",\n    \"description\": \"Compreenda os princípios fundamentais da física e suas aplicações no mundo real.\"\n  },\n  {\n    \"title\": \"Química\",\n    \"description\": \"Explore os conceitos essenciais da química e como eles influenciam nosso cotidiano.\"\n  }\n]",
-      "outputTokens": 52,
-      "systemPrompt": "",
-      "testCaseId": "pt-physics-and-chemistry-3",
-      "userPrompt": ""
-    },
-    {
-      "duration": 2444.8872919999994,
-      "inputTokens": 943,
-      "output": "[\n  {\n    \"title\": \"Chemistry\",\n    \"description\": \"Explore the fundamental concepts and principles of chemistry essential for further scientific study.\"\n  },\n  {\n    \"title\": \"Organic Chemistry\",\n    \"description\": \"Understand the structure, properties, and reactions of organic compounds.\"\n  },\n  {\n    \"title\": \"Physical Chemistry\",\n    \"description\": \"Learn about the physical principles underlying chemical systems and processes.\"\n  },\n  {\n    \"title\": \"Analytical Chemistry\",\n    \"description\": \"Discover methods and techniques for analyzing the composition of substances.\"\n  }\n]",
-      "outputTokens": 87,
-      "systemPrompt": "",
-      "testCaseId": "en-intro-to-chemistry-1",
-      "userPrompt": ""
-    },
-    {
-      "duration": 2434.2851670000236,
-      "inputTokens": 943,
-      "output": "[\n  {\n    \"title\": \"Chemistry\",\n    \"description\": \"Explore the fundamental concepts and principles that form the basis of chemistry.\"\n  },\n  {\n    \"title\": \"Organic Chemistry\",\n    \"description\": \"Understand the structure, properties, and reactions of organic compounds.\"\n  },\n  {\n    \"title\": \"Physical Chemistry\",\n    \"description\": \"Learn about the physical principles underlying chemical systems.\"\n  },\n  {\n    \"title\": \"Analytical Chemistry\",\n    \"description\": \"Study techniques and methods to analyze substances and their compositions.\"\n  }\n]",
-      "outputTokens": 84,
-      "systemPrompt": "",
-      "testCaseId": "en-intro-to-chemistry-2",
-      "userPrompt": ""
-    },
-    {
-      "duration": 1690.7712499999907,
-      "inputTokens": 943,
-      "output": "[\n  {\n    \"title\": \"Chemistry\",\n    \"description\": \"Explore the fundamental principles of matter and chemical reactions.\"\n  },\n  {\n    \"title\": \"Organic Chemistry\",\n    \"description\": \"Study the structure, properties, and reactions of organic compounds.\"\n  },\n  {\n    \"title\": \"Physical Chemistry\",\n    \"description\": \"Understand the physical principles underlying chemical systems and processes.\"\n  }\n]",
-      "outputTokens": 62,
-      "systemPrompt": "",
-      "testCaseId": "en-intro-to-chemistry-3",
-      "userPrompt": ""
-    },
-    {
-      "duration": 2236.7708750000456,
-      "inputTokens": 939,
-      "output": "[\n  {\n    \"title\": \"Dragon Ball\",\n    \"description\": \"Explore a série Dragon Ball para entender sua narrativa, personagens e impacto cultural.\"\n  },\n  {\n    \"title\": \"Anime e Mangá no Japão\",\n    \"description\": \"Conheça a história, estilos e influência do anime e mangá na cultura japonesa.\"\n  },\n  {\n    \"title\": \"Animação e Design de Personagens\",\n    \"description\": \"Aprenda os princípios básicos de animação e criação de personagens para mídia visual.\"\n  }\n]",
-      "outputTokens": 88,
-      "systemPrompt": "",
-      "testCaseId": "pt-dragon-ball-1",
-      "userPrompt": ""
-    },
-    {
-      "duration": 1385.0988329999964,
-      "inputTokens": 939,
-      "output": "[\n  {\n    \"title\": \"Dragon Ball\",\n    \"description\": \"Explore a história e os personagens de Dragon Ball, uma série icônica de anime e mangá.\"\n  },\n  {\n    \"title\": \"Animação Japonesa\",\n    \"description\": \"Entenda os fundamentos e a influência da animação japonesa na cultura pop mundial.\"\n  }\n]",
-      "outputTokens": 61,
-      "systemPrompt": "",
-      "testCaseId": "pt-dragon-ball-2",
-      "userPrompt": ""
-    },
-    {
-      "duration": 1960.259791999997,
-      "inputTokens": 939,
-      "output": "[\n  {\n    \"title\": \"Dragon Ball\",\n    \"description\": \"Explore o universo, personagens e histórias da série Dragon Ball.\"\n  },\n  {\n    \"title\": \"Análise de Anime e Mangá\",\n    \"description\": \"Compreenda a arte e narrativa por trás de animes e mangás populares.\"\n  },\n  {\n    \"title\": \"Cultura Pop Japonesa\",\n    \"description\": \"Descubra a influência da cultura pop japonesa no entretenimento mundial.\"\n  }\n]",
-      "outputTokens": 80,
-      "systemPrompt": "",
-      "testCaseId": "pt-dragon-ball-3",
-      "userPrompt": ""
-    },
-    {
-      "duration": 2236.706208999967,
-      "inputTokens": 939,
-      "output": "[\n  {\n    \"title\": \"The Beatles\",\n    \"description\": \"Explore the history and impact of The Beatles on music and culture.\"\n  },\n  {\n    \"title\": \"Music History\",\n    \"description\": \"Understand the evolution of music and its cultural significance.\"\n  },\n  {\n    \"title\": \"Songwriting\",\n    \"description\": \"Learn techniques for writing compelling and memorable songs.\"\n  },\n  {\n    \"title\": \"Rock Music\",\n    \"description\": \"Discover the development and characteristics of rock music.\"\n  }\n]",
-      "outputTokens": 79,
-      "systemPrompt": "",
-      "testCaseId": "en-beatles-1",
-      "userPrompt": ""
-    },
-    {
-      "duration": 1637.7032920000493,
-      "inputTokens": 939,
-      "output": "[\n  {\n    \"title\": \"The Beatles\",\n    \"description\": \"Explore the history and impact of The Beatles on music and culture.\"\n  },\n  {\n    \"title\": \"History of Rock Music\",\n    \"description\": \"Understand the development of rock music and its influential artists.\"\n  },\n  {\n    \"title\": \"Music Production Techniques\",\n    \"description\": \"Learn key techniques used in producing music like The Beatles.\"\n  }\n]",
-      "outputTokens": 68,
-      "systemPrompt": "",
-      "testCaseId": "en-beatles-2",
-      "userPrompt": ""
-    },
-    {
-      "duration": 1597.055457999988,
-      "inputTokens": 939,
-      "output": "[\n  {\n    \"title\": \"The Beatles\",\n    \"description\": \"Explore the history, music, and cultural impact of The Beatles.\"\n  },\n  {\n    \"title\": \"Music History\",\n    \"description\": \"Understand the evolution of music through different periods and styles.\"\n  },\n  {\n    \"title\": \"Rock Music\",\n    \"description\": \"Discover the characteristics and development of rock music.\"\n  }\n]",
-      "outputTokens": 63,
-      "systemPrompt": "",
-      "testCaseId": "en-beatles-3",
-      "userPrompt": ""
-    },
-    {
-      "duration": 2567.181958000001,
-      "inputTokens": 939,
-      "output": "[\n  {\n    \"title\": \"Formule 1\",\n    \"description\": \"Découvrez les compétences et techniques utilisées dans le sport automobile de Formule 1.\"\n  },\n  {\n    \"title\": \"Ingénierie automobile\",\n    \"description\": \"Comprenez les principes de conception et de mécanique qui sous-tendent les voitures de course.\"\n  },\n  {\n    \"title\": \"Gestion d'équipe sportive\",\n    \"description\": \"Apprenez à gérer une équipe dans le contexte compétitif des sports mécaniques.\"\n  }\n]",
-      "outputTokens": 88,
-      "systemPrompt": "",
-      "testCaseId": "fr-f1-1",
-      "userPrompt": ""
-    },
-    {
-      "duration": 2439.425916999986,
-      "inputTokens": 939,
-      "output": "[\n  {\n    \"title\": \"Formule 1\",\n    \"description\": \"Explorez les stratégies, l'ingénierie et les aspects techniques de la Formule 1.\"\n  },\n  {\n    \"title\": \"Mécanique automobile\",\n    \"description\": \"Comprenez les principes fondamentaux de la mécanique appliquée aux voitures de haute performance.\"\n  },\n  {\n    \"title\": \"Gestion sportive\",\n    \"description\": \"Apprenez à gérer les aspects organisationnels et commerciaux des sports motorisés tels que la Formule 1.\"\n  }\n]",
-      "outputTokens": 96,
-      "systemPrompt": "",
-      "testCaseId": "fr-f1-2",
-      "userPrompt": ""
-    },
-    {
-      "duration": 1463.2807499999763,
-      "inputTokens": 939,
-      "output": "[\n  {\n    \"title\": \"Formule 1\",\n    \"description\": \"Explorez les aspects techniques et stratégiques de la Formule 1.\"\n  },\n  {\n    \"title\": \"Sports Mécaniques\",\n    \"description\": \"Découvrez le monde des sports mécaniques et leurs disciplines variées.\"\n  }\n]",
-      "outputTokens": 55,
-      "systemPrompt": "",
-      "testCaseId": "fr-f1-3",
-      "userPrompt": ""
-    },
-    {
-      "duration": 2006.3988750000135,
-      "inputTokens": 946,
-      "output": "[\n  {\n    \"title\": \"JLPT\",\n    \"description\": \"Prepare effectively for the Japanese Language Proficiency Test to achieve your certification.\"\n  },\n  {\n    \"title\": \"Japanese\",\n    \"description\": \"Develop comprehensive Japanese language skills to support passing various proficiency tests.\"\n  }\n]",
-      "outputTokens": 47,
-      "systemPrompt": "",
-      "testCaseId": "en-jlpt-n2-1",
-      "userPrompt": ""
-    },
-    {
-      "duration": 1152.8257079999894,
-      "inputTokens": 946,
-      "output": "[\n  {\n    \"title\": \"JLPT\",\n    \"description\": \"Prepare effectively for the Japanese Language Proficiency Test to achieve your certification goals.\"\n  },\n  {\n    \"title\": \"Japanese\",\n    \"description\": \"Learn Japanese to enhance your communication skills and cultural understanding.\"\n  }\n]",
-      "outputTokens": 47,
-      "systemPrompt": "",
-      "testCaseId": "en-jlpt-n2-2",
-      "userPrompt": ""
-    },
-    {
-      "duration": 1538.000875000027,
-      "inputTokens": 946,
-      "output": "[\n  {\n    \"title\": \"Japanese Language Proficiency Test N2\",\n    \"description\": \"Prepare effectively to pass the JLPT N2 with focused language skills and exam strategies.\"\n  },\n  {\n    \"title\": \"Japanese\",\n    \"description\": \"Develop comprehensive Japanese language skills to support success in the JLPT N2 exam.\"\n  }\n]",
-      "outputTokens": 59,
-      "systemPrompt": "",
-      "testCaseId": "en-jlpt-n2-3",
-      "userPrompt": ""
-    },
-    {
-      "duration": 1480.3495000000112,
-      "inputTokens": 942,
-      "output": "[\n  {\n    \"title\": \"IELTS\",\n    \"description\": \"Prepare-se para o exame IELTS focando nas habilidades necessárias para alcançar uma alta pontuação.\"\n  },\n  {\n    \"title\": \"Inglês\",\n    \"description\": \"Aprenda inglês para melhorar sua fluência e compreensão, essenciais para o sucesso no IELTS.\"\n  }\n]",
-      "outputTokens": 59,
-      "systemPrompt": "",
-      "testCaseId": "pt-ielts-academic-1",
-      "userPrompt": ""
-    },
-    {
-      "duration": 1374.205874999985,
-      "inputTokens": 942,
-      "output": "[\n  {\n    \"title\": \"IELTS\",\n    \"description\": \"Aprenda as habilidades necessárias para obter uma boa pontuação no exame IELTS.\"\n  },\n  {\n    \"title\": \"Inglês\",\n    \"description\": \"Desenvolva suas competências em inglês para comunicação efetiva e exames internacionais.\"\n  }\n]",
-      "outputTokens": 53,
-      "systemPrompt": "",
-      "testCaseId": "pt-ielts-academic-2",
-      "userPrompt": ""
-    },
-    {
-      "duration": 3321.1471669999883,
-      "inputTokens": 942,
-      "output": "[\n  {\n    \"title\": \"IELTS\",\n    \"description\": \"Prepare-se para o exame de proficiência em inglês mais reconhecido internacionalmente.\"\n  },\n  {\n    \"title\": \"Inglês\",\n    \"description\": \"Melhore suas habilidades na língua inglesa para se comunicar efetivamente em diversos contextos.\"\n  }\n]",
-      "outputTokens": 56,
-      "systemPrompt": "",
-      "testCaseId": "pt-ielts-academic-3",
-      "userPrompt": ""
-    },
-    {
-      "duration": 2560.805666,
-      "inputTokens": 941,
-      "output": "[\n  {\n    \"title\": \"Computer Architecture\",\n    \"description\": \"Explore the internal structure and organization of computer systems to understand how they operate.\"\n  },\n  {\n    \"title\": \"Operating Systems\",\n    \"description\": \"Learn how operating systems manage hardware and software resources on computers.\"\n  },\n  {\n    \"title\": \"Digital Logic Design\",\n    \"description\": \"Understand the fundamental logic circuits and components that form the basis of computer hardware.\"\n  },\n  {\n    \"title\": \"Computer Hardware Fundamentals\",\n    \"description\": \"Discover the physical components of computers and how they interact to execute tasks.\"\n  },\n  {\n    \"title\": \"Software Engineering\",\n    \"description\": \"Study the principles and practices of designing and building effective computer programs.\"\n  }\n]",
+      "duration": 4053.400708000001,
+      "inputTokens": 974,
+      "output": "[\n  {\n    \"description\": \"Estudia las bases y aplicaciones del derecho chileno.\",\n    \"targetLanguageCode\": null,\n    \"title\": \"Derecho chileno\"\n  },\n  {\n    \"description\": \"Comprende el funcionamiento y las normativas del sistema judicial chileno.\",\n    \"targetLanguageCode\": null,\n    \"title\": \"Sistema judicial chileno\"\n  },\n  {\n    \"description\": \"Explora las leyes constitucionales específicas de Chile.\",\n    \"targetLanguageCode\": null,\n    \"title\": \"Constitución chilena\"\n  },\n  {\n    \"description\": \"Analiza la legislación laboral y los derechos de los trabajadores en Chile.\",\n    \"targetLanguageCode\": null,\n    \"title\": \"Derecho laboral chileno\"\n  }\n]",
       "outputTokens": 117,
-      "systemPrompt": "",
+      "systemPrompt": "You generate course suggestions from a user input.\n\n## Rules\n\n- Generate as many course suggestions as you think are relevant, except for language courses, which must suggest only the language they want to learn\n\n### Language\n\n- Use the `LANGUAGE` value set by the user for both `title` and `description`, no matter what's the language used in `USER_INPUT`\n- For `en`, default to US English unless the content is about a different region\n- For `pt`, default to Brazilian Portuguese unless the content is about a different region\n- For `es`, default to Latin American Spanish unless the content is about a different region\n\n### Title\n\n- Titles must look like real courses\n- NEVER use levels such as (but not limited to) \"Basics\", \"Beginner\", \"Advanced\", \"Intro\", \"Introduction\", \"101\", \"Mastery\", \"Fundamentals\", etc.\n- Don't use variant markers in titles (e.g., '101', 'Beginner', exam levels like `B1`, or variants like 'Academic')\n- Single-topic titles: NEVER use \"and\", \"or\", \"&\", \"/\" and commas joining topics\n- For vague inputs, include the broad canonical title itself and related courses (e.g., \"Computer Science\", \"Software Engineering\", \"Web Development\")\n- If a user's input includes a jusrisdiction (e.g. \"California Law\", \"UK History\", \"Brazilian Politics\"), all suggestions must include that jurisdiction\n- If a user's input is very specific (e.g. \"Quantum Field Theory\", \"Renaissance Art in Florence\", \"German Law\", etc), include that title as the first suggestion\n\n### Description\n\n- Should be EXACTLY one sentence\n- Highlights why it may be useful or relevant to the learner\n- No need to prefix with \"This course is useful for...\", just say why it's useful.\n  For example, instead of \"This course is useful for understanding the basics of economics.\", say \"Understand the basics of economics.\"\n\n### Target Language Code\n\n- For language learning courses, include `targetLanguageCode` with the ISO 639-1 code (e.g., \"es\" for Spanish, \"ja\" for Japanese)\n- For non-language learning courses, set `targetLanguageCode` to null\n\n### Edge cases\n\n#### Language learning\n\n- If the user's goal is to learn a language (or pass a language exam like TOEFL, IELTS, HSK, etc.), return EXACTLY ONE suggestion with the language name and the correct `targetLanguageCode`\n- Do not add a \"language\" suffix to the language name (e.g., \"French\", not \"French Language\")\n- Do not add extra suggestions for language learning/exams (no exam prep, writing, culture add-ons, just the name of the language they want to learn)\n\n#### Intellectual Property\n\n- If the input targets a specific book/topic/IP include that exact topic as the first suggestion. For example:\n  - Topics: \"World War II\", \"Quantum Mechanics\", \"States of Matter\"\n  - Books: \"1984\", \"To Kill a Mockingbird\", \"The Great Gatsby\"\n  - Series: \"Harry Potter\", \"The Lord of the Rings\", \"Game of Thrones\"\n- For books/movies/IP, use the **official** name (e.g., \"The Great Gatsby\", not \"Great Gatsby\" or \"Gatsby\")\n  - This doesn't apply to general topics (e.g., \"General Relativity\" is correct, we wouldn't say \"The General Relativity Theory\")\n- Fixes any typos (e.g. \"Rolling Stones\" instead of \"roling stone\")\n- You should add other related suggestions to this subject\n\n#### Abbreviations\n\n- Avoid abbreviations in titles unless the abbreviated form is universally recognized. For example:\n  - Use \"Machine Learning\" instead of \"ML\" and \"Computer Science\" instead of \"CS\"\n  - However, words like DNA, GDP, NASA, UK, EU, SAT, HTML, SQL, etc. are more often used in their abbreviated forms and are acceptable\n- Think of this:\n  - People will never say \"HyperText Markup Language\", they will say \"HTML\"\n  - However, even though \"NLP\" is widely used, people will more often say \"Natural Language Processing\" when naming a course\n",
+      "testCaseId": "es-derecho-chileno-1",
+      "userPrompt": "\n    LANGUAGE: es\n    USER_INPUT: derecho chileno\n  "
+    },
+    {
+      "duration": 2105.993208,
+      "inputTokens": 976,
+      "output": "[\n  {\n    \"description\": \"Aprenda inglês para se preparar para o TOEFL com foco em todas as habilidades necessárias para a prova.\",\n    \"targetLanguageCode\": \"en\",\n    \"title\": \"Inglês\"\n  }\n]",
+      "outputTokens": 41,
+      "systemPrompt": "You generate course suggestions from a user input.\n\n## Rules\n\n- Generate as many course suggestions as you think are relevant, except for language courses, which must suggest only the language they want to learn\n\n### Language\n\n- Use the `LANGUAGE` value set by the user for both `title` and `description`, no matter what's the language used in `USER_INPUT`\n- For `en`, default to US English unless the content is about a different region\n- For `pt`, default to Brazilian Portuguese unless the content is about a different region\n- For `es`, default to Latin American Spanish unless the content is about a different region\n\n### Title\n\n- Titles must look like real courses\n- NEVER use levels such as (but not limited to) \"Basics\", \"Beginner\", \"Advanced\", \"Intro\", \"Introduction\", \"101\", \"Mastery\", \"Fundamentals\", etc.\n- Don't use variant markers in titles (e.g., '101', 'Beginner', exam levels like `B1`, or variants like 'Academic')\n- Single-topic titles: NEVER use \"and\", \"or\", \"&\", \"/\" and commas joining topics\n- For vague inputs, include the broad canonical title itself and related courses (e.g., \"Computer Science\", \"Software Engineering\", \"Web Development\")\n- If a user's input includes a jusrisdiction (e.g. \"California Law\", \"UK History\", \"Brazilian Politics\"), all suggestions must include that jurisdiction\n- If a user's input is very specific (e.g. \"Quantum Field Theory\", \"Renaissance Art in Florence\", \"German Law\", etc), include that title as the first suggestion\n\n### Description\n\n- Should be EXACTLY one sentence\n- Highlights why it may be useful or relevant to the learner\n- No need to prefix with \"This course is useful for...\", just say why it's useful.\n  For example, instead of \"This course is useful for understanding the basics of economics.\", say \"Understand the basics of economics.\"\n\n### Target Language Code\n\n- For language learning courses, include `targetLanguageCode` with the ISO 639-1 code (e.g., \"es\" for Spanish, \"ja\" for Japanese)\n- For non-language learning courses, set `targetLanguageCode` to null\n\n### Edge cases\n\n#### Language learning\n\n- If the user's goal is to learn a language (or pass a language exam like TOEFL, IELTS, HSK, etc.), return EXACTLY ONE suggestion with the language name and the correct `targetLanguageCode`\n- Do not add a \"language\" suffix to the language name (e.g., \"French\", not \"French Language\")\n- Do not add extra suggestions for language learning/exams (no exam prep, writing, culture add-ons, just the name of the language they want to learn)\n\n#### Intellectual Property\n\n- If the input targets a specific book/topic/IP include that exact topic as the first suggestion. For example:\n  - Topics: \"World War II\", \"Quantum Mechanics\", \"States of Matter\"\n  - Books: \"1984\", \"To Kill a Mockingbird\", \"The Great Gatsby\"\n  - Series: \"Harry Potter\", \"The Lord of the Rings\", \"Game of Thrones\"\n- For books/movies/IP, use the **official** name (e.g., \"The Great Gatsby\", not \"Great Gatsby\" or \"Gatsby\")\n  - This doesn't apply to general topics (e.g., \"General Relativity\" is correct, we wouldn't say \"The General Relativity Theory\")\n- Fixes any typos (e.g. \"Rolling Stones\" instead of \"roling stone\")\n- You should add other related suggestions to this subject\n\n#### Abbreviations\n\n- Avoid abbreviations in titles unless the abbreviated form is universally recognized. For example:\n  - Use \"Machine Learning\" instead of \"ML\" and \"Computer Science\" instead of \"CS\"\n  - However, words like DNA, GDP, NASA, UK, EU, SAT, HTML, SQL, etc. are more often used in their abbreviated forms and are acceptable\n- Think of this:\n  - People will never say \"HyperText Markup Language\", they will say \"HTML\"\n  - However, even though \"NLP\" is widely used, people will more often say \"Natural Language Processing\" when naming a course\n",
+      "testCaseId": "pt-toefl-1",
+      "userPrompt": "\n    LANGUAGE: pt\n    USER_INPUT: quero passar no TOEFL\n  "
+    },
+    {
+      "duration": 2632.1813339999935,
+      "inputTokens": 974,
+      "output": "[\n  {\n    \"description\": \"Explore the principles and applications of physics in various contexts.\",\n    \"targetLanguageCode\": null,\n    \"title\": \"Física\"\n  },\n  {\n    \"description\": \"Study the fundamental concepts and reactions in chemistry.\",\n    \"targetLanguageCode\": null,\n    \"title\": \"Química\"\n  }\n]",
+      "outputTokens": 52,
+      "systemPrompt": "You generate course suggestions from a user input.\n\n## Rules\n\n- Generate as many course suggestions as you think are relevant, except for language courses, which must suggest only the language they want to learn\n\n### Language\n\n- Use the `LANGUAGE` value set by the user for both `title` and `description`, no matter what's the language used in `USER_INPUT`\n- For `en`, default to US English unless the content is about a different region\n- For `pt`, default to Brazilian Portuguese unless the content is about a different region\n- For `es`, default to Latin American Spanish unless the content is about a different region\n\n### Title\n\n- Titles must look like real courses\n- NEVER use levels such as (but not limited to) \"Basics\", \"Beginner\", \"Advanced\", \"Intro\", \"Introduction\", \"101\", \"Mastery\", \"Fundamentals\", etc.\n- Don't use variant markers in titles (e.g., '101', 'Beginner', exam levels like `B1`, or variants like 'Academic')\n- Single-topic titles: NEVER use \"and\", \"or\", \"&\", \"/\" and commas joining topics\n- For vague inputs, include the broad canonical title itself and related courses (e.g., \"Computer Science\", \"Software Engineering\", \"Web Development\")\n- If a user's input includes a jusrisdiction (e.g. \"California Law\", \"UK History\", \"Brazilian Politics\"), all suggestions must include that jurisdiction\n- If a user's input is very specific (e.g. \"Quantum Field Theory\", \"Renaissance Art in Florence\", \"German Law\", etc), include that title as the first suggestion\n\n### Description\n\n- Should be EXACTLY one sentence\n- Highlights why it may be useful or relevant to the learner\n- No need to prefix with \"This course is useful for...\", just say why it's useful.\n  For example, instead of \"This course is useful for understanding the basics of economics.\", say \"Understand the basics of economics.\"\n\n### Target Language Code\n\n- For language learning courses, include `targetLanguageCode` with the ISO 639-1 code (e.g., \"es\" for Spanish, \"ja\" for Japanese)\n- For non-language learning courses, set `targetLanguageCode` to null\n\n### Edge cases\n\n#### Language learning\n\n- If the user's goal is to learn a language (or pass a language exam like TOEFL, IELTS, HSK, etc.), return EXACTLY ONE suggestion with the language name and the correct `targetLanguageCode`\n- Do not add a \"language\" suffix to the language name (e.g., \"French\", not \"French Language\")\n- Do not add extra suggestions for language learning/exams (no exam prep, writing, culture add-ons, just the name of the language they want to learn)\n\n#### Intellectual Property\n\n- If the input targets a specific book/topic/IP include that exact topic as the first suggestion. For example:\n  - Topics: \"World War II\", \"Quantum Mechanics\", \"States of Matter\"\n  - Books: \"1984\", \"To Kill a Mockingbird\", \"The Great Gatsby\"\n  - Series: \"Harry Potter\", \"The Lord of the Rings\", \"Game of Thrones\"\n- For books/movies/IP, use the **official** name (e.g., \"The Great Gatsby\", not \"Great Gatsby\" or \"Gatsby\")\n  - This doesn't apply to general topics (e.g., \"General Relativity\" is correct, we wouldn't say \"The General Relativity Theory\")\n- Fixes any typos (e.g. \"Rolling Stones\" instead of \"roling stone\")\n- You should add other related suggestions to this subject\n\n#### Abbreviations\n\n- Avoid abbreviations in titles unless the abbreviated form is universally recognized. For example:\n  - Use \"Machine Learning\" instead of \"ML\" and \"Computer Science\" instead of \"CS\"\n  - However, words like DNA, GDP, NASA, UK, EU, SAT, HTML, SQL, etc. are more often used in their abbreviated forms and are acceptable\n- Think of this:\n  - People will never say \"HyperText Markup Language\", they will say \"HTML\"\n  - However, even though \"NLP\" is widely used, people will more often say \"Natural Language Processing\" when naming a course\n",
+      "testCaseId": "pt-physics-and-chemistry-1",
+      "userPrompt": "\n    LANGUAGE: pt\n    USER_INPUT: physics and chemistry\n  "
+    },
+    {
+      "duration": 2287.332874999993,
+      "inputTokens": 977,
+      "output": "[\n  {\n    \"description\": \"Explore the foundational concepts and principles of chemistry to build a solid understanding of the subject.\",\n    \"targetLanguageCode\": null,\n    \"title\": \"Chemistry\"\n  }\n]",
+      "outputTokens": 36,
+      "systemPrompt": "You generate course suggestions from a user input.\n\n## Rules\n\n- Generate as many course suggestions as you think are relevant, except for language courses, which must suggest only the language they want to learn\n\n### Language\n\n- Use the `LANGUAGE` value set by the user for both `title` and `description`, no matter what's the language used in `USER_INPUT`\n- For `en`, default to US English unless the content is about a different region\n- For `pt`, default to Brazilian Portuguese unless the content is about a different region\n- For `es`, default to Latin American Spanish unless the content is about a different region\n\n### Title\n\n- Titles must look like real courses\n- NEVER use levels such as (but not limited to) \"Basics\", \"Beginner\", \"Advanced\", \"Intro\", \"Introduction\", \"101\", \"Mastery\", \"Fundamentals\", etc.\n- Don't use variant markers in titles (e.g., '101', 'Beginner', exam levels like `B1`, or variants like 'Academic')\n- Single-topic titles: NEVER use \"and\", \"or\", \"&\", \"/\" and commas joining topics\n- For vague inputs, include the broad canonical title itself and related courses (e.g., \"Computer Science\", \"Software Engineering\", \"Web Development\")\n- If a user's input includes a jusrisdiction (e.g. \"California Law\", \"UK History\", \"Brazilian Politics\"), all suggestions must include that jurisdiction\n- If a user's input is very specific (e.g. \"Quantum Field Theory\", \"Renaissance Art in Florence\", \"German Law\", etc), include that title as the first suggestion\n\n### Description\n\n- Should be EXACTLY one sentence\n- Highlights why it may be useful or relevant to the learner\n- No need to prefix with \"This course is useful for...\", just say why it's useful.\n  For example, instead of \"This course is useful for understanding the basics of economics.\", say \"Understand the basics of economics.\"\n\n### Target Language Code\n\n- For language learning courses, include `targetLanguageCode` with the ISO 639-1 code (e.g., \"es\" for Spanish, \"ja\" for Japanese)\n- For non-language learning courses, set `targetLanguageCode` to null\n\n### Edge cases\n\n#### Language learning\n\n- If the user's goal is to learn a language (or pass a language exam like TOEFL, IELTS, HSK, etc.), return EXACTLY ONE suggestion with the language name and the correct `targetLanguageCode`\n- Do not add a \"language\" suffix to the language name (e.g., \"French\", not \"French Language\")\n- Do not add extra suggestions for language learning/exams (no exam prep, writing, culture add-ons, just the name of the language they want to learn)\n\n#### Intellectual Property\n\n- If the input targets a specific book/topic/IP include that exact topic as the first suggestion. For example:\n  - Topics: \"World War II\", \"Quantum Mechanics\", \"States of Matter\"\n  - Books: \"1984\", \"To Kill a Mockingbird\", \"The Great Gatsby\"\n  - Series: \"Harry Potter\", \"The Lord of the Rings\", \"Game of Thrones\"\n- For books/movies/IP, use the **official** name (e.g., \"The Great Gatsby\", not \"Great Gatsby\" or \"Gatsby\")\n  - This doesn't apply to general topics (e.g., \"General Relativity\" is correct, we wouldn't say \"The General Relativity Theory\")\n- Fixes any typos (e.g. \"Rolling Stones\" instead of \"roling stone\")\n- You should add other related suggestions to this subject\n\n#### Abbreviations\n\n- Avoid abbreviations in titles unless the abbreviated form is universally recognized. For example:\n  - Use \"Machine Learning\" instead of \"ML\" and \"Computer Science\" instead of \"CS\"\n  - However, words like DNA, GDP, NASA, UK, EU, SAT, HTML, SQL, etc. are more often used in their abbreviated forms and are acceptable\n- Think of this:\n  - People will never say \"HyperText Markup Language\", they will say \"HTML\"\n  - However, even though \"NLP\" is widely used, people will more often say \"Natural Language Processing\" when naming a course\n",
+      "testCaseId": "en-intro-to-chemistry-1",
+      "userPrompt": "\n    LANGUAGE: en\n    USER_INPUT: i want an intro to chemistry\n  "
+    },
+    {
+      "duration": 1950.3669170000067,
+      "inputTokens": 973,
+      "output": "[\n  {\n    \"description\": \"Explore a técnica e a arte do basketball.\",\n    \"targetLanguageCode\": null,\n    \"title\": \"Basketball\"\n  }\n]",
+      "outputTokens": 28,
+      "systemPrompt": "You generate course suggestions from a user input.\n\n## Rules\n\n- Generate as many course suggestions as you think are relevant, except for language courses, which must suggest only the language they want to learn\n\n### Language\n\n- Use the `LANGUAGE` value set by the user for both `title` and `description`, no matter what's the language used in `USER_INPUT`\n- For `en`, default to US English unless the content is about a different region\n- For `pt`, default to Brazilian Portuguese unless the content is about a different region\n- For `es`, default to Latin American Spanish unless the content is about a different region\n\n### Title\n\n- Titles must look like real courses\n- NEVER use levels such as (but not limited to) \"Basics\", \"Beginner\", \"Advanced\", \"Intro\", \"Introduction\", \"101\", \"Mastery\", \"Fundamentals\", etc.\n- Don't use variant markers in titles (e.g., '101', 'Beginner', exam levels like `B1`, or variants like 'Academic')\n- Single-topic titles: NEVER use \"and\", \"or\", \"&\", \"/\" and commas joining topics\n- For vague inputs, include the broad canonical title itself and related courses (e.g., \"Computer Science\", \"Software Engineering\", \"Web Development\")\n- If a user's input includes a jusrisdiction (e.g. \"California Law\", \"UK History\", \"Brazilian Politics\"), all suggestions must include that jurisdiction\n- If a user's input is very specific (e.g. \"Quantum Field Theory\", \"Renaissance Art in Florence\", \"German Law\", etc), include that title as the first suggestion\n\n### Description\n\n- Should be EXACTLY one sentence\n- Highlights why it may be useful or relevant to the learner\n- No need to prefix with \"This course is useful for...\", just say why it's useful.\n  For example, instead of \"This course is useful for understanding the basics of economics.\", say \"Understand the basics of economics.\"\n\n### Target Language Code\n\n- For language learning courses, include `targetLanguageCode` with the ISO 639-1 code (e.g., \"es\" for Spanish, \"ja\" for Japanese)\n- For non-language learning courses, set `targetLanguageCode` to null\n\n### Edge cases\n\n#### Language learning\n\n- If the user's goal is to learn a language (or pass a language exam like TOEFL, IELTS, HSK, etc.), return EXACTLY ONE suggestion with the language name and the correct `targetLanguageCode`\n- Do not add a \"language\" suffix to the language name (e.g., \"French\", not \"French Language\")\n- Do not add extra suggestions for language learning/exams (no exam prep, writing, culture add-ons, just the name of the language they want to learn)\n\n#### Intellectual Property\n\n- If the input targets a specific book/topic/IP include that exact topic as the first suggestion. For example:\n  - Topics: \"World War II\", \"Quantum Mechanics\", \"States of Matter\"\n  - Books: \"1984\", \"To Kill a Mockingbird\", \"The Great Gatsby\"\n  - Series: \"Harry Potter\", \"The Lord of the Rings\", \"Game of Thrones\"\n- For books/movies/IP, use the **official** name (e.g., \"The Great Gatsby\", not \"Great Gatsby\" or \"Gatsby\")\n  - This doesn't apply to general topics (e.g., \"General Relativity\" is correct, we wouldn't say \"The General Relativity Theory\")\n- Fixes any typos (e.g. \"Rolling Stones\" instead of \"roling stone\")\n- You should add other related suggestions to this subject\n\n#### Abbreviations\n\n- Avoid abbreviations in titles unless the abbreviated form is universally recognized. For example:\n  - Use \"Machine Learning\" instead of \"ML\" and \"Computer Science\" instead of \"CS\"\n  - However, words like DNA, GDP, NASA, UK, EU, SAT, HTML, SQL, etc. are more often used in their abbreviated forms and are acceptable\n- Think of this:\n  - People will never say \"HyperText Markup Language\", they will say \"HTML\"\n  - However, even though \"NLP\" is widely used, people will more often say \"Natural Language Processing\" when naming a course\n",
+      "testCaseId": "pt-dragon-ball-1",
+      "userPrompt": "\n    LANGUAGE: pt\n    USER_INPUT: dragon bals\n  "
+    },
+    {
+      "duration": 3329.3864999999932,
+      "inputTokens": 973,
+      "output": "[\n  {\n    \"description\": \"Explore the history and cultural impact of The Beatles on music and society.\",\n    \"targetLanguageCode\": null,\n    \"title\": \"The Beatles\"\n  },\n  {\n    \"description\": \"Discover the evolution of rock music shaped by The Beatles' innovative style.\",\n    \"targetLanguageCode\": null,\n    \"title\": \"Rock Music History\"\n  },\n  {\n    \"description\": \"Learn about iconic bands that influenced and were influenced by The Beatles.\",\n    \"targetLanguageCode\": null,\n    \"title\": \"History of British Rock Music\"\n  }\n]",
+      "outputTokens": 90,
+      "systemPrompt": "You generate course suggestions from a user input.\n\n## Rules\n\n- Generate as many course suggestions as you think are relevant, except for language courses, which must suggest only the language they want to learn\n\n### Language\n\n- Use the `LANGUAGE` value set by the user for both `title` and `description`, no matter what's the language used in `USER_INPUT`\n- For `en`, default to US English unless the content is about a different region\n- For `pt`, default to Brazilian Portuguese unless the content is about a different region\n- For `es`, default to Latin American Spanish unless the content is about a different region\n\n### Title\n\n- Titles must look like real courses\n- NEVER use levels such as (but not limited to) \"Basics\", \"Beginner\", \"Advanced\", \"Intro\", \"Introduction\", \"101\", \"Mastery\", \"Fundamentals\", etc.\n- Don't use variant markers in titles (e.g., '101', 'Beginner', exam levels like `B1`, or variants like 'Academic')\n- Single-topic titles: NEVER use \"and\", \"or\", \"&\", \"/\" and commas joining topics\n- For vague inputs, include the broad canonical title itself and related courses (e.g., \"Computer Science\", \"Software Engineering\", \"Web Development\")\n- If a user's input includes a jusrisdiction (e.g. \"California Law\", \"UK History\", \"Brazilian Politics\"), all suggestions must include that jurisdiction\n- If a user's input is very specific (e.g. \"Quantum Field Theory\", \"Renaissance Art in Florence\", \"German Law\", etc), include that title as the first suggestion\n\n### Description\n\n- Should be EXACTLY one sentence\n- Highlights why it may be useful or relevant to the learner\n- No need to prefix with \"This course is useful for...\", just say why it's useful.\n  For example, instead of \"This course is useful for understanding the basics of economics.\", say \"Understand the basics of economics.\"\n\n### Target Language Code\n\n- For language learning courses, include `targetLanguageCode` with the ISO 639-1 code (e.g., \"es\" for Spanish, \"ja\" for Japanese)\n- For non-language learning courses, set `targetLanguageCode` to null\n\n### Edge cases\n\n#### Language learning\n\n- If the user's goal is to learn a language (or pass a language exam like TOEFL, IELTS, HSK, etc.), return EXACTLY ONE suggestion with the language name and the correct `targetLanguageCode`\n- Do not add a \"language\" suffix to the language name (e.g., \"French\", not \"French Language\")\n- Do not add extra suggestions for language learning/exams (no exam prep, writing, culture add-ons, just the name of the language they want to learn)\n\n#### Intellectual Property\n\n- If the input targets a specific book/topic/IP include that exact topic as the first suggestion. For example:\n  - Topics: \"World War II\", \"Quantum Mechanics\", \"States of Matter\"\n  - Books: \"1984\", \"To Kill a Mockingbird\", \"The Great Gatsby\"\n  - Series: \"Harry Potter\", \"The Lord of the Rings\", \"Game of Thrones\"\n- For books/movies/IP, use the **official** name (e.g., \"The Great Gatsby\", not \"Great Gatsby\" or \"Gatsby\")\n  - This doesn't apply to general topics (e.g., \"General Relativity\" is correct, we wouldn't say \"The General Relativity Theory\")\n- Fixes any typos (e.g. \"Rolling Stones\" instead of \"roling stone\")\n- You should add other related suggestions to this subject\n\n#### Abbreviations\n\n- Avoid abbreviations in titles unless the abbreviated form is universally recognized. For example:\n  - Use \"Machine Learning\" instead of \"ML\" and \"Computer Science\" instead of \"CS\"\n  - However, words like DNA, GDP, NASA, UK, EU, SAT, HTML, SQL, etc. are more often used in their abbreviated forms and are acceptable\n- Think of this:\n  - People will never say \"HyperText Markup Language\", they will say \"HTML\"\n  - However, even though \"NLP\" is widely used, people will more often say \"Natural Language Processing\" when naming a course\n",
+      "testCaseId": "en-beatles-1",
+      "userPrompt": "\n    LANGUAGE: en\n    USER_INPUT: beatles\n  "
+    },
+    {
+      "duration": 2281.9115409999795,
+      "inputTokens": 973,
+      "output": "[\n  {\n    \"description\": \"Explore the high-speed world of Formula 1 racing.\",\n    \"targetLanguageCode\": null,\n    \"title\": \"Formule 1\"\n  }\n]",
+      "outputTokens": 32,
+      "systemPrompt": "You generate course suggestions from a user input.\n\n## Rules\n\n- Generate as many course suggestions as you think are relevant, except for language courses, which must suggest only the language they want to learn\n\n### Language\n\n- Use the `LANGUAGE` value set by the user for both `title` and `description`, no matter what's the language used in `USER_INPUT`\n- For `en`, default to US English unless the content is about a different region\n- For `pt`, default to Brazilian Portuguese unless the content is about a different region\n- For `es`, default to Latin American Spanish unless the content is about a different region\n\n### Title\n\n- Titles must look like real courses\n- NEVER use levels such as (but not limited to) \"Basics\", \"Beginner\", \"Advanced\", \"Intro\", \"Introduction\", \"101\", \"Mastery\", \"Fundamentals\", etc.\n- Don't use variant markers in titles (e.g., '101', 'Beginner', exam levels like `B1`, or variants like 'Academic')\n- Single-topic titles: NEVER use \"and\", \"or\", \"&\", \"/\" and commas joining topics\n- For vague inputs, include the broad canonical title itself and related courses (e.g., \"Computer Science\", \"Software Engineering\", \"Web Development\")\n- If a user's input includes a jusrisdiction (e.g. \"California Law\", \"UK History\", \"Brazilian Politics\"), all suggestions must include that jurisdiction\n- If a user's input is very specific (e.g. \"Quantum Field Theory\", \"Renaissance Art in Florence\", \"German Law\", etc), include that title as the first suggestion\n\n### Description\n\n- Should be EXACTLY one sentence\n- Highlights why it may be useful or relevant to the learner\n- No need to prefix with \"This course is useful for...\", just say why it's useful.\n  For example, instead of \"This course is useful for understanding the basics of economics.\", say \"Understand the basics of economics.\"\n\n### Target Language Code\n\n- For language learning courses, include `targetLanguageCode` with the ISO 639-1 code (e.g., \"es\" for Spanish, \"ja\" for Japanese)\n- For non-language learning courses, set `targetLanguageCode` to null\n\n### Edge cases\n\n#### Language learning\n\n- If the user's goal is to learn a language (or pass a language exam like TOEFL, IELTS, HSK, etc.), return EXACTLY ONE suggestion with the language name and the correct `targetLanguageCode`\n- Do not add a \"language\" suffix to the language name (e.g., \"French\", not \"French Language\")\n- Do not add extra suggestions for language learning/exams (no exam prep, writing, culture add-ons, just the name of the language they want to learn)\n\n#### Intellectual Property\n\n- If the input targets a specific book/topic/IP include that exact topic as the first suggestion. For example:\n  - Topics: \"World War II\", \"Quantum Mechanics\", \"States of Matter\"\n  - Books: \"1984\", \"To Kill a Mockingbird\", \"The Great Gatsby\"\n  - Series: \"Harry Potter\", \"The Lord of the Rings\", \"Game of Thrones\"\n- For books/movies/IP, use the **official** name (e.g., \"The Great Gatsby\", not \"Great Gatsby\" or \"Gatsby\")\n  - This doesn't apply to general topics (e.g., \"General Relativity\" is correct, we wouldn't say \"The General Relativity Theory\")\n- Fixes any typos (e.g. \"Rolling Stones\" instead of \"roling stone\")\n- You should add other related suggestions to this subject\n\n#### Abbreviations\n\n- Avoid abbreviations in titles unless the abbreviated form is universally recognized. For example:\n  - Use \"Machine Learning\" instead of \"ML\" and \"Computer Science\" instead of \"CS\"\n  - However, words like DNA, GDP, NASA, UK, EU, SAT, HTML, SQL, etc. are more often used in their abbreviated forms and are acceptable\n- Think of this:\n  - People will never say \"HyperText Markup Language\", they will say \"HTML\"\n  - However, even though \"NLP\" is widely used, people will more often say \"Natural Language Processing\" when naming a course\n",
+      "testCaseId": "fr-f1-1",
+      "userPrompt": "\n    LANGUAGE: fr\n    USER_INPUT: f1\n  "
+    },
+    {
+      "duration": 2097.453541999974,
+      "inputTokens": 980,
+      "output": "[\n  {\n    \"description\": \"Prepare comprehensively for the Japanese Language Proficiency Test to achieve N2 level proficiency.\",\n    \"targetLanguageCode\": \"ja\",\n    \"title\": \"Japanese\"\n  }\n]",
+      "outputTokens": 35,
+      "systemPrompt": "You generate course suggestions from a user input.\n\n## Rules\n\n- Generate as many course suggestions as you think are relevant, except for language courses, which must suggest only the language they want to learn\n\n### Language\n\n- Use the `LANGUAGE` value set by the user for both `title` and `description`, no matter what's the language used in `USER_INPUT`\n- For `en`, default to US English unless the content is about a different region\n- For `pt`, default to Brazilian Portuguese unless the content is about a different region\n- For `es`, default to Latin American Spanish unless the content is about a different region\n\n### Title\n\n- Titles must look like real courses\n- NEVER use levels such as (but not limited to) \"Basics\", \"Beginner\", \"Advanced\", \"Intro\", \"Introduction\", \"101\", \"Mastery\", \"Fundamentals\", etc.\n- Don't use variant markers in titles (e.g., '101', 'Beginner', exam levels like `B1`, or variants like 'Academic')\n- Single-topic titles: NEVER use \"and\", \"or\", \"&\", \"/\" and commas joining topics\n- For vague inputs, include the broad canonical title itself and related courses (e.g., \"Computer Science\", \"Software Engineering\", \"Web Development\")\n- If a user's input includes a jusrisdiction (e.g. \"California Law\", \"UK History\", \"Brazilian Politics\"), all suggestions must include that jurisdiction\n- If a user's input is very specific (e.g. \"Quantum Field Theory\", \"Renaissance Art in Florence\", \"German Law\", etc), include that title as the first suggestion\n\n### Description\n\n- Should be EXACTLY one sentence\n- Highlights why it may be useful or relevant to the learner\n- No need to prefix with \"This course is useful for...\", just say why it's useful.\n  For example, instead of \"This course is useful for understanding the basics of economics.\", say \"Understand the basics of economics.\"\n\n### Target Language Code\n\n- For language learning courses, include `targetLanguageCode` with the ISO 639-1 code (e.g., \"es\" for Spanish, \"ja\" for Japanese)\n- For non-language learning courses, set `targetLanguageCode` to null\n\n### Edge cases\n\n#### Language learning\n\n- If the user's goal is to learn a language (or pass a language exam like TOEFL, IELTS, HSK, etc.), return EXACTLY ONE suggestion with the language name and the correct `targetLanguageCode`\n- Do not add a \"language\" suffix to the language name (e.g., \"French\", not \"French Language\")\n- Do not add extra suggestions for language learning/exams (no exam prep, writing, culture add-ons, just the name of the language they want to learn)\n\n#### Intellectual Property\n\n- If the input targets a specific book/topic/IP include that exact topic as the first suggestion. For example:\n  - Topics: \"World War II\", \"Quantum Mechanics\", \"States of Matter\"\n  - Books: \"1984\", \"To Kill a Mockingbird\", \"The Great Gatsby\"\n  - Series: \"Harry Potter\", \"The Lord of the Rings\", \"Game of Thrones\"\n- For books/movies/IP, use the **official** name (e.g., \"The Great Gatsby\", not \"Great Gatsby\" or \"Gatsby\")\n  - This doesn't apply to general topics (e.g., \"General Relativity\" is correct, we wouldn't say \"The General Relativity Theory\")\n- Fixes any typos (e.g. \"Rolling Stones\" instead of \"roling stone\")\n- You should add other related suggestions to this subject\n\n#### Abbreviations\n\n- Avoid abbreviations in titles unless the abbreviated form is universally recognized. For example:\n  - Use \"Machine Learning\" instead of \"ML\" and \"Computer Science\" instead of \"CS\"\n  - However, words like DNA, GDP, NASA, UK, EU, SAT, HTML, SQL, etc. are more often used in their abbreviated forms and are acceptable\n- Think of this:\n  - People will never say \"HyperText Markup Language\", they will say \"HTML\"\n  - However, even though \"NLP\" is widely used, people will more often say \"Natural Language Processing\" when naming a course\n",
+      "testCaseId": "en-jlpt-n2-1",
+      "userPrompt": "\n    LANGUAGE: en\n    USER_INPUT: i want to pass the JLPT N2\n  "
+    },
+    {
+      "duration": 2021.9553749999905,
+      "inputTokens": 976,
+      "output": "[\n  {\n    \"description\": \"Aprenda inglês focado para alcançar sucesso no exame IELTS Academic.\",\n    \"targetLanguageCode\": \"en\",\n    \"title\": \"Inglês para IELTS Academic\"\n  }\n]",
+      "outputTokens": 36,
+      "systemPrompt": "You generate course suggestions from a user input.\n\n## Rules\n\n- Generate as many course suggestions as you think are relevant, except for language courses, which must suggest only the language they want to learn\n\n### Language\n\n- Use the `LANGUAGE` value set by the user for both `title` and `description`, no matter what's the language used in `USER_INPUT`\n- For `en`, default to US English unless the content is about a different region\n- For `pt`, default to Brazilian Portuguese unless the content is about a different region\n- For `es`, default to Latin American Spanish unless the content is about a different region\n\n### Title\n\n- Titles must look like real courses\n- NEVER use levels such as (but not limited to) \"Basics\", \"Beginner\", \"Advanced\", \"Intro\", \"Introduction\", \"101\", \"Mastery\", \"Fundamentals\", etc.\n- Don't use variant markers in titles (e.g., '101', 'Beginner', exam levels like `B1`, or variants like 'Academic')\n- Single-topic titles: NEVER use \"and\", \"or\", \"&\", \"/\" and commas joining topics\n- For vague inputs, include the broad canonical title itself and related courses (e.g., \"Computer Science\", \"Software Engineering\", \"Web Development\")\n- If a user's input includes a jusrisdiction (e.g. \"California Law\", \"UK History\", \"Brazilian Politics\"), all suggestions must include that jurisdiction\n- If a user's input is very specific (e.g. \"Quantum Field Theory\", \"Renaissance Art in Florence\", \"German Law\", etc), include that title as the first suggestion\n\n### Description\n\n- Should be EXACTLY one sentence\n- Highlights why it may be useful or relevant to the learner\n- No need to prefix with \"This course is useful for...\", just say why it's useful.\n  For example, instead of \"This course is useful for understanding the basics of economics.\", say \"Understand the basics of economics.\"\n\n### Target Language Code\n\n- For language learning courses, include `targetLanguageCode` with the ISO 639-1 code (e.g., \"es\" for Spanish, \"ja\" for Japanese)\n- For non-language learning courses, set `targetLanguageCode` to null\n\n### Edge cases\n\n#### Language learning\n\n- If the user's goal is to learn a language (or pass a language exam like TOEFL, IELTS, HSK, etc.), return EXACTLY ONE suggestion with the language name and the correct `targetLanguageCode`\n- Do not add a \"language\" suffix to the language name (e.g., \"French\", not \"French Language\")\n- Do not add extra suggestions for language learning/exams (no exam prep, writing, culture add-ons, just the name of the language they want to learn)\n\n#### Intellectual Property\n\n- If the input targets a specific book/topic/IP include that exact topic as the first suggestion. For example:\n  - Topics: \"World War II\", \"Quantum Mechanics\", \"States of Matter\"\n  - Books: \"1984\", \"To Kill a Mockingbird\", \"The Great Gatsby\"\n  - Series: \"Harry Potter\", \"The Lord of the Rings\", \"Game of Thrones\"\n- For books/movies/IP, use the **official** name (e.g., \"The Great Gatsby\", not \"Great Gatsby\" or \"Gatsby\")\n  - This doesn't apply to general topics (e.g., \"General Relativity\" is correct, we wouldn't say \"The General Relativity Theory\")\n- Fixes any typos (e.g. \"Rolling Stones\" instead of \"roling stone\")\n- You should add other related suggestions to this subject\n\n#### Abbreviations\n\n- Avoid abbreviations in titles unless the abbreviated form is universally recognized. For example:\n  - Use \"Machine Learning\" instead of \"ML\" and \"Computer Science\" instead of \"CS\"\n  - However, words like DNA, GDP, NASA, UK, EU, SAT, HTML, SQL, etc. are more often used in their abbreviated forms and are acceptable\n- Think of this:\n  - People will never say \"HyperText Markup Language\", they will say \"HTML\"\n  - However, even though \"NLP\" is widely used, people will more often say \"Natural Language Processing\" when naming a course\n",
+      "testCaseId": "pt-ielts-academic-1",
+      "userPrompt": "\n    LANGUAGE: pt\n    USER_INPUT: quero passar no IELTS Academic\n  "
+    },
+    {
+      "duration": 2873.7040419999976,
+      "inputTokens": 975,
+      "output": "[\n  {\n    \"description\": \"Explore the fundamental principles behind computer operations and architecture.\",\n    \"targetLanguageCode\": null,\n    \"title\": \"Computer Architecture\"\n  },\n  {\n    \"description\": \"Learn how software interacts with hardware to perform computing tasks.\",\n    \"targetLanguageCode\": null,\n    \"title\": \"Operating Systems\"\n  },\n  {\n    \"description\": \"Understand the basics of how digital circuits and processors function in computers.\",\n    \"targetLanguageCode\": null,\n    \"title\": \"Digital Logic Design\"\n  }\n]",
+      "outputTokens": 80,
+      "systemPrompt": "You generate course suggestions from a user input.\n\n## Rules\n\n- Generate as many course suggestions as you think are relevant, except for language courses, which must suggest only the language they want to learn\n\n### Language\n\n- Use the `LANGUAGE` value set by the user for both `title` and `description`, no matter what's the language used in `USER_INPUT`\n- For `en`, default to US English unless the content is about a different region\n- For `pt`, default to Brazilian Portuguese unless the content is about a different region\n- For `es`, default to Latin American Spanish unless the content is about a different region\n\n### Title\n\n- Titles must look like real courses\n- NEVER use levels such as (but not limited to) \"Basics\", \"Beginner\", \"Advanced\", \"Intro\", \"Introduction\", \"101\", \"Mastery\", \"Fundamentals\", etc.\n- Don't use variant markers in titles (e.g., '101', 'Beginner', exam levels like `B1`, or variants like 'Academic')\n- Single-topic titles: NEVER use \"and\", \"or\", \"&\", \"/\" and commas joining topics\n- For vague inputs, include the broad canonical title itself and related courses (e.g., \"Computer Science\", \"Software Engineering\", \"Web Development\")\n- If a user's input includes a jusrisdiction (e.g. \"California Law\", \"UK History\", \"Brazilian Politics\"), all suggestions must include that jurisdiction\n- If a user's input is very specific (e.g. \"Quantum Field Theory\", \"Renaissance Art in Florence\", \"German Law\", etc), include that title as the first suggestion\n\n### Description\n\n- Should be EXACTLY one sentence\n- Highlights why it may be useful or relevant to the learner\n- No need to prefix with \"This course is useful for...\", just say why it's useful.\n  For example, instead of \"This course is useful for understanding the basics of economics.\", say \"Understand the basics of economics.\"\n\n### Target Language Code\n\n- For language learning courses, include `targetLanguageCode` with the ISO 639-1 code (e.g., \"es\" for Spanish, \"ja\" for Japanese)\n- For non-language learning courses, set `targetLanguageCode` to null\n\n### Edge cases\n\n#### Language learning\n\n- If the user's goal is to learn a language (or pass a language exam like TOEFL, IELTS, HSK, etc.), return EXACTLY ONE suggestion with the language name and the correct `targetLanguageCode`\n- Do not add a \"language\" suffix to the language name (e.g., \"French\", not \"French Language\")\n- Do not add extra suggestions for language learning/exams (no exam prep, writing, culture add-ons, just the name of the language they want to learn)\n\n#### Intellectual Property\n\n- If the input targets a specific book/topic/IP include that exact topic as the first suggestion. For example:\n  - Topics: \"World War II\", \"Quantum Mechanics\", \"States of Matter\"\n  - Books: \"1984\", \"To Kill a Mockingbird\", \"The Great Gatsby\"\n  - Series: \"Harry Potter\", \"The Lord of the Rings\", \"Game of Thrones\"\n- For books/movies/IP, use the **official** name (e.g., \"The Great Gatsby\", not \"Great Gatsby\" or \"Gatsby\")\n  - This doesn't apply to general topics (e.g., \"General Relativity\" is correct, we wouldn't say \"The General Relativity Theory\")\n- Fixes any typos (e.g. \"Rolling Stones\" instead of \"roling stone\")\n- You should add other related suggestions to this subject\n\n#### Abbreviations\n\n- Avoid abbreviations in titles unless the abbreviated form is universally recognized. For example:\n  - Use \"Machine Learning\" instead of \"ML\" and \"Computer Science\" instead of \"CS\"\n  - However, words like DNA, GDP, NASA, UK, EU, SAT, HTML, SQL, etc. are more often used in their abbreviated forms and are acceptable\n- Think of this:\n  - People will never say \"HyperText Markup Language\", they will say \"HTML\"\n  - However, even though \"NLP\" is widely used, people will more often say \"Natural Language Processing\" when naming a course\n",
       "testCaseId": "en-how-computers-work-1",
-      "userPrompt": ""
+      "userPrompt": "\n    LANGUAGE: en\n    USER_INPUT: how do computers work\n  "
     },
     {
-      "duration": 1655.3721659999574,
-      "inputTokens": 941,
-      "output": "[\n  {\n    \"title\": \"Computer Architecture\",\n    \"description\": \"Learn how the internal components of computers function and interact.\"\n  },\n  {\n    \"title\": \"Operating Systems\",\n    \"description\": \"Understand the software that manages hardware and software resources in computers.\"\n  },\n  {\n    \"title\": \"Digital Logic Design\",\n    \"description\": \"Explore the foundations of digital circuits that make up computer hardware.\"\n  },\n  {\n    \"title\": \"Computer Science\",\n    \"description\": \"Gain a broad understanding of computing principles and how computers operate.\"\n  }\n]",
-      "outputTokens": 86,
-      "systemPrompt": "",
-      "testCaseId": "en-how-computers-work-2",
-      "userPrompt": ""
-    },
-    {
-      "duration": 2212.8741670000018,
-      "inputTokens": 941,
-      "output": "[\n  {\n    \"title\": \"Computer Architecture\",\n    \"description\": \"Explore the fundamental structure and operation of computer systems.\"\n  },\n  {\n    \"title\": \"Operating Systems\",\n    \"description\": \"Learn how operating systems manage hardware and software resources.\"\n  },\n  {\n    \"title\": \"Computer Networks\",\n    \"description\": \"Understand how computers communicate and share data across networks.\"\n  },\n  {\n    \"title\": \"Digital Logic Design\",\n    \"description\": \"Study the basic logic circuits that form the foundation of computer hardware.\"\n  }\n]",
-      "outputTokens": 82,
-      "systemPrompt": "",
-      "testCaseId": "en-how-computers-work-3",
-      "userPrompt": ""
-    },
-    {
-      "duration": 1782.177416999999,
-      "inputTokens": 940,
-      "output": "[\n  {\n    \"title\": \"Tabela Periódica\",\n    \"description\": \"Explore os elementos químicos e suas propriedades organizadas na tabela periódica.\"\n  },\n  {\n    \"title\": \"Química Inorgânica\",\n    \"description\": \"Entenda as reações e características dos compostos inorgânicos.\"\n  },\n  {\n    \"title\": \"Estrutura Atômica\",\n    \"description\": \"Conheça a composição e organização dos átomos que formam os elementos.\"\n  }\n]",
-      "outputTokens": 82,
-      "systemPrompt": "",
-      "testCaseId": "pt-periodic-table-1",
-      "userPrompt": ""
-    },
-    {
-      "duration": 1959.84054200002,
-      "inputTokens": 940,
-      "output": "[\n  {\n    \"title\": \"Tabela Periódica\",\n    \"description\": \"Explore a organização dos elementos químicos e suas propriedades fundamentais.\"\n  },\n  {\n    \"title\": \"Química Inorgânica\",\n    \"description\": \"Entenda as reações e compostos formados por elementos da tabela periódica.\"\n  },\n  {\n    \"title\": \"Estrutura Atômica\",\n    \"description\": \"Compreenda a composição dos átomos e como ela influencia a tabela periódica.\"\n  }\n]",
-      "outputTokens": 84,
-      "systemPrompt": "",
-      "testCaseId": "pt-periodic-table-2",
-      "userPrompt": ""
-    },
-    {
-      "duration": 2565.7627499999944,
-      "inputTokens": 940,
-      "output": "[\n  {\n    \"title\": \"Tabela Periódica\",\n    \"description\": \"Explore os elementos químicos e suas propriedades organizadas na tabela periódica.\"\n  },\n  {\n    \"title\": \"Química Inorgânica\",\n    \"description\": \"Entenda as reações e características dos compostos inorgânicos relacionados aos elementos da tabela periódica.\"\n  },\n  {\n    \"title\": \"Estrutura Atômica\",\n    \"description\": \"Conheça os fundamentos da estrutura dos átomos que compõem os elementos químicos da tabela periódica.\"\n  }\n]",
-      "outputTokens": 94,
-      "systemPrompt": "",
-      "testCaseId": "pt-periodic-table-3",
-      "userPrompt": ""
-    },
-    {
-      "duration": 2054.7150830000173,
-      "inputTokens": 939,
-      "output": "[\n  {\n    \"title\": \"The Matrix\",\n    \"description\": \"Explore the themes and impact of the iconic film The Matrix.\"\n  },\n  {\n    \"title\": \"Science Fiction Cinema\",\n    \"description\": \"Understand the evolution and elements of science fiction movies.\"\n  },\n  {\n    \"title\": \"Film Studies\",\n    \"description\": \"Analyze various cinematic techniques and storytelling methods used in movies.\"\n  }\n]",
-      "outputTokens": 64,
-      "systemPrompt": "",
-      "testCaseId": "en-matrix-movie-1",
-      "userPrompt": ""
-    },
-    {
-      "duration": 2111.9276669999817,
-      "inputTokens": 939,
-      "output": "[\n  {\n    \"title\": \"The Matrix\",\n    \"description\": \"Explore the themes and impact of the movie The Matrix on science fiction and pop culture.\"\n  },\n  {\n    \"title\": \"Film Studies\",\n    \"description\": \"Analyze film techniques and storytelling methods used in various genres.\"\n  },\n  {\n    \"title\": \"Science Fiction Cinema\",\n    \"description\": \"Understand the evolution and characteristics of science fiction movies.\"\n  }\n]",
-      "outputTokens": 69,
-      "systemPrompt": "",
-      "testCaseId": "en-matrix-movie-2",
-      "userPrompt": ""
-    },
-    {
-      "duration": 3018.9127499999595,
-      "inputTokens": 939,
-      "output": "[\n  {\n    \"title\": \"The Matrix\",\n    \"description\": \"Explore the themes, production, and cultural impact of the movie The Matrix.\"\n  },\n  {\n    \"title\": \"Science Fiction Film Analysis\",\n    \"description\": \"Understand how science fiction films like The Matrix shape and reflect societal ideas.\"\n  },\n  {\n    \"title\": \"Philosophy in Cinema\",\n    \"description\": \"Examine philosophical concepts presented in films such as The Matrix.\"\n  }\n]",
-      "outputTokens": 76,
-      "systemPrompt": "",
-      "testCaseId": "en-matrix-movie-3",
-      "userPrompt": ""
-    },
-    {
-      "duration": 2102.7759169999626,
-      "inputTokens": 938,
-      "output": "[\n  {\n    \"title\": \"Artificial Intelligence\",\n    \"description\": \"Explore the concepts and techniques of artificial intelligence and their applications.\"\n  },\n  {\n    \"title\": \"Machine Learning\",\n    \"description\": \"Learn how machines can improve from experience through data-driven algorithms.\"\n  },\n  {\n    \"title\": \"Neural Networks\",\n    \"description\": \"Understand the architecture and functioning of neural networks in AI systems.\"\n  },\n  {\n    \"title\": \"Computer Vision\",\n    \"description\": \"Study the methods enabling computers to interpret and process visual information.\"\n  },\n  {\n    \"title\": \"Natural Language Processing\",\n    \"description\": \"Discover how computers understand, interpret, and generate human language.\"\n  }\n]",
-      "outputTokens": 108,
-      "systemPrompt": "",
-      "testCaseId": "en-ai-1",
-      "userPrompt": ""
-    },
-    {
-      "duration": 2300.460000000021,
-      "inputTokens": 938,
-      "output": "[\n  {\n    \"title\": \"Artificial Intelligence\",\n    \"description\": \"Explore the principles and applications of artificial intelligence.\"\n  },\n  {\n    \"title\": \"Machine Learning\",\n    \"description\": \"Learn algorithms that enable computers to learn from data.\"\n  },\n  {\n    \"title\": \"Deep Learning\",\n    \"description\": \"Understand neural networks and their use in AI systems.\"\n  },\n  {\n    \"title\": \"Data Science\",\n    \"description\": \"Analyze and interpret complex data to support AI solutions.\"\n  },\n  {\n    \"title\": \"Computer Vision\",\n    \"description\": \"Discover how to enable machines to interpret visual information.\"\n  }\n]",
-      "outputTokens": 95,
-      "systemPrompt": "",
-      "testCaseId": "en-ai-2",
-      "userPrompt": ""
-    },
-    {
-      "duration": 1966.2717499999562,
-      "inputTokens": 938,
-      "output": "[\n  {\n    \"title\": \"Artificial Intelligence\",\n    \"description\": \"Explore the principles and applications of artificial intelligence.\"\n  },\n  {\n    \"title\": \"Machine Learning\",\n    \"description\": \"Learn techniques to build systems that improve from data.\"\n  },\n  {\n    \"title\": \"Deep Learning\",\n    \"description\": \"Understand neural networks and their use in solving complex problems.\"\n  },\n  {\n    \"title\": \"Data Science\",\n    \"description\": \"Gain skills in analyzing and interpreting complex data.\"\n  },\n  {\n    \"title\": \"Robotics\",\n    \"description\": \"Study the design and operation of intelligent robots.\"\n  }\n]",
-      "outputTokens": 94,
-      "systemPrompt": "",
-      "testCaseId": "en-ai-3",
-      "userPrompt": ""
-    },
-    {
-      "duration": 1785.7441249999683,
-      "inputTokens": 940,
-      "output": "[\n  {\n    \"title\": \"The Wealth of Nations\",\n    \"description\": \"Explore the foundational economic theories presented by Adam Smith in this influential work.\"\n  },\n  {\n    \"title\": \"Classical Economics\",\n    \"description\": \"Understand the economic principles and ideas that shaped early economic thought.\"\n  },\n  {\n    \"title\": \"Economic History\",\n    \"description\": \"Learn about the development of economic systems and theories through history.\"\n  },\n  {\n    \"title\": \"Political Economy\",\n    \"description\": \"Examine the relationship between politics and economics and their impact on society.\"\n  }\n]",
-      "outputTokens": 93,
-      "systemPrompt": "",
-      "testCaseId": "en-wealth-of-nations-1",
-      "userPrompt": ""
-    },
-    {
-      "duration": 1708.6363750000019,
-      "inputTokens": 940,
-      "output": "[\n  {\n    \"title\": \"The Wealth of Nations\",\n    \"description\": \"Explore the foundational concepts and economic theories presented in Adam Smith's seminal work.\"\n  },\n  {\n    \"title\": \"Classical Economics\",\n    \"description\": \"Understand the development of economic thought initiated by early economists.\"\n  },\n  {\n    \"title\": \"Economic History\",\n    \"description\": \"Learn about the evolution of economies and economic ideas through history.\"\n  }\n]",
-      "outputTokens": 71,
-      "systemPrompt": "",
-      "testCaseId": "en-wealth-of-nations-2",
-      "userPrompt": ""
-    },
-    {
-      "duration": 2277.175707999966,
-      "inputTokens": 940,
-      "output": "[\n  {\n    \"title\": \"The Wealth of Nations\",\n    \"description\": \"Explore the foundational concepts of modern economics through Adam Smith's seminal work.\"\n  },\n  {\n    \"title\": \"Economic Theory\",\n    \"description\": \"Understand the principles underlying economic behavior and market dynamics.\"\n  },\n  {\n    \"title\": \"History of Economic Thought\",\n    \"description\": \"Trace the development of economic ideas from classical to modern theories.\"\n  },\n  {\n    \"title\": \"Capitalism and Society\",\n    \"description\": \"Examine how economic systems shape social structures and individual behavior.\"\n  }\n]",
+      "duration": 3146.7182500000054,
+      "inputTokens": 974,
+      "output": "[\n  {\n    \"description\": \"Explore os elementos químicos e suas propriedades na tabela periódica.\",\n    \"targetLanguageCode\": null,\n    \"title\": \"Tabela Periódica\"\n  },\n  {\n    \"description\": \"Compreenda os fundamentos da química e a organização dos elementos.\",\n    \"targetLanguageCode\": null,\n    \"title\": \"Química Geral\"\n  },\n  {\n    \"description\": \"Estude a estrutura atômica e suas implicações na ciência dos materiais.\",\n    \"targetLanguageCode\": null,\n    \"title\": \"Estrutura Atômica\"\n  }\n]",
       "outputTokens": 92,
-      "systemPrompt": "",
-      "testCaseId": "en-wealth-of-nations-3",
-      "userPrompt": ""
+      "systemPrompt": "You generate course suggestions from a user input.\n\n## Rules\n\n- Generate as many course suggestions as you think are relevant, except for language courses, which must suggest only the language they want to learn\n\n### Language\n\n- Use the `LANGUAGE` value set by the user for both `title` and `description`, no matter what's the language used in `USER_INPUT`\n- For `en`, default to US English unless the content is about a different region\n- For `pt`, default to Brazilian Portuguese unless the content is about a different region\n- For `es`, default to Latin American Spanish unless the content is about a different region\n\n### Title\n\n- Titles must look like real courses\n- NEVER use levels such as (but not limited to) \"Basics\", \"Beginner\", \"Advanced\", \"Intro\", \"Introduction\", \"101\", \"Mastery\", \"Fundamentals\", etc.\n- Don't use variant markers in titles (e.g., '101', 'Beginner', exam levels like `B1`, or variants like 'Academic')\n- Single-topic titles: NEVER use \"and\", \"or\", \"&\", \"/\" and commas joining topics\n- For vague inputs, include the broad canonical title itself and related courses (e.g., \"Computer Science\", \"Software Engineering\", \"Web Development\")\n- If a user's input includes a jusrisdiction (e.g. \"California Law\", \"UK History\", \"Brazilian Politics\"), all suggestions must include that jurisdiction\n- If a user's input is very specific (e.g. \"Quantum Field Theory\", \"Renaissance Art in Florence\", \"German Law\", etc), include that title as the first suggestion\n\n### Description\n\n- Should be EXACTLY one sentence\n- Highlights why it may be useful or relevant to the learner\n- No need to prefix with \"This course is useful for...\", just say why it's useful.\n  For example, instead of \"This course is useful for understanding the basics of economics.\", say \"Understand the basics of economics.\"\n\n### Target Language Code\n\n- For language learning courses, include `targetLanguageCode` with the ISO 639-1 code (e.g., \"es\" for Spanish, \"ja\" for Japanese)\n- For non-language learning courses, set `targetLanguageCode` to null\n\n### Edge cases\n\n#### Language learning\n\n- If the user's goal is to learn a language (or pass a language exam like TOEFL, IELTS, HSK, etc.), return EXACTLY ONE suggestion with the language name and the correct `targetLanguageCode`\n- Do not add a \"language\" suffix to the language name (e.g., \"French\", not \"French Language\")\n- Do not add extra suggestions for language learning/exams (no exam prep, writing, culture add-ons, just the name of the language they want to learn)\n\n#### Intellectual Property\n\n- If the input targets a specific book/topic/IP include that exact topic as the first suggestion. For example:\n  - Topics: \"World War II\", \"Quantum Mechanics\", \"States of Matter\"\n  - Books: \"1984\", \"To Kill a Mockingbird\", \"The Great Gatsby\"\n  - Series: \"Harry Potter\", \"The Lord of the Rings\", \"Game of Thrones\"\n- For books/movies/IP, use the **official** name (e.g., \"The Great Gatsby\", not \"Great Gatsby\" or \"Gatsby\")\n  - This doesn't apply to general topics (e.g., \"General Relativity\" is correct, we wouldn't say \"The General Relativity Theory\")\n- Fixes any typos (e.g. \"Rolling Stones\" instead of \"roling stone\")\n- You should add other related suggestions to this subject\n\n#### Abbreviations\n\n- Avoid abbreviations in titles unless the abbreviated form is universally recognized. For example:\n  - Use \"Machine Learning\" instead of \"ML\" and \"Computer Science\" instead of \"CS\"\n  - However, words like DNA, GDP, NASA, UK, EU, SAT, HTML, SQL, etc. are more often used in their abbreviated forms and are acceptable\n- Think of this:\n  - People will never say \"HyperText Markup Language\", they will say \"HTML\"\n  - However, even though \"NLP\" is widely used, people will more often say \"Natural Language Processing\" when naming a course\n",
+      "testCaseId": "pt-periodic-table-1",
+      "userPrompt": "\n    LANGUAGE: pt\n    USER_INPUT: tabela periódica\n  "
+    },
+    {
+      "duration": 3164.29574999999,
+      "inputTokens": 973,
+      "output": "[\n  {\n    \"description\": \"Explore the groundbreaking science fiction world of The Matrix movie.\",\n    \"targetLanguageCode\": null,\n    \"title\": \"The Matrix Movie\"\n  },\n  {\n    \"description\": \"Analyze the impact of The Matrix movie on modern cinema and culture.\",\n    \"targetLanguageCode\": null,\n    \"title\": \"The Matrix Movie Influence\"\n  },\n  {\n    \"description\": \"Understand the philosophical themes presented in The Matrix movie.\",\n    \"targetLanguageCode\": null,\n    \"title\": \"Philosophy in The Matrix Movie\"\n  },\n  {\n    \"description\": \"Examine the special effects innovations used in The Matrix movie.\",\n    \"targetLanguageCode\": null,\n    \"title\": \"Visual Effects in The Matrix Movie\"\n  }\n]",
+      "outputTokens": 116,
+      "systemPrompt": "You generate course suggestions from a user input.\n\n## Rules\n\n- Generate as many course suggestions as you think are relevant, except for language courses, which must suggest only the language they want to learn\n\n### Language\n\n- Use the `LANGUAGE` value set by the user for both `title` and `description`, no matter what's the language used in `USER_INPUT`\n- For `en`, default to US English unless the content is about a different region\n- For `pt`, default to Brazilian Portuguese unless the content is about a different region\n- For `es`, default to Latin American Spanish unless the content is about a different region\n\n### Title\n\n- Titles must look like real courses\n- NEVER use levels such as (but not limited to) \"Basics\", \"Beginner\", \"Advanced\", \"Intro\", \"Introduction\", \"101\", \"Mastery\", \"Fundamentals\", etc.\n- Don't use variant markers in titles (e.g., '101', 'Beginner', exam levels like `B1`, or variants like 'Academic')\n- Single-topic titles: NEVER use \"and\", \"or\", \"&\", \"/\" and commas joining topics\n- For vague inputs, include the broad canonical title itself and related courses (e.g., \"Computer Science\", \"Software Engineering\", \"Web Development\")\n- If a user's input includes a jusrisdiction (e.g. \"California Law\", \"UK History\", \"Brazilian Politics\"), all suggestions must include that jurisdiction\n- If a user's input is very specific (e.g. \"Quantum Field Theory\", \"Renaissance Art in Florence\", \"German Law\", etc), include that title as the first suggestion\n\n### Description\n\n- Should be EXACTLY one sentence\n- Highlights why it may be useful or relevant to the learner\n- No need to prefix with \"This course is useful for...\", just say why it's useful.\n  For example, instead of \"This course is useful for understanding the basics of economics.\", say \"Understand the basics of economics.\"\n\n### Target Language Code\n\n- For language learning courses, include `targetLanguageCode` with the ISO 639-1 code (e.g., \"es\" for Spanish, \"ja\" for Japanese)\n- For non-language learning courses, set `targetLanguageCode` to null\n\n### Edge cases\n\n#### Language learning\n\n- If the user's goal is to learn a language (or pass a language exam like TOEFL, IELTS, HSK, etc.), return EXACTLY ONE suggestion with the language name and the correct `targetLanguageCode`\n- Do not add a \"language\" suffix to the language name (e.g., \"French\", not \"French Language\")\n- Do not add extra suggestions for language learning/exams (no exam prep, writing, culture add-ons, just the name of the language they want to learn)\n\n#### Intellectual Property\n\n- If the input targets a specific book/topic/IP include that exact topic as the first suggestion. For example:\n  - Topics: \"World War II\", \"Quantum Mechanics\", \"States of Matter\"\n  - Books: \"1984\", \"To Kill a Mockingbird\", \"The Great Gatsby\"\n  - Series: \"Harry Potter\", \"The Lord of the Rings\", \"Game of Thrones\"\n- For books/movies/IP, use the **official** name (e.g., \"The Great Gatsby\", not \"Great Gatsby\" or \"Gatsby\")\n  - This doesn't apply to general topics (e.g., \"General Relativity\" is correct, we wouldn't say \"The General Relativity Theory\")\n- Fixes any typos (e.g. \"Rolling Stones\" instead of \"roling stone\")\n- You should add other related suggestions to this subject\n\n#### Abbreviations\n\n- Avoid abbreviations in titles unless the abbreviated form is universally recognized. For example:\n  - Use \"Machine Learning\" instead of \"ML\" and \"Computer Science\" instead of \"CS\"\n  - However, words like DNA, GDP, NASA, UK, EU, SAT, HTML, SQL, etc. are more often used in their abbreviated forms and are acceptable\n- Think of this:\n  - People will never say \"HyperText Markup Language\", they will say \"HTML\"\n  - However, even though \"NLP\" is widely used, people will more often say \"Natural Language Processing\" when naming a course\n",
+      "testCaseId": "en-matrix-movie-1",
+      "userPrompt": "\n    LANGUAGE: en\n    USER_INPUT: matrix movie\n  "
+    },
+    {
+      "duration": 2909.3744169999845,
+      "inputTokens": 972,
+      "output": "[\n  {\n    \"description\": \"Explore the foundational concepts and applications of artificial intelligence.\",\n    \"targetLanguageCode\": null,\n    \"title\": \"Artificial Intelligence\"\n  },\n  {\n    \"description\": \"Learn techniques and models for machines to learn from data and improve over time.\",\n    \"targetLanguageCode\": null,\n    \"title\": \"Machine Learning\"\n  },\n  {\n    \"description\": \"Understand the principles and methods used in natural language processing to interpret human language.\",\n    \"targetLanguageCode\": null,\n    \"title\": \"Natural Language Processing\"\n  },\n  {\n    \"description\": \"Study computer vision techniques that enable machines to interpret and understand visual information.\",\n    \"targetLanguageCode\": null,\n    \"title\": \"Computer Vision\"\n  }\n]",
+      "outputTokens": 113,
+      "systemPrompt": "You generate course suggestions from a user input.\n\n## Rules\n\n- Generate as many course suggestions as you think are relevant, except for language courses, which must suggest only the language they want to learn\n\n### Language\n\n- Use the `LANGUAGE` value set by the user for both `title` and `description`, no matter what's the language used in `USER_INPUT`\n- For `en`, default to US English unless the content is about a different region\n- For `pt`, default to Brazilian Portuguese unless the content is about a different region\n- For `es`, default to Latin American Spanish unless the content is about a different region\n\n### Title\n\n- Titles must look like real courses\n- NEVER use levels such as (but not limited to) \"Basics\", \"Beginner\", \"Advanced\", \"Intro\", \"Introduction\", \"101\", \"Mastery\", \"Fundamentals\", etc.\n- Don't use variant markers in titles (e.g., '101', 'Beginner', exam levels like `B1`, or variants like 'Academic')\n- Single-topic titles: NEVER use \"and\", \"or\", \"&\", \"/\" and commas joining topics\n- For vague inputs, include the broad canonical title itself and related courses (e.g., \"Computer Science\", \"Software Engineering\", \"Web Development\")\n- If a user's input includes a jusrisdiction (e.g. \"California Law\", \"UK History\", \"Brazilian Politics\"), all suggestions must include that jurisdiction\n- If a user's input is very specific (e.g. \"Quantum Field Theory\", \"Renaissance Art in Florence\", \"German Law\", etc), include that title as the first suggestion\n\n### Description\n\n- Should be EXACTLY one sentence\n- Highlights why it may be useful or relevant to the learner\n- No need to prefix with \"This course is useful for...\", just say why it's useful.\n  For example, instead of \"This course is useful for understanding the basics of economics.\", say \"Understand the basics of economics.\"\n\n### Target Language Code\n\n- For language learning courses, include `targetLanguageCode` with the ISO 639-1 code (e.g., \"es\" for Spanish, \"ja\" for Japanese)\n- For non-language learning courses, set `targetLanguageCode` to null\n\n### Edge cases\n\n#### Language learning\n\n- If the user's goal is to learn a language (or pass a language exam like TOEFL, IELTS, HSK, etc.), return EXACTLY ONE suggestion with the language name and the correct `targetLanguageCode`\n- Do not add a \"language\" suffix to the language name (e.g., \"French\", not \"French Language\")\n- Do not add extra suggestions for language learning/exams (no exam prep, writing, culture add-ons, just the name of the language they want to learn)\n\n#### Intellectual Property\n\n- If the input targets a specific book/topic/IP include that exact topic as the first suggestion. For example:\n  - Topics: \"World War II\", \"Quantum Mechanics\", \"States of Matter\"\n  - Books: \"1984\", \"To Kill a Mockingbird\", \"The Great Gatsby\"\n  - Series: \"Harry Potter\", \"The Lord of the Rings\", \"Game of Thrones\"\n- For books/movies/IP, use the **official** name (e.g., \"The Great Gatsby\", not \"Great Gatsby\" or \"Gatsby\")\n  - This doesn't apply to general topics (e.g., \"General Relativity\" is correct, we wouldn't say \"The General Relativity Theory\")\n- Fixes any typos (e.g. \"Rolling Stones\" instead of \"roling stone\")\n- You should add other related suggestions to this subject\n\n#### Abbreviations\n\n- Avoid abbreviations in titles unless the abbreviated form is universally recognized. For example:\n  - Use \"Machine Learning\" instead of \"ML\" and \"Computer Science\" instead of \"CS\"\n  - However, words like DNA, GDP, NASA, UK, EU, SAT, HTML, SQL, etc. are more often used in their abbreviated forms and are acceptable\n- Think of this:\n  - People will never say \"HyperText Markup Language\", they will say \"HTML\"\n  - However, even though \"NLP\" is widely used, people will more often say \"Natural Language Processing\" when naming a course\n",
+      "testCaseId": "en-ai-1",
+      "userPrompt": "\n    LANGUAGE: en\n    USER_INPUT: ai\n  "
+    },
+    {
+      "duration": 3546.832999999984,
+      "inputTokens": 974,
+      "output": "[\n  {\n    \"description\": \"Explore the economic principles and historical impact of Adam Smith's seminal work.\",\n    \"targetLanguageCode\": null,\n    \"title\": \"The Wealth of Nations\"\n  },\n  {\n    \"description\": \"Understand the foundations and evolution of economic thought.\",\n    \"targetLanguageCode\": null,\n    \"title\": \"Economics\"\n  },\n  {\n    \"description\": \"Analyze the role of markets and trade in economic systems.\",\n    \"targetLanguageCode\": null,\n    \"title\": \"Market Economy\"\n  },\n  {\n    \"description\": \"Examine the development of capitalism and its societal effects.\",\n    \"targetLanguageCode\": null,\n    \"title\": \"Capitalism\"\n  }\n]",
+      "outputTokens": 105,
+      "systemPrompt": "You generate course suggestions from a user input.\n\n## Rules\n\n- Generate as many course suggestions as you think are relevant, except for language courses, which must suggest only the language they want to learn\n\n### Language\n\n- Use the `LANGUAGE` value set by the user for both `title` and `description`, no matter what's the language used in `USER_INPUT`\n- For `en`, default to US English unless the content is about a different region\n- For `pt`, default to Brazilian Portuguese unless the content is about a different region\n- For `es`, default to Latin American Spanish unless the content is about a different region\n\n### Title\n\n- Titles must look like real courses\n- NEVER use levels such as (but not limited to) \"Basics\", \"Beginner\", \"Advanced\", \"Intro\", \"Introduction\", \"101\", \"Mastery\", \"Fundamentals\", etc.\n- Don't use variant markers in titles (e.g., '101', 'Beginner', exam levels like `B1`, or variants like 'Academic')\n- Single-topic titles: NEVER use \"and\", \"or\", \"&\", \"/\" and commas joining topics\n- For vague inputs, include the broad canonical title itself and related courses (e.g., \"Computer Science\", \"Software Engineering\", \"Web Development\")\n- If a user's input includes a jusrisdiction (e.g. \"California Law\", \"UK History\", \"Brazilian Politics\"), all suggestions must include that jurisdiction\n- If a user's input is very specific (e.g. \"Quantum Field Theory\", \"Renaissance Art in Florence\", \"German Law\", etc), include that title as the first suggestion\n\n### Description\n\n- Should be EXACTLY one sentence\n- Highlights why it may be useful or relevant to the learner\n- No need to prefix with \"This course is useful for...\", just say why it's useful.\n  For example, instead of \"This course is useful for understanding the basics of economics.\", say \"Understand the basics of economics.\"\n\n### Target Language Code\n\n- For language learning courses, include `targetLanguageCode` with the ISO 639-1 code (e.g., \"es\" for Spanish, \"ja\" for Japanese)\n- For non-language learning courses, set `targetLanguageCode` to null\n\n### Edge cases\n\n#### Language learning\n\n- If the user's goal is to learn a language (or pass a language exam like TOEFL, IELTS, HSK, etc.), return EXACTLY ONE suggestion with the language name and the correct `targetLanguageCode`\n- Do not add a \"language\" suffix to the language name (e.g., \"French\", not \"French Language\")\n- Do not add extra suggestions for language learning/exams (no exam prep, writing, culture add-ons, just the name of the language they want to learn)\n\n#### Intellectual Property\n\n- If the input targets a specific book/topic/IP include that exact topic as the first suggestion. For example:\n  - Topics: \"World War II\", \"Quantum Mechanics\", \"States of Matter\"\n  - Books: \"1984\", \"To Kill a Mockingbird\", \"The Great Gatsby\"\n  - Series: \"Harry Potter\", \"The Lord of the Rings\", \"Game of Thrones\"\n- For books/movies/IP, use the **official** name (e.g., \"The Great Gatsby\", not \"Great Gatsby\" or \"Gatsby\")\n  - This doesn't apply to general topics (e.g., \"General Relativity\" is correct, we wouldn't say \"The General Relativity Theory\")\n- Fixes any typos (e.g. \"Rolling Stones\" instead of \"roling stone\")\n- You should add other related suggestions to this subject\n\n#### Abbreviations\n\n- Avoid abbreviations in titles unless the abbreviated form is universally recognized. For example:\n  - Use \"Machine Learning\" instead of \"ML\" and \"Computer Science\" instead of \"CS\"\n  - However, words like DNA, GDP, NASA, UK, EU, SAT, HTML, SQL, etc. are more often used in their abbreviated forms and are acceptable\n- Think of this:\n  - People will never say \"HyperText Markup Language\", they will say \"HTML\"\n  - However, even though \"NLP\" is widely used, people will more often say \"Natural Language Processing\" when naming a course\n",
+      "testCaseId": "en-wealth-of-nations-1",
+      "userPrompt": "\n    LANGUAGE: en\n    USER_INPUT: wealth of nations\n  "
     }
   ],
   "taskId": "course-suggestions"

@@ -55,7 +55,15 @@ async function categoriesOrSkip(
     await streamStatus({ status: "completed", step: "generateCategories" });
     return [];
   }
-  return generateCategoriesStep(course);
+
+  if (course.targetLanguage) {
+    await streamStatus({ status: "completed", step: "generateCategories" });
+    return ["languages"];
+  }
+
+  const categories = await generateCategoriesStep(course);
+
+  return categories.filter((cat) => cat !== "languages");
 }
 
 async function chaptersOrSkip(

@@ -16,6 +16,7 @@ model CourseSuggestion {
   slug             String
   title            String
   description      String
+  targetLanguage   String?                  @map("target_language") @db.VarChar(10)
   generationStatus GenerationStatus         @default(pending) @map("generation_status")
   generationRunId  String?                  @map("generation_run_id")
   prompts          SearchPromptSuggestion[]
@@ -51,6 +52,7 @@ model Course {
   title             String
   normalizedTitle   String                   @map("normalized_title")
   description       String?
+  targetLanguage    String?                  @map("target_language") @db.VarChar(10)
   generationStatus  GenerationStatus         @default(completed) @map("generation_status")
   generationRunId   String?                  @map("generation_run_id")
   imageUrl          String?                  @map("image_url")

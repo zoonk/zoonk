@@ -564,4 +564,118 @@ describe(courseGenerationWorkflow, () => {
       expect(firstChapter?.generationStatus).toBe("failed");
     });
   });
+
+  describe("targetLanguage propagation", () => {
+    test("creates language course with correct title and targetLanguage", async () => {
+      // The data layer resolves "es" to "Spanish" via Intl before persisting the suggestion.
+      // The workflow should propagate both the Intl-derived title and targetLanguage to the course.
+      const title = `Spanish ${randomUUID()}`;
+      const slug = toSlug(title);
+
+      const suggestion = await courseSuggestionFixture({
+        generationStatus: "pending",
+        language: "en",
+        slug,
+        targetLanguage: "es",
+        title,
+      });
+
+      await courseGenerationWorkflow(suggestion.id);
+
+      const course = await prisma.course.findFirst({
+        where: { slug },
+      });
+
+      expect(course?.title).toBe(title);
+      expect(course?.targetLanguage).toBe("es");
+    });
+
+    test("creates non-language course with null targetLanguage", async () => {
+      const title = `Calculus ${randomUUID()}`;
+      const slug = toSlug(title);
+
+      const suggestion = await courseSuggestionFixture({
+        generationStatus: "pending",
+        slug,
+        targetLanguage: null,
+        title,
+      });
+
+      await courseGenerationWorkflow(suggestion.id);
+
+      const course = await prisma.course.findFirst({
+        where: { slug },
+      });
+
+      expect(course?.title).toBe(title);
+      expect(course?.targetLanguage).toBeNull();
+    });
+
+    test("language course gets 'languages' category without AI call", async () => {
+      const title = `Spanish Lang Course ${randomUUID()}`;
+      const slug = toSlug(title);
+
+      const suggestion = await courseSuggestionFixture({
+        generationStatus: "pending",
+        slug,
+        targetLanguage: "es",
+        title,
+      });
+
+      await courseGenerationWorkflow(suggestion.id);
+
+      const course = await prisma.course.findFirst({
+        include: { categories: true },
+        where: { slug },
+      });
+
+      expect(course?.categories).toHaveLength(1);
+      expect(course?.categories[0]?.category).toBe("languages");
+      expect(generateCourseCategories).not.toHaveBeenCalled();
+    });
+
+    test("non-language course uses AI for categories", async () => {
+      const title = `Math Course ${randomUUID()}`;
+      const slug = toSlug(title);
+
+      const suggestion = await courseSuggestionFixture({
+        generationStatus: "pending",
+        slug,
+        targetLanguage: null,
+        title,
+      });
+
+      await courseGenerationWorkflow(suggestion.id);
+
+      expect(generateCourseCategories).toHaveBeenCalled();
+    });
+
+    test("filters out 'languages' category from AI results for non-language courses", async () => {
+      // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- testing safety net for unexpected AI output
+      vi.mocked(generateCourseCategories).mockResolvedValueOnce({
+        data: { categories: ["arts", "languages"] },
+      } as never);
+
+      const title = `Literature Course ${randomUUID()}`;
+      const slug = toSlug(title);
+
+      const suggestion = await courseSuggestionFixture({
+        generationStatus: "pending",
+        slug,
+        targetLanguage: null,
+        title,
+      });
+
+      await courseGenerationWorkflow(suggestion.id);
+
+      const course = await prisma.course.findFirst({
+        include: { categories: true },
+        where: { slug },
+      });
+
+      const categoryNames = course?.categories.map((cat) => cat.category);
+      expect(categoryNames).toContain("arts");
+      expect(categoryNames).not.toContain("languages");
+    });
+  });
 });

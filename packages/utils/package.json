@@ -12,6 +12,7 @@
     "./error": "./src/error.ts",
     "./form": "./src/form.ts",
     "./json": "./src/json.ts",
+    "./languages": "./src/languages.ts",
     "./locale": "./src/locale.ts",
     "./search": "./src/search.ts",
     "./string": "./src/string.ts",

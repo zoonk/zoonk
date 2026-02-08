@@ -34,6 +34,7 @@ export const coursesData = [
     language: "en",
     normalizedTitle: normalizeString("Spanish"),
     slug: "spanish",
+    targetLanguage: "es",
     title: "Spanish",
   },
   {

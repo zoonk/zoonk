@@ -50,6 +50,7 @@ export async function initializeCourseStep(input: {
         normalizedTitle,
         organizationId: aiOrg.id,
         slug,
+        targetLanguage: suggestion.targetLanguage,
         title: suggestion.title,
       },
       select: { id: true, slug: true },
@@ -69,5 +70,6 @@ export async function initializeCourseStep(input: {
     courseTitle: suggestion.title,
     language: suggestion.language,
     organizationId: aiOrg.id,
+    targetLanguage: suggestion.targetLanguage,
   };
 }

@@ -7,17 +7,18 @@ import systemPrompt from "./course-suggestions.prompt.md";
 const DEFAULT_MODEL = process.env.AI_MODEL_COURSE_SUGGESTIONS || "google/gemini-3-flash";
 
 const FALLBACK_MODELS = [
-  "google/gemini-2.5-flash",
-  "xai/grok-4-fast-reasoning",
-  "openai/gpt-4.1-mini",
-  "moonshotai/kimi-k2",
-  "google/gemini-2.5-pro",
+  "openai/gpt-5-mini",
+  "xai/grok-4.1-fast-reasoning",
+  "google/gemini-3-pro-preview",
+  "anthropic/claude-opus-4.5",
+  "openai/gpt-5.2",
 ];
 
 const schema = z.object({
   courses: z.array(
     z.object({
       description: z.string(),
+      targetLanguageCode: z.string().nullable(),
       title: z.string(),
     }),
   ),

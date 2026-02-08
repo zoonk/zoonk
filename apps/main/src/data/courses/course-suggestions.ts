@@ -1,9 +1,10 @@
 import "server-only";
 import { generateCourseSuggestions as generateTask } from "@zoonk/ai/tasks/courses/suggestions";
 import { type CourseSuggestion, prisma } from "@zoonk/db";
+import { getLanguageName, isSupportedLanguage } from "@zoonk/utils/languages";
 import { normalizeString, toSlug } from "@zoonk/utils/string";
 
-type SuggestionResult = Pick<CourseSuggestion, "id" | "title" | "description">;
+type SuggestionResult = Pick<CourseSuggestion, "id" | "title" | "description" | "targetLanguage">;
 
 async function findSearchPrompt(params: { language: string; prompt: string }) {
   const { language, prompt: rawPrompt } = params;
@@ -20,10 +21,16 @@ async function findSearchPrompt(params: { language: string; prompt: string }) {
   });
 }
 
+type SuggestionInput = {
+  title: string;
+  description: string;
+  targetLanguage: string | null;
+};
+
 async function upsertSearchPromptWithSuggestions(input: {
   language: string;
   prompt: string;
-  suggestions: { title: string; description: string }[];
+  suggestions: SuggestionInput[];
 }): Promise<{ id: number; suggestions: SuggestionResult[] }> {
   const { language, prompt: rawPrompt, suggestions } = input;
   const prompt = normalizeString(rawPrompt);
@@ -36,7 +43,7 @@ async function upsertSearchPromptWithSuggestions(input: {
     });
 
     const results = await Promise.all(
-      suggestions.map(async (suggestion, i) => {
+      suggestions.map(async (suggestion, idx) => {
         const slug = toSlug(suggestion.title);
 
         const courseSuggestion = await tx.courseSuggestion.upsert({
@@ -44,6 +51,7 @@ async function upsertSearchPromptWithSuggestions(input: {
             description: suggestion.description,
             language,
             slug,
+            targetLanguage: suggestion.targetLanguage,
             title: suggestion.title,
           },
           update: {},
@@ -53,10 +61,10 @@ async function upsertSearchPromptWithSuggestions(input: {
         await tx.searchPromptSuggestion.upsert({
           create: {
             courseSuggestionId: courseSuggestion.id,
-            position: i,
+            position: idx,
             searchPromptId: searchPrompt.id,
           },
-          update: { position: i },
+          update: { position: idx },
           where: {
             promptSuggestion: {
               courseSuggestionId: courseSuggestion.id,
@@ -68,12 +76,54 @@ async function upsertSearchPromptWithSuggestions(input: {
         return {
           description: courseSuggestion.description,
           id: courseSuggestion.id,
+          targetLanguage: courseSuggestion.targetLanguage,
           title: courseSuggestion.title,
         };
       }),
     );
 
     return { id: searchPrompt.id, suggestions: results };
+  });
+}
+
+function resolveLanguageSuggestion(
+  suggestion: { title: string; description: string; targetLanguageCode: string | null },
+  language: string,
+): SuggestionInput {
+  if (!isSupportedLanguage(suggestion.targetLanguageCode)) {
+    return {
+      description: suggestion.description,
+      targetLanguage: null,
+      title: suggestion.title,
+    };
+  }
+
+  const title = getLanguageName({
+    targetLanguage: suggestion.targetLanguageCode,
+    userLanguage: language,
+  });
+
+  return {
+    description: suggestion.description,
+    targetLanguage: suggestion.targetLanguageCode,
+    title,
+  };
+}
+
+function deduplicateByTargetLanguage(suggestions: SuggestionInput[]): SuggestionInput[] {
+  const seen = new Set<string>();
+
+  return suggestions.filter((suggestion) => {
+    if (!suggestion.targetLanguage) {
+      return true;
+    }
+
+    if (seen.has(suggestion.targetLanguage)) {
+      return false;
+    }
+
+    seen.add(suggestion.targetLanguage);
+    return true;
   });
 }
 
@@ -92,6 +142,7 @@ export async function generateCourseSuggestions({
       suggestions: record.suggestions.map((link) => ({
         description: link.courseSuggestion.description,
         id: link.courseSuggestion.id,
+        targetLanguage: link.courseSuggestion.targetLanguage,
         title: link.courseSuggestion.title,
       })),
     };
@@ -99,10 +150,13 @@ export async function generateCourseSuggestions({
 
   const { data } = await generateTask({ language, prompt });
 
+  const resolved = data.map((item) => resolveLanguageSuggestion(item, language));
+  const deduplicated = deduplicateByTargetLanguage(resolved);
+
   return upsertSearchPromptWithSuggestions({
     language,
     prompt,
-    suggestions: data,
+    suggestions: deduplicated,
   });
 }
 
@@ -110,7 +164,13 @@ export async function getCourseSuggestionById(
   id: number,
 ): Promise<Pick<
   CourseSuggestion,
-  "description" | "generationRunId" | "generationStatus" | "language" | "slug" | "title"
+  | "description"
+  | "generationRunId"
+  | "generationStatus"
+  | "language"
+  | "slug"
+  | "targetLanguage"
+  | "title"
 > | null> {
   return prisma.courseSuggestion.findUnique({
     select: {
@@ -119,6 +179,7 @@ export async function getCourseSuggestionById(
       generationStatus: true,
       language: true,
       slug: true,
+      targetLanguage: true,
       title: true,
     },
     where: { id },
