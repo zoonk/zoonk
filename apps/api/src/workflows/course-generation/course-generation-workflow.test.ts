@@ -4,6 +4,7 @@ import { generateAlternativeTitles } from "@zoonk/ai/tasks/courses/alternative-t
 import { generateCourseCategories } from "@zoonk/ai/tasks/courses/categories";
 import { generateCourseChapters } from "@zoonk/ai/tasks/courses/chapters";
 import { generateCourseDescription } from "@zoonk/ai/tasks/courses/description";
+import { generateLanguageCourseChapters } from "@zoonk/ai/tasks/courses/language-chapters";
 import { generateLessonKind } from "@zoonk/ai/tasks/lessons/kind";
 import { generateCourseImage } from "@zoonk/core/courses/image";
 import { prisma } from "@zoonk/db";
@@ -47,6 +48,17 @@ vi.mock("@zoonk/ai/tasks/courses/chapters", () => ({
   }),
 }));
 
+vi.mock("@zoonk/ai/tasks/courses/language-chapters", () => ({
+  generateLanguageCourseChapters: vi.fn().mockResolvedValue({
+    data: {
+      chapters: [
+        { description: "Lang Chapter 1 description", title: "Lang Chapter 1" },
+        { description: "Lang Chapter 2 description", title: "Lang Chapter 2" },
+      ],
+    },
+  }),
+}));
+
 vi.mock("@zoonk/ai/tasks/courses/alternative-titles", () => ({
   generateAlternativeTitles: vi.fn().mockImplementation(() =>
     Promise.resolve({
@@ -78,6 +90,17 @@ vi.mock("@zoonk/ai/tasks/chapters/lessons", () => ({
       lessons: [
         { description: "Lesson 1 description", title: "Lesson 1" },
         { description: "Lesson 2 description", title: "Lesson 2" },
+      ],
+    },
+  }),
+}));
+
+vi.mock("@zoonk/ai/tasks/chapters/language-lessons", () => ({
+  generateLanguageChapterLessons: vi.fn().mockResolvedValue({
+    data: {
+      lessons: [
+        { description: "Lang Lesson 1 description", title: "Lang Lesson 1" },
+        { description: "Lang Lesson 2 description", title: "Lang Lesson 2" },
       ],
     },
   }),
@@ -657,6 +680,44 @@ describe(courseGenerationWorkflow, () => {
       await courseGenerationWorkflow(suggestion.id);
 
       expect(generateCourseCategories).toHaveBeenCalled();
+    });
+
+    test("language course calls generateLanguageCourseChapters", async () => {
+      vi.mocked(generateLessonKind).mockResolvedValueOnce({
+        data: { kind: "language" },
+      } as Awaited<ReturnType<typeof generateLessonKind>>);
+
+      const title = `Language Chapters Course ${randomUUID()}`;
+      const slug = toSlug(title);
+
+      const suggestion = await courseSuggestionFixture({
+        generationStatus: "pending",
+        slug,
+        targetLanguage: "es",
+        title,
+      });
+
+      await courseGenerationWorkflow(suggestion.id);
+
+      expect(generateLanguageCourseChapters).toHaveBeenCalled();
+      expect(generateCourseChapters).not.toHaveBeenCalled();
+    });
+
+    test("non-language course calls generateCourseChapters", async () => {
+      const title = `Generic Chapters Course ${randomUUID()}`;
+      const slug = toSlug(title);
+
+      const suggestion = await courseSuggestionFixture({
+        generationStatus: "pending",
+        slug,
+        targetLanguage: null,
+        title,
+      });
+
+      await courseGenerationWorkflow(suggestion.id);
+
+      expect(generateCourseChapters).toHaveBeenCalled();
+      expect(generateLanguageCourseChapters).not.toHaveBeenCalled();
     });
 
     test("filters out 'languages' category from AI results for non-language courses", async () => {

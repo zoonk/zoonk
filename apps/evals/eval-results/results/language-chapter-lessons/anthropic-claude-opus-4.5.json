@@ -1,0 +1,131 @@
+{
+  "modelId": "anthropic/claude-opus-4.5",
+  "results": [
+    {
+      "steps": [
+        {
+          "conclusion": "The model includes duplicate lessons for the same verbs under different categories. specifically, 'Poder' is listed as 'Irregular: Poder' and later as 'Stem Change: Poder'. Similarly, 'Seguir' is listed under 'Stem Change: Seguir' and 'Spelling Change: Seguir'. This creates redundancy and confusion in the curriculum.",
+          "kind": "majorErrors",
+          "score": 7.5
+        },
+        {
+          "conclusion": "The classification of verbs is inconsistent. 'Poder' and 'Querer' are standard stem-changing verbs but are initially listed in the 'Irregular' section alongside highly irregular verbs like 'Ser' and 'Ir', while other stem changers are separated. Additionally, 'Elegir' is listed only under spelling changes despite also being a stem-changing verb (e-i), which might lead to incomplete instruction if the lesson focuses solely on the title's concept.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "The list is extremely extensive and granular, effectively following the instruction to add as many lessons as needed. However, listing 8 specific regular -ar verbs as separate lessons (e.g., 'Conjugating: Caminar', 'Conjugating: Cocinar') borders on excessive repetition of the same grammatical concept, though it serves as vocabulary practice. A 'Saber vs Conocer' usage lesson would have been a valuable addition given they are both taught, similar to the suggested 'Ser vs Estar' structure.",
+          "kind": "potentialImprovements",
+          "score": 8.5
+        },
+        {
+          "conclusion": "The response provided a very thorough and properly formatted list of lessons that adhered to most constraints, including single-concept focus and output format. However, the logical flaws in curriculum design—specifically the duplicate lessons for 'Poder' and 'Seguir'—detract from the final utility.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n      - Should break down present tense verb conjugations individually\n      - Should have separate lessons for ser and estar\n      - Should cover regular -ar, -er, -ir verb patterns separately\n\n      \n  - Each lesson should cover a SINGLE, SPECIFIC concept that can be explained within 10 short tweets\n  - Break down topics into the smallest, most manageable units possible, so that each lesson can be learned in 2-3 minutes\n  - If a topic is too broad, split it into multiple lessons\n  - Each lesson should be extremely focused on a SINGLE concept\n  - If you find yourself using \"AND\", \"OR\", or \"VS\" in a title, you should split it into separate lessons\n  - ALL lessons must be about pure language acquisition (vocabulary, grammar, pronunciation, sentences, conjugations, dialogues)\n  - NO culture lessons (history, traditions, cuisine, festivals)\n  - NO career or professional lessons\n  - NO proficiency exam preparation lessons\n  - NO literature or media analysis lessons\n  - Lesson titles should be short and specific to the exact concept covered\n  - Build a logical progression from basic to advanced concepts\n  - Ensure lessons build on knowledge from previous lessons\n  - Focus lessons for this specific chapter, not the entire course\n  - Don't include summary or review lessons\n  - Don't include assessment or quiz lessons\n  - Should follow the language specified by language parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Descriptions should be concise, no fluff (avoid \"learn\", \"understand\", \"explore\", etc.)\n  - You don't need to evaluate the output format here, just focus on the lesson content quality\n  - Include an extensive list of lessons to cover all the concepts needed for the chapter\n\n    ",
+        "id": "en-spanish-present-tense-1",
+        "userInput": {
+          "chapterDescription": "Regular and irregular verb conjugations in the present tense for everyday actions.",
+          "chapterTitle": "Present Tense Verbs",
+          "courseTitle": "Spanish",
+          "language": "en",
+          "targetLanguage": "es"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None. The response provides a highly extensive and accurate list of lessons covering the specified chapter content (Hiragana). It correctly adheres to the major constraints: pure language acquisition content, no culture/career topics, single concepts per lesson (mostly), and correct target/output languages.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The titles 'Linha W e N: わ を ん' and 'Ordem dos Traços: Linha W e N' violate the specific negative constraint: 'If you find yourself using AND, OR, or VS in a title, you should split it into separate lessons'. The 'W' row (Wa, Wo) and the 'N' character are distinct entities and should have been split into separate lessons to strictly follow the granularity and titling rules. The lessons on 'Caracteres Similares' also use 'e' (and), but this is acceptable as the 'comparison' itself is the single concept.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "To strictly adhere to the titling constraints and granularity, the 'Linha W e N' lessons should be split into 'Linha W' and 'Caractere N'. Additionally, while grouping all reading lessons first and all writing lessons second is a valid logical progression, interleaving them (e.g., Reading K-Row, then Writing K-Row) might offer a better pedagogical flow for a student, though the current structure is not incorrect.",
+          "kind": "potentialImprovements",
+          "score": 9.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Should break down hiragana by character groups (vowels, k-row, s-row, etc.)\n      - Should cover stroke order and pronunciation for each group\n      - Should not go beyond hiragana into katakana or kanji\n\n      \n  - Each lesson should cover a SINGLE, SPECIFIC concept that can be explained within 10 short tweets\n  - Break down topics into the smallest, most manageable units possible, so that each lesson can be learned in 2-3 minutes\n  - If a topic is too broad, split it into multiple lessons\n  - Each lesson should be extremely focused on a SINGLE concept\n  - If you find yourself using \"AND\", \"OR\", or \"VS\" in a title, you should split it into separate lessons\n  - ALL lessons must be about pure language acquisition (vocabulary, grammar, pronunciation, sentences, conjugations, dialogues)\n  - NO culture lessons (history, traditions, cuisine, festivals)\n  - NO career or professional lessons\n  - NO proficiency exam preparation lessons\n  - NO literature or media analysis lessons\n  - Lesson titles should be short and specific to the exact concept covered\n  - Build a logical progression from basic to advanced concepts\n  - Ensure lessons build on knowledge from previous lessons\n  - Focus lessons for this specific chapter, not the entire course\n  - Don't include summary or review lessons\n  - Don't include assessment or quiz lessons\n  - Should follow the language specified by language parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Descriptions should be concise, no fluff (avoid \"learn\", \"understand\", \"explore\", etc.)\n  - You don't need to evaluate the output format here, just focus on the lesson content quality\n  - Include an extensive list of lessons to cover all the concepts needed for the chapter\n\n    ",
+        "id": "pt-japanese-hiragana-1",
+        "userInput": {
+          "chapterDescription": "The hiragana syllabary: basic characters, dakuten, handakuten, and combination characters.",
+          "chapterTitle": "Hiragana",
+          "courseTitle": "Japonês",
+          "language": "pt",
+          "targetLanguage": "ja"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The lesson title \"Formal vs Informal: Vous and Tu\" violates the negative constraint regarding titles: \"If you find yourself using 'AND', 'OR', or 'VS' in a title, you should split it into separate lessons\". Although the prompt contained a contradictory example (\"Ser vs Estar\"), the explicit instructions and Quality Checks forbade this. Additionally, the lesson \"Saying And You: Et vous / Et toi\" combines formal and informal forms, which violates the strict granularity requested and practiced elsewhere in the list (e.g., separating \"Asking Someone's Name\").",
+          "kind": "minorErrors",
+          "score": 8.5
+        },
+        {
+          "conclusion": "The lessons \"Starting a Conversation: Opening Lines\" and \"Ending a Conversation: Closing Phrases\" are slightly broad compared to the specific phrase-based lessons in the rest of the list. Breaking these down into specific common phrases (e.g., \"Opening: Quoi de neuf?\") would better align with the \"single specific concept\" requirement.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n      - Should separate formal and informal greetings\n      - Should cover common phrases individually\n      - Should include time-of-day greetings as separate lessons\n\n      \n  - Each lesson should cover a SINGLE, SPECIFIC concept that can be explained within 10 short tweets\n  - Break down topics into the smallest, most manageable units possible, so that each lesson can be learned in 2-3 minutes\n  - If a topic is too broad, split it into multiple lessons\n  - Each lesson should be extremely focused on a SINGLE concept\n  - If you find yourself using \"AND\", \"OR\", or \"VS\" in a title, you should split it into separate lessons\n  - ALL lessons must be about pure language acquisition (vocabulary, grammar, pronunciation, sentences, conjugations, dialogues)\n  - NO culture lessons (history, traditions, cuisine, festivals)\n  - NO career or professional lessons\n  - NO proficiency exam preparation lessons\n  - NO literature or media analysis lessons\n  - Lesson titles should be short and specific to the exact concept covered\n  - Build a logical progression from basic to advanced concepts\n  - Ensure lessons build on knowledge from previous lessons\n  - Focus lessons for this specific chapter, not the entire course\n  - Don't include summary or review lessons\n  - Don't include assessment or quiz lessons\n  - Should follow the language specified by language parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Descriptions should be concise, no fluff (avoid \"learn\", \"understand\", \"explore\", etc.)\n  - You don't need to evaluate the output format here, just focus on the lesson content quality\n  - Include an extensive list of lessons to cover all the concepts needed for the chapter\n\n    ",
+        "id": "en-french-greetings-1",
+        "userInput": {
+          "chapterDescription": "Common greetings, introductions, and polite expressions for everyday encounters.",
+          "chapterTitle": "Basic Greetings & Introductions",
+          "courseTitle": "French",
+          "language": "en",
+          "targetLanguage": "fr"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The response exhibits inconsistency in the naming of tenses within the titles. It starts with Spanish names ('Pasado Simple', 'Pasado Continuo') but switches to English names halfway through ('Present Perfect', 'Past Perfect'), despite the target language being Spanish. Additionally, the prompt explicitly instructs to split lessons if using 'AND' ('y') or 'OR' in the title. The model violates this in several places, such as 'Pasado Simple: Was y Were', 'Present Perfect: Ever y Never', and 'Past Perfect: Already y Just', especially given that it correctly split 'Already' and 'Just' in the Present Perfect section but combined them in the Past Perfect section.",
+          "kind": "minorErrors",
+          "score": 8.5
+        },
+        {
+          "conclusion": "To strictly follow the granularity guidelines, lessons like 'Pasado Simple: Was y Were' should be split into 'Pasado Simple: Was' and 'Pasado Simple: Were' (or focused on the singular/plural distinction specifically). Similarly, 'Past Perfect: Already y Just' and 'Past Perfect: Never y Ever' should be split into separate lessons as was done in the Present Perfect section. The titles should consistently use Spanish terms for tenses (e.g., 'Presente Perfecto', 'Pasado Perfecto') to match the 'Pasado Simple' convention used at the start.",
+          "kind": "potentialImprovements",
+          "score": 8.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Latin American Spanish\n      - Should break down past tenses individually (simple past, past continuous, etc.)\n      - Should cover regular and irregular verbs separately\n      - Should not combine multiple tense types in a single lesson\n\n      \n  - Each lesson should cover a SINGLE, SPECIFIC concept that can be explained within 10 short tweets\n  - Break down topics into the smallest, most manageable units possible, so that each lesson can be learned in 2-3 minutes\n  - If a topic is too broad, split it into multiple lessons\n  - Each lesson should be extremely focused on a SINGLE concept\n  - If you find yourself using \"AND\", \"OR\", or \"VS\" in a title, you should split it into separate lessons\n  - ALL lessons must be about pure language acquisition (vocabulary, grammar, pronunciation, sentences, conjugations, dialogues)\n  - NO culture lessons (history, traditions, cuisine, festivals)\n  - NO career or professional lessons\n  - NO proficiency exam preparation lessons\n  - NO literature or media analysis lessons\n  - Lesson titles should be short and specific to the exact concept covered\n  - Build a logical progression from basic to advanced concepts\n  - Ensure lessons build on knowledge from previous lessons\n  - Focus lessons for this specific chapter, not the entire course\n  - Don't include summary or review lessons\n  - Don't include assessment or quiz lessons\n  - Should follow the language specified by language parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Descriptions should be concise, no fluff (avoid \"learn\", \"understand\", \"explore\", etc.)\n  - You don't need to evaluate the output format here, just focus on the lesson content quality\n  - Include an extensive list of lessons to cover all the concepts needed for the chapter\n\n    ",
+        "id": "es-english-past-tenses-1",
+        "userInput": {
+          "chapterDescription": "Simple past, past continuous, present perfect, and past perfect tenses with regular and irregular verbs.",
+          "chapterTitle": "Tiempos Pasados",
+          "courseTitle": "Inglés",
+          "language": "es",
+          "targetLanguage": "en"
+        }
+      }
+    }
+  ],
+  "taskId": "language-chapter-lessons"
+}

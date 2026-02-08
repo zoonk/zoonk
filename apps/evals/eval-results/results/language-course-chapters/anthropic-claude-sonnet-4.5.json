@@ -1,0 +1,123 @@
+{
+  "modelId": "anthropic/claude-sonnet-4.5",
+  "results": [
+    {
+      "steps": [
+        {
+          "conclusion": "The generated curriculum is extremely comprehensive, covering CEFR levels A1 through C2 with a high degree of granularity. It strictly follows the output format and includes a vast array of topics relevant to Spanish (subjunctive, preterite vs imperfect, etc.).",
+          "kind": "potentialImprovements",
+          "score": 10
+        },
+        {
+          "conclusion": "The curriculum is missing a dedicated chapter for the basics of 'Ser vs Estar' in the beginner section (A1/A2). While 'Ser vs Estar: Advanced' appears at chapter 60, the fundamental distinction between these two verbs is a critical, distinct grammar area in Spanish that warrants its own chapter early on, rather than being implicitly buried in 'Present Tense' or 'Adjectives'.",
+          "kind": "minorErrors",
+          "score": 8.5
+        },
+        {
+          "conclusion": "The response violates specific negative constraints regarding forbidden topics. Chapter 89 'Etymology & Historical Development' falls under the forbidden 'History' or 'Culture' category. Chapter 92 'Literary Analysis Vocabulary' violates the ban on 'Literature' chapters. While framed as vocabulary, these specific domains were explicitly excluded in the instructions.",
+          "kind": "minorErrors",
+          "score": 8.5
+        },
+        {
+          "conclusion": "Some advanced chapters drift into academic linguistics (e.g., 'Sociolinguistic Variation', 'Etymology') rather than functional language acquisition. While this demonstrates depth for C2, it slightly contradicts the practical communication focus implied by the exclusion of 'history' and 'theory' chapters.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English (teaching Spanish)\n      - Should cover Spanish-specific grammar structures (ser vs estar, subjunctive, preterite vs imperfect, etc.)\n      - Should cover vocabulary themes relevant to everyday Spanish (food, travel, family, etc.)\n      - Should cover communication scenarios (greetings, ordering food, asking directions, etc.)\n\n      \n  - Chapters should follow CEFR progression from A1 (beginner) to C2 (mastery)\n  - ALL chapters must be content-domain chapters: grammar structures, vocabulary themes, or communication scenarios\n  - NO skill-based chapters (pronunciation, listening, reading, writing) — those skills are built into every lesson automatically\n  - NO culture chapters (history, traditions, cuisine, music, festivals, customs)\n  - NO career or professional chapters (business language, workplace communication)\n  - NO proficiency exam preparation chapters (DELE, JLPT, DELF, HSK, etc.)\n  - NO literature or media chapters (books, films, songs, poetry)\n  - Should cover grammar structures (verb tenses, nouns, articles, etc.) and vocabulary themes (food, travel, health, etc.)\n  - Should follow the language specified by language parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Titles should be concise, no filler words\n  - Descriptions should be concise, no fluff (avoid \"learn\", \"understand\", \"explore\", etc.)\n  - You don't need to evaluate the output format here, just focus on the chapter content quality\n  - Don't add capstone/final projects, assessments, or exercises\n\n    ",
+        "id": "en-learning-spanish-1",
+        "userInput": {
+          "courseTitle": "Spanish",
+          "language": "en",
+          "targetLanguage": "es"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The model included explicit references to JLPT levels (N5, N4, N3, N2, N1) in several chapter titles (e.g., \"Padrões Gramaticais N1 I\") and descriptions. The instructions explicitly forbade \"proficiency exam preparation — no ... JLPT\" and mentioning levels/instructions in titles. While the content is valid, labeling chapters by exam levels makes it look like a test prep course rather than a general curriculum.",
+          "kind": "minorErrors",
+          "score": 8.5
+        },
+        {
+          "conclusion": "The chapters labeled with exam levels (e.g., \"Kanji Básicos I (N5)\") should be renamed to reflect the semantic content or function of the characters/grammar included (e.g., \"Complex Compound Kanji\" or \"Advanced Abstract Grammar\") to fully align with the 'No Exam Prep' constraint.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese (teaching Japanese)\n      - Should include dedicated chapters for writing systems (hiragana, katakana, kanji)\n      - Should cover Japanese-specific grammar (particles, verb forms, honorifics, counters)\n      - Should cover vocabulary themes and communication scenarios\n\n      \n  - Chapters should follow CEFR progression from A1 (beginner) to C2 (mastery)\n  - ALL chapters must be content-domain chapters: grammar structures, vocabulary themes, or communication scenarios\n  - NO skill-based chapters (pronunciation, listening, reading, writing) — those skills are built into every lesson automatically\n  - NO culture chapters (history, traditions, cuisine, music, festivals, customs)\n  - NO career or professional chapters (business language, workplace communication)\n  - NO proficiency exam preparation chapters (DELE, JLPT, DELF, HSK, etc.)\n  - NO literature or media chapters (books, films, songs, poetry)\n  - Should cover grammar structures (verb tenses, nouns, articles, etc.) and vocabulary themes (food, travel, health, etc.)\n  - Should follow the language specified by language parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Titles should be concise, no filler words\n  - Descriptions should be concise, no fluff (avoid \"learn\", \"understand\", \"explore\", etc.)\n  - You don't need to evaluate the output format here, just focus on the chapter content quality\n  - Don't add capstone/final projects, assessments, or exercises\n\n    ",
+        "id": "pt-learning-japanese-1",
+        "userInput": {
+          "courseTitle": "Japonês",
+          "language": "pt",
+          "targetLanguage": "ja"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English (teaching French)\n      - Should cover French-specific grammar (gender/articles, subjunctive, past tenses, etc.)\n      - Should cover vocabulary themes for everyday French situations (food, travel, etc.)\n      - Should cover communication scenarios (greetings, shopping, etc.)\n\n      \n  - Chapters should follow CEFR progression from A1 (beginner) to C2 (mastery)\n  - ALL chapters must be content-domain chapters: grammar structures, vocabulary themes, or communication scenarios\n  - NO skill-based chapters (pronunciation, listening, reading, writing) — those skills are built into every lesson automatically\n  - NO culture chapters (history, traditions, cuisine, music, festivals, customs)\n  - NO career or professional chapters (business language, workplace communication)\n  - NO proficiency exam preparation chapters (DELE, JLPT, DELF, HSK, etc.)\n  - NO literature or media chapters (books, films, songs, poetry)\n  - Should cover grammar structures (verb tenses, nouns, articles, etc.) and vocabulary themes (food, travel, health, etc.)\n  - Should follow the language specified by language parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Titles should be concise, no filler words\n  - Descriptions should be concise, no fluff (avoid \"learn\", \"understand\", \"explore\", etc.)\n  - You don't need to evaluate the output format here, just focus on the chapter content quality\n  - Don't add capstone/final projects, assessments, or exercises\n\n    ",
+        "id": "en-learning-french-1",
+        "userInput": {
+          "courseTitle": "French",
+          "language": "en",
+          "targetLanguage": "fr"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The prompt explicitly forbids 'career/professional chapters' and 'business language courses'. Chapter 65 ('Lenguaje Profesional Especializado') explicitly covers 'lenguaje de negocios, finanzas, derecho', which violates this negative constraint.",
+          "kind": "minorErrors",
+          "score": 8.5
+        },
+        {
+          "conclusion": "The curriculum is exceptionally comprehensive, reaching deep into C2 mastery. However, the titles for the advanced chapters use highly technical linguistic terminology (e.g., 'Prosodia Semántica', 'Modalización Epistémica', 'Deixis y Referencia', 'Polifonía Discursiva'). While accurate for an expert, these titles may be intimidating or unclear for a general language learner. Simplifying these to more functional or descriptive titles (e.g., 'Connotación de Palabras', 'Expresando Certeza', 'Referencia en el Texto') would improve the user experience while maintaining the depth of content.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Latin American Spanish (teaching English)\n      - Should cover English grammar structures (tenses, articles, phrasal verbs, conditionals)\n      - Should cover vocabulary themes and communication scenarios\n      - Should interleave grammar and vocabulary/situation chapters\n\n      \n  - Chapters should follow CEFR progression from A1 (beginner) to C2 (mastery)\n  - ALL chapters must be content-domain chapters: grammar structures, vocabulary themes, or communication scenarios\n  - NO skill-based chapters (pronunciation, listening, reading, writing) — those skills are built into every lesson automatically\n  - NO culture chapters (history, traditions, cuisine, music, festivals, customs)\n  - NO career or professional chapters (business language, workplace communication)\n  - NO proficiency exam preparation chapters (DELE, JLPT, DELF, HSK, etc.)\n  - NO literature or media chapters (books, films, songs, poetry)\n  - Should cover grammar structures (verb tenses, nouns, articles, etc.) and vocabulary themes (food, travel, health, etc.)\n  - Should follow the language specified by language parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Titles should be concise, no filler words\n  - Descriptions should be concise, no fluff (avoid \"learn\", \"understand\", \"explore\", etc.)\n  - You don't need to evaluate the output format here, just focus on the chapter content quality\n  - Don't add capstone/final projects, assessments, or exercises\n\n    ",
+        "id": "es-learning-english-1",
+        "userInput": {
+          "courseTitle": "Inglés",
+          "language": "es",
+          "targetLanguage": "en"
+        }
+      }
+    }
+  ],
+  "taskId": "language-course-chapters"
+}

@@ -35,18 +35,11 @@ It should cover everything needed to land a job at top firms in this field.
 - Should be **up-to-date**, **modern**, and cover the **latest trends** in this field.
 - No assessments, projects, or capstones.
 - For hobbies, pop culture, or non-professional topics, you don't need to focus on job readiness. Instead, focus on comprehensive coverage of the topic.
-- Add at least one chapter covering how to start a career in this field, except for courses where this is not applicable (e.g., languages, hobbies, pop culture, non-professional topics, etc.).
+- Add at least one chapter covering how to start a career in this field, except for courses where this is not applicable (e.g., hobbies, pop culture, non-professional topics, etc.).
 - Cover **everything** they need to be at the top 1% in this field. This is very important.
 - Don't mention prompt instructions (like "top 1%") in the chapter titles or descriptions.
 
 Build a curriculum that would make hiring managers excited to hire someone who completed it. A person completing this course should have all knowledge to be the "Einstein" of this field.
-
-## Language Learning
-
-Language learning is a special case where most of the other rules don't apply. For language learning courses, follow these specific guidelines:
-
-- Cover **everything** to go from A1 to C2 (CEFR).
-- Don't add culture, proficiency exam preparation, and career chapters unless `COURSE_TITLE` is about that. Just focus on being a traditional language learning course.
 
 ## Hobbies, Pop Culture, Non-Professional Topics
 

@@ -1,0 +1,167 @@
+{
+  "expectations": "\n      - MUST be in Latin American Spanish\n      - Should break down past tenses individually (simple past, past continuous, etc.)\n      - Should cover regular and irregular verbs separately\n      - Should not combine multiple tense types in a single lesson\n\n      \n  - Each lesson should cover a SINGLE, SPECIFIC concept that can be explained within 10 short tweets\n  - Break down topics into the smallest, most manageable units possible, so that each lesson can be learned in 2-3 minutes\n  - If a topic is too broad, split it into multiple lessons\n  - Each lesson should be extremely focused on a SINGLE concept\n  - If you find yourself using \"AND\", \"OR\", or \"VS\" in a title, you should split it into separate lessons\n  - ALL lessons must be about pure language acquisition (vocabulary, grammar, pronunciation, sentences, conjugations, dialogues)\n  - NO culture lessons (history, traditions, cuisine, festivals)\n  - NO career or professional lessons\n  - NO proficiency exam preparation lessons\n  - NO literature or media analysis lessons\n  - Lesson titles should be short and specific to the exact concept covered\n  - Build a logical progression from basic to advanced concepts\n  - Ensure lessons build on knowledge from previous lessons\n  - Focus lessons for this specific chapter, not the entire course\n  - Don't include summary or review lessons\n  - Don't include assessment or quiz lessons\n  - Should follow the language specified by language parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Descriptions should be concise, no fluff (avoid \"learn\", \"understand\", \"explore\", etc.)\n  - You don't need to evaluate the output format here, just focus on the lesson content quality\n  - Include an extensive list of lessons to cover all the concepts needed for the chapter\n\n    ",
+  "judgedAt": "2026-02-08T20:43:15.134Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model G provides the most comprehensive and well-organized lesson set with 127 lessons. It excels at breaking down concepts into extremely granular, focused units that can each be covered in 2-3 minutes. The lessons follow excellent logical progression from simple past regulars through irregulars, past continuous, present perfect, and past perfect. Each tense is thoroughly separated with distinct lessons for: structure, pronunciation rules (/t/, /d/, /ɪd/), spelling rules, affirmative/negative/interrogative forms, time markers, and individual irregular verbs. The descriptions are concise without fluff. Regular and irregular verbs are properly separated. The only minor issue is some lessons could be seen as slightly too granular (individual irregular verbs), but this aligns with the 'smallest manageable units' requirement.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model F provides 85 well-structured lessons with excellent granularity and logical progression. It properly separates regular and irregular verbs, breaks down pronunciation rules individually (/t/, /d/, /ɪd/), and covers each tense type separately. The lessons are appropriately focused on single concepts. Descriptions are concise and direct. Good coverage of time markers and adverbs for each tense. The progression is logical and builds properly. One minor weakness is one lesson mentions 'Past Perfect: sin forma continua' which is more of a clarification than a lesson concept, and the final lessons about narrative contexts slightly blur the 'single concept' rule.",
+          "score": 8.9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model C offers 63 lessons with good coverage and organization. It properly separates regular and irregular verbs, covers pronunciation, spelling rules, and breaks down past tenses individually. However, the last lesson 'Los Cuatro Tiempos Pasados: Cuándo Usar Cada Uno' is explicitly a summary/review lesson which violates the requirements. Also, some lessons combine concepts (e.g., 'Reglas ortográficas al agregar -ed: duplicar consonantes, cambiar y por i, y eliminar la e muda' combines three rules). Some comparison lessons appear (Past Simple o Present Perfect) which could be seen as 'VS' lessons that should be split. Descriptions are generally concise.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model B provides 71 lessons with reasonable coverage. It organizes irregular verbs by patterns (A-B-B, A-B-C, etc.) which is pedagogically sound. However, several issues: includes 'While vs When en Tiempos Pasados' which uses 'vs' in title (should be split), includes 'Errores Comunes en Tiempos Pasados' which is somewhat outside pure acquisition focus, combines some concepts like 'Pasado Simple: Reglas Ortográficas de -ed' instead of separating them, and some comparison lessons mix tenses. The lessons on 'Verbos de Estado en Tiempos Pasados' is borderline. Pronunciation is covered in one lesson rather than three separate ones.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Model E has 51 lessons with decent coverage. It separates tenses properly and covers regular/irregular verbs. However, the last 4 lessons are explicit comparison lessons ('Simple Past vs Past Continuous', 'Simple Past vs Present Perfect', etc.) which use 'vs' in titles - these should be split per the requirements. Some lessons could be more focused. The pronunciation of -ed is not broken into separate lessons for each sound. Descriptions are generally concise. Good coverage of present perfect adverbs and time expressions.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Model A provides 50 lessons with good focus on single concepts. Excellent separation of pronunciation rules into three distinct lessons (/t/, /d/, /ɪd/). Regular and irregular verbs are properly separated. Time expressions are broken into individual lessons (Yesterday, Last, Ago). Present perfect and past perfect are well covered. However, the coverage is somewhat less comprehensive than top models - missing some irregular verb patterns, contractions, short answers for some tenses. Some lessons on participios could have more irregular verb coverage. Overall well-structured but could be more extensive.",
+          "score": 7.3
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model D provides only 37 lessons which is notably less comprehensive than expected for covering all past tenses thoroughly. While the lessons are focused and descriptions are concise, the coverage is insufficient. Some concepts are combined (e.g., 'Present Perfect: just, already, yet' should be separate lessons per requirements). Missing dedicated lessons for many common irregular verbs. The last lesson about 'Errores frecuentes' is outside pure language acquisition focus. Less granular breakdown of concepts compared to better models.",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model H provides only 44 lessons which is insufficient for comprehensive coverage. While lessons are well-focused on single concepts, the overall coverage is limited. Missing many common irregular verbs, missing contractions lessons, limited coverage of time expressions. Present perfect negations are split by haven't/hasn't which is good, but the overall progression and completeness falls short. Past perfect coverage is minimal with only 6 lessons. The lessons that are included are well-structured but the set is not 'extensive' as required.",
+          "score": 6.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "This model followed the instructions perfectly, particularly the constraints to break topics down into the smallest manageable units and to avoid 'AND/OR' in titles. It offers the most granular breakdown (e.g., separating 'was' and 'were', separating 'haven\\'t' and 'hasn\\'t', and separating spelling rules extensively). It avoids combining concepts that other models lumped together, resulting in a highly effective, step-by-step curriculum ideal for the requested '10 tweet' micro-lesson format.",
+          "score": 9.8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model F provided an excellent, extensive list of lessons (68) with a high degree of granularity. It adhered strictly to the negative constraints regarding 'AND/OR' in titles (splitting 'was/were', 'ever/never'). It grouped irregular verbs by pattern rather than individual words, which is a strong pedagogical approach, though slightly less granular than Model G in some specific grammar instances (like negation). It is a top-tier output.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Model A produced a very solid curriculum with good granularity (46 lessons). It respected the 'split' constraint for the most part (separating 'Was' and 'Were', and pronunciation rules). However, it lumped some concepts that strictly could be split (e.g., negative structures) and used a slash in one title ('Was/Were'), which implies an 'OR'. It is slightly less comprehensive than G and F but still very good.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model H followed the constraints well, separating distinct forms like singular/plural 'to be' and 'haven\\'t/hasn\\'t'. However, it was less extensive (44 lessons) than the top models and missed some of the finer nuances in spelling rules and adverb placement that F and G captured.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model B provided a good list of lessons in terms of progression, but it failed the negative constraint regarding title formatting. Several titles explicitly use 'y' (and) or 'vs' (e.g., 'Was y Were', 'Have vs Has'), which the prompt specifically asked to be split into separate lessons. This indicates a failure to follow negative constraints despite good content.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Similar to Model B, Model C failed the 'AND/OR/VS' constraint multiple times (e.g., 'Was y Were', 'Before y After'). While the content is decent, the lack of adherence to the specific splitting instructions lowers the score significantly.",
+          "score": 5.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Model E focused heavily on comparisons ('Simple Past vs Past Continuous'), which violates the instruction to split 'VS' topics into specific single-concept lessons. While comparisons are useful, the prompt explicitly forbade this titling style to ensure atomic lessons.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model D had the fewest lessons (37) and frequently combined concepts that should have been separated (e.g., 'negaciones y preguntas', 'just, already, yet', 'was / were'). This resulted in broad lessons that violate the 'single specific concept' expectation more than the other models.",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Cumple muy bien con la progresión y la granularidad: muchos microtemas (pronunciación /t/ /d/ /ɪd/, reglas ortográficas separadas, estructuras de negación/preguntas por tiempo). Separa regulares/irregulares en pasado simple y participios en perfectos. En general evita títulos con “vs”. Punto débil: incluye “presente perfecto” dentro de un capítulo de “pasados” (aunque suele enseñarse junto con tiempos pasados) y algunos títulos/descr. usan inglés (was/were, did), pero el texto general está en español LATAM y la segmentación es la más consistente.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Buena cobertura y progresión, con lecciones bastante atómicas (ortografía -e, -y, CVC; pronunciación -ed; negación/preguntas; -ing). Separa regulares/irregulares y cubre perfectos. Debilidad importante: varias lecciones combinan más de un concepto (p. ej., “formación… y reglas básicas de uso”, “present perfect… y diferencias… frente al pasado simple”, “interrupción: past continuous y past simple en contexto”), lo cual viola “no combinar tipos de tiempo en una sola lección”.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Muy alineado con “un concepto por lección” en la mayor parte: divide pronunciaciones, ortografías, auxiliares, negaciones/preguntas. Progresión clara. Debilidades: algunas lecciones son demasiado generales/vagas (“Auxiliar Did” sin delimitar bien el objetivo), falta más lista/segmentación de irregulares (solo “invariables” y “cambio de vocal”), y cobertura menos “extensa” que A/B/C/F/G para el capítulo.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Extremadamente granular (incluye detalles útiles como wh- sujeto sin did, marcadores específicos, contracciones separadas). Buena separación de estructuras por tiempo. Debilidades: es excesivamente largo y a veces hiperfragmentado en micro-piezas poco “conceptuales” (p. ej., lecciones solo para “did not” vs “didn’t”, “wasn’t” y “weren’t”), lo que se acerca a “formato de hilo” más que a lista de lecciones; además mezcla algunas distinciones comparativas implícitas (got vs gotten) y usa ejemplos/énfasis más de EE. UU. sin necesidad.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Cobertura amplia y bastante atómica, con separación explícita de regulares/irregulares, pronunciación, -ing, y estructuras por tiempo. Debilidades: introduce varias lecciones comparativas entre tiempos (simple past vs past continuous / present perfect vs simple past), y algunas duplicidades/redundancias (“Simple Past: evento completo” aparece como contraste). También incluye una lección meta (“Past Perfect continuous… por qué no aparece”) que no es adquisición directa del contenido del capítulo.",
+          "score": 7.4
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Cobertura extensa y ordenada, pero viola varias expectativas: muchos títulos usan “vs” (While vs When; For vs Since; varios “Pasado Simple vs…”), y varias lecciones combinan tiempos en una sola (“Pasado Continuo con Pasado Simple: Interrupción”, “Uso del pasado continuo con past perfect…”). Además incluye lecciones de “errores comunes” (prohibidas) y “marcadores temporales en tiempos pasados” (mezcla).",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Similar a B en amplitud, pero también incumple: incluye múltiples lecciones “Past Simple o Present Perfect…” (comparativas), combina tiempos (“Past Perfect con Past Simple en Oraciones”), y termina con una lección de “Los Cuatro Tiempos… en contraste” (resumen/review prohibido y mezcla de tiempos). También usa bastante inglés en títulos (“Past Simple”, “Past Continuous”).",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Estructura clara por tiempo, pero incumple de forma directa varias reglas: muchas lecciones comparativas “X vs Y” (prohibido) y varias lecciones combinan conceptos (p. ej., “Acciones interrumpidas (when, while)” junta conectores; “For y Since” junta dos). Cobertura de irregulares es menos sistemática que otros modelos y la granularidad es más gruesa.",
+          "score": 6.1
+        }
+      ]
+    }
+  ],
+  "taskId": "language-chapter-lessons",
+  "testCaseId": "es-english-past-tenses-1"
+}

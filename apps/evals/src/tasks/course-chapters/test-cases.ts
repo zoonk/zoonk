@@ -85,20 +85,6 @@ export const TEST_CASES = [
   },
   {
     expectations: `
-      - SHOULD cover everyday communication scenarios
-      - MUST be in English (teaching Spanish)
-      - Should reach at least A2 proficiency
-      - Don't add culture-specific chapters, just focus on language learning
-      - Don't add proficiency exam preparation chapters, just focus on language learning skills
-      - Don't add career chapter since this is an exception to the career-related rule. Main focus here is language learning
-
-      ${SHARED_EXPECTATIONS}
-    `,
-    id: "en-spanish",
-    userInput: { courseTitle: "Spanish", language: "en" },
-  },
-  {
-    expectations: `
       - MUST be in Brazilian Portuguese
       - Should cover Brazilian Law
       
