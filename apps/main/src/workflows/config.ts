@@ -46,6 +46,12 @@ export const ACTIVITY_STEPS = [
   "setQuizAsCompleted",
   "setReviewAsCompleted",
   "setStoryAsCompleted",
+  "generateVocabularyContent",
+  "saveVocabularyWords",
+  "generateVocabularyPronunciation",
+  "generateVocabularyAudio",
+  "updateVocabularyEnrichments",
+  "setVocabularyAsCompleted",
   "setActivityAsCompleted",
   "workflowError",
 ] as const;
@@ -61,7 +67,8 @@ export type ActivityCompletionStep =
   | "setMechanicsAsCompleted"
   | "setQuizAsCompleted"
   | "setReviewAsCompleted"
-  | "setStoryAsCompleted";
+  | "setStoryAsCompleted"
+  | "setVocabularyAsCompleted";
 
 const activityCompletionSteps: Partial<Record<string, ActivityCompletionStep>> = {
   background: "setBackgroundAsCompleted",
@@ -73,6 +80,7 @@ const activityCompletionSteps: Partial<Record<string, ActivityCompletionStep>> =
   quiz: "setQuizAsCompleted",
   review: "setReviewAsCompleted",
   story: "setStoryAsCompleted",
+  vocabulary: "setVocabularyAsCompleted",
 };
 
 /**

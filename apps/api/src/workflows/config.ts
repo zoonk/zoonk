@@ -45,6 +45,12 @@ const ACTIVITY_STEPS = [
   "setQuizAsCompleted",
   "setReviewAsCompleted",
   "setStoryAsCompleted",
+  "generateVocabularyContent",
+  "saveVocabularyWords",
+  "generateVocabularyPronunciation",
+  "generateVocabularyAudio",
+  "updateVocabularyEnrichments",
+  "setVocabularyAsCompleted",
   "setActivityAsCompleted",
   "workflowError",
 ] as const;

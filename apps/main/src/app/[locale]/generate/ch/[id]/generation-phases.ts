@@ -48,6 +48,7 @@ const PHASE_STEPS = {
     "setQuizAsCompleted",
     "setReviewAsCompleted",
     "setStoryAsCompleted",
+    "setVocabularyAsCompleted",
     "setActivityAsCompleted",
   ],
   preparingLessons: [
@@ -75,6 +76,11 @@ const PHASE_STEPS = {
     "generateQuizContent",
     "generateReviewContent",
     "generateStoryContent",
+    "generateVocabularyContent",
+    "saveVocabularyWords",
+    "generateVocabularyPronunciation",
+    "generateVocabularyAudio",
+    "updateVocabularyEnrichments",
   ],
 } as const satisfies Record<PhaseName, readonly ChapterWorkflowStepName[]>;
 

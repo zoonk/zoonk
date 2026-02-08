@@ -15,6 +15,7 @@ const kindToStepName: Partial<Record<ActivityKind, ActivityStepName>> = {
   quiz: "setQuizAsCompleted",
   review: "setReviewAsCompleted",
   story: "setStoryAsCompleted",
+  vocabulary: "setVocabularyAsCompleted",
 };
 
 export async function saveActivityStep(
