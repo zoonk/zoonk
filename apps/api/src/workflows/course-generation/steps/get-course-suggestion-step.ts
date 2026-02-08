@@ -17,6 +17,7 @@ export async function getCourseSuggestionStep(
       generationStatus: true,
       language: true,
       slug: true,
+      targetLanguage: true,
       title: true,
     },
     where: { id: courseSuggestionId },
@@ -43,6 +44,7 @@ export async function getCourseSuggestionStep(
     id: courseSuggestionId,
     language: suggestion.language,
     slug: suggestion.slug,
+    targetLanguage: suggestion.targetLanguage,
     title: suggestion.title,
   };
 }

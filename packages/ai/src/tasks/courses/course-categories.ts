@@ -3,7 +3,7 @@ import { COURSE_CATEGORIES } from "@zoonk/utils/categories";
 import { Output, generateText } from "ai";
 import { z } from "zod";
 import { type ReasoningEffort, buildProviderOptions } from "../../provider-options";
-import systemPrompt from "./course-categories.prompt.md";
+import promptTemplate from "./course-categories.prompt.md";
 
 const DEFAULT_MODEL = process.env.AI_MODEL_COURSE_CATEGORIES ?? "google/gemini-3-flash";
 
@@ -15,8 +15,16 @@ const FALLBACK_MODELS = [
   "openai/gpt-4.1-mini",
 ];
 
+/**
+ * Categories available for AI assignment.
+ * "languages" is excluded because language courses are categorized deterministically.
+ */
+const AI_CATEGORIES = COURSE_CATEGORIES.filter(
+  (cat): cat is Exclude<(typeof COURSE_CATEGORIES)[number], "languages"> => cat !== "languages",
+);
+
 const schema = z.object({
-  categories: z.array(z.enum(COURSE_CATEGORIES)),
+  categories: z.array(z.enum(AI_CATEGORIES)),
 });
 
 export type CourseCategoriesSchema = z.infer<typeof schema>;
@@ -35,6 +43,7 @@ export async function generateCourseCategories({
   reasoningEffort,
 }: CourseCategoriesParams) {
   const userPrompt = `COURSE_TITLE: ${courseTitle}`;
+  const systemPrompt = promptTemplate.replace("{{CATEGORIES}}", () => AI_CATEGORIES.join(", "));
 
   const providerOptions = buildProviderOptions({
     fallbackModels: FALLBACK_MODELS,

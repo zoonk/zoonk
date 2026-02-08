@@ -14,6 +14,7 @@ export type CourseSuggestionData = {
   slug: string;
   title: string;
   description: string;
+  targetLanguage: string | null;
   generationStatus: GenerationStatus;
   generationRunId: string | null;
 };
@@ -24,6 +25,7 @@ export type CourseContext = {
   courseTitle: string;
   language: string;
   organizationId: number;
+  targetLanguage: string | null;
 };
 
 export type GeneratedChapter = {

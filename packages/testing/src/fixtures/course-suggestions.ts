@@ -10,6 +10,7 @@ export function courseSuggestionAttrs(
     generationStatus: "pending",
     language: "en",
     slug: `test-suggestion-${randomUUID()}`,
+    targetLanguage: null,
     title: "Test Course Suggestion",
     ...attrs,
   };

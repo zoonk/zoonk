@@ -18,6 +18,7 @@ const schema = z.object({
   courses: z.array(
     z.object({
       description: z.string(),
+      targetLanguageCode: z.string().nullable(),
       title: z.string(),
     }),
   ),

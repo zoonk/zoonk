@@ -43,6 +43,7 @@ export async function getOrCreateCourse(
     courseTitle: suggestion.title,
     language: suggestion.language,
     organizationId: aiOrg.id,
+    targetLanguage: suggestion.targetLanguage,
   };
 
   await setCourseAsRunningStep({

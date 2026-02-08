@@ -57,7 +57,9 @@ describe("course-suggestions", () => {
     const language = "en";
     const prompt = `vitest-${randomUUID()}`;
 
-    const generatedSuggestions = [{ description: "A course on Vitest basics.", title: "Vitest" }];
+    const generatedSuggestions = [
+      { description: "A course on Vitest basics.", targetLanguageCode: null, title: "Vitest" },
+    ];
 
     // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- mock return type
     spy.mockResolvedValueOnce({ data: generatedSuggestions } as never);
@@ -89,7 +91,9 @@ describe("course-suggestions", () => {
     const prompt1 = `dedupe-test-1-${randomUUID()}`;
     const prompt2 = `dedupe-test-2-${randomUUID()}`;
 
-    const suggestions = [{ description: "Learn basics", title: "Common Course" }];
+    const suggestions = [
+      { description: "Learn basics", targetLanguageCode: null, title: "Common Course" },
+    ];
 
     // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- mock return type
     spy.mockResolvedValue({ data: suggestions } as never);
@@ -111,6 +115,115 @@ describe("course-suggestions", () => {
       where: { language, slug: toSlug("Common Course") },
     });
     expect(items).toHaveLength(1);
+  });
+
+  test("overrides title with Intl language name for supported language courses", async () => {
+    const spy = vi.spyOn(courseSuggestions, "generateCourseSuggestions");
+
+    const language = "pt";
+    const prompt = `lang-override-${randomUUID()}`;
+
+    const generatedSuggestions = [
+      {
+        description: "Learn Spanish from scratch.",
+        targetLanguageCode: "es",
+        title: "Espanhol",
+      },
+    ];
+
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- mock return type
+    spy.mockResolvedValueOnce({ data: generatedSuggestions } as never);
+
+    const result = await generateCourseSuggestions({ language, prompt });
+
+    // Title should be the Intl-derived name, not the AI-generated one
+    expect(result.suggestions[0]?.title).toBe("Espanhol");
+    expect(result.suggestions[0]?.targetLanguage).toBe("es");
+
+    const dbItem = await prisma.courseSuggestion.findUnique({
+      where: { languageSlug: { language, slug: toSlug("Espanhol") } },
+    });
+
+    expect(dbItem?.title).toBe("Espanhol");
+    expect(dbItem?.targetLanguage).toBe("es");
+  });
+
+  test("overrides AI title with deterministic Intl name for language courses", async () => {
+    const spy = vi.spyOn(courseSuggestions, "generateCourseSuggestions");
+
+    const language = "en";
+    const prompt = `toefl-override-${randomUUID()}`;
+
+    // AI returns "TOEFL" but with targetLanguageCode "en" — title should become "English"
+    const generatedSuggestions = [
+      {
+        description: "Pass the TOEFL exam.",
+        targetLanguageCode: "en",
+        title: "TOEFL",
+      },
+    ];
+
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- mock return type
+    spy.mockResolvedValueOnce({ data: generatedSuggestions } as never);
+
+    const result = await generateCourseSuggestions({ language, prompt });
+
+    expect(result.suggestions[0]?.title).toBe("English");
+    expect(result.suggestions[0]?.targetLanguage).toBe("en");
+  });
+
+  test("keeps AI title for unsupported targetLanguageCode", async () => {
+    const spy = vi.spyOn(courseSuggestions, "generateCourseSuggestions");
+
+    const language = "en";
+    const prompt = `unsupported-lang-${randomUUID()}`;
+
+    const generatedSuggestions = [
+      {
+        description: "Learn this language.",
+        targetLanguageCode: "xx",
+        title: "Unknown Language",
+      },
+    ];
+
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- mock return type
+    spy.mockResolvedValueOnce({ data: generatedSuggestions } as never);
+
+    const result = await generateCourseSuggestions({ language, prompt });
+
+    expect(result.suggestions[0]?.title).toBe("Unknown Language");
+    expect(result.suggestions[0]?.targetLanguage).toBeNull();
+  });
+
+  test("deduplicates suggestions with the same targetLanguageCode", async () => {
+    const spy = vi.spyOn(courseSuggestions, "generateCourseSuggestions");
+
+    const language = "pt";
+    const prompt = `dedupe-lang-${randomUUID()}`;
+
+    // AI returns two suggestions that both resolve to the same language
+    const generatedSuggestions = [
+      {
+        description: "Pass the TOEFL exam.",
+        targetLanguageCode: "en",
+        title: "TOEFL",
+      },
+      {
+        description: "Learn English.",
+        targetLanguageCode: "en",
+        title: "Inglês",
+      },
+    ];
+
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- mock return type
+    spy.mockResolvedValueOnce({ data: generatedSuggestions } as never);
+
+    const result = await generateCourseSuggestions({ language, prompt });
+
+    // Should deduplicate to only one suggestion
+    expect(result.suggestions).toHaveLength(1);
+    expect(result.suggestions[0]?.title).toBe("Inglês");
+    expect(result.suggestions[0]?.targetLanguage).toBe("en");
   });
 
   test("getCourseSuggestionById returns null for non-existent id", async () => {
@@ -140,6 +253,7 @@ describe("course-suggestions", () => {
       generationStatus: "pending",
       language,
       slug,
+      targetLanguage: null,
       title,
     });
   });

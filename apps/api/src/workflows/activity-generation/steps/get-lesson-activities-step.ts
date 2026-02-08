@@ -20,6 +20,7 @@ async function getLessonActivities(lessonId: number) {
               course: {
                 select: {
                   organization: { select: { slug: true } },
+                  targetLanguage: true,
                   title: true,
                 },
               },

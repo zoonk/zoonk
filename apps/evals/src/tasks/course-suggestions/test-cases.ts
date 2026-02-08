@@ -6,6 +6,8 @@ const SHARED_EXPECTATIONS = `
   - Title should NOT have words like "course" in the title
   - Title cases are not important (e.g., both "física" and "Física" are acceptable)
   - Not following title guidelines is a major error
+  - Setting targetLanguageCode to a non-null value for non-language courses is a major error
+  - targetLanguageCode must be null for any course that is NOT teaching a language
 `;
 
 export const TEST_CASES = [
@@ -14,6 +16,7 @@ export const TEST_CASES = [
       - titles should include broad topics like "Ciência da Computação", "Programação", "Desenvolvimento de Software"
       - may include other related topics to coding and programming
       - all titles and descriptions in Brazilian Portuguese
+      - targetLanguageCode must be null for all suggestions
 
       ${SHARED_EXPECTATIONS}
     `,
@@ -28,6 +31,7 @@ export const TEST_CASES = [
       - should include "Black Holes" in the first result
       - should include broader topics like "Astrophysics"
       - all titles and descriptions in US English
+      - targetLanguageCode must be null for all suggestions
 
       ${SHARED_EXPECTATIONS}
     `,
@@ -42,6 +46,7 @@ export const TEST_CASES = [
       - should include "Derecho Penal"
       - may include broader or similar topics
       - all titles and descriptions in Latin American Spanish
+      - targetLanguageCode must be null for all suggestions
 
       ${SHARED_EXPECTATIONS}
     `,
@@ -56,6 +61,7 @@ export const TEST_CASES = [
       - should include "Derecho Chileno" since the user is specifically asking for Chilean law
       - if including related topics, they should be specific to Chilean law, not general Spanish law
       - all titles and descriptions in Chilean Spanish since this courses is specific to Chile
+      - targetLanguageCode must be null for all suggestions
 
       ${SHARED_EXPECTATIONS}
     `,
@@ -67,9 +73,10 @@ export const TEST_CASES = [
   },
   {
     expectations: `
-      - should ONLY include "TOEFL" and "Inglês"
+      - should ONLY include "Inglês" with targetLanguageCode "en"
       - all titles and descriptions in Brazilian Portuguese
-      - no extra titles like "Testes de Proficiência em Inglês", "Preparatório para o TOEFL", etc
+      - no extra titles like "TOEFL", "Testes de Proficiência em Inglês", "Preparatório para o TOEFL", etc
+      - must return EXACTLY ONE suggestion
 
       ${SHARED_EXPECTATIONS}
     `,
@@ -85,6 +92,7 @@ export const TEST_CASES = [
       - should NOT include "Física e Química" as a single title
       - may include broader or similar topics but it's not required
       - all titles and descriptions in Brazilian Portuguese
+      - targetLanguageCode must be null for all suggestions
 
       ${SHARED_EXPECTATIONS}
     `,
@@ -100,6 +108,7 @@ export const TEST_CASES = [
       - do NOT include "Intro to Chemistry" or "Introduction to Chemistry"
       - may include broader or similar topics but it's not required
       - all titles and descriptions in US English
+      - targetLanguageCode must be null for all suggestions
 
       ${SHARED_EXPECTATIONS}
     `,
@@ -114,6 +123,7 @@ export const TEST_CASES = [
       - should include "Dragon Ball", fixing the typo in the input
       - optionally, may include broader alts like "Animação", "Cultura Pop" or related suggestions
       - all titles and descriptions in Brazilian Portuguese
+      - targetLanguageCode must be null for all suggestions
 
       ${SHARED_EXPECTATIONS}
     `,
@@ -128,6 +138,7 @@ export const TEST_CASES = [
       - should include "Beatles" or "The Beatles"
       - optionally, may include broader alts like "Rock", "Music History" or related suggestions
       - all titles and descriptions in US English
+      - targetLanguageCode must be null for all suggestions
 
       ${SHARED_EXPECTATIONS}
     `,
@@ -142,6 +153,7 @@ export const TEST_CASES = [
       - should include "Formule 1" or "F1"
       - optionally, may include broader alts like "Sport Automobile", "Courses de Voitures" or related suggestions
       - all titles and descriptions in France French
+      - targetLanguageCode must be null for all suggestions
 
       ${SHARED_EXPECTATIONS}
     `,
@@ -153,11 +165,11 @@ export const TEST_CASES = [
   },
   {
     expectations: `
-      - should include "JLPT" without the "N2" level suffix
-      - should include "Japanese", not "Japanese Language" (adding a "language" suffix is a major error)
+      - should ONLY include "Japanese" with targetLanguageCode "ja"
+      - should NOT include "Japanese Language" (adding a "language" suffix is a major error)
       - all titles and descriptions in US English
-      - no extra titles like "Japanese Language Proficiency Test", "JLPT N2 Preparation", etc
-      - should NOT include any other suggestions
+      - no extra titles like "JLPT", "Japanese Language Proficiency Test", "JLPT N2 Preparation", etc
+      - must return EXACTLY ONE suggestion
 
       ${SHARED_EXPECTATIONS}
     `,
@@ -169,10 +181,10 @@ export const TEST_CASES = [
   },
   {
     expectations: `
-      - should ONLY include "IELTS" and "Inglês", strip "Academic" suffix
+      - should ONLY include "Inglês" with targetLanguageCode "en"
       - all titles and descriptions in Brazilian Portuguese
-      - no extra titles like "Testes de Proficiência em Inglês", "Preparatório para o IELTS", etc
-      - should NOT include any other suggestions
+      - no extra titles like "IELTS", "Testes de Proficiência em Inglês", "Preparatório para o IELTS", etc
+      - must return EXACTLY ONE suggestion
 
       ${SHARED_EXPECTATIONS}
     `,
@@ -187,6 +199,7 @@ export const TEST_CASES = [
       - should include broad courses like "Computer Science", "Computer Architecture", etc
       - extra related topics are fine but their absence is also fine
       - all titles and descriptions in US English
+      - targetLanguageCode must be null for all suggestions
 
       ${SHARED_EXPECTATIONS}
     `,
@@ -202,6 +215,7 @@ export const TEST_CASES = [
       - should NOT include an article title like "A Tabela Periódica"
       - may include other chemistry-related topics and broad suggestions like "Química"
       - all titles and descriptions in Brazilian Portuguese
+      - targetLanguageCode must be null for all suggestions
 
       ${SHARED_EXPECTATIONS}
     `,
@@ -217,6 +231,7 @@ export const TEST_CASES = [
       - may include other sci-fi related topics and broad suggestions
       - may include broader film-related suggestions
       - all titles and descriptions in US English
+      - targetLanguageCode must be null for all suggestions
 
       ${SHARED_EXPECTATIONS}
     `,
@@ -231,6 +246,7 @@ export const TEST_CASES = [
       - should include "Artificial Intelligence" (not "AI" abbreviation in the title)
       - may include other AI-related topics and broad suggestions
       - all titles and descriptions in US English
+      - targetLanguageCode must be null for all suggestions
 
       ${SHARED_EXPECTATIONS}
     `,
@@ -245,6 +261,7 @@ export const TEST_CASES = [
       - should include the exact book title ("The Wealth of Nations") since the user is specifically asking for this book
       - should include broader or similar topics
       - all titles and descriptions in US English
+      - targetLanguageCode must be null for all suggestions
 
       ${SHARED_EXPECTATIONS}
     `,
