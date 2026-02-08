@@ -87,5 +87,17 @@ export async function getActivityKinds(params?: { locale: string }): Promise<Act
       key: "review",
       label: t("Review"),
     },
+    {
+      description: t(
+        "A dialogue-based story that helps you practice the language in a real-world context.",
+      ),
+      key: "languageStory",
+      label: t("Story"),
+    },
+    {
+      description: t("A comprehensive review covering vocabulary and skills from this lesson."),
+      key: "languageReview",
+      label: t("Review"),
+    },
   ];
 }

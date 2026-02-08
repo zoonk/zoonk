@@ -1271,6 +1271,11 @@ msgid "Tests analytical thinking through decisions with trade-offs. See how each
 msgstr "Tests analytical thinking through decisions with trade-offs. See how each choice impacts different outcomes."
 
 #: src/lib/activities.ts
+msgctxt "i09QqM"
+msgid "A dialogue-based story that helps you practice the language in a real-world context."
+msgstr "A dialogue-based story that helps you practice the language in a real-world context."
+
+#: src/lib/activities.ts
 msgctxt "J9eZ8n"
 msgid "Listen to audio sentences and translate them to practice listening skills."
 msgstr "Listen to audio sentences and translate them to practice listening skills."
@@ -1319,6 +1324,11 @@ msgstr "Review"
 msgctxt "tzNRA/"
 msgid "Explains WHAT this topic is. Breaks down core concepts and definitions using metaphors and analogies."
 msgstr "Explains WHAT this topic is. Breaks down core concepts and definitions using metaphors and analogies."
+
+#: src/lib/activities.ts
+msgctxt "U9yVH/"
+msgid "A comprehensive review covering vocabulary and skills from this lesson."
+msgstr "A comprehensive review covering vocabulary and skills from this lesson."
 
 #: src/lib/activities.ts
 msgctxt "WD76vM"

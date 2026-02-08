@@ -2084,63 +2084,6 @@ describe(activityGenerationWorkflow, () => {
       expect(generateActivityReview).not.toHaveBeenCalled();
     });
 
-    test("doesn't call generateActivityReview for language lessons", async () => {
-      const testLesson = await lessonFixture({
-        chapterId: chapter.id,
-        kind: "language",
-        organizationId,
-        title: `Language Lesson ${randomUUID()}`,
-      });
-
-      const activities = await Promise.all([
-        activityFixture({
-          generationStatus: "pending",
-          kind: "background",
-          lessonId: testLesson.id,
-          organizationId,
-          title: `Background ${randomUUID()}`,
-        }),
-        activityFixture({
-          generationStatus: "pending",
-          kind: "explanation",
-          lessonId: testLesson.id,
-          organizationId,
-          title: `Explanation ${randomUUID()}`,
-        }),
-        activityFixture({
-          generationStatus: "pending",
-          kind: "mechanics",
-          lessonId: testLesson.id,
-          organizationId,
-          title: `Mechanics ${randomUUID()}`,
-        }),
-        activityFixture({
-          generationStatus: "pending",
-          kind: "examples",
-          lessonId: testLesson.id,
-          organizationId,
-          title: `Examples ${randomUUID()}`,
-        }),
-        activityFixture({
-          generationStatus: "pending",
-          kind: "review",
-          lessonId: testLesson.id,
-          organizationId,
-          title: `Review ${randomUUID()}`,
-        }),
-      ]);
-
-      await activityGenerationWorkflow(testLesson.id);
-
-      expect(generateActivityReview).not.toHaveBeenCalled();
-
-      const reviewActivity = activities[4];
-      const dbActivity = await prisma.activity.findUnique({
-        where: { id: reviewActivity?.id },
-      });
-      expect(dbActivity?.generationStatus).toBe("pending");
-    });
-
     test("passes all dependency steps to generateActivityReview", async () => {
       const testLesson = await lessonFixture({
         chapterId: chapter.id,

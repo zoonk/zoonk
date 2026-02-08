@@ -183,7 +183,7 @@ describe(lessonGenerationWorkflow, () => {
   });
 
   describe("language lesson flow", () => {
-    test("generates 5 fixed activities for language lesson", async () => {
+    test("generates 6 fixed activities for language lesson", async () => {
       vi.mocked(generateLessonKind).mockResolvedValueOnce({
         data: { kind: "language" },
       } as Awaited<ReturnType<typeof generateLessonKind>>);
@@ -210,13 +210,15 @@ describe(lessonGenerationWorkflow, () => {
         where: { lessonId: lesson.id },
       });
 
-      expect(activities).toHaveLength(5);
+      expect(activities).toHaveLength(6);
+
       expect(activities.map((a) => a.kind)).toEqual([
         "vocabulary",
         "grammar",
         "reading",
         "listening",
-        "review",
+        "languageStory",
+        "languageReview",
       ]);
 
       for (const activity of activities) {

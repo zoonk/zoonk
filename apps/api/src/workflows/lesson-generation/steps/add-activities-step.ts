@@ -20,7 +20,8 @@ const LANGUAGE_ACTIVITY_KINDS: ActivityKind[] = [
   "grammar",
   "reading",
   "listening",
-  "review",
+  "languageStory",
+  "languageReview",
 ];
 
 function getActivitiesForKind(

@@ -9,6 +9,7 @@ import {
   prisma,
 } from "@zoonk/db";
 import { getContinueLearning as getContinueLearningQuery } from "@zoonk/db/continue-learning";
+import { toActivityKind } from "@zoonk/db/utils";
 import { safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
 
@@ -52,7 +53,7 @@ export const getContinueLearning = cache(
     return rows.map((row) => ({
       activity: {
         id: row.activityId,
-        kind: row.activityKind,
+        kind: toActivityKind(row.activityKind),
         position: row.activityPosition,
         title: row.activityTitle,
       },

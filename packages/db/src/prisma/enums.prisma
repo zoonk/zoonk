@@ -25,6 +25,8 @@ enum ActivityKind {
   reading
   listening
   review
+  languageStory  @map("language_story")
+  languageReview @map("language_review")
 }
 
 enum StepKind {

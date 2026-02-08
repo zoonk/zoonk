@@ -1271,6 +1271,11 @@ msgid "Tests analytical thinking through decisions with trade-offs. See how each
 msgstr "Evalúa el pensamiento analítico a través de decisiones con compensaciones. Ve cómo cada elección impacta diferentes resultados."
 
 #: src/lib/activities.ts
+msgctxt "i09QqM"
+msgid "A dialogue-based story that helps you practice the language in a real-world context."
+msgstr "Una historia basada en diálogos que te ayuda a practicar el idioma en un contexto del mundo real."
+
+#: src/lib/activities.ts
 msgctxt "J9eZ8n"
 msgid "Listen to audio sentences and translate them to practice listening skills."
 msgstr "Escucha oraciones en audio y tradúcelas para practicar habilidades de escucha."
@@ -1319,6 +1324,11 @@ msgstr "Repaso"
 msgctxt "tzNRA/"
 msgid "Explains WHAT this topic is. Breaks down core concepts and definitions using metaphors and analogies."
 msgstr "Explica QUÉ es este tema. Desglosa conceptos centrales y definiciones usando metáforas y analogías."
+
+#: src/lib/activities.ts
+msgctxt "U9yVH/"
+msgid "A comprehensive review covering vocabulary and skills from this lesson."
+msgstr "Un repaso completo que cubre vocabulario y habilidades de esta lección."
 
 #: src/lib/activities.ts
 msgctxt "WD76vM"
