@@ -27,11 +27,14 @@ export function useGenerationPhases(
   const t = useExtracted();
 
   const labels: Record<PhaseName, string> = {
+    addingPronunciation: t("Adding pronunciation"),
+    buildingWordList: t("Building your word list"),
     creatingImages: t("Creating images"),
     finishing: t("Almost done"),
     gettingStarted: t("Getting started"),
     preparingVisuals: t("Preparing illustrations"),
     processingDependencies: t("Processing earlier activities"),
+    recordingAudio: t("Recording audio"),
     writingContent: t("Writing the content"),
   };
 

@@ -1,18 +1,37 @@
+import { settled } from "@zoonk/utils/settled";
+import { generateVocabularyAudioStep } from "./steps/generate-vocabulary-audio-step";
+import { generateVocabularyContentStep } from "./steps/generate-vocabulary-content-step";
+import { generateVocabularyPronunciationStep } from "./steps/generate-vocabulary-pronunciation-step";
 import { type LessonActivity } from "./steps/get-lesson-activities-step";
+import { saveActivityStep } from "./steps/save-activity-step";
+import { saveVocabularyWordsStep } from "./steps/save-vocabulary-words-step";
+import { updateVocabularyEnrichmentsStep } from "./steps/update-vocabulary-enrichments-step";
 
-/**
- * Language lesson pipeline (placeholder).
- *
- * TODO: Implement when language AI tasks are available.
- * Expected wave structure:
- * - Wave 1: vocabulary/grammar generation
- * - Wave 2: reading/listening generation
- * - Wave 3: languageStory/languageReview generation
- * - Wave 4: save
- */
 export async function languageActivityWorkflow(
-  _activities: LessonActivity[],
-  _workflowRunId: string,
+  activities: LessonActivity[],
+  workflowRunId: string,
 ): Promise<void> {
-  // No-op until language AI tasks exist
+  // Wave 1: Build word list (AI)
+  const { words } = await generateVocabularyContentStep(activities, workflowRunId);
+
+  if (words.length === 0) {
+    return;
+  }
+
+  // Wave 2: Save words + add pronunciation + record audio in parallel
+  const [saveResult, pronResult, audioResult] = await Promise.allSettled([
+    saveVocabularyWordsStep(activities, words),
+    generateVocabularyPronunciationStep(activities, words),
+    generateVocabularyAudioStep(activities, words),
+  ]);
+
+  const { savedWords } = settled(saveResult, { savedWords: [] });
+  const { pronunciations } = settled(pronResult, { pronunciations: {} });
+  const { audioUrls } = settled(audioResult, { audioUrls: {} });
+
+  // Wave 3: Update word records with enrichments
+  await updateVocabularyEnrichmentsStep(activities, savedWords, pronunciations, audioUrls);
+
+  // Wave 4: Mark activity as completed
+  await saveActivityStep(activities, workflowRunId, "vocabulary");
 }

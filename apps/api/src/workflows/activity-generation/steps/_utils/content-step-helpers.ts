@@ -1,6 +1,7 @@
 import { type ActivityKind, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { type LessonActivity } from "../get-lesson-activities-step";
+import { findActivityByKind } from "./find-activity-by-kind";
 import { type ActivitySteps, parseActivitySteps } from "./get-activity-steps";
 
 /**
@@ -34,7 +35,7 @@ export async function resolveActivityForGeneration(
   | { activity: LessonActivity; shouldGenerate: true; existingSteps?: undefined }
   | { activity?: undefined; shouldGenerate: false; existingSteps: ActivitySteps }
 > {
-  const activity = activities.find((act) => act.kind === kind);
+  const activity = findActivityByKind(activities, kind);
 
   if (!activity) {
     return { existingSteps: [], shouldGenerate: false };

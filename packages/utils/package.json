@@ -15,6 +15,7 @@
     "./languages": "./src/languages.ts",
     "./locale": "./src/locale.ts",
     "./search": "./src/search.ts",
+    "./settled": "./src/settled.ts",
     "./string": "./src/string.ts",
     "./url": "./src/url.ts"
   },

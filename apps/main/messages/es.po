@@ -999,6 +999,11 @@ msgid "Almost done"
 msgstr "Casi listo"
 
 #: src/app/[locale]/generate/a/[id]/use-generation-phases.ts
+msgctxt "N3SU2T"
+msgid "Building your word list"
+msgstr "Construyendo tu lista de palabras"
+
+#: src/app/[locale]/generate/a/[id]/use-generation-phases.ts
 msgctxt "sISitf"
 msgid "Processing earlier activities"
 msgstr "Procesando actividades anteriores"
@@ -1009,6 +1014,16 @@ msgstr "Procesando actividades anteriores"
 msgctxt "sLBFa0"
 msgid "Preparing illustrations"
 msgstr "Preparando ilustraciones"
+
+#: src/app/[locale]/generate/a/[id]/use-generation-phases.ts
+msgctxt "T00GEW"
+msgid "Recording audio"
+msgstr "Grabando audio"
+
+#: src/app/[locale]/generate/a/[id]/use-generation-phases.ts
+msgctxt "TlrPFF"
+msgid "Adding pronunciation"
+msgstr "Agregando pronunciación"
 
 #: src/app/[locale]/generate/a/[id]/use-generation-phases.ts
 #: src/app/[locale]/generate/ch/[id]/use-generation-phases.ts

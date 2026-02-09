@@ -693,6 +693,100 @@ test.describe("Generate Activity Page - With Subscription", () => {
     );
   });
 
+  test("completes workflow for vocabulary activity kind", async ({ userWithoutProgress }) => {
+    await createTestSubscription();
+
+    const org = await prisma.organization.findUniqueOrThrow({
+      where: { slug: "ai" },
+    });
+
+    const uniqueId = randomUUID().slice(0, 8);
+    const courseTitle = `E2E Vocabulary Course ${uniqueId}`;
+    const chapterTitle = `E2E Vocabulary Chapter ${uniqueId}`;
+    const lessonTitle = `E2E Vocabulary Lesson ${uniqueId}`;
+    const activityTitle = `E2E Vocabulary Activity ${uniqueId}`;
+
+    const course = await courseFixture({
+      isPublished: true,
+      normalizedTitle: normalizeString(courseTitle),
+      organizationId: org.id,
+      slug: `e2e-vocabulary-course-${uniqueId}`,
+      targetLanguage: "es",
+      title: courseTitle,
+    });
+
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      generationStatus: "completed",
+      isPublished: true,
+      normalizedTitle: normalizeString(chapterTitle),
+      organizationId: org.id,
+      slug: `e2e-vocabulary-chapter-${uniqueId}`,
+      title: chapterTitle,
+    });
+
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      generationStatus: "completed",
+      isPublished: true,
+      kind: "language",
+      normalizedTitle: normalizeString(lessonTitle),
+      organizationId: org.id,
+      slug: `e2e-vocabulary-lesson-${uniqueId}`,
+      title: lessonTitle,
+    });
+
+    const activity = await activityFixture({
+      generationStatus: "pending",
+      isPublished: true,
+      kind: "vocabulary",
+      lessonId: lesson.id,
+      organizationId: org.id,
+      title: activityTitle,
+    });
+
+    await setupMockApis(userWithoutProgress, {
+      streamMessages: [
+        { status: "started", step: "getLessonActivities" },
+        { status: "completed", step: "getLessonActivities" },
+        { status: "started", step: "setActivityAsRunning" },
+        { status: "completed", step: "setActivityAsRunning" },
+        { status: "started", step: "generateVocabularyContent" },
+        { status: "completed", step: "generateVocabularyContent" },
+        { status: "started", step: "saveVocabularyWords" },
+        { status: "completed", step: "saveVocabularyWords" },
+        { status: "started", step: "generateVocabularyPronunciation" },
+        { status: "completed", step: "generateVocabularyPronunciation" },
+        { status: "started", step: "generateVocabularyAudio" },
+        { status: "completed", step: "generateVocabularyAudio" },
+        { status: "started", step: "updateVocabularyEnrichments" },
+        { status: "completed", step: "updateVocabularyEnrichments" },
+        { status: "started", step: "setVocabularyAsCompleted" },
+        { status: "completed", step: "setVocabularyAsCompleted" },
+      ],
+    });
+
+    await userWithoutProgress.goto(`/generate/a/${activity.id}`);
+
+    await expect(userWithoutProgress.getByText(/your activity is ready/i)).toBeVisible({
+      timeout: 10_000,
+    });
+
+    await expect(userWithoutProgress.getByText(/taking you to your activity/i)).toBeVisible();
+
+    await prisma.activity.update({
+      data: { generationStatus: "completed" },
+      where: { id: activity.id },
+    });
+
+    await userWithoutProgress.waitForURL(
+      new RegExp(
+        `/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}/a/${activity.position}`,
+      ),
+      { timeout: 10_000 },
+    );
+  });
+
   test("shows error when stream returns error status", async ({ userWithoutProgress }) => {
     await createTestSubscription();
     const { activity } = await createPendingActivity();

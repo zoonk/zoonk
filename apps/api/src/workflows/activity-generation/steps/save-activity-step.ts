@@ -4,6 +4,7 @@ import { type ActivityKind, prisma } from "@zoonk/db";
 import { cacheTagActivity } from "@zoonk/utils/cache";
 import { safeAsync } from "@zoonk/utils/error";
 import { streamStatus } from "../stream-status";
+import { findActivityByKind } from "./_utils/find-activity-by-kind";
 import { type LessonActivity } from "./get-lesson-activities-step";
 
 const kindToStepName: Partial<Record<ActivityKind, ActivityStepName>> = {
@@ -15,6 +16,7 @@ const kindToStepName: Partial<Record<ActivityKind, ActivityStepName>> = {
   quiz: "setQuizAsCompleted",
   review: "setReviewAsCompleted",
   story: "setStoryAsCompleted",
+  vocabulary: "setVocabularyAsCompleted",
 };
 
 export async function saveActivityStep(
@@ -24,7 +26,7 @@ export async function saveActivityStep(
 ): Promise<void> {
   "use step";
 
-  const activity = activities.find((a) => a.kind === activityKind);
+  const activity = findActivityByKind(activities, activityKind);
   const stepName = kindToStepName[activityKind];
 
   if (!activity || !stepName) {
