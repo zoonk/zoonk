@@ -53,6 +53,17 @@ export function getPhaseOrder(kind: ActivityKind): PhaseName[] {
     return ["gettingStarted", "buildingWordList", "recordingAudio", "finishing"];
   }
 
+  if (kind === "listening") {
+    return [
+      "gettingStarted",
+      "processingDependencies",
+      "buildingWordList",
+      "recordingAudio",
+      "writingContent",
+      "finishing",
+    ];
+  }
+
   if (kind === "grammar") {
     return ["gettingStarted", "writingContent", "finishing"];
   }
@@ -88,6 +99,7 @@ const ALL_CONTENT_STEPS: ActivityStepName[] = [
   "generateGrammarContent",
   "generateSentences",
   "generateVocabularyContent",
+  "copyListeningSteps",
 ];
 
 const ALL_VOCABULARY_STEPS: ActivityStepName[] = [
@@ -116,6 +128,7 @@ const ALL_COMPLETION_STEPS: ActivityStepName[] = [
   "setGrammarAsCompleted",
   "setVocabularyAsCompleted",
   "setReadingAsCompleted",
+  "setListeningAsCompleted",
   "setActivityAsCompleted",
 ];
 
@@ -212,6 +225,30 @@ export function getPhaseSteps(kind: ActivityKind): Record<PhaseName, ActivitySte
     };
   }
 
+  if (kind === "listening") {
+    return {
+      ...shared,
+      buildingWordList: ["saveSentences"],
+      creatingImages: [],
+      finishing: [
+        "generateVisuals",
+        "generateImages",
+        "generateQuizImages",
+        ...getFinishingSteps([
+          "generateSentences",
+          "saveSentences",
+          "generateAudio",
+          "updateSentenceEnrichments",
+          "copyListeningSteps",
+        ]),
+      ],
+      preparingVisuals: [],
+      processingDependencies: ["setActivityAsRunning", "generateSentences"],
+      recordingAudio: ["generateAudio", "updateSentenceEnrichments"],
+      writingContent: ["copyListeningSteps"],
+    };
+  }
+
   if (kind === "background") {
     return {
       ...shared,
@@ -269,6 +306,7 @@ const SUPPORTED_KINDS: ActivityKind[] = [
   "examples",
   "explanation",
   "grammar",
+  "listening",
   "mechanics",
   "quiz",
   "reading",

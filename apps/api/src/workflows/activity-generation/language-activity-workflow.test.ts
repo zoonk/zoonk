@@ -1221,6 +1221,370 @@ describe("language activity generation", () => {
     expect(dbActivity?.generationStatus).toBe("failed");
   });
 
+  test("creates listening steps that mirror reading steps", async () => {
+    const testLesson = await lessonFixture({
+      chapterId: chapter.id,
+      kind: "language",
+      organizationId,
+      title: `Listening Mirror ${randomUUID()}`,
+    });
+
+    await createLessonWordsForReading({
+      lessonId: testLesson.id,
+      targetLanguage: "es",
+    });
+
+    await activityFixture({
+      generationStatus: "pending",
+      kind: "vocabulary",
+      lessonId: testLesson.id,
+      organizationId,
+      title: `Vocabulary ${randomUUID()}`,
+    });
+
+    const readingActivity = await activityFixture({
+      generationStatus: "pending",
+      kind: "reading",
+      lessonId: testLesson.id,
+      organizationId,
+      title: `Reading ${randomUUID()}`,
+    });
+
+    const listeningActivity = await activityFixture({
+      generationStatus: "pending",
+      kind: "listening",
+      lessonId: testLesson.id,
+      organizationId,
+      title: `Listening ${randomUUID()}`,
+    });
+
+    await activityGenerationWorkflow(testLesson.id);
+
+    const readingSteps = await prisma.step.findMany({
+      orderBy: { position: "asc" },
+      where: { activityId: readingActivity.id, kind: "reading" },
+    });
+
+    const listeningSteps = await prisma.step.findMany({
+      orderBy: { position: "asc" },
+      where: { activityId: listeningActivity.id, kind: "listening" },
+    });
+
+    expect(listeningSteps).toHaveLength(readingSteps.length);
+
+    listeningSteps.forEach((listeningStep, idx) => {
+      expect(listeningStep.sentenceId).toBe(readingSteps[idx]?.sentenceId);
+      expect(listeningStep.position).toBe(readingSteps[idx]?.position);
+      expect(listeningStep.kind).toBe("listening");
+      expect(listeningStep.content).toEqual({});
+    });
+  });
+
+  test("sets listening activity to completed", async () => {
+    const testLesson = await lessonFixture({
+      chapterId: chapter.id,
+      kind: "language",
+      organizationId,
+      title: `Listening Complete ${randomUUID()}`,
+    });
+
+    await createLessonWordsForReading({
+      lessonId: testLesson.id,
+      targetLanguage: "es",
+    });
+
+    await activityFixture({
+      generationStatus: "pending",
+      kind: "vocabulary",
+      lessonId: testLesson.id,
+      organizationId,
+      title: `Vocabulary ${randomUUID()}`,
+    });
+
+    await activityFixture({
+      generationStatus: "pending",
+      kind: "reading",
+      lessonId: testLesson.id,
+      organizationId,
+      title: `Reading ${randomUUID()}`,
+    });
+
+    const listeningActivity = await activityFixture({
+      generationStatus: "pending",
+      kind: "listening",
+      lessonId: testLesson.id,
+      organizationId,
+      title: `Listening ${randomUUID()}`,
+    });
+
+    await activityGenerationWorkflow(testLesson.id);
+
+    const dbActivity = await prisma.activity.findUnique({
+      where: { id: listeningActivity.id },
+    });
+
+    expect(dbActivity?.generationStatus).toBe("completed");
+    expect(dbActivity?.generationRunId).toBe("test-run-id");
+  });
+
+  test("sets listening to failed when reading has no steps", async () => {
+    const testLesson = await lessonFixture({
+      chapterId: chapter.id,
+      kind: "language",
+      organizationId,
+      title: `Listening NoReading ${randomUUID()}`,
+    });
+
+    const listeningActivity = await activityFixture({
+      generationStatus: "pending",
+      kind: "listening",
+      lessonId: testLesson.id,
+      organizationId,
+      title: `Listening ${randomUUID()}`,
+    });
+
+    await activityGenerationWorkflow(testLesson.id);
+
+    const dbActivity = await prisma.activity.findUnique({
+      where: { id: listeningActivity.id },
+    });
+
+    expect(dbActivity?.generationStatus).toBe("failed");
+  });
+
+  test("reading fails => listening must not complete", async () => {
+    vi.mocked(generateActivitySentences).mockRejectedValueOnce(new Error("Sentences AI failed"));
+
+    const testLesson = await lessonFixture({
+      chapterId: chapter.id,
+      kind: "language",
+      organizationId,
+      title: `Listening ReadFail ${randomUUID()}`,
+    });
+
+    await createLessonWordsForReading({
+      lessonId: testLesson.id,
+      targetLanguage: "es",
+    });
+
+    await activityFixture({
+      generationStatus: "pending",
+      kind: "vocabulary",
+      lessonId: testLesson.id,
+      organizationId,
+      title: `Vocabulary ${randomUUID()}`,
+    });
+
+    await activityFixture({
+      generationStatus: "pending",
+      kind: "reading",
+      lessonId: testLesson.id,
+      organizationId,
+      title: `Reading ${randomUUID()}`,
+    });
+
+    const listeningActivity = await activityFixture({
+      generationStatus: "pending",
+      kind: "listening",
+      lessonId: testLesson.id,
+      organizationId,
+      title: `Listening ${randomUUID()}`,
+    });
+
+    await activityGenerationWorkflow(testLesson.id);
+
+    const dbActivity = await prisma.activity.findUnique({
+      where: { id: listeningActivity.id },
+    });
+
+    expect(dbActivity?.generationStatus).toBe("failed");
+  });
+
+  test("reading audio failure causes both reading and listening to fail", async () => {
+    vi.mocked(generateLanguageAudio).mockResolvedValue({
+      data: null,
+      error: new Error("Audio failed"),
+    });
+
+    const audioFailCourse = await courseFixture({ organizationId, targetLanguage: "it" });
+    const audioFailChapter = await chapterFixture({
+      courseId: audioFailCourse.id,
+      organizationId,
+      title: `ListenAudioFail Chapter ${randomUUID()}`,
+    });
+
+    const testLesson = await lessonFixture({
+      chapterId: audioFailChapter.id,
+      kind: "language",
+      organizationId,
+      title: `Listening AudioFail ${randomUUID()}`,
+    });
+
+    await createLessonWordsForReading({
+      lessonId: testLesson.id,
+      targetLanguage: "it",
+    });
+
+    await activityFixture({
+      generationStatus: "pending",
+      kind: "vocabulary",
+      lessonId: testLesson.id,
+      organizationId,
+      title: `Vocabulary ${randomUUID()}`,
+    });
+
+    const readingActivity = await activityFixture({
+      generationStatus: "pending",
+      kind: "reading",
+      lessonId: testLesson.id,
+      organizationId,
+      title: `Reading ${randomUUID()}`,
+    });
+
+    const listeningActivity = await activityFixture({
+      generationStatus: "pending",
+      kind: "listening",
+      lessonId: testLesson.id,
+      organizationId,
+      title: `Listening ${randomUUID()}`,
+    });
+
+    await activityGenerationWorkflow(testLesson.id);
+
+    const dbReading = await prisma.activity.findUnique({
+      where: { id: readingActivity.id },
+    });
+
+    const dbListening = await prisma.activity.findUnique({
+      where: { id: listeningActivity.id },
+    });
+
+    expect(dbReading?.generationStatus).toBe("failed");
+    expect(dbListening?.generationStatus).toBe("failed");
+  });
+
+  test("skips listening when activity is already completed", async () => {
+    const testLesson = await lessonFixture({
+      chapterId: chapter.id,
+      kind: "language",
+      organizationId,
+      title: `Listening Skip ${randomUUID()}`,
+    });
+
+    await createLessonWordsForReading({
+      lessonId: testLesson.id,
+      targetLanguage: "es",
+    });
+
+    await activityFixture({
+      generationStatus: "pending",
+      kind: "reading",
+      lessonId: testLesson.id,
+      organizationId,
+      title: `Reading ${randomUUID()}`,
+    });
+
+    const listeningActivity = await activityFixture({
+      generationStatus: "completed",
+      kind: "listening",
+      lessonId: testLesson.id,
+      organizationId,
+      title: `Listening ${randomUUID()}`,
+    });
+
+    await activityGenerationWorkflow(testLesson.id);
+
+    const steps = await prisma.step.findMany({
+      where: { activityId: listeningActivity.id },
+    });
+
+    expect(steps).toHaveLength(0);
+  });
+
+  test("copies listening from pre-completed reading without calling AI", async () => {
+    const testLesson = await lessonFixture({
+      chapterId: chapter.id,
+      kind: "language",
+      organizationId,
+      title: `Listening PreComplete ${randomUUID()}`,
+    });
+
+    const readingActivity = await activityFixture({
+      generationStatus: "completed",
+      kind: "reading",
+      lessonId: testLesson.id,
+      organizationId,
+      title: `Reading ${randomUUID()}`,
+    });
+
+    // Manually create reading steps in DB to simulate pre-completed reading
+    const sentence1 = await prisma.sentence.create({
+      data: {
+        organizationId,
+        sentence: `pre-complete-sentence-1-${randomUUID().slice(0, 8)}`,
+        targetLanguage: "es",
+        translation: "Pre-complete sentence 1",
+        userLanguage: "en",
+      },
+    });
+
+    const sentence2 = await prisma.sentence.create({
+      data: {
+        organizationId,
+        sentence: `pre-complete-sentence-2-${randomUUID().slice(0, 8)}`,
+        targetLanguage: "es",
+        translation: "Pre-complete sentence 2",
+        userLanguage: "en",
+      },
+    });
+
+    await prisma.step.createMany({
+      data: [
+        {
+          activityId: readingActivity.id,
+          content: {},
+          kind: "reading",
+          position: 0,
+          sentenceId: sentence1.id,
+        },
+        {
+          activityId: readingActivity.id,
+          content: {},
+          kind: "reading",
+          position: 1,
+          sentenceId: sentence2.id,
+        },
+      ],
+    });
+
+    const listeningActivity = await activityFixture({
+      generationStatus: "pending",
+      kind: "listening",
+      lessonId: testLesson.id,
+      organizationId,
+      title: `Listening ${randomUUID()}`,
+    });
+
+    await activityGenerationWorkflow(testLesson.id);
+
+    expect(generateActivitySentences).not.toHaveBeenCalled();
+
+    const listeningSteps = await prisma.step.findMany({
+      orderBy: { position: "asc" },
+      where: { activityId: listeningActivity.id, kind: "listening" },
+    });
+
+    expect(listeningSteps).toHaveLength(2);
+    expect(listeningSteps[0]?.sentenceId).toBe(sentence1.id);
+    expect(listeningSteps[1]?.sentenceId).toBe(sentence2.id);
+
+    const dbListening = await prisma.activity.findUnique({
+      where: { id: listeningActivity.id },
+    });
+
+    expect(dbListening?.generationStatus).toBe("completed");
+  });
+
   test("sets reading activity to failed when no source words are available", async () => {
     const testLesson = await lessonFixture({
       chapterId: chapter.id,

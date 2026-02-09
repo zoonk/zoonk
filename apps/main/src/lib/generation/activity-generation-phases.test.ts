@@ -119,6 +119,57 @@ describe("grammar phase status", () => {
   });
 });
 
+describe("listening phase status", () => {
+  test("returns correct phase order for listening", () => {
+    expect(getPhaseOrder("listening")).toEqual([
+      "gettingStarted",
+      "processingDependencies",
+      "buildingWordList",
+      "recordingAudio",
+      "writingContent",
+      "finishing",
+    ]);
+  });
+
+  test("activates processingDependencies for generateSentences", () => {
+    const status = getPhaseStatus(
+      "processingDependencies",
+      ["setActivityAsRunning"],
+      "generateSentences",
+      "listening",
+    );
+
+    expect(status).toBe("active");
+  });
+
+  test("activates writingContent for copyListeningSteps", () => {
+    const status = getPhaseStatus(
+      "writingContent",
+      [
+        "setActivityAsRunning",
+        "generateSentences",
+        "saveSentences",
+        "generateAudio",
+        "updateSentenceEnrichments",
+      ],
+      "copyListeningSteps",
+      "listening",
+    );
+
+    expect(status).toBe("active");
+  });
+
+  test("calculates progress for listening flow", () => {
+    const progress = calculateWeightedProgress(
+      ["setActivityAsRunning", "generateSentences", "saveSentences"],
+      "generateAudio",
+      "listening",
+    );
+
+    expect(progress).toBeGreaterThan(0);
+  });
+});
+
 describe("reading phase status", () => {
   test("activates buildingWordList for sentence generation", () => {
     const status = getPhaseStatus(

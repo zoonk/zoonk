@@ -9,4 +9,8 @@ describe(getActivityCompletionStep, () => {
   test("returns reading completion step for reading activity kind", () => {
     expect(getActivityCompletionStep("reading")).toBe("setReadingAsCompleted");
   });
+
+  test("returns listening completion step for listening activity kind", () => {
+    expect(getActivityCompletionStep("listening")).toBe("setListeningAsCompleted");
+  });
 });
