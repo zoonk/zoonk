@@ -11,7 +11,19 @@ import { handleActivityFailureStep } from "./handle-failure-step";
 import { setActivityAsRunningStep } from "./set-activity-as-running-step";
 
 function hasMinimumGrammarContent(data: ActivityGrammarSchema): boolean {
-  return data.examples.length > 0 && data.discovery.options.length > 0 && data.exercises.length > 0;
+  return (
+    data.examples.length > 0 &&
+    data.discovery.options.length > 0 &&
+    data.discovery.context.trim().length > 0 &&
+    data.discovery.question.trim().length > 0 &&
+    data.exercises.length > 0 &&
+    data.exercises.every(
+      (exercise) =>
+        exercise.answers.length > 0 &&
+        exercise.question.trim().length > 0 &&
+        exercise.template.trim().length > 0,
+    )
+  );
 }
 
 function buildGrammarSteps(activityId: bigint | number, data: ActivityGrammarSchema) {
@@ -30,9 +42,9 @@ function buildGrammarSteps(activityId: bigint | number, data: ActivityGrammarSch
   const discoveryStep = {
     activityId,
     content: {
+      context: data.discovery.context,
       options: data.discovery.options,
       question: data.discovery.question,
-      section: "discovery",
     },
     kind: "multipleChoice" as const,
   };
@@ -53,7 +65,7 @@ function buildGrammarSteps(activityId: bigint | number, data: ActivityGrammarSch
       answers: exercise.answers,
       distractors: exercise.distractors,
       feedback: exercise.feedback,
-      section: "practice",
+      question: exercise.question,
       template: exercise.template,
     },
     kind: "fillBlank" as const,

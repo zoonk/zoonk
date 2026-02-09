@@ -40,6 +40,7 @@ vi.mock("@zoonk/ai/tasks/activities/language/grammar", () => ({
   generateActivityGrammar: vi.fn().mockResolvedValue({
     data: {
       discovery: {
+        context: "A student says: Yo hablo español. Tú comes pan.",
         options: [
           { feedback: "Correct", isCorrect: true, text: "Pattern A" },
           { feedback: "Try again", isCorrect: false, text: "Pattern B" },
@@ -65,12 +66,14 @@ vi.mock("@zoonk/ai/tasks/activities/language/grammar", () => ({
           answers: ["hablo"],
           distractors: ["hablas", "habla"],
           feedback: "First person singular ends with -o.",
+          question: "Complete with the correct present-tense verb form.",
           template: "Yo [BLANK] español.",
         },
         {
           answers: ["comes"],
           distractors: ["como", "come"],
           feedback: "Second person singular ends with -es.",
+          question: "Complete with the correct present-tense verb form.",
           template: "Tú [BLANK] pan.",
         },
       ],
@@ -719,12 +722,12 @@ describe("language activity generation", () => {
     });
 
     expect(steps[2]?.content).toEqual({
+      context: "A student says: Yo hablo español. Tú comes pan.",
       options: [
         { feedback: "Correct", isCorrect: true, text: "Pattern A" },
         { feedback: "Try again", isCorrect: false, text: "Pattern B" },
       ],
       question: "What pattern do you see?",
-      section: "discovery",
     });
 
     expect(steps[3]?.content).toEqual({
@@ -737,7 +740,7 @@ describe("language activity generation", () => {
       answers: ["hablo"],
       distractors: ["hablas", "habla"],
       feedback: "First person singular ends with -o.",
-      section: "practice",
+      question: "Complete with the correct present-tense verb form.",
       template: "Yo [BLANK] español.",
     });
   });
@@ -800,7 +803,7 @@ describe("language activity generation", () => {
       // oxlint-disable-next-line no-unsafe-type-assertion -- test: grammar step validates only data shape
       {
         data: {
-          discovery: { options: [], question: "" },
+          discovery: { context: "", options: [], question: "" },
           examples: [],
           exercises: [],
           ruleName: "",
