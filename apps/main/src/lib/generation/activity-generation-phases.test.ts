@@ -58,6 +58,10 @@ describe(getPhaseOrder, () => {
       "finishing",
     ]);
   });
+
+  test("uses grammar-specific order without visual or audio phases", () => {
+    expect(getPhaseOrder("grammar")).toEqual(["gettingStarted", "writingContent", "finishing"]);
+  });
 });
 
 describe("vocabulary phase status", () => {
@@ -77,6 +81,29 @@ describe("vocabulary phase status", () => {
       ["setActivityAsRunning", "generateVocabularyContent", "saveVocabularyWords"],
       "generateVocabularyPronunciation",
       "vocabulary",
+    );
+
+    expect(progress).toBeGreaterThan(0);
+  });
+});
+
+describe("grammar phase status", () => {
+  test("activates writingContent for grammar generation", () => {
+    const status = getPhaseStatus(
+      "writingContent",
+      ["setActivityAsRunning"],
+      "generateGrammarContent",
+      "grammar",
+    );
+
+    expect(status).toBe("active");
+  });
+
+  test("calculates progress for grammar flow", () => {
+    const progress = calculateWeightedProgress(
+      ["setActivityAsRunning", "generateGrammarContent"],
+      "setGrammarAsCompleted",
+      "grammar",
     );
 
     expect(progress).toBeGreaterThan(0);

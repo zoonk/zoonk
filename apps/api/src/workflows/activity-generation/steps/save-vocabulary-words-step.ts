@@ -1,3 +1,4 @@
+import { assertStepContent } from "@zoonk/core/steps/content-contract";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { streamStatus } from "../stream-status";
@@ -50,7 +51,7 @@ function buildSaveOneWord(params: {
     await prisma.step.create({
       data: {
         activityId,
-        content: {},
+        content: assertStepContent("static", { variant: "vocabularyWordRef" }),
         kind: "static",
         position,
         wordId,

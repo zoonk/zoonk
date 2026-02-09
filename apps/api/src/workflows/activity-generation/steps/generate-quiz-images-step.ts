@@ -2,6 +2,7 @@ import {
   type QuizQuestion,
   type SelectImageQuestion,
 } from "@zoonk/ai/tasks/activities/core/explanation-quiz";
+import { assertStepContent } from "@zoonk/core/steps/content-contract";
 import { generateStepImage } from "@zoonk/core/steps/image";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
@@ -14,10 +15,15 @@ import { handleActivityFailureStep } from "./handle-failure-step";
 export type QuizQuestionWithUrls =
   | Exclude<QuizQuestion, SelectImageQuestion>
   | (Omit<SelectImageQuestion, "options"> & {
-      options: SelectImageQuestion["options"][number] & { url?: string }[];
+      options: (SelectImageQuestion["options"][number] & { url?: string })[];
     });
 
-type SelectImageOption = { prompt: string; url?: string };
+type SelectImageOption = {
+  feedback: string;
+  isCorrect: boolean;
+  prompt: string;
+  url?: string;
+};
 
 function parseSelectImageOptions(content: unknown): SelectImageOption[] | null {
   if (!isJsonObject(content)) {
@@ -28,7 +34,11 @@ function parseSelectImageOptions(content: unknown): SelectImageOption[] | null {
     return null;
   }
   return options.filter(
-    (opt): opt is SelectImageOption => isJsonObject(opt) && typeof opt.prompt === "string",
+    (opt): opt is SelectImageOption =>
+      isJsonObject(opt) &&
+      typeof opt.feedback === "string" &&
+      typeof opt.isCorrect === "boolean" &&
+      typeof opt.prompt === "string",
   );
 }
 
@@ -102,9 +112,13 @@ export async function generateQuizImagesStep(
       );
 
       const stepContent = toRecord(step.content);
+      const content = assertStepContent("selectImage", {
+        ...stepContent,
+        options: updatedOptions,
+      });
       const { error } = await safeAsync(() =>
         prisma.step.update({
-          data: { content: { ...stepContent, options: updatedOptions } },
+          data: { content },
           where: { id: step.id },
         }),
       );

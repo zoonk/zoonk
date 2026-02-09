@@ -261,10 +261,12 @@ describe("custom activity workflow", () => {
     expect(customSteps[0]?.content).toEqual({
       text: "Custom step 1 text",
       title: "Custom Step 1",
+      variant: "text",
     });
     expect(customSteps[1]?.content).toEqual({
       text: "Custom step 2 text",
       title: "Custom Step 2",
+      variant: "text",
     });
   });
 

@@ -17,6 +17,7 @@ const FALLBACK_MODELS = [
 
 const schema = z.object({
   discovery: z.object({
+    context: z.string().optional(),
     options: z.array(
       z.object({
         feedback: z.string(),
@@ -24,7 +25,7 @@ const schema = z.object({
         text: z.string(),
       }),
     ),
-    question: z.string(),
+    question: z.string().optional(),
   }),
   examples: z.array(
     z.object({
@@ -39,6 +40,7 @@ const schema = z.object({
       answers: z.array(z.string()),
       distractors: z.array(z.string()),
       feedback: z.string(),
+      question: z.string().optional(),
       template: z.string(),
     }),
   ),
@@ -77,7 +79,7 @@ CHAPTER_TITLE: ${chapterTitle}
 LESSON_TITLE: ${lessonTitle}
 LESSON_DESCRIPTION: ${lessonDescription}
 
-Generate a Pattern Discovery grammar activity for this lesson. Include 3-4 examples demonstrating the grammar pattern, a discovery question, a brief rule summary, and 2-3 fill-in-the-blank practice exercises.`;
+Generate a Pattern Discovery grammar activity for this lesson. Include 3-4 examples demonstrating the grammar pattern, one discovery task, a brief rule summary, and 2-3 fill-in-the-blank practice exercises.`;
 
   const providerOptions = buildProviderOptions({
     fallbackModels: FALLBACK_MODELS,

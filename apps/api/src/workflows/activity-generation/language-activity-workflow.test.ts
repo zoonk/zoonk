@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { generateActivityBackground } from "@zoonk/ai/tasks/activities/core/background";
+import { generateActivityGrammar } from "@zoonk/ai/tasks/activities/language/grammar";
 import { generateActivityPronunciation } from "@zoonk/ai/tasks/activities/language/pronunciation";
 import { generateActivityVocabulary } from "@zoonk/ai/tasks/activities/language/vocabulary";
 import { generateLanguageAudio } from "@zoonk/core/audio/generate";
@@ -31,6 +32,49 @@ vi.mock("@zoonk/ai/tasks/activities/language/vocabulary", () => ({
         { romanization: "o-la", translation: "hello", word: "hola" },
         { romanization: "ga-to", translation: "cat", word: "gato" },
       ],
+    },
+  }),
+}));
+
+vi.mock("@zoonk/ai/tasks/activities/language/grammar", () => ({
+  generateActivityGrammar: vi.fn().mockResolvedValue({
+    data: {
+      discovery: {
+        options: [
+          { feedback: "Correct", isCorrect: true, text: "Pattern A" },
+          { feedback: "Try again", isCorrect: false, text: "Pattern B" },
+        ],
+      },
+      examples: [
+        {
+          highlight: "hablo",
+          romanization: "ha-blo",
+          sentence: "Yo hablo español.",
+          translation: "I speak Spanish.",
+        },
+        {
+          highlight: "comes",
+          romanization: "co-mes",
+          sentence: "Tú comes pan.",
+          translation: "You eat bread.",
+        },
+      ],
+      exercises: [
+        {
+          answers: ["hablo"],
+          distractors: ["hablas", "habla"],
+          feedback: "First person singular ends with -o.",
+          template: "Yo [BLANK] español.",
+        },
+        {
+          answers: ["comes"],
+          distractors: ["como", "come"],
+          feedback: "Second person singular ends with -es.",
+          template: "Tú [BLANK] pan.",
+        },
+      ],
+      ruleName: "Present tense endings",
+      ruleSummary: "Use -o for yo and -es for tú in regular -er verbs.",
     },
   }),
 }));
@@ -104,7 +148,7 @@ vi.mock("@zoonk/core/cache/revalidate", () => ({
   revalidateMainApp: vi.fn().mockResolvedValue(null),
 }));
 
-describe("vocabulary activity generation", () => {
+describe("language activity generation", () => {
   let organizationId: number;
   let course: Awaited<ReturnType<typeof courseFixture>>;
   let chapter: Awaited<ReturnType<typeof chapterFixture>>;
@@ -230,7 +274,7 @@ describe("vocabulary activity generation", () => {
     expect(lessonWords).toHaveLength(2);
   });
 
-  test("creates steps with wordId links and empty content", async () => {
+  test("creates steps with wordId links and vocabularyWordRef content", async () => {
     const testLesson = await lessonFixture({
       chapterId: chapter.id,
       kind: "language",
@@ -259,7 +303,7 @@ describe("vocabulary activity generation", () => {
     for (const step of steps) {
       expect(step.wordId).not.toBeNull();
       expect(step.kind).toBe("static");
-      expect(step.content).toEqual({});
+      expect(step.content).toEqual({ variant: "vocabularyWordRef" });
     }
 
     const wordNames = steps.map((step) => step.word?.word);
@@ -601,5 +645,224 @@ describe("vocabulary activity generation", () => {
 
     expect(generateActivityVocabulary).toHaveBeenCalled();
     expect(generateActivityBackground).not.toHaveBeenCalled();
+  });
+
+  test("calls generateActivityGrammar with targetLanguage and userLanguage", async () => {
+    const testLesson = await lessonFixture({
+      chapterId: chapter.id,
+      description: "Learn present tense in Spanish",
+      kind: "language",
+      organizationId,
+      title: `Grammar Params ${randomUUID()}`,
+    });
+
+    await activityFixture({
+      generationStatus: "pending",
+      kind: "grammar",
+      lessonId: testLesson.id,
+      organizationId,
+      title: `Grammar ${randomUUID()}`,
+    });
+
+    await activityGenerationWorkflow(testLesson.id);
+
+    expect(generateActivityGrammar).toHaveBeenCalledWith({
+      chapterTitle: chapter.title,
+      lessonDescription: "Learn present tense in Spanish",
+      lessonTitle: testLesson.title,
+      targetLanguage: "es",
+      userLanguage: "en",
+    });
+  });
+
+  test("creates grammar steps in order with expected kinds and content", async () => {
+    const testLesson = await lessonFixture({
+      chapterId: chapter.id,
+      kind: "language",
+      organizationId,
+      title: `Grammar Steps ${randomUUID()}`,
+    });
+
+    const activity = await activityFixture({
+      generationStatus: "pending",
+      kind: "grammar",
+      lessonId: testLesson.id,
+      organizationId,
+      title: `Grammar ${randomUUID()}`,
+    });
+
+    await activityGenerationWorkflow(testLesson.id);
+
+    const steps = await prisma.step.findMany({
+      orderBy: { position: "asc" },
+      where: { activityId: activity.id },
+    });
+
+    expect(steps).toHaveLength(6);
+
+    expect(steps.map((step) => step.kind)).toEqual([
+      "static",
+      "static",
+      "multipleChoice",
+      "static",
+      "fillBlank",
+      "fillBlank",
+    ]);
+
+    expect(steps[0]?.content).toEqual({
+      highlight: "hablo",
+      romanization: "ha-blo",
+      sentence: "Yo hablo español.",
+      translation: "I speak Spanish.",
+      variant: "grammarExample",
+    });
+
+    expect(steps[2]?.content).toEqual({
+      options: [
+        { feedback: "Correct", isCorrect: true, text: "Pattern A" },
+        { feedback: "Try again", isCorrect: false, text: "Pattern B" },
+      ],
+    });
+
+    expect(steps[3]?.content).toEqual({
+      ruleName: "Present tense endings",
+      ruleSummary: "Use -o for yo and -es for tú in regular -er verbs.",
+      variant: "grammarRule",
+    });
+
+    expect(steps[4]?.content).toEqual({
+      answers: ["hablo"],
+      distractors: ["hablas", "habla"],
+      feedback: "First person singular ends with -o.",
+      template: "Yo [BLANK] español.",
+    });
+  });
+
+  test("sets grammar activity generationStatus to 'completed' with generationRunId", async () => {
+    const testLesson = await lessonFixture({
+      chapterId: chapter.id,
+      kind: "language",
+      organizationId,
+      title: `Grammar Complete ${randomUUID()}`,
+    });
+
+    const activity = await activityFixture({
+      generationStatus: "pending",
+      kind: "grammar",
+      lessonId: testLesson.id,
+      organizationId,
+      title: `Grammar ${randomUUID()}`,
+    });
+
+    await activityGenerationWorkflow(testLesson.id);
+
+    const dbActivity = await prisma.activity.findUnique({
+      where: { id: activity.id },
+    });
+
+    expect(dbActivity?.generationStatus).toBe("completed");
+    expect(dbActivity?.generationRunId).toBe("test-run-id");
+  });
+
+  test("sets grammar activity to 'failed' when generateActivityGrammar throws", async () => {
+    vi.mocked(generateActivityGrammar).mockRejectedValueOnce(new Error("Grammar AI failed"));
+
+    const testLesson = await lessonFixture({
+      chapterId: chapter.id,
+      kind: "language",
+      organizationId,
+      title: `Grammar Fail ${randomUUID()}`,
+    });
+
+    const activity = await activityFixture({
+      generationStatus: "pending",
+      kind: "grammar",
+      lessonId: testLesson.id,
+      organizationId,
+      title: `Grammar ${randomUUID()}`,
+    });
+
+    await activityGenerationWorkflow(testLesson.id);
+
+    const dbActivity = await prisma.activity.findUnique({
+      where: { id: activity.id },
+    });
+
+    expect(dbActivity?.generationStatus).toBe("failed");
+  });
+
+  test("sets grammar activity to 'failed' when grammar payload is empty", async () => {
+    vi.mocked(generateActivityGrammar).mockResolvedValueOnce(
+      // oxlint-disable-next-line no-unsafe-type-assertion -- test: grammar step validates only data shape
+      {
+        data: {
+          discovery: { options: [] },
+          examples: [],
+          exercises: [],
+          ruleName: "",
+          ruleSummary: "",
+        },
+      } as unknown as Awaited<ReturnType<typeof generateActivityGrammar>>,
+    );
+
+    const testLesson = await lessonFixture({
+      chapterId: chapter.id,
+      kind: "language",
+      organizationId,
+      title: `Grammar Empty ${randomUUID()}`,
+    });
+
+    const activity = await activityFixture({
+      generationStatus: "pending",
+      kind: "grammar",
+      lessonId: testLesson.id,
+      organizationId,
+      title: `Grammar ${randomUUID()}`,
+    });
+
+    await activityGenerationWorkflow(testLesson.id);
+
+    const dbActivity = await prisma.activity.findUnique({
+      where: { id: activity.id },
+    });
+
+    expect(dbActivity?.generationStatus).toBe("failed");
+  });
+
+  test("generates grammar even when vocabulary generation fails", async () => {
+    vi.mocked(generateActivityVocabulary).mockRejectedValueOnce(new Error("Vocabulary AI failed"));
+
+    const testLesson = await lessonFixture({
+      chapterId: chapter.id,
+      kind: "language",
+      organizationId,
+      title: `Grammar Independent ${randomUUID()}`,
+    });
+
+    await activityFixture({
+      generationStatus: "pending",
+      kind: "vocabulary",
+      lessonId: testLesson.id,
+      organizationId,
+      title: `Vocabulary ${randomUUID()}`,
+    });
+
+    const grammarActivity = await activityFixture({
+      generationStatus: "pending",
+      kind: "grammar",
+      lessonId: testLesson.id,
+      organizationId,
+      title: `Grammar ${randomUUID()}`,
+    });
+
+    await activityGenerationWorkflow(testLesson.id);
+
+    expect(generateActivityGrammar).toHaveBeenCalledOnce();
+
+    const dbGrammarActivity = await prisma.activity.findUnique({
+      where: { id: grammarActivity.id },
+    });
+
+    expect(dbGrammarActivity?.generationStatus).toBe("completed");
   });
 });

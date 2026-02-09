@@ -26,6 +26,7 @@ const stepsData: {
         content: {
           text: "In 1956, a group of scientists gathered at Dartmouth College with an ambitious goal: create machines that could think like humans.",
           title: "The Birth of AI",
+          variant: "text",
         },
         kind: "static",
         visualContent: {
@@ -53,6 +54,7 @@ const stepsData: {
         content: {
           text: "Traditional programming required explicit rules for every scenario. But what if computers could learn patterns from data instead?",
           title: "The Problem",
+          variant: "text",
         },
         kind: "static",
         visualContent: {
@@ -72,6 +74,7 @@ const stepsData: {
         content: {
           text: "Machine learning flips the script: instead of programming rules, we provide examples and let the computer discover the patterns.",
           title: "A New Approach",
+          variant: "text",
         },
         kind: "static",
         visualContent: {
@@ -127,6 +130,7 @@ const stepsData: {
               right: "Learning through trial and error",
             },
           ],
+          question: "Match each learning type to its description.",
         },
         kind: "matchColumns",
       },
@@ -134,14 +138,15 @@ const stepsData: {
         content: {
           answers: ["supervised", "unsupervised"],
           feedback: "Great! You understand the difference between these learning types.",
+          question: "Fill in the blanks with the correct learning types.",
           template:
             "In {0} learning, the algorithm learns from labeled data, while in {1} learning, it finds patterns without labels.",
-          wordBank: ["supervised", "unsupervised", "reinforcement", "deep"],
         },
         kind: "fillBlank",
       },
       {
         content: {
+          feedback: "This sequence follows the standard end-to-end ML development lifecycle.",
           items: [
             "Collect and prepare data",
             "Choose a model architecture",
@@ -155,17 +160,17 @@ const stepsData: {
       },
       {
         content: {
-          images: [
+          options: [
             {
-              alt: "Connected layers of nodes",
               feedback: "Correct! Neural networks have interconnected layers of nodes.",
               isCorrect: true,
+              prompt: "A clear diagram of a neural network with connected layers of nodes",
               url: "https://to3kaoi21m60hzgu.public.blob.vercel-storage.com/courses/machine_learning-jmaDwiS0MptNV2EGCZzYWU7RBJs3Qg.webp",
             },
             {
-              alt: "Simple flowchart",
               feedback: "This is a flowchart, not a neural network architecture.",
               isCorrect: false,
+              prompt: "A simple flowchart with boxes and arrows",
               url: "https://to3kaoi21m60hzgu.public.blob.vercel-storage.com/courses/astronomy-OfBov0VHGQPk98amhfAPg4UVrJH114.webp",
             },
           ],
@@ -184,6 +189,7 @@ const stepsData: {
         content: {
           text: "You're leading a machine learning project at a startup. Your goal is to build a successful model while managing resources and team morale. Make strategic decisions to win!",
           title: "The ML Project Challenge",
+          variant: "text",
         },
         kind: "static",
       },

@@ -1,3 +1,4 @@
+import { assertStepContent } from "@zoonk/core/steps/content-contract";
 import { type ActivityKind, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { type LessonActivity } from "../get-lesson-activities-step";
@@ -75,7 +76,11 @@ export async function saveContentSteps(
     prisma.step.createMany({
       data: steps.map((step, index) => ({
         activityId,
-        content: { text: step.text, title: step.title },
+        content: assertStepContent("static", {
+          text: step.text,
+          title: step.title,
+          variant: "text",
+        }),
         kind: "static" as const,
         position: index,
       })),
