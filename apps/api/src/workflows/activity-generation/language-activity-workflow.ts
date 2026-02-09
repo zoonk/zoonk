@@ -42,7 +42,7 @@ export async function languageActivityWorkflow(
   }
 
   // Wave 3: Update word records with enrichments
-  await updateVocabularyEnrichmentsStep(savedWords, pronunciations, audioUrls);
+  await updateVocabularyEnrichmentsStep(activities, savedWords, pronunciations, audioUrls);
 
   // Wave 4: Mark activity as completed
   await saveActivityStep(activities, workflowRunId, "vocabulary");

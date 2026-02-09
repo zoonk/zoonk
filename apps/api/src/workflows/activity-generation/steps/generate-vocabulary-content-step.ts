@@ -2,9 +2,9 @@ import { generateActivityVocabulary } from "@zoonk/ai/tasks/activities/language/
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { streamStatus } from "../stream-status";
+import { findActivityByKind } from "./_utils/find-activity-by-kind";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
-import { findActivityByKind } from "./_utils/find-activity-by-kind";
 import { setActivityAsRunningStep } from "./set-activity-as-running-step";
 
 export type VocabularyWord = {

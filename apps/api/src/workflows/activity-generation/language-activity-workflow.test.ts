@@ -563,6 +563,51 @@ describe("vocabulary activity generation", () => {
     expect(dbActivity?.generationStatus).toBe("failed");
   });
 
+  test("sets activity to 'failed' when enrichment transaction fails", async () => {
+    // Return saved words with non-existent IDs so the real $transaction fails
+    const saveStepModule = await import("./steps/save-vocabulary-words-step");
+    const spy = vi.spyOn(saveStepModule, "saveVocabularyWordsStep").mockResolvedValueOnce({
+      savedWords: [
+        { word: "hola", wordId: 999_999_999 },
+        { word: "gato", wordId: 999_999_998 },
+      ],
+    });
+
+    try {
+      const enrichFailCourse = await courseFixture({ organizationId, targetLanguage: "it" });
+      const enrichFailChapter = await chapterFixture({
+        courseId: enrichFailCourse.id,
+        organizationId,
+        title: `EnrichFail Chapter ${randomUUID()}`,
+      });
+
+      const testLesson = await lessonFixture({
+        chapterId: enrichFailChapter.id,
+        kind: "language",
+        organizationId,
+        title: `Vocab EnrichFail ${randomUUID()}`,
+      });
+
+      const activity = await activityFixture({
+        generationStatus: "pending",
+        kind: "vocabulary",
+        lessonId: testLesson.id,
+        organizationId,
+        title: `Vocabulary ${randomUUID()}`,
+      });
+
+      await activityGenerationWorkflow(testLesson.id);
+
+      const dbActivity = await prisma.activity.findUnique({
+        where: { id: activity.id },
+      });
+
+      expect(dbActivity?.generationStatus).toBe("failed");
+    } finally {
+      spy.mockRestore();
+    }
+  });
+
   test("sets activity to 'failed' when word saving fails", async () => {
     const saveStepModule = await import("./steps/save-vocabulary-words-step");
     const spy = vi
