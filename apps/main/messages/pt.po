@@ -991,6 +991,11 @@ msgid "Getting started"
 msgstr "Começando"
 
 #: src/app/[locale]/generate/a/[id]/use-generation-phases.ts
+msgctxt "FQVLIz"
+msgid "Building your sentence list"
+msgstr "Construindo sua lista de frases"
+
+#: src/app/[locale]/generate/a/[id]/use-generation-phases.ts
 #: src/app/[locale]/generate/ch/[id]/use-generation-phases.ts
 #: src/app/[locale]/generate/cs/[id]/use-generation-phases.ts
 #: src/app/[locale]/generate/l/[id]/use-generation-phases.ts

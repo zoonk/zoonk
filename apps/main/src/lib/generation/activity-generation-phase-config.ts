@@ -1,6 +1,8 @@
 import { ACTIVITY_STEPS, type ActivityStepName } from "@/workflows/config";
 import { type ActivityKind } from "@zoonk/db";
 
+export { getPhaseWeights } from "./activity-generation-phase-weights";
+
 export type PhaseName =
   | "gettingStarted"
   | "processingDependencies"
@@ -47,6 +49,10 @@ export function getPhaseOrder(kind: ActivityKind): PhaseName[] {
     ];
   }
 
+  if (kind === "reading") {
+    return ["gettingStarted", "buildingWordList", "recordingAudio", "finishing"];
+  }
+
   if (kind === "grammar") {
     return ["gettingStarted", "writingContent", "finishing"];
   }
@@ -80,6 +86,7 @@ const ALL_CONTENT_STEPS: ActivityStepName[] = [
   "generateReviewContent",
   "generateStoryContent",
   "generateGrammarContent",
+  "generateSentences",
   "generateVocabularyContent",
 ];
 
@@ -88,6 +95,12 @@ const ALL_VOCABULARY_STEPS: ActivityStepName[] = [
   "generateVocabularyPronunciation",
   "generateVocabularyAudio",
   "updateVocabularyEnrichments",
+];
+
+const ALL_READING_STEPS: ActivityStepName[] = [
+  "saveSentences",
+  "generateAudio",
+  "updateSentenceEnrichments",
 ];
 
 const ALL_COMPLETION_STEPS: ActivityStepName[] = [
@@ -102,6 +115,7 @@ const ALL_COMPLETION_STEPS: ActivityStepName[] = [
   "setStoryAsCompleted",
   "setGrammarAsCompleted",
   "setVocabularyAsCompleted",
+  "setReadingAsCompleted",
   "setActivityAsCompleted",
 ];
 
@@ -110,6 +124,7 @@ function getFinishingSteps(exclude: ActivityStepName[]): ActivityStepName[] {
   return [
     ...ALL_CONTENT_STEPS.filter((step) => !excluded.has(step)),
     ...ALL_VOCABULARY_STEPS.filter((step) => !excluded.has(step)),
+    ...ALL_READING_STEPS.filter((step) => !excluded.has(step)),
     ...ALL_COMPLETION_STEPS,
   ];
 }
@@ -174,6 +189,29 @@ export function getPhaseSteps(kind: ActivityKind): Record<PhaseName, ActivitySte
     };
   }
 
+  if (kind === "reading") {
+    return {
+      ...shared,
+      buildingWordList: ["setActivityAsRunning", "generateSentences", "saveSentences"],
+      creatingImages: [],
+      finishing: [
+        "generateVisuals",
+        "generateImages",
+        "generateQuizImages",
+        ...getFinishingSteps([
+          "generateSentences",
+          "saveSentences",
+          "generateAudio",
+          "updateSentenceEnrichments",
+        ]),
+      ],
+      preparingVisuals: [],
+      processingDependencies: [],
+      recordingAudio: ["generateAudio", "updateSentenceEnrichments"],
+      writingContent: [],
+    };
+  }
+
   if (kind === "background") {
     return {
       ...shared,
@@ -224,76 +262,6 @@ export function getPhaseSteps(kind: ActivityKind): Record<PhaseName, ActivitySte
   };
 }
 
-export function getPhaseWeights(kind: ActivityKind): Record<PhaseName, number> {
-  if (kind === "vocabulary") {
-    return {
-      addingPronunciation: 25,
-      buildingWordList: 20,
-      creatingImages: 0,
-      finishing: 10,
-      gettingStarted: 3,
-      preparingVisuals: 0,
-      processingDependencies: 0,
-      recordingAudio: 42,
-      writingContent: 0,
-    };
-  }
-
-  if (kind === "background" || kind === "custom") {
-    return {
-      addingPronunciation: 0,
-      buildingWordList: 0,
-      creatingImages: 43,
-      finishing: 7,
-      gettingStarted: 3,
-      preparingVisuals: 22,
-      processingDependencies: 0,
-      recordingAudio: 0,
-      writingContent: 25,
-    };
-  }
-
-  if (kind === "grammar") {
-    return {
-      addingPronunciation: 0,
-      buildingWordList: 0,
-      creatingImages: 0,
-      finishing: 10,
-      gettingStarted: 5,
-      preparingVisuals: 0,
-      processingDependencies: 0,
-      recordingAudio: 0,
-      writingContent: 85,
-    };
-  }
-
-  if (kind === "story" || kind === "challenge" || kind === "review") {
-    return {
-      addingPronunciation: 0,
-      buildingWordList: 0,
-      creatingImages: 0,
-      finishing: 10,
-      gettingStarted: 5,
-      preparingVisuals: 0,
-      processingDependencies: 40,
-      recordingAudio: 0,
-      writingContent: 45,
-    };
-  }
-
-  return {
-    addingPronunciation: 0,
-    buildingWordList: 0,
-    creatingImages: 35,
-    finishing: 9,
-    gettingStarted: 3,
-    preparingVisuals: 18,
-    processingDependencies: 15,
-    recordingAudio: 0,
-    writingContent: 20,
-  };
-}
-
 const SUPPORTED_KINDS: ActivityKind[] = [
   "background",
   "challenge",
@@ -303,6 +271,7 @@ const SUPPORTED_KINDS: ActivityKind[] = [
   "grammar",
   "mechanics",
   "quiz",
+  "reading",
   "review",
   "story",
   "vocabulary",

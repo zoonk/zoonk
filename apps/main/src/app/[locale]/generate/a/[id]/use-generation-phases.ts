@@ -25,10 +25,12 @@ export function useGenerationPhases(
   activityKind: ActivityKind,
 ) {
   const t = useExtracted();
+  const buildingWordListLabel =
+    activityKind === "reading" ? t("Building your sentence list") : t("Building your word list");
 
   const labels: Record<PhaseName, string> = {
     addingPronunciation: t("Adding pronunciation"),
-    buildingWordList: t("Building your word list"),
+    buildingWordList: buildingWordListLabel,
     creatingImages: t("Creating images"),
     finishing: t("Almost done"),
     gettingStarted: t("Getting started"),

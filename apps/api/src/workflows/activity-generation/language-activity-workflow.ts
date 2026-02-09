@@ -1,11 +1,15 @@
 import { settled } from "@zoonk/utils/settled";
 import { generateGrammarContentStep } from "./steps/generate-grammar-content-step";
+import { generateReadingAudioStep } from "./steps/generate-reading-audio-step";
+import { generateReadingContentStep } from "./steps/generate-reading-content-step";
 import { generateVocabularyAudioStep } from "./steps/generate-vocabulary-audio-step";
 import { generateVocabularyContentStep } from "./steps/generate-vocabulary-content-step";
 import { generateVocabularyPronunciationStep } from "./steps/generate-vocabulary-pronunciation-step";
 import { type LessonActivity } from "./steps/get-lesson-activities-step";
 import { saveActivityStep } from "./steps/save-activity-step";
+import { saveReadingSentencesStep } from "./steps/save-reading-sentences-step";
 import { saveVocabularyWordsStep } from "./steps/save-vocabulary-words-step";
+import { updateReadingEnrichmentsStep } from "./steps/update-reading-enrichments-step";
 import { updateVocabularyEnrichmentsStep } from "./steps/update-vocabulary-enrichments-step";
 
 export async function languageActivityWorkflow(
@@ -42,5 +46,20 @@ export async function languageActivityWorkflow(
 
   if (grammarGenerated) {
     await saveActivityStep(activities, workflowRunId, "grammar");
+  }
+
+  const currentRunWords = words.map((word) => word.word);
+  const { sentences } = await generateReadingContentStep(
+    activities,
+    workflowRunId,
+    currentRunWords,
+  );
+
+  if (sentences.length > 0) {
+    const { savedSentences } = await saveReadingSentencesStep(activities, sentences);
+    const { audioUrls } = await generateReadingAudioStep(activities, savedSentences);
+
+    await updateReadingEnrichmentsStep(activities, savedSentences, audioUrls);
+    await saveActivityStep(activities, workflowRunId, "reading");
   }
 }
