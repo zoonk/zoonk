@@ -1,4 +1,5 @@
 import { settled } from "@zoonk/utils/settled";
+import { completeActivityStep } from "./steps/complete-activity-step";
 import { generateGrammarContentStep } from "./steps/generate-grammar-content-step";
 import { generateReadingAudioStep } from "./steps/generate-reading-audio-step";
 import { generateReadingContentStep } from "./steps/generate-reading-content-step";
@@ -6,7 +7,6 @@ import { generateVocabularyAudioStep } from "./steps/generate-vocabulary-audio-s
 import { generateVocabularyContentStep } from "./steps/generate-vocabulary-content-step";
 import { generateVocabularyPronunciationStep } from "./steps/generate-vocabulary-pronunciation-step";
 import { type LessonActivity } from "./steps/get-lesson-activities-step";
-import { saveActivityStep } from "./steps/save-activity-step";
 import { saveReadingSentencesStep } from "./steps/save-reading-sentences-step";
 import { saveVocabularyWordsStep } from "./steps/save-vocabulary-words-step";
 import { updateReadingEnrichmentsStep } from "./steps/update-reading-enrichments-step";
@@ -32,7 +32,7 @@ export async function languageActivityWorkflow(
       generateVocabularyPronunciationStep(activities, words),
       generateVocabularyAudioStep(activities, words),
       generateReadingContentStep(activities, workflowRunId, currentRunWords),
-      saveActivityStep(activities, workflowRunId, "grammar"),
+      completeActivityStep(activities, workflowRunId, "grammar"),
     ]);
 
   const { savedWords } = settled(saveWordsResult, { savedWords: [] });
@@ -51,7 +51,7 @@ export async function languageActivityWorkflow(
   // Wave 4: generate reading audio + complete vocabulary
   const [readingAudioResult] = await Promise.allSettled([
     generateReadingAudioStep(activities, savedSentences),
-    saveActivityStep(activities, workflowRunId, "vocabulary"),
+    completeActivityStep(activities, workflowRunId, "vocabulary"),
   ]);
 
   const { audioUrls: readingAudioUrls } = settled(readingAudioResult, { audioUrls: {} });
@@ -60,5 +60,5 @@ export async function languageActivityWorkflow(
   await updateReadingEnrichmentsStep(activities, savedSentences, readingAudioUrls);
 
   // Wave 6: complete reading after enrichments are finalized
-  await saveActivityStep(activities, workflowRunId, "reading");
+  await completeActivityStep(activities, workflowRunId, "reading");
 }

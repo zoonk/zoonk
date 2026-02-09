@@ -21,7 +21,7 @@ const kindToStepName: Partial<Record<ActivityKind, ActivityStepName>> = {
   vocabulary: "setVocabularyAsCompleted",
 };
 
-export async function saveActivityStep(
+export async function completeActivityStep(
   activities: LessonActivity[],
   workflowRunId: string,
   activityKind: ActivityKind,
