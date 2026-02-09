@@ -47,6 +47,10 @@ export function getPhaseOrder(kind: ActivityKind): PhaseName[] {
     ];
   }
 
+  if (kind === "grammar") {
+    return ["gettingStarted", "writingContent", "finishing"];
+  }
+
   if (kind === "background" || kind === "custom") {
     return ["gettingStarted", "writingContent", "preparingVisuals", "creatingImages", "finishing"];
   }
@@ -75,6 +79,7 @@ const ALL_CONTENT_STEPS: ActivityStepName[] = [
   "generateQuizContent",
   "generateReviewContent",
   "generateStoryContent",
+  "generateGrammarContent",
   "generateVocabularyContent",
 ];
 
@@ -95,6 +100,7 @@ const ALL_COMPLETION_STEPS: ActivityStepName[] = [
   "setQuizAsCompleted",
   "setReviewAsCompleted",
   "setStoryAsCompleted",
+  "setGrammarAsCompleted",
   "setVocabularyAsCompleted",
   "setActivityAsCompleted",
 ];
@@ -149,6 +155,22 @@ export function getPhaseSteps(kind: ActivityKind): Record<PhaseName, ActivitySte
       processingDependencies: [],
       recordingAudio: ["generateVocabularyAudio"],
       writingContent: [],
+    };
+  }
+
+  if (kind === "grammar") {
+    return {
+      ...shared,
+      creatingImages: [],
+      finishing: [
+        "generateVisuals",
+        "generateImages",
+        "generateQuizImages",
+        ...getFinishingSteps(["generateGrammarContent"]),
+      ],
+      preparingVisuals: [],
+      processingDependencies: [],
+      writingContent: ["setActivityAsRunning", "generateGrammarContent"],
     };
   }
 
@@ -231,6 +253,20 @@ export function getPhaseWeights(kind: ActivityKind): Record<PhaseName, number> {
     };
   }
 
+  if (kind === "grammar") {
+    return {
+      addingPronunciation: 0,
+      buildingWordList: 0,
+      creatingImages: 0,
+      finishing: 10,
+      gettingStarted: 5,
+      preparingVisuals: 0,
+      processingDependencies: 0,
+      recordingAudio: 0,
+      writingContent: 85,
+    };
+  }
+
   if (kind === "story" || kind === "challenge" || kind === "review") {
     return {
       addingPronunciation: 0,
@@ -264,6 +300,7 @@ const SUPPORTED_KINDS: ActivityKind[] = [
   "custom",
   "examples",
   "explanation",
+  "grammar",
   "mechanics",
   "quiz",
   "review",
