@@ -27,7 +27,7 @@ export function useGenerationPhases(
 
   const labels: Record<PhaseName, string> = {
     addingPronunciation: t("Adding pronunciation"),
-    buildingWordList: t("Building your word list"),
+    buildingWordList: t("Preparing practice content"),
     categorizingCourse: t("Categorizing your course"),
     creatingCoverImage: t("Creating the cover image"),
     creatingImages: t("Creating images"),

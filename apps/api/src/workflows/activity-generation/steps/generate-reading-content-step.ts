@@ -11,7 +11,6 @@ import { handleActivityFailureStep } from "./handle-failure-step";
 import { setActivityAsRunningStep } from "./set-activity-as-running-step";
 
 export type ReadingSentence = ActivitySentencesSchema["sentences"][number];
-
 async function getFallbackLessonWords(params: {
   lessonId: number;
   organizationId: number;
@@ -40,6 +39,41 @@ function hasValidSentences(sentences: ReadingSentence[]): boolean {
   );
 }
 
+async function resolveSourceWords(input: {
+  currentRunWords: string[];
+  lessonId: number;
+  organizationId: number;
+  targetLanguage: string;
+  userLanguage: string;
+}): Promise<{ error: Error; words: [] } | { error: null; words: string[] }> {
+  if (input.currentRunWords.length > 0) {
+    return { error: null, words: input.currentRunWords };
+  }
+
+  const { data: fallbackWords, error } = await safeAsync(() =>
+    getFallbackLessonWords({
+      lessonId: input.lessonId,
+      organizationId: input.organizationId,
+      targetLanguage: input.targetLanguage,
+      userLanguage: input.userLanguage,
+    }),
+  );
+
+  if (error) {
+    return { error, words: [] };
+  }
+
+  return { error: null, words: fallbackWords ?? [] };
+}
+
+async function handleReadingGenerationFailure(
+  activityId: number,
+): Promise<{ sentences: ReadingSentence[] }> {
+  await streamStatus({ status: "error", step: "generateSentences" });
+  await handleActivityFailureStep({ activityId });
+  return { sentences: [] };
+}
+
 export async function generateReadingContentStep(
   activities: LessonActivity[],
   workflowRunId: string,
@@ -62,31 +96,16 @@ export async function generateReadingContentStep(
   const targetLanguage = course.targetLanguage ?? "";
   const userLanguage = activity.language;
 
-  let words = currentRunWords;
+  const sourceWords = await resolveSourceWords({
+    currentRunWords,
+    lessonId: activity.lessonId,
+    organizationId: course.organization.id,
+    targetLanguage,
+    userLanguage,
+  });
 
-  if (words.length === 0) {
-    const { data: fallbackWords, error: fallbackWordsError } = await safeAsync(() =>
-      getFallbackLessonWords({
-        lessonId: activity.lessonId,
-        organizationId: course.organization.id,
-        targetLanguage,
-        userLanguage,
-      }),
-    );
-
-    if (fallbackWordsError) {
-      await streamStatus({ status: "error", step: "generateSentences" });
-      await handleActivityFailureStep({ activityId: activity.id });
-      return { sentences: [] };
-    }
-
-    words = fallbackWords ?? [];
-  }
-
-  if (words.length === 0) {
-    await streamStatus({ status: "error", step: "generateSentences" });
-    await handleActivityFailureStep({ activityId: activity.id });
-    return { sentences: [] };
+  if (sourceWords.error || sourceWords.words.length === 0) {
+    return handleReadingGenerationFailure(activity.id);
   }
 
   const { data: result, error } = await safeAsync(() =>
@@ -94,7 +113,7 @@ export async function generateReadingContentStep(
       lessonTitle: activity.lesson.title,
       targetLanguage: course.targetLanguage ?? course.title,
       userLanguage,
-      words,
+      words: sourceWords.words,
     }),
   );
 
@@ -104,9 +123,7 @@ export async function generateReadingContentStep(
     result.data.sentences.length === 0 ||
     !hasValidSentences(result.data.sentences)
   ) {
-    await streamStatus({ status: "error", step: "generateSentences" });
-    await handleActivityFailureStep({ activityId: activity.id });
-    return { sentences: [] };
+    return handleReadingGenerationFailure(activity.id);
   }
 
   await streamStatus({ status: "completed", step: "generateSentences" });

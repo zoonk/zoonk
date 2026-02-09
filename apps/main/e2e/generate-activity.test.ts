@@ -983,7 +983,7 @@ test.describe("Generate Activity Page - With Subscription", () => {
     );
   });
 
-  test("shows reading sentence-list phase and skips pronunciation phase", async ({
+  test("shows practice-content phase and skips pronunciation phase for reading", async ({
     userWithoutProgress,
   }) => {
     await createTestSubscription();
@@ -997,7 +997,7 @@ test.describe("Generate Activity Page - With Subscription", () => {
 
     await userWithoutProgress.goto(`/generate/a/${activity.id}`);
 
-    await expect(userWithoutProgress.getByText(/building your sentence list/i)).toBeVisible({
+    await expect(userWithoutProgress.getByText(/preparing practice content/i)).toBeVisible({
       timeout: 10_000,
     });
 

@@ -991,9 +991,11 @@ msgid "Getting started"
 msgstr "Getting started"
 
 #: src/app/[locale]/generate/a/[id]/use-generation-phases.ts
-msgctxt "FQVLIz"
-msgid "Building your sentence list"
-msgstr "Building your sentence list"
+#: src/app/[locale]/generate/ch/[id]/use-generation-phases.ts
+#: src/app/[locale]/generate/cs/[id]/use-generation-phases.ts
+msgctxt "fbHa1D"
+msgid "Preparing practice content"
+msgstr "Preparing practice content"
 
 #: src/app/[locale]/generate/a/[id]/use-generation-phases.ts
 #: src/app/[locale]/generate/ch/[id]/use-generation-phases.ts
@@ -1002,13 +1004,6 @@ msgstr "Building your sentence list"
 msgctxt "HYmCaW"
 msgid "Almost done"
 msgstr "Almost done"
-
-#: src/app/[locale]/generate/a/[id]/use-generation-phases.ts
-#: src/app/[locale]/generate/ch/[id]/use-generation-phases.ts
-#: src/app/[locale]/generate/cs/[id]/use-generation-phases.ts
-msgctxt "N3SU2T"
-msgid "Building your word list"
-msgstr "Building your word list"
 
 #: src/app/[locale]/generate/a/[id]/use-generation-phases.ts
 msgctxt "sISitf"

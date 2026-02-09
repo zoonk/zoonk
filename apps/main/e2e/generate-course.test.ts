@@ -190,7 +190,7 @@ test.describe("Generate Course Page", () => {
 
       await page.goto(`/generate/cs/${suggestion.id}`);
 
-      await expect(page.getByText(/building your word list/i)).toBeVisible({
+      await expect(page.getByText(/preparing practice content/i)).toBeVisible({
         timeout: 10_000,
       });
 
