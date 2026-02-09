@@ -11,52 +11,54 @@ export type SavedWord = {
   wordId: number;
 };
 
-async function saveOneWord(
-  vocabWord: VocabularyWord,
-  activityId: number,
-  lessonId: number,
-  organizationId: number,
-  targetLanguage: string,
-  userLanguage: string,
-  position: number,
-): Promise<SavedWord> {
-  const record = await prisma.word.upsert({
-    create: {
-      organizationId,
-      romanization: vocabWord.romanization,
-      targetLanguage,
-      translation: vocabWord.translation,
-      userLanguage,
-      word: vocabWord.word,
-    },
-    update: {
-      romanization: vocabWord.romanization,
-      translation: vocabWord.translation,
-    },
-    where: {
-      orgWord: { organizationId, targetLanguage, userLanguage, word: vocabWord.word },
-    },
-  });
+function buildSaveOneWord(params: {
+  activityId: number;
+  lessonId: number;
+  organizationId: number;
+  targetLanguage: string;
+  userLanguage: string;
+}) {
+  const { activityId, lessonId, organizationId, targetLanguage, userLanguage } = params;
 
-  const wordId = record.id;
+  return async (vocabWord: VocabularyWord, position: number): Promise<SavedWord> => {
+    const record = await prisma.word.upsert({
+      create: {
+        organizationId,
+        romanization: vocabWord.romanization,
+        targetLanguage,
+        translation: vocabWord.translation,
+        userLanguage,
+        word: vocabWord.word,
+      },
+      update: {
+        romanization: vocabWord.romanization,
+        translation: vocabWord.translation,
+      },
+      where: {
+        orgWord: { organizationId, targetLanguage, userLanguage, word: vocabWord.word },
+      },
+    });
 
-  await prisma.lessonWord.upsert({
-    create: { lessonId, wordId },
-    update: {},
-    where: { lessonWord: { lessonId, wordId } },
-  });
+    const wordId = record.id;
 
-  await prisma.step.create({
-    data: {
-      activityId,
-      content: {},
-      kind: "static",
-      position,
-      wordId,
-    },
-  });
+    await prisma.lessonWord.upsert({
+      create: { lessonId, wordId },
+      update: {},
+      where: { lessonWord: { lessonId, wordId } },
+    });
 
-  return { word: vocabWord.word, wordId: Number(wordId) };
+    await prisma.step.create({
+      data: {
+        activityId,
+        content: {},
+        kind: "static",
+        position,
+        wordId,
+      },
+    });
+
+    return { word: vocabWord.word, wordId: Number(wordId) };
+  };
 }
 
 export async function saveVocabularyWordsStep(
@@ -78,20 +80,16 @@ export async function saveVocabularyWordsStep(
   const userLanguage = activity.language;
   const organizationId = course.organization.id;
 
+  const saveOneWord = buildSaveOneWord({
+    activityId: activity.id,
+    lessonId: activity.lessonId,
+    organizationId,
+    targetLanguage,
+    userLanguage,
+  });
+
   const { data: savedWords, error } = await safeAsync(() =>
-    Promise.all(
-      words.map((vocabWord, index) =>
-        saveOneWord(
-          vocabWord,
-          activity.id,
-          activity.lessonId,
-          organizationId,
-          targetLanguage,
-          userLanguage,
-          index,
-        ),
-      ),
-    ),
+    Promise.all(words.map((vocabWord, index) => saveOneWord(vocabWord, index))),
   );
 
   if (error) {

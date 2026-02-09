@@ -15,17 +15,11 @@ async function generatePronunciation(
     generateActivityPronunciation({ nativeLanguage, targetLanguage, word }),
   );
 
-  if (error || !result) {
+  if (error || !result?.data) {
     return null;
   }
 
-  const output = result.data;
-
-  if (!output) {
-    return null;
-  }
-
-  return { pronunciation: output.pronunciation, word };
+  return { pronunciation: result.data.pronunciation, word };
 }
 
 export async function generateVocabularyPronunciationStep(

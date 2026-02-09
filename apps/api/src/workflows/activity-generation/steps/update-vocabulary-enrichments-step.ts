@@ -22,22 +22,14 @@ export async function updateVocabularyEnrichmentsStep(
 
   await streamStatus({ status: "started", step: "updateVocabularyEnrichments" });
 
-  const updates = savedWords.flatMap((saved) => {
-    const pronunciation = pronunciations[saved.word];
-    const audioUrl = audioUrls[saved.word];
-
-    if (!pronunciation && !audioUrl) {
-      return [];
-    }
-
-    return prisma.word.update({
-      data: {
-        ...(audioUrl ? { audioUrl } : {}),
-        ...(pronunciation ? { pronunciation } : {}),
-      },
-      where: { id: saved.wordId },
-    });
-  });
+  const updates = savedWords
+    .filter((saved) => pronunciations[saved.word] || audioUrls[saved.word])
+    .map((saved) =>
+      prisma.word.update({
+        data: { audioUrl: audioUrls[saved.word], pronunciation: pronunciations[saved.word] },
+        where: { id: saved.wordId },
+      }),
+    );
 
   const { error } = await safeAsync(() => prisma.$transaction(updates));
 

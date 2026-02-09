@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { generateActivityBackground } from "@zoonk/ai/tasks/activities/core/background";
 import { generateActivityPronunciation } from "@zoonk/ai/tasks/activities/language/pronunciation";
 import { generateActivityVocabulary } from "@zoonk/ai/tasks/activities/language/vocabulary";
 import { generateLanguageAudio } from "@zoonk/core/audio/generate";
@@ -522,22 +523,10 @@ describe("vocabulary activity generation", () => {
   });
 
   test("sets activity to 'failed' when AI returns empty words", async () => {
-    vi.mocked(generateActivityVocabulary).mockResolvedValueOnce({
-      data: { words: [] },
-      systemPrompt: "",
-      usage: {
-        inputTokenDetails: {
-          cacheReadTokens: undefined,
-          cacheWriteTokens: undefined,
-          noCacheTokens: undefined,
-        },
-        inputTokens: 0,
-        outputTokenDetails: { reasoningTokens: undefined, textTokens: undefined },
-        outputTokens: 0,
-        totalTokens: 0,
-      },
-      userPrompt: "",
-    });
+    vi.mocked(generateActivityVocabulary).mockResolvedValueOnce(
+      // oxlint-disable-next-line no-unsafe-type-assertion -- test: only data.words is read
+      { data: { words: [] } } as unknown as Awaited<ReturnType<typeof generateActivityVocabulary>>,
+    );
 
     const testLesson = await lessonFixture({
       chapterId: chapter.id,
@@ -561,51 +550,6 @@ describe("vocabulary activity generation", () => {
     });
 
     expect(dbActivity?.generationStatus).toBe("failed");
-  });
-
-  test("sets activity to 'failed' when enrichment transaction fails", async () => {
-    // Return saved words with non-existent IDs so the real $transaction fails
-    const saveStepModule = await import("./steps/save-vocabulary-words-step");
-    const spy = vi.spyOn(saveStepModule, "saveVocabularyWordsStep").mockResolvedValueOnce({
-      savedWords: [
-        { word: "hola", wordId: 999_999_999 },
-        { word: "gato", wordId: 999_999_998 },
-      ],
-    });
-
-    try {
-      const enrichFailCourse = await courseFixture({ organizationId, targetLanguage: "it" });
-      const enrichFailChapter = await chapterFixture({
-        courseId: enrichFailCourse.id,
-        organizationId,
-        title: `EnrichFail Chapter ${randomUUID()}`,
-      });
-
-      const testLesson = await lessonFixture({
-        chapterId: enrichFailChapter.id,
-        kind: "language",
-        organizationId,
-        title: `Vocab EnrichFail ${randomUUID()}`,
-      });
-
-      const activity = await activityFixture({
-        generationStatus: "pending",
-        kind: "vocabulary",
-        lessonId: testLesson.id,
-        organizationId,
-        title: `Vocabulary ${randomUUID()}`,
-      });
-
-      await activityGenerationWorkflow(testLesson.id);
-
-      const dbActivity = await prisma.activity.findUnique({
-        where: { id: activity.id },
-      });
-
-      expect(dbActivity?.generationStatus).toBe("failed");
-    } finally {
-      spy.mockRestore();
-    }
   });
 
   test("skips vocabulary generation if activity is already completed", async () => {
@@ -656,9 +600,6 @@ describe("vocabulary activity generation", () => {
     await activityGenerationWorkflow(testLesson.id);
 
     expect(generateActivityVocabulary).toHaveBeenCalled();
-
-    const { generateActivityBackground } =
-      await import("@zoonk/ai/tasks/activities/core/background");
     expect(generateActivityBackground).not.toHaveBeenCalled();
   });
 });

@@ -1,8 +1,7 @@
 import { generateActivityVocabulary } from "@zoonk/ai/tasks/activities/language/vocabulary";
-import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { streamStatus } from "../stream-status";
-import { findActivityByKind } from "./_utils/find-activity-by-kind";
+import { resolveActivityForGeneration } from "./_utils/content-step-helpers";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
 import { setActivityAsRunningStep } from "./set-activity-as-running-step";
@@ -13,29 +12,19 @@ export type VocabularyWord = {
   word: string;
 };
 
-async function handleFailedActivity(activityId: number) {
-  await prisma.step.deleteMany({ where: { activityId } });
-}
-
 export async function generateVocabularyContentStep(
   activities: LessonActivity[],
   workflowRunId: string,
 ): Promise<{ words: VocabularyWord[] }> {
   "use step";
 
-  const activity = findActivityByKind(activities, "vocabulary");
+  const resolved = await resolveActivityForGeneration(activities, "vocabulary");
 
-  if (!activity) {
+  if (!resolved.shouldGenerate) {
     return { words: [] };
   }
 
-  if (activity.generationStatus === "completed" || activity.generationStatus === "running") {
-    return { words: [] };
-  }
-
-  if (activity.generationStatus === "failed") {
-    await handleFailedActivity(activity.id);
-  }
+  const { activity } = resolved;
 
   await streamStatus({ status: "started", step: "generateVocabularyContent" });
   await setActivityAsRunningStep({ activityId: activity.id, workflowRunId });
