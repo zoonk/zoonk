@@ -30,6 +30,7 @@ type MockApiOptions = {
   triggerResponse?: { runId?: string; error?: string; status?: number };
   streamMessages?: { step: string; status: string }[];
   streamError?: boolean;
+  statusDelayMs?: number;
 };
 
 /**
@@ -46,6 +47,7 @@ function createSSEStream(messages: { step: string; status: string }[]): string {
  */
 function createRouteHandler(options: MockApiOptions) {
   const {
+    statusDelayMs = 0,
     triggerResponse = { runId: TEST_RUN_ID },
     streamMessages = [],
     streamError = false,
@@ -81,6 +83,11 @@ function createRouteHandler(options: MockApiOptions) {
       if (streamError) {
         await route.abort("failed");
         return;
+      }
+      if (statusDelayMs > 0) {
+        await new Promise<void>((resolve) => {
+          setTimeout(resolve, statusDelayMs);
+        });
       }
       await route.fulfill({
         body: createSSEStream(streamMessages),
@@ -164,6 +171,34 @@ test.describe("Generate Course Page", () => {
       await expect(page.getByText(/creating your course/i)).toBeVisible({
         timeout: 10_000,
       });
+    });
+
+    test("shows vocabulary-specific activity phases for language courses", async ({ page }) => {
+      const slug = `e2e-language-status-${randomUUID().slice(0, 8)}`;
+      const suggestion = await courseSuggestionFixture({
+        generationStatus: "running",
+        language: "en",
+        slug,
+        targetLanguage: "es",
+        title: "E2E Language Course Status",
+      });
+
+      await setupMockApis(page, {
+        statusDelayMs: 2500,
+        streamMessages: [{ status: "started", step: "getCourseSuggestion" }],
+      });
+
+      await page.goto(`/generate/cs/${suggestion.id}`);
+
+      await expect(page.getByText(/building your word list/i)).toBeVisible({
+        timeout: 10_000,
+      });
+
+      await expect(page.getByText(/adding pronunciation/i)).toBeVisible();
+      await expect(page.getByText(/recording audio/i)).toBeVisible();
+      await expect(page.getByText(/writing the lesson content/i)).toHaveCount(0);
+      await expect(page.getByText(/preparing illustrations/i)).toHaveCount(0);
+      await expect(page.getByText(/creating images/i)).toHaveCount(0);
     });
   });
 

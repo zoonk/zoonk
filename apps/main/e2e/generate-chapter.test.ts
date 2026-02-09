@@ -27,6 +27,7 @@ type MockApiOptions = {
   triggerResponse?: { runId?: string; error?: string; status?: number };
   streamMessages?: { step: string; status: string }[];
   streamError?: boolean;
+  statusDelayMs?: number;
 };
 
 /**
@@ -41,6 +42,7 @@ function createSSEStream(messages: { step: string; status: string }[]): string {
  */
 function createRouteHandler(options: MockApiOptions) {
   const {
+    statusDelayMs = 0,
     triggerResponse = { runId: TEST_RUN_ID },
     streamMessages = [],
     streamError = false,
@@ -76,6 +78,11 @@ function createRouteHandler(options: MockApiOptions) {
       if (streamError) {
         await route.abort("failed");
         return;
+      }
+      if (statusDelayMs > 0) {
+        await new Promise<void>((resolve) => {
+          setTimeout(resolve, statusDelayMs);
+        });
       }
       await route.fulfill({
         body: createSSEStream(streamMessages),
@@ -135,6 +142,7 @@ async function createPendingChapter() {
     normalizedTitle: normalizeString(courseTitle),
     organizationId: org.id,
     slug: `e2e-gen-course-${uniqueId}`,
+    targetLanguage: null,
     title: courseTitle,
   });
 
@@ -213,6 +221,56 @@ test.describe("Generate Chapter Page - No Subscription", () => {
 });
 
 test.describe("Generate Chapter Page - With Subscription", () => {
+  test("shows vocabulary-specific activity phases for language courses", async ({
+    userWithoutProgress,
+  }) => {
+    await createTestSubscription();
+
+    const org = await prisma.organization.findUniqueOrThrow({
+      where: { slug: "ai" },
+    });
+
+    const uniqueId = randomUUID().slice(0, 8);
+    const courseTitle = `E2E Language Chapter Course ${uniqueId}`;
+    const chapterTitle = `E2E Language Chapter ${uniqueId}`;
+
+    const course = await courseFixture({
+      isPublished: true,
+      normalizedTitle: normalizeString(courseTitle),
+      organizationId: org.id,
+      slug: `e2e-language-ch-course-${uniqueId}`,
+      targetLanguage: "es",
+      title: courseTitle,
+    });
+
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      generationStatus: "pending",
+      isPublished: true,
+      normalizedTitle: normalizeString(chapterTitle),
+      organizationId: org.id,
+      slug: `e2e-language-chapter-${uniqueId}`,
+      title: chapterTitle,
+    });
+
+    await setupMockApis(userWithoutProgress, {
+      statusDelayMs: 2500,
+      streamMessages: [{ status: "started", step: "getChapter" }],
+    });
+
+    await userWithoutProgress.goto(`/generate/ch/${chapter.id}`);
+
+    await expect(userWithoutProgress.getByText(/building your word list/i)).toBeVisible({
+      timeout: 10_000,
+    });
+
+    await expect(userWithoutProgress.getByText(/adding pronunciation/i)).toBeVisible();
+    await expect(userWithoutProgress.getByText(/recording audio/i)).toBeVisible();
+    await expect(userWithoutProgress.getByText(/writing the content/i)).toHaveCount(0);
+    await expect(userWithoutProgress.getByText(/preparing illustrations/i)).toHaveCount(0);
+    await expect(userWithoutProgress.getByText(/creating images/i)).toHaveCount(0);
+  });
+
   test("shows generation UI and completes workflow", async ({ userWithoutProgress }) => {
     await createTestSubscription();
     const { chapter, organizationId } = await createPendingChapter();

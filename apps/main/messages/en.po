@@ -999,6 +999,8 @@ msgid "Almost done"
 msgstr "Almost done"
 
 #: src/app/[locale]/generate/a/[id]/use-generation-phases.ts
+#: src/app/[locale]/generate/ch/[id]/use-generation-phases.ts
+#: src/app/[locale]/generate/cs/[id]/use-generation-phases.ts
 msgctxt "N3SU2T"
 msgid "Building your word list"
 msgstr "Building your word list"
@@ -1016,11 +1018,15 @@ msgid "Preparing illustrations"
 msgstr "Preparing illustrations"
 
 #: src/app/[locale]/generate/a/[id]/use-generation-phases.ts
+#: src/app/[locale]/generate/ch/[id]/use-generation-phases.ts
+#: src/app/[locale]/generate/cs/[id]/use-generation-phases.ts
 msgctxt "T00GEW"
 msgid "Recording audio"
 msgstr "Recording audio"
 
 #: src/app/[locale]/generate/a/[id]/use-generation-phases.ts
+#: src/app/[locale]/generate/ch/[id]/use-generation-phases.ts
+#: src/app/[locale]/generate/cs/[id]/use-generation-phases.ts
 msgctxt "TlrPFF"
 msgid "Adding pronunciation"
 msgstr "Adding pronunciation"

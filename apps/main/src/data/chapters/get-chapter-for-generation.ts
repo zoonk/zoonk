@@ -12,6 +12,7 @@ export async function getChapterForGeneration(chapterId: number) {
       course: {
         select: {
           slug: true,
+          targetLanguage: true,
           title: true,
         },
       },
