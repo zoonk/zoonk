@@ -166,7 +166,7 @@ describe("vocabulary activity generation", () => {
     expect(generateActivityVocabulary).toHaveBeenCalledWith({
       chapterTitle: chapter.title,
       courseTitle: course.title,
-      language: "es",
+      language: "en",
       lessonDescription: "Learn basic greetings",
       lessonTitle: testLesson.title,
     });
@@ -448,7 +448,9 @@ describe("vocabulary activity generation", () => {
   });
 
   test("sets activity to 'failed' when generateActivityPronunciation fails for all words", async () => {
-    vi.mocked(generateActivityPronunciation).mockRejectedValue(new Error("Pronunciation failed"));
+    vi.mocked(generateActivityPronunciation)
+      .mockRejectedValueOnce(new Error("Pronunciation failed"))
+      .mockRejectedValueOnce(new Error("Pronunciation failed"));
 
     // Use unique targetLanguage to avoid shared word records from other tests
     const pronFailCourse = await courseFixture({ organizationId, targetLanguage: "fr" });
@@ -483,10 +485,9 @@ describe("vocabulary activity generation", () => {
   });
 
   test("sets activity to 'failed' when generateLanguageAudio fails for all words", async () => {
-    vi.mocked(generateLanguageAudio).mockResolvedValue({
-      data: null,
-      error: new Error("Audio failed"),
-    });
+    vi.mocked(generateLanguageAudio)
+      .mockResolvedValueOnce({ data: null, error: new Error("Audio failed") })
+      .mockResolvedValueOnce({ data: null, error: new Error("Audio failed") });
 
     // Use unique targetLanguage to avoid shared word records from other tests
     const audioFailCourse = await courseFixture({ organizationId, targetLanguage: "de" });
@@ -501,6 +502,48 @@ describe("vocabulary activity generation", () => {
       kind: "language",
       organizationId,
       title: `Vocab AudioFail ${randomUUID()}`,
+    });
+
+    const activity = await activityFixture({
+      generationStatus: "pending",
+      kind: "vocabulary",
+      lessonId: testLesson.id,
+      organizationId,
+      title: `Vocabulary ${randomUUID()}`,
+    });
+
+    await activityGenerationWorkflow(testLesson.id);
+
+    const dbActivity = await prisma.activity.findUnique({
+      where: { id: activity.id },
+    });
+
+    expect(dbActivity?.generationStatus).toBe("failed");
+  });
+
+  test("sets activity to 'failed' when AI returns empty words", async () => {
+    vi.mocked(generateActivityVocabulary).mockResolvedValueOnce({
+      data: { words: [] },
+      systemPrompt: "",
+      usage: {
+        inputTokenDetails: {
+          cacheReadTokens: undefined,
+          cacheWriteTokens: undefined,
+          noCacheTokens: undefined,
+        },
+        inputTokens: 0,
+        outputTokenDetails: { reasoningTokens: undefined, textTokens: undefined },
+        outputTokens: 0,
+        totalTokens: 0,
+      },
+      userPrompt: "",
+    });
+
+    const testLesson = await lessonFixture({
+      chapterId: chapter.id,
+      kind: "language",
+      organizationId,
+      title: `Vocab EmptyAI ${randomUUID()}`,
     });
 
     const activity = await activityFixture({

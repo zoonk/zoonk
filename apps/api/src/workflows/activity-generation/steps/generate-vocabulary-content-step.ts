@@ -47,13 +47,19 @@ export async function generateVocabularyContentStep(
     generateActivityVocabulary({
       chapterTitle: activity.lesson.chapter.title,
       courseTitle: activity.lesson.chapter.course.title,
-      language: activity.lesson.chapter.course.targetLanguage ?? "",
+      language: activity.language,
       lessonDescription: activity.lesson.description ?? "",
       lessonTitle: activity.lesson.title,
     }),
   );
 
   if (error || !result) {
+    await streamStatus({ status: "error", step: "generateVocabularyContent" });
+    await handleActivityFailureStep({ activityId: activity.id });
+    return { words: [] };
+  }
+
+  if (result.data.words.length === 0) {
     await streamStatus({ status: "error", step: "generateVocabularyContent" });
     await handleActivityFailureStep({ activityId: activity.id });
     return { words: [] };
