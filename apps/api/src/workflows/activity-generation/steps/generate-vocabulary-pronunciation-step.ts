@@ -4,6 +4,7 @@ import { streamStatus } from "../stream-status";
 import { type VocabularyWord } from "./generate-vocabulary-content-step";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
+import { findActivityByKind } from "./_utils/find-activity-by-kind";
 
 async function generatePronunciation(
   word: string,
@@ -33,7 +34,7 @@ export async function generateVocabularyPronunciationStep(
 ): Promise<{ pronunciations: Record<string, string> }> {
   "use step";
 
-  const activity = activities.find((act) => act.kind === "vocabulary");
+  const activity = findActivityByKind(activities, "vocabulary");
 
   if (!activity || words.length === 0) {
     return { pronunciations: {} };

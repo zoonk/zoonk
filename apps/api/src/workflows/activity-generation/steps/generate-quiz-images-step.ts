@@ -7,6 +7,7 @@ import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { isJsonObject, toRecord } from "@zoonk/utils/json";
 import { streamStatus } from "../stream-status";
+import { findActivityByKind } from "./_utils/find-activity-by-kind";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
 
@@ -63,7 +64,7 @@ export async function generateQuizImagesStep(
 ): Promise<QuizQuestionWithUrls[]> {
   "use step";
 
-  const activity = activities.find((act) => act.kind === "quiz");
+  const activity = findActivityByKind(activities, "quiz");
 
   if (!activity || questions.length === 0) {
     return [];

@@ -1,4 +1,5 @@
 import { settled } from "@zoonk/utils/settled";
+import { findActivityByKind } from "./steps/_utils/find-activity-by-kind";
 import { generateVocabularyAudioStep } from "./steps/generate-vocabulary-audio-step";
 import { generateVocabularyContentStep } from "./steps/generate-vocabulary-content-step";
 import { generateVocabularyPronunciationStep } from "./steps/generate-vocabulary-pronunciation-step";
@@ -31,7 +32,7 @@ export async function languageActivityWorkflow(
   const { audioUrls } = settled(audioResult, { audioUrls: {} });
 
   if (savedWords.length === 0) {
-    const vocabActivity = activities.find((act) => act.kind === "vocabulary");
+    const vocabActivity = findActivityByKind(activities, "vocabulary");
 
     if (vocabActivity) {
       await handleActivityFailureStep({ activityId: vocabActivity.id });

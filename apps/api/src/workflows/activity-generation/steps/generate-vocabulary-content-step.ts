@@ -4,6 +4,7 @@ import { safeAsync } from "@zoonk/utils/error";
 import { streamStatus } from "../stream-status";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
+import { findActivityByKind } from "./_utils/find-activity-by-kind";
 import { setActivityAsRunningStep } from "./set-activity-as-running-step";
 
 export type VocabularyWord = {
@@ -11,10 +12,6 @@ export type VocabularyWord = {
   translation: string;
   word: string;
 };
-
-function findVocabularyActivity(activities: LessonActivity[]) {
-  return activities.find((act) => act.kind === "vocabulary");
-}
 
 async function handleFailedActivity(activityId: number) {
   await prisma.step.deleteMany({ where: { activityId } });
@@ -26,7 +23,7 @@ export async function generateVocabularyContentStep(
 ): Promise<{ words: VocabularyWord[] }> {
   "use step";
 
-  const activity = findVocabularyActivity(activities);
+  const activity = findActivityByKind(activities, "vocabulary");
 
   if (!activity) {
     return { words: [] };
