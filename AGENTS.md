@@ -36,6 +36,8 @@ Zoonk is a web app where users can learn anything using AI. This app uses AI to 
 - Never guess at imports, table names, or conventions—always search for existing patterns first
 - Before writing code, check for existing patterns, agents, and skills that could help execute the task better
 - Don't be afraid to refactor existing code to improve quality, clarity, or simplicity. Always leave the codebase better than you found it
+- Never cut corners or do hacks. Aim for maintainable, clean code
+- Think about the big picture—how your changes fit into the overall architecture and future growth
 
 **IMPORTANT**: Before completing a task, make sure to run the following commands:
 
@@ -91,6 +93,7 @@ For detailed UX guidelines (interactions, animation, layout, accessibility), see
 - Workflow files (`"use workflow"`) can't call Node APIs directly; wrap them in `"use step"` functions
 - When adding a new endpoint, add docs for it in `document.ts`
 - When adding e2e tests, use `*Fixture()` functions to create unique test data per test - do not modify seed files
+- Avoid inline imports like `await import()`, only do it when dynamic imports are absolutely necessary
 
 ## Component Organization
 
