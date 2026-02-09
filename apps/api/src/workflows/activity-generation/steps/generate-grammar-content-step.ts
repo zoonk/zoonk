@@ -5,24 +5,33 @@ import {
 import { assertStepContent } from "@zoonk/core/steps/content-contract";
 import { prisma } from "@zoonk/db";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
+import { z } from "zod";
 import { streamStatus } from "../stream-status";
 import { findActivityByKind } from "./_utils/find-activity-by-kind";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
 import { setActivityAsRunningStep } from "./set-activity-as-running-step";
 
-function hasMinimumGrammarContent(data: ActivityGrammarSchema): boolean {
-  return (
-    data.examples.length > 0 &&
-    data.discovery.options.length > 0 &&
-    data.exercises.length > 0 &&
-    data.exercises.every(
-      (exercise) =>
-        exercise.answers.length > 0 &&
-        exercise.feedback.trim().length > 0 &&
-        exercise.template.trim().length > 0,
+const minimumGrammarContentSchema = z.object({
+  discovery: z.object({
+    options: z.array(z.unknown()).min(1),
+  }),
+  examples: z.array(z.unknown()).min(1),
+  exercises: z
+    .array(
+      z.object({
+        answers: z.array(z.string()).min(1),
+        feedback: z.string().trim().min(1),
+        template: z.string().trim().min(1),
+      }),
     )
-  );
+    .min(1),
+  ruleName: z.string().trim().min(1),
+  ruleSummary: z.string().trim().min(1),
+});
+
+function hasMinimumGrammarContent(data: ActivityGrammarSchema): boolean {
+  return minimumGrammarContentSchema.safeParse(data).success;
 }
 
 function optionalNonEmpty(value: string | undefined): string | undefined {
