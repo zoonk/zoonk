@@ -48,7 +48,7 @@ async function saveOneWord(
   await prisma.step.create({
     data: {
       activityId,
-      content: { text: vocabWord.translation, title: vocabWord.word },
+      content: {},
       kind: "static",
       position,
       wordId,

@@ -229,7 +229,7 @@ describe("vocabulary activity generation", () => {
     expect(lessonWords).toHaveLength(2);
   });
 
-  test("creates steps with wordId links and correct content", async () => {
+  test("creates steps with wordId links and empty content", async () => {
     const testLesson = await lessonFixture({
       chapterId: chapter.id,
       kind: "language",
@@ -248,6 +248,7 @@ describe("vocabulary activity generation", () => {
     await activityGenerationWorkflow(testLesson.id);
 
     const steps = await prisma.step.findMany({
+      include: { word: true },
       orderBy: { position: "asc" },
       where: { activityId: activity.id },
     });
@@ -257,16 +258,16 @@ describe("vocabulary activity generation", () => {
     for (const step of steps) {
       expect(step.wordId).not.toBeNull();
       expect(step.kind).toBe("static");
+      expect(step.content).toEqual({});
     }
 
-    const holaStep = steps.find(
-      (step) => (step.content as Record<string, unknown>).title === "hola",
-    );
-    expect(holaStep).toBeDefined();
+    const wordNames = steps.map((step) => step.word?.word);
+    expect(wordNames).toHaveLength(2);
+    expect(wordNames).toContain("hola");
+    expect(wordNames).toContain("gato");
 
-    // oxlint-disable-next-line no-non-null-assertion -- asserted above
-    const holaContent = holaStep!.content as Record<string, unknown>;
-    expect(holaContent.text).toBe("hello");
+    const holaStep = steps.find((step) => step.word?.word === "hola");
+    expect(holaStep?.word?.translation).toBe("hello");
   });
 
   test("calls generateActivityPronunciation once per word with correct params", async () => {
