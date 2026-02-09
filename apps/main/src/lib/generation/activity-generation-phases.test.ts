@@ -62,6 +62,15 @@ describe(getPhaseOrder, () => {
   test("uses grammar-specific order without visual or audio phases", () => {
     expect(getPhaseOrder("grammar")).toEqual(["gettingStarted", "writingContent", "finishing"]);
   });
+
+  test("uses reading-specific order without visuals or pronunciation", () => {
+    expect(getPhaseOrder("reading")).toEqual([
+      "gettingStarted",
+      "buildingWordList",
+      "recordingAudio",
+      "finishing",
+    ]);
+  });
 });
 
 describe("vocabulary phase status", () => {
@@ -104,6 +113,29 @@ describe("grammar phase status", () => {
       ["setActivityAsRunning", "generateGrammarContent"],
       "setGrammarAsCompleted",
       "grammar",
+    );
+
+    expect(progress).toBeGreaterThan(0);
+  });
+});
+
+describe("reading phase status", () => {
+  test("activates buildingWordList for sentence generation", () => {
+    const status = getPhaseStatus(
+      "buildingWordList",
+      ["setActivityAsRunning"],
+      "generateSentences",
+      "reading",
+    );
+
+    expect(status).toBe("active");
+  });
+
+  test("calculates progress for reading flow", () => {
+    const progress = calculateWeightedProgress(
+      ["setActivityAsRunning", "generateSentences", "saveSentences"],
+      "generateAudio",
+      "reading",
     );
 
     expect(progress).toBeGreaterThan(0);

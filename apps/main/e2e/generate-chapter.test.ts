@@ -260,7 +260,7 @@ test.describe("Generate Chapter Page - With Subscription", () => {
 
     await userWithoutProgress.goto(`/generate/ch/${chapter.id}`);
 
-    await expect(userWithoutProgress.getByText(/building your word list/i)).toBeVisible({
+    await expect(userWithoutProgress.getByText(/preparing practice content/i)).toBeVisible({
       timeout: 10_000,
     });
 

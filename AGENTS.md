@@ -33,6 +33,8 @@ Zoonk is a web app where users can learn anything using AI. This app uses AI to 
 - Use `[condition && value, ...].filter(Boolean)` instead of `let` + `.push()` for conditional arrays
 - Extract helper functions that return objects to eliminate `let` variables (e.g., `const { a, b } = await getOrCreate(...)`)
 - Use meaningful variable names and avoid abbreviations
+- For workflow orchestration, prefer linear wave-based flows (core-workflow style) with `Promise.allSettled` over branching orchestration unless branching is strictly required
+- Prefer linear, declarative code over nested conditionals and imperative code
 - Never guess at imports, table names, or conventions—always search for existing patterns first
 - Before writing code, check for existing patterns, agents, and skills that could help execute the task better
 - Don't be afraid to refactor existing code to improve quality, clarity, or simplicity. Always leave the codebase better than you found it
@@ -162,6 +164,9 @@ For detailed testing patterns, fixtures, and best practices, see `.agents/skills
 - **IMPORTANT**: The `t` function does NOT support dynamic keys. Use string literals: `t("Arts courses")`, not `t(someVariable)`
 - **CRITICAL: NEVER pass `t` as a function argument**. This is a common mistake that breaks i18n extraction. Instead of passing `t` to a function, create an async function that calls `getExtracted()` internally (see `@apps/main/src/lib/categories.ts` and `@apps/main/src/lib/belt-colors.ts` for examples)
 - **CRITICAL: NEVER call `getExtracted()` inside `Promise.all()`**
+- Translation strings are extracted to PO files automatically when running `pnpm --filter {app} build`
+- Never edit `i18n.lock` manually
+- Manual translation work should be done only in PO entries with empty `msgstr`
 - When using `render` prop with base-ui components (e.g., `useRender`), use `ClientLink` instead of `Link` since the render prop requires a client component
 - Always read the [translations skill](.agents/skills/zoonk-translations/SKILL.md) when using `next-intl`.
 

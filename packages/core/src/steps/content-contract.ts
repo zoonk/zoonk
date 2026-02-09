@@ -108,11 +108,18 @@ export const staticVocabularyWordRefContentSchema = z
   })
   .strict();
 
+export const staticReadingSentenceRefContentSchema = z
+  .object({
+    variant: z.literal("readingSentenceRef"),
+  })
+  .strict();
+
 export const staticContentSchema = z.discriminatedUnion("variant", [
   staticTextContentSchema,
   staticGrammarExampleContentSchema,
   staticGrammarRuleContentSchema,
   staticVocabularyWordRefContentSchema,
+  staticReadingSentenceRefContentSchema,
 ]);
 
 const stepContentSchemas = {

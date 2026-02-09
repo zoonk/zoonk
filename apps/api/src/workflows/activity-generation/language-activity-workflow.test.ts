@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { generateActivityBackground } from "@zoonk/ai/tasks/activities/core/background";
 import { generateActivityGrammar } from "@zoonk/ai/tasks/activities/language/grammar";
 import { generateActivityPronunciation } from "@zoonk/ai/tasks/activities/language/pronunciation";
+import { generateActivitySentences } from "@zoonk/ai/tasks/activities/language/sentences";
 import { generateActivityVocabulary } from "@zoonk/ai/tasks/activities/language/vocabulary";
 import { generateLanguageAudio } from "@zoonk/core/audio/generate";
 import { prisma } from "@zoonk/db";
@@ -75,6 +76,25 @@ vi.mock("@zoonk/ai/tasks/activities/language/grammar", () => ({
       ],
       ruleName: "Present tense endings",
       ruleSummary: "Use -o for yo and -es for tú in regular -er verbs.",
+    },
+  }),
+}));
+
+vi.mock("@zoonk/ai/tasks/activities/language/sentences", () => ({
+  generateActivitySentences: vi.fn().mockResolvedValue({
+    data: {
+      sentences: [
+        {
+          romanization: "yo see-o un ga-to",
+          sentence: "Yo veo un gato.",
+          translation: "I see a cat.",
+        },
+        {
+          romanization: "o-la, ko-mo es-tas",
+          sentence: "Hola, ¿cómo estás?",
+          translation: "Hello, how are you?",
+        },
+      ],
     },
   }),
 }));
@@ -167,6 +187,45 @@ describe("language activity generation", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
+
+  async function createLessonWordsForReading(input: {
+    lessonId: number;
+    targetLanguage: string;
+    userLanguage?: string;
+  }) {
+    const { lessonId, targetLanguage, userLanguage = "en" } = input;
+
+    const word1 = await prisma.word.create({
+      data: {
+        organizationId,
+        romanization: "ga-to",
+        targetLanguage,
+        translation: "cat",
+        userLanguage,
+        word: `gato-${randomUUID().slice(0, 8)}`,
+      },
+    });
+
+    const word2 = await prisma.word.create({
+      data: {
+        organizationId,
+        romanization: "o-la",
+        targetLanguage,
+        translation: "hello",
+        userLanguage,
+        word: `hola-${randomUUID().slice(0, 8)}`,
+      },
+    });
+
+    await prisma.lessonWord.createMany({
+      data: [
+        { lessonId, wordId: word1.id },
+        { lessonId, wordId: word2.id },
+      ],
+    });
+
+    return [word1.word, word2.word];
+  }
 
   test("doesn't call generateActivityVocabulary when lesson has no vocabulary activities", async () => {
     const testLesson = await lessonFixture({
@@ -864,5 +923,328 @@ describe("language activity generation", () => {
     });
 
     expect(dbGrammarActivity?.generationStatus).toBe("completed");
+  });
+
+  test("calls generateActivitySentences with targetLanguage and userLanguage", async () => {
+    const testLesson = await lessonFixture({
+      chapterId: chapter.id,
+      kind: "language",
+      organizationId,
+      title: `Reading Params ${randomUUID()}`,
+    });
+
+    await activityFixture({
+      generationStatus: "pending",
+      kind: "vocabulary",
+      lessonId: testLesson.id,
+      organizationId,
+      title: `Vocabulary ${randomUUID()}`,
+    });
+
+    await activityFixture({
+      generationStatus: "pending",
+      kind: "reading",
+      lessonId: testLesson.id,
+      organizationId,
+      title: `Reading ${randomUUID()}`,
+    });
+
+    await activityGenerationWorkflow(testLesson.id);
+
+    expect(generateActivitySentences).toHaveBeenCalledWith({
+      lessonTitle: testLesson.title,
+      targetLanguage: "es",
+      userLanguage: "en",
+      words: ["hola", "gato"],
+    });
+  });
+
+  test("falls back to lesson words when reading has no current-run vocabulary words", async () => {
+    const testLesson = await lessonFixture({
+      chapterId: chapter.id,
+      kind: "language",
+      organizationId,
+      title: `Reading Fallback ${randomUUID()}`,
+    });
+
+    const expectedWords = await createLessonWordsForReading({
+      lessonId: testLesson.id,
+      targetLanguage: "es",
+    });
+
+    await activityFixture({
+      generationStatus: "pending",
+      kind: "reading",
+      lessonId: testLesson.id,
+      organizationId,
+      title: `Reading ${randomUUID()}`,
+    });
+
+    await activityGenerationWorkflow(testLesson.id);
+
+    expect(generateActivitySentences).toHaveBeenCalledWith({
+      lessonTitle: testLesson.title,
+      targetLanguage: "es",
+      userLanguage: "en",
+      words: expectedWords,
+    });
+  });
+
+  test("creates sentence records in sentences table and lesson_sentences junction records", async () => {
+    const testLesson = await lessonFixture({
+      chapterId: chapter.id,
+      kind: "language",
+      organizationId,
+      title: `Reading Sentences ${randomUUID()}`,
+    });
+
+    await createLessonWordsForReading({
+      lessonId: testLesson.id,
+      targetLanguage: "es",
+    });
+
+    await activityFixture({
+      generationStatus: "pending",
+      kind: "reading",
+      lessonId: testLesson.id,
+      organizationId,
+      title: `Reading ${randomUUID()}`,
+    });
+
+    await activityGenerationWorkflow(testLesson.id);
+
+    const sentences = await prisma.sentence.findMany({
+      where: {
+        lessons: {
+          some: {
+            lessonId: testLesson.id,
+          },
+        },
+        organizationId,
+        targetLanguage: "es",
+        userLanguage: "en",
+      },
+    });
+
+    expect(sentences).toHaveLength(2);
+    expect(sentences.map((sentence) => sentence.sentence).toSorted()).toEqual([
+      "Hola, ¿cómo estás?",
+      "Yo veo un gato.",
+    ]);
+
+    const lessonSentences = await prisma.lessonSentence.findMany({
+      where: { lessonId: testLesson.id },
+    });
+
+    expect(lessonSentences).toHaveLength(2);
+  });
+
+  test("creates steps with sentenceId links and readingSentenceRef content", async () => {
+    const testLesson = await lessonFixture({
+      chapterId: chapter.id,
+      kind: "language",
+      organizationId,
+      title: `Reading Steps ${randomUUID()}`,
+    });
+
+    await createLessonWordsForReading({
+      lessonId: testLesson.id,
+      targetLanguage: "es",
+    });
+
+    const activity = await activityFixture({
+      generationStatus: "pending",
+      kind: "reading",
+      lessonId: testLesson.id,
+      organizationId,
+      title: `Reading ${randomUUID()}`,
+    });
+
+    await activityGenerationWorkflow(testLesson.id);
+
+    const steps = await prisma.step.findMany({
+      include: { sentence: true },
+      orderBy: { position: "asc" },
+      where: { activityId: activity.id },
+    });
+
+    expect(steps).toHaveLength(2);
+
+    for (const step of steps) {
+      expect(step.sentenceId).not.toBeNull();
+      expect(step.kind).toBe("static");
+      expect(step.content).toEqual({ variant: "readingSentenceRef" });
+    }
+
+    expect(steps[0]?.sentence?.sentence).toBe("Yo veo un gato.");
+    expect(steps[1]?.sentence?.sentence).toBe("Hola, ¿cómo estás?");
+  });
+
+  test("calls generateLanguageAudio once per sentence for reading when targetLanguage supports TTS", async () => {
+    const testLesson = await lessonFixture({
+      chapterId: chapter.id,
+      kind: "language",
+      organizationId,
+      title: `Reading Audio ${randomUUID()}`,
+    });
+
+    await createLessonWordsForReading({
+      lessonId: testLesson.id,
+      targetLanguage: "es",
+    });
+
+    await activityFixture({
+      generationStatus: "pending",
+      kind: "reading",
+      lessonId: testLesson.id,
+      organizationId,
+      title: `Reading ${randomUUID()}`,
+    });
+
+    await activityGenerationWorkflow(testLesson.id);
+
+    expect(generateLanguageAudio).toHaveBeenCalledTimes(2);
+    expect(generateLanguageAudio).toHaveBeenCalledWith({
+      language: "es",
+      orgSlug: "ai",
+      text: "Yo veo un gato.",
+    });
+    expect(generateLanguageAudio).toHaveBeenCalledWith({
+      language: "es",
+      orgSlug: "ai",
+      text: "Hola, ¿cómo estás?",
+    });
+  });
+
+  test("does not call generateLanguageAudio for reading when targetLanguage does not support TTS", async () => {
+    const unsupportedCourse = await courseFixture({
+      organizationId,
+      targetLanguage: "xx",
+    });
+
+    const unsupportedChapter = await chapterFixture({
+      courseId: unsupportedCourse.id,
+      organizationId,
+      title: `Unsupported Reading Chapter ${randomUUID()}`,
+    });
+
+    const testLesson = await lessonFixture({
+      chapterId: unsupportedChapter.id,
+      kind: "language",
+      organizationId,
+      title: `Reading NoTTS ${randomUUID()}`,
+    });
+
+    await createLessonWordsForReading({
+      lessonId: testLesson.id,
+      targetLanguage: "xx",
+    });
+
+    await activityFixture({
+      generationStatus: "pending",
+      kind: "reading",
+      lessonId: testLesson.id,
+      organizationId,
+      title: `Reading ${randomUUID()}`,
+    });
+
+    await activityGenerationWorkflow(testLesson.id);
+
+    expect(generateLanguageAudio).not.toHaveBeenCalled();
+  });
+
+  test("sets reading activity generationStatus to completed with generationRunId", async () => {
+    const testLesson = await lessonFixture({
+      chapterId: chapter.id,
+      kind: "language",
+      organizationId,
+      title: `Reading Complete ${randomUUID()}`,
+    });
+
+    await createLessonWordsForReading({
+      lessonId: testLesson.id,
+      targetLanguage: "es",
+    });
+
+    const activity = await activityFixture({
+      generationStatus: "pending",
+      kind: "reading",
+      lessonId: testLesson.id,
+      organizationId,
+      title: `Reading ${randomUUID()}`,
+    });
+
+    await activityGenerationWorkflow(testLesson.id);
+
+    const dbActivity = await prisma.activity.findUnique({
+      where: { id: activity.id },
+    });
+
+    expect(dbActivity?.generationStatus).toBe("completed");
+    expect(dbActivity?.generationRunId).toBe("test-run-id");
+  });
+
+  test("sets reading activity to failed when AI returns empty sentences", async () => {
+    vi.mocked(generateActivitySentences).mockResolvedValueOnce(
+      // oxlint-disable-next-line no-unsafe-type-assertion -- test: reading validates only data.sentences
+      { data: { sentences: [] } } as unknown as Awaited<
+        ReturnType<typeof generateActivitySentences>
+      >,
+    );
+
+    const testLesson = await lessonFixture({
+      chapterId: chapter.id,
+      kind: "language",
+      organizationId,
+      title: `Reading EmptyAI ${randomUUID()}`,
+    });
+
+    await createLessonWordsForReading({
+      lessonId: testLesson.id,
+      targetLanguage: "es",
+    });
+
+    const activity = await activityFixture({
+      generationStatus: "pending",
+      kind: "reading",
+      lessonId: testLesson.id,
+      organizationId,
+      title: `Reading ${randomUUID()}`,
+    });
+
+    await activityGenerationWorkflow(testLesson.id);
+
+    const dbActivity = await prisma.activity.findUnique({
+      where: { id: activity.id },
+    });
+
+    expect(dbActivity?.generationStatus).toBe("failed");
+  });
+
+  test("sets reading activity to failed when no source words are available", async () => {
+    const testLesson = await lessonFixture({
+      chapterId: chapter.id,
+      kind: "language",
+      organizationId,
+      title: `Reading NoWords ${randomUUID()}`,
+    });
+
+    const activity = await activityFixture({
+      generationStatus: "pending",
+      kind: "reading",
+      lessonId: testLesson.id,
+      organizationId,
+      title: `Reading ${randomUUID()}`,
+    });
+
+    await activityGenerationWorkflow(testLesson.id);
+
+    expect(generateActivitySentences).not.toHaveBeenCalled();
+
+    const dbActivity = await prisma.activity.findUnique({
+      where: { id: activity.id },
+    });
+
+    expect(dbActivity?.generationStatus).toBe("failed");
   });
 });

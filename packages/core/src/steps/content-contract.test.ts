@@ -79,6 +79,11 @@ describe("step content contracts", () => {
     expect(content).toEqual({ variant: "vocabularyWordRef" });
   });
 
+  test("parses static readingSentenceRef variant", () => {
+    const content = parseStepContent("static", { variant: "readingSentenceRef" });
+    expect(content).toEqual({ variant: "readingSentenceRef" });
+  });
+
   test("parses matchColumns", () => {
     const content = parseStepContent("matchColumns", {
       pairs: [{ left: "A", right: "1" }],
