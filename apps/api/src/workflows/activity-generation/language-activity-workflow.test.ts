@@ -426,12 +426,10 @@ describe("language activity generation", () => {
 
     expect(generateLanguageAudio).toHaveBeenCalledTimes(2);
     expect(generateLanguageAudio).toHaveBeenCalledWith({
-      language: "es",
       orgSlug: "ai",
       text: "hola",
     });
     expect(generateLanguageAudio).toHaveBeenCalledWith({
-      language: "es",
       orgSlug: "ai",
       text: "gato",
     });
@@ -1105,12 +1103,10 @@ describe("language activity generation", () => {
 
     expect(generateLanguageAudio).toHaveBeenCalledTimes(2);
     expect(generateLanguageAudio).toHaveBeenCalledWith({
-      language: "es",
       orgSlug: "ai",
       text: "Yo veo un gato.",
     });
     expect(generateLanguageAudio).toHaveBeenCalledWith({
-      language: "es",
       orgSlug: "ai",
       text: "Hola, ¿cómo estás?",
     });

@@ -51,17 +51,6 @@ export function AudioTestForm() {
         </div>
 
         <div className="flex flex-col gap-2">
-          <Label htmlFor="language">Language (ISO 639-1 code)</Label>
-          <Input
-            disabled={isPending}
-            id="language"
-            name="language"
-            placeholder="e.g. en, es, fr, pt, ja"
-            type="text"
-          />
-        </div>
-
-        <div className="flex flex-col gap-2">
           <Label htmlFor="voice">Voice</Label>
           <Select defaultValue="marin" name="voice">
             <SelectTrigger id="voice">
