@@ -56,9 +56,9 @@ export async function languageActivityWorkflow(
 
   const { audioUrls: readingAudioUrls } = settled(readingAudioResult, { audioUrls: {} });
 
-  // Wave 5: save reading enrichments + complete reading
-  await Promise.allSettled([
-    updateReadingEnrichmentsStep(activities, savedSentences, readingAudioUrls),
-    saveActivityStep(activities, workflowRunId, "reading"),
-  ]);
+  // Wave 5: save reading enrichments
+  await updateReadingEnrichmentsStep(activities, savedSentences, readingAudioUrls);
+
+  // Wave 6: complete reading after enrichments are finalized
+  await saveActivityStep(activities, workflowRunId, "reading");
 }
