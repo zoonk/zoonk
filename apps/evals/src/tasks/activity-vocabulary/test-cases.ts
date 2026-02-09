@@ -100,11 +100,11 @@ ${SHARED_EXPECTATIONS}
     id: "en-spanish-ordering-coffee",
     userInput: {
       chapterTitle: "At the Cafe",
-      courseTitle: "Spanish",
-      language: "en",
       lessonDescription:
         "Words and phrases for ordering coffee drinks, specifying sizes, and requesting milk options at a cafe",
       lessonTitle: "Ordering Coffee",
+      targetLanguage: "Spanish",
+      userLanguage: "en",
     },
   },
   {
@@ -132,11 +132,11 @@ ${SHARED_EXPECTATIONS}
     id: "en-french-bakery-items",
     userInput: {
       chapterTitle: "French Cuisine",
-      courseTitle: "French",
-      language: "en",
       lessonDescription:
         "Names of breads, pastries, and baked goods commonly found in French bakeries",
       lessonTitle: "Breads and Pastries",
+      targetLanguage: "French",
+      userLanguage: "en",
     },
   },
   {
@@ -164,11 +164,11 @@ ${SHARED_EXPECTATIONS}
     id: "en-german-parents-siblings",
     userInput: {
       chapterTitle: "Family",
-      courseTitle: "German",
-      language: "en",
       lessonDescription:
         "Words for parents, siblings, and immediate family relationships in German",
       lessonTitle: "Parents and Siblings",
+      targetLanguage: "German",
+      userLanguage: "en",
     },
   },
   {
@@ -199,11 +199,11 @@ ${SHARED_EXPECTATIONS}
     id: "pt-italian-common-pets",
     userInput: {
       chapterTitle: "Animais",
-      courseTitle: "Italian",
-      language: "pt",
       lessonDescription:
         "Nomes de animais de estimacao comuns e termos basicos relacionados a cuidados com pets",
       lessonTitle: "Animais de Estimacao",
+      targetLanguage: "Italian",
+      userLanguage: "pt",
     },
   },
   {
@@ -239,11 +239,11 @@ ${SHARED_EXPECTATIONS}
     id: "es-japanese-basic-colors",
     userInput: {
       chapterTitle: "Describir Cosas",
-      courseTitle: "Japanese",
-      language: "es",
       lessonDescription:
         "Los colores basicos en japones - rojo, azul, verde, amarillo, y otros colores comunes",
       lessonTitle: "Colores Basicos",
+      targetLanguage: "Japanese",
+      userLanguage: "es",
     },
   },
 ];

@@ -2,6 +2,7 @@ import "server-only";
 import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-options";
 import { Output, generateText } from "ai";
 import { z } from "zod";
+import { getLanguagePromptContext } from "./_utils/language-prompt-context";
 import systemPrompt from "./activity-pronunciation.prompt.md";
 
 const DEFAULT_MODEL = process.env.AI_MODEL_ACTIVITY_PRONUNCIATION ?? "google/gemini-3-flash";
@@ -24,24 +25,26 @@ export type ActivityPronunciationSchema = z.infer<typeof schema>;
 
 export type ActivityPronunciationParams = {
   model?: string;
-  nativeLanguage: string;
   reasoningEffort?: ReasoningEffort;
   targetLanguage: string;
+  userLanguage: string;
   useFallback?: boolean;
   word: string;
 };
 
 export async function generateActivityPronunciation({
   model = DEFAULT_MODEL,
-  nativeLanguage,
   reasoningEffort,
   targetLanguage,
+  userLanguage,
   useFallback = true,
   word,
 }: ActivityPronunciationParams) {
+  const promptContext = getLanguagePromptContext({ targetLanguage, userLanguage });
+
   const userPrompt = `WORD: ${word}
-TARGET_LANGUAGE: ${targetLanguage}
-NATIVE_LANGUAGE: ${nativeLanguage}
+TARGET_LANGUAGE: ${promptContext.targetLanguageName}
+USER_LANGUAGE: ${promptContext.userLanguage}
 
 Generate a pronunciation guide for this word using only sounds from the native language.`;
 

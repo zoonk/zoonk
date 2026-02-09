@@ -8,11 +8,11 @@ import { handleActivityFailureStep } from "./handle-failure-step";
 
 async function generatePronunciation(
   word: string,
-  nativeLanguage: string,
+  userLanguage: string,
   targetLanguage: string,
 ): Promise<{ pronunciation: string; word: string } | null> {
   const { data: result, error } = await safeAsync(() =>
-    generateActivityPronunciation({ nativeLanguage, targetLanguage, word }),
+    generateActivityPronunciation({ targetLanguage, userLanguage, word }),
   );
 
   if (error || !result?.data) {
@@ -38,10 +38,10 @@ export async function generateVocabularyPronunciationStep(
 
   const course = activity.lesson.chapter.course;
   const targetLanguage = course.targetLanguage ?? "";
-  const nativeLanguage = activity.language;
+  const userLanguage = activity.language;
 
   const results = await Promise.all(
-    words.map((vocabWord) => generatePronunciation(vocabWord.word, nativeLanguage, targetLanguage)),
+    words.map((vocabWord) => generatePronunciation(vocabWord.word, userLanguage, targetLanguage)),
   );
 
   const fulfilled = results.filter((result) => result !== null);

@@ -145,7 +145,7 @@ describe("vocabulary activity generation", () => {
     expect(generateActivityVocabulary).not.toHaveBeenCalled();
   });
 
-  test("calls generateActivityVocabulary with correct params", async () => {
+  test("calls generateActivityVocabulary with targetLanguage and userLanguage", async () => {
     const testLesson = await lessonFixture({
       chapterId: chapter.id,
       description: "Learn basic greetings",
@@ -166,10 +166,10 @@ describe("vocabulary activity generation", () => {
 
     expect(generateActivityVocabulary).toHaveBeenCalledWith({
       chapterTitle: chapter.title,
-      courseTitle: course.title,
-      language: "en",
       lessonDescription: "Learn basic greetings",
       lessonTitle: testLesson.title,
+      targetLanguage: "es",
+      userLanguage: "en",
     });
   });
 
@@ -292,13 +292,13 @@ describe("vocabulary activity generation", () => {
 
     expect(generateActivityPronunciation).toHaveBeenCalledTimes(2);
     expect(generateActivityPronunciation).toHaveBeenCalledWith({
-      nativeLanguage: "en",
       targetLanguage: "es",
+      userLanguage: "en",
       word: "hola",
     });
     expect(generateActivityPronunciation).toHaveBeenCalledWith({
-      nativeLanguage: "en",
       targetLanguage: "es",
+      userLanguage: "en",
       word: "gato",
     });
   });

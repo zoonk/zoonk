@@ -2,6 +2,7 @@ import "server-only";
 import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-options";
 import { Output, generateText } from "ai";
 import { z } from "zod";
+import { getLanguagePromptContext } from "./_utils/language-prompt-context";
 import systemPrompt from "./activity-sentences.prompt.md";
 
 const DEFAULT_MODEL = process.env.AI_MODEL_ACTIVITY_SENTENCES ?? "google/gemini-3-flash";
@@ -25,26 +26,28 @@ const schema = z.object({
 export type ActivitySentencesSchema = z.infer<typeof schema>;
 
 export type ActivitySentencesParams = {
-  courseTitle: string;
-  language: string;
   lessonTitle: string;
   model?: string;
   reasoningEffort?: ReasoningEffort;
+  targetLanguage: string;
+  userLanguage: string;
   useFallback?: boolean;
   words: string[];
 };
 
 export async function generateActivitySentences({
-  courseTitle,
-  language,
   lessonTitle,
   model = DEFAULT_MODEL,
   reasoningEffort,
+  targetLanguage,
+  userLanguage,
   useFallback = true,
   words,
 }: ActivitySentencesParams) {
-  const userPrompt = `TARGET_LANGUAGE: ${courseTitle}
-NATIVE_LANGUAGE: ${language}
+  const promptContext = getLanguagePromptContext({ targetLanguage, userLanguage });
+
+  const userPrompt = `TARGET_LANGUAGE: ${promptContext.targetLanguageName}
+USER_LANGUAGE: ${promptContext.userLanguage}
 LESSON_TITLE: ${lessonTitle}
 VOCABULARY_WORDS: ${words.join(", ")}
 

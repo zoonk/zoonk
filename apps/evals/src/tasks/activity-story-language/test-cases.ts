@@ -119,11 +119,11 @@ ${SHARED_EXPECTATIONS}
     id: "en-french-cafe-ordering",
     userInput: {
       chapterTitle: "At the Cafe",
-      courseTitle: "French",
-      language: "en",
       lessonDescription:
         "Practice ordering drinks and food at a French cafe, including asking for the menu and paying",
       lessonTitle: "Ordering at a Cafe",
+      targetLanguage: "French",
+      userLanguage: "en",
     },
   },
   {
@@ -160,11 +160,11 @@ ${SHARED_EXPECTATIONS}
     id: "en-japanese-hotel-checkin",
     userInput: {
       chapterTitle: "Travel and Accommodation",
-      courseTitle: "Japanese",
-      language: "en",
       lessonDescription:
         "Learn to check into a hotel, confirm reservations, and ask about room amenities",
       lessonTitle: "Hotel Check-in",
+      targetLanguage: "Japanese",
+      userLanguage: "en",
     },
   },
   {
@@ -197,10 +197,10 @@ ${SHARED_EXPECTATIONS}
     id: "pt-german-market-shopping",
     userInput: {
       chapterTitle: "Fazendo Compras",
-      courseTitle: "German",
-      language: "pt",
       lessonDescription: "Aprenda a comprar frutas, verduras e outros itens em um mercado alemao",
       lessonTitle: "No Mercado",
+      targetLanguage: "German",
+      userLanguage: "pt",
     },
   },
   {
@@ -238,10 +238,10 @@ ${SHARED_EXPECTATIONS}
     id: "es-korean-asking-directions",
     userInput: {
       chapterTitle: "Transporte y Direcciones",
-      courseTitle: "Korean",
-      language: "es",
       lessonDescription: "Como pedir direcciones y entender indicaciones basicas en coreano",
       lessonTitle: "Pidiendo Direcciones",
+      targetLanguage: "Korean",
+      userLanguage: "es",
     },
   },
   {
@@ -272,10 +272,10 @@ ${SHARED_EXPECTATIONS}
     id: "en-spanish-pharmacy-visit",
     userInput: {
       chapterTitle: "Health and Wellness",
-      courseTitle: "Spanish",
-      language: "en",
       lessonDescription: "Learn to describe symptoms and buy medicine at a Spanish pharmacy",
       lessonTitle: "At the Pharmacy",
+      targetLanguage: "Spanish",
+      userLanguage: "en",
     },
   },
 ];
