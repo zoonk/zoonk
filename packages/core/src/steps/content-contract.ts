@@ -102,33 +102,26 @@ export const staticGrammarRuleContentSchema = z
   })
   .strict();
 
-export const staticVocabularyWordRefContentSchema = z
-  .object({
-    variant: z.literal("vocabularyWordRef"),
-  })
-  .strict();
-
-export const staticReadingSentenceRefContentSchema = z
-  .object({
-    variant: z.literal("readingSentenceRef"),
-  })
-  .strict();
-
 export const staticContentSchema = z.discriminatedUnion("variant", [
   staticTextContentSchema,
   staticGrammarExampleContentSchema,
   staticGrammarRuleContentSchema,
-  staticVocabularyWordRefContentSchema,
-  staticReadingSentenceRefContentSchema,
 ]);
+
+export const vocabularyContentSchema = z.object({}).strict();
+export const readingContentSchema = z.object({}).strict();
+export const listeningContentSchema = z.object({}).strict();
 
 const stepContentSchemas = {
   fillBlank: fillBlankContentSchema,
+  listening: listeningContentSchema,
   matchColumns: matchColumnsContentSchema,
   multipleChoice: multipleChoiceContentSchema,
+  reading: readingContentSchema,
   selectImage: selectImageContentSchema,
   sortOrder: sortOrderContentSchema,
   static: staticContentSchema,
+  vocabulary: vocabularyContentSchema,
 } as const;
 
 export type SupportedStepKind = keyof typeof stepContentSchemas;
@@ -139,14 +132,20 @@ export type MatchColumnsStepContent = z.infer<typeof matchColumnsContentSchema>;
 export type SortOrderStepContent = z.infer<typeof sortOrderContentSchema>;
 export type SelectImageStepContent = z.infer<typeof selectImageContentSchema>;
 export type StaticStepContent = z.infer<typeof staticContentSchema>;
+export type VocabularyStepContent = z.infer<typeof vocabularyContentSchema>;
+export type ReadingStepContent = z.infer<typeof readingContentSchema>;
+export type ListeningStepContent = z.infer<typeof listeningContentSchema>;
 
 export type StepContentByKind = {
   fillBlank: FillBlankStepContent;
+  listening: ListeningStepContent;
   matchColumns: MatchColumnsStepContent;
   multipleChoice: MultipleChoiceStepContent;
+  reading: ReadingStepContent;
   selectImage: SelectImageStepContent;
   sortOrder: SortOrderStepContent;
   static: StaticStepContent;
+  vocabulary: VocabularyStepContent;
 };
 
 export function isSupportedStepKind(kind: StepKind): kind is SupportedStepKind {
@@ -154,14 +153,17 @@ export function isSupportedStepKind(kind: StepKind): kind is SupportedStepKind {
 }
 
 export function parseStepContent(kind: "fillBlank", content: unknown): FillBlankStepContent;
+export function parseStepContent(kind: "listening", content: unknown): ListeningStepContent;
 export function parseStepContent(kind: "matchColumns", content: unknown): MatchColumnsStepContent;
 export function parseStepContent(
   kind: "multipleChoice",
   content: unknown,
 ): MultipleChoiceStepContent;
+export function parseStepContent(kind: "reading", content: unknown): ReadingStepContent;
 export function parseStepContent(kind: "selectImage", content: unknown): SelectImageStepContent;
 export function parseStepContent(kind: "sortOrder", content: unknown): SortOrderStepContent;
 export function parseStepContent(kind: "static", content: unknown): StaticStepContent;
+export function parseStepContent(kind: "vocabulary", content: unknown): VocabularyStepContent;
 export function parseStepContent(
   kind: SupportedStepKind,
   content: unknown,
@@ -171,14 +173,17 @@ export function parseStepContent(kind: SupportedStepKind, content: unknown) {
 }
 
 export function assertStepContent(kind: "fillBlank", content: unknown): FillBlankStepContent;
+export function assertStepContent(kind: "listening", content: unknown): ListeningStepContent;
 export function assertStepContent(kind: "matchColumns", content: unknown): MatchColumnsStepContent;
 export function assertStepContent(
   kind: "multipleChoice",
   content: unknown,
 ): MultipleChoiceStepContent;
+export function assertStepContent(kind: "reading", content: unknown): ReadingStepContent;
 export function assertStepContent(kind: "selectImage", content: unknown): SelectImageStepContent;
 export function assertStepContent(kind: "sortOrder", content: unknown): SortOrderStepContent;
 export function assertStepContent(kind: "static", content: unknown): StaticStepContent;
+export function assertStepContent(kind: "vocabulary", content: unknown): VocabularyStepContent;
 export function assertStepContent(
   kind: SupportedStepKind,
   content: unknown,

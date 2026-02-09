@@ -51,8 +51,8 @@ function buildSaveOneWord(params: {
     await prisma.step.create({
       data: {
         activityId,
-        content: assertStepContent("static", { variant: "vocabularyWordRef" }),
-        kind: "static",
+        content: assertStepContent("vocabulary", {}),
+        kind: "vocabulary",
         position,
         wordId,
       },

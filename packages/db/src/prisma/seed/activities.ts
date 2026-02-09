@@ -143,6 +143,22 @@ const activitiesData: {
   {
     activities: [
       {
+        generationStatus: "completed",
+        isPublished: true,
+        kind: "vocabulary",
+      },
+      {
+        generationStatus: "completed",
+        isPublished: true,
+        kind: "reading",
+      },
+    ],
+    language: "en",
+    lessonSlug: "greetings-introductions",
+  },
+  {
+    activities: [
+      {
         generationStatus: "pending",
         isPublished: true,
         kind: "background",
