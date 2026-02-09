@@ -5,6 +5,13 @@ import {
   getPhaseStatus as getStatus,
 } from "@/lib/generation-phases";
 import {
+  PHASE_ICONS as ACTIVITY_PHASE_ICONS,
+  type PhaseName as ActivityPhaseName,
+  type FirstActivityKind,
+  getPhaseSteps as getActivityPhaseSteps,
+  inferFirstActivityKind,
+} from "@/lib/generation/activity-generation-phases";
+import {
   type ActivityStepName,
   type ChapterStepName,
   type CourseStepName,
@@ -26,7 +33,7 @@ import {
   TagIcon,
 } from "lucide-react";
 
-export type PhaseName =
+type BasePhaseName =
   | "gettingReady"
   | "writingDescription"
   | "creatingCoverImage"
@@ -35,34 +42,23 @@ export type PhaseName =
   | "savingCourseInfo"
   | "planningLessons"
   | "figuringOutApproach"
-  | "settingUpActivities"
-  | "writingContent"
-  | "preparingVisuals"
-  | "creatingImages"
-  | "finishing";
+  | "settingUpActivities";
 
-const PHASE_STEPS = {
+type ActivityTailPhaseName = Exclude<
+  ActivityPhaseName,
+  "gettingStarted" | "processingDependencies"
+>;
+
+export type PhaseName = BasePhaseName | ActivityTailPhaseName;
+
+const BASE_PHASE_STEPS = {
   categorizingCourse: ["generateAlternativeTitles", "generateCategories"],
   creatingCoverImage: ["generateImage"],
-  creatingImages: ["generateImages", "generateQuizImages"],
   figuringOutApproach: [
     "getLesson",
     "setLessonAsRunning",
     "determineLessonKind",
     "updateLessonKind",
-  ],
-  finishing: [
-    "setBackgroundAsCompleted",
-    "setChallengeAsCompleted",
-    "setCustomAsCompleted",
-    "setExamplesAsCompleted",
-    "setExplanationAsCompleted",
-    "setMechanicsAsCompleted",
-    "setQuizAsCompleted",
-    "setReviewAsCompleted",
-    "setStoryAsCompleted",
-    "setVocabularyAsCompleted",
-    "setActivityAsCompleted",
   ],
   gettingReady: [
     "getCourseSuggestion",
@@ -78,7 +74,6 @@ const PHASE_STEPS = {
     "addLessons",
     "setChapterAsCompleted",
   ],
-  preparingVisuals: ["generateVisuals"],
   savingCourseInfo: [
     "getExistingChapters",
     "updateCourse",
@@ -93,28 +88,11 @@ const PHASE_STEPS = {
     "setLessonAsCompleted",
     "getLessonActivities",
   ],
-  writingContent: [
-    "setActivityAsRunning",
-    "generateBackgroundContent",
-    "generateChallengeContent",
-    "generateCustomContent",
-    "generateExamplesContent",
-    "generateExplanationContent",
-    "generateMechanicsContent",
-    "generateQuizContent",
-    "generateReviewContent",
-    "generateStoryContent",
-    "generateVocabularyContent",
-    "saveVocabularyWords",
-    "generateVocabularyPronunciation",
-    "generateVocabularyAudio",
-    "updateVocabularyEnrichments",
-  ],
   writingDescription: ["generateDescription"],
-} as const satisfies Record<PhaseName, readonly CourseWorkflowStepName[]>;
+} as const satisfies Record<BasePhaseName, readonly CourseWorkflowStepName[]>;
 
-// Compile-time check: typecheck fails with the exact missing step names.
-type AssignedSteps = (typeof PHASE_STEPS)[PhaseName][number];
+type AssignedSteps = (typeof BASE_PHASE_STEPS)[BasePhaseName][number] | ActivityStepName;
+
 type _ValidateCourse = AssertAllCovered<Exclude<CourseStepName, AssignedSteps>>;
 type _ValidateChapter = AssertAllCovered<Exclude<ChapterStepName, AssignedSteps>>;
 type _ValidateLesson = AssertAllCovered<Exclude<LessonStepName, AssignedSteps>>;
@@ -122,7 +100,7 @@ type _ValidateActivity = AssertAllCovered<
   Exclude<ActivityStepName, AssignedSteps | "workflowError">
 >;
 
-export const PHASE_ORDER: PhaseName[] = [
+const BASE_PHASE_ORDER: BasePhaseName[] = [
   "gettingReady",
   "writingDescription",
   "creatingCoverImage",
@@ -132,13 +110,72 @@ export const PHASE_ORDER: PhaseName[] = [
   "planningLessons",
   "figuringOutApproach",
   "settingUpActivities",
+];
+
+const NON_LANGUAGE_ACTIVITY_TAIL_ORDER: ActivityTailPhaseName[] = [
   "writingContent",
   "preparingVisuals",
   "creatingImages",
   "finishing",
 ];
 
+const LANGUAGE_ACTIVITY_TAIL_ORDER: ActivityTailPhaseName[] = [
+  "buildingWordList",
+  "addingPronunciation",
+  "recordingAudio",
+  "finishing",
+];
+
+function getInferredFirstActivityKind(
+  completedSteps: CourseWorkflowStepName[],
+  currentStep: CourseWorkflowStepName | null,
+  targetLanguage: string | null,
+): FirstActivityKind {
+  return inferFirstActivityKind({ completedSteps, currentStep, targetLanguage });
+}
+
+function getActivityTailPhaseOrder(kind: FirstActivityKind): ActivityTailPhaseName[] {
+  if (kind === "vocabulary") {
+    return LANGUAGE_ACTIVITY_TAIL_ORDER;
+  }
+
+  return NON_LANGUAGE_ACTIVITY_TAIL_ORDER;
+}
+
+function getPhaseSteps(
+  kind: FirstActivityKind,
+): Record<PhaseName, readonly CourseWorkflowStepName[]> {
+  const activitySteps = getActivityPhaseSteps(kind);
+
+  return {
+    ...BASE_PHASE_STEPS,
+    addingPronunciation: activitySteps.addingPronunciation,
+    buildingWordList: activitySteps.buildingWordList,
+    creatingImages: activitySteps.creatingImages,
+    finishing: activitySteps.finishing,
+    preparingVisuals: activitySteps.preparingVisuals,
+    recordingAudio: activitySteps.recordingAudio,
+    writingContent: activitySteps.writingContent,
+  };
+}
+
+export function getPhaseOrder(params: {
+  completedSteps: CourseWorkflowStepName[];
+  currentStep: CourseWorkflowStepName | null;
+  targetLanguage: string | null;
+}): PhaseName[] {
+  const kind = getInferredFirstActivityKind(
+    params.completedSteps,
+    params.currentStep,
+    params.targetLanguage,
+  );
+
+  return [...BASE_PHASE_ORDER, ...getActivityTailPhaseOrder(kind)];
+}
+
 export const PHASE_ICONS: Record<PhaseName, LucideIcon> = {
+  addingPronunciation: ACTIVITY_PHASE_ICONS.addingPronunciation,
+  buildingWordList: ACTIVITY_PHASE_ICONS.buildingWordList,
   categorizingCourse: TagIcon,
   creatingCoverImage: ImageIcon,
   creatingImages: ImageIcon,
@@ -148,43 +185,71 @@ export const PHASE_ICONS: Record<PhaseName, LucideIcon> = {
   outliningChapters: LayoutListIcon,
   planningLessons: BookOpenIcon,
   preparingVisuals: PaletteIcon,
+  recordingAudio: ACTIVITY_PHASE_ICONS.recordingAudio,
   savingCourseInfo: SaveIcon,
   settingUpActivities: LayoutListIcon,
   writingContent: SparklesIcon,
   writingDescription: PenLineIcon,
 };
 
-const PHASE_WEIGHTS: Record<PhaseName, number> = {
+const BASE_PHASE_WEIGHTS: Record<BasePhaseName, number> = {
   categorizingCourse: 3,
   creatingCoverImage: 7,
-  creatingImages: 16,
   figuringOutApproach: 1,
-  finishing: 1,
   gettingReady: 1,
   outliningChapters: 19,
   planningLessons: 16,
-  preparingVisuals: 8,
   savingCourseInfo: 1,
   settingUpActivities: 3,
-  writingContent: 21,
   writingDescription: 3,
 };
+
+function getPhaseWeights(kind: FirstActivityKind): Record<PhaseName, number> {
+  if (kind === "vocabulary") {
+    return {
+      ...BASE_PHASE_WEIGHTS,
+      addingPronunciation: 12,
+      buildingWordList: 10,
+      creatingImages: 0,
+      finishing: 4,
+      preparingVisuals: 0,
+      recordingAudio: 20,
+      writingContent: 0,
+    };
+  }
+
+  return {
+    ...BASE_PHASE_WEIGHTS,
+    addingPronunciation: 0,
+    buildingWordList: 0,
+    creatingImages: 16,
+    finishing: 1,
+    preparingVisuals: 8,
+    recordingAudio: 0,
+    writingContent: 21,
+  };
+}
 
 export function getPhaseStatus(
   phase: PhaseName,
   completedSteps: CourseWorkflowStepName[],
   currentStep: CourseWorkflowStepName | null,
+  targetLanguage: string | null,
 ): PhaseStatus {
-  return getStatus(phase, completedSteps, currentStep, PHASE_STEPS);
+  const kind = getInferredFirstActivityKind(completedSteps, currentStep, targetLanguage);
+  return getStatus(phase, completedSteps, currentStep, getPhaseSteps(kind));
 }
 
 export function calculateWeightedProgress(
   completedSteps: CourseWorkflowStepName[],
   currentStep: CourseWorkflowStepName | null,
+  targetLanguage: string | null,
 ): number {
+  const kind = getInferredFirstActivityKind(completedSteps, currentStep, targetLanguage);
+
   return calculateProgress(completedSteps, currentStep, {
-    phaseOrder: PHASE_ORDER,
-    phaseSteps: PHASE_STEPS,
-    phaseWeights: PHASE_WEIGHTS,
+    phaseOrder: getPhaseOrder({ completedSteps, currentStep, targetLanguage }),
+    phaseSteps: getPhaseSteps(kind),
+    phaseWeights: getPhaseWeights(kind),
   });
 }

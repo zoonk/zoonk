@@ -1,22 +1,5 @@
-import {
-  type PhaseStatus,
-  calculateWeightedProgress as calculateProgress,
-  getPhaseStatus as getStatus,
-} from "@/lib/generation-phases";
 import { ACTIVITY_STEPS, type ActivityStepName } from "@/workflows/config";
 import { type ActivityKind } from "@zoonk/db";
-import {
-  AudioLinesIcon,
-  BookOpenIcon,
-  BookTextIcon,
-  CheckCircleIcon,
-  ImageIcon,
-  LayersIcon,
-  type LucideIcon,
-  MicIcon,
-  PaletteIcon,
-  PenLineIcon,
-} from "lucide-react";
 
 export type PhaseName =
   | "gettingStarted"
@@ -28,6 +11,30 @@ export type PhaseName =
   | "addingPronunciation"
   | "recordingAudio"
   | "finishing";
+
+export type FirstActivityKind = "background" | "custom" | "vocabulary";
+
+const CUSTOM_INFERENCE_STEPS = new Set(["generateCustomContent", "setCustomAsCompleted"]);
+
+export function inferFirstActivityKind(params: {
+  completedSteps: readonly string[];
+  currentStep: string | null;
+  targetLanguage: string | null;
+}): FirstActivityKind {
+  if (params.targetLanguage !== null) {
+    return "vocabulary";
+  }
+
+  const seenSteps = params.currentStep
+    ? [...params.completedSteps, params.currentStep]
+    : params.completedSteps;
+
+  if (seenSteps.some((step) => CUSTOM_INFERENCE_STEPS.has(step))) {
+    return "custom";
+  }
+
+  return "background";
+}
 
 export function getPhaseOrder(kind: ActivityKind): PhaseName[] {
   if (kind === "vocabulary") {
@@ -92,10 +99,6 @@ const ALL_COMPLETION_STEPS: ActivityStepName[] = [
   "setActivityAsCompleted",
 ];
 
-/**
- * Builds a finishing array that includes all content, vocabulary, and completion steps
- * except the ones assigned to other phases for this kind.
- */
 function getFinishingSteps(exclude: ActivityStepName[]): ActivityStepName[] {
   const excluded = new Set(exclude);
   return [
@@ -111,7 +114,7 @@ const EXPLANATION_DEPS: ActivityStepName[] = [
   "generateExplanationContent",
 ];
 
-function getPhaseSteps(kind: ActivityKind): Record<PhaseName, ActivityStepName[]> {
+export function getPhaseSteps(kind: ActivityKind): Record<PhaseName, ActivityStepName[]> {
   const shared = {
     addingPronunciation: [] as ActivityStepName[],
     buildingWordList: [] as ActivityStepName[],
@@ -199,7 +202,7 @@ function getPhaseSteps(kind: ActivityKind): Record<PhaseName, ActivityStepName[]
   };
 }
 
-function getPhaseWeights(kind: ActivityKind): Record<PhaseName, number> {
+export function getPhaseWeights(kind: ActivityKind): Record<PhaseName, number> {
   if (kind === "vocabulary") {
     return {
       addingPronunciation: 25,
@@ -278,40 +281,7 @@ for (const kind of SUPPORTED_KINDS) {
   if (missingSteps.length > 0) {
     throw new Error(
       `Missing activity steps for kind "${kind}": ${missingSteps.join(", ")}. ` +
-        "Add them to the appropriate phase in generation-phases.ts",
+        "Add them to the appropriate phase in activity-generation-phase-config.ts",
     );
   }
-}
-
-export const PHASE_ICONS: Record<PhaseName, LucideIcon> = {
-  addingPronunciation: MicIcon,
-  buildingWordList: BookTextIcon,
-  creatingImages: ImageIcon,
-  finishing: CheckCircleIcon,
-  gettingStarted: BookOpenIcon,
-  preparingVisuals: PaletteIcon,
-  processingDependencies: LayersIcon,
-  recordingAudio: AudioLinesIcon,
-  writingContent: PenLineIcon,
-};
-
-export function getPhaseStatus(
-  phase: PhaseName,
-  completedSteps: ActivityStepName[],
-  currentStep: ActivityStepName | null,
-  activityKind: ActivityKind,
-): PhaseStatus {
-  const phaseSteps = getPhaseSteps(activityKind);
-  return getStatus(phase, completedSteps, currentStep, phaseSteps);
-}
-
-export function calculateWeightedProgress(
-  completedSteps: ActivityStepName[],
-  currentStep: ActivityStepName | null,
-  activityKind: ActivityKind,
-): number {
-  const phaseSteps = getPhaseSteps(activityKind);
-  const phaseOrder = getPhaseOrder(activityKind);
-  const phaseWeights = getPhaseWeights(activityKind);
-  return calculateProgress(completedSteps, currentStep, { phaseOrder, phaseSteps, phaseWeights });
 }

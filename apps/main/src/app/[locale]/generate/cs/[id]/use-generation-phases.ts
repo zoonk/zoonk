@@ -5,9 +5,9 @@ import { type CourseWorkflowStepName } from "@/workflows/config";
 import { useExtracted } from "next-intl";
 import {
   PHASE_ICONS,
-  PHASE_ORDER,
   type PhaseName,
   calculateWeightedProgress,
+  getPhaseOrder,
   getPhaseStatus,
 } from "./generation-phases";
 
@@ -21,10 +21,13 @@ export type PhaseInfo = {
 export function useGenerationPhases(
   completedSteps: CourseWorkflowStepName[],
   currentStep: CourseWorkflowStepName | null,
+  targetLanguage: string | null,
 ) {
   const t = useExtracted();
 
   const labels: Record<PhaseName, string> = {
+    addingPronunciation: t("Adding pronunciation"),
+    buildingWordList: t("Building your word list"),
     categorizingCourse: t("Categorizing your course"),
     creatingCoverImage: t("Creating the cover image"),
     creatingImages: t("Creating images"),
@@ -34,20 +37,23 @@ export function useGenerationPhases(
     outliningChapters: t("Outlining chapters"),
     planningLessons: t("Planning your first lesson"),
     preparingVisuals: t("Preparing illustrations"),
+    recordingAudio: t("Recording audio"),
     savingCourseInfo: t("Saving your course"),
     settingUpActivities: t("Setting up activities"),
     writingContent: t("Writing the lesson content"),
     writingDescription: t("Writing your course description"),
   };
 
-  const phases: PhaseInfo[] = PHASE_ORDER.map((phase) => ({
+  const phaseOrder = getPhaseOrder({ completedSteps, currentStep, targetLanguage });
+
+  const phases: PhaseInfo[] = phaseOrder.map((phase) => ({
     icon: PHASE_ICONS[phase],
     label: labels[phase],
     name: phase,
-    status: getPhaseStatus(phase, completedSteps, currentStep),
+    status: getPhaseStatus(phase, completedSteps, currentStep, targetLanguage),
   }));
 
-  const progress = calculateWeightedProgress(completedSteps, currentStep);
+  const progress = calculateWeightedProgress(completedSteps, currentStep, targetLanguage);
   const activePhase = phases.find((phase) => phase.status === "active");
 
   return { activePhase, phases, progress };

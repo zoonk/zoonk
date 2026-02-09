@@ -29,6 +29,7 @@ describe(getChapterForGeneration, () => {
       },
       course: {
         slug: course.slug,
+        targetLanguage: course.targetLanguage,
         title: course.title,
       },
       description: chapter.description,

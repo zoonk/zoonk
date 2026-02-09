@@ -29,6 +29,7 @@ export function GenerationClient({
   generationRunId,
   generationStatus,
   locale,
+  targetLanguage,
 }: {
   chapterId: number;
   chapterSlug: string;
@@ -36,6 +37,7 @@ export function GenerationClient({
   generationRunId: string | null;
   generationStatus: GenerationStatus;
   locale: string;
+  targetLanguage: string | null;
 }) {
   const t = useExtracted();
 
@@ -51,6 +53,7 @@ export function GenerationClient({
   const { phases, progress } = useGenerationPhases(
     generation.completedSteps,
     generation.currentStep,
+    targetLanguage,
   );
 
   const displayProgress = useAnimatedProgress(

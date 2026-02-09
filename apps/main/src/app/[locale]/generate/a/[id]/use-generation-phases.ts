@@ -1,16 +1,16 @@
 "use client";
 
 import { type PhaseStatus } from "@/lib/generation-phases";
-import { type ActivityStepName } from "@/workflows/config";
-import { type ActivityKind } from "@zoonk/db";
-import { useExtracted } from "next-intl";
 import {
   PHASE_ICONS,
   type PhaseName,
   calculateWeightedProgress,
   getPhaseOrder,
   getPhaseStatus,
-} from "./generation-phases";
+} from "@/lib/generation/activity-generation-phases";
+import { type ActivityStepName } from "@/workflows/config";
+import { type ActivityKind } from "@zoonk/db";
+import { useExtracted } from "next-intl";
 
 export type PhaseInfo = {
   name: PhaseName;

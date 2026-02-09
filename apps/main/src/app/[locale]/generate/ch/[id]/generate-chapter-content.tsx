@@ -68,6 +68,7 @@ export async function GenerateChapterContent({
             generationRunId={chapter.generationRunId}
             generationStatus={chapter.generationStatus}
             locale={locale}
+            targetLanguage={chapter.course.targetLanguage}
           />
         </SubscriptionGate>
       </ContainerBody>
