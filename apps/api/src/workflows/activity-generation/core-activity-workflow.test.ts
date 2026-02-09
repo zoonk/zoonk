@@ -2339,7 +2339,11 @@ describe("core activity workflow", () => {
 
       await stepFixture({
         activityId: backgroundActivity.id,
-        content: { text: "Existing background text", title: "Existing Background" },
+        content: {
+          text: "Existing background text",
+          title: "Existing Background",
+          variant: "text",
+        },
         position: 0,
       });
 
@@ -2365,7 +2369,7 @@ describe("core activity workflow", () => {
 
       await stepFixture({
         activityId: backgroundActivity.id,
-        content: { text: "Existing BG text", title: "Existing BG" },
+        content: { text: "Existing BG text", title: "Existing BG", variant: "text" },
         position: 0,
       });
 
@@ -2404,7 +2408,7 @@ describe("core activity workflow", () => {
 
       await stepFixture({
         activityId: backgroundActivity.id,
-        content: { text: "Step text", title: "Step" },
+        content: { text: "Step text", title: "Step", variant: "text" },
         position: 0,
         visualContent: { prompt: "A prompt", url: "https://example.com/existing.webp" },
         visualKind: "image",
@@ -2433,7 +2437,7 @@ describe("core activity workflow", () => {
 
       await stepFixture({
         activityId: backgroundActivity.id,
-        content: { text: "Step text", title: "Step" },
+        content: { text: "Step text", title: "Step", variant: "text" },
         position: 0,
         visualContent: { prompt: "A prompt", url: "https://example.com/existing.webp" },
         visualKind: "image",
@@ -2461,7 +2465,7 @@ describe("core activity workflow", () => {
 
       await stepFixture({
         activityId: backgroundActivity.id,
-        content: { text: "BG text", title: "BG" },
+        content: { text: "BG text", title: "BG", variant: "text" },
         position: 0,
       });
 
@@ -2475,7 +2479,7 @@ describe("core activity workflow", () => {
 
       await stepFixture({
         activityId: explanationActivity.id,
-        content: { text: "Exp text", title: "Exp" },
+        content: { text: "Exp text", title: "Exp", variant: "text" },
         position: 0,
       });
 
@@ -2540,7 +2544,7 @@ describe("core activity workflow", () => {
 
       await stepFixture({
         activityId: backgroundActivity.id,
-        content: { text: "Background content", title: "Background" },
+        content: { text: "Background content", title: "Background", variant: "text" },
         position: 0,
       });
 
@@ -2575,7 +2579,11 @@ describe("core activity workflow", () => {
 
       await stepFixture({
         activityId: backgroundActivity.id,
-        content: { text: "Background for partial", title: "Partial BG" },
+        content: {
+          text: "Background for partial",
+          title: "Partial BG",
+          variant: "text",
+        },
         position: 0,
       });
 
@@ -2615,7 +2623,11 @@ describe("core activity workflow", () => {
 
       await stepFixture({
         activityId: backgroundActivity.id,
-        content: { text: "Partial complete BG text", title: "Partial BG" },
+        content: {
+          text: "Partial complete BG text",
+          title: "Partial BG",
+          variant: "text",
+        },
         position: 0,
       });
 
@@ -2996,7 +3008,7 @@ describe("core activity workflow", () => {
 
       await stepFixture({
         activityId: backgroundActivity.id,
-        content: { text: "Existing", title: "Existing" },
+        content: { text: "Existing", title: "Existing", variant: "text" },
         position: 0,
         visualContent: { prompt: "test", url: "https://example.com/existing.webp" },
         visualKind: "image",
@@ -3067,7 +3079,7 @@ describe("core activity workflow", () => {
 
       await stepFixture({
         activityId: backgroundActivity.id,
-        content: { text: "Failed but has step", title: "Failed Step" },
+        content: { text: "Failed but has step", title: "Failed Step", variant: "text" },
         position: 0,
       });
 
