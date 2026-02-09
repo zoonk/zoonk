@@ -21,7 +21,8 @@ export async function generateLanguageAudio({
 }: GenerateLanguageAudioParams): Promise<SafeReturn<GenerateLanguageAudioResult>> {
   const { data, error } = await safeAsync(async () => {
     const { audio } = await generateSpeech({
-      instructions: "Speak clearly and at a moderate pace suitable for language learners. Enunciate each word precisely.",
+      instructions:
+        "Speak clearly and at a moderate pace suitable for language learners. Enunciate each word precisely.",
       model: DEFAULT_MODEL,
       outputFormat: "opus",
       text,
