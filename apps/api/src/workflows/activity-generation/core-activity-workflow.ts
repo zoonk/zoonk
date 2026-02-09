@@ -1,4 +1,5 @@
 import { settled } from "@zoonk/utils/settled";
+import { completeActivityStep } from "./steps/complete-activity-step";
 import { generateBackgroundContentStep } from "./steps/generate-background-content-step";
 import { generateChallengeContentStep } from "./steps/generate-challenge-content-step";
 import { generateExamplesContentStep } from "./steps/generate-examples-content-step";
@@ -11,7 +12,6 @@ import { generateReviewContentStep } from "./steps/generate-review-content-step"
 import { generateStoryContentStep } from "./steps/generate-story-content-step";
 import { generateVisualsStep } from "./steps/generate-visuals-step";
 import { type LessonActivity } from "./steps/get-lesson-activities-step";
-import { saveActivityStep } from "./steps/save-activity-step";
 
 /**
  * Core lesson pipeline: background → explanation → mechanics, quiz, examples, story, challenge → review.
@@ -66,9 +66,9 @@ export async function coreActivityWorkflow(
       examplesContent.steps,
       workflowRunId,
     ),
-    saveActivityStep(activities, workflowRunId, "background"),
-    saveActivityStep(activities, workflowRunId, "story"),
-    saveActivityStep(activities, workflowRunId, "challenge"),
+    completeActivityStep(activities, workflowRunId, "background"),
+    completeActivityStep(activities, workflowRunId, "story"),
+    completeActivityStep(activities, workflowRunId, "challenge"),
   ]);
 
   const mechVisuals = settled(mechVisualsResult, { visuals: [] });
@@ -78,14 +78,14 @@ export async function coreActivityWorkflow(
   await Promise.allSettled([
     generateImagesStep(activities, mechVisuals.visuals, "mechanics"),
     generateImagesStep(activities, examplesVisuals.visuals, "examples"),
-    saveActivityStep(activities, workflowRunId, "explanation"),
-    saveActivityStep(activities, workflowRunId, "quiz"),
-    saveActivityStep(activities, workflowRunId, "review"),
+    completeActivityStep(activities, workflowRunId, "explanation"),
+    completeActivityStep(activities, workflowRunId, "quiz"),
+    completeActivityStep(activities, workflowRunId, "review"),
   ]);
 
   // Wave 6: save mechanics + save examples
   await Promise.allSettled([
-    saveActivityStep(activities, workflowRunId, "mechanics"),
-    saveActivityStep(activities, workflowRunId, "examples"),
+    completeActivityStep(activities, workflowRunId, "mechanics"),
+    completeActivityStep(activities, workflowRunId, "examples"),
   ]);
 }
