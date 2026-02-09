@@ -33,6 +33,7 @@ const nextConfig: NextConfig = {
     minimumCacheTTL: 60 * 60 * 24 * CACHE_IMAGE_DAYS,
     remotePatterns: [
       new URL("https://to3kaoi21m60hzgu.public.blob.vercel-storage.com/**"),
+      new URL("https://mvrkldmanjesbxos.public.blob.vercel-storage.com/**"),
       new URL("https://*.googleusercontent.com/**"),
       new URL("https://*.githubusercontent.com/**"),
     ],
