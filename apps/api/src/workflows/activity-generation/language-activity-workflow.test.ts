@@ -519,6 +519,40 @@ describe("vocabulary activity generation", () => {
     expect(dbActivity?.generationStatus).toBe("failed");
   });
 
+  test("sets activity to 'failed' when word saving fails", async () => {
+    const saveStepModule = await import("./steps/save-vocabulary-words-step");
+    const spy = vi
+      .spyOn(saveStepModule, "saveVocabularyWordsStep")
+      .mockRejectedValueOnce(new Error("DB error"));
+
+    try {
+      const testLesson = await lessonFixture({
+        chapterId: chapter.id,
+        kind: "language",
+        organizationId,
+        title: `Vocab SaveFail ${randomUUID()}`,
+      });
+
+      const activity = await activityFixture({
+        generationStatus: "pending",
+        kind: "vocabulary",
+        lessonId: testLesson.id,
+        organizationId,
+        title: `Vocabulary ${randomUUID()}`,
+      });
+
+      await activityGenerationWorkflow(testLesson.id);
+
+      const dbActivity = await prisma.activity.findUnique({
+        where: { id: activity.id },
+      });
+
+      expect(dbActivity?.generationStatus).toBe("failed");
+    } finally {
+      spy.mockRestore();
+    }
+  });
+
   test("skips vocabulary generation if activity is already completed", async () => {
     const testLesson = await lessonFixture({
       chapterId: chapter.id,

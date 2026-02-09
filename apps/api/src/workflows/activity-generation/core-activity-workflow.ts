@@ -1,4 +1,4 @@
-import { settled } from "./_utils/settled";
+import { settled } from "@zoonk/utils/settled";
 import { generateBackgroundContentStep } from "./steps/generate-background-content-step";
 import { generateChallengeContentStep } from "./steps/generate-challenge-content-step";
 import { generateExamplesContentStep } from "./steps/generate-examples-content-step";

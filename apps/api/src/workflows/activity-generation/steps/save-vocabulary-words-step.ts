@@ -3,6 +3,7 @@ import { safeAsync } from "@zoonk/utils/error";
 import { streamStatus } from "../stream-status";
 import { type VocabularyWord } from "./generate-vocabulary-content-step";
 import { type LessonActivity } from "./get-lesson-activities-step";
+import { handleActivityFailureStep } from "./handle-failure-step";
 
 export type SavedWord = {
   word: string;
@@ -94,6 +95,7 @@ export async function saveVocabularyWordsStep(
 
   if (error) {
     await streamStatus({ status: "error", step: "saveVocabularyWords" });
+    await handleActivityFailureStep({ activityId: activity.id });
     return { savedWords: [] };
   }
 

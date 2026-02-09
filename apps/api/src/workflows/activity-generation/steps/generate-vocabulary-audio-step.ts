@@ -3,6 +3,7 @@ import { isTTSSupportedLanguage } from "@zoonk/utils/languages";
 import { streamStatus } from "../stream-status";
 import { type VocabularyWord } from "./generate-vocabulary-content-step";
 import { type LessonActivity } from "./get-lesson-activities-step";
+import { handleActivityFailureStep } from "./handle-failure-step";
 
 async function generateAudioForWord(
   word: string,
@@ -46,16 +47,20 @@ export async function generateVocabularyAudioStep(
 
   const orgSlug = course.organization.slug;
 
-  const results = await Promise.allSettled(
+  const results = await Promise.all(
     words.map((vocabWord) => generateAudioForWord(vocabWord.word, targetLanguage, orgSlug)),
   );
 
-  const audioUrls: Record<string, string> = {};
+  const fulfilled = results.filter((result) => result !== null);
 
-  for (const result of results) {
-    if (result.status === "fulfilled" && result.value) {
-      audioUrls[result.value.word] = result.value.audioUrl;
-    }
+  const audioUrls: Record<string, string> = Object.fromEntries(
+    fulfilled.map(({ word, audioUrl }) => [word, audioUrl]),
+  );
+
+  if (fulfilled.length < words.length) {
+    await streamStatus({ status: "error", step: "generateVocabularyAudio" });
+    await handleActivityFailureStep({ activityId: activity.id });
+    return { audioUrls };
   }
 
   await streamStatus({ status: "completed", step: "generateVocabularyAudio" });

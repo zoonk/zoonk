@@ -3,6 +3,7 @@ import { safeAsync } from "@zoonk/utils/error";
 import { streamStatus } from "../stream-status";
 import { type VocabularyWord } from "./generate-vocabulary-content-step";
 import { type LessonActivity } from "./get-lesson-activities-step";
+import { handleActivityFailureStep } from "./handle-failure-step";
 
 async function generatePronunciation(
   word: string,
@@ -44,16 +45,20 @@ export async function generateVocabularyPronunciationStep(
   const targetLanguage = course.targetLanguage ?? "";
   const nativeLanguage = activity.language;
 
-  const results = await Promise.allSettled(
+  const results = await Promise.all(
     words.map((vocabWord) => generatePronunciation(vocabWord.word, nativeLanguage, targetLanguage)),
   );
 
-  const pronunciations: Record<string, string> = {};
+  const fulfilled = results.filter((result) => result !== null);
 
-  for (const result of results) {
-    if (result.status === "fulfilled" && result.value) {
-      pronunciations[result.value.word] = result.value.pronunciation;
-    }
+  const pronunciations: Record<string, string> = Object.fromEntries(
+    fulfilled.map(({ word, pronunciation }) => [word, pronunciation]),
+  );
+
+  if (fulfilled.length < words.length) {
+    await streamStatus({ status: "error", step: "generateVocabularyPronunciation" });
+    await handleActivityFailureStep({ activityId: activity.id });
+    return { pronunciations };
   }
 
   await streamStatus({ status: "completed", step: "generateVocabularyPronunciation" });
