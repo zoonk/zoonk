@@ -2,6 +2,7 @@ import {
   type ActivityChallengeSchema,
   generateActivityChallenge,
 } from "@zoonk/ai/tasks/activities/core/challenge";
+import { assertStepContent } from "@zoonk/core/steps/content-contract";
 import { prisma } from "@zoonk/db";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { streamStatus } from "../stream-status";
@@ -19,12 +20,20 @@ async function saveChallengeSteps(
   return safeAsync(() =>
     prisma.$transaction([
       prisma.step.createMany({
-        data: steps.map((step, index) => ({
-          activityId,
-          content: { context: step.context, options: step.options, question: step.question },
-          kind: "multipleChoice",
-          position: index,
-        })),
+        data: steps.map((step, index) => {
+          const content = assertStepContent("multipleChoice", {
+            context: step.context,
+            options: step.options,
+            question: step.question,
+          });
+
+          return {
+            activityId,
+            content,
+            kind: "multipleChoice",
+            position: index,
+          };
+        }),
       }),
       prisma.activity.update({
         data: { content: activityContent },

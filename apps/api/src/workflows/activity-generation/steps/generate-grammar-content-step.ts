@@ -2,6 +2,7 @@ import {
   type ActivityGrammarSchema,
   generateActivityGrammar,
 } from "@zoonk/ai/tasks/activities/language/grammar";
+import { assertStepContent } from "@zoonk/core/steps/content-contract";
 import { prisma } from "@zoonk/db";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { streamStatus } from "../stream-status";
@@ -14,62 +15,79 @@ function hasMinimumGrammarContent(data: ActivityGrammarSchema): boolean {
   return (
     data.examples.length > 0 &&
     data.discovery.options.length > 0 &&
-    data.discovery.context.trim().length > 0 &&
-    data.discovery.question.trim().length > 0 &&
     data.exercises.length > 0 &&
     data.exercises.every(
       (exercise) =>
         exercise.answers.length > 0 &&
-        exercise.question.trim().length > 0 &&
+        exercise.feedback.trim().length > 0 &&
         exercise.template.trim().length > 0,
     )
   );
 }
 
+function optionalNonEmpty(value: string | undefined): string | undefined {
+  if (!value || value.trim().length === 0) {
+    return undefined;
+  }
+
+  return value;
+}
+
 function buildGrammarSteps(activityId: bigint | number, data: ActivityGrammarSchema) {
-  const exampleSteps = data.examples.map((example) => ({
-    activityId,
-    content: {
+  const exampleSteps = data.examples.map((example) => {
+    const content = assertStepContent("static", {
       highlight: example.highlight,
       romanization: example.romanization,
-      section: "examples",
       sentence: example.sentence,
       translation: example.translation,
-    },
-    kind: "static" as const,
-  }));
+      variant: "grammarExample",
+    });
+
+    return {
+      activityId,
+      content,
+      kind: "static" as const,
+    };
+  });
+
+  const discoveryQuestion = optionalNonEmpty(data.discovery.question);
+  const discoveryContext = optionalNonEmpty(data.discovery.context);
 
   const discoveryStep = {
     activityId,
-    content: {
-      context: data.discovery.context,
+    content: assertStepContent("multipleChoice", {
+      ...(discoveryContext ? { context: discoveryContext } : {}),
       options: data.discovery.options,
-      question: data.discovery.question,
-    },
+      ...(discoveryQuestion ? { question: discoveryQuestion } : {}),
+    }),
     kind: "multipleChoice" as const,
   };
 
   const ruleStep = {
     activityId,
-    content: {
+    content: assertStepContent("static", {
       ruleName: data.ruleName,
       ruleSummary: data.ruleSummary,
-      section: "rule",
-    },
+      variant: "grammarRule",
+    }),
     kind: "static" as const,
   };
 
-  const practiceSteps = data.exercises.map((exercise) => ({
-    activityId,
-    content: {
-      answers: exercise.answers,
-      distractors: exercise.distractors,
-      feedback: exercise.feedback,
-      question: exercise.question,
-      template: exercise.template,
-    },
-    kind: "fillBlank" as const,
-  }));
+  const practiceSteps = data.exercises.map((exercise) => {
+    const exerciseQuestion = optionalNonEmpty(exercise.question);
+
+    return {
+      activityId,
+      content: assertStepContent("fillBlank", {
+        answers: exercise.answers,
+        distractors: exercise.distractors,
+        feedback: exercise.feedback,
+        ...(exerciseQuestion ? { question: exerciseQuestion } : {}),
+        template: exercise.template,
+      }),
+      kind: "fillBlank" as const,
+    };
+  });
 
   return [...exampleSteps, discoveryStep, ruleStep, ...practiceSteps].map((step, position) => ({
     ...step,

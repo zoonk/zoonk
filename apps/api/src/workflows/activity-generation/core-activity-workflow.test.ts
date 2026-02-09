@@ -368,10 +368,12 @@ describe("core activity workflow", () => {
       expect(backgroundSteps[0]?.content).toEqual({
         text: "Background step 1 text",
         title: "Background Step 1",
+        variant: "text",
       });
       expect(backgroundSteps[1]?.content).toEqual({
         text: "Background step 2 text",
         title: "Background Step 2",
+        variant: "text",
       });
     });
 
@@ -787,10 +789,12 @@ describe("core activity workflow", () => {
       expect(explanationSteps[0]?.content).toEqual({
         text: "Explanation step 1 text",
         title: "Explanation Step 1",
+        variant: "text",
       });
       expect(explanationSteps[1]?.content).toEqual({
         text: "Explanation step 2 text",
         title: "Explanation Step 2",
+        variant: "text",
       });
     });
 
@@ -1416,10 +1420,12 @@ describe("core activity workflow", () => {
       expect(examplesSteps[0]?.content).toEqual({
         text: "Examples step 1 text",
         title: "Examples Step 1",
+        variant: "text",
       });
       expect(examplesSteps[1]?.content).toEqual({
         text: "Examples step 2 text",
         title: "Examples Step 2",
+        variant: "text",
       });
     });
 
@@ -3077,6 +3083,7 @@ describe("core activity workflow", () => {
       expect(steps[0]?.content).toEqual({
         text: "Background step 1 text",
         title: "Background Step 1",
+        variant: "text",
       });
     });
   });

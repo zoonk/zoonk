@@ -570,6 +570,9 @@ importers:
       sharp:
         specifier: '>=0.34'
         version: 0.34.5
+      zod:
+        specifier: 4.3.5
+        version: 4.3.5
     devDependencies:
       '@types/react':
         specifier: ^19

@@ -2,6 +2,7 @@ import {
   type ActivityReviewSchema,
   generateActivityReview,
 } from "@zoonk/ai/tasks/activities/core/review";
+import { assertStepContent } from "@zoonk/core/steps/content-contract";
 import { prisma } from "@zoonk/db";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { streamStatus } from "../stream-status";
@@ -19,16 +20,20 @@ async function saveReviewSteps(
 ): Promise<{ error: Error | null }> {
   return safeAsync(() =>
     prisma.step.createMany({
-      data: questions.map((question, index) => ({
-        activityId,
-        content: {
+      data: questions.map((question, index) => {
+        const content = assertStepContent("multipleChoice", {
           context: question.context,
           options: question.options,
           question: question.question,
-        },
-        kind: "multipleChoice",
-        position: index,
-      })),
+        });
+
+        return {
+          activityId,
+          content,
+          kind: "multipleChoice",
+          position: index,
+        };
+      }),
     }),
   );
 }

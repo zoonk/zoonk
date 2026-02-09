@@ -3,6 +3,7 @@ import {
   type QuizQuestion,
   generateActivityExplanationQuiz,
 } from "@zoonk/ai/tasks/activities/core/explanation-quiz";
+import { assertStepContent } from "@zoonk/core/steps/content-contract";
 import { prisma } from "@zoonk/db";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { streamStatus } from "../stream-status";
@@ -19,10 +20,11 @@ async function saveQuizSteps(
   return safeAsync(() =>
     prisma.step.createMany({
       data: questions.map((question, index) => {
-        const { format, ...content } = question;
+        const { format, ...rawContent } = question;
+
         return {
           activityId,
-          content,
+          content: assertStepContent(format, rawContent),
           kind: format,
           position: index,
         };

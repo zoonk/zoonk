@@ -2,8 +2,6 @@ import "server-only";
 import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-options";
 import { Output, generateText } from "ai";
 import { z } from "zod";
-import { fillBlankInputSchema } from "../_tools/fill-blank";
-import { multipleChoiceInputSchema } from "../_tools/multiple-choice";
 import { getLanguagePromptContext } from "./_utils/language-prompt-context";
 import systemPrompt from "./activity-grammar.prompt.md";
 
@@ -18,7 +16,17 @@ const FALLBACK_MODELS = [
 ];
 
 const schema = z.object({
-  discovery: multipleChoiceInputSchema,
+  discovery: z.object({
+    context: z.string().optional(),
+    options: z.array(
+      z.object({
+        feedback: z.string(),
+        isCorrect: z.boolean(),
+        text: z.string(),
+      }),
+    ),
+    question: z.string().optional(),
+  }),
   examples: z.array(
     z.object({
       highlight: z.string(),
@@ -27,7 +35,15 @@ const schema = z.object({
       translation: z.string(),
     }),
   ),
-  exercises: z.array(fillBlankInputSchema),
+  exercises: z.array(
+    z.object({
+      answers: z.array(z.string()),
+      distractors: z.array(z.string()),
+      feedback: z.string(),
+      question: z.string().optional(),
+      template: z.string(),
+    }),
+  ),
   ruleName: z.string(),
   ruleSummary: z.string(),
 });
@@ -63,7 +79,7 @@ CHAPTER_TITLE: ${chapterTitle}
 LESSON_TITLE: ${lessonTitle}
 LESSON_DESCRIPTION: ${lessonDescription}
 
-Generate a Pattern Discovery grammar activity for this lesson. Include 3-4 examples demonstrating the grammar pattern, one discovery multiple-choice question with context, a brief rule summary, and 2-3 fill-in-the-blank practice exercises each with question/context.`;
+Generate a Pattern Discovery grammar activity for this lesson. Include 3-4 examples demonstrating the grammar pattern, one discovery task, a brief rule summary, and 2-3 fill-in-the-blank practice exercises.`;
 
   const providerOptions = buildProviderOptions({
     fallbackModels: FALLBACK_MODELS,

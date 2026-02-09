@@ -24,6 +24,7 @@
     "./orgs/get": "./src/orgs/get-org.ts",
     "./orgs/permissions": "./src/orgs/org-permissions.ts",
     "./steps/image": "./src/steps/step-image.ts",
+    "./steps/content-contract": "./src/steps/content-contract.ts",
     "./steps/visual-image": "./src/steps/step-visual-image.ts",
     "./types": "./src/types.ts",
     "./users/orgs/list": "./src/users/list-user-orgs.ts",
@@ -42,7 +43,8 @@
     "@zoonk/db": "workspace:*",
     "@zoonk/mailer": "workspace:*",
     "@zoonk/utils": "workspace:*",
-    "better-auth": "1.4.17"
+    "better-auth": "1.4.17",
+    "zod": "4.3.5"
   },
   "devDependencies": {
     "@types/react": "^19",

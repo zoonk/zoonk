@@ -40,12 +40,10 @@ vi.mock("@zoonk/ai/tasks/activities/language/grammar", () => ({
   generateActivityGrammar: vi.fn().mockResolvedValue({
     data: {
       discovery: {
-        context: "A student says: Yo hablo español. Tú comes pan.",
         options: [
           { feedback: "Correct", isCorrect: true, text: "Pattern A" },
           { feedback: "Try again", isCorrect: false, text: "Pattern B" },
         ],
-        question: "What pattern do you see?",
       },
       examples: [
         {
@@ -66,14 +64,12 @@ vi.mock("@zoonk/ai/tasks/activities/language/grammar", () => ({
           answers: ["hablo"],
           distractors: ["hablas", "habla"],
           feedback: "First person singular ends with -o.",
-          question: "Complete with the correct present-tense verb form.",
           template: "Yo [BLANK] español.",
         },
         {
           answers: ["comes"],
           distractors: ["como", "come"],
           feedback: "Second person singular ends with -es.",
-          question: "Complete with the correct present-tense verb form.",
           template: "Tú [BLANK] pan.",
         },
       ],
@@ -278,7 +274,7 @@ describe("language activity generation", () => {
     expect(lessonWords).toHaveLength(2);
   });
 
-  test("creates steps with wordId links and empty content", async () => {
+  test("creates steps with wordId links and vocabularyWordRef content", async () => {
     const testLesson = await lessonFixture({
       chapterId: chapter.id,
       kind: "language",
@@ -307,7 +303,7 @@ describe("language activity generation", () => {
     for (const step of steps) {
       expect(step.wordId).not.toBeNull();
       expect(step.kind).toBe("static");
-      expect(step.content).toEqual({});
+      expect(step.content).toEqual({ variant: "vocabularyWordRef" });
     }
 
     const wordNames = steps.map((step) => step.word?.word);
@@ -716,31 +712,28 @@ describe("language activity generation", () => {
     expect(steps[0]?.content).toEqual({
       highlight: "hablo",
       romanization: "ha-blo",
-      section: "examples",
       sentence: "Yo hablo español.",
       translation: "I speak Spanish.",
+      variant: "grammarExample",
     });
 
     expect(steps[2]?.content).toEqual({
-      context: "A student says: Yo hablo español. Tú comes pan.",
       options: [
         { feedback: "Correct", isCorrect: true, text: "Pattern A" },
         { feedback: "Try again", isCorrect: false, text: "Pattern B" },
       ],
-      question: "What pattern do you see?",
     });
 
     expect(steps[3]?.content).toEqual({
       ruleName: "Present tense endings",
       ruleSummary: "Use -o for yo and -es for tú in regular -er verbs.",
-      section: "rule",
+      variant: "grammarRule",
     });
 
     expect(steps[4]?.content).toEqual({
       answers: ["hablo"],
       distractors: ["hablas", "habla"],
       feedback: "First person singular ends with -o.",
-      question: "Complete with the correct present-tense verb form.",
       template: "Yo [BLANK] español.",
     });
   });
@@ -803,7 +796,7 @@ describe("language activity generation", () => {
       // oxlint-disable-next-line no-unsafe-type-assertion -- test: grammar step validates only data shape
       {
         data: {
-          discovery: { context: "", options: [], question: "" },
+          discovery: { options: [] },
           examples: [],
           exercises: [],
           ruleName: "",
