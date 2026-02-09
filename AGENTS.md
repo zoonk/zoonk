@@ -33,6 +33,8 @@ Zoonk is a web app where users can learn anything using AI. This app uses AI to 
 - Use `[condition && value, ...].filter(Boolean)` instead of `let` + `.push()` for conditional arrays
 - Extract helper functions that return objects to eliminate `let` variables (e.g., `const { a, b } = await getOrCreate(...)`)
 - Use meaningful variable names and avoid abbreviations
+- For workflow orchestration, prefer linear wave-based flows (core-workflow style) with `Promise.allSettled` over branching orchestration unless branching is strictly required
+- Prefer linear, declarative code over nested conditionals and imperative code
 - Never guess at imports, table names, or conventions—always search for existing patterns first
 - Before writing code, check for existing patterns, agents, and skills that could help execute the task better
 - Don't be afraid to refactor existing code to improve quality, clarity, or simplicity. Always leave the codebase better than you found it

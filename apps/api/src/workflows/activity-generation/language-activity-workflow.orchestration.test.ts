@@ -115,10 +115,9 @@ describe("languageActivityWorkflow orchestration", () => {
 
     const runPromise = languageActivityWorkflow(activities, workflowRunId);
 
-    await Promise.resolve();
-    await Promise.resolve();
-
-    expect(generateReadingContentStep).toHaveBeenCalledWith(activities, workflowRunId, ["hola"]);
+    await vi.waitFor(() => {
+      expect(generateReadingContentStep).toHaveBeenCalledWith(activities, workflowRunId, ["hola"]);
+    });
 
     pendingSaveWords.resolve({
       savedWords: [{ word: "hola", wordId: 1 }],
@@ -137,10 +136,9 @@ describe("languageActivityWorkflow orchestration", () => {
 
     const runPromise = languageActivityWorkflow(activities, workflowRunId);
 
-    await Promise.resolve();
-    await Promise.resolve();
-
-    expect(saveActivityStep).toHaveBeenCalledWith(activities, workflowRunId, "grammar");
+    await vi.waitFor(() => {
+      expect(saveActivityStep).toHaveBeenCalledWith(activities, workflowRunId, "grammar");
+    });
 
     pendingReadingContent.resolve({ sentences: [] });
     await runPromise;
@@ -156,8 +154,9 @@ describe("languageActivityWorkflow orchestration", () => {
 
     const runPromise = languageActivityWorkflow(activities, workflowRunId);
 
-    await Promise.resolve();
-    await Promise.resolve();
+    await vi.waitFor(() => {
+      expect(generateReadingContentStep).toHaveBeenCalledWith(activities, workflowRunId, ["hola"]);
+    });
 
     expect(saveActivityStep).not.toHaveBeenCalledWith(activities, workflowRunId, "vocabulary");
 
@@ -192,8 +191,9 @@ describe("languageActivityWorkflow orchestration", () => {
 
     const runPromise = languageActivityWorkflow(activities, workflowRunId);
 
-    await Promise.resolve();
-    await Promise.resolve();
+    await vi.waitFor(() => {
+      expect(saveReadingSentencesStep).toHaveBeenCalled();
+    });
 
     expect(saveActivityStep).not.toHaveBeenCalledWith(activities, workflowRunId, "reading");
 
