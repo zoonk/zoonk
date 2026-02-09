@@ -37,6 +37,9 @@ enum StepKind {
   selectImage    @map("select_image")
   sortOrder      @map("sort_order")
   arrangeWords   @map("arrange_words")
+  vocabulary
+  reading
+  listening
 }
 
 enum StepVisualKind {

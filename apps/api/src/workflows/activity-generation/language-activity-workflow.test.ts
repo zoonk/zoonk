@@ -361,8 +361,8 @@ describe("language activity generation", () => {
 
     for (const step of steps) {
       expect(step.wordId).not.toBeNull();
-      expect(step.kind).toBe("static");
-      expect(step.content).toEqual({ variant: "vocabularyWordRef" });
+      expect(step.kind).toBe("vocabulary");
+      expect(step.content).toEqual({});
     }
 
     const wordNames = steps.map((step) => step.word?.word);
@@ -1072,8 +1072,8 @@ describe("language activity generation", () => {
 
     for (const step of steps) {
       expect(step.sentenceId).not.toBeNull();
-      expect(step.kind).toBe("static");
-      expect(step.content).toEqual({ variant: "readingSentenceRef" });
+      expect(step.kind).toBe("reading");
+      expect(step.content).toEqual({});
     }
 
     expect(steps[0]?.sentence?.sentence).toBe("Yo veo un gato.");

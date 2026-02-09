@@ -56,8 +56,8 @@ function buildSaveOneSentence(params: {
     await prisma.step.create({
       data: {
         activityId,
-        content: assertStepContent("static", { variant: "readingSentenceRef" }),
-        kind: "static",
+        content: assertStepContent("reading", {}),
+        kind: "reading",
         position,
         sentenceId,
       },

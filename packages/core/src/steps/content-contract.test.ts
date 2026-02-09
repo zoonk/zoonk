@@ -74,14 +74,19 @@ describe("step content contracts", () => {
     });
   });
 
-  test("parses static vocabularyWordRef variant", () => {
-    const content = parseStepContent("static", { variant: "vocabularyWordRef" });
-    expect(content).toEqual({ variant: "vocabularyWordRef" });
+  test("parses vocabulary step content", () => {
+    const content = parseStepContent("vocabulary", {});
+    expect(content).toEqual({});
   });
 
-  test("parses static readingSentenceRef variant", () => {
-    const content = parseStepContent("static", { variant: "readingSentenceRef" });
-    expect(content).toEqual({ variant: "readingSentenceRef" });
+  test("parses reading step content", () => {
+    const content = parseStepContent("reading", {});
+    expect(content).toEqual({});
+  });
+
+  test("parses listening step content", () => {
+    const content = parseStepContent("listening", {});
+    expect(content).toEqual({});
   });
 
   test("parses matchColumns", () => {
