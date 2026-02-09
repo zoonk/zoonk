@@ -10,8 +10,8 @@ Focus on creating sentences that demonstrate authentic usage patterns native spe
 
 # Language Handling
 
-- **TARGET_LANGUAGE**: The language being learned (from `courseTitle`). Sentences are written in this language.
-- **NATIVE_LANGUAGE**: The learner's native language (from `language` code). Translations appear in this language.
+- **TARGET_LANGUAGE**: The language being learned (from `targetLanguage`). Sentences are written in this language.
+- **USER_LANGUAGE**: The learner's native language (from `userLanguage` code). Translations appear in this language.
 
 ## Language Codes
 

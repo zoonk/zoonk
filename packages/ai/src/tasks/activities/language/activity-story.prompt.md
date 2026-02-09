@@ -55,8 +55,8 @@ The character in the story is a friendly native speaker who:
 
 ## Input Variables
 
-- **TARGET_LANGUAGE**: The language being learned (from `courseTitle`). All dialogue and options are in this language.
-- **NATIVE_LANGUAGE**: The learner's native language (from `language` code). Questions, feedback, and context translations use this language.
+- **TARGET_LANGUAGE**: The language being learned (from `targetLanguage`). All dialogue and options are in this language.
+- **USER_LANGUAGE**: The learner's native language (from `userLanguage` code). Questions, feedback, and context translations use this language.
 
 ## Language Codes
 

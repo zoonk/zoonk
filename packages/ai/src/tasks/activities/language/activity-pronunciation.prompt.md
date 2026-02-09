@@ -9,7 +9,7 @@ Generate a pronunciation guide that helps a native speaker of one language prono
 # Language Handling
 
 - **TARGET_LANGUAGE**: The language of the word being learned. This is where the word comes from.
-- **NATIVE_LANGUAGE**: The learner's native language. The pronunciation guide uses ONLY sounds from this language.
+- **USER_LANGUAGE**: The learner's native language. The pronunciation guide uses ONLY sounds from this language.
 
 ## Language Codes
 
@@ -236,7 +236,7 @@ Return a JSON object with a single `pronunciation` field containing the phonetic
 
 ## Portuguese Speaker Learning English
 
-**Input**: WORD: "water", TARGET_LANGUAGE: English, NATIVE_LANGUAGE: pt
+**Input**: WORD: "water", TARGET_LANGUAGE: English, USER_LANGUAGE: pt
 
 ```json
 {
@@ -246,7 +246,7 @@ Return a JSON object with a single `pronunciation` field containing the phonetic
 
 ## Spanish Speaker Learning English
 
-**Input**: WORD: "world", TARGET_LANGUAGE: English, NATIVE_LANGUAGE: es
+**Input**: WORD: "world", TARGET_LANGUAGE: English, USER_LANGUAGE: es
 
 ```json
 {
@@ -256,7 +256,7 @@ Return a JSON object with a single `pronunciation` field containing the phonetic
 
 ## English Speaker Learning Portuguese
 
-**Input**: WORD: "obrigado", TARGET_LANGUAGE: Portuguese, NATIVE_LANGUAGE: en
+**Input**: WORD: "obrigado", TARGET_LANGUAGE: Portuguese, USER_LANGUAGE: en
 
 ```json
 {
@@ -264,7 +264,7 @@ Return a JSON object with a single `pronunciation` field containing the phonetic
 }
 ```
 
-**Input**: WORD: "coração", TARGET_LANGUAGE: Portuguese, NATIVE_LANGUAGE: en
+**Input**: WORD: "coração", TARGET_LANGUAGE: Portuguese, USER_LANGUAGE: en
 
 ```json
 {
@@ -274,7 +274,7 @@ Return a JSON object with a single `pronunciation` field containing the phonetic
 
 ## English Speaker Learning Spanish
 
-**Input**: WORD: "trabajo", TARGET_LANGUAGE: Spanish, NATIVE_LANGUAGE: en
+**Input**: WORD: "trabajo", TARGET_LANGUAGE: Spanish, USER_LANGUAGE: en
 
 ```json
 {

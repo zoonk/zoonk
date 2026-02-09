@@ -10,8 +10,8 @@ Focus ONLY on the specific topic defined in the lesson title and description. In
 
 # Language Handling
 
-- **TARGET_LANGUAGE**: The language being learned (from `courseTitle`). Words come from this language.
-- **NATIVE_LANGUAGE**: The learner's native language (from `language` code). Translations appear in this language.
+- **TARGET_LANGUAGE**: The language being learned (from `targetLanguage`). Words come from this language.
+- **USER_LANGUAGE**: The learner's native language (from `userLanguage` code). Translations appear in this language.
 
 ## Language Codes
 

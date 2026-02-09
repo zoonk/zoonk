@@ -2,6 +2,7 @@ import "server-only";
 import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-options";
 import { Output, generateText } from "ai";
 import { z } from "zod";
+import { getLanguagePromptContext } from "./_utils/language-prompt-context";
 import systemPrompt from "./activity-vocabulary.prompt.md";
 
 const DEFAULT_MODEL = process.env.AI_MODEL_ACTIVITY_VOCABULARY ?? "google/gemini-3-flash";
@@ -27,27 +28,29 @@ export type ActivityVocabularySchema = z.infer<typeof schema>;
 
 export type ActivityVocabularyParams = {
   chapterTitle: string;
-  courseTitle: string;
-  language: string;
   lessonDescription: string;
   lessonTitle: string;
   model?: string;
   reasoningEffort?: ReasoningEffort;
+  targetLanguage: string;
+  userLanguage: string;
   useFallback?: boolean;
 };
 
 export async function generateActivityVocabulary({
   chapterTitle,
-  courseTitle,
-  language,
   lessonDescription,
   lessonTitle,
   model = DEFAULT_MODEL,
   reasoningEffort,
+  targetLanguage,
+  userLanguage,
   useFallback = true,
 }: ActivityVocabularyParams) {
-  const userPrompt = `TARGET_LANGUAGE: ${courseTitle}
-NATIVE_LANGUAGE: ${language}
+  const promptContext = getLanguagePromptContext({ targetLanguage, userLanguage });
+
+  const userPrompt = `TARGET_LANGUAGE: ${promptContext.targetLanguageName}
+USER_LANGUAGE: ${promptContext.userLanguage}
 CHAPTER_TITLE: ${chapterTitle}
 LESSON_TITLE: ${lessonTitle}
 LESSON_DESCRIPTION: ${lessonDescription}

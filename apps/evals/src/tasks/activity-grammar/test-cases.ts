@@ -113,11 +113,11 @@ ${SHARED_EXPECTATIONS}
     id: "en-japanese-topic-marker-wa",
     userInput: {
       chapterTitle: "Basic Particles",
-      courseTitle: "Japanese",
-      language: "en",
       lessonDescription:
         "The topic marker particle は (wa) and how it indicates what the sentence is about",
       lessonTitle: "Topic Marker は",
+      targetLanguage: "Japanese",
+      userLanguage: "en",
     },
   },
   {
@@ -152,11 +152,11 @@ ${SHARED_EXPECTATIONS}
     id: "en-spanish-ar-verb-conjugation",
     userInput: {
       chapterTitle: "Present Tense Verbs",
-      courseTitle: "Spanish",
-      language: "en",
       lessonDescription:
         "How to conjugate regular -ar verbs in the present tense, matching verb endings to subjects",
       lessonTitle: "Regular -ar Verbs",
+      targetLanguage: "Spanish",
+      userLanguage: "en",
     },
   },
   {
@@ -182,11 +182,11 @@ ${SHARED_EXPECTATIONS}
     id: "en-german-verb-second",
     userInput: {
       chapterTitle: "Sentence Structure",
-      courseTitle: "German",
-      language: "en",
       lessonDescription:
         "Understanding German verb-second word order in main clauses and how it differs from English",
       lessonTitle: "Verb Second Word Order",
+      targetLanguage: "German",
+      userLanguage: "en",
     },
   },
   {
@@ -213,11 +213,11 @@ ${SHARED_EXPECTATIONS}
     id: "pt-french-gender-agreement",
     userInput: {
       chapterTitle: "Adjetivos",
-      courseTitle: "French",
-      language: "pt",
       lessonDescription:
         "Como os adjetivos em frances concordam em genero com os substantivos que modificam",
       lessonTitle: "Concordancia de Genero",
+      targetLanguage: "French",
+      userLanguage: "pt",
     },
   },
   {
@@ -254,11 +254,11 @@ ${SHARED_EXPECTATIONS}
     id: "es-korean-subject-marker",
     userInput: {
       chapterTitle: "Particulas Basicas",
-      courseTitle: "Korean",
-      language: "es",
       lessonDescription:
         "Los marcadores de sujeto coreanos 이 y 가 y como elegir cual usar segun la palabra",
       lessonTitle: "Marcadores de Sujeto",
+      targetLanguage: "Korean",
+      userLanguage: "es",
     },
   },
 ];

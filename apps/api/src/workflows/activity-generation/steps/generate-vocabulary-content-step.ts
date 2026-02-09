@@ -32,10 +32,11 @@ export async function generateVocabularyContentStep(
   const { data: result, error } = await safeAsync(() =>
     generateActivityVocabulary({
       chapterTitle: activity.lesson.chapter.title,
-      courseTitle: activity.lesson.chapter.course.title,
-      language: activity.language,
       lessonDescription: activity.lesson.description ?? "",
       lessonTitle: activity.lesson.title,
+      targetLanguage:
+        activity.lesson.chapter.course.targetLanguage ?? activity.lesson.chapter.course.title,
+      userLanguage: activity.language,
     }),
   );
 

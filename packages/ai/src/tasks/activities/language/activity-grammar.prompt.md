@@ -15,8 +15,8 @@ The activity follows this structure:
 
 # Language Handling
 
-- **TARGET_LANGUAGE**: The language being learned (from `courseTitle`). Examples and exercises are in this language.
-- **NATIVE_LANGUAGE**: The learner's native language (from `language` code). Translations appear in this language.
+- **TARGET_LANGUAGE**: The language being learned (from `targetLanguage`). Examples and exercises are in this language.
+- **USER_LANGUAGE**: The learner's native language (from `userLanguage` code). Translations appear in this language.
 
 ## Language Codes
 
