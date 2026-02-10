@@ -1675,6 +1675,7 @@ describe("core activity workflow", () => {
       expect(storySteps[0]?.kind).toBe("multipleChoice");
       expect(storySteps[0]?.content).toEqual({
         context: "Your colleague turns to you during a meeting...",
+        kind: "core",
         options: [
           { feedback: "Great choice!", isCorrect: true, text: "Option A" },
           { feedback: "Not quite.", isCorrect: false, text: "Option B" },
@@ -1933,6 +1934,7 @@ describe("core activity workflow", () => {
       expect(challengeSteps[0]?.kind).toBe("multipleChoice");
       expect(challengeSteps[0]?.content).toEqual({
         context: "Your team lead asks you to choose...",
+        kind: "challenge",
         options: [
           {
             consequence: "Great outcome",
@@ -2256,6 +2258,7 @@ describe("core activity workflow", () => {
       expect(reviewSteps[0]?.kind).toBe("multipleChoice");
       expect(reviewSteps[0]?.content).toEqual({
         context: "Review context about the lesson content...",
+        kind: "core",
         options: [
           { feedback: "Correct!", isCorrect: true, text: "Option A" },
           { feedback: "Not quite.", isCorrect: false, text: "Option B" },
@@ -2495,6 +2498,7 @@ describe("core activity workflow", () => {
         activityId: quizActivity.id,
         content: {
           context: "Test",
+          kind: "core",
           options: [{ feedback: "Yes", isCorrect: true, text: "A" }],
           question: "Q?",
         },

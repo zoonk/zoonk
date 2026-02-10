@@ -27,6 +27,7 @@ async function saveReviewSteps(
       data: questions.map((question, index) => {
         const content = assertStepContent("multipleChoice", {
           context: question.context,
+          kind: "core",
           options: question.options,
           question: question.question,
         });

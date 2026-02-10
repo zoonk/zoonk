@@ -27,6 +27,7 @@ async function saveChallengeSteps(
         data: steps.map((step, index) => {
           const content = assertStepContent("multipleChoice", {
             context: step.context,
+            kind: "challenge",
             options: step.options,
             question: step.question,
           });

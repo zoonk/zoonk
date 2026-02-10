@@ -93,6 +93,7 @@ const stepsData: {
       {
         content: {
           context: "Traditional programming requires explicit rules for every scenario.",
+          kind: "core",
           options: [
             {
               feedback: "Both use electricity. Think about how they solve problems.",
@@ -195,31 +196,35 @@ const stepsData: {
       },
       {
         content: {
+          context:
+            "Your team is building an ML model and discovers the training data has quality issues.",
+          kind: "challenge",
           options: [
             {
-              effects: { dataQuality: -10, modelAccuracy: -15, teamMorale: -5 },
-              feedback: "Garbage in, garbage out. Poor data quality leads to poor models.",
-              isCorrect: false,
+              consequence: "Garbage in, garbage out. Poor data quality leads to poor models.",
+              effects: [
+                { dimension: "Data Quality", impact: "negative" },
+                { dimension: "Model Accuracy", impact: "negative" },
+                { dimension: "Team Morale", impact: "negative" },
+              ],
               text: "Ignore it and proceed with training",
             },
             {
-              effects: {
-                computeResources: -5,
-                dataQuality: 20,
-                modelAccuracy: 10,
-              },
-              feedback: "Good choice! Clean data is the foundation of good ML models.",
-              isCorrect: true,
+              consequence: "Good choice! Clean data is the foundation of good ML models.",
+              effects: [
+                { dimension: "Data Quality", impact: "positive" },
+                { dimension: "Model Accuracy", impact: "positive" },
+                { dimension: "Compute Resources", impact: "negative" },
+              ],
               text: "Spend time cleaning and validating the data",
             },
             {
-              effects: {
-                computeResources: -25,
-                dataQuality: 15,
-                teamMorale: -10,
-              },
-              feedback: "This wastes resources when cleaning could suffice.",
-              isCorrect: false,
+              consequence: "This wastes resources when cleaning could suffice.",
+              effects: [
+                { dimension: "Data Quality", impact: "positive" },
+                { dimension: "Compute Resources", impact: "negative" },
+                { dimension: "Team Morale", impact: "negative" },
+              ],
               text: "Collect entirely new data from scratch",
             },
           ],
@@ -229,27 +234,31 @@ const stepsData: {
       },
       {
         content: {
+          context:
+            "The model is underperforming and a team member suggests using a more complex architecture.",
+          kind: "challenge",
           options: [
             {
-              effects: {
-                computeResources: -20,
-                modelAccuracy: 5,
-                teamMorale: 5,
-              },
-              feedback: "Complex models need more compute and may overfit. Start simple!",
-              isCorrect: false,
+              consequence: "Complex models need more compute and may overfit. Start simple!",
+              effects: [
+                { dimension: "Compute Resources", impact: "negative" },
+                { dimension: "Model Accuracy", impact: "positive" },
+                { dimension: "Team Morale", impact: "positive" },
+              ],
               text: "Immediately switch to the complex model",
             },
             {
-              effects: { dataQuality: 5, modelAccuracy: 15, teamMorale: 10 },
-              feedback: "Smart! Understanding the problem helps choose the right solution.",
-              isCorrect: true,
+              consequence: "Smart! Understanding the problem helps choose the right solution.",
+              effects: [
+                { dimension: "Data Quality", impact: "positive" },
+                { dimension: "Model Accuracy", impact: "positive" },
+                { dimension: "Team Morale", impact: "positive" },
+              ],
               text: "First analyze why the current model is failing",
             },
             {
-              effects: { teamMorale: -20 },
-              feedback: "Ignoring team input hurts morale and misses opportunities.",
-              isCorrect: false,
+              consequence: "Ignoring team input hurts morale and misses opportunities.",
+              effects: [{ dimension: "Team Morale", impact: "negative" }],
               text: "Dismiss the suggestion without discussion",
             },
           ],

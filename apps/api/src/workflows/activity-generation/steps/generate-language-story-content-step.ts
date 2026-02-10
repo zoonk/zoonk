@@ -61,6 +61,7 @@ function buildLanguageStorySteps(activityId: bigint | number, data: ActivityStor
       context: step.context,
       contextRomanization: step.contextRomanization,
       contextTranslation: step.contextTranslation,
+      kind: "language",
       options: step.options.map((option) => ({
         feedback: option.feedback,
         isCorrect: option.isCorrect,
