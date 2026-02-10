@@ -1,6 +1,6 @@
 import { generateLanguageAudio } from "@zoonk/core/audio/generate";
 import { isTTSSupportedLanguage } from "@zoonk/utils/languages";
-import { streamStatus } from "../stream-status";
+import { streamError, streamStatus } from "../stream-status";
 import { findActivityByKind } from "./_utils/find-activity-by-kind";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
@@ -59,7 +59,7 @@ export async function generateReadingAudioStep(
   );
 
   if (fulfilled.length < savedSentences.length) {
-    await streamStatus({ status: "error", step: "generateAudio" });
+    await streamError({ reason: "enrichmentFailed", step: "generateAudio" });
     await handleActivityFailureStep({ activityId: activity.id });
     return { audioUrls };
   }

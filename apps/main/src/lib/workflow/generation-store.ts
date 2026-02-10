@@ -4,6 +4,7 @@ export type StepStatus = "started" | "completed" | "error";
 export type GenerationStatus = "idle" | "triggering" | "streaming" | "completed" | "error";
 
 export type StreamMessage<TStep extends string = string> = {
+  reason?: string;
   step: TStep;
   status: StepStatus;
 };
@@ -96,9 +97,13 @@ export function handleStreamMessage<TStep extends string>(
         store.send({ type: "workflowCompleted" });
       }
       break;
-    case "error":
-      store.send({ error: "Step failed", type: "setError" });
+    case "error": {
+      const errorMessage = message.reason
+        ? `${message.step}: ${message.reason}`
+        : `Step "${message.step}" failed`;
+      store.send({ error: errorMessage, type: "setError" });
       break;
+    }
     default: {
       const exhaustiveCheck: never = message.status;
       throw new Error(`Unexpected status: ${String(exhaustiveCheck)}`);

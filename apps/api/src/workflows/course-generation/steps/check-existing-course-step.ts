@@ -2,7 +2,7 @@ import { prisma } from "@zoonk/db";
 import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import { safeAsync } from "@zoonk/utils/error";
 import { toSlug } from "@zoonk/utils/string";
-import { streamStatus } from "../stream-status";
+import { streamError, streamStatus } from "../stream-status";
 import { type CourseSuggestionData } from "../types";
 
 export type ExistingCourse = {
@@ -66,7 +66,7 @@ export async function checkExistingCourseStep(
   );
 
   if (error) {
-    await streamStatus({ status: "error", step: "checkExistingCourse" });
+    await streamError({ reason: "dbFetchFailed", step: "checkExistingCourse" });
     throw error;
   }
 

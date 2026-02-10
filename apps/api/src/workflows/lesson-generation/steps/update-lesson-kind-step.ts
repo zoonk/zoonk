@@ -1,6 +1,6 @@
 import { type LessonKind, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
-import { streamStatus } from "../stream-status";
+import { streamError, streamStatus } from "../stream-status";
 
 export async function updateLessonKindStep(input: {
   lessonId: number;
@@ -19,7 +19,7 @@ export async function updateLessonKindStep(input: {
   );
 
   if (error) {
-    await streamStatus({ status: "error", step: "updateLessonKind" });
+    await streamError({ reason: "dbSaveFailed", step: "updateLessonKind" });
     throw error;
   }
 

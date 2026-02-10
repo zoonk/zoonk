@@ -1,7 +1,7 @@
 import { type ActivityKind, type LessonKind, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { isTTSSupportedLanguage } from "@zoonk/utils/languages";
-import { streamStatus } from "../stream-status";
+import { streamError, streamStatus } from "../stream-status";
 import { type GeneratedActivity } from "./generate-custom-activities-step";
 import { type LessonContext } from "./get-lesson-step";
 
@@ -96,7 +96,7 @@ export async function addActivitiesStep(input: {
   const { error } = await safeAsync(() => prisma.activity.createMany({ data: activitiesData }));
 
   if (error) {
-    await streamStatus({ status: "error", step: "addActivities" });
+    await streamError({ reason: "dbSaveFailed", step: "addActivities" });
     throw error;
   }
 

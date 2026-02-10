@@ -1,7 +1,7 @@
 import { assertStepContent } from "@zoonk/core/steps/content-contract";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
-import { streamStatus } from "../stream-status";
+import { streamError, streamStatus } from "../stream-status";
 import { findActivityByKind } from "./_utils/find-activity-by-kind";
 import { type ReadingSentence } from "./generate-reading-content-step";
 import { type LessonActivity } from "./get-lesson-activities-step";
@@ -99,7 +99,7 @@ export async function saveReadingSentencesStep(
   );
 
   if (error) {
-    await streamStatus({ status: "error", step: "saveSentences" });
+    await streamError({ reason: "dbSaveFailed", step: "saveSentences" });
     await handleActivityFailureStep({ activityId: activity.id });
     return { savedSentences: [] };
   }

@@ -1,7 +1,7 @@
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { normalizeString, toSlug } from "@zoonk/utils/string";
-import { streamStatus } from "../stream-status";
+import { streamError, streamStatus } from "../stream-status";
 import { type CourseContext, type CreatedChapter, type GeneratedChapter } from "../types";
 
 export async function addChaptersStep(input: {
@@ -39,7 +39,7 @@ export async function addChaptersStep(input: {
   );
 
   if (error || !createdChapters) {
-    await streamStatus({ status: "error", step: "addChapters" });
+    await streamError({ reason: "dbSaveFailed", step: "addChapters" });
     throw error ?? new Error("Failed to create chapters");
   }
 

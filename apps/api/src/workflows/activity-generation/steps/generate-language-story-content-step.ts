@@ -1,4 +1,8 @@
 import {
+  type WorkflowErrorReason,
+  getAIResultErrorReason,
+} from "@/workflows/_shared/stream-status";
+import {
   type ActivityStoryLanguageSchema,
   generateActivityStoryLanguage,
 } from "@zoonk/ai/tasks/activities/language/story";
@@ -6,7 +10,7 @@ import { assertStepContent } from "@zoonk/core/steps/content-contract";
 import { prisma } from "@zoonk/db";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { z } from "zod";
-import { streamStatus } from "../stream-status";
+import { streamError, streamStatus } from "../stream-status";
 import { findActivityByKind } from "./_utils/find-activity-by-kind";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
@@ -71,8 +75,11 @@ function buildLanguageStorySteps(activityId: bigint | number, data: ActivityStor
   return [scenarioStep, ...storySteps];
 }
 
-async function handleLanguageStoryError(activityId: bigint | number): Promise<void> {
-  await streamStatus({ status: "error", step: "generateLanguageStoryContent" });
+async function handleLanguageStoryError(
+  activityId: bigint | number,
+  reason: WorkflowErrorReason,
+): Promise<void> {
+  await streamError({ reason, step: "generateLanguageStoryContent" });
   await handleActivityFailureStep({ activityId });
 }
 
@@ -123,14 +130,15 @@ export async function generateLanguageStoryContentStep(
     );
 
   if (error || !result || !hasMinimumLanguageStoryContent(result.data)) {
-    await handleLanguageStoryError(activity.id);
+    const reason = getAIResultErrorReason(error, result);
+    await handleLanguageStoryError(activity.id, reason);
     return { generated: false };
   }
 
   const { error: saveError } = await saveLanguageStorySteps(activity.id, result.data);
 
   if (saveError) {
-    await handleLanguageStoryError(activity.id);
+    await handleLanguageStoryError(activity.id, "dbSaveFailed");
     return { generated: false };
   }
 

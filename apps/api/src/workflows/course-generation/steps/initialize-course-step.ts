@@ -2,7 +2,7 @@ import { prisma } from "@zoonk/db";
 import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import { safeAsync } from "@zoonk/utils/error";
 import { normalizeString, toSlug } from "@zoonk/utils/string";
-import { streamStatus } from "../stream-status";
+import { streamError, streamStatus } from "../stream-status";
 import { type CourseContext, type CourseSuggestionData } from "../types";
 
 export async function initializeCourseStep(input: {
@@ -32,7 +32,7 @@ export async function initializeCourseStep(input: {
   );
 
   if (updateError) {
-    await streamStatus({ status: "error", step: "initializeCourse" });
+    await streamError({ reason: "dbSaveFailed", step: "initializeCourse" });
     throw updateError;
   }
 
@@ -58,7 +58,7 @@ export async function initializeCourseStep(input: {
   );
 
   if (createError || !course) {
-    await streamStatus({ status: "error", step: "initializeCourse" });
+    await streamError({ reason: "dbSaveFailed", step: "initializeCourse" });
     throw createError ?? new Error("Failed to create course");
   }
 

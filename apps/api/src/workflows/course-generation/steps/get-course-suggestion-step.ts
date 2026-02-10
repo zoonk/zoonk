@@ -1,6 +1,6 @@
 import { prisma } from "@zoonk/db";
 import { FatalError } from "workflow";
-import { streamStatus } from "../stream-status";
+import { streamError, streamStatus } from "../stream-status";
 import { type CourseSuggestionData } from "../types";
 
 export async function getCourseSuggestionStep(
@@ -24,7 +24,7 @@ export async function getCourseSuggestionStep(
   });
 
   if (!suggestion) {
-    await streamStatus({ status: "error", step: "getCourseSuggestion" });
+    await streamError({ reason: "notFound", step: "getCourseSuggestion" });
     throw new FatalError("Course suggestion not found");
   }
 

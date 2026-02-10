@@ -1,7 +1,7 @@
 import { generateCourseChapters } from "@zoonk/ai/tasks/courses/chapters";
 import { generateLanguageCourseChapters } from "@zoonk/ai/tasks/courses/language-chapters";
 import { safeAsync } from "@zoonk/utils/error";
-import { streamStatus } from "../stream-status";
+import { streamError, streamStatus } from "../stream-status";
 import { type CourseContext, type GeneratedChapter } from "../types";
 
 function generateChapters(course: CourseContext) {
@@ -27,7 +27,7 @@ export async function generateChaptersStep(course: CourseContext): Promise<Gener
   const { data: result, error } = await safeAsync(() => generateChapters(course));
 
   if (error) {
-    await streamStatus({ status: "error", step: "generateChapters" });
+    await streamError({ reason: "aiGenerationFailed", step: "generateChapters" });
     throw error;
   }
 

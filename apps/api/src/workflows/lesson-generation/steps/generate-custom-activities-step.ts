@@ -1,6 +1,6 @@
 import { generateLessonActivities } from "@zoonk/ai/tasks/lessons/activities";
 import { safeAsync } from "@zoonk/utils/error";
-import { streamStatus } from "../stream-status";
+import { streamError, streamStatus } from "../stream-status";
 import { type LessonContext } from "./get-lesson-step";
 
 export type GeneratedActivity = {
@@ -26,7 +26,7 @@ export async function generateCustomActivitiesStep(
   );
 
   if (error) {
-    await streamStatus({ status: "error", step: "generateCustomActivities" });
+    await streamError({ reason: "aiGenerationFailed", step: "generateCustomActivities" });
     throw error;
   }
 

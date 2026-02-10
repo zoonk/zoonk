@@ -1,11 +1,15 @@
 import {
+  type WorkflowErrorReason,
+  getAIResultErrorReason,
+} from "@/workflows/_shared/stream-status";
+import {
   type ActivityReviewSchema,
   generateActivityReview,
 } from "@zoonk/ai/tasks/activities/core/review";
 import { assertStepContent } from "@zoonk/core/steps/content-contract";
 import { prisma } from "@zoonk/db";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
-import { streamStatus } from "../stream-status";
+import { streamError, streamStatus } from "../stream-status";
 import { resolveActivityForGeneration } from "./_utils/content-step-helpers";
 import { type ActivitySteps } from "./_utils/get-activity-steps";
 import { type LessonActivity } from "./get-lesson-activities-step";
@@ -38,8 +42,11 @@ async function saveReviewSteps(
   );
 }
 
-async function handleReviewError(activityId: bigint | number): Promise<void> {
-  await streamStatus({ status: "error", step: "generateReviewContent" });
+async function handleReviewError(
+  activityId: bigint | number,
+  reason: WorkflowErrorReason,
+): Promise<void> {
+  await streamError({ reason, step: "generateReviewContent" });
   await handleActivityFailureStep({ activityId });
 }
 
@@ -50,7 +57,7 @@ async function saveAndCompleteReview(
   const { error } = await saveReviewSteps(activityId, questions);
 
   if (error) {
-    await handleReviewError(activityId);
+    await handleReviewError(activityId, "dbSaveFailed");
     return;
   }
 
@@ -103,7 +110,8 @@ export async function generateReviewContentStep(
   );
 
   if (error || !result || result.data.questions.length === 0) {
-    await handleReviewError(activity.id);
+    const reason = getAIResultErrorReason(error, result);
+    await handleReviewError(activity.id, reason);
     return;
   }
 

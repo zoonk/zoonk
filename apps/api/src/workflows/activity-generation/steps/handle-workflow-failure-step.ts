@@ -1,6 +1,6 @@
+import { streamError } from "@/workflows/_shared/stream-error";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
-import { getWritable } from "workflow";
 
 /**
  * Marks activities left in "running" state by this workflow as failed.
@@ -24,12 +24,5 @@ export async function handleWorkflowFailureStep(
     }),
   );
 
-  const writable = getWritable<string>();
-  const writer = writable.getWriter();
-
-  try {
-    await writer.write(`data: ${JSON.stringify({ status: "error", step: "workflowError" })}\n\n`);
-  } finally {
-    writer.releaseLock();
-  }
+  await streamError({ reason: "aiGenerationFailed", step: "workflowError" });
 }

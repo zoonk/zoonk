@@ -1,6 +1,6 @@
 import { prisma } from "@zoonk/db";
 import { FatalError } from "workflow";
-import { streamStatus } from "../stream-status";
+import { streamError, streamStatus } from "../stream-status";
 
 async function getLessonForGeneration(lessonId: number) {
   return prisma.lesson.findUnique({
@@ -45,7 +45,7 @@ export async function getLessonStep(lessonId: number): Promise<LessonContext> {
   const lesson = await getLessonForGeneration(lessonId);
 
   if (!lesson) {
-    await streamStatus({ status: "error", step: "getLesson" });
+    await streamError({ reason: "notFound", step: "getLesson" });
     throw new FatalError("Lesson not found");
   }
 

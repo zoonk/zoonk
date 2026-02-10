@@ -3,7 +3,7 @@ import { revalidateMainApp } from "@zoonk/core/cache/revalidate";
 import { type ActivityKind, prisma } from "@zoonk/db";
 import { cacheTagActivity } from "@zoonk/utils/cache";
 import { safeAsync } from "@zoonk/utils/error";
-import { streamStatus } from "../stream-status";
+import { streamError, streamStatus } from "../stream-status";
 import { findActivityByKind } from "./_utils/find-activity-by-kind";
 import { type LessonActivity } from "./get-lesson-activities-step";
 
@@ -57,7 +57,7 @@ export async function completeActivityStep(
   );
 
   if (error) {
-    await streamStatus({ status: "error", step: stepName });
+    await streamError({ reason: "dbSaveFailed", step: stepName });
     await streamStatus({ status: "error", step: "setActivityAsCompleted" });
     return;
   }

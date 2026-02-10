@@ -1,6 +1,6 @@
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
-import { streamStatus } from "../stream-status";
+import { streamError, streamStatus } from "../stream-status";
 import { findActivityByKind } from "./_utils/find-activity-by-kind";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
@@ -34,7 +34,7 @@ export async function updateVocabularyEnrichmentsStep(
   const { error } = await safeAsync(() => prisma.$transaction(updates));
 
   if (error) {
-    await streamStatus({ status: "error", step: "updateVocabularyEnrichments" });
+    await streamError({ reason: "dbSaveFailed", step: "updateVocabularyEnrichments" });
     await handleActivityFailureStep({ activityId: activity.id });
     return;
   }

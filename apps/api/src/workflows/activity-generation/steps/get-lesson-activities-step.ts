@@ -1,7 +1,7 @@
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { FatalError } from "workflow";
-import { streamStatus } from "../stream-status";
+import { streamError, streamStatus } from "../stream-status";
 
 async function getLessonActivities(lessonId: number) {
   const activities = await prisma.activity.findMany({
@@ -52,12 +52,12 @@ export async function getLessonActivitiesStep(lessonId: number): Promise<LessonA
   const { data: activities, error } = await safeAsync(() => getLessonActivities(lessonId));
 
   if (error) {
-    await streamStatus({ status: "error", step: "getLessonActivities" });
+    await streamError({ reason: "dbFetchFailed", step: "getLessonActivities" });
     throw error;
   }
 
   if (activities.length === 0) {
-    await streamStatus({ status: "error", step: "getLessonActivities" });
+    await streamError({ reason: "noSourceData", step: "getLessonActivities" });
     throw new FatalError("No activities found for lesson");
   }
 

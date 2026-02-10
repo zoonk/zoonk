@@ -1,6 +1,6 @@
 import { generateActivityPronunciation } from "@zoonk/ai/tasks/activities/language/pronunciation";
 import { safeAsync } from "@zoonk/utils/error";
-import { streamStatus } from "../stream-status";
+import { streamError, streamStatus } from "../stream-status";
 import { findActivityByKind } from "./_utils/find-activity-by-kind";
 import { type VocabularyWord } from "./generate-vocabulary-content-step";
 import { type LessonActivity } from "./get-lesson-activities-step";
@@ -51,7 +51,7 @@ export async function generateVocabularyPronunciationStep(
   );
 
   if (fulfilled.length < words.length) {
-    await streamStatus({ status: "error", step: "generateVocabularyPronunciation" });
+    await streamError({ reason: "enrichmentFailed", step: "generateVocabularyPronunciation" });
     await handleActivityFailureStep({ activityId: activity.id });
     return { pronunciations };
   }
