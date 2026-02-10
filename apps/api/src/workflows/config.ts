@@ -59,9 +59,11 @@ const ACTIVITY_STEPS = [
   "generateAudio",
   "updateSentenceEnrichments",
   "copyListeningSteps",
+  "copyLanguageReviewSteps",
   "setVocabularyAsCompleted",
   "setReadingAsCompleted",
   "setListeningAsCompleted",
+  "setLanguageReviewAsCompleted",
   "setActivityAsCompleted",
   "workflowError",
 ] as const;

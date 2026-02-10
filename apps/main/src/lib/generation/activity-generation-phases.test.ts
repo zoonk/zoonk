@@ -237,6 +237,61 @@ describe("listening phase status", () => {
   });
 });
 
+describe("languageReview phase status", () => {
+  test("returns correct phase order for languageReview", () => {
+    expect(getPhaseOrder("languageReview")).toEqual([
+      "gettingStarted",
+      "processingDependencies",
+      "writingContent",
+      "finishing",
+    ]);
+  });
+
+  test("activates processingDependencies for dependency steps", () => {
+    const status = getPhaseStatus(
+      "processingDependencies",
+      ["setActivityAsRunning"],
+      "generateVocabularyContent",
+      "languageReview",
+    );
+
+    expect(status).toBe("active");
+  });
+
+  test("activates writingContent for copyLanguageReviewSteps", () => {
+    const status = getPhaseStatus(
+      "writingContent",
+      [
+        "setActivityAsRunning",
+        "generateVocabularyContent",
+        "saveVocabularyWords",
+        "generateVocabularyPronunciation",
+        "generateVocabularyAudio",
+        "updateVocabularyEnrichments",
+        "generateGrammarContent",
+        "generateSentences",
+        "saveSentences",
+        "setGrammarAsCompleted",
+        "setActivityAsCompleted",
+      ],
+      "copyLanguageReviewSteps",
+      "languageReview",
+    );
+
+    expect(status).toBe("active");
+  });
+
+  test("calculates progress for languageReview flow", () => {
+    const progress = calculateWeightedProgress(
+      ["setActivityAsRunning", "generateVocabularyContent", "saveVocabularyWords"],
+      "generateGrammarContent",
+      "languageReview",
+    );
+
+    expect(progress).toBeGreaterThan(0);
+  });
+});
+
 describe("reading phase status", () => {
   test("activates buildingWordList for sentence generation", () => {
     const status = getPhaseStatus(

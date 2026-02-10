@@ -2,6 +2,7 @@ import { ACTIVITY_STEPS, type ActivityStepName } from "@/workflows/config";
 import { type ActivityKind } from "@zoonk/db";
 import {
   EXPLANATION_DEPS,
+  LANGUAGE_REVIEW_DEPENDENCY_STEPS,
   LISTENING_DEPENDENCY_STEPS,
   LISTENING_WRITING_STEPS,
   getFinishingSteps,
@@ -74,6 +75,10 @@ export function getPhaseOrder(kind: ActivityKind): PhaseName[] {
     ];
   }
 
+  if (kind === "languageReview") {
+    return ["gettingStarted", "processingDependencies", "writingContent", "finishing"];
+  }
+
   if (kind === "grammar" || kind === "languageStory") {
     return ["gettingStarted", "writingContent", "finishing"];
   }
@@ -96,16 +101,27 @@ export function getPhaseOrder(kind: ActivityKind): PhaseName[] {
   ];
 }
 
-export function getPhaseSteps(kind: ActivityKind): Record<PhaseName, ActivityStepName[]> {
-  const shared = {
-    addingPronunciation: [] as ActivityStepName[],
-    buildingWordList: [] as ActivityStepName[],
-    creatingImages: ["generateImages", "generateQuizImages"] as ActivityStepName[],
-    gettingStarted: ["getLessonActivities"] as ActivityStepName[],
-    preparingVisuals: ["generateVisuals"] as ActivityStepName[],
-    recordingAudio: [] as ActivityStepName[],
-  };
+const SHARED_PHASE_STEPS = {
+  addingPronunciation: [] as ActivityStepName[],
+  buildingWordList: [] as ActivityStepName[],
+  creatingImages: ["generateImages", "generateQuizImages"] as ActivityStepName[],
+  gettingStarted: ["getLessonActivities"] as ActivityStepName[],
+  preparingVisuals: ["generateVisuals"] as ActivityStepName[],
+  recordingAudio: [] as ActivityStepName[],
+};
 
+const NO_VISUALS_OVERRIDE = {
+  creatingImages: [] as ActivityStepName[],
+  preparingVisuals: [] as ActivityStepName[],
+};
+
+const VISUALS_AS_FINISHING = [
+  "generateVisuals",
+  "generateImages",
+  "generateQuizImages",
+] as const satisfies readonly ActivityStepName[];
+
+function getLanguagePhaseSteps(kind: ActivityKind): Record<PhaseName, ActivityStepName[]> | null {
   if (kind === "vocabulary") {
     return {
       addingPronunciation: ["generateVocabularyPronunciation"],
@@ -114,11 +130,9 @@ export function getPhaseSteps(kind: ActivityKind): Record<PhaseName, ActivitySte
         "generateVocabularyContent",
         "saveVocabularyWords",
       ],
-      creatingImages: [],
+      ...NO_VISUALS_OVERRIDE,
       finishing: [
-        "generateVisuals",
-        "generateImages",
-        "generateQuizImages",
+        ...VISUALS_AS_FINISHING,
         ...getFinishingSteps([
           "generateVocabularyContent",
           "saveVocabularyWords",
@@ -127,10 +141,27 @@ export function getPhaseSteps(kind: ActivityKind): Record<PhaseName, ActivitySte
         ]),
       ],
       gettingStarted: ["getLessonActivities"],
-      preparingVisuals: [],
       processingDependencies: [],
       recordingAudio: ["generateVocabularyAudio"],
       writingContent: [],
+    };
+  }
+
+  if (kind === "languageReview") {
+    return {
+      ...SHARED_PHASE_STEPS,
+      ...NO_VISUALS_OVERRIDE,
+      finishing: [
+        ...VISUALS_AS_FINISHING,
+        ...getFinishingSteps([
+          ...LANGUAGE_REVIEW_DEPENDENCY_STEPS,
+          "copyLanguageReviewSteps",
+          "setLanguageReviewAsCompleted",
+        ]),
+        "setLanguageReviewAsCompleted",
+      ],
+      processingDependencies: LANGUAGE_REVIEW_DEPENDENCY_STEPS,
+      writingContent: ["copyLanguageReviewSteps"],
     };
   }
 
@@ -138,15 +169,9 @@ export function getPhaseSteps(kind: ActivityKind): Record<PhaseName, ActivitySte
 
   if (writingOnlyStep) {
     return {
-      ...shared,
-      creatingImages: [],
-      finishing: [
-        "generateVisuals",
-        "generateImages",
-        "generateQuizImages",
-        ...getFinishingSteps([writingOnlyStep]),
-      ],
-      preparingVisuals: [],
+      ...SHARED_PHASE_STEPS,
+      ...NO_VISUALS_OVERRIDE,
+      finishing: [...VISUALS_AS_FINISHING, ...getFinishingSteps([writingOnlyStep])],
       processingDependencies: [],
       writingContent: ["setActivityAsRunning", writingOnlyStep],
     };
@@ -154,13 +179,11 @@ export function getPhaseSteps(kind: ActivityKind): Record<PhaseName, ActivitySte
 
   if (kind === "reading") {
     return {
-      ...shared,
+      ...SHARED_PHASE_STEPS,
       buildingWordList: ["setActivityAsRunning", "generateSentences", "saveSentences"],
-      creatingImages: [],
+      ...NO_VISUALS_OVERRIDE,
       finishing: [
-        "generateVisuals",
-        "generateImages",
-        "generateQuizImages",
+        ...VISUALS_AS_FINISHING,
         ...getFinishingSteps([
           "generateSentences",
           "saveSentences",
@@ -168,7 +191,6 @@ export function getPhaseSteps(kind: ActivityKind): Record<PhaseName, ActivitySte
           "updateSentenceEnrichments",
         ]),
       ],
-      preparingVisuals: [],
       processingDependencies: [],
       recordingAudio: ["generateAudio", "updateSentenceEnrichments"],
       writingContent: [],
@@ -177,13 +199,11 @@ export function getPhaseSteps(kind: ActivityKind): Record<PhaseName, ActivitySte
 
   if (kind === "listening") {
     return {
-      ...shared,
+      ...SHARED_PHASE_STEPS,
       buildingWordList: ["saveSentences"],
-      creatingImages: [],
+      ...NO_VISUALS_OVERRIDE,
       finishing: [
-        "generateVisuals",
-        "generateImages",
-        "generateQuizImages",
+        ...VISUALS_AS_FINISHING,
         ...getFinishingSteps([
           ...LISTENING_DEPENDENCY_STEPS,
           ...LISTENING_WRITING_STEPS,
@@ -195,16 +215,25 @@ export function getPhaseSteps(kind: ActivityKind): Record<PhaseName, ActivitySte
         ]),
         "setListeningAsCompleted",
       ],
-      preparingVisuals: [],
       processingDependencies: LISTENING_DEPENDENCY_STEPS,
       recordingAudio: ["generateAudio", "updateSentenceEnrichments"],
       writingContent: LISTENING_WRITING_STEPS,
     };
   }
 
+  return null;
+}
+
+export function getPhaseSteps(kind: ActivityKind): Record<PhaseName, ActivityStepName[]> {
+  const languagePhase = getLanguagePhaseSteps(kind);
+
+  if (languagePhase) {
+    return languagePhase;
+  }
+
   if (kind === "background") {
     return {
-      ...shared,
+      ...SHARED_PHASE_STEPS,
       finishing: getFinishingSteps(["generateBackgroundContent"]),
       processingDependencies: [],
       writingContent: ["setActivityAsRunning", "generateBackgroundContent"],
@@ -213,7 +242,7 @@ export function getPhaseSteps(kind: ActivityKind): Record<PhaseName, ActivitySte
 
   if (kind === "custom") {
     return {
-      ...shared,
+      ...SHARED_PHASE_STEPS,
       finishing: getFinishingSteps(["generateCustomContent"]),
       processingDependencies: [],
       writingContent: ["setActivityAsRunning", "generateCustomContent"],
@@ -222,7 +251,7 @@ export function getPhaseSteps(kind: ActivityKind): Record<PhaseName, ActivitySte
 
   if (kind === "explanation") {
     return {
-      ...shared,
+      ...SHARED_PHASE_STEPS,
       finishing: getFinishingSteps(["generateBackgroundContent", "generateExplanationContent"]),
       processingDependencies: ["setActivityAsRunning", "generateBackgroundContent"],
       writingContent: ["generateExplanationContent"],
@@ -241,7 +270,7 @@ export function getPhaseSteps(kind: ActivityKind): Record<PhaseName, ActivitySte
   const writingStep = contentStepMap[kind] ?? "generateQuizContent";
 
   return {
-    ...shared,
+    ...SHARED_PHASE_STEPS,
     finishing: getFinishingSteps([
       "generateBackgroundContent",
       "generateExplanationContent",
@@ -259,6 +288,7 @@ const SUPPORTED_KINDS: ActivityKind[] = [
   "examples",
   "explanation",
   "grammar",
+  "languageReview",
   "languageStory",
   "listening",
   "mechanics",
