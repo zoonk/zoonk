@@ -30,7 +30,7 @@ const schema = z.object({
   examples: z.array(
     z.object({
       highlight: z.string(),
-      romanization: z.string(),
+      romanization: z.string().nullable(),
       sentence: z.string(),
       translation: z.string(),
     }),

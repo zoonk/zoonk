@@ -1,5 +1,6 @@
 import { describe, expect, test } from "vitest";
 import {
+  emptyToNull,
   formatPosition,
   normalizeString,
   parseBigIntId,
@@ -136,6 +137,28 @@ describe(parseBigIntId, () => {
 
   test("returns null for empty string", () => {
     expect(parseBigIntId("")).toBeNull();
+  });
+});
+
+describe(emptyToNull, () => {
+  test("converts empty string to null", () => {
+    expect(emptyToNull("")).toBeNull();
+  });
+
+  test("converts whitespace-only string to null", () => {
+    expect(emptyToNull("  ")).toBeNull();
+  });
+
+  test("converts null to null", () => {
+    expect(emptyToNull(null)).toBeNull();
+  });
+
+  test("converts undefined to null", () => {
+    expect(emptyToNull()).toBeNull();
+  });
+
+  test("returns non-empty string as-is", () => {
+    expect(emptyToNull("romaji")).toBe("romaji");
   });
 });
 

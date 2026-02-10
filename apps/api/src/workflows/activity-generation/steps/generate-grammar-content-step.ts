@@ -9,6 +9,7 @@ import {
 import { assertStepContent } from "@zoonk/core/steps/content-contract";
 import { prisma } from "@zoonk/db";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
+import { emptyToNull } from "@zoonk/utils/string";
 import { z } from "zod";
 import { streamError, streamStatus } from "../stream-status";
 import { findActivityByKind } from "./_utils/find-activity-by-kind";
@@ -50,7 +51,7 @@ function buildGrammarSteps(activityId: bigint | number, data: ActivityGrammarSch
   const exampleSteps = data.examples.map((example) => {
     const content = assertStepContent("static", {
       highlight: example.highlight,
-      romanization: example.romanization,
+      romanization: emptyToNull(example.romanization),
       sentence: example.sentence,
       translation: example.translation,
       variant: "grammarExample",

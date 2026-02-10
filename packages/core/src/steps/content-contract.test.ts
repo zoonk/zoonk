@@ -130,20 +130,34 @@ describe("step content contracts", () => {
     ).toThrow();
   });
 
-  test("parses language without optional romanization fields", () => {
+  test("parses language with null romanization fields", () => {
     const content = parseStepContent("multipleChoice", {
       context: "Context",
+      contextRomanization: null,
       contextTranslation: "Translation",
       kind: "language",
-      options: [{ feedback: "Great", isCorrect: true, text: "A" }],
+      options: [{ feedback: "Great", isCorrect: true, text: "A", textRomanization: null }],
     });
 
     expect(content).toEqual({
       context: "Context",
+      contextRomanization: null,
       contextTranslation: "Translation",
       kind: "language",
-      options: [{ feedback: "Great", isCorrect: true, text: "A" }],
+      options: [{ feedback: "Great", isCorrect: true, text: "A", textRomanization: null }],
     });
+  });
+
+  test("rejects empty string contextRomanization in language kind", () => {
+    expect(() =>
+      parseStepContent("multipleChoice", {
+        context: "Context",
+        contextRomanization: "",
+        contextTranslation: "Translation",
+        kind: "language",
+        options: [{ feedback: "Great", isCorrect: true, text: "A" }],
+      }),
+    ).toThrow();
   });
 
   test("rejects language without required contextTranslation", () => {
@@ -278,6 +292,36 @@ describe("step content contracts", () => {
       options: [{ feedback: "Correct", isCorrect: true, prompt: "A cat", url: "https://a.co/x" }],
       question: "Which image shows a cat?",
     });
+  });
+
+  test("parses grammar example with null romanization", () => {
+    const content = parseStepContent("static", {
+      highlight: "hablo",
+      romanization: null,
+      sentence: "Yo hablo español.",
+      translation: "I speak Spanish.",
+      variant: "grammarExample",
+    });
+
+    expect(content).toEqual({
+      highlight: "hablo",
+      romanization: null,
+      sentence: "Yo hablo español.",
+      translation: "I speak Spanish.",
+      variant: "grammarExample",
+    });
+  });
+
+  test("rejects grammar example with empty string romanization", () => {
+    expect(() =>
+      parseStepContent("static", {
+        highlight: "hablo",
+        romanization: "",
+        sentence: "Yo hablo español.",
+        translation: "I speak Spanish.",
+        variant: "grammarExample",
+      }),
+    ).toThrow();
   });
 
   test("throws for invalid fillBlank", () => {

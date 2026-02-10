@@ -17,7 +17,7 @@ EVALUATION CRITERIA:
 3. ROMANIZATION (required field):
    - For Japanese, Chinese, Korean, Arabic, Russian, Greek, Thai, Hindi, etc.: romanization MUST contain the Roman letter representation
    - Use standard romanization (romaji for Japanese, pinyin for Chinese, etc.)
-   - For Roman-script languages (Spanish, French, German, etc.): romanization MUST be an empty string ""
+   - For Roman-script languages (Spanish, French, German, etc.): romanization MUST be null
    - Penalize if romanization is missing for non-Roman scripts or contains text for Roman scripts
 
 4. TOPIC FOCUS (STRICT BOUNDARY ENFORCEMENT): Words must be INSIDE the lesson's specific scope. Penalize SEVERELY if:
@@ -80,7 +80,7 @@ LANGUAGE: English output required.
 
 TOPIC: Spanish vocabulary for ordering coffee - focused specifically on coffee drinks, sizes, milk options, and common cafe phrases.
 
-SCRIPT: Roman (romanization should be empty string "")
+SCRIPT: Roman (romanization should be null)
 
 TOPIC SCOPE: This is a narrow, focused lesson. Vocabulary should include:
 - Coffee drink types (espresso, latte, cappuccino, americano, etc.)
@@ -92,7 +92,7 @@ TOPIC SCOPE: This is a narrow, focused lesson. Vocabulary should include:
 ACCURACY PITFALLS - Penalize SEVERELY if:
 - Coffee-specific terms are mistranslated
 - Vocabulary drifts to general food/restaurant terms unrelated to coffee ordering
-- Romanization contains any text (should be empty string)
+- Romanization contains any text (should be null)
 - Articles are missing from nouns (el cafe, la leche, not cafe, leche)
 
 ${SHARED_EXPECTATIONS}
@@ -113,7 +113,7 @@ LANGUAGE: English output required.
 
 TOPIC: French vocabulary for breads and pastries - focused specifically on bakery items found in a French boulangerie/patisserie.
 
-SCRIPT: Roman (romanization should be empty string "")
+SCRIPT: Roman (romanization should be null)
 
 TOPIC SCOPE: This is a narrow, focused lesson. Vocabulary should include:
 - Types of bread (baguette, pain de campagne, brioche, etc.)
@@ -125,7 +125,7 @@ ACCURACY PITFALLS - Penalize SEVERELY if:
 - Bakery items are mistranslated
 - Vocabulary drifts to general cooking or restaurant terms
 - Gendered articles are missing (le pain, la baguette, not pain, baguette)
-- Romanization contains any text (should be empty string)
+- Romanization contains any text (should be null)
 
 ${SHARED_EXPECTATIONS}
     `,
@@ -145,7 +145,7 @@ LANGUAGE: English output required.
 
 TOPIC: German vocabulary for parents and siblings - focused specifically on immediate family members (mother, father, brother, sister, and their variations).
 
-SCRIPT: Roman (romanization should be empty string "")
+SCRIPT: Roman (romanization should be null)
 
 TOPIC SCOPE: This is a narrow, focused lesson. Vocabulary should include:
 - Parents (mother, father, mom, dad, step-parents)
@@ -157,7 +157,7 @@ ACCURACY PITFALLS - Penalize SEVERELY if:
 - Parent/sibling terms are mistranslated (Mutter=mother, Vater=father, Bruder=brother, Schwester=sister)
 - Vocabulary includes extended family members (this lesson is specifically about parents and siblings)
 - German articles (der/die/das) are missing from nouns
-- Romanization contains any text (should be empty string)
+- Romanization contains any text (should be null)
 
 ${SHARED_EXPECTATIONS}
     `,
@@ -177,7 +177,7 @@ LANGUAGE: Brazilian Portuguese output required (NOT English).
 
 TOPIC: Italian vocabulary for common pets - focused specifically on household pets and basic pet care terms.
 
-SCRIPT: Roman (romanization should be empty string "")
+SCRIPT: Roman (romanization should be null)
 
 TOPIC SCOPE: This is a narrow, focused lesson. Vocabulary should include:
 - Common household pets (dog, cat, fish, bird, hamster, rabbit, turtle, etc.)
@@ -192,7 +192,7 @@ ACCURACY PITFALLS - Penalize SEVERELY if:
 - Output is in English instead of Portuguese
 - Italian articles are missing from nouns (il cane, il gatto, not cane, gatto)
 - Grammatical gender is incorrect (masculine article with feminine noun or vice versa)
-- Romanization contains any text (should be empty string)
+- Romanization contains any text (should be null)
 
 ${SHARED_EXPECTATIONS}
     `,

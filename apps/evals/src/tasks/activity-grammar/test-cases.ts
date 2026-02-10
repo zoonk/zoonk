@@ -49,7 +49,7 @@ EVALUATION CRITERIA:
    - For non-Roman scripts (Japanese, Korean, Chinese, Arabic, Russian, Greek, Thai, Hindi, etc.):
      romanization MUST be included and accurate using standard systems (romaji, romanization, pinyin, etc.)
    - For Roman-script languages (Spanish, French, German, Portuguese, Italian, etc.):
-     romanization MUST be empty string ""
+     romanization MUST be null
    - Penalize SEVERELY if romanization is missing for non-Roman scripts
    - Penalize SEVERELY if romanization contains text for Roman scripts
 
@@ -126,7 +126,7 @@ LANGUAGE: English output required.
 
 TOPIC: Spanish present tense conjugation of regular -ar verbs - how verbs ending in -ar change their endings to match the subject.
 
-SCRIPT: Roman (romanization should be empty string "")
+SCRIPT: Roman (romanization should be null)
 
 GRAMMAR PATTERN: Regular -ar verbs in Spanish follow a consistent conjugation pattern in present tense. The -ar ending is replaced with: -o (yo), -as (tu), -a (el/ella), -amos (nosotros), -an (ellos/ellas).
 
@@ -143,7 +143,7 @@ ACCURACY PITFALLS - Penalize SEVERELY if:
 - Conjugation endings are incorrect
 - Examples use irregular verbs instead of regular -ar verbs
 - Examples mix -ar verbs with -er or -ir verbs (those belong in separate lessons)
-- Romanization contains any text (should be empty string)
+- Romanization contains any text (should be null)
 - Discovery question tests vocabulary instead of conjugation patterns
 - Exercises test irregular verb forms
 
@@ -165,7 +165,7 @@ LANGUAGE: English output required.
 
 TOPIC: German verb-second (V2) word order - in German main clauses, the conjugated verb must be in the second position.
 
-SCRIPT: Roman (romanization should be empty string "")
+SCRIPT: Roman (romanization should be null)
 
 GRAMMAR PATTERN: In German declarative sentences, the conjugated verb MUST occupy the second position. The first position can be filled by the subject, an adverb, or another element, but the verb always comes second.
 
@@ -173,7 +173,7 @@ ACCURACY PITFALLS - Penalize SEVERELY if:
 - Examples show verb in positions other than second without explanation
 - Examples use subordinate clauses (which have different word order)
 - The pattern demonstrated is not clearly V2
-- Romanization contains any text (should be empty string)
+- Romanization contains any text (should be null)
 - Discovery question tests vocabulary instead of word order
 - Exercises do not clearly test V2 word order
 
@@ -195,7 +195,7 @@ LANGUAGE: Brazilian Portuguese output required (NOT English).
 
 TOPIC: French adjective-noun gender agreement - adjectives must match the gender of the noun they modify.
 
-SCRIPT: Roman (romanization should be empty string "")
+SCRIPT: Roman (romanization should be null)
 
 GRAMMAR PATTERN: In French, adjectives must agree in gender with the noun they modify. Masculine nouns take masculine adjectives; feminine nouns take feminine adjectives. Most adjectives add -e for feminine form.
 
@@ -204,7 +204,7 @@ ACCURACY PITFALLS - Penalize SEVERELY if:
 - Examples show incorrect gender agreement
 - Adjective forms do not match noun gender
 - Examples use invariable adjectives that do not demonstrate the pattern
-- Romanization contains any text (should be empty string)
+- Romanization contains any text (should be null)
 - Discovery question tests vocabulary instead of gender agreement
 - Exercises do not clearly test gender agreement
 

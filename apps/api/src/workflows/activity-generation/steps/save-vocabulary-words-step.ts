@@ -1,6 +1,7 @@
 import { assertStepContent } from "@zoonk/core/steps/content-contract";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
+import { emptyToNull } from "@zoonk/utils/string";
 import { streamError, streamStatus } from "../stream-status";
 import { findActivityByKind } from "./_utils/find-activity-by-kind";
 import { type VocabularyWord } from "./generate-vocabulary-content-step";
@@ -25,14 +26,14 @@ function buildSaveOneWord(params: {
     const record = await prisma.word.upsert({
       create: {
         organizationId,
-        romanization: vocabWord.romanization,
+        romanization: emptyToNull(vocabWord.romanization),
         targetLanguage,
         translation: vocabWord.translation,
         userLanguage,
         word: vocabWord.word,
       },
       update: {
-        romanization: vocabWord.romanization,
+        romanization: emptyToNull(vocabWord.romanization),
         translation: vocabWord.translation,
       },
       where: {

@@ -27,7 +27,7 @@ EVALUATION CRITERIA:
    - Options MUST show only TARGET language text (NO translations)
    - All 4 options MUST be grammatically correct in TARGET language
    - Options should represent meaningfully different responses
-   - textRomanization provided for non-Roman scripts, empty string for Roman scripts
+   - textRomanization provided for non-Roman scripts, null for Roman scripts
    - Penalize SEVERELY if options include translations or hints in NATIVE language
    - Penalize if options are grammatically incorrect or nonsensical
 
@@ -43,7 +43,7 @@ EVALUATION CRITERIA:
    - For non-Roman scripts (Japanese, Korean, Chinese, Arabic, Russian, Greek, Thai, Hindi, etc.):
      BOTH contextRomanization AND textRomanization MUST be included and accurate
    - For Roman-script languages (Spanish, French, German, Portuguese, Italian, etc.):
-     BOTH romanization fields MUST be empty strings ""
+     BOTH romanization fields MUST be null
    - Penalize SEVERELY if romanization is missing for non-Roman scripts
    - Penalize SEVERELY if romanization contains text for Roman scripts
 
@@ -96,7 +96,7 @@ LANGUAGE: English output required (scenario, questions, feedback).
 
 TOPIC: Ordering coffee and pastries at a cafe in France.
 
-SCRIPT: Roman (ALL romanization fields must be empty strings "")
+SCRIPT: Roman (ALL romanization fields must be null)
 
 SCENARIO TYPE: Food & Dining - casual cafe interaction
 
@@ -110,7 +110,7 @@ KEY REQUIREMENTS:
 ACCURACY PITFALLS - Penalize SEVERELY if:
 - Options include English translations or hints
 - French dialogue is unnatural or overly formal for a cafe
-- Romanization fields contain any text (must be empty string)
+- Romanization fields contain any text (must be null)
 - Feedback doesn't include translation of what the learner said
 - Steps don't follow a logical cafe interaction flow
 
@@ -173,7 +173,7 @@ LANGUAGE: Brazilian Portuguese output required (NOT English).
 
 TOPIC: Buying groceries at a market in Germany.
 
-SCRIPT: Roman (ALL romanization fields must be empty strings "")
+SCRIPT: Roman (ALL romanization fields must be null)
 
 SCENARIO TYPE: Shopping - grocery market interaction
 
@@ -188,7 +188,7 @@ ACCURACY PITFALLS - Penalize SEVERELY if:
 - Output is in English instead of Portuguese
 - Options include Portuguese translations
 - German dialogue is unnatural or uses overly formal register for a market
-- Romanization fields contain any text (must be empty strings)
+- Romanization fields contain any text (must be null)
 - Feedback (in Portuguese) doesn't include German translation
 - Steps don't follow a logical shopping interaction
 
@@ -250,7 +250,7 @@ LANGUAGE: English output required.
 
 TOPIC: Visiting a pharmacy in Spain with a minor ailment.
 
-SCRIPT: Roman (ALL romanization fields must be empty strings "")
+SCRIPT: Roman (ALL romanization fields must be null)
 
 SCENARIO TYPE: Healthcare - pharmacy interaction
 
@@ -264,7 +264,7 @@ KEY REQUIREMENTS:
 ACCURACY PITFALLS - Penalize SEVERELY if:
 - Options include English translations
 - Spanish dialogue is unnatural
-- Romanization fields contain any text (must be empty strings)
+- Romanization fields contain any text (must be null)
 - Feedback doesn't include translation
 
 ${SHARED_EXPECTATIONS}

@@ -29,7 +29,7 @@ const languageOptionSchema = z
     feedback: z.string(),
     isCorrect: z.boolean(),
     text: z.string(),
-    textRomanization: z.string().optional(),
+    textRomanization: z.string().min(1).nullable(),
   })
   .strict();
 
@@ -54,7 +54,7 @@ const challengeMultipleChoiceContentSchema = z
 const languageMultipleChoiceContentSchema = z
   .object({
     context: z.string(),
-    contextRomanization: z.string().optional(),
+    contextRomanization: z.string().min(1).nullable(),
     contextTranslation: z.string(),
     kind: z.literal("language"),
     options: z.array(languageOptionSchema).min(1),
@@ -128,7 +128,7 @@ export const staticTextContentSchema = z
 export const staticGrammarExampleContentSchema = z
   .object({
     highlight: z.string(),
-    romanization: z.string(),
+    romanization: z.string().min(1).nullable(),
     sentence: z.string(),
     translation: z.string(),
     variant: z.literal("grammarExample"),

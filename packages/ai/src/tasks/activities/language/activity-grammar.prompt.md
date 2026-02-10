@@ -188,7 +188,7 @@ Use the standard romanization system for each language:
 - **Thai**: Royal Thai General System (e.g., ฉันเป็นนักเรียน → "chan pen nakrian")
 - **Hindi**: IAST or Hunterian (e.g., मैं छात्र हूँ → "main chhatr hoon")
 
-**For languages using Roman letters** (Spanish, French, German, Portuguese, Italian, etc.), set `romanization` to an empty string `""`.
+**For languages using Roman letters** (Spanish, French, German, Portuguese, Italian, etc.), set `romanization` to `null`.
 
 # Linguistic Accuracy Requirements
 
@@ -226,19 +226,19 @@ Return an object with this structure:
     {
       "sentence": "Yo hablo español.",
       "translation": "I speak Spanish.",
-      "romanization": "",
+      "romanization": null,
       "highlight": "hablo"
     },
     {
       "sentence": "Ella habla con su madre.",
       "translation": "She speaks with her mother.",
-      "romanization": "",
+      "romanization": null,
       "highlight": "habla"
     },
     {
       "sentence": "Nosotros hablamos mucho.",
       "translation": "We speak a lot.",
-      "romanization": "",
+      "romanization": null,
       "highlight": "hablamos"
     }
   ],
