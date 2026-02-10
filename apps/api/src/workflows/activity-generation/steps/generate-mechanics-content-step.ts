@@ -1,6 +1,6 @@
 import { generateActivityMechanics } from "@zoonk/ai/tasks/activities/core/mechanics";
 import { safeAsync } from "@zoonk/utils/error";
-import { streamStatus } from "../stream-status";
+import { streamError, streamStatus } from "../stream-status";
 import { resolveActivityForGeneration, saveContentSteps } from "./_utils/content-step-helpers";
 import { type ActivitySteps } from "./_utils/get-activity-steps";
 import { type LessonActivity } from "./get-lesson-activities-step";
@@ -42,7 +42,8 @@ export async function generateMechanicsContentStep(
   );
 
   if (error || !result) {
-    await streamStatus({ status: "error", step: "generateMechanicsContent" });
+    const reason = error ? "aiGenerationFailed" : "aiEmptyResult";
+    await streamError({ reason, step: "generateMechanicsContent" });
     await handleActivityFailureStep({ activityId: activity.id });
     return { steps: [] };
   }
@@ -57,7 +58,7 @@ async function saveAndStreamResult(
   const { error } = await saveContentSteps(activityId, steps);
 
   if (error) {
-    await streamStatus({ status: "error", step: "generateMechanicsContent" });
+    await streamError({ reason: "dbSaveFailed", step: "generateMechanicsContent" });
     await handleActivityFailureStep({ activityId });
     return { steps: [] };
   }

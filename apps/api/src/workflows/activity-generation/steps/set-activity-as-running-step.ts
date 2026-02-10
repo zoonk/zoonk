@@ -1,6 +1,6 @@
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
-import { streamStatus } from "../stream-status";
+import { streamError, streamStatus } from "../stream-status";
 
 export async function setActivityAsRunningStep(input: {
   activityId: bigint | number;
@@ -22,7 +22,7 @@ export async function setActivityAsRunningStep(input: {
   );
 
   if (error) {
-    await streamStatus({ status: "error", step: "setActivityAsRunning" });
+    await streamError({ reason: "dbSaveFailed", step: "setActivityAsRunning" });
     throw error;
   }
 

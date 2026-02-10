@@ -2,7 +2,7 @@ import { revalidateMainApp } from "@zoonk/core/cache/revalidate";
 import { prisma } from "@zoonk/db";
 import { cacheTagLesson } from "@zoonk/utils/cache";
 import { safeAsync } from "@zoonk/utils/error";
-import { streamStatus } from "../stream-status";
+import { streamError, streamStatus } from "../stream-status";
 import { type LessonContext } from "./get-lesson-step";
 
 export async function setLessonAsCompletedStep(input: {
@@ -25,7 +25,7 @@ export async function setLessonAsCompletedStep(input: {
   );
 
   if (error) {
-    await streamStatus({ status: "error", step: "setLessonAsCompleted" });
+    await streamError({ reason: "dbSaveFailed", step: "setLessonAsCompleted" });
     throw error;
   }
 

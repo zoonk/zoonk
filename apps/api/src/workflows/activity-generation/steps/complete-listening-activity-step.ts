@@ -1,5 +1,5 @@
 import { prisma } from "@zoonk/db";
-import { streamStatus } from "../stream-status";
+import { streamError } from "../stream-status";
 import { findActivityByKind } from "./_utils/find-activity-by-kind";
 import { completeActivityStep } from "./complete-activity-step";
 import { type LessonActivity } from "./get-lesson-activities-step";
@@ -20,7 +20,7 @@ export async function completeListeningActivityStep(
   const reading = findActivityByKind(activities, "reading");
 
   if (!reading) {
-    await streamStatus({ status: "error", step: "setListeningAsCompleted" });
+    await streamError({ reason: "noSourceData", step: "setListeningAsCompleted" });
     await handleActivityFailureStep({ activityId: listening.id });
     return;
   }
@@ -35,6 +35,6 @@ export async function completeListeningActivityStep(
     return;
   }
 
-  await streamStatus({ status: "error", step: "setListeningAsCompleted" });
+  await streamError({ reason: "noSourceData", step: "setListeningAsCompleted" });
   await handleActivityFailureStep({ activityId: listening.id });
 }

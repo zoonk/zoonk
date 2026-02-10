@@ -1,7 +1,7 @@
 import { assertStepContent } from "@zoonk/core/steps/content-contract";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
-import { streamStatus } from "../stream-status";
+import { streamError, streamStatus } from "../stream-status";
 import { findActivityByKind } from "./_utils/find-activity-by-kind";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
@@ -35,7 +35,7 @@ export async function copyListeningStepsStep(
   const reading = findActivityByKind(activities, "reading");
 
   if (!reading) {
-    await streamStatus({ status: "error", step: "copyListeningSteps" });
+    await streamError({ reason: "noSourceData", step: "copyListeningSteps" });
     await handleActivityFailureStep({ activityId: listening.id });
     return;
   }
@@ -49,7 +49,7 @@ export async function copyListeningStepsStep(
   await streamStatus({ status: "started", step: "copyListeningSteps" });
 
   if (readingSteps.length === 0) {
-    await streamStatus({ status: "error", step: "copyListeningSteps" });
+    await streamError({ reason: "noSourceData", step: "copyListeningSteps" });
     await handleActivityFailureStep({ activityId: listening.id });
     return;
   }
@@ -72,7 +72,7 @@ export async function copyListeningStepsStep(
   );
 
   if (error) {
-    await streamStatus({ status: "error", step: "copyListeningSteps" });
+    await streamError({ reason: "dbSaveFailed", step: "copyListeningSteps" });
     await handleActivityFailureStep({ activityId: listening.id });
     return;
   }

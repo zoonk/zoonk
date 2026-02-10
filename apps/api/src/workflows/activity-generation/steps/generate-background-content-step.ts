@@ -1,6 +1,6 @@
 import { generateActivityBackground } from "@zoonk/ai/tasks/activities/core/background";
 import { safeAsync } from "@zoonk/utils/error";
-import { streamStatus } from "../stream-status";
+import { streamError, streamStatus } from "../stream-status";
 import { resolveActivityForGeneration, saveContentSteps } from "./_utils/content-step-helpers";
 import { type ActivitySteps } from "./_utils/get-activity-steps";
 import { type LessonActivity } from "./get-lesson-activities-step";
@@ -35,7 +35,8 @@ export async function generateBackgroundContentStep(
   );
 
   if (error || !result) {
-    await streamStatus({ status: "error", step: "generateBackgroundContent" });
+    const reason = error ? "aiGenerationFailed" : "aiEmptyResult";
+    await streamError({ reason, step: "generateBackgroundContent" });
     await handleActivityFailureStep({ activityId: activity.id });
     return { steps: [] };
   }
@@ -43,7 +44,7 @@ export async function generateBackgroundContentStep(
   const { error: saveError } = await saveContentSteps(activity.id, result.data.steps);
 
   if (saveError) {
-    await streamStatus({ status: "error", step: "generateBackgroundContent" });
+    await streamError({ reason: "dbSaveFailed", step: "generateBackgroundContent" });
     await handleActivityFailureStep({ activityId: activity.id });
     return { steps: [] };
   }

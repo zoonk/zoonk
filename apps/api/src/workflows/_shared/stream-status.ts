@@ -2,7 +2,34 @@ import { getWritable } from "workflow";
 
 export type StepStatus = "started" | "completed" | "error";
 
-export async function streamStatus<T extends string>(params: { step: T; status: StepStatus }) {
+export type WorkflowErrorReason =
+  | "aiEmptyResult"
+  | "aiGenerationFailed"
+  | "contentValidationFailed"
+  | "dbFetchFailed"
+  | "dbSaveFailed"
+  | "enrichmentFailed"
+  | "noSourceData"
+  | "notFound";
+
+export function getAIResultErrorReason(
+  error: Error | null | undefined,
+  result: unknown,
+): WorkflowErrorReason {
+  if (error) {
+    return "aiGenerationFailed";
+  }
+  if (!result) {
+    return "aiEmptyResult";
+  }
+  return "contentValidationFailed";
+}
+
+export async function streamStatus<T extends string>(params: {
+  reason?: WorkflowErrorReason;
+  step: T;
+  status: StepStatus;
+}) {
   "use step";
 
   const writable = getWritable<string>();

@@ -1,4 +1,8 @@
 import {
+  type WorkflowErrorReason,
+  getAIResultErrorReason,
+} from "@/workflows/_shared/stream-status";
+import {
   type ActivityGrammarSchema,
   generateActivityGrammar,
 } from "@zoonk/ai/tasks/activities/language/grammar";
@@ -6,7 +10,7 @@ import { assertStepContent } from "@zoonk/core/steps/content-contract";
 import { prisma } from "@zoonk/db";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { z } from "zod";
-import { streamStatus } from "../stream-status";
+import { streamError, streamStatus } from "../stream-status";
 import { findActivityByKind } from "./_utils/find-activity-by-kind";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
@@ -104,8 +108,11 @@ function buildGrammarSteps(activityId: bigint | number, data: ActivityGrammarSch
   }));
 }
 
-async function handleGrammarError(activityId: bigint | number): Promise<void> {
-  await streamStatus({ status: "error", step: "generateGrammarContent" });
+async function handleGrammarError(
+  activityId: bigint | number,
+  reason: WorkflowErrorReason,
+): Promise<void> {
+  await streamError({ reason, step: "generateGrammarContent" });
   await handleActivityFailureStep({ activityId });
 }
 
@@ -155,14 +162,15 @@ export async function generateGrammarContentStep(
   );
 
   if (error || !result || !hasMinimumGrammarContent(result.data)) {
-    await handleGrammarError(activity.id);
+    const reason = getAIResultErrorReason(error, result);
+    await handleGrammarError(activity.id, reason);
     return { generated: false };
   }
 
   const { error: saveError } = await saveGrammarSteps(activity.id, result.data);
 
   if (saveError) {
-    await handleGrammarError(activity.id);
+    await handleGrammarError(activity.id, "dbSaveFailed");
     return { generated: false };
   }
 

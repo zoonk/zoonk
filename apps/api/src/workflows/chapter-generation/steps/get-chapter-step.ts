@@ -1,6 +1,6 @@
 import { prisma } from "@zoonk/db";
 import { FatalError } from "workflow";
-import { streamStatus } from "../stream-status";
+import { streamError, streamStatus } from "../stream-status";
 
 async function getChapterForGeneration(chapterId: number) {
   return prisma.chapter.findUnique({
@@ -40,7 +40,7 @@ export async function getChapterStep(chapterId: number): Promise<ChapterContext>
   const chapter = await getChapterForGeneration(chapterId);
 
   if (!chapter) {
-    await streamStatus({ status: "error", step: "getChapter" });
+    await streamError({ reason: "notFound", step: "getChapter" });
     throw new FatalError("Chapter not found");
   }
 

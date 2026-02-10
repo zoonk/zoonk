@@ -1,6 +1,6 @@
 import { generateCourseDescription } from "@zoonk/ai/tasks/courses/description";
 import { safeAsync } from "@zoonk/utils/error";
-import { streamStatus } from "../stream-status";
+import { streamError, streamStatus } from "../stream-status";
 import { type CourseContext } from "../types";
 
 export async function generateDescriptionStep(course: CourseContext): Promise<string> {
@@ -16,7 +16,7 @@ export async function generateDescriptionStep(course: CourseContext): Promise<st
   );
 
   if (error) {
-    await streamStatus({ status: "error", step: "generateDescription" });
+    await streamError({ reason: "aiGenerationFailed", step: "generateDescription" });
     throw error;
   }
 

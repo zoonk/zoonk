@@ -27,14 +27,14 @@ const TEST_USER_EMAIL = "e2e-new@zoonk.test";
 type MockApiOptions = {
   triggerResponse?: { runId?: string; error?: string; status?: number };
   streamDelayMs?: number;
-  streamMessages?: { step: string; status: string }[];
+  streamMessages?: { reason?: string; step: string; status: string }[];
   streamError?: boolean;
 };
 
 /**
  * Creates a mock SSE stream response from an array of messages.
  */
-function createSSEStream(messages: { step: string; status: string }[]): string {
+function createSSEStream(messages: { reason?: string; step: string; status: string }[]): string {
   return messages.map((msg) => `data: ${JSON.stringify(msg)}\n\n`).join("");
 }
 
@@ -1261,7 +1261,7 @@ test.describe("Generate Activity Page - With Subscription", () => {
     await setupMockApis(userWithoutProgress, {
       streamMessages: [
         { status: "started", step: "getLessonActivities" },
-        { status: "error", step: "getLessonActivities" },
+        { reason: "dbFetchFailed", status: "error", step: "getLessonActivities" },
       ],
     });
 
@@ -1318,7 +1318,7 @@ test.describe("Generate Activity Page - With Subscription", () => {
     await setupMockApis(userWithoutProgress, {
       streamMessages: [
         { status: "started", step: "getLessonActivities" },
-        { status: "error", step: "workflowError" },
+        { reason: "aiGenerationFailed", status: "error", step: "workflowError" },
       ],
     });
 

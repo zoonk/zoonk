@@ -1,7 +1,7 @@
 import { generateLessonKind } from "@zoonk/ai/tasks/lessons/kind";
 import { type LessonKind } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
-import { streamStatus } from "../stream-status";
+import { streamError, streamStatus } from "../stream-status";
 import { type LessonContext } from "./get-lesson-step";
 
 export async function determineLessonKindStep(context: LessonContext): Promise<LessonKind> {
@@ -20,7 +20,7 @@ export async function determineLessonKindStep(context: LessonContext): Promise<L
   );
 
   if (error) {
-    await streamStatus({ status: "error", step: "determineLessonKind" });
+    await streamError({ reason: "aiGenerationFailed", step: "determineLessonKind" });
     throw error;
   }
 

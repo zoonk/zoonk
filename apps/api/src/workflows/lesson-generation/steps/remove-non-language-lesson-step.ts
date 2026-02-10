@@ -1,6 +1,6 @@
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
-import { streamStatus } from "../stream-status";
+import { streamError, streamStatus } from "../stream-status";
 
 export async function removeNonLanguageLessonStep(input: { lessonId: number }): Promise<void> {
   "use step";
@@ -10,7 +10,7 @@ export async function removeNonLanguageLessonStep(input: { lessonId: number }): 
   const { error } = await safeAsync(() => prisma.lesson.delete({ where: { id: input.lessonId } }));
 
   if (error) {
-    await streamStatus({ status: "error", step: "removeNonLanguageLesson" });
+    await streamError({ reason: "dbSaveFailed", step: "removeNonLanguageLesson" });
     throw error;
   }
 

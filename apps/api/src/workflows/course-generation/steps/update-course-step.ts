@@ -1,6 +1,6 @@
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
-import { streamStatus } from "../stream-status";
+import { streamError, streamStatus } from "../stream-status";
 import { type CourseContext } from "../types";
 
 export async function updateCourseStep(input: {
@@ -24,7 +24,7 @@ export async function updateCourseStep(input: {
   );
 
   if (error) {
-    await streamStatus({ status: "error", step: "updateCourse" });
+    await streamError({ reason: "dbSaveFailed", step: "updateCourse" });
     throw error;
   }
 

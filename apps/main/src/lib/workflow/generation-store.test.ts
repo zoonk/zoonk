@@ -88,11 +88,23 @@ describe(handleStreamMessage, () => {
     expect(store.getSnapshot().context.status).toBe("streaming");
   });
 
-  it("routes 'error' to setError", () => {
+  it("routes 'error' to setError with step name", () => {
     const store = createGenerationStore<"stepA">();
     const message: StreamMessage<"stepA"> = { status: "error", step: "stepA" };
     handleStreamMessage(message, store);
     expect(store.getSnapshot().context.status).toBe("error");
-    expect(store.getSnapshot().context.error).toBe("Step failed");
+    expect(store.getSnapshot().context.error).toBe('Step "stepA" failed');
+  });
+
+  it("routes 'error' with reason to setError", () => {
+    const store = createGenerationStore<"stepA">();
+    const message: StreamMessage<"stepA"> = {
+      reason: "aiGenerationFailed",
+      status: "error",
+      step: "stepA",
+    };
+    handleStreamMessage(message, store);
+    expect(store.getSnapshot().context.status).toBe("error");
+    expect(store.getSnapshot().context.error).toBe("stepA: aiGenerationFailed");
   });
 });

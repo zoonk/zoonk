@@ -1,6 +1,6 @@
 import { generateAlternativeTitles } from "@zoonk/ai/tasks/courses/alternative-titles";
 import { safeAsync } from "@zoonk/utils/error";
-import { streamStatus } from "../stream-status";
+import { streamError, streamStatus } from "../stream-status";
 import { type CourseContext } from "../types";
 
 export async function generateAlternativeTitlesStep(course: CourseContext): Promise<string[]> {
@@ -16,7 +16,7 @@ export async function generateAlternativeTitlesStep(course: CourseContext): Prom
   );
 
   if (error) {
-    await streamStatus({ status: "error", step: "generateAlternativeTitles" });
+    await streamError({ reason: "aiGenerationFailed", step: "generateAlternativeTitles" });
     throw error;
   }
 

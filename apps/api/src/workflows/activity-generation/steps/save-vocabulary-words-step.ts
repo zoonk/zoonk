@@ -1,7 +1,7 @@
 import { assertStepContent } from "@zoonk/core/steps/content-contract";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
-import { streamStatus } from "../stream-status";
+import { streamError, streamStatus } from "../stream-status";
 import { findActivityByKind } from "./_utils/find-activity-by-kind";
 import { type VocabularyWord } from "./generate-vocabulary-content-step";
 import { type LessonActivity } from "./get-lesson-activities-step";
@@ -94,7 +94,7 @@ export async function saveVocabularyWordsStep(
   );
 
   if (error) {
-    await streamStatus({ status: "error", step: "saveVocabularyWords" });
+    await streamError({ reason: "dbSaveFailed", step: "saveVocabularyWords" });
     await handleActivityFailureStep({ activityId: activity.id });
     return { savedWords: [] };
   }

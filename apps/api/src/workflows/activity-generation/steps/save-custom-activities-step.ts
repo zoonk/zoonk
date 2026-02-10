@@ -2,7 +2,7 @@ import { revalidateMainApp } from "@zoonk/core/cache/revalidate";
 import { prisma } from "@zoonk/db";
 import { cacheTagActivity } from "@zoonk/utils/cache";
 import { safeAsync } from "@zoonk/utils/error";
-import { streamStatus } from "../stream-status";
+import { streamError, streamStatus } from "../stream-status";
 import { type LessonActivity } from "./get-lesson-activities-step";
 
 async function saveActivity(activity: LessonActivity, workflowRunId: string): Promise<boolean> {
@@ -54,7 +54,7 @@ export async function saveCustomActivitiesStep(
   );
 
   if (hasFailure) {
-    await streamStatus({ status: "error", step: "setCustomAsCompleted" });
+    await streamError({ reason: "dbSaveFailed", step: "setCustomAsCompleted" });
     await streamStatus({ status: "error", step: "setActivityAsCompleted" });
     return;
   }

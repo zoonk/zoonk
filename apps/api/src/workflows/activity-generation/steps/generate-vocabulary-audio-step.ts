@@ -1,6 +1,6 @@
 import { generateLanguageAudio } from "@zoonk/core/audio/generate";
 import { isTTSSupportedLanguage } from "@zoonk/utils/languages";
-import { streamStatus } from "../stream-status";
+import { streamError, streamStatus } from "../stream-status";
 import { findActivityByKind } from "./_utils/find-activity-by-kind";
 import { type VocabularyWord } from "./generate-vocabulary-content-step";
 import { type LessonActivity } from "./get-lesson-activities-step";
@@ -59,7 +59,7 @@ export async function generateVocabularyAudioStep(
   );
 
   if (fulfilled.length < words.length) {
-    await streamStatus({ status: "error", step: "generateVocabularyAudio" });
+    await streamError({ reason: "enrichmentFailed", step: "generateVocabularyAudio" });
     await handleActivityFailureStep({ activityId: activity.id });
     return { audioUrls };
   }

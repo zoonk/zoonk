@@ -1,4 +1,8 @@
 import {
+  type WorkflowErrorReason,
+  getAIResultErrorReason,
+} from "@/workflows/_shared/stream-status";
+import {
   type ActivityExplanationQuizSchema,
   type QuizQuestion,
   generateActivityExplanationQuiz,
@@ -6,7 +10,7 @@ import {
 import { assertStepContent } from "@zoonk/core/steps/content-contract";
 import { prisma } from "@zoonk/db";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
-import { streamStatus } from "../stream-status";
+import { streamError, streamStatus } from "../stream-status";
 import { resolveActivityForGeneration } from "./_utils/content-step-helpers";
 import { type ActivitySteps } from "./_utils/get-activity-steps";
 import { type LessonActivity } from "./get-lesson-activities-step";
@@ -33,8 +37,11 @@ async function saveQuizSteps(
   );
 }
 
-async function handleQuizError(activityId: bigint | number): Promise<{ questions: [] }> {
-  await streamStatus({ status: "error", step: "generateQuizContent" });
+async function handleQuizError(
+  activityId: bigint | number,
+  reason: WorkflowErrorReason,
+): Promise<{ questions: [] }> {
+  await streamError({ reason, step: "generateQuizContent" });
   await handleActivityFailureStep({ activityId });
   return { questions: [] };
 }
@@ -46,7 +53,7 @@ async function saveAndCompleteQuiz(
   const { error } = await saveQuizSteps(activityId, questions);
 
   if (error) {
-    return handleQuizError(activityId);
+    return handleQuizError(activityId, "dbSaveFailed");
   }
 
   await streamStatus({ status: "completed", step: "generateQuizContent" });
@@ -89,7 +96,8 @@ export async function generateQuizContentStep(
     );
 
   if (error || !result || result.data.questions.length === 0) {
-    return handleQuizError(activity.id);
+    const reason = getAIResultErrorReason(error, result);
+    return handleQuizError(activity.id, reason);
   }
 
   return saveAndCompleteQuiz(activity.id, result.data.questions);

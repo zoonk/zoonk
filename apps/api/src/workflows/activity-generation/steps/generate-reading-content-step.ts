@@ -1,10 +1,14 @@
 import {
+  type WorkflowErrorReason,
+  getAIResultErrorReason,
+} from "@/workflows/_shared/stream-status";
+import {
   type ActivitySentencesSchema,
   generateActivitySentences,
 } from "@zoonk/ai/tasks/activities/language/sentences";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
-import { streamStatus } from "../stream-status";
+import { streamError, streamStatus } from "../stream-status";
 import { resolveActivityForGeneration } from "./_utils/content-step-helpers";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
@@ -68,8 +72,9 @@ async function resolveSourceWords(input: {
 
 async function handleReadingGenerationFailure(
   activityId: number,
+  reason: WorkflowErrorReason,
 ): Promise<{ sentences: ReadingSentence[] }> {
-  await streamStatus({ status: "error", step: "generateSentences" });
+  await streamError({ reason, step: "generateSentences" });
   await handleActivityFailureStep({ activityId });
   return { sentences: [] };
 }
@@ -105,7 +110,8 @@ export async function generateReadingContentStep(
   });
 
   if (sourceWords.error || sourceWords.words.length === 0) {
-    return handleReadingGenerationFailure(activity.id);
+    const reason = sourceWords.error ? "dbFetchFailed" : "noSourceData";
+    return handleReadingGenerationFailure(activity.id, reason);
   }
 
   const { data: result, error } = await safeAsync(() =>
@@ -123,7 +129,8 @@ export async function generateReadingContentStep(
     result.data.sentences.length === 0 ||
     !hasValidSentences(result.data.sentences)
   ) {
-    return handleReadingGenerationFailure(activity.id);
+    const reason = getAIResultErrorReason(error, result);
+    return handleReadingGenerationFailure(activity.id, reason);
   }
 
   await streamStatus({ status: "completed", step: "generateSentences" });

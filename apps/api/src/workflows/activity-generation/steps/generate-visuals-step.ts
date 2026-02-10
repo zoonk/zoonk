@@ -1,7 +1,8 @@
+import { type WorkflowErrorReason } from "@/workflows/_shared/stream-status";
 import { type StepVisualSchema, generateStepVisuals } from "@zoonk/ai/tasks/steps/visual";
 import { type ActivityKind, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
-import { streamStatus } from "../stream-status";
+import { streamError, streamStatus } from "../stream-status";
 import { findActivityByKind } from "./_utils/find-activity-by-kind";
 import { type ActivitySteps } from "./_utils/get-activity-steps";
 import { type LessonActivity } from "./get-lesson-activities-step";
@@ -30,8 +31,11 @@ async function saveVisualsToDB(
   );
 }
 
-async function handleVisualsError(activityId: bigint | number): Promise<{ visuals: StepVisual[] }> {
-  await streamStatus({ status: "error", step: "generateVisuals" });
+async function handleVisualsError(
+  activityId: bigint | number,
+  reason: WorkflowErrorReason,
+): Promise<{ visuals: StepVisual[] }> {
+  await streamError({ reason, step: "generateVisuals" });
   await handleActivityFailureStep({ activityId });
   return { visuals: [] };
 }
@@ -77,13 +81,14 @@ export async function generateVisualsStep(
   );
 
   if (error || !result) {
-    return handleVisualsError(activity.id);
+    const reason = error ? "aiGenerationFailed" : "aiEmptyResult";
+    return handleVisualsError(activity.id, reason);
   }
 
   const { error: saveError } = await saveVisualsToDB(result.data.visuals, dbSteps);
 
   if (saveError) {
-    return handleVisualsError(activity.id);
+    return handleVisualsError(activity.id, "dbSaveFailed");
   }
 
   await streamStatus({ status: "completed", step: "generateVisuals" });

@@ -1,6 +1,6 @@
 import { generateActivityVocabulary } from "@zoonk/ai/tasks/activities/language/vocabulary";
 import { safeAsync } from "@zoonk/utils/error";
-import { streamStatus } from "../stream-status";
+import { streamError, streamStatus } from "../stream-status";
 import { resolveActivityForGeneration } from "./_utils/content-step-helpers";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
@@ -41,13 +41,14 @@ export async function generateVocabularyContentStep(
   );
 
   if (error || !result) {
-    await streamStatus({ status: "error", step: "generateVocabularyContent" });
+    const reason = error ? "aiGenerationFailed" : "aiEmptyResult";
+    await streamError({ reason, step: "generateVocabularyContent" });
     await handleActivityFailureStep({ activityId: activity.id });
     return { words: [] };
   }
 
   if (result.data.words.length === 0) {
-    await streamStatus({ status: "error", step: "generateVocabularyContent" });
+    await streamError({ reason: "contentValidationFailed", step: "generateVocabularyContent" });
     await handleActivityFailureStep({ activityId: activity.id });
     return { words: [] };
   }

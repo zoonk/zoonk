@@ -1,11 +1,15 @@
 import {
+  type WorkflowErrorReason,
+  getAIResultErrorReason,
+} from "@/workflows/_shared/stream-status";
+import {
   type ActivityChallengeSchema,
   generateActivityChallenge,
 } from "@zoonk/ai/tasks/activities/core/challenge";
 import { assertStepContent } from "@zoonk/core/steps/content-contract";
 import { prisma } from "@zoonk/db";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
-import { streamStatus } from "../stream-status";
+import { streamError, streamStatus } from "../stream-status";
 import { resolveActivityForGeneration } from "./_utils/content-step-helpers";
 import { type ActivitySteps } from "./_utils/get-activity-steps";
 import { type LessonActivity } from "./get-lesson-activities-step";
@@ -43,8 +47,11 @@ async function saveChallengeSteps(
   );
 }
 
-async function handleChallengeError(activityId: bigint | number): Promise<void> {
-  await streamStatus({ status: "error", step: "generateChallengeContent" });
+async function handleChallengeError(
+  activityId: bigint | number,
+  reason: WorkflowErrorReason,
+): Promise<void> {
+  await streamError({ reason, step: "generateChallengeContent" });
   await handleActivityFailureStep({ activityId });
 }
 
@@ -58,7 +65,7 @@ async function saveAndCompleteChallenge(
   });
 
   if (error) {
-    await handleChallengeError(activityId);
+    await handleChallengeError(activityId, "dbSaveFailed");
     return;
   }
 
@@ -101,7 +108,8 @@ export async function generateChallengeContentStep(
   );
 
   if (error || !result || result.data.steps.length === 0) {
-    await handleChallengeError(activity.id);
+    const reason = getAIResultErrorReason(error, result);
+    await handleChallengeError(activity.id, reason);
     return;
   }
 

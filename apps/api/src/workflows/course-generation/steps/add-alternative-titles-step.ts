@@ -1,5 +1,5 @@
 import { addAlternativeTitles } from "@zoonk/core/alternative-titles/add";
-import { streamStatus } from "../stream-status";
+import { streamError, streamStatus } from "../stream-status";
 import { type CourseContext } from "../types";
 
 export async function addAlternativeTitlesStep(input: {
@@ -17,7 +17,7 @@ export async function addAlternativeTitlesStep(input: {
   });
 
   if (error) {
-    await streamStatus({ status: "error", step: "addAlternativeTitles" });
+    await streamError({ reason: "dbSaveFailed", step: "addAlternativeTitles" });
     throw error;
   }
 

@@ -1,6 +1,6 @@
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
-import { streamStatus } from "../stream-status";
+import { streamError, streamStatus } from "../stream-status";
 import { type CreatedChapter } from "../types";
 
 export async function getCourseChaptersStep(courseId: number): Promise<CreatedChapter[]> {
@@ -23,7 +23,7 @@ export async function getCourseChaptersStep(courseId: number): Promise<CreatedCh
   );
 
   if (error || !chapters) {
-    await streamStatus({ status: "error", step: "getExistingChapters" });
+    await streamError({ reason: "dbFetchFailed", step: "getExistingChapters" });
     throw error ?? new Error("Failed to fetch existing chapters");
   }
 

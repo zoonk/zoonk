@@ -2,7 +2,7 @@ import { revalidateMainApp } from "@zoonk/core/cache/revalidate";
 import { prisma } from "@zoonk/db";
 import { cacheTagChapter } from "@zoonk/utils/cache";
 import { safeAsync } from "@zoonk/utils/error";
-import { streamStatus } from "../stream-status";
+import { streamError, streamStatus } from "../stream-status";
 import { type ChapterContext } from "./get-chapter-step";
 
 export async function setChapterAsCompletedStep(input: {
@@ -25,7 +25,7 @@ export async function setChapterAsCompletedStep(input: {
   );
 
   if (error) {
-    await streamStatus({ status: "error", step: "setChapterAsCompleted" });
+    await streamError({ reason: "dbSaveFailed", step: "setChapterAsCompleted" });
     throw error;
   }
 
