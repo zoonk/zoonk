@@ -1,5 +1,11 @@
 import { ACTIVITY_STEPS, type ActivityStepName } from "@/workflows/config";
 import { type ActivityKind } from "@zoonk/db";
+import {
+  EXPLANATION_DEPS,
+  LISTENING_DEPENDENCY_STEPS,
+  LISTENING_WRITING_STEPS,
+  getFinishingSteps,
+} from "./activity-generation-phase-step-groups";
 
 export { getPhaseWeights } from "./activity-generation-phase-weights";
 
@@ -85,87 +91,6 @@ export function getPhaseOrder(kind: ActivityKind): PhaseName[] {
     "finishing",
   ];
 }
-
-const ALL_CONTENT_STEPS: ActivityStepName[] = [
-  "generateBackgroundContent",
-  "generateChallengeContent",
-  "generateCustomContent",
-  "generateExamplesContent",
-  "generateExplanationContent",
-  "generateMechanicsContent",
-  "generateQuizContent",
-  "generateReviewContent",
-  "generateStoryContent",
-  "generateGrammarContent",
-  "generateSentences",
-  "generateVocabularyContent",
-  "copyListeningSteps",
-];
-
-const ALL_VOCABULARY_STEPS: ActivityStepName[] = [
-  "saveVocabularyWords",
-  "generateVocabularyPronunciation",
-  "generateVocabularyAudio",
-  "updateVocabularyEnrichments",
-];
-
-const ALL_READING_STEPS: ActivityStepName[] = [
-  "saveSentences",
-  "generateAudio",
-  "updateSentenceEnrichments",
-];
-
-const ALL_COMPLETION_STEPS: ActivityStepName[] = [
-  "setBackgroundAsCompleted",
-  "setChallengeAsCompleted",
-  "setCustomAsCompleted",
-  "setExamplesAsCompleted",
-  "setExplanationAsCompleted",
-  "setMechanicsAsCompleted",
-  "setQuizAsCompleted",
-  "setReviewAsCompleted",
-  "setStoryAsCompleted",
-  "setGrammarAsCompleted",
-  "setVocabularyAsCompleted",
-  "setReadingAsCompleted",
-  "setListeningAsCompleted",
-  "setActivityAsCompleted",
-];
-
-function getFinishingSteps(exclude: ActivityStepName[]): ActivityStepName[] {
-  const excluded = new Set(exclude);
-  return [
-    ...ALL_CONTENT_STEPS.filter((step) => !excluded.has(step)),
-    ...ALL_VOCABULARY_STEPS.filter((step) => !excluded.has(step)),
-    ...ALL_READING_STEPS.filter((step) => !excluded.has(step)),
-    ...ALL_COMPLETION_STEPS.filter((step) => !excluded.has(step)),
-  ];
-}
-
-const EXPLANATION_DEPS: ActivityStepName[] = [
-  "setActivityAsRunning",
-  "generateBackgroundContent",
-  "generateExplanationContent",
-];
-
-const LISTENING_DEPENDENCY_STEPS: ActivityStepName[] = [
-  "setActivityAsRunning",
-  "generateVocabularyContent",
-  "saveVocabularyWords",
-  "generateVocabularyPronunciation",
-  "generateVocabularyAudio",
-  "updateVocabularyEnrichments",
-  "generateGrammarContent",
-  "generateSentences",
-  "setGrammarAsCompleted",
-  "setActivityAsCompleted",
-];
-
-const LISTENING_WRITING_STEPS: ActivityStepName[] = [
-  "copyListeningSteps",
-  "setVocabularyAsCompleted",
-  "setReadingAsCompleted",
-];
 
 export function getPhaseSteps(kind: ActivityKind): Record<PhaseName, ActivityStepName[]> {
   const shared = {
