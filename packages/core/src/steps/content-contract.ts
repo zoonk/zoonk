@@ -8,26 +8,64 @@ const challengeEffectSchema = z
   })
   .strict();
 
-const multipleChoiceOptionSchema = z
+const coreOptionSchema = z
   .object({
-    consequence: z.string().optional(),
-    effects: z.array(challengeEffectSchema).optional(),
-    feedback: z.string().optional(),
-    isCorrect: z.boolean().optional(),
+    feedback: z.string(),
+    isCorrect: z.boolean(),
+    text: z.string(),
+  })
+  .strict();
+
+const challengeOptionSchema = z
+  .object({
+    consequence: z.string(),
+    effects: z.array(challengeEffectSchema),
+    text: z.string(),
+  })
+  .strict();
+
+const languageOptionSchema = z
+  .object({
+    feedback: z.string(),
+    isCorrect: z.boolean(),
     text: z.string(),
     textRomanization: z.string().optional(),
   })
   .strict();
 
-export const multipleChoiceContentSchema = z
+const coreMultipleChoiceContentSchema = z
   .object({
     context: z.string().optional(),
-    contextRomanization: z.string().optional(),
-    contextTranslation: z.string().optional(),
-    options: z.array(multipleChoiceOptionSchema).min(1),
+    kind: z.literal("core"),
+    options: z.array(coreOptionSchema).min(1),
     question: z.string().optional(),
   })
   .strict();
+
+const challengeMultipleChoiceContentSchema = z
+  .object({
+    context: z.string(),
+    kind: z.literal("challenge"),
+    options: z.array(challengeOptionSchema).min(1),
+    question: z.string(),
+  })
+  .strict();
+
+const languageMultipleChoiceContentSchema = z
+  .object({
+    context: z.string(),
+    contextRomanization: z.string().optional(),
+    contextTranslation: z.string(),
+    kind: z.literal("language"),
+    options: z.array(languageOptionSchema).min(1),
+  })
+  .strict();
+
+export const multipleChoiceContentSchema = z.discriminatedUnion("kind", [
+  coreMultipleChoiceContentSchema,
+  challengeMultipleChoiceContentSchema,
+  languageMultipleChoiceContentSchema,
+]);
 
 const fillBlankChoiceSchema = z.string();
 
@@ -129,6 +167,9 @@ const stepContentSchemas = {
 
 export type SupportedStepKind = keyof typeof stepContentSchemas;
 
+export type CoreMultipleChoiceContent = z.infer<typeof coreMultipleChoiceContentSchema>;
+export type ChallengeMultipleChoiceContent = z.infer<typeof challengeMultipleChoiceContentSchema>;
+export type LanguageMultipleChoiceContent = z.infer<typeof languageMultipleChoiceContentSchema>;
 export type MultipleChoiceStepContent = z.infer<typeof multipleChoiceContentSchema>;
 export type FillBlankStepContent = z.infer<typeof fillBlankContentSchema>;
 export type MatchColumnsStepContent = z.infer<typeof matchColumnsContentSchema>;

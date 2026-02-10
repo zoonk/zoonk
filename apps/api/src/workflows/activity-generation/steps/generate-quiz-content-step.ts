@@ -25,10 +25,14 @@ async function saveQuizSteps(
     prisma.step.createMany({
       data: questions.map((question, index) => {
         const { format, ...rawContent } = question;
+        const content =
+          format === "multipleChoice"
+            ? assertStepContent(format, { ...rawContent, kind: "core" })
+            : assertStepContent(format, rawContent);
 
         return {
           activityId,
-          content: assertStepContent(format, rawContent),
+          content,
           kind: format,
           position: index,
         };

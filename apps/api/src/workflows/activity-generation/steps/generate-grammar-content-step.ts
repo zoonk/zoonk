@@ -70,6 +70,7 @@ function buildGrammarSteps(activityId: bigint | number, data: ActivityGrammarSch
     activityId,
     content: assertStepContent("multipleChoice", {
       ...(discoveryContext ? { context: discoveryContext } : {}),
+      kind: "core",
       options: data.discovery.options,
       ...(discoveryQuestion ? { question: discoveryQuestion } : {}),
     }),

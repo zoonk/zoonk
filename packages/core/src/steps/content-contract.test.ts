@@ -2,21 +2,74 @@ import { describe, expect, test } from "vitest";
 import { assertStepContent, parseStepContent } from "./content-contract";
 
 describe("step content contracts", () => {
-  test("parses multipleChoice with optional context/question omitted", () => {
+  test("parses core multipleChoice with optional context/question omitted", () => {
     const content = parseStepContent("multipleChoice", {
+      kind: "core",
       options: [{ feedback: "Correct", isCorrect: true, text: "A" }],
     });
 
     expect(content).toEqual({
+      kind: "core",
       options: [{ feedback: "Correct", isCorrect: true, text: "A" }],
     });
   });
 
-  test("parses multipleChoice with optional language story fields", () => {
+  test("parses core multipleChoice with all fields", () => {
+    const content = parseStepContent("multipleChoice", {
+      context: "Some context",
+      kind: "core",
+      options: [
+        { feedback: "Correct!", isCorrect: true, text: "A" },
+        { feedback: "Wrong.", isCorrect: false, text: "B" },
+      ],
+      question: "What is correct?",
+    });
+
+    expect(content).toEqual({
+      context: "Some context",
+      kind: "core",
+      options: [
+        { feedback: "Correct!", isCorrect: true, text: "A" },
+        { feedback: "Wrong.", isCorrect: false, text: "B" },
+      ],
+      question: "What is correct?",
+    });
+  });
+
+  test("parses challenge multipleChoice", () => {
+    const content = parseStepContent("multipleChoice", {
+      context: "You face a decision.",
+      kind: "challenge",
+      options: [
+        {
+          consequence: "Good outcome",
+          effects: [{ dimension: "Quality", impact: "positive" }],
+          text: "Option A",
+        },
+      ],
+      question: "What do you do?",
+    });
+
+    expect(content).toEqual({
+      context: "You face a decision.",
+      kind: "challenge",
+      options: [
+        {
+          consequence: "Good outcome",
+          effects: [{ dimension: "Quality", impact: "positive" }],
+          text: "Option A",
+        },
+      ],
+      question: "What do you do?",
+    });
+  });
+
+  test("parses language multipleChoice", () => {
     const content = parseStepContent("multipleChoice", {
       context: "You enter a bakery in Madrid.",
       contextRomanization: "You enter a bakery in Madrid.",
       contextTranslation: "You enter a bakery in Madrid.",
+      kind: "language",
       options: [
         {
           feedback: "Great response.",
@@ -31,6 +84,7 @@ describe("step content contracts", () => {
       context: "You enter a bakery in Madrid.",
       contextRomanization: "You enter a bakery in Madrid.",
       contextTranslation: "You enter a bakery in Madrid.",
+      kind: "language",
       options: [
         {
           feedback: "Great response.",
@@ -40,6 +94,75 @@ describe("step content contracts", () => {
         },
       ],
     });
+  });
+
+  test("rejects multipleChoice without kind", () => {
+    expect(() =>
+      parseStepContent("multipleChoice", {
+        options: [{ feedback: "Correct", isCorrect: true, text: "A" }],
+      }),
+    ).toThrow();
+  });
+
+  test("rejects core options with challenge fields", () => {
+    expect(() =>
+      parseStepContent("multipleChoice", {
+        kind: "core",
+        options: [
+          {
+            consequence: "Something",
+            effects: [{ dimension: "X", impact: "positive" }],
+            text: "A",
+          },
+        ],
+      }),
+    ).toThrow();
+  });
+
+  test("rejects challenge options with core fields", () => {
+    expect(() =>
+      parseStepContent("multipleChoice", {
+        context: "Context",
+        kind: "challenge",
+        options: [{ feedback: "Great", isCorrect: true, text: "A" }],
+        question: "Q?",
+      }),
+    ).toThrow();
+  });
+
+  test("parses language without optional romanization fields", () => {
+    const content = parseStepContent("multipleChoice", {
+      context: "Context",
+      contextTranslation: "Translation",
+      kind: "language",
+      options: [{ feedback: "Great", isCorrect: true, text: "A" }],
+    });
+
+    expect(content).toEqual({
+      context: "Context",
+      contextTranslation: "Translation",
+      kind: "language",
+      options: [{ feedback: "Great", isCorrect: true, text: "A" }],
+    });
+  });
+
+  test("rejects language without required contextTranslation", () => {
+    expect(() =>
+      parseStepContent("multipleChoice", {
+        context: "Context",
+        kind: "language",
+        options: [{ feedback: "Great", isCorrect: true, text: "A" }],
+      }),
+    ).toThrow();
+  });
+
+  test("rejects unknown kind value", () => {
+    expect(() =>
+      parseStepContent("multipleChoice", {
+        kind: "unknown",
+        options: [{ feedback: "Correct", isCorrect: true, text: "A" }],
+      }),
+    ).toThrow();
   });
 
   test("parses fillBlank with optional question omitted", () => {

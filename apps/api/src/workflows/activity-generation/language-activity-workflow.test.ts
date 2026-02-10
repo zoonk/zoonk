@@ -822,6 +822,7 @@ describe("language activity generation", () => {
     });
 
     expect(steps[2]?.content).toEqual({
+      kind: "core",
       options: [
         { feedback: "Correct", isCorrect: true, text: "Pattern A" },
         { feedback: "Try again", isCorrect: false, text: "Pattern B" },
@@ -1104,6 +1105,7 @@ describe("language activity generation", () => {
       context: "The clerk smiles and asks what you'd like to drink.",
       contextRomanization: "The clerk smiles and asks what you'd like to drink.",
       contextTranslation: "The clerk smiles and asks what you'd like to drink.",
+      kind: "language",
       options: [
         {
           feedback: "Perfectly polite and natural.",
