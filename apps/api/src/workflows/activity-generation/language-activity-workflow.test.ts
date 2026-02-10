@@ -1188,6 +1188,81 @@ describe("language activity generation", () => {
     expect(dbActivity?.generationStatus).toBe("failed");
   });
 
+  test("completes language story with empty romanization for Roman-script languages", async () => {
+    vi.mocked(generateActivityStoryLanguage).mockResolvedValueOnce({
+      data: {
+        scenario: "You're at a cafe in Madrid ordering breakfast.",
+        steps: [
+          {
+            context: "Buenos días, ¿qué le pongo?",
+            contextRomanization: "",
+            contextTranslation: "Good morning, what can I get you?",
+            options: [
+              {
+                feedback: "Perfectly polite and natural.",
+                isCorrect: true,
+                text: "Un café con leche, por favor.",
+                textRomanization: "",
+              },
+              {
+                feedback: "Too abrupt.",
+                isCorrect: false,
+                text: "Dame café.",
+                textRomanization: "",
+              },
+              {
+                feedback: "Wrong item.",
+                isCorrect: false,
+                text: "Quiero té.",
+                textRomanization: "",
+              },
+              {
+                feedback: "Wrong context.",
+                isCorrect: false,
+                text: "¿Dónde está el baño?",
+                textRomanization: "",
+              },
+            ],
+          },
+        ],
+      },
+    } as Awaited<ReturnType<typeof generateActivityStoryLanguage>>);
+
+    const testLesson = await lessonFixture({
+      chapterId: chapter.id,
+      kind: "language",
+      organizationId,
+      title: `LanguageStory EmptyRoman ${randomUUID()}`,
+    });
+
+    const activity = await activityFixture({
+      generationStatus: "pending",
+      kind: "languageStory",
+      lessonId: testLesson.id,
+      organizationId,
+      title: `LanguageStory ${randomUUID()}`,
+    });
+
+    await activityGenerationWorkflow(testLesson.id);
+
+    const dbActivity = await prisma.activity.findUnique({
+      where: { id: activity.id },
+    });
+
+    expect(dbActivity?.generationStatus).toBe("completed");
+
+    const steps = await prisma.step.findMany({
+      orderBy: { position: "asc" },
+      where: { activityId: activity.id },
+    });
+
+    expect(steps).toHaveLength(2);
+    expect(steps[1]?.content).toMatchObject({
+      contextRomanization: "",
+      options: expect.arrayContaining([expect.objectContaining({ textRomanization: "" })]),
+    });
+  });
+
   test("sets language story activity to failed when payload is empty", async () => {
     vi.mocked(generateActivityStoryLanguage).mockResolvedValueOnce({
       data: { scenario: "", steps: [] },
