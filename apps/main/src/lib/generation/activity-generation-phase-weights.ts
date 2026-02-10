@@ -72,6 +72,20 @@ export function getPhaseWeights(kind: ActivityKind): Record<PhaseName, number> {
     };
   }
 
+  if (kind === "languageReview") {
+    return {
+      addingPronunciation: 0,
+      buildingWordList: 0,
+      creatingImages: 0,
+      finishing: 5,
+      gettingStarted: 5,
+      preparingVisuals: 0,
+      processingDependencies: 75,
+      recordingAudio: 0,
+      writingContent: 15,
+    };
+  }
+
   if (kind === "story" || kind === "challenge" || kind === "review") {
     return {
       addingPronunciation: 0,

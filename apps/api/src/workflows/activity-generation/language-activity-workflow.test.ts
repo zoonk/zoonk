@@ -1992,6 +1992,332 @@ describe("language activity generation", () => {
     expect(dbListening?.generationStatus).toBe("completed");
   });
 
+  test("creates vocabulary and reading steps under languageReview activity", async () => {
+    const testLesson = await lessonFixture({
+      chapterId: chapter.id,
+      kind: "language",
+      organizationId,
+      title: `LangReview Steps ${randomUUID()}`,
+    });
+
+    await createLessonWordsForReading({
+      lessonId: testLesson.id,
+      targetLanguage: "es",
+    });
+
+    const vocabActivity = await activityFixture({
+      generationStatus: "pending",
+      kind: "vocabulary",
+      lessonId: testLesson.id,
+      organizationId,
+      title: `Vocabulary ${randomUUID()}`,
+    });
+
+    await activityFixture({
+      generationStatus: "pending",
+      kind: "reading",
+      lessonId: testLesson.id,
+      organizationId,
+      title: `Reading ${randomUUID()}`,
+    });
+
+    const reviewActivity = await activityFixture({
+      generationStatus: "pending",
+      kind: "languageReview",
+      lessonId: testLesson.id,
+      organizationId,
+      title: `LanguageReview ${randomUUID()}`,
+    });
+
+    await activityGenerationWorkflow(testLesson.id);
+
+    const vocabSteps = await prisma.step.findMany({
+      orderBy: { position: "asc" },
+      where: { activityId: vocabActivity.id, kind: "vocabulary" },
+    });
+
+    const reviewSteps = await prisma.step.findMany({
+      orderBy: { position: "asc" },
+      where: { activityId: reviewActivity.id },
+    });
+
+    const reviewVocabSteps = reviewSteps.filter((step) => step.kind === "vocabulary");
+    const reviewReadingSteps = reviewSteps.filter((step) => step.kind === "reading");
+
+    expect(reviewVocabSteps).toHaveLength(vocabSteps.length);
+    expect(reviewReadingSteps.length).toBeGreaterThan(0);
+
+    // Vocabulary steps come first, reading steps after
+    for (const vocabStep of reviewVocabSteps) {
+      expect(vocabStep.wordId).not.toBeNull();
+      expect(vocabStep.content).toEqual({});
+    }
+
+    for (const readingStep of reviewReadingSteps) {
+      expect(readingStep.sentenceId).not.toBeNull();
+      expect(readingStep.content).toEqual({});
+    }
+  });
+
+  test("sets languageReview to completed with generationRunId", async () => {
+    const testLesson = await lessonFixture({
+      chapterId: chapter.id,
+      kind: "language",
+      organizationId,
+      title: `LangReview Complete ${randomUUID()}`,
+    });
+
+    await createLessonWordsForReading({
+      lessonId: testLesson.id,
+      targetLanguage: "es",
+    });
+
+    await activityFixture({
+      generationStatus: "pending",
+      kind: "vocabulary",
+      lessonId: testLesson.id,
+      organizationId,
+      title: `Vocabulary ${randomUUID()}`,
+    });
+
+    await activityFixture({
+      generationStatus: "pending",
+      kind: "reading",
+      lessonId: testLesson.id,
+      organizationId,
+      title: `Reading ${randomUUID()}`,
+    });
+
+    const reviewActivity = await activityFixture({
+      generationStatus: "pending",
+      kind: "languageReview",
+      lessonId: testLesson.id,
+      organizationId,
+      title: `LanguageReview ${randomUUID()}`,
+    });
+
+    await activityGenerationWorkflow(testLesson.id);
+
+    const dbActivity = await prisma.activity.findUnique({
+      where: { id: reviewActivity.id },
+    });
+
+    expect(dbActivity?.generationStatus).toBe("completed");
+    expect(dbActivity?.generationRunId).toBe("test-run-id");
+  });
+
+  test("creates only vocabulary steps when reading has no steps", async () => {
+    const testLesson = await lessonFixture({
+      chapterId: chapter.id,
+      kind: "language",
+      organizationId,
+      title: `LangReview VocabOnly ${randomUUID()}`,
+    });
+
+    await activityFixture({
+      generationStatus: "pending",
+      kind: "vocabulary",
+      lessonId: testLesson.id,
+      organizationId,
+      title: `Vocabulary ${randomUUID()}`,
+    });
+
+    const reviewActivity = await activityFixture({
+      generationStatus: "pending",
+      kind: "languageReview",
+      lessonId: testLesson.id,
+      organizationId,
+      title: `LanguageReview ${randomUUID()}`,
+    });
+
+    await activityGenerationWorkflow(testLesson.id);
+
+    const reviewSteps = await prisma.step.findMany({
+      orderBy: { position: "asc" },
+      where: { activityId: reviewActivity.id },
+    });
+
+    expect(reviewSteps.length).toBeGreaterThan(0);
+    expect(reviewSteps.every((step) => step.kind === "vocabulary")).toBeTruthy();
+
+    const dbActivity = await prisma.activity.findUnique({
+      where: { id: reviewActivity.id },
+    });
+
+    expect(dbActivity?.generationStatus).toBe("completed");
+  });
+
+  test("creates only reading steps when vocabulary has no steps", async () => {
+    const testLesson = await lessonFixture({
+      chapterId: chapter.id,
+      kind: "language",
+      organizationId,
+      title: `LangReview ReadOnly ${randomUUID()}`,
+    });
+
+    await createLessonWordsForReading({
+      lessonId: testLesson.id,
+      targetLanguage: "es",
+    });
+
+    const readingActivity = await activityFixture({
+      generationStatus: "completed",
+      kind: "reading",
+      lessonId: testLesson.id,
+      organizationId,
+      title: `Reading ${randomUUID()}`,
+    });
+
+    // Pre-create reading steps
+    const sentence = await prisma.sentence.create({
+      data: {
+        organizationId,
+        sentence: `review-read-only-${randomUUID().slice(0, 8)}`,
+        targetLanguage: "es",
+        translation: "Review read only",
+        userLanguage: "en",
+      },
+    });
+
+    await prisma.step.create({
+      data: {
+        activityId: readingActivity.id,
+        content: {},
+        kind: "reading",
+        position: 0,
+        sentenceId: sentence.id,
+      },
+    });
+
+    const reviewActivity = await activityFixture({
+      generationStatus: "pending",
+      kind: "languageReview",
+      lessonId: testLesson.id,
+      organizationId,
+      title: `LanguageReview ${randomUUID()}`,
+    });
+
+    await activityGenerationWorkflow(testLesson.id);
+
+    const reviewSteps = await prisma.step.findMany({
+      orderBy: { position: "asc" },
+      where: { activityId: reviewActivity.id },
+    });
+
+    expect(reviewSteps.length).toBeGreaterThan(0);
+    expect(reviewSteps.every((step) => step.kind === "reading")).toBeTruthy();
+
+    const dbActivity = await prisma.activity.findUnique({
+      where: { id: reviewActivity.id },
+    });
+
+    expect(dbActivity?.generationStatus).toBe("completed");
+  });
+
+  test("fails languageReview when both vocabulary and reading have no steps", async () => {
+    const testLesson = await lessonFixture({
+      chapterId: chapter.id,
+      kind: "language",
+      organizationId,
+      title: `LangReview NoSource ${randomUUID()}`,
+    });
+
+    const reviewActivity = await activityFixture({
+      generationStatus: "pending",
+      kind: "languageReview",
+      lessonId: testLesson.id,
+      organizationId,
+      title: `LanguageReview ${randomUUID()}`,
+    });
+
+    await activityGenerationWorkflow(testLesson.id);
+
+    const dbActivity = await prisma.activity.findUnique({
+      where: { id: reviewActivity.id },
+    });
+
+    expect(dbActivity?.generationStatus).toBe("failed");
+  });
+
+  test("skips languageReview when already completed", async () => {
+    const testLesson = await lessonFixture({
+      chapterId: chapter.id,
+      kind: "language",
+      organizationId,
+      title: `LangReview Skip ${randomUUID()}`,
+    });
+
+    const reviewActivity = await activityFixture({
+      generationStatus: "completed",
+      kind: "languageReview",
+      lessonId: testLesson.id,
+      organizationId,
+      title: `LanguageReview ${randomUUID()}`,
+    });
+
+    await activityGenerationWorkflow(testLesson.id);
+
+    const steps = await prisma.step.findMany({
+      where: { activityId: reviewActivity.id },
+    });
+
+    expect(steps).toHaveLength(0);
+  });
+
+  test("positions vocabulary steps before reading steps in languageReview", async () => {
+    const testLesson = await lessonFixture({
+      chapterId: chapter.id,
+      kind: "language",
+      organizationId,
+      title: `LangReview Positions ${randomUUID()}`,
+    });
+
+    await createLessonWordsForReading({
+      lessonId: testLesson.id,
+      targetLanguage: "es",
+    });
+
+    await activityFixture({
+      generationStatus: "pending",
+      kind: "vocabulary",
+      lessonId: testLesson.id,
+      organizationId,
+      title: `Vocabulary ${randomUUID()}`,
+    });
+
+    await activityFixture({
+      generationStatus: "pending",
+      kind: "reading",
+      lessonId: testLesson.id,
+      organizationId,
+      title: `Reading ${randomUUID()}`,
+    });
+
+    const reviewActivity = await activityFixture({
+      generationStatus: "pending",
+      kind: "languageReview",
+      lessonId: testLesson.id,
+      organizationId,
+      title: `LanguageReview ${randomUUID()}`,
+    });
+
+    await activityGenerationWorkflow(testLesson.id);
+
+    const reviewSteps = await prisma.step.findMany({
+      orderBy: { position: "asc" },
+      where: { activityId: reviewActivity.id },
+    });
+
+    const vocabSteps = reviewSteps.filter((step) => step.kind === "vocabulary");
+    const readingSteps = reviewSteps.filter((step) => step.kind === "reading");
+
+    // All vocabulary steps should have lower positions than reading steps
+    const maxVocabPosition = Math.max(...vocabSteps.map((step) => step.position));
+    const minReadingPosition = Math.min(...readingSteps.map((step) => step.position));
+
+    expect(maxVocabPosition).toBeLessThan(minReadingPosition);
+  });
+
   test("sets reading activity to failed when no source words are available", async () => {
     const testLesson = await lessonFixture({
       chapterId: chapter.id,
