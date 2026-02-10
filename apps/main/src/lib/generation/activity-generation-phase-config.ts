@@ -23,6 +23,10 @@ export type PhaseName =
 export type FirstActivityKind = "background" | "custom" | "vocabulary";
 
 const CUSTOM_INFERENCE_STEPS = new Set(["generateCustomContent", "setCustomAsCompleted"]);
+const WRITING_ONLY_LANGUAGE_STEP_MAP: Partial<Record<ActivityKind, ActivityStepName>> = {
+  grammar: "generateGrammarContent",
+  languageStory: "generateLanguageStoryContent",
+};
 
 export function inferFirstActivityKind(params: {
   completedSteps: readonly string[];
@@ -70,7 +74,7 @@ export function getPhaseOrder(kind: ActivityKind): PhaseName[] {
     ];
   }
 
-  if (kind === "grammar") {
+  if (kind === "grammar" || kind === "languageStory") {
     return ["gettingStarted", "writingContent", "finishing"];
   }
 
@@ -130,7 +134,9 @@ export function getPhaseSteps(kind: ActivityKind): Record<PhaseName, ActivitySte
     };
   }
 
-  if (kind === "grammar") {
+  const writingOnlyStep = WRITING_ONLY_LANGUAGE_STEP_MAP[kind];
+
+  if (writingOnlyStep) {
     return {
       ...shared,
       creatingImages: [],
@@ -138,11 +144,11 @@ export function getPhaseSteps(kind: ActivityKind): Record<PhaseName, ActivitySte
         "generateVisuals",
         "generateImages",
         "generateQuizImages",
-        ...getFinishingSteps(["generateGrammarContent"]),
+        ...getFinishingSteps([writingOnlyStep]),
       ],
       preparingVisuals: [],
       processingDependencies: [],
-      writingContent: ["setActivityAsRunning", "generateGrammarContent"],
+      writingContent: ["setActivityAsRunning", writingOnlyStep],
     };
   }
 
@@ -253,6 +259,7 @@ const SUPPORTED_KINDS: ActivityKind[] = [
   "examples",
   "explanation",
   "grammar",
+  "languageStory",
   "listening",
   "mechanics",
   "quiz",

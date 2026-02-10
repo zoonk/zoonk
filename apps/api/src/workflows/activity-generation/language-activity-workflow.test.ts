@@ -3,6 +3,7 @@ import { generateActivityBackground } from "@zoonk/ai/tasks/activities/core/back
 import { generateActivityGrammar } from "@zoonk/ai/tasks/activities/language/grammar";
 import { generateActivityPronunciation } from "@zoonk/ai/tasks/activities/language/pronunciation";
 import { generateActivitySentences } from "@zoonk/ai/tasks/activities/language/sentences";
+import { generateActivityStoryLanguage } from "@zoonk/ai/tasks/activities/language/story";
 import { generateActivityVocabulary } from "@zoonk/ai/tasks/activities/language/vocabulary";
 import { generateLanguageAudio } from "@zoonk/core/audio/generate";
 import { prisma } from "@zoonk/db";
@@ -78,6 +79,48 @@ vi.mock("@zoonk/ai/tasks/activities/language/grammar", () => ({
       ],
       ruleName: "Present tense endings",
       ruleSummary: "Use -o for yo and -es for tú in regular -er verbs.",
+    },
+  }),
+}));
+
+vi.mock("@zoonk/ai/tasks/activities/language/story", () => ({
+  generateActivityStoryLanguage: vi.fn().mockResolvedValue({
+    data: {
+      scenario:
+        "You're in a Madrid bakery and need to order politely while the clerk asks follow-up questions.",
+      steps: [
+        {
+          context: "The clerk smiles and asks what you'd like to drink.",
+          contextRomanization: "The clerk smiles and asks what you'd like to drink.",
+          contextTranslation: "The clerk smiles and asks what you'd like to drink.",
+          options: [
+            {
+              feedback: "Perfectly polite and natural.",
+              isCorrect: true,
+              text: "Buenos días, quisiera un café con leche, por favor.",
+              textRomanization: "bweh-nos dee-as kee-sye-ra oon ka-fe kon leh-che por fa-bor",
+            },
+            {
+              feedback: "Understandable, but too abrupt.",
+              isCorrect: false,
+              text: "Dame café.",
+              textRomanization: "da-me ka-fe",
+            },
+            {
+              feedback: "This asks for tea, not coffee.",
+              isCorrect: false,
+              text: "Quiero té.",
+              textRomanization: "kye-ro te",
+            },
+            {
+              feedback: "Wrong context and meaning.",
+              isCorrect: false,
+              text: "¿Dónde está el baño?",
+              textRomanization: "don-de es-ta el ba-nyo",
+            },
+          ],
+        },
+      ],
     },
   }),
 }));
@@ -925,6 +968,253 @@ describe("language activity generation", () => {
     });
 
     expect(dbGrammarActivity?.generationStatus).toBe("completed");
+  });
+
+  test("sets language story status to 'running' when generation starts", async () => {
+    const testLesson = await lessonFixture({
+      chapterId: chapter.id,
+      kind: "language",
+      organizationId,
+      title: `LanguageStory Running ${randomUUID()}`,
+    });
+
+    const activity = await activityFixture({
+      generationStatus: "pending",
+      kind: "languageStory",
+      lessonId: testLesson.id,
+      organizationId,
+      title: `LanguageStory ${randomUUID()}`,
+    });
+
+    let capturedStatus: string | null = null;
+
+    vi.mocked(generateActivityStoryLanguage).mockImplementationOnce(async () => {
+      const dbActivity = await prisma.activity.findUnique({
+        where: { id: activity.id },
+      });
+
+      capturedStatus = dbActivity?.generationStatus ?? null;
+
+      return {
+        data: {
+          scenario: "You are at a train station in Madrid.",
+          steps: [
+            {
+              context: "The attendant asks where you want to go.",
+              contextRomanization: "The attendant asks where you want to go.",
+              contextTranslation: "The attendant asks where you want to go.",
+              options: [
+                {
+                  feedback: "Correct and polite.",
+                  isCorrect: true,
+                  text: "Quisiera un billete a Toledo, por favor.",
+                  textRomanization: "kee-sye-ra oon bee-ye-te a to-le-do por fa-bor",
+                },
+                {
+                  feedback: "Wrong meaning.",
+                  isCorrect: false,
+                  text: "Estoy cansado.",
+                  textRomanization: "es-toy kan-sa-do",
+                },
+                {
+                  feedback: "Irrelevant question.",
+                  isCorrect: false,
+                  text: "¿Qué hora es?",
+                  textRomanization: "ke o-ra es",
+                },
+                {
+                  feedback: "Too informal and unclear.",
+                  isCorrect: false,
+                  text: "Toledo.",
+                  textRomanization: "to-le-do",
+                },
+              ],
+            },
+          ],
+        },
+      } as Awaited<ReturnType<typeof generateActivityStoryLanguage>>;
+    });
+
+    await activityGenerationWorkflow(testLesson.id);
+
+    expect(capturedStatus).toBe("running");
+  });
+
+  test("calls generateActivityStoryLanguage with targetLanguage and userLanguage", async () => {
+    const testLesson = await lessonFixture({
+      chapterId: chapter.id,
+      description: "Practice ordering in a cafe",
+      kind: "language",
+      organizationId,
+      title: `LanguageStory Params ${randomUUID()}`,
+    });
+
+    await activityFixture({
+      generationStatus: "pending",
+      kind: "languageStory",
+      lessonId: testLesson.id,
+      organizationId,
+      title: `LanguageStory ${randomUUID()}`,
+    });
+
+    await activityGenerationWorkflow(testLesson.id);
+
+    expect(generateActivityStoryLanguage).toHaveBeenCalledWith({
+      chapterTitle: chapter.title,
+      lessonDescription: "Practice ordering in a cafe",
+      lessonTitle: testLesson.title,
+      targetLanguage: "es",
+      userLanguage: "en",
+    });
+  });
+
+  test("creates language story steps in order with expected kinds and content", async () => {
+    const testLesson = await lessonFixture({
+      chapterId: chapter.id,
+      kind: "language",
+      organizationId,
+      title: `LanguageStory Steps ${randomUUID()}`,
+    });
+
+    const activity = await activityFixture({
+      generationStatus: "pending",
+      kind: "languageStory",
+      lessonId: testLesson.id,
+      organizationId,
+      title: `LanguageStory ${randomUUID()}`,
+    });
+
+    await activityGenerationWorkflow(testLesson.id);
+
+    const steps = await prisma.step.findMany({
+      orderBy: { position: "asc" },
+      where: { activityId: activity.id },
+    });
+
+    expect(steps).toHaveLength(2);
+    expect(steps.map((step) => step.kind)).toEqual(["static", "multipleChoice"]);
+
+    expect(steps[0]?.content).toEqual({
+      text: "You're in a Madrid bakery and need to order politely while the clerk asks follow-up questions.",
+      title: "Scenario",
+      variant: "text",
+    });
+
+    expect(steps[1]?.content).toEqual({
+      context: "The clerk smiles and asks what you'd like to drink.",
+      contextRomanization: "The clerk smiles and asks what you'd like to drink.",
+      contextTranslation: "The clerk smiles and asks what you'd like to drink.",
+      options: [
+        {
+          feedback: "Perfectly polite and natural.",
+          isCorrect: true,
+          text: "Buenos días, quisiera un café con leche, por favor.",
+          textRomanization: "bweh-nos dee-as kee-sye-ra oon ka-fe kon leh-che por fa-bor",
+        },
+        {
+          feedback: "Understandable, but too abrupt.",
+          isCorrect: false,
+          text: "Dame café.",
+          textRomanization: "da-me ka-fe",
+        },
+        {
+          feedback: "This asks for tea, not coffee.",
+          isCorrect: false,
+          text: "Quiero té.",
+          textRomanization: "kye-ro te",
+        },
+        {
+          feedback: "Wrong context and meaning.",
+          isCorrect: false,
+          text: "¿Dónde está el baño?",
+          textRomanization: "don-de es-ta el ba-nyo",
+        },
+      ],
+    });
+  });
+
+  test("sets language story activity generationStatus to completed with generationRunId", async () => {
+    const testLesson = await lessonFixture({
+      chapterId: chapter.id,
+      kind: "language",
+      organizationId,
+      title: `LanguageStory Complete ${randomUUID()}`,
+    });
+
+    const activity = await activityFixture({
+      generationStatus: "pending",
+      kind: "languageStory",
+      lessonId: testLesson.id,
+      organizationId,
+      title: `LanguageStory ${randomUUID()}`,
+    });
+
+    await activityGenerationWorkflow(testLesson.id);
+
+    const dbActivity = await prisma.activity.findUnique({
+      where: { id: activity.id },
+    });
+
+    expect(dbActivity?.generationStatus).toBe("completed");
+    expect(dbActivity?.generationRunId).toBe("test-run-id");
+  });
+
+  test("sets language story activity to failed on generation error", async () => {
+    vi.mocked(generateActivityStoryLanguage).mockRejectedValueOnce(
+      new Error("Language story AI failed"),
+    );
+
+    const testLesson = await lessonFixture({
+      chapterId: chapter.id,
+      kind: "language",
+      organizationId,
+      title: `LanguageStory Fail ${randomUUID()}`,
+    });
+
+    const activity = await activityFixture({
+      generationStatus: "pending",
+      kind: "languageStory",
+      lessonId: testLesson.id,
+      organizationId,
+      title: `LanguageStory ${randomUUID()}`,
+    });
+
+    await activityGenerationWorkflow(testLesson.id);
+
+    const dbActivity = await prisma.activity.findUnique({
+      where: { id: activity.id },
+    });
+
+    expect(dbActivity?.generationStatus).toBe("failed");
+  });
+
+  test("sets language story activity to failed when payload is empty", async () => {
+    vi.mocked(generateActivityStoryLanguage).mockResolvedValueOnce({
+      data: { scenario: "", steps: [] },
+    } as unknown as Awaited<ReturnType<typeof generateActivityStoryLanguage>>);
+
+    const testLesson = await lessonFixture({
+      chapterId: chapter.id,
+      kind: "language",
+      organizationId,
+      title: `LanguageStory Empty ${randomUUID()}`,
+    });
+
+    const activity = await activityFixture({
+      generationStatus: "pending",
+      kind: "languageStory",
+      lessonId: testLesson.id,
+      organizationId,
+      title: `LanguageStory ${randomUUID()}`,
+    });
+
+    await activityGenerationWorkflow(testLesson.id);
+
+    const dbActivity = await prisma.activity.findUnique({
+      where: { id: activity.id },
+    });
+
+    expect(dbActivity?.generationStatus).toBe("failed");
   });
 
   test("calls generateActivitySentences with targetLanguage and userLanguage", async () => {

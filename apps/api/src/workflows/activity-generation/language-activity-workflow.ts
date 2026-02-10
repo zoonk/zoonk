@@ -3,6 +3,7 @@ import { completeActivityStep } from "./steps/complete-activity-step";
 import { completeListeningActivityStep } from "./steps/complete-listening-activity-step";
 import { copyListeningStepsStep } from "./steps/copy-listening-steps-step";
 import { generateGrammarContentStep } from "./steps/generate-grammar-content-step";
+import { generateLanguageStoryContentStep } from "./steps/generate-language-story-content-step";
 import { generateReadingAudioStep } from "./steps/generate-reading-audio-step";
 import { generateReadingContentStep } from "./steps/generate-reading-content-step";
 import { generateVocabularyAudioStep } from "./steps/generate-vocabulary-audio-step";
@@ -22,6 +23,7 @@ export async function languageActivityWorkflow(
   const [vocabularyResult] = await Promise.allSettled([
     generateVocabularyContentStep(activities, workflowRunId),
     generateGrammarContentStep(activities, workflowRunId),
+    generateLanguageStoryContentStep(activities, workflowRunId),
   ]);
 
   const { words } = settled(vocabularyResult, { words: [] });
@@ -35,6 +37,7 @@ export async function languageActivityWorkflow(
       generateVocabularyAudioStep(activities, words),
       generateReadingContentStep(activities, workflowRunId, currentRunWords),
       completeActivityStep(activities, workflowRunId, "grammar"),
+      completeActivityStep(activities, workflowRunId, "languageStory"),
     ]);
 
   const { savedWords } = settled(saveWordsResult, { savedWords: [] });
