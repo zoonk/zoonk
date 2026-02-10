@@ -18,7 +18,7 @@ const minimumLanguageStoryContentSchema = z.object({
     .array(
       z.object({
         context: z.string().trim().min(1),
-        contextRomanization: z.string().trim().min(1),
+        contextRomanization: z.string(),
         contextTranslation: z.string().trim().min(1),
         options: z
           .array(
@@ -26,7 +26,7 @@ const minimumLanguageStoryContentSchema = z.object({
               feedback: z.string().trim().min(1),
               isCorrect: z.boolean(),
               text: z.string().trim().min(1),
-              textRomanization: z.string().trim().min(1),
+              textRomanization: z.string(),
             }),
           )
           .min(1),
