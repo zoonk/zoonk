@@ -13,6 +13,8 @@ import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { activityGenerationWorkflow } from "./activity-generation-workflow";
+import { completeListeningActivityStep } from "./steps/complete-listening-activity-step";
+import { getLessonActivitiesStep } from "./steps/get-lesson-activities-step";
 
 vi.mock("workflow", () => ({
   FatalError: class FatalError extends Error {},
@@ -1325,6 +1327,44 @@ describe("language activity generation", () => {
 
     expect(dbActivity?.generationStatus).toBe("completed");
     expect(dbActivity?.generationRunId).toBe("test-run-id");
+  });
+
+  test("allows listening completion while reading is still running", async () => {
+    const testLesson = await lessonFixture({
+      chapterId: chapter.id,
+      kind: "language",
+      organizationId,
+      title: `Listening ReadingRunning ${randomUUID()}`,
+    });
+
+    const readingActivity = await activityFixture({
+      generationStatus: "running",
+      kind: "reading",
+      lessonId: testLesson.id,
+      organizationId,
+      title: `Reading ${randomUUID()}`,
+    });
+
+    const listeningActivity = await activityFixture({
+      generationStatus: "running",
+      kind: "listening",
+      lessonId: testLesson.id,
+      organizationId,
+      title: `Listening ${randomUUID()}`,
+    });
+
+    const activities = await getLessonActivitiesStep(testLesson.id);
+
+    await completeListeningActivityStep(activities, "test-run-id");
+
+    const [dbReading, dbListening] = await Promise.all([
+      prisma.activity.findUnique({ where: { id: readingActivity.id } }),
+      prisma.activity.findUnique({ where: { id: listeningActivity.id } }),
+    ]);
+
+    expect(dbReading?.generationStatus).toBe("running");
+    expect(dbListening?.generationStatus).toBe("completed");
+    expect(dbListening?.generationRunId).toBe("test-run-id");
   });
 
   test("sets listening to failed when reading has no steps", async () => {

@@ -62,9 +62,9 @@ export async function languageActivityWorkflow(
   // Wave 5: save reading enrichments
   await updateReadingEnrichmentsStep(activities, savedSentences, readingAudioUrls);
 
-  // Wave 6: complete reading after enrichments are finalized
-  await completeActivityStep(activities, workflowRunId, "reading");
-
-  // Wave 7: complete listening only if reading succeeded
-  await completeListeningActivityStep(activities, workflowRunId);
+  // Wave 6: finalize reading + listening in parallel
+  await Promise.allSettled([
+    completeActivityStep(activities, workflowRunId, "reading"),
+    completeListeningActivityStep(activities, workflowRunId),
+  ]);
 }

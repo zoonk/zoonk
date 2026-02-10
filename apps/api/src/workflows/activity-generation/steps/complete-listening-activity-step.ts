@@ -30,7 +30,7 @@ export async function completeListeningActivityStep(
     where: { id: reading.id },
   });
 
-  if (readingActivity?.generationStatus === "completed") {
+  if (readingActivity?.generationStatus !== "failed") {
     await completeActivityStep(activities, workflowRunId, "listening");
     return;
   }

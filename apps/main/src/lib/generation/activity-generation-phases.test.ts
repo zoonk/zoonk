@@ -142,6 +142,17 @@ describe("listening phase status", () => {
     expect(status).toBe("active");
   });
 
+  test("keeps finishing pending during early dependency processing", () => {
+    const status = getPhaseStatus(
+      "finishing",
+      ["setActivityAsRunning", "generateVocabularyContent", "setActivityAsCompleted"],
+      "generateGrammarContent",
+      "listening",
+    );
+
+    expect(status).toBe("pending");
+  });
+
   test("activates writingContent for copyListeningSteps", () => {
     const status = getPhaseStatus(
       "writingContent",
@@ -153,6 +164,31 @@ describe("listening phase status", () => {
         "updateSentenceEnrichments",
       ],
       "copyListeningSteps",
+      "listening",
+    );
+
+    expect(status).toBe("active");
+  });
+
+  test("activates finishing at terminal listening completion", () => {
+    const status = getPhaseStatus(
+      "finishing",
+      [
+        "setActivityAsRunning",
+        "generateVocabularyContent",
+        "saveVocabularyWords",
+        "generateVocabularyPronunciation",
+        "generateVocabularyAudio",
+        "generateGrammarContent",
+        "generateSentences",
+        "saveSentences",
+        "generateAudio",
+        "updateSentenceEnrichments",
+        "copyListeningSteps",
+        "setVocabularyAsCompleted",
+        "setReadingAsCompleted",
+      ],
+      "setListeningAsCompleted",
       "listening",
     );
 

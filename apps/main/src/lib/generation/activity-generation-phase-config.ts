@@ -138,7 +138,7 @@ function getFinishingSteps(exclude: ActivityStepName[]): ActivityStepName[] {
     ...ALL_CONTENT_STEPS.filter((step) => !excluded.has(step)),
     ...ALL_VOCABULARY_STEPS.filter((step) => !excluded.has(step)),
     ...ALL_READING_STEPS.filter((step) => !excluded.has(step)),
-    ...ALL_COMPLETION_STEPS,
+    ...ALL_COMPLETION_STEPS.filter((step) => !excluded.has(step)),
   ];
 }
 
@@ -146,6 +146,25 @@ const EXPLANATION_DEPS: ActivityStepName[] = [
   "setActivityAsRunning",
   "generateBackgroundContent",
   "generateExplanationContent",
+];
+
+const LISTENING_DEPENDENCY_STEPS: ActivityStepName[] = [
+  "setActivityAsRunning",
+  "generateVocabularyContent",
+  "saveVocabularyWords",
+  "generateVocabularyPronunciation",
+  "generateVocabularyAudio",
+  "updateVocabularyEnrichments",
+  "generateGrammarContent",
+  "generateSentences",
+  "setGrammarAsCompleted",
+  "setActivityAsCompleted",
+];
+
+const LISTENING_WRITING_STEPS: ActivityStepName[] = [
+  "copyListeningSteps",
+  "setVocabularyAsCompleted",
+  "setReadingAsCompleted",
 ];
 
 export function getPhaseSteps(kind: ActivityKind): Record<PhaseName, ActivityStepName[]> {
@@ -235,17 +254,20 @@ export function getPhaseSteps(kind: ActivityKind): Record<PhaseName, ActivitySte
         "generateImages",
         "generateQuizImages",
         ...getFinishingSteps([
+          ...LISTENING_DEPENDENCY_STEPS,
+          ...LISTENING_WRITING_STEPS,
           "generateSentences",
           "saveSentences",
           "generateAudio",
           "updateSentenceEnrichments",
-          "copyListeningSteps",
+          "setListeningAsCompleted",
         ]),
+        "setListeningAsCompleted",
       ],
       preparingVisuals: [],
-      processingDependencies: ["setActivityAsRunning", "generateSentences"],
+      processingDependencies: LISTENING_DEPENDENCY_STEPS,
       recordingAudio: ["generateAudio", "updateSentenceEnrichments"],
-      writingContent: ["copyListeningSteps"],
+      writingContent: LISTENING_WRITING_STEPS,
     };
   }
 
