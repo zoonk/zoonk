@@ -130,12 +130,28 @@ describe("step content contracts", () => {
     ).toThrow();
   });
 
-  test("rejects language without required romanization fields", () => {
+  test("parses language without optional romanization fields", () => {
+    const content = parseStepContent("multipleChoice", {
+      context: "Context",
+      contextTranslation: "Translation",
+      kind: "language",
+      options: [{ feedback: "Great", isCorrect: true, text: "A" }],
+    });
+
+    expect(content).toEqual({
+      context: "Context",
+      contextTranslation: "Translation",
+      kind: "language",
+      options: [{ feedback: "Great", isCorrect: true, text: "A" }],
+    });
+  });
+
+  test("rejects language without required contextTranslation", () => {
     expect(() =>
       parseStepContent("multipleChoice", {
         context: "Context",
         kind: "language",
-        options: [{ feedback: "Great", isCorrect: true, text: "A", textRomanization: "a" }],
+        options: [{ feedback: "Great", isCorrect: true, text: "A" }],
       }),
     ).toThrow();
   });

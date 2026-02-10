@@ -29,7 +29,7 @@ const languageOptionSchema = z
     feedback: z.string(),
     isCorrect: z.boolean(),
     text: z.string(),
-    textRomanization: z.string(),
+    textRomanization: z.string().optional(),
   })
   .strict();
 
@@ -54,7 +54,7 @@ const challengeMultipleChoiceContentSchema = z
 const languageMultipleChoiceContentSchema = z
   .object({
     context: z.string(),
-    contextRomanization: z.string(),
+    contextRomanization: z.string().optional(),
     contextTranslation: z.string(),
     kind: z.literal("language"),
     options: z.array(languageOptionSchema).min(1),
