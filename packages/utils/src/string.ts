@@ -36,3 +36,7 @@ export function toSlug(str: string): string {
 export function formatPosition(position: number): string {
   return String(position + 1).padStart(2, "0");
 }
+
+export function emptyToNull(value?: string | null): string | null {
+  return value?.trim() || null;
+}

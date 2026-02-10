@@ -109,7 +109,7 @@ Use the standard romanization system for each language:
 - **Thai**: Royal Thai General System (e.g., สวัสดี → "sawatdi", แมว → "maeo")
 - **Hindi**: IAST or Hunterian (e.g., नमस्ते → "namaste", बिल्ली → "billi")
 
-**For languages using Roman letters** (Spanish, French, German, Portuguese, Italian, etc.), set `romanization` to an empty string `""`.
+**For languages using Roman letters** (Spanish, French, German, Portuguese, Italian, etc.), set `romanization` to `null`.
 
 # Output Format
 
@@ -117,9 +117,9 @@ Return an object with a `words` array. Each word object must include:
 
 - `word`: The word in the target language (with article for gendered nouns)
 - `translation`: The translation in the native language
-- `romanization`: Roman letter representation for non-Roman scripts, or empty string `""` for Roman scripts
+- `romanization`: Roman letter representation for non-Roman scripts, or `null` for Roman scripts
 
-**Example for Spanish (Roman script) - romanization is empty:**
+**Example for Spanish (Roman script) - romanization is null:**
 
 ```json
 {
@@ -127,12 +127,12 @@ Return an object with a `words` array. Each word object must include:
     {
       "word": "la casa",
       "translation": "the house",
-      "romanization": ""
+      "romanization": null
     },
     {
       "word": "el gato",
       "translation": "the cat",
-      "romanization": ""
+      "romanization": null
     }
   ]
 }

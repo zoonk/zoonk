@@ -1260,8 +1260,8 @@ describe("language activity generation", () => {
 
     expect(steps).toHaveLength(2);
     expect(steps[1]?.content).toMatchObject({
-      contextRomanization: "",
-      options: expect.arrayContaining([expect.objectContaining({ textRomanization: "" })]),
+      contextRomanization: null,
+      options: expect.arrayContaining([expect.objectContaining({ textRomanization: null })]),
     });
   });
 

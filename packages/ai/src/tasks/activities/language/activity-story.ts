@@ -21,7 +21,7 @@ const schema = z.object({
   steps: z.array(
     z.object({
       context: z.string(),
-      contextRomanization: z.string(),
+      contextRomanization: z.string().nullable(),
       contextTranslation: z.string(),
       options: z
         .array(
@@ -29,7 +29,7 @@ const schema = z.object({
             feedback: z.string(),
             isCorrect: z.boolean(),
             text: z.string(),
-            textRomanization: z.string(),
+            textRomanization: z.string().nullable(),
           }),
         )
         .length(ACTIVITY_OPTIONS_COUNT),

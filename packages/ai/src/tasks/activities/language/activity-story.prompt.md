@@ -71,9 +71,9 @@ The character in the story is a friendly native speaker who:
 | `scenario`                   | NATIVE       | "You're at a cafe in Madrid and want to order coffee."    |
 | `context`                    | TARGET       | "Buenos dias, que le pongo?"                              |
 | `contextTranslation`         | NATIVE       | "Good morning, what can I get you?"                       |
-| `contextRomanization`        | Romanization | "" (empty for Roman scripts)                              |
+| `contextRomanization`        | Romanization | null (for Roman scripts)                                  |
 | `options[].text`             | TARGET       | "Un cafe con leche, por favor."                           |
-| `options[].textRomanization` | Romanization | "" (empty for Roman scripts)                              |
+| `options[].textRomanization` | Romanization | null (for Roman scripts)                                  |
 | `options[].feedback`         | NATIVE       | "A coffee with milk, please - Perfect! Polite and clear." |
 
 # Options Design
@@ -83,7 +83,7 @@ The character in the story is a friendly native speaker who:
 This is the most critical design decision. Options show ONLY:
 
 - `text`: The phrase in TARGET language
-- `textRomanization`: Romanization for non-Roman scripts (empty string for Roman scripts)
+- `textRomanization`: Romanization for non-Roman scripts (null for Roman scripts)
 
 **NO translation is shown**. This forces the learner to:
 
@@ -160,7 +160,7 @@ For languages using non-Roman writing systems (Japanese, Chinese, Korean, Arabic
 
 ## Roman Scripts
 
-For languages using Roman letters (Spanish, French, German, Portuguese, Italian, etc.), set both `contextRomanization` and `textRomanization` to empty strings `""`.
+For languages using Roman letters (Spanish, French, German, Portuguese, Italian, etc.), set both `contextRomanization` and `textRomanization` to `null`.
 
 # Story Arc
 
@@ -232,17 +232,17 @@ Return an object with this structure (abbreviated examples shown):
     {
       "context": "Buenas noches. Estan listos para pedir?",
       "contextTranslation": "Good evening. Are you ready to order?",
-      "contextRomanization": "",
+      "contextRomanization": null,
       "options": [
         {
           "text": "Si, me gustaria la paella, por favor.",
-          "textRomanization": "",
+          "textRomanization": null,
           "isCorrect": true,
           "feedback": "Yes, I would like the paella, please - Perfect!"
         },
         {
           "text": "La cuenta, por favor.",
-          "textRomanization": "",
+          "textRomanization": null,
           "isCorrect": false,
           "feedback": "The check, please - You haven't eaten yet!"
         }
@@ -265,7 +265,7 @@ Before finalizing, verify:
 5. **Clear progression**: Steps follow a logical narrative arc
 6. **Distinct options**: Each option represents a meaningfully different choice
 7. **Helpful feedback**: Translations and explanations clarify meaning and context
-8. **Correct romanization**: Follows standard systems for non-Roman scripts, empty for Roman scripts
+8. **Correct romanization**: Follows standard systems for non-Roman scripts, null for Roman scripts
 9. **Scenario relevance**: The story matches the lesson topic
 10. **Appropriate difficulty**: Language complexity matches learner level
 
@@ -276,6 +276,6 @@ Before finalizing, verify:
 3. **Inconsistent register**: Mixing formal and informal inappropriately
 4. **Unnatural responses**: Things a native speaker would never actually say
 5. **Missing romanization**: Forgetting to add romanization for non-Roman scripts
-6. **Adding romanization to Roman scripts**: Spanish, French, etc. should have empty strings
+6. **Adding romanization to Roman scripts**: Spanish, French, etc. should have null
 7. **Feedback without translation**: Always include what the option means
 8. **Disconnected steps**: Each step should follow logically from the previous one

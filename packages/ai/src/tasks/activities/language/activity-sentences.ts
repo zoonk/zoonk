@@ -16,7 +16,7 @@ const FALLBACK_MODELS = [
 const schema = z.object({
   sentences: z.array(
     z.object({
-      romanization: z.string(),
+      romanization: z.string().nullable(),
       sentence: z.string(),
       translation: z.string(),
     }),

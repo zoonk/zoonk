@@ -9,6 +9,7 @@ import {
 import { assertStepContent } from "@zoonk/core/steps/content-contract";
 import { prisma } from "@zoonk/db";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
+import { emptyToNull } from "@zoonk/utils/string";
 import { z } from "zod";
 import { streamError, streamStatus } from "../stream-status";
 import { findActivityByKind } from "./_utils/find-activity-by-kind";
@@ -22,7 +23,7 @@ const minimumLanguageStoryContentSchema = z.object({
     .array(
       z.object({
         context: z.string().trim().min(1),
-        contextRomanization: z.string(),
+        contextRomanization: z.string().nullable(),
         contextTranslation: z.string().trim().min(1),
         options: z
           .array(
@@ -30,7 +31,7 @@ const minimumLanguageStoryContentSchema = z.object({
               feedback: z.string().trim().min(1),
               isCorrect: z.boolean(),
               text: z.string().trim().min(1),
-              textRomanization: z.string(),
+              textRomanization: z.string().nullable(),
             }),
           )
           .min(1),
@@ -59,14 +60,14 @@ function buildLanguageStorySteps(activityId: bigint | number, data: ActivityStor
     activityId,
     content: assertStepContent("multipleChoice", {
       context: step.context,
-      contextRomanization: step.contextRomanization,
+      contextRomanization: emptyToNull(step.contextRomanization),
       contextTranslation: step.contextTranslation,
       kind: "language",
       options: step.options.map((option) => ({
         feedback: option.feedback,
         isCorrect: option.isCorrect,
         text: option.text,
-        textRomanization: option.textRomanization,
+        textRomanization: emptyToNull(option.textRomanization),
       })),
     }),
     kind: "multipleChoice" as const,

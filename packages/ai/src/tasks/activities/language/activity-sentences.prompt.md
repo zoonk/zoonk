@@ -94,7 +94,7 @@ Use the standard romanization system for each language:
 - **Thai**: Royal Thai General System (e.g., ฉันชอบแมว → "chan chop maeo")
 - **Hindi**: IAST or Hunterian (e.g., मुझे बिल्लियाँ पसंद हैं → "mujhe billiyaan pasand hain")
 
-**For languages using Roman letters** (Spanish, French, German, Portuguese, Italian, etc.), set `romanization` to an empty string `""`.
+**For languages using Roman letters** (Spanish, French, German, Portuguese, Italian, etc.), set `romanization` to `null`.
 
 # Output Format
 
@@ -102,9 +102,9 @@ Return an object with a `sentences` array. Each sentence object must include:
 
 - `sentence`: The complete sentence in the target language
 - `translation`: The translation in the native language
-- `romanization`: Roman letter representation for non-Roman scripts, or empty string `""` for Roman scripts
+- `romanization`: Roman letter representation for non-Roman scripts, or `null` for Roman scripts
 
-**Example for Spanish (Roman script) - romanization is empty:**
+**Example for Spanish (Roman script) - romanization is null:**
 
 ```json
 {
@@ -112,12 +112,12 @@ Return an object with a `sentences` array. Each sentence object must include:
     {
       "sentence": "Mi hermana trabaja en un hospital.",
       "translation": "My sister works at a hospital.",
-      "romanization": ""
+      "romanization": null
     },
     {
       "sentence": "¿Dónde está la estación de tren?",
       "translation": "Where is the train station?",
-      "romanization": ""
+      "romanization": null
     }
   ]
 }

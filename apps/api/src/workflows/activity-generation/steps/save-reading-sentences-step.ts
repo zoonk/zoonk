@@ -1,6 +1,7 @@
 import { assertStepContent } from "@zoonk/core/steps/content-contract";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
+import { emptyToNull } from "@zoonk/utils/string";
 import { streamError, streamStatus } from "../stream-status";
 import { findActivityByKind } from "./_utils/find-activity-by-kind";
 import { type ReadingSentence } from "./generate-reading-content-step";
@@ -25,14 +26,14 @@ function buildSaveOneSentence(params: {
     const record = await prisma.sentence.upsert({
       create: {
         organizationId,
-        romanization: readingSentence.romanization,
+        romanization: emptyToNull(readingSentence.romanization),
         sentence: readingSentence.sentence,
         targetLanguage,
         translation: readingSentence.translation,
         userLanguage,
       },
       update: {
-        romanization: readingSentence.romanization,
+        romanization: emptyToNull(readingSentence.romanization),
         translation: readingSentence.translation,
       },
       where: {

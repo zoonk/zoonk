@@ -17,7 +17,7 @@ EVALUATION CRITERIA:
 3. ROMANIZATION (required field):
    - For Japanese, Chinese, Korean, Arabic, Russian, Greek, Thai, Hindi, etc.: romanization MUST contain the Roman letter representation of the sentence
    - Use standard romanization systems (romaji for Japanese, pinyin for Chinese, etc.)
-   - For Roman-script languages (Spanish, French, German, etc.): romanization MUST be an empty string ""
+   - For Roman-script languages (Spanish, French, German, etc.): romanization MUST be null
    - Penalize if romanization is missing for non-Roman scripts or contains text for Roman scripts
 
 4. GRAMMATICAL CORRECTNESS:
@@ -77,7 +77,7 @@ LANGUAGE: English output required for translations.
 
 TOPIC: Spanish sentences for greetings and introductions - using basic greeting vocabulary.
 
-SCRIPT: Roman (romanization should be empty string "")
+SCRIPT: Roman (romanization should be null)
 
 VOCABULARY WORDS PROVIDED: hola, buenos dias, buenas noches, adios, gracias
 These words MUST appear in the generated sentences.
@@ -86,7 +86,7 @@ ACCURACY PITFALLS - Penalize SEVERELY if:
 - Any sentence doesn't use at least one of the provided vocabulary words
 - Greetings are used incorrectly (e.g., "buenas noches" used for morning)
 - Translations don't match the Spanish sentences
-- Romanization contains any text (should be empty string)
+- Romanization contains any text (should be null)
 
 CONTEXT EXPECTATIONS:
 - Sentences should demonstrate natural use of greetings
@@ -109,7 +109,7 @@ LANGUAGE: English output required for translations.
 
 TOPIC: French sentences for food and dining - using food-related vocabulary.
 
-SCRIPT: Roman (romanization should be empty string "")
+SCRIPT: Roman (romanization should be null)
 
 VOCABULARY WORDS PROVIDED: le pain, le fromage, le vin, la soupe, le dessert
 These words MUST appear in the generated sentences.
@@ -119,7 +119,7 @@ ACCURACY PITFALLS - Penalize SEVERELY if:
 - Food items are used in unrealistic contexts
 - Gender agreement is incorrect (le/la must match the noun)
 - Translations don't accurately convey the French meaning
-- Romanization contains any text (should be empty string)
+- Romanization contains any text (should be null)
 
 CONTEXT EXPECTATIONS:
 - Sentences about ordering, eating, or discussing food
@@ -142,7 +142,7 @@ LANGUAGE: English output required for translations.
 
 TOPIC: German sentences for family members - using family vocabulary.
 
-SCRIPT: Roman (romanization should be empty string "")
+SCRIPT: Roman (romanization should be null)
 
 VOCABULARY WORDS PROVIDED: die Mutter, der Vater, die Schwester, der Bruder, die Familie
 These words MUST appear in the generated sentences.
@@ -152,7 +152,7 @@ ACCURACY PITFALLS - Penalize SEVERELY if:
 - Case endings are incorrect (nominative, accusative, dative contexts)
 - Article-noun agreement is wrong
 - Translations don't accurately convey the German meaning
-- Romanization contains any text (should be empty string)
+- Romanization contains any text (should be null)
 
 CONTEXT EXPECTATIONS:
 - Sentences about family relationships and activities
@@ -252,7 +252,7 @@ LANGUAGE: Brazilian Portuguese output required for translations (NOT English).
 
 TOPIC: Italian sentences for travel and transportation - using travel vocabulary.
 
-SCRIPT: Roman (romanization should be empty string "")
+SCRIPT: Roman (romanization should be null)
 
 VOCABULARY WORDS PROVIDED: il treno, l'aereo, la macchina, il biglietto, la stazione
 These words MUST appear in the generated sentences.
@@ -262,7 +262,7 @@ ACCURACY PITFALLS - Penalize SEVERELY if:
 - Article contractions are incorrect (e.g., l'aereo not la aereo)
 - Translations are in English instead of Portuguese
 - Gender agreement is incorrect
-- Romanization contains any text (should be empty string)
+- Romanization contains any text (should be null)
 
 CONTEXT EXPECTATIONS:
 - Sentences about traveling, booking tickets, transportation
@@ -285,7 +285,7 @@ LANGUAGE: Brazilian Portuguese output required for translations (NOT English).
 
 TOPIC: Spanish sentences for shopping - using shopping vocabulary.
 
-SCRIPT: Roman (romanization should be empty string "")
+SCRIPT: Roman (romanization should be null)
 
 VOCABULARY WORDS PROVIDED: comprar, la tienda, el precio, caro, barato
 These words MUST appear in the generated sentences.
@@ -295,7 +295,7 @@ ACCURACY PITFALLS - Penalize SEVERELY if:
 - Verb conjugation is incorrect (comprar conjugated forms)
 - Adjective gender agreement is wrong (caro/cara, barato/barata)
 - Translations are in English instead of Portuguese
-- Romanization contains any text (should be empty string)
+- Romanization contains any text (should be null)
 
 CONTEXT EXPECTATIONS:
 - Sentences about buying, prices, stores
@@ -318,7 +318,7 @@ LANGUAGE: Latin American Spanish output required for translations (NOT English).
 
 TOPIC: French sentences for weather - using weather vocabulary.
 
-SCRIPT: Roman (romanization should be empty string "")
+SCRIPT: Roman (romanization should be null)
 
 VOCABULARY WORDS PROVIDED: le soleil, la pluie, le vent, il fait chaud, il fait froid
 These words/expressions MUST appear in the generated sentences.
@@ -327,7 +327,7 @@ ACCURACY PITFALLS - Penalize SEVERELY if:
 - Any sentence doesn't use at least one of the provided vocabulary words/expressions
 - Weather expressions are used incorrectly
 - Translations are in English instead of Spanish
-- Romanization contains any text (should be empty string)
+- Romanization contains any text (should be null)
 
 CONTEXT EXPECTATIONS:
 - Sentences describing weather conditions
@@ -505,7 +505,7 @@ LANGUAGE: English output required for translations.
 
 TOPIC: Portuguese sentences for emotions and feelings - using emotion vocabulary.
 
-SCRIPT: Roman (romanization should be empty string "")
+SCRIPT: Roman (romanization should be null)
 
 VOCABULARY WORDS PROVIDED: feliz, triste, cansado, com fome, com sede
 These words/expressions MUST appear in the generated sentences.
@@ -515,7 +515,7 @@ ACCURACY PITFALLS - Penalize SEVERELY if:
 - Estar vs ser usage is incorrect for states (estar feliz, not ser feliz for temporary states)
 - Gender agreement is wrong (cansado/cansada)
 - Translations don't match the Portuguese sentences
-- Romanization contains any text (should be empty string)
+- Romanization contains any text (should be null)
 
 CONTEXT EXPECTATIONS:
 - Sentences expressing how someone feels
@@ -538,7 +538,7 @@ LANGUAGE: Brazilian Portuguese output required for translations (NOT English).
 
 TOPIC: German sentences for daily routines - using routine action vocabulary.
 
-SCRIPT: Roman (romanization should be empty string "")
+SCRIPT: Roman (romanization should be null)
 
 VOCABULARY WORDS PROVIDED: aufstehen, fruhstucken, arbeiten, schlafen, essen
 These verbs MUST appear in the generated sentences.
@@ -548,7 +548,7 @@ ACCURACY PITFALLS - Penalize SEVERELY if:
 - Separable prefix verbs are handled incorrectly (aufstehen -> ich stehe auf)
 - Verb conjugation is wrong
 - Translations are in English instead of Portuguese
-- Romanization contains any text (should be empty string)
+- Romanization contains any text (should be null)
 
 CONTEXT EXPECTATIONS:
 - Sentences about daily activities and schedules
