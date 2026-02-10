@@ -1,5 +1,11 @@
 import { ACTIVITY_STEPS, type ActivityStepName } from "@/workflows/config";
 import { type ActivityKind } from "@zoonk/db";
+import {
+  EXPLANATION_DEPS,
+  LISTENING_DEPENDENCY_STEPS,
+  LISTENING_WRITING_STEPS,
+  getFinishingSteps,
+} from "./activity-generation-phase-step-groups";
 
 export { getPhaseWeights } from "./activity-generation-phase-weights";
 
@@ -53,6 +59,17 @@ export function getPhaseOrder(kind: ActivityKind): PhaseName[] {
     return ["gettingStarted", "buildingWordList", "recordingAudio", "finishing"];
   }
 
+  if (kind === "listening") {
+    return [
+      "gettingStarted",
+      "processingDependencies",
+      "buildingWordList",
+      "recordingAudio",
+      "writingContent",
+      "finishing",
+    ];
+  }
+
   if (kind === "grammar") {
     return ["gettingStarted", "writingContent", "finishing"];
   }
@@ -74,66 +91,6 @@ export function getPhaseOrder(kind: ActivityKind): PhaseName[] {
     "finishing",
   ];
 }
-
-const ALL_CONTENT_STEPS: ActivityStepName[] = [
-  "generateBackgroundContent",
-  "generateChallengeContent",
-  "generateCustomContent",
-  "generateExamplesContent",
-  "generateExplanationContent",
-  "generateMechanicsContent",
-  "generateQuizContent",
-  "generateReviewContent",
-  "generateStoryContent",
-  "generateGrammarContent",
-  "generateSentences",
-  "generateVocabularyContent",
-];
-
-const ALL_VOCABULARY_STEPS: ActivityStepName[] = [
-  "saveVocabularyWords",
-  "generateVocabularyPronunciation",
-  "generateVocabularyAudio",
-  "updateVocabularyEnrichments",
-];
-
-const ALL_READING_STEPS: ActivityStepName[] = [
-  "saveSentences",
-  "generateAudio",
-  "updateSentenceEnrichments",
-];
-
-const ALL_COMPLETION_STEPS: ActivityStepName[] = [
-  "setBackgroundAsCompleted",
-  "setChallengeAsCompleted",
-  "setCustomAsCompleted",
-  "setExamplesAsCompleted",
-  "setExplanationAsCompleted",
-  "setMechanicsAsCompleted",
-  "setQuizAsCompleted",
-  "setReviewAsCompleted",
-  "setStoryAsCompleted",
-  "setGrammarAsCompleted",
-  "setVocabularyAsCompleted",
-  "setReadingAsCompleted",
-  "setActivityAsCompleted",
-];
-
-function getFinishingSteps(exclude: ActivityStepName[]): ActivityStepName[] {
-  const excluded = new Set(exclude);
-  return [
-    ...ALL_CONTENT_STEPS.filter((step) => !excluded.has(step)),
-    ...ALL_VOCABULARY_STEPS.filter((step) => !excluded.has(step)),
-    ...ALL_READING_STEPS.filter((step) => !excluded.has(step)),
-    ...ALL_COMPLETION_STEPS,
-  ];
-}
-
-const EXPLANATION_DEPS: ActivityStepName[] = [
-  "setActivityAsRunning",
-  "generateBackgroundContent",
-  "generateExplanationContent",
-];
 
 export function getPhaseSteps(kind: ActivityKind): Record<PhaseName, ActivityStepName[]> {
   const shared = {
@@ -212,6 +169,33 @@ export function getPhaseSteps(kind: ActivityKind): Record<PhaseName, ActivitySte
     };
   }
 
+  if (kind === "listening") {
+    return {
+      ...shared,
+      buildingWordList: ["saveSentences"],
+      creatingImages: [],
+      finishing: [
+        "generateVisuals",
+        "generateImages",
+        "generateQuizImages",
+        ...getFinishingSteps([
+          ...LISTENING_DEPENDENCY_STEPS,
+          ...LISTENING_WRITING_STEPS,
+          "generateSentences",
+          "saveSentences",
+          "generateAudio",
+          "updateSentenceEnrichments",
+          "setListeningAsCompleted",
+        ]),
+        "setListeningAsCompleted",
+      ],
+      preparingVisuals: [],
+      processingDependencies: LISTENING_DEPENDENCY_STEPS,
+      recordingAudio: ["generateAudio", "updateSentenceEnrichments"],
+      writingContent: LISTENING_WRITING_STEPS,
+    };
+  }
+
   if (kind === "background") {
     return {
       ...shared,
@@ -269,6 +253,7 @@ const SUPPORTED_KINDS: ActivityKind[] = [
   "examples",
   "explanation",
   "grammar",
+  "listening",
   "mechanics",
   "quiz",
   "reading",

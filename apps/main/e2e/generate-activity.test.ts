@@ -983,6 +983,163 @@ test.describe("Generate Activity Page - With Subscription", () => {
     );
   });
 
+  test("completes workflow for listening activity kind", async ({ userWithoutProgress }) => {
+    await createTestSubscription();
+
+    const org = await prisma.organization.findUniqueOrThrow({
+      where: { slug: "ai" },
+    });
+
+    const uniqueId = randomUUID().slice(0, 8);
+    const courseTitle = `E2E Listening Course ${uniqueId}`;
+    const chapterTitle = `E2E Listening Chapter ${uniqueId}`;
+    const lessonTitle = `E2E Listening Lesson ${uniqueId}`;
+    const activityTitle = `E2E Listening Activity ${uniqueId}`;
+
+    const course = await courseFixture({
+      isPublished: true,
+      normalizedTitle: normalizeString(courseTitle),
+      organizationId: org.id,
+      slug: `e2e-listening-course-${uniqueId}`,
+      targetLanguage: "es",
+      title: courseTitle,
+    });
+
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      generationStatus: "completed",
+      isPublished: true,
+      normalizedTitle: normalizeString(chapterTitle),
+      organizationId: org.id,
+      slug: `e2e-listening-chapter-${uniqueId}`,
+      title: chapterTitle,
+    });
+
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      generationStatus: "completed",
+      isPublished: true,
+      kind: "language",
+      normalizedTitle: normalizeString(lessonTitle),
+      organizationId: org.id,
+      slug: `e2e-listening-lesson-${uniqueId}`,
+      title: lessonTitle,
+    });
+
+    const activity = await activityFixture({
+      generationStatus: "pending",
+      isPublished: true,
+      kind: "listening",
+      lessonId: lesson.id,
+      organizationId: org.id,
+      title: activityTitle,
+    });
+
+    await setupMockApis(userWithoutProgress, {
+      streamMessages: [
+        { status: "started", step: "getLessonActivities" },
+        { status: "completed", step: "getLessonActivities" },
+        { status: "started", step: "setActivityAsRunning" },
+        { status: "completed", step: "setActivityAsRunning" },
+        { status: "started", step: "generateSentences" },
+        { status: "completed", step: "generateSentences" },
+        { status: "started", step: "saveSentences" },
+        { status: "completed", step: "saveSentences" },
+        { status: "started", step: "generateAudio" },
+        { status: "completed", step: "generateAudio" },
+        { status: "started", step: "updateSentenceEnrichments" },
+        { status: "completed", step: "updateSentenceEnrichments" },
+        { status: "started", step: "copyListeningSteps" },
+        { status: "completed", step: "copyListeningSteps" },
+        { status: "started", step: "setListeningAsCompleted" },
+        { status: "completed", step: "setListeningAsCompleted" },
+        { status: "started", step: "setActivityAsCompleted" },
+        { status: "completed", step: "setActivityAsCompleted" },
+      ],
+    });
+
+    await userWithoutProgress.goto(`/generate/a/${activity.id}`);
+
+    await expect(userWithoutProgress.getByText(/your activity is ready/i)).toBeVisible({
+      timeout: 10_000,
+    });
+
+    await expect(userWithoutProgress.getByText(/taking you to your activity/i)).toBeVisible();
+
+    await prisma.activity.update({
+      data: { generationStatus: "completed" },
+      where: { id: activity.id },
+    });
+
+    await userWithoutProgress.waitForURL(
+      new RegExp(
+        `/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}/a/${activity.position}`,
+      ),
+      { timeout: 10_000 },
+    );
+  });
+
+  test("shows correct phases for listening activity", async ({ userWithoutProgress }) => {
+    await createTestSubscription();
+
+    const org = await prisma.organization.findUniqueOrThrow({
+      where: { slug: "ai" },
+    });
+
+    const uniqueId = randomUUID().slice(0, 8);
+
+    const course = await courseFixture({
+      isPublished: true,
+      normalizedTitle: normalizeString(`E2E ListenPhase Course ${uniqueId}`),
+      organizationId: org.id,
+      slug: `e2e-listen-phase-course-${uniqueId}`,
+      targetLanguage: "es",
+      title: `E2E ListenPhase Course ${uniqueId}`,
+    });
+
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      generationStatus: "completed",
+      isPublished: true,
+      normalizedTitle: normalizeString(`E2E ListenPhase Chapter ${uniqueId}`),
+      organizationId: org.id,
+      slug: `e2e-listen-phase-chapter-${uniqueId}`,
+      title: `E2E ListenPhase Chapter ${uniqueId}`,
+    });
+
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      generationStatus: "completed",
+      isPublished: true,
+      kind: "language",
+      normalizedTitle: normalizeString(`E2E ListenPhase Lesson ${uniqueId}`),
+      organizationId: org.id,
+      slug: `e2e-listen-phase-lesson-${uniqueId}`,
+      title: `E2E ListenPhase Lesson ${uniqueId}`,
+    });
+
+    const activity = await activityFixture({
+      generationStatus: "pending",
+      isPublished: true,
+      kind: "listening",
+      lessonId: lesson.id,
+      organizationId: org.id,
+      title: `E2E ListenPhase Activity ${uniqueId}`,
+    });
+
+    await setupMockApis(userWithoutProgress, {
+      streamDelayMs: 15_000,
+      streamMessages: [{ status: "started", step: "getLessonActivities" }],
+    });
+
+    await userWithoutProgress.goto(`/generate/a/${activity.id}`);
+
+    // Listening should show recording audio phase (from reading dependency)
+    await expect(userWithoutProgress.getByText(/recording audio/i)).toBeVisible({
+      timeout: 10_000,
+    });
+  });
+
   test("shows practice-content phase and skips pronunciation phase for reading", async ({
     userWithoutProgress,
   }) => {

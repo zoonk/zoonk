@@ -1,5 +1,7 @@
 import { settled } from "@zoonk/utils/settled";
 import { completeActivityStep } from "./steps/complete-activity-step";
+import { completeListeningActivityStep } from "./steps/complete-listening-activity-step";
+import { copyListeningStepsStep } from "./steps/copy-listening-steps-step";
 import { generateGrammarContentStep } from "./steps/generate-grammar-content-step";
 import { generateReadingAudioStep } from "./steps/generate-reading-audio-step";
 import { generateReadingContentStep } from "./steps/generate-reading-content-step";
@@ -48,10 +50,11 @@ export async function languageActivityWorkflow(
 
   const { savedSentences } = settled(saveSentencesResult, { savedSentences: [] });
 
-  // Wave 4: generate reading audio + complete vocabulary
+  // Wave 4: generate reading audio + complete vocabulary + copy listening steps
   const [readingAudioResult] = await Promise.allSettled([
     generateReadingAudioStep(activities, savedSentences),
     completeActivityStep(activities, workflowRunId, "vocabulary"),
+    copyListeningStepsStep(activities, workflowRunId),
   ]);
 
   const { audioUrls: readingAudioUrls } = settled(readingAudioResult, { audioUrls: {} });
@@ -59,6 +62,9 @@ export async function languageActivityWorkflow(
   // Wave 5: save reading enrichments
   await updateReadingEnrichmentsStep(activities, savedSentences, readingAudioUrls);
 
-  // Wave 6: complete reading after enrichments are finalized
-  await completeActivityStep(activities, workflowRunId, "reading");
+  // Wave 6: finalize reading + listening in parallel
+  await Promise.allSettled([
+    completeActivityStep(activities, workflowRunId, "reading"),
+    completeListeningActivityStep(activities, workflowRunId),
+  ]);
 }

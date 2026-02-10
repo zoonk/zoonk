@@ -57,8 +57,10 @@ export const ACTIVITY_STEPS = [
   "saveSentences",
   "generateAudio",
   "updateSentenceEnrichments",
+  "copyListeningSteps",
   "setVocabularyAsCompleted",
   "setReadingAsCompleted",
+  "setListeningAsCompleted",
   "setActivityAsCompleted",
   "workflowError",
 ] as const;
@@ -77,7 +79,8 @@ export type ActivityCompletionStep =
   | "setStoryAsCompleted"
   | "setGrammarAsCompleted"
   | "setVocabularyAsCompleted"
-  | "setReadingAsCompleted";
+  | "setReadingAsCompleted"
+  | "setListeningAsCompleted";
 
 const activityCompletionSteps: Partial<Record<string, ActivityCompletionStep>> = {
   background: "setBackgroundAsCompleted",
@@ -86,6 +89,7 @@ const activityCompletionSteps: Partial<Record<string, ActivityCompletionStep>> =
   examples: "setExamplesAsCompleted",
   explanation: "setExplanationAsCompleted",
   grammar: "setGrammarAsCompleted",
+  listening: "setListeningAsCompleted",
   mechanics: "setMechanicsAsCompleted",
   quiz: "setQuizAsCompleted",
   reading: "setReadingAsCompleted",
