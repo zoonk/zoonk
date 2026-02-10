@@ -15,12 +15,15 @@ const multipleChoiceOptionSchema = z
     feedback: z.string().optional(),
     isCorrect: z.boolean().optional(),
     text: z.string(),
+    textRomanization: z.string().optional(),
   })
   .strict();
 
 export const multipleChoiceContentSchema = z
   .object({
     context: z.string().optional(),
+    contextRomanization: z.string().optional(),
+    contextTranslation: z.string().optional(),
     options: z.array(multipleChoiceOptionSchema).min(1),
     question: z.string().optional(),
   })

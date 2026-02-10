@@ -12,6 +12,36 @@ describe("step content contracts", () => {
     });
   });
 
+  test("parses multipleChoice with optional language story fields", () => {
+    const content = parseStepContent("multipleChoice", {
+      context: "You enter a bakery in Madrid.",
+      contextRomanization: "You enter a bakery in Madrid.",
+      contextTranslation: "You enter a bakery in Madrid.",
+      options: [
+        {
+          feedback: "Great response.",
+          isCorrect: true,
+          text: "Buenos días, quisiera un café.",
+          textRomanization: "bwen-os dee-as kee-sye-ra oon ka-fe",
+        },
+      ],
+    });
+
+    expect(content).toEqual({
+      context: "You enter a bakery in Madrid.",
+      contextRomanization: "You enter a bakery in Madrid.",
+      contextTranslation: "You enter a bakery in Madrid.",
+      options: [
+        {
+          feedback: "Great response.",
+          isCorrect: true,
+          text: "Buenos días, quisiera un café.",
+          textRomanization: "bwen-os dee-as kee-sye-ra oon ka-fe",
+        },
+      ],
+    });
+  });
+
   test("parses fillBlank with optional question omitted", () => {
     const content = parseStepContent("fillBlank", {
       answers: ["hablo"],

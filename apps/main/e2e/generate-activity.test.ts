@@ -215,6 +215,59 @@ async function createPendingReadingActivity() {
   return { activity, chapter, course, lesson };
 }
 
+async function createPendingLanguageStoryActivity() {
+  const org = await prisma.organization.findUniqueOrThrow({
+    where: { slug: "ai" },
+  });
+
+  const uniqueId = randomUUID().slice(0, 8);
+  const courseTitle = `E2E LangStory Course ${uniqueId}`;
+  const chapterTitle = `E2E LangStory Chapter ${uniqueId}`;
+  const lessonTitle = `E2E LangStory Lesson ${uniqueId}`;
+  const activityTitle = `E2E LangStory Activity ${uniqueId}`;
+
+  const course = await courseFixture({
+    isPublished: true,
+    normalizedTitle: normalizeString(courseTitle),
+    organizationId: org.id,
+    slug: `e2e-lang-story-course-${uniqueId}`,
+    targetLanguage: "es",
+    title: courseTitle,
+  });
+
+  const chapter = await chapterFixture({
+    courseId: course.id,
+    generationStatus: "completed",
+    isPublished: true,
+    normalizedTitle: normalizeString(chapterTitle),
+    organizationId: org.id,
+    slug: `e2e-lang-story-chapter-${uniqueId}`,
+    title: chapterTitle,
+  });
+
+  const lesson = await lessonFixture({
+    chapterId: chapter.id,
+    generationStatus: "completed",
+    isPublished: true,
+    kind: "language",
+    normalizedTitle: normalizeString(lessonTitle),
+    organizationId: org.id,
+    slug: `e2e-lang-story-lesson-${uniqueId}`,
+    title: lessonTitle,
+  });
+
+  const activity = await activityFixture({
+    generationStatus: "pending",
+    isPublished: true,
+    kind: "languageStory",
+    lessonId: lesson.id,
+    organizationId: org.id,
+    title: activityTitle,
+  });
+
+  return { activity, chapter, course, lesson };
+}
+
 /**
  * Creates a test subscription for the test user.
  */
@@ -911,6 +964,46 @@ test.describe("Generate Activity Page - With Subscription", () => {
         { status: "completed", step: "generateGrammarContent" },
         { status: "started", step: "setGrammarAsCompleted" },
         { status: "completed", step: "setGrammarAsCompleted" },
+        { status: "started", step: "setActivityAsCompleted" },
+        { status: "completed", step: "setActivityAsCompleted" },
+      ],
+    });
+
+    await userWithoutProgress.goto(`/generate/a/${activity.id}`);
+
+    await expect(userWithoutProgress.getByText(/your activity is ready/i)).toBeVisible({
+      timeout: 10_000,
+    });
+
+    await expect(userWithoutProgress.getByText(/taking you to your activity/i)).toBeVisible();
+
+    await prisma.activity.update({
+      data: { generationStatus: "completed" },
+      where: { id: activity.id },
+    });
+
+    await userWithoutProgress.waitForURL(
+      new RegExp(
+        `/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}/a/${activity.position}`,
+      ),
+      { timeout: 10_000 },
+    );
+  });
+
+  test("completes workflow for language story activity kind", async ({ userWithoutProgress }) => {
+    await createTestSubscription();
+    const { activity, chapter, course, lesson } = await createPendingLanguageStoryActivity();
+
+    await setupMockApis(userWithoutProgress, {
+      streamMessages: [
+        { status: "started", step: "getLessonActivities" },
+        { status: "completed", step: "getLessonActivities" },
+        { status: "started", step: "setActivityAsRunning" },
+        { status: "completed", step: "setActivityAsRunning" },
+        { status: "started", step: "generateLanguageStoryContent" },
+        { status: "completed", step: "generateLanguageStoryContent" },
+        { status: "started", step: "setLanguageStoryAsCompleted" },
+        { status: "completed", step: "setLanguageStoryAsCompleted" },
         { status: "started", step: "setActivityAsCompleted" },
         { status: "completed", step: "setActivityAsCompleted" },
       ],
