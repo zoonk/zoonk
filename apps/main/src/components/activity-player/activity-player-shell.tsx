@@ -1,6 +1,7 @@
 "use client";
 
 import { type SerializedActivity } from "@/data/activities/prepare-activity-data";
+import { useRouter } from "@/i18n/navigation";
 import { useExtracted } from "next-intl";
 import { useCallback } from "react";
 import { PlayerActionBar, PlayerActionButton } from "./player-action-bar";
@@ -17,6 +18,7 @@ export function ActivityPlayerShell({
   lessonHref: string;
 }) {
   const t = useExtracted();
+  const router = useRouter();
   const { dispatch, state } = usePlayerState(activity);
 
   const currentStep = state.steps[state.currentStepIndex];
@@ -26,6 +28,10 @@ export function ActivityPlayerShell({
 
   const progressValue =
     state.phase === "completed" ? 100 : computeProgress(state.currentStepIndex, totalSteps);
+
+  const handleEscape = useCallback(() => {
+    router.push(lessonHref);
+  }, [router, lessonHref]);
 
   const handleCheck = useCallback(() => {
     // No-op until step renderers exist (Issue 9)
@@ -48,6 +54,7 @@ export function ActivityPlayerShell({
     isStaticStep,
     onCheck: handleCheck,
     onContinue: handleContinue,
+    onEscape: handleEscape,
     onNavigateNext: handleNavigateNext,
     onNavigatePrev: handleNavigatePrev,
     phase: state.phase,

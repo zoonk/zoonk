@@ -8,6 +8,7 @@ export function usePlayerKeyboard({
   isStaticStep,
   onCheck,
   onContinue,
+  onEscape,
   onNavigateNext,
   onNavigatePrev,
   phase,
@@ -16,6 +17,7 @@ export function usePlayerKeyboard({
   isStaticStep: boolean;
   onCheck: () => void;
   onContinue: () => void;
+  onEscape: () => void;
   onNavigateNext: () => void;
   onNavigatePrev: () => void;
   phase: PlayerPhase;
@@ -51,4 +53,6 @@ export function usePlayerKeyboard({
     },
     { mode: "none" },
   );
+
+  useKeyboardCallback("Escape", onEscape, { mode: "none" });
 }

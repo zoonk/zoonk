@@ -10,6 +10,7 @@ function buildOptions(overrides: Partial<Parameters<typeof usePlayerKeyboard>[0]
     isStaticStep: false,
     onCheck: vi.fn(),
     onContinue: vi.fn(),
+    onEscape: vi.fn(),
     onNavigateNext: vi.fn(),
     onNavigatePrev: vi.fn(),
     phase: "playing" as PlayerPhase,
@@ -106,6 +107,26 @@ describe(usePlayerKeyboard, () => {
 
       expect(opts.onNavigateNext).not.toHaveBeenCalled();
       expect(opts.onNavigatePrev).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("Escape key", () => {
+    test("calls onEscape during playing phase", () => {
+      const opts = buildOptions({ phase: "playing" });
+      renderHook(() => usePlayerKeyboard(opts));
+
+      fireKey("Escape");
+
+      expect(opts.onEscape).toHaveBeenCalledOnce();
+    });
+
+    test("calls onEscape during feedback phase", () => {
+      const opts = buildOptions({ phase: "feedback" });
+      renderHook(() => usePlayerKeyboard(opts));
+
+      fireKey("Escape");
+
+      expect(opts.onEscape).toHaveBeenCalledOnce();
     });
   });
 

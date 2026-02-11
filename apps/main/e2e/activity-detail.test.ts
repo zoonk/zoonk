@@ -216,6 +216,22 @@ test.describe("Activity Detail Page", () => {
     await expect(generateLink).toHaveAttribute("rel", "nofollow");
   });
 
+  test("pressing escape navigates to lesson page", async ({ page }) => {
+    const { chapter, course, lesson } = await createTestActivity({
+      generationStatus: "completed",
+    });
+
+    await page.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}/a/0`);
+
+    await expect(page.getByRole("link", { name: /close/i })).toBeVisible();
+
+    await page.keyboard.press("Escape");
+
+    await expect(page).toHaveURL(
+      new RegExp(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}$`),
+    );
+  });
+
   test("non-existent activity shows 404 page", async ({ page }) => {
     const { chapter, course, lesson } = await createTestActivity();
 
