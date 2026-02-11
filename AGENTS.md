@@ -130,6 +130,7 @@ For detailed examples and patterns, see `.agents/skills/zoonk-compound-component
 
 **VERY IMPORTANT**: **Always follow TDD (Test-Driven Development)**: Write a failing test first, **run the test to confirm it fails**, then write the code to make it pass. If the test passes before your fix, the test is wrong—never use workarounds like `.first()` or loose assertions to make tests pass. Use unique test data (e.g., UUIDs in titles) to ensure tests catch regressions.
 
+- **Parallelize independent fixtures**: When test setup creates multiple entities that don't depend on each other (e.g., `user` + `course`, sibling chapters, multiple `activityProgressFixture` calls), use `Promise.all` instead of sequential awaits
 - **E2E tests**: For app/UI features, use Playwright (`apps/{app}/e2e/`)
 - **Integration tests**: For data functions with Prisma (`apps/{app}/src/data/`)
 - **Unit tests**: For utils, helpers, and UI component edge cases
