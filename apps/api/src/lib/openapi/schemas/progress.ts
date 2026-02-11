@@ -1,5 +1,19 @@
 import { z } from "zod";
 
+export const activityCompletionQuerySchema = z
+  .object({
+    lessonId: z.coerce.number().int().positive().meta({ description: "Lesson ID" }),
+  })
+  .meta({ id: "ActivityCompletionQuery" });
+
+export const activityCompletionResponseSchema = z
+  .object({
+    completedActivityIds: z
+      .array(z.string())
+      .meta({ description: "IDs of completed activities in the lesson" }),
+  })
+  .meta({ id: "ActivityCompletionResponse" });
+
 export const nextActivityQuerySchema = z
   .object({
     chapterId: z.coerce.number().int().positive().optional().meta({ description: "Chapter ID" }),

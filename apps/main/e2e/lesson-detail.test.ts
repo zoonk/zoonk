@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { type Page } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
@@ -37,8 +38,7 @@ async function createTestLessonWithActivities() {
     title: `E2E Lesson ${uniqueId}`,
   });
 
-  // Create activities for the lesson
-  await activityFixture({
+  const background = await activityFixture({
     isPublished: true,
     kind: "background",
     lessonId: lesson.id,
@@ -46,7 +46,7 @@ async function createTestLessonWithActivities() {
     position: 0,
   });
 
-  await activityFixture({
+  const explanation = await activityFixture({
     isPublished: true,
     kind: "explanation",
     lessonId: lesson.id,
@@ -54,7 +54,7 @@ async function createTestLessonWithActivities() {
     position: 1,
   });
 
-  await activityFixture({
+  const quiz = await activityFixture({
     isPublished: true,
     kind: "quiz",
     lessonId: lesson.id,
@@ -62,7 +62,7 @@ async function createTestLessonWithActivities() {
     position: 2,
   });
 
-  await activityFixture({
+  const challenge = await activityFixture({
     isPublished: true,
     kind: "challenge",
     lessonId: lesson.id,
@@ -70,7 +70,22 @@ async function createTestLessonWithActivities() {
     position: 3,
   });
 
-  return { chapter, course, lesson };
+  return {
+    activities: { background, challenge, explanation, quiz },
+    chapter,
+    course,
+    lesson,
+  };
+}
+
+function mockActivityCompletionAPI(page: Page, completedActivityIds: string[]) {
+  return page.route("**/v1/progress/activity-completion**", async (route) => {
+    await route.fulfill({
+      body: JSON.stringify({ completedActivityIds }),
+      contentType: "application/json",
+      status: 200,
+    });
+  });
 }
 
 test.describe("Lesson Detail Page", () => {
@@ -169,5 +184,49 @@ test.describe("Lesson Detail Page", () => {
     await page.goto("/b/ai/c/machine-learning/ch/data-preparation/l/understanding-datasets");
 
     await expect(page).toHaveURL(/\/generate\/l\/\d+/);
+  });
+
+  test("shows not-completed indicators when API returns empty array", async ({ page }) => {
+    const { chapter, course, lesson } = await createTestLessonWithActivities();
+    await mockActivityCompletionAPI(page, []);
+
+    await page.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
+
+    const activityList = page.getByRole("list", { name: /activities/i });
+    const notCompletedIndicators = activityList.getByRole("img", { name: /not completed/i });
+    await expect(notCompletedIndicators).toHaveCount(4);
+  });
+
+  test("shows completed indicators for activities in the response", async ({ page }) => {
+    const { activities, chapter, course, lesson } = await createTestLessonWithActivities();
+    const allIds = [
+      String(activities.background.id),
+      String(activities.explanation.id),
+      String(activities.quiz.id),
+      String(activities.challenge.id),
+    ];
+    await mockActivityCompletionAPI(page, allIds);
+
+    await page.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
+
+    const activityList = page.getByRole("list", { name: /activities/i });
+    const completedIndicators = activityList.getByRole("img", { name: /^completed$/i });
+    await expect(completedIndicators).toHaveCount(4);
+  });
+
+  test("shows mix of completed and not-completed indicators", async ({ page }) => {
+    const { activities, chapter, course, lesson } = await createTestLessonWithActivities();
+    await mockActivityCompletionAPI(page, [
+      String(activities.background.id),
+      String(activities.quiz.id),
+    ]);
+
+    await page.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
+
+    const activityList = page.getByRole("list", { name: /activities/i });
+    const completedIndicators = activityList.getByRole("img", { name: /^completed$/i });
+    const notCompletedIndicators = activityList.getByRole("img", { name: /not completed/i });
+    await expect(completedIndicators).toHaveCount(2);
+    await expect(notCompletedIndicators).toHaveCount(2);
   });
 });

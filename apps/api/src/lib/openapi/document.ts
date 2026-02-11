@@ -2,7 +2,12 @@ import { z } from "zod";
 import { createDocument } from "zod-openapi";
 import { paginationSchema } from "./schemas/common";
 import { courseResultSchema, courseSearchQuerySchema } from "./schemas/courses";
-import { nextActivityQuerySchema, nextActivityResponseSchema } from "./schemas/progress";
+import {
+  activityCompletionQuerySchema,
+  activityCompletionResponseSchema,
+  nextActivityQuerySchema,
+  nextActivityResponseSchema,
+} from "./schemas/progress";
 import {
   validationErrorResponse,
   workflowStatusEndpoint,
@@ -58,6 +63,24 @@ export const openAPIDocument = createDocument({
         },
         summary: "Search published courses",
         tags: ["Courses"],
+      },
+    },
+    "/progress/activity-completion": {
+      get: {
+        requestParams: { query: activityCompletionQuerySchema },
+        responses: {
+          "200": {
+            content: {
+              "application/json": {
+                schema: activityCompletionResponseSchema,
+              },
+            },
+            description: "Completed activity IDs for a lesson",
+          },
+          "400": validationErrorResponse,
+        },
+        summary: "Get completed activities for a lesson",
+        tags: ["Progress"],
       },
     },
     "/progress/next-activity": {

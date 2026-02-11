@@ -1,10 +1,10 @@
+import { ActivityCompletionIndicator } from "@/components/catalog/activity-completion-indicator";
 import {
   CatalogList,
   CatalogListContent,
   CatalogListItem,
   CatalogListItemContent,
   CatalogListItemDescription,
-  CatalogListItemIndicator,
   CatalogListItemTitle,
 } from "@/components/catalog/catalog-list";
 import { type ActivityForList } from "@/data/activities/list-lesson-activities";
@@ -15,10 +15,12 @@ export async function ActivityList({
   activities,
   baseHref,
   kindMeta,
+  lessonId,
 }: {
   activities: ActivityForList[];
   baseHref: string;
   kindMeta: Map<string, ActivityKindInfo>;
+  lessonId: number;
 }) {
   if (activities.length === 0) {
     return null;
@@ -45,11 +47,7 @@ export async function ActivityList({
               id={activity.id}
               key={String(activity.id)}
             >
-              <CatalogListItemIndicator
-                completed={false}
-                completedLabel={t("Completed")}
-                notCompletedLabel={t("Not completed")}
-              />
+              <ActivityCompletionIndicator activityId={String(activity.id)} lessonId={lessonId} />
 
               <CatalogListItemContent>
                 <CatalogListItemTitle>{title}</CatalogListItemTitle>
