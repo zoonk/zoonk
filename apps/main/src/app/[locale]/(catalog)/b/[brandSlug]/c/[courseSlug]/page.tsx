@@ -1,6 +1,7 @@
 "use cache";
 
 import { CatalogContainer } from "@/components/catalog/catalog-list";
+import { ContinueActivityLink } from "@/components/catalog/continue-activity-link";
 import { listCourseChapters } from "@/data/chapters/list-course-chapters";
 import { getCourse } from "@/data/courses/get-course";
 import { redirect } from "@/i18n/navigation";
@@ -60,6 +61,8 @@ export default async function CoursePage({
       <CourseHeader brandSlug={brandSlug} course={course} />
 
       <CatalogContainer>
+        <ContinueActivityLink courseId={course.id} />
+
         <Suspense>
           <ChapterList brandSlug={brandSlug} chapters={chapters} courseSlug={courseSlug} />
         </Suspense>

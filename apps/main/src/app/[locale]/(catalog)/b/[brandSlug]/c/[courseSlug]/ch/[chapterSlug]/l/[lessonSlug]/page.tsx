@@ -1,6 +1,7 @@
 "use cache";
 
 import { CatalogContainer } from "@/components/catalog/catalog-list";
+import { ContinueActivityLink } from "@/components/catalog/continue-activity-link";
 import { listLessonActivities } from "@/data/activities/list-lesson-activities";
 import { getLesson } from "@/data/lessons/get-lesson";
 import { redirect } from "@/i18n/navigation";
@@ -86,6 +87,7 @@ export default async function LessonPage({
       />
 
       <CatalogContainer>
+        <ContinueActivityLink lessonId={lesson.id} />
         <ActivityList activities={activities} baseHref={baseHref} kindMeta={kindMeta} />
       </CatalogContainer>
     </main>
