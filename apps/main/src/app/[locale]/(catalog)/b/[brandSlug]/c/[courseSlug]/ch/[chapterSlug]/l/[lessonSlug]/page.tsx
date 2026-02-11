@@ -93,7 +93,7 @@ export default async function LessonPage({
             fallbackHref={`${baseHref}/a/${activities[0]?.position}`}
             lessonId={lesson.id}
           />
-          <CatalogActions />
+          <CatalogActions contentId={`${courseSlug}/${chapterSlug}/${lessonSlug}`} kind="lesson" />
         </CatalogToolbar>
         <ActivityList activities={activities} baseHref={baseHref} kindMeta={kindMeta} />
       </CatalogContainer>

@@ -1,5 +1,6 @@
 import { routing } from "@/i18n/routing";
 import { Analytics } from "@vercel/analytics/next";
+import { Toaster } from "@zoonk/ui/components/sonner";
 import { type Metadata } from "next";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
@@ -35,6 +36,7 @@ export default async function RootLayout({ children, params }: LayoutProps<"/[lo
           <NextIntlClientProvider>{children}</NextIntlClientProvider>
         </NuqsAdapter>
         <Analytics />
+        <Toaster />
       </body>
     </html>
   );
