@@ -13,6 +13,7 @@ describe(getNextChapterActivity, () => {
   beforeAll(async () => {
     organization = await organizationFixture();
   });
+
   test("returns first activity when userId is 0 (unauthenticated)", async () => {
     const course = await courseFixture({ isPublished: true, organizationId: organization.id });
     const chapter = await chapterFixture({
@@ -48,8 +49,11 @@ describe(getNextChapterActivity, () => {
   });
 
   test("returns first activity when user has not started", async () => {
-    const user = await userFixture();
-    const course = await courseFixture({ isPublished: true, organizationId: organization.id });
+    const [user, course] = await Promise.all([
+      userFixture(),
+      courseFixture({ isPublished: true, organizationId: organization.id }),
+    ]);
+
     const chapter = await chapterFixture({
       courseId: course.id,
       isPublished: true,
@@ -83,8 +87,11 @@ describe(getNextChapterActivity, () => {
   });
 
   test("returns next incomplete activity when user has progress", async () => {
-    const user = await userFixture();
-    const course = await courseFixture({ isPublished: true, organizationId: organization.id });
+    const [user, course] = await Promise.all([
+      userFixture(),
+      courseFixture({ isPublished: true, organizationId: organization.id }),
+    ]);
+
     const chapter = await chapterFixture({
       courseId: course.id,
       isPublished: true,
@@ -98,24 +105,26 @@ describe(getNextChapterActivity, () => {
       position: 0,
     });
 
-    const activity1 = await activityFixture({
-      isPublished: true,
-      lessonId: lesson.id,
-      organizationId: organization.id,
-      position: 0,
-    });
-    const activity2 = await activityFixture({
-      isPublished: true,
-      lessonId: lesson.id,
-      organizationId: organization.id,
-      position: 1,
-    });
-    await activityFixture({
-      isPublished: true,
-      lessonId: lesson.id,
-      organizationId: organization.id,
-      position: 2,
-    });
+    const [activity1, activity2] = await Promise.all([
+      activityFixture({
+        isPublished: true,
+        lessonId: lesson.id,
+        organizationId: organization.id,
+        position: 0,
+      }),
+      activityFixture({
+        isPublished: true,
+        lessonId: lesson.id,
+        organizationId: organization.id,
+        position: 1,
+      }),
+      activityFixture({
+        isPublished: true,
+        lessonId: lesson.id,
+        organizationId: organization.id,
+        position: 2,
+      }),
+    ]);
 
     await activityProgressFixture({
       activityId: activity1.id,
@@ -138,8 +147,11 @@ describe(getNextChapterActivity, () => {
   });
 
   test("returns first activity with completed=true when all completed", async () => {
-    const user = await userFixture();
-    const course = await courseFixture({ isPublished: true, organizationId: organization.id });
+    const [user, course] = await Promise.all([
+      userFixture(),
+      courseFixture({ isPublished: true, organizationId: organization.id }),
+    ]);
+
     const chapter = await chapterFixture({
       courseId: course.id,
       isPublished: true,
@@ -153,31 +165,35 @@ describe(getNextChapterActivity, () => {
       position: 0,
     });
 
-    const activity1 = await activityFixture({
-      isPublished: true,
-      lessonId: lesson.id,
-      organizationId: organization.id,
-      position: 0,
-    });
-    const activity2 = await activityFixture({
-      isPublished: true,
-      lessonId: lesson.id,
-      organizationId: organization.id,
-      position: 1,
-    });
+    const [activity1, activity2] = await Promise.all([
+      activityFixture({
+        isPublished: true,
+        lessonId: lesson.id,
+        organizationId: organization.id,
+        position: 0,
+      }),
+      activityFixture({
+        isPublished: true,
+        lessonId: lesson.id,
+        organizationId: organization.id,
+        position: 1,
+      }),
+    ]);
 
-    await activityProgressFixture({
-      activityId: activity1.id,
-      completedAt: new Date(),
-      durationSeconds: 60,
-      userId: Number(user.id),
-    });
-    await activityProgressFixture({
-      activityId: activity2.id,
-      completedAt: new Date(),
-      durationSeconds: 60,
-      userId: Number(user.id),
-    });
+    await Promise.all([
+      activityProgressFixture({
+        activityId: activity1.id,
+        completedAt: new Date(),
+        durationSeconds: 60,
+        userId: Number(user.id),
+      }),
+      activityProgressFixture({
+        activityId: activity2.id,
+        completedAt: new Date(),
+        durationSeconds: 60,
+        userId: Number(user.id),
+      }),
+    ]);
 
     const result = await getNextChapterActivity(Number(user.id), chapter.id);
 
@@ -220,8 +236,11 @@ describe(getNextChapterActivity, () => {
   });
 
   test("respects position ordering across lessons", async () => {
-    const user = await userFixture();
-    const course = await courseFixture({ isPublished: true, organizationId: organization.id });
+    const [user, course] = await Promise.all([
+      userFixture(),
+      courseFixture({ isPublished: true, organizationId: organization.id }),
+    ]);
+
     const chapter = await chapterFixture({
       courseId: course.id,
       isPublished: true,
@@ -229,31 +248,35 @@ describe(getNextChapterActivity, () => {
       position: 0,
     });
 
-    const lesson1 = await lessonFixture({
-      chapterId: chapter.id,
-      isPublished: true,
-      organizationId: organization.id,
-      position: 0,
-    });
-    const lesson2 = await lessonFixture({
-      chapterId: chapter.id,
-      isPublished: true,
-      organizationId: organization.id,
-      position: 1,
-    });
+    const [lesson1, lesson2] = await Promise.all([
+      lessonFixture({
+        chapterId: chapter.id,
+        isPublished: true,
+        organizationId: organization.id,
+        position: 0,
+      }),
+      lessonFixture({
+        chapterId: chapter.id,
+        isPublished: true,
+        organizationId: organization.id,
+        position: 1,
+      }),
+    ]);
 
-    const activity1 = await activityFixture({
-      isPublished: true,
-      lessonId: lesson1.id,
-      organizationId: organization.id,
-      position: 0,
-    });
-    const activity2 = await activityFixture({
-      isPublished: true,
-      lessonId: lesson2.id,
-      organizationId: organization.id,
-      position: 0,
-    });
+    const [activity1, activity2] = await Promise.all([
+      activityFixture({
+        isPublished: true,
+        lessonId: lesson1.id,
+        organizationId: organization.id,
+        position: 0,
+      }),
+      activityFixture({
+        isPublished: true,
+        lessonId: lesson2.id,
+        organizationId: organization.id,
+        position: 0,
+      }),
+    ]);
 
     await activityProgressFixture({
       activityId: activity1.id,
@@ -284,31 +307,35 @@ describe(getNextChapterActivity, () => {
       position: 0,
     });
 
-    const unpublishedLesson = await lessonFixture({
-      chapterId: chapter.id,
-      isPublished: false,
-      organizationId: organization.id,
-      position: 0,
-    });
-    const publishedLesson = await lessonFixture({
-      chapterId: chapter.id,
-      isPublished: true,
-      organizationId: organization.id,
-      position: 1,
-    });
+    const [unpublishedLesson, publishedLesson] = await Promise.all([
+      lessonFixture({
+        chapterId: chapter.id,
+        isPublished: false,
+        organizationId: organization.id,
+        position: 0,
+      }),
+      lessonFixture({
+        chapterId: chapter.id,
+        isPublished: true,
+        organizationId: organization.id,
+        position: 1,
+      }),
+    ]);
 
-    await activityFixture({
-      isPublished: true,
-      lessonId: unpublishedLesson.id,
-      organizationId: organization.id,
-      position: 0,
-    });
-    const publishedActivity = await activityFixture({
-      isPublished: true,
-      lessonId: publishedLesson.id,
-      organizationId: organization.id,
-      position: 0,
-    });
+    const [, publishedActivity] = await Promise.all([
+      activityFixture({
+        isPublished: true,
+        lessonId: unpublishedLesson.id,
+        organizationId: organization.id,
+        position: 0,
+      }),
+      activityFixture({
+        isPublished: true,
+        lessonId: publishedLesson.id,
+        organizationId: organization.id,
+        position: 0,
+      }),
+    ]);
 
     const result = await getNextChapterActivity(0, chapter.id);
 
