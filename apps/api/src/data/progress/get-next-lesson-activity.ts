@@ -7,9 +7,13 @@ export async function getNextLessonActivity(
   userId: number,
   lessonId: number,
 ): Promise<NextActivityResult> {
-  const { data: rows } = await safeAsync(() =>
+  const { data: rows, error } = await safeAsync(() =>
     prisma.$queryRawTyped(getNextLessonActivityQuery(userId, lessonId)),
   );
+
+  if (error) {
+    return null;
+  }
 
   const row = rows?.[0];
 

@@ -8,6 +8,7 @@ SELECT o.slug AS "orgSlug", c.slug AS "courseSlug",
          JOIN activities a2 ON a2.id = ap2.activity_id
          JOIN lessons l2 ON l2.id = a2.lesson_id
          WHERE l2.chapter_id = $2 AND ap2.user_id = $1
+           AND a2.is_published = true AND l2.is_published = true
        ) AS "hasStarted"
 FROM activities a
 JOIN lessons l ON l.id = a.lesson_id

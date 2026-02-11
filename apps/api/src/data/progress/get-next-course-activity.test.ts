@@ -126,15 +126,12 @@ describe(getNextCourseActivity, () => {
       }),
     ]);
 
-    await Promise.all([
-      courseUserFixture({ courseId: course.id, userId: Number(user.id) }),
-      activityProgressFixture({
-        activityId: activity1.id,
-        completedAt: new Date(),
-        durationSeconds: 60,
-        userId: Number(user.id),
-      }),
-    ]);
+    await activityProgressFixture({
+      activityId: activity1.id,
+      completedAt: new Date(),
+      durationSeconds: 60,
+      userId: Number(user.id),
+    });
 
     const result = await getNextCourseActivity(Number(user.id), course.id);
 
@@ -184,7 +181,6 @@ describe(getNextCourseActivity, () => {
     ]);
 
     await Promise.all([
-      courseUserFixture({ courseId: course.id, userId: Number(user.id) }),
       activityProgressFixture({
         activityId: activity1.id,
         completedAt: new Date(),
@@ -208,6 +204,46 @@ describe(getNextCourseActivity, () => {
       completed: true,
       courseSlug: course.slug,
       hasStarted: true,
+      lessonSlug: lesson.slug,
+    });
+  });
+
+  test("hasStarted is false when user is enrolled but has no activity progress", async () => {
+    const [user, course] = await Promise.all([
+      userFixture(),
+      courseFixture({ isPublished: true, organizationId: organization.id }),
+    ]);
+
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      isPublished: true,
+      organizationId: organization.id,
+      position: 0,
+    });
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      isPublished: true,
+      organizationId: organization.id,
+      position: 0,
+    });
+    const activity = await activityFixture({
+      isPublished: true,
+      lessonId: lesson.id,
+      organizationId: organization.id,
+      position: 0,
+    });
+
+    await courseUserFixture({ courseId: course.id, userId: Number(user.id) });
+
+    const result = await getNextCourseActivity(Number(user.id), course.id);
+
+    expect(result).toEqual({
+      activityPosition: activity.position,
+      brandSlug: organization.slug,
+      chapterSlug: chapter.slug,
+      completed: false,
+      courseSlug: course.slug,
+      hasStarted: false,
       lessonSlug: lesson.slug,
     });
   });
@@ -290,15 +326,12 @@ describe(getNextCourseActivity, () => {
       }),
     ]);
 
-    await Promise.all([
-      courseUserFixture({ courseId: course.id, userId: Number(user.id) }),
-      activityProgressFixture({
-        activityId: activity1.id,
-        completedAt: new Date(),
-        durationSeconds: 60,
-        userId: Number(user.id),
-      }),
-    ]);
+    await activityProgressFixture({
+      activityId: activity1.id,
+      completedAt: new Date(),
+      durationSeconds: 60,
+      userId: Number(user.id),
+    });
 
     const result = await getNextCourseActivity(Number(user.id), course.id);
 

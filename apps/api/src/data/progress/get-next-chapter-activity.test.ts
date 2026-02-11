@@ -298,6 +298,60 @@ describe(getNextChapterActivity, () => {
     });
   });
 
+  test("hasStarted ignores progress on unpublished activities", async () => {
+    const [user, course] = await Promise.all([
+      userFixture(),
+      courseFixture({ isPublished: true, organizationId: organization.id }),
+    ]);
+
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      isPublished: true,
+      organizationId: organization.id,
+      position: 0,
+    });
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      isPublished: true,
+      organizationId: organization.id,
+      position: 0,
+    });
+
+    const [unpublishedActivity, publishedActivity] = await Promise.all([
+      activityFixture({
+        isPublished: false,
+        lessonId: lesson.id,
+        organizationId: organization.id,
+        position: 0,
+      }),
+      activityFixture({
+        isPublished: true,
+        lessonId: lesson.id,
+        organizationId: organization.id,
+        position: 1,
+      }),
+    ]);
+
+    await activityProgressFixture({
+      activityId: unpublishedActivity.id,
+      completedAt: new Date(),
+      durationSeconds: 60,
+      userId: Number(user.id),
+    });
+
+    const result = await getNextChapterActivity(Number(user.id), chapter.id);
+
+    expect(result).toEqual({
+      activityPosition: publishedActivity.position,
+      brandSlug: organization.slug,
+      chapterSlug: chapter.slug,
+      completed: false,
+      courseSlug: course.slug,
+      hasStarted: false,
+      lessonSlug: lesson.slug,
+    });
+  });
+
   test("skips unpublished lessons", async () => {
     const course = await courseFixture({ isPublished: true, organizationId: organization.id });
     const chapter = await chapterFixture({

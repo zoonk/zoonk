@@ -16,9 +16,13 @@ export async function getNextCourseActivity(
   userId: number,
   courseId: number,
 ): Promise<NextActivityResult> {
-  const { data: rows } = await safeAsync(() =>
+  const { data: rows, error } = await safeAsync(() =>
     prisma.$queryRawTyped(getNextCourseActivityQuery(userId, courseId)),
   );
+
+  if (error) {
+    return null;
+  }
 
   const row = rows?.[0];
 

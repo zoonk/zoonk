@@ -3,7 +3,14 @@
 SELECT o.slug AS "orgSlug", c.slug AS "courseSlug",
        ch.slug AS "chapterSlug", l.slug AS "lessonSlug",
        a.position AS "activityPosition",
-       EXISTS(SELECT 1 FROM course_users WHERE course_id = $2 AND user_id = $1) AS "hasStarted"
+       EXISTS(
+         SELECT 1 FROM activity_progress ap2
+         JOIN activities a2 ON a2.id = ap2.activity_id
+         JOIN lessons l2 ON l2.id = a2.lesson_id
+         JOIN chapters ch2 ON ch2.id = l2.chapter_id
+         WHERE ch2.course_id = $2 AND ap2.user_id = $1
+           AND a2.is_published = true AND l2.is_published = true AND ch2.is_published = true
+       ) AS "hasStarted"
 FROM activities a
 JOIN lessons l ON l.id = a.lesson_id
 JOIN chapters ch ON ch.id = l.chapter_id
