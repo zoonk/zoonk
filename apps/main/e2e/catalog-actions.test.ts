@@ -107,7 +107,7 @@ test.describe("Catalog Actions", () => {
     await page.goto(`/b/ai/c/${course.slug}`);
 
     await page.getByRole("button", { name: /more options/i }).click();
-    await expect(page.getByRole("menuitem", { name: /send feedback/i })).toBeVisible();
+    await expect(page.getByRole("button", { name: /send feedback/i })).toBeVisible();
   });
 
   test("feedback dialog opens from dropdown", async ({ page }) => {
@@ -126,7 +126,7 @@ test.describe("Catalog Actions", () => {
     await page.goto(`/b/ai/c/${course.slug}`);
 
     await page.getByRole("button", { name: /more options/i }).click();
-    await page.getByRole("menuitem", { name: /send feedback/i }).click();
+    await page.getByRole("button", { name: /send feedback/i }).click();
 
     await expect(page.getByRole("heading", { name: /feedback/i })).toBeVisible();
     await expect(page.getByRole("textbox", { name: /email/i })).toBeVisible();
