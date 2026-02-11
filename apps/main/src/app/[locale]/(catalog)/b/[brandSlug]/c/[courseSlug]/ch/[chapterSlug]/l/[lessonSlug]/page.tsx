@@ -1,6 +1,7 @@
 "use cache";
 
-import { CatalogContainer } from "@/components/catalog/catalog-list";
+import { CatalogActions } from "@/components/catalog/catalog-actions";
+import { CatalogContainer, CatalogToolbar } from "@/components/catalog/catalog-list";
 import { ContinueActivityLink } from "@/components/catalog/continue-activity-link";
 import { listLessonActivities } from "@/data/activities/list-lesson-activities";
 import { getLesson } from "@/data/lessons/get-lesson";
@@ -87,10 +88,13 @@ export default async function LessonPage({
       />
 
       <CatalogContainer>
-        <ContinueActivityLink
-          fallbackHref={`${baseHref}/a/${activities[0]?.position}`}
-          lessonId={lesson.id}
-        />
+        <CatalogToolbar>
+          <ContinueActivityLink
+            fallbackHref={`${baseHref}/a/${activities[0]?.position}`}
+            lessonId={lesson.id}
+          />
+          <CatalogActions />
+        </CatalogToolbar>
         <ActivityList activities={activities} baseHref={baseHref} kindMeta={kindMeta} />
       </CatalogContainer>
     </main>
