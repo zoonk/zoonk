@@ -88,7 +88,7 @@ We recommend using [mise](https://mise.jdx.dev/) to manage your Node.js and pnpm
 - [db](./packages/db): Prisma schema and client
 - [e2e](./packages/e2e): Shared Playwright config and test fixtures
 - [error-reporter](./packages/error-reporter): Error reporting utilities
-- [eslint-plugin](./packages/eslint-plugin): Custom ESLint rules
+- [oxlint-plugin](./packages/oxlint-plugin): Custom oxlint rules
 - [mailer](./packages/mailer): Email-sending utilities
 - [next](./packages/next): Shared Next.js utilities
 - [testing](./packages/testing): Shared testing utilities
