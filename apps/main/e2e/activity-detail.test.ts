@@ -225,6 +225,8 @@ test.describe("Activity Detail Page", () => {
 
     await expect(page.getByRole("link", { name: /close/i })).toBeVisible();
 
+    // Wait for hydration so the keyboard listener from useEffect is attached
+    await page.waitForLoadState("networkidle");
     await page.keyboard.press("Escape");
 
     await expect(page).toHaveURL(
