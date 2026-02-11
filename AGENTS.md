@@ -31,12 +31,13 @@ Zoonk is a web app where users can learn anything using AI. This app uses AI to 
 - Prefer functional programming over OOP
 - Avoid mutations: return new values instead of modifying existing data or state
 - Use `[condition && value, ...].filter(Boolean)` instead of `let` + `.push()` for conditional arrays
-- Extract helper functions that return objects to eliminate `let` variables (e.g., `const { a, b } = await getOrCreate(...)`)
+- **Never use `let` + reassignment to compute a value.** Extract a helper function with early returns instead (e.g., `function getLabel() { if (x) return a; return b; }`). For objects, use helper functions that return the result (e.g., `const { a, b } = await getOrCreate(...)`). See `getComparisonLabel` in `metric-comparison.tsx` for the pattern
 - Use meaningful variable names and avoid abbreviations
 - For workflow orchestration, prefer linear wave-based flows (core-workflow style) with `Promise.allSettled` over branching orchestration unless branching is strictly required
 - Prefer linear, declarative code over nested conditionals and imperative code
 - Never guess at imports, table names, or conventions—always search for existing patterns first
 - Before writing code, check for existing patterns, agents, and skills that could help execute the task better
+- **Always use the best tool for the job.** Don't avoid installing a well-established library (e.g., SWR for client-side fetching) just because it's not already in the project. If it's the right solution, install it
 - Don't be afraid to refactor existing code to improve quality, clarity, or simplicity. Always leave the codebase better than you found it
 - Never cut corners or do hacks. Aim for maintainable, clean code
 - Think about the big picture—how your changes fit into the overall architecture and future growth
@@ -130,6 +131,7 @@ For detailed examples and patterns, see `.agents/skills/zoonk-compound-component
 
 **VERY IMPORTANT**: **Always follow TDD (Test-Driven Development)**: Write a failing test first, **run the test to confirm it fails**, then write the code to make it pass. If the test passes before your fix, the test is wrong—never use workarounds like `.first()` or loose assertions to make tests pass. Use unique test data (e.g., UUIDs in titles) to ensure tests catch regressions.
 
+- **Parallelize independent fixtures**: When test setup creates multiple entities that don't depend on each other (e.g., `user` + `course`, sibling chapters, multiple `activityProgressFixture` calls), use `Promise.all` instead of sequential awaits
 - **E2E tests**: For app/UI features, use Playwright (`apps/{app}/e2e/`)
 - **Integration tests**: For data functions with Prisma (`apps/{app}/src/data/`)
 - **Unit tests**: For utils, helpers, and UI component edge cases

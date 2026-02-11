@@ -5,6 +5,9 @@
   "exports": {
     ".": "./src/index.ts",
     "./continue-learning": "./src/generated/prisma/sql/getContinueLearning.ts",
+    "./next-activity/chapter": "./src/generated/prisma/sql/getNextChapterActivity.ts",
+    "./next-activity/course": "./src/generated/prisma/sql/getNextCourseActivity.ts",
+    "./next-activity/lesson": "./src/generated/prisma/sql/getNextLessonActivity.ts",
     "./peak-time": "./src/generated/prisma/sql/getPeakTime.ts",
     "./utils": "./src/utils.ts"
   },

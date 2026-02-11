@@ -376,8 +376,8 @@ checksums:
     Something%20went%20wrong.%20Please%20try%20again./singular: c62a7718d9a1e9c4ffb707807550f836
     Creating%20images/singular: ab6fe5010daa5a4deb52eabed6ca071f
     Getting%20started/singular: 8e5e7bd026b5bec46bbfdce02ab9e0b8
+    Preparing%20practice%20content/singular: 00fb505f6c2aec84f56054b9ab972655
     Almost%20done/singular: fa5f270ea4b185be8dd47cfb91b87810
-    Building%20your%20word%20list/singular: 72d48fdf27708f78aed15651559d029a
     Processing%20earlier%20activities/singular: 162ae4b3d730c56cf76023bb37004e59
     Preparing%20illustrations/singular: ebb0d8d739dd029c1ac7327ab6adf8b7
     Recording%20audio/singular: 528bf44d9d7b8a1c8be7ec526307a703
@@ -410,6 +410,8 @@ checksums:
     Read%20Zoonk's%20terms%20of%20use%20to%20understand%20the%20rules%20and%20conditions%20for%20using%20our%20platform%20and%20services/singular: 4b82898d60691839a1999e4a17199895
     Terms%20of%20Use/singular: 9ac262b2eda552beeecd904c0b9f8fa2
     This%20content%20was%20generated%20by%20AI.%20It%20may%20contain%20errors%20or%20inaccuracies%20and%20should%20not%20be%20considered%20professional%20advice./singular: 269e7c16a722903b9b434f28aa6cf617
+    Continue/singular: 3cfba90b4600131e82fc4260c568d044
+    Review/singular: 299f75db25382980b2895622d7712927
     Please%20provide%20as%20much%20detail%20as%20possible./singular: 3c8b231283c751d4beae059a6ffc3643
     Failed%20to%20send%20message.%20Please%20try%20again%20or%20email%20us%20directly%20at%20hello%40zoonk.com/singular: 7f36bcd5ba5dad4b9981f85488ff794c
     Email%20address/singular: 3ba3f099b1b9be6c35ad797da660cb9f
@@ -442,7 +444,6 @@ checksums:
     Mechanics/singular: 9885fd6c35db2bd26affb830d537046b
     Quiz/singular: 22bce287f7a90d3b41b418108eaab43b
     Grammar/singular: 1d97aca351a45df1d6eb27adbee04832
-    Review/singular: 299f75db25382980b2895622d7712927
     Explains%20WHAT%20this%20topic%20is.%20Breaks%20down%20core%20concepts%20and%20definitions%20using%20metaphors%20and%20analogies./singular: 5eb6b1cd33e5c20af8423753d4368a81
     A%20comprehensive%20review%20covering%20vocabulary%20and%20skills%20from%20this%20lesson./singular: 9d8f77da46237b58839fadcbadc5a0bc
     Explains%20WHY%20this%20topic%20exists.%20Tells%20the%20origin%20story%2C%20the%20problems%20it%20solved%2C%20and%20why%20it%20matters%20today./singular: 8bdce45d80e8a4cfcbc65d2bfe928c82

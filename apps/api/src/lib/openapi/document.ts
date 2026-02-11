@@ -2,6 +2,7 @@ import { z } from "zod";
 import { createDocument } from "zod-openapi";
 import { paginationSchema } from "./schemas/common";
 import { courseResultSchema, courseSearchQuerySchema } from "./schemas/courses";
+import { nextActivityQuerySchema, nextActivityResponseSchema } from "./schemas/progress";
 import {
   validationErrorResponse,
   workflowStatusEndpoint,
@@ -57,6 +58,24 @@ export const openAPIDocument = createDocument({
         },
         summary: "Search published courses",
         tags: ["Courses"],
+      },
+    },
+    "/progress/next-activity": {
+      get: {
+        requestParams: { query: nextActivityQuerySchema },
+        responses: {
+          "200": {
+            content: {
+              "application/json": {
+                schema: nextActivityResponseSchema,
+              },
+            },
+            description: "Next activity to complete",
+          },
+          "400": validationErrorResponse,
+        },
+        summary: "Get next activity for a course, chapter, or lesson",
+        tags: ["Progress"],
       },
     },
     "/workflows/activity-generation/status": workflowStatusEndpoint(
