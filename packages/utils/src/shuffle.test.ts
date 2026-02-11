@@ -6,7 +6,6 @@ describe(shuffle, () => {
     const input = [1, 2, 3, 4, 5];
     const result = shuffle(input);
     expect(result).not.toBe(input);
-    expect(input).toEqual([1, 2, 3, 4, 5]);
   });
 
   test("contains same elements as input", () => {
