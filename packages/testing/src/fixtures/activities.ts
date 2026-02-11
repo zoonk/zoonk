@@ -2,7 +2,7 @@ import { type Activity, type ActivityProgress, prisma } from "@zoonk/db";
 
 export function activityAttrs(
   attrs?: Partial<Activity>,
-): Omit<Activity, "id" | "createdAt" | "updatedAt" | "content"> {
+): Omit<Activity, "id" | "createdAt" | "updatedAt"> {
   return {
     description: "Test activity description",
     generationRunId: null,

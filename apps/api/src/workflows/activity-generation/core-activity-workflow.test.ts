@@ -1890,7 +1890,7 @@ describe("core activity workflow", () => {
       expect(dbActivity?.generationStatus).toBe("failed");
     });
 
-    test("creates steps in DB with multipleChoice kind and correct content", async () => {
+    test("creates steps in DB with intro, multipleChoice, and reflection steps", async () => {
       const testLesson = await lessonFixture({
         chapterId: chapter.id,
         organizationId,
@@ -1930,9 +1930,17 @@ describe("core activity workflow", () => {
         where: { activityId: challengeActivity?.id },
       });
 
-      expect(challengeSteps).toHaveLength(1);
-      expect(challengeSteps[0]?.kind).toBe("multipleChoice");
+      expect(challengeSteps).toHaveLength(3);
+
+      expect(challengeSteps[0]?.kind).toBe("static");
       expect(challengeSteps[0]?.content).toEqual({
+        text: "Welcome to the challenge scenario...",
+        title: "",
+        variant: "text",
+      });
+
+      expect(challengeSteps[1]?.kind).toBe("multipleChoice");
+      expect(challengeSteps[1]?.content).toEqual({
         context: "Your team lead asks you to choose...",
         kind: "challenge",
         options: [
@@ -1954,9 +1962,16 @@ describe("core activity workflow", () => {
         ],
         question: "What approach do you take?",
       });
+
+      expect(challengeSteps[2]?.kind).toBe("static");
+      expect(challengeSteps[2]?.content).toEqual({
+        text: "Every decision involves trade-offs...",
+        title: "",
+        variant: "text",
+      });
     });
 
-    test("saves intro and reflection to activity content", async () => {
+    test("stores intro and reflection as static steps instead of activity content", async () => {
       const testLesson = await lessonFixture({
         chapterId: chapter.id,
         organizationId,
@@ -1991,13 +2006,28 @@ describe("core activity workflow", () => {
 
       await activityGenerationWorkflow(testLesson.id);
 
-      const dbActivity = await prisma.activity.findUnique({
-        where: { id: challengeActivity?.id },
+      const challengeSteps = await prisma.step.findMany({
+        orderBy: { position: "asc" },
+        where: { activityId: challengeActivity?.id },
       });
 
-      expect(dbActivity?.content).toEqual({
-        intro: "Welcome to the challenge scenario...",
-        reflection: "Every decision involves trade-offs...",
+      const introStep = challengeSteps[0];
+      const reflectionStep = challengeSteps.at(-1);
+
+      expect(introStep?.kind).toBe("static");
+      expect(introStep?.position).toBe(0);
+      expect(introStep?.content).toEqual({
+        text: "Welcome to the challenge scenario...",
+        title: "",
+        variant: "text",
+      });
+
+      expect(reflectionStep?.kind).toBe("static");
+      expect(reflectionStep?.position).toBe(2);
+      expect(reflectionStep?.content).toEqual({
+        text: "Every decision involves trade-offs...",
+        title: "",
+        variant: "text",
       });
     });
 

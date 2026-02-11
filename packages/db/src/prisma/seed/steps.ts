@@ -189,7 +189,7 @@ const stepsData: {
       {
         content: {
           text: "You're leading a machine learning project at a startup. Your goal is to build a successful model while managing resources and team morale. Make strategic decisions to win!",
-          title: "The ML Project Challenge",
+          title: "",
           variant: "text",
         },
         kind: "static",
@@ -266,6 +266,14 @@ const stepsData: {
             "The model is underperforming. A team member suggests using a more complex architecture. What's your decision?",
         },
         kind: "multipleChoice",
+      },
+      {
+        content: {
+          text: "Every ML project involves trade-offs between speed, quality, and team wellbeing. The best approach depends on your priorities and constraints.",
+          title: "",
+          variant: "text",
+        },
+        kind: "static",
       },
     ],
   },

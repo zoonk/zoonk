@@ -18,33 +18,38 @@ import { setActivityAsRunningStep } from "./set-activity-as-running-step";
 
 async function saveChallengeSteps(
   activityId: bigint | number,
-  steps: ActivityChallengeSchema["steps"][number][],
-  activityContent: { intro: string; reflection: string },
+  data: ActivityChallengeSchema,
 ): Promise<{ error: Error | null }> {
-  return safeAsync(() =>
-    prisma.$transaction([
-      prisma.step.createMany({
-        data: steps.map((step, index) => {
-          const content = assertStepContent("multipleChoice", {
-            context: step.context,
-            kind: "challenge",
-            options: step.options,
-            question: step.question,
-          });
+  const introStep = {
+    activityId,
+    content: assertStepContent("static", { text: data.intro, title: "", variant: "text" }),
+    kind: "static" as const,
+    position: 0,
+  };
 
-          return {
-            activityId,
-            content,
-            kind: "multipleChoice",
-            position: index,
-          };
-        }),
-      }),
-      prisma.activity.update({
-        data: { content: activityContent },
-        where: { id: activityId },
-      }),
-    ]),
+  const mcSteps = data.steps.map((step, index) => ({
+    activityId,
+    content: assertStepContent("multipleChoice", {
+      context: step.context,
+      kind: "challenge",
+      options: step.options,
+      question: step.question,
+    }),
+    kind: "multipleChoice" as const,
+    position: index + 1,
+  }));
+
+  const reflectionStep = {
+    activityId,
+    content: assertStepContent("static", { text: data.reflection, title: "", variant: "text" }),
+    kind: "static" as const,
+    position: data.steps.length + 1,
+  };
+
+  return safeAsync(() =>
+    prisma.step.createMany({
+      data: [introStep, ...mcSteps, reflectionStep],
+    }),
   );
 }
 
@@ -60,10 +65,7 @@ async function saveAndCompleteChallenge(
   activityId: bigint | number,
   data: ActivityChallengeSchema,
 ): Promise<void> {
-  const { error } = await saveChallengeSteps(activityId, data.steps, {
-    intro: data.intro,
-    reflection: data.reflection,
-  });
+  const { error } = await saveChallengeSteps(activityId, data);
 
   if (error) {
     await handleChallengeError(activityId, "dbSaveFailed");
