@@ -57,7 +57,11 @@ export default async function ActivityPage({ params }: Props) {
     notFound();
   }
 
-  const activity = await getActivity({ lessonId: lesson.id, position: activityPosition });
+  const [activity, lessonWords, lessonSentences] = await Promise.all([
+    getActivity({ lessonId: lesson.id, position: activityPosition }),
+    getLessonWords({ lessonId: lesson.id }),
+    getLessonSentences({ lessonId: lesson.id }),
+  ]);
 
   if (!activity) {
     notFound();
@@ -72,11 +76,6 @@ export default async function ActivityPage({ params }: Props) {
       </main>
     );
   }
-
-  const [lessonWords, lessonSentences] = await Promise.all([
-    getLessonWords({ lessonId: lesson.id }),
-    getLessonSentences({ lessonId: lesson.id }),
-  ]);
 
   const serialized = prepareActivityData(activity, lessonWords, lessonSentences);
   const lessonHref = `/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}/l/${lessonSlug}`;
