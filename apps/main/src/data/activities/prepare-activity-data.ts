@@ -1,18 +1,58 @@
-import { isSupportedStepKind, parseStepContent } from "@zoonk/core/steps/content-contract";
 import {
-  type SerializedActivity,
-  type SerializedSentence,
-  type SerializedStep,
-  type SerializedWord,
-} from "@zoonk/core/steps/serialized-types";
+  type StepContentByKind,
+  type SupportedStepKind,
+  isSupportedStepKind,
+  parseStepContent,
+} from "@zoonk/core/steps/content-contract";
 import {
   type SupportedVisualKind,
+  type VisualContentByKind,
   isSupportedVisualKind,
   parseVisualContent,
 } from "@zoonk/core/steps/visual-content-contract";
 import { type ActivityWithSteps } from "./get-activity";
 import { type LessonSentenceData } from "./get-lesson-sentences";
 import { type LessonWordData } from "./get-lesson-words";
+
+export type SerializedWord = {
+  id: string;
+  word: string;
+  translation: string;
+  pronunciation: string | null;
+  romanization: string | null;
+  audioUrl: string | null;
+};
+
+export type SerializedSentence = {
+  id: string;
+  sentence: string;
+  translation: string;
+  romanization: string | null;
+  audioUrl: string | null;
+};
+
+export type SerializedStep<Kind extends SupportedStepKind = SupportedStepKind> = {
+  id: string;
+  kind: Kind;
+  position: number;
+  content: StepContentByKind[Kind];
+  visualKind: SupportedVisualKind | null;
+  visualContent: VisualContentByKind[SupportedVisualKind] | null;
+  word: SerializedWord | null;
+  sentence: SerializedSentence | null;
+};
+
+export type SerializedActivity = {
+  id: string;
+  kind: string;
+  title: string | null;
+  description: string | null;
+  language: string;
+  organizationId: number;
+  steps: SerializedStep[];
+  lessonWords: SerializedWord[];
+  lessonSentences: SerializedSentence[];
+};
 
 function serializeWord(
   word: NonNullable<ActivityWithSteps["steps"][number]["word"]>,

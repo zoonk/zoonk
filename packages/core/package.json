@@ -27,7 +27,6 @@
     "./player/compute-score": "./src/player/compute-score.ts",
     "./steps/image": "./src/steps/step-image.ts",
     "./steps/content-contract": "./src/steps/content-contract.ts",
-    "./steps/serialized-types": "./src/steps/serialized-types.ts",
     "./steps/visual-content-contract": "./src/steps/visual-content-contract.ts",
     "./steps/visual-image": "./src/steps/step-visual-image.ts",
     "./types": "./src/types.ts",
