@@ -671,12 +671,6 @@ importers:
         specifier: workspace:*
         version: link:../tsconfig
 
-  packages/eslint-plugin:
-    devDependencies:
-      oxlint:
-        specifier: 1.41.0
-        version: 1.41.0(oxlint-tsgolint@0.11.4)
-
   packages/mailer:
     dependencies:
       '@zoonk/utils':
@@ -726,6 +720,12 @@ importers:
       '@zoonk/tsconfig':
         specifier: workspace:*
         version: link:../tsconfig
+
+  packages/oxlint-plugin:
+    devDependencies:
+      oxlint:
+        specifier: 1.41.0
+        version: 1.41.0(oxlint-tsgolint@0.11.4)
 
   packages/testing:
     dependencies:

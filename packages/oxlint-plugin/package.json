@@ -1,5 +1,5 @@
 {
-  "name": "@zoonk/eslint-plugin",
+  "name": "@zoonk/oxlint-plugin",
   "private": true,
   "type": "module",
   "devDependencies": {
