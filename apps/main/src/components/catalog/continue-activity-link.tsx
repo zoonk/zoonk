@@ -4,11 +4,28 @@ import { ClientLink } from "@/i18n/client-link";
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { API_URL } from "@zoonk/utils/constants";
+import { getString, isJsonObject } from "@zoonk/utils/json";
 import { ChevronRightIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useEffect, useState } from "react";
+import useSWR from "swr";
 
-type NextActivityData = {
+function buildQueryString(props: { chapterId?: number; courseId?: number; lessonId?: number }) {
+  if (props.courseId) {
+    return `courseId=${props.courseId}`;
+  }
+
+  if (props.chapterId) {
+    return `chapterId=${props.chapterId}`;
+  }
+
+  if (props.lessonId) {
+    return `lessonId=${props.lessonId}`;
+  }
+
+  return "";
+}
+
+async function fetchNextActivity(url: string): Promise<{
   activityPosition: number;
   brandSlug: string;
   chapterSlug: string;
@@ -16,47 +33,23 @@ type NextActivityData = {
   courseSlug: string;
   hasStarted: boolean;
   lessonSlug: string;
-};
+} | null> {
+  const res = await fetch(url, { credentials: "include" });
+  const json: unknown = await res.json();
 
-function useNextActivity(params: URLSearchParams) {
-  const [data, setData] = useState<NextActivityData | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetch(`${API_URL}/v1/progress/next-activity?${params.toString()}`, {
-      credentials: "include",
-    })
-      .then((res) => res.json())
-      .then((json: NextActivityData) => {
-        setData(json.brandSlug ? json : null);
-        setLoading(false);
-      })
-      .catch(() => {
-        setLoading(false);
-      });
-  }, [params]);
-
-  return { data, loading };
-}
-
-function ActivityLink({ data }: { data: NextActivityData }) {
-  const t = useExtracted();
-  const href = `/b/${data.brandSlug}/c/${data.courseSlug}/ch/${data.chapterSlug}/l/${data.lessonSlug}/a/${data.activityPosition}`;
-
-  let label = t("Start");
-
-  if (data.completed) {
-    label = t("Review");
-  } else if (data.hasStarted) {
-    label = t("Continue");
+  if (!isJsonObject(json)) {
+    return null;
   }
 
-  return (
-    <ClientLink className={cn(buttonVariants(), "w-full gap-2")} href={href}>
-      {label}
-      <ChevronRightIcon aria-hidden="true" />
-    </ClientLink>
-  );
+  return {
+    activityPosition: Number(json.activityPosition),
+    brandSlug: getString(json, "brandSlug") ?? "",
+    chapterSlug: getString(json, "chapterSlug") ?? "",
+    completed: json.completed === true,
+    courseSlug: getString(json, "courseSlug") ?? "",
+    hasStarted: json.hasStarted === true,
+    lessonSlug: getString(json, "lessonSlug") ?? "",
+  };
 }
 
 export function ContinueActivityLink({
@@ -69,21 +62,14 @@ export function ContinueActivityLink({
   lessonId?: number;
 }) {
   const t = useExtracted();
-  const params = new URLSearchParams();
+  const queryString = buildQueryString({ chapterId, courseId, lessonId });
 
-  if (courseId) {
-    params.set("courseId", String(courseId));
-  }
-  if (chapterId) {
-    params.set("chapterId", String(chapterId));
-  }
-  if (lessonId) {
-    params.set("lessonId", String(lessonId));
-  }
+  const { data, isLoading } = useSWR(
+    `${API_URL}/v1/progress/next-activity?${queryString}`,
+    fetchNextActivity,
+  );
 
-  const { data, loading } = useNextActivity(params);
-
-  if (loading) {
+  if (isLoading) {
     return (
       <Button className="w-full" disabled>
         {t("Start")}
@@ -95,5 +81,24 @@ export function ContinueActivityLink({
     return null;
   }
 
-  return <ActivityLink data={data} />;
+  const href = `/b/${data.brandSlug}/c/${data.courseSlug}/ch/${data.chapterSlug}/l/${data.lessonSlug}/a/${data.activityPosition}`;
+
+  const getLabel = () => {
+    if (data.completed) {
+      return t("Review");
+    }
+
+    if (data.hasStarted) {
+      return t("Continue");
+    }
+
+    return t("Start");
+  };
+
+  return (
+    <ClientLink className={cn(buttonVariants(), "w-full gap-2")} href={href}>
+      {getLabel()}
+      <ChevronRightIcon aria-hidden="true" />
+    </ClientLink>
+  );
 }
