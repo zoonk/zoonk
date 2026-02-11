@@ -35,6 +35,8 @@
       "ignore": [
         "e2e/**",
         "setup-tests.ts",
+        "src/components/activity-player/player-reducer.ts",
+        "src/components/activity-player/use-player-state.ts",
         "src/data/activities/get-lesson-sentences.ts",
         "src/data/activities/get-lesson-words.ts",
         "src/data/activities/prepare-activity-data.ts"
