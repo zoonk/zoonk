@@ -96,4 +96,22 @@ function ProgressDots({
   );
 }
 
-export { Progress, ProgressDots, ProgressIndicator, ProgressLabel, ProgressTrack, ProgressValue };
+function ProgressRoot({ className, ...props }: ProgressPrimitive.Root.Props) {
+  return (
+    <ProgressPrimitive.Root
+      className={cn("flex flex-wrap gap-3", className)}
+      data-slot="progress-root"
+      {...props}
+    />
+  );
+}
+
+export {
+  Progress,
+  ProgressDots,
+  ProgressIndicator,
+  ProgressLabel,
+  ProgressRoot,
+  ProgressTrack,
+  ProgressValue,
+};

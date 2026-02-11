@@ -32,15 +32,7 @@
         "src/app/[locale]/privacy/*.mdx",
         "src/app/[locale]/terms/*.mdx"
       ],
-      "ignore": [
-        "e2e/**",
-        "setup-tests.ts",
-        "src/components/activity-player/player-reducer.ts",
-        "src/components/activity-player/use-player-state.ts",
-        "src/data/activities/get-lesson-sentences.ts",
-        "src/data/activities/get-lesson-words.ts",
-        "src/data/activities/prepare-activity-data.ts"
-      ]
+      "ignore": ["e2e/**", "setup-tests.ts", "src/components/activity-player/use-player-state.ts"]
     },
     "packages/core": {
       "ignore": ["setup-tests.ts"]
