@@ -3,7 +3,7 @@ import { Skeleton } from "@zoonk/ui/components/skeleton";
 export default function ActivityPlayerLoading() {
   return (
     <main className="flex min-h-dvh flex-col">
-      <header className="flex items-center justify-between p-4">
+      <header className="flex items-center justify-between px-3 py-1.5 sm:p-4">
         <Skeleton className="size-9 rounded-full" />
         <Skeleton className="h-4 w-12" />
       </header>

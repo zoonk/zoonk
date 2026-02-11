@@ -6,7 +6,7 @@ import { XIcon } from "lucide-react";
 export function PlayerHeader({ className, ...props }: React.ComponentProps<"header">) {
   return (
     <header
-      className={cn("flex items-center justify-between p-4", className)}
+      className={cn("flex items-center justify-between px-3 py-1.5 sm:p-4", className)}
       data-slot="player-header"
       {...props}
     />
