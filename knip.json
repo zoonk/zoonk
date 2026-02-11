@@ -1,5 +1,5 @@
 {
-  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "$schema": "./node_modules/knip/schema.json",
   "ignore": [],
   "ignoreBinaries": ["stripe", "build-and-start", "turbo"],
   "ignoreDependencies": [
@@ -32,7 +32,13 @@
         "src/app/[locale]/privacy/*.mdx",
         "src/app/[locale]/terms/*.mdx"
       ],
-      "ignore": ["e2e/**", "setup-tests.ts"]
+      "ignore": [
+        "e2e/**",
+        "setup-tests.ts",
+        "src/data/activities/get-lesson-sentences.ts",
+        "src/data/activities/get-lesson-words.ts",
+        "src/data/activities/prepare-activity-data.ts"
+      ]
     },
     "packages/core": {
       "ignore": ["setup-tests.ts"]

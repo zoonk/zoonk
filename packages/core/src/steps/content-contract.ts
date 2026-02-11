@@ -1,4 +1,3 @@
-import { type StepKind } from "@zoonk/db";
 import { z } from "zod";
 
 const challengeEffectSchema = z
@@ -192,7 +191,7 @@ export type StepContentByKind = {
   vocabulary: VocabularyStepContent;
 };
 
-export function isSupportedStepKind(kind: StepKind): kind is SupportedStepKind {
+export function isSupportedStepKind(kind: string): kind is SupportedStepKind {
   return Object.hasOwn(stepContentSchemas, kind);
 }
 

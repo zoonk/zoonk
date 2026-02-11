@@ -14,7 +14,6 @@ const activitiesData: {
     kind: ActivityKind;
     title?: string;
     description?: string;
-    content?: { intro?: string; reflection?: string };
   }[];
 }[] = [
   {
@@ -50,12 +49,6 @@ const activitiesData: {
         kind: "quiz",
       },
       {
-        content: {
-          intro:
-            "Welcome to TechCorp, {{NAME}}! You've just joined the ML team during a critical project phase. Your decisions will shape the outcome.",
-          reflection:
-            "Every ML project involves trade-offs between speed, quality, and team wellbeing. The best approach depends on your priorities and constraints.",
-        },
         generationStatus: "completed",
         isPublished: true,
         kind: "challenge",
@@ -249,7 +242,6 @@ export async function seedActivities(prisma: PrismaClient, org: Organization): P
           data.activities.map((activityData, position) =>
             prisma.activity.create({
               data: {
-                content: activityData.content,
                 description: activityData.description,
                 generationStatus: activityData.generationStatus,
                 isPublished: activityData.isPublished,

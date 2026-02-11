@@ -7,6 +7,8 @@ export type ActivityWithSteps = {
   kind: ActivityKind;
   title: string | null;
   description: string | null;
+  language: string;
+  organizationId: number;
   position: number;
   generationStatus: GenerationStatus;
   generationRunId: string | null;
@@ -17,6 +19,21 @@ export type ActivityWithSteps = {
     position: number;
     visualContent: unknown;
     visualKind: string | null;
+    word: {
+      id: bigint;
+      word: string;
+      translation: string;
+      pronunciation: string | null;
+      romanization: string | null;
+      audioUrl: string | null;
+    } | null;
+    sentence: {
+      id: bigint;
+      sentence: string;
+      translation: string;
+      romanization: string | null;
+      audioUrl: string | null;
+    } | null;
   }[];
 };
 
@@ -30,6 +47,8 @@ const cachedGetActivity = cache(
         generationStatus: true,
         id: true,
         kind: true,
+        language: true,
+        organizationId: true,
         position: true,
         steps: {
           orderBy: { position: "asc" },
@@ -38,8 +57,27 @@ const cachedGetActivity = cache(
             id: true,
             kind: true,
             position: true,
+            sentence: {
+              select: {
+                audioUrl: true,
+                id: true,
+                romanization: true,
+                sentence: true,
+                translation: true,
+              },
+            },
             visualContent: true,
             visualKind: true,
+            word: {
+              select: {
+                audioUrl: true,
+                id: true,
+                pronunciation: true,
+                romanization: true,
+                translation: true,
+                word: true,
+              },
+            },
           },
         },
         title: true,

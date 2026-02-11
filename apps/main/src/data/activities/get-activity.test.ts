@@ -3,7 +3,9 @@ import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
+import { sentenceFixture } from "@zoonk/testing/fixtures/sentences";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
+import { wordFixture } from "@zoonk/testing/fixtures/words";
 import { beforeAll, describe, expect, test } from "vitest";
 import { getActivity } from "./get-activity";
 
@@ -123,5 +125,109 @@ describe(getActivity, () => {
 
     expect(result?.steps[0]?.content).toEqual({ text: "Step 1 content", title: "Step 1" });
     expect(result?.steps[0]?.kind).toBe("static");
+  });
+
+  test("returns language and organizationId on the activity", async () => {
+    const result = await getActivity({ lessonId: lesson.id, position: 0 });
+
+    expect(result?.language).toBe("en");
+    expect(result?.organizationId).toBe(org.id);
+  });
+
+  test("returns word data when step has word relation", async () => {
+    const wordLesson = await lessonFixture({
+      chapterId: chapter.id,
+      isPublished: true,
+      language: "en",
+      organizationId: org.id,
+    });
+
+    const [wordActivity, word] = await Promise.all([
+      activityFixture({
+        generationStatus: "completed",
+        isPublished: true,
+        kind: "vocabulary",
+        language: "en",
+        lessonId: wordLesson.id,
+        organizationId: org.id,
+        position: 0,
+      }),
+      wordFixture({
+        audioUrl: "https://example.com/audio.mp3",
+        organizationId: org.id,
+        pronunciation: "test-pron",
+        romanization: "test-roman",
+        translation: "test-translation",
+        word: `test-word-${crypto.randomUUID()}`,
+      }),
+    ]);
+
+    await stepFixture({
+      activityId: wordActivity.id,
+      position: 0,
+      wordId: word.id,
+    });
+
+    const result = await getActivity({ lessonId: wordLesson.id, position: 0 });
+
+    expect(result?.steps[0]?.word).toEqual({
+      audioUrl: "https://example.com/audio.mp3",
+      id: word.id,
+      pronunciation: "test-pron",
+      romanization: "test-roman",
+      translation: "test-translation",
+      word: word.word,
+    });
+  });
+
+  test("returns sentence data when step has sentence relation", async () => {
+    const sentLesson = await lessonFixture({
+      chapterId: chapter.id,
+      isPublished: true,
+      language: "en",
+      organizationId: org.id,
+    });
+
+    const [sentActivity, sentence] = await Promise.all([
+      activityFixture({
+        generationStatus: "completed",
+        isPublished: true,
+        kind: "vocabulary",
+        language: "en",
+        lessonId: sentLesson.id,
+        organizationId: org.id,
+        position: 0,
+      }),
+      sentenceFixture({
+        audioUrl: "https://example.com/sent-audio.mp3",
+        organizationId: org.id,
+        romanization: "test-sent-roman",
+        sentence: `test-sentence-${crypto.randomUUID()}`,
+        translation: "test-sent-translation",
+      }),
+    ]);
+
+    await stepFixture({
+      activityId: sentActivity.id,
+      position: 0,
+      sentenceId: sentence.id,
+    });
+
+    const result = await getActivity({ lessonId: sentLesson.id, position: 0 });
+
+    expect(result?.steps[0]?.sentence).toEqual({
+      audioUrl: "https://example.com/sent-audio.mp3",
+      id: sentence.id,
+      romanization: "test-sent-roman",
+      sentence: sentence.sentence,
+      translation: "test-sent-translation",
+    });
+  });
+
+  test("returns null word and sentence for steps without relations", async () => {
+    const result = await getActivity({ lessonId: lesson.id, position: 0 });
+
+    expect(result?.steps[0]?.word).toBeNull();
+    expect(result?.steps[0]?.sentence).toBeNull();
   });
 });
