@@ -97,6 +97,7 @@ For detailed UX guidelines (interactions, animation, layout, accessibility), see
 - When adding a new endpoint, add docs for it in `document.ts`
 - When adding e2e tests, use `*Fixture()` functions to create unique test data per test - do not modify seed files
 - Avoid inline imports like `await import()`, only do it when dynamic imports are absolutely necessary
+- Never use `git push --force` or `git push --force-with-lease`. When you make a change, just add a new commit and push it, no need to rewrite history
 
 ## Component Organization
 

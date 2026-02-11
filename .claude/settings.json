@@ -18,7 +18,9 @@
       "Read(.env.production)",
       "Read(**/.env.production)",
       "Read(.env.staging)",
-      "Read(**/.env.staging)"
+      "Read(**/.env.staging)",
+      "Bash(git push --force-with-lease:*)",
+      "Bash(git push --force:*)"
     ]
   },
   "enabledPlugins": {
