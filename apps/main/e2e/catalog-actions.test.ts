@@ -168,4 +168,162 @@ test.describe("Catalog Actions", () => {
 
     await expect(page.getByRole("button", { name: /more options/i })).toBeVisible();
   });
+
+  test("dropdown shows feedback items on course page", async ({ page }) => {
+    const { chapter, course, lesson } = await createTestCourseWithActivity();
+
+    await mockNextActivityAPI(page, {
+      activityPosition: 0,
+      brandSlug: "ai",
+      chapterSlug: chapter.slug,
+      completed: false,
+      courseSlug: course.slug,
+      hasStarted: false,
+      lessonSlug: lesson.slug,
+    });
+
+    await page.goto(`/b/ai/c/${course.slug}`);
+
+    await page.getByRole("button", { name: /more options/i }).click();
+    await expect(page.getByRole("menuitemradio", { name: /^helpful$/i })).toBeVisible();
+    await expect(page.getByRole("menuitemradio", { name: /not helpful/i })).toBeVisible();
+  });
+
+  test("clicking helpful shows toast confirmation", async ({ page }) => {
+    const { chapter, course, lesson } = await createTestCourseWithActivity();
+
+    await mockNextActivityAPI(page, {
+      activityPosition: 0,
+      brandSlug: "ai",
+      chapterSlug: chapter.slug,
+      completed: false,
+      courseSlug: course.slug,
+      hasStarted: false,
+      lessonSlug: lesson.slug,
+    });
+
+    await page.goto(`/b/ai/c/${course.slug}`);
+
+    await page.getByRole("button", { name: /more options/i }).click();
+    await page.getByRole("menuitemradio", { name: /^helpful$/i }).click();
+
+    await expect(page.getByText(/thanks for your feedback/i)).toBeVisible();
+  });
+
+  test("clicking helpful marks it as selected", async ({ page }) => {
+    const { chapter, course, lesson } = await createTestCourseWithActivity();
+
+    await mockNextActivityAPI(page, {
+      activityPosition: 0,
+      brandSlug: "ai",
+      chapterSlug: chapter.slug,
+      completed: false,
+      courseSlug: course.slug,
+      hasStarted: false,
+      lessonSlug: lesson.slug,
+    });
+
+    await page.goto(`/b/ai/c/${course.slug}`);
+
+    await page.getByRole("button", { name: /more options/i }).click();
+    await page.getByRole("menuitemradio", { name: /^helpful$/i }).click();
+
+    await expect(page.getByRole("menuitemradio", { name: /^helpful$/i })).toHaveAttribute(
+      "aria-checked",
+      "true",
+    );
+  });
+
+  test("switching feedback changes selection", async ({ page }) => {
+    const { chapter, course, lesson } = await createTestCourseWithActivity();
+
+    await mockNextActivityAPI(page, {
+      activityPosition: 0,
+      brandSlug: "ai",
+      chapterSlug: chapter.slug,
+      completed: false,
+      courseSlug: course.slug,
+      hasStarted: false,
+      lessonSlug: lesson.slug,
+    });
+
+    await page.goto(`/b/ai/c/${course.slug}`);
+
+    await page.getByRole("button", { name: /more options/i }).click();
+    await page.getByRole("menuitemradio", { name: /^helpful$/i }).click();
+    await page.getByRole("menuitemradio", { name: /not helpful/i }).click();
+
+    await expect(page.getByRole("menuitemradio", { name: /not helpful/i })).toHaveAttribute(
+      "aria-checked",
+      "true",
+    );
+    await expect(page.getByRole("menuitemradio", { name: /^helpful$/i })).toHaveAttribute(
+      "aria-checked",
+      "false",
+    );
+  });
+
+  test("chapter page shows feedback items", async ({ page }) => {
+    const { chapter, course, lesson } = await createTestCourseWithActivity();
+
+    await mockNextActivityAPI(page, {
+      activityPosition: 0,
+      brandSlug: "ai",
+      chapterSlug: chapter.slug,
+      completed: false,
+      courseSlug: course.slug,
+      hasStarted: false,
+      lessonSlug: lesson.slug,
+    });
+
+    await page.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}`);
+
+    await page.getByRole("button", { name: /more options/i }).click();
+    await expect(page.getByRole("menuitemradio", { name: /^helpful$/i })).toBeVisible();
+    await expect(page.getByRole("menuitemradio", { name: /not helpful/i })).toBeVisible();
+  });
+
+  test("lesson page shows feedback items", async ({ page }) => {
+    const { chapter, course, lesson } = await createTestCourseWithActivity();
+
+    await mockNextActivityAPI(page, {
+      activityPosition: 0,
+      brandSlug: "ai",
+      chapterSlug: chapter.slug,
+      completed: false,
+      courseSlug: course.slug,
+      hasStarted: false,
+      lessonSlug: lesson.slug,
+    });
+
+    await page.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
+
+    await page.getByRole("button", { name: /more options/i }).click();
+    await expect(page.getByRole("menuitemradio", { name: /^helpful$/i })).toBeVisible();
+    await expect(page.getByRole("menuitemradio", { name: /not helpful/i })).toBeVisible();
+  });
+
+  test("send feedback dialog still works after selecting feedback", async ({ page }) => {
+    const { chapter, course, lesson } = await createTestCourseWithActivity();
+
+    await mockNextActivityAPI(page, {
+      activityPosition: 0,
+      brandSlug: "ai",
+      chapterSlug: chapter.slug,
+      completed: false,
+      courseSlug: course.slug,
+      hasStarted: false,
+      lessonSlug: lesson.slug,
+    });
+
+    await page.goto(`/b/ai/c/${course.slug}`);
+
+    await page.getByRole("button", { name: /more options/i }).click();
+    await page.getByRole("menuitemradio", { name: /^helpful$/i }).click();
+    await page.getByRole("button", { name: /send feedback/i }).click();
+
+    await expect(page.getByRole("heading", { name: /feedback/i })).toBeVisible();
+    await expect(page.getByRole("textbox", { name: /email/i })).toBeVisible();
+    await expect(page.getByRole("textbox", { name: /message/i })).toBeVisible();
+  });
 });

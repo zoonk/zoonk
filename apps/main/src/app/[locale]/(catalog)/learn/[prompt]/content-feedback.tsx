@@ -1,7 +1,7 @@
 "use client";
 
 import { FeedbackDialog } from "@/components/feedback/feedback-dialog";
-import { track } from "@vercel/analytics";
+import { type FeedbackKind, type FeedbackValue, trackFeedback } from "@/lib/track-feedback";
 import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { MessageSquareIcon, ThumbsDownIcon, ThumbsUpIcon } from "lucide-react";
@@ -13,19 +13,18 @@ export function ContentFeedback({
   contentId,
   className,
 }: {
-  kind: "courseSuggestions";
+  kind: FeedbackKind;
   contentId: string;
 } & React.ComponentProps<"footer">) {
   const t = useExtracted();
-  const [feedback, setFeedback] = useState<"upvote" | "downvote" | null>(null);
+  const [feedback, setFeedback] = useState<FeedbackValue | null>(null);
 
-  const handleFeedback = (value: "upvote" | "downvote") => {
-    // Only track analytics if the feedback value is actually changing
+  function handleFeedback(value: FeedbackValue) {
     if (feedback !== value) {
       setFeedback(value);
-      track("Feedback", { contentId, feedback: value, kind });
+      trackFeedback({ contentId, feedback: value, kind });
     }
-  };
+  }
 
   return (
     <footer className={cn("flex flex-col items-center gap-1 text-center", className)}>

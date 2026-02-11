@@ -67,7 +67,7 @@ export default async function CoursePage({
             courseId={course.id}
             fallbackHref={`/b/${brandSlug}/c/${courseSlug}/ch/${chapters[0]?.slug}`}
           />
-          <CatalogActions />
+          <CatalogActions contentId={courseSlug} kind="course" />
         </CatalogToolbar>
 
         <Suspense>
