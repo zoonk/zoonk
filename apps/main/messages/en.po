@@ -136,16 +136,6 @@ msgid "Chapter {position}"
 msgstr "Chapter {position}"
 
 #: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/activity-list.tsx
-msgctxt "4o5CAP"
-msgid "Not completed"
-msgstr "Not completed"
-
-#: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/activity-list.tsx
-msgctxt "95stPq"
-msgid "Completed"
-msgstr "Completed"
-
-#: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/activity-list.tsx
 msgctxt "UmEsZF"
 msgid "Activities"
 msgstr "Activities"
@@ -1172,6 +1162,16 @@ msgstr "Read Zoonk's terms of use to understand the rules and conditions for usi
 msgctxt "UhkSyx"
 msgid "Terms of Use"
 msgstr "Terms of Use"
+
+#: src/components/catalog/activity-completion-indicator.tsx
+msgctxt "4o5CAP"
+msgid "Not completed"
+msgstr "Not completed"
+
+#: src/components/catalog/activity-completion-indicator.tsx
+msgctxt "95stPq"
+msgid "Completed"
+msgstr "Completed"
 
 #: src/components/catalog/ai-warning.tsx
 msgctxt "Dwdx/1"
