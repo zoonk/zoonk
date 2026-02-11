@@ -61,7 +61,10 @@ export default async function CoursePage({
       <CourseHeader brandSlug={brandSlug} course={course} />
 
       <CatalogContainer>
-        <ContinueActivityLink courseId={course.id} />
+        <ContinueActivityLink
+          courseId={course.id}
+          fallbackHref={`/b/${brandSlug}/c/${courseSlug}/ch/${chapters[0]?.slug}`}
+        />
 
         <Suspense>
           <ChapterList brandSlug={brandSlug} chapters={chapters} courseSlug={courseSlug} />

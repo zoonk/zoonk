@@ -87,7 +87,10 @@ export default async function LessonPage({
       />
 
       <CatalogContainer>
-        <ContinueActivityLink lessonId={lesson.id} />
+        <ContinueActivityLink
+          fallbackHref={`${baseHref}/a/${activities[0]?.position}`}
+          lessonId={lesson.id}
+        />
         <ActivityList activities={activities} baseHref={baseHref} kindMeta={kindMeta} />
       </CatalogContainer>
     </main>

@@ -41,9 +41,15 @@ async function fetchNextActivity(url: string): Promise<{
     return null;
   }
 
+  const brandSlug = getString(json, "brandSlug");
+
+  if (!brandSlug) {
+    return null;
+  }
+
   return {
     activityPosition: Number(json.activityPosition),
-    brandSlug: getString(json, "brandSlug") ?? "",
+    brandSlug,
     chapterSlug: getString(json, "chapterSlug") ?? "",
     completed: json.completed === true,
     courseSlug: getString(json, "courseSlug") ?? "",
@@ -55,10 +61,12 @@ async function fetchNextActivity(url: string): Promise<{
 export function ContinueActivityLink({
   chapterId,
   courseId,
+  fallbackHref,
   lessonId,
 }: {
   chapterId?: number;
   courseId?: number;
+  fallbackHref: string;
   lessonId?: number;
 }) {
   const t = useExtracted();
@@ -78,7 +86,12 @@ export function ContinueActivityLink({
   }
 
   if (!data) {
-    return null;
+    return (
+      <ClientLink className={cn(buttonVariants(), "w-full gap-2")} href={fallbackHref}>
+        {t("Start")}
+        <ChevronRightIcon aria-hidden="true" />
+      </ClientLink>
+    );
   }
 
   const href = `/b/${data.brandSlug}/c/${data.courseSlug}/ch/${data.chapterSlug}/l/${data.lessonSlug}/a/${data.activityPosition}`;

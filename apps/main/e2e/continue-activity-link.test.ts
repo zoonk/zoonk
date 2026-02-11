@@ -72,6 +72,16 @@ function mockNextActivityAPI(
   });
 }
 
+function mockNoActivitiesAPI(page: Page) {
+  return page.route("**/v1/progress/next-activity**", async (route) => {
+    await route.fulfill({
+      body: JSON.stringify({ completed: false, hasStarted: false }),
+      contentType: "application/json",
+      status: 200,
+    });
+  });
+}
+
 test.describe("Continue Activity Link", () => {
   test("course page shows Start link for unauthenticated user", async ({ page }) => {
     const { chapter, course, lesson } = await createTestCourseWithActivity();
@@ -150,6 +160,48 @@ test.describe("Continue Activity Link", () => {
 
     const startLink = page.getByRole("link", { name: /^start$/i });
     await expect(startLink).toBeVisible();
+  });
+
+  test("course page falls back to first chapter when no activity data", async ({ page }) => {
+    const { chapter, course } = await createTestCourseWithActivity();
+    await mockNoActivitiesAPI(page);
+
+    await page.goto(`/b/ai/c/${course.slug}`);
+
+    const startLink = page.getByRole("link", { name: /^start$/i });
+    await expect(startLink).toBeVisible();
+    await expect(startLink).toHaveAttribute(
+      "href",
+      expect.stringContaining(`/b/ai/c/${course.slug}/ch/${chapter.slug}`),
+    );
+  });
+
+  test("chapter page falls back to first lesson when no activity data", async ({ page }) => {
+    const { chapter, course, lesson } = await createTestCourseWithActivity();
+    await mockNoActivitiesAPI(page);
+
+    await page.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}`);
+
+    const startLink = page.getByRole("link", { name: /^start$/i });
+    await expect(startLink).toBeVisible();
+    await expect(startLink).toHaveAttribute(
+      "href",
+      expect.stringContaining(`/ch/${chapter.slug}/l/${lesson.slug}`),
+    );
+  });
+
+  test("lesson page falls back to first activity when no activity data", async ({ page }) => {
+    const { chapter, course, lesson } = await createTestCourseWithActivity();
+    await mockNoActivitiesAPI(page);
+
+    await page.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
+
+    const startLink = page.getByRole("link", { name: /^start$/i });
+    await expect(startLink).toBeVisible();
+    await expect(startLink).toHaveAttribute(
+      "href",
+      expect.stringContaining(`/l/${lesson.slug}/a/0`),
+    );
   });
 
   test("authenticated user with progress sees Continue on course page", async ({
