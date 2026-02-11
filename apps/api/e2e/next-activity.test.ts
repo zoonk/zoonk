@@ -21,30 +21,6 @@ test.describe("Next Activity API", () => {
     brandOrgId = org.id;
   });
 
-  test.afterAll(async () => {
-    await prisma.activity.deleteMany({
-      where: { organizationId: brandOrgId },
-    });
-
-    await prisma.lesson.deleteMany({
-      where: { organizationId: brandOrgId },
-    });
-
-    await prisma.chapter.deleteMany({
-      where: { organizationId: brandOrgId },
-    });
-
-    await prisma.course.deleteMany({
-      where: { organizationId: brandOrgId },
-    });
-
-    await prisma.organization.delete({
-      where: { id: brandOrgId },
-    });
-
-    await prisma.$disconnect();
-  });
-
   test("returns 400 when no scope param provided", async () => {
     const apiContext = await request.newContext({ baseURL });
     const response = await apiContext.get("/v1/progress/next-activity");
