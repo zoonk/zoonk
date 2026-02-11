@@ -1,67 +1,54 @@
 "use client";
 
-import { useEffect } from "react";
+import { useKeyboardCallback } from "@zoonk/ui/hooks/keyboard";
 import { type PlayerPhase } from "./player-reducer";
 
 export function usePlayerKeyboard({
-  phase,
   hasAnswer,
   isStaticStep,
   onCheck,
   onContinue,
   onNavigateNext,
   onNavigatePrev,
+  phase,
 }: {
-  phase: PlayerPhase;
   hasAnswer: boolean;
   isStaticStep: boolean;
   onCheck: () => void;
   onContinue: () => void;
   onNavigateNext: () => void;
   onNavigatePrev: () => void;
+  phase: PlayerPhase;
 }) {
-  useEffect(() => {
-    function hasModifier(event: KeyboardEvent) {
-      return event.metaKey || event.ctrlKey || event.shiftKey || event.altKey;
-    }
-
-    function handleEnter() {
+  useKeyboardCallback(
+    "Enter",
+    () => {
       if (phase === "playing" && hasAnswer) {
         onCheck();
       } else if (phase === "feedback") {
         onContinue();
       }
-    }
+    },
+    { mode: "none" },
+  );
 
-    function handleArrows(key: string) {
-      if (phase !== "playing" || !isStaticStep) {
-        return;
-      }
-
-      if (key === "ArrowRight") {
+  useKeyboardCallback(
+    "ArrowRight",
+    () => {
+      if (phase === "playing" && isStaticStep) {
         onNavigateNext();
-      } else if (key === "ArrowLeft") {
+      }
+    },
+    { mode: "none" },
+  );
+
+  useKeyboardCallback(
+    "ArrowLeft",
+    () => {
+      if (phase === "playing" && isStaticStep) {
         onNavigatePrev();
       }
-    }
-
-    function handleKeyDown(event: KeyboardEvent) {
-      if (hasModifier(event)) {
-        return;
-      }
-
-      if (event.key === "Enter") {
-        event.preventDefault();
-        handleEnter();
-      }
-
-      if (event.key === "ArrowRight" || event.key === "ArrowLeft") {
-        event.preventDefault();
-        handleArrows(event.key);
-      }
-    }
-
-    globalThis.addEventListener("keydown", handleKeyDown);
-    return () => globalThis.removeEventListener("keydown", handleKeyDown);
-  }, [phase, hasAnswer, isStaticStep, onCheck, onContinue, onNavigateNext, onNavigatePrev]);
+    },
+    { mode: "none" },
+  );
 }

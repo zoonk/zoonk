@@ -54,7 +54,7 @@ describe(usePlayerState, () => {
       expect(result.current.state.activityId).toBe("activity-test");
     });
 
-    test("resumes from sessionStorage with matching version", () => {
+    test("initial render uses createInitialState even when sessionStorage has data (hydration-safe)", () => {
       const activity = buildActivity();
       const persisted = {
         ...createInitialState(activity),
@@ -63,9 +63,18 @@ describe(usePlayerState, () => {
       };
       sessionStorage.setItem(playerStorageKey(activity.id), JSON.stringify(persisted));
 
-      const { result } = renderHook(() => usePlayerState(activity));
-      expect(result.current.state.currentStepIndex).toBe(1);
-      expect(result.current.state.phase).toBe("feedback");
+      const renders: number[] = [];
+
+      renderHook(() => {
+        const hookResult = usePlayerState(activity);
+        renders.push(hookResult.state.currentStepIndex);
+        return hookResult;
+      });
+
+      // First render (before effects) must use createInitialState for hydration safety
+      expect(renders[0]).toBe(0);
+      // After effect, state should be restored from sessionStorage
+      expect(renders.at(-1)).toBe(1);
     });
 
     test("discards data with mismatched version", () => {

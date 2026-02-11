@@ -288,10 +288,17 @@ describe("NAVIGATE_STEP", () => {
     expect(next.currentStepIndex).toBe(0);
   });
 
-  test("next on last step sets completed", () => {
+  test("next on last step is no-op", () => {
     const state = buildState({ currentStepIndex: 2, steps: staticSteps });
     const next = playerReducer(state, { direction: "next", type: "NAVIGATE_STEP" });
-    expect(next.phase).toBe("completed");
+    expect(next).toBe(state);
+  });
+
+  test("prev from last step goes back", () => {
+    const state = buildState({ currentStepIndex: 2, steps: staticSteps });
+    const next = playerReducer(state, { direction: "prev", type: "NAVIGATE_STEP" });
+    expect(next.currentStepIndex).toBe(1);
+    expect(next.phase).toBe("playing");
   });
 
   test("no-ops on interactive step", () => {

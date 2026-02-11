@@ -7,7 +7,10 @@ import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
 import { expect, test } from "./fixtures";
 
-async function createTestActivity(options?: { generationStatus?: "pending" | "completed" }) {
+async function createTestActivity(options?: {
+  generationStatus?: "pending" | "completed";
+  stepCount?: number;
+}) {
   const org = await prisma.organization.findUniqueOrThrow({
     where: { slug: "ai" },
   });
@@ -49,11 +52,21 @@ async function createTestActivity(options?: { generationStatus?: "pending" | "co
   });
 
   if (options?.generationStatus !== "pending") {
-    await stepFixture({
-      activityId: activity.id,
-      content: { text: `Test step content ${uniqueId}`, title: `Step ${uniqueId}`, variant: "text" },
-      position: 0,
-    });
+    const count = options?.stepCount ?? 1;
+
+    await Promise.all(
+      Array.from({ length: count }, (_, idx) =>
+        stepFixture({
+          activityId: activity.id,
+          content: {
+            text: `Test step content ${uniqueId} #${idx}`,
+            title: `Step ${uniqueId} #${idx}`,
+            variant: "text",
+          },
+          position: idx,
+        }),
+      ),
+    );
   }
 
   return { activity, chapter, course, lesson };
@@ -127,7 +140,10 @@ test.describe("Activity Detail Page", () => {
 
     await expect(page.getByRole("link", { name: /close/i })).toBeVisible();
     await expect(page.getByText(/1 \/ 1/)).toBeVisible();
-    await expect(page.getByRole("progressbar")).toBeVisible();
+
+    const progressbar = page.getByRole("progressbar", { name: /activity progress/i });
+    await expect(progressbar).toBeVisible();
+    await expect(progressbar).toHaveAttribute("aria-valuenow", "100");
   });
 
   test("close link has correct href", async ({ page }) => {

@@ -89,5 +89,5 @@ function computeProgress(currentIndex: number, total: number): number {
     return 0;
   }
 
-  return Math.round((currentIndex / total) * 100);
+  return Math.round(((currentIndex + 1) / total) * 100);
 }

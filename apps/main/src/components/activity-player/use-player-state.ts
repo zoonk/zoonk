@@ -2,7 +2,7 @@
 
 import { type SerializedActivity } from "@/data/activities/prepare-activity-data";
 import { isJsonObject } from "@zoonk/utils/json";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   PLAYER_STATE_VERSION,
   type PlayerAction,
@@ -49,9 +49,16 @@ function persistState(state: PlayerState): void {
 }
 
 export function usePlayerState(activity: SerializedActivity) {
-  const [state, setState] = useState<PlayerState>(
-    () => loadPersistedState(activity.id) ?? createInitialState(activity),
-  );
+  const [state, setState] = useState<PlayerState>(() => createInitialState(activity));
+
+  // Sync persisted state after hydration to avoid server/client mismatch
+  useEffect(() => {
+    const persisted = loadPersistedState(activity.id);
+
+    if (persisted) {
+      setState(persisted);
+    }
+  }, [activity.id]);
 
   const dispatch = useCallback((action: PlayerAction) => {
     setState((prev) => {

@@ -165,13 +165,12 @@ function handleNavigateStep(
   }
 
   const nextIndex = state.currentStepIndex + 1;
-  const isLast = nextIndex >= state.steps.length;
 
-  return {
-    ...state,
-    currentStepIndex: isLast ? state.currentStepIndex : nextIndex,
-    phase: isLast ? "completed" : "playing",
-  };
+  if (nextIndex >= state.steps.length) {
+    return state;
+  }
+
+  return { ...state, currentStepIndex: nextIndex };
 }
 
 function handleComplete(state: PlayerState): PlayerState {
