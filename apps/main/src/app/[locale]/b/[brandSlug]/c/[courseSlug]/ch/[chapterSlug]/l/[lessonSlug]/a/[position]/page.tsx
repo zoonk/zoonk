@@ -1,6 +1,10 @@
 "use cache";
 
+import { ActivityPlayerShell } from "@/components/activity-player/activity-player-shell";
 import { getActivity } from "@/data/activities/get-activity";
+import { getLessonSentences } from "@/data/activities/get-lesson-sentences";
+import { getLessonWords } from "@/data/activities/get-lesson-words";
+import { prepareActivityData } from "@/data/activities/prepare-activity-data";
 import { getLesson } from "@/data/lessons/get-lesson";
 import { cacheTagActivity } from "@zoonk/utils/cache";
 import { AI_ORG_SLUG } from "@zoonk/utils/constants";
@@ -53,7 +57,11 @@ export default async function ActivityPage({ params }: Props) {
     notFound();
   }
 
-  const activity = await getActivity({ lessonId: lesson.id, position: activityPosition });
+  const [activity, lessonWords, lessonSentences] = await Promise.all([
+    getActivity({ lessonId: lesson.id, position: activityPosition }),
+    getLessonWords({ lessonId: lesson.id }),
+    getLessonSentences({ lessonId: lesson.id }),
+  ]);
 
   if (!activity) {
     notFound();
@@ -69,15 +77,8 @@ export default async function ActivityPage({ params }: Props) {
     );
   }
 
-  return (
-    <main className="p-4">
-      <pre className="bg-muted overflow-auto rounded-lg p-4 text-sm">
-        {JSON.stringify(
-          activity,
-          (_, value: unknown) => (typeof value === "bigint" ? value.toString() : value),
-          2,
-        )}
-      </pre>
-    </main>
-  );
+  const serialized = prepareActivityData(activity, lessonWords, lessonSentences);
+  const lessonHref = `/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}/l/${lessonSlug}`;
+
+  return <ActivityPlayerShell activity={serialized} lessonHref={lessonHref} />;
 }

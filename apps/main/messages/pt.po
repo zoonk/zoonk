@@ -1163,6 +1163,17 @@ msgctxt "UhkSyx"
 msgid "Terms of Use"
 msgstr "Termos de uso"
 
+#: src/components/activity-player/activity-player-shell.tsx
+#: src/components/catalog/continue-activity-link.tsx
+msgctxt "acrOoz"
+msgid "Continue"
+msgstr "Continuar"
+
+#: src/components/activity-player/activity-player-shell.tsx
+msgctxt "RDZVQL"
+msgid "Check"
+msgstr "Verificar"
+
 #: src/components/catalog/activity-completion-indicator.tsx
 msgctxt "4o5CAP"
 msgid "Not completed"
@@ -1197,11 +1208,6 @@ msgstr "Obrigado pelo seu feedback"
 msgctxt "IzCVhG"
 msgid "More options"
 msgstr "Mais opções"
-
-#: src/components/catalog/continue-activity-link.tsx
-msgctxt "acrOoz"
-msgid "Continue"
-msgstr "Continuar"
 
 #: src/components/catalog/continue-activity-link.tsx
 #: src/lib/activities.ts
