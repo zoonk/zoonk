@@ -23,6 +23,10 @@ export function CatalogContainer({ className, ...props }: React.ComponentProps<"
   );
 }
 
+export function CatalogToolbar({ className, ...props }: React.ComponentProps<"div">) {
+  return <div {...props} className={cn("flex gap-2", className)} data-slot="catalog-toolbar" />;
+}
+
 export function CatalogList({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div {...props} className={cn("flex flex-col gap-4", className)} data-slot="catalog-list" />

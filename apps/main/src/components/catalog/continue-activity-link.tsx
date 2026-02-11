@@ -79,7 +79,7 @@ export function ContinueActivityLink({
 
   if (isLoading) {
     return (
-      <Button className="w-full" disabled>
+      <Button className="min-w-0 flex-1" disabled>
         {t("Start")}
       </Button>
     );
@@ -87,7 +87,7 @@ export function ContinueActivityLink({
 
   if (!data) {
     return (
-      <ClientLink className={cn(buttonVariants(), "w-full gap-2")} href={fallbackHref}>
+      <ClientLink className={cn(buttonVariants(), "min-w-0 flex-1 gap-2")} href={fallbackHref}>
         {t("Start")}
         <ChevronRightIcon aria-hidden="true" />
       </ClientLink>
@@ -109,7 +109,7 @@ export function ContinueActivityLink({
   };
 
   return (
-    <ClientLink className={cn(buttonVariants(), "w-full gap-2")} href={href}>
+    <ClientLink className={cn(buttonVariants(), "min-w-0 flex-1 gap-2")} href={href}>
       {getLabel()}
       <ChevronRightIcon aria-hidden="true" />
     </ClientLink>

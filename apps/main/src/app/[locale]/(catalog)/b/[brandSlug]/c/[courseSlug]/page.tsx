@@ -1,6 +1,7 @@
 "use cache";
 
-import { CatalogContainer } from "@/components/catalog/catalog-list";
+import { CatalogActions } from "@/components/catalog/catalog-actions";
+import { CatalogContainer, CatalogToolbar } from "@/components/catalog/catalog-list";
 import { ContinueActivityLink } from "@/components/catalog/continue-activity-link";
 import { listCourseChapters } from "@/data/chapters/list-course-chapters";
 import { getCourse } from "@/data/courses/get-course";
@@ -61,10 +62,13 @@ export default async function CoursePage({
       <CourseHeader brandSlug={brandSlug} course={course} />
 
       <CatalogContainer>
-        <ContinueActivityLink
-          courseId={course.id}
-          fallbackHref={`/b/${brandSlug}/c/${courseSlug}/ch/${chapters[0]?.slug}`}
-        />
+        <CatalogToolbar>
+          <ContinueActivityLink
+            courseId={course.id}
+            fallbackHref={`/b/${brandSlug}/c/${courseSlug}/ch/${chapters[0]?.slug}`}
+          />
+          <CatalogActions />
+        </CatalogToolbar>
 
         <Suspense>
           <ChapterList brandSlug={brandSlug} chapters={chapters} courseSlug={courseSlug} />
