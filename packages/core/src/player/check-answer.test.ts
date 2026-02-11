@@ -152,6 +152,13 @@ describe(checkFillBlankAnswer, () => {
       isCorrect: false,
     });
   });
+
+  test("returns incorrect when user provides extra answers", () => {
+    expect(checkFillBlankAnswer(content, ["hablo", "español", "extra"])).toEqual({
+      feedback: "Use first person singular.",
+      isCorrect: false,
+    });
+  });
 });
 
 describe(checkMatchColumnsAnswer, () => {
@@ -229,6 +236,13 @@ describe(checkSortOrderAnswer, () => {
       isCorrect: false,
     });
   });
+
+  test("returns incorrect when user provides extra entries", () => {
+    expect(checkSortOrderAnswer(content, ["one", "two", "three", "four"])).toEqual({
+      feedback: "Correct order.",
+      isCorrect: false,
+    });
+  });
 });
 
 describe(checkSelectImageAnswer, () => {
@@ -288,6 +302,15 @@ describe(checkArrangeWordsAnswer, () => {
 
   test("returns incorrect for wrong sequence", () => {
     expect(checkArrangeWordsAnswer(["I", "speak", "Spanish"], ["Spanish", "I", "speak"])).toEqual({
+      feedback: null,
+      isCorrect: false,
+    });
+  });
+
+  test("returns incorrect when user provides extra words", () => {
+    expect(
+      checkArrangeWordsAnswer(["I", "speak", "Spanish"], ["I", "speak", "Spanish", "well"]),
+    ).toEqual({
       feedback: null,
       isCorrect: false,
     });

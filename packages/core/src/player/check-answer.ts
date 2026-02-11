@@ -34,9 +34,12 @@ export function checkFillBlankAnswer(
   content: FillBlankStepContent,
   userAnswers: string[],
 ): AnswerResult {
-  const isCorrect = content.answers.every(
-    (answer, index) => answer.toLowerCase() === (userAnswers[index] ?? "").trim().toLowerCase(),
-  );
+  const isSameLength = content.answers.length === userAnswers.length;
+  const isCorrect =
+    isSameLength &&
+    content.answers.every(
+      (answer, index) => answer.toLowerCase() === (userAnswers[index] ?? "").trim().toLowerCase(),
+    );
   return { feedback: content.feedback, isCorrect };
 }
 
@@ -59,7 +62,8 @@ export function checkSortOrderAnswer(
   content: SortOrderStepContent,
   userOrder: string[],
 ): AnswerResult {
-  const isCorrect = content.items.every((item, index) => item === userOrder[index]);
+  const isSameLength = content.items.length === userOrder.length;
+  const isCorrect = isSameLength && content.items.every((item, index) => item === userOrder[index]);
   return { feedback: content.feedback, isCorrect };
 }
 
@@ -79,6 +83,7 @@ export function checkVocabularyAnswer(correctWordId: string, selectedWordId: str
 }
 
 export function checkArrangeWordsAnswer(correctWords: string[], userWords: string[]): AnswerResult {
-  const isCorrect = correctWords.every((word, index) => word === userWords[index]);
+  const isSameLength = correctWords.length === userWords.length;
+  const isCorrect = isSameLength && correctWords.every((word, index) => word === userWords[index]);
   return { feedback: null, isCorrect };
 }
