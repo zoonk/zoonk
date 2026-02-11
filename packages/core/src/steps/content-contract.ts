@@ -179,6 +179,8 @@ export type VocabularyStepContent = z.infer<typeof vocabularyContentSchema>;
 export type ReadingStepContent = z.infer<typeof readingContentSchema>;
 export type ListeningStepContent = z.infer<typeof listeningContentSchema>;
 
+export type ChallengeEffect = z.infer<typeof challengeEffectSchema>;
+
 export type StepContentByKind = {
   fillBlank: FillBlankStepContent;
   listening: ListeningStepContent;
