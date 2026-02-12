@@ -83,6 +83,7 @@ export default async function ChapterPage({
         <Suspense>
           <LessonList
             brandSlug={brandSlug}
+            chapterId={chapter.id}
             chapterSlug={chapterSlug}
             courseSlug={courseSlug}
             lessons={lessons}

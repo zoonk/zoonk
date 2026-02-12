@@ -9,6 +9,7 @@ import {
   CatalogListItemTitle,
   CatalogListSearch,
 } from "@/components/catalog/catalog-list";
+import { ChapterCompletion } from "@/components/catalog/chapter-completion";
 import { type ChapterForList } from "@/data/chapters/list-course-chapters";
 import { formatPosition } from "@zoonk/utils/string";
 import { getExtracted } from "next-intl/server";
@@ -16,10 +17,12 @@ import { getExtracted } from "next-intl/server";
 export async function ChapterList({
   brandSlug,
   chapters,
+  courseId,
   courseSlug,
 }: {
   brandSlug: string;
   chapters: ChapterForList[];
+  courseId: number;
   courseSlug: string;
 }) {
   if (chapters.length === 0) {
@@ -48,6 +51,8 @@ export async function ChapterList({
                   <CatalogListItemDescription>{chapter.description}</CatalogListItemDescription>
                 )}
               </CatalogListItemContent>
+
+              <ChapterCompletion chapterId={chapter.id} courseId={courseId} />
             </CatalogListItem>
           ))}
         </CatalogListContent>

@@ -71,7 +71,12 @@ export default async function CoursePage({
         </CatalogToolbar>
 
         <Suspense>
-          <ChapterList brandSlug={brandSlug} chapters={chapters} courseSlug={courseSlug} />
+          <ChapterList
+            brandSlug={brandSlug}
+            chapters={chapters}
+            courseId={course.id}
+            courseSlug={courseSlug}
+          />
         </Suspense>
       </CatalogContainer>
     </main>

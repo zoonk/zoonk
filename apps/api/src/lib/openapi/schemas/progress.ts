@@ -14,6 +14,46 @@ export const activityCompletionResponseSchema = z
   })
   .meta({ id: "ActivityCompletionResponse" });
 
+export const courseCompletionQuerySchema = z
+  .object({
+    courseId: z.coerce.number().int().positive().meta({ description: "Course ID" }),
+  })
+  .meta({ id: "CourseCompletionQuery" });
+
+export const courseCompletionResponseSchema = z
+  .object({
+    chapters: z
+      .array(
+        z.object({
+          chapterId: z.number().meta({ description: "Chapter ID" }),
+          completedLessons: z.number().meta({ description: "Number of completed lessons" }),
+          totalLessons: z.number().meta({ description: "Total number of lessons" }),
+        }),
+      )
+      .meta({ description: "Completion status per chapter" }),
+  })
+  .meta({ id: "CourseCompletionResponse" });
+
+export const chapterCompletionQuerySchema = z
+  .object({
+    chapterId: z.coerce.number().int().positive().meta({ description: "Chapter ID" }),
+  })
+  .meta({ id: "ChapterCompletionQuery" });
+
+export const chapterCompletionResponseSchema = z
+  .object({
+    lessons: z
+      .array(
+        z.object({
+          completedActivities: z.number().meta({ description: "Number of completed activities" }),
+          lessonId: z.number().meta({ description: "Lesson ID" }),
+          totalActivities: z.number().meta({ description: "Total number of activities" }),
+        }),
+      )
+      .meta({ description: "Completion status per lesson" }),
+  })
+  .meta({ id: "ChapterCompletionResponse" });
+
 export const nextActivityQuerySchema = z
   .object({
     chapterId: z.coerce.number().int().positive().optional().meta({ description: "Chapter ID" }),

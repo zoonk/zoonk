@@ -9,6 +9,8 @@
     "./next-activity/course": "./src/generated/prisma/sql/getNextCourseActivity.ts",
     "./next-activity/lesson": "./src/generated/prisma/sql/getNextLessonActivity.ts",
     "./peak-time": "./src/generated/prisma/sql/getPeakTime.ts",
+    "./completion/chapter-lessons": "./src/generated/prisma/sql/getChapterLessonCompletion.ts",
+    "./completion/course-chapters": "./src/generated/prisma/sql/getCourseChapterCompletion.ts",
     "./utils": "./src/utils.ts"
   },
   "scripts": {
