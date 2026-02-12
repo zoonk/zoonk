@@ -1180,6 +1180,8 @@ msgid "Not completed"
 msgstr "Not completed"
 
 #: src/components/catalog/activity-completion-indicator.tsx
+#: src/components/catalog/chapter-completion.tsx
+#: src/components/catalog/lesson-completion.tsx
 msgctxt "95stPq"
 msgid "Completed"
 msgstr "Completed"

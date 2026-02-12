@@ -177,7 +177,7 @@ export function CatalogListItemIndicator({
       <div
         aria-label={completedLabel}
         className={cn(
-          "bg-success/60 text-background mt-1 flex size-3.5 shrink-0 items-center justify-center rounded-full",
+          "bg-success/60 text-background flex size-3.5 shrink-0 items-center justify-center self-center rounded-full",
           className,
         )}
         data-slot="catalog-list-item-indicator"
@@ -192,7 +192,7 @@ export function CatalogListItemIndicator({
     <div
       aria-label={notCompletedLabel}
       className={cn(
-        "border-muted-foreground/30 mt-1 size-3.5 shrink-0 rounded-full border-2",
+        "border-muted-foreground/30 size-3.5 shrink-0 self-center rounded-full border-2",
         className,
       )}
       data-slot="catalog-list-item-indicator"
@@ -228,5 +228,35 @@ export function CatalogListItemDescription({ className, ...props }: React.Compon
       className={cn("text-muted-foreground line-clamp-2 pt-0.5 text-sm leading-snug", className)}
       data-slot="catalog-list-item-description"
     />
+  );
+}
+
+export function CatalogListItemProgress({
+  completed,
+  completedLabel,
+  total,
+}: {
+  completed: number;
+  completedLabel: string;
+  total: number;
+}) {
+  if (total === 0 || completed === 0) {
+    return null;
+  }
+
+  if (completed >= total) {
+    return (
+      <CatalogListItemIndicator completed completedLabel={completedLabel} notCompletedLabel="" />
+    );
+  }
+
+  return (
+    <span
+      aria-label={`${completed} of ${total} completed`}
+      className="text-muted-foreground/60 shrink-0 self-center font-mono text-xs tabular-nums"
+      data-slot="catalog-list-item-progress"
+    >
+      {completed}/{total}
+    </span>
   );
 }

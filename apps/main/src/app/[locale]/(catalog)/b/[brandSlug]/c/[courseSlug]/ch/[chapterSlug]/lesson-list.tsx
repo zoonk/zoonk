@@ -9,17 +9,20 @@ import {
   CatalogListItemTitle,
   CatalogListSearch,
 } from "@/components/catalog/catalog-list";
+import { LessonCompletion } from "@/components/catalog/lesson-completion";
 import { type LessonForList } from "@/data/lessons/list-chapter-lessons";
 import { formatPosition } from "@zoonk/utils/string";
 import { getExtracted } from "next-intl/server";
 
 export async function LessonList({
   brandSlug,
+  chapterId,
   chapterSlug,
   courseSlug,
   lessons,
 }: {
   brandSlug: string;
+  chapterId: number;
   chapterSlug: string;
   courseSlug: string;
   lessons: LessonForList[];
@@ -48,6 +51,8 @@ export async function LessonList({
                 <CatalogListItemTitle>{lesson.title}</CatalogListItemTitle>
                 <CatalogListItemDescription>{lesson.description}</CatalogListItemDescription>
               </CatalogListItemContent>
+
+              <LessonCompletion chapterId={chapterId} lessonId={lesson.id} />
             </CatalogListItem>
           ))}
         </CatalogListContent>

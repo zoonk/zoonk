@@ -47,12 +47,12 @@ export async function ActivityList({
               id={activity.id}
               key={String(activity.id)}
             >
-              <ActivityCompletionIndicator activityId={String(activity.id)} lessonId={lessonId} />
-
               <CatalogListItemContent>
                 <CatalogListItemTitle>{title}</CatalogListItemTitle>
                 <CatalogListItemDescription>{description}</CatalogListItemDescription>
               </CatalogListItemContent>
+
+              <ActivityCompletionIndicator activityId={String(activity.id)} lessonId={lessonId} />
             </CatalogListItem>
           );
         })}
