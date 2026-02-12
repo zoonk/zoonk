@@ -20,10 +20,11 @@ export async function importFlow(page: Page, importFile: string, mode: "merge" |
 
   if (mode === "merge") {
     await expect(dialog.getByLabel(/merge/i)).toBeChecked();
+    await dialog.getByRole("button", { name: /^import$/i }).click();
   } else {
     await dialog.getByText(/replace \(remove existing first\)/i).click();
+    await dialog.getByRole("button", { name: /replace all/i }).click();
   }
 
-  await dialog.getByRole("button", { name: /^import$/i }).click();
   await expect(dialog).not.toBeVisible();
 }

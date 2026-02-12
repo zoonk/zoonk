@@ -2,22 +2,11 @@
 
 import { type ImportMode, isImportMode } from "@/lib/import-mode";
 import { Button } from "@zoonk/ui/components/button";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@zoonk/ui/components/collapsible";
 import { Label } from "@zoonk/ui/components/label";
 import { RadioGroup, RadioGroupItem } from "@zoonk/ui/components/radio-group";
 import { toast } from "@zoonk/ui/components/sonner";
 import { cn } from "@zoonk/ui/lib/utils";
-import {
-  ChevronDownIcon,
-  ChevronRightIcon,
-  FileIcon,
-  LoaderCircleIcon,
-  UploadIcon,
-} from "lucide-react";
+import { FileIcon, LoaderCircleIcon, TriangleAlertIcon, UploadIcon } from "lucide-react";
 import {
   createContext,
   useCallback,
@@ -219,40 +208,36 @@ function ImportModeOption({
   );
 }
 
-function ImportFormatPreview({
-  format,
-  label,
-  className,
-  ...props
-}: Omit<React.ComponentProps<"div">, "children"> & {
-  format: object;
-  label: string;
-}) {
-  const [open, setOpen] = useState(false);
+function ImportReplaceWarning({ children, className, ...props }: React.ComponentProps<"p">) {
+  const { mode } = useImport();
+
+  if (mode !== "replace") {
+    return null;
+  }
 
   return (
-    <Collapsible
-      className={className}
-      data-slot="import-format-preview"
-      onOpenChange={setOpen}
-      open={open}
+    <p
+      className={cn("text-destructive flex items-start gap-2 text-sm", className)}
+      data-slot="import-replace-warning"
+      role="alert"
       {...props}
     >
-      <CollapsibleTrigger className="text-muted-foreground hover:text-foreground flex items-center gap-2 text-sm transition-colors">
-        {open ? <ChevronDownIcon className="size-4" /> : <ChevronRightIcon className="size-4" />}
-        {label}
-      </CollapsibleTrigger>
-      <CollapsibleContent>
-        <pre className="bg-muted/50 mt-3 max-h-48 overflow-auto rounded-xl p-4 font-mono text-xs wrap-break-word whitespace-pre-wrap">
-          {JSON.stringify(format, null, 2)}
-        </pre>
-      </CollapsibleContent>
-    </Collapsible>
+      <TriangleAlertIcon className="mt-0.5 size-4 shrink-0" />
+      <span>{children}</span>
+    </p>
   );
 }
 
-function ImportSubmit({ children, className, ...props }: React.ComponentProps<typeof Button>) {
-  const { file, pending, handleImport } = useImport();
+function ImportSubmit({
+  children,
+  replaceChildren,
+  className,
+  ...props
+}: React.ComponentProps<typeof Button> & {
+  replaceChildren?: React.ReactNode;
+}) {
+  const { file, mode, pending, handleImport } = useImport();
+  const isReplace = mode === "replace";
 
   return (
     <Button
@@ -260,10 +245,11 @@ function ImportSubmit({ children, className, ...props }: React.ComponentProps<ty
       data-slot="import-submit"
       disabled={!file || pending}
       onClick={handleImport}
+      variant={isReplace ? "destructive" : undefined}
       {...props}
     >
       {pending && <LoaderCircleIcon className="animate-spin" />}
-      {children}
+      {isReplace && replaceChildren ? replaceChildren : children}
     </Button>
   );
 }
@@ -298,7 +284,7 @@ export {
   ImportDropzone,
   ImportModeSelector,
   ImportModeOption,
-  ImportFormatPreview,
+  ImportReplaceWarning,
   ImportSubmit,
   ImportCancel,
 };
