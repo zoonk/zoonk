@@ -1174,6 +1174,21 @@ msgctxt "RDZVQL"
 msgid "Check"
 msgstr "Verificación"
 
+#: src/components/activity-player/feedback-screen.tsx
+msgctxt "++l7ni"
+msgid "Not quite"
+msgstr "No del todo"
+
+#: src/components/activity-player/feedback-screen.tsx
+msgctxt "iaHymw"
+msgid "Outcome"
+msgstr "Resultado"
+
+#: src/components/activity-player/feedback-screen.tsx
+msgctxt "xmF49T"
+msgid "Correct!"
+msgstr "¡Correcto!"
+
 #: src/components/catalog/activity-completion-indicator.tsx
 msgctxt "4o5CAP"
 msgid "Not completed"
