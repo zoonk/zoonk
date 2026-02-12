@@ -1,5 +1,5 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { type GenerationStatus, prisma } from "@zoonk/db";
 import { cache } from "react";
 
 export type LessonForList = {
@@ -8,6 +8,7 @@ export type LessonForList = {
   title: string;
   description: string;
   position: number;
+  generationStatus: GenerationStatus;
 };
 
 const cachedListChapterLessons = cache(
@@ -16,6 +17,7 @@ const cachedListChapterLessons = cache(
       orderBy: { position: "asc" },
       select: {
         description: true,
+        generationStatus: true,
         id: true,
         position: true,
         slug: true,

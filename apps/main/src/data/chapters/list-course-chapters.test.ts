@@ -1,6 +1,5 @@
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
-import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, describe, expect, test } from "vitest";
 import { listCourseChapters } from "./list-course-chapters";
@@ -14,9 +13,6 @@ describe(listCourseChapters, () => {
   let publishedChapter1: Awaited<ReturnType<typeof chapterFixture>>;
   let publishedChapter2: Awaited<ReturnType<typeof chapterFixture>>;
   let draftChapter: Awaited<ReturnType<typeof chapterFixture>>;
-  let publishedLesson1: Awaited<ReturnType<typeof lessonFixture>>;
-  let publishedLesson2: Awaited<ReturnType<typeof lessonFixture>>;
-  let draftLesson: Awaited<ReturnType<typeof lessonFixture>>;
 
   beforeAll(async () => {
     [brandOrg, schoolOrg] = await Promise.all([
@@ -42,7 +38,6 @@ describe(listCourseChapters, () => {
       }),
     ]);
 
-    // Create chapters with different positions
     [publishedChapter1, publishedChapter2, draftChapter] = await Promise.all([
       chapterFixture({
         courseId: publishedCourse.id,
@@ -59,8 +54,7 @@ describe(listCourseChapters, () => {
         isPublished: true,
         language: "en",
         organizationId: brandOrg.id,
-        position: 0, // Position 0 should come first
-        title: "Chapter 2",
+        position: 0,
       }),
       chapterFixture({
         courseId: publishedCourse.id,
@@ -71,39 +65,9 @@ describe(listCourseChapters, () => {
         title: "Draft Chapter",
       }),
     ]);
-
-    // Create lessons for publishedChapter1
-    [publishedLesson1, publishedLesson2, draftLesson] = await Promise.all([
-      lessonFixture({
-        chapterId: publishedChapter1.id,
-        description: "First lesson",
-        isPublished: true,
-        language: "en",
-        organizationId: brandOrg.id,
-        position: 1,
-        title: "Lesson 1",
-      }),
-      lessonFixture({
-        chapterId: publishedChapter1.id,
-        description: "Second lesson (but position 0)",
-        isPublished: true,
-        language: "en",
-        organizationId: brandOrg.id,
-        position: 0, // Position 0 should come first
-        title: "Lesson 2",
-      }),
-      lessonFixture({
-        chapterId: publishedChapter1.id,
-        isPublished: false,
-        language: "en",
-        organizationId: brandOrg.id,
-        position: 2,
-        title: "Draft Lesson",
-      }),
-    ]);
   });
 
-  test("returns published chapters with published lessons", async () => {
+  test("returns published chapters ordered by position", async () => {
     const result = await listCourseChapters({
       brandSlug: brandOrg.slug,
       courseSlug: publishedCourse.slug,
@@ -114,36 +78,14 @@ describe(listCourseChapters, () => {
 
     // Chapter at position 0 should come first
     expect(result[0]?.id).toBe(publishedChapter2.id);
-    expect(result[0]?.title).toBe("Chapter 2");
     expect(result[0]?.description).toBe("Second chapter (but position 0)");
     expect(result[0]?.slug).toBe(publishedChapter2.slug);
     expect(result[0]?.position).toBe(0);
+    expect(result[0]?.generationStatus).toBeDefined();
 
     // Chapter at position 1 should come second
     expect(result[1]?.id).toBe(publishedChapter1.id);
     expect(result[1]?.title).toBe("Chapter 1");
-  });
-
-  test("includes lessons ordered by position", async () => {
-    const result = await listCourseChapters({
-      brandSlug: brandOrg.slug,
-      courseSlug: publishedCourse.slug,
-      language: "en",
-    });
-
-    // Chapter at position 1 has lessons
-    const chapterWithLessons = result.find((chapter) => chapter.id === publishedChapter1.id);
-    expect(chapterWithLessons?.lessons).toHaveLength(2);
-
-    // Lesson at position 0 should come first
-    expect(chapterWithLessons?.lessons[0]?.id).toBe(publishedLesson2.id);
-    expect(chapterWithLessons?.lessons[0]?.title).toBe("Lesson 2");
-    expect(chapterWithLessons?.lessons[0]?.position).toBe(0);
-
-    // Lesson at position 1 should come second
-    expect(chapterWithLessons?.lessons[1]?.id).toBe(publishedLesson1.id);
-    expect(chapterWithLessons?.lessons[1]?.title).toBe("Lesson 1");
-    expect(chapterWithLessons?.lessons[1]?.position).toBe(1);
   });
 
   test("excludes unpublished chapters", async () => {
@@ -155,20 +97,6 @@ describe(listCourseChapters, () => {
 
     const draftChapterInResult = result.find((chapter) => chapter.id === draftChapter.id);
     expect(draftChapterInResult).toBeUndefined();
-  });
-
-  test("excludes unpublished lessons within published chapters", async () => {
-    const result = await listCourseChapters({
-      brandSlug: brandOrg.slug,
-      courseSlug: publishedCourse.slug,
-      language: "en",
-    });
-
-    const chapterWithLessons = result.find((chapter) => chapter.id === publishedChapter1.id);
-    const draftLessonInResult = chapterWithLessons?.lessons.find(
-      (lesson) => lesson.id === draftLesson.id,
-    );
-    expect(draftLessonInResult).toBeUndefined();
   });
 
   test("returns empty array for non-brand organizations", async () => {
