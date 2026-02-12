@@ -98,6 +98,7 @@ For detailed UX guidelines (interactions, animation, layout, accessibility), see
 - When adding e2e tests, use `*Fixture()` functions to create unique test data per test - do not modify seed files
 - Avoid inline imports like `await import()`, only do it when dynamic imports are absolutely necessary
 - Never use `git push --force` or `git push --force-with-lease`. When you make a change, just add a new commit and push it, no need to rewrite history
+- Never push your changes to GitHub without explicit authorization. Only push when someone asks you to push
 
 ## Component Organization
 

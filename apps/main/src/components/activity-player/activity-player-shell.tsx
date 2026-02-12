@@ -2,13 +2,13 @@
 
 import { type SerializedActivity } from "@/data/activities/prepare-activity-data";
 import { useRouter } from "@/i18n/navigation";
-import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useCallback } from "react";
 import { FeedbackScreenContent, getFeedbackVariant } from "./feedback-screen";
 import { PlayerActionBar, PlayerActionButton } from "./player-action-bar";
 import { PlayerCloseLink, PlayerHeader, PlayerStepFraction } from "./player-header";
 import { PlayerProgressBar } from "./player-progress-bar";
+import { PlayerStage } from "./player-stage";
 import { usePlayerKeyboard } from "./use-player-keyboard";
 import { usePlayerState } from "./use-player-state";
 
@@ -77,21 +77,12 @@ export function ActivityPlayerShell({
 
       <PlayerProgressBar value={progressValue} />
 
-      <section
-        className={cn(
-          "flex flex-1 flex-col items-center overflow-y-auto transition-colors duration-300",
-          state.phase === "feedback"
-            ? "justify-start px-6 pt-16 sm:px-8 sm:pt-24"
-            : "justify-center p-4",
-          feedbackVariant === "correct" && "bg-success/5",
-          feedbackVariant === "incorrect" && "bg-destructive/5",
-        )}
-      >
+      <PlayerStage feedback={feedbackVariant} phase={state.phase}>
         {state.phase === "feedback" && currentResult ? (
           <FeedbackScreenContent result={currentResult} />
         ) : // Step content will be rendered here by step renderers (Issue 9)
         null}
-      </section>
+      </PlayerStage>
 
       {!isStaticStep && (
         <PlayerActionBar>
