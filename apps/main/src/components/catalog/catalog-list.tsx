@@ -117,11 +117,13 @@ export function CatalogListItem({
   className,
   href,
   id,
+  prefetch,
 }: {
   children: ReactNode;
   className?: string;
   href: string;
   id: string | number | bigint;
+  prefetch?: boolean;
 }) {
   const context = use(CatalogListContext);
   const filteredIds = context?.filteredIds ?? null;
@@ -138,6 +140,7 @@ export function CatalogListItem({
           className,
         )}
         href={href}
+        prefetch={prefetch}
       >
         {children}
       </ClientLink>

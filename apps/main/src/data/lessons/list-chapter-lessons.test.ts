@@ -115,5 +115,6 @@ describe(listChapterLessons, () => {
     expect(lesson).toHaveProperty("title");
     expect(lesson).toHaveProperty("description");
     expect(lesson).toHaveProperty("position");
+    expect(lesson).toHaveProperty("generationStatus");
   });
 });

@@ -9,7 +9,7 @@ import {
   CatalogListItemTitle,
   CatalogListSearch,
 } from "@/components/catalog/catalog-list";
-import { type ChapterWithLessons } from "@/data/chapters/list-course-chapters";
+import { type ChapterForList } from "@/data/chapters/list-course-chapters";
 import { formatPosition } from "@zoonk/utils/string";
 import { getExtracted } from "next-intl/server";
 
@@ -19,7 +19,7 @@ export async function ChapterList({
   courseSlug,
 }: {
   brandSlug: string;
-  chapters: ChapterWithLessons[];
+  chapters: ChapterForList[];
   courseSlug: string;
 }) {
   if (chapters.length === 0) {
@@ -38,6 +38,7 @@ export async function ChapterList({
               href={`/b/${brandSlug}/c/${courseSlug}/ch/${chapter.slug}`}
               id={chapter.id}
               key={chapter.id}
+              prefetch={chapter.generationStatus === "completed"}
             >
               <CatalogListItemPosition>{formatPosition(chapter.position)}</CatalogListItemPosition>
 
