@@ -544,6 +544,18 @@ msgstr "Importar títulos alternativos"
 
 #: src/components/alternative-titles/alternative-titles-import-dialog.tsx
 #: src/components/entity/entity-import-dialog.tsx
+msgctxt "cSnnsn"
+msgid "Replace all"
+msgstr "Reemplazar todo"
+
+#: src/components/alternative-titles/alternative-titles-import-dialog.tsx
+#: src/components/entity/entity-import-dialog.tsx
+msgctxt "fwPYIb"
+msgid "This will permanently delete all existing items and any learner progress associated with them. This action cannot be undone."
+msgstr "Esto eliminará permanentemente todos los elementos existentes y cualquier progreso de aprendizaje asociado con ellos. Esta acción no se puede deshacer."
+
+#: src/components/alternative-titles/alternative-titles-import-dialog.tsx
+#: src/components/entity/entity-import-dialog.tsx
 msgctxt "GAHXbk"
 msgid "Show expected format"
 msgstr "Mostrar formato esperado"

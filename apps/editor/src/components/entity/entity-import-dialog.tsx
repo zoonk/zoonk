@@ -11,11 +11,12 @@ import { useExtracted } from "next-intl";
 import {
   ImportCancel,
   ImportDropzone,
-  ImportFormatPreview,
   ImportModeOption,
   ImportModeSelector,
+  ImportReplaceWarning,
   ImportSubmit,
 } from "../import";
+import { ImportFormatPreview } from "../import-format-preview";
 
 type EntityType = "activities" | "chapters" | "lessons";
 
@@ -79,12 +80,18 @@ export function EntityImportDialog({
           </ImportModeOption>
         </ImportModeSelector>
 
+        <ImportReplaceWarning>
+          {t(
+            "This will permanently delete all existing items and any learner progress associated with them. This action cannot be undone.",
+          )}
+        </ImportReplaceWarning>
+
         <ImportFormatPreview format={FORMATS[entityType]} label={t("Show expected format")} />
       </div>
 
       <DialogFooter>
         <ImportCancel onClick={onClose}>{t("Cancel")}</ImportCancel>
-        <ImportSubmit>{t("Import")}</ImportSubmit>
+        <ImportSubmit replaceChildren={t("Replace all")}>{t("Import")}</ImportSubmit>
       </DialogFooter>
     </DialogContent>
   );

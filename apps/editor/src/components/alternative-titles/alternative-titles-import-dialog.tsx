@@ -11,11 +11,12 @@ import { useExtracted } from "next-intl";
 import {
   ImportCancel,
   ImportDropzone,
-  ImportFormatPreview,
   ImportModeOption,
   ImportModeSelector,
+  ImportReplaceWarning,
   ImportSubmit,
 } from "../import";
+import { ImportFormatPreview } from "../import-format-preview";
 
 const IMPORT_FORMAT = {
   alternativeTitles: ["title-slug-1", "title-slug-2"],
@@ -43,12 +44,18 @@ export function AlternativeTitlesImportDialog({ onClose }: { onClose: () => void
           </ImportModeOption>
         </ImportModeSelector>
 
+        <ImportReplaceWarning>
+          {t(
+            "This will permanently delete all existing items and any learner progress associated with them. This action cannot be undone.",
+          )}
+        </ImportReplaceWarning>
+
         <ImportFormatPreview format={IMPORT_FORMAT} label={t("Show expected format")} />
       </div>
 
       <DialogFooter>
         <ImportCancel onClick={onClose}>{t("Cancel")}</ImportCancel>
-        <ImportSubmit>{t("Import")}</ImportSubmit>
+        <ImportSubmit replaceChildren={t("Replace all")}>{t("Import")}</ImportSubmit>
       </DialogFooter>
     </DialogContent>
   );

@@ -7,15 +7,15 @@ checksums:
     Delete%20lesson/singular: 18309d2fe705fd2c4301224dee3be224
     Delete%20course/singular: 86bac6527eb0b380a3f0a5e38b6938ff
     Delete%20course%3F/singular: c83369b40aec2a0eb3cafd146d70020e
-    Untitled%20chapter/singular: 28963b46f393d2828ea31c00345d2a2e
-    Invalid%20file%20type.%20Please%20upload%20a%20JPEG%2C%20PNG%2C%20WebP%2C%20or%20GIF%20image./singular: 40eeddb92c25b31b4501d3d3a9df9bb4
-    File%20is%20too%20large.%20Maximum%20size%20is%205MB./singular: cc3c4b1ec696f2d8785996097bd4dfc1
-    Failed%20to%20upload%20image.%20Please%20try%20again./singular: 2fe14e681cc529b661785fdc2abac145
     No%20file%20provided/singular: 04285abfc9d18ce401da2f6f570523a5
     Title%20is%20required/singular: a8541a9d81ad1f2d007e52328d8b4074
     Failed%20to%20add%20alternative%20title/singular: f6cd02c75277bbdf4f137f95ea90bc63
-    Failed%20to%20process%20image.%20Please%20try%20again./singular: 7dd397d230e66c4cc464d501e93caa05
+    Untitled%20chapter/singular: 28963b46f393d2828ea31c00345d2a2e
     Add%20a%20description%E2%80%A6/singular: 6737ac865733a3e459ddfeb5b6134ce5
+    Invalid%20file%20type.%20Please%20upload%20a%20JPEG%2C%20PNG%2C%20WebP%2C%20or%20GIF%20image./singular: 40eeddb92c25b31b4501d3d3a9df9bb4
+    File%20is%20too%20large.%20Maximum%20size%20is%205MB./singular: cc3c4b1ec696f2d8785996097bd4dfc1
+    Failed%20to%20upload%20image.%20Please%20try%20again./singular: 2fe14e681cc529b661785fdc2abac145
+    Failed%20to%20process%20image.%20Please%20try%20again./singular: 7dd397d230e66c4cc464d501e93caa05
     Untitled%20lesson/singular: 252aefbc39883b5a3aae879535b0c6d2
     Edit%20chapter%20description/singular: e27c305ac8ad54675309e239bccdd648
     Edit%20chapter%20title/singular: 21c04bd3ed6335df5195d1f2857131bf
@@ -24,22 +24,22 @@ checksums:
     Lesson/singular: 0369d21b141f7f54c4586224e7e7ae65
     Activity%20editor%20coming%20soon/singular: e02fa050fd72d48f0a50cad81149b8fd
     Untitled%20activity/singular: 92dccd756c491fc1b61f3eced6b4b96a
+    Drag%20to%20reorder/singular: 42c84478eb582f41d72d5bd7b27bb028
+    Insert%20below/singular: 13f5339830c81c2c64a513b4f0a77c2d
+    Activity%20actions/singular: c3253e1c7046f25d280fea09a6d17a31
+    Insert%20above/singular: 24d027b3c1e816c98f5571bb637669bf
     We%20couldn't%20load%20the%20activities.%20Please%20try%20again./singular: 2f8bcd34b6eb7dc4a2ebccf05311b4c2
     Contact%20support/singular: 32a4dee2033635e334a5f4d34724e3e0
     Add%20activity/singular: 69eea4d3afd3c3b3fba0975ff6d9a1d1
-    Drag%20to%20reorder/singular: 42c84478eb582f41d72d5bd7b27bb028
     Try%20again/singular: 33dd8820e743e35a66e6977f69e9d3b5
-    Insert%20below/singular: 13f5339830c81c2c64a513b4f0a77c2d
     Failed%20to%20load%20activities/singular: 1d7878e3d09bbbbc244fcca4f846fc0a
-    Activity%20actions/singular: c3253e1c7046f25d280fea09a6d17a31
-    Insert%20above/singular: 24d027b3c1e816c98f5571bb637669bf
     Edit%20lesson%20description/singular: b959f1e2fc7f00f593ae2c1a12fd330d
     Lesson%20description%E2%80%A6/singular: 77ad5a9829eda8182865a46455d5a842
     Lesson%20title%E2%80%A6/singular: d7b981d2734c11f2ee5d58f21c93bd3e
     Edit%20lesson%20title/singular: 15b5a30f4a0365bae4da264383dae889
+    Lesson%20actions/singular: e014e6d8a3eb4906b17a79ca0ee96867
     We%20couldn't%20load%20the%20lessons.%20Please%20try%20again./singular: f2e68b6dd4d7f2eb0c91f20ade06957d
     Failed%20to%20load%20lessons/singular: 427523eb64ddb239d642ca975d6e1dbb
-    Lesson%20actions/singular: e014e6d8a3eb4906b17a79ca0ee96867
     Add%20lesson/singular: 101a1880b35c68eed6f80e7574f4ff2d
     Chapter%20actions/singular: 9f8fd63a1c71839fddbb5b57a1c62f73
     Add%20chapter/singular: af2ea03f1678fcea1fb005f66f28bfa5
@@ -86,29 +86,31 @@ checksums:
     Login/singular: f4f219abeb5a465ecb1c7efaf50246de
     Logout/singular: 07948fdf20705e04a7bf68ab197512bf
     401%20-%20Unauthorized/singular: 0612c3a47aaacaa9fd8aa3d5f0fbc0b8
+    Remove%20%7Btitle%7D/singular: 7ea5f663311db30da2ee678435d6c019
     Add/singular: 87c4a663507f2bcbbf79934af8164e13
+    Add%20alternative%20title%E2%80%A6/singular: cd5bd023fe1686324a3a146a072c968a
+    Alternative%20titles%20exported%20successfully/singular: 533d342c9b0ff576b40b1098d8e6d03c
+    Alternative%20titles/singular: 46f935d0da3101e12be5dda4fb12e520
+    (%7Bcount%7D)/singular: 61cc7515856066d5ddb9c5f2087563d8
+    Failed%20to%20export/singular: e1ed0bd77fc4509b338f2ed32565012a
+    Alternative%20titles%20imported%20successfully/singular: ca67e17d28382d5ef29bd27219a4104e
+    Import/singular: 348b8ab981de5b7f1fca6d7302263bbd
+    More%20options/singular: 53d90eae6a9b0243b5bc043b3d9de169
+    Export/singular: 709afbc86c5fdca279a111ea8e49d1c9
     Cancel/singular: 2e2a849c2223911717de8caa2c71bade
     Drop%20file%20or%20click%20to%20select/singular: e18ab4b554f4a2ab70350d565634021e
-    Alternative%20titles%20exported%20successfully/singular: 533d342c9b0ff576b40b1098d8e6d03c
     Replace%20(remove%20existing%20first)/singular: 0c375e65816d893151b927f8928c647b
     Import%20mode/singular: 99a121a79e9385892a65b17c2be56bfa
-    Import/singular: 348b8ab981de5b7f1fca6d7302263bbd
     Import%20alternative%20titles/singular: 6184f68131e1b31ce82b27e682c32473
-    Search%20titles%E2%80%A6/singular: 17c8f6ebb441b65bcd71751d895b083c
-    Remove%20%7Btitle%7D/singular: 7ea5f663311db30da2ee678435d6c019
+    Replace%20all/singular: 16c16679abef1cad8cefee7ff30433b5
+    This%20will%20permanently%20delete%20all%20existing%20items%20and%20any%20learner%20progress%20associated%20with%20them.%20This%20action%20cannot%20be%20undone./singular: 182cfc0507161bb66567b1b5d14f3961
     Show%20expected%20format/singular: 923bfe5861a5c67c5816dcbc1c6efa29
     Merge%20(add%20to%20existing)/singular: cb7e20a5abf4b5d9ef49cdb09e037d6a
-    Alternative%20titles/singular: 46f935d0da3101e12be5dda4fb12e520
-    More%20options/singular: 53d90eae6a9b0243b5bc043b3d9de169
-    Add%20alternative%20title%E2%80%A6/singular: cd5bd023fe1686324a3a146a072c968a
+    Upload%20a%20JSON%20file%20containing%20alternative%20titles%20to%20import./singular: 7dd18059ccf7955ba864342fdc0d6629
+    Search%20titles%E2%80%A6/singular: 17c8f6ebb441b65bcd71751d895b083c
     No%20titles%20match%20your%20search/singular: e35f274fe8b17b3db9b59116ac5b1d5e
     and%20%7Bcount%7D%20more/singular: 1caeff4ca948a7db83103b95323a62b6
     Show%20less/singular: 377af19e130feb94abe6fc3d281b55fd
-    (%7Bcount%7D)/singular: 61cc7515856066d5ddb9c5f2087563d8
-    Export/singular: 709afbc86c5fdca279a111ea8e49d1c9
-    Failed%20to%20export/singular: e1ed0bd77fc4509b338f2ed32565012a
-    Upload%20a%20JSON%20file%20containing%20alternative%20titles%20to%20import./singular: 7dd18059ccf7955ba864342fdc0d6629
-    Alternative%20titles%20imported%20successfully/singular: ca67e17d28382d5ef29bd27219a4104e
     Add%20category/singular: f1ef62efcd0e61cff264dd18047ebd6f
     Category%20options/singular: c968d0f8e27f746f50efeda29834ad74
     Categories/singular: fd4e44f3b1b2bba9ca45f3aef963d042
