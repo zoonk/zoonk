@@ -3,6 +3,7 @@
 import { CatalogActions } from "@/components/catalog/catalog-actions";
 import { CatalogContainer, CatalogToolbar } from "@/components/catalog/catalog-list";
 import { ContinueActivityLink } from "@/components/catalog/continue-activity-link";
+import { ProgressPreloader } from "@/components/catalog/progress-preloader";
 import { getChapter } from "@/data/chapters/get-chapter";
 import { listChapterLessons } from "@/data/lessons/list-chapter-lessons";
 import { redirect } from "@/i18n/navigation";
@@ -69,6 +70,7 @@ export default async function ChapterPage({
 
   return (
     <main className="flex flex-1 flex-col">
+      <ProgressPreloader chapterId={chapter.id} />
       <ChapterHeader brandSlug={brandSlug} chapter={chapter} courseSlug={courseSlug} />
 
       <CatalogContainer>

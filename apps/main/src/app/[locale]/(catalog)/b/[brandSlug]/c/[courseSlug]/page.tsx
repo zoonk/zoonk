@@ -3,6 +3,7 @@
 import { CatalogActions } from "@/components/catalog/catalog-actions";
 import { CatalogContainer, CatalogToolbar } from "@/components/catalog/catalog-list";
 import { ContinueActivityLink } from "@/components/catalog/continue-activity-link";
+import { ProgressPreloader } from "@/components/catalog/progress-preloader";
 import { listCourseChapters } from "@/data/chapters/list-course-chapters";
 import { getCourse } from "@/data/courses/get-course";
 import { redirect } from "@/i18n/navigation";
@@ -59,6 +60,7 @@ export default async function CoursePage({
 
   return (
     <main className="flex flex-1 flex-col">
+      <ProgressPreloader courseId={course.id} />
       <CourseHeader brandSlug={brandSlug} course={course} />
 
       <CatalogContainer>
