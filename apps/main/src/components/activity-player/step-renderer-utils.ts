@@ -12,18 +12,18 @@ function getMultipleChoiceSummary(step: SerializedStep): string {
   return content.question ?? "";
 }
 
-function getStaticSummary(step: SerializedStep): string {
+export function getStaticContent(step: SerializedStep): { heading: string; body: string } {
   const content = parseStepContent("static", step.content);
 
   if (content.variant === "grammarExample") {
-    return content.sentence;
+    return { body: content.translation, heading: content.sentence };
   }
 
   if (content.variant === "grammarRule") {
-    return content.ruleName;
+    return { body: content.ruleSummary, heading: content.ruleName };
   }
 
-  return content.title;
+  return { body: content.text, heading: content.title };
 }
 
 export function getStepSummary(step: SerializedStep): string {
@@ -44,7 +44,7 @@ export function getStepSummary(step: SerializedStep): string {
       return parseStepContent("selectImage", step.content).question;
 
     case "static":
-      return getStaticSummary(step);
+      return getStaticContent(step).heading;
 
     case "vocabulary":
       return step.word?.word ?? "";

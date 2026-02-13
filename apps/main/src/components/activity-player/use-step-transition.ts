@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 
 type StepTransitionRef = { index: number; isStatic: boolean };
 
@@ -25,6 +25,10 @@ function getTransitionClass(
 export function useStepTransition(stepIndex: number, isStatic: boolean): string {
   const prevRef = useRef<StepTransitionRef | null>(null);
   const transitionClass = getTransitionClass(prevRef.current, stepIndex, isStatic);
-  prevRef.current = { index: stepIndex, isStatic };
+
+  useEffect(() => {
+    prevRef.current = { index: stepIndex, isStatic };
+  });
+
   return transitionClass;
 }
