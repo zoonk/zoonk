@@ -1,4 +1,8 @@
 import "server-only";
+import {
+  type NextActivityInCourse,
+  getNextActivityInCourse,
+} from "@zoonk/core/activities/next-in-course";
 import { getSession } from "@zoonk/core/users/session/get";
 import {
   type Activity,
@@ -8,12 +12,19 @@ import {
   type Organization,
   prisma,
 } from "@zoonk/db";
-import { getContinueLearning as getContinueLearningQuery } from "@zoonk/db/continue-learning";
-import { toActivityKind } from "@zoonk/db/utils";
+import {
+  type getContinueLearning as GetContinueLearningQuery,
+  getContinueLearning as getContinueLearningQuery,
+} from "@zoonk/db/continue-learning";
 import { safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
 
 const MAX_CONTINUE_LEARNING_ITEMS = 4;
+
+/**
+ * Over-fetch to account for completed courses being filtered out.
+ */
+const SQL_LIMIT = 10;
 
 export type ContinueLearningActivity = Pick<Activity, "id" | "kind" | "title" | "position">;
 
@@ -32,6 +43,37 @@ export type ContinueLearningItem = {
   activity: ContinueLearningActivity;
 };
 
+function toItem(
+  row: GetContinueLearningQuery.Result,
+  next: NextActivityInCourse,
+): ContinueLearningItem {
+  return {
+    activity: {
+      id: next.activityId,
+      kind: next.activityKind,
+      position: next.activityPosition,
+      title: next.activityTitle,
+    },
+    chapter: {
+      id: next.chapterId,
+      slug: next.chapterSlug,
+    },
+    course: {
+      id: row.courseId,
+      imageUrl: row.courseImageUrl,
+      organization: { slug: row.orgSlug },
+      slug: row.courseSlug,
+      title: row.courseTitle,
+    },
+    lesson: {
+      description: next.lessonDescription,
+      id: next.lessonId,
+      slug: next.lessonSlug,
+      title: next.lessonTitle,
+    },
+  };
+}
+
 export const getContinueLearning = cache(
   async (headers?: Headers): Promise<ContinueLearningItem[]> => {
     const session = await getSession(headers);
@@ -43,37 +85,31 @@ export const getContinueLearning = cache(
     const userId = Number(session.user.id);
 
     const { data: rows, error } = await safeAsync(() =>
-      prisma.$queryRawTyped(getContinueLearningQuery(userId, MAX_CONTINUE_LEARNING_ITEMS)),
+      prisma.$queryRawTyped(getContinueLearningQuery(userId, SQL_LIMIT)),
     );
 
     if (error || !rows) {
       return [];
     }
 
-    return rows.map((row) => ({
-      activity: {
-        id: row.activityId,
-        kind: toActivityKind(row.activityKind),
-        position: row.activityPosition,
-        title: row.activityTitle,
-      },
-      chapter: {
-        id: row.chapterId,
-        slug: row.chapterSlug,
-      },
-      course: {
-        id: row.courseId,
-        imageUrl: row.courseImageUrl,
-        organization: { slug: row.orgSlug },
-        slug: row.courseSlug,
-        title: row.courseTitle,
-      },
-      lesson: {
-        description: row.lessonDescription,
-        id: row.lessonId,
-        slug: row.lessonSlug,
-        title: row.lessonTitle,
-      },
-    }));
+    const nextActivities = await Promise.all(
+      rows.map((row) =>
+        getNextActivityInCourse({
+          activityPosition: row.activityPosition,
+          chapterId: row.chapterId,
+          chapterPosition: row.chapterPosition,
+          courseId: row.courseId,
+          lessonId: row.lessonId,
+          lessonPosition: row.lessonPosition,
+        }),
+      ),
+    );
+
+    return rows
+      .flatMap((row, idx) => {
+        const next = nextActivities[idx];
+        return next ? [toItem(row, next)] : [];
+      })
+      .slice(0, MAX_CONTINUE_LEARNING_ITEMS);
   },
 );

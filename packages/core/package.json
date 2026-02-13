@@ -3,6 +3,7 @@
   "private": true,
   "type": "module",
   "exports": {
+    "./activities/last-completed": "./src/activities/find-last-completed.ts",
     "./activities/next-in-course": "./src/activities/get-next-activity-in-course.ts",
     "./ai": "./src/ai.ts",
     "./alternative-titles/add": "./src/alternative-titles/add-alternative-titles.ts",
