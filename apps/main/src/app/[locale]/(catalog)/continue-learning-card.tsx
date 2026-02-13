@@ -23,9 +23,11 @@ import Image from "next/image";
 export async function ContinueLearningCard({
   item,
   kindLabels,
+  fullWidth,
 }: {
   item: ContinueLearningItem;
   kindLabels: Map<string, string>;
+  fullWidth?: boolean;
 }) {
   const t = await getExtracted();
   const { activity, chapter, course, lesson } = item;
@@ -39,7 +41,11 @@ export async function ContinueLearningCard({
   const courseHref = `/b/${course.organization.slug}/c/${course.slug}`;
 
   return (
-    <FeatureCard className="w-[85vw] shrink-0 snap-start sm:w-[45vw] 2xl:w-[calc(25%-1rem)]">
+    <FeatureCard
+      className={
+        fullWidth ? undefined : "w-[85vw] shrink-0 snap-start sm:w-[45vw] 2xl:w-[calc(25%-1rem)]"
+      }
+    >
       <Link href={activityHref}>
         <FeatureCardHeader>
           <FeatureCardHeaderContent>
