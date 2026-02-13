@@ -23,7 +23,7 @@ function FeedbackScreen({ className, ...props }: React.ComponentProps<"div">) {
     <div
       aria-live="polite"
       className={cn(
-        "animate-in fade-in slide-in-from-bottom-1 mx-auto flex w-full max-w-lg flex-col items-center gap-3 duration-200 ease-out motion-reduce:animate-none",
+        "animate-in fade-in slide-in-from-bottom-1 mx-auto flex w-full max-w-lg flex-col gap-6 duration-200 ease-out motion-reduce:animate-none",
         className,
       )}
       data-slot="feedback-screen"
@@ -33,23 +33,20 @@ function FeedbackScreen({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
-function FeedbackIcon({ className, ...props }: React.ComponentProps<"div">) {
-  return <div className={cn("[&_svg]:size-10", className)} data-slot="feedback-icon" {...props} />;
-}
-
-function FeedbackTitle({ className, ...props }: React.ComponentProps<"p">) {
+function FeedbackIndicator({ className, ...props }: React.ComponentProps<"div">) {
   return (
-    <p className={cn("text-xl font-semibold", className)} data-slot="feedback-title" {...props} />
+    <div
+      className={cn("flex items-center gap-1.5 text-sm font-medium", className)}
+      data-slot="feedback-indicator"
+      {...props}
+    />
   );
 }
 
-function FeedbackMessage({ className, ...props }: React.ComponentProps<"div">) {
+function FeedbackMessage({ className, ...props }: React.ComponentProps<"p">) {
   return (
-    <div
-      className={cn(
-        "text-muted-foreground max-w-lg text-center text-sm leading-relaxed",
-        className,
-      )}
+    <p
+      className={cn("text-foreground max-w-md text-lg leading-relaxed", className)}
       data-slot="feedback-message"
       {...props}
     />
@@ -59,7 +56,7 @@ function FeedbackMessage({ className, ...props }: React.ComponentProps<"div">) {
 function FeedbackEffects({ className, ...props }: React.ComponentProps<"ul">) {
   return (
     <ul
-      className={cn("border-border mx-auto max-w-xs border-t pt-6", className)}
+      className={cn("border-border w-full max-w-xs border-t pt-5", className)}
       data-slot="feedback-effects"
       {...props}
     />
@@ -97,7 +94,7 @@ function FeedbackEffect({
 }: React.ComponentProps<"li"> & { effect: ChallengeEffect }) {
   return (
     <li
-      className={cn("flex items-center justify-between py-1", className)}
+      className={cn("flex items-center justify-between py-1.5", className)}
       data-slot="feedback-effect"
       {...props}
     >
@@ -116,7 +113,7 @@ export function FeedbackScreenContent({ result }: { result: StepResult }) {
   if (variant === "challenge") {
     return (
       <FeedbackScreen>
-        <FeedbackTitle className="text-foreground">{t("Outcome")}</FeedbackTitle>
+        <FeedbackIndicator className="text-foreground">{t("Outcome")}</FeedbackIndicator>
 
         {result.result.feedback ? (
           <FeedbackMessage>{result.result.feedback}</FeedbackMessage>
@@ -137,17 +134,14 @@ export function FeedbackScreenContent({ result }: { result: StepResult }) {
 
   return (
     <FeedbackScreen>
-      <FeedbackIcon>
+      <FeedbackIndicator className={isCorrect ? "text-success" : "text-destructive"}>
         {isCorrect ? (
-          <CircleCheck aria-label={t("Correct!")} className="text-success" />
+          <CircleCheck aria-hidden="true" className="size-4" />
         ) : (
-          <CircleX aria-label={t("Not quite")} className="text-destructive" />
+          <CircleX aria-hidden="true" className="size-4" />
         )}
-      </FeedbackIcon>
-
-      <FeedbackTitle className={isCorrect ? "text-success" : "text-destructive"}>
-        {isCorrect ? t("Correct!") : t("Not quite")}
-      </FeedbackTitle>
+        <span>{isCorrect ? t("Correct!") : t("Not quite")}</span>
+      </FeedbackIndicator>
 
       {result.result.feedback ? <FeedbackMessage>{result.result.feedback}</FeedbackMessage> : null}
     </FeedbackScreen>
