@@ -108,7 +108,7 @@ export function CatalogListContent({ className, ...props }: React.ComponentProps
   return (
     <ul
       {...props}
-      className={cn("flex flex-col", className)}
+      className={cn("-mt-3.5 flex flex-col", className)}
       data-slot="catalog-list-content"
       role="list"
     />
