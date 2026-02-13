@@ -56,6 +56,7 @@ Zoonk is a web app where users can learn anything using AI. This app uses AI to 
 ## Engineering Mindset
 
 - **Build for growth, not current size.** "We only have N of X" is NEVER a valid reason to skip proper patterns. Early-stage projects grow. Build infrastructure that scales with the project from the start.
+- **Structure code for known growth.** When a plan or issue tracker shows a file will grow (e.g., new renderers, phases, or features), extract components and helpers proactively — don't wait for it to become a problem. "One-time use" is not a reason to inline if we already know more uses are coming.
 - **Single source of truth always wins.** If two things must stay in sync (schemas + docs, types + validation), generate one from the other. Manual duplication WILL drift.
 - **Setup cost is amortized.** The effort to set up reusable code and automations always pays off. Don't optimize for today's sprint. Focus on long-term velocity.
 - **Principles override plans.** If a plan marks something as "optional" but skipping it would violate core principles (like single source of truth), do it anyway. Plans are guidance; principles are non-negotiable. When in doubt, ask: "Does skipping this create duplicate sources of truth or technical debt?"

@@ -9,9 +9,12 @@ export type LessonWithDetails = {
   description: string;
   position: number;
   chapter: {
+    id: number;
+    position: number;
     slug: string;
     title: string;
     course: {
+      id: number;
       slug: string;
       title: string;
     };
@@ -24,7 +27,9 @@ const cachedGetLesson = cache(
       select: {
         chapter: {
           select: {
-            course: { select: { slug: true, title: true } },
+            course: { select: { id: true, slug: true, title: true } },
+            id: true,
+            position: true,
             slug: true,
             title: true,
           },

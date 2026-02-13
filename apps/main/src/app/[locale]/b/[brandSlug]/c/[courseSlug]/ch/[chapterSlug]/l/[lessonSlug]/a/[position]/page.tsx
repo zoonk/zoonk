@@ -6,6 +6,7 @@ import { getLessonSentences } from "@/data/activities/get-lesson-sentences";
 import { getLessonWords } from "@/data/activities/get-lesson-words";
 import { prepareActivityData } from "@/data/activities/prepare-activity-data";
 import { getLesson } from "@/data/lessons/get-lesson";
+import { getNextActivityInCourse } from "@zoonk/core/activities/next-in-course";
 import { cacheTagActivity } from "@zoonk/utils/cache";
 import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import { parseNumericId } from "@zoonk/utils/string";
@@ -57,10 +58,18 @@ export default async function ActivityPage({ params }: Props) {
     notFound();
   }
 
-  const [activity, lessonWords, lessonSentences] = await Promise.all([
+  const [activity, lessonWords, lessonSentences, nextActivity] = await Promise.all([
     getActivity({ lessonId: lesson.id, position: activityPosition }),
     getLessonWords({ lessonId: lesson.id }),
     getLessonSentences({ lessonId: lesson.id }),
+    getNextActivityInCourse({
+      activityPosition,
+      chapterId: lesson.chapter.id,
+      chapterPosition: lesson.chapter.position,
+      courseId: lesson.chapter.course.id,
+      lessonId: lesson.id,
+      lessonPosition: lesson.position,
+    }),
   ]);
 
   if (!activity) {
@@ -79,6 +88,15 @@ export default async function ActivityPage({ params }: Props) {
 
   const serialized = prepareActivityData(activity, lessonWords, lessonSentences);
   const lessonHref = `/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}/l/${lessonSlug}`;
+  const nextActivityHref = nextActivity
+    ? `/b/${brandSlug}/c/${courseSlug}/ch/${nextActivity.chapterSlug}/l/${nextActivity.lessonSlug}/a/${nextActivity.activityPosition}`
+    : null;
 
-  return <ActivityPlayerShell activity={serialized} lessonHref={lessonHref} />;
+  return (
+    <ActivityPlayerShell
+      activity={serialized}
+      lessonHref={lessonHref}
+      nextActivityHref={nextActivityHref}
+    />
+  );
 }
