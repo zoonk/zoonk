@@ -502,8 +502,8 @@ describe(findLastCompleted, () => {
       const result = await findLastCompleted(uid, { lessonId: lesson1.id });
 
       expect(result).toMatchObject({
-        lessonId: lesson1.id,
         activityPosition: 0,
+        lessonId: lesson1.id,
       });
     });
   });
