@@ -88,6 +88,66 @@ function ActionRow({ className, ...props }: React.ComponentProps<"div">) {
   return <div className={cn("flex w-full gap-3", className)} {...props} />;
 }
 
+function SecondaryActions({
+  lessonHref,
+  onRestart,
+  variant,
+}: {
+  lessonHref: string;
+  onRestart: () => void;
+  variant: "inline" | "stacked";
+}) {
+  const t = useExtracted();
+  const isInline = variant === "inline";
+
+  const backLink = (
+    <ClientLink
+      className={cn(
+        buttonVariants({ variant: isInline ? "outline" : "default" }),
+        isInline ? "flex-1 justify-between" : "w-full justify-between",
+      )}
+      href={lessonHref}
+    >
+      {t("Back to Lesson")}
+      <Kbd
+        className={cn(
+          "hidden lg:inline-flex",
+          isInline ? "opacity-60" : "bg-primary-foreground/15 text-primary-foreground opacity-70",
+        )}
+      >
+        Esc
+      </Kbd>
+    </ClientLink>
+  );
+
+  const restartButton = (
+    <Button
+      className={cn(isInline ? "flex-1" : "w-full", "justify-between")}
+      onClick={onRestart}
+      variant="outline"
+    >
+      {t("Restart")}
+      <Kbd className="hidden opacity-60 lg:inline-flex">R</Kbd>
+    </Button>
+  );
+
+  if (isInline) {
+    return (
+      <ActionRow>
+        {backLink}
+        {restartButton}
+      </ActionRow>
+    );
+  }
+
+  return (
+    <>
+      {backLink}
+      {restartButton}
+    </>
+  );
+}
+
 function AuthenticatedContent({
   lessonHref,
   nextActivityHref,
@@ -116,38 +176,10 @@ function AuthenticatedContent({
               </Kbd>
             </ClientLink>
 
-            <ActionRow>
-              <ClientLink
-                className={cn(buttonVariants({ variant: "outline" }), "flex-1 justify-between")}
-                href={lessonHref}
-              >
-                {t("Back to Lesson")}
-                <Kbd className="hidden opacity-60 lg:inline-flex">Esc</Kbd>
-              </ClientLink>
-
-              <Button className="flex-1 justify-between" onClick={onRestart} variant="outline">
-                {t("Restart")}
-                <Kbd className="hidden opacity-60 lg:inline-flex">R</Kbd>
-              </Button>
-            </ActionRow>
+            <SecondaryActions lessonHref={lessonHref} onRestart={onRestart} variant="inline" />
           </>
         ) : (
-          <>
-            <ClientLink
-              className={cn(buttonVariants(), "w-full justify-between")}
-              href={lessonHref}
-            >
-              {t("Back to Lesson")}
-              <Kbd className="bg-primary-foreground/15 text-primary-foreground hidden opacity-70 lg:inline-flex">
-                Esc
-              </Kbd>
-            </ClientLink>
-
-            <Button className="w-full justify-between" onClick={onRestart} variant="outline">
-              {t("Restart")}
-              <Kbd className="hidden opacity-60 lg:inline-flex">R</Kbd>
-            </Button>
-          </>
+          <SecondaryActions lessonHref={lessonHref} onRestart={onRestart} variant="stacked" />
         )}
       </CompletionActions>
     </>
@@ -172,20 +204,7 @@ function UnauthenticatedContent({
           {t("Login")}
         </ClientLink>
 
-        <ActionRow>
-          <ClientLink
-            className={cn(buttonVariants({ variant: "outline" }), "flex-1 justify-between")}
-            href={lessonHref}
-          >
-            {t("Back to Lesson")}
-            <Kbd className="hidden opacity-60 lg:inline-flex">Esc</Kbd>
-          </ClientLink>
-
-          <Button className="flex-1 justify-between" onClick={onRestart} variant="outline">
-            {t("Restart")}
-            <Kbd className="hidden opacity-60 lg:inline-flex">R</Kbd>
-          </Button>
-        </ActionRow>
+        <SecondaryActions lessonHref={lessonHref} onRestart={onRestart} variant="inline" />
       </CompletionActions>
     </>
   );

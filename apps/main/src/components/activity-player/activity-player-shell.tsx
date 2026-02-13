@@ -43,7 +43,6 @@ export function ActivityPlayerShell({
   const totalSteps = state.steps.length;
   const isCompleted = state.phase === "completed";
   const isFirstStep = state.currentStepIndex === 0;
-  const isLastStep = state.currentStepIndex >= totalSteps - 1;
 
   const progressValue = isCompleted ? 100 : computeProgress(state.currentStepIndex, totalSteps);
 
@@ -127,11 +126,7 @@ export function ActivityPlayerShell({
                 <PlayerStepFraction>
                   {state.currentStepIndex + 1} / {totalSteps}
                 </PlayerStepFraction>
-                <PlayerNavButton
-                  direction="next"
-                  disabled={isLastStep}
-                  onClick={handleNavigateNext}
-                />
+                <PlayerNavButton direction="next" onClick={handleNavigateNext} />
               </PlayerNavGroup>
             </PlayerNav>
           )}

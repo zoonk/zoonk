@@ -474,7 +474,7 @@ test.describe("Static Step Navigation", () => {
     await expect(nav.getByRole("button", { name: /next step/i })).toBeEnabled();
   });
 
-  test("header next button is disabled on last step", async ({ page }) => {
+  test("header next button navigates to completion on last step", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const { url } = await createStaticActivity({
       steps: [
@@ -508,8 +508,13 @@ test.describe("Static Step Navigation", () => {
       page.getByRole("heading", { name: new RegExp(`Last 2 ${uniqueId}`) }),
     ).toBeVisible();
 
-    await expect(nav.getByRole("button", { name: /next step/i })).toBeDisabled();
-    await expect(nav.getByRole("button", { name: /previous step/i })).toBeEnabled();
+    // Next button should be enabled on last step
+    await expect(nav.getByRole("button", { name: /next step/i })).toBeEnabled();
+
+    // Clicking it should show completion screen
+    await nav.getByRole("button", { name: /next step/i }).click();
+    await expect(page.getByRole("status")).toBeVisible();
+    await expect(page.getByText(/completed/i)).toBeVisible();
   });
 });
 
