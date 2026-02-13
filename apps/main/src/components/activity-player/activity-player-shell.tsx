@@ -4,10 +4,12 @@ import { type SerializedActivity } from "@/data/activities/prepare-activity-data
 import { useRouter } from "@/i18n/navigation";
 import { useExtracted } from "next-intl";
 import { useCallback } from "react";
+import { checkStep } from "./check-step";
 import { getFeedbackVariant } from "./feedback-screen";
 import { PlayerActionBar, PlayerActionButton } from "./player-action-bar";
 import { PlayerCloseLink, PlayerHeader, PlayerStepFraction } from "./player-header";
 import { PlayerProgressBar } from "./player-progress-bar";
+import { type SelectedAnswer } from "./player-reducer";
 import { PlayerStage } from "./player-stage";
 import { StageContent } from "./stage-content";
 import { usePlayerKeyboard } from "./use-player-keyboard";
@@ -40,9 +42,27 @@ export function ActivityPlayerShell({
     router.push(lessonHref);
   }, [router, lessonHref]);
 
+  const handleSelectAnswer = useCallback(
+    (stepId: string, answer: SelectedAnswer) => {
+      dispatch({ answer, stepId, type: "SELECT_ANSWER" });
+    },
+    [dispatch],
+  );
+
   const handleCheck = useCallback(() => {
-    // No-op until step renderers exist (Issue 9)
-  }, []);
+    if (!currentStep) {
+      return;
+    }
+
+    const answer = state.selectedAnswers[currentStep.id];
+
+    if (!answer) {
+      return;
+    }
+
+    const { effects, result } = checkStep(currentStep, answer);
+    dispatch({ effects, result, stepId: currentStep.id, type: "CHECK_ANSWER" });
+  }, [currentStep, state.selectedAnswers, dispatch]);
 
   const handleContinue = useCallback(() => {
     dispatch({ type: "CONTINUE" });
@@ -84,11 +104,15 @@ export function ActivityPlayerShell({
         <StageContent
           activityId={state.activityId}
           currentResult={currentResult}
+          currentStep={currentStep}
+          currentStepIndex={state.currentStepIndex}
           isCompleted={isCompleted}
           lessonHref={lessonHref}
           nextActivityHref={nextActivityHref}
+          onSelectAnswer={handleSelectAnswer}
           phase={state.phase}
           results={state.results}
+          selectedAnswer={currentStep ? state.selectedAnswers[currentStep.id] : undefined}
         />
       </PlayerStage>
 

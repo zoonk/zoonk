@@ -1,26 +1,39 @@
 "use client";
 
+import { type SerializedStep } from "@/data/activities/prepare-activity-data";
 import { CompletionScreenContent } from "./completion-screen";
 import { FeedbackScreenContent } from "./feedback-screen";
-import { type StepResult } from "./player-reducer";
+import { type SelectedAnswer, type StepResult } from "./player-reducer";
+import { StepRenderer } from "./step-renderer";
+import { useStepTransition } from "./use-step-transition";
 
 export function StageContent({
   currentResult,
+  currentStep,
+  currentStepIndex,
   isCompleted,
   activityId,
   lessonHref,
   nextActivityHref,
+  onSelectAnswer,
   results,
   phase,
+  selectedAnswer,
 }: {
   currentResult: StepResult | undefined;
+  currentStep: SerializedStep | undefined;
+  currentStepIndex: number;
   isCompleted: boolean;
   activityId: string;
   lessonHref: string;
   nextActivityHref: string | null;
+  onSelectAnswer: (stepId: string, answer: SelectedAnswer) => void;
   results: Record<string, StepResult>;
   phase: string;
+  selectedAnswer: SelectedAnswer | undefined;
 }) {
+  const transitionClass = useStepTransition(currentStepIndex, currentStep?.kind === "static");
+
   if (isCompleted) {
     return (
       <CompletionScreenContent
@@ -36,6 +49,17 @@ export function StageContent({
     return <FeedbackScreenContent result={currentResult} />;
   }
 
-  // Step content will be rendered here by step renderers (Issue 9)
+  if (phase === "playing" && currentStep) {
+    return (
+      <div className={transitionClass} key={`step-${currentStepIndex}`}>
+        <StepRenderer
+          onSelectAnswer={onSelectAnswer}
+          selectedAnswer={selectedAnswer}
+          step={currentStep}
+        />
+      </div>
+    );
+  }
+
   return null;
 }
