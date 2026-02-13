@@ -32,7 +32,7 @@
         "src/app/[locale]/privacy/*.mdx",
         "src/app/[locale]/terms/*.mdx"
       ],
-      "ignore": ["e2e/**", "setup-tests.ts", "src/components/activity-player/use-player-state.ts"]
+      "ignore": ["e2e/**", "setup-tests.ts"]
     },
     "packages/core": {
       "ignore": ["setup-tests.ts"]
