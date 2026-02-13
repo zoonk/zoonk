@@ -1,10 +1,10 @@
 "use client";
 
-import { type ChallengeEffect } from "@zoonk/core/steps/content-contract";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CircleCheck, CircleX } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { type StepResult } from "./player-reducer";
+import { DimensionList, buildDimensionEntries } from "./dimension-inventory";
+import { type DimensionInventory, type StepResult } from "./player-reducer";
 
 export function getFeedbackVariant(result: StepResult): "correct" | "incorrect" | "challenge" {
   if (result.effects.length > 0) {
@@ -53,64 +53,19 @@ function FeedbackMessage({ className, ...props }: React.ComponentProps<"p">) {
   );
 }
 
-function FeedbackEffects({ className, ...props }: React.ComponentProps<"ul">) {
-  return (
-    <ul
-      className={cn("border-border w-full max-w-xs border-t pt-5", className)}
-      data-slot="feedback-effects"
-      {...props}
-    />
-  );
-}
-
-function getEffectColor(impact: ChallengeEffect["impact"]): string {
-  if (impact === "positive") {
-    return "text-success";
-  }
-
-  if (impact === "negative") {
-    return "text-destructive";
-  }
-
-  return "text-muted-foreground";
-}
-
-function getEffectLabel(impact: ChallengeEffect["impact"]): string {
-  if (impact === "positive") {
-    return "+1";
-  }
-
-  if (impact === "negative") {
-    return "-1";
-  }
-
-  return "0";
-}
-
-function FeedbackEffect({
-  effect,
-  className,
-  ...props
-}: React.ComponentProps<"li"> & { effect: ChallengeEffect }) {
-  return (
-    <li
-      className={cn("flex items-center justify-between py-1.5", className)}
-      data-slot="feedback-effect"
-      {...props}
-    >
-      <span className="text-muted-foreground text-sm">{effect.dimension}</span>
-      <span className={cn("text-sm font-medium", getEffectColor(effect.impact))}>
-        {getEffectLabel(effect.impact)}
-      </span>
-    </li>
-  );
-}
-
-export function FeedbackScreenContent({ result }: { result: StepResult }) {
+export function FeedbackScreenContent({
+  dimensions,
+  result,
+}: {
+  dimensions: DimensionInventory;
+  result: StepResult;
+}) {
   const t = useExtracted();
   const variant = getFeedbackVariant(result);
 
   if (variant === "challenge") {
+    const entries = buildDimensionEntries(dimensions, result.effects);
+
     return (
       <FeedbackScreen>
         <FeedbackIndicator className="text-foreground">{t("Outcome")}</FeedbackIndicator>
@@ -119,13 +74,7 @@ export function FeedbackScreenContent({ result }: { result: StepResult }) {
           <FeedbackMessage>{result.result.feedback}</FeedbackMessage>
         ) : null}
 
-        {result.effects.length > 0 ? (
-          <FeedbackEffects>
-            {result.effects.map((effect) => (
-              <FeedbackEffect effect={effect} key={effect.dimension} />
-            ))}
-          </FeedbackEffects>
-        ) : null}
+        <DimensionList aria-label="Dimension inventory" entries={entries} variant="feedback" />
       </FeedbackScreen>
     );
   }

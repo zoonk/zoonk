@@ -347,7 +347,9 @@ test.describe("Challenge Variant", () => {
     ).toBeVisible();
   });
 
-  test("selecting option shows Outcome feedback with consequence and effects", async ({ page }) => {
+  test("selecting option shows Outcome feedback with consequence and dimension inventory", async ({
+    page,
+  }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const { url } = await createMultipleChoiceActivity({
       steps: [
@@ -358,12 +360,15 @@ test.describe("Challenge Variant", () => {
             options: [
               {
                 consequence: `Bold move ${uniqueId}`,
-                effects: [{ dimension: `Wisdom ${uniqueId}`, impact: "positive" }],
+                effects: [
+                  { dimension: `Wisdom ${uniqueId}`, impact: "positive" },
+                  { dimension: `Courage ${uniqueId}`, impact: "negative" },
+                ],
                 text: "Choice A",
               },
               {
                 consequence: "Cautious approach",
-                effects: [{ dimension: "Wisdom", impact: "negative" }],
+                effects: [{ dimension: `Wisdom ${uniqueId}`, impact: "negative" }],
                 text: "Choice B",
               },
             ],
@@ -382,7 +387,180 @@ test.describe("Challenge Variant", () => {
 
     await expect(page.getByText(/outcome/i)).toBeVisible();
     await expect(page.getByText(new RegExp(`Bold move ${uniqueId}`))).toBeVisible();
-    await expect(page.getByText(new RegExp(`Wisdom ${uniqueId}`))).toBeVisible();
+
+    const inventory = page.getByRole("list", { name: /dimension inventory/i });
+    await expect(inventory).toBeVisible();
+    await expect(inventory.getByText(new RegExp(`Wisdom ${uniqueId}`))).toBeVisible();
+    await expect(inventory.getByText(new RegExp(`Courage ${uniqueId}`))).toBeVisible();
+  });
+
+  test("accumulated inventory across multiple steps", async ({ page }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const dim = `Bravery ${uniqueId}`;
+    const { url } = await createMultipleChoiceActivity({
+      steps: [
+        {
+          content: {
+            context: `Step 1 context ${uniqueId}`,
+            kind: "challenge",
+            options: [
+              {
+                consequence: `Gain bravery ${uniqueId}`,
+                effects: [{ dimension: dim, impact: "positive" }],
+                text: `Brave choice ${uniqueId}`,
+              },
+              {
+                consequence: "Stay safe",
+                effects: [{ dimension: dim, impact: "negative" }],
+                text: "Safe choice",
+              },
+            ],
+            question: `Step 1 question ${uniqueId}`,
+          },
+          position: 0,
+        },
+        {
+          content: {
+            context: `Step 2 context ${uniqueId}`,
+            kind: "challenge",
+            options: [
+              {
+                consequence: `More bravery ${uniqueId}`,
+                effects: [{ dimension: dim, impact: "positive" }],
+                text: `Bold choice ${uniqueId}`,
+              },
+              {
+                consequence: "Retreat",
+                effects: [{ dimension: dim, impact: "negative" }],
+                text: "Timid choice",
+              },
+            ],
+            question: `Step 2 question ${uniqueId}`,
+          },
+          position: 1,
+        },
+      ],
+    });
+
+    await page.goto(url);
+    await page.waitForLoadState("networkidle");
+
+    // Step 1: choose brave option (+1)
+    await page.getByRole("radio", { name: new RegExp(`Brave choice ${uniqueId}`) }).click();
+    await page.getByRole("button", { name: /check/i }).click();
+
+    const inventory = page.getByRole("list", { name: /dimension inventory/i });
+    await expect(inventory).toBeVisible();
+    await expect(inventory.getByText(new RegExp(dim))).toBeVisible();
+
+    // Continue to step 2
+    await page.getByRole("button", { name: /continue/i }).click();
+
+    // Step 2: choose bold option (+1 again, total should be 2)
+    await page.getByRole("radio", { name: new RegExp(`Bold choice ${uniqueId}`) }).click();
+    await page.getByRole("button", { name: /check/i }).click();
+
+    // After step 2, total should be 2 (accumulated from both steps)
+    await expect(inventory.getByText("2", { exact: true })).toBeVisible();
+  });
+
+  test("challenge completion success shows Challenge Complete", async ({ authenticatedPage }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const dim = `Diplomacy ${uniqueId}`;
+    const { url } = await createMultipleChoiceActivity({
+      steps: [
+        {
+          content: {
+            context: `Negotiate ${uniqueId}`,
+            kind: "challenge",
+            options: [
+              {
+                consequence: `Peace prevails ${uniqueId}`,
+                effects: [{ dimension: dim, impact: "positive" }],
+                text: `Negotiate ${uniqueId}`,
+              },
+              {
+                consequence: "War erupts",
+                effects: [{ dimension: dim, impact: "negative" }],
+                text: "Attack",
+              },
+            ],
+            question: `What do you do ${uniqueId}`,
+          },
+          position: 0,
+        },
+      ],
+    });
+
+    await authenticatedPage.goto(url);
+    await authenticatedPage.waitForLoadState("networkidle");
+
+    await authenticatedPage
+      .getByRole("radio", { name: new RegExp(`Negotiate ${uniqueId}`) })
+      .click();
+    await authenticatedPage.getByRole("button", { name: /check/i }).click();
+    await authenticatedPage.getByRole("button", { name: /continue/i }).click();
+
+    await expect(authenticatedPage.getByText(/challenge complete/i)).toBeVisible();
+
+    const inventory = authenticatedPage.getByRole("list", { name: /final dimension scores/i });
+    await expect(inventory.getByText(new RegExp(dim))).toBeVisible();
+  });
+
+  test("challenge completion game over shows Challenge Failed with Try Again", async ({ page }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const dim = `Economy ${uniqueId}`;
+    const { url } = await createMultipleChoiceActivity({
+      steps: [
+        {
+          content: {
+            context: `Crisis ${uniqueId}`,
+            kind: "challenge",
+            options: [
+              {
+                consequence: "Good choice",
+                effects: [{ dimension: dim, impact: "positive" }],
+                text: "Invest",
+              },
+              {
+                consequence: `Economy crashes ${uniqueId}`,
+                effects: [{ dimension: dim, impact: "negative" }],
+                text: `Spend recklessly ${uniqueId}`,
+              },
+            ],
+            question: `What do you do ${uniqueId}`,
+          },
+          position: 0,
+        },
+      ],
+    });
+
+    await page.goto(url);
+    await page.waitForLoadState("networkidle");
+
+    // Choose the negative option to get a negative dimension
+    await page.getByRole("radio", { name: new RegExp(`Spend recklessly ${uniqueId}`) }).click();
+    await page.getByRole("button", { name: /check/i }).click();
+    await page.getByRole("button", { name: /continue/i }).click();
+
+    await expect(page.getByText(/challenge failed/i)).toBeVisible();
+    await expect(page.getByText(/some of your stats went below zero/i)).toBeVisible();
+
+    const inventory = page.getByRole("list", { name: /final dimension scores/i });
+    await expect(inventory.getByText(new RegExp(dim))).toBeVisible();
+
+    // No "Next" button on game over
+    await expect(page.getByRole("link", { name: /next/i })).not.toBeVisible();
+
+    // "Try Again" button is available
+    const tryAgain = page.getByRole("button", { name: /try again/i });
+    await expect(tryAgain).toBeVisible();
+
+    // Click "Try Again" should restart the activity
+    await tryAgain.click();
+
+    // After restart, we should see the question again
+    await expect(page.getByText(new RegExp(`Crisis ${uniqueId}`))).toBeVisible();
   });
 });
 

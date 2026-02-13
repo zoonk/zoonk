@@ -1,0 +1,109 @@
+"use client";
+
+import { ContentFeedback } from "@/components/feedback/content-feedback";
+import { ClientLink } from "@/i18n/client-link";
+import { Button, buttonVariants } from "@zoonk/ui/components/button";
+import { Kbd } from "@zoonk/ui/components/kbd";
+import { cn } from "@zoonk/ui/lib/utils";
+import { CircleCheck } from "lucide-react";
+import { useExtracted } from "next-intl";
+import { DimensionList, buildDimensionEntries } from "./dimension-inventory";
+import { type DimensionInventory } from "./player-reducer";
+
+function ChallengeScreen({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      aria-live="polite"
+      className={cn(
+        "animate-in fade-in mx-auto flex w-full max-w-lg flex-col items-center gap-6 duration-200 ease-out motion-reduce:animate-none",
+        className,
+      )}
+      data-slot="completion-screen"
+      role="status"
+      {...props}
+    />
+  );
+}
+
+function ChallengeActions({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      className={cn("flex w-full flex-col gap-3", className)}
+      data-slot="completion-actions"
+      {...props}
+    />
+  );
+}
+
+export function ChallengeSuccessContent({
+  activityId,
+  children,
+  dimensions,
+}: {
+  activityId: string;
+  children: React.ReactNode;
+  dimensions: DimensionInventory;
+}) {
+  const t = useExtracted();
+  const entries = buildDimensionEntries(dimensions, []);
+
+  return (
+    <ChallengeScreen>
+      <div className="flex flex-col items-center gap-2">
+        <CircleCheck className="text-foreground size-12" />
+        <p className="text-lg font-medium">{t("Challenge Complete")}</p>
+      </div>
+
+      <DimensionList aria-label="Final dimension scores" entries={entries} variant="success" />
+
+      {children}
+
+      <ContentFeedback className="pt-8" contentId={activityId} kind="activity" variant="minimal" />
+    </ChallengeScreen>
+  );
+}
+
+export function ChallengeFailureContent({
+  activityId,
+  dimensions,
+  lessonHref,
+  onRestart,
+}: {
+  activityId: string;
+  dimensions: DimensionInventory;
+  lessonHref: string;
+  onRestart: () => void;
+}) {
+  const t = useExtracted();
+  const entries = buildDimensionEntries(dimensions, []);
+
+  return (
+    <ChallengeScreen>
+      <div className="flex flex-col items-center gap-1">
+        <p className="text-2xl font-bold tracking-tight">{t("Challenge Failed")}</p>
+        <p className="text-muted-foreground text-sm">{t("Some of your stats went below zero.")}</p>
+      </div>
+
+      <DimensionList aria-label="Final dimension scores" entries={entries} variant="failure" />
+
+      <ChallengeActions>
+        <Button className="w-full justify-between" onClick={onRestart} size="lg">
+          {t("Try Again")}
+          <Kbd className="bg-primary-foreground/15 text-primary-foreground hidden opacity-70 lg:inline-flex">
+            R
+          </Kbd>
+        </Button>
+
+        <ClientLink
+          className={cn(buttonVariants({ variant: "outline" }), "w-full justify-between")}
+          href={lessonHref}
+        >
+          {t("Back to Lesson")}
+          <Kbd className="hidden opacity-60 lg:inline-flex">Esc</Kbd>
+        </ClientLink>
+      </ChallengeActions>
+
+      <ContentFeedback className="pt-8" contentId={activityId} kind="activity" variant="minimal" />
+    </ChallengeScreen>
+  );
+}

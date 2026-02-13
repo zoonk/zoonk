@@ -1,13 +1,14 @@
 import { type SerializedStep } from "@/data/activities/prepare-activity-data";
 import { CompletionScreenContent } from "./completion-screen";
 import { FeedbackScreenContent } from "./feedback-screen";
-import { type SelectedAnswer, type StepResult } from "./player-reducer";
+import { type DimensionInventory, type SelectedAnswer, type StepResult } from "./player-reducer";
 import { StepRenderer } from "./step-renderer";
 
 export function StageContent({
   currentResult,
   currentStep,
   currentStepIndex,
+  dimensions,
   isCompleted,
   isFirst,
   activityId,
@@ -24,6 +25,7 @@ export function StageContent({
   currentResult: StepResult | undefined;
   currentStep: SerializedStep | undefined;
   currentStepIndex: number;
+  dimensions: DimensionInventory;
   isCompleted: boolean;
   isFirst: boolean;
   activityId: string;
@@ -41,6 +43,7 @@ export function StageContent({
     return (
       <CompletionScreenContent
         activityId={activityId}
+        dimensions={dimensions}
         lessonHref={lessonHref}
         nextActivityHref={nextActivityHref}
         onRestart={onRestart}
@@ -50,7 +53,7 @@ export function StageContent({
   }
 
   if (phase === "feedback" && currentResult) {
-    return <FeedbackScreenContent result={currentResult} />;
+    return <FeedbackScreenContent dimensions={dimensions} result={currentResult} />;
   }
 
   if (phase === "playing" && currentStep) {

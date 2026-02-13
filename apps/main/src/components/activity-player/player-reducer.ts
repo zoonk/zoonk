@@ -3,7 +3,7 @@ import {
   type SerializedStep,
 } from "@/data/activities/prepare-activity-data";
 import { type AnswerResult } from "@zoonk/core/player/check-answer";
-import { type ChallengeEffect } from "@zoonk/core/steps/content-contract";
+import { type ChallengeEffect, parseStepContent } from "@zoonk/core/steps/content-contract";
 
 export type PlayerPhase = "playing" | "feedback" | "completed";
 
@@ -44,7 +44,7 @@ export type PlayerAction =
   | { type: "NAVIGATE_STEP"; direction: "next" | "prev" }
   | { type: "RESTART" };
 
-function effectDelta(impact: ChallengeEffect["impact"]): number {
+export function effectDelta(impact: ChallengeEffect["impact"]): number {
   if (impact === "positive") {
     return 1;
   }
@@ -77,11 +77,31 @@ function isStaticStep(step: SerializedStep): boolean {
   return step.kind === "static";
 }
 
+function getChallengeEffects(step: SerializedStep): ChallengeEffect[] {
+  if (step.kind !== "multipleChoice") {
+    return [];
+  }
+
+  const content = parseStepContent("multipleChoice", step.content);
+
+  if (content.kind !== "challenge") {
+    return [];
+  }
+
+  return content.options.flatMap((option) => option.effects);
+}
+
+function collectAllDimensions(steps: SerializedStep[]): DimensionInventory {
+  const effects = steps.flatMap((step) => getChallengeEffects(step));
+
+  return Object.fromEntries(effects.map((effect) => [effect.dimension, 0]));
+}
+
 export function createInitialState(activity: SerializedActivity): PlayerState {
   return {
     activityId: activity.id,
     currentStepIndex: 0,
-    dimensions: {},
+    dimensions: collectAllDimensions(activity.steps),
     phase: "playing",
     results: {},
     selectedAnswers: {},
@@ -174,7 +194,7 @@ function handleRestart(state: PlayerState): PlayerState {
   return {
     ...state,
     currentStepIndex: 0,
-    dimensions: {},
+    dimensions: collectAllDimensions(state.steps),
     phase: "playing",
     results: {},
     selectedAnswers: {},
