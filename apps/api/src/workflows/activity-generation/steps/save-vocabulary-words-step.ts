@@ -53,6 +53,7 @@ function buildSaveOneWord(params: {
       data: {
         activityId,
         content: assertStepContent("vocabulary", {}),
+        isPublished: true,
         kind: "vocabulary",
         position,
         wordId,

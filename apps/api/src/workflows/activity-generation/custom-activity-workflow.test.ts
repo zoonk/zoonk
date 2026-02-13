@@ -257,6 +257,11 @@ describe("custom activity workflow", () => {
     });
 
     expect(customSteps).toHaveLength(2);
+
+    for (const step of customSteps) {
+      expect(step.isPublished).toBeTruthy();
+    }
+
     expect(customSteps[0]?.kind).toBe("static");
     expect(customSteps[0]?.content).toEqual({
       text: "Custom step 1 text",

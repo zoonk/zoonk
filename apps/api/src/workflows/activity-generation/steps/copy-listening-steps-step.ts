@@ -64,6 +64,7 @@ export async function copyListeningStepsStep(
       data: readingSteps.map((readingStep) => ({
         activityId: listening.id,
         content: assertStepContent("listening", {}),
+        isPublished: true,
         kind: "listening" as const,
         position: readingStep.position,
         sentenceId: readingStep.sentenceId,

@@ -58,6 +58,7 @@ function buildSaveOneSentence(params: {
       data: {
         activityId,
         content: assertStepContent("reading", {}),
+        isPublished: true,
         kind: "reading",
         position,
         sentenceId,

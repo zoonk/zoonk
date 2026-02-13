@@ -57,11 +57,13 @@ describe(getActivity, () => {
       stepFixture({
         activityId: activity.id,
         content: { text: "Step 1 content", title: "Step 1" },
+        isPublished: true,
         position: 0,
       }),
       stepFixture({
         activityId: activity.id,
         content: { text: "Step 2 content", title: "Step 2" },
+        isPublished: true,
         position: 1,
       }),
     ]);
@@ -164,6 +166,7 @@ describe(getActivity, () => {
 
     await stepFixture({
       activityId: wordActivity.id,
+      isPublished: true,
       position: 0,
       wordId: word.id,
     });
@@ -209,6 +212,7 @@ describe(getActivity, () => {
 
     await stepFixture({
       activityId: sentActivity.id,
+      isPublished: true,
       position: 0,
       sentenceId: sentence.id,
     });
@@ -229,5 +233,80 @@ describe(getActivity, () => {
 
     expect(result?.steps[0]?.word).toBeNull();
     expect(result?.steps[0]?.sentence).toBeNull();
+  });
+
+  test("excludes unpublished steps", async () => {
+    const pubLesson = await lessonFixture({
+      chapterId: chapter.id,
+      isPublished: true,
+      language: "en",
+      organizationId: org.id,
+    });
+
+    const pubActivity = await activityFixture({
+      generationStatus: "completed",
+      isPublished: true,
+      kind: "background",
+      language: "en",
+      lessonId: pubLesson.id,
+      organizationId: org.id,
+      position: 0,
+    });
+
+    const [pubStep1, , pubStep3] = await Promise.all([
+      stepFixture({
+        activityId: pubActivity.id,
+        content: { text: "Published step 1", title: "Pub 1" },
+        isPublished: true,
+        position: 0,
+      }),
+      stepFixture({
+        activityId: pubActivity.id,
+        content: { text: "Unpublished step", title: "Unpub" },
+        isPublished: false,
+        position: 1,
+      }),
+      stepFixture({
+        activityId: pubActivity.id,
+        content: { text: "Published step 3", title: "Pub 3" },
+        isPublished: true,
+        position: 2,
+      }),
+    ]);
+
+    const result = await getActivity({ lessonId: pubLesson.id, position: 0 });
+
+    expect(result?.steps).toHaveLength(2);
+    expect(result?.steps[0]?.id).toBe(pubStep1.id);
+    expect(result?.steps[1]?.id).toBe(pubStep3.id);
+  });
+
+  test("returns no steps when all are unpublished", async () => {
+    const draftLesson = await lessonFixture({
+      chapterId: chapter.id,
+      isPublished: true,
+      language: "en",
+      organizationId: org.id,
+    });
+
+    const draftActivity = await activityFixture({
+      generationStatus: "completed",
+      isPublished: true,
+      kind: "background",
+      language: "en",
+      lessonId: draftLesson.id,
+      organizationId: org.id,
+      position: 0,
+    });
+
+    await stepFixture({
+      activityId: draftActivity.id,
+      content: { text: "Draft step", title: "Draft" },
+      position: 0,
+    });
+
+    const result = await getActivity({ lessonId: draftLesson.id, position: 0 });
+
+    expect(result?.steps).toHaveLength(0);
   });
 });

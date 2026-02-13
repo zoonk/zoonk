@@ -33,6 +33,7 @@ async function saveQuizSteps(
         return {
           activityId,
           content,
+          isPublished: true,
           kind: format,
           position: index,
         };

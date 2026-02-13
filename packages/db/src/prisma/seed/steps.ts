@@ -318,6 +318,7 @@ export async function seedSteps(prisma: PrismaClient, org: Organization): Promis
           data: {
             activityId: activity.id,
             content: stepData.content,
+            isPublished: true,
             kind: stepData.kind,
             position,
             visualContent: stepData.visualContent,

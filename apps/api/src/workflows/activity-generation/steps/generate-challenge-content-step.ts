@@ -23,6 +23,7 @@ async function saveChallengeSteps(
   const introStep = {
     activityId,
     content: assertStepContent("static", { text: data.intro, title: "", variant: "text" }),
+    isPublished: true,
     kind: "static" as const,
     position: 0,
   };
@@ -35,6 +36,7 @@ async function saveChallengeSteps(
       options: step.options,
       question: step.question,
     }),
+    isPublished: true,
     kind: "multipleChoice" as const,
     position: index + 1,
   }));
@@ -42,6 +44,7 @@ async function saveChallengeSteps(
   const reflectionStep = {
     activityId,
     content: assertStepContent("static", { text: data.reflection, title: "", variant: "text" }),
+    isPublished: true,
     kind: "static" as const,
     position: data.steps.length + 1,
   };
