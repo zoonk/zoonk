@@ -11,13 +11,18 @@ import { useState } from "react";
 export function ContentFeedback({
   kind,
   contentId,
+  variant = "default",
   className,
+  ...props
 }: {
   kind: FeedbackKind;
   contentId: string;
+  variant?: "default" | "minimal";
 } & React.ComponentProps<"footer">) {
   const t = useExtracted();
   const [feedback, setFeedback] = useState<FeedbackValue | null>(null);
+  const isMinimal = variant === "minimal";
+  const iconSize = isMinimal ? "size-7" : "size-8";
 
   function handleFeedback(value: FeedbackValue) {
     if (feedback !== value) {
@@ -27,15 +32,18 @@ export function ContentFeedback({
   }
 
   return (
-    <footer className={cn("flex flex-col items-center gap-1 text-center", className)}>
-      <h6 className="text-muted-foreground text-sm">{t("Did you like this content?")}</h6>
+    <footer className={cn("flex flex-col items-center gap-1 text-center", className)} {...props}>
+      {!isMinimal && (
+        <h6 className="text-muted-foreground text-sm">{t("Did you like this content?")}</h6>
+      )}
 
       <div className="flex gap-1">
         <Button
           aria-pressed={feedback === "upvote"}
           className={cn(
-            "size-8 hover:bg-green-50 hover:text-green-600",
-            feedback === "upvote" && "bg-green-50 text-green-600",
+            iconSize,
+            "hover:bg-success/10 hover:text-success",
+            feedback === "upvote" && "bg-success/10 text-success",
           )}
           onClick={() => handleFeedback("upvote")}
           size="icon"
@@ -48,8 +56,9 @@ export function ContentFeedback({
         <Button
           aria-pressed={feedback === "downvote"}
           className={cn(
-            "size-8 hover:bg-red-50 hover:text-red-600",
-            feedback === "downvote" && "bg-red-50 text-red-600",
+            iconSize,
+            "hover:bg-destructive/10 hover:text-destructive",
+            feedback === "downvote" && "bg-destructive/10 text-destructive",
           )}
           onClick={() => handleFeedback("downvote")}
           size="icon"
@@ -60,12 +69,14 @@ export function ContentFeedback({
         </Button>
       </div>
 
-      <FeedbackDialog>
-        <Button className="text-muted-foreground" size="sm" variant="ghost">
-          <MessageSquareIcon aria-hidden="true" />
-          {t("Send feedback")}
-        </Button>
-      </FeedbackDialog>
+      {!isMinimal && (
+        <FeedbackDialog>
+          <Button className="text-muted-foreground" size="sm" variant="ghost">
+            <MessageSquareIcon aria-hidden="true" />
+            {t("Send feedback")}
+          </Button>
+        </FeedbackDialog>
+      )}
     </footer>
   );
 }

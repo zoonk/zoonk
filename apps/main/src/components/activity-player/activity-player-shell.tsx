@@ -4,20 +4,23 @@ import { type SerializedActivity } from "@/data/activities/prepare-activity-data
 import { useRouter } from "@/i18n/navigation";
 import { useExtracted } from "next-intl";
 import { useCallback } from "react";
-import { FeedbackScreenContent, getFeedbackVariant } from "./feedback-screen";
+import { getFeedbackVariant } from "./feedback-screen";
 import { PlayerActionBar, PlayerActionButton } from "./player-action-bar";
 import { PlayerCloseLink, PlayerHeader, PlayerStepFraction } from "./player-header";
 import { PlayerProgressBar } from "./player-progress-bar";
 import { PlayerStage } from "./player-stage";
+import { StageContent } from "./stage-content";
 import { usePlayerKeyboard } from "./use-player-keyboard";
 import { usePlayerState } from "./use-player-state";
 
 export function ActivityPlayerShell({
   activity,
   lessonHref,
+  nextActivityHref,
 }: {
   activity: SerializedActivity;
   lessonHref: string;
+  nextActivityHref: string | null;
 }) {
   const t = useExtracted();
   const router = useRouter();
@@ -29,9 +32,9 @@ export function ActivityPlayerShell({
   const currentResult = currentStep ? state.results[currentStep.id] : undefined;
   const feedbackVariant = currentResult ? getFeedbackVariant(currentResult) : undefined;
   const totalSteps = state.steps.length;
+  const isCompleted = state.phase === "completed";
 
-  const progressValue =
-    state.phase === "completed" ? 100 : computeProgress(state.currentStepIndex, totalSteps);
+  const progressValue = isCompleted ? 100 : computeProgress(state.currentStepIndex, totalSteps);
 
   const handleEscape = useCallback(() => {
     router.push(lessonHref);
@@ -78,13 +81,18 @@ export function ActivityPlayerShell({
       <PlayerProgressBar value={progressValue} />
 
       <PlayerStage feedback={feedbackVariant} phase={state.phase}>
-        {state.phase === "feedback" && currentResult ? (
-          <FeedbackScreenContent result={currentResult} />
-        ) : // Step content will be rendered here by step renderers (Issue 9)
-        null}
+        <StageContent
+          activityId={state.activityId}
+          currentResult={currentResult}
+          isCompleted={isCompleted}
+          lessonHref={lessonHref}
+          nextActivityHref={nextActivityHref}
+          phase={state.phase}
+          results={state.results}
+        />
       </PlayerStage>
 
-      {!isStaticStep && (
+      {!isStaticStep && !isCompleted && (
         <PlayerActionBar>
           <PlayerActionButton
             disabled={state.phase === "playing" && !hasAnswer}

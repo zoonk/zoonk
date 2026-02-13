@@ -1,6 +1,6 @@
 import { track } from "@vercel/analytics";
 
-export type FeedbackKind = "course" | "chapter" | "lesson" | "courseSuggestions";
+export type FeedbackKind = "activity" | "course" | "chapter" | "lesson" | "courseSuggestions";
 
 export type FeedbackValue = "upvote" | "downvote";
 
