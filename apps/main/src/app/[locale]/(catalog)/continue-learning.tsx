@@ -22,15 +22,28 @@ export async function ContinueLearningList({ items }: { items: ContinueLearningI
     <section className="flex flex-col gap-3 py-4 md:py-6">
       <FeatureCardSectionTitle className="px-4">{t("Continue learning")}</FeatureCardSectionTitle>
 
-      <ScrollArea className="w-full px-4 pb-2">
-        <div className="flex snap-x snap-mandatory gap-4">
+      {items.length === 1 ? (
+        <div className="px-4">
           {items.map((item) => (
-            <ContinueLearningCard item={item} key={item.activity.id} kindLabels={kindLabels} />
+            <ContinueLearningCard
+              item={item}
+              key={item.activity.id}
+              kindLabels={kindLabels}
+              fullWidth
+            />
           ))}
         </div>
+      ) : (
+        <ScrollArea className="w-full px-4 pb-2">
+          <div className="flex snap-x snap-mandatory gap-4">
+            {items.map((item) => (
+              <ContinueLearningCard item={item} key={item.activity.id} kindLabels={kindLabels} />
+            ))}
+          </div>
 
-        <ScrollBar orientation="horizontal" />
-      </ScrollArea>
+          <ScrollBar orientation="horizontal" />
+        </ScrollArea>
+      )}
     </section>
   );
 }
