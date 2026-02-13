@@ -106,7 +106,7 @@ export function ActivityPlayerShell({
         </PlayerHeader>
       )}
 
-      <PlayerProgressBar value={progressValue} />
+      {!isCompleted && <PlayerProgressBar value={progressValue} />}
 
       <PlayerStage feedback={feedbackVariant} phase={state.phase}>
         <StageContent

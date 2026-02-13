@@ -443,7 +443,7 @@ test.describe("Static Step Navigation", () => {
 });
 
 test.describe("Completion Screen", () => {
-  test("header is hidden on completion screen but progress bar remains", async ({ page }) => {
+  test("header and progress bar are hidden on completion screen", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const { url } = await createStaticActivity({
       steps: [
@@ -461,19 +461,18 @@ test.describe("Completion Screen", () => {
     await page.goto(url);
     await page.waitForLoadState("networkidle");
 
-    // Header elements visible before completion
+    // Header and progress bar visible before completion
     await expect(page.getByLabel(/close/i)).toBeVisible();
     await expect(page.getByText(/1 \/ 1/)).toBeVisible();
+    await expect(page.getByRole("progressbar", { name: /activity progress/i })).toBeVisible();
 
     await page.keyboard.press("ArrowRight");
 
-    // Header hidden on completion
+    // All chrome hidden on completion
     await expect(page.getByRole("status")).toBeVisible();
     await expect(page.getByLabel(/close/i)).not.toBeVisible();
     await expect(page.getByText(/1 \/ 1/)).not.toBeVisible();
-
-    // Progress bar still visible at 100%
-    await expect(page.getByRole("progressbar", { name: /activity progress/i })).toBeVisible();
+    await expect(page.getByRole("progressbar", { name: /activity progress/i })).not.toBeVisible();
   });
 
   test("shows Back to Lesson link and Restart button", async ({ page }) => {
