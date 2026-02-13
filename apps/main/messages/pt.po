@@ -1167,7 +1167,7 @@ msgstr "Voltar para a aula"
 #: src/components/activity-player/completion-screen.tsx
 msgctxt "9+Ddtu"
 msgid "Next"
-msgstr "Próximo"
+msgstr "Próxima"
 
 #: src/components/activity-player/completion-screen.tsx
 #: src/components/catalog/activity-completion-indicator.tsx
