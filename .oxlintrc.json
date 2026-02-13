@@ -96,6 +96,7 @@
 
     // custom rules
     "zoonk/no-dynamic-translation-key": "error",
+    "zoonk/no-get-extracted-in-promise": "error",
     "zoonk/no-object-params-in-cache": ["error", { "exceptions": ["headers"] }],
     "zoonk/no-single-use-type-alias": "error",
     "zoonk/no-t-function-as-argument": "error"
