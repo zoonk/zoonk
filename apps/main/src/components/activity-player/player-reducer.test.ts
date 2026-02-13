@@ -4,7 +4,6 @@ import {
 } from "@/data/activities/prepare-activity-data";
 import { describe, expect, test } from "vitest";
 import {
-  PLAYER_STATE_VERSION,
   type PlayerAction,
   type PlayerState,
   type SelectedAnswer,
@@ -51,7 +50,6 @@ function buildState(overrides: Partial<PlayerState> = {}): PlayerState {
     results: {},
     selectedAnswers: {},
     steps: [buildStep()],
-    version: PLAYER_STATE_VERSION,
     ...overrides,
   };
 }
@@ -79,11 +77,6 @@ describe(createInitialState, () => {
     expect(state.selectedAnswers).toEqual({});
     expect(state.results).toEqual({});
     expect(state.dimensions).toEqual({});
-  });
-
-  test("sets version to current", () => {
-    const state = createInitialState(buildActivity());
-    expect(state.version).toBe(PLAYER_STATE_VERSION);
   });
 });
 
@@ -391,19 +384,17 @@ describe("RESTART", () => {
     expect(next.dimensions).toEqual({});
   });
 
-  test("preserves activityId, steps, and version", () => {
+  test("preserves activityId and steps", () => {
     const steps = [buildStep({ id: "s1" }), buildStep({ id: "s2", position: 1 })];
     const state = buildState({
       activityId: "my-activity",
       phase: "completed",
       steps,
-      version: PLAYER_STATE_VERSION,
     });
 
     const next = playerReducer(state, { type: "RESTART" });
     expect(next.activityId).toBe("my-activity");
     expect(next.steps).toEqual(steps);
-    expect(next.version).toBe(PLAYER_STATE_VERSION);
   });
 });
 

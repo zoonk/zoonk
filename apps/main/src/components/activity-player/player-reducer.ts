@@ -5,8 +5,6 @@ import {
 import { type AnswerResult } from "@zoonk/core/player/check-answer";
 import { type ChallengeEffect } from "@zoonk/core/steps/content-contract";
 
-export const PLAYER_STATE_VERSION = 1;
-
 export type PlayerPhase = "playing" | "feedback" | "completed";
 
 export type SelectedAnswer =
@@ -36,7 +34,6 @@ export type PlayerState = {
   selectedAnswers: Record<string, SelectedAnswer>;
   results: Record<string, StepResult>;
   dimensions: DimensionInventory;
-  version: number;
 };
 
 export type PlayerAction =
@@ -89,7 +86,6 @@ export function createInitialState(activity: SerializedActivity): PlayerState {
     results: {},
     selectedAnswers: {},
     steps: activity.steps,
-    version: PLAYER_STATE_VERSION,
   };
 }
 
