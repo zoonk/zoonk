@@ -1,6 +1,6 @@
 "use client";
 
-import { ContentFeedback } from "@/app/[locale]/(catalog)/learn/[prompt]/content-feedback";
+import { ContentFeedback } from "@/components/feedback/content-feedback";
 import { ClientLink } from "@/i18n/client-link";
 import { useAuthState } from "@zoonk/core/auth/hooks/auth-state";
 import { computeScore } from "@zoonk/core/player/compute-score";
@@ -46,11 +46,9 @@ function CompletionActions({ className, ...props }: React.ComponentProps<"div">)
 }
 
 function AuthenticatedContent({
-  activityId,
   lessonHref,
   nextActivityHref,
 }: {
-  activityId: string;
   lessonHref: string;
   nextActivityHref: string | null;
 }) {
@@ -74,8 +72,6 @@ function AuthenticatedContent({
           {t("Done")}
         </ClientLink>
       </CompletionActions>
-
-      <ContentFeedback className="pt-8" contentId={activityId} kind="activity" variant="minimal" />
     </>
   );
 }
@@ -122,22 +118,24 @@ function PendingContent({ lessonHref }: { lessonHref: string }) {
   );
 }
 
-function AuthBranch(props: {
-  activityId: string;
+function AuthBranch({
+  lessonHref,
+  nextActivityHref,
+}: {
   lessonHref: string;
   nextActivityHref: string | null;
 }) {
   const authState = useAuthState();
 
   if (authState === "pending") {
-    return <PendingContent lessonHref={props.lessonHref} />;
+    return <PendingContent lessonHref={lessonHref} />;
   }
 
   if (authState === "unauthenticated") {
-    return <UnauthenticatedContent lessonHref={props.lessonHref} />;
+    return <UnauthenticatedContent lessonHref={lessonHref} />;
   }
 
-  return <AuthenticatedContent {...props} />;
+  return <AuthenticatedContent lessonHref={lessonHref} nextActivityHref={nextActivityHref} />;
 }
 
 export function getCompletionScore(results: Record<string, StepResult>) {
@@ -179,11 +177,9 @@ export function CompletionScreenContent({
         </CompletionScore>
       )}
 
-      <AuthBranch
-        activityId={activityId}
-        lessonHref={lessonHref}
-        nextActivityHref={nextActivityHref}
-      />
+      <AuthBranch lessonHref={lessonHref} nextActivityHref={nextActivityHref} />
+
+      <ContentFeedback className="pt-8" contentId={activityId} kind="activity" variant="minimal" />
     </CompletionScreen>
   );
 }

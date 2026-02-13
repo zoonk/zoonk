@@ -376,6 +376,30 @@ test.describe("Static Step Navigation", () => {
     await expect(page.getByText(/0\/0/)).not.toBeVisible();
   });
 
+  test("completion screen shows Send feedback button", async ({ page }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const { url } = await createStaticActivity({
+      steps: [
+        {
+          content: {
+            text: `Feedback body ${uniqueId}`,
+            title: `Feedback Step ${uniqueId}`,
+            variant: "text",
+          },
+          position: 0,
+        },
+      ],
+    });
+
+    await page.goto(url);
+    await page.waitForLoadState("networkidle");
+    await page.keyboard.press("ArrowRight");
+
+    const completionStatus = page.getByRole("status");
+    await expect(completionStatus).toBeVisible();
+    await expect(page.getByRole("button", { name: /send feedback/i })).toBeVisible();
+  });
+
   test("click navigation — right area advances, left area goes back", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const { url } = await createStaticActivity({

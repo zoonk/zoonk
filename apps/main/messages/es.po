@@ -322,27 +322,6 @@ msgctxt "VcxnWX"
 msgid "Interactive courses built for you. Just tell us what you want to learn."
 msgstr "Cursos interactivos creados para ti. Solo dinos qué quieres aprender."
 
-#: src/app/[locale]/(catalog)/learn/[prompt]/content-feedback.tsx
-msgctxt "BlI1/9"
-msgid "Did you like this content?"
-msgstr "¿Te gustó este contenido?"
-
-#: src/app/[locale]/(catalog)/learn/[prompt]/content-feedback.tsx
-#: src/components/catalog/catalog-actions.tsx
-msgctxt "G5YSJR"
-msgid "Send feedback"
-msgstr "Enviar comentarios"
-
-#: src/app/[locale]/(catalog)/learn/[prompt]/content-feedback.tsx
-msgctxt "Hqn5Uo"
-msgid "I didn't like it"
-msgstr "No me gustó"
-
-#: src/app/[locale]/(catalog)/learn/[prompt]/content-feedback.tsx
-msgctxt "rTFrsw"
-msgid "I liked it"
-msgstr "Me gustó"
-
 #: src/app/[locale]/(catalog)/learn/[prompt]/course-suggestion-item.tsx
 msgctxt "Pc+tM3"
 msgid "Generate"
@@ -1264,6 +1243,12 @@ msgid "Thanks for your feedback"
 msgstr "Gracias por tu opinión"
 
 #: src/components/catalog/catalog-actions.tsx
+#: src/components/feedback/content-feedback.tsx
+msgctxt "G5YSJR"
+msgid "Send feedback"
+msgstr "Enviar comentarios"
+
+#: src/components/catalog/catalog-actions.tsx
 msgctxt "IzCVhG"
 msgid "More options"
 msgstr "Más opciones"
@@ -1318,6 +1303,21 @@ msgstr "Usaremos este correo electrónico para contactarte."
 msgctxt "Xx0WZV"
 msgid "Send message"
 msgstr "Enviar mensaje"
+
+#: src/components/feedback/content-feedback.tsx
+msgctxt "BlI1/9"
+msgid "Did you like this content?"
+msgstr "¿Te gustó este contenido?"
+
+#: src/components/feedback/content-feedback.tsx
+msgctxt "Hqn5Uo"
+msgid "I didn't like it"
+msgstr "No me gustó"
+
+#: src/components/feedback/content-feedback.tsx
+msgctxt "rTFrsw"
+msgid "I liked it"
+msgstr "Me gustó"
 
 #: src/components/feedback/feedback-dialog.tsx
 msgctxt "Ejhdi4"
