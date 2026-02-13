@@ -1,13 +1,17 @@
 "use client";
 
-import { ContentFeedback } from "@/app/[locale]/(catalog)/learn/[prompt]/content-feedback";
+import { ContentFeedback } from "@/components/feedback/content-feedback";
 import { ClientLink } from "@/i18n/client-link";
 import { useAuthState } from "@zoonk/core/auth/hooks/auth-state";
 import { computeScore } from "@zoonk/core/player/compute-score";
-import { buttonVariants } from "@zoonk/ui/components/button";
+import { Badge } from "@zoonk/ui/components/badge";
+import { Button, buttonVariants } from "@zoonk/ui/components/button";
+import { Kbd } from "@zoonk/ui/components/kbd";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
+import { Brain, CircleCheck, ZapIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { CountUp } from "./count-up";
 import { type StepResult } from "./player-reducer";
 
 function CompletionScreen({ className, ...props }: React.ComponentProps<"div">) {
@@ -15,7 +19,7 @@ function CompletionScreen({ className, ...props }: React.ComponentProps<"div">) 
     <div
       aria-live="polite"
       className={cn(
-        "animate-in fade-in slide-in-from-bottom-1 mx-auto flex w-full max-w-lg flex-col items-center gap-4 duration-200 ease-out motion-reduce:animate-none",
+        "animate-in fade-in mx-auto flex w-full max-w-lg flex-col items-center gap-6 duration-200 ease-out motion-reduce:animate-none",
         className,
       )}
       data-slot="completion-screen"
@@ -35,6 +39,17 @@ function CompletionScore({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
+function CompletionSignal() {
+  const t = useExtracted();
+
+  return (
+    <div className="flex flex-col items-center gap-2">
+      <CircleCheck className="text-foreground size-12" />
+      <p className="text-lg font-medium">{t("Completed")}</p>
+    </div>
+  );
+}
+
 function CompletionActions({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -45,42 +60,139 @@ function CompletionActions({ className, ...props }: React.ComponentProps<"div">)
   );
 }
 
+function RewardBadges() {
+  const t = useExtracted();
+
+  return (
+    <div className="flex gap-2">
+      <Badge variant="secondary">
+        <Brain data-icon="inline-start" />
+        <span>
+          +<CountUp value={10} />
+        </span>{" "}
+        {t("BP")}
+      </Badge>
+
+      <Badge variant="secondary">
+        <ZapIcon className="text-energy" data-icon="inline-start" />
+        <span>
+          +<CountUp value={5} />
+        </span>
+        <span className="sr-only">{t("Energy")}</span>
+      </Badge>
+    </div>
+  );
+}
+
+function ActionRow({ className, ...props }: React.ComponentProps<"div">) {
+  return <div className={cn("flex w-full gap-3", className)} {...props} />;
+}
+
+function SecondaryActions({
+  lessonHref,
+  onRestart,
+  variant,
+}: {
+  lessonHref: string;
+  onRestart: () => void;
+  variant: "inline" | "stacked";
+}) {
+  const t = useExtracted();
+  const isInline = variant === "inline";
+
+  const backLink = (
+    <ClientLink
+      className={cn(
+        buttonVariants({ variant: isInline ? "outline" : "default" }),
+        isInline ? "flex-1 justify-between" : "w-full justify-between",
+      )}
+      href={lessonHref}
+    >
+      {t("Back to Lesson")}
+      <Kbd
+        className={cn(
+          "hidden lg:inline-flex",
+          isInline ? "opacity-60" : "bg-primary-foreground/15 text-primary-foreground opacity-70",
+        )}
+      >
+        Esc
+      </Kbd>
+    </ClientLink>
+  );
+
+  const restartButton = (
+    <Button
+      className={cn(isInline ? "flex-1" : "w-full", "justify-between")}
+      onClick={onRestart}
+      variant="outline"
+    >
+      {t("Restart")}
+      <Kbd className="hidden opacity-60 lg:inline-flex">R</Kbd>
+    </Button>
+  );
+
+  if (isInline) {
+    return (
+      <ActionRow>
+        {backLink}
+        {restartButton}
+      </ActionRow>
+    );
+  }
+
+  return (
+    <>
+      {backLink}
+      {restartButton}
+    </>
+  );
+}
+
 function AuthenticatedContent({
-  activityId,
   lessonHref,
   nextActivityHref,
+  onRestart,
 }: {
-  activityId: string;
   lessonHref: string;
   nextActivityHref: string | null;
+  onRestart: () => void;
 }) {
   const t = useExtracted();
 
   return (
     <>
-      <p className="text-muted-foreground text-sm">+10 BP</p>
+      <RewardBadges />
 
       <CompletionActions>
-        {nextActivityHref && (
-          <ClientLink className={cn(buttonVariants(), "w-full")} href={nextActivityHref}>
-            {t("Next Activity")}
-          </ClientLink>
+        {nextActivityHref ? (
+          <>
+            <ClientLink
+              className={cn(buttonVariants({ size: "lg" }), "w-full justify-between")}
+              href={nextActivityHref}
+            >
+              {t("Next")}
+              <Kbd className="bg-primary-foreground/15 text-primary-foreground hidden opacity-70 lg:inline-flex">
+                Enter
+              </Kbd>
+            </ClientLink>
+
+            <SecondaryActions lessonHref={lessonHref} onRestart={onRestart} variant="inline" />
+          </>
+        ) : (
+          <SecondaryActions lessonHref={lessonHref} onRestart={onRestart} variant="stacked" />
         )}
-
-        <ClientLink
-          className={cn(buttonVariants({ variant: "outline" }), "w-full")}
-          href={lessonHref}
-        >
-          {t("Done")}
-        </ClientLink>
       </CompletionActions>
-
-      <ContentFeedback className="pt-8" contentId={activityId} kind="activity" variant="minimal" />
     </>
   );
 }
 
-function UnauthenticatedContent({ lessonHref }: { lessonHref: string }) {
+function UnauthenticatedContent({
+  lessonHref,
+  onRestart,
+}: {
+  lessonHref: string;
+  onRestart: () => void;
+}) {
   const t = useExtracted();
 
   return (
@@ -92,12 +204,7 @@ function UnauthenticatedContent({ lessonHref }: { lessonHref: string }) {
           {t("Login")}
         </ClientLink>
 
-        <ClientLink
-          className={cn(buttonVariants({ variant: "outline" }), "w-full")}
-          href={lessonHref}
-        >
-          {t("Done")}
-        </ClientLink>
+        <SecondaryActions lessonHref={lessonHref} onRestart={onRestart} variant="inline" />
       </CompletionActions>
     </>
   );
@@ -108,69 +215,101 @@ function PendingContent({ lessonHref }: { lessonHref: string }) {
 
   return (
     <>
-      <Skeleton className="h-4 w-32" />
+      <div className="flex gap-2">
+        <Skeleton className="h-5 w-20" />
+        <Skeleton className="h-5 w-24" />
+      </div>
 
       <CompletionActions>
         <ClientLink
           className={cn(buttonVariants({ variant: "outline" }), "w-full")}
           href={lessonHref}
         >
-          {t("Done")}
+          {t("Back to Lesson")}
         </ClientLink>
       </CompletionActions>
     </>
   );
 }
 
-function AuthBranch(props: {
-  activityId: string;
+function AuthBranch({
+  lessonHref,
+  nextActivityHref,
+  onRestart,
+}: {
   lessonHref: string;
   nextActivityHref: string | null;
+  onRestart: () => void;
 }) {
   const authState = useAuthState();
 
   if (authState === "pending") {
-    return <PendingContent lessonHref={props.lessonHref} />;
+    return <PendingContent lessonHref={lessonHref} />;
   }
 
   if (authState === "unauthenticated") {
-    return <UnauthenticatedContent lessonHref={props.lessonHref} />;
+    return <UnauthenticatedContent lessonHref={lessonHref} onRestart={onRestart} />;
   }
 
-  return <AuthenticatedContent {...props} />;
+  return (
+    <AuthenticatedContent
+      lessonHref={lessonHref}
+      nextActivityHref={nextActivityHref}
+      onRestart={onRestart}
+    />
+  );
+}
+
+export function getCompletionScore(results: Record<string, StepResult>) {
+  const resultList = Object.values(results);
+
+  if (resultList.length === 0) {
+    return null;
+  }
+
+  const score = computeScore({
+    results: resultList.map((stepResult) => ({ isCorrect: stepResult.result.isCorrect })),
+  });
+
+  return { correctCount: score.correctCount, totalCount: resultList.length };
 }
 
 export function CompletionScreenContent({
   activityId,
   lessonHref,
   nextActivityHref,
+  onRestart,
   results,
 }: {
   activityId: string;
   lessonHref: string;
   nextActivityHref: string | null;
+  onRestart: () => void;
   results: Record<string, StepResult>;
 }) {
   const t = useExtracted();
-  const resultList = Object.values(results);
-  const score = computeScore({
-    results: resultList.map((stepResult) => ({ isCorrect: stepResult.result.isCorrect })),
-  });
+  const score = getCompletionScore(results);
 
   return (
     <CompletionScreen>
-      <CompletionScore>
-        <p className="text-4xl font-bold tabular-nums">
-          {score.correctCount}/{resultList.length}
-        </p>
-        <p className="text-muted-foreground text-sm">{t("correct")}</p>
-      </CompletionScore>
+      {score ? (
+        <CompletionScore>
+          <p className="text-5xl font-bold tracking-tight tabular-nums">
+            {score.correctCount}/{score.totalCount}
+          </p>
+          <p className="text-muted-foreground text-sm">{t("correct")}</p>
+        </CompletionScore>
+      ) : (
+        <CompletionSignal />
+      )}
 
       <AuthBranch
-        activityId={activityId}
         lessonHref={lessonHref}
         nextActivityHref={nextActivityHref}
+        onRestart={onRestart}
       />
+
+      <ContentFeedback className="pt-8" contentId={activityId} kind="activity" variant="minimal" />
     </CompletionScreen>
   );
 }

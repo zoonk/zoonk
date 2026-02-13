@@ -293,6 +293,7 @@ msgstr "Sua energia está em {value}%"
 #: src/app/[locale]/(catalog)/energy.tsx
 #: src/app/[locale]/(performance)/_components/metric-pills.tsx
 #: src/app/[locale]/(performance)/energy/page.tsx
+#: src/components/activity-player/completion-screen.tsx
 msgctxt "cVpmV7"
 msgid "Energy"
 msgstr "Energia"
@@ -321,27 +322,6 @@ msgstr "Aprenda qualquer coisa com IA"
 msgctxt "VcxnWX"
 msgid "Interactive courses built for you. Just tell us what you want to learn."
 msgstr "Cursos interativos criados para você. Apenas nos diga o que você quer aprender."
-
-#: src/app/[locale]/(catalog)/learn/[prompt]/content-feedback.tsx
-msgctxt "BlI1/9"
-msgid "Did you like this content?"
-msgstr "Você gostou deste conteúdo?"
-
-#: src/app/[locale]/(catalog)/learn/[prompt]/content-feedback.tsx
-#: src/components/catalog/catalog-actions.tsx
-msgctxt "G5YSJR"
-msgid "Send feedback"
-msgstr "Enviar feedback"
-
-#: src/app/[locale]/(catalog)/learn/[prompt]/content-feedback.tsx
-msgctxt "Hqn5Uo"
-msgid "I didn't like it"
-msgstr "Não gostei"
-
-#: src/app/[locale]/(catalog)/learn/[prompt]/content-feedback.tsx
-msgctxt "rTFrsw"
-msgid "I liked it"
-msgstr "Gostei"
 
 #: src/app/[locale]/(catalog)/learn/[prompt]/course-suggestion-item.tsx
 msgctxt "Pc+tM3"
@@ -638,7 +618,6 @@ msgid "Level {current} of 10 in {color} belt"
 msgstr "Nível {current} de 10 na faixa {color}"
 
 #: src/app/[locale]/(performance)/level/level-progression.tsx
-#: src/components/activity-player/completion-screen.tsx
 msgctxt "JXdbo8"
 msgid "Done"
 msgstr "Pronto"
@@ -664,6 +643,7 @@ msgid "{current}/10"
 msgstr "{current}/10"
 
 #: src/app/[locale]/(performance)/level/level-stats.tsx
+#: src/components/activity-player/completion-screen.tsx
 msgctxt "/Q0taG"
 msgid "BP"
 msgstr "PM"
@@ -1177,14 +1157,32 @@ msgid "Check"
 msgstr "Verificar"
 
 #: src/components/activity-player/completion-screen.tsx
+msgctxt "5kK+j9"
+msgid "Restart"
+msgstr "Reiniciar"
+
+#: src/components/activity-player/completion-screen.tsx
+msgctxt "7tB7n/"
+msgid "Back to Lesson"
+msgstr "Voltar para a aula"
+
+#: src/components/activity-player/completion-screen.tsx
+msgctxt "9+Ddtu"
+msgid "Next"
+msgstr "Próxima"
+
+#: src/components/activity-player/completion-screen.tsx
+#: src/components/catalog/activity-completion-indicator.tsx
+#: src/components/catalog/chapter-completion.tsx
+#: src/components/catalog/lesson-completion.tsx
+msgctxt "95stPq"
+msgid "Completed"
+msgstr "Concluída"
+
+#: src/components/activity-player/completion-screen.tsx
 msgctxt "e1M39C"
 msgid "Sign up to track your progress"
 msgstr "Cadastre-se para acompanhar seu progresso"
-
-#: src/components/activity-player/completion-screen.tsx
-msgctxt "GB+0+G"
-msgid "Next Activity"
-msgstr "Próxima atividade"
 
 #: src/components/activity-player/completion-screen.tsx
 msgctxt "P768k7"
@@ -1206,6 +1204,26 @@ msgctxt "xmF49T"
 msgid "Correct!"
 msgstr "Correto!"
 
+#: src/components/activity-player/player-header.tsx
+msgctxt "aNzy1T"
+msgid "Previous step"
+msgstr "Passo anterior"
+
+#: src/components/activity-player/player-header.tsx
+msgctxt "d+qgix"
+msgid "Next step"
+msgstr "Próximo passo"
+
+#: src/components/activity-player/player-header.tsx
+msgctxt "kXUK98"
+msgid "Step navigation"
+msgstr "Navegação de etapas"
+
+#: src/components/activity-player/player-header.tsx
+msgctxt "rbrahO"
+msgid "Close"
+msgstr "Fechar"
+
 #: src/components/activity-player/step-renderer.tsx
 msgctxt "4pTU5S"
 msgid "Answer selected"
@@ -1220,13 +1238,6 @@ msgstr "Selecionar resposta"
 msgctxt "4o5CAP"
 msgid "Not completed"
 msgstr "Não concluída"
-
-#: src/components/catalog/activity-completion-indicator.tsx
-#: src/components/catalog/chapter-completion.tsx
-#: src/components/catalog/lesson-completion.tsx
-msgctxt "95stPq"
-msgid "Completed"
-msgstr "Concluída"
 
 #: src/components/catalog/ai-warning.tsx
 msgctxt "Dwdx/1"
@@ -1247,6 +1258,12 @@ msgstr "Foi útil"
 msgctxt "F0tnKc"
 msgid "Thanks for your feedback"
 msgstr "Obrigado pelo seu feedback"
+
+#: src/components/catalog/catalog-actions.tsx
+#: src/components/feedback/content-feedback.tsx
+msgctxt "G5YSJR"
+msgid "Send feedback"
+msgstr "Enviar feedback"
 
 #: src/components/catalog/catalog-actions.tsx
 msgctxt "IzCVhG"
@@ -1303,6 +1320,21 @@ msgstr "Usaremos este email para entrar em contato com você."
 msgctxt "Xx0WZV"
 msgid "Send message"
 msgstr "Enviar mensagem"
+
+#: src/components/feedback/content-feedback.tsx
+msgctxt "BlI1/9"
+msgid "Did you like this content?"
+msgstr "Você gostou deste conteúdo?"
+
+#: src/components/feedback/content-feedback.tsx
+msgctxt "Hqn5Uo"
+msgid "I didn't like it"
+msgstr "Não gostei"
+
+#: src/components/feedback/content-feedback.tsx
+msgctxt "rTFrsw"
+msgid "I liked it"
+msgstr "Gostei"
 
 #: src/components/feedback/feedback-dialog.tsx
 msgctxt "Ejhdi4"

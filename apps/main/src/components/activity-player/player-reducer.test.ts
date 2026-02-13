@@ -4,7 +4,6 @@ import {
 } from "@/data/activities/prepare-activity-data";
 import { describe, expect, test } from "vitest";
 import {
-  PLAYER_STATE_VERSION,
   type PlayerAction,
   type PlayerState,
   type SelectedAnswer,
@@ -51,7 +50,6 @@ function buildState(overrides: Partial<PlayerState> = {}): PlayerState {
     results: {},
     selectedAnswers: {},
     steps: [buildStep()],
-    version: PLAYER_STATE_VERSION,
     ...overrides,
   };
 }
@@ -79,11 +77,6 @@ describe(createInitialState, () => {
     expect(state.selectedAnswers).toEqual({});
     expect(state.results).toEqual({});
     expect(state.dimensions).toEqual({});
-  });
-
-  test("sets version to current", () => {
-    const state = createInitialState(buildActivity());
-    expect(state.version).toBe(PLAYER_STATE_VERSION);
   });
 });
 
@@ -339,6 +332,69 @@ describe("COMPLETE", () => {
     const state = buildState({ phase: "completed" });
     const next = playerReducer(state, { type: "COMPLETE" });
     expect(next).toBe(state);
+  });
+});
+
+describe("RESTART", () => {
+  test("resets to playing with index 0 from completed state", () => {
+    const steps = [
+      buildStep({ id: "s1", kind: "multipleChoice" }),
+      buildStep({ id: "s2", kind: "multipleChoice", position: 1 }),
+    ];
+    const state = buildState({
+      currentStepIndex: 1,
+      phase: "completed",
+      results: {
+        s1: {
+          answer: mcAnswer,
+          effects: [],
+          result: { feedback: null, isCorrect: true },
+          stepId: "s1",
+        },
+      },
+      selectedAnswers: { s1: mcAnswer },
+      steps,
+    });
+
+    const next = playerReducer(state, { type: "RESTART" });
+    expect(next.phase).toBe("playing");
+    expect(next.currentStepIndex).toBe(0);
+  });
+
+  test("clears results, selectedAnswers, and dimensions", () => {
+    const steps = [buildStep({ id: "s1", kind: "multipleChoice" })];
+    const state = buildState({
+      dimensions: { Quality: 2 },
+      phase: "completed",
+      results: {
+        s1: {
+          answer: mcAnswer,
+          effects: [{ dimension: "Quality", impact: "positive" }],
+          result: { feedback: null, isCorrect: true },
+          stepId: "s1",
+        },
+      },
+      selectedAnswers: { s1: mcAnswer },
+      steps,
+    });
+
+    const next = playerReducer(state, { type: "RESTART" });
+    expect(next.results).toEqual({});
+    expect(next.selectedAnswers).toEqual({});
+    expect(next.dimensions).toEqual({});
+  });
+
+  test("preserves activityId and steps", () => {
+    const steps = [buildStep({ id: "s1" }), buildStep({ id: "s2", position: 1 })];
+    const state = buildState({
+      activityId: "my-activity",
+      phase: "completed",
+      steps,
+    });
+
+    const next = playerReducer(state, { type: "RESTART" });
+    expect(next.activityId).toBe("my-activity");
+    expect(next.steps).toEqual(steps);
   });
 });
 

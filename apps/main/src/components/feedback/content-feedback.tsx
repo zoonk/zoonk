@@ -69,14 +69,12 @@ export function ContentFeedback({
         </Button>
       </div>
 
-      {!isMinimal && (
-        <FeedbackDialog>
-          <Button className="text-muted-foreground" size="sm" variant="ghost">
-            <MessageSquareIcon aria-hidden="true" />
-            {t("Send feedback")}
-          </Button>
-        </FeedbackDialog>
-      )}
+      <FeedbackDialog>
+        <Button className="text-muted-foreground" size="sm" variant="ghost">
+          <MessageSquareIcon aria-hidden="true" />
+          {t("Send feedback")}
+        </Button>
+      </FeedbackDialog>
     </footer>
   );
 }

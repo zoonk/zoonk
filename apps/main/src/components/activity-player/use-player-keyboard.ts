@@ -11,6 +11,8 @@ export function usePlayerKeyboard({
   onEscape,
   onNavigateNext,
   onNavigatePrev,
+  onNext,
+  onRestart,
   phase,
 }: {
   hasAnswer: boolean;
@@ -20,6 +22,8 @@ export function usePlayerKeyboard({
   onEscape: () => void;
   onNavigateNext: () => void;
   onNavigatePrev: () => void;
+  onNext: (() => void) | null;
+  onRestart: () => void;
   phase: PlayerPhase;
 }) {
   useKeyboardCallback(
@@ -29,9 +33,25 @@ export function usePlayerKeyboard({
         onCheck();
       } else if (phase === "feedback") {
         onContinue();
+      } else if (phase === "completed") {
+        if (onNext) {
+          onNext();
+        } else {
+          onEscape();
+        }
       }
     },
     { mode: "none" },
+  );
+
+  useKeyboardCallback(
+    "r",
+    () => {
+      if (phase === "completed") {
+        onRestart();
+      }
+    },
+    { ignoreEditable: true, mode: "none" },
   );
 
   useKeyboardCallback(

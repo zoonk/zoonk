@@ -1,6 +1,6 @@
 "use client";
 
-import { buttonVariants } from "@zoonk/ui/components/button";
+import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import {
   Empty,
   EmptyContent,
@@ -40,14 +40,10 @@ export function ErrorView({
 
       <EmptyContent>
         <div className="flex items-center gap-3">
-          <button
-            className={buttonVariants({ size: "sm", variant: "default" })}
-            onClick={handleRetry}
-            type="button"
-          >
+          <Button onClick={handleRetry} size="sm">
             <RefreshCwIcon aria-hidden="true" className="size-4" />
             {retryLabel}
-          </button>
+          </Button>
 
           {/* oxlint-disable-next-line next/no-html-link-for-pages -- external link */}
           <a className={buttonVariants({ size: "sm", variant: "outline" })} href={supportHref}>

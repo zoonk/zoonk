@@ -7,7 +7,14 @@ import { useCallback } from "react";
 import { checkStep } from "./check-step";
 import { getFeedbackVariant } from "./feedback-screen";
 import { PlayerActionBar, PlayerActionButton } from "./player-action-bar";
-import { PlayerCloseLink, PlayerHeader, PlayerStepFraction } from "./player-header";
+import {
+  PlayerCloseLink,
+  PlayerHeader,
+  PlayerNav,
+  PlayerNavButton,
+  PlayerNavGroup,
+  PlayerStepFraction,
+} from "./player-header";
 import { PlayerProgressBar } from "./player-progress-bar";
 import { type SelectedAnswer } from "./player-reducer";
 import { PlayerStage } from "./player-stage";
@@ -35,6 +42,7 @@ export function ActivityPlayerShell({
   const feedbackVariant = currentResult ? getFeedbackVariant(currentResult) : undefined;
   const totalSteps = state.steps.length;
   const isCompleted = state.phase === "completed";
+  const isFirstStep = state.currentStepIndex === 0;
 
   const progressValue = isCompleted ? 100 : computeProgress(state.currentStepIndex, totalSteps);
 
@@ -76,6 +84,16 @@ export function ActivityPlayerShell({
     dispatch({ direction: "prev", type: "NAVIGATE_STEP" });
   }, [dispatch]);
 
+  const handleRestart = useCallback(() => {
+    dispatch({ type: "RESTART" });
+  }, [dispatch]);
+
+  const handleNext = useCallback(() => {
+    if (nextActivityHref) {
+      router.push(nextActivityHref);
+    }
+  }, [router, nextActivityHref]);
+
   usePlayerKeyboard({
     hasAnswer,
     isStaticStep,
@@ -84,6 +102,8 @@ export function ActivityPlayerShell({
     onEscape: handleEscape,
     onNavigateNext: handleNavigateNext,
     onNavigatePrev: handleNavigatePrev,
+    onNext: nextActivityHref ? handleNext : null,
+    onRestart: handleRestart,
     phase: state.phase,
   });
 
@@ -91,14 +111,37 @@ export function ActivityPlayerShell({
 
   return (
     <main className="flex min-h-dvh flex-col">
-      <PlayerHeader>
-        <PlayerCloseLink href={lessonHref} />
-        <PlayerStepFraction>
-          {state.currentStepIndex + 1} / {totalSteps}
-        </PlayerStepFraction>
-      </PlayerHeader>
+      {!isCompleted && (
+        <PlayerHeader>
+          <PlayerCloseLink href={lessonHref} />
 
-      <PlayerProgressBar value={progressValue} />
+          {isStaticStep && (
+            <PlayerNav>
+              <PlayerNavGroup>
+                <PlayerNavButton
+                  direction="prev"
+                  disabled={isFirstStep}
+                  onClick={handleNavigatePrev}
+                />
+                <PlayerStepFraction>
+                  {state.currentStepIndex + 1} / {totalSteps}
+                </PlayerStepFraction>
+                <PlayerNavButton direction="next" onClick={handleNavigateNext} />
+              </PlayerNavGroup>
+            </PlayerNav>
+          )}
+
+          {!isStaticStep && (
+            <PlayerStepFraction>
+              {state.currentStepIndex + 1} / {totalSteps}
+            </PlayerStepFraction>
+          )}
+
+          <div className="size-9" aria-hidden="true" />
+        </PlayerHeader>
+      )}
+
+      {!isCompleted && <PlayerProgressBar value={progressValue} />}
 
       <PlayerStage feedback={feedbackVariant} phase={state.phase}>
         <StageContent
@@ -107,8 +150,12 @@ export function ActivityPlayerShell({
           currentStep={currentStep}
           currentStepIndex={state.currentStepIndex}
           isCompleted={isCompleted}
+          isFirst={isFirstStep}
           lessonHref={lessonHref}
           nextActivityHref={nextActivityHref}
+          onNavigateNext={handleNavigateNext}
+          onNavigatePrev={handleNavigatePrev}
+          onRestart={handleRestart}
           onSelectAnswer={handleSelectAnswer}
           phase={state.phase}
           results={state.results}

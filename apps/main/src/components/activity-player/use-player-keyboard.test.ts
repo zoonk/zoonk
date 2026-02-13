@@ -13,6 +13,8 @@ function buildOptions(overrides: Partial<Parameters<typeof usePlayerKeyboard>[0]
     onEscape: vi.fn(),
     onNavigateNext: vi.fn(),
     onNavigatePrev: vi.fn(),
+    onNext: null as (() => void) | null,
+    onRestart: vi.fn(),
     phase: "playing" as PlayerPhase,
     ...overrides,
   };
@@ -57,12 +59,24 @@ describe(usePlayerKeyboard, () => {
       expect(opts.onContinue).not.toHaveBeenCalled();
     });
 
-    test("no-op when completed", () => {
-      const opts = buildOptions({ phase: "completed" });
+    test("calls onNext when completed and onNext is provided", () => {
+      const onNext = vi.fn();
+      const opts = buildOptions({ onNext, phase: "completed" });
       renderHook(() => usePlayerKeyboard(opts));
 
       fireKey("Enter");
 
+      expect(onNext).toHaveBeenCalledOnce();
+      expect(opts.onEscape).not.toHaveBeenCalled();
+    });
+
+    test("calls onEscape when completed and onNext is null", () => {
+      const opts = buildOptions({ onNext: null, phase: "completed" });
+      renderHook(() => usePlayerKeyboard(opts));
+
+      fireKey("Enter");
+
+      expect(opts.onEscape).toHaveBeenCalledOnce();
       expect(opts.onCheck).not.toHaveBeenCalled();
       expect(opts.onContinue).not.toHaveBeenCalled();
     });
@@ -127,6 +141,49 @@ describe(usePlayerKeyboard, () => {
       fireKey("Escape");
 
       expect(opts.onEscape).toHaveBeenCalledOnce();
+    });
+  });
+
+  describe("R key", () => {
+    test("calls onRestart when completed", () => {
+      const opts = buildOptions({ phase: "completed" });
+      renderHook(() => usePlayerKeyboard(opts));
+
+      fireKey("r");
+
+      expect(opts.onRestart).toHaveBeenCalledOnce();
+    });
+
+    test("no-op when playing", () => {
+      const opts = buildOptions({ phase: "playing" });
+      renderHook(() => usePlayerKeyboard(opts));
+
+      fireKey("r");
+
+      expect(opts.onRestart).not.toHaveBeenCalled();
+    });
+
+    test("no-op when feedback", () => {
+      const opts = buildOptions({ phase: "feedback" });
+      renderHook(() => usePlayerKeyboard(opts));
+
+      fireKey("r");
+
+      expect(opts.onRestart).not.toHaveBeenCalled();
+    });
+
+    test("no-op when target is an input element", () => {
+      const opts = buildOptions({ phase: "completed" });
+      renderHook(() => usePlayerKeyboard(opts));
+
+      const input = document.createElement("input");
+      document.body.append(input);
+      const event = new KeyboardEvent("keydown", { bubbles: true, key: "r" });
+      Object.defineProperty(event, "target", { value: input });
+      globalThis.dispatchEvent(event);
+      input.remove();
+
+      expect(opts.onRestart).not.toHaveBeenCalled();
     });
   });
 
