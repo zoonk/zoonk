@@ -9,7 +9,10 @@ import { useExtracted } from "next-intl";
 export function PlayerHeader({ className, ...props }: React.ComponentProps<"header">) {
   return (
     <header
-      className={cn("relative flex items-center justify-between px-3 py-1.5 sm:p-4", className)}
+      className={cn(
+        "relative flex items-center justify-between px-3 py-1.5 sm:py-2.5 lg:p-4",
+        className,
+      )}
       data-slot="player-header"
       {...props}
     />
