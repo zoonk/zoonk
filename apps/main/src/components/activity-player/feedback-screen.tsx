@@ -23,7 +23,7 @@ function FeedbackScreen({ className, ...props }: React.ComponentProps<"div">) {
     <div
       aria-live="polite"
       className={cn(
-        "animate-in fade-in slide-in-from-bottom-1 mx-auto flex w-full max-w-lg flex-col items-center gap-3 duration-200",
+        "animate-in fade-in slide-in-from-bottom-1 mx-auto flex w-full max-w-lg flex-col items-center gap-3 duration-200 ease-out motion-reduce:animate-none",
         className,
       )}
       data-slot="feedback-screen"

@@ -1,11 +1,8 @@
-"use client";
-
 import { type SerializedStep } from "@/data/activities/prepare-activity-data";
 import { CompletionScreenContent } from "./completion-screen";
 import { FeedbackScreenContent } from "./feedback-screen";
 import { type SelectedAnswer, type StepResult } from "./player-reducer";
 import { StepRenderer } from "./step-renderer";
-import { useStepTransition } from "./use-step-transition";
 
 export function StageContent({
   currentResult,
@@ -32,8 +29,6 @@ export function StageContent({
   phase: string;
   selectedAnswer: SelectedAnswer | undefined;
 }) {
-  const transitionClass = useStepTransition(currentStepIndex, currentStep?.kind === "static");
-
   if (isCompleted) {
     return (
       <CompletionScreenContent
@@ -51,7 +46,10 @@ export function StageContent({
 
   if (phase === "playing" && currentStep) {
     return (
-      <div className={transitionClass} key={`step-${currentStepIndex}`}>
+      <div
+        className="animate-in fade-in duration-150 ease-out motion-reduce:animate-none"
+        key={`step-${currentStepIndex}`}
+      >
         <StepRenderer
           onSelectAnswer={onSelectAnswer}
           selectedAnswer={selectedAnswer}
