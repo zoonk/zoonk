@@ -29,12 +29,20 @@ describe("getNextActivity - course scope", () => {
       position: 0,
     });
 
-    await activityFixture({
-      isPublished: true,
-      lessonId: lesson.id,
-      organizationId: organization.id,
-      position: 0,
-    });
+    await Promise.all([
+      activityFixture({
+        isPublished: true,
+        lessonId: lesson.id,
+        organizationId: organization.id,
+        position: 0,
+      }),
+      activityFixture({
+        isPublished: true,
+        lessonId: lesson.id,
+        organizationId: organization.id,
+        position: 1,
+      }),
+    ]);
 
     const result = await getNextActivity(0, { courseId: course.id });
 
