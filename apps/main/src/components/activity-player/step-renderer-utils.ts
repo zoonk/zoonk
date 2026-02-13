@@ -12,7 +12,7 @@ function getMultipleChoiceSummary(step: SerializedStep): string {
   return content.question ?? "";
 }
 
-export function getStaticContent(step: SerializedStep): { heading: string; body: string } {
+function getStaticContent(step: SerializedStep): { heading: string; body: string } {
   const content = parseStepContent("static", step.content);
 
   if (content.variant === "grammarExample") {

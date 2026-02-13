@@ -3,7 +3,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 export function StaticStepLayout({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
-      className={cn("flex w-full max-w-2xl flex-1 flex-col", className)}
+      className={cn("relative flex w-full max-w-2xl flex-1 flex-col", className)}
       data-slot="static-step-layout"
       {...props}
     />

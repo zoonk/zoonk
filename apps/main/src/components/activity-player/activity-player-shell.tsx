@@ -35,6 +35,8 @@ export function ActivityPlayerShell({
   const feedbackVariant = currentResult ? getFeedbackVariant(currentResult) : undefined;
   const totalSteps = state.steps.length;
   const isCompleted = state.phase === "completed";
+  const isFirstStep = state.currentStepIndex === 0;
+  const isLastStep = state.currentStepIndex >= totalSteps - 1;
 
   const progressValue = isCompleted ? 100 : computeProgress(state.currentStepIndex, totalSteps);
 
@@ -107,8 +109,12 @@ export function ActivityPlayerShell({
           currentStep={currentStep}
           currentStepIndex={state.currentStepIndex}
           isCompleted={isCompleted}
+          isFirst={isFirstStep}
+          isLast={isLastStep}
           lessonHref={lessonHref}
           nextActivityHref={nextActivityHref}
+          onNavigateNext={handleNavigateNext}
+          onNavigatePrev={handleNavigatePrev}
           onSelectAnswer={handleSelectAnswer}
           phase={state.phase}
           results={state.results}

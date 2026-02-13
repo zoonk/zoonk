@@ -3,29 +3,12 @@
 import { type SerializedStep } from "@/data/activities/prepare-activity-data";
 import { Button } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
+import { CoachingOverlay } from "./coaching-overlay";
 import { type SelectedAnswer } from "./player-reducer";
-import {
-  InteractiveStepLayout,
-  StaticStepLayout,
-  StaticStepText,
-  StaticStepVisual,
-} from "./step-layouts";
-import { getMockAnswer, getStaticContent, getStepSummary } from "./step-renderer-utils";
-
-function PlaceholderStaticStep({ step }: { step: SerializedStep }) {
-  const { body, heading } = getStaticContent(step);
-
-  return (
-    <>
-      <StaticStepVisual />
-
-      <StaticStepText>
-        <h2 className="text-xl font-semibold">{heading}</h2>
-        <p className="text-muted-foreground">{body}</p>
-      </StaticStepText>
-    </>
-  );
-}
+import { StaticStep } from "./static-step";
+import { StaticEdgeChevrons, StaticTapZones, useSwipeNavigation } from "./static-step-navigation";
+import { InteractiveStepLayout, StaticStepLayout } from "./step-layouts";
+import { getMockAnswer, getStepSummary } from "./step-renderer-utils";
 
 function PlaceholderInteractiveStep({
   onSelectAnswer,
@@ -59,18 +42,36 @@ function PlaceholderInteractiveStep({
 }
 
 export function StepRenderer({
+  isFirst,
+  isLast,
+  onNavigateNext,
+  onNavigatePrev,
   onSelectAnswer,
   selectedAnswer,
   step,
 }: {
+  isFirst: boolean;
+  isLast: boolean;
+  onNavigateNext: () => void;
+  onNavigatePrev: () => void;
   onSelectAnswer: (stepId: string, answer: SelectedAnswer) => void;
   selectedAnswer: SelectedAnswer | undefined;
   step: SerializedStep;
 }) {
+  const swipeHandlers = useSwipeNavigation({ onNavigateNext, onNavigatePrev });
+
   if (step.kind === "static") {
     return (
-      <StaticStepLayout>
-        <PlaceholderStaticStep step={step} />
+      <StaticStepLayout {...swipeHandlers}>
+        <StaticStep step={step} />
+        <StaticTapZones
+          isFirst={isFirst}
+          isLast={isLast}
+          onNavigateNext={onNavigateNext}
+          onNavigatePrev={onNavigatePrev}
+        />
+        <StaticEdgeChevrons isFirst={isFirst} isLast={isLast} />
+        <CoachingOverlay />
       </StaticStepLayout>
     );
   }

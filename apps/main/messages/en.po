@@ -1176,6 +1176,11 @@ msgctxt "RDZVQL"
 msgid "Check"
 msgstr "Check"
 
+#: src/components/activity-player/coaching-overlay.tsx
+msgctxt "s9rdfJ"
+msgid "Tap, swipe, or use arrow keys to navigate"
+msgstr "Tap, swipe, or use arrow keys to navigate"
+
 #: src/components/activity-player/completion-screen.tsx
 msgctxt "e1M39C"
 msgid "Sign up to track your progress"
@@ -1205,6 +1210,21 @@ msgstr "Outcome"
 msgctxt "xmF49T"
 msgid "Correct!"
 msgstr "Correct!"
+
+#: src/components/activity-player/static-step-navigation.tsx
+msgctxt "5i63aw"
+msgid "Complete activity"
+msgstr "Complete activity"
+
+#: src/components/activity-player/static-step-navigation.tsx
+msgctxt "aNzy1T"
+msgid "Previous step"
+msgstr "Previous step"
+
+#: src/components/activity-player/static-step-navigation.tsx
+msgctxt "d+qgix"
+msgid "Next step"
+msgstr "Next step"
 
 #: src/components/activity-player/step-renderer.tsx
 msgctxt "4pTU5S"

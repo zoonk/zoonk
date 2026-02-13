@@ -9,9 +9,13 @@ export function StageContent({
   currentStep,
   currentStepIndex,
   isCompleted,
+  isFirst,
+  isLast,
   activityId,
   lessonHref,
   nextActivityHref,
+  onNavigateNext,
+  onNavigatePrev,
   onSelectAnswer,
   results,
   phase,
@@ -21,9 +25,13 @@ export function StageContent({
   currentStep: SerializedStep | undefined;
   currentStepIndex: number;
   isCompleted: boolean;
+  isFirst: boolean;
+  isLast: boolean;
   activityId: string;
   lessonHref: string;
   nextActivityHref: string | null;
+  onNavigateNext: () => void;
+  onNavigatePrev: () => void;
   onSelectAnswer: (stepId: string, answer: SelectedAnswer) => void;
   results: Record<string, StepResult>;
   phase: string;
@@ -51,6 +59,10 @@ export function StageContent({
         key={`step-${currentStepIndex}`}
       >
         <StepRenderer
+          isFirst={isFirst}
+          isLast={isLast}
+          onNavigateNext={onNavigateNext}
+          onNavigatePrev={onNavigatePrev}
           onSelectAnswer={onSelectAnswer}
           selectedAnswer={selectedAnswer}
           step={currentStep}
