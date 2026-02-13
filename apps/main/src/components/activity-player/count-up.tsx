@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 const DURATION_MS = 600;
 const EASE_EXPONENT = 3;
@@ -11,14 +11,9 @@ function easeOut(progress: number): number {
 
 export function CountUp({ value }: { value: number }) {
   const [display, setDisplay] = useState(0);
-  const prefersReducedMotion = useRef(false);
 
   useEffect(() => {
-    prefersReducedMotion.current = globalThis.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
-
-    if (prefersReducedMotion.current) {
+    if (globalThis.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       setDisplay(value);
       return;
     }
