@@ -369,55 +369,6 @@ test.describe("Static Step Navigation", () => {
     await expect(page.getByText(/^correct$/i)).toBeVisible();
   });
 
-  test("coaching overlay appears on first visit", async ({ page }) => {
-    const uniqueId = randomUUID().slice(0, 8);
-    const { url } = await createStaticActivity({
-      steps: [
-        {
-          content: {
-            text: `Coach body ${uniqueId}`,
-            title: `Coach Step ${uniqueId}`,
-            variant: "text",
-          },
-          position: 0,
-        },
-      ],
-    });
-
-    // Clear localStorage to simulate first visit
-    await page.goto(url);
-    await page.evaluate(() => localStorage.removeItem("zoonk:coaching:static-nav"));
-    await page.reload();
-
-    await expect(page.getByText(/tap, swipe, or use arrow keys/i)).toBeVisible();
-  });
-
-  test("coaching overlay does not appear on repeat visit", async ({ page }) => {
-    const uniqueId = randomUUID().slice(0, 8);
-    const { url } = await createStaticActivity({
-      steps: [
-        {
-          content: {
-            text: `Repeat body ${uniqueId}`,
-            title: `Repeat Step ${uniqueId}`,
-            variant: "text",
-          },
-          position: 0,
-        },
-      ],
-    });
-
-    // Set localStorage before navigating
-    await page.goto(url);
-    await page.evaluate(() => localStorage.setItem("zoonk:coaching:static-nav", "true"));
-    await page.reload();
-
-    await expect(
-      page.getByRole("heading", { name: new RegExp(`Repeat Step ${uniqueId}`) }),
-    ).toBeVisible();
-    await expect(page.getByText(/tap, swipe, or use arrow keys/i)).not.toBeVisible();
-  });
-
   test("click navigation — right area advances, left area goes back", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const { url } = await createStaticActivity({

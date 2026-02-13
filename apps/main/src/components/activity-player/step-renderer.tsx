@@ -3,7 +3,6 @@
 import { type SerializedStep } from "@/data/activities/prepare-activity-data";
 import { Button } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
-import { CoachingOverlay } from "./coaching-overlay";
 import { type SelectedAnswer } from "./player-reducer";
 import { StaticStep } from "./static-step";
 import { StaticEdgeChevrons, StaticTapZones, useSwipeNavigation } from "./static-step-navigation";
@@ -71,7 +70,6 @@ export function StepRenderer({
           onNavigatePrev={onNavigatePrev}
         />
         <StaticEdgeChevrons isFirst={isFirst} isLast={isLast} />
-        <CoachingOverlay />
       </StaticStepLayout>
     );
   }

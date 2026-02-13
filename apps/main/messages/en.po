@@ -1176,11 +1176,6 @@ msgctxt "RDZVQL"
 msgid "Check"
 msgstr "Check"
 
-#: src/components/activity-player/coaching-overlay.tsx
-msgctxt "s9rdfJ"
-msgid "Tap, swipe, or use arrow keys to navigate"
-msgstr "Tap, swipe, or use arrow keys to navigate"
-
 #: src/components/activity-player/completion-screen.tsx
 msgctxt "e1M39C"
 msgid "Sign up to track your progress"
