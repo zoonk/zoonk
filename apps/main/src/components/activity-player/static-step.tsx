@@ -8,7 +8,7 @@ import { StaticStepText, StaticStepVisual } from "./step-layouts";
 function TextVariant({ title, text }: { title: string; text: string }) {
   return (
     <>
-      <h2 className="text-xl font-semibold sm:text-2xl">{title}</h2>
+      <h2 className="text-base font-semibold">{title}</h2>
       <p className="text-muted-foreground text-base">{text}</p>
     </>
   );
@@ -27,13 +27,13 @@ function GrammarExampleVariant({
 }) {
   return (
     <>
-      <p className="text-2xl font-medium sm:text-3xl">
+      <p className="text-xl font-medium sm:text-2xl">
         <HighlightText highlight={highlight} text={sentence} />
       </p>
 
       {romanization && <p className="text-muted-foreground text-sm italic">{romanization}</p>}
 
-      <p className="text-muted-foreground mt-3 text-base">{translation}</p>
+      <p className="text-muted-foreground text-base">{translation}</p>
     </>
   );
 }
@@ -41,7 +41,7 @@ function GrammarExampleVariant({
 function GrammarRuleVariant({ ruleName, ruleSummary }: { ruleName: string; ruleSummary: string }) {
   return (
     <>
-      <h2 className="text-lg font-semibold tracking-tight sm:text-xl">{ruleName}</h2>
+      <h2 className="text-base font-semibold tracking-tight">{ruleName}</h2>
       <p className="text-muted-foreground text-base">{ruleSummary}</p>
     </>
   );
