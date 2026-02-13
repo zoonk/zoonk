@@ -9,6 +9,18 @@ type KeyboardModifiers = {
 
 type ModifierMode = "all" | "any" | "none";
 
+function isEditableTarget(target: EventTarget | null): boolean {
+  if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) {
+    return true;
+  }
+
+  if (target instanceof HTMLElement && target.isContentEditable) {
+    return true;
+  }
+
+  return false;
+}
+
 function hasAnyModifier(event: KeyboardEvent): boolean {
   return event.metaKey || event.ctrlKey || event.shiftKey || event.altKey;
 }
@@ -94,6 +106,10 @@ export function useKeyboardCallback(
   callback: () => void,
   options: {
     /**
+     * Skip the callback when the event target is an input, textarea, or contenteditable element.
+     */
+    ignoreEditable?: boolean;
+    /**
      * How to match modifiers:
      * - "all": ALL specified modifiers must be pressed (AND) — default
      * - "any": ANY specified modifier triggers (OR)
@@ -106,7 +122,7 @@ export function useKeyboardCallback(
     modifiers?: KeyboardModifiers;
   } = {},
 ) {
-  const { mode = "all", modifiers } = options;
+  const { ignoreEditable = false, mode = "all", modifiers } = options;
   const { altKey, ctrlKey, metaKey, shiftKey } = modifiers ?? {};
 
   const onKeyPress = useEffectEvent(() => {
@@ -116,6 +132,10 @@ export function useKeyboardCallback(
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key !== key) {
+        return;
+      }
+
+      if (ignoreEditable && isEditableTarget(event.target)) {
         return;
       }
 
@@ -129,5 +149,5 @@ export function useKeyboardCallback(
 
     globalThis.addEventListener("keydown", handleKeyDown);
     return () => globalThis.removeEventListener("keydown", handleKeyDown);
-  }, [key, mode, altKey, ctrlKey, metaKey, shiftKey]);
+  }, [key, mode, ignoreEditable, altKey, ctrlKey, metaKey, shiftKey]);
 }

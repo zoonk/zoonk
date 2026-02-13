@@ -89,6 +89,12 @@ export function ActivityPlayerShell({
     dispatch({ type: "RESTART" });
   }, [dispatch]);
 
+  const handleNext = useCallback(() => {
+    if (nextActivityHref) {
+      router.push(nextActivityHref);
+    }
+  }, [router, nextActivityHref]);
+
   usePlayerKeyboard({
     hasAnswer,
     isStaticStep,
@@ -97,6 +103,8 @@ export function ActivityPlayerShell({
     onEscape: handleEscape,
     onNavigateNext: handleNavigateNext,
     onNavigatePrev: handleNavigatePrev,
+    onNext: nextActivityHref ? handleNext : null,
+    onRestart: handleRestart,
     phase: state.phase,
   });
 

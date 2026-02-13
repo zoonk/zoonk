@@ -6,6 +6,7 @@ import { useAuthState } from "@zoonk/core/auth/hooks/auth-state";
 import { computeScore } from "@zoonk/core/player/compute-score";
 import { Badge } from "@zoonk/ui/components/badge";
 import { buttonVariants } from "@zoonk/ui/components/button";
+import { Kbd } from "@zoonk/ui/components/kbd";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
 import { Brain, CircleCheck, ZapIcon } from "lucide-react";
@@ -104,41 +105,53 @@ function AuthenticatedContent({
         {nextActivityHref ? (
           <>
             <ClientLink
-              className={cn(buttonVariants({ size: "lg" }), "w-full")}
+              className={cn(buttonVariants({ size: "lg" }), "w-full justify-between")}
               href={nextActivityHref}
             >
               {t("Next")}
+              <Kbd className="bg-primary-foreground/15 text-primary-foreground hidden opacity-70 lg:inline-flex">
+                Enter
+              </Kbd>
             </ClientLink>
 
             <ActionRow>
               <ClientLink
-                className={cn(buttonVariants({ variant: "outline" }), "flex-1")}
+                className={cn(buttonVariants({ variant: "outline" }), "flex-1 justify-between")}
                 href={lessonHref}
               >
                 {t("Back to Lesson")}
+                <Kbd className="hidden opacity-60 lg:inline-flex">Esc</Kbd>
               </ClientLink>
 
               <button
-                className={cn(buttonVariants({ variant: "outline" }), "flex-1")}
+                className={cn(buttonVariants({ variant: "outline" }), "flex-1 justify-between")}
                 onClick={onRestart}
                 type="button"
               >
                 {t("Restart")}
+                <Kbd className="hidden opacity-60 lg:inline-flex">R</Kbd>
               </button>
             </ActionRow>
           </>
         ) : (
           <>
-            <ClientLink className={cn(buttonVariants(), "w-full")} href={lessonHref}>
+            <ClientLink
+              className={cn(buttonVariants(), "w-full justify-between")}
+              href={lessonHref}
+            >
               {t("Back to Lesson")}
+              <Kbd className="bg-primary-foreground/15 text-primary-foreground hidden opacity-70 lg:inline-flex">
+                Esc
+              </Kbd>
             </ClientLink>
 
             <button
-              className={cn(buttonVariants({ variant: "outline" }), "w-full")}
+              className={cn(buttonVariants({ variant: "outline" }), "w-full justify-between")}
               onClick={onRestart}
               type="button"
             >
               {t("Restart")}
+              <Kbd className="hidden opacity-60 lg:inline-flex">R</Kbd>
             </button>
           </>
         )}
@@ -167,18 +180,20 @@ function UnauthenticatedContent({
 
         <ActionRow>
           <ClientLink
-            className={cn(buttonVariants({ variant: "outline" }), "flex-1")}
+            className={cn(buttonVariants({ variant: "outline" }), "flex-1 justify-between")}
             href={lessonHref}
           >
             {t("Back to Lesson")}
+            <Kbd className="hidden opacity-60 lg:inline-flex">Esc</Kbd>
           </ClientLink>
 
           <button
-            className={cn(buttonVariants({ variant: "outline" }), "flex-1")}
+            className={cn(buttonVariants({ variant: "outline" }), "flex-1 justify-between")}
             onClick={onRestart}
             type="button"
           >
             {t("Restart")}
+            <Kbd className="hidden opacity-60 lg:inline-flex">R</Kbd>
           </button>
         </ActionRow>
       </CompletionActions>

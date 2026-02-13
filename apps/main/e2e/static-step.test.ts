@@ -570,6 +570,76 @@ test.describe("Completion Screen", () => {
     await expect(page.getByRole("button", { name: /restart/i })).toBeVisible();
   });
 
+  test("pressing R on completion screen restarts activity", async ({ page }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const { url } = await createStaticActivity({
+      steps: [
+        {
+          content: {
+            text: `R key 1 body ${uniqueId}`,
+            title: `R Key Step 1 ${uniqueId}`,
+            variant: "text",
+          },
+          position: 0,
+        },
+        {
+          content: {
+            text: `R key 2 body ${uniqueId}`,
+            title: `R Key Step 2 ${uniqueId}`,
+            variant: "text",
+          },
+          position: 1,
+        },
+      ],
+    });
+
+    await page.goto(url);
+    await page.waitForLoadState("networkidle");
+
+    // Navigate to completion
+    await page.keyboard.press("ArrowRight");
+    await page.keyboard.press("ArrowRight");
+    await expect(page.getByRole("status")).toBeVisible();
+
+    // Press R to restart
+    await page.keyboard.press("r");
+
+    // Should be back at step 1
+    await expect(
+      page.getByRole("heading", { name: new RegExp(`R Key Step 1 ${uniqueId}`) }),
+    ).toBeVisible();
+    await expect(page.getByText(/1 \/ 2/)).toBeVisible();
+  });
+
+  test("pressing Enter on completion screen navigates back to lesson when no next activity", async ({
+    page,
+  }) => {
+    const { lesson, url } = await createStaticActivity({
+      steps: [
+        {
+          content: {
+            text: "Enter key body",
+            title: "Enter Key Step",
+            variant: "text",
+          },
+          position: 0,
+        },
+      ],
+    });
+
+    await page.goto(url);
+    await page.waitForLoadState("networkidle");
+
+    // Navigate to completion
+    await page.keyboard.press("ArrowRight");
+    await expect(page.getByRole("status")).toBeVisible();
+
+    // Press Enter — no next activity, so should go back to lesson
+    await page.keyboard.press("Enter");
+
+    await page.waitForURL(new RegExp(lesson.slug));
+  });
+
   test("clicking Restart resets to first step", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const { url } = await createStaticActivity({
