@@ -16,6 +16,7 @@ export function StageContent({
   nextActivityHref,
   onNavigateNext,
   onNavigatePrev,
+  onRestart,
   onSelectAnswer,
   results,
   phase,
@@ -32,6 +33,7 @@ export function StageContent({
   nextActivityHref: string | null;
   onNavigateNext: () => void;
   onNavigatePrev: () => void;
+  onRestart: () => void;
   onSelectAnswer: (stepId: string, answer: SelectedAnswer) => void;
   results: Record<string, StepResult>;
   phase: string;
@@ -43,6 +45,7 @@ export function StageContent({
         activityId={activityId}
         lessonHref={lessonHref}
         nextActivityHref={nextActivityHref}
+        onRestart={onRestart}
         results={results}
       />
     );

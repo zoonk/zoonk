@@ -342,6 +342,71 @@ describe("COMPLETE", () => {
   });
 });
 
+describe("RESTART", () => {
+  test("resets to playing with index 0 from completed state", () => {
+    const steps = [
+      buildStep({ id: "s1", kind: "multipleChoice" }),
+      buildStep({ id: "s2", kind: "multipleChoice", position: 1 }),
+    ];
+    const state = buildState({
+      currentStepIndex: 1,
+      phase: "completed",
+      results: {
+        s1: {
+          answer: mcAnswer,
+          effects: [],
+          result: { feedback: null, isCorrect: true },
+          stepId: "s1",
+        },
+      },
+      selectedAnswers: { s1: mcAnswer },
+      steps,
+    });
+
+    const next = playerReducer(state, { type: "RESTART" });
+    expect(next.phase).toBe("playing");
+    expect(next.currentStepIndex).toBe(0);
+  });
+
+  test("clears results, selectedAnswers, and dimensions", () => {
+    const steps = [buildStep({ id: "s1", kind: "multipleChoice" })];
+    const state = buildState({
+      dimensions: { Quality: 2 },
+      phase: "completed",
+      results: {
+        s1: {
+          answer: mcAnswer,
+          effects: [{ dimension: "Quality", impact: "positive" }],
+          result: { feedback: null, isCorrect: true },
+          stepId: "s1",
+        },
+      },
+      selectedAnswers: { s1: mcAnswer },
+      steps,
+    });
+
+    const next = playerReducer(state, { type: "RESTART" });
+    expect(next.results).toEqual({});
+    expect(next.selectedAnswers).toEqual({});
+    expect(next.dimensions).toEqual({});
+  });
+
+  test("preserves activityId, steps, and version", () => {
+    const steps = [buildStep({ id: "s1" }), buildStep({ id: "s2", position: 1 })];
+    const state = buildState({
+      activityId: "my-activity",
+      phase: "completed",
+      steps,
+      version: PLAYER_STATE_VERSION,
+    });
+
+    const next = playerReducer(state, { type: "RESTART" });
+    expect(next.activityId).toBe("my-activity");
+    expect(next.steps).toEqual(steps);
+    expect(next.version).toBe(PLAYER_STATE_VERSION);
+  });
+});
+
 describe("edge cases", () => {
   test("unknown action returns state unchanged", () => {
     const state = buildState();

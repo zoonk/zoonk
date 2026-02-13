@@ -78,6 +78,10 @@ export function ActivityPlayerShell({
     dispatch({ direction: "prev", type: "NAVIGATE_STEP" });
   }, [dispatch]);
 
+  const handleRestart = useCallback(() => {
+    dispatch({ type: "RESTART" });
+  }, [dispatch]);
+
   usePlayerKeyboard({
     hasAnswer,
     isStaticStep,
@@ -93,12 +97,14 @@ export function ActivityPlayerShell({
 
   return (
     <main className="flex min-h-dvh flex-col">
-      <PlayerHeader>
-        <PlayerCloseLink href={lessonHref} />
-        <PlayerStepFraction>
-          {state.currentStepIndex + 1} / {totalSteps}
-        </PlayerStepFraction>
-      </PlayerHeader>
+      {!isCompleted && (
+        <PlayerHeader>
+          <PlayerCloseLink href={lessonHref} />
+          <PlayerStepFraction>
+            {state.currentStepIndex + 1} / {totalSteps}
+          </PlayerStepFraction>
+        </PlayerHeader>
+      )}
 
       <PlayerProgressBar value={progressValue} />
 
@@ -115,6 +121,7 @@ export function ActivityPlayerShell({
           nextActivityHref={nextActivityHref}
           onNavigateNext={handleNavigateNext}
           onNavigatePrev={handleNavigatePrev}
+          onRestart={handleRestart}
           onSelectAnswer={handleSelectAnswer}
           phase={state.phase}
           results={state.results}

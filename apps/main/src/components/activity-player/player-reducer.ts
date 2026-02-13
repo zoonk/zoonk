@@ -44,7 +44,8 @@ export type PlayerAction =
   | { type: "CHECK_ANSWER"; stepId: string; result: AnswerResult; effects: ChallengeEffect[] }
   | { type: "CONTINUE" }
   | { type: "COMPLETE" }
-  | { type: "NAVIGATE_STEP"; direction: "next" | "prev" };
+  | { type: "NAVIGATE_STEP"; direction: "next" | "prev" }
+  | { type: "RESTART" };
 
 function effectDelta(impact: ChallengeEffect["impact"]): number {
   if (impact === "positive") {
@@ -173,6 +174,17 @@ function handleNavigateStep(
   return { ...state, currentStepIndex: nextIndex };
 }
 
+function handleRestart(state: PlayerState): PlayerState {
+  return {
+    ...state,
+    currentStepIndex: 0,
+    dimensions: {},
+    phase: "playing",
+    results: {},
+    selectedAnswers: {},
+  };
+}
+
 function handleComplete(state: PlayerState): PlayerState {
   if (state.phase === "completed") {
     return state;
@@ -197,6 +209,9 @@ export function playerReducer(state: PlayerState, action: PlayerAction): PlayerS
 
     case "COMPLETE":
       return handleComplete(state);
+
+    case "RESTART":
+      return handleRestart(state);
 
     default:
       return state;

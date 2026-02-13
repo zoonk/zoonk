@@ -271,7 +271,7 @@ test.describe("Static Step Navigation", () => {
     await expect(page.getByText(/1 \/ 2/)).toBeVisible();
   });
 
-  test("ArrowRight on last static step transitions to completed without score", async ({
+  test("ArrowRight on last static step transitions to completed with Completed text", async ({
     page,
   }) => {
     const uniqueId = randomUUID().slice(0, 8);
@@ -293,11 +293,11 @@ test.describe("Static Step Navigation", () => {
 
     await page.keyboard.press("ArrowRight");
 
-    // Should show completion screen without a score for static-only activities
+    // Should show completion screen with "Completed" text for static-only activities
     const completionStatus = page.getByRole("status");
     await expect(completionStatus).toBeVisible();
+    await expect(page.getByText(/completed/i)).toBeVisible();
     await expect(page.getByText(/correct/i)).not.toBeVisible();
-    await expect(page.getByText(/0\/0/)).not.toBeVisible();
   });
 
   test("navigates forward and backward through multiple static steps", async ({ page }) => {
@@ -350,7 +350,9 @@ test.describe("Static Step Navigation", () => {
     ).toBeVisible();
   });
 
-  test("single static step — ArrowRight completes activity without score", async ({ page }) => {
+  test("single static step — ArrowRight completes activity with Completed text", async ({
+    page,
+  }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const { url } = await createStaticActivity({
       steps: [
@@ -372,8 +374,8 @@ test.describe("Static Step Navigation", () => {
 
     const completionStatus = page.getByRole("status");
     await expect(completionStatus).toBeVisible();
+    await expect(page.getByText(/completed/i)).toBeVisible();
     await expect(page.getByText(/correct/i)).not.toBeVisible();
-    await expect(page.getByText(/0\/0/)).not.toBeVisible();
   });
 
   test("completion screen shows Send feedback button", async ({ page }) => {
@@ -437,5 +439,108 @@ test.describe("Static Step Navigation", () => {
     await expect(
       page.getByRole("heading", { name: new RegExp(`Click 1 ${uniqueId}`) }),
     ).toBeVisible();
+  });
+});
+
+test.describe("Completion Screen", () => {
+  test("header is hidden on completion screen but progress bar remains", async ({ page }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const { url } = await createStaticActivity({
+      steps: [
+        {
+          content: {
+            text: `Header test body ${uniqueId}`,
+            title: `Header Test ${uniqueId}`,
+            variant: "text",
+          },
+          position: 0,
+        },
+      ],
+    });
+
+    await page.goto(url);
+    await page.waitForLoadState("networkidle");
+
+    // Header elements visible before completion
+    await expect(page.getByLabel(/close/i)).toBeVisible();
+    await expect(page.getByText(/1 \/ 1/)).toBeVisible();
+
+    await page.keyboard.press("ArrowRight");
+
+    // Header hidden on completion
+    await expect(page.getByRole("status")).toBeVisible();
+    await expect(page.getByLabel(/close/i)).not.toBeVisible();
+    await expect(page.getByText(/1 \/ 1/)).not.toBeVisible();
+
+    // Progress bar still visible at 100%
+    await expect(page.getByRole("progressbar", { name: /activity progress/i })).toBeVisible();
+  });
+
+  test("shows Back to Lesson link and Restart button", async ({ page }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const { url } = await createStaticActivity({
+      steps: [
+        {
+          content: {
+            text: `Actions test body ${uniqueId}`,
+            title: `Actions Test ${uniqueId}`,
+            variant: "text",
+          },
+          position: 0,
+        },
+      ],
+    });
+
+    await page.goto(url);
+    await page.waitForLoadState("networkidle");
+    await page.keyboard.press("ArrowRight");
+
+    await expect(page.getByRole("status")).toBeVisible();
+    await expect(page.getByRole("link", { name: /back to lesson/i })).toBeVisible();
+    await expect(page.getByRole("button", { name: /restart/i })).toBeVisible();
+  });
+
+  test("clicking Restart resets to first step", async ({ page }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const { url } = await createStaticActivity({
+      steps: [
+        {
+          content: {
+            text: `Restart 1 body ${uniqueId}`,
+            title: `Restart Step 1 ${uniqueId}`,
+            variant: "text",
+          },
+          position: 0,
+        },
+        {
+          content: {
+            text: `Restart 2 body ${uniqueId}`,
+            title: `Restart Step 2 ${uniqueId}`,
+            variant: "text",
+          },
+          position: 1,
+        },
+      ],
+    });
+
+    await page.goto(url);
+    await page.waitForLoadState("networkidle");
+
+    // Navigate to completion
+    await page.keyboard.press("ArrowRight");
+    await page.keyboard.press("ArrowRight");
+    await expect(page.getByRole("status")).toBeVisible();
+
+    // Click Restart
+    await page.getByRole("button", { name: /restart/i }).click();
+
+    // Should be back at step 1
+    await expect(
+      page.getByRole("heading", { name: new RegExp(`Restart Step 1 ${uniqueId}`) }),
+    ).toBeVisible();
+    await expect(page.getByText(/1 \/ 2/)).toBeVisible();
+
+    // Header should be visible again
+    await expect(page.getByLabel(/close/i)).toBeVisible();
   });
 });

@@ -617,7 +617,6 @@ msgid "Level {current} of 10 in {color} belt"
 msgstr "Level {current} of 10 in {color} belt"
 
 #: src/app/[locale]/(performance)/level/level-progression.tsx
-#: src/components/activity-player/completion-screen.tsx
 msgctxt "JXdbo8"
 msgid "Done"
 msgstr "Done"
@@ -1156,14 +1155,32 @@ msgid "Check"
 msgstr "Check"
 
 #: src/components/activity-player/completion-screen.tsx
+msgctxt "5kK+j9"
+msgid "Restart"
+msgstr "Restart"
+
+#: src/components/activity-player/completion-screen.tsx
+msgctxt "7tB7n/"
+msgid "Back to Lesson"
+msgstr "Back to Lesson"
+
+#: src/components/activity-player/completion-screen.tsx
+msgctxt "9+Ddtu"
+msgid "Next"
+msgstr "Next"
+
+#: src/components/activity-player/completion-screen.tsx
+#: src/components/catalog/activity-completion-indicator.tsx
+#: src/components/catalog/chapter-completion.tsx
+#: src/components/catalog/lesson-completion.tsx
+msgctxt "95stPq"
+msgid "Completed"
+msgstr "Completed"
+
+#: src/components/activity-player/completion-screen.tsx
 msgctxt "e1M39C"
 msgid "Sign up to track your progress"
 msgstr "Sign up to track your progress"
-
-#: src/components/activity-player/completion-screen.tsx
-msgctxt "GB+0+G"
-msgid "Next Activity"
-msgstr "Next Activity"
 
 #: src/components/activity-player/completion-screen.tsx
 msgctxt "P768k7"
@@ -1214,13 +1231,6 @@ msgstr "Select answer"
 msgctxt "4o5CAP"
 msgid "Not completed"
 msgstr "Not completed"
-
-#: src/components/catalog/activity-completion-indicator.tsx
-#: src/components/catalog/chapter-completion.tsx
-#: src/components/catalog/lesson-completion.tsx
-msgctxt "95stPq"
-msgid "Completed"
-msgstr "Completed"
 
 #: src/components/catalog/ai-warning.tsx
 msgctxt "Dwdx/1"

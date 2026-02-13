@@ -251,10 +251,6 @@ checksums:
     Learn%20anything/singular: 1409ee983014ff2deefb61aa0fbc570d
     Learn%20anything%20with%20AI/singular: 0ee713125135f591c75af6e19f94f03a
     Interactive%20courses%20built%20for%20you.%20Just%20tell%20us%20what%20you%20want%20to%20learn./singular: 30ce55333f2080aaf0681647cb26bfbb
-    Did%20you%20like%20this%20content%3F/singular: 23b97024cf20ceee3ee4a1ddc65d251c
-    Send%20feedback/singular: 9631cc08d49da04475b30a0d320ce97c
-    I%20didn't%20like%20it/singular: 9761a96b22323e7db7d7176b77cf7caa
-    I%20liked%20it/singular: ed20592186f53abcc526360869bd0f55
     Generate/singular: 0345bf322c191e70d01fd6607ec5c2f8
     Cancel/singular: 2e2a849c2223911717de8caa2c71bade
     Cooking%20up%20some%20course%20ideas/singular: a42520f96dbac3580a2ccae4bd6ceb31
@@ -411,9 +407,11 @@ checksums:
     Terms%20of%20Use/singular: 9ac262b2eda552beeecd904c0b9f8fa2
     Continue/singular: 3cfba90b4600131e82fc4260c568d044
     Check/singular: 023cc2ba432775c38e3efc004ad7b9ef
-    Tap%2C%20swipe%2C%20or%20use%20arrow%20keys%20to%20navigate/singular: b6203530d524f75bf782334f792aa7b6
+    Restart/singular: bab6232e89f24e3129f8e48268739d5b
+    Back%20to%20Lesson/singular: e2dbef5a2fefae8f9cee708e53e61cb9
+    Next/singular: 89ddbcf710eba274963494f312bdc8a9
+    Completed/singular: 0e4bbce9985f25eb673d9a054c8d5334
     Sign%20up%20to%20track%20your%20progress/singular: 554ed29d9b8a243362c3b3374222af08
-    Next%20Activity/singular: 90a2c70d1a053926e3144ee05627f687
     correct/singular: 0c2df4a764cea47295c0b550477e8e29
     Not%20quite/singular: e570085e69662802acf485c4565e3e3e
     Outcome/singular: 4cfc7a40e384ea8b6658e8da6e351bf0
@@ -424,11 +422,11 @@ checksums:
     Answer%20selected/singular: 43c2c02a2f5ab63d04a3ba140a03b769
     Select%20answer/singular: 4951d9f093550e70ff5f399634b2b595
     Not%20completed/singular: d011b1ae92a1a8a2676a5d6999bbe6d4
-    Completed/singular: 0e4bbce9985f25eb673d9a054c8d5334
     This%20content%20was%20generated%20by%20AI.%20It%20may%20contain%20errors%20or%20inaccuracies%20and%20should%20not%20be%20considered%20professional%20advice./singular: 269e7c16a722903b9b434f28aa6cf617
     Not%20helpful/singular: ceb8a457e7e4c62a465cd1dd2620990e
     Helpful/singular: 9a25a3e10315cf4a8c65996e31f6cda6
     Thanks%20for%20your%20feedback/singular: 05d6f70cdb81119bcf0ad7443438e82b
+    Send%20feedback/singular: 9631cc08d49da04475b30a0d320ce97c
     More%20options/singular: 53d90eae6a9b0243b5bc043b3d9de169
     Review/singular: 299f75db25382980b2895622d7712927
     Please%20provide%20as%20much%20detail%20as%20possible./singular: 3c8b231283c751d4beae059a6ffc3643
@@ -440,6 +438,9 @@ checksums:
     Message%20sent%20successfully!%20We'll%20get%20back%20to%20you%20soon./singular: c34a09294fd597649e9bd42401477697
     We'll%20use%20this%20email%20to%20contact%20you./singular: a09d71670ae76167b7faa718e794086b
     Send%20message/singular: 19e7006870c6e407dece25ee8c9d5333
+    Did%20you%20like%20this%20content%3F/singular: 23b97024cf20ceee3ee4a1ddc65d251c
+    I%20didn't%20like%20it/singular: 9761a96b22323e7db7d7176b77cf7caa
+    I%20liked%20it/singular: ed20592186f53abcc526360869bd0f55
     Feedback/singular: 6fac88806e0c269a30777b283988c61c
     Send%20feedback%2C%20questions%2C%20or%20suggestions%20to%20us.%20Fill%20in%20the%20form%20below%20or%20email%20us%20directly%20at%20hello%40zoonk.com./singular: 6ce5e55ddeeb7de9480b806358aa5b95
     Upgrade%20to%20generate/singular: 9c4baffb6ff3a12a322dfe02735ac35c
