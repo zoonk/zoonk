@@ -19,14 +19,21 @@ export type LastCompletedActivity = {
 
 function scopeFilter(scope: ActivityScope) {
   if ("courseId" in scope) {
-    return { lesson: { chapter: { courseId: scope.courseId } } };
+    return {
+      lesson: { chapter: { courseId: scope.courseId, isPublished: true }, isPublished: true },
+    };
   }
 
   if ("chapterId" in scope) {
-    return { lesson: { chapterId: scope.chapterId } };
+    return {
+      lesson: { chapter: { isPublished: true }, chapterId: scope.chapterId, isPublished: true },
+    };
   }
 
-  return { lessonId: scope.lessonId };
+  return {
+    lesson: { chapter: { isPublished: true }, isPublished: true },
+    lessonId: scope.lessonId,
+  };
 }
 
 /**
@@ -77,10 +84,6 @@ export async function findLastCompleted(
         activity: {
           isPublished: true,
           ...scopeFilter(scope),
-          lesson: {
-            chapter: { isPublished: true },
-            isPublished: true,
-          },
         },
         completedAt: { not: null },
         userId,
