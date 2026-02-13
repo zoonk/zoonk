@@ -271,7 +271,9 @@ test.describe("Static Step Navigation", () => {
     await expect(page.getByText(/1 \/ 2/)).toBeVisible();
   });
 
-  test("ArrowRight on last static step transitions to completed", async ({ page }) => {
+  test("ArrowRight on last static step transitions to completed without score", async ({
+    page,
+  }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const { url } = await createStaticActivity({
       steps: [
@@ -291,9 +293,11 @@ test.describe("Static Step Navigation", () => {
 
     await page.keyboard.press("ArrowRight");
 
-    // Should show completion screen (score and label are in separate elements)
-    await expect(page.getByText("0/0")).toBeVisible();
-    await expect(page.getByText(/^correct$/i)).toBeVisible();
+    // Should show completion screen without a score for static-only activities
+    const completionStatus = page.getByRole("status");
+    await expect(completionStatus).toBeVisible();
+    await expect(page.getByText(/correct/i)).not.toBeVisible();
+    await expect(page.getByText(/0\/0/)).not.toBeVisible();
   });
 
   test("navigates forward and backward through multiple static steps", async ({ page }) => {
@@ -346,7 +350,7 @@ test.describe("Static Step Navigation", () => {
     ).toBeVisible();
   });
 
-  test("single static step — ArrowRight completes activity", async ({ page }) => {
+  test("single static step — ArrowRight completes activity without score", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const { url } = await createStaticActivity({
       steps: [
@@ -365,8 +369,11 @@ test.describe("Static Step Navigation", () => {
     await page.waitForLoadState("networkidle");
 
     await page.keyboard.press("ArrowRight");
-    await expect(page.getByText("0/0")).toBeVisible();
-    await expect(page.getByText(/^correct$/i)).toBeVisible();
+
+    const completionStatus = page.getByRole("status");
+    await expect(completionStatus).toBeVisible();
+    await expect(page.getByText(/correct/i)).not.toBeVisible();
+    await expect(page.getByText(/0\/0/)).not.toBeVisible();
   });
 
   test("click navigation — right area advances, left area goes back", async ({ page }) => {

@@ -21,7 +21,13 @@ export function StaticStepVisual({ className, ...props }: React.ComponentProps<"
 }
 
 export function StaticStepText({ className, ...props }: React.ComponentProps<"div">) {
-  return <div className={cn("flex flex-col gap-1 text-left", className)} data-slot="static-step-text" {...props} />;
+  return (
+    <div
+      className={cn("flex flex-col gap-1 text-left", className)}
+      data-slot="static-step-text"
+      {...props}
+    />
+  );
 }
 
 export function InteractiveStepLayout({ className, ...props }: React.ComponentProps<"div">) {

@@ -140,6 +140,20 @@ function AuthBranch(props: {
   return <AuthenticatedContent {...props} />;
 }
 
+export function getCompletionScore(results: Record<string, StepResult>) {
+  const resultList = Object.values(results);
+
+  if (resultList.length === 0) {
+    return null;
+  }
+
+  const score = computeScore({
+    results: resultList.map((stepResult) => ({ isCorrect: stepResult.result.isCorrect })),
+  });
+
+  return { correctCount: score.correctCount, totalCount: resultList.length };
+}
+
 export function CompletionScreenContent({
   activityId,
   lessonHref,
@@ -152,19 +166,18 @@ export function CompletionScreenContent({
   results: Record<string, StepResult>;
 }) {
   const t = useExtracted();
-  const resultList = Object.values(results);
-  const score = computeScore({
-    results: resultList.map((stepResult) => ({ isCorrect: stepResult.result.isCorrect })),
-  });
+  const score = getCompletionScore(results);
 
   return (
     <CompletionScreen>
-      <CompletionScore>
-        <p className="text-4xl font-bold tabular-nums">
-          {score.correctCount}/{resultList.length}
-        </p>
-        <p className="text-muted-foreground text-sm">{t("correct")}</p>
-      </CompletionScore>
+      {score && (
+        <CompletionScore>
+          <p className="text-4xl font-bold tabular-nums">
+            {score.correctCount}/{score.totalCount}
+          </p>
+          <p className="text-muted-foreground text-sm">{t("correct")}</p>
+        </CompletionScore>
+      )}
 
       <AuthBranch
         activityId={activityId}
