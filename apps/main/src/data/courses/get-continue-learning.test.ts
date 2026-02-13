@@ -1,8 +1,7 @@
-import { prisma } from "@zoonk/db";
 import { activityFixture, activityProgressFixture } from "@zoonk/testing/fixtures/activities";
 import { signInAs } from "@zoonk/testing/fixtures/auth";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
-import { courseFixture, courseUserFixture } from "@zoonk/testing/fixtures/courses";
+import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { userFixture } from "@zoonk/testing/fixtures/users";
@@ -11,7 +10,7 @@ import { getContinueLearning } from "./get-continue-learning";
 
 const MAX_CONTINUE_LEARNING_ITEMS = 4;
 
-async function createCourseWithActivity(organizationId: number) {
+async function createCourseWithActivities(organizationId: number) {
   const course = await courseFixture({
     isPublished: true,
     organizationId,
@@ -31,14 +30,24 @@ async function createCourseWithActivity(organizationId: number) {
     position: 0,
   });
 
-  const activity = await activityFixture({
-    isPublished: true,
-    lessonId: lesson.id,
-    organizationId,
-    position: 1,
-  });
+  const [activity1, activity2] = await Promise.all([
+    activityFixture({
+      generationStatus: "completed",
+      isPublished: true,
+      lessonId: lesson.id,
+      organizationId,
+      position: 0,
+    }),
+    activityFixture({
+      generationStatus: "completed",
+      isPublished: true,
+      lessonId: lesson.id,
+      organizationId,
+      position: 1,
+    }),
+  ]);
 
-  return { activity, chapter, course, lesson };
+  return { activity1, activity2, chapter, course, lesson };
 }
 
 describe("unauthenticated users", () => {
@@ -55,7 +64,7 @@ describe("authenticated users", () => {
     organization = await organizationFixture();
   });
 
-  test("returns empty array when user has no courses", async () => {
+  test("returns empty array when user has no completions", async () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);
 
@@ -63,105 +72,13 @@ describe("authenticated users", () => {
     expect(result).toEqual([]);
   });
 
-  test("returns courses with next activity info", async () => {
+  test("returns courses with next activity info based on completions", async () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);
 
-    const { activity, chapter, course, lesson } = await createCourseWithActivity(organization.id);
-
-    await courseUserFixture({
-      courseId: course.id,
-      userId: Number(user.id),
-    });
-
-    const result = await getContinueLearning(headers);
-
-    expect(result).toHaveLength(1);
-    expect(result[0]?.course.id).toBe(course.id);
-    expect(result[0]?.chapter.id).toBe(chapter.id);
-    expect(result[0]?.lesson.id).toBe(lesson.id);
-    expect(result[0]?.activity.id).toBe(activity.id);
-  });
-
-  test("returns max courses ordered by most recent", async () => {
-    const user = await userFixture();
-    const headers = await signInAs(user.email, user.password);
-
-    const courseData = await Promise.all(
-      Array.from({ length: MAX_CONTINUE_LEARNING_ITEMS + 1 }, () =>
-        createCourseWithActivity(organization.id),
-      ),
+    const { activity1, activity2, chapter, course, lesson } = await createCourseWithActivities(
+      organization.id,
     );
-
-    const now = new Date();
-    await prisma.courseUser.createMany({
-      data: courseData.map((data, i) => ({
-        courseId: data.course.id,
-        startedAt: new Date(now.getTime() + i * 1000),
-        userId: Number(user.id),
-      })),
-    });
-
-    const result = await getContinueLearning(headers);
-
-    expect(result).toHaveLength(MAX_CONTINUE_LEARNING_ITEMS);
-
-    const resultCourseIds = result.map((item) => item.course.id);
-    const expectedIds = courseData
-      .slice(1)
-      .map((data) => data.course.id)
-      .toReversed();
-    expect(resultCourseIds).toEqual(expectedIds);
-  });
-
-  test("correctly identifies next incomplete activity", async () => {
-    const user = await userFixture();
-    const headers = await signInAs(user.email, user.password);
-
-    const course = await courseFixture({
-      isPublished: true,
-      organizationId: organization.id,
-    });
-
-    const chapter = await chapterFixture({
-      courseId: course.id,
-      isPublished: true,
-      organizationId: organization.id,
-      position: 0,
-    });
-
-    const lesson = await lessonFixture({
-      chapterId: chapter.id,
-      isPublished: true,
-      organizationId: organization.id,
-      position: 0,
-    });
-
-    const activity1 = await activityFixture({
-      isPublished: true,
-      lessonId: lesson.id,
-      organizationId: organization.id,
-      position: 1,
-    });
-
-    const activity2 = await activityFixture({
-      isPublished: true,
-      lessonId: lesson.id,
-      organizationId: organization.id,
-      position: 2,
-    });
-
-    await activityFixture({
-      isPublished: true,
-      lessonId: lesson.id,
-      organizationId: organization.id,
-      position: 3,
-    });
-
-    await courseUserFixture({
-      courseId: course.id,
-      userId: Number(user.id),
-    });
 
     await activityProgressFixture({
       activityId: activity1.id,
@@ -173,7 +90,95 @@ describe("authenticated users", () => {
     const result = await getContinueLearning(headers);
 
     expect(result).toHaveLength(1);
+    expect(result[0]?.course.id).toBe(course.id);
+    expect(result[0]?.chapter.id).toBe(chapter.id);
+    expect(result[0]?.lesson.id).toBe(lesson.id);
     expect(result[0]?.activity.id).toBe(activity2.id);
+  });
+
+  test("orders by most recent completion", async () => {
+    const user = await userFixture();
+    const headers = await signInAs(user.email, user.password);
+
+    const data1 = await createCourseWithActivities(organization.id);
+    const data2 = await createCourseWithActivities(organization.id);
+
+    const now = new Date();
+
+    await Promise.all([
+      activityProgressFixture({
+        activityId: data1.activity1.id,
+        completedAt: new Date(now.getTime() - 1000),
+        durationSeconds: 60,
+        userId: Number(user.id),
+      }),
+      activityProgressFixture({
+        activityId: data2.activity1.id,
+        completedAt: now,
+        durationSeconds: 60,
+        userId: Number(user.id),
+      }),
+    ]);
+
+    const result = await getContinueLearning(headers);
+
+    expect(result).toHaveLength(2);
+    expect(result[0]?.course.id).toBe(data2.course.id);
+    expect(result[1]?.course.id).toBe(data1.course.id);
+  });
+
+  test("limits to max items", async () => {
+    const user = await userFixture();
+    const headers = await signInAs(user.email, user.password);
+
+    const courses = await Promise.all(
+      Array.from({ length: MAX_CONTINUE_LEARNING_ITEMS + 1 }, () =>
+        createCourseWithActivities(organization.id),
+      ),
+    );
+
+    const now = new Date();
+
+    await Promise.all(
+      courses.map((data, idx) =>
+        activityProgressFixture({
+          activityId: data.activity1.id,
+          completedAt: new Date(now.getTime() + idx * 1000),
+          durationSeconds: 60,
+          userId: Number(user.id),
+        }),
+      ),
+    );
+
+    const result = await getContinueLearning(headers);
+
+    expect(result).toHaveLength(MAX_CONTINUE_LEARNING_ITEMS);
+  });
+
+  test("filters out completed courses", async () => {
+    const user = await userFixture();
+    const headers = await signInAs(user.email, user.password);
+
+    const { activity1, activity2 } = await createCourseWithActivities(organization.id);
+
+    await Promise.all([
+      activityProgressFixture({
+        activityId: activity1.id,
+        completedAt: new Date("2024-01-01"),
+        durationSeconds: 60,
+        userId: Number(user.id),
+      }),
+      activityProgressFixture({
+        activityId: activity2.id,
+        completedAt: new Date("2024-01-02"),
+        durationSeconds: 60,
+        userId: Number(user.id),
+      }),
+    ]);
+
+    const result = await getContinueLearning(headers);
+
+    expect(result).toEqual([]);
   });
 
   test("finds activity in next chapter when current chapter is complete", async () => {
@@ -185,52 +190,52 @@ describe("authenticated users", () => {
       organizationId: organization.id,
     });
 
-    const chapter1 = await chapterFixture({
-      courseId: course.id,
-      isPublished: true,
-      organizationId: organization.id,
-      position: 0,
-    });
+    const [chapter1, chapter2] = await Promise.all([
+      chapterFixture({
+        courseId: course.id,
+        isPublished: true,
+        organizationId: organization.id,
+        position: 0,
+      }),
+      chapterFixture({
+        courseId: course.id,
+        isPublished: true,
+        organizationId: organization.id,
+        position: 1,
+      }),
+    ]);
 
-    const chapter2 = await chapterFixture({
-      courseId: course.id,
-      isPublished: true,
-      organizationId: organization.id,
-      position: 1,
-    });
+    const [lesson1, lesson2] = await Promise.all([
+      lessonFixture({
+        chapterId: chapter1.id,
+        isPublished: true,
+        organizationId: organization.id,
+        position: 0,
+      }),
+      lessonFixture({
+        chapterId: chapter2.id,
+        isPublished: true,
+        organizationId: organization.id,
+        position: 0,
+      }),
+    ]);
 
-    const lesson1 = await lessonFixture({
-      chapterId: chapter1.id,
-      isPublished: true,
-      organizationId: organization.id,
-      position: 0,
-    });
-
-    const lesson2 = await lessonFixture({
-      chapterId: chapter2.id,
-      isPublished: true,
-      organizationId: organization.id,
-      position: 0,
-    });
-
-    const activity1 = await activityFixture({
-      isPublished: true,
-      lessonId: lesson1.id,
-      organizationId: organization.id,
-      position: 1,
-    });
-
-    const activity2 = await activityFixture({
-      isPublished: true,
-      lessonId: lesson2.id,
-      organizationId: organization.id,
-      position: 1,
-    });
-
-    await courseUserFixture({
-      courseId: course.id,
-      userId: Number(user.id),
-    });
+    const [activity1, activity2] = await Promise.all([
+      activityFixture({
+        generationStatus: "completed",
+        isPublished: true,
+        lessonId: lesson1.id,
+        organizationId: organization.id,
+        position: 0,
+      }),
+      activityFixture({
+        generationStatus: "completed",
+        isPublished: true,
+        lessonId: lesson2.id,
+        organizationId: organization.id,
+        position: 0,
+      }),
+    ]);
 
     await activityProgressFixture({
       activityId: activity1.id,

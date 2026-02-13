@@ -1,12 +1,19 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { type ActivityKind, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
 
 export type NextActivityInCourse = {
+  activityId: bigint;
+  activityKind: ActivityKind;
   activityPosition: number;
+  activityTitle: string | null;
+  chapterId: number;
   chapterSlug: string;
+  lessonDescription: string;
+  lessonId: number;
   lessonSlug: string;
+  lessonTitle: string;
 };
 
 const cachedGetNextActivity = cache(
@@ -26,13 +33,19 @@ const cachedGetNextActivity = cache(
           { position: "asc" },
         ],
         select: {
+          id: true,
+          kind: true,
           lesson: {
             select: {
-              chapter: { select: { slug: true } },
+              chapter: { select: { id: true, slug: true } },
+              description: true,
+              id: true,
               slug: true,
+              title: true,
             },
           },
           position: true,
+          title: true,
         },
         where: {
           OR: [
@@ -73,9 +86,16 @@ const cachedGetNextActivity = cache(
     }
 
     return {
+      activityId: activity.id,
+      activityKind: activity.kind,
       activityPosition: activity.position,
+      activityTitle: activity.title,
+      chapterId: activity.lesson.chapter.id,
       chapterSlug: activity.lesson.chapter.slug,
+      lessonDescription: activity.lesson.description,
+      lessonId: activity.lesson.id,
       lessonSlug: activity.lesson.slug,
+      lessonTitle: activity.lesson.title,
     };
   },
 );

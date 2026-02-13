@@ -22,6 +22,10 @@ describe(getNextActivityInCourse, () => {
   let l3Id: number;
   let l3Slug: string;
 
+  let a2Id: bigint;
+  let a3Id: bigint;
+  let a4Id: bigint;
+
   beforeAll(async () => {
     const org = await organizationFixture({ kind: "brand" });
     orgId = org.id;
@@ -87,7 +91,7 @@ describe(getNextActivityInCourse, () => {
     // Lesson 1: activities at positions 0, 1
     // Lesson 2: activity at position 0
     // Lesson 3 (ch2): activity at position 0
-    await Promise.all([
+    const [, act2, act3, act4] = await Promise.all([
       activityFixture({
         generationStatus: "completed",
         isPublished: true,
@@ -117,6 +121,10 @@ describe(getNextActivityInCourse, () => {
         position: 0,
       }),
     ]);
+
+    a2Id = act2.id;
+    a3Id = act3.id;
+    a4Id = act4.id;
   });
 
   test("returns next activity in same lesson", async () => {
@@ -129,9 +137,12 @@ describe(getNextActivityInCourse, () => {
       lessonPosition: 0,
     });
 
-    expect(result).toEqual({
+    expect(result).toMatchObject({
+      activityId: a2Id,
       activityPosition: 1,
+      chapterId: ch1Id,
       chapterSlug: ch1Slug,
+      lessonId: l1Id,
       lessonSlug: l1Slug,
     });
   });
@@ -146,9 +157,12 @@ describe(getNextActivityInCourse, () => {
       lessonPosition: 0,
     });
 
-    expect(result).toEqual({
+    expect(result).toMatchObject({
+      activityId: a3Id,
       activityPosition: 0,
+      chapterId: ch1Id,
       chapterSlug: ch1Slug,
+      lessonId: l2Id,
       lessonSlug: l2Slug,
     });
   });
@@ -163,9 +177,12 @@ describe(getNextActivityInCourse, () => {
       lessonPosition: 1,
     });
 
-    expect(result).toEqual({
+    expect(result).toMatchObject({
+      activityId: a4Id,
       activityPosition: 0,
+      chapterId: ch2Id,
       chapterSlug: ch2Slug,
+      lessonId: l3Id,
       lessonSlug: l3Slug,
     });
   });
@@ -196,6 +213,22 @@ describe(getNextActivityInCourse, () => {
     expect(result).toBeNull();
   });
 
+  test("includes activity kind and title in result", async () => {
+    const result = await getNextActivityInCourse({
+      activityPosition: 0,
+      chapterId: ch1Id,
+      chapterPosition: 0,
+      courseId,
+      lessonId: l1Id,
+      lessonPosition: 0,
+    });
+
+    expect(result).toHaveProperty("activityKind");
+    expect(result).toHaveProperty("activityTitle");
+    expect(result).toHaveProperty("lessonTitle");
+    expect(result).toHaveProperty("lessonDescription");
+  });
+
   test("skips unpublished activities", async () => {
     const testOrg = await organizationFixture({ kind: "brand" });
     const testCourse = await courseFixture({
@@ -215,7 +248,7 @@ describe(getNextActivityInCourse, () => {
       position: 0,
     });
 
-    await Promise.all([
+    const activities = await Promise.all([
       activityFixture({
         generationStatus: "completed",
         isPublished: true,
@@ -239,6 +272,8 @@ describe(getNextActivityInCourse, () => {
       }),
     ]);
 
+    const thirdActivity = activities[2];
+
     const result = await getNextActivityInCourse({
       activityPosition: 0,
       chapterId: testChapter.id,
@@ -248,7 +283,8 @@ describe(getNextActivityInCourse, () => {
       lessonPosition: 0,
     });
 
-    expect(result).toEqual({
+    expect(result).toMatchObject({
+      activityId: thirdActivity?.id,
       activityPosition: 2,
       chapterSlug: testChapter.slug,
       lessonSlug: testLesson.slug,
@@ -274,7 +310,7 @@ describe(getNextActivityInCourse, () => {
       position: 0,
     });
 
-    await Promise.all([
+    const pendingActivities = await Promise.all([
       activityFixture({
         generationStatus: "completed",
         isPublished: true,
@@ -298,6 +334,8 @@ describe(getNextActivityInCourse, () => {
       }),
     ]);
 
+    const thirdActivity = pendingActivities[2];
+
     const result = await getNextActivityInCourse({
       activityPosition: 0,
       chapterId: testChapter.id,
@@ -307,7 +345,8 @@ describe(getNextActivityInCourse, () => {
       lessonPosition: 0,
     });
 
-    expect(result).toEqual({
+    expect(result).toMatchObject({
+      activityId: thirdActivity?.id,
       activityPosition: 2,
       chapterSlug: testChapter.slug,
       lessonSlug: testLesson.slug,
@@ -348,7 +387,7 @@ describe(getNextActivityInCourse, () => {
       }),
     ]);
 
-    await Promise.all([
+    const activityResults = await Promise.all([
       activityFixture({
         generationStatus: "completed",
         isPublished: true,
@@ -372,6 +411,8 @@ describe(getNextActivityInCourse, () => {
       }),
     ]);
 
+    const nextActivity = activityResults[2];
+
     const result = await getNextActivityInCourse({
       activityPosition: 0,
       chapterId: testChapter.id,
@@ -381,7 +422,8 @@ describe(getNextActivityInCourse, () => {
       lessonPosition: 0,
     });
 
-    expect(result).toEqual({
+    expect(result).toMatchObject({
+      activityId: nextActivity?.id,
       activityPosition: 0,
       chapterSlug: testChapter.slug,
       lessonSlug: nextPublishedLesson.slug,
@@ -437,7 +479,7 @@ describe(getNextActivityInCourse, () => {
       }),
     ]);
 
-    await Promise.all([
+    const activityResults = await Promise.all([
       activityFixture({
         generationStatus: "completed",
         isPublished: true,
@@ -461,6 +503,8 @@ describe(getNextActivityInCourse, () => {
       }),
     ]);
 
+    const nextActivity = activityResults[2];
+
     const result = await getNextActivityInCourse({
       activityPosition: 0,
       chapterId: publishedCh.id,
@@ -470,7 +514,8 @@ describe(getNextActivityInCourse, () => {
       lessonPosition: 0,
     });
 
-    expect(result).toEqual({
+    expect(result).toMatchObject({
+      activityId: nextActivity?.id,
       activityPosition: 0,
       chapterSlug: nextPublishedCh.slug,
       lessonSlug: lesson3.slug,

@@ -252,6 +252,60 @@ async function seedStepAttempts(
   });
 }
 
+/**
+ * Seed activity completions for the e2eWithProgress user so
+ * getContinueLearning (which queries activity_progress) returns results.
+ */
+async function seedActivityCompletions(
+  prisma: PrismaClient,
+  org: Organization,
+  userId: number,
+  now: Date,
+) {
+  const courses = await prisma.course.findMany({
+    orderBy: { id: "asc" },
+    take: 3,
+    where: { isPublished: true, language: "en", organizationId: org.id },
+  });
+
+  const activities = await prisma.activity.findMany({
+    orderBy: [
+      { lesson: { chapter: { position: "asc" } } },
+      { lesson: { position: "asc" } },
+      { position: "asc" },
+    ],
+    select: { id: true },
+    where: {
+      generationStatus: "completed",
+      isPublished: true,
+      lesson: {
+        chapter: { courseId: { in: courses.map((course) => course.id) }, isPublished: true },
+        isPublished: true,
+      },
+    },
+  });
+
+  const firstActivity = activities[0];
+
+  if (!firstActivity) {
+    return;
+  }
+
+  await prisma.activityProgress.upsert({
+    create: {
+      activityId: firstActivity.id,
+      completedAt: new Date(now.getTime() - 60 * 1000),
+      durationSeconds: 120,
+      startedAt: new Date(now.getTime() - 180 * 1000),
+      userId,
+    },
+    update: {},
+    where: {
+      userActivity: { activityId: firstActivity.id, userId },
+    },
+  });
+}
+
 export async function seedProgress(
   prisma: PrismaClient,
   org: Organization,
@@ -284,4 +338,5 @@ export async function seedProgress(
   );
 
   await seedStepAttempts(prisma, org, users, now);
+  await seedActivityCompletions(prisma, org, users.e2eWithProgress.id, now);
 }
