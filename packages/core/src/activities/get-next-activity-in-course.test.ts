@@ -10,21 +10,21 @@ describe(getNextActivityInCourse, () => {
   let courseId: number;
   let orgId: number;
 
-  let ch1Id: number;
-  let ch1Slug: string;
-  let ch2Id: number;
-  let ch2Slug: string;
+  let chapter1Id: number;
+  let chapter1Slug: string;
+  let chapter2Id: number;
+  let chapter2Slug: string;
 
-  let l1Id: number;
-  let l1Slug: string;
-  let l2Id: number;
-  let l2Slug: string;
-  let l3Id: number;
-  let l3Slug: string;
+  let lesson1Id: number;
+  let lesson1Slug: string;
+  let lesson2Id: number;
+  let lesson2Slug: string;
+  let lesson3Id: number;
+  let lesson3Slug: string;
 
-  let a2Id: bigint;
-  let a3Id: bigint;
-  let a4Id: bigint;
+  let activity2Id: bigint;
+  let activity3Id: bigint;
+  let activity4Id: bigint;
 
   beforeAll(async () => {
     const org = await organizationFixture({ kind: "brand" });
@@ -51,149 +51,149 @@ describe(getNextActivityInCourse, () => {
       }),
     ]);
 
-    ch1Id = ch1.id;
-    ch1Slug = ch1.slug;
-    ch2Id = ch2.id;
-    ch2Slug = ch2.slug;
+    chapter1Id = ch1.id;
+    chapter1Slug = ch1.slug;
+    chapter2Id = ch2.id;
+    chapter2Slug = ch2.slug;
 
     // Chapter 1: 2 lessons
     const [lesson1, lesson2] = await Promise.all([
       lessonFixture({
-        chapterId: ch1Id,
+        chapterId: chapter1Id,
         isPublished: true,
         organizationId: orgId,
         position: 0,
       }),
       lessonFixture({
-        chapterId: ch1Id,
+        chapterId: chapter1Id,
         isPublished: true,
         organizationId: orgId,
         position: 1,
       }),
     ]);
 
-    l1Id = lesson1.id;
-    l1Slug = lesson1.slug;
-    l2Id = lesson2.id;
-    l2Slug = lesson2.slug;
+    lesson1Id = lesson1.id;
+    lesson1Slug = lesson1.slug;
+    lesson2Id = lesson2.id;
+    lesson2Slug = lesson2.slug;
 
     // Chapter 2: 1 lesson
     const lesson3 = await lessonFixture({
-      chapterId: ch2Id,
+      chapterId: chapter2Id,
       isPublished: true,
       organizationId: orgId,
       position: 0,
     });
 
-    l3Id = lesson3.id;
-    l3Slug = lesson3.slug;
+    lesson3Id = lesson3.id;
+    lesson3Slug = lesson3.slug;
 
     // Lesson 1: activities at positions 0, 1
     // Lesson 2: activity at position 0
-    // Lesson 3 (ch2): activity at position 0
+    // Lesson 3 (chapter 2): activity at position 0
     const [, act2, act3, act4] = await Promise.all([
       activityFixture({
         generationStatus: "completed",
         isPublished: true,
-        lessonId: l1Id,
+        lessonId: lesson1Id,
         organizationId: orgId,
         position: 0,
       }),
       activityFixture({
         generationStatus: "completed",
         isPublished: true,
-        lessonId: l1Id,
+        lessonId: lesson1Id,
         organizationId: orgId,
         position: 1,
       }),
       activityFixture({
         generationStatus: "completed",
         isPublished: true,
-        lessonId: l2Id,
+        lessonId: lesson2Id,
         organizationId: orgId,
         position: 0,
       }),
       activityFixture({
         generationStatus: "completed",
         isPublished: true,
-        lessonId: l3Id,
+        lessonId: lesson3Id,
         organizationId: orgId,
         position: 0,
       }),
     ]);
 
-    a2Id = act2.id;
-    a3Id = act3.id;
-    a4Id = act4.id;
+    activity2Id = act2.id;
+    activity3Id = act3.id;
+    activity4Id = act4.id;
   });
 
   test("returns next activity in same lesson", async () => {
     const result = await getNextActivityInCourse({
       activityPosition: 0,
-      chapterId: ch1Id,
+      chapterId: chapter1Id,
       chapterPosition: 0,
       courseId,
-      lessonId: l1Id,
+      lessonId: lesson1Id,
       lessonPosition: 0,
     });
 
     expect(result).toMatchObject({
-      activityId: a2Id,
+      activityId: activity2Id,
       activityPosition: 1,
-      chapterId: ch1Id,
-      chapterSlug: ch1Slug,
-      lessonId: l1Id,
-      lessonSlug: l1Slug,
+      chapterId: chapter1Id,
+      chapterSlug: chapter1Slug,
+      lessonId: lesson1Id,
+      lessonSlug: lesson1Slug,
     });
   });
 
   test("returns first activity of next lesson when at last activity of current lesson", async () => {
     const result = await getNextActivityInCourse({
       activityPosition: 1,
-      chapterId: ch1Id,
+      chapterId: chapter1Id,
       chapterPosition: 0,
       courseId,
-      lessonId: l1Id,
+      lessonId: lesson1Id,
       lessonPosition: 0,
     });
 
     expect(result).toMatchObject({
-      activityId: a3Id,
+      activityId: activity3Id,
       activityPosition: 0,
-      chapterId: ch1Id,
-      chapterSlug: ch1Slug,
-      lessonId: l2Id,
-      lessonSlug: l2Slug,
+      chapterId: chapter1Id,
+      chapterSlug: chapter1Slug,
+      lessonId: lesson2Id,
+      lessonSlug: lesson2Slug,
     });
   });
 
   test("returns first activity of next chapter when at last lesson of current chapter", async () => {
     const result = await getNextActivityInCourse({
       activityPosition: 0,
-      chapterId: ch1Id,
+      chapterId: chapter1Id,
       chapterPosition: 0,
       courseId,
-      lessonId: l2Id,
+      lessonId: lesson2Id,
       lessonPosition: 1,
     });
 
     expect(result).toMatchObject({
-      activityId: a4Id,
+      activityId: activity4Id,
       activityPosition: 0,
-      chapterId: ch2Id,
-      chapterSlug: ch2Slug,
-      lessonId: l3Id,
-      lessonSlug: l3Slug,
+      chapterId: chapter2Id,
+      chapterSlug: chapter2Slug,
+      lessonId: lesson3Id,
+      lessonSlug: lesson3Slug,
     });
   });
 
   test("returns null when at the last activity of the course", async () => {
     const result = await getNextActivityInCourse({
       activityPosition: 0,
-      chapterId: ch2Id,
+      chapterId: chapter2Id,
       chapterPosition: 1,
       courseId,
-      lessonId: l3Id,
+      lessonId: lesson3Id,
       lessonPosition: 0,
     });
 
@@ -203,10 +203,10 @@ describe(getNextActivityInCourse, () => {
   test("returns null for a non-existent course", async () => {
     const result = await getNextActivityInCourse({
       activityPosition: 0,
-      chapterId: ch1Id,
+      chapterId: chapter1Id,
       chapterPosition: 0,
       courseId: 999_999,
-      lessonId: l1Id,
+      lessonId: lesson1Id,
       lessonPosition: 0,
     });
 
@@ -216,10 +216,10 @@ describe(getNextActivityInCourse, () => {
   test("includes activity kind and title in result", async () => {
     const result = await getNextActivityInCourse({
       activityPosition: 0,
-      chapterId: ch1Id,
+      chapterId: chapter1Id,
       chapterPosition: 0,
       courseId,
-      lessonId: l1Id,
+      lessonId: lesson1Id,
       lessonPosition: 0,
     });
 
