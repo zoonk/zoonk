@@ -1,83 +1,34 @@
 "use client";
 
-import { cn } from "@zoonk/ui/lib/utils";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useExtracted } from "next-intl";
 import { useRef } from "react";
 
 export function StaticTapZones({
   isFirst,
-  isLast,
   onNavigateNext,
   onNavigatePrev,
 }: {
   isFirst: boolean;
-  isLast: boolean;
   onNavigateNext: () => void;
   onNavigatePrev: () => void;
 }) {
-  const t = useExtracted();
-
   return (
-    <>
+    <div aria-hidden="true">
       {!isFirst && (
         <button
-          aria-label={t("Previous step")}
           className="absolute inset-y-0 left-0 z-10 w-1/3 active:opacity-92 pointer-fine:cursor-pointer"
           onClick={onNavigatePrev}
+          tabIndex={-1}
           type="button"
         />
       )}
 
       <button
-        aria-label={isLast ? t("Complete activity") : t("Next step")}
         className="absolute inset-y-0 right-0 z-10 w-2/3 active:opacity-92 pointer-fine:cursor-pointer"
         onClick={onNavigateNext}
+        tabIndex={-1}
         type="button"
       />
-    </>
-  );
-}
-
-export function StaticEdgeChevrons({ isFirst, isLast }: { isFirst: boolean; isLast: boolean }) {
-  return (
-    <>
-      {!isFirst && (
-        <div
-          aria-hidden="true"
-          className="group/left pointer-events-none absolute inset-y-0 left-0 z-20 w-20 pointer-coarse:hidden"
-        >
-          <div
-            className={cn(
-              "border-border bg-background",
-              "absolute top-1/2 left-3 flex size-9 -translate-y-1/2 items-center justify-center rounded-full border shadow-sm",
-              "opacity-0 transition-opacity duration-200 group-hover/left:opacity-100",
-              "motion-reduce:transition-none",
-            )}
-          >
-            <ChevronLeft className="text-muted-foreground size-4" />
-          </div>
-        </div>
-      )}
-
-      {!isLast && (
-        <div
-          aria-hidden="true"
-          className="group/right pointer-events-none absolute inset-y-0 right-0 z-20 w-20 pointer-coarse:hidden"
-        >
-          <div
-            className={cn(
-              "border-border bg-background",
-              "absolute top-1/2 right-3 flex size-9 -translate-y-1/2 items-center justify-center rounded-full border shadow-sm",
-              "opacity-0 transition-opacity duration-200 group-hover/right:opacity-100",
-              "motion-reduce:transition-none",
-            )}
-          >
-            <ChevronRight className="text-muted-foreground size-4" />
-          </div>
-        </div>
-      )}
-    </>
+    </div>
   );
 }
 

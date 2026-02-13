@@ -10,7 +10,6 @@ export function StageContent({
   currentStepIndex,
   isCompleted,
   isFirst,
-  isLast,
   activityId,
   lessonHref,
   nextActivityHref,
@@ -27,7 +26,6 @@ export function StageContent({
   currentStepIndex: number;
   isCompleted: boolean;
   isFirst: boolean;
-  isLast: boolean;
   activityId: string;
   lessonHref: string;
   nextActivityHref: string | null;
@@ -63,7 +61,6 @@ export function StageContent({
       >
         <StepRenderer
           isFirst={isFirst}
-          isLast={isLast}
           onNavigateNext={onNavigateNext}
           onNavigatePrev={onNavigatePrev}
           onSelectAnswer={onSelectAnswer}

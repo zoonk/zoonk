@@ -1202,17 +1202,12 @@ msgctxt "xmF49T"
 msgid "Correct!"
 msgstr "¡Correcto!"
 
-#: src/components/activity-player/static-step-navigation.tsx
-msgctxt "5i63aw"
-msgid "Complete activity"
-msgstr "Completar actividad"
-
-#: src/components/activity-player/static-step-navigation.tsx
+#: src/components/activity-player/player-header.tsx
 msgctxt "aNzy1T"
 msgid "Previous step"
 msgstr "Paso anterior"
 
-#: src/components/activity-player/static-step-navigation.tsx
+#: src/components/activity-player/player-header.tsx
 msgctxt "d+qgix"
 msgid "Next step"
 msgstr "Siguiente paso"

@@ -7,7 +7,14 @@ import { useCallback } from "react";
 import { checkStep } from "./check-step";
 import { getFeedbackVariant } from "./feedback-screen";
 import { PlayerActionBar, PlayerActionButton } from "./player-action-bar";
-import { PlayerCloseLink, PlayerHeader, PlayerStepFraction } from "./player-header";
+import {
+  PlayerCloseLink,
+  PlayerHeader,
+  PlayerNav,
+  PlayerNavButton,
+  PlayerNavGroup,
+  PlayerStepFraction,
+} from "./player-header";
 import { PlayerProgressBar } from "./player-progress-bar";
 import { type SelectedAnswer } from "./player-reducer";
 import { PlayerStage } from "./player-stage";
@@ -100,9 +107,34 @@ export function ActivityPlayerShell({
       {!isCompleted && (
         <PlayerHeader>
           <PlayerCloseLink href={lessonHref} />
-          <PlayerStepFraction>
-            {state.currentStepIndex + 1} / {totalSteps}
-          </PlayerStepFraction>
+
+          {isStaticStep && (
+            <PlayerNav>
+              <PlayerNavGroup>
+                <PlayerNavButton
+                  direction="prev"
+                  disabled={isFirstStep}
+                  onClick={handleNavigatePrev}
+                />
+                <PlayerStepFraction>
+                  {state.currentStepIndex + 1} / {totalSteps}
+                </PlayerStepFraction>
+                <PlayerNavButton
+                  direction="next"
+                  disabled={isLastStep}
+                  onClick={handleNavigateNext}
+                />
+              </PlayerNavGroup>
+            </PlayerNav>
+          )}
+
+          {!isStaticStep && (
+            <PlayerStepFraction>
+              {state.currentStepIndex + 1} / {totalSteps}
+            </PlayerStepFraction>
+          )}
+
+          <div className="size-9" aria-hidden="true" />
         </PlayerHeader>
       )}
 
@@ -116,7 +148,6 @@ export function ActivityPlayerShell({
           currentStepIndex={state.currentStepIndex}
           isCompleted={isCompleted}
           isFirst={isFirstStep}
-          isLast={isLastStep}
           lessonHref={lessonHref}
           nextActivityHref={nextActivityHref}
           onNavigateNext={handleNavigateNext}

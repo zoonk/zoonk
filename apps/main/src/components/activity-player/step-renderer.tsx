@@ -5,7 +5,7 @@ import { Button } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
 import { type SelectedAnswer } from "./player-reducer";
 import { StaticStep } from "./static-step";
-import { StaticEdgeChevrons, StaticTapZones, useSwipeNavigation } from "./static-step-navigation";
+import { StaticTapZones, useSwipeNavigation } from "./static-step-navigation";
 import { InteractiveStepLayout, StaticStepLayout } from "./step-layouts";
 import { getMockAnswer, getStepSummary } from "./step-renderer-utils";
 
@@ -42,7 +42,6 @@ function PlaceholderInteractiveStep({
 
 export function StepRenderer({
   isFirst,
-  isLast,
   onNavigateNext,
   onNavigatePrev,
   onSelectAnswer,
@@ -50,7 +49,6 @@ export function StepRenderer({
   step,
 }: {
   isFirst: boolean;
-  isLast: boolean;
   onNavigateNext: () => void;
   onNavigatePrev: () => void;
   onSelectAnswer: (stepId: string, answer: SelectedAnswer) => void;
@@ -65,11 +63,9 @@ export function StepRenderer({
         <StaticStep step={step} />
         <StaticTapZones
           isFirst={isFirst}
-          isLast={isLast}
           onNavigateNext={onNavigateNext}
           onNavigatePrev={onNavigatePrev}
         />
-        <StaticEdgeChevrons isFirst={isFirst} isLast={isLast} />
       </StaticStepLayout>
     );
   }

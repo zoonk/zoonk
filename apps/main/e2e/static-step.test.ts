@@ -402,22 +402,22 @@ test.describe("Static Step Navigation", () => {
     await expect(page.getByRole("button", { name: /send feedback/i })).toBeVisible();
   });
 
-  test("click navigation — right area advances, left area goes back", async ({ page }) => {
+  test("header nav buttons navigate between steps", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const { url } = await createStaticActivity({
       steps: [
         {
           content: {
-            text: `Click 1 body ${uniqueId}`,
-            title: `Click 1 ${uniqueId}`,
+            text: `Nav 1 body ${uniqueId}`,
+            title: `Nav 1 ${uniqueId}`,
             variant: "text",
           },
           position: 0,
         },
         {
           content: {
-            text: `Click 2 body ${uniqueId}`,
-            title: `Click 2 ${uniqueId}`,
+            text: `Nav 2 body ${uniqueId}`,
+            title: `Nav 2 ${uniqueId}`,
             variant: "text",
           },
           position: 1,
@@ -428,17 +428,88 @@ test.describe("Static Step Navigation", () => {
     await page.goto(url);
     await page.waitForLoadState("networkidle");
 
-    // Click on the "Next step" button (right 2/3 area)
-    await page.getByRole("button", { name: /next step/i }).click();
+    const nav = page.getByRole("navigation", { name: /step navigation/i });
+
+    // Click next in header nav
+    await nav.getByRole("button", { name: /next step/i }).click();
     await expect(
-      page.getByRole("heading", { name: new RegExp(`Click 2 ${uniqueId}`) }),
+      page.getByRole("heading", { name: new RegExp(`Nav 2 ${uniqueId}`) }),
     ).toBeVisible();
 
-    // Click on the "Previous step" button (left 1/3 area)
-    await page.getByRole("button", { name: /previous step/i }).click();
+    // Click previous in header nav
+    await nav.getByRole("button", { name: /previous step/i }).click();
     await expect(
-      page.getByRole("heading", { name: new RegExp(`Click 1 ${uniqueId}`) }),
+      page.getByRole("heading", { name: new RegExp(`Nav 1 ${uniqueId}`) }),
     ).toBeVisible();
+  });
+
+  test("header prev button is disabled on first step", async ({ page }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const { url } = await createStaticActivity({
+      steps: [
+        {
+          content: {
+            text: `First body ${uniqueId}`,
+            title: `First ${uniqueId}`,
+            variant: "text",
+          },
+          position: 0,
+        },
+        {
+          content: {
+            text: `Second body ${uniqueId}`,
+            title: `Second ${uniqueId}`,
+            variant: "text",
+          },
+          position: 1,
+        },
+      ],
+    });
+
+    await page.goto(url);
+    await page.waitForLoadState("networkidle");
+
+    const nav = page.getByRole("navigation", { name: /step navigation/i });
+    await expect(nav.getByRole("button", { name: /previous step/i })).toBeDisabled();
+    await expect(nav.getByRole("button", { name: /next step/i })).toBeEnabled();
+  });
+
+  test("header next button is disabled on last step", async ({ page }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const { url } = await createStaticActivity({
+      steps: [
+        {
+          content: {
+            text: `Last 1 body ${uniqueId}`,
+            title: `Last 1 ${uniqueId}`,
+            variant: "text",
+          },
+          position: 0,
+        },
+        {
+          content: {
+            text: `Last 2 body ${uniqueId}`,
+            title: `Last 2 ${uniqueId}`,
+            variant: "text",
+          },
+          position: 1,
+        },
+      ],
+    });
+
+    await page.goto(url);
+    await page.waitForLoadState("networkidle");
+
+    const nav = page.getByRole("navigation", { name: /step navigation/i });
+
+    // Navigate to last step
+    await nav.getByRole("button", { name: /next step/i }).click();
+    await expect(
+      page.getByRole("heading", { name: new RegExp(`Last 2 ${uniqueId}`) }),
+    ).toBeVisible();
+
+    await expect(nav.getByRole("button", { name: /next step/i })).toBeDisabled();
+    await expect(nav.getByRole("button", { name: /previous step/i })).toBeEnabled();
   });
 });
 
