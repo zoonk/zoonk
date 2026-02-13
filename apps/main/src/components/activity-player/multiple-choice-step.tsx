@@ -29,6 +29,10 @@ function ContextText({ children }: { children: React.ReactNode }) {
   return <p className="text-muted-foreground text-base">{children}</p>;
 }
 
+function StepTextGroup({ children }: { children: React.ReactNode }) {
+  return <div className="flex flex-col gap-2 sm:gap-6">{children}</div>;
+}
+
 function OptionGroup({ children }: { children: React.ReactNode }) {
   return (
     <div aria-label="Answer options" className="flex flex-col gap-3" role="radiogroup">
@@ -87,8 +91,10 @@ function CoreVariant({
 }) {
   return (
     <>
-      {content.context ? <ContextText>{content.context}</ContextText> : null}
-      {content.question ? <QuestionText>{content.question}</QuestionText> : null}
+      <StepTextGroup>
+        {content.context ? <ContextText>{content.context}</ContextText> : null}
+        {content.question ? <QuestionText>{content.question}</QuestionText> : null}
+      </StepTextGroup>
 
       <OptionGroup>
         {content.options.map((option, index) => (
@@ -116,8 +122,10 @@ function ChallengeVariant({
 }) {
   return (
     <>
-      <ContextText>{content.context}</ContextText>
-      <QuestionText>{content.question}</QuestionText>
+      <StepTextGroup>
+        <ContextText>{content.context}</ContextText>
+        <QuestionText>{content.question}</QuestionText>
+      </StepTextGroup>
 
       <OptionGroup>
         {content.options.map((option, index) => (
@@ -145,13 +153,15 @@ function LanguageVariant({
 }) {
   return (
     <>
-      <p className="text-xl font-medium sm:text-2xl">{content.context}</p>
+      <StepTextGroup>
+        <QuestionText>{content.context}</QuestionText>
 
-      {content.contextRomanization ? (
-        <p className="text-muted-foreground text-sm italic">{content.contextRomanization}</p>
-      ) : null}
+        {content.contextRomanization && (
+          <p className="text-muted-foreground text-sm italic">{content.contextRomanization}</p>
+        )}
 
-      <p className="text-muted-foreground text-base">{content.contextTranslation}</p>
+        <ContextText>{content.contextTranslation}</ContextText>
+      </StepTextGroup>
 
       <OptionGroup>
         {content.options.map((option, index) => (
