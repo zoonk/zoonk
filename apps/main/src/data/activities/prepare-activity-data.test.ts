@@ -349,6 +349,52 @@ describe(prepareActivityData, () => {
     expect(result.lessonSentences[0]?.id).toBe(String(sentence1.id));
   });
 
+  test("shuffles multiple choice options without losing or duplicating elements", async () => {
+    const activity = await activityFixture({
+      generationStatus: "completed",
+      isPublished: true,
+      kind: "background",
+      language: "en",
+      lessonId: lesson.id,
+      organizationId: org.id,
+      position: 109,
+    });
+
+    await stepFixture({
+      activityId: activity.id,
+      content: {
+        kind: "core",
+        options: [
+          { feedback: "Yes", isCorrect: true, text: "Alpha" },
+          { feedback: "No", isCorrect: false, text: "Beta" },
+          { feedback: "No", isCorrect: false, text: "Gamma" },
+          { feedback: "No", isCorrect: false, text: "Delta" },
+        ],
+        question: "Pick the correct one",
+      },
+      isPublished: true,
+      kind: "multipleChoice",
+      position: 0,
+    });
+
+    const raw = await getActivity({ lessonId: lesson.id, position: 109 });
+    const result = prepareActivityData(raw!, [], []);
+
+    expect(result.steps).toHaveLength(1);
+
+    const step = result.steps[0]!;
+    expect(step.kind).toBe("multipleChoice");
+
+    const content = step.content as {
+      kind: string;
+      options: { text: string }[];
+      question: string;
+    };
+
+    const optionTexts = content.options.map((opt) => opt.text).toSorted();
+    expect(optionTexts).toEqual(["Alpha", "Beta", "Delta", "Gamma"]);
+  });
+
   test("includes language and organizationId", async () => {
     const activity = await activityFixture({
       generationStatus: "completed",

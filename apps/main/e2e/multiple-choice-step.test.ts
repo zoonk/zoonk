@@ -55,6 +55,7 @@ async function createMultipleChoiceActivity(options: {
       stepFixture({
         activityId: activity.id,
         content: step.content,
+        isPublished: true,
         kind: "multipleChoice",
         position: step.position,
       }),
@@ -449,8 +450,8 @@ test.describe("Interaction Mechanics", () => {
           content: {
             kind: "core",
             options: [
-              { feedback: "No", isCorrect: false, text: `First ${uniqueId}` },
-              { feedback: `Correct ${uniqueId}`, isCorrect: true, text: `Second ${uniqueId}` },
+              { feedback: `Feedback A ${uniqueId}`, isCorrect: false, text: `First ${uniqueId}` },
+              { feedback: `Feedback B ${uniqueId}`, isCorrect: true, text: `Second ${uniqueId}` },
             ],
             question: `Shortcut test ${uniqueId}`,
           },
@@ -462,16 +463,15 @@ test.describe("Interaction Mechanics", () => {
     await page.goto(url);
     await page.waitForLoadState("networkidle");
 
-    // Press 2 to select second option
-    await page.keyboard.press("2");
+    // Press 1 to select the first displayed option (position may vary due to shuffle)
+    await page.keyboard.press("1");
 
     // Check button should now be enabled
     await expect(page.getByRole("button", { name: /check/i })).toBeEnabled();
 
-    // Verify via check that it selected the correct answer
+    // Verify pressing Enter submits and shows feedback (correct or incorrect)
     await page.keyboard.press("Enter");
-    await expect(page.getByText(/correct!/i)).toBeVisible();
-    await expect(page.getByText(new RegExp(`Correct ${uniqueId}`))).toBeVisible();
+    await expect(page.getByText(new RegExp(`Feedback [AB] ${uniqueId}`))).toBeVisible();
   });
 
   test("changing selection before checking updates the highlighted option", async ({ page }) => {
