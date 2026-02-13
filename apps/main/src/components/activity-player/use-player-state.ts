@@ -11,7 +11,7 @@ import {
   playerReducer,
 } from "./player-reducer";
 
-function playerStorageKey(activityId: string): string {
+export function playerStorageKey(activityId: string): string {
   return `zoonk:player:${activityId}`;
 }
 
