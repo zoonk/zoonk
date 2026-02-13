@@ -1206,6 +1206,16 @@ msgctxt "xmF49T"
 msgid "Correct!"
 msgstr "Correct!"
 
+#: src/components/activity-player/step-renderer.tsx
+msgctxt "4pTU5S"
+msgid "Answer selected"
+msgstr "Answer selected"
+
+#: src/components/activity-player/step-renderer.tsx
+msgctxt "QJadX5"
+msgid "Select answer"
+msgstr "Select answer"
+
 #: src/components/catalog/activity-completion-indicator.tsx
 msgctxt "4o5CAP"
 msgid "Not completed"

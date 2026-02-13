@@ -167,7 +167,7 @@ function handleNavigateStep(
   const nextIndex = state.currentStepIndex + 1;
 
   if (nextIndex >= state.steps.length) {
-    return state;
+    return { ...state, phase: "completed" };
   }
 
   return { ...state, currentStepIndex: nextIndex };

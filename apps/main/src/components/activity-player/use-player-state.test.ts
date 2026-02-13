@@ -11,9 +11,9 @@ import { playerStorageKey, usePlayerState } from "./use-player-state";
 function buildStep(overrides: Partial<SerializedStep> = {}): SerializedStep {
   return {
     content: { text: "Hello", title: "Intro", variant: "text" as const },
-    id: overrides.id ?? "step-1",
-    kind: overrides.kind ?? "static",
-    position: overrides.position ?? 0,
+    id: "step-1",
+    kind: "static",
+    position: 0,
     sentence: null,
     visualContent: null,
     visualKind: null,
@@ -25,16 +25,13 @@ function buildStep(overrides: Partial<SerializedStep> = {}): SerializedStep {
 function buildActivity(overrides: Partial<SerializedActivity> = {}): SerializedActivity {
   return {
     description: null,
-    id: overrides.id ?? "activity-test",
+    id: "activity-1",
     kind: "core",
     language: "en",
     lessonSentences: [],
     lessonWords: [],
     organizationId: 1,
-    steps: overrides.steps ?? [
-      buildStep(),
-      buildStep({ id: "step-2", kind: "multipleChoice", position: 1 }),
-    ],
+    steps: [buildStep()],
     title: "Test Activity",
     ...overrides,
   };
@@ -51,11 +48,13 @@ describe(usePlayerState, () => {
       const { result } = renderHook(() => usePlayerState(activity));
       expect(result.current.state.phase).toBe("playing");
       expect(result.current.state.currentStepIndex).toBe(0);
-      expect(result.current.state.activityId).toBe("activity-test");
+      expect(result.current.state.activityId).toBe("activity-1");
     });
 
     test("initial render uses createInitialState even when sessionStorage has data (hydration-safe)", () => {
-      const activity = buildActivity();
+      const activity = buildActivity({
+        steps: [buildStep(), buildStep({ id: "step-2", kind: "multipleChoice", position: 1 })],
+      });
       const persisted = {
         ...createInitialState(activity),
         currentStepIndex: 1,

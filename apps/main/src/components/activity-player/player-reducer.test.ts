@@ -16,9 +16,9 @@ import {
 function buildStep(overrides: Partial<SerializedStep> = {}): SerializedStep {
   return {
     content: { text: "Hello", title: "Intro", variant: "text" as const },
-    id: overrides.id ?? "step-1",
-    kind: overrides.kind ?? "static",
-    position: overrides.position ?? 0,
+    id: "step-1",
+    kind: "static",
+    position: 0,
     sentence: null,
     visualContent: null,
     visualKind: null,
@@ -27,7 +27,7 @@ function buildStep(overrides: Partial<SerializedStep> = {}): SerializedStep {
   };
 }
 
-function buildActivity(steps: SerializedStep[] = [buildStep()]): SerializedActivity {
+function buildActivity(overrides: Partial<SerializedActivity> = {}): SerializedActivity {
   return {
     description: null,
     id: "activity-1",
@@ -36,8 +36,9 @@ function buildActivity(steps: SerializedStep[] = [buildStep()]): SerializedActiv
     lessonSentences: [],
     lessonWords: [],
     organizationId: 1,
-    steps,
+    steps: [buildStep()],
     title: "Test Activity",
+    ...overrides,
   };
 }
 
@@ -67,7 +68,7 @@ describe(createInitialState, () => {
 
   test("copies activityId and steps", () => {
     const steps = [buildStep({ id: "s1" }), buildStep({ id: "s2", position: 1 })];
-    const activity = buildActivity(steps);
+    const activity = buildActivity({ steps });
     const state = createInitialState(activity);
     expect(state.activityId).toBe("activity-1");
     expect(state.steps).toEqual(steps);
@@ -288,10 +289,10 @@ describe("NAVIGATE_STEP", () => {
     expect(next.currentStepIndex).toBe(0);
   });
 
-  test("next on last step is no-op", () => {
+  test("next past last step transitions to completed", () => {
     const state = buildState({ currentStepIndex: 2, steps: staticSteps });
     const next = playerReducer(state, { direction: "next", type: "NAVIGATE_STEP" });
-    expect(next).toBe(state);
+    expect(next.phase).toBe("completed");
   });
 
   test("prev from last step goes back", () => {
@@ -349,7 +350,7 @@ describe("edge cases", () => {
   });
 
   test("empty steps array", () => {
-    const activity = buildActivity([]);
+    const activity = buildActivity({ steps: [] });
     const state = createInitialState(activity);
     expect(state.steps).toEqual([]);
     expect(state.currentStepIndex).toBe(0);
