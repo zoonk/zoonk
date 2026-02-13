@@ -17,7 +17,10 @@ export function CatalogContainer({ className, ...props }: React.ComponentProps<"
   return (
     <div
       {...props}
-      className={cn("mx-auto flex w-full flex-col gap-4 px-4 py-8 md:py-10 lg:max-w-xl", className)}
+      className={cn(
+        "mx-auto flex w-full flex-col gap-4 px-4 pt-4 pb-8 md:pb-10 lg:max-w-xl",
+        className,
+      )}
       data-slot="catalog-container"
     />
   );
