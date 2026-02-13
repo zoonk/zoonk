@@ -76,12 +76,20 @@ describe("getNextActivity - course scope", () => {
       position: 0,
     });
 
-    await activityFixture({
-      isPublished: true,
-      lessonId: lesson.id,
-      organizationId: organization.id,
-      position: 0,
-    });
+    await Promise.all([
+      activityFixture({
+        isPublished: true,
+        lessonId: lesson.id,
+        organizationId: organization.id,
+        position: 0,
+      }),
+      activityFixture({
+        isPublished: true,
+        lessonId: lesson.id,
+        organizationId: organization.id,
+        position: 1,
+      }),
+    ]);
 
     const result = await getNextActivity(Number(user.id), { courseId: course.id });
 
@@ -406,12 +414,20 @@ describe("getNextActivity - chapter scope", () => {
       position: 0,
     });
 
-    await activityFixture({
-      isPublished: true,
-      lessonId: lesson.id,
-      organizationId: organization.id,
-      position: 0,
-    });
+    await Promise.all([
+      activityFixture({
+        isPublished: true,
+        lessonId: lesson.id,
+        organizationId: organization.id,
+        position: 0,
+      }),
+      activityFixture({
+        isPublished: true,
+        lessonId: lesson.id,
+        organizationId: organization.id,
+        position: 1,
+      }),
+    ]);
 
     const result = await getNextActivity(0, { chapterId: chapter.id });
 
@@ -578,12 +594,20 @@ describe("getNextActivity - lesson scope", () => {
       position: 0,
     });
 
-    await activityFixture({
-      isPublished: true,
-      lessonId: lesson.id,
-      organizationId: organization.id,
-      position: 0,
-    });
+    await Promise.all([
+      activityFixture({
+        isPublished: true,
+        lessonId: lesson.id,
+        organizationId: organization.id,
+        position: 0,
+      }),
+      activityFixture({
+        isPublished: true,
+        lessonId: lesson.id,
+        organizationId: organization.id,
+        position: 1,
+      }),
+    ]);
 
     const result = await getNextActivity(0, { lessonId: lesson.id });
 
