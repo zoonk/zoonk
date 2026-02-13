@@ -106,6 +106,7 @@ function buildGrammarSteps(activityId: bigint | number, data: ActivityGrammarSch
 
   return [...exampleSteps, discoveryStep, ruleStep, ...practiceSteps].map((step, position) => ({
     ...step,
+    isPublished: true,
     position,
   }));
 }

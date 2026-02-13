@@ -53,6 +53,7 @@ async function createStaticActivity(options: { steps: { content: object; positio
       stepFixture({
         activityId: activity.id,
         content: step.content,
+        isPublished: true,
         position: step.position,
       }),
     ),

@@ -405,6 +405,7 @@ describe("language activity generation", () => {
     expect(steps).toHaveLength(2);
 
     for (const step of steps) {
+      expect(step.isPublished).toBeTruthy();
       expect(step.wordId).not.toBeNull();
       expect(step.kind).toBe("vocabulary");
       expect(step.content).toEqual({});
@@ -804,6 +805,10 @@ describe("language activity generation", () => {
 
     expect(steps).toHaveLength(6);
 
+    for (const step of steps) {
+      expect(step.isPublished).toBeTruthy();
+    }
+
     expect(steps.map((step) => step.kind)).toEqual([
       "static",
       "static",
@@ -1093,6 +1098,11 @@ describe("language activity generation", () => {
     });
 
     expect(steps).toHaveLength(2);
+
+    for (const step of steps) {
+      expect(step.isPublished).toBeTruthy();
+    }
+
     expect(steps.map((step) => step.kind)).toEqual(["static", "multipleChoice"]);
 
     expect(steps[0]?.content).toEqual({
@@ -1440,6 +1450,7 @@ describe("language activity generation", () => {
     expect(steps).toHaveLength(2);
 
     for (const step of steps) {
+      expect(step.isPublished).toBeTruthy();
       expect(step.sentenceId).not.toBeNull();
       expect(step.kind).toBe("reading");
       expect(step.content).toEqual({});
@@ -1642,6 +1653,7 @@ describe("language activity generation", () => {
     expect(listeningSteps).toHaveLength(readingSteps.length);
 
     listeningSteps.forEach((listeningStep, idx) => {
+      expect(listeningStep.isPublished).toBeTruthy();
       expect(listeningStep.sentenceId).toBe(readingSteps[idx]?.sentenceId);
       expect(listeningStep.position).toBe(readingSteps[idx]?.position);
       expect(listeningStep.kind).toBe("listening");
@@ -2049,11 +2061,13 @@ describe("language activity generation", () => {
 
     // Vocabulary steps come first, reading steps after
     for (const vocabStep of reviewVocabSteps) {
+      expect(vocabStep.isPublished).toBeTruthy();
       expect(vocabStep.wordId).not.toBeNull();
       expect(vocabStep.content).toEqual({});
     }
 
     for (const readingStep of reviewReadingSteps) {
+      expect(readingStep.isPublished).toBeTruthy();
       expect(readingStep.sentenceId).not.toBeNull();
       expect(readingStep.content).toEqual({});
     }

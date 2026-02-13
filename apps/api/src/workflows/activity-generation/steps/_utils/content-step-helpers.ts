@@ -81,6 +81,7 @@ export async function saveContentSteps(
           title: step.title,
           variant: "text",
         }),
+        isPublished: true,
         kind: "static" as const,
         position: index,
       })),

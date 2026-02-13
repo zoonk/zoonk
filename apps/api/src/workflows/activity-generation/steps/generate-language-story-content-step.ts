@@ -52,6 +52,7 @@ function buildLanguageStorySteps(activityId: bigint | number, data: ActivityStor
       title: "Scenario",
       variant: "text",
     }),
+    isPublished: true,
     kind: "static" as const,
     position: 0,
   };
@@ -70,6 +71,7 @@ function buildLanguageStorySteps(activityId: bigint | number, data: ActivityStor
         textRomanization: emptyToNull(option.textRomanization),
       })),
     }),
+    isPublished: true,
     kind: "multipleChoice" as const,
     position: index + 1,
   }));

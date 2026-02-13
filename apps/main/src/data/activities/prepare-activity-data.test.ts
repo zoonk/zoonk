@@ -58,6 +58,7 @@ describe(prepareActivityData, () => {
     await stepFixture({
       activityId: activity.id,
       content: { text: "test", title: "Test", variant: "text" },
+      isPublished: true,
       position: 0,
     });
 
@@ -83,6 +84,7 @@ describe(prepareActivityData, () => {
     await stepFixture({
       activityId: activity.id,
       content: { text: "Hello world", title: "Intro", variant: "text" },
+      isPublished: true,
       kind: "static",
       position: 0,
     });
@@ -113,6 +115,7 @@ describe(prepareActivityData, () => {
     await stepFixture({
       activityId: activity.id,
       content: { text: "Code example", title: "Code", variant: "text" },
+      isPublished: true,
       kind: "static",
       position: 0,
       visualContent: { code: "console.log('hi')", language: "javascript" },
@@ -143,6 +146,7 @@ describe(prepareActivityData, () => {
     await stepFixture({
       activityId: activity.id,
       content: { text: "Audio step", title: "Audio", variant: "text" },
+      isPublished: true,
       kind: "static",
       position: 0,
       visualContent: { src: "audio.mp3" },
@@ -180,6 +184,7 @@ describe(prepareActivityData, () => {
     await stepFixture({
       activityId: activity.id,
       content: {},
+      isPublished: true,
       kind: "vocabulary",
       position: 0,
       wordId: word.id,
@@ -221,6 +226,7 @@ describe(prepareActivityData, () => {
     await stepFixture({
       activityId: activity.id,
       content: {},
+      isPublished: true,
       kind: "reading",
       position: 0,
       sentenceId: sentence.id,
@@ -253,12 +259,14 @@ describe(prepareActivityData, () => {
       stepFixture({
         activityId: activity.id,
         content: { text: "Valid step", title: "Valid", variant: "text" },
+        isPublished: true,
         kind: "static",
         position: 0,
       }),
       stepFixture({
         activityId: activity.id,
         content: {},
+        isPublished: true,
         kind: "arrangeWords",
         position: 1,
       }),
@@ -326,6 +334,7 @@ describe(prepareActivityData, () => {
     await stepFixture({
       activityId: activity.id,
       content: {},
+      isPublished: true,
       kind: "vocabulary",
       position: 0,
     });
@@ -354,6 +363,7 @@ describe(prepareActivityData, () => {
     await stepFixture({
       activityId: activity.id,
       content: { text: "test", title: "Test", variant: "text" },
+      isPublished: true,
       position: 0,
     });
 

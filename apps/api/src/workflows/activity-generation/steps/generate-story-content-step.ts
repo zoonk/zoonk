@@ -35,6 +35,7 @@ async function saveStorySteps(
         return {
           activityId,
           content,
+          isPublished: true,
           kind: "multipleChoice",
           position: index,
         };

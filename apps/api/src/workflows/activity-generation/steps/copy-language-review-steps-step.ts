@@ -67,6 +67,7 @@ export async function copyLanguageReviewStepsStep(
   const vocabData = vocabularySteps.map((step, idx) => ({
     activityId: languageReview.id,
     content: assertStepContent("vocabulary", {}),
+    isPublished: true,
     kind: "vocabulary" as const,
     position: idx,
     wordId: step.wordId,
@@ -75,6 +76,7 @@ export async function copyLanguageReviewStepsStep(
   const readingData = readingSteps.map((step, idx) => ({
     activityId: languageReview.id,
     content: assertStepContent("reading", {}),
+    isPublished: true,
     kind: "reading" as const,
     position: vocabularySteps.length + idx,
     sentenceId: step.sentenceId,

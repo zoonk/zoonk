@@ -79,6 +79,7 @@ const cachedGetActivity = cache(
               },
             },
           },
+          where: { isPublished: true },
         },
         title: true,
       },

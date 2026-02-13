@@ -3,6 +3,7 @@ import { type StepKind, type StepVisualKind, prisma } from "@zoonk/db";
 export async function stepFixture(attrs: {
   activityId: bigint;
   content?: object;
+  isPublished?: boolean;
   kind?: StepKind;
   position?: number;
   sentenceId?: bigint;
@@ -14,6 +15,7 @@ export async function stepFixture(attrs: {
     data: {
       activityId: attrs.activityId,
       content: attrs.content ?? { text: "Test step content", title: "Test Step" },
+      isPublished: attrs.isPublished,
       kind: attrs.kind ?? "static",
       position: attrs.position ?? 0,
       sentenceId: attrs.sentenceId,

@@ -365,6 +365,11 @@ describe("core activity workflow", () => {
       });
 
       expect(backgroundSteps).toHaveLength(2);
+
+      for (const step of backgroundSteps) {
+        expect(step.isPublished).toBeTruthy();
+      }
+
       expect(backgroundSteps[0]?.content).toEqual({
         text: "Background step 1 text",
         title: "Background Step 1",
@@ -786,6 +791,11 @@ describe("core activity workflow", () => {
       });
 
       expect(explanationSteps).toHaveLength(2);
+
+      for (const step of explanationSteps) {
+        expect(step.isPublished).toBeTruthy();
+      }
+
       expect(explanationSteps[0]?.content).toEqual({
         text: "Explanation step 1 text",
         title: "Explanation Step 1",
@@ -1034,6 +1044,11 @@ describe("core activity workflow", () => {
       });
 
       expect(quizSteps).toHaveLength(2);
+
+      for (const step of quizSteps) {
+        expect(step.isPublished).toBeTruthy();
+      }
+
       expect(quizSteps[0]?.kind).toBe("multipleChoice");
       expect(quizSteps[1]?.kind).toBe("selectImage");
     });
@@ -1417,6 +1432,11 @@ describe("core activity workflow", () => {
       });
 
       expect(examplesSteps).toHaveLength(2);
+
+      for (const step of examplesSteps) {
+        expect(step.isPublished).toBeTruthy();
+      }
+
       expect(examplesSteps[0]?.content).toEqual({
         text: "Examples step 1 text",
         title: "Examples Step 1",
@@ -1672,6 +1692,7 @@ describe("core activity workflow", () => {
       });
 
       expect(storySteps).toHaveLength(1);
+      expect(storySteps[0]?.isPublished).toBeTruthy();
       expect(storySteps[0]?.kind).toBe("multipleChoice");
       expect(storySteps[0]?.content).toEqual({
         context: "Your colleague turns to you during a meeting...",
@@ -2285,6 +2306,7 @@ describe("core activity workflow", () => {
       });
 
       expect(reviewSteps).toHaveLength(1);
+      expect(reviewSteps[0]?.isPublished).toBeTruthy();
       expect(reviewSteps[0]?.kind).toBe("multipleChoice");
       expect(reviewSteps[0]?.content).toEqual({
         context: "Review context about the lesson content...",

@@ -35,6 +35,7 @@ async function saveReviewSteps(
         return {
           activityId,
           content,
+          isPublished: true,
           kind: "multipleChoice",
           position: index,
         };
