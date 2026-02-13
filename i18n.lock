@@ -416,9 +416,10 @@ checksums:
     Not%20quite/singular: e570085e69662802acf485c4565e3e3e
     Outcome/singular: 4cfc7a40e384ea8b6658e8da6e351bf0
     Correct!/singular: dda1a98dc04fd9db252887ecf1765d41
-    Complete%20activity/singular: d0100909febc6a4e0163cb7361f9958f
     Previous%20step/singular: 96b31ec6dab003c2bbfbbca10a8a9826
     Next%20step/singular: 712c63650b5180cbc14d6246b5d558c2
+    Step%20navigation/singular: ec328f28051577e1c0aab044c89b138c
+    Close/singular: 2c2e22f8424a1031de89063bd0022e16
     Answer%20selected/singular: 43c2c02a2f5ab63d04a3ba140a03b769
     Select%20answer/singular: 4951d9f093550e70ff5f399634b2b595
     Not%20completed/singular: d011b1ae92a1a8a2676a5d6999bbe6d4

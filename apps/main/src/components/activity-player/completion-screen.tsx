@@ -61,6 +61,8 @@ function CompletionActions({ className, ...props }: React.ComponentProps<"div">)
 }
 
 function RewardBadges() {
+  const t = useExtracted();
+
   return (
     <div className="flex gap-2">
       <Badge variant="secondary">
@@ -68,7 +70,7 @@ function RewardBadges() {
         <span>
           +<CountUp value={10} />
         </span>{" "}
-        BP
+        {t("BP")}
       </Badge>
 
       <Badge variant="secondary">
@@ -76,7 +78,7 @@ function RewardBadges() {
         <span>
           +<CountUp value={5} />
         </span>
-        <span className="sr-only">Energy</span>
+        <span className="sr-only">{t("Energy")}</span>
       </Badge>
     </div>
   );

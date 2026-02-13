@@ -293,6 +293,7 @@ msgstr "Tu energía es {value}%"
 #: src/app/[locale]/(catalog)/energy.tsx
 #: src/app/[locale]/(performance)/_components/metric-pills.tsx
 #: src/app/[locale]/(performance)/energy/page.tsx
+#: src/components/activity-player/completion-screen.tsx
 msgctxt "cVpmV7"
 msgid "Energy"
 msgstr "Energía"
@@ -642,6 +643,7 @@ msgid "{current}/10"
 msgstr "{current}/10"
 
 #: src/app/[locale]/(performance)/level/level-stats.tsx
+#: src/components/activity-player/completion-screen.tsx
 msgctxt "/Q0taG"
 msgid "BP"
 msgstr "PM"
@@ -1211,6 +1213,16 @@ msgstr "Paso anterior"
 msgctxt "d+qgix"
 msgid "Next step"
 msgstr "Siguiente paso"
+
+#: src/components/activity-player/player-header.tsx
+msgctxt "kXUK98"
+msgid "Step navigation"
+msgstr "Navegación de pasos"
+
+#: src/components/activity-player/player-header.tsx
+msgctxt "rbrahO"
+msgid "Close"
+msgstr "Cerrar"
 
 #: src/components/activity-player/step-renderer.tsx
 msgctxt "4pTU5S"

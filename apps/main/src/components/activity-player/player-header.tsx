@@ -21,9 +21,11 @@ export function PlayerCloseLink({
   href,
   ...props
 }: React.ComponentProps<typeof ClientLink>) {
+  const t = useExtracted();
+
   return (
     <ClientLink
-      aria-label="Close"
+      aria-label={t("Close")}
       className={cn(buttonVariants({ size: "icon", variant: "ghost" }), className)}
       data-slot="player-close-link"
       href={href}
@@ -45,9 +47,11 @@ export function PlayerStepFraction({ className, ...props }: React.ComponentProps
 }
 
 export function PlayerNav({ className, ...props }: React.ComponentProps<"nav">) {
+  const t = useExtracted();
+
   return (
     <nav
-      aria-label="Step navigation"
+      aria-label={t("Step navigation")}
       className={cn(
         "pointer-events-none absolute inset-x-0 flex items-center justify-center",
         className,
