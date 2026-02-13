@@ -63,6 +63,7 @@ async function createTestActivity(options?: {
             title: `Step ${uniqueId} #${idx}`,
             variant: "text",
           },
+          isPublished: true,
           position: idx,
         }),
       ),
@@ -123,6 +124,7 @@ async function createTestActivityWithInteractiveStep() {
       ],
       question: `Test question ${uniqueId}?`,
     },
+    isPublished: true,
     kind: "multipleChoice",
     position: 0,
   });
