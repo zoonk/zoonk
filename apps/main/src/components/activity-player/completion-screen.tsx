@@ -5,7 +5,7 @@ import { ClientLink } from "@/i18n/client-link";
 import { useAuthState } from "@zoonk/core/auth/hooks/auth-state";
 import { computeScore } from "@zoonk/core/player/compute-score";
 import { Badge } from "@zoonk/ui/components/badge";
-import { buttonVariants } from "@zoonk/ui/components/button";
+import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import { Kbd } from "@zoonk/ui/components/kbd";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -125,14 +125,10 @@ function AuthenticatedContent({
                 <Kbd className="hidden opacity-60 lg:inline-flex">Esc</Kbd>
               </ClientLink>
 
-              <button
-                className={cn(buttonVariants({ variant: "outline" }), "flex-1 justify-between")}
-                onClick={onRestart}
-                type="button"
-              >
+              <Button className="flex-1 justify-between" onClick={onRestart} variant="outline">
                 {t("Restart")}
                 <Kbd className="hidden opacity-60 lg:inline-flex">R</Kbd>
-              </button>
+              </Button>
             </ActionRow>
           </>
         ) : (
@@ -147,14 +143,10 @@ function AuthenticatedContent({
               </Kbd>
             </ClientLink>
 
-            <button
-              className={cn(buttonVariants({ variant: "outline" }), "w-full justify-between")}
-              onClick={onRestart}
-              type="button"
-            >
+            <Button className="w-full justify-between" onClick={onRestart} variant="outline">
               {t("Restart")}
               <Kbd className="hidden opacity-60 lg:inline-flex">R</Kbd>
-            </button>
+            </Button>
           </>
         )}
       </CompletionActions>
@@ -189,14 +181,10 @@ function UnauthenticatedContent({
             <Kbd className="hidden opacity-60 lg:inline-flex">Esc</Kbd>
           </ClientLink>
 
-          <button
-            className={cn(buttonVariants({ variant: "outline" }), "flex-1 justify-between")}
-            onClick={onRestart}
-            type="button"
-          >
+          <Button className="flex-1 justify-between" onClick={onRestart} variant="outline">
             {t("Restart")}
             <Kbd className="hidden opacity-60 lg:inline-flex">R</Kbd>
-          </button>
+          </Button>
         </ActionRow>
       </CompletionActions>
     </>
