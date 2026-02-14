@@ -12,6 +12,14 @@ import {
   playerReducer,
 } from "./player-reducer";
 
+const coreMultipleChoiceContent = {
+  kind: "core" as const,
+  options: [
+    { feedback: "Yes", isCorrect: true, text: "A" },
+    { feedback: "No", isCorrect: false, text: "B" },
+  ],
+};
+
 function buildStep(overrides: Partial<SerializedStep> = {}): SerializedStep {
   return {
     content: { text: "Hello", title: "Intro", variant: "text" as const },
@@ -24,6 +32,10 @@ function buildStep(overrides: Partial<SerializedStep> = {}): SerializedStep {
     word: null,
     ...overrides,
   };
+}
+
+function buildMultipleChoiceStep(overrides: Partial<SerializedStep> = {}): SerializedStep {
+  return buildStep({ content: coreMultipleChoiceContent, kind: "multipleChoice", ...overrides });
 }
 
 function buildActivity(overrides: Partial<SerializedActivity> = {}): SerializedActivity {
@@ -54,7 +66,7 @@ function buildState(overrides: Partial<PlayerState> = {}): PlayerState {
   };
 }
 
-const mcAnswer: SelectedAnswer = { kind: "multipleChoice", selectedIndex: 0 };
+const multipleChoiceAnswer: SelectedAnswer = { kind: "multipleChoice", selectedIndex: 0 };
 
 describe(createInitialState, () => {
   test("sets phase to playing and index to 0", () => {
@@ -72,11 +84,37 @@ describe(createInitialState, () => {
     expect(state.steps).toEqual(steps);
   });
 
-  test("initializes empty maps", () => {
+  test("initializes empty maps for non-challenge activity", () => {
     const state = createInitialState(buildActivity());
     expect(state.selectedAnswers).toEqual({});
     expect(state.results).toEqual({});
     expect(state.dimensions).toEqual({});
+  });
+
+  test("collects all dimensions from challenge steps at init", () => {
+    const challengeContent = {
+      context: "A scenario",
+      kind: "challenge" as const,
+      options: [
+        {
+          consequence: "Good",
+          effects: [{ dimension: "Courage", impact: "positive" as const }],
+          text: "A",
+        },
+        {
+          consequence: "Bad",
+          effects: [{ dimension: "Diplomacy", impact: "negative" as const }],
+          text: "B",
+        },
+      ],
+      question: "What do you do?",
+    };
+    const steps = [
+      buildStep({ content: challengeContent, id: "c1", kind: "multipleChoice" }),
+      buildStep({ id: "s2", position: 1 }),
+    ];
+    const state = createInitialState(buildActivity({ steps }));
+    expect(state.dimensions).toEqual({ Courage: 0, Diplomacy: 0 });
   });
 });
 
@@ -84,17 +122,17 @@ describe("SELECT_ANSWER", () => {
   test("stores answer by stepId", () => {
     const state = buildState();
     const next = playerReducer(state, {
-      answer: mcAnswer,
+      answer: multipleChoiceAnswer,
       stepId: "step-1",
       type: "SELECT_ANSWER",
     });
-    expect(next.selectedAnswers["step-1"]).toEqual(mcAnswer);
+    expect(next.selectedAnswers["step-1"]).toEqual(multipleChoiceAnswer);
   });
 
   test("does not change phase or index", () => {
     const state = buildState();
     const next = playerReducer(state, {
-      answer: mcAnswer,
+      answer: multipleChoiceAnswer,
       stepId: "step-1",
       type: "SELECT_ANSWER",
     });
@@ -107,17 +145,17 @@ describe("SELECT_ANSWER", () => {
       selectedAnswers: { "step-1": { kind: "multipleChoice", selectedIndex: 1 } },
     });
     const next = playerReducer(state, {
-      answer: mcAnswer,
+      answer: multipleChoiceAnswer,
       stepId: "step-1",
       type: "SELECT_ANSWER",
     });
-    expect(next.selectedAnswers["step-1"]).toEqual(mcAnswer);
+    expect(next.selectedAnswers["step-1"]).toEqual(multipleChoiceAnswer);
   });
 });
 
 describe("CHECK_ANSWER", () => {
   test("transitions from playing to feedback and stores result", () => {
-    const step = buildStep({ id: "mc-1", kind: "multipleChoice" });
+    const step = buildMultipleChoiceStep({ id: "mc-1" });
     const state = buildState({ steps: [step] });
     const next = playerReducer(state, {
       effects: [],
@@ -135,9 +173,9 @@ describe("CHECK_ANSWER", () => {
   });
 
   test("includes selected answer in the result", () => {
-    const step = buildStep({ id: "mc-1", kind: "multipleChoice" });
+    const step = buildMultipleChoiceStep({ id: "mc-1" });
     const state = buildState({
-      selectedAnswers: { "mc-1": mcAnswer },
+      selectedAnswers: { "mc-1": multipleChoiceAnswer },
       steps: [step],
     });
     const next = playerReducer(state, {
@@ -146,7 +184,7 @@ describe("CHECK_ANSWER", () => {
       stepId: "mc-1",
       type: "CHECK_ANSWER",
     });
-    expect(next.results["mc-1"]?.answer).toEqual(mcAnswer);
+    expect(next.results["mc-1"]?.answer).toEqual(multipleChoiceAnswer);
   });
 
   test("applies positive effect to dimensions", () => {
@@ -184,8 +222,8 @@ describe("CHECK_ANSWER", () => {
 
   test("accumulates effects on same dimension across multiple calls", () => {
     const steps = [
-      buildStep({ id: "s1", kind: "multipleChoice" }),
-      buildStep({ id: "s2", kind: "multipleChoice", position: 1 }),
+      buildMultipleChoiceStep({ id: "s1" }),
+      buildMultipleChoiceStep({ id: "s2", position: 1 }),
     ];
     let state = buildState({ steps });
     state = playerReducer(state, {
@@ -296,7 +334,7 @@ describe("NAVIGATE_STEP", () => {
   });
 
   test("no-ops on interactive step", () => {
-    const steps = [buildStep({ id: "mc-1", kind: "multipleChoice" })];
+    const steps = [buildMultipleChoiceStep({ id: "mc-1" })];
     const state = buildState({ steps });
     const next = playerReducer(state, { direction: "next", type: "NAVIGATE_STEP" });
     expect(next).toBe(state);
@@ -338,21 +376,21 @@ describe("COMPLETE", () => {
 describe("RESTART", () => {
   test("resets to playing with index 0 from completed state", () => {
     const steps = [
-      buildStep({ id: "s1", kind: "multipleChoice" }),
-      buildStep({ id: "s2", kind: "multipleChoice", position: 1 }),
+      buildMultipleChoiceStep({ id: "s1" }),
+      buildMultipleChoiceStep({ id: "s2", position: 1 }),
     ];
     const state = buildState({
       currentStepIndex: 1,
       phase: "completed",
       results: {
         s1: {
-          answer: mcAnswer,
+          answer: multipleChoiceAnswer,
           effects: [],
           result: { feedback: null, isCorrect: true },
           stepId: "s1",
         },
       },
-      selectedAnswers: { s1: mcAnswer },
+      selectedAnswers: { s1: multipleChoiceAnswer },
       steps,
     });
 
@@ -362,19 +400,19 @@ describe("RESTART", () => {
   });
 
   test("clears results, selectedAnswers, and dimensions", () => {
-    const steps = [buildStep({ id: "s1", kind: "multipleChoice" })];
+    const steps = [buildMultipleChoiceStep({ id: "s1" })];
     const state = buildState({
       dimensions: { Quality: 2 },
       phase: "completed",
       results: {
         s1: {
-          answer: mcAnswer,
+          answer: multipleChoiceAnswer,
           effects: [{ dimension: "Quality", impact: "positive" }],
           result: { feedback: null, isCorrect: true },
           stepId: "s1",
         },
       },
-      selectedAnswers: { s1: mcAnswer },
+      selectedAnswers: { s1: multipleChoiceAnswer },
       steps,
     });
 
@@ -428,7 +466,7 @@ describe("edge cases", () => {
   });
 
   test("results include the stored StepResult structure", () => {
-    const step = buildStep({ id: "mc-1", kind: "multipleChoice" });
+    const step = buildMultipleChoiceStep({ id: "mc-1" });
     const answer: SelectedAnswer = { kind: "multipleChoice", selectedIndex: 2 };
     const state = buildState({ selectedAnswers: { "mc-1": answer }, steps: [step] });
     const next = playerReducer(state, {

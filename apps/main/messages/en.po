@@ -9,7 +9,7 @@ msgstr ""
 #: src/app/[locale]/(catalog)/_components/logout-dropdown-item.tsx
 #: src/app/[locale]/(performance)/_components/performance-empty-state.tsx
 #: src/app/[locale]/(settings)/_components/protected-section.tsx
-#: src/components/activity-player/completion-screen.tsx
+#: src/components/activity-player/completion-auth-branch.tsx
 #: src/components/auth/login-required.tsx
 msgctxt "AyGauy"
 msgid "Login"
@@ -293,7 +293,7 @@ msgstr "Your energy is {value}%"
 #: src/app/[locale]/(catalog)/energy.tsx
 #: src/app/[locale]/(performance)/_components/metric-pills.tsx
 #: src/app/[locale]/(performance)/energy/page.tsx
-#: src/components/activity-player/completion-screen.tsx
+#: src/components/activity-player/completion-auth-branch.tsx
 msgctxt "cVpmV7"
 msgid "Energy"
 msgstr "Energy"
@@ -643,7 +643,7 @@ msgid "{current}/10"
 msgstr "{current}/10"
 
 #: src/app/[locale]/(performance)/level/level-stats.tsx
-#: src/components/activity-player/completion-screen.tsx
+#: src/components/activity-player/completion-auth-branch.tsx
 msgctxt "/Q0taG"
 msgid "BP"
 msgstr "BP"
@@ -1156,20 +1156,46 @@ msgctxt "RDZVQL"
 msgid "Check"
 msgstr "Check"
 
-#: src/components/activity-player/completion-screen.tsx
-msgctxt "5kK+j9"
-msgid "Restart"
-msgstr "Restart"
-
-#: src/components/activity-player/completion-screen.tsx
+#: src/components/activity-player/challenge-completion.tsx
+#: src/components/activity-player/completion-auth-branch.tsx
 msgctxt "7tB7n/"
 msgid "Back to Lesson"
 msgstr "Back to Lesson"
 
-#: src/components/activity-player/completion-screen.tsx
+#: src/components/activity-player/challenge-completion.tsx
+msgctxt "a0e1mh"
+msgid "Challenge Complete"
+msgstr "Challenge Complete"
+
+#: src/components/activity-player/challenge-completion.tsx
+msgctxt "JOTIo6"
+msgid "Some of your stats went below zero."
+msgstr "Some of your stats went below zero."
+
+#: src/components/activity-player/challenge-completion.tsx
+msgctxt "jsy7pk"
+msgid "Try Again"
+msgstr "Try Again"
+
+#: src/components/activity-player/challenge-completion.tsx
+msgctxt "w48TcP"
+msgid "Challenge Failed"
+msgstr "Challenge Failed"
+
+#: src/components/activity-player/completion-auth-branch.tsx
+msgctxt "5kK+j9"
+msgid "Restart"
+msgstr "Restart"
+
+#: src/components/activity-player/completion-auth-branch.tsx
 msgctxt "9+Ddtu"
 msgid "Next"
 msgstr "Next"
+
+#: src/components/activity-player/completion-auth-branch.tsx
+msgctxt "e1M39C"
+msgid "Sign up to track your progress"
+msgstr "Sign up to track your progress"
 
 #: src/components/activity-player/completion-screen.tsx
 #: src/components/catalog/activity-completion-indicator.tsx
@@ -1178,11 +1204,6 @@ msgstr "Next"
 msgctxt "95stPq"
 msgid "Completed"
 msgstr "Completed"
-
-#: src/components/activity-player/completion-screen.tsx
-msgctxt "e1M39C"
-msgid "Sign up to track your progress"
-msgstr "Sign up to track your progress"
 
 #: src/components/activity-player/completion-screen.tsx
 msgctxt "P768k7"
@@ -1203,6 +1224,16 @@ msgstr "Outcome"
 msgctxt "xmF49T"
 msgid "Correct!"
 msgstr "Correct!"
+
+#: src/components/activity-player/multiple-choice-step.tsx
+msgctxt "HHBtl4"
+msgid "What do you say?"
+msgstr "What do you say?"
+
+#: src/components/activity-player/multiple-choice-step.tsx
+msgctxt "nJGJop"
+msgid "Someone says:"
+msgstr "Someone says:"
 
 #: src/components/activity-player/player-header.tsx
 msgctxt "aNzy1T"

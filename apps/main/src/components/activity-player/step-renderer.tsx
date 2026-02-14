@@ -3,6 +3,7 @@
 import { type SerializedStep } from "@/data/activities/prepare-activity-data";
 import { Button } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
+import { MultipleChoiceStep } from "./multiple-choice-step";
 import { type SelectedAnswer } from "./player-reducer";
 import { StaticStep } from "./static-step";
 import { StaticTapZones, useSwipeNavigation } from "./static-step-navigation";
@@ -67,6 +68,16 @@ export function StepRenderer({
           onNavigatePrev={onNavigatePrev}
         />
       </StaticStepLayout>
+    );
+  }
+
+  if (step.kind === "multipleChoice") {
+    return (
+      <MultipleChoiceStep
+        onSelectAnswer={onSelectAnswer}
+        selectedAnswer={selectedAnswer}
+        step={step}
+      />
     );
   }
 

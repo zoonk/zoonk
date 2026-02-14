@@ -1,4 +1,5 @@
 import {
+  type MultipleChoiceStepContent,
   type StepContentByKind,
   type SupportedStepKind,
   isSupportedStepKind,
@@ -10,6 +11,7 @@ import {
   isSupportedVisualKind,
   parseVisualContent,
 } from "@zoonk/core/steps/visual-content-contract";
+import { shuffle } from "@zoonk/utils/shuffle";
 import { type ActivityWithSteps } from "./get-activity";
 import { type LessonSentenceData } from "./get-lesson-sentences";
 import { type LessonWordData } from "./get-lesson-words";
@@ -101,13 +103,32 @@ function parseVisualIfSupported(
   }
 }
 
+function shuffleMultipleChoiceContent(
+  content: MultipleChoiceStepContent,
+): MultipleChoiceStepContent {
+  switch (content.kind) {
+    case "core":
+      return { ...content, options: shuffle(content.options) };
+    case "challenge":
+      return { ...content, options: shuffle(content.options) };
+    case "language":
+      return { ...content, options: shuffle(content.options) };
+    default:
+      return content;
+  }
+}
+
 function serializeStep(step: ActivityWithSteps["steps"][number]): SerializedStep | null {
   if (!isSupportedStepKind(step.kind)) {
     return null;
   }
 
   try {
-    const content = parseStepContent(step.kind, step.content);
+    const content =
+      step.kind === "multipleChoice"
+        ? shuffleMultipleChoiceContent(parseStepContent("multipleChoice", step.content))
+        : parseStepContent(step.kind, step.content);
+
     const visual = parseVisualIfSupported(step.visualKind, step.visualContent);
 
     return {

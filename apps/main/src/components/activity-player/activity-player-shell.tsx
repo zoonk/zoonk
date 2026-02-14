@@ -5,7 +5,7 @@ import { useRouter } from "@/i18n/navigation";
 import { useExtracted } from "next-intl";
 import { useCallback } from "react";
 import { checkStep } from "./check-step";
-import { getFeedbackVariant } from "./feedback-screen";
+import { hasNegativeDimension } from "./dimension-inventory";
 import { PlayerActionBar, PlayerActionButton } from "./player-action-bar";
 import {
   PlayerCloseLink,
@@ -39,10 +39,11 @@ export function ActivityPlayerShell({
   const isStaticStep = currentStep?.kind === "static";
   const hasAnswer = currentStep ? Boolean(state.selectedAnswers[currentStep.id]) : false;
   const currentResult = currentStep ? state.results[currentStep.id] : undefined;
-  const feedbackVariant = currentResult ? getFeedbackVariant(currentResult) : undefined;
   const totalSteps = state.steps.length;
   const isCompleted = state.phase === "completed";
   const isFirstStep = state.currentStepIndex === 0;
+  const hasDimensions = Object.keys(state.dimensions).length > 0;
+  const isGameOver = isCompleted && hasDimensions && hasNegativeDimension(state.dimensions);
 
   const progressValue = isCompleted ? 100 : computeProgress(state.currentStepIndex, totalSteps);
 
@@ -102,7 +103,7 @@ export function ActivityPlayerShell({
     onEscape: handleEscape,
     onNavigateNext: handleNavigateNext,
     onNavigatePrev: handleNavigatePrev,
-    onNext: nextActivityHref ? handleNext : null,
+    onNext: nextActivityHref && !isGameOver ? handleNext : null,
     onRestart: handleRestart,
     phase: state.phase,
   });
@@ -143,12 +144,13 @@ export function ActivityPlayerShell({
 
       {!isCompleted && <PlayerProgressBar value={progressValue} />}
 
-      <PlayerStage feedback={feedbackVariant} phase={state.phase}>
+      <PlayerStage phase={state.phase}>
         <StageContent
           activityId={state.activityId}
           currentResult={currentResult}
           currentStep={currentStep}
           currentStepIndex={state.currentStepIndex}
+          dimensions={state.dimensions}
           isCompleted={isCompleted}
           isFirst={isFirstStep}
           lessonHref={lessonHref}

@@ -33,7 +33,7 @@ export function StaticStepText({ className, ...props }: React.ComponentProps<"di
 export function InteractiveStepLayout({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
-      className={cn("flex w-full max-w-2xl flex-col gap-6", className)}
+      className={cn("flex w-full max-w-2xl flex-col gap-4 sm:gap-6", className)}
       data-slot="interactive-step-layout"
       {...props}
     />

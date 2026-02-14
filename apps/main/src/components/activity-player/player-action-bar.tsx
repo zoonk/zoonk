@@ -6,6 +6,7 @@ export function PlayerActionBar({ className, ...props }: React.ComponentProps<"d
     <div
       className={cn(
         "bg-background/95 sticky bottom-0 p-4 pb-[max(1rem,env(safe-area-inset-bottom))] backdrop-blur-sm",
+        "mx-auto w-full max-w-2xl",
         className,
       )}
       data-slot="player-action-bar"
