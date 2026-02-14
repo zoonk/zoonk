@@ -5,6 +5,7 @@ import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
+import { STORAGE_KEY_DISPLAY_NAME } from "@zoonk/utils/constants";
 import { expect, test } from "./fixtures";
 import { E2E_USERS } from "./global-setup";
 
@@ -128,6 +129,11 @@ test.describe("Name placeholder replacement", () => {
       ],
     });
 
+    await authenticatedPage.addInitScript(({ key, name }) => localStorage.setItem(key, name), {
+      key: STORAGE_KEY_DISPLAY_NAME,
+      name: userName,
+    });
+
     await authenticatedPage.goto(url);
 
     await expect(
@@ -160,6 +166,11 @@ test.describe("Name placeholder replacement", () => {
           position: 0,
         },
       ],
+    });
+
+    await authenticatedPage.addInitScript(({ key, name }) => localStorage.setItem(key, name), {
+      key: STORAGE_KEY_DISPLAY_NAME,
+      name: userName,
     });
 
     await authenticatedPage.goto(url);

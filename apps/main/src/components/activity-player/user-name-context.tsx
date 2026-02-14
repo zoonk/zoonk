@@ -21,15 +21,17 @@ function getServerSnapshot(): null {
 }
 
 export function UserNameProvider({ children }: { children: React.ReactNode }) {
-  const { data } = authClient.useSession();
+  const { data, isPending } = authClient.useSession();
   const sessionName = data?.user.name ?? null;
   const cachedName = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
   useEffect(() => {
     if (sessionName) {
       localStorage.setItem(STORAGE_KEY_DISPLAY_NAME, sessionName);
+    } else if (!isPending) {
+      localStorage.removeItem(STORAGE_KEY_DISPLAY_NAME);
     }
-  }, [sessionName]);
+  }, [sessionName, isPending]);
 
   const name = sessionName ?? cachedName;
 
