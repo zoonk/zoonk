@@ -2,7 +2,7 @@ import { expect, test } from "./fixtures";
 import { cleanupVerifications, disconnectDb, getOTPForEmail } from "./helpers/db";
 
 const TEST_EMAIL = `e2e-otp-${Date.now()}@zoonk.test`;
-const REDIRECT_URL = "http://localhost:3000/test";
+const REDIRECT_URL = "http://localhost:49152/test";
 
 test.describe("OTP Login Flow", () => {
   test.afterAll(async () => {
@@ -77,7 +77,7 @@ test.describe("OTP Login Flow", () => {
   });
 
   test("handles redirect URL with trailing slash without double slashes", async ({ page }) => {
-    const trailingSlashUrl = "http://localhost:3000/test/";
+    const trailingSlashUrl = "http://localhost:49152/test/";
     await page.goto(`/auth/login?redirectTo=${encodeURIComponent(trailingSlashUrl)}`);
     await page.getByLabel(/email/i).fill(TEST_EMAIL);
     await page.getByRole("button", { name: /^continue$/i }).click();
@@ -91,7 +91,7 @@ test.describe("OTP Login Flow", () => {
 
     const redirectPromise = page.waitForRequest((request) => {
       const url = request.url();
-      return url.startsWith("http://localhost:3000/test/") && url.length > 27;
+      return url.startsWith("http://localhost:49152/test/") && url.length > 28;
     });
 
     await page.getByRole("textbox").click();
