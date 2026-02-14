@@ -1,6 +1,12 @@
 name: E2E Tests (Main App)
 
-on: push
+on:
+  push:
+    paths:
+      - "apps/main/**"
+      - "packages/**"
+      - "pnpm-lock.yaml"
+      - ".github/workflows/e2e-main.yml"
 
 permissions:
   contents: read
@@ -12,6 +18,10 @@ jobs:
   e2e:
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3]
     env:
       BETTER_AUTH_SECRET: test-secret-for-ci
       DATABASE_URL: postgres://postgres:postgres@localhost:5432/zoonk_e2e
@@ -87,4 +97,4 @@ jobs:
         run: pnpm build:e2e --filter main
 
       - name: Run E2E tests
-        run: pnpm e2e --filter main
+        run: pnpm e2e --filter main -- --shard=${{ matrix.shard }}/${{ strategy.job-total }}

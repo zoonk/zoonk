@@ -1,6 +1,12 @@
 name: E2E Tests (API App)
 
-on: push
+on:
+  push:
+    paths:
+      - "apps/api/**"
+      - "packages/**"
+      - "pnpm-lock.yaml"
+      - ".github/workflows/e2e-api.yml"
 
 permissions:
   contents: read

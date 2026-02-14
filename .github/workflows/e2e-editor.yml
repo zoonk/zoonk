@@ -1,6 +1,12 @@
 name: E2E Tests (Editor App)
 
-on: push
+on:
+  push:
+    paths:
+      - "apps/editor/**"
+      - "packages/**"
+      - "pnpm-lock.yaml"
+      - ".github/workflows/e2e-editor.yml"
 
 permissions:
   contents: read
