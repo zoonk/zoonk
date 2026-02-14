@@ -13,6 +13,7 @@ import { useExtracted } from "next-intl";
 import { type SelectedAnswer } from "./player-reducer";
 import { InteractiveStepLayout } from "./step-layouts";
 import { useOptionKeyboard } from "./use-option-keyboard";
+import { useReplaceName } from "./user-name-context";
 
 function getSelectedIndex(selectedAnswer: SelectedAnswer | undefined): number | null {
   if (selectedAnswer?.kind !== "multipleChoice") {
@@ -107,11 +108,13 @@ function CoreVariant({
   onSelect: (index: number) => void;
   selectedIndex: number | null;
 }) {
+  const replaceName = useReplaceName();
+
   return (
     <>
       <StepTextGroup>
-        {content.context ? <ContextText>{content.context}</ContextText> : null}
-        {content.question ? <QuestionText>{content.question}</QuestionText> : null}
+        {content.context ? <ContextText>{replaceName(content.context)}</ContextText> : null}
+        {content.question ? <QuestionText>{replaceName(content.question)}</QuestionText> : null}
       </StepTextGroup>
 
       <OptionList onSelect={onSelect} options={content.options} selectedIndex={selectedIndex} />
@@ -128,11 +131,13 @@ function ChallengeVariant({
   onSelect: (index: number) => void;
   selectedIndex: number | null;
 }) {
+  const replaceName = useReplaceName();
+
   return (
     <>
       <StepTextGroup>
-        <ContextText>{content.context}</ContextText>
-        <QuestionText>{content.question}</QuestionText>
+        <ContextText>{replaceName(content.context)}</ContextText>
+        <QuestionText>{replaceName(content.question)}</QuestionText>
       </StepTextGroup>
 
       <OptionList onSelect={onSelect} options={content.options} selectedIndex={selectedIndex} />
@@ -160,6 +165,7 @@ function LanguageVariant({
   selectedIndex: number | null;
 }) {
   const t = useExtracted();
+  const replaceName = useReplaceName();
 
   return (
     <>
@@ -167,13 +173,13 @@ function LanguageVariant({
         <SectionLabel>{t("Someone says:")}</SectionLabel>
 
         <SpeechBubble>
-          <p className="text-base font-semibold">{content.context}</p>
+          <p className="text-base font-semibold">{replaceName(content.context)}</p>
 
           {content.contextRomanization ? (
             <p className="text-muted-foreground text-sm italic">{content.contextRomanization}</p>
           ) : null}
 
-          <p className="text-muted-foreground text-sm">{content.contextTranslation}</p>
+          <p className="text-muted-foreground text-sm">{replaceName(content.contextTranslation)}</p>
         </SpeechBubble>
       </div>
 

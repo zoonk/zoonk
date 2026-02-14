@@ -4,12 +4,15 @@ import { type SerializedStep } from "@/data/activities/prepare-activity-data";
 import { parseStepContent } from "@zoonk/core/steps/content-contract";
 import { HighlightText } from "./highlight-text";
 import { StaticStepText, StaticStepVisual } from "./step-layouts";
+import { useReplaceName } from "./user-name-context";
 
 function TextVariant({ title, text }: { title: string; text: string }) {
+  const replaceName = useReplaceName();
+
   return (
     <>
-      <h2 className="text-base font-semibold">{title}</h2>
-      <p className="text-muted-foreground text-base">{text}</p>
+      <h2 className="text-base font-semibold">{replaceName(title)}</h2>
+      <p className="text-muted-foreground text-base">{replaceName(text)}</p>
     </>
   );
 }
