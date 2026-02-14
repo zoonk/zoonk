@@ -96,7 +96,6 @@ export function StepRenderer({
     return (
       <MatchColumnsStep
         onSelectAnswer={onSelectAnswer}
-        result={result}
         selectedAnswer={selectedAnswer}
         step={step}
       />

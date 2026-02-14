@@ -1277,7 +1277,6 @@ msgid "Stats"
 msgstr "Stats"
 
 #: src/components/activity-player/feedback-screen.tsx
-#: src/components/activity-player/match-columns-step.tsx
 #: src/components/activity-player/sort-order-step.tsx
 msgctxt "++l7ni"
 msgid "Not quite"
@@ -1289,7 +1288,6 @@ msgid "Outcome"
 msgstr "Outcome"
 
 #: src/components/activity-player/feedback-screen.tsx
-#: src/components/activity-player/match-columns-step.tsx
 #: src/components/activity-player/sort-order-step.tsx
 msgctxt "xmF49T"
 msgid "Correct!"

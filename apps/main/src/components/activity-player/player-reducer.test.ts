@@ -280,6 +280,48 @@ describe("CHECK_ANSWER", () => {
     expect(state.dimensions).toEqual({ Quality: 2 });
   });
 
+  describe("matchColumns auto-advance", () => {
+    test("auto-advances to next step instead of entering feedback phase", () => {
+      const steps = [
+        buildStep({ id: "mc-1", kind: "matchColumns", position: 0 }),
+        buildStep({ id: "mc-2", kind: "matchColumns", position: 1 }),
+      ];
+      const state = buildState({ steps });
+      const next = playerReducer(state, {
+        effects: [],
+        result: { feedback: null, isCorrect: true },
+        stepId: "mc-1",
+        type: "CHECK_ANSWER",
+      });
+      expect(next.phase).toBe("playing");
+      expect(next.currentStepIndex).toBe(1);
+      expect(next.results["mc-1"]).toEqual({
+        answer: undefined,
+        effects: [],
+        result: { feedback: null, isCorrect: true },
+        stepId: "mc-1",
+      });
+    });
+
+    test("sets completed when matchColumns is the last step", () => {
+      const steps = [buildStep({ id: "mc-1", kind: "matchColumns", position: 0 })];
+      const state = buildState({ steps });
+      const next = playerReducer(state, {
+        effects: [],
+        result: { feedback: null, isCorrect: true },
+        stepId: "mc-1",
+        type: "CHECK_ANSWER",
+      });
+      expect(next.phase).toBe("completed");
+      expect(next.results["mc-1"]).toEqual({
+        answer: undefined,
+        effects: [],
+        result: { feedback: null, isCorrect: true },
+        stepId: "mc-1",
+      });
+    });
+  });
+
   test("no-ops in feedback phase", () => {
     const state = buildState({ phase: "feedback" });
     const next = playerReducer(state, {

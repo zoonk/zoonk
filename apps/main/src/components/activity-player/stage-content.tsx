@@ -65,8 +65,7 @@ export function StageContent({
   }
 
   if (phase === "feedback" && currentResult) {
-    const hasInlineFeedback =
-      currentStep?.kind === "matchColumns" || currentStep?.kind === "sortOrder";
+    const hasInlineFeedback = currentStep?.kind === "sortOrder";
 
     if (hasInlineFeedback && currentStep) {
       return (

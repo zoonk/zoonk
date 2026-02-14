@@ -237,6 +237,49 @@ test.describe("Match Columns Step", () => {
     await expect(checkButton).toBeEnabled();
   });
 
+  test("skips feedback screen and advances to next step after Check", async ({ page }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const { url } = await createMatchColumnsActivity({
+      steps: [
+        {
+          content: {
+            pairs: [
+              { left: `Red ${uniqueId}`, right: `Rouge ${uniqueId}` },
+              { left: `Blue ${uniqueId}`, right: `Bleu ${uniqueId}` },
+            ],
+            question: `Match colors step 1 ${uniqueId}`,
+          },
+          position: 0,
+        },
+        {
+          content: {
+            pairs: [
+              { left: `One ${uniqueId}`, right: `Uno ${uniqueId}` },
+              { left: `Two ${uniqueId}`, right: `Dos ${uniqueId}` },
+            ],
+            question: `Match numbers step 2 ${uniqueId}`,
+          },
+          position: 1,
+        },
+      ],
+    });
+
+    await page.goto(url);
+    await page.waitForLoadState("networkidle");
+
+    // Complete first step
+    await page.getByRole("button", { name: `Red ${uniqueId}` }).click();
+    await page.getByRole("button", { name: `Rouge ${uniqueId}` }).click();
+
+    await page.getByRole("button", { name: `Blue ${uniqueId}` }).click();
+    await page.getByRole("button", { name: `Bleu ${uniqueId}` }).click();
+
+    await page.getByRole("button", { name: /check/i }).click();
+
+    // Should immediately show the second step's question — no feedback screen
+    await expect(page.getByText(new RegExp(`Match numbers step 2 ${uniqueId}`))).toBeVisible();
+  });
+
   test("making a mistake then correcting shows as incorrect on completion", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const { url } = await createMatchColumnsActivity({
@@ -273,11 +316,8 @@ test.describe("Match Columns Step", () => {
     await page.getByRole("button", { name: `NaCl ${uniqueId}` }).click();
     await page.getByRole("button", { name: `Salt ${uniqueId}` }).click();
 
-    // Check and continue
+    // Check — auto-advances to completion (no feedback screen)
     await page.getByRole("button", { name: /check/i }).click();
-    await expect(page.getByText(/not quite/i)).toBeVisible();
-
-    await page.getByRole("button", { name: /continue/i }).click();
 
     // Completion screen should show 0/1 (incorrect because of mistakes)
     await expect(page.getByText("0/1")).toBeVisible();
@@ -309,10 +349,8 @@ test.describe("Match Columns Step", () => {
     await page.getByRole("button", { name: `Cat ${uniqueId}` }).click();
     await page.getByRole("button", { name: `Meow ${uniqueId}` }).click();
 
+    // Check — auto-advances to completion (no feedback screen)
     await page.getByRole("button", { name: /check/i }).click();
-    await expect(page.getByText(/correct!/i)).toBeVisible();
-
-    await page.getByRole("button", { name: /continue/i }).click();
     await expect(page.getByText("1/1")).toBeVisible();
     await expect(page.getByText(/correct/i)).toBeVisible();
   });

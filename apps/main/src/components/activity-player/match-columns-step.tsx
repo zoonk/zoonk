@@ -8,7 +8,7 @@ import { shuffle } from "@zoonk/utils/shuffle";
 import { CircleCheck } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { Fragment, useCallback, useMemo, useRef, useState } from "react";
-import { type SelectedAnswer, type StepResult } from "./player-reducer";
+import { type SelectedAnswer } from "./player-reducer";
 import { QuestionText } from "./question-text";
 import { InteractiveStepLayout } from "./step-layouts";
 import { useReplaceName } from "./user-name-context";
@@ -146,32 +146,11 @@ function MatchGrid({
   );
 }
 
-function InlineFeedback({ result }: { result: StepResult }) {
-  const t = useExtracted();
-  const isCorrect = result.result.isCorrect;
-
-  return (
-    <div
-      aria-live="polite"
-      className={cn(
-        "flex items-center gap-1.5 text-sm font-medium",
-        isCorrect ? "text-success" : "text-destructive",
-      )}
-      role="status"
-    >
-      <CircleCheck aria-hidden="true" className="size-4" />
-      <span>{isCorrect ? t("Correct!") : t("Not quite")}</span>
-    </div>
-  );
-}
-
 export function MatchColumnsStep({
   onSelectAnswer,
-  result,
   step,
 }: {
   onSelectAnswer: (stepId: string, answer: SelectedAnswer | null) => void;
-  result?: StepResult;
   selectedAnswer: SelectedAnswer | undefined;
   step: SerializedStep;
 }) {
@@ -273,8 +252,6 @@ export function MatchColumnsStep({
       <div aria-live="polite" className="sr-only" role="status">
         {allMatched ? t("All pairs matched. Press Check to continue.") : null}
       </div>
-
-      {result ? <InlineFeedback result={result} /> : null}
     </InteractiveStepLayout>
   );
 }
