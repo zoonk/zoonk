@@ -68,7 +68,7 @@ async function createMatchColumnsActivity(options: {
 }
 
 test.describe("Match Columns Step", () => {
-  test("renders question and both columns", async ({ page }) => {
+  test("renders question and items in aligned rows", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const { url } = await createMatchColumnsActivity({
       steps: [
@@ -88,14 +88,8 @@ test.describe("Match Columns Step", () => {
     await page.goto(url);
 
     await expect(page.getByText(new RegExp(`Match the pairs ${uniqueId}`))).toBeVisible();
-
-    const leftColumn = page.getByRole("group", { name: /left column/i });
-    await expect(leftColumn.getByRole("button", { name: `Sun ${uniqueId}` })).toBeVisible();
-    await expect(leftColumn.getByRole("button", { name: `Moon ${uniqueId}` })).toBeVisible();
-
-    const rightColumn = page.getByRole("group", { name: /right column/i });
-    await expect(rightColumn.getByRole("button", { name: `Star ${uniqueId}` })).toBeVisible();
-    await expect(rightColumn.getByRole("button", { name: `Satellite ${uniqueId}` })).toBeVisible();
+    await expect(page.getByRole("button", { name: `Sun ${uniqueId}` })).toBeVisible();
+    await expect(page.getByRole("button", { name: `Moon ${uniqueId}` })).toBeVisible();
   });
 
   test("tapping left item highlights it", async ({ page }) => {
@@ -117,15 +111,12 @@ test.describe("Match Columns Step", () => {
 
     await page.goto(url);
 
-    const leftColumn = page.getByRole("group", { name: /left column/i });
-    const catButton = leftColumn.getByRole("button", { name: `Cat ${uniqueId}` });
-
+    const catButton = page.getByRole("button", { name: `Cat ${uniqueId}` });
     await catButton.click();
-
     await expect(catButton).toHaveAttribute("aria-pressed", "true");
   });
 
-  test("tapping right item after selecting left creates a match", async ({ page }) => {
+  test("correct match shows success state and locks pair", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const { url } = await createMatchColumnsActivity({
       steps: [
@@ -144,30 +135,25 @@ test.describe("Match Columns Step", () => {
 
     await page.goto(url);
 
-    const leftColumn = page.getByRole("group", { name: /left column/i });
-    const rightColumn = page.getByRole("group", { name: /right column/i });
+    await page.getByRole("button", { name: `Apple ${uniqueId}` }).click();
+    await page.getByRole("button", { name: `Fruit ${uniqueId}` }).click();
 
-    await leftColumn.getByRole("button", { name: `Apple ${uniqueId}` }).click();
-    await rightColumn.getByRole("button", { name: `Fruit ${uniqueId}` }).click();
-
-    await expect(
-      leftColumn.getByRole("button", {
-        name: new RegExp(`Apple ${uniqueId}.*matched.*Fruit ${uniqueId}`),
-      }),
-    ).toBeVisible();
+    // Both items should be disabled (locked) after correct match
+    await expect(page.getByRole("button", { name: `Apple ${uniqueId}` })).toBeDisabled();
+    await expect(page.getByRole("button", { name: `Fruit ${uniqueId}` })).toBeDisabled();
   });
 
-  test("tapping a matched pair unmatches it", async ({ page }) => {
+  test("incorrect match flashes error and auto-resets", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const { url } = await createMatchColumnsActivity({
       steps: [
         {
           content: {
             pairs: [
-              { left: `Red ${uniqueId}`, right: `Color ${uniqueId}` },
-              { left: `Three ${uniqueId}`, right: `Number ${uniqueId}` },
+              { left: `Paris ${uniqueId}`, right: `France ${uniqueId}` },
+              { left: `Tokyo ${uniqueId}`, right: `Japan ${uniqueId}` },
             ],
-            question: `Match types ${uniqueId}`,
+            question: `Match capitals ${uniqueId}`,
           },
           position: 0,
         },
@@ -176,20 +162,14 @@ test.describe("Match Columns Step", () => {
 
     await page.goto(url);
 
-    const leftColumn = page.getByRole("group", { name: /left column/i });
-    const rightColumn = page.getByRole("group", { name: /right column/i });
+    await page.getByRole("button", { name: `Paris ${uniqueId}` }).click();
+    await page.getByRole("button", { name: `Japan ${uniqueId}` }).click();
 
-    await leftColumn.getByRole("button", { name: `Red ${uniqueId}` }).click();
-    await rightColumn.getByRole("button", { name: `Color ${uniqueId}` }).click();
-
-    // Tap the matched left item to unmatch
-    await leftColumn.getByRole("button", { name: new RegExp(`Red ${uniqueId}.*matched`) }).click();
-
-    // Should be back to unmatched state
-    await expect(leftColumn.getByRole("button", { name: `Red ${uniqueId}` })).toHaveAttribute(
-      "aria-pressed",
-      "false",
-    );
+    // After flash timeout, items should be back to interactive
+    await expect(page.getByRole("button", { name: `Paris ${uniqueId}` })).toBeEnabled({
+      timeout: 2000,
+    });
+    await expect(page.getByRole("button", { name: `Japan ${uniqueId}` })).toBeEnabled();
   });
 
   test("deselecting a left item", async ({ page }) => {
@@ -211,8 +191,7 @@ test.describe("Match Columns Step", () => {
 
     await page.goto(url);
 
-    const leftColumn = page.getByRole("group", { name: /left column/i });
-    const hotButton = leftColumn.getByRole("button", { name: `Hot ${uniqueId}` });
+    const hotButton = page.getByRole("button", { name: `Hot ${uniqueId}` });
 
     await hotButton.click();
     await expect(hotButton).toHaveAttribute("aria-pressed", "true");
@@ -221,7 +200,7 @@ test.describe("Match Columns Step", () => {
     await expect(hotButton).toHaveAttribute("aria-pressed", "false");
   });
 
-  test("check button disabled until all pairs matched", async ({ page }) => {
+  test("all correct matches enables Check button", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const { url } = await createMatchColumnsActivity({
       steps: [
@@ -244,21 +223,21 @@ test.describe("Match Columns Step", () => {
     const checkButton = page.getByRole("button", { name: /check/i });
     await expect(checkButton).toBeDisabled();
 
-    const leftColumn = page.getByRole("group", { name: /left column/i });
-    const rightColumn = page.getByRole("group", { name: /right column/i });
+    // Match first pair correctly
+    await page.getByRole("button", { name: `A ${uniqueId}` }).click();
+    await page.getByRole("button", { name: `1 ${uniqueId}` }).click();
 
-    await leftColumn.getByRole("button", { name: `A ${uniqueId}` }).click();
-    await rightColumn.getByRole("button", { name: `1 ${uniqueId}` }).click();
-
+    // Still disabled — not all matched yet
     await expect(checkButton).toBeDisabled();
 
-    await leftColumn.getByRole("button", { name: `B ${uniqueId}` }).click();
-    await rightColumn.getByRole("button", { name: `2 ${uniqueId}` }).click();
+    // Match second pair correctly
+    await page.getByRole("button", { name: `B ${uniqueId}` }).click();
+    await page.getByRole("button", { name: `2 ${uniqueId}` }).click();
 
     await expect(checkButton).toBeEnabled();
   });
 
-  test("correct answer shows Correct! feedback", async ({ page }) => {
+  test("making a mistake then correcting shows as incorrect on completion", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const { url } = await createMatchColumnsActivity({
       steps: [
@@ -278,56 +257,33 @@ test.describe("Match Columns Step", () => {
     await page.goto(url);
     await page.waitForLoadState("networkidle");
 
-    const leftColumn = page.getByRole("group", { name: /left column/i });
-    const rightColumn = page.getByRole("group", { name: /right column/i });
+    // Make an incorrect match first
+    await page.getByRole("button", { name: `H2O ${uniqueId}` }).click();
+    await page.getByRole("button", { name: `Salt ${uniqueId}` }).click();
 
-    await leftColumn.getByRole("button", { name: `H2O ${uniqueId}` }).click();
-    await rightColumn.getByRole("button", { name: `Water ${uniqueId}` }).click();
-
-    await leftColumn.getByRole("button", { name: `NaCl ${uniqueId}` }).click();
-    await rightColumn.getByRole("button", { name: `Salt ${uniqueId}` }).click();
-
-    await page.getByRole("button", { name: /check/i }).click();
-
-    await expect(page.getByText(/correct!/i)).toBeVisible();
-  });
-
-  test("incorrect answer shows Not quite feedback", async ({ page }) => {
-    const uniqueId = randomUUID().slice(0, 8);
-    const { url } = await createMatchColumnsActivity({
-      steps: [
-        {
-          content: {
-            pairs: [
-              { left: `Paris ${uniqueId}`, right: `France ${uniqueId}` },
-              { left: `Tokyo ${uniqueId}`, right: `Japan ${uniqueId}` },
-            ],
-            question: `Match capitals ${uniqueId}`,
-          },
-          position: 0,
-        },
-      ],
+    // Wait for flash to clear
+    await expect(page.getByRole("button", { name: `H2O ${uniqueId}` })).toBeEnabled({
+      timeout: 2000,
     });
 
-    await page.goto(url);
-    await page.waitForLoadState("networkidle");
+    // Now match correctly
+    await page.getByRole("button", { name: `H2O ${uniqueId}` }).click();
+    await page.getByRole("button", { name: `Water ${uniqueId}` }).click();
 
-    const leftColumn = page.getByRole("group", { name: /left column/i });
-    const rightColumn = page.getByRole("group", { name: /right column/i });
+    await page.getByRole("button", { name: `NaCl ${uniqueId}` }).click();
+    await page.getByRole("button", { name: `Salt ${uniqueId}` }).click();
 
-    // Match incorrectly: Paris → Japan, Tokyo → France
-    await leftColumn.getByRole("button", { name: `Paris ${uniqueId}` }).click();
-    await rightColumn.getByRole("button", { name: `Japan ${uniqueId}` }).click();
-
-    await leftColumn.getByRole("button", { name: `Tokyo ${uniqueId}` }).click();
-    await rightColumn.getByRole("button", { name: `France ${uniqueId}` }).click();
-
+    // Check and continue
     await page.getByRole("button", { name: /check/i }).click();
-
     await expect(page.getByText(/not quite/i)).toBeVisible();
+
+    await page.getByRole("button", { name: /continue/i }).click();
+
+    // Completion screen should show 0/1 (incorrect because of mistakes)
+    await expect(page.getByText("0/1")).toBeVisible();
   });
 
-  test("full flow: match all, check, continue, completion", async ({ page }) => {
+  test("full flow with no mistakes shows correct on completion", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const { url } = await createMatchColumnsActivity({
       steps: [
@@ -347,14 +303,11 @@ test.describe("Match Columns Step", () => {
     await page.goto(url);
     await page.waitForLoadState("networkidle");
 
-    const leftColumn = page.getByRole("group", { name: /left column/i });
-    const rightColumn = page.getByRole("group", { name: /right column/i });
+    await page.getByRole("button", { name: `Dog ${uniqueId}` }).click();
+    await page.getByRole("button", { name: `Woof ${uniqueId}` }).click();
 
-    await leftColumn.getByRole("button", { name: `Dog ${uniqueId}` }).click();
-    await rightColumn.getByRole("button", { name: `Woof ${uniqueId}` }).click();
-
-    await leftColumn.getByRole("button", { name: `Cat ${uniqueId}` }).click();
-    await rightColumn.getByRole("button", { name: `Meow ${uniqueId}` }).click();
+    await page.getByRole("button", { name: `Cat ${uniqueId}` }).click();
+    await page.getByRole("button", { name: `Meow ${uniqueId}` }).click();
 
     await page.getByRole("button", { name: /check/i }).click();
     await expect(page.getByText(/correct!/i)).toBeVisible();

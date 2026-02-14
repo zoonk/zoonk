@@ -12,6 +12,7 @@ import {
   checkMatchColumnsAnswer,
   checkMultipleChoiceAnswer,
   checkSelectImageAnswer,
+  checkSingleMatchPair,
   checkSortOrderAnswer,
   checkVocabularyAnswer,
 } from "./check-answer";
@@ -161,6 +162,24 @@ describe(checkFillBlankAnswer, () => {
   });
 });
 
+describe(checkSingleMatchPair, () => {
+  const content: MatchColumnsStepContent = {
+    pairs: [
+      { left: "A", right: "1" },
+      { left: "B", right: "2" },
+    ],
+    question: "Match the items.",
+  };
+
+  test("returns true for a correct pair", () => {
+    expect(checkSingleMatchPair(content, { left: "A", right: "1" })).toBeTruthy();
+  });
+
+  test("returns false for an incorrect pair", () => {
+    expect(checkSingleMatchPair(content, { left: "A", right: "2" })).toBeFalsy();
+  });
+});
+
 describe(checkMatchColumnsAnswer, () => {
   const content: MatchColumnsStepContent = {
     pairs: [
@@ -170,27 +189,39 @@ describe(checkMatchColumnsAnswer, () => {
     question: "Match the items.",
   };
 
-  test("returns correct when all pairs match (same order)", () => {
+  test("returns correct when all pairs match with no mistakes", () => {
     const userPairs = [
       { left: "A", right: "1" },
       { left: "B", right: "2" },
     ];
 
-    expect(checkMatchColumnsAnswer(content, userPairs)).toEqual({
+    expect(checkMatchColumnsAnswer(content, userPairs, 0)).toEqual({
       feedback: null,
       isCorrect: true,
     });
   });
 
-  test("returns correct when all pairs match (different order)", () => {
+  test("returns correct when all pairs match in different order with no mistakes", () => {
     const userPairs = [
       { left: "B", right: "2" },
       { left: "A", right: "1" },
     ];
 
-    expect(checkMatchColumnsAnswer(content, userPairs)).toEqual({
+    expect(checkMatchColumnsAnswer(content, userPairs, 0)).toEqual({
       feedback: null,
       isCorrect: true,
+    });
+  });
+
+  test("returns incorrect when all pairs match but mistakes > 0", () => {
+    const userPairs = [
+      { left: "A", right: "1" },
+      { left: "B", right: "2" },
+    ];
+
+    expect(checkMatchColumnsAnswer(content, userPairs, 1)).toEqual({
+      feedback: null,
+      isCorrect: false,
     });
   });
 
@@ -200,7 +231,7 @@ describe(checkMatchColumnsAnswer, () => {
       { left: "B", right: "1" },
     ];
 
-    expect(checkMatchColumnsAnswer(content, userPairs)).toEqual({
+    expect(checkMatchColumnsAnswer(content, userPairs, 0)).toEqual({
       feedback: null,
       isCorrect: false,
     });
@@ -209,7 +240,7 @@ describe(checkMatchColumnsAnswer, () => {
   test("returns incorrect when counts differ", () => {
     const userPairs = [{ left: "A", right: "1" }];
 
-    expect(checkMatchColumnsAnswer(content, userPairs)).toEqual({
+    expect(checkMatchColumnsAnswer(content, userPairs, 0)).toEqual({
       feedback: null,
       isCorrect: false,
     });

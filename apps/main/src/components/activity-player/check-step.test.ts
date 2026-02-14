@@ -127,6 +127,7 @@ describe(checkStep, () => {
     test("correct pairs", () => {
       const answer: SelectedAnswer = {
         kind: "matchColumns",
+        mistakes: 0,
         userPairs: [
           { left: "A", right: "1" },
           { left: "B", right: "2" },
@@ -140,6 +141,7 @@ describe(checkStep, () => {
     test("incorrect pairs", () => {
       const answer: SelectedAnswer = {
         kind: "matchColumns",
+        mistakes: 0,
         userPairs: [
           { left: "A", right: "2" },
           { left: "B", right: "1" },

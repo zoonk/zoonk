@@ -10,7 +10,7 @@ export type PlayerPhase = "intro" | "playing" | "feedback" | "completed";
 export type SelectedAnswer =
   | { kind: "fillBlank"; userAnswers: string[] }
   | { kind: "listening"; arrangedWords: string[] }
-  | { kind: "matchColumns"; userPairs: { left: string; right: string }[] }
+  | { kind: "matchColumns"; userPairs: { left: string; right: string }[]; mistakes: number }
   | { kind: "multipleChoice"; selectedIndex: number }
   | { kind: "reading"; arrangedWords: string[] }
   | { kind: "selectImage"; selectedIndex: number }

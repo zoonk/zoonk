@@ -6,7 +6,7 @@ import { useExtracted } from "next-intl";
 import { FillBlankStep } from "./fill-blank-step";
 import { MatchColumnsStep } from "./match-columns-step";
 import { MultipleChoiceStep } from "./multiple-choice-step";
-import { type SelectedAnswer } from "./player-reducer";
+import { type SelectedAnswer, type StepResult } from "./player-reducer";
 import { SortOrderStep } from "./sort-order-step";
 import { StaticStep } from "./static-step";
 import { StaticTapZones, useSwipeNavigation } from "./static-step-navigation";
@@ -49,6 +49,7 @@ export function StepRenderer({
   onNavigateNext,
   onNavigatePrev,
   onSelectAnswer,
+  result,
   selectedAnswer,
   step,
 }: {
@@ -56,6 +57,7 @@ export function StepRenderer({
   onNavigateNext: () => void;
   onNavigatePrev: () => void;
   onSelectAnswer: (stepId: string, answer: SelectedAnswer | null) => void;
+  result?: StepResult;
   selectedAnswer: SelectedAnswer | undefined;
   step: SerializedStep;
 }) {
@@ -94,6 +96,7 @@ export function StepRenderer({
     return (
       <MatchColumnsStep
         onSelectAnswer={onSelectAnswer}
+        result={result}
         selectedAnswer={selectedAnswer}
         step={step}
       />
@@ -102,7 +105,12 @@ export function StepRenderer({
 
   if (step.kind === "sortOrder") {
     return (
-      <SortOrderStep onSelectAnswer={onSelectAnswer} selectedAnswer={selectedAnswer} step={step} />
+      <SortOrderStep
+        onSelectAnswer={onSelectAnswer}
+        result={result}
+        selectedAnswer={selectedAnswer}
+        step={step}
+      />
     );
   }
 

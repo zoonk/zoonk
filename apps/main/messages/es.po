@@ -1277,6 +1277,8 @@ msgid "Stats"
 msgstr "Estadísticas"
 
 #: src/components/activity-player/feedback-screen.tsx
+#: src/components/activity-player/match-columns-step.tsx
+#: src/components/activity-player/sort-order-step.tsx
 msgctxt "++l7ni"
 msgid "Not quite"
 msgstr "No del todo"
@@ -1287,6 +1289,8 @@ msgid "Outcome"
 msgstr "Resultado"
 
 #: src/components/activity-player/feedback-screen.tsx
+#: src/components/activity-player/match-columns-step.tsx
+#: src/components/activity-player/sort-order-step.tsx
 msgctxt "xmF49T"
 msgid "Correct!"
 msgstr "¡Correcto!"
@@ -1307,19 +1311,9 @@ msgid "Blank {position}: {item}. Tap to remove."
 msgstr "Espacio {position}: {item}. Toca para quitar."
 
 #: src/components/activity-player/match-columns-step.tsx
-msgctxt "FiksC2"
-msgid "Right column"
-msgstr "Columna derecha"
-
-#: src/components/activity-player/match-columns-step.tsx
-msgctxt "HqBZKC"
-msgid "Left column"
-msgstr "Columna izquierda"
-
-#: src/components/activity-player/match-columns-step.tsx
-msgctxt "JF7Y01"
-msgid "{item}, matched with {match}. Tap to unmatch."
-msgstr "{item}, emparejado con {match}. Toca para desemparejar."
+msgctxt "ja1JDt"
+msgid "All pairs matched. Press Check to continue."
+msgstr "Todos los pares coinciden. Presiona Verificar para continuar."
 
 #: src/components/activity-player/multiple-choice-step.tsx
 msgctxt "HHBtl4"
@@ -1352,9 +1346,19 @@ msgid "Close"
 msgstr "Cerrar"
 
 #: src/components/activity-player/sort-order-step.tsx
+msgctxt "6NoIUl"
+msgid "Correct"
+msgstr "Correcto"
+
+#: src/components/activity-player/sort-order-step.tsx
 msgctxt "7Af5sM"
 msgid "Slot {position}"
 msgstr "Casilla {position}"
+
+#: src/components/activity-player/sort-order-step.tsx
+msgctxt "8PMLyr"
+msgid "Slot {position}: {item}. {result}."
+msgstr "Casilla {position}: {item}. {result}."
 
 #: src/components/activity-player/sort-order-step.tsx
 msgctxt "fXxL3z"
@@ -1365,6 +1369,16 @@ msgstr "Elementos disponibles"
 msgctxt "KoFztx"
 msgid "Slot {position}: {item}. Tap to remove."
 msgstr "Casilla {position}: {item}. Toca para quitar."
+
+#: src/components/activity-player/sort-order-step.tsx
+msgctxt "VA8c/A"
+msgid "Correct order:"
+msgstr "Orden correcto:"
+
+#: src/components/activity-player/sort-order-step.tsx
+msgctxt "Ypr9T5"
+msgid "Incorrect"
+msgstr "Incorrecto"
 
 #: src/components/activity-player/sort-order-step.tsx
 msgctxt "yZaQVq"

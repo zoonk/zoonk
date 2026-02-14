@@ -1,133 +1,183 @@
 "use client";
 
 import { type SerializedStep } from "@/data/activities/prepare-activity-data";
+import { checkSingleMatchPair } from "@zoonk/core/player/check-answer";
 import { parseStepContent } from "@zoonk/core/steps/content-contract";
 import { cn } from "@zoonk/ui/lib/utils";
 import { shuffle } from "@zoonk/utils/shuffle";
+import { CircleCheck } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useCallback, useMemo, useState } from "react";
-import { type SelectedAnswer } from "./player-reducer";
+import { Fragment, useCallback, useMemo, useRef, useState } from "react";
+import { type SelectedAnswer, type StepResult } from "./player-reducer";
 import { QuestionText } from "./question-text";
 import { InteractiveStepLayout } from "./step-layouts";
 import { useReplaceName } from "./user-name-context";
 
 type Pair = { left: string; right: string };
+type ItemVisualState = "correct" | "idle" | "incorrectFlash" | "selected";
 
-function findMatch(matchedPairs: Pair[], item: string, side: "left" | "right"): Pair | undefined {
-  return matchedPairs.find((pair) => pair[side] === item);
+const FLASH_DURATION = 800;
+
+function getItemVisualState({
+  correctPairs,
+  flashingPair,
+  item,
+  selectedLeft,
+  side,
+}: {
+  correctPairs: Pair[];
+  flashingPair: Pair | null;
+  item: string;
+  selectedLeft: string | null;
+  side: "left" | "right";
+}): ItemVisualState {
+  if (correctPairs.some((pair) => pair[side] === item)) {
+    return "correct";
+  }
+
+  if (flashingPair && flashingPair[side] === item) {
+    return "incorrectFlash";
+  }
+
+  if (side === "left" && selectedLeft === item) {
+    return "selected";
+  }
+
+  return "idle";
+}
+
+function getItemClassName(state: ItemVisualState): string {
+  if (state === "correct") {
+    return "border-success bg-success/5 pointer-events-none";
+  }
+
+  if (state === "incorrectFlash") {
+    return "border-destructive bg-destructive/5 animate-shake";
+  }
+
+  if (state === "selected") {
+    return "border-primary bg-primary/5";
+  }
+
+  return "hover:bg-accent focus-visible:border-ring focus-visible:ring-ring/50 outline-none focus-visible:ring-[3px]";
 }
 
 function MatchItem({
-  isMatched,
-  isSelected,
   label,
   onTap,
+  state,
 }: {
-  isMatched: boolean;
-  isSelected: boolean;
   label: string;
   onTap: () => void;
+  state: ItemVisualState;
 }) {
+  const isLocked = state === "correct" || state === "incorrectFlash";
+
   return (
     <button
       aria-label={label}
-      aria-pressed={isSelected}
+      aria-pressed={state === "selected"}
       className={cn(
-        "border-border min-h-11 rounded-lg border px-4 py-3.5 text-left transition-all duration-150",
-        isMatched && "opacity-50",
-        isSelected && "border-primary bg-primary/5",
-        !isMatched &&
-          !isSelected &&
-          "hover:bg-accent focus-visible:border-ring focus-visible:ring-ring/50 outline-none focus-visible:ring-[3px]",
+        "border-border flex min-h-11 items-center gap-2 rounded-lg border px-2.5 py-2.5 text-left text-sm break-words transition-all duration-150 sm:px-4 sm:py-3.5 sm:text-base",
+        getItemClassName(state),
       )}
+      disabled={isLocked}
       onClick={onTap}
       type="button"
     >
-      {label}
+      {state === "correct" ? (
+        <CircleCheck aria-hidden="true" className="text-success size-3.5 shrink-0" />
+      ) : null}
+
+      <span>{label}</span>
     </button>
   );
 }
 
 function MatchGrid({
+  correctPairs,
+  flashingPair,
   leftItems,
-  matchedPairs,
   onTapLeft,
   onTapRight,
   rightItems,
   selectedLeft,
 }: {
+  correctPairs: Pair[];
+  flashingPair: Pair | null;
   leftItems: string[];
-  matchedPairs: Pair[];
   onTapLeft: (item: string) => void;
   onTapRight: (item: string) => void;
   rightItems: string[];
   selectedLeft: string | null;
 }) {
+  return (
+    <div className="grid grid-cols-2 gap-2 sm:gap-3">
+      {leftItems.map((left, index) => {
+        const right = rightItems[index];
+        if (!right) {
+          return null;
+        }
+
+        const leftState = getItemVisualState({
+          correctPairs,
+          flashingPair,
+          item: left,
+          selectedLeft,
+          side: "left",
+        });
+
+        const rightState = getItemVisualState({
+          correctPairs,
+          flashingPair,
+          item: right,
+          selectedLeft,
+          side: "right",
+        });
+
+        return (
+          <Fragment key={left}>
+            <MatchItem label={left} onTap={() => onTapLeft(left)} state={leftState} />
+            <MatchItem label={right} onTap={() => onTapRight(right)} state={rightState} />
+          </Fragment>
+        );
+      })}
+    </div>
+  );
+}
+
+function InlineFeedback({ result }: { result: StepResult }) {
   const t = useExtracted();
+  const isCorrect = result.result.isCorrect;
 
   return (
-    <div className="grid grid-cols-2 gap-3">
-      <div aria-label={t("Left column")} className="flex flex-col gap-3" role="group">
-        {leftItems.map((item) => {
-          const match = findMatch(matchedPairs, item, "left");
-          const isMatched = match !== undefined;
-          const isSelected = selectedLeft === item && !isMatched;
-          const label = isMatched
-            ? t("{item}, matched with {match}. Tap to unmatch.", {
-                item,
-                match: match.right,
-              })
-            : item;
-
-          return (
-            <MatchItem
-              isMatched={isMatched}
-              isSelected={isSelected}
-              key={item}
-              label={label}
-              onTap={() => onTapLeft(item)}
-            />
-          );
-        })}
-      </div>
-
-      <div aria-label={t("Right column")} className="flex flex-col gap-3" role="group">
-        {rightItems.map((item) => {
-          const match = findMatch(matchedPairs, item, "right");
-          const isMatched = match !== undefined;
-          const label = isMatched
-            ? t("{item}, matched with {match}. Tap to unmatch.", {
-                item,
-                match: match.left,
-              })
-            : item;
-
-          return (
-            <MatchItem
-              isMatched={isMatched}
-              isSelected={false}
-              key={item}
-              label={label}
-              onTap={() => onTapRight(item)}
-            />
-          );
-        })}
-      </div>
+    <div
+      aria-live="polite"
+      className={cn(
+        "flex items-center gap-1.5 text-sm font-medium",
+        isCorrect ? "text-success" : "text-destructive",
+      )}
+      role="status"
+    >
+      <CircleCheck aria-hidden="true" className="size-4" />
+      <span>{isCorrect ? t("Correct!") : t("Not quite")}</span>
     </div>
   );
 }
 
 export function MatchColumnsStep({
   onSelectAnswer,
-  selectedAnswer,
+  result,
   step,
 }: {
   onSelectAnswer: (stepId: string, answer: SelectedAnswer | null) => void;
+  result?: StepResult;
   selectedAnswer: SelectedAnswer | undefined;
   step: SerializedStep;
 }) {
   const content = useMemo(() => parseStepContent("matchColumns", step.content), [step.content]);
   const replaceName = useReplaceName();
+  const t = useExtracted();
 
   const shuffledRight = useMemo(
     () => shuffle(content.pairs.map((pair) => pair.right)),
@@ -137,42 +187,33 @@ export function MatchColumnsStep({
   const leftItems = useMemo(() => content.pairs.map((pair) => pair.left), [content.pairs]);
 
   const [selectedLeft, setSelectedLeft] = useState<string | null>(null);
-  const [matchedPairs, setMatchedPairs] = useState<Pair[]>([]);
+  const [correctPairs, setCorrectPairs] = useState<Pair[]>([]);
+  const [flashingPair, setFlashingPair] = useState<Pair | null>(null);
+  const [mistakes, setMistakes] = useState(0);
+  const flashTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handleTapLeft = useCallback(
     (item: string) => {
-      const existingMatch = findMatch(matchedPairs, item, "left");
+      if (correctPairs.some((pair) => pair.left === item)) {
+        return;
+      }
 
-      if (existingMatch) {
-        const next = matchedPairs.filter((pair) => pair.left !== item);
-        setMatchedPairs(next);
-        setSelectedLeft(null);
-
-        if (selectedAnswer) {
-          onSelectAnswer(step.id, null);
-        }
-
+      if (flashingPair) {
         return;
       }
 
       setSelectedLeft(selectedLeft === item ? null : item);
     },
-    [matchedPairs, onSelectAnswer, selectedAnswer, selectedLeft, step.id],
+    [correctPairs, flashingPair, selectedLeft],
   );
 
   const handleTapRight = useCallback(
     (item: string) => {
-      const existingMatch = findMatch(matchedPairs, item, "right");
+      if (correctPairs.some((pair) => pair.right === item)) {
+        return;
+      }
 
-      if (existingMatch) {
-        const next = matchedPairs.filter((pair) => pair.right !== item);
-        setMatchedPairs(next);
-        setSelectedLeft(null);
-
-        if (selectedAnswer) {
-          onSelectAnswer(step.id, null);
-        }
-
+      if (flashingPair) {
         return;
       }
 
@@ -180,30 +221,60 @@ export function MatchColumnsStep({
         return;
       }
 
-      const newPair: Pair = { left: selectedLeft, right: item };
-      const next = [...matchedPairs, newPair];
-      setMatchedPairs(next);
-      setSelectedLeft(null);
+      const pair: Pair = { left: selectedLeft, right: item };
+      const isCorrectPair = checkSingleMatchPair(content, pair);
 
-      if (next.length === content.pairs.length) {
-        onSelectAnswer(step.id, { kind: "matchColumns", userPairs: next });
+      if (isCorrectPair) {
+        const nextCorrect = [...correctPairs, pair];
+        setCorrectPairs(nextCorrect);
+        setSelectedLeft(null);
+
+        if (nextCorrect.length === content.pairs.length) {
+          onSelectAnswer(step.id, {
+            kind: "matchColumns",
+            mistakes,
+            userPairs: nextCorrect,
+          });
+        }
+      } else {
+        setMistakes((prev) => prev + 1);
+        setFlashingPair(pair);
+        setSelectedLeft(null);
+
+        if (flashTimeoutRef.current) {
+          clearTimeout(flashTimeoutRef.current);
+        }
+
+        flashTimeoutRef.current = setTimeout(() => {
+          setFlashingPair(null);
+          flashTimeoutRef.current = null;
+        }, FLASH_DURATION);
       }
     },
-    [content.pairs.length, matchedPairs, onSelectAnswer, selectedAnswer, selectedLeft, step.id],
+    [content, correctPairs, flashingPair, mistakes, onSelectAnswer, selectedLeft, step.id],
   );
+
+  const allMatched = correctPairs.length === content.pairs.length;
 
   return (
     <InteractiveStepLayout>
       {content.question ? <QuestionText>{replaceName(content.question)}</QuestionText> : null}
 
       <MatchGrid
+        correctPairs={correctPairs}
+        flashingPair={flashingPair}
         leftItems={leftItems}
-        matchedPairs={matchedPairs}
         onTapLeft={handleTapLeft}
         onTapRight={handleTapRight}
         rightItems={shuffledRight}
         selectedLeft={selectedLeft}
       />
+
+      <div aria-live="polite" className="sr-only" role="status">
+        {allMatched ? t("All pairs matched. Press Check to continue.") : null}
+      </div>
+
+      {result ? <InlineFeedback result={result} /> : null}
     </InteractiveStepLayout>
   );
 }

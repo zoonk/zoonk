@@ -43,19 +43,27 @@ export function checkFillBlankAnswer(
   return { feedback: content.feedback, isCorrect };
 }
 
+export function checkSingleMatchPair(
+  content: MatchColumnsStepContent,
+  pair: { left: string; right: string },
+): boolean {
+  return content.pairs.some(
+    (correct) => correct.left === pair.left && correct.right === pair.right,
+  );
+}
+
 export function checkMatchColumnsAnswer(
   content: MatchColumnsStepContent,
   userPairs: { left: string; right: string }[],
+  mistakes: number,
 ): AnswerResult {
-  if (content.pairs.length !== userPairs.length) {
-    return { feedback: null, isCorrect: false };
-  }
+  const allPairsCorrect =
+    content.pairs.length === userPairs.length &&
+    content.pairs.every((pair) =>
+      userPairs.some((userPair) => userPair.left === pair.left && userPair.right === pair.right),
+    );
 
-  const isCorrect = content.pairs.every((pair) =>
-    userPairs.some((userPair) => userPair.left === pair.left && userPair.right === pair.right),
-  );
-
-  return { feedback: null, isCorrect };
+  return { feedback: null, isCorrect: allPairsCorrect && mistakes === 0 };
 }
 
 export function checkSortOrderAnswer(
