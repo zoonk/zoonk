@@ -1,3 +1,4 @@
+import { openDialog } from "@zoonk/e2e/helpers";
 import { expect, test } from "./fixtures";
 
 test.describe("Support page", () => {
@@ -14,9 +15,9 @@ test.describe("Support page", () => {
   });
 
   test("submit with valid data shows success message", async ({ page }) => {
-    await page.getByRole("button", { name: /contact support/i }).click();
-
+    const supportButton = page.getByRole("button", { name: /contact support/i });
     const dialog = page.getByRole("dialog");
+    await openDialog(supportButton, dialog);
     const emailInput = dialog.getByRole("textbox", { name: /email address/i });
     const messageInput = dialog.getByRole("textbox", { name: /^message$/i });
 
@@ -31,9 +32,9 @@ test.describe("Support page", () => {
   });
 
   test("submit with invalid email shows validation error", async ({ page }) => {
-    await page.getByRole("button", { name: /contact support/i }).click();
-
+    const supportButton = page.getByRole("button", { name: /contact support/i });
     const dialog = page.getByRole("dialog");
+    await openDialog(supportButton, dialog);
     const emailInput = dialog.getByRole("textbox", { name: /email address/i });
     const messageInput = dialog.getByRole("textbox", { name: /^message$/i });
 
@@ -53,9 +54,9 @@ test.describe("Support page", () => {
   });
 
   test("submit failure shows error message", async ({ page }) => {
-    await page.getByRole("button", { name: /contact support/i }).click();
-
+    const supportButton = page.getByRole("button", { name: /contact support/i });
     const dialog = page.getByRole("dialog");
+    await openDialog(supportButton, dialog);
     const emailInput = dialog.getByRole("textbox", { name: /email address/i });
     const messageInput = dialog.getByRole("textbox", { name: /^message$/i });
 
@@ -76,11 +77,11 @@ test.describe("Support page - Authenticated", () => {
   test("email field shows authenticated user's email", async ({ authenticatedPage }) => {
     await authenticatedPage.goto("/support");
 
-    await authenticatedPage.getByRole("button", { name: /contact support/i }).click();
+    const supportButton = authenticatedPage.getByRole("button", { name: /contact support/i });
+    const dialog = authenticatedPage.getByRole("dialog");
+    await openDialog(supportButton, dialog);
 
-    const emailInput = authenticatedPage
-      .getByRole("dialog")
-      .getByRole("textbox", { name: /email address/i });
+    const emailInput = dialog.getByRole("textbox", { name: /email address/i });
 
     await expect(emailInput).toBeEnabled();
 

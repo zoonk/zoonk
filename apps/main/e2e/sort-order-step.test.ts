@@ -150,24 +150,31 @@ test.describe("Sort Order Step", () => {
 
     const itemList = page.getByRole("list", { name: /sort items/i });
 
-    // Select three items
-    await itemList
-      .getByRole("button", { name: new RegExp(`Uno ${uniqueId}.*Tap to select`) })
-      .click();
+    // First click: resilient to hydration timing
+    const unoSelected = itemList.getByRole("button", {
+      name: new RegExp(`Position 1.*Uno ${uniqueId}`),
+    });
+
+    await expect(async () => {
+      if (!(await unoSelected.isVisible())) {
+        await itemList
+          .getByRole("button", { name: new RegExp(`Uno ${uniqueId}.*Tap to select`) })
+          .click();
+      }
+      await expect(unoSelected).toBeVisible({ timeout: 1000 });
+    }).toPass();
+
+    // Subsequent clicks: page is hydrated, add assertions for determinism
     await itemList
       .getByRole("button", { name: new RegExp(`Dos ${uniqueId}.*Tap to select`) })
       .click();
-    await itemList
-      .getByRole("button", { name: new RegExp(`Tres ${uniqueId}.*Tap to select`) })
-      .click();
-
-    // Verify positions
-    await expect(
-      itemList.getByRole("button", { name: new RegExp(`Position 1.*Uno ${uniqueId}`) }),
-    ).toBeVisible();
     await expect(
       itemList.getByRole("button", { name: new RegExp(`Position 2.*Dos ${uniqueId}`) }),
     ).toBeVisible();
+
+    await itemList
+      .getByRole("button", { name: new RegExp(`Tres ${uniqueId}.*Tap to select`) })
+      .click();
     await expect(
       itemList.getByRole("button", { name: new RegExp(`Position 3.*Tres ${uniqueId}`) }),
     ).toBeVisible();
