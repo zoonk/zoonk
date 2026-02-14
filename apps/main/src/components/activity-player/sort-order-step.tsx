@@ -5,7 +5,6 @@ import { parseStepContent } from "@zoonk/core/steps/content-contract";
 import { Kbd } from "@zoonk/ui/components/kbd";
 import { cn } from "@zoonk/ui/lib/utils";
 import { shuffle } from "@zoonk/utils/shuffle";
-import { CircleCheck, CircleX } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useCallback, useMemo, useState } from "react";
 import { type SelectedAnswer, type StepResult } from "./player-reducer";
@@ -13,164 +12,136 @@ import { QuestionText } from "./question-text";
 import { InteractiveStepLayout } from "./step-layouts";
 import { useReplaceName } from "./user-name-context";
 
-function getSlotResultState(
+function getItemResultState(
   item: string,
-  index: number,
+  position: number,
   correctItems: string[],
-): "correct" | "incorrect" | null {
-  const correctItem = correctItems[index];
-
-  if (!correctItem) {
-    return null;
-  }
-
-  return item === correctItem ? "correct" : "incorrect";
+): "correct" | "incorrect" {
+  return correctItems[position] === item ? "correct" : "incorrect";
 }
 
-function OrderSlot({
-  index,
+function getExpectedItem(position: number, correctItems: string[]): string | undefined {
+  return correctItems[position];
+}
+
+function ItemButton({
+  correctItems,
   item,
-  onRemove,
+  nextPosition,
+  onClick,
+  position,
   resultState,
 }: {
-  index: number;
-  item: string | null;
-  onRemove: () => void;
-  resultState?: "correct" | "incorrect" | null;
-}) {
-  const t = useExtracted();
-  const position = String(index + 1);
-  const hasResult = resultState !== undefined && resultState !== null;
-
-  if (item) {
-    const ariaLabel = hasResult
-      ? t("Slot {position}: {item}. {result}.", {
-          item,
-          position,
-          result: resultState === "correct" ? t("Correct") : t("Incorrect"),
-        })
-      : t("Slot {position}: {item}. Tap to remove.", { item, position });
-
-    return (
-      <button
-        aria-label={ariaLabel}
-        className={cn(
-          "flex min-h-11 items-center gap-3 rounded-lg border border-transparent px-3 py-2 text-left transition-all duration-150 sm:px-4 sm:py-2.5",
-          hasResult && "pointer-events-none",
-          resultState === "correct" && "border-l-success border-l-2",
-          resultState === "incorrect" && "border-l-destructive border-l-2",
-        )}
-        disabled={hasResult}
-        onClick={onRemove}
-        type="button"
-      >
-        <Kbd
-          className={cn(
-            "bg-primary text-primary-foreground",
-            resultState === "correct" && "bg-success text-white",
-            resultState === "incorrect" && "bg-destructive text-white",
-          )}
-        >
-          {position}
-        </Kbd>
-        <span className="text-base">{item}</span>
-      </button>
-    );
-  }
-
-  return (
-    <div
-      aria-label={t("Slot {position}", { position })}
-      className="border-border/50 flex min-h-11 items-center gap-3 rounded-lg border border-dashed px-3 py-2 sm:px-4 sm:py-2.5"
-    >
-      <Kbd>{position}</Kbd>
-    </div>
-  );
-}
-
-function SlotList({
-  correctItems,
-  onRemove,
-  slots,
-}: {
   correctItems?: string[];
-  onRemove: (index: number) => void;
-  slots: (string | null)[];
+  item: string;
+  nextPosition: number;
+  onClick: () => void;
+  position: number | null;
+  resultState?: "correct" | "incorrect";
 }) {
   const t = useExtracted();
+  const hasResult = resultState !== undefined;
+  const isSelected = position !== null;
 
-  return (
-    <div aria-label={t("Answer slots")} className="flex flex-col gap-2" role="list">
-      {slots.map((item, index) => {
-        const resultState =
-          correctItems && item ? getSlotResultState(item, index, correctItems) : undefined;
+  const ariaLabel = (() => {
+    if (hasResult && position !== null) {
+      const result = resultState === "correct" ? t("Correct") : t("Incorrect");
+      return t("Position {position}: {item}. {result}.", {
+        item,
+        position: String(position + 1),
+        result,
+      });
+    }
 
-        return (
-          <OrderSlot
-            index={index}
-            item={item}
-            key={`slot-${index}`}
-            onRemove={() => onRemove(index)}
-            resultState={resultState}
-          />
-        );
-      })}
-    </div>
-  );
-}
+    if (isSelected) {
+      return t("Position {position}: {item}. Tap to remove.", {
+        item,
+        position: String(position + 1),
+      });
+    }
 
-function ItemTile({
-  isUsed,
-  onPlace,
-  word,
-}: {
-  isUsed: boolean;
-  onPlace: () => void;
-  word: string;
-}) {
+    return t("{item}. Tap to select as position {nextPosition}.", {
+      item,
+      nextPosition: String(nextPosition),
+    });
+  })();
+
+  const expectedItem =
+    resultState === "incorrect" && position !== null && correctItems
+      ? getExpectedItem(position, correctItems)
+      : undefined;
+
   return (
     <button
-      aria-disabled={isUsed}
+      aria-label={ariaLabel}
       className={cn(
-        "border-border min-h-11 w-full rounded-lg border px-4 py-2.5 text-left transition-all duration-150",
-        isUsed
-          ? "pointer-events-none opacity-50"
-          : "hover:bg-accent focus-visible:border-ring focus-visible:ring-ring/50 outline-none focus-visible:ring-[3px]",
+        "flex min-h-11 items-center gap-3 rounded-lg border px-3 py-2 text-left transition-all duration-150 sm:px-4 sm:py-2.5",
+        hasResult && "pointer-events-none",
+        !hasResult &&
+          !isSelected &&
+          "border-border/50 hover:bg-accent focus-visible:border-ring focus-visible:ring-ring/50 border-dashed outline-none focus-visible:ring-[3px]",
+        !hasResult && isSelected && "border-border",
+        resultState === "correct" && "border-l-success border-l-2",
+        resultState === "incorrect" && "border-l-destructive border-l-2",
       )}
-      onClick={onPlace}
-      tabIndex={isUsed ? -1 : 0}
+      disabled={hasResult}
+      onClick={onClick}
       type="button"
     >
-      {word}
+      <Kbd
+        className={cn(
+          isSelected && "bg-primary text-primary-foreground",
+          resultState === "correct" && "bg-success text-white",
+          resultState === "incorrect" && "bg-destructive text-white",
+        )}
+      >
+        {isSelected ? String(position + 1) : "\u00A0"}
+      </Kbd>
+
+      <div className="flex flex-col">
+        <span className="text-base">{item}</span>
+
+        {expectedItem ? (
+          <span className="text-muted-foreground text-xs">
+            {t('Expected: "{expectedItem}"', { expectedItem })}
+          </span>
+        ) : null}
+      </div>
     </button>
   );
 }
 
-function ItemPool({
-  onPlace,
-  slots,
-  words,
+function SortItemList({
+  correctItems,
+  items,
+  onToggle,
+  selections,
 }: {
-  onPlace: (word: string) => void;
-  slots: (string | null)[];
-  words: string[];
+  correctItems?: string[];
+  items: string[];
+  onToggle: (item: string) => void;
+  selections: string[];
 }) {
   const t = useExtracted();
-  const usedWords = slots.filter(Boolean);
+  const nextPosition = selections.length + 1;
 
   return (
-    <div aria-label={t("Available items")} className="flex flex-col gap-2" role="group">
-      {words.map((word, index) => {
-        const usedCount = usedWords.filter((used) => used === word).length;
-        const totalCount = words.slice(0, index + 1).filter((item) => item === word).length;
-        const isUsed = usedCount >= totalCount;
+    <div aria-label={t("Sort items")} className="flex flex-col gap-2" role="list">
+      {items.map((item, index) => {
+        const position = selections.indexOf(item);
+        const isSelected = position !== -1;
+        const resultState =
+          correctItems && isSelected ? getItemResultState(item, position, correctItems) : undefined;
 
         return (
-          <ItemTile
-            isUsed={isUsed}
-            key={`${word}-${index}`}
-            onPlace={() => onPlace(word)}
-            word={word}
+          <ItemButton
+            correctItems={correctItems}
+            item={item}
+            key={`${item}-${index}`}
+            nextPosition={nextPosition}
+            onClick={() => onToggle(item)}
+            position={isSelected ? position : null}
+            resultState={resultState}
           />
         );
       })}
@@ -182,7 +153,7 @@ function InlineFeedback({
   content,
   result,
 }: {
-  content: { feedback: string | null; items: string[] };
+  content: { feedback: string | null };
   result: StepResult;
 }) {
   const t = useExtracted();
@@ -192,40 +163,13 @@ function InlineFeedback({
 
   return (
     <div className="flex flex-col gap-3">
-      <div
-        aria-live="polite"
-        className={cn(
-          "flex items-center gap-1.5 text-sm font-medium",
-          isCorrect ? "text-success" : "text-destructive",
-        )}
-        role="status"
-      >
-        {isCorrect ? (
-          <CircleCheck aria-hidden="true" className="size-4" />
-        ) : (
-          <CircleX aria-hidden="true" className="size-4" />
-        )}
-        <span>{isCorrect ? t("Correct!") : t("Not quite")}</span>
+      <div aria-live="polite" className="sr-only" role="status">
+        {isCorrect ? t("Correct") : t("Incorrect")}
       </div>
 
-      {feedback ? <p className="text-muted-foreground text-base">{feedback}</p> : null}
-
-      {isCorrect ? null : (
-        <div className="text-muted-foreground text-sm">
-          <p className="font-medium">{t("Correct order:")}</p>
-          <ol className="mt-1 list-inside list-decimal">
-            {content.items.map((item) => (
-              <li key={item}>{item}</li>
-            ))}
-          </ol>
-        </div>
-      )}
+      {feedback ? <p className="text-muted-foreground text-sm">{feedback}</p> : null}
     </div>
   );
-}
-
-function isComplete(slots: (string | null)[]): slots is string[] {
-  return slots.every((slot) => slot !== null);
 }
 
 export function SortOrderStep({
@@ -239,53 +183,43 @@ export function SortOrderStep({
   selectedAnswer: SelectedAnswer | undefined;
   step: SerializedStep;
 }) {
+  const t = useExtracted();
   const content = useMemo(() => parseStepContent("sortOrder", step.content), [step.content]);
   const replaceName = useReplaceName();
 
   const shuffledItems = useMemo(() => shuffle(content.items), [content.items]);
 
-  const [slots, setSlots] = useState<(string | null)[]>(() => {
+  const [selections, setSelections] = useState<string[]>(() => {
     if (result?.answer?.kind === "sortOrder") {
       return result.answer.userOrder;
     }
 
-    return Array.from({ length: content.items.length }, () => null);
+    return [];
   });
 
-  const handlePlace = useCallback(
-    (word: string) => {
-      const firstEmptyIndex = slots.indexOf(null);
+  const handleToggle = useCallback(
+    (item: string) => {
+      const index = selections.indexOf(item);
 
-      if (firstEmptyIndex === -1) {
+      if (index !== -1) {
+        const next = selections.filter((_, idx) => idx !== index);
+        setSelections(next);
+
+        if (selectedAnswer) {
+          onSelectAnswer(step.id, null);
+        }
+
         return;
       }
 
-      const next = [...slots];
-      next[firstEmptyIndex] = word;
-      setSlots(next);
+      const next = [...selections, item];
+      setSelections(next);
 
-      if (isComplete(next)) {
+      if (next.length === content.items.length) {
         onSelectAnswer(step.id, { kind: "sortOrder", userOrder: next });
       }
     },
-    [onSelectAnswer, slots, step.id],
-  );
-
-  const handleRemove = useCallback(
-    (index: number) => {
-      if (!slots[index]) {
-        return;
-      }
-
-      const next = [...slots];
-      next[index] = null;
-      setSlots(next);
-
-      if (selectedAnswer) {
-        onSelectAnswer(step.id, null);
-      }
-    },
-    [onSelectAnswer, selectedAnswer, slots, step.id],
+    [content.items.length, onSelectAnswer, selectedAnswer, selections, step.id],
   );
 
   const hasResult = result !== undefined;
@@ -294,13 +228,14 @@ export function SortOrderStep({
     <InteractiveStepLayout>
       {content.question ? <QuestionText>{replaceName(content.question)}</QuestionText> : null}
 
-      <SlotList
-        correctItems={hasResult ? content.items : undefined}
-        onRemove={handleRemove}
-        slots={slots}
-      />
+      <p className="text-muted-foreground text-sm">{t("Tap items in the correct order")}</p>
 
-      {hasResult ? null : <ItemPool onPlace={handlePlace} slots={slots} words={shuffledItems} />}
+      <SortItemList
+        correctItems={hasResult ? content.items : undefined}
+        items={shuffledItems}
+        onToggle={handleToggle}
+        selections={selections}
+      />
 
       {result ? <InlineFeedback content={content} result={result} /> : null}
     </InteractiveStepLayout>

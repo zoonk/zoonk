@@ -1277,7 +1277,6 @@ msgid "Stats"
 msgstr "Estadísticas"
 
 #: src/components/activity-player/feedback-screen.tsx
-#: src/components/activity-player/sort-order-step.tsx
 msgctxt "++l7ni"
 msgid "Not quite"
 msgstr "No del todo"
@@ -1288,7 +1287,6 @@ msgid "Outcome"
 msgstr "Resultado"
 
 #: src/components/activity-player/feedback-screen.tsx
-#: src/components/activity-player/sort-order-step.tsx
 msgctxt "xmF49T"
 msgid "Correct!"
 msgstr "¡Correcto!"
@@ -1344,44 +1342,44 @@ msgid "Close"
 msgstr "Cerrar"
 
 #: src/components/activity-player/sort-order-step.tsx
+msgctxt "/CFOL2"
+msgid "Tap items in the correct order"
+msgstr "Toca los elementos en el orden correcto"
+
+#: src/components/activity-player/sort-order-step.tsx
+msgctxt "1za4AW"
+msgid "{item}. Tap to select as position {nextPosition}."
+msgstr "{item}. Toca para seleccionar como posición {nextPosition}."
+
+#: src/components/activity-player/sort-order-step.tsx
 msgctxt "6NoIUl"
 msgid "Correct"
 msgstr "Correcto"
 
 #: src/components/activity-player/sort-order-step.tsx
-msgctxt "7Af5sM"
-msgid "Slot {position}"
-msgstr "Casilla {position}"
+msgctxt "oqRIWD"
+msgid "Position {position}: {item}. {result}."
+msgstr "Posición {position}: {item}. {result}."
 
 #: src/components/activity-player/sort-order-step.tsx
-msgctxt "8PMLyr"
-msgid "Slot {position}: {item}. {result}."
-msgstr "Casilla {position}: {item}. {result}."
+msgctxt "p5llOK"
+msgid "Sort items"
+msgstr "Ordenar elementos"
 
 #: src/components/activity-player/sort-order-step.tsx
-msgctxt "fXxL3z"
-msgid "Available items"
-msgstr "Elementos disponibles"
+msgctxt "rNTHBv"
+msgid "Expected: \"{expectedItem}\""
+msgstr "Esperado: \"{expectedItem}\""
 
 #: src/components/activity-player/sort-order-step.tsx
-msgctxt "KoFztx"
-msgid "Slot {position}: {item}. Tap to remove."
-msgstr "Casilla {position}: {item}. Toca para quitar."
-
-#: src/components/activity-player/sort-order-step.tsx
-msgctxt "VA8c/A"
-msgid "Correct order:"
-msgstr "Orden correcto:"
+msgctxt "vPyO9S"
+msgid "Position {position}: {item}. Tap to remove."
+msgstr "Posición {position}: {item}. Toca para quitar."
 
 #: src/components/activity-player/sort-order-step.tsx
 msgctxt "Ypr9T5"
 msgid "Incorrect"
 msgstr "Incorrecto"
-
-#: src/components/activity-player/sort-order-step.tsx
-msgctxt "yZaQVq"
-msgid "Answer slots"
-msgstr "Casillas de respuesta"
 
 #: src/components/activity-player/step-renderer.tsx
 msgctxt "4pTU5S"

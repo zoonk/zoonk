@@ -68,7 +68,7 @@ async function createSortOrderActivity(options: {
 }
 
 test.describe("Sort Order Step", () => {
-  test("renders question, empty slots, and full-width item tiles", async ({ page }) => {
+  test("renders question, instruction text, and shuffled item list", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const { url } = await createSortOrderActivity({
       steps: [
@@ -86,17 +86,23 @@ test.describe("Sort Order Step", () => {
     await page.goto(url);
 
     await expect(page.getByText(new RegExp(`Sort these items ${uniqueId}`))).toBeVisible();
+    await expect(page.getByText(/tap items in the correct order/i)).toBeVisible();
 
-    const slotList = page.getByRole("list", { name: /answer slots/i });
-    await expect(slotList).toBeVisible();
+    const itemList = page.getByRole("list", { name: /sort items/i });
+    await expect(itemList).toBeVisible();
 
-    const itemPool = page.getByRole("group", { name: /available items/i });
-    await expect(itemPool.getByRole("button", { name: `First ${uniqueId}` })).toBeVisible();
-    await expect(itemPool.getByRole("button", { name: `Second ${uniqueId}` })).toBeVisible();
-    await expect(itemPool.getByRole("button", { name: `Third ${uniqueId}` })).toBeVisible();
+    await expect(
+      itemList.getByRole("button", { name: new RegExp(`First ${uniqueId}`) }),
+    ).toBeVisible();
+    await expect(
+      itemList.getByRole("button", { name: new RegExp(`Second ${uniqueId}`) }),
+    ).toBeVisible();
+    await expect(
+      itemList.getByRole("button", { name: new RegExp(`Third ${uniqueId}`) }),
+    ).toBeVisible();
   });
 
-  test("tapping an item places it in the first empty slot", async ({ page }) => {
+  test("tapping an item assigns the next sequential number", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const { url } = await createSortOrderActivity({
       steps: [
@@ -113,22 +119,26 @@ test.describe("Sort Order Step", () => {
 
     await page.goto(url);
 
-    const itemPool = page.getByRole("group", { name: /available items/i });
-    await itemPool.getByRole("button", { name: `Alpha ${uniqueId}` }).click();
+    const itemList = page.getByRole("list", { name: /sort items/i });
+    await itemList
+      .getByRole("button", { name: new RegExp(`Alpha ${uniqueId}.*Tap to select`) })
+      .click();
 
     await expect(
-      page.getByRole("button", { name: new RegExp(`Slot 1.*Alpha ${uniqueId}`) }),
+      itemList.getByRole("button", { name: new RegExp(`Position 1.*Alpha ${uniqueId}`) }),
     ).toBeVisible();
   });
 
-  test("tapping a filled slot returns item to pool", async ({ page }) => {
+  test("tapping a selected item removes its number and renumbers higher items", async ({
+    page,
+  }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const { url } = await createSortOrderActivity({
       steps: [
         {
           content: {
             feedback: `Feedback ${uniqueId}`,
-            items: [`Uno ${uniqueId}`, `Dos ${uniqueId}`],
+            items: [`Uno ${uniqueId}`, `Dos ${uniqueId}`, `Tres ${uniqueId}`],
             question: `Order ${uniqueId}`,
           },
           position: 0,
@@ -138,25 +148,45 @@ test.describe("Sort Order Step", () => {
 
     await page.goto(url);
 
-    const itemPool = page.getByRole("group", { name: /available items/i });
-    await itemPool.getByRole("button", { name: `Uno ${uniqueId}` }).click();
+    const itemList = page.getByRole("list", { name: /sort items/i });
 
-    const filledSlot = page.getByRole("button", { name: new RegExp(`Slot 1.*Uno ${uniqueId}`) });
-    await expect(filledSlot).toBeVisible();
+    // Select three items
+    await itemList
+      .getByRole("button", { name: new RegExp(`Uno ${uniqueId}.*Tap to select`) })
+      .click();
+    await itemList
+      .getByRole("button", { name: new RegExp(`Dos ${uniqueId}.*Tap to select`) })
+      .click();
+    await itemList
+      .getByRole("button", { name: new RegExp(`Tres ${uniqueId}.*Tap to select`) })
+      .click();
 
-    await filledSlot.click();
+    // Verify positions
+    await expect(
+      itemList.getByRole("button", { name: new RegExp(`Position 1.*Uno ${uniqueId}`) }),
+    ).toBeVisible();
+    await expect(
+      itemList.getByRole("button", { name: new RegExp(`Position 2.*Dos ${uniqueId}`) }),
+    ).toBeVisible();
+    await expect(
+      itemList.getByRole("button", { name: new RegExp(`Position 3.*Tres ${uniqueId}`) }),
+    ).toBeVisible();
+
+    // Remove #2 (Dos) — Tres should become #2
+    await itemList.getByRole("button", { name: new RegExp(`Position 2.*Dos ${uniqueId}`) }).click();
 
     await expect(
-      page.getByRole("button", { name: new RegExp(`Slot 1.*Uno ${uniqueId}`) }),
-    ).not.toBeVisible();
-
-    await expect(itemPool.getByRole("button", { name: `Uno ${uniqueId}` })).not.toHaveAttribute(
-      "aria-disabled",
-      "true",
-    );
+      itemList.getByRole("button", { name: new RegExp(`Position 1.*Uno ${uniqueId}`) }),
+    ).toBeVisible();
+    await expect(
+      itemList.getByRole("button", { name: new RegExp(`Dos ${uniqueId}.*Tap to select`) }),
+    ).toBeVisible();
+    await expect(
+      itemList.getByRole("button", { name: new RegExp(`Position 2.*Tres ${uniqueId}`) }),
+    ).toBeVisible();
   });
 
-  test("check button disabled until all slots filled", async ({ page }) => {
+  test("check button disabled until all items selected", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const { url } = await createSortOrderActivity({
       steps: [
@@ -177,17 +207,21 @@ test.describe("Sort Order Step", () => {
     const checkButton = page.getByRole("button", { name: /check/i });
     await expect(checkButton).toBeDisabled();
 
-    const itemPool = page.getByRole("group", { name: /available items/i });
-    await itemPool.getByRole("button", { name: `X ${uniqueId}` }).click();
+    const itemList = page.getByRole("list", { name: /sort items/i });
+    await itemList
+      .getByRole("button", { name: new RegExp(`X ${uniqueId}.*Tap to select`) })
+      .click();
 
     await expect(checkButton).toBeDisabled();
 
-    await itemPool.getByRole("button", { name: `Y ${uniqueId}` }).click();
+    await itemList
+      .getByRole("button", { name: new RegExp(`Y ${uniqueId}.*Tap to select`) })
+      .click();
 
     await expect(checkButton).toBeEnabled();
   });
 
-  test("correct answer shows inline feedback with green indicators", async ({ page }) => {
+  test("correct answer shows custom feedback and green indicators", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const { url } = await createSortOrderActivity({
       steps: [
@@ -205,27 +239,30 @@ test.describe("Sort Order Step", () => {
     await page.goto(url);
     await page.waitForLoadState("networkidle");
 
-    const itemPool = page.getByRole("group", { name: /available items/i });
+    const itemList = page.getByRole("list", { name: /sort items/i });
 
-    await itemPool.getByRole("button", { name: `Step1 ${uniqueId}` }).click();
-    await itemPool.getByRole("button", { name: `Step2 ${uniqueId}` }).click();
+    await itemList
+      .getByRole("button", { name: new RegExp(`Step1 ${uniqueId}.*Tap to select`) })
+      .click();
+    await itemList
+      .getByRole("button", { name: new RegExp(`Step2 ${uniqueId}.*Tap to select`) })
+      .click();
 
     await page.getByRole("button", { name: /check/i }).click();
 
-    // Inline feedback shows Correct!
-    await expect(page.getByText(/correct!/i)).toBeVisible();
+    // Custom feedback is shown
     await expect(page.getByText(new RegExp(`Well done ${uniqueId}`))).toBeVisible();
 
-    // Item pool should be hidden
-    await expect(page.getByRole("group", { name: /available items/i })).not.toBeVisible();
-
-    // Slots should show result state (Correct in aria-label)
+    // Items show correct result state
     await expect(
-      page.getByRole("button", { name: new RegExp(`Slot 1.*Step1 ${uniqueId}.*Correct`) }),
+      itemList.getByRole("button", { name: new RegExp(`Position 1.*Step1 ${uniqueId}.*Correct`) }),
+    ).toBeVisible();
+    await expect(
+      itemList.getByRole("button", { name: new RegExp(`Position 2.*Step2 ${uniqueId}.*Correct`) }),
     ).toBeVisible();
   });
 
-  test("incorrect answer shows inline feedback with correct order", async ({ page }) => {
+  test("incorrect answer shows inline expected hints", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const { url } = await createSortOrderActivity({
       steps: [
@@ -243,19 +280,28 @@ test.describe("Sort Order Step", () => {
     await page.goto(url);
     await page.waitForLoadState("networkidle");
 
-    const itemPool = page.getByRole("group", { name: /available items/i });
+    const itemList = page.getByRole("list", { name: /sort items/i });
 
     // Place in wrong order
-    await itemPool.getByRole("button", { name: `Second ${uniqueId}` }).click();
-    await itemPool.getByRole("button", { name: `First ${uniqueId}` }).click();
+    await itemList
+      .getByRole("button", { name: new RegExp(`Second ${uniqueId}.*Tap to select`) })
+      .click();
+    await itemList
+      .getByRole("button", { name: new RegExp(`First ${uniqueId}.*Tap to select`) })
+      .click();
 
     await page.getByRole("button", { name: /check/i }).click();
 
-    // Inline feedback shows Not quite
-    await expect(page.getByText(/not quite/i)).toBeVisible();
+    // Shows inline expected hints instead of "Correct order:" list
+    await expect(page.getByText(new RegExp(`Expected: "First ${uniqueId}"`))).toBeVisible();
+    await expect(page.getByText(new RegExp(`Expected: "Second ${uniqueId}"`))).toBeVisible();
 
-    // Shows correct order
-    await expect(page.getByText(/correct order/i)).toBeVisible();
+    // Custom feedback shown
+    await expect(page.getByText(new RegExp(`Try again ${uniqueId}`))).toBeVisible();
+
+    // No "Correct order:" list or "Not quite" visible text
+    await expect(page.getByText(/correct order:/i)).not.toBeVisible();
+    await expect(page.getByText(/not quite/i)).not.toBeVisible();
   });
 
   test("continue button appears after checking", async ({ page }) => {
@@ -276,17 +322,21 @@ test.describe("Sort Order Step", () => {
     await page.goto(url);
     await page.waitForLoadState("networkidle");
 
-    const itemPool = page.getByRole("group", { name: /available items/i });
+    const itemList = page.getByRole("list", { name: /sort items/i });
 
-    await itemPool.getByRole("button", { name: `A ${uniqueId}` }).click();
-    await itemPool.getByRole("button", { name: `B ${uniqueId}` }).click();
+    await itemList
+      .getByRole("button", { name: new RegExp(`A ${uniqueId}.*Tap to select`) })
+      .click();
+    await itemList
+      .getByRole("button", { name: new RegExp(`B ${uniqueId}.*Tap to select`) })
+      .click();
 
     await page.getByRole("button", { name: /check/i }).click();
 
     await expect(page.getByRole("button", { name: /continue/i })).toBeVisible();
   });
 
-  test("full flow: place all, check, inline feedback, continue, completion", async ({ page }) => {
+  test("full flow: select all, check, feedback, continue, completion", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const { url } = await createSortOrderActivity({
       steps: [
@@ -304,13 +354,17 @@ test.describe("Sort Order Step", () => {
     await page.goto(url);
     await page.waitForLoadState("networkidle");
 
-    const itemPool = page.getByRole("group", { name: /available items/i });
+    const itemList = page.getByRole("list", { name: /sort items/i });
 
-    await itemPool.getByRole("button", { name: `A ${uniqueId}` }).click();
-    await itemPool.getByRole("button", { name: `B ${uniqueId}` }).click();
+    await itemList
+      .getByRole("button", { name: new RegExp(`A ${uniqueId}.*Tap to select`) })
+      .click();
+    await itemList
+      .getByRole("button", { name: new RegExp(`B ${uniqueId}.*Tap to select`) })
+      .click();
 
     await page.getByRole("button", { name: /check/i }).click();
-    await expect(page.getByText(/correct!/i)).toBeVisible();
+    await expect(page.getByText(new RegExp(`Nice ${uniqueId}`))).toBeVisible();
 
     await page.getByRole("button", { name: /continue/i }).click();
     await expect(page.getByText("1/1")).toBeVisible();

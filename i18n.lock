@@ -443,14 +443,14 @@ checksums:
     Next%20step/singular: 712c63650b5180cbc14d6246b5d558c2
     Step%20navigation/singular: ec328f28051577e1c0aab044c89b138c
     Close/singular: 2c2e22f8424a1031de89063bd0022e16
+    Tap%20items%20in%20the%20correct%20order/singular: 221c7b9ef00241af65f534432965e782
+    "%7Bitem%7D.%20Tap%20to%20select%20as%20position%20%7BnextPosition%7D./singular": f8b0d3e60ce3740c02c33c0faaec5e6b
     Correct/singular: c643eeb0a615de2032eca68722c31177
-    Slot%20%7Bposition%7D/singular: 860581010a2082a83dcdfcb2803fce82
-    Slot%20%7Bposition%7D%3A%20%7Bitem%7D.%20%7Bresult%7D./singular: babff11abd6c298cb6b8c27291f4a30f
-    Available%20items/singular: 4ddce93f2455bfafb212b3eb68f18bf1
-    Slot%20%7Bposition%7D%3A%20%7Bitem%7D.%20Tap%20to%20remove./singular: 87edef45f4f5f40c8ee3902e4500ff87
-    Correct%20order%3A/singular: df3f446653ec8cde9c29d8d5912636ef
+    Position%20%7Bposition%7D%3A%20%7Bitem%7D.%20%7Bresult%7D./singular: af22d79f69dfa3f725721db4d668814d
+    Sort%20items/singular: 3b1072a596203b5acdc5718d38161392
+    Expected%3A%20%22%7BexpectedItem%7D%22/singular: e7904d0034072590249b13ffdde17f3c
+    Position%20%7Bposition%7D%3A%20%7Bitem%7D.%20Tap%20to%20remove./singular: a1b3d3e026bfff43bff3d3e85ccdb952
     Incorrect/singular: a86cfbe7b86f19dc8df14a67df073d22
-    Answer%20slots/singular: 439a0650c67bd8bbdc46fe8ceb72edab
     Answer%20selected/singular: 43c2c02a2f5ab63d04a3ba140a03b769
     Select%20answer/singular: 4951d9f093550e70ff5f399634b2b595
     Not%20completed/singular: d011b1ae92a1a8a2676a5d6999bbe6d4
