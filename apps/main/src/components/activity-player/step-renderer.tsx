@@ -3,6 +3,7 @@
 import { type SerializedStep } from "@/data/activities/prepare-activity-data";
 import { Button } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
+import { FillBlankStep } from "./fill-blank-step";
 import { MultipleChoiceStep } from "./multiple-choice-step";
 import { type SelectedAnswer } from "./player-reducer";
 import { StaticStep } from "./static-step";
@@ -15,7 +16,7 @@ function PlaceholderInteractiveStep({
   selectedAnswer,
   step,
 }: {
-  onSelectAnswer: (stepId: string, answer: SelectedAnswer) => void;
+  onSelectAnswer: (stepId: string, answer: SelectedAnswer | null) => void;
   selectedAnswer: SelectedAnswer | undefined;
   step: SerializedStep;
 }) {
@@ -52,7 +53,7 @@ export function StepRenderer({
   isFirst: boolean;
   onNavigateNext: () => void;
   onNavigatePrev: () => void;
-  onSelectAnswer: (stepId: string, answer: SelectedAnswer) => void;
+  onSelectAnswer: (stepId: string, answer: SelectedAnswer | null) => void;
   selectedAnswer: SelectedAnswer | undefined;
   step: SerializedStep;
 }) {
@@ -78,6 +79,12 @@ export function StepRenderer({
         selectedAnswer={selectedAnswer}
         step={step}
       />
+    );
+  }
+
+  if (step.kind === "fillBlank") {
+    return (
+      <FillBlankStep onSelectAnswer={onSelectAnswer} selectedAnswer={selectedAnswer} step={step} />
     );
   }
 

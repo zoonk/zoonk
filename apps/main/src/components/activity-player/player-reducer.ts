@@ -38,6 +38,7 @@ export type PlayerState = {
 
 export type PlayerAction =
   | { type: "SELECT_ANSWER"; stepId: string; answer: SelectedAnswer }
+  | { type: "CLEAR_ANSWER"; stepId: string }
   | { type: "CHECK_ANSWER"; stepId: string; result: AnswerResult; effects: ChallengeEffect[] }
   | { type: "CONTINUE" }
   | { type: "COMPLETE" }
@@ -121,6 +122,14 @@ function handleSelectAnswer(
     ...state,
     selectedAnswers: { ...state.selectedAnswers, [action.stepId]: action.answer },
   };
+}
+
+function handleClearAnswer(
+  state: PlayerState,
+  action: Extract<PlayerAction, { type: "CLEAR_ANSWER" }>,
+): PlayerState {
+  const { [action.stepId]: _, ...rest } = state.selectedAnswers;
+  return { ...state, selectedAnswers: rest };
 }
 
 function handleCheckAnswer(
@@ -225,6 +234,9 @@ export function playerReducer(state: PlayerState, action: PlayerAction): PlayerS
   switch (action.type) {
     case "SELECT_ANSWER":
       return handleSelectAnswer(state, action);
+
+    case "CLEAR_ANSWER":
+      return handleClearAnswer(state, action);
 
     case "CHECK_ANSWER":
       return handleCheckAnswer(state, action);
