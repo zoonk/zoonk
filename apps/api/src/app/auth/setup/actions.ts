@@ -15,7 +15,7 @@ export async function setupProfileAction(
   const username = parseFormField(formData, "username");
 
   if (!name || !username) {
-    return { status: "error" as const };
+    return { status: "error" };
   }
 
   const { error } = await safeAsync(async () =>
@@ -27,8 +27,8 @@ export async function setupProfileAction(
 
   if (error) {
     console.error("Error setting up profile:", error);
-    return { status: "error" as const };
+    return { status: "error" };
   }
 
-  return { status: "success" as const };
+  return { status: "success" };
 }
