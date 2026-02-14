@@ -68,7 +68,13 @@ export function SetupProfileForm({
     <SetupForm action={formAction}>
       <SetupField>
         <SetupLabel htmlFor="name">{t("Name")}</SetupLabel>
-        <SetupInput defaultValue={defaultName} id="name" name="name" type="text" />
+        <SetupInput
+          autoComplete="name"
+          defaultValue={defaultName}
+          id="name"
+          name="name"
+          type="text"
+        />
       </SetupField>
 
       <SetupField>

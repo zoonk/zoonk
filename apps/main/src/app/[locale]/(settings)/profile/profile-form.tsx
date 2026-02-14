@@ -11,6 +11,7 @@ import {
   FieldLabel,
 } from "@zoonk/ui/components/field";
 import { Input } from "@zoonk/ui/components/input";
+import { InputGroup, InputGroupAddon, InputGroupInput } from "@zoonk/ui/components/input-group";
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { cn } from "@zoonk/ui/lib/utils";
 import { SubmitButton } from "@zoonk/ui/patterns/buttons/submit";
@@ -72,6 +73,7 @@ export function ProfileForm() {
           <FieldLabel htmlFor="name">{t("Name")}</FieldLabel>
           <Input
             aria-invalid={hasError}
+            autoComplete="name"
             defaultValue={currentName}
             disabled={isPending}
             id="name"
@@ -101,18 +103,13 @@ export function ProfileForm() {
         <FieldContent>
           <FieldLabel htmlFor="username">{t("Username")}</FieldLabel>
 
-          <div className="relative">
-            <span
-              aria-hidden="true"
-              className="text-muted-foreground pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-sm"
-            >
-              @
-            </span>
+          <InputGroup>
+            <InputGroupAddon>@</InputGroupAddon>
 
-            <Input
+            <InputGroupInput
               autoCapitalize="none"
+              autoComplete="username"
               autoCorrect="off"
-              className="pl-7"
               disabled={isPending}
               id="username"
               maxLength={30}
@@ -123,7 +120,7 @@ export function ProfileForm() {
               spellCheck={false}
               value={username}
             />
-          </div>
+          </InputGroup>
 
           <UsernameStatus description={description} status={status} />
         </FieldContent>
