@@ -763,7 +763,7 @@ msgstr "Este nome será visível para outros usuários."
 #: src/app/[locale]/(settings)/profile/profile-form.tsx
 msgctxt "wYCHCR"
 msgid "Failed to update your profile. Please try again or contact hello@zoonk.com"
-msgstr "Falha ao atualizar seu perfil. Por favor, tente novamente ou entre em contato com hello@zoonk.com"
+msgstr "Falha ao atualizar seu perfil. Por favor, tente novamente ou entre em contato com contato@zoonk.com"
 
 #: src/app/[locale]/(settings)/profile/profile-form.tsx
 msgctxt "X0ha1a"
