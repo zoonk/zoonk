@@ -252,6 +252,17 @@ test.describe("Activity Detail Page", () => {
     await expect(page.getByText(/not found|404/i)).toBeVisible();
   });
 
+  test("page title contains kind label and lesson title", async ({ page }) => {
+    const { chapter, course, lesson } = await createTestActivity({
+      generationStatus: "completed",
+    });
+
+    await page.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}/a/0`);
+
+    await expect(page).toHaveTitle(new RegExp(lesson.title));
+    await expect(page).toHaveTitle(/background/i);
+  });
+
   test("unpublished activity shows 404 page", async ({ page }) => {
     const org = await prisma.organization.findUniqueOrThrow({
       where: { slug: "ai" },

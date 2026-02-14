@@ -360,7 +360,6 @@ checksums:
     Generate%20activity/singular: 4fbbc27fc1d296a0414ed0d7f57e4ba0
     Activity%20not%20available/singular: a76f6331aa0aad825903108429b132a0
     This%20activity%20hasn't%20been%20generated%20yet./singular: 631d7c5e190d95c7697df1f6a4bb9a1c
-    Complete%20this%20activity%20to%20reinforce%20your%20learning%20and%20track%20your%20progress./singular: ae9411230fe031bbbd7471a8fde4b17d
     Generate%20content%20for%20this%20activity/singular: 0ac20ea56d4391004d976cd8f377a645
     Generate%20Activity/singular: e386c80be3da0ee0b54a940afc4de373
     Your%20activity%20is%20ready/singular: e7385c4096b843839bb9a96023f0eea9
@@ -448,27 +447,44 @@ checksums:
     Generating%20content%20with%20AI%20requires%20an%20active%20subscription./singular: ee3e62a18f3437b719f6793dd01d66f8
     Explains%20HOW%20things%20work%20under%20the%20hood.%20Shows%20the%20processes%2C%20sequences%2C%20and%20cause-effect%20chains%20in%20action./singular: 89c176fd862db6d6178194b091e8544d
     Listening/singular: 9e680c44cd88a178b953349ed8881ef2
+    Experience%20when%20to%20apply%20%7Btopic%7D%20through%20a%20real-world%20dialogue%20scenario./singular: d143d122b526618096d637288c66f50a
     Examples/singular: 9dacb7c56bc894e4bcad39f41265e3a0
     Challenge/singular: 7f333a59ee7a3596e27a2f8c3401b764
+    Practice%20%7Btopic%7D%20in%20context%20through%20a%20dialogue-based%20story%20set%20in%20real-world%20situations./singular: e1b3079ec8c6a2c89d20e5c7c48bfc59
     Story/singular: fabac3f62af801d429e2cd7115bf14c9
+    Build%20your%20%7Btopic%7D%20vocabulary%20with%20new%20words%2C%20translations%2C%20and%20pronunciation./singular: 2c0f84dadf5fcbfb5842260046bfa956
+    Review%20everything%20you%20learned%20about%20%7Btopic%7D%20with%20a%20comprehensive%20quiz./singular: 8acf9006cabdcbaac217c7565943f068
     Explanation/singular: f6b595df4ffb1a5b0cbbe1dda5993522
     Read%20sentences%20and%20translate%20them%20to%20practice%20reading%20comprehension./singular: b084920876df6266904d73e2ddfc6f19
     A%20comprehensive%20quiz%20covering%20everything%20you%20learned%20in%20this%20lesson./singular: bd46bf5022b53951436d9facacacf673
     Learn%20new%20words%20and%20their%20translations%20to%20build%20your%20vocabulary./singular: edf41f5213749b375ab5057e14707380
+    See%20where%20%7Btopic%7D%20appears%20in%20real%20life%20%E2%80%94%20in%20daily%20routines%2C%20work%2C%20pop%20culture%2C%20and%20unexpected%20places./singular: a9a8d8e02fec7e88426b9ca04018f353
+    Sharpen%20your%20%7Btopic%7D%20listening%20skills%20by%20translating%20audio%20sentences./singular: b624ceffbbfc91a29cec43a0037b067f
     Tests%20analytical%20thinking%20through%20decisions%20with%20trade-offs.%20See%20how%20each%20choice%20impacts%20different%20outcomes./singular: 6d49ad51d42b986411df06b5ceb48067
+    Test%20your%20understanding%20of%20%7Btopic%7D%20with%20questions%20designed%20to%20check%20real%20comprehension%2C%20not%20just%20memorization./singular: d9f3e39d19b1c6969b481bc8aec8fc10
     A%20dialogue-based%20story%20that%20helps%20you%20practice%20the%20language%20in%20a%20real-world%20context./singular: 1eb319ba42d87bf86a9ff6e17bddee5f
+    Discover%20why%20%7Btopic%7D%20matters%20%E2%80%94%20its%20origins%2C%20the%20problems%20it%20solved%2C%20and%20why%20it's%20important%20today./singular: 4ab5d214b2548bd9399cbc3a8eef6284
     Listen%20to%20audio%20sentences%20and%20translate%20them%20to%20practice%20listening%20skills./singular: c7f37f13c3e2d3cb1f23c9cc5eee4e1d
     Teaches%20grammar%20rules%20with%20practical%20exercises%20to%20help%20you%20remember%20and%20apply%20them./singular: b1250dcf530d4320d730ad2744d37221
     Vocabulary/singular: 2c8127af4c194fa05463e82d5e414c62
     Shows%20WHERE%20this%20topic%20appears%20in%20real%20life.%20Helps%20you%20recognize%20it%20in%20daily%20routines%2C%20work%2C%20pop%20culture%2C%20and%20unexpected%20places./singular: bd7cdd212990640d3e21ae67a305379f
+    "%7Blesson%7D%20%7Bactivity%7D/singular": d959fed1ee77dca493e8cf0a3b3129c0
     Reading/singular: 9d93f1dff4a01a9e1566f23b401b8868
     Mechanics/singular: 9885fd6c35db2bd26affb830d537046b
     Quiz/singular: 22bce287f7a90d3b41b418108eaab43b
     Grammar/singular: 1d97aca351a45df1d6eb27adbee04832
+    Learn%20about%20%7Btopic%7D%20through%20an%20interactive%20activity./singular: 94f8ca153ea2ee6b539f507266548201
+    Review%20vocabulary%20and%20skills%20from%20%7Btopic%7D%20with%20a%20comprehensive%20assessment./singular: c903b125483f18bcc4a59f0b0ea31eef
+    Apply%20your%20knowledge%20of%20%7Btopic%7D%20through%20analytical%20decisions%20with%20real%20trade-offs./singular: a45d6f6551b5ec5c1206d7886bff0437
+    Understand%20what%20%7Btopic%7D%20is%20%E2%80%94%20core%20concepts%20and%20definitions%20explained%20with%20clear%20metaphors%20and%20analogies./singular: ec3b49a710ebac5f592523bdaa68ceff
+    Practice%20%7Btopic%7D%20grammar%20rules%20with%20exercises%20designed%20to%20help%20you%20remember%20and%20apply%20them./singular: 107adae09992e8b4deb051afa38da3bd
     Explains%20WHAT%20this%20topic%20is.%20Breaks%20down%20core%20concepts%20and%20definitions%20using%20metaphors%20and%20analogies./singular: 5eb6b1cd33e5c20af8423753d4368a81
     A%20comprehensive%20review%20covering%20vocabulary%20and%20skills%20from%20this%20lesson./singular: 9d8f77da46237b58839fadcbadc5a0bc
+    "%7Bactivity%7D%20-%20%7Blesson%7D/singular": 0aad8d82851f799d79c052a0f2b90d67
     Explains%20WHY%20this%20topic%20exists.%20Tells%20the%20origin%20story%2C%20the%20problems%20it%20solved%2C%20and%20why%20it%20matters%20today./singular: 8bdce45d80e8a4cfcbc65d2bfe928c82
+    Learn%20how%20%7Btopic%7D%20works%20under%20the%20hood%20%E2%80%94%20processes%2C%20sequences%2C%20and%20cause-effect%20chains%20explained./singular: 6d836bff9577f6063c768783327531b8
     Background/singular: 0ceaed10d99ed4ad83cb0934ab970174
+    Improve%20your%20%7Btopic%7D%20reading%20comprehension%20by%20translating%20sentences%20and%20passages./singular: 60baac4222f76009cc1eb1b6065b403b
     Shows%20WHEN%20to%20apply%20this%20topic.%20A%20dialogue%20with%20a%20colleague%20where%20you%20solve%20a%20real%20problem%20together./singular: 3fb0934c1e0a5ba3e31b6cc5b897b509
     Tests%20your%20understanding%20with%20questions.%20Uses%20new%20scenarios%20to%20check%20if%20you%20grasped%20the%20concept%2C%20not%20just%20memorized%20it./singular: feeb1e59f787035a964dd93290e180e7
     Green/singular: 482ff383a4258357ba404f283682471d
