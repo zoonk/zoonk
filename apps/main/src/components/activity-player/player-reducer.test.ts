@@ -221,7 +221,10 @@ describe("CHECK_ANSWER", () => {
   });
 
   test("accumulates effects on same dimension across multiple calls", () => {
-    const steps = [buildMultipleChoiceStep({ id: "s1" }), buildMultipleChoiceStep({ id: "s2", position: 1 })];
+    const steps = [
+      buildMultipleChoiceStep({ id: "s1" }),
+      buildMultipleChoiceStep({ id: "s2", position: 1 }),
+    ];
     let state = buildState({ steps });
     state = playerReducer(state, {
       effects: [{ dimension: "Quality", impact: "positive" }],
@@ -372,7 +375,10 @@ describe("COMPLETE", () => {
 
 describe("RESTART", () => {
   test("resets to playing with index 0 from completed state", () => {
-    const steps = [buildMultipleChoiceStep({ id: "s1" }), buildMultipleChoiceStep({ id: "s2", position: 1 })];
+    const steps = [
+      buildMultipleChoiceStep({ id: "s1" }),
+      buildMultipleChoiceStep({ id: "s2", position: 1 }),
+    ];
     const state = buildState({
       currentStepIndex: 1,
       phase: "completed",

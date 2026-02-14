@@ -59,7 +59,7 @@ export function StageContent({
   if (phase === "playing" && currentStep) {
     return (
       <div
-        className="animate-in fade-in duration-150 ease-out motion-reduce:animate-none"
+        className="animate-in fade-in flex w-full flex-col items-center duration-150 ease-out motion-reduce:animate-none"
         key={`step-${currentStepIndex}`}
       >
         <StepRenderer

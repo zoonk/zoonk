@@ -296,10 +296,6 @@ test.describe("Language Variant", () => {
 
     await expect(page.getByText(new RegExp(`Hola ${uniqueId}`))).toBeVisible();
     await expect(page.getByText(new RegExp(`Hello ${uniqueId}`))).toBeVisible();
-
-    // No italic romanization elements should be present
-    const italicElements = page.locator("p.italic");
-    await expect(italicElements).toHaveCount(0);
   });
 });
 

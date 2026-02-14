@@ -33,14 +33,6 @@ function StepTextGroup({ children }: { children: React.ReactNode }) {
   return <div className="flex flex-col gap-2 sm:gap-6">{children}</div>;
 }
 
-function OptionGroup({ children }: { children: React.ReactNode }) {
-  return (
-    <div aria-label="Answer options" className="flex flex-col gap-3" role="radiogroup">
-      {children}
-    </div>
-  );
-}
-
 function OptionCard({
   index,
   isSelected,
@@ -58,7 +50,7 @@ function OptionCard({
     <button
       aria-checked={isSelected}
       className={cn(
-        "focus-visible:border-ring focus-visible:ring-ring/50 flex items-center gap-3 rounded-xl border px-4 py-3.5 text-left transition-colors duration-150 outline-none focus-visible:ring-[3px]",
+        "focus-visible:border-ring focus-visible:ring-ring/50 flex w-full items-center gap-3 rounded-xl border px-4 py-3.5 text-left transition-colors duration-150 outline-none focus-visible:ring-[3px]",
         isSelected ? "border-primary bg-primary/5" : "border-border hover:bg-accent",
       )}
       onClick={onSelect}
@@ -80,6 +72,31 @@ function OptionCard({
   );
 }
 
+function OptionList({
+  onSelect,
+  options,
+  selectedIndex,
+}: {
+  onSelect: (index: number) => void;
+  options: readonly { text: string; textRomanization?: string | null }[];
+  selectedIndex: number | null;
+}) {
+  return (
+    <div aria-label="Answer options" className="flex flex-col gap-3" role="radiogroup">
+      {options.map((option, index) => (
+        <OptionCard
+          index={index}
+          isSelected={selectedIndex === index}
+          key={option.text}
+          onSelect={() => onSelect(index)}
+          romanization={"textRomanization" in option ? option.textRomanization : undefined}
+          text={option.text}
+        />
+      ))}
+    </div>
+  );
+}
+
 function CoreVariant({
   content,
   onSelect,
@@ -96,17 +113,7 @@ function CoreVariant({
         {content.question ? <QuestionText>{content.question}</QuestionText> : null}
       </StepTextGroup>
 
-      <OptionGroup>
-        {content.options.map((option, index) => (
-          <OptionCard
-            index={index}
-            isSelected={selectedIndex === index}
-            key={option.text}
-            onSelect={() => onSelect(index)}
-            text={option.text}
-          />
-        ))}
-      </OptionGroup>
+      <OptionList onSelect={onSelect} options={content.options} selectedIndex={selectedIndex} />
     </>
   );
 }
@@ -127,17 +134,7 @@ function ChallengeVariant({
         <QuestionText>{content.question}</QuestionText>
       </StepTextGroup>
 
-      <OptionGroup>
-        {content.options.map((option, index) => (
-          <OptionCard
-            index={index}
-            isSelected={selectedIndex === index}
-            key={option.text}
-            onSelect={() => onSelect(index)}
-            text={option.text}
-          />
-        ))}
-      </OptionGroup>
+      <OptionList onSelect={onSelect} options={content.options} selectedIndex={selectedIndex} />
     </>
   );
 }
@@ -153,28 +150,19 @@ function LanguageVariant({
 }) {
   return (
     <>
-      <StepTextGroup>
-        <QuestionText>{content.context}</QuestionText>
+      <div className="flex flex-col">
+        <div className="flex flex-col">
+          {content.contextRomanization && (
+            <p className="text-muted-foreground text-sm italic">{content.contextRomanization}</p>
+          )}
 
-        {content.contextRomanization && (
-          <p className="text-muted-foreground text-sm italic">{content.contextRomanization}</p>
-        )}
+          <QuestionText>{content.context}</QuestionText>
+        </div>
 
         <ContextText>{content.contextTranslation}</ContextText>
-      </StepTextGroup>
+      </div>
 
-      <OptionGroup>
-        {content.options.map((option, index) => (
-          <OptionCard
-            index={index}
-            isSelected={selectedIndex === index}
-            key={option.text}
-            onSelect={() => onSelect(index)}
-            romanization={option.textRomanization}
-            text={option.text}
-          />
-        ))}
-      </OptionGroup>
+      <OptionList onSelect={onSelect} options={content.options} selectedIndex={selectedIndex} />
     </>
   );
 }
