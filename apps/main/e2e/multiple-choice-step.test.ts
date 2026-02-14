@@ -409,9 +409,12 @@ test.describe("Challenge Variant", () => {
     await page.goto(url);
     await expect(page.getByText(/make choices/i)).toBeVisible();
 
-    await page.keyboard.press("Enter");
-
-    await expect(page.getByText(new RegExp(`Enter question ${uniqueId}`))).toBeVisible();
+    await expect(async () => {
+      await page.keyboard.press("Enter");
+      await expect(page.getByText(new RegExp(`Enter question ${uniqueId}`))).toBeVisible({
+        timeout: 1000,
+      });
+    }).toPass();
   });
 
   test("renders context, question, and options after begin", async ({ page }) => {

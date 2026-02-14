@@ -1,3 +1,4 @@
+import { openDialog } from "@zoonk/e2e/helpers";
 import { expect, test } from "./fixtures";
 
 // Content feedback is tested on the course suggestions page where it's used
@@ -29,9 +30,10 @@ test.describe("Content Feedback", () => {
   });
 
   test("submit with valid data shows success message", async ({ page }) => {
-    await page.getByRole("button", { name: /send feedback/i }).click();
-
+    const feedbackButton = page.getByRole("button", { name: /send feedback/i });
     const dialog = page.getByRole("dialog");
+    await openDialog(feedbackButton, dialog);
+
     const emailInput = dialog.getByRole("textbox", { name: /email address/i });
     const messageInput = dialog.getByRole("textbox", { name: /^message$/i });
 
@@ -47,9 +49,10 @@ test.describe("Content Feedback", () => {
   });
 
   test("submit with invalid email shows validation error", async ({ page }) => {
-    await page.getByRole("button", { name: /send feedback/i }).click();
-
+    const feedbackButton = page.getByRole("button", { name: /send feedback/i });
     const dialog = page.getByRole("dialog");
+    await openDialog(feedbackButton, dialog);
+
     const emailInput = dialog.getByRole("textbox", { name: /email address/i });
     const messageInput = dialog.getByRole("textbox", { name: /^message$/i });
 
@@ -70,9 +73,10 @@ test.describe("Content Feedback", () => {
   });
 
   test("submit failure shows error message", async ({ page }) => {
-    await page.getByRole("button", { name: /send feedback/i }).click();
-
+    const feedbackButton = page.getByRole("button", { name: /send feedback/i });
     const dialog = page.getByRole("dialog");
+    await openDialog(feedbackButton, dialog);
+
     const emailInput = dialog.getByRole("textbox", { name: /email address/i });
     const messageInput = dialog.getByRole("textbox", { name: /^message$/i });
 
@@ -96,11 +100,12 @@ test.describe("Content Feedback - Authenticated", () => {
     // Wait for content to load
     await expect(authenticatedPage.getByText("Introduction to Testing")).toBeVisible();
 
-    await authenticatedPage.getByRole("button", { name: /send feedback/i }).click();
+    const feedbackButton = authenticatedPage.getByRole("button", { name: /send feedback/i });
+    const dialog = authenticatedPage.getByRole("dialog");
+    await openDialog(feedbackButton, dialog);
 
-    const emailInput = authenticatedPage.getByRole("textbox", { name: /email address/i });
+    const emailInput = dialog.getByRole("textbox", { name: /email address/i });
 
-    // Wait for dialog to be fully visible and email input to be enabled
     await expect(emailInput).toBeEnabled();
 
     // Should be pre-filled with user's email
