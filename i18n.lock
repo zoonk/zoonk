@@ -433,12 +433,22 @@ checksums:
     Not%20quite/singular: e570085e69662802acf485c4565e3e3e
     Outcome/singular: 4cfc7a40e384ea8b6658e8da6e351bf0
     Correct!/singular: dda1a98dc04fd9db252887ecf1765d41
+    Word%20bank/singular: ceea720dd5fa3747c7f93ce165f77b2e
+    Blank%20%7Bposition%7D/singular: 70a4795f65f91685071b6abb1c3a6bad
+    Blank%20%7Bposition%7D%3A%20%7Bitem%7D.%20Tap%20to%20remove./singular: d7ab9b86256fae5fbb5187fe718afe0b
+    Right%20column/singular: 543eba2cadacf4a570f16029d2314db5
+    Left%20column/singular: 325de16ded7fbe868f3fbfff4f11e510
+    "%7Bitem%7D%2C%20matched%20with%20%7Bmatch%7D.%20Tap%20to%20unmatch./singular": b77325cc70fd75ccf8279ac6c2d7cf2d
     What%20do%20you%20say%3F/singular: 75887288b85fc19e67b7d20550d9205e
     Someone%20says%3A/singular: 09f34dce0528b57e89c8757b5745e6c5
     Previous%20step/singular: 96b31ec6dab003c2bbfbbca10a8a9826
     Next%20step/singular: 712c63650b5180cbc14d6246b5d558c2
     Step%20navigation/singular: ec328f28051577e1c0aab044c89b138c
     Close/singular: 2c2e22f8424a1031de89063bd0022e16
+    Slot%20%7Bposition%7D/singular: 860581010a2082a83dcdfcb2803fce82
+    Available%20items/singular: 4ddce93f2455bfafb212b3eb68f18bf1
+    Slot%20%7Bposition%7D%3A%20%7Bitem%7D.%20Tap%20to%20remove./singular: 87edef45f4f5f40c8ee3902e4500ff87
+    Answer%20slots/singular: 439a0650c67bd8bbdc46fe8ceb72edab
     Answer%20selected/singular: 43c2c02a2f5ab63d04a3ba140a03b769
     Select%20answer/singular: 4951d9f093550e70ff5f399634b2b595
     Not%20completed/singular: d011b1ae92a1a8a2676a5d6999bbe6d4

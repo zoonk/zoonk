@@ -4,8 +4,10 @@ import { type SerializedStep } from "@/data/activities/prepare-activity-data";
 import { Button } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
 import { FillBlankStep } from "./fill-blank-step";
+import { MatchColumnsStep } from "./match-columns-step";
 import { MultipleChoiceStep } from "./multiple-choice-step";
 import { type SelectedAnswer } from "./player-reducer";
+import { SortOrderStep } from "./sort-order-step";
 import { StaticStep } from "./static-step";
 import { StaticTapZones, useSwipeNavigation } from "./static-step-navigation";
 import { InteractiveStepLayout, StaticStepLayout } from "./step-layouts";
@@ -85,6 +87,22 @@ export function StepRenderer({
   if (step.kind === "fillBlank") {
     return (
       <FillBlankStep onSelectAnswer={onSelectAnswer} selectedAnswer={selectedAnswer} step={step} />
+    );
+  }
+
+  if (step.kind === "matchColumns") {
+    return (
+      <MatchColumnsStep
+        onSelectAnswer={onSelectAnswer}
+        selectedAnswer={selectedAnswer}
+        step={step}
+      />
+    );
+  }
+
+  if (step.kind === "sortOrder") {
+    return (
+      <SortOrderStep onSelectAnswer={onSelectAnswer} selectedAnswer={selectedAnswer} step={step} />
     );
   }
 

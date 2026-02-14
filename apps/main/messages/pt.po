@@ -1291,6 +1291,36 @@ msgctxt "xmF49T"
 msgid "Correct!"
 msgstr "Correto!"
 
+#: src/components/activity-player/fill-blank-step.tsx
+msgctxt "e7WNdK"
+msgid "Word bank"
+msgstr "Banco de palavras"
+
+#: src/components/activity-player/fill-blank-step.tsx
+msgctxt "FmmJ/j"
+msgid "Blank {position}"
+msgstr "Espaço {position}"
+
+#: src/components/activity-player/fill-blank-step.tsx
+msgctxt "wUEGVH"
+msgid "Blank {position}: {item}. Tap to remove."
+msgstr "Espaço {position}: {item}. Toque para remover."
+
+#: src/components/activity-player/match-columns-step.tsx
+msgctxt "FiksC2"
+msgid "Right column"
+msgstr "Coluna direita"
+
+#: src/components/activity-player/match-columns-step.tsx
+msgctxt "HqBZKC"
+msgid "Left column"
+msgstr "Coluna esquerda"
+
+#: src/components/activity-player/match-columns-step.tsx
+msgctxt "JF7Y01"
+msgid "{item}, matched with {match}. Tap to unmatch."
+msgstr "{item}, combinado com {match}. Toque para desfazer."
+
 #: src/components/activity-player/multiple-choice-step.tsx
 msgctxt "HHBtl4"
 msgid "What do you say?"
@@ -1320,6 +1350,26 @@ msgstr "Navegação de etapas"
 msgctxt "rbrahO"
 msgid "Close"
 msgstr "Fechar"
+
+#: src/components/activity-player/sort-order-step.tsx
+msgctxt "7Af5sM"
+msgid "Slot {position}"
+msgstr "Posição {position}"
+
+#: src/components/activity-player/sort-order-step.tsx
+msgctxt "fXxL3z"
+msgid "Available items"
+msgstr "Itens disponíveis"
+
+#: src/components/activity-player/sort-order-step.tsx
+msgctxt "KoFztx"
+msgid "Slot {position}: {item}. Tap to remove."
+msgstr "Posição {position}: {item}. Toque para remover."
+
+#: src/components/activity-player/sort-order-step.tsx
+msgctxt "yZaQVq"
+msgid "Answer slots"
+msgstr "Espaços de resposta"
 
 #: src/components/activity-player/step-renderer.tsx
 msgctxt "4pTU5S"

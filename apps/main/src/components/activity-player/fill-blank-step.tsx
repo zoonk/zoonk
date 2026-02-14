@@ -4,14 +4,12 @@ import { type SerializedStep } from "@/data/activities/prepare-activity-data";
 import { parseStepContent } from "@zoonk/core/steps/content-contract";
 import { cn } from "@zoonk/ui/lib/utils";
 import { shuffle } from "@zoonk/utils/shuffle";
+import { useExtracted } from "next-intl";
 import { useCallback, useMemo, useState } from "react";
 import { type SelectedAnswer } from "./player-reducer";
+import { QuestionText } from "./question-text";
 import { InteractiveStepLayout } from "./step-layouts";
 import { useReplaceName } from "./user-name-context";
-
-function QuestionText({ children }: { children: React.ReactNode }) {
-  return <p className="text-base font-semibold">{children}</p>;
-}
 
 function BlankSlot({
   index,
@@ -22,10 +20,15 @@ function BlankSlot({
   onRemove: () => void;
   word: string | null;
 }) {
+  const t = useExtracted();
+
   if (word) {
     return (
       <button
-        aria-label={`Blank ${index + 1}: ${word}. Tap to remove.`}
+        aria-label={t("Blank {position}: {item}. Tap to remove.", {
+          item: word,
+          position: String(index + 1),
+        })}
         className="border-primary/30 text-primary inline-flex min-w-16 items-center justify-center border-b-2 px-1 font-medium transition-all duration-150"
         onClick={onRemove}
         type="button"
@@ -37,7 +40,7 @@ function BlankSlot({
 
   return (
     <span
-      aria-label={`Blank ${index + 1}`}
+      aria-label={t("Blank {position}", { position: String(index + 1) })}
       className="border-muted-foreground/30 inline-flex min-w-16 border-b-2"
       role="img"
     />
@@ -110,10 +113,11 @@ function WordBank({
   onPlaceWord: (word: string) => void;
   words: string[];
 }) {
+  const t = useExtracted();
   const usedWords = blanks.filter(Boolean);
 
   return (
-    <div aria-label="Word bank" className="flex flex-wrap gap-2.5" role="group">
+    <div aria-label={t("Word bank")} className="flex flex-wrap gap-2.5" role="group">
       {words.map((word, index) => {
         const usedCount = usedWords.filter((used) => used === word).length;
         const totalCount = words.slice(0, index + 1).filter((item) => item === word).length;
