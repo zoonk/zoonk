@@ -3,31 +3,12 @@
 import { authClient } from "@zoonk/auth/client";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-type UsernameStatus = "idle" | "checking" | "available" | "taken" | "invalid";
+export type UsernameStatus = "idle" | "checking" | "available" | "taken" | "invalid";
 
-const MIN_USERNAME_LENGTH = 3;
-const USERNAME_REGEX = /^[a-z0-9_-]{3,30}$/;
+export const USERNAME_MIN_LENGTH = 3;
+export const USERNAME_MAX_LENGTH = 30;
+const USERNAME_REGEX = /^[a-z0-9_.]{3,30}$/;
 const DEBOUNCE_MS = 300;
-
-function getDescription(status: UsernameStatus, username: string) {
-  if (status === "checking") {
-    return "Checking...";
-  }
-
-  if (status === "available") {
-    return `${username} is available`;
-  }
-
-  if (status === "taken") {
-    return `${username} is already taken`;
-  }
-
-  if (status === "invalid") {
-    return "3-30 characters. Letters, numbers, underscores, and hyphens only.";
-  }
-
-  return "3-30 characters. Letters, numbers, underscores, and hyphens only.";
-}
 
 export function useUsernameAvailability(currentUsername?: string | null) {
   const [username, setUsername] = useState(currentUsername ?? "");
@@ -48,9 +29,14 @@ export function useUsernameAvailability(currentUsername?: string | null) {
 
       setStatus("checking");
 
-      const { data } = await authClient.isUsernameAvailable({
+      const { data, error } = await authClient.isUsernameAvailable({
         username: value,
       });
+
+      if (error) {
+        setStatus("idle");
+        return;
+      }
 
       setStatus(data?.available ? "available" : "taken");
     },
@@ -62,7 +48,7 @@ export function useUsernameAvailability(currentUsername?: string | null) {
       clearTimeout(timerRef.current);
     }
 
-    if (!username || username.length < MIN_USERNAME_LENGTH) {
+    if (!username || username.length < USERNAME_MIN_LENGTH) {
       setStatus(username.length > 0 ? "invalid" : "idle");
       return;
     }
@@ -79,7 +65,6 @@ export function useUsernameAvailability(currentUsername?: string | null) {
   }, [username, checkAvailability]);
 
   return {
-    description: getDescription(status, username),
     setUsername,
     status,
     username,
