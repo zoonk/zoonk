@@ -15,6 +15,7 @@ function buildOptions(overrides: Partial<Parameters<typeof usePlayerKeyboard>[0]
     onNavigatePrev: vi.fn(),
     onNext: null as (() => void) | null,
     onRestart: vi.fn(),
+    onStartChallenge: null as (() => void) | null,
     phase: "playing" as PlayerPhase,
     ...overrides,
   };
@@ -31,6 +32,28 @@ describe(usePlayerKeyboard, () => {
   });
 
   describe("Enter key", () => {
+    test("calls onStartChallenge when intro phase", () => {
+      const onStartChallenge = vi.fn();
+      const opts = buildOptions({ onStartChallenge, phase: "intro" });
+      renderHook(() => usePlayerKeyboard(opts));
+
+      fireKey("Enter");
+
+      expect(onStartChallenge).toHaveBeenCalledOnce();
+      expect(opts.onCheck).not.toHaveBeenCalled();
+    });
+
+    test("does not call onStartChallenge when playing", () => {
+      const onStartChallenge = vi.fn();
+      const opts = buildOptions({ hasAnswer: true, onStartChallenge, phase: "playing" });
+      renderHook(() => usePlayerKeyboard(opts));
+
+      fireKey("Enter");
+
+      expect(onStartChallenge).not.toHaveBeenCalled();
+      expect(opts.onCheck).toHaveBeenCalledOnce();
+    });
+
     test("calls onCheck when playing and hasAnswer", () => {
       const opts = buildOptions({ hasAnswer: true, phase: "playing" });
       renderHook(() => usePlayerKeyboard(opts));

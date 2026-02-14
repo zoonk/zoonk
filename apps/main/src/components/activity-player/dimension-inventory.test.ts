@@ -4,6 +4,7 @@ import {
   buildDimensionEntries,
   formatDelta,
   getDeltaColor,
+  getStatusTotalColor,
   hasNegativeDimension,
 } from "./dimension-inventory";
 import { type DimensionInventory } from "./player-reducer";
@@ -109,5 +110,19 @@ describe(buildDimensionEntries, () => {
     const result = buildDimensionEntries(dims, []);
 
     expect(result.map((entry) => entry.name)).toEqual(["Courage", "Diplomacy", "Morale"]);
+  });
+});
+
+describe(getStatusTotalColor, () => {
+  test("returns text-foreground for positive total", () => {
+    expect(getStatusTotalColor(3)).toBe("text-foreground");
+  });
+
+  test("returns text-warning for zero total", () => {
+    expect(getStatusTotalColor(0)).toBe("text-warning");
+  });
+
+  test("returns text-destructive for negative total", () => {
+    expect(getStatusTotalColor(-1)).toBe("text-destructive");
   });
 });

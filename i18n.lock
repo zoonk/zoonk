@@ -415,11 +415,21 @@ checksums:
     Some%20of%20your%20stats%20went%20below%20zero./singular: bc281c87ae70abd076e3e73aa263ddc2
     Try%20Again/singular: d65fad81c5f8f90405b26bf6e5d70ab9
     Challenge%20Failed/singular: e9b1d1d02118f2e2ddc34907748955c4
+    Make%20choices./singular: 0861e9651cbff7146aee6cafb92128a8
+    Balance%20the%20outcome./singular: bce81c0b25b5ab019b5ce5dba5a12c3f
+    Challenge/singular: 7f333a59ee7a3596e27a2f8c3401b764
+    You'll%20face%20a%20series%20of%20decisions.%20Each%20one%20shifts%20your%20scores.%20Don't%20let%20any%20go%20negative./singular: 026dc19377a9b04a9bfce46cf8bcfa16
+    Starting%20scores/singular: 6a21f8424cdc75e477c3d7857a97db6d
+    Begin/singular: cc2a17a662cb60dd2d8335a2e8440997
+    Your%20scores/singular: 1700f65ead0647bc4876f4b3b6453a8b
     Restart/singular: bab6232e89f24e3129f8e48268739d5b
     Next/singular: 89ddbcf710eba274963494f312bdc8a9
     Sign%20up%20to%20track%20your%20progress/singular: 554ed29d9b8a243362c3b3374222af08
     Completed/singular: 0e4bbce9985f25eb673d9a054c8d5334
     correct/singular: 0c2df4a764cea47295c0b550477e8e29
+    Current%20dimension%20scores/singular: b3a4b7edbd41132e6fb349a6df24a33d
+    View%20stats/singular: 707f91e0ff65e7163c95900395dc0297
+    Stats/singular: 5cf8b052c89fa1b05397a956ebec69b2
     Not%20quite/singular: e570085e69662802acf485c4565e3e3e
     Outcome/singular: 4cfc7a40e384ea8b6658e8da6e351bf0
     Correct!/singular: dda1a98dc04fd9db252887ecf1765d41
@@ -459,7 +469,6 @@ checksums:
     Listening/singular: 9e680c44cd88a178b953349ed8881ef2
     Experience%20when%20to%20apply%20%7Btopic%7D%20through%20a%20real-world%20dialogue%20scenario./singular: d143d122b526618096d637288c66f50a
     Examples/singular: 9dacb7c56bc894e4bcad39f41265e3a0
-    Challenge/singular: 7f333a59ee7a3596e27a2f8c3401b764
     Practice%20%7Btopic%7D%20in%20context%20through%20a%20dialogue-based%20story%20set%20in%20real-world%20situations./singular: e1b3079ec8c6a2c89d20e5c7c48bfc59
     Story/singular: fabac3f62af801d429e2cd7115bf14c9
     Build%20your%20%7Btopic%7D%20vocabulary%20with%20new%20words%2C%20translations%2C%20and%20pronunciation./singular: 2c0f84dadf5fcbfb5842260046bfa956

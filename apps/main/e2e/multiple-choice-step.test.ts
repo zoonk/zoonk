@@ -306,7 +306,115 @@ test.describe("Language Variant", () => {
 });
 
 test.describe("Challenge Variant", () => {
-  test("renders context, question, and options", async ({ page }) => {
+  test("intro screen shown for challenge activity", async ({ page }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const { url } = await createMultipleChoiceActivity({
+      steps: [
+        {
+          content: {
+            context: `Fork in road ${uniqueId}`,
+            kind: "challenge",
+            options: [
+              {
+                consequence: "Safe path",
+                effects: [{ dimension: `Courage ${uniqueId}`, impact: "negative" }],
+                text: `Go left ${uniqueId}`,
+              },
+              {
+                consequence: "Brave path",
+                effects: [{ dimension: `Courage ${uniqueId}`, impact: "positive" }],
+                text: `Go right ${uniqueId}`,
+              },
+            ],
+            question: `Which path ${uniqueId}`,
+          },
+          position: 0,
+        },
+      ],
+    });
+
+    await page.goto(url);
+
+    // Intro screen content
+    await expect(page.getByText(/make choices/i)).toBeVisible();
+    await expect(page.getByText(new RegExp(`Courage ${uniqueId}`))).toBeVisible();
+    await expect(page.getByRole("button", { name: /begin/i })).toBeVisible();
+
+    // Step fraction and progress bar should NOT be visible
+    await expect(page.getByText(/1 \/ 1/)).not.toBeVisible();
+  });
+
+  test("begin button starts challenge", async ({ page }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const { url } = await createMultipleChoiceActivity({
+      steps: [
+        {
+          content: {
+            context: `Begin test ${uniqueId}`,
+            kind: "challenge",
+            options: [
+              {
+                consequence: "Good",
+                effects: [{ dimension: "Courage", impact: "positive" }],
+                text: `Option A ${uniqueId}`,
+              },
+              {
+                consequence: "Bad",
+                effects: [{ dimension: "Courage", impact: "negative" }],
+                text: "Option B",
+              },
+            ],
+            question: `Begin question ${uniqueId}`,
+          },
+          position: 0,
+        },
+      ],
+    });
+
+    await page.goto(url);
+    await page.getByRole("button", { name: /begin/i }).click();
+
+    // First step should now be visible
+    await expect(page.getByText(new RegExp(`Begin question ${uniqueId}`))).toBeVisible();
+    await expect(page.getByText(/1 \/ 1/)).toBeVisible();
+  });
+
+  test("enter key starts challenge from intro", async ({ page }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const { url } = await createMultipleChoiceActivity({
+      steps: [
+        {
+          content: {
+            context: `Enter test ${uniqueId}`,
+            kind: "challenge",
+            options: [
+              {
+                consequence: "Good",
+                effects: [{ dimension: "Courage", impact: "positive" }],
+                text: `Enter option ${uniqueId}`,
+              },
+              {
+                consequence: "Bad",
+                effects: [{ dimension: "Courage", impact: "negative" }],
+                text: "Other option",
+              },
+            ],
+            question: `Enter question ${uniqueId}`,
+          },
+          position: 0,
+        },
+      ],
+    });
+
+    await page.goto(url);
+    await expect(page.getByText(/make choices/i)).toBeVisible();
+
+    await page.keyboard.press("Enter");
+
+    await expect(page.getByText(new RegExp(`Enter question ${uniqueId}`))).toBeVisible();
+  });
+
+  test("renders context, question, and options after begin", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const { url } = await createMultipleChoiceActivity({
       steps: [
@@ -334,6 +442,7 @@ test.describe("Challenge Variant", () => {
     });
 
     await page.goto(url);
+    await page.getByRole("button", { name: /begin/i }).click();
 
     await expect(
       page.getByText(new RegExp(`You find a fork in the road ${uniqueId}`)),
@@ -382,6 +491,7 @@ test.describe("Challenge Variant", () => {
     });
 
     await page.goto(url);
+    await page.getByRole("button", { name: /begin/i }).click();
     await page.waitForLoadState("networkidle");
 
     await page.getByRole("radio", { name: /choice a/i }).click();
@@ -394,6 +504,111 @@ test.describe("Challenge Variant", () => {
     await expect(inventory).toBeVisible();
     await expect(inventory.getByText(new RegExp(`Wisdom ${uniqueId}`))).toBeVisible();
     await expect(inventory.getByText(new RegExp(`Courage ${uniqueId}`))).toBeVisible();
+  });
+
+  test("stats button visible during challenge play", async ({ page }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const dim = `Morale ${uniqueId}`;
+    const { url } = await createMultipleChoiceActivity({
+      steps: [
+        {
+          content: {
+            context: `Stats test ${uniqueId}`,
+            kind: "challenge",
+            options: [
+              {
+                consequence: "Good",
+                effects: [{ dimension: dim, impact: "positive" }],
+                text: `Good choice ${uniqueId}`,
+              },
+              {
+                consequence: "Bad",
+                effects: [{ dimension: dim, impact: "negative" }],
+                text: "Bad choice",
+              },
+            ],
+            question: `Stats question ${uniqueId}`,
+          },
+          position: 0,
+        },
+      ],
+    });
+
+    await page.goto(url);
+    await page.getByRole("button", { name: /begin/i }).click();
+
+    // Stats button should be visible
+    const statsButton = page.getByRole("button", { name: /view stats/i });
+    await expect(statsButton).toBeVisible();
+
+    // Click to open popover
+    await statsButton.click();
+
+    // Popover should show dimension names
+    await expect(page.getByText(new RegExp(dim))).toBeVisible();
+  });
+
+  test("stats reflect accumulated changes", async ({ page }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const dim = `Resolve ${uniqueId}`;
+    const { url } = await createMultipleChoiceActivity({
+      steps: [
+        {
+          content: {
+            context: `Step 1 ${uniqueId}`,
+            kind: "challenge",
+            options: [
+              {
+                consequence: "Good",
+                effects: [{ dimension: dim, impact: "positive" }],
+                text: `Positive pick ${uniqueId}`,
+              },
+              {
+                consequence: "Bad",
+                effects: [{ dimension: dim, impact: "negative" }],
+                text: "Negative pick",
+              },
+            ],
+            question: `Step 1 question ${uniqueId}`,
+          },
+          position: 0,
+        },
+        {
+          content: {
+            context: `Step 2 ${uniqueId}`,
+            kind: "challenge",
+            options: [
+              {
+                consequence: "Good again",
+                effects: [{ dimension: dim, impact: "positive" }],
+                text: `Positive again ${uniqueId}`,
+              },
+              {
+                consequence: "Bad again",
+                effects: [{ dimension: dim, impact: "negative" }],
+                text: "Negative again",
+              },
+            ],
+            question: `Step 2 question ${uniqueId}`,
+          },
+          position: 1,
+        },
+      ],
+    });
+
+    await page.goto(url);
+    await page.getByRole("button", { name: /begin/i }).click();
+    await page.waitForLoadState("networkidle");
+
+    // Step 1: choose positive (+1)
+    await page.getByRole("radio", { name: new RegExp(`Positive pick ${uniqueId}`) }).click();
+    await page.getByRole("button", { name: /check/i }).click();
+    await page.getByRole("button", { name: /continue/i }).click();
+
+    // Open stats to verify updated total
+    await page.getByRole("button", { name: /view stats/i }).click();
+    const statsList = page.getByRole("list", { name: /current dimension scores/i });
+    await expect(statsList.getByText("1", { exact: true })).toBeVisible();
   });
 
   test("accumulated inventory across multiple steps", async ({ page }) => {
@@ -445,6 +660,7 @@ test.describe("Challenge Variant", () => {
     });
 
     await page.goto(url);
+    await page.getByRole("button", { name: /begin/i }).click();
     await page.waitForLoadState("networkidle");
 
     // Step 1: choose brave option (+1)
@@ -495,6 +711,7 @@ test.describe("Challenge Variant", () => {
     });
 
     await authenticatedPage.goto(url);
+    await authenticatedPage.getByRole("button", { name: /begin/i }).click();
     await authenticatedPage.waitForLoadState("networkidle");
 
     await authenticatedPage
@@ -538,6 +755,7 @@ test.describe("Challenge Variant", () => {
     });
 
     await page.goto(url);
+    await page.getByRole("button", { name: /begin/i }).click();
     await page.waitForLoadState("networkidle");
 
     // Choose the negative option to get a negative dimension
@@ -558,11 +776,38 @@ test.describe("Challenge Variant", () => {
     const tryAgain = page.getByRole("button", { name: /try again/i });
     await expect(tryAgain).toBeVisible();
 
-    // Click "Try Again" should restart the activity
+    // Click "Try Again" should restart the activity (skips intro)
     await tryAgain.click();
 
-    // After restart, we should see the question again
+    // After restart, we should see the question again (not intro)
     await expect(page.getByText(new RegExp(`Crisis ${uniqueId}`))).toBeVisible();
+    await expect(page.getByText(/make choices/i)).not.toBeVisible();
+  });
+
+  test("non-challenge activity skips intro", async ({ page }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const { url } = await createMultipleChoiceActivity({
+      steps: [
+        {
+          content: {
+            kind: "core",
+            options: [
+              { feedback: "Yes", isCorrect: true, text: `Core opt ${uniqueId}` },
+              { feedback: "No", isCorrect: false, text: "Other opt" },
+            ],
+            question: `Core question ${uniqueId}`,
+          },
+          position: 0,
+        },
+      ],
+    });
+
+    await page.goto(url);
+
+    // Should see question immediately, no intro
+    await expect(page.getByText(new RegExp(`Core question ${uniqueId}`))).toBeVisible();
+    await expect(page.getByText(/make choices/i)).not.toBeVisible();
+    await expect(page.getByRole("button", { name: /begin/i })).not.toBeVisible();
   });
 });
 

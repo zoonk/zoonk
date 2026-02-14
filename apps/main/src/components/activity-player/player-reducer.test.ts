@@ -68,12 +68,44 @@ function buildState(overrides: Partial<PlayerState> = {}): PlayerState {
 
 const multipleChoiceAnswer: SelectedAnswer = { kind: "multipleChoice", selectedIndex: 0 };
 
+const challengeContent = {
+  context: "A scenario",
+  kind: "challenge" as const,
+  options: [
+    {
+      consequence: "Good",
+      effects: [{ dimension: "Courage", impact: "positive" as const }],
+      text: "A",
+    },
+    {
+      consequence: "Bad",
+      effects: [{ dimension: "Diplomacy", impact: "negative" as const }],
+      text: "B",
+    },
+  ],
+  question: "What do you do?",
+};
+
+function buildChallengeActivity(): SerializedActivity {
+  return buildActivity({
+    steps: [
+      buildStep({ content: challengeContent, id: "c1", kind: "multipleChoice" }),
+      buildStep({ content: challengeContent, id: "c2", kind: "multipleChoice", position: 1 }),
+    ],
+  });
+}
+
 describe(createInitialState, () => {
-  test("sets phase to playing and index to 0", () => {
+  test("sets phase to playing and index to 0 for non-challenge", () => {
     const activity = buildActivity();
     const state = createInitialState(activity);
     expect(state.phase).toBe("playing");
     expect(state.currentStepIndex).toBe(0);
+  });
+
+  test("sets phase to intro for challenge activity", () => {
+    const state = createInitialState(buildChallengeActivity());
+    expect(state.phase).toBe("intro");
   });
 
   test("copies activityId and steps", () => {
@@ -92,29 +124,34 @@ describe(createInitialState, () => {
   });
 
   test("collects all dimensions from challenge steps at init", () => {
-    const challengeContent = {
-      context: "A scenario",
-      kind: "challenge" as const,
-      options: [
-        {
-          consequence: "Good",
-          effects: [{ dimension: "Courage", impact: "positive" as const }],
-          text: "A",
-        },
-        {
-          consequence: "Bad",
-          effects: [{ dimension: "Diplomacy", impact: "negative" as const }],
-          text: "B",
-        },
-      ],
-      question: "What do you do?",
-    };
-    const steps = [
-      buildStep({ content: challengeContent, id: "c1", kind: "multipleChoice" }),
-      buildStep({ id: "s2", position: 1 }),
-    ];
-    const state = createInitialState(buildActivity({ steps }));
+    const state = createInitialState(buildChallengeActivity());
     expect(state.dimensions).toEqual({ Courage: 0, Diplomacy: 0 });
+  });
+});
+
+describe("START_CHALLENGE", () => {
+  test("transitions from intro to playing", () => {
+    const state = buildState({ phase: "intro" });
+    const next = playerReducer(state, { type: "START_CHALLENGE" });
+    expect(next.phase).toBe("playing");
+  });
+
+  test("no-ops in playing phase", () => {
+    const state = buildState({ phase: "playing" });
+    const next = playerReducer(state, { type: "START_CHALLENGE" });
+    expect(next).toBe(state);
+  });
+
+  test("no-ops in feedback phase", () => {
+    const state = buildState({ phase: "feedback" });
+    const next = playerReducer(state, { type: "START_CHALLENGE" });
+    expect(next).toBe(state);
+  });
+
+  test("no-ops in completed phase", () => {
+    const state = buildState({ phase: "completed" });
+    const next = playerReducer(state, { type: "START_CHALLENGE" });
+    expect(next).toBe(state);
   });
 });
 
@@ -433,6 +470,21 @@ describe("RESTART", () => {
     const next = playerReducer(state, { type: "RESTART" });
     expect(next.activityId).toBe("my-activity");
     expect(next.steps).toEqual(steps);
+  });
+
+  test("resets to playing (not intro) for challenge activities", () => {
+    const steps = [
+      buildStep({ content: challengeContent, id: "c1", kind: "multipleChoice" }),
+      buildStep({ content: challengeContent, id: "c2", kind: "multipleChoice", position: 1 }),
+    ];
+    const state = buildState({
+      dimensions: { Courage: 2, Diplomacy: -1 },
+      phase: "completed",
+      steps,
+    });
+
+    const next = playerReducer(state, { type: "RESTART" });
+    expect(next.phase).toBe("playing");
   });
 });
 

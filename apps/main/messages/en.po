@@ -1197,6 +1197,42 @@ msgctxt "w48TcP"
 msgid "Challenge Failed"
 msgstr "Challenge Failed"
 
+#: src/components/activity-player/challenge-intro.tsx
+msgctxt "/DZ4Fx"
+msgid "Make choices."
+msgstr "Make choices."
+
+#: src/components/activity-player/challenge-intro.tsx
+msgctxt "4vTq4b"
+msgid "Balance the outcome."
+msgstr "Balance the outcome."
+
+#: src/components/activity-player/challenge-intro.tsx
+#: src/lib/activities.ts
+msgctxt "9MidH4"
+msgid "Challenge"
+msgstr "Challenge"
+
+#: src/components/activity-player/challenge-intro.tsx
+msgctxt "c+wn4p"
+msgid "You'll face a series of decisions. Each one shifts your scores. Don't let any go negative."
+msgstr "You'll face a series of decisions. Each one shifts your scores. Don't let any go negative."
+
+#: src/components/activity-player/challenge-intro.tsx
+msgctxt "kKztdT"
+msgid "Starting scores"
+msgstr "Starting scores"
+
+#: src/components/activity-player/challenge-intro.tsx
+msgctxt "PVe26p"
+msgid "Begin"
+msgstr "Begin"
+
+#: src/components/activity-player/challenge-intro.tsx
+msgctxt "SFKe0U"
+msgid "Your scores"
+msgstr "Your scores"
+
 #: src/components/activity-player/completion-auth-branch.tsx
 msgctxt "5kK+j9"
 msgid "Restart"
@@ -1224,6 +1260,21 @@ msgstr "Completed"
 msgctxt "P768k7"
 msgid "correct"
 msgstr "correct"
+
+#: src/components/activity-player/dimension-status-button.tsx
+msgctxt "ehV7Gg"
+msgid "Current dimension scores"
+msgstr "Current dimension scores"
+
+#: src/components/activity-player/dimension-status-button.tsx
+msgctxt "EUdKC+"
+msgid "View stats"
+msgstr "View stats"
+
+#: src/components/activity-player/dimension-status-button.tsx
+msgctxt "U86B6w"
+msgid "Stats"
+msgstr "Stats"
 
 #: src/components/activity-player/feedback-screen.tsx
 msgctxt "++l7ni"
@@ -1421,11 +1472,6 @@ msgstr "Experience when to apply {topic} through a real-world dialogue scenario.
 msgctxt "3GLH+d"
 msgid "Examples"
 msgstr "Examples"
-
-#: src/lib/activities.ts
-msgctxt "9MidH4"
-msgid "Challenge"
-msgstr "Challenge"
 
 #: src/lib/activities.ts
 msgctxt "BB51/R"

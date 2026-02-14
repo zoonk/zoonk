@@ -26,6 +26,18 @@ export function getDeltaColor(delta: number): string {
   return "text-success";
 }
 
+export function getStatusTotalColor(total: number): string {
+  if (total < 0) {
+    return "text-destructive";
+  }
+
+  if (total === 0) {
+    return "text-warning";
+  }
+
+  return "text-foreground";
+}
+
 export function buildDimensionEntries(
   dimensions: DimensionInventoryType,
   effects: ChallengeEffect[],
@@ -71,10 +83,9 @@ function DeltaPill({ delta, hidden }: { delta: number; hidden?: boolean }) {
   );
 }
 
-function getRowBackground(
-  variant: "feedback" | "success" | "failure",
-  entry: DimensionEntry,
-): string | false {
+type DimensionVariant = "feedback" | "failure" | "intro" | "status" | "success";
+
+function getRowBackground(variant: DimensionVariant, entry: DimensionEntry): string | false {
   if (variant === "feedback" && entry.delta > 0) {
     return "bg-success/5";
   }
@@ -90,6 +101,30 @@ function getRowBackground(
   return false;
 }
 
+function getTotalColor(variant: DimensionVariant, entry: DimensionEntry): string {
+  if (variant === "intro") {
+    return "text-muted-foreground";
+  }
+
+  if (variant === "status") {
+    return getStatusTotalColor(entry.total);
+  }
+
+  if (variant === "success") {
+    return "text-muted-foreground";
+  }
+
+  if (variant === "failure" && entry.total < 0) {
+    return "text-destructive font-semibold";
+  }
+
+  if (entry.total < 0) {
+    return "text-destructive";
+  }
+
+  return "text-foreground";
+}
+
 function DimensionRow({
   entry,
   variant,
@@ -97,10 +132,9 @@ function DimensionRow({
   ...props
 }: React.ComponentProps<"li"> & {
   entry: DimensionEntry;
-  variant: "feedback" | "success" | "failure";
+  variant: DimensionVariant;
 }) {
-  const isNegativeTotal = entry.total < 0;
-  const isFailureHighlight = variant === "failure" && isNegativeTotal;
+  const isFailureHighlight = variant === "failure" && entry.total < 0;
 
   return (
     <li
@@ -122,9 +156,7 @@ function DimensionRow({
         <span
           className={cn(
             "min-w-6 text-right text-sm font-medium tabular-nums",
-            isNegativeTotal ? "text-destructive" : "text-foreground",
-            variant === "success" && "text-muted-foreground",
-            isFailureHighlight && "text-destructive font-semibold",
+            getTotalColor(variant, entry),
           )}
         >
           {entry.total}
@@ -145,7 +177,7 @@ export function DimensionList({
 }: {
   "aria-label": string;
   entries: DimensionEntry[];
-  variant: "feedback" | "success" | "failure";
+  variant: DimensionVariant;
 }) {
   if (entries.length === 0) {
     return null;

@@ -5,7 +5,7 @@ import {
 import { type AnswerResult } from "@zoonk/core/player/check-answer";
 import { type ChallengeEffect, parseStepContent } from "@zoonk/core/steps/content-contract";
 
-export type PlayerPhase = "playing" | "feedback" | "completed";
+export type PlayerPhase = "intro" | "playing" | "feedback" | "completed";
 
 export type SelectedAnswer =
   | { kind: "fillBlank"; userAnswers: string[] }
@@ -42,7 +42,8 @@ export type PlayerAction =
   | { type: "CONTINUE" }
   | { type: "COMPLETE" }
   | { type: "NAVIGATE_STEP"; direction: "next" | "prev" }
-  | { type: "RESTART" };
+  | { type: "RESTART" }
+  | { type: "START_CHALLENGE" };
 
 export function effectDelta(impact: ChallengeEffect["impact"]): number {
   if (impact === "positive") {
@@ -98,11 +99,14 @@ function collectAllDimensions(steps: SerializedStep[]): DimensionInventory {
 }
 
 export function createInitialState(activity: SerializedActivity): PlayerState {
+  const dimensions = collectAllDimensions(activity.steps);
+  const isChallenge = Object.keys(dimensions).length > 0;
+
   return {
     activityId: activity.id,
     currentStepIndex: 0,
-    dimensions: collectAllDimensions(activity.steps),
-    phase: "playing",
+    dimensions,
+    phase: isChallenge ? "intro" : "playing",
     results: {},
     selectedAnswers: {},
     steps: activity.steps,
@@ -201,6 +205,14 @@ function handleRestart(state: PlayerState): PlayerState {
   };
 }
 
+function handleStartChallenge(state: PlayerState): PlayerState {
+  if (state.phase !== "intro") {
+    return state;
+  }
+
+  return { ...state, phase: "playing" };
+}
+
 function handleComplete(state: PlayerState): PlayerState {
   if (state.phase === "completed") {
     return state;
@@ -228,6 +240,9 @@ export function playerReducer(state: PlayerState, action: PlayerAction): PlayerS
 
     case "RESTART":
       return handleRestart(state);
+
+    case "START_CHALLENGE":
+      return handleStartChallenge(state);
 
     default:
       return state;

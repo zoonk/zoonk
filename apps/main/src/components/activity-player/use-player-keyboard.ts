@@ -13,6 +13,7 @@ export function usePlayerKeyboard({
   onNavigatePrev,
   onNext,
   onRestart,
+  onStartChallenge,
   phase,
 }: {
   hasAnswer: boolean;
@@ -24,12 +25,15 @@ export function usePlayerKeyboard({
   onNavigatePrev: () => void;
   onNext: (() => void) | null;
   onRestart: () => void;
+  onStartChallenge: (() => void) | null;
   phase: PlayerPhase;
 }) {
   useKeyboardCallback(
     "Enter",
     () => {
-      if (phase === "playing" && hasAnswer) {
+      if (phase === "intro" && onStartChallenge) {
+        onStartChallenge();
+      } else if (phase === "playing" && hasAnswer) {
         onCheck();
       } else if (phase === "feedback") {
         onContinue();
