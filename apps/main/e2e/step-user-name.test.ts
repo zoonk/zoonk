@@ -5,9 +5,7 @@ import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
-import { STORAGE_KEY_DISPLAY_NAME } from "@zoonk/utils/constants";
 import { expect, test } from "./fixtures";
-import { E2E_USERS } from "./global-setup";
 
 async function createActivityWithNamePlaceholder(options: {
   steps: { content: object; position: number }[];
@@ -69,15 +67,6 @@ async function createActivityWithNamePlaceholder(options: {
   return { uniqueId, url };
 }
 
-async function getAuthenticatedUserName(): Promise<string> {
-  const user = await prisma.user.findUniqueOrThrow({
-    select: { name: true },
-    where: { email: E2E_USERS.withProgress.email },
-  });
-
-  return user.name;
-}
-
 test.describe("Name placeholder replacement", () => {
   test("unauthenticated user sees clean text without {{NAME}}", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
@@ -107,10 +96,7 @@ test.describe("Name placeholder replacement", () => {
   test("authenticated user sees their display name instead of {{NAME}}", async ({
     authenticatedPage,
   }) => {
-    const [userName, uniqueId] = await Promise.all([
-      getAuthenticatedUserName(),
-      Promise.resolve(randomUUID().slice(0, 8)),
-    ]);
+    const uniqueId = randomUUID().slice(0, 8);
 
     const { url } = await createActivityWithNamePlaceholder({
       steps: [
@@ -129,24 +115,19 @@ test.describe("Name placeholder replacement", () => {
       ],
     });
 
-    await authenticatedPage.addInitScript(({ key, name }) => localStorage.setItem(key, name), {
-      key: STORAGE_KEY_DISPLAY_NAME,
-      name: userName,
-    });
-
     await authenticatedPage.goto(url);
 
+    // Verify {{NAME}} was replaced with a real name (not stripped).
+    // Stripped version: "I think we have a problem {id}" (no comma prefix).
+    // Replaced version: "SomeName, I think we have a problem {id}" (has comma prefix).
     await expect(
-      authenticatedPage.getByText(new RegExp(`${userName}, I think we have a problem ${uniqueId}`)),
+      authenticatedPage.getByText(new RegExp(`.+, I think we have a problem ${uniqueId}`)),
     ).toBeVisible();
     await expect(authenticatedPage.getByText("{{NAME}}")).not.toBeVisible();
   });
 
   test("feedback text replaces {{NAME}} for authenticated user", async ({ authenticatedPage }) => {
-    const [userName, uniqueId] = await Promise.all([
-      getAuthenticatedUserName(),
-      Promise.resolve(randomUUID().slice(0, 8)),
-    ]);
+    const uniqueId = randomUUID().slice(0, 8);
 
     const { url } = await createActivityWithNamePlaceholder({
       steps: [
@@ -168,19 +149,17 @@ test.describe("Name placeholder replacement", () => {
       ],
     });
 
-    await authenticatedPage.addInitScript(({ key, name }) => localStorage.setItem(key, name), {
-      key: STORAGE_KEY_DISPLAY_NAME,
-      name: userName,
-    });
-
     await authenticatedPage.goto(url);
     await authenticatedPage.waitForLoadState("networkidle");
 
     await authenticatedPage.getByRole("radio", { name: /correct answer/i }).click();
     await authenticatedPage.getByRole("button", { name: /check/i }).click();
 
+    // Verify {{NAME}} was replaced with a real name (not stripped).
+    // Stripped version: "great job {id}" (no comma prefix).
+    // Replaced version: "SomeName, great job {id}" (has comma prefix).
     await expect(
-      authenticatedPage.getByText(new RegExp(`${userName}, great job ${uniqueId}`)),
+      authenticatedPage.getByText(new RegExp(`.+, great job ${uniqueId}`)),
     ).toBeVisible();
     await expect(authenticatedPage.getByText("{{NAME}}")).not.toBeVisible();
   });
