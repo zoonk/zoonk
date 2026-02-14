@@ -79,7 +79,7 @@ export function ChallengeFailureContent({
 
   return (
     <ChallengeScreen>
-      <div className="flex flex-col items-center gap-1">
+      <div className="flex w-full flex-col gap-1">
         <p className="text-2xl font-bold tracking-tight">{t("Challenge Failed")}</p>
         <p className="text-muted-foreground text-sm">{t("Some of your stats went below zero.")}</p>
       </div>
