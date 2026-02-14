@@ -1,7 +1,13 @@
 import { type SerializedStep } from "@/data/activities/prepare-activity-data";
+import { ChallengeIntro } from "./challenge-intro";
 import { CompletionScreenContent } from "./completion-screen";
 import { FeedbackScreenContent } from "./feedback-screen";
-import { type DimensionInventory, type SelectedAnswer, type StepResult } from "./player-reducer";
+import {
+  type DimensionInventory,
+  type PlayerPhase,
+  type SelectedAnswer,
+  type StepResult,
+} from "./player-reducer";
 import { StepRenderer } from "./step-renderer";
 
 export function StageContent({
@@ -18,6 +24,7 @@ export function StageContent({
   onNavigatePrev,
   onRestart,
   onSelectAnswer,
+  onStartChallenge,
   results,
   phase,
   selectedAnswer,
@@ -35,10 +42,15 @@ export function StageContent({
   onNavigatePrev: () => void;
   onRestart: () => void;
   onSelectAnswer: (stepId: string, answer: SelectedAnswer) => void;
+  onStartChallenge: () => void;
   results: Record<string, StepResult>;
-  phase: string;
+  phase: PlayerPhase;
   selectedAnswer: SelectedAnswer | undefined;
 }) {
+  if (phase === "intro") {
+    return <ChallengeIntro dimensions={dimensions} onStart={onStartChallenge} />;
+  }
+
   if (isCompleted) {
     return (
       <CompletionScreenContent

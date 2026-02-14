@@ -1197,6 +1197,42 @@ msgctxt "w48TcP"
 msgid "Challenge Failed"
 msgstr "Desafío fallido"
 
+#: src/components/activity-player/challenge-intro.tsx
+msgctxt "/DZ4Fx"
+msgid "Make choices."
+msgstr "Toma decisiones."
+
+#: src/components/activity-player/challenge-intro.tsx
+msgctxt "4vTq4b"
+msgid "Balance the outcome."
+msgstr "Equilibra el resultado."
+
+#: src/components/activity-player/challenge-intro.tsx
+#: src/lib/activities.ts
+msgctxt "9MidH4"
+msgid "Challenge"
+msgstr "Desafío"
+
+#: src/components/activity-player/challenge-intro.tsx
+msgctxt "c+wn4p"
+msgid "You'll face a series of decisions. Each one shifts your scores. Don't let any go negative."
+msgstr "Enfrentarás una serie de decisiones. Cada una cambia tus puntajes. No dejes que ninguno sea negativo."
+
+#: src/components/activity-player/challenge-intro.tsx
+msgctxt "kKztdT"
+msgid "Starting scores"
+msgstr "Puntajes iniciales"
+
+#: src/components/activity-player/challenge-intro.tsx
+msgctxt "PVe26p"
+msgid "Begin"
+msgstr "Comenzar"
+
+#: src/components/activity-player/challenge-intro.tsx
+msgctxt "SFKe0U"
+msgid "Your scores"
+msgstr "Tus puntajes"
+
 #: src/components/activity-player/completion-auth-branch.tsx
 msgctxt "5kK+j9"
 msgid "Restart"
@@ -1224,6 +1260,21 @@ msgstr "Completada"
 msgctxt "P768k7"
 msgid "correct"
 msgstr "correcto"
+
+#: src/components/activity-player/dimension-status-button.tsx
+msgctxt "ehV7Gg"
+msgid "Current dimension scores"
+msgstr "Puntajes de dimensión actuales"
+
+#: src/components/activity-player/dimension-status-button.tsx
+msgctxt "EUdKC+"
+msgid "View stats"
+msgstr "Ver estadísticas"
+
+#: src/components/activity-player/dimension-status-button.tsx
+msgctxt "U86B6w"
+msgid "Stats"
+msgstr "Estadísticas"
 
 #: src/components/activity-player/feedback-screen.tsx
 msgctxt "++l7ni"
@@ -1421,11 +1472,6 @@ msgstr "Experimenta cuándo aplicar {topic} a través de un escenario de diálog
 msgctxt "3GLH+d"
 msgid "Examples"
 msgstr "Ejemplos"
-
-#: src/lib/activities.ts
-msgctxt "9MidH4"
-msgid "Challenge"
-msgstr "Desafío"
 
 #: src/lib/activities.ts
 msgctxt "BB51/R"

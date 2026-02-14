@@ -3,6 +3,51 @@
 import { useKeyboardCallback } from "@zoonk/ui/hooks/keyboard";
 import { type PlayerPhase } from "./player-reducer";
 
+type PlayerKeyboardParams = {
+  hasAnswer: boolean;
+  isStaticStep: boolean;
+  onCheck: () => void;
+  onContinue: () => void;
+  onEscape: () => void;
+  onNavigateNext: () => void;
+  onNavigatePrev: () => void;
+  onNext: (() => void) | null;
+  onRestart: () => void;
+  onStartChallenge: (() => void) | null;
+  phase: PlayerPhase;
+};
+
+function getEnterAction({
+  hasAnswer,
+  onCheck,
+  onContinue,
+  onEscape,
+  onNext,
+  onStartChallenge,
+  phase,
+}: Pick<
+  PlayerKeyboardParams,
+  "hasAnswer" | "onCheck" | "onContinue" | "onEscape" | "onNext" | "onStartChallenge" | "phase"
+>): (() => void) | null {
+  if (phase === "intro" && onStartChallenge) {
+    return onStartChallenge;
+  }
+
+  if (phase === "playing" && hasAnswer) {
+    return onCheck;
+  }
+
+  if (phase === "feedback") {
+    return onContinue;
+  }
+
+  if (phase === "completed") {
+    return onNext ?? onEscape;
+  }
+
+  return null;
+}
+
 export function usePlayerKeyboard({
   hasAnswer,
   isStaticStep,
@@ -13,33 +58,21 @@ export function usePlayerKeyboard({
   onNavigatePrev,
   onNext,
   onRestart,
+  onStartChallenge,
   phase,
-}: {
-  hasAnswer: boolean;
-  isStaticStep: boolean;
-  onCheck: () => void;
-  onContinue: () => void;
-  onEscape: () => void;
-  onNavigateNext: () => void;
-  onNavigatePrev: () => void;
-  onNext: (() => void) | null;
-  onRestart: () => void;
-  phase: PlayerPhase;
-}) {
+}: PlayerKeyboardParams) {
   useKeyboardCallback(
     "Enter",
     () => {
-      if (phase === "playing" && hasAnswer) {
-        onCheck();
-      } else if (phase === "feedback") {
-        onContinue();
-      } else if (phase === "completed") {
-        if (onNext) {
-          onNext();
-        } else {
-          onEscape();
-        }
-      }
+      getEnterAction({
+        hasAnswer,
+        onCheck,
+        onContinue,
+        onEscape,
+        onNext,
+        onStartChallenge,
+        phase,
+      })?.();
     },
     { mode: "none" },
   );
