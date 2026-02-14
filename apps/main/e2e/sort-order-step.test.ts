@@ -253,16 +253,16 @@ test.describe("Sort Order Step", () => {
     // Custom feedback is shown
     await expect(page.getByText(new RegExp(`Well done ${uniqueId}`))).toBeVisible();
 
-    // Items show correct result state
+    // Items show correct result state (list reorders to correct order)
     await expect(
-      itemList.getByRole("button", { name: new RegExp(`Position 1.*Step1 ${uniqueId}.*Correct`) }),
+      itemList.getByRole("button", { name: new RegExp(`Step1 ${uniqueId}.*Correct`) }),
     ).toBeVisible();
     await expect(
-      itemList.getByRole("button", { name: new RegExp(`Position 2.*Step2 ${uniqueId}.*Correct`) }),
+      itemList.getByRole("button", { name: new RegExp(`Step2 ${uniqueId}.*Correct`) }),
     ).toBeVisible();
   });
 
-  test("incorrect answer shows inline expected hints", async ({ page }) => {
+  test("incorrect answer reorders list to correct order with red indicators", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const { url } = await createSortOrderActivity({
       steps: [
@@ -292,16 +292,16 @@ test.describe("Sort Order Step", () => {
 
     await page.getByRole("button", { name: /check/i }).click();
 
-    // Shows inline expected hints instead of "Correct order:" list
-    await expect(page.getByText(new RegExp(`Expected: "First ${uniqueId}"`))).toBeVisible();
-    await expect(page.getByText(new RegExp(`Expected: "Second ${uniqueId}"`))).toBeVisible();
+    // List reorders to correct order with incorrect indicators
+    await expect(
+      itemList.getByRole("button", { name: new RegExp(`First ${uniqueId}.*Incorrect`) }),
+    ).toBeVisible();
+    await expect(
+      itemList.getByRole("button", { name: new RegExp(`Second ${uniqueId}.*Incorrect`) }),
+    ).toBeVisible();
 
     // Custom feedback shown
     await expect(page.getByText(new RegExp(`Try again ${uniqueId}`))).toBeVisible();
-
-    // No "Correct order:" list or "Not quite" visible text
-    await expect(page.getByText(/correct order:/i)).not.toBeVisible();
-    await expect(page.getByText(/not quite/i)).not.toBeVisible();
   });
 
   test("continue button appears after checking", async ({ page }) => {

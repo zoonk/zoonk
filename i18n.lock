@@ -446,9 +446,8 @@ checksums:
     Tap%20items%20in%20the%20correct%20order/singular: 221c7b9ef00241af65f534432965e782
     "%7Bitem%7D.%20Tap%20to%20select%20as%20position%20%7BnextPosition%7D./singular": f8b0d3e60ce3740c02c33c0faaec5e6b
     Correct/singular: c643eeb0a615de2032eca68722c31177
-    Position%20%7Bposition%7D%3A%20%7Bitem%7D.%20%7Bresult%7D./singular: af22d79f69dfa3f725721db4d668814d
+    "%7Bitem%7D.%20%7Bresult%7D./singular": 454dd5319c350f361652396801a1c30b
     Sort%20items/singular: 3b1072a596203b5acdc5718d38161392
-    Expected%3A%20%22%7BexpectedItem%7D%22/singular: e7904d0034072590249b13ffdde17f3c
     Position%20%7Bposition%7D%3A%20%7Bitem%7D.%20Tap%20to%20remove./singular: a1b3d3e026bfff43bff3d3e85ccdb952
     Incorrect/singular: a86cfbe7b86f19dc8df14a67df073d22
     Answer%20selected/singular: 43c2c02a2f5ab63d04a3ba140a03b769

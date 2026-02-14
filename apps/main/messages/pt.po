@@ -1357,19 +1357,14 @@ msgid "Correct"
 msgstr "Correto"
 
 #: src/components/activity-player/sort-order-step.tsx
-msgctxt "oqRIWD"
-msgid "Position {position}: {item}. {result}."
-msgstr "Posição {position}: {item}. {result}."
+msgctxt "hFFOe+"
+msgid "{item}. {result}."
+msgstr "{item}. {result}."
 
 #: src/components/activity-player/sort-order-step.tsx
 msgctxt "p5llOK"
 msgid "Sort items"
 msgstr "Ordenar itens"
-
-#: src/components/activity-player/sort-order-step.tsx
-msgctxt "rNTHBv"
-msgid "Expected: \"{expectedItem}\""
-msgstr "Esperado: \"{expectedItem}\""
 
 #: src/components/activity-player/sort-order-step.tsx
 msgctxt "vPyO9S"

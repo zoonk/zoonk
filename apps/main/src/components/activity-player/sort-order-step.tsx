@@ -5,6 +5,7 @@ import { parseStepContent } from "@zoonk/core/steps/content-contract";
 import { Kbd } from "@zoonk/ui/components/kbd";
 import { cn } from "@zoonk/ui/lib/utils";
 import { shuffle } from "@zoonk/utils/shuffle";
+import { CheckIcon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useCallback, useMemo, useState } from "react";
 import { type SelectedAnswer, type StepResult } from "./player-reducer";
@@ -20,19 +21,13 @@ function getItemResultState(
   return correctItems[position] === item ? "correct" : "incorrect";
 }
 
-function getExpectedItem(position: number, correctItems: string[]): string | undefined {
-  return correctItems[position];
-}
-
 function ItemButton({
-  correctItems,
   item,
   nextPosition,
   onClick,
   position,
   resultState,
 }: {
-  correctItems?: string[];
   item: string;
   nextPosition: number;
   onClick: () => void;
@@ -44,13 +39,9 @@ function ItemButton({
   const isSelected = position !== null;
 
   const ariaLabel = (() => {
-    if (hasResult && position !== null) {
+    if (hasResult) {
       const result = resultState === "correct" ? t("Correct") : t("Incorrect");
-      return t("Position {position}: {item}. {result}.", {
-        item,
-        position: String(position + 1),
-        result,
-      });
+      return t("{item}. {result}.", { item, result });
     }
 
     if (isSelected) {
@@ -66,10 +57,21 @@ function ItemButton({
     });
   })();
 
-  const expectedItem =
-    resultState === "incorrect" && position !== null && correctItems
-      ? getExpectedItem(position, correctItems)
-      : undefined;
+  const kbdContent = (() => {
+    if (resultState === "correct") {
+      return <CheckIcon aria-hidden="true" className="size-3" />;
+    }
+
+    if (resultState === "incorrect") {
+      return <XIcon aria-hidden="true" className="size-3" />;
+    }
+
+    if (isSelected) {
+      return String(position + 1);
+    }
+
+    return "\u00A0";
+  })();
 
   return (
     <button
@@ -90,23 +92,15 @@ function ItemButton({
     >
       <Kbd
         className={cn(
-          isSelected && "bg-primary text-primary-foreground",
+          isSelected && !hasResult && "bg-primary text-primary-foreground",
           resultState === "correct" && "bg-success text-white",
           resultState === "incorrect" && "bg-destructive text-white",
         )}
       >
-        {isSelected ? String(position + 1) : "\u00A0"}
+        {kbdContent}
       </Kbd>
 
-      <div className="flex flex-col">
-        <span className="text-base">{item}</span>
-
-        {expectedItem ? (
-          <span className="text-muted-foreground text-xs">
-            {t('Expected: "{expectedItem}"', { expectedItem })}
-          </span>
-        ) : null}
-      </div>
+      <span className="text-base">{item}</span>
     </button>
   );
 }
@@ -124,18 +118,17 @@ function SortItemList({
 }) {
   const t = useExtracted();
   const nextPosition = selections.length + 1;
+  const displayItems = correctItems ?? items;
 
   return (
     <div aria-label={t("Sort items")} className="flex flex-col gap-2" role="list">
-      {items.map((item, index) => {
-        const position = selections.indexOf(item);
+      {displayItems.map((item, index) => {
+        const resultState = correctItems ? getItemResultState(item, index, selections) : undefined;
+        const position = correctItems ? index : selections.indexOf(item);
         const isSelected = position !== -1;
-        const resultState =
-          correctItems && isSelected ? getItemResultState(item, position, correctItems) : undefined;
 
         return (
           <ItemButton
-            correctItems={correctItems}
             item={item}
             key={`${item}-${index}`}
             nextPosition={nextPosition}
