@@ -8,8 +8,8 @@ import {
   SetupLabel,
   SetupSubmit,
 } from "@/components/setup";
-import { UsernameInput } from "@/components/username-input";
 import { useUsernameAvailability } from "@zoonk/core/auth/hooks/username-availability";
+import { InputGroup, InputGroupAddon, InputGroupInput } from "@zoonk/ui/components/input-group";
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
@@ -79,13 +79,27 @@ export function SetupProfileForm({
 
       <SetupField>
         <SetupLabel htmlFor="username">{t("Username")}</SetupLabel>
-        <UsernameInput
-          id="username"
-          name="username"
-          onChange={(event) => setUsername(event.target.value)}
-          placeholder={t("your-username")}
-          value={username}
-        />
+        <InputGroup>
+          <InputGroupAddon>@</InputGroupAddon>
+
+          <InputGroupInput
+            autoCapitalize="none"
+            autoComplete="username"
+            autoCorrect="off"
+            id="username"
+            maxLength={30}
+            minLength={3}
+            name="username"
+            onChange={(event) => {
+              event.target.value = event.target.value.toLowerCase();
+              setUsername(event.target.value);
+            }}
+            placeholder={t("your-username")}
+            required
+            spellCheck={false}
+            value={username}
+          />
+        </InputGroup>
         <UsernameDescription description={description} status={status} />
       </SetupField>
 
