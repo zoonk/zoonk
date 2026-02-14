@@ -1,3 +1,4 @@
+import { NAME_PLACEHOLDER } from "@zoonk/utils/constants";
 import slugify from "slugify";
 
 const NUMERIC_ID_PATTERN = /^\d+$/;
@@ -39,4 +40,20 @@ export function formatPosition(position: number): string {
 
 export function emptyToNull(value?: string | null): string | null {
   return value?.trim() || null;
+}
+
+export function replaceNamePlaceholder(text: string, name: string | null): string {
+  if (!text.includes(NAME_PLACEHOLDER)) {
+    return text;
+  }
+
+  if (name) {
+    return text.replaceAll(NAME_PLACEHOLDER, name);
+  }
+
+  return text
+    .replaceAll(/\{\{NAME\}\},\s*/g, "")
+    .replaceAll(/,\s*\{\{NAME\}\}/g, "")
+    .replaceAll(NAME_PLACEHOLDER, "")
+    .trim();
 }

@@ -21,6 +21,7 @@ import { PlayerStage } from "./player-stage";
 import { StageContent } from "./stage-content";
 import { usePlayerKeyboard } from "./use-player-keyboard";
 import { usePlayerState } from "./use-player-state";
+import { UserNameProvider } from "./user-name-context";
 
 export function ActivityPlayerShell({
   activity,
@@ -111,71 +112,73 @@ export function ActivityPlayerShell({
   const buttonLabel = state.phase === "feedback" ? t("Continue") : t("Check");
 
   return (
-    <main className="flex min-h-dvh flex-col">
-      {!isCompleted && (
-        <PlayerHeader>
-          <PlayerCloseLink href={lessonHref} />
+    <UserNameProvider>
+      <main className="flex min-h-dvh flex-col">
+        {!isCompleted && (
+          <PlayerHeader>
+            <PlayerCloseLink href={lessonHref} />
 
-          {isStaticStep && (
-            <PlayerNav>
-              <PlayerNavGroup>
-                <PlayerNavButton
-                  direction="prev"
-                  disabled={isFirstStep}
-                  onClick={handleNavigatePrev}
-                />
-                <PlayerStepFraction>
-                  {state.currentStepIndex + 1} / {totalSteps}
-                </PlayerStepFraction>
-                <PlayerNavButton direction="next" onClick={handleNavigateNext} />
-              </PlayerNavGroup>
-            </PlayerNav>
-          )}
+            {isStaticStep && (
+              <PlayerNav>
+                <PlayerNavGroup>
+                  <PlayerNavButton
+                    direction="prev"
+                    disabled={isFirstStep}
+                    onClick={handleNavigatePrev}
+                  />
+                  <PlayerStepFraction>
+                    {state.currentStepIndex + 1} / {totalSteps}
+                  </PlayerStepFraction>
+                  <PlayerNavButton direction="next" onClick={handleNavigateNext} />
+                </PlayerNavGroup>
+              </PlayerNav>
+            )}
 
-          {!isStaticStep && (
-            <PlayerStepFraction>
-              {state.currentStepIndex + 1} / {totalSteps}
-            </PlayerStepFraction>
-          )}
+            {!isStaticStep && (
+              <PlayerStepFraction>
+                {state.currentStepIndex + 1} / {totalSteps}
+              </PlayerStepFraction>
+            )}
 
-          <div className="size-9" aria-hidden="true" />
-        </PlayerHeader>
-      )}
+            <div className="size-9" aria-hidden="true" />
+          </PlayerHeader>
+        )}
 
-      {!isCompleted && <PlayerProgressBar value={progressValue} />}
+        {!isCompleted && <PlayerProgressBar value={progressValue} />}
 
-      <PlayerStage phase={state.phase}>
-        <StageContent
-          activityId={state.activityId}
-          currentResult={currentResult}
-          currentStep={currentStep}
-          currentStepIndex={state.currentStepIndex}
-          dimensions={state.dimensions}
-          isCompleted={isCompleted}
-          isFirst={isFirstStep}
-          lessonHref={lessonHref}
-          nextActivityHref={nextActivityHref}
-          onNavigateNext={handleNavigateNext}
-          onNavigatePrev={handleNavigatePrev}
-          onRestart={handleRestart}
-          onSelectAnswer={handleSelectAnswer}
-          phase={state.phase}
-          results={state.results}
-          selectedAnswer={currentStep ? state.selectedAnswers[currentStep.id] : undefined}
-        />
-      </PlayerStage>
+        <PlayerStage phase={state.phase}>
+          <StageContent
+            activityId={state.activityId}
+            currentResult={currentResult}
+            currentStep={currentStep}
+            currentStepIndex={state.currentStepIndex}
+            dimensions={state.dimensions}
+            isCompleted={isCompleted}
+            isFirst={isFirstStep}
+            lessonHref={lessonHref}
+            nextActivityHref={nextActivityHref}
+            onNavigateNext={handleNavigateNext}
+            onNavigatePrev={handleNavigatePrev}
+            onRestart={handleRestart}
+            onSelectAnswer={handleSelectAnswer}
+            phase={state.phase}
+            results={state.results}
+            selectedAnswer={currentStep ? state.selectedAnswers[currentStep.id] : undefined}
+          />
+        </PlayerStage>
 
-      {!isStaticStep && !isCompleted && (
-        <PlayerActionBar>
-          <PlayerActionButton
-            disabled={state.phase === "playing" && !hasAnswer}
-            onClick={state.phase === "feedback" ? handleContinue : handleCheck}
-          >
-            {buttonLabel}
-          </PlayerActionButton>
-        </PlayerActionBar>
-      )}
-    </main>
+        {!isStaticStep && !isCompleted && (
+          <PlayerActionBar>
+            <PlayerActionButton
+              disabled={state.phase === "playing" && !hasAnswer}
+              onClick={state.phase === "feedback" ? handleContinue : handleCheck}
+            >
+              {buttonLabel}
+            </PlayerActionButton>
+          </PlayerActionBar>
+        )}
+      </main>
+    </UserNameProvider>
   );
 }
 

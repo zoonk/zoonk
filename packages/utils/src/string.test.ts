@@ -6,6 +6,7 @@ import {
   parseBigIntId,
   parseNumericId,
   removeAccents,
+  replaceNamePlaceholder,
 } from "./string";
 
 describe(removeAccents, () => {
@@ -171,5 +172,34 @@ describe(formatPosition, () => {
   test("formats double digit positions without leading zero", () => {
     expect(formatPosition(9)).toBe("10");
     expect(formatPosition(99)).toBe("100");
+  });
+});
+
+describe(replaceNamePlaceholder, () => {
+  test("replaces {{NAME}} with provided name", () => {
+    expect(replaceNamePlaceholder("Hello, {{NAME}}!", "Alice")).toBe("Hello, Alice!");
+  });
+
+  test("handles multiple occurrences", () => {
+    expect(replaceNamePlaceholder("{{NAME}}, meet {{NAME}}", "Bob")).toBe("Bob, meet Bob");
+  });
+
+  test("strips '{{NAME}}, ' pattern when name is null", () => {
+    expect(replaceNamePlaceholder("{{NAME}}, I think we have a problem.", null)).toBe(
+      "I think we have a problem.",
+    );
+  });
+
+  test("strips ', {{NAME}}' pattern when name is null", () => {
+    expect(replaceNamePlaceholder("Hello there, {{NAME}}", null)).toBe("Hello there");
+  });
+
+  test("strips standalone {{NAME}} when name is null", () => {
+    expect(replaceNamePlaceholder("{{NAME}} welcome back", null)).toBe("welcome back");
+  });
+
+  test("returns original text when no placeholder present", () => {
+    expect(replaceNamePlaceholder("No placeholder here", "Alice")).toBe("No placeholder here");
+    expect(replaceNamePlaceholder("No placeholder here", null)).toBe("No placeholder here");
   });
 });

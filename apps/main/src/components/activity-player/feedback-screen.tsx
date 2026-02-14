@@ -5,6 +5,7 @@ import { CircleCheck, CircleX } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { DimensionList, buildDimensionEntries } from "./dimension-inventory";
 import { type DimensionInventory, type StepResult } from "./player-reducer";
+import { useReplaceName } from "./user-name-context";
 
 export function getFeedbackVariant(result: StepResult): "correct" | "incorrect" | "challenge" {
   if (result.effects.length > 0) {
@@ -61,7 +62,9 @@ export function FeedbackScreenContent({
   result: StepResult;
 }) {
   const t = useExtracted();
+  const replaceName = useReplaceName();
   const variant = getFeedbackVariant(result);
+  const feedback = result.result.feedback ? replaceName(result.result.feedback) : null;
 
   if (variant === "challenge") {
     const entries = buildDimensionEntries(dimensions, result.effects);
@@ -70,9 +73,7 @@ export function FeedbackScreenContent({
       <FeedbackScreen>
         <FeedbackIndicator className="text-foreground">{t("Outcome")}</FeedbackIndicator>
 
-        {result.result.feedback ? (
-          <FeedbackMessage>{result.result.feedback}</FeedbackMessage>
-        ) : null}
+        {feedback ? <FeedbackMessage>{feedback}</FeedbackMessage> : null}
 
         <DimensionList aria-label="Dimension inventory" entries={entries} variant="feedback" />
       </FeedbackScreen>
@@ -92,7 +93,7 @@ export function FeedbackScreenContent({
         <span>{isCorrect ? t("Correct!") : t("Not quite")}</span>
       </FeedbackIndicator>
 
-      {result.result.feedback ? <FeedbackMessage>{result.result.feedback}</FeedbackMessage> : null}
+      {feedback ? <FeedbackMessage>{feedback}</FeedbackMessage> : null}
     </FeedbackScreen>
   );
 }

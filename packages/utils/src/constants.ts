@@ -53,3 +53,6 @@ export const TTS_VOICES = [
 ] as const;
 
 export type TTSVoice = (typeof TTS_VOICES)[number];
+
+export const STORAGE_KEY_DISPLAY_NAME = "zoonk:displayName";
+export const NAME_PLACEHOLDER = "{{NAME}}";
