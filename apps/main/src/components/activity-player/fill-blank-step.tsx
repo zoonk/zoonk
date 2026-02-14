@@ -145,7 +145,7 @@ export function FillBlankStep({
   selectedAnswer: SelectedAnswer | undefined;
   step: SerializedStep;
 }) {
-  const content = parseStepContent("fillBlank", step.content);
+  const content = useMemo(() => parseStepContent("fillBlank", step.content), [step.content]);
   const replaceName = useReplaceName();
   const blankCount = content.answers.length;
 
