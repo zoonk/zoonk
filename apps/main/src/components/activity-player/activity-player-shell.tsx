@@ -6,17 +6,9 @@ import { useExtracted } from "next-intl";
 import { useCallback } from "react";
 import { checkStep } from "./check-step";
 import { hasNegativeDimension } from "./dimension-inventory";
-import { DimensionStatusButton } from "./dimension-status-button";
+import { InPlayStickyHeader } from "./in-play-sticky-header";
 import { PlayerActionBar, PlayerActionButton } from "./player-action-bar";
-import {
-  PlayerCloseLink,
-  PlayerHeader,
-  PlayerNav,
-  PlayerNavButton,
-  PlayerNavGroup,
-  PlayerStepFraction,
-} from "./player-header";
-import { PlayerProgressBar } from "./player-progress-bar";
+import { PlayerCloseLink, PlayerHeader } from "./player-header";
 import { type PlayerState, type SelectedAnswer } from "./player-reducer";
 import { PlayerStage } from "./player-stage";
 import { StageContent } from "./stage-content";
@@ -139,47 +131,28 @@ export function ActivityPlayerShell({
     <UserNameProvider>
       <main className="flex min-h-dvh flex-col">
         {view.isIntro && (
-          <PlayerHeader>
-            <PlayerCloseLink href={lessonHref} />
-            <div className="size-9" aria-hidden="true" />
-          </PlayerHeader>
+          <div className="bg-background/95 sticky top-0 z-30 backdrop-blur-sm">
+            <PlayerHeader>
+              <PlayerCloseLink href={lessonHref} />
+              <div className="size-9" aria-hidden="true" />
+            </PlayerHeader>
+          </div>
         )}
 
         {view.showHeader && (
-          <PlayerHeader>
-            <PlayerCloseLink href={lessonHref} />
-
-            {view.isStaticStep && (
-              <PlayerNav>
-                <PlayerNavGroup>
-                  <PlayerNavButton
-                    direction="prev"
-                    disabled={view.isFirstStep}
-                    onClick={handleNavigatePrev}
-                  />
-                  <PlayerStepFraction>
-                    {state.currentStepIndex + 1} / {view.totalSteps}
-                  </PlayerStepFraction>
-                  <PlayerNavButton direction="next" onClick={handleNavigateNext} />
-                </PlayerNavGroup>
-              </PlayerNav>
-            )}
-
-            {!view.isStaticStep && (
-              <PlayerStepFraction>
-                {state.currentStepIndex + 1} / {view.totalSteps}
-              </PlayerStepFraction>
-            )}
-
-            {view.hasDimensions ? (
-              <DimensionStatusButton dimensions={state.dimensions} />
-            ) : (
-              <div className="size-9" aria-hidden="true" />
-            )}
-          </PlayerHeader>
+          <InPlayStickyHeader
+            currentStepIndex={state.currentStepIndex}
+            dimensions={state.dimensions}
+            hasDimensions={view.hasDimensions}
+            isFirstStep={view.isFirstStep}
+            isStaticStep={view.isStaticStep}
+            lessonHref={lessonHref}
+            onNavigateNext={handleNavigateNext}
+            onNavigatePrev={handleNavigatePrev}
+            progressValue={view.progressValue}
+            totalSteps={view.totalSteps}
+          />
         )}
-
-        {view.showHeader && <PlayerProgressBar value={view.progressValue} />}
 
         <PlayerStage phase={state.phase}>
           <StageContent
