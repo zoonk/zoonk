@@ -22,12 +22,14 @@ test.describe("OTP Login Flow", () => {
   });
 
   test("validates OTP and redirects to setup for new user", async ({ page }) => {
+    const email = `e2e-otp-validate-${Date.now()}@zoonk.test`;
+
     await page.goto(`/auth/login?redirectTo=${encodeURIComponent(REDIRECT_URL)}`);
-    await page.getByLabel(/email/i).fill(TEST_EMAIL);
+    await page.getByLabel(/email/i).fill(email);
     await page.getByRole("button", { name: /^continue$/i }).click();
     await page.waitForURL(/\/auth\/otp/);
 
-    const otp = await getOTPForEmail(TEST_EMAIL);
+    const otp = await getOTPForEmail(email);
 
     if (!otp) {
       throw new Error("OTP not found in database");
@@ -40,6 +42,8 @@ test.describe("OTP Login Flow", () => {
     // New users without name/username are redirected to setup
     await page.waitForURL(/\/auth\/setup/);
     await expect(page.getByRole("heading", { name: /complete your profile/i })).toBeVisible();
+
+    await cleanupVerifications(email);
   });
 
   test("shows error for invalid OTP", async ({ page }) => {

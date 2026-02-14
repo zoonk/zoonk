@@ -36,6 +36,56 @@ test.describe("Profile settings page", () => {
     await expect(authenticatedPage.getByText("@")).toBeVisible();
   });
 
+  test("shows validation for short username", async ({ authenticatedPage }) => {
+    await authenticatedPage.goto("/profile");
+
+    const usernameInput = authenticatedPage.getByRole("textbox", { name: /username/i });
+    await usernameInput.fill("ab");
+
+    await expect(authenticatedPage.getByText(/3-30 characters/i)).toBeVisible();
+  });
+
+  test("disables save button for invalid username", async ({ authenticatedPage }) => {
+    await authenticatedPage.goto("/profile");
+
+    const usernameInput = authenticatedPage.getByRole("textbox", { name: /username/i });
+    await usernameInput.fill("AB!@#");
+
+    await expect(authenticatedPage.getByText(/3-30 characters/i)).toBeVisible();
+  });
+
+  test("updates username successfully", async ({ authenticatedPage }) => {
+    await authenticatedPage.goto("/profile");
+
+    const usernameInput = authenticatedPage.getByRole("textbox", { name: /username/i });
+    const originalUsername = await usernameInput.inputValue();
+    const newUsername = `e2etest${Date.now().toString().slice(-6)}`;
+
+    await usernameInput.fill(newUsername);
+
+    await authenticatedPage.getByRole("button", { name: /save changes/i }).click();
+
+    await expect(
+      authenticatedPage.getByText(/your profile has been updated successfully/i),
+    ).toBeVisible();
+
+    // Verify username persists after reload
+    await authenticatedPage.reload();
+
+    await expect(authenticatedPage.getByRole("textbox", { name: /username/i })).toHaveValue(
+      newUsername,
+    );
+
+    // Restore original username to avoid breaking other tests
+    await usernameInput.fill(originalUsername);
+
+    await authenticatedPage.getByRole("button", { name: /save changes/i }).click();
+
+    await expect(
+      authenticatedPage.getByText(/your profile has been updated successfully/i),
+    ).toBeVisible();
+  });
+
   test("shows error for whitespace-only name", async ({ authenticatedPage }) => {
     await authenticatedPage.goto("/profile");
 
