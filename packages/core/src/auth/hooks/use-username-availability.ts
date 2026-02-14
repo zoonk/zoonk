@@ -34,7 +34,7 @@ export function useUsernameAvailability(currentUsername?: string | null) {
       });
 
       if (error) {
-        setStatus("idle");
+        setStatus("taken");
         return;
       }
 

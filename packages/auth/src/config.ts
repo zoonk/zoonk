@@ -20,6 +20,7 @@ import { stripePlugin } from "./plugins/stripe";
 import { trustedOriginPlugin } from "./plugins/trusted-origin";
 import { appleProvider } from "./providers/apple";
 import { googleProvider } from "./providers/google";
+import { isUsernameAllowed } from "./username-validator";
 
 const SESSION_EXPIRES_IN_DAYS = 30;
 const COOKIE_CACHE_MINUTES = 60;
@@ -70,7 +71,9 @@ export const baseAuthConfig: Omit<BetterAuthOptions, "rateLimit"> = {
 
 export const baseAuthPlugins = [
   adminPlugin(),
-  username(),
+  username({
+    usernameValidator: (username) => isUsernameAllowed(username),
+  }),
   organization({
     ac,
     // Temporarily disable organization creation

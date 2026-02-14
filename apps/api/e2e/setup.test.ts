@@ -76,6 +76,33 @@ test.describe("Profile Setup Flow", () => {
     await cleanupVerifications(email);
   });
 
+  test("shows taken for blocked username", async ({ page }) => {
+    const email = `e2e-setup-blocked-${Date.now()}@zoonk.test`;
+
+    await page.goto(`/auth/login?redirectTo=${encodeURIComponent(REDIRECT_URL)}`);
+    await page.getByLabel(/email/i).fill(email);
+    await page.getByRole("button", { name: /^continue$/i }).click();
+    await page.waitForURL(/\/auth\/otp/);
+
+    const otp = await getOTPForEmail(email);
+
+    if (!otp) {
+      throw new Error("OTP not found in database");
+    }
+
+    await page.getByRole("textbox").click();
+    await page.keyboard.type(otp);
+    await page.getByRole("button", { name: /^continue$/i }).click();
+
+    await page.waitForURL(/\/auth\/setup/);
+
+    await page.getByRole("textbox", { name: /username/i }).fill("admin");
+
+    await expect(page.getByText(/is already taken/i)).toBeVisible();
+
+    await cleanupVerifications(email);
+  });
+
   test("shows validation for short username", async ({ page }) => {
     await page.goto(`/auth/login?redirectTo=${encodeURIComponent(REDIRECT_URL)}`);
     await page.getByLabel(/email/i).fill(TEST_EMAIL);
