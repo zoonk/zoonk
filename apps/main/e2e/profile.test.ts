@@ -52,6 +52,7 @@ test.describe("Profile settings page", () => {
     await usernameInput.fill("AB!@#");
 
     await expect(authenticatedPage.getByText(/3-30 characters/i)).toBeVisible();
+    await expect(authenticatedPage.getByRole("button", { name: /save changes/i })).toBeDisabled();
   });
 
   test("updates username successfully", async ({ authenticatedPage }) => {

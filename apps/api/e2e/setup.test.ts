@@ -1,22 +1,22 @@
 import { expect, test } from "./fixtures";
 import { cleanupVerifications, disconnectDb, getOTPForEmail } from "./helpers/db";
 
-const TEST_EMAIL = `e2e-setup-${Date.now()}@zoonk.test`;
 const REDIRECT_URL = "http://localhost:49152/test";
 
 test.describe("Profile Setup Flow", () => {
   test.afterAll(async () => {
-    await cleanupVerifications(TEST_EMAIL);
     await disconnectDb();
   });
 
   test("new user is redirected to setup after OTP", async ({ page }) => {
+    const email = `e2e-setup-redirect-${Date.now()}@zoonk.test`;
+
     await page.goto(`/auth/login?redirectTo=${encodeURIComponent(REDIRECT_URL)}`);
-    await page.getByLabel(/email/i).fill(TEST_EMAIL);
+    await page.getByLabel(/email/i).fill(email);
     await page.getByRole("button", { name: /^continue$/i }).click();
     await page.waitForURL(/\/auth\/otp/);
 
-    const otp = await getOTPForEmail(TEST_EMAIL);
+    const otp = await getOTPForEmail(email);
 
     if (!otp) {
       throw new Error("OTP not found in database");
@@ -31,6 +31,8 @@ test.describe("Profile Setup Flow", () => {
     await expect(page.getByRole("heading", { name: /complete your profile/i })).toBeVisible();
     await expect(page.getByRole("textbox", { name: /^name$/i })).toBeVisible();
     await expect(page.getByRole("textbox", { name: /username/i })).toBeVisible();
+
+    await cleanupVerifications(email);
   });
 
   test("completes setup and redirects to callback", async ({ page }) => {
@@ -104,12 +106,14 @@ test.describe("Profile Setup Flow", () => {
   });
 
   test("shows validation for short username", async ({ page }) => {
+    const email = `e2e-setup-short-${Date.now()}@zoonk.test`;
+
     await page.goto(`/auth/login?redirectTo=${encodeURIComponent(REDIRECT_URL)}`);
-    await page.getByLabel(/email/i).fill(TEST_EMAIL);
+    await page.getByLabel(/email/i).fill(email);
     await page.getByRole("button", { name: /^continue$/i }).click();
     await page.waitForURL(/\/auth\/otp/);
 
-    const otp = await getOTPForEmail(TEST_EMAIL);
+    const otp = await getOTPForEmail(email);
 
     if (!otp) {
       throw new Error("OTP not found in database");
@@ -124,5 +128,7 @@ test.describe("Profile Setup Flow", () => {
     await page.getByRole("textbox", { name: /username/i }).fill("ab");
 
     await expect(page.getByText(/3-30 characters/i)).toBeVisible();
+
+    await cleanupVerifications(email);
   });
 });

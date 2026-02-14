@@ -97,12 +97,16 @@ test.describe("OTP Login Flow", () => {
     await page.getByRole("textbox", { name: /^name$/i }).fill("Trailing Slash User");
     await page.getByRole("textbox", { name: /username/i }).fill(`trailing${Date.now()}`);
     await expect(page.getByText(/is available/i)).toBeVisible();
-    await page.getByRole("button", { name: /^continue$/i }).click();
 
+    // Register listener BEFORE the click that triggers the redirect.
+    // waitForRequest only captures requests after registration,
+    // so registering after click risks missing fast redirects.
     const redirectPromise = page.waitForRequest((request) => {
       const url = request.url();
       return url.startsWith("http://localhost:49152/test/") && url.length > 28;
     });
+
+    await page.getByRole("button", { name: /^continue$/i }).click();
 
     const redirectRequest = await redirectPromise;
     const redirectUrl = new URL(redirectRequest.url());

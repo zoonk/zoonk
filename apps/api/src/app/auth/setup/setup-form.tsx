@@ -78,7 +78,7 @@ export function SetupProfileForm({
   }, [state.status, router, redirectTo]);
 
   const hasError = state.status === "error";
-  const isSubmitDisabled = status === "taken" || status === "checking";
+  const isSubmitDisabled = status !== "idle" && status !== "available";
 
   return (
     <SetupForm action={formAction}>

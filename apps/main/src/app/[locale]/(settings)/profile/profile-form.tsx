@@ -21,7 +21,7 @@ import { Spinner } from "@zoonk/ui/components/spinner";
 import { cn } from "@zoonk/ui/lib/utils";
 import { SubmitButton } from "@zoonk/ui/patterns/buttons/submit";
 import { useExtracted } from "next-intl";
-import { useActionState, useEffect } from "react";
+import { useActionState } from "react";
 import { profileFormAction } from "./actions";
 
 function UsernameStatus({ status, username }: { status: UsernameStatusType; username: string }) {
@@ -78,14 +78,8 @@ export function ProfileForm() {
 
   const currentName = state.name || session?.user.name || "";
 
-  useEffect(() => {
-    if (currentUsername && !username) {
-      setUsername(currentUsername);
-    }
-  }, [currentUsername, username, setUsername]);
-
   const hasError = state.status === "error";
-  const isSubmitDisabled = status === "taken" || status === "checking";
+  const isSubmitDisabled = status !== "idle" && status !== "available";
 
   return (
     <form action={formAction} className="flex flex-col gap-6 lg:max-w-md">
