@@ -1225,6 +1225,16 @@ msgctxt "xmF49T"
 msgid "Correct!"
 msgstr "¡Correcto!"
 
+#: src/components/activity-player/multiple-choice-step.tsx
+msgctxt "HHBtl4"
+msgid "What do you say?"
+msgstr "¿Qué dices?"
+
+#: src/components/activity-player/multiple-choice-step.tsx
+msgctxt "nJGJop"
+msgid "Someone says:"
+msgstr "Alguien dice:"
+
 #: src/components/activity-player/player-header.tsx
 msgctxt "aNzy1T"
 msgid "Previous step"

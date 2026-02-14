@@ -251,6 +251,9 @@ test.describe("Language Variant", () => {
 
     await page.goto(url);
 
+    await expect(page.getByText(/someone says:/i)).toBeVisible();
+    await expect(page.getByText(/what do you say\?/i)).toBeVisible();
+
     await expect(page.getByText(new RegExp(`Bonjour ${uniqueId}`))).toBeVisible();
     await expect(page.getByText(new RegExp(`bon-zhoor ${uniqueId}`))).toBeVisible();
     await expect(page.getByText(new RegExp(`Hello ${uniqueId}`))).toBeVisible();
@@ -293,6 +296,9 @@ test.describe("Language Variant", () => {
     });
 
     await page.goto(url);
+
+    await expect(page.getByText(/someone says:/i)).toBeVisible();
+    await expect(page.getByText(/what do you say\?/i)).toBeVisible();
 
     await expect(page.getByText(new RegExp(`Hola ${uniqueId}`))).toBeVisible();
     await expect(page.getByText(new RegExp(`Hello ${uniqueId}`))).toBeVisible();

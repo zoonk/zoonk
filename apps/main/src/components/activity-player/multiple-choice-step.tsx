@@ -9,6 +9,7 @@ import {
 } from "@zoonk/core/steps/content-contract";
 import { Kbd } from "@zoonk/ui/components/kbd";
 import { cn } from "@zoonk/ui/lib/utils";
+import { useExtracted } from "next-intl";
 import { type SelectedAnswer } from "./player-reducer";
 import { InteractiveStepLayout } from "./step-layouts";
 import { useOptionKeyboard } from "./use-option-keyboard";
@@ -139,6 +140,16 @@ function ChallengeVariant({
   );
 }
 
+function SectionLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <p className="text-muted-foreground text-xs font-medium tracking-wide uppercase">{children}</p>
+  );
+}
+
+function SpeechBubble({ children }: { children: React.ReactNode }) {
+  return <div className="bg-muted flex flex-col gap-1 rounded-2xl px-4 py-3">{children}</div>;
+}
+
 function LanguageVariant({
   content,
   onSelect,
@@ -148,21 +159,28 @@ function LanguageVariant({
   onSelect: (index: number) => void;
   selectedIndex: number | null;
 }) {
+  const t = useExtracted();
+
   return (
     <>
-      <div className="flex flex-col">
-        <div className="flex flex-col">
-          {content.contextRomanization && (
+      <div className="flex flex-col gap-2">
+        <SectionLabel>{t("Someone says:")}</SectionLabel>
+
+        <SpeechBubble>
+          <p className="text-base font-semibold">{content.context}</p>
+
+          {content.contextRomanization ? (
             <p className="text-muted-foreground text-sm italic">{content.contextRomanization}</p>
-          )}
+          ) : null}
 
-          <QuestionText>{content.context}</QuestionText>
-        </div>
-
-        <ContextText>{content.contextTranslation}</ContextText>
+          <p className="text-muted-foreground text-sm">{content.contextTranslation}</p>
+        </SpeechBubble>
       </div>
 
-      <OptionList onSelect={onSelect} options={content.options} selectedIndex={selectedIndex} />
+      <div className="flex flex-col gap-3">
+        <SectionLabel>{t("What do you say?")}</SectionLabel>
+        <OptionList onSelect={onSelect} options={content.options} selectedIndex={selectedIndex} />
+      </div>
     </>
   );
 }

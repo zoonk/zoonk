@@ -420,6 +420,8 @@ checksums:
     Not%20quite/singular: e570085e69662802acf485c4565e3e3e
     Outcome/singular: 4cfc7a40e384ea8b6658e8da6e351bf0
     Correct!/singular: dda1a98dc04fd9db252887ecf1765d41
+    What%20do%20you%20say%3F/singular: 75887288b85fc19e67b7d20550d9205e
+    Someone%20says%3A/singular: 09f34dce0528b57e89c8757b5745e6c5
     Previous%20step/singular: 96b31ec6dab003c2bbfbbca10a8a9826
     Next%20step/singular: 712c63650b5180cbc14d6246b5d558c2
     Step%20navigation/singular: ec328f28051577e1c0aab044c89b138c
