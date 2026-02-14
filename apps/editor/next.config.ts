@@ -6,7 +6,6 @@ const CACHE_IMAGE_DAYS = 30;
 
 const isE2E = process.env.E2E_TESTING === "true";
 
-// test only editor e2e runs
 // Swap modules for E2E-specific config during E2E builds
 const e2eAliases: Record<string, string> = isE2E
   ? {
