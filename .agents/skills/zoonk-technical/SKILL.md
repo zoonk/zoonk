@@ -54,7 +54,7 @@ Server components, server data, URL state.
 
 - Prefer server components over client components
 - Fetch data on the server with `Suspense` + `Skeleton` for loading
-- Use URL state (nuqs) over client state when appropriate
+- Use URL state over client state when appropriate
 - Avoid `useEffect` and `useState` unless absolutely required
 - Avoid waterfalls in data fetching
 
@@ -196,50 +196,25 @@ When in doubt, STOP. Ask for clarification. It's better to ask than to build the
 - Lightweight solutions always
 - Solutions backed by a business (they have stake in the game)
 
-## Architecture Context
+## Technology Choice Principles
 
-Understanding why we chose our stack helps you make aligned decisions.
+These principles guide stack decisions. When evaluating new tools or questioning existing ones, apply this framework:
 
-### Why Next.js 16 + Cache Components
+### Managed Over Self-Hosted
 
-Vercel's ecosystem abstracts away infrastructure complexity, letting us focus on the product. Cache Components enable:
+Prefer managed infrastructure that abstracts operational complexity. Focus time on the product, not servers. Operational burden is a hidden cost that compounds.
 
-- Static pages for free users (SEO, indexing, performance)
-- Dynamic parts for premium features (user progress, personalization)
-- Perfect for B2C main app
+### Business-Backed Over Community-Only
 
-### Why Better Auth
+Prefer tools backed by companies with financial stake — stronger maintenance, better long-term support, and aligned incentives. Community projects are valuable but carry higher abandonment risk.
 
-Better Auth has more features than alternatives and **acquired NextAuth** — it will become THE default auth solution in the TypeScript ecosystem. Getting ahead of the curve.
+### Composable Over Monolithic
 
-### Why Monorepo
+Choose tools that do one thing well. A monorepo enables independent scaling — self-contained apps can be worked on by different teams/agents simultaneously.
 
-Independent scaling + different teams/agents can work in different areas easily.
+### Ahead of the Curve (When the Signal is Strong)
 
-Self-contained apps can scale independently and be worked on by different teams/agents simultaneously.
-
-## Sub-Agent Collaboration
-
-You are part of a team. Other agents have specialized expertise. Use them.
-
-### Build the Habit of Searching for Agents
-
-**Before starting specialized work:**
-
-- "Is there an agent that specializes in this?"
-- Search the Task tool's agent descriptions for matches
-- Use the right agent for the job — they'll do it better
-
-**After completing implementation:**
-
-- "Is there an agent that could review this work?"
-- Proactively invoke review agents for validation
-
-### The Mindset
-
-Agents work as a team — no micromanaging, trust their expertise. If an agent exists for a task, use it. They have domain knowledge you might not.
-
-**Don't work in isolation.** Check if there's an agent with relevant expertise.
+Adopt emerging technology when it solves a real current problem, is business-backed, and the ecosystem direction is clear. Otherwise, be conservative and go with stable, proven solutions.
 
 ## Common Scenarios
 
@@ -281,11 +256,7 @@ Adopt when:
 - Good opportunity for improvement
 - Backed by a trustworthy business (they have stake in the game)
 
-Otherwise, be conservative. Go with stable, proven solutions. Always weigh the trade-offs.
-
-**Example:** Vercel Workflow adopted even during their beta stage because it was a simple solution to a real problem we had and backed by Vercel.
-
-Always prefer solutions and technologies from businesses that deeply care about quality.
+Otherwise, be conservative. Go with stable, proven solutions. Always weigh the trade-offs. Prefer solutions and technologies from businesses that deeply care about quality.
 
 ## Remember
 

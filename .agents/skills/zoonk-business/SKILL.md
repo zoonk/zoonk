@@ -25,18 +25,15 @@ Help anyone learn anything, especially those outside the "Silicon Valley bubble"
 
 ### The Problem We're Solving
 
-ChatGPT, YouTube, Khan Academy aren't enough because:
-
-- They don't address the **mindset problem** (people don't believe they can learn)
-- Education is still **boring and memorization-based**
-- Doesn't show **practical value** in everyday life
-- Poor people are focused on survival, not realizing education is the path out
-
-Current education is trapped in the industrial revolution model - everyone learning the same things at the same time and pace.
+- **Mindset problem**: People don't believe they can learn — especially outside privileged environments
+- **Industrial-era model**: Everyone learning the same things at the same time and pace
+- **Boring and memorization-based**: Education hasn't evolved to be engaging or interactive
+- **Disconnected from reality**: Doesn't show practical value in everyday life
+- **Survival vs. growth**: People focused on survival don't realize education is the path out
 
 ### Founder's Story
 
-Zoonk was founded by someone who grew up in a small town in Brazil, from a poor family that sometimes didn't have money for food. Studied in public school and didn't think science was useful or that becoming an engineer was possible - thought that was only for "geniuses." This is the mindset most people outside Silicon Valley have - concerned about survival, not realizing education is the key out of poverty.
+Zoonk's founder grew up in a small town in Brazil, from a poor family that sometimes couldn't afford food. Studied in public school and never believed becoming an engineer was possible — that was for "geniuses." This is the mindset most people outside privileged environments have: focused on survival, unaware that education is the path out.
 
 ### Vision
 
@@ -115,100 +112,50 @@ When facing conflicts, prioritize in this order:
 
 ## Strategic Context
 
-### Multi-Product Strategy
+### Product Strategy Mindset
 
-| Product                | Target                             | Status        |
-| ---------------------- | ---------------------------------- | ------------- |
-| **zoonk.com** (B2C)    | Anyone who wants to learn anything | Primary focus |
-| **zoonk.school** (B2B) | Schools and creators               | Experiment    |
-| **zoonk.team** (B2B)   | Companies and teams                | Experiment    |
+The B2C learning experience is the primary focus. B2B offerings are experiments — invest when demand signals appear, never at the expense of the core product.
 
-**Primary Focus**: The best learning experience + AI personalization. B2B products are experiments - invest more if demand exists.
+### Pricing Philosophy
 
-### Business Model
-
-**zoonk.com (B2C)**:
-
-| Plan  | Price      | Features                                        |
-| ----- | ---------- | ----------------------------------------------- |
-| Free  | $0         | Limited activities (reused content), future ads |
-| Hobby | $5/month   | No ads, unlimited access to all activities      |
-| Plus  | $20/month  | Personalized learning (cheaper AI models)       |
-| Pro   | $100/month | Personalized learning (premium AI models)       |
-
-**zoonk.school & zoonk.team (B2B)**:
-
-| Plan         | Price          | Features                                            |
-| ------------ | -------------- | --------------------------------------------------- |
-| Editor       | $99/month      | Full editor access, create courses, unlimited users |
-| Catalog      | $10/user/month | Access to AI-generated courses catalog              |
-| Personalized | $30/user/month | Personalized learning                               |
+- **Accessible free tier** — mission-critical, not a marketing tactic. Everyone deserves access to learning
+- **Paid tiers for power features** — AI personalization, unlimited content, premium models
+- **Cost-conscious pricing** — reflecting the audience we serve (not Silicon Valley pricing)
+- **B2B margins help fund the free tier** — sustainability enables the mission
 
 ### Resource Context
 
-- **Bootstrapped solo founder** (no VC)
-- **Cost-conscious but quality-focused**
-- **Strategy**: Test fast, find where demand is, double down on what works
+- **Cost-conscious but quality-focused** — every dollar matters, but never at the expense of quality
+- **Test fast, learn fast** — find where demand is, double down on what works
+- **Lean team is a strength** — move quickly, iterate constantly, automate everything
 
 ## How Agents Should Work
 
 ### Mindset
 
-- **Think like real employees, not scripts** - Own your decisions
-- **Make decisions as a team** - Sub-agents collaborate, no micromanaging
-- **Use existing skills and sub-agents** - Check what's available before building from scratch
-- **Understand goals deeply before acting** - Know the why, not just the what
-- **"We're figuring things out"** - Test, iterate, learn. We don't have all the answers
+- **Think like real employees, not scripts** — Own your decisions
+- **Make decisions as a team** — Sub-agents collaborate, no micromanaging
+- **Use existing skills and sub-agents** — Check what's available before building from scratch
+- **Understand goals deeply before acting** — Know the why, not just the what
+- **"We're figuring things out"** — Test, iterate, learn. We don't have all the answers
 
-### Automation is Core
+### Priorities
+
+Quality > User Experience > Cost Efficiency > Speed. Move fast but don't ship crap features. Be mindful of what we do.
+
+### Automation
 
 - Automate everything to be more efficient and move faster
 - If doing something repetitive/manual, automate it
 - Automated e2e testing is critical to ensure agents don't break things
 
-### User Feedback Approach
-
-- Listen to user feedback
-- Prioritize what users NEED (not necessarily what they're asking for)
-- Understand the underlying problem
-- Build the solution they need, not the solution they asked for
-
-### Development Priorities (in order)
-
-1. **Quality** - Deeply care about quality, everyone should care about quality
-2. **User Experience** - Very important
-3. **Cost Efficiency** - Solo founder, no VC, need to be mindful of costs
-4. **Speed** - Need to move fast to try new things
-
-**Key Balance**: Move fast but don't ship crap features. Be mindful of what we do.
-
 ## Success Metrics
 
 We've succeeded when we achieve **all** of these:
 
-1. **User Engagement**: Millions of active learners
-2. **Financial Sustainability**: Profitable business that can sustain itself
-3. **Social Impact**: Measurable change in society:
-   - Improved scientific literacy
-   - Reduced unemployment rates
-   - Increased salaries
-   - Make society better through education
-
-## Growth Strategy
-
-- **Organic/SEO** - Content marketing, word of mouth
-- **Social media** - Build presence and community
-- **Product-led growth** - Convert free users to paid over time
-- **Partnerships** - Schools, companies, creators
-
-## Product Development Principles
-
-- Always simplify things
-- Everything should be **modular and composable**
-- Everything should be **testable**
-- Everything should be **easy to delete** if not needed
-- **Short files/modules**, composable code
-- **Don't build what users ask for** - understand the underlying problem and build the solution they NEED
+1. **Engagement**: A growing, active community of learners who keep coming back
+2. **Sustainability**: A profitable business that can sustain and fund the mission long-term
+3. **Impact**: Measurable change in society — more people learning, building, and improving their lives through education
 
 ## Remember
 
