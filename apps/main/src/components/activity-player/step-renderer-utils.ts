@@ -89,6 +89,7 @@ export function getMockAnswer(step: SerializedStep): SelectedAnswer | null {
     case "matchColumns":
       return {
         kind: "matchColumns",
+        mistakes: 0,
         userPairs: parseStepContent("matchColumns", step.content).pairs,
       };
 

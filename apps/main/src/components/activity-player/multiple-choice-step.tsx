@@ -11,6 +11,7 @@ import { Kbd } from "@zoonk/ui/components/kbd";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { type SelectedAnswer } from "./player-reducer";
+import { ContextText, QuestionText } from "./question-text";
 import { InteractiveStepLayout } from "./step-layouts";
 import { useOptionKeyboard } from "./use-option-keyboard";
 import { useReplaceName } from "./user-name-context";
@@ -21,14 +22,6 @@ function getSelectedIndex(selectedAnswer: SelectedAnswer | undefined): number | 
   }
 
   return selectedAnswer.selectedIndex;
-}
-
-function QuestionText({ children }: { children: React.ReactNode }) {
-  return <p className="text-base font-semibold">{children}</p>;
-}
-
-function ContextText({ children }: { children: React.ReactNode }) {
-  return <p className="text-muted-foreground text-base">{children}</p>;
 }
 
 function StepTextGroup({ children }: { children: React.ReactNode }) {

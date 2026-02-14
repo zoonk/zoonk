@@ -50,7 +50,10 @@ function checkMatchColumns(step: SerializedStep, answer: SelectedAnswer): CheckS
   }
 
   const content = parseStepContent("matchColumns", step.content);
-  return { effects: [], result: checkMatchColumnsAnswer(content, answer.userPairs) };
+  return {
+    effects: [],
+    result: checkMatchColumnsAnswer(content, answer.userPairs, answer.mistakes),
+  };
 }
 
 function checkSortOrder(step: SerializedStep, answer: SelectedAnswer): CheckStepResult {

@@ -10,7 +10,7 @@ export type PlayerPhase = "intro" | "playing" | "feedback" | "completed";
 export type SelectedAnswer =
   | { kind: "fillBlank"; userAnswers: string[] }
   | { kind: "listening"; arrangedWords: string[] }
-  | { kind: "matchColumns"; userPairs: { left: string; right: string }[] }
+  | { kind: "matchColumns"; userPairs: { left: string; right: string }[]; mistakes: number }
   | { kind: "multipleChoice"; selectedIndex: number }
   | { kind: "reading"; arrangedWords: string[] }
   | { kind: "selectImage"; selectedIndex: number }
@@ -140,6 +140,8 @@ function handleCheckAnswer(
     return state;
   }
 
+  const currentStep = state.steps[state.currentStepIndex];
+
   const stepResult: StepResult = {
     answer: state.selectedAnswers[action.stepId],
     effects: action.effects,
@@ -147,12 +149,19 @@ function handleCheckAnswer(
     stepId: action.stepId,
   };
 
-  return {
+  const checked: PlayerState = {
     ...state,
     dimensions: applyEffects(state.dimensions, action.effects),
     phase: "feedback",
     results: { ...state.results, [action.stepId]: stepResult },
   };
+
+  // matchColumns validates each pair during interaction, so feedback is redundant.
+  if (currentStep?.kind === "matchColumns") {
+    return handleContinue(checked);
+  }
+
+  return checked;
 }
 
 function handleContinue(state: PlayerState): PlayerState {

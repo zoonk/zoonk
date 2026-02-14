@@ -233,6 +233,7 @@ describe(getMockAnswer, () => {
     });
     expect(getMockAnswer(step)).toEqual({
       kind: "matchColumns",
+      mistakes: 0,
       userPairs: [{ left: "A", right: "1" }],
     });
   });

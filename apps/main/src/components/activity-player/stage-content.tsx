@@ -65,6 +65,22 @@ export function StageContent({
   }
 
   if (phase === "feedback" && currentResult) {
+    const hasInlineFeedback = currentStep?.kind === "sortOrder";
+
+    if (hasInlineFeedback && currentStep) {
+      return (
+        <StepRenderer
+          isFirst={isFirst}
+          onNavigateNext={onNavigateNext}
+          onNavigatePrev={onNavigatePrev}
+          onSelectAnswer={onSelectAnswer}
+          result={currentResult}
+          selectedAnswer={selectedAnswer}
+          step={currentStep}
+        />
+      );
+    }
+
     return <FeedbackScreenContent dimensions={dimensions} result={currentResult} />;
   }
 
