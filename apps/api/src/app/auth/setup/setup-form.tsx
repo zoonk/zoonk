@@ -8,7 +8,12 @@ import {
   SetupLabel,
   SetupSubmit,
 } from "@/components/setup";
-import { useUsernameAvailability } from "@zoonk/core/auth/hooks/username-availability";
+import {
+  USERNAME_MAX_LENGTH,
+  USERNAME_MIN_LENGTH,
+  type UsernameStatus,
+  useUsernameAvailability,
+} from "@zoonk/core/auth/hooks/username-availability";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@zoonk/ui/components/input-group";
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -17,25 +22,36 @@ import { useRouter } from "next/navigation";
 import { useActionState, useEffect } from "react";
 import { setupProfileAction } from "./actions";
 
-function UsernameDescription({ status, description }: { status: string; description: string }) {
+function UsernameDescription({ status, username }: { status: UsernameStatus; username: string }) {
+  const t = useExtracted();
+
   if (status === "checking") {
     return (
       <p className="text-muted-foreground flex items-center gap-1 text-sm">
         <Spinner className="size-3" />
-        {description}
+        {t("Checking...")}
       </p>
+    );
+  }
+
+  if (status === "available") {
+    return <p className="text-success text-sm">{t("{username} is available", { username })}</p>;
+  }
+
+  if (status === "taken") {
+    return (
+      <p className="text-destructive text-sm">{t("{username} is already taken", { username })}</p>
     );
   }
 
   return (
     <p
       className={cn("text-sm", {
-        "text-destructive": status === "taken" || status === "invalid",
+        "text-destructive": status === "invalid",
         "text-muted-foreground": status === "idle",
-        "text-success": status === "available",
       })}
     >
-      {description}
+      {t("3-30 characters. Letters, numbers, underscores, and dots only.")}
     </p>
   );
 }
@@ -49,7 +65,7 @@ export function SetupProfileForm({
 }) {
   const router = useRouter();
   const t = useExtracted();
-  const { description, setUsername, status, username } = useUsernameAvailability();
+  const { setUsername, status, username } = useUsernameAvailability();
 
   const [state, formAction] = useActionState(setupProfileAction, {
     status: "idle" as const,
@@ -87,8 +103,8 @@ export function SetupProfileForm({
             autoComplete="username"
             autoCorrect="off"
             id="username"
-            maxLength={30}
-            minLength={3}
+            maxLength={USERNAME_MAX_LENGTH}
+            minLength={USERNAME_MIN_LENGTH}
             name="username"
             onChange={(event) => {
               event.target.value = event.target.value.toLowerCase();
@@ -100,7 +116,7 @@ export function SetupProfileForm({
             value={username}
           />
         </InputGroup>
-        <UsernameDescription description={description} status={status} />
+        <UsernameDescription status={status} username={username} />
       </SetupField>
 
       <SetupError hasError={hasError}>

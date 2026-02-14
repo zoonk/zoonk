@@ -746,6 +746,21 @@ msgid "Your name and username as they appear to others."
 msgstr "Your name and username as they appear to others."
 
 #: src/app/[locale]/(settings)/profile/profile-form.tsx
+msgctxt "1SvspN"
+msgid "Checking..."
+msgstr "Checking..."
+
+#: src/app/[locale]/(settings)/profile/profile-form.tsx
+msgctxt "9N4/rz"
+msgid "{username} is available"
+msgstr "{username} is available"
+
+#: src/app/[locale]/(settings)/profile/profile-form.tsx
+msgctxt "aW6DOm"
+msgid "3-30 characters. Letters, numbers, underscores, and dots only."
+msgstr "3-30 characters. Letters, numbers, underscores, and dots only."
+
+#: src/app/[locale]/(settings)/profile/profile-form.tsx
 msgctxt "HAlOn1"
 msgid "Name"
 msgstr "Name"
@@ -754,6 +769,11 @@ msgstr "Name"
 msgctxt "JCIgkj"
 msgid "Username"
 msgstr "Username"
+
+#: src/app/[locale]/(settings)/profile/profile-form.tsx
+msgctxt "R76cpj"
+msgid "{username} is already taken"
+msgstr "{username} is already taken"
 
 #: src/app/[locale]/(settings)/profile/profile-form.tsx
 msgctxt "VT+G/7"

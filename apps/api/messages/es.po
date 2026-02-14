@@ -93,6 +93,21 @@ msgid "Complete your profile"
 msgstr "Completa tu perfil"
 
 #: src/app/auth/setup/setup-form.tsx
+msgctxt "1SvspN"
+msgid "Checking..."
+msgstr "Verificando..."
+
+#: src/app/auth/setup/setup-form.tsx
+msgctxt "9N4/rz"
+msgid "{username} is available"
+msgstr "{username} está disponible"
+
+#: src/app/auth/setup/setup-form.tsx
+msgctxt "aW6DOm"
+msgid "3-30 characters. Letters, numbers, underscores, and dots only."
+msgstr "3-30 caracteres. Solo letras, números, guiones bajos y puntos."
+
+#: src/app/auth/setup/setup-form.tsx
 msgctxt "HAlOn1"
 msgid "Name"
 msgstr "Nombre"
@@ -101,6 +116,11 @@ msgstr "Nombre"
 msgctxt "JCIgkj"
 msgid "Username"
 msgstr "Nombre de usuario"
+
+#: src/app/auth/setup/setup-form.tsx
+msgctxt "R76cpj"
+msgid "{username} is already taken"
+msgstr "{username} ya está en uso"
 
 #: src/app/auth/setup/setup-form.tsx
 msgctxt "XLl/pd"

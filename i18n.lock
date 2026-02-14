@@ -332,8 +332,12 @@ checksums:
     Update%20your%20Zoonk%20app%20language%20to%20learn%20in%20English%2C%20Portuguese%2C%20Spanish%2C%20French%2C%20or%20other%20supported%20languages./singular: 1c0ee0edf658ce641954e5e20a447905
     Update%20your%20name%20and%20username%20on%20Zoonk./singular: 09d76cc9403a9cc67f55194ae9044701
     Your%20name%20and%20username%20as%20they%20appear%20to%20others./singular: b972c833827f90df25a18a0b6616210d
+    Checking.../singular: 7fb996bee0359e5dbdd92bd6e147a814
+    "%7Busername%7D%20is%20available/singular": 7011c6819f17536a661f82840fe3b4a7
+    3-30%20characters.%20Letters%2C%20numbers%2C%20underscores%2C%20and%20dots%20only./singular: 0122d7cb152edd24492d1a51e9a9c1e5
     Name/singular: 9368b5a047572b6051f334af5aa76819
     Username/singular: 2ee65bc2dd2f12cf2672f95b2a054bf8
+    "%7Busername%7D%20is%20already%20taken/singular": dfd79c11a80ade1108d4e6279db2e4aa
     This%20name%20will%20be%20visible%20to%20other%20users./singular: f09fcb0452297983c7b73c689206fa08
     Failed%20to%20update%20your%20profile.%20Please%20try%20again%20or%20contact%20hello%40zoonk.com/singular: bd7a0ae0d6061d6c480c3f85047b4342
     Save%20changes/singular: 53dd9f4f0a4accc822fa5c1f2f6d118a
@@ -561,8 +565,12 @@ checksums:
     Check%20your%20email/singular: c51aa8640fe15af146f3e2dd4602e0c1
     Choose%20a%20name%20and%20username%20before%20continuing./singular: 4f6823df92820aa6444e4d8baa6a270e
     Complete%20your%20profile/singular: 061e1acc1b9ebad9de09fd5626e813c7
+    Checking.../singular: 7fb996bee0359e5dbdd92bd6e147a814
+    "%7Busername%7D%20is%20available/singular": 7011c6819f17536a661f82840fe3b4a7
+    3-30%20characters.%20Letters%2C%20numbers%2C%20underscores%2C%20and%20dots%20only./singular: 0122d7cb152edd24492d1a51e9a9c1e5
     Name/singular: 9368b5a047572b6051f334af5aa76819
     Username/singular: 2ee65bc2dd2f12cf2672f95b2a054bf8
+    "%7Busername%7D%20is%20already%20taken/singular": dfd79c11a80ade1108d4e6279db2e4aa
     your-username/singular: 84d0eb10ffede02a6737a8d2a7247cf1
     Failed%20to%20set%20up%20your%20profile.%20Please%20try%20again%20or%20contact%20hello%40zoonk.com/singular: f99443e6bfc1663931f4953e6ec3895e
     Continue%20to%20Zoonk/singular: 78daa6a6e9d8cebee3648e542a5698c6

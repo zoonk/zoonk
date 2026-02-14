@@ -1,7 +1,12 @@
 "use client";
 
 import { authClient } from "@zoonk/core/auth/client";
-import { useUsernameAvailability } from "@zoonk/core/auth/hooks/username-availability";
+import {
+  USERNAME_MAX_LENGTH,
+  USERNAME_MIN_LENGTH,
+  type UsernameStatus as UsernameStatusType,
+  useUsernameAvailability,
+} from "@zoonk/core/auth/hooks/username-availability";
 import {
   Field,
   FieldContent,
@@ -19,25 +24,41 @@ import { useExtracted } from "next-intl";
 import { useActionState, useEffect } from "react";
 import { profileFormAction } from "./actions";
 
-function UsernameStatus({ status, description }: { status: string; description: string }) {
+function UsernameStatus({ status, username }: { status: UsernameStatusType; username: string }) {
+  const t = useExtracted();
+
   if (status === "checking") {
     return (
       <FieldDescription className="flex items-center gap-1">
         <Spinner className="size-3" />
-        {description}
+        {t("Checking...")}
       </FieldDescription>
     );
   }
 
   if (status === "available") {
-    return <p className="text-success text-sm">{description}</p>;
+    return <p className="text-success text-sm">{t("{username} is available", { username })}</p>;
   }
 
-  if (status === "taken" || status === "invalid") {
-    return <p className="text-destructive text-sm">{description}</p>;
+  if (status === "taken") {
+    return (
+      <p className="text-destructive text-sm">{t("{username} is already taken", { username })}</p>
+    );
   }
 
-  return <FieldDescription>{description}</FieldDescription>;
+  if (status === "invalid") {
+    return (
+      <p className="text-destructive text-sm">
+        {t("3-30 characters. Letters, numbers, underscores, and dots only.")}
+      </p>
+    );
+  }
+
+  return (
+    <FieldDescription>
+      {t("3-30 characters. Letters, numbers, underscores, and dots only.")}
+    </FieldDescription>
+  );
 }
 
 const initialState = {
@@ -51,7 +72,7 @@ export function ProfileForm() {
   const t = useExtracted();
 
   const currentUsername = session?.user.username ?? "";
-  const { description, setUsername, status, username } = useUsernameAvailability(currentUsername);
+  const { setUsername, status, username } = useUsernameAvailability(currentUsername);
 
   const [state, formAction] = useActionState(profileFormAction, initialState);
 
@@ -112,8 +133,8 @@ export function ProfileForm() {
               autoCorrect="off"
               disabled={isPending}
               id="username"
-              maxLength={30}
-              minLength={3}
+              maxLength={USERNAME_MAX_LENGTH}
+              minLength={USERNAME_MIN_LENGTH}
               name="username"
               onChange={(event) => setUsername(event.target.value.toLowerCase())}
               required
@@ -122,7 +143,7 @@ export function ProfileForm() {
             />
           </InputGroup>
 
-          <UsernameStatus description={description} status={status} />
+          <UsernameStatus status={status} username={username} />
         </FieldContent>
       </Field>
 
