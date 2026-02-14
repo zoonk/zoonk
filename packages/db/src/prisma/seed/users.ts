@@ -18,8 +18,9 @@ export async function seedUsers(prisma: PrismaClient): Promise<SeedUsers> {
       emailVerified: true,
       name: "Owner User",
       role: "admin",
+      username: "owner-user",
     },
-    update: {},
+    update: { username: "owner-user" },
     where: { email: "owner@zoonk.test" },
   });
 
@@ -29,8 +30,9 @@ export async function seedUsers(prisma: PrismaClient): Promise<SeedUsers> {
       emailVerified: true,
       name: "Admin User",
       role: "admin",
+      username: "admin-user",
     },
-    update: {},
+    update: { username: "admin-user" },
     where: { email: "admin@zoonk.test" },
   });
 
@@ -40,8 +42,9 @@ export async function seedUsers(prisma: PrismaClient): Promise<SeedUsers> {
       emailVerified: true,
       name: "Member User",
       role: "member",
+      username: "member-user",
     },
-    update: {},
+    update: { username: "member-user" },
     where: { email: "member@zoonk.test" },
   });
 
@@ -52,8 +55,9 @@ export async function seedUsers(prisma: PrismaClient): Promise<SeedUsers> {
       emailVerified: true,
       name: "Logout Test User",
       role: "member",
+      username: "logout-test",
     },
-    update: {},
+    update: { username: "logout-test" },
     where: { email: "logout-test@zoonk.test" },
   });
 
@@ -64,8 +68,9 @@ export async function seedUsers(prisma: PrismaClient): Promise<SeedUsers> {
       emailVerified: true,
       name: "E2E Progress User",
       role: "member",
+      username: "e2e-progress",
     },
-    update: {},
+    update: { username: "e2e-progress" },
     where: { email: "e2e-progress@zoonk.test" },
   });
 
@@ -75,8 +80,9 @@ export async function seedUsers(prisma: PrismaClient): Promise<SeedUsers> {
       emailVerified: true,
       name: "E2E New User",
       role: "member",
+      username: "e2e-new",
     },
-    update: {},
+    update: { username: "e2e-new" },
     where: { email: "e2e-new@zoonk.test" },
   });
 
@@ -86,8 +92,9 @@ export async function seedUsers(prisma: PrismaClient): Promise<SeedUsers> {
       emailVerified: true,
       name: "E2E Logout User",
       role: "member",
+      username: "e2e-logout",
     },
-    update: {},
+    update: { username: "e2e-logout" },
     where: { email: "e2e-logout@zoonk.test" },
   });
 
@@ -98,8 +105,9 @@ export async function seedUsers(prisma: PrismaClient): Promise<SeedUsers> {
       emailVerified: true,
       name: "Multi Org User",
       role: "admin",
+      username: "multi-org",
     },
-    update: {},
+    update: { username: "multi-org" },
     where: { email: "multi-org@zoonk.test" },
   });
 

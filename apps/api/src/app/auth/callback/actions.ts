@@ -10,6 +10,19 @@ export type TokenResult =
   | { success: true; url: string }
   | { success: false; error: "UNTRUSTED_ORIGIN" };
 
+export async function validateTrustedOriginAction(redirectTo: string): Promise<boolean> {
+  const reqHeaders = await headers();
+
+  const { error } = await safeAsync(async () =>
+    auth.api.validateTrustedOrigin({
+      body: { url: redirectTo },
+      headers: reqHeaders,
+    }),
+  );
+
+  return !error;
+}
+
 export async function createOneTimeTokenAction(redirectTo: string): Promise<TokenResult> {
   const reqHeaders = await headers();
 

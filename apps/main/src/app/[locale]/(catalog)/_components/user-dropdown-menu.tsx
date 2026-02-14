@@ -14,6 +14,7 @@ export async function UserDropdownMenu() {
   const catalogMenu = [{ key: t("My courses"), ...getMenu("myCourses") }];
 
   const accountMenu = [
+    { key: t("Profile"), ...getMenu("profile") },
     { key: t("Subscription"), ...getMenu("subscription") },
     { key: t("Support"), ...getMenu("support") },
   ];

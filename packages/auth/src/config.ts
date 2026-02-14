@@ -10,6 +10,7 @@ import {
   oneTimeToken,
   openAPI,
   organization,
+  username,
 } from "better-auth/plugins";
 import { type BetterAuthOptions } from "better-auth/types";
 import { BETTER_AUTH_BASE_PATH } from "./constants";
@@ -69,6 +70,7 @@ export const baseAuthConfig: Omit<BetterAuthOptions, "rateLimit"> = {
 
 export const baseAuthPlugins = [
   adminPlugin(),
+  username(),
   organization({
     ac,
     // Temporarily disable organization creation

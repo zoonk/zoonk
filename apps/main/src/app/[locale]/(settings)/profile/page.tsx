@@ -11,21 +11,21 @@ import {
 import { type Metadata } from "next";
 import { getExtracted, setRequestLocale } from "next-intl/server";
 import { ProtectedSection } from "../_components/protected-section";
-import { NameForm } from "./name-form";
+import { ProfileForm } from "./profile-form";
 
-export async function generateMetadata({ params }: PageProps<"/[locale]/name">): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: PageProps<"/[locale]/profile">): Promise<Metadata> {
   const { locale } = await params;
   const t = await getExtracted({ locale });
 
   return {
-    description: t(
-      "Set or update your Zoonk display name. This name may be visible to others and will be used when referring to you in lessons and activities.",
-    ),
-    title: t("Update Display Name"),
+    description: t("Update your name and username on Zoonk."),
+    title: t("Profile"),
   };
 }
 
-export default async function Name({ params }: PageProps<"/[locale]/name">) {
+export default async function ProfilePage({ params }: PageProps<"/[locale]/profile">) {
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getExtracted();
@@ -34,18 +34,16 @@ export default async function Name({ params }: PageProps<"/[locale]/name">) {
     <Container>
       <ContainerHeader>
         <ContainerHeaderGroup>
-          <ContainerTitle>{t("Display name")}</ContainerTitle>
+          <ContainerTitle>{t("Profile")}</ContainerTitle>
           <ContainerDescription>
-            {t(
-              "This is the name others may see and the one we'll use to refer to you in activities.",
-            )}
+            {t("Your name and username as they appear to others.")}
           </ContainerDescription>
         </ContainerHeaderGroup>
       </ContainerHeader>
 
       <ContainerBody>
         <ProtectedSection>
-          <NameForm />
+          <ProfileForm />
         </ProtectedSection>
       </ContainerBody>
     </Container>

@@ -13,7 +13,7 @@ test.describe("Settings Navbar", () => {
 
     await expect(page.getByRole("link", { name: /subscription/i })).toBeVisible();
     await expect(page.getByRole("link", { name: /language/i })).toBeVisible();
-    await expect(page.getByRole("link", { name: /display name/i })).toBeVisible();
+    await expect(page.getByRole("link", { name: /profile/i })).toBeVisible();
     await expect(page.getByRole("link", { name: /support/i })).toBeVisible();
   });
 
@@ -31,11 +31,11 @@ test.describe("Settings Navbar", () => {
     await expect(page.getByRole("heading", { level: 1, name: /language/i })).toBeVisible();
   });
 
-  test("Display name pill navigates to name page", async ({ page }) => {
+  test("Profile pill navigates to profile page", async ({ page }) => {
     await page.goto("/subscription");
-    await page.getByRole("link", { name: /display name/i }).click();
+    await page.getByRole("link", { name: /profile/i }).click();
 
-    await expect(page.getByRole("heading", { level: 1, name: /display name/i })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: /profile/i })).toBeVisible();
   });
 
   test("Support pill navigates to support page", async ({ page }) => {

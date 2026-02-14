@@ -13,7 +13,7 @@ export function SettingsPillLinks() {
   const items = [
     { label: t("Subscription"), segment: "subscription", ...getMenu("subscription") },
     { label: t("Language"), segment: "language", ...getMenu("language") },
-    { label: t("Display name"), segment: "name", ...getMenu("displayName") },
+    { label: t("Profile"), segment: "profile", ...getMenu("profile") },
     { label: t("Support"), segment: "support", ...getMenu("support") },
   ];
 

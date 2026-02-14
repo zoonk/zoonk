@@ -21,7 +21,7 @@ test.describe("OTP Login Flow", () => {
     await expect(page.getByText(TEST_EMAIL)).toBeVisible();
   });
 
-  test("validates OTP and redirects with token", async ({ page }) => {
+  test("validates OTP and redirects to setup for new user", async ({ page }) => {
     await page.goto(`/auth/login?redirectTo=${encodeURIComponent(REDIRECT_URL)}`);
     await page.getByLabel(/email/i).fill(TEST_EMAIL);
     await page.getByRole("button", { name: /^continue$/i }).click();
@@ -33,22 +33,13 @@ test.describe("OTP Login Flow", () => {
       throw new Error("OTP not found in database");
     }
 
-    const redirectPromise = page.waitForRequest((request) => {
-      const url = request.url();
-      // Token is now appended to the path, not as a query param
-      return url.startsWith(REDIRECT_URL) && url.split("/").length > 4;
-    });
-
     await page.getByRole("textbox").click();
     await page.keyboard.type(otp);
     await page.getByRole("button", { name: /^continue$/i }).click();
 
-    const redirectRequest = await redirectPromise;
-    const redirectUrl = new URL(redirectRequest.url());
-    const pathSegments = redirectUrl.pathname.split("/").filter(Boolean);
-
-    expect(`${redirectUrl.origin}/${pathSegments[0]}`).toBe(REDIRECT_URL);
-    expect(pathSegments[1]).toBeTruthy();
+    // New users without name/username are redirected to setup
+    await page.waitForURL(/\/auth\/setup/);
+    await expect(page.getByRole("heading", { name: /complete your profile/i })).toBeVisible();
   });
 
   test("shows error for invalid OTP", async ({ page }) => {
@@ -78,25 +69,36 @@ test.describe("OTP Login Flow", () => {
 
   test("handles redirect URL with trailing slash without double slashes", async ({ page }) => {
     const trailingSlashUrl = "http://localhost:49152/test/";
+    const email = `e2e-otp-trailing-${Date.now()}@zoonk.test`;
+
     await page.goto(`/auth/login?redirectTo=${encodeURIComponent(trailingSlashUrl)}`);
-    await page.getByLabel(/email/i).fill(TEST_EMAIL);
+    await page.getByLabel(/email/i).fill(email);
     await page.getByRole("button", { name: /^continue$/i }).click();
     await page.waitForURL(/\/auth\/otp/);
 
-    const otp = await getOTPForEmail(TEST_EMAIL);
+    const otp = await getOTPForEmail(email);
 
     if (!otp) {
       throw new Error("OTP not found in database");
     }
 
+    await page.getByRole("textbox").click();
+    await page.keyboard.type(otp);
+    await page.getByRole("button", { name: /^continue$/i }).click();
+
+    // New user will be redirected to setup first
+    await page.waitForURL(/\/auth\/setup/);
+
+    // Complete setup to continue the redirect flow
+    await page.getByRole("textbox", { name: /^name$/i }).fill("Trailing Slash User");
+    await page.getByRole("textbox", { name: /username/i }).fill(`trailing${Date.now()}`);
+    await expect(page.getByText(/is available/i)).toBeVisible();
+    await page.getByRole("button", { name: /^continue$/i }).click();
+
     const redirectPromise = page.waitForRequest((request) => {
       const url = request.url();
       return url.startsWith("http://localhost:49152/test/") && url.length > 28;
     });
-
-    await page.getByRole("textbox").click();
-    await page.keyboard.type(otp);
-    await page.getByRole("button", { name: /^continue$/i }).click();
 
     const redirectRequest = await redirectPromise;
     const redirectUrl = new URL(redirectRequest.url());
@@ -105,5 +107,7 @@ test.describe("OTP Login Flow", () => {
     expect(redirectUrl.pathname).not.toContain("//");
     // Verify token is present
     expect(redirectUrl.pathname.split("/").filter(Boolean).length).toBe(2);
+
+    await cleanupVerifications(email);
   });
 });

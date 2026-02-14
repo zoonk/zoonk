@@ -33,11 +33,6 @@ msgid "My account"
 msgstr "My account"
 
 #: src/app/[locale]/(catalog)/_components/command-palette.tsx
-msgctxt "gvd2HB"
-msgid "Update display name"
-msgstr "Update display name"
-
-#: src/app/[locale]/(catalog)/_components/command-palette.tsx
 msgctxt "h7uoBs"
 msgid "Help and support"
 msgstr "Help and support"
@@ -62,6 +57,11 @@ msgstr "My courses"
 msgctxt "L6kaJv"
 msgid "Learn something"
 msgstr "Learn something"
+
+#: src/app/[locale]/(catalog)/_components/command-palette.tsx
+msgctxt "O7ozeo"
+msgid "Update profile"
+msgstr "Update profile"
 
 #: src/app/[locale]/(catalog)/_components/command-palette.tsx
 #: src/app/[locale]/(settings)/_components/locale-switcher.tsx
@@ -123,6 +123,13 @@ msgstr "User menu"
 msgctxt "HqRNN8"
 msgid "Support"
 msgstr "Support"
+
+#: src/app/[locale]/(catalog)/_components/user-dropdown-menu.tsx
+#: src/app/[locale]/(settings)/_components/settings-pills.tsx
+#: src/app/[locale]/(settings)/profile/page.tsx
+msgctxt "itPgxd"
+msgid "Profile"
+msgstr "Profile"
 
 #: src/app/[locale]/(catalog)/_components/user-dropdown-menu.tsx
 #: src/app/[locale]/(settings)/_components/settings-pills.tsx
@@ -718,12 +725,6 @@ msgctxt "yOFm9C"
 msgid "You need to be logged in to access this page."
 msgstr "You need to be logged in to access this page."
 
-#: src/app/[locale]/(settings)/_components/settings-pills.tsx
-#: src/app/[locale]/(settings)/name/page.tsx
-msgctxt "dOQCL8"
-msgid "Display name"
-msgstr "Display name"
-
 #: src/app/[locale]/(settings)/language/page.tsx
 msgctxt "aNLa1G"
 msgid "Choose the app language you prefer for this device."
@@ -734,45 +735,45 @@ msgctxt "gr4VpD"
 msgid "Update your Zoonk app language to learn in English, Portuguese, Spanish, French, or other supported languages."
 msgstr "Update your Zoonk app language to learn in English, Portuguese, Spanish, French, or other supported languages."
 
-#: src/app/[locale]/(settings)/name/name-form.tsx
-msgctxt "7jmSf7"
-msgid "Your name has been updated successfully!"
-msgstr "Your name has been updated successfully!"
+#: src/app/[locale]/(settings)/profile/page.tsx
+msgctxt "dSVD13"
+msgid "Update your name and username on Zoonk."
+msgstr "Update your name and username on Zoonk."
 
-#: src/app/[locale]/(settings)/name/name-form.tsx
-msgctxt "eLjVDg"
-msgid "Update name"
-msgstr "Update name"
+#: src/app/[locale]/(settings)/profile/page.tsx
+msgctxt "wjIStY"
+msgid "Your name and username as they appear to others."
+msgstr "Your name and username as they appear to others."
 
-#: src/app/[locale]/(settings)/name/name-form.tsx
-msgctxt "Gr/Ipw"
-msgid "Failed to update your name. Please try again or contact hello@zoonk.com"
-msgstr "Failed to update your name. Please try again or contact hello@zoonk.com"
-
-#: src/app/[locale]/(settings)/name/name-form.tsx
+#: src/app/[locale]/(settings)/profile/profile-form.tsx
 msgctxt "HAlOn1"
 msgid "Name"
 msgstr "Name"
 
-#: src/app/[locale]/(settings)/name/name-form.tsx
+#: src/app/[locale]/(settings)/profile/profile-form.tsx
+msgctxt "JCIgkj"
+msgid "Username"
+msgstr "Username"
+
+#: src/app/[locale]/(settings)/profile/profile-form.tsx
 msgctxt "VT+G/7"
 msgid "This name will be visible to other users."
 msgstr "This name will be visible to other users."
 
-#: src/app/[locale]/(settings)/name/page.tsx
-msgctxt "+ceM20"
-msgid "Set or update your Zoonk display name. This name may be visible to others and will be used when referring to you in lessons and activities."
-msgstr "Set or update your Zoonk display name. This name may be visible to others and will be used when referring to you in lessons and activities."
+#: src/app/[locale]/(settings)/profile/profile-form.tsx
+msgctxt "wYCHCR"
+msgid "Failed to update your profile. Please try again or contact hello@zoonk.com"
+msgstr "Failed to update your profile. Please try again or contact hello@zoonk.com"
 
-#: src/app/[locale]/(settings)/name/page.tsx
-msgctxt "9NBNq2"
-msgid "Update Display Name"
-msgstr "Update Display Name"
+#: src/app/[locale]/(settings)/profile/profile-form.tsx
+msgctxt "X0ha1a"
+msgid "Save changes"
+msgstr "Save changes"
 
-#: src/app/[locale]/(settings)/name/page.tsx
-msgctxt "Pj/oEx"
-msgid "This is the name others may see and the one we'll use to refer to you in activities."
-msgstr "This is the name others may see and the one we'll use to refer to you in activities."
+#: src/app/[locale]/(settings)/profile/profile-form.tsx
+msgctxt "yNHZ+a"
+msgid "Your profile has been updated successfully!"
+msgstr "Your profile has been updated successfully!"
 
 #: src/app/[locale]/(settings)/subscription/page.tsx
 msgctxt "9vk07U"

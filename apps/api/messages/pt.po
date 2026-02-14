@@ -22,6 +22,7 @@ msgstr "Ou"
 
 #: src/app/auth/login/page.tsx
 #: src/app/auth/otp/otp-form.tsx
+#: src/app/auth/setup/setup-form.tsx
 msgctxt "acrOoz"
 msgid "Continue"
 msgstr "Continuar"
@@ -80,6 +81,36 @@ msgstr "Digite o código que enviamos para {email}:"
 msgctxt "zx7CKB"
 msgid "Check your email"
 msgstr "Confira seu email"
+
+#: src/app/auth/setup/page.tsx
+msgctxt "7463XU"
+msgid "Choose a name and username before continuing."
+msgstr "Escolha um nome e nome de usuário antes de continuar."
+
+#: src/app/auth/setup/page.tsx
+msgctxt "CYqIel"
+msgid "Complete your profile"
+msgstr "Complete seu perfil"
+
+#: src/app/auth/setup/setup-form.tsx
+msgctxt "HAlOn1"
+msgid "Name"
+msgstr "Nome"
+
+#: src/app/auth/setup/setup-form.tsx
+msgctxt "JCIgkj"
+msgid "Username"
+msgstr "Nome de usuário"
+
+#: src/app/auth/setup/setup-form.tsx
+msgctxt "XLl/pd"
+msgid "your-username"
+msgstr "seu-nome-de-usuario"
+
+#: src/app/auth/setup/setup-form.tsx
+msgctxt "yCCLud"
+msgid "Failed to set up your profile. Please try again or contact hello@zoonk.com"
+msgstr "Falha ao configurar seu perfil. Por favor, tente novamente ou entre em contato com hello@zoonk.com"
 
 #: src/app/auth/untrusted-origin/page.tsx
 msgctxt "+e4BVR"
