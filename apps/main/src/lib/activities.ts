@@ -101,3 +101,112 @@ export async function getActivityKinds(params?: { locale: string }): Promise<Act
     },
   ];
 }
+
+async function getSeoDescription(
+  kind: ActivityKind,
+  topic: string,
+  params?: { locale: string },
+): Promise<string> {
+  const t = await getExtracted(params);
+
+  const descriptions: Record<ActivityKind, string> = {
+    background: t(
+      "Discover why {topic} matters — its origins, the problems it solved, and why it's important today.",
+      { topic },
+    ),
+    challenge: t(
+      "Apply your knowledge of {topic} through analytical decisions with real trade-offs.",
+      { topic },
+    ),
+    custom: t("Learn about {topic} through an interactive activity.", { topic }),
+    examples: t(
+      "See where {topic} appears in real life — in daily routines, work, pop culture, and unexpected places.",
+      { topic },
+    ),
+    explanation: t(
+      "Understand what {topic} is — core concepts and definitions explained with clear metaphors and analogies.",
+      { topic },
+    ),
+    grammar: t(
+      "Practice {topic} grammar rules with exercises designed to help you remember and apply them.",
+      { topic },
+    ),
+    languageReview: t(
+      "Review vocabulary and skills from {topic} with a comprehensive assessment.",
+      { topic },
+    ),
+    languageStory: t(
+      "Practice {topic} in context through a dialogue-based story set in real-world situations.",
+      { topic },
+    ),
+    listening: t("Sharpen your {topic} listening skills by translating audio sentences.", {
+      topic,
+    }),
+    mechanics: t(
+      "Learn how {topic} works under the hood — processes, sequences, and cause-effect chains explained.",
+      { topic },
+    ),
+    quiz: t(
+      "Test your understanding of {topic} with questions designed to check real comprehension, not just memorization.",
+      { topic },
+    ),
+    reading: t(
+      "Improve your {topic} reading comprehension by translating sentences and passages.",
+      { topic },
+    ),
+    review: t("Review everything you learned about {topic} with a comprehensive quiz.", { topic }),
+    story: t("Experience when to apply {topic} through a real-world dialogue scenario.", { topic }),
+    vocabulary: t(
+      "Build your {topic} vocabulary with new words, translations, and pronunciation.",
+      { topic },
+    ),
+  };
+
+  return descriptions[kind];
+}
+
+export async function getActivitySeoMeta(
+  activity: { kind: ActivityKind; title: string | null; description: string | null },
+  lessonTitle: string,
+  params?: { locale: string },
+): Promise<{ title: string; description: string }> {
+  const [title, description] = await Promise.all([
+    getSeoTitle(activity, lessonTitle, params),
+    getSeoActivityDescription(activity, lessonTitle, params),
+  ]);
+
+  return { description, title };
+}
+
+async function getSeoTitle(
+  activity: { kind: ActivityKind; title: string | null },
+  lessonTitle: string,
+  params?: { locale: string },
+): Promise<string> {
+  const t = await getExtracted(params);
+
+  if (activity.kind === "custom" && activity.title) {
+    return t("{activity} - {lesson}", { activity: activity.title, lesson: lessonTitle });
+  }
+
+  const kinds = await getActivityKinds(params);
+  const kindInfo = kinds.find((kind) => kind.key === activity.kind);
+
+  if (kindInfo) {
+    return t("{lesson} {activity}", { activity: kindInfo.label, lesson: lessonTitle });
+  }
+
+  return lessonTitle;
+}
+
+async function getSeoActivityDescription(
+  activity: { kind: ActivityKind; description: string | null },
+  lessonTitle: string,
+  params?: { locale: string },
+): Promise<string> {
+  if (activity.kind === "custom" && activity.description) {
+    return activity.description;
+  }
+
+  return getSeoDescription(activity.kind, lessonTitle, params);
+}
