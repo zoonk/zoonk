@@ -13,6 +13,7 @@
     "./auth/client": "./src/auth/client.ts",
     "./auth/hooks/auth-state": "./src/auth/hooks/auth-state.ts",
     "./auth/hooks/subscription": "./src/auth/hooks/subscription.ts",
+    "./auth/hooks/username-availability": "./src/auth/hooks/use-username-availability.ts",
     "./auth/next": "./src/auth/next.ts",
     "./auth/subscription": "./src/auth/subscription.ts",
     "./cache/revalidate": "./src/cache/revalidate-main-app.ts",

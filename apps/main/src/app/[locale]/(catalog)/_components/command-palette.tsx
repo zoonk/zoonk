@@ -65,7 +65,7 @@ export function CommandPalette() {
     { key: t("My courses"), ...getMenu("myCourses") },
     { key: t("Manage subscription"), ...getMenu("subscription") },
     { key: t("Update language"), ...getMenu("language") },
-    { key: t("Update display name"), ...getMenu("displayName") },
+    { key: t("Update profile"), ...getMenu("profile") },
     { key: t("Logout"), ...getMenu("logout") },
   ];
 

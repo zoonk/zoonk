@@ -33,11 +33,6 @@ msgid "My account"
 msgstr "Mi cuenta"
 
 #: src/app/[locale]/(catalog)/_components/command-palette.tsx
-msgctxt "gvd2HB"
-msgid "Update display name"
-msgstr "Actualizar nombre visible"
-
-#: src/app/[locale]/(catalog)/_components/command-palette.tsx
 msgctxt "h7uoBs"
 msgid "Help and support"
 msgstr "Ayuda y soporte"
@@ -62,6 +57,11 @@ msgstr "Mis cursos"
 msgctxt "L6kaJv"
 msgid "Learn something"
 msgstr "Aprende algo"
+
+#: src/app/[locale]/(catalog)/_components/command-palette.tsx
+msgctxt "O7ozeo"
+msgid "Update profile"
+msgstr "Actualizar perfil"
 
 #: src/app/[locale]/(catalog)/_components/command-palette.tsx
 #: src/app/[locale]/(settings)/_components/locale-switcher.tsx
@@ -123,6 +123,13 @@ msgstr "Menú de usuario"
 msgctxt "HqRNN8"
 msgid "Support"
 msgstr "Soporte"
+
+#: src/app/[locale]/(catalog)/_components/user-dropdown-menu.tsx
+#: src/app/[locale]/(settings)/_components/settings-pills.tsx
+#: src/app/[locale]/(settings)/profile/page.tsx
+msgctxt "itPgxd"
+msgid "Profile"
+msgstr "Perfil"
 
 #: src/app/[locale]/(catalog)/_components/user-dropdown-menu.tsx
 #: src/app/[locale]/(settings)/_components/settings-pills.tsx
@@ -718,12 +725,6 @@ msgctxt "yOFm9C"
 msgid "You need to be logged in to access this page."
 msgstr "Necesitas iniciar sesión para acceder a esta página."
 
-#: src/app/[locale]/(settings)/_components/settings-pills.tsx
-#: src/app/[locale]/(settings)/name/page.tsx
-msgctxt "dOQCL8"
-msgid "Display name"
-msgstr "Nombre de usuario"
-
 #: src/app/[locale]/(settings)/language/page.tsx
 msgctxt "aNLa1G"
 msgid "Choose the app language you prefer for this device."
@@ -734,45 +735,65 @@ msgctxt "gr4VpD"
 msgid "Update your Zoonk app language to learn in English, Portuguese, Spanish, French, or other supported languages."
 msgstr "Actualiza el idioma de tu aplicación Zoonk para aprender en inglés, portugués, español, francés u otros idiomas compatibles."
 
-#: src/app/[locale]/(settings)/name/name-form.tsx
-msgctxt "7jmSf7"
-msgid "Your name has been updated successfully!"
-msgstr "¡Tu nombre ha sido actualizado correctamente!"
+#: src/app/[locale]/(settings)/profile/page.tsx
+msgctxt "dSVD13"
+msgid "Update your name and username on Zoonk."
+msgstr "Actualiza tu nombre y nombre de usuario en Zoonk."
 
-#: src/app/[locale]/(settings)/name/name-form.tsx
-msgctxt "eLjVDg"
-msgid "Update name"
-msgstr "Actualizar nombre"
+#: src/app/[locale]/(settings)/profile/page.tsx
+msgctxt "wjIStY"
+msgid "Your name and username as they appear to others."
+msgstr "Tu nombre y nombre de usuario como aparecen para otros."
 
-#: src/app/[locale]/(settings)/name/name-form.tsx
-msgctxt "Gr/Ipw"
-msgid "Failed to update your name. Please try again or contact hello@zoonk.com"
-msgstr "No se pudo actualizar tu nombre. Por favor, inténtalo de nuevo o contacta con contacto@zoonk.com"
+#: src/app/[locale]/(settings)/profile/profile-form.tsx
+msgctxt "1SvspN"
+msgid "Checking..."
+msgstr "Verificando..."
 
-#: src/app/[locale]/(settings)/name/name-form.tsx
+#: src/app/[locale]/(settings)/profile/profile-form.tsx
+msgctxt "9N4/rz"
+msgid "{username} is available"
+msgstr "{username} está disponible"
+
+#: src/app/[locale]/(settings)/profile/profile-form.tsx
+msgctxt "aW6DOm"
+msgid "3-30 characters. Letters, numbers, underscores, and dots only."
+msgstr "3-30 caracteres. Solo letras, números, guiones bajos y puntos."
+
+#: src/app/[locale]/(settings)/profile/profile-form.tsx
 msgctxt "HAlOn1"
 msgid "Name"
 msgstr "Nombre"
 
-#: src/app/[locale]/(settings)/name/name-form.tsx
+#: src/app/[locale]/(settings)/profile/profile-form.tsx
+msgctxt "JCIgkj"
+msgid "Username"
+msgstr "Nombre de usuario"
+
+#: src/app/[locale]/(settings)/profile/profile-form.tsx
+msgctxt "R76cpj"
+msgid "{username} is already taken"
+msgstr "{username} ya está en uso"
+
+#: src/app/[locale]/(settings)/profile/profile-form.tsx
 msgctxt "VT+G/7"
 msgid "This name will be visible to other users."
 msgstr "Este nombre será visible para otros usuarios."
 
-#: src/app/[locale]/(settings)/name/page.tsx
-msgctxt "+ceM20"
-msgid "Set or update your Zoonk display name. This name may be visible to others and will be used when referring to you in lessons and activities."
-msgstr "Establece o actualiza tu nombre de usuario en Zoonk. Este nombre puede ser visible para otros y se usará cuando nos refiramos a ti en lecciones y actividades."
+#: src/app/[locale]/(settings)/profile/profile-form.tsx
+msgctxt "wYCHCR"
+msgid "Failed to update your profile. Please try again or contact hello@zoonk.com"
+msgstr "Error al actualizar tu perfil. Inténtalo de nuevo o contáctanos en contacto@zoonk.com"
 
-#: src/app/[locale]/(settings)/name/page.tsx
-msgctxt "9NBNq2"
-msgid "Update Display Name"
-msgstr "Actualizar nombre de usuario"
+#: src/app/[locale]/(settings)/profile/profile-form.tsx
+msgctxt "X0ha1a"
+msgid "Save changes"
+msgstr "Guardar cambios"
 
-#: src/app/[locale]/(settings)/name/page.tsx
-msgctxt "Pj/oEx"
-msgid "This is the name others may see and the one we'll use to refer to you in activities."
-msgstr "Este es el nombre que otros pueden ver y el que usaremos para referirnos a ti en las actividades."
+#: src/app/[locale]/(settings)/profile/profile-form.tsx
+msgctxt "yNHZ+a"
+msgid "Your profile has been updated successfully!"
+msgstr "¡Tu perfil se actualizó correctamente!"
 
 #: src/app/[locale]/(settings)/subscription/page.tsx
 msgctxt "9vk07U"

@@ -164,7 +164,7 @@ test.describe("Command Palette - Authenticated", () => {
     await expect(dialog.getByText(/^my courses$/i)).toBeVisible();
     await expect(dialog.getByText(/manage subscription/i)).toBeVisible();
     await expect(dialog.getByText(/update language/i)).toBeVisible();
-    await expect(dialog.getByText(/update display name/i)).toBeVisible();
+    await expect(dialog.getByText(/update profile/i)).toBeVisible();
     await expect(dialog.getByText(/^logout$/i)).toBeVisible();
   });
 

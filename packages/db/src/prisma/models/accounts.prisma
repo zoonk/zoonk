@@ -13,6 +13,8 @@ model User {
   banReason        String?            @map("ban_reason")
   banExpires       DateTime?          @map("ban_expires")
   stripeCustomerId String?            @map("stripe_customer_id")
+  username         String?
+  displayUsername  String?            @map("display_username")
   sessions         Session[]
   accounts         Account[]
   members          Member[]
@@ -24,6 +26,8 @@ model User {
   dailyProgress    DailyProgress[]
 
   @@unique([email])
+  @@unique([username])
+  @@unique([displayUsername])
   @@map("users")
 }
 

@@ -13,6 +13,8 @@
     "./subscription": "./src/subscription.ts"
   },
   "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
     "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
@@ -29,7 +31,9 @@
     "@types/node": "^24",
     "@types/react": "^19",
     "@typescript/native-preview": "7.0.0-dev.20260202.1",
-    "@zoonk/tsconfig": "workspace:*"
+    "@zoonk/tsconfig": "workspace:*",
+    "vite-tsconfig-paths": "6.0.3",
+    "vitest": "4.0.16"
   },
   "peerDependencies": {
     "next": ">=16",

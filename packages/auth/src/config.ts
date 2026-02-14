@@ -10,6 +10,7 @@ import {
   oneTimeToken,
   openAPI,
   organization,
+  username,
 } from "better-auth/plugins";
 import { type BetterAuthOptions } from "better-auth/types";
 import { BETTER_AUTH_BASE_PATH } from "./constants";
@@ -19,6 +20,7 @@ import { stripePlugin } from "./plugins/stripe";
 import { trustedOriginPlugin } from "./plugins/trusted-origin";
 import { appleProvider } from "./providers/apple";
 import { googleProvider } from "./providers/google";
+import { isUsernameAllowed } from "./username-validator";
 
 const SESSION_EXPIRES_IN_DAYS = 30;
 const COOKIE_CACHE_MINUTES = 60;
@@ -69,6 +71,9 @@ export const baseAuthConfig: Omit<BetterAuthOptions, "rateLimit"> = {
 
 export const baseAuthPlugins = [
   adminPlugin(),
+  username({
+    usernameValidator: (username) => isUsernameAllowed(username),
+  }),
   organization({
     ac,
     // Temporarily disable organization creation

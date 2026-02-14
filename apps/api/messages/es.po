@@ -22,6 +22,7 @@ msgstr "O"
 
 #: src/app/auth/login/page.tsx
 #: src/app/auth/otp/otp-form.tsx
+#: src/app/auth/setup/setup-form.tsx
 msgctxt "acrOoz"
 msgid "Continue"
 msgstr "Continuar"
@@ -59,12 +60,12 @@ msgstr "Continuar con Google"
 #: src/app/auth/login/social-login.tsx
 msgctxt "pN2p0t"
 msgid "There was an error signing you in. Please try again or contact hello@zoonk.com"
-msgstr "Hubo un error al iniciar sesión. Intenta de nuevo o contacta a hello@zoonk.com"
+msgstr "Hubo un error al iniciar sesión. Intenta de nuevo o contacta a contacto@zoonk.com"
 
 #: src/app/auth/otp/otp-form.tsx
 msgctxt "HkHvQv"
 msgid "The code you entered is incorrect. Please try again or contact hello@zoonk.com"
-msgstr "El código que ingresaste es incorrecto. Intenta de nuevo o contacta a hello@zoonk.com"
+msgstr "El código que ingresaste es incorrecto. Intenta de nuevo o contacta a contacto@zoonk.com"
 
 #: src/app/auth/otp/page.tsx
 msgctxt "ChATeO"
@@ -80,6 +81,56 @@ msgstr "Ingresa el código que enviamos a {email}:"
 msgctxt "zx7CKB"
 msgid "Check your email"
 msgstr "Revisa tu correo"
+
+#: src/app/auth/setup/page.tsx
+msgctxt "7463XU"
+msgid "Choose a name and username before continuing."
+msgstr "Elige un nombre y nombre de usuario antes de continuar."
+
+#: src/app/auth/setup/page.tsx
+msgctxt "CYqIel"
+msgid "Complete your profile"
+msgstr "Completa tu perfil"
+
+#: src/app/auth/setup/setup-form.tsx
+msgctxt "1SvspN"
+msgid "Checking..."
+msgstr "Verificando..."
+
+#: src/app/auth/setup/setup-form.tsx
+msgctxt "9N4/rz"
+msgid "{username} is available"
+msgstr "{username} está disponible"
+
+#: src/app/auth/setup/setup-form.tsx
+msgctxt "aW6DOm"
+msgid "3-30 characters. Letters, numbers, underscores, and dots only."
+msgstr "3-30 caracteres. Solo letras, números, guiones bajos y puntos."
+
+#: src/app/auth/setup/setup-form.tsx
+msgctxt "HAlOn1"
+msgid "Name"
+msgstr "Nombre"
+
+#: src/app/auth/setup/setup-form.tsx
+msgctxt "JCIgkj"
+msgid "Username"
+msgstr "Nombre de usuario"
+
+#: src/app/auth/setup/setup-form.tsx
+msgctxt "R76cpj"
+msgid "{username} is already taken"
+msgstr "{username} ya está en uso"
+
+#: src/app/auth/setup/setup-form.tsx
+msgctxt "XLl/pd"
+msgid "your-username"
+msgstr "tu-nombre-de-usuario"
+
+#: src/app/auth/setup/setup-form.tsx
+msgctxt "yCCLud"
+msgid "Failed to set up your profile. Please try again or contact hello@zoonk.com"
+msgstr "No se pudo configurar tu perfil. Intenta de nuevo o contacta a contacto@zoonk.com"
 
 #: src/app/auth/untrusted-origin/page.tsx
 msgctxt "+e4BVR"

@@ -80,6 +80,18 @@ test.describe("Navbar - Authenticated", () => {
     ).toBeVisible();
   });
 
+  test("Profile menu item navigates to profile page", async ({ authenticatedPage }) => {
+    await authenticatedPage.goto("/");
+
+    await authenticatedPage.getByRole("button", { name: /user menu/i }).click();
+
+    await authenticatedPage.getByRole("menuitem", { name: /profile/i }).click();
+
+    await expect(
+      authenticatedPage.getByRole("heading", { level: 1, name: /profile/i }),
+    ).toBeVisible();
+  });
+
   test("Support menu item navigates to support page", async ({ authenticatedPage }) => {
     await authenticatedPage.goto("/");
 
