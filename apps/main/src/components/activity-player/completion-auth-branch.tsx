@@ -65,7 +65,7 @@ function SecondaryActions({
     <ClientLink
       className={cn(
         buttonVariants({ variant: isInline ? "outline" : "default" }),
-        isInline ? "flex-1 justify-between" : "w-full justify-between",
+        isInline ? "flex-1 lg:justify-between" : "w-full lg:justify-between",
       )}
       href={lessonHref}
     >
@@ -83,7 +83,7 @@ function SecondaryActions({
 
   const restartButton = (
     <Button
-      className={cn(isInline ? "flex-1" : "w-full", "justify-between")}
+      className={cn(isInline ? "flex-1" : "w-full", "lg:justify-between")}
       onClick={onRestart}
       variant="outline"
     >
@@ -128,7 +128,7 @@ function AuthenticatedContent({
         {nextActivityHref ? (
           <>
             <ClientLink
-              className={cn(buttonVariants({ size: "lg" }), "w-full justify-between")}
+              className={cn(buttonVariants({ size: "lg" }), "w-full lg:justify-between")}
               href={nextActivityHref}
             >
               {t("Next")}
