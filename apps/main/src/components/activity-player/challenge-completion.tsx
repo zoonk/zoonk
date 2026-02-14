@@ -87,7 +87,7 @@ export function ChallengeFailureContent({
       <DimensionList aria-label="Final dimension scores" entries={entries} variant="failure" />
 
       <ChallengeActions>
-        <Button className="w-full justify-between" onClick={onRestart} size="lg">
+        <Button className="w-full lg:justify-between" onClick={onRestart} size="lg">
           {t("Try Again")}
           <Kbd className="bg-primary-foreground/15 text-primary-foreground hidden opacity-70 lg:inline-flex">
             R
@@ -95,7 +95,7 @@ export function ChallengeFailureContent({
         </Button>
 
         <ClientLink
-          className={cn(buttonVariants({ variant: "outline" }), "w-full justify-between")}
+          className={cn(buttonVariants({ variant: "outline" }), "w-full lg:justify-between")}
           href={lessonHref}
         >
           {t("Back to Lesson")}
