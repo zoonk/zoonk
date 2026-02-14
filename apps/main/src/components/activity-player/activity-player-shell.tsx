@@ -68,8 +68,12 @@ export function ActivityPlayerShell({
   }, [router, lessonHref]);
 
   const handleSelectAnswer = useCallback(
-    (stepId: string, answer: SelectedAnswer) => {
-      dispatch({ answer, stepId, type: "SELECT_ANSWER" });
+    (stepId: string, answer: SelectedAnswer | null) => {
+      if (answer) {
+        dispatch({ answer, stepId, type: "SELECT_ANSWER" });
+      } else {
+        dispatch({ stepId, type: "CLEAR_ANSWER" });
+      }
     },
     [dispatch],
   );

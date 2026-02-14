@@ -41,7 +41,7 @@ export function StageContent({
   onNavigateNext: () => void;
   onNavigatePrev: () => void;
   onRestart: () => void;
-  onSelectAnswer: (stepId: string, answer: SelectedAnswer) => void;
+  onSelectAnswer: (stepId: string, answer: SelectedAnswer | null) => void;
   onStartChallenge: () => void;
   results: Record<string, StepResult>;
   phase: PlayerPhase;

@@ -488,6 +488,38 @@ describe("RESTART", () => {
   });
 });
 
+describe("CLEAR_ANSWER", () => {
+  test("removes the selected answer for the given stepId", () => {
+    const state = buildState({
+      selectedAnswers: {
+        "step-1": multipleChoiceAnswer,
+        "step-2": { kind: "fillBlank", userAnswers: ["cat", "mat"] },
+      },
+    });
+    const next = playerReducer(state, { stepId: "step-1", type: "CLEAR_ANSWER" });
+    expect(next.selectedAnswers).toEqual({
+      "step-2": { kind: "fillBlank", userAnswers: ["cat", "mat"] },
+    });
+  });
+
+  test("no-ops when stepId is not in selectedAnswers", () => {
+    const state = buildState({
+      selectedAnswers: { "step-1": multipleChoiceAnswer },
+    });
+    const next = playerReducer(state, { stepId: "step-99", type: "CLEAR_ANSWER" });
+    expect(next.selectedAnswers).toEqual({ "step-1": multipleChoiceAnswer });
+  });
+
+  test("does not change phase or index", () => {
+    const state = buildState({
+      selectedAnswers: { "step-1": multipleChoiceAnswer },
+    });
+    const next = playerReducer(state, { stepId: "step-1", type: "CLEAR_ANSWER" });
+    expect(next.phase).toBe("playing");
+    expect(next.currentStepIndex).toBe(0);
+  });
+});
+
 describe("edge cases", () => {
   test("unknown action returns state unchanged", () => {
     const state = buildState();
