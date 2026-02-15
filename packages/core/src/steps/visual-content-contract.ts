@@ -66,7 +66,7 @@ export const quoteVisualContentSchema = z
   })
   .strict();
 
-const tableVisualContentSchema = z
+export const tableVisualContentSchema = z
   .object({
     caption: z.string().optional(),
     columns: z.array(z.string()),

@@ -83,6 +83,24 @@ const stepsData: {
         },
         visualKind: "quote",
       },
+      {
+        content: {
+          text: "Each type of machine learning has distinct characteristics, strengths, and typical applications.",
+          title: "Comparing ML Types",
+          variant: "text",
+        },
+        kind: "static",
+        visualContent: {
+          caption: "Key differences between the three main types of machine learning",
+          columns: ["Type", "Data", "Goal", "Example"],
+          rows: [
+            ["Supervised", "Labeled", "Predict outcomes", "Spam detection"],
+            ["Unsupervised", "Unlabeled", "Find patterns", "Customer grouping"],
+            ["Reinforcement", "Rewards", "Maximize score", "Game playing"],
+          ],
+        },
+        visualKind: "table",
+      },
     ],
   },
   {

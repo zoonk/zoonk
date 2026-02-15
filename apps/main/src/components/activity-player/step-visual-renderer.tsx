@@ -7,6 +7,7 @@ import {
 import dynamic from "next/dynamic";
 import { ImageVisual } from "./image-visual";
 import { QuoteVisual } from "./quote-visual";
+import { TableVisual } from "./table-visual";
 
 const CodeVisual = dynamic(() =>
   import("./code-visual").then((mod) => ({ default: mod.CodeVisual })),
@@ -35,6 +36,10 @@ export function StepVisualRenderer({
     return <CodeVisual content={visualContent} />;
   }
 
-  // Other visual kinds will be added in Issues 19-22.
+  if (visualKind === "table") {
+    return <TableVisual content={visualContent} />;
+  }
+
+  // Other visual kinds will be added in Issues 20-22.
   return null;
 }

@@ -299,6 +299,131 @@ test.describe("Step Visual Content", () => {
     await expect(page.getByText(/2 \/ 2/)).toBeVisible();
   });
 
+  test("static step with table visual renders headers and cell data", async ({ page }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const { url } = await createStaticActivityWithVisual({
+      steps: [
+        {
+          content: {
+            text: `Table body ${uniqueId}`,
+            title: `Table Title ${uniqueId}`,
+            variant: "text",
+          },
+          position: 0,
+          visualContent: {
+            columns: [`Feature ${uniqueId}`, `Python ${uniqueId}`, `JavaScript ${uniqueId}`],
+            rows: [
+              [`Typing ${uniqueId}`, `Dynamic ${uniqueId}`, `Dynamic ${uniqueId}`],
+              [`Paradigm ${uniqueId}`, `Multi ${uniqueId}`, `Multi ${uniqueId}`],
+            ],
+          },
+          visualKind: "table",
+        },
+      ],
+    });
+
+    await page.goto(url);
+
+    await expect(
+      page.getByRole("columnheader", { name: new RegExp(`Feature ${uniqueId}`) }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("columnheader", { name: new RegExp(`Python ${uniqueId}`) }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("columnheader", { name: new RegExp(`JavaScript ${uniqueId}`) }),
+    ).toBeVisible();
+
+    await expect(page.getByRole("cell", { name: new RegExp(`Typing ${uniqueId}`) })).toBeVisible();
+    await expect(
+      page.getByRole("cell", { name: new RegExp(`Dynamic ${uniqueId}`) }).first(),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("cell", { name: new RegExp(`Paradigm ${uniqueId}`) }),
+    ).toBeVisible();
+  });
+
+  test("static step with table visual renders caption", async ({ page }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const captionText = `Comparison of languages ${uniqueId}`;
+    const { url } = await createStaticActivityWithVisual({
+      steps: [
+        {
+          content: {
+            text: `Table caption body ${uniqueId}`,
+            title: `Table Caption Title ${uniqueId}`,
+            variant: "text",
+          },
+          position: 0,
+          visualContent: {
+            caption: captionText,
+            columns: [`Lang ${uniqueId}`, `Year ${uniqueId}`],
+            rows: [[`Python ${uniqueId}`, `1991 ${uniqueId}`]],
+          },
+          visualKind: "table",
+        },
+      ],
+    });
+
+    await page.goto(url);
+
+    await expect(page.getByText(new RegExp(captionText))).toBeVisible();
+  });
+
+  test("clicking on a table visual does not navigate to the next step", async ({ page }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const { url } = await createStaticActivityWithVisual({
+      steps: [
+        {
+          content: {
+            text: `Click table body ${uniqueId}`,
+            title: `Click Table Step1 ${uniqueId}`,
+            variant: "text",
+          },
+          position: 0,
+          visualContent: {
+            caption: `Table caption ${uniqueId}`,
+            columns: [`Col A ${uniqueId}`, `Col B ${uniqueId}`],
+            rows: [[`Cell 1 ${uniqueId}`, `Cell 2 ${uniqueId}`]],
+          },
+          visualKind: "table",
+        },
+        {
+          content: {
+            text: `Next step body ${uniqueId}`,
+            title: `Click Table Step2 ${uniqueId}`,
+            variant: "text",
+          },
+          position: 1,
+        },
+      ],
+    });
+
+    await page.goto(url);
+
+    await expect(
+      page.getByRole("columnheader", { name: new RegExp(`Col A ${uniqueId}`) }),
+    ).toBeVisible();
+    await expect(page.getByText(/1 \/ 2/)).toBeVisible();
+
+    // Click on the table — should NOT navigate
+    await page.getByRole("figure", { name: new RegExp(`Table caption ${uniqueId}`) }).click();
+
+    // Still on step 1
+    await expect(
+      page.getByRole("heading", { name: new RegExp(`Click Table Step1 ${uniqueId}`) }),
+    ).toBeVisible();
+    await expect(page.getByText(/1 \/ 2/)).toBeVisible();
+
+    // Keyboard navigation still works
+    await page.keyboard.press("ArrowRight");
+
+    await expect(
+      page.getByRole("heading", { name: new RegExp(`Click Table Step2 ${uniqueId}`) }),
+    ).toBeVisible();
+    await expect(page.getByText(/2 \/ 2/)).toBeVisible();
+  });
+
   test("static step with code visual renders annotations", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const annotationText = `This declares a variable ${uniqueId}`;
