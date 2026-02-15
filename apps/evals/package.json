@@ -15,7 +15,7 @@
     "@zoonk/core": "workspace:*",
     "@zoonk/ui": "workspace:*",
     "@zoonk/utils": "workspace:*",
-    "ai": "6.0.39",
+    "ai": "6.0.86",
     "lucide-react": "0.564.0",
     "next": "16.1.6",
     "react": "19.2.4",

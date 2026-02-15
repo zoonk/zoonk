@@ -1,4 +1,4 @@
-import { defineRule } from "oxlint";
+import { defineRule } from "@oxlint/plugins";
 
 function getRemovalRange(sourceCode, aliasNode) {
   const tokenBefore = sourceCode.getTokenBefore(aliasNode);
