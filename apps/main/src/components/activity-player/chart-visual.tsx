@@ -5,6 +5,7 @@ import {
   chartVisualContentSchema,
 } from "@zoonk/core/steps/visual-content-contract";
 import { useExtracted } from "next-intl";
+import { useId } from "react";
 import {
   Area,
   AreaChart,
@@ -79,11 +80,13 @@ function BarChartVisual({ data }: { data: ChartDataPoint[] }) {
 }
 
 function LineChartVisual({ data }: { data: ChartDataPoint[] }) {
+  const gradientId = useId();
+
   return (
     <ResponsiveContainer height={224} width="100%">
       <AreaChart data={data} margin={{ bottom: 0, left: 0, right: 0, top: 0 }}>
         <defs>
-          <linearGradient id="chartLineGradient" x1="0" x2="0" y1="0" y2="1">
+          <linearGradient id={gradientId} x1="0" x2="0" y1="0" y2="1">
             <stop offset="5%" stopColor="var(--foreground)" stopOpacity={0.12} />
             <stop offset="95%" stopColor="var(--foreground)" stopOpacity={0} />
           </linearGradient>
@@ -107,7 +110,7 @@ function LineChartVisual({ data }: { data: ChartDataPoint[] }) {
           activeDot={ACTIVE_DOT_STYLE}
           dataKey="value"
           dot={false}
-          fill="url(#chartLineGradient)"
+          fill={`url(#${gradientId})`}
           fillOpacity={1}
           isAnimationActive={false}
           stroke="var(--foreground)"
