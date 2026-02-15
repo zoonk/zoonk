@@ -54,7 +54,7 @@ export function ChallengeSuccessContent({
         <p className="text-lg font-medium">{t("Challenge Complete")}</p>
       </div>
 
-      <DimensionList aria-label="Final dimension scores" entries={entries} variant="success" />
+      <DimensionList aria-label={t("Final dimension scores")} entries={entries} variant="success" />
 
       {children}
 
@@ -84,7 +84,7 @@ export function ChallengeFailureContent({
         <p className="text-muted-foreground text-sm">{t("Some of your stats went below zero.")}</p>
       </div>
 
-      <DimensionList aria-label="Final dimension scores" entries={entries} variant="failure" />
+      <DimensionList aria-label={t("Final dimension scores")} entries={entries} variant="failure" />
 
       <ChallengeActions>
         <Button className="w-full lg:justify-between" onClick={onRestart} size="lg">

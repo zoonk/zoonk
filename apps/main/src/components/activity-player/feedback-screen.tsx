@@ -75,7 +75,7 @@ export function FeedbackScreenContent({
 
         {feedback ? <FeedbackMessage>{feedback}</FeedbackMessage> : null}
 
-        <DimensionList aria-label="Dimension inventory" entries={entries} variant="feedback" />
+        <DimensionList aria-label={t("Dimension inventory")} entries={entries} variant="feedback" />
       </FeedbackScreen>
     );
   }
