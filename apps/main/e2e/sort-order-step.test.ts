@@ -120,13 +120,19 @@ test.describe("Sort Order Step", () => {
     await page.goto(url);
 
     const itemList = page.getByRole("list", { name: /sort items/i });
-    await itemList
-      .getByRole("button", { name: new RegExp(`Alpha ${uniqueId}.*Tap to select`) })
-      .click();
+    const alphaSelected = itemList.getByRole("button", {
+      name: new RegExp(`Position 1.*Alpha ${uniqueId}`),
+    });
 
-    await expect(
-      itemList.getByRole("button", { name: new RegExp(`Position 1.*Alpha ${uniqueId}`) }),
-    ).toBeVisible();
+    // First click: resilient to hydration timing
+    await expect(async () => {
+      if (!(await alphaSelected.isVisible())) {
+        await itemList
+          .getByRole("button", { name: new RegExp(`Alpha ${uniqueId}.*Tap to select`) })
+          .click();
+      }
+      await expect(alphaSelected).toBeVisible({ timeout: 1000 });
+    }).toPass();
   });
 
   test("tapping a selected item removes its number and renumbers higher items", async ({
@@ -209,15 +215,24 @@ test.describe("Sort Order Step", () => {
     });
 
     await page.goto(url);
-    await page.waitForLoadState("networkidle");
 
     const checkButton = page.getByRole("button", { name: /check/i });
     await expect(checkButton).toBeDisabled();
 
     const itemList = page.getByRole("list", { name: /sort items/i });
-    await itemList
-      .getByRole("button", { name: new RegExp(`X ${uniqueId}.*Tap to select`) })
-      .click();
+    const xSelected = itemList.getByRole("button", {
+      name: new RegExp(`Position 1.*X ${uniqueId}`),
+    });
+
+    // First click: resilient to hydration timing
+    await expect(async () => {
+      if (!(await xSelected.isVisible())) {
+        await itemList
+          .getByRole("button", { name: new RegExp(`X ${uniqueId}.*Tap to select`) })
+          .click();
+      }
+      await expect(xSelected).toBeVisible({ timeout: 1000 });
+    }).toPass();
 
     await expect(checkButton).toBeDisabled();
 
@@ -244,13 +259,22 @@ test.describe("Sort Order Step", () => {
     });
 
     await page.goto(url);
-    await page.waitForLoadState("networkidle");
 
     const itemList = page.getByRole("list", { name: /sort items/i });
+    const step1Selected = itemList.getByRole("button", {
+      name: new RegExp(`Position 1.*Step1 ${uniqueId}`),
+    });
 
-    await itemList
-      .getByRole("button", { name: new RegExp(`Step1 ${uniqueId}.*Tap to select`) })
-      .click();
+    // First click: resilient to hydration timing
+    await expect(async () => {
+      if (!(await step1Selected.isVisible())) {
+        await itemList
+          .getByRole("button", { name: new RegExp(`Step1 ${uniqueId}.*Tap to select`) })
+          .click();
+      }
+      await expect(step1Selected).toBeVisible({ timeout: 1000 });
+    }).toPass();
+
     await itemList
       .getByRole("button", { name: new RegExp(`Step2 ${uniqueId}.*Tap to select`) })
       .click();
@@ -285,14 +309,22 @@ test.describe("Sort Order Step", () => {
     });
 
     await page.goto(url);
-    await page.waitForLoadState("networkidle");
 
     const itemList = page.getByRole("list", { name: /sort items/i });
+    const secondSelected = itemList.getByRole("button", {
+      name: new RegExp(`Position 1.*Second ${uniqueId}`),
+    });
 
-    // Place in wrong order
-    await itemList
-      .getByRole("button", { name: new RegExp(`Second ${uniqueId}.*Tap to select`) })
-      .click();
+    // First click: resilient to hydration timing (place in wrong order)
+    await expect(async () => {
+      if (!(await secondSelected.isVisible())) {
+        await itemList
+          .getByRole("button", { name: new RegExp(`Second ${uniqueId}.*Tap to select`) })
+          .click();
+      }
+      await expect(secondSelected).toBeVisible({ timeout: 1000 });
+    }).toPass();
+
     await itemList
       .getByRole("button", { name: new RegExp(`First ${uniqueId}.*Tap to select`) })
       .click();
@@ -327,13 +359,22 @@ test.describe("Sort Order Step", () => {
     });
 
     await page.goto(url);
-    await page.waitForLoadState("networkidle");
 
     const itemList = page.getByRole("list", { name: /sort items/i });
+    const aSelected = itemList.getByRole("button", {
+      name: new RegExp(`Position 1.*A ${uniqueId}`),
+    });
 
-    await itemList
-      .getByRole("button", { name: new RegExp(`A ${uniqueId}.*Tap to select`) })
-      .click();
+    // First click: resilient to hydration timing
+    await expect(async () => {
+      if (!(await aSelected.isVisible())) {
+        await itemList
+          .getByRole("button", { name: new RegExp(`A ${uniqueId}.*Tap to select`) })
+          .click();
+      }
+      await expect(aSelected).toBeVisible({ timeout: 1000 });
+    }).toPass();
+
     await itemList
       .getByRole("button", { name: new RegExp(`B ${uniqueId}.*Tap to select`) })
       .click();
@@ -359,13 +400,22 @@ test.describe("Sort Order Step", () => {
     });
 
     await page.goto(url);
-    await page.waitForLoadState("networkidle");
 
     const itemList = page.getByRole("list", { name: /sort items/i });
+    const aSelected = itemList.getByRole("button", {
+      name: new RegExp(`Position 1.*A ${uniqueId}`),
+    });
 
-    await itemList
-      .getByRole("button", { name: new RegExp(`A ${uniqueId}.*Tap to select`) })
-      .click();
+    // First click: resilient to hydration timing
+    await expect(async () => {
+      if (!(await aSelected.isVisible())) {
+        await itemList
+          .getByRole("button", { name: new RegExp(`A ${uniqueId}.*Tap to select`) })
+          .click();
+      }
+      await expect(aSelected).toBeVisible({ timeout: 1000 });
+    }).toPass();
+
     await itemList
       .getByRole("button", { name: new RegExp(`B ${uniqueId}.*Tap to select`) })
       .click();
