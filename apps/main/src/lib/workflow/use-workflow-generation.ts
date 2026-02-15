@@ -1,6 +1,6 @@
 "use client";
 
-import { useSelector } from "@xstate/store/react";
+import { useSelector } from "@xstate/store-react";
 import { getString } from "@zoonk/utils/json";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import {

@@ -43,22 +43,22 @@
     "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
-    "@vercel/blob": "2.0.1",
+    "@vercel/blob": "2.2.0",
     "@zoonk/ai": "workspace:*",
     "@zoonk/auth": "workspace:*",
     "@zoonk/db": "workspace:*",
     "@zoonk/mailer": "workspace:*",
     "@zoonk/utils": "workspace:*",
     "better-auth": "1.4.18",
-    "zod": "4.3.5"
+    "zod": "4.3.6"
   },
   "devDependencies": {
     "@types/react": "^19",
-    "@typescript/native-preview": "7.0.0-dev.20260202.1",
+    "@typescript/native-preview": "7.0.0-dev.20260214.1",
     "@zoonk/testing": "workspace:*",
     "@zoonk/tsconfig": "workspace:*",
-    "vite-tsconfig-paths": "6.0.3",
-    "vitest": "4.0.16"
+    "vite-tsconfig-paths": "6.1.1",
+    "vitest": "4.0.18"
   },
   "peerDependencies": {
     "next": ">=16",

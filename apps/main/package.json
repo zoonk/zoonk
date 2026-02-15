@@ -15,9 +15,10 @@
     "typecheck": "next typegen && tsgo --noEmit"
   },
   "dependencies": {
-    "@tabler/icons-react": "3.35.0",
+    "@tabler/icons-react": "3.36.1",
     "@vercel/analytics": "1.6.1",
-    "@xstate/store": "3.14.1",
+    "@xstate/store": "3.15.0",
+    "@xstate/store-react": "1.0.1",
     "@zoonk/ai": "workspace:*",
     "@zoonk/core": "workspace:*",
     "@zoonk/db": "workspace:*",
@@ -27,10 +28,10 @@
     "@zoonk/utils": "workspace:*",
     "botid": "1.5.10",
     "eventsource-parser": "3.0.6",
-    "lucide-react": "0.562.0",
+    "lucide-react": "0.564.0",
     "next": "16.1.6",
-    "next-intl": "4.8.0",
-    "nuqs": "2.8.6",
+    "next-intl": "4.8.2",
+    "nuqs": "2.8.8",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "recharts": "3.7.0",
@@ -48,7 +49,7 @@
     "@types/node": "^24",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@typescript/native-preview": "7.0.0-dev.20260202.1",
+    "@typescript/native-preview": "7.0.0-dev.20260214.1",
     "@zoonk/e2e": "workspace:*",
     "@zoonk/testing": "workspace:*",
     "@zoonk/tsconfig": "workspace:*",
@@ -57,7 +58,7 @@
     "raw-loader": "4.0.2",
     "tsx": "4.21.0",
     "typescript": "^5",
-    "vite-tsconfig-paths": "6.0.3",
-    "vitest": "4.0.16"
+    "vite-tsconfig-paths": "6.1.1",
+    "vitest": "4.0.18"
   }
 }
