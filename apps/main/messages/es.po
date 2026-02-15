@@ -1271,6 +1271,11 @@ msgctxt "P768k7"
 msgid "correct"
 msgstr "correcto"
 
+#: src/components/activity-player/diagram-visual.tsx
+msgctxt "PBUs06"
+msgid "Diagram"
+msgstr "Diagrama"
+
 #: src/components/activity-player/dimension-status-button.tsx
 msgctxt "ehV7Gg"
 msgid "Current dimension scores"

@@ -15,6 +15,7 @@
     "typecheck": "next typegen && tsgo --noEmit"
   },
   "dependencies": {
+    "@dagrejs/dagre": "2.0.4",
     "@tabler/icons-react": "3.36.1",
     "@vercel/analytics": "1.6.1",
     "@xstate/store": "3.15.0",
