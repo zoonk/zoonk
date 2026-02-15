@@ -76,8 +76,10 @@ function OptionList({
   options: readonly { text: string; textRomanization?: string | null }[];
   selectedIndex: number | null;
 }) {
+  const t = useExtracted();
+
   return (
-    <div aria-label="Answer options" className="flex flex-col gap-3" role="radiogroup">
+    <div aria-label={t("Answer options")} className="flex flex-col gap-3" role="radiogroup">
       {options.map((option, index) => (
         <OptionCard
           index={index}

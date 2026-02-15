@@ -412,6 +412,7 @@ checksums:
     Check/singular: 023cc2ba432775c38e3efc004ad7b9ef
     Back%20to%20Lesson/singular: e2dbef5a2fefae8f9cee708e53e61cb9
     Challenge%20Complete/singular: 7854472cc9245aaa8a13f54514968506
+    Final%20dimension%20scores/singular: aa4efa7ecef99d375c1daf4c6585ba98
     Some%20of%20your%20stats%20went%20below%20zero./singular: bc281c87ae70abd076e3e73aa263ddc2
     Try%20Again/singular: d65fad81c5f8f90405b26bf6e5d70ab9
     Challenge%20Failed/singular: e9b1d1d02118f2e2ddc34907748955c4
@@ -433,16 +434,20 @@ checksums:
     Not%20quite/singular: e570085e69662802acf485c4565e3e3e
     Outcome/singular: 4cfc7a40e384ea8b6658e8da6e351bf0
     Correct!/singular: dda1a98dc04fd9db252887ecf1765d41
+    Dimension%20inventory/singular: a150bc3e032ae9e9202db1b375029aae
     Word%20bank/singular: ceea720dd5fa3747c7f93ce165f77b2e
     Blank%20%7Bposition%7D/singular: 70a4795f65f91685071b6abb1c3a6bad
     Blank%20%7Bposition%7D%3A%20%7Bitem%7D.%20Tap%20to%20remove./singular: d7ab9b86256fae5fbb5187fe718afe0b
     All%20pairs%20matched.%20Press%20Check%20to%20continue./singular: 0663e33ba7db53b298c5f50a2f3c7ae8
+    Answer%20options/singular: acb0b378cefcb8a8d50a7c43ce77ae39
     What%20do%20you%20say%3F/singular: 75887288b85fc19e67b7d20550d9205e
     Someone%20says%3A/singular: 09f34dce0528b57e89c8757b5745e6c5
     Previous%20step/singular: 96b31ec6dab003c2bbfbbca10a8a9826
     Next%20step/singular: 712c63650b5180cbc14d6246b5d558c2
     Step%20navigation/singular: ec328f28051577e1c0aab044c89b138c
     Close/singular: 2c2e22f8424a1031de89063bd0022e16
+    Activity%20progress/singular: 8ff2fb7372b8a2525f2955c851c4fa42
+    Image%20options/singular: 64a1aee44b26dbaff851cb846eb4274d
     Tap%20items%20in%20the%20correct%20order/singular: 221c7b9ef00241af65f534432965e782
     "%7Bitem%7D.%20Tap%20to%20select%20as%20position%20%7BnextPosition%7D./singular": f8b0d3e60ce3740c02c33c0faaec5e6b
     Correct/singular: c643eeb0a615de2032eca68722c31177

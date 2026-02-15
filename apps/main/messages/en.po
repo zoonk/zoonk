@@ -1183,6 +1183,11 @@ msgid "Challenge Complete"
 msgstr "Challenge Complete"
 
 #: src/components/activity-player/challenge-completion.tsx
+msgctxt "hOjzbw"
+msgid "Final dimension scores"
+msgstr "Final dimension scores"
+
+#: src/components/activity-player/challenge-completion.tsx
 msgctxt "JOTIo6"
 msgid "Some of your stats went below zero."
 msgstr "Some of your stats went below zero."
@@ -1291,6 +1296,11 @@ msgctxt "xmF49T"
 msgid "Correct!"
 msgstr "Correct!"
 
+#: src/components/activity-player/feedback-screen.tsx
+msgctxt "zZGbEs"
+msgid "Dimension inventory"
+msgstr "Dimension inventory"
+
 #: src/components/activity-player/fill-blank-step.tsx
 msgctxt "e7WNdK"
 msgid "Word bank"
@@ -1310,6 +1320,11 @@ msgstr "Blank {position}: {item}. Tap to remove."
 msgctxt "ja1JDt"
 msgid "All pairs matched. Press Check to continue."
 msgstr "All pairs matched. Press Check to continue."
+
+#: src/components/activity-player/multiple-choice-step.tsx
+msgctxt "akd+cv"
+msgid "Answer options"
+msgstr "Answer options"
 
 #: src/components/activity-player/multiple-choice-step.tsx
 msgctxt "HHBtl4"
@@ -1340,6 +1355,16 @@ msgstr "Step navigation"
 msgctxt "rbrahO"
 msgid "Close"
 msgstr "Close"
+
+#: src/components/activity-player/player-progress-bar.tsx
+msgctxt "OUZtdJ"
+msgid "Activity progress"
+msgstr "Activity progress"
+
+#: src/components/activity-player/select-image-step.tsx
+msgctxt "NA6C/+"
+msgid "Image options"
+msgstr "Image options"
 
 #: src/components/activity-player/sort-order-step.tsx
 msgctxt "/CFOL2"

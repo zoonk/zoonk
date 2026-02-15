@@ -99,6 +99,7 @@
     "zoonk/no-get-extracted-in-promise": "error",
     "zoonk/no-object-params-in-cache": ["error", { "exceptions": ["headers"] }],
     "zoonk/no-single-use-type-alias": "error",
+    "zoonk/no-hardcoded-aria-label": "off",
     "zoonk/no-t-function-as-argument": "error"
   },
   "overrides": [
@@ -225,6 +226,12 @@
       "files": ["**/*.d.ts"],
       "rules": {
         "import/unambiguous": "off"
+      }
+    },
+    {
+      "files": ["apps/main/**/*.tsx", "apps/editor/**/*.tsx", "apps/api/**/*.tsx"],
+      "rules": {
+        "zoonk/no-hardcoded-aria-label": "error"
       }
     }
   ],

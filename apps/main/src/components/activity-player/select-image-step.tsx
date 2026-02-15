@@ -3,6 +3,7 @@
 import { type SerializedStep } from "@/data/activities/prepare-activity-data";
 import { parseStepContent } from "@zoonk/core/steps/content-contract";
 import { cn } from "@zoonk/ui/lib/utils";
+import { useExtracted } from "next-intl";
 import Image from "next/image";
 import { useState } from "react";
 import { type SelectedAnswer } from "./player-reducer";
@@ -78,6 +79,7 @@ export function SelectImageStep({
   selectedAnswer: SelectedAnswer | undefined;
   step: SerializedStep;
 }) {
+  const t = useExtracted();
   const content = parseStepContent("selectImage", step.content);
   const selectedIndex = getSelectedIndex(selectedAnswer);
 
@@ -95,7 +97,7 @@ export function SelectImageStep({
     <InteractiveStepLayout>
       {content.question ? <QuestionText>{content.question}</QuestionText> : null}
 
-      <div aria-label="Image options" className="grid grid-cols-2 gap-3" role="radiogroup">
+      <div aria-label={t("Image options")} className="grid grid-cols-2 gap-3" role="radiogroup">
         {content.options.map((option, index) => (
           <ImageOptionCard
             isSelected={selectedIndex === index}
