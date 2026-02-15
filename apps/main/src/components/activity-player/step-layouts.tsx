@@ -14,7 +14,7 @@ export function StaticStepVisual({ className, ...props }: React.ComponentProps<"
   return (
     <div
       className={cn(
-        "flex min-h-0 flex-1 items-center justify-center overflow-y-auto px-4 py-6 sm:px-6 sm:py-8",
+        "flex min-h-0 flex-1 items-center justify-center overflow-y-auto px-4 py-6 sm:px-6 sm:py-8 xl:max-h-[50vh] xl:flex-initial xl:py-10",
         className,
       )}
       data-slot="static-step-visual"

@@ -10,7 +10,7 @@ export function PlayerHeader({ className, ...props }: React.ComponentProps<"head
   return (
     <header
       className={cn(
-        "relative flex items-center justify-between px-3 py-1.5 sm:py-2.5 lg:p-4",
+        "relative flex items-center justify-between px-3 py-1.5 sm:py-2.5 xl:p-4",
         className,
       )}
       data-slot="player-header"
