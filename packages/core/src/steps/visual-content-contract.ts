@@ -22,7 +22,7 @@ const chartDataPointSchema = z
   })
   .strict();
 
-const chartVisualContentSchema = z
+export const chartVisualContentSchema = z
   .object({
     chartType: z.enum(["bar", "line", "pie"]),
     data: z.array(chartDataPointSchema),
