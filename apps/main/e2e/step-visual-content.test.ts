@@ -424,6 +424,125 @@ test.describe("Step Visual Content", () => {
     await expect(page.getByText(/2 \/ 2/)).toBeVisible();
   });
 
+  test("static step with timeline visual renders event dates, titles, and descriptions", async ({
+    page,
+  }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const { url } = await createStaticActivityWithVisual({
+      steps: [
+        {
+          content: {
+            text: `Timeline body ${uniqueId}`,
+            title: `Timeline Title ${uniqueId}`,
+            variant: "text",
+          },
+          position: 0,
+          visualContent: {
+            events: [
+              {
+                date: `1956 ${uniqueId}`,
+                description: `The term AI is coined ${uniqueId}`,
+                title: `Dartmouth Conference ${uniqueId}`,
+              },
+              {
+                date: `1997 ${uniqueId}`,
+                description: `Deep Blue defeats Kasparov ${uniqueId}`,
+                title: `Chess Milestone ${uniqueId}`,
+              },
+              {
+                date: `2012 ${uniqueId}`,
+                description: `AlexNet wins ImageNet ${uniqueId}`,
+                title: `Deep Learning Breakthrough ${uniqueId}`,
+              },
+            ],
+          },
+          visualKind: "timeline",
+        },
+      ],
+    });
+
+    await page.goto(url);
+
+    await expect(page.getByRole("figure", { name: /timeline/i })).toBeVisible();
+
+    await expect(page.getByText(new RegExp(`1956 ${uniqueId}`))).toBeVisible();
+    await expect(page.getByText(new RegExp(`Dartmouth Conference ${uniqueId}`))).toBeVisible();
+    await expect(page.getByText(new RegExp(`The term AI is coined ${uniqueId}`))).toBeVisible();
+
+    await expect(page.getByText(new RegExp(`1997 ${uniqueId}`))).toBeVisible();
+    await expect(page.getByText(new RegExp(`Chess Milestone ${uniqueId}`))).toBeVisible();
+    await expect(
+      page.getByText(new RegExp(`Deep Blue defeats Kasparov ${uniqueId}`)),
+    ).toBeVisible();
+
+    await expect(page.getByText(new RegExp(`2012 ${uniqueId}`))).toBeVisible();
+    await expect(
+      page.getByText(new RegExp(`Deep Learning Breakthrough ${uniqueId}`)),
+    ).toBeVisible();
+    await expect(page.getByText(new RegExp(`AlexNet wins ImageNet ${uniqueId}`))).toBeVisible();
+  });
+
+  test("clicking on a timeline visual does not navigate to the next step", async ({ page }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const { url } = await createStaticActivityWithVisual({
+      steps: [
+        {
+          content: {
+            text: `Click timeline body ${uniqueId}`,
+            title: `Click Timeline Step1 ${uniqueId}`,
+            variant: "text",
+          },
+          position: 0,
+          visualContent: {
+            events: [
+              {
+                date: `2000 ${uniqueId}`,
+                description: `First event description ${uniqueId}`,
+                title: `First Event ${uniqueId}`,
+              },
+              {
+                date: `2010 ${uniqueId}`,
+                description: `Second event description ${uniqueId}`,
+                title: `Second Event ${uniqueId}`,
+              },
+            ],
+          },
+          visualKind: "timeline",
+        },
+        {
+          content: {
+            text: `Next step body ${uniqueId}`,
+            title: `Click Timeline Step2 ${uniqueId}`,
+            variant: "text",
+          },
+          position: 1,
+        },
+      ],
+    });
+
+    await page.goto(url);
+
+    await expect(page.getByRole("figure", { name: /timeline/i })).toBeVisible();
+    await expect(page.getByText(/1 \/ 2/)).toBeVisible();
+
+    // Click on the timeline — should NOT navigate
+    await page.getByRole("figure", { name: /timeline/i }).click();
+
+    // Still on step 1
+    await expect(
+      page.getByRole("heading", { name: new RegExp(`Click Timeline Step1 ${uniqueId}`) }),
+    ).toBeVisible();
+    await expect(page.getByText(/1 \/ 2/)).toBeVisible();
+
+    // Keyboard navigation still works
+    await page.keyboard.press("ArrowRight");
+
+    await expect(
+      page.getByRole("heading", { name: new RegExp(`Click Timeline Step2 ${uniqueId}`) }),
+    ).toBeVisible();
+    await expect(page.getByText(/2 \/ 2/)).toBeVisible();
+  });
+
   test("static step with code visual renders annotations", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const annotationText = `This declares a variable ${uniqueId}`;

@@ -82,7 +82,7 @@ const timelineEventSchema = z
   })
   .strict();
 
-const timelineVisualContentSchema = z
+export const timelineVisualContentSchema = z
   .object({
     events: z.array(timelineEventSchema),
   })
