@@ -68,14 +68,17 @@ export function StepRenderer({
     const hasVisual = Boolean(step.visualKind && step.visualContent);
 
     return (
-      <StaticStepLayout className={hasVisual ? undefined : "justify-center"} {...swipeHandlers}>
-        <StaticStep step={step} />
+      <div className="relative flex w-full flex-1 justify-center" {...swipeHandlers}>
+        <StaticStepLayout className={hasVisual ? undefined : "justify-center"}>
+          <StaticStep step={step} />
+        </StaticStepLayout>
+
         <StaticTapZones
           isFirst={isFirst}
           onNavigateNext={onNavigateNext}
           onNavigatePrev={onNavigatePrev}
         />
-      </StaticStepLayout>
+      </div>
     );
   }
 
