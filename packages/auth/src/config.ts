@@ -1,5 +1,5 @@
 import { prisma } from "@zoonk/db";
-import { getDevTrustedOrigins, getVercelTrustedOrigins } from "@zoonk/utils/url";
+import { getBaseUrl, getDevTrustedOrigins, getVercelTrustedOrigins } from "@zoonk/utils/url";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { nextCookies } from "better-auth/next-js";
 import {
@@ -14,7 +14,7 @@ import {
 } from "better-auth/plugins";
 import { type BetterAuthOptions } from "better-auth/types";
 import { BETTER_AUTH_BASE_PATH } from "./constants";
-import { getAuthBaseUrl, getCrossSubDomainCookies } from "./env";
+import { getCrossSubDomainCookies } from "./env";
 import { ac, admin, member, owner } from "./permissions";
 import { sendVerificationOTP } from "./plugins/otp";
 import { stripePlugin } from "./plugins/stripe";
@@ -45,7 +45,7 @@ export const baseAuthConfig: Omit<BetterAuthOptions, "rateLimit"> = {
   },
   appName: "Zoonk",
   basePath: BETTER_AUTH_BASE_PATH,
-  baseURL: getAuthBaseUrl(),
+  baseURL: getBaseUrl(),
   database: prismaAdapter(prisma, { provider: "postgresql" }),
   experimental: {
     joins: true,
