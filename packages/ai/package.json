@@ -39,10 +39,10 @@
     "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
-    "@ai-sdk/gateway": "3.0.16",
-    "@ai-sdk/openai": "3.0.12",
+    "@ai-sdk/gateway": "3.0.46",
+    "@ai-sdk/openai": "3.0.29",
     "@zoonk/utils": "workspace:*",
-    "ai": "6.0.39"
+    "ai": "6.0.86"
   },
   "devDependencies": {
     "@types/node": "^24",
