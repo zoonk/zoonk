@@ -45,7 +45,7 @@ const diagramEdgeSchema = z
   })
   .strict();
 
-const diagramVisualContentSchema = z
+export const diagramVisualContentSchema = z
   .object({
     edges: z.array(diagramEdgeSchema),
     nodes: z.array(diagramNodeSchema),

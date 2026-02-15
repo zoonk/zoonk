@@ -181,24 +181,26 @@ test.describe("Step Visual Content", () => {
     await expect(page.getByText(new RegExp(`No visual body ${uniqueId}`))).toBeVisible();
   });
 
-  test("static step with unimplemented visual kind renders text content without crashing", async ({
-    page,
-  }) => {
+  test("static step with diagram visual renders nodes and edge labels", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const { url } = await createStaticActivityWithVisual({
       steps: [
         {
           content: {
-            text: `Unimplemented body ${uniqueId}`,
-            title: `Unimplemented Title ${uniqueId}`,
+            text: `Diagram body ${uniqueId}`,
+            title: `Diagram Title ${uniqueId}`,
             variant: "text",
           },
           position: 0,
           visualContent: {
-            edges: [{ source: "a", target: "b" }],
+            edges: [
+              { label: `transforms ${uniqueId}`, source: "input", target: "process" },
+              { source: "process", target: "output" },
+            ],
             nodes: [
-              { id: "a", label: "Start" },
-              { id: "b", label: "End" },
+              { id: "input", label: `Input ${uniqueId}` },
+              { id: "process", label: `Process ${uniqueId}` },
+              { id: "output", label: `Output ${uniqueId}` },
             ],
           },
           visualKind: "diagram",
@@ -208,10 +210,74 @@ test.describe("Step Visual Content", () => {
 
     await page.goto(url);
 
+    const figure = page.getByRole("figure", { name: /diagram/i });
+
+    await expect(async () => {
+      await expect(figure).toBeVisible();
+    }).toPass();
+
+    const diagram = figure.getByRole("img");
+    await expect(diagram.getByText(`Input ${uniqueId}`)).toBeVisible();
+    await expect(diagram.getByText(`Process ${uniqueId}`)).toBeVisible();
+    await expect(diagram.getByText(`Output ${uniqueId}`)).toBeVisible();
+    await expect(diagram.getByText(`transforms ${uniqueId}`)).toBeVisible();
+  });
+
+  test("clicking on a diagram visual does not navigate to the next step", async ({ page }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const { url } = await createStaticActivityWithVisual({
+      steps: [
+        {
+          content: {
+            text: `Click diagram body ${uniqueId}`,
+            title: `Click Diagram Step1 ${uniqueId}`,
+            variant: "text",
+          },
+          position: 0,
+          visualContent: {
+            edges: [{ source: "a", target: "b" }],
+            nodes: [
+              { id: "a", label: `Start ${uniqueId}` },
+              { id: "b", label: `End ${uniqueId}` },
+            ],
+          },
+          visualKind: "diagram",
+        },
+        {
+          content: {
+            text: `Next step body ${uniqueId}`,
+            title: `Click Diagram Step2 ${uniqueId}`,
+            variant: "text",
+          },
+          position: 1,
+        },
+      ],
+    });
+
+    await page.goto(url);
+
+    await expect(async () => {
+      await expect(page.getByRole("figure", { name: /diagram/i })).toBeVisible();
+    }).toPass();
+
+    await expect(page.getByText(/1 \/ 2/)).toBeVisible();
+
+    // Click on the diagram — should NOT navigate
+    await page.getByRole("figure", { name: /diagram/i }).click();
+
+    // Still on step 1
     await expect(
-      page.getByRole("heading", { name: new RegExp(`Unimplemented Title ${uniqueId}`) }),
+      page.getByRole("heading", { name: new RegExp(`Click Diagram Step1 ${uniqueId}`) }),
     ).toBeVisible();
-    await expect(page.getByText(new RegExp(`Unimplemented body ${uniqueId}`))).toBeVisible();
+    await expect(page.getByText(/1 \/ 2/)).toBeVisible();
+
+    // Keyboard navigation still works
+    await page.keyboard.press("ArrowRight");
+
+    await expect(
+      page.getByRole("heading", { name: new RegExp(`Click Diagram Step2 ${uniqueId}`) }),
+    ).toBeVisible();
+    await expect(page.getByText(/2 \/ 2/)).toBeVisible();
   });
 
   test("static step with code visual renders code and language label", async ({ page }) => {

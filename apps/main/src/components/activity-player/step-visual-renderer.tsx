@@ -6,6 +6,7 @@ import {
 } from "@zoonk/core/steps/visual-content-contract";
 import { ChartVisual } from "./chart-visual";
 import { CodeVisual } from "./code-visual";
+import { DiagramVisual } from "./diagram-visual";
 import { ImageVisual } from "./image-visual";
 import { QuoteVisual } from "./quote-visual";
 import { TableVisual } from "./table-visual";
@@ -46,6 +47,9 @@ export function StepVisualRenderer({
     return <ChartVisual content={visualContent} />;
   }
 
-  // Other visual kinds will be added in Issue 22 (diagram).
+  if (visualKind === "diagram") {
+    return <DiagramVisual content={visualContent} />;
+  }
+
   return null;
 }
