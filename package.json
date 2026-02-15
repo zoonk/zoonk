@@ -30,7 +30,7 @@
     "@typescript/native-preview": "7.0.0-dev.20260214.1",
     "knip": "5.83.1",
     "oxfmt": "0.32.0",
-    "oxlint": "1.43.0",
+    "oxlint": "1.47.0",
     "oxlint-tsgolint": "0.12.2",
     "turbo": "2.8.9"
   },

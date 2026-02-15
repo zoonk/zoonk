@@ -61,6 +61,7 @@ function TemplateText({
   return (
     <p className="text-base leading-10">
       {segments.map((segment, index) => (
+        // oxlint-disable-next-line react/no-array-index-key -- Template segments from split() can repeat, no unique ID
         <span key={`seg-${segment}-${index}`}>
           {segment}
 
@@ -126,6 +127,7 @@ function WordBank({
         return (
           <WordTile
             isUsed={isUsed}
+            // oxlint-disable-next-line react/no-array-index-key -- Words can repeat in word bank, no unique ID
             key={`${word}-${index}`}
             onPlace={() => onPlaceWord(word)}
             word={word}
