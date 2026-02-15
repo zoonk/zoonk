@@ -65,8 +65,10 @@ export function StepRenderer({
   const swipeHandlers = useSwipeNavigation({ onNavigateNext, onNavigatePrev });
 
   if (step.kind === "static") {
+    const hasVisual = Boolean(step.visualKind && step.visualContent);
+
     return (
-      <StaticStepLayout {...swipeHandlers}>
+      <StaticStepLayout className={hasVisual ? undefined : "justify-center"} {...swipeHandlers}>
         <StaticStep step={step} />
         <StaticTapZones
           isFirst={isFirst}

@@ -21,7 +21,7 @@ export function QuoteVisual({ content }: { content: VisualContentByKind[Supporte
   const parsed = quoteVisualContentSchema.parse(content);
 
   return (
-    <figure className="flex max-w-lg flex-col items-center gap-6 text-center">
+    <figure className="flex w-full max-w-xl flex-col items-center gap-4 px-2 text-center sm:gap-6">
       <QuoteMark />
 
       <blockquote>

@@ -13,7 +13,10 @@ export function StaticStepLayout({ className, ...props }: React.ComponentProps<"
 export function StaticStepVisual({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
-      className={cn("flex flex-1 items-center justify-center", className)}
+      className={cn(
+        "flex min-h-0 flex-1 items-center justify-center overflow-y-auto px-4 py-6 sm:px-6 sm:py-8",
+        className,
+      )}
       data-slot="static-step-visual"
       {...props}
     />

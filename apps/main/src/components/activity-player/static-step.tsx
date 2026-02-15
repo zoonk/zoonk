@@ -2,6 +2,7 @@
 
 import { type SerializedStep } from "@/data/activities/prepare-activity-data";
 import { parseStepContent } from "@zoonk/core/steps/content-contract";
+import { cn } from "@zoonk/ui/lib/utils";
 import { HighlightText } from "./highlight-text";
 import { ContextText } from "./question-text";
 import { StaticStepText, StaticStepVisual } from "./step-layouts";
@@ -74,13 +75,22 @@ function StaticStepContent({ step }: { step: SerializedStep }) {
 }
 
 export function StaticStep({ step }: { step: SerializedStep }) {
+  const hasVisual = Boolean(step.visualKind && step.visualContent);
+
   return (
     <>
-      <StaticStepVisual>
-        <StepVisualRenderer visualContent={step.visualContent} visualKind={step.visualKind} />
-      </StaticStepVisual>
+      {hasVisual && (
+        <StaticStepVisual>
+          <StepVisualRenderer visualContent={step.visualContent} visualKind={step.visualKind} />
+        </StaticStepVisual>
+      )}
 
-      <StaticStepText className="px-6 pt-6 pb-8 sm:px-8 sm:pb-10">
+      <StaticStepText
+        className={cn(
+          "px-4 pt-5 pb-6 sm:px-6 sm:pt-6 sm:pb-8",
+          hasVisual && "border-border/40 border-t",
+        )}
+      >
         <StaticStepContent step={step} />
       </StaticStepText>
     </>
