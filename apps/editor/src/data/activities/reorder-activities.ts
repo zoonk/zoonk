@@ -4,13 +4,11 @@ import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
 import { prisma } from "@zoonk/db";
 import { AppError, type SafeReturn, safeAsync } from "@zoonk/utils/error";
 
-export type ActivityPosition = {
-  activityId: bigint;
-  position: number;
-};
-
 export async function reorderActivities(params: {
-  activities: ActivityPosition[];
+  activities: {
+    activityId: bigint;
+    position: number;
+  }[];
   lessonId: number;
   headers?: Headers;
 }): Promise<SafeReturn<{ updated: number }>> {

@@ -71,7 +71,7 @@ export const ACTIVITY_STEPS = [
 
 export type ActivityStepName = (typeof ACTIVITY_STEPS)[number];
 
-export type ActivityCompletionStep =
+type ActivityCompletionStep =
   | "setBackgroundAsCompleted"
   | "setChallengeAsCompleted"
   | "setCustomAsCompleted"

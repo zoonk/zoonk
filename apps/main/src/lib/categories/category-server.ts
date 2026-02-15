@@ -2,8 +2,6 @@ import { type CourseCategory } from "@zoonk/utils/categories";
 import { getExtracted } from "next-intl/server";
 import { CATEGORY_ICONS, type CategoryInfo } from "./category-icons";
 
-export type { CategoryInfo } from "./category-icons";
-
 export async function getCategories(params?: { locale: string }): Promise<CategoryInfo[]> {
   const t = await getExtracted(params);
 

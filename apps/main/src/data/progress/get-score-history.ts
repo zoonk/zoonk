@@ -19,7 +19,7 @@ export type ScoreDataPoint = {
   label: string;
 };
 
-export type ScoreHistoryData = {
+type ScoreHistoryData = {
   dataPoints: ScoreDataPoint[];
   average: number;
   previousAverage: number | null;
@@ -50,13 +50,6 @@ function calculateAverage(dataPoints: { score: number }[]): number {
   const sum = dataPoints.reduce((acc, point) => acc + point.score, 0);
   return sum / dataPoints.length;
 }
-
-export type ScoreHistoryParams = {
-  period: ScorePeriod;
-  offset?: number;
-  locale?: string;
-  headers?: Headers;
-};
 
 async function fetchDailyData(
   userId: number,
@@ -181,7 +174,12 @@ const cachedGetScoreHistory = cache(
   },
 );
 
-export function getScoreHistory(params: ScoreHistoryParams): Promise<ScoreHistoryData | null> {
+export function getScoreHistory(params: {
+  period: ScorePeriod;
+  offset?: number;
+  locale?: string;
+  headers?: Headers;
+}): Promise<ScoreHistoryData | null> {
   return cachedGetScoreHistory(
     params.period,
     params.offset ?? 0,

@@ -7,7 +7,7 @@ import { type StepVisual } from "./generate-visuals-step";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
 
-export type StepVisualWithUrl = StepVisual & { url?: string };
+type StepVisualWithUrl = StepVisual & { url?: string };
 
 type ImageStep = { id: bigint | number; visualContent: unknown; visualKind: string | null };
 

@@ -12,13 +12,6 @@ import { type ActivityStepName } from "@/workflows/config";
 import { type ActivityKind } from "@zoonk/db";
 import { useExtracted } from "next-intl";
 
-export type PhaseInfo = {
-  name: PhaseName;
-  label: string;
-  status: PhaseStatus;
-  icon: (typeof PHASE_ICONS)[PhaseName];
-};
-
 export function useGenerationPhases(
   completedSteps: ActivityStepName[],
   currentStep: ActivityStepName | null,
@@ -40,7 +33,12 @@ export function useGenerationPhases(
 
   const phaseOrder = getPhaseOrder(activityKind);
 
-  const phases: PhaseInfo[] = phaseOrder.map((phase) => ({
+  const phases: {
+    name: PhaseName;
+    label: string;
+    status: PhaseStatus;
+    icon: (typeof PHASE_ICONS)[PhaseName];
+  }[] = phaseOrder.map((phase) => ({
     icon: PHASE_ICONS[phase],
     label: labels[phase],
     name: phase,

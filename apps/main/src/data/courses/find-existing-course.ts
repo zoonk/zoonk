@@ -5,7 +5,7 @@ import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { toSlug } from "@zoonk/utils/string";
 import { cache } from "react";
 
-export type ExistingCourse = {
+type ExistingCourse = {
   id: number;
   slug: string;
   generationStatus: string;

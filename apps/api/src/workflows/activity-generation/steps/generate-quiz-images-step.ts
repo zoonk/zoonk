@@ -12,7 +12,7 @@ import { findActivityByKind } from "./_utils/find-activity-by-kind";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
 
-export type QuizQuestionWithUrls =
+type QuizQuestionWithUrls =
   | Exclude<QuizQuestion, SelectImageQuestion>
   | (Omit<SelectImageQuestion, "options"> & {
       options: (SelectImageQuestion["options"][number] & { url?: string })[];

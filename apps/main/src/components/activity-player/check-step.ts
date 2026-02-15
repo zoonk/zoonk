@@ -12,7 +12,7 @@ import {
 import { type ChallengeEffect, parseStepContent } from "@zoonk/core/steps/content-contract";
 import { type SelectedAnswer } from "./player-reducer";
 
-export type CheckStepResult = {
+type CheckStepResult = {
   effects: ChallengeEffect[];
   result: AnswerResult;
 };

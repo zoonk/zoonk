@@ -11,13 +11,6 @@ import {
   getPhaseStatus,
 } from "./generation-phases";
 
-export type PhaseInfo = {
-  name: PhaseName;
-  label: string;
-  status: PhaseStatus;
-  icon: (typeof PHASE_ICONS)[PhaseName];
-};
-
 export function useGenerationPhases(
   completedSteps: LessonStepName[],
   currentStep: LessonStepName | null,
@@ -31,7 +24,12 @@ export function useGenerationPhases(
     settingUpActivities: t("Setting up activities"),
   };
 
-  const phases: PhaseInfo[] = PHASE_ORDER.map((phase) => ({
+  const phases: {
+    name: PhaseName;
+    label: string;
+    status: PhaseStatus;
+    icon: (typeof PHASE_ICONS)[PhaseName];
+  }[] = PHASE_ORDER.map((phase) => ({
     icon: PHASE_ICONS[phase],
     label: labels[phase],
     name: phase,

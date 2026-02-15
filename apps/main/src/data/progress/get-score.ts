@@ -5,14 +5,8 @@ import { DEFAULT_PROGRESS_LOOKBACK_DAYS } from "@zoonk/utils/constants";
 import { safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
 
-export type ScoreData = {
+type ScoreData = {
   score: number;
-};
-
-export type ScoreParams = {
-  headers?: Headers;
-  startDate?: Date;
-  endDate?: Date;
 };
 
 function getDateRange(
@@ -70,7 +64,11 @@ const cachedGetScore = cache(
   },
 );
 
-export function getScore(params?: ScoreParams): Promise<ScoreData | null> {
+export function getScore(params?: {
+  headers?: Headers;
+  startDate?: Date;
+  endDate?: Date;
+}): Promise<ScoreData | null> {
   return cachedGetScore(
     params?.startDate?.toISOString(),
     params?.endDate?.toISOString(),
