@@ -74,6 +74,7 @@ export function AdminPagination({
         </PaginationItem>
 
         {pagesWithEllipses.map((pageOrEllipsis, index) => (
+          // oxlint-disable-next-line react/no-array-index-key -- Page numbers/ellipses can repeat, no unique ID
           <PaginationItem key={`${pageOrEllipsis}-${index}`}>
             {pageOrEllipsis === "ellipsis" ? (
               <PaginationEllipsis />

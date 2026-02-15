@@ -19,7 +19,7 @@ export type EnergyDataPoint = {
   label: string;
 };
 
-export type EnergyHistoryData = {
+type EnergyHistoryData = {
   dataPoints: EnergyDataPoint[];
   average: number;
   previousAverage: number | null;
@@ -115,13 +115,6 @@ function aggregateEnergyByMonth(dataPoints: RawDataPoint[]): RawDataPoint[] {
   }));
 }
 
-export type EnergyHistoryParams = {
-  period: EnergyPeriod;
-  offset?: number;
-  locale?: string;
-  headers?: Headers;
-};
-
 function getPreviousAverage(
   previousData: RawDataPoint[] | null,
   period: EnergyPeriod,
@@ -186,7 +179,12 @@ const cachedGetEnergyHistory = cache(
   },
 );
 
-export function getEnergyHistory(params: EnergyHistoryParams): Promise<EnergyHistoryData | null> {
+export function getEnergyHistory(params: {
+  period: EnergyPeriod;
+  offset?: number;
+  locale?: string;
+  headers?: Headers;
+}): Promise<EnergyHistoryData | null> {
   return cachedGetEnergyHistory(
     params.period,
     params.offset ?? 0,

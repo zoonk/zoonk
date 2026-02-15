@@ -26,15 +26,15 @@
     "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
-    "@formatjs/intl-localematcher": "0.6.1",
+    "@formatjs/intl-localematcher": "0.8.1",
     "negotiator": "1.0.0",
     "slugify": "1.6.6"
   },
   "devDependencies": {
     "@types/negotiator": "0.6.4",
-    "@typescript/native-preview": "7.0.0-dev.20260202.1",
+    "@typescript/native-preview": "7.0.0-dev.20260214.1",
     "@zoonk/tsconfig": "workspace:*",
-    "vite-tsconfig-paths": "6.0.3",
-    "vitest": "4.0.16"
+    "vite-tsconfig-paths": "6.1.1",
+    "vitest": "4.0.18"
   }
 }

@@ -1,4 +1,4 @@
-import { defineRule } from "oxlint";
+import { defineRule } from "@oxlint/plugins";
 
 const PROMISE_METHODS = new Set(["all", "allSettled", "race", "any"]);
 

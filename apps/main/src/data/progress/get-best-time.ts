@@ -6,15 +6,9 @@ import { safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
 import { type ScoredRow, findBestByScore, getDefaultStartDate } from "./_utils";
 
-export type BestTimeData = {
+type BestTimeData = {
   score: number;
   period: number;
-};
-
-export type BestTimeParams = {
-  headers?: Headers;
-  startDate?: Date;
-  endDate?: Date;
 };
 
 const cachedGetBestTime = cache(
@@ -46,6 +40,10 @@ const cachedGetBestTime = cache(
   },
 );
 
-export function getBestTime(params?: BestTimeParams): Promise<BestTimeData | null> {
+export function getBestTime(params?: {
+  headers?: Headers;
+  startDate?: Date;
+  endDate?: Date;
+}): Promise<BestTimeData | null> {
   return cachedGetBestTime(params?.startDate?.toISOString(), params?.headers);
 }

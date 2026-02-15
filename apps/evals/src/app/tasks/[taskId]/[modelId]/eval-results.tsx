@@ -31,6 +31,7 @@ export function EvalResults({ results }: { results: TaskEvalResults }) {
 
         <Accordion className="w-full">
           {results.results.map((result, index) => (
+            // oxlint-disable-next-line react/no-array-index-key -- Fallback key when testCase.id is falsy
             <TestCase index={index} key={result.testCase.id || index} result={result} />
           ))}
         </Accordion>

@@ -6,10 +6,6 @@ import { headers } from "next/headers";
 
 const TRAILING_SLASHES = /\/+$/;
 
-export type TokenResult =
-  | { success: true; url: string }
-  | { success: false; error: "UNTRUSTED_ORIGIN" };
-
 export async function validateTrustedOriginAction(redirectTo: string): Promise<boolean> {
   const reqHeaders = await headers();
 
@@ -23,7 +19,9 @@ export async function validateTrustedOriginAction(redirectTo: string): Promise<b
   return !error;
 }
 
-export async function createOneTimeTokenAction(redirectTo: string): Promise<TokenResult> {
+export async function createOneTimeTokenAction(
+  redirectTo: string,
+): Promise<{ success: true; url: string } | { success: false; error: "UNTRUSTED_ORIGIN" }> {
   const reqHeaders = await headers();
 
   const { error: validationError } = await safeAsync(async () =>

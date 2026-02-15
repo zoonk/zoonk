@@ -130,6 +130,7 @@ function SortItemList({
         return (
           <ItemButton
             item={item}
+            // oxlint-disable-next-line react/no-array-index-key -- Items can repeat, no unique ID
             key={`${item}-${index}`}
             nextPosition={nextPosition}
             onClick={() => onToggle(item)}

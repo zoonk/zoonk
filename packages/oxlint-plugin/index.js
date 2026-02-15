@@ -1,4 +1,4 @@
-import { definePlugin } from "oxlint";
+import { eslintCompatPlugin } from "@oxlint/plugins";
 import noDynamicTranslationKey from "./rules/no-dynamic-translation-key.js";
 import noGetExtractedInPromise from "./rules/no-get-extracted-in-promise.js";
 import noHardcodedAriaLabel from "./rules/no-hardcoded-aria-label.js";
@@ -6,7 +6,7 @@ import noObjectParamsInCache from "./rules/no-object-params-in-cache.js";
 import noSingleUseTypeAlias from "./rules/no-single-use-type-alias.js";
 import noTFunctionAsArgument from "./rules/no-t-function-as-argument.js";
 
-export default definePlugin({
+export default eslintCompatPlugin({
   meta: {
     name: "zoonk",
   },

@@ -4,13 +4,11 @@ import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
 import { prisma } from "@zoonk/db";
 import { AppError, type SafeReturn, safeAsync } from "@zoonk/utils/error";
 
-export type LessonPosition = {
-  lessonId: number;
-  position: number;
-};
-
 export async function reorderLessons(params: {
-  lessons: LessonPosition[];
+  lessons: {
+    lessonId: number;
+    position: number;
+  }[];
   chapterId: number;
   headers?: Headers;
 }): Promise<SafeReturn<{ updated: number }>> {

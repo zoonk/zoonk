@@ -9,16 +9,14 @@ export type StreamMessage<TStep extends string = string> = {
   status: StepStatus;
 };
 
-export type GenerationContext<TStep extends string = string> = {
-  completedSteps: TStep[];
-  currentStep: TStep | null;
-  error: string | null;
-  runId: string | null;
-  status: GenerationStatus;
-};
-
 export function createGenerationStore<TStep extends string = string>(
-  initialContext?: Partial<GenerationContext<TStep>>,
+  initialContext?: Partial<{
+    completedSteps: TStep[];
+    currentStep: TStep | null;
+    error: string | null;
+    runId: string | null;
+    status: GenerationStatus;
+  }>,
 ) {
   return createStore({
     context: {

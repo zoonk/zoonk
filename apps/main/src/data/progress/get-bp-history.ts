@@ -18,7 +18,7 @@ export type BpDataPoint = {
   label: string;
 };
 
-export type BpHistoryData = {
+type BpHistoryData = {
   dataPoints: BpDataPoint[];
   totalBp: number;
   periodTotal: number;
@@ -28,13 +28,6 @@ export type BpHistoryData = {
   hasPreviousPeriod: boolean;
   hasNextPeriod: boolean;
   currentBelt: BeltLevelResult;
-};
-
-export type BpHistoryParams = {
-  period: HistoryPeriod;
-  offset?: number;
-  locale?: string;
-  headers?: Headers;
 };
 
 type RawDataPoint = { date: Date; bp: number };
@@ -157,7 +150,12 @@ const cachedGetBpHistory = cache(
   },
 );
 
-export function getBpHistory(params: BpHistoryParams): Promise<BpHistoryData | null> {
+export function getBpHistory(params: {
+  period: HistoryPeriod;
+  offset?: number;
+  locale?: string;
+  headers?: Headers;
+}): Promise<BpHistoryData | null> {
   return cachedGetBpHistory(
     params.period,
     params.offset ?? 0,

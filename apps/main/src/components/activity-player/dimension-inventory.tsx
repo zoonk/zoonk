@@ -4,7 +4,7 @@ import { type ChallengeEffect } from "@zoonk/core/steps/content-contract";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type DimensionInventory as DimensionInventoryType, effectDelta } from "./player-reducer";
 
-export type DimensionEntry = {
+type DimensionEntry = {
   delta: number;
   name: string;
   total: number;

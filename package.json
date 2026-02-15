@@ -25,17 +25,17 @@
     "typecheck": "turbo typecheck"
   },
   "devDependencies": {
-    "@playwright/test": "1.58.0",
+    "@playwright/test": "1.58.2",
     "@types/node": "^24",
-    "@typescript/native-preview": "7.0.0-dev.20260202.1",
-    "knip": "5.83.0",
-    "oxfmt": "0.28.0",
-    "oxlint": "1.43.0",
-    "oxlint-tsgolint": "0.11.4",
-    "turbo": "2.8.1"
+    "@typescript/native-preview": "7.0.0-dev.20260214.1",
+    "knip": "5.83.1",
+    "oxfmt": "0.32.0",
+    "oxlint": "1.47.0",
+    "oxlint-tsgolint": "0.12.2",
+    "turbo": "2.8.9"
   },
   "engines": {
     "node": "^24"
   },
-  "packageManager": "pnpm@10.28.2"
+  "packageManager": "pnpm@10.29.3"
 }

@@ -5,17 +5,17 @@ import { streamError, streamStatus } from "../stream-status";
 import { type GeneratedLesson } from "./generate-lessons-step";
 import { type ChapterContext } from "./get-chapter-step";
 
-export type CreatedLesson = {
-  id: number;
-  position: number;
-  slug: string;
-  title: string;
-};
-
 export async function addLessonsStep(input: {
   context: ChapterContext;
   lessons: GeneratedLesson[];
-}): Promise<CreatedLesson[]> {
+}): Promise<
+  {
+    id: number;
+    position: number;
+    slug: string;
+    title: string;
+  }[]
+> {
   "use step";
 
   await streamStatus({ status: "started", step: "addLessons" });

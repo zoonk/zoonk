@@ -3,15 +3,13 @@ import { ErrorCode } from "@/lib/app-error";
 import { prisma } from "@zoonk/db";
 import { AppError, type SafeReturn, safeAsync } from "@zoonk/utils/error";
 
-export type AlternativeTitlesExport = {
-  alternativeTitles: string[];
-  exportedAt: string;
-  version: number;
-};
-
-export async function exportAlternativeTitles(params: {
-  courseId: number;
-}): Promise<SafeReturn<AlternativeTitlesExport>> {
+export async function exportAlternativeTitles(params: { courseId: number }): Promise<
+  SafeReturn<{
+    alternativeTitles: string[];
+    exportedAt: string;
+    version: number;
+  }>
+> {
   const { data: course, error: findError } = await safeAsync(() =>
     prisma.course.findUnique({
       where: { id: params.courseId },

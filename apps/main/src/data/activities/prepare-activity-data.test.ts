@@ -8,7 +8,7 @@ import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { sentenceFixture } from "@zoonk/testing/fixtures/sentences";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
 import { wordFixture } from "@zoonk/testing/fixtures/words";
-import { beforeAll, describe, expect, test } from "vitest";
+import { beforeAll, describe, expect, expectTypeOf, test } from "vitest";
 import { getActivity } from "./get-activity";
 import { type LessonSentenceData } from "./get-lesson-sentences";
 import { type LessonWordData } from "./get-lesson-words";
@@ -65,9 +65,13 @@ describe(prepareActivityData, () => {
     const raw = await getActivity({ lessonId: lesson.id, position: 100 });
     const result = prepareActivityData(raw!, [], []);
 
-    expect(typeof result.id).toBe("string");
+    expectTypeOf(result.id).toBeString();
     expect(result.id).toBe(String(activity.id));
-    expect(typeof result.steps[0]?.id).toBe("string");
+    const firstStep = result.steps[0];
+    expect(firstStep).toBeDefined();
+    if (firstStep) {
+      expectTypeOf(firstStep.id).toBeString();
+    }
   });
 
   test("parses step content for supported kinds", async () => {

@@ -4,23 +4,20 @@ import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
 import { prisma } from "@zoonk/db";
 import { AppError, type SafeReturn, safeAsync } from "@zoonk/utils/error";
 
-export type ExportedChapter = {
+type ExportedChapter = {
   description: string;
   position: number;
   slug: string;
   title: string;
 };
 
-export type ChaptersExport = {
-  chapters: ExportedChapter[];
-  exportedAt: string;
-  version: number;
-};
-
-export async function exportChapters(params: {
-  courseId: number;
-  headers?: Headers;
-}): Promise<SafeReturn<ChaptersExport>> {
+export async function exportChapters(params: { courseId: number; headers?: Headers }): Promise<
+  SafeReturn<{
+    chapters: ExportedChapter[];
+    exportedAt: string;
+    version: number;
+  }>
+> {
   const { data: course, error: findError } = await safeAsync(() =>
     prisma.course.findUnique({
       where: { id: params.courseId },

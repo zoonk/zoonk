@@ -8,7 +8,7 @@ export function stripePlugin() {
   return stripe({
     createCustomerOnSignUp: true,
     organization: { enabled: true },
-    stripeClient: new Stripe(secretKey, { apiVersion: "2025-12-15.clover" }),
+    stripeClient: new Stripe(secretKey, { apiVersion: "2026-01-28.clover" }),
     stripeWebhookSecret: webhookSecret,
     subscription: {
       enabled: true,

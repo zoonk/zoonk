@@ -25,19 +25,19 @@
     "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
-    "@prisma/adapter-pg": "7.3.0",
-    "@prisma/client": "7.3.0",
-    "@vercel/functions": "3.3.6",
+    "@prisma/adapter-pg": "7.4.0",
+    "@prisma/client": "7.4.0",
+    "@vercel/functions": "3.4.2",
     "@zoonk/utils": "workspace:*",
-    "pg": "8.17.2"
+    "pg": "8.18.0"
   },
   "devDependencies": {
     "@types/pg": "8.16.0",
-    "@typescript/native-preview": "7.0.0-dev.20260202.1",
+    "@typescript/native-preview": "7.0.0-dev.20260214.1",
     "@zoonk/tsconfig": "workspace:*",
-    "dotenv": "17.2.3",
-    "prisma": "7.3.0",
-    "tsx": "4.20.6"
+    "dotenv": "17.3.1",
+    "prisma": "7.4.0",
+    "tsx": "4.21.0"
   },
   "peerDependencies": {
     "server-only": ">=0.0.1"

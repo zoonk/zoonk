@@ -10,12 +10,11 @@
   "scripts": {
     "typecheck": "tsgo --noEmit"
   },
-  "dependencies": {
-    "@playwright/test": "1.58.0"
-  },
+  "dependencies": {},
   "devDependencies": {
+    "@playwright/test": "1.58.2",
     "@types/node": "^24",
-    "@typescript/native-preview": "7.0.0-dev.20260202.1",
+    "@typescript/native-preview": "7.0.0-dev.20260214.1",
     "@zoonk/tsconfig": "workspace:*"
   }
 }

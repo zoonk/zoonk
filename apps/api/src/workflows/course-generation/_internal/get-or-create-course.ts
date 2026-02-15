@@ -9,11 +9,6 @@ import {
   type ExistingCourseContent,
 } from "../types";
 
-export type CourseSetupResult = {
-  course: CourseContext;
-  existing: ExistingCourseContent;
-};
-
 const DEFAULT_EXISTING_CONTENT: ExistingCourseContent = {
   description: null,
   hasAlternativeTitles: false,
@@ -27,7 +22,10 @@ export async function getOrCreateCourse(
   suggestion: CourseSuggestionData,
   courseSuggestionId: number,
   workflowRunId: string,
-): Promise<CourseSetupResult> {
+): Promise<{
+  course: CourseContext;
+  existing: ExistingCourseContent;
+}> {
   if (!existingCourse) {
     const course = await initializeCourseStep({ suggestion, workflowRunId });
     await streamStatus({ status: "completed", step: "setCourseAsRunning" });

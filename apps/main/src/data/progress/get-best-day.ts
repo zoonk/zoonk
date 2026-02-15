@@ -4,14 +4,9 @@ import { prisma } from "@zoonk/db";
 import { cache } from "react";
 import { type ScoredRow, findBestByScore, getDefaultStartDate } from "./_utils";
 
-export type BestDayData = {
+type BestDayData = {
   score: number;
   dayOfWeek: number;
-};
-
-export type BestDayParams = {
-  headers?: Headers;
-  startDate?: Date;
 };
 
 const cachedGetBestDay = cache(
@@ -45,6 +40,9 @@ const cachedGetBestDay = cache(
   },
 );
 
-export function getBestDay(params?: BestDayParams): Promise<BestDayData | null> {
+export function getBestDay(params?: {
+  headers?: Headers;
+  startDate?: Date;
+}): Promise<BestDayData | null> {
   return cachedGetBestDay(params?.startDate?.toISOString(), params?.headers);
 }

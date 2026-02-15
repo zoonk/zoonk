@@ -3,7 +3,7 @@ import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { beforeAll, describe, expect, test } from "vitest";
+import { beforeAll, describe, expect, expectTypeOf, test } from "vitest";
 import { getActivityForGeneration } from "./get-activity-for-generation";
 
 describe(getActivityForGeneration, () => {
@@ -97,7 +97,10 @@ describe(getActivityForGeneration, () => {
   test("includes lesson id for workflow triggering", async () => {
     const result = await getActivityForGeneration(activity.id);
 
-    expect(result?.lesson?.id).toBe(lesson.id);
-    expect(typeof result?.lesson?.id).toBe("number");
+    const lessonData = result?.lesson;
+    expect(lessonData?.id).toBe(lesson.id);
+    if (lessonData) {
+      expectTypeOf(lessonData.id).toBeNumber();
+    }
   });
 });

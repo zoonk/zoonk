@@ -8,7 +8,7 @@ import { AppError, safeAsync } from "@zoonk/utils/error";
 import { normalizeString } from "@zoonk/utils/string";
 import { cache } from "react";
 
-export type ChapterWithCourse = Chapter & {
+type ChapterWithCourse = Chapter & {
   course: { slug: string; language: string };
 };
 
