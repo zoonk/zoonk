@@ -1,4 +1,5 @@
 import "server-only";
+import { getLanguageName } from "@zoonk/utils/languages";
 import { Output, generateText } from "ai";
 import { z } from "zod";
 import { type ReasoningEffort, buildProviderOptions } from "../../provider-options";
@@ -24,8 +25,7 @@ const schema = z.object({
 export type LanguageCourseChaptersSchema = z.infer<typeof schema>;
 
 export type LanguageCourseChaptersParams = {
-  courseTitle: string;
-  language: string;
+  userLanguage: string;
   targetLanguage: string;
   model?: string;
   useFallback?: boolean;
@@ -33,17 +33,17 @@ export type LanguageCourseChaptersParams = {
 };
 
 export async function generateLanguageCourseChapters({
-  courseTitle,
-  language,
+  userLanguage,
   targetLanguage,
   model = DEFAULT_MODEL,
   useFallback = true,
   reasoningEffort = "high",
 }: LanguageCourseChaptersParams) {
+  const targetLanguageName = getLanguageName({ targetLanguage, userLanguage });
+
   const userPrompt = `
-    LANGUAGE: ${language}
-    COURSE_TITLE: ${courseTitle}
-    TARGET_LANGUAGE: ${targetLanguage}
+    USER_LANGUAGE: ${userLanguage}
+    TARGET_LANGUAGE: ${targetLanguageName}
   `;
 
   const providerOptions = buildProviderOptions({

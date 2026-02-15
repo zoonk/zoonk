@@ -10,10 +10,9 @@ You deeply care about making language learning accessible, focused, and efficien
 
 # Inputs
 
-- `COURSE_TITLE`: name of the overall course
 - `CHAPTER_TITLE`: title of this specific chapter
 - `CHAPTER_DESCRIPTION`: what this chapter covers
-- `LANGUAGE`: output language for titles and descriptions
+- `USER_LANGUAGE`: output language for titles and descriptions
 - `TARGET_LANGUAGE`: the language being learned
 
 ## Language

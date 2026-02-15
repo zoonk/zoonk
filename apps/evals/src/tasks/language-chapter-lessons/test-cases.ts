@@ -37,9 +37,8 @@ export const TEST_CASES = [
       chapterDescription:
         "Regular and irregular verb conjugations in the present tense for everyday actions.",
       chapterTitle: "Present Tense Verbs",
-      courseTitle: "Spanish",
-      language: "en",
       targetLanguage: "es",
+      userLanguage: "en",
     },
   },
   {
@@ -56,9 +55,8 @@ export const TEST_CASES = [
       chapterDescription:
         "The hiragana syllabary: basic characters, dakuten, handakuten, and combination characters.",
       chapterTitle: "Hiragana",
-      courseTitle: "Japonês",
-      language: "pt",
       targetLanguage: "ja",
+      userLanguage: "pt",
     },
   },
   {
@@ -75,9 +73,8 @@ export const TEST_CASES = [
       chapterDescription:
         "Common greetings, introductions, and polite expressions for everyday encounters.",
       chapterTitle: "Basic Greetings & Introductions",
-      courseTitle: "French",
-      language: "en",
       targetLanguage: "fr",
+      userLanguage: "en",
     },
   },
   {
@@ -94,9 +91,8 @@ export const TEST_CASES = [
       chapterDescription:
         "Simple past, past continuous, present perfect, and past perfect tenses with regular and irregular verbs.",
       chapterTitle: "Tiempos Pasados",
-      courseTitle: "Inglés",
-      language: "es",
       targetLanguage: "en",
+      userLanguage: "es",
     },
   },
 ];
