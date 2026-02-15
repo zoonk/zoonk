@@ -193,6 +193,11 @@
     --score: var(--color-green-400);
     --belt-black: var(--color-neutral-700);
   }
+
+  [data-code-visual] span[style] {
+    color: var(--shiki-dark) !important;
+    background-color: var(--shiki-dark-bg) !important;
+  }
 }
 
 @media (prefers-color-scheme: dark) and (prefers-contrast: more) {

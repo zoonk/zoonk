@@ -4,8 +4,13 @@ import {
   type SupportedVisualKind,
   type VisualContentByKind,
 } from "@zoonk/core/steps/visual-content-contract";
+import dynamic from "next/dynamic";
 import { ImageVisual } from "./image-visual";
 import { QuoteVisual } from "./quote-visual";
+
+const CodeVisual = dynamic(() =>
+  import("./code-visual").then((mod) => ({ default: mod.CodeVisual })),
+);
 
 export function StepVisualRenderer({
   visualContent,
@@ -26,6 +31,10 @@ export function StepVisualRenderer({
     return <ImageVisual content={visualContent} />;
   }
 
-  // Other visual kinds will be added in Issues 17-22.
+  if (visualKind === "code") {
+    return <CodeVisual content={visualContent} />;
+  }
+
+  // Other visual kinds will be added in Issues 19-22.
   return null;
 }
