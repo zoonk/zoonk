@@ -105,6 +105,59 @@ test.describe("Step Visual Content", () => {
     ).toBeVisible();
   });
 
+  test("static step with image visual renders the image", async ({ page }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const { url } = await createStaticActivityWithVisual({
+      steps: [
+        {
+          content: {
+            text: `Image body ${uniqueId}`,
+            title: `Image Title ${uniqueId}`,
+            variant: "text",
+          },
+          position: 0,
+          visualContent: {
+            prompt: `A beautiful sunset ${uniqueId}`,
+            url: "https://to3kaoi21m60hzgu.public.blob.vercel-storage.com/courses/machine_learning-jmaDwiS0MptNV2EGCZzYWU7RBJs3Qg.webp",
+          },
+          visualKind: "image",
+        },
+      ],
+    });
+
+    await page.goto(url);
+
+    await expect(async () => {
+      await expect(
+        page.getByRole("img", { name: new RegExp(`A beautiful sunset ${uniqueId}`) }),
+      ).toBeVisible();
+    }).toPass();
+  });
+
+  test("static step with image visual without URL shows fallback", async ({ page }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const { url } = await createStaticActivityWithVisual({
+      steps: [
+        {
+          content: {
+            text: `Image fallback body ${uniqueId}`,
+            title: `Image Fallback Title ${uniqueId}`,
+            variant: "text",
+          },
+          position: 0,
+          visualContent: {
+            prompt: `A unique fallback text ${uniqueId}`,
+          },
+          visualKind: "image",
+        },
+      ],
+    });
+
+    await page.goto(url);
+
+    await expect(page.getByText(new RegExp(`A unique fallback text ${uniqueId}`))).toBeVisible();
+  });
+
   test("static step without visual content renders text content normally", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const { url } = await createStaticActivityWithVisual({

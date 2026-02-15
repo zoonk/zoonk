@@ -4,6 +4,7 @@ import {
   type SupportedVisualKind,
   type VisualContentByKind,
 } from "@zoonk/core/steps/visual-content-contract";
+import { ImageVisual } from "./image-visual";
 import { QuoteVisual } from "./quote-visual";
 
 export function StepVisualRenderer({
@@ -21,6 +22,10 @@ export function StepVisualRenderer({
     return <QuoteVisual content={visualContent} />;
   }
 
-  // Other visual kinds will be added in Issues 16-22.
+  if (visualKind === "image") {
+    return <ImageVisual content={visualContent} />;
+  }
+
+  // Other visual kinds will be added in Issues 17-22.
   return null;
 }

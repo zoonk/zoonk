@@ -52,7 +52,7 @@ const diagramVisualContentSchema = z
   })
   .strict();
 
-const imageVisualContentSchema = z
+export const imageVisualContentSchema = z
   .object({
     prompt: z.string(),
     url: z.string().optional(),
