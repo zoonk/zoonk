@@ -37,7 +37,7 @@
     "@zoonk/tsconfig": "workspace:*",
     "dotenv": "17.2.3",
     "prisma": "7.3.0",
-    "tsx": "4.20.6"
+    "tsx": "4.21.0"
   },
   "peerDependencies": {
     "server-only": ">=0.0.1"
