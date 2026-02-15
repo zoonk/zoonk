@@ -26,7 +26,7 @@ export const TEST_CASES = [
       ${SHARED_EXPECTATIONS}
     `,
     id: "en-learning-spanish",
-    userInput: { courseTitle: "Spanish", language: "en", targetLanguage: "es" },
+    userInput: { targetLanguage: "es", userLanguage: "en" },
   },
   {
     expectations: `
@@ -38,7 +38,7 @@ export const TEST_CASES = [
       ${SHARED_EXPECTATIONS}
     `,
     id: "pt-learning-japanese",
-    userInput: { courseTitle: "Japonês", language: "pt", targetLanguage: "ja" },
+    userInput: { targetLanguage: "ja", userLanguage: "pt" },
   },
   {
     expectations: `
@@ -50,7 +50,7 @@ export const TEST_CASES = [
       ${SHARED_EXPECTATIONS}
     `,
     id: "en-learning-french",
-    userInput: { courseTitle: "French", language: "en", targetLanguage: "fr" },
+    userInput: { targetLanguage: "fr", userLanguage: "en" },
   },
   {
     expectations: `
@@ -62,6 +62,6 @@ export const TEST_CASES = [
       ${SHARED_EXPECTATIONS}
     `,
     id: "es-learning-english",
-    userInput: { courseTitle: "Inglés", language: "es", targetLanguage: "en" },
+    userInput: { targetLanguage: "en", userLanguage: "es" },
   },
 ];

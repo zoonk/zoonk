@@ -7,9 +7,8 @@ import { type CourseContext, type GeneratedChapter } from "../types";
 function generateChapters(course: CourseContext) {
   if (course.targetLanguage) {
     return generateLanguageCourseChapters({
-      courseTitle: course.courseTitle,
-      language: course.language,
       targetLanguage: course.targetLanguage,
+      userLanguage: course.language,
     });
   }
 

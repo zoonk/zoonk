@@ -14,9 +14,8 @@ function generateLessons(context: ChapterContext) {
     return generateLanguageChapterLessons({
       chapterDescription: context.description,
       chapterTitle: context.title,
-      courseTitle: context.course.title,
-      language: context.language,
       targetLanguage: context.course.targetLanguage,
+      userLanguage: context.language,
     });
   }
 

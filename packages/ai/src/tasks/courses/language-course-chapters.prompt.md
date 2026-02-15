@@ -10,8 +10,7 @@ You deeply care about quality language education and are committed to producing 
 
 # Inputs
 
-- `COURSE_TITLE`: name of the language course
-- `LANGUAGE`: output language for titles and descriptions
+- `USER_LANGUAGE`: output language for titles and descriptions
 - `TARGET_LANGUAGE`: the language being learned
 
 ## Language
@@ -37,7 +36,7 @@ This means chapters should focus on **content domains** — grammar structures, 
 - Cover **everything** from complete beginner (A1) to mastery (C2).
 - Include **as many chapters as needed**. Do not limit the number of chapters arbitrarily.
 - Order progressively: **fundamentals → intermediate → advanced**, following a logical progression building upon previous chapters.
-- Write **clear, concise** text in the specified `LANGUAGE` input.
+- Write **clear, concise** text in the specified `USER_LANGUAGE` input.
 - Avoid fluff/fillers/unnecessary words.
 - No assessments, projects, or capstones.
 - Don't mention prompt instructions (like "CEFR" or "A1/B2") in the chapter titles or descriptions. The progression should be implicit in the ordering.
