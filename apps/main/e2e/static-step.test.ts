@@ -403,6 +403,52 @@ test.describe("Static Step Navigation", () => {
     await expect(page.getByRole("button", { name: /send feedback/i })).toBeVisible();
   });
 
+  test("clicking outside content area navigates between steps", async ({ page }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const { url } = await createStaticActivity({
+      steps: [
+        {
+          content: {
+            text: `Outside 1 body ${uniqueId}`,
+            title: `Outside 1 ${uniqueId}`,
+            variant: "text",
+          },
+          position: 0,
+        },
+        {
+          content: {
+            text: `Outside 2 body ${uniqueId}`,
+            title: `Outside 2 ${uniqueId}`,
+            variant: "text",
+          },
+          position: 1,
+        },
+      ],
+    });
+
+    await page.goto(url);
+    await page.waitForLoadState("networkidle");
+
+    await expect(
+      page.getByRole("heading", { name: new RegExp(`Outside 1 ${uniqueId}`) }),
+    ).toBeVisible();
+
+    // Click far-right edge of viewport (outside the max-w-2xl content area)
+    const viewport = page.viewportSize();
+    await page.mouse.click(viewport!.width - 10, viewport!.height / 2);
+
+    await expect(
+      page.getByRole("heading", { name: new RegExp(`Outside 2 ${uniqueId}`) }),
+    ).toBeVisible();
+
+    // Click far-left edge to go back
+    await page.mouse.click(10, viewport!.height / 2);
+
+    await expect(
+      page.getByRole("heading", { name: new RegExp(`Outside 1 ${uniqueId}`) }),
+    ).toBeVisible();
+  });
+
   test("header nav buttons navigate between steps", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const { url } = await createStaticActivity({
