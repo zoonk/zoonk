@@ -5,6 +5,7 @@ import { parseStepContent } from "@zoonk/core/steps/content-contract";
 import { HighlightText } from "./highlight-text";
 import { ContextText } from "./question-text";
 import { StaticStepText, StaticStepVisual } from "./step-layouts";
+import { StepVisualRenderer } from "./step-visual-renderer";
 import { useReplaceName } from "./user-name-context";
 
 function TextVariant({ title, text }: { title: string; text: string }) {
@@ -75,7 +76,9 @@ function StaticStepContent({ step }: { step: SerializedStep }) {
 export function StaticStep({ step }: { step: SerializedStep }) {
   return (
     <>
-      <StaticStepVisual />
+      <StaticStepVisual>
+        <StepVisualRenderer visualContent={step.visualContent} visualKind={step.visualKind} />
+      </StaticStepVisual>
 
       <StaticStepText className="px-6 pt-6 pb-8 sm:px-8 sm:pb-10">
         <StaticStepContent step={step} />
