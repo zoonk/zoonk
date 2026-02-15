@@ -7,6 +7,7 @@ export default defineConfig({
     env: {
       DATABASE_URL: "postgres://postgres:postgres@localhost:5432/zoonk_test",
       DATABASE_URL_UNPOOLED: "postgres://postgres:postgres@localhost:5432/zoonk_test",
+      NEXT_PUBLIC_APP_DOMAIN: "localhost:9000",
     },
     environment: "node",
     setupFiles: ["./setup-tests.ts"],
