@@ -117,9 +117,15 @@ test.describe("Fill Blank Step", () => {
     await page.goto(url);
 
     const wordBank = page.getByRole("group", { name: /word bank/i });
-    await wordBank.getByRole("button", { name: "sun" }).click();
+    const sunInBlank = page.getByRole("button", { name: /blank 1: sun/i });
 
-    await expect(page.getByRole("button", { name: /blank 1: sun/i })).toBeVisible();
+    // First click: resilient to hydration timing
+    await expect(async () => {
+      if (!(await sunInBlank.isVisible())) {
+        await wordBank.getByRole("button", { name: "sun" }).click();
+      }
+      await expect(sunInBlank).toBeVisible({ timeout: 1000 });
+    }).toPass();
   });
 
   test("tapping a placed word returns it to the bank", async ({ page }) => {
@@ -141,10 +147,15 @@ test.describe("Fill Blank Step", () => {
     await page.goto(url);
 
     const wordBank = page.getByRole("group", { name: /word bank/i });
-    await wordBank.getByRole("button", { name: "rain" }).click();
-
     const filledBlank = page.getByRole("button", { name: /blank 1: rain/i });
-    await expect(filledBlank).toBeVisible();
+
+    // First click: resilient to hydration timing
+    await expect(async () => {
+      if (!(await filledBlank.isVisible())) {
+        await wordBank.getByRole("button", { name: "rain" }).click();
+      }
+      await expect(filledBlank).toBeVisible({ timeout: 1000 });
+    }).toPass();
 
     await filledBlank.click();
 
@@ -172,10 +183,17 @@ test.describe("Fill Blank Step", () => {
     });
 
     await page.goto(url);
-    await page.waitForLoadState("networkidle");
 
     const wordBank = page.getByRole("group", { name: /word bank/i });
-    await wordBank.getByRole("button", { name: "blue" }).click();
+    const blueInBlank = page.getByRole("button", { name: /blank 1: blue/i });
+
+    // First click: resilient to hydration timing
+    await expect(async () => {
+      if (!(await blueInBlank.isVisible())) {
+        await wordBank.getByRole("button", { name: "blue" }).click();
+      }
+      await expect(blueInBlank).toBeVisible({ timeout: 1000 });
+    }).toPass();
 
     await page.getByRole("button", { name: /check/i }).click();
 
@@ -200,10 +218,17 @@ test.describe("Fill Blank Step", () => {
     });
 
     await page.goto(url);
-    await page.waitForLoadState("networkidle");
 
     const wordBank = page.getByRole("group", { name: /word bank/i });
-    await wordBank.getByRole("button", { name: "red" }).click();
+    const redInBlank = page.getByRole("button", { name: /blank 1: red/i });
+
+    // First click: resilient to hydration timing
+    await expect(async () => {
+      if (!(await redInBlank.isVisible())) {
+        await wordBank.getByRole("button", { name: "red" }).click();
+      }
+      await expect(redInBlank).toBeVisible({ timeout: 1000 });
+    }).toPass();
 
     await page.getByRole("button", { name: /check/i }).click();
 
@@ -227,13 +252,20 @@ test.describe("Fill Blank Step", () => {
     });
 
     await page.goto(url);
-    await page.waitForLoadState("networkidle");
 
     const checkButton = page.getByRole("button", { name: /check/i });
     await expect(checkButton).toBeDisabled();
 
     const wordBank = page.getByRole("group", { name: /word bank/i });
-    await wordBank.getByRole("button", { name: "one" }).click();
+    const oneInBlank = page.getByRole("button", { name: /blank 1: one/i });
+
+    // First click: resilient to hydration timing
+    await expect(async () => {
+      if (!(await oneInBlank.isVisible())) {
+        await wordBank.getByRole("button", { name: "one" }).click();
+      }
+      await expect(oneInBlank).toBeVisible({ timeout: 1000 });
+    }).toPass();
 
     await expect(checkButton).toBeDisabled();
 
@@ -259,15 +291,22 @@ test.describe("Fill Blank Step", () => {
     });
 
     await page.goto(url);
-    await page.waitForLoadState("networkidle");
 
     const checkButton = page.getByRole("button", { name: /check/i });
     const wordBank = page.getByRole("group", { name: /word bank/i });
+    const fastInBlank = page.getByRole("button", { name: /blank 1: fast/i });
 
-    await wordBank.getByRole("button", { name: "fast" }).click();
+    // First click: resilient to hydration timing
+    await expect(async () => {
+      if (!(await fastInBlank.isVisible())) {
+        await wordBank.getByRole("button", { name: "fast" }).click();
+      }
+      await expect(fastInBlank).toBeVisible({ timeout: 1000 });
+    }).toPass();
+
     await expect(checkButton).toBeEnabled();
 
-    await page.getByRole("button", { name: /blank 1: fast/i }).click();
+    await fastInBlank.click();
     await expect(checkButton).toBeDisabled();
   });
 
@@ -288,10 +327,17 @@ test.describe("Fill Blank Step", () => {
     });
 
     await page.goto(url);
-    await page.waitForLoadState("networkidle");
 
     const wordBank = page.getByRole("group", { name: /word bank/i });
-    await wordBank.getByRole("button", { name: "world" }).click();
+    const worldInBlank = page.getByRole("button", { name: /blank 1: world/i });
+
+    // First click: resilient to hydration timing
+    await expect(async () => {
+      if (!(await worldInBlank.isVisible())) {
+        await wordBank.getByRole("button", { name: "world" }).click();
+      }
+      await expect(worldInBlank).toBeVisible({ timeout: 1000 });
+    }).toPass();
 
     await page.getByRole("button", { name: /check/i }).click();
     await expect(page.getByText(/correct!/i)).toBeVisible();

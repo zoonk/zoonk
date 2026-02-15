@@ -112,8 +112,14 @@ test.describe("Match Columns Step", () => {
     await page.goto(url);
 
     const catButton = page.getByRole("button", { name: `Cat ${uniqueId}` });
-    await catButton.click();
-    await expect(catButton).toHaveAttribute("aria-pressed", "true");
+
+    // First click: resilient to hydration timing
+    await expect(async () => {
+      if ((await catButton.getAttribute("aria-pressed")) !== "true") {
+        await catButton.click();
+      }
+      await expect(catButton).toHaveAttribute("aria-pressed", "true", { timeout: 1000 });
+    }).toPass();
   });
 
   test("correct match shows success state and locks pair", async ({ page }) => {
@@ -135,11 +141,20 @@ test.describe("Match Columns Step", () => {
 
     await page.goto(url);
 
-    await page.getByRole("button", { name: `Apple ${uniqueId}` }).click();
+    const appleButton = page.getByRole("button", { name: `Apple ${uniqueId}` });
+
+    // First click: resilient to hydration timing
+    await expect(async () => {
+      if ((await appleButton.getAttribute("aria-pressed")) !== "true") {
+        await appleButton.click();
+      }
+      await expect(appleButton).toHaveAttribute("aria-pressed", "true", { timeout: 1000 });
+    }).toPass();
+
     await page.getByRole("button", { name: `Fruit ${uniqueId}` }).click();
 
     // Both items should be disabled (locked) after correct match
-    await expect(page.getByRole("button", { name: `Apple ${uniqueId}` })).toBeDisabled();
+    await expect(appleButton).toBeDisabled();
     await expect(page.getByRole("button", { name: `Fruit ${uniqueId}` })).toBeDisabled();
   });
 
@@ -162,7 +177,16 @@ test.describe("Match Columns Step", () => {
 
     await page.goto(url);
 
-    await page.getByRole("button", { name: `Paris ${uniqueId}` }).click();
+    const parisButton = page.getByRole("button", { name: `Paris ${uniqueId}` });
+
+    // First click: resilient to hydration timing
+    await expect(async () => {
+      if ((await parisButton.getAttribute("aria-pressed")) !== "true") {
+        await parisButton.click();
+      }
+      await expect(parisButton).toHaveAttribute("aria-pressed", "true", { timeout: 1000 });
+    }).toPass();
+
     await page.getByRole("button", { name: `Japan ${uniqueId}` }).click();
 
     // After flash timeout, items should be back to interactive
@@ -193,8 +217,13 @@ test.describe("Match Columns Step", () => {
 
     const hotButton = page.getByRole("button", { name: `Hot ${uniqueId}` });
 
-    await hotButton.click();
-    await expect(hotButton).toHaveAttribute("aria-pressed", "true");
+    // First click: resilient to hydration timing
+    await expect(async () => {
+      if ((await hotButton.getAttribute("aria-pressed")) !== "true") {
+        await hotButton.click();
+      }
+      await expect(hotButton).toHaveAttribute("aria-pressed", "true", { timeout: 1000 });
+    }).toPass();
 
     await hotButton.click();
     await expect(hotButton).toHaveAttribute("aria-pressed", "false");
@@ -218,13 +247,20 @@ test.describe("Match Columns Step", () => {
     });
 
     await page.goto(url);
-    await page.waitForLoadState("networkidle");
 
     const checkButton = page.getByRole("button", { name: /check/i });
     await expect(checkButton).toBeDisabled();
 
-    // Match first pair correctly
-    await page.getByRole("button", { name: `A ${uniqueId}` }).click();
+    const buttonA = page.getByRole("button", { name: `A ${uniqueId}` });
+
+    // First click: resilient to hydration timing
+    await expect(async () => {
+      if ((await buttonA.getAttribute("aria-pressed")) !== "true") {
+        await buttonA.click();
+      }
+      await expect(buttonA).toHaveAttribute("aria-pressed", "true", { timeout: 1000 });
+    }).toPass();
+
     await page.getByRole("button", { name: `1 ${uniqueId}` }).click();
 
     // Still disabled — not all matched yet
@@ -265,10 +301,17 @@ test.describe("Match Columns Step", () => {
     });
 
     await page.goto(url);
-    await page.waitForLoadState("networkidle");
 
-    // Complete first step
-    await page.getByRole("button", { name: `Red ${uniqueId}` }).click();
+    const redButton = page.getByRole("button", { name: `Red ${uniqueId}` });
+
+    // First click: resilient to hydration timing
+    await expect(async () => {
+      if ((await redButton.getAttribute("aria-pressed")) !== "true") {
+        await redButton.click();
+      }
+      await expect(redButton).toHaveAttribute("aria-pressed", "true", { timeout: 1000 });
+    }).toPass();
+
     await page.getByRole("button", { name: `Rouge ${uniqueId}` }).click();
 
     await page.getByRole("button", { name: `Blue ${uniqueId}` }).click();
@@ -298,10 +341,17 @@ test.describe("Match Columns Step", () => {
     });
 
     await page.goto(url);
-    await page.waitForLoadState("networkidle");
 
-    // Make an incorrect match first
-    await page.getByRole("button", { name: `H2O ${uniqueId}` }).click();
+    const h2oButton = page.getByRole("button", { name: `H2O ${uniqueId}` });
+
+    // First click: resilient to hydration timing
+    await expect(async () => {
+      if ((await h2oButton.getAttribute("aria-pressed")) !== "true") {
+        await h2oButton.click();
+      }
+      await expect(h2oButton).toHaveAttribute("aria-pressed", "true", { timeout: 1000 });
+    }).toPass();
+
     await page.getByRole("button", { name: `Salt ${uniqueId}` }).click();
 
     // Wait for flash to clear
@@ -341,9 +391,17 @@ test.describe("Match Columns Step", () => {
     });
 
     await page.goto(url);
-    await page.waitForLoadState("networkidle");
 
-    await page.getByRole("button", { name: `Dog ${uniqueId}` }).click();
+    const dogButton = page.getByRole("button", { name: `Dog ${uniqueId}` });
+
+    // First click: resilient to hydration timing
+    await expect(async () => {
+      if ((await dogButton.getAttribute("aria-pressed")) !== "true") {
+        await dogButton.click();
+      }
+      await expect(dogButton).toHaveAttribute("aria-pressed", "true", { timeout: 1000 });
+    }).toPass();
+
     await page.getByRole("button", { name: `Woof ${uniqueId}` }).click();
 
     await page.getByRole("button", { name: `Cat ${uniqueId}` }).click();
