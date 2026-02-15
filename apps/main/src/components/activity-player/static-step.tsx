@@ -87,8 +87,8 @@ export function StaticStep({ step }: { step: SerializedStep }) {
 
       <StaticStepText
         className={cn(
-          "px-4 pt-5 pb-6 sm:px-6 sm:pt-6 sm:pb-8",
-          hasVisual && "border-border/40 border-t",
+          "mx-4 pt-4 pb-6 sm:mx-6 sm:pt-5 sm:pb-8",
+          hasVisual && "border-border/40 border-t xl:border-t-0",
         )}
       >
         <StaticStepContent step={step} />
