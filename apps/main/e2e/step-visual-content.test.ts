@@ -543,6 +543,183 @@ test.describe("Step Visual Content", () => {
     await expect(page.getByText(/2 \/ 2/)).toBeVisible();
   });
 
+  test("static step with bar chart visual renders title and category labels", async ({ page }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const chartTitle = `Data Usage ${uniqueId}`;
+    const { url } = await createStaticActivityWithVisual({
+      steps: [
+        {
+          content: {
+            text: `Bar chart body ${uniqueId}`,
+            title: `Bar Chart Title ${uniqueId}`,
+            variant: "text",
+          },
+          position: 0,
+          visualContent: {
+            chartType: "bar",
+            data: [
+              { name: `Alpha ${uniqueId}`, value: 70 },
+              { name: `Beta ${uniqueId}`, value: 45 },
+              { name: `Gamma ${uniqueId}`, value: 90 },
+            ],
+            title: chartTitle,
+          },
+          visualKind: "chart",
+        },
+      ],
+    });
+
+    await page.goto(url);
+
+    await expect(async () => {
+      await expect(page.getByRole("figure", { name: chartTitle })).toBeVisible();
+    }).toPass();
+
+    const chart = page.getByRole("figure", { name: chartTitle });
+    await expect(chart.getByText(chartTitle)).toBeVisible();
+    await expect(chart.getByText(new RegExp(`Alpha ${uniqueId}`))).toBeVisible();
+    await expect(chart.getByText(new RegExp(`Beta ${uniqueId}`))).toBeVisible();
+    await expect(chart.getByText(new RegExp(`Gamma ${uniqueId}`))).toBeVisible();
+  });
+
+  test("static step with line chart visual renders title and category labels", async ({ page }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const chartTitle = `Trend Data ${uniqueId}`;
+    const { url } = await createStaticActivityWithVisual({
+      steps: [
+        {
+          content: {
+            text: `Line chart body ${uniqueId}`,
+            title: `Line Chart Title ${uniqueId}`,
+            variant: "text",
+          },
+          position: 0,
+          visualContent: {
+            chartType: "line",
+            data: [
+              { name: `Jan ${uniqueId}`, value: 10 },
+              { name: `Feb ${uniqueId}`, value: 25 },
+              { name: `Mar ${uniqueId}`, value: 40 },
+            ],
+            title: chartTitle,
+          },
+          visualKind: "chart",
+        },
+      ],
+    });
+
+    await page.goto(url);
+
+    await expect(async () => {
+      await expect(page.getByRole("figure", { name: chartTitle })).toBeVisible();
+    }).toPass();
+
+    const chart = page.getByRole("figure", { name: chartTitle });
+    await expect(chart.getByText(chartTitle)).toBeVisible();
+    await expect(chart.getByText(new RegExp(`Jan ${uniqueId}`))).toBeVisible();
+    await expect(chart.getByText(new RegExp(`Feb ${uniqueId}`))).toBeVisible();
+    await expect(chart.getByText(new RegExp(`Mar ${uniqueId}`))).toBeVisible();
+  });
+
+  test("static step with pie chart visual renders title and legend", async ({ page }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const chartTitle = `Distribution ${uniqueId}`;
+    const { url } = await createStaticActivityWithVisual({
+      steps: [
+        {
+          content: {
+            text: `Pie chart body ${uniqueId}`,
+            title: `Pie Chart Title ${uniqueId}`,
+            variant: "text",
+          },
+          position: 0,
+          visualContent: {
+            chartType: "pie",
+            data: [
+              { name: `Red ${uniqueId}`, value: 40 },
+              { name: `Blue ${uniqueId}`, value: 35 },
+              { name: `Green ${uniqueId}`, value: 25 },
+            ],
+            title: chartTitle,
+          },
+          visualKind: "chart",
+        },
+      ],
+    });
+
+    await page.goto(url);
+
+    await expect(async () => {
+      await expect(page.getByRole("figure", { name: chartTitle })).toBeVisible();
+    }).toPass();
+
+    await expect(page.getByText(chartTitle)).toBeVisible();
+
+    const legend = page.getByRole("list", { name: /legend/i });
+    await expect(legend.getByText(new RegExp(`Red ${uniqueId}`))).toBeVisible();
+    await expect(legend.getByText(new RegExp(`Blue ${uniqueId}`))).toBeVisible();
+    await expect(legend.getByText(new RegExp(`Green ${uniqueId}`))).toBeVisible();
+  });
+
+  test("clicking on a chart visual does not navigate to the next step", async ({ page }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const chartTitle = `Click Chart ${uniqueId}`;
+    const { url } = await createStaticActivityWithVisual({
+      steps: [
+        {
+          content: {
+            text: `Click chart body ${uniqueId}`,
+            title: `Click Chart Step1 ${uniqueId}`,
+            variant: "text",
+          },
+          position: 0,
+          visualContent: {
+            chartType: "bar",
+            data: [
+              { name: `ItemA ${uniqueId}`, value: 50 },
+              { name: `ItemB ${uniqueId}`, value: 30 },
+            ],
+            title: chartTitle,
+          },
+          visualKind: "chart",
+        },
+        {
+          content: {
+            text: `Next step body ${uniqueId}`,
+            title: `Click Chart Step2 ${uniqueId}`,
+            variant: "text",
+          },
+          position: 1,
+        },
+      ],
+    });
+
+    await page.goto(url);
+
+    await expect(async () => {
+      await expect(page.getByRole("figure", { name: chartTitle })).toBeVisible();
+    }).toPass();
+
+    await expect(page.getByText(/1 \/ 2/)).toBeVisible();
+
+    // Click on the chart — should NOT navigate
+    await page.getByRole("figure", { name: chartTitle }).click();
+
+    // Still on step 1
+    await expect(
+      page.getByRole("heading", { name: new RegExp(`Click Chart Step1 ${uniqueId}`) }),
+    ).toBeVisible();
+    await expect(page.getByText(/1 \/ 2/)).toBeVisible();
+
+    // Keyboard navigation still works
+    await page.keyboard.press("ArrowRight");
+
+    await expect(
+      page.getByRole("heading", { name: new RegExp(`Click Chart Step2 ${uniqueId}`) }),
+    ).toBeVisible();
+    await expect(page.getByText(/2 \/ 2/)).toBeVisible();
+  });
+
   test("static step with code visual renders annotations", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const annotationText = `This declares a variable ${uniqueId}`;

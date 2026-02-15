@@ -101,6 +101,25 @@ const stepsData: {
         },
         visualKind: "table",
       },
+      {
+        content: {
+          text: "Different types of ML require different amounts of labeled data to achieve good performance.",
+          title: "Data Requirements",
+          variant: "text",
+        },
+        kind: "static",
+        visualContent: {
+          chartType: "bar",
+          data: [
+            { name: "Supervised", value: 85 },
+            { name: "Semi-supervised", value: 40 },
+            { name: "Unsupervised", value: 5 },
+            { name: "Reinforcement", value: 15 },
+          ],
+          title: "Labeled Data Required (%)",
+        },
+        visualKind: "chart",
+      },
     ],
   },
   {

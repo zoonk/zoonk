@@ -4,15 +4,12 @@ import {
   type SupportedVisualKind,
   type VisualContentByKind,
 } from "@zoonk/core/steps/visual-content-contract";
-import dynamic from "next/dynamic";
+import { ChartVisual } from "./chart-visual";
+import { CodeVisual } from "./code-visual";
 import { ImageVisual } from "./image-visual";
 import { QuoteVisual } from "./quote-visual";
 import { TableVisual } from "./table-visual";
 import { TimelineVisual } from "./timeline-visual";
-
-const CodeVisual = dynamic(() =>
-  import("./code-visual").then((mod) => ({ default: mod.CodeVisual })),
-);
 
 export function StepVisualRenderer({
   visualContent,
@@ -45,6 +42,10 @@ export function StepVisualRenderer({
     return <TimelineVisual content={visualContent} />;
   }
 
-  // Other visual kinds will be added in Issues 21-22.
+  if (visualKind === "chart") {
+    return <ChartVisual content={visualContent} />;
+  }
+
+  // Other visual kinds will be added in Issue 22 (diagram).
   return null;
 }

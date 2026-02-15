@@ -1238,6 +1238,11 @@ msgctxt "SFKe0U"
 msgid "Your scores"
 msgstr "Your scores"
 
+#: src/components/activity-player/chart-visual.tsx
+msgctxt "iZuO+L"
+msgid "Legend"
+msgstr "Legend"
+
 #: src/components/activity-player/completion-auth-branch.tsx
 msgctxt "5kK+j9"
 msgid "Restart"
