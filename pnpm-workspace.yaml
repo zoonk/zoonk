@@ -3,8 +3,10 @@ packages:
   - packages/*
 
 ignoredBuiltDependencies:
+  - "@nestjs/core"
   - "@parcel/watcher"
   - "@prisma/client"
+  - cbor-extract
   - sharp
 
 onlyBuiltDependencies:
