@@ -7,7 +7,7 @@ const codeAnnotationSchema = z
   })
   .strict();
 
-const codeVisualContentSchema = z
+export const codeVisualContentSchema = z
   .object({
     annotations: z.array(codeAnnotationSchema).optional(),
     code: z.string(),

@@ -194,8 +194,14 @@ test.describe("Step Visual Content", () => {
             variant: "text",
           },
           position: 0,
-          visualContent: { code: "console.log('hello')", language: "javascript" },
-          visualKind: "code",
+          visualContent: {
+            edges: [{ source: "a", target: "b" }],
+            nodes: [
+              { id: "a", label: "Start" },
+              { id: "b", label: "End" },
+            ],
+          },
+          visualKind: "diagram",
         },
       ],
     });
@@ -206,5 +212,66 @@ test.describe("Step Visual Content", () => {
       page.getByRole("heading", { name: new RegExp(`Unimplemented Title ${uniqueId}`) }),
     ).toBeVisible();
     await expect(page.getByText(new RegExp(`Unimplemented body ${uniqueId}`))).toBeVisible();
+  });
+
+  test("static step with code visual renders code and language label", async ({ page }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const codeSnippet = `function greet_${uniqueId}() { return "hello"; }`;
+    const { url } = await createStaticActivityWithVisual({
+      steps: [
+        {
+          content: {
+            text: `Code body ${uniqueId}`,
+            title: `Code Title ${uniqueId}`,
+            variant: "text",
+          },
+          position: 0,
+          visualContent: {
+            code: codeSnippet,
+            language: "javascript",
+          },
+          visualKind: "code",
+        },
+      ],
+    });
+
+    await page.goto(url);
+
+    await expect(async () => {
+      await expect(page.getByRole("figure", { name: /javascript/i })).toBeVisible();
+    }).toPass();
+
+    await expect(page.getByText(new RegExp(`greet_${uniqueId}`))).toBeVisible();
+  });
+
+  test("static step with code visual renders annotations", async ({ page }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const annotationText = `This declares a variable ${uniqueId}`;
+    const { url } = await createStaticActivityWithVisual({
+      steps: [
+        {
+          content: {
+            text: `Annotated code body ${uniqueId}`,
+            title: `Annotated Code Title ${uniqueId}`,
+            variant: "text",
+          },
+          position: 0,
+          visualContent: {
+            annotations: [{ line: 1, text: annotationText }],
+            code: `const x_${uniqueId} = 42;\nconsole.log(x_${uniqueId});`,
+            language: "javascript",
+          },
+          visualKind: "code",
+        },
+      ],
+    });
+
+    await page.goto(url);
+
+    await expect(async () => {
+      await expect(page.getByRole("figure", { name: /javascript/i })).toBeVisible();
+    }).toPass();
+
+    await expect(page.getByRole("note")).toContainText(annotationText);
   });
 });
