@@ -25,7 +25,7 @@
     "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
-    "@base-ui/react": "1.0.0",
+    "@base-ui/react": "1.2.0",
     "@zoonk/utils": "workspace:*",
     "class-variance-authority": "0.7.1",
     "clsx": "2.1.1",
