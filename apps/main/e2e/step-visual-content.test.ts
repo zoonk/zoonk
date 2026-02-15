@@ -244,6 +244,61 @@ test.describe("Step Visual Content", () => {
     await expect(page.getByText(new RegExp(`greet_${uniqueId}`))).toBeVisible();
   });
 
+  test("clicking on a code visual does not navigate to the next step", async ({ page }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const codeSnippet = `function stay_${uniqueId}() { return "no nav"; }`;
+    const { url } = await createStaticActivityWithVisual({
+      steps: [
+        {
+          content: {
+            text: `Click code body ${uniqueId}`,
+            title: `Click Code Step1 ${uniqueId}`,
+            variant: "text",
+          },
+          position: 0,
+          visualContent: {
+            code: codeSnippet,
+            language: "typescript",
+          },
+          visualKind: "code",
+        },
+        {
+          content: {
+            text: `Next step body ${uniqueId}`,
+            title: `Click Code Step2 ${uniqueId}`,
+            variant: "text",
+          },
+          position: 1,
+        },
+      ],
+    });
+
+    await page.goto(url);
+
+    await expect(async () => {
+      await expect(page.getByRole("figure", { name: /typescript/i })).toBeVisible();
+    }).toPass();
+
+    await expect(page.getByText(/1 \/ 2/)).toBeVisible();
+
+    // Click on the code visual — should NOT navigate
+    await page.getByRole("figure", { name: /typescript/i }).click();
+
+    // Still on step 1
+    await expect(
+      page.getByRole("heading", { name: new RegExp(`Click Code Step1 ${uniqueId}`) }),
+    ).toBeVisible();
+    await expect(page.getByText(/1 \/ 2/)).toBeVisible();
+
+    // Keyboard navigation still works
+    await page.keyboard.press("ArrowRight");
+
+    await expect(
+      page.getByRole("heading", { name: new RegExp(`Click Code Step2 ${uniqueId}`) }),
+    ).toBeVisible();
+    await expect(page.getByText(/2 \/ 2/)).toBeVisible();
+  });
+
   test("static step with code visual renders annotations", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const annotationText = `This declares a variable ${uniqueId}`;
