@@ -59,7 +59,7 @@ const imageVisualContentSchema = z
   })
   .strict();
 
-const quoteVisualContentSchema = z
+export const quoteVisualContentSchema = z
   .object({
     author: z.string(),
     text: z.string(),

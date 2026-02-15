@@ -154,7 +154,7 @@ export function ActivityPlayerShell({
           />
         )}
 
-        <PlayerStage phase={state.phase}>
+        <PlayerStage isStatic={view.isStaticStep && state.phase === "playing"} phase={state.phase}>
           <StageContent
             activityId={state.activityId}
             currentResult={view.currentResult}
