@@ -1,8 +1,7 @@
 import { getStripePrices } from "@zoonk/core/auth/stripe-prices";
 import { getActiveSubscription } from "@zoonk/core/auth/subscription";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
-import { type PriceInfo, countryToCurrency } from "@zoonk/utils/currency";
-import { safeAsync } from "@zoonk/utils/error";
+import { countryToCurrency } from "@zoonk/utils/currency";
 import { SUBSCRIPTION_PLANS } from "@zoonk/utils/subscription";
 import { getExtracted, getFormatter } from "next-intl/server";
 import { headers } from "next/headers";
@@ -20,12 +19,10 @@ export async function SubscriptionPlans() {
     [plan.lookupKey, plan.annualLookupKey].filter((key) => key !== null),
   );
 
-  const [subscription, prices] = await Promise.all([
+  const [subscription, priceMap] = await Promise.all([
     getActiveSubscription(requestHeaders),
-    safeAsync(() => getStripePrices(lookupKeys, currency)),
+    getStripePrices(lookupKeys, currency),
   ]);
-
-  const priceMap = prices.data ?? new Map<string, PriceInfo>();
   const currentPlan = subscription?.plan ?? null;
 
   const cancelMessage = subscription?.cancelAt
