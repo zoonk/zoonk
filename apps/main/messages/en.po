@@ -71,7 +71,6 @@ msgid "Update language"
 msgstr "Update language"
 
 #: src/app/[locale]/(catalog)/_components/command-palette.tsx
-#: src/app/[locale]/(settings)/subscription/subscription-page.tsx
 msgctxt "Oj9Phc"
 msgid "Manage subscription"
 msgstr "Manage subscription"
@@ -335,6 +334,7 @@ msgid "Generate"
 msgstr "Generate"
 
 #: src/app/[locale]/(catalog)/learn/[prompt]/course-suggestions-fallback.tsx
+#: src/app/[locale]/(settings)/subscription/plan-list.tsx
 msgctxt "47FYwb"
 msgid "Cancel"
 msgstr "Cancel"
@@ -796,46 +796,106 @@ msgid "Your profile has been updated successfully!"
 msgstr "Your profile has been updated successfully!"
 
 #: src/app/[locale]/(settings)/subscription/page.tsx
-msgctxt "9vk07U"
-msgid "Manage Subscription"
-msgstr "Manage Subscription"
+msgctxt "NBEnVd"
+msgid "Compare plans and manage your subscription."
+msgstr "Compare plans and manage your subscription."
 
 #: src/app/[locale]/(settings)/subscription/page.tsx
-msgctxt "GjSDly"
-msgid "Manage your Zoonk subscription. View your current plan, upgrade or downgrade, and see available benefits."
-msgstr "Manage your Zoonk subscription. View your current plan, upgrade or downgrade, and see available benefits."
+msgctxt "TKk9oj"
+msgid "Compare plans and manage your Zoonk subscription. See pricing, switch plans, or update billing."
+msgstr "Compare plans and manage your Zoonk subscription. See pricing, switch plans, or update billing."
 
-#: src/app/[locale]/(settings)/subscription/page.tsx
-msgctxt "qux0WX"
-msgid "Check your plan details and manage your subscription."
-msgstr "Check your plan details and manage your subscription."
+#: src/app/[locale]/(settings)/subscription/plan-list.tsx
+msgctxt "0Azlrb"
+msgid "Manage"
+msgstr "Manage"
 
-#: src/app/[locale]/(settings)/subscription/subscription-page.tsx
+#: src/app/[locale]/(settings)/subscription/plan-list.tsx
 #: src/components/subscription/upgrade-cta.tsx
 msgctxt "0h/lPM"
 msgid "Upgrade"
 msgstr "Upgrade"
 
-#: src/app/[locale]/(settings)/subscription/subscription-page.tsx
-msgctxt "bqJOI8"
-msgid "No ads, unlimited lessons, and full progress tracking."
-msgstr "No ads, unlimited lessons, and full progress tracking."
+#: src/app/[locale]/(settings)/subscription/plan-list.tsx
+msgctxt "0jIMEb"
+msgid "/mo"
+msgstr "/mo"
 
-#: src/app/[locale]/(settings)/subscription/subscription-page.tsx
-msgctxt "ES/etj"
-msgid "Remove ads, unlock unlimited lessons, and track your progress."
-msgstr "Remove ads, unlock unlimited lessons, and track your progress."
+#: src/app/[locale]/(settings)/subscription/plan-list.tsx
+msgctxt "2EsPdm"
+msgid "/yr"
+msgstr "/yr"
 
-#: src/app/[locale]/(settings)/subscription/subscription-page.tsx
-#: src/components/subscription/upgrade-cta.tsx
+#: src/app/[locale]/(settings)/subscription/plan-list.tsx
+msgctxt "dqD39h"
+msgid "Yearly"
+msgstr "Yearly"
+
+#: src/app/[locale]/(settings)/subscription/plan-list.tsx
+msgctxt "fF376U"
+msgid "Current"
+msgstr "Current"
+
+#: src/app/[locale]/(settings)/subscription/plan-list.tsx
+msgctxt "n1Whvj"
+msgid "Switch"
+msgstr "Switch"
+
+#: src/app/[locale]/(settings)/subscription/plan-list.tsx
 msgctxt "s1ZXI0"
 msgid "Unable to update your subscription. Contact us at hello@zoonk.com"
 msgstr "Unable to update your subscription. Contact us at hello@zoonk.com"
 
-#: src/app/[locale]/(settings)/subscription/subscription-page.tsx
-msgctxt "YCSaAY"
-msgid "Your subscription is active"
-msgstr "Your subscription is active"
+#: src/app/[locale]/(settings)/subscription/plan-list.tsx
+#: src/app/[locale]/(settings)/subscription/subscription-plans.tsx
+msgctxt "tf1lIh"
+msgid "Free"
+msgstr "Free"
+
+#: src/app/[locale]/(settings)/subscription/plan-list.tsx
+msgctxt "wYsv4Z"
+msgid "Monthly"
+msgstr "Monthly"
+
+#: src/app/[locale]/(settings)/subscription/plan-list.tsx
+msgctxt "ZBALng"
+msgid "Current plan"
+msgstr "Current plan"
+
+#: src/app/[locale]/(settings)/subscription/subscription-plans.tsx
+msgctxt "eaOADK"
+msgid "Personalized lessons, fast AI"
+msgstr "Personalized lessons, fast AI"
+
+#: src/app/[locale]/(settings)/subscription/subscription-plans.tsx
+msgctxt "HYX1JL"
+msgid "Hobby"
+msgstr "Hobby"
+
+#: src/app/[locale]/(settings)/subscription/subscription-plans.tsx
+msgctxt "LnosqI"
+msgid "Unlimited lessons, no ads"
+msgstr "Unlimited lessons, no ads"
+
+#: src/app/[locale]/(settings)/subscription/subscription-plans.tsx
+msgctxt "lOdoIb"
+msgid "Plus"
+msgstr "Plus"
+
+#: src/app/[locale]/(settings)/subscription/subscription-plans.tsx
+msgctxt "mqHNd6"
+msgid "Personalized lessons, smartest AI"
+msgstr "Personalized lessons, smartest AI"
+
+#: src/app/[locale]/(settings)/subscription/subscription-plans.tsx
+msgctxt "R/eOkj"
+msgid "Pro"
+msgstr "Pro"
+
+#: src/app/[locale]/(settings)/subscription/subscription-plans.tsx
+msgctxt "uNQcTY"
+msgid "Limited lessons with ads"
+msgstr "Limited lessons with ads"
 
 #: src/app/[locale]/(settings)/support/page.tsx
 #: src/app/[locale]/(settings)/support/support-content.tsx

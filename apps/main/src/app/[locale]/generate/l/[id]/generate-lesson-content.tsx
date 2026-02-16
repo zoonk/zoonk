@@ -49,8 +49,6 @@ export async function GenerateLessonContent({
     });
   }
 
-  const returnUrl = `/generate/l/${lessonId}`;
-
   return (
     <Container variant="narrow">
       <ContainerHeader>
@@ -61,7 +59,7 @@ export async function GenerateLessonContent({
       </ContainerHeader>
 
       <ContainerBody>
-        <SubscriptionGate returnUrl={returnUrl}>
+        <SubscriptionGate>
           <GenerationClient
             chapterSlug={lesson.chapter.slug}
             courseSlug={lesson.chapter.course.slug}

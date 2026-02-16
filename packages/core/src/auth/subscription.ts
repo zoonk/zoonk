@@ -4,7 +4,7 @@ import { safeAsync } from "@zoonk/utils/error";
 
 export { findActiveSubscription, isActiveSubscription } from "@zoonk/auth/subscription";
 
-async function getActiveSubscription(headers: Headers) {
+export async function getActiveSubscription(headers: Headers) {
   const { data } = await safeAsync(() => auth.api.listActiveSubscriptions({ headers }));
   return findActiveSubscription(data);
 }

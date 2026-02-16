@@ -46,8 +46,6 @@ export async function GenerateChapterContent({
     redirect({ href: `/b/${AI_ORG_SLUG}/c/${chapter.course.slug}/ch/${chapter.slug}`, locale });
   }
 
-  const returnUrl = `/generate/ch/${chapterId}`;
-
   return (
     <Container variant="narrow">
       <ContainerHeader>
@@ -60,7 +58,7 @@ export async function GenerateChapterContent({
       </ContainerHeader>
 
       <ContainerBody>
-        <SubscriptionGate returnUrl={returnUrl}>
+        <SubscriptionGate>
           <GenerationClient
             chapterId={chapterId}
             chapterSlug={chapter.slug}

@@ -1,5 +1,3 @@
-"use cache";
-
 import {
   Container,
   ContainerBody,
@@ -10,8 +8,9 @@ import {
 } from "@zoonk/ui/components/container";
 import { type Metadata } from "next";
 import { getExtracted, setRequestLocale } from "next-intl/server";
+import { Suspense } from "react";
 import { ProtectedSection } from "../_components/protected-section";
-import { SubscriptionPage } from "./subscription-page";
+import { SubscriptionPlans, SubscriptionPlansSkeleton } from "./subscription-plans";
 
 export async function generateMetadata({
   params,
@@ -21,9 +20,9 @@ export async function generateMetadata({
 
   return {
     description: t(
-      "Manage your Zoonk subscription. View your current plan, upgrade or downgrade, and see available benefits.",
+      "Compare plans and manage your Zoonk subscription. See pricing, switch plans, or update billing.",
     ),
-    title: t("Manage Subscription"),
+    title: t("Subscription"),
   };
 }
 
@@ -38,14 +37,16 @@ export default async function Subscription({ params }: PageProps<"/[locale]/subs
         <ContainerHeaderGroup>
           <ContainerTitle>{t("Subscription")}</ContainerTitle>
           <ContainerDescription>
-            {t("Check your plan details and manage your subscription.")}
+            {t("Compare plans and manage your subscription.")}
           </ContainerDescription>
         </ContainerHeaderGroup>
       </ContainerHeader>
 
       <ContainerBody>
         <ProtectedSection>
-          <SubscriptionPage />
+          <Suspense fallback={<SubscriptionPlansSkeleton />}>
+            <SubscriptionPlans />
+          </Suspense>
         </ProtectedSection>
       </ContainerBody>
     </Container>

@@ -18,6 +18,7 @@
     "./settled": "./src/settled.ts",
     "./shuffle": "./src/shuffle.ts",
     "./string": "./src/string.ts",
+    "./currency": "./src/currency.ts",
     "./url": "./src/url.ts"
   },
   "scripts": {

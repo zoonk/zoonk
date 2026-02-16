@@ -25,6 +25,16 @@ export function stripePlugin() {
           lookupKey: "hobby_monthly",
           name: "hobby",
         },
+        {
+          annualDiscountLookupKey: "plus_yearly",
+          lookupKey: "plus_monthly",
+          name: "plus",
+        },
+        {
+          annualDiscountLookupKey: "pro_yearly",
+          lookupKey: "pro_monthly",
+          name: "pro",
+        },
       ],
     },
   });

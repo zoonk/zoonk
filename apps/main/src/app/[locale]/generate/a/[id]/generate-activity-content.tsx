@@ -52,8 +52,6 @@ export async function GenerateActivityContent({
     });
   }
 
-  const returnUrl = `/generate/a/${activityId}`;
-
   return (
     <Container variant="narrow">
       <ContainerHeader>
@@ -64,7 +62,7 @@ export async function GenerateActivityContent({
       </ContainerHeader>
 
       <ContainerBody>
-        <SubscriptionGate returnUrl={returnUrl}>
+        <SubscriptionGate>
           <GenerationClient
             activityKind={activity.kind}
             chapterSlug={activity.lesson.chapter.slug}
