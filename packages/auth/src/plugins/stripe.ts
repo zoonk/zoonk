@@ -1,4 +1,5 @@
 import { stripe } from "@better-auth/stripe";
+import { PAID_PLANS } from "@zoonk/utils/subscription";
 import Stripe from "stripe";
 
 const secretKey = process.env.STRIPE_SECRET_KEY || "sk_test_dummykey1234567890";
@@ -19,23 +20,11 @@ export function stripePlugin() {
           tax_id_collection: { enabled: true },
         },
       }),
-      plans: [
-        {
-          annualDiscountLookupKey: "hobby_yearly",
-          lookupKey: "hobby_monthly",
-          name: "hobby",
-        },
-        {
-          annualDiscountLookupKey: "plus_yearly",
-          lookupKey: "plus_monthly",
-          name: "plus",
-        },
-        {
-          annualDiscountLookupKey: "pro_yearly",
-          lookupKey: "pro_monthly",
-          name: "pro",
-        },
-      ],
+      plans: PAID_PLANS.map((plan) => ({
+        annualDiscountLookupKey: plan.annualLookupKey,
+        lookupKey: plan.lookupKey,
+        name: plan.name,
+      })),
     },
   });
 }

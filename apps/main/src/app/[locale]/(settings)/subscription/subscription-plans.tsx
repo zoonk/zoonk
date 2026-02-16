@@ -3,9 +3,9 @@ import { getActiveSubscription } from "@zoonk/core/auth/subscription";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type PriceInfo, countryToCurrency } from "@zoonk/utils/currency";
 import { safeAsync } from "@zoonk/utils/error";
+import { SUBSCRIPTION_PLANS } from "@zoonk/utils/subscription";
 import { getExtracted, getFormatter } from "next-intl/server";
 import { headers } from "next/headers";
-import { SUBSCRIPTION_PLANS } from "./_utils/plans";
 import { PlanList } from "./plan-list";
 
 export async function SubscriptionPlans() {

@@ -13,10 +13,10 @@ import {
 import { RadioGroup, RadioGroupItem } from "@zoonk/ui/components/radio-group";
 import { Tabs, TabsList, TabsTrigger } from "@zoonk/ui/components/tabs";
 import { type PriceInfo, formatPrice } from "@zoonk/utils/currency";
+import { FREE_PLAN, getPlanTier } from "@zoonk/utils/subscription";
 import { Loader2Icon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
-import { getPlanTier } from "./_utils/plans";
 
 type PlanData = {
   annualLookupKey: string | null;
@@ -52,15 +52,8 @@ export function PlanList({
   const [state, setState] = useState<"error" | "idle" | "loading">("idle");
   const t = useExtracted();
 
-  const freePlan: PlanData = {
-    annualLookupKey: null,
-    lookupKey: null,
-    monthlyPrice: null,
-    name: "free",
-    tier: 0,
-    yearlyPrice: null,
-  };
-  const selected = plans.find((plan) => plan.name === selectedPlan) ?? freePlan;
+  const fallback: PlanData = { ...FREE_PLAN, monthlyPrice: null, yearlyPrice: null };
+  const selected = plans.find((plan) => plan.name === selectedPlan) ?? fallback;
   const cta = getCTAAction(selected, currentPlanName);
   const isLoading = state === "loading";
   const showCTA = cta.action !== "manage" || currentPlanName !== "free";
