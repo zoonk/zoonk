@@ -4,6 +4,7 @@ import {
   Item,
   ItemActions,
   ItemContent,
+  ItemSeparator,
   ItemTitle,
 } from "@zoonk/ui/components/item";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
@@ -71,22 +72,37 @@ export function SubscriptionPlansSkeleton() {
     <div className="flex flex-col gap-4">
       <Skeleton className="h-9 w-48" />
 
-      {Array.from({ length: 4 }, (_, i) => (
-        <Item key={i} variant="outline">
-          <ItemContent>
-            <ItemTitle>
-              <Skeleton className="h-4 w-20" />
-            </ItemTitle>
+      <div>
+        {Array.from({ length: 4 }, (_, i) => (
+          <PlanRowSkeleton key={i} showSeparator={i > 0} />
+        ))}
+      </div>
 
-            <Skeleton className="h-4 w-48" />
-          </ItemContent>
+      <Skeleton className="h-9 w-full" />
+    </div>
+  );
+}
 
-          <ItemActions>
-            <Skeleton className="h-4 w-16" />
-            <Skeleton className="h-8 w-20" />
-          </ItemActions>
-        </Item>
-      ))}
+function PlanRowSkeleton({ showSeparator }: { showSeparator: boolean }) {
+  return (
+    <div>
+      {showSeparator && <ItemSeparator />}
+
+      <Item variant="default">
+        <Skeleton className="size-4 rounded-full" />
+
+        <ItemContent>
+          <ItemTitle>
+            <Skeleton className="h-4 w-20" />
+          </ItemTitle>
+
+          <Skeleton className="h-4 w-48" />
+        </ItemContent>
+
+        <ItemActions>
+          <Skeleton className="h-4 w-16" />
+        </ItemActions>
+      </Item>
     </div>
   );
 }

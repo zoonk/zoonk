@@ -8,10 +8,10 @@ import {
   ItemActions,
   ItemContent,
   ItemDescription,
-  ItemFooter,
-  ItemGroup,
+  ItemSeparator,
   ItemTitle,
 } from "@zoonk/ui/components/item";
+import { RadioGroup, RadioGroupItem } from "@zoonk/ui/components/radio-group";
 import { Tabs, TabsList, TabsTrigger } from "@zoonk/ui/components/tabs";
 import { type PriceInfo, formatPrice } from "@zoonk/utils/currency";
 import { Loader2Icon } from "lucide-react";
@@ -45,8 +45,64 @@ export function PlanList({
   plans: PlanData[];
   titles: Record<string, string>;
 }) {
+  const currentPlanName = currentPlan ?? "free";
   const [period, setPeriod] = useState<BillingPeriod>("monthly");
+  const [selectedPlan, setSelectedPlan] = useState(currentPlanName);
+  const [state, setState] = useState<"error" | "idle" | "loading">("idle");
   const t = useExtracted();
+
+  const freePlan: PlanData = {
+    annualLookupKey: null,
+    lookupKey: null,
+    monthlyPrice: null,
+    name: "free",
+    tier: 0,
+    yearlyPrice: null,
+  };
+  const selected = plans.find((plan) => plan.name === selectedPlan) ?? freePlan;
+  const cta = getCTAAction(selected, currentPlanName);
+  const isLoading = state === "loading";
+  const selectedTitle = titles[selected.name] ?? selected.name;
+
+  const ctaLabel = {
+    cancel: t("Cancel"),
+    downgrade: t("Switch to {plan}", { plan: selectedTitle }),
+    manage: t("Manage"),
+    upgrade: t("Upgrade to {plan}", { plan: selectedTitle }),
+  }[cta.action];
+
+  const handleAction = async () => {
+    setState("loading");
+
+    const isCurrent = selectedPlan === currentPlanName;
+    const selectedTier = getPlanTier(selectedPlan);
+    const currentTier = getPlanTier(currentPlanName);
+    const isDowngradeOrManage = isCurrent || selectedTier < currentTier;
+
+    if (isDowngradeOrManage) {
+      const { error } = await authClient.subscription.billingPortal({
+        returnUrl: "/subscription",
+      });
+
+      if (error) {
+        setState("error");
+        return;
+      }
+
+      return;
+    }
+
+    const { error } = await authClient.subscription.upgrade({
+      annual: period === "yearly",
+      cancelUrl: "/subscription",
+      plan: selectedPlan,
+      successUrl: "/subscription",
+    });
+
+    if (error) {
+      setState("error");
+    }
+  };
 
   return (
     <div className="flex flex-col gap-4">
@@ -64,154 +120,122 @@ export function PlanList({
         </TabsList>
       </Tabs>
 
-      <ItemGroup>
-        {plans.map((plan) => (
-          <PlanItem
-            currentPlan={currentPlan}
+      <RadioGroup value={selectedPlan} onValueChange={setSelectedPlan}>
+        {plans.map((plan, index) => (
+          <PlanRow
+            currentPlanName={currentPlanName}
             description={descriptions[plan.name] ?? ""}
             key={plan.name}
             period={period}
             plan={plan}
+            selectedPlan={selectedPlan}
+            showSeparator={index > 0}
             title={titles[plan.name] ?? plan.name}
           />
         ))}
-      </ItemGroup>
+      </RadioGroup>
+
+      <Button disabled={isLoading} onClick={handleAction} variant={cta.variant}>
+        {isLoading && <Loader2Icon className="animate-spin" />}
+        {ctaLabel}
+      </Button>
+
+      {state === "error" && (
+        <p className="text-destructive text-sm">
+          {t("Unable to update your subscription. Contact us at hello@zoonk.com")}
+        </p>
+      )}
     </div>
   );
 }
 
-function PlanItem({
-  currentPlan,
+function PlanRow({
+  currentPlanName,
   description,
   period,
   plan,
+  selectedPlan,
+  showSeparator,
   title,
 }: {
-  currentPlan: string | null;
+  currentPlanName: string;
   description: string;
   period: BillingPeriod;
   plan: PlanData;
+  selectedPlan: string;
+  showSeparator: boolean;
   title: string;
 }) {
-  const [state, setState] = useState<"error" | "idle" | "loading">("idle");
   const t = useExtracted();
-
-  const isCurrent = (currentPlan ?? "free") === plan.name;
-  const currentTier = getPlanTier(currentPlan);
-  const isAbove = plan.tier > currentTier;
-  const isBelow = plan.tier < currentTier;
-  const isLoading = state === "loading";
   const price = period === "yearly" ? plan.yearlyPrice : plan.monthlyPrice;
-
   const priceLabel = getPriceLabel(plan.name, price);
   const periodSuffix = period === "yearly" ? t("/yr") : t("/mo");
   const displayPrice = plan.name === "free" ? t("Free") : `${priceLabel}${periodSuffix}`;
-
-  const buttonAction = getButtonAction(plan, currentTier, isCurrent, isAbove);
-
-  const buttonLabel = {
-    cancel: t("Cancel"),
-    manage: t("Manage"),
-    switch: t("Switch"),
-    upgrade: t("Upgrade"),
-  }[buttonAction.action];
-
-  const handleAction = async () => {
-    setState("loading");
-
-    if (isCurrent || isBelow) {
-      const { error } = await authClient.subscription.billingPortal({
-        returnUrl: "/subscription",
-      });
-
-      if (error) {
-        setState("error");
-        return;
-      }
-
-      return;
-    }
-
-    const annual = period === "yearly";
-
-    const { error } = await authClient.subscription.upgrade({
-      annual,
-      cancelUrl: "/subscription",
-      plan: plan.name,
-      successUrl: "/subscription",
-    });
-
-    if (error) {
-      setState("error");
-    }
-  };
+  const isCurrent = currentPlanName === plan.name;
+  const isSelected = selectedPlan === plan.name;
 
   return (
-    <Item variant={isCurrent ? "muted" : "outline"}>
-      <ItemContent>
-        <ItemTitle>
-          {title}
+    <div>
+      {showSeparator && <ItemSeparator />}
 
-          {isCurrent && (
-            <Badge aria-label={t("Current plan")} variant="outline">
-              {t("Current")}
-            </Badge>
-          )}
-        </ItemTitle>
+      <Item
+        render={<label aria-label={title} htmlFor={`plan-${plan.name}`} />}
+        variant={isSelected ? "muted" : "default"}
+      >
+        <RadioGroupItem aria-label={title} id={`plan-${plan.name}`} value={plan.name} />
 
-        <ItemDescription>{description}</ItemDescription>
-      </ItemContent>
+        <ItemContent>
+          <ItemTitle>
+            {title}
 
-      <ItemActions>
-        <span className="text-muted-foreground text-sm">{displayPrice}</span>
+            {isCurrent && (
+              <Badge aria-label={t("Current plan")} variant="outline">
+                {t("Current")}
+              </Badge>
+            )}
+          </ItemTitle>
 
-        {plan.name !== "free" && (
-          <Button disabled={isLoading} onClick={handleAction} variant={buttonAction.variant}>
-            {isLoading && <Loader2Icon className="animate-spin" />}
-            {buttonLabel}
-          </Button>
-        )}
-      </ItemActions>
+          <ItemDescription>{description}</ItemDescription>
+        </ItemContent>
 
-      {state === "error" && (
-        <ItemFooter className="text-destructive text-sm">
-          {t("Unable to update your subscription. Contact us at hello@zoonk.com")}
-        </ItemFooter>
-      )}
-    </Item>
+        <ItemActions>
+          <span className="text-muted-foreground text-sm">{displayPrice}</span>
+        </ItemActions>
+      </Item>
+    </div>
   );
 }
 
-function getPriceLabel(
-  planName: string,
-  price: PriceInfo | null,
-): string {
-  if (planName === "free") {return "";}
-  if (!price) {return "";}
+function getPriceLabel(planName: string, price: PriceInfo | null): string {
+  if (planName === "free") {
+    return "";
+  }
+  if (!price) {
+    return "";
+  }
   return formatPrice(price.amount, price.currency);
 }
 
-function getButtonAction(
-  plan: PlanData,
-  currentTier: number,
-  isCurrent: boolean,
-  isAbove: boolean,
+function getCTAAction(
+  selected: PlanData,
+  currentPlanName: string,
 ): {
-  action: "cancel" | "manage" | "switch" | "upgrade";
-  variant: "default" | "outline";
+  action: "cancel" | "downgrade" | "manage" | "upgrade";
+  variant: "default" | "destructive" | "outline";
 } {
-  if (isCurrent) {
+  const currentTier = getPlanTier(currentPlanName);
+
+  if (selected.name === currentPlanName) {
     return { action: "manage", variant: "outline" };
   }
 
-  if (isAbove) {
-    const isNextTier = plan.tier === currentTier + 1;
-    return { action: "upgrade", variant: isNextTier ? "default" : "outline" };
+  if (selected.tier > currentTier) {
+    return { action: "upgrade", variant: "default" };
   }
 
-  if (plan.name === "free") {
-    return { action: "cancel", variant: "outline" };
+  if (selected.name === "free") {
+    return { action: "cancel", variant: "destructive" };
   }
 
-  return { action: "switch", variant: "outline" };
+  return { action: "downgrade", variant: "destructive" };
 }

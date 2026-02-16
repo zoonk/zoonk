@@ -806,15 +806,14 @@ msgid "Compare plans and manage your Zoonk subscription. See pricing, switch pla
 msgstr "Compare plans and manage your Zoonk subscription. See pricing, switch plans, or update billing."
 
 #: src/app/[locale]/(settings)/subscription/plan-list.tsx
+msgctxt "/gko4g"
+msgid "Upgrade to {plan}"
+msgstr "Upgrade to {plan}"
+
+#: src/app/[locale]/(settings)/subscription/plan-list.tsx
 msgctxt "0Azlrb"
 msgid "Manage"
 msgstr "Manage"
-
-#: src/app/[locale]/(settings)/subscription/plan-list.tsx
-#: src/components/subscription/upgrade-cta.tsx
-msgctxt "0h/lPM"
-msgid "Upgrade"
-msgstr "Upgrade"
 
 #: src/app/[locale]/(settings)/subscription/plan-list.tsx
 msgctxt "0jIMEb"
@@ -837,9 +836,9 @@ msgid "Current"
 msgstr "Current"
 
 #: src/app/[locale]/(settings)/subscription/plan-list.tsx
-msgctxt "n1Whvj"
-msgid "Switch"
-msgstr "Switch"
+msgctxt "KAb0Yr"
+msgid "Switch to {plan}"
+msgstr "Switch to {plan}"
 
 #: src/app/[locale]/(settings)/subscription/plan-list.tsx
 msgctxt "s1ZXI0"
@@ -1597,6 +1596,11 @@ msgstr "Feedback"
 msgctxt "eUzs3M"
 msgid "Send feedback, questions, or suggestions to us. Fill in the form below or email us directly at hello@zoonk.com."
 msgstr "Send feedback, questions, or suggestions to us. Fill in the form below or email us directly at hello@zoonk.com."
+
+#: src/components/subscription/upgrade-cta.tsx
+msgctxt "0h/lPM"
+msgid "Upgrade"
+msgstr "Upgrade"
 
 #: src/components/subscription/upgrade-cta.tsx
 msgctxt "L90YUq"

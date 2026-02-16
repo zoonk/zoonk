@@ -344,13 +344,13 @@ checksums:
     Your%20profile%20has%20been%20updated%20successfully!/singular: e0c2b89add5324306f5d7b7e0b38f670
     Compare%20plans%20and%20manage%20your%20subscription./singular: 91697440112212fb005c401f3f09ce55
     Compare%20plans%20and%20manage%20your%20Zoonk%20subscription.%20See%20pricing%2C%20switch%20plans%2C%20or%20update%20billing./singular: bb91a0c0ed2b8edc2433123a61dfb96f
+    Upgrade%20to%20%7Bplan%7D/singular: 5b209bc2780222a04aa65972a03599c5
     Manage/singular: a3d40c0267b81ae53c9598eaeb05087d
-    Upgrade/singular: 63c3b52882e0d779859307d672c178c2
     "%2Fmo/singular": ed85f2a8ca60f479ded99b66261a808a
     "%2Fyr/singular": 611585c791b9738a693fa06fde739b06
     Yearly/singular: 87f43e016c19cb25860f456549a2f431
     Current/singular: 27f172f76ac28e72cb062f80002b0ad5
-    Switch/singular: bab779e32d2519152481e180aea26879
+    Switch%20to%20%7Bplan%7D/singular: 46627bffd79958cfddc45098b77a580a
     Unable%20to%20update%20your%20subscription.%20Contact%20us%20at%20hello%40zoonk.com/singular: 07449ee5fe347be88856524cec7f06ef
     Free/singular: 0326365539c004f6088656f692602078
     Monthly/singular: 818f1192e32bb855597f930d3e78806e
@@ -494,6 +494,7 @@ checksums:
     I%20liked%20it/singular: ed20592186f53abcc526360869bd0f55
     Feedback/singular: 6fac88806e0c269a30777b283988c61c
     Send%20feedback%2C%20questions%2C%20or%20suggestions%20to%20us.%20Fill%20in%20the%20form%20below%20or%20email%20us%20directly%20at%20hello%40zoonk.com./singular: 6ce5e55ddeeb7de9480b806358aa5b95
+    Upgrade/singular: 63c3b52882e0d779859307d672c178c2
     Upgrade%20to%20generate/singular: 9c4baffb6ff3a12a322dfe02735ac35c
     Generating%20content%20with%20AI%20requires%20an%20active%20subscription./singular: ee3e62a18f3437b719f6793dd01d66f8
     Explains%20HOW%20things%20work%20under%20the%20hood.%20Shows%20the%20processes%2C%20sequences%2C%20and%20cause-effect%20chains%20in%20action./singular: 89c176fd862db6d6178194b091e8544d

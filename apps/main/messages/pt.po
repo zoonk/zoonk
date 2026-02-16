@@ -806,15 +806,14 @@ msgid "Compare plans and manage your Zoonk subscription. See pricing, switch pla
 msgstr "Compare planos e gerencie sua assinatura do Zoonk. Veja preços, troque de plano ou atualize a cobrança."
 
 #: src/app/[locale]/(settings)/subscription/plan-list.tsx
+msgctxt "/gko4g"
+msgid "Upgrade to {plan}"
+msgstr "Fazer upgrade para {plan}"
+
+#: src/app/[locale]/(settings)/subscription/plan-list.tsx
 msgctxt "0Azlrb"
 msgid "Manage"
 msgstr "Gerenciar"
-
-#: src/app/[locale]/(settings)/subscription/plan-list.tsx
-#: src/components/subscription/upgrade-cta.tsx
-msgctxt "0h/lPM"
-msgid "Upgrade"
-msgstr "Upgrade"
 
 #: src/app/[locale]/(settings)/subscription/plan-list.tsx
 msgctxt "0jIMEb"
@@ -837,9 +836,9 @@ msgid "Current"
 msgstr "Atual"
 
 #: src/app/[locale]/(settings)/subscription/plan-list.tsx
-msgctxt "n1Whvj"
-msgid "Switch"
-msgstr "Trocar"
+msgctxt "KAb0Yr"
+msgid "Switch to {plan}"
+msgstr "Mudar para {plan}"
 
 #: src/app/[locale]/(settings)/subscription/plan-list.tsx
 msgctxt "s1ZXI0"
@@ -1597,6 +1596,11 @@ msgstr "Feedback"
 msgctxt "eUzs3M"
 msgid "Send feedback, questions, or suggestions to us. Fill in the form below or email us directly at hello@zoonk.com."
 msgstr "Envie feedback, perguntas ou sugestões para a gente. Preencha o formulário abaixo ou envie um email diretamente para contato@zoonk.com."
+
+#: src/components/subscription/upgrade-cta.tsx
+msgctxt "0h/lPM"
+msgid "Upgrade"
+msgstr "Upgrade"
 
 #: src/components/subscription/upgrade-cta.tsx
 msgctxt "L90YUq"

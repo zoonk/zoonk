@@ -1,17 +1,25 @@
 import { randomUUID } from "node:crypto";
+import { type Browser } from "@playwright/test";
 import { prisma } from "@zoonk/db";
+import { request } from "@zoonk/e2e/fixtures";
 import { expect, test } from "./fixtures";
 
-const TEST_USER_EMAIL = "e2e-new@zoonk.test";
+async function createUserWithSubscription(baseURL: string, plan: string) {
+  const uniqueId = randomUUID().slice(0, 8);
+  const email = `e2e-sub-${uniqueId}@zoonk.test`;
+  const password = "password123";
 
-async function createTestSubscription(plan: string) {
-  const uniqueId = randomUUID();
-
-  const user = await prisma.user.findUniqueOrThrow({
-    where: { email: TEST_USER_EMAIL },
+  const signupContext = await request.newContext({ baseURL });
+  const signupResponse = await signupContext.post("/api/auth/sign-up/email", {
+    data: { email, name: `E2E Sub ${uniqueId}`, password },
   });
 
-  return prisma.subscription.create({
+  expect(signupResponse.ok()).toBe(true);
+  await signupContext.dispose();
+
+  const user = await prisma.user.findUniqueOrThrow({ where: { email } });
+
+  await prisma.subscription.create({
     data: {
       plan,
       referenceId: String(user.id),
@@ -20,6 +28,24 @@ async function createTestSubscription(plan: string) {
       stripeSubscriptionId: `sub_test_e2e_${uniqueId}`,
     },
   });
+
+  return email;
+}
+
+async function createAuthenticatedPage(browser: Browser, baseURL: string, email: string) {
+  const context = await request.newContext({ baseURL });
+
+  await context.post("/api/auth/sign-in/email", {
+    data: { email, password: "password123" },
+  });
+
+  const storageState = await context.storageState();
+  await context.dispose();
+
+  const browserContext = await browser.newContext({ storageState });
+  const page = await browserContext.newPage();
+
+  return { browserContext, page };
 }
 
 test.describe("Subscription Page - Unauthenticated", () => {
@@ -34,22 +60,23 @@ test.describe("Subscription Page - Unauthenticated", () => {
 });
 
 test.describe("Subscription Page - No Subscription", () => {
-  test("displays all four plans", async ({ authenticatedPage }) => {
+  test("displays all four plans as radio options", async ({ authenticatedPage }) => {
     await authenticatedPage.goto("/subscription");
 
     await expect(
       authenticatedPage.getByRole("heading", { level: 1, name: /subscription/i }),
     ).toBeVisible();
 
-    await expect(authenticatedPage.getByText("Free")).toBeVisible();
-    await expect(authenticatedPage.getByText("Hobby")).toBeVisible();
-    await expect(authenticatedPage.getByText("Plus")).toBeVisible();
-    await expect(authenticatedPage.getByText("Pro")).toBeVisible();
+    await expect(authenticatedPage.getByRole("radio", { name: /free/i })).toBeVisible();
+    await expect(authenticatedPage.getByRole("radio", { name: /hobby/i })).toBeVisible();
+    await expect(authenticatedPage.getByRole("radio", { name: /plus/i })).toBeVisible();
+    await expect(authenticatedPage.getByRole("radio", { name: /pro/i })).toBeVisible();
   });
 
-  test("shows Current badge on Free plan when no subscription", async ({ authenticatedPage }) => {
+  test("has Free plan selected by default when no subscription", async ({ authenticatedPage }) => {
     await authenticatedPage.goto("/subscription");
 
+    await expect(authenticatedPage.getByRole("radio", { name: /free/i })).toBeChecked();
     await expect(authenticatedPage.getByLabel(/current plan/i)).toBeVisible();
   });
 
@@ -60,78 +87,103 @@ test.describe("Subscription Page - No Subscription", () => {
     await expect(authenticatedPage.getByRole("tab", { name: /yearly/i })).toBeVisible();
   });
 
-  test("shows upgrade buttons for paid plans", async ({ authenticatedPage }) => {
+  test("shows Manage button when current plan is selected", async ({ authenticatedPage }) => {
     await authenticatedPage.goto("/subscription");
 
-    const upgradeButtons = authenticatedPage.getByRole("button", { name: /upgrade/i });
-    await expect(upgradeButtons.first()).toBeVisible();
+    await expect(authenticatedPage.getByRole("button", { name: /manage/i })).toBeVisible();
   });
 
-  test("does not show action button for free plan", async ({ authenticatedPage }) => {
+  test("shows Upgrade button when selecting a paid plan", async ({ authenticatedPage }) => {
     await authenticatedPage.goto("/subscription");
 
-    await expect(authenticatedPage.getByText("Limited lessons with ads")).toBeVisible();
+    await authenticatedPage.getByRole("radio", { name: /hobby/i }).click();
+    await expect(
+      authenticatedPage.getByRole("button", { name: /upgrade to hobby/i }),
+    ).toBeVisible();
+  });
+
+  test("changes CTA label when selecting different plans", async ({ authenticatedPage }) => {
+    await authenticatedPage.goto("/subscription");
+
+    await authenticatedPage.getByRole("radio", { name: /pro/i }).click();
+    await expect(authenticatedPage.getByRole("button", { name: /upgrade to pro/i })).toBeVisible();
+
+    await authenticatedPage.getByRole("radio", { name: /free/i }).click();
+    await expect(authenticatedPage.getByRole("button", { name: /manage/i })).toBeVisible();
   });
 });
 
 test.describe("Subscription Page - With Hobby Subscription", () => {
-  test("shows Current badge on Hobby plan", async ({ userWithoutProgress }) => {
-    const subscription = await createTestSubscription("hobby");
+  test("has current plan selected by default and shows Current badge", async ({
+    browser,
+    baseURL,
+  }) => {
+    const email = await createUserWithSubscription(baseURL!, "hobby");
+    const { browserContext, page } = await createAuthenticatedPage(browser, baseURL!, email);
 
-    try {
-      await userWithoutProgress.goto("/subscription");
+    await page.goto("/subscription");
 
-      await expect(userWithoutProgress.getByLabel(/current plan/i)).toBeVisible();
-      await expect(userWithoutProgress.getByRole("button", { name: /manage/i })).toBeVisible();
-    } finally {
-      await prisma.subscription.delete({ where: { id: subscription.id } });
-    }
+    await expect(page.getByRole("radio", { name: /hobby/i })).toBeChecked();
+    await expect(page.getByLabel(/current plan/i)).toBeVisible();
+    await expect(page.getByRole("button", { name: /manage/i })).toBeVisible();
+
+    await browserContext.close();
   });
 
-  test("shows upgrade buttons for Plus and Pro", async ({ userWithoutProgress }) => {
-    const subscription = await createTestSubscription("hobby");
+  test("shows Upgrade when selecting a higher plan", async ({ browser, baseURL }) => {
+    const email = await createUserWithSubscription(baseURL!, "hobby");
+    const { browserContext, page } = await createAuthenticatedPage(browser, baseURL!, email);
 
-    try {
-      await userWithoutProgress.goto("/subscription");
+    await page.goto("/subscription");
 
-      const upgradeButtons = userWithoutProgress.getByRole("button", { name: /upgrade/i });
-      await expect(upgradeButtons).toHaveCount(2);
-    } finally {
-      await prisma.subscription.delete({ where: { id: subscription.id } });
-    }
+    await page.getByRole("radio", { name: /plus/i }).click();
+    await expect(page.getByRole("button", { name: /upgrade to plus/i })).toBeVisible();
+
+    await browserContext.close();
   });
 
-  test("manage button shows loading state when clicked", async ({ userWithoutProgress }) => {
-    const subscription = await createTestSubscription("hobby");
+  test("shows Cancel when selecting Free plan", async ({ browser, baseURL }) => {
+    const email = await createUserWithSubscription(baseURL!, "hobby");
+    const { browserContext, page } = await createAuthenticatedPage(browser, baseURL!, email);
 
-    try {
-      await userWithoutProgress.goto("/subscription");
+    await page.goto("/subscription");
 
-      const manageButton = userWithoutProgress.getByRole("button", { name: /manage/i });
-      await manageButton.click();
-      await expect(manageButton).toBeDisabled();
-    } finally {
-      await prisma.subscription.delete({ where: { id: subscription.id } });
-    }
+    await page.getByRole("radio", { name: /free/i }).click();
+    await expect(page.getByRole("button", { name: /cancel/i })).toBeVisible();
+
+    await browserContext.close();
+  });
+
+  test("CTA button shows loading state when clicked", async ({ browser, baseURL }) => {
+    const email = await createUserWithSubscription(baseURL!, "hobby");
+    const { browserContext, page } = await createAuthenticatedPage(browser, baseURL!, email);
+
+    await page.goto("/subscription");
+
+    const manageButton = page.getByRole("button", { name: /manage/i });
+    await manageButton.click();
+    await expect(manageButton).toBeDisabled();
+
+    await browserContext.close();
   });
 });
 
 test.describe("Subscription Page - With Pro Subscription", () => {
-  test("shows Current badge on Pro plan and Switch/Cancel for lower plans", async ({
-    userWithoutProgress,
-  }) => {
-    const subscription = await createTestSubscription("pro");
+  test("shows Switch to for lower paid plans and Cancel for Free", async ({ browser, baseURL }) => {
+    const email = await createUserWithSubscription(baseURL!, "pro");
+    const { browserContext, page } = await createAuthenticatedPage(browser, baseURL!, email);
 
-    try {
-      await userWithoutProgress.goto("/subscription");
+    await page.goto("/subscription");
 
-      await expect(userWithoutProgress.getByLabel(/current plan/i)).toBeVisible();
-      await expect(userWithoutProgress.getByRole("button", { name: /manage/i })).toBeVisible();
+    await expect(page.getByRole("radio", { name: /pro/i })).toBeChecked();
+    await expect(page.getByLabel(/current plan/i)).toBeVisible();
 
-      const switchButtons = userWithoutProgress.getByRole("button", { name: /switch/i });
-      await expect(switchButtons.first()).toBeVisible();
-    } finally {
-      await prisma.subscription.delete({ where: { id: subscription.id } });
-    }
+    await page.getByRole("radio", { name: /hobby/i }).click();
+    await expect(page.getByRole("button", { name: /switch to hobby/i })).toBeVisible();
+
+    await page.getByRole("radio", { name: /free/i }).click();
+    await expect(page.getByRole("button", { name: /cancel/i })).toBeVisible();
+
+    await browserContext.close();
   });
 });
