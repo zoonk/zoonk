@@ -76,16 +76,17 @@ export function PlanList({
     const isCurrent = selectedPlan === currentPlanName;
     const selectedTier = getPlanTier(selectedPlan);
     const currentTier = getPlanTier(currentPlanName);
-    const isDowngradeOrManage = isCurrent || selectedTier < currentTier;
 
-    if (isDowngradeOrManage) {
-      const { error } = await authClient.subscription.billingPortal({
-        returnUrl: "/subscription",
-      });
+    if (isCurrent || selectedTier < currentTier) {
+      const action =
+        selectedPlan === "free"
+          ? authClient.subscription.cancel({ returnUrl: "/subscription" })
+          : authClient.subscription.billingPortal({ returnUrl: "/subscription" });
+
+      const { error } = await action;
 
       if (error) {
         setState("error");
-        return;
       }
 
       return;
