@@ -34,11 +34,13 @@ function isBillingPeriod(value: unknown): value is BillingPeriod {
 }
 
 export function PlanList({
+  cancelMessage,
   currentPlan,
   descriptions,
   plans,
   titles,
 }: {
+  cancelMessage: string | null;
   currentPlan: string | null;
   descriptions: Record<string, string>;
   plans: PlanData[];
@@ -106,6 +108,8 @@ export function PlanList({
 
   return (
     <div className="flex w-full max-w-2xl flex-col gap-4">
+      {cancelMessage && <p className="text-destructive text-sm">{cancelMessage}</p>}
+
       <Tabs
         value={period}
         onValueChange={(value) => {
@@ -191,7 +195,7 @@ function PlanRow({
 
         <div className="flex items-center gap-3">
           <span className="text-muted-foreground text-sm">{displayPrice}</span>
-          <RadioGroupItem id={`plan-${plan.name}`} value={plan.name} />
+          <RadioGroupItem aria-label={title} id={`plan-${plan.name}`} value={plan.name} />
         </div>
       </Field>
     </FieldLabel>

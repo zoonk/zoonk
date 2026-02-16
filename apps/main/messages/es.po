@@ -862,6 +862,11 @@ msgid "Current plan"
 msgstr "Plan actual"
 
 #: src/app/[locale]/(settings)/subscription/subscription-plans.tsx
+msgctxt "9o8O4m"
+msgid "Your subscription will end on {date}."
+msgstr "Tu suscripción finalizará el {date}."
+
+#: src/app/[locale]/(settings)/subscription/subscription-plans.tsx
 msgctxt "eaOADK"
 msgid "Personalized lessons, fast AI"
 msgstr "Lecciones personalizadas, IA rápida"

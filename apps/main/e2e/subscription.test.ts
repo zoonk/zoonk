@@ -4,7 +4,11 @@ import { prisma } from "@zoonk/db";
 import { request } from "@zoonk/e2e/fixtures";
 import { expect, test } from "./fixtures";
 
-async function createUserWithSubscription(baseURL: string, plan: string) {
+async function createUserWithSubscription(
+  baseURL: string,
+  plan: string,
+  options?: { cancelAt?: Date },
+) {
   const uniqueId = randomUUID().slice(0, 8);
   const email = `e2e-sub-${uniqueId}@zoonk.test`;
   const password = "password123";
@@ -21,6 +25,7 @@ async function createUserWithSubscription(baseURL: string, plan: string) {
 
   await prisma.subscription.create({
     data: {
+      cancelAt: options?.cancelAt,
       plan,
       referenceId: String(user.id),
       status: "active",
@@ -183,6 +188,29 @@ test.describe("Subscription Page - With Pro Subscription", () => {
 
     await page.getByRole("radio", { name: /free/i }).click();
     await expect(page.getByRole("button", { name: /cancel/i })).toBeVisible();
+
+    await browserContext.close();
+  });
+});
+
+test.describe("Subscription Page - With Cancelled Subscription", () => {
+  test("shows cancellation notice when cancel_at is set", async ({ browser, baseURL }) => {
+    const cancelAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+    const email = await createUserWithSubscription(baseURL!, "hobby", { cancelAt });
+    const { browserContext, page } = await createAuthenticatedPage(browser, baseURL!, email);
+
+    await page.goto("/subscription");
+    await expect(page.getByText(/subscription will end on/i)).toBeVisible();
+
+    await browserContext.close();
+  });
+
+  test("does not show cancellation notice when cancel_at is null", async ({ browser, baseURL }) => {
+    const email = await createUserWithSubscription(baseURL!, "hobby");
+    const { browserContext, page } = await createAuthenticatedPage(browser, baseURL!, email);
+
+    await page.goto("/subscription");
+    await expect(page.getByText(/subscription will end on/i)).not.toBeVisible();
 
     await browserContext.close();
   });

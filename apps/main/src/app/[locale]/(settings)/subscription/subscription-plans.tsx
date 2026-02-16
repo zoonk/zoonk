@@ -3,7 +3,7 @@ import { getActiveSubscription } from "@zoonk/core/auth/subscription";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type PriceInfo, countryToCurrency } from "@zoonk/utils/currency";
 import { safeAsync } from "@zoonk/utils/error";
-import { getExtracted } from "next-intl/server";
+import { getExtracted, getFormatter } from "next-intl/server";
 import { headers } from "next/headers";
 import { SUBSCRIPTION_PLANS } from "./_utils/plans";
 import { PlanList } from "./plan-list";
@@ -11,6 +11,7 @@ import { PlanList } from "./plan-list";
 export async function SubscriptionPlans() {
   const requestHeaders = await headers();
   const t = await getExtracted();
+  const format = await getFormatter();
 
   const countryCode = requestHeaders.get("x-vercel-ip-country") ?? "US";
   const currency = countryToCurrency(countryCode);
@@ -26,6 +27,16 @@ export async function SubscriptionPlans() {
 
   const priceMap = prices.data ?? new Map<string, PriceInfo>();
   const currentPlan = subscription?.plan ?? null;
+
+  const cancelMessage = subscription?.cancelAt
+    ? t("Your subscription will end on {date}.", {
+        date: format.dateTime(new Date(subscription.cancelAt), {
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+        }),
+      })
+    : null;
 
   const plans = SUBSCRIPTION_PLANS.map((plan) => {
     const monthlyPrice = plan.lookupKey ? (priceMap.get(plan.lookupKey) ?? null) : null;
@@ -56,7 +67,13 @@ export async function SubscriptionPlans() {
   };
 
   return (
-    <PlanList currentPlan={currentPlan} descriptions={descriptions} plans={plans} titles={titles} />
+    <PlanList
+      cancelMessage={cancelMessage}
+      currentPlan={currentPlan}
+      descriptions={descriptions}
+      plans={plans}
+      titles={titles}
+    />
   );
 }
 
