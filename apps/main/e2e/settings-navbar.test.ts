@@ -48,14 +48,14 @@ test.describe("Settings Navbar", () => {
   test("logout button logs user out", async ({ logoutPage }) => {
     await logoutPage.goto("/subscription");
 
-    await expect(logoutPage.getByRole("link", { name: /logout/i })).toBeVisible();
+    await expect(logoutPage.getByRole("button", { name: /logout/i })).toBeVisible();
 
     await Promise.all([
       logoutPage.waitForURL(/^[^?]*\/$/),
       logoutPage.waitForResponse(
         (response) => response.url().includes("/api/auth/get-session") && response.status() === 200,
       ),
-      logoutPage.getByRole("link", { name: /logout/i }).click(),
+      logoutPage.getByRole("button", { name: /logout/i }).click(),
     ]);
 
     // Scope to navigation to avoid strict mode violation

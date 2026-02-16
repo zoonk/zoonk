@@ -1,6 +1,7 @@
 "use client";
 
 import { type ResultWithImage, type SearchResults, searchContent } from "@/data/search-content";
+import { logout } from "@zoonk/core/auth/client";
 import { Button } from "@zoonk/ui/components/button";
 import {
   CommandDialog,
@@ -81,13 +82,6 @@ export function CommandPalette() {
         label: t("Create course"),
         url: `/${orgSlug}/new-course`,
       },
-      {
-        icon: LogOutIcon,
-        id: "logout",
-        keywords: [t("logout"), t("sign out"), t("exit")],
-        label: t("Logout"),
-        url: "/logout",
-      },
     ],
     [orgSlug, t],
   );
@@ -133,6 +127,18 @@ export function CommandPalette() {
                 {item.label}
               </CommandItem>
             ))}
+
+            <CommandItem
+              keywords={[t("logout"), t("sign out"), t("exit")]}
+              onSelect={() => {
+                closePalette();
+                logout();
+              }}
+              value={`${t("Logout")}-logout`}
+            >
+              <LogOutIcon aria-hidden="true" />
+              {t("Logout")}
+            </CommandItem>
           </CommandGroup>
 
           {/* Dynamic results - only shown when there are search results */}

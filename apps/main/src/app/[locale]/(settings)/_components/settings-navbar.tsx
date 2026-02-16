@@ -2,8 +2,8 @@
 
 import { Link } from "@/i18n/navigation";
 import { getMenu } from "@/lib/menu";
-import { authClient } from "@zoonk/core/auth/client";
-import { buttonVariants } from "@zoonk/ui/components/button";
+import { authClient, logout } from "@zoonk/core/auth/client";
+import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import { HorizontalScroll, HorizontalScrollContent } from "@zoonk/ui/components/horizontal-scroll";
 import { LogOutIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -31,18 +31,10 @@ export function SettingsNavbar() {
           <SettingsPillLinks />
 
           {isLoggedIn && (
-            <Link
-              className={buttonVariants({
-                className: "ml-auto",
-                size: "icon",
-                variant: "secondary",
-              })}
-              href="/logout"
-              prefetch={false}
-            >
+            <Button className="ml-auto" onClick={() => logout()} size="icon" variant="secondary">
               <LogOutIcon aria-hidden="true" />
               <span className="sr-only">{t("Logout")}</span>
-            </Link>
+            </Button>
           )}
         </HorizontalScrollContent>
       </HorizontalScroll>

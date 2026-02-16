@@ -18,7 +18,7 @@ test.describe("Home Page - Authenticated without org", () => {
       userWithoutOrg.getByRole("heading", { name: /401 - unauthorized/i }),
     ).toBeVisible();
 
-    await expect(userWithoutOrg.getByRole("link", { name: /logout/i })).toBeVisible();
+    await expect(userWithoutOrg.getByRole("button", { name: /logout/i })).toBeVisible();
   });
 });
 
