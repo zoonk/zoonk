@@ -11,7 +11,7 @@ vi.mock("stripe", () => ({
   },
 }));
 
-describe("getStripePrices", () => {
+describe(getStripePrices, () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
