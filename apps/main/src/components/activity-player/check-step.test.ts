@@ -216,6 +216,7 @@ describe(checkStep, () => {
       id: "vocab-1",
       kind: "vocabulary",
       word: {
+        alternativeTranslations: [],
         audioUrl: null,
         id: "word-1",
         pronunciation: null,

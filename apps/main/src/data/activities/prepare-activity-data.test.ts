@@ -198,6 +198,7 @@ describe(prepareActivityData, () => {
     const result = prepareActivityData(raw!, [], []);
 
     expect(result.steps[0]?.word).toEqual({
+      alternativeTranslations: [],
       audioUrl: "https://example.com/word.mp3",
       id: String(word.id),
       pronunciation: "hola",
@@ -298,6 +299,7 @@ describe(prepareActivityData, () => {
 
     const lessonWords: LessonWordData[] = [
       {
+        alternativeTranslations: word1.alternativeTranslations,
         audioUrl: word1.audioUrl,
         id: word1.id,
         pronunciation: word1.pronunciation,
@@ -306,6 +308,7 @@ describe(prepareActivityData, () => {
         word: word1.word,
       },
       {
+        alternativeTranslations: word2.alternativeTranslations,
         audioUrl: word2.audioUrl,
         id: word2.id,
         pronunciation: word2.pronunciation,

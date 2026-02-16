@@ -94,6 +94,23 @@ Before including any noun, verify the grammatical gender is correct:
 - Use the most natural translation for the native language
 - Avoid loanwords that are not standard in the target language (e.g., do not use English words as standalone vocabulary in languages where they are not commonly used)
 
+# Alternative Translations
+
+For each word, include an `alternativeTranslations` array listing other valid translations in the learner's language (USER_LANGUAGE) that would also be correct. This is used to prevent semantically equivalent words from appearing as wrong answers in exercises.
+
+**Rules:**
+
+- List genuinely equivalent translations only — not loosely related words
+- Include alternatives from BOTH directions: if the user's language has synonyms that map to the same target word, list them
+- Set to an empty array `[]` when the word has only one clear translation
+
+**Examples:**
+
+- Portuguese "boa noite" → translation: "good evening", alternativeTranslations: ["good night"]
+- Italian "ciao" → translation: "hello", alternativeTranslations: ["bye", "hi", "goodbye"]
+- Portuguese "oi" → translation: "hi", alternativeTranslations: ["hello", "hey"]
+- Spanish "el gato" → translation: "the cat", alternativeTranslations: [] (only one clear translation)
+
 # Romanization (for non-Roman scripts)
 
 For languages that use non-Roman writing systems (Japanese, Chinese, Korean, Arabic, Russian, Greek, Hebrew, Thai, Hindi, etc.), include the `romanization` field showing how the word is written in Roman letters.
@@ -118,6 +135,7 @@ Return an object with a `words` array. Each word object must include:
 - `word`: The word in the target language (with article for gendered nouns)
 - `translation`: The translation in the native language
 - `romanization`: Roman letter representation for non-Roman scripts, or `null` for Roman scripts
+- `alternativeTranslations`: Array of other valid translations in the learner's language, or `[]` if none
 
 **Example for Spanish (Roman script) - romanization is null:**
 
@@ -127,11 +145,13 @@ Return an object with a `words` array. Each word object must include:
     {
       "word": "la casa",
       "translation": "the house",
+      "alternativeTranslations": ["the home"],
       "romanization": null
     },
     {
       "word": "el gato",
       "translation": "the cat",
+      "alternativeTranslations": [],
       "romanization": null
     }
   ]
@@ -146,11 +166,13 @@ Return an object with a `words` array. Each word object must include:
     {
       "word": "猫",
       "translation": "the cat",
+      "alternativeTranslations": [],
       "romanization": "neko"
     },
     {
       "word": "犬",
       "translation": "the dog",
+      "alternativeTranslations": [],
       "romanization": "inu"
     }
   ]
@@ -199,3 +221,5 @@ The word field is used for text-to-speech and display - parenthetical content br
    - You're listing 5+ items that are all "types of X"
    - Removing half the variants wouldn't reduce what the learner understands
    - The items differ only in minor attributes (size, color, style) rather than meaning
+
+6. **Alternative translations must be accurate**: The `alternativeTranslations` array should only contain genuinely equivalent translations, not loosely related words. Words with multiple common translations MUST list alternatives. Words with only one clear translation should have an empty array.

@@ -23,6 +23,7 @@ export type ActivityWithSteps = {
       id: bigint;
       word: string;
       translation: string;
+      alternativeTranslations: string[];
       pronunciation: string | null;
       romanization: string | null;
       audioUrl: string | null;
@@ -70,6 +71,7 @@ const cachedGetActivity = cache(
             visualKind: true,
             word: {
               select: {
+                alternativeTranslations: true,
                 audioUrl: true,
                 id: true,
                 pronunciation: true,

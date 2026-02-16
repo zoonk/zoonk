@@ -28,6 +28,7 @@
     "./orgs/permissions": "./src/orgs/org-permissions.ts",
     "./player/check-answer": "./src/player/check-answer.ts",
     "./player/compute-score": "./src/player/compute-score.ts",
+    "./player/distractor-words": "./src/player/get-distractor-words.ts",
     "./steps/image": "./src/steps/step-image.ts",
     "./steps/content-contract": "./src/steps/content-contract.ts",
     "./steps/visual-content-contract": "./src/steps/visual-content-contract.ts",

@@ -1,18 +1,19 @@
 model Word {
-  id             BigInt       @id @default(autoincrement())
-  organizationId Int          @map("organization_id")
-  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  targetLanguage String       @map("target_language") @db.VarChar(10)
-  userLanguage   String       @map("user_language") @db.VarChar(10)
-  word           String
-  translation    String
-  pronunciation  String?
-  romanization   String?
-  audioUrl       String?      @map("audio_url")
-  createdAt      DateTime     @default(now()) @map("created_at")
-  updatedAt      DateTime     @default(now()) @updatedAt @map("updated_at")
-  lessons        LessonWord[]
-  steps          Step[]
+  id                      BigInt       @id @default(autoincrement())
+  organizationId          Int          @map("organization_id")
+  organization            Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  targetLanguage          String       @map("target_language") @db.VarChar(10)
+  userLanguage            String       @map("user_language") @db.VarChar(10)
+  word                    String
+  translation             String
+  alternativeTranslations String[]     @default([]) @map("alternative_translations")
+  pronunciation           String?
+  romanization            String?
+  audioUrl                String?      @map("audio_url")
+  createdAt               DateTime     @default(now()) @map("created_at")
+  updatedAt               DateTime     @default(now()) @updatedAt @map("updated_at")
+  lessons                 LessonWord[]
+  steps                   Step[]
 
   @@unique([organizationId, targetLanguage, userLanguage, word], name: "orgWord")
   @@index([organizationId, targetLanguage, userLanguage])

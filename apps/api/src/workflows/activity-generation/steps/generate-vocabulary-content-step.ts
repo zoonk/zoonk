@@ -7,6 +7,7 @@ import { handleActivityFailureStep } from "./handle-failure-step";
 import { setActivityAsRunningStep } from "./set-activity-as-running-step";
 
 export type VocabularyWord = {
+  alternativeTranslations: string[];
   romanization: string | null;
   translation: string;
   word: string;

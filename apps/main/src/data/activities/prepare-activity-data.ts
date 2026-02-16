@@ -20,6 +20,7 @@ export type SerializedWord = {
   id: string;
   word: string;
   translation: string;
+  alternativeTranslations: string[];
   pronunciation: string | null;
   romanization: string | null;
   audioUrl: string | null;
@@ -60,6 +61,7 @@ function serializeWord(
   word: NonNullable<ActivityWithSteps["steps"][number]["word"]>,
 ): SerializedWord {
   return {
+    alternativeTranslations: word.alternativeTranslations,
     audioUrl: word.audioUrl,
     id: String(word.id),
     pronunciation: word.pronunciation,
@@ -168,6 +170,7 @@ export function prepareActivityData(
       translation: sentence.translation,
     })),
     lessonWords: lessonWords.map((word) => ({
+      alternativeTranslations: word.alternativeTranslations,
       audioUrl: word.audioUrl,
       id: String(word.id),
       pronunciation: word.pronunciation,
