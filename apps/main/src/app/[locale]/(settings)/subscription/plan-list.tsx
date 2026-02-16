@@ -63,6 +63,7 @@ export function PlanList({
   const selected = plans.find((plan) => plan.name === selectedPlan) ?? freePlan;
   const cta = getCTAAction(selected, currentPlanName);
   const isLoading = state === "loading";
+  const showCTA = cta.action !== "manage" || currentPlanName !== "free";
   const selectedTitle = titles[selected.name] ?? selected.name;
 
   const ctaLabel = {
@@ -137,15 +138,17 @@ export function PlanList({
         ))}
       </RadioGroup>
 
-      <Button
-        className="sm:self-end"
-        disabled={isLoading}
-        onClick={handleAction}
-        variant={cta.variant}
-      >
-        {isLoading && <Loader2Icon className="animate-spin" />}
-        {ctaLabel}
-      </Button>
+      {showCTA && (
+        <Button
+          className="sm:self-end"
+          disabled={isLoading}
+          onClick={handleAction}
+          variant={cta.variant}
+        >
+          {isLoading && <Loader2Icon className="animate-spin" />}
+          {ctaLabel}
+        </Button>
+      )}
 
       {state === "error" && (
         <p className="text-destructive text-sm">

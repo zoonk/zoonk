@@ -92,10 +92,13 @@ test.describe("Subscription Page - No Subscription", () => {
     await expect(authenticatedPage.getByRole("tab", { name: /yearly/i })).toBeVisible();
   });
 
-  test("shows Manage button when current plan is selected", async ({ authenticatedPage }) => {
+  test("hides action button when on free plan with free selected", async ({
+    authenticatedPage,
+  }) => {
     await authenticatedPage.goto("/subscription");
 
-    await expect(authenticatedPage.getByRole("button", { name: /manage/i })).toBeVisible();
+    await expect(authenticatedPage.getByRole("radio", { name: /free/i })).toBeChecked();
+    await expect(authenticatedPage.getByRole("button", { name: /manage/i })).not.toBeVisible();
   });
 
   test("shows Upgrade button when selecting a paid plan", async ({ authenticatedPage }) => {
@@ -114,7 +117,9 @@ test.describe("Subscription Page - No Subscription", () => {
     await expect(authenticatedPage.getByRole("button", { name: /upgrade to pro/i })).toBeVisible();
 
     await authenticatedPage.getByRole("radio", { name: /free/i }).click();
-    await expect(authenticatedPage.getByRole("button", { name: /manage/i })).toBeVisible();
+    await expect(
+      authenticatedPage.getByRole("button", { name: /upgrade to pro/i }),
+    ).not.toBeVisible();
   });
 });
 
