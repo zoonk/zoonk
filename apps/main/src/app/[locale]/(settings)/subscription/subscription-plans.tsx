@@ -1,12 +1,5 @@
 import { getStripePrices } from "@zoonk/core/auth/stripe-prices";
 import { getActiveSubscription } from "@zoonk/core/auth/subscription";
-import {
-  Item,
-  ItemActions,
-  ItemContent,
-  ItemSeparator,
-  ItemTitle,
-} from "@zoonk/ui/components/item";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type PriceInfo, countryToCurrency } from "@zoonk/utils/currency";
 import { safeAsync } from "@zoonk/utils/error";
@@ -69,40 +62,30 @@ export async function SubscriptionPlans() {
 
 export function SubscriptionPlansSkeleton() {
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex w-full max-w-2xl flex-col gap-4">
       <Skeleton className="h-9 w-48" />
 
-      <div>
+      <div className="flex flex-col gap-3">
         {Array.from({ length: 4 }, (_, i) => (
-          <PlanRowSkeleton key={i} showSeparator={i > 0} />
+          <PlanRowSkeleton key={i} />
         ))}
       </div>
 
-      <Skeleton className="h-9 w-full" />
+      <Skeleton className="h-9 w-32 sm:self-end" />
     </div>
   );
 }
 
-function PlanRowSkeleton({ showSeparator }: { showSeparator: boolean }) {
+function PlanRowSkeleton() {
   return (
-    <div>
-      {showSeparator && <ItemSeparator />}
+    <div className="flex items-center gap-3 rounded-xl border p-4">
+      <div className="flex flex-1 flex-col gap-1">
+        <Skeleton className="h-4 w-20" />
+        <Skeleton className="h-4 w-48" />
+      </div>
 
-      <Item variant="default">
-        <Skeleton className="size-4 rounded-full" />
-
-        <ItemContent>
-          <ItemTitle>
-            <Skeleton className="h-4 w-20" />
-          </ItemTitle>
-
-          <Skeleton className="h-4 w-48" />
-        </ItemContent>
-
-        <ItemActions>
-          <Skeleton className="h-4 w-16" />
-        </ItemActions>
-      </Item>
+      <Skeleton className="h-4 w-16" />
+      <Skeleton className="size-4 rounded-full" />
     </div>
   );
 }

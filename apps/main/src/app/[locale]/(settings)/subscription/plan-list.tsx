@@ -4,13 +4,12 @@ import { authClient } from "@zoonk/core/auth/client";
 import { Badge } from "@zoonk/ui/components/badge";
 import { Button } from "@zoonk/ui/components/button";
 import {
-  Item,
-  ItemActions,
-  ItemContent,
-  ItemDescription,
-  ItemSeparator,
-  ItemTitle,
-} from "@zoonk/ui/components/item";
+  Field,
+  FieldContent,
+  FieldDescription,
+  FieldLabel,
+  FieldTitle,
+} from "@zoonk/ui/components/field";
 import { RadioGroup, RadioGroupItem } from "@zoonk/ui/components/radio-group";
 import { Tabs, TabsList, TabsTrigger } from "@zoonk/ui/components/tabs";
 import { type PriceInfo, formatPrice } from "@zoonk/utils/currency";
@@ -105,7 +104,7 @@ export function PlanList({
   };
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex w-full max-w-2xl flex-col gap-4">
       <Tabs
         value={period}
         onValueChange={(value) => {
@@ -121,21 +120,24 @@ export function PlanList({
       </Tabs>
 
       <RadioGroup value={selectedPlan} onValueChange={setSelectedPlan}>
-        {plans.map((plan, index) => (
+        {plans.map((plan) => (
           <PlanRow
             currentPlanName={currentPlanName}
             description={descriptions[plan.name] ?? ""}
             key={plan.name}
             period={period}
             plan={plan}
-            selectedPlan={selectedPlan}
-            showSeparator={index > 0}
             title={titles[plan.name] ?? plan.name}
           />
         ))}
       </RadioGroup>
 
-      <Button disabled={isLoading} onClick={handleAction} variant={cta.variant}>
+      <Button
+        className="sm:self-end"
+        disabled={isLoading}
+        onClick={handleAction}
+        variant={cta.variant}
+      >
         {isLoading && <Loader2Icon className="animate-spin" />}
         {ctaLabel}
       </Button>
@@ -154,16 +156,12 @@ function PlanRow({
   description,
   period,
   plan,
-  selectedPlan,
-  showSeparator,
   title,
 }: {
   currentPlanName: string;
   description: string;
   period: BillingPeriod;
   plan: PlanData;
-  selectedPlan: string;
-  showSeparator: boolean;
   title: string;
 }) {
   const t = useExtracted();
@@ -172,20 +170,12 @@ function PlanRow({
   const periodSuffix = period === "yearly" ? t("/yr") : t("/mo");
   const displayPrice = plan.name === "free" ? t("Free") : `${priceLabel}${periodSuffix}`;
   const isCurrent = currentPlanName === plan.name;
-  const isSelected = selectedPlan === plan.name;
 
   return (
-    <div>
-      {showSeparator && <ItemSeparator />}
-
-      <Item
-        render={<label aria-label={title} htmlFor={`plan-${plan.name}`} />}
-        variant={isSelected ? "muted" : "default"}
-      >
-        <RadioGroupItem aria-label={title} id={`plan-${plan.name}`} value={plan.name} />
-
-        <ItemContent>
-          <ItemTitle>
+    <FieldLabel htmlFor={`plan-${plan.name}`}>
+      <Field orientation="horizontal">
+        <FieldContent>
+          <FieldTitle>
             {title}
 
             {isCurrent && (
@@ -193,16 +183,17 @@ function PlanRow({
                 {t("Current")}
               </Badge>
             )}
-          </ItemTitle>
+          </FieldTitle>
 
-          <ItemDescription>{description}</ItemDescription>
-        </ItemContent>
+          <FieldDescription>{description}</FieldDescription>
+        </FieldContent>
 
-        <ItemActions>
+        <div className="flex items-center gap-3">
           <span className="text-muted-foreground text-sm">{displayPrice}</span>
-        </ItemActions>
-      </Item>
-    </div>
+          <RadioGroupItem id={`plan-${plan.name}`} value={plan.name} />
+        </div>
+      </Field>
+    </FieldLabel>
   );
 }
 
