@@ -93,6 +93,7 @@ describe(getLessonWords, () => {
 
     expect(result).toHaveLength(1);
     expect(result[0]).toEqual({
+      alternativeTranslations: [],
       audioUrl: "https://example.com/perro.mp3",
       id: word.id,
       pronunciation: "peh-roh",

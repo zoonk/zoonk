@@ -25,6 +25,7 @@ function buildSaveOneWord(params: {
   return async (vocabWord: VocabularyWord, position: number): Promise<SavedWord> => {
     const record = await prisma.word.upsert({
       create: {
+        alternativeTranslations: vocabWord.alternativeTranslations,
         organizationId,
         romanization: emptyToNull(vocabWord.romanization),
         targetLanguage,
@@ -33,6 +34,7 @@ function buildSaveOneWord(params: {
         word: vocabWord.word,
       },
       update: {
+        alternativeTranslations: vocabWord.alternativeTranslations,
         romanization: emptyToNull(vocabWord.romanization),
         translation: vocabWord.translation,
       },

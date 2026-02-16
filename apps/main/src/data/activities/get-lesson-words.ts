@@ -6,6 +6,7 @@ export type LessonWordData = {
   id: bigint;
   word: string;
   translation: string;
+  alternativeTranslations: string[];
   pronunciation: string | null;
   romanization: string | null;
   audioUrl: string | null;
@@ -16,6 +17,7 @@ const cachedGetLessonWords = cache(async (lessonId: number): Promise<LessonWordD
     select: {
       word: {
         select: {
+          alternativeTranslations: true,
           audioUrl: true,
           id: true,
           pronunciation: true,

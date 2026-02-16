@@ -174,6 +174,7 @@ describe(getActivity, () => {
     const result = await getActivity({ lessonId: wordLesson.id, position: 0 });
 
     expect(result?.steps[0]?.word).toEqual({
+      alternativeTranslations: [],
       audioUrl: "https://example.com/audio.mp3",
       id: word.id,
       pronunciation: "test-pron",

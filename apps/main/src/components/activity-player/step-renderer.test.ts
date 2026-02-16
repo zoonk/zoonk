@@ -130,6 +130,7 @@ describe(getStepSummary, () => {
       content: {},
       kind: "vocabulary",
       word: {
+        alternativeTranslations: [],
         audioUrl: null,
         id: "w1",
         pronunciation: null,
@@ -265,6 +266,7 @@ describe(getMockAnswer, () => {
       content: {},
       kind: "vocabulary",
       word: {
+        alternativeTranslations: [],
         audioUrl: null,
         id: "w1",
         pronunciation: null,

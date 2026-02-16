@@ -33,8 +33,13 @@ vi.mock("@zoonk/ai/tasks/activities/language/vocabulary", () => ({
   generateActivityVocabulary: vi.fn().mockResolvedValue({
     data: {
       words: [
-        { romanization: "o-la", translation: "hello", word: "hola" },
-        { romanization: "ga-to", translation: "cat", word: "gato" },
+        {
+          alternativeTranslations: ["hi"],
+          romanization: "o-la",
+          translation: "hello",
+          word: "hola",
+        },
+        { alternativeTranslations: [], romanization: "ga-to", translation: "cat", word: "gato" },
       ],
     },
   }),
@@ -351,6 +356,95 @@ describe("language activity generation", () => {
 
     expect(words).toHaveLength(2);
     expect(words.map((word) => word.word).toSorted()).toEqual(["gato", "hola"]);
+  });
+
+  test("saves alternativeTranslations to word records", async () => {
+    const testLesson = await lessonFixture({
+      chapterId: chapter.id,
+      kind: "language",
+      organizationId,
+      title: `Vocab AltTranslations ${randomUUID()}`,
+    });
+
+    const activity = await activityFixture({
+      generationStatus: "pending",
+      kind: "vocabulary",
+      language: "en",
+      lessonId: testLesson.id,
+      organizationId,
+      title: `Vocabulary ${randomUUID()}`,
+    });
+
+    await activityGenerationWorkflow(testLesson.id);
+
+    const words = await prisma.word.findMany({
+      orderBy: { word: "asc" },
+      where: {
+        organizationId,
+        steps: { some: { activityId: activity.id } },
+        targetLanguage: "es",
+        userLanguage: "en",
+      },
+    });
+
+    const gato = words.find((word) => word.word === "gato");
+    const hola = words.find((word) => word.word === "hola");
+
+    expect(gato?.alternativeTranslations).toEqual([]);
+    expect(hola?.alternativeTranslations).toEqual(["hi"]);
+  });
+
+  test("updates alternativeTranslations when word already exists", async () => {
+    const uniqueWord = `hola-${randomUUID().slice(0, 8)}`;
+
+    await prisma.word.create({
+      data: {
+        alternativeTranslations: ["hey"],
+        organizationId,
+        romanization: "o-la",
+        targetLanguage: "es",
+        translation: "hello",
+        userLanguage: "en",
+        word: uniqueWord,
+      },
+    });
+
+    vi.mocked(generateActivityVocabulary).mockResolvedValueOnce({
+      data: {
+        words: [
+          {
+            alternativeTranslations: ["hi", "hey"],
+            romanization: "o-la",
+            translation: "hello",
+            word: uniqueWord,
+          },
+        ],
+      },
+    } as Awaited<ReturnType<typeof generateActivityVocabulary>>);
+
+    const testLesson = await lessonFixture({
+      chapterId: chapter.id,
+      kind: "language",
+      organizationId,
+      title: `Vocab UpdateAlt ${randomUUID()}`,
+    });
+
+    await activityFixture({
+      generationStatus: "pending",
+      kind: "vocabulary",
+      language: "en",
+      lessonId: testLesson.id,
+      organizationId,
+      title: `Vocabulary ${randomUUID()}`,
+    });
+
+    await activityGenerationWorkflow(testLesson.id);
+
+    const updatedWord = await prisma.word.findFirst({
+      where: { organizationId, targetLanguage: "es", userLanguage: "en", word: uniqueWord },
+    });
+
+    expect(updatedWord?.alternativeTranslations).toEqual(["hi", "hey"]);
   });
 
   test("creates lesson_words junction records for each word", async () => {
