@@ -1,1 +1,1 @@
-export { authClient } from "@zoonk/auth/client";
+export { authClient, logout } from "@zoonk/auth/client";

@@ -439,13 +439,6 @@ msgid "Login"
 msgstr "Entrar"
 
 #: src/app/unauthorized.tsx
-#: src/components/navbar/command-palette.tsx
-#: src/components/navbar/logout-menu-item.tsx
-msgctxt "C81/uG"
-msgid "Logout"
-msgstr "Sair"
-
-#: src/app/unauthorized.tsx
 msgctxt "gNtXZ8"
 msgid "401 - Unauthorized"
 msgstr "401 - Não autorizado"
@@ -686,6 +679,13 @@ msgstr "Capítulos importados com sucesso"
 msgctxt "ZuOjRf"
 msgid "Upload a JSON file containing lessons to import."
 msgstr "Envie um arquivo JSON contendo as aulas para importar."
+
+#: src/components/logout-button.tsx
+#: src/components/navbar/command-palette.tsx
+#: src/components/navbar/logout-menu-item.tsx
+msgctxt "C81/uG"
+msgid "Logout"
+msgstr "Sair"
 
 #: src/components/navbar/command-palette.tsx
 msgctxt "6BySgv"

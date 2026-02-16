@@ -2,7 +2,7 @@
 
 import { useRouter } from "@/i18n/navigation";
 import { getMenu } from "@/lib/menu";
-import { authClient } from "@zoonk/core/auth/client";
+import { authClient, logout } from "@zoonk/core/auth/client";
 import { Button } from "@zoonk/ui/components/button";
 import {
   CommandDialog,
@@ -13,7 +13,7 @@ import {
   CommandList,
 } from "@zoonk/ui/components/command";
 import { useCommandPaletteSearch } from "@zoonk/ui/hooks/command-palette-search";
-import { BookOpenIcon, Search } from "lucide-react";
+import { BookOpenIcon, LogOut, Search } from "lucide-react";
 import { useExtracted, useLocale } from "next-intl";
 import Image from "next/image";
 import { useCallback } from "react";
@@ -66,7 +66,6 @@ export function CommandPalette() {
     { key: t("Manage subscription"), ...getMenu("subscription") },
     { key: t("Update language"), ...getMenu("language") },
     { key: t("Update profile"), ...getMenu("profile") },
-    { key: t("Logout"), ...getMenu("logout") },
   ];
 
   const contactUs = [{ key: t("Help and support"), ...getMenu("support") }];
@@ -122,6 +121,18 @@ export function CommandPalette() {
                   {item.key}
                 </CommandItem>
               ))}
+
+            {isLoggedIn && (
+              <CommandItem
+                onSelect={() => {
+                  closePalette();
+                  logout();
+                }}
+              >
+                <LogOut aria-hidden="true" />
+                {t("Logout")}
+              </CommandItem>
+            )}
           </CommandGroup>
 
           <CommandGroup heading={t("Contact us")}>

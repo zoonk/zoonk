@@ -1,3 +1,4 @@
+import { LogoutButton } from "@/components/logout-button";
 import { getSession } from "@zoonk/core/users/session/get";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import {
@@ -32,9 +33,7 @@ export default async function Unauthorized() {
 
       <ContainerBody className="justify-end">
         {session ? (
-          <Link className={buttonVariants()} href="/logout" prefetch={false}>
-            {t("Logout")}
-          </Link>
+          <LogoutButton />
         ) : (
           <Link className={buttonVariants()} href="/login" prefetch>
             {t("Login")}
