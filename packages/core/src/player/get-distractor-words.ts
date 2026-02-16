@@ -10,7 +10,7 @@ function isSemanticMatch(correctWord: DistractorWord, candidate: DistractorWord)
   const correctTranslation = correctWord.translation.toLowerCase();
   const candidateTranslation = candidate.translation.toLowerCase();
   const correctAlternatives = correctWord.alternativeTranslations.map((alt) => alt.toLowerCase());
-  const candidateAlternatives = candidate.alternativeTranslations.map((alt) => alt.toLowerCase());
+  const candidateAlternatives = new Set(candidate.alternativeTranslations.map((alt) => alt.toLowerCase()));
 
   // Rule 2: same translation
   if (correctTranslation === candidateTranslation) {
@@ -23,7 +23,12 @@ function isSemanticMatch(correctWord: DistractorWord, candidate: DistractorWord)
   }
 
   // Rule 4: correct word's translation is in the candidate's alternatives
-  if (candidateAlternatives.includes(correctTranslation)) {
+  if (candidateAlternatives.has(correctTranslation)) {
+    return true;
+  }
+
+  // Rule 5: overlapping alternatives (shared synonym means semantic equivalence)
+  if (correctAlternatives.some((alt) => candidateAlternatives.has(alt))) {
     return true;
   }
 

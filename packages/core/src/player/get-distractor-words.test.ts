@@ -124,6 +124,24 @@ describe(getDistractorWords, () => {
     expect(allSame).toBeFalsy();
   });
 
+  test("excludes words whose alternativeTranslations overlap with correct word's alternatives", () => {
+    const correct = makeWord("1", "farewell", ["bye", "goodbye"]);
+    const words = [correct, makeWord("2", "see you", ["bye", "later"]), makeWord("3", "cat")];
+    const result = getDistractorWords(correct, words, 5);
+
+    expect(result).toHaveLength(1);
+    expect(result[0]?.id).toBe("3");
+  });
+
+  test("alternative-to-alternative overlap is case-insensitive", () => {
+    const correct = makeWord("1", "farewell", ["BYE"]);
+    const words = [correct, makeWord("2", "see you", ["bye"]), makeWord("3", "cat")];
+    const result = getDistractorWords(correct, words, 5);
+
+    expect(result).toHaveLength(1);
+    expect(result[0]?.id).toBe("3");
+  });
+
   test("alternative translation matching is case-insensitive", () => {
     const correct = makeWord("1", "Good Evening", ["GOOD NIGHT"]);
     const words = [correct, makeWord("2", "good night"), makeWord("3", "cat")];
