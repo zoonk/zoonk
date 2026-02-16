@@ -1,9 +1,6 @@
 import { type PriceInfo } from "@zoonk/utils/currency";
-import Stripe from "stripe";
-
-const secretKey = process.env.STRIPE_SECRET_KEY || "sk_test_dummykey1234567890";
-
-const stripe = new Stripe(secretKey, { apiVersion: "2026-01-28.clover" });
+import { stripeClient } from "./client";
+import type Stripe from "stripe";
 
 export type { PriceInfo } from "@zoonk/utils/currency";
 
@@ -44,7 +41,7 @@ export async function getStripePrices(
     return result;
   }
 
-  const prices = await stripe.prices.list({
+  const prices = await stripeClient.prices.list({
     expand: ["data.currency_options"],
     lookup_keys: lookupKeys,
   });

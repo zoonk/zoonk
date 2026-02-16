@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { getStripePrices } from "./stripe-prices";
+import { getStripePrices } from "./prices";
 
 const { mockList } = vi.hoisted(() => ({
   mockList: vi.fn(),

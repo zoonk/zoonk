@@ -1,15 +1,14 @@
 import { stripe } from "@better-auth/stripe";
 import { PAID_PLANS } from "@zoonk/utils/subscription";
-import Stripe from "stripe";
+import { stripeClient } from "./client";
 
-const secretKey = process.env.STRIPE_SECRET_KEY || "sk_test_dummykey1234567890";
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET ?? "";
 
 export function stripePlugin() {
   return stripe({
     createCustomerOnSignUp: true,
     organization: { enabled: true },
-    stripeClient: new Stripe(secretKey, { apiVersion: "2026-01-28.clover" }),
+    stripeClient,
     stripeWebhookSecret: webhookSecret,
     subscription: {
       enabled: true,

@@ -10,8 +10,8 @@
     "./next": "./src/next.ts",
     "./testing": "./src/testing.ts",
     "./permissions": "./src/permissions.ts",
-    "./stripe-prices": "./src/stripe-prices.ts",
-    "./subscription": "./src/subscription.ts"
+    "./stripe-prices": "./src/stripe/prices.ts",
+    "./subscription": "./src/stripe/subscription.ts"
   },
   "scripts": {
     "test": "vitest run",
