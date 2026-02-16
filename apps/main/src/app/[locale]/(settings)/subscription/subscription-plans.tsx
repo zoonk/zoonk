@@ -2,6 +2,7 @@ import { getStripePrices } from "@zoonk/core/auth/stripe-prices";
 import { getActiveSubscription } from "@zoonk/core/auth/subscription";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { countryToCurrency } from "@zoonk/utils/currency";
+import { getCountryFromAcceptLanguage } from "@zoonk/utils/locale";
 import { SUBSCRIPTION_PLANS } from "@zoonk/utils/subscription";
 import { getExtracted, getFormatter } from "next-intl/server";
 import { headers } from "next/headers";
@@ -12,7 +13,10 @@ export async function SubscriptionPlans() {
   const t = await getExtracted();
   const format = await getFormatter();
 
-  const countryCode = requestHeaders.get("x-vercel-ip-country") ?? "US";
+  const countryCode =
+    requestHeaders.get("x-vercel-ip-country") ??
+    getCountryFromAcceptLanguage(requestHeaders.get("accept-language"));
+
   const currency = countryToCurrency(countryCode);
 
   const lookupKeys: string[] = SUBSCRIPTION_PLANS.flatMap((plan) =>
