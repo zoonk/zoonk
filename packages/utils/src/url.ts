@@ -82,7 +82,7 @@ export function getDevTrustedOrigins(): string[] {
   return ["http://localhost:*", ...customOrigins];
 }
 
-const ZOONK_DOMAINS = [".zoonk.com", ".zoonk.app", ".zoonk.school", ".zoonk.team"];
+const ZOONK_DOMAINS = [".zoonk.com", ".zoonk.app", ".zoonk.school", ".zoonk.team", ".zoonk.dev"];
 
 /**
  * Checks if an origin is allowed for CORS.
