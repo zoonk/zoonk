@@ -13,6 +13,7 @@ import { StaticStep } from "./static-step";
 import { StaticTapZones, useSwipeNavigation } from "./static-step-navigation";
 import { InteractiveStepLayout, StaticStepLayout } from "./step-layouts";
 import { getMockAnswer, getStepSummary } from "./step-renderer-utils";
+import { VocabularyStep } from "./vocabulary-step";
 
 function PlaceholderInteractiveStep({
   onSelectAnswer,
@@ -121,6 +122,17 @@ export function StepRenderer({
   if (step.kind === "sortOrder") {
     return (
       <SortOrderStep
+        onSelectAnswer={onSelectAnswer}
+        result={result}
+        selectedAnswer={selectedAnswer}
+        step={step}
+      />
+    );
+  }
+
+  if (step.kind === "vocabulary") {
+    return (
+      <VocabularyStep
         onSelectAnswer={onSelectAnswer}
         result={result}
         selectedAnswer={selectedAnswer}

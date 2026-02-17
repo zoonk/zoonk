@@ -1,3 +1,4 @@
+import { getDistractorWords } from "@zoonk/core/player/distractor-words";
 import {
   type MultipleChoiceStepContent,
   type StepContentByKind,
@@ -15,6 +16,8 @@ import { shuffle } from "@zoonk/utils/shuffle";
 import { type ActivityWithSteps } from "./get-activity";
 import { type LessonSentenceData } from "./get-lesson-sentences";
 import { type LessonWordData } from "./get-lesson-words";
+
+const VOCABULARY_DISTRACTOR_COUNT = 3;
 
 export type SerializedWord = {
   id: string;
@@ -43,6 +46,7 @@ export type SerializedStep<Kind extends SupportedStepKind = SupportedStepKind> =
   visualContent: VisualContentByKind[SupportedVisualKind] | null;
   word: SerializedWord | null;
   sentence: SerializedSentence | null;
+  vocabularyOptions: SerializedWord[];
 };
 
 export type SerializedActivity = {
@@ -61,7 +65,7 @@ function serializeWord(
   word: NonNullable<ActivityWithSteps["steps"][number]["word"]>,
 ): SerializedWord {
   return {
-    alternativeTranslations: word.alternativeTranslations,
+    alternativeTranslations: [...word.alternativeTranslations],
     audioUrl: word.audioUrl,
     id: String(word.id),
     pronunciation: word.pronunciation,
@@ -120,6 +124,25 @@ function shuffleMultipleChoiceContent(
   }
 }
 
+function buildVocabularyOptions(
+  step: SerializedStep,
+  serializedLessonWords: SerializedWord[],
+): SerializedWord[] {
+  if (step.kind !== "vocabulary" || !step.word) {
+    return [];
+  }
+
+  const distractors = getDistractorWords(
+    step.word,
+    serializedLessonWords,
+    VOCABULARY_DISTRACTOR_COUNT,
+  );
+  return shuffle([step.word, ...distractors]).map((word) => ({
+    ...word,
+    alternativeTranslations: [...word.alternativeTranslations],
+  }));
+}
+
 function serializeStep(step: ActivityWithSteps["steps"][number]): SerializedStep | null {
   if (!isSupportedStepKind(step.kind)) {
     return null;
@@ -141,6 +164,7 @@ function serializeStep(step: ActivityWithSteps["steps"][number]): SerializedStep
       sentence: step.sentence ? serializeSentence(step.sentence) : null,
       visualContent: visual?.content ?? null,
       visualKind: visual?.kind ?? null,
+      vocabularyOptions: [],
       word: step.word ? serializeWord(step.word) : null,
     };
   } catch {
@@ -153,9 +177,23 @@ export function prepareActivityData(
   lessonWords: LessonWordData[],
   lessonSentences: LessonSentenceData[],
 ): SerializedActivity {
+  const serializedLessonWords = lessonWords.map((word) => ({
+    alternativeTranslations: [...word.alternativeTranslations],
+    audioUrl: word.audioUrl,
+    id: String(word.id),
+    pronunciation: word.pronunciation,
+    romanization: word.romanization,
+    translation: word.translation,
+    word: word.word,
+  }));
+
   const steps = activity.steps
     .map((step) => serializeStep(step))
-    .filter((step): step is SerializedStep => step !== null);
+    .filter((step): step is SerializedStep => step !== null)
+    .map((step) => ({
+      ...step,
+      vocabularyOptions: buildVocabularyOptions(step, serializedLessonWords),
+    }));
 
   return {
     description: activity.description,
@@ -169,15 +207,7 @@ export function prepareActivityData(
       sentence: sentence.sentence,
       translation: sentence.translation,
     })),
-    lessonWords: lessonWords.map((word) => ({
-      alternativeTranslations: word.alternativeTranslations,
-      audioUrl: word.audioUrl,
-      id: String(word.id),
-      pronunciation: word.pronunciation,
-      romanization: word.romanization,
-      translation: word.translation,
-      word: word.word,
-    })),
+    lessonWords: serializedLessonWords,
     organizationId: activity.organizationId,
     steps,
     title: activity.title,

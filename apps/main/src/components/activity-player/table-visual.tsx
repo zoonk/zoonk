@@ -43,11 +43,11 @@ export function TableVisual({ content }: { content: VisualContentByKind[Supporte
         </TableBody>
       </Table>
 
-      {parsed.caption ? (
+      {parsed.caption && (
         <figcaption className="text-muted-foreground mt-3 px-1 text-center text-sm">
           {parsed.caption}
         </figcaption>
-      ) : null}
+      )}
     </figure>
   );
 }

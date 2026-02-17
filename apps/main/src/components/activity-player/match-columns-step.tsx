@@ -78,16 +78,16 @@ function MatchItem({
       aria-label={label}
       aria-pressed={state === "selected"}
       className={cn(
-        "border-border flex min-h-11 items-center gap-2 rounded-lg border px-2.5 py-2.5 text-left text-sm break-words transition-all duration-150 sm:px-4 sm:py-3.5 sm:text-base",
+        "border-border flex min-h-11 items-center gap-2 rounded-lg border px-2.5 py-2.5 text-left text-sm wrap-break-word transition-all duration-150 sm:px-4 sm:py-3.5 sm:text-base",
         getItemClassName(state),
       )}
       disabled={isLocked}
       onClick={onTap}
       type="button"
     >
-      {state === "correct" ? (
+      {state === "correct" && (
         <CircleCheck aria-hidden="true" className="text-success size-3.5 shrink-0" />
-      ) : null}
+      )}
 
       <span>{label}</span>
     </button>
@@ -237,7 +237,7 @@ export function MatchColumnsStep({
 
   return (
     <InteractiveStepLayout>
-      {content.question ? <QuestionText>{replaceName(content.question)}</QuestionText> : null}
+      {content.question && <QuestionText>{replaceName(content.question)}</QuestionText>}
 
       <MatchGrid
         correctPairs={correctPairs}
@@ -250,7 +250,7 @@ export function MatchColumnsStep({
       />
 
       <div aria-live="polite" className="sr-only" role="status">
-        {allMatched ? t("All pairs matched. Press Check to continue.") : null}
+        {allMatched && t("All pairs matched. Press Check to continue.")}
       </div>
     </InteractiveStepLayout>
   );

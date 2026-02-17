@@ -7,11 +7,12 @@ import {
   type LanguageMultipleChoiceContent,
   parseStepContent,
 } from "@zoonk/core/steps/content-contract";
-import { Kbd } from "@zoonk/ui/components/kbd";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { type SelectedAnswer } from "./player-reducer";
 import { ContextText, QuestionText } from "./question-text";
+import { ResultKbd } from "./result-kbd";
+import { SectionLabel } from "./section-label";
 import { InteractiveStepLayout } from "./step-layouts";
 import { useOptionKeyboard } from "./use-option-keyboard";
 import { useReplaceName } from "./user-name-context";
@@ -52,16 +53,14 @@ function OptionCard({
       role="radio"
       type="button"
     >
-      <Kbd aria-hidden="true" className={cn(isSelected && "bg-primary text-primary-foreground")}>
-        {index + 1}
-      </Kbd>
+      <ResultKbd isSelected={isSelected}>{index + 1}</ResultKbd>
 
       <div className="flex flex-col">
         <span className="text-base leading-6">{text}</span>
 
-        {romanization ? (
+        {romanization && (
           <span className="text-muted-foreground text-sm italic">{romanization}</span>
-        ) : null}
+        )}
       </div>
     </button>
   );
@@ -108,8 +107,8 @@ function CoreVariant({
   return (
     <>
       <StepTextGroup>
-        {content.context ? <ContextText>{replaceName(content.context)}</ContextText> : null}
-        {content.question ? <QuestionText>{replaceName(content.question)}</QuestionText> : null}
+        {content.context && <ContextText>{replaceName(content.context)}</ContextText>}
+        {content.question && <QuestionText>{replaceName(content.question)}</QuestionText>}
       </StepTextGroup>
 
       <OptionList onSelect={onSelect} options={content.options} selectedIndex={selectedIndex} />
@@ -140,12 +139,6 @@ function ChallengeVariant({
   );
 }
 
-function SectionLabel({ children }: { children: React.ReactNode }) {
-  return (
-    <p className="text-muted-foreground text-xs font-medium tracking-wide uppercase">{children}</p>
-  );
-}
-
 function SpeechBubble({ children }: { children: React.ReactNode }) {
   return <div className="bg-muted flex flex-col gap-1 rounded-2xl px-4 py-3">{children}</div>;
 }
@@ -170,9 +163,9 @@ function LanguageVariant({
         <SpeechBubble>
           <p className="text-base font-semibold">{replaceName(content.context)}</p>
 
-          {content.contextRomanization ? (
+          {content.contextRomanization && (
             <p className="text-muted-foreground text-sm italic">{content.contextRomanization}</p>
-          ) : null}
+          )}
 
           <p className="text-muted-foreground text-sm">{replaceName(content.contextTranslation)}</p>
         </SpeechBubble>
@@ -210,17 +203,17 @@ export function MultipleChoiceStep({
 
   return (
     <InteractiveStepLayout>
-      {content.kind === "challenge" ? (
+      {content.kind === "challenge" && (
         <ChallengeVariant content={content} onSelect={handleSelect} selectedIndex={selectedIndex} />
-      ) : null}
+      )}
 
-      {content.kind === "core" ? (
+      {content.kind === "core" && (
         <CoreVariant content={content} onSelect={handleSelect} selectedIndex={selectedIndex} />
-      ) : null}
+      )}
 
-      {content.kind === "language" ? (
+      {content.kind === "language" && (
         <LanguageVariant content={content} onSelect={handleSelect} selectedIndex={selectedIndex} />
-      ) : null}
+      )}
     </InteractiveStepLayout>
   );
 }
