@@ -9,7 +9,7 @@ import { sentenceFixture } from "@zoonk/testing/fixtures/sentences";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
 import { wordFixture } from "@zoonk/testing/fixtures/words";
 import { beforeAll, describe, expect, expectTypeOf, test } from "vitest";
-import { getActivity } from "./get-activity";
+import { type ActivityWithSteps, getActivity } from "./get-activity";
 import { type LessonSentenceData } from "./get-lesson-sentences";
 import { type LessonWordData } from "./get-lesson-words";
 import { prepareActivityData } from "./prepare-activity-data";
@@ -400,6 +400,65 @@ describe(prepareActivityData, () => {
 
     const optionTexts = content.options.map((opt) => opt.text).toSorted();
     expect(optionTexts).toEqual(["Alpha", "Beta", "Delta", "Gamma"]);
+  });
+
+  test("copies alternativeTranslations arrays for vocabulary options", () => {
+    const stepWord = {
+      alternativeTranslations: ["hello"],
+      audioUrl: null,
+      id: BigInt(1),
+      pronunciation: null,
+      romanization: null,
+      translation: "hello",
+      word: "hola",
+    };
+
+    const lessonWord = {
+      alternativeTranslations: ["cat"],
+      audioUrl: null,
+      id: BigInt(2),
+      pronunciation: null,
+      romanization: null,
+      translation: "cat",
+      word: "gato",
+    };
+
+    const activity = {
+      description: null,
+      generationRunId: null,
+      generationStatus: "completed",
+      id: BigInt(9),
+      kind: "vocabulary",
+      language: "en",
+      organizationId: 1,
+      position: 0,
+      steps: [
+        {
+          content: {},
+          id: BigInt(10),
+          kind: "vocabulary",
+          position: 0,
+          sentence: null,
+          visualContent: null,
+          visualKind: null,
+          word: stepWord,
+        },
+      ],
+      title: "Vocabulary",
+    } satisfies ActivityWithSteps;
+
+    const lessonWords: LessonWordData[] = [stepWord, lessonWord];
+    const result = prepareActivityData(activity, lessonWords, []);
+    const vocabularyStep = result.steps[0];
+    const vocabularyOptions = vocabularyStep?.vocabularyOptions ?? [];
+    const serializedStepWord = vocabularyOptions.find((word) => word.id === String(stepWord.id));
+
+    expect(serializedStepWord).toBeDefined();
+    expect(serializedStepWord?.alternativeTranslations).toEqual(stepWord.alternativeTranslations);
+    expect(serializedStepWord?.alternativeTranslations).not.toBe(stepWord.alternativeTranslations);
+    expect(result.lessonWords[0]?.alternativeTranslations).not.toBe(
+      stepWord.alternativeTranslations,
+    );
   });
 
   test("includes language and organizationId", async () => {

@@ -65,7 +65,7 @@ function serializeWord(
   word: NonNullable<ActivityWithSteps["steps"][number]["word"]>,
 ): SerializedWord {
   return {
-    alternativeTranslations: word.alternativeTranslations,
+    alternativeTranslations: [...word.alternativeTranslations],
     audioUrl: word.audioUrl,
     id: String(word.id),
     pronunciation: word.pronunciation,
@@ -137,7 +137,10 @@ function buildVocabularyOptions(
     serializedLessonWords,
     VOCABULARY_DISTRACTOR_COUNT,
   );
-  return shuffle([step.word, ...distractors]);
+  return shuffle([step.word, ...distractors]).map((word) => ({
+    ...word,
+    alternativeTranslations: [...word.alternativeTranslations],
+  }));
 }
 
 function serializeStep(step: ActivityWithSteps["steps"][number]): SerializedStep | null {
@@ -175,7 +178,7 @@ export function prepareActivityData(
   lessonSentences: LessonSentenceData[],
 ): SerializedActivity {
   const serializedLessonWords = lessonWords.map((word) => ({
-    alternativeTranslations: word.alternativeTranslations,
+    alternativeTranslations: [...word.alternativeTranslations],
     audioUrl: word.audioUrl,
     id: String(word.id),
     pronunciation: word.pronunciation,
