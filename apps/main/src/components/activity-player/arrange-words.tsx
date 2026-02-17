@@ -227,13 +227,13 @@ export function ArrangeWordsInteraction({
 
       <WordBank onPlace={handlePlace} placedWords={placedWords} words={wordBankOptions} />
 
-      {result ? <ResultAnnouncement isCorrect={result.result.isCorrect} /> : null}
+      {result && <ResultAnnouncement isCorrect={result.result.isCorrect} />}
 
-      {isIncorrect ? (
+      {isIncorrect && (
         <p className="text-muted-foreground text-sm">
           {t("Correct answer: {answer}", { answer: correctSentence })}
         </p>
-      ) : null}
+      )}
     </InteractiveStepLayout>
   );
 }

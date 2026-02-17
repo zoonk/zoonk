@@ -136,7 +136,7 @@ function InlineFeedback({
     <div className="flex flex-col gap-3">
       <ResultAnnouncement isCorrect={isCorrect} />
 
-      {feedback ? <p className="text-muted-foreground text-sm">{feedback}</p> : null}
+      {feedback && <p className="text-muted-foreground text-sm">{feedback}</p>}
     </div>
   );
 }
@@ -195,7 +195,7 @@ export function SortOrderStep({
 
   return (
     <InteractiveStepLayout>
-      {content.question ? <QuestionText>{replaceName(content.question)}</QuestionText> : null}
+      {content.question && <QuestionText>{replaceName(content.question)}</QuestionText>}
 
       <p className="text-muted-foreground text-sm">{t("Tap items in the correct order")}</p>
 
@@ -206,7 +206,7 @@ export function SortOrderStep({
         selections={selections}
       />
 
-      {result ? <InlineFeedback content={content} result={result} /> : null}
+      {result && <InlineFeedback content={content} result={result} />}
     </InteractiveStepLayout>
   );
 }
