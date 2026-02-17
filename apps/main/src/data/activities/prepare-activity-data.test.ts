@@ -461,6 +461,240 @@ describe(prepareActivityData, () => {
     );
   });
 
+  test("reading step gets word bank with sentence words and distractors from lesson word fields", async () => {
+    const uniqueId = crypto.randomUUID().slice(0, 8);
+    const sentenceText = `Hola mundo ${uniqueId}`;
+    const [sentence, word1, word2, activity] = await Promise.all([
+      sentenceFixture({
+        organizationId: org.id,
+        sentence: sentenceText,
+        translation: `Hello world ${uniqueId}`,
+      }),
+      wordFixture({
+        organizationId: org.id,
+        translation: `cat-${uniqueId}`,
+        word: `gato-${uniqueId}`,
+      }),
+      wordFixture({
+        organizationId: org.id,
+        translation: `dog-${uniqueId}`,
+        word: `perro-${uniqueId}`,
+      }),
+      activityFixture({
+        generationStatus: "completed",
+        isPublished: true,
+        kind: "reading",
+        language: "en",
+        lessonId: lesson.id,
+        organizationId: org.id,
+        position: 110,
+      }),
+    ]);
+
+    await stepFixture({
+      activityId: activity.id,
+      content: {},
+      isPublished: true,
+      kind: "reading",
+      position: 0,
+      sentenceId: sentence.id,
+    });
+
+    const lessonWords: LessonWordData[] = [
+      {
+        alternativeTranslations: [],
+        audioUrl: null,
+        id: word1.id,
+        pronunciation: null,
+        romanization: null,
+        translation: word1.translation,
+        word: word1.word,
+      },
+      {
+        alternativeTranslations: [],
+        audioUrl: null,
+        id: word2.id,
+        pronunciation: null,
+        romanization: null,
+        translation: word2.translation,
+        word: word2.word,
+      },
+    ];
+
+    const raw = await getActivity({ lessonId: lesson.id, position: 110 });
+    const result = prepareActivityData(raw!, lessonWords, []);
+    const wordBank = result.steps[0]?.wordBankOptions ?? [];
+
+    // Should contain the correct sentence words
+    for (const word of sentenceText.split(" ")) {
+      expect(wordBank).toContain(word);
+    }
+
+    // Should contain distractor words from lesson word .word field (for reading)
+    expect(wordBank).toContain(`gato-${uniqueId}`);
+    expect(wordBank).toContain(`perro-${uniqueId}`);
+  });
+
+  test("listening step gets word bank with translation words and distractors from lesson word translation fields", async () => {
+    const uniqueId = crypto.randomUUID().slice(0, 8);
+    const translationText = `Hello world ${uniqueId}`;
+    const [sentence, word1, word2, activity] = await Promise.all([
+      sentenceFixture({
+        organizationId: org.id,
+        sentence: `Hola mundo ${uniqueId}`,
+        translation: translationText,
+      }),
+      wordFixture({
+        organizationId: org.id,
+        translation: `cat-${uniqueId}`,
+        word: `gato-${uniqueId}`,
+      }),
+      wordFixture({
+        organizationId: org.id,
+        translation: `dog-${uniqueId}`,
+        word: `perro-${uniqueId}`,
+      }),
+      activityFixture({
+        generationStatus: "completed",
+        isPublished: true,
+        kind: "listening",
+        language: "en",
+        lessonId: lesson.id,
+        organizationId: org.id,
+        position: 111,
+      }),
+    ]);
+
+    await stepFixture({
+      activityId: activity.id,
+      content: {},
+      isPublished: true,
+      kind: "listening",
+      position: 0,
+      sentenceId: sentence.id,
+    });
+
+    const lessonWords: LessonWordData[] = [
+      {
+        alternativeTranslations: [],
+        audioUrl: null,
+        id: word1.id,
+        pronunciation: null,
+        romanization: null,
+        translation: word1.translation,
+        word: word1.word,
+      },
+      {
+        alternativeTranslations: [],
+        audioUrl: null,
+        id: word2.id,
+        pronunciation: null,
+        romanization: null,
+        translation: word2.translation,
+        word: word2.word,
+      },
+    ];
+
+    const raw = await getActivity({ lessonId: lesson.id, position: 111 });
+    const result = prepareActivityData(raw!, lessonWords, []);
+    const wordBank = result.steps[0]?.wordBankOptions ?? [];
+
+    // Should contain the correct translation words
+    for (const word of translationText.split(" ")) {
+      expect(wordBank).toContain(word);
+    }
+
+    // Should contain distractor words from lesson word .translation field (for listening)
+    expect(wordBank).toContain(`cat-${uniqueId}`);
+    expect(wordBank).toContain(`dog-${uniqueId}`);
+  });
+
+  test("word bank removes duplicates between correct and distractor words", () => {
+    const activity = {
+      description: null,
+      generationRunId: null,
+      generationStatus: "completed",
+      id: BigInt(20),
+      kind: "reading",
+      language: "en",
+      organizationId: 1,
+      position: 0,
+      steps: [
+        {
+          content: {},
+          id: BigInt(21),
+          kind: "reading",
+          position: 0,
+          sentence: {
+            audioUrl: null,
+            id: BigInt(22),
+            romanization: null,
+            sentence: "Hola mundo",
+            translation: "Hello world",
+          },
+          visualContent: null,
+          visualKind: null,
+          word: null,
+        },
+      ],
+      title: "Reading",
+    } satisfies ActivityWithSteps;
+
+    // Distractor word "hola" overlaps with correct word "Hola" (case-insensitive)
+    const lessonWords: LessonWordData[] = [
+      {
+        alternativeTranslations: [],
+        audioUrl: null,
+        id: BigInt(23),
+        pronunciation: null,
+        romanization: null,
+        translation: "hello",
+        word: "hola",
+      },
+      {
+        alternativeTranslations: [],
+        audioUrl: null,
+        id: BigInt(24),
+        pronunciation: null,
+        romanization: null,
+        translation: "cat",
+        word: "gato",
+      },
+    ];
+
+    const result = prepareActivityData(activity, lessonWords, []);
+    const wordBank = result.steps[0]?.wordBankOptions ?? [];
+
+    // "hola" should be excluded because it duplicates "Hola" (case-insensitive)
+    const holaCount = wordBank.filter((word) => word.toLowerCase() === "hola").length;
+    expect(holaCount).toBe(1); // Only the correct "Hola"
+  });
+
+  test("non-reading/listening steps return empty wordBankOptions", async () => {
+    const activity = await activityFixture({
+      generationStatus: "completed",
+      isPublished: true,
+      kind: "background",
+      language: "en",
+      lessonId: lesson.id,
+      organizationId: org.id,
+      position: 112,
+    });
+
+    await stepFixture({
+      activityId: activity.id,
+      content: { text: "test", title: "Test", variant: "text" },
+      isPublished: true,
+      kind: "static",
+      position: 0,
+    });
+
+    const raw = await getActivity({ lessonId: lesson.id, position: 112 });
+    const result = prepareActivityData(raw!, [], []);
+
+    expect(result.steps[0]?.wordBankOptions).toEqual([]);
+  });
+
   test("includes language and organizationId", async () => {
     const activity = await activityFixture({
       generationStatus: "completed",

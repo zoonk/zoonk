@@ -33,6 +33,7 @@ function buildFillBlankStep(overrides: Record<string, unknown> = {}) {
     visualKind: null,
     vocabularyOptions: [],
     word: null,
+    wordBankOptions: [],
     ...overrides,
   };
 }

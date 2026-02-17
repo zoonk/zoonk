@@ -66,7 +66,10 @@ export function StageContent({
 
   if (phase === "feedback" && currentResult) {
     const hasInlineFeedback =
-      currentStep?.kind === "sortOrder" || currentStep?.kind === "vocabulary";
+      currentStep?.kind === "sortOrder" ||
+      currentStep?.kind === "vocabulary" ||
+      currentStep?.kind === "reading" ||
+      currentStep?.kind === "listening";
 
     if (hasInlineFeedback && currentStep) {
       return (

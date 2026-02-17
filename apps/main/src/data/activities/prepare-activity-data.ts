@@ -18,6 +18,7 @@ import { type LessonSentenceData } from "./get-lesson-sentences";
 import { type LessonWordData } from "./get-lesson-words";
 
 const VOCABULARY_DISTRACTOR_COUNT = 3;
+const WORD_BANK_DISTRACTOR_COUNT = 8;
 
 export type SerializedWord = {
   id: string;
@@ -47,6 +48,7 @@ export type SerializedStep<Kind extends SupportedStepKind = SupportedStepKind> =
   word: SerializedWord | null;
   sentence: SerializedSentence | null;
   vocabularyOptions: SerializedWord[];
+  wordBankOptions: string[];
 };
 
 export type SerializedActivity = {
@@ -143,6 +145,45 @@ function buildVocabularyOptions(
   }));
 }
 
+function getWordBankConfig(
+  step: SerializedStep,
+): { correctWords: string[]; distractorField: "word" | "translation" } | null {
+  if (step.kind === "reading" && step.sentence) {
+    return { correctWords: step.sentence.sentence.split(" "), distractorField: "word" };
+  }
+
+  if (step.kind === "listening" && step.sentence) {
+    return { correctWords: step.sentence.translation.split(" "), distractorField: "translation" };
+  }
+
+  return null;
+}
+
+function buildWordBankOptions(
+  step: SerializedStep,
+  serializedLessonWords: SerializedWord[],
+): string[] {
+  const config = getWordBankConfig(step);
+
+  if (!config) {
+    return [];
+  }
+
+  const { correctWords, distractorField } = config;
+  const correctSet = new Set(correctWords.map((word) => word.toLowerCase()));
+
+  const allDistractorWords = serializedLessonWords.flatMap((lessonWord) =>
+    lessonWord[distractorField].split(" "),
+  );
+
+  const uniqueDistractors = [
+    ...new Set(allDistractorWords.filter((word) => !correctSet.has(word.toLowerCase()))),
+  ];
+
+  const selected = shuffle(uniqueDistractors).slice(0, WORD_BANK_DISTRACTOR_COUNT);
+  return shuffle([...correctWords, ...selected]);
+}
+
 function serializeStep(step: ActivityWithSteps["steps"][number]): SerializedStep | null {
   if (!isSupportedStepKind(step.kind)) {
     return null;
@@ -166,6 +207,7 @@ function serializeStep(step: ActivityWithSteps["steps"][number]): SerializedStep
       visualKind: visual?.kind ?? null,
       vocabularyOptions: [],
       word: step.word ? serializeWord(step.word) : null,
+      wordBankOptions: [],
     };
   } catch {
     return null;
@@ -193,6 +235,7 @@ export function prepareActivityData(
     .map((step) => ({
       ...step,
       vocabularyOptions: buildVocabularyOptions(step, serializedLessonWords),
+      wordBankOptions: buildWordBankOptions(step, serializedLessonWords),
     }));
 
   return {
