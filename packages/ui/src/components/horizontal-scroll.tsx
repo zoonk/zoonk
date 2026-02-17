@@ -88,7 +88,7 @@ function HorizontalScroll({ className, children, ...props }: React.ComponentProp
 function HorizontalScrollContent({ className, children, ...props }: React.ComponentProps<"div">) {
   return (
     <div
-      className={cn("flex gap-2 pb-1 after:w-4 after:shrink-0 after:content-['']", className)}
+      className={cn("flex gap-2 px-4 pb-1", className)}
       data-slot="horizontal-scroll-content"
       {...props}
     >
