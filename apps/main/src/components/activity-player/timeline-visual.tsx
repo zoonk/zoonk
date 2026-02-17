@@ -25,9 +25,9 @@ function TimelineEvent({
         <time className="text-muted-foreground text-xs font-medium tracking-wide">{date}</time>
       </div>
 
-      {hasLine ? (
+      {hasLine && (
         <span aria-hidden="true" className="bg-border absolute top-4.5 bottom-0 left-0.75 w-px" />
-      ) : null}
+      )}
 
       <div className="pl-5">
         <p className="text-sm font-semibold">{title}</p>

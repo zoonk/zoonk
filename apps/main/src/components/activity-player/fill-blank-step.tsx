@@ -65,13 +65,13 @@ function TemplateText({
         <span key={`seg-${segment}-${index}`}>
           {segment}
 
-          {index < segments.length - 1 ? (
+          {index < segments.length - 1 && (
             <BlankSlot
               index={index}
               onRemove={() => onRemoveWord(index)}
               word={blanks[index] ?? null}
             />
-          ) : null}
+          )}
         </span>
       ))}
     </p>
@@ -202,7 +202,7 @@ export function FillBlankStep({
 
   return (
     <InteractiveStepLayout>
-      {content.question ? <QuestionText>{replaceName(content.question)}</QuestionText> : null}
+      {content.question && <QuestionText>{replaceName(content.question)}</QuestionText>}
 
       <TemplateText blanks={blanks} onRemoveWord={handleRemoveWord} template={content.template} />
 

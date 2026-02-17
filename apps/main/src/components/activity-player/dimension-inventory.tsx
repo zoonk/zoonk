@@ -162,9 +162,7 @@ function DimensionRow({
           {entry.total}
         </span>
 
-        {variant === "feedback" ? (
-          <DeltaPill delta={entry.delta} hidden={entry.delta === 0} />
-        ) : null}
+        {variant === "feedback" && <DeltaPill delta={entry.delta} hidden={entry.delta === 0} />}
       </span>
     </li>
   );

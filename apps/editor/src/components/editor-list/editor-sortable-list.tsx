@@ -155,14 +155,14 @@ export function EditorSortableList<T extends SortableItem>({
         </SortableContext>
 
         <DragOverlay>
-          {activeItem && renderOverlay ? (
+          {activeItem && renderOverlay && (
             <div
               className="bg-background rounded-md border shadow-md"
               data-slot="editor-drag-overlay"
             >
               {renderOverlay(activeItem)}
             </div>
-          ) : null}
+          )}
         </DragOverlay>
       </DndContext>
     </EditorSortableContext.Provider>

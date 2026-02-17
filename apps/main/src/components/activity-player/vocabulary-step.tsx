@@ -108,16 +108,16 @@ function OptionCard({
       <div className="flex flex-col">
         <span className="text-base leading-6">{word.word}</span>
 
-        {word.romanization ? (
+        {word.romanization && (
           <span className="text-muted-foreground text-sm italic">{word.romanization}</span>
-        ) : null}
+        )}
 
-        {isSelected && word.pronunciation ? (
+        {isSelected && word.pronunciation && (
           <span className="text-muted-foreground flex items-center gap-1 text-sm">
             <Volume2Icon aria-hidden="true" className="size-3.5" />
             {word.pronunciation}
           </span>
-        ) : null}
+        )}
       </div>
     </button>
   );
@@ -189,11 +189,11 @@ export function VocabularyStep({
         ))}
       </div>
 
-      {result ? (
+      {result && (
         <div aria-live="polite" className="sr-only" role="status">
           {result.result.isCorrect ? t("Correct") : t("Incorrect")}
         </div>
-      ) : null}
+      )}
     </InteractiveStepLayout>
   );
 }

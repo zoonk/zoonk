@@ -85,9 +85,9 @@ function MatchItem({
       onClick={onTap}
       type="button"
     >
-      {state === "correct" ? (
+      {state === "correct" && (
         <CircleCheck aria-hidden="true" className="text-success size-3.5 shrink-0" />
-      ) : null}
+      )}
 
       <span>{label}</span>
     </button>
@@ -237,7 +237,7 @@ export function MatchColumnsStep({
 
   return (
     <InteractiveStepLayout>
-      {content.question ? <QuestionText>{replaceName(content.question)}</QuestionText> : null}
+      {content.question && <QuestionText>{replaceName(content.question)}</QuestionText>}
 
       <MatchGrid
         correctPairs={correctPairs}
@@ -250,7 +250,7 @@ export function MatchColumnsStep({
       />
 
       <div aria-live="polite" className="sr-only" role="status">
-        {allMatched ? t("All pairs matched. Press Check to continue.") : null}
+        {allMatched && t("All pairs matched. Press Check to continue.")}
       </div>
     </InteractiveStepLayout>
   );

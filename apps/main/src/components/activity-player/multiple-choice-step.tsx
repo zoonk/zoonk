@@ -59,9 +59,9 @@ function OptionCard({
       <div className="flex flex-col">
         <span className="text-base leading-6">{text}</span>
 
-        {romanization ? (
+        {romanization && (
           <span className="text-muted-foreground text-sm italic">{romanization}</span>
-        ) : null}
+        )}
       </div>
     </button>
   );
@@ -108,8 +108,8 @@ function CoreVariant({
   return (
     <>
       <StepTextGroup>
-        {content.context ? <ContextText>{replaceName(content.context)}</ContextText> : null}
-        {content.question ? <QuestionText>{replaceName(content.question)}</QuestionText> : null}
+        {content.context && <ContextText>{replaceName(content.context)}</ContextText>}
+        {content.question && <QuestionText>{replaceName(content.question)}</QuestionText>}
       </StepTextGroup>
 
       <OptionList onSelect={onSelect} options={content.options} selectedIndex={selectedIndex} />
@@ -170,9 +170,9 @@ function LanguageVariant({
         <SpeechBubble>
           <p className="text-base font-semibold">{replaceName(content.context)}</p>
 
-          {content.contextRomanization ? (
+          {content.contextRomanization && (
             <p className="text-muted-foreground text-sm italic">{content.contextRomanization}</p>
-          ) : null}
+          )}
 
           <p className="text-muted-foreground text-sm">{replaceName(content.contextTranslation)}</p>
         </SpeechBubble>
@@ -210,17 +210,17 @@ export function MultipleChoiceStep({
 
   return (
     <InteractiveStepLayout>
-      {content.kind === "challenge" ? (
+      {content.kind === "challenge" && (
         <ChallengeVariant content={content} onSelect={handleSelect} selectedIndex={selectedIndex} />
-      ) : null}
+      )}
 
-      {content.kind === "core" ? (
+      {content.kind === "core" && (
         <CoreVariant content={content} onSelect={handleSelect} selectedIndex={selectedIndex} />
-      ) : null}
+      )}
 
-      {content.kind === "language" ? (
+      {content.kind === "language" && (
         <LanguageVariant content={content} onSelect={handleSelect} selectedIndex={selectedIndex} />
-      ) : null}
+      )}
     </InteractiveStepLayout>
   );
 }
