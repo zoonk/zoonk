@@ -65,19 +65,25 @@ export function StageContent({
   }
 
   if (phase === "feedback" && currentResult) {
-    const hasInlineFeedback = currentStep?.kind === "sortOrder";
+    const hasInlineFeedback =
+      currentStep?.kind === "sortOrder" || currentStep?.kind === "vocabulary";
 
     if (hasInlineFeedback && currentStep) {
       return (
-        <StepRenderer
-          isFirst={isFirst}
-          onNavigateNext={onNavigateNext}
-          onNavigatePrev={onNavigatePrev}
-          onSelectAnswer={onSelectAnswer}
-          result={currentResult}
-          selectedAnswer={selectedAnswer}
-          step={currentStep}
-        />
+        <div
+          className="animate-in fade-in flex w-full flex-1 flex-col items-center justify-center duration-150 ease-out motion-reduce:animate-none"
+          key={`step-${currentStepIndex}`}
+        >
+          <StepRenderer
+            isFirst={isFirst}
+            onNavigateNext={onNavigateNext}
+            onNavigatePrev={onNavigatePrev}
+            onSelectAnswer={onSelectAnswer}
+            result={currentResult}
+            selectedAnswer={selectedAnswer}
+            step={currentStep}
+          />
+        </div>
       );
     }
 
