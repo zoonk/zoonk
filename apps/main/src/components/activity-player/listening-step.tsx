@@ -14,11 +14,16 @@ import { useWordAudio } from "./use-word-audio";
 function AudioPrompt({ audioUrl }: { audioUrl: string }) {
   const t = useExtracted();
   const [isPlaying, setIsPlaying] = useState(false);
-  const { play } = useWordAudio({ onEnded: () => setIsPlaying(false) });
+  const { pause, play } = useWordAudio({ onEnded: () => setIsPlaying(false) });
 
   const handleClick = () => {
-    setIsPlaying(true);
-    play(audioUrl);
+    if (isPlaying) {
+      pause();
+      setIsPlaying(false);
+    } else {
+      play(audioUrl);
+      setIsPlaying(true);
+    }
   };
 
   const Icon = isPlaying ? PauseIcon : Volume2Icon;

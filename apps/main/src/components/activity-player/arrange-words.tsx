@@ -190,6 +190,10 @@ export function ArrangeWordsInteraction({
 
   const handlePlace = useCallback(
     (word: string) => {
+      if (placedWords.length >= correctWords.length) {
+        return;
+      }
+
       const next = [...placedWords, word];
       setPlacedWords(next);
 

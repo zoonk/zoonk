@@ -731,6 +731,70 @@ describe(prepareActivityData, () => {
     expect(wordBank).not.toContain("you");
   });
 
+  test("deduplicates distractors that differ only by punctuation", () => {
+    const activity = {
+      description: null,
+      generationRunId: null,
+      generationStatus: "completed",
+      id: BigInt(40),
+      kind: "reading",
+      language: "en",
+      organizationId: 1,
+      position: 0,
+      steps: [
+        {
+          content: {},
+          id: BigInt(41),
+          kind: "reading",
+          position: 0,
+          sentence: {
+            audioUrl: null,
+            id: BigInt(42),
+            romanization: null,
+            sentence: "Hola amigos",
+            translation: "Hello friends",
+          },
+          visualContent: null,
+          visualKind: null,
+          word: null,
+        },
+      ],
+      title: "Distractor Dedup",
+    } satisfies ActivityWithSteps;
+
+    // Two lesson words produce distractors "tu" and "tu?" after splitting
+    const lessonWords: LessonWordData[] = [
+      {
+        alternativeTranslations: [],
+        audioUrl: null,
+        id: BigInt(43),
+        pronunciation: null,
+        romanization: null,
+        translation: "you",
+        word: "tu",
+      },
+      {
+        alternativeTranslations: [],
+        audioUrl: null,
+        id: BigInt(44),
+        pronunciation: null,
+        romanization: null,
+        translation: "you?",
+        word: "tu?",
+      },
+    ];
+
+    const result = prepareActivityData(activity, lessonWords, []);
+    const wordBank = result.steps[0]?.wordBankOptions ?? [];
+
+    // Only one variant of "tu" should appear, not both "tu" and "tu?"
+    const tuVariants = wordBank.filter(
+      (word) => word.toLowerCase().replaceAll(/[^\p{L}\p{N}\s]/gu, "") === "tu",
+    );
+
+    expect(tuVariants).toHaveLength(1);
+  });
+
   test("non-reading/listening steps return empty wordBankOptions", async () => {
     const activity = await activityFixture({
       generationStatus: "completed",

@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef } from "react";
 
 export function useWordAudio(options?: { onEnded?: () => void }): {
+  pause: () => void;
   play: (url: string | null) => void;
 } {
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -27,6 +28,10 @@ export function useWordAudio(options?: { onEnded?: () => void }): {
     void audio.play();
   }, []);
 
+  const pause = useCallback(() => {
+    audioRef.current?.pause();
+  }, []);
+
   useEffect(
     () => () => {
       audioRef.current?.pause();
@@ -34,5 +39,5 @@ export function useWordAudio(options?: { onEnded?: () => void }): {
     [],
   );
 
-  return { play };
+  return { pause, play };
 }

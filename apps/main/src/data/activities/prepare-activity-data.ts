@@ -181,9 +181,11 @@ function buildWordBankOptions(
   );
 
   const uniqueDistractors = [
-    ...new Set(
-      allDistractorWords.filter((word) => !correctSet.has(stripPunctuation(word).toLowerCase())),
-    ),
+    ...new Map(
+      allDistractorWords
+        .filter((word) => !correctSet.has(stripPunctuation(word).toLowerCase()))
+        .map((word) => [stripPunctuation(word).toLowerCase(), word] as const),
+    ).values(),
   ];
 
   const selected = shuffle(uniqueDistractors).slice(0, WORD_BANK_DISTRACTOR_COUNT);
