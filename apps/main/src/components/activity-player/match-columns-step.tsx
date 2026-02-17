@@ -78,7 +78,7 @@ function MatchItem({
       aria-label={label}
       aria-pressed={state === "selected"}
       className={cn(
-        "border-border flex min-h-11 items-center gap-2 rounded-lg border px-2.5 py-2.5 text-left text-sm break-words transition-all duration-150 sm:px-4 sm:py-3.5 sm:text-base",
+        "border-border flex min-h-11 items-center gap-2 rounded-lg border px-2.5 py-2.5 text-left text-sm wrap-break-word transition-all duration-150 sm:px-4 sm:py-3.5 sm:text-base",
         getItemClassName(state),
       )}
       disabled={isLocked}
