@@ -13,7 +13,7 @@ export function PerformanceNavbar() {
   return (
     <nav className="bg-background/95 supports-backdrop-filter:bg-background/60 sticky top-0 z-10 pt-4 backdrop-blur">
       <HorizontalScroll>
-        <HorizontalScrollContent className="px-4">
+        <HorizontalScrollContent>
           <Link className={buttonVariants({ size: "icon", variant: "outline" })} href="/">
             <HomeIcon aria-hidden="true" />
             <span className="sr-only">{t("Home page")}</span>
