@@ -670,6 +670,67 @@ describe(prepareActivityData, () => {
     expect(holaCount).toBe(1); // Only the correct "Hola"
   });
 
+  test("excludes distractors that match correct words when ignoring punctuation", () => {
+    const activity = {
+      description: null,
+      generationRunId: null,
+      generationStatus: "completed",
+      id: BigInt(30),
+      kind: "reading",
+      language: "en",
+      organizationId: 1,
+      position: 0,
+      steps: [
+        {
+          content: {},
+          id: BigInt(31),
+          kind: "reading",
+          position: 0,
+          sentence: {
+            audioUrl: null,
+            id: BigInt(32),
+            romanization: null,
+            sentence: "Sabes you?",
+            translation: "Know you?",
+          },
+          visualContent: null,
+          visualKind: null,
+          word: null,
+        },
+      ],
+      title: "Punctuation Reading",
+    } satisfies ActivityWithSteps;
+
+    // Distractor "you" (from .word) overlaps with correct word "you?" after stripping punctuation
+    const lessonWords: LessonWordData[] = [
+      {
+        alternativeTranslations: [],
+        audioUrl: null,
+        id: BigInt(33),
+        pronunciation: null,
+        romanization: null,
+        translation: "you",
+        word: "you",
+      },
+      {
+        alternativeTranslations: [],
+        audioUrl: null,
+        id: BigInt(34),
+        pronunciation: null,
+        romanization: null,
+        translation: "cat",
+        word: "gato",
+      },
+    ];
+
+    const result = prepareActivityData(activity, lessonWords, []);
+    const wordBank = result.steps[0]?.wordBankOptions ?? [];
+
+    // "you" distractor should be excluded because "you?" is already a correct word
+    expect(wordBank).toContain("you?");
+    expect(wordBank).not.toContain("you");
+  });
+
   test("non-reading/listening steps return empty wordBankOptions", async () => {
     const activity = await activityFixture({
       generationStatus: "completed",

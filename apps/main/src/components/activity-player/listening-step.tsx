@@ -13,11 +13,11 @@ import { useWordAudio } from "./use-word-audio";
 
 function AudioPrompt({ audioUrl }: { audioUrl: string }) {
   const t = useExtracted();
-  const { play } = useWordAudio();
   const [isPlaying, setIsPlaying] = useState(false);
+  const { play } = useWordAudio({ onEnded: () => setIsPlaying(false) });
 
   const handleClick = () => {
-    setIsPlaying(!isPlaying);
+    setIsPlaying(true);
     play(audioUrl);
   };
 

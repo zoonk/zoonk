@@ -159,6 +159,10 @@ function getWordBankConfig(
   return null;
 }
 
+function stripPunctuation(text: string): string {
+  return text.replaceAll(/[^\p{L}\p{N}\s]/gu, "");
+}
+
 function buildWordBankOptions(
   step: SerializedStep,
   serializedLessonWords: SerializedWord[],
@@ -170,14 +174,16 @@ function buildWordBankOptions(
   }
 
   const { correctWords, distractorField } = config;
-  const correctSet = new Set(correctWords.map((word) => word.toLowerCase()));
+  const correctSet = new Set(correctWords.map((word) => stripPunctuation(word).toLowerCase()));
 
   const allDistractorWords = serializedLessonWords.flatMap((lessonWord) =>
     lessonWord[distractorField].split(" "),
   );
 
   const uniqueDistractors = [
-    ...new Set(allDistractorWords.filter((word) => !correctSet.has(word.toLowerCase()))),
+    ...new Set(
+      allDistractorWords.filter((word) => !correctSet.has(stripPunctuation(word).toLowerCase())),
+    ),
   ];
 
   const selected = shuffle(uniqueDistractors).slice(0, WORD_BANK_DISTRACTOR_COUNT);
