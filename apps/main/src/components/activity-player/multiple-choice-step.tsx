@@ -7,11 +7,12 @@ import {
   type LanguageMultipleChoiceContent,
   parseStepContent,
 } from "@zoonk/core/steps/content-contract";
-import { Kbd } from "@zoonk/ui/components/kbd";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { type SelectedAnswer } from "./player-reducer";
 import { ContextText, QuestionText } from "./question-text";
+import { ResultKbd } from "./result-kbd";
+import { SectionLabel } from "./section-label";
 import { InteractiveStepLayout } from "./step-layouts";
 import { useOptionKeyboard } from "./use-option-keyboard";
 import { useReplaceName } from "./user-name-context";
@@ -52,9 +53,7 @@ function OptionCard({
       role="radio"
       type="button"
     >
-      <Kbd aria-hidden="true" className={cn(isSelected && "bg-primary text-primary-foreground")}>
-        {index + 1}
-      </Kbd>
+      <ResultKbd isSelected={isSelected}>{index + 1}</ResultKbd>
 
       <div className="flex flex-col">
         <span className="text-base leading-6">{text}</span>
@@ -137,12 +136,6 @@ function ChallengeVariant({
 
       <OptionList onSelect={onSelect} options={content.options} selectedIndex={selectedIndex} />
     </>
-  );
-}
-
-function SectionLabel({ children }: { children: React.ReactNode }) {
-  return (
-    <p className="text-muted-foreground text-xs font-medium tracking-wide uppercase">{children}</p>
   );
 }
 

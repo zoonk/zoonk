@@ -1,11 +1,13 @@
 "use client";
 
 import { type SerializedStep, type SerializedWord } from "@/data/activities/prepare-activity-data";
-import { Kbd } from "@zoonk/ui/components/kbd";
 import { cn } from "@zoonk/ui/lib/utils";
-import { CheckIcon, Volume2Icon, XIcon } from "lucide-react";
+import { Volume2Icon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type SelectedAnswer, type StepResult } from "./player-reducer";
+import { ResultAnnouncement } from "./result-announcement";
+import { ResultKbd } from "./result-kbd";
+import { SectionLabel } from "./section-label";
 import { InteractiveStepLayout } from "./step-layouts";
 import { useOptionKeyboard } from "./use-option-keyboard";
 import { useWordAudio } from "./use-word-audio";
@@ -32,44 +34,6 @@ function getOptionResultState(
   }
 
   return undefined;
-}
-
-function SectionLabel({ children }: { children: React.ReactNode }) {
-  return (
-    <p className="text-muted-foreground text-xs font-medium tracking-wide uppercase">{children}</p>
-  );
-}
-
-function OptionKbd({
-  index,
-  isSelected,
-  resultState,
-}: {
-  index: number;
-  isSelected: boolean;
-  resultState?: "correct" | "incorrect";
-}) {
-  if (resultState === "correct") {
-    return (
-      <Kbd aria-hidden="true" className="bg-success text-white">
-        <CheckIcon aria-hidden="true" className="size-3" />
-      </Kbd>
-    );
-  }
-
-  if (resultState === "incorrect") {
-    return (
-      <Kbd aria-hidden="true" className="bg-destructive text-white">
-        <XIcon aria-hidden="true" className="size-3" />
-      </Kbd>
-    );
-  }
-
-  return (
-    <Kbd aria-hidden="true" className={cn(isSelected && "bg-primary text-primary-foreground")}>
-      {index + 1}
-    </Kbd>
-  );
 }
 
 function OptionCard({
@@ -103,7 +67,9 @@ function OptionCard({
       role="radio"
       type="button"
     >
-      <OptionKbd index={index} isSelected={isSelected} resultState={resultState} />
+      <ResultKbd isSelected={isSelected} resultState={resultState}>
+        {index + 1}
+      </ResultKbd>
 
       <div className="flex flex-col">
         <span className="text-base leading-6">{word.word}</span>
@@ -189,11 +155,7 @@ export function VocabularyStep({
         ))}
       </div>
 
-      {result && (
-        <div aria-live="polite" className="sr-only" role="status">
-          {result.result.isCorrect ? t("Correct") : t("Incorrect")}
-        </div>
-      )}
+      {result && <ResultAnnouncement isCorrect={result.result.isCorrect} />}
     </InteractiveStepLayout>
   );
 }

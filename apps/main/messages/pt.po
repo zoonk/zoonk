@@ -1436,6 +1436,18 @@ msgctxt "OUZtdJ"
 msgid "Activity progress"
 msgstr "Progresso da atividade"
 
+#: src/components/activity-player/result-announcement.tsx
+#: src/components/activity-player/sort-order-step.tsx
+msgctxt "6NoIUl"
+msgid "Correct"
+msgstr "Correto"
+
+#: src/components/activity-player/result-announcement.tsx
+#: src/components/activity-player/sort-order-step.tsx
+msgctxt "Ypr9T5"
+msgid "Incorrect"
+msgstr "Incorreto"
+
 #: src/components/activity-player/select-image-step.tsx
 msgctxt "NA6C/+"
 msgid "Image options"
@@ -1452,12 +1464,6 @@ msgid "{item}. Tap to select as position {nextPosition}."
 msgstr "{item}. Toque para selecionar como posição {nextPosition}."
 
 #: src/components/activity-player/sort-order-step.tsx
-#: src/components/activity-player/vocabulary-step.tsx
-msgctxt "6NoIUl"
-msgid "Correct"
-msgstr "Correto"
-
-#: src/components/activity-player/sort-order-step.tsx
 msgctxt "hFFOe+"
 msgid "{item}. {result}."
 msgstr "{item}. {result}."
@@ -1471,12 +1477,6 @@ msgstr "Ordenar itens"
 msgctxt "vPyO9S"
 msgid "Position {position}: {item}. Tap to remove."
 msgstr "Posição {position}: {item}. Toque para remover."
-
-#: src/components/activity-player/sort-order-step.tsx
-#: src/components/activity-player/vocabulary-step.tsx
-msgctxt "Ypr9T5"
-msgid "Incorrect"
-msgstr "Incorreto"
 
 #: src/components/activity-player/step-renderer.tsx
 msgctxt "4pTU5S"

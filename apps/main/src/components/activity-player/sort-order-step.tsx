@@ -2,14 +2,14 @@
 
 import { type SerializedStep } from "@/data/activities/prepare-activity-data";
 import { parseStepContent } from "@zoonk/core/steps/content-contract";
-import { Kbd } from "@zoonk/ui/components/kbd";
 import { cn } from "@zoonk/ui/lib/utils";
 import { shuffle } from "@zoonk/utils/shuffle";
-import { CheckIcon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useCallback, useMemo, useState } from "react";
 import { type SelectedAnswer, type StepResult } from "./player-reducer";
 import { QuestionText } from "./question-text";
+import { ResultAnnouncement } from "./result-announcement";
+import { ResultKbd } from "./result-kbd";
 import { InteractiveStepLayout } from "./step-layouts";
 import { useReplaceName } from "./user-name-context";
 
@@ -57,22 +57,6 @@ function ItemButton({
     });
   })();
 
-  const kbdContent = (() => {
-    if (resultState === "correct") {
-      return <CheckIcon aria-hidden="true" className="size-3" />;
-    }
-
-    if (resultState === "incorrect") {
-      return <XIcon aria-hidden="true" className="size-3" />;
-    }
-
-    if (isSelected) {
-      return String(position + 1);
-    }
-
-    return "\u00A0";
-  })();
-
   return (
     <button
       aria-label={ariaLabel}
@@ -90,15 +74,9 @@ function ItemButton({
       onClick={onClick}
       type="button"
     >
-      <Kbd
-        className={cn(
-          isSelected && !hasResult && "bg-primary text-primary-foreground",
-          resultState === "correct" && "bg-success text-white",
-          resultState === "incorrect" && "bg-destructive text-white",
-        )}
-      >
-        {kbdContent}
-      </Kbd>
+      <ResultKbd isSelected={isSelected} resultState={resultState}>
+        {isSelected ? String(position + 1) : "\u00A0"}
+      </ResultKbd>
 
       <span className="text-base">{item}</span>
     </button>
@@ -150,16 +128,13 @@ function InlineFeedback({
   content: { feedback: string | null };
   result: StepResult;
 }) {
-  const t = useExtracted();
   const replaceName = useReplaceName();
   const isCorrect = result.result.isCorrect;
   const feedback = content.feedback ? replaceName(content.feedback) : null;
 
   return (
     <div className="flex flex-col gap-3">
-      <div aria-live="polite" className="sr-only" role="status">
-        {isCorrect ? t("Correct") : t("Incorrect")}
-      </div>
+      <ResultAnnouncement isCorrect={isCorrect} />
 
       {feedback ? <p className="text-muted-foreground text-sm">{feedback}</p> : null}
     </div>
