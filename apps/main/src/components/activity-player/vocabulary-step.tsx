@@ -37,32 +37,32 @@ function getOptionResultState(
 }
 
 function OptionCard({
+  disabled,
   index,
   isSelected,
   onSelect,
   resultState,
   word,
 }: {
+  disabled: boolean;
   index: number;
   isSelected: boolean;
   onSelect: () => void;
   resultState?: "correct" | "incorrect";
   word: SerializedWord;
 }) {
-  const hasResult = resultState !== undefined;
-
   return (
     <button
       aria-checked={isSelected}
       className={cn(
         "focus-visible:border-ring focus-visible:ring-ring/50 flex w-full items-center gap-3 rounded-xl border px-4 py-3.5 text-left transition-colors duration-150 outline-none focus-visible:ring-[3px]",
-        !hasResult && !isSelected && "border-border hover:bg-accent",
-        !hasResult && isSelected && "border-primary bg-primary/5",
-        hasResult && "pointer-events-none",
+        !disabled && !isSelected && "border-border hover:bg-accent",
+        !disabled && isSelected && "border-primary bg-primary/5",
+        disabled && "pointer-events-none",
         resultState === "correct" && "border-l-success border-l-2",
         resultState === "incorrect" && "border-l-destructive border-l-2",
       )}
-      disabled={hasResult}
+      disabled={disabled}
       onClick={onSelect}
       role="radio"
       type="button"
@@ -141,6 +141,7 @@ export function VocabularyStep({
       <div aria-label={t("Answer options")} className="flex flex-col gap-3" role="radiogroup">
         {options.map((word, index) => (
           <OptionCard
+            disabled={Boolean(result)}
             index={index}
             isSelected={selectedWordId === word.id}
             key={word.id}
