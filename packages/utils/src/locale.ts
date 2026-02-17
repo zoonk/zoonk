@@ -3,6 +3,7 @@ import Negotiator from "negotiator";
 
 export const SUPPORTED_LOCALES = ["en", "es", "pt"] as const;
 export const DEFAULT_LOCALE = "en";
+export const DEFAULT_COUNTRY = "US";
 export const LOCALE_COOKIE = "NEXT_LOCALE";
 
 export type SupportedLocale = (typeof SUPPORTED_LOCALES)[number];
@@ -21,6 +22,27 @@ export const LOCALE_LABELS: Record<SupportedLocale, string> = {
   es: "Español",
   pt: "Português",
 } as const;
+
+function parseRegion(tag: string): string | undefined {
+  try {
+    return new Intl.Locale(tag.split(";")[0]?.trim() ?? "").region;
+  } catch {
+    return undefined;
+  }
+}
+
+export function getCountryFromAcceptLanguage(acceptLanguage: string | null): string {
+  if (!acceptLanguage) {
+    return DEFAULT_COUNTRY;
+  }
+
+  const region = acceptLanguage
+    .split(",")
+    .map((tag) => parseRegion(tag))
+    .find((region) => region !== undefined);
+
+  return region ?? DEFAULT_COUNTRY;
+}
 
 /**
  * Detect the best locale from an Accept-Language header.

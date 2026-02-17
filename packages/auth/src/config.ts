@@ -17,10 +17,10 @@ import { BETTER_AUTH_BASE_PATH } from "./constants";
 import { getCrossSubDomainCookies } from "./env";
 import { ac, admin, member, owner } from "./permissions";
 import { sendVerificationOTP } from "./plugins/otp";
-import { stripePlugin } from "./plugins/stripe";
 import { trustedOriginPlugin } from "./plugins/trusted-origin";
 import { appleProvider } from "./providers/apple";
 import { googleProvider } from "./providers/google";
+import { stripePlugin } from "./stripe/plugin";
 import { isUsernameAllowed } from "./username-validator";
 
 const SESSION_EXPIRES_IN_DAYS = 30;

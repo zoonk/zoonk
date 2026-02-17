@@ -1,7 +1,5 @@
-"use client";
-
-import { authClient } from "@zoonk/core/auth/client";
-import { Button } from "@zoonk/ui/components/button";
+import { Link } from "@/i18n/navigation";
+import { buttonVariants } from "@zoonk/ui/components/button";
 import {
   Empty,
   EmptyContent,
@@ -10,29 +8,12 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@zoonk/ui/components/empty";
-import { Loader2Icon, SparklesIcon } from "lucide-react";
-import { useExtracted } from "next-intl";
-import { useState } from "react";
+import { cn } from "@zoonk/ui/lib/utils";
+import { SparklesIcon } from "lucide-react";
+import { getExtracted } from "next-intl/server";
 
-export function UpgradeCTA({ returnUrl }: { returnUrl: string }) {
-  const [state, setState] = useState<"idle" | "loading" | "error">("idle");
-  const t = useExtracted();
-  const isLoading = state === "loading";
-
-  const subscribe = async () => {
-    setState("loading");
-
-    const { error } = await authClient.subscription.upgrade({
-      cancelUrl: returnUrl,
-      plan: "hobby",
-      successUrl: returnUrl,
-    });
-
-    if (error) {
-      console.error("Error upgrading subscription:", error);
-      setState("error");
-    }
-  };
+export async function UpgradeCTA() {
+  const t = await getExtracted();
 
   return (
     <Empty className="border-0">
@@ -49,16 +30,9 @@ export function UpgradeCTA({ returnUrl }: { returnUrl: string }) {
       </EmptyHeader>
 
       <EmptyContent>
-        <Button disabled={isLoading} onClick={subscribe}>
-          {isLoading && <Loader2Icon className="animate-spin" />}
+        <Link className={cn(buttonVariants(), "w-max")} href="/subscription">
           {t("Upgrade")}
-        </Button>
-
-        {state === "error" && (
-          <p className="text-destructive text-sm">
-            {t("Unable to update your subscription. Contact us at hello@zoonk.com")}
-          </p>
-        )}
+        </Link>
       </EmptyContent>
     </Empty>
   );

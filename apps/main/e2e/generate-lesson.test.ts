@@ -180,27 +180,15 @@ test.describe("Generate Lesson Page - Unauthenticated", () => {
 });
 
 test.describe("Generate Lesson Page - No Subscription", () => {
-  test("shows upgrade CTA when authenticated without subscription", async ({
-    authenticatedPage,
-  }) => {
+  test("shows upgrade CTA with link to subscription page", async ({ authenticatedPage }) => {
     const { lesson } = await createPendingLesson();
     await authenticatedPage.goto(`/generate/l/${lesson.id}`);
 
     await expect(authenticatedPage.getByText(/upgrade to generate/i)).toBeVisible();
 
-    await expect(authenticatedPage.getByRole("button", { name: /upgrade/i })).toBeVisible();
-  });
-
-  test("upgrade button shows loading state when clicked", async ({ authenticatedPage }) => {
-    const { lesson } = await createPendingLesson();
-    await authenticatedPage.goto(`/generate/l/${lesson.id}`);
-
-    const upgradeButton = authenticatedPage.getByRole("button", {
-      name: /upgrade/i,
-    });
-
-    await upgradeButton.click();
-    await expect(upgradeButton).toBeDisabled();
+    const upgradeLink = authenticatedPage.getByRole("link", { name: /upgrade/i });
+    await expect(upgradeLink).toBeVisible();
+    await expect(upgradeLink).toHaveAttribute("href", /\/subscription/);
   });
 });
 

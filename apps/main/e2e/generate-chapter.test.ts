@@ -196,27 +196,15 @@ test.describe("Generate Chapter Page - Unauthenticated", () => {
 });
 
 test.describe("Generate Chapter Page - No Subscription", () => {
-  test("shows upgrade CTA when authenticated without subscription", async ({
-    authenticatedPage,
-  }) => {
+  test("shows upgrade CTA with link to subscription page", async ({ authenticatedPage }) => {
     const chapterId = await getPendingChapterId();
     await authenticatedPage.goto(`/generate/ch/${chapterId}`);
 
     await expect(authenticatedPage.getByText(/upgrade to generate/i)).toBeVisible();
 
-    await expect(authenticatedPage.getByRole("button", { name: /upgrade/i })).toBeVisible();
-  });
-
-  test("upgrade button shows loading state when clicked", async ({ authenticatedPage }) => {
-    const chapterId = await getPendingChapterId();
-    await authenticatedPage.goto(`/generate/ch/${chapterId}`);
-
-    const upgradeButton = authenticatedPage.getByRole("button", {
-      name: /upgrade/i,
-    });
-
-    await upgradeButton.click();
-    await expect(upgradeButton).toBeDisabled();
+    const upgradeLink = authenticatedPage.getByRole("link", { name: /upgrade/i });
+    await expect(upgradeLink).toBeVisible();
+    await expect(upgradeLink).toHaveAttribute("href", /\/subscription/);
   });
 });
 

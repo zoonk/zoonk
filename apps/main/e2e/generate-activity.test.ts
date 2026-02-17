@@ -358,15 +358,15 @@ test.describe("Generate Activity Page - Unauthenticated", () => {
 });
 
 test.describe("Generate Activity Page - No Subscription", () => {
-  test("shows upgrade CTA when authenticated without subscription", async ({
-    authenticatedPage,
-  }) => {
+  test("shows upgrade CTA with link to subscription page", async ({ authenticatedPage }) => {
     const { activity } = await createPendingActivity();
     await authenticatedPage.goto(`/generate/a/${activity.id}`);
 
     await expect(authenticatedPage.getByText(/upgrade to generate/i)).toBeVisible();
 
-    await expect(authenticatedPage.getByRole("button", { name: /upgrade/i })).toBeVisible();
+    const upgradeLink = authenticatedPage.getByRole("link", { name: /upgrade/i });
+    await expect(upgradeLink).toBeVisible();
+    await expect(upgradeLink).toHaveAttribute("href", /\/subscription/);
   });
 });
 

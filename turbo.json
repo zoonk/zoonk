@@ -63,6 +63,7 @@
       "outputs": [".next/**", "!.next/cache/**"]
     },
     "build:e2e": {
+      "dependsOn": ["^db:generate", "^build:e2e"],
       "outputs": [".next-e2e/**", "!.next-e2e/cache/**"]
     },
     "db:deploy": {

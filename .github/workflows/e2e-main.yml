@@ -7,6 +7,7 @@ on:
       - "packages/**"
       - "pnpm-lock.yaml"
       - ".github/workflows/e2e-main.yml"
+      - "turbo.json"
 
 permissions:
   contents: read
