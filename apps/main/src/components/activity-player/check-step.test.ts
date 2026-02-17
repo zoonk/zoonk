@@ -14,6 +14,7 @@ function buildStep(overrides: Partial<SerializedStep> = {}): SerializedStep {
     visualKind: null,
     vocabularyOptions: [],
     word: null,
+    wordBankOptions: [],
     ...overrides,
   };
 }
@@ -283,15 +284,15 @@ describe(checkStep, () => {
       },
     });
 
-    test("correct word arrangement", () => {
-      const answer: SelectedAnswer = { arrangedWords: ["Good", "morning"], kind: "listening" };
+    test("correct word arrangement uses translation", () => {
+      const answer: SelectedAnswer = { arrangedWords: ["Buenos", "dias"], kind: "listening" };
       const { effects, result } = checkStep(step, answer);
       expect(result.isCorrect).toBeTruthy();
       expect(effects).toEqual([]);
     });
 
     test("incorrect word arrangement", () => {
-      const answer: SelectedAnswer = { arrangedWords: ["morning", "Good"], kind: "listening" };
+      const answer: SelectedAnswer = { arrangedWords: ["dias", "Buenos"], kind: "listening" };
       const { result } = checkStep(step, answer);
       expect(result.isCorrect).toBeFalsy();
     });

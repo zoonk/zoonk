@@ -31,6 +31,7 @@ function buildStep(overrides: Partial<SerializedStep> = {}): SerializedStep {
     visualKind: null,
     vocabularyOptions: [],
     word: null,
+    wordBankOptions: [],
     ...overrides,
   };
 }

@@ -1,50 +1,18 @@
 "use client";
 
 import { type SerializedStep } from "@/data/activities/prepare-activity-data";
-import { Button } from "@zoonk/ui/components/button";
-import { useExtracted } from "next-intl";
 import { FillBlankStep } from "./fill-blank-step";
+import { ListeningStep } from "./listening-step";
 import { MatchColumnsStep } from "./match-columns-step";
 import { MultipleChoiceStep } from "./multiple-choice-step";
 import { type SelectedAnswer, type StepResult } from "./player-reducer";
+import { ReadingStep } from "./reading-step";
 import { SelectImageStep } from "./select-image-step";
 import { SortOrderStep } from "./sort-order-step";
 import { StaticStep } from "./static-step";
 import { StaticTapZones, useSwipeNavigation } from "./static-step-navigation";
-import { InteractiveStepLayout, StaticStepLayout } from "./step-layouts";
-import { getMockAnswer, getStepSummary } from "./step-renderer-utils";
+import { StaticStepLayout } from "./step-layouts";
 import { VocabularyStep } from "./vocabulary-step";
-
-function PlaceholderInteractiveStep({
-  onSelectAnswer,
-  selectedAnswer,
-  step,
-}: {
-  onSelectAnswer: (stepId: string, answer: SelectedAnswer | null) => void;
-  selectedAnswer: SelectedAnswer | undefined;
-  step: SerializedStep;
-}) {
-  const t = useExtracted();
-  const summary = getStepSummary(step);
-  const mockAnswer = getMockAnswer(step);
-  const hasAnswer = selectedAnswer !== undefined;
-
-  const handleClick = () => {
-    if (mockAnswer) {
-      onSelectAnswer(step.id, mockAnswer);
-    }
-  };
-
-  return (
-    <InteractiveStepLayout>
-      <p className="text-muted-foreground text-center">{summary}</p>
-
-      <Button disabled={hasAnswer || !mockAnswer} onClick={handleClick} variant="outline">
-        {hasAnswer ? t("Answer selected") : t("Select answer")}
-      </Button>
-    </InteractiveStepLayout>
-  );
-}
 
 export function StepRenderer({
   isFirst,
@@ -141,11 +109,27 @@ export function StepRenderer({
     );
   }
 
-  return (
-    <PlaceholderInteractiveStep
-      onSelectAnswer={onSelectAnswer}
-      selectedAnswer={selectedAnswer}
-      step={step}
-    />
-  );
+  if (step.kind === "reading") {
+    return (
+      <ReadingStep
+        onSelectAnswer={onSelectAnswer}
+        result={result}
+        selectedAnswer={selectedAnswer}
+        step={step}
+      />
+    );
+  }
+
+  if (step.kind === "listening") {
+    return (
+      <ListeningStep
+        onSelectAnswer={onSelectAnswer}
+        result={result}
+        selectedAnswer={selectedAnswer}
+        step={step}
+      />
+    );
+  }
+
+  return null;
 }

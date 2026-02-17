@@ -1235,6 +1235,53 @@ msgctxt "RDZVQL"
 msgid "Check"
 msgstr "Verificar"
 
+#: src/components/activity-player/arrange-words.tsx
+msgctxt "1nJY2/"
+msgid "Your answer"
+msgstr "Sua resposta"
+
+#: src/components/activity-player/arrange-words.tsx
+#: src/components/activity-player/result-announcement.tsx
+#: src/components/activity-player/sort-order-step.tsx
+msgctxt "6NoIUl"
+msgid "Correct"
+msgstr "Correto"
+
+#: src/components/activity-player/arrange-words.tsx
+msgctxt "7R/rOB"
+msgid "Tap words to build your answer"
+msgstr "Toque nas palavras para construir sua resposta"
+
+#: src/components/activity-player/arrange-words.tsx
+#: src/components/activity-player/fill-blank-step.tsx
+msgctxt "e7WNdK"
+msgid "Word bank"
+msgstr "Banco de palavras"
+
+#: src/components/activity-player/arrange-words.tsx
+#: src/components/activity-player/sort-order-step.tsx
+msgctxt "hFFOe+"
+msgid "{item}. {result}."
+msgstr "{item}. {result}."
+
+#: src/components/activity-player/arrange-words.tsx
+#: src/components/activity-player/sort-order-step.tsx
+msgctxt "vPyO9S"
+msgid "Position {position}: {item}. Tap to remove."
+msgstr "Posição {position}: {item}. Toque para remover."
+
+#: src/components/activity-player/arrange-words.tsx
+msgctxt "xvWuPP"
+msgid "Correct answer: {answer}"
+msgstr "Resposta correta: {answer}"
+
+#: src/components/activity-player/arrange-words.tsx
+#: src/components/activity-player/result-announcement.tsx
+#: src/components/activity-player/sort-order-step.tsx
+msgctxt "Ypr9T5"
+msgid "Incorrect"
+msgstr "Incorreto"
+
 #: src/components/activity-player/challenge-completion.tsx
 #: src/components/activity-player/completion-auth-branch.tsx
 msgctxt "7tB7n/"
@@ -1376,11 +1423,6 @@ msgid "Dimension inventory"
 msgstr "Inventário de dimensões"
 
 #: src/components/activity-player/fill-blank-step.tsx
-msgctxt "e7WNdK"
-msgid "Word bank"
-msgstr "Banco de palavras"
-
-#: src/components/activity-player/fill-blank-step.tsx
 msgctxt "FmmJ/j"
 msgid "Blank {position}"
 msgstr "Espaço {position}"
@@ -1389,6 +1431,27 @@ msgstr "Espaço {position}"
 msgctxt "wUEGVH"
 msgid "Blank {position}: {item}. Tap to remove."
 msgstr "Espaço {position}: {item}. Toque para remover."
+
+#: src/components/activity-player/listening-step.tsx
+#: src/components/activity-player/reading-step.tsx
+msgctxt "19nXyC"
+msgid "Translate this sentence:"
+msgstr "Traduza esta frase:"
+
+#: src/components/activity-player/listening-step.tsx
+msgctxt "aAmWaS"
+msgid "What do you hear?"
+msgstr "O que você ouve?"
+
+#: src/components/activity-player/listening-step.tsx
+msgctxt "P7p52A"
+msgid "Pause audio"
+msgstr "Pausar áudio"
+
+#: src/components/activity-player/listening-step.tsx
+msgctxt "vUZhim"
+msgid "Play audio"
+msgstr "Reproduzir áudio"
 
 #: src/components/activity-player/match-columns-step.tsx
 msgctxt "ja1JDt"
@@ -1436,18 +1499,6 @@ msgctxt "OUZtdJ"
 msgid "Activity progress"
 msgstr "Progresso da atividade"
 
-#: src/components/activity-player/result-announcement.tsx
-#: src/components/activity-player/sort-order-step.tsx
-msgctxt "6NoIUl"
-msgid "Correct"
-msgstr "Correto"
-
-#: src/components/activity-player/result-announcement.tsx
-#: src/components/activity-player/sort-order-step.tsx
-msgctxt "Ypr9T5"
-msgid "Incorrect"
-msgstr "Incorreto"
-
 #: src/components/activity-player/select-image-step.tsx
 msgctxt "NA6C/+"
 msgid "Image options"
@@ -1464,29 +1515,9 @@ msgid "{item}. Tap to select as position {nextPosition}."
 msgstr "{item}. Toque para selecionar como posição {nextPosition}."
 
 #: src/components/activity-player/sort-order-step.tsx
-msgctxt "hFFOe+"
-msgid "{item}. {result}."
-msgstr "{item}. {result}."
-
-#: src/components/activity-player/sort-order-step.tsx
 msgctxt "p5llOK"
 msgid "Sort items"
 msgstr "Ordenar itens"
-
-#: src/components/activity-player/sort-order-step.tsx
-msgctxt "vPyO9S"
-msgid "Position {position}: {item}. Tap to remove."
-msgstr "Posição {position}: {item}. Toque para remover."
-
-#: src/components/activity-player/step-renderer.tsx
-msgctxt "4pTU5S"
-msgid "Answer selected"
-msgstr "Resposta selecionada"
-
-#: src/components/activity-player/step-renderer.tsx
-msgctxt "QJadX5"
-msgid "Select answer"
-msgstr "Selecionar resposta"
 
 #: src/components/activity-player/timeline-visual.tsx
 msgctxt "zWkvNO"

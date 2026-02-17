@@ -1235,6 +1235,53 @@ msgctxt "RDZVQL"
 msgid "Check"
 msgstr "Check"
 
+#: src/components/activity-player/arrange-words.tsx
+msgctxt "1nJY2/"
+msgid "Your answer"
+msgstr "Your answer"
+
+#: src/components/activity-player/arrange-words.tsx
+#: src/components/activity-player/result-announcement.tsx
+#: src/components/activity-player/sort-order-step.tsx
+msgctxt "6NoIUl"
+msgid "Correct"
+msgstr "Correct"
+
+#: src/components/activity-player/arrange-words.tsx
+msgctxt "7R/rOB"
+msgid "Tap words to build your answer"
+msgstr "Tap words to build your answer"
+
+#: src/components/activity-player/arrange-words.tsx
+#: src/components/activity-player/fill-blank-step.tsx
+msgctxt "e7WNdK"
+msgid "Word bank"
+msgstr "Word bank"
+
+#: src/components/activity-player/arrange-words.tsx
+#: src/components/activity-player/sort-order-step.tsx
+msgctxt "hFFOe+"
+msgid "{item}. {result}."
+msgstr "{item}. {result}."
+
+#: src/components/activity-player/arrange-words.tsx
+#: src/components/activity-player/sort-order-step.tsx
+msgctxt "vPyO9S"
+msgid "Position {position}: {item}. Tap to remove."
+msgstr "Position {position}: {item}. Tap to remove."
+
+#: src/components/activity-player/arrange-words.tsx
+msgctxt "xvWuPP"
+msgid "Correct answer: {answer}"
+msgstr "Correct answer: {answer}"
+
+#: src/components/activity-player/arrange-words.tsx
+#: src/components/activity-player/result-announcement.tsx
+#: src/components/activity-player/sort-order-step.tsx
+msgctxt "Ypr9T5"
+msgid "Incorrect"
+msgstr "Incorrect"
+
 #: src/components/activity-player/challenge-completion.tsx
 #: src/components/activity-player/completion-auth-branch.tsx
 msgctxt "7tB7n/"
@@ -1376,11 +1423,6 @@ msgid "Dimension inventory"
 msgstr "Dimension inventory"
 
 #: src/components/activity-player/fill-blank-step.tsx
-msgctxt "e7WNdK"
-msgid "Word bank"
-msgstr "Word bank"
-
-#: src/components/activity-player/fill-blank-step.tsx
 msgctxt "FmmJ/j"
 msgid "Blank {position}"
 msgstr "Blank {position}"
@@ -1389,6 +1431,27 @@ msgstr "Blank {position}"
 msgctxt "wUEGVH"
 msgid "Blank {position}: {item}. Tap to remove."
 msgstr "Blank {position}: {item}. Tap to remove."
+
+#: src/components/activity-player/listening-step.tsx
+#: src/components/activity-player/reading-step.tsx
+msgctxt "19nXyC"
+msgid "Translate this sentence:"
+msgstr "Translate this sentence:"
+
+#: src/components/activity-player/listening-step.tsx
+msgctxt "aAmWaS"
+msgid "What do you hear?"
+msgstr "What do you hear?"
+
+#: src/components/activity-player/listening-step.tsx
+msgctxt "P7p52A"
+msgid "Pause audio"
+msgstr "Pause audio"
+
+#: src/components/activity-player/listening-step.tsx
+msgctxt "vUZhim"
+msgid "Play audio"
+msgstr "Play audio"
 
 #: src/components/activity-player/match-columns-step.tsx
 msgctxt "ja1JDt"
@@ -1436,18 +1499,6 @@ msgctxt "OUZtdJ"
 msgid "Activity progress"
 msgstr "Activity progress"
 
-#: src/components/activity-player/result-announcement.tsx
-#: src/components/activity-player/sort-order-step.tsx
-msgctxt "6NoIUl"
-msgid "Correct"
-msgstr "Correct"
-
-#: src/components/activity-player/result-announcement.tsx
-#: src/components/activity-player/sort-order-step.tsx
-msgctxt "Ypr9T5"
-msgid "Incorrect"
-msgstr "Incorrect"
-
 #: src/components/activity-player/select-image-step.tsx
 msgctxt "NA6C/+"
 msgid "Image options"
@@ -1464,29 +1515,9 @@ msgid "{item}. Tap to select as position {nextPosition}."
 msgstr "{item}. Tap to select as position {nextPosition}."
 
 #: src/components/activity-player/sort-order-step.tsx
-msgctxt "hFFOe+"
-msgid "{item}. {result}."
-msgstr "{item}. {result}."
-
-#: src/components/activity-player/sort-order-step.tsx
 msgctxt "p5llOK"
 msgid "Sort items"
 msgstr "Sort items"
-
-#: src/components/activity-player/sort-order-step.tsx
-msgctxt "vPyO9S"
-msgid "Position {position}: {item}. Tap to remove."
-msgstr "Position {position}: {item}. Tap to remove."
-
-#: src/components/activity-player/step-renderer.tsx
-msgctxt "4pTU5S"
-msgid "Answer selected"
-msgstr "Answer selected"
-
-#: src/components/activity-player/step-renderer.tsx
-msgctxt "QJadX5"
-msgid "Select answer"
-msgstr "Select answer"
 
 #: src/components/activity-player/timeline-visual.tsx
 msgctxt "zWkvNO"

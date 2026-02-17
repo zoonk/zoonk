@@ -423,6 +423,14 @@ checksums:
     Terms%20of%20Use/singular: 9ac262b2eda552beeecd904c0b9f8fa2
     Continue/singular: 3cfba90b4600131e82fc4260c568d044
     Check/singular: 023cc2ba432775c38e3efc004ad7b9ef
+    Your%20answer/singular: 016cfa0eceeaa32f8ed699a0668a278b
+    Correct/singular: c643eeb0a615de2032eca68722c31177
+    Tap%20words%20to%20build%20your%20answer/singular: 025315562266cdfc630efa8b5de74961
+    Word%20bank/singular: ceea720dd5fa3747c7f93ce165f77b2e
+    "%7Bitem%7D.%20%7Bresult%7D./singular": 454dd5319c350f361652396801a1c30b
+    Position%20%7Bposition%7D%3A%20%7Bitem%7D.%20Tap%20to%20remove./singular: a1b3d3e026bfff43bff3d3e85ccdb952
+    Correct%20answer%3A%20%7Banswer%7D/singular: 7745b2664e841dffff4568203ee443b2
+    Incorrect/singular: a86cfbe7b86f19dc8df14a67df073d22
     Back%20to%20Lesson/singular: e2dbef5a2fefae8f9cee708e53e61cb9
     Challenge%20Complete/singular: 7854472cc9245aaa8a13f54514968506
     Final%20dimension%20scores/singular: aa4efa7ecef99d375c1daf4c6585ba98
@@ -450,9 +458,12 @@ checksums:
     Outcome/singular: 4cfc7a40e384ea8b6658e8da6e351bf0
     Correct!/singular: dda1a98dc04fd9db252887ecf1765d41
     Dimension%20inventory/singular: a150bc3e032ae9e9202db1b375029aae
-    Word%20bank/singular: ceea720dd5fa3747c7f93ce165f77b2e
     Blank%20%7Bposition%7D/singular: 70a4795f65f91685071b6abb1c3a6bad
     Blank%20%7Bposition%7D%3A%20%7Bitem%7D.%20Tap%20to%20remove./singular: d7ab9b86256fae5fbb5187fe718afe0b
+    Translate%20this%20sentence%3A/singular: f69b2eec827b3a74bafca50e9058716f
+    What%20do%20you%20hear%3F/singular: 9527d094d65c550a40108673bc67744f
+    Pause%20audio/singular: a18f2dcad1748fe33e5f8ab62bc49075
+    Play%20audio/singular: b144bc2118a0803bb8c05c58740c33ba
     All%20pairs%20matched.%20Press%20Check%20to%20continue./singular: 0663e33ba7db53b298c5f50a2f3c7ae8
     Answer%20options/singular: acb0b378cefcb8a8d50a7c43ce77ae39
     What%20do%20you%20say%3F/singular: 75887288b85fc19e67b7d20550d9205e
@@ -465,13 +476,7 @@ checksums:
     Image%20options/singular: 64a1aee44b26dbaff851cb846eb4274d
     Tap%20items%20in%20the%20correct%20order/singular: 221c7b9ef00241af65f534432965e782
     "%7Bitem%7D.%20Tap%20to%20select%20as%20position%20%7BnextPosition%7D./singular": f8b0d3e60ce3740c02c33c0faaec5e6b
-    Correct/singular: c643eeb0a615de2032eca68722c31177
-    "%7Bitem%7D.%20%7Bresult%7D./singular": 454dd5319c350f361652396801a1c30b
     Sort%20items/singular: 3b1072a596203b5acdc5718d38161392
-    Position%20%7Bposition%7D%3A%20%7Bitem%7D.%20Tap%20to%20remove./singular: a1b3d3e026bfff43bff3d3e85ccdb952
-    Incorrect/singular: a86cfbe7b86f19dc8df14a67df073d22
-    Answer%20selected/singular: 43c2c02a2f5ab63d04a3ba140a03b769
-    Select%20answer/singular: 4951d9f093550e70ff5f399634b2b595
     Timeline/singular: 342b1e646f0634e47112092db1a24f49
     Translate%20this%20word%3A/singular: 05fede3c583e9ea39f27ac9fdf17fcc3
     Not%20completed/singular: d011b1ae92a1a8a2676a5d6999bbe6d4

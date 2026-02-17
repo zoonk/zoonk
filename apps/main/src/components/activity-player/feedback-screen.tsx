@@ -73,7 +73,7 @@ export function FeedbackScreenContent({
       <FeedbackScreen>
         <FeedbackIndicator className="text-foreground">{t("Outcome")}</FeedbackIndicator>
 
-        {feedback ? <FeedbackMessage>{feedback}</FeedbackMessage> : null}
+        {feedback && <FeedbackMessage>{feedback}</FeedbackMessage>}
 
         <DimensionList aria-label={t("Dimension inventory")} entries={entries} variant="feedback" />
       </FeedbackScreen>
@@ -93,7 +93,7 @@ export function FeedbackScreenContent({
         <span>{isCorrect ? t("Correct!") : t("Not quite")}</span>
       </FeedbackIndicator>
 
-      {feedback ? <FeedbackMessage>{feedback}</FeedbackMessage> : null}
+      {feedback && <FeedbackMessage>{feedback}</FeedbackMessage>}
     </FeedbackScreen>
   );
 }

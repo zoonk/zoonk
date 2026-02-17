@@ -108,7 +108,12 @@ function checkListeningStep(step: SerializedStep, answer: SelectedAnswer): Check
     return MISMATCH_RESULT;
   }
 
-  return checkArrangeWords(step, answer.arrangedWords);
+  if (!step.sentence) {
+    return MISMATCH_RESULT;
+  }
+
+  const words = step.sentence.translation.split(" ");
+  return { effects: [], result: checkArrangeWordsAnswer(words, answer.arrangedWords) };
 }
 
 export function checkStep(step: SerializedStep, answer: SelectedAnswer): CheckStepResult {

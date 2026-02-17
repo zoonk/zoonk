@@ -95,7 +95,7 @@ export function SelectImageStep({
 
   return (
     <InteractiveStepLayout>
-      {content.question ? <QuestionText>{content.question}</QuestionText> : null}
+      {content.question && <QuestionText>{content.question}</QuestionText>}
 
       <div aria-label={t("Image options")} className="grid grid-cols-2 gap-3" role="radiogroup">
         {content.options.map((option, index) => (
