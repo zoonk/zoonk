@@ -5,13 +5,15 @@ import {
   type ChallengeMultipleChoiceContent,
   type CoreMultipleChoiceContent,
   type LanguageMultipleChoiceContent,
+  type MultipleChoiceStepContent,
   parseStepContent,
 } from "@zoonk/core/steps/content-contract";
-import { cn } from "@zoonk/ui/lib/utils";
+import { CircleCheck, CircleX } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { type SelectedAnswer } from "./player-reducer";
+import { OptionCard } from "./option-card";
+import { type SelectedAnswer, type StepResult } from "./player-reducer";
 import { ContextText, QuestionText } from "./question-text";
-import { ResultKbd } from "./result-kbd";
+import { ResultAnnouncement } from "./result-announcement";
 import { SectionLabel } from "./section-label";
 import { InteractiveStepLayout } from "./step-layouts";
 import { useOptionKeyboard } from "./use-option-keyboard";
@@ -25,52 +27,49 @@ function getSelectedIndex(selectedAnswer: SelectedAnswer | undefined): number | 
   return selectedAnswer.selectedIndex;
 }
 
+function getOptionResultState(
+  index: number,
+  content: MultipleChoiceStepContent,
+  selectedIndex: number,
+): "correct" | "incorrect" | undefined {
+  if (content.kind === "challenge") {
+    return undefined;
+  }
+
+  if (content.options[index]?.isCorrect) {
+    return "correct";
+  }
+
+  if (index === selectedIndex) {
+    return "incorrect";
+  }
+
+  return undefined;
+}
+
 function StepTextGroup({ children }: { children: React.ReactNode }) {
   return <div className="flex flex-col gap-2 sm:gap-6">{children}</div>;
 }
 
-function OptionCard({
-  index,
-  isSelected,
-  onSelect,
-  romanization,
-  text,
-}: {
-  index: number;
-  isSelected: boolean;
-  onSelect: () => void;
-  romanization?: string | null;
-  text: string;
-}) {
+function OptionContent({ romanization, text }: { romanization?: string | null; text: string }) {
   return (
-    <button
-      aria-checked={isSelected}
-      className={cn(
-        "focus-visible:border-ring focus-visible:ring-ring/50 flex w-full items-center gap-3 rounded-xl border px-4 py-3.5 text-left transition-colors duration-150 outline-none focus-visible:ring-[3px]",
-        isSelected ? "border-primary bg-primary/5" : "border-border hover:bg-accent",
-      )}
-      onClick={onSelect}
-      role="radio"
-      type="button"
-    >
-      <ResultKbd isSelected={isSelected}>{index + 1}</ResultKbd>
+    <>
+      <span className="text-base leading-6">{text}</span>
 
-      <div className="flex flex-col">
-        <span className="text-base leading-6">{text}</span>
-
-        {romanization && (
-          <span className="text-muted-foreground text-sm italic">{romanization}</span>
-        )}
-      </div>
-    </button>
+      {romanization && <span className="text-muted-foreground text-sm italic">{romanization}</span>}
+    </>
   );
 }
 
 function OptionList({
+  content,
+  disabled,
   onSelect,
   options,
   selectedIndex,
 }: {
+  content: MultipleChoiceStepContent;
+  disabled: boolean;
   onSelect: (index: number) => void;
   options: readonly { text: string; textRomanization?: string | null }[];
   selectedIndex: number | null;
@@ -81,25 +80,67 @@ function OptionList({
     <div aria-label={t("Answer options")} className="flex flex-col gap-3" role="radiogroup">
       {options.map((option, index) => (
         <OptionCard
+          disabled={disabled}
           index={index}
           isSelected={selectedIndex === index}
           key={option.text}
           onSelect={() => onSelect(index)}
-          romanization={"textRomanization" in option ? option.textRomanization : undefined}
-          text={option.text}
-        />
+          resultState={
+            disabled && selectedIndex !== null
+              ? getOptionResultState(index, content, selectedIndex)
+              : undefined
+          }
+        >
+          <OptionContent
+            romanization={"textRomanization" in option ? option.textRomanization : undefined}
+            text={option.text}
+          />
+        </OptionCard>
       ))}
+    </div>
+  );
+}
+
+function InlineFeedback({ result }: { result: StepResult }) {
+  const t = useExtracted();
+  const replaceName = useReplaceName();
+  const isCorrect = result.result.isCorrect;
+  const feedback = result.result.feedback ? replaceName(result.result.feedback) : null;
+
+  return (
+    <div className="flex flex-col gap-3">
+      <div className="flex items-center gap-1.5 text-sm font-medium">
+        {isCorrect ? (
+          <>
+            <CircleCheck aria-hidden="true" className="text-success size-4" />
+            <span className="text-success">{t("Correct!")}</span>
+          </>
+        ) : (
+          <>
+            <CircleX aria-hidden="true" className="text-destructive size-4" />
+            <span className="text-destructive">{t("Not quite")}</span>
+          </>
+        )}
+      </div>
+
+      {feedback && <p className="text-muted-foreground text-sm">{feedback}</p>}
+
+      <ResultAnnouncement isCorrect={isCorrect} />
     </div>
   );
 }
 
 function CoreVariant({
   content,
+  disabled,
   onSelect,
+  result,
   selectedIndex,
 }: {
   content: CoreMultipleChoiceContent;
+  disabled: boolean;
   onSelect: (index: number) => void;
+  result?: StepResult;
   selectedIndex: number | null;
 }) {
   const replaceName = useReplaceName();
@@ -111,7 +152,15 @@ function CoreVariant({
         {content.question && <QuestionText>{replaceName(content.question)}</QuestionText>}
       </StepTextGroup>
 
-      <OptionList onSelect={onSelect} options={content.options} selectedIndex={selectedIndex} />
+      <OptionList
+        content={content}
+        disabled={disabled}
+        onSelect={onSelect}
+        options={content.options}
+        selectedIndex={selectedIndex}
+      />
+
+      {result && <InlineFeedback result={result} />}
     </>
   );
 }
@@ -134,7 +183,13 @@ function ChallengeVariant({
         <QuestionText>{replaceName(content.question)}</QuestionText>
       </StepTextGroup>
 
-      <OptionList onSelect={onSelect} options={content.options} selectedIndex={selectedIndex} />
+      <OptionList
+        content={content}
+        disabled={false}
+        onSelect={onSelect}
+        options={content.options}
+        selectedIndex={selectedIndex}
+      />
     </>
   );
 }
@@ -145,11 +200,15 @@ function SpeechBubble({ children }: { children: React.ReactNode }) {
 
 function LanguageVariant({
   content,
+  disabled,
   onSelect,
+  result,
   selectedIndex,
 }: {
   content: LanguageMultipleChoiceContent;
+  disabled: boolean;
   onSelect: (index: number) => void;
+  result?: StepResult;
   selectedIndex: number | null;
 }) {
   const t = useExtracted();
@@ -173,30 +232,45 @@ function LanguageVariant({
 
       <div className="flex flex-col gap-3">
         <SectionLabel>{t("What do you say?")}</SectionLabel>
-        <OptionList onSelect={onSelect} options={content.options} selectedIndex={selectedIndex} />
+        <OptionList
+          content={content}
+          disabled={disabled}
+          onSelect={onSelect}
+          options={content.options}
+          selectedIndex={selectedIndex}
+        />
       </div>
+
+      {result && <InlineFeedback result={result} />}
     </>
   );
 }
 
 export function MultipleChoiceStep({
   onSelectAnswer,
+  result,
   selectedAnswer,
   step,
 }: {
   onSelectAnswer: (stepId: string, answer: SelectedAnswer) => void;
+  result?: StepResult;
   selectedAnswer: SelectedAnswer | undefined;
   step: SerializedStep;
 }) {
   const content = parseStepContent("multipleChoice", step.content);
   const selectedIndex = getSelectedIndex(selectedAnswer);
+  const hasResult = Boolean(result);
 
   const handleSelect = (index: number) => {
+    if (result) {
+      return;
+    }
+
     onSelectAnswer(step.id, { kind: "multipleChoice", selectedIndex: index });
   };
 
   useOptionKeyboard({
-    enabled: selectedAnswer === undefined || selectedAnswer.kind === "multipleChoice",
+    enabled: !result && (selectedAnswer === undefined || selectedAnswer.kind === "multipleChoice"),
     onSelect: handleSelect,
     optionCount: content.options.length,
   });
@@ -208,11 +282,23 @@ export function MultipleChoiceStep({
       )}
 
       {content.kind === "core" && (
-        <CoreVariant content={content} onSelect={handleSelect} selectedIndex={selectedIndex} />
+        <CoreVariant
+          content={content}
+          disabled={hasResult}
+          onSelect={handleSelect}
+          result={result}
+          selectedIndex={selectedIndex}
+        />
       )}
 
       {content.kind === "language" && (
-        <LanguageVariant content={content} onSelect={handleSelect} selectedIndex={selectedIndex} />
+        <LanguageVariant
+          content={content}
+          disabled={hasResult}
+          onSelect={handleSelect}
+          result={result}
+          selectedIndex={selectedIndex}
+        />
       )}
     </InteractiveStepLayout>
   );

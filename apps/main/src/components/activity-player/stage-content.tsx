@@ -11,6 +11,16 @@ import {
 import { StepRenderer } from "./step-renderer";
 import { type CompletionResult } from "./submit-completion-action";
 
+function hasInlineFeedback(step: SerializedStep | undefined, result: StepResult): boolean {
+  return (
+    step?.kind === "sortOrder" ||
+    step?.kind === "vocabulary" ||
+    step?.kind === "reading" ||
+    step?.kind === "listening" ||
+    (step?.kind === "multipleChoice" && result.effects.length === 0)
+  );
+}
+
 export function StageContent({
   completionResult,
   currentResult,
@@ -68,39 +78,18 @@ export function StageContent({
     );
   }
 
-  if (phase === "feedback" && currentResult) {
-    const hasInlineFeedback =
-      currentStep?.kind === "sortOrder" ||
-      currentStep?.kind === "vocabulary" ||
-      currentStep?.kind === "reading" ||
-      currentStep?.kind === "listening";
-
-    if (hasInlineFeedback && currentStep) {
-      return (
-        <div
-          className="animate-in fade-in flex w-full flex-1 flex-col items-center justify-center duration-150 ease-out motion-reduce:animate-none"
-          key={`step-${currentStepIndex}`}
-        >
-          <StepRenderer
-            isFirst={isFirst}
-            onNavigateNext={onNavigateNext}
-            onNavigatePrev={onNavigatePrev}
-            onSelectAnswer={onSelectAnswer}
-            result={currentResult}
-            selectedAnswer={selectedAnswer}
-            step={currentStep}
-          />
-        </div>
-      );
-    }
-
+  if (
+    phase === "feedback" &&
+    currentResult &&
+    (!hasInlineFeedback(currentStep, currentResult) || !currentStep)
+  ) {
     return <FeedbackScreenContent dimensions={dimensions} result={currentResult} />;
   }
 
-  if (phase === "playing" && currentStep) {
+  if ((phase === "playing" || phase === "feedback") && currentStep) {
     return (
       <div
-        className="animate-in fade-in flex w-full flex-1 flex-col items-center justify-center duration-150 ease-out motion-reduce:animate-none"
+        className="animate-in fade-in flex w-full flex-1 flex-col items-center duration-150 ease-out motion-reduce:animate-none sm:justify-center"
         key={`step-${currentStepIndex}`}
       >
         <StepRenderer
@@ -108,6 +97,7 @@ export function StageContent({
           onNavigateNext={onNavigateNext}
           onNavigatePrev={onNavigatePrev}
           onSelectAnswer={onSelectAnswer}
+          result={phase === "feedback" ? currentResult : undefined}
           selectedAnswer={selectedAnswer}
           step={currentStep}
         />

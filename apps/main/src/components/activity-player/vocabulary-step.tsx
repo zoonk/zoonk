@@ -1,12 +1,11 @@
 "use client";
 
 import { type SerializedStep, type SerializedWord } from "@/data/activities/prepare-activity-data";
-import { cn } from "@zoonk/ui/lib/utils";
 import { Volume2Icon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { OptionCard } from "./option-card";
 import { type SelectedAnswer, type StepResult } from "./player-reducer";
 import { ResultAnnouncement } from "./result-announcement";
-import { ResultKbd } from "./result-kbd";
 import { SectionLabel } from "./section-label";
 import { InteractiveStepLayout } from "./step-layouts";
 import { useOptionKeyboard } from "./use-option-keyboard";
@@ -36,56 +35,28 @@ function getOptionResultState(
   return undefined;
 }
 
-function OptionCard({
-  disabled,
-  index,
+function VocabularyOptionContent({
   isSelected,
-  onSelect,
-  resultState,
   word,
 }: {
-  disabled: boolean;
-  index: number;
   isSelected: boolean;
-  onSelect: () => void;
-  resultState?: "correct" | "incorrect";
   word: SerializedWord;
 }) {
   return (
-    <button
-      aria-checked={isSelected}
-      className={cn(
-        "focus-visible:border-ring focus-visible:ring-ring/50 flex w-full items-center gap-3 rounded-xl border px-4 py-3.5 text-left transition-colors duration-150 outline-none focus-visible:ring-[3px]",
-        !disabled && !isSelected && "border-border hover:bg-accent",
-        !disabled && isSelected && "border-primary bg-primary/5",
-        disabled && "pointer-events-none",
-        resultState === "correct" && "border-l-success border-l-2",
-        resultState === "incorrect" && "border-l-destructive border-l-2",
+    <>
+      <span className="text-base leading-6">{word.word}</span>
+
+      {word.romanization && (
+        <span className="text-muted-foreground text-sm italic">{word.romanization}</span>
       )}
-      disabled={disabled}
-      onClick={onSelect}
-      role="radio"
-      type="button"
-    >
-      <ResultKbd isSelected={isSelected} resultState={resultState}>
-        {index + 1}
-      </ResultKbd>
 
-      <div className="flex flex-col">
-        <span className="text-base leading-6">{word.word}</span>
-
-        {word.romanization && (
-          <span className="text-muted-foreground text-sm italic">{word.romanization}</span>
-        )}
-
-        {isSelected && word.pronunciation && (
-          <span className="text-muted-foreground flex items-center gap-1 text-sm">
-            <Volume2Icon aria-hidden="true" className="size-3.5" />
-            {word.pronunciation}
-          </span>
-        )}
-      </div>
-    </button>
+      {isSelected && word.pronunciation && (
+        <span className="text-muted-foreground flex items-center gap-1 text-sm">
+          <Volume2Icon aria-hidden="true" className="size-3.5" />
+          {word.pronunciation}
+        </span>
+      )}
+    </>
   );
 }
 
@@ -139,21 +110,26 @@ export function VocabularyStep({
       </div>
 
       <div aria-label={t("Answer options")} className="flex flex-col gap-3" role="radiogroup">
-        {options.map((word, index) => (
-          <OptionCard
-            disabled={Boolean(result)}
-            index={index}
-            isSelected={selectedWordId === word.id}
-            key={word.id}
-            onSelect={() => handleSelect(index)}
-            resultState={
-              result && selectedWordId
-                ? getOptionResultState(word.id, correctWord.id, selectedWordId)
-                : undefined
-            }
-            word={word}
-          />
-        ))}
+        {options.map((word, index) => {
+          const isSelected = selectedWordId === word.id;
+
+          return (
+            <OptionCard
+              disabled={Boolean(result)}
+              index={index}
+              isSelected={isSelected}
+              key={word.id}
+              onSelect={() => handleSelect(index)}
+              resultState={
+                result && selectedWordId
+                  ? getOptionResultState(word.id, correctWord.id, selectedWordId)
+                  : undefined
+              }
+            >
+              <VocabularyOptionContent isSelected={isSelected} word={word} />
+            </OptionCard>
+          );
+        })}
       </div>
 
       {result && <ResultAnnouncement isCorrect={result.result.isCorrect} />}

@@ -1414,6 +1414,7 @@ msgid "Stats"
 msgstr "Estatísticas"
 
 #: src/components/activity-player/feedback-screen.tsx
+#: src/components/activity-player/multiple-choice-step.tsx
 msgctxt "++l7ni"
 msgid "Not quite"
 msgstr "Não exatamente"
@@ -1424,6 +1425,7 @@ msgid "Outcome"
 msgstr "Resultado"
 
 #: src/components/activity-player/feedback-screen.tsx
+#: src/components/activity-player/multiple-choice-step.tsx
 msgctxt "xmF49T"
 msgid "Correct!"
 msgstr "Correto!"

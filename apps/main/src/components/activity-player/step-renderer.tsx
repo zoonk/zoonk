@@ -55,6 +55,7 @@ export function StepRenderer({
     return (
       <MultipleChoiceStep
         onSelectAnswer={onSelectAnswer}
+        result={result}
         selectedAnswer={selectedAnswer}
         step={step}
       />
