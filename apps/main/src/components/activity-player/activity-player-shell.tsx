@@ -2,8 +2,9 @@
 
 import { type SerializedActivity } from "@/data/activities/prepare-activity-data";
 import { useRouter } from "@/i18n/navigation";
+import { useAuthState } from "@zoonk/core/auth/hooks/auth-state";
 import { useExtracted } from "next-intl";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { checkStep } from "./check-step";
 import { hasNegativeDimension } from "./dimension-inventory";
 import { InPlayStickyHeader } from "./in-play-sticky-header";
@@ -12,6 +13,7 @@ import { PlayerCloseLink, PlayerHeader } from "./player-header";
 import { type PlayerState, type SelectedAnswer } from "./player-reducer";
 import { PlayerStage } from "./player-stage";
 import { StageContent } from "./stage-content";
+import { type CompletionResult, submitCompletion } from "./submit-completion-action";
 import { usePlayerKeyboard } from "./use-player-keyboard";
 import { usePlayerState } from "./use-player-state";
 import { UserNameProvider } from "./user-name-context";
@@ -41,6 +43,39 @@ function deriveViewState(state: PlayerState) {
   };
 }
 
+function willComplete(state: PlayerState): boolean {
+  if (state.phase === "feedback") {
+    return state.currentStepIndex + 1 >= state.steps.length;
+  }
+
+  if (state.phase === "playing") {
+    const currentStep = state.steps[state.currentStepIndex];
+
+    if (currentStep?.kind === "static") {
+      return state.currentStepIndex + 1 >= state.steps.length;
+    }
+
+    // matchColumns auto-advances: check → feedback → continue in one step
+    if (currentStep?.kind === "matchColumns") {
+      return state.currentStepIndex + 1 >= state.steps.length;
+    }
+  }
+
+  return false;
+}
+
+function fireCompletion(state: PlayerState, setResult: (result: CompletionResult) => void) {
+  void submitCompletion({
+    activityId: state.activityId,
+    answers: state.selectedAnswers,
+    dimensions: state.dimensions,
+    startedAt: state.startedAt,
+    stepTimings: state.stepTimings,
+  }).then((result) => {
+    setResult(result);
+  });
+}
+
 export function ActivityPlayerShell({
   activity,
   lessonHref,
@@ -54,6 +89,8 @@ export function ActivityPlayerShell({
   const router = useRouter();
   const { dispatch, state } = usePlayerState(activity);
   const view = deriveViewState(state);
+  const authState = useAuthState();
+  const [completionResult, setCompletionResult] = useState<CompletionResult | null>(null);
 
   const handleEscape = useCallback(() => {
     router.push(lessonHref);
@@ -82,22 +119,42 @@ export function ActivityPlayerShell({
     }
 
     const { effects, result } = checkStep(view.currentStep, answer);
+
+    // matchColumns auto-completes: CHECK_ANSWER → handleContinue internally
+    const matchColumnsWillComplete =
+      view.currentStep.kind === "matchColumns" && willComplete(state);
+
     dispatch({ effects, result, stepId: view.currentStep.id, type: "CHECK_ANSWER" });
-  }, [view.currentStep, state.selectedAnswers, dispatch]);
+
+    if (matchColumnsWillComplete && authState === "authenticated") {
+      fireCompletion(state, setCompletionResult);
+    }
+  }, [view.currentStep, state, dispatch, authState]);
 
   const handleContinue = useCallback(() => {
+    const completing = willComplete(state);
     dispatch({ type: "CONTINUE" });
-  }, [dispatch]);
+
+    if (completing && authState === "authenticated") {
+      fireCompletion(state, setCompletionResult);
+    }
+  }, [state, dispatch, authState]);
 
   const handleNavigateNext = useCallback(() => {
+    const completing = willComplete(state);
     dispatch({ direction: "next", type: "NAVIGATE_STEP" });
-  }, [dispatch]);
+
+    if (completing && authState === "authenticated") {
+      fireCompletion(state, setCompletionResult);
+    }
+  }, [state, dispatch, authState]);
 
   const handleNavigatePrev = useCallback(() => {
     dispatch({ direction: "prev", type: "NAVIGATE_STEP" });
   }, [dispatch]);
 
   const handleRestart = useCallback(() => {
+    setCompletionResult(null);
     dispatch({ type: "RESTART" });
   }, [dispatch]);
 
@@ -157,6 +214,7 @@ export function ActivityPlayerShell({
         <PlayerStage isStatic={view.isStaticStep && state.phase === "playing"} phase={state.phase}>
           <StageContent
             activityId={state.activityId}
+            completionResult={completionResult}
             currentResult={view.currentResult}
             currentStep={view.currentStep}
             currentStepIndex={state.currentStepIndex}

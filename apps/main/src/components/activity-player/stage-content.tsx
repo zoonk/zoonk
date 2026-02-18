@@ -9,8 +9,10 @@ import {
   type StepResult,
 } from "./player-reducer";
 import { StepRenderer } from "./step-renderer";
+import { type CompletionResult } from "./submit-completion-action";
 
 export function StageContent({
+  completionResult,
   currentResult,
   currentStep,
   currentStepIndex,
@@ -29,6 +31,7 @@ export function StageContent({
   phase,
   selectedAnswer,
 }: {
+  completionResult: CompletionResult | null;
   currentResult: StepResult | undefined;
   currentStep: SerializedStep | undefined;
   currentStepIndex: number;
@@ -55,6 +58,7 @@ export function StageContent({
     return (
       <CompletionScreenContent
         activityId={activityId}
+        completionResult={completionResult}
         dimensions={dimensions}
         lessonHref={lessonHref}
         nextActivityHref={nextActivityHref}

@@ -26,14 +26,24 @@ export type StepResult = {
 
 export type DimensionInventory = Record<string, number>;
 
+export type StepTiming = {
+  answeredAt: number;
+  dayOfWeek: number;
+  durationSeconds: number;
+  hourOfDay: number;
+};
+
 export type PlayerState = {
   activityId: string;
-  steps: SerializedStep[];
   currentStepIndex: number;
-  phase: PlayerPhase;
-  selectedAnswers: Record<string, SelectedAnswer>;
-  results: Record<string, StepResult>;
   dimensions: DimensionInventory;
+  phase: PlayerPhase;
+  results: Record<string, StepResult>;
+  selectedAnswers: Record<string, SelectedAnswer>;
+  startedAt: number;
+  stepStartedAt: number;
+  steps: SerializedStep[];
+  stepTimings: Record<string, StepTiming>;
 };
 
 export type PlayerAction =
@@ -102,6 +112,7 @@ function collectAllDimensions(steps: SerializedStep[]): DimensionInventory {
 export function createInitialState(activity: SerializedActivity): PlayerState {
   const dimensions = collectAllDimensions(activity.steps);
   const isChallenge = Object.keys(dimensions).length > 0;
+  const now = Date.now();
 
   return {
     activityId: activity.id,
@@ -110,6 +121,9 @@ export function createInitialState(activity: SerializedActivity): PlayerState {
     phase: isChallenge ? "intro" : "playing",
     results: {},
     selectedAnswers: {},
+    startedAt: now,
+    stepStartedAt: now,
+    stepTimings: {},
     steps: activity.steps,
   };
 }
@@ -130,6 +144,21 @@ function handleClearAnswer(
 ): PlayerState {
   const { [action.stepId]: _, ...rest } = state.selectedAnswers;
   return { ...state, selectedAnswers: rest };
+}
+
+function recordStepTiming(state: PlayerState, stepId: string): Record<string, StepTiming> {
+  const now = Date.now();
+  const answeredDate = new Date(now);
+
+  return {
+    ...state.stepTimings,
+    [stepId]: {
+      answeredAt: now,
+      dayOfWeek: answeredDate.getDay(),
+      durationSeconds: Math.max(0, Math.round((now - state.stepStartedAt) / 1000)),
+      hourOfDay: answeredDate.getHours(),
+    },
+  };
 }
 
 function handleCheckAnswer(
@@ -154,6 +183,7 @@ function handleCheckAnswer(
     dimensions: applyEffects(state.dimensions, action.effects),
     phase: "feedback",
     results: { ...state.results, [action.stepId]: stepResult },
+    stepTimings: recordStepTiming(state, action.stepId),
   };
 
   // matchColumns validates each pair during interaction, so feedback is redundant.
@@ -176,6 +206,7 @@ function handleContinue(state: PlayerState): PlayerState {
     ...state,
     currentStepIndex: isLast ? state.currentStepIndex : nextIndex,
     phase: isLast ? "completed" : "playing",
+    stepStartedAt: isLast ? state.stepStartedAt : Date.now(),
   };
 }
 
@@ -200,7 +231,7 @@ function handleNavigateStep(
       return state;
     }
 
-    return { ...state, currentStepIndex: prevIndex };
+    return { ...state, currentStepIndex: prevIndex, stepStartedAt: Date.now() };
   }
 
   const nextIndex = state.currentStepIndex + 1;
@@ -209,10 +240,12 @@ function handleNavigateStep(
     return { ...state, phase: "completed" };
   }
 
-  return { ...state, currentStepIndex: nextIndex };
+  return { ...state, currentStepIndex: nextIndex, stepStartedAt: Date.now() };
 }
 
 function handleRestart(state: PlayerState): PlayerState {
+  const now = Date.now();
+
   return {
     ...state,
     currentStepIndex: 0,
@@ -220,6 +253,9 @@ function handleRestart(state: PlayerState): PlayerState {
     phase: "playing",
     results: {},
     selectedAnswers: {},
+    startedAt: now,
+    stepStartedAt: now,
+    stepTimings: {},
   };
 }
 

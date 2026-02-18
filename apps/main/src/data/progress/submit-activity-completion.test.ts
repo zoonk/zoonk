@@ -1,0 +1,276 @@
+import { prisma } from "@zoonk/db";
+import { activityFixture } from "@zoonk/testing/fixtures/activities";
+import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
+import { courseFixture } from "@zoonk/testing/fixtures/courses";
+import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
+import { userProgressFixture } from "@zoonk/testing/fixtures/progress";
+import { stepFixture } from "@zoonk/testing/fixtures/steps";
+import { userFixture } from "@zoonk/testing/fixtures/users";
+import { describe, expect, test } from "vitest";
+import { submitActivityCompletion } from "./submit-activity-completion";
+
+async function createTestSetup() {
+  const org = await prisma.organization.findUniqueOrThrow({ where: { slug: "ai" } });
+  const user = await userFixture();
+  const userId = Number(user.id);
+
+  const course = await courseFixture({ organizationId: org.id });
+  const chapter = await chapterFixture({ courseId: course.id, organizationId: org.id });
+  const lesson = await lessonFixture({ chapterId: chapter.id, organizationId: org.id });
+
+  const activity = await activityFixture({
+    kind: "quiz",
+    lessonId: lesson.id,
+    organizationId: org.id,
+  });
+
+  const step = await stepFixture({
+    activityId: activity.id,
+    content: {
+      kind: "core",
+      options: [
+        { feedback: "Correct!", isCorrect: true, text: "A" },
+        { feedback: "Wrong.", isCorrect: false, text: "B" },
+      ],
+    },
+    kind: "multipleChoice",
+  });
+
+  return { activity, org, step, userId };
+}
+
+function buildStepResult(stepId: bigint, isCorrect: boolean) {
+  return {
+    answer: { kind: "multipleChoice", selectedIndex: 0 },
+    answeredAt: new Date(),
+    dayOfWeek: 1,
+    durationSeconds: 5,
+    effects: [],
+    hourOfDay: 14,
+    isCorrect,
+    stepId,
+  };
+}
+
+describe(submitActivityCompletion, () => {
+  test("creates StepAttempt records with correct fields", async () => {
+    const { activity, org, step, userId } = await createTestSetup();
+
+    await submitActivityCompletion({
+      activityId: activity.id,
+      durationSeconds: 10,
+      isChallenge: false,
+      organizationId: org.id,
+      score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
+      startedAt: new Date(Date.now() - 10_000),
+      stepResults: [buildStepResult(step.id, true)],
+      userId,
+    });
+
+    const attempts = await prisma.stepAttempt.findMany({
+      where: { stepId: step.id, userId },
+    });
+
+    expect(attempts).toHaveLength(1);
+    expect(attempts[0]?.isCorrect).toBeTruthy();
+    expect(attempts[0]?.durationSeconds).toBe(5);
+    expect(attempts[0]?.hourOfDay).toBe(14);
+    expect(attempts[0]?.dayOfWeek).toBe(1);
+  });
+
+  test("creates ActivityProgress with completedAt and durationSeconds", async () => {
+    const { activity, org, step, userId } = await createTestSetup();
+
+    await submitActivityCompletion({
+      activityId: activity.id,
+      durationSeconds: 15,
+      isChallenge: false,
+      organizationId: org.id,
+      score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
+      startedAt: new Date(Date.now() - 15_000),
+      stepResults: [buildStepResult(step.id, true)],
+      userId,
+    });
+
+    const progress = await prisma.activityProgress.findUnique({
+      where: { userActivity: { activityId: activity.id, userId } },
+    });
+
+    expect(progress).not.toBeNull();
+    expect(progress?.completedAt).not.toBeNull();
+    expect(progress?.durationSeconds).toBe(15);
+  });
+
+  test("creates UserProgress with correct BP increment and energy delta", async () => {
+    const { activity, org, step, userId } = await createTestSetup();
+
+    await submitActivityCompletion({
+      activityId: activity.id,
+      durationSeconds: 10,
+      isChallenge: false,
+      organizationId: org.id,
+      score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
+      startedAt: new Date(Date.now() - 10_000),
+      stepResults: [buildStepResult(step.id, true)],
+      userId,
+    });
+
+    const userProgress = await prisma.userProgress.findUnique({ where: { userId } });
+
+    expect(userProgress).not.toBeNull();
+    expect(Number(userProgress?.totalBrainPower)).toBe(10);
+    expect(userProgress?.currentEnergy).toBeCloseTo(0.2);
+  });
+
+  test("creates DailyProgress with correct counters", async () => {
+    const { activity, org, step, userId } = await createTestSetup();
+
+    await submitActivityCompletion({
+      activityId: activity.id,
+      durationSeconds: 10,
+      isChallenge: false,
+      organizationId: org.id,
+      score: { brainPower: 10, correctCount: 3, energyDelta: 0.4, incorrectCount: 2 },
+      startedAt: new Date(Date.now() - 10_000),
+      stepResults: [buildStepResult(step.id, true)],
+      userId,
+    });
+
+    const daily = await prisma.dailyProgress.findFirst({
+      where: { organizationId: org.id, userId },
+    });
+
+    expect(daily).not.toBeNull();
+    expect(daily?.correctAnswers).toBe(3);
+    expect(daily?.incorrectAnswers).toBe(2);
+    expect(daily?.brainPowerEarned).toBe(10);
+    expect(daily?.interactiveCompleted).toBe(1);
+    expect(daily?.challengesCompleted).toBe(0);
+  });
+
+  test("energy clamps at 100", async () => {
+    const { activity, org, step, userId } = await createTestSetup();
+    await userProgressFixture({ currentEnergy: 99.5, userId });
+
+    const result = await submitActivityCompletion({
+      activityId: activity.id,
+      durationSeconds: 10,
+      isChallenge: false,
+      organizationId: org.id,
+      score: { brainPower: 10, correctCount: 5, energyDelta: 1, incorrectCount: 0 },
+      startedAt: new Date(Date.now() - 10_000),
+      stepResults: [buildStepResult(step.id, true)],
+      userId,
+    });
+
+    const userProgress = await prisma.userProgress.findUnique({ where: { userId } });
+    expect(userProgress?.currentEnergy).toBe(100);
+    expect(result.energyDelta).toBe(1);
+  });
+
+  test("energy clamps at 0", async () => {
+    const { activity, org, step, userId } = await createTestSetup();
+    await userProgressFixture({ currentEnergy: 0.05, userId });
+
+    await submitActivityCompletion({
+      activityId: activity.id,
+      durationSeconds: 10,
+      isChallenge: false,
+      organizationId: org.id,
+      score: { brainPower: 10, correctCount: 0, energyDelta: -0.5, incorrectCount: 5 },
+      startedAt: new Date(Date.now() - 10_000),
+      stepResults: [buildStepResult(step.id, false)],
+      userId,
+    });
+
+    const userProgress = await prisma.userProgress.findUnique({ where: { userId } });
+    expect(userProgress?.currentEnergy).toBe(0);
+  });
+
+  test("challenge success: 100 BP", async () => {
+    const { activity, org, step, userId } = await createTestSetup();
+
+    const result = await submitActivityCompletion({
+      activityId: activity.id,
+      durationSeconds: 10,
+      isChallenge: true,
+      organizationId: org.id,
+      score: { brainPower: 100, correctCount: 0, energyDelta: 3, incorrectCount: 0 },
+      startedAt: new Date(Date.now() - 10_000),
+      stepResults: [buildStepResult(step.id, true)],
+      userId,
+    });
+
+    expect(result.brainPower).toBe(100);
+
+    const daily = await prisma.dailyProgress.findFirst({
+      where: { organizationId: org.id, userId },
+    });
+
+    expect(daily?.challengesCompleted).toBe(1);
+    expect(daily?.interactiveCompleted).toBe(0);
+  });
+
+  test("challenge failure: 10 BP, energy +0.1", async () => {
+    const { activity, org, step, userId } = await createTestSetup();
+
+    const result = await submitActivityCompletion({
+      activityId: activity.id,
+      durationSeconds: 10,
+      isChallenge: true,
+      organizationId: org.id,
+      score: { brainPower: 10, correctCount: 0, energyDelta: 0.1, incorrectCount: 0 },
+      startedAt: new Date(Date.now() - 10_000),
+      stepResults: [buildStepResult(step.id, true)],
+      userId,
+    });
+
+    expect(result.brainPower).toBe(10);
+    expect(result.energyDelta).toBe(0.1);
+  });
+
+  test("re-completion: new StepAttempts, updated BP", async () => {
+    const { activity, org, step, userId } = await createTestSetup();
+
+    const baseInput = {
+      activityId: activity.id,
+      durationSeconds: 10,
+      isChallenge: false,
+      organizationId: org.id,
+      score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
+      startedAt: new Date(Date.now() - 10_000),
+      stepResults: [buildStepResult(step.id, true)],
+      userId,
+    };
+
+    await submitActivityCompletion(baseInput);
+    await submitActivityCompletion(baseInput);
+
+    const attempts = await prisma.stepAttempt.findMany({
+      where: { stepId: step.id, userId },
+    });
+    expect(attempts).toHaveLength(2);
+
+    const userProgress = await prisma.userProgress.findUnique({ where: { userId } });
+    expect(Number(userProgress?.totalBrainPower)).toBe(20);
+  });
+
+  test("returns correct belt level based on new total BP", async () => {
+    const { activity, org, step, userId } = await createTestSetup();
+
+    const result = await submitActivityCompletion({
+      activityId: activity.id,
+      durationSeconds: 10,
+      isChallenge: false,
+      organizationId: org.id,
+      score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
+      startedAt: new Date(Date.now() - 10_000),
+      stepResults: [buildStepResult(step.id, true)],
+      userId,
+    });
+
+    expect(result.belt.color).toBe("white");
+    expect(result.belt.level).toBe(1);
+    expect(result.newTotalBp).toBe(10);
+  });
+});

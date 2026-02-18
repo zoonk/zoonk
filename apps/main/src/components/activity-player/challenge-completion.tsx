@@ -9,6 +9,8 @@ import { CircleCheck } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { DimensionList, buildDimensionEntries } from "./dimension-inventory";
 import { type DimensionInventory } from "./player-reducer";
+import { RewardBadges, RewardBadgesSkeleton } from "./reward-badges";
+import { type CompletionResult } from "./submit-completion-action";
 
 function ChallengeScreen({ className, ...props }: React.ComponentProps<"div">) {
   return (
@@ -35,13 +37,35 @@ function ChallengeActions({ className, ...props }: React.ComponentProps<"div">) 
   );
 }
 
+function ChallengeRewardBadges({
+  completionResult,
+  isSuccess,
+}: {
+  completionResult: CompletionResult | null;
+  isSuccess: boolean;
+}) {
+  if (!completionResult || completionResult.status !== "success") {
+    return <RewardBadgesSkeleton />;
+  }
+
+  return (
+    <RewardBadges
+      brainPower={completionResult.brainPower}
+      energyDelta={completionResult.energyDelta}
+      isChallenge={isSuccess}
+    />
+  );
+}
+
 export function ChallengeSuccessContent({
   activityId,
   children,
+  completionResult,
   dimensions,
 }: {
   activityId: string;
   children: React.ReactNode;
+  completionResult: CompletionResult | null;
   dimensions: DimensionInventory;
 }) {
   const t = useExtracted();
@@ -56,6 +80,8 @@ export function ChallengeSuccessContent({
 
       <DimensionList aria-label={t("Final dimension scores")} entries={entries} variant="success" />
 
+      <ChallengeRewardBadges completionResult={completionResult} isSuccess />
+
       {children}
 
       <ContentFeedback className="pt-8" contentId={activityId} kind="activity" variant="minimal" />
@@ -65,11 +91,13 @@ export function ChallengeSuccessContent({
 
 export function ChallengeFailureContent({
   activityId,
+  completionResult,
   dimensions,
   lessonHref,
   onRestart,
 }: {
   activityId: string;
+  completionResult: CompletionResult | null;
   dimensions: DimensionInventory;
   lessonHref: string;
   onRestart: () => void;
@@ -85,6 +113,8 @@ export function ChallengeFailureContent({
       </div>
 
       <DimensionList aria-label={t("Final dimension scores")} entries={entries} variant="failure" />
+
+      <ChallengeRewardBadges completionResult={completionResult} isSuccess={false} />
 
       <ChallengeActions>
         <Button className="w-full lg:justify-between" onClick={onRestart} size="lg">

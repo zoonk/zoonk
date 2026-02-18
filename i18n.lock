@@ -473,6 +473,18 @@ checksums:
     Step%20navigation/singular: ec328f28051577e1c0aab044c89b138c
     Close/singular: 2c2e22f8424a1031de89063bd0022e16
     Activity%20progress/singular: 8ff2fb7372b8a2525f2955c851c4fa42
+    Green/singular: 482ff383a4258357ba404f283682471d
+    Yellow/singular: 15d533755d35af887dfa584975549fda
+    Red/singular: bace0083b78cdb188523bc4abc7b55c6
+    Brown/singular: 82d5fc088538ffd2a24581d1ca1836ef
+    Belt/singular: fa36e8e36732c223d2876c0337d372e9
+    BP%20to%20next%20level/singular: e77c5d6498ff38284c1f6b0721b8b33d
+    Blue/singular: a5cf034b2d370a976119335cd99f4217
+    Orange/singular: 836094fa3fcf7488957f6d7cba7c1f60
+    White/singular: 5d3dd2b57ed2fc668362b9b9efd8fb41
+    Purple/singular: 547ba93b6f68317e2dfbafb16cabc30f
+    Black/singular: 0a78282fb00e09a335608b154ffa01de
+    Gray/singular: 54ec745c22b59509822468ba82070d74
     Image%20options/singular: 64a1aee44b26dbaff851cb846eb4274d
     Tap%20items%20in%20the%20correct%20order/singular: 221c7b9ef00241af65f534432965e782
     "%7Bitem%7D.%20Tap%20to%20select%20as%20position%20%7BnextPosition%7D./singular": f8b0d3e60ce3740c02c33c0faaec5e6b
@@ -545,16 +557,6 @@ checksums:
     Improve%20your%20%7Btopic%7D%20reading%20comprehension%20by%20translating%20sentences%20and%20passages./singular: 60baac4222f76009cc1eb1b6065b403b
     Shows%20WHEN%20to%20apply%20this%20topic.%20A%20dialogue%20with%20a%20colleague%20where%20you%20solve%20a%20real%20problem%20together./singular: 3fb0934c1e0a5ba3e31b6cc5b897b509
     Tests%20your%20understanding%20with%20questions.%20Uses%20new%20scenarios%20to%20check%20if%20you%20grasped%20the%20concept%2C%20not%20just%20memorized%20it./singular: feeb1e59f787035a964dd93290e180e7
-    Green/singular: 482ff383a4258357ba404f283682471d
-    Yellow/singular: 15d533755d35af887dfa584975549fda
-    Red/singular: bace0083b78cdb188523bc4abc7b55c6
-    Brown/singular: 82d5fc088538ffd2a24581d1ca1836ef
-    Blue/singular: a5cf034b2d370a976119335cd99f4217
-    Orange/singular: 836094fa3fcf7488957f6d7cba7c1f60
-    White/singular: 5d3dd2b57ed2fc668362b9b9efd8fb41
-    Purple/singular: 547ba93b6f68317e2dfbafb16cabc30f
-    Black/singular: 0a78282fb00e09a335608b154ffa01de
-    Gray/singular: 54ec745c22b59509822468ba82070d74
     History/singular: b0578d6d225f512e42f823fbca2e3c32
     Math/singular: 0a604ffa5ef57408918fe98ef05eb05a
     Arts/singular: 9b1845cec1210e57ea990b1a90823228
