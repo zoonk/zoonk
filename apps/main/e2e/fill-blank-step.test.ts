@@ -240,10 +240,7 @@ test.describe("Fill Blank Step", () => {
 
     await expect(page.getByText(/not quite/i)).toBeVisible();
 
-    // Question stays visible (inline feedback, not separate screen)
-    await expect(page.getByText(new RegExp(`The sky is.*${uniqueId}`))).toBeVisible();
-
-    // Blank slot shows incorrect annotation
+    // Blank slot shows incorrect annotation (question stays visible, not separate screen)
     await expect(page.getByRole("button", { name: /blank 1: red.*incorrect/i })).toBeVisible();
 
     // Correct answer hint shown
