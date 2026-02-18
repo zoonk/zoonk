@@ -316,4 +316,81 @@ describe(submitActivityCompletion, () => {
     expect(result.belt.level).toBe(1);
     expect(result.newTotalBp).toBe(10);
   });
+
+  test("null organizationId: creates DailyProgress without org", async () => {
+    const user = await userFixture();
+    const userId = Number(user.id);
+
+    await submitActivityCompletion({
+      activityId: activity.id,
+      durationSeconds: 10,
+      isChallenge: false,
+      organizationId: null,
+      score: { brainPower: 10, correctCount: 2, energyDelta: 0.3, incorrectCount: 1 },
+      startedAt: new Date(Date.now() - 10_000),
+      stepResults: [stepResult(true)],
+      userId,
+    });
+
+    const daily = await prisma.dailyProgress.findFirst({
+      where: { organizationId: null, userId },
+    });
+
+    expect(daily).not.toBeNull();
+    expect(daily?.correctAnswers).toBe(2);
+    expect(daily?.incorrectAnswers).toBe(1);
+    expect(daily?.brainPowerEarned).toBe(10);
+    expect(daily?.interactiveCompleted).toBe(1);
+  });
+
+  test("null organizationId: increments existing DailyProgress on second completion", async () => {
+    const user = await userFixture();
+    const userId = Number(user.id);
+
+    const baseInput = {
+      activityId: activity.id,
+      durationSeconds: 10,
+      isChallenge: false,
+      organizationId: null as number | null,
+      score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
+      startedAt: new Date(Date.now() - 10_000),
+      stepResults: [stepResult(true)],
+      userId,
+    };
+
+    await submitActivityCompletion(baseInput);
+    await submitActivityCompletion(baseInput);
+
+    const dailyRecords = await prisma.dailyProgress.findMany({
+      where: { organizationId: null, userId },
+    });
+
+    expect(dailyRecords).toHaveLength(1);
+    expect(dailyRecords[0]?.brainPowerEarned).toBe(20);
+    expect(dailyRecords[0]?.correctAnswers).toBe(2);
+    expect(dailyRecords[0]?.interactiveCompleted).toBe(2);
+  });
+
+  test("null organizationId: creates StepAttempt without org", async () => {
+    const user = await userFixture();
+    const userId = Number(user.id);
+
+    await submitActivityCompletion({
+      activityId: activity.id,
+      durationSeconds: 10,
+      isChallenge: false,
+      organizationId: null,
+      score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
+      startedAt: new Date(Date.now() - 10_000),
+      stepResults: [stepResult(true)],
+      userId,
+    });
+
+    const attempts = await prisma.stepAttempt.findMany({
+      where: { organizationId: null, stepId: step.id, userId },
+    });
+
+    expect(attempts).toHaveLength(1);
+    expect(attempts[0]?.organizationId).toBeNull();
+  });
 });
