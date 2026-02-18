@@ -59,13 +59,13 @@ describe(computeScore, () => {
     });
   });
 
-  test("empty results: BP=10, energyDelta=0, counts=0", () => {
+  test("empty results (static activity): BP=10, energyDelta=0.1", () => {
     const result = computeScore({ results: [] });
 
     expect(result).toEqual({
       brainPower: 10,
       correctCount: 0,
-      energyDelta: 0,
+      energyDelta: 0.1,
       incorrectCount: 0,
     });
   });

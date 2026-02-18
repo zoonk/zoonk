@@ -3,6 +3,7 @@ export const BRAIN_POWER_PER_CHALLENGE = 100;
 
 const ENERGY_PER_CORRECT = 0.2;
 const ENERGY_PER_INCORRECT = -0.1;
+const ENERGY_PER_STATIC = 0.1;
 const CHALLENGE_FAILURE_ENERGY = 0.1;
 
 export type ActivityScoreInput = {
@@ -21,10 +22,20 @@ export type ScoreResult = {
   incorrectCount: number;
 };
 
+function calculateEnergyDelta(results: ActivityScoreInput["results"]): number {
+  if (results.length === 0) {
+    return ENERGY_PER_STATIC;
+  }
+
+  const correctCount = results.filter((result) => result.isCorrect).length;
+  const incorrectCount = results.length - correctCount;
+  return correctCount * ENERGY_PER_CORRECT + incorrectCount * ENERGY_PER_INCORRECT;
+}
+
 export function computeScore(input: ActivityScoreInput): ScoreResult {
   const correctCount = input.results.filter((result) => result.isCorrect).length;
   const incorrectCount = input.results.length - correctCount;
-  const energyDelta = correctCount * ENERGY_PER_CORRECT + incorrectCount * ENERGY_PER_INCORRECT;
+  const energyDelta = calculateEnergyDelta(input.results);
 
   return {
     brainPower: BRAIN_POWER_PER_ACTIVITY,
