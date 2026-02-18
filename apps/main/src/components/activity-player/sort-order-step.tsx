@@ -19,8 +19,34 @@ type OrderItem = {
   text: string;
 };
 
-function getUserPosition(item: string, userOrder: string[]): number {
-  return userOrder.indexOf(item) + 1;
+/**
+ * For each correct position, find the user's position using occurrence-based
+ * matching so duplicate items map correctly (1st "A" → 1st "A", etc.).
+ */
+function buildUserPositions(
+  correctItems: readonly string[],
+  userOrder: readonly string[],
+): number[] {
+  const occurrences = new Map<string, number>();
+
+  return correctItems.map((item) => {
+    const nth = (occurrences.get(item) ?? 0) + 1;
+    occurrences.set(item, nth);
+
+    let count = 0;
+
+    for (let idx = 0; idx < userOrder.length; idx += 1) {
+      if (userOrder[idx] === item) {
+        count += 1;
+
+        if (count === nth) {
+          return idx + 1;
+        }
+      }
+    }
+
+    return 0;
+  });
 }
 
 function getFocusDirection(fromIndex: number, toIndex: number, itemCount: number): "down" | "up" {
@@ -80,6 +106,7 @@ function ReorderRow({
         ) : (
           <Button
             aria-label={t("Move {item} up", { item: item.text })}
+            data-direction="up"
             onClick={() => {
               onMove(index, index - 1);
             }}
@@ -95,6 +122,7 @@ function ReorderRow({
         ) : (
           <Button
             aria-label={t("Move {item} down", { item: item.text })}
+            data-direction="down"
             onClick={() => {
               onMove(index, index + 1);
             }}
@@ -112,14 +140,13 @@ function ReorderRow({
 function FeedbackRow({
   correctIndex,
   item,
-  userOrder,
+  userPosition,
 }: {
   correctIndex: number;
   item: string;
-  userOrder: string[];
+  userPosition: number;
 }) {
   const t = useExtracted();
-  const userPosition = getUserPosition(item, userOrder);
   const isCorrect = userPosition === correctIndex + 1;
   const resultState = isCorrect ? "correct" : "incorrect";
 
@@ -200,15 +227,14 @@ export function SortOrderStep({
     const row = listRef.current.querySelectorAll("[role='listitem']")[itemIndex];
 
     if (row) {
-      const selector = `button[aria-label*="${direction === "up" ? "up" : "down"}"]`;
-      const button = row.querySelector<HTMLButtonElement>(selector);
+      const button = row.querySelector<HTMLButtonElement>(`button[data-direction="${direction}"]`);
 
       if (button) {
         button.focus();
       } else {
         // At boundary — focus opposite arrow
-        const opposite = `button[aria-label*="${direction === "up" ? "down" : "up"}"]`;
-        row.querySelector<HTMLButtonElement>(opposite)?.focus();
+        const opposite = direction === "up" ? "down" : "up";
+        row.querySelector<HTMLButtonElement>(`button[data-direction="${opposite}"]`)?.focus();
       }
     }
 
@@ -252,6 +278,7 @@ export function SortOrderStep({
   const hasResult = result !== undefined;
   const isIncorrect = hasResult && !result.result.isCorrect;
   const userOrder = items.map((item) => item.text);
+  const userPositions = hasResult ? buildUserPositions(content.items, userOrder) : [];
 
   return (
     <InteractiveStepLayout>
@@ -267,7 +294,7 @@ export function SortOrderStep({
               item={item}
               // oxlint-disable-next-line react/no-array-index-key -- Items can repeat, no unique ID
               key={`feedback-${index}`}
-              userOrder={userOrder}
+              userPosition={userPositions[index] ?? 0}
             />
           ))}
         </div>
