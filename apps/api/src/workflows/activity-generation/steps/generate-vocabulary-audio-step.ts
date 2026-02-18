@@ -9,7 +9,7 @@ import { handleActivityFailureStep } from "./handle-failure-step";
 async function generateAudioForWord(
   word: string,
   language: string,
-  orgSlug: string,
+  orgSlug?: string,
 ): Promise<{ audioUrl: string; word: string } | null> {
   const { data, error } = await generateLanguageAudio({
     language,
@@ -46,7 +46,7 @@ export async function generateVocabularyAudioStep(
     return { audioUrls: {} };
   }
 
-  const orgSlug = course.organization.slug;
+  const orgSlug = course.organization?.slug;
 
   const results = await Promise.all(
     words.map((vocabWord) => generateAudioForWord(vocabWord.word, targetLanguage, orgSlug)),

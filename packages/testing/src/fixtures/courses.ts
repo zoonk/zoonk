@@ -16,17 +16,20 @@ export function courseAttrs(attrs?: Partial<Course>): Omit<
   const { description, ...rest } = attrs ?? {};
 
   return {
+    completedAt: null,
     description: description ?? "Test course description",
     generationRunId: null,
     generationStatus: "completed",
     imageUrl: null,
     isPublished: false,
     language: "en",
+    mode: "full" as const,
     normalizedTitle: "test course",
     organizationId: 0,
     slug: `test-course-${randomUUID()}`,
     targetLanguage: null,
     title: "Test Course",
+    userId: null,
     ...rest,
   };
 }

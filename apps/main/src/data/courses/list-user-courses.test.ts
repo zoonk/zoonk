@@ -76,8 +76,8 @@ describe("authenticated users", () => {
 
     const returnedCourse = result.data?.find((item) => item.id === course.id);
     expect(returnedCourse?.organization).toBeDefined();
-    expect(returnedCourse?.organization.id).toBe(organization.id);
-    expect(returnedCourse?.organization.slug).toBe(organization.slug);
+    expect(returnedCourse?.organization?.id).toBe(organization.id);
+    expect(returnedCourse?.organization?.slug).toBe(organization.slug);
   });
 
   test("orders courses by startedAt descending (most recent first)", async () => {

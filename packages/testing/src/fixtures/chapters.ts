@@ -13,6 +13,7 @@ export function chapterAttrs(
     description: "Test chapter description",
     generationRunId: null,
     generationStatus: "completed",
+    isLocked: false,
     isPublished: false,
     language: "en",
     normalizedTitle,

@@ -12,7 +12,7 @@ export type CourseWithDetails = {
     name: string;
     slug: string;
     logo: string | null;
-  };
+  } | null;
   categories: { category: string }[];
 };
 

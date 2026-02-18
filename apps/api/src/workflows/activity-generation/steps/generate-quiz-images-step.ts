@@ -49,7 +49,7 @@ function toQuizQuestion(step: { content: unknown; kind: string }): QuizQuestionW
 
 async function generateOptionImages(
   options: SelectImageOption[],
-  orgSlug: string,
+  orgSlug?: string,
 ): Promise<{ hadFailure: boolean; updatedOptions: SelectImageOption[] }> {
   const results = await Promise.allSettled(
     options.map(({ prompt }) => generateStepImage({ orgSlug, prompt })),
@@ -97,7 +97,7 @@ export async function generateQuizImagesStep(
 
   await streamStatus({ status: "started", step: "generateQuizImages" });
 
-  const orgSlug = activity.lesson.chapter.course.organization.slug;
+  const orgSlug = activity.lesson.chapter.course.organization?.slug;
 
   const stepResults = await Promise.allSettled(
     dbSteps.map(async (step) => {

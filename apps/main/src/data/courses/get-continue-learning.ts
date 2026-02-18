@@ -33,7 +33,7 @@ export type ContinueLearningLesson = Pick<Lesson, "id" | "slug" | "title" | "des
 export type ContinueLearningChapter = Pick<Chapter, "id" | "slug">;
 
 export type ContinueLearningCourse = Pick<Course, "id" | "slug" | "title" | "imageUrl"> & {
-  organization: Pick<Organization, "slug">;
+  organization: Pick<Organization, "slug"> | null;
 };
 
 export type ContinueLearningItem = {
@@ -47,6 +47,9 @@ function toItem(
   row: GetContinueLearningQuery.Result,
   next: NextActivityInCourse,
 ): ContinueLearningItem {
+  // orgSlug is typed as string by Prisma's generated SQL, but LEFT JOIN can return null at runtime
+  const orgSlug = row.orgSlug as string | null;
+
   return {
     activity: {
       id: next.activityId,
@@ -61,7 +64,7 @@ function toItem(
     course: {
       id: row.courseId,
       imageUrl: row.courseImageUrl,
-      organization: { slug: row.orgSlug },
+      organization: orgSlug ? { slug: orgSlug } : null,
       slug: row.courseSlug,
       title: row.courseTitle,
     },

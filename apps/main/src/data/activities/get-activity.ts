@@ -8,7 +8,7 @@ export type ActivityWithSteps = {
   title: string | null;
   description: string | null;
   language: string;
-  organizationId: number;
+  organizationId: number | null;
   position: number;
   generationStatus: GenerationStatus;
   generationRunId: string | null;

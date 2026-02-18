@@ -57,7 +57,7 @@ export type SerializedActivity = {
   title: string | null;
   description: string | null;
   language: string;
-  organizationId: number;
+  organizationId: number | null;
   steps: SerializedStep[];
   lessonWords: SerializedWord[];
   lessonSentences: SerializedSentence[];

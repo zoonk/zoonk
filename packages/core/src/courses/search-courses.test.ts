@@ -331,4 +331,36 @@ describe(searchCourses, () => {
     // With offset clamped to 100 and only 1 result, we get empty array
     expect(result).toEqual([]);
   });
+
+  test("excludes courses without an organization", async () => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const searchTerm = `noorg${uniqueId}`;
+
+    const [withOrg] = await Promise.all([
+      courseFixture({
+        isPublished: true,
+        language: "en",
+        normalizedTitle: searchTerm,
+        organizationId: brandOrg.id,
+        title: searchTerm,
+      }),
+      courseFixture({
+        isPublished: true,
+        language: "en",
+        normalizedTitle: `${searchTerm} personal`,
+        organizationId: null,
+        title: `${searchTerm} Personal`,
+      }),
+    ]);
+
+    const result = await searchCourses({
+      language: "en",
+      query: searchTerm,
+    });
+
+    const ids = result.map((course) => course.id);
+
+    expect(ids).toContain(withOrg.id);
+    expect(result.every((course) => course.organization !== null)).toBeTruthy();
+  });
 });

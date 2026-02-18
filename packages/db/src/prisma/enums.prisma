@@ -53,3 +53,10 @@ enum StepVisualKind {
   audio
   video
 }
+
+enum CourseMode {
+  full
+  quickLesson  @map("quick_lesson")
+  personalized
+  examPrep     @map("exam_prep")
+}

@@ -9,7 +9,7 @@ import { type SavedSentence } from "./save-reading-sentences-step";
 async function generateAudioForSentence(
   sentence: string,
   language: string,
-  orgSlug: string,
+  orgSlug?: string,
 ): Promise<{ audioUrl: string; sentence: string } | null> {
   const { data, error } = await generateLanguageAudio({
     language,
@@ -48,7 +48,7 @@ export async function generateReadingAudioStep(
 
   const results = await Promise.all(
     savedSentences.map((savedSentence) =>
-      generateAudioForSentence(savedSentence.sentence, targetLanguage, course.organization.slug),
+      generateAudioForSentence(savedSentence.sentence, targetLanguage, course.organization?.slug),
     ),
   );
 

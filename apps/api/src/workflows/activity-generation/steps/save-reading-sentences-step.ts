@@ -84,6 +84,11 @@ export async function saveReadingSentencesStep(
   await streamStatus({ status: "started", step: "saveSentences" });
 
   const course = activity.lesson.chapter.course;
+
+  if (!course.organization) {
+    return { savedSentences: [] };
+  }
+
   const targetLanguage = course.targetLanguage ?? "";
   const userLanguage = activity.language;
   const organizationId = course.organization.id;

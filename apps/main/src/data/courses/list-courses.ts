@@ -7,7 +7,7 @@ import { cache } from "react";
 export const LIST_COURSES_LIMIT = 20;
 
 export type CourseWithOrg = Course & {
-  organization: { slug: string };
+  organization: { slug: string } | null;
 };
 
 const cachedListCourses = cache(

@@ -14,7 +14,7 @@ export type LastCompletedActivity = {
   lessonId: number;
   lessonPosition: number;
   lessonSlug: string;
-  orgSlug: string;
+  orgSlug: string | null;
 };
 
 function scopeFilter(scope: ActivityScope) {
@@ -109,6 +109,6 @@ export async function findLastCompleted(
     lessonId: lesson.id,
     lessonPosition: lesson.position,
     lessonSlug: lesson.slug,
-    orgSlug: chapter.course.organization.slug,
+    orgSlug: chapter.course.organization?.slug ?? null,
   };
 }

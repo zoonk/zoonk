@@ -13,7 +13,7 @@ type ImageStep = { id: bigint | number; visualContent: unknown; visualKind: stri
 
 async function generateAndSaveImages(
   imageSteps: ImageStep[],
-  orgSlug: string,
+  orgSlug?: string,
 ): Promise<{
   hadFailure: boolean;
   results: PromiseSettledResult<{ data: string | null; error: Error | null }>[];
@@ -110,7 +110,7 @@ export async function generateImagesStep(
 
   const { hadFailure, results } = await generateAndSaveImages(
     imageSteps,
-    activity.lesson.chapter.course.organization.slug,
+    activity.lesson.chapter.course.organization?.slug,
   );
 
   if (hadFailure) {

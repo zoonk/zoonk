@@ -49,7 +49,7 @@ export async function createLesson(params: {
 
   const kind = getLessonKind({
     courseCategories: chapter.course.categories.map((cat) => cat.category),
-    orgSlug: chapter.organization.slug,
+    orgSlug: chapter.organization?.slug,
   });
 
   const { data: lesson, error } = await safeAsync(() =>
