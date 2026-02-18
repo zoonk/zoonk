@@ -6,6 +6,21 @@ import { type BeltLevelResult, calculateBeltLevel } from "@zoonk/utils/belt-leve
 const MAX_ENERGY = 100;
 const MIN_ENERGY = 0;
 
+function getCompletionField(input: {
+  isChallenge: boolean;
+  stepResults: unknown[];
+}): "challengesCompleted" | "interactiveCompleted" | "staticCompleted" {
+  if (input.isChallenge) {
+    return "challengesCompleted";
+  }
+
+  if (input.stepResults.length === 0) {
+    return "staticCompleted";
+  }
+
+  return "interactiveCompleted";
+}
+
 function clampEnergy(value: number): number {
   return Math.min(MAX_ENERGY, Math.max(MIN_ENERGY, value));
 }
@@ -108,21 +123,20 @@ export async function submitActivityCompletion(input: {
     }
 
     // 4. DailyProgress upsert
-    const completionField = input.isChallenge
-      ? { challengesCompleted: { increment: 1 } }
-      : { interactiveCompleted: { increment: 1 } };
+    const field = getCompletionField(input);
 
     await tx.dailyProgress.upsert({
       create: {
         brainPowerEarned: input.score.brainPower,
-        challengesCompleted: input.isChallenge ? 1 : 0,
+        challengesCompleted: field === "challengesCompleted" ? 1 : 0,
         correctAnswers: input.score.correctCount,
         date: today,
         dayOfWeek: now.getDay(),
         energyAtEnd: clampedEnergy,
         incorrectAnswers: input.score.incorrectCount,
-        interactiveCompleted: input.isChallenge ? 0 : 1,
+        interactiveCompleted: field === "interactiveCompleted" ? 1 : 0,
         organizationId: input.organizationId,
+        staticCompleted: field === "staticCompleted" ? 1 : 0,
         timeSpentSeconds: input.durationSeconds,
         userId: input.userId,
       },
@@ -132,7 +146,7 @@ export async function submitActivityCompletion(input: {
         energyAtEnd: clampedEnergy,
         incorrectAnswers: { increment: input.score.incorrectCount },
         timeSpentSeconds: { increment: input.durationSeconds },
-        ...completionField,
+        [field]: { increment: 1 },
       },
       where: {
         userDateOrg: {

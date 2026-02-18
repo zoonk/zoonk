@@ -146,6 +146,7 @@ describe(submitActivityCompletion, () => {
     expect(daily?.brainPowerEarned).toBe(10);
     expect(daily?.interactiveCompleted).toBe(1);
     expect(daily?.challengesCompleted).toBe(0);
+    expect(daily?.staticCompleted).toBe(0);
   });
 
   test("energy clamps at 100", async () => {
@@ -253,6 +254,41 @@ describe(submitActivityCompletion, () => {
 
     const userProgress = await prisma.userProgress.findUnique({ where: { userId } });
     expect(Number(userProgress?.totalBrainPower)).toBe(20);
+  });
+
+  test("static activity increments staticCompleted, not interactiveCompleted", async () => {
+    const org = await prisma.organization.findUniqueOrThrow({ where: { slug: "ai" } });
+    const user = await userFixture();
+    const userId = Number(user.id);
+    const course = await courseFixture({ organizationId: org.id });
+    const chapter = await chapterFixture({ courseId: course.id, organizationId: org.id });
+    const lesson = await lessonFixture({ chapterId: chapter.id, organizationId: org.id });
+
+    const activity = await activityFixture({
+      kind: "background",
+      lessonId: lesson.id,
+      organizationId: org.id,
+    });
+
+    await submitActivityCompletion({
+      activityId: activity.id,
+      durationSeconds: 5,
+      isChallenge: false,
+      organizationId: org.id,
+      score: { brainPower: 10, correctCount: 0, energyDelta: 0.1, incorrectCount: 0 },
+      startedAt: new Date(Date.now() - 5000),
+      stepResults: [],
+      userId,
+    });
+
+    const daily = await prisma.dailyProgress.findFirst({
+      where: { organizationId: org.id, userId },
+    });
+
+    expect(daily).not.toBeNull();
+    expect(daily?.staticCompleted).toBe(1);
+    expect(daily?.interactiveCompleted).toBe(0);
+    expect(daily?.challengesCompleted).toBe(0);
   });
 
   test("returns correct belt level based on new total BP", async () => {
