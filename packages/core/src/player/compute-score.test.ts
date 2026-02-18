@@ -72,7 +72,7 @@ describe(computeScore, () => {
 });
 
 describe(computeChallengeScore, () => {
-  test("successful challenge with positive dimensions: BP=100, energy=sum of positives", () => {
+  test("successful challenge: counts positive/neutral as correct, none incorrect", () => {
     const result = computeChallengeScore({
       dimensions: { Courage: 2, Diplomacy: 1, Speed: 0 },
       isSuccessful: true,
@@ -80,13 +80,13 @@ describe(computeChallengeScore, () => {
 
     expect(result).toEqual({
       brainPower: 100,
-      correctCount: 0,
+      correctCount: 3,
       energyDelta: 3,
       incorrectCount: 0,
     });
   });
 
-  test("successful challenge with all zeros: BP=100, energy=1 (minimum)", () => {
+  test("successful challenge with all zeros: all counted as correct", () => {
     const result = computeChallengeScore({
       dimensions: { Courage: 0, Diplomacy: 0 },
       isSuccessful: true,
@@ -94,13 +94,13 @@ describe(computeChallengeScore, () => {
 
     expect(result).toEqual({
       brainPower: 100,
-      correctCount: 0,
+      correctCount: 2,
       energyDelta: 1,
       incorrectCount: 0,
     });
   });
 
-  test("failed challenge: BP=10, energy=0.1", () => {
+  test("failed challenge: negative dimensions counted as incorrect", () => {
     const result = computeChallengeScore({
       dimensions: { Courage: -1, Diplomacy: 2 },
       isSuccessful: false,
@@ -108,13 +108,13 @@ describe(computeChallengeScore, () => {
 
     expect(result).toEqual({
       brainPower: 10,
-      correctCount: 0,
+      correctCount: 1,
       energyDelta: 0.1,
-      incorrectCount: 0,
+      incorrectCount: 1,
     });
   });
 
-  test("successful challenge ignores negative dimensions in energy sum", () => {
+  test("mixed dimensions: positive/neutral correct, negative incorrect", () => {
     const result = computeChallengeScore({
       dimensions: { Courage: 3, Diplomacy: -1, Speed: 2 },
       isSuccessful: true,
@@ -122,9 +122,9 @@ describe(computeChallengeScore, () => {
 
     expect(result).toEqual({
       brainPower: 100,
-      correctCount: 0,
+      correctCount: 2,
       energyDelta: 5,
-      incorrectCount: 0,
+      incorrectCount: 1,
     });
   });
 });

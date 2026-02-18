@@ -45,7 +45,15 @@ export function computeScore(input: ActivityScoreInput): ScoreResult {
   };
 }
 
+function countDimensionOutcomes(dimensions: Record<string, number>) {
+  const values = Object.values(dimensions);
+  const incorrectCount = values.filter((value) => value < 0).length;
+  return { correctCount: values.length - incorrectCount, incorrectCount };
+}
+
 export function computeChallengeScore(input: ChallengeScoreInput): ScoreResult {
+  const { correctCount, incorrectCount } = countDimensionOutcomes(input.dimensions);
+
   if (input.isSuccessful) {
     const positiveSum = Object.values(input.dimensions)
       .filter((value) => value > 0)
@@ -53,16 +61,16 @@ export function computeChallengeScore(input: ChallengeScoreInput): ScoreResult {
 
     return {
       brainPower: BRAIN_POWER_PER_CHALLENGE,
-      correctCount: 0,
+      correctCount,
       energyDelta: Math.max(1, positiveSum),
-      incorrectCount: 0,
+      incorrectCount,
     };
   }
 
   return {
     brainPower: BRAIN_POWER_PER_ACTIVITY,
-    correctCount: 0,
+    correctCount,
     energyDelta: CHALLENGE_FAILURE_ENERGY,
-    incorrectCount: 0,
+    incorrectCount,
   };
 }
