@@ -325,6 +325,34 @@ describe("CHECK_ANSWER", () => {
         stepId: "mc-1",
       });
     });
+
+    test("records stepTimings on last matchColumns step", () => {
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date("2026-03-15T14:30:00"));
+
+      const startTime = Date.now();
+      const steps = [buildStep({ id: "mc-1", kind: "matchColumns", position: 0 })];
+      const state = buildState({ stepStartedAt: startTime, steps });
+
+      vi.setSystemTime(new Date("2026-03-15T14:30:07"));
+
+      const next = playerReducer(state, {
+        effects: [],
+        result: { feedback: null, isCorrect: true },
+        stepId: "mc-1",
+        type: "CHECK_ANSWER",
+      });
+
+      expect(next.phase).toBe("completed");
+      expect(next.stepTimings["mc-1"]).toEqual({
+        answeredAt: Date.now(),
+        dayOfWeek: 0,
+        durationSeconds: 7,
+        hourOfDay: 14,
+      });
+
+      vi.useRealTimers();
+    });
   });
 
   test("no-ops in feedback phase", () => {

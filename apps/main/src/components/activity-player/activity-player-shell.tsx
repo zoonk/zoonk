@@ -10,7 +10,7 @@ import { hasNegativeDimension } from "./has-negative-dimension";
 import { InPlayStickyHeader } from "./in-play-sticky-header";
 import { PlayerActionBar, PlayerActionButton } from "./player-action-bar";
 import { PlayerCloseLink, PlayerHeader } from "./player-header";
-import { type PlayerState, type SelectedAnswer } from "./player-reducer";
+import { type PlayerState, type SelectedAnswer, playerReducer } from "./player-reducer";
 import { PlayerStage } from "./player-stage";
 import { StageContent } from "./stage-content";
 import { type CompletionResult, submitCompletion } from "./submit-completion-action";
@@ -128,10 +128,12 @@ export function ActivityPlayerShell({
     const matchColumnsWillComplete =
       view.currentStep.kind === "matchColumns" && willComplete(state);
 
-    dispatch({ effects, result, stepId: view.currentStep.id, type: "CHECK_ANSWER" });
+    const action = { effects, result, stepId: view.currentStep.id, type: "CHECK_ANSWER" as const };
+    dispatch(action);
 
     if (matchColumnsWillComplete && authState === "authenticated") {
-      fireCompletion(state, setCompletionResult);
+      // Compute post-dispatch state so stepTimings are included in the submission.
+      fireCompletion(playerReducer(state, action), setCompletionResult);
     }
   }, [view.currentStep, state, dispatch, authState]);
 
