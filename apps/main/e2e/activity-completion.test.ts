@@ -1,11 +1,44 @@
 import { randomUUID } from "node:crypto";
+import { type Browser } from "@playwright/test";
 import { prisma } from "@zoonk/db";
+import { request } from "@zoonk/e2e/fixtures";
 import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
 import { expect, test } from "./fixtures";
+
+async function createUniqueUser(baseURL: string) {
+  const uniqueId = randomUUID().slice(0, 8);
+  const email = `e2e-completion-${uniqueId}@zoonk.test`;
+
+  const signupContext = await request.newContext({ baseURL });
+  const response = await signupContext.post("/api/auth/sign-up/email", {
+    data: { email, name: `E2E Completion ${uniqueId}`, password: "password123" },
+  });
+
+  expect(response.ok()).toBe(true);
+  await signupContext.dispose();
+
+  return email;
+}
+
+async function createAuthenticatedPage(browser: Browser, baseURL: string, email: string) {
+  const context = await request.newContext({ baseURL });
+
+  await context.post("/api/auth/sign-in/email", {
+    data: { email, password: "password123" },
+  });
+
+  const storageState = await context.storageState();
+  await context.dispose();
+
+  const browserContext = await browser.newContext({ storageState });
+  const page = await browserContext.newPage();
+
+  return { browserContext, page };
+}
 
 async function createTestHierarchy(prefix: string) {
   const org = await prisma.organization.findUniqueOrThrow({ where: { slug: "ai" } });
@@ -42,8 +75,11 @@ async function createTestHierarchy(prefix: string) {
 
 test.describe("Activity Completion", () => {
   test("authenticated user sees real BP and energy badges on quiz completion", async ({
-    authenticatedPage,
+    baseURL,
+    browser,
   }) => {
+    const email = await createUniqueUser(baseURL!);
+    const { browserContext, page } = await createAuthenticatedPage(browser, baseURL!, email);
     const { buildUrl, lesson, org, uniqueId } = await createTestHierarchy("compl");
 
     const activity = await activityFixture({
@@ -69,15 +105,17 @@ test.describe("Activity Completion", () => {
       kind: "multipleChoice",
     });
 
-    await authenticatedPage.goto(buildUrl());
-    await authenticatedPage.waitForLoadState("networkidle");
+    await page.goto(buildUrl());
+    await page.waitForLoadState("networkidle");
 
-    await authenticatedPage.getByRole("radio", { name: new RegExp(`Right ${uniqueId}`) }).click();
-    await authenticatedPage.getByRole("button", { name: /check/i }).click();
-    await authenticatedPage.getByRole("button", { name: /continue/i }).click();
+    await page.getByRole("radio", { name: new RegExp(`Right ${uniqueId}`) }).click();
+    await page.getByRole("button", { name: /check/i }).click();
+    await page.getByRole("button", { name: /continue/i }).click();
 
-    await expect(authenticatedPage.getByText("+10 BP")).toBeVisible();
-    await expect(authenticatedPage.getByText(/BP to next level/i)).toBeVisible();
+    await expect(page.getByText("+10 BP")).toBeVisible();
+    await expect(page.getByText(/BP to next level/i)).toBeVisible();
+
+    await browserContext.close();
   });
 
   test("guest user sees login prompt, no reward badges", async ({ page }) => {
@@ -117,7 +155,9 @@ test.describe("Activity Completion", () => {
     await expect(page.getByText(/BP to next level/i)).not.toBeVisible();
   });
 
-  test("challenge success shows +100 BP badge", async ({ authenticatedPage }) => {
+  test("challenge success shows +100 BP badge", async ({ baseURL, browser }) => {
+    const email = await createUniqueUser(baseURL!);
+    const { browserContext, page } = await createAuthenticatedPage(browser, baseURL!, email);
     const { buildUrl, lesson, org, uniqueId } = await createTestHierarchy("chsuc");
     const dim = `Valor ${uniqueId}`;
 
@@ -153,19 +193,23 @@ test.describe("Activity Completion", () => {
       kind: "multipleChoice",
     });
 
-    await authenticatedPage.goto(buildUrl());
-    await authenticatedPage.getByRole("button", { name: /begin/i }).click();
-    await authenticatedPage.waitForLoadState("networkidle");
+    await page.goto(buildUrl());
+    await page.getByRole("button", { name: /begin/i }).click();
+    await page.waitForLoadState("networkidle");
 
-    await authenticatedPage.getByRole("radio", { name: new RegExp(`Good ${uniqueId}`) }).click();
-    await authenticatedPage.getByRole("button", { name: /check/i }).click();
-    await authenticatedPage.getByRole("button", { name: /continue/i }).click();
+    await page.getByRole("radio", { name: new RegExp(`Good ${uniqueId}`) }).click();
+    await page.getByRole("button", { name: /check/i }).click();
+    await page.getByRole("button", { name: /continue/i }).click();
 
-    await expect(authenticatedPage.getByText(/challenge complete/i)).toBeVisible();
-    await expect(authenticatedPage.getByText("+100 BP")).toBeVisible();
+    await expect(page.getByText(/challenge complete/i)).toBeVisible();
+    await expect(page.getByText("+100 BP")).toBeVisible();
+
+    await browserContext.close();
   });
 
-  test("challenge failure shows Challenge Failed and +10 BP", async ({ authenticatedPage }) => {
+  test("challenge failure shows Challenge Failed and +10 BP", async ({ baseURL, browser }) => {
+    const email = await createUniqueUser(baseURL!);
+    const { browserContext, page } = await createAuthenticatedPage(browser, baseURL!, email);
     const { buildUrl, lesson, org, uniqueId } = await createTestHierarchy("chfail");
     const dim = `Honor ${uniqueId}`;
 
@@ -201,15 +245,17 @@ test.describe("Activity Completion", () => {
       kind: "multipleChoice",
     });
 
-    await authenticatedPage.goto(buildUrl());
-    await authenticatedPage.getByRole("button", { name: /begin/i }).click();
-    await authenticatedPage.waitForLoadState("networkidle");
+    await page.goto(buildUrl());
+    await page.getByRole("button", { name: /begin/i }).click();
+    await page.waitForLoadState("networkidle");
 
-    await authenticatedPage.getByRole("radio", { name: new RegExp(`Bad ${uniqueId}`) }).click();
-    await authenticatedPage.getByRole("button", { name: /check/i }).click();
-    await authenticatedPage.getByRole("button", { name: /continue/i }).click();
+    await page.getByRole("radio", { name: new RegExp(`Bad ${uniqueId}`) }).click();
+    await page.getByRole("button", { name: /check/i }).click();
+    await page.getByRole("button", { name: /continue/i }).click();
 
-    await expect(authenticatedPage.getByText(/challenge failed/i)).toBeVisible();
-    await expect(authenticatedPage.getByText("+10 BP")).toBeVisible();
+    await expect(page.getByText(/challenge failed/i)).toBeVisible();
+    await expect(page.getByText("+10 BP")).toBeVisible();
+
+    await browserContext.close();
   });
 });

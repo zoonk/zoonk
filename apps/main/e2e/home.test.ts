@@ -61,8 +61,8 @@ test.describe("Home Page - Performance Section", () => {
     // Wait for Suspense content to load - Performance section only renders when data is available
     await expect(authenticatedPage.getByText(/^performance$/i)).toBeVisible();
 
-    // Use regex to match "Your energy is X%" where X can be any number
-    await expect(authenticatedPage.getByText(/your energy is \d+%/i)).toBeVisible();
+    // Use regex to match "Your energy is X%" where X can be any number (including decimals)
+    await expect(authenticatedPage.getByText(/your energy is \d+(\.\d+)?%/i)).toBeVisible();
   });
 
   test("authenticated user with progress sees belt level", async ({ authenticatedPage }) => {

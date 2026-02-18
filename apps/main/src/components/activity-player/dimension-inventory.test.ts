@@ -5,8 +5,8 @@ import {
   formatDelta,
   getDeltaColor,
   getStatusTotalColor,
-  hasNegativeDimension,
 } from "./dimension-inventory";
+import { hasNegativeDimension } from "./has-negative-dimension";
 import { type DimensionInventory } from "./player-reducer";
 
 describe(hasNegativeDimension, () => {

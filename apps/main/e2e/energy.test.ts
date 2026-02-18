@@ -26,7 +26,7 @@ test.describe("Energy Page", () => {
       await authenticatedPage
         .getByRole("link")
         .filter({
-          has: authenticatedPage.getByText(/your energy is \d+%/i),
+          has: authenticatedPage.getByText(/your energy is \d+(\.\d+)?%/i),
         })
         .click();
 

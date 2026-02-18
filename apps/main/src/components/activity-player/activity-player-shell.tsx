@@ -6,7 +6,7 @@ import { useAuthState } from "@zoonk/core/auth/hooks/auth-state";
 import { useExtracted } from "next-intl";
 import { useCallback, useState } from "react";
 import { checkStep } from "./check-step";
-import { hasNegativeDimension } from "./dimension-inventory";
+import { hasNegativeDimension } from "./has-negative-dimension";
 import { InPlayStickyHeader } from "./in-play-sticky-header";
 import { PlayerActionBar, PlayerActionButton } from "./player-action-bar";
 import { PlayerCloseLink, PlayerHeader } from "./player-header";
@@ -71,9 +71,13 @@ function fireCompletion(state: PlayerState, setResult: (result: CompletionResult
     dimensions: state.dimensions,
     startedAt: state.startedAt,
     stepTimings: state.stepTimings,
-  }).then((result) => {
-    setResult(result);
-  });
+  })
+    .then((result) => {
+      setResult(result);
+    })
+    .catch(() => {
+      setResult({ status: "error" });
+    });
 }
 
 export function ActivityPlayerShell({

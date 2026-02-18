@@ -4,10 +4,6 @@ import { type ChallengeEffect } from "@zoonk/core/steps/content-contract";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type DimensionInventory as DimensionInventoryType, effectDelta } from "./player-reducer";
 
-export function hasNegativeDimension(dimensions: Record<string, number>): boolean {
-  return Object.values(dimensions).some((value) => value < 0);
-}
-
 type DimensionEntry = {
   delta: number;
   name: string;

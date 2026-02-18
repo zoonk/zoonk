@@ -7,7 +7,7 @@ import { CircleCheck } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { ChallengeFailureContent, ChallengeSuccessContent } from "./challenge-completion";
 import { AuthBranch } from "./completion-auth-branch";
-import { hasNegativeDimension } from "./dimension-inventory";
+import { hasNegativeDimension } from "./has-negative-dimension";
 import { type DimensionInventory, type StepResult } from "./player-reducer";
 import { type CompletionResult } from "./submit-completion-action";
 

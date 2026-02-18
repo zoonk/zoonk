@@ -12,7 +12,7 @@ import { prisma } from "@zoonk/db";
 import { type BeltLevelResult } from "@zoonk/utils/belt-level";
 import { safeAsync } from "@zoonk/utils/error";
 import { headers } from "next/headers";
-import { hasNegativeDimension } from "./dimension-inventory";
+import { hasNegativeDimension } from "./has-negative-dimension";
 
 export type CompletionResult =
   | {
