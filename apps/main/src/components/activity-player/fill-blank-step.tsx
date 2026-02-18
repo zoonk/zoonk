@@ -6,30 +6,63 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { shuffle } from "@zoonk/utils/shuffle";
 import { useExtracted } from "next-intl";
 import { useCallback, useMemo, useState } from "react";
-import { type SelectedAnswer } from "./player-reducer";
+import { InlineFeedback } from "./inline-feedback";
+import { type SelectedAnswer, type StepResult } from "./player-reducer";
 import { QuestionText } from "./question-text";
 import { InteractiveStepLayout } from "./step-layouts";
 import { useReplaceName } from "./user-name-context";
 
+function getBlankResultState(
+  index: number,
+  blanks: (string | null)[],
+  answers: string[],
+): "correct" | "incorrect" | undefined {
+  const userAnswer = blanks[index];
+
+  if (!userAnswer) {
+    return undefined;
+  }
+
+  return userAnswer.toLowerCase() === answers[index]?.toLowerCase() ? "correct" : "incorrect";
+}
+
 function BlankSlot({
   index,
   onRemove,
+  resultState,
   word,
 }: {
   index: number;
   onRemove: () => void;
+  resultState?: "correct" | "incorrect";
   word: string | null;
 }) {
   const t = useExtracted();
+  const hasResult = resultState !== undefined;
 
   if (word) {
     return (
       <button
-        aria-label={t("Blank {position}: {item}. Tap to remove.", {
-          item: word,
-          position: String(index + 1),
-        })}
-        className="border-primary/30 text-primary inline-flex min-w-16 items-center justify-center border-b-2 px-1 font-medium transition-all duration-150"
+        aria-label={
+          hasResult
+            ? t("Blank {position}: {item}. {result}.", {
+                item: word,
+                position: String(index + 1),
+                result: resultState === "correct" ? t("Correct") : t("Incorrect"),
+              })
+            : t("Blank {position}: {item}. Tap to remove.", {
+                item: word,
+                position: String(index + 1),
+              })
+        }
+        className={cn(
+          "inline-flex min-w-16 items-center justify-center border-b-2 px-1 font-medium transition-all duration-150",
+          hasResult && "pointer-events-none",
+          !resultState && "border-primary/30 text-primary",
+          resultState === "correct" && "border-success text-success",
+          resultState === "incorrect" && "border-destructive text-destructive",
+        )}
+        disabled={hasResult}
         onClick={onRemove}
         type="button"
       >
@@ -48,11 +81,15 @@ function BlankSlot({
 }
 
 function TemplateText({
+  answers,
   blanks,
+  hasResult,
   onRemoveWord,
   template,
 }: {
+  answers: string[];
   blanks: (string | null)[];
+  hasResult: boolean;
   onRemoveWord: (blankIndex: number) => void;
   template: string;
 }) {
@@ -69,6 +106,7 @@ function TemplateText({
             <BlankSlot
               index={index}
               onRemove={() => onRemoveWord(index)}
+              resultState={hasResult ? getBlankResultState(index, blanks, answers) : undefined}
               word={blanks[index] ?? null}
             />
           )}
@@ -107,10 +145,12 @@ function WordTile({
 
 function WordBank({
   blanks,
+  disabled,
   onPlaceWord,
   words,
 }: {
   blanks: (string | null)[];
+  disabled: boolean;
   onPlaceWord: (word: string) => void;
   words: string[];
 }) {
@@ -118,7 +158,11 @@ function WordBank({
   const usedWords = blanks.filter(Boolean);
 
   return (
-    <div aria-label={t("Word bank")} className="flex flex-wrap gap-2.5" role="group">
+    <div
+      aria-label={t("Word bank")}
+      className={cn("flex flex-wrap gap-2.5", disabled && "pointer-events-none opacity-50")}
+      role="group"
+    >
       {words.map((word, index) => {
         const usedCount = usedWords.filter((used) => used === word).length;
         const totalCount = words.slice(0, index + 1).filter((item) => item === word).length;
@@ -138,31 +182,45 @@ function WordBank({
   );
 }
 
+function getCorrectSentence(template: string, answers: string[]): string {
+  return template
+    .split("[BLANK]")
+    .reduce((acc, segment, index) => acc + segment + (answers[index] ?? ""), "");
+}
+
 function isComplete(blanks: (string | null)[]): blanks is string[] {
   return blanks.every((blank) => blank !== null);
 }
 
 export function FillBlankStep({
   onSelectAnswer,
+  result,
   selectedAnswer,
   step,
 }: {
   onSelectAnswer: (stepId: string, answer: SelectedAnswer | null) => void;
+  result?: StepResult;
   selectedAnswer: SelectedAnswer | undefined;
   step: SerializedStep;
 }) {
+  const t = useExtracted();
   const content = useMemo(() => parseStepContent("fillBlank", step.content), [step.content]);
   const replaceName = useReplaceName();
   const blankCount = content.answers.length;
+  const hasResult = result !== undefined;
 
   const shuffledWords = useMemo(
     () => shuffle([...content.answers, ...content.distractors]),
     [content.answers, content.distractors],
   );
 
-  const [blanks, setBlanks] = useState<(string | null)[]>(() =>
-    Array.from({ length: blankCount }, () => null),
-  );
+  const [blanks, setBlanks] = useState<(string | null)[]>(() => {
+    if (result?.answer?.kind === "fillBlank") {
+      return result.answer.userAnswers;
+    }
+
+    return Array.from({ length: blankCount }, () => null);
+  });
 
   const handlePlaceWord = useCallback(
     (word: string) => {
@@ -200,13 +258,38 @@ export function FillBlankStep({
     [blanks, onSelectAnswer, selectedAnswer, step.id],
   );
 
+  const isIncorrect = result && !result.result.isCorrect;
+
   return (
     <InteractiveStepLayout>
       {content.question && <QuestionText>{replaceName(content.question)}</QuestionText>}
 
-      <TemplateText blanks={blanks} onRemoveWord={handleRemoveWord} template={content.template} />
+      <TemplateText
+        answers={content.answers}
+        blanks={blanks}
+        hasResult={hasResult}
+        onRemoveWord={handleRemoveWord}
+        template={content.template}
+      />
 
-      <WordBank blanks={blanks} onPlaceWord={handlePlaceWord} words={shuffledWords} />
+      <WordBank
+        blanks={blanks}
+        disabled={hasResult}
+        onPlaceWord={handlePlaceWord}
+        words={shuffledWords}
+      />
+
+      {result && (
+        <InlineFeedback result={result}>
+          {isIncorrect && (
+            <p className="text-muted-foreground text-sm">
+              {t("Correct answer: {answer}", {
+                answer: getCorrectSentence(content.template, content.answers),
+              })}
+            </p>
+          )}
+        </InlineFeedback>
+      )}
     </InteractiveStepLayout>
   );
 }

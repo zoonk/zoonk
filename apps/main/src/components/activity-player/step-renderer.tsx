@@ -55,6 +55,7 @@ export function StepRenderer({
     return (
       <MultipleChoiceStep
         onSelectAnswer={onSelectAnswer}
+        result={result}
         selectedAnswer={selectedAnswer}
         step={step}
       />
@@ -63,7 +64,12 @@ export function StepRenderer({
 
   if (step.kind === "fillBlank") {
     return (
-      <FillBlankStep onSelectAnswer={onSelectAnswer} selectedAnswer={selectedAnswer} step={step} />
+      <FillBlankStep
+        onSelectAnswer={onSelectAnswer}
+        result={result}
+        selectedAnswer={selectedAnswer}
+        step={step}
+      />
     );
   }
 
@@ -81,6 +87,7 @@ export function StepRenderer({
     return (
       <SelectImageStep
         onSelectAnswer={onSelectAnswer}
+        result={result}
         selectedAnswer={selectedAnswer}
         step={step}
       />

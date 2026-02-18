@@ -243,7 +243,7 @@ test.describe("Sort Order Step", () => {
     await expect(checkButton).toBeEnabled();
   });
 
-  test("correct answer shows custom feedback and green indicators", async ({ page }) => {
+  test("correct answer shows visible Correct! text and green indicators", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const { url } = await createSortOrderActivity({
       steps: [
@@ -280,6 +280,9 @@ test.describe("Sort Order Step", () => {
       .click();
 
     await page.getByRole("button", { name: /check/i }).click();
+
+    // Visible "Correct!" text (not just screen-reader)
+    await expect(page.getByText(/correct!/i)).toBeVisible();
 
     // Custom feedback is shown
     await expect(page.getByText(new RegExp(`Well done ${uniqueId}`))).toBeVisible();
@@ -330,6 +333,9 @@ test.describe("Sort Order Step", () => {
       .click();
 
     await page.getByRole("button", { name: /check/i }).click();
+
+    // Visible "Not quite" text (not just screen-reader)
+    await expect(page.getByText(/not quite/i)).toBeVisible();
 
     // List reorders to correct order with incorrect indicators
     await expect(

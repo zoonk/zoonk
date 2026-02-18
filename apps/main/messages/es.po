@@ -1252,6 +1252,7 @@ msgid "Your answer"
 msgstr "Tu respuesta"
 
 #: src/components/activity-player/arrange-words.tsx
+#: src/components/activity-player/fill-blank-step.tsx
 #: src/components/activity-player/result-announcement.tsx
 #: src/components/activity-player/sort-order-step.tsx
 msgctxt "6NoIUl"
@@ -1282,11 +1283,13 @@ msgid "Position {position}: {item}. Tap to remove."
 msgstr "Posición {position}: {item}. Toca para quitar."
 
 #: src/components/activity-player/arrange-words.tsx
+#: src/components/activity-player/fill-blank-step.tsx
 msgctxt "xvWuPP"
 msgid "Correct answer: {answer}"
 msgstr "Respuesta correcta: {answer}"
 
 #: src/components/activity-player/arrange-words.tsx
+#: src/components/activity-player/fill-blank-step.tsx
 #: src/components/activity-player/result-announcement.tsx
 #: src/components/activity-player/sort-order-step.tsx
 msgctxt "Ypr9T5"
@@ -1414,19 +1417,9 @@ msgid "Stats"
 msgstr "Estadísticas"
 
 #: src/components/activity-player/feedback-screen.tsx
-msgctxt "++l7ni"
-msgid "Not quite"
-msgstr "No del todo"
-
-#: src/components/activity-player/feedback-screen.tsx
 msgctxt "iaHymw"
 msgid "Outcome"
 msgstr "Resultado"
-
-#: src/components/activity-player/feedback-screen.tsx
-msgctxt "xmF49T"
-msgid "Correct!"
-msgstr "¡Correcto!"
 
 #: src/components/activity-player/feedback-screen.tsx
 msgctxt "zZGbEs"
@@ -1439,9 +1432,24 @@ msgid "Blank {position}"
 msgstr "Espacio {position}"
 
 #: src/components/activity-player/fill-blank-step.tsx
+msgctxt "SL2Bob"
+msgid "Blank {position}: {item}. {result}."
+msgstr "Espacio en blanco {position}: {item}. {result}."
+
+#: src/components/activity-player/fill-blank-step.tsx
 msgctxt "wUEGVH"
 msgid "Blank {position}: {item}. Tap to remove."
 msgstr "Espacio {position}: {item}. Toca para quitar."
+
+#: src/components/activity-player/inline-feedback.tsx
+msgctxt "++l7ni"
+msgid "Not quite"
+msgstr "No del todo"
+
+#: src/components/activity-player/inline-feedback.tsx
+msgctxt "xmF49T"
+msgid "Correct!"
+msgstr "¡Correcto!"
 
 #: src/components/activity-player/listening-step.tsx
 #: src/components/activity-player/reading-step.tsx

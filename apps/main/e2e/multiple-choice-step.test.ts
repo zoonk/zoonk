@@ -105,7 +105,7 @@ test.describe("Core Variant", () => {
     ).toBeVisible();
   });
 
-  test("correct answer shows Correct! feedback", async ({ page }) => {
+  test("correct answer shows inline Correct! feedback with question visible", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const { url } = await createMultipleChoiceActivity({
       steps: [
@@ -129,11 +129,19 @@ test.describe("Core Variant", () => {
     await page.getByRole("radio", { name: /option b/i }).click();
     await page.getByRole("button", { name: /check/i }).click();
 
+    // Inline feedback visible
     await expect(page.getByText(/correct!/i)).toBeVisible();
     await expect(page.getByText(new RegExp(`Well done ${uniqueId}`))).toBeVisible();
+
+    // Question and options remain visible
+    await expect(page.getByText(new RegExp(`Test question ${uniqueId}`))).toBeVisible();
+    await expect(page.getByRole("radio", { name: /option a/i })).toBeVisible();
+    await expect(page.getByRole("radio", { name: /option b/i })).toBeVisible();
   });
 
-  test("incorrect answer shows Not quite feedback", async ({ page }) => {
+  test("incorrect answer shows inline Not quite feedback with question visible", async ({
+    page,
+  }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const { url } = await createMultipleChoiceActivity({
       steps: [
@@ -157,8 +165,14 @@ test.describe("Core Variant", () => {
     await page.getByRole("radio", { name: /wrong choice/i }).click();
     await page.getByRole("button", { name: /check/i }).click();
 
+    // Inline feedback visible
     await expect(page.getByText(/not quite/i)).toBeVisible();
     await expect(page.getByText(new RegExp(`Nope ${uniqueId}`))).toBeVisible();
+
+    // Question and options remain visible
+    await expect(page.getByText(new RegExp(`Test question ${uniqueId}`))).toBeVisible();
+    await expect(page.getByRole("radio", { name: /wrong choice/i })).toBeVisible();
+    await expect(page.getByRole("radio", { name: /right choice/i })).toBeVisible();
   });
 
   test("renders without question when omitted", async ({ page }) => {
@@ -945,6 +959,124 @@ test.describe("Interaction Mechanics", () => {
     );
   });
 
+  test("options are disabled after checking", async ({ page }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const { url } = await createMultipleChoiceActivity({
+      steps: [
+        {
+          content: {
+            kind: "core",
+            options: [
+              { feedback: "Yes", isCorrect: true, text: `Opt A ${uniqueId}` },
+              { feedback: "No", isCorrect: false, text: `Opt B ${uniqueId}` },
+            ],
+            question: `Disable test ${uniqueId}`,
+          },
+          position: 0,
+        },
+      ],
+    });
+
+    await page.goto(url);
+    await page.waitForLoadState("networkidle");
+
+    await page.getByRole("radio", { name: new RegExp(`Opt A ${uniqueId}`, "i") }).click();
+    await page.getByRole("button", { name: /check/i }).click();
+
+    await expect(page.getByText(/correct!/i)).toBeVisible();
+
+    // Options should be disabled
+    await expect(
+      page.getByRole("radio", { name: new RegExp(`Opt A ${uniqueId}`, "i") }),
+    ).toBeDisabled();
+    await expect(
+      page.getByRole("radio", { name: new RegExp(`Opt B ${uniqueId}`, "i") }),
+    ).toBeDisabled();
+  });
+
+  test("correct option highlighted when user answers incorrectly", async ({ page }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const { url } = await createMultipleChoiceActivity({
+      steps: [
+        {
+          content: {
+            kind: "core",
+            options: [
+              { feedback: "Wrong", isCorrect: false, text: `Wrong opt ${uniqueId}` },
+              { feedback: "Right", isCorrect: true, text: `Right opt ${uniqueId}` },
+            ],
+            question: `Highlight test ${uniqueId}`,
+          },
+          position: 0,
+        },
+      ],
+    });
+
+    await page.goto(url);
+    await page.waitForLoadState("networkidle");
+
+    // Select the wrong option
+    await page.getByRole("radio", { name: new RegExp(`Wrong opt ${uniqueId}`, "i") }).click();
+    await page.getByRole("button", { name: /check/i }).click();
+
+    await expect(page.getByText(/not quite/i)).toBeVisible();
+
+    // Both options should be disabled and visible
+    await expect(
+      page.getByRole("radio", { name: new RegExp(`Wrong opt ${uniqueId}`, "i") }),
+    ).toBeDisabled();
+    await expect(
+      page.getByRole("radio", { name: new RegExp(`Right opt ${uniqueId}`, "i") }),
+    ).toBeDisabled();
+  });
+
+  test("challenge variant still shows feedback screen with dimension inventory", async ({
+    page,
+  }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const dim = `Honor ${uniqueId}`;
+    const { url } = await createMultipleChoiceActivity({
+      steps: [
+        {
+          content: {
+            context: `Challenge feedback test ${uniqueId}`,
+            kind: "challenge",
+            options: [
+              {
+                consequence: `Honorable ${uniqueId}`,
+                effects: [{ dimension: dim, impact: "positive" }],
+                text: `Honor pick ${uniqueId}`,
+              },
+              {
+                consequence: "Dishonorable",
+                effects: [{ dimension: dim, impact: "negative" }],
+                text: "Dishonor pick",
+              },
+            ],
+            question: `Challenge question ${uniqueId}`,
+          },
+          position: 0,
+        },
+      ],
+    });
+
+    await page.goto(url);
+    await page.getByRole("button", { name: /begin/i }).click();
+    await page.waitForLoadState("networkidle");
+
+    await page.getByRole("radio", { name: new RegExp(`Honor pick ${uniqueId}`, "i") }).click();
+    await page.getByRole("button", { name: /check/i }).click();
+
+    // Challenge variant should show Outcome feedback screen (not inline)
+    await expect(page.getByText(/outcome/i)).toBeVisible();
+    await expect(page.getByText(new RegExp(`Honorable ${uniqueId}`))).toBeVisible();
+
+    // Dimension inventory should be visible
+    const inventory = page.getByRole("list", { name: /dimension inventory/i });
+    await expect(inventory).toBeVisible();
+    await expect(inventory.getByText(new RegExp(dim))).toBeVisible();
+  });
+
   test("full flow: select -> check -> continue -> completion screen", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const { url } = await createMultipleChoiceActivity({
@@ -969,9 +1101,10 @@ test.describe("Interaction Mechanics", () => {
     // Select answer
     await page.getByRole("radio", { name: /right/i }).click();
 
-    // Check
+    // Check - question stays visible with inline feedback
     await page.getByRole("button", { name: /check/i }).click();
     await expect(page.getByText(/correct!/i)).toBeVisible();
+    await expect(page.getByText(new RegExp(`Full flow test ${uniqueId}`))).toBeVisible();
 
     // Continue
     await page.getByRole("button", { name: /continue/i }).click();

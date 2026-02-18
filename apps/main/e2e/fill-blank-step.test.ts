@@ -199,9 +199,15 @@ test.describe("Fill Blank Step", () => {
 
     await expect(page.getByText(/correct!/i)).toBeVisible();
     await expect(page.getByText(new RegExp(`Well done ${uniqueId}`))).toBeVisible();
+
+    // Question stays visible (inline feedback, not separate screen)
+    await expect(page.getByText(new RegExp(`The sky is.*${uniqueId}`))).toBeVisible();
+
+    // Blank slot shows correct annotation
+    await expect(page.getByRole("button", { name: /blank 1: blue.*correct/i })).toBeVisible();
   });
 
-  test("incorrect answer shows Not quite", async ({ page }) => {
+  test("incorrect answer shows Not quite with correct answer hint", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const { url } = await createFillBlankActivity({
       steps: [
@@ -233,6 +239,12 @@ test.describe("Fill Blank Step", () => {
     await page.getByRole("button", { name: /check/i }).click();
 
     await expect(page.getByText(/not quite/i)).toBeVisible();
+
+    // Blank slot shows incorrect annotation (question stays visible, not separate screen)
+    await expect(page.getByRole("button", { name: /blank 1: red.*incorrect/i })).toBeVisible();
+
+    // Correct answer hint shown
+    await expect(page.getByText(/correct answer/i)).toBeVisible();
   });
 
   test("check button disabled until all blanks filled", async ({ page }) => {

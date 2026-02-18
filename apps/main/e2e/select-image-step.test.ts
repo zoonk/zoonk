@@ -166,7 +166,7 @@ test.describe("Select Image Step", () => {
     await expect(page.getByRole("button", { name: /check/i })).toBeEnabled();
   });
 
-  test("correct answer shows feedback", async ({ page }) => {
+  test("correct answer shows inline feedback with images visible", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const { url } = await createSelectImageActivity({
       steps: [
@@ -191,9 +191,17 @@ test.describe("Select Image Step", () => {
 
     await expect(page.getByText(/correct!/i)).toBeVisible();
     await expect(page.getByText(new RegExp(`Well done ${uniqueId}`))).toBeVisible();
+
+    // Images stay visible (inline feedback, not separate screen)
+    await expect(page.getByRole("radiogroup", { name: /image options/i })).toBeVisible();
+
+    // Options disabled after checking
+    await expect(page.getByRole("radio", { name: new RegExp(`Right ${uniqueId}`) })).toBeDisabled();
   });
 
-  test("incorrect answer shows feedback", async ({ page }) => {
+  test("incorrect answer shows inline feedback with correct image highlighted", async ({
+    page,
+  }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const { url } = await createSelectImageActivity({
       steps: [
@@ -222,6 +230,14 @@ test.describe("Select Image Step", () => {
 
     await expect(page.getByText(/not quite/i)).toBeVisible();
     await expect(page.getByText(new RegExp(`Try again ${uniqueId}`))).toBeVisible();
+
+    // Images stay visible (inline feedback, not separate screen)
+    await expect(page.getByRole("radiogroup", { name: /image options/i })).toBeVisible();
+
+    // Both options still visible (correct one highlighted)
+    await expect(
+      page.getByRole("radio", { name: new RegExp(`Correct ${uniqueId}`) }),
+    ).toBeVisible();
   });
 
   test("changing selection before checking", async ({ page }) => {
