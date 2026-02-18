@@ -1,6 +1,7 @@
 import "server-only";
 import { getSession } from "@zoonk/core/users/session/get";
 import { prisma } from "@zoonk/db";
+import { DAILY_DECAY, MIN_ENERGY } from "@zoonk/utils/constants";
 import { safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
 import {
@@ -36,8 +37,6 @@ function calculateAverage(dataPoints: { energy: number }[]): number {
   const sum = dataPoints.reduce((acc, point) => acc + point.energy, 0);
   return sum / dataPoints.length;
 }
-
-const DAILY_DECAY = 1;
 
 type RawDataPoint = { date: Date; energy: number };
 
@@ -75,7 +74,7 @@ function fillDateRange(
       result.push({ date: new Date(current), energy: existingEnergy });
       previousEnergy = existingEnergy;
     } else if (previousEnergy !== null) {
-      const decayedEnergy = Math.max(0, previousEnergy - DAILY_DECAY);
+      const decayedEnergy = Math.max(MIN_ENERGY, previousEnergy - DAILY_DECAY);
       result.push({ date: new Date(current), energy: decayedEnergy });
       previousEnergy = decayedEnergy;
     }

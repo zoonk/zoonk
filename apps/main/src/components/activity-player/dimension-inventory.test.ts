@@ -5,28 +5,25 @@ import {
   formatDelta,
   getDeltaColor,
   getStatusTotalColor,
-  hasNegativeDimension,
 } from "./dimension-inventory";
+import { hasNegativeDimension } from "./has-negative-dimension";
 import { type DimensionInventory } from "./player-reducer";
 
 describe(hasNegativeDimension, () => {
+  test("returns true when any dimension is negative", () => {
+    expect(hasNegativeDimension({ Courage: 2, Diplomacy: -1, Speed: 0 })).toBeTruthy();
+  });
+
+  test("returns false when all dimensions are non-negative", () => {
+    expect(hasNegativeDimension({ Courage: 2, Diplomacy: 0, Speed: 1 })).toBeFalsy();
+  });
+
   test("returns false for empty dimensions", () => {
     expect(hasNegativeDimension({})).toBeFalsy();
   });
 
-  test("returns false when all values are positive", () => {
-    const dims: DimensionInventory = { Courage: 2, Diplomacy: 1 };
-    expect(hasNegativeDimension(dims)).toBeFalsy();
-  });
-
-  test("returns false when all values are zero", () => {
-    const dims: DimensionInventory = { Courage: 0, Diplomacy: 0 };
-    expect(hasNegativeDimension(dims)).toBeFalsy();
-  });
-
-  test("returns true when any value is negative", () => {
-    const dims: DimensionInventory = { Courage: 2, Diplomacy: -1, Morale: 0 };
-    expect(hasNegativeDimension(dims)).toBeTruthy();
+  test("returns true when all dimensions are negative", () => {
+    expect(hasNegativeDimension({ Courage: -1, Diplomacy: -2 })).toBeTruthy();
   });
 });
 

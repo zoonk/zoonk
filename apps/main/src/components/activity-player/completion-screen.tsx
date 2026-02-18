@@ -7,8 +7,9 @@ import { CircleCheck } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { ChallengeFailureContent, ChallengeSuccessContent } from "./challenge-completion";
 import { AuthBranch } from "./completion-auth-branch";
-import { hasNegativeDimension } from "./dimension-inventory";
+import { hasNegativeDimension } from "./has-negative-dimension";
 import { type DimensionInventory, type StepResult } from "./player-reducer";
+import { type CompletionResult } from "./submit-completion-action";
 
 function CompletionScreen({ className, ...props }: React.ComponentProps<"div">) {
   return (
@@ -62,6 +63,7 @@ export function getCompletionScore(results: Record<string, StepResult>) {
 
 export function CompletionScreenContent({
   activityId,
+  completionResult,
   dimensions,
   lessonHref,
   nextActivityHref,
@@ -69,6 +71,7 @@ export function CompletionScreenContent({
   results,
 }: {
   activityId: string;
+  completionResult: CompletionResult | null;
   dimensions: DimensionInventory;
   lessonHref: string;
   nextActivityHref: string | null;
@@ -82,6 +85,7 @@ export function CompletionScreenContent({
     return (
       <ChallengeFailureContent
         activityId={activityId}
+        completionResult={completionResult}
         dimensions={dimensions}
         lessonHref={lessonHref}
         onRestart={onRestart}
@@ -91,11 +95,17 @@ export function CompletionScreenContent({
 
   if (isChallenge) {
     return (
-      <ChallengeSuccessContent activityId={activityId} dimensions={dimensions}>
+      <ChallengeSuccessContent
+        activityId={activityId}
+        completionResult={completionResult}
+        dimensions={dimensions}
+      >
         <AuthBranch
+          completionResult={completionResult}
           lessonHref={lessonHref}
           nextActivityHref={nextActivityHref}
           onRestart={onRestart}
+          showRewards={false}
         />
       </ChallengeSuccessContent>
     );
@@ -117,6 +127,7 @@ export function CompletionScreenContent({
       )}
 
       <AuthBranch
+        completionResult={completionResult}
         lessonHref={lessonHref}
         nextActivityHref={nextActivityHref}
         onRestart={onRestart}

@@ -2,14 +2,18 @@
 
 import { ClientLink } from "@/i18n/client-link";
 import { useAuthState } from "@zoonk/core/auth/hooks/auth-state";
-import { Badge } from "@zoonk/ui/components/badge";
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import { Kbd } from "@zoonk/ui/components/kbd";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
-import { Brain, ZapIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { CountUp } from "./count-up";
+import {
+  BeltProgressHint,
+  BeltProgressSkeleton,
+  RewardBadges,
+  RewardBadgesSkeleton,
+} from "./reward-badges";
+import { type CompletionResult } from "./submit-completion-action";
 
 function CompletionActions({ className, ...props }: React.ComponentProps<"div">) {
   return (
@@ -18,30 +22,6 @@ function CompletionActions({ className, ...props }: React.ComponentProps<"div">)
       data-slot="completion-actions"
       {...props}
     />
-  );
-}
-
-function RewardBadges() {
-  const t = useExtracted();
-
-  return (
-    <div className="flex gap-2">
-      <Badge variant="secondary">
-        <Brain data-icon="inline-start" />
-        <span>
-          +<CountUp value={10} />
-        </span>{" "}
-        {t("BP")}
-      </Badge>
-
-      <Badge variant="secondary">
-        <ZapIcon className="text-energy" data-icon="inline-start" />
-        <span>
-          +<CountUp value={5} />
-        </span>
-        <span className="sr-only">{t("Energy")}</span>
-      </Badge>
-    </div>
   );
 }
 
@@ -110,19 +90,42 @@ function SecondaryActions({
 }
 
 function AuthenticatedContent({
+  completionResult,
   lessonHref,
   nextActivityHref,
   onRestart,
+  showRewards,
 }: {
+  completionResult: CompletionResult | null;
   lessonHref: string;
   nextActivityHref: string | null;
   onRestart: () => void;
+  showRewards: boolean;
 }) {
   const t = useExtracted();
+  const isLoading = !completionResult || completionResult.status !== "success";
 
   return (
     <>
-      <RewardBadges />
+      {showRewards &&
+        (isLoading ? (
+          <>
+            <RewardBadgesSkeleton />
+            <BeltProgressSkeleton />
+          </>
+        ) : (
+          <>
+            <RewardBadges
+              brainPower={completionResult.brainPower}
+              energyDelta={completionResult.energyDelta}
+              isChallenge={false}
+            />
+            <BeltProgressHint
+              brainPower={completionResult.brainPower}
+              newTotalBp={completionResult.newTotalBp}
+            />
+          </>
+        ))}
 
       <CompletionActions>
         {nextActivityHref ? (
@@ -194,13 +197,17 @@ function PendingContent({ lessonHref }: { lessonHref: string }) {
 }
 
 export function AuthBranch({
+  completionResult,
   lessonHref,
   nextActivityHref,
   onRestart,
+  showRewards = true,
 }: {
+  completionResult: CompletionResult | null;
   lessonHref: string;
   nextActivityHref: string | null;
   onRestart: () => void;
+  showRewards?: boolean;
 }) {
   const authState = useAuthState();
 
@@ -214,9 +221,11 @@ export function AuthBranch({
 
   return (
     <AuthenticatedContent
+      completionResult={completionResult}
       lessonHref={lessonHref}
       nextActivityHref={nextActivityHref}
       onRestart={onRestart}
+      showRewards={showRewards}
     />
   );
 }

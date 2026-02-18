@@ -19,7 +19,7 @@ export async function EnergyExplanation() {
 
       <ExplanationText className="leading-relaxed">
         {t(
-          "Energy reflects your learning consistency. It increases with correct answers (+0.1%), decreases with wrong answers (-0.03%), and drops 1% for each inactive day.",
+          "Energy reflects your learning consistency. It increases with correct answers, decreases with wrong answers, and drops for each inactive day.",
         )}
       </ExplanationText>
     </Explanation>

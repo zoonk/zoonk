@@ -11,7 +11,8 @@ import {
 import { cn } from "@zoonk/ui/lib/utils";
 import { BarChart3Icon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { DimensionList, buildDimensionEntries, hasNegativeDimension } from "./dimension-inventory";
+import { DimensionList, buildDimensionEntries } from "./dimension-inventory";
+import { hasNegativeDimension } from "./has-negative-dimension";
 import { type DimensionInventory } from "./player-reducer";
 
 function getIconColor(dimensions: DimensionInventory): string {

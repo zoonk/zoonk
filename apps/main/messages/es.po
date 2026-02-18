@@ -298,7 +298,7 @@ msgstr "Tu energía es {value}%"
 #: src/app/[locale]/(catalog)/energy.tsx
 #: src/app/[locale]/(performance)/_components/metric-pills.tsx
 #: src/app/[locale]/(performance)/energy/page.tsx
-#: src/components/activity-player/completion-auth-branch.tsx
+#: src/components/activity-player/reward-badges.tsx
 msgctxt "cVpmV7"
 msgid "Energy"
 msgstr "Energía"
@@ -427,6 +427,7 @@ msgstr "Cinturón {color} - Nivel {level}"
 #: src/app/[locale]/(catalog)/level.tsx
 #: src/app/[locale]/(performance)/_components/metric-pills.tsx
 #: src/app/[locale]/(performance)/level/page.tsx
+#: src/components/activity-player/reward-badges.tsx
 msgctxt "y1Qr81"
 msgid "Level"
 msgstr "Nivel"
@@ -564,9 +565,9 @@ msgid "Avg"
 msgstr "Prom"
 
 #: src/app/[locale]/(performance)/energy/energy-explanation.tsx
-msgctxt "bbspjV"
-msgid "Energy reflects your learning consistency. It increases with correct answers (+0.1%), decreases with wrong answers (-0.03%), and drops 1% for each inactive day."
-msgstr "La energía refleja tu consistencia de aprendizaje. Aumenta con respuestas correctas (+0.1%), disminuye con respuestas incorrectas (-0.03%), y baja 1% por cada día inactivo."
+msgctxt "/1gcM1"
+msgid "Energy reflects your learning consistency. It increases with correct answers, decreases with wrong answers, and drops for each inactive day."
+msgstr "La energía refleja tu consistencia de aprendizaje. Aumenta con respuestas correctas, disminuye con respuestas incorrectas y baja por cada día inactivo."
 
 #: src/app/[locale]/(performance)/energy/energy-explanation.tsx
 msgctxt "tqJIUh"
@@ -649,7 +650,7 @@ msgid "{current}/10"
 msgstr "{current}/10"
 
 #: src/app/[locale]/(performance)/level/level-stats.tsx
-#: src/components/activity-player/completion-auth-branch.tsx
+#: src/components/activity-player/reward-badges.tsx
 msgctxt "/Q0taG"
 msgid "BP"
 msgstr "PM"
@@ -1499,6 +1500,16 @@ msgctxt "OUZtdJ"
 msgid "Activity progress"
 msgstr "Progreso de actividad"
 
+#: src/components/activity-player/reward-badges.tsx
+msgctxt "erSdxr"
+msgid "Belt"
+msgstr "Cinturón"
+
+#: src/components/activity-player/reward-badges.tsx
+msgctxt "HiBQnL"
+msgid "BP to next level"
+msgstr "PM para el siguiente nivel"
+
 #: src/components/activity-player/select-image-step.tsx
 msgctxt "NA6C/+"
 msgid "Image options"
@@ -1862,51 +1873,61 @@ msgid "Tests your understanding with questions. Uses new scenarios to check if y
 msgstr "Evalúa tu comprensión con preguntas. Usa nuevos escenarios para verificar si captaste el concepto, no solo lo memorizaste."
 
 #: src/lib/belt-colors.ts
+#: src/lib/use-belt-color-label.ts
 msgctxt "1W4okO"
 msgid "Green"
 msgstr "Verde"
 
 #: src/lib/belt-colors.ts
+#: src/lib/use-belt-color-label.ts
 msgctxt "5Tw3Ta"
 msgid "Yellow"
 msgstr "Amarillo"
 
 #: src/lib/belt-colors.ts
+#: src/lib/use-belt-color-label.ts
 msgctxt "D+ZFS/"
 msgid "Red"
 msgstr "Rojo"
 
 #: src/lib/belt-colors.ts
+#: src/lib/use-belt-color-label.ts
 msgctxt "eM/4ho"
 msgid "Brown"
 msgstr "Café"
 
 #: src/lib/belt-colors.ts
+#: src/lib/use-belt-color-label.ts
 msgctxt "k2tJ9k"
 msgid "Blue"
 msgstr "Azul"
 
 #: src/lib/belt-colors.ts
+#: src/lib/use-belt-color-label.ts
 msgctxt "n3m1xt"
 msgid "Orange"
 msgstr "Naranja"
 
 #: src/lib/belt-colors.ts
+#: src/lib/use-belt-color-label.ts
 msgctxt "OAG+sQ"
 msgid "White"
 msgstr "Blanco"
 
 #: src/lib/belt-colors.ts
+#: src/lib/use-belt-color-label.ts
 msgctxt "tihmF3"
 msgid "Purple"
 msgstr "Morado"
 
 #: src/lib/belt-colors.ts
+#: src/lib/use-belt-color-label.ts
 msgctxt "XjGbuY"
 msgid "Black"
 msgstr "Negro"
 
 #: src/lib/belt-colors.ts
+#: src/lib/use-belt-color-label.ts
 msgctxt "Yp7v0H"
 msgid "Gray"
 msgstr "Gris"

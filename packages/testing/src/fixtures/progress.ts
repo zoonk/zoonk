@@ -39,3 +39,49 @@ export async function dailyProgressFixtureMany(inputs: DailyProgressFixtureInput
     })),
   });
 }
+
+const DEFAULT_ENERGY = 50;
+
+export async function userProgressFixture(attrs: {
+  currentEnergy?: number;
+  totalBrainPower?: bigint;
+  userId: number;
+}) {
+  return prisma.userProgress.create({
+    data: {
+      currentEnergy: attrs.currentEnergy ?? DEFAULT_ENERGY,
+      totalBrainPower: attrs.totalBrainPower ?? 0n,
+      userId: attrs.userId,
+    },
+  });
+}
+
+export async function stepAttemptFixture(attrs: {
+  answer: object;
+  answeredAt?: Date;
+  dayOfWeek?: number;
+  durationSeconds: number;
+  effects?: object;
+  hourOfDay?: number;
+  isCorrect: boolean;
+  organizationId: number;
+  stepId: bigint;
+  userId: number;
+}) {
+  const answeredAt = attrs.answeredAt ?? new Date();
+
+  return prisma.stepAttempt.create({
+    data: {
+      answer: attrs.answer,
+      answeredAt,
+      dayOfWeek: attrs.dayOfWeek ?? answeredAt.getDay(),
+      durationSeconds: attrs.durationSeconds,
+      effects: attrs.effects,
+      hourOfDay: attrs.hourOfDay ?? answeredAt.getHours(),
+      isCorrect: attrs.isCorrect,
+      organizationId: attrs.organizationId,
+      stepId: attrs.stepId,
+      userId: attrs.userId,
+    },
+  });
+}

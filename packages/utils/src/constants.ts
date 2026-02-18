@@ -54,5 +54,15 @@ export const TTS_VOICES = [
 
 export type TTSVoice = (typeof TTS_VOICES)[number];
 
+export const BRAIN_POWER_PER_ACTIVITY = 10;
+export const BRAIN_POWER_PER_CHALLENGE = 100;
+export const CHALLENGE_FAILURE_ENERGY = 0.1;
+export const DAILY_DECAY = 1;
+export const ENERGY_PER_CORRECT = 0.2;
+export const ENERGY_PER_INCORRECT = -0.1;
+export const ENERGY_PER_STATIC = 0.1;
+export const MAX_ENERGY = 100;
+export const MIN_ENERGY = 0;
+
 export const STORAGE_KEY_DISPLAY_NAME = "zoonk:displayName";
 export const NAME_PLACEHOLDER = "{{NAME}}";

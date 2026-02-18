@@ -35,7 +35,7 @@ function BeltIndicator({
     <span
       aria-label={label}
       className={cn(
-        "inline-block shrink-0 rounded-full",
+        "inline-block shrink-0 rounded-full transition-colors duration-500",
         "ring-1 ring-black/10 ring-inset dark:ring-white/10",
         beltColorClasses[color],
         sizeClasses[size],

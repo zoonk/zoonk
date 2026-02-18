@@ -10,10 +10,6 @@ type DimensionEntry = {
   total: number;
 };
 
-export function hasNegativeDimension(dimensions: DimensionInventoryType): boolean {
-  return Object.values(dimensions).some((value) => value < 0);
-}
-
 export function formatDelta(delta: number): string {
   return delta >= 0 ? `+${delta}` : `${delta}`;
 }

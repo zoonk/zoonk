@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { computeScore } from "./compute-score";
+import { computeChallengeScore, computeScore } from "./compute-score";
 
 describe(computeScore, () => {
   test("all correct (5): BP=10, energyDelta=1.0", () => {
@@ -59,14 +59,72 @@ describe(computeScore, () => {
     });
   });
 
-  test("empty results: BP=10, energyDelta=0, counts=0", () => {
+  test("empty results (static activity): BP=10, energyDelta=0.1", () => {
     const result = computeScore({ results: [] });
 
     expect(result).toEqual({
       brainPower: 10,
       correctCount: 0,
-      energyDelta: 0,
+      energyDelta: 0.1,
       incorrectCount: 0,
+    });
+  });
+});
+
+describe(computeChallengeScore, () => {
+  test("successful challenge: counts positive/neutral as correct, none incorrect", () => {
+    const result = computeChallengeScore({
+      dimensions: { Courage: 2, Diplomacy: 1, Speed: 0 },
+      isSuccessful: true,
+    });
+
+    expect(result).toEqual({
+      brainPower: 100,
+      correctCount: 3,
+      energyDelta: 3,
+      incorrectCount: 0,
+    });
+  });
+
+  test("successful challenge with all zeros: all counted as correct", () => {
+    const result = computeChallengeScore({
+      dimensions: { Courage: 0, Diplomacy: 0 },
+      isSuccessful: true,
+    });
+
+    expect(result).toEqual({
+      brainPower: 100,
+      correctCount: 2,
+      energyDelta: 1,
+      incorrectCount: 0,
+    });
+  });
+
+  test("failed challenge: negative dimensions counted as incorrect", () => {
+    const result = computeChallengeScore({
+      dimensions: { Courage: -1, Diplomacy: 2 },
+      isSuccessful: false,
+    });
+
+    expect(result).toEqual({
+      brainPower: 10,
+      correctCount: 1,
+      energyDelta: 0.1,
+      incorrectCount: 1,
+    });
+  });
+
+  test("mixed dimensions: positive/neutral correct, negative incorrect", () => {
+    const result = computeChallengeScore({
+      dimensions: { Courage: 3, Diplomacy: -1, Speed: 2 },
+      isSuccessful: true,
+    });
+
+    expect(result).toEqual({
+      brainPower: 100,
+      correctCount: 2,
+      energyDelta: 5,
+      incorrectCount: 1,
     });
   });
 });

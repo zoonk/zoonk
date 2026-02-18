@@ -60,7 +60,9 @@
   --color-belt-red: var(--belt-red);
   --color-belt-gray: var(--belt-gray);
   --color-belt-black: var(--belt-black);
+  --animate-badge-land: badge-land 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both;
   --animate-breathe: breathe 2s ease-in-out infinite;
+  --animate-dot-pulse: dot-pulse 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
   --animate-shimmer-text: shimmer-text 3s ease-in-out infinite;
 }
 
@@ -269,6 +271,30 @@
   }
   100% {
     background-position: -200% center;
+  }
+}
+
+@keyframes badge-land {
+  0% {
+    transform: scale(0.85);
+  }
+  60% {
+    transform: scale(1.04);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes dot-pulse {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.6);
+  }
+  100% {
+    transform: scale(1);
   }
 }
 

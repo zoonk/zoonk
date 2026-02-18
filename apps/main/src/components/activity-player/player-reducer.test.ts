@@ -2,7 +2,7 @@ import {
   type SerializedActivity,
   type SerializedStep,
 } from "@/data/activities/prepare-activity-data";
-import { describe, expect, test } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import {
   type PlayerAction,
   type PlayerState,
@@ -63,6 +63,9 @@ function buildState(overrides: Partial<PlayerState> = {}): PlayerState {
     phase: "playing",
     results: {},
     selectedAnswers: {},
+    startedAt: 1000,
+    stepStartedAt: 1000,
+    stepTimings: {},
     steps: [buildStep()],
     ...overrides,
   };
@@ -322,6 +325,34 @@ describe("CHECK_ANSWER", () => {
         stepId: "mc-1",
       });
     });
+
+    test("records stepTimings on last matchColumns step", () => {
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date("2026-03-15T14:30:00"));
+
+      const startTime = Date.now();
+      const steps = [buildStep({ id: "mc-1", kind: "matchColumns", position: 0 })];
+      const state = buildState({ stepStartedAt: startTime, steps });
+
+      vi.setSystemTime(new Date("2026-03-15T14:30:07"));
+
+      const next = playerReducer(state, {
+        effects: [],
+        result: { feedback: null, isCorrect: true },
+        stepId: "mc-1",
+        type: "CHECK_ANSWER",
+      });
+
+      expect(next.phase).toBe("completed");
+      expect(next.stepTimings["mc-1"]).toEqual({
+        answeredAt: Date.now(),
+        dayOfWeek: 0,
+        durationSeconds: 7,
+        hourOfDay: 14,
+      });
+
+      vi.useRealTimers();
+    });
   });
 
   test("no-ops in feedback phase", () => {
@@ -561,6 +592,116 @@ describe("CLEAR_ANSWER", () => {
     const next = playerReducer(state, { stepId: "step-1", type: "CLEAR_ANSWER" });
     expect(next.phase).toBe("playing");
     expect(next.currentStepIndex).toBe(0);
+  });
+});
+
+describe("timing", () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  test("createInitialState sets startedAt and stepStartedAt", () => {
+    vi.setSystemTime(new Date("2026-03-15T10:00:00"));
+    const state = createInitialState(buildActivity());
+    expect(state.startedAt).toBe(Date.now());
+    expect(state.stepStartedAt).toBe(Date.now());
+    expect(state.stepTimings).toEqual({});
+  });
+
+  test("CHECK_ANSWER records step timing with duration, hourOfDay, dayOfWeek", () => {
+    vi.setSystemTime(new Date("2026-03-15T14:30:00"));
+    const startTime = Date.now();
+    const step = buildMultipleChoiceStep({ id: "mc-1" });
+    const state = buildState({ stepStartedAt: startTime, steps: [step] });
+
+    vi.setSystemTime(new Date("2026-03-15T14:30:05"));
+    const next = playerReducer(state, {
+      effects: [],
+      result: { feedback: "Correct!", isCorrect: true },
+      stepId: "mc-1",
+      type: "CHECK_ANSWER",
+    });
+
+    expect(next.stepTimings["mc-1"]).toEqual({
+      answeredAt: Date.now(),
+      dayOfWeek: 0, // Sunday
+      durationSeconds: 5,
+      hourOfDay: 14,
+    });
+  });
+
+  test("CONTINUE resets stepStartedAt when advancing to next step", () => {
+    const steps = [buildStep({ id: "s1" }), buildStep({ id: "s2", position: 1 })];
+
+    vi.setSystemTime(new Date("2026-03-15T10:00:00"));
+    const state = buildState({
+      currentStepIndex: 0,
+      phase: "feedback",
+      stepStartedAt: 1000,
+      steps,
+    });
+
+    const next = playerReducer(state, { type: "CONTINUE" });
+    expect(next.stepStartedAt).toBe(Date.now());
+    expect(next.stepStartedAt).not.toBe(1000);
+  });
+
+  test("CONTINUE does not reset stepStartedAt on last step (completed)", () => {
+    const state = buildState({
+      currentStepIndex: 0,
+      phase: "feedback",
+      stepStartedAt: 1000,
+      steps: [buildStep()],
+    });
+
+    const next = playerReducer(state, { type: "CONTINUE" });
+    expect(next.phase).toBe("completed");
+    expect(next.stepStartedAt).toBe(1000);
+  });
+
+  test("NAVIGATE_STEP next resets stepStartedAt", () => {
+    vi.setSystemTime(new Date("2026-03-15T10:00:00"));
+    const staticSteps = [
+      buildStep({ id: "s1", kind: "static", position: 0 }),
+      buildStep({ id: "s2", kind: "static", position: 1 }),
+    ];
+    const state = buildState({ stepStartedAt: 1000, steps: staticSteps });
+
+    const next = playerReducer(state, { direction: "next", type: "NAVIGATE_STEP" });
+    expect(next.stepStartedAt).toBe(Date.now());
+  });
+
+  test("NAVIGATE_STEP prev resets stepStartedAt", () => {
+    vi.setSystemTime(new Date("2026-03-15T10:00:00"));
+    const staticSteps = [
+      buildStep({ id: "s1", kind: "static", position: 0 }),
+      buildStep({ id: "s2", kind: "static", position: 1 }),
+    ];
+    const state = buildState({ currentStepIndex: 1, stepStartedAt: 1000, steps: staticSteps });
+
+    const next = playerReducer(state, { direction: "prev", type: "NAVIGATE_STEP" });
+    expect(next.stepStartedAt).toBe(Date.now());
+  });
+
+  test("RESTART resets startedAt, stepStartedAt, and clears stepTimings", () => {
+    vi.setSystemTime(new Date("2026-03-15T10:00:00"));
+    const state = buildState({
+      phase: "completed",
+      startedAt: 500,
+      stepStartedAt: 800,
+      stepTimings: {
+        "step-1": { answeredAt: 900, dayOfWeek: 0, durationSeconds: 3, hourOfDay: 14 },
+      },
+    });
+
+    const next = playerReducer(state, { type: "RESTART" });
+    expect(next.startedAt).toBe(Date.now());
+    expect(next.stepStartedAt).toBe(Date.now());
+    expect(next.stepTimings).toEqual({});
   });
 });
 
