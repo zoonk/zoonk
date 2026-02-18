@@ -31,7 +31,6 @@
     "./player/completion-input-schema": "./src/player/completion-input-schema.ts",
     "./player/compute-score": "./src/player/compute-score.ts",
     "./player/distractor-words": "./src/player/get-distractor-words.ts",
-    "./player/has-negative-dimension": "./src/player/has-negative-dimension.ts",
     "./player/validate-answers": "./src/player/validate-answers.ts",
     "./steps/image": "./src/steps/step-image.ts",
     "./steps/content-contract": "./src/steps/content-contract.ts",

@@ -7,12 +7,12 @@ import {
   completionInputSchema,
 } from "@zoonk/core/player/completion-input-schema";
 import { computeChallengeScore, computeScore } from "@zoonk/core/player/compute-score";
-import { hasNegativeDimension } from "@zoonk/core/player/has-negative-dimension";
 import { validateAnswers } from "@zoonk/core/player/validate-answers";
 import { prisma } from "@zoonk/db";
 import { type BeltLevelResult } from "@zoonk/utils/belt-level";
 import { safeAsync } from "@zoonk/utils/error";
 import { headers } from "next/headers";
+import { hasNegativeDimension } from "./dimension-inventory";
 
 export type CompletionResult =
   | {

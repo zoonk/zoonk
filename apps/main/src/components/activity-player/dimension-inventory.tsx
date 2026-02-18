@@ -1,11 +1,12 @@
 "use client";
 
-import { hasNegativeDimension } from "@zoonk/core/player/has-negative-dimension";
 import { type ChallengeEffect } from "@zoonk/core/steps/content-contract";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type DimensionInventory as DimensionInventoryType, effectDelta } from "./player-reducer";
 
-export { hasNegativeDimension };
+export function hasNegativeDimension(dimensions: Record<string, number>): boolean {
+  return Object.values(dimensions).some((value) => value < 0);
+}
 
 type DimensionEntry = {
   delta: number;

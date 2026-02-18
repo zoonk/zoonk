@@ -2,12 +2,12 @@
 
 import { ContentFeedback } from "@/components/feedback/content-feedback";
 import { computeScore } from "@zoonk/core/player/compute-score";
-import { hasNegativeDimension } from "@zoonk/core/player/has-negative-dimension";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CircleCheck } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { ChallengeFailureContent, ChallengeSuccessContent } from "./challenge-completion";
 import { AuthBranch } from "./completion-auth-branch";
+import { hasNegativeDimension } from "./dimension-inventory";
 import { type DimensionInventory, type StepResult } from "./player-reducer";
 import { type CompletionResult } from "./submit-completion-action";
 
