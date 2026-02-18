@@ -2,9 +2,7 @@ import "server-only";
 import { type ScoreResult } from "@zoonk/core/player/compute-score";
 import { prisma } from "@zoonk/db";
 import { type BeltLevelResult, calculateBeltLevel } from "@zoonk/utils/belt-level";
-
-const MAX_ENERGY = 100;
-const MIN_ENERGY = 0;
+import { MAX_ENERGY, MIN_ENERGY } from "@zoonk/utils/constants";
 
 function getCompletionField(input: {
   isChallenge: boolean;

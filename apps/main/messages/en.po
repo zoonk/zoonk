@@ -565,9 +565,9 @@ msgid "Avg"
 msgstr "Avg"
 
 #: src/app/[locale]/(performance)/energy/energy-explanation.tsx
-msgctxt "bbspjV"
-msgid "Energy reflects your learning consistency. It increases with correct answers (+0.1%), decreases with wrong answers (-0.03%), and drops 1% for each inactive day."
-msgstr "Energy reflects your learning consistency. It increases with correct answers (+0.1%), decreases with wrong answers (-0.03%), and drops 1% for each inactive day."
+msgctxt "/1gcM1"
+msgid "Energy reflects your learning consistency. It increases with correct answers, decreases with wrong answers, and drops for each inactive day."
+msgstr "Energy reflects your learning consistency. It increases with correct answers, decreases with wrong answers, and drops for each inactive day."
 
 #: src/app/[locale]/(performance)/energy/energy-explanation.tsx
 msgctxt "tqJIUh"

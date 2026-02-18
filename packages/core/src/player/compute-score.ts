@@ -1,10 +1,11 @@
-export const BRAIN_POWER_PER_ACTIVITY = 10;
-export const BRAIN_POWER_PER_CHALLENGE = 100;
-
-const ENERGY_PER_CORRECT = 0.2;
-const ENERGY_PER_INCORRECT = -0.1;
-const ENERGY_PER_STATIC = 0.1;
-const CHALLENGE_FAILURE_ENERGY = 0.1;
+import {
+  BRAIN_POWER_PER_ACTIVITY,
+  BRAIN_POWER_PER_CHALLENGE,
+  CHALLENGE_FAILURE_ENERGY,
+  ENERGY_PER_CORRECT,
+  ENERGY_PER_INCORRECT,
+  ENERGY_PER_STATIC,
+} from "@zoonk/utils/constants";
 
 export type ActivityScoreInput = {
   results: { isCorrect: boolean }[];
