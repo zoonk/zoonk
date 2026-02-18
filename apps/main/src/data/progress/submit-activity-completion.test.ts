@@ -3,58 +3,60 @@ import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
+import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { userProgressFixture } from "@zoonk/testing/fixtures/progress";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, test } from "vitest";
+import { beforeAll, describe, expect, test } from "vitest";
 import { submitActivityCompletion } from "./submit-activity-completion";
 
-async function createTestSetup() {
-  const org = await prisma.organization.findUniqueOrThrow({ where: { slug: "ai" } });
-  const user = await userFixture();
-  const userId = Number(user.id);
-
-  const course = await courseFixture({ organizationId: org.id });
-  const chapter = await chapterFixture({ courseId: course.id, organizationId: org.id });
-  const lesson = await lessonFixture({ chapterId: chapter.id, organizationId: org.id });
-
-  const activity = await activityFixture({
-    kind: "quiz",
-    lessonId: lesson.id,
-    organizationId: org.id,
-  });
-
-  const step = await stepFixture({
-    activityId: activity.id,
-    content: {
-      kind: "core",
-      options: [
-        { feedback: "Correct!", isCorrect: true, text: "A" },
-        { feedback: "Wrong.", isCorrect: false, text: "B" },
-      ],
-    },
-    kind: "multipleChoice",
-  });
-
-  return { activity, org, step, userId };
-}
-
-function buildStepResult(stepId: bigint, isCorrect: boolean) {
-  return {
-    answer: { kind: "multipleChoice", selectedIndex: 0 },
-    answeredAt: new Date(),
-    dayOfWeek: 1,
-    durationSeconds: 5,
-    effects: [],
-    hourOfDay: 14,
-    isCorrect,
-    stepId,
-  };
-}
-
 describe(submitActivityCompletion, () => {
+  let org: Awaited<ReturnType<typeof organizationFixture>>;
+  let lesson: Awaited<ReturnType<typeof lessonFixture>>;
+  let activity: Awaited<ReturnType<typeof activityFixture>>;
+  let step: Awaited<ReturnType<typeof stepFixture>>;
+
+  function stepResult(isCorrect: boolean) {
+    return {
+      answer: { kind: "multipleChoice", selectedIndex: 0 },
+      answeredAt: new Date(),
+      dayOfWeek: 1,
+      durationSeconds: 5,
+      effects: [],
+      hourOfDay: 14,
+      isCorrect,
+      stepId: step.id,
+    };
+  }
+
+  beforeAll(async () => {
+    org = await organizationFixture();
+    const course = await courseFixture({ organizationId: org.id });
+    const chapter = await chapterFixture({ courseId: course.id, organizationId: org.id });
+    lesson = await lessonFixture({ chapterId: chapter.id, organizationId: org.id });
+
+    activity = await activityFixture({
+      kind: "quiz",
+      lessonId: lesson.id,
+      organizationId: org.id,
+    });
+
+    step = await stepFixture({
+      activityId: activity.id,
+      content: {
+        kind: "core",
+        options: [
+          { feedback: "Correct!", isCorrect: true, text: "A" },
+          { feedback: "Wrong.", isCorrect: false, text: "B" },
+        ],
+      },
+      kind: "multipleChoice",
+    });
+  });
+
   test("creates StepAttempt records with correct fields", async () => {
-    const { activity, org, step, userId } = await createTestSetup();
+    const user = await userFixture();
+    const userId = Number(user.id);
 
     await submitActivityCompletion({
       activityId: activity.id,
@@ -63,7 +65,7 @@ describe(submitActivityCompletion, () => {
       organizationId: org.id,
       score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
       startedAt: new Date(Date.now() - 10_000),
-      stepResults: [buildStepResult(step.id, true)],
+      stepResults: [stepResult(true)],
       userId,
     });
 
@@ -79,7 +81,8 @@ describe(submitActivityCompletion, () => {
   });
 
   test("creates ActivityProgress with completedAt and durationSeconds", async () => {
-    const { activity, org, step, userId } = await createTestSetup();
+    const user = await userFixture();
+    const userId = Number(user.id);
 
     await submitActivityCompletion({
       activityId: activity.id,
@@ -88,7 +91,7 @@ describe(submitActivityCompletion, () => {
       organizationId: org.id,
       score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
       startedAt: new Date(Date.now() - 15_000),
-      stepResults: [buildStepResult(step.id, true)],
+      stepResults: [stepResult(true)],
       userId,
     });
 
@@ -102,7 +105,8 @@ describe(submitActivityCompletion, () => {
   });
 
   test("creates UserProgress with correct BP increment and energy delta", async () => {
-    const { activity, org, step, userId } = await createTestSetup();
+    const user = await userFixture();
+    const userId = Number(user.id);
 
     await submitActivityCompletion({
       activityId: activity.id,
@@ -111,7 +115,7 @@ describe(submitActivityCompletion, () => {
       organizationId: org.id,
       score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
       startedAt: new Date(Date.now() - 10_000),
-      stepResults: [buildStepResult(step.id, true)],
+      stepResults: [stepResult(true)],
       userId,
     });
 
@@ -123,7 +127,8 @@ describe(submitActivityCompletion, () => {
   });
 
   test("creates DailyProgress with correct counters", async () => {
-    const { activity, org, step, userId } = await createTestSetup();
+    const user = await userFixture();
+    const userId = Number(user.id);
 
     await submitActivityCompletion({
       activityId: activity.id,
@@ -132,7 +137,7 @@ describe(submitActivityCompletion, () => {
       organizationId: org.id,
       score: { brainPower: 10, correctCount: 3, energyDelta: 0.4, incorrectCount: 2 },
       startedAt: new Date(Date.now() - 10_000),
-      stepResults: [buildStepResult(step.id, true)],
+      stepResults: [stepResult(true)],
       userId,
     });
 
@@ -150,7 +155,8 @@ describe(submitActivityCompletion, () => {
   });
 
   test("energy clamps at 100", async () => {
-    const { activity, org, step, userId } = await createTestSetup();
+    const user = await userFixture();
+    const userId = Number(user.id);
     await userProgressFixture({ currentEnergy: 99.5, userId });
 
     const result = await submitActivityCompletion({
@@ -160,7 +166,7 @@ describe(submitActivityCompletion, () => {
       organizationId: org.id,
       score: { brainPower: 10, correctCount: 5, energyDelta: 1, incorrectCount: 0 },
       startedAt: new Date(Date.now() - 10_000),
-      stepResults: [buildStepResult(step.id, true)],
+      stepResults: [stepResult(true)],
       userId,
     });
 
@@ -170,7 +176,8 @@ describe(submitActivityCompletion, () => {
   });
 
   test("energy clamps at 0", async () => {
-    const { activity, org, step, userId } = await createTestSetup();
+    const user = await userFixture();
+    const userId = Number(user.id);
     await userProgressFixture({ currentEnergy: 0.05, userId });
 
     await submitActivityCompletion({
@@ -180,7 +187,7 @@ describe(submitActivityCompletion, () => {
       organizationId: org.id,
       score: { brainPower: 10, correctCount: 0, energyDelta: -0.5, incorrectCount: 5 },
       startedAt: new Date(Date.now() - 10_000),
-      stepResults: [buildStepResult(step.id, false)],
+      stepResults: [stepResult(false)],
       userId,
     });
 
@@ -189,7 +196,8 @@ describe(submitActivityCompletion, () => {
   });
 
   test("challenge success: 100 BP", async () => {
-    const { activity, org, step, userId } = await createTestSetup();
+    const user = await userFixture();
+    const userId = Number(user.id);
 
     const result = await submitActivityCompletion({
       activityId: activity.id,
@@ -198,7 +206,7 @@ describe(submitActivityCompletion, () => {
       organizationId: org.id,
       score: { brainPower: 100, correctCount: 0, energyDelta: 3, incorrectCount: 0 },
       startedAt: new Date(Date.now() - 10_000),
-      stepResults: [buildStepResult(step.id, true)],
+      stepResults: [stepResult(true)],
       userId,
     });
 
@@ -213,7 +221,8 @@ describe(submitActivityCompletion, () => {
   });
 
   test("challenge failure: 10 BP, energy +0.1", async () => {
-    const { activity, org, step, userId } = await createTestSetup();
+    const user = await userFixture();
+    const userId = Number(user.id);
 
     const result = await submitActivityCompletion({
       activityId: activity.id,
@@ -222,7 +231,7 @@ describe(submitActivityCompletion, () => {
       organizationId: org.id,
       score: { brainPower: 10, correctCount: 0, energyDelta: 0.1, incorrectCount: 0 },
       startedAt: new Date(Date.now() - 10_000),
-      stepResults: [buildStepResult(step.id, true)],
+      stepResults: [stepResult(true)],
       userId,
     });
 
@@ -231,7 +240,8 @@ describe(submitActivityCompletion, () => {
   });
 
   test("re-completion: new StepAttempts, updated BP", async () => {
-    const { activity, org, step, userId } = await createTestSetup();
+    const user = await userFixture();
+    const userId = Number(user.id);
 
     const baseInput = {
       activityId: activity.id,
@@ -240,7 +250,7 @@ describe(submitActivityCompletion, () => {
       organizationId: org.id,
       score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
       startedAt: new Date(Date.now() - 10_000),
-      stepResults: [buildStepResult(step.id, true)],
+      stepResults: [stepResult(true)],
       userId,
     };
 
@@ -257,21 +267,17 @@ describe(submitActivityCompletion, () => {
   });
 
   test("static activity increments staticCompleted, not interactiveCompleted", async () => {
-    const org = await prisma.organization.findUniqueOrThrow({ where: { slug: "ai" } });
     const user = await userFixture();
     const userId = Number(user.id);
-    const course = await courseFixture({ organizationId: org.id });
-    const chapter = await chapterFixture({ courseId: course.id, organizationId: org.id });
-    const lesson = await lessonFixture({ chapterId: chapter.id, organizationId: org.id });
 
-    const activity = await activityFixture({
+    const staticActivity = await activityFixture({
       kind: "background",
       lessonId: lesson.id,
       organizationId: org.id,
     });
 
     await submitActivityCompletion({
-      activityId: activity.id,
+      activityId: staticActivity.id,
       durationSeconds: 5,
       isChallenge: false,
       organizationId: org.id,
@@ -292,7 +298,8 @@ describe(submitActivityCompletion, () => {
   });
 
   test("returns correct belt level based on new total BP", async () => {
-    const { activity, org, step, userId } = await createTestSetup();
+    const user = await userFixture();
+    const userId = Number(user.id);
 
     const result = await submitActivityCompletion({
       activityId: activity.id,
@@ -301,7 +308,7 @@ describe(submitActivityCompletion, () => {
       organizationId: org.id,
       score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
       startedAt: new Date(Date.now() - 10_000),
-      stepResults: [buildStepResult(step.id, true)],
+      stepResults: [stepResult(true)],
       userId,
     });
 
