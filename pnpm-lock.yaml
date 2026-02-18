@@ -112,9 +112,6 @@ importers:
       '@zoonk/db':
         specifier: workspace:*
         version: link:../../packages/db
-      '@zoonk/error-reporter':
-        specifier: workspace:*
-        version: link:../../packages/error-reporter
       '@zoonk/next':
         specifier: workspace:*
         version: link:../../packages/next
@@ -212,9 +209,6 @@ importers:
       '@zoonk/db':
         specifier: workspace:*
         version: link:../../packages/db
-      '@zoonk/error-reporter':
-        specifier: workspace:*
-        version: link:../../packages/error-reporter
       '@zoonk/next':
         specifier: workspace:*
         version: link:../../packages/next
@@ -367,9 +361,6 @@ importers:
       '@zoonk/db':
         specifier: workspace:*
         version: link:../../packages/db
-      '@zoonk/error-reporter':
-        specifier: workspace:*
-        version: link:../../packages/error-reporter
       '@zoonk/next':
         specifier: workspace:*
         version: link:../../packages/next
@@ -663,28 +654,6 @@ importers:
       '@playwright/test':
         specifier: 1.58.2
         version: 1.58.2
-      '@types/node':
-        specifier: ^24
-        version: 24.10.13
-      '@typescript/native-preview':
-        specifier: 7.0.0-dev.20260214.1
-        version: 7.0.0-dev.20260214.1
-      '@zoonk/tsconfig':
-        specifier: workspace:*
-        version: link:../tsconfig
-
-  packages/error-reporter:
-    dependencies:
-      '@zoonk/mailer':
-        specifier: workspace:*
-        version: link:../mailer
-      '@zoonk/utils':
-        specifier: workspace:*
-        version: link:../utils
-      next:
-        specifier: '>=16'
-        version: 16.1.6(@opentelemetry/api@1.9.0)(@playwright/test@1.58.2)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-    devDependencies:
       '@types/node':
         specifier: ^24
         version: 24.10.13
