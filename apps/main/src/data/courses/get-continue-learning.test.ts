@@ -250,4 +250,61 @@ describe("authenticated users", () => {
     expect(result[0]?.activity.id).toBe(activity2.id);
     expect(result[0]?.chapter.id).toBe(chapter2.id);
   });
+
+  test("returns null organization for personal courses", async () => {
+    const user = await userFixture();
+    const headers = await signInAs(user.email, user.password);
+
+    const course = await courseFixture({
+      isPublished: true,
+      mode: "quickLesson",
+      organizationId: null,
+      userId: Number(user.id),
+    });
+
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      isPublished: true,
+      organizationId: null,
+      position: 0,
+    });
+
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      isPublished: true,
+      organizationId: null,
+      position: 0,
+    });
+
+    const [activity1, activity2] = await Promise.all([
+      activityFixture({
+        generationStatus: "completed",
+        isPublished: true,
+        lessonId: lesson.id,
+        organizationId: null,
+        position: 0,
+      }),
+      activityFixture({
+        generationStatus: "completed",
+        isPublished: true,
+        lessonId: lesson.id,
+        organizationId: null,
+        position: 1,
+      }),
+    ]);
+
+    await activityProgressFixture({
+      activityId: activity1.id,
+      completedAt: new Date(),
+      durationSeconds: 60,
+      userId: Number(user.id),
+    });
+
+    const result = await getContinueLearning(headers);
+
+    expect(result).toHaveLength(1);
+    expect(result[0]?.course.id).toBe(course.id);
+    expect(result[0]?.course.organization).toBeNull();
+    expect(result[0]?.activity.id).toBe(activity2.id);
+  });
 });
