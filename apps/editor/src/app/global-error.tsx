@@ -1,14 +1,8 @@
 "use client";
 
-import { reportError } from "@zoonk/error-reporter/client";
 import NextError from "next/error";
-import { useEffect } from "react";
 
-export default function GlobalError({ error }: { error: Error & { digest?: string } }) {
-  useEffect(() => {
-    reportError(error);
-  }, [error]);
-
+export default function GlobalError() {
   return (
     <html lang="en">
       <body>

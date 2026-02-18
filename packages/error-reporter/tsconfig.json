@@ -1,5 +1,0 @@
-{
-  "exclude": ["node_modules", "dist"],
-  "extends": "@zoonk/tsconfig/base.json",
-  "include": ["src"]
-}
