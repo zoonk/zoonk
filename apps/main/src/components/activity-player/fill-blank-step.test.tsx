@@ -29,6 +29,7 @@ function buildFillBlankStep(overrides: Record<string, unknown> = {}) {
     kind: "fillBlank" as const,
     position: 0,
     sentence: null,
+    sortOrderItems: [],
     visualContent: null,
     visualKind: null,
     vocabularyOptions: [],

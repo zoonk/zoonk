@@ -1271,13 +1271,11 @@ msgid "Word bank"
 msgstr "Banco de palavras"
 
 #: src/components/activity-player/arrange-words.tsx
-#: src/components/activity-player/sort-order-step.tsx
 msgctxt "hFFOe+"
 msgid "{item}. {result}."
 msgstr "{item}. {result}."
 
 #: src/components/activity-player/arrange-words.tsx
-#: src/components/activity-player/sort-order-step.tsx
 msgctxt "vPyO9S"
 msgid "Position {position}: {item}. Tap to remove."
 msgstr "Posição {position}: {item}. Toque para remover."
@@ -1534,19 +1532,44 @@ msgid "Image options"
 msgstr "Opções de imagem"
 
 #: src/components/activity-player/sort-order-step.tsx
-msgctxt "/CFOL2"
-msgid "Tap items in the correct order"
-msgstr "Toque nos itens na ordem correta"
+msgctxt "E2Dn6t"
+msgid "Position {position}: {item}"
+msgstr "Posição {position}: {item}"
 
 #: src/components/activity-player/sort-order-step.tsx
-msgctxt "1za4AW"
-msgid "{item}. Tap to select as position {nextPosition}."
-msgstr "{item}. Toque para selecionar como posição {nextPosition}."
+msgctxt "e4MHav"
+msgid "Move {item} up"
+msgstr "Mover {item} para cima"
+
+#: src/components/activity-player/sort-order-step.tsx
+msgctxt "Gjog5F"
+msgid "Tap arrows to reorder"
+msgstr "Toque nas setas para reordenar"
+
+#: src/components/activity-player/sort-order-step.tsx
+msgctxt "kayUDP"
+msgid "Correct order: {answer}"
+msgstr "Ordem correta: {answer}"
+
+#: src/components/activity-player/sort-order-step.tsx
+msgctxt "NSI0LD"
+msgid "{item} moved to position {position}"
+msgstr "{item} movido para a posição {position}"
 
 #: src/components/activity-player/sort-order-step.tsx
 msgctxt "p5llOK"
 msgid "Sort items"
 msgstr "Ordenar itens"
+
+#: src/components/activity-player/sort-order-step.tsx
+msgctxt "uQ20ns"
+msgid "you had: #{position}"
+msgstr "você tinha: #{position}"
+
+#: src/components/activity-player/sort-order-step.tsx
+msgctxt "y6DROt"
+msgid "Move {item} down"
+msgstr "Mover {item} para baixo"
 
 #: src/components/activity-player/timeline-visual.tsx
 msgctxt "zWkvNO"

@@ -10,6 +10,7 @@ function buildStep(overrides: Partial<SerializedStep> = {}): SerializedStep {
     kind: "static",
     position: 0,
     sentence: null,
+    sortOrderItems: [],
     visualContent: null,
     visualKind: null,
     vocabularyOptions: [],

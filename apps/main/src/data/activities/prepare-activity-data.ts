@@ -47,6 +47,7 @@ export type SerializedStep<Kind extends SupportedStepKind = SupportedStepKind> =
   visualContent: VisualContentByKind[SupportedVisualKind] | null;
   word: SerializedWord | null;
   sentence: SerializedSentence | null;
+  sortOrderItems: string[];
   vocabularyOptions: SerializedWord[];
   wordBankOptions: string[];
 };
@@ -192,6 +193,15 @@ function buildWordBankOptions(
   return shuffle([...correctWords, ...selected]);
 }
 
+function buildSortOrderItems(step: SerializedStep): string[] {
+  if (step.kind !== "sortOrder") {
+    return [];
+  }
+
+  const content = parseStepContent("sortOrder", step.content);
+  return shuffle([...content.items]);
+}
+
 function serializeStep(step: ActivityWithSteps["steps"][number]): SerializedStep | null {
   if (!isSupportedStepKind(step.kind)) {
     return null;
@@ -211,6 +221,7 @@ function serializeStep(step: ActivityWithSteps["steps"][number]): SerializedStep
       kind: step.kind,
       position: step.position,
       sentence: step.sentence ? serializeSentence(step.sentence) : null,
+      sortOrderItems: [],
       visualContent: visual?.content ?? null,
       visualKind: visual?.kind ?? null,
       vocabularyOptions: [],
@@ -242,6 +253,7 @@ export function prepareActivityData(
     .filter((step): step is SerializedStep => step !== null)
     .map((step) => ({
       ...step,
+      sortOrderItems: buildSortOrderItems(step),
       vocabularyOptions: buildVocabularyOptions(step, serializedLessonWords),
       wordBankOptions: buildWordBankOptions(step, serializedLessonWords),
     }));
