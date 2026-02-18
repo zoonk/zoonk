@@ -1,4 +1,5 @@
 import { type SerializedStep } from "@/data/activities/prepare-activity-data";
+import { parseStepContent } from "@zoonk/core/steps/content-contract";
 import { ChallengeIntro } from "./challenge-intro";
 import { CompletionScreenContent } from "./completion-screen";
 import { FeedbackScreenContent } from "./feedback-screen";
@@ -11,13 +12,17 @@ import {
 import { StepRenderer } from "./step-renderer";
 import { type CompletionResult } from "./submit-completion-action";
 
-function hasInlineFeedback(step: SerializedStep | undefined, result: StepResult): boolean {
+function hasInlineFeedback(step: SerializedStep): boolean {
+  if (step.kind === "multipleChoice") {
+    const content = parseStepContent("multipleChoice", step.content);
+    return content.kind !== "challenge";
+  }
+
   return (
-    step?.kind === "sortOrder" ||
-    step?.kind === "vocabulary" ||
-    step?.kind === "reading" ||
-    step?.kind === "listening" ||
-    (step?.kind === "multipleChoice" && result.effects.length === 0)
+    step.kind === "sortOrder" ||
+    step.kind === "vocabulary" ||
+    step.kind === "reading" ||
+    step.kind === "listening"
   );
 }
 
@@ -78,11 +83,7 @@ export function StageContent({
     );
   }
 
-  if (
-    phase === "feedback" &&
-    currentResult &&
-    (!hasInlineFeedback(currentStep, currentResult) || !currentStep)
-  ) {
+  if (phase === "feedback" && currentResult && (!currentStep || !hasInlineFeedback(currentStep))) {
     return <FeedbackScreenContent dimensions={dimensions} result={currentResult} />;
   }
 
