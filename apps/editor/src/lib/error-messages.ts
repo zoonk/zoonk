@@ -53,7 +53,7 @@ export async function getErrorMessage(error: Error): Promise<string> {
       case ErrorCode.invalidActivityFormat:
         return t("Invalid activity format. Each activity must have a kind and position");
       case ErrorCode.invalidAlternativeTitleFormat:
-        return t("Invalid format. Please provide an array of non-empty strings");
+        return t("Invalid alternative title format. Please provide an array of non-empty strings");
       case ErrorCode.invalidLessonFormat:
         return t("Invalid lesson format. Each lesson must have a title and description");
       case ErrorCode.lessonNotFound:

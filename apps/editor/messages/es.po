@@ -869,11 +869,6 @@ msgid "Lesson not found"
 msgstr "Lección no encontrada"
 
 #: src/lib/error-messages.ts
-msgctxt "c3FYXv"
-msgid "Invalid format. Please provide an array of non-empty strings"
-msgstr "Formato inválido. Por favor, proporciona un array de cadenas no vacías"
-
-#: src/lib/error-messages.ts
 msgctxt "cvtZ2C"
 msgid "Course not found"
 msgstr "Curso no encontrado"
@@ -932,6 +927,11 @@ msgstr "Formato JSON inválido. Por favor revisa tu archivo"
 msgctxt "yVHcXv"
 msgid "Organization not found"
 msgstr "Organización no encontrada"
+
+#: src/lib/error-messages.ts
+msgctxt "zWnazz"
+msgid "Invalid alternative title format. Please provide an array of non-empty strings"
+msgstr "Formato de título alternativo inválido. Por favor proporciona un array de strings no vacíos"
 
 #: src/lib/use-category-labels.ts
 msgctxt "djJp6c"

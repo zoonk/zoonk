@@ -84,7 +84,6 @@ checksums:
     Need%20help%3F%20Contact%20us%20at%20hello%40zoonk.com/singular: 0053665fad1f58782cc3a6f442b36726
     You%20can't%20edit%20courses%20for%20this%20organization.%20Log%20in%20with%20another%20account%20or%20switch%20to%20a%20different%20organization./singular: f4c2f472730fa69b3602af2d9cfa56c5
     Login/singular: f4f219abeb5a465ecb1c7efaf50246de
-    Logout/singular: 07948fdf20705e04a7bf68ab197512bf
     401%20-%20Unauthorized/singular: 0612c3a47aaacaa9fd8aa3d5f0fbc0b8
     Remove%20%7Btitle%7D/singular: 7ea5f663311db30da2ee678435d6c019
     Add/singular: 87c4a663507f2bcbbf79934af8164e13
@@ -130,6 +129,7 @@ checksums:
     Import%20lessons/singular: 8d1fae531b7e8156042321586d18b522
     Chapters%20imported%20successfully/singular: 2a3fda7021d4d81b1cdc6e869f94664f
     Upload%20a%20JSON%20file%20containing%20lessons%20to%20import./singular: a6aec991263d7f81fe5f06e48c4aaa68
+    Logout/singular: 07948fdf20705e04a7bf68ab197512bf
     logout/singular: 77ca3565971e69e420e8eec6f752be84
     home/singular: c227d2c8e5d86a375988bd63ebeececc
     create/singular: 1323e3c278824cce3b4975f937fed459
@@ -166,7 +166,6 @@ checksums:
     Chapter%20not%20found/singular: 72d4a8758136678acbae0ec942227f7e
     Invalid%20chapter%20format.%20Each%20chapter%20must%20have%20a%20title%20and%20description/singular: 6c9dc938c75674b73b61177b55cce86d
     Lesson%20not%20found/singular: 41c0c0e96242a28b4d90a84b3bf80e94
-    Invalid%20format.%20Please%20provide%20an%20array%20of%20non-empty%20strings/singular: c9dbc954cf099eedbb573d647356f52e
     Course%20not%20found/singular: 679d024095e9e605246a1928a7e1d87b
     Invalid%20file%20type.%20Please%20upload%20a%20JSON%20file/singular: 9164c5c1930e61a6037fab99386c02f6
     This%20category%20has%20already%20been%20added%20to%20the%20course/singular: 5b220e40c0bfc7b3700d1f402697c522
@@ -179,6 +178,7 @@ checksums:
     File%20is%20too%20large.%20Maximum%20size%20is%205MB/singular: 6ee737426f04528c60f84ba1004542b3
     Invalid%20JSON%20format.%20Please%20check%20your%20file/singular: 2a890d833f49aa36f02433476ca33468
     Organization%20not%20found/singular: 4cb8c07ec2c599b6f48750e06ffa182b
+    Invalid%20alternative%20title%20format.%20Please%20provide%20an%20array%20of%20non-empty%20strings/singular: 87c68e5bcde1f097b333d363fe75a67e
     History/singular: b0578d6d225f512e42f823fbca2e3c32
     Math/singular: 0a604ffa5ef57408918fe98ef05eb05a
     Arts/singular: 9b1845cec1210e57ea990b1a90823228
