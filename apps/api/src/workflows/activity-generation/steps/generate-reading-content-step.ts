@@ -17,10 +17,14 @@ import { setActivityAsRunningStep } from "./set-activity-as-running-step";
 export type ReadingSentence = ActivitySentencesSchema["sentences"][number];
 async function getFallbackLessonWords(params: {
   lessonId: number;
-  organizationId: number;
+  organizationId: number | null;
   targetLanguage: string;
   userLanguage: string;
 }): Promise<string[]> {
+  if (!params.organizationId) {
+    return [];
+  }
+
   const words = await prisma.lessonWord.findMany({
     orderBy: { id: "asc" },
     select: { word: { select: { word: true } } },
@@ -46,7 +50,7 @@ function hasValidSentences(sentences: ReadingSentence[]): boolean {
 async function resolveSourceWords(input: {
   currentRunWords: string[];
   lessonId: number;
-  organizationId: number;
+  organizationId: number | null;
   targetLanguage: string;
   userLanguage: string;
 }): Promise<{ error: Error; words: [] } | { error: null; words: string[] }> {
@@ -104,7 +108,7 @@ export async function generateReadingContentStep(
   const sourceWords = await resolveSourceWords({
     currentRunWords,
     lessonId: activity.lessonId,
-    organizationId: course.organization.id,
+    organizationId: course.organization?.id ?? null,
     targetLanguage,
     userLanguage,
   });

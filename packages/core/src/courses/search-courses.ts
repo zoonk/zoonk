@@ -50,5 +50,7 @@ export async function searchCourses(params: {
 
   const merged = mergeSearchResults(exactMatch, containsMatches);
 
-  return merged.slice(offset, offset + limit);
+  return merged
+    .filter((course): course is CourseWithOrganization => course.organization !== null)
+    .slice(offset, offset + limit);
 }

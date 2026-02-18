@@ -10,7 +10,7 @@ async function getOrganizationId({
   orgId,
   orgSlug,
 }: {
-  orgId?: number;
+  orgId?: number | null;
   orgSlug?: string;
 }): Promise<number | null> {
   if (orgId) {
@@ -28,7 +28,7 @@ async function getOrganizationId({
 const cachedHasCoursePermission = cache(
   async (
     permission: CoursePermission,
-    orgId: number | undefined,
+    orgId: number | null | undefined,
     orgSlug: string | undefined,
     reqHeaders?: Headers,
   ): Promise<boolean> => {
@@ -59,7 +59,7 @@ const cachedHasCoursePermission = cache(
 export function hasCoursePermission(opts: {
   permission: CoursePermission;
   headers?: Headers;
-  orgId?: number;
+  orgId?: number | null;
   orgSlug?: string;
 }): Promise<boolean> {
   return cachedHasCoursePermission(opts.permission, opts.orgId, opts.orgSlug, opts.headers);

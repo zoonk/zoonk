@@ -20,6 +20,26 @@ import { PlayCircleIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
 import Image from "next/image";
 
+function getCourseHrefs(item: ContinueLearningItem) {
+  const { activity, chapter, course, lesson } = item;
+
+  if (course.organization) {
+    const lessonHref = `/b/${course.organization.slug}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`;
+
+    return {
+      activityHref: `${lessonHref}/a/${activity.position}`,
+      courseHref: `/b/${course.organization.slug}/c/${course.slug}`,
+      lessonHref,
+    };
+  }
+
+  return {
+    activityHref: `/p/${course.id}`,
+    courseHref: `/p/${course.id}`,
+    lessonHref: `/p/${course.id}`,
+  };
+}
+
 export async function ContinueLearningCard({
   item,
   kindLabels,
@@ -30,15 +50,13 @@ export async function ContinueLearningCard({
   fullWidth?: boolean;
 }) {
   const t = await getExtracted();
-  const { activity, chapter, course, lesson } = item;
+  const { activity, course, lesson } = item;
 
   const defaultLabel = t("Activity");
   const activityLabel = activity.title ?? kindLabels.get(activity.kind) ?? defaultLabel;
   const nextLabel = t("Next: {activity}", { activity: activityLabel });
 
-  const lessonHref = `/b/${course.organization.slug}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`;
-  const activityHref = `${lessonHref}/a/${activity.position}`;
-  const courseHref = `/b/${course.organization.slug}/c/${course.slug}`;
+  const { activityHref, courseHref, lessonHref } = getCourseHrefs(item);
 
   return (
     <FeatureCard

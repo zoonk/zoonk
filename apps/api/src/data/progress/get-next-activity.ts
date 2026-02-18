@@ -28,7 +28,7 @@ function scopeWhere(scope: ActivityScope) {
 
 async function findFirstActivity(scope: ActivityScope): Promise<{
   activityPosition: number;
-  brandSlug: string;
+  brandSlug: string | null;
   chapterSlug: string;
   courseSlug: string;
   lessonSlug: string;
@@ -69,7 +69,7 @@ async function findFirstActivity(scope: ActivityScope): Promise<{
 
   return {
     activityPosition: activity.position,
-    brandSlug: activity.lesson.chapter.course.organization.slug,
+    brandSlug: activity.lesson.chapter.course.organization?.slug ?? null,
     chapterSlug: activity.lesson.chapter.slug,
     courseSlug: activity.lesson.chapter.course.slug,
     lessonSlug: activity.lesson.slug,
@@ -97,7 +97,7 @@ export async function getNextActivity(
   scope: ActivityScope,
 ): Promise<{
   activityPosition: number;
-  brandSlug: string;
+  brandSlug: string | null;
   chapterSlug: string;
   completed: boolean;
   courseSlug: string;

@@ -64,7 +64,7 @@ export async function UserCourseList() {
           }
           key={course.id}
           linkComponent={
-            <Link href={`/b/${course.organization.slug}/c/${course.slug}`} prefetch={false} />
+            <Link href={`/b/${course.organization?.slug}/c/${course.slug}`} prefetch={false} />
           }
         />
       ))}

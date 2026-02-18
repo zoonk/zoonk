@@ -13,6 +13,7 @@ export function lessonAttrs(
     description: "Test lesson description",
     generationRunId: null,
     generationStatus: "completed",
+    isLocked: false,
     isPublished: false,
     kind: "core",
     language: "en",

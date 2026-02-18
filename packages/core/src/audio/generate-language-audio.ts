@@ -7,7 +7,7 @@ import { uploadAudio } from "./upload-audio";
 
 export type GenerateLanguageAudioParams = {
   language?: string;
-  orgSlug: string;
+  orgSlug?: string;
   text: string;
   voice?: TTSVoice;
 };
@@ -29,7 +29,7 @@ export async function generateLanguageAudio({
   }
 
   const slug = toSlug(text);
-  const fileName = `audio/${orgSlug}/${slug}.opus`;
+  const fileName = `audio/${orgSlug ?? "default"}/${slug}.opus`;
 
   const { data: url, error: uploadError } = await uploadAudio({
     audio: audioResult.audio,

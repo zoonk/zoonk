@@ -73,7 +73,7 @@ export async function CourseHeader({
         <MediaCardPopoverMeta>
           <MediaCardPopoverSource>
             <MediaCardPopoverSourceLink render={<span />}>
-              {course.organization.name}
+              {course.organization?.name}
             </MediaCardPopoverSourceLink>
           </MediaCardPopoverSource>
 

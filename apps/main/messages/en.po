@@ -457,6 +457,16 @@ msgctxt "BDHWkf"
 msgid "No courses yet"
 msgstr "No courses yet"
 
+#: src/app/[locale]/(catalog)/p/[courseId]/page.tsx
+msgctxt "dtRj3N"
+msgid "Personalized courses are coming soon."
+msgstr "Personalized courses are coming soon."
+
+#: src/app/[locale]/(catalog)/p/[courseId]/page.tsx
+msgctxt "e61Jf3"
+msgid "Coming soon"
+msgstr "Coming soon"
+
 #: src/app/[locale]/(catalog)/page.tsx
 msgctxt "qsfeMJ"
 msgid "Zoonk: AI Learning Platform"

@@ -5,7 +5,7 @@ import { type Course, type Organization, prisma } from "@zoonk/db";
 import { AppError, type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
 
-export type UserCourse = Course & { organization: Organization };
+export type UserCourse = Course & { organization: Organization | null };
 
 export const listUserCourses = cache(
   async (headers?: Headers): Promise<SafeReturn<UserCourse[]>> => {

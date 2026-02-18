@@ -18,7 +18,7 @@ WITH last_per_course AS (
   JOIN lessons l ON l.id = a.lesson_id AND l.is_published = true
   JOIN chapters ch ON ch.id = l.chapter_id AND ch.is_published = true
   JOIN courses c ON c.id = ch.course_id
-  JOIN organizations o ON o.id = c.organization_id
+  LEFT JOIN organizations o ON o.id = c.organization_id
   WHERE ap.user_id = $1 AND ap.completed_at IS NOT NULL
   ORDER BY ch.course_id, ap.completed_at DESC
 )

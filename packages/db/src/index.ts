@@ -27,6 +27,7 @@ export type {
   Course,
   CourseAlternativeTitle,
   CourseCategory,
+  CourseMode,
   CourseSuggestion,
   CourseUser,
   DailyProgress,
@@ -46,6 +47,7 @@ export type {
   StepVisualKind,
   Subscription,
   User,
+  UserLearningProfile,
   UserProgress,
   Verification,
 } from "./generated/prisma/client";

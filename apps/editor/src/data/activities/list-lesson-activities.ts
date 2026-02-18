@@ -8,9 +8,13 @@ import { cache } from "react";
 const cachedListLessonActivities = cache(
   async (
     lessonId: number,
-    orgId: number,
+    orgId: number | null,
     headers?: Headers,
   ): Promise<{ data: Activity[]; error: Error | null }> => {
+    if (!orgId) {
+      return { data: [], error: new AppError(ErrorCode.forbidden) };
+    }
+
     const { data, error } = await safeAsync(() =>
       Promise.all([
         hasCoursePermission({
@@ -42,7 +46,7 @@ const cachedListLessonActivities = cache(
 export function listLessonActivities(params: {
   headers?: Headers;
   lessonId: number;
-  orgId: number;
+  orgId: number | null;
 }): Promise<{ data: Activity[]; error: Error | null }> {
   return cachedListLessonActivities(params.lessonId, params.orgId, params.headers);
 }

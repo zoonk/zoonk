@@ -1,6 +1,6 @@
 import "server-only";
 import { type ScoreResult } from "@zoonk/core/player/compute-score";
-import { prisma } from "@zoonk/db";
+import { type TransactionClient, prisma } from "@zoonk/db";
 import { type BeltLevelResult, calculateBeltLevel } from "@zoonk/utils/belt-level";
 import { MAX_ENERGY, MIN_ENERGY } from "@zoonk/utils/constants";
 
@@ -27,11 +27,85 @@ function getDateOnly(date: Date): Date {
   return new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
 }
 
+async function upsertDailyProgress(
+  tx: TransactionClient,
+  params: {
+    clampedEnergy: number;
+    date: Date;
+    dayOfWeek: number;
+    durationSeconds: number;
+    field: "challengesCompleted" | "interactiveCompleted" | "staticCompleted";
+    organizationId: number | null;
+    score: ScoreResult;
+    userId: number;
+  },
+): Promise<void> {
+  const createData = {
+    brainPowerEarned: params.score.brainPower,
+    challengesCompleted: params.field === "challengesCompleted" ? 1 : 0,
+    correctAnswers: params.score.correctCount,
+    date: params.date,
+    dayOfWeek: params.dayOfWeek,
+    energyAtEnd: params.clampedEnergy,
+    incorrectAnswers: params.score.incorrectCount,
+    interactiveCompleted: params.field === "interactiveCompleted" ? 1 : 0,
+    organizationId: params.organizationId,
+    staticCompleted: params.field === "staticCompleted" ? 1 : 0,
+    timeSpentSeconds: params.durationSeconds,
+    userId: params.userId,
+  };
+
+  const updateData = {
+    brainPowerEarned: { increment: params.score.brainPower },
+    correctAnswers: { increment: params.score.correctCount },
+    energyAtEnd: params.clampedEnergy,
+    incorrectAnswers: { increment: params.score.incorrectCount },
+    timeSpentSeconds: { increment: params.durationSeconds },
+    [params.field]: { increment: 1 },
+  };
+
+  if (params.organizationId) {
+    await tx.dailyProgress.upsert({
+      create: createData,
+      update: updateData,
+      where: {
+        userDateOrg: {
+          date: params.date,
+          organizationId: params.organizationId,
+          userId: params.userId,
+        },
+      },
+    });
+
+    return;
+  }
+
+  // When organizationId is null, the compound unique can't be used.
+  // Find an existing record by individual fields instead.
+  const existing = await tx.dailyProgress.findFirst({
+    select: { id: true },
+    where: {
+      date: params.date,
+      organizationId: null,
+      userId: params.userId,
+    },
+  });
+
+  if (existing) {
+    await tx.dailyProgress.update({
+      data: updateData,
+      where: { id: existing.id },
+    });
+  } else {
+    await tx.dailyProgress.create({ data: createData });
+  }
+}
+
 export async function submitActivityCompletion(input: {
   activityId: bigint;
   durationSeconds: number;
   isChallenge: boolean;
-  organizationId: number;
+  organizationId: number | null;
   score: ScoreResult;
   startedAt: Date;
   stepResults: {
@@ -123,36 +197,15 @@ export async function submitActivityCompletion(input: {
     // 4. DailyProgress upsert
     const field = getCompletionField(input);
 
-    await tx.dailyProgress.upsert({
-      create: {
-        brainPowerEarned: input.score.brainPower,
-        challengesCompleted: field === "challengesCompleted" ? 1 : 0,
-        correctAnswers: input.score.correctCount,
-        date: today,
-        dayOfWeek: now.getDay(),
-        energyAtEnd: clampedEnergy,
-        incorrectAnswers: input.score.incorrectCount,
-        interactiveCompleted: field === "interactiveCompleted" ? 1 : 0,
-        organizationId: input.organizationId,
-        staticCompleted: field === "staticCompleted" ? 1 : 0,
-        timeSpentSeconds: input.durationSeconds,
-        userId: input.userId,
-      },
-      update: {
-        brainPowerEarned: { increment: input.score.brainPower },
-        correctAnswers: { increment: input.score.correctCount },
-        energyAtEnd: clampedEnergy,
-        incorrectAnswers: { increment: input.score.incorrectCount },
-        timeSpentSeconds: { increment: input.durationSeconds },
-        [field]: { increment: 1 },
-      },
-      where: {
-        userDateOrg: {
-          date: today,
-          organizationId: input.organizationId,
-          userId: input.userId,
-        },
-      },
+    await upsertDailyProgress(tx, {
+      clampedEnergy,
+      date: today,
+      dayOfWeek: now.getDay(),
+      durationSeconds: input.durationSeconds,
+      field,
+      organizationId: input.organizationId,
+      score: input.score,
+      userId: input.userId,
     });
 
     const newTotalBp = Number(updatedProgress.totalBrainPower);

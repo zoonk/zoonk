@@ -44,8 +44,12 @@ model SearchPromptSuggestion {
 
 model Course {
   id                Int                      @id @default(autoincrement())
-  organizationId    Int                      @map("organization_id")
-  organization      Organization             @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  organizationId    Int?                     @map("organization_id")
+  organization      Organization?            @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  userId            Int?                     @map("user_id")
+  user              User?                    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  mode              CourseMode               @default(full)
+  completedAt       DateTime?                @map("completed_at")
   isPublished       Boolean                  @default(false) @map("is_published")
   language          String                   @db.VarChar(10)
   slug              String
@@ -64,8 +68,11 @@ model Course {
   users             CourseUser[]
 
   @@unique([organizationId, language, slug], name: "orgSlug")
+  @@unique([userId, language, slug], name: "userSlug")
   @@index([organizationId, language, isPublished])
   @@index([organizationId, normalizedTitle])
+  @@index([userId])
+  @@index([userId, mode])
   @@map("courses")
 }
 

@@ -1,9 +1,10 @@
 model Lesson {
   id               Int              @id @default(autoincrement())
-  organizationId   Int              @map("organization_id")
-  organization     Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  organizationId   Int?             @map("organization_id")
+  organization     Organization?    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   chapterId        Int              @map("chapter_id")
   chapter          Chapter          @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  isLocked         Boolean          @default(false) @map("is_locked")
   isPublished      Boolean          @default(false) @map("is_published")
   language         String           @db.VarChar(10)
   kind             LessonKind       @default(core)

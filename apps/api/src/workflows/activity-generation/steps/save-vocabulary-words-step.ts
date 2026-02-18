@@ -81,6 +81,11 @@ export async function saveVocabularyWordsStep(
   await streamStatus({ status: "started", step: "saveVocabularyWords" });
 
   const course = activity.lesson.chapter.course;
+
+  if (!course.organization) {
+    return { savedWords: [] };
+  }
+
   const targetLanguage = course.targetLanguage ?? "";
   const userLanguage = activity.language;
   const organizationId = course.organization.id;

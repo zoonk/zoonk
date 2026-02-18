@@ -23,7 +23,7 @@ async function generateImagesForActivity(activity: LessonActivity): Promise<void
     return;
   }
 
-  const orgSlug = activity.lesson.chapter.course.organization.slug;
+  const orgSlug = activity.lesson.chapter.course.organization?.slug;
 
   const results = await Promise.allSettled(
     imageSteps.map((step) => {
