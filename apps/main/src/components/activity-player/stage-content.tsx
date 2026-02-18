@@ -12,18 +12,13 @@ import {
 import { StepRenderer } from "./step-renderer";
 import { type CompletionResult } from "./submit-completion-action";
 
-function hasInlineFeedback(step: SerializedStep): boolean {
+function needsFeedbackScreen(step: SerializedStep): boolean {
   if (step.kind === "multipleChoice") {
     const content = parseStepContent("multipleChoice", step.content);
-    return content.kind !== "challenge";
+    return content.kind === "challenge";
   }
 
-  return (
-    step.kind === "sortOrder" ||
-    step.kind === "vocabulary" ||
-    step.kind === "reading" ||
-    step.kind === "listening"
-  );
+  return false;
 }
 
 export function StageContent({
@@ -83,7 +78,7 @@ export function StageContent({
     );
   }
 
-  if (phase === "feedback" && currentResult && (!currentStep || !hasInlineFeedback(currentStep))) {
+  if (phase === "feedback" && currentResult && (!currentStep || needsFeedbackScreen(currentStep))) {
     return <FeedbackScreenContent dimensions={dimensions} result={currentResult} />;
   }
 

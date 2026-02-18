@@ -8,12 +8,11 @@ import {
   type MultipleChoiceStepContent,
   parseStepContent,
 } from "@zoonk/core/steps/content-contract";
-import { CircleCheck, CircleX } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { InlineFeedback } from "./inline-feedback";
 import { OptionCard } from "./option-card";
 import { type SelectedAnswer, type StepResult } from "./player-reducer";
 import { ContextText, QuestionText } from "./question-text";
-import { ResultAnnouncement } from "./result-announcement";
 import { SectionLabel } from "./section-label";
 import { InteractiveStepLayout } from "./step-layouts";
 import { useOptionKeyboard } from "./use-option-keyboard";
@@ -97,35 +96,6 @@ function OptionList({
           />
         </OptionCard>
       ))}
-    </div>
-  );
-}
-
-function InlineFeedback({ result }: { result: StepResult }) {
-  const t = useExtracted();
-  const replaceName = useReplaceName();
-  const isCorrect = result.result.isCorrect;
-  const feedback = result.result.feedback ? replaceName(result.result.feedback) : null;
-
-  return (
-    <div className="flex flex-col gap-3">
-      <div className="flex items-center gap-1.5 text-sm font-medium">
-        {isCorrect ? (
-          <>
-            <CircleCheck aria-hidden="true" className="text-success size-4" />
-            <span className="text-success">{t("Correct!")}</span>
-          </>
-        ) : (
-          <>
-            <CircleX aria-hidden="true" className="text-destructive size-4" />
-            <span className="text-destructive">{t("Not quite")}</span>
-          </>
-        )}
-      </div>
-
-      {feedback && <p className="text-muted-foreground text-sm">{feedback}</p>}
-
-      <ResultAnnouncement isCorrect={isCorrect} />
     </div>
   );
 }

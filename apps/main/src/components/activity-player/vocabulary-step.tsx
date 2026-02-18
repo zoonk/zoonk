@@ -3,9 +3,9 @@
 import { type SerializedStep, type SerializedWord } from "@/data/activities/prepare-activity-data";
 import { Volume2Icon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { InlineFeedback } from "./inline-feedback";
 import { OptionCard } from "./option-card";
 import { type SelectedAnswer, type StepResult } from "./player-reducer";
-import { ResultAnnouncement } from "./result-announcement";
 import { SectionLabel } from "./section-label";
 import { InteractiveStepLayout } from "./step-layouts";
 import { useOptionKeyboard } from "./use-option-keyboard";
@@ -132,7 +132,7 @@ export function VocabularyStep({
         })}
       </div>
 
-      {result && <ResultAnnouncement isCorrect={result.result.isCorrect} />}
+      {result && <InlineFeedback result={result} />}
     </InteractiveStepLayout>
   );
 }

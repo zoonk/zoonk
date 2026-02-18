@@ -3,8 +3,8 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useCallback, useState } from "react";
+import { InlineFeedback } from "./inline-feedback";
 import { type SelectedAnswer, type StepResult } from "./player-reducer";
-import { ResultAnnouncement } from "./result-announcement";
 import { InteractiveStepLayout } from "./step-layouts";
 
 function getWordResultState(
@@ -231,12 +231,14 @@ export function ArrangeWordsInteraction({
 
       <WordBank onPlace={handlePlace} placedWords={placedWords} words={wordBankOptions} />
 
-      {result && <ResultAnnouncement isCorrect={result.result.isCorrect} />}
-
-      {isIncorrect && (
-        <p className="text-muted-foreground text-sm">
-          {t("Correct answer: {answer}", { answer: correctSentence })}
-        </p>
+      {result && (
+        <InlineFeedback result={result}>
+          {isIncorrect && (
+            <p className="text-muted-foreground text-sm">
+              {t("Correct answer: {answer}", { answer: correctSentence })}
+            </p>
+          )}
+        </InlineFeedback>
       )}
     </InteractiveStepLayout>
   );

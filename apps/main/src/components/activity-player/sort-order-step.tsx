@@ -6,9 +6,9 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { shuffle } from "@zoonk/utils/shuffle";
 import { useExtracted } from "next-intl";
 import { useCallback, useMemo, useState } from "react";
+import { InlineFeedback } from "./inline-feedback";
 import { type SelectedAnswer, type StepResult } from "./player-reducer";
 import { QuestionText } from "./question-text";
-import { ResultAnnouncement } from "./result-announcement";
 import { ResultKbd } from "./result-kbd";
 import { InteractiveStepLayout } from "./step-layouts";
 import { useReplaceName } from "./user-name-context";
@@ -121,26 +121,6 @@ function SortItemList({
   );
 }
 
-function InlineFeedback({
-  content,
-  result,
-}: {
-  content: { feedback: string | null };
-  result: StepResult;
-}) {
-  const replaceName = useReplaceName();
-  const isCorrect = result.result.isCorrect;
-  const feedback = content.feedback ? replaceName(content.feedback) : null;
-
-  return (
-    <div className="flex flex-col gap-3">
-      <ResultAnnouncement isCorrect={isCorrect} />
-
-      {feedback && <p className="text-muted-foreground text-sm">{feedback}</p>}
-    </div>
-  );
-}
-
 export function SortOrderStep({
   onSelectAnswer,
   result,
@@ -206,7 +186,7 @@ export function SortOrderStep({
         selections={selections}
       />
 
-      {result && <InlineFeedback content={content} result={result} />}
+      {result && <InlineFeedback result={result} />}
     </InteractiveStepLayout>
   );
 }

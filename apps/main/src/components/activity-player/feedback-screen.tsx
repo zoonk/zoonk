@@ -1,23 +1,10 @@
 "use client";
 
 import { cn } from "@zoonk/ui/lib/utils";
-import { CircleCheck, CircleX } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { DimensionList, buildDimensionEntries } from "./dimension-inventory";
 import { type DimensionInventory, type StepResult } from "./player-reducer";
 import { useReplaceName } from "./user-name-context";
-
-export function getFeedbackVariant(result: StepResult): "correct" | "incorrect" | "challenge" {
-  if (result.effects.length > 0) {
-    return "challenge";
-  }
-
-  if (result.result.isCorrect) {
-    return "correct";
-  }
-
-  return "incorrect";
-}
 
 function FeedbackScreen({ className, ...props }: React.ComponentProps<"div">) {
   return (
@@ -63,37 +50,16 @@ export function FeedbackScreenContent({
 }) {
   const t = useExtracted();
   const replaceName = useReplaceName();
-  const variant = getFeedbackVariant(result);
   const feedback = result.result.feedback ? replaceName(result.result.feedback) : null;
-
-  if (variant === "challenge") {
-    const entries = buildDimensionEntries(dimensions, result.effects);
-
-    return (
-      <FeedbackScreen>
-        <FeedbackIndicator className="text-foreground">{t("Outcome")}</FeedbackIndicator>
-
-        {feedback && <FeedbackMessage>{feedback}</FeedbackMessage>}
-
-        <DimensionList aria-label={t("Dimension inventory")} entries={entries} variant="feedback" />
-      </FeedbackScreen>
-    );
-  }
-
-  const isCorrect = variant === "correct";
+  const entries = buildDimensionEntries(dimensions, result.effects);
 
   return (
     <FeedbackScreen>
-      <FeedbackIndicator className={isCorrect ? "text-success" : "text-destructive"}>
-        {isCorrect ? (
-          <CircleCheck aria-hidden="true" className="size-4" />
-        ) : (
-          <CircleX aria-hidden="true" className="size-4" />
-        )}
-        <span>{isCorrect ? t("Correct!") : t("Not quite")}</span>
-      </FeedbackIndicator>
+      <FeedbackIndicator className="text-foreground">{t("Outcome")}</FeedbackIndicator>
 
       {feedback && <FeedbackMessage>{feedback}</FeedbackMessage>}
+
+      <DimensionList aria-label={t("Dimension inventory")} entries={entries} variant="feedback" />
     </FeedbackScreen>
   );
 }

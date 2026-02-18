@@ -139,7 +139,7 @@ test.describe("Vocabulary Step", () => {
     await expect(radiogroup.getByRole("radio", { name: new RegExp(word) })).toBeVisible();
   });
 
-  test("select correct option and check shows green indicator", async ({ page }) => {
+  test("select correct option and check shows visible Correct! text", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const correctWord = `gato-${uniqueId}`;
 
@@ -168,12 +168,13 @@ test.describe("Vocabulary Step", () => {
     }).toPass();
 
     await page.getByRole("button", { name: /check/i }).click();
+
+    // Visible "Correct!" text (not just screen-reader)
+    await expect(page.getByText(/correct!/i)).toBeVisible();
     await expect(page.getByRole("button", { name: /continue/i })).toBeVisible();
   });
 
-  test("select wrong option and check shows red on wrong and green on correct", async ({
-    page,
-  }) => {
+  test("select wrong option shows visible Not quite text", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const correctWord = `rojo-${uniqueId}`;
     const wrongWord = `azul-${uniqueId}`;
@@ -203,6 +204,9 @@ test.describe("Vocabulary Step", () => {
     }).toPass();
 
     await page.getByRole("button", { name: /check/i }).click();
+
+    // Visible "Not quite" text (not just screen-reader)
+    await expect(page.getByText(/not quite/i)).toBeVisible();
     await expect(page.getByRole("button", { name: /continue/i })).toBeVisible();
     await expect(radiogroup.getByRole("radio", { name: new RegExp(correctWord) })).toBeVisible();
   });
