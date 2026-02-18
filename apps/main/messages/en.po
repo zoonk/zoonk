@@ -1501,30 +1501,6 @@ msgid "Activity progress"
 msgstr "Activity progress"
 
 #: src/components/activity-player/reward-badges.tsx
-#: src/lib/belt-colors.ts
-msgctxt "1W4okO"
-msgid "Green"
-msgstr "Green"
-
-#: src/components/activity-player/reward-badges.tsx
-#: src/lib/belt-colors.ts
-msgctxt "5Tw3Ta"
-msgid "Yellow"
-msgstr "Yellow"
-
-#: src/components/activity-player/reward-badges.tsx
-#: src/lib/belt-colors.ts
-msgctxt "D+ZFS/"
-msgid "Red"
-msgstr "Red"
-
-#: src/components/activity-player/reward-badges.tsx
-#: src/lib/belt-colors.ts
-msgctxt "eM/4ho"
-msgid "Brown"
-msgstr "Brown"
-
-#: src/components/activity-player/reward-badges.tsx
 msgctxt "erSdxr"
 msgid "Belt"
 msgstr "Belt"
@@ -1533,42 +1509,6 @@ msgstr "Belt"
 msgctxt "HiBQnL"
 msgid "BP to next level"
 msgstr "BP to next level"
-
-#: src/components/activity-player/reward-badges.tsx
-#: src/lib/belt-colors.ts
-msgctxt "k2tJ9k"
-msgid "Blue"
-msgstr "Blue"
-
-#: src/components/activity-player/reward-badges.tsx
-#: src/lib/belt-colors.ts
-msgctxt "n3m1xt"
-msgid "Orange"
-msgstr "Orange"
-
-#: src/components/activity-player/reward-badges.tsx
-#: src/lib/belt-colors.ts
-msgctxt "OAG+sQ"
-msgid "White"
-msgstr "White"
-
-#: src/components/activity-player/reward-badges.tsx
-#: src/lib/belt-colors.ts
-msgctxt "tihmF3"
-msgid "Purple"
-msgstr "Purple"
-
-#: src/components/activity-player/reward-badges.tsx
-#: src/lib/belt-colors.ts
-msgctxt "XjGbuY"
-msgid "Black"
-msgstr "Black"
-
-#: src/components/activity-player/reward-badges.tsx
-#: src/lib/belt-colors.ts
-msgctxt "Yp7v0H"
-msgid "Gray"
-msgstr "Gray"
 
 #: src/components/activity-player/select-image-step.tsx
 msgctxt "NA6C/+"
@@ -1931,6 +1871,66 @@ msgstr "Shows WHEN to apply this topic. A dialogue with a colleague where you so
 msgctxt "ypy024"
 msgid "Tests your understanding with questions. Uses new scenarios to check if you grasped the concept, not just memorized it."
 msgstr "Tests your understanding with questions. Uses new scenarios to check if you grasped the concept, not just memorized it."
+
+#: src/lib/belt-colors.ts
+#: src/lib/use-belt-color-label.ts
+msgctxt "1W4okO"
+msgid "Green"
+msgstr "Green"
+
+#: src/lib/belt-colors.ts
+#: src/lib/use-belt-color-label.ts
+msgctxt "5Tw3Ta"
+msgid "Yellow"
+msgstr "Yellow"
+
+#: src/lib/belt-colors.ts
+#: src/lib/use-belt-color-label.ts
+msgctxt "D+ZFS/"
+msgid "Red"
+msgstr "Red"
+
+#: src/lib/belt-colors.ts
+#: src/lib/use-belt-color-label.ts
+msgctxt "eM/4ho"
+msgid "Brown"
+msgstr "Brown"
+
+#: src/lib/belt-colors.ts
+#: src/lib/use-belt-color-label.ts
+msgctxt "k2tJ9k"
+msgid "Blue"
+msgstr "Blue"
+
+#: src/lib/belt-colors.ts
+#: src/lib/use-belt-color-label.ts
+msgctxt "n3m1xt"
+msgid "Orange"
+msgstr "Orange"
+
+#: src/lib/belt-colors.ts
+#: src/lib/use-belt-color-label.ts
+msgctxt "OAG+sQ"
+msgid "White"
+msgstr "White"
+
+#: src/lib/belt-colors.ts
+#: src/lib/use-belt-color-label.ts
+msgctxt "tihmF3"
+msgid "Purple"
+msgstr "Purple"
+
+#: src/lib/belt-colors.ts
+#: src/lib/use-belt-color-label.ts
+msgctxt "XjGbuY"
+msgid "Black"
+msgstr "Black"
+
+#: src/lib/belt-colors.ts
+#: src/lib/use-belt-color-label.ts
+msgctxt "Yp7v0H"
+msgid "Gray"
+msgstr "Gray"
 
 #: src/lib/categories/category-client.ts
 #: src/lib/categories/category-server.ts

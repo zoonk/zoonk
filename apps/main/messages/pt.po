@@ -1501,30 +1501,6 @@ msgid "Activity progress"
 msgstr "Progresso da atividade"
 
 #: src/components/activity-player/reward-badges.tsx
-#: src/lib/belt-colors.ts
-msgctxt "1W4okO"
-msgid "Green"
-msgstr "Verde"
-
-#: src/components/activity-player/reward-badges.tsx
-#: src/lib/belt-colors.ts
-msgctxt "5Tw3Ta"
-msgid "Yellow"
-msgstr "Amarela"
-
-#: src/components/activity-player/reward-badges.tsx
-#: src/lib/belt-colors.ts
-msgctxt "D+ZFS/"
-msgid "Red"
-msgstr "Vermelha"
-
-#: src/components/activity-player/reward-badges.tsx
-#: src/lib/belt-colors.ts
-msgctxt "eM/4ho"
-msgid "Brown"
-msgstr "Marrom"
-
-#: src/components/activity-player/reward-badges.tsx
 msgctxt "erSdxr"
 msgid "Belt"
 msgstr "Faixa"
@@ -1533,42 +1509,6 @@ msgstr "Faixa"
 msgctxt "HiBQnL"
 msgid "BP to next level"
 msgstr "PM para o próximo nível"
-
-#: src/components/activity-player/reward-badges.tsx
-#: src/lib/belt-colors.ts
-msgctxt "k2tJ9k"
-msgid "Blue"
-msgstr "Azul"
-
-#: src/components/activity-player/reward-badges.tsx
-#: src/lib/belt-colors.ts
-msgctxt "n3m1xt"
-msgid "Orange"
-msgstr "Laranja"
-
-#: src/components/activity-player/reward-badges.tsx
-#: src/lib/belt-colors.ts
-msgctxt "OAG+sQ"
-msgid "White"
-msgstr "Branca"
-
-#: src/components/activity-player/reward-badges.tsx
-#: src/lib/belt-colors.ts
-msgctxt "tihmF3"
-msgid "Purple"
-msgstr "Roxa"
-
-#: src/components/activity-player/reward-badges.tsx
-#: src/lib/belt-colors.ts
-msgctxt "XjGbuY"
-msgid "Black"
-msgstr "Preta"
-
-#: src/components/activity-player/reward-badges.tsx
-#: src/lib/belt-colors.ts
-msgctxt "Yp7v0H"
-msgid "Gray"
-msgstr "Cinza"
 
 #: src/components/activity-player/select-image-step.tsx
 msgctxt "NA6C/+"
@@ -1931,6 +1871,66 @@ msgstr "Mostra QUANDO aplicar este tópico. Um diálogo com um colega onde você
 msgctxt "ypy024"
 msgid "Tests your understanding with questions. Uses new scenarios to check if you grasped the concept, not just memorized it."
 msgstr "Testa sua compreensão com perguntas. Usa cenários novos pra verificar se você entendeu o conceito, não só memorizou ele."
+
+#: src/lib/belt-colors.ts
+#: src/lib/use-belt-color-label.ts
+msgctxt "1W4okO"
+msgid "Green"
+msgstr "Verde"
+
+#: src/lib/belt-colors.ts
+#: src/lib/use-belt-color-label.ts
+msgctxt "5Tw3Ta"
+msgid "Yellow"
+msgstr "Amarela"
+
+#: src/lib/belt-colors.ts
+#: src/lib/use-belt-color-label.ts
+msgctxt "D+ZFS/"
+msgid "Red"
+msgstr "Vermelha"
+
+#: src/lib/belt-colors.ts
+#: src/lib/use-belt-color-label.ts
+msgctxt "eM/4ho"
+msgid "Brown"
+msgstr "Marrom"
+
+#: src/lib/belt-colors.ts
+#: src/lib/use-belt-color-label.ts
+msgctxt "k2tJ9k"
+msgid "Blue"
+msgstr "Azul"
+
+#: src/lib/belt-colors.ts
+#: src/lib/use-belt-color-label.ts
+msgctxt "n3m1xt"
+msgid "Orange"
+msgstr "Laranja"
+
+#: src/lib/belt-colors.ts
+#: src/lib/use-belt-color-label.ts
+msgctxt "OAG+sQ"
+msgid "White"
+msgstr "Branca"
+
+#: src/lib/belt-colors.ts
+#: src/lib/use-belt-color-label.ts
+msgctxt "tihmF3"
+msgid "Purple"
+msgstr "Roxa"
+
+#: src/lib/belt-colors.ts
+#: src/lib/use-belt-color-label.ts
+msgctxt "XjGbuY"
+msgid "Black"
+msgstr "Preta"
+
+#: src/lib/belt-colors.ts
+#: src/lib/use-belt-color-label.ts
+msgctxt "Yp7v0H"
+msgid "Gray"
+msgstr "Cinza"
 
 #: src/lib/categories/category-client.ts
 #: src/lib/categories/category-server.ts

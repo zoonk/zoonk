@@ -1,30 +1,14 @@
 "use client";
 
 import { ClientLink } from "@/i18n/client-link";
+import { useBeltColorLabel } from "@/lib/use-belt-color-label";
 import { Badge } from "@zoonk/ui/components/badge";
 import { BeltIndicator } from "@zoonk/ui/components/belt-indicator";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
-import { type BeltColor, calculateBeltLevel } from "@zoonk/utils/belt-level";
-import { Brain, ZapIcon } from "lucide-react";
+import { calculateBeltLevel } from "@zoonk/utils/belt-level";
+import { BrainIcon, ZapIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-
-function useBeltColorLabel(color: BeltColor): string {
-  const t = useExtracted();
-  const labels: Record<BeltColor, string> = {
-    black: t("Black"),
-    blue: t("Blue"),
-    brown: t("Brown"),
-    gray: t("Gray"),
-    green: t("Green"),
-    orange: t("Orange"),
-    purple: t("Purple"),
-    red: t("Red"),
-    white: t("White"),
-    yellow: t("Yellow"),
-  };
-  return labels[color];
-}
 
 function formatEnergyDelta(delta: number): string {
   const sign = delta >= 0 ? "+" : "";
@@ -46,7 +30,7 @@ export function RewardBadges({
   return (
     <div className="animate-badge-land flex gap-2 motion-reduce:animate-none">
       <Badge variant={isHighBp ? "default" : "secondary"}>
-        <Brain data-icon="inline-start" />
+        <BrainIcon data-icon="inline-start" />
         <span>+{brainPower}</span> {t("BP")}
       </Badge>
 
