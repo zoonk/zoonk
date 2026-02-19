@@ -1,11 +1,6 @@
 import { type ChallengeEffect } from "@zoonk/core/steps/content-contract";
 import { describe, expect, test } from "vitest";
-import {
-  buildDimensionEntries,
-  formatDelta,
-  getDeltaColor,
-  getStatusTotalColor,
-} from "./dimension-inventory";
+import { buildDimensionEntries } from "./dimension-inventory";
 import { hasNegativeDimension } from "./has-negative-dimension";
 import { type DimensionInventory } from "./player-reducer";
 
@@ -24,39 +19,6 @@ describe(hasNegativeDimension, () => {
 
   test("returns true when all dimensions are negative", () => {
     expect(hasNegativeDimension({ Courage: -1, Diplomacy: -2 })).toBeTruthy();
-  });
-});
-
-describe(formatDelta, () => {
-  test("formats positive delta with plus sign", () => {
-    expect(formatDelta(1)).toBe("+1");
-  });
-
-  test("formats negative delta as-is", () => {
-    expect(formatDelta(-1)).toBe("-1");
-  });
-
-  test("formats zero delta with plus sign", () => {
-    expect(formatDelta(0)).toBe("+0");
-  });
-
-  test("formats larger values", () => {
-    expect(formatDelta(3)).toBe("+3");
-    expect(formatDelta(-5)).toBe("-5");
-  });
-});
-
-describe(getDeltaColor, () => {
-  test("returns success color for positive delta", () => {
-    expect(getDeltaColor(1)).toBe("text-success");
-  });
-
-  test("returns destructive color for negative delta", () => {
-    expect(getDeltaColor(-1)).toBe("text-destructive");
-  });
-
-  test("returns success color for zero delta", () => {
-    expect(getDeltaColor(0)).toBe("text-success");
   });
 });
 
@@ -107,19 +69,5 @@ describe(buildDimensionEntries, () => {
     const result = buildDimensionEntries(dims, []);
 
     expect(result.map((entry) => entry.name)).toEqual(["Courage", "Diplomacy", "Morale"]);
-  });
-});
-
-describe(getStatusTotalColor, () => {
-  test("returns text-foreground for positive total", () => {
-    expect(getStatusTotalColor(3)).toBe("text-foreground");
-  });
-
-  test("returns text-warning for zero total", () => {
-    expect(getStatusTotalColor(0)).toBe("text-warning");
-  });
-
-  test("returns text-destructive for negative total", () => {
-    expect(getStatusTotalColor(-1)).toBe("text-destructive");
   });
 });

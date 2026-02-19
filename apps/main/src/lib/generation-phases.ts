@@ -8,12 +8,6 @@ export type PhaseStatus = "pending" | "active" | "completed";
  */
 export type AssertAllCovered<T extends never> = T;
 
-export type PhaseConfig<TPhase extends string, TStep extends string> = {
-  phaseSteps: Record<TPhase, readonly TStep[]>;
-  phaseOrder: readonly TPhase[];
-  phaseWeights: Record<TPhase, number>;
-};
-
 export function getPhaseStatus<TPhase extends string, TStep extends string>(
   phase: TPhase,
   completedSteps: TStep[],
@@ -41,7 +35,11 @@ export function getPhaseStatus<TPhase extends string, TStep extends string>(
 export function calculateWeightedProgress<TPhase extends string, TStep extends string>(
   completedSteps: TStep[],
   currentStep: TStep | null,
-  config: PhaseConfig<TPhase, TStep>,
+  config: {
+    phaseSteps: Record<TPhase, readonly TStep[]>;
+    phaseOrder: readonly TPhase[];
+    phaseWeights: Record<TPhase, number>;
+  },
 ): number {
   const totalWeight = config.phaseOrder.reduce((sum, phase) => sum + config.phaseWeights[phase], 0);
 

@@ -1,7 +1,7 @@
 {
   "$schema": "./node_modules/knip/schema.json",
   "ignore": [],
-  "ignoreBinaries": ["stripe", "build-and-start"],
+  "ignoreBinaries": ["stripe", "build-and-start", "turbo"],
   "ignoreDependencies": [
     "@prisma/client",
     "@tailwindcss/postcss",

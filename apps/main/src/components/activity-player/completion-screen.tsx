@@ -47,7 +47,7 @@ function CompletionSignal() {
   );
 }
 
-export function getCompletionScore(results: Record<string, StepResult>) {
+function getCompletionScore(results: Record<string, StepResult>) {
   const resultList = Object.values(results);
 
   if (resultList.length === 0) {

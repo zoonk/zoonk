@@ -1,17 +1,16 @@
 import { describe, expect, it } from "vitest";
-import { type PhaseConfig, calculateWeightedProgress, getPhaseStatus } from "./generation-phases";
+import { calculateWeightedProgress, getPhaseStatus } from "./generation-phases";
 
-type TestPhase = "phase1" | "phase2" | "phase3";
 type TestStep = "stepA" | "stepB" | "stepC" | "stepD" | "stepE";
 
-const testPhaseSteps: Record<TestPhase, TestStep[]> = {
+const testPhaseSteps: Record<"phase1" | "phase2" | "phase3", TestStep[]> = {
   phase1: ["stepA", "stepB"],
   phase2: ["stepC"],
   phase3: ["stepD", "stepE"],
 };
 
-const testConfig: PhaseConfig<TestPhase, TestStep> = {
-  phaseOrder: ["phase1", "phase2", "phase3"],
+const testConfig = {
+  phaseOrder: ["phase1", "phase2", "phase3"] as const,
   phaseSteps: testPhaseSteps,
   phaseWeights: { phase1: 20, phase2: 30, phase3: 50 },
 };
@@ -71,8 +70,8 @@ describe(calculateWeightedProgress, () => {
   });
 
   it("normalizes weights that do not sum to 100", () => {
-    const config: PhaseConfig<TestPhase, TestStep> = {
-      phaseOrder: ["phase1", "phase2", "phase3"],
+    const config = {
+      phaseOrder: ["phase1", "phase2", "phase3"] as const,
       phaseSteps: testPhaseSteps,
       phaseWeights: { phase1: 10, phase2: 15, phase3: 25 },
     };
@@ -82,8 +81,8 @@ describe(calculateWeightedProgress, () => {
   });
 
   it("returns correct partial progress with non-100 weights", () => {
-    const config: PhaseConfig<TestPhase, TestStep> = {
-      phaseOrder: ["phase1", "phase2", "phase3"],
+    const config = {
+      phaseOrder: ["phase1", "phase2", "phase3"] as const,
       phaseSteps: testPhaseSteps,
       phaseWeights: { phase1: 10, phase2: 15, phase3: 25 },
     };
