@@ -294,6 +294,19 @@ await page.getByRole("button", { name: /submit/i }).click();
 await expect(page.getByRole("alert")).toBeVisible();
 ```
 
+### Drag and Drop (dnd-kit)
+
+Use `locator.dragTo()` with the `steps` parameter. The `steps` option emits intermediate `mousemove` events, which dnd-kit's `PointerSensor` requires to activate a drag:
+
+```typescript
+const firstHandle = page.getByRole("button", { name: "Drag to reorder" }).first();
+const secondHandle = page.getByRole("button", { name: "Drag to reorder" }).nth(1);
+
+await firstHandle.dragTo(secondHandle, { steps: 10 });
+```
+
+**Why `steps` matters**: Without `steps`, Playwright emits a single `mousemove` at the destination, which isn't enough for dnd-kit's PointerSensor to recognize a drag gesture. Use `steps: 10` to generate enough intermediate movements.
+
 ## Common Thinking Mistakes
 
 ### Over-Testing Through UI Mechanics

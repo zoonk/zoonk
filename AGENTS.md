@@ -114,6 +114,8 @@ page.getByLabel(/email/i);
 
 **E2E builds**: Apps use separate build directories for E2E testing (e.g., `.next-e2e` instead of `.next`). When running E2E tests, build with `pnpm --filter {app} build:e2e`
 
+**IMPORTANT:** Before writing E2E tests, **always** read the [zoonk-testing skill](.agents/skills/zoonk-testing/SKILL.md).
+
 ## i18n
 
 - Use `getExtracted` (server) or `useExtracted` (client) for translations, don't use `getTranslations` or `useTranslations`
