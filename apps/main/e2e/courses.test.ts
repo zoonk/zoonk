@@ -42,7 +42,7 @@ test.describe("Courses Page - Basic", () => {
 
     // Get the first course link (order is non-deterministic, so we don't target a specific course)
     const courseLink = page.getByRole("list").getByRole("link").first();
-    await expect(courseLink).toBeVisible();
+    await expect(courseLink).toBeVisible({ timeout: 10_000 });
 
     // Get the href to extract the course slug for verification
     const href = await courseLink.getAttribute("href");

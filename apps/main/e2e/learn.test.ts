@@ -32,7 +32,7 @@ test.describe("Learn Form", () => {
   test("submitting prompt navigates to suggestions page", async ({ page }) => {
     await page.goto("/learn");
 
-    await page.getByRole("textbox").fill("test prompt");
+    await page.getByRole("textbox").fill(prompt);
     await page.getByRole("button", { name: /start/i }).click();
 
     await expect(page.getByRole("heading", { name: /course ideas for/i })).toBeVisible();
@@ -79,7 +79,7 @@ test.describe("Course Suggestions", () => {
     await page.goto("/learn");
 
     const input = page.getByRole("textbox");
-    await input.fill("test prompt");
+    await input.fill(prompt);
     await page.keyboard.press("Enter");
 
     await expect(page.getByRole("heading", { name: /course ideas for/i })).toBeVisible();

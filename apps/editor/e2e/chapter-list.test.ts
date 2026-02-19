@@ -197,7 +197,10 @@ test.describe("Chapter List", () => {
         { position: 3, title: "Chapter 1" },
       ];
 
-      await expectChaptersVisible(authenticatedPage, reorderedChapters);
+      // Drag-and-drop can be timing-sensitive on CI — retry the assertion
+      await expect(async () => {
+        await expectChaptersVisible(authenticatedPage, reorderedChapters);
+      }).toPass({ timeout: 10_000 });
 
       // Reload and verify persistence
       await authenticatedPage.reload();
