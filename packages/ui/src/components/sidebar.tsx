@@ -20,7 +20,8 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { setCookie } from "@zoonk/utils/cookies";
 import { type VariantProps, cva } from "class-variance-authority";
 import { PanelLeftIcon } from "lucide-react";
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useMemo, useState } from "react";
+import { useKeyboardCallback } from "../hooks/use-keyboard";
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state";
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
@@ -92,17 +93,14 @@ function SidebarProvider({
   );
 
   // Adds a keyboard shortcut to toggle the sidebar.
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === SIDEBAR_KEYBOARD_SHORTCUT && (event.metaKey || event.ctrlKey)) {
-        event.preventDefault();
-        toggleSidebar();
-      }
-    };
-
-    globalThis.addEventListener("keydown", handleKeyDown);
-    return () => globalThis.removeEventListener("keydown", handleKeyDown);
-  }, [toggleSidebar]);
+  useKeyboardCallback(
+    SIDEBAR_KEYBOARD_SHORTCUT,
+    (event) => {
+      event.preventDefault();
+      toggleSidebar();
+    },
+    { mode: "any", modifiers: { ctrlKey: true, metaKey: true } },
+  );
 
   // We add a state so that we can do data-state="expanded" or "collapsed".
   // This makes it easier to style the sidebar with Tailwind classes.

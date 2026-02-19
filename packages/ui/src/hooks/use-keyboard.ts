@@ -103,7 +103,7 @@ function checkModifiers(
  */
 export function useKeyboardCallback(
   key: string,
-  callback: () => void,
+  callback: (event: KeyboardEvent) => void,
   options: {
     /**
      * Skip the callback when the event target is an input, textarea, or contenteditable element.
@@ -125,8 +125,8 @@ export function useKeyboardCallback(
   const { ignoreEditable = false, mode = "all", modifiers } = options;
   const { altKey, ctrlKey, metaKey, shiftKey } = modifiers ?? {};
 
-  const onKeyPress = useEffectEvent(() => {
-    callback();
+  const onKeyPress = useEffectEvent((event: KeyboardEvent) => {
+    callback(event);
   });
 
   useEffect(() => {
@@ -142,8 +142,7 @@ export function useKeyboardCallback(
       const mods = { altKey, ctrlKey, metaKey, shiftKey };
 
       if (checkModifiers(event, mods, mode)) {
-        event.preventDefault();
-        onKeyPress();
+        onKeyPress(event);
       }
     }
 

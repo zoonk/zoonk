@@ -1,7 +1,7 @@
 "use client";
 
 import { type EventSourceMessage, createParser } from "eventsource-parser";
-import { useEffect, useRef } from "react";
+import { useEffect, useEffectEvent, useRef } from "react";
 
 export function useSSE<T>(
   url: string | null,
@@ -14,6 +14,10 @@ export function useSSE<T>(
 ) {
   const indexRef = useRef(options.startIndex ?? 0);
   const { onComplete, onError, onMessage } = options;
+
+  const onMessageEvent = useEffectEvent((data: T) => onMessage(data));
+  const onCompleteEvent = useEffectEvent(() => onComplete?.());
+  const onErrorEvent = useEffectEvent((error: Error) => onError?.(error));
 
   useEffect(() => {
     if (!url) {
@@ -31,7 +35,7 @@ export function useSSE<T>(
         });
 
         if (!response.ok) {
-          onError?.(new Error(`HTTP ${response.status}`));
+          onErrorEvent(new Error(`HTTP ${response.status}`));
           return;
         }
 
@@ -46,7 +50,7 @@ export function useSSE<T>(
             indexRef.current += 1;
             // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- SSE data type is validated by consumer
             const data = JSON.parse(event.data) as T;
-            onMessage(data);
+            onMessageEvent(data);
           },
         });
 
@@ -58,16 +62,16 @@ export function useSSE<T>(
         }
         /* eslint-enable no-await-in-loop */
 
-        onComplete?.();
+        onCompleteEvent();
       } catch (error) {
         if (error instanceof Error && error.name !== "AbortError") {
-          onError?.(error);
+          onErrorEvent(error);
         }
       }
     })();
 
     return () => controller.abort();
-  }, [url, onComplete, onError, onMessage]);
+  }, [url]);
 
   return {
     resetIndex: () => {

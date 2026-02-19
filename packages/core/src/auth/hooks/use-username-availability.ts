@@ -16,14 +16,16 @@ export function useUsernameAvailability(currentUsername?: string | null) {
   const timerRef = useRef<ReturnType<typeof setTimeout>>(null);
   const abortRef = useRef<AbortController>(null);
 
-  // Sync state when currentUsername arrives from async session.
-  // No "hasSynced" guard needed: the input is disabled while
-  // the session loads, so the user can't type before this fires.
-  useEffect(() => {
+  // Render-time state adjustment: sync username when currentUsername
+  // arrives from async session without an extra render pass.
+  const [prevCurrentUsername, setPrevCurrentUsername] = useState(currentUsername);
+
+  if (currentUsername !== prevCurrentUsername) {
+    setPrevCurrentUsername(currentUsername);
     if (currentUsername) {
       setUsername(currentUsername);
     }
-  }, [currentUsername]);
+  }
 
   const checkAvailability = useCallback(
     async (value: string) => {
