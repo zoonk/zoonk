@@ -1,12 +1,13 @@
 import { randomUUID } from "node:crypto";
 import * as fs from "node:fs";
+import { prisma } from "@zoonk/db";
 import { getAiOrganization } from "@zoonk/e2e/helpers";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import tmp from "tmp";
 import { type Page, expect, test } from "./fixtures";
-import { getMoreOptionsButton, importFlow } from "./helpers/import-dialog";
+import { importFlow, openMoreOptionsMenu } from "./helpers/import-dialog";
 
 function createImportFile(chapters: { title: string; description: string }[]): string {
   const content = JSON.stringify({ chapters }, null, 2);
@@ -203,14 +204,17 @@ test.describe("Chapter List", () => {
         await expectChaptersVisible(authenticatedPage, reorderedChapters);
       }).toPass({ timeout: 10_000 });
 
-      // Reload and verify persistence
-      await authenticatedPage.reload();
+      await expect(async () => {
+        const chapters = await prisma.chapter.findMany({
+          orderBy: { position: "asc" },
+          select: { position: true, title: true },
+          where: { courseId: course.id },
+        });
 
-      await expect(
-        authenticatedPage.getByRole("textbox", { name: /edit course title/i }),
-      ).toBeVisible();
-
-      await expectChaptersVisible(authenticatedPage, reorderedChapters);
+        expect(chapters).toEqual(
+          reorderedChapters.map(({ position, title }) => ({ position: position - 1, title })),
+        );
+      }).toPass({ timeout: 10_000 });
     });
   });
 
@@ -220,7 +224,7 @@ test.describe("Chapter List", () => {
 
       await navigateToCoursePage(authenticatedPage, course.slug);
 
-      await getMoreOptionsButton(authenticatedPage).click();
+      await openMoreOptionsMenu(authenticatedPage);
 
       const downloadPromise = authenticatedPage.waitForEvent("download");
 
@@ -272,20 +276,16 @@ test.describe("Chapter List", () => {
 
         await expect(authenticatedPage.getByRole("link", { name: importedTitle2 })).toBeVisible();
 
-        // Verify persistence after reload
-        await authenticatedPage.reload();
-
-        await expect(
-          authenticatedPage.getByRole("textbox", {
-            name: /edit course title/i,
-          }),
-        ).toBeVisible();
-
-        await expect(authenticatedPage.getByRole("link", { name: existingTitle })).toBeVisible();
-
-        await expect(authenticatedPage.getByRole("link", { name: importedTitle1 })).toBeVisible();
-
-        await expect(authenticatedPage.getByRole("link", { name: importedTitle2 })).toBeVisible();
+        await expect(async () => {
+          const titles = await prisma.chapter.findMany({
+            select: { title: true },
+            where: { courseId: course.id },
+          });
+          const titleList = titles.map((chapter) => chapter.title);
+          expect(titleList).toContain(existingTitle);
+          expect(titleList).toContain(importedTitle1);
+          expect(titleList).toContain(importedTitle2);
+        }).toPass({ timeout: 10_000 });
       } finally {
         fs.unlinkSync(importFile);
       }
@@ -319,20 +319,16 @@ test.describe("Chapter List", () => {
 
         await expect(authenticatedPage.getByRole("link", { name: importedTitle2 })).toBeVisible();
 
-        // Verify persistence after reload
-        await authenticatedPage.reload();
-
-        await expect(
-          authenticatedPage.getByRole("textbox", {
-            name: /edit course title/i,
-          }),
-        ).toBeVisible();
-
-        await expectChapterNotVisible(authenticatedPage, existingTitle);
-
-        await expect(authenticatedPage.getByRole("link", { name: importedTitle1 })).toBeVisible();
-
-        await expect(authenticatedPage.getByRole("link", { name: importedTitle2 })).toBeVisible();
+        await expect(async () => {
+          const titles = await prisma.chapter.findMany({
+            select: { title: true },
+            where: { courseId: course.id },
+          });
+          const titleList = titles.map((chapter) => chapter.title);
+          expect(titleList).not.toContain(existingTitle);
+          expect(titleList).toContain(importedTitle1);
+          expect(titleList).toContain(importedTitle2);
+        }).toPass({ timeout: 10_000 });
       } finally {
         fs.unlinkSync(importFile);
       }

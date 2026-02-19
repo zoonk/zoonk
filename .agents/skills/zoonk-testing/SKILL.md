@@ -282,6 +282,7 @@ for i in {1..5}; do pnpm e2e -- -g "test name" --reporter=line; done
 | Actions triggering navigation    | Use `waitForLoadState` or `waitForURL` after click |
 | Form submissions                 | Wait for success indicator before next action      |
 | Inputs with debounced validation | Use `waitForLoadState("networkidle")` after fill   |
+| Server action persistence        | Assert UI immediately, then DB query with `toPass` |
 
 ### Server Actions
 
@@ -293,6 +294,54 @@ await nameInput.fill("   ");
 await page.getByRole("button", { name: /submit/i }).click();
 await expect(page.getByRole("alert")).toBeVisible();
 ```
+
+### Verifying Persistence in E2E Tests
+
+When a server action mutates data (toggle, add, remove, reorder), verify two things separately:
+
+1. **UI updates immediately** (no reload) — tests the user experience
+2. **Data persisted to DB** (via Prisma query) — tests the server action, fast and deterministic
+
+```typescript
+// GOOD: UI assertion + DB assertion
+await openCategoryPopover(page);
+await getCategoryOption(page, /technology/i).click();
+await page.keyboard.press("Escape");
+
+// 1. Badge appears immediately — user doesn't need to refresh
+await expect(page.getByText("Technology")).toBeVisible();
+
+// 2. Server action persisted — fast DB check with retry
+await expect(async () => {
+  const record = await prisma.courseCategory.findUnique({
+    where: { courseCategory: { category: "tech", courseId: course.id } },
+  });
+  expect(record).not.toBeNull();
+}).toPass({ timeout: 10_000 });
+
+// BAD: Reloading to verify persistence
+await page.reload();
+await expect(page.getByText("Technology")).toBeVisible();
+// This is slow, flaky (caching), and doesn't catch "user must refresh" bugs
+```
+
+**When reload IS appropriate**: Auto-save flows (type → debounce → "saved" indicator → persist) where the reload verifies the complete UX cycle end-to-end. The user types, sees "saved", and expects data to survive a refresh — that IS the behavior being tested.
+
+```typescript
+// Auto-save flow: reload is the right tool
+await titleInput.fill(uniqueTitle);
+await expect(page.getByText(/^saved$/i)).toBeVisible();
+await page.reload();
+await expect(titleInput).toHaveValue(uniqueTitle);
+```
+
+**Decision guide:**
+
+| Action type                        | Immediate check           | Persistence check            |
+| ---------------------------------- | ------------------------- | ---------------------------- |
+| Server action (click → mutation)   | UI assertion (no reload)  | DB query with `toPass` retry |
+| Auto-save (type → debounce → save) | "saved" indicator visible | Reload + verify value        |
+| URL/cookie state (locale, filters) | URL assertion             | Reload + verify URL          |
 
 ### Drag and Drop (dnd-kit)
 
@@ -372,6 +421,30 @@ test("finds course by title", async ({ page }) => {
   await page.getByRole("textbox").fill(`Search Test ${uniqueId}`);
   await expect(page.getByText(`Search Test ${uniqueId}`)).toBeVisible();
 });
+```
+
+### Reloading to Verify Server Action Persistence
+
+**Mistake**: Reloading the page to verify a server action persisted data.
+
+**Why it's wrong**: Slow, flaky (caching/timing), and doesn't catch bugs where the UI doesn't update without a refresh.
+
+**Fix**: Assert the UI updates immediately, then query the DB for persistence.
+
+```typescript
+// BAD: Reload for persistence — slow, flaky, misses "must refresh" bugs
+await page.getByRole("button", { name: /publish/i }).click();
+await expect(toggle).toBeChecked();
+await page.reload();
+await expect(toggle).toBeChecked();
+
+// GOOD: UI check + DB check — fast, reliable, catches UI bugs
+await page.getByRole("button", { name: /publish/i }).click();
+await expect(toggle).toBeChecked();
+await expect(async () => {
+  const course = await prisma.course.findUniqueOrThrow({ where: { id: course.id } });
+  expect(course.isPublished).toBe(true);
+}).toPass({ timeout: 10_000 });
 ```
 
 ### Redundant Tests

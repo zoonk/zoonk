@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import * as fs from "node:fs";
+import { prisma } from "@zoonk/db";
 import { getAiOrganization } from "@zoonk/e2e/helpers";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
@@ -7,7 +8,7 @@ import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import tmp from "tmp";
 import { type Page, expect, test } from "./fixtures";
-import { getMoreOptionsButton, importFlow } from "./helpers/import-dialog";
+import { importFlow, openMoreOptionsMenu } from "./helpers/import-dialog";
 
 function createImportFile(lessons: { title: string; description: string }[]): string {
   const content = JSON.stringify({ lessons }, null, 2);
@@ -210,14 +211,17 @@ test.describe("Lesson List", () => {
 
       await expectLessonsVisible(authenticatedPage, reorderedLessons);
 
-      // Reload and verify persistence
-      await authenticatedPage.reload();
+      await expect(async () => {
+        const lessons = await prisma.lesson.findMany({
+          orderBy: { position: "asc" },
+          select: { position: true, title: true },
+          where: { chapterId: chapter.id },
+        });
 
-      await expect(
-        authenticatedPage.getByRole("textbox", { name: /edit chapter title/i }),
-      ).toBeVisible();
-
-      await expectLessonsVisible(authenticatedPage, reorderedLessons);
+        expect(lessons).toEqual(
+          reorderedLessons.map(({ position, title }) => ({ position: position - 1, title })),
+        );
+      }).toPass({ timeout: 10_000 });
     });
   });
 
@@ -227,7 +231,7 @@ test.describe("Lesson List", () => {
 
       await navigateToChapterPage(authenticatedPage, course.slug, chapter.slug);
 
-      await getMoreOptionsButton(authenticatedPage).click();
+      await openMoreOptionsMenu(authenticatedPage);
 
       const downloadPromise = authenticatedPage.waitForEvent("download");
 
@@ -279,20 +283,16 @@ test.describe("Lesson List", () => {
 
         await expect(authenticatedPage.getByRole("link", { name: importedTitle2 })).toBeVisible();
 
-        // Verify persistence after reload
-        await authenticatedPage.reload();
-
-        await expect(
-          authenticatedPage.getByRole("textbox", {
-            name: /edit chapter title/i,
-          }),
-        ).toBeVisible();
-
-        await expect(authenticatedPage.getByRole("link", { name: existingTitle })).toBeVisible();
-
-        await expect(authenticatedPage.getByRole("link", { name: importedTitle1 })).toBeVisible();
-
-        await expect(authenticatedPage.getByRole("link", { name: importedTitle2 })).toBeVisible();
+        await expect(async () => {
+          const titles = await prisma.lesson.findMany({
+            select: { title: true },
+            where: { chapterId: chapter.id },
+          });
+          const titleList = titles.map((lesson) => lesson.title);
+          expect(titleList).toContain(existingTitle);
+          expect(titleList).toContain(importedTitle1);
+          expect(titleList).toContain(importedTitle2);
+        }).toPass({ timeout: 10_000 });
       } finally {
         fs.unlinkSync(importFile);
       }
@@ -326,20 +326,16 @@ test.describe("Lesson List", () => {
 
         await expect(authenticatedPage.getByRole("link", { name: importedTitle2 })).toBeVisible();
 
-        // Verify persistence after reload
-        await authenticatedPage.reload();
-
-        await expect(
-          authenticatedPage.getByRole("textbox", {
-            name: /edit chapter title/i,
-          }),
-        ).toBeVisible();
-
-        await expectLessonNotVisible(authenticatedPage, existingTitle);
-
-        await expect(authenticatedPage.getByRole("link", { name: importedTitle1 })).toBeVisible();
-
-        await expect(authenticatedPage.getByRole("link", { name: importedTitle2 })).toBeVisible();
+        await expect(async () => {
+          const titles = await prisma.lesson.findMany({
+            select: { title: true },
+            where: { chapterId: chapter.id },
+          });
+          const titleList = titles.map((lesson) => lesson.title);
+          expect(titleList).not.toContain(existingTitle);
+          expect(titleList).toContain(importedTitle1);
+          expect(titleList).toContain(importedTitle2);
+        }).toPass({ timeout: 10_000 });
       } finally {
         fs.unlinkSync(importFile);
       }

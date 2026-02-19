@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { prisma } from "@zoonk/db";
 import { getAiOrganization, revalidateCacheTags } from "@zoonk/e2e/helpers";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
@@ -31,6 +32,28 @@ async function createPublishedCourse(language: string) {
     position: 0,
   });
 
+  // The courses page sorts by user count descending. Enroll multiple
+  // users so this course always ranks at the top regardless of
+  // accumulated test data from other runs.
+  const boostCount = 50;
+
+  const users = await Promise.all(
+    Array.from({ length: boostCount }, (_, index) =>
+      prisma.user.create({
+        data: {
+          email: `e2e-courses-${uniqueId}-${index}@zoonk.test`,
+          name: `E2E Courses User ${uniqueId}-${index}`,
+        },
+      }),
+    ),
+  );
+
+  await Promise.all(
+    users.map((user) =>
+      prisma.courseUser.create({ data: { courseId: course.id, userId: user.id } }),
+    ),
+  );
+
   await revalidateCacheTags(
     [cacheTagCoursesList({ language })],
     [`/${language === "en" ? "" : `${language}/`}courses`],
@@ -43,12 +66,15 @@ test.describe("Courses Page - Basic", () => {
   test("clicking course card navigates to course detail", async ({ page }) => {
     const course = await createPublishedCourse("en");
 
-    await page.goto("/courses");
-
-    await expect(page.getByRole("heading", { name: /explore courses/i })).toBeVisible();
-
     const courseLink = page.getByRole("link", { name: new RegExp(course.title, "i") });
-    await expect(courseLink).toBeVisible();
+
+    // Cache revalidation uses background regeneration, so the first load
+    // after invalidation may still serve stale content. Retry navigation
+    // until the newly created course appears.
+    await expect(async () => {
+      await page.goto("/courses");
+      await expect(courseLink).toBeVisible({ timeout: 5000 });
+    }).toPass({ timeout: 15_000 });
 
     await courseLink.click();
 

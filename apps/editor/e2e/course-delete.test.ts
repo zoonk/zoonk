@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
-import { getAiOrganization } from "@zoonk/e2e/helpers";
+import { getAiOrganization, openDialog } from "@zoonk/e2e/helpers";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import { type Page, expect, test } from "./fixtures";
@@ -38,8 +38,7 @@ function getConfirmDeleteButton(page: Page) {
 }
 
 async function openDeleteDialog(page: Page) {
-  await getDeleteButton(page).click();
-  await expect(getDeleteDialog(page)).toBeVisible();
+  await openDialog(getDeleteButton(page), getDeleteDialog(page));
 }
 
 async function confirmDelete(page: Page) {

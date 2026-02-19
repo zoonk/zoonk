@@ -4,8 +4,20 @@ export function getMoreOptionsButton(page: Page) {
   return page.getByRole("button", { name: /more options/i }).first();
 }
 
+export async function openMoreOptionsMenu(page: Page) {
+  const trigger = getMoreOptionsButton(page);
+  const menuItem = page.getByRole("menuitem", { name: /import/i });
+
+  await expect(async () => {
+    if (!(await menuItem.isVisible())) {
+      await trigger.click();
+    }
+    await expect(menuItem).toBeVisible({ timeout: 1000 });
+  }).toPass();
+}
+
 export async function importFlow(page: Page, importFile: string, mode: "merge" | "replace") {
-  await getMoreOptionsButton(page).click();
+  await openMoreOptionsMenu(page);
   await page.getByRole("menuitem", { name: /import/i }).click();
 
   const dialog = page.getByRole("dialog");

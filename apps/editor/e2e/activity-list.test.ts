@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import * as fs from "node:fs";
+import { prisma } from "@zoonk/db";
 import { getAiOrganization } from "@zoonk/e2e/helpers";
 import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
@@ -8,7 +9,7 @@ import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import tmp from "tmp";
 import { type Page, expect, test } from "./fixtures";
-import { getMoreOptionsButton, importFlow } from "./helpers/import-dialog";
+import { importFlow, openMoreOptionsMenu } from "./helpers/import-dialog";
 
 function createImportFile(
   activities: { description?: string; kind: string; title?: string }[],
@@ -212,13 +213,17 @@ test.describe("Activity List", () => {
 
       await expectActivitiesVisible(authenticatedPage, reorderedActivities);
 
-      await authenticatedPage.reload();
+      await expect(async () => {
+        const activities = await prisma.activity.findMany({
+          orderBy: { position: "asc" },
+          select: { position: true, title: true },
+          where: { lessonId: lesson.id },
+        });
 
-      await expect(
-        authenticatedPage.getByRole("textbox", { name: /edit lesson title/i }),
-      ).toBeVisible();
-
-      await expectActivitiesVisible(authenticatedPage, reorderedActivities);
+        expect(activities).toEqual(
+          reorderedActivities.map(({ position, title }) => ({ position: position - 1, title })),
+        );
+      }).toPass({ timeout: 10_000 });
     });
   });
 
@@ -228,7 +233,7 @@ test.describe("Activity List", () => {
 
       await navigateToLessonPage(authenticatedPage, course.slug, chapter.slug, lesson.slug);
 
-      await getMoreOptionsButton(authenticatedPage).click();
+      await openMoreOptionsMenu(authenticatedPage);
 
       const downloadPromise = authenticatedPage.waitForEvent("download");
 
@@ -278,19 +283,16 @@ test.describe("Activity List", () => {
 
         await expect(authenticatedPage.getByRole("link", { name: importedTitle2 })).toBeVisible();
 
-        await authenticatedPage.reload();
-
-        await expect(
-          authenticatedPage.getByRole("textbox", {
-            name: /edit lesson title/i,
-          }),
-        ).toBeVisible();
-
-        await expect(authenticatedPage.getByRole("link", { name: existingTitle })).toBeVisible();
-
-        await expect(authenticatedPage.getByRole("link", { name: importedTitle1 })).toBeVisible();
-
-        await expect(authenticatedPage.getByRole("link", { name: importedTitle2 })).toBeVisible();
+        await expect(async () => {
+          const titles = await prisma.activity.findMany({
+            select: { title: true },
+            where: { lessonId: lesson.id },
+          });
+          const titleList = titles.map((activity) => activity.title);
+          expect(titleList).toContain(existingTitle);
+          expect(titleList).toContain(importedTitle1);
+          expect(titleList).toContain(importedTitle2);
+        }).toPass({ timeout: 10_000 });
       } finally {
         fs.unlinkSync(importFile);
       }
@@ -322,19 +324,16 @@ test.describe("Activity List", () => {
 
         await expect(authenticatedPage.getByRole("link", { name: importedTitle2 })).toBeVisible();
 
-        await authenticatedPage.reload();
-
-        await expect(
-          authenticatedPage.getByRole("textbox", {
-            name: /edit lesson title/i,
-          }),
-        ).toBeVisible();
-
-        await expectActivityNotVisible(authenticatedPage, existingTitle);
-
-        await expect(authenticatedPage.getByRole("link", { name: importedTitle1 })).toBeVisible();
-
-        await expect(authenticatedPage.getByRole("link", { name: importedTitle2 })).toBeVisible();
+        await expect(async () => {
+          const titles = await prisma.activity.findMany({
+            select: { title: true },
+            where: { lessonId: lesson.id },
+          });
+          const titleList = titles.map((activity) => activity.title);
+          expect(titleList).not.toContain(existingTitle);
+          expect(titleList).toContain(importedTitle1);
+          expect(titleList).toContain(importedTitle2);
+        }).toPass({ timeout: 10_000 });
       } finally {
         fs.unlinkSync(importFile);
       }
