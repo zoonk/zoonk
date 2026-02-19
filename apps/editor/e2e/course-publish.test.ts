@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { getAiOrganization } from "@zoonk/e2e/helpers";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
+import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import { type Page, expect, test } from "./fixtures";
 
 async function createTestCourse(isPublished: boolean) {
@@ -14,7 +15,7 @@ async function createTestCourse(isPublished: boolean) {
 }
 
 async function navigateToCoursePage(page: Page, slug: string) {
-  await page.goto(`/ai/c/en/${slug}`);
+  await page.goto(`/${AI_ORG_SLUG}/c/en/${slug}`);
 
   await expect(page.getByRole("textbox", { name: /edit course title/i })).toBeVisible();
 }

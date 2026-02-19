@@ -5,6 +5,7 @@ import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
+import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import { expect, test } from "./fixtures";
 
 async function createTestCourseWithActivity() {
@@ -86,7 +87,7 @@ test.describe("Continue Activity Link", () => {
 
     await mockNextActivityAPI(page, {
       activityPosition: 0,
-      brandSlug: "ai",
+      brandSlug: AI_ORG_SLUG,
       chapterSlug: chapter.slug,
       completed: false,
       courseSlug: course.slug,
@@ -94,7 +95,7 @@ test.describe("Continue Activity Link", () => {
       lessonSlug: lesson.slug,
     });
 
-    await page.goto(`/b/ai/c/${course.slug}`);
+    await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
 
     const startLink = page.getByRole("link", { name: /^start$/i });
     await expect(startLink).toBeVisible();
@@ -105,7 +106,7 @@ test.describe("Continue Activity Link", () => {
 
     await mockNextActivityAPI(page, {
       activityPosition: 0,
-      brandSlug: "ai",
+      brandSlug: AI_ORG_SLUG,
       chapterSlug: chapter.slug,
       completed: false,
       courseSlug: course.slug,
@@ -113,7 +114,7 @@ test.describe("Continue Activity Link", () => {
       lessonSlug: lesson.slug,
     });
 
-    await page.goto(`/b/ai/c/${course.slug}`);
+    await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
 
     const startLink = page.getByRole("link", { name: /^start$/i });
     await expect(startLink).toBeVisible();
@@ -127,7 +128,7 @@ test.describe("Continue Activity Link", () => {
 
     await mockNextActivityAPI(page, {
       activityPosition: 0,
-      brandSlug: "ai",
+      brandSlug: AI_ORG_SLUG,
       chapterSlug: chapter.slug,
       completed: false,
       courseSlug: course.slug,
@@ -135,7 +136,7 @@ test.describe("Continue Activity Link", () => {
       lessonSlug: lesson.slug,
     });
 
-    await page.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}`);
+    await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}`);
 
     const startLink = page.getByRole("link", { name: /^start$/i });
     await expect(startLink).toBeVisible();
@@ -146,7 +147,7 @@ test.describe("Continue Activity Link", () => {
 
     await mockNextActivityAPI(page, {
       activityPosition: 0,
-      brandSlug: "ai",
+      brandSlug: AI_ORG_SLUG,
       chapterSlug: chapter.slug,
       completed: false,
       courseSlug: course.slug,
@@ -154,7 +155,7 @@ test.describe("Continue Activity Link", () => {
       lessonSlug: lesson.slug,
     });
 
-    await page.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
+    await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
 
     const startLink = page.getByRole("link", { name: /^start$/i });
     await expect(startLink).toBeVisible();
@@ -164,13 +165,13 @@ test.describe("Continue Activity Link", () => {
     const { chapter, course } = await createTestCourseWithActivity();
     await mockNoActivitiesAPI(page);
 
-    await page.goto(`/b/ai/c/${course.slug}`);
+    await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
 
     const startLink = page.getByRole("link", { name: /^start$/i });
     await expect(startLink).toBeVisible();
     await expect(startLink).toHaveAttribute(
       "href",
-      expect.stringContaining(`/b/ai/c/${course.slug}/ch/${chapter.slug}`),
+      expect.stringContaining(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}`),
     );
   });
 
@@ -178,7 +179,7 @@ test.describe("Continue Activity Link", () => {
     const { chapter, course, lesson } = await createTestCourseWithActivity();
     await mockNoActivitiesAPI(page);
 
-    await page.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}`);
+    await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}`);
 
     const startLink = page.getByRole("link", { name: /^start$/i });
     await expect(startLink).toBeVisible();
@@ -192,7 +193,7 @@ test.describe("Continue Activity Link", () => {
     const { chapter, course, lesson } = await createTestCourseWithActivity();
     await mockNoActivitiesAPI(page);
 
-    await page.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
+    await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
 
     const startLink = page.getByRole("link", { name: /^start$/i });
     await expect(startLink).toBeVisible();
@@ -218,7 +219,7 @@ test.describe("Continue Activity Link", () => {
 
     await mockNextActivityAPI(authenticatedPage, {
       activityPosition: 1,
-      brandSlug: "ai",
+      brandSlug: AI_ORG_SLUG,
       chapterSlug: chapter.slug,
       completed: false,
       courseSlug: course.slug,
@@ -226,7 +227,7 @@ test.describe("Continue Activity Link", () => {
       lessonSlug: lesson.slug,
     });
 
-    await authenticatedPage.goto(`/b/ai/c/${course.slug}`);
+    await authenticatedPage.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
 
     const continueLink = authenticatedPage.getByRole("link", { name: /^continue$/i });
     await expect(continueLink).toBeVisible();

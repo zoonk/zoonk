@@ -3,6 +3,7 @@ import * as fs from "node:fs";
 import { getAiOrganization } from "@zoonk/e2e/helpers";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
+import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import tmp from "tmp";
 import { type Page, expect, test } from "./fixtures";
 import { getMoreOptionsButton, importFlow } from "./helpers/import-dialog";
@@ -41,7 +42,7 @@ async function createTestCourse(chapterCount = 0) {
 }
 
 async function navigateToCoursePage(page: Page, slug: string) {
-  await page.goto(`/ai/c/en/${slug}`);
+  await page.goto(`/${AI_ORG_SLUG}/c/en/${slug}`);
 
   await expect(page.getByRole("textbox", { name: /edit course title/i })).toBeVisible();
 }
@@ -151,7 +152,7 @@ test.describe("Chapter List", () => {
       ).toBeVisible();
 
       // Navigate back to course page to verify insertion
-      await authenticatedPage.goto(`/ai/c/en/${course.slug}`);
+      await authenticatedPage.goto(`/${AI_ORG_SLUG}/c/en/${course.slug}`);
 
       await expect(
         authenticatedPage.getByRole("textbox", { name: /edit course title/i }),

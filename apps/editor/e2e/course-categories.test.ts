@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { getAiOrganization } from "@zoonk/e2e/helpers";
 import { courseCategoryFixture, courseFixture } from "@zoonk/testing/fixtures/courses";
+import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import { LOCALE_COOKIE } from "@zoonk/utils/locale";
 import { type Page, expect, test } from "./fixtures";
 
@@ -14,7 +15,7 @@ async function createTestCourse() {
 }
 
 async function navigateToCoursePage(page: Page, slug: string) {
-  await page.goto(`/ai/c/en/${slug}`);
+  await page.goto(`/${AI_ORG_SLUG}/c/en/${slug}`);
 
   await expect(page.getByRole("textbox", { name: /edit course title/i })).toBeVisible();
 }
@@ -138,7 +139,7 @@ test.describe("Course Categories Editor", () => {
       .context()
       .addCookies([{ domain: "localhost", name: LOCALE_COOKIE, path: "/", value: "es" }]);
 
-    await authenticatedPage.goto(`/ai/c/en/${course.slug}`);
+    await authenticatedPage.goto(`/${AI_ORG_SLUG}/c/en/${course.slug}`);
 
     await expect(
       authenticatedPage.getByRole("textbox", {

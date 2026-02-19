@@ -12,6 +12,7 @@ import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
+import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { activityGenerationWorkflow } from "./activity-generation-workflow";
 import { completeListeningActivityStep } from "./steps/complete-listening-activity-step";
@@ -567,12 +568,12 @@ describe("language activity generation", () => {
     expect(generateLanguageAudio).toHaveBeenCalledTimes(2);
     expect(generateLanguageAudio).toHaveBeenCalledWith({
       language: "es",
-      orgSlug: "ai",
+      orgSlug: AI_ORG_SLUG,
       text: "hola",
     });
     expect(generateLanguageAudio).toHaveBeenCalledWith({
       language: "es",
-      orgSlug: "ai",
+      orgSlug: AI_ORG_SLUG,
       text: "gato",
     });
   });
@@ -1580,12 +1581,12 @@ describe("language activity generation", () => {
     expect(generateLanguageAudio).toHaveBeenCalledTimes(2);
     expect(generateLanguageAudio).toHaveBeenCalledWith({
       language: "es",
-      orgSlug: "ai",
+      orgSlug: AI_ORG_SLUG,
       text: "Yo veo un gato.",
     });
     expect(generateLanguageAudio).toHaveBeenCalledWith({
       language: "es",
-      orgSlug: "ai",
+      orgSlug: AI_ORG_SLUG,
       text: "Hola, ¿cómo estás?",
     });
   });

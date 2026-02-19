@@ -5,6 +5,7 @@ import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
+import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import tmp from "tmp";
 import { type Page, expect, test } from "./fixtures";
 import { getMoreOptionsButton, importFlow } from "./helpers/import-dialog";
@@ -68,7 +69,7 @@ async function navigateToLessonPage(
   chapterSlug: string,
   lessonSlug: string,
 ) {
-  await page.goto(`/ai/c/en/${courseSlug}/ch/${chapterSlug}/l/${lessonSlug}`);
+  await page.goto(`/${AI_ORG_SLUG}/c/en/${courseSlug}/ch/${chapterSlug}/l/${lessonSlug}`);
 
   await expect(page.getByRole("textbox", { name: /edit lesson title/i })).toBeVisible();
 }
@@ -163,7 +164,9 @@ test.describe("Activity List", () => {
 
       await expect(authenticatedPage.getByText(/activity editor coming soon/i)).toBeVisible();
 
-      await authenticatedPage.goto(`/ai/c/en/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
+      await authenticatedPage.goto(
+        `/${AI_ORG_SLUG}/c/en/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`,
+      );
 
       await expect(
         authenticatedPage.getByRole("textbox", { name: /edit lesson title/i }),

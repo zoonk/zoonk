@@ -1,5 +1,6 @@
 import { getAiOrganization } from "@zoonk/e2e/helpers";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
+import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import { type Page, expect, test } from "./fixtures";
 import { getMoreOptionsButton } from "./helpers/import-dialog";
 
@@ -26,7 +27,7 @@ test.describe("Import Replace Warning", () => {
     authenticatedPage,
   }) => {
     const course = await createTestCourse();
-    await authenticatedPage.goto(`/ai/c/en/${course.slug}`);
+    await authenticatedPage.goto(`/${AI_ORG_SLUG}/c/en/${course.slug}`);
     await expect(
       authenticatedPage.getByRole("textbox", { name: /edit course title/i }),
     ).toBeVisible();
@@ -42,7 +43,7 @@ test.describe("Import Replace Warning", () => {
     authenticatedPage,
   }) => {
     const course = await createTestCourse();
-    await authenticatedPage.goto(`/ai/c/en/${course.slug}`);
+    await authenticatedPage.goto(`/${AI_ORG_SLUG}/c/en/${course.slug}`);
     await expect(
       authenticatedPage.getByRole("textbox", { name: /edit course title/i }),
     ).toBeVisible();
@@ -61,7 +62,7 @@ test.describe("Import Replace Warning", () => {
     authenticatedPage,
   }) => {
     const course = await createTestCourse();
-    await authenticatedPage.goto(`/ai/c/en/${course.slug}`);
+    await authenticatedPage.goto(`/${AI_ORG_SLUG}/c/en/${course.slug}`);
     await expect(
       authenticatedPage.getByRole("textbox", { name: /edit course title/i }),
     ).toBeVisible();

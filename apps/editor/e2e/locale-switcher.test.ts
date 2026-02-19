@@ -1,3 +1,4 @@
+import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import { type Page, expect, test } from "./fixtures";
 
 async function openOrgDropdown(page: Page) {
@@ -21,7 +22,7 @@ async function openLanguageSubmenu(page: Page) {
 
 test.describe("Locale Switcher", () => {
   test.beforeEach(async ({ authenticatedPage }) => {
-    await authenticatedPage.goto("/ai");
+    await authenticatedPage.goto(`/${AI_ORG_SLUG}`);
   });
 
   test("switching locale updates page content", async ({ authenticatedPage }) => {

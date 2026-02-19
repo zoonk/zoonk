@@ -4,6 +4,7 @@ import { getAiOrganization } from "@zoonk/e2e/helpers";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
+import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import { type Page, expect, test } from "./fixtures";
 
 async function createTestLesson(isPublished: boolean) {
@@ -40,7 +41,7 @@ async function navigateToLessonPage(
   chapterSlug: string,
   lessonSlug: string,
 ) {
-  await page.goto(`/ai/c/en/${courseSlug}/ch/${chapterSlug}/l/${lessonSlug}`);
+  await page.goto(`/${AI_ORG_SLUG}/c/en/${courseSlug}/ch/${chapterSlug}/l/${lessonSlug}`);
 
   await expect(page.getByRole("textbox", { name: /edit lesson title/i })).toBeVisible();
 }
@@ -91,7 +92,7 @@ test.describe("Lesson Delete", () => {
       await confirmDelete(authenticatedPage);
 
       await expect(authenticatedPage).toHaveURL(
-        new RegExp(`/ai/c/en/${course.slug}/ch/${chapter.slug}$`),
+        new RegExp(`/${AI_ORG_SLUG}/c/en/${course.slug}/ch/${chapter.slug}$`),
       );
       await verifyLessonDeleted(lesson.id);
     });
@@ -103,7 +104,9 @@ test.describe("Lesson Delete", () => {
       await openDeleteDialog(ownerPage);
       await confirmDelete(ownerPage);
 
-      await expect(ownerPage).toHaveURL(new RegExp(`/ai/c/en/${course.slug}/ch/${chapter.slug}$`));
+      await expect(ownerPage).toHaveURL(
+        new RegExp(`/${AI_ORG_SLUG}/c/en/${course.slug}/ch/${chapter.slug}$`),
+      );
       await verifyLessonDeleted(lesson.id);
     });
 
@@ -114,7 +117,9 @@ test.describe("Lesson Delete", () => {
       await openDeleteDialog(ownerPage);
       await confirmDelete(ownerPage);
 
-      await expect(ownerPage).toHaveURL(new RegExp(`/ai/c/en/${course.slug}/ch/${chapter.slug}$`));
+      await expect(ownerPage).toHaveURL(
+        new RegExp(`/${AI_ORG_SLUG}/c/en/${course.slug}/ch/${chapter.slug}$`),
+      );
       await verifyLessonDeleted(lesson.id);
     });
   });

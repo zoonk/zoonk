@@ -5,6 +5,7 @@ import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
+import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import { expect, test } from "./fixtures";
 
 async function createTestCourseWithActivity() {
@@ -93,7 +94,7 @@ test.describe("Catalog Actions", () => {
 
     await mockNextActivityAPI(page, {
       activityPosition: 0,
-      brandSlug: "ai",
+      brandSlug: AI_ORG_SLUG,
       chapterSlug: chapter.slug,
       completed: false,
       courseSlug: course.slug,
@@ -101,7 +102,7 @@ test.describe("Catalog Actions", () => {
       lessonSlug: lesson.slug,
     });
 
-    await page.goto(`/b/ai/c/${course.slug}`);
+    await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
 
     await expect(page.getByRole("button", { name: /more options/i })).toBeVisible();
   });
@@ -111,7 +112,7 @@ test.describe("Catalog Actions", () => {
 
     await mockNextActivityAPI(page, {
       activityPosition: 0,
-      brandSlug: "ai",
+      brandSlug: AI_ORG_SLUG,
       chapterSlug: chapter.slug,
       completed: false,
       courseSlug: course.slug,
@@ -119,7 +120,7 @@ test.describe("Catalog Actions", () => {
       lessonSlug: lesson.slug,
     });
 
-    await page.goto(`/b/ai/c/${course.slug}`);
+    await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
 
     await openMoreOptions(page);
     await expect(page.getByRole("button", { name: /send feedback/i })).toBeVisible();
@@ -130,7 +131,7 @@ test.describe("Catalog Actions", () => {
 
     await mockNextActivityAPI(page, {
       activityPosition: 0,
-      brandSlug: "ai",
+      brandSlug: AI_ORG_SLUG,
       chapterSlug: chapter.slug,
       completed: false,
       courseSlug: course.slug,
@@ -138,7 +139,7 @@ test.describe("Catalog Actions", () => {
       lessonSlug: lesson.slug,
     });
 
-    await page.goto(`/b/ai/c/${course.slug}`);
+    await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
 
     await openMoreOptions(page);
     await page.getByRole("button", { name: /send feedback/i }).click();
@@ -153,7 +154,7 @@ test.describe("Catalog Actions", () => {
 
     await mockNextActivityAPI(page, {
       activityPosition: 0,
-      brandSlug: "ai",
+      brandSlug: AI_ORG_SLUG,
       chapterSlug: chapter.slug,
       completed: false,
       courseSlug: course.slug,
@@ -161,7 +162,7 @@ test.describe("Catalog Actions", () => {
       lessonSlug: lesson.slug,
     });
 
-    await page.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}`);
+    await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}`);
 
     await expect(page.getByRole("button", { name: /more options/i })).toBeVisible();
   });
@@ -171,7 +172,7 @@ test.describe("Catalog Actions", () => {
 
     await mockNextActivityAPI(page, {
       activityPosition: 0,
-      brandSlug: "ai",
+      brandSlug: AI_ORG_SLUG,
       chapterSlug: chapter.slug,
       completed: false,
       courseSlug: course.slug,
@@ -179,7 +180,7 @@ test.describe("Catalog Actions", () => {
       lessonSlug: lesson.slug,
     });
 
-    await page.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
+    await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
 
     await expect(page.getByRole("button", { name: /more options/i })).toBeVisible();
   });
@@ -189,7 +190,7 @@ test.describe("Catalog Actions", () => {
 
     await mockNextActivityAPI(page, {
       activityPosition: 0,
-      brandSlug: "ai",
+      brandSlug: AI_ORG_SLUG,
       chapterSlug: chapter.slug,
       completed: false,
       courseSlug: course.slug,
@@ -197,7 +198,7 @@ test.describe("Catalog Actions", () => {
       lessonSlug: lesson.slug,
     });
 
-    await page.goto(`/b/ai/c/${course.slug}`);
+    await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
 
     await openMoreOptions(page);
     await expect(page.getByRole("menuitemradio", { name: /^helpful$/i })).toBeVisible();
@@ -209,7 +210,7 @@ test.describe("Catalog Actions", () => {
 
     await mockNextActivityAPI(page, {
       activityPosition: 0,
-      brandSlug: "ai",
+      brandSlug: AI_ORG_SLUG,
       chapterSlug: chapter.slug,
       completed: false,
       courseSlug: course.slug,
@@ -217,7 +218,7 @@ test.describe("Catalog Actions", () => {
       lessonSlug: lesson.slug,
     });
 
-    await page.goto(`/b/ai/c/${course.slug}`);
+    await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
 
     await openMoreOptions(page);
     await page.getByRole("menuitemradio", { name: /^helpful$/i }).click();
@@ -230,7 +231,7 @@ test.describe("Catalog Actions", () => {
 
     await mockNextActivityAPI(page, {
       activityPosition: 0,
-      brandSlug: "ai",
+      brandSlug: AI_ORG_SLUG,
       chapterSlug: chapter.slug,
       completed: false,
       courseSlug: course.slug,
@@ -238,7 +239,7 @@ test.describe("Catalog Actions", () => {
       lessonSlug: lesson.slug,
     });
 
-    await page.goto(`/b/ai/c/${course.slug}`);
+    await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
 
     await openMoreOptions(page);
     await page.getByRole("menuitemradio", { name: /^helpful$/i }).click();
@@ -254,7 +255,7 @@ test.describe("Catalog Actions", () => {
 
     await mockNextActivityAPI(page, {
       activityPosition: 0,
-      brandSlug: "ai",
+      brandSlug: AI_ORG_SLUG,
       chapterSlug: chapter.slug,
       completed: false,
       courseSlug: course.slug,
@@ -262,7 +263,7 @@ test.describe("Catalog Actions", () => {
       lessonSlug: lesson.slug,
     });
 
-    await page.goto(`/b/ai/c/${course.slug}`);
+    await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
 
     await openMoreOptions(page);
     await page.getByRole("menuitemradio", { name: /^helpful$/i }).click();
@@ -283,7 +284,7 @@ test.describe("Catalog Actions", () => {
 
     await mockNextActivityAPI(page, {
       activityPosition: 0,
-      brandSlug: "ai",
+      brandSlug: AI_ORG_SLUG,
       chapterSlug: chapter.slug,
       completed: false,
       courseSlug: course.slug,
@@ -291,7 +292,7 @@ test.describe("Catalog Actions", () => {
       lessonSlug: lesson.slug,
     });
 
-    await page.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}`);
+    await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}`);
 
     await openMoreOptions(page);
     await expect(page.getByRole("menuitemradio", { name: /^helpful$/i })).toBeVisible();
@@ -303,7 +304,7 @@ test.describe("Catalog Actions", () => {
 
     await mockNextActivityAPI(page, {
       activityPosition: 0,
-      brandSlug: "ai",
+      brandSlug: AI_ORG_SLUG,
       chapterSlug: chapter.slug,
       completed: false,
       courseSlug: course.slug,
@@ -311,7 +312,7 @@ test.describe("Catalog Actions", () => {
       lessonSlug: lesson.slug,
     });
 
-    await page.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
+    await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
 
     await openMoreOptions(page);
     await expect(page.getByRole("menuitemradio", { name: /^helpful$/i })).toBeVisible();
@@ -323,7 +324,7 @@ test.describe("Catalog Actions", () => {
 
     await mockNextActivityAPI(page, {
       activityPosition: 0,
-      brandSlug: "ai",
+      brandSlug: AI_ORG_SLUG,
       chapterSlug: chapter.slug,
       completed: false,
       courseSlug: course.slug,
@@ -331,7 +332,7 @@ test.describe("Catalog Actions", () => {
       lessonSlug: lesson.slug,
     });
 
-    await page.goto(`/b/ai/c/${course.slug}`);
+    await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
 
     await openMoreOptions(page);
     await page.getByRole("menuitemradio", { name: /^helpful$/i }).click();
