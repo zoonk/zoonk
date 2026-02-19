@@ -94,18 +94,15 @@ test.describe("Alternative Titles Editor", () => {
 
     await expect(authenticatedPage.getByText(expectedSlug)).toBeVisible();
 
-    await authenticatedPage.reload();
-
-    await expect(
-      authenticatedPage.getByRole("textbox", { name: /edit course title/i }),
-    ).toBeVisible();
-
-    await openAlternativeTitles(authenticatedPage);
-
-    await expect(authenticatedPage.getByText(expectedSlug)).toBeVisible();
+    await expect(async () => {
+      const title = await prisma.courseAlternativeTitle.findFirst({
+        where: { courseId: course.id, slug: expectedSlug },
+      });
+      expect(title).not.toBeNull();
+    }).toPass({ timeout: 10_000 });
   });
 
-  test("removes a title and persists after reload", async ({ authenticatedPage }) => {
+  test("removes a title and persists", async ({ authenticatedPage }) => {
     const course = await createTestCourse();
     const slug = await createAlternativeTitleFixture(course.id, "to-remove");
 
@@ -120,15 +117,12 @@ test.describe("Alternative Titles Editor", () => {
 
     await expect(authenticatedPage.getByText(slug)).not.toBeVisible();
 
-    await authenticatedPage.reload();
-
-    await expect(
-      authenticatedPage.getByRole("textbox", { name: /edit course title/i }),
-    ).toBeVisible();
-
-    await openAlternativeTitles(authenticatedPage);
-
-    await expect(authenticatedPage.getByText(slug)).not.toBeVisible();
+    await expect(async () => {
+      const title = await prisma.courseAlternativeTitle.findFirst({
+        where: { courseId: course.id, slug },
+      });
+      expect(title).toBeNull();
+    }).toPass({ timeout: 10_000 });
   });
 
   test("filters titles by search", async ({ authenticatedPage }) => {
@@ -219,17 +213,16 @@ test.describe("Alternative Titles Editor", () => {
       await expect(authenticatedPage.getByText(importedSlug1)).toBeVisible();
       await expect(authenticatedPage.getByText(importedSlug2)).toBeVisible();
 
-      await authenticatedPage.reload();
-
-      await expect(
-        authenticatedPage.getByRole("textbox", { name: /edit course title/i }),
-      ).toBeVisible();
-
-      await openAlternativeTitles(authenticatedPage);
-
-      await expect(authenticatedPage.getByText(existingSlug)).toBeVisible();
-      await expect(authenticatedPage.getByText(importedSlug1)).toBeVisible();
-      await expect(authenticatedPage.getByText(importedSlug2)).toBeVisible();
+      await expect(async () => {
+        const titles = await prisma.courseAlternativeTitle.findMany({
+          select: { slug: true },
+          where: { courseId: course.id },
+        });
+        const slugList = titles.map((title) => title.slug);
+        expect(slugList).toContain(existingSlug);
+        expect(slugList).toContain(importedSlug1);
+        expect(slugList).toContain(importedSlug2);
+      }).toPass({ timeout: 10_000 });
     } finally {
       fs.unlinkSync(importFile);
     }
@@ -255,17 +248,16 @@ test.describe("Alternative Titles Editor", () => {
       await expect(authenticatedPage.getByText(importedSlug1)).toBeVisible();
       await expect(authenticatedPage.getByText(importedSlug2)).toBeVisible();
 
-      await authenticatedPage.reload();
-
-      await expect(
-        authenticatedPage.getByRole("textbox", { name: /edit course title/i }),
-      ).toBeVisible();
-
-      await openAlternativeTitles(authenticatedPage);
-
-      await expect(authenticatedPage.getByText(oldSlug)).not.toBeVisible();
-      await expect(authenticatedPage.getByText(importedSlug1)).toBeVisible();
-      await expect(authenticatedPage.getByText(importedSlug2)).toBeVisible();
+      await expect(async () => {
+        const titles = await prisma.courseAlternativeTitle.findMany({
+          select: { slug: true },
+          where: { courseId: course.id },
+        });
+        const slugList = titles.map((title) => title.slug);
+        expect(slugList).not.toContain(oldSlug);
+        expect(slugList).toContain(importedSlug1);
+        expect(slugList).toContain(importedSlug2);
+      }).toPass({ timeout: 10_000 });
     } finally {
       fs.unlinkSync(importFile);
     }

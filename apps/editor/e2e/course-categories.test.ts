@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
-import { getAiOrganization } from "@zoonk/e2e/helpers";
+import { prisma } from "@zoonk/db";
+import { getAiOrganization, openDialog } from "@zoonk/e2e/helpers";
 import { courseCategoryFixture, courseFixture } from "@zoonk/testing/fixtures/courses";
 import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import { LOCALE_COOKIE } from "@zoonk/utils/locale";
@@ -21,13 +22,30 @@ async function navigateToCoursePage(page: Page, slug: string) {
 }
 
 async function openCategoryPopover(page: Page) {
-  await page.getByRole("button", { name: /add category/i }).click();
-  await expect(page.getByRole("dialog")).toBeVisible();
+  await openDialog(page.getByRole("button", { name: /add category/i }), page.getByRole("dialog"));
 }
 
 function getCategoryOption(page: Page, name: RegExp) {
   const dialog = page.getByRole("dialog");
   return dialog.getByText(name);
+}
+
+async function expectCategoryInDB(courseId: number, category: string) {
+  await expect(async () => {
+    const record = await prisma.courseCategory.findUnique({
+      where: { courseCategory: { category, courseId } },
+    });
+    expect(record).not.toBeNull();
+  }).toPass({ timeout: 10_000 });
+}
+
+async function expectCategoryNotInDB(courseId: number, category: string) {
+  await expect(async () => {
+    const record = await prisma.courseCategory.findUnique({
+      where: { courseCategory: { category, courseId } },
+    });
+    expect(record).toBeNull();
+  }).toPass({ timeout: 10_000 });
 }
 
 test.describe("Course Categories Editor", () => {
@@ -45,35 +63,23 @@ test.describe("Course Categories Editor", () => {
     await expect(authenticatedPage.getByText("Science")).toBeVisible();
   });
 
-  test("adds a category and persists after reload", async ({ authenticatedPage }) => {
+  test("adds a category and persists", async ({ authenticatedPage }) => {
     const course = await createTestCourse();
     await navigateToCoursePage(authenticatedPage, course.slug);
 
     await openCategoryPopover(authenticatedPage);
     await getCategoryOption(authenticatedPage, /technology/i).click();
-
-    const addButton = authenticatedPage.getByRole("button", {
-      name: /add category/i,
-    });
-
-    await expect(addButton).toBeEnabled({ timeout: 10_000 });
-
     await authenticatedPage.keyboard.press("Escape");
     await expect(authenticatedPage.getByRole("dialog")).not.toBeVisible();
 
+    // Badge appears immediately without reload
     const main = authenticatedPage.getByRole("main");
     await expect(main.getByText("Technology")).toBeVisible();
 
-    await authenticatedPage.reload();
-
-    await expect(
-      authenticatedPage.getByRole("textbox", { name: /edit course title/i }),
-    ).toBeVisible();
-
-    await expect(main.getByText("Technology")).toBeVisible();
+    await expectCategoryInDB(course.id, "tech");
   });
 
-  test("removes a category and persists after reload", async ({ authenticatedPage }) => {
+  test("removes a category and persists", async ({ authenticatedPage }) => {
     const course = await createTestCourse();
     await courseCategoryFixture({ category: "tech", courseId: course.id });
 
@@ -83,23 +89,12 @@ test.describe("Course Categories Editor", () => {
 
     await openCategoryPopover(authenticatedPage);
     await getCategoryOption(authenticatedPage, /technology/i).click();
-
-    const addButton = authenticatedPage.getByRole("button", {
-      name: /add category/i,
-    });
-    await expect(addButton).toBeEnabled({ timeout: 10_000 });
-
     await authenticatedPage.keyboard.press("Escape");
 
+    // Badge disappears immediately without reload
     await expect(authenticatedPage.getByText("Technology")).not.toBeVisible();
 
-    await authenticatedPage.reload();
-
-    await expect(
-      authenticatedPage.getByRole("textbox", { name: /edit course title/i }),
-    ).toBeVisible();
-
-    await expect(authenticatedPage.getByText("Technology")).not.toBeVisible();
+    await expectCategoryNotInDB(course.id, "tech");
   });
 
   test("filters categories by search", async ({ authenticatedPage }) => {
@@ -193,24 +188,22 @@ test.describe("Course Categories Editor", () => {
 
     await authenticatedPage.keyboard.press("Escape");
 
+    // All changes reflect immediately without reload
     await expect(authenticatedPage.getByText("Technology")).not.toBeVisible();
     await expect(authenticatedPage.getByText("Arts")).toBeVisible();
     await expect(authenticatedPage.getByText("Science")).toBeVisible();
     await expect(authenticatedPage.getByText("Math")).toBeVisible();
 
-    await authenticatedPage.reload();
-
-    await expect(
-      authenticatedPage.getByRole("textbox", { name: /edit course title/i }),
-    ).toBeVisible();
-
-    await expect(authenticatedPage.getByText("Technology")).not.toBeVisible();
-    await expect(authenticatedPage.getByText("Arts")).toBeVisible();
-    await expect(authenticatedPage.getByText("Science")).toBeVisible();
-    await expect(authenticatedPage.getByText("Math")).toBeVisible();
+    await Promise.all([
+      expectCategoryNotInDB(course.id, "tech"),
+      expectCategoryInDB(course.id, "arts"),
+      expectCategoryInDB(course.id, "science"),
+      expectCategoryInDB(course.id, "math"),
+    ]);
   });
 
-  // Track a regression where the category is not selected after the server action completes
+  // Regression: optimistic update reverted after server action when revalidatePath was missing.
+  // We wait for the DB write to confirm the action completed, then verify the UI didn't revert.
   test("keeps category selected after server action completes - regression", async ({
     authenticatedPage,
   }) => {
@@ -218,34 +211,16 @@ test.describe("Course Categories Editor", () => {
     await navigateToCoursePage(authenticatedPage, course.slug);
 
     await openCategoryPopover(authenticatedPage);
-
-    // Click the category option to select it
     await getCategoryOption(authenticatedPage, /technology/i).click();
-
-    // Wait for the add button to be enabled (indicates transition completed)
-    const addButton = authenticatedPage.getByRole("button", {
-      name: /add category/i,
-    });
-
-    await expect(addButton).toBeEnabled({ timeout: 10_000 });
-
-    // Close the popover and wait for it to close
     await authenticatedPage.keyboard.press("Escape");
     await expect(authenticatedPage.getByRole("dialog")).not.toBeVisible();
 
-    // Verify the badge is still visible after transition completed
-    // This is the key assertion - if revalidatePath is missing,
-    // The optimistic update reverts and the badge disappears
     const main = authenticatedPage.getByRole("main");
     await expect(main.getByText("Technology")).toBeVisible();
 
-    // Verify persistence
-    await authenticatedPage.reload();
-
-    await expect(
-      authenticatedPage.getByRole("textbox", { name: /edit course title/i }),
-    ).toBeVisible();
-
-    await expect(authenticatedPage.getByText("Technology")).toBeVisible();
+    // Wait for server action to complete via DB, then verify the
+    // optimistic update wasn't reverted (catches missing revalidatePath).
+    await expectCategoryInDB(course.id, "tech");
+    await expect(main.getByText("Technology")).toBeVisible();
   });
 });

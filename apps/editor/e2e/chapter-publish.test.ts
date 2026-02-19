@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { prisma } from "@zoonk/db";
 import { getAiOrganization } from "@zoonk/e2e/helpers";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
@@ -67,18 +68,10 @@ test.describe("Chapter Publish Toggle", () => {
     await expect(publishLabel.getByText(/^published$/i)).toBeVisible();
     await expect(toggle).toBeChecked();
 
-    // Wait for the server action to complete (switch re-enables after transition)
-    await expect(toggle).toBeEnabled();
-
-    await authenticatedPage.reload();
-
-    await expect(
-      authenticatedPage.getByRole("textbox", { name: /edit chapter title/i }),
-    ).toBeVisible();
-    const reloadedToggle = authenticatedPage.getByRole("switch");
-    const reloadedLabel = authenticatedPage.locator("label").filter({ has: reloadedToggle });
-    await expect(reloadedLabel.getByText(/^published$/i)).toBeVisible();
-    await expect(reloadedToggle).toBeChecked();
+    await expect(async () => {
+      const record = await prisma.chapter.findUniqueOrThrow({ where: { id: chapter.id } });
+      expect(record.isPublished).toBe(true);
+    }).toPass({ timeout: 10_000 });
   });
 
   test("unpublishes a published chapter and persists", async ({ authenticatedPage }) => {
@@ -97,17 +90,9 @@ test.describe("Chapter Publish Toggle", () => {
     await expect(publishLabel.getByText(/^draft$/i)).toBeVisible();
     await expect(toggle).not.toBeChecked();
 
-    // Wait for the server action to complete (switch re-enables after transition)
-    await expect(toggle).toBeEnabled();
-
-    await authenticatedPage.reload();
-
-    await expect(
-      authenticatedPage.getByRole("textbox", { name: /edit chapter title/i }),
-    ).toBeVisible();
-    const reloadedToggle = authenticatedPage.getByRole("switch");
-    const reloadedLabel = authenticatedPage.locator("label").filter({ has: reloadedToggle });
-    await expect(reloadedLabel.getByText(/^draft$/i)).toBeVisible();
-    await expect(reloadedToggle).not.toBeChecked();
+    await expect(async () => {
+      const record = await prisma.chapter.findUniqueOrThrow({ where: { id: chapter.id } });
+      expect(record.isPublished).toBe(false);
+    }).toPass({ timeout: 10_000 });
   });
 });

@@ -2,7 +2,7 @@ import { getAiOrganization } from "@zoonk/e2e/helpers";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import { type Page, expect, test } from "./fixtures";
-import { getMoreOptionsButton } from "./helpers/import-dialog";
+import { openMoreOptionsMenu } from "./helpers/import-dialog";
 
 async function createTestCourse() {
   const org = await getAiOrganization();
@@ -11,7 +11,7 @@ async function createTestCourse() {
 }
 
 async function openImportDialog(page: Page) {
-  await getMoreOptionsButton(page).click();
+  await openMoreOptionsMenu(page);
   await page.getByRole("menuitem", { name: /import/i }).click();
 
   const dialog = page.getByRole("dialog");
