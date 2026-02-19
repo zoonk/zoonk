@@ -8,17 +8,8 @@ import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import { normalizeString } from "@zoonk/utils/string";
 import { expect, test } from "./fixtures";
 
-const uniqueId = randomUUID().slice(0, 8);
 const TEST_RUN_ID = "test-run-id-course-detail";
-
-let courseWithImageUrl: string;
-let courseWithImageTitle: string;
-let courseWithImageDescription: string;
-
-let courseNoImageUrl: string;
-let courseNoImageTitle: string;
-
-let ptCourseUrl: string;
+const UUID_SHORT_LENGTH = 8;
 
 /**
  * Mock the workflow APIs to avoid hitting real services.
@@ -48,32 +39,49 @@ async function mockWorkflowApis(route: Route) {
   await route.continue();
 }
 
+const testData: {
+  courseNoImageTitle: string;
+  courseNoImageUrl: string;
+  courseWithImageDescription: string;
+  courseWithImageTitle: string;
+  courseWithImageUrl: string;
+  ptCourseUrl: string;
+} = {
+  courseNoImageTitle: "",
+  courseNoImageUrl: "",
+  courseWithImageDescription: "",
+  courseWithImageTitle: "",
+  courseWithImageUrl: "",
+  ptCourseUrl: "",
+};
+
 test.beforeAll(async () => {
+  const uniqueId = randomUUID().slice(0, UUID_SHORT_LENGTH);
   const org = await getAiOrganization();
 
-  courseWithImageTitle = `E2E Image Course ${uniqueId}`;
-  courseWithImageDescription = `Description for image course ${uniqueId}`;
-  courseNoImageTitle = `E2E No Image Course ${uniqueId}`;
+  testData.courseWithImageTitle = `E2E Image Course ${uniqueId}`;
+  testData.courseWithImageDescription = `Description for image course ${uniqueId}`;
+  testData.courseNoImageTitle = `E2E No Image Course ${uniqueId}`;
   const ptCourseTitle = `E2E Curso PT ${uniqueId}`;
 
   const [courseWithImage, courseNoImage, ptCourse] = await Promise.all([
     courseFixture({
-      description: courseWithImageDescription,
+      description: testData.courseWithImageDescription,
       imageUrl: "https://placehold.co/200x200.png",
       isPublished: true,
       language: "en",
-      normalizedTitle: normalizeString(courseWithImageTitle),
+      normalizedTitle: normalizeString(testData.courseWithImageTitle),
       organizationId: org.id,
       slug: `e2e-img-course-${uniqueId}`,
-      title: courseWithImageTitle,
+      title: testData.courseWithImageTitle,
     }),
     courseFixture({
       isPublished: true,
       language: "en",
-      normalizedTitle: normalizeString(courseNoImageTitle),
+      normalizedTitle: normalizeString(testData.courseNoImageTitle),
       organizationId: org.id,
       slug: `e2e-noimg-course-${uniqueId}`,
-      title: courseNoImageTitle,
+      title: testData.courseNoImageTitle,
     }),
     courseFixture({
       isPublished: true,
@@ -114,20 +122,22 @@ test.beforeAll(async () => {
     }),
   ]);
 
-  courseWithImageUrl = `/b/${AI_ORG_SLUG}/c/${courseWithImage.slug}`;
-  courseNoImageUrl = `/b/${AI_ORG_SLUG}/c/${courseNoImage.slug}`;
-  ptCourseUrl = `/pt/b/${AI_ORG_SLUG}/c/${ptCourse.slug}`;
+  testData.courseWithImageUrl = `/b/${AI_ORG_SLUG}/c/${courseWithImage.slug}`;
+  testData.courseNoImageUrl = `/b/${AI_ORG_SLUG}/c/${courseNoImage.slug}`;
+  testData.ptCourseUrl = `/pt/b/${AI_ORG_SLUG}/c/${ptCourse.slug}`;
 });
 
 test.describe("Course Detail Page", () => {
   test("shows course content with title, description, and image", async ({ page }) => {
-    await page.goto(courseWithImageUrl);
+    await page.goto(testData.courseWithImageUrl);
 
-    await expect(page.getByRole("heading", { level: 1, name: courseWithImageTitle })).toBeVisible();
+    await expect(
+      page.getByRole("heading", { level: 1, name: testData.courseWithImageTitle }),
+    ).toBeVisible();
 
-    await expect(page.getByText(courseWithImageDescription).first()).toBeVisible();
+    await expect(page.getByText(testData.courseWithImageDescription).first()).toBeVisible();
 
-    const courseImage = page.getByRole("img", { name: courseWithImageTitle });
+    const courseImage = page.getByRole("img", { name: testData.courseWithImageTitle });
     await expect(courseImage).toBeVisible();
   });
 
@@ -140,7 +150,7 @@ test.describe("Course Detail Page", () => {
   test("redirects to generate page when course has no chapters", async ({ page }) => {
     const org = await getAiOrganization();
 
-    const slug = `e2e-no-chapters-${randomUUID().slice(0, 8)}`;
+    const slug = `e2e-no-chapters-${randomUUID().slice(0, UUID_SHORT_LENGTH)}`;
 
     const [, suggestion] = await Promise.all([
       courseFixture({
@@ -171,11 +181,11 @@ test.describe("Course Detail Page", () => {
   });
 
   test("shows fallback icon when course has no image", async ({ page }) => {
-    await page.goto(courseNoImageUrl);
+    await page.goto(testData.courseNoImageUrl);
 
-    await expect(page.getByRole("heading", { name: courseNoImageTitle })).toBeVisible();
+    await expect(page.getByRole("heading", { name: testData.courseNoImageTitle })).toBeVisible();
 
-    const fallbackIcon = page.getByRole("img", { name: courseNoImageTitle }).first();
+    const fallbackIcon = page.getByRole("img", { name: testData.courseNoImageTitle }).first();
     await expect(fallbackIcon).toBeVisible();
     await expect(fallbackIcon).not.toHaveAttribute("src");
   });
@@ -183,7 +193,7 @@ test.describe("Course Detail Page", () => {
 
 test.describe("Course Detail Page - Locale", () => {
   test("clicking course from PT list preserves locale", async ({ page }) => {
-    await page.goto(ptCourseUrl);
+    await page.goto(testData.ptCourseUrl);
 
     await expect(page).toHaveURL(/\/pt\/b\/ai\/c\//);
   });

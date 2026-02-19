@@ -2,6 +2,8 @@ import { randomUUID } from "node:crypto";
 import { type CourseSuggestion, prisma } from "@zoonk/db";
 import { normalizeString } from "@zoonk/utils/string";
 
+const UUID_SHORT_LENGTH = 8;
+
 export function courseSuggestionAttrs(
   attrs?: Partial<CourseSuggestion>,
 ): Omit<CourseSuggestion, "id" | "createdAt" | "updatedAt"> {
@@ -30,7 +32,7 @@ export async function searchPromptWithSuggestionsFixture(attrs?: {
   suggestions?: Partial<CourseSuggestion>[];
 }) {
   const language = attrs?.language ?? "en";
-  const uniqueId = randomUUID().slice(0, 8);
+  const uniqueId = randomUUID().slice(0, UUID_SHORT_LENGTH);
   const prompt = attrs?.prompt ?? `e2e prompt ${uniqueId}`;
 
   const suggestionsData = attrs?.suggestions ?? [

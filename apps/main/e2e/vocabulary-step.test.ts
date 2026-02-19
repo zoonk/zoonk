@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { prisma } from "@zoonk/db";
+import { getAiOrganization } from "@zoonk/e2e/helpers";
 import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
@@ -17,9 +17,7 @@ async function createVocabularyActivity(options: {
     romanization?: string | null;
   }[];
 }) {
-  const org = await prisma.organization.findUniqueOrThrow({
-    where: { slug: "ai" },
-  });
+  const org = await getAiOrganization();
 
   const uniqueId = randomUUID().slice(0, 8);
 

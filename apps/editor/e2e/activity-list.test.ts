@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import * as fs from "node:fs";
-import { prisma } from "@zoonk/db";
+import { getAiOrganization } from "@zoonk/e2e/helpers";
 import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
@@ -19,9 +19,7 @@ function createImportFile(
 }
 
 async function createTestLesson(activityCount = 0) {
-  const org = await prisma.organization.findUniqueOrThrow({
-    where: { slug: "ai" },
-  });
+  const org = await getAiOrganization();
 
   const course = await courseFixture({
     organizationId: org.id,

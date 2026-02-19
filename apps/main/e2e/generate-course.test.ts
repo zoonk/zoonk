@@ -116,18 +116,6 @@ async function setupMockApis(page: Page, options: MockApiOptions = {}): Promise<
   await page.route("**/v1/workflows/course-generation/**", handler);
 }
 
-/**
- * Sets up mocks and navigates directly to the generate page for a given suggestion.
- */
-async function navigateWithMocks(
-  page: Page,
-  suggestionId: number | bigint,
-  options: MockApiOptions,
-): Promise<void> {
-  await setupMockApis(page, options);
-  await page.goto(`/generate/cs/${suggestionId}`);
-}
-
 test.describe("Generate Course Page", () => {
   test.describe("Initial triggering state", () => {
     test("shows triggering state immediately on page load", async ({ page }) => {

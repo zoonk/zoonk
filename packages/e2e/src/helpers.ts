@@ -13,6 +13,8 @@ import {
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
 import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 
+const UUID_SHORT_LENGTH = 8;
+
 export function getBaseURL(): string {
   const url = process.env.E2E_BASE_URL;
 
@@ -52,7 +54,7 @@ export async function createE2EUser(
     withSubscription?: boolean;
   },
 ): Promise<E2EUser> {
-  const uniqueId = randomUUID().slice(0, 8);
+  const uniqueId = randomUUID().slice(0, UUID_SHORT_LENGTH);
   const email = `e2e-${uniqueId}@zoonk.test`;
   const password = "password123";
   const name = `E2E User ${uniqueId}`;
@@ -137,18 +139,28 @@ export async function openDialog(trigger: Locator, dialog: Locator) {
   }).toPass();
 }
 
+// Daily progress test fixture constants
+const PROGRESS_DAYS = 60;
+const PROGRESS_LAST_INDEX = 59;
+const CURRENT_MONTH_CORRECT = 17;
+const PREVIOUS_MONTH_CORRECT = 13;
+const CURRENT_MONTH_ENERGY = 75;
+const PREVIOUS_MONTH_ENERGY = 65;
+const CURRENT_MONTH_INCORRECT = 3;
+const PREVIOUS_MONTH_INCORRECT = 7;
+
 function buildDailyProgressInputs(today: Date, orgId: number, userId: number) {
-  return Array.from({ length: 60 }, (_, reverseIdx) => {
-    const idx = 59 - reverseIdx;
+  return Array.from({ length: PROGRESS_DAYS }, (_, reverseIdx) => {
+    const idx = PROGRESS_LAST_INDEX - reverseIdx;
     const date = new Date(today.getTime() - idx * 24 * 60 * 60 * 1000);
     const isCurrentMonth = idx < 30;
 
     return {
       brainPowerEarned: 250,
-      correctAnswers: isCurrentMonth ? 17 : 13,
+      correctAnswers: isCurrentMonth ? CURRENT_MONTH_CORRECT : PREVIOUS_MONTH_CORRECT,
       date,
-      energyAtEnd: isCurrentMonth ? 75 : 65,
-      incorrectAnswers: isCurrentMonth ? 3 : 7,
+      energyAtEnd: isCurrentMonth ? CURRENT_MONTH_ENERGY : PREVIOUS_MONTH_ENERGY,
+      incorrectAnswers: isCurrentMonth ? CURRENT_MONTH_INCORRECT : PREVIOUS_MONTH_INCORRECT,
       organizationId: orgId,
       userId,
     };
@@ -197,7 +209,7 @@ async function createStepAttempts(
 
 async function createE2EProgressData(userId: number): Promise<void> {
   const org = await getAiOrganization();
-  const uniqueId = randomUUID().slice(0, 8);
+  const uniqueId = randomUUID().slice(0, UUID_SHORT_LENGTH);
   const now = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
@@ -266,13 +278,16 @@ async function createE2EProgressData(userId: number): Promise<void> {
 
   await createStepAttempts(step.id, org.id, userId, now);
 
+  const activityDurationSeconds = 120;
+  const activityStartOffsetSeconds = 180;
+
   await Promise.all([
     prisma.activityProgress.create({
       data: {
         activityId: completedActivity.id,
         completedAt: new Date(now.getTime() - 60 * 1000),
-        durationSeconds: 120,
-        startedAt: new Date(now.getTime() - 180 * 1000),
+        durationSeconds: activityDurationSeconds,
+        startedAt: new Date(now.getTime() - activityStartOffsetSeconds * 1000),
         userId,
       },
     }),

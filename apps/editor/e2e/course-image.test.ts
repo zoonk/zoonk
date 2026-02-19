@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { prisma } from "@zoonk/db";
+import { getAiOrganization } from "@zoonk/e2e/helpers";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { type Page, expect, test } from "./fixtures";
 
@@ -15,9 +15,7 @@ const TEST_IMAGES = {
 };
 
 async function createTestCourse(imageUrl: string | null = null) {
-  const org = await prisma.organization.findUniqueOrThrow({
-    where: { slug: "ai" },
-  });
+  const org = await getAiOrganization();
 
   return courseFixture({
     imageUrl,

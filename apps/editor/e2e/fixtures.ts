@@ -18,9 +18,8 @@ export const test = base.extend<
     ownerUser: E2EUser;
   }
 >({
-  // Worker-scoped: each parallel worker gets unique users
-  // oxlint-disable-next-line eslint/no-empty-pattern -- Playwright requires destructuring pattern
   adminUser: [
+    // oxlint-disable-next-line eslint/no-empty-pattern -- Playwright requires destructuring pattern
     async ({}, use) => {
       const user = await createE2EUser(getBaseURL(), {
         orgRole: "admin",
@@ -31,8 +30,31 @@ export const test = base.extend<
     { scope: "worker" },
   ],
 
+  authenticatedPage: async ({ browser, adminUser }, use) => {
+    const ctx = await browser.newContext({
+      storageState: adminUser.storageState,
+    });
+    const page = await ctx.newPage();
+    await use(page);
+    await ctx.close();
+  },
+
   // oxlint-disable-next-line eslint/no-empty-pattern -- Playwright requires destructuring pattern
+  baseURL: async ({}, use) => {
+    await use(getBaseURL());
+  },
+
+  memberPage: async ({ browser, memberUser }, use) => {
+    const ctx = await browser.newContext({
+      storageState: memberUser.storageState,
+    });
+    const page = await ctx.newPage();
+    await use(page);
+    await ctx.close();
+  },
+
   memberUser: [
+    // oxlint-disable-next-line eslint/no-empty-pattern -- Playwright requires destructuring pattern
     async ({}, use) => {
       const user = await createE2EUser(getBaseURL(), { orgRole: "member" });
       await use(user);
@@ -40,20 +62,17 @@ export const test = base.extend<
     { scope: "worker" },
   ],
 
-  // oxlint-disable-next-line eslint/no-empty-pattern -- Playwright requires destructuring pattern
-  ownerUser: [
-    async ({}, use) => {
-      const user = await createE2EUser(getBaseURL(), {
-        orgRole: "owner",
-        withSubscription: true,
-      });
-      await use(user);
-    },
-    { scope: "worker" },
-  ],
+  multiOrgPage: async ({ browser, multiOrgUser }, use) => {
+    const ctx = await browser.newContext({
+      storageState: multiOrgUser.storageState,
+    });
+    const page = await ctx.newPage();
+    await use(page);
+    await ctx.close();
+  },
 
-  // oxlint-disable-next-line eslint/no-empty-pattern -- Playwright requires destructuring pattern
   multiOrgUser: [
+    // oxlint-disable-next-line eslint/no-empty-pattern -- Playwright requires destructuring pattern
     async ({}, use) => {
       const user = await createE2EUser(getBaseURL(), {
         orgRole: "admin",
@@ -77,39 +96,14 @@ export const test = base.extend<
     { scope: "worker" },
   ],
 
-  // oxlint-disable-next-line eslint/no-empty-pattern -- Playwright requires destructuring pattern
   noOrgUser: [
+    // oxlint-disable-next-line eslint/no-empty-pattern -- Playwright requires destructuring pattern
     async ({}, use) => {
       const user = await createE2EUser(getBaseURL());
       await use(user);
     },
     { scope: "worker" },
   ],
-
-  // Set baseURL from captured web server port so page.goto("/path") works
-  // oxlint-disable-next-line eslint/no-empty-pattern -- Playwright requires destructuring pattern
-  baseURL: async ({}, use) => {
-    await use(getBaseURL());
-  },
-
-  // Test-scoped: fresh browser context per test
-  authenticatedPage: async ({ browser, adminUser }, use) => {
-    const ctx = await browser.newContext({
-      storageState: adminUser.storageState,
-    });
-    const page = await ctx.newPage();
-    await use(page);
-    await ctx.close();
-  },
-
-  memberPage: async ({ browser, memberUser }, use) => {
-    const ctx = await browser.newContext({
-      storageState: memberUser.storageState,
-    });
-    const page = await ctx.newPage();
-    await use(page);
-    await ctx.close();
-  },
 
   ownerPage: async ({ browser, ownerUser }, use) => {
     const ctx = await browser.newContext({
@@ -120,14 +114,17 @@ export const test = base.extend<
     await ctx.close();
   },
 
-  multiOrgPage: async ({ browser, multiOrgUser }, use) => {
-    const ctx = await browser.newContext({
-      storageState: multiOrgUser.storageState,
-    });
-    const page = await ctx.newPage();
-    await use(page);
-    await ctx.close();
-  },
+  ownerUser: [
+    // oxlint-disable-next-line eslint/no-empty-pattern -- Playwright requires destructuring pattern
+    async ({}, use) => {
+      const user = await createE2EUser(getBaseURL(), {
+        orgRole: "owner",
+        withSubscription: true,
+      });
+      await use(user);
+    },
+    { scope: "worker" },
+  ],
 
   userWithoutOrg: async ({ browser, noOrgUser }, use) => {
     const ctx = await browser.newContext({

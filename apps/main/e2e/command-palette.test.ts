@@ -1,13 +1,11 @@
 import { randomUUID } from "node:crypto";
-import { prisma } from "@zoonk/db";
+import { getAiOrganization } from "@zoonk/e2e/helpers";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { normalizeString } from "@zoonk/utils/string";
 import { type Page, expect, test } from "./fixtures";
 
 async function createTestCourse() {
-  const org = await prisma.organization.findUniqueOrThrow({
-    where: { slug: "ai" },
-  });
+  const org = await getAiOrganization();
 
   const uniqueId = randomUUID().slice(0, 8);
   const title = `E2E Course ${uniqueId}`;
@@ -301,9 +299,7 @@ test.describe("Command Palette - Course Search", () => {
   });
 
   test("shows exact match first when searching", async ({ page }) => {
-    const org = await prisma.organization.findUniqueOrThrow({
-      where: { slug: "ai" },
-    });
+    const org = await getAiOrganization();
 
     // Create test courses with a unique prefix to avoid conflicts
     const uniqueId = randomUUID().slice(0, 8);
