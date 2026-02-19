@@ -49,6 +49,9 @@ export type SerializedStep<Kind extends SupportedStepKind = SupportedStepKind> =
   sentence: SerializedSentence | null;
   vocabularyOptions: SerializedWord[];
   wordBankOptions: string[];
+  sortOrderItems: string[];
+  fillBlankOptions: string[];
+  matchColumnsRightItems: string[];
 };
 
 export type SerializedActivity = {
@@ -192,6 +195,33 @@ function buildWordBankOptions(
   return shuffle([...correctWords, ...selected]);
 }
 
+function buildSortOrderItems(step: SerializedStep): string[] {
+  if (step.kind !== "sortOrder") {
+    return [];
+  }
+
+  const content = parseStepContent("sortOrder", step.content);
+  return shuffle(content.items);
+}
+
+function buildFillBlankOptions(step: SerializedStep): string[] {
+  if (step.kind !== "fillBlank") {
+    return [];
+  }
+
+  const content = parseStepContent("fillBlank", step.content);
+  return shuffle([...content.answers, ...content.distractors]);
+}
+
+function buildMatchColumnsRightItems(step: SerializedStep): string[] {
+  if (step.kind !== "matchColumns") {
+    return [];
+  }
+
+  const content = parseStepContent("matchColumns", step.content);
+  return shuffle(content.pairs.map((pair) => pair.right));
+}
+
 function serializeStep(step: ActivityWithSteps["steps"][number]): SerializedStep | null {
   if (!isSupportedStepKind(step.kind)) {
     return null;
@@ -207,10 +237,13 @@ function serializeStep(step: ActivityWithSteps["steps"][number]): SerializedStep
 
     return {
       content,
+      fillBlankOptions: [],
       id: String(step.id),
       kind: step.kind,
+      matchColumnsRightItems: [],
       position: step.position,
       sentence: step.sentence ? serializeSentence(step.sentence) : null,
+      sortOrderItems: [],
       visualContent: visual?.content ?? null,
       visualKind: visual?.kind ?? null,
       vocabularyOptions: [],
@@ -242,6 +275,9 @@ export function prepareActivityData(
     .filter((step): step is SerializedStep => step !== null)
     .map((step) => ({
       ...step,
+      fillBlankOptions: buildFillBlankOptions(step),
+      matchColumnsRightItems: buildMatchColumnsRightItems(step),
+      sortOrderItems: buildSortOrderItems(step),
       vocabularyOptions: buildVocabularyOptions(step, serializedLessonWords),
       wordBankOptions: buildWordBankOptions(step, serializedLessonWords),
     }));

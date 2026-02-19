@@ -3,7 +3,6 @@
 import { type SerializedStep } from "@/data/activities/prepare-activity-data";
 import { parseStepContent } from "@zoonk/core/steps/content-contract";
 import { cn } from "@zoonk/ui/lib/utils";
-import { shuffle } from "@zoonk/utils/shuffle";
 import { useExtracted } from "next-intl";
 import { useCallback, useMemo, useState } from "react";
 import { InlineFeedback } from "./inline-feedback";
@@ -136,8 +135,6 @@ export function SortOrderStep({
   const content = useMemo(() => parseStepContent("sortOrder", step.content), [step.content]);
   const replaceName = useReplaceName();
 
-  const shuffledItems = useMemo(() => shuffle(content.items), [content.items]);
-
   const [selections, setSelections] = useState<string[]>(() => {
     if (result?.answer?.kind === "sortOrder") {
       return result.answer.userOrder;
@@ -181,7 +178,7 @@ export function SortOrderStep({
 
       <SortItemList
         correctItems={hasResult ? content.items : undefined}
-        items={shuffledItems}
+        items={step.sortOrderItems}
         onToggle={handleToggle}
         selections={selections}
       />

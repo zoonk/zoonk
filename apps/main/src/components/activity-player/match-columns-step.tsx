@@ -4,7 +4,6 @@ import { type SerializedStep } from "@/data/activities/prepare-activity-data";
 import { checkSingleMatchPair } from "@zoonk/core/player/check-answer";
 import { parseStepContent } from "@zoonk/core/steps/content-contract";
 import { cn } from "@zoonk/ui/lib/utils";
-import { shuffle } from "@zoonk/utils/shuffle";
 import { CircleCheck } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { Fragment, useCallback, useMemo, useRef, useState } from "react";
@@ -158,11 +157,6 @@ export function MatchColumnsStep({
   const replaceName = useReplaceName();
   const t = useExtracted();
 
-  const shuffledRight = useMemo(
-    () => shuffle(content.pairs.map((pair) => pair.right)),
-    [content.pairs],
-  );
-
   const leftItems = useMemo(() => content.pairs.map((pair) => pair.left), [content.pairs]);
 
   const [selectedLeft, setSelectedLeft] = useState<string | null>(null);
@@ -245,7 +239,7 @@ export function MatchColumnsStep({
         leftItems={leftItems}
         onTapLeft={handleTapLeft}
         onTapRight={handleTapRight}
-        rightItems={shuffledRight}
+        rightItems={step.matchColumnsRightItems}
         selectedLeft={selectedLeft}
       />
 

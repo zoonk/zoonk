@@ -13,10 +13,6 @@ vi.mock("./user-name-context", () => ({
   useReplaceName: () => (value: string) => value,
 }));
 
-vi.mock("@zoonk/utils/shuffle", () => ({
-  shuffle: <T,>(array: readonly T[]): T[] => [...array],
-}));
-
 function buildFillBlankStep(overrides: Record<string, unknown> = {}) {
   return {
     content: {
@@ -25,10 +21,13 @@ function buildFillBlankStep(overrides: Record<string, unknown> = {}) {
       feedback: "Good",
       template: "Say [BLANK] then [BLANK]",
     },
+    fillBlankOptions: ["alpha", "beta", "gamma"],
     id: "step-fb",
     kind: "fillBlank" as const,
+    matchColumnsRightItems: [],
     position: 0,
     sentence: null,
+    sortOrderItems: [],
     visualContent: null,
     visualKind: null,
     vocabularyOptions: [],
