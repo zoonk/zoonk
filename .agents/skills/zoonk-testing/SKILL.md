@@ -482,3 +482,7 @@ pnpm test -- --run src/data/posts/create-post.test.ts  # Run specific file
 pnpm --filter {app} build:e2e  # Always run before e2e tests
 pnpm --filter {app} e2e        # Run all e2e tests
 ```
+
+## Best Practices
+
+- Read [Playwright best practices before writing e2e tests](https://playwright.dev/docs/best-practices)
