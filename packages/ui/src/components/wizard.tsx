@@ -4,7 +4,8 @@ import { Radio as RadioPrimitive } from "@base-ui/react/radio";
 import { RadioGroup as RadioGroupPrimitive } from "@base-ui/react/radio-group";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CheckIcon } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
+import { useKeyboardCallback } from "../hooks/use-keyboard";
 
 export function Wizard({ className, ...props }: React.ComponentProps<"main">) {
   return (
@@ -231,59 +232,43 @@ export function useWizardKeyboard({
   onNext: () => void;
   onSubmit: () => void;
 }) {
-  useEffect(() => {
-    function hasModifier(event: KeyboardEvent) {
-      return event.metaKey || event.ctrlKey || event.shiftKey || event.altKey;
-    }
+  useKeyboardCallback("Escape", (event) => {
+    event.preventDefault();
+    onClose();
+  });
 
-    function handleEscape(event: KeyboardEvent) {
-      if (event.key === "Escape") {
-        event.preventDefault();
-        onClose();
-      }
-    }
-
-    function handleArrowNavigation(event: KeyboardEvent) {
-      // Skip if any modifier is pressed to avoid conflicts with browser/text shortcuts
-      if (hasModifier(event)) {
-        return;
-      }
-
-      if (event.key === "ArrowLeft" && !isFirstStep) {
+  useKeyboardCallback(
+    "ArrowLeft",
+    (event) => {
+      if (!isFirstStep) {
         event.preventDefault();
         onBack();
       }
+    },
+    { mode: "none" },
+  );
 
-      if (event.key === "ArrowRight" && canProceed && !isLastStep) {
+  useKeyboardCallback(
+    "ArrowRight",
+    (event) => {
+      if (canProceed && !isLastStep) {
         event.preventDefault();
         onNext();
       }
-    }
+    },
+    { mode: "none" },
+  );
 
-    function handleEnter(event: KeyboardEvent) {
-      // Skip if any modifier is pressed to avoid conflicts with other shortcuts
-      if (hasModifier(event)) {
-        return;
+  useKeyboardCallback(
+    "Enter",
+    (event) => {
+      event.preventDefault();
+      if (isLastStep) {
+        onSubmit();
+      } else {
+        onNext();
       }
-
-      if (event.key === "Enter") {
-        event.preventDefault();
-
-        if (isLastStep) {
-          onSubmit();
-        } else {
-          onNext();
-        }
-      }
-    }
-
-    function handleKeyDown(event: KeyboardEvent) {
-      handleEscape(event);
-      handleArrowNavigation(event);
-      handleEnter(event);
-    }
-
-    globalThis.addEventListener("keydown", handleKeyDown);
-    return () => globalThis.removeEventListener("keydown", handleKeyDown);
-  }, [canProceed, isFirstStep, isLastStep, onBack, onClose, onNext, onSubmit]);
+    },
+    { mode: "none" },
+  );
 }

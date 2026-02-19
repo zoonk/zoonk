@@ -18,8 +18,7 @@ import { InputGroup, InputGroupAddon, InputGroupInput } from "@zoonk/ui/componen
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import { useRouter } from "next/navigation";
-import { useActionState, useEffect } from "react";
+import { useActionState } from "react";
 import { setupProfileAction } from "./actions";
 
 function UsernameDescription({ status, username }: { status: UsernameStatus; username: string }) {
@@ -63,19 +62,13 @@ export function SetupProfileForm({
   defaultName: string;
   redirectTo: string;
 }) {
-  const router = useRouter();
   const t = useExtracted();
   const { setUsername, status, username } = useUsernameAvailability();
 
-  const [state, formAction] = useActionState(setupProfileAction, {
+  const boundAction = setupProfileAction.bind(null, redirectTo);
+  const [state, formAction] = useActionState(boundAction, {
     status: "idle" as const,
   });
-
-  useEffect(() => {
-    if (state.status === "success") {
-      router.push(`/auth/callback?redirectTo=${encodeURIComponent(redirectTo)}`);
-    }
-  }, [state.status, router, redirectTo]);
 
   const hasError = state.status === "error";
   const isSubmitDisabled = status !== "idle" && status !== "available";

@@ -4,10 +4,12 @@ import { auth } from "@zoonk/core/auth";
 import { safeAsync } from "@zoonk/utils/error";
 import { parseFormField } from "@zoonk/utils/form";
 import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 
-type SetupState = { status: "idle" | "error" | "success" };
+type SetupState = { status: "idle" | "error" };
 
 export async function setupProfileAction(
+  redirectTo: string,
   _prevState: SetupState,
   formData: FormData,
 ): Promise<SetupState> {
@@ -30,5 +32,5 @@ export async function setupProfileAction(
     return { status: "error" };
   }
 
-  return { status: "success" };
+  redirect(`/auth/callback?redirectTo=${encodeURIComponent(redirectTo)}`);
 }

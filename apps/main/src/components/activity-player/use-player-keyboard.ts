@@ -63,8 +63,8 @@ export function usePlayerKeyboard({
 }: PlayerKeyboardParams) {
   useKeyboardCallback(
     "Enter",
-    () => {
-      getEnterAction({
+    (event) => {
+      const action = getEnterAction({
         hasAnswer,
         onCheck,
         onContinue,
@@ -72,15 +72,21 @@ export function usePlayerKeyboard({
         onNext,
         onStartChallenge,
         phase,
-      })?.();
+      });
+
+      if (action) {
+        event.preventDefault();
+        action();
+      }
     },
     { mode: "none" },
   );
 
   useKeyboardCallback(
     "r",
-    () => {
+    (event) => {
       if (phase === "completed") {
+        event.preventDefault();
         onRestart();
       }
     },
@@ -89,8 +95,9 @@ export function usePlayerKeyboard({
 
   useKeyboardCallback(
     "ArrowRight",
-    () => {
+    (event) => {
       if (phase === "playing" && isStaticStep) {
+        event.preventDefault();
         onNavigateNext();
       }
     },
@@ -99,13 +106,14 @@ export function usePlayerKeyboard({
 
   useKeyboardCallback(
     "ArrowLeft",
-    () => {
+    (event) => {
       if (phase === "playing" && isStaticStep) {
+        event.preventDefault();
         onNavigatePrev();
       }
     },
     { mode: "none" },
   );
 
-  useKeyboardCallback("Escape", onEscape, { mode: "none" });
+  useKeyboardCallback("Escape", () => onEscape(), { mode: "none" });
 }
