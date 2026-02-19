@@ -10,10 +10,13 @@ import { usePlayerState } from "./use-player-state";
 function buildStep(overrides: Partial<SerializedStep> = {}): SerializedStep {
   return {
     content: { text: "Hello", title: "Intro", variant: "text" as const },
+    fillBlankOptions: [],
     id: "step-1",
     kind: "static",
+    matchColumnsRightItems: [],
     position: 0,
     sentence: null,
+    sortOrderItems: [],
     visualContent: null,
     visualKind: null,
     vocabularyOptions: [],

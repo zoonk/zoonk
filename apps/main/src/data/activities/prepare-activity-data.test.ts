@@ -820,6 +820,151 @@ describe(prepareActivityData, () => {
     expect(result.steps[0]?.wordBankOptions).toEqual([]);
   });
 
+  test("sortOrder step populates sortOrderItems with all items", () => {
+    const activity = {
+      description: null,
+      generationRunId: null,
+      generationStatus: "completed",
+      id: BigInt(50),
+      kind: "background",
+      language: "en",
+      organizationId: 1,
+      position: 0,
+      steps: [
+        {
+          content: {
+            feedback: "Good",
+            items: ["First", "Second", "Third"],
+            question: "Order these",
+          },
+          id: BigInt(51),
+          kind: "sortOrder",
+          position: 0,
+          sentence: null,
+          visualContent: null,
+          visualKind: null,
+          word: null,
+        },
+      ],
+      title: "Sort Order",
+    } satisfies ActivityWithSteps;
+
+    const result = prepareActivityData(activity, [], []);
+    const step = result.steps[0];
+
+    expect(step?.sortOrderItems).toHaveLength(3);
+    expect(step?.sortOrderItems.toSorted()).toEqual(["First", "Second", "Third"]);
+  });
+
+  test("fillBlank step populates fillBlankOptions with answers and distractors", () => {
+    const activity = {
+      description: null,
+      generationRunId: null,
+      generationStatus: "completed",
+      id: BigInt(52),
+      kind: "background",
+      language: "en",
+      organizationId: 1,
+      position: 0,
+      steps: [
+        {
+          content: {
+            answers: ["alpha", "beta"],
+            distractors: ["gamma", "delta"],
+            feedback: "Nice",
+            template: "Say [BLANK] then [BLANK]",
+          },
+          id: BigInt(53),
+          kind: "fillBlank",
+          position: 0,
+          sentence: null,
+          visualContent: null,
+          visualKind: null,
+          word: null,
+        },
+      ],
+      title: "Fill Blank",
+    } satisfies ActivityWithSteps;
+
+    const result = prepareActivityData(activity, [], []);
+    const step = result.steps[0];
+
+    expect(step?.fillBlankOptions).toHaveLength(4);
+    expect(step?.fillBlankOptions.toSorted()).toEqual(["alpha", "beta", "delta", "gamma"]);
+  });
+
+  test("matchColumns step populates matchColumnsRightItems with right-column values", () => {
+    const activity = {
+      description: null,
+      generationRunId: null,
+      generationStatus: "completed",
+      id: BigInt(54),
+      kind: "background",
+      language: "en",
+      organizationId: 1,
+      position: 0,
+      steps: [
+        {
+          content: {
+            pairs: [
+              { left: "A", right: "1" },
+              { left: "B", right: "2" },
+              { left: "C", right: "3" },
+            ],
+            question: "Match these",
+          },
+          id: BigInt(55),
+          kind: "matchColumns",
+          position: 0,
+          sentence: null,
+          visualContent: null,
+          visualKind: null,
+          word: null,
+        },
+      ],
+      title: "Match Columns",
+    } satisfies ActivityWithSteps;
+
+    const result = prepareActivityData(activity, [], []);
+    const step = result.steps[0];
+
+    expect(step?.matchColumnsRightItems).toHaveLength(3);
+    expect(step?.matchColumnsRightItems.toSorted()).toEqual(["1", "2", "3"]);
+  });
+
+  test("non-matching step kinds return empty arrays for sortOrderItems, fillBlankOptions, matchColumnsRightItems", () => {
+    const activity = {
+      description: null,
+      generationRunId: null,
+      generationStatus: "completed",
+      id: BigInt(56),
+      kind: "background",
+      language: "en",
+      organizationId: 1,
+      position: 0,
+      steps: [
+        {
+          content: { text: "test", title: "Test", variant: "text" },
+          id: BigInt(57),
+          kind: "static",
+          position: 0,
+          sentence: null,
+          visualContent: null,
+          visualKind: null,
+          word: null,
+        },
+      ],
+      title: "Static",
+    } satisfies ActivityWithSteps;
+
+    const result = prepareActivityData(activity, [], []);
+    const step = result.steps[0];
+
+    expect(step?.sortOrderItems).toEqual([]);
+    expect(step?.fillBlankOptions).toEqual([]);
+    expect(step?.matchColumnsRightItems).toEqual([]);
+  });
+
   test("includes language and organizationId", async () => {
     const activity = await activityFixture({
       generationStatus: "completed",
