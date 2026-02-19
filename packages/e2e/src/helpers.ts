@@ -15,6 +15,12 @@ import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 
 const UUID_SHORT_LENGTH = 8;
 
+/**
+ * Shared secret used by the e2e web server and test code
+ * to revalidate cached pages via the /api/revalidate endpoint.
+ */
+export const E2E_REVALIDATE_SECRET = "e2e-revalidate-secret";
+
 export function getBaseURL(): string {
   const url = process.env.E2E_BASE_URL;
 
@@ -137,6 +143,36 @@ export async function openDialog(trigger: Locator, dialog: Locator) {
     }
     await expect(dialog).toBeVisible({ timeout: 1000 });
   }).toPass();
+}
+
+/**
+ * Revalidate cache tags in the running e2e web server.
+ * Use this after creating fixture data that should appear on cached pages.
+ *
+ * Pass `primePaths` to warm the cache after invalidation — `revalidateTag`
+ * uses background revalidation so the first request still serves stale content.
+ * The prime request triggers regeneration; subsequent navigations get fresh data.
+ */
+export async function revalidateCacheTags(tags: string[], primePaths?: string[]): Promise<void> {
+  const baseURL = getBaseURL();
+
+  const response = await fetch(`${baseURL}/api/revalidate`, {
+    body: JSON.stringify({ tags }),
+    headers: {
+      "Content-Type": "application/json",
+      "x-revalidate-secret": E2E_REVALIDATE_SECRET,
+    },
+    method: "POST",
+  });
+
+  if (!response.ok) {
+    const body = await response.text();
+    throw new Error(`Cache revalidation failed: ${response.status} - ${body}`);
+  }
+
+  if (primePaths) {
+    await Promise.all(primePaths.map((path) => fetch(`${baseURL}${path}`)));
+  }
 }
 
 // Daily progress test fixture constants

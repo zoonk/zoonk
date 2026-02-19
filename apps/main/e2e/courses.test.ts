@@ -1,61 +1,59 @@
 import { randomUUID } from "node:crypto";
-import { getAiOrganization } from "@zoonk/e2e/helpers";
+import { getAiOrganization, revalidateCacheTags } from "@zoonk/e2e/helpers";
+import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
+import { cacheTagCoursesList } from "@zoonk/utils/cache";
+import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import { normalizeString } from "@zoonk/utils/string";
 import { expect, test } from "./fixtures";
 
-async function createUnpublishedCourse() {
+const UUID_SHORT_LENGTH = 8;
+
+async function createPublishedCourse(language: string) {
   const org = await getAiOrganization();
+  const uniqueId = randomUUID().slice(0, UUID_SHORT_LENGTH);
+  const title = `E2E Course ${uniqueId}`;
 
-  const uniqueId = randomUUID().slice(0, 8);
-  const title = `E2E Curso Não Publicado ${uniqueId}`;
-
-  return courseFixture({
-    isPublished: false,
-    language: "pt",
+  const course = await courseFixture({
+    isPublished: true,
+    language,
     normalizedTitle: normalizeString(title),
     organizationId: org.id,
-    slug: `e2e-unpublished-${uniqueId}`,
+    slug: `e2e-courses-${uniqueId}`,
     title,
   });
-}
 
-test.beforeAll(async () => {
-  const org = await getAiOrganization();
-  const uniqueId = randomUUID().slice(0, 8);
-
-  await courseFixture({
+  // Course needs a chapter so the detail page renders instead of redirecting
+  await chapterFixture({
+    courseId: course.id,
     isPublished: true,
-    language: "en",
-    normalizedTitle: normalizeString(`E2E Courses Page ${uniqueId}`),
     organizationId: org.id,
-    slug: `e2e-courses-page-${uniqueId}`,
-    title: `E2E Courses Page ${uniqueId}`,
+    position: 0,
   });
-});
+
+  await revalidateCacheTags(
+    [cacheTagCoursesList({ language })],
+    [`/${language === "en" ? "" : `${language}/`}courses`],
+  );
+
+  return course;
+}
 
 test.describe("Courses Page - Basic", () => {
   test("clicking course card navigates to course detail", async ({ page }) => {
+    const course = await createPublishedCourse("en");
+
     await page.goto("/courses");
 
     await expect(page.getByRole("heading", { name: /explore courses/i })).toBeVisible();
 
-    // Get the first course link (order is non-deterministic, so we don't target a specific course)
-    const courseLink = page.getByRole("list").getByRole("link").first();
-    await expect(courseLink).toBeVisible({ timeout: 10_000 });
-
-    // Get the href to extract the course slug for verification
-    const href = await courseLink.getAttribute("href");
-    const courseSlugMatch = href?.match(/\/c\/([\w-]+)/);
-    const courseSlug = courseSlugMatch?.[1] ?? "";
+    const courseLink = page.getByRole("link", { name: new RegExp(course.title, "i") });
+    await expect(courseLink).toBeVisible();
 
     await courseLink.click();
 
-    // Verify we navigated to the course detail page
-    await expect(page).toHaveURL(new RegExp(`/c/${courseSlug}$`));
-
-    // Verify the page rendered successfully with a course heading
-    await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+    await expect(page).toHaveURL(new RegExp(`/b/${AI_ORG_SLUG}/c/${course.slug}$`));
+    await expect(page.getByRole("heading", { level: 1, name: course.title })).toBeVisible();
   });
 });
 
@@ -67,7 +65,19 @@ test.describe("Courses Page - Locale", () => {
   });
 
   test("unpublished courses are hidden", async ({ page }) => {
-    const unpublishedCourse = await createUnpublishedCourse();
+    const org = await getAiOrganization();
+    const uniqueId = randomUUID().slice(0, UUID_SHORT_LENGTH);
+    const title = `E2E Curso Não Publicado ${uniqueId}`;
+
+    const unpublishedCourse = await courseFixture({
+      isPublished: false,
+      language: "pt",
+      normalizedTitle: normalizeString(title),
+      organizationId: org.id,
+      slug: `e2e-unpublished-${uniqueId}`,
+      title,
+    });
+
     await page.goto("/pt/courses");
 
     await expect(page.getByText(unpublishedCourse.title)).not.toBeVisible();
