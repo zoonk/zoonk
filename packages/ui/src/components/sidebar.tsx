@@ -93,14 +93,10 @@ function SidebarProvider({
   );
 
   // Adds a keyboard shortcut to toggle the sidebar.
-  useKeyboardCallback(
-    SIDEBAR_KEYBOARD_SHORTCUT,
-    (event) => {
-      event.preventDefault();
-      toggleSidebar();
-    },
-    { mode: "any", modifiers: { ctrlKey: true, metaKey: true } },
-  );
+  useKeyboardCallback(SIDEBAR_KEYBOARD_SHORTCUT, () => toggleSidebar(), {
+    mode: "any",
+    modifiers: { ctrlKey: true, metaKey: true },
+  });
 
   // We add a state so that we can do data-state="expanded" or "collapsed".
   // This makes it easier to style the sidebar with Tailwind classes.
