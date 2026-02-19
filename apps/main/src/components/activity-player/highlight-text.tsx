@@ -1,4 +1,4 @@
-export function splitHighlight(
+function splitHighlight(
   text: string,
   highlight: string,
 ): { before: string; match: string | null; after: string } {

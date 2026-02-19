@@ -112,6 +112,7 @@ test.describe("Activity Completion", () => {
     await page.getByRole("button", { name: /check/i }).click();
     await page.getByRole("button", { name: /continue/i }).click();
 
+    await expect(page.getByText("1/1")).toBeVisible();
     await expect(page.getByText("+10 BP")).toBeVisible();
     await expect(page.getByText(/BP to next level/i)).toBeVisible();
 
@@ -151,6 +152,7 @@ test.describe("Activity Completion", () => {
     await page.getByRole("button", { name: /check/i }).click();
     await page.getByRole("button", { name: /continue/i }).click();
 
+    await expect(page.getByText("1/1")).toBeVisible();
     await expect(page.getByText(/sign up to track your progress/i)).toBeVisible();
     await expect(page.getByText(/BP to next level/i)).not.toBeVisible();
   });

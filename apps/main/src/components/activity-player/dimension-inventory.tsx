@@ -10,19 +10,11 @@ type DimensionEntry = {
   total: number;
 };
 
-export function formatDelta(delta: number): string {
+function formatDelta(delta: number): string {
   return delta >= 0 ? `+${delta}` : `${delta}`;
 }
 
-export function getDeltaColor(delta: number): string {
-  if (delta < 0) {
-    return "text-destructive";
-  }
-
-  return "text-success";
-}
-
-export function getStatusTotalColor(total: number): string {
+function getStatusTotalColor(total: number): string {
   if (total < 0) {
     return "text-destructive";
   }
