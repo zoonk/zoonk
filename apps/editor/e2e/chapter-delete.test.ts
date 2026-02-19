@@ -3,6 +3,7 @@ import { prisma } from "@zoonk/db";
 import { getAiOrganization } from "@zoonk/e2e/helpers";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
+import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import { type Page, expect, test } from "./fixtures";
 
 async function createTestChapter(isPublished: boolean) {
@@ -26,7 +27,7 @@ async function createTestChapter(isPublished: boolean) {
 }
 
 async function navigateToChapterPage(page: Page, courseSlug: string, chapterSlug: string) {
-  await page.goto(`/ai/c/en/${courseSlug}/ch/${chapterSlug}`);
+  await page.goto(`/${AI_ORG_SLUG}/c/en/${courseSlug}/ch/${chapterSlug}`);
 
   await expect(page.getByRole("textbox", { name: /edit chapter title/i })).toBeVisible();
 }
@@ -76,7 +77,7 @@ test.describe("Chapter Delete", () => {
       await openDeleteDialog(authenticatedPage);
       await confirmDelete(authenticatedPage);
 
-      await expect(authenticatedPage).toHaveURL(new RegExp(`/ai/c/en/${course.slug}$`));
+      await expect(authenticatedPage).toHaveURL(new RegExp(`/${AI_ORG_SLUG}/c/en/${course.slug}$`));
       await verifyChapterDeleted(chapter.id);
     });
 
@@ -87,7 +88,7 @@ test.describe("Chapter Delete", () => {
       await openDeleteDialog(ownerPage);
       await confirmDelete(ownerPage);
 
-      await expect(ownerPage).toHaveURL(new RegExp(`/ai/c/en/${course.slug}$`));
+      await expect(ownerPage).toHaveURL(new RegExp(`/${AI_ORG_SLUG}/c/en/${course.slug}$`));
       await verifyChapterDeleted(chapter.id);
     });
 
@@ -98,7 +99,7 @@ test.describe("Chapter Delete", () => {
       await openDeleteDialog(ownerPage);
       await confirmDelete(ownerPage);
 
-      await expect(ownerPage).toHaveURL(new RegExp(`/ai/c/en/${course.slug}$`));
+      await expect(ownerPage).toHaveURL(new RegExp(`/${AI_ORG_SLUG}/c/en/${course.slug}$`));
       await verifyChapterDeleted(chapter.id);
     });
   });

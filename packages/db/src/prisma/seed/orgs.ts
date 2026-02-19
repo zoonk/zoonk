@@ -1,3 +1,4 @@
+import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import { type Organization, type PrismaClient } from "../../generated/prisma/client";
 import { type SeedUsers } from "./users";
 
@@ -22,10 +23,10 @@ export async function seedOrganizations(
           ],
         },
         name: "Zoonk AI",
-        slug: "ai",
+        slug: AI_ORG_SLUG,
       },
       update: {},
-      where: { slug: "ai" },
+      where: { slug: AI_ORG_SLUG },
     }),
     prisma.organization.upsert({
       create: {

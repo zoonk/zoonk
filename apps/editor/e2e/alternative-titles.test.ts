@@ -3,6 +3,7 @@ import * as fs from "node:fs";
 import { prisma } from "@zoonk/db";
 import { getAiOrganization } from "@zoonk/e2e/helpers";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
+import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import tmp from "tmp";
 import { type Page, expect, test } from "./fixtures";
 import { importFlow } from "./helpers/import-dialog";
@@ -24,7 +25,7 @@ async function createTestCourse() {
 }
 
 async function navigateToCoursePage(page: Page, slug: string) {
-  await page.goto(`/ai/c/en/${slug}`);
+  await page.goto(`/${AI_ORG_SLUG}/c/en/${slug}`);
 
   await expect(page.getByRole("textbox", { name: /edit course title/i })).toBeVisible();
 }

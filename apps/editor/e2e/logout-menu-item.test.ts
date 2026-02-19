@@ -1,3 +1,4 @@
+import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import { type Page, expect, test } from "./fixtures";
 
 async function openOrgDropdown(page: Page) {
@@ -6,7 +7,7 @@ async function openOrgDropdown(page: Page) {
 
 test.describe("Logout Menu Item", () => {
   test("logs out user and shows login button", async ({ authenticatedPage }) => {
-    await authenticatedPage.goto("/ai");
+    await authenticatedPage.goto(`/${AI_ORG_SLUG}`);
 
     await openOrgDropdown(authenticatedPage);
     await authenticatedPage.getByRole("menuitem", { name: /logout/i }).click();

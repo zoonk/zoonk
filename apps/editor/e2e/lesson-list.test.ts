@@ -4,6 +4,7 @@ import { getAiOrganization } from "@zoonk/e2e/helpers";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
+import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import tmp from "tmp";
 import { type Page, expect, test } from "./fixtures";
 import { getMoreOptionsButton, importFlow } from "./helpers/import-dialog";
@@ -51,7 +52,7 @@ async function createTestChapter(lessonCount = 0) {
 }
 
 async function navigateToChapterPage(page: Page, courseSlug: string, chapterSlug: string) {
-  await page.goto(`/ai/c/en/${courseSlug}/ch/${chapterSlug}`);
+  await page.goto(`/${AI_ORG_SLUG}/c/en/${courseSlug}/ch/${chapterSlug}`);
 
   await expect(page.getByRole("textbox", { name: /edit chapter title/i })).toBeVisible();
 }
@@ -161,7 +162,7 @@ test.describe("Lesson List", () => {
       ).toBeVisible();
 
       // Navigate back to chapter page to verify insertion
-      await authenticatedPage.goto(`/ai/c/en/${course.slug}/ch/${chapter.slug}`);
+      await authenticatedPage.goto(`/${AI_ORG_SLUG}/c/en/${course.slug}/ch/${chapter.slug}`);
 
       await expect(
         authenticatedPage.getByRole("textbox", { name: /edit chapter title/i }),

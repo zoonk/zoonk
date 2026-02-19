@@ -3,6 +3,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { getAiOrganization } from "@zoonk/e2e/helpers";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
+import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import { type Page, expect, test } from "./fixtures";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -26,7 +27,7 @@ async function createTestCourse(imageUrl: string | null = null) {
 }
 
 async function navigateToCoursePage(page: Page, slug: string) {
-  await page.goto(`/ai/c/en/${slug}`);
+  await page.goto(`/${AI_ORG_SLUG}/c/en/${slug}`);
 
   await expect(page.getByRole("textbox", { name: /edit course title/i })).toBeVisible();
 }

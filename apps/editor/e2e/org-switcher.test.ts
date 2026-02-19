@@ -1,8 +1,9 @@
+import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import { expect, test } from "./fixtures";
 
 test.describe("Org Switcher - Multi-org user", () => {
   test.beforeEach(async ({ multiOrgPage }) => {
-    await multiOrgPage.goto("/ai");
+    await multiOrgPage.goto(`/${AI_ORG_SLUG}`);
 
     await expect(multiOrgPage.getByRole("button", { name: /zoonk ai/i })).toBeVisible();
   });
@@ -22,7 +23,7 @@ test.describe("Org Switcher - Multi-org user", () => {
 test.describe("Org Switcher - Active org update", () => {
   test("navigating to home redirects to newly selected org", async ({ multiOrgPage }) => {
     // Start at the "ai" org
-    await multiOrgPage.goto("/ai");
+    await multiOrgPage.goto(`/${AI_ORG_SLUG}`);
 
     await expect(multiOrgPage.getByRole("button", { name: /zoonk ai/i })).toBeVisible();
 
@@ -50,7 +51,7 @@ test.describe("Org Switcher - Active org update", () => {
 
 test.describe("Org Switcher - Single org user", () => {
   test("shows 'No other organizations' message", async ({ ownerPage }) => {
-    await ownerPage.goto("/ai");
+    await ownerPage.goto(`/${AI_ORG_SLUG}`);
 
     await expect(ownerPage.getByRole("button", { name: /zoonk ai/i })).toBeVisible();
 
