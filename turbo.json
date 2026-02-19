@@ -63,7 +63,7 @@
       "outputs": [".next/**", "!.next/cache/**"]
     },
     "build:e2e": {
-      "dependsOn": ["^db:generate", "^db:setup:e2e", "^build:e2e"],
+      "dependsOn": ["^db:generate", "^build:e2e"],
       "outputs": [".next-e2e/**", "!.next-e2e/cache/**"]
     },
     "db:deploy": {
@@ -73,10 +73,6 @@
       "cache": false,
       "dependsOn": ["^db:deploy", "^db:generate"],
       "outputs": ["src/generated/**"]
-    },
-    "db:setup:e2e": {
-      "cache": false,
-      "dependsOn": ["^db:setup:e2e"]
     },
     "db:setup:test": {
       "cache": false,
