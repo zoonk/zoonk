@@ -49,6 +49,23 @@ async function createTestCourseWithActivity() {
   return { chapter, course, lesson };
 }
 
+/**
+ * Open the "more options" dropdown, retrying the click if the page
+ * hasn't hydrated yet (SSR'd button visible but no event handler).
+ */
+async function openMoreOptions(page: Page) {
+  const trigger = page.getByRole("button", { name: /more options/i });
+  const menuItem = page.getByRole("button", { name: /send feedback/i });
+
+  await expect(async () => {
+    if (!(await menuItem.isVisible())) {
+      await trigger.click();
+    }
+
+    await expect(menuItem).toBeVisible({ timeout: 1000 });
+  }).toPass();
+}
+
 function mockNextActivityAPI(
   page: Page,
   response: {
@@ -104,7 +121,7 @@ test.describe("Catalog Actions", () => {
 
     await page.goto(`/b/ai/c/${course.slug}`);
 
-    await page.getByRole("button", { name: /more options/i }).click();
+    await openMoreOptions(page);
     await expect(page.getByRole("button", { name: /send feedback/i })).toBeVisible();
   });
 
@@ -123,7 +140,7 @@ test.describe("Catalog Actions", () => {
 
     await page.goto(`/b/ai/c/${course.slug}`);
 
-    await page.getByRole("button", { name: /more options/i }).click();
+    await openMoreOptions(page);
     await page.getByRole("button", { name: /send feedback/i }).click();
 
     await expect(page.getByRole("heading", { name: /feedback/i })).toBeVisible();
@@ -182,7 +199,7 @@ test.describe("Catalog Actions", () => {
 
     await page.goto(`/b/ai/c/${course.slug}`);
 
-    await page.getByRole("button", { name: /more options/i }).click();
+    await openMoreOptions(page);
     await expect(page.getByRole("menuitemradio", { name: /^helpful$/i })).toBeVisible();
     await expect(page.getByRole("menuitemradio", { name: /not helpful/i })).toBeVisible();
   });
@@ -202,7 +219,7 @@ test.describe("Catalog Actions", () => {
 
     await page.goto(`/b/ai/c/${course.slug}`);
 
-    await page.getByRole("button", { name: /more options/i }).click();
+    await openMoreOptions(page);
     await page.getByRole("menuitemradio", { name: /^helpful$/i }).click();
 
     await expect(page.getByText(/thanks for your feedback/i)).toBeVisible();
@@ -223,7 +240,7 @@ test.describe("Catalog Actions", () => {
 
     await page.goto(`/b/ai/c/${course.slug}`);
 
-    await page.getByRole("button", { name: /more options/i }).click();
+    await openMoreOptions(page);
     await page.getByRole("menuitemradio", { name: /^helpful$/i }).click();
 
     await expect(page.getByRole("menuitemradio", { name: /^helpful$/i })).toHaveAttribute(
@@ -247,7 +264,7 @@ test.describe("Catalog Actions", () => {
 
     await page.goto(`/b/ai/c/${course.slug}`);
 
-    await page.getByRole("button", { name: /more options/i }).click();
+    await openMoreOptions(page);
     await page.getByRole("menuitemradio", { name: /^helpful$/i }).click();
     await page.getByRole("menuitemradio", { name: /not helpful/i }).click();
 
@@ -276,7 +293,7 @@ test.describe("Catalog Actions", () => {
 
     await page.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}`);
 
-    await page.getByRole("button", { name: /more options/i }).click();
+    await openMoreOptions(page);
     await expect(page.getByRole("menuitemradio", { name: /^helpful$/i })).toBeVisible();
     await expect(page.getByRole("menuitemradio", { name: /not helpful/i })).toBeVisible();
   });
@@ -296,7 +313,7 @@ test.describe("Catalog Actions", () => {
 
     await page.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
 
-    await page.getByRole("button", { name: /more options/i }).click();
+    await openMoreOptions(page);
     await expect(page.getByRole("menuitemradio", { name: /^helpful$/i })).toBeVisible();
     await expect(page.getByRole("menuitemradio", { name: /not helpful/i })).toBeVisible();
   });
@@ -316,7 +333,7 @@ test.describe("Catalog Actions", () => {
 
     await page.goto(`/b/ai/c/${course.slug}`);
 
-    await page.getByRole("button", { name: /more options/i }).click();
+    await openMoreOptions(page);
     await page.getByRole("menuitemradio", { name: /^helpful$/i }).click();
     await page.getByRole("button", { name: /send feedback/i }).click();
 
