@@ -201,39 +201,7 @@ test.describe("Activity List", () => {
         .getByRole("button", { exact: true, name: "Drag to reorder" })
         .nth(1);
 
-      type BoundingBox = Awaited<ReturnType<typeof firstHandle.boundingBox>>;
-      const boxes: { first: BoundingBox; second: BoundingBox } = {
-        first: null,
-        second: null,
-      };
-
-      await expect(async () => {
-        boxes.first = await firstHandle.boundingBox();
-        boxes.second = await secondHandle.boundingBox();
-        expect(boxes.first).toBeTruthy();
-        expect(boxes.second).toBeTruthy();
-      }).toPass({ timeout: 10_000 });
-
-      if (!(boxes.first && boxes.second)) {
-        throw new Error("Drag handle bounding boxes should exist");
-      }
-
-      await firstHandle.hover();
-      await authenticatedPage.mouse.down();
-
-      const targetY = boxes.second.y + boxes.second.height / 2 + 5;
-
-      await authenticatedPage.mouse.move(
-        boxes.first.x + boxes.first.width / 2,
-        boxes.first.y + 20,
-        { steps: 5 },
-      );
-
-      await authenticatedPage.mouse.move(boxes.first.x + boxes.first.width / 2, targetY, {
-        steps: 10,
-      });
-
-      await authenticatedPage.mouse.up();
+      await firstHandle.dragTo(secondHandle, { steps: 10 });
 
       const reorderedActivities = [
         { position: 1, title: "Activity 2" },

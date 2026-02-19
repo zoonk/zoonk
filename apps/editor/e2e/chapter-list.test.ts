@@ -182,7 +182,6 @@ test.describe("Chapter List", () => {
         { position: 3, title: "Chapter 3" },
       ]);
 
-      // Get the drag handle buttons
       const firstHandle = authenticatedPage
         .getByRole("button", { exact: true, name: "Drag to reorder" })
         .first();
@@ -191,41 +190,7 @@ test.describe("Chapter List", () => {
         .getByRole("button", { exact: true, name: "Drag to reorder" })
         .nth(1);
 
-      // Wait for drag handles to have stable bounding boxes (handles hydration timing)
-      type BoundingBox = Awaited<ReturnType<typeof firstHandle.boundingBox>>;
-      const boxes: { first: BoundingBox; second: BoundingBox } = {
-        first: null,
-        second: null,
-      };
-
-      await expect(async () => {
-        boxes.first = await firstHandle.boundingBox();
-        boxes.second = await secondHandle.boundingBox();
-        expect(boxes.first).toBeTruthy();
-        expect(boxes.second).toBeTruthy();
-      }).toPass({ timeout: 10_000 });
-
-      if (!(boxes.first && boxes.second)) {
-        throw new Error("Drag handle bounding boxes should exist");
-      }
-
-      // Perform drag past 8px activation threshold (PointerSensor uses distance)
-      await firstHandle.hover();
-      await authenticatedPage.mouse.down();
-
-      const targetY = boxes.second.y + boxes.second.height / 2 + 5;
-
-      await authenticatedPage.mouse.move(
-        boxes.first.x + boxes.first.width / 2,
-        boxes.first.y + 20,
-        { steps: 5 },
-      );
-
-      await authenticatedPage.mouse.move(boxes.first.x + boxes.first.width / 2, targetY, {
-        steps: 10,
-      });
-
-      await authenticatedPage.mouse.up();
+      await firstHandle.dragTo(secondHandle, { steps: 10 });
 
       // After reorder: Chapter 1 moves from first to last position
       const reorderedChapters = [
