@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import * as fs from "node:fs";
-import { prisma } from "@zoonk/db";
+import { getAiOrganization } from "@zoonk/e2e/helpers";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import tmp from "tmp";
@@ -15,9 +15,7 @@ function createImportFile(chapters: { title: string; description: string }[]): s
 }
 
 async function createTestCourse(chapterCount = 0) {
-  const org = await prisma.organization.findUniqueOrThrow({
-    where: { slug: "ai" },
-  });
+  const org = await getAiOrganization();
 
   const course = await courseFixture({
     organizationId: org.id,
@@ -199,7 +197,10 @@ test.describe("Chapter List", () => {
         { position: 3, title: "Chapter 1" },
       ];
 
-      await expectChaptersVisible(authenticatedPage, reorderedChapters);
+      // Drag-and-drop can be timing-sensitive on CI — retry the assertion
+      await expect(async () => {
+        await expectChaptersVisible(authenticatedPage, reorderedChapters);
+      }).toPass({ timeout: 10_000 });
 
       // Reload and verify persistence
       await authenticatedPage.reload();

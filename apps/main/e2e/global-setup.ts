@@ -1,47 +1,7 @@
-import { mkdir } from "node:fs/promises";
-import { getBaseURL, request } from "@zoonk/e2e/fixtures";
-
-export const E2E_USERS = {
-  logout: {
-    email: "e2e-logout@zoonk.test",
-    password: "password123",
-  },
-  noProgress: {
-    email: "e2e-new@zoonk.test",
-    password: "password123",
-  },
-  withProgress: {
-    email: "e2e-progress@zoonk.test",
-    password: "password123",
-  },
-} as const;
-
-async function authenticateUser(
-  name: string,
-  user: { email: string; password: string },
-): Promise<void> {
-  const context = await request.newContext({ baseURL: getBaseURL() });
-
-  const response = await context.post("/api/auth/sign-in/email", {
-    data: {
-      email: user.email,
-      password: user.password,
-    },
-  });
-
-  if (!response.ok()) {
-    const body = await response.text();
-    throw new Error(
-      `Failed to authenticate ${name} (${user.email}): ${response.status()} - ${body}`,
-    );
-  }
-
-  await context.storageState({ path: `e2e/.auth/${name}.json` });
-  await context.dispose();
-}
+import { prisma } from "@zoonk/db";
+import { getAiOrganization } from "@zoonk/e2e/helpers";
 
 export default async function globalSetup(): Promise<void> {
-  await mkdir("e2e/.auth", { recursive: true });
-
-  await Promise.all(Object.entries(E2E_USERS).map(([name, user]) => authenticateUser(name, user)));
+  await getAiOrganization();
+  await prisma.$disconnect();
 }

@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { type Page, type Route } from "@zoonk/e2e/fixtures";
+import { getAiOrganization } from "@zoonk/e2e/helpers";
 import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
@@ -22,7 +23,6 @@ import { expect, test } from "./fixtures";
  */
 
 const TEST_RUN_ID = "test-run-id-lesson-12345";
-const TEST_USER_EMAIL = "e2e-new@zoonk.test";
 
 type MockApiOptions = {
   triggerResponse?: { runId?: string; error?: string; status?: number };
@@ -103,9 +103,7 @@ async function setupMockApis(page: Page, options: MockApiOptions = {}): Promise<
  * Creates a lesson with pending generation status for testing the generation workflow.
  */
 async function createPendingLesson() {
-  const org = await prisma.organization.findUniqueOrThrow({
-    where: { slug: "ai" },
-  });
+  const org = await getAiOrganization();
 
   const uniqueId = randomUUID().slice(0, 8);
   const courseTitle = `E2E Lesson Course ${uniqueId}`;
@@ -144,19 +142,15 @@ async function createPendingLesson() {
 }
 
 /**
- * Creates a test subscription for the test user.
+ * Creates a test subscription for the given user.
  */
-async function createTestSubscription() {
+async function createTestSubscription(userId: number) {
   const uniqueId = randomUUID();
-
-  const user = await prisma.user.findUniqueOrThrow({
-    where: { email: TEST_USER_EMAIL },
-  });
 
   const subscription = await prisma.subscription.create({
     data: {
       plan: "hobby",
-      referenceId: String(user.id),
+      referenceId: String(userId),
       status: "active",
       stripeCustomerId: `cus_test_e2e_lesson_${uniqueId}`,
       stripeSubscriptionId: `sub_test_e2e_lesson_${uniqueId}`,
@@ -193,8 +187,11 @@ test.describe("Generate Lesson Page - No Subscription", () => {
 });
 
 test.describe("Generate Lesson Page - With Subscription", () => {
-  test("shows generation UI and completes workflow", async ({ userWithoutProgress }) => {
-    await createTestSubscription();
+  test("shows generation UI and completes workflow", async ({
+    userWithoutProgress,
+    noProgressUser,
+  }) => {
+    await createTestSubscription(noProgressUser.id);
     const { lesson, organizationId } = await createPendingLesson();
 
     // Create an activity so the lesson page doesn't redirect back to /generate
@@ -244,8 +241,11 @@ test.describe("Generate Lesson Page - With Subscription", () => {
     await userWithoutProgress.waitForURL(/\/b\/ai\/c\//, { timeout: 10_000 });
   });
 
-  test("shows error when stream returns error status", async ({ userWithoutProgress }) => {
-    await createTestSubscription();
+  test("shows error when stream returns error status", async ({
+    userWithoutProgress,
+    noProgressUser,
+  }) => {
+    await createTestSubscription(noProgressUser.id);
     const { lesson } = await createPendingLesson();
 
     await setupMockApis(userWithoutProgress, {

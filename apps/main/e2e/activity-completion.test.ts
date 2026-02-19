@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { type Browser } from "@playwright/test";
-import { prisma } from "@zoonk/db";
 import { request } from "@zoonk/e2e/fixtures";
+import { getAiOrganization } from "@zoonk/e2e/helpers";
 import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
@@ -41,7 +41,7 @@ async function createAuthenticatedPage(browser: Browser, baseURL: string, email:
 }
 
 async function createTestHierarchy(prefix: string) {
-  const org = await prisma.organization.findUniqueOrThrow({ where: { slug: "ai" } });
+  const org = await getAiOrganization();
   const uniqueId = randomUUID().slice(0, 8);
 
   const course = await courseFixture({

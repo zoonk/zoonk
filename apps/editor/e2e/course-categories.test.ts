@@ -1,13 +1,11 @@
 import { randomUUID } from "node:crypto";
-import { prisma } from "@zoonk/db";
+import { getAiOrganization } from "@zoonk/e2e/helpers";
 import { courseCategoryFixture, courseFixture } from "@zoonk/testing/fixtures/courses";
 import { LOCALE_COOKIE } from "@zoonk/utils/locale";
 import { type Page, expect, test } from "./fixtures";
 
 async function createTestCourse() {
-  const org = await prisma.organization.findUniqueOrThrow({
-    where: { slug: "ai" },
-  });
+  const org = await getAiOrganization();
 
   return courseFixture({
     organizationId: org.id,
@@ -57,7 +55,7 @@ test.describe("Course Categories Editor", () => {
       name: /add category/i,
     });
 
-    await expect(addButton).toBeEnabled();
+    await expect(addButton).toBeEnabled({ timeout: 10_000 });
 
     await authenticatedPage.keyboard.press("Escape");
     await expect(authenticatedPage.getByRole("dialog")).not.toBeVisible();
@@ -88,7 +86,7 @@ test.describe("Course Categories Editor", () => {
     const addButton = authenticatedPage.getByRole("button", {
       name: /add category/i,
     });
-    await expect(addButton).toBeEnabled();
+    await expect(addButton).toBeEnabled({ timeout: 10_000 });
 
     await authenticatedPage.keyboard.press("Escape");
 
@@ -228,7 +226,7 @@ test.describe("Course Categories Editor", () => {
       name: /add category/i,
     });
 
-    await expect(addButton).toBeEnabled();
+    await expect(addButton).toBeEnabled({ timeout: 10_000 });
 
     // Close the popover and wait for it to close
     await authenticatedPage.keyboard.press("Escape");

@@ -92,11 +92,11 @@
       "persistent": true
     },
     "test": {
-      "dependsOn": ["^db:setup:test", "^test"]
+      "dependsOn": ["^db:generate", "^db:setup:test", "^test"]
     },
     "test:watch": {
       "cache": false,
-      "dependsOn": ["^db:setup:test"],
+      "dependsOn": ["^db:generate", "^db:setup:test"],
       "persistent": true
     },
     "typecheck": {

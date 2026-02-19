@@ -650,6 +650,13 @@ importers:
         version: 4.21.0
 
   packages/e2e:
+    dependencies:
+      '@zoonk/db':
+        specifier: workspace:*
+        version: link:../db
+      '@zoonk/utils':
+        specifier: workspace:*
+        version: link:../utils
     devDependencies:
       '@playwright/test':
         specifier: 1.58.2
@@ -660,6 +667,9 @@ importers:
       '@typescript/native-preview':
         specifier: 7.0.0-dev.20260214.1
         version: 7.0.0-dev.20260214.1
+      '@zoonk/testing':
+        specifier: workspace:*
+        version: link:../testing
       '@zoonk/tsconfig':
         specifier: workspace:*
         version: link:../tsconfig

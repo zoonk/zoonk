@@ -1,4 +1,7 @@
 import { randomUUID } from "node:crypto";
+import { getAiOrganization } from "@zoonk/e2e/helpers";
+import { courseFixture } from "@zoonk/testing/fixtures/courses";
+import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import { type Page, expect, test } from "./fixtures";
 
 function getModifierKey(): "Meta" | "Control" {
@@ -42,7 +45,7 @@ function getProgressBar(page: Page) {
 
 test.describe("Course Creation Wizard - Navigation & Entry Points", () => {
   test("navigates directly to wizard", async ({ authenticatedPage }) => {
-    await authenticatedPage.goto("/ai/new-course");
+    await authenticatedPage.goto(`/${AI_ORG_SLUG}/new-course`);
 
     await expect(authenticatedPage.getByText(/course title/i).first()).toBeVisible();
 
@@ -50,7 +53,7 @@ test.describe("Course Creation Wizard - Navigation & Entry Points", () => {
   });
 
   test("enters from org home header button", async ({ authenticatedPage }) => {
-    await authenticatedPage.goto("/ai");
+    await authenticatedPage.goto(`/${AI_ORG_SLUG}`);
     await authenticatedPage.getByRole("link", { name: /create course/i }).click();
 
     await expect(authenticatedPage).toHaveURL(/\/ai\/new-course/);
@@ -58,7 +61,7 @@ test.describe("Course Creation Wizard - Navigation & Entry Points", () => {
   });
 
   test("enters from command palette", async ({ authenticatedPage }) => {
-    await authenticatedPage.goto("/ai");
+    await authenticatedPage.goto(`/${AI_ORG_SLUG}`);
     await openCommandPalette(authenticatedPage);
 
     await authenticatedPage
@@ -73,7 +76,7 @@ test.describe("Course Creation Wizard - Navigation & Entry Points", () => {
 
 test.describe("Course Creation Wizard - Step Navigation", () => {
   test.beforeEach(async ({ authenticatedPage }) => {
-    await authenticatedPage.goto("/ai/new-course");
+    await authenticatedPage.goto(`/${AI_ORG_SLUG}/new-course`);
     await expect(authenticatedPage.getByText(/course title/i).first()).toBeVisible();
   });
 
@@ -141,7 +144,7 @@ test.describe("Course Creation Wizard - Step Navigation", () => {
 
 test.describe("Course Creation Wizard - Keyboard Shortcuts", () => {
   test.beforeEach(async ({ authenticatedPage }) => {
-    await authenticatedPage.goto("/ai/new-course");
+    await authenticatedPage.goto(`/${AI_ORG_SLUG}/new-course`);
 
     await expect(authenticatedPage.getByText(/course title/i).first()).toBeVisible();
   });
@@ -215,8 +218,22 @@ test.describe("Course Creation Wizard - Keyboard Shortcuts", () => {
 });
 
 test.describe("Course Creation Wizard - Form Validation", () => {
+  let existingCourseSlug: string;
+
+  test.beforeAll(async () => {
+    const org = await getAiOrganization();
+
+    const course = await courseFixture({
+      isPublished: true,
+      organizationId: org.id,
+      slug: `e2e-existing-${randomUUID().slice(0, 8)}`,
+    });
+
+    existingCourseSlug = course.slug;
+  });
+
   test.beforeEach(async ({ authenticatedPage }) => {
-    await authenticatedPage.goto("/ai/new-course");
+    await authenticatedPage.goto(`/${AI_ORG_SLUG}/new-course`);
   });
 
   test("title step requires non-empty title", async ({ authenticatedPage }) => {
@@ -286,7 +303,7 @@ test.describe("Course Creation Wizard - Form Validation", () => {
   test("slug step shows error for existing slug", async ({ authenticatedPage }) => {
     await fillCourseForm(authenticatedPage, {
       description: "Test description",
-      slug: "machine-learning",
+      slug: existingCourseSlug,
       title: "Test Course",
     });
 
@@ -335,7 +352,7 @@ test.describe("Course Creation Wizard - Successful Creation", () => {
     const courseTitle = "E2E Test Course";
     const courseDescription = "A course created during E2E testing";
 
-    await authenticatedPage.goto("/ai/new-course");
+    await authenticatedPage.goto(`/${AI_ORG_SLUG}/new-course`);
 
     await fillCourseForm(authenticatedPage, {
       description: courseDescription,
@@ -363,7 +380,7 @@ test.describe("Course Creation Wizard - Successful Creation", () => {
   });
 
   test("auto-fills slug from title", async ({ authenticatedPage }) => {
-    await authenticatedPage.goto("/ai/new-course");
+    await authenticatedPage.goto(`/${AI_ORG_SLUG}/new-course`);
 
     await authenticatedPage.getByPlaceholder(/course title/i).fill("My Amazing Course");
 
@@ -384,7 +401,7 @@ test.describe("Course Creation Wizard - Successful Creation", () => {
     const uniqueSlug = `e2e-home-${uniqueId}`;
     const courseTitle = `Revalidation Test ${uniqueId}`;
 
-    await authenticatedPage.goto("/ai/new-course");
+    await authenticatedPage.goto(`/${AI_ORG_SLUG}/new-course`);
 
     await fillCourseForm(authenticatedPage, {
       description: "Testing cache revalidation",
@@ -414,7 +431,7 @@ test.describe("Course Creation Wizard - Successful Creation", () => {
 
 test.describe("Course Creation Wizard - Close Button", () => {
   test("close button returns to org home", async ({ authenticatedPage }) => {
-    await authenticatedPage.goto("/ai/new-course");
+    await authenticatedPage.goto(`/${AI_ORG_SLUG}/new-course`);
 
     await authenticatedPage.getByRole("link", { name: /close/i }).click();
 
@@ -424,25 +441,25 @@ test.describe("Course Creation Wizard - Close Button", () => {
 
 test.describe("Course Creation Wizard - Permissions", () => {
   test("owner can access wizard", async ({ ownerPage }) => {
-    await ownerPage.goto("/ai/new-course");
+    await ownerPage.goto(`/${AI_ORG_SLUG}/new-course`);
 
     await expect(ownerPage.getByText(/course title/i).first()).toBeVisible();
   });
 
   test("member cannot access wizard", async ({ memberPage }) => {
-    await memberPage.goto("/ai/new-course");
+    await memberPage.goto(`/${AI_ORG_SLUG}/new-course`);
 
     await expect(memberPage.getByText(/unauthorized/i)).toBeVisible();
   });
 
   test("non-org member cannot access wizard", async ({ userWithoutOrg }) => {
-    await userWithoutOrg.goto("/ai/new-course");
+    await userWithoutOrg.goto(`/${AI_ORG_SLUG}/new-course`);
 
     await expect(userWithoutOrg.getByText(/unauthorized/i)).toBeVisible();
   });
 
   test("unauthenticated user cannot access wizard", async ({ page }) => {
-    await page.goto("/ai/new-course");
+    await page.goto(`/${AI_ORG_SLUG}/new-course`);
 
     await expect(page.getByText(/unauthorized/i)).toBeVisible();
   });
@@ -450,13 +467,13 @@ test.describe("Course Creation Wizard - Permissions", () => {
 
 test.describe("Course Creation Wizard - Input Auto-focus", () => {
   test("title input is auto-focused on load", async ({ authenticatedPage }) => {
-    await authenticatedPage.goto("/ai/new-course");
+    await authenticatedPage.goto(`/${AI_ORG_SLUG}/new-course`);
 
     await expect(authenticatedPage.getByPlaceholder(/course title/i)).toBeFocused();
   });
 
   test("description textarea is auto-focused on step", async ({ authenticatedPage }) => {
-    await authenticatedPage.goto("/ai/new-course");
+    await authenticatedPage.goto(`/${AI_ORG_SLUG}/new-course`);
 
     await authenticatedPage.getByPlaceholder(/course title/i).fill("Test Course");
     await authenticatedPage.keyboard.press("Enter");
@@ -466,7 +483,7 @@ test.describe("Course Creation Wizard - Input Auto-focus", () => {
   });
 
   test("slug input is auto-focused on step", async ({ authenticatedPage }) => {
-    await authenticatedPage.goto("/ai/new-course");
+    await authenticatedPage.goto(`/${AI_ORG_SLUG}/new-course`);
 
     await authenticatedPage.getByPlaceholder(/course title/i).fill("Test Course");
 

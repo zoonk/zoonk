@@ -1,12 +1,14 @@
 import { randomUUID } from "node:crypto";
-import { prisma } from "@zoonk/db";
+import { getAiOrganization } from "@zoonk/e2e/helpers";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
+import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import { type Page, expect, test } from "./fixtures";
 
+let slugCourseSlug: string;
+let duplicateTargetSlug: string;
+
 async function createTestCourse() {
-  const org = await prisma.organization.findUniqueOrThrow({
-    where: { slug: "ai" },
-  });
+  const org = await getAiOrganization();
 
   return courseFixture({
     isPublished: true,
@@ -16,10 +18,30 @@ async function createTestCourse() {
 }
 
 async function navigateToCoursePage(page: Page, slug: string) {
-  await page.goto(`/ai/c/en/${slug}`);
+  await page.goto(`/${AI_ORG_SLUG}/c/en/${slug}`);
 
   await expect(page.getByRole("textbox", { name: /edit course title/i })).toBeVisible();
 }
+
+test.beforeAll(async () => {
+  const org = await getAiOrganization();
+
+  const [slugCourse, duplicateTarget] = await Promise.all([
+    courseFixture({
+      isPublished: true,
+      organizationId: org.id,
+      slug: `e2e-slug-${randomUUID().slice(0, 8)}`,
+    }),
+    courseFixture({
+      isPublished: true,
+      organizationId: org.id,
+      slug: `e2e-dup-${randomUUID().slice(0, 8)}`,
+    }),
+  ]);
+
+  slugCourseSlug = slugCourse.slug;
+  duplicateTargetSlug = duplicateTarget.slug;
+});
 
 test.describe("Course Content Page", () => {
   test("auto-saves and persists title", async ({ authenticatedPage }) => {
@@ -71,10 +93,10 @@ test.describe("Course Content Page", () => {
   });
 
   test("shows validation error for duplicate slug", async ({ authenticatedPage }) => {
-    await navigateToCoursePage(authenticatedPage, "machine-learning");
+    await navigateToCoursePage(authenticatedPage, slugCourseSlug);
     const slugInput = authenticatedPage.getByRole("textbox", { name: /url address/i });
 
-    await slugInput.fill("spanish");
+    await slugInput.fill(duplicateTargetSlug);
 
     await expect(authenticatedPage.getByText(/this url is already in use/i)).toBeVisible();
     await expect(
@@ -85,7 +107,7 @@ test.describe("Course Content Page", () => {
   });
 
   test("disables save for empty slug", async ({ authenticatedPage }) => {
-    await navigateToCoursePage(authenticatedPage, "machine-learning");
+    await navigateToCoursePage(authenticatedPage, slugCourseSlug);
     const slugInput = authenticatedPage.getByRole("textbox", { name: /url address/i });
 
     await slugInput.fill("");
@@ -108,18 +130,18 @@ test.describe("Course Content Page", () => {
     await expect(saveButton).toBeEnabled();
     await saveButton.click();
 
-    await expect(authenticatedPage).toHaveURL(new RegExp(`/ai/c/en/${uniqueSlug}`));
+    await expect(authenticatedPage).toHaveURL(new RegExp(`/${AI_ORG_SLUG}/c/en/${uniqueSlug}`));
     await expect(slugInput).toHaveValue(uniqueSlug);
   });
 
   test("reverts changes on cancel", async ({ authenticatedPage }) => {
-    await navigateToCoursePage(authenticatedPage, "machine-learning");
+    await navigateToCoursePage(authenticatedPage, slugCourseSlug);
     const slugInput = authenticatedPage.getByRole("textbox", { name: /url address/i });
 
     await slugInput.fill("some-other-slug");
     await authenticatedPage.getByRole("button", { name: /cancel/i }).click();
 
-    await expect(slugInput).toHaveValue("machine-learning");
+    await expect(slugInput).toHaveValue(slugCourseSlug);
   });
 
   test("saves on Enter key", async ({ authenticatedPage }) => {
@@ -138,16 +160,16 @@ test.describe("Course Content Page", () => {
     await expect(saveButton).toBeEnabled();
     await slugInput.press("Enter");
 
-    await expect(authenticatedPage).toHaveURL(new RegExp(`/ai/c/en/${uniqueSlug}`));
+    await expect(authenticatedPage).toHaveURL(new RegExp(`/${AI_ORG_SLUG}/c/en/${uniqueSlug}`));
   });
 
   test("cancels on Escape key", async ({ authenticatedPage }) => {
-    await navigateToCoursePage(authenticatedPage, "machine-learning");
+    await navigateToCoursePage(authenticatedPage, slugCourseSlug);
     const slugInput = authenticatedPage.getByRole("textbox", { name: /url address/i });
 
     await slugInput.fill("escape-test-slug");
     await slugInput.press("Escape");
 
-    await expect(slugInput).toHaveValue("machine-learning");
+    await expect(slugInput).toHaveValue(slugCourseSlug);
   });
 });

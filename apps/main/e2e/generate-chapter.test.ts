@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { type Page, type Route } from "@zoonk/e2e/fixtures";
+import { getAiOrganization } from "@zoonk/e2e/helpers";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
@@ -21,7 +22,6 @@ import { expect, test } from "./fixtures";
  */
 
 const TEST_RUN_ID = "test-run-id-chapter-12345";
-const TEST_USER_EMAIL = "e2e-new@zoonk.test";
 
 type MockApiOptions = {
   triggerResponse?: { runId?: string; error?: string; status?: number };
@@ -106,32 +106,10 @@ async function setupMockApis(page: Page, options: MockApiOptions = {}): Promise<
 }
 
 /**
- * Gets a chapter ID with pending generation status for testing.
- * Uses the seeded e2e-no-lessons-chapter for tests that don't need isolation.
- */
-async function getPendingChapterId(): Promise<number> {
-  const chapter = await prisma.chapter.findFirst({
-    select: { id: true },
-    where: {
-      generationStatus: "pending",
-      slug: "e2e-no-lessons-chapter",
-    },
-  });
-
-  if (!chapter) {
-    throw new Error("No pending chapter found for E2E testing");
-  }
-
-  return chapter.id;
-}
-
-/**
  * Creates a chapter with pending generation status for testing the generation workflow.
  */
 async function createPendingChapter() {
-  const org = await prisma.organization.findUniqueOrThrow({
-    where: { slug: "ai" },
-  });
+  const org = await getAiOrganization();
 
   const uniqueId = randomUUID().slice(0, 8);
   const courseTitle = `E2E Generation Course ${uniqueId}`;
@@ -160,19 +138,15 @@ async function createPendingChapter() {
 }
 
 /**
- * Creates a test subscription for the test user.
+ * Creates a test subscription for the given user.
  */
-async function createTestSubscription() {
+async function createTestSubscription(userId: number) {
   const uniqueId = randomUUID();
-
-  const user = await prisma.user.findUniqueOrThrow({
-    where: { email: TEST_USER_EMAIL },
-  });
 
   const subscription = await prisma.subscription.create({
     data: {
       plan: "hobby",
-      referenceId: String(user.id),
+      referenceId: String(userId),
       status: "active",
       stripeCustomerId: `cus_test_e2e_${uniqueId}`,
       stripeSubscriptionId: `sub_test_e2e_${uniqueId}`,
@@ -184,8 +158,8 @@ async function createTestSubscription() {
 
 test.describe("Generate Chapter Page - Unauthenticated", () => {
   test("shows login prompt with link to login page", async ({ page }) => {
-    const chapterId = await getPendingChapterId();
-    await page.goto(`/generate/ch/${chapterId}`);
+    const { chapter } = await createPendingChapter();
+    await page.goto(`/generate/ch/${chapter.id}`);
 
     await expect(page.getByRole("alert").filter({ hasText: /logged in/i })).toBeVisible();
 
@@ -197,8 +171,8 @@ test.describe("Generate Chapter Page - Unauthenticated", () => {
 
 test.describe("Generate Chapter Page - No Subscription", () => {
   test("shows upgrade CTA with link to subscription page", async ({ authenticatedPage }) => {
-    const chapterId = await getPendingChapterId();
-    await authenticatedPage.goto(`/generate/ch/${chapterId}`);
+    const { chapter } = await createPendingChapter();
+    await authenticatedPage.goto(`/generate/ch/${chapter.id}`);
 
     await expect(authenticatedPage.getByText(/upgrade to generate/i)).toBeVisible();
 
@@ -211,12 +185,11 @@ test.describe("Generate Chapter Page - No Subscription", () => {
 test.describe("Generate Chapter Page - With Subscription", () => {
   test("shows vocabulary-specific activity phases for language courses", async ({
     userWithoutProgress,
+    noProgressUser,
   }) => {
-    await createTestSubscription();
+    await createTestSubscription(noProgressUser.id);
 
-    const org = await prisma.organization.findUniqueOrThrow({
-      where: { slug: "ai" },
-    });
+    const org = await getAiOrganization();
 
     const uniqueId = randomUUID().slice(0, 8);
     const courseTitle = `E2E Language Chapter Course ${uniqueId}`;
@@ -259,8 +232,11 @@ test.describe("Generate Chapter Page - With Subscription", () => {
     await expect(userWithoutProgress.getByText(/creating images/i)).toHaveCount(0);
   });
 
-  test("shows generation UI and completes workflow", async ({ userWithoutProgress }) => {
-    await createTestSubscription();
+  test("shows generation UI and completes workflow", async ({
+    userWithoutProgress,
+    noProgressUser,
+  }) => {
+    await createTestSubscription(noProgressUser.id);
     const { chapter, organizationId } = await createPendingChapter();
 
     // Create a lesson so the chapter page doesn't redirect back to /generate
@@ -311,9 +287,12 @@ test.describe("Generate Chapter Page - With Subscription", () => {
     await userWithoutProgress.waitForURL(/\/b\/ai\/c\//, { timeout: 10_000 });
   });
 
-  test("shows error when stream returns error status", async ({ userWithoutProgress }) => {
-    await createTestSubscription();
-    const chapterId = await getPendingChapterId();
+  test("shows error when stream returns error status", async ({
+    userWithoutProgress,
+    noProgressUser,
+  }) => {
+    await createTestSubscription(noProgressUser.id);
+    const { chapter } = await createPendingChapter();
 
     await setupMockApis(userWithoutProgress, {
       streamMessages: [
@@ -322,7 +301,7 @@ test.describe("Generate Chapter Page - With Subscription", () => {
       ],
     });
 
-    await userWithoutProgress.goto(`/generate/ch/${chapterId}`);
+    await userWithoutProgress.goto(`/generate/ch/${chapter.id}`);
 
     await expect(userWithoutProgress.getByText(/something went wrong/i)).toBeVisible({
       timeout: 10_000,

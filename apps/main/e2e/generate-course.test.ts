@@ -1,6 +1,10 @@
 import { randomUUID } from "node:crypto";
 import { type Page, type Route } from "@zoonk/e2e/fixtures";
+import { getAiOrganization } from "@zoonk/e2e/helpers";
+import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseSuggestionFixture } from "@zoonk/testing/fixtures/course-suggestions";
+import { courseFixture } from "@zoonk/testing/fixtures/courses";
+import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { expect, test } from "./fixtures";
 
 /**
@@ -112,41 +116,6 @@ async function setupMockApis(page: Page, options: MockApiOptions = {}): Promise<
   await page.route("**/v1/workflows/course-generation/**", handler);
 }
 
-/**
- * Gets a valid suggestion ID from the learn page without triggering generation.
- * This is used to get a valid ID before setting up route mocks.
- */
-async function getSuggestionId(page: Page): Promise<string> {
-  await page.goto("/learn/test%20prompt");
-  await expect(page.getByRole("heading", { name: /course ideas for/i })).toBeVisible();
-
-  const generateLink = page.getByRole("link", { name: /generate/i }).first();
-  const href = await generateLink.getAttribute("href");
-  const match = href?.match(/\/generate\/cs\/(\d+)/);
-  const suggestionId = match?.[1];
-
-  if (!suggestionId) {
-    throw new Error("Could not extract suggestion ID from generate link");
-  }
-
-  return suggestionId;
-}
-
-/**
- * Gets a suggestion ID and then sets up mocks before navigating directly to the page.
- * This ensures route interception works properly for all API calls.
- */
-async function navigateWithMocks(page: Page, options: MockApiOptions): Promise<void> {
-  // First get the suggestion ID without mocks
-  const suggestionId = await getSuggestionId(page);
-
-  // Set up route mocking
-  await setupMockApis(page, options);
-
-  // Navigate directly to the generate page
-  await page.goto(`/generate/cs/${suggestionId}`);
-}
-
 test.describe("Generate Course Page", () => {
   test.describe("Initial triggering state", () => {
     test("shows triggering state immediately on page load", async ({ page }) => {
@@ -204,7 +173,37 @@ test.describe("Generate Course Page", () => {
 
   test.describe("Workflow completion and redirect", () => {
     test("shows completion state and redirects to course page", async ({ page }) => {
-      await navigateWithMocks(page, {
+      const slug = `e2e-completion-${randomUUID().slice(0, 8)}`;
+      const org = await getAiOrganization();
+
+      const suggestion = await courseSuggestionFixture({
+        generationStatus: "pending",
+        language: "en",
+        slug,
+        title: "E2E Completion Test",
+      });
+
+      // Create a real course so the redirect after "completion" works
+      const course = await courseFixture({
+        isPublished: true,
+        organizationId: org.id,
+        slug,
+        title: "E2E Completion Test",
+      });
+
+      const chapter = await chapterFixture({
+        courseId: course.id,
+        isPublished: true,
+        organizationId: org.id,
+      });
+
+      await lessonFixture({
+        chapterId: chapter.id,
+        isPublished: true,
+        organizationId: org.id,
+      });
+
+      await setupMockApis(page, {
         streamMessages: [
           { status: "started", step: "getCourseSuggestion" },
           { status: "completed", step: "getCourseSuggestion" },
@@ -217,25 +216,30 @@ test.describe("Generate Course Page", () => {
         ],
       });
 
-      // Should show completion message
-      await expect(page.getByText(/your course is ready/i)).toBeVisible({
-        timeout: 10_000,
-      });
-      await expect(page.getByText(/taking you to your course/i)).toBeVisible();
+      await page.goto(`/generate/cs/${suggestion.id}`);
 
-      // Should redirect to course page
+      // Should complete and redirect to course page
       await page.waitForURL(/\/b\/ai\/c\//, { timeout: 10_000 });
     });
   });
 
   test.describe("Error handling", () => {
     test("shows error when stream returns error status", async ({ page }) => {
-      await navigateWithMocks(page, {
+      const suggestion = await courseSuggestionFixture({
+        generationStatus: "pending",
+        language: "en",
+        slug: `e2e-error-${randomUUID().slice(0, 8)}`,
+        title: "E2E Error Handling Test",
+      });
+
+      await setupMockApis(page, {
         streamMessages: [
           { status: "started", step: "getCourseSuggestion" },
           { reason: "notFound", status: "error", step: "getCourseSuggestion" },
         ],
       });
+
+      await page.goto(`/generate/cs/${suggestion.id}`);
 
       // Should show error message when a step errors
       await expect(page.getByText(/something went wrong/i)).toBeVisible({

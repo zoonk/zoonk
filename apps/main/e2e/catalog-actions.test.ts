@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { type Page } from "@playwright/test";
-import { prisma } from "@zoonk/db";
+import { getAiOrganization } from "@zoonk/e2e/helpers";
 import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
@@ -8,9 +8,7 @@ import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { expect, test } from "./fixtures";
 
 async function createTestCourseWithActivity() {
-  const org = await prisma.organization.findUniqueOrThrow({
-    where: { slug: "ai" },
-  });
+  const org = await getAiOrganization();
 
   const uniqueId = randomUUID().slice(0, 8);
 
@@ -49,6 +47,23 @@ async function createTestCourseWithActivity() {
   });
 
   return { chapter, course, lesson };
+}
+
+/**
+ * Open the "more options" dropdown, retrying the click if the page
+ * hasn't hydrated yet (SSR'd button visible but no event handler).
+ */
+async function openMoreOptions(page: Page) {
+  const trigger = page.getByRole("button", { name: /more options/i });
+  const menuItem = page.getByRole("button", { name: /send feedback/i });
+
+  await expect(async () => {
+    if (!(await menuItem.isVisible())) {
+      await trigger.click();
+    }
+
+    await expect(menuItem).toBeVisible({ timeout: 1000 });
+  }).toPass();
 }
 
 function mockNextActivityAPI(
@@ -106,7 +121,7 @@ test.describe("Catalog Actions", () => {
 
     await page.goto(`/b/ai/c/${course.slug}`);
 
-    await page.getByRole("button", { name: /more options/i }).click();
+    await openMoreOptions(page);
     await expect(page.getByRole("button", { name: /send feedback/i })).toBeVisible();
   });
 
@@ -125,7 +140,7 @@ test.describe("Catalog Actions", () => {
 
     await page.goto(`/b/ai/c/${course.slug}`);
 
-    await page.getByRole("button", { name: /more options/i }).click();
+    await openMoreOptions(page);
     await page.getByRole("button", { name: /send feedback/i }).click();
 
     await expect(page.getByRole("heading", { name: /feedback/i })).toBeVisible();
@@ -184,7 +199,7 @@ test.describe("Catalog Actions", () => {
 
     await page.goto(`/b/ai/c/${course.slug}`);
 
-    await page.getByRole("button", { name: /more options/i }).click();
+    await openMoreOptions(page);
     await expect(page.getByRole("menuitemradio", { name: /^helpful$/i })).toBeVisible();
     await expect(page.getByRole("menuitemradio", { name: /not helpful/i })).toBeVisible();
   });
@@ -204,7 +219,7 @@ test.describe("Catalog Actions", () => {
 
     await page.goto(`/b/ai/c/${course.slug}`);
 
-    await page.getByRole("button", { name: /more options/i }).click();
+    await openMoreOptions(page);
     await page.getByRole("menuitemradio", { name: /^helpful$/i }).click();
 
     await expect(page.getByText(/thanks for your feedback/i)).toBeVisible();
@@ -225,7 +240,7 @@ test.describe("Catalog Actions", () => {
 
     await page.goto(`/b/ai/c/${course.slug}`);
 
-    await page.getByRole("button", { name: /more options/i }).click();
+    await openMoreOptions(page);
     await page.getByRole("menuitemradio", { name: /^helpful$/i }).click();
 
     await expect(page.getByRole("menuitemradio", { name: /^helpful$/i })).toHaveAttribute(
@@ -249,7 +264,7 @@ test.describe("Catalog Actions", () => {
 
     await page.goto(`/b/ai/c/${course.slug}`);
 
-    await page.getByRole("button", { name: /more options/i }).click();
+    await openMoreOptions(page);
     await page.getByRole("menuitemradio", { name: /^helpful$/i }).click();
     await page.getByRole("menuitemradio", { name: /not helpful/i }).click();
 
@@ -278,7 +293,7 @@ test.describe("Catalog Actions", () => {
 
     await page.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}`);
 
-    await page.getByRole("button", { name: /more options/i }).click();
+    await openMoreOptions(page);
     await expect(page.getByRole("menuitemradio", { name: /^helpful$/i })).toBeVisible();
     await expect(page.getByRole("menuitemradio", { name: /not helpful/i })).toBeVisible();
   });
@@ -298,7 +313,7 @@ test.describe("Catalog Actions", () => {
 
     await page.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
 
-    await page.getByRole("button", { name: /more options/i }).click();
+    await openMoreOptions(page);
     await expect(page.getByRole("menuitemradio", { name: /^helpful$/i })).toBeVisible();
     await expect(page.getByRole("menuitemradio", { name: /not helpful/i })).toBeVisible();
   });
@@ -318,7 +333,7 @@ test.describe("Catalog Actions", () => {
 
     await page.goto(`/b/ai/c/${course.slug}`);
 
-    await page.getByRole("button", { name: /more options/i }).click();
+    await openMoreOptions(page);
     await page.getByRole("menuitemradio", { name: /^helpful$/i }).click();
     await page.getByRole("button", { name: /send feedback/i }).click();
 

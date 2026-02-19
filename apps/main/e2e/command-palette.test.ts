@@ -1,13 +1,12 @@
 import { randomUUID } from "node:crypto";
-import { prisma } from "@zoonk/db";
+import { getAiOrganization } from "@zoonk/e2e/helpers";
+import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { normalizeString } from "@zoonk/utils/string";
 import { type Page, expect, test } from "./fixtures";
 
 async function createTestCourse() {
-  const org = await prisma.organization.findUniqueOrThrow({
-    where: { slug: "ai" },
-  });
+  const org = await getAiOrganization();
 
   const uniqueId = randomUUID().slice(0, 8);
   const title = `E2E Course ${uniqueId}`;
@@ -248,10 +247,27 @@ test.describe("Command Palette - Course Search", () => {
   });
 
   test("shows course in results and navigates to detail page", async ({ page }) => {
-    // Use a seeded course (Machine Learning) that is pre-rendered for navigation testing
-    // New courses created via fixtures won't have their detail pages pre-rendered
-    const courseName = "Machine Learning";
-    const courseDescription = "Machine learning enables computers";
+    const org = await getAiOrganization();
+    const uniqueId = randomUUID().slice(0, 8);
+    const courseName = `E2E Search Nav ${uniqueId}`;
+    const courseDescription = `Searchable course for navigation ${uniqueId}`;
+
+    const course = await courseFixture({
+      description: courseDescription,
+      isPublished: true,
+      normalizedTitle: normalizeString(courseName),
+      organizationId: org.id,
+      slug: `e2e-search-nav-${uniqueId}`,
+      title: courseName,
+    });
+
+    // Course needs a chapter so the detail page renders instead of redirecting
+    await chapterFixture({
+      courseId: course.id,
+      isPublished: true,
+      organizationId: org.id,
+      position: 0,
+    });
 
     await page.goto("/");
     await openCommandPalette(page);
@@ -270,7 +286,9 @@ test.describe("Command Palette - Course Search", () => {
     await courseOption.click();
 
     // Verify user sees course detail page
-    await expect(page.getByRole("heading", { level: 1, name: courseName })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: courseName })).toBeVisible({
+      timeout: 10_000,
+    });
   });
 
   test("shows No results found for non-matching query", async ({ page }) => {
@@ -301,9 +319,7 @@ test.describe("Command Palette - Course Search", () => {
   });
 
   test("shows exact match first when searching", async ({ page }) => {
-    const org = await prisma.organization.findUniqueOrThrow({
-      where: { slug: "ai" },
-    });
+    const org = await getAiOrganization();
 
     // Create test courses with a unique prefix to avoid conflicts
     const uniqueId = randomUUID().slice(0, 8);

@@ -1,4 +1,22 @@
+import { searchPromptWithSuggestionsFixture } from "@zoonk/testing/fixtures/course-suggestions";
 import { expect, test } from "./fixtures";
+
+let prompt: string;
+let suggestionTitle: string;
+let suggestionDescription: string;
+
+test.beforeAll(async () => {
+  const fixture = await searchPromptWithSuggestionsFixture();
+  const firstSuggestion = fixture.suggestions[0];
+
+  if (!firstSuggestion) {
+    throw new Error("No suggestions created by fixture");
+  }
+
+  prompt = fixture.prompt;
+  suggestionTitle = firstSuggestion.title;
+  suggestionDescription = firstSuggestion.description;
+});
 
 test.describe("Learn Form", () => {
   test("shows form with auto-focused input", async ({ page }) => {
@@ -14,7 +32,7 @@ test.describe("Learn Form", () => {
   test("submitting prompt navigates to suggestions page", async ({ page }) => {
     await page.goto("/learn");
 
-    await page.getByRole("textbox").fill("test prompt");
+    await page.getByRole("textbox").fill(prompt);
     await page.getByRole("button", { name: /start/i }).click();
 
     await expect(page.getByRole("heading", { name: /course ideas for/i })).toBeVisible();
@@ -23,21 +41,21 @@ test.describe("Learn Form", () => {
 
 test.describe("Course Suggestions", () => {
   test("shows suggestions with title, description, and generate link", async ({ page }) => {
-    await page.goto("/learn/test%20prompt");
+    await page.goto(`/learn/${encodeURIComponent(prompt)}`);
 
     await expect(
-      page.getByRole("heading", { name: /course ideas for test prompt/i }),
+      page.getByRole("heading", { name: new RegExp(`course ideas for ${prompt}`, "i") }),
     ).toBeVisible();
 
-    await expect(page.getByText("Introduction to Testing")).toBeVisible();
-    await expect(page.getByText(/fundamentals of software testing/i)).toBeVisible();
+    await expect(page.getByText(suggestionTitle)).toBeVisible();
+    await expect(page.getByText(suggestionDescription)).toBeVisible();
 
     const generateLinks = page.getByRole("link", { name: /generate/i });
     await expect(generateLinks.first()).toBeVisible();
   });
 
   test("Generate link navigates to generate page", async ({ page }) => {
-    await page.goto("/learn/test%20prompt");
+    await page.goto(`/learn/${encodeURIComponent(prompt)}`);
 
     await expect(page.getByRole("heading", { name: /course ideas for/i })).toBeVisible();
 
@@ -48,7 +66,7 @@ test.describe("Course Suggestions", () => {
   });
 
   test("Change subject navigates back to learn form", async ({ page }) => {
-    await page.goto("/learn/test%20prompt");
+    await page.goto(`/learn/${encodeURIComponent(prompt)}`);
 
     await expect(page.getByRole("heading", { name: /course ideas for/i })).toBeVisible();
 
@@ -61,7 +79,7 @@ test.describe("Course Suggestions", () => {
     await page.goto("/learn");
 
     const input = page.getByRole("textbox");
-    await input.fill("test prompt");
+    await input.fill(prompt);
     await page.keyboard.press("Enter");
 
     await expect(page.getByRole("heading", { name: /course ideas for/i })).toBeVisible();
