@@ -1,16 +1,15 @@
 import { randomUUID } from "node:crypto";
 import { type Page } from "@playwright/test";
-import { prisma } from "@zoonk/db";
+import { getAiOrganization } from "@zoonk/e2e/helpers";
 import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
+import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import { expect, test } from "./fixtures";
 
 async function createTestLessonWithActivities() {
-  const org = await prisma.organization.findUniqueOrThrow({
-    where: { slug: "ai" },
-  });
+  const org = await getAiOrganization();
 
   const uniqueId = randomUUID().slice(0, 8);
 
@@ -91,7 +90,7 @@ function mockActivityCompletionAPI(page: Page, completedActivityIds: string[]) {
 test.describe("Lesson Detail Page", () => {
   test("shows lesson content with title, description, and position", async ({ page }) => {
     const { chapter, course, lesson } = await createTestLessonWithActivities();
-    await page.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
+    await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
 
     await expect(
       page.getByRole("heading", {
@@ -107,24 +106,44 @@ test.describe("Lesson Detail Page", () => {
   });
 
   test("non-existent lesson shows 404 page", async ({ page }) => {
-    await page.goto(
-      "/b/ai/c/machine-learning/ch/introduction-to-machine-learning/l/nonexistent-lesson",
-    );
+    const { chapter, course } = await createTestLessonWithActivities();
+    await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/nonexistent-lesson`);
 
     await expect(page.getByText(/not found|404/i)).toBeVisible();
   });
 
   test("unpublished lesson shows 404 page", async ({ page }) => {
-    await page.goto(
-      "/b/ai/c/machine-learning/ch/introduction-to-machine-learning/l/types-of-learning",
-    );
+    const org = await getAiOrganization();
+    const uniqueId = randomUUID().slice(0, 8);
+
+    const course = await courseFixture({
+      isPublished: true,
+      organizationId: org.id,
+      slug: `e2e-unpub-lesson-course-${uniqueId}`,
+    });
+
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      isPublished: true,
+      organizationId: org.id,
+      slug: `e2e-unpub-lesson-ch-${uniqueId}`,
+    });
+
+    const unpubLesson = await lessonFixture({
+      chapterId: chapter.id,
+      isPublished: false,
+      organizationId: org.id,
+      slug: `e2e-unpub-lesson-${uniqueId}`,
+    });
+
+    await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${unpubLesson.slug}`);
 
     await expect(page.getByText(/not found|404/i)).toBeVisible();
   });
 
   test("clicking links in popover navigates correctly", async ({ page }) => {
     const { chapter, course, lesson } = await createTestLessonWithActivities();
-    await page.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
+    await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
 
     const triggerButton = page.getByRole("button", {
       name: lesson.title,
@@ -142,7 +161,7 @@ test.describe("Lesson Detail Page", () => {
     await courseLink.click({ force: true });
 
     // Verify URL is correct
-    await expect(page).toHaveURL(new RegExp(`/b/ai/c/${course.slug}$`));
+    await expect(page).toHaveURL(new RegExp(`/b/${AI_ORG_SLUG}/c/${course.slug}$`));
 
     // Verify we're on the course page
     await expect(page.getByRole("heading", { level: 1, name: course.title })).toBeVisible();
@@ -150,7 +169,7 @@ test.describe("Lesson Detail Page", () => {
 
   test("displays activity list with titles and descriptions", async ({ page }) => {
     const { chapter, course, lesson } = await createTestLessonWithActivities();
-    await page.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
+    await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
 
     // Scope to the activity list for precise queries
     const activityList = page.getByRole("list", { name: /activities/i });
@@ -170,7 +189,7 @@ test.describe("Lesson Detail Page", () => {
 
   test("clicking activity link navigates to activity page", async ({ page }) => {
     const { chapter, course, lesson } = await createTestLessonWithActivities();
-    await page.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
+    await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
 
     // Scope to the activity list for precise query
     const activityList = page.getByRole("list", { name: /activities/i });
@@ -181,16 +200,39 @@ test.describe("Lesson Detail Page", () => {
   });
 
   test("lesson without activities redirects to generate page", async ({ page }) => {
-    await page.goto("/b/ai/c/machine-learning/ch/data-preparation/l/understanding-datasets");
+    const org = await getAiOrganization();
+    const uniqueId = randomUUID().slice(0, 8);
 
-    await expect(page).toHaveURL(/\/generate\/l\/\d+/);
+    const course = await courseFixture({
+      isPublished: true,
+      organizationId: org.id,
+      slug: `e2e-no-act-course-${uniqueId}`,
+    });
+
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      isPublished: true,
+      organizationId: org.id,
+      slug: `e2e-no-act-ch-${uniqueId}`,
+    });
+
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      isPublished: true,
+      organizationId: org.id,
+      slug: `e2e-no-act-lesson-${uniqueId}`,
+    });
+
+    await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
+
+    await expect(page).toHaveURL(new RegExp(`/generate/l/${lesson.id}`));
   });
 
   test("shows not-completed indicators when API returns empty array", async ({ page }) => {
     const { chapter, course, lesson } = await createTestLessonWithActivities();
     await mockActivityCompletionAPI(page, []);
 
-    await page.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
+    await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
 
     const activityList = page.getByRole("list", { name: /activities/i });
     const notCompletedIndicators = activityList.getByRole("img", { name: /not completed/i });
@@ -207,7 +249,7 @@ test.describe("Lesson Detail Page", () => {
     ];
     await mockActivityCompletionAPI(page, allIds);
 
-    await page.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
+    await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
 
     const activityList = page.getByRole("list", { name: /activities/i });
     const completedIndicators = activityList.getByRole("img", { name: /^completed$/i });
@@ -221,7 +263,7 @@ test.describe("Lesson Detail Page", () => {
       String(activities.quiz.id),
     ]);
 
-    await page.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
+    await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
 
     const activityList = page.getByRole("list", { name: /activities/i });
     const completedIndicators = activityList.getByRole("img", { name: /^completed$/i });

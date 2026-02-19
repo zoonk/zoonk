@@ -1,13 +1,11 @@
 import { randomUUID } from "node:crypto";
-import { prisma } from "@zoonk/db";
+import { getAiOrganization } from "@zoonk/e2e/helpers";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { normalizeString } from "@zoonk/utils/string";
 import { expect, test } from "./fixtures";
 
 async function createUnpublishedCourse() {
-  const org = await prisma.organization.findUniqueOrThrow({
-    where: { slug: "ai" },
-  });
+  const org = await getAiOrganization();
 
   const uniqueId = randomUUID().slice(0, 8);
   const title = `E2E Curso Não Publicado ${uniqueId}`;
@@ -21,6 +19,20 @@ async function createUnpublishedCourse() {
     title,
   });
 }
+
+test.beforeAll(async () => {
+  const org = await getAiOrganization();
+  const uniqueId = randomUUID().slice(0, 8);
+
+  await courseFixture({
+    isPublished: true,
+    language: "en",
+    normalizedTitle: normalizeString(`E2E Courses Page ${uniqueId}`),
+    organizationId: org.id,
+    slug: `e2e-courses-page-${uniqueId}`,
+    title: `E2E Courses Page ${uniqueId}`,
+  });
+});
 
 test.describe("Courses Page - Basic", () => {
   test("clicking course card navigates to course detail", async ({ page }) => {

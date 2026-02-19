@@ -1,10 +1,12 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { type Page, type Route } from "@zoonk/e2e/fixtures";
+import { getAiOrganization } from "@zoonk/e2e/helpers";
 import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
+import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import { normalizeString } from "@zoonk/utils/string";
 import { expect, test } from "./fixtures";
 
@@ -22,7 +24,6 @@ import { expect, test } from "./fixtures";
  */
 
 const TEST_RUN_ID = "test-run-id-activity-12345";
-const TEST_USER_EMAIL = "e2e-new@zoonk.test";
 
 type MockApiOptions = {
   triggerResponse?: { runId?: string; error?: string; status?: number };
@@ -112,9 +113,7 @@ async function setupMockApis(page: Page, options: MockApiOptions = {}): Promise<
  * Creates an activity with pending generation status for testing the generation workflow.
  */
 async function createPendingActivity() {
-  const org = await prisma.organization.findUniqueOrThrow({
-    where: { slug: "ai" },
-  });
+  const org = await getAiOrganization();
 
   const uniqueId = randomUUID().slice(0, 8);
   const courseTitle = `E2E Activity Course ${uniqueId}`;
@@ -163,9 +162,7 @@ async function createPendingActivity() {
 }
 
 async function createPendingReadingActivity() {
-  const org = await prisma.organization.findUniqueOrThrow({
-    where: { slug: "ai" },
-  });
+  const org = await getAiOrganization();
 
   const uniqueId = randomUUID().slice(0, 8);
   const courseTitle = `E2E Reading Course ${uniqueId}`;
@@ -216,9 +213,7 @@ async function createPendingReadingActivity() {
 }
 
 async function createPendingLanguageStoryActivity() {
-  const org = await prisma.organization.findUniqueOrThrow({
-    where: { slug: "ai" },
-  });
+  const org = await getAiOrganization();
 
   const uniqueId = randomUUID().slice(0, 8);
   const courseTitle = `E2E LangStory Course ${uniqueId}`;
@@ -269,9 +264,7 @@ async function createPendingLanguageStoryActivity() {
 }
 
 async function createPendingLanguageReviewActivity() {
-  const org = await prisma.organization.findUniqueOrThrow({
-    where: { slug: "ai" },
-  });
+  const org = await getAiOrganization();
 
   const uniqueId = randomUUID().slice(0, 8);
   const courseTitle = `E2E LangReview Course ${uniqueId}`;
@@ -322,19 +315,15 @@ async function createPendingLanguageReviewActivity() {
 }
 
 /**
- * Creates a test subscription for the test user.
+ * Creates a test subscription for the given user.
  */
-async function createTestSubscription() {
+async function createTestSubscription(userId: number) {
   const uniqueId = randomUUID();
-
-  const user = await prisma.user.findUniqueOrThrow({
-    where: { email: TEST_USER_EMAIL },
-  });
 
   const subscription = await prisma.subscription.create({
     data: {
       plan: "hobby",
-      referenceId: String(user.id),
+      referenceId: String(userId),
       status: "active",
       stripeCustomerId: `cus_test_e2e_activity_${uniqueId}`,
       stripeSubscriptionId: `sub_test_e2e_activity_${uniqueId}`,
@@ -371,8 +360,11 @@ test.describe("Generate Activity Page - No Subscription", () => {
 });
 
 test.describe("Generate Activity Page - With Subscription", () => {
-  test("shows generation UI and completes workflow", async ({ userWithoutProgress }) => {
-    await createTestSubscription();
+  test("shows generation UI and completes workflow", async ({
+    userWithoutProgress,
+    noProgressUser,
+  }) => {
+    await createTestSubscription(noProgressUser.id);
     const { activity, chapter, course, lesson } = await createPendingActivity();
 
     await setupMockApis(userWithoutProgress, {
@@ -410,18 +402,19 @@ test.describe("Generate Activity Page - With Subscription", () => {
     // Should redirect to activity page
     await userWithoutProgress.waitForURL(
       new RegExp(
-        `/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}/a/${activity.position}`,
+        `/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}/a/${activity.position}`,
       ),
       { timeout: 10_000 },
     );
   });
 
-  test("completes workflow for examples activity kind", async ({ userWithoutProgress }) => {
-    await createTestSubscription();
+  test("completes workflow for examples activity kind", async ({
+    userWithoutProgress,
+    noProgressUser,
+  }) => {
+    await createTestSubscription(noProgressUser.id);
 
-    const org = await prisma.organization.findUniqueOrThrow({
-      where: { slug: "ai" },
-    });
+    const org = await getAiOrganization();
 
     const uniqueId = randomUUID().slice(0, 8);
     const courseTitle = `E2E Examples Course ${uniqueId}`;
@@ -502,18 +495,19 @@ test.describe("Generate Activity Page - With Subscription", () => {
 
     await userWithoutProgress.waitForURL(
       new RegExp(
-        `/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}/a/${activity.position}`,
+        `/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}/a/${activity.position}`,
       ),
       { timeout: 10_000 },
     );
   });
 
-  test("completes workflow for story activity kind", async ({ userWithoutProgress }) => {
-    await createTestSubscription();
+  test("completes workflow for story activity kind", async ({
+    userWithoutProgress,
+    noProgressUser,
+  }) => {
+    await createTestSubscription(noProgressUser.id);
 
-    const org = await prisma.organization.findUniqueOrThrow({
-      where: { slug: "ai" },
-    });
+    const org = await getAiOrganization();
 
     const uniqueId = randomUUID().slice(0, 8);
     const courseTitle = `E2E Story Course ${uniqueId}`;
@@ -590,18 +584,19 @@ test.describe("Generate Activity Page - With Subscription", () => {
 
     await userWithoutProgress.waitForURL(
       new RegExp(
-        `/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}/a/${activity.position}`,
+        `/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}/a/${activity.position}`,
       ),
       { timeout: 10_000 },
     );
   });
 
-  test("completes workflow for challenge activity kind", async ({ userWithoutProgress }) => {
-    await createTestSubscription();
+  test("completes workflow for challenge activity kind", async ({
+    userWithoutProgress,
+    noProgressUser,
+  }) => {
+    await createTestSubscription(noProgressUser.id);
 
-    const org = await prisma.organization.findUniqueOrThrow({
-      where: { slug: "ai" },
-    });
+    const org = await getAiOrganization();
 
     const uniqueId = randomUUID().slice(0, 8);
     const courseTitle = `E2E Challenge Course ${uniqueId}`;
@@ -678,18 +673,19 @@ test.describe("Generate Activity Page - With Subscription", () => {
 
     await userWithoutProgress.waitForURL(
       new RegExp(
-        `/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}/a/${activity.position}`,
+        `/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}/a/${activity.position}`,
       ),
       { timeout: 10_000 },
     );
   });
 
-  test("completes workflow for review activity kind", async ({ userWithoutProgress }) => {
-    await createTestSubscription();
+  test("completes workflow for review activity kind", async ({
+    userWithoutProgress,
+    noProgressUser,
+  }) => {
+    await createTestSubscription(noProgressUser.id);
 
-    const org = await prisma.organization.findUniqueOrThrow({
-      where: { slug: "ai" },
-    });
+    const org = await getAiOrganization();
 
     const uniqueId = randomUUID().slice(0, 8);
     const courseTitle = `E2E Review Course ${uniqueId}`;
@@ -766,18 +762,19 @@ test.describe("Generate Activity Page - With Subscription", () => {
 
     await userWithoutProgress.waitForURL(
       new RegExp(
-        `/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}/a/${activity.position}`,
+        `/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}/a/${activity.position}`,
       ),
       { timeout: 10_000 },
     );
   });
 
-  test("completes workflow for custom activity kind", async ({ userWithoutProgress }) => {
-    await createTestSubscription();
+  test("completes workflow for custom activity kind", async ({
+    userWithoutProgress,
+    noProgressUser,
+  }) => {
+    await createTestSubscription(noProgressUser.id);
 
-    const org = await prisma.organization.findUniqueOrThrow({
-      where: { slug: "ai" },
-    });
+    const org = await getAiOrganization();
 
     const uniqueId = randomUUID().slice(0, 8);
     const courseTitle = `E2E Custom Course ${uniqueId}`;
@@ -855,18 +852,19 @@ test.describe("Generate Activity Page - With Subscription", () => {
 
     await userWithoutProgress.waitForURL(
       new RegExp(
-        `/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}/a/${activity.position}`,
+        `/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}/a/${activity.position}`,
       ),
       { timeout: 10_000 },
     );
   });
 
-  test("completes workflow for vocabulary activity kind", async ({ userWithoutProgress }) => {
-    await createTestSubscription();
+  test("completes workflow for vocabulary activity kind", async ({
+    userWithoutProgress,
+    noProgressUser,
+  }) => {
+    await createTestSubscription(noProgressUser.id);
 
-    const org = await prisma.organization.findUniqueOrThrow({
-      where: { slug: "ai" },
-    });
+    const org = await getAiOrganization();
 
     const uniqueId = randomUUID().slice(0, 8);
     const courseTitle = `E2E Vocabulary Course ${uniqueId}`;
@@ -949,18 +947,19 @@ test.describe("Generate Activity Page - With Subscription", () => {
 
     await userWithoutProgress.waitForURL(
       new RegExp(
-        `/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}/a/${activity.position}`,
+        `/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}/a/${activity.position}`,
       ),
       { timeout: 10_000 },
     );
   });
 
-  test("completes workflow for grammar activity kind", async ({ userWithoutProgress }) => {
-    await createTestSubscription();
+  test("completes workflow for grammar activity kind", async ({
+    userWithoutProgress,
+    noProgressUser,
+  }) => {
+    await createTestSubscription(noProgressUser.id);
 
-    const org = await prisma.organization.findUniqueOrThrow({
-      where: { slug: "ai" },
-    });
+    const org = await getAiOrganization();
 
     const uniqueId = randomUUID().slice(0, 8);
     const courseTitle = `E2E Grammar Course ${uniqueId}`;
@@ -1037,14 +1036,17 @@ test.describe("Generate Activity Page - With Subscription", () => {
 
     await userWithoutProgress.waitForURL(
       new RegExp(
-        `/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}/a/${activity.position}`,
+        `/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}/a/${activity.position}`,
       ),
       { timeout: 10_000 },
     );
   });
 
-  test("completes workflow for language story activity kind", async ({ userWithoutProgress }) => {
-    await createTestSubscription();
+  test("completes workflow for language story activity kind", async ({
+    userWithoutProgress,
+    noProgressUser,
+  }) => {
+    await createTestSubscription(noProgressUser.id);
     const { activity, chapter, course, lesson } = await createPendingLanguageStoryActivity();
 
     await setupMockApis(userWithoutProgress, {
@@ -1077,14 +1079,17 @@ test.describe("Generate Activity Page - With Subscription", () => {
 
     await userWithoutProgress.waitForURL(
       new RegExp(
-        `/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}/a/${activity.position}`,
+        `/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}/a/${activity.position}`,
       ),
       { timeout: 10_000 },
     );
   });
 
-  test("completes workflow for languageReview activity kind", async ({ userWithoutProgress }) => {
-    await createTestSubscription();
+  test("completes workflow for languageReview activity kind", async ({
+    userWithoutProgress,
+    noProgressUser,
+  }) => {
+    await createTestSubscription(noProgressUser.id);
     const { activity, chapter, course, lesson } = await createPendingLanguageReviewActivity();
 
     await setupMockApis(userWithoutProgress, {
@@ -1117,14 +1122,17 @@ test.describe("Generate Activity Page - With Subscription", () => {
 
     await userWithoutProgress.waitForURL(
       new RegExp(
-        `/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}/a/${activity.position}`,
+        `/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}/a/${activity.position}`,
       ),
       { timeout: 10_000 },
     );
   });
 
-  test("completes workflow for reading activity kind", async ({ userWithoutProgress }) => {
-    await createTestSubscription();
+  test("completes workflow for reading activity kind", async ({
+    userWithoutProgress,
+    noProgressUser,
+  }) => {
+    await createTestSubscription(noProgressUser.id);
     const { activity, chapter, course, lesson } = await createPendingReadingActivity();
 
     await setupMockApis(userWithoutProgress, {
@@ -1163,18 +1171,19 @@ test.describe("Generate Activity Page - With Subscription", () => {
 
     await userWithoutProgress.waitForURL(
       new RegExp(
-        `/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}/a/${activity.position}`,
+        `/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}/a/${activity.position}`,
       ),
       { timeout: 10_000 },
     );
   });
 
-  test("completes workflow for listening activity kind", async ({ userWithoutProgress }) => {
-    await createTestSubscription();
+  test("completes workflow for listening activity kind", async ({
+    userWithoutProgress,
+    noProgressUser,
+  }) => {
+    await createTestSubscription(noProgressUser.id);
 
-    const org = await prisma.organization.findUniqueOrThrow({
-      where: { slug: "ai" },
-    });
+    const org = await getAiOrganization();
 
     const uniqueId = randomUUID().slice(0, 8);
     const courseTitle = `E2E Listening Course ${uniqueId}`;
@@ -1259,18 +1268,19 @@ test.describe("Generate Activity Page - With Subscription", () => {
 
     await userWithoutProgress.waitForURL(
       new RegExp(
-        `/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}/a/${activity.position}`,
+        `/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}/a/${activity.position}`,
       ),
       { timeout: 10_000 },
     );
   });
 
-  test("shows correct phases for listening activity", async ({ userWithoutProgress }) => {
-    await createTestSubscription();
+  test("shows correct phases for listening activity", async ({
+    userWithoutProgress,
+    noProgressUser,
+  }) => {
+    await createTestSubscription(noProgressUser.id);
 
-    const org = await prisma.organization.findUniqueOrThrow({
-      where: { slug: "ai" },
-    });
+    const org = await getAiOrganization();
 
     const uniqueId = randomUUID().slice(0, 8);
 
@@ -1328,8 +1338,9 @@ test.describe("Generate Activity Page - With Subscription", () => {
 
   test("shows practice-content phase and skips pronunciation phase for reading", async ({
     userWithoutProgress,
+    noProgressUser,
   }) => {
-    await createTestSubscription();
+    await createTestSubscription(noProgressUser.id);
 
     const { activity } = await createPendingReadingActivity();
 
@@ -1347,8 +1358,11 @@ test.describe("Generate Activity Page - With Subscription", () => {
     await expect(userWithoutProgress.getByText(/adding pronunciation/i)).toHaveCount(0);
   });
 
-  test("shows error when stream returns error status", async ({ userWithoutProgress }) => {
-    await createTestSubscription();
+  test("shows error when stream returns error status", async ({
+    userWithoutProgress,
+    noProgressUser,
+  }) => {
+    await createTestSubscription(noProgressUser.id);
     const { activity } = await createPendingActivity();
 
     await setupMockApis(userWithoutProgress, {
@@ -1367,8 +1381,9 @@ test.describe("Generate Activity Page - With Subscription", () => {
 
   test("shows error on premature stream end without completion step", async ({
     userWithoutProgress,
+    noProgressUser,
   }) => {
-    await createTestSubscription();
+    await createTestSubscription(noProgressUser.id);
     const { activity } = await createPendingActivity();
 
     // Stream ends after just a couple of steps, without completion
@@ -1389,8 +1404,8 @@ test.describe("Generate Activity Page - With Subscription", () => {
     ).toBeVisible({ timeout: 10_000 });
   });
 
-  test("shows error when trigger API fails", async ({ userWithoutProgress }) => {
-    await createTestSubscription();
+  test("shows error when trigger API fails", async ({ userWithoutProgress, noProgressUser }) => {
+    await createTestSubscription(noProgressUser.id);
     const { activity } = await createPendingActivity();
 
     await setupMockApis(userWithoutProgress, {
@@ -1404,8 +1419,8 @@ test.describe("Generate Activity Page - With Subscription", () => {
     });
   });
 
-  test("shows retry button on error", async ({ userWithoutProgress }) => {
-    await createTestSubscription();
+  test("shows retry button on error", async ({ userWithoutProgress, noProgressUser }) => {
+    await createTestSubscription(noProgressUser.id);
     const { activity } = await createPendingActivity();
 
     await setupMockApis(userWithoutProgress, {

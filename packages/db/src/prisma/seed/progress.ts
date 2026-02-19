@@ -1,7 +1,17 @@
-import { type Organization, type PrismaClient, type Step } from "../../generated/prisma/client";
+import { type Organization, type PrismaClient } from "../../generated/prisma/client";
 import { type SeedUsers } from "./users";
 
-type DailyProgressInput = {
+// Deterministic random for reproducible seed data
+function seededRandom(seed: number) {
+  const x = Math.sin(seed) * 10_000;
+  return x - Math.floor(x);
+}
+
+function buildOwnerDailyProgress(
+  today: Date,
+  orgId: number,
+  userId: number,
+): {
   brainPowerEarned: number;
   challengesCompleted: number;
   correctAnswers: number;
@@ -14,65 +24,7 @@ type DailyProgressInput = {
   staticCompleted: number;
   timeSpentSeconds: number;
   userId: number;
-};
-
-function buildE2eStepAttempts(
-  step: Step,
-  org: Organization,
-  userId: number,
-  now: Date,
-): {
-  answer: { selectedOption: number };
-  answeredAt: Date;
-  dayOfWeek: number;
-  durationSeconds: number;
-  hourOfDay: number;
-  isCorrect: boolean;
-  organizationId: number;
-  stepId: bigint;
-  userId: number;
 }[] {
-  const configs = [
-    { correct: 9, hourOfDay: 9, incorrect: 1 }, // Morning: 90%
-    { correct: 8, hourOfDay: 15, incorrect: 2 }, // Afternoon: 80%
-    { correct: 7, hourOfDay: 21, incorrect: 3 }, // Evening: 70%
-  ];
-
-  return configs.flatMap((config) => {
-    const base = {
-      dayOfWeek: now.getDay(),
-      durationSeconds: 15,
-      hourOfDay: config.hourOfDay,
-      organizationId: org.id,
-      stepId: step.id,
-      userId,
-    };
-
-    const correctAttempts = Array.from({ length: config.correct }, (_, i) => ({
-      ...base,
-      answer: { selectedOption: 1 },
-      answeredAt: new Date(now.getTime() - i * 60 * 1000),
-      isCorrect: true,
-    }));
-
-    const incorrectAttempts = Array.from({ length: config.incorrect }, (_, i) => ({
-      ...base,
-      answer: { selectedOption: 0 },
-      answeredAt: new Date(now.getTime() - (config.correct + i) * 60 * 1000),
-      isCorrect: false,
-    }));
-
-    return [...correctAttempts, ...incorrectAttempts];
-  });
-}
-
-// Deterministic random for reproducible seed data
-function seededRandom(seed: number) {
-  const x = Math.sin(seed) * 10_000;
-  return x - Math.floor(x);
-}
-
-function buildOwnerDailyProgress(today: Date, orgId: number, userId: number): DailyProgressInput[] {
   const indices = Array.from({ length: 90 }, (_, i) => 89 - i);
 
   return indices
@@ -103,36 +55,6 @@ function buildOwnerDailyProgress(today: Date, orgId: number, userId: number): Da
         userId,
       };
     });
-}
-
-function buildE2eDailyProgress(today: Date, orgId: number, userId: number): DailyProgressInput[] {
-  const data: DailyProgressInput[] = [];
-
-  // 60 days: current month (75% energy), previous month (65% energy)
-  for (let i = 59; i >= 0; i -= 1) {
-    const date = new Date(today.getTime() - i * 24 * 60 * 60 * 1000);
-    const isCurrentMonth = i < 30;
-    const energy = isCurrentMonth ? 75 : 65;
-    const correctAnswers = isCurrentMonth ? 17 : 13;
-    const incorrectAnswers = isCurrentMonth ? 3 : 7;
-
-    data.push({
-      brainPowerEarned: 300,
-      challengesCompleted: 0,
-      correctAnswers,
-      date,
-      dayOfWeek: date.getDay(),
-      energyAtEnd: energy,
-      incorrectAnswers,
-      interactiveCompleted: 10,
-      organizationId: orgId,
-      staticCompleted: 5,
-      timeSpentSeconds: 1800,
-      userId,
-    });
-  }
-
-  return data;
 }
 
 async function seedUserProgress(prisma: PrismaClient, users: SeedUsers, now: Date) {
@@ -166,16 +88,6 @@ async function seedUserProgress(prisma: PrismaClient, users: SeedUsers, now: Dat
       },
       update: {},
       where: { userId: users.member.id },
-    }),
-    prisma.userProgress.upsert({
-      create: {
-        currentEnergy: 75,
-        lastActiveAt: now,
-        totalBrainPower: BigInt(15_000),
-        userId: users.e2eWithProgress.id,
-      },
-      update: {},
-      where: { userId: users.e2eWithProgress.id },
     }),
   ]);
 }
@@ -228,10 +140,8 @@ async function seedStepAttempts(
     userId: users.owner.id,
   }));
 
-  const e2eAttemptData = buildE2eStepAttempts(firstStep, org, users.e2eWithProgress.id, now);
-
   await prisma.stepAttempt.createMany({
-    data: [...attemptData, ...e2eAttemptData],
+    data: attemptData,
   });
 
   await prisma.activityProgress.upsert({
@@ -252,60 +162,6 @@ async function seedStepAttempts(
   });
 }
 
-/**
- * Seed activity completions for the e2eWithProgress user so
- * getContinueLearning (which queries activity_progress) returns results.
- */
-async function seedActivityCompletions(
-  prisma: PrismaClient,
-  org: Organization,
-  userId: number,
-  now: Date,
-) {
-  const courses = await prisma.course.findMany({
-    orderBy: { id: "asc" },
-    take: 3,
-    where: { isPublished: true, language: "en", organizationId: org.id },
-  });
-
-  const activities = await prisma.activity.findMany({
-    orderBy: [
-      { lesson: { chapter: { position: "asc" } } },
-      { lesson: { position: "asc" } },
-      { position: "asc" },
-    ],
-    select: { id: true },
-    where: {
-      generationStatus: "completed",
-      isPublished: true,
-      lesson: {
-        chapter: { courseId: { in: courses.map((course) => course.id) }, isPublished: true },
-        isPublished: true,
-      },
-    },
-  });
-
-  const firstActivity = activities[0];
-
-  if (!firstActivity) {
-    return;
-  }
-
-  await prisma.activityProgress.upsert({
-    create: {
-      activityId: firstActivity.id,
-      completedAt: new Date(now.getTime() - 60 * 1000),
-      durationSeconds: 120,
-      startedAt: new Date(now.getTime() - 180 * 1000),
-      userId,
-    },
-    update: {},
-    where: {
-      userActivity: { activityId: firstActivity.id, userId },
-    },
-  });
-}
-
 export async function seedProgress(
   prisma: PrismaClient,
   org: Organization,
@@ -316,10 +172,7 @@ export async function seedProgress(
 
   await seedUserProgress(prisma, users, now);
 
-  const dailyProgressData = [
-    ...buildOwnerDailyProgress(today, org.id, users.owner.id),
-    ...buildE2eDailyProgress(today, org.id, users.e2eWithProgress.id),
-  ];
+  const dailyProgressData = buildOwnerDailyProgress(today, org.id, users.owner.id);
 
   await Promise.all(
     dailyProgressData.map((data) =>
@@ -338,5 +191,4 @@ export async function seedProgress(
   );
 
   await seedStepAttempts(prisma, org, users, now);
-  await seedActivityCompletions(prisma, org, users.e2eWithProgress.id, now);
 }

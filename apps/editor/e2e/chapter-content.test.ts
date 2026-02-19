@@ -1,13 +1,17 @@
 import { randomUUID } from "node:crypto";
-import { prisma } from "@zoonk/db";
+import { getAiOrganization } from "@zoonk/e2e/helpers";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
+import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import { type Page, expect, test } from "./fixtures";
 
+let fixtureCoursSlug: string;
+let fixtureChapterSlug: string;
+let fixtureCourseTitle: string;
+let duplicateTargetChapterSlug: string;
+
 async function createTestChapter() {
-  const org = await prisma.organization.findUniqueOrThrow({
-    where: { slug: "ai" },
-  });
+  const org = await getAiOrganization();
 
   const course = await courseFixture({
     isPublished: true,
@@ -26,10 +30,40 @@ async function createTestChapter() {
 }
 
 async function navigateToChapterPage(page: Page, courseSlug: string, chapterSlug: string) {
-  await page.goto(`/ai/c/en/${courseSlug}/ch/${chapterSlug}`);
+  await page.goto(`/${AI_ORG_SLUG}/c/en/${courseSlug}/ch/${chapterSlug}`);
 
   await expect(page.getByRole("textbox", { name: /edit chapter title/i })).toBeVisible();
 }
+
+test.beforeAll(async () => {
+  const org = await getAiOrganization();
+
+  const course = await courseFixture({
+    isPublished: true,
+    organizationId: org.id,
+    slug: `e2e-slug-${randomUUID().slice(0, 8)}`,
+  });
+
+  const [chapter, duplicateTarget] = await Promise.all([
+    chapterFixture({
+      courseId: course.id,
+      isPublished: true,
+      organizationId: org.id,
+      slug: `e2e-ch-${randomUUID().slice(0, 8)}`,
+    }),
+    chapterFixture({
+      courseId: course.id,
+      isPublished: true,
+      organizationId: org.id,
+      slug: `e2e-dup-${randomUUID().slice(0, 8)}`,
+    }),
+  ]);
+
+  fixtureCoursSlug = course.slug;
+  fixtureCourseTitle = course.title;
+  fixtureChapterSlug = chapter.slug;
+  duplicateTargetChapterSlug = duplicateTarget.slug;
+});
 
 test.describe("Chapter Content Page", () => {
   test("auto-saves and persists title", async ({ authenticatedPage }) => {
@@ -81,14 +115,10 @@ test.describe("Chapter Content Page", () => {
   });
 
   test("shows validation error for duplicate slug", async ({ authenticatedPage }) => {
-    await navigateToChapterPage(
-      authenticatedPage,
-      "machine-learning",
-      "introduction-to-machine-learning",
-    );
+    await navigateToChapterPage(authenticatedPage, fixtureCoursSlug, fixtureChapterSlug);
     const slugInput = authenticatedPage.getByRole("textbox", { name: /url address/i });
 
-    await slugInput.fill("data-preparation");
+    await slugInput.fill(duplicateTargetChapterSlug);
 
     await expect(authenticatedPage.getByText(/this url is already in use/i)).toBeVisible();
     await expect(
@@ -99,11 +129,7 @@ test.describe("Chapter Content Page", () => {
   });
 
   test("disables save for empty slug", async ({ authenticatedPage }) => {
-    await navigateToChapterPage(
-      authenticatedPage,
-      "machine-learning",
-      "introduction-to-machine-learning",
-    );
+    await navigateToChapterPage(authenticatedPage, fixtureCoursSlug, fixtureChapterSlug);
     const slugInput = authenticatedPage.getByRole("textbox", { name: /url address/i });
 
     await slugInput.fill("");
@@ -127,23 +153,19 @@ test.describe("Chapter Content Page", () => {
     await saveButton.click();
 
     await expect(authenticatedPage).toHaveURL(
-      new RegExp(`/ai/c/en/${course.slug}/ch/${uniqueSlug}`),
+      new RegExp(`/${AI_ORG_SLUG}/c/en/${course.slug}/ch/${uniqueSlug}`),
     );
     await expect(slugInput).toHaveValue(uniqueSlug);
   });
 
   test("reverts changes on cancel", async ({ authenticatedPage }) => {
-    await navigateToChapterPage(
-      authenticatedPage,
-      "machine-learning",
-      "introduction-to-machine-learning",
-    );
+    await navigateToChapterPage(authenticatedPage, fixtureCoursSlug, fixtureChapterSlug);
     const slugInput = authenticatedPage.getByRole("textbox", { name: /url address/i });
 
     await slugInput.fill("some-other-slug");
     await authenticatedPage.getByRole("button", { name: /cancel/i }).click();
 
-    await expect(slugInput).toHaveValue("introduction-to-machine-learning");
+    await expect(slugInput).toHaveValue(fixtureChapterSlug);
   });
 
   test("saves on Enter key", async ({ authenticatedPage }) => {
@@ -163,40 +185,34 @@ test.describe("Chapter Content Page", () => {
     await slugInput.press("Enter");
 
     await expect(authenticatedPage).toHaveURL(
-      new RegExp(`/ai/c/en/${course.slug}/ch/${uniqueSlug}`),
+      new RegExp(`/${AI_ORG_SLUG}/c/en/${course.slug}/ch/${uniqueSlug}`),
     );
   });
 
   test("cancels on Escape key", async ({ authenticatedPage }) => {
-    await navigateToChapterPage(
-      authenticatedPage,
-      "machine-learning",
-      "introduction-to-machine-learning",
-    );
+    await navigateToChapterPage(authenticatedPage, fixtureCoursSlug, fixtureChapterSlug);
     const slugInput = authenticatedPage.getByRole("textbox", { name: /url address/i });
 
     await slugInput.fill("escape-test-slug");
     await slugInput.press("Escape");
 
-    await expect(slugInput).toHaveValue("introduction-to-machine-learning");
+    await expect(slugInput).toHaveValue(fixtureChapterSlug);
   });
 
   test("back link shows course title and navigates to course", async ({ authenticatedPage }) => {
-    await navigateToChapterPage(
-      authenticatedPage,
-      "machine-learning",
-      "introduction-to-machine-learning",
-    );
+    await navigateToChapterPage(authenticatedPage, fixtureCoursSlug, fixtureChapterSlug);
 
     const backLink = authenticatedPage.getByRole("link", {
       exact: true,
-      name: "Machine Learning",
+      name: fixtureCourseTitle,
     });
 
     await expect(backLink).toBeVisible();
     await backLink.click();
 
-    await expect(authenticatedPage).toHaveURL(/\/ai\/c\/en\/machine-learning$/);
+    await expect(authenticatedPage).toHaveURL(
+      new RegExp(`/${AI_ORG_SLUG}/c/en/${fixtureCoursSlug}$`),
+    );
 
     await expect(
       authenticatedPage.getByRole("textbox", { name: /edit course title/i }),
@@ -226,7 +242,7 @@ test.describe("Chapter Content Page", () => {
     });
     await backLink.click();
 
-    await expect(authenticatedPage).toHaveURL(new RegExp(`/ai/c/en/${course.slug}$`));
+    await expect(authenticatedPage).toHaveURL(new RegExp(`/${AI_ORG_SLUG}/c/en/${course.slug}$`));
 
     // Verify the updated title shows in the chapter list
     await expect(authenticatedPage.getByText(uniqueTitle)).toBeVisible();
@@ -255,7 +271,7 @@ test.describe("Chapter Content Page", () => {
     });
     await backLink.click();
 
-    await expect(authenticatedPage).toHaveURL(new RegExp(`/ai/c/en/${course.slug}$`));
+    await expect(authenticatedPage).toHaveURL(new RegExp(`/${AI_ORG_SLUG}/c/en/${course.slug}$`));
 
     // Verify the updated description shows in the chapter list
     // Scope to the chapter's link element since getByRole filters by visibility

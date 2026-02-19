@@ -1,15 +1,14 @@
 import { randomUUID } from "node:crypto";
-import { prisma } from "@zoonk/db";
+import { getAiOrganization } from "@zoonk/e2e/helpers";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
+import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import { normalizeString } from "@zoonk/utils/string";
 import { type Page, expect, test } from "./fixtures";
 
 async function createTestCourse() {
-  const org = await prisma.organization.findUniqueOrThrow({
-    where: { slug: "ai" },
-  });
+  const org = await getAiOrganization();
 
   const uniqueId = randomUUID().slice(0, 8);
   const title = `E2E Course ${uniqueId}`;
@@ -25,9 +24,7 @@ async function createTestCourse() {
 }
 
 async function createTestChapter() {
-  const org = await prisma.organization.findUniqueOrThrow({
-    where: { slug: "ai" },
-  });
+  const org = await getAiOrganization();
 
   const course = await courseFixture({
     isPublished: true,
@@ -52,9 +49,7 @@ async function createTestChapter() {
 }
 
 async function createTestLesson() {
-  const org = await prisma.organization.findUniqueOrThrow({
-    where: { slug: "ai" },
-  });
+  const org = await getAiOrganization();
 
   const course = await courseFixture({
     isPublished: true,
@@ -85,19 +80,17 @@ async function createTestLesson() {
   return { chapter, course, lesson };
 }
 
-// Helper to open command palette via click
 async function openCommandPalette(page: Page) {
   await page.getByRole("button", { name: /search/i }).click();
 }
 
-// Helper to get the correct modifier key for the platform
 function getModifierKey(): "Meta" | "Control" {
   return process.platform === "darwin" ? "Meta" : "Control";
 }
 
 test.describe("Command Palette - Open/Close", () => {
   test.beforeEach(async ({ ownerPage }) => {
-    await ownerPage.goto("/ai");
+    await ownerPage.goto(`/${AI_ORG_SLUG}`);
     await expect(ownerPage.getByRole("button", { name: /search/i })).toBeVisible();
   });
 
@@ -140,8 +133,22 @@ test.describe("Command Palette - Open/Close", () => {
 });
 
 test.describe("Command Palette - Static Items", () => {
+  let courseUrl: string;
+
+  test.beforeAll(async () => {
+    const org = await getAiOrganization();
+
+    const course = await courseFixture({
+      isPublished: true,
+      organizationId: org.id,
+      slug: `e2e-nav-${randomUUID().slice(0, 8)}`,
+    });
+
+    courseUrl = `/${AI_ORG_SLUG}/c/en/${course.slug}`;
+  });
+
   test("shows Pages group with Home, Create course, Logout", async ({ ownerPage }) => {
-    await ownerPage.goto("/ai");
+    await ownerPage.goto(`/${AI_ORG_SLUG}`);
     await openCommandPalette(ownerPage);
 
     const dialog = ownerPage.getByRole("dialog");
@@ -152,8 +159,7 @@ test.describe("Command Palette - Static Items", () => {
   });
 
   test("selecting Home navigates to org home", async ({ ownerPage }) => {
-    // Start from a course detail page
-    await ownerPage.goto("/ai/c/en/machine-learning");
+    await ownerPage.goto(courseUrl);
     await openCommandPalette(ownerPage);
 
     await ownerPage
@@ -165,7 +171,7 @@ test.describe("Command Palette - Static Items", () => {
   });
 
   test("selecting Create course navigates to new course page", async ({ ownerPage }) => {
-    await ownerPage.goto("/ai");
+    await ownerPage.goto(`/${AI_ORG_SLUG}`);
     await openCommandPalette(ownerPage);
 
     await ownerPage
@@ -177,7 +183,7 @@ test.describe("Command Palette - Static Items", () => {
   });
 
   test("selecting Logout navigates to logout URL", async ({ ownerPage }) => {
-    await ownerPage.goto("/ai");
+    await ownerPage.goto(`/${AI_ORG_SLUG}`);
     await openCommandPalette(ownerPage);
 
     // Verify logout option is visible and clickable
@@ -187,7 +193,7 @@ test.describe("Command Palette - Static Items", () => {
     // Click logout - the full logout flow is tested in main app
     // Here we just verify the command palette triggers navigation
     await Promise.all([
-      ownerPage.waitForURL((url) => url.pathname !== "/ai"),
+      ownerPage.waitForURL((url) => url.pathname !== `/${AI_ORG_SLUG}`),
       logoutOption.click(),
     ]);
   });
@@ -196,7 +202,7 @@ test.describe("Command Palette - Static Items", () => {
 test.describe("Command Palette - Course Search", () => {
   test("does not search with fewer than 2 characters", async ({ ownerPage }) => {
     const course = await createTestCourse();
-    await ownerPage.goto("/ai");
+    await ownerPage.goto(`/${AI_ORG_SLUG}`);
     await openCommandPalette(ownerPage);
 
     const dialog = ownerPage.getByRole("dialog");
@@ -208,7 +214,7 @@ test.describe("Command Palette - Course Search", () => {
 
   test("shows courses in results", async ({ ownerPage }) => {
     const course = await createTestCourse();
-    await ownerPage.goto("/ai");
+    await ownerPage.goto(`/${AI_ORG_SLUG}`);
     await openCommandPalette(ownerPage);
 
     const dialog = ownerPage.getByRole("dialog");
@@ -220,7 +226,7 @@ test.describe("Command Palette - Course Search", () => {
 
   test("shows course description in results", async ({ ownerPage }) => {
     const course = await createTestCourse();
-    await ownerPage.goto("/ai");
+    await ownerPage.goto(`/${AI_ORG_SLUG}`);
     await openCommandPalette(ownerPage);
 
     const dialog = ownerPage.getByRole("dialog");
@@ -232,7 +238,7 @@ test.describe("Command Palette - Course Search", () => {
 
   test("clicking course navigates to course page", async ({ ownerPage }) => {
     const course = await createTestCourse();
-    await ownerPage.goto("/ai");
+    await ownerPage.goto(`/${AI_ORG_SLUG}`);
     await openCommandPalette(ownerPage);
 
     const dialog = ownerPage.getByRole("dialog");
@@ -240,11 +246,11 @@ test.describe("Command Palette - Course Search", () => {
 
     await dialog.getByText(course.title).click();
 
-    await expect(ownerPage).toHaveURL(new RegExp(`/ai/c/en/${course.slug}`));
+    await expect(ownerPage).toHaveURL(new RegExp(`/${AI_ORG_SLUG}/c/en/${course.slug}`));
   });
 
   test("shows No results found for non-matching query", async ({ ownerPage }) => {
-    await ownerPage.goto("/ai");
+    await ownerPage.goto(`/${AI_ORG_SLUG}`);
     await openCommandPalette(ownerPage);
 
     const dialog = ownerPage.getByRole("dialog");
@@ -255,7 +261,7 @@ test.describe("Command Palette - Course Search", () => {
 
   test("handles rapid typing correctly", async ({ ownerPage }) => {
     const course = await createTestCourse();
-    await ownerPage.goto("/ai");
+    await ownerPage.goto(`/${AI_ORG_SLUG}`);
     await openCommandPalette(ownerPage);
 
     const dialog = ownerPage.getByRole("dialog");
@@ -272,7 +278,7 @@ test.describe("Command Palette - Course Search", () => {
 test.describe("Command Palette - Chapter Search", () => {
   test("shows chapters in search results", async ({ ownerPage }) => {
     const { chapter } = await createTestChapter();
-    await ownerPage.goto("/ai");
+    await ownerPage.goto(`/${AI_ORG_SLUG}`);
     await openCommandPalette(ownerPage);
 
     const dialog = ownerPage.getByRole("dialog");
@@ -284,7 +290,7 @@ test.describe("Command Palette - Chapter Search", () => {
 
   test("shows chapter position badge", async ({ ownerPage }) => {
     const { chapter } = await createTestChapter();
-    await ownerPage.goto("/ai");
+    await ownerPage.goto(`/${AI_ORG_SLUG}`);
     await openCommandPalette(ownerPage);
 
     const dialog = ownerPage.getByRole("dialog");
@@ -298,7 +304,7 @@ test.describe("Command Palette - Chapter Search", () => {
 
   test("clicking chapter navigates to chapter page", async ({ ownerPage }) => {
     const { chapter, course } = await createTestChapter();
-    await ownerPage.goto("/ai");
+    await ownerPage.goto(`/${AI_ORG_SLUG}`);
     await openCommandPalette(ownerPage);
 
     const dialog = ownerPage.getByRole("dialog");
@@ -306,14 +312,16 @@ test.describe("Command Palette - Chapter Search", () => {
 
     await dialog.getByText(chapter.title).click();
 
-    await expect(ownerPage).toHaveURL(new RegExp(`/ai/c/en/${course.slug}/ch/${chapter.slug}`));
+    await expect(ownerPage).toHaveURL(
+      new RegExp(`/${AI_ORG_SLUG}/c/en/${course.slug}/ch/${chapter.slug}`),
+    );
   });
 });
 
 test.describe("Command Palette - Lesson Search", () => {
   test("shows lessons in search results", async ({ ownerPage }) => {
     const { lesson } = await createTestLesson();
-    await ownerPage.goto("/ai");
+    await ownerPage.goto(`/${AI_ORG_SLUG}`);
     await openCommandPalette(ownerPage);
 
     const dialog = ownerPage.getByRole("dialog");
@@ -325,7 +333,7 @@ test.describe("Command Palette - Lesson Search", () => {
 
   test("clicking lesson navigates to lesson page", async ({ ownerPage }) => {
     const { chapter, course, lesson } = await createTestLesson();
-    await ownerPage.goto("/ai");
+    await ownerPage.goto(`/${AI_ORG_SLUG}`);
     await openCommandPalette(ownerPage);
 
     const dialog = ownerPage.getByRole("dialog");
@@ -334,14 +342,28 @@ test.describe("Command Palette - Lesson Search", () => {
     await dialog.getByText(lesson.title).click();
 
     await expect(ownerPage).toHaveURL(
-      new RegExp(`/ai/c/en/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`),
+      new RegExp(`/${AI_ORG_SLUG}/c/en/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`),
     );
   });
 });
 
 test.describe("Command Palette - Keyboard Navigation", () => {
+  let courseUrl: string;
+
+  test.beforeAll(async () => {
+    const org = await getAiOrganization();
+
+    const course = await courseFixture({
+      isPublished: true,
+      organizationId: org.id,
+      slug: `e2e-kbd-${randomUUID().slice(0, 8)}`,
+    });
+
+    courseUrl = `/${AI_ORG_SLUG}/c/en/${course.slug}`;
+  });
+
   test("focuses input on open", async ({ ownerPage }) => {
-    await ownerPage.goto("/ai");
+    await ownerPage.goto(`/${AI_ORG_SLUG}`);
     await ownerPage.getByRole("button", { name: /search/i }).click();
 
     const input = ownerPage.getByPlaceholder(/search/i);
@@ -349,7 +371,7 @@ test.describe("Command Palette - Keyboard Navigation", () => {
   });
 
   test("arrow key navigation selects items", async ({ ownerPage }) => {
-    await ownerPage.goto("/ai");
+    await ownerPage.goto(`/${AI_ORG_SLUG}`);
     await ownerPage.getByRole("button", { name: /search/i }).click();
 
     const dialog = ownerPage.getByRole("dialog");
@@ -390,8 +412,7 @@ test.describe("Command Palette - Keyboard Navigation", () => {
   });
 
   test("Enter to select navigates correctly", async ({ ownerPage }) => {
-    // Start from a course detail page
-    await ownerPage.goto("/ai/c/en/machine-learning");
+    await ownerPage.goto(courseUrl);
     await ownerPage.getByRole("button", { name: /search/i }).click();
     await expect(ownerPage.getByRole("dialog")).toBeVisible();
 
@@ -403,7 +424,7 @@ test.describe("Command Palette - Keyboard Navigation", () => {
   });
 
   test("focus trap within dialog", async ({ ownerPage }) => {
-    await ownerPage.goto("/ai");
+    await ownerPage.goto(`/${AI_ORG_SLUG}`);
     await ownerPage.getByRole("button", { name: /search/i }).click();
     await expect(ownerPage.getByRole("dialog")).toBeVisible();
 
@@ -419,7 +440,7 @@ test.describe("Command Palette - Mobile Viewport", () => {
   test.use({ viewport: { height: 667, width: 375 } });
 
   test("command palette opens and functions on mobile", async ({ ownerPage }) => {
-    await ownerPage.goto("/ai");
+    await ownerPage.goto(`/${AI_ORG_SLUG}`);
     await ownerPage.getByRole("button", { name: /search/i }).click();
 
     const dialog = ownerPage.getByRole("dialog");
@@ -430,7 +451,7 @@ test.describe("Command Palette - Mobile Viewport", () => {
 
 test.describe("Command Palette - Accessibility", () => {
   test("has dialog role", async ({ ownerPage }) => {
-    await ownerPage.goto("/ai");
+    await ownerPage.goto(`/${AI_ORG_SLUG}`);
     await ownerPage.getByRole("button", { name: /search/i }).click();
 
     const dialog = ownerPage.getByRole("dialog");
@@ -438,7 +459,7 @@ test.describe("Command Palette - Accessibility", () => {
   });
 
   test("has accessible title", async ({ ownerPage }) => {
-    await ownerPage.goto("/ai");
+    await ownerPage.goto(`/${AI_ORG_SLUG}`);
     await ownerPage.getByRole("button", { name: /search/i }).click();
 
     const dialog = ownerPage.getByRole("dialog");
@@ -449,7 +470,7 @@ test.describe("Command Palette - Accessibility", () => {
   });
 
   test("search button indicates keyboard shortcut", async ({ ownerPage }) => {
-    await ownerPage.goto("/ai");
+    await ownerPage.goto(`/${AI_ORG_SLUG}`);
 
     const searchButton = ownerPage.getByRole("button", { name: /search/i });
     await expect(searchButton).toHaveAttribute("aria-keyshortcuts", /k/i);
@@ -457,15 +478,15 @@ test.describe("Command Palette - Accessibility", () => {
 
   test("search input has font-size >= 16px on mobile to prevent iOS Safari zoom", async ({
     browser,
-    baseURL,
+    ownerUser,
   }) => {
     const context = await browser.newContext({
-      storageState: "e2e/.auth/owner.json",
+      storageState: ownerUser.storageState,
       viewport: { height: 667, width: 375 },
     });
 
     const page = await context.newPage();
-    await page.goto(`${baseURL}/ai`);
+    await page.goto(`/${AI_ORG_SLUG}`);
     await openCommandPalette(page);
 
     const input = page.getByPlaceholder(/search/i);
