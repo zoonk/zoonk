@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { request } from "@playwright/test";
 import { prisma } from "@zoonk/db";
-import { AI_ORG_SLUG } from "@zoonk/utils/constants";
+import { getAiOrganization } from "@zoonk/e2e/helpers";
 import { expect, test } from "./fixtures";
 
 test.describe("Course Generation Workflow API", () => {
@@ -10,14 +10,7 @@ test.describe("Course Generation Workflow API", () => {
   test.beforeAll(async () => {
     baseURL = process.env.E2E_BASE_URL ?? "";
 
-    // Verify AI organization exists
-    const aiOrg = await prisma.organization.findUnique({
-      where: { slug: AI_ORG_SLUG },
-    });
-
-    if (!aiOrg) {
-      throw new Error("AI organization not found");
-    }
+    await getAiOrganization();
   });
 
   test.afterAll(async () => {
