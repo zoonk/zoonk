@@ -34,17 +34,10 @@ export function useCommandPaletteSearch<TResults>(options: {
   const [isPending, startTransition] = useTransition();
   const requestIdRef = useRef(0);
 
-  useKeyboardCallback(
-    "k",
-    (event) => {
-      event.preventDefault();
-      setIsOpen((prev) => !prev);
-    },
-    {
-      mode: "any",
-      modifiers: { ctrlKey: true, metaKey: true },
-    },
-  );
+  useKeyboardCallback("k", () => setIsOpen((prev) => !prev), {
+    mode: "any",
+    modifiers: { ctrlKey: true, metaKey: true },
+  });
 
   const open = useCallback(() => setIsOpen(true), []);
   const toggle = useCallback(() => setIsOpen((prev) => !prev), []);

@@ -232,37 +232,33 @@ export function useWizardKeyboard({
   onNext: () => void;
   onSubmit: () => void;
 }) {
-  useKeyboardCallback("Escape", (event) => {
-    event.preventDefault();
-    onClose();
-  });
+  useKeyboardCallback("Escape", () => onClose());
 
   useKeyboardCallback(
     "ArrowLeft",
-    (event) => {
-      if (!isFirstStep) {
-        event.preventDefault();
-        onBack();
+    () => {
+      if (isFirstStep) {
+        return false;
       }
+      onBack();
     },
     { mode: "none" },
   );
 
   useKeyboardCallback(
     "ArrowRight",
-    (event) => {
-      if (canProceed && !isLastStep) {
-        event.preventDefault();
-        onNext();
+    () => {
+      if (!canProceed || isLastStep) {
+        return false;
       }
+      onNext();
     },
     { mode: "none" },
   );
 
   useKeyboardCallback(
     "Enter",
-    (event) => {
-      event.preventDefault();
+    () => {
       if (isLastStep) {
         onSubmit();
       } else {

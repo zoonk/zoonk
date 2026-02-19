@@ -63,7 +63,7 @@ export function usePlayerKeyboard({
 }: PlayerKeyboardParams) {
   useKeyboardCallback(
     "Enter",
-    (event) => {
+    () => {
       const action = getEnterAction({
         hasAnswer,
         onCheck,
@@ -74,43 +74,43 @@ export function usePlayerKeyboard({
         phase,
       });
 
-      if (action) {
-        event.preventDefault();
-        action();
+      if (!action) {
+        return false;
       }
+      action();
     },
     { mode: "none" },
   );
 
   useKeyboardCallback(
     "r",
-    (event) => {
-      if (phase === "completed") {
-        event.preventDefault();
-        onRestart();
+    () => {
+      if (phase !== "completed") {
+        return false;
       }
+      onRestart();
     },
     { ignoreEditable: true, mode: "none" },
   );
 
   useKeyboardCallback(
     "ArrowRight",
-    (event) => {
-      if (phase === "playing" && isStaticStep) {
-        event.preventDefault();
-        onNavigateNext();
+    () => {
+      if (phase !== "playing" || !isStaticStep) {
+        return false;
       }
+      onNavigateNext();
     },
     { mode: "none" },
   );
 
   useKeyboardCallback(
     "ArrowLeft",
-    (event) => {
-      if (phase === "playing" && isStaticStep) {
-        event.preventDefault();
-        onNavigatePrev();
+    () => {
+      if (phase !== "playing" || !isStaticStep) {
+        return false;
       }
+      onNavigatePrev();
     },
     { mode: "none" },
   );

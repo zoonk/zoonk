@@ -76,34 +76,31 @@ function checkModifiers(
  * @param callback The function to call when the shortcut is pressed.
  * @param options Optional configuration for modifier keys and matching mode.
  *
+ * Callbacks return `void` (handled — `preventDefault` is called) or
+ * `false` (not handled — `preventDefault` is skipped).
+ *
  * @example
  * // Cmd+K OR Ctrl+K (cross-platform toggle)
- * useKeyboardCallback("k", toggle, {
+ * useKeyboardCallback("k", () => toggle(), {
  *   mode: "any",
  *   modifiers: { ctrlKey: true, metaKey: true },
  * });
  *
  * @example
- * // Cmd+Shift+P (both modifiers required)
- * useKeyboardCallback("p", openPalette, {
- *   modifiers: { metaKey: true, shiftKey: true },
- * });
- *
- * @example
  * // Just Enter, no modifiers allowed
- * useKeyboardCallback("Enter", submit, { mode: "none" });
+ * useKeyboardCallback("Enter", () => submit(), { mode: "none" });
  *
  * @example
- * // Any Enter (modifiers don't matter)
- * useKeyboardCallback("Enter", submit);
- *
- * @example
- * // Escape key without modifiers
- * useKeyboardCallback("Escape", close, { mode: "none" });
+ * // Conditionally handle — return false to skip preventDefault
+ * useKeyboardCallback("ArrowRight", () => {
+ *   if (!canNavigate) return false;
+ *   goNext();
+ * }, { mode: "none" });
  */
 export function useKeyboardCallback(
   key: string,
-  callback: (event: KeyboardEvent) => void,
+  // oxlint-disable-next-line @typescript-eslint/no-invalid-void-type -- `void` is the correct return type here; `undefined` breaks contextual typing for callbacks like `() => toggle()`
+  callback: () => false | void,
   options: {
     /**
      * Skip the callback when the event target is an input, textarea, or contenteditable element.
@@ -126,7 +123,11 @@ export function useKeyboardCallback(
   const { altKey, ctrlKey, metaKey, shiftKey } = modifiers ?? {};
 
   const onKeyPress = useEffectEvent((event: KeyboardEvent) => {
-    callback(event);
+    const handled = callback();
+
+    if (handled !== false) {
+      event.preventDefault();
+    }
   });
 
   useEffect(() => {
