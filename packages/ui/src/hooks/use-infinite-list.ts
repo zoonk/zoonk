@@ -3,10 +3,6 @@
 import { useCallback, useRef, useState } from "react";
 import useInfiniteScroll from "react-infinite-scroll-hook";
 
-function getItemsIdentity<TItem>(items: TItem[], getKey: (item: TItem) => string | number): string {
-  return items.map((item) => getKey(item)).join(",");
-}
-
 export function useInfiniteList<TItem, TCursor>({
   fetchMore,
   getCursor,
@@ -34,17 +30,6 @@ export function useInfiniteList<TItem, TCursor>({
   // Use ref to track the latest cursor to avoid stale closures
   const lastItem = initialItems.at(-1);
   const cursorRef = useRef<TCursor | undefined>(lastItem ? getCursor(lastItem) : undefined);
-
-  const itemsIdentity = getItemsIdentity(initialItems, getKey);
-  const [prevIdentity, setPrevIdentity] = useState(itemsIdentity);
-
-  if (itemsIdentity !== prevIdentity) {
-    setPrevIdentity(itemsIdentity);
-    setItems(initialItems);
-    setHasNextPage(initialItems.length >= limit);
-    const lastInitialItem = initialItems.at(-1);
-    cursorRef.current = lastInitialItem ? getCursor(lastInitialItem) : undefined;
-  }
 
   const loadMore = useCallback(async () => {
     if (cursorRef.current === undefined) {
