@@ -11,6 +11,8 @@ import { validateAnswers } from "@zoonk/core/player/validate-answers";
 import { prisma } from "@zoonk/db";
 import { type BeltLevelResult } from "@zoonk/utils/belt-level";
 import { safeAsync } from "@zoonk/utils/error";
+import { getLocale } from "next-intl/server";
+import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { hasNegativeDimension } from "./has-negative-dimension";
 
@@ -118,6 +120,9 @@ export async function submitCompletion(rawInput: CompletionInput): Promise<Compl
   if (error || !data) {
     return { status: "error" };
   }
+
+  const locale = await getLocale();
+  revalidatePath(`/${locale}`);
 
   return {
     belt: data.belt,
