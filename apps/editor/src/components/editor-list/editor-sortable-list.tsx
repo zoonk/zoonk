@@ -22,11 +22,11 @@ import { toast } from "@zoonk/ui/components/sonner";
 import { cn } from "@zoonk/ui/lib/utils";
 import {
   useCallback,
-  useEffect,
   useId,
   useMemo,
   useOptimistic,
   useState,
+  useSyncExternalStore,
   useTransition,
 } from "react";
 import {
@@ -34,6 +34,13 @@ import {
   type EditorSortableContextValue,
   type SortableItem,
 } from "./editor-sortable-context";
+
+// No-op unsubscribe for useSyncExternalStore (client-only mount detection).
+// oxlint-disable-next-line no-empty-function -- intentional: useSyncExternalStore requires a subscribe that returns an unsubscribe
+const noopUnsubscribe = () => {};
+function emptySubscribe() {
+  return noopUnsubscribe;
+}
 
 export function EditorSortableList<T extends SortableItem>({
   children,
@@ -47,14 +54,14 @@ export function EditorSortableList<T extends SortableItem>({
   renderOverlay?: (activeItem: T) => React.ReactNode;
 }) {
   const dndId = useId();
-  const [mounted, setMounted] = useState(false);
+  const mounted = useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false,
+  );
   const [activeId, setActiveId] = useState<number | null>(null);
   const [optimisticItems, setOptimisticItems] = useOptimistic(initialItems);
   const [pending, startTransition] = useTransition();
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {

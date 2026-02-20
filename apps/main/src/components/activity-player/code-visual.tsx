@@ -31,6 +31,8 @@ function buildAnnotationMap(
   return map;
 }
 
+const CODE_THEMES = { dark: "github-dark-dimmed", light: "github-light" } as const;
+
 function useHighlightedCode(code: string, language: string): TokenLine[] | null {
   const [tokens, setTokens] = useState<TokenLine[] | null>(null);
 
@@ -40,7 +42,7 @@ function useHighlightedCode(code: string, language: string): TokenLine[] | null 
     codeToTokens(code, {
       // oxlint-disable-next-line no-unsafe-type-assertion -- language comes from AI-generated content; unsupported languages are caught below
       lang: language as BundledLanguage,
-      themes: { dark: "github-dark-dimmed", light: "github-light" },
+      themes: CODE_THEMES,
     })
       .then((result) => {
         if (!cancelled) {
