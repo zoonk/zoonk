@@ -1277,7 +1277,6 @@ msgid "{item}. {result}."
 msgstr "{item}. {result}."
 
 #: src/components/activity-player/arrange-words.tsx
-#: src/components/activity-player/sort-order-step.tsx
 msgctxt "vPyO9S"
 msgid "Position {position}: {item}. Tap to remove."
 msgstr "Posição {position}: {item}. Toque para remover."
@@ -1534,19 +1533,19 @@ msgid "Image options"
 msgstr "Opções de imagem"
 
 #: src/components/activity-player/sort-order-step.tsx
-msgctxt "/CFOL2"
-msgid "Tap items in the correct order"
-msgstr "Toque nos itens na ordem correta"
-
-#: src/components/activity-player/sort-order-step.tsx
-msgctxt "1za4AW"
-msgid "{item}. Tap to select as position {nextPosition}."
-msgstr "{item}. Toque para selecionar como posição {nextPosition}."
+msgctxt "9lc1oV"
+msgid "Drag items into the correct order"
+msgstr "Arraste os itens para a ordem correta"
 
 #: src/components/activity-player/sort-order-step.tsx
 msgctxt "p5llOK"
 msgid "Sort items"
 msgstr "Ordenar itens"
+
+#: src/components/activity-player/sort-order-step.tsx
+msgctxt "VA8c/A"
+msgid "Correct order:"
+msgstr "Ordem correta:"
 
 #: src/components/activity-player/timeline-visual.tsx
 msgctxt "zWkvNO"
