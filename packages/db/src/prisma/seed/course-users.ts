@@ -55,4 +55,15 @@ export async function seedCourseUsers(
       },
     });
   }
+
+  // Sync userCount for all enrolled courses
+  await Promise.all(
+    courses.map(async (course) => {
+      const count = await prisma.courseUser.count({ where: { courseId: course.id } });
+      await prisma.course.update({
+        data: { userCount: count },
+        where: { id: course.id },
+      });
+    }),
+  );
 }

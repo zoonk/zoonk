@@ -15,7 +15,7 @@ const cachedListCourses = cache(
     language: string,
     limit: number,
     category?: CourseCategory,
-    offset?: number,
+    cursor?: number,
   ): Promise<CourseWithOrg[]> => {
     const courses = await prisma.course.findMany({
       include: {
@@ -23,9 +23,9 @@ const cachedListCourses = cache(
           select: { slug: true },
         },
       },
-      orderBy: [{ users: { _count: "desc" } }, { createdAt: "desc" }],
+      orderBy: [{ userCount: "desc" }, { id: "desc" }],
       take: limit,
-      ...(offset && { skip: offset }),
+      ...(cursor && { cursor: { id: cursor }, skip: 1 }),
       where: {
         isPublished: true,
         language,
@@ -42,10 +42,10 @@ const cachedListCourses = cache(
 
 export function listCourses(params: {
   category?: CourseCategory;
+  cursor?: number;
   language: string;
   limit?: number;
-  offset?: number;
 }): Promise<CourseWithOrg[]> {
   const limit = clampQueryItems(params.limit ?? LIST_COURSES_LIMIT);
-  return cachedListCourses(params.language, limit, params.category, params.offset);
+  return cachedListCourses(params.language, limit, params.category, params.cursor);
 }

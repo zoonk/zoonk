@@ -57,6 +57,7 @@ export async function submitCompletion(rawInput: CompletionInput): Promise<Compl
       select: {
         id: true,
         kind: true,
+        lesson: { select: { chapter: { select: { courseId: true } } } },
         organizationId: true,
         steps: {
           orderBy: { position: "asc" },
@@ -107,6 +108,7 @@ export async function submitCompletion(rawInput: CompletionInput): Promise<Compl
 
     return submitActivityCompletion({
       activityId: activity.id,
+      courseId: activity.lesson.chapter.courseId,
       durationSeconds,
       isChallenge,
       organizationId: activity.organizationId,

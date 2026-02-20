@@ -43,7 +43,7 @@ export function CourseListClient({
     isLoading,
     sentryRef,
   } = useInfiniteList<CourseWithOrg>({
-    fetchMore: (offset) => loadMoreCourses({ category, language, offset }),
+    fetchMore: (cursor) => loadMoreCourses({ category, cursor: Number(cursor), language }),
     getKey: (course) => course.id,
     initialItems: initialCourses,
     limit,

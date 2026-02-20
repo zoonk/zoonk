@@ -101,6 +101,10 @@ test.describe("Continue Learning Revalidation", () => {
         userId: user.id,
       }),
       prisma.courseUser.create({ data: { courseId: course.id, userId: user.id } }),
+      prisma.course.update({
+        data: { userCount: { increment: 1 } },
+        where: { id: course.id },
+      }),
     ]);
 
     // 1. Navigate to home page (full load)
