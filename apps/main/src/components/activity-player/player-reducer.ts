@@ -109,6 +109,14 @@ function collectAllDimensions(steps: SerializedStep[]): DimensionInventory {
   return Object.fromEntries(effects.map((effect) => [effect.dimension, 0]));
 }
 
+function buildInitialAnswers(steps: SerializedStep[]): Record<string, SelectedAnswer> {
+  return Object.fromEntries(
+    steps
+      .filter((step) => step.kind === "sortOrder" && step.sortOrderItems.length > 0)
+      .map((step) => [step.id, { kind: "sortOrder" as const, userOrder: step.sortOrderItems }]),
+  );
+}
+
 export function createInitialState(activity: SerializedActivity): PlayerState {
   const dimensions = collectAllDimensions(activity.steps);
   const isChallenge = Object.keys(dimensions).length > 0;
@@ -120,7 +128,7 @@ export function createInitialState(activity: SerializedActivity): PlayerState {
     dimensions,
     phase: isChallenge ? "intro" : "playing",
     results: {},
-    selectedAnswers: {},
+    selectedAnswers: buildInitialAnswers(activity.steps),
     startedAt: now,
     stepStartedAt: now,
     stepTimings: {},
@@ -252,7 +260,7 @@ function handleRestart(state: PlayerState): PlayerState {
     dimensions: collectAllDimensions(state.steps),
     phase: "playing",
     results: {},
-    selectedAnswers: {},
+    selectedAnswers: buildInitialAnswers(state.steps),
     startedAt: now,
     stepStartedAt: now,
     stepTimings: {},

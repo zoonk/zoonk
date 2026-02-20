@@ -24,7 +24,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { parseStepContent } from "@zoonk/core/steps/content-contract";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import { useCallback, useEffect, useId, useMemo, useState } from "react";
+import { useCallback, useId, useMemo, useState } from "react";
 import { InlineFeedback } from "./inline-feedback";
 import { type SelectedAnswer, type StepResult } from "./player-reducer";
 import { QuestionText } from "./question-text";
@@ -240,17 +240,6 @@ export function SortOrderStep({
   const content = useMemo(() => parseStepContent("sortOrder", step.content), [step.content]);
   const replaceName = useReplaceName();
   const [items, setItems] = useState<SortItem[]>(() => initItems(step, result));
-
-  // Register the initial shuffled order as the answer on mount.
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional mount-only effect
-  useEffect(() => {
-    if (!result) {
-      onSelectAnswer(step.id, {
-        kind: "sortOrder",
-        userOrder: items.map((item) => item.text),
-      });
-    }
-  }, []); // oxlint-disable-line react-hooks/exhaustive-deps -- mount-only
 
   const handleReorder = useCallback(
     (reordered: SortItem[]) => {
