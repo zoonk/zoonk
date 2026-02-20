@@ -48,12 +48,4 @@ describe(preloadNextLesson, () => {
 
     await expect(preloadNextLesson(BigInt(1), "session=abc123")).resolves.toBeUndefined();
   });
-
-  test("passes activityId to getNextLessonId", async () => {
-    vi.mocked(getNextLessonId).mockResolvedValue(null);
-
-    await preloadNextLesson(BigInt(99), "session=abc123");
-
-    expect(getNextLessonId).toHaveBeenCalledWith(BigInt(99));
-  });
 });

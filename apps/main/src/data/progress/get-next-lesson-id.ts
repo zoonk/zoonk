@@ -35,7 +35,7 @@ export async function getNextLessonId(activityId: bigint): Promise<number | null
       where: {
         OR: [
           {
-            chapter: { id: chapter.id, position: chapter.position },
+            chapter: { id: chapter.id },
             position: { gt: lesson.position },
           },
           {

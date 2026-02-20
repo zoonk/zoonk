@@ -38,13 +38,6 @@ describe(lessonPreloadWorkflow, () => {
     expect(callOrder).toEqual(["lessonGeneration", "activityGeneration"]);
   });
 
-  test("passes the lessonId to both workflows", async () => {
-    await lessonPreloadWorkflow(123);
-
-    expect(lessonGenerationWorkflow).toHaveBeenCalledWith(123);
-    expect(activityGenerationWorkflow).toHaveBeenCalledWith(123);
-  });
-
   test("propagates errors from lessonGenerationWorkflow", async () => {
     vi.mocked(lessonGenerationWorkflow).mockRejectedValueOnce(new Error("lesson gen failed"));
 

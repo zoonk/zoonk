@@ -54,6 +54,8 @@ export async function submitCompletion(rawInput: CompletionInput): Promise<Compl
 
   const userId = Number(session.user.id);
 
+  const activityId = BigInt(input.activityId);
+
   const { data, error } = await safeAsync(async () => {
     const activity = await prisma.activity.findUnique({
       select: {
@@ -73,7 +75,7 @@ export async function submitCompletion(rawInput: CompletionInput): Promise<Compl
           where: { isPublished: true },
         },
       },
-      where: { id: BigInt(input.activityId) },
+      where: { id: activityId },
     });
 
     if (!activity) {
@@ -128,7 +130,7 @@ export async function submitCompletion(rawInput: CompletionInput): Promise<Compl
   const locale = await getLocale();
   revalidatePath(`/${locale}`);
 
-  after(() => preloadNextLesson(BigInt(input.activityId), reqHeaders.get("cookie") ?? ""));
+  after(() => preloadNextLesson(activityId, reqHeaders.get("cookie") ?? ""));
 
   return {
     belt: data.belt,
