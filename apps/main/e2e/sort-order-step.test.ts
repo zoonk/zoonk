@@ -66,7 +66,7 @@ async function createSortOrderActivity(options: {
 }
 
 test.describe("Sort Order Step", () => {
-  test("renders question, instruction text, and shuffled item list", async ({ page }) => {
+  test("renders question, instruction text, and all items", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const { url } = await createSortOrderActivity({
       steps: [
@@ -84,23 +84,16 @@ test.describe("Sort Order Step", () => {
     await page.goto(url);
 
     await expect(page.getByText(new RegExp(`Sort these items ${uniqueId}`))).toBeVisible();
-    await expect(page.getByText(/tap items in the correct order/i)).toBeVisible();
+    await expect(page.getByText(/drag items into the correct order/i)).toBeVisible();
 
     const itemList = page.getByRole("list", { name: /sort items/i });
-    await expect(itemList).toBeVisible();
 
-    await expect(
-      itemList.getByRole("button", { name: new RegExp(`First ${uniqueId}`) }),
-    ).toBeVisible();
-    await expect(
-      itemList.getByRole("button", { name: new RegExp(`Second ${uniqueId}`) }),
-    ).toBeVisible();
-    await expect(
-      itemList.getByRole("button", { name: new RegExp(`Third ${uniqueId}`) }),
-    ).toBeVisible();
+    await expect(itemList.getByText(new RegExp(`First ${uniqueId}`))).toBeVisible();
+    await expect(itemList.getByText(new RegExp(`Second ${uniqueId}`))).toBeVisible();
+    await expect(itemList.getByText(new RegExp(`Third ${uniqueId}`))).toBeVisible();
   });
 
-  test("tapping an item assigns the next sequential number", async ({ page }) => {
+  test("check button is always enabled and items have position numbers", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const { url } = await createSortOrderActivity({
       steps: [
@@ -118,31 +111,25 @@ test.describe("Sort Order Step", () => {
     await page.goto(url);
 
     const itemList = page.getByRole("list", { name: /sort items/i });
-    const alphaSelected = itemList.getByRole("button", {
-      name: new RegExp(`Position 1.*Alpha ${uniqueId}`),
-    });
+    const items = itemList.getByRole("listitem");
 
-    // First click: resilient to hydration timing
+    await expect(items).toHaveCount(2);
+    await expect(items.nth(0)).toContainText("1");
+    await expect(items.nth(1)).toContainText("2");
+
     await expect(async () => {
-      if (!(await alphaSelected.isVisible())) {
-        await itemList
-          .getByRole("button", { name: new RegExp(`Alpha ${uniqueId}.*Tap to select`) })
-          .click();
-      }
-      await expect(alphaSelected).toBeVisible({ timeout: 1000 });
+      await expect(page.getByRole("button", { name: /check/i })).toBeEnabled({ timeout: 1000 });
     }).toPass();
   });
 
-  test("tapping a selected item removes its number and renumbers higher items", async ({
-    page,
-  }) => {
+  test("drag swaps adjacent items", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const { url } = await createSortOrderActivity({
       steps: [
         {
           content: {
             feedback: `Feedback ${uniqueId}`,
-            items: [`Uno ${uniqueId}`, `Dos ${uniqueId}`, `Tres ${uniqueId}`],
+            items: [`One ${uniqueId}`, `Two ${uniqueId}`, `Three ${uniqueId}`],
             question: `Order ${uniqueId}`,
           },
           position: 0,
@@ -153,59 +140,31 @@ test.describe("Sort Order Step", () => {
     await page.goto(url);
 
     const itemList = page.getByRole("list", { name: /sort items/i });
+    await expect(itemList.getByRole("listitem")).toHaveCount(3);
 
-    // First click: resilient to hydration timing
-    const unoSelected = itemList.getByRole("button", {
-      name: new RegExp(`Position 1.*Uno ${uniqueId}`),
-    });
+    // Wait for hydration
+    await expect(page.getByRole("button", { name: /check/i })).toBeEnabled();
 
+    const buttons = itemList.getByRole("button");
+    const initialFirstText = await buttons.nth(0).textContent();
+
+    // Drag-and-drop can be timing-sensitive — retry the drag + assertion
     await expect(async () => {
-      if (!(await unoSelected.isVisible())) {
-        await itemList
-          .getByRole("button", { name: new RegExp(`Uno ${uniqueId}.*Tap to select`) })
-          .click();
-      }
-      await expect(unoSelected).toBeVisible({ timeout: 1000 });
-    }).toPass();
-
-    // Subsequent clicks: page is hydrated, add assertions for determinism
-    await itemList
-      .getByRole("button", { name: new RegExp(`Dos ${uniqueId}.*Tap to select`) })
-      .click();
-    await expect(
-      itemList.getByRole("button", { name: new RegExp(`Position 2.*Dos ${uniqueId}`) }),
-    ).toBeVisible();
-
-    await itemList
-      .getByRole("button", { name: new RegExp(`Tres ${uniqueId}.*Tap to select`) })
-      .click();
-    await expect(
-      itemList.getByRole("button", { name: new RegExp(`Position 3.*Tres ${uniqueId}`) }),
-    ).toBeVisible();
-
-    // Remove #2 (Dos) — Tres should become #2
-    await itemList.getByRole("button", { name: new RegExp(`Position 2.*Dos ${uniqueId}`) }).click();
-
-    await expect(
-      itemList.getByRole("button", { name: new RegExp(`Position 1.*Uno ${uniqueId}`) }),
-    ).toBeVisible();
-    await expect(
-      itemList.getByRole("button", { name: new RegExp(`Dos ${uniqueId}.*Tap to select`) }),
-    ).toBeVisible();
-    await expect(
-      itemList.getByRole("button", { name: new RegExp(`Position 2.*Tres ${uniqueId}`) }),
-    ).toBeVisible();
+      await buttons.nth(1).dragTo(buttons.nth(0), { steps: 10 });
+      const newFirstText = await buttons.nth(0).textContent();
+      expect(newFirstText).not.toBe(initialFirstText);
+    }).toPass({ timeout: 10_000 });
   });
 
-  test("check button disabled until all items selected", async ({ page }) => {
+  test("checking answer shows feedback and continue button", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const { url } = await createSortOrderActivity({
       steps: [
         {
           content: {
-            feedback: `Feedback ${uniqueId}`,
-            items: [`X ${uniqueId}`, `Y ${uniqueId}`],
-            question: `Order ${uniqueId}`,
+            feedback: `Nice work ${uniqueId}`,
+            items: [`A ${uniqueId}`, `B ${uniqueId}`, `C ${uniqueId}`],
+            question: `Sort ${uniqueId}`,
           },
           position: 0,
         },
@@ -214,94 +173,38 @@ test.describe("Sort Order Step", () => {
 
     await page.goto(url);
 
-    const checkButton = page.getByRole("button", { name: /check/i });
-    await expect(checkButton).toBeDisabled();
-
-    const itemList = page.getByRole("list", { name: /sort items/i });
-    const xSelected = itemList.getByRole("button", {
-      name: new RegExp(`Position 1.*X ${uniqueId}`),
-    });
-
-    // First click: resilient to hydration timing
-    await expect(async () => {
-      if (!(await xSelected.isVisible())) {
-        await itemList
-          .getByRole("button", { name: new RegExp(`X ${uniqueId}.*Tap to select`) })
-          .click();
-      }
-      await expect(xSelected).toBeVisible({ timeout: 1000 });
-    }).toPass();
-
-    await expect(checkButton).toBeDisabled();
-
-    await itemList
-      .getByRole("button", { name: new RegExp(`Y ${uniqueId}.*Tap to select`) })
-      .click();
-
-    await expect(checkButton).toBeEnabled();
-  });
-
-  test("correct answer shows visible Correct! text and green indicators", async ({ page }) => {
-    const uniqueId = randomUUID().slice(0, 8);
-    const { url } = await createSortOrderActivity({
-      steps: [
-        {
-          content: {
-            feedback: `Well done ${uniqueId}`,
-            items: [`Step1 ${uniqueId}`, `Step2 ${uniqueId}`],
-            question: `Order correctly ${uniqueId}`,
-          },
-          position: 0,
-        },
-      ],
-    });
-
-    await page.goto(url);
-
-    const itemList = page.getByRole("list", { name: /sort items/i });
-    const step1Selected = itemList.getByRole("button", {
-      name: new RegExp(`Position 1.*Step1 ${uniqueId}`),
-    });
-
-    // First click: resilient to hydration timing
-    await expect(async () => {
-      if (!(await step1Selected.isVisible())) {
-        await itemList
-          .getByRole("button", { name: new RegExp(`Step1 ${uniqueId}.*Tap to select`) })
-          .click();
-      }
-      await expect(step1Selected).toBeVisible({ timeout: 1000 });
-    }).toPass();
-
-    await itemList
-      .getByRole("button", { name: new RegExp(`Step2 ${uniqueId}.*Tap to select`) })
-      .click();
+    // Wait for hydration
+    await expect(page.getByRole("button", { name: /check/i })).toBeEnabled();
 
     await page.getByRole("button", { name: /check/i }).click();
 
-    // Visible "Correct!" text (not just screen-reader)
-    await expect(page.getByText(/correct!/i)).toBeVisible();
+    // Either "Correct!" or "Not quite" appears (depends on shuffle)
+    await expect(page.getByText(/correct!|not quite/i)).toBeVisible();
 
-    // Custom feedback is shown
-    await expect(page.getByText(new RegExp(`Well done ${uniqueId}`))).toBeVisible();
+    // Custom feedback always shows
+    await expect(page.getByText(new RegExp(`Nice work ${uniqueId}`))).toBeVisible();
 
-    // Items show correct result state (list reorders to correct order)
-    await expect(
-      itemList.getByRole("button", { name: new RegExp(`Step1 ${uniqueId}.*Correct`) }),
-    ).toBeVisible();
-    await expect(
-      itemList.getByRole("button", { name: new RegExp(`Step2 ${uniqueId}.*Correct`) }),
-    ).toBeVisible();
+    // Continue button appears
+    await expect(page.getByRole("button", { name: /continue/i })).toBeVisible();
   });
 
-  test("incorrect answer reorders list to correct order with red indicators", async ({ page }) => {
+  test("incorrect answer shows 'Correct order:' label", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
+    // 7 items = 1/5040 chance of correct shuffle, virtually guaranteed wrong
     const { url } = await createSortOrderActivity({
       steps: [
         {
           content: {
             feedback: `Try again ${uniqueId}`,
-            items: [`First ${uniqueId}`, `Second ${uniqueId}`],
+            items: [
+              `Item1 ${uniqueId}`,
+              `Item2 ${uniqueId}`,
+              `Item3 ${uniqueId}`,
+              `Item4 ${uniqueId}`,
+              `Item5 ${uniqueId}`,
+              `Item6 ${uniqueId}`,
+              `Item7 ${uniqueId}`,
+            ],
             question: `Order ${uniqueId}`,
           },
           position: 0,
@@ -311,50 +214,23 @@ test.describe("Sort Order Step", () => {
 
     await page.goto(url);
 
-    const itemList = page.getByRole("list", { name: /sort items/i });
-    const secondSelected = itemList.getByRole("button", {
-      name: new RegExp(`Position 1.*Second ${uniqueId}`),
-    });
-
-    // First click: resilient to hydration timing (place in wrong order)
-    await expect(async () => {
-      if (!(await secondSelected.isVisible())) {
-        await itemList
-          .getByRole("button", { name: new RegExp(`Second ${uniqueId}.*Tap to select`) })
-          .click();
-      }
-      await expect(secondSelected).toBeVisible({ timeout: 1000 });
-    }).toPass();
-
-    await itemList
-      .getByRole("button", { name: new RegExp(`First ${uniqueId}.*Tap to select`) })
-      .click();
-
+    // Submit shuffled order as-is (virtually guaranteed incorrect with 7 items)
+    await expect(page.getByRole("button", { name: /check/i })).toBeEnabled();
     await page.getByRole("button", { name: /check/i }).click();
 
-    // Visible "Not quite" text (not just screen-reader)
     await expect(page.getByText(/not quite/i)).toBeVisible();
-
-    // List reorders to correct order with incorrect indicators
-    await expect(
-      itemList.getByRole("button", { name: new RegExp(`First ${uniqueId}.*Incorrect`) }),
-    ).toBeVisible();
-    await expect(
-      itemList.getByRole("button", { name: new RegExp(`Second ${uniqueId}.*Incorrect`) }),
-    ).toBeVisible();
-
-    // Custom feedback shown
+    await expect(page.getByText(/correct order:/i)).toBeVisible();
     await expect(page.getByText(new RegExp(`Try again ${uniqueId}`))).toBeVisible();
   });
 
-  test("continue button appears after checking", async ({ page }) => {
+  test("full flow: check, feedback, continue, completion", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const { url } = await createSortOrderActivity({
       steps: [
         {
           content: {
-            feedback: `Nice ${uniqueId}`,
-            items: [`A ${uniqueId}`, `B ${uniqueId}`],
+            feedback: `Done ${uniqueId}`,
+            items: [`A ${uniqueId}`, `B ${uniqueId}`, `C ${uniqueId}`],
             question: `Sort ${uniqueId}`,
           },
           position: 0,
@@ -364,71 +240,13 @@ test.describe("Sort Order Step", () => {
 
     await page.goto(url);
 
-    const itemList = page.getByRole("list", { name: /sort items/i });
-    const aSelected = itemList.getByRole("button", {
-      name: new RegExp(`Position 1.*A ${uniqueId}`),
-    });
-
-    // First click: resilient to hydration timing
-    await expect(async () => {
-      if (!(await aSelected.isVisible())) {
-        await itemList
-          .getByRole("button", { name: new RegExp(`A ${uniqueId}.*Tap to select`) })
-          .click();
-      }
-      await expect(aSelected).toBeVisible({ timeout: 1000 });
-    }).toPass();
-
-    await itemList
-      .getByRole("button", { name: new RegExp(`B ${uniqueId}.*Tap to select`) })
-      .click();
-
+    await expect(page.getByRole("button", { name: /check/i })).toBeEnabled();
     await page.getByRole("button", { name: /check/i }).click();
 
-    await expect(page.getByRole("button", { name: /continue/i })).toBeVisible();
-  });
-
-  test("full flow: select all, check, feedback, continue, completion", async ({ page }) => {
-    const uniqueId = randomUUID().slice(0, 8);
-    const { url } = await createSortOrderActivity({
-      steps: [
-        {
-          content: {
-            feedback: `Nice ${uniqueId}`,
-            items: [`A ${uniqueId}`, `B ${uniqueId}`],
-            question: `Sort ${uniqueId}`,
-          },
-          position: 0,
-        },
-      ],
-    });
-
-    await page.goto(url);
-
-    const itemList = page.getByRole("list", { name: /sort items/i });
-    const aSelected = itemList.getByRole("button", {
-      name: new RegExp(`Position 1.*A ${uniqueId}`),
-    });
-
-    // First click: resilient to hydration timing
-    await expect(async () => {
-      if (!(await aSelected.isVisible())) {
-        await itemList
-          .getByRole("button", { name: new RegExp(`A ${uniqueId}.*Tap to select`) })
-          .click();
-      }
-      await expect(aSelected).toBeVisible({ timeout: 1000 });
-    }).toPass();
-
-    await itemList
-      .getByRole("button", { name: new RegExp(`B ${uniqueId}.*Tap to select`) })
-      .click();
-
-    await page.getByRole("button", { name: /check/i }).click();
-    await expect(page.getByText(new RegExp(`Nice ${uniqueId}`))).toBeVisible();
-
+    await expect(page.getByText(new RegExp(`Done ${uniqueId}`))).toBeVisible();
     await page.getByRole("button", { name: /continue/i }).click();
-    await expect(page.getByText("1/1")).toBeVisible();
+
+    // Verify completion screen appears (score depends on shuffle)
     await expect(page.getByText(/correct/i)).toBeVisible();
   });
 });

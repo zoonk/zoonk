@@ -134,6 +134,25 @@ describe(createInitialState, () => {
     const state = createInitialState(buildChallengeActivity());
     expect(state.dimensions).toEqual({ Courage: 0, Diplomacy: 0 });
   });
+
+  test("pre-populates selectedAnswers for sortOrder steps", () => {
+    const sortItems = ["Banana", "Apple", "Cherry"];
+    const steps = [buildStep({ id: "sort-1", kind: "sortOrder", sortOrderItems: sortItems })];
+    const state = createInitialState(buildActivity({ steps }));
+    expect(state.selectedAnswers["sort-1"]).toEqual({
+      kind: "sortOrder",
+      userOrder: sortItems,
+    });
+  });
+
+  test("does not pre-populate selectedAnswers for non-sortOrder steps", () => {
+    const steps = [
+      buildStep({ id: "s1", kind: "static" }),
+      buildMultipleChoiceStep({ id: "mc-1" }),
+    ];
+    const state = createInitialState(buildActivity({ steps }));
+    expect(state.selectedAnswers).toEqual({});
+  });
 });
 
 describe("START_CHALLENGE", () => {
@@ -547,6 +566,27 @@ describe("RESTART", () => {
     const next = playerReducer(state, { type: "RESTART" });
     expect(next.activityId).toBe("my-activity");
     expect(next.steps).toEqual(steps);
+  });
+
+  test("re-seeds sortOrder answers on restart", () => {
+    const sortItems = ["Banana", "Apple", "Cherry"];
+    const steps = [
+      buildStep({ id: "sort-1", kind: "sortOrder", sortOrderItems: sortItems }),
+      buildMultipleChoiceStep({ id: "mc-1", position: 1 }),
+    ];
+    const state = buildState({
+      phase: "completed",
+      results: {},
+      selectedAnswers: {},
+      steps,
+    });
+
+    const next = playerReducer(state, { type: "RESTART" });
+    expect(next.selectedAnswers["sort-1"]).toEqual({
+      kind: "sortOrder",
+      userOrder: sortItems,
+    });
+    expect(next.selectedAnswers["mc-1"]).toBeUndefined();
   });
 
   test("resets to playing (not intro) for challenge activities", () => {
