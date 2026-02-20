@@ -20,18 +20,64 @@ describe("authenticated users", () => {
     expect(result).toBeNull();
   });
 
-  test("returns energy level when user has progress record", async () => {
+  test("returns energy unchanged when lastActiveAt is today", async () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);
 
     await prisma.userProgress.create({
       data: {
         currentEnergy: 85.5,
+        lastActiveAt: new Date(),
         userId: Number(user.id),
       },
     });
 
     const result = await getEnergyLevel(headers);
     expect(result).toEqual({ currentEnergy: 85.5 });
+  });
+
+  test("applies decay when lastActiveAt is 5 days ago", async () => {
+    const user = await userFixture();
+    const headers = await signInAs(user.email, user.password);
+
+    // Anchor to UTC midnight so a midnight rollover can't shift the day count
+    const today = new Date();
+    const todayMidnight = new Date(
+      Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()),
+    );
+    const fiveDaysAgo = new Date(todayMidnight.getTime() - 5 * 86_400_000);
+
+    await prisma.userProgress.create({
+      data: {
+        currentEnergy: 50,
+        lastActiveAt: fiveDaysAgo,
+        userId: Number(user.id),
+      },
+    });
+
+    const result = await getEnergyLevel(headers);
+    expect(result).toEqual({ currentEnergy: 46 });
+  });
+
+  test("clamps decayed energy at 0", async () => {
+    const user = await userFixture();
+    const headers = await signInAs(user.email, user.password);
+
+    const today = new Date();
+    const todayMidnight = new Date(
+      Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()),
+    );
+    const longAgo = new Date(todayMidnight.getTime() - 100 * 86_400_000);
+
+    await prisma.userProgress.create({
+      data: {
+        currentEnergy: 20,
+        lastActiveAt: longAgo,
+        userId: Number(user.id),
+      },
+    });
+
+    const result = await getEnergyLevel(headers);
+    expect(result).toEqual({ currentEnergy: 0 });
   });
 });

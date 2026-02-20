@@ -2,7 +2,8 @@ import "server-only";
 import { type ScoreResult } from "@zoonk/core/player/compute-score";
 import { type TransactionClient, prisma } from "@zoonk/db";
 import { type BeltLevelResult, calculateBeltLevel } from "@zoonk/utils/belt-level";
-import { MAX_ENERGY, MIN_ENERGY } from "@zoonk/utils/constants";
+import { DAILY_DECAY, MIN_ENERGY, MS_PER_DAY } from "@zoonk/utils/constants";
+import { clampEnergy, computeDecayedEnergy, toUTCMidnight } from "@zoonk/utils/energy";
 
 function getCompletionField(input: {
   isChallenge: boolean;
@@ -19,12 +20,35 @@ function getCompletionField(input: {
   return "interactiveCompleted";
 }
 
-function clampEnergy(value: number): number {
-  return Math.min(MAX_ENERGY, Math.max(MIN_ENERGY, value));
-}
+// Decay is org-independent: a user's energy decays globally regardless of
+// which organization they were active in, so gap records use organizationId: null.
+async function fillDecayGaps(
+  tx: TransactionClient,
+  userId: number,
+  currentEnergy: number,
+  lastActiveDate: Date,
+  todayDate: Date,
+): Promise<void> {
+  const dayDiff = Math.round((todayDate.getTime() - lastActiveDate.getTime()) / MS_PER_DAY);
 
-function getDateOnly(date: Date): Date {
-  return new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  if (dayDiff <= 1) {
+    return;
+  }
+
+  const records = Array.from({ length: dayDiff - 1 }, (_, i) => {
+    const date = new Date(lastActiveDate.getTime() + (i + 1) * MS_PER_DAY);
+    const decayedEnergy = Math.max(MIN_ENERGY, currentEnergy - (i + 1) * DAILY_DECAY);
+
+    return {
+      date,
+      dayOfWeek: date.getUTCDay(),
+      energyAtEnd: decayedEnergy,
+      organizationId: null as number | null,
+      userId,
+    };
+  });
+
+  await tx.dailyProgress.createMany({ data: records, skipDuplicates: true });
 }
 
 async function upsertDailyProgress(
@@ -127,7 +151,7 @@ export async function submitActivityCompletion(input: {
   newTotalBp: number;
 }> {
   const now = new Date();
-  const today = getDateOnly(now);
+  const today = toUTCMidnight(now);
 
   return prisma.$transaction(async (tx) => {
     // Create StepAttempt records
@@ -182,39 +206,49 @@ export async function submitActivityCompletion(input: {
       });
     }
 
-    // UserProgress upsert
+    // Find existing UserProgress to apply decay
+    const existingProgress = await tx.userProgress.findUnique({
+      select: { currentEnergy: true, lastActiveAt: true },
+      where: { userId: input.userId },
+    });
+
+    const decayedBase = existingProgress
+      ? computeDecayedEnergy(existingProgress.currentEnergy, existingProgress.lastActiveAt, now)
+      : 0;
+
+    // Fill DailyProgress records for inactive days
+    if (existingProgress) {
+      const lastActiveDate = toUTCMidnight(existingProgress.lastActiveAt);
+      await fillDecayGaps(tx, input.userId, existingProgress.currentEnergy, lastActiveDate, today);
+    }
+
+    const clampedEnergy = clampEnergy(decayedBase + input.score.energyDelta);
+
+    // Absolute write is safe: the interactive transaction serializes row access,
+    // so concurrent requests block until the prior commit completes.
+
     const updatedProgress = await tx.userProgress.upsert({
       create: {
-        currentEnergy: clampEnergy(input.score.energyDelta),
+        currentEnergy: clampedEnergy,
         lastActiveAt: now,
         totalBrainPower: input.score.brainPower,
         userId: input.userId,
       },
       update: {
-        currentEnergy: { increment: input.score.energyDelta },
+        currentEnergy: clampedEnergy,
         lastActiveAt: now,
         totalBrainPower: { increment: input.score.brainPower },
       },
       where: { userId: input.userId },
     });
 
-    // Clamp energy if out of bounds after increment
-    const clampedEnergy = clampEnergy(updatedProgress.currentEnergy);
-
-    if (clampedEnergy !== updatedProgress.currentEnergy) {
-      await tx.userProgress.update({
-        data: { currentEnergy: clampedEnergy },
-        where: { userId: input.userId },
-      });
-    }
-
-    // DailyProgress upsert
+    // DailyProgress upsert for today
     const field = getCompletionField(input);
 
     await upsertDailyProgress(tx, {
       clampedEnergy,
       date: today,
-      dayOfWeek: now.getDay(),
+      dayOfWeek: now.getUTCDay(),
       durationSeconds: input.durationSeconds,
       field,
       organizationId: input.organizationId,

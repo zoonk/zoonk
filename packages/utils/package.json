@@ -9,6 +9,7 @@
     "./cache": "./src/cache.ts",
     "./categories": "./src/categories.ts",
     "./constants": "./src/constants.ts",
+    "./energy": "./src/energy.ts",
     "./error": "./src/error.ts",
     "./form": "./src/form.ts",
     "./json": "./src/json.ts",

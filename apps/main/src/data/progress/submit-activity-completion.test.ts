@@ -162,7 +162,7 @@ describe(submitActivityCompletion, () => {
   test("energy clamps at 100", async () => {
     const user = await userFixture();
     const userId = Number(user.id);
-    await userProgressFixture({ currentEnergy: 99.5, userId });
+    await userProgressFixture({ currentEnergy: 99.5, lastActiveAt: new Date(), userId });
 
     const result = await submitActivityCompletion({
       activityId: activity.id,
@@ -184,7 +184,7 @@ describe(submitActivityCompletion, () => {
   test("energy clamps at 0", async () => {
     const user = await userFixture();
     const userId = Number(user.id);
-    await userProgressFixture({ currentEnergy: 0.05, userId });
+    await userProgressFixture({ currentEnergy: 0.05, lastActiveAt: new Date(), userId });
 
     await submitActivityCompletion({
       activityId: activity.id,
@@ -466,5 +466,97 @@ describe(submitActivityCompletion, () => {
       where: { courseId: course.id, userId },
     });
     expect(courseUsers).toHaveLength(1);
+  });
+
+  test("1-day gap: no decay, no gap records", async () => {
+    const user = await userFixture();
+    const userId = Number(user.id);
+
+    // Anchor to UTC midnight so a midnight rollover can't shift the day count
+    const today = new Date();
+    const todayMidnight = new Date(
+      Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()),
+    );
+    const yesterday = new Date(todayMidnight.getTime() - 86_400_000);
+
+    await userProgressFixture({
+      currentEnergy: 50,
+      lastActiveAt: yesterday,
+      userId,
+    });
+
+    await submitActivityCompletion({
+      activityId: activity.id,
+      courseId: course.id,
+      durationSeconds: 10,
+      isChallenge: false,
+      organizationId: org.id,
+      score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
+      startedAt: new Date(Date.now() - 10_000),
+      stepResults: [stepResult(true)],
+      userId,
+    });
+
+    const userProgress = await prisma.userProgress.findUnique({ where: { userId } });
+    expect(userProgress?.currentEnergy).toBeCloseTo(50.2);
+
+    // No decay gap records should exist (only today's org-scoped record)
+    const decayRecords = await prisma.dailyProgress.findMany({
+      where: { organizationId: null, userId },
+    });
+    expect(decayRecords).toHaveLength(0);
+  });
+
+  test("applies decay and fills DailyProgress gaps for inactive days", async () => {
+    const user = await userFixture();
+    const userId = Number(user.id);
+
+    const today = new Date();
+    const todayMidnight = new Date(
+      Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()),
+    );
+    const fiveDaysAgo = new Date(todayMidnight.getTime() - 5 * 86_400_000);
+
+    await userProgressFixture({
+      currentEnergy: 50,
+      lastActiveAt: fiveDaysAgo,
+      userId,
+    });
+
+    await submitActivityCompletion({
+      activityId: activity.id,
+      courseId: course.id,
+      durationSeconds: 10,
+      isChallenge: false,
+      organizationId: org.id,
+      score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
+      startedAt: new Date(Date.now() - 10_000),
+      stepResults: [stepResult(true)],
+      userId,
+    });
+
+    // 5 day gap → 4 inactive days → decay=4 → base=46, +0.2 → 46.2
+    const userProgress = await prisma.userProgress.findUnique({ where: { userId } });
+    expect(userProgress?.currentEnergy).toBeCloseTo(46.2);
+
+    // Should have 4 decay DailyProgress records (one per inactive day) + 1 for today
+    const dailyRecords = await prisma.dailyProgress.findMany({
+      orderBy: { date: "asc" },
+      where: { organizationId: null, userId },
+    });
+
+    expect(dailyRecords).toHaveLength(4);
+
+    // Decay records: energy decreases by 1 each day
+    expect(dailyRecords[0]?.energyAtEnd).toBe(49);
+    expect(dailyRecords[1]?.energyAtEnd).toBe(48);
+    expect(dailyRecords[2]?.energyAtEnd).toBe(47);
+    expect(dailyRecords[3]?.energyAtEnd).toBe(46);
+
+    // Today's record is in the org-scoped DailyProgress
+    const todayRecord = await prisma.dailyProgress.findFirst({
+      where: { organizationId: org.id, userId },
+    });
+    expect(todayRecord?.energyAtEnd).toBeCloseTo(46.2);
   });
 });

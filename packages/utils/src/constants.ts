@@ -58,6 +58,7 @@ export const BRAIN_POWER_PER_ACTIVITY = 10;
 export const BRAIN_POWER_PER_CHALLENGE = 100;
 export const CHALLENGE_FAILURE_ENERGY = 0.1;
 export const DAILY_DECAY = 1;
+export const MS_PER_DAY = 86_400_000;
 export const ENERGY_PER_CORRECT = 0.2;
 export const ENERGY_PER_INCORRECT = -0.1;
 export const ENERGY_PER_STATIC = 0.1;

@@ -44,12 +44,14 @@ const DEFAULT_ENERGY = 50;
 
 export async function userProgressFixture(attrs: {
   currentEnergy?: number;
+  lastActiveAt?: Date;
   totalBrainPower?: bigint;
   userId: number;
 }) {
   return prisma.userProgress.create({
     data: {
       currentEnergy: attrs.currentEnergy ?? DEFAULT_ENERGY,
+      lastActiveAt: attrs.lastActiveAt ?? new Date(),
       totalBrainPower: attrs.totalBrainPower ?? 0n,
       userId: attrs.userId,
     },
