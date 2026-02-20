@@ -3,9 +3,8 @@
 import { useCallback, useRef, useState } from "react";
 import useInfiniteScroll from "react-infinite-scroll-hook";
 
-export function useInfiniteList<TItem, TCursor>({
+export function useInfiniteList<TItem>({
   fetchMore,
-  getCursor,
   getKey,
   initialItems,
   limit,
@@ -13,8 +12,7 @@ export function useInfiniteList<TItem, TCursor>({
 }: {
   initialItems: TItem[];
   limit: number;
-  getCursor: (item: TItem) => TCursor;
-  fetchMore: (cursor: TCursor) => Promise<TItem[]>;
+  fetchMore: (offset: number) => Promise<TItem[]>;
   getKey: (item: TItem) => string | number;
   rootMargin?: string;
 }): {
@@ -26,29 +24,16 @@ export function useInfiniteList<TItem, TCursor>({
   const [items, setItems] = useState(initialItems);
   const [isLoading, setIsLoading] = useState(false);
   const [hasNextPage, setHasNextPage] = useState(initialItems.length >= limit);
-
-  // Use ref to track the latest cursor to avoid stale closures
-  const lastItem = initialItems.at(-1);
-  const cursorRef = useRef<TCursor | undefined>(lastItem ? getCursor(lastItem) : undefined);
+  const offsetRef = useRef(initialItems.length);
 
   const loadMore = useCallback(async () => {
-    if (cursorRef.current === undefined) {
-      return;
-    }
-
     setIsLoading(true);
 
     try {
-      const newItems = await fetchMore(cursorRef.current);
+      const newItems = await fetchMore(offsetRef.current);
 
       if (newItems.length < limit) {
         setHasNextPage(false);
-      }
-
-      // Update cursor ref to the last new item
-      const lastNewItem = newItems.at(-1);
-      if (lastNewItem) {
-        cursorRef.current = getCursor(lastNewItem);
       }
 
       setItems((prev) => {
@@ -56,12 +41,14 @@ export function useInfiniteList<TItem, TCursor>({
         const existingKeys = new Set(prev.map((item) => getKey(item)));
         const uniqueNewItems = newItems.filter((item) => !existingKeys.has(getKey(item)));
 
+        offsetRef.current = prev.length + uniqueNewItems.length;
+
         return [...prev, ...uniqueNewItems];
       });
     } finally {
       setIsLoading(false);
     }
-  }, [fetchMore, getCursor, getKey, limit]);
+  }, [fetchMore, getKey, limit]);
 
   const [sentryRef] = useInfiniteScroll({
     hasNextPage,
