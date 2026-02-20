@@ -472,8 +472,12 @@ describe(submitActivityCompletion, () => {
     const user = await userFixture();
     const userId = Number(user.id);
 
-    const yesterday = new Date();
-    yesterday.setUTCDate(yesterday.getUTCDate() - 1);
+    // Anchor to UTC midnight so a midnight rollover can't shift the day count
+    const today = new Date();
+    const todayMidnight = new Date(
+      Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()),
+    );
+    const yesterday = new Date(todayMidnight.getTime() - 86_400_000);
 
     await userProgressFixture({
       currentEnergy: 50,
@@ -507,8 +511,11 @@ describe(submitActivityCompletion, () => {
     const user = await userFixture();
     const userId = Number(user.id);
 
-    const fiveDaysAgo = new Date();
-    fiveDaysAgo.setUTCDate(fiveDaysAgo.getUTCDate() - 5);
+    const today = new Date();
+    const todayMidnight = new Date(
+      Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()),
+    );
+    const fiveDaysAgo = new Date(todayMidnight.getTime() - 5 * 86_400_000);
 
     await userProgressFixture({
       currentEnergy: 50,

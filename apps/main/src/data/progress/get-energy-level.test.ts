@@ -39,8 +39,13 @@ describe("authenticated users", () => {
   test("applies decay when lastActiveAt is 5 days ago", async () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);
-    const fiveDaysAgo = new Date();
-    fiveDaysAgo.setUTCDate(fiveDaysAgo.getUTCDate() - 5);
+
+    // Anchor to UTC midnight so a midnight rollover can't shift the day count
+    const today = new Date();
+    const todayMidnight = new Date(
+      Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()),
+    );
+    const fiveDaysAgo = new Date(todayMidnight.getTime() - 5 * 86_400_000);
 
     await prisma.userProgress.create({
       data: {
@@ -57,8 +62,12 @@ describe("authenticated users", () => {
   test("clamps decayed energy at 0", async () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);
-    const longAgo = new Date();
-    longAgo.setUTCDate(longAgo.getUTCDate() - 100);
+
+    const today = new Date();
+    const todayMidnight = new Date(
+      Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()),
+    );
+    const longAgo = new Date(todayMidnight.getTime() - 100 * 86_400_000);
 
     await prisma.userProgress.create({
       data: {

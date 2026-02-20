@@ -224,7 +224,9 @@ export async function submitActivityCompletion(input: {
 
     const clampedEnergy = clampEnergy(decayedBase + input.score.energyDelta);
 
-    // UserProgress upsert with absolute energy (decay already applied)
+    // Absolute write is safe: the interactive transaction serializes row access,
+    // so concurrent requests block until the prior commit completes.
+
     const updatedProgress = await tx.userProgress.upsert({
       create: {
         currentEnergy: clampedEnergy,
