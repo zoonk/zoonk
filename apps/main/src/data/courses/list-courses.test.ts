@@ -75,6 +75,43 @@ describe(listCourses, () => {
     expect(result).toHaveLength(3);
   });
 
+  test("paginates using cursor", async () => {
+    const uniqueLang = randomUUID().slice(0, 10);
+
+    // Create 5 courses with a unique language so we have a clean, isolated set
+    await prisma.course.createMany({
+      data: Array.from({ length: 5 }, (_, idx) => ({
+        description: `Cursor test course ${idx}`,
+        imageUrl: null,
+        isPublished: true,
+        language: uniqueLang,
+        normalizedTitle: `cursor test ${idx}`,
+        organizationId: brandOrg.id,
+        slug: `cursor-test-${randomUUID()}-${idx}`,
+        title: `Cursor Test ${idx}`,
+      })),
+    });
+
+    // Fetch the first page (3 items)
+    const firstPage = await listCourses({ language: uniqueLang, limit: 3 });
+    expect(firstPage).toHaveLength(3);
+
+    // Fetch the second page using offset
+    const secondPage = await listCourses({
+      language: uniqueLang,
+      limit: 3,
+      offset: firstPage.length,
+    });
+
+    // Should return the remaining 2 courses
+    expect(secondPage).toHaveLength(2);
+
+    // No overlap between pages
+    const firstPageIds = new Set(firstPage.map((course) => course.id));
+    const hasOverlap = secondPage.some((course) => firstPageIds.has(course.id));
+    expect(hasOverlap).toBeFalsy();
+  });
+
   test("sorts by popularity (more users first)", async () => {
     const result = await listCourses({ language: "en" });
 

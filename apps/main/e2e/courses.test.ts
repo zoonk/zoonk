@@ -83,6 +83,43 @@ test.describe("Courses Page - Basic", () => {
   });
 });
 
+test.describe("Courses Page - Infinite Loading", () => {
+  test("loads more courses when scrolling to the bottom", async ({ page }) => {
+    const org = await getAiOrganization();
+
+    // Create 25 courses to exceed the page limit (20)
+    await Promise.all(
+      Array.from({ length: 25 }, () =>
+        courseFixture({
+          isPublished: true,
+          language: "en",
+          organizationId: org.id,
+        }),
+      ),
+    );
+
+    await revalidateCacheTags([cacheTagCoursesList({ language: "en" })], ["/courses"]);
+
+    const courseList = page.getByRole("main").getByRole("list");
+    const courseLinks = courseList.getByRole("link");
+
+    // Wait for the courses page to load with the initial 20 items
+    await expect(async () => {
+      await page.goto("/courses");
+      await expect(courseLinks).toHaveCount(20, { timeout: 5000 });
+    }).toPass({ timeout: 15_000 });
+
+    // Scroll to the bottom to trigger infinite loading
+    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+
+    // Verify more courses loaded after scrolling
+    await expect(async () => {
+      const count = await courseLinks.count();
+      expect(count).toBeGreaterThan(20);
+    }).toPass({ timeout: 10_000 });
+  });
+});
+
 test.describe("Courses Page - Locale", () => {
   test("Portuguese locale shows translated content", async ({ page }) => {
     await page.goto("/pt/courses");
