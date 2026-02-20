@@ -103,6 +103,7 @@ async function upsertDailyProgress(
 
 export async function submitActivityCompletion(input: {
   activityId: bigint;
+  courseId: number;
   durationSeconds: number;
   isChallenge: boolean;
   organizationId: number | null;
@@ -129,7 +130,7 @@ export async function submitActivityCompletion(input: {
   const today = getDateOnly(now);
 
   return prisma.$transaction(async (tx) => {
-    // 1. Create StepAttempt records
+    // Create StepAttempt records
     if (input.stepResults.length > 0) {
       await tx.stepAttempt.createMany({
         data: input.stepResults.map((step) => ({
@@ -147,7 +148,7 @@ export async function submitActivityCompletion(input: {
       });
     }
 
-    // 2. ActivityProgress upsert
+    // ActivityProgress upsert
     await tx.activityProgress.upsert({
       create: {
         activityId: input.activityId,
@@ -168,7 +169,20 @@ export async function submitActivityCompletion(input: {
       },
     });
 
-    // 3. UserProgress upsert
+    // CourseUser + userCount (only on first completion per course)
+    const { count } = await tx.courseUser.createMany({
+      data: [{ courseId: input.courseId, userId: input.userId }],
+      skipDuplicates: true,
+    });
+
+    if (count > 0) {
+      await tx.course.update({
+        data: { userCount: { increment: 1 } },
+        where: { id: input.courseId },
+      });
+    }
+
+    // UserProgress upsert
     const updatedProgress = await tx.userProgress.upsert({
       create: {
         currentEnergy: clampEnergy(input.score.energyDelta),
@@ -194,7 +208,7 @@ export async function submitActivityCompletion(input: {
       });
     }
 
-    // 4. DailyProgress upsert
+    // DailyProgress upsert
     const field = getCompletionField(input);
 
     await upsertDailyProgress(tx, {

@@ -96,11 +96,12 @@ describe(listCourses, () => {
     const firstPage = await listCourses({ language: uniqueLang, limit: 3 });
     expect(firstPage).toHaveLength(3);
 
-    // Fetch the second page using offset
+    // Fetch the second page using cursor (last item's id)
+    const lastItem = firstPage.at(-1)!;
     const secondPage = await listCourses({
+      cursor: lastItem.id,
       language: uniqueLang,
       limit: 3,
-      offset: firstPage.length,
     });
 
     // Should return the remaining 2 courses
@@ -112,19 +113,35 @@ describe(listCourses, () => {
     expect(hasOverlap).toBeFalsy();
   });
 
-  test("sorts by popularity (more users first)", async () => {
-    const result = await listCourses({ language: "en" });
+  test("sorts by popularity (higher userCount first)", async () => {
+    const uniqueLang = randomUUID().slice(0, 10);
 
-    expect(result.length).toBeGreaterThan(1);
+    // Create courses with explicit userCount values
+    const [popularCourse, mediumCourse, unpopularCourse] = await Promise.all([
+      courseFixture({
+        isPublished: true,
+        language: uniqueLang,
+        organizationId: brandOrg.id,
+        userCount: 100,
+      }),
+      courseFixture({
+        isPublished: true,
+        language: uniqueLang,
+        organizationId: brandOrg.id,
+        userCount: 50,
+      }),
+      courseFixture({
+        isPublished: true,
+        language: uniqueLang,
+        organizationId: brandOrg.id,
+        userCount: 10,
+      }),
+    ]);
 
-    const userCounts = await Promise.all(
-      result.map((course) => prisma.courseUser.count({ where: { courseId: course.id } })),
-    );
+    const result = await listCourses({ language: uniqueLang });
 
-    for (let i = 0; i < userCounts.length - 1; i += 1) {
-      const current = userCounts[i] ?? 0;
-      const next = userCounts[i + 1] ?? 0;
-      expect(current).toBeGreaterThanOrEqual(next);
-    }
+    const ids = result.map((course) => course.id);
+    expect(ids.indexOf(popularCourse.id)).toBeLessThan(ids.indexOf(mediumCourse.id));
+    expect(ids.indexOf(mediumCourse.id)).toBeLessThan(ids.indexOf(unpopularCourse.id));
   });
 });

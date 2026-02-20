@@ -5,13 +5,13 @@ import { type CourseCategory } from "@zoonk/utils/categories";
 
 export async function loadMoreCourses(params: {
   category?: CourseCategory;
+  cursor: number;
   language: string;
-  offset: number;
 }) {
   const courses = await listCourses({
     category: params.category,
+    cursor: params.cursor,
     language: params.language,
-    offset: params.offset,
   });
 
   return courses;

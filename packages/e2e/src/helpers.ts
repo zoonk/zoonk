@@ -330,5 +330,9 @@ async function createE2EProgressData(userId: number): Promise<void> {
     prisma.courseUser.create({
       data: { courseId: course.id, userId },
     }),
+    prisma.course.update({
+      data: { userCount: { increment: 1 } },
+      where: { id: course.id },
+    }),
   ]);
 }

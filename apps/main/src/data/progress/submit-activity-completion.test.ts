@@ -12,6 +12,7 @@ import { submitActivityCompletion } from "./submit-activity-completion";
 
 describe(submitActivityCompletion, () => {
   let org: Awaited<ReturnType<typeof organizationFixture>>;
+  let course: Awaited<ReturnType<typeof courseFixture>>;
   let lesson: Awaited<ReturnType<typeof lessonFixture>>;
   let activity: Awaited<ReturnType<typeof activityFixture>>;
   let step: Awaited<ReturnType<typeof stepFixture>>;
@@ -31,7 +32,7 @@ describe(submitActivityCompletion, () => {
 
   beforeAll(async () => {
     org = await organizationFixture();
-    const course = await courseFixture({ organizationId: org.id });
+    course = await courseFixture({ organizationId: org.id });
     const chapter = await chapterFixture({ courseId: course.id, organizationId: org.id });
     lesson = await lessonFixture({ chapterId: chapter.id, organizationId: org.id });
 
@@ -60,6 +61,7 @@ describe(submitActivityCompletion, () => {
 
     await submitActivityCompletion({
       activityId: activity.id,
+      courseId: course.id,
       durationSeconds: 10,
       isChallenge: false,
       organizationId: org.id,
@@ -86,6 +88,7 @@ describe(submitActivityCompletion, () => {
 
     await submitActivityCompletion({
       activityId: activity.id,
+      courseId: course.id,
       durationSeconds: 15,
       isChallenge: false,
       organizationId: org.id,
@@ -110,6 +113,7 @@ describe(submitActivityCompletion, () => {
 
     await submitActivityCompletion({
       activityId: activity.id,
+      courseId: course.id,
       durationSeconds: 10,
       isChallenge: false,
       organizationId: org.id,
@@ -132,6 +136,7 @@ describe(submitActivityCompletion, () => {
 
     await submitActivityCompletion({
       activityId: activity.id,
+      courseId: course.id,
       durationSeconds: 10,
       isChallenge: false,
       organizationId: org.id,
@@ -161,6 +166,7 @@ describe(submitActivityCompletion, () => {
 
     const result = await submitActivityCompletion({
       activityId: activity.id,
+      courseId: course.id,
       durationSeconds: 10,
       isChallenge: false,
       organizationId: org.id,
@@ -182,6 +188,7 @@ describe(submitActivityCompletion, () => {
 
     await submitActivityCompletion({
       activityId: activity.id,
+      courseId: course.id,
       durationSeconds: 10,
       isChallenge: false,
       organizationId: org.id,
@@ -201,6 +208,7 @@ describe(submitActivityCompletion, () => {
 
     const result = await submitActivityCompletion({
       activityId: activity.id,
+      courseId: course.id,
       durationSeconds: 10,
       isChallenge: true,
       organizationId: org.id,
@@ -226,6 +234,7 @@ describe(submitActivityCompletion, () => {
 
     const result = await submitActivityCompletion({
       activityId: activity.id,
+      courseId: course.id,
       durationSeconds: 10,
       isChallenge: true,
       organizationId: org.id,
@@ -245,6 +254,7 @@ describe(submitActivityCompletion, () => {
 
     const baseInput = {
       activityId: activity.id,
+      courseId: course.id,
       durationSeconds: 10,
       isChallenge: false,
       organizationId: org.id,
@@ -278,6 +288,7 @@ describe(submitActivityCompletion, () => {
 
     await submitActivityCompletion({
       activityId: staticActivity.id,
+      courseId: course.id,
       durationSeconds: 5,
       isChallenge: false,
       organizationId: org.id,
@@ -303,6 +314,7 @@ describe(submitActivityCompletion, () => {
 
     const result = await submitActivityCompletion({
       activityId: activity.id,
+      courseId: course.id,
       durationSeconds: 10,
       isChallenge: false,
       organizationId: org.id,
@@ -323,6 +335,7 @@ describe(submitActivityCompletion, () => {
 
     await submitActivityCompletion({
       activityId: activity.id,
+      courseId: course.id,
       durationSeconds: 10,
       isChallenge: false,
       organizationId: null,
@@ -349,6 +362,7 @@ describe(submitActivityCompletion, () => {
 
     const baseInput = {
       activityId: activity.id,
+      courseId: course.id,
       durationSeconds: 10,
       isChallenge: false,
       organizationId: null as number | null,
@@ -377,6 +391,7 @@ describe(submitActivityCompletion, () => {
 
     await submitActivityCompletion({
       activityId: activity.id,
+      courseId: course.id,
       durationSeconds: 10,
       isChallenge: false,
       organizationId: null,
@@ -392,5 +407,64 @@ describe(submitActivityCompletion, () => {
 
     expect(attempts).toHaveLength(1);
     expect(attempts[0]?.organizationId).toBeNull();
+  });
+
+  test("creates CourseUser and increments userCount on first activity completion", async () => {
+    const user = await userFixture();
+    const userId = Number(user.id);
+
+    const courseBefore = await prisma.course.findUniqueOrThrow({ where: { id: course.id } });
+
+    await submitActivityCompletion({
+      activityId: activity.id,
+      courseId: course.id,
+      durationSeconds: 10,
+      isChallenge: false,
+      organizationId: org.id,
+      score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
+      startedAt: new Date(Date.now() - 10_000),
+      stepResults: [stepResult(true)],
+      userId,
+    });
+
+    const courseUser = await prisma.courseUser.findUnique({
+      where: { courseUser: { courseId: course.id, userId } },
+    });
+    expect(courseUser).not.toBeNull();
+
+    const courseAfter = await prisma.course.findUniqueOrThrow({ where: { id: course.id } });
+    expect(courseAfter.userCount).toBe(courseBefore.userCount + 1);
+  });
+
+  test("does not duplicate CourseUser or increment userCount on re-completion", async () => {
+    const user = await userFixture();
+    const userId = Number(user.id);
+
+    const baseInput = {
+      activityId: activity.id,
+      courseId: course.id,
+      durationSeconds: 10,
+      isChallenge: false,
+      organizationId: org.id,
+      score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
+      startedAt: new Date(Date.now() - 10_000),
+      stepResults: [stepResult(true)],
+      userId,
+    };
+
+    await submitActivityCompletion(baseInput);
+    const courseAfterFirst = await prisma.course.findUniqueOrThrow({ where: { id: course.id } });
+
+    await submitActivityCompletion(baseInput);
+    const courseAfterSecond = await prisma.course.findUniqueOrThrow({ where: { id: course.id } });
+
+    // userCount should not increment on second completion
+    expect(courseAfterSecond.userCount).toBe(courseAfterFirst.userCount);
+
+    // Only one CourseUser record should exist
+    const courseUsers = await prisma.courseUser.findMany({
+      where: { courseId: course.id, userId },
+    });
+    expect(courseUsers).toHaveLength(1);
   });
 });

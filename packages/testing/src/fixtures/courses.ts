@@ -29,6 +29,7 @@ export function courseAttrs(attrs?: Partial<Course>): Omit<
     slug: `test-course-${randomUUID()}`,
     targetLanguage: null,
     title: "Test Course",
+    userCount: 0,
     userId: null,
     ...rest,
   };
@@ -50,12 +51,18 @@ export async function courseCategoryFixture(attrs: Omit<CourseCategory, "id" | "
 }
 
 export async function courseUserFixture(attrs: Omit<CourseUser, "id" | "startedAt">) {
-  const courseUser = await prisma.courseUser.create({
-    data: {
-      courseId: attrs.courseId,
-      userId: attrs.userId,
-    },
-  });
+  const [courseUser] = await prisma.$transaction([
+    prisma.courseUser.create({
+      data: {
+        courseId: attrs.courseId,
+        userId: attrs.userId,
+      },
+    }),
+    prisma.course.update({
+      data: { userCount: { increment: 1 } },
+      where: { id: attrs.courseId },
+    }),
+  ]);
 
   return courseUser;
 }

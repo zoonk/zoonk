@@ -3,6 +3,14 @@
 import { useCallback, useRef, useState } from "react";
 import useInfiniteScroll from "react-infinite-scroll-hook";
 
+function getLastKey<TItem>(
+  items: TItem[],
+  getKey: (item: TItem) => string | number,
+): string | number | null {
+  const lastItem = items.at(-1);
+  return lastItem ? getKey(lastItem) : null;
+}
+
 export function useInfiniteList<TItem>({
   fetchMore,
   getKey,
@@ -12,7 +20,7 @@ export function useInfiniteList<TItem>({
 }: {
   initialItems: TItem[];
   limit: number;
-  fetchMore: (offset: number) => Promise<TItem[]>;
+  fetchMore: (cursor: string | number) => Promise<TItem[]>;
   getKey: (item: TItem) => string | number;
   rootMargin?: string;
 }): {
@@ -24,13 +32,17 @@ export function useInfiniteList<TItem>({
   const [items, setItems] = useState(initialItems);
   const [isLoading, setIsLoading] = useState(false);
   const [hasNextPage, setHasNextPage] = useState(initialItems.length >= limit);
-  const offsetRef = useRef(initialItems.length);
+  const lastKeyRef = useRef(getLastKey(initialItems, getKey));
 
   const loadMore = useCallback(async () => {
+    if (lastKeyRef.current === null) {
+      return;
+    }
+
     setIsLoading(true);
 
     try {
-      const newItems = await fetchMore(offsetRef.current);
+      const newItems = await fetchMore(lastKeyRef.current);
 
       if (newItems.length < limit) {
         setHasNextPage(false);
@@ -41,7 +53,11 @@ export function useInfiniteList<TItem>({
         const existingKeys = new Set(prev.map((item) => getKey(item)));
         const uniqueNewItems = newItems.filter((item) => !existingKeys.has(getKey(item)));
 
-        offsetRef.current = prev.length + uniqueNewItems.length;
+        const newLastKey = getLastKey(uniqueNewItems, getKey);
+
+        if (newLastKey !== null) {
+          lastKeyRef.current = newLastKey;
+        }
 
         return [...prev, ...uniqueNewItems];
       });

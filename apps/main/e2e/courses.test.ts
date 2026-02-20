@@ -1,5 +1,4 @@
 import { randomUUID } from "node:crypto";
-import { prisma } from "@zoonk/db";
 import { getAiOrganization, revalidateCacheTags } from "@zoonk/e2e/helpers";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
@@ -22,6 +21,7 @@ async function createPublishedCourse(language: string) {
     organizationId: org.id,
     slug: `e2e-courses-${uniqueId}`,
     title,
+    userCount: 50,
   });
 
   // Course needs a chapter so the detail page renders instead of redirecting
@@ -31,28 +31,6 @@ async function createPublishedCourse(language: string) {
     organizationId: org.id,
     position: 0,
   });
-
-  // The courses page sorts by user count descending. Enroll multiple
-  // users so this course always ranks at the top regardless of
-  // accumulated test data from other runs.
-  const boostCount = 50;
-
-  const users = await Promise.all(
-    Array.from({ length: boostCount }, (_, index) =>
-      prisma.user.create({
-        data: {
-          email: `e2e-courses-${uniqueId}-${index}@zoonk.test`,
-          name: `E2E Courses User ${uniqueId}-${index}`,
-        },
-      }),
-    ),
-  );
-
-  await Promise.all(
-    users.map((user) =>
-      prisma.courseUser.create({ data: { courseId: course.id, userId: user.id } }),
-    ),
-  );
 
   await revalidateCacheTags(
     [cacheTagCoursesList({ language })],
