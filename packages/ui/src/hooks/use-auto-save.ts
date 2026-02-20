@@ -24,12 +24,19 @@ export function useAutoSave({
   setValue: (value: string) => void;
 } {
   const [value, setValue] = useState(initialValue);
+  const [prevInitialValue, setPrevInitialValue] = useState(initialValue);
   const [status, setStatus] = useState<SaveStatusType>("idle");
 
   const debouncedValue = useDebounce(value, debounceMs);
   const lastSavedValue = useRef(initialValue);
   const statusTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const saveRequestRef = useRef(0);
+
+  if (initialValue !== prevInitialValue) {
+    setPrevInitialValue(initialValue);
+    setValue(initialValue);
+    lastSavedValue.current = initialValue;
+  }
 
   useEffect(() => {
     if (debouncedValue === lastSavedValue.current) {
@@ -102,13 +109,5 @@ export function useAutoSave({
     [],
   );
 
-  function handleSetValue(newValue: string) {
-    setValue(newValue);
-  }
-
-  return {
-    setValue: handleSetValue,
-    status,
-    value,
-  };
+  return { setValue, status, value };
 }

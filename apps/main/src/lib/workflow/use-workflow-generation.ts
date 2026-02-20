@@ -2,7 +2,7 @@
 
 import { useSelector } from "@xstate/store-react";
 import { getString } from "@zoonk/utils/json";
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useEffectEvent, useMemo, useRef } from "react";
 import {
   type GenerationStatus,
   type StreamMessage,
@@ -77,39 +77,44 @@ export function useWorkflowGeneration<TStep extends string = string>(config: {
     },
   );
 
+  const startTrigger = useEffectEvent(async () => {
+    store.send({ type: "triggerStart" });
+
+    try {
+      const response = await fetch(triggerUrl, {
+        body: JSON.stringify(triggerBody),
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        method: "POST",
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to start generation");
+      }
+
+      const data: unknown = await response.json();
+      const newRunId = getString(data, "runId");
+
+      if (!newRunId) {
+        throw new Error("Invalid response: missing runId");
+      }
+
+      store.send({ runId: newRunId, type: "triggerSuccess" });
+    } catch (error) {
+      store.send({
+        error: error instanceof Error ? error.message : "Failed to start",
+        type: "setError",
+      });
+    }
+  });
+
   useEffect(() => {
     if (!autoTrigger || status !== "idle" || hasTriggeredRef.current) {
       return;
     }
     hasTriggeredRef.current = true;
-
-    void (async () => {
-      store.send({ type: "triggerStart" });
-      try {
-        const response = await fetch(triggerUrl, {
-          body: JSON.stringify(triggerBody),
-          credentials: "include",
-          headers: { "Content-Type": "application/json" },
-          method: "POST",
-        });
-
-        if (!response.ok) {
-          throw new Error("Failed to start generation");
-        }
-        const data: unknown = await response.json();
-        const runId = getString(data, "runId");
-        if (!runId) {
-          throw new Error("Invalid response: missing runId");
-        }
-        store.send({ runId, type: "triggerSuccess" });
-      } catch (error) {
-        store.send({
-          error: error instanceof Error ? error.message : "Failed to start",
-          type: "setError",
-        });
-      }
-    })();
-  }, [autoTrigger, status, triggerUrl, triggerBody, store]);
+    void startTrigger();
+  }, [autoTrigger, status]);
 
   const retry = useCallback(() => {
     hasTriggeredRef.current = false;

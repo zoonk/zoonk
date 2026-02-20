@@ -20,15 +20,7 @@ import {
 } from "@dnd-kit/sortable";
 import { toast } from "@zoonk/ui/components/sonner";
 import { cn } from "@zoonk/ui/lib/utils";
-import {
-  useCallback,
-  useEffect,
-  useId,
-  useMemo,
-  useOptimistic,
-  useState,
-  useTransition,
-} from "react";
+import { useCallback, useId, useMemo, useOptimistic, useState, useTransition } from "react";
 import {
   EditorSortableContext,
   type EditorSortableContextValue,
@@ -47,14 +39,9 @@ export function EditorSortableList<T extends SortableItem>({
   renderOverlay?: (activeItem: T) => React.ReactNode;
 }) {
   const dndId = useId();
-  const [mounted, setMounted] = useState(false);
   const [activeId, setActiveId] = useState<number | null>(null);
   const [optimisticItems, setOptimisticItems] = useOptimistic(initialItems);
   const [pending, startTransition] = useTransition();
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -130,10 +117,6 @@ export function EditorSortableList<T extends SortableItem>({
   );
 
   const itemIds = useMemo(() => optimisticItems.map((item) => item.id), [optimisticItems]);
-
-  if (!mounted) {
-    return <div data-slot="editor-sortable-list">{children}</div>;
-  }
 
   return (
     <EditorSortableContext.Provider value={contextValue}>
