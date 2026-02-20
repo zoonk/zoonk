@@ -468,6 +468,41 @@ describe(submitActivityCompletion, () => {
     expect(courseUsers).toHaveLength(1);
   });
 
+  test("1-day gap: no decay, no gap records", async () => {
+    const user = await userFixture();
+    const userId = Number(user.id);
+
+    const yesterday = new Date();
+    yesterday.setUTCDate(yesterday.getUTCDate() - 1);
+
+    await userProgressFixture({
+      currentEnergy: 50,
+      lastActiveAt: yesterday,
+      userId,
+    });
+
+    await submitActivityCompletion({
+      activityId: activity.id,
+      courseId: course.id,
+      durationSeconds: 10,
+      isChallenge: false,
+      organizationId: org.id,
+      score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
+      startedAt: new Date(Date.now() - 10_000),
+      stepResults: [stepResult(true)],
+      userId,
+    });
+
+    const userProgress = await prisma.userProgress.findUnique({ where: { userId } });
+    expect(userProgress?.currentEnergy).toBeCloseTo(50.2);
+
+    // No decay gap records should exist (only today's org-scoped record)
+    const decayRecords = await prisma.dailyProgress.findMany({
+      where: { organizationId: null, userId },
+    });
+    expect(decayRecords).toHaveLength(0);
+  });
+
   test("applies decay and fills DailyProgress gaps for inactive days", async () => {
     const user = await userFixture();
     const userId = Number(user.id);

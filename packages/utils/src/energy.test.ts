@@ -1,10 +1,10 @@
 import { describe, expect, test } from "vitest";
-import { computeDecayedEnergy, getDateOnly } from "./energy";
+import { clampEnergy, computeDecayedEnergy, toUTCMidnight } from "./energy";
 
-describe(getDateOnly, () => {
+describe(toUTCMidnight, () => {
   test("strips time and creates UTC midnight", () => {
     const date = new Date("2025-03-15T14:30:45.123Z");
-    const result = getDateOnly(date);
+    const result = toUTCMidnight(date);
 
     expect(result.getUTCHours()).toBe(0);
     expect(result.getUTCMinutes()).toBe(0);
@@ -13,6 +13,28 @@ describe(getDateOnly, () => {
     expect(result.getUTCFullYear()).toBe(2025);
     expect(result.getUTCMonth()).toBe(2);
     expect(result.getUTCDate()).toBe(15);
+  });
+});
+
+describe(clampEnergy, () => {
+  test("clamps below minimum to 0", () => {
+    expect(clampEnergy(-5)).toBe(0);
+  });
+
+  test("clamps above maximum to 100", () => {
+    expect(clampEnergy(150)).toBe(100);
+  });
+
+  test("returns value unchanged when within bounds", () => {
+    expect(clampEnergy(50)).toBe(50);
+  });
+
+  test("returns 0 at exact minimum", () => {
+    expect(clampEnergy(0)).toBe(0);
+  });
+
+  test("returns 100 at exact maximum", () => {
+    expect(clampEnergy(100)).toBe(100);
   });
 });
 
