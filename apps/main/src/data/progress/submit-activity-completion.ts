@@ -3,6 +3,7 @@ import { type ScoreResult } from "@zoonk/core/player/compute-score";
 import { type TransactionClient, prisma } from "@zoonk/db";
 import { type BeltLevelResult, calculateBeltLevel } from "@zoonk/utils/belt-level";
 import { MAX_ENERGY, MIN_ENERGY } from "@zoonk/utils/constants";
+import { computeDecayedEnergy, getDateOnly } from "@zoonk/utils/energy";
 
 function getCompletionField(input: {
   isChallenge: boolean;
@@ -23,8 +24,35 @@ function clampEnergy(value: number): number {
   return Math.min(MAX_ENERGY, Math.max(MIN_ENERGY, value));
 }
 
-function getDateOnly(date: Date): Date {
-  return new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+const MS_PER_DAY = 86_400_000;
+
+async function fillDecayGaps(
+  tx: TransactionClient,
+  userId: number,
+  currentEnergy: number,
+  lastActiveDate: Date,
+  todayDate: Date,
+): Promise<void> {
+  const dayDiff = Math.round((todayDate.getTime() - lastActiveDate.getTime()) / MS_PER_DAY);
+
+  if (dayDiff <= 1) {
+    return;
+  }
+
+  const records = Array.from({ length: dayDiff - 1 }, (_, i) => {
+    const date = new Date(lastActiveDate.getTime() + (i + 1) * MS_PER_DAY);
+    const decayedEnergy = Math.max(0, currentEnergy - (i + 1));
+
+    return {
+      date,
+      dayOfWeek: date.getUTCDay(),
+      energyAtEnd: decayedEnergy,
+      organizationId: null as number | null,
+      userId,
+    };
+  });
+
+  await tx.dailyProgress.createMany({ data: records, skipDuplicates: true });
 }
 
 async function upsertDailyProgress(
@@ -182,33 +210,41 @@ export async function submitActivityCompletion(input: {
       });
     }
 
-    // UserProgress upsert
+    // Find existing UserProgress to apply decay
+    const existing = await tx.userProgress.findUnique({
+      select: { currentEnergy: true, lastActiveAt: true },
+      where: { userId: input.userId },
+    });
+
+    const decayedBase = existing
+      ? computeDecayedEnergy(existing.currentEnergy, existing.lastActiveAt, now)
+      : 0;
+
+    // Fill DailyProgress records for inactive days
+    if (existing) {
+      const lastActiveDate = getDateOnly(existing.lastActiveAt);
+      await fillDecayGaps(tx, input.userId, existing.currentEnergy, lastActiveDate, today);
+    }
+
+    const clampedEnergy = clampEnergy(decayedBase + input.score.energyDelta);
+
+    // UserProgress upsert with absolute energy (decay already applied)
     const updatedProgress = await tx.userProgress.upsert({
       create: {
-        currentEnergy: clampEnergy(input.score.energyDelta),
+        currentEnergy: clampedEnergy,
         lastActiveAt: now,
         totalBrainPower: input.score.brainPower,
         userId: input.userId,
       },
       update: {
-        currentEnergy: { increment: input.score.energyDelta },
+        currentEnergy: clampedEnergy,
         lastActiveAt: now,
         totalBrainPower: { increment: input.score.brainPower },
       },
       where: { userId: input.userId },
     });
 
-    // Clamp energy if out of bounds after increment
-    const clampedEnergy = clampEnergy(updatedProgress.currentEnergy);
-
-    if (clampedEnergy !== updatedProgress.currentEnergy) {
-      await tx.userProgress.update({
-        data: { currentEnergy: clampedEnergy },
-        where: { userId: input.userId },
-      });
-    }
-
-    // DailyProgress upsert
+    // DailyProgress upsert for today
     const field = getCompletionField(input);
 
     await upsertDailyProgress(tx, {

@@ -1,6 +1,7 @@
 import "server-only";
 import { getSession } from "@zoonk/core/users/session/get";
 import { prisma } from "@zoonk/db";
+import { computeDecayedEnergy } from "@zoonk/utils/energy";
 import { safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
 
@@ -20,7 +21,7 @@ export const getEnergyLevel = cache(
 
     const { data: progress, error } = await safeAsync(() =>
       prisma.userProgress.findUnique({
-        select: { currentEnergy: true },
+        select: { currentEnergy: true, lastActiveAt: true },
         where: { userId },
       }),
     );
@@ -30,7 +31,11 @@ export const getEnergyLevel = cache(
     }
 
     return {
-      currentEnergy: progress.currentEnergy,
+      currentEnergy: computeDecayedEnergy(
+        progress.currentEnergy,
+        progress.lastActiveAt,
+        new Date(),
+      ),
     };
   },
 );

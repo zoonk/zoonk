@@ -5,11 +5,7 @@ import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
-import {
-  dailyProgressFixtureMany,
-  stepAttemptFixture,
-  userProgressFixture,
-} from "@zoonk/testing/fixtures/progress";
+import { dailyProgressFixtureMany, userProgressFixture } from "@zoonk/testing/fixtures/progress";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
 import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 
@@ -240,7 +236,7 @@ async function createStepAttempts(
     })),
   ]);
 
-  await Promise.all(attempts.map((attempt) => stepAttemptFixture(attempt)));
+  await prisma.stepAttempt.createMany({ data: attempts });
 }
 
 async function createE2EProgressData(userId: number): Promise<void> {

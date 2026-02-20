@@ -20,18 +20,55 @@ describe("authenticated users", () => {
     expect(result).toBeNull();
   });
 
-  test("returns energy level when user has progress record", async () => {
+  test("returns energy unchanged when lastActiveAt is today", async () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);
 
     await prisma.userProgress.create({
       data: {
         currentEnergy: 85.5,
+        lastActiveAt: new Date(),
         userId: Number(user.id),
       },
     });
 
     const result = await getEnergyLevel(headers);
     expect(result).toEqual({ currentEnergy: 85.5 });
+  });
+
+  test("applies decay when lastActiveAt is 5 days ago", async () => {
+    const user = await userFixture();
+    const headers = await signInAs(user.email, user.password);
+    const fiveDaysAgo = new Date();
+    fiveDaysAgo.setUTCDate(fiveDaysAgo.getUTCDate() - 5);
+
+    await prisma.userProgress.create({
+      data: {
+        currentEnergy: 50,
+        lastActiveAt: fiveDaysAgo,
+        userId: Number(user.id),
+      },
+    });
+
+    const result = await getEnergyLevel(headers);
+    expect(result).toEqual({ currentEnergy: 46 });
+  });
+
+  test("clamps decayed energy at 0", async () => {
+    const user = await userFixture();
+    const headers = await signInAs(user.email, user.password);
+    const longAgo = new Date();
+    longAgo.setUTCDate(longAgo.getUTCDate() - 100);
+
+    await prisma.userProgress.create({
+      data: {
+        currentEnergy: 20,
+        lastActiveAt: longAgo,
+        userId: Number(user.id),
+      },
+    });
+
+    const result = await getEnergyLevel(headers);
+    expect(result).toEqual({ currentEnergy: 0 });
   });
 });
