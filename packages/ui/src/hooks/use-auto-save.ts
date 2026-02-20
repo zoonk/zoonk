@@ -109,13 +109,5 @@ export function useAutoSave({
     [],
   );
 
-  function handleSetValue(newValue: string) {
-    setValue(newValue);
-  }
-
-  return {
-    setValue: handleSetValue,
-    status,
-    value,
-  };
+  return { setValue, status, value };
 }

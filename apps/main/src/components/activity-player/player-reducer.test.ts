@@ -4,7 +4,6 @@ import {
 } from "@/data/activities/prepare-activity-data";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import {
-  type PlayerAction,
   type PlayerState,
   type SelectedAnswer,
   type StepResult,
@@ -711,7 +710,7 @@ describe("timing", () => {
 describe("edge cases", () => {
   test("unknown action returns state unchanged", () => {
     const state = buildState();
-    const next = playerReducer(state, { type: "UNKNOWN" } as any as PlayerAction);
+    const next = playerReducer(state, { type: "UNKNOWN" } as any);
     expect(next).toBe(state);
   });
 

@@ -46,7 +46,7 @@ export type PlayerState = {
   stepTimings: Record<string, StepTiming>;
 };
 
-export type PlayerAction =
+type PlayerAction =
   | { type: "SELECT_ANSWER"; stepId: string; answer: SelectedAnswer }
   | { type: "CLEAR_ANSWER"; stepId: string }
   | { type: "CHECK_ANSWER"; stepId: string; result: AnswerResult; effects: ChallengeEffect[] }
