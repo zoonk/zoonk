@@ -22,6 +22,7 @@ import {
   chapterGenerationTriggerSchema,
   courseGenerationTriggerSchema,
   lessonGenerationTriggerSchema,
+  lessonPreloadTriggerSchema,
 } from "./schemas/workflows";
 
 export const openAPIDocument = createDocument({
@@ -171,6 +172,11 @@ export const openAPIDocument = createDocument({
       requiresSubscription: true,
       schema: lessonGenerationTriggerSchema,
       summary: "Trigger lesson generation workflow",
+    }),
+    "/workflows/lesson-preload/trigger": workflowTriggerEndpoint({
+      requiresSubscription: true,
+      schema: lessonPreloadTriggerSchema,
+      summary: "Trigger lesson preload workflow",
     }),
   },
   servers: [{ description: "API v1", url: "/v1" }],

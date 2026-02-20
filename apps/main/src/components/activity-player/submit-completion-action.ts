@@ -1,5 +1,6 @@
 "use server";
 
+import { preloadNextLesson } from "@/data/progress/preload-next-lesson";
 import { submitActivityCompletion } from "@/data/progress/submit-activity-completion";
 import { auth } from "@zoonk/core/auth";
 import {
@@ -14,6 +15,7 @@ import { safeAsync } from "@zoonk/utils/error";
 import { getLocale } from "next-intl/server";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
+import { after } from "next/server";
 import { hasNegativeDimension } from "./has-negative-dimension";
 
 export type CompletionResult =
@@ -125,6 +127,8 @@ export async function submitCompletion(rawInput: CompletionInput): Promise<Compl
 
   const locale = await getLocale();
   revalidatePath(`/${locale}`);
+
+  after(() => preloadNextLesson(BigInt(input.activityId), reqHeaders.get("cookie") ?? ""));
 
   return {
     belt: data.belt,
