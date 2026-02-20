@@ -19,7 +19,6 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { toast } from "@zoonk/ui/components/sonner";
-import { useIsMounted } from "@zoonk/ui/hooks/is-mounted";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useCallback, useId, useMemo, useOptimistic, useState, useTransition } from "react";
 import {
@@ -40,7 +39,6 @@ export function EditorSortableList<T extends SortableItem>({
   renderOverlay?: (activeItem: T) => React.ReactNode;
 }) {
   const dndId = useId();
-  const mounted = useIsMounted();
   const [activeId, setActiveId] = useState<number | null>(null);
   const [optimisticItems, setOptimisticItems] = useOptimistic(initialItems);
   const [pending, startTransition] = useTransition();
@@ -119,10 +117,6 @@ export function EditorSortableList<T extends SortableItem>({
   );
 
   const itemIds = useMemo(() => optimisticItems.map((item) => item.id), [optimisticItems]);
-
-  if (!mounted) {
-    return <div data-slot="editor-sortable-list">{children}</div>;
-  }
 
   return (
     <EditorSortableContext.Provider value={contextValue}>
