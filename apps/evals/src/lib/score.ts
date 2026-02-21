@@ -55,7 +55,7 @@ export async function generateScore(params: {
   `;
 
   const { output: result } = await generateText({
-    model: "google/gemini-3-pro-preview",
+    model: "google/gemini-3.1-pro-preview",
     output: Output.object({ schema: scoreSchema }),
     prompt: evalPrompt,
     system: systemPrompt,
