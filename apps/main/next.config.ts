@@ -78,7 +78,7 @@ const withNextIntl = createNextIntlPlugin({
       path: "./messages",
       precompile: true,
     },
-    srcPath: "./src",
+    srcPath: ["./src", "../../packages/player/src"],
   },
 });
 

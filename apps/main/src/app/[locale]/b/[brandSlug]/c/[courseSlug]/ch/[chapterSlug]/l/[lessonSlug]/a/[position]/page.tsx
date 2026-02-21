@@ -1,13 +1,12 @@
 "use cache";
 
-import { ActivityPlayerShell } from "@/components/activity-player/activity-player-shell";
 import { getActivity } from "@/data/activities/get-activity";
 import { getLessonSentences } from "@/data/activities/get-lesson-sentences";
 import { getLessonWords } from "@/data/activities/get-lesson-words";
-import { prepareActivityData } from "@/data/activities/prepare-activity-data";
 import { getLesson } from "@/data/lessons/get-lesson";
 import { getActivitySeoMeta } from "@/lib/activities";
 import { getNextActivityInCourse } from "@zoonk/core/activities/next-in-course";
+import { prepareActivityData } from "@zoonk/player/prepare-activity-data";
 import { cacheTagActivity } from "@zoonk/utils/cache";
 import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import { parseNumericId } from "@zoonk/utils/string";
@@ -16,6 +15,7 @@ import { setRequestLocale } from "next-intl/server";
 import { cacheTag } from "next/cache";
 import { notFound } from "next/navigation";
 import { ActivityNotGenerated } from "./activity-not-generated";
+import { ActivityPlayerClient } from "./activity-player-client";
 
 type Props =
   PageProps<"/[locale]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/a/[position]">;
@@ -109,7 +109,7 @@ export default async function ActivityPage({ params }: Props) {
     : null;
 
   return (
-    <ActivityPlayerShell
+    <ActivityPlayerClient
       activity={serialized}
       lessonHref={lessonHref}
       nextActivityHref={nextActivityHref}

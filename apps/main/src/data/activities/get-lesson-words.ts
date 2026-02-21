@@ -2,7 +2,7 @@ import "server-only";
 import { prisma } from "@zoonk/db";
 import { cache } from "react";
 
-export type LessonWordData = {
+type LessonWordData = {
   id: bigint;
   word: string;
   translation: string;
