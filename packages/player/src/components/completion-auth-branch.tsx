@@ -8,12 +8,8 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { type CompletionResult } from "../completion-input-schema";
 import { usePlayer } from "../player-context";
-import {
-  BeltProgressHint,
-  BeltProgressSkeleton,
-  RewardBadges,
-  RewardBadgesSkeleton,
-} from "./reward-badges";
+import { BeltProgressHint, BeltProgressSkeleton } from "./belt-progress";
+import { RewardBadges, RewardBadgesSkeleton } from "./reward-badges";
 
 function CompletionActions({ className, ...props }: React.ComponentProps<"div">) {
   return (

@@ -8,13 +8,9 @@ import { useExtracted } from "next-intl";
 import { type CompletionResult } from "../completion-input-schema";
 import { usePlayer } from "../player-context";
 import { type DimensionInventory } from "../player-reducer";
+import { BeltProgressHint, BeltProgressSkeleton } from "./belt-progress";
 import { DimensionList, buildDimensionEntries } from "./dimension-inventory";
-import {
-  BeltProgressHint,
-  BeltProgressSkeleton,
-  RewardBadges,
-  RewardBadgesSkeleton,
-} from "./reward-badges";
+import { RewardBadges, RewardBadgesSkeleton } from "./reward-badges";
 
 function ChallengeScreen({ className, ...props }: React.ComponentProps<"div">) {
   return (
