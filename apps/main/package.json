@@ -27,6 +27,7 @@
     "@zoonk/core": "workspace:*",
     "@zoonk/db": "workspace:*",
     "@zoonk/next": "workspace:*",
+    "@zoonk/player": "workspace:*",
     "@zoonk/ui": "workspace:*",
     "@zoonk/utils": "workspace:*",
     "botid": "1.5.10",

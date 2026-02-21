@@ -5,15 +5,419 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "X-Generator: next-intl\n"
 
+#: ../../packages/player/src/components/arrange-words.tsx
+msgctxt "1nJY2/"
+msgid "Your answer"
+msgstr "Your answer"
+
+#: ../../packages/player/src/components/arrange-words.tsx
+#: ../../packages/player/src/components/fill-blank-step.tsx
+#: ../../packages/player/src/components/result-announcement.tsx
+#: ../../packages/player/src/components/sort-order-step.tsx
+msgctxt "6NoIUl"
+msgid "Correct"
+msgstr "Correct"
+
+#: ../../packages/player/src/components/arrange-words.tsx
+msgctxt "7R/rOB"
+msgid "Tap words to build your answer"
+msgstr "Tap words to build your answer"
+
+#: ../../packages/player/src/components/arrange-words.tsx
+#: ../../packages/player/src/components/fill-blank-step.tsx
+msgctxt "e7WNdK"
+msgid "Word bank"
+msgstr "Word bank"
+
+#: ../../packages/player/src/components/arrange-words.tsx
+#: ../../packages/player/src/components/sort-order-step.tsx
+msgctxt "hFFOe+"
+msgid "{item}. {result}."
+msgstr "{item}. {result}."
+
+#: ../../packages/player/src/components/arrange-words.tsx
+msgctxt "vPyO9S"
+msgid "Position {position}: {item}. Tap to remove."
+msgstr "Position {position}: {item}. Tap to remove."
+
+#: ../../packages/player/src/components/arrange-words.tsx
+#: ../../packages/player/src/components/fill-blank-step.tsx
+msgctxt "xvWuPP"
+msgid "Correct answer: {answer}"
+msgstr "Correct answer: {answer}"
+
+#: ../../packages/player/src/components/arrange-words.tsx
+#: ../../packages/player/src/components/fill-blank-step.tsx
+#: ../../packages/player/src/components/result-announcement.tsx
+#: ../../packages/player/src/components/sort-order-step.tsx
+msgctxt "Ypr9T5"
+msgid "Incorrect"
+msgstr "Incorrect"
+
+#: ../../packages/player/src/components/challenge-completion.tsx
+#: ../../packages/player/src/components/completion-auth-branch.tsx
+msgctxt "7tB7n/"
+msgid "Back to Lesson"
+msgstr "Back to Lesson"
+
+#: ../../packages/player/src/components/challenge-completion.tsx
+msgctxt "a0e1mh"
+msgid "Challenge Complete"
+msgstr "Challenge Complete"
+
+#: ../../packages/player/src/components/challenge-completion.tsx
+msgctxt "hOjzbw"
+msgid "Final dimension scores"
+msgstr "Final dimension scores"
+
+#: ../../packages/player/src/components/challenge-completion.tsx
+msgctxt "JOTIo6"
+msgid "Some of your stats went below zero."
+msgstr "Some of your stats went below zero."
+
+#: ../../packages/player/src/components/challenge-completion.tsx
+msgctxt "jsy7pk"
+msgid "Try Again"
+msgstr "Try Again"
+
+#: ../../packages/player/src/components/challenge-completion.tsx
+msgctxt "w48TcP"
+msgid "Challenge Failed"
+msgstr "Challenge Failed"
+
+#: ../../packages/player/src/components/challenge-intro.tsx
+msgctxt "/DZ4Fx"
+msgid "Make choices."
+msgstr "Make choices."
+
+#: ../../packages/player/src/components/challenge-intro.tsx
+msgctxt "4vTq4b"
+msgid "Balance the outcome."
+msgstr "Balance the outcome."
+
+#: ../../packages/player/src/components/challenge-intro.tsx
+#: src/lib/activities.ts
+msgctxt "9MidH4"
+msgid "Challenge"
+msgstr "Challenge"
+
+#: ../../packages/player/src/components/challenge-intro.tsx
+msgctxt "c+wn4p"
+msgid "You'll face a series of decisions. Each one shifts your scores. Don't let any go negative."
+msgstr "You'll face a series of decisions. Each one shifts your scores. Don't let any go negative."
+
+#: ../../packages/player/src/components/challenge-intro.tsx
+msgctxt "kKztdT"
+msgid "Starting scores"
+msgstr "Starting scores"
+
+#: ../../packages/player/src/components/challenge-intro.tsx
+msgctxt "PVe26p"
+msgid "Begin"
+msgstr "Begin"
+
+#: ../../packages/player/src/components/challenge-intro.tsx
+msgctxt "SFKe0U"
+msgid "Your scores"
+msgstr "Your scores"
+
+#: ../../packages/player/src/components/completion-auth-branch.tsx
+msgctxt "5kK+j9"
+msgid "Restart"
+msgstr "Restart"
+
+#: ../../packages/player/src/components/completion-auth-branch.tsx
+msgctxt "9+Ddtu"
+msgid "Next"
+msgstr "Next"
+
+#: ../../packages/player/src/components/completion-auth-branch.tsx
 #: src/app/[locale]/(catalog)/_components/command-palette.tsx
 #: src/app/[locale]/(catalog)/_components/logout-dropdown-item.tsx
 #: src/app/[locale]/(performance)/_components/performance-empty-state.tsx
 #: src/app/[locale]/(settings)/_components/protected-section.tsx
-#: src/components/activity-player/completion-auth-branch.tsx
 #: src/components/auth/login-required.tsx
 msgctxt "AyGauy"
 msgid "Login"
 msgstr "Login"
+
+#: ../../packages/player/src/components/completion-auth-branch.tsx
+msgctxt "e1M39C"
+msgid "Sign up to track your progress"
+msgstr "Sign up to track your progress"
+
+#: ../../packages/player/src/components/completion-screen.tsx
+#: src/components/catalog/activity-completion-indicator.tsx
+#: src/components/catalog/chapter-completion.tsx
+#: src/components/catalog/lesson-completion.tsx
+msgctxt "95stPq"
+msgid "Completed"
+msgstr "Completed"
+
+#: ../../packages/player/src/components/completion-screen.tsx
+msgctxt "P768k7"
+msgid "correct"
+msgstr "correct"
+
+#: ../../packages/player/src/components/dimension-status-button.tsx
+msgctxt "ehV7Gg"
+msgid "Current dimension scores"
+msgstr "Current dimension scores"
+
+#: ../../packages/player/src/components/dimension-status-button.tsx
+msgctxt "EUdKC+"
+msgid "View stats"
+msgstr "View stats"
+
+#: ../../packages/player/src/components/dimension-status-button.tsx
+msgctxt "U86B6w"
+msgid "Stats"
+msgstr "Stats"
+
+#: ../../packages/player/src/components/feedback-screen.tsx
+msgctxt "iaHymw"
+msgid "Outcome"
+msgstr "Outcome"
+
+#: ../../packages/player/src/components/feedback-screen.tsx
+msgctxt "zZGbEs"
+msgid "Dimension inventory"
+msgstr "Dimension inventory"
+
+#: ../../packages/player/src/components/fill-blank-step.tsx
+msgctxt "FmmJ/j"
+msgid "Blank {position}"
+msgstr "Blank {position}"
+
+#: ../../packages/player/src/components/fill-blank-step.tsx
+msgctxt "SL2Bob"
+msgid "Blank {position}: {item}. {result}."
+msgstr "Blank {position}: {item}. {result}."
+
+#: ../../packages/player/src/components/fill-blank-step.tsx
+msgctxt "wUEGVH"
+msgid "Blank {position}: {item}. Tap to remove."
+msgstr "Blank {position}: {item}. Tap to remove."
+
+#: ../../packages/player/src/components/inline-feedback.tsx
+msgctxt "++l7ni"
+msgid "Not quite"
+msgstr "Not quite"
+
+#: ../../packages/player/src/components/inline-feedback.tsx
+msgctxt "xmF49T"
+msgid "Correct!"
+msgstr "Correct!"
+
+#: ../../packages/player/src/components/listening-step.tsx
+#: ../../packages/player/src/components/reading-step.tsx
+msgctxt "19nXyC"
+msgid "Translate this sentence:"
+msgstr "Translate this sentence:"
+
+#: ../../packages/player/src/components/listening-step.tsx
+msgctxt "aAmWaS"
+msgid "What do you hear?"
+msgstr "What do you hear?"
+
+#: ../../packages/player/src/components/listening-step.tsx
+msgctxt "P7p52A"
+msgid "Pause audio"
+msgstr "Pause audio"
+
+#: ../../packages/player/src/components/listening-step.tsx
+msgctxt "vUZhim"
+msgid "Play audio"
+msgstr "Play audio"
+
+#: ../../packages/player/src/components/match-columns-step.tsx
+msgctxt "ja1JDt"
+msgid "All pairs matched. Press Check to continue."
+msgstr "All pairs matched. Press Check to continue."
+
+#: ../../packages/player/src/components/multiple-choice-step.tsx
+#: ../../packages/player/src/components/vocabulary-step.tsx
+msgctxt "akd+cv"
+msgid "Answer options"
+msgstr "Answer options"
+
+#: ../../packages/player/src/components/multiple-choice-step.tsx
+msgctxt "HHBtl4"
+msgid "What do you say?"
+msgstr "What do you say?"
+
+#: ../../packages/player/src/components/multiple-choice-step.tsx
+msgctxt "nJGJop"
+msgid "Someone says:"
+msgstr "Someone says:"
+
+#: ../../packages/player/src/components/player-header.tsx
+msgctxt "aNzy1T"
+msgid "Previous step"
+msgstr "Previous step"
+
+#: ../../packages/player/src/components/player-header.tsx
+msgctxt "d+qgix"
+msgid "Next step"
+msgstr "Next step"
+
+#: ../../packages/player/src/components/player-header.tsx
+msgctxt "kXUK98"
+msgid "Step navigation"
+msgstr "Step navigation"
+
+#: ../../packages/player/src/components/player-header.tsx
+msgctxt "rbrahO"
+msgid "Close"
+msgstr "Close"
+
+#: ../../packages/player/src/components/player-progress-bar.tsx
+msgctxt "OUZtdJ"
+msgid "Activity progress"
+msgstr "Activity progress"
+
+#: ../../packages/player/src/components/player-shell.tsx
+#: src/components/catalog/continue-activity-link.tsx
+msgctxt "acrOoz"
+msgid "Continue"
+msgstr "Continue"
+
+#: ../../packages/player/src/components/player-shell.tsx
+msgctxt "RDZVQL"
+msgid "Check"
+msgstr "Check"
+
+#: ../../packages/player/src/components/reward-badges.tsx
+#: src/app/[locale]/(performance)/level/level-stats.tsx
+msgctxt "/Q0taG"
+msgid "BP"
+msgstr "BP"
+
+#: ../../packages/player/src/components/reward-badges.tsx
+#: src/app/[locale]/(catalog)/energy.tsx
+#: src/app/[locale]/(performance)/_components/metric-pills.tsx
+#: src/app/[locale]/(performance)/energy/page.tsx
+msgctxt "cVpmV7"
+msgid "Energy"
+msgstr "Energy"
+
+#: ../../packages/player/src/components/reward-badges.tsx
+msgctxt "erSdxr"
+msgid "Belt"
+msgstr "Belt"
+
+#: ../../packages/player/src/components/reward-badges.tsx
+msgctxt "HiBQnL"
+msgid "BP to next level"
+msgstr "BP to next level"
+
+#: ../../packages/player/src/components/reward-badges.tsx
+#: src/app/[locale]/(catalog)/level.tsx
+#: src/app/[locale]/(performance)/_components/metric-pills.tsx
+#: src/app/[locale]/(performance)/level/page.tsx
+msgctxt "y1Qr81"
+msgid "Level"
+msgstr "Level"
+
+#: ../../packages/player/src/components/select-image-step.tsx
+msgctxt "NA6C/+"
+msgid "Image options"
+msgstr "Image options"
+
+#: ../../packages/player/src/components/sort-order-step.tsx
+msgctxt "9lc1oV"
+msgid "Drag items into the correct order"
+msgstr "Drag items into the correct order"
+
+#: ../../packages/player/src/components/sort-order-step.tsx
+msgctxt "p5llOK"
+msgid "Sort items"
+msgstr "Sort items"
+
+#: ../../packages/player/src/components/sort-order-step.tsx
+msgctxt "VA8c/A"
+msgid "Correct order:"
+msgstr "Correct order:"
+
+#: ../../packages/player/src/components/visuals/chart-visual.tsx
+msgctxt "iZuO+L"
+msgid "Legend"
+msgstr "Legend"
+
+#: ../../packages/player/src/components/visuals/diagram-visual.tsx
+msgctxt "PBUs06"
+msgid "Diagram"
+msgstr "Diagram"
+
+#: ../../packages/player/src/components/visuals/timeline-visual.tsx
+msgctxt "zWkvNO"
+msgid "Timeline"
+msgstr "Timeline"
+
+#: ../../packages/player/src/components/vocabulary-step.tsx
+msgctxt "MxLxkr"
+msgid "Translate this word:"
+msgstr "Translate this word:"
+
+#: ../../packages/player/src/use-belt-color-label.ts
+#: src/lib/belt-colors.ts
+msgctxt "1W4okO"
+msgid "Green"
+msgstr "Green"
+
+#: ../../packages/player/src/use-belt-color-label.ts
+#: src/lib/belt-colors.ts
+msgctxt "5Tw3Ta"
+msgid "Yellow"
+msgstr "Yellow"
+
+#: ../../packages/player/src/use-belt-color-label.ts
+#: src/lib/belt-colors.ts
+msgctxt "D+ZFS/"
+msgid "Red"
+msgstr "Red"
+
+#: ../../packages/player/src/use-belt-color-label.ts
+#: src/lib/belt-colors.ts
+msgctxt "eM/4ho"
+msgid "Brown"
+msgstr "Brown"
+
+#: ../../packages/player/src/use-belt-color-label.ts
+#: src/lib/belt-colors.ts
+msgctxt "k2tJ9k"
+msgid "Blue"
+msgstr "Blue"
+
+#: ../../packages/player/src/use-belt-color-label.ts
+#: src/lib/belt-colors.ts
+msgctxt "n3m1xt"
+msgid "Orange"
+msgstr "Orange"
+
+#: ../../packages/player/src/use-belt-color-label.ts
+#: src/lib/belt-colors.ts
+msgctxt "OAG+sQ"
+msgid "White"
+msgstr "White"
+
+#: ../../packages/player/src/use-belt-color-label.ts
+#: src/lib/belt-colors.ts
+msgctxt "tihmF3"
+msgid "Purple"
+msgstr "Purple"
+
+#: ../../packages/player/src/use-belt-color-label.ts
+#: src/lib/belt-colors.ts
+msgctxt "XjGbuY"
+msgid "Black"
+msgstr "Black"
+
+#: ../../packages/player/src/use-belt-color-label.ts
+#: src/lib/belt-colors.ts
+msgctxt "Yp7v0H"
+msgid "Gray"
+msgstr "Gray"
 
 #: src/app/[locale]/(catalog)/_components/command-palette.tsx
 #: src/app/[locale]/(catalog)/_components/logout-dropdown-item.tsx
@@ -296,14 +700,6 @@ msgid "Your energy is {value}%"
 msgstr "Your energy is {value}%"
 
 #: src/app/[locale]/(catalog)/energy.tsx
-#: src/app/[locale]/(performance)/_components/metric-pills.tsx
-#: src/app/[locale]/(performance)/energy/page.tsx
-#: src/components/activity-player/reward-badges.tsx
-msgctxt "cVpmV7"
-msgid "Energy"
-msgstr "Energy"
-
-#: src/app/[locale]/(catalog)/energy.tsx
 msgctxt "soDmlG"
 msgid "Keep learning to increase it"
 msgstr "Keep learning to increase it"
@@ -423,14 +819,6 @@ msgstr "Max level reached"
 msgctxt "uiwFZe"
 msgid "{color} Belt - Level {level}"
 msgstr "{color} Belt - Level {level}"
-
-#: src/app/[locale]/(catalog)/level.tsx
-#: src/app/[locale]/(performance)/_components/metric-pills.tsx
-#: src/app/[locale]/(performance)/level/page.tsx
-#: src/components/activity-player/reward-badges.tsx
-msgctxt "y1Qr81"
-msgid "Level"
-msgstr "Level"
 
 #: src/app/[locale]/(catalog)/my/page.tsx
 msgctxt "Dr13kE"
@@ -658,12 +1046,6 @@ msgstr "{color} Belt, Level {level} of 10. Maximum level achieved."
 msgctxt "ZKbTsS"
 msgid "{current}/10"
 msgstr "{current}/10"
-
-#: src/app/[locale]/(performance)/level/level-stats.tsx
-#: src/components/activity-player/reward-badges.tsx
-msgctxt "/Q0taG"
-msgid "BP"
-msgstr "BP"
 
 #: src/app/[locale]/(performance)/level/level-stats.tsx
 msgctxt "u/oEJA"
@@ -1235,328 +1617,6 @@ msgctxt "UhkSyx"
 msgid "Terms of Use"
 msgstr "Terms of Use"
 
-#: src/components/activity-player/activity-player-shell.tsx
-#: src/components/catalog/continue-activity-link.tsx
-msgctxt "acrOoz"
-msgid "Continue"
-msgstr "Continue"
-
-#: src/components/activity-player/activity-player-shell.tsx
-msgctxt "RDZVQL"
-msgid "Check"
-msgstr "Check"
-
-#: src/components/activity-player/arrange-words.tsx
-msgctxt "1nJY2/"
-msgid "Your answer"
-msgstr "Your answer"
-
-#: src/components/activity-player/arrange-words.tsx
-#: src/components/activity-player/fill-blank-step.tsx
-#: src/components/activity-player/result-announcement.tsx
-#: src/components/activity-player/sort-order-step.tsx
-msgctxt "6NoIUl"
-msgid "Correct"
-msgstr "Correct"
-
-#: src/components/activity-player/arrange-words.tsx
-msgctxt "7R/rOB"
-msgid "Tap words to build your answer"
-msgstr "Tap words to build your answer"
-
-#: src/components/activity-player/arrange-words.tsx
-#: src/components/activity-player/fill-blank-step.tsx
-msgctxt "e7WNdK"
-msgid "Word bank"
-msgstr "Word bank"
-
-#: src/components/activity-player/arrange-words.tsx
-#: src/components/activity-player/sort-order-step.tsx
-msgctxt "hFFOe+"
-msgid "{item}. {result}."
-msgstr "{item}. {result}."
-
-#: src/components/activity-player/arrange-words.tsx
-msgctxt "vPyO9S"
-msgid "Position {position}: {item}. Tap to remove."
-msgstr "Position {position}: {item}. Tap to remove."
-
-#: src/components/activity-player/arrange-words.tsx
-#: src/components/activity-player/fill-blank-step.tsx
-msgctxt "xvWuPP"
-msgid "Correct answer: {answer}"
-msgstr "Correct answer: {answer}"
-
-#: src/components/activity-player/arrange-words.tsx
-#: src/components/activity-player/fill-blank-step.tsx
-#: src/components/activity-player/result-announcement.tsx
-#: src/components/activity-player/sort-order-step.tsx
-msgctxt "Ypr9T5"
-msgid "Incorrect"
-msgstr "Incorrect"
-
-#: src/components/activity-player/challenge-completion.tsx
-#: src/components/activity-player/completion-auth-branch.tsx
-msgctxt "7tB7n/"
-msgid "Back to Lesson"
-msgstr "Back to Lesson"
-
-#: src/components/activity-player/challenge-completion.tsx
-msgctxt "a0e1mh"
-msgid "Challenge Complete"
-msgstr "Challenge Complete"
-
-#: src/components/activity-player/challenge-completion.tsx
-msgctxt "hOjzbw"
-msgid "Final dimension scores"
-msgstr "Final dimension scores"
-
-#: src/components/activity-player/challenge-completion.tsx
-msgctxt "JOTIo6"
-msgid "Some of your stats went below zero."
-msgstr "Some of your stats went below zero."
-
-#: src/components/activity-player/challenge-completion.tsx
-msgctxt "jsy7pk"
-msgid "Try Again"
-msgstr "Try Again"
-
-#: src/components/activity-player/challenge-completion.tsx
-msgctxt "w48TcP"
-msgid "Challenge Failed"
-msgstr "Challenge Failed"
-
-#: src/components/activity-player/challenge-intro.tsx
-msgctxt "/DZ4Fx"
-msgid "Make choices."
-msgstr "Make choices."
-
-#: src/components/activity-player/challenge-intro.tsx
-msgctxt "4vTq4b"
-msgid "Balance the outcome."
-msgstr "Balance the outcome."
-
-#: src/components/activity-player/challenge-intro.tsx
-#: src/lib/activities.ts
-msgctxt "9MidH4"
-msgid "Challenge"
-msgstr "Challenge"
-
-#: src/components/activity-player/challenge-intro.tsx
-msgctxt "c+wn4p"
-msgid "You'll face a series of decisions. Each one shifts your scores. Don't let any go negative."
-msgstr "You'll face a series of decisions. Each one shifts your scores. Don't let any go negative."
-
-#: src/components/activity-player/challenge-intro.tsx
-msgctxt "kKztdT"
-msgid "Starting scores"
-msgstr "Starting scores"
-
-#: src/components/activity-player/challenge-intro.tsx
-msgctxt "PVe26p"
-msgid "Begin"
-msgstr "Begin"
-
-#: src/components/activity-player/challenge-intro.tsx
-msgctxt "SFKe0U"
-msgid "Your scores"
-msgstr "Your scores"
-
-#: src/components/activity-player/chart-visual.tsx
-msgctxt "iZuO+L"
-msgid "Legend"
-msgstr "Legend"
-
-#: src/components/activity-player/completion-auth-branch.tsx
-msgctxt "5kK+j9"
-msgid "Restart"
-msgstr "Restart"
-
-#: src/components/activity-player/completion-auth-branch.tsx
-msgctxt "9+Ddtu"
-msgid "Next"
-msgstr "Next"
-
-#: src/components/activity-player/completion-auth-branch.tsx
-msgctxt "e1M39C"
-msgid "Sign up to track your progress"
-msgstr "Sign up to track your progress"
-
-#: src/components/activity-player/completion-screen.tsx
-#: src/components/catalog/activity-completion-indicator.tsx
-#: src/components/catalog/chapter-completion.tsx
-#: src/components/catalog/lesson-completion.tsx
-msgctxt "95stPq"
-msgid "Completed"
-msgstr "Completed"
-
-#: src/components/activity-player/completion-screen.tsx
-msgctxt "P768k7"
-msgid "correct"
-msgstr "correct"
-
-#: src/components/activity-player/diagram-visual.tsx
-msgctxt "PBUs06"
-msgid "Diagram"
-msgstr "Diagram"
-
-#: src/components/activity-player/dimension-status-button.tsx
-msgctxt "ehV7Gg"
-msgid "Current dimension scores"
-msgstr "Current dimension scores"
-
-#: src/components/activity-player/dimension-status-button.tsx
-msgctxt "EUdKC+"
-msgid "View stats"
-msgstr "View stats"
-
-#: src/components/activity-player/dimension-status-button.tsx
-msgctxt "U86B6w"
-msgid "Stats"
-msgstr "Stats"
-
-#: src/components/activity-player/feedback-screen.tsx
-msgctxt "iaHymw"
-msgid "Outcome"
-msgstr "Outcome"
-
-#: src/components/activity-player/feedback-screen.tsx
-msgctxt "zZGbEs"
-msgid "Dimension inventory"
-msgstr "Dimension inventory"
-
-#: src/components/activity-player/fill-blank-step.tsx
-msgctxt "FmmJ/j"
-msgid "Blank {position}"
-msgstr "Blank {position}"
-
-#: src/components/activity-player/fill-blank-step.tsx
-msgctxt "SL2Bob"
-msgid "Blank {position}: {item}. {result}."
-msgstr "Blank {position}: {item}. {result}."
-
-#: src/components/activity-player/fill-blank-step.tsx
-msgctxt "wUEGVH"
-msgid "Blank {position}: {item}. Tap to remove."
-msgstr "Blank {position}: {item}. Tap to remove."
-
-#: src/components/activity-player/inline-feedback.tsx
-msgctxt "++l7ni"
-msgid "Not quite"
-msgstr "Not quite"
-
-#: src/components/activity-player/inline-feedback.tsx
-msgctxt "xmF49T"
-msgid "Correct!"
-msgstr "Correct!"
-
-#: src/components/activity-player/listening-step.tsx
-#: src/components/activity-player/reading-step.tsx
-msgctxt "19nXyC"
-msgid "Translate this sentence:"
-msgstr "Translate this sentence:"
-
-#: src/components/activity-player/listening-step.tsx
-msgctxt "aAmWaS"
-msgid "What do you hear?"
-msgstr "What do you hear?"
-
-#: src/components/activity-player/listening-step.tsx
-msgctxt "P7p52A"
-msgid "Pause audio"
-msgstr "Pause audio"
-
-#: src/components/activity-player/listening-step.tsx
-msgctxt "vUZhim"
-msgid "Play audio"
-msgstr "Play audio"
-
-#: src/components/activity-player/match-columns-step.tsx
-msgctxt "ja1JDt"
-msgid "All pairs matched. Press Check to continue."
-msgstr "All pairs matched. Press Check to continue."
-
-#: src/components/activity-player/multiple-choice-step.tsx
-#: src/components/activity-player/vocabulary-step.tsx
-msgctxt "akd+cv"
-msgid "Answer options"
-msgstr "Answer options"
-
-#: src/components/activity-player/multiple-choice-step.tsx
-msgctxt "HHBtl4"
-msgid "What do you say?"
-msgstr "What do you say?"
-
-#: src/components/activity-player/multiple-choice-step.tsx
-msgctxt "nJGJop"
-msgid "Someone says:"
-msgstr "Someone says:"
-
-#: src/components/activity-player/player-header.tsx
-msgctxt "aNzy1T"
-msgid "Previous step"
-msgstr "Previous step"
-
-#: src/components/activity-player/player-header.tsx
-msgctxt "d+qgix"
-msgid "Next step"
-msgstr "Next step"
-
-#: src/components/activity-player/player-header.tsx
-msgctxt "kXUK98"
-msgid "Step navigation"
-msgstr "Step navigation"
-
-#: src/components/activity-player/player-header.tsx
-msgctxt "rbrahO"
-msgid "Close"
-msgstr "Close"
-
-#: src/components/activity-player/player-progress-bar.tsx
-msgctxt "OUZtdJ"
-msgid "Activity progress"
-msgstr "Activity progress"
-
-#: src/components/activity-player/reward-badges.tsx
-msgctxt "erSdxr"
-msgid "Belt"
-msgstr "Belt"
-
-#: src/components/activity-player/reward-badges.tsx
-msgctxt "HiBQnL"
-msgid "BP to next level"
-msgstr "BP to next level"
-
-#: src/components/activity-player/select-image-step.tsx
-msgctxt "NA6C/+"
-msgid "Image options"
-msgstr "Image options"
-
-#: src/components/activity-player/sort-order-step.tsx
-msgctxt "9lc1oV"
-msgid "Drag items into the correct order"
-msgstr "Drag items into the correct order"
-
-#: src/components/activity-player/sort-order-step.tsx
-msgctxt "p5llOK"
-msgid "Sort items"
-msgstr "Sort items"
-
-#: src/components/activity-player/sort-order-step.tsx
-msgctxt "VA8c/A"
-msgid "Correct order:"
-msgstr "Correct order:"
-
-#: src/components/activity-player/timeline-visual.tsx
-msgctxt "zWkvNO"
-msgid "Timeline"
-msgstr "Timeline"
-
-#: src/components/activity-player/vocabulary-step.tsx
-msgctxt "MxLxkr"
-msgid "Translate this word:"
-msgstr "Translate this word:"
-
 #: src/components/catalog/activity-completion-indicator.tsx
 msgctxt "4o5CAP"
 msgid "Not completed"
@@ -1888,66 +1948,6 @@ msgstr "Shows WHEN to apply this topic. A dialogue with a colleague where you so
 msgctxt "ypy024"
 msgid "Tests your understanding with questions. Uses new scenarios to check if you grasped the concept, not just memorized it."
 msgstr "Tests your understanding with questions. Uses new scenarios to check if you grasped the concept, not just memorized it."
-
-#: src/lib/belt-colors.ts
-#: src/lib/use-belt-color-label.ts
-msgctxt "1W4okO"
-msgid "Green"
-msgstr "Green"
-
-#: src/lib/belt-colors.ts
-#: src/lib/use-belt-color-label.ts
-msgctxt "5Tw3Ta"
-msgid "Yellow"
-msgstr "Yellow"
-
-#: src/lib/belt-colors.ts
-#: src/lib/use-belt-color-label.ts
-msgctxt "D+ZFS/"
-msgid "Red"
-msgstr "Red"
-
-#: src/lib/belt-colors.ts
-#: src/lib/use-belt-color-label.ts
-msgctxt "eM/4ho"
-msgid "Brown"
-msgstr "Brown"
-
-#: src/lib/belt-colors.ts
-#: src/lib/use-belt-color-label.ts
-msgctxt "k2tJ9k"
-msgid "Blue"
-msgstr "Blue"
-
-#: src/lib/belt-colors.ts
-#: src/lib/use-belt-color-label.ts
-msgctxt "n3m1xt"
-msgid "Orange"
-msgstr "Orange"
-
-#: src/lib/belt-colors.ts
-#: src/lib/use-belt-color-label.ts
-msgctxt "OAG+sQ"
-msgid "White"
-msgstr "White"
-
-#: src/lib/belt-colors.ts
-#: src/lib/use-belt-color-label.ts
-msgctxt "tihmF3"
-msgid "Purple"
-msgstr "Purple"
-
-#: src/lib/belt-colors.ts
-#: src/lib/use-belt-color-label.ts
-msgctxt "XjGbuY"
-msgid "Black"
-msgstr "Black"
-
-#: src/lib/belt-colors.ts
-#: src/lib/use-belt-color-label.ts
-msgctxt "Yp7v0H"
-msgid "Gray"
-msgstr "Gray"
 
 #: src/lib/categories/category-client.ts
 #: src/lib/categories/category-server.ts

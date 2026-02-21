@@ -1,6 +1,6 @@
 import "server-only";
-import { type ScoreResult } from "@zoonk/core/player/compute-score";
 import { type TransactionClient, prisma } from "@zoonk/db";
+import { type ScoreResult } from "@zoonk/player/compute-score";
 import { type BeltLevelResult, calculateBeltLevel } from "@zoonk/utils/belt-level";
 import { DAILY_DECAY, MIN_ENERGY, MS_PER_DAY } from "@zoonk/utils/constants";
 import { clampEnergy, computeDecayedEnergy, toUTCMidnight } from "@zoonk/utils/energy";

@@ -1,0 +1,332 @@
+import {
+  type MultipleChoiceStepContent,
+  type StepContentByKind,
+  type SupportedStepKind,
+  isSupportedStepKind,
+  parseStepContent,
+} from "@zoonk/core/steps/content-contract";
+import {
+  type SupportedVisualKind,
+  type VisualContentByKind,
+  isSupportedVisualKind,
+  parseVisualContent,
+} from "@zoonk/core/steps/visual-content-contract";
+import { shuffle } from "@zoonk/utils/shuffle";
+import { getDistractorWords } from "./get-distractor-words";
+
+const VOCABULARY_DISTRACTOR_COUNT = 3;
+const WORD_BANK_DISTRACTOR_COUNT = 8;
+
+export type SerializedWord = {
+  id: string;
+  word: string;
+  translation: string;
+  alternativeTranslations: string[];
+  pronunciation: string | null;
+  romanization: string | null;
+  audioUrl: string | null;
+};
+
+export type SerializedSentence = {
+  id: string;
+  sentence: string;
+  translation: string;
+  romanization: string | null;
+  audioUrl: string | null;
+};
+
+export type SerializedStep<Kind extends SupportedStepKind = SupportedStepKind> = {
+  id: string;
+  kind: Kind;
+  position: number;
+  content: StepContentByKind[Kind];
+  visualKind: SupportedVisualKind | null;
+  visualContent: VisualContentByKind[SupportedVisualKind] | null;
+  word: SerializedWord | null;
+  sentence: SerializedSentence | null;
+  vocabularyOptions: SerializedWord[];
+  wordBankOptions: string[];
+  sortOrderItems: string[];
+  fillBlankOptions: string[];
+  matchColumnsRightItems: string[];
+};
+
+export type SerializedActivity = {
+  id: string;
+  kind: string;
+  title: string | null;
+  description: string | null;
+  language: string;
+  organizationId: number | null;
+  steps: SerializedStep[];
+  lessonWords: SerializedWord[];
+  lessonSentences: SerializedSentence[];
+};
+
+type StepDataInput = {
+  id: bigint;
+  content: unknown;
+  kind: string;
+  position: number;
+  visualContent: unknown;
+  visualKind: string | null;
+  word: WordDataInput | null;
+  sentence: SentenceDataInput | null;
+};
+
+type WordDataInput = {
+  id: bigint;
+  word: string;
+  translation: string;
+  alternativeTranslations: string[];
+  pronunciation: string | null;
+  romanization: string | null;
+  audioUrl: string | null;
+};
+
+type SentenceDataInput = {
+  id: bigint;
+  sentence: string;
+  translation: string;
+  romanization: string | null;
+  audioUrl: string | null;
+};
+
+function serializeWord(word: WordDataInput): SerializedWord {
+  return {
+    alternativeTranslations: [...word.alternativeTranslations],
+    audioUrl: word.audioUrl,
+    id: String(word.id),
+    pronunciation: word.pronunciation,
+    romanization: word.romanization,
+    translation: word.translation,
+    word: word.word,
+  };
+}
+
+function serializeSentence(sentence: SentenceDataInput): SerializedSentence {
+  return {
+    audioUrl: sentence.audioUrl,
+    id: String(sentence.id),
+    romanization: sentence.romanization,
+    sentence: sentence.sentence,
+    translation: sentence.translation,
+  };
+}
+
+function parseVisualIfSupported(
+  visualKind: string | null,
+  visualContent: unknown,
+): { kind: SupportedVisualKind; content: SerializedStep["visualContent"] } | null {
+  if (!visualKind || !visualContent) {
+    return null;
+  }
+
+  if (!isSupportedVisualKind(visualKind)) {
+    return null;
+  }
+
+  try {
+    return {
+      content: parseVisualContent(visualKind, visualContent),
+      kind: visualKind,
+    };
+  } catch {
+    return null;
+  }
+}
+
+function shuffleMultipleChoiceContent(
+  content: MultipleChoiceStepContent,
+): MultipleChoiceStepContent {
+  switch (content.kind) {
+    case "core":
+      return { ...content, options: shuffle(content.options) };
+    case "challenge":
+      return { ...content, options: shuffle(content.options) };
+    case "language":
+      return { ...content, options: shuffle(content.options) };
+    default:
+      return content;
+  }
+}
+
+function buildVocabularyOptions(
+  step: SerializedStep,
+  serializedLessonWords: SerializedWord[],
+): SerializedWord[] {
+  if (step.kind !== "vocabulary" || !step.word) {
+    return [];
+  }
+
+  const distractors = getDistractorWords(
+    step.word,
+    serializedLessonWords,
+    VOCABULARY_DISTRACTOR_COUNT,
+  );
+  return shuffle([step.word, ...distractors]).map((word) => ({
+    ...word,
+    alternativeTranslations: [...word.alternativeTranslations],
+  }));
+}
+
+function getWordBankConfig(
+  step: SerializedStep,
+): { correctWords: string[]; distractorField: "word" | "translation" } | null {
+  if (step.kind === "reading" && step.sentence) {
+    return { correctWords: step.sentence.sentence.split(" "), distractorField: "word" };
+  }
+
+  if (step.kind === "listening" && step.sentence) {
+    return { correctWords: step.sentence.translation.split(" "), distractorField: "translation" };
+  }
+
+  return null;
+}
+
+function stripPunctuation(text: string): string {
+  return text.replaceAll(/[^\p{L}\p{N}\s]/gu, "");
+}
+
+function buildWordBankOptions(
+  step: SerializedStep,
+  serializedLessonWords: SerializedWord[],
+): string[] {
+  const config = getWordBankConfig(step);
+
+  if (!config) {
+    return [];
+  }
+
+  const { correctWords, distractorField } = config;
+  const correctSet = new Set(correctWords.map((word) => stripPunctuation(word).toLowerCase()));
+
+  const allDistractorWords = serializedLessonWords.flatMap((lessonWord) =>
+    lessonWord[distractorField].split(" "),
+  );
+
+  const uniqueDistractors = [
+    ...new Map(
+      allDistractorWords
+        .filter((word) => !correctSet.has(stripPunctuation(word).toLowerCase()))
+        .map((word) => [stripPunctuation(word).toLowerCase(), word] as const),
+    ).values(),
+  ];
+
+  const selected = shuffle(uniqueDistractors).slice(0, WORD_BANK_DISTRACTOR_COUNT);
+  return shuffle([...correctWords, ...selected]);
+}
+
+function buildSortOrderItems(step: SerializedStep): string[] {
+  if (step.kind !== "sortOrder") {
+    return [];
+  }
+
+  const content = parseStepContent("sortOrder", step.content);
+  return shuffle(content.items);
+}
+
+function buildFillBlankOptions(step: SerializedStep): string[] {
+  if (step.kind !== "fillBlank") {
+    return [];
+  }
+
+  const content = parseStepContent("fillBlank", step.content);
+  return shuffle([...content.answers, ...content.distractors]);
+}
+
+function buildMatchColumnsRightItems(step: SerializedStep): string[] {
+  if (step.kind !== "matchColumns") {
+    return [];
+  }
+
+  const content = parseStepContent("matchColumns", step.content);
+  return shuffle(content.pairs.map((pair) => pair.right));
+}
+
+function serializeStep(step: StepDataInput): SerializedStep | null {
+  if (!isSupportedStepKind(step.kind)) {
+    return null;
+  }
+
+  try {
+    const content =
+      step.kind === "multipleChoice"
+        ? shuffleMultipleChoiceContent(parseStepContent("multipleChoice", step.content))
+        : parseStepContent(step.kind, step.content);
+
+    const visual = parseVisualIfSupported(step.visualKind, step.visualContent);
+
+    return {
+      content,
+      fillBlankOptions: [],
+      id: String(step.id),
+      kind: step.kind,
+      matchColumnsRightItems: [],
+      position: step.position,
+      sentence: step.sentence ? serializeSentence(step.sentence) : null,
+      sortOrderItems: [],
+      visualContent: visual?.content ?? null,
+      visualKind: visual?.kind ?? null,
+      vocabularyOptions: [],
+      word: step.word ? serializeWord(step.word) : null,
+      wordBankOptions: [],
+    };
+  } catch {
+    return null;
+  }
+}
+
+export function prepareActivityData(
+  activity: {
+    id: bigint;
+    kind: string;
+    title: string | null;
+    description: string | null;
+    language: string;
+    organizationId: number | null;
+    steps: StepDataInput[];
+  },
+  lessonWords: WordDataInput[],
+  lessonSentences: SentenceDataInput[],
+): SerializedActivity {
+  const serializedLessonWords = lessonWords.map((word) => ({
+    alternativeTranslations: [...word.alternativeTranslations],
+    audioUrl: word.audioUrl,
+    id: String(word.id),
+    pronunciation: word.pronunciation,
+    romanization: word.romanization,
+    translation: word.translation,
+    word: word.word,
+  }));
+
+  const steps = activity.steps
+    .map((step) => serializeStep(step))
+    .filter((step): step is SerializedStep => step !== null)
+    .map((step) => ({
+      ...step,
+      fillBlankOptions: buildFillBlankOptions(step),
+      matchColumnsRightItems: buildMatchColumnsRightItems(step),
+      sortOrderItems: buildSortOrderItems(step),
+      vocabularyOptions: buildVocabularyOptions(step, serializedLessonWords),
+      wordBankOptions: buildWordBankOptions(step, serializedLessonWords),
+    }));
+
+  return {
+    description: activity.description,
+    id: String(activity.id),
+    kind: activity.kind,
+    language: activity.language,
+    lessonSentences: lessonSentences.map((sentence) => ({
+      audioUrl: sentence.audioUrl,
+      id: String(sentence.id),
+      romanization: sentence.romanization,
+      sentence: sentence.sentence,
+      translation: sentence.translation,
+    })),
+    lessonWords: serializedLessonWords,
+    organizationId: activity.organizationId,
+    steps,
+    title: activity.title,
+  };
+}

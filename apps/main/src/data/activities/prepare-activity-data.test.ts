@@ -9,10 +9,14 @@ import { sentenceFixture } from "@zoonk/testing/fixtures/sentences";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
 import { wordFixture } from "@zoonk/testing/fixtures/words";
 import { beforeAll, describe, expect, expectTypeOf, test } from "vitest";
-import { type ActivityWithSteps, getActivity } from "./get-activity";
-import { type LessonSentenceData } from "./get-lesson-sentences";
-import { type LessonWordData } from "./get-lesson-words";
-import { prepareActivityData } from "./prepare-activity-data";
+import { getActivity } from "./get-activity";
+import { getLessonSentences } from "./get-lesson-sentences";
+import { getLessonWords } from "./get-lesson-words";
+
+type ActivityWithSteps = NonNullable<Awaited<ReturnType<typeof getActivity>>>;
+type LessonWordData = Awaited<ReturnType<typeof getLessonWords>>[number];
+type LessonSentenceData = Awaited<ReturnType<typeof getLessonSentences>>[number];
+import { prepareActivityData } from "@zoonk/player/prepare-activity-data";
 
 describe(prepareActivityData, () => {
   let org: Awaited<ReturnType<typeof organizationFixture>>;

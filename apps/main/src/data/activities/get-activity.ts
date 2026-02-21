@@ -2,7 +2,7 @@ import "server-only";
 import { type ActivityKind, type GenerationStatus, prisma } from "@zoonk/db";
 import { cache } from "react";
 
-export type ActivityWithSteps = {
+type ActivityWithSteps = {
   id: bigint;
   kind: ActivityKind;
   title: string | null;

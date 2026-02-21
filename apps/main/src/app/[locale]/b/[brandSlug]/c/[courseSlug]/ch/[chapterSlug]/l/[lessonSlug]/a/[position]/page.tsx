@@ -1,10 +1,10 @@
 "use cache";
 
-import { ActivityPlayerShell } from "@/components/activity-player/activity-player-shell";
+import { ActivityPlayerClient } from "@/components/activity-player/activity-player-client";
 import { getActivity } from "@/data/activities/get-activity";
 import { getLessonSentences } from "@/data/activities/get-lesson-sentences";
 import { getLessonWords } from "@/data/activities/get-lesson-words";
-import { prepareActivityData } from "@/data/activities/prepare-activity-data";
+import { prepareActivityData } from "@zoonk/player/prepare-activity-data";
 import { getLesson } from "@/data/lessons/get-lesson";
 import { getActivitySeoMeta } from "@/lib/activities";
 import { getNextActivityInCourse } from "@zoonk/core/activities/next-in-course";
@@ -109,7 +109,7 @@ export default async function ActivityPage({ params }: Props) {
     : null;
 
   return (
-    <ActivityPlayerShell
+    <ActivityPlayerClient
       activity={serialized}
       lessonHref={lessonHref}
       nextActivityHref={nextActivityHref}

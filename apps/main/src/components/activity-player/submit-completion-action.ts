@@ -3,31 +3,23 @@
 import { preloadNextLesson } from "@/data/progress/preload-next-lesson";
 import { submitActivityCompletion } from "@/data/progress/submit-activity-completion";
 import { auth } from "@zoonk/core/auth";
+import { prisma } from "@zoonk/db";
 import {
   type CompletionInput,
+  type CompletionResult,
   completionInputSchema,
-} from "@zoonk/core/player/completion-input-schema";
-import { computeChallengeScore, computeScore } from "@zoonk/core/player/compute-score";
-import { validateAnswers } from "@zoonk/core/player/validate-answers";
-import { prisma } from "@zoonk/db";
-import { type BeltLevelResult } from "@zoonk/utils/belt-level";
+} from "@zoonk/player/completion-input-schema";
+import { computeChallengeScore, computeScore } from "@zoonk/player/compute-score";
+import { validateAnswers } from "@zoonk/player/validate-answers";
 import { safeAsync } from "@zoonk/utils/error";
 import { getLocale } from "next-intl/server";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { after } from "next/server";
-import { hasNegativeDimension } from "./has-negative-dimension";
 
-export type CompletionResult =
-  | {
-      status: "success";
-      belt: BeltLevelResult;
-      brainPower: number;
-      energyDelta: number;
-      newTotalBp: number;
-    }
-  | { status: "error" }
-  | { status: "unauthenticated" };
+function hasNegativeDimension(dimensions: Record<string, number>): boolean {
+  return Object.values(dimensions).some((value) => value < 0);
+}
 
 const MAX_DURATION_SECONDS = 7200;
 
