@@ -4,6 +4,7 @@ import {
   type ChartVisualContent,
   chartVisualContentSchema,
 } from "@zoonk/core/steps/visual-content-contract";
+import { isValidChartPayload } from "@zoonk/utils/chart";
 import { useExtracted } from "next-intl";
 import { useId } from "react";
 import {
@@ -18,16 +19,6 @@ import {
   Tooltip,
   XAxis,
 } from "recharts";
-
-function isValidChartPayload<T>(
-  payload: unknown,
-): payload is [{ payload: T }, ...{ payload: T }[]] {
-  if (!Array.isArray(payload) || payload.length === 0) {
-    return false;
-  }
-  const first: unknown = payload[0];
-  return typeof first === "object" && first !== null && "payload" in first;
-}
 
 type ChartDataPoint = ChartVisualContent["data"][number];
 

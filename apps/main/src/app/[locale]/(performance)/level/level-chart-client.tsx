@@ -1,5 +1,6 @@
 "use client";
 
+import { isValidChartPayload } from "@zoonk/utils/chart";
 import { useExtracted, useLocale } from "next-intl";
 import {
   Area,
@@ -10,7 +11,6 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { isValidChartPayload } from "../_lib/chart-payload";
 
 type SerializedDataPoint = {
   date: string;
