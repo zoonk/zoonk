@@ -114,7 +114,7 @@ test.describe("Activity Completion", () => {
 
     await expect(page.getByText("1/1")).toBeVisible();
     await expect(page.getByText("+10 BP")).toBeVisible();
-    await expect(page.getByText(/BP to next level/i)).toBeVisible();
+    await expect(page.getByRole("progressbar", { name: /level progress/i })).toBeVisible();
 
     await browserContext.close();
   });
@@ -154,7 +154,7 @@ test.describe("Activity Completion", () => {
 
     await expect(page.getByText("1/1")).toBeVisible();
     await expect(page.getByText(/sign up to track your progress/i)).toBeVisible();
-    await expect(page.getByText(/BP to next level/i)).not.toBeVisible();
+    await expect(page.getByRole("progressbar", { name: /level progress/i })).not.toBeVisible();
   });
 
   test("challenge success shows +100 BP badge", async ({ baseURL, browser }) => {
@@ -205,6 +205,7 @@ test.describe("Activity Completion", () => {
 
     await expect(page.getByText(/challenge complete/i)).toBeVisible();
     await expect(page.getByText("+100 BP")).toBeVisible();
+    await expect(page.getByRole("progressbar", { name: /level progress/i })).toBeVisible();
 
     await browserContext.close();
   });

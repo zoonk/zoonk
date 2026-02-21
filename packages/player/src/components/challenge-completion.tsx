@@ -9,7 +9,12 @@ import { type CompletionResult } from "../completion-input-schema";
 import { usePlayer } from "../player-context";
 import { type DimensionInventory } from "../player-reducer";
 import { DimensionList, buildDimensionEntries } from "./dimension-inventory";
-import { RewardBadges, RewardBadgesSkeleton } from "./reward-badges";
+import {
+  BeltProgressHint,
+  BeltProgressSkeleton,
+  RewardBadges,
+  RewardBadgesSkeleton,
+} from "./reward-badges";
 
 function ChallengeScreen({ className, ...props }: React.ComponentProps<"div">) {
   return (
@@ -44,15 +49,28 @@ function ChallengeRewardBadges({
   isSuccess: boolean;
 }) {
   if (!completionResult || completionResult.status !== "success") {
-    return <RewardBadgesSkeleton />;
+    return (
+      <>
+        <RewardBadgesSkeleton />
+        {isSuccess && <BeltProgressSkeleton />}
+      </>
+    );
   }
 
   return (
-    <RewardBadges
-      brainPower={completionResult.brainPower}
-      energyDelta={completionResult.energyDelta}
-      isChallenge={isSuccess}
-    />
+    <>
+      <RewardBadges
+        brainPower={completionResult.brainPower}
+        energyDelta={completionResult.energyDelta}
+        isChallenge={isSuccess}
+      />
+      {isSuccess && (
+        <BeltProgressHint
+          brainPower={completionResult.brainPower}
+          newTotalBp={completionResult.newTotalBp}
+        />
+      )}
+    </>
   );
 }
 

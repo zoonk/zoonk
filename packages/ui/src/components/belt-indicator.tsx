@@ -47,4 +47,4 @@ function BeltIndicator({
   );
 }
 
-export { BeltIndicator };
+export { BeltIndicator, beltColorClasses };

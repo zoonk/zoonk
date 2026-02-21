@@ -33,10 +33,12 @@ describe("authenticated users", () => {
 
     const result = await getBeltLevel(headers);
     expect(result).toEqual({
+      bpPerLevel: 1000,
       bpToNextLevel: 500,
       color: "orange",
       isMaxLevel: false,
       level: 8,
+      progressInLevel: 500,
     });
   });
 
@@ -54,10 +56,12 @@ describe("authenticated users", () => {
     const result = await getBeltLevel(headers);
 
     expect(result).toEqual({
+      bpPerLevel: 250,
       bpToNextLevel: 250,
       color: "white",
       isMaxLevel: false,
       level: 1,
+      progressInLevel: 0,
     });
   });
 });

@@ -307,9 +307,14 @@ msgid "Belt"
 msgstr "Faixa"
 
 #: ../../packages/player/src/components/reward-badges.tsx
-msgctxt "HiBQnL"
-msgid "BP to next level"
-msgstr "PM para o próximo nível"
+msgctxt "IGs0wl"
+msgid "Level progress"
+msgstr "Progresso do nível"
+
+#: ../../packages/player/src/components/reward-badges.tsx
+msgctxt "oMEE4o"
+msgid "{value} BP to level up"
+msgstr "{value} PM para subir de nível"
 
 #: ../../packages/player/src/components/reward-badges.tsx
 #: src/app/[locale]/(catalog)/level.tsx

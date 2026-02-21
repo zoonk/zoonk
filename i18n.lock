@@ -195,7 +195,82 @@ checksums:
     Business/singular: 7682c7966c6e718836388561e7e68cab
     Geography/singular: fd93fe516c40f1f2dd96f53a507ce95d
   9270df1bc9e10fdb8026bb4ab67061d4:
+    Your%20answer/singular: 016cfa0eceeaa32f8ed699a0668a278b
+    Correct/singular: c643eeb0a615de2032eca68722c31177
+    Tap%20words%20to%20build%20your%20answer/singular: 025315562266cdfc630efa8b5de74961
+    Word%20bank/singular: ceea720dd5fa3747c7f93ce165f77b2e
+    "%7Bitem%7D.%20%7Bresult%7D./singular": 454dd5319c350f361652396801a1c30b
+    Position%20%7Bposition%7D%3A%20%7Bitem%7D.%20Tap%20to%20remove./singular: a1b3d3e026bfff43bff3d3e85ccdb952
+    Correct%20answer%3A%20%7Banswer%7D/singular: 7745b2664e841dffff4568203ee443b2
+    Incorrect/singular: a86cfbe7b86f19dc8df14a67df073d22
+    Back%20to%20Lesson/singular: e2dbef5a2fefae8f9cee708e53e61cb9
+    Challenge%20Complete/singular: 7854472cc9245aaa8a13f54514968506
+    Final%20dimension%20scores/singular: aa4efa7ecef99d375c1daf4c6585ba98
+    Some%20of%20your%20stats%20went%20below%20zero./singular: bc281c87ae70abd076e3e73aa263ddc2
+    Try%20Again/singular: d65fad81c5f8f90405b26bf6e5d70ab9
+    Challenge%20Failed/singular: e9b1d1d02118f2e2ddc34907748955c4
+    Make%20choices./singular: 0861e9651cbff7146aee6cafb92128a8
+    Balance%20the%20outcome./singular: bce81c0b25b5ab019b5ce5dba5a12c3f
+    Challenge/singular: 7f333a59ee7a3596e27a2f8c3401b764
+    You'll%20face%20a%20series%20of%20decisions.%20Each%20one%20shifts%20your%20scores.%20Don't%20let%20any%20go%20negative./singular: 026dc19377a9b04a9bfce46cf8bcfa16
+    Starting%20scores/singular: 6a21f8424cdc75e477c3d7857a97db6d
+    Begin/singular: cc2a17a662cb60dd2d8335a2e8440997
+    Your%20scores/singular: 1700f65ead0647bc4876f4b3b6453a8b
+    Restart/singular: bab6232e89f24e3129f8e48268739d5b
+    Next/singular: 89ddbcf710eba274963494f312bdc8a9
     Login/singular: f4f219abeb5a465ecb1c7efaf50246de
+    Sign%20up%20to%20track%20your%20progress/singular: 554ed29d9b8a243362c3b3374222af08
+    Completed/singular: 0e4bbce9985f25eb673d9a054c8d5334
+    correct/singular: 0c2df4a764cea47295c0b550477e8e29
+    Current%20dimension%20scores/singular: b3a4b7edbd41132e6fb349a6df24a33d
+    View%20stats/singular: 707f91e0ff65e7163c95900395dc0297
+    Stats/singular: 5cf8b052c89fa1b05397a956ebec69b2
+    Outcome/singular: 4cfc7a40e384ea8b6658e8da6e351bf0
+    Dimension%20inventory/singular: a150bc3e032ae9e9202db1b375029aae
+    Blank%20%7Bposition%7D/singular: 70a4795f65f91685071b6abb1c3a6bad
+    Blank%20%7Bposition%7D%3A%20%7Bitem%7D.%20%7Bresult%7D./singular: c64e721cdd1e4cc48eff9f9690f1fc6b
+    Blank%20%7Bposition%7D%3A%20%7Bitem%7D.%20Tap%20to%20remove./singular: d7ab9b86256fae5fbb5187fe718afe0b
+    Not%20quite/singular: e570085e69662802acf485c4565e3e3e
+    Correct!/singular: dda1a98dc04fd9db252887ecf1765d41
+    Translate%20this%20sentence%3A/singular: f69b2eec827b3a74bafca50e9058716f
+    What%20do%20you%20hear%3F/singular: 9527d094d65c550a40108673bc67744f
+    Pause%20audio/singular: a18f2dcad1748fe33e5f8ab62bc49075
+    Play%20audio/singular: b144bc2118a0803bb8c05c58740c33ba
+    All%20pairs%20matched.%20Press%20Check%20to%20continue./singular: 0663e33ba7db53b298c5f50a2f3c7ae8
+    Answer%20options/singular: acb0b378cefcb8a8d50a7c43ce77ae39
+    What%20do%20you%20say%3F/singular: 75887288b85fc19e67b7d20550d9205e
+    Someone%20says%3A/singular: 09f34dce0528b57e89c8757b5745e6c5
+    Previous%20step/singular: 96b31ec6dab003c2bbfbbca10a8a9826
+    Next%20step/singular: 712c63650b5180cbc14d6246b5d558c2
+    Step%20navigation/singular: ec328f28051577e1c0aab044c89b138c
+    Close/singular: 2c2e22f8424a1031de89063bd0022e16
+    Activity%20progress/singular: 8ff2fb7372b8a2525f2955c851c4fa42
+    Continue/singular: 3cfba90b4600131e82fc4260c568d044
+    Check/singular: 023cc2ba432775c38e3efc004ad7b9ef
+    BP/singular: 842ed01b3a4d0efa6fe96ae8c595726c
+    Energy/singular: 958809db5050650b97519e0f1f3e1951
+    Belt/singular: fa36e8e36732c223d2876c0337d372e9
+    Level%20progress/singular: 286f095acd17006787247db0b69270e3
+    "%7Bvalue%7D%20BP%20to%20level%20up/singular": 755c2fe6e435645cb35b57bf92af09d3
+    Level/singular: 1e3bf31d5c6083e898dd3e3359fbb0c2
+    Image%20options/singular: 64a1aee44b26dbaff851cb846eb4274d
+    Drag%20items%20into%20the%20correct%20order/singular: 8ccab82ee3ba645ac23da4ca14a0dd2a
+    Sort%20items/singular: 3b1072a596203b5acdc5718d38161392
+    Correct%20order%3A/singular: df3f446653ec8cde9c29d8d5912636ef
+    Legend/singular: 3b588fbd2fe35ded6ca38334e15400c3
+    Diagram/singular: e0bc1ef7782cb0d749c9582da6775175
+    Timeline/singular: 342b1e646f0634e47112092db1a24f49
+    Translate%20this%20word%3A/singular: 05fede3c583e9ea39f27ac9fdf17fcc3
+    Green/singular: 482ff383a4258357ba404f283682471d
+    Yellow/singular: 15d533755d35af887dfa584975549fda
+    Red/singular: bace0083b78cdb188523bc4abc7b55c6
+    Brown/singular: 82d5fc088538ffd2a24581d1ca1836ef
+    Blue/singular: a5cf034b2d370a976119335cd99f4217
+    Orange/singular: 836094fa3fcf7488957f6d7cba7c1f60
+    White/singular: 5d3dd2b57ed2fc668362b9b9efd8fb41
+    Purple/singular: 547ba93b6f68317e2dfbafb16cabc30f
+    Black/singular: 0a78282fb00e09a335608b154ffa01de
+    Gray/singular: 54ec745c22b59509822468ba82070d74
     Logout/singular: 07948fdf20705e04a7bf68ab197512bf
     Pages/singular: 75088c94fb3c374efd452624d4b74be8
     My%20account/singular: 4791806fd9fadc33912e3df7e4e3911c
@@ -246,7 +321,6 @@ checksums:
     Explore%20courses/singular: 3a60fa1d4a1a6cfffcc0573e3366cd35
     Explore%20all%20Zoonk%20courses%20to%20learn%20anything%20using%20AI.%20Find%20interactive%20lessons%2C%20challenges%2C%20and%20activities%20to%20learn%20subjects%20like%20science%2C%20math%2C%20technology%2C%20and%20more./singular: c3f4a7dfd17b4523b5535f40170c7731
     Your%20energy%20is%20%7Bvalue%7D%25/singular: d5ae9aecd778267fbc44c9e681c91637
-    Energy/singular: 958809db5050650b97519e0f1f3e1951
     Keep%20learning%20to%20increase%20it/singular: a3c3f15ac29089d9448b0971126cabf7
     Keep%20learning%20to%20maintain%20it/singular: 0d21c6a7c014a9e42e97c37d4e8d9674
     Learn%20anything/singular: 1409ee983014ff2deefb61aa0fbc570d
@@ -270,7 +344,6 @@ checksums:
     "%7Bvalue%7D%20BP%20to%20next%20level/singular": dc80ce93407f21e5e909760ec2c9aaef
     Max%20level%20reached/singular: 5bfdf2d9ba3929b456dcf5c253315e92
     "%7Bcolor%7D%20Belt%20-%20Level%20%7Blevel%7D/singular": abb5a7600bd66f523906425beffbaff4
-    Level/singular: 1e3bf31d5c6083e898dd3e3359fbb0c2
     Continue%20where%20you%20left%20off/singular: c3ef4fd14e046d53816ede13fc5d27fc
     My%20Courses/singular: 3031c7801404796addff2b7d796fa4c2
     View%20all%20the%20courses%20you%20started%20on%20Zoonk.%20Continue%20where%20you%20left%20off%20and%20track%20your%20progress%20across%20interactive%20lessons%20and%20activities./singular: eee1ce9f3b0be49ddc9bb3ce21270796
@@ -315,7 +388,6 @@ checksums:
     "%7Bcolor%7D%20Belt%2C%20Level%20%7Blevel%7D%20of%2010.%20%7Bbp%7D%20brain%20power%20until%20next%20level./singular": e367a07e36f925916dfd40e71129786b
     "%7Bcolor%7D%20Belt%2C%20Level%20%7Blevel%7D%20of%2010.%20Maximum%20level%20achieved./singular": f76961b35ae61781509ea9f0b5c19849
     "%7Bcurrent%7D%2F10/singular": ae23c13a041f3d7fe6e13ca4927ad01e
-    BP/singular: 842ed01b3a4d0efa6fe96ae8c595726c
     "%7Bvalue%7D%20BP%20earned/singular": 583e121af4a624edef99166b4af272c0
     Total%20Brain%20Power/singular: d20bd99b8345101df62b8fa365c9b2dc
     Track%20your%20level%20progress%20and%20see%20how%20you%20advance./singular: 25792319622e431462e5963816d3a1c1
@@ -423,67 +495,6 @@ checksums:
     Privacy%20Policy/singular: 7459744a63ef8af4e517a09024bd7c08
     Read%20Zoonk's%20terms%20of%20use%20to%20understand%20the%20rules%20and%20conditions%20for%20using%20our%20platform%20and%20services/singular: 4b82898d60691839a1999e4a17199895
     Terms%20of%20Use/singular: 9ac262b2eda552beeecd904c0b9f8fa2
-    Continue/singular: 3cfba90b4600131e82fc4260c568d044
-    Check/singular: 023cc2ba432775c38e3efc004ad7b9ef
-    Your%20answer/singular: 016cfa0eceeaa32f8ed699a0668a278b
-    Correct/singular: c643eeb0a615de2032eca68722c31177
-    Tap%20words%20to%20build%20your%20answer/singular: 025315562266cdfc630efa8b5de74961
-    Word%20bank/singular: ceea720dd5fa3747c7f93ce165f77b2e
-    "%7Bitem%7D.%20%7Bresult%7D./singular": 454dd5319c350f361652396801a1c30b
-    Position%20%7Bposition%7D%3A%20%7Bitem%7D.%20Tap%20to%20remove./singular: a1b3d3e026bfff43bff3d3e85ccdb952
-    Correct%20answer%3A%20%7Banswer%7D/singular: 7745b2664e841dffff4568203ee443b2
-    Incorrect/singular: a86cfbe7b86f19dc8df14a67df073d22
-    Back%20to%20Lesson/singular: e2dbef5a2fefae8f9cee708e53e61cb9
-    Challenge%20Complete/singular: 7854472cc9245aaa8a13f54514968506
-    Final%20dimension%20scores/singular: aa4efa7ecef99d375c1daf4c6585ba98
-    Some%20of%20your%20stats%20went%20below%20zero./singular: bc281c87ae70abd076e3e73aa263ddc2
-    Try%20Again/singular: d65fad81c5f8f90405b26bf6e5d70ab9
-    Challenge%20Failed/singular: e9b1d1d02118f2e2ddc34907748955c4
-    Make%20choices./singular: 0861e9651cbff7146aee6cafb92128a8
-    Balance%20the%20outcome./singular: bce81c0b25b5ab019b5ce5dba5a12c3f
-    Challenge/singular: 7f333a59ee7a3596e27a2f8c3401b764
-    You'll%20face%20a%20series%20of%20decisions.%20Each%20one%20shifts%20your%20scores.%20Don't%20let%20any%20go%20negative./singular: 026dc19377a9b04a9bfce46cf8bcfa16
-    Starting%20scores/singular: 6a21f8424cdc75e477c3d7857a97db6d
-    Begin/singular: cc2a17a662cb60dd2d8335a2e8440997
-    Your%20scores/singular: 1700f65ead0647bc4876f4b3b6453a8b
-    Legend/singular: 3b588fbd2fe35ded6ca38334e15400c3
-    Restart/singular: bab6232e89f24e3129f8e48268739d5b
-    Next/singular: 89ddbcf710eba274963494f312bdc8a9
-    Sign%20up%20to%20track%20your%20progress/singular: 554ed29d9b8a243362c3b3374222af08
-    Completed/singular: 0e4bbce9985f25eb673d9a054c8d5334
-    correct/singular: 0c2df4a764cea47295c0b550477e8e29
-    Diagram/singular: e0bc1ef7782cb0d749c9582da6775175
-    Current%20dimension%20scores/singular: b3a4b7edbd41132e6fb349a6df24a33d
-    View%20stats/singular: 707f91e0ff65e7163c95900395dc0297
-    Stats/singular: 5cf8b052c89fa1b05397a956ebec69b2
-    Outcome/singular: 4cfc7a40e384ea8b6658e8da6e351bf0
-    Dimension%20inventory/singular: a150bc3e032ae9e9202db1b375029aae
-    Blank%20%7Bposition%7D/singular: 70a4795f65f91685071b6abb1c3a6bad
-    Blank%20%7Bposition%7D%3A%20%7Bitem%7D.%20%7Bresult%7D./singular: c64e721cdd1e4cc48eff9f9690f1fc6b
-    Blank%20%7Bposition%7D%3A%20%7Bitem%7D.%20Tap%20to%20remove./singular: d7ab9b86256fae5fbb5187fe718afe0b
-    Not%20quite/singular: e570085e69662802acf485c4565e3e3e
-    Correct!/singular: dda1a98dc04fd9db252887ecf1765d41
-    Translate%20this%20sentence%3A/singular: f69b2eec827b3a74bafca50e9058716f
-    What%20do%20you%20hear%3F/singular: 9527d094d65c550a40108673bc67744f
-    Pause%20audio/singular: a18f2dcad1748fe33e5f8ab62bc49075
-    Play%20audio/singular: b144bc2118a0803bb8c05c58740c33ba
-    All%20pairs%20matched.%20Press%20Check%20to%20continue./singular: 0663e33ba7db53b298c5f50a2f3c7ae8
-    Answer%20options/singular: acb0b378cefcb8a8d50a7c43ce77ae39
-    What%20do%20you%20say%3F/singular: 75887288b85fc19e67b7d20550d9205e
-    Someone%20says%3A/singular: 09f34dce0528b57e89c8757b5745e6c5
-    Previous%20step/singular: 96b31ec6dab003c2bbfbbca10a8a9826
-    Next%20step/singular: 712c63650b5180cbc14d6246b5d558c2
-    Step%20navigation/singular: ec328f28051577e1c0aab044c89b138c
-    Close/singular: 2c2e22f8424a1031de89063bd0022e16
-    Activity%20progress/singular: 8ff2fb7372b8a2525f2955c851c4fa42
-    Belt/singular: fa36e8e36732c223d2876c0337d372e9
-    BP%20to%20next%20level/singular: e77c5d6498ff38284c1f6b0721b8b33d
-    Image%20options/singular: 64a1aee44b26dbaff851cb846eb4274d
-    Drag%20items%20into%20the%20correct%20order/singular: 8ccab82ee3ba645ac23da4ca14a0dd2a
-    Sort%20items/singular: 3b1072a596203b5acdc5718d38161392
-    Correct%20order%3A/singular: df3f446653ec8cde9c29d8d5912636ef
-    Timeline/singular: 342b1e646f0634e47112092db1a24f49
-    Translate%20this%20word%3A/singular: 05fede3c583e9ea39f27ac9fdf17fcc3
     Not%20completed/singular: d011b1ae92a1a8a2676a5d6999bbe6d4
     This%20content%20was%20generated%20by%20AI.%20It%20may%20contain%20errors%20or%20inaccuracies%20and%20should%20not%20be%20considered%20professional%20advice./singular: 269e7c16a722903b9b434f28aa6cf617
     Not%20helpful/singular: ceb8a457e7e4c62a465cd1dd2620990e
@@ -550,16 +561,6 @@ checksums:
     Improve%20your%20%7Btopic%7D%20reading%20comprehension%20by%20translating%20sentences%20and%20passages./singular: 60baac4222f76009cc1eb1b6065b403b
     Shows%20WHEN%20to%20apply%20this%20topic.%20A%20dialogue%20with%20a%20colleague%20where%20you%20solve%20a%20real%20problem%20together./singular: 3fb0934c1e0a5ba3e31b6cc5b897b509
     Tests%20your%20understanding%20with%20questions.%20Uses%20new%20scenarios%20to%20check%20if%20you%20grasped%20the%20concept%2C%20not%20just%20memorized%20it./singular: feeb1e59f787035a964dd93290e180e7
-    Green/singular: 482ff383a4258357ba404f283682471d
-    Yellow/singular: 15d533755d35af887dfa584975549fda
-    Red/singular: bace0083b78cdb188523bc4abc7b55c6
-    Brown/singular: 82d5fc088538ffd2a24581d1ca1836ef
-    Blue/singular: a5cf034b2d370a976119335cd99f4217
-    Orange/singular: 836094fa3fcf7488957f6d7cba7c1f60
-    White/singular: 5d3dd2b57ed2fc668362b9b9efd8fb41
-    Purple/singular: 547ba93b6f68317e2dfbafb16cabc30f
-    Black/singular: 0a78282fb00e09a335608b154ffa01de
-    Gray/singular: 54ec745c22b59509822468ba82070d74
     History/singular: b0578d6d225f512e42f823fbca2e3c32
     Math/singular: 0a604ffa5ef57408918fe98ef05eb05a
     Arts/singular: 9b1845cec1210e57ea990b1a90823228
