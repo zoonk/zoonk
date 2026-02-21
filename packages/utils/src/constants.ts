@@ -17,7 +17,8 @@ function getDefaultApiUrl(): string {
 }
 
 export const API_URL = getDefaultApiUrl();
-export const SUPPORT_URL = "https://www.zoonk.com/help";
+export const SITE_URL = "https://www.zoonk.com";
+export const SUPPORT_URL = `${SITE_URL}/help`;
 
 export const BYTES_PER_MB = 1024 * 1024;
 export const DEFAULT_IMAGE_MAX_SIZE_MB = 5;
