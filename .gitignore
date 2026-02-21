@@ -50,10 +50,12 @@ yarn-error.log*
 tasks.json
 i18n.cache
 
-# Cursor
+# AI
 debug.log
+.claude/agent-memory
 
 # Tasks for AI agents
 /tasks/
+
 # next-agents-md
 .next-docs/
