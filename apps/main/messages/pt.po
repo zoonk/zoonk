@@ -54,6 +54,29 @@ msgctxt "Ypr9T5"
 msgid "Incorrect"
 msgstr "Incorreto"
 
+#: ../../packages/player/src/components/belt-progress.tsx
+msgctxt "erSdxr"
+msgid "Belt"
+msgstr "Faixa"
+
+#: ../../packages/player/src/components/belt-progress.tsx
+msgctxt "IGs0wl"
+msgid "Level progress"
+msgstr "Progresso do nível"
+
+#: ../../packages/player/src/components/belt-progress.tsx
+msgctxt "oMEE4o"
+msgid "{value} BP to level up"
+msgstr "{value} PM para subir de nível"
+
+#: ../../packages/player/src/components/belt-progress.tsx
+#: src/app/[locale]/(catalog)/level.tsx
+#: src/app/[locale]/(performance)/_components/metric-pills.tsx
+#: src/app/[locale]/(performance)/level/page.tsx
+msgctxt "y1Qr81"
+msgid "Level"
+msgstr "Nível"
+
 #: ../../packages/player/src/components/challenge-completion.tsx
 #: ../../packages/player/src/components/completion-auth-branch.tsx
 msgctxt "7tB7n/"
@@ -300,29 +323,6 @@ msgstr "PM"
 msgctxt "cVpmV7"
 msgid "Energy"
 msgstr "Energia"
-
-#: ../../packages/player/src/components/reward-badges.tsx
-msgctxt "erSdxr"
-msgid "Belt"
-msgstr "Faixa"
-
-#: ../../packages/player/src/components/reward-badges.tsx
-msgctxt "IGs0wl"
-msgid "Level progress"
-msgstr "Progresso do nível"
-
-#: ../../packages/player/src/components/reward-badges.tsx
-msgctxt "oMEE4o"
-msgid "{value} BP to level up"
-msgstr "{value} PM para subir de nível"
-
-#: ../../packages/player/src/components/reward-badges.tsx
-#: src/app/[locale]/(catalog)/level.tsx
-#: src/app/[locale]/(performance)/_components/metric-pills.tsx
-#: src/app/[locale]/(performance)/level/page.tsx
-msgctxt "y1Qr81"
-msgid "Level"
-msgstr "Nível"
 
 #: ../../packages/player/src/components/select-image-step.tsx
 msgctxt "NA6C/+"
