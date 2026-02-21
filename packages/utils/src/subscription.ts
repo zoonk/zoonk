@@ -28,7 +28,11 @@ export const FREE_PLAN: SubscriptionPlan = {
   tier: 0,
 };
 
-export const PAID_PLANS: readonly PaidPlan[] = [
+const HIDDEN_PLANS = new Set(
+  (process.env.HIDDEN_SUBSCRIPTION_PLANS ?? "").split(",").filter(Boolean),
+);
+
+const ALL_PAID_PLANS: readonly PaidPlan[] = [
   {
     annualLookupKey: PLAN_LOOKUP_KEYS.hobby.yearly,
     lookupKey: PLAN_LOOKUP_KEYS.hobby.monthly,
@@ -49,11 +53,16 @@ export const PAID_PLANS: readonly PaidPlan[] = [
   },
 ];
 
+export const PAID_PLANS: readonly PaidPlan[] = ALL_PAID_PLANS.filter(
+  (plan) => !HIDDEN_PLANS.has(plan.name),
+);
+
+const ALL_SUBSCRIPTION_PLANS: readonly SubscriptionPlan[] = [FREE_PLAN, ...ALL_PAID_PLANS];
 export const SUBSCRIPTION_PLANS: readonly SubscriptionPlan[] = [FREE_PLAN, ...PAID_PLANS];
 
 export function getPlanTier(planName: string | null): number {
   if (!planName) {
     return 0;
   }
-  return SUBSCRIPTION_PLANS.find((plan) => plan.name === planName)?.tier ?? 0;
+  return ALL_SUBSCRIPTION_PLANS.find((plan) => plan.name === planName)?.tier ?? 0;
 }

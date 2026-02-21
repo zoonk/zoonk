@@ -84,7 +84,7 @@ export function SubscriptionPlansSkeleton() {
       <Skeleton className="h-9 w-48" />
 
       <div className="flex flex-col gap-3">
-        {Array.from({ length: 4 }, (_, i) => (
+        {Array.from({ length: SUBSCRIPTION_PLANS.length }, (_, i) => (
           <PlanRowSkeleton key={i} />
         ))}
       </div>
