@@ -1,3 +1,4 @@
+import { prepareActivityData } from "@zoonk/player/prepare-activity-data";
 import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
@@ -10,13 +11,11 @@ import { stepFixture } from "@zoonk/testing/fixtures/steps";
 import { wordFixture } from "@zoonk/testing/fixtures/words";
 import { beforeAll, describe, expect, expectTypeOf, test } from "vitest";
 import { getActivity } from "./get-activity";
-import { getLessonSentences } from "./get-lesson-sentences";
-import { getLessonWords } from "./get-lesson-words";
+import { type getLessonSentences } from "./get-lesson-sentences";
+import { type getLessonWords } from "./get-lesson-words";
 
 type ActivityWithSteps = NonNullable<Awaited<ReturnType<typeof getActivity>>>;
 type LessonWordData = Awaited<ReturnType<typeof getLessonWords>>[number];
-type LessonSentenceData = Awaited<ReturnType<typeof getLessonSentences>>[number];
-import { prepareActivityData } from "@zoonk/player/prepare-activity-data";
 
 describe(prepareActivityData, () => {
   let org: Awaited<ReturnType<typeof organizationFixture>>;
@@ -322,7 +321,7 @@ describe(prepareActivityData, () => {
       },
     ];
 
-    const lessonSentences: LessonSentenceData[] = [
+    const lessonSentences: Awaited<ReturnType<typeof getLessonSentences>>[number][] = [
       {
         audioUrl: sentence1.audioUrl,
         id: sentence1.id,
