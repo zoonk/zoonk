@@ -4,10 +4,10 @@ import { ActivityPlayerClient } from "@/components/activity-player/activity-play
 import { getActivity } from "@/data/activities/get-activity";
 import { getLessonSentences } from "@/data/activities/get-lesson-sentences";
 import { getLessonWords } from "@/data/activities/get-lesson-words";
-import { prepareActivityData } from "@zoonk/player/prepare-activity-data";
 import { getLesson } from "@/data/lessons/get-lesson";
 import { getActivitySeoMeta } from "@/lib/activities";
 import { getNextActivityInCourse } from "@zoonk/core/activities/next-in-course";
+import { prepareActivityData } from "@zoonk/player/prepare-activity-data";
 import { cacheTagActivity } from "@zoonk/utils/cache";
 import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import { parseNumericId } from "@zoonk/utils/string";

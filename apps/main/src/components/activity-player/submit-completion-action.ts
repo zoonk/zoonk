@@ -10,16 +10,13 @@ import {
   completionInputSchema,
 } from "@zoonk/player/completion-input-schema";
 import { computeChallengeScore, computeScore } from "@zoonk/player/compute-score";
+import { hasNegativeDimension } from "@zoonk/player/has-negative-dimension";
 import { validateAnswers } from "@zoonk/player/validate-answers";
 import { safeAsync } from "@zoonk/utils/error";
 import { getLocale } from "next-intl/server";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { after } from "next/server";
-
-function hasNegativeDimension(dimensions: Record<string, number>): boolean {
-  return Object.values(dimensions).some((value) => value < 0);
-}
 
 const MAX_DURATION_SECONDS = 7200;
 
