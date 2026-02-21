@@ -4,6 +4,7 @@
 @plugin "@tailwindcss/typography";
 
 @source "../../../apps/**/src/**/*.{ts,tsx}";
+@source "../../../player/src/**/*.{ts,tsx}";
 @source "../**/*.{ts,tsx}";
 
 @theme inline {
