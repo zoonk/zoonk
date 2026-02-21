@@ -20,6 +20,10 @@ export function cacheTagActivity({ activityId }: { activityId: bigint }) {
   return `activity:${activityId}`.slice(0, CACHE_TAG_LIMIT);
 }
 
+export function cacheTagSitemap() {
+  return "sitemap";
+}
+
 export function cacheTagCoursesList({ language }: { language: string }) {
   return `courses-list:${language}`.slice(0, CACHE_TAG_LIMIT);
 }

@@ -213,6 +213,8 @@
         "**/global-error.tsx",
         "**/*codec.ts",
         "**/request.ts",
+        "**/robots.ts",
+        "**/sitemap.ts",
         "**/*.config.ts",
         "**/*.mjs",
         "**/*.mts",
