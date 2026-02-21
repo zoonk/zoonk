@@ -8,6 +8,7 @@ import { useExtracted } from "next-intl";
 import { type CompletionResult } from "../completion-input-schema";
 import { usePlayer } from "../player-context";
 import { type DimensionInventory } from "../player-reducer";
+import { BeltProgressHint, BeltProgressSkeleton } from "./belt-progress";
 import { DimensionList, buildDimensionEntries } from "./dimension-inventory";
 import { RewardBadges, RewardBadgesSkeleton } from "./reward-badges";
 
@@ -44,15 +45,28 @@ function ChallengeRewardBadges({
   isSuccess: boolean;
 }) {
   if (!completionResult || completionResult.status !== "success") {
-    return <RewardBadgesSkeleton />;
+    return (
+      <>
+        <RewardBadgesSkeleton />
+        {isSuccess && <BeltProgressSkeleton />}
+      </>
+    );
   }
 
   return (
-    <RewardBadges
-      brainPower={completionResult.brainPower}
-      energyDelta={completionResult.energyDelta}
-      isChallenge={isSuccess}
-    />
+    <>
+      <RewardBadges
+        brainPower={completionResult.brainPower}
+        energyDelta={completionResult.energyDelta}
+        isChallenge={isSuccess}
+      />
+      {isSuccess && (
+        <BeltProgressHint
+          brainPower={completionResult.brainPower}
+          newTotalBp={completionResult.newTotalBp}
+        />
+      )}
+    </>
   );
 }
 

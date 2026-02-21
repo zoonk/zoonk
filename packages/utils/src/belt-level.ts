@@ -24,10 +24,12 @@ export const BELT_COLORS_ORDER: BeltColor[] = [
 ];
 
 export type BeltLevelResult = {
+  bpPerLevel: number;
   bpToNextLevel: number;
   color: BeltColor;
   isMaxLevel: boolean;
   level: number;
+  progressInLevel: number;
 };
 
 type BeltConfig = {
@@ -70,20 +72,29 @@ export function calculateBeltLevel(totalBrainPower: number): BeltLevelResult {
 
   if (isMaxLevel) {
     return {
+      bpPerLevel: currentBelt.bpPerLevel,
       bpToNextLevel: 0,
       color: currentBelt.color,
       isMaxLevel: true,
       level: LEVELS_PER_COLOR,
+      progressInLevel: 0,
     };
   }
 
   const bpForCurrentLevel = (level - 1) * currentBelt.bpPerLevel;
   const bpToNextLevel = currentBelt.bpPerLevel - (bpInCurrentBelt - bpForCurrentLevel);
+  const progressInLevel = currentBelt.bpPerLevel - bpToNextLevel;
 
   return {
+    bpPerLevel: currentBelt.bpPerLevel,
     bpToNextLevel,
     color: currentBelt.color,
     isMaxLevel: false,
     level,
+    progressInLevel,
   };
+}
+
+export function getBeltProgressPercent(result: BeltLevelResult): number {
+  return Math.round((result.progressInLevel / result.bpPerLevel) * 100);
 }
