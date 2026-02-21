@@ -1,122 +1,158 @@
 {
   "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\n1. APPLICATION CHECK:\n   - GOOD PATTERN: Scenarios involving code errors where learners must identify which compilation phase would catch or miss them\n   - GOOD PATTERN: Situations requiring understanding of why phases must occur in a specific order\n   - BAD PATTERN: Asking to list phases, name outputs, or define terminology without application context\n   - BAD PATTERN: Questions about the \"assembly line\" metaphor or other explanation-specific content\n\n2. ACCURACY PITFALLS - Penalize if any of these are stated or implied:\n   - Lexical analysis and parsing being the same thing (lexical analysis produces tokens; parsing builds syntax trees from tokens)\n   - Compilers only producing machine code (many produce bytecode or intermediate representations)\n   - Optimization being optional or unimportant (it's crucial for performance)\n   - Semantic analysis happening before parsing (parsing must complete first)\n\n3. FORMAT FIT: Sort order works well for compiler pipeline stages. Match columns work for connecting error types to phases. Multiple choice for \"which phase catches this error.\"\n\n\nEVALUATION CRITERIA:\n\n1. UNDERSTANDING OVER MEMORIZATION: Questions must test conceptual understanding, not recall. A learner who understood the concept but never read this specific explanation should be able to answer correctly. Penalize questions that:\n   - Use phrases like \"according to the text,\" \"as described,\" or \"the explanation said\"\n   - Reference specific metaphors, analogies, or examples from the explanation steps\n   - Ask \"what is X?\" instead of \"what would happen if...\" or \"which scenario shows...\"\n\n2. APPLICATION TO NOVEL SCENARIOS: Questions should present concepts in new contexts the learner hasn't seen. The scenario in the question should be different from any examples in the explanation steps. Penalize questions that:\n   - Reuse scenarios from the explanation\n   - Ask about facts that could only be known by reading this specific text\n   - Test vocabulary definitions rather than concept application\n\n3. FORMAT APPROPRIATENESS: Evaluate whether the chosen format genuinely tests understanding.\n\n   ANTI-PATTERN - \"Forced variety\": Using different formats just for variety is a serious flaw. Multiple well-crafted questions of the same format are better than poorly-suited formats used for variety's sake. Do NOT penalize for using multiple choice repeatedly if it tests the concepts well.\n\n   Format guidance:\n   - Multiple choice: Often the BEST choice, not just a \"default.\" It excels at testing whether learners can apply concepts to novel scenarios. Use it freely.\n   - Match columns: Best when the concept involves connecting observations to principles (symptoms to causes, effects to mechanisms).\n   - Sort order: ONLY when the concept IS about sequence — when order matters conceptually (biological processes, compilation phases).\n   - Fill blank: Best for completing relationships or processes where the blank tests conceptual understanding.\n   - Select image: ONLY when visual recognition genuinely tests understanding.\n\n   PENALIZE when:\n   - Formats are used for variety rather than fit\n   - A different format would clearly test the concept better\n\n   Do NOT penalize when:\n   - Multiple choice is used repeatedly across several questions\n   - Some available formats are not used at all\n   - The quiz sticks to one or two well-suited formats\n\n4. FEEDBACK QUALITY: Feedback must explain reasoning, not just state correct/incorrect. Good feedback:\n   - For correct answers: Explains WHY it's right plus an additional insight\n   - For incorrect answers: Explains WHY it's wrong AND why the correct answer is right\n   Penalize feedback that only says \"Correct!\" or \"That's wrong.\"\n\n5. FACTUAL ACCURACY: All questions and answers must be scientifically/technically correct. Penalize:\n   - Incorrect facts presented as correct answers\n   - Correct facts marked as incorrect\n   - Misleading simplifications that create misconceptions\n\n6. QUESTION CLARITY: Questions must be unambiguous with a conversational tone. Penalize:\n   - Academic or formal phrasing\n   - Ambiguous scenarios where multiple answers could be valid\n   - Trick questions designed to confuse rather than test understanding\n\n7. APPROPRIATE DIFFICULTY: Questions should challenge understanding without being unfair. Penalize:\n   - Trivially easy questions anyone could guess\n   - Questions requiring knowledge beyond the lesson scope\n   - Trick questions that test careful reading rather than comprehension\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for missing specific question formats you might expect\n- Do NOT require a specific number of questions - quality matters more than quantity\n- Do NOT check against an imagined \"complete\" quiz you think should exist\n- Do NOT penalize for covering some concepts more than others if coverage is reasonable\n- Do NOT expect questions to follow any particular order or progression\n- ONLY penalize for: memorization-based questions, factual errors, poor feedback quality, unclear wording, or inappropriate format choices\n- Different valid quiz designs exist - assess the quality of what IS provided\n\n    ",
-  "judgedAt": "2026-01-15T22:03:09.876Z",
+  "judgedAt": "2026-02-21T23:46:39.992Z",
   "judgments": [
     {
-      "judgeId": "anthropic/claude-opus-4.5",
+      "judgeId": "anthropic/claude-opus-4.6",
       "rankings": [
         {
-          "anonymousId": "Model A",
-          "modelId": "anthropic/claude-sonnet-4.5",
-          "reasoning": "Model A provides an excellent, comprehensive quiz with 8 questions that demonstrate strong conceptual testing. The questions use novel scenarios (programmer writing functions, debugging scenarios, software engineer questioning compilation), test application rather than recall, and avoid memorization patterns. Formats are well-chosen: multiple choice for error identification, sort order for pipeline sequence (appropriate since order matters conceptually), match columns for connecting errors to phases, and fill-blank for process completion. Feedback is detailed and educational, explaining both why correct answers are right and why incorrect ones are wrong. All factual content is accurate. The questions about 'why compilation uses multiple stages' and comparing two students' errors show sophisticated conceptual testing. Minor issue: one fill-blank has 4 blanks which is slightly complex, but overall this is near-exceptional work.",
-          "score": 10
+          "anonymousId": "D",
+          "modelId": "D",
+          "reasoning": "Model D offers 5 well-crafted questions with excellent format variety that is genuinely appropriate (not forced). The syntax highlighter question is a brilliant novel scenario that tests application of lexical analysis concepts. The Chomsky-inspired 'green idea sleeps furiously' question tests semantic vs syntactic understanding in a creative way. The match columns format is well-suited for connecting errors to phases. The sort order tests the pipeline sequence using artifacts (not just phase names), which is conceptually richer. The fill-blank tests understanding of parser output. Feedback is consistently excellent - explaining why correct answers are right and why incorrect ones are wrong, with additional insight. No factual errors. Questions test understanding over memorization. The only minor issue: the 'assembly line' reference in question 3 of Model A's matchColumns is noted as a bad pattern in the guidelines, but Model D avoids this. One small concern: the fill-blank question asks for 'Parser' and 'tree' which is somewhat recall-based, but the template provides enough context to make it application-oriented. Overall very strong.",
+          "score": 8.5
         },
         {
-          "anonymousId": "Model C",
-          "modelId": "anthropic/claude-opus-4.5",
-          "reasoning": "Model C offers 8 well-designed questions with good variety and strong conceptual testing. Uses code contexts appropriately (showing actual error scenarios), tests understanding through novel examples like the calculator scenario and the code editor highlighting 'whlie'. The question about why compilers use phases tests deep understanding. Feedback is consistently helpful, explaining reasoning. Format choices are appropriate - multiple choice dominates but that's fine per guidelines. The match columns question has a slight issue with 'Unknown symbol func' which could arguably be either lexical or semantic depending on context. Overall very strong but slightly less polished than Model A in scenario novelty and feedback depth.",
-          "score": 9
+          "anonymousId": "G",
+          "modelId": "G",
+          "reasoning": "Model G provides 8 questions with strong quality throughout. The questions test genuine understanding through novel scenarios. The 'why does compilation use multiple stages' question tests conceptual understanding of compiler architecture. The comparison of two students' error messages is an excellent application question. Match columns and fill-blank formats are well-used. Feedback is consistently thorough, explaining both why correct answers are right and why incorrect ones are wrong. No factual errors detected. The fill-blank with 4 blanks might be slightly tedious but tests the pipeline well. Minor concern: 8 questions is quite a lot and some overlap in concepts (multiple questions testing similar phase identification), but quality remains high throughout. The question about why compilation uses multiple stages is particularly well-crafted with good distractors.",
+          "score": 8.3
         },
         {
-          "anonymousId": "Model H",
-          "modelId": "google/gemini-3-pro-preview",
-          "reasoning": "Model H shows creativity with the syntax highlighter scenario and the 'green idea sleeps furiously' analogy for semantic vs syntactic correctness. These are excellent novel applications that test conceptual understanding. The sort order question appropriately tests pipeline sequence. Match columns and fill-blank formats are well-suited. However, there are only 5 questions which is lighter coverage. The sort order includes 'Logically validated structure' as a separate artifact which is slightly unusual representation. The fill-blank is clean and tests parsing understanding well. Feedback is good but slightly less detailed than top models. Strong conceptual testing but less comprehensive.",
-          "score": 8
+          "anonymousId": "I",
+          "modelId": "I",
+          "reasoning": "Model I provides 8 questions with good variety and quality. The calculator expression question (lexical analysis followed by parsing) is a creative application scenario. The code editor highlighting 'whlie' question is a good real-world application. The 'why can't compilers do it in one step' question tests conceptual understanding well. Feedback is consistently good - explaining reasoning for both correct and incorrect answers. No factual errors. However, there's a potential issue with the 'whlie' question: in most languages, 'whlie' would simply be treated as a valid identifier (variable name), not flagged as an invalid token. The lexer wouldn't necessarily know it was meant to be 'while'. This is a subtle factual concern. Also, in the match columns, 'Unknown symbol func near line 10' mapped to lexical analysis is questionable - 'func' could be a valid identifier in many languages. Some questions are somewhat similar in structure (multiple 'which phase catches this error' questions).",
+          "score": 7.8
         },
         {
-          "anonymousId": "Model E",
-          "modelId": "openai/gpt-5-mini",
-          "reasoning": "Model E provides 6 solid questions with good format variety. The questions test understanding of phases and their outputs. The 'unexpected )' error scenario is good application testing. Sort order and match columns are appropriately used. Fill-blank asks about 'abstract syntax tree' which tests appropriate terminology. However, some feedback is more terse (e.g., 'Right — lexical analysis groups characters into tokens'). The first question about why use stages is good but slightly abstract compared to scenario-based alternatives. Questions are accurate and test concepts well, but less creative in scenarios than top models.",
+          "anonymousId": "H",
+          "modelId": "H",
+          "reasoning": "Model H provides 6 well-structured questions covering all major phases. The reserved keyword question is a creative and accurate scenario. All three MC questions test phase identification through distinct scenarios. The sort order and match columns are appropriate format choices. The fill-blank with 4 blanks (tokens, tree, semantic, machine) works well. Feedback is good but somewhat concise compared to the best models - it explains reasoning but sometimes briefly. No significant factual errors. The questions are clear and unambiguous. One minor issue: some feedback could be more detailed (e.g., 'Parsing checks structure, not meaning' is correct but brief). Overall solid and accurate.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "E",
+          "modelId": "E",
+          "reasoning": "Model E provides 5 questions with good format variety. The calculator app scenario for tokenization is a good applied question. The match columns connecting errors to phases is appropriate. The fill-blank question tests understanding of parser output and code generation. Feedback is generally good. However, the 'blue idea slept furiously' question is essentially the same as Model D's Chomsky-inspired question - both are valid but this is a well-known example. One concern: the sort order items are somewhat generic and could border on recall. The feedback quality is good but not exceptional. No factual errors detected. The context formatting uses plain strings rather than objects in some places, which may be a minor schema issue but doesn't affect content quality.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "A",
+          "modelId": "A",
+          "reasoning": "Model A has 5 questions with decent variety. The letter-writing analogy for lexical vs syntax errors is creative. The semantic analysis question about multiplying by a string is good. However, there are issues: Question 3 (matchColumns) references the 'assembly line' metaphor which the guidelines explicitly flag as a BAD PATTERN ('Questions about the assembly line metaphor or other explanation-specific content'). Question 5 uses a chef/robot metaphor that, while creative, tests what code generation produces rather than applying concepts to novel coding scenarios - it's somewhat recall-oriented. The correct answer says the final output is 'machine code—instructions that talk directly to the hardware,' but the guidelines note that compilers don't only produce machine code (many produce bytecode or intermediate representations). This is a potential accuracy pitfall. The 'glarb-flarb' example: treating a nonsense word as a lexical error is reasonable. Feedback is generally good but could be more detailed in places.",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "J",
+          "modelId": "J",
+          "reasoning": "Model J provides 6 questions covering the main concepts well. The questions are clear and technically accurate. The sort order and match columns are appropriately used. However, several questions lean toward recall rather than application: 'Why use stages in a compiler?' and 'What does lexical analysis produce?' are more definitional than application-based. The fill-blank skips semantic analysis entirely (going from AST to code generation), which is a notable gap. The syntax error question with 'print(1 + * 2)' is a good application question. Feedback is adequate but somewhat brief - some just say 'Correct —' followed by a short explanation. The 'unexpected )' error message for 'print(1 + * 2)' is slightly misleading - the actual error would more likely be about an unexpected '*' or missing operand, not an unexpected ')'. Overall competent but not as strong in application testing.",
           "score": 7
         },
         {
-          "anonymousId": "Model B",
-          "modelId": "openai/gpt-5.2",
-          "reasoning": "Model B has 6 questions with decent coverage. The reserved keyword scenario is creative and accurate. Questions test appropriate concepts. However, some issues: the fill-blank uses very short answers ('tokens', 'tree', 'semantic', 'machine') which tests more recall than understanding. The match columns question has slightly awkward phrasing in places. Feedback is adequate but briefer than top models. The 'taxRate as reserved keyword' scenario is interesting but the explanation about tokenization is slightly oversimplified (reserved word handling can vary by implementation). Overall solid but less polished.",
-          "score": 6
+          "anonymousId": "F",
+          "modelId": "F",
+          "reasoning": "Model F provides 5 questions (4 MC + 1 match). The questions are technically accurate and cover the main phases. However, the questions are quite formulaic and somewhat straightforward - each MC question essentially asks 'which stage?' with a brief scenario. The feedback is notably thin: 'Correct. Identifying unexpected or malformed symbols is the job of lexical analysis.' lacks the depth expected. Multiple questions follow the exact same pattern without much variation in how they test understanding. The match columns question is appropriate. The questions test identification more than deep understanding - they describe symptoms and ask which phase, without requiring the learner to reason about WHY. The tone is more formal/clinical than conversational. No factual errors, but the overall quality is held back by thin feedback and repetitive question structure.",
+          "score": 6.2
         },
         {
-          "anonymousId": "Model G",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Model G has creative analogies but problematic execution. The letter-writing analogy is novel but 'The blue fast runs tomorrow' is described as a syntax error when it's arguably more semantic (grammatically it could parse as adjective-adjective-verb-adverb but makes no sense). The match columns question uses 'assembly line' language which the guidelines specifically flag as BAD PATTERN (referencing metaphor from explanation). The chef/robot analogy is creative but somewhat tangential. The sorting question is fine. Only 5 questions total. Some factual ambiguity and metaphor-dependent testing reduce the score.",
-          "score": 5
+          "anonymousId": "B",
+          "modelId": "B",
+          "reasoning": "Model B provides only 2 questions, which is quite limited in coverage. Both questions are well-crafted multiple choice questions with good feedback. The Python 'primt' example is a reasonable scenario, though there's a subtle issue: in Python, 'primt' would actually be treated as a valid identifier (variable name) by the lexer - it's not an invalid token. The error would likely come later. This is a factual accuracy concern. The C code type mismatch question is accurate and well-explained. Feedback quality is strong for both questions. However, with only 2 questions, the quiz is too limited to adequately test understanding of compiler phases. The guidelines say 'quality matters more than quantity' and not to require a specific number, but 2 questions is genuinely insufficient for meaningful assessment of the topic.",
+          "score": 5.5
         },
         {
-          "anonymousId": "Model F",
-          "modelId": "openai/gpt-5.1-instant",
-          "reasoning": "Model F provides 5 questions that are accurate but relatively basic. The scenarios are functional but less creative - 'unexpected symbol', 'missing parenthesis', 'type mismatch', 'final binary'. These are valid tests but feel more like standard examples than novel applications. Feedback is adequate but brief (e.g., 'Correct. Code generation translates validated program structure into machine instructions.'). The match columns is appropriate. Missing fill-blank or more creative scenario applications. Competent but unremarkable.",
-          "score": 4
+          "anonymousId": "K",
+          "modelId": "K",
+          "reasoning": "Model K provides only 1 question, which is far too limited for any meaningful quiz. However, the single question is excellent: it presents a genuine novel scenario (incomplete expression `5 +;`), the feedback is outstanding (especially the incorrect answer feedback explaining why `+` and `;` are valid individual tokens), and it tests real understanding of the distinction between lexical analysis and parsing. The question is technically accurate and well-crafted. But a single question cannot constitute an adequate quiz on compiler phases.",
+          "score": 4.5
         },
         {
-          "anonymousId": "Model D",
-          "modelId": "openai/gpt-5.2:high",
-          "reasoning": "Model D provides only a single question, which is a significant deficiency regardless of quality. The one question it does provide is reasonable - testing lexical analysis identification with a novel scenario. The feedback is adequate. However, a single question cannot constitute an adequate quiz for assessing understanding of compiler phases. While the guidelines say not to require a specific number, having only one question is clearly insufficient for meaningful assessment of the topic.",
-          "score": 2
+          "anonymousId": "C",
+          "modelId": "C",
+          "reasoning": "Model C provides only 1 question. While the question is technically accurate (identifying what lexical analysis produces from `sum = a + b * c`), it leans toward recall rather than application - it essentially asks 'what does this phase do?' The feedback is adequate but brief. The question asks 'What does the first processing stage produce from this code?' which is more definitional than scenario-based. With only 1 question and that question being more recall-oriented, this is the weakest submission.",
+          "score": 3.8
         },
         {
-          "anonymousId": "Model I",
-          "modelId": "xai/grok-4.1-fast-reasoning",
-          "reasoning": "Model I provides only one question, similar to Model D. The question tests lexical analysis output, which is valid. The scenario (sum = a + b * c) is standard but acceptable. Feedback is reasonable. However, like Model D, a single question is inadequate. Model I scores slightly lower than Model D because the scenario is more standard/textbook-like rather than the slightly more novel context Model D provided.",
-          "score": 1
+          "anonymousId": "L",
+          "modelId": "L",
+          "reasoning": "Model L provides only 1 question that is essentially a definition question: 'Which compiler phase are they describing?' when the description straightforwardly says 'group this into meaningful chunks like identifiers, numbers, and operators.' This is quite close to recall/definition testing rather than application. The feedback is adequate but brief. The context even gives away the answer by describing exactly what lexical analysis does. With only 1 question that's recall-oriented, this is among the weakest submissions.",
+          "score": 3.5
         }
       ]
     },
     {
-      "judgeId": "google/gemini-3-pro-preview",
+      "judgeId": "google/gemini-3.1-pro-preview",
       "rankings": [
         {
-          "anonymousId": "Model H",
+          "anonymousId": "Model D",
           "modelId": "google/gemini-3-pro-preview",
-          "reasoning": "Model H provides the most insightful questions, successfully applying compiler concepts to novel real-world scenarios like building a syntax highlighter. It also correctly handles the linguistic analogy (grammatically correct but logically nonsense sentences) to illustrate semantic analysis, demonstrating deep technical accuracy where others failed. The feedback is precise and educational.",
-          "score": 10
+          "reasoning": "Model D provides an exceptional set of questions. It uses highly effective, novel analogies (like a syntax highlighter for lexical analysis and a grammatically correct but nonsensical English sentence for semantic analysis). The feedback perfectly explains both why answers are right and why distractors are wrong. It completely avoids the bad patterns and factual pitfalls.",
+          "score": 9.5
         },
         {
-          "anonymousId": "Model A",
+          "anonymousId": "Model G",
           "modelId": "anthropic/claude-sonnet-4.5",
-          "reasoning": "Model A offers a comprehensive and engaging quiz with excellent variety in question formats and deep, explanatory feedback. It excels at scenario-based questions (e.g., the debugging comparison). It ranks slightly below Model H due to a minor editorial flaw in the matching question, where a 'successful status' message was listed in a column labeled 'error messages'.",
-          "score": 9
+          "reasoning": "Model G is fantastic. It contextualizes each question beautifully with realistic coding scenarios and uses a great variety of formats appropriately. The question regarding why compilers use multiple stages (separation of concerns) is a superb conceptual addition. The feedback is thorough and expertly written.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Although Model K only provided a single question, the quality of this question is outstanding. It directly tackles one of the most common misconceptions learners have about compiler phases (assuming that a dangling operator is a lexical error rather than a structural parsing error). The feedback is top-tier pedagogy.",
+          "score": 8.5
         },
         {
           "anonymousId": "Model E",
-          "modelId": "openai/gpt-5-mini",
-          "reasoning": "Model E is a solid, technically accurate performer. It avoids the misconceptions found in lower-ranked models and provides clear, correct feedback. While its questions are effective, they are slightly more standard and less creative than the scenarios presented by Models H and A.",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model E provides a very strong set of questions with good application scenarios. The analogies used are clear and helpful. It leans slightly into the 'machine code only' pitfall in the fill-in-the-blank question by emphasizing 'physical computer chip can directly execute', but it is acceptable in the context of the question.",
           "score": 8
         },
         {
           "anonymousId": "Model F",
           "modelId": "openai/gpt-5.1-instant",
-          "reasoning": "Model F is technically correct but suffers from repetitive design. Four of its five questions follow the exact same multiple-choice pattern (presenting a scenario and asking 'Which stage?'). While it avoids factual errors, this 'forced variety' in options without variety in structure makes for a less engaging assessment.",
+          "reasoning": "Model F generates a solid, factually accurate set of questions that cover the pipeline well. However, the scenarios are a bit generic ('A developer notices...') and less engaging than the top models. The feedback is accurate but quite brief.",
           "score": 7
         },
         {
-          "anonymousId": "Model B",
-          "modelId": "openai/gpt-5.2",
-          "reasoning": "Model B presents a polished quiz but contains a specific technical inaccuracy in Question 1. It suggests that lexical analysis catches the error of using a reserved keyword as a variable name. In reality, the lexer produces a valid keyword token, and the parser detects the syntax error (unexpected keyword). Misrepresenting phase responsibilities is a significant flaw in this topic.",
-          "score": 6
+          "anonymousId": "Model L",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model L provides a single, well-crafted multiple-choice question with good feedback. It accurately identifies the output of the lexical phase without falling into any traps.",
+          "score": 6.5
         },
         {
           "anonymousId": "Model C",
-          "modelId": "anthropic/claude-opus-4.5",
-          "reasoning": "Model C includes a technical confusion in Question 7, implying that a code editor highlighting a typo ('whlie') is a lexical error identifying an 'invalid token'. In most languages, 'whlie' is a valid identifier token, not an invalid token; the error is usually syntactic or semantic depending on context. This indicates a misunderstanding of tokenization.",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Model C also provides a single question. It accurately tests lexical analysis and includes good explanatory feedback, though the distractors are slightly less challenging than Model L's.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model J has good structural variety but contains a flawed question. In Q3, the error message 'unexpected )' does not logically align with the code snippet `print(1 + * 2)`, which would throw an error at the `*` or due to a missing operand, not a closing parenthesis. This makes the question confusing.",
           "score": 5
         },
         {
-          "anonymousId": "Model G",
+          "anonymousId": "Model A",
           "modelId": "google/gemini-3-flash",
-          "reasoning": "Model G fails on a fundamental concept in Question 1. It classifies a nonsense sentence ('The blue fast runs tomorrow') as a syntax error, despite it being grammatically structured. This contradicts the standard curriculum example ('Colorless green ideas...') which is used specifically to teach that such errors are semantic, not syntactic.",
+          "reasoning": "Model A violates two explicit negative constraints from the prompt. First, it uses the 'assembly line' metaphor in Q3, which was designated as a BAD PATTERN. Second, in Q5, it strongly implies that compilers only produce machine code ('electrical-level instructions the robot executes directly'), which was listed as an accuracy pitfall.",
           "score": 4
         },
         {
-          "anonymousId": "Model D",
-          "modelId": "openai/gpt-5.2:high",
-          "reasoning": "Model D provides only a single question. While the question itself is technically accurate and has decent feedback, a single item cannot adequately test the breadth of the topic or compete with the comprehensive quizzes provided by top models.",
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model B contains a major factual inaccuracy in Q1. A typo in a keyword like `primt` is NOT a lexical error. The lexer will successfully tokenize `primt` as a valid identifier. The error would be caught during semantic analysis or at runtime (undefined variable/function). This demonstrates a fundamental misunderstanding of the lexer's role.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model H has a significant factual error in Q1. If a keyword like `taxRate` is reserved, the lexer will successfully tokenize it as a keyword token. It does not throw an error. The *parser* will throw the error when it receives a keyword token where it structurally expected an identifier token. Stating that the lexer catches this is incorrect.",
           "score": 3
         },
         {
           "anonymousId": "Model I",
-          "modelId": "xai/grok-4.1-fast-reasoning",
-          "reasoning": "Model I also provides only a single question. It ranks below Model D because its feedback and option descriptions are slightly less technical regarding the specific output of the lexical phase (token types).",
-          "score": 2
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model I shares the same fundamental misconception as B and H. In Q7, it claims that the lexer catches the typo `whlie` as an invalid token. `whlie` consists of valid characters and forms a perfectly valid identifier token. The lexer succeeds without issue; the error is semantic (or caught by an IDE's specific linter, not the standard lexical phase).",
+          "score": 3
         }
       ]
     },
@@ -124,58 +160,76 @@
       "judgeId": "openai/gpt-5.2",
       "rankings": [
         {
-          "anonymousId": "Model A",
-          "modelId": "anthropic/claude-sonnet-4.5",
-          "reasoning": "Strong application focus with varied but well-fit formats (MCQ, sortOrder, matchColumns, fillBlank) that genuinely test phase responsibilities and ordering. Feedback is consistently explanatory for both correct/incorrect choices. Technically accurate distinctions (lexing vs parsing vs semantics vs codegen) and good “which phase catches this?” scenarios. Minor nit: a couple items imply “processor instructions” as the only output, but elsewhere it’s framed generally enough; overall excellent.",
-          "score": 10
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Strong application-based scenarios (reserved keyword as identifier, missing paren, type mismatch). Uses well-fit formats (MC, sort, match, fill) without feeling forced, and feedback explains why each phase fits. Also explicitly notes codegen can output executable or bytecode (avoids the “only machine code” pitfall). Overall accurate and clear.",
+          "score": 9.6
         },
         {
-          "anonymousId": "Model B",
-          "modelId": "openai/gpt-5.2",
-          "reasoning": "Consistently application-based questions, good phase mapping, and clear rationales in feedback. The fillBlank uses “machine” as the target output, but its own feedback explicitly allows “or another low-level target,” avoiding the “compilers only produce machine code” pitfall. Overall very solid, just slightly less rich/robust than A in breadth/insight and one distractor set feels a bit arbitrary.",
+          "anonymousId": "Model I",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Consistently application-focused and clear. Good variety of scenarios (type mismatch, missing paren, calculator tokenization+precedence, editor highlighting, why phases exist) with solid explanatory feedback. Minor issue: in matchColumns, “Unknown symbol 'func'” is not necessarily lexical (often semantic/name resolution), so that mapping is questionable.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Many high-quality application questions, including a good “why phases exist” item and clear feedback. Formats mostly fit well. Small weaknesses: some prompts are a bit wordy, and one match item (“Function result stored in register EAX”) is architecture-specific and could be seen as beyond scope, though still plausibly codegen-related. Overall very strong.",
           "score": 9
         },
         {
-          "anonymousId": "Model E",
+          "anonymousId": "Model J",
           "modelId": "openai/gpt-5-mini",
-          "reasoning": "Good mix of formats with generally strong, concept-testing prompts (token stream vs tree, syntax vs semantic, ordering). Feedback is mostly reasoning-based. Two accuracy/coverage weaknesses: the fillBlank jumps from AST straight to code generation and omits semantic analysis (could mislead about necessary phases), and it repeatedly frames the output as machine/executable code without acknowledging other targets. Still high quality overall.",
-          "score": 8
+          "reasoning": "Accurate, clear, and mostly application-oriented (e.g., diagnosing which stage reports an “unexpected )” error). Good match/sort items and solid feedback. However, a couple questions drift toward near-definitional (“What does lexical analysis produce?” / fill-blank pipeline) rather than scenario-based application.",
+          "score": 8.6
         },
         {
-          "anonymousId": "Model C",
-          "modelId": "anthropic/claude-opus-4.5",
-          "reasoning": "Good application scenarios (type mismatch, missing delimiter, calculator precedence) and mostly strong feedback. However, matchColumns contains a likely misclassification: “Unknown symbol 'func' near line 10” is not inherently a lexical error (often semantic/symbol resolution after parsing); could also be a parse error depending on context, making it ambiguous. Also leans on “machine instructions” as the output without nuance. Solid but with notable factual/ambiguity issues.",
-          "score": 7
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Good application framing (syntax highlighter mimics lexing; grammatically-correct-but-nonsense for semantics). Formats are appropriate and feedback is generally strong. Minor concern: the semantic question uses an English meaning example that can blur “semantic analysis” with real-world plausibility rather than language rules, but it does connect back to type-rule violations in feedback.",
+          "score": 8.3
         },
         {
           "anonymousId": "Model F",
           "modelId": "openai/gpt-5.1-instant",
-          "reasoning": "Clear, application-based MCQs and a matchColumns that correctly connects common error types to phases. Feedback explains why alternatives are wrong, though it’s a bit repetitive and shallow compared to stronger models. Also includes a question implying the compiler’s product is a “final binary output” from code generation (not always true; can be object files/IR/bytecode), so slightly misleading.",
-          "score": 6
+          "reasoning": "Clean, accurate, and strongly scenario/error-to-phase focused with decent feedback. Main drawback is repetitiveness and lower novelty (many items are basically the same stem), and limited probing of ordering/why phases must be ordered (no explicit sequencing question). Still solid.",
+          "score": 7.9
         },
         {
-          "anonymousId": "Model H",
-          "modelId": "google/gemini-3-pro-preview",
-          "reasoning": "Generally good application (syntax highlighter for lexing, semantic-vs-grammar analogy, ordering of artifacts). Feedback is explanatory. Main weakness: heavy reliance on English-language analogies rather than novel code scenarios, which trends toward the disallowed “explanation/metaphor” style. Also the sortOrder asks for artifacts rather than error-catching application (still acceptable, but less aligned with the task’s ‘phase catches error/order matters’ emphasis).",
-          "score": 5
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Generally accurate with good format fit (sort, match, MC, fill) and explanatory feedback. A bit heavy on analogy, and some items are closer to describing pipeline outputs than diagnosing scenarios. Also leans into “hardware commands/1s and 0s” for codegen without acknowledging other targets (IR/bytecode).",
+          "score": 7.7
         },
         {
-          "anonymousId": "Model I",
-          "modelId": "xai/grok-4.1-fast-reasoning",
-          "reasoning": "Only one question, but it is application-based and accurate about lexical analysis producing tokens. Feedback is fine but limited in depth and scope; no broader testing of parsing/semantic/codegen distinctions, ordering constraints, or error-to-phase mapping. Acceptable but minimal.",
-          "score": 4
-        },
-        {
-          "anonymousId": "Model D",
-          "modelId": "openai/gpt-5.2:high",
-          "reasoning": "Only a single MCQ. It’s accurate and application-oriented, but extremely limited coverage and does not test ordering constraints or error detection across phases. Feedback is okay but brief; overall underdeveloped compared to others.",
-          "score": 3
-        },
-        {
-          "anonymousId": "Model G",
+          "anonymousId": "Model A",
           "modelId": "google/gemini-3-flash",
-          "reasoning": "Multiple questions, but several violate the guidance by leaning on extended metaphors (letter/chef/assembly line) rather than compiler scenarios. Also includes a strong accuracy pitfall: claims code generation output is “machine code… electrical-level instructions executed directly,” implying compilers only produce machine code and overstating hardware-direct execution; many targets exist (bytecode/IR/object files). MatchColumns question explicitly references an “assembly line” framing (called out as a bad pattern).",
-          "score": 2
+          "reasoning": "Has several good application questions, but it repeatedly leans on metaphors (“assembly line,” chef/robot) despite the guidance discouraging metaphor-focused content. Also states code generation produces “machine code… electrical-level instructions,” implying compilers only produce machine code. One match pair (“variable used before it has been given a value”) is more runtime/definite-assignment than general semantic analysis across languages. Overall decent but with notable guideline violations.",
+          "score": 6.6
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Accurate semantic/type-mismatch question. But the first question misclassifies `primt(\"Hello\")` as a lexical error; that’s typically not lexical (it’s a valid identifier token) but a name resolution/semantic issue (or runtime in Python). This is a significant conceptual error for this topic.",
+          "score": 4.2
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Single question, but it’s a good application of parsing catching a structural error and the feedback is solid. Limited coverage/variety keeps it from ranking higher, but what’s present is accurate and well-explained.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model L",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Accurate, but essentially a lightly rephrased definition check (identify which phase groups into tokens) with minimal novel scenario pressure. Feedback is fine, but the question tests recognition more than application.",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Primarily asks about what the first stage produces from a code line—more recall/output-focused than application. Accurate distinctions between phases, but doesn’t meet the “application over memorization” expectation strongly.",
+          "score": 6.2
         }
       ]
     }
