@@ -256,42 +256,7 @@ describe("authenticated users", () => {
     const headers = await signInAs(user.email, user.password);
 
     const schoolOrg = await organizationFixture({ kind: "school" });
-
-    const course = await courseFixture({
-      isPublished: true,
-      organizationId: schoolOrg.id,
-    });
-
-    const chapter = await chapterFixture({
-      courseId: course.id,
-      isPublished: true,
-      organizationId: schoolOrg.id,
-      position: 0,
-    });
-
-    const lesson = await lessonFixture({
-      chapterId: chapter.id,
-      isPublished: true,
-      organizationId: schoolOrg.id,
-      position: 0,
-    });
-
-    const [activity1, activity2] = await Promise.all([
-      activityFixture({
-        generationStatus: "completed",
-        isPublished: true,
-        lessonId: lesson.id,
-        organizationId: schoolOrg.id,
-        position: 0,
-      }),
-      activityFixture({
-        generationStatus: "completed",
-        isPublished: true,
-        lessonId: lesson.id,
-        organizationId: schoolOrg.id,
-        position: 1,
-      }),
-    ]);
+    const { activity1, activity2 } = await createCourseWithActivities(schoolOrg.id);
 
     await Promise.all([
       activityProgressFixture({
