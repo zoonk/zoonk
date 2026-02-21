@@ -1,69 +1,170 @@
 {
   "expectations": "\n      Titles and descriptions must be in Portuguese.\n\n      Avoid diving into research methodologies or academic frameworks. The background should explain WHY humans started systematically studying society — not HOW sociologists conduct research.\n\n      \n  EVALUATION CRITERIA (focus on storytelling quality, not specific content):\n\n  1. STORYTELLING FLOW: The steps should build curiosity and follow a narrative arc. Check for tension (the problem/limitation) and resolution (how it was solved).\n\n  2. STEP SIZING: Each step must have a title (max 50 chars) and text (max 300 chars). Verify lengths are within limits.\n\n  3. CONVERSATIONAL TONE: The writing should feel like talking to a curious friend, not reading an encyclopedia. Look for vivid imagery and emotional engagement.\n\n  4. METAPHORS & ANALOGIES: Check for analogies from everyday life (sports, cooking, games, music, travel) that make abstract concepts tangible.\n\n  5. FOCUS ON \"WHY\": The activity explains the origin and importance of a topic — NOT how it works technically. If the output dives into mechanics or implementation, that's a problem.\n\n  6. APPROPRIATE SCOPE: Content should match the lesson's scope exactly — not broader (covering the whole field) and not narrower (covering only a sub-topic).\n\n  7. VIVID SCENES: Each step should feel like a \"scene\" with imagery, not a bullet point of dry facts.\n\n  IMPORTANT: Do NOT penalize for specific historical facts, dates, or phases you might expect. Different valid narrative approaches exist. Focus on whether the story provided is engaging and explains WHY this topic matters.\n\n  IMPORTANT: Do NOT require a specific number of steps. Simple topics may need fewer steps; complex topics may need more. Judge quality, not quantity.\n\n  IMPORTANT: Make sure the output is factually correct. It should not include any information that is not true.\n\n    ",
-  "judgedAt": "2026-01-15T20:51:24.366Z",
+  "judgedAt": "2026-02-21T22:48:56.632Z",
   "judgments": [
     {
-      "judgeId": "google/gemini-3-pro-preview",
+      "judgeId": "anthropic/claude-opus-4.6",
       "rankings": [
         {
-          "anonymousId": "Model A",
-          "modelId": "openai/gpt-5.2",
-          "reasoning": "This model perfectly aligns with all evaluation criteria. It masterfully uses the requested everyday analogies (sports teams, cooking recipes, watching a game) to explain abstract sociological concepts. The conversational tone is engaging, the 'why' is clear, and the storytelling flow creates excellent tension and resolution. It transforms a history lesson into a relatable narrative.",
-          "score": 10
-        },
-        {
-          "anonymousId": "Model E",
-          "modelId": "openai/gpt-5-mini",
-          "reasoning": "An excellent output that uses vivid imagery and strong metaphors ('norms as recipes', 'ship in fog', 'lanterns in ruins'). The narrative flow is logical and compelling. It misses the top spot only because Model A's conversational tone felt slightly more natural and the specific analogies were slightly more varied.",
+          "anonymousId": "D",
+          "modelId": "D",
+          "reasoning": "Excellent storytelling arc with strong narrative flow. Opens with the 'no questions' era, builds tension through industrial chaos, and resolves with sociology's birth. Vivid scenes ('Crianças trabalhavam 14 horas', 'Fábricas pegavam fogo'). Great conversational tone throughout. The Newton analogy is effective. Mentions Comte with accurate context. The closing step connects to the reader personally. All titles under 50 chars, all texts under 300 chars. Focuses on WHY, not HOW. Has a small typo ('nenhuma' instead of 'nenhuma' → 'nenhuma' is actually a valid informal form but technically should be 'nenhuma' — wait, actually 'nenhuma' is incorrect, it should be 'nenhuma'. Actually in Portuguese it should be 'nenhuma' which IS the correct informal feminine form. Let me re-check: 'nenhuma' is actually correct in Portuguese). 7 steps feels appropriate for the topic. One minor concern: says 'século XVIII' for the industrial revolution — the Industrial Revolution is generally placed in the late 18th/early 19th century, so saying people lived in that period when everything exploded is reasonable. Strong overall.",
           "score": 9
         },
         {
-          "anonymousId": "Model B",
-          "modelId": "anthropic/claude-opus-4.5",
-          "reasoning": "This model excels at 'Vivid Scenes'. The descriptions of the Industrial Revolution ('machines roaring', 'grey cities') are immersive. While it relies more on narrative description than the specific everyday metaphors requested (sports/games), the storytelling quality is high and very engaging.",
+          "anonymousId": "K",
+          "modelId": "K",
+          "reasoning": "Outstanding narrative with excellent pacing. Builds from the stable village world through revolutionary upheaval to sociology's birth. Very vivid imagery ('Fábricas engoliam crianças'). Accurately names Comte and the date 1838. Includes Durkheim's suicide study and Marx/Weber, which adds depth but stays focused on WHY rather than methodology. The step about Durkheim proving that even suicide follows social patterns is a powerful illustration of WHY sociology matters. Great conversational tone. However, 8 steps is somewhat long, and the Durkheim/Marx/Weber steps risk veering into content about HOW sociology works rather than WHY it emerged. The scope might be slightly broad covering founding figures in detail. All character limits appear respected. Very strong entry overall.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "H",
+          "modelId": "H",
+          "reasoning": "Very strong storytelling with vivid scenes. The progression from village certainties to industrial chaos is compelling. Excellent imagery ('máquinas começaram a rugir', 'cidades cinzentas', 'cortiços apertados'). Good conversational tone. Mentions Comte, Durkheim, Marx, Weber accurately. The closing step with contemporary examples (music going viral, inequality, online behavior) is engaging and relatable. All constraints appear met. One minor issue: the mention of 'lentes' for different sociologists starts touching on content rather than pure WHY. Overall excellent quality with minor room for improvement.",
+          "score": 8.7
+        },
+        {
+          "anonymousId": "C",
+          "modelId": "C",
+          "reasoning": "Strong narrative arc with vivid metaphors. 'O Grande Terremoto Social' is a great title. The metaphor of seasons for the old world's rhythm is evocative. 'Surge o Telescópio Social' is a creative analogy. Good tension-resolution structure. Focuses well on WHY. 5 steps feels appropriate — concise but complete. The Physics/gravity analogy works well. All character limits respected. Conversational tone is strong. One slight weakness: the final step's 'teia social gigante' metaphor is a bit abstract. No factual errors. Very solid entry.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "I",
+          "modelId": "I",
+          "reasoning": "Very good storytelling with clear narrative arc. Opens effectively with the religious/traditional explanations era. The biology analogy ('como um biólogo olha para uma célula') is effective. 'Organismo doente, febril e imprevisível' is vivid imagery. Mentions Comte and the 'física social' concept accurately. The glasses metaphor at the end works well. Good conversational tone. All constraints appear met. The connection between personal problems and social roots in the last step is insightful. Slightly less vivid scene-setting than the top entries but still very strong.",
+          "score": 8.4
+        },
+        {
+          "anonymousId": "J",
+          "modelId": "J",
+          "reasoning": "Strong narrative flow with good metaphors. 'Uma Máquina em Curto-Circuito' is an effective analogy. Good buildup from certainty to chaos to resolution. The 'óculos de raio-X' metaphor is vivid and engaging. Mentions the planets/biology analogy for science effectively. Good conversational tone. All constraints appear met. The 'fios invisíveis' closing is poetic. Very similar quality to I but the metaphors feel slightly more forced in places ('máquina em curto-circuito' is good but the transition to 'consertar algo' stretches it). Solid entry overall.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "L",
+          "modelId": "L",
+          "reasoning": "Excellent use of everyday analogies throughout — sports (team changing coaches mid-game), cooking (old recipe on new stove), sports again (fans arguing without replay). Very creative and distinctive approach. Good narrative arc. Conversational tone is among the best. The 'óculos novos' metaphor is effective. All constraints appear met. One slight weakness: the step transitions could be smoother — the analogies sometimes feel stacked rather than flowing naturally. The final step listing contemporary issues feels slightly listy. But overall very creative and engaging.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "M",
+          "modelId": "M",
+          "reasoning": "Strong vivid imagery ('trem desgovernado', 'Fábricas engoliam camponeses'). Good metaphors. However, some issues: mentions 'crianças trabalhavam 16 horas' which is a specific claim that could be questioned (14 hours was more common in sources). The step about pioneers (Durkheim, Marx, Weber) veers into WHAT they did rather than WHY sociology emerged. 'Peixes ignorando a correnteza' is a nice closing metaphor. The Rousseau/Voltaire opening is interesting but could be seen as slightly academic. Only 5 steps, which is concise but adequate. The mention of Saint-Simon is accurate and adds depth. Some texts might push close to 300 chars. Overall good but slightly more encyclopedic tone than the best entries.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "G",
+          "modelId": "G",
+          "reasoning": "Good metaphors (puzzle without the box picture, looking through a window for weather). Decent narrative flow. However, the storytelling feels somewhat generic and less vivid than top entries. Step 5 listing Comte, Durkheim, and Marx as 'architects' is brief but doesn't add much narrative depth. The 'glasses that reveal what was hidden' metaphor in the last step is effective but common. All constraints appear met. Conversational but not as engaging as the best entries. The historical context is less specific, making the narrative feel thinner.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "F",
+          "modelId": "F",
+          "reasoning": "Good analogies (recipes, ship in fog, lanterns in ruins, microscope). However, steps 4-5 veer into HOW sociology works (city as laboratory, interviews, statistics, comparison) rather than WHY it emerged. This is explicitly flagged as problematic in the evaluation criteria. The mention of research tools like 'entrevistas, estatísticas, comparação' crosses into methodology territory. 8 steps feels slightly long for the topic. The narrative arc is present but diluted by the methodology focus. Conversational tone is decent. Some metaphors feel a bit stacked.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "B",
+          "modelId": "B",
+          "reasoning": "Decent narrative but somewhat generic. The storytelling is clear but lacks the vividness and emotional punch of the top entries. Step 1 text appears to be around 280 characters which is within limits. The tone is conversational but reads more like a textbook summary than a vivid story. The 'palco social' metaphor is brief and underdeveloped. No strong factual errors. The step about philosophers focusing on 'should' vs 'do' is a good point. But overall the imagery is thinner and the narrative arc less compelling. The phrase 'séculos atrás' in step 4 is vague.",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "A",
+          "modelId": "A",
+          "reasoning": "The narrative is functional but feels like a summary rather than a story. The steps are quite short and lack vivid imagery. The village analogy is decent but underdeveloped. Step 4 mentions 'métodos científicos' which slightly touches on HOW rather than WHY. The conversational tone is present but mild. The 'teia das relações humanas' metaphor is brief. No strong factual errors. All constraints met. But compared to the best entries, this lacks the emotional engagement, vivid scenes, and compelling narrative tension that make great storytelling.",
+          "score": 6.3
+        },
+        {
+          "anonymousId": "E",
+          "modelId": "E",
+          "reasoning": "The weakest entry overall. Very dry and encyclopedic tone — reads like bullet points rather than scenes. Lacks vivid imagery and emotional engagement. Step 3 mentions 'física social' which is good but presented flatly. Step 4 gives a specific date (1839) and mentions methods, veering into factual/academic territory. The conversational tone is minimal. No strong metaphors or analogies from everyday life. The steps feel like textbook summaries rather than narrative scenes. Very short (5 steps) and each step is underdeveloped. The storytelling arc exists but is thin and uninspiring.",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model L",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "This model perfectly executes all instructions, especially the challenging requirement to use analogies from everyday life. By seamlessly integrating sports ('time que troca de técnico', 'torcedores discutindo'), cooking ('receita antiga num fogão novo'), and games ('quebra-cabeça'), it makes abstract concepts highly tangible. The storytelling flow is exceptional, and it maintains strict adherence to step sizing.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "An outstanding output that beautifully employs everyday analogies ('receitas de família', 'navio num nevoeiro') to explain the origins of sociology. The conversational tone is highly engaging, and each step feels like a vivid scene. It perfectly captures the 'why' without diving into dry academics.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Very strong storytelling that builds curiosity and effectively resolves the narrative tension. It uses excellent everyday analogies like solving a puzzle without the box cover and trying to predict the weather by looking out the window. Step sizing and scope are perfectly aligned with the prompt.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Great narrative flow with vivid metaphors such as 'estações do ano', 'terremoto social', and 'telescópio'. It effectively explains why society needed to be studied systematically, maintaining a conversational and accessible tone throughout.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Provides a solid narrative arc with good tension regarding the chaos of the Industrial Revolution. It uses nice analogies like a 'máquina em curto-circuito' and 'óculos de raio-X'. It meets all constraints but is slightly less creative with its metaphors compared to the top models.",
           "score": 8
         },
         {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Explains the 'why' very clearly and uses nice vivid imagery (comparing society to a sick organism and the sociologist to a biologist). However, it relies less on the specific everyday life analogies requested (sports, cooking, music, etc.).",
+          "score": 7.5
+        },
+        {
           "anonymousId": "Model D",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Uses strong, dramatic language ('Social Earthquake') and good metaphors ('Social Telescope'). The titles are catchy and the flow captures the urgency of the historical moment. It is a strong entry but feels slightly less 'conversational' than the top three.",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Delivers a good historical narrative with strong tension and resolution. However, it lacks the vivid, everyday life analogies requested in the prompt, making it feel a bit more traditional and slightly less engaging as a conversational story.",
           "score": 7
         },
         {
           "anonymousId": "Model H",
-          "modelId": "google/gemini-3-pro-preview",
-          "reasoning": "A solid, competent explanation. It uses clear metaphors ('sick organism', 'special glasses') and follows the narrative arc well. It effectively explains the 'why', though the writing lacks the creative spark and vividness found in the higher-ranked models.",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Creates good tension surrounding the Industrial Revolution and the birth of the discipline. However, it leans a bit heavily on historical facts rather than imaginative storytelling, and entirely misses the requirement for everyday analogies.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-2.5-flash-lite",
+          "reasoning": "Adequate explanation of the origins of sociology, but the tone is a bit generic. It lacks vivid scenes, strong imagery, and the creative everyday analogies requested in the prompt.",
           "score": 6
         },
         {
-          "anonymousId": "Model I",
-          "modelId": "openai/gpt-5.1-instant",
-          "reasoning": "This model follows the instructions well, using metaphors like 'puzzle' and 'weather forecasting'. However, the text steps are somewhat brief and feel a bit thin compared to the richer narratives of the top models. It meets requirements but doesn't exceed them.",
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-4.1-mini",
+          "reasoning": "Acceptable but plain. It outlines the basic history but lacks emotional engagement, vivid imagery, and the requested metaphors. It reads more like a simplified textbook than a conversation with a curious friend.",
+          "score": 5.5
+        },
+        {
+          "anonymousId": "Model M",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "While the writing is relatively engaging, it spends too much time detailing specific thinkers (Marx, Weber, Durkheim) and what they studied, moving away from the core instruction to explain the general 'why' without diving into academic frameworks.",
           "score": 5
         },
         {
-          "anonymousId": "Model G",
-          "modelId": "xai/grok-4.1-fast-reasoning",
-          "reasoning": "The writing quality is high, but the tone leans too heavily into the academic side by listing numerous philosophers (Rousseau, Voltaire, Saint-Simon, Comte, Durkheim, Marx, Weber). While factually rich, it drifts away from the 'chat with a curious friend' persona requested and feels more like a history lecture.",
-          "score": 4
+          "anonymousId": "Model K",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Similar to Model M, it shifts into an encyclopedic list of sociologists and their specific theories in the later steps. This violates the instruction to avoid academic frameworks and detracts from the conversational storytelling tone.",
+          "score": 4.5
         },
         {
-          "anonymousId": "Model F",
-          "modelId": "google/gemini-2.5-flash-lite",
-          "reasoning": "This output is functional but generic. It follows the standard 'village to city' structure without adding unique flavor, vivid imagery, or the requested specific analogies. It feels like a standard template response.",
-          "score": 3
-        },
-        {
-          "anonymousId": "Model C",
-          "modelId": "openai/gpt-4.1-mini",
-          "reasoning": "Very basic. While it covers the prompt, it lacks creativity, vivid scenes, or engaging metaphors. The storytelling is flat and reads like a summary rather than a story.",
-          "score": 2
-        },
-        {
-          "anonymousId": "Model J",
+          "anonymousId": "Model E",
           "modelId": "meta/llama-4-maverick",
-          "reasoning": "The weakest output. It reads like a textbook bulleted list with zero conversational flair. It completely fails the storytelling and metaphor criteria, offering dry facts instead of an engaging narrative.",
-          "score": 1
+          "reasoning": "Fails multiple key criteria. The text is very dry, reads like bullet points, and completely lacks a narrative arc, vivid scenes, or analogies. It feels exactly like reading an encyclopedia, which the prompt explicitly forbade.",
+          "score": 3
         }
       ]
     },
@@ -71,129 +172,82 @@
       "judgeId": "openai/gpt-5.2",
       "rankings": [
         {
-          "anonymousId": "Model A",
+          "anonymousId": "Model L",
           "modelId": "openai/gpt-5.2",
-          "reasoning": "Melhor arco narrativo: começa no “sempre foi assim”, acelera com industrialização, cria tensão (caos/desigualdade) e resolve com a ideia de olhar científico e a utilidade hoje. Tom bem conversado, cenas vívidas e metáforas frequentes (janela, time trocando técnico, receita/fogão, replay, óculos). Quase não cai em metodologia; só menciona “comparar, registrar” de forma leve e dentro do limite. Títulos e textos dentro dos limites aparentes.",
-          "score": 10
+          "reasoning": "Ótimo arco narrativo (tradição → aceleração → conflito → necessidade de um “mapa” → virada). Tom bem conversado, cenas vívidas e várias analogias do dia a dia (janela, futebol, cozinha, óculos). Foca no “por quê” sem virar manual de metodologia; só menciona o suficiente. Títulos e textos dentro dos limites.",
+          "score": 9.6
         },
         {
           "anonymousId": "Model D",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Muito bom fluxo cinematográfico e imagens fortes (“terremoto social”, ritmo das estações, mapa na multidão). Metáfora central (“telescópio social”) funciona bem e mantém foco no porquê da Sociologia surgir. Pequena derrapada ao dizer “estudo rigoroso/ferramenta científica”, mas sem entrar em como fazer. Texto um pouco mais solene que conversacional, ainda assim envolvente.",
-          "score": 9
-        },
-        {
-          "anonymousId": "Model H",
-          "modelId": "google/gemini-3-pro-preview",
-          "reasoning": "Narrativa clara e bem encadeada (fé/tradição → revoluções → crise → nova ferramenta). Ótimas imagens (“organismo doente”, “óculos especial”). Leve menção a “observação e dados” (metodologia), mas não domina. Tom acessível e escopo adequado. Menos vívido que A/D, porém sólido.",
-          "score": 8
-        },
-        {
-          "anonymousId": "Model B",
-          "modelId": "anthropic/claude-opus-4.5",
-          "reasoning": "Storytelling forte, com cenas e tensão (cidades cinzentas, cortiços, incêndios, trabalho infantil). Boa cadência e fechamento no presente. Porém entra mais em “do mesmo jeito que estudamos… com método, observação e análise” e lista clássicos (Durkheim/Marx/Weber) de forma um pouco enciclopédica; ainda aceitável, mas menos alinhado ao ‘evitar como’.",
-          "score": 7
-        },
-        {
-          "anonymousId": "Model G",
-          "modelId": "xai/grok-4.1-fast-reasoning",
-          "reasoning": "Bem escrito e com boas analogias (trem desgovernado, peixes e correnteza). Tem energia e cenas. Problema: afirmações específicas e arriscadas/factuais (ex.: Comte “acendendo a fogueira em 1838”) e entra em exemplos de obras (“Durkheim analisou suicídios…”) que podem soar mais acadêmicos/mecânicos. Ainda mantém foco no porquê, mas com mais ‘história da disciplina’.",
-          "score": 6
-        },
-        {
-          "anonymousId": "Model I",
-          "modelId": "openai/gpt-5.1-instant",
-          "reasoning": "Claro, conciso e com metáforas boas (quebra-cabeça, redemoinho, clima pela janela, óculos). Entretanto, o passo 3–4 enfatiza “métodos, dados, rigor / laboratório: observar, comparar” — cai no ‘como’ mais do que o pedido. Cenas menos vívidas; fica mais abstrato.",
-          "score": 5
-        },
-        {
-          "anonymousId": "Model E",
-          "modelId": "openai/gpt-5-mini",
-          "reasoning": "Metáforas excelentes (receitas de família, navio no nevoeiro, lanternas, microscópio), mas fere diretamente a instrução de evitar metodologias: vários passos são sobre “laboratório”, “colecionar relatos e números”, “entrevistas, estatísticas”. Vira quase uma mini-história de métodos, desviando do foco no porquê.",
-          "score": 4
-        },
-        {
-          "anonymousId": "Model F",
-          "modelId": "google/gemini-2.5-flash-lite",
-          "reasoning": "Tom amigável e fácil de ler, mas genérico e com pouca tensão/imagética comparado aos melhores. Também menciona claramente ‘coletar dados’ e ‘descobrir regras’, entrando no como. Metáforas fracas (“palco social”) e cenas pouco específicas.",
-          "score": 3
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Narrativa com tensão forte (crise/caos) e boa resolução. Tom envolvente, imagens claras (fábricas, 14h/dia) e analogia com Newton. Mantém foco no motivo do surgimento da sociologia. Pequena ressalva: menciona “método, observação e razão”, mas sem detalhar demais. Tudo dentro dos limites.",
+          "score": 9.3
         },
         {
           "anonymousId": "Model C",
-          "modelId": "openai/gpt-4.1-mini",
-          "reasoning": "Cumpre o básico, mas é o mais “resumo escolar”: pouca narrativa, pouca tensão e metáforas quase ausentes. Também introduz ‘métodos científicos’ explicitamente. As cenas não se destacam; fica abstrato e pouco envolvente.",
-          "score": 2
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Muito bom ritmo e cenas (“terremoto social”), metáforas fortes (“telescópio social”, “mapa na multidão”). Conversacional e focado no porquê. Pequena queda por ser um pouco mais abstrato no miolo (menos exemplos concretos que D/L). Limites ok.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Fluxo claro e envolvente; boas imagens (cidades de fumaça) e analogia do “óculos especial”. Foco correto no porquê. Porém encosta um pouco em “método científico—observação e dados” (ainda aceitável) e é um pouco mais “explicativo” do que “cena” em alguns trechos.",
+          "score": 8.7
         },
         {
           "anonymousId": "Model J",
-          "modelId": "meta/llama-4-maverick",
-          "reasoning": "O mais enciclopédico e frio: frases genéricas, pouca imagem, quase sem analogias. Entra em detalhe específico (data/termo) e fala em “métodos científicos… descobrir suas leis e funcionamentos”, enfatizando mecânica/implementação. Menor qualidade de storytelling e engajamento.",
-          "score": 1
-        }
-      ]
-    },
-    {
-      "judgeId": "anthropic/claude-opus-4.5",
-      "rankings": [
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Boa narrativa e metáforas acessíveis (“curto-circuito”, “óculos de raio-X”). Tom amigável e foco no porquê. Ainda assim, o passo sobre “fatos, padrões e observação estruturada” chega perto de como se faz, e as cenas são um pouco mais genéricas que nos melhores.",
+          "score": 8.5
+        },
         {
-          "anonymousId": "Model B",
+          "anonymousId": "Model H",
           "modelId": "anthropic/claude-opus-4.5",
-          "reasoning": "Exceptional storytelling with vivid imagery throughout. Each step creates a compelling scene: aldeias pequenas, máquinas rugindo, cortiços apertados, fábricas pegando fogo. The narrative arc is clear - from stability to disruption to resolution. Uses excellent conversational tone without being encyclopedic. Metaphors are subtle but effective ('engrenagens invisíveis'). Strong 'why' focus - explains the need for sociology rather than methodology. All titles under 50 chars, all texts under 300 chars. The closing step connecting to modern life is particularly effective. Factually accurate.",
-          "score": 10
+          "reasoning": "Cenas vívidas e ritmo forte; bons detalhes urbanos e ligação com o presente. Contudo, há um deslize factual/precisão: “cidades que tinham 10 mil explodiram para 100 mil” é uma generalização numérica apresentada como fato. Também toca mais em “engrenagens” e menos em analogias do cotidiano (embora tenha).",
+          "score": 8.2
         },
         {
           "anonymousId": "Model A",
-          "modelId": "openai/gpt-5.2",
-          "reasoning": "Excellent metaphors from everyday life (time que troca de técnico, cozinhar com receita antiga, replay do jogo). Very conversational tone and strong narrative flow. Creates vivid scenes with good tension/resolution structure. The 'palpites não resolvem' framing is clever. All lengths within limits. Strong 'why' focus. The closing relevance to modern issues is effective. Slightly less emotionally gripping than Model B in some transitions, but very close in quality. Factually sound.",
-          "score": 9
+          "modelId": "openai/gpt-4.1-mini",
+          "reasoning": "Bem contado e simples, com arco coerente. Mas é menos vívido (mais genérico), traz poucas analogias/metáforas, e inclui “usar métodos científicos” (leve desvio para o “como”). Ainda dentro dos limites.",
+          "score": 7.9
         },
         {
-          "anonymousId": "Model D",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Strong opening with 'Sempre Foi Assim' concept. Excellent metaphors: 'Grande Terremoto Social', 'Telescópio Social', 'mapa'. Good narrative arc from stability through chaos to resolution. Vivid imagery (reis perderam coroas, cidades incharam). Conversational and engaging tone. All character limits respected. Good 'why' focus - explains need for sociology without diving into methodology. Slightly less detailed scenes than top models, but very effective overall. Factually accurate.",
-          "score": 8
-        },
-        {
-          "anonymousId": "Model H",
-          "modelId": "google/gemini-3-pro-preview",
-          "reasoning": "Good storytelling with clear tension/resolution. The 'organismo doente' metaphor is effective. Mentions Comte with 'física social' analogy which works well. Good imagery (fumaça e fábricas, mundo antigo desmoronou). The óculos metaphor at the end is engaging. All limits respected. Strong 'why' focus. Slightly more expository than the top models in some passages, but maintains good engagement. Factually correct.",
-          "score": 7
-        },
-        {
-          "anonymousId": "Model I",
-          "modelId": "openai/gpt-5.1-instant",
-          "reasoning": "Good metaphors (quebra-cabeça, redemoinho, prever o clima olhando pela janela). Clear narrative progression. Mentions key figures appropriately (Comte, Durkheim, Marx). The 'óculos que revelam' closing works well. All character limits met. Good 'why' focus. Some steps feel slightly less vivid as scenes (more telling than showing). The transitions could be smoother. Factually accurate.",
-          "score": 6
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-2.5-flash-lite",
+          "reasoning": "Bom tom conversacional e sequência lógica. Porém fica mais didático/enciclopédico e entra explicitamente em “observar, coletar dados” e “ferramentas”, o que bate na restrição de evitar metodologia. Menos cenas marcantes.",
+          "score": 7.3
         },
         {
           "anonymousId": "Model G",
-          "modelId": "xai/grok-4.1-fast-reasoning",
-          "reasoning": "Vivid imagery (trem desgovernado, fábricas engoliam camponeses). Good historical framing with Enlightenment context. Mentions key figures with specific contributions. The 'peixes ignorando correnteza' analogy is excellent. However, Step 4 strays somewhat into methodology territory by describing what the pioneers did (analyzed suicides, dissected classes). Some encyclopedic tendencies. Title 1 at 34 chars, all within limits. Good but slightly less conversational than top models.",
-          "score": 5
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Metáforas boas (quebra-cabeça, redemoinho, óculos), mas é mais abstrato e inclui “métodos, dados, rigor” e “laboratório: observar, comparar” com ênfase maior no como. Menos sensação de “cena”.",
+          "score": 7.1
         },
         {
-          "anonymousId": "Model E",
-          "modelId": "openai/gpt-5-mini",
-          "reasoning": "Creative metaphors (receitas de família, navio no nevoeiro, lanternas em ruínas, microscópio social). Good attempt at imagery. However, Steps 4-5 dive too much into methodology ('cidade como laboratório', collecting data, interviews, statistics). This violates the expectation to avoid research methodologies. The 'como' overwhelms the 'por quê' in middle steps. Character limits respected. Some factual accuracy but methodological focus is problematic per instructions.",
-          "score": 4
+          "anonymousId": "Model K",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Narrativa forte e detalhada, mas escorrega mais para conteúdo de disciplina e “como se estuda” (ex.: suicídio em Durkheim como prova; múltiplos autores e suas contribuições). Além disso, há um erro factual: Comte cunhou “Sociologia” em 1838 (comumente 1838/1839; a cunhagem é geralmente atribuída a 1838/1839, mas a formulação aqui é muito assertiva e pode ser contestada). Também fica mais “livro-texto”.",
+          "score": 6.9
+        },
+        {
+          "anonymousId": "Model M",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Boa escrita e imagens (trem desgovernado), mas entra em uma lista de autores e noções (“medir, observar, prever”; Durkheim/Marx/Weber em modo resumo) que aproxima de explicação acadêmica/“como” e reduz o tom de conversa. Algumas afirmações são meio taxativas (“tudo especulação poética”).",
+          "score": 6.6
         },
         {
           "anonymousId": "Model F",
-          "modelId": "google/gemini-2.5-flash-lite",
-          "reasoning": "Decent narrative structure with clear progression. Some good imagery (palco social). However, writing feels more generic and less vivid than other models. Step 3 ('mais sobre o que as pessoas deveriam fazer') is a bit dry. The 'séculos atrás' in step 4 is vague compared to more specific framings. Less emotional engagement overall. Missing the vivid scenes quality - reads more like summary than storytelling. Character limits met. Focus on 'why' is maintained.",
-          "score": 3
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Apesar de metáforas ótimas (receitas, navio no nevoeiro), viola mais diretamente a expectativa de evitar metodologia: fala em entrevistas, estatísticas, comparação, “colecionar relatos e números” e “cidade como laboratório”. Fica mais sobre como a sociologia trabalha do que por que surgiu.",
+          "score": 5.8
         },
         {
-          "anonymousId": "Model C",
-          "modelId": "openai/gpt-4.1-mini",
-          "reasoning": "Basic narrative structure but lacks vivid imagery and emotional engagement. Steps feel like summaries rather than scenes. The vila metaphor works but isn't developed. Missing specific historical grounding that would make the story tangible. 'Buscando respostas no escuro' is a decent metaphor but underutilized. Writing is functional but not conversational or engaging. All character limits met. Focus on 'why' is maintained but execution is weak.",
-          "score": 2
-        },
-        {
-          "anonymousId": "Model J",
+          "anonymousId": "Model E",
           "modelId": "meta/llama-4-maverick",
-          "reasoning": "Weakest storytelling of all models. Steps read like encyclopedia entries rather than vivid scenes. Very dry tone ('Isso gera problemas sociais', 'Comte cunha o termo'). No metaphors or analogies from everyday life. Missing emotional engagement entirely. Step 4 mentions specific date (1839) which is fine, but the overall framing is mechanical. Very short steps that feel like bullet points rather than narrative scenes. Lacks the conversational, curious-friend tone expected.",
-          "score": 1
+          "reasoning": "Correto e dentro dos limites, mas é o mais seco/enciclopédico: pouca cena, pouca conversa e quase sem analogias. Também enfatiza “métodos científicos… descobrir leis e funcionamentos”, indo ao “como” e perdendo storytelling.",
+          "score": 5.5
         }
       ]
     }

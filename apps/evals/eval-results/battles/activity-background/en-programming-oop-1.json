@@ -1,69 +1,170 @@
 {
   "expectations": "\n      Avoid jumping into code syntax or technical implementation. The background should explain WHY object-oriented programming was invented and what problems it solved — not HOW to use classes.\n\n      \n  EVALUATION CRITERIA (focus on storytelling quality, not specific content):\n\n  1. STORYTELLING FLOW: The steps should build curiosity and follow a narrative arc. Check for tension (the problem/limitation) and resolution (how it was solved).\n\n  2. STEP SIZING: Each step must have a title (max 50 chars) and text (max 300 chars). Verify lengths are within limits.\n\n  3. CONVERSATIONAL TONE: The writing should feel like talking to a curious friend, not reading an encyclopedia. Look for vivid imagery and emotional engagement.\n\n  4. METAPHORS & ANALOGIES: Check for analogies from everyday life (sports, cooking, games, music, travel) that make abstract concepts tangible.\n\n  5. FOCUS ON \"WHY\": The activity explains the origin and importance of a topic — NOT how it works technically. If the output dives into mechanics or implementation, that's a problem.\n\n  6. APPROPRIATE SCOPE: Content should match the lesson's scope exactly — not broader (covering the whole field) and not narrower (covering only a sub-topic).\n\n  7. VIVID SCENES: Each step should feel like a \"scene\" with imagery, not a bullet point of dry facts.\n\n  IMPORTANT: Do NOT penalize for specific historical facts, dates, or phases you might expect. Different valid narrative approaches exist. Focus on whether the story provided is engaging and explains WHY this topic matters.\n\n  IMPORTANT: Do NOT require a specific number of steps. Simple topics may need fewer steps; complex topics may need more. Judge quality, not quantity.\n\n  IMPORTANT: Make sure the output is factually correct. It should not include any information that is not true.\n\n    ",
-  "judgedAt": "2026-01-15T20:51:33.404Z",
+  "judgedAt": "2026-02-21T22:48:56.312Z",
   "judgments": [
     {
-      "judgeId": "google/gemini-3-pro-preview",
+      "judgeId": "anthropic/claude-opus-4.6",
       "rankings": [
         {
-          "anonymousId": "Model J",
-          "modelId": "openai/gpt-5.2",
-          "reasoning": "This model offers the best storytelling flow by explicitly mentioning the intermediate evolutionary step ('Functions helped... but not enough'), which creates excellent narrative tension. It uses highly creative and varied metaphors (soup, sweater unraveling, song verses, magic remote, zoning laws) that make abstract concepts intuitive without becoming technical. The tone is perfectly conversational.",
-          "score": 10
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Excellent storytelling flow with a clear narrative arc from problem (spaghetti code) → failed approaches → radical question → historical origins → key concepts → modern impact. 11 steps is on the longer side but each adds value. Titles are all under 50 chars. Text lengths are all within 300 chars. Conversational tone is strong ('Good luck finding them', 'no sanity'). Metaphors are vivid and varied (spaghetti, pile of car parts, TV remote, family tree, musicians). Focuses on WHY throughout. Steps 7-9 do touch on encapsulation, inheritance, and polymorphism conceptually, which borders on mechanics, but stays at the 'why it matters' level rather than implementation. Historically accurate (Simula, Dahl & Nygaard, Alan Kay, Smalltalk). Strong vivid scenes throughout.",
+          "score": 8.5
         },
         {
-          "anonymousId": "Model D",
-          "modelId": "openai/gpt-5.1-instant",
-          "reasoning": "This model excels with vivid imagery, particularly the 'tangled like headphone wires' metaphor which is instantly relatable. The transition from 'giant to-do list' to 'neighborhoods' provides a strong conceptual bridge. The tone is warm and engaging, adhering strictly to the 'curious friend' persona.",
-          "score": 9
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Clean, well-paced narrative with 7 steps. Good storytelling arc. Titles under 50 chars. Text within 300 chars. Conversational tone is good with the actors-on-a-stage metaphor for Alan Kay's vision. Focuses on WHY well. However, it lacks the depth of some other outputs — it doesn't explain encapsulation, inheritance, or polymorphism at all, which leaves the 'why OOP solved the problem' somewhat vague. The car analogy is effective. Historically accurate. Slightly less vivid than the best outputs but solid overall.",
+          "score": 7.5
         },
         {
           "anonymousId": "Model C",
-          "modelId": "openai/gpt-5-mini",
-          "reasoning": "Strong storytelling that successfully integrates historical context (Simula, Smalltalk) into the narrative without making it dry. The opening scene of a chaotic kitchen is effective, and the metaphor of objects as 'actors on a stage' captures the essence of OOP beautifully. It balances history and analogy well.",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Strong metaphors throughout (headphone wires, overcrowded pot, shoving things under the bed, neighborhoods vs mazes, well-kept gardens). Good conversational tone. 8 steps with nice pacing. Titles under 50 chars. Text within 300 chars. The 'Failed Attempts at Order' step adds a nice narrative beat. Covers encapsulation, inheritance, and polymorphism conceptually without diving into mechanics. However, it lacks historical grounding — no mention of Simula, Dahl & Nygaard, Alan Kay, or Smalltalk. This isn't necessarily a flaw per the instructions, but it makes the narrative slightly less grounded. The 'WHY' focus is strong. Vivid scenes throughout.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Excellent storytelling with very strong metaphors (giant pot, sweater unraveling, song into verses, game character carrying stats, LEGO pieces, zoning laws for cities). Great conversational tone. 8 steps with good pacing. Titles under 50 chars. Text within 300 chars. The progression from functions → objects is a nice narrative choice showing WHY functions weren't enough. 'Sometimes messy' about inheritance is an honest, nuanced touch. The final step with 'crowded cities' and 'zoning laws' is particularly strong. Stays focused on WHY. However, no historical figures mentioned (no Simula, Dahl, Kay) which makes the narrative less grounded in the actual origin story. Still, the WHY focus is excellent.",
           "score": 8
         },
         {
           "anonymousId": "Model E",
-          "modelId": "anthropic/claude-opus-4.5",
-          "reasoning": "This model provides excellent insight into the cognitive shift of OOP ('We don't see height, width... we see car'). The biological metaphor ('living cells') and the encapsulation analogy ('TV') are strong. It is high quality but feels slightly more educational than the purely storytelling vibe of the top three.",
-          "score": 7
-        },
-        {
-          "anonymousId": "Model I",
-          "modelId": "google/gemini-3-pro-preview",
-          "reasoning": "The specific extension of the spaghetti code metaphor—'pulling a noodle moves a meatball'—is a fantastic way to explain side effects visually. The narrative is clear and follows a good arc, though the later steps are slightly more standard compared to the top tier.",
-          "score": 6
-        },
-        {
-          "anonymousId": "Model H",
-          "modelId": "xai/grok-4.1-fast-reasoning",
-          "reasoning": "This output has high energy and a fun tone ('herding cats', 'minds blown'). It covers the history well. However, the metaphors (cookbook, Lego) are a bit more standard/cliché compared to the unique imagery found in the higher-ranked models.",
-          "score": 5
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "Very short (5 steps) and sparse. Lacks vivid imagery and emotional engagement. Reads more like bullet points than scenes. 'It made code reusable, maintainable, and scalable' is encyclopedia-like, not conversational. 'You're using OOP principles in your code already' feels presumptuous. The LEGO metaphor is mentioned but not developed. Historically mentions Simula but barely. Doesn't explain WHY OOP solved the problems in any depth. Missing the narrative tension and resolution that makes a good story. Titles and text are within limits but the content is thin.",
+          "score": 3.5
         },
         {
           "anonymousId": "Model F",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "A competent explanation with a good analogy about 'hand-drawing every brick.' However, the flow feels slightly less cohesive than the higher models, and the metaphors (recipe, Lego) are safe choices. It meets the criteria but doesn't sparkle.",
-          "score": 4
-        },
-        {
-          "anonymousId": "Model B",
-          "modelId": "google/gemini-2.5-flash-lite",
-          "reasoning": "The structure is solid, but the content is a bit generic. Metaphors like 'blueprint' and 'machine' are functional but lack the vivid storytelling flare of the others. It feels a bit more like a simplified textbook than a conversation.",
-          "score": 3
-        },
-        {
-          "anonymousId": "Model A",
-          "modelId": "meta/llama-4-maverick",
-          "reasoning": "This model follows the prompt but lacks the conversational 'spark'. The tone is dry and factual ('Researchers in Norway created Simula...'), feeling more like an encyclopedia entry than a story told to a friend.",
-          "score": 2
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Good storytelling with vivid metaphors (kitchen/baking, spaghetti with meatball detail, car pedal, Dog blueprint, huts to skyscrapers). 6 steps with decent pacing. Titles under 50 chars. Let me check text lengths — Step 1 appears to be around 290 chars, within limit. Conversational tone is strong. Historical mention of Norway researchers in the 1960s is accurate but doesn't name them (minor gap). Step 5 talks about 'blueprints' and spawning dogs — this starts to feel slightly like HOW (class/instance mechanics) rather than WHY, though it's borderline. The ship simulation context is a nice historical detail. The 'spaghetti' step with the noodle/meatball extension is creative. Good WHY focus overall.",
+          "score": 7.5
         },
         {
           "anonymousId": "Model G",
+          "modelId": "google/gemini-2.5-flash-lite",
+          "reasoning": "Adequate but fairly generic. 6 steps. Metaphors are present but not very vivid ('tangled blueprint', 'messy workshop to organized toolkits'). Tone is somewhat encyclopedic — 'This made software development revolutionary!' feels like a textbook exclamation. 'It grouped data (properties) and behaviors (methods) together' dips into technical terminology (properties, methods). No historical grounding (no Simula, no names, no dates). The narrative arc is present but thin. Steps feel more like summary bullet points than vivid scenes. Titles and text within limits.",
+          "score": 4.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Strong storytelling with good metaphors (kitchen with messy cooks, knotted string, reorganizing garage without labels, toys with instruction sheets, actors on stage, family recipes). 8 steps with good pacing. Historically accurate (Simula, Smalltalk). The 'Band-Aid Fixes' step adds nice narrative tension. The core principles step is efficient. 'These are design tools, not spells' is a nice touch. 'It's not the only way to code' in the final step is a mature, honest note. Conversational tone is good. The 'actors on a stage' metaphor for Smalltalk is vivid. However, step 6 ('The Core Principles, in Plain Talk') feels slightly list-like rather than scene-like. Titles and text within limits. Good WHY focus.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Good storytelling with a clear arc. Metaphors include city/bricks, LEGO bricks. 6 steps. Titles under 50 chars. Text — Step 2 appears to be around 290 chars, within limit. Mentions Alan Kay but doesn't mention Simula or Dahl/Nygaard. The statement 'Visionaries like Alan Kay realized we needed a better way' is slightly misleading as it implies Kay was the originator rather than building on Simula's work. Step 4 mentions 'Button blueprint' which edges toward implementation. Step 5's 'Instead of focusing only on how to do a task, we focus on what we are building' is a nice conceptual insight. Tone is conversational. Overall solid but not exceptional.",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "Model J",
           "modelId": "openai/gpt-4.1-mini",
-          "reasoning": "The steps are too brief and choppy to build a compelling narrative. While the 'novel without chapters' metaphor is good, the overall execution feels sparse and lacks the depth required to truly explain the 'Why'.",
-          "score": 1
+          "reasoning": "Weakest among the outputs. Very thin content with limited vivid imagery. 'Like untangling spaghetti without ends' and 'fitting square blocks in round holes' are present but not well-developed. The LEGO metaphor is mentioned twice without much elaboration. 'Bundling their work and secrets inside one cozy space' is a bit awkward. No historical grounding. Steps feel more like bullet points than scenes. The narrative arc is present but underdeveloped. Titles and text within limits but content is sparse.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Excellent storytelling with strong narrative arc. 10 steps, each well-crafted. Vivid scenes throughout. Strong metaphors (spaghetti plate, endless mazes, cells communicating, TV buttons, dog/cat animals, shapes drawing themselves). Historically accurate and well-grounded (Simula, Dahl & Nygaard, Smalltalk, Alan Kay, C++, Java). The cognitive framing in step 3 ('We don't see height, width, speed — we see car') is particularly effective at explaining WHY. Covers encapsulation, inheritance, polymorphism conceptually without diving into implementation. 'Programs became ecosystems' for Smalltalk is vivid. The team collaboration angle in step 9 nicely explains WHY OOP matters practically. Titles under 50 chars. Text within 300 chars. Conversational tone is strong throughout.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model L",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Good storytelling with a unique angle — the biology/cells inspiration from Alan Kay. Food truck metaphor is vivid and original. 7 steps with good pacing. However, there's a factual concern: Step 3 says 'In the 1960s, a visionary named Alan Kay looked at biology for a solution.' Kay's biological cell metaphor was more associated with the 1970s and Smalltalk, and Simula (1967, Dahl & Nygaard) preceded Kay's work. The step implies Kay originated OOP in the 1960s, which is misleading — he was still quite young then and his main contributions came in the early 1970s. The omission of Simula/Dahl/Nygaard gives a historically incomplete picture. Despite this, the metaphors are strong and the WHY focus is good. The food truck analogy is one of the most original across all outputs.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model M",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Good energy and vivid writing ('Programs ballooned into monsters', 'Minds blown'). 7 steps. Historically accurate (Nygaard, Dahl, 1967, Simula, Alan Kay, Smalltalk). Good metaphors (cookbook, spaghetti, car with engine, LEGO bricks). However, the tone occasionally feels breathless/hyperbolic rather than conversational ('Minds blown', 'Pure, elegant OOP'). Step 5 mentions 'classes as blueprints, objects as living copies' which edges toward technical mechanics. 'Everything became an object—even numbers and code itself!' is interesting but slightly implementation-focused. The final step ('Mastering its principles? You're unlocking the secret') feels a bit promotional. Titles and text within limits. Overall good but slightly uneven tone.",
+          "score": 7.3
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model D is exceptional. It perfectly answers the 'why' using a masterclass of varied, highly accurate, and vivid metaphors. Progressing from 'soup' to 'unraveling sweaters' to 'zoning laws', it translates complex abstract concepts (functions, encapsulation, inheritance, polymorphism) into relatable everyday scenes without ever touching on syntax or technical mechanics. The storytelling flow and step sizing are flawless.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Model C is beautifully written and incredibly conversational. It uses outstanding vivid imagery ('headphone wires in a pocket', 'shoving everything under the bed', 'neighborhoods') to explain the problem and the OOP solution. It strips away all technical jargon and focuses purely on the conceptual 'why', creating a highly engaging narrative arc.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model L",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model L brilliantly weaves actual computing history (Alan Kay's inspiration from biology) into a compelling story. The transition from the 'haystack' problem to the solution of 'cells' and eventually the 'food truck' metaphor makes encapsulation wonderfully easy to understand. The narrative flow is gripping and perfectly scoped.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model H provides a fantastic storytelling experience, using a chaotic kitchen and a messy garage to set up the problem. Its explanation of Smalltalk using the metaphor of 'actors on a stage' is both historically accurate to the inventor's vision and highly accessible. It meets all constraints perfectly.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model A expertly balances historical context with accessible analogies. The 'pile of parts' and 'TV remote' metaphors perfectly capture the essence of OOP without diving into implementation. The pacing is excellent, and it breaks down the core tenets of OOP smoothly.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model K shares a very similar high-quality structure with Model A. It uses vivid imagery ('pull one strand, and the whole plate moves') and cleanly translates encapsulation, inheritance, and polymorphism into everyday concepts. It maintains a highly engaging conversational tone throughout.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Model F has a highly entertaining and vivid explanation of spaghetti code ('moving a meatball on the other side'). The connection to Simula's ship simulations grounds the 'why' in real history, and the blueprint metaphor is effectively used. Very strong storytelling.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model B delivers a solid, well-paced story. The metaphors (recipes, loose car parts, actors on a stage) are effective and appropriate, though perhaps slightly less varied and colorful than the higher-ranked models. It adheres perfectly to the constraints.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model M",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Model M captures the history well but leans a bit heavily on names and historical milestones (Nygaard, Dahl, Kay, PARC, specific languages) which makes it feel slightly more like an enthusiastic encyclopedia entry than a relatable story. Still, the metaphors used are good and it avoids syntax.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model I has a good narrative flow but relies almost entirely on the 'blueprint/Lego' analogy for the second half. While effective for explaining code reuse, it slightly misses the opportunity to vividly explain other core 'why' aspects of OOP like behavior encapsulation.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-2.5-flash-lite",
+          "reasoning": "Model G follows the instructions but lacks the vivid imagery and conversational tone requested. It relies on slightly dry, technical terminology ('procedural', 'properties', 'methods') rather than painting scenes, making it feel less engaging.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-4.1-mini",
+          "reasoning": "Model J attempts to use metaphors but they feel a bit disjointed (jumping from Legos to spaghetti to a novel to a house). The brevity of the steps prevents it from building a strong narrative arc or adequately explaining the 'why' compared to its peers.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "Model E fails the storytelling and conversational tone criteria. It reads like a dry, high-level textbook summary rather than an engaging story with vivid scenes and analogies. It lacks emotional engagement and glosses over the conceptual explanations.",
+          "score": 4
         }
       ]
     },
@@ -71,129 +172,82 @@
       "judgeId": "openai/gpt-5.2",
       "rankings": [
         {
-          "anonymousId": "Model J",
-          "modelId": "openai/gpt-5.2",
-          "reasoning": "Strong narrative arc (soup → sweater → partial fix → breakthrough → consequences). Very conversational, vivid, and analogy-rich (cooking, music, game characters, remote, city zoning). Stays focused on “why” with only light concept mentions; no real implementation. Step titles/text appear within limits.",
-          "score": 10
-        },
-        {
-          "anonymousId": "Model C",
-          "modelId": "openai/gpt-5-mini",
-          "reasoning": "Best “scene” writing: kitchen/garage/toys/actors metaphors keep curiosity building. Good tension and resolution and clear motivation for OOP. Slight drift into naming principles (encapsulation/inheritance/polymorphism), but framed as design ideas, not how-to. Length limits look respected.",
-          "score": 9
-        },
-        {
           "anonymousId": "Model D",
-          "modelId": "openai/gpt-5.1-instant",
-          "reasoning": "Great flow and vivid everyday metaphors (headphones, pot, under-bed, neighborhood). Clear problem→solution arc. However it leans more into principle-by-principle explanation (encapsulation/inheritance/polymorphism) which nudges toward “how it works,” though still not code-level. Within size limits.",
-          "score": 8
-        },
-        {
-          "anonymousId": "Model I",
-          "modelId": "google/gemini-3-pro-preview",
-          "reasoning": "Engaging kitchen/spaghetti/blueprints/skyscrapers imagery and a clean “why it mattered” storyline. It does introduce a slightly more mechanical claim (“spawn a hundred dogs”) which edges toward usage, but still mostly motivational. Size limits seem OK.",
-          "score": 7
-        },
-        {
-          "anonymousId": "Model F",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Good analogies (recipe, city map, Lego bricks) and clear motivation. But a couple lines feel closer to practical usage (“Need a new button… use your ‘Button’ blueprint”), and some claims are a bit sweeping (“almost everything you touch”). Still solid narrative and within limits.",
-          "score": 6
-        },
-        {
-          "anonymousId": "Model E",
-          "modelId": "anthropic/claude-opus-4.5",
-          "reasoning": "Strong, detailed historical-styled arc (Simula/Smalltalk/C++/Java) with vivid metaphors (cells, TV buttons). But it repeatedly teaches named mechanics (encapsulation/inheritance/polymorphism) more explicitly, pushing toward “how,” and the step count/length verbosity risks brushing the 300-char limit in a few steps (though not obviously over).",
-          "score": 5
-        },
-        {
-          "anonymousId": "Model B",
-          "modelId": "google/gemini-2.5-flash-lite",
-          "reasoning": "Clear and readable, but more textbook-ish. The “bundle data (properties) and behaviors (methods)” line is fairly technical per the task expectations. Metaphors exist (machine/workshop) but scenes feel less vivid. Likely within length constraints.",
-          "score": 4
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Strong narrative arc: soup/chefs → growing-team chaos → partial fix (functions) → breakthrough (bundle data+behavior) → why it matters. Conversational, vivid scenes, lots of everyday metaphors (sweater, song, game character, remote, LEGO, zoning laws). Stays mostly on “why,” with only light mention of methods/calls. All titles <50 chars; texts appear <300 chars each.",
+          "score": 9.3
         },
         {
           "anonymousId": "Model H",
-          "modelId": "xai/grok-4.1-fast-reasoning",
-          "reasoning": "Energetic and vivid, but includes some questionable/overstated claims (“Everything became an object—even numbers and code itself!” is broadly true for Smalltalk, but the hype-y framing plus “OOP rules your code” feels less impartial). Also leans into class/object blueprint phrasing and broad language coverage, drifting scope. Size limits seem OK.",
-          "score": 3
-        },
-        {
-          "anonymousId": "Model A",
-          "modelId": "meta/llama-4-maverick",
-          "reasoning": "Competent but comparatively flat: less scene-like, fewer fresh metaphors, and the ending shifts into learner-address (“You’re using OOP principles…”) without adding much “why.” Also somewhat declarative/encyclopedic. Within limits and factually mostly fine.",
-          "score": 2
-        },
-        {
-          "anonymousId": "Model G",
-          "modelId": "openai/gpt-4.1-mini",
-          "reasoning": "Very generic and light on a true narrative arc; several steps feel like slogans. Limited tension/resolution detail and fewer vivid “scenes.” Stays non-technical, but at the cost of depth and emotional engagement. Within limits.",
-          "score": 1
-        }
-      ]
-    },
-    {
-      "judgeId": "anthropic/claude-opus-4.5",
-      "rankings": [
-        {
-          "anonymousId": "Model E",
-          "modelId": "anthropic/claude-opus-4.5",
-          "reasoning": "Exceptional storytelling with a clear narrative arc. Opens with vivid spaghetti code imagery, builds tension with growing complexity, resolves with OOP invention. Each step is a well-crafted scene (1960s programmer, Norwegian researchers, Alan Kay). Excellent analogies (TV buttons for encapsulation, dogs/cats for inheritance, shapes for polymorphism). Stays focused on WHY throughout - only touches 'how' concepts minimally to explain their purpose. Proper scope covering OOP's origins. All titles under 50 chars, all text under 300 chars. Conversational tone with 'Picture a 1960s programmer' and 'What if'. Minor weakness: steps 6-8 edge slightly toward explaining mechanics of encapsulation/inheritance/polymorphism rather than pure 'why', but keeps it conceptual.",
-          "score": 10
-        },
-        {
-          "anonymousId": "Model D",
-          "modelId": "openai/gpt-5.1-instant",
-          "reasoning": "Strong storytelling with vivid metaphors throughout (headphone wires, overcrowded pot, tidying room by shoving under bed, neighborhoods instead of mazes, well-kept gardens). Excellent conversational tone. Good narrative arc from mess to solution. Covers encapsulation, inheritance, polymorphism as concepts without diving into implementation. The 'Failed Attempts at Order' step adds nice tension. Guitar/piano analogy for polymorphism is accessible. All constraints met. Slightly less historical grounding than Model E (no mention of Simula, Smalltalk, specific pioneers), which makes the story feel slightly less authoritative.",
-          "score": 9
-        },
-        {
-          "anonymousId": "Model J",
-          "modelId": "openai/gpt-5.2",
-          "reasoning": "Very strong storytelling with consistent metaphors (giant pot/soup, sweater unraveling, game character, machines with gears, family tree, LEGO pieces, zoning laws). Good progression from problem to solution. The functions step adds nice nuance about intermediate solutions. Encapsulation/inheritance/polymorphism explained conceptually with good analogies. 'Modern apps are crowded cities' is a great closing image. Minor issue: some metaphors feel slightly forced ('magic remote'). Slightly more technical lean than top models when explaining principles. All constraints met.",
-          "score": 8
-        },
-        {
-          "anonymousId": "Model I",
-          "modelId": "google/gemini-3-pro-preview",
-          "reasoning": "Good storytelling with engaging kitchen/baking analogy that carries through. The spaghetti code explanation with 'noodle and meatball' is creative and memorable. Norway ship simulation is historically accurate. Fuel injection/pedal analogy for encapsulation works well. Blueprint analogy for classes is clear. 'Simple huts to skyscrapers' ending is evocative. However, steps feel slightly compressed - the magic of encapsulation step veers toward explaining HOW rather than purely WHY. The blueprint step is borderline technical. All constraints met.",
-          "score": 7
-        },
-        {
-          "anonymousId": "Model C",
           "modelId": "openai/gpt-5-mini",
-          "reasoning": "Good storytelling with varied metaphors (chaotic kitchen, messy garage, toys with instruction sheets, actors on stage). Nice historical progression through Simula and Smalltalk. The 'Band-Aid Fixes' step adds tension well. Closing frames OOP as 'storytelling toolkit' which is apt. However, step 6 'The Core Principles, in Plain Talk' explicitly lists encapsulation, inheritance, polymorphism in a more encyclopedic way that breaks the conversational flow. Some metaphors feel mixed (actors, family recipes, boxes all in one step). Still strong overall. All constraints met.",
-          "score": 6
-        },
-        {
-          "anonymousId": "Model H",
-          "modelId": "xai/grok-4.1-fast-reasoning",
-          "reasoning": "Vivid imagery (cookbook, spaghetti, herding cats, Lego bricks). Good historical grounding with Nygaard, Dahl, Alan Kay, Smalltalk, Simula. 'Minds blown' adds personality. However, several issues: 'Simula Lights the Fuse' step explains inheritance mechanism more than needed. 'Smalltalk Makes It Pure' discusses classes as blueprints and objects as copies - edging into implementation. 'Building Software Empires' is somewhat generic. The tone occasionally feels breathless rather than conversational ('Minds blown'). All constraints met but less focused on 'why'.",
-          "score": 5
-        },
-        {
-          "anonymousId": "Model F",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Decent storytelling with brick/mold analogy and Lego reference. Mentions Alan Kay. The 'hand-drawing every brick vs mold' analogy is creative. However, issues: First step's claim that 'to make a tiny change at the end, you often had to rewrite the beginning' is overstated and not quite accurate about procedural programming. Step 4 discusses 'Button blueprint' which feels like it's moving toward implementation. Step 5 'focuses on what vs how' is somewhat abstract. The scope feels slightly rushed with fewer steps. Less vivid scene-setting than top models. All constraints met.",
-          "score": 4
-        },
-        {
-          "anonymousId": "Model G",
-          "modelId": "openai/gpt-4.1-mini",
-          "reasoning": "Uses good metaphors (Lego, spaghetti, novel without chapters, neighbors in a house). However, the narrative feels choppy - 'Clumsy Solutions Tried' is vague and doesn't build tension effectively. 'The Object Breakthrough' metaphor of 'neighbors in a house called an object' is confusing. Steps feel more like bullet points than vivid scenes. Less conversational tone - 'bundling their work and secrets inside one cozy space' tries but doesn't quite land. No historical grounding (no Simula, Smalltalk, pioneers). All constraints met but weaker storytelling quality.",
-          "score": 3
+          "reasoning": "Excellent scene-setting (kitchen pile, garage, toys, actors). Clear tension → failed band-aids → Simula/Smalltalk → principles → modern impact, with friendly tone. Minor “mechanics” creep by naming principles, but framed as design tools. Length limits look respected; titles concise.",
+          "score": 9.1
         },
         {
           "anonymousId": "Model B",
-          "modelId": "google/gemini-2.5-flash-lite",
-          "reasoning": "Basic coverage but weak storytelling. Metaphors are generic (tangled blueprint, messy workshop to organized toolkits). Step 4 'Bundling Data and Actions' explicitly mentions properties and methods - this is too technical/implementation-focused. 'This made software development revolutionary!' uses an exclamation mark but doesn't feel emotionally engaging. Steps feel like encyclopedia entries rather than vivid scenes. No historical grounding. The narrative arc is flat - problem-solution without sufficient tension-building. All constraints met but minimal engagement.",
-          "score": 2
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Clean storytelling flow with good tension and resolution; strong analogies (recipe, spaghetti, actors on a stage). Keeps focus on motivation and collaboration benefits. Slightly overclaims “transformed overnight,” but generally factual and non-technical. Lengths/titles within limits.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Engaging arc and vivid imagery; good rationale for OOP and team-scale benefits. Uses analogies well (spaghetti, brains see “car,” TV buttons). Dives more into encapsulation/inheritance/polymorphism than necessary, but still explains “why” rather than “how.” Length constraints seem ok.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Very conversational and metaphor-rich (headphone wires, chefs/overcrowded pot, under-the-bed cleanup, neighborhoods). Good arc. More concept-heavy mid/late steps (explicit principle labels) but still aimed at purpose. No notable factual issues; lengths likely within limits.",
+          "score": 8.4
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Strong kitchen/spaghetti metaphors and a clear shift in perspective tied to simulations. However, Step 1 and possibly Step 2 look over the 300-character limit, and Step 5 edges toward “how” (blueprints/spawn) even if still conceptual.",
+          "score": 7.8
         },
         {
           "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Vivid, detailed, and historically grounded with lots of analogies. But it’s too long and drifts into “how it works” territory by explaining multiple principles in sequence; several step texts appear to exceed 300 characters. Also a bit encyclopedic by the end.",
+          "score": 7.4
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Good flow and imagery (city bricks/molds, Lego bricks), and stays mostly on “why.” But it’s more generic, with less scene-by-scene vividness. Some broad claims (“secret architecture”) and mild repetition. Lengths/titles likely fine.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-4.1-mini",
+          "reasoning": "Friendly and metaphor-driven (Lego, novel without chapters). Arc is present but shallow; “clumsy solutions” is vague and the resolution doesn’t clearly articulate the specific problem OOP solved beyond general manageability. Still within scope and non-technical.",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "Model L",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Good imagery and modularity motivation, but includes a factual problem: it implies Alan Kay in the 1960s as the key origin point/inspiration, which is misleading (OOP roots precede that; Kay’s work is 1970s). Otherwise solid tone/flow.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model E",
           "modelId": "meta/llama-4-maverick",
-          "reasoning": "Very sparse and underdeveloped. Only 5 short steps that feel like bullet points rather than scenes. 'Imagine writing code as a long list' is extremely brief and not vivid. 'It was like organizing code into modular LEGO bricks' is the only real analogy. The tone is encyclopedic ('Object-Oriented Programming (OOP) was born'). 'You're using OOP principles in your code already' is presumptuous. Minimal storytelling, minimal emotional engagement. Steps don't build on each other. While constraints are met, fails to deliver engaging narrative or vivid imagery.",
-          "score": 1
+          "reasoning": "Meets basic “why” but feels bullet-pointy and generic, with minimal vivid scenes or narrative tension/resolution. Some second-person drift into instruction (“You’re using OOP principles...”). Also mentions classes (light mechanics).",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-2.5-flash-lite",
+          "reasoning": "Clear but bland and somewhat textbook-like. Uses some analogies, yet quickly becomes definitional (“bundle data and behaviors (methods)”)—more “what it is” than an engaging origin story. Less vivid scene work; otherwise within limits.",
+          "score": 5.7
+        },
+        {
+          "anonymousId": "Model M",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Energetic and metaphor-heavy, but slips into hype and mechanics (explicitly calling out inheritance, ‘classes as blueprints,’ ‘everything became an object’). Also includes a specific date (1967) presented as fact, which is risky/likely incorrect. Several steps may exceed 300 characters.",
+          "score": 5.4
         }
       ]
     }

@@ -1,69 +1,170 @@
 {
   "expectations": "\n      Avoid diving into formulas, derivatives, or mathematical notation. The background should explain WHY calculus was invented and what problems it solved — not HOW to calculate limits.\n\n      \n  EVALUATION CRITERIA (focus on storytelling quality, not specific content):\n\n  1. STORYTELLING FLOW: The steps should build curiosity and follow a narrative arc. Check for tension (the problem/limitation) and resolution (how it was solved).\n\n  2. STEP SIZING: Each step must have a title (max 50 chars) and text (max 300 chars). Verify lengths are within limits.\n\n  3. CONVERSATIONAL TONE: The writing should feel like talking to a curious friend, not reading an encyclopedia. Look for vivid imagery and emotional engagement.\n\n  4. METAPHORS & ANALOGIES: Check for analogies from everyday life (sports, cooking, games, music, travel) that make abstract concepts tangible.\n\n  5. FOCUS ON \"WHY\": The activity explains the origin and importance of a topic — NOT how it works technically. If the output dives into mechanics or implementation, that's a problem.\n\n  6. APPROPRIATE SCOPE: Content should match the lesson's scope exactly — not broader (covering the whole field) and not narrower (covering only a sub-topic).\n\n  7. VIVID SCENES: Each step should feel like a \"scene\" with imagery, not a bullet point of dry facts.\n\n  IMPORTANT: Do NOT penalize for specific historical facts, dates, or phases you might expect. Different valid narrative approaches exist. Focus on whether the story provided is engaging and explains WHY this topic matters.\n\n  IMPORTANT: Do NOT require a specific number of steps. Simple topics may need fewer steps; complex topics may need more. Judge quality, not quantity.\n\n  IMPORTANT: Make sure the output is factually correct. It should not include any information that is not true.\n\n    ",
-  "judgedAt": "2026-01-15T20:51:22.014Z",
+  "judgedAt": "2026-02-21T22:49:39.095Z",
   "judgments": [
     {
-      "judgeId": "google/gemini-3-pro-preview",
+      "judgeId": "anthropic/claude-opus-4.6",
       "rankings": [
         {
-          "anonymousId": "Model A",
-          "modelId": "openai/gpt-5.2",
-          "reasoning": "This model is exceptional. It perfectly balances the conversational tone with deep conceptual clarity. It uses distinct, brilliant metaphors for both differential calculus (judging a song's tempo from two notes, reading a speedometer) and integral calculus (cutting a loaf of bread, counting drops in a bucket). It explains the 'why' and the nature of the solution without a single piece of jargon.",
-          "score": 10
+          "anonymousId": "D",
+          "modelId": "D",
+          "reasoning": "Exceptional storytelling flow with a clear narrative arc. Opens with the limitation (static math), builds tension with Zeno's paradox (a vivid, engaging scene), escalates with the 1600s astronomy problem, and resolves with Newton/Leibniz. The Zeno's arrow paradox is a brilliant touch that adds philosophical depth and tension. 'Motion was poetry, not numbers' is a memorable line. 'Two rivals losing sleep' creates human drama. The 'fluxions' vs 'calculus' naming detail is a nice factual touch without being technical. Every step feels like a scene. The tone is conversational and vivid throughout. Step titles are all under 50 chars, texts under 300 chars. Stays focused on WHY without diving into formulas. The final step connects to modern relevance effectively. Factually accurate throughout. Minor note: Newton and Leibniz weren't exactly 'rivals' at the point of invention (the rivalry came later), but the word choice isn't egregiously wrong. One of the strongest outputs overall.",
+          "score": 9.3
         },
         {
-          "anonymousId": "Model J",
-          "modelId": "openai/gpt-5.1-instant",
-          "reasoning": "This output has a fantastic writing style. The metaphors are creative and engaging, particularly the 'flipbook with missing pages' and 'baking without knowing the heat.' The flow builds tension well, and the tone is consistently friendly and vivid.",
+          "anonymousId": "F",
+          "modelId": "F",
+          "reasoning": "Excellent storytelling with strong scene-building. The hummingbird metaphor is fresh and vivid. Galileo and Kepler are well-placed historically. The 'mathematical microscope' metaphor is effective. The Latin etymology ('small stone') is a delightful factual detail. 8 steps is well-paced without feeling bloated. Each step builds naturally on the previous. Conversational tone throughout. The opening with ancient astronomers sets a good scene. The falling ball example is concrete and engaging. Stays firmly in WHY territory. All character limits appear respected. Factually sound. The only slight weakness is that the transition between steps 3 and 4 could be smoother — there's a small narrative gap between the hummingbird metaphor and the 1600s scientists.",
           "score": 9
         },
         {
-          "anonymousId": "Model I",
-          "modelId": "openai/gpt-5-mini",
-          "reasoning": "Strong conceptual metaphors elevate this model. Describing integration as a 'ledger' to add up changes and differentiation as a 'zoom lens' is highly effective. The imagery of 'catching lightning with a net' sets the stage well for the difficulty of the problem.",
-          "score": 8
+          "anonymousId": "M",
+          "modelId": "M",
+          "reasoning": "Compact and punchy with excellent metaphors throughout — the flipbook, the oven heat, the dull knives. Every step has vivid imagery. 'Tools like dull knives: useful, but never sharp enough' is a great line. The narrative arc is tight: problem → failed attempts → breakthrough → impact. Stays conversational and avoids technical content. Six steps feels appropriately sized. The 'mind-bending zoom' captures the key insight well. The final step effectively connects to modern life. All lengths appear within limits. Factually accurate. The only minor weakness is that it's slightly less specific historically (no mention of the time period until Newton/Leibniz appear, no Zeno or Archimedes), but this is a valid narrative choice that keeps things lean and focused.",
+          "score": 8.8
         },
         {
-          "anonymousId": "Model D",
-          "modelId": "anthropic/claude-opus-4.5",
-          "reasoning": "This model excels at imagery, specifically the 'hummingbird' metaphor for instantaneous velocity, which is very vivid. It builds a strong narrative arc around the scientists' desperation, though it focuses slightly more on the differentiation side than the accumulation side compared to higher-ranked models.",
+          "anonymousId": "A",
+          "modelId": "A",
+          "reasoning": "Strong narrative with the photograph/movie metaphor running throughout. The speedometer paradox is an excellent relatable analogy. The plague quarantine detail adds human interest. Good narrative arc from frozen math → problem → specific paradox → historical context → resolution → modern impact. Conversational and engaging tone. All lengths appear within limits. The 'frozen' metaphor is used effectively but appears in multiple steps (could be slightly repetitive). The claim about Newton 'watching apples fall in his garden' during the plague is a popularized version of events — the apple story is likely apocryphal in its common telling, though Newton did spend time at Woolsthorpe during the plague. Slight factual concern but not a major issue since it's a well-known historical anecdote. The step about Leibniz feels slightly thinner compared to the rich Newton step.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "E",
+          "modelId": "E",
+          "reasoning": "Well-written with strong metaphors (photograph/movie, ruler measuring a river). The falling apple speed example is concrete and engaging. The 'zero divided by zero' mention is vivid without being too technical. Good narrative flow. The 'infinite zoom' concept is well explained. 'Why You Are Here' as a closing step creates good engagement. However, step 2 text appears to be slightly over 300 characters — checking: it's close to the limit and may exceed it. The tone is conversational and engaging. Factually accurate. The scope is appropriate. One minor issue: the step about cannonballs and planets in the 1600s is good but slightly less vivid as a scene compared to the best outputs. Overall very solid.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "I",
+          "modelId": "I",
+          "reasoning": "Well-structured with 11 steps — perhaps too many for a background/intro activity, though the instructions say not to penalize for step count. The narrative is thorough and well-paced. Good historical detail (Archimedes, plague, Cambridge). The 'zoom-in revelation' is well explained. However, steps 7 and 9 start to edge into technical territory: mentioning 'dx' and '∫' symbols and explicitly naming 'derivative' and 'integral' as tools feels like it crosses into HOW rather than WHY. The instruction specifically says to avoid mathematical notation. The 'dx' and '∫' mention is a clear violation. Otherwise the writing quality is high with vivid scenes and good metaphors ('slipped through their fingers like water'). Factually accurate. The length of 11 steps might test attention for a background activity.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "K",
+          "modelId": "K",
+          "reasoning": "Solid and well-structured with a clean narrative arc. The winding river/straight ruler metaphor is excellent. The wine barrel volume detail is a nice historical touch (Kepler actually worked on this). The 'freeze time, no speed' paradox is well presented. Good conversational tone. All lengths appear within limits. The final step connecting to GPS and phone algorithms is effective. However, the writing feels slightly more textbook-ish compared to the top outputs — less emotional engagement, fewer moments of genuine surprise or delight. It's competent and clear but doesn't quite reach the storytelling heights of the best entries. Factually accurate throughout.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "L",
+          "modelId": "L",
+          "reasoning": "Good imagery throughout — 'catching lightning with a net,' 'a horse galloping,' 'one blade of grass.' The zoom lens and ledger metaphor is effective. The tone is conversational. However, step 4 ('The Turning Point') is notably vague — 'Two minds in different places' avoids naming Newton and Leibniz, which feels like an odd omission and weakens the narrative's concreteness. Step 6 ('From Insight to Toolbox') is somewhat abstract and less vivid than other steps. The overall arc works but lacks the dramatic tension of the strongest outputs. All lengths appear within limits. Factually accurate. Good but not exceptional.",
+          "score": 7.9
+        },
+        {
+          "anonymousId": "C",
+          "modelId": "C",
+          "reasoning": "Good scene-setting with vivid imagery. The 'measure a river's flow with a dry ruler' metaphor is memorable. The Archimedes step adds historical depth. The 'microscope for math' metaphor is effective. However, the 'painting a sunset in black and white' analogy for Archimedes' approximations doesn't quite land — it implies a loss of richness rather than precision, which slightly misrepresents the limitation. The step about Newton and Leibniz ('imagined zooming in infinitely close') starts to feel slightly mechanical. The final step is somewhat generic. All lengths appear within limits. Tone is mostly conversational. Factually accurate. Solid but not as compelling as the top tier.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "G",
+          "modelId": "G",
+          "reasoning": "Very thorough with 9 steps and strong metaphors throughout ('judge a song's tempo from two notes,' 'cutting a loaf of bread'). The 'stubborn dancers' for planets is fun. However, 9 steps feels slightly long for a background activity, and steps 7 and 8 start diving into the mechanics of calculus — 'speedometers and buckets' essentially explains derivatives and integrals, and 'two puzzles click into one' describes the fundamental theorem of calculus. This edges into HOW territory rather than staying with WHY, which the instructions explicitly warn against. The writing quality is high but the scope creep is a concern. Step titles are lowercase which is fine stylistically. All lengths appear within limits. Factually accurate.",
+          "score": 7.6
+        },
+        {
+          "anonymousId": "H",
+          "modelId": "H",
+          "reasoning": "Energetic and punchy writing style with short, vivid scenes. 'Math shrugged helplessly' is fun. The Galileo/Kepler setup is good. However, step 3's 'Clumsy Ancient Hacks' title feels slightly dismissive and un-conversational. Step 6 explicitly mentions 'Derivatives' and 'Integrals' with 'Boom!' — this crosses into technical terminology and feels like a shift from WHY to WHAT. 'Calculus Unleashes Motion' as a title is dramatic but the step content ('Derivatives nailed instantaneous speed. Integrals tallied total distance.') is essentially explaining how calculus works, not why it was needed. The overall tone oscillates between engaging and slightly forced ('Boom!'). Some steps feel more like bullet points than scenes. Factually accurate. The 'infinitesimals — vanishingly small slices — unlocked accumulation' is also somewhat technical.",
           "score": 7
+        },
+        {
+          "anonymousId": "B",
+          "modelId": "B",
+          "reasoning": "The weakest among the more developed outputs. Step 1 and 2 essentially repeat the same idea (static snapshots vs. motion) without building tension. The dance/photos analogy in step 2 is decent but redundant with step 1's bird analogy. Step 3's painter metaphor ('Painters tried blending colors') feels forced and doesn't clearly connect to the mathematical problem. The narrative lacks a clear arc — it meanders rather than builds. The Newton/Leibniz step is thin and declarative rather than scene-building. 'Nearly simultaneously' is awkward phrasing. The conversational tone is present but the writing lacks the vividness and emotional engagement of the stronger outputs. The final step about GPS and medicine is generic. All lengths appear within limits. Factually accurate but uninspiring.",
+          "score": 5.8
+        },
+        {
+          "anonymousId": "J",
+          "modelId": "J",
+          "reasoning": "The most encyclopedic and least engaging output. Reads like a textbook summary rather than a story. Almost no metaphors or vivid imagery. 'The existing toolkit fell short' — this is dry and tells rather than shows. No human drama, no scenes, no emotional engagement. Step 3 is factually accurate but has no narrative tension. Step 4 ('analyze dynamic systems,' 'unprecedented precision') is pure academic language. Five steps could work for simplicity but these steps don't compensate with depth or engagement. The tone is the opposite of conversational — it reads like an encyclopedia entry. Fails significantly on storytelling, conversational tone, metaphors/analogies, and vivid scenes criteria.",
+          "score": 3.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Flawless storytelling and unparalleled analogies. Comparing instantaneous speed to 'judging a song’s tempo from two notes' and explaining differentiation and integration as 'speedometers and buckets' brilliantly captures the essence of calculus conceptually without any jargon. It perfectly fulfills all prompt requirements with an exceptionally engaging tone.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Exceptional storytelling that clearly explains the core problem calculus solved. The 'Speedometer Paradox' step brilliantly articulates the 0/0 problem (distance over zero time) conceptually, making it incredibly accessible. Strong conversational tone, perfect step sizing, and vivid imagery.",
+          "score": 9.6
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Very strong execution. It uses the 'photograph vs. movie' analogy effectively and does a fantastic job explaining the instantaneous motion problem conceptually ('frustrating zero divided by zero') without relying on formulas. Engaging, vivid, and highly conversational.",
+          "score": 9.5
         },
         {
           "anonymousId": "Model C",
           "modelId": "google/gemini-2.5-flash-lite",
-          "reasoning": "Solid storytelling with good artistic metaphors. 'Trying to paint a vibrant sunset using only black and white' is a beautiful way to describe the limitations of pre-calculus approximation. The flow is logical and the tone is appropriate.",
-          "score": 6
+          "reasoning": "Provides highly evocative and vivid imagery ('measuring a river's flow with a dry ruler,' 'painting a vibrant sunset using only black and white'). It explains the limitations of static math beautifully and maintains a curious, friendly tone throughout.",
+          "score": 9.4
         },
         {
-          "anonymousId": "Model H",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Competent and clear, using standard analogies like the 'photo vs. movie.' It loses points slightly for explicitly mentioning 'zero divided by zero,' which skirts the instruction to avoid mathematical mechanics, even though it frames it narratively.",
-          "score": 5
+          "anonymousId": "Model L",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Features outstanding analogies ('catching lightning with a net,' 'zoom lens and a ledger,' 'reading nature's score'). It beautifully balances the conceptual explanation of both branches of calculus with a highly engaging, conversational voice.",
+          "score": 9.4
         },
         {
           "anonymousId": "Model F",
-          "modelId": "xai/grok-4.1-fast-reasoning",
-          "reasoning": "This model has high energy and vivid language ('Math shrugged helplessly,' 'Screamed for a tool'), meeting the conversational criteria well. However, it uses specific terms like 'fluxions,' 'derivatives,' and 'integrals,' which makes it slightly less accessible than the models that stuck purely to metaphors.",
-          "score": 4
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Strong storytelling with punchy, vivid scenes. The 'hummingbird's speed with a photograph' analogy is an excellent way to explain the problem of instantaneous motion. The 'mathematical microscope' resolution wraps the narrative up perfectly.",
+          "score": 9.3
         },
         {
-          "anonymousId": "Model G",
+          "anonymousId": "Model M",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Uses great everyday analogies, particularly the 'flipbook with missing pages,' to explain discrete versus continuous motion. The tone is very conversational, guiding the reader smoothly through the historical tension and resolution.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "A solid, engaging narrative that weaves in historical context (Zeno's paradox, astronomy) while staying focused on the conceptual 'why.' The 'photograph vs. film' analogy works well, though the imagery is slightly less creative than the top-tier models.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model K",
           "modelId": "google/gemini-3-pro-preview",
-          "reasoning": "This output follows the prompt instructions and provides a correct explanation, but the writing is safe and lacks the 'sparkle' or vivid imagery of the top models. It feels a bit more like a standard lecture than a story.",
-          "score": 3
+          "reasoning": "Effectively uses the 'winding river using straight rigid rulers' analogy to explain the transition from static geometry to continuous change. The tone is accessible and friendly, meeting all criteria well.",
+          "score": 8.8
         },
         {
           "anonymousId": "Model B",
           "modelId": "openai/gpt-4.1-mini",
-          "reasoning": "The content is accurate but generic. Phrases like 'static blind spot' and 'game-changer' are functional but not evocative. It lacks the vivid scenes requested in the prompt.",
-          "score": 2
+          "reasoning": "Meets all requirements and uses good analogies ('capture a dance by looking at single photos'). The text is a bit shorter and the narrative flow is slightly less punchy and vivid compared to the highest-scoring models, but still very solid.",
+          "score": 8.5
         },
         {
-          "anonymousId": "Model E",
+          "anonymousId": "Model H",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "While it captures the history, the tone is slightly choppy and overly dramatic ('Boom!'). It borders on failing the negative constraint by relying mechanically on terms like 'derivatives' and 'integrals' instead of using the rich everyday analogies requested.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Fails the negative constraint. The prompt explicitly instructed to 'Avoid diving into formulas, derivatives, or mathematical notation,' yet this model includes 'the dx and ∫ symbols.' Aside from this major rule violation, the narrative flow is decent.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model J",
           "modelId": "meta/llama-4-maverick",
-          "reasoning": "This model fails the tone requirement. It reads like a textbook summary ('The existing toolkit fell short,' 'unprecedented precision') rather than a conversation with a curious friend. It lacks metaphors and vivid imagery entirely.",
-          "score": 1
+          "reasoning": "Fails the tone and storytelling criteria completely. It reads like a dry encyclopedia entry, entirely lacking the vivid scenes, conversational warmth, everyday analogies, and narrative tension requested in the prompt.",
+          "score": 3
         }
       ]
     },
@@ -71,129 +172,82 @@
       "judgeId": "openai/gpt-5.2",
       "rankings": [
         {
-          "anonymousId": "Model A",
-          "modelId": "openai/gpt-5.2",
-          "reasoning": "Strong narrative arc (static-math limitation → mounting pressure from motion/astronomy → inventive leap → modern impact). Very conversational with vivid scenes and multiple sticky analogies (photo, tempo, bread slices, zoom lens, speedometer/bucket). Stays mostly on “why,” with only light conceptual mention of shrinking steps. All titles/text appear within limits.",
-          "score": 10
-        },
-        {
-          "anonymousId": "Model J",
+          "anonymousId": "Model M",
           "modelId": "openai/gpt-5.1-instant",
-          "reasoning": "Excellent storytelling flow and tension/resolution, with punchy, vivid metaphors (flipbook, baking heat, dull knives, zoom). Keeps mechanics minimal and focused on motivation/importance. Scene-like steps, friendly tone. Slightly less rich/grounded than A (fewer concrete historical pressures/examples), but very aligned to the brief. Length limits look safe.",
-          "score": 9
+          "reasoning": "Excellent narrative arc and scene-like progression: snapshots → missing ingredient → dull knives → mind-bending zoom → world becomes predictable → modern impact. Very conversational with strong everyday metaphors (flipbook, baking, knives). Stays on “why” without technical mechanics. All titles/text appear within limits.",
+          "score": 9.4
         },
         {
-          "anonymousId": "Model D",
-          "modelId": "anthropic/claude-opus-4.5",
-          "reasoning": "Cinematic scenes (planets, falling ball, hummingbird) and clear buildup to Newton/Leibniz. Good analogies (“mathematical microscope”). Stays on the “why” well. One factual claim is dubious: “calculus…from the Latin for 'small stone'” (calculus is Latin for pebble/small stone used for counting—close, but phrasing may mislead). Otherwise strong and within length limits.",
-          "score": 8
-        },
-        {
-          "anonymousId": "Model I",
+          "anonymousId": "Model L",
           "modelId": "openai/gpt-5-mini",
-          "reasoning": "Smooth arc, vivid imagery (horse, waves, lightning net), and clear explanation of the problems calculus addressed. Nice “zoom lens and ledger” analogy. Slightly more abstract in places and includes “Symbols and rules” toolbox framing (still okay). Conversational tone is good. Length constraints appear satisfied.",
-          "score": 7
+          "reasoning": "Strong imagery and analogies (lightning with a net, polygon circle, zoom lens + ledger, nature’s score). Good tension/resolution and conversational tone. Slightly closer to “how” when mentioning “symbols and rules,” but still high-level. Length constraints look satisfied.",
+          "score": 9.1
         },
         {
-          "anonymousId": "Model G",
+          "anonymousId": "Model K",
           "modelId": "google/gemini-3-pro-preview",
-          "reasoning": "Clear, friendly, and uses everyday analogy (river + rulers, wine barrel). Good focus on motivation and historical need. Flow is coherent but less dramatic/scene-like than top entries, and some lines read more explanatory than cinematic. Still well within scope and avoids deep mechanics.",
-          "score": 6
-        },
-        {
-          "anonymousId": "Model C",
-          "modelId": "google/gemini-2.5-flash-lite",
-          "reasoning": "Engaging and generally on-brief with several metaphors (dry ruler for river flow, black-and-white sunset, microscope). Narrative is solid but a bit “textbook-y” in the middle, and “infinite zoom/breaking motion into tiny moments” edges toward how-it-works (still not formula-heavy). Overall good but less vivid/tight than higher-ranked.",
-          "score": 5
-        },
-        {
-          "anonymousId": "Model B",
-          "modelId": "openai/gpt-4.1-mini",
-          "reasoning": "Meets the basic why-story and uses a few analogies (dance photos, blending colors). However, it’s somewhat repetitive early on (two similar snapshot steps), and the imagery feels less scene-based. “Capturing infinite smallness” is a bit mechanistic but still not technical. Adequate, not standout.",
-          "score": 4
-        },
-        {
-          "anonymousId": "Model H",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Strong metaphors and flow, but it violates the “avoid formulas/notation” spirit by explicitly referencing “zero divided by zero,” which pulls the reader into computational mechanics. Otherwise vivid and conversational, but that technical turn is a notable mismatch to the task expectations.",
-          "score": 3
+          "reasoning": "Clear, friendly story with vivid analogies (river + rulers) and a solid arc from static math to need for change. Minimal technical detail, good scope, and modern relevance. Slightly less scene-like/evocative than the top entries but still very strong.",
+          "score": 8.8
         },
         {
           "anonymousId": "Model F",
-          "modelId": "xai/grok-4.1-fast-reasoning",
-          "reasoning": "Very lively voice and good tension, but it crosses into mechanics more than requested: explicitly names derivatives/integrals and claims “Derivatives nailed instantaneous speed. Integrals tallied total distance,” which is more ‘how’ than ‘why.’ Also “no elegant formula” contradicts the no-formula focus while invoking it. Still engaging, but off-brief.",
-          "score": 2
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Strong scene-based storytelling (drop a ball; hummingbird photo; 1600s scientists desperate) with a memorable “mathematical microscope” metaphor. Mostly stays on “why.” Minor factual/word-choice risk: calculus etymology as “small stone” is broadly true (Latin calculus), but can be debated; still acceptable. Within length limits.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Compelling tension (Zeno paradox, astronomers, rivals losing sleep) and vivid phrasing. However it edges into mechanics (“shrink a time interval…infinitely close”) more than ideal, and the claim astronomers ‘couldn’t explain WHY’ is a bit sweeping. Still engaging and within limits.",
+          "score": 8.3
         },
         {
           "anonymousId": "Model E",
-          "modelId": "meta/llama-4-maverick",
-          "reasoning": "Correct high-level message, but the weakest storytelling: reads like a summary/mini-encyclopedia with minimal scene imagery and few memorable analogies. Conversational tone is limited, tension/resolution is muted, and it feels more like bullet-point exposition than a narrative arc. On-scope and non-technical, but bland.",
-          "score": 1
-        }
-      ]
-    },
-    {
-      "judgeId": "anthropic/claude-opus-4.5",
-      "rankings": [
-        {
-          "anonymousId": "Model D",
-          "modelId": "anthropic/claude-opus-4.5",
-          "reasoning": "Exceptional storytelling with beautiful narrative arc. Opens with ancient puzzle, builds tension through the problem of motion, uses vivid hummingbird metaphor, introduces historical context naturally, and resolves with Newton/Leibniz breakthrough. 'Mathematical microscope' is a brilliant analogy. Every step feels like a scene with imagery. Conversational tone throughout. All titles under 50 chars, all texts under 300 chars. Focuses entirely on WHY without diving into formulas. The modern applications feel relevant without being forced. Near-perfect execution.",
-          "score": 10
-        },
-        {
-          "anonymousId": "Model J",
-          "modelId": "openai/gpt-5.1-instant",
-          "reasoning": "Strong narrative with creative analogies: 'flipbook with missing pages,' 'baking without knowing heat,' 'dull knives.' The 'mind-bending zoom' concept is well-executed. Good tension and resolution structure. Vivid imagery in most steps. Slightly less detailed historical context than top performers but maintains excellent flow. All constraints met. Focuses well on WHY.",
-          "score": 9
-        },
-        {
-          "anonymousId": "Model H",
           "modelId": "google/gemini-3-flash",
-          "reasoning": "Opens with excellent photo/movie metaphor that carries through the narrative. Good technical explanation of why 'zero divided by zero' was problematic (borderline on the 'no formulas' rule but acceptable). Strong imagery with river/ruler analogy. The 'infinite zoom' metaphor works well. Modern applications are relevant. Minor issue: 'You're about to learn the toolkit' is slightly instructional rather than purely exploratory. Otherwise excellent execution.",
+          "reasoning": "Very engaging and visual; good arc and relevance. But it explicitly mentions “zero divided by zero,” which is mathematical/mechanical and against the ‘avoid notation/formulas’ spirit. Otherwise strong metaphors and scenes; within size limits.",
           "score": 8
         },
         {
           "anonymousId": "Model A",
-          "modelId": "openai/gpt-5.2",
-          "reasoning": "Very thorough 9-step narrative with good pacing. Creative analogies: 'judging a song's tempo from two notes,' 'cutting a loaf of bread,' 'speedometers and buckets.' The 'lock and key' metaphor for fundamental theorem is elegant. Perhaps slightly too detailed for scope - veers close to explaining HOW (talks about derivatives/integrals conceptually). Good conversational tone but occasionally drifts toward textbook style.",
-          "score": 7
-        },
-        {
-          "anonymousId": "Model G",
-          "modelId": "google/gemini-3-pro-preview",
-          "reasoning": "Solid narrative structure with clear problem-solution arc. Good analogies (winding river with straight rulers, wine barrel). The 'zoom in until it looks straight' explanation is effective. Slightly less vivid imagery than top performers - some steps feel more expository than scenic. 'A New Language' step is a bit abstract. Modern applications are relevant. All constraints met.",
-          "score": 6
-        },
-        {
-          "anonymousId": "Model I",
-          "modelId": "openai/gpt-5-mini",
-          "reasoning": "Good imagery with 'catching lightning with a net' and polygon approximation analogies. 'Zoom lens and ledger' is creative. However, some steps feel slightly disconnected. 'From Insight to Toolbox' step is abstract and less vivid. 'Learning to read nature's score' is lovely ending. Narrative flow is good but not as tight as top performers.",
-          "score": 5
-        },
-        {
-          "anonymousId": "Model F",
-          "modelId": "xai/grok-4.1-fast-reasoning",
-          "reasoning": "Energetic, punchy writing style with phrases like 'Math shrugged helplessly' and 'Boom!' Creative but occasionally too casual. Good historical narrative with Galileo, Kepler, Newton, Leibniz. However, 'Derivatives nailed instantaneous speed. Integrals tallied total distance' crosses into explaining WHAT calculus does technically, violating the 'no HOW' requirement. 'Priority feud' is interesting but slightly off-focus.",
-          "score": 4
-        },
-        {
-          "anonymousId": "Model C",
-          "modelId": "google/gemini-2.5-flash-lite",
-          "reasoning": "Decent narrative arc but some metaphors feel forced or mixed ('measuring a river's flow with a dry ruler,' 'paint sunset with black and white' doesn't quite land). 'Microscope for math' is good. Less vivid than top performers - some steps feel like summaries rather than scenes. Archimedes mention is nice but 'clever geometric tricks' is vague. Serviceable but lacks sparkle.",
-          "score": 3
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Good flow and strong metaphors (photo vs movie, speedometer paradox) with a clean resolution. Two issues: the speedometer bit leans into a technical “distance/time at zero” explanation, and “design aerodynamic airplanes” is a bit anachronistic framing (calculus later supports aerodynamics, but ‘design airplanes’ as an immediate consequence is overstated).",
+          "score": 7.7
         },
         {
           "anonymousId": "Model B",
           "modelId": "openai/gpt-4.1-mini",
-          "reasoning": "Attempts creative analogies but some don't quite work ('Painters tried blending colors' connection to rates of change is unclear). Repetitive imagery (snapshots/flipbook used twice). 'Slicing the Problem Thin' step is vague about who and what. Narrative feels choppy - steps don't flow naturally into each other. Some awkward phrasing. Meets constraints but weaker execution.",
-          "score": 2
+          "reasoning": "Conversational with multiple analogies (dance photos, painters blending, slicing). Narrative is somewhat repetitive early (two similar “static snapshots” steps) and scenes are less vivid. Slightly vague but stays mostly on “why.” Within limits.",
+          "score": 7.5
         },
         {
-          "anonymousId": "Model E",
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-2.5-flash-lite",
+          "reasoning": "Solid, friendly explanation with a few nice metaphors (river + dry ruler, sunset in black-and-white, microscope). But it drifts toward “how” with ‘zooming in infinitely close’ and ‘breaking motion into moments,’ and the storytelling tension is milder/less cinematic than stronger entries.",
+          "score": 7.3
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Great metaphors and a satisfying ‘two puzzles click’ arc. However it leans most into the *mechanics* (step size shrinking toward zero; explicit derivative/integral conceptual split), which violates the “why not how” requirement more than others, even without heavy notation. Still within length limits.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Vivid and well-structured, but it includes explicit notation references (“dx” and “∫”) and names ‘derivative’ and ‘integral’ with functional descriptions, pushing into how-it-works territory. Also a couple claims are a bit strong (“two thousand years of waiting”).",
+          "score": 6.6
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Energetic and vivid, but it directly introduces derivatives/integrals and frames them as doing specific jobs, plus uses the term “elegant formula.” That crosses the boundary into teaching mechanics rather than origin/importance. Priority feud mention is fine but not needed. Limits seem OK.",
+          "score": 6.2
+        },
+        {
+          "anonymousId": "Model J",
           "modelId": "meta/llama-4-maverick",
-          "reasoning": "Very sparse and dry - reads like encyclopedia bullet points rather than engaging story. No vivid scenes or imagery. Minimal metaphors. 'The existing toolkit fell short' is vague and uninspiring. Steps feel like summaries. Doesn't explain the 'different angles' Newton and Leibniz approached from. Misses conversational tone entirely. Only 5 steps but the issue is quality, not quantity. Factually correct but fails storytelling criteria.",
-          "score": 1
+          "reasoning": "Meets the basic ‘why’ premise but reads like a summary, not a story: minimal imagery, weak tension/resolution, few metaphors, and a more encyclopedic tone. Within limits, but least engaging per the storytelling criteria.",
+          "score": 5.6
         }
       ]
     }
