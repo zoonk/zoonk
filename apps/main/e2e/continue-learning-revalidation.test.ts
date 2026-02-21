@@ -124,6 +124,9 @@ test.describe("Continue Learning Revalidation", () => {
     await expect(page.getByRole("status")).toBeVisible();
     await expect(page.getByText(/completed/i)).toBeVisible();
 
+    // Wait for the server action to finish (reward badges appear only after server responds with revalidatePath)
+    await expect(page.getByText(/\+\d+ BP/)).toBeVisible();
+
     // 4. Click "Back to Lesson" (client-side navigation)
     await page.getByRole("link", { name: /back to lesson/i }).click();
     await page.waitForURL(new RegExp(`e2e-cl-reval-lesson-${uniqueId}`));
