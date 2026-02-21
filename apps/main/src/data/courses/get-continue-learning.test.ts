@@ -251,6 +251,33 @@ describe("authenticated users", () => {
     expect(result[0]?.chapter.id).toBe(chapter2.id);
   });
 
+  test("excludes courses from non-brand organizations", async () => {
+    const user = await userFixture();
+    const headers = await signInAs(user.email, user.password);
+
+    const schoolOrg = await organizationFixture({ kind: "school" });
+    const { activity1, activity2 } = await createCourseWithActivities(schoolOrg.id);
+
+    await Promise.all([
+      activityProgressFixture({
+        activityId: activity1.id,
+        completedAt: new Date(),
+        durationSeconds: 60,
+        userId: Number(user.id),
+      }),
+      activityProgressFixture({
+        activityId: activity2.id,
+        completedAt: new Date(),
+        durationSeconds: 60,
+        userId: Number(user.id),
+      }),
+    ]);
+
+    const result = await getContinueLearning(headers);
+
+    expect(result).toEqual([]);
+  });
+
   test("returns null organization for personal courses", async () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);

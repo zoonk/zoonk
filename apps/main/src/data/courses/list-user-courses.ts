@@ -21,7 +21,12 @@ export const listUserCourses = cache(
       prisma.courseUser.findMany({
         include: { course: { include: { organization: true } } },
         orderBy: { startedAt: "desc" },
-        where: { userId },
+        where: {
+          course: {
+            OR: [{ organization: { kind: "brand" } }, { organizationId: null }],
+          },
+          userId,
+        },
       }),
     );
 

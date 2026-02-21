@@ -19,7 +19,7 @@ WITH last_per_course AS (
   JOIN chapters ch ON ch.id = l.chapter_id AND ch.is_published = true
   JOIN courses c ON c.id = ch.course_id
   LEFT JOIN organizations o ON o.id = c.organization_id
-  WHERE ap.user_id = $1 AND ap.completed_at IS NOT NULL
+  WHERE ap.user_id = $1 AND ap.completed_at IS NOT NULL AND (o.kind = 'brand' OR o.id IS NULL)
   ORDER BY ch.course_id, ap.completed_at DESC
 )
 SELECT

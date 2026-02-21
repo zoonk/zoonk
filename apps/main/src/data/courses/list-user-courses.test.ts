@@ -124,6 +124,53 @@ describe("authenticated users", () => {
     expect(courseIds).toEqual([course2.id, course3.id, course1.id]);
   });
 
+  test("excludes courses from non-brand organizations", async () => {
+    const testUser = await userFixture();
+    const testHeaders = await signInAs(testUser.email, testUser.password);
+
+    const [brandOrg, schoolOrg] = await Promise.all([
+      organizationFixture({ kind: "brand" }),
+      organizationFixture({ kind: "school" }),
+    ]);
+
+    const [brandCourse, schoolCourse] = await Promise.all([
+      courseFixture({ isPublished: true, organizationId: brandOrg.id }),
+      courseFixture({ isPublished: true, organizationId: schoolOrg.id }),
+    ]);
+
+    await Promise.all([
+      courseUserFixture({ courseId: brandCourse.id, userId: Number(testUser.id) }),
+      courseUserFixture({ courseId: schoolCourse.id, userId: Number(testUser.id) }),
+    ]);
+
+    const result = await listUserCourses(testHeaders);
+
+    expect(result.error).toBeNull();
+    expect(result.data?.some((item) => item.id === brandCourse.id)).toBeTruthy();
+    expect(result.data?.some((item) => item.id === schoolCourse.id)).toBeFalsy();
+  });
+
+  test("includes personal courses with null organization", async () => {
+    const testUser = await userFixture();
+    const testHeaders = await signInAs(testUser.email, testUser.password);
+
+    const personalCourse = await courseFixture({
+      isPublished: true,
+      organizationId: null,
+      userId: Number(testUser.id),
+    });
+
+    await courseUserFixture({
+      courseId: personalCourse.id,
+      userId: Number(testUser.id),
+    });
+
+    const result = await listUserCourses(testHeaders);
+
+    expect(result.error).toBeNull();
+    expect(result.data?.some((item) => item.id === personalCourse.id)).toBeTruthy();
+  });
+
   test("does not return other users courses", async () => {
     const [otherUser, testUser] = await Promise.all([userFixture(), userFixture()]);
 
