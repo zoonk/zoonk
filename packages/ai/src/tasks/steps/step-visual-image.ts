@@ -1,9 +1,8 @@
-import { openai } from "@ai-sdk/openai";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { type GeneratedFile, type ImageModel, generateImage } from "ai";
 import promptTemplate from "./step-visual-image.prompt.md";
 
-const DEFAULT_MODEL = openai.image("gpt-image-1.5");
+const DEFAULT_MODEL = "openai/gpt-image-1.5";
 const DEFAULT_QUALITY = "low";
 
 export function getStepVisualImagePrompt(prompt: string) {
