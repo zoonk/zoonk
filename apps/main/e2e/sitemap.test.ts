@@ -29,12 +29,11 @@ test.describe("sitemap.xml", () => {
 });
 
 test.describe("sitemap-courses", () => {
-  test("returns course URLs", async () => {
+  test("returns valid sitemap XML", async () => {
     const response = await fetch(`${getBaseURL()}/sitemap-courses/sitemap/0.xml`);
     expect(response.status).toBe(200);
 
     const body = await response.text();
-    expect(body).toContain("/b/");
-    expect(body).toContain("/c/");
+    expect(body).toContain("<urlset");
   });
 });

@@ -5,12 +5,14 @@ import { type MetadataRoute } from "next";
 const STATIC_PATHS = ["/", "/courses", "/learn", "/privacy", "/terms"];
 
 function buildAlternates(path: string): Record<string, string> {
-  return Object.fromEntries(
-    SUPPORTED_LOCALES.map((locale) => {
-      const prefix = locale === DEFAULT_LOCALE ? "" : `/${locale}`;
-      return [locale, `${SITE_URL}${prefix}${path}`];
-    }),
-  );
+  const defaultUrl = `${SITE_URL}${path}`;
+
+  const localeEntries: [string, string][] = SUPPORTED_LOCALES.map((locale) => {
+    const prefix = locale === DEFAULT_LOCALE ? "" : `/${locale}`;
+    return [locale, `${SITE_URL}${prefix}${path}`];
+  });
+
+  return Object.fromEntries([["x-default", defaultUrl], ...localeEntries]);
 }
 
 export default function sitemap(): MetadataRoute.Sitemap {
