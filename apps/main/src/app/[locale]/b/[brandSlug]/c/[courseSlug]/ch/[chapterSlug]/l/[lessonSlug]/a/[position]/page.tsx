@@ -1,6 +1,5 @@
 "use cache";
 
-import { ActivityPlayerClient } from "@/components/activity-player/activity-player-client";
 import { getActivity } from "@/data/activities/get-activity";
 import { getLessonSentences } from "@/data/activities/get-lesson-sentences";
 import { getLessonWords } from "@/data/activities/get-lesson-words";
@@ -16,6 +15,7 @@ import { setRequestLocale } from "next-intl/server";
 import { cacheTag } from "next/cache";
 import { notFound } from "next/navigation";
 import { ActivityNotGenerated } from "./activity-not-generated";
+import { ActivityPlayerClient } from "./activity-player-client";
 
 type Props =
   PageProps<"/[locale]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/a/[position]">;
