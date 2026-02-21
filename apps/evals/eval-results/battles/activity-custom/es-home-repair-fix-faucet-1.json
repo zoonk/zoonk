@@ -1,122 +1,158 @@
 {
   "expectations": "\nLANGUAGE REQUIREMENT: Titles and text must be in Spanish.\n\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Faucet repair involves specific plumbing steps. Penalize if:\n   - Water supply shutoff is not the first step\n   - Disassembly order is incorrect (handle before cartridge/stem)\n\n2. SAFETY CHECK: Penalize if:\n   - Draining residual water is skipped\n   - No mention of placing parts in order for reassembly\n\n3. TOOL SPECIFICITY: Penalize if tools needed are not specified (adjustable wrench, screwdriver type, etc.).\n\n\nANTI-CHECKLIST GUIDANCE (READ THIS FIRST - CRITICAL):\n- Do NOT penalize for missing steps you might expect\n- Do NOT require a specific number of steps - let complexity dictate length\n- Do NOT check against an imagined \"ideal\" procedure\n- Do NOT interpret rules too literally - use common sense\n- Different valid procedures exist - assess the quality of what IS provided\n- ONLY penalize for actual problems: incorrect sequence, factual errors, missing critical safety steps, or truly confusing instructions\n\nEVALUATION CRITERIA:\n\n1. PROCEDURAL ACCURACY: Steps must be in correct sequence. Penalize only if actions are genuinely out of order or skip critical prerequisites.\n\n2. ACTION-ORIENTED LANGUAGE: Each step must use imperative verbs (Click, Type, Add, Place, Turn, etc.). Penalize passive or purely descriptive language.\n\n3. LOGICAL STEP GROUPING: Steps should be coherent units that a user can follow without confusion. This does NOT mean micro-splitting every movement:\n   - ACCEPTABLE: \"Click the File name field and type your document name\" (filling a form field is ONE action)\n   - ACCEPTABLE: \"Pull over safely and turn on hazard lights\" (logically grouped safety actions)\n   - ACCEPTABLE: \"Pour hot water, swirl to warm, then discard\" (continuous motion)\n   - PROBLEMATIC: \"Download the file, install it, configure settings, and restart\" (unrelated actions crammed together)\n   The goal is clarity, not arbitrary splitting. If a step reads naturally and a user can follow it without confusion, it's fine.\n\n4. VERIFICATION POINTS: Where helpful, include confirmation of success. Only penalize if verification is missing for critical/risky actions. Do NOT penalize verification steps as \"padding\" - helping users confirm success is valuable teaching.\n\n5. FORMAT COMPLIANCE:\n   - title: Maximum 50 characters\n   - text: Maximum 300 characters\n\n6. SCOPE ADHERENCE: Content should cover the activity as described. Do not penalize for reasonable setup or verification steps.\n\n7. PRACTICAL FOCUS: Steps should be actionable instructions, not conceptual explanations.\n\nFINAL CHECK: Before penalizing anything, ask yourself: \"Would a reasonable human instructor consider this a genuine problem?\" If not, do not penalize.\n\n    ",
-  "judgedAt": "2026-01-18T04:06:45.761Z",
+  "judgedAt": "2026-02-21T23:16:36.299Z",
   "judgments": [
     {
-      "judgeId": "anthropic/claude-opus-4.5",
+      "judgeId": "anthropic/claude-opus-4.6",
       "rankings": [
         {
-          "anonymousId": "Model B",
-          "modelId": "xai/grok-4.1-fast-reasoning",
-          "reasoning": "Excellent comprehensive guide. Starts with tool gathering (specificity: Phillips/plana destornillador, llave ajustable, cinta teflón). Water shutoff is step 2 which is acceptable since tools first. Drains residual water explicitly. Correct disassembly order (handle before cartridge). Mentions ordering parts (cover drain). Very detailed 16 steps with good action-oriented language. All steps within character limits. Clear verification throughout. Minor issue: 'nueces' should be 'tuerca' (typo). Overall excellent procedural accuracy and completeness.",
+          "anonymousId": "B",
+          "modelId": "B",
+          "reasoning": "Excellent procedural accuracy: starts with water shutoff, drains residual water (step 2), covers drain, correct disassembly order (handle before cartridge). Safety: draining residual water explicitly included, mentions organizing parts. Tool specificity: mentions Phillips, Allen, adjustable wrench, silicone grease. Action-oriented language throughout with imperative verbs. Good logical step grouping - steps are coherent units without over-splitting or cramming. Includes mechanism identification step which adds practical value. Verification points at critical moments (step 14). Mentions getting correct replacement parts. All titles under 50 chars, all text under 300 chars. Comprehensive without being excessive. Minor issues: step 6 is more observational/diagnostic than action-oriented, but still practical. The tip about bringing a photo to the hardware store is a nice practical touch.",
           "score": 9
         },
         {
-          "anonymousId": "Model I",
-          "modelId": "anthropic/claude-opus-4.5",
-          "reasoning": "Very strong guide with 16 steps. Water shutoff first, then drain pressure (step 2). Covers drain protection. Tool specificity present (destornillador Phillips/Allen, llave ajustable). Correct disassembly sequence. Unique addition of taking parts to hardware store and lubrication with silicone grease. All action-oriented imperatives. Good verification at end. Character limits respected. Comprehensive without being excessive.",
+          "anonymousId": "I",
+          "modelId": "I",
+          "reasoning": "Very strong procedural accuracy: water shutoff first, drains residual water (step 2), covers drain, correct disassembly order. Safety well covered. Tool specificity is excellent: Phillips, Allen, adjustable wrench, flat screwdriver, silicone grease all mentioned. Action-oriented language with imperative verbs consistently. Good logical grouping. Includes lubrication step which is practical. Mentions protecting finish with tape. Verification at end is clear. All format requirements met. Very similar quality to Model B but slightly less detail in some areas (e.g., no mention of mechanism type identification, slightly less guidance on troubleshooting). Clean, well-organized guide.",
           "score": 8.8
         },
         {
-          "anonymousId": "Model H",
-          "modelId": "anthropic/claude-sonnet-4.5",
-          "reasoning": "Solid 12-step guide. Water shutoff first with confirmation. Drain protection included. Correct disassembly order. Tool specificity good (destornillador, llave ajustable). Clean action-oriented language. Good verification steps. Mentions taking cartucho to hardware store for exact replacement. All within character limits. Slightly less detailed than B or I on some nuances but complete and accurate.",
+          "anonymousId": "G",
+          "modelId": "G",
+          "reasoning": "Strong procedural accuracy: water shutoff first, drains residual water (step 2), correct disassembly order. Safety covered with drain blocking and residual water drainage. Tool specificity good: Phillips screwdriver, flat screwdriver, adjustable wrench, pliers, plumbing grease mentioned. Action-oriented language throughout. Good logical grouping - steps flow naturally. Includes lubrication step. Verification at end. Format compliant. Mentions taking cartridge to hardware store. Slightly fewer steps than B/I but covers all critical aspects well. Clean and practical guide.",
           "score": 8.5
         },
         {
-          "anonymousId": "Model C",
-          "modelId": "google/gemini-3-pro-preview",
-          "reasoning": "Concise 9-step guide that covers essentials well. Water shutoff first, drains residual water. Correct disassembly order. Tool specificity present (destornillador plano, llave inglesa/pinzas ajustables). Drain protection included. Good action-oriented language. All character limits respected. Slightly less detailed than top models but efficient and accurate. No mention of keeping parts organized beyond drain coverage.",
-          "score": 8.2
+          "anonymousId": "C",
+          "modelId": "C",
+          "reasoning": "Good procedural accuracy: separates locating and closing the water valve into two steps (steps 1-2), which is a bit unusual but not wrong. Drains residual water in step 2. Correct disassembly order. Safety covered. Tool specificity good: Phillips, Allen, adjustable wrench, pliers mentioned in step 4. Action-oriented language. Logical grouping is mostly good though perhaps slightly over-split in places (separate steps for removing cap, screw, and handle). Step 10 'márcalas como a cambiar' is a bit odd but not harmful. Includes both washer replacement and full cartridge replacement scenarios. All format requirements met. 18 steps is on the longer side but each is a coherent unit.",
+          "score": 8
         },
         {
-          "anonymousId": "Model E",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Good 9-step guide. Starts with tools (llave inglesa/ajustable, destornillador, silicona). Water shutoff step 2. Pressure release step 3 (draining). Correct sequence throughout. Action-oriented. Missing explicit drain protection. Character limits respected. Somewhat condensed final steps. Overall solid but less thorough than leaders.",
-          "score": 7.8
-        },
-        {
-          "anonymousId": "Model D",
-          "modelId": "openai/gpt-5.1-instant",
-          "reasoning": "Decent 11-step guide. Water shutoff first. Drain protection step 2. Correct disassembly order. Tool specificity partial (destornillador, llave ajustable - but doesn't specify types early). Missing explicit draining of residual water (verification only - 'no saque nada al abrirlo' is passive). Action-oriented language. Character limits respected. Less comprehensive on replacement parts details.",
-          "score": 7.5
-        },
-        {
-          "anonymousId": "Model F",
-          "modelId": "openai/gpt-5.2",
-          "reasoning": "Very detailed 18-step guide. Water shutoff covered in steps 1-2. Good tool specificity. Correct sequence. Drain protection included. However, excessively granular - separating locating valve from closing it is unnecessary. Many steps have 'Debe...' verification phrases that become repetitive. All within character limits. Some steps could be better consolidated. Thorough but somewhat overwrought.",
+          "anonymousId": "E",
+          "modelId": "E",
+          "reasoning": "Good procedural accuracy but starts with tool gathering before water shutoff - while not incorrect (gathering tools is preparation), the task guidance says 'Water supply shutoff is not the first step' should be penalized. However, tool prep before starting work is reasonable. Drains residual water in step 2 (combined with shutoff). Correct disassembly order. Tool specificity is excellent: Phillips, flat screwdriver, adjustable wrench, silicone lubricant, Teflon tape, vinegar all mentioned. Action-oriented language. Step 5 'No lo retires del todo aún' is slightly odd - why not remove it fully? Step 7 uses 'nueces' which is an unusual/incorrect translation for nuts (should be 'tuercas'). Teflon tape on faucet stem threads is questionable practice - not typically done for internal faucet components. The vinegar cleaning step is nice. Some steps are over-split (steps 5-6 could be one). 16 steps total.",
           "score": 7.3
         },
         {
-          "anonymousId": "Model G",
-          "modelId": "openai/gpt-5-mini",
-          "reasoning": "Extremely detailed 22-step guide. Good tool specificity. Correct sequence with water shutoff step 2 (tools first). Drain/pressure release included. However, excessively verbose with repetitive 'Verifica que...' at end of nearly every step - becomes formulaic. 'suposición' is a typo (should be 'su posición'). Final cleanup step is unnecessary padding. Step 14 typo. Too granular overall. Some redundant steps (separate reinstall steps for every component).",
+          "anonymousId": "A",
+          "modelId": "A",
+          "reasoning": "Good procedural accuracy: water shutoff first with verification, drain covered, correct disassembly order. Safety: drains residual water implicitly (step 1 verification), blocks drain. However, no explicit 'drain residual water' step - the verification in step 1 serves this purpose but doesn't explicitly drain. Tool specificity: mentions screwdriver and adjustable wrench but doesn't specify screwdriver type (Phillips vs flat). Action-oriented language throughout. Good logical grouping. Clean and concise at 11 steps. Missing: no mention of placing parts in order for reassembly (safety check requirement). No lubrication mention. No mention of inspecting O-rings specifically. Format compliant. Solid but less detailed than top models.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "H",
+          "modelId": "H",
+          "reasoning": "Good procedural accuracy: water shutoff first, correct disassembly order. However, no explicit step for draining residual water - this is a safety requirement that's missing. Step 1 confirms no water comes out but doesn't explicitly drain. Drain is covered in step 2. Tool specificity: mentions screwdriver and adjustable wrench but doesn't specify screwdriver type clearly. Action-oriented language. Good logical grouping. Includes cleaning step which is practical. No mention of placing parts in order. 12 steps, well-organized. Missing the residual water drain is a notable gap per the requirements. Otherwise clean and practical.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "J",
+          "modelId": "J",
+          "reasoning": "Good procedural accuracy: water shutoff first with drain included in same step, correct disassembly order. Drain covered. Tool specificity: mentions flat screwdriver, regular screwdriver, adjustable wrench/pliers. Action-oriented language. Step 8 (reassembly) crams multiple actions together: inserting stem, tightening nut, placing handle, tightening screw, pressing decorative cap - this is problematic per the grouping criteria as these are distinct actions requiring different tools. Only 9 steps total which means some steps are over-compressed. 'corta las juntas tóricas gastadas' (cut the worn O-rings) is a bit rough as instruction. No explicit mention of placing parts in order. Residual water drainage included in step 1.",
           "score": 7
         },
         {
-          "anonymousId": "Model A",
-          "modelId": "anthropic/claude-haiku-4.5",
-          "reasoning": "10-step guide with some issues. Water shutoff first - good. But step 3 jumps to loosening base nut of entire faucet - this appears to be removing the whole faucet rather than repairing internal components. Steps 4-5 describe extracting and disassembling the faucet body rather than standard cartridge/washer repair. This is a different procedure (full faucet replacement/rebuild) than typical drip repair. 'Reensambler' is misspelled. Tool specificity present. While instructions are clear, the procedure deviates from standard drip repair methodology.",
+          "anonymousId": "K",
+          "modelId": "K",
+          "reasoning": "Decent procedural accuracy: water shutoff first with drain, correct disassembly order. However, missing accents throughout (giralas, esta, evitara, pequenas, etc.) which is a language quality issue for Spanish. Only 7 steps means some are over-compressed: step 6 combines inserting cartridge, placing retention nut, tightening, putting handle back, tightening screw, and pressing decorative cap - too many distinct actions crammed together. Tool specificity: mentions flat screwdriver, Allen wrench, adjustable wrench. Drain covered. No mention of placing parts in order. No lubrication. Concise but at the cost of clarity in reassembly steps.",
           "score": 6.5
+        },
+        {
+          "anonymousId": "D",
+          "modelId": "D",
+          "reasoning": "Starts with tool preparation before water shutoff - tools first is reasonable preparation but per requirements water shutoff should be first. Drains residual water (step 3). Correct disassembly order. Tool specificity: mentions adjustable wrench, screwdriver, silicone lubricant. However, step 4 mentions flat screwdriver and Allen but doesn't specify which screwdriver type for the main screw. Only 9 steps - step 8 crams tuerca, handle, screw, and decorative cap into one step which is problematic. No mention of covering drain (safety issue - small parts can fall). No mention of placing parts in order. Missing drain cover is a significant safety omission. Step 7 combines cartridge replacement and washer replacement which could be confusing.",
+          "score": 6
+        },
+        {
+          "anonymousId": "F",
+          "modelId": "F",
+          "reasoning": "Significant procedural issues: Step 1 says to find the main valve 'in the basement' - doesn't mention local shutoff valves under the sink first, which is standard. Step 3 jumps to loosening the base nut before removing the handle - this is incorrect disassembly order (handle should come off first, then access internal components). The guide describes removing the entire faucet from the sink (step 4) which is not standard faucet repair procedure for fixing a drip - typically you repair in place. Step 7 title has a typo: 'Reensambler' instead of 'Reensamblar'. The overall procedure is more like a full faucet removal and rebuild rather than a standard drip repair. No mention of covering the drain. Tool specificity is decent. The incorrect disassembly sequence is a significant problem per the evaluation criteria.",
+          "score": 4.5
+        },
+        {
+          "anonymousId": "L",
+          "modelId": "L",
+          "reasoning": "While comprehensive with 22 steps, this guide is excessively over-split and repetitive. Nearly every step ends with 'Verifica que...' which becomes formulaic padding rather than genuine verification guidance. Steps like 'Retira el tornillo del mango' and 'Retira el mango' are unnecessarily split - removing a screw and pulling the handle is one natural action. The repetitive 'Verifica' pattern makes it feel robotic. Step 14 has a typo: 'suposición' should be 'su posición'. Tool specificity is excellent (best of all models). Procedural accuracy is correct but starts with tools before water shutoff. Safety is well covered. The guide suffers from over-splitting that the anti-checklist guidance warns against - 22 steps for a faucet repair is excessive and the mechanical verification pattern reduces readability. Format compliant individually but the overall experience is tedious.",
+          "score": 5.5
         }
       ]
     },
     {
-      "judgeId": "google/gemini-3-pro-preview",
+      "judgeId": "google/gemini-3.1-pro-preview",
       "rankings": [
-        {
-          "anonymousId": "Model F",
-          "modelId": "openai/gpt-5.2",
-          "reasoning": "This model provides the most effective instructional guide. It breaks down the procedure into logical, manageable steps and uniquely includes specific \"verification points\" within each step (e.g., \"Debes oír pasar agua...\"). It adheres strictly to all safety and tool requirements, explicitly mentions draining residual water, covers the drain to prevent lost parts, and specifies tool types. The language is imperative and action-oriented.",
-          "score": 10
-        },
-        {
-          "anonymousId": "Model G",
-          "modelId": "openai/gpt-5-mini",
-          "reasoning": "Extremely thorough with a high step count that ensures no detail is missed. Like Model F, it includes a specific verification action for every step. The tool list is very comprehensive (specifying Flat, Phillips, and Allen). The procedure is accurate and safe. It scores slightly lower than F only because the repetitive structure (\"Verifica que...\") feels slightly more robotic, but the content is excellent.",
-          "score": 9.5
-        },
         {
           "anonymousId": "Model I",
           "modelId": "anthropic/claude-opus-4.5",
-          "reasoning": "This model offers excellent practical advice, including a step often missed by others: applying silicone lubricant to the new parts, which significantly aids reassembly and longevity. It correctly handles the safety checks (draining water, covering drain) and tool specificity. It also pragmatically suggests going to the store mid-process to match parts.",
+          "reasoning": "Excellent response. Water shutoff is the first step, disassembly order is correct, residual water is explicitly drained, and tools are properly specified. It successfully addresses the reassembly safety check by instructing the user to observe part orientation and place them on a clean towel. Steps are actionable, naturally grouped, and include helpful verification points.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Very strong response. It follows all technical and safety requirements, correctly placing water shutoff first and explicitly advising the user to note the position of parts before disassembly. The logical grouping of steps is excellent. A slightly ambiguous phrase ('Mientras tienes el grifo abierto' referring to a disassembled state) is its only minor flaw.",
           "score": 9
-        },
-        {
-          "anonymousId": "Model B",
-          "modelId": "xai/grok-4.1-fast-reasoning",
-          "reasoning": "A very strong response. It starts with a comprehensive tool list and follows a logical, accurate procedure. It correctly identifies safety steps like draining the line and plugging the drain. The instructions are clear and imperative. It loses minor points only because the suggestion to use Teflon tape on stem threads (step 12) is not always necessary for cartridge/washer faucets, whereas lubrication (Model I) is universally helpful.",
-          "score": 8.5
-        },
-        {
-          "anonymousId": "Model E",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "A solid, concise guide that hits all the main requirements without fluff. It correctly sequences the shut-off, drain, and disassembly. It is less detailed than the top models regarding specific checks or troubleshooting during the process, but entirely accurate and easy to follow.",
-          "score": 7.5
-        },
-        {
-          "anonymousId": "Model C",
-          "modelId": "google/gemini-3-pro-preview",
-          "reasoning": "Good procedural accuracy and structure. It meets all safety constraints. The instructions are clear, though slightly less detailed regarding tool specifics in the middle steps compared to the top models (e.g., just saying \"destornillador\" in step 4). A reliable, standard output.",
-          "score": 7.5
         },
         {
           "anonymousId": "Model H",
           "modelId": "anthropic/claude-sonnet-4.5",
-          "reasoning": "The procedure is generally correct and safe. However, Step 3 refers to a \"tornillo decorativo\" (decorative screw) on the handle; usually, there is a decorative *cap* covering a structural screw, which might confuse a user looking for a decorative screw. Otherwise, it follows the requirements well.",
+          "reasoning": "Great response. Procedural sequence is highly accurate, it confirms the line is drained, and it properly instructs the user to observe part orientation for reassembly. Tools are specified, though slightly less detailed than the top models. Formatting constraints are fully respected.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Very well-written and logically structured instructions. However, it receives a penalty for missing the specific safety check regarding placing parts in order or noting their orientation for reassembly. It hits all other requirements perfectly.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Good procedural flow and correct disassembly order. Like Model B, it completely misses the safety requirement to mention placing parts in order or noting orientation for reassembly. Tools are well specified and formatting is correct.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Technically accurate and successfully includes all safety/procedural requirements (including noting part orientation). However, the writing feels unnatural and rigid because it forces a 'Debe [verificación]' clause at the end of every single step, detracting from the instructional flow.",
           "score": 7
         },
         {
-          "anonymousId": "Model D",
-          "modelId": "openai/gpt-5.1-instant",
-          "reasoning": "Adequate, but less thorough on safety details. While it verifies flow stops, it does not explicitly instruct the user to open the faucet to drain residual pressure *before* disassembly as clearly as others. It also lacks detail on removing the decorative cap before the handle screw.",
-          "score": 6
+          "anonymousId": "Model E",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Receives penalties for failing to make the water shutoff the very first step (gathering tools is listed first) and for missing the safety check about placing parts in order/orientation. Otherwise, the disassembly steps are clear and well-written.",
+          "score": 6.5
         },
         {
           "anonymousId": "Model A",
-          "modelId": "anthropic/claude-haiku-4.5",
-          "reasoning": "This model outlines a procedure for removing the *entire* faucet fixture from the sink (Step 3: \"afloja la tuerca de la base... retira completamente el grifo del fregadero\"), rather than simply disassembling the handle and stem to replace a washer. While technically a way to repair it, this makes the job significantly harder and riskier (dealing with supply lines under the sink) than necessary for a simple leak repair. This demonstrates a misunderstanding of the typical repair scope.",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Misses explicit instructions to drain residual water (only mentions verifying no water comes out) and completely fails to mention keeping parts in order or noting orientation for reassembly. The procedural order is otherwise acceptable.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Penalized for placing tool preparation before water shutoff, which violates the strict accuracy check. It also omits the parts orientation safety check and the steps are somewhat brief.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model L",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Very poorly written instruction style. It forces a 'Verifica que...' verification point into every single step, resulting in robotic and highly repetitive text. It also lists gathering tools as the first step instead of water shutoff and fails to explicitly mention keeping parts in order.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Fails the language quality requirement by omitting almost all accent marks (tapon, desague, tuberia, reparacion, exito, etc.), resulting in poor Spanish. It also misses the parts orientation safety check.",
           "score": 3
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Major procedural failure. The model instructs the user to completely remove the entire faucet from the sink just to change internal washers or a cartridge. This is incorrect, unnecessary, and significantly complicates a simple repair.",
+          "score": 2
         }
       ]
     },
@@ -124,58 +160,76 @@
       "judgeId": "openai/gpt-5.2",
       "rankings": [
         {
-          "anonymousId": "Model F",
-          "modelId": "openai/gpt-5.2",
-          "reasoning": "Cumple bien con la secuencia: cierre de agua antes de desmontar, luego drenaje, protección del desagüe y desmontaje (tapa/tornillo/mango → tuerca → cartucho/vástago). Incluye herramientas específicas (Phillips/Allen, llave ajustable, pinzas) y varios puntos de verificación. Menciona observar orientación para rearmar y guardar tornillos (casi equivalente a “poner piezas en orden”). El agrupamiento es claro y accionable.",
+          "anonymousId": "Model I",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Cumple muy bien la secuencia crítica (corte de agua primero, luego drenaje, luego manija→tuerca→cartucho). Incluye drenaje de agua residual, herramientas específicas (plano/Phillips/Allen, llave ajustable, grasa de silicona), y recordatorios de orientación/colocar piezas para rearmado. Lenguaje imperativo y verificaciones al final. Títulos en español y concisos.",
           "score": 9.2
         },
         {
-          "anonymousId": "Model G",
-          "modelId": "openai/gpt-5-mini",
-          "reasoning": "Muy completo: herramientas específicas, cierre de agua temprano y drenaje, protección del área, desmontaje en orden correcto, múltiples verificaciones y prueba final incluyendo revisión bajo fregadero. Incluye “recipiente para piezas”, lo que ayuda al reensamble. Punto débil: el paso 2 verifica corte de agua pero el drenaje explícito viene en el paso 3 (sigue siendo seguro y coherente). Algo verboso, pero accionable.",
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Muy completo y bien ordenado: cierra agua, drena, protege desagüe, desmontaje correcto, herramientas específicas (plano, Phillips/Allen, llave ajustable), verificación final robusta. También sugiere recipiente para piezas (ayuda a mantener orden). Le resta que un paso mezcla “si es de compresión…” con “retira vástago o cartucho” pero en el texto realmente solo detalla compresión, lo que puede confundir un poco (aunque no es un error grave).",
           "score": 9
         },
         {
-          "anonymousId": "Model I",
-          "modelId": "anthropic/claude-opus-4.5",
-          "reasoning": "Secuencia correcta (cierra agua, drena, luego desmonta mango antes de cartucho). Herramientas bastante específicas (plano, Phillips/Allen, llave ajustable) y buen énfasis en orientación y colocación de piezas sobre toalla. Incluye lubricación adecuada y verificación final. Falta un recordatorio explícito de ordenar piezas para rearmar (aunque sugiere lugar seguro/toalla).",
-          "score": 8.7
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Procedimiento claro y accionable con buen orden de desmontaje (tapa/tornillo/manija antes del cartucho) y herramientas listadas. Incluye observar orientación para reinstalar y verificación de fugas. Punto flojo: no tiene un paso explícito de “drenar completamente” (solo menciona que puede salir algo residual al comprobar), lo que toca el requisito de seguridad de drenar residual.",
+          "score": 8.6
         },
         {
-          "anonymousId": "Model B",
-          "modelId": "xai/grok-4.1-fast-reasoning",
-          "reasoning": "Buen orden procedural y seguridad: cierre de agua + drenaje temprano, tapa desagüe, desmontaje del mango antes del vástago. Herramientas muy específicas y buenas verificaciones (“chorro corto y luego detenerse”). Debilidad: el paso de “no lo retires del todo aún” es confuso/innecesario y no aporta al reensamble; además no menciona ordenar piezas (solo evitar que se pierdan).",
+          "anonymousId": "Model L",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Muy fuerte en especificidad de herramientas, drenaje residual explícito, protección del área con recipiente (útil para mantener piezas), y muchas verificaciones. Secuencia de desmontaje correcta. Penaliza un poco por ser verboso y repetitivo con “Verifica…” en casi cada paso (no es incorrecto, pero afecta claridad/agrupación) y por algún detalle menor de redacción (“en suposición”).",
           "score": 8.4
         },
         {
-          "anonymousId": "Model E",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Correcto en lo esencial: herramientas (aunque “destornillador” es genérico), cierre de agua como paso 2 y drenaje como paso 3, desmontaje en orden correcto, reinstalación y prueba. Faltan detalles de tipo de destornillador/recipiente para piezas y no menciona mantener piezas en orden; aun así es claro y accionable.",
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Buen orden (cierra agua, vacía residual, manija→tuerca→cartucho), herramientas bastante específicas (plano/Phillips, llave ajustable, alicates, grasa). Incluye ‘Anota su posición’ (ayuda a rearmar) y verificación final. Le falta proteger el desagüe (seguridad) y no menciona colocar piezas en orden salvo la nota de posición.",
           "score": 8
         },
         {
-          "anonymousId": "Model C",
-          "modelId": "google/gemini-3-pro-preview",
-          "reasoning": "Secuencia correcta: cierra agua y drena, protege desagüe, retira manija antes de tuerca/cartucho. Herramientas aceptables (destornillador plano, llave inglesa/pinzas ajustables). Incluye orientación para rearmar y prueba final. Debilidad: herramientas menos específicas (no indica Phillips/Allen) y no indica explícitamente ordenar/guardar piezas para el reensamble.",
-          "score": 7.8
+          "anonymousId": "Model E",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Incluye herramientas específicas, cierra y drena en el mismo paso (aceptable), y protege desagüe. Orden de desmontaje correcto. Debilidades: indica “No lo retires del todo aún” para el tornillo sin explicar por qué (puede confundir) y sugiere cinta de teflón en roscas del vástago (no siempre aplica en este tipo de unión; puede inducir a práctica inapropiada).",
+          "score": 7.6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Secuencia correcta (aunque comienza con preparar herramientas, luego cierre de agua). Incluye drenaje residual y herramientas básicas. Pero omite tapar desagüe y no menciona organizar piezas para rearmado. También es menos específico en tipos de destornillador (solo plano, luego “tornillo central” genérico).",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Buen orden de desmontaje y herramientas (destornillador, llave ajustable) con verificación final. Problemas: no incluye drenaje de agua residual (solo verifica que no salga nada) y no menciona guardar/ordenar piezas para reensamblaje. Además, no especifica tipo de destornillador.",
+          "score": 7
         },
         {
           "anonymousId": "Model H",
           "modelId": "anthropic/claude-sonnet-4.5",
-          "reasoning": "Buen orden y claridad general: cierra agua primero y confirma, desmontaje (manija → tuerca → cartucho), reinstala y verifica fugas. Herramientas: menciona destornillador y llave ajustable, pero el destornillador no es específico (tipo). Tampoco menciona drenar agua residual explícitamente (solo confirmar que no sale agua), lo que es un punto de seguridad relevante.",
-          "score": 7.3
+          "reasoning": "Orden de desmontaje correcto y herramientas mínimas (destornillador, llave ajustable) con verificación. Fallos: no drena explícitamente el agua residual (solo confirma que no sale agua) y tampoco sugiere mantener piezas en orden/recipiente. Algo de imprecisión (“tornillo decorativo”).",
+          "score": 6.9
         },
         {
-          "anonymousId": "Model D",
-          "modelId": "openai/gpt-5.1-instant",
-          "reasoning": "Secuencia de desmontaje correcta y herramientas básicas (destornillador, llave ajustable). Sin embargo, omite el drenaje explícito de agua residual (solo “verifica que no saque nada”), y no menciona ordenar/guardar piezas para reensamble. Instrucciones algo mínimas para un proceso con piezas pequeñas.",
-          "score": 7
+          "anonymousId": "Model J",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Secuencia base correcta y menciona drenar residual en el primer paso. Protege desagüe y verifica al final. Pero herramientas son poco específicas (dice “destornillador” sin tipo en pasos clave, y “llave inglesa o pinzas ajustables” sin concretar) y no menciona orientación/orden de piezas para rearmado. También agrupa muchas acciones en ‘Reensambla’ (aunque todavía entendible).",
+          "score": 6.8
         },
         {
-          "anonymousId": "Model A",
+          "anonymousId": "Model K",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Orden correcto y menciona drenar residual en el primer paso. Herramientas razonables (plano, Allen, llave inglesa). Pero no menciona colocar piezas en orden/recipiente ni orientación salvo ‘alineando las muescas’ de forma breve. Además tiene errores ortográficos/acentos que reducen claridad.",
+          "score": 6.7
+        },
+        {
+          "anonymousId": "Model F",
           "modelId": "anthropic/claude-haiku-4.5",
-          "reasoning": "Problemas procedurales: tras cerrar el suministro, se enfoca en aflojar “la tuerca de la base” y extraer el grifo completo del lavamanos, lo que no es el enfoque típico de una reparación de goteo y puede estar fuera de alcance/incorrectamente orientado. No presenta el orden esperado de desmontaje del mango antes de cartucho/vástago. Herramientas son algo específicas, y sí drena/mitiga derrames, pero la secuencia y el enfoque pueden confundir y llevar a acciones innecesarias.",
-          "score": 5.6
+          "reasoning": "Presenta un enfoque que suele ser incorrecto/innecesario: aflojar tuerca de la base, retirar completamente el grifo del lavabo y trabajar ‘boca arriba’ como flujo principal. Eso no es el orden típico para reparar un goteo común y puede ser contraproducente. También no tapa desagüe ni menciona organizar piezas para rearmado; herramientas son generales. Aunque sí cierra agua y menciona liberar presión, la secuencia/procedimiento es menos fiable.",
+          "score": 4.5
         }
       ]
     }

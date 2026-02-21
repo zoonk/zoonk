@@ -1,122 +1,158 @@
 {
   "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Soil preparation involves physical and chemical considerations. Penalize if:\n   - Depth guidance is missing (tomatoes need deep, loose soil)\n   - Steps combine too many amendments without explaining when to add each\n\n2. TIMING CHECK: Penalize if:\n   - No mention of when to prepare soil relative to planting\n   - Watering the prepared bed is omitted\n\n3. SPECIFICITY CHECK: Penalize vague instructions like \"add fertilizer\" without specifying type, amount, or how to incorporate it.\n\n\nANTI-CHECKLIST GUIDANCE (READ THIS FIRST - CRITICAL):\n- Do NOT penalize for missing steps you might expect\n- Do NOT require a specific number of steps - let complexity dictate length\n- Do NOT check against an imagined \"ideal\" procedure\n- Do NOT interpret rules too literally - use common sense\n- Different valid procedures exist - assess the quality of what IS provided\n- ONLY penalize for actual problems: incorrect sequence, factual errors, missing critical safety steps, or truly confusing instructions\n\nEVALUATION CRITERIA:\n\n1. PROCEDURAL ACCURACY: Steps must be in correct sequence. Penalize only if actions are genuinely out of order or skip critical prerequisites.\n\n2. ACTION-ORIENTED LANGUAGE: Each step must use imperative verbs (Click, Type, Add, Place, Turn, etc.). Penalize passive or purely descriptive language.\n\n3. LOGICAL STEP GROUPING: Steps should be coherent units that a user can follow without confusion. This does NOT mean micro-splitting every movement:\n   - ACCEPTABLE: \"Click the File name field and type your document name\" (filling a form field is ONE action)\n   - ACCEPTABLE: \"Pull over safely and turn on hazard lights\" (logically grouped safety actions)\n   - ACCEPTABLE: \"Pour hot water, swirl to warm, then discard\" (continuous motion)\n   - PROBLEMATIC: \"Download the file, install it, configure settings, and restart\" (unrelated actions crammed together)\n   The goal is clarity, not arbitrary splitting. If a step reads naturally and a user can follow it without confusion, it's fine.\n\n4. VERIFICATION POINTS: Where helpful, include confirmation of success. Only penalize if verification is missing for critical/risky actions. Do NOT penalize verification steps as \"padding\" - helping users confirm success is valuable teaching.\n\n5. FORMAT COMPLIANCE:\n   - title: Maximum 50 characters\n   - text: Maximum 300 characters\n\n6. SCOPE ADHERENCE: Content should cover the activity as described. Do not penalize for reasonable setup or verification steps.\n\n7. PRACTICAL FOCUS: Steps should be actionable instructions, not conceptual explanations.\n\nFINAL CHECK: Before penalizing anything, ask yourself: \"Would a reasonable human instructor consider this a genuine problem?\" If not, do not penalize.\n\n    ",
-  "judgedAt": "2026-01-18T04:06:51.208Z",
+  "judgedAt": "2026-02-21T23:16:11.451Z",
   "judgments": [
     {
-      "judgeId": "anthropic/claude-opus-4.5",
+      "judgeId": "anthropic/claude-opus-4.6",
       "rankings": [
         {
-          "anonymousId": "Model B",
-          "modelId": "openai/gpt-5-mini",
-          "reasoning": "Excellent comprehensive guide with 14 well-structured steps. Includes critical elements: soil depth (12 inches), pH testing with specific target range (6.0-6.8), timing guidance (24-48 hours rest), specific fertilizer rates (1 cup per 10 sq ft), watering to 6 inches, and moisture check before digging. Strong action-oriented language throughout. Includes verification points appropriately. The pH testing and adjustment steps add valuable specificity that other models lack. The only minor issue is the materials list step could be slightly excessive, but it's practical. All character limits respected.",
-          "score": 9
-        },
-        {
           "anonymousId": "Model A",
-          "modelId": "anthropic/claude-opus-4.5",
-          "reasoning": "Very strong 10-step guide covering all essentials. Includes depth guidance (12-14 inches), specific fertilizer type and rate (10-10-10, 2 lbs per 100 sq ft), watering depth (6 inches), timing (24-48 hours rest), and soil texture improvement options. Good action-oriented language with clear imperatives. Includes a helpful verification step at the end. The soil texture improvement step (clay vs sandy) shows good practical awareness. Slight weakness: no pH testing mentioned, but this is not always critical. All format requirements met.",
-          "score": 8.5
-        },
-        {
-          "anonymousId": "Model F",
-          "modelId": "openai/gpt-5.2",
-          "reasoning": "Strong 11-step guide with good specificity. Includes depth (10-12 inches), fertilizer guidance (balanced organic, per label rate), watering, and rest period (24-48 hours). Unique strength: includes a drainage test step which is practical and valuable. Good action-oriented language. Location selection includes drainage consideration. However, fertilizer instruction is slightly less specific ('per label rate' rather than specific amounts). The mixing depth (8-10 inches) is adequate but slightly shallow compared to loosening depth. Good verification language throughout.",
-          "score": 8.3
-        },
-        {
-          "anonymousId": "Model C",
-          "modelId": "anthropic/claude-sonnet-4.5",
-          "reasoning": "Solid 10-step guide with good coverage. Includes depth (12-15 inches), fertilizer specifics (10-10-10, 2-3 lbs per 100 sq ft), watering depth (6-8 inches), and rest period (2-3 days). Good action-oriented language throughout. Minor issue: rest period of 2-3 days is longer than typically needed and some might consider excessive. The crown/drainage mention in leveling is a nice practical touch. Slightly less detailed on timing relative to planting but does address it. All format requirements met.",
-          "score": 8.2
-        },
-        {
-          "anonymousId": "Model E",
-          "modelId": "xai/grok-4.1-fast-reasoning",
-          "reasoning": "Good 9-step guide with practical information. Includes depth (12-18 inches), specific fertilizer (10-10-10, 1 lb per 100 sq ft), compost amounts, and watering. Good action-oriented language. The materials list is helpful. However, the timing guidance is weak - says 'let it settle for 1-2 hours' which is insufficient; other guides recommend 24-48 hours. Also the watering step's timing guidance is unclear about when to plant. Otherwise solid procedural accuracy.",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Strong procedural accuracy with correct sequencing. Includes depth guidance (10-12 inches), pH testing with specific range (6.0-6.8), pH adjustment instructions, compost amount (2-3 inches), and mixing depth (8-10 inches). Watering the prepared bed is included. Has a soil consistency check which is a useful verification. Good action-oriented language throughout. The only minor issue is no mention of fertilizer beyond compost/manure, and no explicit timing guidance on when to prepare relative to planting. All steps are within character limits. Clear, specific, and well-organized.",
           "score": 7.8
         },
         {
-          "anonymousId": "Model G",
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Procedurally correct but notably weak on specificity. The loosening depth is only 6-8 inches, which is insufficient for tomatoes (they need deep, loose soil - 10-12+ inches). Compost is only 1-2 inches rather than 2-3. No pH testing, no fertilizer mention at all, no timing relative to planting. The 'Adjust soil condition' step is vague. Watering is included. Steps are action-oriented and clear but the guide is too thin for the task - missing several important elements that the evaluation criteria specifically flag (depth, specificity of amendments, timing).",
+          "score": 4.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Good procedural flow. Includes site selection (6-8 hours sun), depth guidance (8-12 inches), compost (2-3 inches), specific fertilizer type (balanced, slow-release, vegetable/tomato specific), mixing depth (6 inches), leveling, and watering. Action-oriented language. However, no pH testing, no timing guidance on when to prepare relative to planting (just says 'prepares the environment'), and some steps lean slightly explanatory rather than purely actionable. Fertilizer step says 'following the package instructions' which is reasonable but could be more specific on amount. Overall solid but missing pH and timing.",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "Model D",
           "modelId": "anthropic/claude-haiku-4.5",
-          "reasoning": "Good 8-step guide with some unique elements. Includes depth (8-12 inches), pH testing (mentions 6.0-6.8 target), watering depth (8-10 inches), and rest period (1-2 days). Unique inclusion of peat moss/coconut coir for moisture retention. However, lacks specific fertilizer type/amount - only mentions compost/manure. The depth range starting at 8 inches is on the low end for tomatoes. Good action-oriented language. Format compliant. The moisture-retaining material step adds value but the lack of fertilizer specificity is a notable gap.",
+          "reasoning": "Good structure with gathering supplies, deep loosening (8-12 inches), pH testing with target range (6.0-6.8), compost (2-3 inches), peat moss/coconut coir for moisture retention, thorough mixing (6-8 inches), and watering with settling time (1-2 days). Action-oriented language. Mentions timing relative to planting (wait 1-2 days). However, pH adjustment step says 'adjust before proceeding' without specifying what to add or how much - this is vague. No fertilizer beyond compost. The peat moss step title says 'Mix in' but the text says 'Spread' - slight inconsistency. Good overall but the vague pH adjustment is a notable gap.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Comprehensive and well-structured. Includes site selection, deep loosening (12-14 inches), debris removal, compost (2-3 inches), specific fertilizer (10-10-10 with rate of 2 lbs per 100 sq ft), soil texture improvement (perlite/sand for clay, extra compost for sand), mixing, raking, watering with verification (6 inches, finger check), and timing (24-48 hours). Action-oriented throughout. The final confirmation step is useful verification, not padding. Missing pH testing, which is a gap given the topic-specific guidance. The sequence of loosening before clearing debris is slightly unusual but defensible (you find debris while loosening). Very specific and actionable. Character limits appear respected.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Good procedural guide. Includes tools/materials gathering, clearing, deep loosening (12-18 inches), clump breaking, compost (2-3 inches with volume estimate), specific fertilizer (10-10-10, 1 lb per 100 sq ft), mixing into top 12 inches, leveling, and watering with settling time (1-2 hours). Action-oriented. Specific amounts throughout. However, no pH testing, no timing relative to planting (only 1-2 hours settling, not days). The '2-3 inches of compost per square foot' in the gathering step is confusingly worded (should be per bed area, not per square foot as a depth measurement). The first step text may be close to 300 char limit. Good specificity overall but missing pH.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Very thorough and comprehensive - 14 steps. Includes gathering supplies, marking bed, clearing, moisture check before digging, pH testing with multiple samples and target range, pH adjustment with specific products, deep loosening (12 inches), clod removal, compost (2-3 inches), specific fertilizer (10-10-10, 1 cup per 10 sq ft), mixing (6-8 inches), leveling, watering (6 inches), and resting (24-48 hours). Action-oriented throughout with good verification points. Covers timing relative to planting. Highly specific. Slight concern: the moisture check step and bed marking step may feel like over-splitting, but they are genuinely useful discrete actions. Some steps may push character limits but seem within bounds. Excellent coverage of all evaluation criteria.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Well-structured 9-step guide. Includes clearing, deep loosening (8-12 inches), clump breaking, compost (2-3 inches), specific fertilizer (continuous-release tomato fertilizer with calcium for blossom end rot - excellent specificity), mixing (6-8 inches), leveling, soil texture test, and watering with timing (24 hours). Action-oriented language. The calcium mention for blossom end rot is a nice tomato-specific detail. Missing pH testing. No site selection, which is fine. Good specificity throughout. Timing is addressed (wait 24 hours). Solid guide with good practical focus.",
           "score": 7.5
         },
         {
           "anonymousId": "Model I",
           "modelId": "google/gemini-3-pro-preview",
-          "reasoning": "Decent 7-step guide covering basics. Includes depth (12 inches), organic matter, specific fertilizer mention (5-10-5, bone meal for calcium - good detail for tomatoes), watering to 6 inches, and brief rest period mention ('a day or two'). However, the fertilizer instruction lacks specific amounts ('a handful' is vague). The calcium/blossom end rot mention shows good tomato-specific knowledge. Action-oriented language is good. Shorter than some but covers essentials. No location selection step assumes site already chosen.",
+          "reasoning": "Good 7-step guide. Includes clearing, deep loosening (12 inches), compost (2-3 inches), specific fertilizer (5-10-5 plus bone meal/eggshells for calcium - excellent tomato-specific detail), mixing (6-8 inches), raking, and watering with settling time (a day or two). Action-oriented. Good specificity with the fertilizer type and calcium amendment. Missing pH testing. The mention of blossom end rot prevention via calcium shows domain knowledge. Concise but covers essentials. No site selection step which is fine. Character limits respected. Timing addressed. A solid, practical guide.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Comprehensive 10-step guide. Site selection (6-8 hours sun), clearing, deep loosening (12-15 inches), clump breaking, compost (2-3 inches), specific fertilizer (10-10-10, 2-3 lbs per 100 sq ft), mixing (8-10 inches), leveling with drainage crown, watering with verification (6-8 inches, finger check), and resting (2-3 days). Action-oriented throughout. Good specificity. Missing pH testing. The drainage crown detail is a nice practical touch. Timing is well addressed (2-3 days rest). Good verification points. All character limits appear respected. Very well-rounded despite missing pH.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Most comprehensive at 15 steps. Covers everything: site selection, deep loosening (12-14 inches), debris removal, soil texture test, pH testing with multiple samples, pH adjustment (lime/sulfur), compost (3-4 inches with volume estimate), composted manure layer, specific fertilizer (10-10-10, 1-2 lbs per 100 sq ft), drainage/retention amendments, thorough mixing (10-12 inches), clump breaking, leveling with crown, deep watering (6-8 inches), and resting (2-3 days). Extremely thorough with excellent specificity. Action-oriented. However, some steps may push or exceed 300 character limits - particularly steps about mixing amendments and the site selection step. The guide may be over-detailed for some users (separate compost and manure steps), but the anti-checklist guidance says not to penalize for length if complexity warrants it. Some text fields look like they might be right at or slightly over 300 chars. Very high quality content overall.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model L",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Good 11-step guide with practical focus. Site selection (6-8 hours sun, drainage consideration), clearing, deep loosening (10-12 inches), clump breaking, compost (2-3 inches), fertilizer (balanced organic, per label rate), mixing (8-10 inches), leveling, drainage test (unique and practical), watering, and resting (24-48 hours). Action-oriented with conversational but clear tone. The drainage soak test is a creative and useful addition. Missing pH testing. Fertilizer is specified as 'balanced organic' per label rate - somewhat specific but could name a type. Good timing guidance. The abbreviated 'in' for inches and informal tone works well for practical instructions. Character limits appear respected. Solid practical guide.",
           "score": 7.3
-        },
-        {
-          "anonymousId": "Model H",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Adequate 8-step guide but with some weaknesses. Includes depth (8-12 inches), compost layer, and watering. However, depth starting at 8 inches is borderline for tomatoes. Fertilizer instruction is vague - 'balanced, slow-release fertilizer following package instructions' lacks specificity. No timing mentioned for when to plant after preparation - just says 'hydrate the bed' as final step. The 'lightly spray' watering instruction may not achieve adequate depth. Action-oriented language is adequate. Missing the critical rest period before planting.",
-          "score": 6.8
-        },
-        {
-          "anonymousId": "Model D",
-          "modelId": "openai/gpt-5.1-instant",
-          "reasoning": "Weakest of the set with 8 steps. Major issue: soil loosening depth is only 6-8 inches, which is insufficient for tomatoes that need 12+ inch depth. No fertilizer is mentioned - only compost. No timing guidance about when to prepare relative to planting. The 'lightly water' and 'moist but not soggy' guidance is okay but lacks depth specification. Missing several topic-specific requirements. While the steps are action-oriented and clear, the missing depth and fertilizer information are significant gaps for tomato-specific soil preparation.",
-          "score": 5.5
         }
       ]
     },
     {
-      "judgeId": "google/gemini-3-pro-preview",
+      "judgeId": "google/gemini-3.1-pro-preview",
       "rankings": [
         {
-          "anonymousId": "Model B",
+          "anonymousId": "Model K",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Exceptional output. It is highly detailed, covering soil texture tests, pH adjustment, and specific amendments while keeping all steps actionable and under the character limits. It correctly instructs on deep loosening (12-14 inches) and explicitly states to let the bed rest for 2-3 days before planting.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model G",
           "modelId": "openai/gpt-5-mini",
-          "reasoning": "This model provides the most comprehensive and technically accurate procedure. It is the only model to include a soil moisture check before digging (a critical step to prevent destroying soil structure) and a pH test step. It offers specific details on fertilizer amounts and incorporates distinct verification points ('You should see...') in every step. The logic is flawless, and the safety/timing checks are excellent.",
-          "score": 9.8
+          "reasoning": "Flawless procedure. It provides highly specific instructions (e.g., specific NPK fertilizer ratios, exact amounts), instructs on deep soil preparation (12 inches), and clearly mentions resting the soil for 24-48 hours before planting. All formatting and language constraints are perfectly met.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model L",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Excellent output with highly practical tips, such as a quick drainage soak test. It meets all constraints, including depth (10-12 inches) and timing (rest 24-48 hours). Minor room for improvement in providing slightly more specific fertilizer application rates.",
+          "score": 9.5
         },
         {
           "anonymousId": "Model I",
           "modelId": "google/gemini-3-pro-preview",
-          "reasoning": "This output is highly specific to the topic of tomatoes. It includes a step for adding calcium (bone meal/eggshells) to prevent blossom end rot, which is a common issue for tomatoes. The depth guidance (12 inches) and timing (settle for a day or two) are accurate. The instructions are actionable and concise without losing necessary detail.",
+          "reasoning": "Very strong and concise. Includes excellent tomato-specific advice (adding bone meal/eggshells for calcium to prevent blossom end rot). Meets all depth, timing, and specificity checks perfectly.",
           "score": 9.5
         },
         {
-          "anonymousId": "Model A",
-          "modelId": "anthropic/claude-opus-4.5",
-          "reasoning": "A very strong, standard set of instructions. It correctly identifies the need for deep soil preparation (12-14 inches) and provides specific application rates for fertilizer. It also offers conditional advice for heavy clay soil (adding perlite), which adds value. The resting period (24-48 hours) is appropriate.",
-          "score": 9.2
-        },
-        {
-          "anonymousId": "Model F",
-          "modelId": "openai/gpt-5.2",
-          "reasoning": "This model includes a drainage test, which is excellent advice for tomatoes. The steps are well-structured and accurate regarding depth (10-12 inches) and resting time. The instructions are clear and follow a logical sequence.",
-          "score": 9
-        },
-        {
-          "anonymousId": "Model C",
+          "anonymousId": "Model J",
           "modelId": "anthropic/claude-sonnet-4.5",
-          "reasoning": "Provides solid, standard advice. It meets the depth requirements (12-15 inches) and specifies fertilizer amounts. The resting time (2-3 days) is good. It lacks the extra verification or specific soil checks (moisture/drainage/pH) found in the higher-ranked models but is otherwise error-free.",
-          "score": 8.5
-        },
-        {
-          "anonymousId": "Model E",
-          "modelId": "xai/grok-4.1-fast-reasoning",
-          "reasoning": "The instructions are generally good and include specific measurements for amendments. However, the settling time of '1-2 hours' is significantly shorter than the standard recommendation (24-48 hours) to allow amendments to activate and soil to settle properly. Otherwise, the depth and specificity are good.",
-          "score": 8
+          "reasoning": "Clear, logical, and highly actionable. It hits all the required checks, including deep digging (12-15 inches) and explicit timing (let rest 2-3 days). Step formatting and imperative language are flawlessly executed.",
+          "score": 9.5
         },
         {
           "anonymousId": "Model H",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "The depth guidance (8-12 inches) is on the lower end of the acceptable range for tomatoes. While it mentions fertilizer, it lacks specific amounts. The watering step ('lightly spray') is weak compared to the deep soaking required to settle a prepared bed.",
-          "score": 6.5
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Excellent output that includes good tips on breaking up soil clods and adding calcium. Fully compliant with all depth, timing, and specificity constraints.",
+          "score": 9.5
         },
         {
-          "anonymousId": "Model G",
-          "modelId": "anthropic/claude-haiku-4.5",
-          "reasoning": "While it offers good advice on peat moss for water retention, this model fails to explicitly include a step for granular fertilizer, relying only on compost. As tomatoes are heavy feeders, this is a notable omission. The depth guidance is also on the lower end.",
-          "score": 6
+          "anonymousId": "Model F",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Good output that follows instructions well. It loses slight points because the settling time recommended (1-2 hours) is practically negligible for soil biology compared to the standard 1-2 days, though it technically fulfills the requirement to mention timing.",
+          "score": 8.5
         },
         {
           "anonymousId": "Model D",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Very good procedure, but it falls short in Step 3 by telling the user to 'adjust before proceeding' if pH is off, without explaining how to adjust it (e.g., lime or sulfur). This leaves the instruction incomplete.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Good sequence, but it fails to provide a standard timeframe for preparing the soil relative to planting. It only mentions waiting a day conditionally if the soil is too wet, which partially misses the timing check.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Contains a notable format violation. Step 10 is purely descriptive ('Your soil is ready when... You're now ready...') and lacks an imperative verb, directly violating the action-oriented language constraint.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Misses the timing check completely. There is no mention of when to prepare the soil relative to planting, simply stating that it prepares the environment for transplants. Also lacks specific measurements for fertilizer.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model B",
           "modelId": "openai/gpt-5.1-instant",
-          "reasoning": "This output fails multiple critical checks. It recommends a shallow depth (6-8 inches) unsuitable for tomatoes, completely omits fertilizer instructions, and mentions no resting period. The watering instruction ('lightly water') is insufficient for bed preparation.",
-          "score": 3
+          "reasoning": "Significant issues. It suggests a digging depth of only 6-8 inches, which is too shallow for deep-rooted tomatoes. It also completely omits any timeframe regarding when to prepare the soil relative to planting.",
+          "score": 5
         }
       ]
     },
@@ -124,58 +160,76 @@
       "judgeId": "openai/gpt-5.2",
       "rankings": [
         {
-          "anonymousId": "Model B",
+          "anonymousId": "Model G",
           "modelId": "openai/gpt-5-mini",
-          "reasoning": "Meets all key expectations: deep loosening (12 in), clear timing (wait 24–48 hrs), explicit watering/settling, and specific amendment guidance (compost depth, fertilizer rate, pH test + lime/sulfur). Steps are imperative, well-grouped, and include verification checks without cramming unrelated actions.",
-          "score": 9.6
+          "reasoning": "Strong procedural flow with clear, imperative actions; includes pre-check for moisture, pH testing/adjustment with clear thresholds, deep loosening (12 in), compost and fertilizer with specific rates, incorporation depth, leveling, watering, and explicit 24–48 hr rest before planting. Good verification points throughout. Main weakness: mixes pH amendments during incorporation after adding fertilizer/compost (still workable), and a couple steps are a bit long but remain coherent.",
+          "score": 9.4
         },
         {
-          "anonymousId": "Model A",
-          "modelId": "anthropic/claude-opus-4.5",
-          "reasoning": "Strong procedural sequence with deep prep (12–14 in), specific compost and fertilizer guidance, clear watering to depth plus rest period, and a final readiness check. Minor drawback: texture-improvement step (perlite/sand) is a bit broad and could risk overgeneralization, but it’s conditional and not egregiously confusing.",
-          "score": 9.1
-        },
-        {
-          "anonymousId": "Model C",
-          "modelId": "anthropic/claude-sonnet-4.5",
-          "reasoning": "Clear, actionable, correct order; includes deep loosening (12–15 in), compost + fertilizer with typical rate, thorough mixing, watering to depth, and rest timing (2–3 days). Slightly less precise on fertilizer (leans on package directions) and adds “slight crown” as a directive that may not fit all beds, but overall solid.",
+          "anonymousId": "Model L",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Clear, action-oriented steps with depth guidance (10–12 in), compost layer, fertilizer “per label,” incorporation depth, drainage soak test, watering, and explicit 24–48 hr wait. Good verification cues. Weaknesses: fertilizer is not specific in type/rate (relies on label), and timing is good but no pH consideration (not required, but G/K do it better).",
           "score": 8.8
         },
         {
+          "anonymousId": "Model J",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Meets key requirements: clear sequence, deep loosening (12–15 in), compost, fertilizer with a typical rate, mixing depth, watering, and explicit 2–3 day settling period. Verification cues included. Minor issue: fertilizer guidance is still partly “follow package directions,” but it adds a typical range, so acceptable.",
+          "score": 8.6
+        },
+        {
           "anonymousId": "Model F",
-          "modelId": "openai/gpt-5.2",
-          "reasoning": "Action-oriented and includes depth, watering, and rest timing. Good verification (drainage soak test). Weaknesses: fertilizer guidance is vague (“per label,” no example rate), and it suggests adding more compost after a drainage test without stating amounts; also loosening depth (10–12 in) is acceptable but on the lower end for tomatoes per the prompt emphasis.",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Good actionable steps and sequencing; deep loosening (12–18 in), compost with bed-specific quantity, fertilizer with example rate, mixing depth, leveling, and watering with a short settle time. Weaknesses: compost quantity phrasing is a bit inconsistent (\"2–3 inches of compost per square foot\" is awkward), and no explicit days-before-planting guidance (only 1–2 hours settling).",
           "score": 8.2
         },
         {
           "anonymousId": "Model E",
-          "modelId": "xai/grok-4.1-fast-reasoning",
-          "reasoning": "Generally correct sequence with deep loosening (12–18 in), compost amount example, watering and brief settling. Main issue: fertilizer amount example (about 1 lb/100 sq ft) is likely too low/underspecified and conflicts with other models’ more plausible ranges; also mixes compost+fertilizer into top 12 in (fine) but gives limited timing relative to planting beyond 1–2 hours settling.",
-          "score": 7.8
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Strong depth (12–14 in), compost, fertilizer with a typical rate, texture adjustments by soil type, thorough watering, and explicit 24–48 hr wait plus readiness check. Weakness: sequence has weeding/debris removal after loosening (not fatal, but less clean logically).",
+          "score": 8.1
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Includes deep loosening (8–12 in), pH testing, compost, watering depth and explicit 1–2 day wait. Weaknesses: introduces peat/coir as a separate amendment without clear decision criteria (could be unnecessary), and the pH-adjust step says “adjust before proceeding” but doesn’t give the actual add-lime/sulfur instruction or timing beyond that, making it less specific than A/G/K.",
+          "score": 7.7
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Very clear and thorough with depth (10–12 in), pH test and explicit lime/sulfur decision, compost amount, incorporation depth, consistency check, and watering. Main weakness per constraints: no explicit “prepare X days before planting” or rest/settle timing (it says ready for planting immediately), and Step 1/2 texts are overlong and not very step-like for the tight format requirement.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Comprehensive with depth, pH testing/adjustment, multiple amendments, watering, and explicit 2–3 day rest. However, it violates the accuracy/clarity guidance by stacking many amendments (compost + manure + fertilizer + perlite/sand + peat/coir) with conditionality that can be confusing, and several steps are long. Also adds manure on top of compost regardless of need, which risks over-amending for some users.",
+          "score": 7.3
         },
         {
           "anonymousId": "Model I",
           "modelId": "google/gemini-3-pro-preview",
-          "reasoning": "Good depth (12 in), includes watering and 1–2 day settle timing, and reasonably grouped steps. Issues: fertilizer guidance is not very specific (no rate), and the bone meal/eggshells calcium advice is presented as a fix for blossom-end rot (which is more complex than just calcium in soil), risking some oversimplification.",
-          "score": 7.6
-        },
-        {
-          "anonymousId": "Model G",
-          "modelId": "anthropic/claude-haiku-4.5",
-          "reasoning": "Covers depth range (8–12 in) and includes watering plus 1–2 day wait. However, it combines multiple amendments (compost + peat/coir) without clear need/conditional guidance, lacks fertilizer altogether, and pH adjustment is mentioned but not described (what to add/how much/when), reducing specificity.",
-          "score": 6.9
+          "reasoning": "Good essentials: clear, deep loosening (12 in), compost, fertilizer example, mixing depth, watering, and explicit 1–2 day settling. Weaknesses: adds bone meal/eggshells “per plant spot” without an amount standardization (handful is vague), and no guidance on when to add each beyond combining them—still mostly workable.",
+          "score": 7.1
         },
         {
           "anonymousId": "Model H",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Clear and correctly ordered with compost and watering, but critical gaps vs expectations: loosening depth only 8–12 in (no strong “deep, loose” emphasis), fertilizer is vague (no type/rate beyond generic), and no timing relative to planting (no rest period). Watering is only “lightly spray,” not deep bed-watering.",
-          "score": 6.3
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Solid action language, correct general order, depth (8–12 in), compost, fertilizer (but only ‘check package’), mixing, texture test, watering, and 24 hr wait. Weaknesses: fertilizer specificity is low, and the remediation advice (“mix in more compost”) is vague on quantity; otherwise fine.",
+          "score": 6.9
         },
         {
-          "anonymousId": "Model D",
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Good depth (8–12 in), compost/manure, mixing, leveling, watering. Weaknesses: fertilizer step is vague (no type/amount beyond “balanced, slow-release” and “package instructions”), and no timing relative to planting (no rest period). Location selection is fine but not core to soil prep.",
+          "score": 6.6
+        },
+        {
+          "anonymousId": "Model B",
           "modelId": "openai/gpt-5.1-instant",
-          "reasoning": "Too shallow (only 6–8 in) for tomatoes per the stated guidance, no fertilizer at all, no timing relative to planting, and watering is only “lightly water” without depth/settling guidance. Steps are imperative and coherent, but it misses multiple topic-critical expectations.",
-          "score": 5.4
+          "reasoning": "Actionable and includes watering, but depth guidance is shallow for tomatoes (6–8 in loosening; mixing only top 6 in) which conflicts with the accuracy check. No timing guidance relative to planting. Also ‘adjust soil condition’ is vague and iterative without amounts, reducing specificity.",
+          "score": 5.8
         }
       ]
     }

@@ -1,122 +1,158 @@
 {
   "expectations": "\nEDGE CASE: COMPLEX ACTIVITY (15+ steps may be appropriate)\n\nTOPIC-SPECIFIC GUIDANCE:\n\n1. SCOPE CHECK: This is a complex multi-component task. Penalize if:\n   - Critical components are skipped (CPU, RAM, storage, power)\n   - The order of component installation is physically impossible\n\n2. SAFETY CHECK: Penalize if:\n   - ESD (electrostatic discharge) precautions are not mentioned\n   - Power connection sequence is incorrect\n\n3. VERIFICATION CHECK: Penalize if POST (Power-On Self-Test) or initial boot verification is missing at the end.\n\n4. Do NOT penalize for having many steps (15+) - this is appropriate for the task complexity.\n\n\nANTI-CHECKLIST GUIDANCE (READ THIS FIRST - CRITICAL):\n- Do NOT penalize for missing steps you might expect\n- Do NOT require a specific number of steps - let complexity dictate length\n- Do NOT check against an imagined \"ideal\" procedure\n- Do NOT interpret rules too literally - use common sense\n- Different valid procedures exist - assess the quality of what IS provided\n- ONLY penalize for actual problems: incorrect sequence, factual errors, missing critical safety steps, or truly confusing instructions\n\nEVALUATION CRITERIA:\n\n1. PROCEDURAL ACCURACY: Steps must be in correct sequence. Penalize only if actions are genuinely out of order or skip critical prerequisites.\n\n2. ACTION-ORIENTED LANGUAGE: Each step must use imperative verbs (Click, Type, Add, Place, Turn, etc.). Penalize passive or purely descriptive language.\n\n3. LOGICAL STEP GROUPING: Steps should be coherent units that a user can follow without confusion. This does NOT mean micro-splitting every movement:\n   - ACCEPTABLE: \"Click the File name field and type your document name\" (filling a form field is ONE action)\n   - ACCEPTABLE: \"Pull over safely and turn on hazard lights\" (logically grouped safety actions)\n   - ACCEPTABLE: \"Pour hot water, swirl to warm, then discard\" (continuous motion)\n   - PROBLEMATIC: \"Download the file, install it, configure settings, and restart\" (unrelated actions crammed together)\n   The goal is clarity, not arbitrary splitting. If a step reads naturally and a user can follow it without confusion, it's fine.\n\n4. VERIFICATION POINTS: Where helpful, include confirmation of success. Only penalize if verification is missing for critical/risky actions. Do NOT penalize verification steps as \"padding\" - helping users confirm success is valuable teaching.\n\n5. FORMAT COMPLIANCE:\n   - title: Maximum 50 characters\n   - text: Maximum 300 characters\n\n6. SCOPE ADHERENCE: Content should cover the activity as described. Do not penalize for reasonable setup or verification steps.\n\n7. PRACTICAL FOCUS: Steps should be actionable instructions, not conceptual explanations.\n\nFINAL CHECK: Before penalizing anything, ask yourself: \"Would a reasonable human instructor consider this a genuine problem?\" If not, do not penalize.\n\n    ",
-  "judgedAt": "2026-01-18T04:07:17.826Z",
+  "judgedAt": "2026-02-21T23:16:12.073Z",
   "judgments": [
     {
-      "judgeId": "anthropic/claude-opus-4.5",
+      "judgeId": "anthropic/claude-opus-4.6",
       "rankings": [
         {
-          "anonymousId": "Model G",
-          "modelId": "anthropic/claude-sonnet-4.5",
-          "reasoning": "Model G provides an excellent 37-step guide that covers all critical components thoroughly. ESD is mentioned (anti-static bag), all major components are covered (CPU, RAM, storage, GPU, PSU) in correct order. CPU installation is properly detailed with socket opening, positioning, and locking. Thermal paste and cooler installation are included. Power connections are complete (24-pin, CPU power, GPU power). Front panel connections are detailed. POST/verification is included at the end. Steps are action-oriented with imperative verbs. The step-by-step breakdown is logical without over-splitting. Each step stays within 300 characters. Only minor note: the anti-static bag reference is less ideal than an anti-static mat or grounding strap mention, but grounding is implicitly addressed.",
+          "anonymousId": "Model L",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Excellent comprehensive guide with 30 steps covering all critical components (CPU, RAM, storage, PSU, GPU), proper ESD precautions (anti-static wrist strap mentioned in step 1), correct installation order, and thorough POST/BIOS verification at the end (steps 29-30 cover power-on and BIOS detection). Action-oriented language throughout with imperative verbs. Includes front panel connectors, USB headers, audio headers, cable management, and a verification checklist step. Standoff installation is mentioned. Dual-channel RAM guidance included. Titles are within 50 chars, text within 300 chars. Step grouping is logical and clear. The final step confirming BIOS detection of components is an excellent verification point. Minor: could have separated the cooler fan connection from mounting in step 7 for clarity, but this is a reasonable grouping.",
           "score": 9.2
         },
         {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Very thorough 38-step guide. Excellent ESD coverage (step 2), correct procedural order, all critical components covered, and includes a final connection check (step 37). However, it's missing a proper POST/boot verification step at the end - the guide ends at 'Close the case' (step 38) without a power-on and boot test step, which is a significant omission per the evaluation criteria. Wait - re-reading, it does end at step 38 closing the case with no POST step. This is a notable penalty. The guide is otherwise excellent with great detail on cooler mounting hardware, standoffs, front panel connectors, USB 2.0/3.0, audio, case fans, and cable management. Step granularity is appropriate. Titles and text lengths appear compliant. The missing POST step is a significant issue.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Comprehensive 25-step guide with excellent ESD coverage (step 2), all critical components, correct order, and POST verification at the end (step 25). Covers front panel cables, USB headers, audio header, and a final visual check. Action-oriented language throughout. Good detail on dual-channel RAM slots. The power connection sequence groups 24-pin and CPU power into one step (step 14), which is acceptable grouping. Includes GPU bracket securing and SATA cable connections. Good verification at step 24 before power-on. Titles and text appear within limits. Slightly less detailed than Model L on cable management and case fan installation, but still very solid.",
+          "score": 8.8
+        },
+        {
           "anonymousId": "Model B",
-          "modelId": "anthropic/claude-opus-4.5",
-          "reasoning": "Model B provides a comprehensive 36-step guide that covers virtually all aspects of PC building. ESD precautions are included (anti-static surface). CPU installation is properly sequenced with socket opening, CPU placement, securing, thermal paste, and cooler mounting. All components are covered: CPU, RAM, M.2, SATA drives, GPU, PSU. Power connections are thorough: 24-pin, CPU power, GPU power, SATA power. Front panel connectors including USB and audio are covered. POST verification is included at the end. Steps are action-oriented with good logical grouping. Minor issue: CPU cooler fan connection comes after cooler mounting which is correct. The guide includes optional SATA drive steps which is appropriate. Very thorough and accurate.",
-          "score": 9.1
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Very comprehensive 36-step guide covering all critical components with correct order. ESD precautions are partially addressed - the motherboard is placed on anti-static bag (step 1) but no explicit mention of anti-static wrist strap or grounding yourself, which is a notable gap. Covers front panel connectors, USB, audio headers, a final check (step 34), and POST verification (steps 35-36). Action-oriented language throughout. Good detail on RAM slot recommendations (slots 2 and 4). The M.2 installation happens after motherboard is in the case (steps 28-30), which is less ideal but not incorrect. Step grouping is logical. Titles within limits. The missing explicit ESD grounding instruction is a penalty per safety criteria.",
+          "score": 8.3
         },
         {
           "anonymousId": "Model C",
-          "modelId": "openai/gpt-5.2",
-          "reasoning": "Model C provides a comprehensive 37-step guide with excellent attention to detail. ESD is explicitly addressed (anti-static strap mention). CPU installation sequence is correct with socket opening, insertion, locking, thermal paste, and cooler mounting. All major components covered: CPU, RAM, M.2, SATA drives, GPU, PSU. Power connections are complete. Front panel connectors are detailed. The guide includes helpful verification language ('You should...'). However, it ends with 'Reinstall both side panels' without a POST/power-on verification step, which is a critical omission per the task requirements. The final connection check is good but doesn't substitute for actual boot verification.",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Comprehensive 36-step guide covering all critical components, correct order, and POST verification at the end (steps 34-36 with a separate confirmation step). Good ESD precaution (anti-static bag mentioned in step 1, though no explicit wrist strap mention). Covers front panel connectors, USB headers, audio, case fans, cable management. Action-oriented language. The final step confirming successful boot is a nice touch. However, the ESD precaution is implicit rather than explicit - placing board on anti-static bag is mentioned but grounding yourself is not explicitly stated. The RAM steps (8-10) are split into three steps which is a bit granular but acceptable. Overall very solid guide.",
           "score": 8.5
         },
         {
-          "anonymousId": "Model I",
+          "anonymousId": "Model A",
           "modelId": "openai/gpt-5-mini",
-          "reasoning": "Model I provides a solid 25-step guide covering all critical components. ESD is mentioned (anti-static mat, anti-static strap). CPU installation is properly sequenced. All major components covered: CPU, cooler, RAM, M.2, SATA, GPU, PSU. Power connections are complete: 24-pin, 8-pin CPU, SATA power, PCIe GPU power. The guide ends with POST verification which is excellent. Front panel connections are notably missing (power switch, LEDs, USB headers, audio) which is a significant omission - the PC wouldn't actually turn on without the power switch connection being mentioned. Steps are action-oriented and within character limits.",
-          "score": 8
-        },
-        {
-          "anonymousId": "Model F",
-          "modelId": "anthropic/claude-haiku-4.5",
-          "reasoning": "Model F provides a 23-step guide. ESD is addressed (grounding mentioned). CPU installation is covered but lacks explicit socket opening/closing steps - it combines too much. All major components are covered. Power connections are complete. POST verification is included. However, Step 1 mentions 'Power off your workstation' and 'unplug the power cable' which implies this is an upgrade to an existing system rather than a new build - this creates confusion about the task scope. The thermal paste/cooler mounting is vague ('follow cooler instructions'). Front panel connections are covered. Overall solid but the framing as an upgrade rather than new build is problematic.",
+          "reasoning": "Solid 25-step guide covering all critical components with correct order and POST verification (step 24). Strong ESD precautions (anti-static mat/strap mentioned in steps 1-2). Action-oriented language throughout with good verification points. Covers both M.2 and SATA storage options. However, it's missing front panel connectors (power switch, reset, LEDs), USB headers, and audio headers - the PC wouldn't actually turn on without the power switch connection, which is a significant omission. Cable management is briefly addressed in the final step. The I/O shield step is included. Titles and text within limits. The missing front panel connector instructions are a notable gap.",
           "score": 7.5
         },
         {
-          "anonymousId": "Model D",
-          "modelId": "openai/gpt-5.1-instant",
-          "reasoning": "Model D provides an 18-step concise guide that covers all critical components. ESD precautions are NOT explicitly mentioned which is a safety violation per task requirements. CPU installation is covered but socket opening/preparation could be clearer. All major components included: CPU, RAM, storage, GPU, PSU. Power connections are present but routing cables before installation (Step 11) is slightly unusual sequence. POST verification is included at the end. Front panel connections are present. Steps are action-oriented. The guide is more concise which works for the task but the missing ESD mention is a notable safety gap.",
-          "score": 7.3
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Good 14-step guide that covers all critical components with correct order. ESD precautions are well addressed (step 1). POST verification is present but bundled into step 14 with cable management and case closing, which is a lot crammed into one step - 'Check cables, bundle, close panels, connect power, flip switch, press power button' is problematic grouping per the criteria. Front panel headers, USB, and audio are mentioned in step 13 but somewhat briefly. The guide is more concise than others, which means some steps combine quite a bit of work. Step 10 combines M.2 and SATA installation which is acceptable. Overall good but the final step grouping is too aggressive, and the guide could benefit from more granularity on verification.",
+          "score": 7.6
         },
         {
-          "anonymousId": "Model E",
-          "modelId": "xai/grok-4.1-fast-reasoning",
-          "reasoning": "Model E provides a 22-step guide. ESD is addressed (anti-static wrist strap). CPU installation is properly sequenced. All major components covered. However, the guide ends abruptly at step 22 with 'Connect Fans and Verify' which mentions 'no loose connections' but lacks an actual POST/boot verification step. This is a critical omission - there's no mention of powering on the system, connecting a monitor, or confirming successful boot. The case is never closed in the instructions. Front panel connections are mentioned but briefly. Steps are action-oriented. The incomplete ending significantly impacts the score.",
-          "score": 7
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Concise 11-step guide that covers CPU, RAM, storage, GPU, PSU, and power cables. ESD precaution mentioned (step 1). POST verification present (step 11). However, the guide is quite compressed - step 5 combines thermal paste, cooler mounting, and fan connection. Step 9 combines 24-pin, 8-pin CPU, and GPU power cables into one step, which is problematic grouping (unrelated actions crammed together). Missing I/O shield installation. Missing front panel USB and audio connections. The PSU is installed without prior mention of the case preparation. Step 2 combines socket opening, CPU alignment, placement, AND lever closing - that's a lot for one step. While concise can be good, this guide sacrifices clarity and completeness.",
+          "score": 6.5
         },
         {
           "anonymousId": "Model H",
-          "modelId": "google/gemini-3-pro-preview",
-          "reasoning": "Model H provides a concise 14-step guide that covers all critical components. ESD is mentioned (grounding). CPU, RAM, cooler, storage (M.2 and SATA), GPU, and PSU are all covered. Power connections are complete. POST verification is included at the end ('press the power button to test'). However, the condensed nature means some steps are overly combined - e.g., Step 3 combines CPU alignment, placement, and locking in one step. Step 10 combines M.2 and SATA installation which are different processes. This violates the logical grouping principle somewhat. Front panel connections are covered. The guide works but feels rushed in places.",
-          "score": 7.2
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Reasonable 18-step guide covering all critical components with correct order and POST verification (step 18). However, ESD precautions are completely absent - no mention of anti-static strap, grounding, or static discharge anywhere, which is a significant safety penalty. The guide uses somewhat passive/descriptive language in places ('You should see...', 'It should sit level'). Missing I/O shield installation as a separate clear step (mentioned briefly in step 9). Missing front panel USB and audio connections. Cable routing step (11) comes before power connections (13-14), which is a reasonable approach. The 'You should see/feel' pattern is repetitive but serves as verification. Overall decent but the complete absence of ESD safety is a major gap.",
+          "score": 6.3
         },
         {
-          "anonymousId": "Model A",
+          "anonymousId": "Model F",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "22-step guide covering most critical components. ESD precautions mentioned (step 1). Correct installation order. However, POST/boot verification is completely missing - the guide ends at step 22 with 'Connect Fans and Verify' which just says to ensure connections are tidy, not to actually power on and test. This is a significant penalty per the verification criteria. The CPU cooler fan connection is not explicitly mentioned (step 22 mentions fan headers generically but not the CPU fan specifically in step 5). Front panel connections are briefly covered (step 21). SATA data cable connection is not mentioned. Some steps have incomplete sentences or feel rushed ('Secure motherboard with screws (start corners, finger-tighten, avoid overtightening). Check no bending.'). Missing the power-on POST test is a critical gap.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "23-step guide with several issues. The first step 'Power off your workstation completely and unplug the power cable' suggests this is upgrading an existing system, not building a new PC - this is contextually inappropriate for a PC build from scratch. ESD is addressed (step 3). Covers most components. POST verification present (step 23). However, step 2 about opening the case suggests this is an existing system. The I/O shield is not mentioned. Front panel connectors are covered. Step 16 mentions 'M.2 to SATA adapters' for SATA power which is unusual/incorrect. Some steps are vaguely worded ('Attach the CPU cooler according to your cooler's specific instructions' - step 6 is not very actionable). The conceptual framing as modifying an existing system rather than building new is a notable issue. Missing cable management step order is odd (step 20 after case closing discussion).",
+          "score": 5.8
+        },
+        {
+          "anonymousId": "Model J",
           "modelId": "google/gemini-3-flash",
-          "reasoning": "Model A provides only 10 steps which is insufficient for a complex PC build task. While ESD precautions are partially addressed (anti-static mat mentioned), critical components are missing or under-detailed: CPU cooler installation is completely absent (critical safety/functionality issue - CPU would overheat), thermal paste not mentioned. Front panel connections (power switch, LEDs, USB, audio) are not covered - the PC couldn't even turn on. The final step lacks actual POST verification - it mentions 'prepare for first boot' but doesn't confirm the system actually boots. Power connections are present. The guide is too abbreviated for the task complexity.",
-          "score": 5.5
+          "reasoning": "Very concise 10-step guide that covers the basic components but is too compressed for this task. ESD precautions are absent - no mention of grounding, anti-static strap, or static discharge (major safety penalty). The I/O shield installation is vaguely referenced in step 5 ('aligning the rear ports with the I/O shield') but no step for actually installing it. Front panel connectors are completely missing - the PC cannot turn on without Power SW connection. No mention of thermal paste or CPU cooler installation at all - this is a critical component skip. No front USB, audio, or case fan connections. Cable management absent. The POST verification is minimal (step 10). Missing CPU cooler is a critical safety and functional issue - the CPU would overheat immediately. This guide is far too abbreviated for the task complexity.",
+          "score": 3.5
         }
       ]
     },
     {
-      "judgeId": "google/gemini-3-pro-preview",
+      "judgeId": "google/gemini-3.1-pro-preview",
       "rankings": [
         {
-          "anonymousId": "Model I",
+          "anonymousId": "Model A",
           "modelId": "openai/gpt-5-mini",
-          "reasoning": "This model provides the best overall procedure. It is highly detailed (25 steps), logically sequenced, and strictly adheres to all safety and verification requirements. It effectively handles the 'Test before close' workflow, which is a best practice in PC building to avoid having to reopen the case if issues arise. It includes clear action verbs, verification checks, and covers all critical components including the CPU cooler and front panel connectors.",
+          "reasoning": "Exceptional quality. The guide covers all components logically, includes appropriate ESD precautions, ends with a clear POST verification, and uses strong action-oriented language. The step grouping is excellent, and it executes all task expectations flawlessly.",
           "score": 10
         },
         {
-          "anonymousId": "Model B",
-          "modelId": "anthropic/claude-opus-4.5",
-          "reasoning": "Model B offers an excellent, deep-dive procedure (36 steps) that is very educational for complex steps like front panel wiring and cooler installation. It adheres to safety guidelines. It scores slightly lower than Model I only because it omits the final cleanup step of putting the side panels back on after testing, leaving the build technically unfinished.",
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Excellent guide. It is perfectly sequenced, concise, and covers all necessary safety precautions (explicit ESD grounding), component installations, and a final boot check. Action-oriented language is used effectively throughout.",
           "score": 9.5
         },
         {
-          "anonymousId": "Model G",
-          "modelId": "anthropic/claude-sonnet-4.5",
-          "reasoning": "Model G is nearly equivalent to Model B in detail and quality (37 steps). It covers all critical areas well. It is ranked slightly lower because it suggests placing the motherboard on the anti-static bag, which is a debated practice (the box is preferred by many experts), and like Model B, it ends without explicitly instructing the user to close the case.",
-          "score": 9
-        },
-        {
-          "anonymousId": "Model F",
-          "modelId": "anthropic/claude-haiku-4.5",
-          "reasoning": "Model F provides a solid, complete workflow (23 steps) that includes safety, all critical components, and the final POST verification. It follows the logic of closing the case before testing, which is valid but less efficient than Model I's approach. Its instructions are clear and compliant.",
-          "score": 8.5
-        },
-        {
-          "anonymousId": "Model H",
-          "modelId": "google/gemini-3-pro-preview",
-          "reasoning": "Model H follows all specific constraints (Safety, Scope, Verification) and produces a working PC. However, it is quite condensed (14 steps) for a task labeled 'Complex Activity'. Step 13 bunches complex wiring tasks together, which is less helpful than the top models. It is a good, compliant output but lacks the depth of the higher-ranked models.",
-          "score": 8
-        },
-        {
-          "anonymousId": "Model C",
-          "modelId": "openai/gpt-5.2",
-          "reasoning": "Model C contains excellent instructional content, with detailed steps and valuable 'You should' verification points for every action. However, it fails the strict prompt requirement to include a final POST/Boot verification step (it ends at closing the case). This specific constraint failure forces a significant score penalty despite the high quality of the body text.",
-          "score": 6.5
+          "anonymousId": "Model L",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Outstanding level of detail and beautifully sequenced. It properly verifies POST and uses great action-oriented language. The only minor flaw is suggesting the user place the motherboard on the outside of its anti-static bag, which can technically act as a conductive surface.",
+          "score": 9.5
         },
         {
           "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Very good, highly efficient guide. It is more condensed than the top models but still hits every single critical safety, scope, and verification requirement perfectly while maintaining clear imperative language.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "A solid and logical procedure. It loses a few points because while it mentions an anti-static surface, it misses an explicit instruction for the user to ground themselves, resulting in a minor safety deduction.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model H",
           "modelId": "openai/gpt-5.1-instant",
-          "reasoning": "Model D provides a coherent procedure that results in a built and tested PC. However, it fails the 'Safety Check' requirement by not mentioning ESD (Electrostatic Discharge) precautions. It is ranked below Model C because disregarding safety is generally considered a more critical flaw than missing a final confirmation step.",
+          "reasoning": "Provides a generally good high-level overview of the build process with correct sequencing and POST verification, but it completely fails to mention any ESD or static electricity precautions, triggering a penalty under the safety check.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Adequate, but has a few notable flaws. It lacks an explicit instruction for the user to ground themselves, suggests placing the motherboard on the outside of its anti-static bag (a static risk), and places the M.2 SSD installation after the GPU, which is physically awkward as GPUs typically cover M.2 slots.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "An incredibly thorough and beautifully detailed guide for the assembly process. However, it abruptly ends after closing the case panels and completely skips the power-on and POST verification at the end, explicitly violating a critical Verification Check requirement.",
           "score": 5.5
         },
         {
-          "anonymousId": "Model E",
+          "anonymousId": "Model F",
           "modelId": "xai/grok-4.1-fast-reasoning",
-          "reasoning": "Model E outlines the build process but fails the 'Verification Check' by not including a final Power On/POST step. It effectively builds the PC but stops short of testing it. It is ranked lower than C and D because it is less detailed than C and shares the constraint violation found in C.",
+          "reasoning": "Provides decent step-by-step assembly instructions with correct ESD precautions, but it ends abruptly after connecting the fans and completely misses the POST or initial boot verification, failing the Verification Check criteria.",
           "score": 5
         },
         {
-          "anonymousId": "Model A",
+          "anonymousId": "Model K",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Poor execution of scope. While the guide instructs the user to plug in power cables, it completely skips the physical installation and mounting of the Power Supply Unit (PSU) into the case, leaving a critical component floating.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Major failure in procedural accuracy and scope. The guide completely skips the critical step of lowering and screwing the motherboard into the case, eventually instructing the user to close the case as if the board magically mounted itself.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model J",
           "modelId": "google/gemini-3-flash",
-          "reasoning": "Model A fails the 'Scope Check' catastrophically. It omits the installation of the CPU Cooler and the connection of Front Panel connectors (specifically the power switch). Following these instructions would result in a PC that cannot be turned on and would overheat immediately if it could. It is an unusable procedure.",
-          "score": 1
+          "reasoning": "Major failure in scope and safety. The guide completely skips the installation of the CPU cooler and thermal paste. Attempting to boot a newly built PC without a CPU cooler will cause immediate thermal throttling or shutdown, making this a critical omission.",
+          "score": 3
         }
       ]
     },
@@ -124,58 +160,76 @@
       "judgeId": "openai/gpt-5.2",
       "rankings": [
         {
-          "anonymousId": "Model B",
-          "modelId": "anthropic/claude-opus-4.5",
-          "reasoning": "Most complete and well-sequenced: covers CPU, cooler, RAM, storage (M.2 + optional SATA), PSU, GPU, front-panel/USB/audio, fans, cable management, and ends with explicit power-on and POST/BIOS confirmation. Power sequence is correct (connect AC, then PSU switch, then case button). Main weakness: no explicit ESD/grounding step, and many steps exceed the 300-character limit.",
-          "score": 8.6
+          "anonymousId": "Model L",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Most complete and well-sequenced: ESD precautions, CPU/RAM/storage/PSU/GPU all covered, standoffs and I/O shield handled, front-panel/USB/audio/fans included, and ends with first-boot + BIOS/UEFI detection verification. Steps are action-oriented and logically grouped. Minor verbosity but within reason.",
+          "score": 9.6
         },
         {
           "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Very thorough, strong safety (ESD), correct physical ordering (standoffs before mounting board, power after PSU install, etc.), good front-panel/USB/audio/SATA/GPU coverage, and has a solid final connection check and case closure. Only notable miss: no explicit POST/BIOS power-on verification step at the end (ends at closing case).",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Comprehensive with good grouping and lots of verification cues, includes front-panel wiring and explicit POST test. Sequence is mostly correct and actionable. Main weakness: never explicitly installs the PSU before instructing to connect ATX/CPU power (implicit PSU existence), which is a scope/sequence gap for a build guide.",
+          "score": 8.7
+        },
+        {
+          "anonymousId": "Model A",
           "modelId": "openai/gpt-5-mini",
-          "reasoning": "Strong procedural flow with action verbs and clear verification. Includes tools/anti-static strap (ESD addressed), CPU/cooler/RAM/M.2, PSU/GPU, optional SATA, and explicit POST test. Power sequence is sensible. Notable gaps: no explicit standoff check before mounting motherboard; front-panel/USB/audio connections are missing (not “critical” per prompt but a practical omission). Many steps likely exceed 300 characters.",
-          "score": 8.1
+          "reasoning": "Good coverage of critical components, clear imperative steps, includes anti-static strap mention and explicit POST test. Sequence is generally feasible. Gaps: no standoff check/front-panel wiring/USB/audio, and it oddly includes SATA power/data steps without ever instructing mounting a SATA drive; also I/O shield step is case-dependent. Still strong overall.",
+          "score": 8.4
         },
         {
           "anonymousId": "Model C",
-          "modelId": "openai/gpt-5.2",
-          "reasoning": "Excellent ESD grounding, standoff check, and thorough component coverage (CPU, cooler, RAM, M.2/SATA, PSU, GPU, front panel, USB, audio, fans, cable mgmt). Sequence is physically plausible. Major issue: missing any power-on/POST verification at the end (explicitly required). Also many steps exceed 300 characters.",
-          "score": 7.9
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Covers all critical components plus front-panel/USB/audio/fans/cable management and includes explicit POST confirmation. However, it installs M.2 after the motherboard is already mounted in the case (often possible but unnecessarily awkward) and has a few mildly confusing details (e.g., GPU 'fans facing down' not universal).",
+          "score": 8.1
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Solid, complete build flow with ESD, standoffs implied via case, front-panel/USB/audio, and ends with power-on/BIOS verification. One factual/safety issue: says if cooler has pre-applied paste, 'wipe off any existing paste on the CPU first' (there typically isn’t paste on the CPU; wiping can introduce contamination). Otherwise good.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Covers CPU/RAM/storage/PSU/GPU, mentions ESD, and has a final test power-on. Sequence is feasible. Missing explicit POST/BIOS success criteria (just 'test'), and front-panel wiring is combined a bit broadly. Still clear and practical.",
+          "score": 7.6
         },
         {
           "anonymousId": "Model H",
-          "modelId": "google/gemini-3-pro-preview",
-          "reasoning": "Good high-level build order with ESD mention, CPU/RAM/cooler, standoffs, PSU, power leads, storage, GPU, front-panel wiring, and a final power-on test mention. Weaknesses: storage step is vague (“screw them into the motherboard slots now”), fewer verification cues, and likely exceeds 300 characters in multiple steps.",
-          "score": 7.4
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Reasonably ordered, covers critical components and ends with boot-screen verification. Missing explicit ESD precautions (a stated safety requirement). Also step 2 assumes socket cover already removed/lever raised, which can be wrong as a default instruction.",
+          "score": 7
         },
         {
           "anonymousId": "Model D",
-          "modelId": "openai/gpt-5.1-instant",
-          "reasoning": "Includes CPU/RAM/M.2, standoffs, PSU, GPU, front panel, and ends with power-on verification. However, it incorrectly assumes the CPU socket cover is already removed and lever raised during 'Position the Motherboard' (not action-oriented and can be wrong), and ESD precautions are missing. Some steps bundle many actions but still mostly followable. Likely over 300 chars in some texts.",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Meets core components and includes grounding and a first-boot check. But it’s quite compressed: several steps bundle multiple actions (cooler+paste+fan in one; multiple power cables in one), limited verification points, and omits storage beyond M.2/SATA and some case wiring details. Still generally correct.",
           "score": 6.9
         },
         {
           "anonymousId": "Model F",
-          "modelId": "anthropic/claude-haiku-4.5",
-          "reasoning": "Good safety: unplug/discharge and explicit grounding. Includes CPU/cooler/RAM/M.2, GPU, and ends with a basic power-on check. Critical flaw: never installs/mounts the motherboard into the case and never installs the PSU (yet repeatedly refers to PSU cables). That’s a major skipped component/sequence issue. Also no explicit POST/BIOS check (only ‘should boot’).",
-          "score": 5.2
-        },
-        {
-          "anonymousId": "Model E",
           "modelId": "xai/grok-4.1-fast-reasoning",
-          "reasoning": "Mentions ESD, covers CPU/cooler/RAM/M.2, standoffs, I/O shield, motherboard mount, PSU, GPU, and basic wiring. Major missing requirement: no explicit power-on/POST verification step at the end. Also has a combined 'Connect Storage and GPU Power' step and generally omits a clear, safe power-connection sequence. Likely exceeds 300 chars.",
-          "score": 5
+          "reasoning": "Good ESD mention and generally correct assembly order through most hardware. Major issue: no POST/initial boot verification at end (fails a critical requirement). Also some steps are slightly vague/odd (e.g., cooler 'until screws latch').",
+          "score": 6.6
         },
         {
           "anonymousId": "Model G",
-          "modelId": "anthropic/claude-sonnet-4.5",
-          "reasoning": "Detailed and action-oriented with good sequencing and ends with power-on test. However, it never installs/mounts the PSU at all, yet instructs connecting ATX/CPU/GPU/SATA power “from the PSU,” which is a major missing critical component. Also lacks explicit ESD precautions. Many steps exceed 300 characters.",
-          "score": 4.6
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Includes grounding and ends with power-on expectation, but the procedure has a major physical/sequence problem: it never mounts the motherboard into the case or installs the PSU, yet connects 24-pin/CPU power and proceeds as if powered. This is a critical scope/ordering failure.",
+          "score": 3.2
         },
         {
-          "anonymousId": "Model A",
+          "anonymousId": "Model J",
           "modelId": "google/gemini-3-flash",
-          "reasoning": "Covers CPU/RAM/M.2, motherboard mount, PSU, GPU, and basic power leads. Major issues: no ESD precautions; misses CPU cooler/thermal paste entirely; no front-panel wiring (so power button may not work); and no explicit POST/BIOS verification (just flips PSU switch). Also the final step’s power sequence is incomplete (no AC cord / no press power button). Likely exceeds 300 chars.",
-          "score": 4.1
+          "reasoning": "Too incomplete for the task expectations: no ESD/grounding, no CPU cooler installation, no front-panel wiring (so powering on is not assured), no storage beyond M.2, and no explicit POST/BIOS verification (only PSU switch prep). Significant missing critical components/steps.",
+          "score": 2.8
         }
       ]
     }
