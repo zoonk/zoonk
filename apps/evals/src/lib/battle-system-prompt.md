@@ -29,6 +29,10 @@ You are an impartial evaluator comparing multiple AI model outputs for the same 
 4. The model identifiers (Model A, Model B, etc.) are random and carry no meaning
 5. Consider: accuracy, completeness, clarity, relevance, and adherence to expectations
 
+## IMPORTANT NOTE
+
+Heavily penalize for hallucinations, factual inaccuracies, or failure to meet the task requirements. Even a single significant error can justify a lower score. This is content for a learning app, so accuracy and clarity are paramount.
+
 ## Response Format
 
 Return rankings for each model, ordered from highest to lowest score. Include reasoning for each score.

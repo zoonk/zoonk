@@ -7,12 +7,12 @@ import systemPrompt from "./activity-examples.prompt.md";
 const DEFAULT_MODEL = process.env.AI_MODEL_ACTIVITY_EXAMPLES ?? "openai/gpt-5.2";
 
 const FALLBACK_MODELS = [
-  "openai/gpt-5-mini",
-  "openai/gpt-5.1-instant",
   "anthropic/claude-opus-4.5",
-  "anthropic/claude-sonnet-4.5",
-  "google/gemini-3-flash",
+  "google/gemini-3.1-pro-preview",
+  "anthropic/claude-opus-4.6",
   "google/gemini-3-pro-preview",
+  "google/gemini-3-flash",
+  "openai/gpt-5-mini",
 ];
 
 const schema = z.object({

@@ -1,110 +1,146 @@
 {
   "expectations": "\nLANGUAGE REQUIREMENT: Titles and text must be in Spanish.\n\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Encryption examples must reflect genuine security applications. Penalize if:\n   - Examples confuse encryption with other security measures (passwords, firewalls)\n   - Claims about encryption strength or applications are technically inaccurate\n\n2. CONTEXT CHECK: Penalize if examples are limited to banking. Encryption protects messaging, medical records, voting systems, e-commerce, streaming services, and even car key fobs.\n\n3. DISTINCTION FROM EXPLANATION: The explanation covered WHAT encryption is (scrambling data with keys). This should show WHERE encryption silently protects information in daily digital life.\n\n\nEVALUATION CRITERIA:\n\n1. REAL-WORLD RELEVANCE: Examples must be concrete, recognizable situations from everyday life. Penalize abstract or theoretical applications without clear real-world grounding.\n\n2. CONTEXT DIVERSITY: Content should show the topic across different life domains (daily life, work, entertainment, unexpected places, personal interests). Variety helps different learners connect.\n\n3. RECOGNITION FACTOR: Examples should create \"aha moments\" — helping learners see the topic in familiar places they hadn't noticed before.\n\n4. FORMAT: Each step must have a title (max 50 chars) and text (max 300 chars).\n\n5. TONE: Conversational, like pointing out hidden patterns in everyday life. Include metaphors and analogies from familiar activities.\n\n6. FOCUS: Shows WHERE something appears (real-world contexts), not WHAT it is (definitions) or HOW it works (processes).\n\n7. NO OVERLAP: Must not repeat content from the EXPLANATION_STEPS which covered the WHAT.\n\n8. SCOPE: Content matches the lesson scope exactly.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for missing specific life domains or contexts you might expect\n- Do NOT require a specific number of contexts or examples\n- Do NOT check against an imagined \"complete\" list of applications\n- ONLY penalize for: incorrect real-world claims, abstract examples without concrete situations, overlap with explanation content, or lack of variety in context types\n- Different valid sets of examples exist - assess the quality of what IS provided\n\n    ",
-  "judgedAt": "2026-01-17T14:32:37.405Z",
+  "judgedAt": "2026-02-21T23:29:13.455Z",
   "judgments": [
     {
-      "judgeId": "anthropic/claude-opus-4.5",
+      "judgeId": "anthropic/claude-opus-4.6",
       "rankings": [
         {
-          "anonymousId": "Model A",
-          "modelId": "openai/gpt-5.1-instant",
-          "reasoning": "Excellent variety covering 10 diverse contexts: messaging, e-commerce, Wi-Fi, cloud storage, phone encryption, video calls, banking, app credentials, Bluetooth, and health data. Strong metaphors ('burbuja privada', 'cofre digital', 'tinta invisible', 'bata y mascarilla'). All examples are concrete and relatable. Good conversational tone. All text and titles are in Spanish. Text lengths are appropriate (under 300 chars). Titles are concise. No overlap with 'what encryption is' - focuses on WHERE it appears. Some minor technical simplification (not all cloud storage is encrypted even from the provider), but generally accurate.",
-          "score": 9
+          "anonymousId": "F",
+          "modelId": "F",
+          "reasoning": "Excellent diversity of contexts: messaging, e-commerce, banking, Wi-Fi, cloud storage, device encryption, video calls, password managers, work documents, and NFC payments. All examples are concrete and recognizable. Good conversational tone with effective analogies ('como hablar con el cajero en una cabina privada'). Titles are concise and within limits. Text lengths are all within 300 chars. Focuses on WHERE encryption appears rather than HOW it works. The NFC/tap payment and password manager examples are distinctive and create genuine 'aha moments.' No significant technical inaccuracies. Minor note: mentioning WPA2/WPA3 is slightly technical but still grounded in a real-world context.",
+          "score": 8.5
         },
         {
-          "anonymousId": "Model C",
-          "modelId": "openai/gpt-5.2",
-          "reasoning": "Very good variety with 10 examples: chats, e-commerce, banking, Wi-Fi (mentions WPA2/WPA3 specifically), cloud storage, phone loss protection, video calls, password managers, work documents, and NFC payments. Good balance of technical accuracy and accessibility. Concrete examples with app names (WhatsApp, Signal, iCloud, 1Password). Good metaphors ('sobre sellado', 'cabina privada', 'caja con candado'). Spanish text throughout. Appropriate lengths. One small issue: mentions technical terms that may be less conversational, but overall strong quality.",
-          "score": 8.8
-        },
-        {
-          "anonymousId": "Model D",
-          "modelId": "anthropic/claude-sonnet-4.5",
-          "reasoning": "Good variety with 10 examples: online shopping, WhatsApp, login sessions, phone data, video calls, email, mobile banking, streaming, cloud storage, and protected WiFi. Mentions specific services (Amazon, Mercado Libre, WhatsApp, Zoom, Gmail, Netflix, Spotify, Google Drive, Dropbox). Concrete and recognizable examples. Good conversational tone. Spanish throughout. However, the streaming example explanation (about preventing tracking of what you watch) is slightly less accurate - streaming encryption is more about DRM and transit security. Some examples feel slightly repetitive in structure.",
+          "anonymousId": "G",
+          "modelId": "G",
+          "reasoning": "Good variety: messaging, e-commerce, lost phone, VPN/remote work, streaming, medical portal, Wi-Fi. All within format limits. Creates good 'aha moments' especially with the Wi-Fi password explanation and streaming DRM. Conversational tone is strong. Medical records and VPN are less common examples that add diversity. Technically accurate throughout. The streaming example about not being able to download files is a nice concrete observation. 7 steps is a good number. Clean and focused on WHERE encryption appears.",
           "score": 8.2
         },
         {
-          "anonymousId": "Model G",
-          "modelId": "anthropic/claude-opus-4.5",
-          "reasoning": "Good variety with 8 examples: messaging, online payments, phone encryption, email, streaming, social media passwords, medical records, and cloud storage. Concrete examples with specific service names. Good conversational tone. Spanish throughout. However, one technical issue: the statement about passwords being 'encrypted' when stored is imprecise - they're typically hashed, not encrypted (hashing is distinct from encryption). This is a notable accuracy issue per the criteria. Otherwise solid examples with good diversity.",
-          "score": 7.5
+          "anonymousId": "H",
+          "modelId": "H",
+          "reasoning": "Very comprehensive with 10 steps covering messaging, payments (including Apple Pay), device encryption, streaming, email, Wi-Fi, cloud, VPN, banking, and biometrics. Good conversational tone with effective metaphors ('túnel invisible'). Technically accurate. The biometric chip example is distinctive. However, some texts are borderline on the 300-char limit and a few steps lean slightly toward explaining HOW (e.g., the biometric chip step). The banking step ('múltiples capas de encriptación') is a bit vague. Still very strong overall with excellent diversity.",
+          "score": 8
         },
         {
-          "anonymousId": "Model E",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Good content with 6 examples covering messaging, online shopping, Wi-Fi, biometric unlock, ATM/banking, and cloud photos. Good metaphors and conversational tone. Spanish throughout. The example about facial recognition/fingerprint data being 'encrypted' is somewhat imprecise - biometric templates are stored as mathematical representations but the explanation conflates encryption with the template conversion process. Also, only 6 examples provides less variety than other models, though quality is good. ATM example is somewhat similar to banking app examples elsewhere.",
-          "score": 7.3
-        },
-        {
-          "anonymousId": "Model B",
-          "modelId": "google/gemini-3-pro-preview",
-          "reasoning": "Only 6 examples but covers: WhatsApp, banking apps, online shopping, locked phone, stored passwords, and streaming. Good concrete examples with specific situations (WiFi in a café). However, the 'Tus Contraseñas Guardadas' example is technically inaccurate - it describes hashing, not encryption, and conflates the two. Also, Netflix DRM preventing copying is more about licensing controls than privacy protection as described. Fewer examples means less variety. Spanish throughout with good metaphors.",
-          "score": 7
-        },
-        {
-          "anonymousId": "Model H",
-          "modelId": "openai/gpt-5-mini",
-          "reasoning": "10 examples covering: chats, banking/mobile purchases, public Wi-Fi, cloud storage, device encryption, email/contracts, streaming DRM, medical records, electronic tickets, and professionals. Good variety including unexpected contexts (tickets, professionals). Strong metaphors throughout. However, some examples are somewhat abstract ('profesionales y fuentes seguras' is vague). The DRM explanation for streaming is present but accurate. Spanish throughout. Some examples like 'navegar en Wi-Fi público' vaguely mention 'protection' without explicitly naming encryption. Slightly less concrete than top models.",
+          "anonymousId": "A",
+          "modelId": "A",
+          "reasoning": "8 steps covering messaging, e-commerce, device encryption, email, streaming, passwords, medical records, and cloud storage. Good diversity. Technically accurate. Conversational tone works well. The 'candadito' reference is a nice real-world touch. However, the password step ('se almacena encriptada') is slightly misleading — passwords are typically hashed, not encrypted, which is a meaningful technical distinction. The tone is slightly more informational than conversational compared to top entries. All format constraints met.",
           "score": 7.8
         },
         {
-          "anonymousId": "Model F",
-          "modelId": "anthropic/claude-haiku-4.5",
-          "reasoning": "10 examples with good variety: online shopping, messaging, social media login, banking, email, video calls, cloud storage, device data, smartwatch, and streaming. Includes unexpected context (smartwatch health data). However, there are issues: the text is quite long and somewhat explanation-heavy (borders on explaining HOW rather than just WHERE). Contains a typo ('desbloquead or' should be 'desbloqueas'). Uses 'tenéis' which is Spanish from Spain, mixing registers. Some descriptions lean toward explaining mechanisms rather than pure recognition of where encryption appears. Still solid overall.",
-          "score": 7.4
+          "anonymousId": "D",
+          "modelId": "D",
+          "reasoning": "8 steps covering email, e-commerce, messaging, banking, streaming, cloud, device encryption, and Wi-Fi. Solid diversity and technically accurate. Good conversational touches ('tú compras, ella trabaja silenciosamente'). All format constraints met. The Wi-Fi step mentioning WPA3 is concrete. However, the set of examples is fairly standard without many surprising 'aha moments.' The email step's first sentence about encrypting the password specifically is a bit narrow framing of email encryption. Overall solid but not exceptional.",
+          "score": 7.7
+        },
+        {
+          "anonymousId": "K",
+          "modelId": "K",
+          "reasoning": "Only 6 steps, but they are well-crafted with strong analogies and conversational tone. Good diversity: messaging, e-commerce, Wi-Fi, biometrics, ATM/banking, cloud. The biometric explanation is particularly interesting ('un código matemático imposible de reconstruir'). However, 6 steps limits the breadth of contexts shown. The biometric step's claim that biometric data is 'encrypted' is somewhat simplified — it's stored as a mathematical template, which is more nuanced than simple encryption. Still, the quality of individual steps is high. 'Tus chismes, fotos y secretos' is nicely conversational.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "J",
+          "modelId": "J",
+          "reasoning": "10 steps covering shopping, messaging, login, device, video calls, email, banking, streaming, cloud, Wi-Fi. Good breadth and all technically accurate. Format constraints met. However, the tone is more informational than conversational — fewer metaphors and analogies compared to top entries. The streaming step's claim that encryption 'evita que terceros rastreen exactamente qué miras o escuchas' is somewhat misleading — DRM encryption's primary purpose is content protection, not privacy of viewing habits. The steps are competent but lack the distinctive 'aha' quality of the best entries.",
+          "score": 7.3
+        },
+        {
+          "anonymousId": "E",
+          "modelId": "E",
+          "reasoning": "10 steps with strong metaphorical language and conversational tone. Good variety including Bluetooth (unusual context). However, several issues: (1) The Bluetooth music encryption claim is misleading — while Bluetooth has encryption, the primary reason 'nadie pueda interceptarla o reproducirla sin permiso' overstates the DRM aspect of Bluetooth audio. (2) Some examples are too vague — 'una app de chat' instead of naming specific apps reduces concreteness. (3) The Wi-Fi step says 'la protección' rather than naming encryption, being imprecise. (4) The health step's metaphor ('bata y mascarilla') is cute but slightly trivializes. Good creative effort but accuracy and concreteness suffer in places.",
+          "score": 7
+        },
+        {
+          "anonymousId": "I",
+          "modelId": "I",
+          "reasoning": "10 steps with good diversity including tickets/boarding passes and journalists — unique contexts. However, several weaknesses: (1) Many examples avoid the word 'encriptación' using vague 'protección' instead, which dilutes the topic focus. (2) The electronic tickets example is a stretch — QR codes on boarding passes use digital signatures more than encryption per se. (3) Some steps are too abstract ('como un archivo con acceso restringido'). (4) The Wi-Fi step doesn't mention encryption explicitly. The analogies are decent but the imprecise language throughout is a notable weakness for a learning app about encryption specifically.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "C",
+          "modelId": "C",
+          "reasoning": "10 steps with broad coverage. However, multiple issues: (1) Several texts exceed 300 characters — the first step about 'Compras Online Seguras' is clearly over 300 chars, as is the 'Login en Redes Sociales' step and others. This is a format violation. (2) The login step claims passwords are 'encrypted' and compared with an 'encrypted version' — this confuses encryption with hashing, a meaningful technical error. (3) Uses 'tenéis' (vosotros form) which is Spain-specific Spanish, potentially alienating Latin American learners. (4) The smartwatch step, while creative, is somewhat niche. (5) Several steps lean toward explaining HOW encryption works rather than WHERE it appears. The step about 'desbloqueo' has a typo: 'desbloquear' is written as 'desbloqueador.'",
+          "score": 5.5
+        },
+        {
+          "anonymousId": "B",
+          "modelId": "B",
+          "reasoning": "Only 6 steps, limiting diversity. Multiple texts exceed 300 characters — the first step about WhatsApp is clearly over 300 chars, as are the online shopping and lost phone steps. This is a significant format violation. The content leans heavily toward explaining HOW encryption works (puzzle metaphors, tunnel descriptions) rather than WHERE it appears. The password step confuses encryption with hashing ('versión encriptada' of passwords). Banking is one of only 6 examples, and the guidance specifically warns against being limited to banking. Several steps overlap with explanation content about WHAT encryption is.",
+          "score": 5
         }
       ]
     },
     {
-      "judgeId": "google/gemini-3-pro-preview",
+      "judgeId": "google/gemini-3.1-pro-preview",
       "rankings": [
         {
-          "anonymousId": "Model A",
+          "anonymousId": "Model E",
           "modelId": "openai/gpt-5.1-instant",
-          "reasoning": "Model A is the strongest output. It perfectly captures the requested tone with creative, conversational titles ('Mensajes que viajan blindados') and vivid metaphors ('tinta invisible', 'bata y mascarilla', 'rompecabezas'). It offers excellent diversity (10 items), covering unique areas like Bluetooth and Health, creating genuine 'aha moments' without getting bogged down in technical explanations.",
+          "reasoning": "Exceptional output. It flawlessly adopts the requested conversational tone and uses brilliant metaphors (burbuja, cofre, bata y mascarilla, sonido disfrazado) to explain WHERE encryption operates. The inclusion of Bluetooth and digital healthcare creates fantastic 'aha moments'. All constraints are met.",
           "score": 10
         },
         {
-          "anonymousId": "Model C",
+          "anonymousId": "Model F",
           "modelId": "openai/gpt-5.2",
-          "reasoning": "Model C is exceptional and nearly ties with A. It excels in 'Recognition Factor' by naming specific apps (WhatsApp, Signal, Zoom), which grounds the concepts in reality. The analogies ('hablar a gritos en la calle') are very effective. It follows all formatting and content constraints perfectly.",
+          "reasoning": "Exceptional output. It matches Model E in quality by providing highly relatable real-world contexts (NFC tap payments, password managers, work documents). The analogies (like talking to a teller in a private cabin vs. shouting in the street) perfectly hit the 'hidden patterns' expectation.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Excellent output. The explanation of facial/fingerprint recognition (that it stores an encrypted mathematical version of your features, not a photo) is one of the best 'aha moments' across all models. ATMs are also a great physical-world context.",
           "score": 9.5
         },
         {
           "anonymousId": "Model H",
-          "modelId": "openai/gpt-5-mini",
-          "reasoning": "Model H follows the instruction to use analogies very explicitly ('imagina un baúl', 'como un sobre sellado'). It includes unique and valuable contexts like 'Entradas electrónicas' and 'Activistas', showing great breadth. It is slightly less conversational than A but highly effective educationally.",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Excellent output. Very technically precise while remaining accessible. It covers a fantastic variety of contexts, including VPNs in cafes, Apple Pay, secure enclaves for biometrics, and home Wi-Fi.",
           "score": 9
         },
         {
           "anonymousId": "Model G",
-          "modelId": "anthropic/claude-opus-4.5",
-          "reasoning": "Model G provides a solid, accurate list of 8 items. It covers important domains like medical privacy ('Resultados Médicos') and streaming. The tone is clear and correct, though it lacks the flair and vivid imagery found in models A and C.",
-          "score": 8
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Very Good output. Strong selection of contexts, particularly the mention of remote work VPNs and medical portals. Well-written and conversational, just slightly less metaphorical than the top models.",
+          "score": 8.5
         },
         {
-          "anonymousId": "Model F",
-          "modelId": "anthropic/claude-haiku-4.5",
-          "reasoning": "Model F provides a comprehensive list (10 items) but struggles with the 'Focus' constraint. It tends to explain *how* the security works (e.g., explaining password hashing/comparison on servers) rather than just pointing out *where* it is using metaphors. This makes it feel more technical and less conversational.",
-          "score": 7.5
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Very Good output. Accurate, clear, and meets all requirements. Provides a solid mix of daily contexts, though it relies slightly less on analogies and metaphors to create the requested 'aha moments'.",
+          "score": 8.5
         },
         {
           "anonymousId": "Model D",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Very Good output. Covers all the expected bases effectively and accurately. Good conversational tone, though structurally quite standard.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model J",
           "modelId": "anthropic/claude-sonnet-4.5",
-          "reasoning": "Model D meets the basic requirements with a list of 10 accurate locations. However, the tone is dry and factual ('Tus mensajes... están encriptados'), missing the requested metaphors and 'aha moment' style found in the top models.",
-          "score": 7
+          "reasoning": "Good output. It is accurate and covers the right topics, but the sentence structures are highly repetitive ('Tu celular encripta...', 'Las videollamadas usan encriptación...', 'Las apps bancarias encriptan...'), which detracts from the requested conversational, engaging tone.",
+          "score": 8
         },
         {
           "anonymousId": "Model B",
           "modelId": "google/gemini-3-pro-preview",
-          "reasoning": "Model B offers high-quality explanations, particularly regarding Streaming/DRM. However, it only provides 6 items, resulting in lower context diversity compared to the top models. The content is good, just less comprehensive.",
-          "score": 6.5
+          "reasoning": "Good output. Provides nice analogies ('túnel seguro', 'rompecabezas'), but offers fewer contexts than others and feels slightly less comprehensive in its variety of life domains.",
+          "score": 8
         },
         {
-          "anonymousId": "Model E",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Model E is competent but limited by its lower item count (6 items), which restricts the diversity of contexts shown. The explanations are decent, but it doesn't stand out against the more comprehensive models.",
-          "score": 6.5
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Adequate output. It has a great variety of contexts (like smartwatches), but contains a noticeable grammatical error ('Cuando desbloqueador con huella dactilar') and reads a bit more like a technical manual than a conversational discovery.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Adequate, but with notable weaknesses. It frequently replaces the word 'encriptación' with the generic term 'protección' (e.g., 'la protección evita', 'están guardados bajo protección'). This weakens the connection to the core topic, making it sound like a generic security lesson rather than specifically highlighting where encryption lives.",
+          "score": 6
         }
       ]
     },
@@ -112,52 +148,70 @@
       "judgeId": "openai/gpt-5.2",
       "rankings": [
         {
-          "anonymousId": "Model C",
+          "anonymousId": "Model F",
           "modelId": "openai/gpt-5.2",
-          "reasoning": "Muy buen ajuste al encargo: ejemplos cotidianos, variados (chat, compras, banco, Wi‑Fi, nube, pérdida del móvil, videollamadas, gestor de contraseñas, trabajo, NFC) y con analogías claras (“cabina privada”, “caja con candado”). Mantiene el foco en DÓNDE aparece. Poco solapamiento con definiciones. En general técnicamente sólido (menciona tokenización en pagos).",
-          "score": 9.3
+          "reasoning": "Cumple muy bien con el enfoque “dónde aparece”: contextos cotidianos y variados (chats, compras, banco, Wi‑Fi, nube, pérdida del móvil, videollamadas, gestor de contraseñas, documentos laborales, pagos NFC). Tono conversacional con analogías claras. Afirmaciones mayormente correctas (WPA2/WPA3, E2EE, gestores, NFC/tokenización como idea). Formato OK (títulos cortos; textos parecen <300).",
+          "score": 9.4
         },
         {
-          "anonymousId": "Model A",
-          "modelId": "openai/gpt-5.1-instant",
-          "reasoning": "Variedad y “aha moments” (Bluetooth, salud digital, videollamadas, nube, móvil). Buen tono conversacional y metáforas. Debilidad: afirma que la nube está “cerrada incluso para la propia empresa”, lo cual no es universal y puede ser inexacto (depende de cifrado E2E/llaves del cliente). También “datos de inicio de sesión se guardan encriptados” es a veces impreciso (tokens/llavero).",
-          "score": 8.6
-        },
-        {
-          "anonymousId": "Model D",
-          "modelId": "anthropic/claude-sonnet-4.5",
-          "reasoning": "Cobertura amplia y reconocible (compras, WhatsApp, login, móvil, Zoom, Gmail, nube, Wi‑Fi, streaming). En general centrado en contextos. Algunos enunciados son demasiado absolutos (WhatsApp: “ni la empresa…”, depende de metadatos/reportes) y streaming: mezcla privacidad con rastreo y no siempre es el objetivo principal.",
-          "score": 8
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Gran diversidad y “aha moments” (entradas electrónicas, profesiones, salud, streaming/DRM) con metáforas reconocibles. Mantiene el foco en usos reales más que en definiciones. Le baja un poco por vaguedad en algunos pasos (“la protección”) sin mencionar explícitamente cifrado/encriptación y por alguna imprecisión potencial en “correos y contratos” (depende de E2EE/PGP).",
+          "score": 9
         },
         {
           "anonymousId": "Model H",
-          "modelId": "openai/gpt-5-mini",
-          "reasoning": "Buenos contextos diversos (Wi‑Fi público, nube, pérdida de dispositivo, contratos, salud, billetes/entradas, profesionales) y analogías útiles. Pero usa repetidamente “protección” en vez de “cifrado/encriptación” y “DRM” puede sonar más abstracto; algunos ejemplos (entradas electrónicas) pueden sentirse menos concretos/estándar sin explicar claramente el uso de cifrado.",
-          "score": 7.7
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Muy completo y variado (mensajería, pagos incl. Apple Pay, cifrado de dispositivo, streaming, correo, Wi‑Fi, nube, VPN, banca). Buen tono y analogías. Penalización por el último paso: biometría “guardada encriptada en un chip especial” es simplificación discutible y el “ni siquiera el fabricante puede acceder” es una afirmación demasiado absoluta. Aun así, fuerte en conjunto.",
+          "score": 8.7
         },
         {
           "anonymousId": "Model G",
-          "modelId": "anthropic/claude-opus-4.5",
-          "reasoning": "Ejemplos claros y cotidianos con algo de diversidad (mensajería, compras, dispositivo, email, streaming, redes sociales, salud, nube). Fallo técnico importante: dice que contraseñas “se almacena encriptada”; típicamente se almacenan con hash (no cifrado reversible). También varias afirmaciones absolutas (“ni empleados…”).",
-          "score": 7.3
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Buenos contextos y algunos inesperados (VPN/trabajo remoto, portal médico, streaming). Explica “dónde” de forma clara. Pequeñas simplificaciones: “ni siquiera la empresa dueña de la app puede ver el contenido” no siempre aplica a todas las apps; y el texto de Wi‑Fi sugiere que la contraseña de invitados ‘encripta todo’ (cierto para el enlace, pero puede inducir a sobreprometer).",
+          "score": 8.3
         },
         {
-          "anonymousId": "Model E",
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Variedad razonable (correo, compras, mensajería, banca, streaming, nube, cifrado del teléfono, Wi‑Fi). Tono conversacional aceptable. Baja por imprecisión en el primer paso: mezcla contraseña y “nadie puede leer tus mensajes—solo el servidor destino tiene la clave”, que suena a E2EE en correo (normalmente no) y confunde alcance del cifrado en tránsito.",
+          "score": 7.9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Muchos contextos y bastante cotidiano (mensajería, compras, dispositivo, correo, streaming, salud, nube). Problema importante: “Tu contraseña… se almacena encriptada” es técnicamente incorrecto en general (suele ser hash, no cifrado reversible) y “ni empleados pueden verla” es afirmación demasiado fuerte. También WhatsApp/Telegram: Telegram no es E2EE por defecto en chats normales.",
+          "score": 7.6
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Cobertura amplia y ejemplos cotidianos (compras, WhatsApp, login, móvil, Zoom, email, banca, streaming, nube, Wi‑Fi). Penaliza por afirmación dudosa: “Netflix y Spotify… esto evita que terceros rastreen exactamente qué miras o escuchas” (el cifrado/DRM no implica eso de forma directa). En general más correcto en otros puntos.",
+          "score": 7.4
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Muchos ejemplos (mensajería, compras, banca, email, videollamadas, nube, dispositivo, smartwatch). Pero incluye varias inexactitudes/sobreexplicaciones del ‘cómo’: dice que el login ‘se encripta en tu dispositivo’ y que el servidor compara con ‘versión encriptada’ (debería ser hash; y el flujo está mal descrito). También afirma email “encriptadas… cuando alguien las descarga” como generalidad. Además un título/texto con error (“desbloqueador”).",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "Model K",
           "modelId": "google/gemini-3-flash",
-          "reasoning": "Buen tono y ejemplos reconocibles (mensajes, compras, Wi‑Fi, biometría, cajero, nube). Problemas técnicos: biometría no necesariamente se guarda “encriptada” como describe y “imposible de reconstruir” es afirmación fuerte; además, falta más diversidad fuera de finanzas (aunque no se exige una lista completa).",
-          "score": 7
+          "reasoning": "Ejemplos claros y tono conversacional. Pero tiene afirmaciones problemáticas: biometría como ‘versión encriptada… imposible de reconstruir’ (en realidad plantillas/secure enclave; ‘imposible’ es demasiado absoluto) y ‘cajero automático… asegura que tu PIN no quede expuesto’ (el PIN se protege, pero la frase puede sugerir que viaja tal cual “encriptado” por la red bancaria). Menos variedad que otros.",
+          "score": 6.6
         },
         {
           "anonymousId": "Model B",
           "modelId": "google/gemini-3-pro-preview",
-          "reasoning": "Tiene buenos ejemplos (E2E chat, compras, móvil, streaming) y metáforas. Pero incluye un error técnico claro: “Los sitios web… guardan tu contraseña… encriptada” (normalmente hash). Además está relativamente centrado en banca/compras y algunas frases se vuelven más explicativas del QUÉ que del DÓNDE.",
-          "score": 6.8
+          "reasoning": "Metáforas útiles y algunos contextos cotidianos. Sin embargo, varios textos exceden claramente el límite de 300 caracteres. Además, “sitios web… guardan tu contraseña… versión encriptada” es inexacto (hash). Variedad moderada y algo centrado en banca/compras.",
+          "score": 6
         },
         {
-          "anonymousId": "Model F",
-          "modelId": "anthropic/claude-haiku-4.5",
-          "reasoning": "Muchos ejemplos, pero incumple el formato: varios textos exceden 300 caracteres (son párrafos largos). También contiene imprecisiones: “cuando inicias sesión, se encripta en tu dispositivo” y “el servidor la compara con una versión encriptada” (debería ser hash), y algunas partes explican el cómo más que señalar dónde aparece.",
-          "score": 6
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Buen tono y metáforas, y variedad (chat, compras, Wi‑Fi, nube, móvil, videollamada, salud). Pero hay inexactitudes importantes: dice que la nube está cifrada ‘incluso para la propia empresa’ (no suele ser cierto sin cifrado de extremo a extremo/cliente) y que Bluetooth/audio ‘va disfrazada’ para que nadie la intercepte o reproduzca (Bluetooth tiene cifrado pero no garantiza eso en todos los casos). También algunos textos pueden rozar la abstracción.",
+          "score": 5.6
         }
       ]
     }

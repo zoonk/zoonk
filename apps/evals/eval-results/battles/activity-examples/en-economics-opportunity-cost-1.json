@@ -1,110 +1,146 @@
 {
   "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Opportunity cost examples must correctly identify what's being given up. Penalize if:\n   - Examples confuse sunk costs with opportunity costs\n   - The \"next best alternative\" concept is missing or incorrectly applied\n\n2. CONTEXT CHECK: Penalize if examples are limited to money. Opportunity cost applies to time, attention, energy, relationships, career paths, and any scarce resource allocation.\n\n3. DISTINCTION FROM EXPLANATION: The explanation covered WHAT opportunity cost is (the value of the next best alternative). This should show WHERE we unconsciously make trade-offs daily.\n\n\nEVALUATION CRITERIA:\n\n1. REAL-WORLD RELEVANCE: Examples must be concrete, recognizable situations from everyday life. Penalize abstract or theoretical applications without clear real-world grounding.\n\n2. CONTEXT DIVERSITY: Content should show the topic across different life domains (daily life, work, entertainment, unexpected places, personal interests). Variety helps different learners connect.\n\n3. RECOGNITION FACTOR: Examples should create \"aha moments\" — helping learners see the topic in familiar places they hadn't noticed before.\n\n4. FORMAT: Each step must have a title (max 50 chars) and text (max 300 chars).\n\n5. TONE: Conversational, like pointing out hidden patterns in everyday life. Include metaphors and analogies from familiar activities.\n\n6. FOCUS: Shows WHERE something appears (real-world contexts), not WHAT it is (definitions) or HOW it works (processes).\n\n7. NO OVERLAP: Must not repeat content from the EXPLANATION_STEPS which covered the WHAT.\n\n8. SCOPE: Content matches the lesson scope exactly.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for missing specific life domains or contexts you might expect\n- Do NOT require a specific number of contexts or examples\n- Do NOT check against an imagined \"complete\" list of applications\n- ONLY penalize for: incorrect real-world claims, abstract examples without concrete situations, overlap with explanation content, or lack of variety in context types\n- Different valid sets of examples exist - assess the quality of what IS provided\n\n    ",
-  "judgedAt": "2026-01-17T14:32:33.880Z",
+  "judgedAt": "2026-02-21T23:30:21.832Z",
   "judgments": [
     {
-      "judgeId": "anthropic/claude-opus-4.5",
+      "judgeId": "anthropic/claude-opus-4.6",
       "rankings": [
         {
-          "anonymousId": "Model H",
+          "anonymousId": "Model E",
           "modelId": "anthropic/claude-opus-4.5",
-          "reasoning": "Model H excels across all criteria. It provides 8 well-crafted examples spanning diverse life domains: social media/leisure (late-night scroll), workplace (free perk, meeting invite), entertainment (streaming), finance (savings), career (internship), daily choices (coffee), and gaming. Every example correctly applies opportunity cost with clear 'next best alternative' framing - never confusing sunk costs. The writing is consistently conversational with excellent metaphors ('your schedule is a trade-off machine', 'convenience has a receipt'). Recognition factor is high with genuine 'aha moments' (free work perks costing gym time, free games costing 'nothing and everything'). All titles under 50 chars, all text under 300 chars. Focuses on WHERE, not WHAT. Only minor weakness: could benefit from one more unexpected domain.",
-          "score": 9.2
-        },
-        {
-          "anonymousId": "Model B",
-          "modelId": "openai/gpt-5.1-instant",
-          "reasoning": "Model B provides 10 diverse, well-executed examples covering morning routines, daily spending, workplace multitasking, social media, entertainment, hobbies, career, fitness, scheduling, and shopping. All correctly identify opportunity costs with proper 'next best alternative' framing. Excellent conversational tone with memorable phrases like 'your attention is the currency they spend' and 'non-decisions carry hidden costs.' Good recognition factor throughout. However, the gym membership example touches on sunk cost territory (money already spent), though it's framed correctly as opportunity cost of the ongoing decision. Slightly less punchy than Model H's writing in some spots. All format requirements met.",
-          "score": 8.9
+          "reasoning": "Excellent variety across life domains: social media/attention, workplace perks, entertainment, personal finance, career decisions, consumer choices, gaming, and professional time management. Strong 'aha moments' throughout — the 'free work perk' example is particularly clever and unexpected. Correctly identifies the next best alternative in each case. Covers time, attention, money, energy, and focus as scarce resources. Conversational tone with good metaphors ('Exposure comes with a receipt,' 'Your schedule is a trade-off machine'). All steps stay within character limits. No overlap with explanation content — focuses purely on WHERE opportunity cost appears. The gaming example is a nice unexpected context. No factual errors or confused concepts.",
+          "score": 9
         },
         {
           "anonymousId": "Model A",
-          "modelId": "openai/gpt-5.2",
-          "reasoning": "Model A delivers 10 solid examples across spending, weekend planning, entertainment, grocery shopping, career, workplace, attention/apps, purchases, hobbies, and cooking. Correctly applies opportunity cost throughout with clear alternatives identified. Good diversity of domains including non-monetary costs (time, attention, energy). Conversational tone with phrases like 'quietly pays' and 'hidden cost.' Format requirements all met. The grocery 'shelf space' framing in example 4 is slightly awkward for consumer perspective but still valid. Recognition factor is good but some examples feel slightly less fresh or insightful than top competitors.",
-          "score": 8.6
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Strong diversity: entertainment, career, sports/education, personal finance, attention/time, technology, government policy, and daily routines. The LeBron James example is concrete and memorable. Good 'aha moments' — the stadium/city budget example shows opportunity cost in unexpected places. Correctly applies the 'next best alternative' concept throughout. Multiple resource types covered (time, money, attention, social connection). Conversational tone with effective language ('shadow price,' 'quiet no'). All within format limits. The savings account example effectively challenges the assumption that 'safe' choices are costless. Minor weakness: the 'Free Trial Trap' example could be slightly more concrete.",
+          "score": 8.8
         },
         {
-          "anonymousId": "Model G",
-          "modelId": "anthropic/claude-sonnet-4.5",
-          "reasoning": "Model G provides 10 examples covering social media, career decisions, bargain hunting, entertainment, education, sunk costs, relationships, entrepreneurship, daily spending, and organizing. Strong diversity across domains. Notably, example 6 (concert ticket) explicitly distinguishes sunk cost from opportunity cost - a valuable teaching point. Good concrete quantification in examples (e.g., $30/hour side gig). However, example 9's calculation of $150,000 in compound growth from lattes over 30 years is a commonly cited but often inflated figure that may oversimplify. Some examples feel slightly more lecture-like than conversational. Format requirements met.",
-          "score": 8.4
-        },
-        {
-          "anonymousId": "Model F",
-          "modelId": "openai/gpt-5-mini",
-          "reasoning": "Model F offers 8 examples spanning morning routines, job offers, daily spending, entertainment, leisure/work trade-offs, business decisions, fantasy sports, and management. Good variety including unexpected domains (fantasy sports, business shelf space). Uses nice metaphors ('rearranging tiles on a board'). However, several examples lean more abstract or hypothetical than concrete - 'Picture hitting snooze' and 'two job offers arrive' feel less grounded than showing specific lived experiences. The business examples (shelf space, manager choosing projects) shift perspective away from personal daily life. All format requirements met.",
-          "score": 7.8
-        },
-        {
-          "anonymousId": "Model E",
+          "anonymousId": "Model J",
           "modelId": "google/gemini-3-pro-preview",
-          "reasoning": "Model E provides 6 examples covering free events, commuting, Black Friday shopping, entrepreneurship, DIY, and education. All correctly apply opportunity cost with strong quantification (e.g., $15/hour valuation). Good recognition factor with clever framings like 'The DIY Trap.' However, the set is limited to only 6 examples and skews heavily toward financial/monetary framing. Missing time, attention, relationship, and daily routine contexts that don't center on dollar calculations. The Black Friday and DIY examples are memorable but the overall diversity is narrower than top competitors.",
-          "score": 7.5
+          "reasoning": "Highly concrete and specific examples with actual numbers that make the trade-offs vivid. The Black Friday line example is particularly clever — quantifying time value against savings. The DIY Trap and Commuter's Dilemma are strong 'aha moments.' Correctly identifies opportunity costs throughout. Good variety: events, housing, shopping, entrepreneurship, DIY, education. However, examples lean heavily toward monetary/financial framing — most examples convert the trade-off into dollar values, which somewhat limits the resource diversity. Only 6 steps, but each is high quality. The free concert example effectively shows non-monetary costs. Clear conversational tone.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Good variety across domains: social media, career, shopping, entertainment, education, behavioral economics (sunk cost distinction), family/relationships, entrepreneurship, consumer habits, and home organization. The sunk cost vs. opportunity cost distinction in the concert ticket example is particularly valuable and shows nuanced understanding. Strong 'aha moments' with the organizing obsession and phone at dinner table. However, the $150,000 latte compound growth claim is a commonly cited but somewhat misleading figure (depends heavily on assumptions), and the example borders on cliché. 10 steps is a lot — some feel slightly repetitive (Netflix marathon and evening scroll cover similar ground). The bargain hunt example with specific numbers is effective.",
+          "score": 8.1
         },
         {
           "anonymousId": "Model D",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Model D provides only 6 examples covering morning routines, weekend entertainment, career, savings, education, and eating habits. While each example is well-written with correct opportunity cost application and good conversational tone, the limited scope hurts diversity. The buffet example is clever and unexpected. However, missing many life domains: social media/attention, relationships, hobbies, work meetings, etc. The cash/cookie jar example is good but adds to the monetary skew. Format requirements met but content feels incomplete compared to fuller responses.",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Strong concrete examples with vivid, specific scenarios. The restaurant corner table example is excellent — unexpected and insightful perspective from a business owner's view. The snooze button and social media examples are relatable. Good variety: morning routine, attention, major purchases, entertainment, business, career. Only 6 steps, which limits breadth somewhat. The car example correctly identifies multiple foregone alternatives. The unpaid internship example is solid. However, the new car example slightly overemphasizes monetary costs despite listing non-monetary alternatives. Conversational tone is effective throughout. No factual errors.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Good variety: consumer spending, attention/time, hiring, entertainment subscriptions, athletics, housing/investment, social commitments, career switching. The Olympian example is vivid and covers non-monetary costs well. The career switcher example involving doctors is interesting. However, the coffee example is somewhat cliché and the math ('$150/month could be a gym membership, a streaming service, and savings') is a list rather than identifying the next best alternative specifically. The home equity example is good but the phrase 'whether they realize it or not' is slightly redundant after 'unknowingly.' The hiring manager example shifts perspective to the employer side, which is a nice touch. Some examples lean slightly toward explaining WHAT opportunity cost is rather than showing WHERE it appears.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Solid examples with good specificity (dollar amounts, time figures). Covers freelancing, career, education, daily spending, attention, location choices, investing, and volunteering. The college hidden cost example is well-articulated. The location/life quality example is a nice unexpected context. However, several examples feel more like textbook illustrations than 'aha moment' discoveries — particularly the investment decision making step, which reads more like an explanation than a real-world observation. The side hustle and promotion examples are somewhat predictable. The tone is conversational but occasionally shifts toward didactic. The coffee example with math ($6 × 250 = $1,500) feels calculated rather than naturally observed. Good but not as surprising or discovery-oriented as the best entries.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Good breadth with 10 steps covering morning routines, coffee, workplace, social media, entertainment, hobbies, career, fitness, scheduling, and shopping. Conversational and relatable tone. However, many examples feel surface-level — they state the trade-off without creating strong 'aha moments.' The gym membership example conflates sunk costs somewhat (the money is already spent on the membership; the opportunity cost is the ongoing monthly payment, not the unused membership itself — though the text does redirect to what the money 'could've been put toward'). Some examples are quite brief and don't develop the insight deeply enough. The 'Chasing a Good Deal' example is decent. The hobby trade-offs example is nice but somewhat generic. Overall competent but lacks the vividness and surprise factor of the best entries. Minor issue: 'unused choices still cost you' has a lowercase 'u' starting the sentence.",
           "score": 7.3
         },
         {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Six steps with decent variety: morning routine, entertainment, career, savings, education, and dining. The buffet example is creative and unexpected — showing opportunity cost in terms of physical comfort and afternoon plans rather than money. The cookie jar example is charming. However, only 6 examples limits breadth. The college example is standard. The promotion example is solid but predictable. The Saturday binge-watching example correctly identifies non-monetary costs. Some descriptions feel slightly over-explained ('You are essentially trading...'). The tone is conversational but occasionally becomes instructional. No factual errors. The buffet example is the strongest 'aha moment' here.",
+          "score": 7.2
+        },
+        {
           "anonymousId": "Model C",
-          "modelId": "anthropic/claude-haiku-4.5",
-          "reasoning": "Model C provides 8 examples but with significant issues. Most examples center heavily on monetary calculations - freelance pay, promotion salary, college tuition costs ($120,000 figure), daily coffee spending, investment decisions. This violates the explicit context check: 'Penalize if examples are limited to money.' While examples are accurate and the opportunity cost concept is correctly applied, the diversity is narrow. The attention and volunteering examples help but most framing returns to financial terms. Additionally, some examples feel more explanatory (covering WHAT) than showing WHERE - the investment decision example essentially defines trade-offs rather than revealing hidden daily patterns.",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Decent variety: morning routine, career, coffee, entertainment, travel, small business, fantasy sports, management. The fantasy sports example is creative and unexpected — a genuinely fun context. The small business shelf space example is practical. However, several examples feel abstract rather than concrete — the morning routine step uses a generic metaphor ('rearranging tiles on a board') without grounding in a specific vivid scenario. The binge vs. study example is described generically ('a new season drops') without specificity. The weekend trip example is fairly generic. The tone tends toward describing trade-offs in general terms rather than creating vivid, specific scenarios that generate 'aha moments.' Some steps border on explaining HOW opportunity cost works rather than showing WHERE it appears. Format is fine, but the recognition factor is weaker than other models.",
           "score": 6.8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "10 steps but many feel thin and underdeveloped. The latte example is brief and doesn't create a strong insight. Several examples state trade-offs without developing them into vivid scenarios — 'You binge a new series and later wonder where the night went' is generic. The grocery store deal example is interesting but could be more developed. The cooking vs. delivery example is decent but fairly obvious. Many steps read as brief observations rather than developed 'aha moments.' The tone is conversational but the brevity of some entries (especially the latte at 130 characters) wastes the 300-character allowance that could create richer scenarios. The hobby/team example is good but underdeveloped. Overall competent but lacking the depth and vividness that creates genuine recognition moments. No factual errors, but the surface-level treatment of most examples is a significant weakness.",
+          "score": 6.5
         }
       ]
     },
     {
-      "judgeId": "google/gemini-3-pro-preview",
+      "judgeId": "google/gemini-3.1-pro-preview",
       "rankings": [
         {
-          "anonymousId": "Model A",
-          "modelId": "openai/gpt-5.2",
-          "reasoning": "Model A is the strongest output. It provides a high volume of examples (10) without sacrificing quality. It excels at applying the concept to diverse resources beyond money, such as energy, team focus (in the meeting example), and attention. The writing is conversational, the examples are immediately recognizable, and it perfectly adhering to the 'Next Best Alternative' definition without becoming a math lesson.",
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Exceptional output. The examples are highly relatable, diverse, and perfectly capture the 'aha moment' requested. Examples like the 'free' work perk costing gym time, or calendar invites costing deep focus, brilliantly highlight non-monetary trade-offs (energy, attention, fitness). The tone is engaging, conversational, and perfectly hits all formatting constraints.",
           "score": 10
         },
         {
-          "anonymousId": "Model B",
-          "modelId": "openai/gpt-5.1-instant",
-          "reasoning": "Model B is excellent and nearly tied with Model A. It offers 10 high-quality, relatable examples with engaging writing (e.g., \"tiny tap hides a trade-off\"). It covers a wide range of contexts including emotional and career growth trade-offs. It ranks just slightly lower than A only because Model A's inclusion of 'team resources' and 'energy' felt slightly more distinct in demonstrating the breadth of the concept.",
+          "anonymousId": "Model K",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Outstanding output that specifically excels at the accuracy check. By explicitly addressing the concert ticket scenario and stating 'the sunk cost isn't the opportunity cost,' it perfectly navigates a common point of confusion. It also provides fantastic context diversity, from the organizing obsession to the phone at the dinner table (trading genuine connection).",
           "score": 9.8
         },
         {
-          "anonymousId": "Model H",
-          "modelId": "anthropic/claude-opus-4.5",
-          "reasoning": "Model H features some of the best writing in the group (e.g., \"alternatives quietly disappear,\" \"shadow price\"). The examples are vivid and hit the \"aha moment\" criteria well, particularly the \"Free Work Perk\" vs. \"Gym time\" example. It ranks below A and B simply due to having slightly fewer examples (8 vs 10), but the quality is top-tier.",
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Very strong output with highly creative and concrete examples. Applying opportunity cost to small-business shelf space and setting a fantasy sports lineup provides fantastic 'aha moments' that learners will immediately recognize. The metaphors (like rearranging tiles) are excellent for the tone required.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Excellent variety of examples balancing daily life, career, and business. The phrasing is highly engaging ('Every swipe reveals a silent trade-off', 'quiet no'). It effectively explores the opportunity cost of attention and energy without overlapping with basic definitions.",
           "score": 9.2
         },
         {
-          "anonymousId": "Model F",
-          "modelId": "openai/gpt-5-mini",
-          "reasoning": "Model F offers unique contexts that others missed, specifically the physical constraint of 'Shelf Space' in retail and the resource management in 'Fantasy Sports.' These help abstract the concept away from just time/money. The writing is solid, though slightly less conversational than H.",
-          "score": 8.5
-        },
-        {
-          "anonymousId": "Model G",
-          "modelId": "anthropic/claude-sonnet-4.5",
-          "reasoning": "Model G provides a good quantity of examples (10) and successfully makes the sophisticated distinction between sunk costs and opportunity costs in the 'Ticket' example. However, some other examples feel slightly more standard or repetitive compared to the unique flair found in H or F.",
-          "score": 8
-        },
-        {
-          "anonymousId": "Model C",
-          "modelId": "anthropic/claude-haiku-4.5",
-          "reasoning": "Model C is accurate but relies heavily on calculating specific dollar amounts (e.g., \"$120,000 before earning your degree,\" \"$1,500 yearly\"). While correct, this makes the content feel more like a finance textbook and less like a guide to spotting hidden patterns in everyday life. It lacks the emotional resonance of the higher-ranked models.",
-          "score": 7
-        },
-        {
-          "anonymousId": "Model E",
-          "modelId": "google/gemini-3-pro-preview",
-          "reasoning": "Model E effectively converts time into money (calculating hourly rates), but this narrow focus misses the qualitative side of opportunity cost—such as lost relaxation, connection, or health. By reducing every example to a financial calculation, it limits the learner's ability to apply the concept to non-monetary parts of life.",
-          "score": 6
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Solid and accurate examples with good diversity spanning daily life, career, and macro-decisions (city budgets). The 'free trial trap' is a particularly great example of attention and focus as a scarce resource.",
+          "score": 9
         },
         {
           "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "High-quality, well-written examples. The restaurant corner table is a superb business application of the concept. It effectively highlights non-monetary costs like stress and peak mental energy. Though it provides slightly fewer examples, the quality of each is excellent.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "The content is accurate and appropriately diverse, but the titles feel a bit dry and academic ('Investment Decision Making', 'Attention as a Scarce Resource'). It lacks some of the conversational, engaging flair requested in the prompt, but the underlying concepts are sound.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Good overall, but slightly repetitive in its structure. Additionally, the 'unused gym membership' example flirts dangerously with the sunk cost fallacy without clearly distinguishing it, which could slightly confuse learners regarding the prompt's accuracy check.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "The examples are accurate but the text is very brief, dry, and repetitive in sentence structure ('You buy...', 'You binge...', 'You take...'). It lacks the conversational analogies, metaphors, and depth requested by the prompt.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model I",
           "modelId": "google/gemini-3-flash",
-          "reasoning": "Model D has the lowest quantity of examples (6) and relies on fairly generic tropes (snooze button, college tuition). The 'Buffet' example blurs the line between a direct consequence (stomach ache) and opportunity cost (lost afternoon activities), making it slightly less precise than the others.",
-          "score": 5.5
+          "reasoning": "While most examples are fine, the 'All-You-Can-Eat' buffet example risks confusing learners. Eating to 'get your money's worth' is a classic sunk cost fallacy. While the model correctly identifies lethargy as an opportunity cost, mixing the two concepts in one scenario violates the spirit of the accuracy check and could cause confusion.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Heavily penalized for failing the context check. Almost every single example explicitly equates the alternative to money, wages, or an hourly rate (e.g., freelancing, earning $15/hr, $60k salary, $300 freelance project). It completely misses the requirement to showcase opportunity cost applying to attention, mental energy, and relationships.",
+          "score": 4
         }
       ]
     },
@@ -112,52 +148,70 @@
       "judgeId": "openai/gpt-5.2",
       "rankings": [
         {
-          "anonymousId": "Model A",
+          "anonymousId": "Model F",
           "modelId": "openai/gpt-5.2",
-          "reasoning": "Strong real-world recognition factor and wide context mix (money, time, attention, work, relationships, career, hobbies). Each example clearly identifies what’s given up (next-best alternatives) and avoids sunk-cost confusion. Mostly stays in “where it shows up” mode with conversational metaphors (“free apps that cost attention”). Only minor risk: a couple examples list multiple alternatives rather than emphasizing the single next-best, but still acceptable.",
+          "reasoning": "Consistently concrete, everyday trade-offs across money, time, attention, work, relationships, and convenience. Clear “given up” alternatives without drifting into definitions. Titles are short; all texts appear within the 300-char limit. Good conversational tone and varied contexts.",
           "score": 9.2
         },
         {
-          "anonymousId": "Model B",
+          "anonymousId": "Model H",
           "modelId": "openai/gpt-5.1-instant",
-          "reasoning": "Very concrete, everyday scenarios with a conversational “silent instead of” framing. Good variety (sleep, coffee, meetings, social, career inertia, overcommitment). Opportunity cost is generally correct and points to what’s forgone. Main weakness: a few entries drift slightly toward explanation/definition (“Overcommitment is basically opportunity cost in disguise”) and one has a small typo/capitalization issue (“unused choices…”).",
+          "reasoning": "Strong variety (time, money, attention, career, scheduling) with high recognition factor and conversational phrasing (“silent instead of”). Mostly stays in “where it shows up.” Minor nit: a couple examples feel slightly generic (e.g., “overbooking”) but still concrete enough. Fits format limits.",
           "score": 8.8
         },
         {
-          "anonymousId": "Model H",
-          "modelId": "anthropic/claude-opus-4.5",
-          "reasoning": "Excellent tone and “shadow price/receipt” metaphors; good spread across attention, workplace, internships, meetings, gaming. Most examples correctly highlight the forgone alternative. Weaknesses: the savings-account example leans into a debatable numeric assumption (7% average) and becomes a bit finance-theory-ish vs everyday. Some texts are close to the 300-char limit and feel slightly more explanatory than purely contextual.",
-          "score": 8.5
-        },
-        {
-          "anonymousId": "Model G",
-          "modelId": "anthropic/claude-sonnet-4.5",
-          "reasoning": "Lots of recognizable contexts and explicitly addresses sunk vs opportunity cost in the ticket example (a plus for accuracy). Mixes time/relationships/career/entrepreneurship. Weaknesses: includes a questionable compound-growth claim (~$150k) that’s likely inaccurate for $4/day without specifying return rate; also repeats coffee as two separate steps (some redundancy).",
-          "score": 8
-        },
-        {
-          "anonymousId": "Model F",
-          "modelId": "openai/gpt-5-mini",
-          "reasoning": "Good domain variety (jobs, entertainment, retail shelf space, management, fantasy sports) and generally accurate trade-off framing. However, several are a bit abstract/vague (“reshuffles your energy and focus,” “hidden effects show up”) and less ‘everyday aha’ concrete than others; fewer crisp next-best-alternative callouts.",
-          "score": 7.6
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Very clear, relatable scenarios with non-money opportunity costs emphasized (snooze, scrolling, Friday night choice, internship). Good metaphor (“attention is a currency”). Less variety than top entries (only 6 steps) but what’s there is solid and concrete; within format.",
+          "score": 8.4
         },
         {
           "anonymousId": "Model E",
-          "modelId": "google/gemini-3-pro-preview",
-          "reasoning": "Clear, concrete trade-offs with good non-money inclusion (time). DIY and Black Friday examples are strong and correctly identify the forgone alternative. But overall skews heavily toward monetary valuation/wages (time valued at $/hr), with less variety in attention/relationships/health contexts; tone is less conversational/metaphoric.",
-          "score": 7.3
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Great everyday contexts (scrolling, meetings, gaming, perks) and good “aha” framing. One weaker spot: the savings example uses a specific ‘investments averaging 7%’ claim, which is contestable and could be seen as over-specific for a learning app. Otherwise strong and within format.",
+          "score": 8.2
         },
         {
-          "anonymousId": "Model D",
+          "anonymousId": "Model K",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Broad, concrete set with a nice explicit nod to sunk cost vs opportunity cost (ticket example), which boosts accuracy. However, the ‘$150,000 in compound growth’ figure is likely overstated/assumption-heavy without context, risking accuracy. Some steps lean money-heavy.",
+          "score": 7.9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Good range (coffee, scroll, hiring, streaming, athletics, home equity, favors, career switch). Generally correct next-best-alternative framing. Some items slip toward explanation language (“opportunity cost” named; “streaming wars are…”) and a few are more business/abstract than personal.",
+          "score": 7.7
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Excellent concreteness and clear next-best-alternative in most steps (commute, Black Friday line, entrepreneur salary, DIY). But several examples heavily monetize time (‘value your time at $15/hr’), which can feel like turning everything into dollars; still valid but narrows context diversity.",
+          "score": 7.6
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Strong storytelling and variety (social, jobs, attention, government budget, takeout). A couple entries drift more conceptual/lecture-y (“shadow price,” broad savings alternatives) and the athlete/college example name-drops LeBron (not necessary) and gets a bit abstract. Still mostly accurate.",
+          "score": 7.4
+        },
+        {
+          "anonymousId": "Model I",
           "modelId": "google/gemini-3-flash",
-          "reasoning": "Recognizable scenarios and mostly correct opportunity cost framing (snooze, promotion, college, investing). The buffet example is weaker: it reads more like consequences/health effects than the value of the next-best alternative you gave up (it implies later plans, but not as clearly). Also fewer contexts and less “aha” variety.",
-          "score": 6.9
+          "reasoning": "Mostly good everyday situations and clear trade-offs. The buffet example is questionable as opportunity cost: it frames the ‘cost’ as discomfort/lethargy rather than the value of the next best alternative you gave up (it could be reframed, but as written it’s more consequence than forgone option). Limited variety (6).",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Several solid time/career trade-offs, but more abstract/“on paper” phrasing and some steps feel like mini-explanations rather than pointing out hidden patterns. The investment choice step is generic and less grounded in a recognizable moment. Still mostly accurate.",
+          "score": 6.7
         },
         {
           "anonymousId": "Model C",
-          "modelId": "anthropic/claude-haiku-4.5",
-          "reasoning": "Accurate in many places, but leans more into explanation and quasi-theoretical/numeric framing (college wage calc, investment choice set) rather than “where you notice it daily.” Several entries exceed the 300-character requirement by a lot, violating format constraints. Less conversational tone overall.",
-          "score": 5.6
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Some examples are clear (job offer, binge vs study, weekend trip). Others are either too abstract (“morning routine” is more metaphor than concrete trade-off) or not truly opportunity cost as stated (fantasy lineup focuses on points gained/forgone, but it’s framed more like performance comparison than a scarce-resource choice). Tone is less conversational.",
+          "score": 6.3
         }
       ]
     }
