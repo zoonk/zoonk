@@ -20,6 +20,12 @@ export const EVAL_MODELS: ModelConfig[] = [
     outputCost: 25,
   },
   {
+    id: "anthropic/claude-sonnet-4.6",
+    inputCost: 3,
+    name: "claude-sonnet-4.6",
+    outputCost: 15,
+  },
+  {
     id: "anthropic/claude-sonnet-4.5",
     inputCost: 3,
     name: "claude-sonnet-4.5",
@@ -30,6 +36,12 @@ export const EVAL_MODELS: ModelConfig[] = [
     inputCost: 1,
     name: "claude-haiku-4.5",
     outputCost: 5,
+  },
+  {
+    id: "google/gemini-3.1-pro-preview",
+    inputCost: 2,
+    name: "gemini-3.1-pro",
+    outputCost: 12,
   },
   {
     id: "google/gemini-3-pro-preview",
