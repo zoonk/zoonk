@@ -50,9 +50,10 @@ EVALUATION CRITERIA:
 7. STORY ARC AND PROGRESSION:
    - Steps should follow a natural conversation flow
    - Story should have: opening, building, resolution, closing
-   - Complication is optional but adds realism (e.g., item unavailable, clarification needed)
+   - A fun twist or complication adds value (e.g., a surprising reveal, role reversal, misunderstanding payoff, item unavailable). Do NOT penalize for absence, but reward stories that include one
    - Each step should logically follow from the previous
    - The native speaker should acknowledge the learner's previous choice
+   - Story continuity issues (e.g., order forgotten between steps) are MINOR — only penalize severely if the issue makes the dialogue incomprehensible for language learning
    Penalize if steps feel disconnected or conversation doesn't flow naturally.
 
 8. LINGUISTIC ACCURACY (CRITICAL):
@@ -92,6 +93,9 @@ ANTI-CHECKLIST GUIDANCE (CRITICAL):
 - Do NOT penalize for specific dialogue choices - accept ANY natural conversation
 - Do NOT require specific phrases or sentence structures
 - Do NOT penalize for different valid cultural approaches
+- Do NOT penalize distractors for being "too obviously wrong" or "too nonsensical" — off-topic distractors are valid by design (asking about haircuts at a pharmacy, asking for directions at a cafe). Only penalize if a distractor is grammatically incorrect or breaks immersion
+- Do NOT require a specific feedback format order. The translation can appear anywhere in the feedback (beginning, inline, quoted). Only penalize if the translation is completely absent
+- Do NOT penalize for output being wrapped in {"scenario": ..., "steps": [...]} vs other valid structures
 - FOCUS ON: structural correctness, immersion principle (no translations in options), feedback quality, romanization correctness
 - The eval model should judge whether the activity creates an immersive language experience, not whether it matches predetermined answers
 `;

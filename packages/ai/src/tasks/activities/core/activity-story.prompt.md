@@ -82,8 +82,8 @@ Your story must follow this structure:
 
 1. **Opening Step**: Begin "in the middle of the action" — the learner and colleague are already working on something. No preamble or setup exposition.
 2. **Rising Complexity**: Each step builds naturally from the previous dialogue. Decisions compound.
-3. **Plot Twist**: The second-to-last step introduces an unexpected complication, surprise, or revelation.
-4. **Resolution**: The final step resolves the problem AND reinforces the main learning takeaway.
+3. **The Twist**: Near the end (within the final 2-3 steps), introduce a genuine surprise that reframes the story. The best twists subvert an assumption the story has been building — the reader thinks the story is going one direction, then discovers reality is completely different. Think Duolingo-style: fun, a little silly, and genuinely surprising. The twist should make the learner smile and think "I didn't see that coming!"
+4. **Resolution**: The final step resolves the problem AND reinforces the main learning takeaway. The resolution can itself BE the twist if the surprise naturally leads to the conclusion.
 
 ## Step Count
 
@@ -161,10 +161,39 @@ While every story is unique, most follow this arc (adapt as needed):
 2. **Initial Assessment**: What's the situation? What do we know? First decisions.
 3. **Deepening Complexity**: The problem has layers. Apply the concept more deeply.
 4. **Complications**: Things aren't as simple as they seemed. Adapt your approach.
-5. **The Twist**: A surprise, revelation, or unexpected turn that requires rethinking.
+5. **The Twist**: A surprise that reframes everything. The best twists flip the story's core assumption — what you thought was the problem turns out to be something else entirely, or the situation is the opposite of what it seemed.
 6. **The Resolution**: Solve the problem AND crystallize the key insight from the lesson.
 
-Note: Sometimes the final twist can have a humorous or unexpected resolution that still reinforces the learning. Something that makes the learner smile and think "I didn't see that coming!"
+## Crafting Great Twists
+
+The twist is what makes a story memorable. Think of Duolingo's best stories — they build an assumption throughout the entire narrative, then flip it in a way that's fun, surprising, and a little silly.
+
+**The technique: Plant an assumption, then subvert it.**
+
+The whole story should build toward one interpretation. The learner becomes invested in that version of events. Then the twist reveals reality was completely different — in a delightful way that still teaches the concept.
+
+**Example patterns:**
+
+- **Perspective flip**: "We've been debugging the competitor's system... turns out it's our own system in a staging environment we forgot about."
+- **The real problem**: "The 'critical security breach' was actually our CEO's kid who guessed the password 'password123'."
+- **Ironic reversal**: "After optimizing the algorithm for hours, we discover the slow part was a console.log printing the entire database on every request."
+- **Scale surprise**: "The 'minor data inconsistency' we've been investigating? It's been silently saving the company $50K/month by catching billing errors."
+- **Wrong assumption**: "We spent all day trying to figure out why the server was slow... it was fast. The client's WiFi was connected to the coffee shop next door."
+
+**What makes a great twist:**
+
+- It reframes the ENTIRE story, not just the last step
+- It's fun and a bit silly — makes you smile
+- It's genuinely surprising but makes sense in hindsight
+- It still reinforces the lesson's concept
+- It gives the story a punchline that learners will remember
+
+**What makes a BAD twist:**
+
+- Just adding a new complication near the end (that's not a twist, it's a complication)
+- A twist that's unrelated to the story or lesson
+- Something dark or stressful instead of fun
+- A predictable "the real problem was X" that everyone saw coming
 
 # Dialogue Tone Examples
 
@@ -186,13 +215,15 @@ The following examples show the **tone and style** to aim for — not complete s
 
 > "The numbers don't add up. We're showing 500 successful transactions, but the bank only received 487. Where did the other 13 go?"
 
-## Plot Twists (The Unexpected Turn)
+## Plot Twists (The Fun Surprise)
 
-> "{{NAME}}... I just ran the analysis twice. The bug isn't in our code. It's been in the library we've trusted for three years. Every project using it has this vulnerability."
+The best twists flip the entire story on its head. They should make the learner smile and think "wait, WHAT?"
 
-> "I found the source of the data leak. {{NAME}}, it's not a hacker. It's our own caching system. We've been accidentally exposing user data to anyone who knew where to look."
+> "{{NAME}}... I just figured out why our 'hacker' only attacks during lunch. It's not a hacker. It's the microwave in the break room crashing the server every time someone heats up soup."
 
-> "Plot twist: the 'broken' feature? It's working exactly as designed. The original spec was just... completely wrong. We've been solving the wrong problem this whole time."
+> "Wait. I've been running our performance test against the wrong server this whole time. This isn't our production database — it's the intern's Minecraft server. No wonder the query patterns looked weird."
+
+> "{{NAME}}, remember the 'ghost user' who's been editing records at 3 AM? I found them. It's our own automated backup script... and it's been 'correcting' data by reverting everything to last month's values. We've been fighting our own system."
 
 ## Humorous Moments (Light Relief)
 
@@ -212,11 +243,11 @@ The following examples show the **tone and style** to aim for — not complete s
 
 ## Unexpected/Funny Endings
 
-> "So after all that debugging... it was a timezone issue. Every single time. I'm starting to think all bugs are secretly timezone issues in disguise."
+> "So let me get this straight. We optimized a million-dollar machine learning pipeline... and the prediction model we built? It's less accurate than the intern's spreadsheet with a VLOOKUP formula. {{NAME}}, we don't tell anyone about this. Ever."
 
-> "{{NAME}}, the CEO just called to thank us. Apparently fixing that 'minor bug' saved them $2 million. I think we need to renegotiate our rates."
+> "Wait — you're saying the 'AI-powered anomaly detection system' that flagged this issue... is just a bash script someone wrote in 2019 that checks if a number is bigger than 1000? And it's been right every single time? I don't know whether to be impressed or terrified."
 
-> "The system's fixed. Also, I may have accidentally discovered that our competitor's product has the exact same bug. Should we... tell them? Actually, don't answer that."
+> "{{NAME}}, the client just called back. They love the fix so much they want us to 'break' three more things so we can dramatically fix those too. I think we've accidentally invented a new business model."
 
 Remember: These are just **tone examples**. Your story should be original, fit the lesson topic, and create its own memorable journey. Mix problem-solving tension with moments of humor or surprise. The best stories make learners think "I didn't see that coming!" while still teaching the concept.
 
@@ -227,7 +258,7 @@ Before finalizing, verify:
 - [ ] Is the dialogue pure conversation with NO narrator, NO character prefixes, NO descriptions?
 - [ ] Does every step flow naturally from the previous one (continuous story)?
 - [ ] Do all decisions require applying lesson concepts, not just recalling facts?
-- [ ] Is there a genuine plot twist in the second-to-last step?
+- [ ] Is there a fun, surprising twist near the end (within the final 2-3 steps) that reframes the story?
 - [ ] Does the resolution both solve the problem AND reinforce the main learning?
 - [ ] Is `{{NAME}}` used appropriately to personalize the dialogue?
 - [ ] Are all distractors plausible (not obviously silly)?

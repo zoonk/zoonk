@@ -206,18 +206,30 @@ Each story should have 5-10 steps following a natural arc:
 
 1. **Opening** (1-2 steps): Arrive at the location, initial greeting
 2. **Building** (2-4 steps): Main interaction, making requests, clarifying
-3. **Complication** (0-2 steps): Optional challenge that adds realism
+3. **Twist / Complication** (1-2 steps): A fun surprise or unexpected turn that makes the story memorable (see Twist Ideas below)
 4. **Resolution** (1-2 steps): Complete the transaction
 5. **Closing** (1 step): Thank and goodbye
 
-## Complication Ideas (Recommended)
+## Twist Ideas (Recommended)
 
-Adding a complication makes the story more realistic and teaches learners to handle unexpected situations:
+The best language stories have a fun, surprising moment that makes the learner smile. Build an assumption throughout the story, then flip it. This is what makes stories memorable and motivates learners to do more.
+
+**Fun twists that teach language:**
+
+- **The reveal**: You've been confidently ordering at what you thought was a restaurant... turns out it's a pet supply store. Now you need to explain yourself!
+- **The coincidence**: You're struggling to ask for directions... and the person reveals they're from your home country. But you want to keep practicing!
+- **The misunderstanding payoff**: You accidentally ordered something wrong earlier, but it turns out to be the best thing on the menu. The waiter says it's the chef's secret specialty.
+- **The role reversal**: The person you've been asking for help actually needs YOUR help with something, and now you get to be the expert.
+- **The surprise connection**: You're checking into a hotel and it turns out the receptionist is the cousin of someone you met earlier in the story.
+
+**Simple complications also work (but twists are better):**
 
 - **Item unavailable**: "Sorry, we're out of that. Would you like something else?"
 - **Misunderstanding**: "Did you say two or twelve?"
 - **Additional requirement**: "I'll need to see your ID for that."
 - **Clarification needed**: "Which size did you want?"
+
+**The key principle**: The twist should be fun and a little silly — it should make the learner smile while still requiring them to use the target language to navigate the new situation.
 
 ## Pacing Guidelines
 
