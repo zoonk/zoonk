@@ -1,0 +1,167 @@
+{
+  "expectations": "\n      - should include \"Dragon Ball\", fixing the typo in the input\n      - optionally, may include broader alts like \"Animação\", \"Cultura Pop\" or related suggestions\n      - all titles and descriptions in Brazilian Portuguese\n      - targetLanguageCode must be null for all suggestions\n\n      \n  - Focus only on title field, no need to pay attention to the description\n  - It's okay for description to have issues, focus on the title\n  - The description should NOT have an impact on scoring unless it's written in the wrong language\n  - Title should NOT have level/joiner words like \"basic\", \"intermediate\", \"advanced\", \"fundamentals\", etc\n  - Title should NOT have words like \"course\" in the title\n  - Title cases are not important (e.g., both \"física\" and \"Física\" are acceptable)\n  - Not following title guidelines is a major error\n  - Setting targetLanguageCode to a non-null value for non-language courses is a major error\n  - targetLanguageCode must be null for any course that is NOT teaching a language\n\n    ",
+  "judgedAt": "2026-02-22T00:24:08.921Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Includes 'Dragon Ball' as the primary suggestion (fixing the typo). All titles are in Brazilian Portuguese, targetLanguageCode is null for all. No level/joiner words or 'course' in titles. The additional suggestions ('Dragon Ball Z', 'Dragon Ball Super', 'Temas em Dragon Ball', 'Dragon Ball na Cultura Pop') are all relevant and well-scoped. Clean, focused set of suggestions that stays close to the topic while offering some variety.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Includes 'Dragon Ball' as primary suggestion. All titles in Brazilian Portuguese, targetLanguageCode null throughout. No prohibited words. Good variety with 'Poderes e Transformações de Dragon Ball', 'A Influência de Dragon Ball na Cultura Pop', 'Akira Toriyama', and 'História do Mangá e do Anime'. All are relevant and well-titled. Solid broader suggestions included.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Includes 'Dragon Ball' correctly. All titles in Brazilian Portuguese, targetLanguageCode null. No prohibited words. Good broader suggestions: 'Mangá', 'Shonen', 'Animação Japonesa', 'Akira Toriyama'. All are relevant and appropriately titled. Clean and concise.",
+          "score": 7.7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Includes 'Dragon Ball' correctly. All titles in Brazilian Portuguese, targetLanguageCode null. No prohibited words. Only 3 suggestions total, which is a bit sparse but all are relevant ('Anime Shonen', 'Cultura Pop Japonesa'). Clean but could have more variety.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Includes 'Dragon Ball' correctly. All titles in Brazilian Portuguese, targetLanguageCode null. No prohibited words. Good mix with 'Dragon Ball Z', 'História do Anime e Mangá', 'Cultura Japonesa no Anime e Mangá'. The title 'Criação de Mundos na Ficção Científica e Fantasia' is a bit of a stretch from the Dragon Ball topic but still acceptable as a broader suggestion.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Includes 'Dragon Ball' correctly. All titles in Brazilian Portuguese, targetLanguageCode null. No prohibited words. Good broader suggestions with 'Anime', 'Mangá', 'Criação de Personagens'. 'Criação de Personagens' is somewhat tangential but acceptable. Only 4 suggestions, clean and focused.",
+          "score": 7.3
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Includes 'Dragon Ball' correctly. All titles in Brazilian Portuguese, targetLanguageCode null. No prohibited words. Has 'Dragon Ball Z', 'Dragon Ball Super' which are good. 'Mitologia e Lore de Dragon Ball' and 'Artes Marciais em Dragon Ball' are reasonable but quite niche. No broader alternatives like 'Anime', 'Cultura Pop', etc. are offered, making the suggestions a bit narrow in scope.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Includes 'Dragon Ball' correctly. All titles in Brazilian Portuguese, targetLanguageCode null. No prohibited words. Offers 10 suggestions which is quite comprehensive. However, several titles drift significantly from the core topic - 'Técnicas de Animação de Luta', 'Design de Personagens de Anime', 'Música para Anime', 'Produção de Anime' are quite tangential to someone searching for Dragon Ball. While none violate the rules, the relevance of some suggestions is questionable. The breadth is good but some suggestions feel like filler.",
+          "score": 7
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Exceptional output. Provides a comprehensive list of 10 items ranging from specific franchise elements to broader topics like 'Animação' and 'Narrativa Shonen'. Perfectly follows all constraints, including null language codes and avoiding forbidden words.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Exceptional output. Offers extremely clean and concise titles that perfectly capture both the core subject ('Dragon Ball') and excellent broader alternatives ('Animação Japonesa', 'Shonen', 'Akira Toriyama'). Follows all instructions flawlessly.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Exceptional output. Although shorter, the titles are highly relevant, clean, and directly incorporate the requested broader topics ('Cultura Pop Japonesa'). Meets all formatting and negative constraints.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Exceptional output. Titles are broad, concise, and conceptually sound. Includes the core topic and broader alternatives ('Anime', 'Mangá') perfectly while adhering to all negative constraints.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Excellent output. Well-structured titles covering the specific series arcs and broader cultural impact ('Cultura Pop'). Adheres to all guidelines without any forbidden words.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Very strong output. Follows all requirements perfectly and includes great broader topics like 'Akira Toriyama'. The titles are slightly more verbose than other models (e.g., 'A Influência de...'), but still of very high quality.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Very strong output. Meets all the negative constraints and includes the target topic perfectly. Deducted a tiny fraction for using the English word 'Lore' in a Portuguese title, though it is common in pop culture contexts.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Very strong output. Includes the target topic and adheres to all technical constraints perfectly. One of the broader topics ('Ficção Científica e Fantasia') feels slightly disconnected from the core aesthetic of the prompt, but it remains a valid suggestion.",
+          "score": 9.5
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "All titles are in Brazilian Portuguese (or accepted franchise proper nouns), directly relevant to Dragon Ball, include the required corrected “Dragon Ball”, avoid forbidden level/joiner words and avoid “course”. targetLanguageCode is null for all. Strong set of focused, on-topic suggestions (including culture pop).",
+          "score": 9.4
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Meets all key constraints: includes “Dragon Ball”, all targetLanguageCode null, titles are clean (no level words / no “course”) and highly relevant. Slightly narrower/less broadly varied than the very best, but still excellent.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "All titles acceptable and on-topic, includes “Dragon Ball”, targetLanguageCode always null, no forbidden title terms. Good mix (powers/transformations, culture pop, Toriyama). Minor nit: one title starts with an article (“A Influência...”), but that’s not disallowed.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Strong set; titles are Portuguese, include “Dragon Ball”, and targetLanguageCode is null. Several suggestions broaden into animation/production/music/design which is acceptable. Slightly less consistently Dragon Ball-focused in titles like “Música para Anime” and “Design de Personagens de Anime”, but still within optional broader alts and no title-guideline violations.",
+          "score": 8.7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Meets requirements (includes “Dragon Ball”, all null targetLanguageCode, Portuguese titles, no forbidden words). Fewer suggestions and more generic, but still acceptable with broader alts like shonen/cultura pop japonesa.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Meets hard constraints (includes “Dragon Ball”, null targetLanguageCode, Portuguese titles, no forbidden words). However, several titles are very broad single-word categories (“Mangá”, “Shonen”) and feel less like tailored suggestions; still acceptable.",
+          "score": 8.1
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Meets the hard constraints (includes “Dragon Ball”, all targetLanguageCode null, Portuguese titles, no forbidden words). But most titles are overly generic (“Anime”, “Mangá”, “Criação de Personagens”) with weaker connection to Dragon Ball than other models.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Includes “Dragon Ball” and “Dragon Ball Z” with null targetLanguageCode and Portuguese titles, and no forbidden title words. But multiple titles drift away from Dragon Ball specificity (e.g., “História do Anime e Mangá”, broad worldbuilding/culture topics) and it omits other obvious Dragon Ball-related continuations (e.g., Super) that others include, making it comparatively less aligned.",
+          "score": 7.6
+        }
+      ]
+    }
+  ],
+  "taskId": "course-suggestions",
+  "testCaseId": "pt-dragon-ball-1"
+}

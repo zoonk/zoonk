@@ -1,0 +1,167 @@
+{
+  "expectations": "\n      - should include \"Artificial Intelligence\" (not \"AI\" abbreviation in the title)\n      - may include other AI-related topics and broad suggestions\n      - all titles and descriptions in US English\n      - targetLanguageCode must be null for all suggestions\n\n      \n  - Focus only on title field, no need to pay attention to the description\n  - It's okay for description to have issues, focus on the title\n  - The description should NOT have an impact on scoring unless it's written in the wrong language\n  - Title should NOT have level/joiner words like \"basic\", \"intermediate\", \"advanced\", \"fundamentals\", etc\n  - Title should NOT have words like \"course\" in the title\n  - Title cases are not important (e.g., both \"física\" and \"Física\" are acceptable)\n  - Not following title guidelines is a major error\n  - Setting targetLanguageCode to a non-null value for non-language courses is a major error\n  - targetLanguageCode must be null for any course that is NOT teaching a language\n\n    ",
+  "judgedAt": "2026-02-22T00:24:21.536Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Includes 'Artificial Intelligence' in the title. 13 suggestions with good variety of AI-related topics. All targetLanguageCode values are null. No level/joiner words or 'course' in titles. All titles and descriptions in US English. Good breadth including Generative AI, Explainable AI, Prompt Engineering, AI Safety, AI Product Management. No title guideline violations.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Includes 'Artificial Intelligence' in the title. 12 suggestions with excellent variety and breadth covering ML Engineering, Probabilistic Modeling, Large Language Models, Sequence Modeling, Model Optimization, AI Ethics. All targetLanguageCode null. No level/joiner words or 'course' in titles. All in US English. Very comprehensive and well-structured.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Includes 'Artificial Intelligence' in the title. 10 suggestions with good variety including AI Ethics, Generative AI, Conversational AI, Statistics for Data Science. All targetLanguageCode null. No level/joiner words or 'course' in titles. All in US English. Good breadth of AI-related topics.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Includes 'Artificial Intelligence' in the title. 10 suggestions with good variety including Mathematics for Machine Learning, AI Engineering, AI Ethics, Data Science, MLOps. All targetLanguageCode null. No level/joiner words or 'course' in titles. All in US English. Solid breadth.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Includes 'Artificial Intelligence' in the title. 8 suggestions with good core AI topics including Robotics. All targetLanguageCode null. No level/joiner words or 'course' in titles. All in US English. Decent variety but slightly fewer suggestions than top models.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Includes 'Artificial Intelligence' in the title. 7 suggestions covering core AI topics. All targetLanguageCode null. No level/joiner words or 'course' in titles. All in US English. Adequate but fewer suggestions and less variety compared to top models.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Includes 'Artificial Intelligence' in the title. 6 suggestions covering core AI topics. All targetLanguageCode null. No level/joiner words or 'course' in titles. All in US English. Correct but minimal - fewest suggestions and least variety among all models.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Includes 'Artificial Intelligence' in the title. Only 5 suggestions, which is the fewest. All targetLanguageCode null. No title violations. All in US English. However, 'Computer Science' is quite broad and only tangentially AI-related, and the overall set is very sparse with limited AI-specific breadth.",
+          "score": 6.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "The model followed all instructions perfectly. It included 'Artificial Intelligence' spelled out completely, provided relevant topics, correctly set 'targetLanguageCode' to null, and avoided all level/joiner words and the word 'course' in the titles.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Excellent output. The model adhered strictly to all guidelines, providing clear and concise subject titles without any forbidden level or joiner words, and properly configured the language code.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Perfect adherence to the prompt. The model successfully included 'Artificial Intelligence' and other relevant broad topics while strictly avoiding any level/joiner words in the titles.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "The model followed all rules precisely. It provided a diverse list of AI topics, correctly formatted the 'Artificial Intelligence' title, and kept all titles clean of joiners, levels, or the word 'course'.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Flawless execution of the task. The titles are appropriately broad, properly capitalized, free of joiner/level words, and the technical JSON requirements are fully met.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Very good output that follows almost all instructions. However, it includes the title 'Statistics for Data Science', which contains the joiner word 'for', slightly violating the strict title formatting constraints.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Very good output, successfully meeting the core requirements. However, it includes 'Mathematics for Machine Learning', using the joiner word 'for', which violates the negative constraint regarding joiner words.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Good output, but it violates the negative constraints on title formatting in 'Applied AI with Python'. It uses both a modifier ('Applied') and a joiner word ('with'), which goes against the instruction to avoid level/joiner words.",
+          "score": 8
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "All titles are in US English, contain no banned level/joiner words or \"course\", and targetLanguageCode is null throughout. Strong breadth of AI-related topics while staying within title rules.",
+          "score": 9.6
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Meets all title constraints (no level words, no \"course\"), US English titles, and all targetLanguageCode values are null. Broad, relevant set; only minor nit is some titles are more tool/process oriented (e.g., \"Applied AI with Python\"), but still acceptable.",
+          "score": 9.4
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "All titles are valid per rules (US English, no banned words, no \"course\"), and targetLanguageCode is null for every item. Good coverage; includes \"MLOps\" acronym but that is not disallowed by the prompt.",
+          "score": 9.1
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "All titles comply with constraints and targetLanguageCode is null. Good variety; one title (\"Statistics for Data Science\") is broader/non-AI but allowed as a broad suggestion.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "All titles meet the rules and targetLanguageCode is null everywhere. Solid set; slightly less breadth than the best lists but still strong and clearly AI-adjacent.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "All titles are compliant and targetLanguageCode is null. However, it’s a shorter, more standard core-topic list with less breadth than several others.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Titles are compliant and targetLanguageCode is null. Coverage is decent but somewhat redundant (Neural Networks + Deep Learning) and less varied than top performers; still acceptable.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "All titles comply and targetLanguageCode is null. Weakest primarily due to limited set and includes very broad non-AI titles (\"Computer Science\") with relatively little AI-specific coverage compared to others.",
+          "score": 7.4
+        }
+      ]
+    }
+  ],
+  "taskId": "course-suggestions",
+  "testCaseId": "en-ai-1"
+}

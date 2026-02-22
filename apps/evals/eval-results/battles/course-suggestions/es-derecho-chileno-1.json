@@ -1,0 +1,167 @@
+{
+  "expectations": "\n      - should include \"Derecho Chileno\" since the user is specifically asking for Chilean law\n      - if including related topics, they should be specific to Chilean law, not general Spanish law\n      - all titles and descriptions in Chilean Spanish since this courses is specific to Chile\n      - targetLanguageCode must be null for all suggestions\n\n      \n  - Focus only on title field, no need to pay attention to the description\n  - It's okay for description to have issues, focus on the title\n  - The description should NOT have an impact on scoring unless it's written in the wrong language\n  - Title should NOT have level/joiner words like \"basic\", \"intermediate\", \"advanced\", \"fundamentals\", etc\n  - Title should NOT have words like \"course\" in the title\n  - Title cases are not important (e.g., both \"física\" and \"Física\" are acceptable)\n  - Not following title guidelines is a major error\n  - Setting targetLanguageCode to a non-null value for non-language courses is a major error\n  - targetLanguageCode must be null for any course that is NOT teaching a language\n\n    ",
+  "judgedAt": "2026-02-22T00:23:49.175Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Includes 'Derecho Chileno' as the first suggestion. All titles are Chile-specific, in Chilean Spanish, and no level/joiner words or 'course' in titles. targetLanguageCode is null for all. Offers 12 diverse and well-thought-out suggestions including unique and relevant topics like 'Sistema de Fuentes del Derecho Chileno', 'Proceso Penal Chileno', 'Contratación Pública Chilena', 'Derecho Administrativo Chileno', 'Proceso Civil Chileno', 'Derecho Comercial Chileno'. The breadth and specificity to Chilean law is excellent. No title guideline violations.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Includes 'Derecho Chileno'. All titles are Chile-specific, in Chilean Spanish, no level/joiner words. targetLanguageCode is null for all. 10 suggestions with good variety including 'Derecho de Familia Chileno' which is a nice addition. All topics are relevant and specific to Chilean law. No title violations.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Includes 'Derecho Chileno'. All titles are Chile-specific, in Chilean Spanish, no level/joiner words. targetLanguageCode is null for all. 9 suggestions covering a good range of Chilean law areas including tributario, administrativo, comercial, procesal. No title violations. Very solid output.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Includes 'Derecho Chileno'. All titles are Chile-specific, in Chilean Spanish, no level/joiner words. targetLanguageCode is null for all. 10 suggestions with good variety. The last title 'Derecho Constitucional Comparado Chile' is slightly unusual phrasing but still valid and Chile-specific. No major issues.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Includes 'Derecho Chileno'. All titles are Chile-specific, in Chilean Spanish, no level/joiner words. targetLanguageCode is null for all. 7 suggestions with good coverage including Comercial. No title violations. Solid output but slightly fewer suggestions than some others.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Includes 'Derecho Chileno'. All titles are Chile-specific, in Chilean Spanish, no level/joiner words. targetLanguageCode is null for all. 6 suggestions covering core areas (Procesal, Constitucional, Laboral, Civil, Penal). No title violations. Good but fewer suggestions and less variety than top models.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Includes 'Derecho Chileno'. All titles are Chile-specific, in Chilean Spanish, no level/joiner words. targetLanguageCode is null for all. 6 suggestions including Tributario which is good. No title violations. Good but fewer suggestions and less variety than top models.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Includes 'Derecho Chileno'. All titles are Chile-specific, in Chilean Spanish, no level/joiner words. targetLanguageCode is null for all. Only 5 suggestions, which is the fewest of all models. Missing important areas like Laboral, Tributario, Comercial, Administrativo. No title violations but limited coverage.",
+          "score": 7
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "The model followed all instructions perfectly. It included 'Derecho Chileno', all related topics are specific to Chilean law, descriptions and titles are in Spanish, targetLanguageCode is null, and there are no forbidden words (like 'curso' or level indicators) in the titles.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "The model followed all instructions perfectly. It included 'Derecho Chileno', all related topics are specific to Chilean law, descriptions and titles are in Spanish, targetLanguageCode is null, and there are no forbidden words (like 'curso' or level indicators) in the titles.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "The model followed all instructions perfectly. It included 'Derecho Chileno', all related topics are specific to Chilean law, descriptions and titles are in Spanish, targetLanguageCode is null, and there are no forbidden words (like 'curso' or level indicators) in the titles.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "The model followed all instructions perfectly. It included 'Derecho Chileno', all related topics are specific to Chilean law, descriptions and titles are in Spanish, targetLanguageCode is null, and there are no forbidden words (like 'curso' or level indicators) in the titles.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "The model followed all instructions perfectly. It included 'Derecho Chileno', all related topics are specific to Chilean law, descriptions and titles are in Spanish, targetLanguageCode is null, and there are no forbidden words (like 'curso' or level indicators) in the titles.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "The model followed all instructions perfectly. It included 'Derecho Chileno', all related topics are specific to Chilean law, descriptions and titles are in Spanish, targetLanguageCode is null, and there are no forbidden words (like 'curso' or level indicators) in the titles.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "The model followed all instructions perfectly. It included 'Derecho Chileno', all related topics are specific to Chilean law, descriptions and titles are in Spanish, targetLanguageCode is null, and there are no forbidden words (like 'curso' or level indicators) in the titles.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "The model followed all instructions perfectly. It included 'Derecho Chileno', all related topics are specific to Chilean law, descriptions and titles are in Spanish, targetLanguageCode is null, and there are no forbidden words (like 'curso' or level indicators) in the titles.",
+          "score": 10
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Cumple todas las reglas de títulos: todos están en español de Chile, específicos a Chile (incluye “Derecho Chileno”), sin palabras tipo “curso” ni niveles, y targetLanguageCode es null en todos. Además propone subáreas muy pertinentes y concretas (fuentes del derecho, contratación pública, procesos civil/penal, administrativo, tributario, comercial).",
+          "score": 9.6
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Todos los títulos están bien formados: específicos a Chile, en español, sin niveles ni “course”, y targetLanguageCode null. Incluye un set amplio y relevante (familia, tributario, procesal, administrativo, etc.).",
+          "score": 9.1
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Muy buen cumplimiento: títulos correctos, todos con “Chileno”, en español y targetLanguageCode null. Cobertura amplia (incluye procesal, administrativo, tributario). Levemente menos específico/variado que E/H.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "En general muy sólido y específico de Chile, con varios temas relevantes y targetLanguageCode null. Penaliza un poco el título “Derecho Constitucional Comparado Chile” por sonar menos natural/consistente (faltaría “en Chile” o “Comparado en Chile”) y por ser el único que no sigue el patrón “... Chileno”, aunque sigue siendo claramente sobre Chile.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Cumple bien las reglas de título (todos específicos a Chile, en español, sin niveles/“course”, targetLanguageCode null) e incluye comercial y procesal. Algo menos redondo por descripciones con redacción no tan chilena (“Obtener/Analizar/Examinar…” estilo enunciativo), pero el idioma es correcto y el foco de scoring es el título.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Todos los títulos cumplen (Chileno, en español, sin niveles, targetLanguageCode null) e incluye procesal. Cobertura correcta pero menos completa que los mejores.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Títulos impecables y muy alineados a Chile, con targetLanguageCode null. Queda un poco más limitado en variedad (no incluye procesal/administrativo/comercial).",
+          "score": 7.6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Cumple reglas de títulos (español, Chile, targetLanguageCode null) pero es el set más corto y menos completo; le falta cobertura de áreas relevantes (laboral/tributario/administrativo/comercial, etc.).",
+          "score": 7
+        }
+      ]
+    }
+  ],
+  "taskId": "course-suggestions",
+  "testCaseId": "es-derecho-chileno-1"
+}

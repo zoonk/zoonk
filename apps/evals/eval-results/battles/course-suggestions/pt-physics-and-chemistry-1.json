@@ -1,0 +1,167 @@
+{
+  "expectations": "\n      - should include both \"Física\" and \"Química\"\n      - should NOT include \"Física e Química\" as a single title\n      - may include broader or similar topics but it's not required\n      - all titles and descriptions in Brazilian Portuguese\n      - targetLanguageCode must be null for all suggestions\n\n      \n  - Focus only on title field, no need to pay attention to the description\n  - It's okay for description to have issues, focus on the title\n  - The description should NOT have an impact on scoring unless it's written in the wrong language\n  - Title should NOT have level/joiner words like \"basic\", \"intermediate\", \"advanced\", \"fundamentals\", etc\n  - Title should NOT have words like \"course\" in the title\n  - Title cases are not important (e.g., both \"física\" and \"Física\" are acceptable)\n  - Not following title guidelines is a major error\n  - Setting targetLanguageCode to a non-null value for non-language courses is a major error\n  - targetLanguageCode must be null for any course that is NOT teaching a language\n\n    ",
+  "judgedAt": "2026-02-22T00:24:02.920Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Includes both 'Física' and 'Química' as separate titles. Does NOT include 'Física e Química' as a single title. All titles are in Brazilian Portuguese. All targetLanguageCode values are null. No level/joiner words (basic, intermediate, advanced, fundamentals) or 'course' in any title. Good variety of related topics: Química Orgânica, Mecânica Clássica, Termodinâmica, Química Inorgânica, Eletromagnetismo. Clean, well-formed titles with no issues. 7 suggestions is a reasonable number.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Includes both 'Física' and 'Química'. No 'Física e Química' as single title. All targetLanguageCode null. No forbidden words in titles. Excellent variety with 10 suggestions including Mecânica Clássica, Eletromagnetismo, Termodinâmica, Física Experimental, Química Orgânica, Química Analítica, Química Inorgânica, Físico-Química. All titles clean and appropriate. Very comprehensive and well-done.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Includes both 'Física' and 'Química'. No 'Física e Química'. All targetLanguageCode null. No forbidden words in titles. Good variety with 10 suggestions. However, 'Química Geral' could be seen as slightly redundant with 'Química', but it's a recognized distinct field/course area so it's acceptable. All titles are clean and in Portuguese. Solid output.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Includes both 'Física' and 'Química'. No 'Física e Química'. All targetLanguageCode null. No forbidden words. Good variety with 12 suggestions. However, 'Química Físico-Química' is an oddly redundant/awkward title - this is not a standard field name and seems like a mistake. Also having both 'Físico-Química' and 'Química Físico-Química' is redundant and confusing. 'Química Geral' is somewhat redundant with 'Química'. These issues bring it down slightly.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Includes both 'Física' and 'Química'. No 'Física e Química'. All targetLanguageCode null. No forbidden words in titles. Good titles including Físico-Química, Termodinâmica, Mecânica Quântica, Química Orgânica. Only 6 suggestions which is on the smaller side but all are clean and appropriate. Nothing wrong, just less comprehensive.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Includes both 'Física' and 'Química'. No 'Física e Química'. All targetLanguageCode null. No forbidden words in titles. 7 suggestions including Físico-Química, Bioquímica, Termodinâmica, Mecânica Quântica. 'Matemática para Ciências Naturais' is a tangential topic - it's about math, not directly physics or chemistry, which is a stretch but acceptable as a broader/related topic. All titles are clean. Decent output.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Includes both 'Física' and 'Química'. No 'Física e Química'. All targetLanguageCode null. No forbidden words. Only 5 suggestions which is quite minimal. Titles are clean: Físico-Química, Mecânica Quântica, Termodinâmica. Nothing wrong but lacks breadth and comprehensiveness.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Includes both 'Física' and 'Química'. No 'Física e Química'. All targetLanguageCode null. No forbidden words. Only 5 suggestions which is minimal. Titles are clean: Ciência dos Materiais, Física de Partículas, Química Orgânica. However, the description for 'Química Orgânica' ('como as reações químicas ocorrem e como podem ser controladas') is more about general chemistry/kinetics than organic chemistry specifically - but per instructions, description issues shouldn't impact scoring unless wrong language. All in Portuguese. Clean but minimal.",
+          "score": 7.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "The model perfectly followed all instructions. It included 'Física' and 'Química' as standalone titles, avoided the combined 'Física e Química', correctly used Portuguese, omitted any level/joiner words, and properly set 'targetLanguageCode' to null.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "The model flawlessly met all expectations. It provided concise and relevant titles without any level descriptors, included the required topics, and correctly assigned null to 'targetLanguageCode'.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "The model fully adhered to all constraints. Titles represent appropriate subject fields without using level/joiner words, Portuguese is consistently used, and 'targetLanguageCode' is null.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "The model accurately followed all guidelines. The required titles are present, no combined titles were used, no foundational/level words were included, and 'targetLanguageCode' was correctly handled.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "The model produced excellent subject titles that meet all the prompt's rules. It successfully avoided basic/intermediate descriptors, properly included the required titles, and handled the language attributes correctly.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "The model followed all instructions correctly, providing a good variety of topics including the required ones. No level words were used, and 'targetLanguageCode' is correctly set to null.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "The model followed most instructions well but included the title 'Química Geral' (General Chemistry). 'General' functions as a level/foundational descriptor, which is discouraged by the prompt's constraint against words like 'basic', 'intermediate', or 'fundamentals'.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "The model followed the majority of instructions but included 'Química Geral', which functions as a foundational/level word. Additionally, it hallucinated a redundant and awkward title: 'Química Físico-Química'.",
+          "score": 8
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Cumpre totalmente os requisitos principais: inclui “Física” e “Química” separadas, não usa “Física e Química” como título único, todos os títulos estão em PT-BR, sem palavras de nível/\"curso\", e targetLanguageCode é null em todas. Conjunto amplo e coerente de títulos.",
+          "score": 9.6
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Também cumpre integralmente: “Física” e “Química” separadas, títulos adequados em PT-BR, sem joiners/níveis/\"curso\", e targetLanguageCode null para todos. Boa variedade (inclui subáreas de física e química). Fica ligeiramente atrás só por não trazer “Química Geral”/visão mais básica explícita, mas isso não é exigido.",
+          "score": 9.4
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Atende aos requisitos centrais (inclui “Física” e “Química” separadas; PT-BR; targetLanguageCode null; sem palavras proibidas). Porém há um título problemático/estranho: “Química Físico-Química” é redundante e pouco natural como título (ainda que não viole literalmente as regras). No mais, bom conjunto.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Cumpre os requisitos: “Física” e “Química” separados, PT-BR, targetLanguageCode null, sem termos de nível/\"curso\". Lista um pouco menos abrangente, mas isso não é obrigatório.",
+          "score": 8.4
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Cumpre requisitos principais (inclui “Física” e “Química” separadas; PT-BR; targetLanguageCode null; títulos sem palavras proibidas). Menos sugestões e cobertura mais curta, mas ainda aceitável.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Cumpre requisitos formais (inclui “Física” e “Química” separadas; PT-BR; targetLanguageCode null; sem termos como \"curso\"/níveis). Contudo, inclui “Bioquímica” (ok) mas a descrição desse item está conceitualmente trocada (fala de sistemas biológicos e processos da vida, mais “Biofísica”); descrições não contam muito, então penalização pequena. Conjunto razoável.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Cumpre os requisitos principais (Física e Química separadas; PT-BR; targetLanguageCode null; títulos ok). Lista é bem curta e pouco variada, mas não é um requisito explícito.",
+          "score": 7.6
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Cumpre o mínimo formal (inclui “Física” e “Química”; PT-BR; targetLanguageCode null; títulos sem palavras proibidas). Porém a seleção é fraca/incoerente: mistura “Química Orgânica” com descrição sobre reações de forma genérica e deixa de fora subáreas comuns; ainda assim, isso é mais qualidade do que regra. Fica como o mais fraco entre os que não violam regras.",
+          "score": 7.2
+        }
+      ]
+    }
+  ],
+  "taskId": "course-suggestions",
+  "testCaseId": "pt-physics-and-chemistry-1"
+}

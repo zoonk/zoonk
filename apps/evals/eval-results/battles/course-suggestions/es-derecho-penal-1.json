@@ -1,0 +1,167 @@
+{
+  "expectations": "\n      - should include \"Derecho Penal\"\n      - may include broader or similar topics\n      - all titles and descriptions in Latin American Spanish\n      - targetLanguageCode must be null for all suggestions\n\n      \n  - Focus only on title field, no need to pay attention to the description\n  - It's okay for description to have issues, focus on the title\n  - The description should NOT have an impact on scoring unless it's written in the wrong language\n  - Title should NOT have level/joiner words like \"basic\", \"intermediate\", \"advanced\", \"fundamentals\", etc\n  - Title should NOT have words like \"course\" in the title\n  - Title cases are not important (e.g., both \"física\" and \"Física\" are acceptable)\n  - Not following title guidelines is a major error\n  - Setting targetLanguageCode to a non-null value for non-language courses is a major error\n  - targetLanguageCode must be null for any course that is NOT teaching a language\n\n    ",
+  "judgedAt": "2026-02-22T00:24:03.238Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Includes 'Derecho Penal' as required. 10 suggestions with excellent variety and relevance (Derecho Procesal Penal, Teoría del Delito, Criminología, Delitos Económicos, Responsabilidad Penal Empresarial, Litigación Penal, Peritaje Forense, Derecho Penal Internacional, Ejecución Penal). All titles are in Latin American Spanish, no level/joiner words, no 'course' words. All targetLanguageCode values are null. Strong, diverse set of related topics. No issues detected.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Includes 'Derecho Penal' as required. 10 suggestions with good variety and strong relevance to criminal law (Teoría del Delito, Dogmática Penal, Litigación Penal, Derecho Procesal Penal, Prueba en el Proceso Penal, Criminología, Derechos Humanos en el Sistema Penal, Medidas Cautelares en Materia Penal, Redacción Jurídica Penal). All titles in Spanish, no forbidden words, all targetLanguageCode null. Very good set with some more niche/specialized topics that add depth.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Includes 'Derecho Penal' as required. 8 suggestions with good variety (Derecho Procesal Penal, Tipos Penales, Teoría de la Pena, Criminología, Derecho Penal Económico, Derecho Penal Internacional, Garantías Constitucionales en el Proceso Penal). All titles in Spanish, no forbidden words, all targetLanguageCode null. Good range of broader and related topics.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Includes 'Derecho Penal' as required. 8 suggestions with good diversity (Derecho Procesal Penal, Teoría del Delito, Derecho Penitenciario, Criminalística, Criminología, Victimología, Derecho Penal Internacional). All titles in Spanish, no forbidden words, all targetLanguageCode null. Solid selection covering the criminal law ecosystem well.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Includes 'Derecho Penal' as required. 5 suggestions (Derecho Procesal Penal, Criminología, Derecho Constitucional, Investigación Criminal). All titles in Spanish, no forbidden words, all targetLanguageCode null. Decent but fewer suggestions. Derecho Constitucional is somewhat broader/tangential. Overall adequate but less comprehensive.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Includes 'Derecho Penal' as required. 5 suggestions (Derecho Procesal Penal, Criminología, Derecho Constitucional, Derecho Penitenciario). All titles in Spanish, no forbidden words, all targetLanguageCode null. Similar to Model C in quantity. Derecho Constitucional is a broader topic. Adequate but limited variety.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Includes 'Derecho Penal' as required. 5 suggestions (Derecho Procesal Penal, Criminología, Victimología, Derecho Penal Internacional). All titles in Spanish, no forbidden words, all targetLanguageCode null. Decent selection but fewer suggestions. All topics are relevant to criminal law.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Includes 'Derecho Penal' as required. Only 4 suggestions total (Teoría del Delito, Procedimiento Penal, Responsabilidad Penal). All titles in Spanish, no forbidden words, all targetLanguageCode null. The fewest suggestions of all models, limiting the breadth and usefulness of the recommendation set.",
+          "score": 6
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "The model followed all instructions perfectly. It provided a robust list of 10 highly relevant course titles related to criminal law (Derecho Penal), avoided any prohibited words (levels/joiners/\"course\"), correctly set targetLanguageCode to null, and wrote everything in Latin American Spanish.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "The model followed all instructions flawlessly. It generated 10 varied and highly relevant titles in the field of criminal law, strictly adhered to the negative constraints regarding forbidden words, and properly formatted the targetLanguageCode.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Excellent output. The model provided 8 relevant and well-crafted titles focusing on criminal law and related areas. All constraints were met, including the correct handling of targetLanguageCode and the avoidance of level or course-related words in the titles.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Excellent output. The model generated 8 highly accurate and relevant titles, adhered completely to the negative constraints regarding titles, and correctly left targetLanguageCode as null.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Very good output. The model followed all rules correctly, avoiding forbidden words and keeping targetLanguageCode null. It generated fewer items (5) compared to the top-scoring models, but the quality of the titles remains excellent.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Good output. The model adhered to all negative constraints and formatting rules. It provided 5 items, including 'Derecho Constitucional', which is a broader topic (allowed by the prompt) but slightly less specialized in the requested domain compared to other models.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Good output. Similar to Model B, it followed all rules perfectly and avoided forbidden words. It generated 5 items, including a broader topic, which is acceptable but makes the list slightly less rich in specialized penal subjects.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Good output. The model followed all constraints perfectly, including the null targetLanguageCode and the absence of forbidden words in titles. However, it only provided 4 items, making it the least comprehensive list among the models.",
+          "score": 8.5
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Cumple plenamente con los criterios: incluye “Derecho Penal”, todos los títulos están en español latino, no usa palabras tipo “curso” ni niveles, y targetLanguageCode es null en todos. Además aporta variedad temática relevante (procesal, prueba, cautelares, DD. HH., litigación, etc.).",
+          "score": 9.6
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Incluye “Derecho Penal”, títulos adecuados en español y sin palabras prohibidas ni niveles; targetLanguageCode siempre null. Buen conjunto amplio y pertinente (delitos económicos, responsabilidad penal empresarial, forense, ejecución penal).",
+          "score": 9.3
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Incluye “Derecho Penal”, títulos correctos en español, sin “curso”/niveles y targetLanguageCode null. Temas bien alineados (penitenciario, criminalística, victimología, penal internacional). Menos completo/variado que A/H.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Cumple requisitos clave (incluye “Derecho Penal”, títulos en español, sin niveles/“curso”, targetLanguageCode null). Títulos pertinentes; ligera menor naturalidad/precisión temática en alguno (p. ej., “Tipos Penales” como etiqueta de curso puede sonar más a sección), pero no viola reglas.",
+          "score": 8.7
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Cumple: “Derecho Penal” presente, títulos en español, sin niveles/“curso”, targetLanguageCode null. Lista corta pero relevante; menos cobertura temática que los mejores.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Cumple reglas de títulos y targetLanguageCode null; incluye “Derecho Penal”. Sin embargo, es breve y mete “Derecho Constitucional”, que es más periférico al foco penal (permitido, pero resta pertinencia frente a alternativas más centradas).",
+          "score": 7.9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Cumple con “Derecho Penal”, español y targetLanguageCode null. Similar a B: lista corta y con “Derecho Constitucional” relativamente periférico; “Investigación Criminal” es pertinente, pero el conjunto es menos sólido/centrado que otros.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Cumple formalmente (incluye “Derecho Penal”, títulos en español, sin niveles/“curso”, targetLanguageCode null), pero hay un problema de calidad en títulos: usa “Teoría del Delito” con una descripción que en realidad trata de delitos específicos/clasificación (desajuste), lo que debilita la utilidad. Lista además muy corta.",
+          "score": 7.2
+        }
+      ]
+    }
+  ],
+  "taskId": "course-suggestions",
+  "testCaseId": "es-derecho-penal-1"
+}

@@ -1,0 +1,167 @@
+{
+  "expectations": "\n      - should include the exact book title (\"The Wealth of Nations\") since the user is specifically asking for this book\n      - should include broader or similar topics\n      - all titles and descriptions in US English\n      - targetLanguageCode must be null for all suggestions\n\n      \n  - Focus only on title field, no need to pay attention to the description\n  - It's okay for description to have issues, focus on the title\n  - The description should NOT have an impact on scoring unless it's written in the wrong language\n  - Title should NOT have level/joiner words like \"basic\", \"intermediate\", \"advanced\", \"fundamentals\", etc\n  - Title should NOT have words like \"course\" in the title\n  - Title cases are not important (e.g., both \"física\" and \"Física\" are acceptable)\n  - Not following title guidelines is a major error\n  - Setting targetLanguageCode to a non-null value for non-language courses is a major error\n  - targetLanguageCode must be null for any course that is NOT teaching a language\n\n    ",
+  "judgedAt": "2026-02-22T00:23:54.860Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Includes 'The Wealth of Nations' as required. Excellent variety of broader/similar topics: Adam Smith, History of Economic Thought, Classical Economics, Political Economy, Economic History, The Theory of Moral Sentiments, Market Institutions. Including Adam Smith as a standalone topic and 'The Theory of Moral Sentiments' (Smith's other major work) shows thoughtful curation. All targetLanguageCode values are null. No forbidden words (basic, intermediate, course, etc.) in titles. 8 suggestions provides good breadth. All titles and descriptions in US English.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Includes 'The Wealth of Nations' as required. Good variety: Economics, History of Economic Thought, Political Economy, International Trade, Market Economics, Macroeconomics. 7 suggestions with solid breadth. All targetLanguageCode null. No forbidden words in titles. All in US English. Strong selection of related topics.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Includes 'The Wealth of Nations' as required. Good variety: Economics, History of Economic Thought, International Trade, Macroeconomics, History of Capitalism, Political Philosophy. 7 suggestions with nice breadth, including Political Philosophy which is a thoughtful adjacent topic. All targetLanguageCode null. No forbidden words. All in US English.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Includes 'The Wealth of Nations' as required. Solid topics: Classical Economics, Capitalism, Macroeconomics, History of Economic Thought, Political Economy. All targetLanguageCode null. No forbidden words. All in US English. 6 suggestions, good quality but slightly less breadth than top models.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Includes 'The Wealth of Nations' as required. Good topics: Classical Economics, Economic History, Political Economy, Market Theory. All targetLanguageCode null. No forbidden words. All in US English. Only 5 suggestions, slightly less variety but all relevant.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Includes 'The Wealth of Nations' as required. Topics: Microeconomics, Macroeconomics, History of Economic Thought, Political Economy. All targetLanguageCode null. No forbidden words. All in US English. Only 5 suggestions, reasonable but fairly standard/generic economics topics without as much thematic connection to Smith's work specifically.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Includes 'The Wealth of Nations' as required. Topics: Classical Economics, History of Economic Thought, Capitalism, Macroeconomics. All targetLanguageCode null. No forbidden words. All in US English. Only 5 suggestions with decent but somewhat limited variety.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Uses the full formal title 'An Inquiry into the Nature and Causes of the Wealth of Nations' instead of the commonly requested 'The Wealth of Nations'. While technically accurate, the task explicitly says it should include the exact book title 'The Wealth of Nations'. This is a notable deviation. Otherwise good variety: History of Economic Thought, Microeconomics, Macroeconomics, Political Economy of Markets, Economic Growth, International Trade, Economics of Incentives. All targetLanguageCode null. No forbidden words in titles. 8 suggestions with good breadth. The title mismatch is a meaningful issue since the task specifically calls for 'The Wealth of Nations'.",
+          "score": 6.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "The model followed all instructions perfectly. It included the exact book title requested, generated excellent related topics, kept 'targetLanguageCode' as null for all items, and avoided any restricted words in the titles.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "The model followed all instructions perfectly. It included the exact book title requested, generated excellent related topics, kept 'targetLanguageCode' as null for all items, and avoided any restricted words in the titles.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "The model followed all instructions perfectly. It included the exact book title requested, generated excellent related topics, kept 'targetLanguageCode' as null for all items, and avoided any restricted words in the titles.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "The model followed all instructions perfectly. It included the exact book title requested, generated excellent related topics, kept 'targetLanguageCode' as null for all items, and avoided any restricted words in the titles.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "The model followed all instructions perfectly. It included the exact book title requested, generated excellent related topics, kept 'targetLanguageCode' as null for all items, and avoided any restricted words in the titles.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "The model followed all instructions perfectly. It included the exact book title requested, generated excellent related topics, kept 'targetLanguageCode' as null for all items, and avoided any restricted words in the titles.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "The model followed all instructions perfectly. It included the exact book title requested, generated excellent related topics, kept 'targetLanguageCode' as null for all items, and avoided any restricted words in the titles.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "The model followed most instructions, but failed to include the exact book title requested ('The Wealth of Nations'). Instead, it provided the full historical title ('An Inquiry into the Nature and Causes of the Wealth of Nations'), which violates the specific requirement for the exact title string. All other constraints were met.",
+          "score": 7
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Includes the exact required title \"The Wealth of Nations\" and all other titles are on closely related topics (economics, market economics, political economy, trade, macro, history of thought). All in US English, no level/joiner words, no \"course\", and all targetLanguageCode values are null. Strong breadth and relevance.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Has the exact required title and a strong set of related topics (economics, history of thought, trade, macro, history of capitalism). \"Political Philosophy\" is a bit broader/less directly tied than other options but still relevant contextually. All titles clean (no level words/no \"course\"), US English, targetLanguageCode null.",
+          "score": 9.1
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Includes the exact required title and several highly relevant adjacent titles, including \"Adam Smith\" and \"The Theory of Moral Sentiments\" (good companion). All titles in US English, no prohibited words, and targetLanguageCode is null throughout. Slightly more niche with multiple Adam Smith-specific items, but still aligned.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Includes exact \"The Wealth of Nations\" and a solid set of related economics topics (classical economics, capitalism, macroeconomics, history of thought, political economy). All titles comply and targetLanguageCode is null. Slightly less rich/precise than top sets but still strong.",
+          "score": 8.7
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Meets key requirements: includes exact \"The Wealth of Nations,\" all titles are relevant, US English, no prohibited words, and targetLanguageCode null. Minor downside: fewer suggestions / less breadth than better-ranked outputs.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Includes exact required title; remaining titles are relevant (micro, macro, history of thought, political economy). US English, no level/joiner words, no \"course\", targetLanguageCode null. Similar to Model B but with a bit broader core-econ coverage; still fewer/less diverse than top outputs.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Includes exact required title and mostly relevant topics (classical economics, economic history, political economy). \"Market Theory\" is fine but a bit generic compared to others. All titles follow rules and targetLanguageCode null. Overall slightly less comprehensive.",
+          "score": 8.4
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Major requirement failure: does NOT include the exact title \"The Wealth of Nations\" (uses the full original title instead). Even though topics are relevant and targetLanguageCode is null, missing the exact requested book title is a significant error per expectations.",
+          "score": 4.5
+        }
+      ]
+    }
+  ],
+  "taskId": "course-suggestions",
+  "testCaseId": "en-wealth-of-nations-1"
+}

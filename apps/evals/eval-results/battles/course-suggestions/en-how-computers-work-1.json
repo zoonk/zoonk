@@ -1,0 +1,167 @@
+{
+  "expectations": "\n      - should include broad courses like \"Computer Science\", \"Computer Architecture\", etc\n      - extra related topics are fine but their absence is also fine\n      - all titles and descriptions in US English\n      - targetLanguageCode must be null for all suggestions\n\n      \n  - Focus only on title field, no need to pay attention to the description\n  - It's okay for description to have issues, focus on the title\n  - The description should NOT have an impact on scoring unless it's written in the wrong language\n  - Title should NOT have level/joiner words like \"basic\", \"intermediate\", \"advanced\", \"fundamentals\", etc\n  - Title should NOT have words like \"course\" in the title\n  - Title cases are not important (e.g., both \"física\" and \"Física\" are acceptable)\n  - Not following title guidelines is a major error\n  - Setting targetLanguageCode to a non-null value for non-language courses is a major error\n  - targetLanguageCode must be null for any course that is NOT teaching a language\n\n    ",
+  "judgedAt": "2026-02-22T00:23:49.202Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Includes both required broad courses (Computer Science, Computer Architecture) plus relevant extras (Operating Systems, Digital Logic, Computer Networking, Software Engineering). All titles are clean without level/joiner words or 'course'. All targetLanguageCode values are null. 'How Computers Work' is a reasonable extra topic. No title violations.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Includes both required broad courses (Computer Science, Computer Architecture) plus many relevant extras (Digital Logic, Operating Systems, Computer Hardware, Microprocessor Architecture, Assembly Language, Data Representation, Computer Networking, Embedded Systems, Hardware Troubleshooting). All titles are clean, no level/joiner words, all targetLanguageCode null. Good comprehensive coverage. Slightly more niche topics but nothing wrong with that.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Includes both required broad courses (Computer Science, Computer Architecture) plus relevant extras (Operating Systems, Computer Engineering, Digital Logic). All titles are clean without level/joiner words. All targetLanguageCode values are null. Solid but slightly fewer suggestions than some others, though the task says extra topics' absence is fine.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Includes both required broad courses (Computer Science, Computer Architecture) plus relevant extras (Operating Systems, Digital Logic, Microprocessors). All titles clean, no level/joiner words, all targetLanguageCode null. Concise and correct, just fewer suggestions.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Includes both required broad courses (Computer Science, Computer Architecture) plus extras (Operating Systems, Computer Systems, Digital Logic Design). All targetLanguageCode null. All titles clean. Solid output, nothing wrong.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Includes both required broad courses (Computer Science, Computer Architecture) plus many relevant extras (Operating Systems, Digital Logic Design, Computer Hardware, Computer Networking, Data Representation, Computer Performance). All targetLanguageCode null. However, 'How Programs Run' is an unusual/informal course title that feels a bit off for a standard course suggestion. All other titles are clean. No level/joiner word violations.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Includes required broad courses (Computer Science, Computer Architecture) plus extras (Operating Systems, Digital Logic, Computer Networking). However, 'Programming Fundamentals' contains the word 'Fundamentals' which is a level/joiner word explicitly prohibited by the guidelines. This is a major title error. All targetLanguageCode values are null.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Missing 'Computer Science' which is explicitly listed as a required broad course. While it has Computer Architecture and Operating Systems, the absence of Computer Science is a notable gap. 'Digital Logic and Boolean Algebra' and 'CPU Design and Instruction Execution' are fine as titles (no prohibited words). All targetLanguageCode null. The missing required course is a significant issue.",
+          "score": 5.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "The model followed all instructions perfectly. It included broad topics like Computer Science and Computer Architecture, used US English, set targetLanguageCode to null, and avoided all forbidden words in the titles.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "The model followed all instructions perfectly. It included broad topics like Computer Science and Computer Architecture, used US English, set targetLanguageCode to null, and avoided all forbidden words in the titles.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "The model followed all instructions perfectly. It included broad topics like Computer Science and Computer Architecture, used US English, set targetLanguageCode to null, and avoided all forbidden words in the titles.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "The model followed all instructions perfectly. It included broad topics like Computer Science and Computer Architecture, used US English, set targetLanguageCode to null, and avoided all forbidden words in the titles.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "The model followed all instructions perfectly. It included broad topics like Computer Science and Computer Architecture, used US English, set targetLanguageCode to null, and avoided all forbidden words in the titles.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "The model followed all instructions perfectly. It included broad topics like Computer Science and Computer Architecture, used US English, set targetLanguageCode to null, and avoided all forbidden words in the titles.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "The model followed almost all instructions and provided excellent titles with no forbidden words. However, it omitted the specifically requested broad topic 'Computer Science', making it slightly less comprehensive than the top models.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "The model committed a major error by including the forbidden word 'Fundamentals' in the title 'Programming Fundamentals'. The prompt explicitly stated that titles should not have level/joiner words like 'fundamentals'.",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "All titles are in US English, contain no level/joiner words (e.g., “fundamentals”), and avoid “course.” targetLanguageCode is correctly null throughout. Includes broad core areas (Computer Science, Computer Architecture, Operating Systems) plus relevant related topics (Networking, Embedded Systems, etc.) without violating title rules.",
+          "score": 9.6
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Meets title rules (no “course,” no level words), US English, and all targetLanguageCode fields are null. Includes the required broad topics (Computer Science, Computer Architecture) and several solid related areas (Networking, Software Engineering). Slightly less directly “hardware/architecture pathway” breadth than the best set, but still strong.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "All titles are compliant (no level words, no “course”), US English, and targetLanguageCode is null for all. Covers broad topics (Computer Science, Operating Systems, Computer Architecture) and adds good adjacent topics (Data Representation, Networking, Hardware). Minor overlap/redundancy (Architecture vs Performance vs Hardware) but not a guideline violation.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Clean, compliant titles in US English; targetLanguageCode is null for all. Includes the explicitly expected broad topics (Computer Science, Computer Architecture). Slightly narrower set than higher-ranked models (fewer related areas like networking, data representation), but still meets expectations well.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "All titles are compliant and in US English with null targetLanguageCode. Includes broad core topics. Slightly less comprehensive than top sets and some titles are a bit generic/overlapping (e.g., “Computer Systems” alongside the others), but still solid.",
+          "score": 8.4
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Compliant titles, US English, and null targetLanguageCode. Includes key broad topics (Computer Science, Computer Architecture, Operating Systems). Less breadth/variety than higher-ranked outputs.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "All titles are in English and targetLanguageCode is null. However, it misses the explicitly expected broad title “Computer Science” (it focuses more on architecture/hardware subareas). Titles are otherwise compliant (no “course,” no level words).",
+          "score": 7.6
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Contains a major title-guideline violation: “Programming Fundamentals” includes the disallowed level/joiner word “Fundamentals.” Other titles are fine and targetLanguageCode is null, but this single major violation substantially lowers quality.",
+          "score": 5.2
+        }
+      ]
+    }
+  ],
+  "taskId": "course-suggestions",
+  "testCaseId": "en-how-computers-work-1"
+}

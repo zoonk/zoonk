@@ -1,0 +1,167 @@
+{
+  "expectations": "\n      - should include \"Tabela Periódica\"\n      - should NOT include an article title like \"A Tabela Periódica\"\n      - may include other chemistry-related topics and broad suggestions like \"Química\"\n      - all titles and descriptions in Brazilian Portuguese\n      - targetLanguageCode must be null for all suggestions\n\n      \n  - Focus only on title field, no need to pay attention to the description\n  - It's okay for description to have issues, focus on the title\n  - The description should NOT have an impact on scoring unless it's written in the wrong language\n  - Title should NOT have level/joiner words like \"basic\", \"intermediate\", \"advanced\", \"fundamentals\", etc\n  - Title should NOT have words like \"course\" in the title\n  - Title cases are not important (e.g., both \"física\" and \"Física\" are acceptable)\n  - Not following title guidelines is a major error\n  - Setting targetLanguageCode to a non-null value for non-language courses is a major error\n  - targetLanguageCode must be null for any course that is NOT teaching a language\n\n    ",
+  "judgedAt": "2026-02-22T00:23:58.503Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Includes 'Tabela Periódica' (not as article title). All titles in Brazilian Portuguese. No level/joiner words or 'course' in titles. All targetLanguageCode are null. Good variety of relevant chemistry topics (7 suggestions) including 'Propriedades Periódicas' and 'Famílias Químicas' which are nicely specific. Clean titles throughout. No issues found.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Includes 'Tabela Periódica'. All titles in Brazilian Portuguese. No level/joiner words. All targetLanguageCode null. Excellent variety with 10 suggestions covering diverse chemistry topics. All titles are clean and appropriate. Very comprehensive set including 'Físico-Química', 'Química Analítica', 'Reatividade Química' - good breadth. No issues found.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Includes 'Tabela Periódica'. Includes broad 'Química' suggestion. All titles in Brazilian Portuguese. No level/joiner words. All targetLanguageCode null. Clean titles. Only 5 suggestions which is adequate but less comprehensive than some others. No issues found.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Includes 'Tabela Periódica'. Includes broad 'Química' suggestion. All titles in Brazilian Portuguese. No level/joiner words. All targetLanguageCode null. Clean titles. Only 5 suggestions. 'Propriedades dos Elementos' is a nice specific addition. No issues found.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Includes 'Tabela Periódica'. All titles in Brazilian Portuguese. No level/joiner words. All targetLanguageCode null. 6 suggestions with good variety. Clean titles throughout. No issues found.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Includes 'Tabela Periódica'. All titles in Brazilian Portuguese. No level/joiner words. All targetLanguageCode null. 5 suggestions with clean titles. Solid but not as comprehensive as some others. No issues found.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Includes 'Tabela Periódica'. All titles in Brazilian Portuguese. No level/joiner words. All targetLanguageCode null. Only 5 suggestions. Clean titles. Solid but basic set. No issues found.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Includes 'Tabela Periódica'. All targetLanguageCode null. All in Brazilian Portuguese. No level/joiner words. 7 suggestions. However, 'Famílias da Tabela Periódica' is a bit long/verbose as a title but not technically violating any rule. 'Química dos Elementos no Cotidiano' is quite long for a course title but not explicitly prohibited. All titles are clean otherwise. Good variety of topics.",
+          "score": 8
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "The model followed all instructions perfectly. It included 'Tabela Periódica' without an article, avoided any level or joiner words, included the exact suggested term 'Química', kept 'targetLanguageCode' as null, and wrote all content in Brazilian Portuguese.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "The model successfully followed all guidelines. It correctly included 'Tabela Periódica', used the suggested broad topic 'Química', avoided prohibited words, maintained 'targetLanguageCode' as null, and used flawless Brazilian Portuguese.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Excellent output. It included the required 'Tabela Periódica', provided relevant chemistry-related topics, avoided level/course words, correctly set 'targetLanguageCode' to null, and wrote everything in valid Brazilian Portuguese.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "The model perfectly adhered to the instructions. The target course 'Tabela Periódica' was included without articles, no level words were used in the titles, 'targetLanguageCode' was null, and all text was in Brazilian Portuguese.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Flawless execution. All titles were clean, appropriate chemistry topics including 'Tabela Periódica'. The 'targetLanguageCode' was set to null for all items, and the language requirement was met.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "The model provided a comprehensive list of valid chemistry topics including 'Tabela Periódica'. It strictly followed the negative constraints (no 'basic', no 'course', no article in the main title) and kept 'targetLanguageCode' null.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Met all requirements. Included 'Tabela Periódica' correctly, provided good chemistry topics, avoided prohibited words, ensured 'targetLanguageCode' was null, and the language was accurately PT-BR.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "The model followed all core instructions perfectly, including the exact title 'Tabela Periódica', maintaining null for 'targetLanguageCode', and writing in PT-BR. Some titles like 'Química dos Elementos no Cotidiano' are slightly long but completely acceptable within the requested parameters.",
+          "score": 9.5
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "All titles are in Brazilian Portuguese, contain no forbidden joiner/level words or “curso”, include the required “Tabela Periódica” exactly (without an article title), and keep targetLanguageCode as null. The set is also cohesive and clearly chemistry-focused with well-formed, natural titles (e.g., “Propriedades Periódicas”, “Famílias Químicas”).",
+          "score": 9.6
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Meets all major constraints: includes “Tabela Periódica”, all titles in PT-BR, no “curso”/level words, and all targetLanguageCode values are null. Broad and relevant chemistry coverage with strong, natural topic titles. Minor nit: one title is singular (“Ligação Química”) while others use plural; not an actual guideline violation.",
+          "score": 9.4
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Fully compliant on the major rules: includes “Tabela Periódica” (no article), titles are PT-BR, no level/course words, and targetLanguageCode is null throughout. Titles are clear and on-topic. Slightly more specialized/wordy titles (e.g., “Química dos Elementos no Cotidiano”) but still acceptable.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "All constraints satisfied (includes “Tabela Periódica”; titles in PT-BR; no level/course words; targetLanguageCode null). Solid basic chemistry topic set. Slightly more generic/less rich coverage than the top-ranked sets.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Compliant titles in PT-BR, includes “Tabela Periódica”, no banned title patterns, and targetLanguageCode is null. One title (“Elementos e Compostos Químicos”) is a bit broad/vague compared with others but still acceptable and on-topic.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Meets key requirements: includes “Tabela Periódica”, PT-BR titles, no course/level words, and targetLanguageCode null. The list is shorter and slightly less specific (e.g., just “Química”), but no major violations.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "All titles satisfy the constraints (PT-BR, includes “Tabela Periódica”, no banned words, targetLanguageCode null). Similar to Model D/E in breadth; overall fine but less varied and slightly more generic than higher-ranked options.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Complies with the stated rules (includes “Tabela Periódica”, PT-BR titles, no level/course words, targetLanguageCode null). Topic set is acceptable but comparatively less cohesive/specific (e.g., “Propriedades dos Elementos” is broader/less standard than “Propriedades Periódicas”), making it a bit weaker than peers.",
+          "score": 8.4
+        }
+      ]
+    }
+  ],
+  "taskId": "course-suggestions",
+  "testCaseId": "pt-periodic-table-1"
+}

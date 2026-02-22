@@ -1,0 +1,167 @@
+{
+  "expectations": "\n      - should include \"Black Holes\" in the first result\n      - should include broader topics like \"Astrophysics\"\n      - all titles and descriptions in US English\n      - targetLanguageCode must be null for all suggestions\n\n      \n  - Focus only on title field, no need to pay attention to the description\n  - It's okay for description to have issues, focus on the title\n  - The description should NOT have an impact on scoring unless it's written in the wrong language\n  - Title should NOT have level/joiner words like \"basic\", \"intermediate\", \"advanced\", \"fundamentals\", etc\n  - Title should NOT have words like \"course\" in the title\n  - Title cases are not important (e.g., both \"física\" and \"Física\" are acceptable)\n  - Not following title guidelines is a major error\n  - Setting targetLanguageCode to a non-null value for non-language courses is a major error\n  - targetLanguageCode must be null for any course that is NOT teaching a language\n\n    ",
+  "judgedAt": "2026-02-22T00:24:23.976Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "First result is 'Black Holes' ✓. Includes broader topic 'Astrophysics' ✓. All titles in US English ✓. All targetLanguageCode null ✓. No level/joiner words or 'course' in titles ✓. Good variety of related topics (General Relativity, Stellar Evolution, Astrophysics, Cosmology, Observational Astronomy, Quantum Mechanics). 7 suggestions with a nice mix of specific and broader topics. All titles are clean and appropriate.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "First result is 'Black Holes' ✓. Includes 'Astrophysics' ✓. All targetLanguageCode null ✓. No level/joiner words ✓. All US English ✓. Clean, well-chosen titles. Only 4 suggestions which is a bit sparse, but all are relevant and well-formed. Meets all requirements perfectly, just fewer suggestions than some others.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "First result is 'Black Holes' ✓. Includes 'Astrophysics' ✓. All targetLanguageCode null ✓. No level/joiner words ✓. All US English ✓. Clean titles. Only 4 suggestions, similar to Model F. All requirements met. Good selection of broader topics (Astrophysics, Astronomy).",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "First result is 'Black Holes' ✓. All targetLanguageCode null ✓. No level/joiner words ✓. All US English ✓. 6 suggestions with good variety. However, does NOT include 'Astrophysics' as a standalone broader topic — it has 'Stellar Astrophysics' instead, which is more specific. The requirement says to include broader topics like 'Astrophysics', and while 'Stellar Astrophysics' is related, it's narrower. Has Astronomy and Cosmology as broader topics though. Minor miss on the explicit 'Astrophysics' requirement.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "First result is 'Black Holes' ✓. Includes 'Astrophysics' ✓. All targetLanguageCode null ✓. No level/joiner words ✓. All US English ✓. 5 suggestions with good variety. All titles are clean. 'Gravitational Physics' is a reasonable related topic. Solid output meeting all requirements.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "First result is 'Black Holes' ✓. All targetLanguageCode null ✓. No level/joiner words ✓. All US English ✓. 10 suggestions — very comprehensive. However, does NOT include broader topics like 'Astrophysics' — all topics are quite specific and narrow (Accretion Disks, Event Horizons, Compact Objects, etc.). The requirement explicitly says to include broader topics like 'Astrophysics'. This is a notable miss. The topics are almost all very specialized sub-topics of black hole physics rather than broader umbrella topics.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "First result is 'Black Holes' ✓. All targetLanguageCode null ✓. No level/joiner words ✓. All US English ✓. 9 suggestions with good depth. However, does NOT include a broad standalone 'Astrophysics' — it has 'Relativistic Astrophysics' and 'High-Energy Astrophysics', which are narrower sub-fields. The requirement says to include broader topics like 'Astrophysics'. Missing the broader umbrella topic is a notable gap. Topics lean heavily specialized (Numerical Relativity, Accretion Physics).",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "First result is 'Black Holes' ✓. All targetLanguageCode null ✓. No level/joiner words ✓. All US English ✓. 5 suggestions. However, does NOT include broader topics like 'Astrophysics' — all topics are closely related to black holes specifically (Stellar Evolution, Gravitational Waves and Detection, Black Hole Thermodynamics). Missing broader umbrella topics is a notable gap per the requirements. 'Gravitational Waves and Detection' is a slightly wordy title but not a rule violation.",
+          "score": 6.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model E provides a perfectly balanced and comprehensive list of 7 topics. It includes exactly 'Astrophysics' as requested, places 'Black Holes' first, and broadens out to excellent related fields like 'Cosmology' and 'Quantum Mechanics'. All negative constraints were perfectly followed.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model C provides an extensive and highly detailed list of 10 topics. It successfully incorporates broader topics like 'General Relativity' and 'Galactic Astronomy'. All formatting and negative constraints are strictly adhered to.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model D offers a very thorough list of 9 topics, including excellent broader subjects like 'High-Energy Astrophysics' and 'Observational Astronomy'. It perfectly follows all positive and negative constraints.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model B provides a strong, concise list of 5 topics that directly hit all instructions, including explicitly listing 'Astrophysics'. The topics are well-structured and follow all constraints perfectly.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model G provides a solid list of 6 topics, successfully incorporating broader subjects like 'Cosmology' and 'Astronomy'. It fully respects all instructions and constraints.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model A follows all instructions perfectly, including the exact broader topics requested. However, it only provides 4 topics, making it slightly less comprehensive and useful than the higher-ranked models.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Model F correctly follows all instructions and includes 'Astrophysics' and 'Cosmology' as broader topics. Like Model A, it is slightly sparse with only 4 topics.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Model H follows the core constraints and places 'Black Holes' first. However, its broader topics are somewhat limited compared to the others (lacking 'Astronomy' or 'Astrophysics' specifically, which was provided as an example in the prompt), and the title 'Gravitational Waves and Detection' is slightly clunky compared to the rest.",
+          "score": 8.5
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Meets all stated expectations: first title is exactly \"Black Holes\", includes the broader topic \"Astrophysics\", all titles are US English, no forbidden level/joiner words or \"course\", and all targetLanguageCode values are null. Clean, minimal, and fully compliant.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Fully compliant: starts with \"Black Holes\", includes \"Astrophysics\", all titles are US English with no banned words, and targetLanguageCode is null everywhere. Slightly less breadth than some others but no requirement on count; still excellent.",
+          "score": 9.8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Compliant on key rules: first is \"Black Holes\", includes \"Astrophysics\", titles are in English, no banned title words, and targetLanguageCode is null throughout. Ordering puts Astrophysics third (not a stated problem). Overall strong.",
+          "score": 9.7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Meets requirements: \"Black Holes\" first, includes \"Astrophysics\", all titles in English, no banned title words, and targetLanguageCode null across items. Includes \"Quantum Mechanics\" which is broader/less directly tied but not disallowed.",
+          "score": 9.6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "All titles are English, no banned words, targetLanguageCode null, and begins with \"Black Holes\". However, it does not include the explicitly requested broader topic title \"Astrophysics\" (it has related subfields like Relativistic/High-Energy Astrophysics, but not the exact broader title).",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Starts with \"Black Holes\", all titles are English, no banned words, and targetLanguageCode is null. But it lacks the explicit broader topic title \"Astrophysics\" (it has \"Stellar Astrophysics\" which is narrower).",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Starts with \"Black Holes\", all titles are English, no banned words, and targetLanguageCode null. Major gap: does not include the broader topic title \"Astrophysics\" as a standalone suggestion (only mentions it in a description, which doesn't count per instructions).",
+          "score": 8.4
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Starts with \"Black Holes\", titles are English, and targetLanguageCode is null. But it fails to include the broader topic title \"Astrophysics\". Otherwise compliant.",
+          "score": 8.3
+        }
+      ]
+    }
+  ],
+  "taskId": "course-suggestions",
+  "testCaseId": "en-black-holes-1"
+}

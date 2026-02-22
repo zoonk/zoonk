@@ -1,0 +1,167 @@
+{
+  "expectations": "\n      - should ONLY include \"Japanese\" with targetLanguageCode \"ja\"\n      - should NOT include \"Japanese Language\" (adding a \"language\" suffix is a major error)\n      - all titles and descriptions in US English\n      - no extra titles like \"JLPT\", \"Japanese Language Proficiency Test\", \"JLPT N2 Preparation\", etc\n      - must return EXACTLY ONE suggestion\n\n      \n  - Focus only on title field, no need to pay attention to the description\n  - It's okay for description to have issues, focus on the title\n  - The description should NOT have an impact on scoring unless it's written in the wrong language\n  - Title should NOT have level/joiner words like \"basic\", \"intermediate\", \"advanced\", \"fundamentals\", etc\n  - Title should NOT have words like \"course\" in the title\n  - Title cases are not important (e.g., both \"física\" and \"Física\" are acceptable)\n  - Not following title guidelines is a major error\n  - Setting targetLanguageCode to a non-null value for non-language courses is a major error\n  - targetLanguageCode must be null for any course that is NOT teaching a language\n\n    ",
+  "judgedAt": "2026-02-22T00:23:41.360Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Title is exactly 'Japanese' ✓, targetLanguageCode is 'ja' ✓, exactly one suggestion ✓, no extra titles ✓, no level words in title ✓, no 'Language' suffix ✓. Description is in English ✓. Meets all requirements perfectly.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Title is exactly 'Japanese' ✓, targetLanguageCode is 'ja' ✓, exactly one suggestion ✓, no extra titles ✓, no level words in title ✓, no 'Language' suffix ✓. Description is in English ✓. Meets all requirements perfectly.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Title is exactly 'Japanese' ✓, targetLanguageCode is 'ja' ✓, exactly one suggestion ✓, no extra titles ✓, no level words in title ✓, no 'Language' suffix ✓. Description is in English ✓. Meets all requirements perfectly.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Title is exactly 'Japanese' ✓, targetLanguageCode is 'ja' ✓, exactly one suggestion ✓, no extra titles ✓, no level words in title ✓, no 'Language' suffix ✓. Description is in English ✓. Meets all requirements perfectly.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Title is exactly 'Japanese' ✓, targetLanguageCode is 'ja' ✓, exactly one suggestion ✓, no extra titles ✓, no level words in title ✓, no 'Language' suffix ✓. Description is in English ✓. Meets all requirements perfectly.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Title is exactly 'Japanese' ✓, targetLanguageCode is 'ja' ✓, exactly one suggestion ✓, no extra titles ✓, no level words in title ✓, no 'Language' suffix ✓. Description is in English ✓. Meets all requirements perfectly.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Title is exactly 'Japanese' ✓, targetLanguageCode is 'ja' ✓, exactly one suggestion ✓, no extra titles ✓, no level words in title ✓, no 'Language' suffix ✓. Description is in English ✓. Meets all requirements perfectly.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Title is exactly 'Japanese' ✓, targetLanguageCode is 'ja' ✓, exactly one suggestion ✓, no extra titles ✓, no level words in title ✓, no 'Language' suffix ✓. Description is in English ✓. Meets all requirements perfectly.",
+          "score": 9.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "The model followed all instructions perfectly. It returned exactly one suggestion with the title 'Japanese' and the targetLanguageCode 'ja'. The title does not contain any forbidden words, and the description is in US English as requested.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "The model followed all instructions perfectly. It returned exactly one suggestion with the title 'Japanese' and the targetLanguageCode 'ja'. The title does not contain any forbidden words, and the description is in US English as requested.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "The model followed all instructions perfectly. It returned exactly one suggestion with the title 'Japanese' and the targetLanguageCode 'ja'. The title does not contain any forbidden words, and the description is in US English as requested.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "The model followed all instructions perfectly. It returned exactly one suggestion with the title 'Japanese' and the targetLanguageCode 'ja'. The title does not contain any forbidden words, and the description is in US English as requested.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "The model followed all instructions perfectly. It returned exactly one suggestion with the title 'Japanese' and the targetLanguageCode 'ja'. The title does not contain any forbidden words, and the description is in US English as requested.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "The model followed all instructions perfectly. It returned exactly one suggestion with the title 'Japanese' and the targetLanguageCode 'ja'. The title does not contain any forbidden words, and the description is in US English as requested.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "The model followed all instructions perfectly. It returned exactly one suggestion with the title 'Japanese' and the targetLanguageCode 'ja'. The title does not contain any forbidden words, and the description is in US English as requested.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "The model followed all instructions perfectly. It returned exactly one suggestion with the title 'Japanese' and the targetLanguageCode 'ja'. The title does not contain any forbidden words, and the description is in US English as requested.",
+          "score": 10
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Meets all title requirements: exactly one suggestion, title is exactly \"Japanese\" (no extra words like course/level/JLPT), targetLanguageCode is correctly \"ja\", and description is in English without adding extra titles.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Title is exactly \"Japanese\" and targetLanguageCode is correctly \"ja\"; one suggestion. Description is in English and acceptable for scoring purposes (mentions \"Japanese language\" in description only, which is not disallowed given focus on title).",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "All requirements met for scoring: single suggestion, title exactly \"Japanese\" with targetLanguageCode \"ja\". Description is in English; JLPT mention is only in the description (not the title), so no title-rule violation.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Single suggestion; title exactly \"Japanese\" and targetLanguageCode \"ja\". Description is English; JLPT mention is confined to description, which does not affect scoring per instructions.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Meets the key constraints: exactly one suggestion, title exactly \"Japanese\" (no level/course/JLPT in title) and targetLanguageCode \"ja\". Description is English; JLPT mention is only in description.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Conforms on title (\"Japanese\" only) and targetLanguageCode (\"ja\"), and returns exactly one suggestion. Description includes \"intermediate-advanced\" and JLPT prep framing, but since scoring focuses on title and description is still English, no scoring impact.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Title and targetLanguageCode are correct (\"Japanese\", \"ja\"), one suggestion. Description is English; JLPT mention is in description only.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Title is exactly \"Japanese\" with targetLanguageCode \"ja\" and only one suggestion. Description is English; JLPT prep is mentioned only in description, which is not scored here.",
+          "score": 10
+        }
+      ]
+    }
+  ],
+  "taskId": "course-suggestions",
+  "testCaseId": "en-jlpt-n2-1"
+}

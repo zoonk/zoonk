@@ -1,0 +1,167 @@
+{
+  "expectations": "\n      - should include \"Formule 1\" or \"F1\"\n      - optionally, may include broader alts like \"Sport Automobile\", \"Courses de Voitures\" or related suggestions\n      - all titles and descriptions in France French\n      - targetLanguageCode must be null for all suggestions\n\n      \n  - Focus only on title field, no need to pay attention to the description\n  - It's okay for description to have issues, focus on the title\n  - The description should NOT have an impact on scoring unless it's written in the wrong language\n  - Title should NOT have level/joiner words like \"basic\", \"intermediate\", \"advanced\", \"fundamentals\", etc\n  - Title should NOT have words like \"course\" in the title\n  - Title cases are not important (e.g., both \"física\" and \"Física\" are acceptable)\n  - Not following title guidelines is a major error\n  - Setting targetLanguageCode to a non-null value for non-language courses is a major error\n  - targetLanguageCode must be null for any course that is NOT teaching a language\n\n    ",
+  "judgedAt": "2026-02-22T00:24:49.048Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "F",
+          "modelId": "F",
+          "reasoning": "Includes 'Formule 1' as the primary title. All additional suggestions explicitly reference 'Formule 1' in their titles (Stratégie de course en Formule 1, Aérodynamique de Formule 1, etc.), making them highly relevant. All titles are in French, no level/joiner words, no 'course' as in 'course d'étude'. targetLanguageCode is null for all. 8 well-crafted suggestions covering diverse F1 topics. Excellent adherence to requirements.",
+          "score": 9
+        },
+        {
+          "anonymousId": "G",
+          "modelId": "G",
+          "reasoning": "Includes 'Formule 1' as primary title. All 9 suggestions reference 'Formule 1' in their titles, covering a wide and creative range of topics (aérodynamique, réglages de châssis, psychologie du pilotage, etc.). All in French, no forbidden words, targetLanguageCode null throughout. Very comprehensive and well-structured. Slightly verbose descriptions but titles are excellent.",
+          "score": 9
+        },
+        {
+          "anonymousId": "A",
+          "modelId": "A",
+          "reasoning": "Includes 'Formule 1' as primary title. All 5 suggestions reference 'Formule 1' in titles. Good variety (ingénierie, histoire, stratégie, règlement). All in French, no forbidden words, targetLanguageCode null. Solid but fewer suggestions than some competitors. Clean and well-done.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "D",
+          "modelId": "D",
+          "reasoning": "Includes 'Formule 1' as primary title. Good variety with 7 suggestions, most referencing F1 or broader 'sport automobile'. Includes broader alt 'Sport automobile' which is a nice touch. All titles in French, no forbidden words, targetLanguageCode null. However, the first description has a language issue: 'Explore the univers' mixes English ('the') with French, but since we're told to focus on titles and only penalize descriptions if in wrong language, this is a minor concern (it's a mix rather than fully wrong language). Slight deduction for the description language mixing.",
+          "score": 8
+        },
+        {
+          "anonymousId": "C",
+          "modelId": "C",
+          "reasoning": "Includes 'Formule 1' as primary title. 6 suggestions with good variety. Some titles use broader terms like 'Sport Automobile' and 'Voitures de Course' which align with optional broader alts mentioned in expectations. All in French, no forbidden words, targetLanguageCode null. However, several suggestions don't explicitly mention F1 in the title (Ingénierie des Voitures de Course, Stratégie en Compétition Automobile, Aérodynamique Automobile) which makes them slightly less directly relevant to F1 specifically, though they're reasonable related suggestions.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "E",
+          "modelId": "E",
+          "reasoning": "Includes 'Formule 1' as primary title. 5 suggestions in French, no forbidden words, targetLanguageCode null. However, several alternative titles don't reference F1 at all (Aérodynamique de Course, Stratégie de Course, Ingénierie des Moteurs, Management du Sport Automobile) — these are quite generic and less specifically tied to F1. Still reasonable as related suggestions but less focused.",
+          "score": 7
+        },
+        {
+          "anonymousId": "H",
+          "modelId": "H",
+          "reasoning": "Includes 'Formule 1' as primary title. 5 suggestions in French, no forbidden words, targetLanguageCode null. Includes broader alt 'Sport automobile'. However, most alternative titles are very generic and don't reference F1 (Aérodynamique automobile, Ingénierie mécanique, Stratégie de course). 'Ingénierie mécanique' is particularly generic and could apply to many fields beyond F1. Less focused on the F1 topic.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "B",
+          "modelId": "B",
+          "reasoning": "Includes 'Formule 1' as primary title. Only 4 suggestions total. The alternative suggestions don't reference F1 in their titles (Ingénierie automobile de course, Histoire et culture du sport automobile, Techniques de pilotage sportif). While 'sport automobile' is listed as an acceptable broader alt, the titles are quite generic. Fewer suggestions and less F1-specific focus compared to other models.",
+          "score": 6.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model G provides an outstanding list of highly specific and relevant titles. It perfectly adheres to all constraints, including keeping all text strictly in French and keeping targetLanguageCode as null. Moreover, it brilliantly avoids the forbidden string 'course' (which means 'race' in French but is often blacklisted as an English educational term) by using natural alternatives like 'en Formule 1', making it the safest and most compliant output.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model A offers excellent, specific titles for F1 topics. It meets all core constraints, including the French language requirement and correct null fields. It uses the word 'course' (in 'Stratégie de course'), which is correct French for 'race', though it matches the exact string of the forbidden English word. Overall, a highly accurate and useful output.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model F provides a very comprehensive and well-thought-out list of titles. Like Model A, it correctly handles all instructions and correctly sets the targetLanguageCode to null. It also uses the French word 'course' for race, which is contextually accurate but overlaps with the literal forbidden string constraint. Excellent variety.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Model B provides solid titles that meet all the instructions. The target language is properly respected, and it does not contain any forbidden level words. The titles are slightly broader than the top models but still very relevant.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model C delivers very good titles that perfectly adhere to the technical requirements (targetLanguageCode is null, no level words). Some titles are a bit generic ('Aérodynamique Automobile') compared to the top models, but it still includes 'Formule 1' successfully.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model E follows all instructions well. The descriptions and titles are all accurately written in French and the targetLanguageCode is correct. The title topics are relevant, though slightly less strictly F1-focused across the board than Models G or A.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model H successfully follows all guidelines, ensuring targetLanguageCode is null and writing all text in French. However, a few titles like 'Ingénierie mécanique' and 'Sport automobile' are a bit too broad and generic for a specific 'Formule 1' query, making it slightly less effective than the others.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "While Model D successfully avoids the word 'course' in its titles and provides good suggestions, it fails the language constraint in its first description by mixing English and French ('Explore the univers de la Formule 1...'). Because descriptions only impact scoring when written in the wrong language, this explicitly triggers a penalty.",
+          "score": 7
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "All titles are in French, have no forbidden level/joiner words, and every suggestion is clearly F1-focused with many titles explicitly containing “Formule 1”. targetLanguageCode is null throughout. Strong adherence and coherence across the full set.",
+          "score": 9.6
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "High-quality set: French titles, no “course”/level words, targetLanguageCode always null. Nearly every title explicitly includes “Formule 1” (or “de la Formule 1”), and the remaining terminology is on-topic. Very aligned with expectations; slightly less “clean/simple” than F only because one title uses a broader phrasing style but still valid.",
+          "score": 9.4
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "All titles are French, no banned words, targetLanguageCode null. Most titles explicitly include “Formule 1” and are tightly scoped to F1. Solid compliance, just fewer varied alternatives than the top sets.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Titles are French and targetLanguageCode is null. Most titles include “Formule 1”; two are broader (“Aérodynamique automobile”, “Gestion d’équipe en sports mécaniques”, plus “Sport automobile”), which is allowed as broader alts. Minor issue: one description contains English (“Explore the univers...”), which is a language mismatch in description (penalized slightly per guidance).",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "French titles and targetLanguageCode null. Only the first title is explicitly “Formule 1”; the rest are broader motorsport/auto topics (still acceptable as related suggestions). Overall less aligned to the expectation of including “Formule 1”/“F1” in suggestions beyond the first.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "French titles, targetLanguageCode null, and includes “Formule 1” once. Remaining titles are quite generic (e.g., “Ingénierie des Moteurs”, “Stratégie de Course”) and not explicitly tied to F1; still related but weaker match to the ‘should include Formule 1 or F1’ emphasis across suggestions.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "All in French, targetLanguageCode null, and includes “Formule 1” once. Other titles are generic (“Ingénierie mécanique”, “Stratégie de course”, “Sport automobile”) and not F1-specific; acceptable as broader alts but overall low F1 explicitness.",
+          "score": 6.9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "French titles and targetLanguageCode null, with “Formule 1” only in the first title. The rest are broad and none mention F1; still motorsport-related but least aligned with the expectation to include “Formule 1”/“F1” in titles across suggestions.",
+          "score": 6.6
+        }
+      ]
+    }
+  ],
+  "taskId": "course-suggestions",
+  "testCaseId": "fr-f1-1"
+}

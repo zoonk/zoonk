@@ -1,0 +1,167 @@
+{
+  "expectations": "\n      - titles should include broad topics like \"Ciência da Computação\", \"Programação\", \"Desenvolvimento de Software\"\n      - may include other related topics to coding and programming\n      - all titles and descriptions in Brazilian Portuguese\n      - targetLanguageCode must be null for all suggestions\n\n      \n  - Focus only on title field, no need to pay attention to the description\n  - It's okay for description to have issues, focus on the title\n  - The description should NOT have an impact on scoring unless it's written in the wrong language\n  - Title should NOT have level/joiner words like \"basic\", \"intermediate\", \"advanced\", \"fundamentals\", etc\n  - Title should NOT have words like \"course\" in the title\n  - Title cases are not important (e.g., both \"física\" and \"Física\" are acceptable)\n  - Not following title guidelines is a major error\n  - Setting targetLanguageCode to a non-null value for non-language courses is a major error\n  - targetLanguageCode must be null for any course that is NOT teaching a language\n\n    ",
+  "judgedAt": "2026-02-22T00:24:23.179Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "D",
+          "modelId": "D",
+          "reasoning": "8 suggestions, all titles in Brazilian Portuguese, no level/joiner words, no 'course' word, all targetLanguageCode null. Good variety: Programação, Python, Desenvolvimento Web, JavaScript, Algoritmos e Estruturas de Dados, Ciência da Computação, Desenvolvimento Mobile, Git. Includes the broad topics mentioned in expectations (Ciência da Computação, Programação). All titles are clean and appropriate. No issues found.",
+          "score": 9
+        },
+        {
+          "anonymousId": "C",
+          "modelId": "C",
+          "reasoning": "8 suggestions, all in Brazilian Portuguese, no level/joiner words, no 'course' word, all targetLanguageCode null. Good variety: Ciência da Computação, Desenvolvimento Web, Lógica de Programação, Engenharia de Software, Desenvolvimento de Aplicativos Mobile, Estruturas de Dados e Algoritmos, Desenvolvimento Back-End, Banco de Dados. Includes broad topics. All titles are clean. No issues.",
+          "score": 9
+        },
+        {
+          "anonymousId": "A",
+          "modelId": "A",
+          "reasoning": "11 suggestions, all in Brazilian Portuguese, no level/joiner words, no 'course' word, all targetLanguageCode null. Good variety and quantity. However, it doesn't include broad topics explicitly mentioned in expectations like 'Ciência da Computação' or 'Desenvolvimento de Software'. It has 'Programação de Computadores' which is close but not exactly one of the suggested broad topics. Still, titles are clean, varied, and relevant. Minor gap in not covering 'Ciência da Computação'.",
+          "score": 8
+        },
+        {
+          "anonymousId": "H",
+          "modelId": "H",
+          "reasoning": "7 suggestions, all in Brazilian Portuguese, all targetLanguageCode null. Titles are clean with no level/joiner words or 'course'. Good mix: Programação, Python, Desenvolvimento Web, SQL, Estruturas de Dados e Algoritmos, Git e Controle de Versão, Desenvolvimento Mobile. Missing the broad topics like 'Ciência da Computação' and 'Engenharia de Software' mentioned in expectations. Otherwise solid.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "E",
+          "modelId": "E",
+          "reasoning": "22 suggestions, all in Brazilian Portuguese, all targetLanguageCode null. Very comprehensive coverage. However, several titles use patterns like 'Programação em Python', 'Programação em JavaScript', 'Programação em Java', 'Programação em C++', 'Programação em C#' which, while not containing level words, feel somewhat formulaic. Also 'Controle de Versão com Git' and 'Automação com Python' use joiner patterns that could be debated. 'Banco de Dados SQL' is fine. No major errors but the quantity leads to some redundancy and the 'Programação em X' pattern is less natural than just using the language name. Overall very thorough but slightly verbose in title patterns.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "F",
+          "modelId": "F",
+          "reasoning": "6 suggestions, all in Brazilian Portuguese, all targetLanguageCode null, no level/joiner words or 'course'. Clean titles: Ciência da Computação, Engenharia de Software, Desenvolvimento Web, Programação Python, Desenvolvimento Mobile, Estruturas de Dados. 'Programação Python' is fine as a title. However, only 6 suggestions is a relatively small set. Quality is good but quantity is limited.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "G",
+          "modelId": "G",
+          "reasoning": "Only 5 suggestions, all in Brazilian Portuguese, all targetLanguageCode null, no level/joiner words. Titles are clean: Ciência da Computação, Engenharia de Software, Programação, Desenvolvimento Web, Ciência de Dados. Good broad topics but very limited in number. Missing many relevant areas like Python, JavaScript, mobile development, etc.",
+          "score": 7
+        },
+        {
+          "anonymousId": "B",
+          "modelId": "B",
+          "reasoning": "Only 5 suggestions, all in Brazilian Portuguese, all targetLanguageCode null, no level/joiner words. Titles: Engenharia de Software, Desenvolvimento Web, Ciência da Computação, Python, JavaScript. Clean titles but very limited number. Missing many important areas like mobile development, data structures, Git, databases, general 'Programação'. The smallest set alongside Model G but with slightly less breadth of broad topics.",
+          "score": 6.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "This model provides an exceptionally comprehensive and diverse list of topics. It strictly follows all negative constraints (no level words, no 'curso', targetLanguageCode is null), is written entirely in Brazilian Portuguese, and covers all the requested broad topics brilliantly.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "The model followed all instructions perfectly, providing a concise list that explicitly includes the broad topics requested ('Ciência da Computação', 'Programação', etc.). There are no forbidden words, and the language code is correctly set to null.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Excellent output. It explicitly includes the broad baseline topics like 'Programação' and 'Ciência da Computação', adheres strictly to formatting, leaves out any level or joiner words, and properly handles the null language code.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Fully complies with all constraints. It appropriately features broad categories ('Ciência da Computação', 'Lógica de Programação', 'Engenharia de Software') and abstains from using any forbidden words or non-null language values.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Very strong output that follows all negative constraints securely. It loses a tiny fraction of a point just because it lacked a generic 'Programação' entry, offering language-specific ones instead, but otherwise flawlessly executed.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Meets all negative constraints perfectly (no 'course', no level identifiers, null language code). It loses half a point only because it missed the broad topic of 'Ciência da Computação', but the list is otherwise excellent.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Follows all constraints flawlessly and includes 'Ciência da Computação' and 'Engenharia de Software'. It slightly misses providing a standalone broad 'Programação' category, but the quality is excellent.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Adheres completely to the core guidelines and formatting rules. It misses incorporating a broader topic like 'Ciência da Computação' or 'Engenharia de Software', but its suggestions are highly relevant and accurate.",
+          "score": 9.5
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Todos os títulos estão em português (pt-BR), são tópicos amplos e relevantes (ex.: Ciência da Computação, Engenharia de Software, Banco de Dados, Back-End). Não há palavras de nível (“básico”, etc.) nem “curso”. targetLanguageCode está null em todos. Boa variedade sem fugir do escopo.",
+          "score": 9.3
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Conjunto bem forte e completo, com títulos claros e adequados (Programação de Computadores, Lógica de Programação, Estruturas de Dados, Algoritmos, Engenharia de Software etc.). Tudo em pt-BR e targetLanguageCode null. Pequena ressalva: inclui títulos só de linguagens (Python, JavaScript, SQL) — ainda dentro do permitido — e falta explicitamente “Ciência da Computação”/“Desenvolvimento de Software” no título, mas não é obrigatório em cada lista.",
+          "score": 9.1
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Muito abrangente e bem alinhado ao tema; títulos em pt-BR, sem termos de nível nem “curso”, e targetLanguageCode null. Leve penalidade por alguns títulos ligeiramente menos “tópico amplo” e mais específicos/formatados como trilhas (“Programação em Python/JavaScript/Java/C++/C#”, “Controle de Versão com Git”), embora ainda aceitáveis.",
+          "score": 8.9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Títulos bons e amplos (Programação, Ciência da Computação, Desenvolvimento Web, Git, Desenvolvimento Mobile). Tudo em pt-BR e targetLanguageCode null. Cobertura sólida, mas menos completa que A/C/E.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Lista coerente e dentro das regras (Programação, Python, Desenvolvimento Web, SQL, Estruturas de Dados e Algoritmos, Git e Controle de Versão, Mobile). Tudo em pt-BR e targetLanguageCode null. Pequena perda por títulos um pouco mais “compostos”/específicos (ex.: “Git e Controle de Versão”), e menor variedade de tópicos gerais.",
+          "score": 8.4
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Todos os títulos em pt-BR, amplos e adequados; inclui “Ciência da Computação”. targetLanguageCode null. Porém é bem curto (apenas 5 sugestões) e cobre menos áreas do ecossistema.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Títulos corretos e em pt-BR, targetLanguageCode null. Mas a lista é curta (6 itens) e inclui “Programação Python” (forma menos natural que “Python” ou “Programação em Python”), embora não viole diretamente as regras. Cobertura limitada.",
+          "score": 7.6
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Títulos em pt-BR, adequados e com targetLanguageCode null. Contudo, é a lista mais curta junto com B (5 itens) e tem menos diversidade de temas centrais de desenvolvimento (ex.: não traz estruturas de dados/algoritmos/banco de dados/versionamento).",
+          "score": 7.4
+        }
+      ]
+    }
+  ],
+  "taskId": "course-suggestions",
+  "testCaseId": "pt-want-to-code-1"
+}
