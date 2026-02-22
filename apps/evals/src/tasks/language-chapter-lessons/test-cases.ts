@@ -29,18 +29,18 @@ export const TEST_CASES = [
   {
     expectations: `
       - MUST be in US English
-      - Should have separate lessons for ser and estar uses
-      - Should cover identity, origin, and location as distinct concepts
-      - Should include basic sentence patterns with each verb
-      - Should not go beyond present tense forms
+      - Should cover regular -ar, -er, -ir conjugation patterns as separate lessons
+      - Should include key irregular verbs (ser, estar, tener, ir) with individual lessons
+      - Should include everyday action verbs and basic sentence patterns
+      - Should not cover other tenses (past, future, subjunctive)
 
       ${SHARED_EXPECTATIONS}
     `,
-    id: "en-spanish-ser-estar",
+    id: "en-spanish-present-tense",
     userInput: {
       chapterDescription:
-        "Ser vs. estar in the present, basic sentence patterns, and describing identity, origin, and location.",
-      chapterTitle: "Ser & Estar (Present)",
+        "Regular present-tense conjugations, essential irregulars (ser, estar, tener, ir), and everyday action verbs.",
+      chapterTitle: "Present Tense",
       targetLanguage: "es",
       userLanguage: "en",
     },
@@ -48,18 +48,18 @@ export const TEST_CASES = [
   {
     expectations: `
       - MUST be in Latin American Spanish
-      - Should break down present perfect formation (have/has + past participle)
-      - Should cover "ever/never" for experiences as separate lessons from "just/already/yet" for recent results
-      - Should include irregular past participles individually
-      - Should not cover other perfect tenses (past perfect, future perfect)
+      - Should cover second conditional structure (if + past simple, would + base form)
+      - Should have separate lessons for "would", "could", and "might" in hypothetical contexts
+      - Should include forming and answering hypothetical questions
+      - Should not cover first conditional (real situations) or third conditional (past regrets)
 
       ${SHARED_EXPECTATIONS}
     `,
-    id: "es-english-present-perfect",
+    id: "es-english-hypothetical-conditionals",
     userInput: {
       chapterDescription:
-        'Presente perfecto con "ever/never/just/already/yet" para experiencias y resultados recientes.',
-      chapterTitle: "Presente perfecto: experiencias y resultados",
+        'Situaciones hipotéticas en presente y futuro. Segunda condicional, "would" y variaciones con "could/might".',
+      chapterTitle: "Condicionales hipotéticas",
       targetLanguage: "en",
       userLanguage: "es",
     },
@@ -67,18 +67,18 @@ export const TEST_CASES = [
   {
     expectations: `
       - MUST be in Brazilian Portuguese
-      - Should cover the causative form (〜させる) construction
-      - Should have separate lessons for permission and compulsion meanings
-      - Should cover particle combinations with causative verbs
-      - Should not go into causative-passive (〜させられる)
+      - Should cover 〜そうだ for appearance and 〜そうだ for hearsay as distinct concepts
+      - Should have separate lessons for 〜らしい and 〜みたい
+      - Should cover register differences between these inference expressions
+      - Should not go into unrelated grammar or verb forms outside appearance/inference
 
       ${SHARED_EXPECTATIONS}
     `,
-    id: "pt-japanese-causative",
+    id: "pt-japanese-appearance-inference",
     userInput: {
       chapterDescription:
-        "Causativa: 〜させる, permitir/obrigar e combinações comuns com partículas.",
-      chapterTitle: "Causativa",
+        "Expressões de aparência e suposição: 〜そうだ, 〜らしい, 〜みたい e diferenças de registro.",
+      chapterTitle: "Aparência e Inferência",
       targetLanguage: "ja",
       userLanguage: "pt",
     },
@@ -86,18 +86,18 @@ export const TEST_CASES = [
   {
     expectations: `
       - MUST be in US English
-      - Should cover implicature, presuppositions, and euphemism as distinct concepts
-      - Should include pragmatic inference strategies
-      - Should have lessons on interpreting implied meaning from context
-      - Should not overlap with argumentation or debate topics
+      - Should cover connotation differences between near-synonyms
+      - Should include register sensitivity in word choice
+      - Should cover subtle meaning shifts and context-dependent word selection
+      - Should not overlap with grammar-focused or idiom-focused chapters
 
       ${SHARED_EXPECTATIONS}
     `,
-    id: "en-french-implied-meaning",
+    id: "en-french-semantic-nuance",
     userInput: {
       chapterDescription:
-        "Understanding and producing implicit meaning and presuppositions. Implication, euphemism, and pragmatic inference.",
-      chapterTitle: "Implied Meaning",
+        "Near-native nuance: connotation, register sensitivity, and subtle meaning shifts in synonyms.",
+      chapterTitle: "Semantic Nuance & Synonyms",
       targetLanguage: "fr",
       userLanguage: "en",
     },

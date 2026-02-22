@@ -30,38 +30,42 @@ export const TEST_CASES = [
   {
     expectations: `
       - MUST be in US English
-      - Should break down networking concepts individually (DNS, HTTP, TLS as separate lessons)
-      - Should separate client-side from server-side concepts
-      - Should cover each protocol and technology as its own lesson
-      - Should not group unrelated concepts (e.g., not "DNS and HTTP" but separate lessons)
-      - Should NOT create dedicated lessons teaching browser rendering engines/pipelines (neighboring chapter "Browsers and rendering pipelines" covers that) — brief contextual references are fine
-      - Should NOT create dedicated lessons teaching URL parsing or URI components (neighboring chapter "URL anatomy and addressing" covers that) — brief contextual references are fine
-      - Should NOT create dedicated lessons teaching HTTP methods, status codes, or headers (neighboring chapter "HTTP fundamentals" covers that) — brief contextual references are fine
+      - Should break down each protocol and networking concept individually (IP, TCP, UDP, NAT as separate lessons)
+      - Should cover different types of failure modes as distinct lessons
+      - Should separate latency concepts from bandwidth concepts
+      - Should NOT create dedicated lessons teaching DNS records, resolvers, or domain configuration (neighboring chapter "DNS and domains" covers that) — brief contextual references are fine
+      - Should NOT create dedicated lessons teaching HTTP methods, status codes, or headers (neighboring chapter "HTTP" covers that) — brief contextual references are fine
+      - Should NOT create dedicated lessons teaching TLS handshakes, certificates, or HTTPS configuration (neighboring chapter "HTTPS and TLS" covers that) — brief contextual references are fine
 
       ${SHARED_EXPECTATIONS}
     `,
-    id: "en-web-how-the-web-works",
+    id: "en-web-networking-fundamentals",
     userInput: {
       chapterDescription:
-        "Core concepts of clients, servers, IP, DNS, HTTP/HTTPS, TLS, proxies, caching, cookies, and CDNs.",
-      chapterTitle: "How the web works",
+        "IP addressing, routing, NAT, TCP vs UDP, latency and bandwidth tradeoffs, and common failure modes. Practical mental models for debugging connectivity issues.",
+      chapterTitle: "Networking fundamentals",
       courseTitle: "Web Development",
       language: "en",
       neighboringChapters: [
         {
           description:
-            "Roles of browsers, rendering engines, JavaScript engines, event loops, process models, and browser security boundaries.",
-          title: "Browsers and rendering pipelines",
+            "Roles, responsibilities, and interfaces across front-end, back-end, full-stack, QA, DevOps, security, design, and product. How standards bodies and browser vendors shape the platform.",
+          title: "Web development landscape",
         },
         {
           description:
-            "URLs, URI components, content negotiation, character encodings, and internationalized domain names.",
-          title: "URL anatomy and addressing",
+            "DNS records, resolvers, caching, propagation, and common configurations for web apps. Domain strategy, subdomains, and pitfalls with split-horizon DNS.",
+          title: "DNS and domains",
         },
         {
           description:
-            "HTTP methods, status codes, headers, caching directives, idempotency, and connection management.",
-          title: "HTTP fundamentals",
+            "HTTP methods, status codes, headers, content negotiation, caching semantics, cookies, and redirects. HTTP/2 and HTTP/3 concepts and performance implications.",
+          title: "HTTP",
+        },
+        {
+          description:
+            "TLS handshakes, certificate chains, HSTS, OCSP stapling, and modern TLS configuration choices. Secure transport patterns for browsers, APIs, and internal services.",
+          title: "HTTPS and TLS",
         },
       ],
     },
@@ -69,41 +73,53 @@ export const TEST_CASES = [
   {
     expectations: `
       - MUST be in Brazilian Portuguese
-      - Should break down each data type into separate lessons
-      - Should cover syntax fundamentals as individual concepts
-      - Basic I/O should be separate from data types and operators
-      - Should NOT create dedicated lessons teaching installation, virtual environments, or project setup (neighboring chapter "Ambiente Python e ferramentas essenciais" covers that) — brief contextual references are fine
-      - Should NOT create dedicated lessons teaching code style, PEP 8, or linters (neighboring chapter "Estilo de código e legibilidade" covers that) — brief contextual references are fine
-      - Should NOT create dedicated lessons teaching operators or precedence in depth (neighboring chapter "Operadores e expressões" covers that) — brief contextual references are fine
-      - Should NOT create dedicated lessons teaching control flow or conditionals (neighboring chapter "Controle de fluxo: condicionais" covers that) — brief contextual references are fine
+      - Should break down each numeric type into separate lessons (int, float, complex, bool, None)
+      - Should cover precision and rounding as individual concepts
+      - Should separate type conversions from arithmetic operations
+      - Should NOT create dedicated lessons teaching installation, virtual environments, or IDE setup (neighboring chapter "Ambiente de desenvolvimento" covers that) — brief contextual references are fine
+      - Should NOT create dedicated lessons teaching indentation rules, naming conventions, or docstrings (neighboring chapter "Sintaxe e convenções" covers that) — brief contextual references are fine
+      - Should NOT create dedicated lessons teaching strings, bytes, or Unicode encoding (neighboring chapter "Texto e codificação" covers that) — brief contextual references are fine
+      - Should NOT create dedicated lessons teaching lists, tuples, dictionaries, or sets (neighboring chapter "Estruturas de dados fundamentais" covers that) — brief contextual references are fine
 
       ${SHARED_EXPECTATIONS}
     `,
-    id: "pt-python-fundamentos",
+    id: "pt-python-tipos-numericos",
     userInput: {
       chapterDescription:
-        "Sintaxe, indentação, comentários, tipos numéricos, booleanos, strings, entrada/saída e operações básicas.",
-      chapterTitle: "Fundamentos da linguagem",
+        "Inteiros, floats, complexos, bool, None; conversões, precisão numérica, erros de arredondamento e uso de decimal/fractions.",
+      chapterTitle: "Tipos numéricos e valores especiais",
       courseTitle: "Python",
       language: "pt",
       neighboringChapters: [
         {
           description:
-            "Instalação, múltiplas versões, ambientes virtuais, dependências, layout de projetos e execução de scripts e módulos.",
-          title: "Ambiente Python e ferramentas essenciais",
-        },
-        {
-          description: "Nomes, escopo, convenções, PEP 8, formatação, linters e análise estática.",
-          title: "Estilo de código e legibilidade",
+            "Instalação e configuração do Python, múltiplas versões, PATH, virtual environments, VS Code/IDEs, REPL, Jupyter e boas práticas de organização local.",
+          title: "Ambiente de desenvolvimento",
         },
         {
           description:
-            "Operadores aritméticos, comparação, lógicos, bitwise, precedência e armadilhas comuns.",
-          title: "Operadores e expressões",
+            "Execução em REPL, scripts e módulos; shebang, codificação, argumentos de linha de comando e status de saída do processo.",
+          title: "Execução de programas",
         },
         {
-          description: "if/elif/else, match/case, expressões condicionais e padrões de validação.",
-          title: "Controle de fluxo: condicionais",
+          description:
+            "Regras de indentação, nomes, comentários, docstrings, literais, operadores e precedência; diferenças entre Python interativo e arquivo.",
+          title: "Sintaxe e convenções",
+        },
+        {
+          description:
+            "Strings, bytes e bytearray; Unicode, normalização, encodings, f-strings, formatação avançada e manipulação eficiente.",
+          title: "Texto e codificação",
+        },
+        {
+          description:
+            "Listas, tuplas, dicionários e conjuntos; mutabilidade, cópia rasa vs profunda, hashing, ordenação e complexidade de operações.",
+          title: "Estruturas de dados fundamentais",
+        },
+        {
+          description:
+            "if/elif/else, match/case, loops, break/continue, compreensão de escopo e padrões comuns de controle.",
+          title: "Controle de fluxo",
         },
       ],
     },
@@ -112,53 +128,53 @@ export const TEST_CASES = [
   {
     expectations: `
       - MUST be in Latin American Spanish
-      - Should separate 1D NMR concepts from 2D NMR techniques
-      - Chemical shifts, coupling, and integration should be distinct lessons
-      - Should break down structural elucidation into individual steps/techniques
-      - Should NOT create dedicated lessons teaching UV-Vis spectroscopy (neighboring chapter "UV-Vis" covers that) — brief contextual references are fine
-      - Should NOT create dedicated lessons teaching IR or Raman spectroscopy (neighboring chapter "IR y Raman" covers that) — brief contextual references are fine
-      - Should NOT create dedicated lessons teaching EPR/ESR or paramagnetic resonance (neighboring chapter "Resonancia paramagnética electrónica" covers that) — brief contextual references are fine
-      - Should NOT create dedicated lessons teaching mass spectrometry (neighboring chapter "Espectrometría de masas" covers that) — brief contextual references are fine
+      - Should separate nucleophilic addition to carbonyls from enolate chemistry
+      - Should break down each named reaction (Aldol, Claisen, Michael) as individual lessons
+      - Should cover selectivity control concepts as distinct lessons
+      - Should NOT create dedicated lessons teaching SN1/SN2 or elimination reactions (neighboring chapter "Sustitución y eliminación" covers that) — brief contextual references are fine
+      - Should NOT create dedicated lessons teaching additions to alkenes or alkynes (neighboring chapter "Adiciones a alquenos y alquinos" covers that) — brief contextual references are fine
+      - Should NOT create dedicated lessons teaching aromatic chemistry or electrophilic aromatic substitution (neighboring chapter "Química aromática" covers that) — brief contextual references are fine
+      - Should NOT create dedicated lessons teaching carboxylic acid derivatives or acyl chemistry (neighboring chapter "Ácidos carboxílicos y derivados" covers that) — brief contextual references are fine
 
       ${SHARED_EXPECTATIONS}
     `,
-    id: "es-quimica-resonancia-magnetica",
+    id: "es-quimica-carbonilos-enolatos",
     userInput: {
       chapterDescription:
-        "RMN: desplazamiento químico, acoplamiento, integración, RMN 2D y elucidación estructural.",
-      chapterTitle: "Resonancia magnética nuclear",
+        "Adición nucleofílica a carbonilos, química de enoles/enolatos, aldol, Claisen, Michael y control de selectividad.",
+      chapterTitle: "Carbonilos y enolatos",
       courseTitle: "Química",
       language: "es",
       neighboringChapters: [
         {
           description:
-            "Espectroscopía UV-Vis: transiciones, ley de Beer–Lambert, instrumentación y análisis cuantitativo.",
-          title: "UV-Vis",
+            "SN1/SN2, E1/E2, reactividad, solventes, nucleófilos/bases, rearrangements y control de selectividad.",
+          title: "Sustitución y eliminación",
         },
         {
           description:
-            "Fluorescencia y fosforescencia: rendimiento cuántico, apagamiento, sondas y aplicaciones.",
-          title: "Espectroscopía de luminiscencia",
+            "Hidrogenación, halogenación, hidratación, hidroboración-oxidación, adiciones conjugadas y química de alquinos.",
+          title: "Adiciones a alquenos y alquinos",
         },
         {
           description:
-            "IR y Raman: modos vibracionales, selección, interpretación estructural y efectos del solvente.",
-          title: "IR y Raman",
+            "Aromaticidad, sustitución electrofílica/nucleofílica aromática, directores, y reactividad de sistemas aromáticos extendidos.",
+          title: "Química aromática",
         },
         {
           description:
-            "EPR/ESR: radicales, centros paramagnéticos, hiperfino y aplicaciones en materiales y bioquímica.",
-          title: "Resonancia paramagnética electrónica",
+            "Reactividad de ácidos carboxílicos, derivados acílicos, química de amidas/ésteres/anhídridos y estrategias de activación.",
+          title: "Ácidos carboxílicos y derivados",
         },
         {
           description:
-            "Espectrometría de masas: ionización, analizadores, fragmentación y asignación de estructuras.",
-          title: "Espectrometría de masas",
+            "Síntesis y reactividad de heterociclos aromáticos y saturados; aplicaciones en fármacos y materiales.",
+          title: "Heterociclos",
         },
         {
           description:
-            "Difracción de rayos X: Bragg, refinamiento, cristalografía de moléculas y sólidos; limitaciones.",
-          title: "Cristalografía de rayos X",
+            "Mecanismos radicalarios, iniciación/propagación/terminación, selectividad, y reacciones fotoquímicas orgánicas.",
+          title: "Radicales y fotoquímica orgánica",
         },
       ],
     },
@@ -167,52 +183,52 @@ export const TEST_CASES = [
     expectations: `
       - MUST be in US English
       - Should separate stylized facts from theoretical models
-      - Should cover each type of indicator individually
+      - Should cover each type of comovement individually
       - Should distinguish business cycle measurement from theory
-      - Should NOT create dedicated lessons teaching GDP measurement or national accounts (neighboring chapter "Macroeconomic statistics" covers that) — brief contextual references are fine
-      - Should NOT create dedicated lessons teaching money supply or quantity theory of money (neighboring chapter "Money and inflation" covers that) — brief contextual references are fine
-      - Should NOT create dedicated lessons teaching IS-LM or aggregate demand/supply models (neighboring chapter "Short-run macro frameworks" covers that) — brief contextual references are fine
-      - Should NOT create dedicated lessons teaching consumption theory or life-cycle models (neighboring chapter "Consumption in macroeconomics" covers that) — brief contextual references are fine
+      - Should NOT create dedicated lessons teaching national income accounting or GDP measurement (neighboring chapter "Macroeconomic accounting" covers that) — brief contextual references are fine
+      - Should NOT create dedicated lessons teaching consumption-savings models or life-cycle theory (neighboring chapter "Consumption and savings" covers that) — brief contextual references are fine
+      - Should NOT create dedicated lessons teaching investment theory or q-models (neighboring chapter "Investment and capital" covers that) — brief contextual references are fine
+      - Should NOT create dedicated lessons teaching labor market search models or wage setting (neighboring chapter "Unemployment and labor in macro" covers that) — brief contextual references are fine
 
       ${SHARED_EXPECTATIONS}
     `,
     id: "en-economics-business-cycles",
     userInput: {
       chapterDescription:
-        "Business cycle facts: stylized facts, co-movements, and leading indicators.",
+        "Business cycle facts, stylized patterns in output, inflation, unemployment, productivity, and comovements across sectors.",
       chapterTitle: "Business cycles",
       courseTitle: "Economics",
       language: "en",
       neighboringChapters: [
         {
           description:
-            "Firms in development: management practices, informality, and productivity dispersion.",
-          title: "Firms and productivity in development",
+            "Behavioral biases, bounded rationality, time inconsistency, social preferences, and policy design with behavioral responses.",
+          title: "Behavioral economics",
         },
         {
           description:
-            "Macroeconomic measurement: GDP, GNI, inflation, unemployment, and national accounts frameworks.",
-          title: "Macroeconomic statistics",
+            "Laboratory and field experiments, incentive design, external validity, and behavioral/market design evidence.",
+          title: "Experimental economics",
         },
         {
           description:
-            "Money and inflation: quantity theory, money demand, and inflation dynamics.",
-          title: "Money and inflation",
+            "National income and product accounts, sectoral balances, price indices, productivity, and flow-of-funds concepts.",
+          title: "Macroeconomic accounting",
         },
         {
           description:
-            "Short-run fluctuations: IS–LM intuition, aggregate demand/supply, and policy transmission.",
-          title: "Short-run macro frameworks",
+            "Consumption-saving, life-cycle and permanent income models, liquidity constraints, and empirical puzzles.",
+          title: "Consumption and savings",
         },
         {
           description:
-            "Consumption theory in macro: permanent income, life-cycle models, and empirical puzzles.",
-          title: "Consumption in macroeconomics",
+            "Investment theory, q-models, adjustment costs, irreversibility, and firm-level investment dynamics.",
+          title: "Investment and capital",
         },
         {
           description:
-            "Investment: q-theory, adjustment costs, uncertainty, and financial frictions.",
-          title: "Investment dynamics",
+            "Labor markets in macro, search and matching, wage setting, unemployment dynamics, and Beveridge curve analysis.",
+          title: "Unemployment and labor in macro",
         },
       ],
     },
@@ -220,50 +236,53 @@ export const TEST_CASES = [
   {
     expectations: `
       - MUST be in Brazilian Portuguese
-      - Should break down Definition of Ready components individually
-      - Should cover story refinement techniques as separate lessons
-      - Should NOT create dedicated lessons teaching estimation techniques, story points, or planning poker (neighboring chapters "Estimativas em ágil" and "Story points e planning poker" cover that) — brief contextual references are fine
-      - Should NOT create dedicated lessons teaching no-estimates or throughput forecasting (neighboring chapter "No-estimates e previsões por fluxo" covers that) — brief contextual references are fine
-      - Should NOT create dedicated lessons teaching risk management or dependency mapping (neighboring chapter "Risco e dependências" covers that) — brief contextual references are fine
-      - Should NOT create dedicated lessons teaching software architecture or SOLID principles (neighboring chapter "Arquitetura em contextos ágeis" covers that) — brief contextual references are fine
+      - Should break down architectural concepts individually (modularity, coupling, cohesion as separate lessons)
+      - Should cover fitness functions as distinct lessons
+      - Should separate evolutionary architecture theory from practical decision-making
+      - Should NOT create dedicated lessons teaching DevOps pipelines, CI/CD, or infrastructure as code (neighboring chapter "DevOps e entrega contínua" covers that) — brief contextual references are fine
+      - Should NOT create dedicated lessons teaching SLIs, SLOs, or error budgets (neighboring chapter "SRE e confiabilidade em produtos digitais" covers that) — brief contextual references are fine
+      - Should NOT create dedicated lessons teaching technical debt management or strategic refactoring (neighboring chapter "Dívida técnica e sustentabilidade" covers that) — brief contextual references are fine
+      - Should NOT create dedicated lessons teaching test strategies, test pyramids, or automated testing (neighboring chapter "Estratégias modernas de testes" covers that) — brief contextual references are fine
 
       ${SHARED_EXPECTATIONS}
     `,
-    id: "pt-agile-definition-of-ready",
+    id: "pt-agile-arquitetura-agil",
     userInput: {
       chapterDescription:
-        "Refinamento contínuo com DoR, preparação de histórias e alinhamento técnico.",
-      chapterTitle: "Definition of Ready e preparo do trabalho",
+        "Arquitetura evolutiva, modularidade, acoplamento/cohesão, fitness functions e decisões arquiteturais compatíveis com mudanças frequentes.",
+      chapterTitle: "Arquitetura em ambientes ágeis",
       courseTitle: "Metodologias Ágeis",
       language: "pt",
       neighboringChapters: [
         {
-          description: "Estimativas: por que, quando e quando não; vieses e variabilidade.",
-          title: "Estimativas em ágil",
+          description:
+            "Dual Track (Discovery/Delivery), discovery contínuo, e prevenção de 'teatro ágil' com entrega sem aprendizado.",
+          title: "Discovery e Delivery integrados",
         },
         {
           description:
-            "Story points, escalas, planning poker e calibração; cuidados com comparações entre times.",
-          title: "Story points e planning poker",
+            "DevOps: colaboração Dev+Ops, automação, pipelines, IaC, e redução de handoffs para acelerar e estabilizar entregas.",
+          title: "DevOps e entrega contínua",
         },
         {
           description:
-            "Estimativas por fluxo: no-estimates, throughput e previsões probabilísticas.",
-          title: "No-estimates e previsões por fluxo",
-        },
-        {
-          description: "Gestão de riscos, premissas e dependências; integração com planejamento.",
-          title: "Risco e dependências",
+            "SRE: SLIs/SLOs, error budget, confiabilidade como requisito, e equilíbrio entre velocidade e estabilidade.",
+          title: "SRE e confiabilidade em produtos digitais",
         },
         {
           description:
-            "Arquitetura evolutiva, modularidade e fitness functions; evitar big design up front.",
-          title: "Arquitetura em contextos ágeis",
+            "Gestão de dívida técnica, qualidade interna, refatoração estratégica, e mecanismos de priorização junto ao valor de negócio.",
+          title: "Dívida técnica e sustentabilidade",
         },
         {
           description:
-            "Princípios SOLID, coesão/acoplamento e técnicas para manter código sustentável.",
-          title: "Design de software para agilidade",
+            "Qualidade e testes: pirâmide de testes, testes automatizados, testes exploratórios, e estratégias para sistemas distribuídos.",
+          title: "Estratégias modernas de testes",
+        },
+        {
+          description:
+            "Segurança no ciclo ágil: threat modeling, DevSecOps, shift-left, gestão de vulnerabilidades e resposta a incidentes.",
+          title: "Segurança e DevSecOps",
         },
       ],
     },
@@ -272,52 +291,53 @@ export const TEST_CASES = [
     expectations: `
       - MUST be in US English
       - Should cover each Horcrux-related concept separately
-      - Should distinguish between Deathly Hallows and Horcruxes as separate topics
-      - Should break down moral and philosophical implications as individual lessons
+      - Should distinguish between alchemy, the Philosopher's Stone, and Horcrux concepts
+      - Should break down moral and philosophical implications of soul fragmentation individually
       - Even though this is pop culture, lessons should still be focused and granular
-      - Should NOT create dedicated lessons teaching Legilimency, Occlumency, or mind magic (neighboring chapter "Magic: Mind Arts" covers that) — brief contextual references are fine
-      - Should NOT create dedicated lessons teaching time-turners or time magic (neighboring chapter "Magic: Time and Paradox" covers that) — brief contextual references are fine
-      - Should NOT create dedicated lessons teaching protective wards or the Fidelius Charm (neighboring chapter "Magic: Wards and Secret-Keeping" covers that) — brief contextual references are fine
-      - Should NOT create dedicated lessons teaching curse-breaking techniques (neighboring chapter "Magic: Curses and Curse-Breaking" covers that) — brief contextual references are fine
+      - Should NOT create dedicated lessons teaching Legilimency, Occlumency, or memory manipulation (neighboring chapter "Mind magic and memory" covers that) — brief contextual references are fine
+      - Should NOT create dedicated lessons teaching wand woods, cores, or the Elder Wand (neighboring chapter "Wandlore" covers that) — brief contextual references are fine
+      - Should NOT create dedicated lessons teaching magical healing or St Mungo's (neighboring chapter "Healing and magical medicine" covers that) — brief contextual references are fine
+      - Should NOT create dedicated lessons teaching divination methods or prophecy (neighboring chapter "Divination and prophecy" covers that) — brief contextual references are fine
 
       ${SHARED_EXPECTATIONS}
     `,
-    id: "en-harry-potter-death-souls",
+    id: "en-harry-potter-alchemy-horcruxes",
     userInput: {
       chapterDescription:
-        "Deathly magic: Horcruxes, Hallows, and how immortality attempts reshape morality.",
-      chapterTitle: "Magic: Death, Souls, and Immortality",
+        "Alchemy, immortality myths, and the Philosopher's Stone as symbol. Horcrux metaphysics and the costs of soul fragmentation.",
+      chapterTitle: "Alchemy, Horcruxes, and immortality",
       courseTitle: "Harry Potter",
       language: "en",
       neighboringChapters: [
         {
           description:
-            "Healing potions and antidotes; triage, toxicity, and counter-poison strategies.",
-          title: "Magic: Antidotes and Healing Potions",
+            "Defense curriculum across eras and how teaching reflects politics. Practical spell selection, threat models, and the pedagogy of fear.",
+          title: "Defense Against the Dark Arts",
         },
         {
           description:
-            "Mind magic: Legilimency, Occlumency, and memory manipulation tradeoffs and risks.",
-          title: "Magic: Mind Arts",
+            "Divination's ambiguity, self-fulfilling prophecy, and narrative foreshadowing. Symbol systems: tea leaves, dreams, centaurs, and astronomy.",
+          title: "Divination and prophecy",
         },
         {
           description:
-            "Time magic: time-turners, paradox avoidance, and narrative constraints on temporal tools.",
-          title: "Magic: Time and Paradox",
+            "Mind magic: Legilimency, Occlumency, memory charms, and Pensieve ethics. Consent, epistemology, and the reliability of recollection.",
+          title: "Mind magic and memory",
         },
         {
           description:
-            "Protective enchantments: Fidelius, blood wards, and layered security design.",
-          title: "Magic: Wards and Secret-Keeping",
-        },
-        {
-          description: "Curses and curse-breaking: detection, containment, and reversal methods.",
-          title: "Magic: Curses and Curse-Breaking",
+            "Wand woods, cores, allegiance, and the Elder Wand's legend. Comparative magical foci and what wandlore implies about power and identity.",
+          title: "Wandlore",
         },
         {
           description:
-            "Artifacts with agency: cursed objects, sentient items, and ownership/allegiance effects.",
-          title: "Magic: Enchanted Objects and Sentience",
+            "Magical healing, St Mungo's, and the boundaries of restorative magic. Disability, trauma, and long-term consequences in the series.",
+          title: "Healing and magical medicine",
+        },
+        {
+          description:
+            "Werewolves, vampires, giants, goblins, house-elves, centaurs, and merpeople as political subjects. Rights, stereotypes, and allegory across species.",
+          title: "Beings, creatures, and species politics",
         },
       ],
     },
@@ -326,53 +346,53 @@ export const TEST_CASES = [
   {
     expectations: `
       - MUST be in Brazilian Portuguese
-      - Should cover each type of evidence individually
-      - Should separate burden of proof from standards of proof
-      - Should break down presumptions as individual concepts
-      - Should NOT create dedicated lessons teaching forensic/technical evidence or perícias (neighboring chapter "Perícias e prova técnica" covers that) — brief contextual references are fine
-      - Should NOT create dedicated lessons teaching legal risk management (neighboring chapter "Risk management jurídico" covers that) — brief contextual references are fine
-      - Should NOT create dedicated lessons teaching precedent analysis or jurisprudence (neighboring chapter "Análise de precedentes" covers that) — brief contextual references are fine
-      - Should NOT create dedicated lessons teaching strategic litigation or amici curiae (neighboring chapter "Litigância estratégica e impacto" covers that) — brief contextual references are fine
+      - Should break down each legal tech concept individually (templates, document review, version control)
+      - Should cover automation risks and governance as distinct lessons
+      - Should separate document management from quality standardization
+      - Should NOT create dedicated lessons teaching litigation strategy or dispute portfolio management (neighboring chapter "Estratégia contenciosa e gestão de disputas" covers that) — brief contextual references are fine
+      - Should NOT create dedicated lessons teaching legal operations management, SLAs, or KPIs (neighboring chapter "Legal operations e gestão jurídica" covers that) — brief contextual references are fine
+      - Should NOT create dedicated lessons teaching contract lifecycle management or CLM (neighboring chapter "Operações contratuais" covers that) — brief contextual references are fine
+      - Should NOT create dedicated lessons teaching negotiation techniques, BATNA, or ZOPA (neighboring chapter "Negociação estratégica" covers that) — brief contextual references are fine
 
       ${SHARED_EXPECTATIONS}
     `,
-    id: "pt-direito-teoria-geral-da-prova",
+    id: "pt-direito-legal-tech",
     userInput: {
       chapterDescription:
-        "Direito probatório: standards de prova, ônus, inversão, presunções e prova estatística.",
-      chapterTitle: "Teoria geral da prova",
+        "Automação jurídica e qualidade: templates, revisão assistida, gestão documental e padronização. Riscos de automação, controle de versões e governança de conhecimento.",
+      chapterTitle: "Legal tech e automação de documentos",
       courseTitle: "Direito",
       language: "pt",
       neighboringChapters: [
         {
           description:
-            "Gestão de riscos jurídicos: mapeamento, matriz de riscos, controles, apetite a risco e relatórios.",
-          title: "Risk management jurídico",
+            "Programas de integridade em terceiros: due diligence, cláusulas anticorrupção e monitoramento. Gestão de contratos, auditoria e encerramento por inadimplemento de compliance.",
+          title: "Gestão de terceiros e due diligence",
         },
         {
           description:
-            "Privilegios e confidencialidade: sigilo profissional, attorney-client privilege comparado e governança de dados.",
-          title: "Sigilo, confidencialidade e privilégio",
+            "Estratégia de litígio: seleção de teses, definição de foro, gestão de portfólio e negociação de acordos. Monitoramento de precedentes, risco financeiro e comunicação com stakeholders.",
+          title: "Estratégia contenciosa e gestão de disputas",
         },
         {
           description:
-            "Provas e perícias: perícia contábil, técnica, grafotécnica, médica, ambiental e quesitação.",
-          title: "Perícias e prova técnica",
+            "Gestão de escritórios e departamentos jurídicos: triagem, SLAs, indicadores e orçamento. Precificação, honorários, contratação de correspondentes e qualidade.",
+          title: "Legal operations e gestão jurídica",
         },
         {
           description:
-            "Jurisprudência e precedentes: ratio decidendi, distinguishing, overruling e consistência decisória.",
-          title: "Análise de precedentes",
+            "Gestão de contratos: ciclo de vida, cláusulas padrão, aprovações e controle de obrigações. CLM, auditoria contratual e prevenção de disputas.",
+          title: "Operações contratuais",
         },
         {
           description:
-            "Litigância estratégica: seleção de casos, construção de teses, amici curiae e impacto sistêmico.",
-          title: "Litigância estratégica e impacto",
+            "Negociação e mediação avançadas: BATNA, ZOPA, técnicas de influência e gestão de impasses. Construção de acordos complexos e multiparte.",
+          title: "Negociação estratégica",
         },
         {
           description:
-            "Processos estruturais e políticas públicas: decisões complexas, monitoramento, compliance judicial e consensualidade.",
-          title: "Processo estrutural",
+            "Oratória e atuação em audiência: teoria do caso, exame e contrainterrogatório, sustentação oral e postura profissional. Comunicação com juízes, jurados e peritos.",
+          title: "Advocacia oral e persuasão",
         },
       ],
     },
@@ -380,42 +400,53 @@ export const TEST_CASES = [
   {
     expectations: `
       - MUST be in US English
-      - Should break down each thematic continuity into separate lessons
-      - Should cover slavery's legacy aspects individually
-      - Should separate political, economic, and social themes into distinct lessons
-      - Should NOT create dedicated lessons teaching about museums, monuments, or public history (neighboring chapter "Public history and collective memory" covers that) — brief contextual references are fine
-      - Should NOT create dedicated lessons teaching comparative parallels with other countries (neighboring chapter "Brazil in comparative perspective" covers that) — brief contextual references are fine
-      - Should NOT create dedicated lessons teaching career advice or academic pathways (neighboring chapter "Careers in Brazilian history and related fields" covers that) — brief contextual references are fine
+      - Should break down each historical period's health challenges into separate lessons
+      - Should cover epidemics, sanitation campaigns, and health systems individually
+      - Should separate public health policy from biomedical politics
+      - Should NOT create dedicated lessons teaching urbanization, housing, or favelas (neighboring chapter "Cities and urban inequality" covers that) — brief contextual references are fine
+      - Should NOT create dedicated lessons teaching environmental history, deforestation, or the Amazon (neighboring chapter "Environmental history and the Amazon" covers that) — brief contextual references are fine
+      - Should NOT create dedicated lessons teaching military history, coups, or defense policy (neighboring chapter "Military and national security" covers that) — brief contextual references are fine
+      - Should NOT create dedicated lessons teaching historiography, monuments, or public memory (neighboring chapter "Historiography and public memory" covers that) — brief contextual references are fine
 
       ${SHARED_EXPECTATIONS}
     `,
-    id: "en-brazilian-history-continuities",
+    id: "en-brazilian-history-health-disease",
     userInput: {
       chapterDescription:
-        "Long-run themes: slavery's legacies, state capacity, inequality, and democracy's cycles.",
-      chapterTitle: "Continuities and turning points in Brazilian history",
+        "Public health, epidemics, health systems, and biomedical politics from the 19th century to COVID-19; sanitation campaigns and inequality.",
+      chapterTitle: "Health and disease",
       courseTitle: "Brazilian History",
       language: "en",
       neighboringChapters: [
         {
           description:
-            "Quantitative and spatial methods: census data, economic series, GIS mapping, and digital humanities.",
-          title: "Data and digital methods in history",
+            "Football history, race and class in sport, club cultures, mega-events, and stadium politics; sport as national narrative.",
+          title: "Sports and society",
         },
         {
           description:
-            "Memory, monuments, and public history: museums, curriculum disputes, and politics of commemoration.",
-          title: "Public history and collective memory",
+            "Urbanization, housing, sanitation, policing, and informal settlements; favelas, segregation, and metropolitan governance.",
+          title: "Cities and urban inequality",
         },
         {
           description:
-            "Comparative Brazil: parallels with Spanish America, the US South, and Atlantic empires.",
-          title: "Brazil in comparative perspective",
+            "Amazon, Cerrado, and Atlantic Forest histories: extraction, conservation, Indigenous stewardship, climate politics, and environmental governance.",
+          title: "Environmental history and the Amazon",
         },
         {
           description:
-            "Key academic pathways, language skills, archives, fellowships, and career options in research, education, and policy.",
-          title: "Careers in Brazilian history and related fields",
+            "Professionalization of the armed forces, coups, doctrine, and defense policy; civil-military relations in democracy.",
+          title: "Military and national security",
+        },
+        {
+          description:
+            "Diplomacy from empire to present: borders, regional leadership, multilateralism, South–South ties, and great-power relations.",
+          title: "Foreign policy and international relations",
+        },
+        {
+          description:
+            "How Brazil's past is narrated and contested: schools, monuments, museums, reparations debates, transitional justice, and public history.",
+          title: "Historiography and public memory",
         },
       ],
     },
