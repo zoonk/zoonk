@@ -21,6 +21,8 @@ ANTI-CHECKLIST GUIDANCE (CRITICAL):
 - Do NOT penalize for missing components, phases, or concepts you might expect
 - Do NOT require a specific number of steps
 - Do NOT check against an imagined "complete" explanation
+- Do NOT penalize for output format or structure (e.g., JSON wrapping, key names, array nesting). We use structured outputs, so focus exclusively on content quality
+- Do NOT penalize for the ordering of explanation steps. Different valid structures and sequences exist
 - ONLY penalize for: factual errors, superficial treatment of complex topics, not using the conversational tone (everyday language) we asked or poor explanation structure
 - Different valid explanatory approaches exist - assess the quality of what IS provided
 `;
@@ -281,6 +283,7 @@ TOPIC-SPECIFIC GUIDANCE:
 
 1. ACCURACY CHECK: Monetary policy involves specific transmission mechanisms with measurable effects. Penalize if:
    - Interest rate effects are described as immediate (transmission mechanisms have significant time lags)
+   - NOTE: Not explicitly mentioning time lags is acceptable as long as effects are not described as immediate. Do NOT penalize for the absence of explicit time lag discussion
 
 2. DEPTH CHECK: Penalize if the explanation presents monetary policy as simply "central banks controlling money" without showing the chain from policy action to economic effect.
 
