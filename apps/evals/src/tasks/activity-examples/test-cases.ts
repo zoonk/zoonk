@@ -21,6 +21,7 @@ ANTI-CHECKLIST GUIDANCE (CRITICAL):
 - Do NOT penalize for missing specific life domains or contexts you might expect
 - Do NOT require a specific number of contexts or examples
 - Do NOT check against an imagined "complete" list of applications
+- Do NOT penalize for JSON structure or output format (e.g., wrapping in an object vs returning a raw array). The output uses a structured schema — evaluate ONLY the content quality of titles and text, not how the data is structured
 - ONLY penalize for: incorrect real-world claims, abstract examples without concrete situations, overlap with explanation content, or lack of variety in context types
 - Different valid sets of examples exist - assess the quality of what IS provided
 `;
@@ -72,7 +73,7 @@ TOPIC-SPECIFIC GUIDANCE:
    - Price changes are attributed to single-cause explanations when multiple factors interact
    - Examples suggest prices are arbitrarily set rather than emerging from market forces
 
-2. CONTEXT CHECK: Penalize if examples are limited to obvious retail. Supply and demand affects housing, labor markets, dating, time allocation, attention economics, and even social status.
+2. CONTEXT CHECK: Penalize only if ALL examples are simple store-purchase scenarios (e.g., "buy X at the store" repeatedly). Diverse market contexts — such as housing, rideshare surge pricing, concert tickets, seasonal goods, or gig economy — count as variety even though they involve transactions. Supply and demand inherently involves markets, so the bar is whether examples show different TYPES of market forces, not whether they go beyond transactions entirely.
 
 3. DISTINCTION FROM EXPLANATION: The explanation covered WHAT supply and demand curves are. This should show WHERE these forces visibly shape real-world situations.
 
