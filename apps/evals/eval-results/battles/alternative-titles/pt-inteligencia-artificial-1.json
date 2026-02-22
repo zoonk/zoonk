@@ -1,0 +1,149 @@
+{
+  "expectations": "\n      - Should include \"IA\"\n      - Variants like \"IA Generativa\", \"IA com ChatGPT\", \"IA com LLMs\" are acceptable — they still contain \"IA\", so they're the same course\n      - Items like \"IA para X\" are also acceptable since they refer to the same core subject\n      - Should NOT include standalone different subjects like \"Aprendizado de Máquina\", \"Deep Learning\", \"ChatGPT\" — these drop \"IA\" entirely\n      - Should NOT include \"Inteligência Humana\" (different subject)\n      - All alternatives should be in Brazilian Portuguese\n      - Should be in Portuguese\n\n      \n  **PURPOSE**: Alternative titles prevent AI from generating duplicate courses for the same subject. If someone creates \"Python for Data Science\", the AI should recognize it as the existing \"Python\" course — not create a separate one. The list catches all title variants that map to the same course.\n\n  **CORE RULE**: If the title still contains the base subject (or a recognized synonym/abbreviation), it is the SAME course — regardless of qualifiers, subtitles, tools, focus areas, or context added to it. We do NOT want separate courses for each variant.\n\n  Examples of this rule:\n  - \"World War II: Normandy and D-Day\" → contains \"World War II\" → same course\n  - \"Python for Data Science\" → contains \"Python\" → same course\n  - \"IA Generativa\" → contains \"IA\" → same course\n  - \"Desarrollo Web con React\" → contains \"Desarrollo Web\" → same course\n  - \"ML with Python\" → contains \"ML\" → same course\n  - \"Differential Calculus\" → contains \"Calculus\" → same course\n  - \"Formula 1 Motorsport\" → contains \"Formula 1\" → same course\n\n  **When to EXCLUDE**:\n  - **Broader**: The title covers a larger domain that encompasses unrelated subjects → exclude. Example: \"Web Development\" is broader than \"Frontend Development\"; \"Programming\" is broader than \"Python\"; standalone \"Motorsport\" is broader than \"Formula 1\".\n  - **Standalone different subject**: The title drops the base subject entirely and represents something else → exclude. Example: \"React\" (no \"JavaScript\" in the title — it’s its own technology); \"Deep Learning\" (no \"Machine Learning\" — it’s its own field); \"Battle of Normandy\" (no \"World War II\" — it’s its own topic); standalone \"Motorsport\" (no \"Formula 1\").\n  - **Ambiguous**: The title could refer to multiple unrelated topics → exclude. Example: just \"Matrix\" without any disambiguator.\n\n  **Also include** (even without the base subject in the title):\n  - **Recognized synonyms/abbreviations**: \"WWII\" / \"Second World War\" ↔ \"World War II\"; \"F1\" ↔ \"Formula 1\"; \"ML\" ↔ \"Machine Learning\"; \"JS\" ↔ \"JavaScript\"; \"UI Development\" / \"Client-Side Development\" ↔ \"Frontend Development\".\n  - **Dialect/variant names**: \"Inglês Americano\", \"Inglês Britânico\", \"Optimisation\" vs \"Optimization\".\n  - **Language learning aspects**: \"Gramática Inglesa\", \"TOEFL\", \"Business English\" — all map to the same language course.\n  - **Light framing words**: \"principles\", \"fundamentals\", \"basics\", \"bootcamp\", \"certification prep\" — these don’t change the subject.\n  - **Descriptive disambiguators**: \"The Matrix (1999 film)\", \"Matrix Movie\" — these clarify which subject, they don’t change it.\n\n  Additional notes:\n  - Include different locale spellings when applicable (e.g., \"Optimization\" and \"Optimisation\").\n  - Include abbreviations if they mean the same thing (e.g., \"AI\"/\"IA\", \"ML\" when base is \"Machine Learning\").\n  - Levels like \"Beginner\", \"Advanced\", \"Calculus 1\", \"101\", etc., are acceptable.\n  - It’s fine to skip spacing/hyphenation/accents variants — serialization will handle those.\n  - Awkward or redundant phrasings are acceptable.\n  - Ignore casing issues (e.g., \"javascript\" vs \"JavaScript\").\n  - Well-known English terms in non-English titles are acceptable (e.g., \"Business English\" in Portuguese, \"TOEFL\", \"IELTS\").\n  - Ideally, it should have a huge list of alternative titles, really good ones have more than 100 alternative titles\n\n  SCORING CALIBRATION:\n  - Apply the CORE RULE above as the PRIMARY lens: does the title still contain the base subject? If yes → it’s the same course, do NOT penalize.\n  - Only penalize for titles that are genuinely broader (umbrella domain), a standalone different subject (base subject dropped entirely), or ambiguous.\n  - Do NOT penalize for qualifiers, subtitles, tools, focus areas, or context added to the base subject — these are all the same course.\n  - Do NOT heavily penalize for missing titles — only penalize for wrong inclusion/exclusion decisions.\n  - A large list is ideal but do NOT heavily penalize shorter lists if all included titles are correct.\n\n    ",
+  "judgedAt": "2026-02-22T18:25:38.782Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model C is the most comprehensive list with 200+ alternatives, all in Portuguese. It includes the key expected items: 'IA', 'IA Generativa', 'IA com ChatGPT', 'IA com LLMs', and many 'IA para X' variants. It correctly avoids standalone different subjects like 'Aprendizado de Máquina', 'Deep Learning', 'ChatGPT' alone, and 'Inteligência Humana'. It includes I.A. abbreviation variant, systematic pairing of both 'Inteligência Artificial' and 'IA' versions, tool/framework variants (Python, TensorFlow, PyTorch, Keras, scikit-learn, Azure, AWS, Google Cloud), application contexts (Negócios, Saúde, Marketing, etc.), level variants (Básica, Avançada, Intermediária, 101), and informal phrasings (Descomplicada, sem Mistérios). The list is well-organized and exhaustive. No problematic inclusions of broader or genuinely different subjects. The only minor issue is it doesn't include 'AI' (English abbreviation) or 'Artificial Intelligence', but these are minor since the language is Portuguese.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model G provides a very extensive list (170+ alternatives) that is well-structured and comprehensive. It includes 'IA', 'I.A.', systematic pairing of full and abbreviated forms, many 'IA para X' application variants, tool framings (Python, Java, TensorFlow, PyTorch, etc.), level variants, and informal phrasings. It doesn't include 'IA Generativa', 'IA com ChatGPT', or 'IA com LLMs' which were specifically mentioned as expected in the task expectations, which is a notable gap. However, it avoids all the problematic inclusions (no standalone different subjects). All titles are in Portuguese. The breadth of application contexts is excellent (Agricultura, Direito, Compliance, etc.). Missing the generative AI variants is the main weakness.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model D provides a solid list of ~90 alternatives. It includes 'IA', 'AI', 'IA Generativa', tool variants, application contexts, level variants, and numbered variants (I, II, 1, 2). It correctly includes 'Sistemas Inteligentes' and 'Agentes Inteligentes' as synonyms. However, it includes some borderline items: 'Inteligência Artificial e Processamento de Linguagem Natural', 'Inteligência Artificial e Visão Computacional', and 'Inteligência Artificial e Busca' - while these contain 'IA', they're acceptable per the core rule. 'Inteligência Artificial Simbólica', 'Inteligência Artificial Conexionista', 'Inteligência Artificial Estatística' are sub-areas which are acceptable. Missing 'IA com ChatGPT' and 'IA com LLMs' which were specifically expected. 'Inteligencia Artificial' (without accent) is a nice spelling variant. Overall good but less exhaustive than C or G.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model B provides ~70 alternatives. It includes 'IA', 'AI', 'Artificial Intelligence' (English), 'IA Generativa', tool variants, application contexts. However, it includes 'Inteligência de Máquina' and 'Pensamento Artificial' which are questionable - 'Inteligência de Máquina' isn't a recognized synonym for AI in Portuguese, and 'Pensamento Artificial' is not a standard term. 'IA e Machine Learning' and 'IA e Ciência de Dados' are fine since they contain 'IA'. Missing 'IA com ChatGPT' and 'IA com LLMs' which were specifically expected. 'Artificial Intelligence' and 'AI' in English are acceptable per the rules (well-known English terms). The list is shorter than top performers but mostly correct. The inclusion of 'Pensamento Artificial' as a supposed synonym is a factual issue.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model F provides ~72 alternatives. It includes good structural variants (Formação, Certificação, Especialização, Bootcamp, Masterclass), tool variants, application contexts, and formatting variants. It includes 'Inteligencia Artificial' (without accent), 'I.A.', and 'Sistemas Inteligentes (Inteligência Artificial)' with disambiguation. However, it doesn't include 'IA Generativa', 'IA com ChatGPT', or 'IA com LLMs' - all specifically expected. It also doesn't include 'AI' (English abbreviation). The list is moderate in size and correct in what it includes, but missing key expected items hurts it. 'Agentes Inteligentes e Inteligência Artificial' and 'Sistemas Inteligentes (Inteligência Artificial)' are properly qualified. 'Laboratório de Inteligência Artificial' and 'Projeto de Inteligência Artificial' are slightly unusual but acceptable.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model E provides only ~38 alternatives, which is the smallest list. While all included titles are correct and well-formed (no problematic inclusions), the list is notably short. It's missing many expected variants: 'IA Generativa', 'IA com ChatGPT', 'IA com LLMs', most 'IA para X' variants (only has Negócios, Desenvolvedores, Empresas), tool variants beyond Python, level variants beyond basic/advanced. It includes 'Sistemas Inteligentes' which is good. The quality of included items is high, but the lack of exhaustiveness is significant. Per the scoring calibration, we shouldn't heavily penalize shorter lists if all titles are correct, but this is notably sparse compared to others.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model A provides ~42 alternatives. The list is relatively short. It's missing key expected items: 'IA Generativa', 'IA com ChatGPT', 'IA com LLMs'. It includes 'Inteligência Computacional' which is somewhat questionable as a synonym - it's used in academia but has a slightly different scope. 'Lógica para IA' is borderline but acceptable since it contains 'IA'. 'Ciência da Inteligência Artificial' is an unusual phrasing. The list lacks systematic pairing of 'Inteligência Artificial' and 'IA' versions - many entries only have one form. Missing 'AI' (English abbreviation), many tool variants, and most application contexts. It doesn't include 'Inteligência Artificial para' variants with the full name, only 'IA para' forms. The list is functional but notably less comprehensive.",
+          "score": 6.2
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model C perfectly follows all instructions. It generates a massive and highly exhaustive list (134 items) while strictly adhering to the core rule: every single title includes 'IA' or 'Inteligência Artificial'. It also successfully incorporates the specific examples mentioned in the prompt, such as 'IA Generativa', 'IA com ChatGPT', and 'IA com LLMs'. There are no hallucinated separate subjects.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model G provides an incredibly exhaustive list (178 items) and follows the core rule flawlessly. Every single title retains the base subject ('IA' or 'Inteligência Artificial'). It misses a few modern context variations like 'ChatGPT' or 'LLMs' that were suggested as acceptable, but its breadth across industries, tools, and experience levels makes it an outstanding output.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model F follows all rules nicely and provides a clean list of 68 items. Crucially, it avoids the trap of dropping the base subject (e.g., phrasing it as 'Sistemas Inteligentes (Inteligência Artificial)' rather than just 'Sistemas Inteligentes'). However, its list is shorter than the top models and lacks some of the modern generative AI variations.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model B generates a good-sized list (72 items) and includes modern terms like 'IA Generativa'. However, it violates the negative constraint by including 'Inteligência de Máquina' and 'Pensamento Artificial', which drop the base subject entirely and represent distinct phrasing/subjects that should have been excluded according to the prompt's rules.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model D provides a solid number of variants (81 items) but violates the core exclusion rule by including 'Sistemas Inteligentes' and 'Agentes Inteligentes'. These titles drop the base subject entirely and represent standalone subjects/fields, which the prompt strictly forbids.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model A generates a somewhat short list (43 items). Furthermore, it violates the exclusion rule by including 'Sistemas Inteligentes' and 'Inteligência Computacional', both of which drop the base subject entirely.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model E provides the shortest list among all models (only 39 items), failing to hit the 'huge list' expectation. Additionally, it violates the exclusion rule by including 'Sistemas Inteligentes', which drops the base subject.",
+          "score": 5.5
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Best adherence overall: all titles are in Portuguese and almost all explicitly include “IA” or “Inteligência Artificial”, including required variants like “IA Generativa”, “IA com ChatGPT”, and “IA com LLMs”. Very exhaustive (well over 100). Mostly avoids the disallowed pattern of dropping IA entirely. Minor issues: includes a few framings that could drift toward broader/adjacent domains (e.g., cloud/vendor/platform mentions), but they still keep IA in the title so they map correctly per the core rule.",
+          "score": 9.6
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Also highly exhaustive (100+), consistent Brazilian Portuguese, strong coverage of level/context/tool variants, and keeps “IA/Inteligência Artificial” present throughout. No obvious forbidden standalone subjects like “ChatGPT” alone. Slightly less aligned than C because it lacks explicit “IA com ChatGPT/LLMs/Generativa” variants (Generativa/LLMs not present), and has a few mildly awkward/duplicative items, but still very solid for deduplication.",
+          "score": 9.1
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Good breadth and clean constraint-following (Portuguese, includes IA, many acceptable variants). Includes core duplicates like course/bootcamp/formação/certificação, tool framings, and applications. Not as exhaustive as C/G and misses the explicitly requested “IA Generativa/IA com ChatGPT/IA com LLMs” variants. Still no major wrong inclusions.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Decent variety, includes “IA Generativa”. However it includes several items that violate the language requirement and/or the “don’t drop IA” expectation: “AI” appears standalone, and “Agentes Inteligentes” appears without IA in the title (could be treated as a separate course). Also includes some subtopic-ish titles (e.g., “IA e Processamento de Linguagem Natural”, “IA e Visão Computacional”) which are acceptable under the core rule because IA remains, but the standalone/English items are notable issues. Overall moderate coverage.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Includes many good variants and explicitly includes “IA Generativa”, but has multiple clear violations: English-only titles “AI” and “Artificial Intelligence” (not Portuguese), and several entries that drop IA entirely and become ambiguous/different (e.g., “Inteligência de Máquina”, “Pensamento Artificial”). Also includes mixed-language “Machine Learning” (though paired with IA) and is less exhaustive. These wrong inclusions hurt dedup precision.",
+          "score": 6.4
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "All in Portuguese and generally on-topic, but not exhaustive (short list). Also includes at least one problematic synonym: “Inteligência Computacional” is not necessarily exactly the same as “Inteligência Artificial” (can be broader/adjacent field), which risks false matches. Misses requested variants like “IA Generativa/IA com ChatGPT/IA com LLMs”.",
+          "score": 6.1
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Clean and Portuguese-only, but very short and misses many expected variants (no “IA Generativa”, no ChatGPT/LLMs framings). Also includes “Sistemas Inteligentes” without “IA” in the title, which can be a distinct/ambiguous course area. Overall weakest for exhaustive duplicate detection.",
+          "score": 5.8
+        }
+      ]
+    }
+  ],
+  "taskId": "alternative-titles",
+  "testCaseId": "pt-inteligencia-artificial-1"
+}

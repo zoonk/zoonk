@@ -1,0 +1,149 @@
+{
+  "expectations": "\n      - Should include \"World War 2\", \"Second World War\", \"WWII\", \"WW2\"\n      - Subtitled variants like \"World War II: Normandy and D-Day\", \"World War II: Holocaust and Genocide\", \"European Theater of World War II\" are acceptable — they still contain \"World War II\", so they're the same course\n      - Should NOT include standalone topics that drop \"World War II\" entirely, like \"Battle of Normandy\", \"D-Day\", \"Holocaust\" — those could be their own courses\n      - Should NOT include just \"World War\" (broader) or \"World War I\" (different subject)\n      - Results should be in English\n\n      \n  **PURPOSE**: Alternative titles prevent AI from generating duplicate courses for the same subject. If someone creates \"Python for Data Science\", the AI should recognize it as the existing \"Python\" course — not create a separate one. The list catches all title variants that map to the same course.\n\n  **CORE RULE**: If the title still contains the base subject (or a recognized synonym/abbreviation), it is the SAME course — regardless of qualifiers, subtitles, tools, focus areas, or context added to it. We do NOT want separate courses for each variant.\n\n  Examples of this rule:\n  - \"World War II: Normandy and D-Day\" → contains \"World War II\" → same course\n  - \"Python for Data Science\" → contains \"Python\" → same course\n  - \"IA Generativa\" → contains \"IA\" → same course\n  - \"Desarrollo Web con React\" → contains \"Desarrollo Web\" → same course\n  - \"ML with Python\" → contains \"ML\" → same course\n  - \"Differential Calculus\" → contains \"Calculus\" → same course\n  - \"Formula 1 Motorsport\" → contains \"Formula 1\" → same course\n\n  **When to EXCLUDE**:\n  - **Broader**: The title covers a larger domain that encompasses unrelated subjects → exclude. Example: \"Web Development\" is broader than \"Frontend Development\"; \"Programming\" is broader than \"Python\"; standalone \"Motorsport\" is broader than \"Formula 1\".\n  - **Standalone different subject**: The title drops the base subject entirely and represents something else → exclude. Example: \"React\" (no \"JavaScript\" in the title — it’s its own technology); \"Deep Learning\" (no \"Machine Learning\" — it’s its own field); \"Battle of Normandy\" (no \"World War II\" — it’s its own topic); standalone \"Motorsport\" (no \"Formula 1\").\n  - **Ambiguous**: The title could refer to multiple unrelated topics → exclude. Example: just \"Matrix\" without any disambiguator.\n\n  **Also include** (even without the base subject in the title):\n  - **Recognized synonyms/abbreviations**: \"WWII\" / \"Second World War\" ↔ \"World War II\"; \"F1\" ↔ \"Formula 1\"; \"ML\" ↔ \"Machine Learning\"; \"JS\" ↔ \"JavaScript\"; \"UI Development\" / \"Client-Side Development\" ↔ \"Frontend Development\".\n  - **Dialect/variant names**: \"Inglês Americano\", \"Inglês Britânico\", \"Optimisation\" vs \"Optimization\".\n  - **Language learning aspects**: \"Gramática Inglesa\", \"TOEFL\", \"Business English\" — all map to the same language course.\n  - **Light framing words**: \"principles\", \"fundamentals\", \"basics\", \"bootcamp\", \"certification prep\" — these don’t change the subject.\n  - **Descriptive disambiguators**: \"The Matrix (1999 film)\", \"Matrix Movie\" — these clarify which subject, they don’t change it.\n\n  Additional notes:\n  - Include different locale spellings when applicable (e.g., \"Optimization\" and \"Optimisation\").\n  - Include abbreviations if they mean the same thing (e.g., \"AI\"/\"IA\", \"ML\" when base is \"Machine Learning\").\n  - Levels like \"Beginner\", \"Advanced\", \"Calculus 1\", \"101\", etc., are acceptable.\n  - It’s fine to skip spacing/hyphenation/accents variants — serialization will handle those.\n  - Awkward or redundant phrasings are acceptable.\n  - Ignore casing issues (e.g., \"javascript\" vs \"JavaScript\").\n  - Well-known English terms in non-English titles are acceptable (e.g., \"Business English\" in Portuguese, \"TOEFL\", \"IELTS\").\n  - Ideally, it should have a huge list of alternative titles, really good ones have more than 100 alternative titles\n\n  SCORING CALIBRATION:\n  - Apply the CORE RULE above as the PRIMARY lens: does the title still contain the base subject? If yes → it’s the same course, do NOT penalize.\n  - Only penalize for titles that are genuinely broader (umbrella domain), a standalone different subject (base subject dropped entirely), or ambiguous.\n  - Do NOT penalize for qualifiers, subtitles, tools, focus areas, or context added to the base subject — these are all the same course.\n  - Do NOT heavily penalize for missing titles — only penalize for wrong inclusion/exclusion decisions.\n  - A large list is ideal but do NOT heavily penalize shorter lists if all included titles are correct.\n\n    ",
+  "judgedAt": "2026-02-22T18:25:34.035Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model C provides the largest list (~170 alternatives) and is extremely thorough. It correctly includes all expected titles: 'World War 2', 'Second World War', 'WWII', 'WW2'. It includes many subtitled variants that still contain the base subject (e.g., 'World War II: Normandy and D-Day', 'European Theater of World War II', 'The Holocaust in World War II'). Importantly, it correctly disambiguates battle references by keeping 'World War II' or 'WWII' in the title (e.g., 'Battle of Stalingrad (World War II)', 'Battle of Kursk (World War II)', 'Battle of Midway (World War II)'). This follows the core rule perfectly. It includes level variations, light framing words, and comprehensive coverage of sub-topics all properly qualified with the base subject. The only minor issue is 'The Great Patriotic War (World War II)' which is fine since it's disambiguated. There are a few titles that could be slightly borderline like 'WWII and the Origins of the Cold War' but it still contains WWII. Very well done overall.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model F provides a very extensive list (~160 alternatives) with excellent coverage. It includes all expected core variants. It has comprehensive country-specific variants ('Japan in World War II', 'Germany in World War II', etc.) all properly containing 'World War II'. It includes theater variants, battle variants with proper disambiguation ('Battle of the Atlantic' appears once standalone which is borderline, but also appears as 'World War II: Battle of the Atlantic'). The standalone 'The Battle of the Atlantic' without 'World War II' qualifier is a minor violation - it could be its own topic. Same issue doesn't appear often though. The list includes level variations, study format variations, and is very well organized. The country-by-country breakdown is thorough and correct since all contain 'World War II'. Very minor deduction for 'The Battle of the Atlantic' standalone.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model D provides a solid list of ~105 alternatives. It includes all expected titles ('World War 2', 'Second World War', 'WWII', 'WW2', '2nd World War'). Good coverage of sub-topics all properly containing the base subject. Includes locale spelling variants ('Theater'/'Theatre'). One issue: 'The Great War II' is not a recognized synonym for World War II - 'The Great War' refers to World War I, so 'The Great War II' is a fabricated/incorrect term, which counts as a factual inaccuracy. Otherwise the list is well-constructed with no standalone topic violations. Good use of level variations and framing words.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model A provides ~80 alternatives with good quality. Includes all expected core variants. Good coverage of sub-topics properly qualified with the base subject. 'Pacific War 1939–1945' is borderline - it doesn't contain 'World War II' or a recognized synonym, though the date qualifier helps disambiguate. 'AP/IB World History: World War II' is a reasonable inclusion. Overall solid but less extensive than Models C, F, or D. No major errors or violations.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model G provides ~68 alternatives with generally good quality. Includes all expected core variants. However, there are several problematic inclusions: 'The Great War II' is not a real term (The Great War = WWI); 'Second Global War' is not a recognized synonym; 'War Against Nazi Germany' drops the base subject and is a different scope; 'War of 1939-1945' and 'Global Conflict 1939-1945' don't contain the base subject or a recognized synonym - they're generic descriptions. 'World War II Documentary' is odd as a course title. 'Allied vs Axis in World War II' is fine since it contains the base subject. The fabrication of terms like 'The Great War II' and 'Second Global War' as supposed synonyms is a factual accuracy concern.",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model E provides only ~43 alternatives. While the quality is good - all included titles are correct and properly contain the base subject or recognized synonyms - the list is notably shorter than others. It lacks many sub-topic variants, country-specific perspectives, and subtitled variants that the prompt encourages. It meets the minimum expectations but falls short of the 'be exhaustive' instruction. No errors, but limited scope.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model B provides only ~39 alternatives and has several significant issues. Problematic inclusions: 'Pacific War' and 'War in the Pacific' don't contain 'World War II' or a recognized synonym and could be standalone topics; 'Invasion of Normandy' drops the base subject entirely; 'Battle of the Atlantic' drops the base subject entirely; 'The Fall of the Third Reich' drops the base subject entirely; 'Axis and Allies' is ambiguous and drops the base subject; 'The Great Patriotic War' without disambiguation could refer to other conflicts in Russian history. 'Global Conflict 1939-1945' and 'The War of 1939-1945' don't contain the base subject. These are exactly the kind of standalone topics the prompt says to exclude. Multiple violations of the core rule make this the weakest output.",
+          "score": 4.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model C perfectly followed all instructions. It generated a highly exhaustive list (130 items) and strictly adhered to the CORE RULE: it ensured that every single title included the base subject ('World War II', 'WWII', 'WW2', or 'Second World War'). Brilliantly, it handled standalone topics like 'D-Day' and 'The Holocaust' by appending '(World War II)' or 'in World War II' to them, perfectly complying with the rule that variants are acceptable as long as they contain the base subject.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model F performed at the exact same high level as Model C. It provided a massive list (122 items) and rigorously ensured that the base subject was present in every single item. Its inclusion of region-specific WWII variants ('Japan in World War II', 'Canada in World War II') was excellent and fully aligned with the prompt's rules.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model D generated a very strong, comprehensive list (90 items) without any major violations. It included excellent permutations like '2nd World War' and successfully avoided standalone topics that drop the base subject. A near-perfect output.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model A provided a large and mostly accurate list (75 items). However, it included one minor violation: 'Pacific War 1939–1945', which drops the base subject ('World War II') entirely. Despite this small slip, the rest of the list is highly compliant and useful.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model E followed the rules perfectly and did not include any forbidden standalone topics. However, the list is relatively short (43 items) compared to the top models, missing out on the exhaustive scope requested, though it avoids heavy penalties since all included items are correct.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model G provided a decent list but included a few items that drop the base subject entirely, such as 'War Against Nazi Germany', 'Global Conflict 1939-1945', and 'War of 1939-1945'. 'War Against Nazi Germany' is a standalone topic that ignores the Pacific theater, violating the negative constraints.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model B heavily violated the negative constraints. The prompt explicitly instructed NOT to include standalone topics that drop 'World War II' entirely, giving 'Battle of Normandy' and 'D-Day' as examples. Model B included 'Invasion of Normandy', 'Battle of the Atlantic', 'The Fall of the Third Reich', 'War in the Pacific', and 'Axis and Allies' (which is ambiguous). These inclusions represent a major failure to follow the core rule.",
+          "score": 3
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Most exhaustive and on-topic list, with many high-quality variants (synonyms/abbreviations, 1939–1945 framing, level variants, theaters, and plenty of subtitle-style variants that still clearly denote WWII). Minor issues: includes a few entries that drop the base phrasing entirely (e.g., some standalone battle names) but many are properly disambiguated with “(World War II)”. Overall best coverage and adherence.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Very long, diverse, and generally compliant. Good inclusion of synonyms/abbreviations and many subtitle variants. However, it contains at least one clear rule violation: a standalone title that drops WWII entirely (“The Battle of the Atlantic”), which the prompt explicitly says to avoid as it could be its own course. Still excellent overall, but that inclusion is a meaningful deduction.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Strong, accurate set of alternatives with good coverage of synonyms and many WWII-subtitled variants (theaters, home front, holocaust, intelligence, etc.). One notable issue: includes “Pacific War 1939–1945,” which drops “World War II/WWII” and is commonly treated as a distinct framing/title; per the prompt, standalones that omit WWII should be avoided unless they’re recognized synonyms/abbreviations (this one is not clearly a strict synonym). Also not very exhaustive (<100).",
+          "score": 8.1
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Solid breadth and mostly follows the “keep WWII in the title (or synonym/abbrev)” rule. But it contains a clear inaccurate/odd synonym (“The Great War II”) and especially “The Great War II”/“The Great War II” style items are not recognized standard equivalents and could be misleading. Otherwise good set of subtitle variants.",
+          "score": 7.6
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Decent list with many correct variants, but includes multiple problematic/ambiguous or nonstandard standalones/synonyms (e.g., “The Second Great War,” “War Against Nazi Germany,” “Second Global War,” “War of 1939-1945”), which are not established synonyms and could refer more broadly or differently. Also includes “World War II Documentary” (format rather than title synonym) and has repetition. کمتر exhaustive.",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Clean and mostly correct set of straightforward variants (synonyms, basic subtitles, theaters). However, it’s quite short and not very exhaustive. Also includes some items that are borderline as standalone topic framings without explicit WWII in the title (e.g., none here are egregious), but overall it lacks breadth compared to stronger outputs.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Includes several clear violations of the prompt’s exclusion rules: standalone topics that drop WWII entirely (e.g., “Pacific War,” “War in the Pacific,” “Invasion of Normandy,” “Battle of the Atlantic,” “The Fall of the Third Reich”). Also includes “The Great Patriotic War,” which is not a strict synonym for all of WWII (it refers to the Eastern Front/Soviet-German war) and would be a different/ambiguous course mapping. Overall weakest adherence despite some correct entries.",
+          "score": 4.2
+        }
+      ]
+    }
+  ],
+  "taskId": "alternative-titles",
+  "testCaseId": "en-world-war-2-1"
+}

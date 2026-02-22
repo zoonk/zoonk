@@ -1,0 +1,149 @@
+{
+  "expectations": "\n      - Should include items like \"Formula One\", \"F1\"\n      - Items like \"F1 Racing\", \"Formula One Championship\", \"F1 Series\", \"Formula 1 Motorsport\" are fine because they clearly refer to Formula 1\n      - Should NOT include standalone \"Motorsport\" or \"Racing\" (broader subjects that encompass more than F1)\n      - A genuinely different subject would be something like \"F1 Engineering\" or \"Motorsport Engineering\"\n      - Results should be in English\n\n      \n  **PURPOSE**: Alternative titles prevent AI from generating duplicate courses for the same subject. If someone creates \"Python for Data Science\", the AI should recognize it as the existing \"Python\" course — not create a separate one. The list catches all title variants that map to the same course.\n\n  **CORE RULE**: If the title still contains the base subject (or a recognized synonym/abbreviation), it is the SAME course — regardless of qualifiers, subtitles, tools, focus areas, or context added to it. We do NOT want separate courses for each variant.\n\n  Examples of this rule:\n  - \"World War II: Normandy and D-Day\" → contains \"World War II\" → same course\n  - \"Python for Data Science\" → contains \"Python\" → same course\n  - \"IA Generativa\" → contains \"IA\" → same course\n  - \"Desarrollo Web con React\" → contains \"Desarrollo Web\" → same course\n  - \"ML with Python\" → contains \"ML\" → same course\n  - \"Differential Calculus\" → contains \"Calculus\" → same course\n  - \"Formula 1 Motorsport\" → contains \"Formula 1\" → same course\n\n  **When to EXCLUDE**:\n  - **Broader**: The title covers a larger domain that encompasses unrelated subjects → exclude. Example: \"Web Development\" is broader than \"Frontend Development\"; \"Programming\" is broader than \"Python\"; standalone \"Motorsport\" is broader than \"Formula 1\".\n  - **Standalone different subject**: The title drops the base subject entirely and represents something else → exclude. Example: \"React\" (no \"JavaScript\" in the title — it’s its own technology); \"Deep Learning\" (no \"Machine Learning\" — it’s its own field); \"Battle of Normandy\" (no \"World War II\" — it’s its own topic); standalone \"Motorsport\" (no \"Formula 1\").\n  - **Ambiguous**: The title could refer to multiple unrelated topics → exclude. Example: just \"Matrix\" without any disambiguator.\n\n  **Also include** (even without the base subject in the title):\n  - **Recognized synonyms/abbreviations**: \"WWII\" / \"Second World War\" ↔ \"World War II\"; \"F1\" ↔ \"Formula 1\"; \"ML\" ↔ \"Machine Learning\"; \"JS\" ↔ \"JavaScript\"; \"UI Development\" / \"Client-Side Development\" ↔ \"Frontend Development\".\n  - **Dialect/variant names**: \"Inglês Americano\", \"Inglês Britânico\", \"Optimisation\" vs \"Optimization\".\n  - **Language learning aspects**: \"Gramática Inglesa\", \"TOEFL\", \"Business English\" — all map to the same language course.\n  - **Light framing words**: \"principles\", \"fundamentals\", \"basics\", \"bootcamp\", \"certification prep\" — these don’t change the subject.\n  - **Descriptive disambiguators**: \"The Matrix (1999 film)\", \"Matrix Movie\" — these clarify which subject, they don’t change it.\n\n  Additional notes:\n  - Include different locale spellings when applicable (e.g., \"Optimization\" and \"Optimisation\").\n  - Include abbreviations if they mean the same thing (e.g., \"AI\"/\"IA\", \"ML\" when base is \"Machine Learning\").\n  - Levels like \"Beginner\", \"Advanced\", \"Calculus 1\", \"101\", etc., are acceptable.\n  - It’s fine to skip spacing/hyphenation/accents variants — serialization will handle those.\n  - Awkward or redundant phrasings are acceptable.\n  - Ignore casing issues (e.g., \"javascript\" vs \"JavaScript\").\n  - Well-known English terms in non-English titles are acceptable (e.g., \"Business English\" in Portuguese, \"TOEFL\", \"IELTS\").\n  - Ideally, it should have a huge list of alternative titles, really good ones have more than 100 alternative titles\n\n  SCORING CALIBRATION:\n  - Apply the CORE RULE above as the PRIMARY lens: does the title still contain the base subject? If yes → it’s the same course, do NOT penalize.\n  - Only penalize for titles that are genuinely broader (umbrella domain), a standalone different subject (base subject dropped entirely), or ambiguous.\n  - Do NOT penalize for qualifiers, subtitles, tools, focus areas, or context added to the base subject — these are all the same course.\n  - Do NOT heavily penalize for missing titles — only penalize for wrong inclusion/exclusion decisions.\n  - A large list is ideal but do NOT heavily penalize shorter lists if all included titles are correct.\n\n    ",
+  "judgedAt": "2026-02-22T18:25:51.523Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model G provides the most extensive list (150+ alternatives) with excellent coverage across all categories: core synonyms (Formula One, F1), official names (FIA variants), level variants (Beginners, 101, Advanced via 'Mastering'), framing variants (Explained, Understanding, Guide, Overview, Insights), sub-topic variants (Strategy, Teams, Drivers, History, Rules), series/season variants, and creative but valid phrasings (Inside F1, Behind the Scenes, The World of, Modern/Contemporary). All titles contain the base subject or recognized synonym (F1/Formula One). No broader or genuinely different subjects included. Includes 'Grand Prix Racing' variants only with F1 disambiguation context. Systematic triplet pattern (Formula 1/Formula One/F1) is thorough. The only minor issue is 'Behind the Scenes of F1' feels slightly unusual as a course title but still clearly refers to Formula 1. No problematic inclusions like standalone 'Grand Prix Racing' or 'Motorsport'.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model E provides a very large list (140+ alternatives) with excellent coverage. It includes core synonyms, official names, level variants (101, Beginners), framing variants (Explained, Guide, Understanding), sub-topics (Strategy, Pit Stops, Tyres/Tires with locale spelling variants, Qualifying, Sprint, Terminology, Glossary), history, teams/drivers, and creative audience-focused variants (for Fans, for New Fans). All titles contain the base subject or synonym. Includes useful locale spelling variants (Tyres/Tires). The disambiguated 'Grand Prix Racing (Formula 1)' and 'Grand Prix (F1)' are smart inclusions. No problematic broader terms. Very thorough and well-organized. Slightly less varied in framing than Model G but compensates with more specific F1 sub-topics.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model D provides a large list (~100 alternatives) with good coverage. Includes core synonyms, official names (FIA variants), level variants (Beginners, Advanced), framing variants (Guide, Explained, Understanding, All About, The World of), sub-topics (Strategy, Aerodynamics, Analytics, Data Analysis, Tire/Tyre Strategy, Pit Stop Strategy, Technical/Sporting Regulations), history, teams/drivers. Has locale spelling (Tire/Tyre). However, it includes 'Grand Prix Racing' as a standalone without disambiguation, which could be considered broader since Grand Prix racing exists in other motorsport categories too. This is a minor issue. Otherwise very solid with no other problematic inclusions.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model B provides a good list (~67 alternatives) with solid coverage. Includes core synonyms, official names (FIA variants), level variants (Beginners), framing variants (Explained, Course, Guide), sub-topics (Cars, Drivers, Teams, History, Strategy, Technology, Aerodynamics, Rules/Regulations). However, it includes standalone 'Grand Prix Racing' without disambiguation, which could refer to other racing series beyond F1. The list is shorter than the top models and misses some useful categories like locale spelling variants, 101/Advanced levels, and more creative framing. Also includes 'Formula 1 Aerodynamics' without the F1 Aerodynamics counterpart (inconsistent triplet pattern). Overall solid but less exhaustive.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model C provides a moderate list (~61 alternatives) with decent coverage. Includes core synonyms, spacing/hyphenation variants (Formula-1, Formula1 - though prompt says to skip these), 'The' prefix variants, official names (FIA variants), level variants (Beginners), framing variants (Explained, Understanding, Overview), sub-topics (Strategy, Teams, Drivers, Rules, Technology, History). No problematic broader inclusions. However, the list is notably shorter than the best models, missing many useful categories like Advanced levels, 101, Guide variants, locale spelling variants (Tire/Tyre), and more creative framings. The spacing variants (Formula-1, Formula1) are noted as unnecessary by the prompt. Generally correct but less exhaustive.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model A provides a smaller list (~47 alternatives) with basic coverage. Includes core synonyms, official name (FIA Formula One World Championship), level variants (Beginners), framing variants (Understanding, Intro), sub-topics (Strategy, Rules, History, Grand Prix). All inclusions are correct with no problematic broader terms. However, the list is significantly shorter than the best models, missing many useful categories: no locale spelling variants, no 101/Advanced, no teams/drivers/cars, no technology, no Explained/Guide variants, no season/series variants. Correct but not exhaustive enough.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model F provides the smallest list (~36 alternatives) with limited coverage. Includes core synonyms, official name (FIA), level variants (Beginners, Advanced), framing variants (Fundamentals, Basics), sub-topics (History, Strategy, Rules/Regulations, Grand Prix). All inclusions are correct. However, the list is notably short and misses many useful categories: no F1 World Championship, no F1 History, no locale spelling variants, no 101, no teams/drivers/cars/technology, no Guide/Explained/Understanding variants, no season/series variants, inconsistent F1 vs Formula 1/Formula One coverage (many entries lack the F1 abbreviation variant). 'Grand Prix Formula 1' is an awkward but acceptable phrasing. Correct but far from exhaustive.",
+          "score": 6.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model G provides an outstanding, exhaustive list of 153 alternative titles. It flawlessly follows the core rule by ensuring every single title contains the base subject ('Formula 1', 'Formula One', or 'F1'). It includes a fantastic variety of contexts, qualifiers, and sub-areas without ever dropping the base subject or venturing into broader/ambiguous territory.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model E generates an exceptional list of 110 titles. It perfectly adheres to the primary core rule. It also uniquely and successfully handles locale spelling differences as requested (e.g., 'Tyres' vs 'Tires') and intelligently uses parenthetical disambiguators ('Grand Prix Racing (F1)') instead of including ambiguous standalone phrases.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model C provides a very good list of 62 titles. It is 100% accurate, with zero rule violations. It also captures helpful formatting variations like 'Formula-1' and 'Formula1'. It scores slightly lower than the top models only because the list size is smaller.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model A offers a solid, entirely accurate list of 47 titles. It does not violate any exclusion rules and successfully includes the base subject in every item. It receives a slightly lower score simply due to the shorter length, as the prompt requested an exhaustive list (ideally >100).",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model F follows all rules and ensures 100% accuracy, but it is the shortest list evaluated (only 36 items). The prompt explicitly requested a huge list. Following the instruction not to heavily penalize short lists if they are entirely correct, it receives a respectable score.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model D provides a robust list of 85 items with great variations. However, it violates a core exclusion rule by including 'Grand Prix Racing'. This title drops the base subject entirely and is ambiguous (it could refer to Moto Grand Prix, A1 Grand Prix, etc.). As per the prompt's strict penalty criteria for rule violations, this causes a notable score drop despite the list's length.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model B provides 65 items but suffers from the same rule violation as Model D: it includes the ambiguous standalone title 'Grand Prix Racing', which completely drops the base subject. Given its smaller list size compared to Model D and the explicit rule violation, it receives the lowest score.",
+          "score": 6
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Largest, most exhaustive list; consistently stays anchored to clear F1/Formula 1 synonyms/abbreviations and acceptable framing (guides, basics, rules, teams, history, strategy). Includes expected variants like “Formula 1 Series”. No meaningful broader/ambiguous off-topic inclusions noticed.",
+          "score": 9.4
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Very large and diverse set of same-meaning variants; good inclusion of tire/tyre spelling, weekend/qualifying/sprint, rules/regulations, guides, terminology/glossary. Keeps F1/Formula 1 context, and when using “Grand Prix” it is disambiguated with “(F1)/(Formula 1)” which avoids ambiguity. Slight redundancy but acceptable.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Solid breadth and mostly correct variants. However includes “Grand Prix Racing” without explicit F1/Formula 1 in the title, which can be broader/ambiguous (could mean other GP series). Everything else remains clearly F1-focused.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Good variety (cars, drivers, teams, aero, regulations) and mostly on-topic. But includes standalone “Grand Prix Racing” (ambiguous/broader than F1) and “FIA Formula 1/One/F1” is slightly vague (could refer to the governing body’s involvement, though commonly understood). Overall good but with a notable rule violation.",
+          "score": 7.9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Generally accurate, includes useful formatting variants (Formula1, Formula-1) and many correct alternates. Minor issues: includes base title itself (“Formula 1”) which is unnecessary; and “The F1” is a bit unnatural/possibly ambiguous as a standalone title. Otherwise fine.",
+          "score": 7.6
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "All entries stay clearly within Formula 1/F1 context and avoid broader umbrella terms. Coverage is noticeably shorter/less exhaustive than top entries and misses some expected/common variants like “Formula 1 Series,” but lacks major wrong inclusions.",
+          "score": 7.4
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Correct items but shortest/least exhaustive. Also includes “Grand Prix Formula 1,” which is awkward but still clearly refers to F1. No major off-topic inclusions, just limited breadth.",
+          "score": 7
+        }
+      ]
+    }
+  ],
+  "taskId": "alternative-titles",
+  "testCaseId": "en-formula-1-1"
+}

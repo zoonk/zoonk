@@ -1,0 +1,143 @@
+{
+  "expectations": "\n      - Variants like \"Data Science Certification Prep\", \"Data Science Bootcamp\" are acceptable — they're still data science\n      - Should NOT include \"Machine Learning\", \"Statistics\", \"Big Data\" as standalone subjects — these are genuinely different fields\n      - Results should be in English\n\n      \n  **PURPOSE**: Alternative titles prevent AI from generating duplicate courses for the same subject. If someone creates \"Python for Data Science\", the AI should recognize it as the existing \"Python\" course — not create a separate one. The list catches all title variants that map to the same course.\n\n  **CORE RULE**: If the title still contains the base subject (or a recognized synonym/abbreviation), it is the SAME course — regardless of qualifiers, subtitles, tools, focus areas, or context added to it. We do NOT want separate courses for each variant.\n\n  Examples of this rule:\n  - \"World War II: Normandy and D-Day\" → contains \"World War II\" → same course\n  - \"Python for Data Science\" → contains \"Python\" → same course\n  - \"IA Generativa\" → contains \"IA\" → same course\n  - \"Desarrollo Web con React\" → contains \"Desarrollo Web\" → same course\n  - \"ML with Python\" → contains \"ML\" → same course\n  - \"Differential Calculus\" → contains \"Calculus\" → same course\n  - \"Formula 1 Motorsport\" → contains \"Formula 1\" → same course\n\n  **When to EXCLUDE**:\n  - **Broader**: The title covers a larger domain that encompasses unrelated subjects → exclude. Example: \"Web Development\" is broader than \"Frontend Development\"; \"Programming\" is broader than \"Python\"; standalone \"Motorsport\" is broader than \"Formula 1\".\n  - **Standalone different subject**: The title drops the base subject entirely and represents something else → exclude. Example: \"React\" (no \"JavaScript\" in the title — it’s its own technology); \"Deep Learning\" (no \"Machine Learning\" — it’s its own field); \"Battle of Normandy\" (no \"World War II\" — it’s its own topic); standalone \"Motorsport\" (no \"Formula 1\").\n  - **Ambiguous**: The title could refer to multiple unrelated topics → exclude. Example: just \"Matrix\" without any disambiguator.\n\n  **Also include** (even without the base subject in the title):\n  - **Recognized synonyms/abbreviations**: \"WWII\" / \"Second World War\" ↔ \"World War II\"; \"F1\" ↔ \"Formula 1\"; \"ML\" ↔ \"Machine Learning\"; \"JS\" ↔ \"JavaScript\"; \"UI Development\" / \"Client-Side Development\" ↔ \"Frontend Development\".\n  - **Dialect/variant names**: \"Inglês Americano\", \"Inglês Britânico\", \"Optimisation\" vs \"Optimization\".\n  - **Language learning aspects**: \"Gramática Inglesa\", \"TOEFL\", \"Business English\" — all map to the same language course.\n  - **Light framing words**: \"principles\", \"fundamentals\", \"basics\", \"bootcamp\", \"certification prep\" — these don’t change the subject.\n  - **Descriptive disambiguators**: \"The Matrix (1999 film)\", \"Matrix Movie\" — these clarify which subject, they don’t change it.\n\n  Additional notes:\n  - Include different locale spellings when applicable (e.g., \"Optimization\" and \"Optimisation\").\n  - Include abbreviations if they mean the same thing (e.g., \"AI\"/\"IA\", \"ML\" when base is \"Machine Learning\").\n  - Levels like \"Beginner\", \"Advanced\", \"Calculus 1\", \"101\", etc., are acceptable.\n  - It’s fine to skip spacing/hyphenation/accents variants — serialization will handle those.\n  - Awkward or redundant phrasings are acceptable.\n  - Ignore casing issues (e.g., \"javascript\" vs \"JavaScript\").\n  - Well-known English terms in non-English titles are acceptable (e.g., \"Business English\" in Portuguese, \"TOEFL\", \"IELTS\").\n  - Ideally, it should have a huge list of alternative titles, really good ones have more than 100 alternative titles\n\n  SCORING CALIBRATION:\n  - Apply the CORE RULE above as the PRIMARY lens: does the title still contain the base subject? If yes → it’s the same course, do NOT penalize.\n  - Only penalize for titles that are genuinely broader (umbrella domain), a standalone different subject (base subject dropped entirely), or ambiguous.\n  - Do NOT penalize for qualifiers, subtitles, tools, focus areas, or context added to the base subject — these are all the same course.\n  - Do NOT heavily penalize for missing titles — only penalize for wrong inclusion/exclusion decisions.\n  - A large list is ideal but do NOT heavily penalize shorter lists if all included titles are correct.\n\n    ",
+  "judgedAt": "2026-02-22T18:25:20.715Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model C provides a very large list (170+ alternatives) that stays remarkably disciplined. Nearly every title contains 'Data Science' as the base subject, which is correct per the CORE RULE. It includes excellent variations: tool framing (Python, R, SQL, Excel, Jupyter, Spark, AWS, Azure, GCP), application contexts (Business, Finance, Healthcare, Marketing, Sports, Education, etc.), level variations (Beginner, Intermediate, Advanced), light framing words (Fundamentals, Foundations, Essentials, Bootcamp, Certification), career-related variants (Interview Prep, Career Path, Resume Projects), and format variants (Course, Class, Training, Program, Workshop, Certificate, Diploma, Nanodegree). It avoids standalone different subjects — no 'Data Analytics', 'Data Mining', 'Data Visualization', 'Predictive Analytics', 'Statistical Analysis' as standalone entries (which would be genuinely different courses). The list is comprehensive and almost entirely correct. Minor issues: 'Data Science Coding Interviews' is a stretch but still contains 'Data Science'. Very few if any problematic inclusions.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model E provides a very large list (170+ alternatives) that is well-structured and disciplined. Almost every entry contains 'Data Science' as the base subject. It includes excellent tool framing variants (Python, R, SQL, Jupyter, Pandas, NumPy, scikit-learn, Excel, Kaggle, AWS, Azure, Google Cloud, Apache Spark, Hadoop), application contexts (Business, Finance, Healthcare, Marketing, Sports, E-commerce, etc.), level variations, format variants (Course, Training, Bootcamp, Workshop, etc.), and light framing words. It correctly avoids standalone different subjects. The only minor concern is 'Data Science & Analytics' / 'Data Science and Analytics' which still contains 'Data Science' so it's fine. The list doesn't include problematic standalone terms like 'Data Analytics', 'Data Mining', 'Predictive Analytics' etc. Very clean and comprehensive.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model D provides a moderate-sized list (~67 entries) that is mostly correct. Most entries contain 'Data Science'. However, it includes several problematic standalone entries: 'Data Analysis' and 'Applied Data Analysis' (standalone different subject without 'Data Science'), 'Predictive Modeling' (standalone), 'Data Mining and Knowledge Discovery' (standalone). While some of these could be argued as synonyms, the task expectations explicitly state 'Machine Learning', 'Statistics', 'Big Data' should NOT be included as standalone subjects, and similarly Data Mining, Data Analysis, and Predictive Modeling are their own fields. The entries like 'Statistics for Data Science', 'Predictive Analytics for Data Science', 'Data Mining for Data Science' are fine because they contain 'Data Science'. The list is also relatively short compared to top performers.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model G provides a good-sized list (~90+ entries) with many correct entries containing 'Data Science'. However, it includes several problematic standalone entries: 'Data Analytics', 'Data Analysis', 'Exploratory Data Analysis', 'EDA', 'Statistical Data Analysis', 'Data Exploration', 'Data Mining' — all without 'Data Science' in the title. These are genuinely different subjects/fields. 'Data Driven Decision Making' is also standalone and different. Additionally, some entries like 'Data Science and Regression', 'Data Science and Classification', 'Data Science and Clustering' are overly specific sub-topics that while they contain 'Data Science', they suggest narrower ML concepts. The standalone inclusions are a meaningful penalty.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model A provides a large list (130+ entries) but includes many problematic standalone entries that are genuinely different subjects: 'Data Analytics', 'Data Analysis', 'Data Analytics Fundamentals', 'Introduction to Data Analytics', 'Data Analysis Fundamentals', 'Data Analysis for Beginners', 'Advanced Data Analytics', 'Applied Data Analytics', 'Practical Data Analysis', 'Data Wrangling', 'Data Munging', 'Data Cleaning', 'Data Preprocessing', 'Data Preparation', 'Data Exploration', 'Exploratory Data Analysis', 'EDA', 'Data Visualization', 'Data Visualisation', 'Data Viz', 'Data Storytelling', 'Data Mining', 'Data Mining Fundamentals', 'Introduction to Data Mining', 'Big Data Analytics', 'Data-Driven Decision Making', 'Data Driven Analysis', 'Data Literacy', 'Quantitative Data Analysis', 'Statistical Analysis', 'Statistical Analytics', 'Predictive Analytics', 'Predictive Modeling', 'Predictive Modelling', 'Descriptive Analytics', 'Prescriptive Analytics'. These are all standalone different subjects/fields without 'Data Science' in the title. This is a significant number of incorrect inclusions that would cause false positive duplicate detection. The task explicitly warns against including genuinely different fields.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model F provides a relatively short list (~48 entries) but is mostly clean. Nearly all entries contain 'Data Science'. It includes 'DS' as an abbreviation which is reasonable. The list covers tool framing, application contexts, level variations, and light framing words. However, 'DS' is somewhat ambiguous (could mean many things). The list is correct but quite short compared to other models — missing many obvious variants like 'Python for Data Science', 'R for Data Science', cloud platform variants, career prep variants, etc. While the task says not to heavily penalize shorter lists, the difference is quite significant here.",
+          "score": 7
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model E followed all instructions perfectly. It generated a massive, exhaustive list of over 170 alternative titles. Most importantly, it strictly adhered to the core rule: every single title contains the base subject ('Data Science'), and it did not include any standalone different subjects like Data Analysis or Machine Learning.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model C also performed exceptionally well, generating a very extensive list of over 150 items. It followed the core rule flawlessly, ensuring the base subject was present in all titles and completely avoiding standalone different fields or broader topics.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model B provided a flawless list with zero violations of the core rules. It correctly excluded different standalone subjects and included excellent contextual variants. It scores slightly lower than C and E only because its list is notably less exhaustive (around 50 items), though still excellent.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model F provided a very good, completely accurate list with zero negative constraint violations. It accurately included the abbreviation 'DS' and ensured 'Data Science' was in all other titles. Like Model B, it is shorter than the top models but very high quality.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model D failed the core negative constraint by including standalone different subjects where the base subject was dropped entirely. It included 'Data Analysis', 'Exploratory Data Analysis (EDA)', 'Predictive Modeling', and 'Data Mining'. These represent genuinely different topics and were explicitly warned against in the prompt.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model G committed significant violations of the prompt's core rule by including numerous standalone different subjects. It listed 'Data Analytics', 'Data Analysis', 'EDA', 'Data-Driven Science', and 'Data Mining'—all of which drop the base subject entirely and map to distinct fields. This heavily penalizes the score.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model A completely ignored the negative constraints provided in the prompt. It included dozens of standalone different subjects, such as 'Data Analytics', 'Data Wrangling', 'EDA', 'Data Visualization', 'Data Mining', 'Big Data Science', 'Statistical Analysis', and 'Predictive Analytics'. The prompt explicitly stated not to include 'Statistics', 'Big Data', and similar standalone subjects. This is a massive failure of the core task rules.",
+          "score": 1.5
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Largest, highly varied list while staying mostly within “Data Science” via direct inclusion or clear framing (“Data Science for X”, tools, levels, formats). Includes locale variant (“Programme”). Avoids most explicitly disallowed standalone subjects. Minor issue: a few items like “Data Science for Customer Analytics” verge toward analytics phrasing, but still anchored to Data Science.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Very exhaustive (near the 100+ target) with many solid variants: levels, formats, tool framing, domains, interview prep, etc. Main drawback: includes several items that drift into adjacent fields/technologies as if equivalent (e.g., “Data Science with TensorFlow/PyTorch/scikit-learn”), which may be acceptable per tool-framing rule, but also nudges toward ML specialization; still kept under “Data Science with …” so mostly compliant. Overall strong.",
+          "score": 8.9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Clean set of common duplicates; includes key “X for Data Science” variants (Python/R/SQL). No obvious broader-umbrella terms. Minor concerns: “Data Scientist”/“Become a Data Scientist” is arguably career-role oriented rather than the subject title, but still plausibly the same course intent. Not very exhaustive.",
+          "score": 8.1
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Includes the important synonym/abbrev “DS” and many safe variants. However it’s relatively short and contains a couple potentially scope-shifting titles like “Computational Data Science” (could be a distinct subfield) and “Statistical Data Science” (borderline). Still largely anchored to Data Science.",
+          "score": 7.7
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Generally good Data Science variants plus tool framing. But it includes multiple disallowed/adjacent standalone subjects: “Data Analysis”, “Applied Data Analysis”, “Predictive Modeling” (not anchored to “Data Science” in that one), and several “Big Data …” items (Big Data is explicitly called out as a standalone different field in expectations). These are meaningful rule violations.",
+          "score": 6.2
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Large list, but it repeatedly includes clearly excluded standalone different subjects and broader/adjacent fields: “Data Analytics”, “Data Analysis”, “Data Mining”, “Big Data Analytics”, “Big Data Science”, “Statistical Analysis”, plus “Data Science and Machine Learning” (ML called out as different as standalone; even though combined, it changes scope). Also includes many standalone data-prep/visualization topics not anchored to Data Science (e.g., “Data Visualization”, “Data Wrangling”, “EDA”). Too many wrong inclusions.",
+          "score": 5.4
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Contains multiple explicit violations: “Data Science and Machine Learning”, “Data Science and Statistics”, “Data Science and AI”, plus many standalone adjacent topics like “Data Analytics”, “Data Analysis”, “Data Mining” and numerous “Data Science and …” combinations that broaden scope into other distinct fields. Also includes “Data-Driven Science” (ambiguous) and many “and X” additions that stop being ‘exactly the same meaning’.",
+          "score": 4.9
+        }
+      ]
+    }
+  ],
+  "taskId": "alternative-titles",
+  "testCaseId": "en-data-science-1"
+}
