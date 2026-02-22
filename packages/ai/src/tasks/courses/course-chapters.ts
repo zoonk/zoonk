@@ -9,8 +9,8 @@ const DEFAULT_MODEL = process.env.AI_MODEL_COURSE_CHAPTERS ?? "openai/gpt-5.2";
 const FALLBACK_MODELS = [
   "openai/gpt-5",
   "anthropic/claude-opus-4.6",
-  "anthropic/claude-sonnet-4.6",
   "openai/gpt-5-mini",
+  "anthropic/claude-sonnet-4.6",
   "google/gemini-3.1-pro-preview",
 ];
 

@@ -1,0 +1,149 @@
+{
+  "expectations": "\n      - MUST be in UK English\n      - Should cover British Law\n      - UK spelling is expected (e.g., \"offences\" not \"offenses\", \"defence\" not \"defense\"). Using US spellings in a UK Law course is a minor error — it shows dialect inconsistency but does not affect pedagogical quality. Do NOT treat spelling variants as a major error\n\n      \n  - It should assume learners start with no prior knowledge of the subject\n  - Should create a progressive learning path going from basic/beginner to mastery of the subject\n  - By the end of this course, they should be able to lead very complex projects and tasks in this field\n  - They should be prepared for certifications or advanced studies in this subject like a master's degree or PhD\n  - Should include **EVERYTHING** a student needs to be at the top 1% of the field\n  - Should follow the language specified by language parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Should cover latest trends in the field\n  - Prefer concept names over vendor names in chapter titles/descriptions (e.g., \"Package management\" instead of \"npm\"). Ecosystem-level tools (npm, yarn, Redux, Zustand) should be avoided in titles\n    - Exception: foundational tools that ARE the course subject matter are allowed (e.g., \"Git\" in a programming course, \"Node.js\" in a web dev course, \"Docker\" in a DevOps course). The test: would a chapter about this subject be incomplete without mentioning this tool?\n    - Vendor name usage is a minor issue — it affects title quality but not pedagogical content. Do NOT treat it as a major error\n  - This is an eval system for a learning platform, of course the definition of \"ready for a job\" doesn't mean they have the legal requirements to work in the field (eg. medical license, law license, etc.). That's not important here, we're assessing if the course prepares the student with the necessary knowledge and skills.\n  - You don't need to evaluate the output format here, just focus on the chapter content quality.\n  - Titles should be concise and straight to the point, no fluff/filler words. For example:\n    - Just \"HTML\" is better than \"HTML Structure and Semantics\" (structure and semantics are implied if this is the only HTML chapter). Similarly, if we only have one CSS chapter, just \"CSS\" is better than \"CSS Styling and Layout\".\n    - \"Front-end frameworks\" is better than \"Front-End UI Frameworks Overview\" (too verbose) or \"Front-End Frameworks: Core Concepts\" (core concepts is unnecessary fluff)\n    - \"Relational Databases\" is better than \"Relational Databases and SQL\" (SQL is implied, no need to mention)\n    - \"Introduction to Java\" is better than \"Introduction to Java and Setting Up Your Development Environment\" (too verbose)\n    - \"Lean Startup\" is better than \"The Lean Startup Methodology: An Overview\" (too verbose)\n    - \"Introduction to X\" is valid for titles of introductory chapters but we should avoid those words in descriptions\n  - Similarly, descriptions should be concise and straight to the point, no fluff/filler words. For example:\n    - \"Styling with CSS: Selectors, properties, the box model, Flexbox, CSS Grid, and cascade principles.\" is better than \"Master styling and layout with CSS, including selectors, properties, the box model, Flexbox, CSS Grid, and cascade principles.\" - \"Master\" is fluff, and so are words like \"learn\", \"understand\", \"explore\", etc.\n    - \"Properties of matter, states, and phase transitions.\" is better than \"Explore the definition of Chemistry, properties of matter, states, and phase transitions.\" - \"Explore the definition of Chemistry\" are filler/unnecessary words.\n  - Don't add assessment-style chapters: no final projects, capstone assignments, exercises, quizzes, or \"test your knowledge\" chapters. A theoretical synthesis chapter (e.g., \"Design Patterns in Architecture\") is fine even if it synthesizes prior material — the rule targets assessment/project chapters, not synthesis of knowledge. If a chapter uses the word \"capstone\" but is theoretical (not an assignment), treat it as a minor issue at most, not a major error\n  - It shouldn't mention in title or description references to 1% or similar instructions about being top 1%\n\n    ",
+  "judgedAt": "2026-02-22T17:24:05.263Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model E provides an exceptionally comprehensive and well-structured curriculum with 93 chapters covering UK law from foundations to mastery. It excels in several areas: (1) Breadth and depth - covers niche but important areas like Scots law, Northern Ireland law, maritime law, aviation law, construction law, insurance law, personal property law, e-disclosure, energy law, and separates children law from family law. (2) Logical progression from foundational concepts through core subjects to specialist areas and practical skills. (3) Good vendor neutrality and concise titles. (4) Includes career chapter. (5) Uses UK English appropriately ('offences'). (6) Descriptions are concise and follow guidelines well. (7) Separates related but distinct topics appropriately (e.g., landlord/tenant from land law, mortgages as separate, equity/trusts split into two chapters, employment split meaningfully). (8) Covers modern topics like AI regulation, legal operations, e-disclosure. Minor issues: some titles could be slightly more concise, and the sheer volume (93 chapters) might be seen as slightly over-granular in places, but for a 'top 1%' curriculum this is appropriate. The separation of asylum from immigration is a nice touch showing depth of understanding.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model F provides an excellent and very comprehensive curriculum with 82 chapters. Strengths: (1) Exceptional depth in contract law (7 chapters covering formation, terms, exclusion clauses, vitiating factors, discharge, remedies, privity - the most granular treatment among all models). (2) Similarly deep treatment of tort law (6 chapters) and criminal law (7+ chapters). (3) Good coverage of specialist areas including construction, shipping/maritime, insurance, planning, media law. (4) Includes jurisprudence, comparative law, law and society, law and technology. (5) Career chapter included. (6) Descriptions are detailed and informative while remaining concise. (7) Contemporary issues chapter covering law reform. Minor issues: some titles are slightly verbose (e.g., 'Contract Law: Privity and Third-Party Rights'), uses 'Queen's/King's Bench' which shows awareness of the change but is slightly awkward. The naming of specific institutional rules (LCIA, ICC) in ADR chapter slightly violates vendor neutrality but these are reasonable exceptions. Overall, this is one of the most thorough curricula with excellent pedagogical structure. Uses UK English well ('offences', 'defence').",
+          "score": 8.7
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model D provides a very strong curriculum with 77 chapters. Strengths: (1) Excellent practical orientation with chapters on legal operations, client skills, legal risk management, litigation strategy, privilege and confidentiality - showing real practitioner awareness. (2) Good coverage of specialist areas including public procurement, housing law, media law, health and safety, energy law, construction law. (3) Includes comparative legal systems and public international law. (4) Modern topics well covered (AI, legal tech, e-disclosure). (5) Career chapter included. (6) Concise titles that follow guidelines well. (7) Logical progression. (8) Interesting structural choices like 'Private law analytical framework' and 'Criminal law analytical framework' as cross-cutting chapters. Minor issues: some titles use Roman numerals (Company law I, II, III) which is functional but slightly less descriptive; the 'Core concepts in evidence and procedure' early placement is unusual; description for 'Private law analytical framework' is a bit abstract. Uses some US spellings ('defenses' appears in a few descriptions) which is a minor dialect inconsistency for a UK Law course. Good separation of banking/finance law from financial regulation. Overall very comprehensive and practice-oriented.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model C provides a very extensive curriculum with 76 chapters. Strengths: (1) Exceptional breadth covering areas other models miss: pensions law, forensic evidence, law reform/policy-making, sector-specific regulation, thought leadership/academia, empirical methods/statistics, AI governance, negotiation/settlement strategy. (2) Good practical orientation with chapters on practice management, in-house counsel, compliance/investigations, costs/funding/access to justice. (3) Multiple career-related chapters (qualification routes, entering the profession, CPD/specialisation). (4) Conveyancing treated as separate practical chapter. (5) Modern and forward-looking. Minor issues: some titles are verbose (e.g., 'Legal Research, Scholarship and Advanced Bibliographic Methods', 'Advocacy, Mooting and Oral Argument Skills', 'Negotiation, Settlement Strategy and Dealcraft' - 'Dealcraft' is unusual). The 'Thought Leadership, Publishing and Academia in Law' and 'Leadership, Judicial Roles and Senior Legal Careers' chapters, while interesting, border on career advice rather than substantive law. Some descriptions contain filler-adjacent language. The separation of equity from trusts into two chapters with some overlap is slightly redundant. 'DB/DC' abbreviation in pensions chapter could be clearer. Overall very comprehensive but occasionally verbose in titles.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model B provides a solid and comprehensive curriculum with 51 chapters. Strengths: (1) Good logical progression from foundations through core subjects to specialist areas and skills. (2) Contract law well-covered across 4 chapters. (3) Includes restitution/unjust enrichment which some models miss. (4) Good practical skills coverage (legal research, case analysis, contract drafting, advocacy). (5) Jurisprudence chapter included. (6) Career chapter. (7) Generally concise titles. (8) Uses UK English ('offences'). Minor issues: 51 chapters is adequate but less comprehensive than other models - missing areas include: construction law, maritime/shipping law, insurance law, housing law, education law, health and safety, public procurement, wills/succession (covered), pensions, comparative law, energy law. Some titles could be more concise (e.g., 'Contract Law: Terms & Exclusion Clauses'). The devolution chapter is good but could be expanded. Missing a dedicated sentencing chapter. Overall a good curriculum but not as deep or broad as the top performers for a 'top 1%' target.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model A provides a competent curriculum with 34 chapters. Strengths: (1) Core subjects well covered - contract (2 chapters), tort (2), criminal (2), land law, equity/trusts. (2) Good specialist coverage including financial services regulation, competition law, private international law. (3) Career chapter with good detail. (4) Concise titles and descriptions. (5) Retained EU law/Brexit chapter. Minor issues: 34 chapters is significantly fewer than other models, meaning much less depth. Notable gaps: no statutory interpretation chapter, no judicial precedent chapter, no separate devolution chapter, no wills/succession, no insurance law, no construction law, no maritime law, no housing law, no education law, no health and safety, no comparative law, no public international law, no restitution/unjust enrichment, no sentencing chapter, no jurisprudence chapter. The curriculum covers the essential areas but lacks the depth and breadth needed for a 'top 1%' target. Some descriptions use filler words. Missing practical skills detail (advocacy, client interviewing are absent as dedicated topics). For a comprehensive UK law curriculum, this feels more like an undergraduate degree overview than a mastery-level course.",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model G provides a basic curriculum with only 33 chapters. Strengths: (1) Core subjects covered adequately. (2) Concise titles. (3) Career chapter included. (4) Post-Brexit chapter. Minor issues: This is the least comprehensive curriculum. Major gaps: no statutory interpretation (wait, it has one), no devolution chapter, no wills/succession, no tax law, no insurance law, no construction law, no maritime law, no housing law, no education law, no health/medical law, no immigration/asylum law, no environmental law, no data protection, no financial services regulation, no jurisprudence, no comparative law, no sentencing, no restitution/unjust enrichment, no media law, no pensions. Many important specialist areas are entirely missing. The title 'Tort Law: Specialized Liabilities' uses American spelling ('Specialized' vs 'Specialised'). 'Commercial and Consumer Law' bundles too much into one chapter. For a 'top 1%' curriculum in UK law, this is significantly incomplete. Missing many areas that would be essential for mastery. The 33-chapter count is insufficient for the breadth required.",
+          "score": 5.8
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model C provides an exceptional, exhaustive curriculum that perfectly aligns with the 'top 1%' and 'mastery' constraints of the prompt. It covers foundational law, substantive subjects, procedural law, and uniquely bridges the gap into high-level professional practice (e.g., Law Firm Business Models, Legal Tech, In-House Counsel Practice, Thought Leadership, and AI Governance). The titles and descriptions are incredibly concise, straight to the point, and strictly adhere to the no-fluff rules. It successfully uses UK English spellings and includes the required career chapters. Progression is logical and highly structured.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model F also provides a masterful and highly comprehensive curriculum (84 chapters). It is extremely well-structured, moving logically from history and foundations through substantive law, specialized fields, procedural skills, and academic jurisprudence, ending with the required career chapter. It strictly follows formatting rules, avoids fluff, and uses proper UK spellings. It falls just slightly behind Model C in its coverage of the business and modern operational realities of law, but is otherwise stellar.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model B offers a very strong and highly accurate curriculum with 53 chapters. It breaks down large topics (like Contract and Tort) effectively and covers all the core subjects required for UK legal practice, including devolution. It follows all prompt constraints, uses UK spellings, and avoids fluff. It scores slightly lower than C and F simply because it does not delve quite as deeply into the exhaustive, granular sub-topics needed to truly represent a 'top 1%' exhaustive list.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model E is phenomenally detailed (92 chapters) and uniquely stands out for dedicating specific chapters to Scots Law and Northern Ireland law, which is technically highly accurate for a 'UK Law' course (since English law is only one jurisdiction). However, the pedagogical progression is slightly unusual (placing civil procedure and evidence before substantive contract/tort law), and it uses US spellings ('offenses', 'defenses') despite the UK English requirement. While the prompt states this is a minor error, combined with the structural flow, it sits just below B.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model A provides a solid overview of the LLB and LPC/SQE core modules. However, with only 34 chapters, it lacks the granular depth required to take a learner to the 'top 1%' of the field compared to the higher-ranked models. It follows the formatting rules well, uses UK spellings, and includes the career chapter, but is simply too brief for a mastery-level curriculum.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model G is very similar to Model A. It offers 33 chapters that effectively cover the basics of a law degree but fails to provide the extensive, comprehensive depth demanded by the prompt. Formatting, spellings, and descriptions are well-executed, but it lacks the necessary scope.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model D has excellent depth (84 chapters) and a strong structure. However, it violates a direct instruction from the prompt: 'Add at least one chapter covering how to start a career in this field'. While it has chapters on client skills and legal operations, it entirely misses a chapter on entering the profession, qualifying, or starting a career. Additionally, it uses US spellings ('offenses', 'defenses'). The missing career chapter warrants a significant penalty.",
+          "score": 6
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Most comprehensive and well-structured for UK law while staying largely concise and practice-relevant. Strong coverage of public law (incl. devolution litigation), civil/criminal procedure, funding/costs, interim relief, enforcement, professional/regulatory, and modern areas (cyber, AI). Also explicitly handles Scots and Northern Ireland perspectives, which is important for a “UK Law” title. Minor issues: occasional mild verbosity and some US-leaning terms (e.g., “nonprofit”), but overall excellent coverage and progression.",
+          "score": 9.4
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Extensive, modern, and very job-aligned, with strong depth in procedure, remedies, investigations/enforcement, legal ops/tech, procurement, climate/ESG, and sectoral topics. Good progression from foundations to advanced practice. Main gap versus the very best: less explicit UK-jurisdictional pluralism than E (Scots/NI treatment) and a few titles are slightly informal/inconsistent casing (“UK constitutional fundamentals”).",
+          "score": 9.1
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Very comprehensive and “top-tier” breadth, including practice management, compliance, legal tech, costs/funding, empirical methods, AI governance, and career/qualification routes. Good inclusion of devolution and public sector accountability. Weaknesses: some chapters feel overly expansive/academic or speculative (“Thought Leadership…”, “Leadership…Senior Legal Careers”) relative to core doctrinal mastery; a few descriptions verge on buzzwordy, but still strong overall.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Strong doctrinal coverage with good sequencing and plenty of UK-specific statutes/cases; includes contemporary issues and retained EU law (incl. 2023 Act). Clear and accurate on core private/public/criminal law. Weaker on ultra-modern operational/practice topics compared with C/D/E (legal ops, e-disclosure depth, pricing, large-scale delivery), and a few descriptions are longer and slightly lecture-like (minor fluff/over-detail).",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Solid, coherent LLB-style curriculum with good foundations (precedent, interpretation, courts), core subjects, procedure, ethics, and some modern tech/privacy coverage. Not as comprehensive as required for “everything”/mastery: thinner on advanced practice management, costs/funding, investigations, sectoral regulation, remedies as a unifying topic, and UK-wide pluralism (Scots/NI specifics). Some descriptions include mild filler (“How…”).",
+          "score": 7.9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Clean, concise chapters with decent breadth and includes careers, ethics, research/drafting, ADR, litigation. However, it’s more of a survey: misses several important UK-specific and advanced areas for top-end mastery (e.g., detailed constitutional machinery/devolution detail, civil procedure depth such as costs/funding/interim/enforcement, media law, wills/succession, discrimination/equality as a dedicated topic). Also slightly England & Wales-centric in framing.",
+          "score": 7.4
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Covers core doctrinal areas reasonably, includes Brexit/assimilated law and a career chapter, but overall too short and lacks depth and breadth for mastery (limited procedure detail, limited regulatory/sector coverage, little on costs/funding, remedies as a cross-cutting system, legal operations/tech beyond basics). Some titles/descriptions are generic and omit key UK institutions details.",
+          "score": 6.9
+        }
+      ]
+    }
+  ],
+  "taskId": "course-chapters",
+  "testCaseId": "en-uk-law-1"
+}

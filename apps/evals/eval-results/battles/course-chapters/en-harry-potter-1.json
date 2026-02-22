@@ -1,0 +1,149 @@
+{
+  "expectations": "\n        - MUST be in US English\n        - Should not cover career-related chapters since this is a pop culture topic\n\n        \n  - It should assume learners start with no prior knowledge of the subject\n  - Should create a progressive learning path going from basic/beginner to mastery of the subject\n  - By the end of this course, they should be able to lead very complex projects and tasks in this field\n  - They should be prepared for certifications or advanced studies in this subject like a master's degree or PhD\n  - Should include **EVERYTHING** a student needs to be at the top 1% of the field\n  - Should follow the language specified by language parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Should cover latest trends in the field\n  - Prefer concept names over vendor names in chapter titles/descriptions (e.g., \"Package management\" instead of \"npm\"). Ecosystem-level tools (npm, yarn, Redux, Zustand) should be avoided in titles\n    - Exception: foundational tools that ARE the course subject matter are allowed (e.g., \"Git\" in a programming course, \"Node.js\" in a web dev course, \"Docker\" in a DevOps course). The test: would a chapter about this subject be incomplete without mentioning this tool?\n    - Vendor name usage is a minor issue — it affects title quality but not pedagogical content. Do NOT treat it as a major error\n  - This is an eval system for a learning platform, of course the definition of \"ready for a job\" doesn't mean they have the legal requirements to work in the field (eg. medical license, law license, etc.). That's not important here, we're assessing if the course prepares the student with the necessary knowledge and skills.\n  - You don't need to evaluate the output format here, just focus on the chapter content quality.\n  - Titles should be concise and straight to the point, no fluff/filler words. For example:\n    - Just \"HTML\" is better than \"HTML Structure and Semantics\" (structure and semantics are implied if this is the only HTML chapter). Similarly, if we only have one CSS chapter, just \"CSS\" is better than \"CSS Styling and Layout\".\n    - \"Front-end frameworks\" is better than \"Front-End UI Frameworks Overview\" (too verbose) or \"Front-End Frameworks: Core Concepts\" (core concepts is unnecessary fluff)\n    - \"Relational Databases\" is better than \"Relational Databases and SQL\" (SQL is implied, no need to mention)\n    - \"Introduction to Java\" is better than \"Introduction to Java and Setting Up Your Development Environment\" (too verbose)\n    - \"Lean Startup\" is better than \"The Lean Startup Methodology: An Overview\" (too verbose)\n    - \"Introduction to X\" is valid for titles of introductory chapters but we should avoid those words in descriptions\n  - Similarly, descriptions should be concise and straight to the point, no fluff/filler words. For example:\n    - \"Styling with CSS: Selectors, properties, the box model, Flexbox, CSS Grid, and cascade principles.\" is better than \"Master styling and layout with CSS, including selectors, properties, the box model, Flexbox, CSS Grid, and cascade principles.\" - \"Master\" is fluff, and so are words like \"learn\", \"understand\", \"explore\", etc.\n    - \"Properties of matter, states, and phase transitions.\" is better than \"Explore the definition of Chemistry, properties of matter, states, and phase transitions.\" - \"Explore the definition of Chemistry\" are filler/unnecessary words.\n  - Don't add assessment-style chapters: no final projects, capstone assignments, exercises, quizzes, or \"test your knowledge\" chapters. A theoretical synthesis chapter (e.g., \"Design Patterns in Architecture\") is fine even if it synthesizes prior material — the rule targets assessment/project chapters, not synthesis of knowledge. If a chapter uses the word \"capstone\" but is theoretical (not an assignment), treat it as a minor issue at most, not a major error\n  - It shouldn't mention in title or description references to 1% or similar instructions about being top 1%\n\n      ",
+  "judgedAt": "2026-02-22T17:23:37.290Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model B delivers an exceptionally comprehensive and well-organized curriculum with 89 chapters covering virtually every dimension of the Harry Potter universe. It progresses logically from series overview through book-by-book analysis, adaptation studies, worldbuilding deep-dives, character studies, thematic analysis, fandom culture, critical scholarship, and mastery-level skills like deep rereading methods and building a personal reference canon. Titles are concise and professional (e.g., 'Wandlore', 'Potions', 'Mind magic and memory'). Descriptions are direct and avoid filler words — they go straight to the point without 'learn', 'explore', or 'understand'. The curriculum correctly treats this as a pop culture topic with no career chapters. It covers latest trends (digital canon, controversies, translation/localization). The depth is remarkable: individual character studies for Neville, Ginny, Luna; separate chapters for spatial analysis, magic system inconsistencies, comparative fantasy, and deep rereading methods. Minor issues: some chapters could arguably be consolidated (e.g., three separate fandom-adjacent chapters), and a few descriptions are slightly long, but overall this is the most complete and best-structured output.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model A provides 62 well-crafted chapters with excellent thematic organization. It stands out for its thoughtful analytical framing — chapters like 'Information warfare', 'Secrecy and moral tradeoffs', 'From school story to war story', and 'Plot architecture' show sophisticated literary thinking. Titles are admirably concise. Descriptions are tight and avoid filler words effectively. The curriculum covers foundational through advanced topics and includes literary theory, comparative analysis, critical writing, and re-reading strategies. It correctly avoids career chapters. However, it lacks book-by-book analysis chapters, which is a notable gap for a comprehensive Harry Potter curriculum — individual book deep-reads are important for mastery. It also doesn't cover the Fantastic Beasts films, Cursed Child, companion texts, translation/localization, video games, or theme parks as thoroughly as some competitors. The 'Leading thoughtful discussions' and 'Critical writing on Harry Potter' chapters border on skill-building that feels slightly out of scope but aren't assessment chapters. Overall very strong but less comprehensive than Model B.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model C is the most exhaustive with 68 chapters, covering extremely granular topics like textual variants and critical editing, digital preservation and archival standards, producing critical editions, computational analysis, and archival/curatorial methods. This demonstrates incredible depth. However, several chapters venture into highly specialized academic/professional territory that feels disconnected from a pop culture topic (e.g., 'Digital preservation and archival standards', 'Producing critical editions and scholarly apparatus', 'Archiving and curating Harry Potter artifacts'). These feel more like library science chapters than Harry Potter mastery. Some chapters also have slightly verbose descriptions with filler phrases like 'Close textual and thematic analysis of' repeated across all book chapters. The 'Teaching Harry Potter in classrooms' and 'Literacy, media, and social-emotional curricula' chapters border on career-oriented content for educators, which slightly conflicts with the pop culture guideline. Titles are generally good but some are verbose (e.g., 'Philosopher's/Sorcerer's Stone deep reading'). Comprehensive coverage but over-indexes on academic apparatus at the expense of some core fan-knowledge topics.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model F provides 56 chapters with solid coverage. It includes book-by-book deep reads, character studies, worldbuilding, adaptations, fandom, and cultural analysis. It covers the HBO reboot, Hogwarts Legacy, internet culture — showing awareness of latest trends. However, there are notable issues: some titles are verbose ('Spells, Charms & Incantations: Complete Reference', 'Dumbledore: Genius, Flaws & Legacy', 'Mastering the Canon: Close Reading & Research Skills'). Some descriptions use filler words ('Deep reading of', 'Every major spell'). Having a separate chapter for Hogwarts Legacy feels overly specific for a vendor-neutral curriculum, though this is a minor concern for pop culture. The 'Mastering the Canon' chapter title uses language that borders on instructional fluff. The final chapter 'Advanced Analysis: Comparative Fantasy & Semiotics' feels like a catch-all. Some descriptions are quite long. Overall good breadth but less refined in titling and description quality than Models A and B.",
+          "score": 7.3
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model D has 47 chapters with reasonable coverage. It includes book-by-book analysis, character studies, worldbuilding, adaptations, and cultural impact. The HBO series chapter shows awareness of current developments. However, titles are often verbose ('Hogwarts: Houses, Classes, and Secrets', 'Themes: Love, Death, Prejudice, and Power', 'Albus Dumbledore: Wisdom and Flaws'). Descriptions frequently use filler words: 'Comprehensive plot analysis', 'Detailed examination', 'Thorough exploration', 'Deep dive into', 'In-depth analysis'. The final chapter 'The Enduring Magic: A Complete Synthesis' is somewhat of a synthesis/capstone that could be seen as unnecessary. The 'Deep Lore, Easter Eggs, and Trivia' chapter title feels informal. Coverage is solid but not as deep as Models B or C — fewer chapters on literary theory, comparative analysis, or advanced analytical methods. The description quality consistently violates the 'no filler words' guideline.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model G has only 25 chapters, making it significantly less comprehensive than competitors. While the chapters it includes are reasonable, the coverage is too thin for mastery-level knowledge. It lacks individual character studies beyond the trio, Snape, and Dumbledore. No chapters on translation, individual companion texts, literary theory applications, narrative technique, symbolism depth, or advanced analytical methods. Missing coverage of video games, theme parks in detail, digital canon, and the HBO reboot. Titles are concise and good ('The Magic System', 'Wizarding History'). Descriptions are generally clean but some use 'Exploration of' as filler. The curriculum would give a solid overview but falls well short of the 'everything needed for mastery' requirement. For a pop culture topic requiring comprehensive coverage, 25 chapters is insufficient.",
+          "score": 5.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model E has only 20 chapters — the fewest of all models — making it the least comprehensive. While it covers the main categories (magic system, creatures, characters, adaptations, themes), it does so at a very high level with no book-by-book analysis, minimal character depth (one chapter for all key characters, one for antagonists), and no coverage of companion texts individually, canon debates, literary theory, comparative analysis, translation, video games, theme parks, or advanced analytical methods. Some titles are verbose ('Literary Origins and Publishing History', 'Magizoology and Magical Creatures'). Some descriptions use filler ('Deep dive into'). The coverage is far too shallow for mastery-level knowledge of Harry Potter. Critical topics like fandom culture get only one chapter, and the entire adaptation analysis is compressed into just three chapters. This would serve as a decent introductory course outline but not a comprehensive mastery curriculum.",
+          "score": 4.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model B provides an absolutely exceptional, PhD-level curriculum. It spans 84 chapters and covers the fictional universe with breathtaking depth (from wandlore to magic system inconsistencies), while also deeply analyzing the real-world impact (fandom, translation, academic scholarship, merchandise). Its titles and descriptions are perfectly concise and completely devoid of fluff, strictly adhering to all prompt constraints.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model A is outstanding. It delivers a highly analytical, 60-chapter curriculum that covers the literature, film craft, fandom, and scholarly lenses necessary to master the subject. Its descriptions are crisp, direct, and free of filler words. It is only slightly less exhaustive than Model B.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model C provides a brilliant academic approach to the franchise, including unique chapters on corpus linguistics, textual variants, and archival methods. This perfectly aligns with the 'master's degree or PhD' instruction. It loses a slight fraction of a point because it uses minor filler phrases in its descriptions (e.g., 'Close textual and thematic analysis of...', 'Comprehensive index and analysis of...'), but the overall content is superb.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model F offers a very strong 55-chapter curriculum that covers the lore, books, films, and cultural impact well. However, it relies on repetitive and slightly fluffy phrasing in its descriptions (e.g., starting seven consecutive chapters with 'Deep reading of...'), which makes it less concise than the top models.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model D provides a solid structure of 47 chapters, but it blatantly violates the negative constraint regarding fluff words in descriptions. By repeatedly using phrases like 'Comprehensive plot analysis of...', 'Detailed examination of...', 'In-depth analysis of...', and 'Thorough exploration of...', it ignores the explicit instruction to go straight to the point without filler.",
+          "score": 5.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model G only provides 25 chapters. For a sprawling franchise with seven core books, multiple spin-offs, complex lore, and massive real-world impact, 25 chapters is insufficient to cover 'EVERYTHING needed to be at the top 1% of the field' or to simulate a PhD-level curriculum.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model E provides only 20 chapters. Like Model G, it fails the comprehensiveness and depth requirements of the prompt. Condensing an entire literary, cinematic, and cultural universe into 20 broad chapters does not equip a learner to reach the top 1% mastery demanded by the prompt.",
+          "score": 4.5
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Most comprehensive while staying reasonably structured and progressive: starts with context/canon/reading order, then book-by-book, then deep dives into magic, institutions, politics, themes, adaptation, fandom, scholarship, continuity methods, and rereading/reference practices. Descriptions are mostly concise and on-point, with minimal filler. Strong coverage of “latest trends” via digital canon/online communities and modern discourse, without career chapters.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Excellent breadth and clear progression from context/reading skills to worldbuilding, characters, institutions, themes, narrative craft, adaptations, fandom, and scholarly lenses. Very strong instructional design for mastery. Minor gaps vs B/C: less explicit coverage of extended canon (Fantastic Beasts/Cursed Child/Pottermore) as dedicated chapters, and fewer modern digital-era topics. Otherwise very high quality and fairly concise.",
+          "score": 8.9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Extremely comprehensive—includes textual criticism, archival/curation, IP law, computational analysis, digital preservation, pedagogy, and research frontiers, which fits the “advanced studies/PhD” aspiration well. However, it sometimes drifts into more professional/industry-adjacent framing (franchise management, archiving standards) and several descriptions are more verbose/academic than needed. Still outstanding coverage and modernity.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Broad coverage across books, magic, institutions, characters, themes, adaptations, games, social media, controversies, and research skills. Good inclusion of newer elements (BookTok, Hogwarts Legacy). Weaker adherence to concision/no-filler (some promotional wording, absolute claims like “every major character arc,” and a few overlong titles). Less systematically comprehensive than A/B/C.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Solid, fairly comprehensive survey including films, extended works, fandom, parks, games, controversies, and even the HBO series (modern trend). But it is notably verbose, uses repeated filler (“comprehensive,” “thorough,” “complete”), and some chapters are bloated catch-alls. Contains a factual issue: listing a “Wizarding World” park in Beijing (not a standard/confirmed Universal Wizarding World location).",
+          "score": 7.1
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Good high-level coverage and logical ordering, but too few chapters for true mastery; many areas are collapsed into broad buckets (society, politics, adaptations, commercial empire) without depth. Less coverage of scholarly methods, canon/continuity methodology, and modern digital-era developments compared with stronger models. Generally concise and acceptable.",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Clear and concise, but far too shallow (only 20 chapters) for the prompt’s “everything/mastery” requirement; missing detailed coverage of individual books, canon/continuity methods, adaptation differences, fandom ecosystems, controversies, and scholarly/advanced analysis techniques. Some descriptions introduce quasi-technical claims (“theoretical laws governing magical energy”) that aren’t well-scoped to the texts.",
+          "score": 5.9
+        }
+      ]
+    }
+  ],
+  "taskId": "course-chapters",
+  "testCaseId": "en-harry-potter-1"
+}

@@ -1,0 +1,149 @@
+{
+  "expectations": "\n      - MUST be in US English\n\n      \n  - It should assume learners start with no prior knowledge of the subject\n  - Should create a progressive learning path going from basic/beginner to mastery of the subject\n  - By the end of this course, they should be able to lead very complex projects and tasks in this field\n  - They should be prepared for certifications or advanced studies in this subject like a master's degree or PhD\n  - Should include **EVERYTHING** a student needs to be at the top 1% of the field\n  - Should follow the language specified by language parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Should cover latest trends in the field\n  - Prefer concept names over vendor names in chapter titles/descriptions (e.g., \"Package management\" instead of \"npm\"). Ecosystem-level tools (npm, yarn, Redux, Zustand) should be avoided in titles\n    - Exception: foundational tools that ARE the course subject matter are allowed (e.g., \"Git\" in a programming course, \"Node.js\" in a web dev course, \"Docker\" in a DevOps course). The test: would a chapter about this subject be incomplete without mentioning this tool?\n    - Vendor name usage is a minor issue — it affects title quality but not pedagogical content. Do NOT treat it as a major error\n  - This is an eval system for a learning platform, of course the definition of \"ready for a job\" doesn't mean they have the legal requirements to work in the field (eg. medical license, law license, etc.). That's not important here, we're assessing if the course prepares the student with the necessary knowledge and skills.\n  - You don't need to evaluate the output format here, just focus on the chapter content quality.\n  - Titles should be concise and straight to the point, no fluff/filler words. For example:\n    - Just \"HTML\" is better than \"HTML Structure and Semantics\" (structure and semantics are implied if this is the only HTML chapter). Similarly, if we only have one CSS chapter, just \"CSS\" is better than \"CSS Styling and Layout\".\n    - \"Front-end frameworks\" is better than \"Front-End UI Frameworks Overview\" (too verbose) or \"Front-End Frameworks: Core Concepts\" (core concepts is unnecessary fluff)\n    - \"Relational Databases\" is better than \"Relational Databases and SQL\" (SQL is implied, no need to mention)\n    - \"Introduction to Java\" is better than \"Introduction to Java and Setting Up Your Development Environment\" (too verbose)\n    - \"Lean Startup\" is better than \"The Lean Startup Methodology: An Overview\" (too verbose)\n    - \"Introduction to X\" is valid for titles of introductory chapters but we should avoid those words in descriptions\n  - Similarly, descriptions should be concise and straight to the point, no fluff/filler words. For example:\n    - \"Styling with CSS: Selectors, properties, the box model, Flexbox, CSS Grid, and cascade principles.\" is better than \"Master styling and layout with CSS, including selectors, properties, the box model, Flexbox, CSS Grid, and cascade principles.\" - \"Master\" is fluff, and so are words like \"learn\", \"understand\", \"explore\", etc.\n    - \"Properties of matter, states, and phase transitions.\" is better than \"Explore the definition of Chemistry, properties of matter, states, and phase transitions.\" - \"Explore the definition of Chemistry\" are filler/unnecessary words.\n  - Don't add assessment-style chapters: no final projects, capstone assignments, exercises, quizzes, or \"test your knowledge\" chapters. A theoretical synthesis chapter (e.g., \"Design Patterns in Architecture\") is fine even if it synthesizes prior material — the rule targets assessment/project chapters, not synthesis of knowledge. If a chapter uses the word \"capstone\" but is theoretical (not an assignment), treat it as a minor issue at most, not a major error\n  - It shouldn't mention in title or description references to 1% or similar instructions about being top 1%\n\n    ",
+  "judgedAt": "2026-02-22T17:24:23.949Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model B is the most comprehensive and well-structured curriculum. It has ~100 chapters covering virtually every subfield of economics with excellent granularity. The progression is logical: it starts with economic reasoning, then math/stats foundations, then micro theory (consumer, producer, competitive markets, game theory, information economics, mechanism design, matching, contract theory, IO), then macro (accounting, business cycles, consumption, investment, monetary, fiscal, DSGE, expectations, financial frictions, growth, inequality), then trade, finance, applied fields (labor, education, health, crime, urban, energy, environmental, development, gender, networks, digital economy), then econometrics (broken into many well-scoped chapters: linear regression, inference, experiments, causal inference, IV, policy evaluation, RDD, panel, discrete choice, limited dependent variables, distributional, time series, filtering, structural, Bayesian, ML), then computational methods, communication, ethics, history of thought, philosophy, and careers. Titles are concise and professional. Descriptions are straight to the point without filler words. It separates topics that other models combine (e.g., separate chapters for auctions, mechanism design, matching, contract theory rather than lumping them together). It includes modern topics like platform economics, digital economy, agent-based models, and reproducible research. Minor issues: some descriptions could be slightly more concise, and having both 'Data quality and measurement error' and 'Economic measurement and data' early on is slightly redundant. But overall this is the strongest curriculum.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model F provides a very comprehensive curriculum (~70 chapters) with excellent coverage. It has good separation between micro and macro, strong econometrics coverage (experimental, quasi-experimental, applied micro/macroeconometrics, structural, ML), and includes important applied fields (health, education, crime, housing, family/gender, urban, environmental). It also covers policy evaluation, network economics, philosophy of economics, history of thought, and careers. Titles are generally concise. Descriptions mostly avoid filler. Some strengths: includes housing economics, crime economics, family/gender economics, managerial economics, and survey design. However, the ordering is somewhat unusual — math chapters (dynamic optimization, Lagrangians, statistics) appear quite late in the curriculum (chapters 60-62), which is pedagogically questionable since these are foundational and should come early. This is a structural flaw in the progression. Also has some redundancy (e.g., 'Market failures and policy toolkits' is somewhat redundant with 'Externalities and public goods'). The 'Current research directions' chapter title is a bit generic. Overall very strong but the ordering issue is notable.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model E is very comprehensive with ~76 chapters covering the full breadth of economics. It starts with good foundations (what is economics, mathematical tools, statistics), progresses through micro and macro theory, then applied fields, econometrics, and advanced topics. It includes many important subfields: agricultural economics, supply chain economics, digital/crypto economics, demographics, gender economics, and energy transition. Titles are generally clear though some are slightly verbose (e.g., 'Econometrics: Bayesian and Machine Learning Methods' combines two distinct topics). The inclusion of 'Supply Chain and Logistics Economics' is unusual for an economics curriculum and feels more like operations management. 'Digital and Crypto Economics' as a standalone chapter is reasonable but slightly trendy. Has good coverage of advanced theory chapters at the end (advanced micro, macro, econometric theory). Some descriptions use words like 'foundations needed for' which borders on filler. The 'Frontiers and Emerging Topics' chapter is a reasonable catch-all. Overall very strong but slightly less precise in chapter scoping than Models B and F.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model A provides a solid but relatively compact curriculum with 33 chapters. The coverage is good for its size — it hits the major areas (micro, macro, econometrics, applied fields) and includes important topics like machine learning in economics, computational economics, and experimental economics. Titles are concise and professional. Descriptions are clean and to the point. However, for a curriculum aimed at the 'top 1%,' 33 chapters is insufficient depth. Many important subfields are missing or underrepresented: no separate chapters on education economics, agricultural economics, political economy, contract theory, mechanism design, demographics, gender economics, crime economics, or housing economics. The econometrics section, while covering the main methods, lacks the granularity needed for mastery (e.g., no separate chapters for RDD, structural econometrics, Bayesian methods). No history of economic thought chapter. No chapter on economic research methods or writing. The mathematical foundations chapter tries to cover calculus, linear algebra, and optimization in one chapter, which is too compressed. Still, what's there is well done and accurate.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model G has ~58 chapters with strong technical depth, particularly in mathematics, econometrics, and computational methods. It includes unique and valuable chapters like 'Real Analysis for Economics,' 'Computational Foundations,' 'Data Engineering for Economists,' 'Market Microstructure,' 'High-Dimensional Econometrics,' and 'Nonparametric and Semiparametric Methods.' However, there are several issues: (1) The 'Capstone technical toolkit' chapter at the end violates the no-assessment/capstone rule — while the description is about assembling tools rather than a project, using 'Capstone' in the title and describing 'assembling pipelines' and 'curated set of datasets and scripts' makes it feel like a project chapter. (2) The curriculum is heavily skewed toward technical/quantitative methods at the expense of applied economics fields — it lacks chapters on education economics (wait, it has one), demographics, gender economics, crime economics, agricultural economics, and energy economics. (3) Some chapters feel more like a data science/CS curriculum than economics (e.g., 'Data Engineering for Economists,' 'Computational Foundations' with data structures and algorithms). (4) Multiple career-related chapters (PhD track, careers, consulting, leadership, writing) may be excessive. (5) Missing history of economic thought. The 'Cryptoeconomics and Digital Currencies' chapter names a specific technology. Still, the technical depth is impressive.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model C provides a reasonable curriculum with 58 chapters covering the main areas of economics. It has good applied field coverage (health, education, urban, agricultural, digital/platform, climate/energy) and includes history of economic thought and economic history as separate chapters, which is good. However, there are several weaknesses: (1) The econometrics coverage lacks depth — only 6 chapters for all of econometrics, missing structural econometrics, Bayesian methods, and limited dependent variables as standalone topics. (2) Some titles are slightly verbose or redundant (e.g., 'Monopoly & Market Power,' 'Oligopoly & Monopolistic Competition'). (3) The mathematical foundations are compressed into just the statistical and econometric chapters with no dedicated math chapter. (4) Some descriptions use slightly filler-ish language ('real-world applications,' 'real-world pricing'). (5) Missing important topics: mechanism design, matching markets (only briefly mentioned), contract theory, network economics, demographic economics, and survey methods. (6) The 'Reading & Critiquing Economic Literature' chapter feels somewhat like an assessment-adjacent activity. (7) Mentions specific names in descriptions ('Piketty's r > g,' 'Acemoglu-Robinson framework') which is fine but unusual. Overall adequate but lacks the depth needed for a top-tier curriculum.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model D is the most compact curriculum with only 38 chapters. While the content that's included is accurate and well-structured, the coverage is significantly insufficient for a comprehensive economics curriculum. Major gaps include: no dedicated math chapter for calculus/linear algebra, no chapter on education economics, demographics, gender economics, crime economics, housing economics, agricultural economics, energy economics, or digital/platform economics. The econometrics section has only 5 chapters, lacking structural econometrics, Bayesian methods, limited dependent variables, and distributional methods. No chapter on policy evaluation, cost-benefit analysis, or research methods. No chapter on mechanism design, matching, or contract theory. The 'Advanced Welfare Economics' chapter combining social choice and mechanism design is too compressed. 'Dynamic Macroeconomics' tries to cover both OLG and DSGE in one chapter. Missing chapters on financial crises, network economics, inequality. Some descriptions are too brief (e.g., 'Laboratory and field experiments to test economic theories and policy interventions' for Experimental Economics). The curriculum would not prepare someone for PhD-level work or top-1% mastery.",
+          "score": 5.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model E provides an exceptionally well-designed curriculum that perfectly satisfies all constraints. It offers 71 highly granular chapters with flawless pedagogical progression: it starts with basic intuition, introduces mathematical foundations, moves through the core micro/macro sequences, covers applied econometrics, dives into specialized fields, and concludes with a dedicated 'advanced' sequence modeled after a PhD core, perfectly matching the 'zero to mastery' requirement. Titles and descriptions are concise, professional, and free of fluff.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model C provides a highly logical and comprehensive curriculum (58 chapters) that progresses smoothly from beginner concepts to advanced topics. It correctly places foundational econometrics before the empirical applied fields (like Labor and Health economics), which is essential for modern economic pedagogy. Titles and descriptions are excellent and fluff-free.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model B offers staggering depth with 98 chapters, covering almost every conceivable subfield and methodology. However, it suffers from a minor structural flaw: it places foundational econometrics (e.g., linear regression) at chapter 74, long after the student has gone through empirically heavy fields like Labor and Education economics. While still a phenomenal outline, the progression is slightly less optimal than Models E and C.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model D is a very solid, well-rounded curriculum with 38 chapters. It covers all the essential bases from beginner to advanced methods and fields, and progresses logically. However, it lacks the extreme granularity and comprehensive depth seen in the top-ranking models, missing out on some of the deeper PhD-level preparation.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model A presents a structurally sound and logically ordered curriculum with 33 chapters. Like Model D, it accurately follows all formatting and fluff constraints but is slightly too brief to fully encompass a 'top 1%' zero-to-PhD trajectory compared to the more expansive models.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model F has great depth (71 chapters) but suffers from severe progression issues. It places fundamental mathematical and statistical concepts (chapters 62-64) near the very end of the course, long after teaching highly advanced topics that require those foundations, such as Structural Econometrics and Machine Learning. This makes the learning path illogical.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "While Model G provides a rigorous, PhD-level curriculum, it completely fails the prompt's instruction to 'assume learners start with no prior knowledge' and 'create a progressive learning path going from basic/beginner to mastery'. Starting a true beginner with Calculus, Linear Algebra, and Real Analysis before explaining a single basic economic concept (like supply and demand) is a major pedagogical failure for this specific prompt.",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Most comprehensive and well-sequenced from reasoning/measurement/math → core micro/macro → advanced fields → deep econometrics/computation → research norms/ethics/careers. Strong coverage of modern topics (platforms, nowcasting, macro-financial frictions, causal inference pitfalls), and chapter titles/descriptions are largely concise and non-fluffy.",
+          "score": 9.6
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Excellent breadth and modernity with strong applied orientation (policy design constraints, antitrust, macro crises, reproducibility, modern causal methods, ML). Slightly less structured than B (some early conceptual chapters come before math/stats, and some redundancy with math/stats appearing late), but still very close to “mastery-ready.”",
+          "score": 9.1
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Very extensive coverage including advanced micro/macro/econometrics, digital/crypto, geopolitics, reproducibility, and research methods; generally clear progression from fundamentals to frontier. Minor issues: more filler phrasing in descriptions (“Definition, scope...”), occasional bundling/overlong chapter titles, and a few trendy topics that could be better integrated rather than standalone.",
+          "score": 8.7
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "High rigor and strong PhD-track orientation (real analysis, high-dimensional econometrics, nonparametrics, market microstructure, open science, leadership). Weaker for true ‘no prior knowledge’ because it starts with heavy math immediately and delays basic economic intuition; also includes an assessment-like ‘Capstone technical toolkit’ chapter (prompt says no projects/capstones), though it’s framed as resources.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Solid, conventional coverage across micro/macro/econometrics and several applied fields; includes careers and some modern topics (platforms, big data). Not as comprehensive or deep as top models (less on identification pitfalls, modern macro-finance, computational/reproducibility workflows, advanced theory like mechanism design/matching depth). Some descriptions are more wordy and introductory.",
+          "score": 7.6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Good core set of micro/macro/econometrics plus a few advanced areas, but overall coverage is notably thinner than needed for mastery (limited modern applied fields, limited econometrics depth, little on measurement/data practices, research/reproducibility, and frontier topics).",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Clear and mostly accurate core topics with some modern elements (ML in economics, computational econ), but far too few chapters for the prompt’s required comprehensiveness and PhD/job-ready breadth. Missing many key areas (measurement/data, identification details, public economics depth, macro-financial crises, IO/platforms detail, research/reproducibility/ethics, many applied fields).",
+          "score": 6.4
+        }
+      ]
+    }
+  ],
+  "taskId": "course-chapters",
+  "testCaseId": "en-economics-1"
+}
