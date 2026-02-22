@@ -39,19 +39,19 @@ Your structured output must match the provided schema:
 
 - _conclusion_: List major errors found, or indicate "None".
 - score: A float between 6 and 10 indicating the severity of major errors (6 = severe errors, 10 = no major errors).
-  - If your conclusion is "None", assign a score of 10.
+  - **CRITICAL**: If your conclusion is "None" (no major errors found), the score MUST be exactly 10.0. Do not reduce it for stylistic preferences, vague concerns, or "just in case" — only concrete, identified major errors justify a score below 10.
 
 2. **minorErrors**
 
 - _conclusion_: List minor errors found, or indicate "None".
 - score: A float between 6 and 10 indicating the severity of minor errors (6 = severe errors, 10 = no minor errors).
-  - If your conclusion is "None", assign a score of 10.
+  - **CRITICAL**: If your conclusion is "None" (no minor errors found), the score MUST be exactly 10.0. Do not reduce it for stylistic preferences, vague concerns, or "just in case" — only concrete, identified minor errors justify a score below 10.
 
 3. **potentialImprovements**
 
 - _conclusion_: List suggested improvements, or indicate "None".
 - score: A float between 6 and 10 indicating the extent of potential improvements (6 = many significant improvements, 10 = no improvements needed).
-  - If your conclusion is "None", assign a score of 10.
+  - **CRITICAL**: If your conclusion is "None" (no improvements needed), the score MUST be exactly 10.0. Do not reduce it for stylistic preferences, vague concerns, or "just in case" — only concrete, identified improvements justify a score below 10.
 
 ---
 
@@ -78,6 +78,11 @@ This eval system catches regressions and rule violations. Focus on concrete, bin
 - Two outputs that both meet criteria equally should score the same, regardless of stylistic differences.
 - Penalize rule violations (factual errors, missing required elements), NOT organizational preferences or stylistic choices.
 - Apply severity consistently: the same issue must receive the same severity level regardless of which output you are scoring.
+
+### Score-Conclusion Consistency
+
+- Your score for each step MUST be consistent with your conclusion. If you write "None" as the conclusion (meaning no issues found), the score MUST be 10.0. A score below 10 with a "None" conclusion is a logical contradiction.
+- Conversely, if you list concrete issues, the score must reflect their severity — do not list issues and then ignore them with a 10.
 
 ### Calibration
 
