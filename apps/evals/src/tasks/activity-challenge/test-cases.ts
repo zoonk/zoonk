@@ -1,10 +1,11 @@
 const SHARED_EXPECTATIONS = `
 EVALUATION CRITERIA:
 
-1. DIMENSION QUALITY: Dimension names used across all effects should:
-   - Connect meaningfully to lesson concepts (2-4 unique dimensions total)
-   - Create natural tension (trade-off axes)
-   - Be consistently named across all effects (same concept = same name)
+1. DIMENSION QUALITY (MOST IMPORTANT): The challenge must use exactly 2-4 unique dimensions across ALL steps.
+   - Count every unique dimension name across the entire output. More than 4 is a violation.
+   - Every dimension must appear in at least 2 different steps (a dimension in only 1 step means the learner can't recover from a bad choice — this is a design flaw)
+   - Dimensions must be consistently named across all effects (same concept = same name, same spelling, same casing)
+   - Dimensions should connect meaningfully to lesson concepts and create natural tension (trade-off axes)
 
 2. CONSEQUENCE QUALITY: Each option's consequence must:
    - Explain what happens as a result of the choice
@@ -14,7 +15,7 @@ EVALUATION CRITERIA:
 
 3. TRADE-OFF DESIGN: No option should be obviously best. Options should affect multiple dimensions with mixed impacts (e.g., positive for one, negative for another). If one option has all positive effects, penalize.
 
-4. EFFECTS CONSISTENCY: Each option should have 1-3 effects. Dimension names should be reused consistently across options to create meaningful trade-offs (not random unique names for each effect).
+4. EFFECTS CONSISTENCY: Each option should have 1-3 effects. The SAME 2-4 dimension names must be reused across ALL steps. If you see different dimension names in different steps (e.g., step 1 uses "Speed" and "Quality" but step 3 uses "Scalability" and "Readability"), this is a major flaw — the challenge should reuse the same dimensions throughout.
 
 5. FORMAT COMPLIANCE: Verify these constraints:
    - intro: Maximum 500 characters
@@ -32,9 +33,10 @@ EVALUATION CRITERIA:
 
 SEVERITY CALIBRATION (apply consistently):
 
-Dimension count violations (the prompt requires 2-4 unique dimensions):
-- 5-6 unique dimensions: minor error. Deduct lightly (score 8.5-9).
-- 7+ unique dimensions: major error. The more dimensions, the harsher the penalty (score 6-8 depending on count).
+Dimension count violations (the prompt requires 2-4 unique dimensions reused across ALL steps):
+- 5 unique dimensions: moderate error (score 7.5-8.5). The challenge starts to lose recoverability.
+- 6+ unique dimensions: major error (score 5-7). Recovery becomes impossible. The more dimensions, the harsher the penalty.
+- Any dimension appearing in only 1 step: moderate error (score 7.5-8.5). Learners can't recover from bad choices on that dimension.
 
 Dominant/dominated option violations (no option should be universally best or worst):
 - 1 step with a dominant or dominated option: minor error (score 8.5-9).

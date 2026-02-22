@@ -50,8 +50,36 @@ Create 4-6 steps. Each step presents a decision point with 3-4 options.
   - **text**: The choice (max 80 characters)
   - **consequence**: What happens as a result (max 300 characters). Shown after choosing. Explains the outcome narratively.
   - **effects**: Array of 1-3 effects showing how this choice impacts different aspects:
-    - **dimension**: A short name for what this affects (e.g., "Code Quality", "Delivery Speed", "Team Morale"). Use 2-4 different dimensions across all options to create meaningful trade-offs. Important: dimensions must be consistent across all steps.
+    - **dimension**: Must be one of the dimensions you defined (see Dimensions below)
     - **impact**: Is this `"positive"`, `"neutral"`, or `"negative"` for that dimension?
+
+### Dimensions (CRITICAL)
+
+**Before writing any steps, define exactly 2-4 dimensions.** Every effect in every step must use one of these dimensions. Do NOT invent new dimensions per step.
+
+This is a core game mechanic: dimensions accumulate across the entire challenge (+1 for positive, -1 for negative). Learners lose if any dimension goes negative. **If step 3 introduces a new dimension that didn't appear in steps 1-2, the learner had no chance to build a buffer — making it unfair and unrecoverable.** Reusing dimensions lets learners recover from bad choices in later steps.
+
+**How to choose dimensions:**
+
+1. Pick 2-4 aspects of the lesson that naturally create tension (e.g., for "Technical Debt": Code Quality vs. Delivery Speed vs. Team Morale)
+2. Write ALL steps using ONLY those dimensions
+3. Ensure every dimension appears in multiple steps so learners can recover
+
+**BAD — different dimensions per step (DON'T DO THIS):**
+
+- Step 1 effects: "Algorithm Speed", "Memory Usage"
+- Step 2 effects: "Code Readability", "Test Coverage"
+- Step 3 effects: "Scalability", "Development Time"
+
+This creates 6 dimensions and makes recovery impossible.
+
+**GOOD — same dimensions reused across steps (DO THIS):**
+
+- Step 1 effects: "Performance", "Maintainability"
+- Step 2 effects: "Performance", "Maintainability", "Scalability"
+- Step 3 effects: "Performance", "Scalability"
+
+This creates 3 dimensions. A bad choice in step 1 can be recovered in step 3.
 
 ### Option Design
 
@@ -86,7 +114,8 @@ The `reflection` field (max 500 characters) provides closing insight after all s
 - **Obviously correct answers**: Every option should have genuine trade-offs
 - **Narrator text**: Keep it pure dialogue in context
 - **Disconnected consequences**: Consequences should relate to lesson concepts
-- **Too many or too few dimensions**: Use 2-4 different dimension names across all effects for meaningful trade-offs
+- **Too many dimensions**: If you have more than 4 unique dimension names across ALL steps, you have too many. Go back and consolidate. Every dimension must appear in at least 2 steps
+- **Step-specific dimensions**: Never introduce a dimension that only appears in one step — it removes the learner's ability to recover
 
 ## Relationship to Previous Activities
 
@@ -148,7 +177,10 @@ Before finalizing, verify:
 - [ ] Are consequences connected to lesson principles?
 - [ ] Is there no obviously "best" option in each step?
 - [ ] Do options affect multiple dimensions where realistic?
-- [ ] Are dimension names consistent and lesson-relevant across all effects?
+- [ ] Did you define exactly 2-4 dimensions BEFORE writing steps?
+- [ ] Does every dimension appear in at least 2 different steps?
+- [ ] Are there ZERO dimensions that only appear in a single step?
+- [ ] Are dimension names identical across all effects (same spelling, same casing)?
 - [ ] Is `{{NAME}}` used appropriately?
 - [ ] Is all dialogue pure conversation (no narrator)?
 - [ ] Does the reflection tie the experience back to the lesson?
@@ -168,6 +200,6 @@ Return an object with:
     - **text**: Choice description (max 80 chars)
     - **consequence**: What happens (max 300 chars)
     - **effects**: Array of 1-3 objects with:
-      - **dimension**: Short name for what this affects (use 2-4 different dimensions total)
+      - **dimension**: Must be one of your pre-defined 2-4 dimensions (reused across ALL steps)
       - **impact**: One of "positive", "neutral", "negative"
 - **reflection**: Closing insight connecting to lesson (max 500 chars)
