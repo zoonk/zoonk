@@ -39,7 +39,9 @@ function buildAnonymousIdMap(matchup: BattleMatchup): Map<string, string> {
 }
 
 function resolveModelId(modelId: string, anonymousIdMap: Map<string, string>): string {
-  if (getModelById(modelId)) {return modelId;}
+  if (getModelById(modelId)) {
+    return modelId;
+  }
   return anonymousIdMap.get(modelId) ?? modelId;
 }
 
