@@ -3,7 +3,7 @@ const SHARED_EXPECTATIONS = `
   - Break down topics into the smallest, most manageable units possible, so that each lesson can be learned in 2-3 minutes
   - If a topic is too broad, split it into multiple lessons
   - Each lesson should be extremely focused on a SINGLE concept
-  - If you find yourself using "AND", "OR", or "VS" in a title, you should split it into separate lessons
+  - Each lesson must cover a SINGLE concept. Using "AND", "OR", "VS" (or their equivalents in other languages like "e", "ou", "y", "o", or symbols like "+", "・", "→") in a title is a signal it MAY be too broad — but it is acceptable when the comparison or pairing IS the concept itself. For example, "Ser vs Estar: Listo" (one adjective's meaning change is the lesson), "Been to vs. Gone to" (the distinction is the concept), or "する e くる" (the only two irregular verbs taught as a natural pair) are all valid single-concept lessons. Only penalize when AND/OR/VS joins genuinely separate concepts that deserve their own lessons (e.g., "Greetings and Introductions" or "Time and Dates" where each half is a full topic)
   - ALL lessons must be about pure language acquisition (vocabulary, grammar, pronunciation, sentences, conjugations, dialogues)
   - NO culture lessons (history, traditions, cuisine, festivals)
   - NO career or professional lessons
