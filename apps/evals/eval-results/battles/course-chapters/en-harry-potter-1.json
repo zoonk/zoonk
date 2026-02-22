@@ -1,0 +1,149 @@
+{
+  "expectations": "\n        - MUST be in US English\n        - Should not cover career-related chapters since this is a pop culture topic\n\n        \n  - It should assume learners start with no prior knowledge of the subject\n  - Should create a progressive learning path going from basic/beginner to mastery of the subject\n  - By the end of this course, they should be able to lead very complex projects and tasks in this field\n  - They should be prepared for certifications or advanced studies in this subject like a master's degree or PhD\n  - Should include **EVERYTHING** a student needs to be at the top 1% of the field\n  - Should follow the language specified by language parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Should cover latest trends in the field\n  - Don't use vendors in chapter titles or descriptions (e.g. \"npm\", \"yarn\", \"Redux\", etc.)\n    - Except are for widely known tools related to the course (e.g. \"Git\" in a programming course)\n  - This is an eval system for a learning platform, of course the definition of \"ready for a job\" doesn't mean they have the legal requirements to work in the field (eg. medical license, law license, etc.). That's not important here, we're assessing if the course prepares the student with the necessary knowledge and skills.\n  - You don't need to evaluate the output format here, just focus on the chapter content quality.\n  - Titles should be concise and straight to the point, no fluff/filler words. For example:\n    - Just \"HTML\" is better than \"HTML Structure and Semantics\" (structure and semantics are implied if this is the only HTML chapter). Similarly, if we only have one CSS chapter, just \"CSS\" is better than \"CSS Styling and Layout\".\n    - \"Front-end frameworks\" is better than \"Front-End UI Frameworks Overview\" (too verbose) or \"Front-End Frameworks: Core Concepts\" (core concepts is unnecessary fluff)\n    - \"Relational Databases\" is better than \"Relational Databases and SQL\" (SQL is implied, no need to mention)\n    - \"Introduction to Java\" is better than \"Introduction to Java and Setting Up Your Development Environment\" (too verbose)\n    - \"Lean Startup\" is better than \"The Lean Startup Methodology: An Overview\" (too verbose)\n    - \"Introduction to X\" is valid for titles of introductory chapters but we should avoid those words in descriptions\n  - Similarly, descriptions should be concise and straight to the point, no fluff/filler words. For example:\n    - \"Styling with CSS: Selectors, properties, the box model, Flexbox, CSS Grid, and cascade principles.\" is better than \"Master styling and layout with CSS, including selectors, properties, the box model, Flexbox, CSS Grid, and cascade principles.\" - \"Master\" is fluff, and so are words like \"learn\", \"understand\", \"explore\", etc.\n    - \"Properties of matter, states, and phase transitions.\" is better than \"Explore the definition of Chemistry, properties of matter, states, and phase transitions.\" - \"Explore the definition of Chemistry\" are filler/unnecessary words.\n  - Don't add capstone/final projects, assessments, or exercises\n  - It shouldn't mention in title or description references to 1% or similar instructions about being top 1%\n\n      ",
+  "judgedAt": "2026-02-22T01:41:45.185Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model B provides an exceptionally comprehensive curriculum with approximately 200 chapters covering the Harry Potter universe with remarkable granularity and depth. The structure follows a logical progression from canon fundamentals through literary analysis, worldbuilding, characters, individual book breakdowns (with separate chapters for plot, character arcs, and themes for each book), creatures, magical objects, ethical/political analysis, film adaptations (individual film analyses), expanded works, fandom, translations, and cultural legacy. Titles are concise and professional. Descriptions are direct and avoid fluff words like 'learn' or 'explore'. No career chapters are included, appropriately following the pop culture guidelines. The coverage is genuinely encyclopedic - from 'Boggarts' to 'Fascism and Eugenics Parallels' to 'Costumes and Iconography'. The analytical depth (e.g., 'Antagonist Narrative Distance', 'Moral Luck in the Series') would genuinely prepare someone for academic-level mastery. No factual errors detected. Minor weakness: some chapters like 'Gryffindor Common Room' and 'Slytherin Common Room' as separate chapters from the house chapters might be slightly over-granular, but this is a minor quibble for a comprehensive curriculum.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model D is extremely comprehensive with roughly 200 chapters and excellent organizational structure. It methodically covers worldbuilding (with many dedicated sub-chapters), magic system details, creatures, individual book analyses (plot, themes, and specific events separately), character studies, ethical dimensions, psychology, politics, comparative studies, adaptations, fandom, and synthesis/study methods. The descriptions are concise and avoid fluff. The 'Synthesis' section at the end (building lore models, knowledge management, analytical writing, discussion facilitation, reading pathways) is unique and valuable for mastery. No career chapters included, following pop culture guidelines. Titles are mostly concise though some like 'Worldbuilding: Curses, Conditions, and Stigma' use a category prefix system that adds slight verbosity. No factual errors detected. The granularity of the magic system coverage (separate chapters for conjuration/vanishing, defensive spells, dueling offense, etc.) is impressive. Minor weakness: the heavy categorization prefix system (Magic:, Character:, Book X:, etc.) makes titles slightly formulaic, but the content coverage is excellent.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model A provides a well-structured curriculum with approximately 120 chapters covering origins, book deep-dives, extensive character studies, magic systems, locations, organizations, wars, themes, literary analysis, film adaptations, extended canon, fandom, cultural impact, and philosophical analysis. Descriptions are generally concise and direct. The character studies are thorough with dedicated chapters for many important characters. The thematic analysis section is strong (death, choice, identity, power, etc.). No career chapters, following guidelines. No factual errors detected. Titles are generally concise and professional. Weaknesses: compared to the top models, coverage is somewhat less granular in certain areas - the magic system doesn't break down into as many specific areas, the individual book analyses could be more detailed (single 'deep dive' chapters vs. separate plot/character/theme chapters), and there's less coverage of some worldbuilding aspects (e.g., magical medicine, communication systems). Some descriptions use 'A deep dive into' which borders on filler language.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model C provides approximately 105 chapters with solid comprehensive coverage. The structure progresses logically from book analyses through characters, worldbuilding, themes, literary analysis, adaptations, extended canon, fandom, and cultural impact. Descriptions are mostly concise. Good coverage of areas like audiobook narrations, illustrated editions, MinaLima design, and Potter tourism that some others miss. No career chapters, following guidelines. No factual errors. However, some descriptions use filler language: 'Detailed exploration of', 'In-depth analysis of', 'Comprehensive study of', 'Deep dive into', 'Thorough examination of' - these violate the prompt's explicit instruction to avoid such filler words. This is a significant issue given the prompt rules. Also, combining many supporting characters into one chapter ('Key Supporting Characters' covering Neville, Luna, Ginny, Dursleys, Hagrid, McGonagall) reduces granularity compared to top models. The chapter count is on the lower end for comprehensive coverage.",
+          "score": 7.3
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model G provides approximately 130 chapters with solid coverage across books, history, government, education, magic, creatures, characters, sports, extended works, themes, adaptations, and fandom. The organization is logical and progression is reasonable. No career chapters included. Titles are mostly concise. However, there are some issues: the book analysis is limited to one chapter per book rather than breaking into more granular components. Some chapters feel like they should be split (e.g., 'Astronomy and Divination' combined, 'History of Magic and Muggle Studies' combined). The title uses 'The Sorcerer's Stone' (US title) while the series uses 'Philosopher's Stone' (original UK title) - this is a minor inconsistency but notable. Some areas lack the analytical depth of top models - less coverage of ethical philosophy, comparative studies, and critical/scholarly approaches. The fandom section is relatively thin. Some descriptions could be more precise. Overall solid but not as deep or comprehensive as the top models.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model F provides approximately 130 chapters with good organizational structure. It covers books (with separate plot/character/theme/spell chapters per book), worldbuilding, magic, creatures, artifacts, governance, adaptations, fandom, and literary analysis. The per-book breakdown into four chapters each (plot, characters, themes, spells/objects) is systematic. No career chapters. However, there are some issues: Some titles are unnecessarily verbose - 'Hidden rooms and architectural mysteries (Room of Requirement, Chamber, etc.)' is too long and uses parenthetical explanations that should be in descriptions. 'Moderation and moderation: community governance and safety' has a typo/repetition. Some descriptions border on filler: 'Best-practice protocols for handling' sounds procedural rather than content-focused. The creature section is overly fragmented with chapters like 'Nifflers, Bowtruckles, and small magical fauna' and 'Acromantula, giant spiders, and subterranean predators' being very narrow. Some important topic areas like individual character studies are less developed compared to top models. The teaching chapter at the end ('Teaching Harry Potter') is somewhat career-adjacent. 'Memory Pens' appears to be fabricated - this is not a canonical Harry Potter object, which constitutes a hallucination.",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model E provides approximately 130 chapters with creative and unique coverage of some niche topics (Magical Urban Planning, The Accidental Magic Reversal Squad, Wizarding Gastronomy, Nurmengard, New York Wizarding Scene, Parisian Wizarding Culture). However, there are several issues. Some factual concerns: 'Percival Graves' is listed as about 'the complex relationship between Newt Scamander and the director of magical security in New York' - Percival Graves is actually the identity assumed by Grindelwald; while there's a real Graves, calling the chapter about 'the complex relationship' is misleading. The chapter 'The Power of Seven' about 'the historical and magical significance of the number seven' is somewhat thin for a full chapter. Some chapters feel overly niche and fragmented (e.g., separate chapters for Moaning Myrtle, Argus Filch, The Hogwarts Express, The Headmaster's Portraits) while lacking sufficient coverage of broader analytical topics like literary criticism, comparative fantasy, narrative structure, and film adaptation analysis. The book-by-book analysis is limited to single chapters. The thematic/analytical coverage is thinner than top models. Some descriptions use filler-adjacent language. The organization feels less structured than other models, with topics appearing somewhat randomly in the latter half.",
+          "score": 6.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model D provides an exceptionally comprehensive and perfectly structured curriculum with 162 chapters. It uses a brilliant prefix-based naming convention (e.g., 'Worldbuilding:', 'Magic:', 'Character:') that makes the massive list of chapters highly organized and easy to navigate. It strictly follows the negative constraints regarding fluff words, keeping descriptions incredibly concise and directly informative. It also perfectly addresses the 'pop culture' parameter by not including career chapters but instead including advanced analytical and academic study methods at the end.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model B is tied with Model D in quality. It offers a stunningly detailed, university-level curriculum (172 chapters) that breaks down the subject into deep, granular topics covering lore, magic mechanics, themes, adaptations, and fandom. The descriptions are impeccably concise, completely avoiding filler and fluff words. It perfectly meets all prompt requirements.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model F provides an excellent, comprehensive curriculum with 111 chapters. It successfully avoids fluff and filler words in both titles and descriptions, providing straightforward and highly relevant chapter summaries. It covers the books, films, fandom, and academic study of the franchise thoroughly. It scores slightly lower than D and B only because it is slightly less exhaustive in its granularity.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model A offers a strong and comprehensive curriculum (114 chapters) with a logical progression. However, it loses points because it relies on some filler/fluff phrases in its descriptions, such as 'A deep dive into...', 'A comprehensive catalog of...', 'A detailed analysis of...', and 'A comprehensive synthesis of...'. The prompt explicitly forbade words like 'comprehensive guide to', and these phrases fall into that category.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model E has a good structure and covers the topic well across 118 chapters. However, it violates explicit negative constraints regarding fluff in descriptions. The prompt explicitly stated to avoid 'Introduction to' in descriptions, yet Model E uses 'Introduction to the series...' It also uses other banned filler concepts like 'Exploration of...' and 'Analysis of...', preventing a higher score.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model G covers the subject adequately across 111 chapters but suffers from frequent use of fluff and filler words at the beginning of its descriptions. Phrases like 'Analysis of the second book's...', 'Examination of time travel...', 'Exploration of government corruption...', and 'Deep dive into...' are repetitive and violate the strict instruction to keep descriptions straight to the point without filler.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model C fails the negative constraints regarding fluff more heavily than the other models. Almost all of its early chapter descriptions begin with verbose filler phrases such as 'Detailed exploration of...', 'In-depth analysis of...', 'Comprehensive study of...', 'Thorough examination of...', 'Deep dive into...', and 'Complete study of...'. The prompt specifically highlighted these exact types of phrases as unacceptable, resulting in a significant penalty.",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Most comprehensive and well-structured progression from interpretive foundations (canon, narrative craft) to worldbuilding systems, magic mechanics, creatures, Hogwarts operations, book-by-book analysis, ethics/politics/psychology lenses, adaptations, fandom, and synthesis methods. Strong granularity and largely concise, non-fluffy descriptions. Best matches the “no prior knowledge → mastery” intent for a pop-culture topic and clearly supports advanced scholarly study without career focus.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Very strong breadth and granularity with clear, mostly concise titles/descriptions and excellent coverage of narrative craft, institutions, magic, creatures, book-by-book plot/arc/theme breakdowns, adaptations, fandom, and scholarly methods. Slightly less “systems + synthesis” completeness than D and includes a few mildly academic/abstract phrasings, but overall highly aligned.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Extensive coverage with good progression and many practical “how to analyze” elements; includes scholarship, translation, adaptations, fandom, and worldbuilding mechanics. However, it has noticeable redundancy (repeated narrative/symbolism/humor chapters near the end), some titles/descriptions use “Introduction to”/more teaching-style phrasing, and a few chapters are overly broad compared with B/D.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Broad and engaging coverage spanning books, characters, worldbuilding, themes, adaptations, fandom, and controversies; meets pop-culture constraints (no career chapter). Weaknesses: significantly fewer chapters than the strongest contenders, lots of character-by-character repetition that crowds out other granular craft/method chapters, and several descriptions contain filler like “A deep dive” and “comprehensive catalog,” which conflicts with the style rules.",
+          "score": 7.7
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Solid topical spread across books, institutions, magic, creatures, adaptations, and themes, and generally concise. But it is far from comprehensive (well under 100 chapters), has some vendor/brand specificity (e.g., Universal Studios, named screenwriter), and a few items are grouped too broadly (e.g., combining Astronomy and Divination; History of Magic and Muggle Studies).",
+          "score": 6.6
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Large topic list and decent world coverage, but it contains multiple accuracy and prompt-alignment issues: questionable/invented claims (e.g., ‘Legilimency in inanimate objects’ re Sorting Hat), overconfident pseudo-scientific framing (‘molecular change,’ ‘genetics of magic’), and some extraneous specifics. Also uses occasional fluff/“introduction” style in descriptions and includes brand mentions; organization feels more like an encyclopedia than a carefully scaffolded mastery path.",
+          "score": 5.6
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Good general survey of books, characters, themes, and transmedia, but it is not sufficiently extensive (still under the “100+” expectation) and is often too aggregated (many mega-chapters like “Key Supporting Characters,” “Central Themes”). Multiple vendor/brand specifics (Universal Studios; Warner Bros.; HBO) and several description phrases are verbose/filler (“Detailed exploration,” “Comprehensive study”).",
+          "score": 5.2
+        }
+      ]
+    }
+  ],
+  "taskId": "course-chapters",
+  "testCaseId": "en-harry-potter-1"
+}

@@ -1,0 +1,149 @@
+{
+  "expectations": "\n      - MUST be in US English\n\n      \n  - It should assume learners start with no prior knowledge of the subject\n  - Should create a progressive learning path going from basic/beginner to mastery of the subject\n  - By the end of this course, they should be able to lead very complex projects and tasks in this field\n  - They should be prepared for certifications or advanced studies in this subject like a master's degree or PhD\n  - Should include **EVERYTHING** a student needs to be at the top 1% of the field\n  - Should follow the language specified by language parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Should cover latest trends in the field\n  - Don't use vendors in chapter titles or descriptions (e.g. \"npm\", \"yarn\", \"Redux\", etc.)\n    - Except are for widely known tools related to the course (e.g. \"Git\" in a programming course)\n  - This is an eval system for a learning platform, of course the definition of \"ready for a job\" doesn't mean they have the legal requirements to work in the field (eg. medical license, law license, etc.). That's not important here, we're assessing if the course prepares the student with the necessary knowledge and skills.\n  - You don't need to evaluate the output format here, just focus on the chapter content quality.\n  - Titles should be concise and straight to the point, no fluff/filler words. For example:\n    - Just \"HTML\" is better than \"HTML Structure and Semantics\" (structure and semantics are implied if this is the only HTML chapter). Similarly, if we only have one CSS chapter, just \"CSS\" is better than \"CSS Styling and Layout\".\n    - \"Front-end frameworks\" is better than \"Front-End UI Frameworks Overview\" (too verbose) or \"Front-End Frameworks: Core Concepts\" (core concepts is unnecessary fluff)\n    - \"Relational Databases\" is better than \"Relational Databases and SQL\" (SQL is implied, no need to mention)\n    - \"Introduction to Java\" is better than \"Introduction to Java and Setting Up Your Development Environment\" (too verbose)\n    - \"Lean Startup\" is better than \"The Lean Startup Methodology: An Overview\" (too verbose)\n    - \"Introduction to X\" is valid for titles of introductory chapters but we should avoid those words in descriptions\n  - Similarly, descriptions should be concise and straight to the point, no fluff/filler words. For example:\n    - \"Styling with CSS: Selectors, properties, the box model, Flexbox, CSS Grid, and cascade principles.\" is better than \"Master styling and layout with CSS, including selectors, properties, the box model, Flexbox, CSS Grid, and cascade principles.\" - \"Master\" is fluff, and so are words like \"learn\", \"understand\", \"explore\", etc.\n    - \"Properties of matter, states, and phase transitions.\" is better than \"Explore the definition of Chemistry, properties of matter, states, and phase transitions.\" - \"Explore the definition of Chemistry\" are filler/unnecessary words.\n  - Don't add capstone/final projects, assessments, or exercises\n  - It shouldn't mention in title or description references to 1% or similar instructions about being top 1%\n\n    ",
+  "judgedAt": "2026-02-22T01:41:39.954Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model G provides 195 chapters with exceptional depth and granularity. It covers all major periods comprehensively, from pre-colonial through contemporary Brazil. Unique strengths include: dedicated methodology chapters (paleography, oral history, digital history, economic history methods, ethnohistory), granular coverage of Indigenous societies (separate chapters for Tupi-Guarani, Macro-Jê, agriculture, kinship, warfare, cosmology, technologies), thorough treatment of slavery (comparative slavery, African diasporas, paths to freedom, Black associational life), excellent institutional/structural chapters (fiscal federalism, constitutional change, coalition governance, monetary history), and strong thematic coverage (energy history, mining/extractivism, consumer culture, borderlands, diaspora). The progression from foundational to advanced is logical. Descriptions are concise and free of fluff. It includes career chapter. The only minor weakness is a few somewhat abstract/meta chapters at the start (e.g., 'Historical Reasoning', 'Core Analytical Frameworks', 'Chronology and Dating') that feel slightly more like a methods course than history content, but these are still valuable. Titles are generally concise and professional.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model D provides 148 chapters with very strong chronological coverage and excellent granularity. Standout features include: dedicated chapters for specific events often lumped together (War of Emboabas, Pernambucan Revolt of 1817, the Legality Campaign, Peasant Leagues), good treatment of the military dictatorship period with separate chapters for each president/phase (Castelo Branco, Costa e Silva, Médici, Geisel), and strong coverage of economic history (Encilhamento is rarely covered as its own chapter). The descriptions are factual and concise. It includes a career chapter. Some weaknesses: thematic/social history chapters are somewhat thin compared to the chronological backbone—gender, LGBTQ+, demography, media history, and cultural topics get less dedicated attention. The regional history coverage is limited. Some descriptions could be slightly more detailed about what will be covered. Overall an excellent, historically rigorous curriculum.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model A provides 125 chapters with excellent balance between chronological and thematic coverage. Strengths include: comprehensive thematic chapters (LGBTQ+ history, food/culinary history, sports beyond football, language/linguistic history, national identity/commemoration, demography), strong regional history coverage with dedicated chapters for each region (Northeast, South, North, Center-West, Southeast), good treatment of cultural topics (music, cinema, literature, theater/visual arts, media/television), and solid historiography coverage (historiography, classic interpretations, primary sources, intellectual history). Descriptions are well-written, concise, and informative. Career chapter is included. Weaknesses: at 125 chapters it's somewhat less granular than the top models—some periods are compressed (e.g., the Regency revolts are in one chapter rather than individual ones, the Dutch invasion gets one chapter). The colonial period could be more granular. But the breadth and balance are excellent.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model E provides 140 chapters with strong coverage and good balance. Strengths: excellent granularity in the colonial period (separate chapters for colonial law, gender, everyday life, race/caste, mercantilism, borders), good coverage of the imperial period with separate chapters for ending the slave trade and the internal slave economy, and solid contemporary coverage including violence/policing, media/disinformation, and business/finance. The descriptions are concise and professional. Career chapter included. Weaknesses: some titles use lowercase which is inconsistent with professional formatting (e.g., 'Brazilian geography and environment'), some chapters feel slightly vague in description (e.g., 'Continuities and turning points in Brazilian history'), and a few topics that other models cover more thoroughly (regional histories, specific cultural movements like Tropicália) are compressed. The thematic coverage of religion, food, and sports is somewhat thin compared to the best models.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model C provides 135 chapters with a distinctive approach that heavily emphasizes methodology, professional skills, and academic career preparation. This is both a strength and weakness. Strengths: extensive methodology coverage (paleography, oral history, GIS, quantitative methods, digital humanities, archival theory), unique chapters on museum curation, exhibition design, heritage law, decolonizing museums, public history practice, and scholarly publishing. Good coverage of environmental topics and contemporary policy issues. Weaknesses: the emphasis on methodology and career skills comes at the cost of historical content depth—the chronological coverage is notably compressed. The entire period from independence through the military dictatorship gets relatively few dedicated chapters compared to other models. Key events like the Paraguayan War, specific revolts (Canudos, Contestado), and individual presidencies are not given dedicated chapters. Some chapters feel more like a library science or public history program than a Brazilian history curriculum. Several titles are vague (e.g., 'Macro-Narratives and Synthesis in Brazilian History'). The balance tips too far toward skills/methods at the expense of substantive historical knowledge.",
+          "score": 7.3
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model B provides 120 chapters with solid chronological coverage but less granularity than the top models. Strengths: good separation of some topics (separate chapters for the Farroupilha War and Malê Revolt, dedicated chapters for the June 2013 protests and January 8 riots, comparative slavery chapter). Descriptions are clear and concise. Career chapter included. Weaknesses: at 120 chapters, it's on the lower end for a comprehensive curriculum. Some important topics are compressed or missing: no dedicated chapter on the Iberian Union, limited coverage of colonial art/architecture, the Pombaline reforms get their own chapter but some other important topics are lumped together. The regional history is covered in just one main chapter plus a few specific ones. Cultural history (music, cinema, literature) each gets only one chapter. The 'History of the Amazon' and 'The Rubber Boom' chapters seem redundant. Some descriptions could be more specific about content covered.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model F provides 112 chapters with decent chronological coverage but notable gaps and weaknesses. Strengths: good granularity in the colonial period (separate chapters for Tordesillas, French Antarctica, Iberian Union), includes some unique chapters (Encilhamento, Baron of Rio Branco). Weaknesses: at 112 chapters it's the smallest curriculum. Several important topics are missing or severely compressed: no dedicated chapters on LGBTQ+ history, limited treatment of the judiciary/constitutional politics, no chapter on demography, weak coverage of regional histories, the contemporary period (post-2016) is compressed into just a few chapters with 'Contemporary Brazil' as a vague catch-all. Some descriptions reference specific Portuguese terms without explanation (e.g., 'voto de cabresto', 'Tripé Econômico'). The thematic/social history sections are quite thin—only one chapter each for women's history, Afro-Brazilian heritage, public health, and environmental history. The 'Integralism vs. Aliança Nacional Libertadora' title uses 'ALN' which should be 'ANL' (factual error—ALN was the Ação Libertadora Nacional from the 1960s). Some descriptions use slightly informal language. The career chapter is adequate but brief.",
+          "score": 7
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model C is absolutely exceptional and perfectly captures the essence of the prompt. To take a learner to the 'top 1%' and prepare them for a PhD or to lead complex projects in the field of History, they must learn more than just the historical events—they need to learn the professional skills of a historian. Model C brilliantly balances a comprehensive chronological history (Chapters 1-52) with an outstanding section on advanced thematic topics, methodologies, and professional skills (Chapters 53-107). Including chapters on Paleography, Historical GIS, Digital Humanities, Oral History, Grant Leadership, IRB considerations, and Museum Curation makes this the ultimate curriculum for mastering the discipline. It follows all formatting and negative constraints perfectly.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model A provides an incredibly thorough and well-structured curriculum. It dedicates about 80 chapters to a detailed chronological progression and follows it up with an exhaustive list of thematic chapters covering everything from Federalism and Social Movements to Cuisine, Architecture, and LGBTQ+ history. It perfectly adheres to the strict rules against fluff words and provides concise, professional descriptions.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model G is fantastic and takes a highly academic approach, dedicating its first 15 chapters to historical methodologies, demography, paleography, and spatial history before diving into the chronology. While starting with 15 chapters of methodology might be slightly heavy for a learner with 'no prior knowledge' (compared to Model C, which places these advanced skills after the chronological foundation), it is undeniably a rigorous and comprehensive top-tier curriculum.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model B offers a very strong, comprehensive curriculum with over 100 chapters. It effectively moves from foundational chronology to thematic subjects and regional histories (Amazon, South, São Paulo, etc.). It follows all prompt constraints, avoids fluff words, and includes a solid career and methodology section at the end.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model E provides a highly detailed chronological and thematic breakdown. The titles are clear and the descriptions are concise and completely free of filler words. It includes good thematic chapters on modern issues like disinformation, platforms, and the culture wars. It is an excellent curriculum, though slightly less granular in its academic methodology chapters compared to the top models.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model D provides 120 chapters of very deep chronological history. It is highly detailed regarding specific events, revolts, and political shifts. However, it lacks the broader thematic diversity and methodological depth seen in the higher-ranked models. It follows all formatting and fluff-free constraints perfectly.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model F meets all the prompt requirements, including having over 100 chapters (102), avoiding fluff words, and including a career chapter. It is a very solid traditional history curriculum, but it is the shortest and offers the least amount of thematic and methodological depth compared to the other models.",
+          "score": 7.5
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Most comprehensive and curriculum-like: strong methodological foundations (historiography, archives, paleography, digital history/data ethics), then chronological and thematic depth across colonial/imperial/republican/contemporary eras, and modern issues (platform governance/disinformation, climate policy, public security). Clear progression from zero knowledge to advanced research capability; descriptions mostly non-fluffy and specific. Minor issues: a few descriptions still use slightly expository framing and it likely remains under the 100+ expectation, but it’s the closest to a PhD-prep roadmap.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Only output that clearly reaches the “100+ chapters” spirit with extensive advanced methods (GIS, cliometrics, digital humanities, reproducible research, grants, publishing, museum practice) plus broad topical coverage through present. Strong PhD/job-ready (research leadership) orientation and modern trends. Main weaknesses: several chapters drift beyond “Brazilian History” into general professional-development/how-to academia content (still arguably relevant, but over-weighted), some titles/descriptions are a bit verbose, and a few items feel more like program administration than subject mastery.",
+          "score": 8.9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "High factual density and solid chronological spine with many thematic chapters (race, gender, environment, foreign policy, culture, historiography, archives). Clear, mostly guideline-compliant titles/descriptions; includes career chapter; reasonably up to date (Jan 8, 2023, Lula third term). Biggest miss: far fewer than 100 chapters; many large domains (methodology, regional histories, economic history, culture) are still bundled and could be split further for “Einstein/top-tier” depth.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Well-structured, balanced chronological + thematic approach, good inclusion of social/cultural/economic/political history and some methods (digital methods, public history). Writing is concise with minimal fluff and generally vendor-neutral. However it is still under 100 chapters and less granular than needed for true mastery; some lowercasing/inconsistent title casing; fewer explicit advanced research-method chapters than the best models.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Very strong chronological coverage with good granularity on key events and 19th–20th century politics; includes career pathways and some historiography/archives. Weaknesses: still well under 100 chapters; some descriptions contain subjective/loaded phrasing (“forged Cohen Plan,” “eccentric presidency,” “pharaonic public works”) that’s not ideal for neutral curriculum; a few items are oddly specific while other major themes (economy, society, culture, historiography methods) are comparatively thin.",
+          "score": 7.6
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Solid survey with many important events and some thematic chapters (religion, environment, urbanization, methods, comparative slavery, careers). But it’s more textbook-outline than mastery curriculum: under 100 chapters, uneven granularity (many single-event chapters but fewer analytic/method chapters), and multiple titles/descriptions include mild fluff/overviews (“An Overview,” “Through the Ages”).",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Decent chronological backbone and includes a career chapter and some culture/social topics, but it is clearly not comprehensive: far under 100 chapters, limited thematic depth (race/gender/indigenous rights, historiography, archival methods, regional diversity, contemporary debates are thin). Also includes some non-US-English/Portuguese phrasing in titles (“à la Brasileira,” “Grito do Ipiranga”) and at least one notable inaccuracy/misleading item: framing ALN as “communist-leaning” opponent of Integralistas in the 1930s is historically off (ALN is primarily associated with the later dictatorship era).",
+          "score": 6.4
+        }
+      ]
+    }
+  ],
+  "taskId": "course-chapters",
+  "testCaseId": "en-brazilian-history-1"
+}

@@ -1,0 +1,149 @@
+{
+  "expectations": "\n      - Prepare students for Python roles\n      - MUST be in Brazilian Portuguese\n\n      \n  - It should assume learners start with no prior knowledge of the subject\n  - Should create a progressive learning path going from basic/beginner to mastery of the subject\n  - By the end of this course, they should be able to lead very complex projects and tasks in this field\n  - They should be prepared for certifications or advanced studies in this subject like a master's degree or PhD\n  - Should include **EVERYTHING** a student needs to be at the top 1% of the field\n  - Should follow the language specified by language parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Should cover latest trends in the field\n  - Don't use vendors in chapter titles or descriptions (e.g. \"npm\", \"yarn\", \"Redux\", etc.)\n    - Except are for widely known tools related to the course (e.g. \"Git\" in a programming course)\n  - This is an eval system for a learning platform, of course the definition of \"ready for a job\" doesn't mean they have the legal requirements to work in the field (eg. medical license, law license, etc.). That's not important here, we're assessing if the course prepares the student with the necessary knowledge and skills.\n  - You don't need to evaluate the output format here, just focus on the chapter content quality.\n  - Titles should be concise and straight to the point, no fluff/filler words. For example:\n    - Just \"HTML\" is better than \"HTML Structure and Semantics\" (structure and semantics are implied if this is the only HTML chapter). Similarly, if we only have one CSS chapter, just \"CSS\" is better than \"CSS Styling and Layout\".\n    - \"Front-end frameworks\" is better than \"Front-End UI Frameworks Overview\" (too verbose) or \"Front-End Frameworks: Core Concepts\" (core concepts is unnecessary fluff)\n    - \"Relational Databases\" is better than \"Relational Databases and SQL\" (SQL is implied, no need to mention)\n    - \"Introduction to Java\" is better than \"Introduction to Java and Setting Up Your Development Environment\" (too verbose)\n    - \"Lean Startup\" is better than \"The Lean Startup Methodology: An Overview\" (too verbose)\n    - \"Introduction to X\" is valid for titles of introductory chapters but we should avoid those words in descriptions\n  - Similarly, descriptions should be concise and straight to the point, no fluff/filler words. For example:\n    - \"Styling with CSS: Selectors, properties, the box model, Flexbox, CSS Grid, and cascade principles.\" is better than \"Master styling and layout with CSS, including selectors, properties, the box model, Flexbox, CSS Grid, and cascade principles.\" - \"Master\" is fluff, and so are words like \"learn\", \"understand\", \"explore\", etc.\n    - \"Properties of matter, states, and phase transitions.\" is better than \"Explore the definition of Chemistry, properties of matter, states, and phase transitions.\" - \"Explore the definition of Chemistry\" are filler/unnecessary words.\n  - Don't add capstone/final projects, assessments, or exercises\n  - It shouldn't mention in title or description references to 1% or similar instructions about being top 1%\n\n    ",
+  "judgedAt": "2026-02-22T01:42:15.273Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model A provides 168 chapters in Brazilian Portuguese, covering Python from foundations to advanced topics. The chapters are well-organized with a logical progression: ecosystem/setup → syntax/types → data structures → functions → OOP → typing → stdlib → file I/O → concurrency → testing → packaging → web → data science → ML → security → architecture → career. Titles are concise and professional (e.g., 'Listas', 'Dicionários', 'Decorators'). Descriptions are direct and avoid fluff words like 'learn' or 'explore'. The curriculum is very granular - for example, it separates float arithmetic errors, Decimal, and Fractions into distinct chapters, and has multiple chapters for asyncio subtopics. It's vendor-neutral (uses 'Frameworks web: trade-offs' instead of naming specific ones, though it parenthetically mentions Django/Flask/FastAPI which is acceptable). It covers career chapters at the end. The depth is impressive - it includes CPython internals, FFI, security, observability, and architecture patterns. Some minor issues: a few chapters like 'Fractions e racionais' and 'fractions na biblioteca padrão' seem somewhat redundant, and similarly 'Decimal para finanças' and 'decimal na biblioteca padrão'. But overall this is an exceptionally comprehensive curriculum.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model D provides 140 chapters in Brazilian Portuguese. The progression is logical and comprehensive, covering fundamentals through advanced topics. It's notably vendor-neutral, frequently using '(conceitos)' to indicate conceptual coverage without tying to specific tools. Coverage is very broad - includes security, observability, distributed systems, ML/NLP, geospatial data, finance, IoT, and career topics. Descriptions are generally concise and avoid fluff. However, there are some weaknesses: some early chapters are too broad (e.g., 'Estruturas de dados nativas' covers list, tuple, dict, set all in one chapter, while the prompt encourages granularity). Some chapters with '(conceitos)' feel too superficial or tangential for a Python course (e.g., 'Dados geoespaciais (conceitos)', 'Computação simbólica (conceitos)', 'Acessibilidade (conceitos)'). There's also significant topic bloat in areas like 'Sistemas multi-tenant', 'Otimização de custo (FinOps - conceitos)', and 'Governança de dados' which, while valuable, make the curriculum feel unfocused for a Python course specifically. Some chapters could be more granular in core Python areas. Titles are generally good but some are a bit verbose.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model G provides 116 chapters in Brazilian Portuguese. The curriculum has a solid logical progression and covers most important Python topics. Titles are generally concise and clear. Descriptions are mostly well-written and avoid excessive fluff. Coverage includes core Python, OOP, concurrency, web development, data science, ML, testing, packaging, and career. However, there are some issues: it names specific frameworks in chapter titles ('APIs GraphQL', 'gRPC e Protocol Buffers') which somewhat violates vendor neutrality, though these are more protocols than vendors. It includes separate chapters for microframeworks and full-stack frameworks which is good but could be more vendor-neutral. Some areas lack the granularity of Model A - for instance, typing gets only 2 chapters, and asyncio gets 2 chapters. The security coverage is decent but not as thorough. Overall a solid curriculum that covers the essential ground well.",
+          "score": 7.3
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model E provides 108 chapters in Brazilian Portuguese. The curriculum follows a clear logical progression and covers a wide range of Python topics. Titles are generally concise. However, there are several issues: some descriptions contain fluff words or are slightly verbose (e.g., 'Visão geral da linguagem Python, sua história...' in the first chapter). The curriculum names specific vendor tools more than necessary - 'Scikit-learn' as a chapter title, 'Matplotlib' and 'Seaborn' named directly, 'PySpark' as a chapter title. Some domain-specific chapters like 'Python para Bioinformática', 'Python para Geoespacial', 'Python e Computação Quântica' add breadth but limited depth. The 'Integração com LLMs e IA Generativa' chapter is a nice modern touch. The core Python coverage is solid but less granular than Model A in areas like typing, asyncio, and stdlib. It includes good algorithm/data structure chapters. Career chapters are present. The chapter on 'Desenvolvimento de Jogos com Python' feels somewhat out of place for a professional curriculum.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model F provides 120 chapters in Brazilian Portuguese. The curriculum is comprehensive and covers a wide range of topics. However, it has some notable issues: the last two chapters ('Playbooks operacionais e checklist de produção' and 'Síntese e roadmap de especialização') feel like filler/summary chapters that don't add educational content. Some descriptions are slightly verbose. The coverage of Python internals, security, and architecture is good. It includes some niche topics like 'Python em plataformas móveis', 'Robótica, automação e integração com hardware', and 'Aprendizado por reforço' which add breadth. However, some core Python areas lack granularity compared to Model A - for example, OOP fundamentals are crammed into fewer chapters. The curriculum is generally vendor-neutral. Some chapters could be more focused - 'Programação reativa e eventos' feels somewhat vague. The 'Diagnóstico de sistema e integração com ferramentas nativas' chapter mentioning perf and strace feels overly specific for a Python course.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model C provides only 100 chapters in Brazilian Portuguese - right at the minimum suggested threshold. While it covers the main Python topics, the granularity is insufficient for a truly comprehensive curriculum. Many important areas are condensed into single chapters where they should be expanded: concurrency gets only 4 chapters (Multithreading, Multiprocessing, Asyncio: Fundamentos, Asyncio Avançado), typing gets only 2 chapters, and testing gets only 4 chapters. The curriculum mentions specific vendor tools in titles: 'SQLAlchemy Core', 'SQLAlchemy ORM', 'NoSQL com MongoDB', 'Flask', 'Django', 'FastAPI', 'Pytest', 'MyPy', 'Cython', 'PySpark' - this violates vendor neutrality guidelines. Some descriptions contain filler words. The coverage of security, architecture patterns, and stdlib is thin compared to other models. There's no coverage of topics like WSGI/ASGI (mentioned briefly), packaging/distribution depth, or advanced typing. The career chapter is present but minimal. Overall, it's a functional but insufficiently deep curriculum.",
+          "score": 5.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model B provides 130 chapters in Brazilian Portuguese, which is a good count. However, the quality is severely undermined by extremely poor descriptions. Nearly every description is written in an unnecessarily convoluted, verbose, and nearly incomprehensible style. Examples: 'Expansão nativa focada exclusivamente na destruição em limites do tráfego unificando binários brutos externos de alta força para contornar alocações da base acoplando ponteiros focados no compilador com APIs integradas em C' for C Extensions - this is nearly unintelligible. 'Barreira nativa descarregando processamento acoplando proteções frontais baseadas em cache e garantias seguras criptográficas isoladas servindo ativos não dinâmicos na delegação de reverso da rede para alívio pesado mantendo pureza no processamento interno' for Reverse Proxies. This writing style makes the descriptions useless for learners. Additionally, it violates vendor neutrality by naming Flask, Django, FastAPI, SQLAlchemy, Alembic, Redis, MongoDB, Celery, Nginx, Docker Compose, Black, Flake8, Ruff, isort, Bandit, Selenium, Scrapy, BeautifulSoup, etc. directly in titles and descriptions. Some chapter titles are also verbose (e.g., 'Gerenciamento de Projetos e Liderança Técnica'). The overall curriculum structure is reasonable, but the execution is extremely poor.",
+          "score": 3.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model A is an exceptional output that perfectly follows every instruction in the prompt. It provides a highly granular and comprehensive curriculum with 161 chapters, perfectly matching the depth required for a broad field to reach the top 1%. It strictly follows the conciseness rules: titles are precise and direct (e.g., \"tempfile e diretórios temporários\", \"CPython: bytecode e dis\"), and descriptions are straight to the point without any fluff verbs like \"learn\" or \"understand\". It also beautifully handles vendor neutrality by using terms like \"Frameworks web: trade-offs\" and \"ORM, migrações e transações\" while correctly naming widely known Python ecosystem tools like NumPy and Pandas.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model D provides a very strong and comprehensive curriculum (over 100 chapters) with highly concise descriptions formatted as direct topic lists. It does a great job maintaining vendor neutrality for the most part. However, it loses points for slightly violating the title conciseness guidelines by appending \"(conceitos)\" to many titles (e.g., \"Bancos NoSQL (conceitos)\", \"Performance testing (conceitos)\") and adding redundant phrases like \"em Python\".",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model F offers a solid curriculum with over 100 chapters and maintains good vendor neutrality. However, it struggles slightly with the anti-fluff rules in its titles, using words like \"essencial\", \"básico\", \"avançadas\", and \"Panorama do Python\" which makes the titles less direct than requested.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model C covers a good amount of ground but violates the vendor neutrality rule by dedicating specific titles to \"Flask\", \"Django\", and \"FastAPI\" instead of generalizing to web frameworks. It also uses banned fluff words in titles such as \"Introdução\" and \"Fundamentos\".",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model G violates the anti-fluff constraints more noticeably. Titles like \"O que é Python e por que aprender\" are exactly the kind of verbose, beginner-oriented titles the prompt asked to avoid. It also uses \"Fundamentos de\" and includes vendor names in titles.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model E includes significant fluff in both titles and descriptions. Titles like \"O que é Python\" and \"Machine Learning — Fundamentos\" violate the conciseness rules. Descriptions frequently start with filler phrases like \"Visão geral da linguagem...\" and \"Conceito de...\", directly ignoring the prompt's formatting examples.",
+          "score": 4.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model B performs very poorly on the prompt's constraints. It heavily violates vendor neutrality by naming specific tools like Django, Flask, FastAPI, Redis, MongoDB, SQLAlchemy, etc., in its titles. Furthermore, its descriptions are incredibly verbose, reading like word-salad in an attempt to sound sophisticated (e.g., \"Barreira nativa descarregando processamento acoplando proteções frontais...\"), which directly contradicts the instruction to be concise and straight to the point.",
+          "score": 3
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Mais alinhado ao pedido de currículo realmente extenso e de nível sênior: alta granularidade (bem mais de 100 capítulos), progressão do básico a tópicos avançados (typing moderno, asyncio, packaging PEP 517/518, wheels, segurança, observabilidade, performance, internals do CPython, web/data/ML/MLOps) e linguagem PT-BR clara e objetiva. Em geral respeita neutralidade de fornecedor (cita ferramentas quando inevitável, e muitas vezes como exemplo). Pequenas quebras: menciona vários produtos/bibliotecas específicas em descrições (Django/Flask/FastAPI, NumPy/pandas) e usa alguns termos em inglês/pouco padronizados, mas é o melhor conjunto para “topo de carreira”.",
+          "score": 9.3
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Também é bem abrangente, moderno e com progressão coerente, cobrindo engenharia de software, produção, segurança, dados/ML e carreira. Descrições são diretas e sem fluff na maior parte. Pontos fracos: muitos capítulos ficam no nível “conceitos” (menos acionável que A) e a granularidade, embora alta, é menos profunda em biblioteca padrão/packaging detalhado. Ainda assim atende bem ao espírito “top 1%”.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Cobertura ampla e madura (internals, segurança, CI/CD, arquitetura, MLOps, escalabilidade). Boa sequência do fundamental ao avançado. Porém viola mais a neutralidade (menciona IPython, Sphinx, setuptools, PyPy, Jython etc. diretamente) e tem menos capítulos que A/D, agrupando temas grandes em unidades extensas, o que reduz a granularidade esperada para um currículo “100+ capítulos”.",
+          "score": 7.9
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Conteúdo sólido e relativamente completo, com boa varredura de linguagem, stdlib, concorrência, web, dados e práticas profissionais. Contudo, fica abaixo na profundidade e detalhamento; ainda agrupa bastante coisa em capítulos largos e não chega perto da extensividade desejada. Também traz vendors/ferramentas específicas em vários pontos (lxml, etc.) e inclui título com “por que aprender” (tom mais promocional).",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Amplo e bem organizado, inclui carreira e tendências (IA generativa/LLMs), mas tem descrições com bastante fluff (“por que é…”, “uma das mais populares”), e forte uso de ferramentas/bibliotecas específicas (requests, Plotly, Seaborn, SciPy, SymPy, PySpark, Docker etc.), contrariando a orientação de neutralidade. Número de capítulos ainda fica bem abaixo do ideal para “completo/extensivo”.",
+          "score": 6.6
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Boa trilha introdutória até intermediário com alguns tópicos avançados, mas é curta para o nível exigido (bem menos de 100). Também usa vendors específicos em vários capítulos (requests, BeautifulSoup, MongoDB, Redis, PySpark, Docker) e não aprofunda tópicos de produção/arquitetura/segurança/packaging no nível esperado para liderança de projetos complexos.",
+          "score": 6.1
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Apesar de cobrir muitos assuntos, o texto tem excesso de verbosidade e linguagem artificial/pouco clara, violando a exigência de descrições concisas e objetivas. Também é o que mais fere neutralidade e foco (lista muitas ferramentas específicas: Flask/Django/FastAPI, SQLAlchemy, Redis, requests, aiohttp, BeautifulSoup, Selenium, Scrapy, Bandit, Nginx, gunicorn etc.). A estrutura fica menos didática e menos consistente; ainda assim tem bastante conteúdo.",
+          "score": 4.9
+        }
+      ]
+    }
+  ],
+  "taskId": "course-chapters",
+  "testCaseId": "pt-python-1"
+}

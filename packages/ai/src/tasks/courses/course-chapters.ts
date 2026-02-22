@@ -10,6 +10,8 @@ const FALLBACK_MODELS = [
   "openai/gpt-5",
   "anthropic/claude-opus-4.6",
   "anthropic/claude-sonnet-4.6",
+  "openai/gpt-5-mini",
+  "google/gemini-3.1-pro-preview",
 ];
 
 const DEFAULT_REASONING_EFFORT: ReasoningEffort = "high";

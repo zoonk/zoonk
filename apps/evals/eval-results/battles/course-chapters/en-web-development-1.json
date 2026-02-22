@@ -1,0 +1,149 @@
+{
+  "expectations": "\n      - Prepare students for web developer roles\n      - MUST be in US English\n\n      \n  - It should assume learners start with no prior knowledge of the subject\n  - Should create a progressive learning path going from basic/beginner to mastery of the subject\n  - By the end of this course, they should be able to lead very complex projects and tasks in this field\n  - They should be prepared for certifications or advanced studies in this subject like a master's degree or PhD\n  - Should include **EVERYTHING** a student needs to be at the top 1% of the field\n  - Should follow the language specified by language parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Should cover latest trends in the field\n  - Don't use vendors in chapter titles or descriptions (e.g. \"npm\", \"yarn\", \"Redux\", etc.)\n    - Except are for widely known tools related to the course (e.g. \"Git\" in a programming course)\n  - This is an eval system for a learning platform, of course the definition of \"ready for a job\" doesn't mean they have the legal requirements to work in the field (eg. medical license, law license, etc.). That's not important here, we're assessing if the course prepares the student with the necessary knowledge and skills.\n  - You don't need to evaluate the output format here, just focus on the chapter content quality.\n  - Titles should be concise and straight to the point, no fluff/filler words. For example:\n    - Just \"HTML\" is better than \"HTML Structure and Semantics\" (structure and semantics are implied if this is the only HTML chapter). Similarly, if we only have one CSS chapter, just \"CSS\" is better than \"CSS Styling and Layout\".\n    - \"Front-end frameworks\" is better than \"Front-End UI Frameworks Overview\" (too verbose) or \"Front-End Frameworks: Core Concepts\" (core concepts is unnecessary fluff)\n    - \"Relational Databases\" is better than \"Relational Databases and SQL\" (SQL is implied, no need to mention)\n    - \"Introduction to Java\" is better than \"Introduction to Java and Setting Up Your Development Environment\" (too verbose)\n    - \"Lean Startup\" is better than \"The Lean Startup Methodology: An Overview\" (too verbose)\n    - \"Introduction to X\" is valid for titles of introductory chapters but we should avoid those words in descriptions\n  - Similarly, descriptions should be concise and straight to the point, no fluff/filler words. For example:\n    - \"Styling with CSS: Selectors, properties, the box model, Flexbox, CSS Grid, and cascade principles.\" is better than \"Master styling and layout with CSS, including selectors, properties, the box model, Flexbox, CSS Grid, and cascade principles.\" - \"Master\" is fluff, and so are words like \"learn\", \"understand\", \"explore\", etc.\n    - \"Properties of matter, states, and phase transitions.\" is better than \"Explore the definition of Chemistry, properties of matter, states, and phase transitions.\" - \"Explore the definition of Chemistry\" are filler/unnecessary words.\n  - Don't add capstone/final projects, assessments, or exercises\n  - It shouldn't mention in title or description references to 1% or similar instructions about being top 1%\n\n    ",
+  "judgedAt": "2026-02-22T01:42:13.227Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model D provides 185 chapters with exceptional breadth and depth. It covers foundational topics (networking, DNS, HTTP, HTML, CSS, JS) through advanced topics (distributed systems, event-driven architecture, compliance, privacy engineering, collaborative applications, CRDTs). The titles are concise and professional ('Relational databases', 'SQL mastery', 'Git fundamentals'). Descriptions are direct and free of filler words. It maintains excellent vendor neutrality throughout - no specific framework names in titles, using patterns like 'Component framework fundamentals (React/Vue/Angular/Svelte concepts)' only in descriptions for context. It includes career chapter, covers security in great depth (threat modeling, injection prevention, XSS defenses, SSRF, auth security, authorization security as separate chapters), has excellent granularity on databases (transactions, concurrency, migrations, indexing all separate), testing (unit, component, E2E, visual, contract, performance, security testing, test data), and operations (observability, SRE metrics, incident management, reliability patterns, capacity planning, cost engineering). It covers modern topics like collaborative applications (CRDTs), edge computing, browser extensions, cross-browser compatibility, and offline-first apps. The logical progression is excellent. Minor weaknesses: some chapters might be overly granular for a web dev course (e.g., 'Time-series and event storage', 'Streaming analytics'), and the mention of Docker in the description of 'Containers and images' violates vendor neutrality slightly, but only in description context.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model F delivers 168 chapters with remarkable depth and comprehensive coverage. Titles are concise and professional. It excels in security coverage (XSS, CSRF, injection, auth attacks, authorization, sessions/tokens, browser security headers, privacy, compliance, secure SDLC, supply chain security - all separate chapters). Excellent vendor neutrality - no framework names in titles. Descriptions are concise and avoid filler. It covers unique and important topics many others miss: Unicode and text processing, time/date engineering, formal methods/verification, research literacy, web standards bodies, chaos engineering, supply chain security. The testing section is thorough (strategy, unit, integration, E2E, API, accessibility in CI, performance, security testing, test data). Operations coverage is strong (observability, monitoring, tracing, incident management, resilience, scalability, FinOps). Modern topics covered well (AI tools, edge architectures, streaming). Weaknesses: some topics feel slightly over-granular for web dev (formal methods, advanced distributed systems like leader election), and a few descriptions could be more specific. The 'TypeScript fundamentals' appears in addition to a separate 'JavaScript runtimes and packages' which mentions Node.js specifically. Some chapters like 'Realtime systems design' and 'Payments systems design' feel like they belong more in a systems design course. Still, exceptionally comprehensive.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model C provides 131 chapters with very good coverage. It follows a logical progression from basics to advanced topics. Titles are generally concise and follow guidelines well. Good vendor neutrality overall, though it mentions 'React' explicitly in multiple chapter titles (React Fundamentals, React Hooks, React State Management, React Performance Optimization, Advanced React Patterns, Testing React Applications, SSR & Meta-Frameworks (React)), and also names Vue.js, Angular, Svelte/SvelteKit as separate chapters. While covering multiple frameworks gives breadth, this violates vendor neutrality guidelines significantly - the prompt says to avoid vendors unless the course is specifically about that tool. It also mentions 'Sass' in CSS Preprocessors description, 'Docker' in containerization title, 'ESLint' and 'Prettier' in linting chapter. On the positive side: excellent practical coverage (email development, e-commerce, search, SaaS/multi-tenant, monorepo management, feature flags), good career chapters, covers ethics/sustainability. Descriptions are mostly concise but a few have minor filler. Missing some depth in security (no separate XSS, CSRF, SQL injection chapters) and databases (no separate transactions, migrations chapters). The framework-specific chapters take up significant space that could be used for deeper architectural/systems coverage.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model G provides 107 chapters with broad coverage. Titles are mostly concise. It covers a wide range: from fundamentals through advanced architecture, SRE, payments, e-commerce, and career topics. Some unique additions like 'Information Architecture and Navigation', 'Platform Engineering and Internal Developer Platforms', 'Advanced Experimentation and Causal Analysis'. However, it names specific frameworks in titles: 'React Core Concepts', 'Kubernetes and Orchestration Fundamentals', mentions 'Docker' in containerization title. Some titles are verbose: 'Microservices, Modular Monoliths, and Service Boundaries', 'API Gateways, Service Meshes, and Traffic Management'. A few chapters seem overly broad - 'CSS' as a single chapter covering 'cascading rules, specificity, inheritance, modern layout systems (flexbox, grid), responsive techniques, and CSS architecture' is too much for one chapter. Similarly 'HTML' as one chapter. 'JavaScript (ESNext)' tries to cover too much. This insufficient granularity in core topics is a significant weakness for a web development course. The advanced topics have good granularity but the foundations are too compressed. Missing some important topics like forms handling, browser storage details, CSS animations as dedicated chapters.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model A provides 113 chapters with solid coverage. Titles are mostly concise and professional. Excellent vendor neutrality - no specific frameworks named in titles. Good granularity in several areas: CSS (7+ chapters), JavaScript (10+ chapters), databases (9 chapters including vector databases), security (11 chapters). Descriptions are direct and free of filler. Covers some unique topics like WebAudio API, gRPC & Protocol Buffers, Vector Databases, Mutation Testing. Logical progression from foundations to advanced. Weaknesses: Missing TypeScript entirely (significant gap for modern web development), no mention of design systems, no SEO chapter, no chapter on browser compatibility/progressive enhancement, missing data structures/algorithms, no UX/design fundamentals, no chapter on cloud computing specifics beyond the models chapter. The absence of TypeScript is a major gap. Also missing chapters on JavaScript modules, regular expressions, web workers. Some descriptions could be more specific. Career chapter is present but brief. Overall solid but with notable gaps.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model E provides 131 chapters with comprehensive coverage and good logical progression. Titles are generally concise. It covers career development extensively (portfolio, job search, resume, interview prep, offer negotiation, career growth, freelancing - 6 chapters). Good coverage of modern topics (AI integration, WebAssembly, feature flags, A/B testing). Includes practical topics often missed: web scraping, email delivery, payments, file uploads. However, it violates vendor neutrality significantly: 'React Fundamentals', 'React Hooks', 'React State Management: Context & Patterns', 'React State Management: Libraries' (mentions Redux Toolkit, Zustand, Jotai, Recoil), 'React Routing' (mentions React Router), 'React Data Fetching & Caching' (mentions SWR, React Query), 'Advanced React Patterns', 'React Performance', 'Testing React Applications', 'Next.js Fundamentals', 'Next.js Rendering Strategies', 'Next.js API & Server Actions', 'Next.js Performance & Optimization'. That's 14 chapters with specific vendor names. Also mentions 'Express.js', 'Tailwind CSS', 'Docker', 'Socket.io', 'Elasticsearch', 'Three.js' in titles. The descriptions mention npm/yarn/pnpm. This is the most significant vendor neutrality violation among all models. While the content coverage is good, the heavy vendor-specific approach heavily penalizes the score per the prompt rules.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model B provides only 100 chapters, which is at the minimum threshold. Titles are mostly concise. It names specific vendors in several titles: 'React Fundamentals', 'React Hooks', 'React Context API', 'React Performance', 'Node.js Basics', 'Express.js', 'Redis and Caching', 'Docker' in containerization description. Mentions 'ESLint and Prettier' in linting title, 'Sass or Less' in preprocessors description, 'Three.js' in WebGL title, 'Vite or Webpack' in bundlers description. Some chapters lack sufficient detail in descriptions: 'Rapid UI development using functional CSS classes' for Utility-First CSS is vague. Coverage gaps: no dedicated chapters on HTTP/2/HTTP/3, no web workers chapter, limited security depth (only 3 security chapters), no separate chapters for database transactions or migrations, no chapters on data structures/algorithms, missing privacy/compliance, no monorepo chapter, no feature flags, limited testing coverage (only 4 testing chapters vs 7-9 in better models). The 100 chapters feel insufficient for comprehensive web development mastery. Missing important topics: browser compatibility, progressive enhancement, design systems lack depth, no architecture documentation, no chaos engineering. Career coverage is minimal (3 chapters). Overall adequate but notably less comprehensive than the top models.",
+          "score": 6
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model F provides an absolute masterclass in curriculum design. It perfectly captures the prompt's ambition of taking a student to the 'top 1%' and preparing them for 'advanced studies like a PhD'. The depth is breathtaking—covering extremely advanced topics like FinOps, supply chain security, formal methods, chaos engineering, data governance, and research literacy. Furthermore, it strictly adhered to the negative constraints, providing concise, fluff-free descriptions and maintaining impeccable vendor neutrality (using 'Node.js' falls safely under the 'Linux/Git' exception for widely known foundational tools, while it brilliantly avoided naming UI frameworks or package managers).",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model A is an exceptionally disciplined and high-quality output. It followed every single constraint flawlessly. It is entirely fluff-free, and it took vendor neutrality to the absolute maximum (avoiding even Node.js or Docker by using terms like 'Server-Side Programming' and 'Containerization'). With 117 chapters, it provides a highly comprehensive progression. It scores just slightly below Model F only because Model F's curriculum included an even higher ceiling of Staff/Principal-level topics, but Model A's execution of the prompt's formatting and negative constraints is flawless.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model D produced an incredibly comprehensive curriculum (151 chapters) with fantastic depth and progression. The titles and descriptions are concise and well-written. However, it receives a penalty for violating the strict vendor neutrality guidelines. Despite the prompt's explicit instruction to avoid vendors (using 'Redux' as a negative example), Model D explicitly listed '(React/Vue/Angular/Svelte concepts)' in a chapter description. Aside from this slip-up, it is a phenomenal curriculum.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model C provides a good progressive curriculum with 108 chapters, but it failed the vendor neutrality constraint heavily. It dedicated entire chapters explicitly to React, Vue.js, Angular, Svelte, Sass, and Docker. While it successfully avoided the 'npm/yarn' trap, relying so heavily on specific vendor frameworks violates the prompt's instructions to keep titles and descriptions vendor-neutral.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Similar to Model C, Model G failed the vendor neutrality constraint by explicitly listing React, Vue, Angular, Svelte, Deno, Docker, Kubernetes, and an entire list of backend languages (Python, Ruby, Java, Go, Rust, C#). This goes against the core instruction to describe the technology theoretically rather than by vendor name.",
+          "score": 4.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model B suffers a heavy penalty for directly violating a specifically provided negative constraint example. The prompt explicitly instructed: 'Don't use vendors... (e.g. \"npm\", \"yarn\", \"Redux\", etc.)'. Model B explicitly wrote 'npm or yarn' in one of its descriptions. It also freely used vendors like Vite, Webpack, ESLint, Prettier, Express, React, and Redis, demonstrating a failure to follow the negative constraints.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model E is the worst offender regarding the negative constraints. The system prompt explicitly stated that 'package managers' is better than 'npm'/'yarn'/'pnpm'. Model E directly defied this by writing 'npm/yarn/pnpm' in its description. Furthermore, it named extremely specific vendors and libraries throughout the curriculum, including Redux Toolkit, Zustand, Jotai, Recoil, Tailwind CSS, Next.js, Figma, and Elasticsearch. It completely ignored the vendor neutrality rules.",
+          "score": 2
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Most comprehensive and job-aligned while staying largely vendor-neutral. Strong progression from networking/web fundamentals through frontend, backend, databases, security, testing, DevOps/SRE, scalability, and leadership. Includes modern topics (HTTP/3, Trusted Types, passkeys, islands/partial hydration, observability, privacy). Also includes a clear career chapter. Minor issues: far below the prompt’s implied 100+ chapter expectation and a few slightly verbose/overlapping chapters, but overall the strongest curriculum design quality.",
+          "score": 9.1
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Very broad and deep coverage with many advanced, modern topics (supply-chain security/SBOM, privacy sandbox direction, WebGPU overview, RUM, CQRS concepts, enterprise SSO/SCIM, etc.) and solid ordering. Mostly vendor-neutral. Main weaknesses: still under 100 chapters, some redundancy (web performance metrics appears twice), and a few titles/descriptions drift into meta wording rather than crisp chapter scopes.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Strong vendor-neutrality and good breadth across frontend, backend, databases, security, testing, CI/CD, cloud, observability, and modern areas (LLM integration, micro-frontends, Wasm). Good concise descriptions. Weaknesses: only ~100? actually closer to ~100? still under the prompt’s “100+” guidance for comprehensive; some chapters are overly tool-agnostic in a way that may miss practical framework/server specifics, and a couple titles are a bit awkward (e.g., “The Internet & Web Working Principles”).",
+          "score": 8.4
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Very wide topical coverage including leadership/product/experimentation, security, data pipelines, infra, and modern trends. However, granularity is too coarse for a ‘comprehensive’ curriculum (many huge umbrella chapters like “CSS” and “JavaScript (ESNext)”), making it less actionable as a learning path from zero. Also includes several vendor/tool mentions (React, Vue, Angular, Svelte, Node.js/Deno, Docker, Kubernetes, Thrift) contrary to the vendor-neutral guideline (some are acceptable, many are not).",
+          "score": 7.6
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Good practical sequence from fundamentals to frameworks, backend, infra, and career readiness; includes modern CSS features and broader professional topics. But it repeatedly violates vendor-neutral constraints by naming many specific tools/vendors in titles/descriptions (React, Vue, Angular, SvelteKit, Docker, ESLint, Prettier). Also remains under the 100+ chapters expectation and has some overly broad chapters.",
+          "score": 7.1
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Solid baseline coverage and includes career/job-search topics, but has many vendor-specific mentions (Google Fonts, npm/yarn/pnpm, Express.js, Redux Toolkit, Zustand, Recoil, Tailwind CSS, Next.js, GitHub Actions, Elasticsearch, Figma, Storybook, Socket.io, tRPC). This directly conflicts with the prompt. Also not comprehensive enough (under 100) and some chapters are framework-heavy rather than vendor-neutral fundamentals.",
+          "score": 6.4
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Clear and fairly well-structured, but heavily violates vendor-neutrality with frequent named tools/frameworks in titles/descriptions (React, Node.js, Express.js, Redis, Docker, Sass/Less, ESLint/Prettier, Vite/Webpack, Three.js, npm/yarn). Also under 100 chapters and missing depth in several advanced areas compared with stronger outputs.",
+          "score": 6.1
+        }
+      ]
+    }
+  ],
+  "taskId": "course-chapters",
+  "testCaseId": "en-web-development-1"
+}
