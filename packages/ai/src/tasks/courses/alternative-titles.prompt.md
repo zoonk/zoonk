@@ -44,8 +44,10 @@ Be exhaustive. For most topics, this means **100+ titles**.
 
 **TITLE:** French
 
-- Good: French Language, The French Language, French for Beginners
-- Bad: French Culture (broader)
+- Good: French Language, The French Language, French for Beginners, French Grammar, French Vocabulary, DELF (exam that maps to French course), French Pronunciation, French Conversation
+- Bad: French Culture (not language learning), French Literature (not language learning)
+
+Note for language courses: our platform consolidates all language learning into a single course per language. Grammar, vocabulary, pronunciation, exam prep (DELF, TOEFL, IELTS, JLPT, etc.) are all part of the same language course, not separate courses. Include these as alternative titles so our duplicate detection catches them.
 
 ## Language
 

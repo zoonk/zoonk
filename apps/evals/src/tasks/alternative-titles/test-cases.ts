@@ -80,9 +80,9 @@ export const TEST_CASES = [
       - Should include "Língua Inglesa", "A Língua Inglesa"
       - Variants like "Inglês Americano", "Inglês Britânico" are acceptable since they refer to the same language
       - Terms like "Inglês Moderno" and "Inglês Contemporâneo" are acceptable since they refer to the same language
-      - Anything that refers to learning English is acceptable
-      - Should NOT include "Cultura Inglesa", "Gramática Inglesa", "Spanish", etc
-      - Should NOT include exams like "TOEFL", "IELTS", etc., since they are different topics
+      - Should include any title that a user might search for when wanting to learn English, since our platform consolidates all English learning into one course
+      - This INCLUDES: "Gramática Inglesa", "Vocabulário de Inglês", "Pronúncia do Inglês", "Conversação em Inglês", "TOEFL", "IELTS", "Cambridge English" — these all map to the same English course
+      - Should NOT include: "Cultura Inglesa" (culture, not language learning), "Literatura Inglesa" (literature, not language learning), "Spanish" (different language)
       - Should be in Portuguese
 
       ${SHARED_EXPECTATIONS}

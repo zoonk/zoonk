@@ -4,7 +4,7 @@ const SHARED_EXPECTATIONS = `
   - If a topic is too broad, split it into multiple lessons
   - Each lesson should be extremely focused on a SINGLE concept
   - If a lesson is too broad, split it into multiple lessons
-  - If you find yourself using "AND", "OR", or "VS" in a title, you should split it into separate lessons
+  - Each lesson must cover a SINGLE concept. Using "AND", "OR", "VS" (or equivalents in other languages like "e", "ou", "y", "o") in a title is a signal it MAY be too broad — but it is acceptable when the comparison or pairing IS the concept itself (e.g., "DEPT-90 y DEPT-135" where distinguishing two NMR techniques is the lesson, or "IPv4 vs. IPv6 Format" where the format contrast is one concept). Only penalize when AND/OR/VS joins genuinely separate concepts that deserve their own lessons (e.g., "Strings and Lists" where each is a full topic)
   - Lesson titles should be short and specific to the exact concept covered
   - Build a logical progression from basic to advanced concepts
   - Ensure lessons build on knowledge from previous lessons
@@ -16,7 +16,7 @@ const SHARED_EXPECTATIONS = `
   - Should follow title and description guidelines: no fluff, be concise, straight to the point
   - Descriptions should be concise and straight to the point, no fluff/filler words (avoid "learn", "understand", "explore", "introduction to", etc.)
   - You don't need to evaluate the output format here, just focus on the lesson content quality
-  - Include an extensive list of lessons to cover all the concepts needed to learn the chapter. Complex topics will usually requiere more than 100 lessons
+  - Include an extensive list of lessons to fully cover the chapter's scope. The key metric is completeness: are all concepts in the chapter description adequately covered with sufficient granularity? Broad technical chapters (e.g., web fundamentals, Python basics) typically need 80-120+ lessons. Narrower or more specialized chapters (e.g., legal theory of evidence, NMR spectroscopy) may need fewer if the domain is inherently smaller — do not penalize for fewer lessons if the chapter's scope is fully covered
 
   Things to check:
   - Is each lesson too broad? If so, it should be broken down further

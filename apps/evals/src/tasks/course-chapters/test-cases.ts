@@ -7,8 +7,9 @@ const SHARED_EXPECTATIONS = `
   - Should follow the language specified by language parameter
   - Should follow title and description guidelines: no fluff, be concise, straight to the point
   - Should cover latest trends in the field
-  - Don't use vendors in chapter titles or descriptions (e.g. "npm", "yarn", "Redux", etc.)
-    - Except are for widely known tools related to the course (e.g. "Git" in a programming course)
+  - Prefer concept names over vendor names in chapter titles/descriptions (e.g., "Package management" instead of "npm"). Ecosystem-level tools (npm, yarn, Redux, Zustand) should be avoided in titles
+    - Exception: foundational tools that ARE the course subject matter are allowed (e.g., "Git" in a programming course, "Node.js" in a web dev course, "Docker" in a DevOps course). The test: would a chapter about this subject be incomplete without mentioning this tool?
+    - Vendor name usage is a minor issue — it affects title quality but not pedagogical content. Do NOT treat it as a major error
   - This is an eval system for a learning platform, of course the definition of "ready for a job" doesn't mean they have the legal requirements to work in the field (eg. medical license, law license, etc.). That's not important here, we're assessing if the course prepares the student with the necessary knowledge and skills.
   - You don't need to evaluate the output format here, just focus on the chapter content quality.
   - Titles should be concise and straight to the point, no fluff/filler words. For example:
@@ -21,7 +22,7 @@ const SHARED_EXPECTATIONS = `
   - Similarly, descriptions should be concise and straight to the point, no fluff/filler words. For example:
     - "Styling with CSS: Selectors, properties, the box model, Flexbox, CSS Grid, and cascade principles." is better than "Master styling and layout with CSS, including selectors, properties, the box model, Flexbox, CSS Grid, and cascade principles." - "Master" is fluff, and so are words like "learn", "understand", "explore", etc.
     - "Properties of matter, states, and phase transitions." is better than "Explore the definition of Chemistry, properties of matter, states, and phase transitions." - "Explore the definition of Chemistry" are filler/unnecessary words.
-  - Don't add capstone/final projects, assessments, or exercises
+  - Don't add assessment-style chapters: no final projects, capstone assignments, exercises, quizzes, or "test your knowledge" chapters. A theoretical synthesis chapter (e.g., "Design Patterns in Architecture") is fine even if it synthesizes prior material — the rule targets assessment/project chapters, not synthesis of knowledge. If a chapter uses the word "capstone" but is theoretical (not an assignment), treat it as a minor issue at most, not a major error
   - It shouldn't mention in title or description references to 1% or similar instructions about being top 1%
 `;
 
@@ -107,6 +108,7 @@ export const TEST_CASES = [
     expectations: `
       - MUST be in UK English
       - Should cover British Law
+      - UK spelling is expected (e.g., "offences" not "offenses", "defence" not "defense"). Using US spellings in a UK Law course is a minor error — it shows dialect inconsistency but does not affect pedagogical quality. Do NOT treat spelling variants as a major error
 
       ${SHARED_EXPECTATIONS}
     `,
