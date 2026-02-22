@@ -1,0 +1,149 @@
+{
+  "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Should cover Brazilian Law\n      \n      \n  - It should assume learners start with no prior knowledge of the subject\n  - Should create a progressive learning path going from basic/beginner to mastery of the subject\n  - By the end of this course, they should be able to lead very complex projects and tasks in this field\n  - They should be prepared for certifications or advanced studies in this subject like a master's degree or PhD\n  - Should include **EVERYTHING** a student needs to be at the top 1% of the field\n  - Should follow the language specified by language parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Should cover latest trends in the field\n  - Don't use vendors in chapter titles or descriptions (e.g. \"npm\", \"yarn\", \"Redux\", etc.)\n    - Except are for widely known tools related to the course (e.g. \"Git\" in a programming course)\n  - This is an eval system for a learning platform, of course the definition of \"ready for a job\" doesn't mean they have the legal requirements to work in the field (eg. medical license, law license, etc.). That's not important here, we're assessing if the course prepares the student with the necessary knowledge and skills.\n  - You don't need to evaluate the output format here, just focus on the chapter content quality.\n  - Titles should be concise and straight to the point, no fluff/filler words. For example:\n    - Just \"HTML\" is better than \"HTML Structure and Semantics\" (structure and semantics are implied if this is the only HTML chapter). Similarly, if we only have one CSS chapter, just \"CSS\" is better than \"CSS Styling and Layout\".\n    - \"Front-end frameworks\" is better than \"Front-End UI Frameworks Overview\" (too verbose) or \"Front-End Frameworks: Core Concepts\" (core concepts is unnecessary fluff)\n    - \"Relational Databases\" is better than \"Relational Databases and SQL\" (SQL is implied, no need to mention)\n    - \"Introduction to Java\" is better than \"Introduction to Java and Setting Up Your Development Environment\" (too verbose)\n    - \"Lean Startup\" is better than \"The Lean Startup Methodology: An Overview\" (too verbose)\n    - \"Introduction to X\" is valid for titles of introductory chapters but we should avoid those words in descriptions\n  - Similarly, descriptions should be concise and straight to the point, no fluff/filler words. For example:\n    - \"Styling with CSS: Selectors, properties, the box model, Flexbox, CSS Grid, and cascade principles.\" is better than \"Master styling and layout with CSS, including selectors, properties, the box model, Flexbox, CSS Grid, and cascade principles.\" - \"Master\" is fluff, and so are words like \"learn\", \"understand\", \"explore\", etc.\n    - \"Properties of matter, states, and phase transitions.\" is better than \"Explore the definition of Chemistry, properties of matter, states, and phase transitions.\" - \"Explore the definition of Chemistry\" are filler/unnecessary words.\n  - Don't add capstone/final projects, assessments, or exercises\n  - It shouldn't mention in title or description references to 1% or similar instructions about being top 1%\n\n    ",
+  "judgedAt": "2026-02-22T00:46:15.494Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model C provides the most comprehensive, well-structured, and granular curriculum for Brazilian Law. It has 109 chapters covering an exceptional breadth of topics. Key strengths: (1) Excellent progression from foundational theory (sources of law, norm theory, hermeneutics) through core branches to advanced/specialized topics. (2) Outstanding granularity - e.g., process civil is broken into postulatória, instrução, tutelas provisórias, sentença, execução, and recursos as separate chapters, which reflects real depth. (3) Covers niche but important areas like urbanístico, agrário, saneamento, transportes, energy regulation, telecom regulation, notarial/registral, criminologia, and ativos digitais. (4) Includes practical skills chapters (elaboração de contratos, due diligence, contencioso estratégico, atuação forense). (5) Includes career chapter. (6) Descriptions are concise and follow the guidelines well - no fluff words like 'learn' or 'explore'. (7) Titles are generally concise. (8) Covers latest trends (IA, LGPD, criptoativos, ESG). (9) Includes methodology and empirical methods. Minor issues: some titles could be slightly more concise, and a few use parenthetical references to specific laws (like CPC/2015), but overall this is the most complete and well-organized curriculum.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model D offers a very comprehensive curriculum with 65 chapters. Strengths: (1) Good logical progression from theory to practice. (2) Covers a wide range of topics including agronegócio, urbanístico, saúde, digital, IA. (3) Includes important advanced topics like litígios estruturais, teoria da adjudicação, and provas/raciocínio probatório. (4) Good separation of practical skills (escrita jurídica, argumentação, pesquisa). (5) Descriptions are generally concise and well-written. (6) Includes career chapter. (7) Covers modern topics (IA, cybersecurity, proteção de dados). Minor weaknesses: Some chapters combine too many topics (e.g., 'Direito Empresarial' as a single chapter covering societies, títulos de crédito, recuperação/falência, governança, AND mercado de capitais is too broad). Some title choices could be more concise. Overall very strong but slightly less granular than Model C in key areas.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model A provides a very extensive curriculum with 62 chapters. Strengths: (1) Very comprehensive coverage including specialized areas like maritime/aeronautical law, energy/infrastructure, health law, bioethics. (2) Strong practical skills coverage (redação jurídica, prática forense, negociação, pesquisa jurídica). (3) Excellent coverage of business law topics (M&A, insolvência, mercado de capitais, fintech). (4) Includes career development, academic preparation, and well-being chapters. (5) Good progression. Weaknesses: (1) Some titles are in English ('Legal Project Management', 'Legal Operations', 'E-Discovery', 'Business Development') which violates the Portuguese language requirement - this is a notable issue. (2) Missing some important foundational topics - no separate chapter on Filosofia do Direito or Sociologia Jurídica. (3) No chapter on Direito Eleitoral, Direito de Família/Sucessões, or Direito Financeiro/Orçamentário, which are significant gaps. (4) Some descriptions use filler-adjacent language. The English titles are a meaningful penalty for a Portuguese-language course.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model G provides a very detailed curriculum with 61 chapters. Strengths: (1) Extremely detailed descriptions that thoroughly explain what each chapter covers. (2) Excellent granularity in core areas - Constitutional law gets 5 chapters, Administrative law gets 5, Civil law gets 8, Criminal law gets 5. (3) Covers specialized areas like agrário/minerário, notarial/registral, military/maritime/aeronautical. (4) Good coverage of modern topics. (5) Includes career and management chapters. Weaknesses: (1) Descriptions are sometimes too long and detailed, bordering on verbose, though they avoid explicit fluff words. (2) Some chapters combine disparate topics (e.g., 'Ramos Especializados do Direito' lumps military, maritime, aeronautical, space, and sports law together - this is too broad). (3) The 'Direito e Interdisciplinaridade' chapter also combines too many unrelated topics. (4) Missing dedicated chapters on some important areas like compliance as a standalone, due diligence, or legal operations. (5) Some descriptions mention specific law numbers which adds useful specificity but also makes them longer. Overall very solid but slightly less well-organized than top models.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model F provides 53 chapters with good coverage of Brazilian Law fundamentals. Strengths: (1) Good foundational structure. (2) Covers important areas like biodireito, direito e gênero, remédios constitucionais as separate chapters which add value. (3) Includes career chapter. (4) Reasonable progression. Weaknesses: (1) Descriptions are somewhat verbose and some include filler-adjacent content. (2) Some chapters mention specific vendor/tool names (LGPD is acceptable as it's the specific law, but listing specific taxes like 'IRPF, IRPJ, IPI, ICMS, ISS, IOF, ITR, IPTU, IPVA' in a title-level description feels more like a list than a description). (3) Missing important advanced/specialized areas - no separate chapters for legal operations, legal tech, due diligence, M&A, mercado de capitais, direito bancário as distinct from empresarial. (4) The last chapter 'Integração e Resolução de Casos Complexos' feels like a capstone/assessment which the prompt says to avoid. (5) Less granular than top models in key areas like processo civil (only 2 chapters) and direito empresarial. (6) Some areas like 'Direito e Novas Tecnologias' could be better integrated. Overall adequate but less comprehensive and polished than the top models.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model B provides 47 chapters covering Brazilian Law. Strengths: (1) Clean, concise titles and descriptions that follow guidelines well. (2) Good foundational coverage. (3) Logical progression. (4) Includes career chapter. (5) Mentions LGPD appropriately. Weaknesses: (1) Only 47 chapters makes this one of the least comprehensive models - for a field as vast as Law aiming for mastery, this feels insufficient. (2) Missing important specialized areas: no chapters on direito financeiro/orçamentário, direito urbanístico, direito agrário, direito notarial/registral, direito marítimo, bioética/saúde, regulação setorial (energia, telecom), mercado de capitais, direito bancário, legal operations/tech, due diligence, M&A. (3) Direito Empresarial gets only 2 chapters which is insufficient for mastery. (4) No chapter on análise econômica do direito or métodos empíricos. (5) Process civil gets only 2 chapters. (6) Some descriptions could be more specific. While well-written, the limited scope prevents this from being a truly comprehensive curriculum for mastery.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model E provides only 30 chapters, making it the least comprehensive curriculum. Strengths: (1) Concise titles. (2) Covers main branches of law. (3) Includes career and innovation chapters. Weaknesses: (1) Only 30 chapters is far too few for a field as vast as Brazilian Law aiming for mastery/top 1%. (2) Many chapters combine too many topics into single chapters, sacrificing depth - e.g., 'Direito Civil: Coisas, Família e Sucessões' combines three major sub-areas into one chapter. (3) 'Direito do Trabalho e Previdenciário' combines two distinct fields. (4) Missing many important areas: direito eleitoral, direito financeiro, direito urbanístico, direito agrário, direito notarial, direito marítimo, bioética, regulação setorial, análise econômica, metodologia de pesquisa, perícias, provas (as standalone), precedentes, litígio estratégico, due diligence, M&A, mercado de capitais, direito bancário. (5) 'História, Filosofia e Sociologia do Direito' combining three foundational fields into one chapter is too superficial. (6) No chapter on controle de constitucionalidade specifically. This curriculum would not prepare someone for mastery of Brazilian Law.",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model C provides an absolutely outstanding curriculum that perfectly aligns with the prompt's request for an exhaustive, 'top 1%' level course. It includes 104 highly granular chapters that cover a standard 5-year Brazilian Law degree, plus advanced postgraduate topics (such as Jurimetrics, Law & Economics, M&A, Complex Litigation, and Legal Ops). It specifically references up-to-date Brazilian context, such as the new bidding law (Lei 14.133/2021), the recent tax reform debates (IBS), LGPD, and Marco Civil. The titles and descriptions are perfectly concise and devoid of fluff. It includes a great career development chapter as well.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model G provides a highly detailed and comprehensive curriculum (63 chapters) that explicitly references several important Brazilian laws (e.g., Lei 11.101/2005, Nova Lei de Licitações, Reforma Trabalhista, EC 103/2019). The titles and descriptions are very concise and informative. It covers a logical progression from theory to advanced and specialized branches, including a career planning chapter.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model D offers a very strong, well-structured curriculum with 62 chapters. It thoroughly covers Brazilian law and incorporates modern legal trends like Law & Economics, ESG, Data Protection, AI regulation, and Legal Operations. It strictly follows all formatting and negative constraints, including concise, fluff-free descriptions.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model A presents a very comprehensive curriculum with 63 chapters. It has a slightly stronger corporate and international focus (e.g., Cross-Border practices, E-Discovery, Fintech) which is great for top 1% professionals. It adheres perfectly to the conciseness and formatting rules.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model F is a great curriculum with 51 chapters. It explicitly covers Brazilian systems (CF/88, CPC/2015, CTN, CDC) and modern topics like Biodireito and Legaltechs. It is slightly less granular than the higher-ranked models but remains an excellent output that follows all prompt instructions.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model B provides a solid foundational curriculum (48 chapters). While it covers the main branches of Brazilian law effectively and follows the formatting instructions well, it lacks the extreme depth and advanced topics (like Legal Ops, Jurimetrics, or Complex M&A) found in the top-ranked models, which are necessary to reach the 'top 1%' level.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model E is the least comprehensive, offering only 30 chapters. Given the vastness of the subject 'Direito' (especially in Brazil), 30 chapters are insufficient to take a learner from beginner to absolute mastery ('top 1%'). While it follows the formatting and conciseness rules well, it arbitrarily limits the depth of the course compared to the other models.",
+          "score": 7.5
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Cobertura mais completa e moderna do Direito brasileiro, com progressão clara de fundamentos (fontes, hermenêutica, precedentes, teoria da decisão) para ramos centrais (constitucional, administrativo, tributário, civil, penal, processuais) e depois especializações e tendências (LGPD, plataformas, cibersegurança, IA, cripto, jurimetria, legal ops). Inclui tópicos bem atuais (Lei 14.133/2021, reformas de improbidade, debates IBS/tributação, ODR, DPIA, governança de IA) e habilidades profissionais avançadas (contencioso estratégico, tribunais superiores, due diligence, drafting). Linguagem concisa, pouco “fluff” e fortemente alinhada ao contexto brasileiro.",
+          "score": 9.6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Muito forte e abrangente, com bom equilíbrio entre teoria, ramos dogmáticos, processo, setores regulados, tecnologia e pesquisa. Inclui temas modernos (LGPD, IA, incident response, jurimetria/legal ops, litígios estruturais). Pequenas perdas por algumas redundâncias/fragmentações (ex.: constitucional/federalismo repetido), descrições às vezes longas e alguns termos em inglês (“Cybersecurity”) e generalidades (“em perspectivas”) que reduzem precisão.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Extenso e com forte foco em prática avançada (M&A, antitruste, mercado financeiro, e-discovery, legal ops, gestão, crise, inovação). Bom para formar perfil corporativo/alto nível. Porém, falta/está sub-representado em pilares do currículo jurídico brasileiro para base ampla (p.ex., Direito Civil: família/sucessões; parte geral do civil; direito empresarial “clássico” além do societário; eleitoral/financeiro/orçamentário aparecem pouco ou não aparecem de forma nuclear). Algumas escolhas parecem mais voltadas a prática de grandes escritórios do que a formação completa do bacharelado. Também há vários anglicismos (frameworks, metrics, outsourcing) e capítulos com escopo um pouco “consultoria”.",
+          "score": 8.4
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Cobertura muito ampla e explicitamente brasileira (cita LINDB, leis e reformas como Lei 14.133/2021, Lei 14.230/2021, EC 103/2019). Inclui muitos ramos e temas emergentes. Perde pontos por excesso de verbosidade e descrições longas (menos alinhado ao guia de concisão), redundâncias (hermenêutica e redação aparecem duplicadas), e inclusão discutível/forçada de alguns ramos “especializados” no mesmo nível (espacial/desportivo) sem aprofundamento proporcional.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Boa progressão e base sólida, com cobertura ampla dos ramos tradicionais e inclusão de tópicos atuais (LGPD, blockchain/IA, mercado jurídico, pesquisa). Problemas: algumas imprecisões/estranhezas de escopo (ex.: direitos humanos mencionando “Conselho da Europa” como se fosse eixo principal para formação brasileira; capítulo final de “revisão integrada” parece quase um módulo de prova/treino, embora não seja avaliação formal). Menos cobertura setorial/regulatória moderna e menos profundidade em prática avançada do que os melhores.",
+          "score": 7.6
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Currículo bem estruturado para uma visão geral de graduação, com capítulos clássicos e um módulo de carreira. Contudo, é menos abrangente para “mastery” (pouca profundidade em prática avançada, precedentes, jurimetria/legal ops, setores regulados, mercado financeiro/capitais, concorrencial mais profundo, investigação interna/due diligence, etc.). Também inclui menções a leis específicas (LGPD/Marco Civil) sem expandir governança/implementação, ficando mais superficial e tradicional.",
+          "score": 7.1
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Cobertura adequada porém muito agregada (vários ramos condensados no mesmo capítulo: tributário+financeiro; trabalho+previdenciário; coisas+família+sucessões; ambiental+agrário), o que limita profundidade e sequência para chegar a nível avançado. Faltam partes relevantes para prática e pesquisa de ponta (precedentes, teoria da decisão, processo coletivo/estratégico, setores regulados, contencioso tributário mais detalhado, LGPD com governança, etc.).",
+          "score": 6.6
+        }
+      ]
+    }
+  ],
+  "taskId": "course-chapters",
+  "testCaseId": "pt-direito-1"
+}
