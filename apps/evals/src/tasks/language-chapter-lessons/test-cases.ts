@@ -32,7 +32,7 @@ export const TEST_CASES = [
       - Should cover regular -ar, -er, -ir conjugation patterns as separate lessons
       - Should include key irregular verbs (ser, estar, tener, ir) with individual lessons
       - Should include everyday action verbs and basic sentence patterns
-      - Should not cover other tenses (past, future, subjunctive)
+      - Should not cover other tense forms (past, future, subjunctive verb conjugations). Common present-tense constructions of listed irregulars (e.g., tener que, ir a + infinitive) and present-tense semantic functions (habits, facts, scheduled future) are in scope since they use the present-tense form
 
       ${SHARED_EXPECTATIONS}
     `,
@@ -77,7 +77,7 @@ export const TEST_CASES = [
     id: "pt-japanese-appearance-inference",
     userInput: {
       chapterDescription:
-        "Expressões de aparência e suposição: 〜そうだ, 〜らしい, 〜みたい e diferenças de registro.",
+        "Expressões de aparência e suposição: 〜そうだ (aparência e boato), 〜らしい, 〜みたい e diferenças de registro.",
       chapterTitle: "Aparência e Inferência",
       targetLanguage: "ja",
       userLanguage: "pt",
@@ -89,7 +89,8 @@ export const TEST_CASES = [
       - Should cover connotation differences between near-synonyms
       - Should include register sensitivity in word choice
       - Should cover subtle meaning shifts and context-dependent word selection
-      - Should not overlap with grammar-focused or idiom-focused chapters
+      - Should not overlap with grammar-focused or idiom-focused chapters. Register-related lexical choices (e.g., on vs nous, ça vs cela) are in scope since register sensitivity is a chapter topic
+      - Lessons should be anchored in concrete French synonym sets or word pairs, not abstract linguistic theory
 
       ${SHARED_EXPECTATIONS}
     `,
