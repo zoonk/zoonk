@@ -1,0 +1,52 @@
+{
+  "generatedAt": "2026-01-15T19:15:16.520Z",
+  "modelId": "google/gemini-2.5-flash",
+  "outputs": [
+    {
+      "duration": 1532.6022079999966,
+      "inputTokens": 209,
+      "output": "{\n  \"categories\": [\n    \"math\"\n  ]\n}",
+      "outputTokens": 6,
+      "systemPrompt": "",
+      "testCaseId": "en-calculus-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1222.3114170000044,
+      "inputTokens": 210,
+      "output": "{\n  \"categories\": [\n    \"languages\"\n  ]\n}",
+      "outputTokens": 6,
+      "systemPrompt": "",
+      "testCaseId": "pt-ingles-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 2199.983291000004,
+      "inputTokens": 211,
+      "output": "{\n  \"categories\": [\n    \"history\"\n  ]\n}",
+      "outputTokens": 6,
+      "systemPrompt": "",
+      "testCaseId": "es-historia-de-roma-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 5874.921125000001,
+      "inputTokens": 210,
+      "output": "{\n  \"categories\": [\n    \"arts\",\n    \"culture\"\n  ]\n}",
+      "outputTokens": 22,
+      "systemPrompt": "",
+      "testCaseId": "en-spanish-literature-strict-rule-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 14089.027665999994,
+      "inputTokens": 209,
+      "output": "{\n  \"categories\": [\n    \"society\"\n  ]\n}",
+      "outputTokens": 17,
+      "systemPrompt": "",
+      "testCaseId": "en-linguistics-1",
+      "userPrompt": ""
+    }
+  ],
+  "taskId": "course-categories"
+}

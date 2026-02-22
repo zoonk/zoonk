@@ -1,0 +1,136 @@
+{
+  "modelId": "openai/gpt-4.1-nano",
+  "results": [
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None. The model correctly identified the single, most appropriate category for the course 'Calculus' based on the provided list and rules. The response is perfect.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST include 'math'.\n      - SHOULD NOT include 'languages'.\n\n      \n  - Choose from the fixed set only\n  - Pick the primary functional domain first; add a secondary ONLY if it is central to the course goals\n  - Anchor on learning outcomes, not surface keywords\n  - Languages strict/important rule: Use 'languages' only when the course is about learning a language (e.g., Spanish, English, JLPT prep). Do NOT use 'languages' for literature, linguistics, or cultural studies\n\n    ",
+        "id": "en-calculus-1",
+        "userInput": {
+          "courseTitle": "Calculus"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST include 'languages'.\n      - SHOULD NOT include other categories\n\n      \n  - Choose from the fixed set only\n  - Pick the primary functional domain first; add a secondary ONLY if it is central to the course goals\n  - Anchor on learning outcomes, not surface keywords\n  - Languages strict/important rule: Use 'languages' only when the course is about learning a language (e.g., Spanish, English, JLPT prep). Do NOT use 'languages' for literature, linguistics, or cultural studies\n\n    ",
+        "id": "pt-ingles-1",
+        "userInput": {
+          "courseTitle": "Inglês"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST include 'history'.\n      - SHOULD NOT include 'languages'.\n\n      \n  - Choose from the fixed set only\n  - Pick the primary functional domain first; add a secondary ONLY if it is central to the course goals\n  - Anchor on learning outcomes, not surface keywords\n  - Languages strict/important rule: Use 'languages' only when the course is about learning a language (e.g., Spanish, English, JLPT prep). Do NOT use 'languages' for literature, linguistics, or cultural studies\n\n    ",
+        "id": "es-historia-de-roma-1",
+        "userInput": {
+          "courseTitle": "Historia de Roma"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The model correctly identified 'arts' as the primary category for 'Spanish Literature' and correctly followed the strict rule to not use the 'languages' category. While 'culture' could also be a valid secondary category, its omission is acceptable given the instruction to only add secondary categories if they are central. The single category 'arts' is a perfect fit.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST NOT include 'languages' (strict rule: literature is not language learning).\n      - SHOULD include 'arts' and/or 'culture'.\n\n      \n  - Choose from the fixed set only\n  - Pick the primary functional domain first; add a secondary ONLY if it is central to the course goals\n  - Anchor on learning outcomes, not surface keywords\n  - Languages strict/important rule: Use 'languages' only when the course is about learning a language (e.g., Spanish, English, JLPT prep). Do NOT use 'languages' for literature, linguistics, or cultural studies\n\n    ",
+        "id": "en-spanish-literature-strict-rule-1",
+        "userInput": {
+          "courseTitle": "Spanish Literature"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "The model included the category 'languages' for the course 'Linguistics'. This is a direct and severe violation of the strict rule provided in the instructions: 'Languages (strict rule): Use only for language learning (e.g., Spanish, TOEFL prep). Do not use for literature, linguistics, or cultural studies (use arts, culture, or society as appropriate)'. This is a critical failure to follow a key negative constraint.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The model selected 'arts' as a category. While there can be some overlap between linguistics and the arts (e.g., poetics), the instructions suggest using 'culture' or 'society' for linguistics. The expectations also explicitly mention that the output SHOULD include 'culture' and/or 'society'. Choosing 'arts' instead of these more appropriate categories is a minor error in judgment.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "The response must be completely changed to adhere to the instructions. The category 'languages' should be removed, and 'society' and/or 'culture' should be added, as linguistics is the study of language as a social and cultural phenomenon. A correct response would be `{\"categories\": [\"society\", \"culture\"]}` or similar.",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST NOT include 'languages' (strict rule: linguistics is not language learning).\n      - SHOULD include 'culture' and/or 'society'.\n\n      \n  - Choose from the fixed set only\n  - Pick the primary functional domain first; add a secondary ONLY if it is central to the course goals\n  - Anchor on learning outcomes, not surface keywords\n  - Languages strict/important rule: Use 'languages' only when the course is about learning a language (e.g., Spanish, English, JLPT prep). Do NOT use 'languages' for literature, linguistics, or cultural studies\n\n    ",
+        "id": "en-linguistics-1",
+        "userInput": {
+          "courseTitle": "Linguistics"
+        }
+      }
+    }
+  ],
+  "taskId": "course-categories"
+}
