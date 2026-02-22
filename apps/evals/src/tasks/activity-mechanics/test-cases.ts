@@ -18,9 +18,10 @@ EVALUATION CRITERIA:
 8. SCOPE: Content matches the lesson scope exactly.
 
 ANTI-CHECKLIST GUIDANCE (CRITICAL):
-- Do NOT penalize for missing process phases or steps you might expect
+- Do NOT penalize for missing process phases or steps you might expect UNLESS they are explicitly listed in the TOPIC-SPECIFIC ACCURACY CHECK above
 - Do NOT require a specific number of steps
 - Do NOT check against an imagined "complete" process description
+- Do NOT penalize for JSON output structure (e.g., \`{ "steps": [...] }\` vs a bare array) — only evaluate the content of the steps themselves
 - ONLY penalize for: factual errors, static descriptions instead of action-oriented content, missing cause-effect relationships, or poor process flow
 - Different valid process explanations exist - assess the quality of what IS provided
 `;
@@ -200,22 +201,22 @@ ${SHARED_EXPECTATIONS}
       courseTitle: "Biologia Vegetal",
       explanationSteps: [
         {
-          text: "A clorofila e o pigmento verde que captura luz. Ela absorve principalmente luz vermelha e azul, refletindo verde — por isso as plantas parecem verdes.",
+          text: "A clorofila é o pigmento verde que captura luz. Ela absorve principalmente luz vermelha e azul, refletindo verde — por isso as plantas parecem verdes.",
           title: "Clorofila",
         },
         {
-          text: "Os fotossistemas sao complexos de proteinas nas membranas dos tilacoides. Fotossistema I e II trabalham juntos para capturar energia luminosa.",
+          text: "Os fotossistemas são complexos de proteínas nas membranas dos tilacoides. Fotossistema I e II trabalham juntos para capturar energia luminosa.",
           title: "Fotossistemas",
         },
         {
-          text: "A ATP sintase e uma turbina molecular que produz ATP. Ela usa o gradiente de protons para fosforilar ADP em ATP, a moeda energetica celular.",
+          text: "A ATP sintase é uma turbina molecular que produz ATP. Ela usa o gradiente de prótons para fosforilar ADP em ATP, a moeda energética celular.",
           title: "ATP Sintase",
         },
       ],
       language: "pt",
       lessonDescription:
-        "Entendendo como a fase clara da fotossintese converte energia luminosa em energia quimica atraves do transporte de eletrons",
-      lessonTitle: "Reacoes Luminosas da Fotossintese",
+        "Entendendo como a fase clara da fotossíntese converte energia luminosa em energia química através do transporte de elétrons",
+      lessonTitle: "Reações Luminosas da Fotossíntese",
     },
   },
   {
@@ -237,14 +238,14 @@ ${SHARED_EXPECTATIONS}
     id: "es-economics-price-discovery",
     userInput: {
       chapterTitle: "Mercados y Precios",
-      courseTitle: "Economia Basica",
+      courseTitle: "Economía Básica",
       explanationSteps: [
         {
-          text: "La curva de oferta muestra cuanto produciran los vendedores a cada precio. Precios mas altos incentivan mayor produccion porque aumentan las ganancias potenciales.",
+          text: "La curva de oferta muestra cuánto producirán los vendedores a cada precio. Precios más altos incentivan mayor producción porque aumentan las ganancias potenciales.",
           title: "Curva de Oferta",
         },
         {
-          text: "La curva de demanda muestra cuanto compraran los consumidores a cada precio. Precios mas bajos aumentan la cantidad demandada porque el producto se vuelve mas accesible.",
+          text: "La curva de demanda muestra cuánto comprarán los consumidores a cada precio. Precios más bajos aumentan la cantidad demandada porque el producto se vuelve más accesible.",
           title: "Curva de Demanda",
         },
         {
@@ -254,7 +255,7 @@ ${SHARED_EXPECTATIONS}
       ],
       language: "es",
       lessonDescription:
-        "Entendiendo como los precios de mercado emergen de las interacciones entre compradores y vendedores",
+        "Entendiendo cómo los precios de mercado emergen de las interacciones entre compradores y vendedores",
       lessonTitle: "El Proceso de Descubrimiento de Precios",
     },
   },
@@ -352,26 +353,26 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "pt-chemistry-enzyme-catalysis",
     userInput: {
-      chapterTitle: "Bioquimica",
-      courseTitle: "Quimica Organica",
+      chapterTitle: "Bioquímica",
+      courseTitle: "Química Orgânica",
       explanationSteps: [
         {
-          text: "O sitio ativo e a regiao da enzima onde a catalise acontece. Sua forma tridimensional complementa o substrato, permitindo ligacao especifica.",
-          title: "Sitio Ativo",
+          text: "O sítio ativo é a região da enzima onde a catálise acontece. Sua forma tridimensional complementa o substrato, permitindo ligação específica.",
+          title: "Sítio Ativo",
         },
         {
-          text: "Substratos sao as moleculas que as enzimas transformam. Eles se ligam ao sitio ativo e passam pela reacao quimica catalisada.",
+          text: "Substratos são as moléculas que as enzimas transformam. Eles se ligam ao sítio ativo e passam pela reação química catalisada.",
           title: "Substratos",
         },
         {
-          text: "A energia de ativacao e a barreira energetica que as reacoes precisam superar. Enzimas reduzem essa barreira, acelerando reacoes milhoes de vezes.",
-          title: "Energia de Ativacao",
+          text: "A energia de ativação é a barreira energética que as reações precisam superar. Enzimas reduzem essa barreira, acelerando reações milhões de vezes.",
+          title: "Energia de Ativação",
         },
       ],
       language: "pt",
       lessonDescription:
-        "Entendendo o processo molecular pelo qual enzimas catalisam reacoes bioquimicas",
-      lessonTitle: "Como Enzimas Catalisam Reacoes",
+        "Entendendo o processo molecular pelo qual enzimas catalisam reações bioquímicas",
+      lessonTitle: "Como Enzimas Catalisam Reações",
     },
   },
   {
@@ -392,26 +393,26 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "es-chemistry-electrolysis",
     userInput: {
-      chapterTitle: "Electroquimica",
-      courseTitle: "Quimica General",
+      chapterTitle: "Electroquímica",
+      courseTitle: "Química General",
       explanationSteps: [
         {
-          text: "Los electrodos son conductores que conectan el circuito externo con la solucion. El catodo es negativo y el anodo es positivo.",
+          text: "Los electrodos son conductores que conectan el circuito externo con la solución. El cátodo es negativo y el ánodo es positivo.",
           title: "Electrodos",
         },
         {
-          text: "Los electrolitos son sustancias que se disocian en iones cuando se disuelven. Estos iones libres permiten que la corriente fluya a traves de la solucion.",
+          text: "Los electrolitos son sustancias que se disocian en iones cuando se disuelven. Estos iones libres permiten que la corriente fluya a través de la solución.",
           title: "Electrolitos",
         },
         {
-          text: "Los iones son atomos o moleculas con carga electrica. Los cationes tienen carga positiva, los aniones tienen carga negativa.",
+          text: "Los iones son átomos o moléculas con carga eléctrica. Los cationes tienen carga positiva, los aniones tienen carga negativa.",
           title: "Iones",
         },
       ],
       language: "es",
       lessonDescription:
-        "Entendiendo como la corriente electrica fuerza reacciones quimicas no espontaneas en celdas electroliticas",
-      lessonTitle: "El Proceso de Electrolisis",
+        "Entendiendo cómo la corriente eléctrica fuerza reacciones químicas no espontáneas en celdas electrolíticas",
+      lessonTitle: "El Proceso de Electrólisis",
     },
   },
   {
