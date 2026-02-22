@@ -26,6 +26,12 @@ const SHARED_EXPECTATIONS = `
   - Awkward or redundant phrasings are acceptable.
   - Ignore casing issues (e.g., "javascript" vs "JavaScript").
   - Ideally, it should have a huge list of alternative titles, really good ones have more than 100 alternative titles
+
+  SCORING CALIBRATION:
+  - The same-course test above is the PRIMARY evaluation tool. Use it as a binary check for each title.
+  - Penalize for INCORRECT inclusions (titles that fail the same-course test) or INCORRECT exclusions (titles that clearly pass the same-course test per the rules above).
+  - Do NOT heavily penalize for missing titles you expected - only penalize for wrong inclusion/exclusion decisions.
+  - A large list (100+) is ideal but do NOT heavily penalize shorter lists if all included titles are correct.
 `;
 
 export const TEST_CASES = [

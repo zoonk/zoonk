@@ -63,6 +63,11 @@ ANTI-CHECKLIST GUIDANCE (CRITICAL):
 - Do NOT expect questions to follow any particular order or progression
 - ONLY penalize for: memorization-based questions, factual errors, poor feedback quality, unclear wording, or inappropriate format choices
 - Different valid quiz designs exist - assess the quality of what IS provided
+
+BINARY CHECKS:
+- "Memorization vs understanding" is checked by: does the question reference the explanation text directly or present a novel scenario? Direct text references = penalize. Novel scenarios = do not penalize.
+- Question count is not strictly enforced in this task - quality over quantity. Only penalize if the count is drastically low (under 5).
+- Format choice is only penalized when the format CANNOT test the concept (e.g., sort_order for a non-sequential concept). Repeated use of a well-suited format is NOT penalizable.
 `;
 
 export const TEST_CASES = [

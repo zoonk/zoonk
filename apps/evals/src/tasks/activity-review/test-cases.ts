@@ -70,6 +70,10 @@ ANTI-CHECKLIST GUIDANCE (CRITICAL):
 - FOCUS penalties on: factual errors, memorization-based questions, wrong tone, format violations
 - Different valid quiz designs exist - assess the quality of what IS provided
 - Reserve scores below 9 for genuine errors (factual mistakes, format violations, wrong language, memorization-based questions), not for stylistic preferences like scenario freshness
+
+BINARY CHECKS:
+- Question count: 15-20 is required. Outside this range = format violation.
+- Language: Content must match specified language. Wrong language = severe error.
 `;
 
 export const TEST_CASES = [

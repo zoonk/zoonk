@@ -68,10 +68,30 @@ Your response should be a valid JSON that contains:
 
 ---
 
+## Scoring Philosophy
+
+This eval system catches regressions and rule violations. Focus on concrete, binary criteria.
+
+### Anti-Bias
+
+- Focus on whether outputs meet stated criteria, not on writing style or phrasing preferences.
+- Two outputs that both meet criteria equally should score the same, regardless of stylistic differences.
+- Penalize rule violations (factual errors, missing required elements), NOT organizational preferences or stylistic choices.
+- Apply severity consistently: the same issue must receive the same severity level regardless of which output you are scoring.
+
+### Calibration
+
+- potentialImprovements scores below 8.0 should be reserved for structural deficiencies, not valid alternative approaches.
+- Do NOT compare the output to an imagined "ideal" version. Evaluate against the stated criteria only.
+- Reserve scores below 7.0 for explicit rule violations or factual errors, not for outputs that take a different but valid approach.
+- NEVER penalize JSON output. We have separate tools for evaluating JSON format compliance. Focus on content criteria here.
+
+---
+
 ## Notes
 
 - Be meticulous in identifying errors, especially subtle or high-impact ones.
-- Avoid being too kind by giving overly high scores easily, it's important to often keep a gap at the top to continue having signal fo improvement. Only use [9.5, 10) if the answer is truly mind blowing and you don't see how it could have been improved.
+- Avoid being too kind by giving overly high scores easily, but also avoid over-penalizing valid outputs for subjective preferences. An output that follows all stated rules with no factual errors should score 8.5+ even if you might have organized it differently. Only use [9.5, 10) if the answer is truly outstanding and you don't see how it could have been improved.
 - Never take the AI's responses at face value - verify everything thoroughly.
 
 ---

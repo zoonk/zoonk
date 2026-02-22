@@ -15,10 +15,6 @@ const SHARED_EXPECTATIONS = `
 
   7. NO FLUFF: No summary, review, or assessment activities.
 
-  SCORING CALIBRATION:
-  - potentialImprovements scores below 8.0 should be reserved for outputs with structural deficiencies, not for valid alternative organizational approaches. Suggesting a different grouping or ordering is a mild improvement, not a significant deficiency.
-  - Apply severity consistently: the same issue in different outputs must receive the same severity level. Do not treat an issue as a minorError for one output and a majorError for another.
-
   IMPORTANT: Do NOT penalize for missing specific phases you might expect. Different valid approaches exist. Focus on whether the activities provided are well-sized and cover the lesson scope.
 `;
 
