@@ -41,7 +41,6 @@ export async function generateScore(params: {
   const { system, prompt, expectations, output } = params;
 
   const evalPrompt = `
-
     **Instructions**
     ${system}
 
