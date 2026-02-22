@@ -1,0 +1,122 @@
+{
+  "modelId": "google/gemini-3.1-pro-preview",
+  "results": [
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The descriptions for third-person and plural conjugations could explicitly list the exact pronouns (e.g., usted, nosotros, ustedes, ellos, ellas) just as 'yo' and 'tú' were specified. Additionally, explicitly naming 'ustedes' for the second person plural would better highlight the Latin American Spanish localization, avoiding any potential confusion with the Spain-specific 'vosotros'.",
+          "kind": "potentialImprovements",
+          "score": 9.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n      - Should have separate lessons for ser and estar uses\n      - Should cover identity, origin, and location as distinct concepts\n      - Should include basic sentence patterns with each verb\n      - Should not go beyond present tense forms\n\n      \n  - Each lesson should cover a SINGLE, SPECIFIC concept that can be explained within 10 short tweets\n  - Break down topics into the smallest, most manageable units possible, so that each lesson can be learned in 2-3 minutes\n  - If a topic is too broad, split it into multiple lessons\n  - Each lesson should be extremely focused on a SINGLE concept\n  - If you find yourself using \"AND\", \"OR\", or \"VS\" in a title, you should split it into separate lessons\n  - ALL lessons must be about pure language acquisition (vocabulary, grammar, pronunciation, sentences, conjugations, dialogues)\n  - NO culture lessons (history, traditions, cuisine, festivals)\n  - NO career or professional lessons\n  - NO proficiency exam preparation lessons\n  - NO literature or media analysis lessons\n  - Lesson titles should be short and specific to the exact concept covered\n  - Build a logical progression from basic to advanced concepts\n  - Ensure lessons build on knowledge from previous lessons\n  - Focus lessons for this specific chapter, not the entire course\n  - Don't include summary or review lessons\n  - Don't include assessment or quiz lessons\n  - Should follow the language specified by language parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Descriptions should be concise, no fluff (avoid \"learn\", \"understand\", \"explore\", etc.)\n  - You don't need to evaluate the output format here, just focus on the lesson content quality\n  - Include an extensive list of lessons to cover all the concepts needed for the chapter\n\n    ",
+        "id": "en-spanish-ser-estar-1",
+        "userInput": {
+          "chapterDescription": "Ser vs. estar in the present, basic sentence patterns, and describing identity, origin, and location.",
+          "chapterTitle": "Ser & Estar (Present)",
+          "targetLanguage": "es",
+          "userLanguage": "en"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "No major errors were found. The response perfectly adheres to the strict constraints, correctly breaking down the concepts into bite-sized lessons, avoiding forbidden topics, and following the expected tone and structure.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The expectations explicitly stated: 'Should include irregular past participles individually'. However, the AI grouped the irregular verbs into 'grupo 1' (be, do, go, have) and 'grupo 2' (see, eat, take, make) rather than dedicating a single lesson to each irregular verb as demonstrated in the prompt's examples.",
+          "kind": "minorErrors",
+          "score": 8.5
+        },
+        {
+          "conclusion": "To improve the output, the irregular verbs should be separated into individual lessons (e.g., 'Participio pasado irregular: be', 'Participio pasado irregular: do'). Additionally, there is a minor typographical issue in the titles for contractions (e.g., \"Contracciones afirmativas: 've\"), which are missing the closing single quote.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Latin American Spanish\n      - Should break down present perfect formation (have/has + past participle)\n      - Should cover \"ever/never\" for experiences as separate lessons from \"just/already/yet\" for recent results\n      - Should include irregular past participles individually\n      - Should not cover other perfect tenses (past perfect, future perfect)\n\n      \n  - Each lesson should cover a SINGLE, SPECIFIC concept that can be explained within 10 short tweets\n  - Break down topics into the smallest, most manageable units possible, so that each lesson can be learned in 2-3 minutes\n  - If a topic is too broad, split it into multiple lessons\n  - Each lesson should be extremely focused on a SINGLE concept\n  - If you find yourself using \"AND\", \"OR\", or \"VS\" in a title, you should split it into separate lessons\n  - ALL lessons must be about pure language acquisition (vocabulary, grammar, pronunciation, sentences, conjugations, dialogues)\n  - NO culture lessons (history, traditions, cuisine, festivals)\n  - NO career or professional lessons\n  - NO proficiency exam preparation lessons\n  - NO literature or media analysis lessons\n  - Lesson titles should be short and specific to the exact concept covered\n  - Build a logical progression from basic to advanced concepts\n  - Ensure lessons build on knowledge from previous lessons\n  - Focus lessons for this specific chapter, not the entire course\n  - Don't include summary or review lessons\n  - Don't include assessment or quiz lessons\n  - Should follow the language specified by language parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Descriptions should be concise, no fluff (avoid \"learn\", \"understand\", \"explore\", etc.)\n  - You don't need to evaluate the output format here, just focus on the lesson content quality\n  - Include an extensive list of lessons to cover all the concepts needed for the chapter\n\n    ",
+        "id": "es-english-present-perfect-1",
+        "userInput": {
+          "chapterDescription": "Presente perfecto con \"ever/never/just/already/yet\" para experiencias y resultados recientes.",
+          "chapterTitle": "Presente perfecto: experiencias y resultados",
+          "targetLanguage": "en",
+          "userLanguage": "es"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The response is extremely well-structured and follows all instructions perfectly. It breaks down the causative form into distinct, logical, bite-sized lessons covering conjugations, meanings (obligation/permission), particle usage, and combinations with other structures. There is no need for improvement.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Should cover the causative form (〜させる) construction\n      - Should have separate lessons for permission and compulsion meanings\n      - Should cover particle combinations with causative verbs\n      - Should not go into causative-passive (〜させられる)\n\n      \n  - Each lesson should cover a SINGLE, SPECIFIC concept that can be explained within 10 short tweets\n  - Break down topics into the smallest, most manageable units possible, so that each lesson can be learned in 2-3 minutes\n  - If a topic is too broad, split it into multiple lessons\n  - Each lesson should be extremely focused on a SINGLE concept\n  - If you find yourself using \"AND\", \"OR\", or \"VS\" in a title, you should split it into separate lessons\n  - ALL lessons must be about pure language acquisition (vocabulary, grammar, pronunciation, sentences, conjugations, dialogues)\n  - NO culture lessons (history, traditions, cuisine, festivals)\n  - NO career or professional lessons\n  - NO proficiency exam preparation lessons\n  - NO literature or media analysis lessons\n  - Lesson titles should be short and specific to the exact concept covered\n  - Build a logical progression from basic to advanced concepts\n  - Ensure lessons build on knowledge from previous lessons\n  - Focus lessons for this specific chapter, not the entire course\n  - Don't include summary or review lessons\n  - Don't include assessment or quiz lessons\n  - Should follow the language specified by language parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Descriptions should be concise, no fluff (avoid \"learn\", \"understand\", \"explore\", etc.)\n  - You don't need to evaluate the output format here, just focus on the lesson content quality\n  - Include an extensive list of lessons to cover all the concepts needed for the chapter\n\n    ",
+        "id": "pt-japanese-causative-1",
+        "userInput": {
+          "chapterDescription": "Causativa: 〜させる, permitir/obrigar e combinações comuns com partículas.",
+          "chapterTitle": "Causativa",
+          "targetLanguage": "ja",
+          "userLanguage": "pt"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "The AI perfectly followed all instructions. There are no major errors. The content accurately reflects the target language (French) and the chapter topic (implied meaning, presuppositions, euphemism, pragmatic inference) while strictly adhering to the micro-learning format.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "No minor errors were found. The AI correctly avoided forbidden words like 'learn', 'understand', and 'explore'. It also successfully avoided 'and', 'or', and 'vs' in the titles. The descriptions are concise, and the topics are perfectly scoped for 2-3 minute lessons.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The response is excellent and leaves virtually no room for improvement. The inclusion of specific French pragmatic structures (like 'c'est pas faux', 'ben...', 'euh...', 'c'est malin') shows a deep understanding of the subject matter applied to the target language.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n      - Should cover implicature, presuppositions, and euphemism as distinct concepts\n      - Should include pragmatic inference strategies\n      - Should have lessons on interpreting implied meaning from context\n      - Should not overlap with argumentation or debate topics\n\n      \n  - Each lesson should cover a SINGLE, SPECIFIC concept that can be explained within 10 short tweets\n  - Break down topics into the smallest, most manageable units possible, so that each lesson can be learned in 2-3 minutes\n  - If a topic is too broad, split it into multiple lessons\n  - Each lesson should be extremely focused on a SINGLE concept\n  - If you find yourself using \"AND\", \"OR\", or \"VS\" in a title, you should split it into separate lessons\n  - ALL lessons must be about pure language acquisition (vocabulary, grammar, pronunciation, sentences, conjugations, dialogues)\n  - NO culture lessons (history, traditions, cuisine, festivals)\n  - NO career or professional lessons\n  - NO proficiency exam preparation lessons\n  - NO literature or media analysis lessons\n  - Lesson titles should be short and specific to the exact concept covered\n  - Build a logical progression from basic to advanced concepts\n  - Ensure lessons build on knowledge from previous lessons\n  - Focus lessons for this specific chapter, not the entire course\n  - Don't include summary or review lessons\n  - Don't include assessment or quiz lessons\n  - Should follow the language specified by language parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Descriptions should be concise, no fluff (avoid \"learn\", \"understand\", \"explore\", etc.)\n  - You don't need to evaluate the output format here, just focus on the lesson content quality\n  - Include an extensive list of lessons to cover all the concepts needed for the chapter\n\n    ",
+        "id": "en-french-implied-meaning-1",
+        "userInput": {
+          "chapterDescription": "Understanding and producing implicit meaning and presuppositions. Implication, euphemism, and pragmatic inference.",
+          "chapterTitle": "Implied Meaning",
+          "targetLanguage": "fr",
+          "userLanguage": "en"
+        }
+      }
+    }
+  ],
+  "taskId": "language-chapter-lessons"
+}

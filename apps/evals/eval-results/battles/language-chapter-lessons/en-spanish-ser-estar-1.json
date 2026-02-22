@@ -1,0 +1,149 @@
+{
+  "expectations": "\n      - MUST be in US English\n      - Should have separate lessons for ser and estar uses\n      - Should cover identity, origin, and location as distinct concepts\n      - Should include basic sentence patterns with each verb\n      - Should not go beyond present tense forms\n\n      \n  - Each lesson should cover a SINGLE, SPECIFIC concept that can be explained within 10 short tweets\n  - Break down topics into the smallest, most manageable units possible, so that each lesson can be learned in 2-3 minutes\n  - If a topic is too broad, split it into multiple lessons\n  - Each lesson should be extremely focused on a SINGLE concept\n  - If you find yourself using \"AND\", \"OR\", or \"VS\" in a title, you should split it into separate lessons\n  - ALL lessons must be about pure language acquisition (vocabulary, grammar, pronunciation, sentences, conjugations, dialogues)\n  - NO culture lessons (history, traditions, cuisine, festivals)\n  - NO career or professional lessons\n  - NO proficiency exam preparation lessons\n  - NO literature or media analysis lessons\n  - Lesson titles should be short and specific to the exact concept covered\n  - Build a logical progression from basic to advanced concepts\n  - Ensure lessons build on knowledge from previous lessons\n  - Focus lessons for this specific chapter, not the entire course\n  - Don't include summary or review lessons\n  - Don't include assessment or quiz lessons\n  - Should follow the language specified by language parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Descriptions should be concise, no fluff (avoid \"learn\", \"understand\", \"explore\", etc.)\n  - You don't need to evaluate the output format here, just focus on the lesson content quality\n  - Include an extensive list of lessons to cover all the concepts needed for the chapter\n\n    ",
+  "judgedAt": "2026-02-22T13:45:02.928Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model A provides 50 lessons with excellent granularity and logical progression. It covers ser and estar conjugations, identity, origin, location, sentence patterns, questions, negation, adjective agreement, prepositions, and even useful vocabulary like también/tampoco and muy/un poco. It breaks down ser vs estar meaning shifts into individual adjective lessons (listo, rico, verde, bueno, malo, abierto), which is impressively granular. However, it has several title violations: 'Ser vs Estar: Quick Choice Rule', 'Ser vs Estar: Identity vs State', 'Ser vs Estar: Adjective Meaning Shift', 'Ser vs Estar: Listo', 'Ser vs Estar: Rico', 'Ser vs Estar: Verde', 'Ser vs Estar: Bueno', 'Ser vs Estar: Malo', 'Ser vs Estar: Abierto' — many of these use 'vs' in the title which the prompt explicitly says should be split. However, for contrast lessons specifically comparing the two verbs, some 'vs' usage might be acceptable since the concept IS the contrast. 'Aquí Ahí Allí' has implicit 'and' combining three concepts. 'Ser: Day and Date' uses 'and'. The descriptions are well-written and concise. Coverage of chapter topics (identity, origin, location, sentence patterns) is thorough. The mini-dialogues at the end provide practical application. Some lessons like 'Ser: Event Location' and telling time might stretch slightly beyond the chapter scope but are reasonable. Overall very strong.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model B provides 42 lessons with good coverage. It covers ser and estar conjugations, uses of each verb, sentence patterns, questions, negation, adjective meaning changes, pronunciation, and mini-dialogues. The granularity is generally good but some lessons are too broad: 'Adjectives That Change Meaning with Ser or Estar' covers multiple adjectives in one lesson (listo, aburrido, rico), 'Ser: Time and Dates' combines two concepts with 'and', 'Ser + De: Origin, Possession, Material' combines three concepts with commas, 'Mini-Dialogues: Ser and Estar Together' combines both verbs. Several titles violate the 'vs' rule: 'Ser vs. Estar: Describing People', 'Common Mistakes: Ser vs. Estar', 'Choosing Ser or Estar: A Quick Guide'. 'Common Mistakes' is essentially a review/summary lesson which is forbidden. 'Choosing Ser or Estar: A Quick Guide' sounds like a summary. The lesson 'Estar: Bien and Mal' uses 'and'. 'Question Words with Ser' and 'Question Words with Estar' each combine multiple question words. Descriptions use forbidden words like 'tips' and the description style is generally good but some are too broad. Coverage is adequate but not as extensive as some other models.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model C provides 32 lessons. It breaks down conjugations per person for both ser and estar (6 each = 12 conjugation lessons), which is very granular but arguably too granular for conjugation — each person's conjugation is a single form that doesn't fill 2-3 minutes. Coverage of uses: identity with names, professions, nationalities, origin with de, origin with cities, origin with countries. Location is covered with en, people, objects, and places. Sentence patterns cover affirmative, negative, and interrogative for both verbs, plus subject omission. The choosing ser/estar section covers identity, origin, and location. However, there are notable gaps: no adjective agreement lessons, no adjective meaning shift lessons, no question word lessons (quién, qué, dónde, cómo), no vocabulary for common adjectives, no pronunciation lessons, and limited practical dialogue/conversational patterns. 'Ser: Origin with Cities' and 'Ser: Origin with Countries' seem artificially split — both use 'ser de + place'. Title style is clean with no 'and/or/vs' violations. Descriptions are concise but sometimes too sparse. The model follows rules well but coverage is incomplete for a chapter that includes 'basic sentence patterns' and 'describing identity, origin, and location.'",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model D provides 82 lessons — the most extensive list. It covers subject pronouns, conjugations per person for both verbs, sentence patterns, questions, negation, identity, origin, location with extensive preposition/location phrase coverage (cerca de, lejos de, al lado de, encima de, debajo de, etc.), adjective agreement, nationality adjectives, contractions (del, al), and ser-estar choice. However, it is arguably over-granular in some areas: separate lessons for 'en el', 'en la', 'en los', 'en las' are excessively split — these are the same concept (using en + definite article). Similarly, splitting 'Estoy en + Place', 'Está en + Place', 'Estamos en + Place', 'Están en + Place' into four separate lessons is excessive. Having both '¿Eres…?' and '¿Es…?' as separate identity question lessons is redundant. 'Pronunciation: oy in soy' and 'Pronunciation: oy in estoy' — these cover the same sound. Location phrases like 'encima de', 'debajo de', 'al lado de', 'cerca de', 'lejos de' may go beyond the chapter scope of 'basic sentence patterns and describing identity, origin, and location.' The contraction lessons (del, al) are useful but 'al' may be beyond scope. Some titles have issues: the em-dash in 'Ser–Estar Choice' titles is fine but could be seen as combining concepts. No 'and/or/vs' violations noted. The indefinite article lessons (un/una) are tangential. Despite over-splitting in some areas, coverage is comprehensive. Descriptions are generally good and concise.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model E provides only 29 lessons — the least extensive list. While the quality of individual lessons is decent, the coverage is notably incomplete for an 'extensive' lesson list. It covers subject pronouns, conjugations per person for both verbs, key uses (identity, origin, characteristics, temporary states, location, event location), sentence patterns, negation, questions, adjective agreement, and subject pronoun omission. However, several lessons are too broad: 'Ser: Identity (name and profession)' combines two concepts, 'Adjective agreement: Gender and number' combines two concepts with 'and', 'Questions with Ser' and 'Questions with Estar' each combine yes/no and information questions, 'Omitting Subject Pronouns with Ser/Estar' uses a slash combining both verbs. It includes vosotros forms which contradicts the Latin American Spanish focus implied by US English. Missing: common adjective vocabulary, prepositions for location, meaning shifts with same adjectives, practical phrases like '¿Cómo estás?', adverbs of location, contractions, and more. Descriptions sometimes use semi-forbidden language. The lesson count falls short of the 'extensive' requirement.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model F provides 31 lessons. Coverage includes conjugations (but as single lessons for each verb), uses of ser and estar, adjective meaning changes, sentence patterns, questions, negation, and common phrases. However, several titles violate rules: 'Ser vs. Estar: Describing People', 'Location: Ser vs. Estar', 'Permanent vs. Temporary: The Core Rule', 'Self-Introduction Sentences with Ser and Estar' (uses 'and'), 'Common Phrases with Ser: Identity and Origin' (uses 'and'), 'Common Phrases with Estar: States and Location' (uses 'and'). 'Adjectives That Change Meaning: Ser' and 'Adjectives That Change Meaning: Estar' are still somewhat broad. 'Exceptions to the Permanent/Temporary Rule' feels like an advanced meta-lesson. 'Ser: Adjective Agreement with Nationality' overlaps with 'Ser: Nationalities'. The permanent/temporary framing is an oversimplification that many linguists would consider misleading — estar is used for death ('está muerto') which is permanent. Coverage of prepositions, question words, and vocabulary is limited. The 'Common Phrases' lessons at the end combine multiple concepts. Not extensive enough for the chapter. Descriptions are generally decent but some lessons are too broad.",
+          "score": 5.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model G provides only 26 lessons — very limited for an 'extensive' requirement. It covers conjugations per person (5 for ser, 5 for estar — omitting vosotros which is appropriate for Latin American focus), uses of ser (names, origin, nationalities, occupations, physical traits, personality), uses of estar (geographic location, specific location, emotional states, physical health), negation, and questions. Notable gaps: no adjective agreement lessons, no sentence pattern lessons (affirmative structures), no adjective meaning shifts, no preposition lessons, no vocabulary lessons, no pronunciation lessons, no practical dialogue/conversation patterns, no common phrases. Question lessons combine concepts: 'Questions: Identity' and 'Questions: Origin' each could be split further. Missing key questions like '¿Cómo estás?', '¿Qué es?'. No lesson on subject pronoun omission beyond conjugation. The list is too short and lacks the extensiveness required. Titles are clean with no 'and/or/vs' violations. Descriptions are concise but sometimes too brief. The logical progression is decent but incomplete.",
+          "score": 4.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "This model is absolutely outstanding and executed the prompt flawlessly. It fully embraced the micro-learning persona by breaking down the chapter into 81 highly granular, single-concept lessons. It separated every single pronoun, contraction, question form, and conjugation into bite-sized units, which perfectly aligns with the prompt's instructions to 'add as many lessons as needed' and 'break down topics into the smallest manageable units'. Most importantly, it successfully passed the strict final Quality Checks by completely avoiding the forbidden words ('AND', 'OR', 'VS') in its titles, opting for clean phrasing and hyphens where necessary. It has no fluff and stays strictly within scope.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Excellent execution. This model provided 32 focused lessons and successfully adhered to the explicit negative constraint, keeping 'AND', 'OR', and 'VS' completely out of its titles. Its descriptions are straight to the point without any fluff words. While it is highly accurate and correctly structured, it is not quite as extensive or granular as Model D, choosing to group some minor concepts (like third-person plural pronouns) rather than separating every single one.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Very good execution. This model provided 26 lessons and also successfully followed the negative constraint regarding forbidden words in the titles. It correctly targets single concepts, but it groups a few things together slightly more than Model C or D (e.g., grouping 'Él, Ella, Usted' into one lesson). It meets almost all requirements but could have been more extensive.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Good granularity with 50 lessons, and it does a commendable job breaking down specific adjectives (listo, rico, verde) into their own lessons. However, it failed the explicit Quality Check checklist by using 'AND' and 'VS' in several titles (e.g., 'Ser: Day and Date', 'Ser vs Estar: Quick Choice Rule'). By using these words, it also violated the core 'single-concept' rule by grouping concepts together.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Adequate, but failed multiple negative constraints. It grouped several concepts together and heavily used forbidden words in its titles (e.g., 'Ser: Time and Dates', 'Location of People and Things', 'Ser vs. Estar: Describing People', 'Choosing Ser or Estar'). The prompt explicitly warned that using 'AND', 'OR', or 'VS' means the topic is too broad and needs to be split.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Below average. It provided 29 lessons but explicitly failed the single-concept constraint by grouping ideas and using forbidden words in titles (e.g., 'Adjective agreement: Gender and number', 'Ser: Identity (name and profession)'). This directly violates the strict prompt rules to break topics down further if an 'AND' is needed.",
+          "score": 5.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Below average. It failed the Quality Checks repeatedly by using 'AND' and 'VS' in titles. More significantly, it blatantly grouped broad concepts at the end of the course, such as 'Self-Introduction Sentences with Ser and Estar' and 'Common Phrases with Estar: States and Location'. This violates the most critical requirement of having a strict single-concept focus per lesson.",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Most extensive while staying largely within chapter scope (ser/estar present, identity, origin, location, basic patterns). Strong micro-splitting: separate patterns, key questions (¿de dónde?, ¿dónde está?, ¿cómo estás?), adjective agreement, prepositions (en/de), mini-dialogues. Minor issues: includes time/date and possession/belonging with ser, which are outside the user’s stated chapter scope; also includes multiple titles containing “vs” (prompt forbids). Still overall the best coverage and granularity.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Very granular and extensive, with clear progression: pronouns → patterns → conjugation pieces → identity/origin/location building blocks → prepositions/location phrases → ser/estar choice. Good adherence to present tense and language-acquisition-only. Issues: some redundancy (two separate “oy” pronunciation lessons; some overlap in question lessons), and it goes beyond scope by adding many location preposition phrases (cerca de, debajo de, etc.) not implied by chapter description. Also uses “Ser–Estar Choice” titles (dash is fine) but overall stays clearer than others.",
+          "score": 8.1
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Good coverage of ser vs estar uses, includes identity/origin/location and sentence patterns for affirmative/negative/questions. Reasonable breadth and mostly on-scope. Weaknesses: several lessons are too broad for the 2–3 minute constraint (e.g., “Question Words with Ser” bundles quién/qué/de dónde; “Adjectives That Change Meaning…” bundles multiple adjectives; “Ser + De: Origin, Possession, Material” violates single-concept and goes beyond scope with possession/material). Some fluffier phrasing (“Quick guide”, “Common mistakes”) and less granular sequencing.",
+          "score": 7.4
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Solid, fairly granular conjugation breakdown and basic patterns; covers identity, origin, location distinctly; includes negation/questions and pronoun omission. Main issues: multiple titles/descriptions bundle concepts (e.g., “Subject Pronouns: Spanish forms” + omission; “Ser: Identity (name and profession)” combines; “Adjective agreement: Gender and number” combines two concepts). Includes vosotros/regional note (okay) but not necessary. Less extensive than top models.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Very strong on single-concept conjugation micro-lessons and basic sentence patterns; covers choosing ser for identity/origin and estar for location. However, it is not very extensive for the chapter description: almost no coverage of estar states/conditions, adjective agreement, key question forms (¿de dónde?, ¿dónde está?, ¿cómo estás?), or ser/estar meaning contrasts. Feels incomplete for “Ser & Estar (Present)” as a chapter.",
+          "score": 6.4
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Covers core uses and patterns, but repeatedly violates single-concept granularity (full conjugations in one lesson; several broad contrast lessons). Goes beyond scope with “exceptions” (estar for death) and multiple bundled items (“Common phrases… identity and origin”). Titles use “vs.” and “Permanent vs. Temporary,” which the prompt explicitly flags as needing splitting. Less tightly aligned to the micro-lesson constraints.",
+          "score": 5.9
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Not extensive enough and has accuracy/usage problems: “Using dónde with ser to ask where someone is from” is incorrect framing (origin is typically “¿De dónde eres?” not “¿Dónde eres?”). Also includes “job or career path” (wording drifts toward career content, even if grammatical). Missing key items: adjective agreement, core sentence patterns, many essential question frames, and ser/estar contrast guidance. Overall coverage is too thin.",
+          "score": 4.8
+        }
+      ]
+    }
+  ],
+  "taskId": "language-chapter-lessons",
+  "testCaseId": "en-spanish-ser-estar-1"
+}

@@ -1,0 +1,122 @@
+{
+  "modelId": "anthropic/claude-opus-4.6",
+  "results": [
+    {
+      "steps": [
+        {
+          "conclusion": "The AI completely failed to follow the explicit negative constraint forbidding the use of 'AND', 'OR', and 'VS' in lesson titles. There are 9 violations of this rule (e.g., 'Ser: Time and Dates', 'Estar: Bien and Mal', 'Ser vs. Estar: Describing People', 'Choosing Ser or Estar: A Quick Guide'). Additionally, the instructions explicitly forbade adding review or summary lessons, but lessons like 'Choosing Ser or Estar: A Quick Guide' and 'Common Mistakes: Ser vs. Estar' violate this.",
+          "kind": "majorErrors",
+          "score": 6.5
+        },
+        {
+          "conclusion": "The chapter description specifically scoped the content to 'describing identity, origin, and location'. The AI went slightly out of scope by including lessons on 'Time and Dates', 'Material', and 'Impersonal Expressions'. While these are valid 'ser' and 'estar' concepts, they violate the strict instruction to 'Never go beyond the chapter's scope'.",
+          "kind": "minorErrors",
+          "score": 7.5
+        },
+        {
+          "conclusion": "To improve, the AI must strictly adhere to the forbidden words list for titles by splitting them further (e.g., separate lessons for 'Bien' and 'Mal', or 'Ser: Describing People' and 'Estar: Describing People'). It must also ensure no summary or review lessons are generated, and strictly adhere to the scope limits defined in the chapter description.",
+          "kind": "potentialImprovements",
+          "score": 7
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n      - Should have separate lessons for ser and estar uses\n      - Should cover identity, origin, and location as distinct concepts\n      - Should include basic sentence patterns with each verb\n      - Should not go beyond present tense forms\n\n      \n  - Each lesson should cover a SINGLE, SPECIFIC concept that can be explained within 10 short tweets\n  - Break down topics into the smallest, most manageable units possible, so that each lesson can be learned in 2-3 minutes\n  - If a topic is too broad, split it into multiple lessons\n  - Each lesson should be extremely focused on a SINGLE concept\n  - If you find yourself using \"AND\", \"OR\", or \"VS\" in a title, you should split it into separate lessons\n  - ALL lessons must be about pure language acquisition (vocabulary, grammar, pronunciation, sentences, conjugations, dialogues)\n  - NO culture lessons (history, traditions, cuisine, festivals)\n  - NO career or professional lessons\n  - NO proficiency exam preparation lessons\n  - NO literature or media analysis lessons\n  - Lesson titles should be short and specific to the exact concept covered\n  - Build a logical progression from basic to advanced concepts\n  - Ensure lessons build on knowledge from previous lessons\n  - Focus lessons for this specific chapter, not the entire course\n  - Don't include summary or review lessons\n  - Don't include assessment or quiz lessons\n  - Should follow the language specified by language parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Descriptions should be concise, no fluff (avoid \"learn\", \"understand\", \"explore\", etc.)\n  - You don't need to evaluate the output format here, just focus on the lesson content quality\n  - Include an extensive list of lessons to cover all the concepts needed for the chapter\n\n    ",
+        "id": "en-spanish-ser-estar-1",
+        "userInput": {
+          "chapterDescription": "Ser vs. estar in the present, basic sentence patterns, and describing identity, origin, and location.",
+          "chapterTitle": "Ser & Estar (Present)",
+          "targetLanguage": "es",
+          "userLanguage": "en"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "The response explicitly violates the critical requirement that forbids using 'AND', 'OR', or 'VS' in lesson titles (or their Spanish equivalents like 'y', 'o'). Four lesson titles contain these forbidden comparative elements: 'Have vs. Has: según el sujeto', 'Diferencia entre already y yet', 'Diferencia entre just y already', and 'Been to vs. Gone to'. The prompt clearly states that if this happens, the concepts should be split into separate lessons.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "The user expectations explicitly stated: 'Should include irregular past participles individually'. The model failed to do this on an individual basis, instead grouping them into sets of five (e.g., 'Participios irregulares comunes: grupo 1').",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "To improve, the model must strictly adhere to the negative constraints by completely avoiding comparative titles. Lessons like 'Been to vs. Gone to' must be split into 'Usage of Been to' and 'Usage of Gone to'. Additionally, the model should create single mini-lessons for each irregular past participle rather than clustering them into groups to better align with the 'single-concept' and 'individual' expectations.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Latin American Spanish\n      - Should break down present perfect formation (have/has + past participle)\n      - Should cover \"ever/never\" for experiences as separate lessons from \"just/already/yet\" for recent results\n      - Should include irregular past participles individually\n      - Should not cover other perfect tenses (past perfect, future perfect)\n\n      \n  - Each lesson should cover a SINGLE, SPECIFIC concept that can be explained within 10 short tweets\n  - Break down topics into the smallest, most manageable units possible, so that each lesson can be learned in 2-3 minutes\n  - If a topic is too broad, split it into multiple lessons\n  - Each lesson should be extremely focused on a SINGLE concept\n  - If you find yourself using \"AND\", \"OR\", or \"VS\" in a title, you should split it into separate lessons\n  - ALL lessons must be about pure language acquisition (vocabulary, grammar, pronunciation, sentences, conjugations, dialogues)\n  - NO culture lessons (history, traditions, cuisine, festivals)\n  - NO career or professional lessons\n  - NO proficiency exam preparation lessons\n  - NO literature or media analysis lessons\n  - Lesson titles should be short and specific to the exact concept covered\n  - Build a logical progression from basic to advanced concepts\n  - Ensure lessons build on knowledge from previous lessons\n  - Focus lessons for this specific chapter, not the entire course\n  - Don't include summary or review lessons\n  - Don't include assessment or quiz lessons\n  - Should follow the language specified by language parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Descriptions should be concise, no fluff (avoid \"learn\", \"understand\", \"explore\", etc.)\n  - You don't need to evaluate the output format here, just focus on the lesson content quality\n  - Include an extensive list of lessons to cover all the concepts needed for the chapter\n\n    ",
+        "id": "es-english-present-perfect-1",
+        "userInput": {
+          "chapterDescription": "Presente perfecto con \"ever/never/just/already/yet\" para experiencias y resultados recientes.",
+          "chapterTitle": "Presente perfecto: experiencias y resultados",
+          "targetLanguage": "en",
+          "userLanguage": "es"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "The response significantly violates multiple explicit negative constraints. It uses the Portuguese equivalents of 'AND' ('e') and 'OR' ('ou') in titles, such as 'Causativa: Verbos Irregulares する e くる', 'Obrigar ou Permitir: Diferenças pelo Contexto', and 'Causativa Curta: Verbos Grupo 2 e Irregulares'. The prompt strictly forbade this to enforce the single-concept rule. Additionally, it includes a summary lesson ('Resumo das Conjugações Causativas'), directly violating the instruction: 'Don't add summary, review, or key concepts lessons'.",
+          "kind": "majorErrors",
+          "score": 6.5
+        },
+        {
+          "conclusion": "The lesson 'Erros Comuns na Causativa' functions somewhat like a review lesson, which goes against the structural guidelines. Moreover, many descriptions start with wordy phrases like 'Como formar...', 'O que é...', or 'Por que não...', failing the 'no fluff' and concise description requirement.",
+          "kind": "minorErrors",
+          "score": 7.5
+        },
+        {
+          "conclusion": "Split the irregular verb lessons into distinct single-concept lessons (one for 'する' and another for 'くる'). Completely remove the summary lesson. Split the 'Obrigar ou Permitir' lesson or rephrase it to avoid comparisons in a single micro-lesson. Finally, refine the descriptions to be more direct and remove introductory conversational fluff.",
+          "kind": "potentialImprovements",
+          "score": 7
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Should cover the causative form (〜させる) construction\n      - Should have separate lessons for permission and compulsion meanings\n      - Should cover particle combinations with causative verbs\n      - Should not go into causative-passive (〜させられる)\n\n      \n  - Each lesson should cover a SINGLE, SPECIFIC concept that can be explained within 10 short tweets\n  - Break down topics into the smallest, most manageable units possible, so that each lesson can be learned in 2-3 minutes\n  - If a topic is too broad, split it into multiple lessons\n  - Each lesson should be extremely focused on a SINGLE concept\n  - If you find yourself using \"AND\", \"OR\", or \"VS\" in a title, you should split it into separate lessons\n  - ALL lessons must be about pure language acquisition (vocabulary, grammar, pronunciation, sentences, conjugations, dialogues)\n  - NO culture lessons (history, traditions, cuisine, festivals)\n  - NO career or professional lessons\n  - NO proficiency exam preparation lessons\n  - NO literature or media analysis lessons\n  - Lesson titles should be short and specific to the exact concept covered\n  - Build a logical progression from basic to advanced concepts\n  - Ensure lessons build on knowledge from previous lessons\n  - Focus lessons for this specific chapter, not the entire course\n  - Don't include summary or review lessons\n  - Don't include assessment or quiz lessons\n  - Should follow the language specified by language parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Descriptions should be concise, no fluff (avoid \"learn\", \"understand\", \"explore\", etc.)\n  - You don't need to evaluate the output format here, just focus on the lesson content quality\n  - Include an extensive list of lessons to cover all the concepts needed for the chapter\n\n    ",
+        "id": "pt-japanese-causative-1",
+        "userInput": {
+          "chapterDescription": "Causativa: 〜させる, permitir/obrigar e combinações comuns com partículas.",
+          "chapterTitle": "Causativa",
+          "targetLanguage": "ja",
+          "userLanguage": "pt"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "The instructions explicitly forbid using the words 'AND', 'OR', or 'VS' in lesson titles, mandating that such topics be split into separate lessons. However, the generated output contains two violations of this negative constraint: \"'Bon' and 'Bref' as Implied Topic Closers\" (contains 'and') and \"'On verra' as a Polite Delay or Refusal\" (contains 'or').",
+          "kind": "majorErrors",
+          "score": 7.5
+        },
+        {
+          "conclusion": "In the section covering Grice's Maxims, the response lists four maxims in the introductory lesson (quantity, quality, relation, manner) but subsequently only provides lessons for flouting Quantity, Relation, and Manner, inexplicably omitting the Maxim of Quality. Additionally, the final lesson 'Reading Between the Lines in Dialogues' describes 'Practicing recognition...', which borders closely on the forbidden 'review, assessment, or practice' lesson constraint.",
+          "kind": "minorErrors",
+          "score": 7.5
+        },
+        {
+          "conclusion": "Split the lessons containing 'and' and 'or' in their titles into separate, highly-focused modules to strictly adhere to the prompt's negative constraints. Add a lesson on 'Flouting the Maxim of Quality' so the Grice's Maxims sequence is complete. Rephrase descriptions that begin with 'Practicing' or 'Recognizing' to focus purely on the language concept rather than the student's action, ensuring they don't resemble review or practice lessons.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n      - Should cover implicature, presuppositions, and euphemism as distinct concepts\n      - Should include pragmatic inference strategies\n      - Should have lessons on interpreting implied meaning from context\n      - Should not overlap with argumentation or debate topics\n\n      \n  - Each lesson should cover a SINGLE, SPECIFIC concept that can be explained within 10 short tweets\n  - Break down topics into the smallest, most manageable units possible, so that each lesson can be learned in 2-3 minutes\n  - If a topic is too broad, split it into multiple lessons\n  - Each lesson should be extremely focused on a SINGLE concept\n  - If you find yourself using \"AND\", \"OR\", or \"VS\" in a title, you should split it into separate lessons\n  - ALL lessons must be about pure language acquisition (vocabulary, grammar, pronunciation, sentences, conjugations, dialogues)\n  - NO culture lessons (history, traditions, cuisine, festivals)\n  - NO career or professional lessons\n  - NO proficiency exam preparation lessons\n  - NO literature or media analysis lessons\n  - Lesson titles should be short and specific to the exact concept covered\n  - Build a logical progression from basic to advanced concepts\n  - Ensure lessons build on knowledge from previous lessons\n  - Focus lessons for this specific chapter, not the entire course\n  - Don't include summary or review lessons\n  - Don't include assessment or quiz lessons\n  - Should follow the language specified by language parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Descriptions should be concise, no fluff (avoid \"learn\", \"understand\", \"explore\", etc.)\n  - You don't need to evaluate the output format here, just focus on the lesson content quality\n  - Include an extensive list of lessons to cover all the concepts needed for the chapter\n\n    ",
+        "id": "en-french-implied-meaning-1",
+        "userInput": {
+          "chapterDescription": "Understanding and producing implicit meaning and presuppositions. Implication, euphemism, and pragmatic inference.",
+          "chapterTitle": "Implied Meaning",
+          "targetLanguage": "fr",
+          "userLanguage": "en"
+        }
+      }
+    }
+  ],
+  "taskId": "language-chapter-lessons"
+}

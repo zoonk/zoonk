@@ -1,0 +1,149 @@
+{
+  "expectations": "\n      - MUST be in Latin American Spanish\n      - Should break down present perfect formation (have/has + past participle)\n      - Should cover \"ever/never\" for experiences as separate lessons from \"just/already/yet\" for recent results\n      - Should include irregular past participles individually\n      - Should not cover other perfect tenses (past perfect, future perfect)\n\n      \n  - Each lesson should cover a SINGLE, SPECIFIC concept that can be explained within 10 short tweets\n  - Break down topics into the smallest, most manageable units possible, so that each lesson can be learned in 2-3 minutes\n  - If a topic is too broad, split it into multiple lessons\n  - Each lesson should be extremely focused on a SINGLE concept\n  - If you find yourself using \"AND\", \"OR\", or \"VS\" in a title, you should split it into separate lessons\n  - ALL lessons must be about pure language acquisition (vocabulary, grammar, pronunciation, sentences, conjugations, dialogues)\n  - NO culture lessons (history, traditions, cuisine, festivals)\n  - NO career or professional lessons\n  - NO proficiency exam preparation lessons\n  - NO literature or media analysis lessons\n  - Lesson titles should be short and specific to the exact concept covered\n  - Build a logical progression from basic to advanced concepts\n  - Ensure lessons build on knowledge from previous lessons\n  - Focus lessons for this specific chapter, not the entire course\n  - Don't include summary or review lessons\n  - Don't include assessment or quiz lessons\n  - Should follow the language specified by language parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Descriptions should be concise, no fluff (avoid \"learn\", \"understand\", \"explore\", etc.)\n  - You don't need to evaluate the output format here, just focus on the lesson content quality\n  - Include an extensive list of lessons to cover all the concepts needed for the chapter\n\n    ",
+  "judgedAt": "2026-02-22T13:45:02.884Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model A provides 41 lessons with excellent granularity and logical progression. It covers: formation (have/has), regular and irregular participles (split into multiple groups), negatives, questions, contractions, ever/never with position and usage as separate lessons, just/already/yet each with meaning, position, and example sentences as separate lessons, differences between already/yet and just/already, results with present perfect, 'been to' vs 'gone to', 'How many times', ever with superlatives, common errors, pronunciation (3 lessons), and dialogues. The titles are specific and concise. Descriptions are clear and focused. However, there are a few issues: (1) 'Have vs. Has: según el sujeto' uses 'vs' in the title which violates the rules; (2) 'Been to vs. Gone to' also uses 'vs'; (3) The dialogue lessons at the end could be seen as slightly broad but are acceptable. (4) Some lessons like 'Oraciones comunes con just/already/yet' feel like they could overlap with the meaning lessons. (5) 'ever con superlativos' and 'How many times' slightly stretch the chapter scope but are reasonable extensions. Despite the 'vs' violations, the overall coverage is the most comprehensive and well-structured.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model E provides 48 lessons - the most extensive list. It has exceptional granularity, breaking down concepts very finely: have/has separately, contractions separately, pronunciation of contractions, participle function, regular participles with three pronunciation variants (/t/, /d/, /ɪd/), questions split by person, negatives split by have/has, contractions split, ever/never each with meaning+position+template+double negation, been/gone separately, just/already/yet each with meaning+position+template, already with position variants (middle and final), already in questions, yet in questions and negatives separately, and useful 'avoid' lessons at the end. Titles are specific and focused. No 'AND/OR/VS' violations. The progression is logical. Coverage is thorough. Some minor issues: (1) 'Adverbio: posición media' is a bit premature and abstract before introducing the specific adverbs; (2) Some lessons might be overly granular (e.g., separate lessons for 'have not' and 'has not' AND separate lessons for 'haven't' and 'hasn't' - that's 4 lessons for negation which could feel repetitive); (3) The pronunciation lessons for -ed sounds are great additions within scope. Overall excellent coverage with strong adherence to the single-concept rule.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model B provides 31 lessons with good granularity. It properly splits have/has into separate lessons, covers regular and irregular participles (2 groups), splits affirmatives by have/has, splits contractions and negations separately, covers ever/never/just/already/yet each with meaning and position as separate lessons, and splits yet into questions and negatives. Strengths: no 'AND/OR/VS' violations, clean single-concept focus, logical progression. Weaknesses: (1) Only 2 groups for irregular participles - could be more extensive; (2) Missing some important topics like 'been to' vs 'gone to', pronunciation, common errors, ever with superlatives, 'Have you ever been to...?' pattern, and results with present perfect beyond the basic explanation; (3) No example/pattern lessons; (4) Less extensive coverage compared to Models A, E, and F. The lessons it does include are well-scoped but the overall coverage feels incomplete for the chapter.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model C provides 31 lessons. It covers the main topics but has several rule violations: (1) 'Ever' y 'never' in lesson 13 title combines two concepts with 'y' (AND equivalent in Spanish); (2) Lesson 21 'Already vs yet' uses 'vs' in the title; (3) Lesson 22 'Just vs already' uses 'vs'; (4) Lesson 23 combines 'just' and 'already'; (5) Lesson 24 combines questions and negations with 'yet'; (6) Lesson 25 combines 'ever' and 'never'; (7) Lesson 29 combines all five adverbs; (8) Lesson 30 uses 'vs' (have vs has); (9) Lesson 31 groups all adverb positions together. These are significant violations of the prompt's explicit rules about AND/OR/VS and single-concept focus. The irregular participles get only one lesson ('common irregular verbs') which is too broad. Despite having some well-scoped individual lessons, the numerous rule violations and broad lessons significantly hurt the quality.",
+          "score": 4.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model F provides 37 lessons with good coverage. Strengths: covers formation, contractions, regular/irregular participles, ever/never/just/already/yet with position and meaning, been/gone distinction, pronunciation, common errors, experiences with frequency. The error lessons at the end are practical. However: (1) Lesson 24 title 'Just: matiz de inmediatez' has description comparing just and already - this is a comparison lesson disguised as a single concept; (2) Lesson 25 'Yet: expectativa pendiente' similarly compares yet and already; (3) Lesson 30 'Elección: already' is vague and the description mentions 'yet'; (4) Lesson 31 'Yet: todavía en negativas' seems redundant with lesson 16; (5) Some lessons seem to have overlapping content; (6) Irregular participles get only one lesson which is too broad; (7) Contractions are in one lesson combining affirmative and negative forms. Despite these issues, coverage is fairly comprehensive and most lessons follow the single-concept rule well.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model D provides only 22 lessons - the shortest list. While the individual lessons are well-scoped and follow single-concept rules (no AND/OR/VS violations), the coverage is notably incomplete: (1) Only 4 irregular participles are covered individually (been, gone, seen, done) - missing many important ones; (2) No pronunciation lessons; (3) No 'been to' vs 'gone to' distinction; (4) No common errors; (5) No lesson on present perfect for experiences or results as concepts; (6) No lessons on responding to 'ever' questions; (7) No lessons on 'Have you ever been to...?' pattern; (8) Missing ever with superlatives and 'How many times'; (9) No position lesson for 'ever' or 'never'; (10) While individual irregular participle lessons are nicely granular, there should be more. The lessons present are clean and focused but the list is far too short to 'fully master the chapter's scope' as required.",
+          "score": 5.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model G provides only 17 lessons - far too few for an 'extensive' list. Major issues: (1) 'have vs has' in the title uses 'vs'; (2) 'Presente perfecto para experiencias vs pasado simple' uses 'vs' and goes beyond the chapter scope (comparing with past simple is another tense); (3) 'recently/lately' may slightly exceed chapter scope (chapter focuses on ever/never/just/already/yet); (4) Many lessons combine multiple concepts: 'Yet en preguntas y negaciones' combines two uses, 'Already en afirmaciones: posición y sentido' combines meaning and position, contractions lesson lists all forms in one; (5) Very thin coverage of irregular participles (one lesson); (6) No separate position lessons for each adverb; (7) No pronunciation lessons; (8) No 'been to'/'gone to' distinction; (9) No common errors; (10) Missing many patterns and examples. This is the least granular and least extensive list, violating the core requirement of breaking concepts into smallest units.",
+          "score": 3.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model D followed all instructions perfectly, including the strict negative constraint to avoid 'AND', 'OR', and 'VS' (y, o, vs) in titles. Most importantly, it was the only model to successfully follow the specific task expectation to 'include irregular past participles individually' by dedicating a specific lesson to each irregular verb (Been, Gone, Seen, Done). The granularity is excellent, and the descriptions are concise and fluff-free.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model E provides an exceptionally granular and brilliant micro-learning structure. It breaks down concepts to their absolute core, even covering pronunciation variations and common mistakes. It strictly followed the 'no AND/OR/VS in titles' rule. However, it receives a penalty because it failed the explicit task expectation to 'include irregular past participles individually' (it provided a general lesson for irregulars instead of individual verbs).",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model B successfully avoided using 'AND', 'OR', or 'VS' in its titles and demonstrated a very logical progression. It correctly separated experiences from recent results. However, like Model E, it failed the instruction to list irregular past participles individually, choosing instead to group them into 'grupo 1' and 'grupo 2'.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model F has good content but failed on two fronts. First, it ignored the explicit instruction to list irregular verbs individually. Second, it violated the critical negative constraint by using 'y' (AND) in a title ('Orden: adverbios y participio').",
+          "score": 5.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model A failed the 'include irregular past participles individually' instruction by grouping them. Furthermore, it heavily violated the critical negative constraint, using 'y' and 'vs' in 5 different titles (e.g., 'Have vs. Has', 'already y yet').",
+          "score": 3.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model G also failed the instruction for individual irregular past participles. It violated the critical negative constraint multiple times, utilizing 'y' and 'vs' in 4 different titles (e.g., 'have vs has', 'preguntas y negaciones').",
+          "score": 3.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model C had the most severe violations of the negative constraints, using 'y' or 'vs' in 7 different titles (e.g., 'Already vs yet', 'just y already'). It also failed to list irregular past participles individually, demonstrating poor adherence to the specific prompt rules.",
+          "score": 3
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Cumple muy bien el desglose granular: formación (have/has + participio), preguntas/negativas/respuestas, separación clara entre experiencias (ever/never) y resultados recientes (just/already/yet), y además incluye participios irregulares de forma individual (been, gone). Mantiene títulos sin “AND/OR/VS” y evita otros perfectos. Muy completo y dentro del alcance.",
+          "score": 9.3
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Estructura progresiva y granular: have vs has separados, afirmativas/negativas/preguntas, ever/never y just/already/yet bien separados y con lecciones de posición. Se queda corto en el requisito de “participios irregulares individualmente”: los agrupa por grupos y no dedica lecciones por verbo. Aun así, se mantiene muy dentro del alcance y sin títulos problemáticos.",
+          "score": 8.4
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Incluye participios irregulares individualmente (been/gone/seen/done) y cubre ever/never/just/already/yet con posiciones básicas. Falta más cobertura de resultados/experiencias (p. ej., respuestas cortas, matices y colocación de ever/never/already/yet con más detalle) y es menos “extenso” que otros, pero cumple lo central y respeta el alcance.",
+          "score": 7.9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Lista extensa y con buena cobertura (formación, usos, posiciones, pronunciación). Pero viola reglas de títulos: usa “vs” y “y” en títulos (p. ej., “Have vs. Has…”, “'Been to' vs. 'Gone to'”, “Posición de 'never' y doble negación”), y agrupa participios irregulares en “grupos” en vez de individualmente. También incluye diálogos con temas de viaje/tareas (aún es adquisición de lenguaje, pero menos alineado con el enfoque ultra-micro).",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Cubre bastante y añade pronunciación/entonación y errores comunes. Sin embargo, varios títulos contienen “vs”/“elección” implícita o comparaciones que el prompt prohíbe (p. ej., “Been vs gone…”; también algunas lecciones mezclan más de un concepto). No incluye participios irregulares individualmente (solo menciona been/gone).",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Buena base, pero incumple varias reglas: usa “vs” en títulos y combina conceptos (p. ej., “Posición de 'ever' y 'never'…”, “Resultados… con 'just' y 'already'”, “Acciones pendientes… preguntas y negaciones…”). No incluye participios irregulares individualmente (solo “lista”). Menos granular de lo requerido.",
+          "score": 6.1
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Cobertura general aceptable, pero varios títulos usan “vs” o combinan conceptos (p. ej., experiencias vs pasado simple; “Yet en preguntas y negaciones”). No incluye irregulares individualmente. Además añade “recently/lately”, que no está en la descripción (ever/never/just/already/yet) y se sale del alcance solicitado.",
+          "score": 5.6
+        }
+      ]
+    }
+  ],
+  "taskId": "language-chapter-lessons",
+  "testCaseId": "es-english-present-perfect-1"
+}

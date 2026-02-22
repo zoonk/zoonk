@@ -1,0 +1,149 @@
+{
+  "expectations": "\n      - MUST be in US English\n      - Should cover implicature, presuppositions, and euphemism as distinct concepts\n      - Should include pragmatic inference strategies\n      - Should have lessons on interpreting implied meaning from context\n      - Should not overlap with argumentation or debate topics\n\n      \n  - Each lesson should cover a SINGLE, SPECIFIC concept that can be explained within 10 short tweets\n  - Break down topics into the smallest, most manageable units possible, so that each lesson can be learned in 2-3 minutes\n  - If a topic is too broad, split it into multiple lessons\n  - Each lesson should be extremely focused on a SINGLE concept\n  - If you find yourself using \"AND\", \"OR\", or \"VS\" in a title, you should split it into separate lessons\n  - ALL lessons must be about pure language acquisition (vocabulary, grammar, pronunciation, sentences, conjugations, dialogues)\n  - NO culture lessons (history, traditions, cuisine, festivals)\n  - NO career or professional lessons\n  - NO proficiency exam preparation lessons\n  - NO literature or media analysis lessons\n  - Lesson titles should be short and specific to the exact concept covered\n  - Build a logical progression from basic to advanced concepts\n  - Ensure lessons build on knowledge from previous lessons\n  - Focus lessons for this specific chapter, not the entire course\n  - Don't include summary or review lessons\n  - Don't include assessment or quiz lessons\n  - Should follow the language specified by language parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Descriptions should be concise, no fluff (avoid \"learn\", \"understand\", \"explore\", etc.)\n  - You don't need to evaluate the output format here, just focus on the lesson content quality\n  - Include an extensive list of lessons to cover all the concepts needed for the chapter\n\n    ",
+  "judgedAt": "2026-02-22T13:44:49.688Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model E provides the most extensive and well-structured lesson list (110+ lessons) with exceptional granularity. Each lesson covers a single, specific concept. The progression is logical: it moves from foundational concepts (explicit vs. implicit meaning) through implicature types, presupposition triggers (broken down by individual words/constructions), discourse markers, hedges, mitigators, politeness strategies, euphemisms (broken into individual topic areas), and scalar implicatures. Titles are concise and specific, avoiding 'AND'/'OR'/'VS' in almost all cases. Descriptions are focused and avoid fluff words like 'learn' or 'explore'. The coverage is comprehensive across all chapter requirements: implicature, presuppositions, euphemism, and pragmatic inference are all thoroughly covered as distinct concepts. The lessons stay within pure language acquisition. Minor issues: a few lessons could potentially be slightly too theoretical (e.g., 'Asserted content', 'Presupposed content') but they are still explainable in tweets. Overall, this is the most thorough and well-executed response.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model D provides an extremely extensive list (110+ lessons) with very fine granularity. It covers presuppositions in great depth (with individual triggers like 'encore', 'déjà', 'arrêter de', 'continuer à', 'reprendre à', 'cesser de', 'aussi', 'même', etc.), discourse markers (en fait, quand même, bref, donc, alors, genre, quoi, hein, tu vois, ben), hedges, euphemisms (death, body, age, weight, relationships, sex, illness, unemployment), litotes, scalar implicatures, and pragmatic inference strategies. The lessons build logically from basic to advanced. Titles are mostly concise and specific. However, some title conventions are slightly inconsistent (using arrows like ⇒ in titles), and a few lessons border on overlapping (e.g., 'Encore: Presupposed Earlier Event' and 'Encore: Presupposed Non-Change' are two separate senses well-handled, but 'Même: Implied Unexpectedness' appears both in scalar implicature section and presupposition section). Some lessons touch on career-adjacent euphemisms ('Euphemism: Être en difficulté') but frame it as pure vocabulary. A few titles use colons with long explanatory phrases. Overall very strong and comprehensive.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model F provides a solid list of ~51 lessons with good coverage of the chapter topics. It covers presuppositions, euphemisms (death, body, financial difficulty, aging, conflict), Gricean maxims, pragmatic inference, discourse markers (quand même, enfin, si tu veux, disons que, c'est-à-dire, justement, tout de même, en principe, on verra, c'est pas faux, bon/bref), indirect speech acts, irony, litotes, and conditional uses. The progression is logical. However, some lessons violate the prompt rules: 'Bon' and 'Bref' as Implied Topic Closers' uses 'and' in the title and should be split. 'Reading Between the Lines in Dialogues' sounds like a practice/review lesson rather than a single-concept lesson. Some titles are a bit long or use question formats ('What Is Implied Meaning in French?', 'What Are Presuppositions?', 'What Are Euphemisms in French?'). The description for the first lesson uses 'why implied meaning matters' which is slightly fluffy. Some euphemism lessons bundle multiple expressions. The list is less extensive than the top models but covers the essential ground well.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model A provides 33 well-focused lessons covering the main chapter topics: pragmatic meaning, conversational implicature, Gricean maxims (each separately), scalar implicature, conventional implicature, presuppositions (with individual triggers), indirect requests, hedges, litotes, and euphemisms. Each lesson is single-concept and appropriately scoped. Titles are concise and descriptions are focused. However, the list is not extensive enough for the chapter's scope - it misses many important areas: rhetorical questions, irony, indirect refusals, discourse markers (quand même, enfin, bref, donc), tu/vous implications, vague language, silence as meaning, many euphemism categories (only death and toileting covered). The prompt explicitly asks for an 'extensive' list that covers 'everything' in the chapter description, and this list falls short of that requirement. The quality of what's included is high, but the coverage gaps are significant.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model B provides 39 lessons with good topical coverage including presuppositions, Gricean maxims, scalar implicature, conditional/subjunctive implied meanings, euphemisms, irony, indirect speech acts, hedging, intonation, silence, tu/vous, and topic shifts. However, several issues: multiple titles use 'AND' or 'OR' which the prompt explicitly forbids ('Death and Illness', 'Body and Intimacy', 'Criticism and Failure', 'Tu vs. Vous'). Some lessons are too broad (e.g., 'Presuppositions Triggered by Verbs' covers arrêter, continuer, cesser in one lesson; 'Scalar Implicature: Quantity Words' covers quelques, plusieurs, tous, certains together). The euphemism lessons bundle multiple topics ('Death and Illness' should be split). 'Producing Implied Meaning Naturally' sounds like a summary/practice lesson. 'Context and Pragmatic Inference' is very broad. 'Recognizing Irony in Written French' borders on a skill lesson rather than single concept. The list is moderate in size but some lessons clearly need further splitting per the prompt's own criteria.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model C provides 28 lessons that are extremely focused and practical, with excellent single-concept granularity. Each lesson covers one specific French expression or pattern (e.g., 'Litotes: Accepting Offers' for 'je ne dis pas non', 'Irony: Bravo' for sarcastic bravo). This is admirably specific. However, the list is not extensive enough - it's the smallest set and misses many important chapter topics: Gricean maxims are entirely absent, there's no coverage of scalar implicature theory, no discourse markers (quand même, en fait, bref, donc, enfin), no presupposition projection tests, no hedging expressions, minimal coverage of presupposition triggers (missing definite articles, cleft sentences, temporal clauses), no indirect requests beyond two examples, limited euphemism coverage. The chapter description calls for 'implication, euphemism, and pragmatic inference' comprehensively, and this list only scratches the surface of each. The prompt demands extensive coverage, and 28 lessons is insufficient for this chapter's breadth.",
+          "score": 5.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model G provides only 28 lessons, making it the least extensive response tied with Model C. Critical coverage gaps: Gricean maxims are mentioned for only quantity and relevance (missing quality and manner); euphemisms cover only 4 categories; presupposition triggers are limited to 6 items; there's no coverage of conventional implicature, scalar implicature, hedging, discourse markers, indirect refusals, vague language, or many other chapter-relevant topics. Some lessons are too broad ('Implied Meaning: Conditional Mood' covers both politeness and hypothetical conditions). The lesson on 'Euphemisms: Professional Status' touches on career language which the prompt forbids. The list lacks logical progression structure and feels incomplete. While the individual lessons that exist are reasonably focused, the overall coverage is far too thin for a chapter on implied meaning, presuppositions, and pragmatic inference. The prompt explicitly requires covering 'everything' in the chapter description with 'as many lessons as needed.'",
+          "score": 4.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model D provides an exceptionally extensive list (95 lessons) that breaks down implied meaning into highly granular, single-concept micro-lessons. It strictly follows all formatting rules, completely avoids the forbidden words ('learn', 'understand', etc.) in descriptions, and flawlessly adheres to the top penalty constraint of never using 'AND', 'OR', or 'VS' in lesson titles. The French examples and logical progression are outstanding.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model E is equally flawless. It provides an incredibly thorough list (104 lessons) that breaks down complex pragmatic and linguistic concepts into perfectly sized micro-lessons. It adheres to all negative constraints, avoiding forbidden words in descriptions and keeping titles free of 'AND', 'OR', and 'VS'. Its focus on pure language acquisition with French-specific discourse markers and implicatures is exactly what was requested.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model G follows all negative constraints perfectly, including the strict ban on 'AND', 'OR', and 'VS' in titles, and avoids all fluffy description verbs. It accurately covers the requested concepts using French examples. However, with only 28 lessons, it is far less 'extensive' and granular than Models D and E, missing an opportunity to break down pragmatic inference into more lessons.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model C successfully adheres to the strict negative constraints regarding titles and descriptions (no 'and/or/vs', no 'learn/understand'). However, it only provides 28 lessons and does not explicitly cover 'implicature' or Gricean 'pragmatic inference strategies' as distinct concepts, which was directly requested in the task expectations.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model A is well-structured and covers the concepts thoroughly with 34 lessons. However, it violates the spirit of the top penalty constraint by using the word 'versus' in the title 'Intonation: rising versus falling for hints'. The prompt explicitly states to avoid 'VS' in titles to ensure concepts aren't grouped together, and spelling it out still violates the single-concept requirement.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model F offers a solid number of lessons (51) but incurs a heavy penalty for violating the top negative constraint regarding title formatting. It includes titles with 'and' and 'or' (e.g., \"'Bon' and 'Bref' as Implied Topic Closers\", \"'On verra' as a Polite Delay or Refusal\"), meaning these lessons were not split properly as instructed.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model B completely ignores the top penalty criteria regarding lesson titles. It uses 'and' and 'vs.' in at least 7 different titles (e.g., 'Literal vs. Pragmatic Meaning', 'Euphemisms for Death and Illness', 'Tu vs. Vous...'). This demonstrates a severe failure to follow the explicit negative constraints of the prompt.",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Most extensive and granular while staying within chapter scope (implicature, presupposition, euphemism, pragmatic inference). Clear progression from core notions (context, common ground) to specific triggers/devices (particles, presupposition tests, accommodation, cancellation) and production/response strategies. Mostly single-concept titles, concise descriptions, and strong coverage of interpreting implied meaning from context. Minor issues: a few titles contain punctuation implying contrast (e.g., “Tu–Vous Switch”), and some items get close to being broader than 2–3 minutes, but overall best adherence.",
+          "score": 9.3
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Very comprehensive and well-scaffolded across implicature types, presupposition mechanics (projection, triggers, accommodation/denial), and euphemism, with many pragmatic markers and inference-related items. Generally respects single-concept lessons and avoids debate/argumentation. Main weaknesses: several descriptions start with “How…”, but also occasionally drift into broader, strategy-like lessons; some overlap/redundancy (e.g., multiple marker lessons) and a few items feel slightly beyond “one concept” (e.g., combining multiple triggers in one lesson). Still excellent coverage.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Solid, accurate core coverage of implicature (Gricean maxims, scalar, conventional), presupposition triggers (definites, factives, change-of-state, clefts), accommodation/projection, plus a small euphemism set and some inference/indirectness items. Mostly single-concept and concise. Weaknesses: not as extensive as required; euphemism coverage is narrow; some titles/descriptions are a bit meta (e.g., “Pragmatic Meaning”) rather than tightly tied to French forms, but still within scope.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Good breadth across implicature, presuppositions, euphemism, and pragmatic inference with many French discourse markers and indirect speech acts. However, multiple lessons are too broad for the required micro-scope (e.g., “Grice's Maxims in French Conversation,” “Euphemisms for the Body,” “Reading Between the Lines in Dialogues”), and several descriptions use “why” framing and more than one concept per lesson. Still largely on-topic and useful.",
+          "score": 7.4
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Covers required areas (presuppositions, implicature, euphemism, inference/context) with decent structure, but repeatedly violates title rule by using “vs.” (“Literal vs. Pragmatic Meaning,” “Tu vs. Vous: Implied Social Meaning”). Also includes an explicitly career/professional flavored euphemism lesson (“Euphemisms for Criticism and Failure” framed as workplace/social) which conflicts with the “NO career or professional lessons” constraint. Many lessons are broader than single-concept (e.g., grouping multiple scalars/verbs/adverbs together).",
+          "score": 6.6
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Good micro-granularity with many concrete French phrases, especially for euphemism, litotes, irony, fillers, and indirect acts. But it misses key chapter requirements: little to no explicit implicature framework (Gricean maxims, scalar vs conventional vs conversational distinctions), limited pragmatic inference strategies as a structured set, and overall coverage is not “extensive” for the chapter scope. Some items are arguably presupposition mislabels (e.g., ‘enfin’ treated as presupposition) and a few are more discourse-pragmatic than presuppositional.",
+          "score": 6.1
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Too short and not extensive; lacks core implicature foundations (no clear conversational vs conventional vs scalar treatment, no cancellation/accommodation/projection). Includes a career/professional euphemism lesson (“Professional Status”), violating constraints. Coverage is patchy and progression is weak; several lessons are vague and not clearly anchored in French forms/examples.",
+          "score": 4.7
+        }
+      ]
+    }
+  ],
+  "taskId": "language-chapter-lessons",
+  "testCaseId": "en-french-implied-meaning-1"
+}
