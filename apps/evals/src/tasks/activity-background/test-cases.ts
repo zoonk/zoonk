@@ -1,15 +1,15 @@
 const SHARED_EXPECTATIONS = `
   EVALUATION CRITERIA (focus on storytelling quality, not specific content):
 
-  1. STORYTELLING FLOW: The steps should build curiosity and follow a narrative arc. Check for tension (the problem/limitation) and resolution (how it was solved).
+  1. STORYTELLING FLOW: The steps should build curiosity and follow a narrative arc. Check for tension (the problem/limitation) and resolution (how it was solved). IMPORTANT: "narrative arc" does NOT require a historical timeline. A conceptual narrative using metaphors and scenarios (e.g., "imagine your money shrinking") is equally valid as a historical narrative (e.g., "in ancient Rome..."). Both approaches can have tension and resolution.
 
   2. STEP SIZING: Each step must have a title (max 50 chars) and text (max 300 chars). Verify lengths are within limits.
 
   3. CONVERSATIONAL TONE: The writing should feel like talking to a curious friend, not reading an encyclopedia. Look for vivid imagery and emotional engagement.
 
-  4. METAPHORS & ANALOGIES: Check for analogies from everyday life (sports, cooking, games, music, travel) that make abstract concepts tangible.
+  4. METAPHORS & ANALOGIES: Check that the writing uses analogies or vivid imagery to make abstract concepts tangible. The prompt suggests everyday life examples (sports, cooking, games, music, travel), but domain-appropriate metaphors are equally valid. For example, art-specific imagery for an art topic or historical scenes for a history topic are perfectly fine. Do NOT penalize for using metaphors outside the suggested categories.
 
-  5. FOCUS ON "WHY": The activity explains the origin and importance of a topic — NOT how it works technically. If the output dives into mechanics or implementation, that's a problem.
+  5. FOCUS ON "WHY": The activity explains the origin and importance of a topic — NOT how it works technically. If the output dives into detailed mechanics, implementation, or jargon, that's a problem. However, high-level conceptual descriptions through analogies (e.g., "like nesting dolls, each containing a smaller version") are acceptable — explaining WHAT a concept does at an intuitive level is often necessary to explain WHY it matters.
 
   6. APPROPRIATE SCOPE: Content should match the lesson's scope exactly — not broader (covering the whole field) and not narrower (covering only a sub-topic).
 
@@ -20,6 +20,10 @@ const SHARED_EXPECTATIONS = `
   IMPORTANT: Do NOT require a specific number of steps. Simple topics may need fewer steps; complex topics may need more. Judge quality, not quantity.
 
   IMPORTANT: Make sure the output is factually correct. It should not include any information that is not true.
+
+  IMPORTANT: Do NOT penalize for JSON structure choices (e.g., returning { "steps": [...] } vs a bare array). Focus exclusively on the content quality of the steps themselves.
+
+  IMPORTANT: A "Background" story can take many valid forms — historical narrative, conceptual metaphor journey, scenario-based explanation, or a mix. Do NOT require a specific approach. A well-crafted conceptual narrative with vivid metaphors and clear tension/resolution is just as valid as a historical origin story.
 `;
 
 export const TEST_CASES = [
@@ -96,7 +100,7 @@ export const TEST_CASES = [
     expectations: `
       Titles and descriptions must be in Portuguese.
 
-      Avoid diving into supply/demand curves or economic formulas. The background should explain WHY inflation matters and what historical problems it caused — not HOW central banks control it.
+      Avoid diving into supply/demand curves or economic formulas. The background should explain WHY inflation matters and why people should care about it — not HOW central banks control it. Both historical narratives (e.g., hyperinflation events) and conceptual/metaphorical approaches (e.g., "imagine your money shrinking") are valid — judge the quality of whichever approach is taken.
 
       ${SHARED_EXPECTATIONS}
     `,
@@ -224,7 +228,7 @@ export const TEST_CASES = [
     expectations: `
       SPECIAL CONSIDERATION: This is a narrow topic (recursion in programming). The background should still have a narrative, but it may be shorter since the scope is focused.
 
-      Avoid explaining how to write recursive functions. Focus on WHY recursion was developed as a concept and what elegant problems it solved.
+      Avoid explaining how to write recursive functions or using technical jargon (e.g., "base case", "tree traversals", "divide-and-conquer"). Focus on WHY recursion was developed as a concept and what elegant problems it solved. High-level analogies that illustrate the concept (e.g., nesting dolls, mirrors) are acceptable and encouraged — they explain the "why" by making the concept intuitive. Both historical narratives and analogy-driven narratives are valid approaches for this narrow topic.
 
       ${SHARED_EXPECTATIONS}
     `,
