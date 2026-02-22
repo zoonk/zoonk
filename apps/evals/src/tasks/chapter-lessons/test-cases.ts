@@ -17,7 +17,7 @@ const SHARED_EXPECTATIONS = `
   - Descriptions should be concise and straight to the point, no fluff/filler words (avoid "learn", "understand", "explore", "introduction to", etc.)
   - You don't need to evaluate the output format here, just focus on the lesson content quality
   - Include an extensive list of lessons to cover all the concepts needed to learn the chapter. Complex topics will usually requiere more than 100 lessons
-  
+
   Things to check:
   - Is each lesson too broad? If so, it should be broken down further
   - Can each concept be explained in 10 short tweets or less? If not, it should be broken down
@@ -34,9 +34,9 @@ export const TEST_CASES = [
       - Should separate client-side from server-side concepts
       - Should cover each protocol and technology as its own lesson
       - Should not group unrelated concepts (e.g., not "DNS and HTTP" but separate lessons)
-      - Should NOT cover browser rendering engines/pipelines (covered in "Browsers and rendering pipelines" chapter)
-      - Should NOT cover URL parsing or URI components (covered in "URL anatomy and addressing" chapter)
-      - Should NOT cover HTTP methods, status codes, or headers in depth (covered in "HTTP fundamentals" chapter)
+      - Should NOT create dedicated lessons teaching browser rendering engines/pipelines (neighboring chapter "Browsers and rendering pipelines" covers that) — brief contextual references are fine
+      - Should NOT create dedicated lessons teaching URL parsing or URI components (neighboring chapter "URL anatomy and addressing" covers that) — brief contextual references are fine
+      - Should NOT create dedicated lessons teaching HTTP methods, status codes, or headers (neighboring chapter "HTTP fundamentals" covers that) — brief contextual references are fine
 
       ${SHARED_EXPECTATIONS}
     `,
@@ -47,6 +47,23 @@ export const TEST_CASES = [
       chapterTitle: "How the web works",
       courseTitle: "Web Development",
       language: "en",
+      neighboringChapters: [
+        {
+          description:
+            "Roles of browsers, rendering engines, JavaScript engines, event loops, process models, and browser security boundaries.",
+          title: "Browsers and rendering pipelines",
+        },
+        {
+          description:
+            "URLs, URI components, content negotiation, character encodings, and internationalized domain names.",
+          title: "URL anatomy and addressing",
+        },
+        {
+          description:
+            "HTTP methods, status codes, headers, caching directives, idempotency, and connection management.",
+          title: "HTTP fundamentals",
+        },
+      ],
     },
   },
   {
@@ -55,10 +72,10 @@ export const TEST_CASES = [
       - Should break down each data type into separate lessons
       - Should cover syntax fundamentals as individual concepts
       - Basic I/O should be separate from data types and operators
-      - Should NOT cover installation, virtual environments, or project setup (covered in "Ambiente Python e ferramentas essenciais" chapter)
-      - Should NOT cover code style, PEP 8, or linters (covered in "Estilo de código e legibilidade" chapter)
-      - Should NOT cover operators or precedence in depth (covered in "Operadores e expressões" chapter)
-      - Should NOT cover control flow or conditionals (covered in "Controle de fluxo: condicionais" chapter)
+      - Should NOT create dedicated lessons teaching installation, virtual environments, or project setup (neighboring chapter "Ambiente Python e ferramentas essenciais" covers that) — brief contextual references are fine
+      - Should NOT create dedicated lessons teaching code style, PEP 8, or linters (neighboring chapter "Estilo de código e legibilidade" covers that) — brief contextual references are fine
+      - Should NOT create dedicated lessons teaching operators or precedence in depth (neighboring chapter "Operadores e expressões" covers that) — brief contextual references are fine
+      - Should NOT create dedicated lessons teaching control flow or conditionals (neighboring chapter "Controle de fluxo: condicionais" covers that) — brief contextual references are fine
 
       ${SHARED_EXPECTATIONS}
     `,
@@ -69,6 +86,26 @@ export const TEST_CASES = [
       chapterTitle: "Fundamentos da linguagem",
       courseTitle: "Python",
       language: "pt",
+      neighboringChapters: [
+        {
+          description:
+            "Instalação, múltiplas versões, ambientes virtuais, dependências, layout de projetos e execução de scripts e módulos.",
+          title: "Ambiente Python e ferramentas essenciais",
+        },
+        {
+          description: "Nomes, escopo, convenções, PEP 8, formatação, linters e análise estática.",
+          title: "Estilo de código e legibilidade",
+        },
+        {
+          description:
+            "Operadores aritméticos, comparação, lógicos, bitwise, precedência e armadilhas comuns.",
+          title: "Operadores e expressões",
+        },
+        {
+          description: "if/elif/else, match/case, expressões condicionais e padrões de validação.",
+          title: "Controle de fluxo: condicionais",
+        },
+      ],
     },
   },
   // Mid-course chapters
@@ -78,10 +115,10 @@ export const TEST_CASES = [
       - Should separate 1D NMR concepts from 2D NMR techniques
       - Chemical shifts, coupling, and integration should be distinct lessons
       - Should break down structural elucidation into individual steps/techniques
-      - Should NOT cover UV-Vis spectroscopy (covered in "UV-Vis" chapter)
-      - Should NOT cover IR or Raman spectroscopy (covered in "IR y Raman" chapter)
-      - Should NOT cover EPR/ESR or paramagnetic resonance (covered in "Resonancia paramagnética electrónica" chapter)
-      - Should NOT cover mass spectrometry (covered in "Espectrometría de masas" chapter)
+      - Should NOT create dedicated lessons teaching UV-Vis spectroscopy (neighboring chapter "UV-Vis" covers that) — brief contextual references are fine
+      - Should NOT create dedicated lessons teaching IR or Raman spectroscopy (neighboring chapter "IR y Raman" covers that) — brief contextual references are fine
+      - Should NOT create dedicated lessons teaching EPR/ESR or paramagnetic resonance (neighboring chapter "Resonancia paramagnética electrónica" covers that) — brief contextual references are fine
+      - Should NOT create dedicated lessons teaching mass spectrometry (neighboring chapter "Espectrometría de masas" covers that) — brief contextual references are fine
 
       ${SHARED_EXPECTATIONS}
     `,
@@ -92,6 +129,38 @@ export const TEST_CASES = [
       chapterTitle: "Resonancia magnética nuclear",
       courseTitle: "Química",
       language: "es",
+      neighboringChapters: [
+        {
+          description:
+            "Espectroscopía UV-Vis: transiciones, ley de Beer–Lambert, instrumentación y análisis cuantitativo.",
+          title: "UV-Vis",
+        },
+        {
+          description:
+            "Fluorescencia y fosforescencia: rendimiento cuántico, apagamiento, sondas y aplicaciones.",
+          title: "Espectroscopía de luminiscencia",
+        },
+        {
+          description:
+            "IR y Raman: modos vibracionales, selección, interpretación estructural y efectos del solvente.",
+          title: "IR y Raman",
+        },
+        {
+          description:
+            "EPR/ESR: radicales, centros paramagnéticos, hiperfino y aplicaciones en materiales y bioquímica.",
+          title: "Resonancia paramagnética electrónica",
+        },
+        {
+          description:
+            "Espectrometría de masas: ionización, analizadores, fragmentación y asignación de estructuras.",
+          title: "Espectrometría de masas",
+        },
+        {
+          description:
+            "Difracción de rayos X: Bragg, refinamiento, cristalografía de moléculas y sólidos; limitaciones.",
+          title: "Cristalografía de rayos X",
+        },
+      ],
     },
   },
   {
@@ -100,10 +169,10 @@ export const TEST_CASES = [
       - Should separate stylized facts from theoretical models
       - Should cover each type of indicator individually
       - Should distinguish business cycle measurement from theory
-      - Should NOT cover GDP measurement or national accounts (covered in "Macroeconomic statistics" chapter)
-      - Should NOT cover money supply or quantity theory of money (covered in "Money and inflation" chapter)
-      - Should NOT cover IS-LM or aggregate demand/supply models (covered in "Short-run macro frameworks" chapter)
-      - Should NOT cover consumption theory or life-cycle models (covered in "Consumption in macroeconomics" chapter)
+      - Should NOT create dedicated lessons teaching GDP measurement or national accounts (neighboring chapter "Macroeconomic statistics" covers that) — brief contextual references are fine
+      - Should NOT create dedicated lessons teaching money supply or quantity theory of money (neighboring chapter "Money and inflation" covers that) — brief contextual references are fine
+      - Should NOT create dedicated lessons teaching IS-LM or aggregate demand/supply models (neighboring chapter "Short-run macro frameworks" covers that) — brief contextual references are fine
+      - Should NOT create dedicated lessons teaching consumption theory or life-cycle models (neighboring chapter "Consumption in macroeconomics" covers that) — brief contextual references are fine
 
       ${SHARED_EXPECTATIONS}
     `,
@@ -114,6 +183,38 @@ export const TEST_CASES = [
       chapterTitle: "Business cycles",
       courseTitle: "Economics",
       language: "en",
+      neighboringChapters: [
+        {
+          description:
+            "Firms in development: management practices, informality, and productivity dispersion.",
+          title: "Firms and productivity in development",
+        },
+        {
+          description:
+            "Macroeconomic measurement: GDP, GNI, inflation, unemployment, and national accounts frameworks.",
+          title: "Macroeconomic statistics",
+        },
+        {
+          description:
+            "Money and inflation: quantity theory, money demand, and inflation dynamics.",
+          title: "Money and inflation",
+        },
+        {
+          description:
+            "Short-run fluctuations: IS–LM intuition, aggregate demand/supply, and policy transmission.",
+          title: "Short-run macro frameworks",
+        },
+        {
+          description:
+            "Consumption theory in macro: permanent income, life-cycle models, and empirical puzzles.",
+          title: "Consumption in macroeconomics",
+        },
+        {
+          description:
+            "Investment: q-theory, adjustment costs, uncertainty, and financial frictions.",
+          title: "Investment dynamics",
+        },
+      ],
     },
   },
   {
@@ -121,10 +222,10 @@ export const TEST_CASES = [
       - MUST be in Brazilian Portuguese
       - Should break down Definition of Ready components individually
       - Should cover story refinement techniques as separate lessons
-      - Should NOT cover estimation techniques, story points, or planning poker (covered in "Estimativas em ágil" and "Story points e planning poker" chapters)
-      - Should NOT cover no-estimates or throughput forecasting (covered in "No-estimates e previsões por fluxo" chapter)
-      - Should NOT cover risk management or dependency mapping (covered in "Risco e dependências" chapter)
-      - Should NOT cover software architecture or SOLID principles (covered in "Arquitetura em contextos ágeis" chapter)
+      - Should NOT create dedicated lessons teaching estimation techniques, story points, or planning poker (neighboring chapters "Estimativas em ágil" and "Story points e planning poker" cover that) — brief contextual references are fine
+      - Should NOT create dedicated lessons teaching no-estimates or throughput forecasting (neighboring chapter "No-estimates e previsões por fluxo" covers that) — brief contextual references are fine
+      - Should NOT create dedicated lessons teaching risk management or dependency mapping (neighboring chapter "Risco e dependências" covers that) — brief contextual references are fine
+      - Should NOT create dedicated lessons teaching software architecture or SOLID principles (neighboring chapter "Arquitetura em contextos ágeis" covers that) — brief contextual references are fine
 
       ${SHARED_EXPECTATIONS}
     `,
@@ -135,6 +236,36 @@ export const TEST_CASES = [
       chapterTitle: "Definition of Ready e preparo do trabalho",
       courseTitle: "Metodologias Ágeis",
       language: "pt",
+      neighboringChapters: [
+        {
+          description: "Estimativas: por que, quando e quando não; vieses e variabilidade.",
+          title: "Estimativas em ágil",
+        },
+        {
+          description:
+            "Story points, escalas, planning poker e calibração; cuidados com comparações entre times.",
+          title: "Story points e planning poker",
+        },
+        {
+          description:
+            "Estimativas por fluxo: no-estimates, throughput e previsões probabilísticas.",
+          title: "No-estimates e previsões por fluxo",
+        },
+        {
+          description: "Gestão de riscos, premissas e dependências; integração com planejamento.",
+          title: "Risco e dependências",
+        },
+        {
+          description:
+            "Arquitetura evolutiva, modularidade e fitness functions; evitar big design up front.",
+          title: "Arquitetura em contextos ágeis",
+        },
+        {
+          description:
+            "Princípios SOLID, coesão/acoplamento e técnicas para manter código sustentável.",
+          title: "Design de software para agilidade",
+        },
+      ],
     },
   },
   {
@@ -144,10 +275,10 @@ export const TEST_CASES = [
       - Should distinguish between Deathly Hallows and Horcruxes as separate topics
       - Should break down moral and philosophical implications as individual lessons
       - Even though this is pop culture, lessons should still be focused and granular
-      - Should NOT cover Legilimency, Occlumency, or mind magic (covered in "Magic: Mind Arts" chapter)
-      - Should NOT cover time-turners or time magic (covered in "Magic: Time and Paradox" chapter)
-      - Should NOT cover protective wards or the Fidelius Charm (covered in "Magic: Wards and Secret-Keeping" chapter)
-      - Should NOT cover curse-breaking techniques (covered in "Magic: Curses and Curse-Breaking" chapter)
+      - Should NOT create dedicated lessons teaching Legilimency, Occlumency, or mind magic (neighboring chapter "Magic: Mind Arts" covers that) — brief contextual references are fine
+      - Should NOT create dedicated lessons teaching time-turners or time magic (neighboring chapter "Magic: Time and Paradox" covers that) — brief contextual references are fine
+      - Should NOT create dedicated lessons teaching protective wards or the Fidelius Charm (neighboring chapter "Magic: Wards and Secret-Keeping" covers that) — brief contextual references are fine
+      - Should NOT create dedicated lessons teaching curse-breaking techniques (neighboring chapter "Magic: Curses and Curse-Breaking" covers that) — brief contextual references are fine
 
       ${SHARED_EXPECTATIONS}
     `,
@@ -158,6 +289,37 @@ export const TEST_CASES = [
       chapterTitle: "Magic: Death, Souls, and Immortality",
       courseTitle: "Harry Potter",
       language: "en",
+      neighboringChapters: [
+        {
+          description:
+            "Healing potions and antidotes; triage, toxicity, and counter-poison strategies.",
+          title: "Magic: Antidotes and Healing Potions",
+        },
+        {
+          description:
+            "Mind magic: Legilimency, Occlumency, and memory manipulation tradeoffs and risks.",
+          title: "Magic: Mind Arts",
+        },
+        {
+          description:
+            "Time magic: time-turners, paradox avoidance, and narrative constraints on temporal tools.",
+          title: "Magic: Time and Paradox",
+        },
+        {
+          description:
+            "Protective enchantments: Fidelius, blood wards, and layered security design.",
+          title: "Magic: Wards and Secret-Keeping",
+        },
+        {
+          description: "Curses and curse-breaking: detection, containment, and reversal methods.",
+          title: "Magic: Curses and Curse-Breaking",
+        },
+        {
+          description:
+            "Artifacts with agency: cursed objects, sentient items, and ownership/allegiance effects.",
+          title: "Magic: Enchanted Objects and Sentience",
+        },
+      ],
     },
   },
   // Late/final chapters
@@ -167,10 +329,10 @@ export const TEST_CASES = [
       - Should cover each type of evidence individually
       - Should separate burden of proof from standards of proof
       - Should break down presumptions as individual concepts
-      - Should NOT cover forensic/technical evidence or perícias (covered in "Perícias e prova técnica" chapter)
-      - Should NOT cover legal risk management (covered in "Risk management jurídico" chapter)
-      - Should NOT cover precedent analysis or jurisprudence (covered in "Análise de precedentes" chapter)
-      - Should NOT cover strategic litigation or amici curiae (covered in "Litigância estratégica e impacto" chapter)
+      - Should NOT create dedicated lessons teaching forensic/technical evidence or perícias (neighboring chapter "Perícias e prova técnica" covers that) — brief contextual references are fine
+      - Should NOT create dedicated lessons teaching legal risk management (neighboring chapter "Risk management jurídico" covers that) — brief contextual references are fine
+      - Should NOT create dedicated lessons teaching precedent analysis or jurisprudence (neighboring chapter "Análise de precedentes" covers that) — brief contextual references are fine
+      - Should NOT create dedicated lessons teaching strategic litigation or amici curiae (neighboring chapter "Litigância estratégica e impacto" covers that) — brief contextual references are fine
 
       ${SHARED_EXPECTATIONS}
     `,
@@ -181,6 +343,38 @@ export const TEST_CASES = [
       chapterTitle: "Teoria geral da prova",
       courseTitle: "Direito",
       language: "pt",
+      neighboringChapters: [
+        {
+          description:
+            "Gestão de riscos jurídicos: mapeamento, matriz de riscos, controles, apetite a risco e relatórios.",
+          title: "Risk management jurídico",
+        },
+        {
+          description:
+            "Privilegios e confidencialidade: sigilo profissional, attorney-client privilege comparado e governança de dados.",
+          title: "Sigilo, confidencialidade e privilégio",
+        },
+        {
+          description:
+            "Provas e perícias: perícia contábil, técnica, grafotécnica, médica, ambiental e quesitação.",
+          title: "Perícias e prova técnica",
+        },
+        {
+          description:
+            "Jurisprudência e precedentes: ratio decidendi, distinguishing, overruling e consistência decisória.",
+          title: "Análise de precedentes",
+        },
+        {
+          description:
+            "Litigância estratégica: seleção de casos, construção de teses, amici curiae e impacto sistêmico.",
+          title: "Litigância estratégica e impacto",
+        },
+        {
+          description:
+            "Processos estruturais e políticas públicas: decisões complexas, monitoramento, compliance judicial e consensualidade.",
+          title: "Processo estrutural",
+        },
+      ],
     },
   },
   {
@@ -189,9 +383,9 @@ export const TEST_CASES = [
       - Should break down each thematic continuity into separate lessons
       - Should cover slavery's legacy aspects individually
       - Should separate political, economic, and social themes into distinct lessons
-      - Should NOT cover museums, monuments, or public history (covered in "Public history and collective memory" chapter)
-      - Should NOT cover comparative parallels with other countries (covered in "Brazil in comparative perspective" chapter)
-      - Should NOT cover career advice or academic pathways (covered in "Careers in Brazilian history and related fields" chapter)
+      - Should NOT create dedicated lessons teaching about museums, monuments, or public history (neighboring chapter "Public history and collective memory" covers that) — brief contextual references are fine
+      - Should NOT create dedicated lessons teaching comparative parallels with other countries (neighboring chapter "Brazil in comparative perspective" covers that) — brief contextual references are fine
+      - Should NOT create dedicated lessons teaching career advice or academic pathways (neighboring chapter "Careers in Brazilian history and related fields" covers that) — brief contextual references are fine
 
       ${SHARED_EXPECTATIONS}
     `,
@@ -202,6 +396,28 @@ export const TEST_CASES = [
       chapterTitle: "Continuities and turning points in Brazilian history",
       courseTitle: "Brazilian History",
       language: "en",
+      neighboringChapters: [
+        {
+          description:
+            "Quantitative and spatial methods: census data, economic series, GIS mapping, and digital humanities.",
+          title: "Data and digital methods in history",
+        },
+        {
+          description:
+            "Memory, monuments, and public history: museums, curriculum disputes, and politics of commemoration.",
+          title: "Public history and collective memory",
+        },
+        {
+          description:
+            "Comparative Brazil: parallels with Spanish America, the US South, and Atlantic empires.",
+          title: "Brazil in comparative perspective",
+        },
+        {
+          description:
+            "Key academic pathways, language skills, archives, fellowships, and career options in research, education, and policy.",
+          title: "Careers in Brazilian history and related fields",
+        },
+      ],
     },
   },
 ];

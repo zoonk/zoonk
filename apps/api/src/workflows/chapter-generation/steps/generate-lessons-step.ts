@@ -24,6 +24,7 @@ function generateLessons(context: ChapterContext) {
     chapterTitle: context.title,
     courseTitle: context.course.title,
     language: context.language,
+    neighboringChapters: context.neighboringChapters,
   });
 }
 

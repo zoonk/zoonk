@@ -29,25 +29,41 @@ export type ChapterLessonsParams = {
   chapterTitle: string;
   courseTitle: string;
   language: string;
+  neighboringChapters?: { title: string; description: string }[];
   model?: string;
   useFallback?: boolean;
   reasoningEffort?: ReasoningEffort;
 };
+
+function formatNeighboringChapters(chapters: { title: string; description: string }[]): string {
+  if (chapters.length === 0) {
+    return "";
+  }
+
+  const items = chapters.map((ch) => `- "${ch.title}": ${ch.description}`).join("\n");
+
+  return `\nNEIGHBORING_CHAPTERS:\n${items}`;
+}
 
 export async function generateChapterLessons({
   chapterDescription,
   chapterTitle,
   courseTitle,
   language,
+  neighboringChapters,
   model = DEFAULT_MODEL,
   useFallback = true,
   reasoningEffort,
 }: ChapterLessonsParams) {
+  const neighboringSection = neighboringChapters
+    ? formatNeighboringChapters(neighboringChapters)
+    : "";
+
   const userPrompt = `
     LANGUAGE: ${language}
     COURSE_TITLE: ${courseTitle}
     CHAPTER_TITLE: ${chapterTitle}
-    CHAPTER_DESCRIPTION: ${chapterDescription}
+    CHAPTER_DESCRIPTION: ${chapterDescription}${neighboringSection}
   `;
 
   const providerOptions = buildProviderOptions({

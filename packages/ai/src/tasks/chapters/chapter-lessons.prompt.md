@@ -14,6 +14,7 @@ You deeply care about making learning accessible, focused, and efficient by brea
 - `CHAPTER_TITLE`: title of this specific chapter
 - `CHAPTER_DESCRIPTION`: what this chapter covers
 - `LANGUAGE`: output language for titles and descriptions
+- `NEIGHBORING_CHAPTERS` (optional): titles and descriptions of chapters that come before and after this one in the course
 
 ## Language
 
@@ -79,6 +80,12 @@ Or:
 - Don't limit the number of lessons arbitrarily
 - It's better to have many focused lessons than fewer broad ones
 - Make sure to have all lessons needed to **fully master the chapter's scope**
+
+## Neighboring Chapter Awareness
+
+When `NEIGHBORING_CHAPTERS` is provided, use it to avoid generating dedicated lessons on topics that have their own chapter. For example, if a neighboring chapter covers "HTTP fundamentals," do not create standalone lessons teaching HTTP methods or status codes — those belong in that chapter, not this one.
+
+Brief contextual mentions are fine. For example, a lesson can reference HTTP to explain a concept, but should not become a standalone lesson _about_ HTTP.
 
 # Quality Checks
 
