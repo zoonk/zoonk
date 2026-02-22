@@ -1,63 +1,158 @@
 {
   "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: The immune system involves verifiable biological mechanisms with specific cell types and processes. Penalize if:\n   - Antibodies are described as directly killing pathogens (they mark them for destruction by other cells)\n\n2. DEPTH CHECK: Penalize if the explanation treats immune response as a simple \"body fights germs\" narrative without showing how different components work together.\n\n3. DISTINCTION FROM BACKGROUND: The background covered historical discovery of microbes and defense mapping. This should explain the actual mechanisms of how immunity works.\n\n\nEVALUATION CRITERIA:\n\n1. FACTUAL ACCURACY: Any scientific processes, mechanisms, or technical details must be correct. Penalize hallucinations, made-up components, or incorrect cause-effect relationships.\n\n2. DEPTH: Complex topics require multi-layered explanations. Penalize superficial overviews that skip essential mechanisms.\n\n3. CLARITY: Steps should build understanding progressively, explaining concepts in accessible language.\n\n4. FORMAT: Each step must have a title (max 50 chars) and text (max 300 chars).\n\n5. TONE: Conversational, like explaining to a curious friend. Include analogies from everyday life.\n\n6. FOCUS: Explains WHAT something IS, not history or origin stories.\n\n7. NO OVERLAP: Must not repeat content from the BACKGROUND_STEPS.\n\n8. SCOPE: Content matches the lesson scope exactly.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for missing components, phases, or concepts you might expect\n- Do NOT require a specific number of steps\n- Do NOT check against an imagined \"complete\" explanation\n- ONLY penalize for: factual errors, superficial treatment of complex topics, not using the conversational tone (everyday language) we asked or poor explanation structure\n- Different valid explanatory approaches exist - assess the quality of what IS provided\n\n    ",
-  "judgedAt": "2026-01-15T20:48:43.434Z",
+  "judgedAt": "2026-02-21T23:57:39.501Z",
   "judgments": [
     {
-      "judgeId": "google/gemini-3-pro-preview",
+      "judgeId": "anthropic/claude-opus-4.6",
       "rankings": [
         {
-          "anonymousId": "Model C",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "This model provides the best balance of depth, accuracy, and tone. It uses outstanding analogies (antigens as 'ID cards', cytokines as 'radio dispatches') to explain *how* the system works, not just *what* it is. This fulfills the depth requirement better than any other model while maintaining a highly conversational tone.",
-          "score": 10
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Excellent structure with 11 well-organized steps that build progressively. Factually accurate throughout: antibodies are correctly described as tagging/marking rather than killing directly. Includes lymph nodes (unique and valuable addition), inflammation explanation, balance/control concept, and clear distinction between innate and adaptive immunity. Conversational tone with good analogies ('saved passwords,' 'fire extinguisher,' 'coach calling plays'). Explicitly addresses common confusions about antibodies not doing all the killing—directly aligned with the accuracy check. All steps within character limits. No overlap with background content. One of the few models to mention lymph nodes as command hubs, adding depth without sacrificing clarity.",
+          "score": 9.2
         },
         {
-          "anonymousId": "Model I",
-          "modelId": "openai/gpt-5.2",
-          "reasoning": "Excellent structural flow and depth. It uniquely includes 'Lymph nodes' as command hubs, adding valuable context. The distinction between innate and adaptive immunity is explained clearly, and the antibody description is accurate.",
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Strong 10-step explanation with excellent structure and progressive depth. Factually accurate: antibodies are described as flagging threats for destruction or blocking entry, not killing directly. Good coverage of innate vs adaptive immunity with specific cell types (macrophages, neutrophils, natural killer cells, helper T cells, killer T cells, B cells). The cytokines/communication step is a valuable addition. Analogies are natural and effective ('group chat,' 'custom keys'). However, calling antibodies 'Custom-Made Weapons' in the title while the text correctly describes their tagging function could be slightly misleading. Minor quibble: 'like finding and eliminating enemy agents already inside the walls' for killer T cells is a good analogy. All within format constraints.",
           "score": 9
         },
         {
           "anonymousId": "Model G",
           "modelId": "anthropic/claude-opus-4.5",
-          "reasoning": "Very strong depth, particularly in distinguishing between Helper T-cells and Killer T-cells. The explanation is comprehensive and accurate, though the flow is slightly more 'textbook' and list-heavy than the top two conversational models.",
-          "score": 8
+          "reasoning": "Comprehensive 10-step explanation with strong factual accuracy. Antibodies correctly described as 'marking them for destruction or blocking them from infecting cells.' Good coverage of specific cell types and their roles. Includes autoimmune disease concept and balance, which adds depth. Clear progressive structure. Analogies are effective ('generals and snipers,' 'key in a lock'). The inflammation step is well-explained. One minor concern: the text says antibodies can mark invaders 'for destruction' which is correct, maintaining accuracy. All format constraints met. Very similar quality to Model A but slightly less distinctive in analogies.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Strong 8-step explanation with a unique and valuable addition: the antigen/ID card concept (step 4), which adds genuine depth about how immune recognition works. Factually accurate: antibodies described as 'tagging' for destruction or neutralizing, not killing directly. Good progressive structure from barriers through adaptive immunity to memory and communication. Cytokines step is well-explained with the fever connection. Conversational tone with accessible analogies ('sticky flypaper,' 'custom-made handcuffs,' 'radio dispatches'). However, doesn't explicitly name macrophages or natural killer cells (mentions them implicitly through innate immunity), which slightly reduces depth compared to top models.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model L",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Comprehensive 10-step explanation with good depth. Factually accurate for the most part. Antibodies described as 'flag the invader for destruction or neutralize it directly'—the 'neutralize it directly' phrasing is acceptable (antibodies can neutralize toxins and block viral entry). Good specific cell type coverage. The 'Pac-Man Cells' step adds nice detail about phagocytes. Real-life examples in the final step are a good touch. However, calling T-cells 'detectives' who 'identify infected cells and destroy them directly' is accurate for killer T cells but the detective metaphor is slightly off since detectives investigate rather than destroy. The 'nose hairs are bouncers' analogy is fun. All format constraints met.",
+          "score": 8.7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Good 8-step explanation with clear layered structure. Factually accurate: antibodies described as 'tags that mark enemies for destruction.' Good coverage of inflammation as a distinct concept. However, 'stopping 99% of attacks right at the gate' is a made-up statistic that should be penalized slightly. The claim that antibodies 'neutralize toxins' is accurate. Good coordination step explaining how innate and adaptive work together. Conversational tone maintained throughout. The 'keys in a puzzle' analogy for antibodies is slightly awkward (usually it's 'lock and key'). Doesn't mention helper T cells vs killer T cells distinction, reducing depth slightly.",
+          "score": 8.3
         },
         {
           "anonymousId": "Model B",
           "modelId": "openai/gpt-5-mini",
-          "reasoning": "High quality content that explicitly addresses the accuracy constraint in a 'Common confusions' step, clarifying that antibodies don't do the killing. However, the use of lists in Step 5 and a meta-commentary step breaks the narrative flow slightly compared to the seamless storytelling of the top models.",
-          "score": 7
-        },
-        {
-          "anonymousId": "Model F",
-          "modelId": "xai/grok-4.1-fast-reasoning",
-          "reasoning": "A strong, punchy explanation that covers all required bases including inflammation and specific cell types. It is accurate and uses good analogies, though it lacks the extra layer of mechanism explanation (like cytokines or antigens) found in the top tier.",
-          "score": 6
-        },
-        {
-          "anonymousId": "Model D",
-          "modelId": "google/gemini-3-pro-preview",
-          "reasoning": "A solid, standard explanation. It uses good analogies ('sticky tracking devices') and covers the basics well. It is ranked lower because it is slightly less detailed regarding specific cell roles and inflammation compared to the models above it.",
-          "score": 5
-        },
-        {
-          "anonymousId": "Model A",
-          "modelId": "openai/gpt-5.1-instant",
-          "reasoning": "Accurate and conversational, but very simple. It simplifies the adaptive immune system to just 'Detectives' without naming T-cells or B-cells, making it less deep than the higher-ranked models.",
-          "score": 4
-        },
-        {
-          "anonymousId": "Model E",
-          "modelId": "google/gemini-2.5-flash-lite",
-          "reasoning": "Too superficial. It skips key concepts like inflammation and does not clearly distinguish between the cell types, resulting in a generic overview that lacks the required depth.",
-          "score": 3
+          "reasoning": "Good 9-step explanation with solid accuracy. Antibodies correctly described in the 'common confusions' step as tagging rather than killing. Unique addition of threat recognition and autoimmunity concepts. However, step 5 ('Who's on the team?') reads like a list rather than an explanation—lacks the conversational flow expected. The final step about 'why it matters' feels more like a lesson summary than content explanation. Some steps feel rushed rather than building understanding. The 'common confusions' step is valuable but slightly breaks the explanatory flow. Good overall but slightly less engaging than top models.",
+          "score": 8
         },
         {
           "anonymousId": "Model H",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Solid 7-step explanation with good conversational tone and analogies. Factually accurate: antibodies described as 'neutralizing them or flagging them' rather than killing. The 'protein ID card' step (self vs non-self recognition) adds genuine depth. However, the explanation lacks specific cell type names beyond T-cells and B-cells—no mention of macrophages, neutrophils, or natural killer cells, which reduces depth. Doesn't cover inflammation or cytokines. The overall structure is clean and progressive but somewhat surface-level for a complex topic. Good analogies throughout ('sticky tracking devices,' 'neon sign').",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Clean 6-step explanation with engaging analogies ('custom-fit handcuffs,' 'mugshot database'). Factually accurate: antibodies described as neutralizing and tagging for destruction. However, depth is somewhat limited—no mention of inflammation, cytokines, or how the systems coordinate. Doesn't name specific innate immune cells (just 'white blood cells'). The 'Pac-Man' reference is fun but the step doesn't name the specific cell types. Step 4 says 'some viruses are too clever' which oversimplifies why adaptive immunity is needed (it's not just about cleverness). Decent but lacks the mechanistic depth expected for a complex topic.",
+          "score": 7.3
+        },
+        {
+          "anonymousId": "Model D",
           "modelId": "meta/llama-4-maverick",
-          "reasoning": "While the structure is acceptable, it uses the analogy of 'precision-guided missiles' for antibodies. This risks violating the specific accuracy check (antibodies tag/neutralize, they do not explode/kill like missiles), whereas other models used safer analogies like 'stickers' or 'handcuffs'.",
-          "score": 2
+          "reasoning": "Reasonable 6-step explanation but notably shallow. Antibodies described as 'precision-guided missiles that target specific invaders'—this is borderline problematic as it implies antibodies directly destroy pathogens rather than marking them. The text doesn't clarify the tagging/marking function. The thermostat analogy for immune balance is nice. However, lacks specific cell type names for innate immunity, doesn't explain how innate and adaptive coordinate, and doesn't mention cytokines or inflammation mechanisms in detail. The final step about seeing a cut is decent but the explanation overall treats immune response too simply for a complex topic.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "google/gemini-2.5-flash-lite",
+          "reasoning": "Basic 6-step explanation that is too superficial for the topic's complexity. Antibodies described as 'wanted posters' that tag enemies—factually acceptable. However, doesn't name any specific immune cell types (just 'white blood cells'). Doesn't distinguish innate from adaptive immunity. No mention of T-cells, B-cells, macrophages, inflammation, or cytokines. The explanation essentially IS the 'body fights germs' narrative that the depth check warns against. While not factually wrong, it fails to show how different components work together at a mechanistic level.",
+          "score": 5.5
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "The most superficial explanation of all models. Only 7 short steps with very little mechanistic detail. Doesn't name any specific cell types—no T-cells, B-cells, macrophages, neutrophils mentioned at all. Doesn't distinguish innate from adaptive immunity by name. Antibodies are correctly described as markers, but the overall depth is severely lacking. Uses vague terms like 'another group acts more like detectives' and 'fast-acting cells' without specificity. This is essentially the 'body fights germs' narrative the guidelines specifically warn against. While tone is conversational and there are no factual errors, the treatment is far too shallow for a complex biological topic.",
+          "score": 4.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model C provides an exceptional, highly engaging explanation of the immune system. It perfectly follows the format constraints and uses brilliant, consistent analogies (ID badges, wanted posters, radio dispatches) to make complex biological mechanisms like antigens and cytokines easy to understand. It accurately describes antibodies as 'tagging' or 'neutralizing' rather than directly killing.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model F is flawless in its execution. It introduces fantastic depth—even including the role of lymph nodes—while remaining incredibly accessible through analogies like 'saved passwords' and 'fire extinguishers'. The distinction between innate and adaptive immunity is beautifully articulated, and the description of antibodies is perfectly accurate.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model A delivers a wonderfully structured and accurate explanation. It introduces key cell types (macrophages, neutrophils, B and T cells) and effectively explains how they work together, culminating in a great explanation of cytokines as a 'group chat'. The antibody description avoids the 'direct killing' trap perfectly.",
+          "score": 9.8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model G offers fantastic depth, covering specific innate cells, the inflammatory response, and the specialized functions of B and T cells. It uses strong analogies and clearly meets all accuracy checks, appropriately defining antibodies as markers and blockers rather than killers.",
+          "score": 9.8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Model E provides a highly effective, multi-layered breakdown. Its analogies are vivid and accessible, and it correctly details the distinct roles of innate and adaptive components. The antibody description is factually precise, ensuring no penalization.",
+          "score": 9.6
+        },
+        {
+          "anonymousId": "Model L",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model L is comprehensive and engaging, successfully using analogies like 'Pac-Man' for phagocytes. It clearly explains the layered approach of the immune system and accurately describes the function of antibodies without falling into the direct killing misconception. The real-life examples at the end are a great touch.",
+          "score": 9.6
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Model H provides a very good overview with strong analogies (protein ID cards). However, it lacks a bit of the depth found in the top-tier models, as it omits specific names for innate immune cells. It remains highly accurate and avoids the antibody misconception.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model K is solid and engaging but slightly brief. It correctly identifies the roles of T-cells, B-cells, and antibodies (using a great 'handcuffs' analogy), but skims over the specific mechanisms and cell types of the innate immune system.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model B offers a good breakdown but suffers from a slight factual inaccuracy. Stating that 'antibodies tag invaders but don’t do all the killing' implies that they perform *some* direct killing, which triggers the specific accuracy penalty outlined in the prompt. Otherwise, the depth and tone are very good.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "Model D triggers a major penalty for its antibody analogy. Describing antibodies as 'precision-guided missiles' strongly implies that they directly explode/kill pathogens, which violates the prompt's explicit biological accuracy check. It also lacks depth regarding the distinction between innate and adaptive immunity.",
+          "score": 5.5
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Model I fails the depth check. It treats the immune response as a highly superficial, simple narrative without naming the essential mechanisms, cell types (like T-cells, B-cells, or macrophages), or distinguishing between innate and adaptive systems. It is too simplistic for the task requirements.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "google/gemini-2.5-flash-lite",
+          "reasoning": "Model J also fails the depth check. Like Model I, it provides a very basic, superficial overview that skips essential biological components and mechanisms entirely. The prompt explicitly demands penalizing overviews that omit the multi-layered complexity of the topic.",
+          "score": 4
         }
       ]
     },
@@ -65,117 +160,76 @@
       "judgeId": "openai/gpt-5.2",
       "rankings": [
         {
-          "anonymousId": "Model I",
+          "anonymousId": "Model F",
           "modelId": "openai/gpt-5.2",
-          "reasoning": "Meets all constraints: every step has a short title and each text stays under 300 chars while still giving real mechanism (barriers → inflammation → innate vs adaptive → B/T roles → lymph nodes → memory). Conversational with multiple everyday analogies. Accurate on antibodies (tag/block/clump/mark) and clear coordination without drifting into history.",
-          "score": 10
+          "reasoning": "Meets all constraints well: clear layered mechanism (barriers→inflammation→innate→adaptive→B/T cells→lymph nodes→memory), strong everyday analogies, explicitly corrects antibody misconception (“tagging…for cleanup”), good coordination/balance. No obvious factual errors. Main drawback: many steps likely exceed 300 chars (format violation).",
+          "score": 8.8
         },
         {
           "anonymousId": "Model B",
           "modelId": "openai/gpt-5-mini",
-          "reasoning": "Strong depth and accuracy: names key cell types and their jobs, explains innate/adaptive coordination, recognition, and explicitly corrects the “antibodies don’t do all the killing” misconception. Main weakness: several step texts look over 300 characters, violating the strict format limit.",
-          "score": 9
+          "reasoning": "Good depth and coordination (antigen presentation/sensors→adaptive), includes required antibody clarification (they tag, not “do all the killing”), clears confusions, conversational with analogies. Likely some steps exceed 300 chars; last “Why it matters” step veers slightly meta but still mechanism-adjacent.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Strong multi-layer explanation with cytokine “group chat” coordination and correct antibody framing (flag/block entry). Good depth and tone. Issues: several steps likely >300 chars; “Antibodies: Custom-Made Weapons” wording could imply direct killing (though text says flag/block, so acceptable).",
+          "score": 8.3
         },
         {
           "anonymousId": "Model G",
           "modelId": "anthropic/claude-opus-4.5",
-          "reasoning": "Mechanistically solid and well-structured (barriers, innate cells, inflammation, adaptive, T/B roles, memory, balance). Antibodies described as marking/blocking, not directly killing. Conversational analogies are good. However, many step texts appear to exceed 300 characters, so format compliance is a major hit.",
+          "reasoning": "Solid mechanisms (innate cells, inflammation, adaptive, B/T, memory, balance) with clear analogies. Mostly accurate; antibodies described as marking/blocking (good). Likely violates 300-char limit in multiple steps; somewhat repetitive of generic security-force framing.",
           "score": 8
         },
         {
-          "anonymousId": "Model F",
-          "modelId": "xai/grok-4.1-fast-reasoning",
-          "reasoning": "Good coverage of innate/adaptive, inflammation, antibodies as tags, and memory; generally accurate and readable. But it includes a dubious quantitative claim (“stopping 99% of attacks”) and multiple texts likely exceed 300 characters. Also a bit overly militaristic/absolute (“sync perfectly”).",
-          "score": 7
+          "anonymousId": "Model L",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Good structure and examples; includes phagocytes, innate vs adaptive, memory, and real-life manifestations. Accuracy mostly fine, but says antibodies “neutralize it directly,” which can be interpreted as antibodies killing pathogens (they neutralize/block, not kill). Likely over 300 chars in several steps.",
+          "score": 7.6
         },
         {
           "anonymousId": "Model C",
           "modelId": "google/gemini-3-flash",
-          "reasoning": "Includes useful mechanistic detail (antigens/ID idea, antibodies tag/neutralize, cytokines signaling, memory). Mostly accurate and friendly. But several steps are far over the 300-character cap, and “every cell has antigens—unique protein markers” is oversimplified in a potentially misleading way (all cells have surface molecules; ‘unique’/antigen framing is imprecise).",
-          "score": 6
-        },
-        {
-          "anonymousId": "Model D",
-          "modelId": "google/gemini-3-pro-preview",
-          "reasoning": "Clear and mostly accurate (barriers, innate vs adaptive, antibodies neutralize/flag, self–nonself via surface proteins, memory). Depth is moderate. Format likely violates 300-char limit in multiple steps, and some phrasing is a bit too vague (“swarm and destroy it”) without explaining mechanisms beyond the metaphor.",
-          "score": 5
-        },
-        {
-          "anonymousId": "Model A",
-          "modelId": "openai/gpt-5.1-instant",
-          "reasoning": "Very clear, friendly analogies and correctly treats antibodies as “stickers” for other cells. But it’s largely generic (guards/detectives) with few concrete mechanisms or cell types, making it somewhat superficial given the topic. Also several texts likely exceed the 300-character requirement.",
-          "score": 4
-        },
-        {
-          "anonymousId": "Model H",
-          "modelId": "meta/llama-4-maverick",
-          "reasoning": "Decent conversational tone and examples (inflammation signs). However, it contains a factual issue: antibodies compared to “precision-guided missiles,” which implies direct killing (the guidance explicitly warns against that). Also light on coordination/mechanisms and likely over the 300-char limit in places.",
-          "score": 3
+          "reasoning": "Clear, friendly, reasonably deep (barriers, innate inflammation, self/non-self via antigens, adaptive, antibodies, memory, cytokines/fever). Minor accuracy concern: implies “every cell has antigens—unique markers” in a way that can confuse (antigens aren’t exclusively foreign; self markers/MHC are key). Many steps likely >300 chars.",
+          "score": 7.4
         },
         {
           "anonymousId": "Model E",
-          "modelId": "google/gemini-2.5-flash-lite",
-          "reasoning": "Most superficial: largely a “body fights germs” overview with minimal mechanism, no innate vs adaptive distinction, and little about how components coordinate beyond generic statements. Likely meets the 300-char limit more often, but depth requirements are weak compared with others.",
-          "score": 2
-        }
-      ]
-    },
-    {
-      "judgeId": "anthropic/claude-opus-4.5",
-      "rankings": [
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Decent layered overview with coordination and mostly correct antibody ‘tag’ role. Two issues: claims barriers stop “99% of attacks” (dubious/unsupported) and calls them “impenetrable”; also several steps likely >300 chars. Tone/analogies are fine.",
+          "score": 6.9
+        },
         {
-          "anonymousId": "Model G",
-          "modelId": "anthropic/claude-opus-4.5",
-          "reasoning": "Excellent comprehensive explanation with 10 well-structured steps. Strong factual accuracy - correctly describes antibodies as 'marking' pathogens for destruction rather than killing them directly. Excellent depth covering innate/adaptive immunity, T-cells, B-cells, inflammation, and memory cells with clear differentiation of their roles. Great analogies (security team, fire alarm, key in lock) that are accessible. Covers the critical balance concept (autoimmunity). Conversational tone throughout. Minor issue: 'killer T-cells directly destroy infected cells' could be slightly clearer that they destroy YOUR cells that are infected, not the pathogens themselves, though the text does say 'infected cells' which is correct.",
-          "score": 10
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Clear and conversational, good analogies, covers innate/adaptive, antibodies, self-ID, memory. However it says innate responders “swarm and destroy it,” which is vague but not wrong; depth is moderate and missing teamwork details. Likely some steps exceed 300 chars.",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Engaging analogies and basic layering (barriers→innate→adaptive→antibodies→memory). Depth is moderate; a bit simplistic on mechanisms/coordination. Mostly accurate; antibody description (neutralize/tag) is okay. Likely exceeds 300 chars in some steps.",
+          "score": 6.6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "Clear and friendly, but more superficial: limited specifics (few cell types/process links). Antibodies described as “precision-guided missiles,” which strongly suggests direct killing (disallowed). Also likely some steps exceed 300 chars.",
+          "score": 5.6
         },
         {
           "anonymousId": "Model I",
-          "modelId": "openai/gpt-5.2",
-          "reasoning": "Very strong 11-step explanation with excellent depth and accuracy. Correctly describes antibodies as 'tagging' for cleanup rather than killing. Includes lymph nodes as 'command hubs' which adds unique value. Good coverage of innate vs adaptive immunity, T-cells as coaches and eliminators, memory cells. Nice clarification that inflammation isn't the enemy. Conversational tone with effective analogies (wanted posters, saved passwords, fire extinguisher). Slightly less elegant organization than Model G, with some repetition in concepts across steps.",
-          "score": 9
-        },
-        {
-          "anonymousId": "Model C",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Strong 8-step explanation with good accuracy. Correctly describes antibodies as 'tagging' for destruction. Unique inclusion of antigen/ID card concept which adds educational depth. Good coverage of innate/adaptive distinction. Includes cytokines as communication network which is valuable. Clear analogies (flypaper, ID badges, handcuffs). Minor weakness: could have covered the balance/autoimmunity concept. Overall very solid depth and accuracy.",
-          "score": 8
-        },
-        {
-          "anonymousId": "Model D",
-          "modelId": "google/gemini-3-pro-preview",
-          "reasoning": "Good 7-step explanation with solid accuracy. Correctly describes antibodies as 'flagging' invaders for destruction. Includes helpful self/non-self recognition concept with protein ID cards. Good innate/adaptive distinction. Memory cells well explained. Conversational tone with good analogies (tracking devices, badges). Slightly less depth than top models - doesn't cover inflammation mechanism or T-cell subtypes. Still a quality explanation.",
-          "score": 7
-        },
-        {
-          "anonymousId": "Model F",
-          "modelId": "xai/grok-4.1-fast-reasoning",
-          "reasoning": "Good 8-step explanation with mostly accurate content. Correctly describes antibodies as 'tags that mark enemies for destruction.' Good layered approach with inflammation explained. However, the statement 'T cells directly kill infected cells, like assassins' is slightly imprecise (they kill YOUR infected cells, not pathogens directly). The '99% of attacks' claim is unsubstantiated. Good coordination explanation between layers. Slightly less conversational, more dramatic ('impenetrable,' 'boiling oil').",
-          "score": 6
-        },
-        {
-          "anonymousId": "Model B",
-          "modelId": "openai/gpt-5-mini",
-          "reasoning": "Decent 9-step explanation but has some issues. Step 5 is essentially a list rather than an explanatory step ('Who does what?'). The 'common confusions' step is useful but breaks the flow. Correctly notes antibodies 'tag' rather than kill. Good coverage of concepts but organization feels more like a reference guide than progressive learning. Less conversational tone - more textbook-like in places. The 'Why it matters' step is somewhat meta rather than explanatory.",
-          "score": 5
-        },
-        {
-          "anonymousId": "Model H",
-          "modelId": "meta/llama-4-maverick",
-          "reasoning": "Adequate 6-step explanation. CRITICAL ERROR: States 'B-cells produce antibodies, like precision-guided missiles that target specific invaders' - this implies antibodies directly attack/kill, which contradicts the accuracy guidance. The 'wanted poster' memory analogy is good. Inflammation explanation is placed at the end rather than in logical sequence. Covers basic concepts but lacks depth on how components work together. The thermostat analogy for balance is effective.",
-          "score": 4
-        },
-        {
-          "anonymousId": "Model A",
           "modelId": "openai/gpt-5.1-instant",
-          "reasoning": "Basic 7-step explanation that is too superficial. Describes immune response as 'guards' and 'detectives' without naming specific cell types (no T-cells, B-cells, macrophages mentioned). Antibody description as 'stickers that mark invaders' is correct but brief. Lacks depth on how innate vs adaptive actually differ mechanistically. No inflammation explanation. Reads more like a high-level overview than a mechanism explanation. Meets the 'body fights germs' narrative concern from the guidance.",
-          "score": 3
+          "reasoning": "Very clear but quite shallow: “guards/detectives” without concrete mechanisms (no innate/adaptive interaction, inflammation details, key cell roles). Meets antibody-as-tag idea. Likely within 300 chars, but depth criterion lowers it.",
+          "score": 5.4
         },
         {
-          "anonymousId": "Model E",
+          "anonymousId": "Model J",
           "modelId": "google/gemini-2.5-flash-lite",
-          "reasoning": "The most superficial explanation with only 6 brief steps. Lacks essential depth - no specific cell types named (no T-cells, B-cells, macrophages). 'Some gobble up invaders, while others sound alarms' is vague. Antibodies described as 'wanted posters' - but the mechanism is unclear. No inflammation explanation. No discussion of innate vs adaptive distinction. Final step is essentially a summary that adds nothing. Falls into the 'body fights germs' narrative without explaining mechanisms.",
-          "score": 2
+          "reasoning": "Simplistic overview with minimal mechanism detail; little on innate vs adaptive, inflammation, coordination. Antibodies correctly framed as tags. Likely within 300 chars but depth is weakest among acceptable ones.",
+          "score": 5.2
         }
       ]
     }

@@ -1,63 +1,158 @@
 {
   "expectations": "\nLANGUAGE REQUIREMENT: Titles and text must be in Portuguese.\n\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: DNA replication involves specific enzymes with distinct roles in a coordinated process. Penalize if:\n   - Both DNA strands are described as being copied the same way (leading and lagging strands are synthesized differently)\n\n2. DEPTH CHECK: Penalize if the explanation presents DNA replication as simply \"unzipping and copying\" without showing how multiple enzymes coordinate the process.\n\n3. DISTINCTION FROM BACKGROUND: The background covered the discovery of DNA structure and the templating concept. This should explain the actual molecular machinery of replication.\n\n\nEVALUATION CRITERIA:\n\n1. FACTUAL ACCURACY: Any scientific processes, mechanisms, or technical details must be correct. Penalize hallucinations, made-up components, or incorrect cause-effect relationships.\n\n2. DEPTH: Complex topics require multi-layered explanations. Penalize superficial overviews that skip essential mechanisms.\n\n3. CLARITY: Steps should build understanding progressively, explaining concepts in accessible language.\n\n4. FORMAT: Each step must have a title (max 50 chars) and text (max 300 chars).\n\n5. TONE: Conversational, like explaining to a curious friend. Include analogies from everyday life.\n\n6. FOCUS: Explains WHAT something IS, not history or origin stories.\n\n7. NO OVERLAP: Must not repeat content from the BACKGROUND_STEPS.\n\n8. SCOPE: Content matches the lesson scope exactly.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for missing components, phases, or concepts you might expect\n- Do NOT require a specific number of steps\n- Do NOT check against an imagined \"complete\" explanation\n- ONLY penalize for: factual errors, superficial treatment of complex topics, not using the conversational tone (everyday language) we asked or poor explanation structure\n- Different valid explanatory approaches exist - assess the quality of what IS provided\n\n    ",
-  "judgedAt": "2026-01-15T20:48:43.021Z",
+  "judgedAt": "2026-02-21T23:57:08.801Z",
   "judgments": [
     {
-      "judgeId": "google/gemini-3-pro-preview",
+      "judgeId": "anthropic/claude-opus-4.6",
       "rankings": [
         {
-          "anonymousId": "Model D",
-          "modelId": "openai/gpt-5.2",
-          "reasoning": "This model provides the best balance of depth, accuracy, and flow. It correctly identifies all key components (Helicase, Topoisomerase, SSB, Primase, Polymerase, Ligase) and places them in a logical chronological order (e.g., explaining Topoisomerase alleviating tension immediately after opening). It clearly distinguishes the leading and lagging strands with excellent analogies ('estrada asfaltada' vs 'costurar retalhos') and maintains the requested conversational tone perfectly.",
-          "score": 10
+          "anonymousId": "D",
+          "modelId": "D",
+          "reasoning": "Model D provides the most comprehensive and accurate explanation of DNA replication. It covers all key enzymes (helicase, primase, DNA polymerase, ligase, topoisomerase) with correct roles. It clearly distinguishes leading and lagging strands with proper terminology (fita líder/retardatária), explains fragments of Okazaki, mentions antiparallel nature and 5'→3' directionality, includes proofreading, and ends with semiconservative replication. The final summary step ties everything together nicely. Analogies are effective and conversational. All steps stay within character limits. The tone is accessible yet thorough. Topoisomerase inclusion adds depth beyond most other models. The only minor issue is that 12 steps is quite long, but each step adds genuine value. No factual errors detected.",
+          "score": 9.5
         },
         {
-          "anonymousId": "Model A",
-          "modelId": "openai/gpt-5-mini",
-          "reasoning": "Exceptional scientific accuracy, covering details the others missed (SSB proteins, Telomerase, Mismatch repair). However, the narrative flow is slightly less intuitive than Model D (e.g., explaining Topoisomerase after Ligase, whereas tension relief happens during opening). It is technically the most complete but slightly denser and less 'story-like' than Model D.",
+          "anonymousId": "K",
+          "modelId": "K",
+          "reasoning": "Model K is exceptionally thorough and accurate. It covers helicase, topoisomerase, SSB proteins, primase/primers, DNA polymerase, leading/lagging strands, fragments of Okazaki, primer removal, ligase, proofreading, and semiconservative result. The inclusion of SSB proteins and primer removal adds depth that most models miss. Analogies are natural and effective. The tone is conversational throughout. All scientific details are correct. The step about primer removal and replacement with DNA is a nice detail. Very similar quality to Model D, perhaps slightly less polished in some analogies but with unique additions like SSB proteins.",
+          "score": 9.3
+        },
+        {
+          "anonymousId": "G",
+          "modelId": "G",
+          "reasoning": "Model G is very comprehensive and scientifically precise. It covers origins of replication, helicase, SSB proteins, primase/primers (with 3'-OH detail), DNA polymerase with base pairing rules, leading/lagging strands, ligase, topoisomerase, proofreading, mismatch repair, telomerase, and replissome. The depth is impressive - it goes beyond most models with mismatch repair, telomerase, and replissome concepts. However, the tone is somewhat more textbook-like and less conversational than requested - phrases like '3'-OH de partida' and 'atividade exonuclease' are technical without sufficient explanation for a curious friend. Some steps feel dense rather than building understanding progressively. Still excellent content but slightly less accessible.",
           "score": 9
         },
         {
-          "anonymousId": "Model C",
-          "modelId": "google/gemini-3-pro-preview",
-          "reasoning": "Strong explanation with excellent analogies (zipper, bricklayer). It covers the core enzymes (Helicase, Primase, Polymerase, Ligase) and the leading/lagging distinction clearly. It scores lower than A and D only because it omits the helper proteins (SSB and Topoisomerase) which adds to the mechanical depth requested.",
-          "score": 8
+          "anonymousId": "B",
+          "modelId": "B",
+          "reasoning": "Model B delivers a well-structured, accurate explanation with excellent conversational tone. Covers helicase, primase, DNA polymerase, leading/lagging strands (fita líder/tardia), fragments of Okazaki, ligase, and proofreading. The analogies are creative and effective (cursor of a zipper, flag at the starting line, walking forward vs stepping backward repeatedly). The 'Via Expressa e Contramão' title is particularly clever. All scientific facts are correct. The explanation flows logically and builds understanding progressively. Missing topoisomerase but per anti-checklist guidance, we shouldn't penalize for missing components. Very strong overall.",
+          "score": 8.8
         },
         {
-          "anonymousId": "Model E",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Very similar in quality to Model C, with clear steps and good analogies. It correctly identifies the directional problem and the need for fragments. It ranks slightly below C because the analogies in C were marginally more vivid, but it is still a solid, accurate response.",
-          "score": 7
+          "anonymousId": "C",
+          "modelId": "C",
+          "reasoning": "Model C provides a solid, well-organized explanation covering origins of replication, helicase, DNA polymerase, leading/lagging strands, primase/primers, ligase, and semiconservative model. All facts are correct and well-explained. The tone is conversational with good analogies (Lego, sewing). The step order is slightly unusual - primase comes after leading/lagging strand discussion rather than before, which could confuse the reader about the logical sequence. Missing proofreading/error correction, but per anti-checklist guidance, we don't penalize for missing components. Overall very good but slightly less engaging than Models B or D.",
+          "score": 8.5
         },
         {
-          "anonymousId": "Model G",
-          "modelId": "xai/grok-4.1-fast-reasoning",
-          "reasoning": "Accurate and covers all necessary steps, including Primase and Ligase. However, it uses the English term 'Lagging' ('Fita lagging') instead of the Portuguese equivalent (tardia/descontínua) used by better models. This slight break in localization places it below the top tier.",
-          "score": 6
+          "anonymousId": "I",
+          "modelId": "I",
+          "reasoning": "Model I covers the key concepts well: semiconservative replication, origins of replication, helicase, primase/primers, leading strand, lagging strand with Okazaki fragments, ligase, and proofreading. Facts are generally correct. However, there are some issues: using English terms without Portuguese equivalents (e.g., 'fita lagging', 'proofreading' in titles) which is inconsistent with the Portuguese language requirement. The analogy of helicase as a 'bottle opener' (abridor de garrafas) is not very apt. The step about 'A Fita Lagging em Pedaços' uses the English term rather than 'fita retardatária/tardia'. Some analogies feel forced (post-its). Still a good explanation overall.",
+          "score": 7.8
         },
         {
-          "anonymousId": "Model F",
-          "modelId": "anthropic/claude-opus-4.5",
-          "reasoning": "Good flow and explanations, but it creates a significant gap by omitting Primase. Since Polymerase cannot initiate synthesis without a primer, this is a missing piece of the 'machinery' requested. It does, however, explain the Okazaki fragments well.",
-          "score": 5
+          "anonymousId": "E",
+          "modelId": "E",
+          "reasoning": "Model E provides a good explanation with correct science. Covers helicase, DNA polymerase, directionality, leading/lagging strands, Okazaki fragments, ligase, proofreading, and semiconservative result. Tone is conversational with decent analogies. However, it lacks mention of primase/primers, which is a notable gap when discussing the replication machinery (though per anti-checklist we shouldn't heavily penalize missing components). The claim of 'one error per billion nucleotides' is for the combined system with mismatch repair, which is fine but slightly imprecise when attributed solely to polymerase proofreading in context. The flow is good and accessible. Missing the primer step means the narrative jumps from template to polymerase without explaining how polymerase starts, which is a logical gap.",
+          "score": 7.5
         },
         {
-          "anonymousId": "Model H",
-          "modelId": "openai/gpt-5.1-instant",
-          "reasoning": "Accurate but too brief. It lists the enzymes (Helicase, Primase, Polymerase) in a single step rather than breaking down their distinct roles in the narrative flow. It lacks the depth and instructional scaffolding of the higher-ranked models.",
+          "anonymousId": "H",
+          "modelId": "H",
+          "reasoning": "Model H provides a clean, well-written explanation with excellent conversational tone and analogies. Covers helicase, primase, DNA polymerase, leading/lagging strand difference, Okazaki fragments, ligase, and proofreading. All facts are correct. The analogies are vivid (painting a road line walking backwards, construction site markers). However, it doesn't name the leading/lagging strands or Okazaki fragments explicitly, which reduces educational value - describing them without naming them means the reader won't learn the proper terminology. The explanation is accessible but slightly less informative because of this terminology gap.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "F",
+          "modelId": "F",
+          "reasoning": "Model F is well-written with good conversational tone and effective analogies. Covers helicase, DNA polymerase, leading/lagging strand concept, ligase, proofreading, and semiconservative result. Facts are correct. However, it omits primase/primers entirely, and doesn't name the Okazaki fragments or the leading/lagging strands by their proper terms. The step about directionality says 'lida e copiada de trás para frente' which is slightly misleading - the lagging strand isn't read backwards, rather synthesis occurs in short segments away from the fork. This is a minor inaccuracy. Overall solid but less detailed than top models.",
+          "score": 7.3
+        },
+        {
+          "anonymousId": "J",
+          "modelId": "J",
+          "reasoning": "Model J provides a basic but mostly correct explanation. It mentions helicase, primase, DNA polymerase, and ligase. It acknowledges the two strands are copied differently ('Duas Fitas, Dois Ritmos'). However, the explanation is quite superficial - the depth check criterion flags this as presenting replication too simply. Key terms like Okazaki fragments, leading/lagging strands are absent. The step 'Duas Fitas, Dois Ritmos' is vague ('uma segue suave... a outra avança em trechos curtos'). No mention of proofreading, semiconservative model, or the reason why strands are copied differently (directionality). The last step about 'where this happens' is generic filler. Meets minimum requirements but lacks depth for a complex topic.",
+          "score": 5.5
+        },
+        {
+          "anonymousId": "L",
+          "modelId": "L",
+          "reasoning": "Model L has several issues. First, it lacks proper Portuguese characters (no accents: 'replicacao' instead of 'replicação', 'helice' instead of 'hélice', etc.), which is problematic for a Portuguese-language requirement. Content-wise, it's quite superficial - only 6 steps covering helicase, base pairing, DNA polymerase, semiconservative result, and proofreading. Critically, it completely fails the depth check: it doesn't distinguish between leading and lagging strands at all, presenting DNA replication as simply 'unzipping and copying'. No mention of primase/primers, Okazaki fragments, or ligase. The description falls into the 'unzip and copy' oversimplification that the task specifically warns against.",
           "score": 4
         },
         {
-          "anonymousId": "Model B",
-          "modelId": "meta/llama-4-maverick",
-          "reasoning": "Fails the specific negative constraint regarding the leading/lagging strands. It treats replication as a uniform process for both strands ('um cria o outro') without mentioning the directionality challenges or Okazaki fragments. It is too superficial for the depth check.",
+          "anonymousId": "A",
+          "modelId": "A",
+          "reasoning": "Model A is the weakest. It presents DNA replication as simply 'unzipping and copying' - exactly what the depth check warns against. It mentions DNA polymerase only generically, doesn't distinguish leading and lagging strands at all, doesn't mention helicase, primase, ligase, or Okazaki fragments. The library analogy in step 5 repeats the concept from step 1 without adding new information. No enzyme coordination is shown. The explanation is superficial and would fail both the depth check and the distinction-from-background check (it essentially repeats the templating concept). Multiple steps are filler rather than substantive content.",
           "score": 3
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "O modelo apresenta uma explicação perfeita e cativante sobre a replicação do DNA. Ele introduz todas as enzimas essenciais (Helicase, Primase, Polimerase, Ligase) de forma coordenada e sequencial. Aborda corretamente a diferença entre a fita líder e a tardia (fragmentos de Okazaki) usando analogias excelentes e fáceis de entender (pedreiro, bandeira de largada, andar para trás). O tom é conversacional e atende a todos os requisitos rigorosamente.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Apresenta um excelente fluxo narrativo e analogias muito didáticas (Lego, canteiro de obras, zíper). Explica claramente o papel coordenado das enzimas e a diferença crucial na síntese das duas fitas (fita líder e fragmentos de Okazaki). Cumpre todos os requisitos de formatação, precisão e tom solicitados.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Resposta extremamente completa e bem estruturada. A divisão em 12 passos torna a leitura leve e progressiva. Inclui as funções detalhadas das enzimas, explica a necessidade do primer, a direcionalidade antiparalela (causando a formação da fita líder e retardatária) e até menciona as topoisomerases de forma muito acessível. As analogias são ricas e o tom é amigável.",
+          "score": 10
         },
         {
           "anonymousId": "Model I",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Destaca-se pela clareza excepcional e pelas analogias do cotidiano (jaqueta longa, abridor de garrafas, etiquetas adesivas, post-its). Cobre todos os pontos obrigatórios: o mecanismo de unzipping, a ação coordenada de múltiplas enzimas e as sínteses distintas (fluida e em pedaços). O modelo alcança a profundidade necessária mantendo a linguagem simples.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Explicação fenomenal que constrói o conhecimento passo a passo de forma impecável. Ao longo de 13 etapas, o modelo detalha o trabalho em equipe das enzimas (incluindo Topoisomerase e SSB), com analogias excelentes como 'fio torcido' e 'asfalto'. Aborda com precisão a diferença entre as fitas contínua e tardia. Totalmente alinhado às expectativas.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Muito bom no uso de metáforas (fotocópia, impressora biológica, rua de mão única) e no tom conversacional. Explica bem o problema das duas fitas e a ação em pedaços (Okazaki). Perde um pequeno detalhe metodológico ao não incluir a Primase na ação coordenada (embora a regra afirme não penalizar componentes ausentes, a fluidez do processo fica levemente menos aprofundada que nos modelos nota 10), mas ainda é excelente.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Apresenta um resumo muito cativante e de fácil leitura. Cobre as etapas essenciais, a ação das enzimas e resolve muito bem o 'desafio da direção' para explicar as diferenças de cópia entre as fitas. A profundidade é ligeiramente menor comparada aos modelos com nota máxima, mas cumpre muito bem o propósito e o tom exigido.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Utiliza linguagem muito acessível e cumpre a tarefa de demonstrar o maquinário molecular trabalhando de forma coordenada. Explica corretamente a necessidade de sintetizar uma fita em pequenos saltos (via de mão única). Excelente aplicação do tom e das regras de formatação.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Embora seja altamente preciso e rico em profundidade científica (mencionando proofreading, SSB, reparos e telomerase), o modelo falha levemente na diretriz de tom ('como explicar a um amigo curioso'). O excesso de jargões técnicos (3'-OH, 5'→3', exonuclease, mismatch repair) torna a leitura densa e um pouco conteudista, fugindo parcialmente da abordagem esperada.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "O modelo atende aos requisitos básicos e diferencia corretamente a síntese das fitas. Contudo, a explicação das enzimas é superficial (agrupa todas no passo 4 sem explicar como se coordenam mecanicamente), resultando em um nível de profundidade baixo que penaliza sua nota, dado que tópicos complexos requerem explicações em múltiplas camadas.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "O modelo viola duas regras críticas de penalização. Primeiro, apresenta a replicação praticamente como 'abrir e copiar' sem mostrar a coordenação das enzimas essenciais (ignora a Helicase, Ligase e Primase). Segundo, e mais grave, descreve as duas fitas como sendo copiadas da mesma forma, omitindo completamente a síntese contínua e descontínua (fita líder e tardia).",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model L",
           "modelId": "google/gemini-2.5-flash-lite",
-          "reasoning": "Fails on language requirements due to a total lack of accentuation (grammar errors like 'replicacao', 'biologica', 'e' instead of 'é'). Additionally, it fails the depth check by not explaining the leading/lagging distinction.",
-          "score": 1
+          "reasoning": "O modelo é inaceitável devido a graves erros ortográficos contínuos (ausência completa de acentos em todo o texto em português, como 'replicacao', 'molecula', 'maquina'). Além disso, falha na verificação de precisão (Accuracy Check), pois não descreve as diferenças de síntese entre as duas fitas, tratando ambas como se fossem copiadas da mesma maneira.",
+          "score": 2
         }
       ]
     },
@@ -66,116 +161,75 @@
       "rankings": [
         {
           "anonymousId": "Model D",
-          "modelId": "openai/gpt-5.2",
-          "reasoning": "Boa coordenação enzimática (helicase, topoisomerase, SSB, primase, polimerase, Okazaki, remoção de primers, ligase, proofreading) e diferencia corretamente fita líder vs tardia. Tom conversacional com analogias. Problema: vários textos excedem 300 caracteres, violando o formato.",
-          "score": 9
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Explica a maquinaria de forma coordenada (helicase, primase, polimerase, ligase, topoisomerase), diferencia fita líder/retardatária corretamente, traz analogias e tom conversacional. Boa distinção do “só abre e copia”. Peca no FORMATO: vários textos passam de 300 caracteres e há mais detalhe do que o limite permite.",
+          "score": 8.6
         },
         {
-          "anonymousId": "Model A",
-          "modelId": "openai/gpt-5-mini",
-          "reasoning": "Muito completo e mecanístico: origens, forquilha, SSB, primers, 5'→3', líder/lagging, ligase, topoisomerase, proofreading, mismatch repair, telomerase, replissoma. Diferencia bem as fitas. Porém é longo e vários passos parecem ultrapassar 300 caracteres; também inclui itens mais avançados (telomerase/reparo) que podem fugir do “escopo exatamente” dependendo da lição.",
-          "score": 8
+          "anonymousId": "Model K",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Muito completo e bem encadeado: inclui topoisomerase, SSB, primers, leading/lagging e ligase, com analogias claras. Factualmente sólido. Também viola o limite de 300 caracteres em muitos passos e usa “leading” (inglês) no título de um passo, mas o conteúdo está em português.",
+          "score": 8.4
         },
         {
           "anonymousId": "Model G",
-          "modelId": "xai/grok-4.1-fast-reasoning",
-          "reasoning": "Explica bem a maquinaria (origens, helicase, primase, direção 5'→3', líder/lagging, remoção de primers, ligase, proofreading) e usa analogias. Erro de requisito: usa termos em inglês (“lagging”, “proofreading”) no título/texto, contrariando “texto em português”. E vários textos provavelmente >300 caracteres.",
-          "score": 7
-        },
-        {
-          "anonymousId": "Model C",
-          "modelId": "google/gemini-3-pro-preview",
-          "reasoning": "Boa explicação em camadas com enzimas-chave (helicase, primase, polimerase, diferença líder/tardia, ligase, proofreading) e analogias claras. Menos completo que A/D (não cita SSB/topoisomerase/remoção de primers), mas isso não é exigido. Problema forte: múltiplos textos excedem 300 caracteres.",
-          "score": 6
-        },
-        {
-          "anonymousId": "Model E",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Mecanismo correto e não superficial: helicase, primase, polimerase, direção única e fragmentos, ligase, revisão. Analogia boa. Lacunas: não nomeia explicitamente líder/tardia nem Okazaki (só descreve). Também tende a exceder 300 caracteres em vários passos.",
-          "score": 5
-        },
-        {
-          "anonymousId": "Model F",
-          "modelId": "anthropic/claude-opus-4.5",
-          "reasoning": "Inclui diferença entre fitas (Okazaki), ligase, proofreading e semiconservativa. Porém traz um dado numérico bem específico (“um erro a cada bilhão”) sem contextualizar (pode variar conforme organismo/condições), e falta primase/primers, o que deixa a coordenação enzimática menos clara. Vários textos provavelmente >300 caracteres.",
-          "score": 4
-        },
-        {
-          "anonymousId": "Model H",
-          "modelId": "openai/gpt-5.1-instant",
-          "reasoning": "Cita equipe (helicase/primase/polimerase) e reconhece ritmos diferentes entre fitas, mas é genérico; não explica primers, Okazaki, direção 5'→3' ou como a descontinuidade é resolvida (ligase é citada sem o ‘porquê’ detalhado). Fica perto de “abrir e copiar”.",
-          "score": 3
-        },
-        {
-          "anonymousId": "Model I",
-          "modelId": "google/gemini-2.5-flash-lite",
-          "reasoning": "Superficial: basicamente “deszipar e copiar”, quase sem coordenação enzimática; não distingue fita líder vs tardia nem síntese descontínua. Também viola requisito de português por falta de acentos (replicacao, molecula etc.) e linguagem simplificada demais para o tópico.",
-          "score": 2
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Alta precisão e boa profundidade: origens, SSB, topoisomerase, proofreading, mismatch repair, telomerase e replissoma; distingue líder vs descontínua. Conversacional com analogias. Porém vários textos excedem 300 caracteres e alguns passos ampliam o escopo (telomerase/por que importa) mais do que o necessário para a lição.",
+          "score": 8.1
         },
         {
           "anonymousId": "Model B",
-          "modelId": "meta/llama-4-maverick",
-          "reasoning": "O mais superficial e repetitivo; descreve replicação como abrir e copiar, sem explicar a maquinaria (helicase/primase/ligase, direção 5'→3', líder/lagging). Também inclui passos redundantes (‘na prática’/‘por que importa’) e pouco foco mecanístico.",
-          "score": 1
-        }
-      ]
-    },
-    {
-      "judgeId": "anthropic/claude-opus-4.5",
-      "rankings": [
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Boa coordenação enzimática (helicase, primase, polimerase, ligase), explica claramente líder/tardia e proofreading com analogias. Evita superficialidade. Problema forte de FORMATO: textos bem acima de 300 caracteres em quase todos os passos.",
+          "score": 7.8
+        },
         {
-          "anonymousId": "Model D",
-          "modelId": "openai/gpt-5.2",
-          "reasoning": "Model D provides an excellent, comprehensive explanation with 13 well-structured steps. It correctly distinguishes leading vs lagging strand synthesis, explains the roles of helicase, topoisomerase, SSB proteins, DNA polimerase, primase, and ligase. The analogies are creative and accessible (zíper, pedreiro, fita adesiva). It correctly explains primers, their removal, and gap filling. The proofreading mechanism is accurately described. The semi-conservative nature is explained at the end. Minor issues: uses some English terms like 'leading' alongside Portuguese. Overall, this is thorough, accurate, and well-explained.",
-          "score": 10
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Cobre origens, helicase, polimerase, primase, fragmentos de Okazaki e ligase; distingue corretamente as fitas e mantém analogias. Mas é menos “máquina coordenada” que os melhores e também estoura o limite de 300 caracteres em vários passos; inclui um passo mais conceitual (semiconservativo) próximo do que o background pode ter tratado.",
+          "score": 7.4
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Bom encadeamento e distingue fita líder/lagging, inclui primase, ligase e proofreading; analogias ok. Factualmente adequado (remoção de primers atribuída genericamente à polimerase é aceitável em alto nível). Viola limites de 300 caracteres e tem pequena imprecisão/ambiguidade ao chamar helicase de “abridor de garrafas”.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Explica direção, cópia contínua vs em fragmentos e ligase; tom acessível. Entretanto fica um pouco mais perto do “abre e pareia bases” do que do trabalho coordenado (não menciona primase/primer). Além disso, vários passos excedem 300 caracteres e há um número de erro (1 por bilhão) que depende do organismo/etapas de reparo, ficando arriscado como afirmação geral.",
+          "score": 6.6
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Clareza e analogias boas; distingue contínua vs em pedaços e inclui ligase e revisão. Mas é mais superficial (não cita primase/primer, nem explica fragmentos de Okazaki explicitamente) e contém frase problemática: “copiada de trás para frente” (a síntese continua sendo 5'→3', não literalmente ‘ao contrário’). Também viola limite de 300 caracteres em passos.",
+          "score": 6.3
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Boa linguagem e analogias, menciona helicase, primase, polimerase, ligase e revisão. Porém fica relativamente genérico: não nomeia líder/retardatária nem fragmentos de Okazaki e explica a diferença de fitas de modo vago (“pequenos saltos”). Vários textos excedem 300 caracteres.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Tenta evitar dizer que as fitas são copiadas do mesmo jeito (“dois ritmos”), e menciona helicase/primase/polimerase/ligase. Mas é superficial (quase “abrir e seguir o padrão simples”), não explica de fato leading/lagging, primers/fragmentos, nem coordenação. Ainda por cima, estoura 300 caracteres em alguns passos e traz passo irrelevante/raso (“Onde isso acontece”).",
+          "score": 5.4
         },
         {
           "anonymousId": "Model A",
-          "modelId": "openai/gpt-5-mini",
-          "reasoning": "Model A provides 13 comprehensive steps covering origins of replication, helicase, SSB proteins, primase/primers, DNA polymerase directionality (5'→3'), leading vs lagging strands with Okazaki fragments, ligase, topoisomerase, proofreading, mismatch repair, telomerase, and the replissoma concept. Highly accurate and detailed. However, some terminology is slightly more technical (e.g., '3'-OH'), which could reduce accessibility. Still excellent depth and accuracy, properly distinguishing strand synthesis mechanisms.",
-          "score": 9
-        },
-        {
-          "anonymousId": "Model F",
-          "modelId": "anthropic/claude-opus-4.5",
-          "reasoning": "Model F provides 10 well-structured steps with excellent coverage. It correctly explains helicase, DNA polymerase, the directionality problem, leading vs lagging strand distinction with Okazaki fragments, ligase, proofreading, and semi-conservative replication. The analogies are effective (zíper, impressora biológica, cola biológica, editor). The precision statistic (one error per billion nucleotides) adds nice detail. Missing primase/primers, but per the anti-checklist guidance, we shouldn't penalize for missing components. All content presented is accurate and well-explained.",
-          "score": 8
-        },
-        {
-          "anonymousId": "Model C",
-          "modelId": "google/gemini-3-pro-preview",
-          "reasoning": "Model C provides 7 steps with strong accuracy. It correctly covers helicase creating the 'forquilha', primase placing primers, DNA polymerase function, leading vs lagging strand distinction (calls them 'fita líder' and 'fita tardia' with Okazaki fragments), ligase, and proofreading. The analogies are effective (cursor de zíper, bandeira de largada, pedreiro, supercola). The explanation of directionality is clear. Slightly less comprehensive than top models but everything presented is accurate and well-explained.",
-          "score": 7
-        },
-        {
-          "anonymousId": "Model E",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Model E provides 7 steps covering helicase, primase, DNA polymerase, the directionality issue requiring fragment synthesis, ligase, and proofreading. The explanations are accurate and use good analogies (cursor do zíper, etiqueta inicial, pintar uma faixa andando de costas). The leading vs lagging distinction is implied but not as explicitly named. Good coverage of key enzymes. Missing explicit mention of semi-conservative replication. Solid overall but slightly less explicit on some key distinctions.",
-          "score": 6
-        },
-        {
-          "anonymousId": "Model G",
-          "modelId": "xai/grok-4.1-fast-reasoning",
-          "reasoning": "Model G provides 9 steps with good accuracy. Correctly covers semi-conservative replication, origins of replication, helicase, primase/primers, leading strand (5'→3' direction), lagging strand with Okazaki fragments, ligase, and proofreading. Uses some English terms (lagging, proofreading) mixed with Portuguese, which is inconsistent with the language requirement. The analogies are effective. The content is accurate but the language mixing is a notable issue given the explicit Portuguese requirement.",
-          "score": 5
-        },
-        {
-          "anonymousId": "Model H",
-          "modelId": "openai/gpt-5.1-instant",
-          "reasoning": "Model H provides 7 steps but is more superficial. It correctly mentions helicase, primase, DNA polymerase, and ligase. It mentions 'two rhythms' for the strands but doesn't explain Okazaki fragments or name leading/lagging strands clearly. The explanation of why strands are copied differently is vague ('Uma segue suave... a outra avança em trechos curtos'). Doesn't mention the enzyme that causes this doesn't explain proofreading. Less depth than required for a complex topic.",
-          "score": 4
-        },
-        {
-          "anonymousId": "Model I",
-          "modelId": "google/gemini-2.5-flash-lite",
-          "reasoning": "Model I provides only 6 steps with significant depth issues. While it mentions helicase, base pairing, DNA polymerase, semi-conservative replication, and error correction, it critically FAILS to distinguish between leading and lagging strand synthesis - both strands are described as being copied the same way. This is explicitly penalized per the task requirements. The analogies are decent but the fundamental mechanism difference is missing. Also missing primase/primers.",
-          "score": 3
-        },
-        {
-          "anonymousId": "Model B",
           "modelId": "meta/llama-4-maverick",
-          "reasoning": "Model B provides 6 steps but has significant depth problems. It only vaguely mentions 'enzimas como a DNA polimerase' without explaining other key enzymes. It completely fails to distinguish between leading and lagging strand synthesis - describes both as being copied the same way. No mention of Okazaki fragments, primase, helicase role, or ligase. The last step ('biblioteca') adds no new information. This is a superficial 'unzipping and copying' explanation which the task explicitly penalizes.",
-          "score": 2
+          "reasoning": "Muito genérico e parcialmente sobre “por que importa”. Não distingue fita líder/retardatária nem mostra coordenação enzimática (só cita polimerase e “enzimas de reparo” de forma vaga). Fica perto demais do “abre e copia” e pode sobrepor ao background conceitual. Também excede 300 caracteres em vários textos.",
+          "score": 4.6
+        },
+        {
+          "anonymousId": "Model L",
+          "modelId": "google/gemini-2.5-flash-lite",
+          "reasoning": "Superficial: basicamente “abre, pareia, polimerase, semiconservativo, revisão”, sem distinguir leading/lagging nem descrever coordenação enzimática real. Além disso, não usa acentos (ainda português, mas pior qualidade), e viola limites de 300 caracteres em passos.",
+          "score": 4.3
         }
       ]
     }

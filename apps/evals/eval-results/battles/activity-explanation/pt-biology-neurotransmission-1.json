@@ -1,63 +1,158 @@
 {
   "expectations": "\nLANGUAGE REQUIREMENT: Titles and text must be in Portuguese.\n\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Neurotransmission involves both electrical and chemical signaling phases. Penalize if:\n   - Neurons are described as physically touching to transmit signals (they communicate across synaptic gaps)\n\n2. DEPTH CHECK: Penalize if the explanation presents neural communication as simply \"electrical signals in the brain\" without distinguishing the electrical phase within neurons from the chemical phase between neurons.\n\n3. DISTINCTION FROM BACKGROUND: The background covered historical debates about thought transmission. This should explain the actual mechanisms of neural signaling.\n\n\nEVALUATION CRITERIA:\n\n1. FACTUAL ACCURACY: Any scientific processes, mechanisms, or technical details must be correct. Penalize hallucinations, made-up components, or incorrect cause-effect relationships.\n\n2. DEPTH: Complex topics require multi-layered explanations. Penalize superficial overviews that skip essential mechanisms.\n\n3. CLARITY: Steps should build understanding progressively, explaining concepts in accessible language.\n\n4. FORMAT: Each step must have a title (max 50 chars) and text (max 300 chars).\n\n5. TONE: Conversational, like explaining to a curious friend. Include analogies from everyday life.\n\n6. FOCUS: Explains WHAT something IS, not history or origin stories.\n\n7. NO OVERLAP: Must not repeat content from the BACKGROUND_STEPS.\n\n8. SCOPE: Content matches the lesson scope exactly.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for missing components, phases, or concepts you might expect\n- Do NOT require a specific number of steps\n- Do NOT check against an imagined \"complete\" explanation\n- ONLY penalize for: factual errors, superficial treatment of complex topics, not using the conversational tone (everyday language) we asked or poor explanation structure\n- Different valid explanatory approaches exist - assess the quality of what IS provided\n\n    ",
-  "judgedAt": "2026-01-15T20:48:41.936Z",
+  "judgedAt": "2026-02-21T23:57:02.394Z",
   "judgments": [
     {
-      "judgeId": "google/gemini-3-pro-preview",
+      "judgeId": "anthropic/claude-opus-4.6",
       "rankings": [
         {
-          "anonymousId": "Model E",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "This model provides the best balance of scientific accuracy and conversational tone. The analogies used (social network, stadium wave, key/lock, cleaning up) are highly effective for a 'curious friend' persona while accurately describing the transition from electrical to chemical and back to electrical signals. The structure is logical, concise, and covers all essential phases including the reuptake (cleaning) process.",
-          "score": 10
+          "anonymousId": "Model I",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Excellent explanation with strong factual accuracy. Clearly distinguishes electrical (within neuron) and chemical (between neurons) phases. Mentions potencial de ação, vesículas, sinapse, receptores, excitatory/inhibitory effects, recaptação, and enzymatic degradation. Uses great analogies (dominós, corrida de revezamento, chave/fechadura, acelerador/freio). Progressive structure that builds understanding. Conversational tone throughout. Mentions specific neurotransmitters (dopamina, serotonina, adrenalina) which adds depth. Correctly states neurons don't touch. The summary step ties everything together well. Only minor issue: step about famous neurotransmitters slightly oversimplifies their roles, but not inaccurate. All steps within character limits. 10 steps is a lot but each adds value.",
+          "score": 9.2
         },
         {
           "anonymousId": "Model G",
-          "modelId": "google/gemini-3-pro-preview",
-          "reasoning": "An excellent output that uses a consistent and clear 'relay race' narrative. It distinguishes the electrical (sprint) and chemical (boat crossing) phases perfectly. The language is natural and engaging. It falls slightly behind Model E only because Model E's 'social network/gossip' analogy feels slightly more modern and relatable for the specific topic of information transmission.",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Very thorough and accurate explanation. 14 steps covering many aspects including calcium's role in vesicle fusion (unique among responses), ionotropic vs metabotropic receptors (fast vs slow), signal integration/summation, and explicitly addresses the common misconception about electrical vs chemical. Strong analogies throughout. Correctly notes neurons don't touch. Mentions recaptação, degradation, and diffusion for neurotransmitter removal. The 'confusão comum' step directly addresses the depth check requirement. However, 14 steps may be slightly excessive for a learning app, and some steps feel like they could be more concise. The step about two types of receptor action (rápido e lento) adds genuine depth. All factually accurate.",
           "score": 9
         },
         {
           "anonymousId": "Model A",
-          "modelId": "xai/grok-4.1-fast-reasoning",
-          "reasoning": "Very strong, clear, and accurate. It effectively breaks down the process into manageable steps with good analogies (swimmers). It covers all necessary technical details (vesicles, excitation/inhibition). It is slightly less creative in its narrative flair than the top two but is otherwise a flawless explanation.",
-          "score": 8
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Very good explanation with clear progression. Accurately distinguishes electrical phase within neurons from chemical phase between them. Explicitly states neurons 'quase se tocam' with a space between them. Good analogies (ola no estádio, barcos carregando cartas, chave e fechadura). Covers neurotransmitter cleanup. Conversational tone is excellent - truly feels like explaining to a friend. The 'fofocar' metaphor is charming. Missing: no mention of excitatory vs inhibitory effects, no mention of potencial de ação by name. But per anti-checklist guidance, we shouldn't penalize for missing components. What IS there is well-explained and accurate. 7 steps, well-structured.",
+          "score": 8.5
         },
         {
-          "anonymousId": "Model C",
-          "modelId": "openai/gpt-5.1-instant",
-          "reasoning": "A solid explanation with a good structural approach, breaking down the sender and receiver roles clearly. The analogies (passing a note, dock) work well. It meets all criteria for depth and accuracy, though the narrative flow is slightly less cohesive than the top models.",
-          "score": 7
+          "anonymousId": "Model J",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Strong explanation with a cohesive relay race metaphor sustained throughout. Accurately covers electrical-to-chemical conversion, synaptic gap, neurotransmitter release, receptor binding, and signal regeneration in the post-synaptic neuron. Explicitly states neurons don't touch physically. Good cleanup step. The metaphor of river/boats is effective. Correctly describes the signal being 'reinitiated' as electrical in the next neuron. Missing excitatory/inhibitory distinction. Clean, progressive structure. Conversational and engaging. 7 well-crafted steps. Very readable.",
+          "score": 8.4
+        },
+        {
+          "anonymousId": "Model L",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Engaging and well-structured with a cohesive metaphor (faísca/rio/barquinhos) that carries through the explanation. Accurately distinguishes electrical within neurons and chemical between them. Explicitly states neurons don't touch. Step 6 nicely summarizes the cycle: 'revezamento perfeito entre eletricidade (dentro da célula) e química (entre as células).' Mentions specific neurotransmitters (dopamina, serotonina). Very conversational tone. The 'fofoqueiros' opening is engaging. Missing: excitatory/inhibitory distinction, potencial de ação term, cleanup/recaptação. But what's present is accurate and clear. 7 steps, good flow.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Good accuracy with clear distinction between electrical and chemical phases. Mentions potencial de ação, vesículas, neurotransmissores específicos (glutamato, dopamina), canais iônicos, excitatory/inhibitory effects. Step 6 nicely shows the chemical-to-electrical conversion. However, missing cleanup/recaptação step which leaves the cycle incomplete. The final step feels a bit vague ('Tudo se conecta em uma dança precisa'). Good analogies but slightly less conversational than the best entries. Some steps feel slightly dense. 7 steps, generally well-structured.",
+          "score": 8.1
         },
         {
           "anonymousId": "Model D",
           "modelId": "openai/gpt-5-mini",
-          "reasoning": "The content is scientifically accurate and includes good details like enzymes/recycling. However, the headers are somewhat academic/dry compared to the requested conversational tone. Additionally, it includes steps about 'Common confusions' and 'Why it matters' which, while useful, deviate slightly from the core task of explaining the mechanism itself.",
-          "score": 6
+          "reasoning": "Good factual accuracy with broad coverage. Covers potencial de ação, sinapse, vesículas, neurotransmissores, receptores, excitatory/inhibitory, cleanup, and even addresses common confusions. Explicitly states neurons don't touch ('eles não chegam a se tocar'). The 'confusões comuns' step is useful. However, some steps feel slightly list-like rather than building progressive understanding. The 'Por que isso importa?' step feels like filler. The tone is conversational but slightly less engaging than top entries. Some analogies feel rushed ('como limpar a bancada após cozinhar'). 10 steps. The typo 'diminuem' → 'diminuem' is minor. Smart quotes issue in step 3 ('tudo ou nada') but this is formatting.",
+          "score": 8
         },
         {
-          "anonymousId": "Model H",
+          "anonymousId": "Model K",
           "modelId": "anthropic/claude-opus-4.5",
-          "reasoning": "A competent explanation that hits the main points. The analogies (drawbridge, Mexican wave) are decent, though the drawbridge analogy could be confusing regarding the physical gap. It is a standard explanation that lacks the engaging 'spark' or cohesive narrative of the higher-ranked models.",
-          "score": 5
-        },
-        {
-          "anonymousId": "Model I",
-          "modelId": "openai/gpt-5.2",
-          "reasoning": "While scientifically the most detailed (mentioning calcium channels and summation), it suffers from being too long (14 steps) and overly technical for a 'curious friend' explanation. It reads more like a textbook outline than a conversational overview, failing the tone and conciseness expectations despite high accuracy.",
-          "score": 4
+          "reasoning": "Solid explanation with good accuracy. Clearly distinguishes electrical (inside) and chemical (between) phases. Mentions potencial de ação, sinapse, vesículas (as 'bolsas'), receptores, excitatory/inhibitory. Includes famous neurotransmitters. Mentions recycling/reabsorption. Good analogies (onda mexicana, ponte levadiça, chaves/fechaduras). However, the cleanup step only mentions reabsorption, not enzymatic degradation - slightly incomplete but not wrong. Tone is conversational. The last step about 'sinfonia' is somewhat cliché. 9 steps, well-organized. Neurons correctly described as not touching.",
+          "score": 8
         },
         {
           "anonymousId": "Model B",
-          "modelId": "meta/llama-4-maverick",
-          "reasoning": "This model is too superficial. It glosses over the specific mechanics of how the chemical signal converts back into an electrical one ('signal is transmitted inside'), missing the depth required. It also lacks a step on the cleanup/reuptake process, which is a key part of the cycle.",
-          "score": 3
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Good structure and accuracy overall, but Step 1 is TRUNCATED - the text cuts off at 'seus neurônios' without completing the sentence. This is a significant formatting/quality issue. The remaining steps are well-done: clear distinction between electrical and chemical phases, potencial de ação mentioned, excitatory/inhibitory covered, cleanup mentioned with both reabsorption and enzyme degradation. Good analogies (antena/computador/cabo, dominó, chave/fechadura, quadro). Explicitly states the gap between neurons. The truncated first step is a notable flaw that undermines the learning experience.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Decent explanation with some good elements. Accurately describes neuron parts, synaptic gap, neurotransmitter release, and receptor binding. Uses chave/fechadura analogy. However, the electrical signal description is somewhat weak: 'Ele não carrega detalhes da mensagem, só diz: Ei, hora de enviar algo!' - this is an oversimplification that could be misleading. The sinal elétrico IS the message traveling within the neuron, not just a trigger. Missing: excitatory/inhibitory distinction, cleanup/recaptação, potencial de ação term. The explanation feels slightly surface-level compared to the best entries. 7 steps, reasonable structure.",
+          "score": 7
         },
         {
           "anonymousId": "Model F",
           "modelId": "google/gemini-2.5-flash-lite",
-          "reasoning": "The output is unacceptable due to major linguistic errors. It completely omits Portuguese accents/diacritics (e.g., 'neurotransmissao', 'comunicacao', 'eletrico'), which is grammatically incorrect and makes the text look unprofessional and hard to read.",
-          "score": 1
+          "reasoning": "Acceptable explanation with correct basic facts. Distinguishes electrical and chemical phases. Covers potencial de ação, sinapse, neurotransmissores, receptores, excitatory/inhibitory. However, the text lacks ALL Portuguese diacritical marks (no accents, tildes, or cedillas throughout), which is a significant issue for a Portuguese-language learning app ('neurotransmissao' instead of 'neurotransmissão', 'cerebro' instead of 'cérebro', etc.). This affects readability and professionalism. Some analogies are weaker ('fogos de artifício' for neurotransmitter release doesn't quite capture the directionality). The lantern analogy in step 2 is confusing. Missing cleanup step.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "The weakest entry. Very superficial treatment - only 6 short steps that lack depth on a complex topic. Doesn't mention potencial de ação, vesículas, excitatory/inhibitory effects, or cleanup/recaptação. The explanation of the electrical phase is minimal ('impulsos elétricos que viajam ao longo de suas membranas'). Step 1 introduces both electrical and chemical but then doesn't clearly explain the transition. Steps feel disconnected rather than building progressively. The final 'orquestra' step adds no substance. While not factually wrong, the depth is insufficient for explaining neurotransmission - this is the 'simply electrical signals in the brain' problem the guidelines warn about, though it does mention chemical signals too. Missing the mechanism of HOW things work.",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "This model provides an exceptionally detailed and scientifically accurate explanation, distinguishing between the electrical and chemical phases perfectly. It explores advanced concepts like calcium channels, excitatory/inhibitory signals, and neural summation, yet remarkably maintains a highly accessible, conversational tone using brilliant everyday analogies (ferry boats, lock and key, equalizers, voting). It follows all formatting constraints flawlessly.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Outstanding pedagogical structure. It thoroughly covers the electrical and chemical phases, provides examples of well-known neurotransmitters, and beautifully balances technical accuracy with an engaging tone. The analogies are consistent and helpful, and the final step provides a fantastic summary. All character limits and formatting rules were strictly followed.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Exceptional output that is highly accessible and engaging. The 'social network' and 'gossip' analogies work wonderfully for the target tone. It accurately delineates the electrical phase within the neuron and the chemical phase across the synapse, avoiding any factual pitfalls. Perfect adherence to all formatting rules.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model L",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Very creative and engaging approach, comparing the brain to a city of gossiping inhabitants. It maintains a cohesive narrative flow from the electrical spark to the chemical 'boats' crossing the river. It is accurate, clear, and perfectly formatted.",
+          "score": 9.8
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Excellent explanation that uses a relay race and river-crossing analogy consistently throughout the text. It accurately distinguishes between the internal electrical signal and the external chemical transmission. Highly readable and respects all constraints.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "A highly accurate and clear explanation using a postal system analogy. It correctly explains the mechanisms, includes excitatory and inhibitory functions, and mentions famous neurotransmitters as examples. The tone is conversational and constraints are met.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Very strong and accurate explanation. It effectively contrasts the electrical spark within the neuron with the chemical transmission across the synapse. The flow is logical, and the analogies are helpful. Meets all constraints easily.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Provides a very thorough and accurate breakdown of the process. It is slightly more textbook-like in structure compared to the highest-ranked models, but the conversational tone is still present. Including a 'Common confusions' step is a nice touch to ensure clarity.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Solid, engaging, and accurate. It covers the necessary distinction between electrical and chemical phases well and uses effective analogies (passing notes, docks, boats). Fits perfectly within the constraints.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "Adequate, but lacks the depth found in the top models. While it mentions electrical and chemical signals, it doesn't clearly delineate how the signal travels electrically within the neuron and chemically across the gap as explicitly as the others. Meets the format constraints but feels slightly superficial.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-2.5-flash-lite",
+          "reasoning": "Significant language issue: the text is entirely missing graphical accents in Portuguese (e.g., 'neurotransmissao', 'comunicacao', 'eletrico', 'acao'). For a learning app, correct orthography is mandatory. The factual content is generally okay, but the grammatical presentation is poor.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Major failure. The text in the very first step cuts off mid-sentence ('A neurotransmissão é a forma como seus neurônios '), leaving an incomplete output. This is unacceptable for a learning app.",
+          "score": 2
         }
       ]
     },
@@ -65,117 +160,76 @@
       "judgeId": "openai/gpt-5.2",
       "rankings": [
         {
-          "anonymousId": "Model I",
-          "modelId": "openai/gpt-5.2",
-          "reasoning": "Muito completo e correto: separa bem fase elétrica (potencial de ação) e química (sinapse), inclui papel do cálcio, tipos de receptores (ionotrópicos/metabotrópicos sem jargão excessivo), integração excitação/inibição e término do sinal. Tom conversacional com analogias. Em geral dentro do escopo e sem história. Pequena dúvida de formato: alguns textos parecem perto/possivelmente acima de 300 chars em alguns passos.",
-          "score": 9.7
-        },
-        {
           "anonymousId": "Model D",
           "modelId": "openai/gpt-5-mini",
-          "reasoning": "Explicação robusta e bem estruturada, com analogias boas e correções de “confusões comuns” (inclui explicitamente que não há contato físico). Inclui encerramento do sinal (degradação/recaptação) e excitação vs inibição. Pode estar no limite de 300 chars em alguns passos e tem 10 passos (ok), mas um ou outro passo fica um pouco “meta” (lista de confusões) em vez de mecanismo.",
-          "score": 9.1
+          "reasoning": "Muito preciso e bem estruturado: distingue claramente fase elétrica (potencial de ação) e fase química (sinapse), explicita que neurônios não se tocam, inclui analogias cotidianas, aborda excitação/inibição e remoção/reciclagem. Títulos curtos e textos parecem dentro do limite. Sem desvio para história.",
+          "score": 9.6
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Excelente profundidade sem perder clareza: cálcio como gatilho, receptores rápidos vs lentos, integração de sinais (limiar), limpeza sináptica e correção do mal-entendido elétrico vs químico. Analogias boas e tom conversacional. Provável conformidade com limites de caracteres; apenas é mais longo em número de passos (permitido).",
+          "score": 9.4
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Explicação clara e correta do revezamento elétrico→químico→elétrico, reforça a lacuna sináptica (sem contato), bons exemplos do dia a dia e limpeza ao final. Menos detalhado que D/G (não fala de excitação/inibição, canais etc.), mas o que traz está correto e não superficial.",
+          "score": 8.9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Boa distinção entre eletricidade no neurônio e química na sinapse; menciona vesículas, receptores e efeito excitatório/inibitório. Analogias adequadas. Pequena imprecisão de linguagem em \"Sinapse: Ponte\" (sinapse é fenda, não ponte), mas o texto esclarece que é fenda; no geral, correto e claro.",
+          "score": 8.6
         },
         {
           "anonymousId": "Model A",
-          "modelId": "xai/grok-4.1-fast-reasoning",
-          "reasoning": "Clara, correta e com boa distinção elétrico (dentro) vs químico (entre). Menciona fenda sináptica, vesículas, receptores/canais iônicos e excitação/inibição. Conversacional e com analogias. Falta o “fechamento” do sinal (recaptação/degradação), e alguns textos/títulos podem exceder limites de 300/50 chars.",
-          "score": 8.4
-        },
-        {
-          "anonymousId": "Model H",
-          "modelId": "anthropic/claude-opus-4.5",
-          "reasoning": "Boa visão geral com analogias e distinção elétrica/química; explicita que neurônios não se tocam e fala de ativar/inibir e reciclagem. Porém, o passo “Neurotransmissores famosos” atribui funções simplificadas/arriscadas (ex.: adrenalina é majoritariamente hormônio e também neurotransmissor; ‘prazer/humor/alerta’ fica reducionista), o que perde precisão. Também pode estourar limites de caracteres.",
-          "score": 7.8
-        },
-        {
-          "anonymousId": "Model E",
           "modelId": "google/gemini-3-flash",
-          "reasoning": "Muito claro, bem conversacional e com analogias fortes (rede social, abismo, barcos, chave/fechadura). Distingue as fases e diz que há espaço sináptico. Inclui limpeza do canal. Menos técnico (não fala de receptores/canais iônicos além do básico) e tem uma frase potencialmente enganosa: ‘sinal elétrico não consegue pular o vazio’ (em geral é verdade para sinapses químicas, mas existem sinapses elétricas). Ainda assim, bom dentro do escopo.",
-          "score": 7.1
-        },
-        {
-          "anonymousId": "Model G",
-          "modelId": "google/gemini-3-pro-preview",
-          "reasoning": "Bem escrito, ótimo fio narrativo (revezamento) e inclui lacuna sináptica, conversão químico→elétrico e limpeza. Correto ao dizer que neurônios não se tocam. Fica mais simplificado: não menciona vesículas/canais iônicos/cálcio e pode dar impressão de que sempre ‘deixa de ser elétrico’ (sem nuance de sinapses elétricas).",
-          "score": 6.6
-        },
-        {
-          "anonymousId": "Model C",
-          "modelId": "openai/gpt-5.1-instant",
-          "reasoning": "Clareza e analogias boas; menciona vão sináptico e liberação de neurotransmissores com receptores. Porém há um erro conceitual: descreve o corpo celular como quem ‘pensa’, o que é uma simplificação incorreta (processamento é distribuído; não é um ‘centro pensante’). Também não explica bem excitação/inibição ou término do sinal, ficando mais superficial.",
-          "score": 6
-        },
-        {
-          "anonymousId": "Model B",
-          "modelId": "meta/llama-4-maverick",
-          "reasoning": "Compreensível e em português, mas é o mais genérico/superficial: menciona elétrico e químico sem realmente explicar a transdução (vesículas, fenda, receptores abrindo canais etc.) com clareza progressiva. Pouca distinção mecanística entre fases e quase nada sobre como o sinal é encerrado ou modulado. Analogia existe, mas o conteúdo fica raso para a complexidade do tema.",
-          "score": 5.2
-        },
-        {
-          "anonymousId": "Model F",
-          "modelId": "google/gemini-2.5-flash-lite",
-          "reasoning": "Cumpre a distinção elétrico/químico e excitação/inibição, mas tem vários problemas de requisitos: ortografia sem acentos (não atende bem ‘Português’ em termos de escrita), analogias ok porém algumas frases ficam vagas. Também é relativamente superficial (não menciona fenda claramente como lacuna nem receptores/canais com detalhe, nem término do sinal).",
-          "score": 4.4
-        }
-      ]
-    },
-    {
-      "judgeId": "anthropic/claude-opus-4.5",
-      "rankings": [
-        {
-          "anonymousId": "Model H",
-          "modelId": "anthropic/claude-opus-4.5",
-          "reasoning": "Exceptional output. Fully Portuguese with proper accents. Clear distinction between electrical (within neurons) and chemical (between neurons) phases. Correctly explains that neurons don't touch (step 3). Excellent analogies: postal system, Mexican wave, drawbridge, keys/locks. Good depth covering vesicles, receptors, excitation/inhibition, recycling. Conversational tone throughout. Mentions famous neurotransmitters. All steps build progressively. Format compliant. Only minor improvement: could mention calcium as trigger.",
-          "score": 10
-        },
-        {
-          "anonymousId": "Model E",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Excellent Portuguese with proper accents. Strong structure with clear electrical-then-chemical explanation. Correctly states neurons 'almost touch' with synapse gap. Good analogies: social network, stadium wave, boats with letters, key-lock. Covers neuron structure (dendrites, axon), action potential, synapse, neurotransmitters, receptors, and cleanup. Conversational and accessible tone. Progressive building of understanding. One minor issue: 'fofocar' is informal but acceptable. Very comprehensive coverage.",
-          "score": 9
-        },
-        {
-          "anonymousId": "Model G",
-          "modelId": "google/gemini-3-pro-preview",
-          "reasoning": "Excellent Portuguese with proper accents. Very clear relay race analogy carried throughout. Strong distinction between electrical (within neuron) and chemical (across synapse). Correctly states neurons don't touch physically. Good analogies: relay race, river crossing, boats, key-lock. Covers action potential conversion, receptors, cleanup. Progressive and logical flow. Slightly less depth on neuron structure but very clear on the core mechanism.",
-          "score": 8
+          "reasoning": "Muito didático e com ótimas analogias; descreve bem a lacuna sináptica e a conversão elétrico→químico→elétrico, além de remoção de neurotransmissores. Porém alguns textos parecem exceder 300 caracteres e há leve simplificação ao dizer que o sinal elétrico não consegue \"pular\" (ok em geral, mas sem nuance).",
+          "score": 8.2
         },
         {
           "anonymousId": "Model I",
-          "modelId": "openai/gpt-5.2",
-          "reasoning": "Excellent depth and accuracy. Proper Portuguese with accents. Clear electrical/chemical distinction. Correctly explains neurons don't touch (fresta/gap). Notable inclusion of calcium as trigger - scientifically accurate detail. Covers fast vs slow receptors, integration of signals, excitation/inhibition. Good analogies. However, 14 steps is quite long and some content feels redundant. The 'common misunderstanding' step is useful but slightly didactic. Still very comprehensive.",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Bem explicado, com analogias e distinção elétrica/química, inclui excitação/inibição e limpeza. Problema importante de formato: vários textos parecem claramente acima de 300 caracteres. Além disso, a parte sobre funções de neurotransmissores (dopamina/serotonina/adrenalina) fica um pouco generalista (ainda aceitável), mas adiciona risco de simplificação.",
+          "score": 7.9
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Correto e claro, com analogias e menção de excitação/inibição. Mas tem um erro factual relevante: diz que após a mensagem os neurotransmissores são reciclados e \"Nada se perde\" — na realidade muitos são degradados por enzimas ou difundem, não só recaptados. Também pode estourar limites de caracteres em alguns passos.",
+          "score": 7.4
+        },
+        {
+          "anonymousId": "Model L",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Didático e mantém a distinção elétrico (dentro) vs químico (entre), e afirma que neurônios não se encostam. Porém inclui o número \"86 bilhões\" (discutível/variável) sem necessidade e alguns trechos parecem longos demais para 300 caracteres. Menos cuidadoso em mecanismos (p.ex., não fala de remoção).",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Clareza e analogias boas, e menciona o vão sináptico. Mas a profundidade é mais limitada (quase não explicita a conversão químico→elétrico e não aborda encerramento do sinal). Ainda assim, sem grandes erros factuais.",
           "score": 7
         },
         {
-          "anonymousId": "Model A",
-          "modelId": "xai/grok-4.1-fast-reasoning",
-          "reasoning": "Good Portuguese with proper accents. Clear electrical-chemical distinction. Correctly explains synapse as gap. Good analogies: relay race, swimmers, keys-locks. Covers vesicles, specific neurotransmitters (glutamato, dopamina), excitation/inhibition. However, slightly less engaging conversational tone - more textbook-like. Fewer steps than some competitors, missing cleanup/recycling phase. Still accurate and well-structured.",
-          "score": 6
-        },
-        {
-          "anonymousId": "Model D",
-          "modelId": "openai/gpt-5-mini",
-          "reasoning": "Good Portuguese with proper accents. Accurate content with clear electrical/chemical distinction. Correctly states neurons don't touch. Good coverage including vesicles, cleanup, excitation/inhibition. Has a 'common confusions' step which is useful. However, 10 steps with some feeling slightly redundant. Tone is conversational but some analogies are less vivid (dominoes, mailman are okay but not as engaging). The 'why this matters' step is somewhat outside scope.",
-          "score": 5
-        },
-        {
           "anonymousId": "Model C",
-          "modelId": "openai/gpt-5.1-instant",
-          "reasoning": "Good Portuguese with accents. Correctly explains synapse as gap between neurons. Clear electrical-chemical sequence. Good analogies: passing notes, two docks with boats. Covers neuron parts, action potential, vesicles, receptors. However, misses explicit statement that neurons don't touch - implies it with 'gap' but less clear. Also lacks cleanup/recycling explanation. Slightly shorter depth than top models.",
-          "score": 4
-        },
-        {
-          "anonymousId": "Model B",
           "modelId": "meta/llama-4-maverick",
-          "reasoning": "Portuguese is correct but lacks accents entirely (neuronios vs neurônios). Content is accurate - correctly explains synapse as junction, electrical to chemical conversion, key-lock receptors. However, significantly less depth than competitors. Only 6 steps with less detailed explanations. The synapse explanation doesn't explicitly state neurons don't touch. Less engaging analogies. Missing cleanup/recycling phase. Format is simple but shallow for the topic complexity.",
-          "score": 3
+          "reasoning": "Muito genérico: fala em elétrico e químico, mas pouco detalha a passagem de fases e mecanismos (fica perto de um resumo superficial). Também chama sinapses de \"junções\" e usa metáfora de ponte sem reforçar bem a ideia de lacuna (embora não diga que encostam).",
+          "score": 6.5
         },
         {
           "anonymousId": "Model F",
           "modelId": "google/gemini-2.5-flash-lite",
-          "reasoning": "Major issue: Missing ALL Portuguese accents throughout (neurotransmissao, eletrico, quimico, cerebro, etc.). This is a significant format violation for the language requirement. Content is accurate - correctly distinguishes electrical/chemical phases, mentions synapse correctly. Decent analogies (fireworks, key-lock). However, the accent omission combined with slightly less depth (no cleanup/recycling, less detail on mechanisms) places this lower.",
-          "score": 2
+          "reasoning": "Conteúdo em geral correto e com distinção elétrico/químico, mas falha no requisito de idioma/forma: não usa acentuação (\"neurotransmissao\", \"acao\" etc.), o que prejudica a qualidade do português para um app de aprendizagem. Também traz afirmação provavelmente exagerada: \"bilhões de vezes por segundo\". Profundidade moderada.",
+          "score": 6.1
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Boa estrutura e mecanismos (íons/potencial de ação, excitação/inibição, limpeza). Porém falha gravemente no formato: o 1º passo está truncado/incompleto (\"A neurotransmissão é a forma como seus neurônios \"). Também alguns textos podem exceder 300 caracteres. O truncamento derruba a utilidade pedagógica.",
+          "score": 5.2
         }
       ]
     }

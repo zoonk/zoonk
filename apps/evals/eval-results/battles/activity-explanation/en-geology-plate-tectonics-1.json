@@ -1,63 +1,158 @@
 {
   "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Plate tectonics involves specific geological mechanisms and processes. Penalize if:\n   - The mantle is described as liquid (it is solid rock that flows very slowly over geological time)\n\n2. DEPTH CHECK: Penalize if the explanation presents plate tectonics as simply \"continents moving\" without showing the driving mechanisms and how different boundary types create different geological features.\n\n3. DISTINCTION FROM BACKGROUND: The background covered the continental puzzle and Wegener's theory. This should explain how plate tectonics actually works as a mechanism.\n\n\nEVALUATION CRITERIA:\n\n1. FACTUAL ACCURACY: Any scientific processes, mechanisms, or technical details must be correct. Penalize hallucinations, made-up components, or incorrect cause-effect relationships.\n\n2. DEPTH: Complex topics require multi-layered explanations. Penalize superficial overviews that skip essential mechanisms.\n\n3. CLARITY: Steps should build understanding progressively, explaining concepts in accessible language.\n\n4. FORMAT: Each step must have a title (max 50 chars) and text (max 300 chars).\n\n5. TONE: Conversational, like explaining to a curious friend. Include analogies from everyday life.\n\n6. FOCUS: Explains WHAT something IS, not history or origin stories.\n\n7. NO OVERLAP: Must not repeat content from the BACKGROUND_STEPS.\n\n8. SCOPE: Content matches the lesson scope exactly.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for missing components, phases, or concepts you might expect\n- Do NOT require a specific number of steps\n- Do NOT check against an imagined \"complete\" explanation\n- ONLY penalize for: factual errors, superficial treatment of complex topics, not using the conversational tone (everyday language) we asked or poor explanation structure\n- Different valid explanatory approaches exist - assess the quality of what IS provided\n\n    ",
-  "judgedAt": "2026-01-15T20:48:45.130Z",
+  "judgedAt": "2026-02-21T23:57:49.179Z",
   "judgments": [
     {
-      "judgeId": "google/gemini-3-pro-preview",
+      "judgeId": "anthropic/claude-opus-4.6",
       "rankings": [
         {
-          "anonymousId": "Model F",
-          "modelId": "openai/gpt-5.2",
-          "reasoning": "This model is exceptional because it directly addresses the critical accuracy check regarding the state of the mantle ('Plates don’t float on liquid; they glide over squishy solid rock'). It uses excellent conversational analogies ('lava lamp', 'moving sidewalk') and covers all required boundary types and features with perfect clarity and tone.",
-          "score": 10
-        },
-        {
-          "anonymousId": "Model G",
-          "modelId": "openai/gpt-5-mini",
-          "reasoning": "Excellent depth; it is the most scientifically comprehensive regarding driving forces, correctly identifying 'slab pull' and 'ridge push' in addition to convection. It receives a slightly lower score than Model F only because the 'honey' analogy, while illustrative of viscosity, is slightly riskier regarding the 'liquid' prohibition than Model F's 'squishy solid' description.",
-          "score": 9
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Excellent output. Factually accurate throughout — describes the mantle as 'hot, semi-solid rock that behaves like thick toothpaste or silly putty,' which is correct. Covers all three boundary types with clear explanations and good analogies (pulling dough apart, slow-motion car crash). Explains the driving mechanism (convection currents) clearly. Good depth on convergent boundaries distinguishing ocean-continent from continent-continent collisions. The 'recycling system' framing in the final step adds conceptual value. Conversational tone is strong throughout. All steps are within character limits. No factual errors. Progressive structure builds understanding well.",
+          "score": 9.2
         },
         {
           "anonymousId": "Model E",
-          "modelId": "anthropic/claude-opus-4.5",
-          "reasoning": "Very strong output that uses specific real-world examples (Iceland, Himalayas, San Andreas) to ground the concepts. The 'warm taffy' analogy is scientifically accurate and accessible. It builds understanding well but lacks the explicit mention of the secondary driving forces found in Model G.",
-          "score": 8
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Very strong output with excellent depth. Separates ridge push and slab pull into distinct steps, which shows sophisticated understanding of driving mechanisms. Factually accurate — describes asthenosphere as 'rock so hot it behaves like thick honey.' Covers all boundary types well. Includes specific examples (Iceland, San Andreas, Ring of Fire). The 11 steps might be slightly long but each adds value. Good conversational tone with effective analogies. The distinction between ridge push and slab pull as separate forces is a nice depth touch. Minor concern: step about 'Features Tell the Story' and 'Ring of Fire Pattern' somewhat overlap in content. All within format limits.",
+          "score": 9
         },
         {
-          "anonymousId": "Model A",
-          "modelId": "google/gemini-3-pro-preview",
-          "reasoning": "Strong performance with accurate rheological analogies ('thick toothpaste', 'silly putty') that perfectly pass the accuracy check. The flow is good and conversational. It scores lower than the top three because it relies on the standard 'convection belt' explanation without the added depth or specific examples provided by Models G and E.",
-          "score": 7
+          "anonymousId": "Model L",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Strong output with excellent depth and accuracy. Correctly states plates 'aren't floating on liquid rock — they ride on a semi-solid layer called the asthenosphere,' directly addressing a common misconception. Covers driving mechanisms (convection + slab pull), all three boundary types, and subduction in detail. The 'recycling system' and '200 million years' ocean floor fact adds depth. Good conversational tone. 10 steps is well-structured. The 'master framework' conclusion ties everything together. Only minor issue: some steps are slightly more textbook-ish in tone than purely conversational, but still accessible.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Very good output. Factually accurate — describes asthenosphere as 'not liquid like water — more like warm taffy.' Good coverage of all boundary types with clear explanations. Includes specific examples and statistics (Ring of Fire: 75% volcanoes, 90% earthquakes; Iceland growing 2cm/year). Good conversational tone with effective analogies. 10 steps is well-structured. However, the 'Himalayas formed — and they're still growing' edges toward historical narrative. The subduction analogy ('heavier swimmer sinking below a lighter one') is slightly less intuitive than other models' analogies. Overall very solid.",
+          "score": 8.8
         },
         {
           "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Very good output with strong accuracy. Explicitly states 'Plates don't float on liquid; they glide over squishy solid rock' — directly correcting a common misconception. Good depth with 12 steps covering convection, all boundary types, subduction details, and common mix-ups. The 'Common mix-ups' step is a nice pedagogical touch. Mentions specific features created by each boundary type. Good analogies (lava lamp, conveyor belt, moving sidewalk). Some steps feel slightly terse ('hot rock that behaves a bit like warm taffy over long time' — slightly awkward phrasing). The tone is mostly conversational but occasionally dips into a slightly more clinical/list-like style. 'over long time' in step 3 reads like a grammatical error.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Good output with strong conversational tone and vivid analogies (thick flowing caramel, crumpling car hood, giant underwater conveyor belt). Factually mostly accurate. However, 'super-heated rock' for the asthenosphere is a bit misleading, and 'The heavier one gets shoved underneath, sinking back into the hot mantle to melt' — while subduction does involve the plate descending, saying it 'melts' is an oversimplification (the plate largely remains solid during descent, with partial melting occurring). The 'hot slush' in the title is slightly misleading. Good coverage of all boundary types. Nice concluding framing about Earth being a 'living planet.' Overall very good but a few accuracy concerns.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Good output with nice analogies (zipper opening, rug pushed under sofa, sandpaper blocks). However, a significant accuracy issue: the first step describes the layer beneath as 'a hot, semi-liquid layer of rock.' While 'semi-liquid' isn't as bad as saying 'liquid,' it's still problematic — the asthenosphere is solid rock that flows slowly, not semi-liquid. The task explicitly penalizes describing the mantle as liquid. 'Semi-liquid' pushes toward that error. Otherwise, the coverage is good — all three boundary types, convection mechanism, subduction. Good conversational tone. The 'ultimate recycling program' conclusion is effective.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Solid output with good accuracy. Correctly describes the asthenosphere and plate motion. Covers all three boundary types and mentions multiple driving forces (convection, slab pull, ridge push). The 'Common misunderstandings' and 'How we spot plate movement' steps add pedagogical value. However, the tone is somewhat more textbook/formal than conversational — phrases like 'the organizing theory' and structured boundary descriptions feel less like explaining to a curious friend. Some steps are a bit list-like rather than building narrative understanding. The boundary explanations, while correct, lack the vivid analogies that make other models more engaging. Also places driving mechanisms after boundaries, which is a less intuitive pedagogical order.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-2.5-flash-lite",
+          "reasoning": "Good output with clear structure. However, step 2 describes the asthenosphere as 'more fluid layer' which is somewhat misleading — it's solid rock that flows slowly. The 'rafts on a slow-moving, viscous river' analogy also suggests more fluidity than is accurate. Covers convection, all three boundary types, and geological features. Good conversational tone. However, the treatment is somewhat surface-level compared to the best models — doesn't distinguish ocean-continent from continent-continent convergent boundaries, doesn't mention subduction, and the boundary explanations are brief. Only 7 steps with less depth than top models.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model C",
           "modelId": "xai/grok-4.1-fast-reasoning",
-          "reasoning": "This model attempts high depth by including 'slab pull' and 'ridge push', which is commendable. However, it is penalized for using terms like 'semi-molten' and 'thick syrup'. While common in lay explanations, they violate the strict instruction to not describe the mantle as liquid (it is solid rock), placing it below the models that navigated this constraint better.",
+          "reasoning": "Mixed quality. Some good technical content (mentions lithosphere, slab pull, ridge push) but has accuracy issues: 'semi-molten layer beneath' in step 1 is problematic — the mantle is not semi-molten, it's solid rock that flows slowly. The tone is less conversational and more textbook-like than requested ('up to 100 km thick,' 'spreading centers'). Some steps feel dense rather than building understanding progressively. 'Rigid Plates on Gooey Mantle' — 'gooey' is informal but 'semi-molten' in step 1 contradicts the guidance about not describing the mantle as liquid. The 'Plate Drama's Epic Landmarks' title feels forced. However, good that it mentions both slab pull and ridge push as driving forces.",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Decent output but notably shallow. The mantle description as 'thick oatmeal warming on a stove' is a reasonable analogy but doesn't clearly state it's solid. The boundary explanations are quite brief and lack specificity — doesn't name boundary types (divergent, convergent, transform), doesn't explain subduction clearly, and the driving mechanism gets only one short step. 'Like two books rubbing edges' for transform boundaries is decent. Missing important details that other models include. The 8 steps don't go deep enough into the mechanisms for a complex topic. Tone is appropriately conversational.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "Significantly shallow treatment. Step 1 says plates 'float on molten rock beneath' — this is a factual error directly penalized by the rubric (mantle described as liquid/molten). The boundary explanations are extremely compressed into just two steps with minimal detail. No analogies for the boundary types. Doesn't explain subduction. Doesn't distinguish types of convergent boundaries. The conversational tone is present but weak. At only 7 short steps, this fails the depth check for such a complex topic. The compressed treatment of all three boundary types into essentially one step ('Diving into Details') is inadequate.",
+          "score": 4.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Exceptional output that could not be meaningfully improved. It provides outstanding depth by accurately explaining not just convection, but also 'ridge push' and 'slab pull' (using a brilliant tablecloth analogy). It completely avoids the liquid mantle misconception ('zone of rock so hot it behaves like thick honey') and accurately describes subduction without falling into the common trap of saying the subducting plate melts. The tone is perfectly conversational.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Excellent explanation with a highly engaging, conversational tone. It explicitly debunks the liquid mantle misconception ('It's not liquid like water... Solid enough to support weight, soft enough to allow slow movement'), which is a fantastic addition. It accurately covers boundary types and their resulting geological features with great everyday analogies.",
+          "score": 9.8
+        },
+        {
+          "anonymousId": "Model L",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Very strong output that explicitly addresses the 'liquid rock' myth ('semi-solid layer... flows like extremely slow-moving putty'). It effectively explains the driving mechanisms, including the concept of slab pull. It receives a tiny deduction for the common oversimplification that a subducting plate 'melts back into the mantle' (magma is primarily generated by flux melting of the overlying mantle wedge, not the plate itself melting), but it remains an excellent educational piece.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Highly accurate and comprehensive. Like Model E, it successfully incorporates advanced mechanisms like slab pull and ridge push while keeping the language accessible ('gentle pushes from elevated ridges'). It correctly describes the mantle as solid but 'squishier'. The tone is slightly more textbook than the absolute top models, but still very engaging.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "A very good, clear explanation. It accurately describes the mantle as 'hot, semi-solid rock' and uses excellent analogies (toothpaste, silly putty, slow-motion car crash). It relies on the slight oversimplification of the subducting plate melting, but meets all other requirements beautifully.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Great job explicitly correcting the liquid mantle misconception ('Plates don't float on liquid; they glide over squishy solid rock'). It covers convection and boundaries accurately and clearly. The inclusion of a step addressing common mix-ups is a nice educational touch.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Solid explanation with highly engaging analogies. Describing the mantle as 'super-heated rock that behaves like thick, flowing caramel' is a good way to convey ductile solids. It lacks the extra mechanical depth (slab pull/ridge push) of the top-tier models but provides a solid overview of convection and boundaries.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-2.5-flash-lite",
+          "reasoning": "Good coverage of plate boundaries and convection. However, it describes the asthenosphere as a 'fluid layer' and compares it to a 'viscous river'. While technically fluids can include ductile solids in physics, in everyday language this flirts too closely with the liquid mantle misconception to score higher.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Conversational and accessible, but it lacks sufficient depth. While it explains what happens when plates interact, it omits the standard technical terminology for the boundary types (divergent, convergent, transform), making it a bit too basic for a comprehensive lesson.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "This model features excellent mechanical depth (mentioning slab pull and ridge push). Unfortunately, it explicitly describes the mantle as a 'semi-molten layer' and compares it to 'thick syrup'. This triggers the primary factual accuracy penalty for describing the solid rock mantle as melted/liquid.",
           "score": 6
         },
         {
           "anonymousId": "Model D",
-          "modelId": "openai/gpt-5.1-instant",
-          "reasoning": "A solid, simple explanation. The 'thick oatmeal' analogy is effective and safe regarding the accuracy check. It falls to the middle of the pack because it is less detailed regarding specific mechanisms and landforms compared to the higher-ranked models.",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "This output directly violates the factual accuracy check by describing the mantle as a 'semi-liquid layer' and comparing it to a 'simmering pot of thick soup'. The rest of the explanation regarding boundaries is adequate, but the fundamental misconception about the Earth's interior requires a heavy penalty.",
           "score": 5
         },
         {
-          "anonymousId": "Model C",
-          "modelId": "google/gemini-2.5-flash-lite",
-          "reasoning": "Adequate but unremarkable. The description of the mantle as a 'fluid layer' and 'viscous river' is physically ambiguous compared to better analogies like putty or taffy. The explanation is accurate but feels a bit more generic than the others.",
-          "score": 4
-        },
-        {
-          "anonymousId": "Model I",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Penalized for accuracy. Describing the layer beneath plates as 'semi-liquid' is scientifically incorrect (it is a rheid solid). While the rest of the explanation is passable, this specific terminology fails the 'Accuracy Check' provided in the instructions.",
-          "score": 3
-        },
-        {
-          "anonymousId": "Model B",
+          "anonymousId": "Model F",
           "modelId": "meta/llama-4-maverick",
-          "reasoning": "This model fails the primary 'Accuracy Check' by explicitly stating that plates 'float on molten rock'. This is a major misconception (the mantle is solid, not molten), resulting in a low score despite a decent format.",
-          "score": 2
+          "reasoning": "Fails the primary accuracy check by explicitly stating that plates float on 'molten rock' (liquid). In addition to this major factual error, the explanation is incredibly superficial, lacking the depth required to explain how the mechanisms actually work.",
+          "score": 3
         }
       ]
     },
@@ -65,117 +160,76 @@
       "judgeId": "openai/gpt-5.2",
       "rankings": [
         {
-          "anonymousId": "Model F",
+          "anonymousId": "Model H",
           "modelId": "openai/gpt-5.2",
-          "reasoning": "Meets all constraints well: clear mechanism (asthenosphere is solid, not liquid), multiple driving forces, and boundary outcomes. Conversational with everyday analogies. No obvious background/history overlap. Step titles/text look within limits.",
-          "score": 10
+          "reasoning": "Meets all constraints well: clear mechanism (solid-but-ductile asthenosphere explicitly “not liquid”), convection explained with a simple analogy, boundary types plus resulting features (subduction→trenches/volcanic arcs; transform→quakes; divergent→ridges). Conversational with everyday analogies. Step titles are short and texts appear under 300 chars each. Focuses on what it is/how it works (not history).",
+          "score": 9.6
         },
         {
-          "anonymousId": "Model G",
+          "anonymousId": "Model K",
           "modelId": "openai/gpt-5-mini",
-          "reasoning": "Strong, mechanism-focused explanation: lithosphere/asthenosphere distinction, three boundary types, and multiple drivers (convection + slab pull + ridge push). Clear, friendly analogies. Slight risk of being a bit textbooky, but still conversational and within format limits.",
-          "score": 9
+          "reasoning": "Strong, mechanism-focused explanation with convection + slab pull + ridge push; good boundary-feature links; includes common misconceptions. No mantle-as-liquid error. Tone is friendly with analogies. One risk: a few steps may be close to the 300-char limit, but generally structured and clear.",
+          "score": 9.2
         },
         {
           "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Excellent depth: plates, asthenosphere behavior, convection, ridge push, slab pull, all three boundary types, and diagnostic surface patterns. Solid accuracy (no “liquid mantle”). Conversational and analogy-rich. Minor concern: several step texts are likely >300 chars (format constraint).",
+          "score": 8.9
+        },
+        {
+          "anonymousId": "Model J",
           "modelId": "anthropic/claude-opus-4.5",
-          "reasoning": "Detailed and engaging with good analogies, correct mantle/asthenosphere description (“not liquid like water”). Covers boundary types and gives concrete examples. Minor nit: “partially melted rock called the asthenosphere” can be misleading (it’s mostly solid), though it immediately clarifies non-liquid behavior.",
-          "score": 8
+          "reasoning": "Accurate and mechanism-based (asthenosphere not liquid; convection; boundary types with examples). Good conversational analogies. Minor issues: some steps likely exceed 300 chars; Ring of Fire stats are broadly correct but can vary by source, though not egregious.",
+          "score": 8.6
         },
         {
-          "anonymousId": "Model A",
-          "modelId": "google/gemini-3-pro-preview",
-          "reasoning": "Good depth and structure with mechanisms and boundary types; mantle described as “semi-solid” with appropriate slow-flow analogy. However, it attributes subducting plate “melting back into the mantle” too directly (subducted slabs mostly remain solid for a long time; melting is more indirect).",
-          "score": 7
-        },
-        {
-          "anonymousId": "Model D",
-          "modelId": "openai/gpt-5.1-instant",
-          "reasoning": "Clear, friendly, and mechanism-oriented enough (mantle churn) with boundary outcomes and ways to recognize boundaries. Slightly less depth on the specific drivers (no slab pull/ridge push) and a bit more general in places, but still solid and accurate.",
-          "score": 6
-        },
-        {
-          "anonymousId": "Model C",
-          "modelId": "google/gemini-2.5-flash-lite",
-          "reasoning": "Generally accurate and clear, but says the asthenosphere is “more fluid,” which can imply liquid-like behavior (though framed as viscous/slow). Also somewhat lighter on drivers beyond convection and less explicit on subduction/volcanism compared to stronger answers.",
-          "score": 5
-        },
-        {
-          "anonymousId": "Model H",
-          "modelId": "xai/grok-4.1-fast-reasoning",
-          "reasoning": "Good inclusion of slab pull and ridge push and decent analogies, but contains a clear accuracy problem: calls the underlying layer “semi-molten,” which violates the requirement to avoid portraying the mantle/asthenosphere as liquid. Also says plates are “unbreakable,” which is misleading.",
-          "score": 4
-        },
-        {
-          "anonymousId": "Model I",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Conversational and covers boundary types, but explicitly says plates float on a “hot, semi-liquid layer,” a key accuracy violation. Also slightly overstates subduction as straightforward melting/recycling. Otherwise structured OK.",
-          "score": 3
+          "anonymousId": "Model L",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Accurate mechanisms (convection + slab pull), good boundary explanations and features, explicitly notes not floating on liquid rock. Conversational. Minor issues: some texts likely exceed 300 chars; “ocean floor replaced roughly every 200 million years” is a common simplification but imprecise and could mislead.",
+          "score": 8.3
         },
         {
           "anonymousId": "Model B",
-          "modelId": "meta/llama-4-maverick",
-          "reasoning": "Has multiple issues: explicitly says plates float on “molten rock beneath” (accuracy violation). Also more superficial: repeats generalities (“big picture”) and compresses boundary effects without much mechanism beyond convection; overall least aligned with the constraints.",
-          "score": 2
-        }
-      ]
-    },
-    {
-      "judgeId": "anthropic/claude-opus-4.5",
-      "rankings": [
-        {
-          "anonymousId": "Model E",
-          "modelId": "anthropic/claude-opus-4.5",
-          "reasoning": "Excellent coverage with strong explanatory approach. Correctly describes asthenosphere as 'partially melted rock' that is 'not liquid like water — more like warm taffy' - accurate characterization. Convection currents clearly explained with soup analogy. All three boundary types covered with appropriate real-world examples (Mid-Atlantic Ridge, Himalayas, San Andreas). The car crash analogy for continental collision and swimmer sinking analogy for subduction are effective. The step about the Ring of Fire connecting concepts is a nice summary. Format and length requirements met. Conversational tone throughout. One minor issue: 'partially melted' could be slightly misleading - the asthenosphere is mostly solid but can flow. Still, this is the most complete and accurate explanation.",
-          "score": 10
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Clear, friendly, and covers asthenosphere as semi-solid, convection, and all boundary types incl. subduction. Good analogies. Minor: “melting back into the mantle” at subduction is oversimplified; likely some steps exceed 300 chars.",
+          "score": 8.1
         },
         {
           "anonymousId": "Model A",
-          "modelId": "google/gemini-3-pro-preview",
-          "reasoning": "Strong explanation with accurate science. Correctly describes mantle as 'semi-solid rock that behaves like thick toothpaste or silly putty' - good characterization avoiding the liquid error. Convection currents well explained as 'conveyor belt.' All three boundary types covered with good analogies (dough for divergent, car crash for convergent, rough rock for transform). The recycling system concept in the final step is insightful. Slightly less detailed than Model E (fewer specific examples), but maintains accuracy and clarity throughout. Format requirements met.",
-          "score": 9
-        },
-        {
-          "anonymousId": "Model F",
-          "modelId": "openai/gpt-5.2",
-          "reasoning": "Very thorough explanation with 12 steps covering the topic comprehensively. Correctly states plates 'don't float on liquid; they glide over squishy solid rock' - explicitly addressing the accuracy concern. Good analogies (lava lamp for convection, conveyor belt for spreading, cars bumping for collision). Distinguishes between oceanic/continental collisions well. The 'common mix-ups' step adds value. However, the explanation is perhaps too encyclopedic and slightly less conversational in places. Still maintains good clarity and accuracy throughout.",
-          "score": 8
-        },
-        {
-          "anonymousId": "Model H",
-          "modelId": "xai/grok-4.1-fast-reasoning",
-          "reasoning": "Good coverage with accurate science. Correctly describes asthenosphere as 'hot and pliable like warm taffy.' Introduces additional driving mechanisms (slab pull, ridge push) beyond basic convection - showing depth. Quantifies plate thickness (100km) and speed (2-10 cm/year). All boundary types covered. However, some language is slightly technical ('lithosphere,' 'slab pull') without full explanation, and the tone is occasionally less conversational. 'Semi-molten' in step 1 is borderline concerning but offset by the taffy description in step 3.",
-          "score": 7
+          "modelId": "google/gemini-2.5-flash-lite",
+          "reasoning": "Good structure and boundary types; includes convection and clear analogies. Weakness: describes asthenosphere as “more fluid,” which can imply liquid (though not explicitly); also misses slab pull/ridge push (not required, but makes mechanism a bit thinner than top entries). Possible 300-char overruns.",
+          "score": 7.7
         },
         {
           "anonymousId": "Model I",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Good explanation with mostly accurate content. The soup/conveyor belt analogy for convection is effective. Boundary types well explained with good analogies (zipper, rug under sofa, sandpaper). However, step 1 describes plates 'floating on a hot, semi-liquid layer of rock' - this is borderline inaccurate as it suggests liquid. The explanation does capture the recycling concept well. Overall good structure but the 'semi-liquid' description is a notable accuracy issue per the task guidance.",
-          "score": 6
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Clear and mostly accurate, with analogies and boundary outcomes. Depth is moderate: mechanisms are mostly “mantle churn pushes/drags” without distinguishing forces; boundary discussion is somewhat compressed. Format likely okay, but overall less layered than stronger responses.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Good depth (slab pull/ridge push, speeds, boundary types) and mostly accurate. However, it says “semi-molten layer beneath,” which suggests liquid mantle/asthenosphere—penalized per accuracy guidance. Also a few steps likely exceed 300 chars.",
+          "score": 7.1
         },
         {
           "anonymousId": "Model G",
-          "modelId": "openai/gpt-5-mini",
-          "reasoning": "Comprehensive 12-step explanation covering many aspects thoroughly. Correctly describes asthenosphere as flowing slowly. Good coverage of boundary types and driving mechanisms. However, tone is more textbook-like and less conversational ('Common confusions,' 'Why this matters' feel like section headers). Some analogies are present but fewer than other models. The structure is somewhat listy rather than flowing explanation. Accurate but less engaging as a learning explanation.",
-          "score": 5
-        },
-        {
-          "anonymousId": "Model C",
-          "modelId": "google/gemini-2.5-flash-lite",
-          "reasoning": "Decent explanation covering key concepts. Correctly mentions plates float on 'hotter, more fluid layer' but then uses 'rafts on a slow-moving, viscous river' which might suggest more liquid than accurate. Convection currents explained adequately. All three boundary types mentioned. However, Step 2 says plates 'float and glide over a hotter, more fluid layer' - 'fluid' is technically problematic as it suggests liquid behavior. Coverage is less detailed than top models, with fewer specific examples and simpler treatment of boundary types.",
-          "score": 4
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Decent boundary coverage and analogies, but “hot slush”/caramel framing plus “super-heated rock” can mislead toward a liquid mantle impression. Otherwise reasonable. Likely some over-300-char steps.",
+          "score": 6.9
         },
         {
           "anonymousId": "Model D",
-          "modelId": "openai/gpt-5.1-instant",
-          "reasoning": "Reasonable explanation with good analogies (cracked eggshell, thick oatmeal, dough stretching). However, the treatment is somewhat superficial - boundary types are briefly mentioned but not deeply explained. Mantle described as moving 'like thick oatmeal warming on a stove' is acceptable. Missing some depth on driving mechanisms - convection mentioned but not fully developed. The 'books rubbing edges' analogy for transform boundaries is good. Overall adequate but lacks the depth of top responses.",
-          "score": 3
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Directly calls the layer under plates “hot, semi-liquid,” which is a significant factual error per the prompt (mantle/asthenosphere is solid rock that flows slowly). Otherwise well-structured and friendly, but the core misconception is major.",
+          "score": 5.2
         },
         {
-          "anonymousId": "Model B",
+          "anonymousId": "Model F",
           "modelId": "meta/llama-4-maverick",
-          "reasoning": "Problematic accuracy: Step 1 states plates 'float on molten rock beneath' - this is factually incorrect and directly contradicts the accuracy requirement. The mantle is NOT molten/liquid. Beyond this error, the explanation is also more superficial - step 5 rushes through all three boundary effects in one step without adequate development. Fewer analogies and less conversational tone. The inaccuracy issue significantly impacts the score.",
-          "score": 2
+          "reasoning": "Explicitly says plates “float on molten rock beneath,” which is a major accuracy error. Also comparatively superficial on mechanisms (mostly just convection) and boundary outcomes are brief/general. Format otherwise fine.",
+          "score": 4.8
         }
       ]
     }

@@ -1,63 +1,158 @@
 {
   "expectations": "\nLANGUAGE REQUIREMENT: Titles and text must be in Spanish.\n\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Cryptographic hash functions have specific mathematical properties that define their security. Penalize if:\n   - Hashing is conflated with encryption (hashing is one-way and irreversible; encryption is designed to be reversible with a key)\n\n2. DEPTH CHECK: Penalize if the explanation presents hash functions as simply \"creating fingerprints\" without showing why properties like collision resistance matter for security.\n\n3. DISTINCTION FROM BACKGROUND: The background covered the data integrity problem and the concept of digital fingerprints. This should explain how hash functions achieve their security properties.\n\n\nEVALUATION CRITERIA:\n\n1. FACTUAL ACCURACY: Any scientific processes, mechanisms, or technical details must be correct. Penalize hallucinations, made-up components, or incorrect cause-effect relationships.\n\n2. DEPTH: Complex topics require multi-layered explanations. Penalize superficial overviews that skip essential mechanisms.\n\n3. CLARITY: Steps should build understanding progressively, explaining concepts in accessible language.\n\n4. FORMAT: Each step must have a title (max 50 chars) and text (max 300 chars).\n\n5. TONE: Conversational, like explaining to a curious friend. Include analogies from everyday life.\n\n6. FOCUS: Explains WHAT something IS, not history or origin stories.\n\n7. NO OVERLAP: Must not repeat content from the BACKGROUND_STEPS.\n\n8. SCOPE: Content matches the lesson scope exactly.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for missing components, phases, or concepts you might expect\n- Do NOT require a specific number of steps\n- Do NOT check against an imagined \"complete\" explanation\n- ONLY penalize for: factual errors, superficial treatment of complex topics, not using the conversational tone (everyday language) we asked or poor explanation structure\n- Different valid explanatory approaches exist - assess the quality of what IS provided\n\n    ",
-  "judgedAt": "2026-01-15T20:48:39.723Z",
+  "judgedAt": "2026-02-21T23:57:16.951Z",
   "judgments": [
     {
-      "judgeId": "google/gemini-3-pro-preview",
+      "judgeId": "anthropic/claude-opus-4.6",
       "rankings": [
         {
-          "anonymousId": "Model A",
-          "modelId": "openai/gpt-5-mini",
-          "reasoning": "This model provides the most complete and pedagogically sound explanation. It excels by explicitly addressing the negative constraints (clarifying that hashes are not encryption) and offers superior depth by explaining the internal mechanism ('mix/condense') and distinguishing between collision resistance and second-preimage resistance. The tone is perfectly conversational, and the analogies are intuitive.",
-          "score": 10
-        },
-        {
-          "anonymousId": "Model C",
-          "modelId": "openai/gpt-5.2",
-          "reasoning": "An excellent response that parallels the top model in technical depth, covering internal structures (rounds/mixing) and specific properties like pre-image resistance types. It also explicitly clarifies that hashing is not encryption. It is ranked slightly lower only because the language is marginally more technical (e.g., referencing Merkle-Damgård/sponge construction), which might be slightly less accessible than Model A's approach.",
-          "score": 9
-        },
-        {
-          "anonymousId": "Model F",
-          "modelId": "xai/grok-4.1-fast-reasoning",
-          "reasoning": "This model offers a very strong explanation of the mathematical properties (distinguishing between pre-image, second pre-image, and collisions) with an enthusiastic, engaging tone. It uses good analogies. It scores lower than the top two because it does not explicitly devote a step to clarifying the common confusion between hashing and encryption, though the content is accurate.",
-          "score": 8
-        },
-        {
           "anonymousId": "Model B",
-          "modelId": "anthropic/claude-opus-4.5",
-          "reasoning": "A very engaging and clear explanation with excellent analogies. However, it includes specific history and names of algorithms (MD5, SHA-1, SHA-256) and their retirement. While accurate, the prompt explicitly requested a focus on 'WHAT something IS, not history or origin stories,' which constitutes a minor deviation from the scope instructions.",
-          "score": 7
-        },
-        {
-          "anonymousId": "Model D",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "A solid, standard explanation that covers all the basics (determinism, one-way, avalanche, collisions) with clear analogies. It lacks the extra layer of depth found in the higher-ranked models regarding the internal processing of blocks or the distinction between different types of resistance, but it is accurate and follows the format well.",
-          "score": 6
-        },
-        {
-          "anonymousId": "Model H",
-          "modelId": "google/gemini-2.5-flash-lite",
-          "reasoning": "A competent explanation that covers the core properties correctly. It uses the standard 'blender' analogy effectively. It is ranked lower than D because the explanation of why these properties matter feels slightly less comprehensive, though it is still a 'passable' and accurate output.",
-          "score": 5
-        },
-        {
-          "anonymousId": "Model G",
-          "modelId": "google/gemini-3-pro-preview",
-          "reasoning": "This model is accurate but uses the analogy of a 'trituradora' (shredder). While common, a shredder implies physical pieces that could theoretically be reconstructed, whereas the 'blender' analogy used by others better represents the mathematical irreversibility of hashing. The content is otherwise standard but brief.",
-          "score": 4
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Excellent coverage with 10 well-structured steps. Covers all key properties (fixed output, avalanche effect, preimage resistance, collision resistance) with clear analogies. Includes internal mechanism explanation (step 6 on rounds/mixing), mentions specific algorithms with security context (MD5/SHA-1 broken, SHA-256/SHA-3 secure), practical applications (downloads, passwords), and a good concluding step. Analogies are vivid and accurate (cenizas de papel quemado, grano de arena reorganizing waves). Does not conflate hashing with encryption. Conversational tone throughout. All steps within character limits. Minor issue: the background already covered digital fingerprints, and step 2 uses 'huella dactilar' analogy which slightly overlaps, but the context is different enough. Very strong overall.",
+          "score": 8.8
         },
         {
           "anonymousId": "Model E",
-          "modelId": "openai/gpt-5.1-instant",
-          "reasoning": "While the textual explanation is generally correct, the title 'Máquina de compresión' (Compression Machine) is technically risky. in Computer Science, compression implies reversibility (lossless) or approximation (lossy), whereas hashing is strictly one-way. Using 'compression' terminology can lead to conceptual confusion for learners.",
-          "score": 3
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Strong and technically precise. Covers all key properties with proper terminology (preimage resistance, second preimage resistance, collision resistance - all three explicitly). Step 8 on Merkle-Damgård/sponge construction adds genuine technical depth. Step 9 explicitly clarifies that hash ≠ encryption, which is excellent per the topic guidance. Mentions 'sal' (salt) for passwords. Good analogies throughout. Conversational but slightly more technical than some others. All steps within limits. One of the few models to distinguish second preimage from collision resistance. The 'placa de auto' analogy in step 2 is creative but slightly awkward. Overall very thorough and accurate.",
+          "score": 8.7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "13 steps with comprehensive coverage. Covers all properties clearly, includes practical applications (downloads, passwords, blockchain, digital signatures), and mentions algorithm history (MD5/SHA-1 retired). Good conversational tone with memorable phrases ('en criptografía, casi seguro significa inseguro'). Analogies are clear. The 'hornear pan' analogy is effective. Step 7 is slightly narrow focusing mainly on SHA-256. Some risk of overlap with background on 'digital fingerprints' in step 5's 'huella única' language. The depth is good but spread across many steps, making some steps feel a bit thin individually. All within character limits. Solid overall.",
+          "score": 8.4
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "9 well-crafted steps. Strong coverage of properties: fixed output, one-way function, avalanche effect, collision resistance, preimage resistance. Good analogies (picadora de carne, batido de frutas). Mentions specific algorithms (MD5, SHA-1, SHA-2, SHA-3). The DNA analogy in step 8 is slightly problematic - 'dos personas pueden tener ADN casi idéntico' doesn't perfectly map to hash uniqueness. Step 9 covers applications. Does not explicitly distinguish hash from encryption. Good conversational tone. All within character limits. The title '¿Qué es exactamente una función hash?' exceeds the casual tone slightly but is fine. Solid but the DNA analogy weakens it slightly.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model L",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "7 clean, well-structured steps. Good coverage of core properties (deterministic, one-way, avalanche, collision resistance). The huevo estrellado analogy is vivid and original. Practical applications in step 6. Good concluding step. Conversational tone throughout. Does not mention specific algorithms which slightly reduces depth. Does not explicitly distinguish hash from encryption. The 'código de barras' analogy in step 1 could overlap with the background's 'digital fingerprint' concept. All within character limits. Clean and effective but slightly less deep than top models.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "10 steps with good technical depth. Covers all three resistance properties explicitly (preimage, second preimage, collision). Step 7 on internal components (blocks, compression functions, rounds) adds depth. Step 9 on common confusions explicitly states hash ≠ encryption, which is valuable. However, the tone is somewhat dry and lecture-like compared to the conversational requirement. Some analogies feel forced (fotocopiadora for determinism is okay but not great). 'Dificultad para empates' as a title is a bit awkward. Step 8 mentions 'direcciones de bloques' which is vague. Overall technically solid but tone could be more engaging.",
+          "score": 7.6
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "8 steps covering the main properties well. Explicitly names preimage resistance, second preimage resistance, and collision resistance in separate steps. The licuadora mágica analogy is good. However, some analogies are weak - 'como una bola de nieve rodando cuesta abajo' doesn't really capture the avalanche effect well. Step 2's 'misma medida corta y dulce' is oddly worded. Step 8 is a vague wrap-up ('herramienta impenetrable' is an overstatement). Does not mention specific algorithms or practical applications beyond vague 'verifica si algo cambió'. Missing the hash ≠ encryption distinction. Within character limits. Decent but lacks depth in applications and some analogies miss.",
+          "score": 7.3
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Only 6 steps, which limits depth. Covers the basics (fixed output, deterministic, one-way, avalanche, collision resistance) and includes one application (passwords). Good conversational tone and analogies. However, doesn't mention specific algorithms, doesn't distinguish hash from encryption, and the application coverage is minimal (only passwords). The 'ganar la lotería en mil universos' analogy is fun but slightly hyperbolic. Within character limits. Clean and accurate but too brief for the complexity of the topic.",
+          "score": 7
         },
         {
           "anonymousId": "Model I",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "6 steps that are clean and well-written. Good analogies (batido, trituradora). Covers irreversibility, avalanche, fixed output, collision resistance, and password verification. However, lacks depth: no mention of specific algorithms, no distinction between hash and encryption, limited applications. Step 5's claim 'Si los hashes son distintos, tienes la certeza absoluta de que los archivos son distintos' is correct but the preceding claim about collision probability being like identical DNA is slightly misleading since DNA comparison is actually probabilistic. Within character limits. Good quality but insufficient depth.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "7 steps covering basics adequately. Covers fixed output, irreversibility, avalanche, collision resistance, determinism, and applications. However, the analogies sometimes miss: 'báscula que siempre muestra un número de 6 dígitos' doesn't make sense as a scale analogy (scales show weight, not fixed-length numbers). No specific algorithms mentioned. No hash ≠ encryption distinction. Applications list is very brief. The overall depth is shallow for a complex topic. Within character limits. Adequate but unremarkable.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "google/gemini-2.5-flash-lite",
+          "reasoning": "6 steps that cover the basics. The title 'La Licuadora de Datos: ¿Qué es un Hash?' is 42 chars, within limit. However, step 1 uses 'huella dactilar' which overlaps with background on digital fingerprints. Step 3 conflates collision resistance with the avalanche effect ('Si cambias una coma... la huella dactilar cambia por completo' is avalanche, not collision resistance, but it's presented under collision resistance). This is a factual/conceptual error. The overall depth is shallow. No specific algorithms. No hash ≠ encryption distinction. Conversational tone is present but the explanations lack nuance. Within character limits.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model G",
           "modelId": "meta/llama-4-maverick",
-          "reasoning": "This model is the weakest in terms of structure and depth. It lumps three distinct properties into a single step ('Propiedades Clave') rather than explaining them individually, resulting in a superficial overview that lacks the educational value of the other models.",
-          "score": 2
+          "reasoning": "Only 6 steps and the shallowest of all models. Step 2 is a dry list of properties rather than explaining them individually. The explanation lacks depth significantly - complex properties are glossed over in single sentences. The color mixing analogy in step 6 is placed awkwardly at the end rather than where irreversibility is first discussed. Uses 'huella digital' extensively which may overlap with background. No specific algorithms mentioned. No hash ≠ encryption distinction. The tone is more textbook than conversational. Steps 3 and 5 are particularly vague. This is a superficial overview of a complex topic.",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Exceptional depth and clarity. This model perfectly hits all constraints. It proactively addresses the accuracy check by explicitly distinguishing hashing from encryption. Furthermore, it explains the internal mechanics (Merkle-Damgård, sponge structures, rounds) using brilliant, accessible analogies (like reducing a sauce or copying a blurry key) that show exactly *how* hashing achieves its security properties.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Excellent output. Like Model E, it explicitly notes that hashes are not encryption. It breaks down complex cryptographic concepts (pre-image vs. second pre-image) and internal flows (compression functions, blocks) in a very accessible manner. The tone is conversational, though slightly less engaging than Model E's analogies.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Very strong explanation. This model shines by including a step on 'La Maquinaria Interna', explaining blocks, rounds, and bit rotation, which directly answers *how* hash functions work rather than just what they do. The analogies are conversational and highly effective.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "A highly solid overview of cryptographic properties, the avalanche effect, and algorithms. It uses great analogies (meat grinder, smoothie) to make the irreversibility clear. It lacks a bit of the deeper internal mechanics found in the top 3 models, but is technically accurate and well-formatted.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Very structured and precise in its cryptographic definitions. It does a great job separating pre-image, second pre-image, and collision resistance into distinct, understandable steps. The analogies are consistent, though slightly repetitive (heavily relying on recipes).",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model L",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Good coverage of the deterministic, one-way, and avalanche properties. The analogies are strong and the tone is perfectly conversational. It misses the deeper explanation of the internal 'how' (mechanics) compared to the higher-ranked models.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Provides an accurate explanation of properties but leans a bit too heavily into the applications of hashing (5 of the steps are about where it's used). While valid, it sacrifices space that could have been used to deepen the explanation of how the mathematical properties themselves function.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "A solid, standard explanation of hash properties. It correctly identifies the one-way nature and avalanche effect. The analogies are good, but it remains a slightly superficial overview without touching on internal mechanisms or more advanced properties.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Accurate and conversational, but quite brief. It covers the basic properties well but leaves out deeper layers of explanation. Acceptable, but not as thorough as higher-ranked models.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "google/gemini-2.5-flash-lite",
+          "reasoning": "Meets the formatting and accuracy requirements. It is a very standard explanation that covers the main bases (one-way, deterministic, collisions), but lacks standout analogies or deeper structural insights.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Accurate but too brief. It touches on the correct properties but the explanations are very short and don't provide the level of depth required for a complex topic.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "Fails the depth check. It groups determinism, irreversibility, and sensitivity into a single, brief step rather than breaking them down to explain *why* these properties matter. Too superficial for a complex technical concept.",
+          "score": 6
         }
       ]
     },
@@ -65,117 +160,76 @@
       "judgeId": "openai/gpt-5.2",
       "rankings": [
         {
-          "anonymousId": "Model C",
+          "anonymousId": "Model E",
           "modelId": "openai/gpt-5.2",
-          "reasoning": "Cumple bien el enfoque: explica propiedades de seguridad (preimagen, segunda preimagen, colisiones) y además da una idea de “por dentro” (rondas, barajar bits, construcciones Merkle–Damgård/esponja). Aclara explícitamente “hash no es cifrado”. Tono conversacional con analogías. No se queda solo en “huella digital”; explica por qué importan las propiedades. Formato OK.",
-          "score": 9.5
+          "reasoning": "Cumple muy bien con la guía: explica propiedades de seguridad (preimagen, segunda preimagen, colisiones) y además aporta “cómo” se logran (rondas, mezcla de bits, construcciones tipo Merkle–Damgård/esponja) sin confundir con cifrado; de hecho aclara explícitamente “Hash no es cifrado”. Tono conversacional con analogías. Formato: títulos <50 chars y textos <300 chars (en general). No se queda solo en ‘huella digital’.",
+          "score": 9.6
         },
         {
-          "anonymousId": "Model A",
+          "anonymousId": "Model K",
           "modelId": "openai/gpt-5-mini",
-          "reasoning": "Muy sólido y relativamente profundo: incluye unidireccionalidad, colisiones y segunda preimagen, y un resumen del flujo interno por bloques/rondas. También evita la confusión con cifrado y menciona sal para contraseñas. Debilidad: varios textos superan 300 caracteres, así que falla el requisito de longitud, pero en contenido técnico está de los mejores.",
+          "reasoning": "Buen equilibrio entre propiedades y mecanismos internos (bloques, rondas, compresión), y distingue bien hash vs cifrado y límites (“no garantizan ausencia absoluta de colisiones”). Conversacional con analogías. Le baja un poco por cierta meta-explicación (“por qué importa entenderlas”) y alguna frase menos enfocada en el “qué es”. Formato parece cumplir límites.",
           "score": 9
         },
         {
           "anonymousId": "Model B",
-          "modelId": "anthropic/claude-opus-4.5",
-          "reasoning": "Explica propiedades relevantes (preimagen, colisiones, avalancha) y da ejemplos prácticos (descargas, firmas, blockchain, contraseñas). No confunde con cifrado. Problemas: afirma “SHA-256 es el más usado hoy” y “estándar dorado” (afirmación discutible/absolutista), y dice “sin colisiones” en el título/tono como si fuera absoluto. Varios textos parecen pasar de 300 caracteres.",
-          "score": 8.2
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Explica propiedades clave (preimagen, colisiones, avalancha) y añade una capa de mecanismo interno (bloques, rondas, rotaciones, combinaciones de bits) con buena analogía. No confunde con cifrado. Penalización leve: “contraseñas… solo ve hashes… no puede recuperar tu contraseña fácilmente” es simplificación (faltan sal/ataques de diccionario), aunque no es falsedad directa. Formato y español correctos.",
+          "score": 8.6
         },
         {
-          "anonymousId": "Model E",
-          "modelId": "openai/gpt-5.1-instant",
-          "reasoning": "Correcto en lo esencial: salida fija, determinismo, irreversibilidad, avalancha y resistencia a colisiones; tono amigable con analogías. Pero es más superficial: no explica segunda preimagen ni aporta mucho sobre el mecanismo interno o por qué exactamente las propiedades sostienen seguridad. Aun así, no comete errores graves.",
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Cobertura amplia y bastante clara: determinismo, preimagen, colisiones, avalancha y usos (incluye blockchain y firmas). Sin embargo, cae en afirmaciones discutibles/sobre-fuertes: “SHA-256 es el más usado hoy” y “tu navegador… tu banco… estándar dorado actual” (generalizaciones). También se apoya bastante en “huella” y aplicaciones más que en mecanismos internos.",
+          "score": 7.9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Buenas definiciones y propiedades (unidireccional, avalancha, colisiones, preimagen). Pero tiene problemas de formato: varios textos claramente superan 300 caracteres. Además, “Dos entradas diferentes jamás deberían producir el mismo hash” y “identifica unívocamente” sugieren unicidad absoluta (debería matizarse más). Menos explicación del ‘cómo’ interno.",
           "score": 7.4
         },
         {
           "anonymousId": "Model D",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Claro y conversacional, con analogías; cubre determinismo, one-way, avalancha y colisiones, más usos. Pero cae bastante en el marco de “huellas” e “integridad” (más cercano al background) y no profundiza en por qué colisiones/segunda preimagen importan ni en construcción interna. Además sugiere probabilidades “nulas”, demasiado absoluto.",
-          "score": 6.7
-        },
-        {
-          "anonymousId": "Model I",
-          "modelId": "meta/llama-4-maverick",
-          "reasoning": "Estructura simple y mayormente correcta (determinista/irreversible/sensible, colisiones improbables, bloques). Pero es genérico y superficial: poca conexión con por qué las propiedades dan seguridad (más allá de nombrarlas) y vuelve mucho a “huella digital” e “integridad”. Menos analogías que otros.",
-          "score": 6
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Claro y conversacional, cubre determinismo, irreversibilidad, avalancha y colisiones con analogías. Pero es relativamente superficial (poco “cómo logra esto” más allá de analogías) y contiene una afirmación demasiado fuerte: “matemáticamente imposible que deduzca qué datos lo formaron” (debería ser computacionalmente inviable).",
+          "score": 7.1
         },
         {
           "anonymousId": "Model F",
-          "modelId": "xai/grok-4.1-fast-reasoning",
-          "reasoning": "Incluye propiedades clave, pero tiene un error conceptual: describe “resistencia a segunda preimagen” como “encontrar otro input diferente que dé el mismo hash” sin partir de un mensaje dado (lo mezcla con colisión). Además usa lenguaje demasiado absoluto (“impenetrable”, “misión imposible”) que puede inducir a entender garantías absolutas. Probables excesos de longitud también.",
-          "score": 5.2
-        },
-        {
-          "anonymousId": "Model H",
-          "modelId": "google/gemini-2.5-flash-lite",
-          "reasoning": "Comprensible y en español, con analogías. Sin embargo, es más repetitivo con la idea de “huella” e “integridad” (solapa con background) y casi no desarrolla el “por qué” de las propiedades, ni distingue segunda preimagen. Además mezcla avalancha dentro de colisiones de forma confusa (“Si cambias una coma…”) sin nombrar el concepto.",
-          "score": 4.6
-        },
-        {
-          "anonymousId": "Model G",
-          "modelId": "google/gemini-3-pro-preview",
-          "reasoning": "Contiene afirmaciones incorrectas/engañosas: “dos archivos distintos nunca” y “certeza absoluta” (no; solo altísima probabilidad/asunción de resistencia). También compara con ADN “exacto” de forma absolutista. Explicación de colisiones es conceptualmente peligrosa. Menor profundidad y vuelve a integridad/verificación sin explicar seguridad más allá de slogans.",
-          "score": 3.8
-        }
-      ]
-    },
-    {
-      "judgeId": "anthropic/claude-opus-4.5",
-      "rankings": [
-        {
-          "anonymousId": "Model B",
-          "modelId": "anthropic/claude-opus-4.5",
-          "reasoning": "Excellent coverage of hash function properties. Clearly explains the three key security properties (preimage resistance, collision resistance, avalanche effect) with good analogies. Distinguishes between deterministic behavior and irreversibility. Addresses the encryption vs hashing distinction implicitly by emphasizing one-way nature. Good practical applications. Uses conversational tone well. Minor issues: some steps like 'Algoritmos Retirados' might overlap with background knowledge, and some text slightly exceeds ideal depth for conversational tone. Very thorough without being superficial.",
-          "score": 10
-        },
-        {
-          "anonymousId": "Model D",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Strong explanation covering core properties: irreversibility, avalanche effect, collision resistance, determinism. Good use of analogies (scrambled egg, fingerprints). Practical applications included. Conversational tone maintained well. Clear structure. Addresses why collision resistance matters for security. The explanation of irreversibility vs encryption is handled well through analogy. Slightly less detailed than Model B on the technical properties but still comprehensive and accurate.",
-          "score": 9
-        },
-        {
-          "anonymousId": "Model C",
-          "modelId": "openai/gpt-5.2",
-          "reasoning": "Covers all key properties well: preimage resistance, second preimage, collision resistance, avalanche effect. Explicitly states 'hash no es cifrado' which addresses a critical requirement. Mentions Merkle-Damgård structure showing good depth. Good analogies. The license plate analogy is helpful. Addresses practical applications. Slightly more technical than others which may affect accessibility for some readers, but maintains conversational elements. Thorough coverage of security properties.",
-          "score": 8
-        },
-        {
-          "anonymousId": "Model G",
-          "modelId": "google/gemini-3-pro-preview",
-          "reasoning": "Good coverage of main concepts: irreversibility, avalanche effect, fixed output length, collision resistance. The 'trituradora matemática' and 'batido' analogies work well. Addresses password verification use case. Conversational tone maintained. Explains why collision resistance matters. However, missing explicit discussion of preimage resistance terminology and slightly less depth on the mathematical properties compared to top models. Still a solid, accurate explanation.",
-          "score": 7
-        },
-        {
-          "anonymousId": "Model A",
-          "modelId": "openai/gpt-5-mini",
-          "reasoning": "Comprehensive coverage including preimage resistance, second preimage, collision resistance. Explicitly addresses 'Confusiones comunes' clarifying hash is not encryption - excellent. Mentions internal structure and practical applications. However, some analogies are less intuitive ('fotocopiadora' doesn't quite work). The tone is somewhat more academic than conversational. Step about 'Protección contra copias alternativas' uses technical term 'segunda preimagen' without sufficient explanation for casual learners.",
-          "score": 6
-        },
-        {
-          "anonymousId": "Model E",
           "modelId": "openai/gpt-5.1-instant",
-          "reasoning": "Covers main properties: fixed output, irreversibility, avalanche effect, collision resistance, determinism. Analogies are accessible (smoothie, recipe). Conversational tone works well. Applications mentioned briefly. However, lacks depth on why these properties matter for security - treats them somewhat superficially. Doesn't explicitly address the distinction from encryption. Missing preimage resistance terminology. Adequate but not as thorough as higher-ranked models.",
-          "score": 5
+          "reasoning": "Correcto y claro a nivel básico (tamaño fijo, irreversibilidad, avalancha, colisiones, determinismo) con analogías. Sin embargo, profundidad limitada: casi nada sobre por qué esas propiedades sostienen seguridad o cómo se diseñan internamente. También hay una analogía rara de la báscula que puede confundir.",
+          "score": 6.8
         },
         {
-          "anonymousId": "Model F",
-          "modelId": "xai/grok-4.1-fast-reasoning",
-          "reasoning": "Covers determinism, avalanche effect, preimage resistance, second preimage resistance, collision resistance - good technical coverage. Analogies work reasonably well. However, some analogies are stretched ('quemar la receta' for irreversibility is confusing). The final step 'Cómo se unen las piezas' is vague. Doesn't explicitly address the encryption vs hashing distinction. Missing practical applications beyond abstract security. Tone is conversational but explanations are sometimes unclear.",
-          "score": 4
+          "anonymousId": "Model L",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Explicación sencilla y mayormente correcta, con propiedades típicas y analogías. Pero es más “resumen/huella” que explicación de seguridad; poca distinción de matices (colisiones como “probabilidades nulas”) y algo de repetición/solapamiento con el concepto de integridad del fondo. Sin mecanismo interno.",
+          "score": 6.6
         },
         {
           "anonymousId": "Model H",
-          "modelId": "google/gemini-2.5-flash-lite",
-          "reasoning": "Basic coverage of main properties: unidirectionality, collision resistance, determinism. Good analogies with 'licuadora mágica'. Mentions applications. However, superficial treatment - lacks depth on WHY these properties matter for security. Step 5 about integrity overlaps with background. Missing avalanche effect. Doesn't distinguish between hash and encryption explicitly. The explanation of collision resistance could be clearer on its security implications. Adequate but not deep.",
-          "score": 3
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Incluye preimagen/segunda preimagen/colisiones, pero afirma “herramienta impenetrable” (exageración) y tiene tono algo más grandilocuente que conversacional. Además, la etapa final vuelve a integridad (“verifica si algo cambió…”) que puede solaparse con el background, y sigue sin explicar realmente mecanismos más allá de analogías.",
+          "score": 6.3
         },
         {
           "anonymousId": "Model I",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Mayormente correcto y claro, pero presenta afirmaciones incorrectas/excesivas: “representación única” y “certeza absoluta” si hashes distintos (eso sí es cierto para el mismo algoritmo: hashes distintos implican entradas distintas; pero el texto también sugiere unicidad general y minimiza matices). Falta resistencia a segunda preimagen y explicación del “cómo” interno; bastante cercano a ‘huella digital’.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "google/gemini-2.5-flash-lite",
+          "reasoning": "Agradable y correcto en lo básico, pero superficial: mezcla avalancha dentro de la explicación de colisiones, no explica mecanismos internos, y se queda bastante en la metáfora de “huella dactilar” (penaliza por la guía de profundidad). Formato: algunos títulos parecen >50 caracteres (p.ej., “La Licuadora de Datos: ¿Qué es un Hash?”).",
+          "score": 5.8
+        },
+        {
+          "anonymousId": "Model G",
           "modelId": "meta/llama-4-maverick",
-          "reasoning": "Very superficial treatment. 'Propiedades Clave' lists three properties in a single step without adequate explanation. 'Cómo Funcionan' is vague ('operaciones matemáticas complejas'). The color mixing analogy comes at the end and is helpful but late. Missing depth on why collision resistance matters. Missing avalanche effect. Doesn't distinguish hash from encryption. Applications mentioned but briefly. Structure is poor with the analogy for irreversibility coming in the last step after already discussing irreversibility. Too brief and surface-level.",
-          "score": 2
+          "reasoning": "El más genérico y cercano al background: ‘huella digital’, lista de propiedades sin profundizar en por qué importan ni cómo se construyen. Explicación interna muy vaga (“operaciones matemáticas complejas”). No hay distinción explícita frente a cifrado. Aunque es correcto en general, la falta de profundidad es notable.",
+          "score": 5.2
         }
       ]
     }

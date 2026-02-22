@@ -1,63 +1,158 @@
 {
   "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Vaccine immunology involves specific cellular and molecular mechanisms. Penalize if:\n   - mRNA vaccines are described as altering DNA (mRNA never enters the cell nucleus)\n\n2. DEPTH CHECK: Penalize if the explanation presents vaccines as simply \"teaching the body to fight disease\" without showing how immune memory develops.\n\n3. DISTINCTION FROM BACKGROUND: The background covered the historical discovery of vaccination through Jenner and Pasteur. This should explain the immunological mechanisms of how vaccines create protection.\n\n\nEVALUATION CRITERIA:\n\n1. FACTUAL ACCURACY: Any scientific processes, mechanisms, or technical details must be correct. Penalize hallucinations, made-up components, or incorrect cause-effect relationships.\n\n2. DEPTH: Complex topics require multi-layered explanations. Penalize superficial overviews that skip essential mechanisms.\n\n3. CLARITY: Steps should build understanding progressively, explaining concepts in accessible language.\n\n4. FORMAT: Each step must have a title (max 50 chars) and text (max 300 chars).\n\n5. TONE: Conversational, like explaining to a curious friend. Include analogies from everyday life.\n\n6. FOCUS: Explains WHAT something IS, not history or origin stories.\n\n7. NO OVERLAP: Must not repeat content from the BACKGROUND_STEPS.\n\n8. SCOPE: Content matches the lesson scope exactly.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for missing components, phases, or concepts you might expect\n- Do NOT require a specific number of steps\n- Do NOT check against an imagined \"complete\" explanation\n- ONLY penalize for: factual errors, superficial treatment of complex topics, not using the conversational tone (everyday language) we asked or poor explanation structure\n- Different valid explanatory approaches exist - assess the quality of what IS provided\n\n    ",
-  "judgedAt": "2026-01-15T20:48:44.865Z",
+  "judgedAt": "2026-02-21T23:57:11.977Z",
   "judgments": [
     {
-      "judgeId": "google/gemini-3-pro-preview",
+      "judgeId": "anthropic/claude-opus-4.6",
       "rankings": [
         {
-          "anonymousId": "Model D",
-          "modelId": "openai/gpt-5-mini",
-          "reasoning": "This model provides the most thorough explanation of the immunological mechanisms while maintaining a conversational tone. It is the only model to distinguish between Helper and Killer T cells and to explain the role of adjuvants ('immune coaches'), fulfilling the depth requirement exceptionally well. The step-by-step breakdown is logical, the analogies (fire drill, wanted poster) are clear, and it addresses the specific cellular processes accurately.",
-          "score": 10
-        },
-        {
           "anonymousId": "Model C",
-          "modelId": "anthropic/claude-opus-4.5",
-          "reasoning": "Model C is scientifically precise, explicitly naming B cells and correctly describing the antigen-antibody relationship using the standard 'key and lock' analogy. It offers vivid analogies for vaccine types (defanged snake, corpse) that aid understanding without oversimplifying. It covers the primary vs. secondary response mechanism clearly, making it a very strong contender, just slightly less detailed on T-cell subtypes than Model D.",
-          "score": 9
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Excellent balance of depth and clarity. Accurately explains antigens, B cells, T cells, memory cells, and four vaccine types. The mRNA step explicitly states 'Your DNA is never touched — the instructions are temporary, the immunity is lasting,' which directly addresses a key accuracy point. Good conversational tone with effective analogies. Progressive structure builds understanding well. Covers immune memory development beyond just 'teaching the body to fight.' All steps are within format constraints. Includes herd immunity which adds scope but doesn't detract.",
+          "score": 8.5
         },
         {
-          "anonymousId": "Model A",
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Most thorough and detailed explanation with 13 steps. Accurately covers antigens, B cells, T cells, memory cells, all four vaccine types, boosters, herd immunity, and timing. Scientifically accurate throughout. Good conversational tone with analogies (mugshot, sparring with tired opponent, studying for exam). The final step provides a nice summary. However, the sheer length may exceed what's needed for a learning app lesson, and some steps feel slightly encyclopedic rather than conversational. All format constraints met.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Strong depth with accurate coverage of antigens, B cells, antibodies, memory cells, four vaccine types with examples, primary vs secondary response, boosters, and herd immunity. Good conversational tone with effective analogies (defanged snake, fingerprints, flashcards). Scientifically accurate. The primary vs secondary response distinction adds valuable depth. 12 steps is substantial but well-organized. All format constraints appear met. Slightly less explicit about T cells compared to Model C.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model L",
           "modelId": "openai/gpt-5.2",
-          "reasoning": "Model A excels in tone and relatability, particularly with the 'saved game progress' analogy for immune memory, which is perfect for the target audience. It covers a broad scope, including side effects and common misunderstandings. However, the analogy of antibodies as 'lock picks' is slightly less precise than the 'key/lock' metaphor used by others, and it groups T cells and B cells rather than distinguishing their roles as clearly as Model D.",
+          "reasoning": "Very good depth covering antigens, antibodies, memory B and T cells, side effects, multiple vaccine types (live, inactivated, subunit/conjugate, mRNA/vector), immunity building over time, and common misunderstandings. The 'saved game progress' analogy for memory cells is creative and effective. Scientifically accurate. Good conversational tone. The side effects explanation adds practical value. Addresses common misconceptions. Well-structured progression. All format constraints met.",
           "score": 8
         },
         {
-          "anonymousId": "Model I",
-          "modelId": "google/gemini-3-pro-preview",
-          "reasoning": "This model uses highly creative and engaging analogies, such as the 'flight simulator' and memory cells as 'librarians who never forget a face.' These make the content very accessible. While it is excellent on clarity and tone, it is slightly less technically detailed regarding specific cell types (B vs T) compared to the top three models.",
-          "score": 7
-        },
-        {
-          "anonymousId": "Model B",
-          "modelId": "openai/gpt-5.1-instant",
-          "reasoning": "Model B offers a solid explanation with a standout analogy comparing the immune response upgrade to moving from 'dial-up to fiber internet.' It accurately explains mRNA and viral vectors. However, its description of the cellular mechanisms is a bit more generalized than the top-tier models, lacking specific mentions of T cells or the detailed breakdown found in Model D.",
-          "score": 6
+          "anonymousId": "Model K",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Good scientific depth covering antigens, B cells, T cells, memory cells, multiple vaccine types, adjuvants (a unique and accurate addition), and immunity stages. The adjuvant step is informative and not covered by other models. However, some steps feel slightly list-like rather than conversational (e.g., step 6 reads more like a catalog). The 'common confusions clarified' and 'why understanding matters' steps are somewhat meta and less about immunological mechanisms. Accurate throughout.",
+          "score": 7.8
         },
         {
           "anonymousId": "Model E",
-          "modelId": "xai/grok-4.1-fast-reasoning",
-          "reasoning": "Model E provides a good, standard explanation with effective analogies like 'Velcro' for antibodies. It covers the necessary bases, including vaccine types and herd immunity. It is ranked lower because it feels slightly more generic and less comprehensive in its cellular explanations compared to the models ranked above it.",
-          "score": 5
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Clean, well-structured 7-step explanation with strong analogies (mugshot, custom handcuffs, martial arts dummy). Covers antigens, antibodies, memory cells, traditional vs mRNA vaccines. The mRNA description ('temporary instructions... the instructions dissolve') is accurate. Good conversational tone throughout. However, it doesn't mention T cells at all, and the depth on immune mechanisms is slightly thinner than top models. Still a solid, accurate explanation that builds progressively.",
+          "score": 7.7
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Well-written with excellent analogies (flight simulator, training dummy, librarians who never forget). Covers the core mechanism well: antigens, antibodies, memory cells, traditional vs mRNA vaccines, secondary response. The mRNA description is accurate. Good conversational tone. However, it doesn't mention T cells or antigens by name, and the depth is somewhat lighter on the cellular mechanisms. The 'key fits a lock' analogy for antibodies is effective but standard. All format constraints met.",
+          "score": 7.5
         },
         {
           "anonymousId": "Model F",
           "modelId": "google/gemini-3-flash",
-          "reasoning": "Model F is accurate and clear but less comprehensive than the others. It covers the basics in fewer steps and misses the opportunity to delve deeper into the cellular interplay (B cells, T cells) that the prompt's depth check required. It is adequate but does not stand out.",
-          "score": 4
+          "reasoning": "Clean 6-step explanation with good conversational tone. Covers antigens, antibodies, memory cells, vaccine types, and side effects. The side effects explanation ('the sound of your immune system's alarm') is a nice practical touch. However, it lacks mention of T cells and doesn't go deep into immune mechanisms. The vaccine types step is quite brief. The first step's text is 307 characters which may exceed the 300-char limit. Accurate but somewhat surface-level on the immunological mechanisms.",
+          "score": 7.3
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Energetic, engaging tone with creative analogies (tame tiger, Velcro, gym reps). Covers antigens, antibodies, memory cells, vaccine types including mRNA and viral vectors. However, calling antibodies 'scouts' is inaccurate — antibodies are proteins, not cells, and they don't scout; they bind to antigens. The description 'Antibodies grab invaders like Velcro' oversimplifies. Memory cells are described as remembering 'faces' which is vague. The compressed style sometimes sacrifices precision for punchiness. Still reasonably accurate overall.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Decent 7-step overview with good analogies (game footage, dial-up to fiber). Covers basic concepts: antigens, antibodies, memory cells, vaccine types. However, the depth is relatively shallow — it doesn't mention T cells or B cells by name, and the mechanism of immune memory development is brief. The last step about 'seeing it in the real world' adds little immunological understanding. The mRNA description is accurate but brief. Conversational tone is good.",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-2.5-flash-lite",
+          "reasoning": "Accessible and conversational but notably shallow on immunological mechanisms. Doesn't mention B cells, T cells, or antigens by name. The explanation of how immunity develops is essentially 'your immune system remembers the enemy' without explaining the cellular mechanisms. Step 4 ('Remembering the Enemy') is particularly superficial — it just says the body 'mobilizes trained defenses' without explaining how. The herd immunity step, while accurate, doesn't add to the immunological mechanism explanation. This falls close to 'teaching the body to fight disease' without showing how immune memory develops.",
+          "score": 6
         },
         {
           "anonymousId": "Model H",
-          "modelId": "google/gemini-2.5-flash-lite",
-          "reasoning": "Model H provides a correct but very basic explanation. It relies on the common 'wanted poster' analogy without adding much unique insight or depth regarding the biological mechanisms. It meets the minimum requirements but lacks the engaging tone or specific detail of the better models.",
-          "score": 3
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "The most superficial of all models. Doesn't mention B cells, T cells, antibodies, or antigens by proper name (just 'ID cards'). The explanation essentially amounts to 'vaccines create memory cells that remember pathogens' without explaining the cellular and molecular mechanisms. Step 5 jumps from seeing a vaccine to creating memory cells with no explanation of the intermediate process. Misses the depth requirement significantly. The herd immunity step doesn't compensate for the lack of immunological depth. Conversational tone is adequate but too simple for the topic.",
+          "score": 5.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Flawless execution. The model explains antigens, B-cells, T-cells, antibodies, and memory cells with perfect pacing. It explicitly addresses the prompt's accuracy check regarding mRNA by clarifying that DNA is never touched. The analogies ('detective agency', 'text message') are brilliant, and all constraints are met.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Exceptional depth and clarity. The explanation seamlessly integrates the specific cellular and molecular mechanisms (antigens, B-cells, antibodies, memory cells) while maintaining a highly accessible, conversational tone. The breakdown of vaccine types and primary vs. secondary responses is top-tier.",
+          "score": 10
         },
         {
           "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Outstanding explanation of complex immunology. It introduces antigens, B-cells, and T-cells, explaining their distinct roles clearly without becoming overly academic. The tone is highly conversational, and all formatting constraints (lengths, titles) are perfectly adhered to.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model L",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Fantastic use of everyday analogies, particularly comparing memory cells to 'saved game progress.' It successfully explains antigens, antibodies, and memory cells while keeping the tone light and engaging. Nearly indistinguishable in quality from the top models.",
+          "score": 9.8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Very strong response that effectively uses a 'fire drill' and 'mugshot' analogy to explain antigens, antibodies, and memory cells. It is scientifically accurate, conversational, and adheres perfectly to the length and formatting constraints.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "An excellent, engaging explanation. While it doesn't explicitly name antigens or B/T cells in the early steps, it thoroughly explains the concept of 'imposters', antibodies, and memory cells using great analogies (flight simulator, librarians). Very accessible and accurate.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Clear, accurate, and conversational. Explains antigens, antibodies, and memory cells effectively using a 'training camp' and 'recipe' analogy. Meets all constraints but is slightly less comprehensive regarding vaccine types than the highest-scoring models.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Great use of relatable analogies (Velcro, secret blueprints, fire drills). It explains antigens, antibodies, and memory cells well. Meets all formatting and tone constraints, providing a highly readable and accurate overview.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Accurate and provides great depth by covering B cells, T cells, memory cells, and even adjuvants. However, the text reads slightly more like an encyclopedic list in some steps (e.g., listing all vaccine types in one step), which slightly detracts from the conversational tone requested.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-2.5-flash-lite",
+          "reasoning": "Good, but leans slightly superficial. It explains that the body builds an army and remembers the enemy, but glosses over the specific molecular mechanisms requested by the prompt (it omits terms like antigens). Still, it is clear, conversational, and accurate.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Uses strong analogies but is somewhat superficial on the biological mechanics. It mentions antibodies and memory cells but skips explaining antigens or how the cells specifically interact, making the 'how' less clear than the top-tier models.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model H",
           "modelId": "meta/llama-4-maverick",
-          "reasoning": "Model G is the weakest regarding depth. It fails to explicitly name 'antibodies' (referring only to 'memory cells' and recognizing 'ID cards'), which is a significant omission for a task focused on explaining vaccine immunology. The explanation is too superficial for the expected 'depth check' criteria.",
-          "score": 2
+          "reasoning": "The weakest of the group. It borders on the superficial treatment the prompt explicitly warned against ('teaching the body to fight disease'). It refers to antigens only as 'ID cards' and fails to mention antibodies or explain the mechanics of memory cells in sufficient depth.",
+          "score": 6.5
         }
       ]
     },
@@ -65,117 +160,76 @@
       "judgeId": "openai/gpt-5.2",
       "rankings": [
         {
-          "anonymousId": "Model D",
+          "anonymousId": "Model K",
           "modelId": "openai/gpt-5-mini",
-          "reasoning": "Most mechanism-focused while staying conversational. Clearly distinguishes B cells/antibodies vs T cells, introduces adjuvants correctly, explains primary/secondary response and boosters, and addresses misconceptions without history. No DNA/nucleus errors. Titles and texts appear within limits.",
-          "score": 10
+          "reasoning": "Strong mechanism focus (antigens, B/T cells, memory), clear analogies, explicitly addresses immune memory and boosters, adds adjuvants and clarifies misconceptions without drifting into history. No mRNA/DNA error. Mostly stays within scope and is well-structured.",
+          "score": 9.2
         },
         {
-          "anonymousId": "Model A",
+          "anonymousId": "Model L",
           "modelId": "openai/gpt-5.2",
-          "reasoning": "Strong depth and structure: antigens, antibodies, memory B/T cells, side effects, multiple vaccine types, and how protection develops over time. mRNA/vector description is accurate (no DNA alteration claim). Slightly more content than needed and some steps are a bit “overviewy,” but still solid immunology and clear analogies.",
+          "reasoning": "Accurate, mechanism-forward (antigens, antibodies, memory B/T), good everyday analogies, covers vaccine types including mRNA/vector without DNA-nucleus errors, and clarifies misconceptions. Slightly more “catalog of types” than needed but still on-scope.",
           "score": 9
         },
         {
-          "anonymousId": "Model C",
-          "modelId": "anthropic/claude-opus-4.5",
-          "reasoning": "Good mechanistic progression (antigens → B cells/antibodies → memory → primary vs secondary, boosters). Accurate mRNA description. Minor factual slippage/overgeneralization: “flu shots often use” inactivated is not reliably true across settings (many are split/subunit), and “too weak to cause disease” for live vaccines is overstated (rare vaccine-derived illness in some cases).",
-          "score": 8
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Good immunology depth: antigens, B cells/antibodies, T cells, memory, primary timing and boosters; clear analogies. Minor overreach: “you vaccinate before an outbreak, not during one” is too absolute. Otherwise accurate and on-topic.",
+          "score": 8.6
         },
         {
-          "anonymousId": "Model I",
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Mechanistically solid (antigens, antibodies, memory, primary vs secondary response, boosters) with clear analogies and correct mRNA framing. A couple examples are a bit sloppy (flu shots aren’t uniformly inactivated), but overall strong.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Good depth with B/T cells, memory, and explicit “DNA never touched” for mRNA. Clear and mostly accurate. Slight issues: “four main types” is an oversimplification framing, and includes herd immunity (okay but not essential).",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model A",
           "modelId": "google/gemini-3-pro-preview",
-          "reasoning": "Clear, friendly analogies and correct core mechanism (antigen/imposter → antibodies → memory → faster secondary response). mRNA explained accurately. Less depth on T cells and antigen presentation, but not required; still avoids being purely “teaches your body” by explaining memory and speed of response.",
-          "score": 7
+          "reasoning": "Clear, friendly analogies and correct basic idea + memory cells; includes mRNA “blueprint” correctly. However, it’s more general and lighter on cellular mechanism (no T cells/APCs), so it risks the “teaching the body” superficiality relative to the task’s depth expectation.",
+          "score": 7.6
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Accurate and clear with good analogies; mentions antigens, antibodies, memory cells, and correct mRNA ‘temporary instructions.’ Still fairly high-level (little on T cells/coordination), so depth is moderate.",
+          "score": 7.5
         },
         {
           "anonymousId": "Model B",
-          "modelId": "openai/gpt-5.1-instant",
-          "reasoning": "Generally accurate and clear, includes antibodies and memory cells plus mRNA/vectors. However, several steps remain fairly high-level (“memorize features”) with limited immunological mechanism beyond memory, and one step (“Seeing it in the Real World”) is more contextual than mechanism-focused.",
-          "score": 6
-        },
-        {
-          "anonymousId": "Model H",
           "modelId": "google/gemini-2.5-flash-lite",
-          "reasoning": "Accurate basics with good analogies and mentions time/second dose. But it stays relatively superficial on how memory is created (no B/T cell roles, no primary/secondary framing) and includes an overbroad claim that the preview “can’t cause the disease” (not always true for live attenuated in rare cases).",
-          "score": 5
+          "reasoning": "Readable and accurate basics; includes boosters and herd immunity. But the immune-memory mechanism is described broadly (few specifics beyond “army of cells/antibodies”), making it more superficial than stronger entries.",
+          "score": 7.2
         },
         {
           "anonymousId": "Model F",
           "modelId": "google/gemini-3-flash",
-          "reasoning": "Meets minimum: antigens, antibodies, memory cells, side effects, and mRNA as a recipe. Still fairly generic (“recognition without infection”) and light on mechanisms of memory development (no distinction of cell types, little on why boosters help). The “proof that the training camp is working” phrasing overstates side effects as necessary/indicative.",
-          "score": 4
-        },
-        {
-          "anonymousId": "Model E",
-          "modelId": "xai/grok-4.1-fast-reasoning",
-          "reasoning": "Contains a notable factual error: calls antibodies “scouts,” which is misleading (antibodies are effector molecules; “scouts” are more like APCs/innate sensors). Otherwise broadly accurate and friendly, but mechanism detail is uneven and leans generic.",
-          "score": 3
-        },
-        {
-          "anonymousId": "Model G",
-          "modelId": "meta/llama-4-maverick",
-          "reasoning": "Most superficial: largely repeats “train/prepare defenses” with minimal mechanism beyond mentioning memory cells. No antibody/B vs T cell explanation, little on how memory yields faster response. Still mostly accurate, but lowest depth per the task’s DEPTH CHECK.",
-          "score": 2
-        }
-      ]
-    },
-    {
-      "judgeId": "anthropic/claude-opus-4.5",
-      "rankings": [
-        {
-          "anonymousId": "Model A",
-          "modelId": "openai/gpt-5.2",
-          "reasoning": "Model A provides an exceptionally comprehensive and accurate explanation. It correctly explains antigens, antibodies, memory cells, and different vaccine types (live attenuated, inactivated, subunit/conjugate, mRNA/vector). The analogy of memory cells as 'saved game progress' is creative and accessible. The explanation of mRNA vaccines as 'temporary recipe cards' is accurate (no DNA alteration claims). It includes important topics like side effects explanation and common misunderstandings. The depth is excellent - it explains the 'why' behind immune mechanisms. Format is proper with clear titles and appropriate text lengths. Conversational tone throughout with excellent analogies.",
-          "score": 10
-        },
-        {
-          "anonymousId": "Model C",
-          "modelId": "anthropic/claude-opus-4.5",
-          "reasoning": "Model C delivers a thorough, well-structured explanation with excellent depth. It covers antigens, antibodies (with accurate lock-and-key analogy), memory cells, and all major vaccine types including mRNA (correctly described as instruction manuals, no DNA claims). It explains primary vs secondary response and boosters. The community immunity section is relevant. All analogies are accessible ('wanted poster', 'defanged snake'). The explanation builds progressively and maintains conversational tone. Minor weakness: could have included T cells for fuller picture. Format is proper throughout.",
-          "score": 9
-        },
-        {
-          "anonymousId": "Model D",
-          "modelId": "openai/gpt-5-mini",
-          "reasoning": "Model D shows excellent immunological depth, correctly explaining B cells, T cells (helper and killer), memory cells, and adjuvants - concepts many others missed. The vaccine types step is comprehensive. The mRNA description is accurate. It includes practical aspects like 'signs a vaccine is working' and clarifies common confusions. However, some steps feel slightly more textbook-like than conversational (e.g., 'T cells are the team's coordinators and cleaners'). The final step about 'why understanding matters' feels like padding. Overall very strong on accuracy and depth.",
-          "score": 8
+          "reasoning": "Good tone and analogies; correctly distinguishes side effects from disease and mentions memory cells. Depth is limited (no real explanation of cellular roles beyond antibodies/memory), and the “proof it’s working” phrasing about side effects is a bit too strong.",
+          "score": 6.9
         },
         {
           "anonymousId": "Model I",
-          "modelId": "google/gemini-3-pro-preview",
-          "reasoning": "Model I offers good depth with the flight simulator analogy and covers key concepts: antigens, antibodies, memory cells, traditional vs mRNA vaccines. The description of mRNA vaccines is accurate. The 'librarians who never forget' analogy for memory cells is effective. The final step about fast counter-attack is accurate. However, it lacks some depth compared to top models - no mention of T cells or boosters. The 'blueprint method' explanation is good but could be slightly clearer. Conversational tone is well-maintained.",
-          "score": 7
-        },
-        {
-          "anonymousId": "Model F",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Model F covers essential concepts: antigens, antibodies, memory cells, vaccine types. The mRNA description as 'recipe' is accurate. The final step about side effects being 'proof the training camp is working' is a nice touch and accurate. Analogies are clear ('Most Wanted poster', 'library'). However, it's slightly less comprehensive than higher-ranked models - no discussion of boosters, no T cells mentioned, and could have deeper mechanistic explanation. The fire drill analogy is used well. Good conversational tone throughout.",
-          "score": 6
-        },
-        {
-          "anonymousId": "Model E",
-          "modelId": "xai/grok-4.1-fast-reasoning",
-          "reasoning": "Model E has good analogies and covers main concepts. However, there's a concerning inaccuracy: 'antibodies and memory cells' are described as 'scouts' - antibodies are not cells that scout, they're proteins that bind to antigens. Memory cells aren't scouts either. This conflation of distinct immune components is a factual error. Otherwise, the mRNA explanation is accurate, vaccine types are covered, and the herd immunity mention is relevant. Format and tone are appropriate. The error prevents a higher score.",
-          "score": 5
-        },
-        {
-          "anonymousId": "Model B",
           "modelId": "openai/gpt-5.1-instant",
-          "reasoning": "Model B provides a reasonable overview with good analogies (wanted poster, game footage, dial-up to fiber internet). It covers antibodies and memory cells correctly, and mRNA description is accurate. However, the depth is noticeably shallower than other models - limited explanation of how antibodies actually work, no T cells, limited vaccine type differentiation. The final step about 'everyday life' adds little value. The 'security team' and 'coach studying game footage' analogies are somewhat mixed metaphors. Adequate but not as thorough.",
-          "score": 4
+          "reasoning": "Generally accurate and includes multiple vaccine platforms, but stays quite surface-level on how memory develops (little beyond ‘memorize’/‘notes’). Last step drifts into examples of routine shots rather than mechanism.",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Conversational and includes modern platforms, but contains a notable inaccuracy: antibodies are not “scouts” (they’re effector molecules). Some steps lean more toward examples/hype than clear mechanism; still no mRNA DNA error.",
+          "score": 6.3
         },
         {
           "anonymousId": "Model H",
-          "modelId": "google/gemini-2.5-flash-lite",
-          "reasoning": "Model H covers basics adequately but lacks depth. The explanation of immune mechanisms is quite superficial - 'army of special cells and antibodies' without explaining what these do specifically. Memory is mentioned but the mechanism isn't explained well. Vaccine types are briefly covered but conflated ('weakened or inactive piece of the germ, or just its genetic instructions' in one step). It's accurate but represents the shallow treatment that instructions warn against for complex topics. Herd immunity is included. Conversational but too simplified.",
-          "score": 3
-        },
-        {
-          "anonymousId": "Model G",
           "modelId": "meta/llama-4-maverick",
-          "reasoning": "Model G provides basic coverage but is too superficial for this complex topic. The explanation uses 'ID cards' metaphor repeatedly without explaining antibodies in detail. Memory cells are mentioned but the mechanism of how they provide faster response isn't well explained. No T cells mentioned. Vaccine types step is brief. The community protection step is included but overall the explanation feels like it's 'teaching the body to fight disease without showing how immune memory develops' - which the instructions specifically flag as penalizable. Format is fine, tone is conversational.",
-          "score": 2
+          "reasoning": "Clear but the most generic: largely ‘train/recognize/practice’ with minimal mechanism detail (no antibodies/B vs T cell roles). Meets tone/format but under-delivers on the requested immunological depth.",
+          "score": 6
         }
       ]
     }
