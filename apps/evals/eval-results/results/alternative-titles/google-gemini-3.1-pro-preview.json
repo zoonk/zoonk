@@ -1,0 +1,357 @@
+{
+  "modelId": "google/gemini-3.1-pro-preview",
+  "results": [
+    {
+      "steps": [
+        {
+          "conclusion": "None. The list perfectly targets the base title without including any broader or narrower topics. It correctly includes 'Frontend Engineering' and successfully excludes 'Web Development' and 'JavaScript Development' as requested.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None. The generated titles are entirely equivalent and accurate variations. It applies the rules for level variations, synonyms, and phrasing differences flawlessly.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The model did an excellent job generating over 100 highly accurate and relevant variations, capturing everything from 'Client-Side' synonyms to course formats ('Bootcamp', 'Training'). A very minor improvement could be to include audience-specific framing (e.g., 'Frontend Development for Designers'), but the provided list is already exceptionally exhaustive and directly aligned with the prompt's requirements.",
+          "kind": "potentialImprovements",
+          "score": 9.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - Should include \"Frontend Engineering\"\n      - Should NOT include topics like \"Web Development\" and \"JavaScript Development\" since those are separate courses\n      - Results should be in English\n\n      \n  - Only include titles that are **equivalent** to the base title — i.e., they refer to the **same course** a user would expect to find under that subject.\n  - **Same‑course test** (use all of these):\n    1) Would we merge both titles into one course page? If yes, they are equivalent.\n    2) Would teaching goals, syllabus scope, and prerequisites remain the same? If yes, they are equivalent.\n    3) Is the difference only wording, dialect/variant, audience, abbreviation, or light framing? If yes, they are equivalent.\n  - **Broader/narrower rule**:\n    - **Broader** expands scope beyond the subject’s core boundaries → exclude. Example: \"Web Development\" is broader than \"Frontend Development\".\n    - **Narrower** is a proper subset that we’d plausibly ship as a separate course (different scope/learning goals) → exclude. Example: \"React\" is narrower than \"JavaScript\"; \"Deep Learning\" is narrower than \"Machine Learning\".\n  - **Not narrower (allowed)** when it is still the same course subject:\n    - **Dialect/variant** names (e.g., \"Inglês Americano\", \"Inglês Britânico\", \"French Grammar\", \"Optimisation\" vs \"Optimization\"). Dialects are surface variants of the same language course.\n    - **Audience qualifiers** (e.g., \"IA para Desenvolvedores\", \"UX for Healthcare\"). Audience framing ≠ topic narrowing if the core subject stays the same.\n    - **Series/labeling of the same entity** (e.g., \"Formula One\", \"F1\", \"Formula One Championship\", \"F1 Series\") — these all clearly denote the same sport/competition brand.\n    - **Light framing words** like \"principles\", \"fundamentals\", \"basics\", \"overview\", or \"for beginners\" when the core topic remains unchanged.\n  - **Decision checklist for each candidate title** (answer all):\n    - Does it introduce a different subfield or tool? If yes → narrower → exclude.\n    - Does it expand to an umbrella domain? If yes → broader → exclude.\n    - If we offered both titles simultaneously, would users be confused by two separate courses? If yes → they are equivalent and, therefore, can be included as an alternative title.\n  - **Concrete examples**:\n    - **Include**: \"Client‑Side Web Development\" ↔ \"Frontend Development\"; \"IA\" / \"Inteligência Artificial\" / \"IA para Desenvolvedores\"; \"Inglês\" ↔ \"Inglês Americano\" / \"Inglês Britânico\" / \"Inglês Britânico e Americano\"; \"Formula 1\" ↔ \"Formula One\" / \"F1\" / \"Formula One Championship\" / \"F1 Series\"; \"UX Design\" ↔ \"UX Design Principles\"; \"World War II\" ↔ \"WWII\" / \"Second World War\"; \"Data Science\" ↔ \"Data Science Fundamentals\".\n    - **Exclude**: \"Web Development\" (broader than \"Frontend Development\"); \"Aprendizado de Máquina\" (narrower than \"Inteligência Artificial\"); \"React\" (narrower than \"JavaScript\"); \"Deep Learning\" (narrower than \"Machine Learning\"); \"Motorsport\" (broader than \"Formula 1\"); \"Differential Calculus\" (narrower than \"Calculus\").\n  - Include different locale spellings when applicable (e.g., \"Optimization\" and \"Optimisation\").\n  - Include abbreviations if they mean the same thing (e.g., \"AI\"/\"IA\", \"ML\" when base is \"Machine Learning\").\n  - Levels like \"Beginner\", \"Advanced\", \"Calculus 1\", \"101\", etc., are acceptable if they keep the same subject.\n  - It’s fine to skip spacing/hyphenation/accents variants — serialization will handle those.\n  - Awkward or redundant phrasings are acceptable.\n  - Ignore casing issues (e.g., \"javascript\" vs \"JavaScript\").\n  - Ideally, it should have a huge list of alternative titles, really good ones have more than 100 alternative titles\n\n    ",
+        "id": "en-frontend-development-1",
+        "userInput": {
+          "language": "en",
+          "title": "Frontend Development"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None. The model correctly identified alternative titles strictly related to 'Formula 1' without including any broader (e.g., 'Motorsport') or narrower (e.g., 'F1 Engineering') topics.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None. The model correctly applied dialect/variant names ('Formula One', 'F1') and combined them with perfectly acceptable framing words ('Introduction', 'Basics', 'Fundamentals', 'for Beginners', 'Masterclass', 'Course', 'Championship').",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The response is extremely thorough, generating over 150 highly relevant and structurally varied alternatives. To be perfectly comprehensive, it could have included 'F1 Series' or 'Formula 1 Series' as mentioned in the expectations, but given the massive and accurate volume provided, the list is already stellar.",
+          "kind": "potentialImprovements",
+          "score": 9.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - Should include items like \"Formula One\", \"F1\"\n      - Should NOT include \"Motorsport\", \"Racing\", etc.\n      - Items like \"F1 Racing\", \"Formula One Championship\", \"F1 Series\", etc. are fine because they clearly refer to Formula 1\n      - A narrower topic in this context would be something like \"F1 Engineering\" because it focuses is on engineering aspects\n      - Results should be in English\n\n      \n  - Only include titles that are **equivalent** to the base title — i.e., they refer to the **same course** a user would expect to find under that subject.\n  - **Same‑course test** (use all of these):\n    1) Would we merge both titles into one course page? If yes, they are equivalent.\n    2) Would teaching goals, syllabus scope, and prerequisites remain the same? If yes, they are equivalent.\n    3) Is the difference only wording, dialect/variant, audience, abbreviation, or light framing? If yes, they are equivalent.\n  - **Broader/narrower rule**:\n    - **Broader** expands scope beyond the subject’s core boundaries → exclude. Example: \"Web Development\" is broader than \"Frontend Development\".\n    - **Narrower** is a proper subset that we’d plausibly ship as a separate course (different scope/learning goals) → exclude. Example: \"React\" is narrower than \"JavaScript\"; \"Deep Learning\" is narrower than \"Machine Learning\".\n  - **Not narrower (allowed)** when it is still the same course subject:\n    - **Dialect/variant** names (e.g., \"Inglês Americano\", \"Inglês Britânico\", \"French Grammar\", \"Optimisation\" vs \"Optimization\"). Dialects are surface variants of the same language course.\n    - **Audience qualifiers** (e.g., \"IA para Desenvolvedores\", \"UX for Healthcare\"). Audience framing ≠ topic narrowing if the core subject stays the same.\n    - **Series/labeling of the same entity** (e.g., \"Formula One\", \"F1\", \"Formula One Championship\", \"F1 Series\") — these all clearly denote the same sport/competition brand.\n    - **Light framing words** like \"principles\", \"fundamentals\", \"basics\", \"overview\", or \"for beginners\" when the core topic remains unchanged.\n  - **Decision checklist for each candidate title** (answer all):\n    - Does it introduce a different subfield or tool? If yes → narrower → exclude.\n    - Does it expand to an umbrella domain? If yes → broader → exclude.\n    - If we offered both titles simultaneously, would users be confused by two separate courses? If yes → they are equivalent and, therefore, can be included as an alternative title.\n  - **Concrete examples**:\n    - **Include**: \"Client‑Side Web Development\" ↔ \"Frontend Development\"; \"IA\" / \"Inteligência Artificial\" / \"IA para Desenvolvedores\"; \"Inglês\" ↔ \"Inglês Americano\" / \"Inglês Britânico\" / \"Inglês Britânico e Americano\"; \"Formula 1\" ↔ \"Formula One\" / \"F1\" / \"Formula One Championship\" / \"F1 Series\"; \"UX Design\" ↔ \"UX Design Principles\"; \"World War II\" ↔ \"WWII\" / \"Second World War\"; \"Data Science\" ↔ \"Data Science Fundamentals\".\n    - **Exclude**: \"Web Development\" (broader than \"Frontend Development\"); \"Aprendizado de Máquina\" (narrower than \"Inteligência Artificial\"); \"React\" (narrower than \"JavaScript\"); \"Deep Learning\" (narrower than \"Machine Learning\"); \"Motorsport\" (broader than \"Formula 1\"); \"Differential Calculus\" (narrower than \"Calculus\").\n  - Include different locale spellings when applicable (e.g., \"Optimization\" and \"Optimisation\").\n  - Include abbreviations if they mean the same thing (e.g., \"AI\"/\"IA\", \"ML\" when base is \"Machine Learning\").\n  - Levels like \"Beginner\", \"Advanced\", \"Calculus 1\", \"101\", etc., are acceptable if they keep the same subject.\n  - It’s fine to skip spacing/hyphenation/accents variants — serialization will handle those.\n  - Awkward or redundant phrasings are acceptable.\n  - Ignore casing issues (e.g., \"javascript\" vs \"JavaScript\").\n  - Ideally, it should have a huge list of alternative titles, really good ones have more than 100 alternative titles\n\n    ",
+        "id": "en-formula-1-1",
+        "userInput": {
+          "language": "en",
+          "title": "Formula 1"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "No major errors found. The response correctly identifies the core subject and provides exact equivalents without drifting into broader (e.g., Web Design) or narrower (e.g., UI Design, Interaction Design) topics.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "No minor errors found. The phrasing, abbreviations (UXD, UED), and level variations are completely appropriate and perfectly align with the duplicate detection guidelines.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The list is excellent and provides over 100 highly accurate titles. However, to be completely exhaustive, it could have capitalized on the 'UX for X' rule mentioned in the expectations by including audience-specific framing variations like 'UX Design for Developers', 'UX for Non-Designers', or 'UX Design for Product Managers'.",
+          "kind": "potentialImprovements",
+          "score": 9.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - Should include \"User Experience Design\"\n      - Should NOT include \"UI Design\", \"Web Design\", etc\n      - Items such as \"UX Design Principles\" are fine since they have the same meaning: a UX course\n      - Similarly, anything that uses \"UX for X\" is also acceptable since it involves the same UX course\n      - Results should be in English\n\n      \n  - Only include titles that are **equivalent** to the base title — i.e., they refer to the **same course** a user would expect to find under that subject.\n  - **Same‑course test** (use all of these):\n    1) Would we merge both titles into one course page? If yes, they are equivalent.\n    2) Would teaching goals, syllabus scope, and prerequisites remain the same? If yes, they are equivalent.\n    3) Is the difference only wording, dialect/variant, audience, abbreviation, or light framing? If yes, they are equivalent.\n  - **Broader/narrower rule**:\n    - **Broader** expands scope beyond the subject’s core boundaries → exclude. Example: \"Web Development\" is broader than \"Frontend Development\".\n    - **Narrower** is a proper subset that we’d plausibly ship as a separate course (different scope/learning goals) → exclude. Example: \"React\" is narrower than \"JavaScript\"; \"Deep Learning\" is narrower than \"Machine Learning\".\n  - **Not narrower (allowed)** when it is still the same course subject:\n    - **Dialect/variant** names (e.g., \"Inglês Americano\", \"Inglês Britânico\", \"French Grammar\", \"Optimisation\" vs \"Optimization\"). Dialects are surface variants of the same language course.\n    - **Audience qualifiers** (e.g., \"IA para Desenvolvedores\", \"UX for Healthcare\"). Audience framing ≠ topic narrowing if the core subject stays the same.\n    - **Series/labeling of the same entity** (e.g., \"Formula One\", \"F1\", \"Formula One Championship\", \"F1 Series\") — these all clearly denote the same sport/competition brand.\n    - **Light framing words** like \"principles\", \"fundamentals\", \"basics\", \"overview\", or \"for beginners\" when the core topic remains unchanged.\n  - **Decision checklist for each candidate title** (answer all):\n    - Does it introduce a different subfield or tool? If yes → narrower → exclude.\n    - Does it expand to an umbrella domain? If yes → broader → exclude.\n    - If we offered both titles simultaneously, would users be confused by two separate courses? If yes → they are equivalent and, therefore, can be included as an alternative title.\n  - **Concrete examples**:\n    - **Include**: \"Client‑Side Web Development\" ↔ \"Frontend Development\"; \"IA\" / \"Inteligência Artificial\" / \"IA para Desenvolvedores\"; \"Inglês\" ↔ \"Inglês Americano\" / \"Inglês Britânico\" / \"Inglês Britânico e Americano\"; \"Formula 1\" ↔ \"Formula One\" / \"F1\" / \"Formula One Championship\" / \"F1 Series\"; \"UX Design\" ↔ \"UX Design Principles\"; \"World War II\" ↔ \"WWII\" / \"Second World War\"; \"Data Science\" ↔ \"Data Science Fundamentals\".\n    - **Exclude**: \"Web Development\" (broader than \"Frontend Development\"); \"Aprendizado de Máquina\" (narrower than \"Inteligência Artificial\"); \"React\" (narrower than \"JavaScript\"); \"Deep Learning\" (narrower than \"Machine Learning\"); \"Motorsport\" (broader than \"Formula 1\"); \"Differential Calculus\" (narrower than \"Calculus\").\n  - Include different locale spellings when applicable (e.g., \"Optimization\" and \"Optimisation\").\n  - Include abbreviations if they mean the same thing (e.g., \"AI\"/\"IA\", \"ML\" when base is \"Machine Learning\").\n  - Levels like \"Beginner\", \"Advanced\", \"Calculus 1\", \"101\", etc., are acceptable if they keep the same subject.\n  - It’s fine to skip spacing/hyphenation/accents variants — serialization will handle those.\n  - Awkward or redundant phrasings are acceptable.\n  - Ignore casing issues (e.g., \"javascript\" vs \"JavaScript\").\n  - Ideally, it should have a huge list of alternative titles, really good ones have more than 100 alternative titles\n\n    ",
+        "id": "en-ux-design-1",
+        "userInput": {
+          "language": "en",
+          "title": "UX Design"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "The response perfectly follows the instructions without any major errors. It correctly excludes broader/narrower topics like culture or grammar, excludes specific exams, and accurately provides equivalent titles, including language variants and levels.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "No minor errors were found. The list strictly adheres to the Portuguese language (with acceptable international acronyms like ESL/EFL) and correctly applies the rules for levels and formatting variants.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "While the list is very exhaustive (over 100 titles), it could be improved by including common audience-specific variations as explicitly permitted in the instructions (e.g., 'Inglês para Negócios', 'Inglês Corporativo', 'Inglês para Viagens', 'Inglês para Crianças'). Adding these would cover even more duplicate edge cases.",
+          "kind": "potentialImprovements",
+          "score": 9.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - Should include \"Língua Inglesa\", \"A Língua Inglesa\"\n      - Variants like \"Inglês Americano\", \"Inglês Britânico\" are acceptable since they refer to the same language\n      - Terms like \"Inglês Moderno\" and \"Inglês Contemporâneo\" are acceptable since they refer to the same language\n      - Anything that refers to learning English is acceptable\n      - Should NOT include \"Cultura Inglesa\", \"Gramática Inglesa\", \"Spanish\", etc\n      - Should NOT include exams like \"TOEFL\", \"IELTS\", etc., since they are different topics\n      - Should be in Portuguese\n\n      \n  - Only include titles that are **equivalent** to the base title — i.e., they refer to the **same course** a user would expect to find under that subject.\n  - **Same‑course test** (use all of these):\n    1) Would we merge both titles into one course page? If yes, they are equivalent.\n    2) Would teaching goals, syllabus scope, and prerequisites remain the same? If yes, they are equivalent.\n    3) Is the difference only wording, dialect/variant, audience, abbreviation, or light framing? If yes, they are equivalent.\n  - **Broader/narrower rule**:\n    - **Broader** expands scope beyond the subject’s core boundaries → exclude. Example: \"Web Development\" is broader than \"Frontend Development\".\n    - **Narrower** is a proper subset that we’d plausibly ship as a separate course (different scope/learning goals) → exclude. Example: \"React\" is narrower than \"JavaScript\"; \"Deep Learning\" is narrower than \"Machine Learning\".\n  - **Not narrower (allowed)** when it is still the same course subject:\n    - **Dialect/variant** names (e.g., \"Inglês Americano\", \"Inglês Britânico\", \"French Grammar\", \"Optimisation\" vs \"Optimization\"). Dialects are surface variants of the same language course.\n    - **Audience qualifiers** (e.g., \"IA para Desenvolvedores\", \"UX for Healthcare\"). Audience framing ≠ topic narrowing if the core subject stays the same.\n    - **Series/labeling of the same entity** (e.g., \"Formula One\", \"F1\", \"Formula One Championship\", \"F1 Series\") — these all clearly denote the same sport/competition brand.\n    - **Light framing words** like \"principles\", \"fundamentals\", \"basics\", \"overview\", or \"for beginners\" when the core topic remains unchanged.\n  - **Decision checklist for each candidate title** (answer all):\n    - Does it introduce a different subfield or tool? If yes → narrower → exclude.\n    - Does it expand to an umbrella domain? If yes → broader → exclude.\n    - If we offered both titles simultaneously, would users be confused by two separate courses? If yes → they are equivalent and, therefore, can be included as an alternative title.\n  - **Concrete examples**:\n    - **Include**: \"Client‑Side Web Development\" ↔ \"Frontend Development\"; \"IA\" / \"Inteligência Artificial\" / \"IA para Desenvolvedores\"; \"Inglês\" ↔ \"Inglês Americano\" / \"Inglês Britânico\" / \"Inglês Britânico e Americano\"; \"Formula 1\" ↔ \"Formula One\" / \"F1\" / \"Formula One Championship\" / \"F1 Series\"; \"UX Design\" ↔ \"UX Design Principles\"; \"World War II\" ↔ \"WWII\" / \"Second World War\"; \"Data Science\" ↔ \"Data Science Fundamentals\".\n    - **Exclude**: \"Web Development\" (broader than \"Frontend Development\"); \"Aprendizado de Máquina\" (narrower than \"Inteligência Artificial\"); \"React\" (narrower than \"JavaScript\"); \"Deep Learning\" (narrower than \"Machine Learning\"); \"Motorsport\" (broader than \"Formula 1\"); \"Differential Calculus\" (narrower than \"Calculus\").\n  - Include different locale spellings when applicable (e.g., \"Optimization\" and \"Optimisation\").\n  - Include abbreviations if they mean the same thing (e.g., \"AI\"/\"IA\", \"ML\" when base is \"Machine Learning\").\n  - Levels like \"Beginner\", \"Advanced\", \"Calculus 1\", \"101\", etc., are acceptable if they keep the same subject.\n  - It’s fine to skip spacing/hyphenation/accents variants — serialization will handle those.\n  - Awkward or redundant phrasings are acceptable.\n  - Ignore casing issues (e.g., \"javascript\" vs \"JavaScript\").\n  - Ideally, it should have a huge list of alternative titles, really good ones have more than 100 alternative titles\n\n    ",
+        "id": "pt-ingles-1",
+        "userInput": {
+          "language": "pt",
+          "title": "Inglês"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None. The model correctly identified and generated valid alternative titles for the base subject without including narrower or broader topics like 'Aprendizado de Máquina' or 'Ciência de Dados'.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None. The generated titles maintain the exact same meaning, varying appropriately by level, format, spelling (accents), and light framing as requested.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Although the model successfully generated over 100 alternative titles, it missed the opportunity to include audience-specific variations (e.g., 'IA para Desenvolvedores', 'IA para Negócios', 'Inteligência Artificial para Gestores'). The instructions explicitly mention that audience qualifiers ('IA para X') are acceptable and expanding on these would make the duplicate detection list even more robust. Furthermore, 'Engenharia de IA' borders on being slightly narrower, as it focuses specifically on the engineering and deployment of AI, but it is acceptable in this context.",
+          "kind": "potentialImprovements",
+          "score": 8.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - Should include \"IA\"\n      - Should NOT include \"Aprendizado de Máquina\", \"Inteligência Humana\", etc\n      - Items like \"IA para X\" are also acceptable since they refer to the same core subject.\n      - All alternatives should be in Brazilian Portuguese\n      - Should be in Portuguese\n\n      \n  - Only include titles that are **equivalent** to the base title — i.e., they refer to the **same course** a user would expect to find under that subject.\n  - **Same‑course test** (use all of these):\n    1) Would we merge both titles into one course page? If yes, they are equivalent.\n    2) Would teaching goals, syllabus scope, and prerequisites remain the same? If yes, they are equivalent.\n    3) Is the difference only wording, dialect/variant, audience, abbreviation, or light framing? If yes, they are equivalent.\n  - **Broader/narrower rule**:\n    - **Broader** expands scope beyond the subject’s core boundaries → exclude. Example: \"Web Development\" is broader than \"Frontend Development\".\n    - **Narrower** is a proper subset that we’d plausibly ship as a separate course (different scope/learning goals) → exclude. Example: \"React\" is narrower than \"JavaScript\"; \"Deep Learning\" is narrower than \"Machine Learning\".\n  - **Not narrower (allowed)** when it is still the same course subject:\n    - **Dialect/variant** names (e.g., \"Inglês Americano\", \"Inglês Britânico\", \"French Grammar\", \"Optimisation\" vs \"Optimization\"). Dialects are surface variants of the same language course.\n    - **Audience qualifiers** (e.g., \"IA para Desenvolvedores\", \"UX for Healthcare\"). Audience framing ≠ topic narrowing if the core subject stays the same.\n    - **Series/labeling of the same entity** (e.g., \"Formula One\", \"F1\", \"Formula One Championship\", \"F1 Series\") — these all clearly denote the same sport/competition brand.\n    - **Light framing words** like \"principles\", \"fundamentals\", \"basics\", \"overview\", or \"for beginners\" when the core topic remains unchanged.\n  - **Decision checklist for each candidate title** (answer all):\n    - Does it introduce a different subfield or tool? If yes → narrower → exclude.\n    - Does it expand to an umbrella domain? If yes → broader → exclude.\n    - If we offered both titles simultaneously, would users be confused by two separate courses? If yes → they are equivalent and, therefore, can be included as an alternative title.\n  - **Concrete examples**:\n    - **Include**: \"Client‑Side Web Development\" ↔ \"Frontend Development\"; \"IA\" / \"Inteligência Artificial\" / \"IA para Desenvolvedores\"; \"Inglês\" ↔ \"Inglês Americano\" / \"Inglês Britânico\" / \"Inglês Britânico e Americano\"; \"Formula 1\" ↔ \"Formula One\" / \"F1\" / \"Formula One Championship\" / \"F1 Series\"; \"UX Design\" ↔ \"UX Design Principles\"; \"World War II\" ↔ \"WWII\" / \"Second World War\"; \"Data Science\" ↔ \"Data Science Fundamentals\".\n    - **Exclude**: \"Web Development\" (broader than \"Frontend Development\"); \"Aprendizado de Máquina\" (narrower than \"Inteligência Artificial\"); \"React\" (narrower than \"JavaScript\"); \"Deep Learning\" (narrower than \"Machine Learning\"); \"Motorsport\" (broader than \"Formula 1\"); \"Differential Calculus\" (narrower than \"Calculus\").\n  - Include different locale spellings when applicable (e.g., \"Optimization\" and \"Optimisation\").\n  - Include abbreviations if they mean the same thing (e.g., \"AI\"/\"IA\", \"ML\" when base is \"Machine Learning\").\n  - Levels like \"Beginner\", \"Advanced\", \"Calculus 1\", \"101\", etc., are acceptable if they keep the same subject.\n  - It’s fine to skip spacing/hyphenation/accents variants — serialization will handle those.\n  - Awkward or redundant phrasings are acceptable.\n  - Ignore casing issues (e.g., \"javascript\" vs \"JavaScript\").\n  - Ideally, it should have a huge list of alternative titles, really good ones have more than 100 alternative titles\n\n    ",
+        "id": "pt-inteligencia-artificial-1",
+        "userInput": {
+          "language": "pt",
+          "title": "Inteligência Artificial"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "No major errors found. The response correctly focuses exclusively on 'Machine Learning' and avoids broader topics like 'Artificial Intelligence' or narrower topics like 'Deep Learning' or 'Neural Networks'. The length exceeds the 100+ item expectation.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "No minor errors. The inclusion of 'Machine Learning Engineering' could borderline be considered a slightly distinct topic (focusing on MLOps and deployment rather than just modeling), but in the context of broad course titles, it still falls under acceptable framing variations.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The response is extremely thorough, providing over 100 variations including abbreviations ('ML'), levels ('Beginner', 'Advanced'), formatting ('101', 'Bootcamp', 'Crash Course'), and synonyms. It perfectly matches the requested guidelines.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - Should include \"ML\"\n      - Should NOT include \"AI\", \"Deep Learning\", etc\n      - Results should be in English\n\n      \n  - Only include titles that are **equivalent** to the base title — i.e., they refer to the **same course** a user would expect to find under that subject.\n  - **Same‑course test** (use all of these):\n    1) Would we merge both titles into one course page? If yes, they are equivalent.\n    2) Would teaching goals, syllabus scope, and prerequisites remain the same? If yes, they are equivalent.\n    3) Is the difference only wording, dialect/variant, audience, abbreviation, or light framing? If yes, they are equivalent.\n  - **Broader/narrower rule**:\n    - **Broader** expands scope beyond the subject’s core boundaries → exclude. Example: \"Web Development\" is broader than \"Frontend Development\".\n    - **Narrower** is a proper subset that we’d plausibly ship as a separate course (different scope/learning goals) → exclude. Example: \"React\" is narrower than \"JavaScript\"; \"Deep Learning\" is narrower than \"Machine Learning\".\n  - **Not narrower (allowed)** when it is still the same course subject:\n    - **Dialect/variant** names (e.g., \"Inglês Americano\", \"Inglês Britânico\", \"French Grammar\", \"Optimisation\" vs \"Optimization\"). Dialects are surface variants of the same language course.\n    - **Audience qualifiers** (e.g., \"IA para Desenvolvedores\", \"UX for Healthcare\"). Audience framing ≠ topic narrowing if the core subject stays the same.\n    - **Series/labeling of the same entity** (e.g., \"Formula One\", \"F1\", \"Formula One Championship\", \"F1 Series\") — these all clearly denote the same sport/competition brand.\n    - **Light framing words** like \"principles\", \"fundamentals\", \"basics\", \"overview\", or \"for beginners\" when the core topic remains unchanged.\n  - **Decision checklist for each candidate title** (answer all):\n    - Does it introduce a different subfield or tool? If yes → narrower → exclude.\n    - Does it expand to an umbrella domain? If yes → broader → exclude.\n    - If we offered both titles simultaneously, would users be confused by two separate courses? If yes → they are equivalent and, therefore, can be included as an alternative title.\n  - **Concrete examples**:\n    - **Include**: \"Client‑Side Web Development\" ↔ \"Frontend Development\"; \"IA\" / \"Inteligência Artificial\" / \"IA para Desenvolvedores\"; \"Inglês\" ↔ \"Inglês Americano\" / \"Inglês Britânico\" / \"Inglês Britânico e Americano\"; \"Formula 1\" ↔ \"Formula One\" / \"F1\" / \"Formula One Championship\" / \"F1 Series\"; \"UX Design\" ↔ \"UX Design Principles\"; \"World War II\" ↔ \"WWII\" / \"Second World War\"; \"Data Science\" ↔ \"Data Science Fundamentals\".\n    - **Exclude**: \"Web Development\" (broader than \"Frontend Development\"); \"Aprendizado de Máquina\" (narrower than \"Inteligência Artificial\"); \"React\" (narrower than \"JavaScript\"); \"Deep Learning\" (narrower than \"Machine Learning\"); \"Motorsport\" (broader than \"Formula 1\"); \"Differential Calculus\" (narrower than \"Calculus\").\n  - Include different locale spellings when applicable (e.g., \"Optimization\" and \"Optimisation\").\n  - Include abbreviations if they mean the same thing (e.g., \"AI\"/\"IA\", \"ML\" when base is \"Machine Learning\").\n  - Levels like \"Beginner\", \"Advanced\", \"Calculus 1\", \"101\", etc., are acceptable if they keep the same subject.\n  - It’s fine to skip spacing/hyphenation/accents variants — serialization will handle those.\n  - Awkward or redundant phrasings are acceptable.\n  - Ignore casing issues (e.g., \"javascript\" vs \"JavaScript\").\n  - Ideally, it should have a huge list of alternative titles, really good ones have more than 100 alternative titles\n\n    ",
+        "id": "en-machine-learning-1",
+        "userInput": {
+          "language": "en",
+          "title": "Machine Learning"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None. The AI successfully generated a comprehensive list of alternative titles for 'JavaScript' without including broader topics (like 'Web Development') or narrower subfields (like 'React' or 'Node.js').",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None. The AI correctly handled different phrasing styles, abbreviations ('JS', 'ECMAScript'), audience qualifiers, and spelling variations (such as 'Java Script'). All generated items accurately reflect the base course concept.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None. The response perfectly meets the expectations by providing a massive and exhaustive list (over 100 entries) covering various valid facets (levels, descriptors, bootcamps, and foundations).",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - Should include \"JS\", \"JavaScript Programming\", \"JavaScript Language\", etc\n      - Should NOT include \"Web Development\", \"React\" since they're different courses\n      - Results should be in English\n\n      \n  - Only include titles that are **equivalent** to the base title — i.e., they refer to the **same course** a user would expect to find under that subject.\n  - **Same‑course test** (use all of these):\n    1) Would we merge both titles into one course page? If yes, they are equivalent.\n    2) Would teaching goals, syllabus scope, and prerequisites remain the same? If yes, they are equivalent.\n    3) Is the difference only wording, dialect/variant, audience, abbreviation, or light framing? If yes, they are equivalent.\n  - **Broader/narrower rule**:\n    - **Broader** expands scope beyond the subject’s core boundaries → exclude. Example: \"Web Development\" is broader than \"Frontend Development\".\n    - **Narrower** is a proper subset that we’d plausibly ship as a separate course (different scope/learning goals) → exclude. Example: \"React\" is narrower than \"JavaScript\"; \"Deep Learning\" is narrower than \"Machine Learning\".\n  - **Not narrower (allowed)** when it is still the same course subject:\n    - **Dialect/variant** names (e.g., \"Inglês Americano\", \"Inglês Britânico\", \"French Grammar\", \"Optimisation\" vs \"Optimization\"). Dialects are surface variants of the same language course.\n    - **Audience qualifiers** (e.g., \"IA para Desenvolvedores\", \"UX for Healthcare\"). Audience framing ≠ topic narrowing if the core subject stays the same.\n    - **Series/labeling of the same entity** (e.g., \"Formula One\", \"F1\", \"Formula One Championship\", \"F1 Series\") — these all clearly denote the same sport/competition brand.\n    - **Light framing words** like \"principles\", \"fundamentals\", \"basics\", \"overview\", or \"for beginners\" when the core topic remains unchanged.\n  - **Decision checklist for each candidate title** (answer all):\n    - Does it introduce a different subfield or tool? If yes → narrower → exclude.\n    - Does it expand to an umbrella domain? If yes → broader → exclude.\n    - If we offered both titles simultaneously, would users be confused by two separate courses? If yes → they are equivalent and, therefore, can be included as an alternative title.\n  - **Concrete examples**:\n    - **Include**: \"Client‑Side Web Development\" ↔ \"Frontend Development\"; \"IA\" / \"Inteligência Artificial\" / \"IA para Desenvolvedores\"; \"Inglês\" ↔ \"Inglês Americano\" / \"Inglês Britânico\" / \"Inglês Britânico e Americano\"; \"Formula 1\" ↔ \"Formula One\" / \"F1\" / \"Formula One Championship\" / \"F1 Series\"; \"UX Design\" ↔ \"UX Design Principles\"; \"World War II\" ↔ \"WWII\" / \"Second World War\"; \"Data Science\" ↔ \"Data Science Fundamentals\".\n    - **Exclude**: \"Web Development\" (broader than \"Frontend Development\"); \"Aprendizado de Máquina\" (narrower than \"Inteligência Artificial\"); \"React\" (narrower than \"JavaScript\"); \"Deep Learning\" (narrower than \"Machine Learning\"); \"Motorsport\" (broader than \"Formula 1\"); \"Differential Calculus\" (narrower than \"Calculus\").\n  - Include different locale spellings when applicable (e.g., \"Optimization\" and \"Optimisation\").\n  - Include abbreviations if they mean the same thing (e.g., \"AI\"/\"IA\", \"ML\" when base is \"Machine Learning\").\n  - Levels like \"Beginner\", \"Advanced\", \"Calculus 1\", \"101\", etc., are acceptable if they keep the same subject.\n  - It’s fine to skip spacing/hyphenation/accents variants — serialization will handle those.\n  - Awkward or redundant phrasings are acceptable.\n  - Ignore casing issues (e.g., \"javascript\" vs \"JavaScript\").\n  - Ideally, it should have a huge list of alternative titles, really good ones have more than 100 alternative titles\n\n    ",
+        "id": "en-javascript-1",
+        "userInput": {
+          "language": "en",
+          "title": "JavaScript"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "The response perfectly aligns with the base title and follows all instructions. It does not include broader or narrower topics like 'Programming' or 'Data Science', and there are no ambiguous or unrelated topics.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "No minor errors were found. All the generated titles clearly refer to the same 'Python' course and correctly incorporate acceptable variations like 'Beginner', 'Bootcamp', 'Advanced', and 'Python 3'.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The list is extremely comprehensive, featuring 120 alternative titles covering a very wide array of synonyms, phrasing variations, levels, and intents without violating any constraints.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - Should include \"Python Programming\", \"Python Language\", \"Python for Beginners\"\n      - Should NOT include \"Programming\", \"Data Science\", etc\n      - Results should be in English\n\n      \n  - Only include titles that are **equivalent** to the base title — i.e., they refer to the **same course** a user would expect to find under that subject.\n  - **Same‑course test** (use all of these):\n    1) Would we merge both titles into one course page? If yes, they are equivalent.\n    2) Would teaching goals, syllabus scope, and prerequisites remain the same? If yes, they are equivalent.\n    3) Is the difference only wording, dialect/variant, audience, abbreviation, or light framing? If yes, they are equivalent.\n  - **Broader/narrower rule**:\n    - **Broader** expands scope beyond the subject’s core boundaries → exclude. Example: \"Web Development\" is broader than \"Frontend Development\".\n    - **Narrower** is a proper subset that we’d plausibly ship as a separate course (different scope/learning goals) → exclude. Example: \"React\" is narrower than \"JavaScript\"; \"Deep Learning\" is narrower than \"Machine Learning\".\n  - **Not narrower (allowed)** when it is still the same course subject:\n    - **Dialect/variant** names (e.g., \"Inglês Americano\", \"Inglês Britânico\", \"French Grammar\", \"Optimisation\" vs \"Optimization\"). Dialects are surface variants of the same language course.\n    - **Audience qualifiers** (e.g., \"IA para Desenvolvedores\", \"UX for Healthcare\"). Audience framing ≠ topic narrowing if the core subject stays the same.\n    - **Series/labeling of the same entity** (e.g., \"Formula One\", \"F1\", \"Formula One Championship\", \"F1 Series\") — these all clearly denote the same sport/competition brand.\n    - **Light framing words** like \"principles\", \"fundamentals\", \"basics\", \"overview\", or \"for beginners\" when the core topic remains unchanged.\n  - **Decision checklist for each candidate title** (answer all):\n    - Does it introduce a different subfield or tool? If yes → narrower → exclude.\n    - Does it expand to an umbrella domain? If yes → broader → exclude.\n    - If we offered both titles simultaneously, would users be confused by two separate courses? If yes → they are equivalent and, therefore, can be included as an alternative title.\n  - **Concrete examples**:\n    - **Include**: \"Client‑Side Web Development\" ↔ \"Frontend Development\"; \"IA\" / \"Inteligência Artificial\" / \"IA para Desenvolvedores\"; \"Inglês\" ↔ \"Inglês Americano\" / \"Inglês Britânico\" / \"Inglês Britânico e Americano\"; \"Formula 1\" ↔ \"Formula One\" / \"F1\" / \"Formula One Championship\" / \"F1 Series\"; \"UX Design\" ↔ \"UX Design Principles\"; \"World War II\" ↔ \"WWII\" / \"Second World War\"; \"Data Science\" ↔ \"Data Science Fundamentals\".\n    - **Exclude**: \"Web Development\" (broader than \"Frontend Development\"); \"Aprendizado de Máquina\" (narrower than \"Inteligência Artificial\"); \"React\" (narrower than \"JavaScript\"); \"Deep Learning\" (narrower than \"Machine Learning\"); \"Motorsport\" (broader than \"Formula 1\"); \"Differential Calculus\" (narrower than \"Calculus\").\n  - Include different locale spellings when applicable (e.g., \"Optimization\" and \"Optimisation\").\n  - Include abbreviations if they mean the same thing (e.g., \"AI\"/\"IA\", \"ML\" when base is \"Machine Learning\").\n  - Levels like \"Beginner\", \"Advanced\", \"Calculus 1\", \"101\", etc., are acceptable if they keep the same subject.\n  - It’s fine to skip spacing/hyphenation/accents variants — serialization will handle those.\n  - Awkward or redundant phrasings are acceptable.\n  - Ignore casing issues (e.g., \"javascript\" vs \"JavaScript\").\n  - Ideally, it should have a huge list of alternative titles, really good ones have more than 100 alternative titles\n\n    ",
+        "id": "en-python-1",
+        "userInput": {
+          "language": "en",
+          "title": "Python"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The list includes 'Diseño y Desarrollo Web' and 'Desarrollo y Diseño Web'. Web Design ('Diseño Web') is a distinct discipline from Web Development ('Desarrollo Web'). Adding it to the title introduces a different subfield and expands the scope, which violates the strict rule against broader or different topics.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "To make the list perfect, the titles containing 'Diseño' should be removed. Aside from that, the response is exceptionally good, generating well over 100 valid, highly relevant alternatives that accurately reflect the base title in Spanish using various framings, synonyms, and levels.",
+          "kind": "potentialImprovements",
+          "score": 9.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - Should include \"Desarrollo de Sitios Web\", \"Programación Web\", etc\n      - All alternatives should be in Spanish\n\n      \n  - Only include titles that are **equivalent** to the base title — i.e., they refer to the **same course** a user would expect to find under that subject.\n  - **Same‑course test** (use all of these):\n    1) Would we merge both titles into one course page? If yes, they are equivalent.\n    2) Would teaching goals, syllabus scope, and prerequisites remain the same? If yes, they are equivalent.\n    3) Is the difference only wording, dialect/variant, audience, abbreviation, or light framing? If yes, they are equivalent.\n  - **Broader/narrower rule**:\n    - **Broader** expands scope beyond the subject’s core boundaries → exclude. Example: \"Web Development\" is broader than \"Frontend Development\".\n    - **Narrower** is a proper subset that we’d plausibly ship as a separate course (different scope/learning goals) → exclude. Example: \"React\" is narrower than \"JavaScript\"; \"Deep Learning\" is narrower than \"Machine Learning\".\n  - **Not narrower (allowed)** when it is still the same course subject:\n    - **Dialect/variant** names (e.g., \"Inglês Americano\", \"Inglês Britânico\", \"French Grammar\", \"Optimisation\" vs \"Optimization\"). Dialects are surface variants of the same language course.\n    - **Audience qualifiers** (e.g., \"IA para Desenvolvedores\", \"UX for Healthcare\"). Audience framing ≠ topic narrowing if the core subject stays the same.\n    - **Series/labeling of the same entity** (e.g., \"Formula One\", \"F1\", \"Formula One Championship\", \"F1 Series\") — these all clearly denote the same sport/competition brand.\n    - **Light framing words** like \"principles\", \"fundamentals\", \"basics\", \"overview\", or \"for beginners\" when the core topic remains unchanged.\n  - **Decision checklist for each candidate title** (answer all):\n    - Does it introduce a different subfield or tool? If yes → narrower → exclude.\n    - Does it expand to an umbrella domain? If yes → broader → exclude.\n    - If we offered both titles simultaneously, would users be confused by two separate courses? If yes → they are equivalent and, therefore, can be included as an alternative title.\n  - **Concrete examples**:\n    - **Include**: \"Client‑Side Web Development\" ↔ \"Frontend Development\"; \"IA\" / \"Inteligência Artificial\" / \"IA para Desenvolvedores\"; \"Inglês\" ↔ \"Inglês Americano\" / \"Inglês Britânico\" / \"Inglês Britânico e Americano\"; \"Formula 1\" ↔ \"Formula One\" / \"F1\" / \"Formula One Championship\" / \"F1 Series\"; \"UX Design\" ↔ \"UX Design Principles\"; \"World War II\" ↔ \"WWII\" / \"Second World War\"; \"Data Science\" ↔ \"Data Science Fundamentals\".\n    - **Exclude**: \"Web Development\" (broader than \"Frontend Development\"); \"Aprendizado de Máquina\" (narrower than \"Inteligência Artificial\"); \"React\" (narrower than \"JavaScript\"); \"Deep Learning\" (narrower than \"Machine Learning\"); \"Motorsport\" (broader than \"Formula 1\"); \"Differential Calculus\" (narrower than \"Calculus\").\n  - Include different locale spellings when applicable (e.g., \"Optimization\" and \"Optimisation\").\n  - Include abbreviations if they mean the same thing (e.g., \"AI\"/\"IA\", \"ML\" when base is \"Machine Learning\").\n  - Levels like \"Beginner\", \"Advanced\", \"Calculus 1\", \"101\", etc., are acceptable if they keep the same subject.\n  - It’s fine to skip spacing/hyphenation/accents variants — serialization will handle those.\n  - Awkward or redundant phrasings are acceptable.\n  - Ignore casing issues (e.g., \"javascript\" vs \"JavaScript\").\n  - Ideally, it should have a huge list of alternative titles, really good ones have more than 100 alternative titles\n\n    ",
+        "id": "es-desarrollo-web-1",
+        "userInput": {
+          "language": "es",
+          "title": "Desarrollo Web"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "The AI provided over 100 alternative course titles that are completely focused on the base title 'Data Science'. It correctly avoided broader domains and narrower fields like 'Machine Learning', 'Big Data', or specific tools. All titles provided represent the exact same course curriculum with various framings, levels, and structures.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "No minor errors were found. The variations include audience framings, role-based titles ('Data Scientist'), and level indicators seamlessly. Borderline titles like 'How to Become a Data Scientist' could occasionally denote career-advice courses, but within the context of duplicate detection for curricula, they are perfectly valid inclusions.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The list is extremely comprehensive and meets the expectation of having over 100 items. It correctly avoided ambiguous acronyms like 'DS' which could mean Data Structures. There is virtually no room for improvement as it perfectly fulfills the criteria and intent of the prompt.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - Should NOT include \"Machine Learning\", \"Statistics\", \"Big Data\", etc\n      - Results should be in English\n\n      \n  - Only include titles that are **equivalent** to the base title — i.e., they refer to the **same course** a user would expect to find under that subject.\n  - **Same‑course test** (use all of these):\n    1) Would we merge both titles into one course page? If yes, they are equivalent.\n    2) Would teaching goals, syllabus scope, and prerequisites remain the same? If yes, they are equivalent.\n    3) Is the difference only wording, dialect/variant, audience, abbreviation, or light framing? If yes, they are equivalent.\n  - **Broader/narrower rule**:\n    - **Broader** expands scope beyond the subject’s core boundaries → exclude. Example: \"Web Development\" is broader than \"Frontend Development\".\n    - **Narrower** is a proper subset that we’d plausibly ship as a separate course (different scope/learning goals) → exclude. Example: \"React\" is narrower than \"JavaScript\"; \"Deep Learning\" is narrower than \"Machine Learning\".\n  - **Not narrower (allowed)** when it is still the same course subject:\n    - **Dialect/variant** names (e.g., \"Inglês Americano\", \"Inglês Britânico\", \"French Grammar\", \"Optimisation\" vs \"Optimization\"). Dialects are surface variants of the same language course.\n    - **Audience qualifiers** (e.g., \"IA para Desenvolvedores\", \"UX for Healthcare\"). Audience framing ≠ topic narrowing if the core subject stays the same.\n    - **Series/labeling of the same entity** (e.g., \"Formula One\", \"F1\", \"Formula One Championship\", \"F1 Series\") — these all clearly denote the same sport/competition brand.\n    - **Light framing words** like \"principles\", \"fundamentals\", \"basics\", \"overview\", or \"for beginners\" when the core topic remains unchanged.\n  - **Decision checklist for each candidate title** (answer all):\n    - Does it introduce a different subfield or tool? If yes → narrower → exclude.\n    - Does it expand to an umbrella domain? If yes → broader → exclude.\n    - If we offered both titles simultaneously, would users be confused by two separate courses? If yes → they are equivalent and, therefore, can be included as an alternative title.\n  - **Concrete examples**:\n    - **Include**: \"Client‑Side Web Development\" ↔ \"Frontend Development\"; \"IA\" / \"Inteligência Artificial\" / \"IA para Desenvolvedores\"; \"Inglês\" ↔ \"Inglês Americano\" / \"Inglês Britânico\" / \"Inglês Britânico e Americano\"; \"Formula 1\" ↔ \"Formula One\" / \"F1\" / \"Formula One Championship\" / \"F1 Series\"; \"UX Design\" ↔ \"UX Design Principles\"; \"World War II\" ↔ \"WWII\" / \"Second World War\"; \"Data Science\" ↔ \"Data Science Fundamentals\".\n    - **Exclude**: \"Web Development\" (broader than \"Frontend Development\"); \"Aprendizado de Máquina\" (narrower than \"Inteligência Artificial\"); \"React\" (narrower than \"JavaScript\"); \"Deep Learning\" (narrower than \"Machine Learning\"); \"Motorsport\" (broader than \"Formula 1\"); \"Differential Calculus\" (narrower than \"Calculus\").\n  - Include different locale spellings when applicable (e.g., \"Optimization\" and \"Optimisation\").\n  - Include abbreviations if they mean the same thing (e.g., \"AI\"/\"IA\", \"ML\" when base is \"Machine Learning\").\n  - Levels like \"Beginner\", \"Advanced\", \"Calculus 1\", \"101\", etc., are acceptable if they keep the same subject.\n  - It’s fine to skip spacing/hyphenation/accents variants — serialization will handle those.\n  - Awkward or redundant phrasings are acceptable.\n  - Ignore casing issues (e.g., \"javascript\" vs \"JavaScript\").\n  - Ideally, it should have a huge list of alternative titles, really good ones have more than 100 alternative titles\n\n    ",
+        "id": "en-data-science-1",
+        "userInput": {
+          "language": "en",
+          "title": "Data Science"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "The response perfectly follows all instructions and negative constraints. It avoids the ambiguous 'Matrix' by itself, avoids broader topics like 'Science Fiction Films', and includes expected titles such as 'Matrix Movie' and 'The Matrix Trilogy'. It also avoids narrower topics like specific sequels.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "There are no minor errors. The AI properly used level variations, framing words, and synonyms without changing the core subject. It correctly handled formatting and variations as requested.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The response is extremely comprehensive, providing well over 100 valid alternative titles that perfectly suit the duplicate detection use case. No significant improvements are needed.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - Should include \"Matrix Movie\" (without \"The\")\n      - May include \"The Matrix Trilogy\" and similar variations since it refers to the same film series\n      - Should NOT include just \"Matrix\" (ambiguous)\n      - Should NOT include broader courses like \"Science Fiction Films\"\n      - Results should be in English\n\n      \n  - Only include titles that are **equivalent** to the base title — i.e., they refer to the **same course** a user would expect to find under that subject.\n  - **Same‑course test** (use all of these):\n    1) Would we merge both titles into one course page? If yes, they are equivalent.\n    2) Would teaching goals, syllabus scope, and prerequisites remain the same? If yes, they are equivalent.\n    3) Is the difference only wording, dialect/variant, audience, abbreviation, or light framing? If yes, they are equivalent.\n  - **Broader/narrower rule**:\n    - **Broader** expands scope beyond the subject’s core boundaries → exclude. Example: \"Web Development\" is broader than \"Frontend Development\".\n    - **Narrower** is a proper subset that we’d plausibly ship as a separate course (different scope/learning goals) → exclude. Example: \"React\" is narrower than \"JavaScript\"; \"Deep Learning\" is narrower than \"Machine Learning\".\n  - **Not narrower (allowed)** when it is still the same course subject:\n    - **Dialect/variant** names (e.g., \"Inglês Americano\", \"Inglês Britânico\", \"French Grammar\", \"Optimisation\" vs \"Optimization\"). Dialects are surface variants of the same language course.\n    - **Audience qualifiers** (e.g., \"IA para Desenvolvedores\", \"UX for Healthcare\"). Audience framing ≠ topic narrowing if the core subject stays the same.\n    - **Series/labeling of the same entity** (e.g., \"Formula One\", \"F1\", \"Formula One Championship\", \"F1 Series\") — these all clearly denote the same sport/competition brand.\n    - **Light framing words** like \"principles\", \"fundamentals\", \"basics\", \"overview\", or \"for beginners\" when the core topic remains unchanged.\n  - **Decision checklist for each candidate title** (answer all):\n    - Does it introduce a different subfield or tool? If yes → narrower → exclude.\n    - Does it expand to an umbrella domain? If yes → broader → exclude.\n    - If we offered both titles simultaneously, would users be confused by two separate courses? If yes → they are equivalent and, therefore, can be included as an alternative title.\n  - **Concrete examples**:\n    - **Include**: \"Client‑Side Web Development\" ↔ \"Frontend Development\"; \"IA\" / \"Inteligência Artificial\" / \"IA para Desenvolvedores\"; \"Inglês\" ↔ \"Inglês Americano\" / \"Inglês Britânico\" / \"Inglês Britânico e Americano\"; \"Formula 1\" ↔ \"Formula One\" / \"F1\" / \"Formula One Championship\" / \"F1 Series\"; \"UX Design\" ↔ \"UX Design Principles\"; \"World War II\" ↔ \"WWII\" / \"Second World War\"; \"Data Science\" ↔ \"Data Science Fundamentals\".\n    - **Exclude**: \"Web Development\" (broader than \"Frontend Development\"); \"Aprendizado de Máquina\" (narrower than \"Inteligência Artificial\"); \"React\" (narrower than \"JavaScript\"); \"Deep Learning\" (narrower than \"Machine Learning\"); \"Motorsport\" (broader than \"Formula 1\"); \"Differential Calculus\" (narrower than \"Calculus\").\n  - Include different locale spellings when applicable (e.g., \"Optimization\" and \"Optimisation\").\n  - Include abbreviations if they mean the same thing (e.g., \"AI\"/\"IA\", \"ML\" when base is \"Machine Learning\").\n  - Levels like \"Beginner\", \"Advanced\", \"Calculus 1\", \"101\", etc., are acceptable if they keep the same subject.\n  - It’s fine to skip spacing/hyphenation/accents variants — serialization will handle those.\n  - Awkward or redundant phrasings are acceptable.\n  - Ignore casing issues (e.g., \"javascript\" vs \"JavaScript\").\n  - Ideally, it should have a huge list of alternative titles, really good ones have more than 100 alternative titles\n\n    ",
+        "id": "en-the-matrix-1",
+        "userInput": {
+          "language": "en",
+          "title": "The Matrix"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "The response includes 'Differential Calculus', which was explicitly listed in the prompt as a negative example to exclude. Furthermore, it includes several other narrower topics such as 'Integral Calculus', 'Introduction to Differential Calculus', 'Introduction to Integral Calculus', 'Multi-Variable Calculus', 'Multivariable Calculus', 'Single Variable Calculus', and 'Single-Variable Calculus'. This is a direct violation of the core instruction to exclude narrower topics.",
+          "kind": "majorErrors",
+          "score": 6.5
+        },
+        {
+          "conclusion": "The list includes titles with category prefixes such as 'Mathematics - Calculus', 'Mathematics: Calculus', 'Math - Calculus', and 'Maths - Calculus'. While these technically refer to the same subject, the prompt explicitly expected not to include 'Mathematics' as it approaches broader territory. 'AP Calculus AB' and 'AP Calculus BC' are also narrower specific subsets of the subject.",
+          "kind": "minorErrors",
+          "score": 7.5
+        },
+        {
+          "conclusion": "Remove all narrower subtopics (e.g., differential, integral, single-variable, multivariable). Ensure that titles exactly refer to the entirety of the base subject 'Calculus'. Also, remove category prefixes like 'Math' or 'Mathematics' from the titles to strictly adhere to the negative constraints.",
+          "kind": "potentialImprovements",
+          "score": 7
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - Should NOT include \"Mathematics\", \"Differential Calculus\", etc\n      - Levels like Calculus I, II, III are acceptable since they refer to the same subject\n      - Results should be in English\n\n      \n  - Only include titles that are **equivalent** to the base title — i.e., they refer to the **same course** a user would expect to find under that subject.\n  - **Same‑course test** (use all of these):\n    1) Would we merge both titles into one course page? If yes, they are equivalent.\n    2) Would teaching goals, syllabus scope, and prerequisites remain the same? If yes, they are equivalent.\n    3) Is the difference only wording, dialect/variant, audience, abbreviation, or light framing? If yes, they are equivalent.\n  - **Broader/narrower rule**:\n    - **Broader** expands scope beyond the subject’s core boundaries → exclude. Example: \"Web Development\" is broader than \"Frontend Development\".\n    - **Narrower** is a proper subset that we’d plausibly ship as a separate course (different scope/learning goals) → exclude. Example: \"React\" is narrower than \"JavaScript\"; \"Deep Learning\" is narrower than \"Machine Learning\".\n  - **Not narrower (allowed)** when it is still the same course subject:\n    - **Dialect/variant** names (e.g., \"Inglês Americano\", \"Inglês Britânico\", \"French Grammar\", \"Optimisation\" vs \"Optimization\"). Dialects are surface variants of the same language course.\n    - **Audience qualifiers** (e.g., \"IA para Desenvolvedores\", \"UX for Healthcare\"). Audience framing ≠ topic narrowing if the core subject stays the same.\n    - **Series/labeling of the same entity** (e.g., \"Formula One\", \"F1\", \"Formula One Championship\", \"F1 Series\") — these all clearly denote the same sport/competition brand.\n    - **Light framing words** like \"principles\", \"fundamentals\", \"basics\", \"overview\", or \"for beginners\" when the core topic remains unchanged.\n  - **Decision checklist for each candidate title** (answer all):\n    - Does it introduce a different subfield or tool? If yes → narrower → exclude.\n    - Does it expand to an umbrella domain? If yes → broader → exclude.\n    - If we offered both titles simultaneously, would users be confused by two separate courses? If yes → they are equivalent and, therefore, can be included as an alternative title.\n  - **Concrete examples**:\n    - **Include**: \"Client‑Side Web Development\" ↔ \"Frontend Development\"; \"IA\" / \"Inteligência Artificial\" / \"IA para Desenvolvedores\"; \"Inglês\" ↔ \"Inglês Americano\" / \"Inglês Britânico\" / \"Inglês Britânico e Americano\"; \"Formula 1\" ↔ \"Formula One\" / \"F1\" / \"Formula One Championship\" / \"F1 Series\"; \"UX Design\" ↔ \"UX Design Principles\"; \"World War II\" ↔ \"WWII\" / \"Second World War\"; \"Data Science\" ↔ \"Data Science Fundamentals\".\n    - **Exclude**: \"Web Development\" (broader than \"Frontend Development\"); \"Aprendizado de Máquina\" (narrower than \"Inteligência Artificial\"); \"React\" (narrower than \"JavaScript\"); \"Deep Learning\" (narrower than \"Machine Learning\"); \"Motorsport\" (broader than \"Formula 1\"); \"Differential Calculus\" (narrower than \"Calculus\").\n  - Include different locale spellings when applicable (e.g., \"Optimization\" and \"Optimisation\").\n  - Include abbreviations if they mean the same thing (e.g., \"AI\"/\"IA\", \"ML\" when base is \"Machine Learning\").\n  - Levels like \"Beginner\", \"Advanced\", \"Calculus 1\", \"101\", etc., are acceptable if they keep the same subject.\n  - It’s fine to skip spacing/hyphenation/accents variants — serialization will handle those.\n  - Awkward or redundant phrasings are acceptable.\n  - Ignore casing issues (e.g., \"javascript\" vs \"JavaScript\").\n  - Ideally, it should have a huge list of alternative titles, really good ones have more than 100 alternative titles\n\n    ",
+        "id": "en-calculus-1",
+        "userInput": {
+          "language": "en",
+          "title": "Calculus"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "The response perfectly follows the negative constraints by avoiding broader topics like 'World War' and narrower topics or other topics like 'World War I'. It correctly identifies all the primary synonyms and variations ('WWII', 'WW2', 'Second World War', 'World War Two', etc.) and successfully applies course-related prefixes/suffixes.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "No minor errors were found. The generated titles maintain the exact same meaning and seamlessly mix audience qualifiers, levels, and light framing words without altering the core topic.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "While the list is very extensive and exceeds the 100+ titles expectation (111 titles), a minor improvement could be adding course-specific terms like 'Course', 'Class', or 'Lessons' (e.g., 'World War II Course', 'WW2 Masterclass'). However, the provided permutations are highly comprehensive.",
+          "kind": "potentialImprovements",
+          "score": 9.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - Should include \"World War 2\", \"Second World War\", \"WWII\", \"WW2\"\n      - Should NOT include just \"World War\" or \"World War I\"\n      - Results should be in English\n\n      \n  - Only include titles that are **equivalent** to the base title — i.e., they refer to the **same course** a user would expect to find under that subject.\n  - **Same‑course test** (use all of these):\n    1) Would we merge both titles into one course page? If yes, they are equivalent.\n    2) Would teaching goals, syllabus scope, and prerequisites remain the same? If yes, they are equivalent.\n    3) Is the difference only wording, dialect/variant, audience, abbreviation, or light framing? If yes, they are equivalent.\n  - **Broader/narrower rule**:\n    - **Broader** expands scope beyond the subject’s core boundaries → exclude. Example: \"Web Development\" is broader than \"Frontend Development\".\n    - **Narrower** is a proper subset that we’d plausibly ship as a separate course (different scope/learning goals) → exclude. Example: \"React\" is narrower than \"JavaScript\"; \"Deep Learning\" is narrower than \"Machine Learning\".\n  - **Not narrower (allowed)** when it is still the same course subject:\n    - **Dialect/variant** names (e.g., \"Inglês Americano\", \"Inglês Britânico\", \"French Grammar\", \"Optimisation\" vs \"Optimization\"). Dialects are surface variants of the same language course.\n    - **Audience qualifiers** (e.g., \"IA para Desenvolvedores\", \"UX for Healthcare\"). Audience framing ≠ topic narrowing if the core subject stays the same.\n    - **Series/labeling of the same entity** (e.g., \"Formula One\", \"F1\", \"Formula One Championship\", \"F1 Series\") — these all clearly denote the same sport/competition brand.\n    - **Light framing words** like \"principles\", \"fundamentals\", \"basics\", \"overview\", or \"for beginners\" when the core topic remains unchanged.\n  - **Decision checklist for each candidate title** (answer all):\n    - Does it introduce a different subfield or tool? If yes → narrower → exclude.\n    - Does it expand to an umbrella domain? If yes → broader → exclude.\n    - If we offered both titles simultaneously, would users be confused by two separate courses? If yes → they are equivalent and, therefore, can be included as an alternative title.\n  - **Concrete examples**:\n    - **Include**: \"Client‑Side Web Development\" ↔ \"Frontend Development\"; \"IA\" / \"Inteligência Artificial\" / \"IA para Desenvolvedores\"; \"Inglês\" ↔ \"Inglês Americano\" / \"Inglês Britânico\" / \"Inglês Britânico e Americano\"; \"Formula 1\" ↔ \"Formula One\" / \"F1\" / \"Formula One Championship\" / \"F1 Series\"; \"UX Design\" ↔ \"UX Design Principles\"; \"World War II\" ↔ \"WWII\" / \"Second World War\"; \"Data Science\" ↔ \"Data Science Fundamentals\".\n    - **Exclude**: \"Web Development\" (broader than \"Frontend Development\"); \"Aprendizado de Máquina\" (narrower than \"Inteligência Artificial\"); \"React\" (narrower than \"JavaScript\"); \"Deep Learning\" (narrower than \"Machine Learning\"); \"Motorsport\" (broader than \"Formula 1\"); \"Differential Calculus\" (narrower than \"Calculus\").\n  - Include different locale spellings when applicable (e.g., \"Optimization\" and \"Optimisation\").\n  - Include abbreviations if they mean the same thing (e.g., \"AI\"/\"IA\", \"ML\" when base is \"Machine Learning\").\n  - Levels like \"Beginner\", \"Advanced\", \"Calculus 1\", \"101\", etc., are acceptable if they keep the same subject.\n  - It’s fine to skip spacing/hyphenation/accents variants — serialization will handle those.\n  - Awkward or redundant phrasings are acceptable.\n  - Ignore casing issues (e.g., \"javascript\" vs \"JavaScript\").\n  - Ideally, it should have a huge list of alternative titles, really good ones have more than 100 alternative titles\n\n    ",
+        "id": "en-world-war-2-1",
+        "userInput": {
+          "language": "en",
+          "title": "World War II"
+        }
+      }
+    }
+  ],
+  "taskId": "alternative-titles"
+}

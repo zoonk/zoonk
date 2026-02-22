@@ -1,0 +1,131 @@
+{
+  "expectations": "\n      - Should include \"IA\"\n      - Should NOT include \"Aprendizado de Máquina\", \"Inteligência Humana\", etc\n      - Items like \"IA para X\" are also acceptable since they refer to the same core subject.\n      - All alternatives should be in Brazilian Portuguese\n      - Should be in Portuguese\n\n      \n  - Only include titles that are **equivalent** to the base title — i.e., they refer to the **same course** a user would expect to find under that subject.\n  - **Same‑course test** (use all of these):\n    1) Would we merge both titles into one course page? If yes, they are equivalent.\n    2) Would teaching goals, syllabus scope, and prerequisites remain the same? If yes, they are equivalent.\n    3) Is the difference only wording, dialect/variant, audience, abbreviation, or light framing? If yes, they are equivalent.\n  - **Broader/narrower rule**:\n    - **Broader** expands scope beyond the subject’s core boundaries → exclude. Example: \"Web Development\" is broader than \"Frontend Development\".\n    - **Narrower** is a proper subset that we’d plausibly ship as a separate course (different scope/learning goals) → exclude. Example: \"React\" is narrower than \"JavaScript\"; \"Deep Learning\" is narrower than \"Machine Learning\".\n  - **Not narrower (allowed)** when it is still the same course subject:\n    - **Dialect/variant** names (e.g., \"Inglês Americano\", \"Inglês Britânico\", \"French Grammar\", \"Optimisation\" vs \"Optimization\"). Dialects are surface variants of the same language course.\n    - **Audience qualifiers** (e.g., \"IA para Desenvolvedores\", \"UX for Healthcare\"). Audience framing ≠ topic narrowing if the core subject stays the same.\n    - **Series/labeling of the same entity** (e.g., \"Formula One\", \"F1\", \"Formula One Championship\", \"F1 Series\") — these all clearly denote the same sport/competition brand.\n    - **Light framing words** like \"principles\", \"fundamentals\", \"basics\", \"overview\", or \"for beginners\" when the core topic remains unchanged.\n  - **Decision checklist for each candidate title** (answer all):\n    - Does it introduce a different subfield or tool? If yes → narrower → exclude.\n    - Does it expand to an umbrella domain? If yes → broader → exclude.\n    - If we offered both titles simultaneously, would users be confused by two separate courses? If yes → they are equivalent and, therefore, can be included as an alternative title.\n  - **Concrete examples**:\n    - **Include**: \"Client‑Side Web Development\" ↔ \"Frontend Development\"; \"IA\" / \"Inteligência Artificial\" / \"IA para Desenvolvedores\"; \"Inglês\" ↔ \"Inglês Americano\" / \"Inglês Britânico\" / \"Inglês Britânico e Americano\"; \"Formula 1\" ↔ \"Formula One\" / \"F1\" / \"Formula One Championship\" / \"F1 Series\"; \"UX Design\" ↔ \"UX Design Principles\"; \"World War II\" ↔ \"WWII\" / \"Second World War\"; \"Data Science\" ↔ \"Data Science Fundamentals\".\n    - **Exclude**: \"Web Development\" (broader than \"Frontend Development\"); \"Aprendizado de Máquina\" (narrower than \"Inteligência Artificial\"); \"React\" (narrower than \"JavaScript\"); \"Deep Learning\" (narrower than \"Machine Learning\"); \"Motorsport\" (broader than \"Formula 1\"); \"Differential Calculus\" (narrower than \"Calculus\").\n  - Include different locale spellings when applicable (e.g., \"Optimization\" and \"Optimisation\").\n  - Include abbreviations if they mean the same thing (e.g., \"AI\"/\"IA\", \"ML\" when base is \"Machine Learning\").\n  - Levels like \"Beginner\", \"Advanced\", \"Calculus 1\", \"101\", etc., are acceptable if they keep the same subject.\n  - It’s fine to skip spacing/hyphenation/accents variants — serialization will handle those.\n  - Awkward or redundant phrasings are acceptable.\n  - Ignore casing issues (e.g., \"javascript\" vs \"JavaScript\").\n  - Ideally, it should have a huge list of alternative titles, really good ones have more than 100 alternative titles\n\n    ",
+  "judgedAt": "2026-02-22T02:04:06.346Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model D provides the most extensive list (~250+ alternatives), which aligns well with the prompt's desire for 100+ titles. It includes 'IA' as required, does not include 'Aprendizado de Máquina' or other narrower/broader topics, and stays in Portuguese. It systematically covers abbreviations (IA, I.A.), level variations (Básico, Intermediário, Avançado, 101, 201, 301), audience qualifiers (para Iniciantes, para Leigos, para Todos, para Estudantes), light framing words (Fundamentos, Princípios, Conceitos, Noções, Panorama, Visão Geral), format variations (Curso, Treinamento, Formação, Bootcamp, Workshop, Imersão, Capacitação), and punctuation/delimiter variations (colons, dashes, em-dashes, parentheses). It avoids narrower subtopics and broader domains. The systematic pairing of both 'Inteligência Artificial' and 'IA' versions is thorough. Some entries are a bit repetitive with formatting variants (parentheses vs dashes vs em-dashes), but that's acceptable for duplicate detection purposes. No hallucinations or factual errors. Follows all prompt rules faithfully.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model F provides a solid list of ~120 alternatives. It includes 'IA', includes the accent-less 'Inteligencia Artificial' variant, covers level variations, audience qualifiers, light framing, and format types. It correctly avoids narrower/broader topics. The list includes good variety: 'Primeiros Passos em IA', 'Descobrindo a IA', 'Guia Definitivo', 'Domine a IA', etc. It includes 'Engenharia de Inteligência Artificial' and 'Desenvolvimento de IA' which are borderline — these could be considered narrower subtopics (engineering/development of AI systems vs. studying AI as a subject), but they're reasonable enough. Follows prompt rules well, all in Portuguese. Good coverage but not as exhaustive as Model D.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model B provides ~115 alternatives with good coverage. It includes 'IA', 'AI', 'Artificial Intelligence', and the accent-less 'Inteligencia Artificial'. It covers levels, audience qualifiers, light framing, and format types well. It includes some borderline entries like 'Técnicas de IA', 'Métodos de IA', 'Programação de IA' which could be seen as slightly narrower, but are acceptable. 'Inteligência Artificial Computacional' is borderline. The list is well-organized and systematic with good pairing of IA/Inteligência Artificial versions. Follows all prompt rules. All in Portuguese. Solid output.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model E provides ~150 alternatives. It includes 'IA', 'I.A.', and covers good variety. However, it has some issues: 'Engenharia de IA', 'Arquitetura de IA', 'Desenvolvimento de IA', 'Programação de IA' are borderline narrower topics. 'IA e Inteligência Computacional' introduces a different concept (Computational Intelligence is a related but distinct field). The systematic inclusion of 'I.A.' variants (with periods) for almost every entry inflates the count significantly — many of these are trivial formatting variants. 'Mestre em IA' and 'Especialista em IA' sound more like credential/degree titles rather than course titles. 'IA Basics' mixes English unnecessarily. 'Ciência da IA' (Science of AI) is borderline broader. Overall decent but has more questionable entries than Models D, F, and B.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model C provides ~130 alternatives with a strong academic/institutional framing focus ('Disciplina', 'Unidade Curricular', 'Matéria', 'Módulo'). It includes 'IA' but notably does NOT include 'AI' or 'Artificial Intelligence' (English equivalents), which is a minor gap. The list is heavily focused on academic course format variations (Disciplina, Módulo, Unidade Curricular, etc.) which adds quantity but many of these are quite redundant and unlikely to be used as course titles in a learning app context. 'Curso Universitário de IA', 'Disciplina Acadêmica de IA', 'Introdução Acadêmica à IA' are very specific institutional framings. Missing some common informal alternatives like 'IA para Leigos', 'Aprenda IA', etc. No major errors but the focus is somewhat skewed toward academic formatting rather than diverse alternative phrasings. Does not include audience qualifiers like 'IA para Desenvolvedores', 'IA para Profissionais', etc.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model A provides ~110 alternatives. It includes 'IA', 'AI', 'Artificial Intelligence', which is good. However, it has some issues: 'Inteligência Artificial para Beginners' mixes English and Portuguese awkwardly. 'Artificial Intelligence para Iniciantes' and 'Artificial Intelligence em Português' are odd mixed-language titles. 'Computação com Inteligência Artificial' and 'Ciência da Inteligência Artificial' are borderline broader. 'Sistemas Inteligentes' (Intelligent Systems) is arguably a different/broader course topic — it's a common separate university course that covers different material. 'Tecnologia de Inteligência Artificial' is also borderline. The list doesn't include 'I.A.' (with periods) or accent-less 'Inteligencia Artificial'. Does not include the base title 'Inteligência Artificial' itself (minor). Overall decent but has more problematic entries than the top models.",
+          "score": 6.8
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model D provides a highly exhaustive list (154 items) that strictly adheres to all instructions. It perfectly utilizes Brazilian Portuguese (along with accepted loanwords like 'Bootcamp' and 'Workshop') and avoids expanding into broader topics or narrowing into specific subfields. The inclusion of level modifiers like '101' and 'Avançado' is fully aligned with the prompt's examples.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model C also provides an excellent, exhaustive list (104 items) that perfectly follows the rules. It creatively includes academic synonyms (e.g., 'Disciplina', 'Unidade Curricular', 'Módulo') which are highly relevant in Portuguese. It avoids narrower topics and strictly maintains the language constraint.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model F provides a solid list, though slightly under the 100+ target (88 items). It mostly adheres to the language constraint. However, it includes narrower fields like 'Engenharia de Inteligência Artificial' and 'Desenvolvimento de Inteligência Artificial', which violate the rule against narrower topics (building/engineering AI is a narrower subset of general AI).",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model B provides a good amount of titles, but it includes English titles ('Artificial Intelligence') which violates the strict rule that all titles must be in Brazilian Portuguese. Furthermore, it includes narrower or distinct fields like 'Inteligência Artificial Computacional' and 'Programação de Inteligência Artificial'.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model E violates the language constraint by including English words like 'Basics'. More significantly, it includes several narrower/different fields such as 'Engenharia de IA', 'Arquitetura de IA', 'Ciência da IA', and 'IA e Inteligência Computacional', which clearly represent different curriculum scopes.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model A has the most significant violations of the language rule. It includes multiple English or mixed-language titles ('Inteligência Artificial para Beginners', 'Essentials de Inteligência Artificial', 'Overview de IA', 'Artificial Intelligence'). It also includes narrower topics like 'Sistemas Inteligentes'. This shows a failure to fully follow the negative constraints of the prompt.",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Best overall adherence: all titles are in Portuguese (BR-appropriate), includes required \"IA\" variants (including punctuation), avoids obvious narrower/broader topic shifts (no \"Aprendizado de Máquina\" etc.), and is the most exhaustive (well over 100). Mostly sticks to equivalent phrasing/level/audience framing. Minor nit: some items like \"Aula(s) de IA\"/\"Módulo\" are more format than title, but still plausibly duplicate-detection equivalents.",
+          "score": 9.3
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Strong Portuguese-only list with \"IA\" included and good variety (intro/fundamentos/níveis/guia/prática). No major prohibited narrowers like ML. Slightly less exhaustive than D (under/around ~100) and includes a few borderline scope shifts like \"Engenharia de IA\"/\"Desenvolvimento de IA\" which could be interpreted as a distinct, narrower course (engineering vs general AI), but still often used as synonymous in course catalogs.",
+          "score": 8.4
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "All in Portuguese and stays mostly within same-course equivalents. Good coverage of academic/course-format synonyms (disciplina, módulo, unidade curricular) and level variants. However, it’s not as exhaustive as requested (roughly ~100 or slightly under) and some items (\"Especialização\", \"Certificação\") can imply a different program scope rather than just wording, making a few entries borderline.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Generally good Portuguese alternatives and includes \"IA\". But it violates the language requirement by including English titles (\"Artificial Intelligence\", \"AI\"). Also includes some potentially narrowing/shifted framings like \"Programação de IA\" which may not be equivalent to a general AI course. Not exhaustive enough for the 100+ expectation (appears under 100).",
+          "score": 6.9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Includes many Portuguese variants and \"IA\"/\"I.A.\", but contains multiple English items (\"IA Basics\", \"IA Masterclass\") and several entries that drift into narrower adjacent domains (e.g., \"Engenharia de IA\", \"Arquitetura de IA\", \"Programação de IA\", \"Desenvolvimento de IA\") which would often be separate courses. Also includes \"IA e Inteligência Computacional\" which broadens/changes scope. Quantity is decent but quality is weakened by these scope/language issues.",
+          "score": 6.4
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Major prompt violations: includes English titles and mixed-language items (\"AI\", \"Artificial Intelligence\", \"Artificial Intelligence em Português\", \"Inteligência Artificial para Beginners\", \"Overview\"), breaking the requirement that all alternatives be in Brazilian Portuguese. Also not very exhaustive (well under 100). Some entries are awkward or redundant, and several are not BR-localized.",
+          "score": 4.5
+        }
+      ]
+    }
+  ],
+  "taskId": "alternative-titles",
+  "testCaseId": "pt-inteligencia-artificial-1"
+}

@@ -1,0 +1,131 @@
+{
+  "expectations": "\n      - Should include \"User Experience Design\"\n      - Should NOT include \"UI Design\", \"Web Design\", etc\n      - Items such as \"UX Design Principles\" are fine since they have the same meaning: a UX course\n      - Similarly, anything that uses \"UX for X\" is also acceptable since it involves the same UX course\n      - Results should be in English\n\n      \n  - Only include titles that are **equivalent** to the base title — i.e., they refer to the **same course** a user would expect to find under that subject.\n  - **Same‑course test** (use all of these):\n    1) Would we merge both titles into one course page? If yes, they are equivalent.\n    2) Would teaching goals, syllabus scope, and prerequisites remain the same? If yes, they are equivalent.\n    3) Is the difference only wording, dialect/variant, audience, abbreviation, or light framing? If yes, they are equivalent.\n  - **Broader/narrower rule**:\n    - **Broader** expands scope beyond the subject’s core boundaries → exclude. Example: \"Web Development\" is broader than \"Frontend Development\".\n    - **Narrower** is a proper subset that we’d plausibly ship as a separate course (different scope/learning goals) → exclude. Example: \"React\" is narrower than \"JavaScript\"; \"Deep Learning\" is narrower than \"Machine Learning\".\n  - **Not narrower (allowed)** when it is still the same course subject:\n    - **Dialect/variant** names (e.g., \"Inglês Americano\", \"Inglês Britânico\", \"French Grammar\", \"Optimisation\" vs \"Optimization\"). Dialects are surface variants of the same language course.\n    - **Audience qualifiers** (e.g., \"IA para Desenvolvedores\", \"UX for Healthcare\"). Audience framing ≠ topic narrowing if the core subject stays the same.\n    - **Series/labeling of the same entity** (e.g., \"Formula One\", \"F1\", \"Formula One Championship\", \"F1 Series\") — these all clearly denote the same sport/competition brand.\n    - **Light framing words** like \"principles\", \"fundamentals\", \"basics\", \"overview\", or \"for beginners\" when the core topic remains unchanged.\n  - **Decision checklist for each candidate title** (answer all):\n    - Does it introduce a different subfield or tool? If yes → narrower → exclude.\n    - Does it expand to an umbrella domain? If yes → broader → exclude.\n    - If we offered both titles simultaneously, would users be confused by two separate courses? If yes → they are equivalent and, therefore, can be included as an alternative title.\n  - **Concrete examples**:\n    - **Include**: \"Client‑Side Web Development\" ↔ \"Frontend Development\"; \"IA\" / \"Inteligência Artificial\" / \"IA para Desenvolvedores\"; \"Inglês\" ↔ \"Inglês Americano\" / \"Inglês Britânico\" / \"Inglês Britânico e Americano\"; \"Formula 1\" ↔ \"Formula One\" / \"F1\" / \"Formula One Championship\" / \"F1 Series\"; \"UX Design\" ↔ \"UX Design Principles\"; \"World War II\" ↔ \"WWII\" / \"Second World War\"; \"Data Science\" ↔ \"Data Science Fundamentals\".\n    - **Exclude**: \"Web Development\" (broader than \"Frontend Development\"); \"Aprendizado de Máquina\" (narrower than \"Inteligência Artificial\"); \"React\" (narrower than \"JavaScript\"); \"Deep Learning\" (narrower than \"Machine Learning\"); \"Motorsport\" (broader than \"Formula 1\"); \"Differential Calculus\" (narrower than \"Calculus\").\n  - Include different locale spellings when applicable (e.g., \"Optimization\" and \"Optimisation\").\n  - Include abbreviations if they mean the same thing (e.g., \"AI\"/\"IA\", \"ML\" when base is \"Machine Learning\").\n  - Levels like \"Beginner\", \"Advanced\", \"Calculus 1\", \"101\", etc., are acceptable if they keep the same subject.\n  - It’s fine to skip spacing/hyphenation/accents variants — serialization will handle those.\n  - Awkward or redundant phrasings are acceptable.\n  - Ignore casing issues (e.g., \"javascript\" vs \"JavaScript\").\n  - Ideally, it should have a huge list of alternative titles, really good ones have more than 100 alternative titles\n\n    ",
+  "judgedAt": "2026-02-22T02:04:07.923Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model E provides ~140 alternatives, which is excellent quantity. It includes the required 'User Experience Design' and does NOT include 'UI Design' or 'Web Design'. It includes good variety: abbreviations (UXD, XD), spelling variants (Specialization/Specialisation, Centered/Centred), level variations (Beginner, Advanced, Intermediate), audience framings (for Designers, for Digital Products), light framing words (Principles, Fundamentals, Basics, Overview), and format variations. It includes 'Human-Centered Design' and 'User-Centered Design' which are arguably equivalent concepts to UX Design (though 'Human-Centered Design' could be debated as slightly broader, it's commonly used interchangeably). 'Experience Design' and 'XD Design' are included which are reasonable synonyms. 'UX Design Thinking' could be seen as slightly different (Design Thinking is a specific methodology), but it's borderline. 'UX Design and Research' could be seen as expanding scope slightly since UX Research is sometimes a separate discipline, but it's a minor issue. Overall very comprehensive and well-structured with minimal problematic entries.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model A provides ~200+ alternatives, the largest list. It includes 'User Experience Design' and avoids 'UI Design' and 'Web Design'. The list is very thorough with many legitimate variations including level variations, audience framings (for Developers, Product Managers, Teams, Startups, SaaS), format variations, and light framing. However, some entries are questionable: 'UX Design for SaaS' and 'UX Design for Product Design' start to feel like they could be separate specialized courses. 'UX Design Strategy' and 'UX Design & Strategy' could be seen as expanding scope since UX Strategy is sometimes taught as a distinct subject. Many entries are very verbose and formulaic (e.g., every single phrase duplicated with both 'UX Design' and 'User Experience Design' versions, plus many subtitle-style entries). It doesn't include some good synonyms like 'UXD', 'Experience Design', or 'Human-Centered Design'. The sheer volume means more potential for borderline entries, but none are seriously wrong. Missing abbreviations like UXD is a notable gap.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model F provides ~115 alternatives. It includes 'User Experience Design' and avoids 'UI Design'/'Web Design'. Good inclusions: UXD, UED (though UED is uncommon and could be questioned), abbreviation variations, level variations, audience framings, spelling variants. It's well-organized with systematic UX/User Experience parallel entries. It includes 'Become a UX Designer' which is a nice touch. No major problematic entries. It lacks some creative synonyms like 'Experience Design', 'Human-Centered Design', 'User-Centered Design', or 'UX Engineering'. 'UED' as an abbreviation is somewhat questionable but not wrong. Overall solid and clean with good variety but could be more exhaustive.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model D provides ~120 alternatives. It includes 'User Experience Design' and avoids 'UI Design'/'Web Design'. Good inclusions: UXD, Experience Design (XD), UX Engineering, level variations (101, 201, Level 1, Level 2), audience framings, certificate/certification variations. It systematically covers UX/User Experience/User Experience (UX) variations. 'Experience Design (XD)' is a good synonym. It includes 'UX Design Portfolio Course' which is borderline (portfolio-focused courses can be different). Overall solid coverage with some good unique entries but slightly less exhaustive than the top models.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model B provides ~130 alternatives. It includes 'User Experience Design' and avoids 'UI Design'/'Web Design'. It includes 'UX' and 'User Experience' as standalone alternatives which are reasonable. However, it includes some problematic entries: 'User-Centered Design' and 'User Centred Design' (debatable - these are related but distinct methodologies), 'UX-Centered Design' (not a real term), 'UX Design and Prototyping' (prototyping is a subtopic, expanding scope), 'UX Design and Wireframing' (wireframing is a subtopic), 'UX Design and User Research' (research is a subtopic that could be a separate course). These introduce scope expansion beyond pure UX Design. 'UX Design Thinking' is also borderline as Design Thinking is a specific methodology. The inclusion of 'Mobile UX Design', 'Web UX Design', 'App UX Design' as audience framings is acceptable per the rules. Overall decent but has more borderline/problematic entries than other models.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model C provides ~130 alternatives. It includes 'User Experience Design' and avoids 'UI Design'/'Web Design'. Good inclusions: UXD, UX Engineering, level variations, light framing variations. However, some entries are problematic: 'UXD Design' is redundant/incorrect (it would mean 'User Experience Design Design'), 'UX Design Architecture' / 'User Experience Architecture' (Information Architecture is a related but distinct field), 'UX Design Blueprint' (unusual term), 'UX Design Bible' (unusual), 'UX Design Career' and 'UX Design Portfolio' are clearly different courses (career guidance vs. design skills), 'UX Design Projects' is also different. 'User-Centric UX Design' is redundant. Several entries feel like they'd be different courses (Career, Portfolio, Projects). These are notable issues that lower the score.",
+          "score": 6
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model A followed all instructions perfectly. It generated over 100 items (131 total) and accurately applied the rules, including the permitted 'UX for X' audience qualifiers (e.g., 'UX Design for Startups', 'UX Design for Developers') and light framing words. It did not include any narrower subfields, broader domains, or distinct topics, keeping all variations strictly equivalent to the base subject. Exceptional output.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model F provided a highly accurate list with no hallucinations, invalid subfields, or scope alterations. However, it fell slightly short of the 100+ item expectation (generating 84 titles) and missed the opportunity to include 'UX for X' variations explicitly permitted in the prompt. Still, a very solid and safe output.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model B successfully generated over 100 items and largely stayed on topic. However, it included a few titles that combine UX Design with specific subfields (e.g., 'UX Research and Design', 'UX Design and Prototyping', 'UX Design and Wireframing'). While highly related, these additions place specific emphasis on narrower tools/subfields, which edges close to violating the scope rule. Overall, it remains a very good list.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model E hit the volume target but included 'UX Engineering', which is a distinct role/field that involves coding (front-end development) in addition to design, violating the 'same-course test' (different syllabus). It also included 'UX Design Certification Prep', which implies a test-prep focus rather than a standard curriculum. ",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model C successfully generated over 100 items but included several titles that violate the 'same-course test'. 'UX Engineering' involves distinct coding prerequisites. Additionally, 'UX Design Career' and 'UX Design Portfolio' represent courses with completely different teaching goals (job hunting and portfolio building rather than learning the core subject).",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model D shares the exact same issues as Model C. It generated over 100 items but included multiple instances of 'UX Engineering' (which introduces coding into the syllabus) and 'UX Design Portfolio Course' (which focuses on artifact presentation rather than learning the subject itself). These violate the equivalent scope requirement.",
+          "score": 6
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Strong adherence to the prompt: all-English, includes the required \"User Experience Design\", avoids obvious off-topic areas like UI/Web Design, and contains a very large set (well over 100) with mostly equivalent phrasing/level/audience variations. Minor issues: some entries get slightly scope-shifty (e.g., \"UX Design: From Research to Design\" leans toward UX research emphasis) but still plausibly the same UX design course. Best overall on exhaustiveness + correctness.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Clean set of equivalents with good variety (intro/basics/foundations/advanced/masterclass, etc.) and no major broader-topic intrusions. Includes some potentially ambiguous/over-broad items like \"UX\" and \"User Experience\" which can be interpreted beyond design, but overall the list stays on-topic and accurate. Not as exhaustive as Model A (well under 100).",
+          "score": 8.1
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Generally relevant and fairly extensive, includes required variants and many reasonable same-course phrasings. However it introduces multiple problematic/ambiguous items: \"UX Engineering\"/\"User Experience Engineering\" is not the same as UX design, and \"UXD Design\" is nonsensical/redundant. Also includes career/portfolio/project/roadmap titles that are narrower/different course goals (portfolio-focused or career guidance).",
+          "score": 7.4
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Good breadth and many valid synonym/level/course-format variants, but contains clear meaning drift: \"Experience Design\" / \"Experience Design (XD)\" can mean broader experiential/service/event or general product experience beyond UX design, and \"UX Engineering\" is distinct from UX design. Also includes portfolio-course titles (narrower). Size is decent but still not 100+.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Contains many acceptable UX design variants, but has several violations of the narrower/broader constraint: includes \"UX Design and Research\" / \"UX Research and Design\" / \"User Experience Research and Design\" (adds research as a co-equal topic) and tool/subarea-like entries such as \"UX Design and Prototyping\" and \"UX Design and Wireframing\" which are plausibly separate narrower courses. Also includes ambiguous \"UX\"/\"User Experience\". Under 100 titles.",
+          "score": 6.6
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "While many entries are fine, it includes multiple clearly non-equivalent/broader titles: \"Human-Centered Design\" and especially \"User-Centered Design\" are broader frameworks that can include UX but also cover other design domains; \"Experience Design\"/\"XD Design\" are ambiguous and not guaranteed to equal UX design. Also includes \"UX\" and \"User Experience\" (ambiguous). Under the desired exhaustiveness threshold.",
+          "score": 5.8
+        }
+      ]
+    }
+  ],
+  "taskId": "alternative-titles",
+  "testCaseId": "en-ux-design-1"
+}

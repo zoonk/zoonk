@@ -1,0 +1,131 @@
+{
+  "expectations": "\n      - Should include items like \"Formula One\", \"F1\"\n      - Should NOT include \"Motorsport\", \"Racing\", etc.\n      - Items like \"F1 Racing\", \"Formula One Championship\", \"F1 Series\", etc. are fine because they clearly refer to Formula 1\n      - A narrower topic in this context would be something like \"F1 Engineering\" because it focuses is on engineering aspects\n      - Results should be in English\n\n      \n  - Only include titles that are **equivalent** to the base title — i.e., they refer to the **same course** a user would expect to find under that subject.\n  - **Same‑course test** (use all of these):\n    1) Would we merge both titles into one course page? If yes, they are equivalent.\n    2) Would teaching goals, syllabus scope, and prerequisites remain the same? If yes, they are equivalent.\n    3) Is the difference only wording, dialect/variant, audience, abbreviation, or light framing? If yes, they are equivalent.\n  - **Broader/narrower rule**:\n    - **Broader** expands scope beyond the subject’s core boundaries → exclude. Example: \"Web Development\" is broader than \"Frontend Development\".\n    - **Narrower** is a proper subset that we’d plausibly ship as a separate course (different scope/learning goals) → exclude. Example: \"React\" is narrower than \"JavaScript\"; \"Deep Learning\" is narrower than \"Machine Learning\".\n  - **Not narrower (allowed)** when it is still the same course subject:\n    - **Dialect/variant** names (e.g., \"Inglês Americano\", \"Inglês Britânico\", \"French Grammar\", \"Optimisation\" vs \"Optimization\"). Dialects are surface variants of the same language course.\n    - **Audience qualifiers** (e.g., \"IA para Desenvolvedores\", \"UX for Healthcare\"). Audience framing ≠ topic narrowing if the core subject stays the same.\n    - **Series/labeling of the same entity** (e.g., \"Formula One\", \"F1\", \"Formula One Championship\", \"F1 Series\") — these all clearly denote the same sport/competition brand.\n    - **Light framing words** like \"principles\", \"fundamentals\", \"basics\", \"overview\", or \"for beginners\" when the core topic remains unchanged.\n  - **Decision checklist for each candidate title** (answer all):\n    - Does it introduce a different subfield or tool? If yes → narrower → exclude.\n    - Does it expand to an umbrella domain? If yes → broader → exclude.\n    - If we offered both titles simultaneously, would users be confused by two separate courses? If yes → they are equivalent and, therefore, can be included as an alternative title.\n  - **Concrete examples**:\n    - **Include**: \"Client‑Side Web Development\" ↔ \"Frontend Development\"; \"IA\" / \"Inteligência Artificial\" / \"IA para Desenvolvedores\"; \"Inglês\" ↔ \"Inglês Americano\" / \"Inglês Britânico\" / \"Inglês Britânico e Americano\"; \"Formula 1\" ↔ \"Formula One\" / \"F1\" / \"Formula One Championship\" / \"F1 Series\"; \"UX Design\" ↔ \"UX Design Principles\"; \"World War II\" ↔ \"WWII\" / \"Second World War\"; \"Data Science\" ↔ \"Data Science Fundamentals\".\n    - **Exclude**: \"Web Development\" (broader than \"Frontend Development\"); \"Aprendizado de Máquina\" (narrower than \"Inteligência Artificial\"); \"React\" (narrower than \"JavaScript\"); \"Deep Learning\" (narrower than \"Machine Learning\"); \"Motorsport\" (broader than \"Formula 1\"); \"Differential Calculus\" (narrower than \"Calculus\").\n  - Include different locale spellings when applicable (e.g., \"Optimization\" and \"Optimisation\").\n  - Include abbreviations if they mean the same thing (e.g., \"AI\"/\"IA\", \"ML\" when base is \"Machine Learning\").\n  - Levels like \"Beginner\", \"Advanced\", \"Calculus 1\", \"101\", etc., are acceptable if they keep the same subject.\n  - It’s fine to skip spacing/hyphenation/accents variants — serialization will handle those.\n  - Awkward or redundant phrasings are acceptable.\n  - Ignore casing issues (e.g., \"javascript\" vs \"JavaScript\").\n  - Ideally, it should have a huge list of alternative titles, really good ones have more than 100 alternative titles\n\n    ",
+  "judgedAt": "2026-02-22T02:04:08.747Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model D produces a very strong list of ~180 alternatives. It systematically covers the three core name variants (Formula 1, Formula One, F1) with a wide variety of light framing words (basics, fundamentals, essentials, 101, masterclass, crash course, bootcamp, deep dive, demystified, etc.), audience qualifiers (for beginners, for dummies), and championship/racing labels. It avoids narrower subtopics (no engineering, aerodynamics, strategy, etc.) and broader topics (no motorsport standalone). It includes FIA variants, level variations, and course-format words. The only minor issue is some titles like 'Formula 1 Certification' which is a bit unusual but not a violation. Very exhaustive and clean.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model B has a very large list (~230+ alternatives) and is extremely thorough with light framing variations. It correctly avoids narrower subtopics and broader categories. It systematically generates triples (Formula 1/Formula One/F1) for each framing. Includes History variants, season variants, audience variants, and many guide/introduction/fundamentals variants. Some items like 'Grand Prix Racing (Formula 1)' are borderline since 'Grand Prix Racing' alone could be broader, but the parenthetical disambiguates it. 'Formula 1 History' could be seen as narrower (a history-focused course rather than a general F1 course), but the prompt's examples include similar light framing. 'Formula 1 Season' is a bit odd as a course title but acceptable. Very comprehensive overall. One redundant entry: 'Formula 1 for Beginners (F1)' is awkward. Minor ding for 'F1 History' / 'History of F1' appearing which could be argued as narrower scope courses.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model E produces a solid list of ~130 alternatives. It covers the core variants well with systematic triples. It includes championship/FIA variants, level variations, and many framing words. It avoids most problematic narrower topics. However, 'The Science of Formula 1' is borderline - it could be seen as narrowing to the scientific/engineering aspects. 'Formula 1 History' similarly could be a narrower course. 'Formula 1 Knowledge' is an unusual course title. Overall good but slightly less exhaustive than Models D and B, and includes a couple more borderline entries.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model C provides ~170 alternatives and is quite systematic. It covers the essential variants well. However, it includes several borderline-narrower titles: 'The Science of Formula 1', 'Formula 1 Theory', 'Formula 1 Techniques', 'Formula 1 Principles' - these could suggest courses focused on specific aspects rather than general F1. 'Formula 1 Studies' and 'F1 Education' are unusual. 'Elite Formula 1' and 'Professional Formula 1' are odd framings. 'F1 GP' is a good abbreviation inclusion. Some titles like 'F1 Pro', 'F1 Expert', 'F1 Specialization' feel like they're stretching. Still a good list overall but more borderline entries than the top models.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model A produces ~130 alternatives. It's strong on championship/FIA/Grand Prix variants and official naming conventions. It includes some creative formatting variants (Formula-1, FormulaOne, dashes, colons). However, it includes 'Formula One Motorsports' and 'F1 Motorsports' which are borderline broader (though they're qualified with Formula One/F1, which helps). 'Formula One™' and 'F1™' with trademark symbols are unusual. The list is somewhat repetitive with many parenthetical and dash/colon variations that don't add much value (e.g., 'Formula One – F1', 'F1 – Formula One', 'Formula One: F1', 'F1: Formula One'). It lacks many of the useful framing words (no fundamentals, basics, essentials, 101, explained, deep dive, etc. in comparison to other models - wait, it does have some: Overview, Course, Class, Training, Introduction). Actually it's less exhaustive on framing variations compared to Models B and D. Still solid but less diverse.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model F has ~120 alternatives but includes several clearly narrower topics that should be excluded: 'Formula 1 Cars/F1 Cars', 'Formula 1 Teams/F1 Teams', 'Formula 1 Drivers/F1 Drivers', 'Formula 1 Technology/F1 Technology', 'Formula 1 Aerodynamics/F1 Aerodynamics', 'Formula 1 Engineering/F1 Engineering', 'Formula 1 Strategy/F1 Strategy', 'Formula 1 Rules/F1 Rules', 'Formula 1 Regulations/F1 Regulations'. These are clearly narrower subtopics that would be separate courses - the prompt specifically mentions 'F1 Engineering' as an example of a narrower topic to exclude. 'Grand Prix Racing' without qualification is also broader. 'Formula 1 sport' / 'Formula One sport' are awkward. This model has the most violations of the narrower-topic exclusion rule, which is a significant issue per the prompt.",
+          "score": 4.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model D provides an exceptional list of alternative titles. It perfectly adheres to all constraints, successfully generating over 100 titles without including any narrower subfields or broader topics. It effectively uses a wide variety of course framings (e.g., 'Bootcamp', 'Crash Course', '101', 'For Dummies', 'Masterclass') that accurately reflect how the identical curriculum might be packaged. No rule violations.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model A is also outstanding. It strictly follows the negative constraints, avoiding any narrower subfields or broader domains. It achieves a list of over 100 items by exhaustively permuting the official entity names, abbreviations, and organizing bodies (e.g., 'FIA Formula One', 'F1 World Championship', 'F1 Grand Prix Series') along with appropriate level indicators and framing. Excellent adherence to the prompt.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model B generates a very large and mostly accurate list. However, it includes a few narrower subfields, such as 'History of Formula 1' and 'Formula 1 Season'. A course focusing exclusively on the history or a specific season is a proper subset of a general Formula 1 course and would not share the exact same curriculum. Aside from these minor infractions, the list is very good.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model E generates a good variety of titles but includes narrower subfields. Specifically, 'History of Formula 1' and 'The Science of Formula 1' are proper subsets that narrow the scope to specific aspects (historical and scientific/engineering), violating the instruction to exclude narrower topics.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model C falls short of the 100-item target and includes multiple narrower topics. Titles like 'The Science of Formula 1', 'Formula 1 Theory', and 'Formula 1 Techniques' narrow the scope of the course to specific subfields, violating the rule against including narrower topics.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model F completely fails to follow the negative constraints regarding narrower topics. It explicitly includes 'F1 Engineering', which the prompt directly provided as an example of a bad, narrower topic that should be excluded. It also includes numerous other narrow subfields such as 'Formula 1 Aerodynamics', 'Formula 1 Technology', 'Formula 1 Strategy', 'Formula 1 Cars', and 'Formula 1 Drivers'. This demonstrates a profound failure to understand or apply the prompt's core rules.",
+          "score": 2
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Strong adherence to the equivalence constraint: mostly clear synonyms/abbreviations (Formula One/F1), championship/Grand Prix phrasing that still clearly denotes F1, and allowed “intro/basics/guide/101/levels” variants. Avoids the biggest narrowing pitfalls (teams/drivers/engineering/rules). Size is <100 (less exhaustive than requested), but quality is consistently on-topic with minimal ambiguity.",
+          "score": 8.4
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Similar to D: stays largely within same-course variants (F1/Formula One, championship/world championship, intro/basics/guide, levels). Includes “History” variants which are arguably a narrower course focus than “Formula 1” broadly, but could still be treated as light framing in some catalogs; still, it’s a slight scope-shift. Also under the 100+ exhaustiveness target.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Generally on-topic with many acceptable rephrasings and series/championship variants. However it introduces more borderline/ambiguous scope shifts (“The Science of Formula 1”, “Techniques”, “Theory”, “Art”, “Insights”, “Studies”), which could plausibly be separate, narrower courses rather than the generic “Formula 1” subject. Still no major broader-topic inclusions like generic motorsport.",
+          "score": 7.4
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Large list (closest to the 100+ expectation) with many solid synonym/guide/overview variants. But it includes explicit broader terms like “Formula 1 Motorsport / F1 Motorsport”, which the prompt explicitly cautions against (“Motorsport” is broader). Also includes “Season” and multiple “History” framings that can become narrower than the base topic depending on interpretation.",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Decent set of synonyms and FIA/world championship/Grand Prix variants, but contains clear rule violations: multiple “Motorsports” entries (broader than F1 per prompt). Also contains some questionable/possibly incorrect or awkward “official/international championship” phrasings that could imply a different entity or expand scope. Not exhaustive relative to the 100+ guidance.",
+          "score": 6.2
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Includes many disallowed narrower-topic titles (Cars, Teams, Drivers, Technology, Aerodynamics, Engineering, Strategy, Rules/Regulations), which the prompt explicitly flags as narrower (e.g., “F1 Engineering”). Also includes “Grand Prix Racing” without explicit F1 context (ambiguous/broader). Overall violates the same-meaning constraint repeatedly despite having some valid items.",
+          "score": 3.2
+        }
+      ]
+    }
+  ],
+  "taskId": "alternative-titles",
+  "testCaseId": "en-formula-1-1"
+}

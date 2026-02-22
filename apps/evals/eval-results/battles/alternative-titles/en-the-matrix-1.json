@@ -1,0 +1,131 @@
+{
+  "expectations": "\n      - Should include \"Matrix Movie\" (without \"The\")\n      - May include \"The Matrix Trilogy\" and similar variations since it refers to the same film series\n      - Should NOT include just \"Matrix\" (ambiguous)\n      - Should NOT include broader courses like \"Science Fiction Films\"\n      - Results should be in English\n\n      \n  - Only include titles that are **equivalent** to the base title — i.e., they refer to the **same course** a user would expect to find under that subject.\n  - **Same‑course test** (use all of these):\n    1) Would we merge both titles into one course page? If yes, they are equivalent.\n    2) Would teaching goals, syllabus scope, and prerequisites remain the same? If yes, they are equivalent.\n    3) Is the difference only wording, dialect/variant, audience, abbreviation, or light framing? If yes, they are equivalent.\n  - **Broader/narrower rule**:\n    - **Broader** expands scope beyond the subject’s core boundaries → exclude. Example: \"Web Development\" is broader than \"Frontend Development\".\n    - **Narrower** is a proper subset that we’d plausibly ship as a separate course (different scope/learning goals) → exclude. Example: \"React\" is narrower than \"JavaScript\"; \"Deep Learning\" is narrower than \"Machine Learning\".\n  - **Not narrower (allowed)** when it is still the same course subject:\n    - **Dialect/variant** names (e.g., \"Inglês Americano\", \"Inglês Britânico\", \"French Grammar\", \"Optimisation\" vs \"Optimization\"). Dialects are surface variants of the same language course.\n    - **Audience qualifiers** (e.g., \"IA para Desenvolvedores\", \"UX for Healthcare\"). Audience framing ≠ topic narrowing if the core subject stays the same.\n    - **Series/labeling of the same entity** (e.g., \"Formula One\", \"F1\", \"Formula One Championship\", \"F1 Series\") — these all clearly denote the same sport/competition brand.\n    - **Light framing words** like \"principles\", \"fundamentals\", \"basics\", \"overview\", or \"for beginners\" when the core topic remains unchanged.\n  - **Decision checklist for each candidate title** (answer all):\n    - Does it introduce a different subfield or tool? If yes → narrower → exclude.\n    - Does it expand to an umbrella domain? If yes → broader → exclude.\n    - If we offered both titles simultaneously, would users be confused by two separate courses? If yes → they are equivalent and, therefore, can be included as an alternative title.\n  - **Concrete examples**:\n    - **Include**: \"Client‑Side Web Development\" ↔ \"Frontend Development\"; \"IA\" / \"Inteligência Artificial\" / \"IA para Desenvolvedores\"; \"Inglês\" ↔ \"Inglês Americano\" / \"Inglês Britânico\" / \"Inglês Britânico e Americano\"; \"Formula 1\" ↔ \"Formula One\" / \"F1\" / \"Formula One Championship\" / \"F1 Series\"; \"UX Design\" ↔ \"UX Design Principles\"; \"World War II\" ↔ \"WWII\" / \"Second World War\"; \"Data Science\" ↔ \"Data Science Fundamentals\".\n    - **Exclude**: \"Web Development\" (broader than \"Frontend Development\"); \"Aprendizado de Máquina\" (narrower than \"Inteligência Artificial\"); \"React\" (narrower than \"JavaScript\"); \"Deep Learning\" (narrower than \"Machine Learning\"); \"Motorsport\" (broader than \"Formula 1\"); \"Differential Calculus\" (narrower than \"Calculus\").\n  - Include different locale spellings when applicable (e.g., \"Optimization\" and \"Optimisation\").\n  - Include abbreviations if they mean the same thing (e.g., \"AI\"/\"IA\", \"ML\" when base is \"Machine Learning\").\n  - Levels like \"Beginner\", \"Advanced\", \"Calculus 1\", \"101\", etc., are acceptable if they keep the same subject.\n  - It’s fine to skip spacing/hyphenation/accents variants — serialization will handle those.\n  - Awkward or redundant phrasings are acceptable.\n  - Ignore casing issues (e.g., \"javascript\" vs \"JavaScript\").\n  - Ideally, it should have a huge list of alternative titles, really good ones have more than 100 alternative titles\n\n    ",
+  "judgedAt": "2026-02-22T02:04:04.500Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model B does the best job overall. It includes 'Matrix Movie', 'Matrix Film', 'Matrix Franchise', 'Matrix Trilogy', 'Matrix Series' etc. (without 'The') as required by the task expectations. It does NOT include bare 'Matrix' (which is ambiguous). It systematically generates variations with different framing words (Introduction to, Exploring, Understanding, Discovering, Guide to, etc.) combined with different base forms (Movie, Film, Franchise, Trilogy, etc.), creating a large list of 160+ alternatives. The titles are all plausibly equivalent courses. It avoids narrower subtopics (no philosophy-specific, soundtrack-specific, etc.). The main weakness is the mechanical/formulaic nature of the combinations, but this is acceptable per the prompt rules. It meets the 100+ target easily.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model A produces a solid list of 110+ alternatives. It includes good variations like 'The Matrix Movie', 'The Matrix Film', 'The Matrix Trilogy', 'The Matrix Franchise', etc. However, it does NOT include 'Matrix Movie' (without 'The'), which was specifically called out as a requirement in the task expectations. It also includes some titles that edge toward narrower territory like 'The Matrix Philosophy', 'Philosophy of The Matrix', 'The Matrix Symbolism' — these could be considered narrower subtopics (a philosophy course about The Matrix is arguably a different course). It also includes 'The Matrix' itself as an alternative, which is redundant. Overall good but misses the key requirement of 'Matrix Movie' without 'The'.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model F provides a reasonable list of 110+ alternatives. It includes good variety: franchise terms (Saga, Anthology, Tetralogy, Collection), framing words (Basics, Fundamentals, Essentials, Deep Dive, Masterclass), and different punctuation styles. However, it does NOT include 'Matrix Movie' (without 'The') which is a task expectation. It includes some potentially narrower titles like 'The Matrix Film Theory', 'The Matrix Media Study', 'The Matrix Narrative', 'The Matrix Storyline', 'The Matrix Brand Study' which could be separate courses. 'The Matrix Tetralogy' is good (since there are 4 films). Generally solid but missing the key 'Matrix Movie' requirement.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model E generates an extremely large list (250+ entries) but has significant quality issues. Many titles are absurdly specific disambiguations that no one would use as a course title, like 'The Matrix (Carrie-Anne Moss Film)', 'The Matrix (Hugo Weaving Movie)', 'The Matrix (Agent Smith)', 'The Matrix (Red Pill / Blue Pill)', 'The Matrix (Bullet Time)', 'The Matrix (Cyberpunk Sci-Fi Movie)'. These are not plausible course title alternatives — they are Wikipedia-style disambiguations. The list is padded with excessive parenthetical variations that add no real value. It also includes many titles that are essentially identical with trivial punctuation differences (colon vs dash vs parentheses), which the prompt says to skip. It does NOT include 'Matrix Movie' without 'The'. The sheer volume doesn't compensate for the low quality of many entries.",
+          "score": 4.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model C has a critical violation: it includes bare 'Matrix' as the very first alternative, which the task expectations explicitly say should NOT be included ('Should NOT include just \"Matrix\" (ambiguous)'). It also includes many narrower/different-scope titles: 'The Matrix Soundtrack', 'The Matrix Score', 'The Matrix Cinematography', 'The Matrix VFX', 'The Matrix Visual Effects', 'The Matrix Special Effects', 'The Matrix Bullet Time', 'The Matrix Kung Fu', 'The Matrix Action Sequences', 'The Matrix Buddhism', 'The Matrix Christianity', 'The Matrix Plato', 'The Matrix Allegory of the Cave', 'The Matrix Screenplay', 'The Matrix Script', 'The Matrix Characters', 'The Matrix Cast', 'The Matrix Director'. These are clearly narrower subtopics that would be separate courses. Actor-specific titles like 'The Matrix Keanu Reeves', 'Keanu Reeves The Matrix', 'The Matrix Laurence Fishburne' are also problematic. The list is also relatively short at ~100 entries. Multiple violations of key rules.",
+          "score": 3.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model D focuses almost exclusively on academic/film-study framings of The Matrix, with titles like 'The Matrix — Screening and Discussion', 'The Matrix — Undergraduate Course (film)', 'The Matrix — Graduate Seminar (film)', 'The Matrix: Auteur Study — The Wachowskis' Film', 'The Matrix: Cinematography and Narrative (1999 film)', 'The Matrix — Sound, Image and Narrative (film)'. While some academic framings are fine, many of these are narrower (cinematography analysis, sound analysis, auteur study, film theory seminar are different courses). The list also lacks basic variations like 'Matrix Movie', 'Matrix Film' (without 'The'). It includes 'THE MATRIX (1999) — COURSE' and 'the matrix (1999 film) course' which seem like padding/casing variants the prompt says to ignore. The list is overly narrow in its approach, missing many obvious equivalent titles while including many that are actually narrower academic subtopics. It does NOT include 'The Matrix Trilogy' or basic series variations.",
+          "score": 3.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model B perfectly followed all instructions, including the specific task expectations. It successfully included 'Matrix Movie' without 'The', correctly avoided the ambiguous standalone word 'Matrix', and kept the scope of the titles equivalent to the base topic without drifting into narrower subtopics. The list is extensive and provides a highly practical variety of alternative titles.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model A generated a great list of high-quality, relevant alternative titles. However, it failed to meet one of the explicit task expectations: it did not include 'Matrix Movie' (without the word 'The'). Otherwise, it correctly avoided the forbidden standalone 'Matrix' and kept the topics accurately scoped.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Similar to Model A, Model F provided a clean and relevant list of alternative titles but missed the specific instruction to include 'Matrix Movie' without 'The'. Its variations are good and correctly scoped to the base topic.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model D missed the explicit expectation to include 'Matrix Movie'. Furthermore, the list is heavily reliant on repetitive academic templating (e.g., 'The Matrix: Undergraduate Seminar on the Film', 'The Matrix — A Critical Study'), making it slightly less practical than Models A, B, and F, though it still accurately avoided narrower topics and the forbidden 'Matrix' title.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model E missed the explicit instruction to include 'Matrix Movie' by itself. More importantly, it violated the rule against including narrower topics by listing specific characters and concepts (e.g., 'The Matrix (Agent Smith)', 'The Matrix (Trinity)', 'The Matrix (Bullet Time)'). A course on a single character or cinematic technique is narrower than a course on the film itself.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model C completely failed the most critical negative constraint by including the ambiguous word 'Matrix' as its very first output. Additionally, it violated the scope rules by including significantly narrower topics like 'The Matrix Buddhism', 'The Matrix Plato', and 'The Matrix Kung Fu'. Even though it successfully included 'Matrix Movie', the negative constraint violations warrant a severe penalty.",
+          "score": 2
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Best adherence to the prompt’s key constraints: includes the explicitly required \"Matrix Movie\" (without \"The\") and provides many close paraphrases/level variants while generally staying within the same subject (the film/film series). It avoids the explicitly forbidden standalone \"Matrix\". Main weakness: it *does* include ambiguous items like \"Matrix (Movie)\" / \"Matrix (Film)\" that could be interpreted as the generic concept of a matrix plus “movie” as a descriptor; still, in context they’re likely intended as shorthand for the title. Also not exhaustive (well under 100).",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Good quality phrasing variety and stays mostly on-topic (film/series) without going broader to sci-fi generally. However it misses the explicit expectation to include \"Matrix Movie\" (without \"The\"). It also includes a few arguably non-equivalent framings (e.g., \"The Matrix Cinematic Universe\" is not a standard/clear referent and could expand scope). Not exhaustive (under 100).",
+          "score": 7.6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "High precision in keeping references anchored to the 1999 film (lots of “film study/analysis” variants) and avoids the forbidden ambiguous \"Matrix\". But it fails the expectation to include \"Matrix Movie\" and also does not include trilogy/franchise variants as much as expected (though it’s allowed). List size is <100.",
+          "score": 7.4
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Includes some useful equivalents and series/franchise variants, but contains factual/meaning issues: \"The Matrix Tetralogy\" is incorrect/at least not a safe equivalent (franchise has 4 films but “tetralogy” is nonstandard and can mislead), and several entries drift into broader/less-equivalent territory (\"Brand Study\", \"Key Concepts\", \"Core Concepts\" without clear film anchor). Also misses required \"Matrix Movie\". Not exhaustive.",
+          "score": 6.6
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Large set of variants, but quality control is weak: many items broaden/narrow the course scope into specific themes or aspects (e.g., \"Virtual Reality\", \"Simulation Theory\", \"Cyberpunk\", \"Bullet Time\") that would plausibly be separate narrower courses, violating the equivalence rule. Also includes potentially risky specificity like actor/character-focused parentheticals that change expected syllabus emphasis. Critically, it still misses the explicitly expected \"Matrix Movie\" phrasing (it has many “The Matrix …” but not the exact requested one).",
+          "score": 5.8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Violates a core instruction by including the forbidden ambiguous title \"Matrix\". It also introduces lots of clearly narrower topic framings (cast/character-specific, effects like \"Bullet Time\", philosophical/religious angles, etc.) that would change syllabus and should be excluded. Overall not aligned with strict same-meaning duplicate detection.",
+          "score": 3.2
+        }
+      ]
+    }
+  ],
+  "taskId": "alternative-titles",
+  "testCaseId": "en-the-matrix-1"
+}

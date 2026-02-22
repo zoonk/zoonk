@@ -1,0 +1,131 @@
+{
+  "expectations": "\n      - Should include \"Desarrollo de Sitios Web\", \"Programación Web\", etc\n      - All alternatives should be in Spanish\n\n      \n  - Only include titles that are **equivalent** to the base title — i.e., they refer to the **same course** a user would expect to find under that subject.\n  - **Same‑course test** (use all of these):\n    1) Would we merge both titles into one course page? If yes, they are equivalent.\n    2) Would teaching goals, syllabus scope, and prerequisites remain the same? If yes, they are equivalent.\n    3) Is the difference only wording, dialect/variant, audience, abbreviation, or light framing? If yes, they are equivalent.\n  - **Broader/narrower rule**:\n    - **Broader** expands scope beyond the subject’s core boundaries → exclude. Example: \"Web Development\" is broader than \"Frontend Development\".\n    - **Narrower** is a proper subset that we’d plausibly ship as a separate course (different scope/learning goals) → exclude. Example: \"React\" is narrower than \"JavaScript\"; \"Deep Learning\" is narrower than \"Machine Learning\".\n  - **Not narrower (allowed)** when it is still the same course subject:\n    - **Dialect/variant** names (e.g., \"Inglês Americano\", \"Inglês Britânico\", \"French Grammar\", \"Optimisation\" vs \"Optimization\"). Dialects are surface variants of the same language course.\n    - **Audience qualifiers** (e.g., \"IA para Desenvolvedores\", \"UX for Healthcare\"). Audience framing ≠ topic narrowing if the core subject stays the same.\n    - **Series/labeling of the same entity** (e.g., \"Formula One\", \"F1\", \"Formula One Championship\", \"F1 Series\") — these all clearly denote the same sport/competition brand.\n    - **Light framing words** like \"principles\", \"fundamentals\", \"basics\", \"overview\", or \"for beginners\" when the core topic remains unchanged.\n  - **Decision checklist for each candidate title** (answer all):\n    - Does it introduce a different subfield or tool? If yes → narrower → exclude.\n    - Does it expand to an umbrella domain? If yes → broader → exclude.\n    - If we offered both titles simultaneously, would users be confused by two separate courses? If yes → they are equivalent and, therefore, can be included as an alternative title.\n  - **Concrete examples**:\n    - **Include**: \"Client‑Side Web Development\" ↔ \"Frontend Development\"; \"IA\" / \"Inteligência Artificial\" / \"IA para Desenvolvedores\"; \"Inglês\" ↔ \"Inglês Americano\" / \"Inglês Britânico\" / \"Inglês Britânico e Americano\"; \"Formula 1\" ↔ \"Formula One\" / \"F1\" / \"Formula One Championship\" / \"F1 Series\"; \"UX Design\" ↔ \"UX Design Principles\"; \"World War II\" ↔ \"WWII\" / \"Second World War\"; \"Data Science\" ↔ \"Data Science Fundamentals\".\n    - **Exclude**: \"Web Development\" (broader than \"Frontend Development\"); \"Aprendizado de Máquina\" (narrower than \"Inteligência Artificial\"); \"React\" (narrower than \"JavaScript\"); \"Deep Learning\" (narrower than \"Machine Learning\"); \"Motorsport\" (broader than \"Formula 1\"); \"Differential Calculus\" (narrower than \"Calculus\").\n  - Include different locale spellings when applicable (e.g., \"Optimization\" and \"Optimisation\").\n  - Include abbreviations if they mean the same thing (e.g., \"AI\"/\"IA\", \"ML\" when base is \"Machine Learning\").\n  - Levels like \"Beginner\", \"Advanced\", \"Calculus 1\", \"101\", etc., are acceptable if they keep the same subject.\n  - It’s fine to skip spacing/hyphenation/accents variants — serialization will handle those.\n  - Awkward or redundant phrasings are acceptable.\n  - Ignore casing issues (e.g., \"javascript\" vs \"JavaScript\").\n  - Ideally, it should have a huge list of alternative titles, really good ones have more than 100 alternative titles\n\n    ",
+  "judgedAt": "2026-02-22T02:04:46.502Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model C provides a clean, well-organized list of ~120 alternatives that are almost entirely valid equivalents. The list systematically covers: synonym variations (Programación, Creación, Construcción, Elaboración), object variations (Sitios, Páginas, Webs), level variations (Básico, Avanzado, Principiantes), framing variations (Fundamentos, Introducción, Bases, Principios, Iniciación, Primeros Pasos), and action-oriented titles (Aprende, Cómo Crear). It avoids most problematic inclusions. Minor issues: 'Desarrollador Web' and 'Programador Web' are role titles rather than course titles about the subject, but these are commonly used as course titles. 'Carrera de Desarrollo Web' and 'Ruta de Desarrollador Web' are slightly different (career path framing) but still plausible as same-course titles. Very few questionable entries overall. Good exhaustiveness without padding with dubious entries.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model B provides ~140 alternatives, all in Spanish. The list is very thorough with systematic variations. Strong coverage of synonyms, level variations, framing words, and action-oriented phrasings. However, there's significant padding with redundant/awkward constructions like 'Desarrollo web para crear sitios web', 'Desarrollo web para la creación de páginas web', 'Desarrollo web: construye tu página web', 'Desarrollo web: haz tu página web' — these are overly specific project-oriented titles rather than course name equivalents. 'Desarrollo web full stack' / 'Full Stack: Desarrollo web' are arguably narrower (full stack is a specific approach). 'Desarrollo web 2026' includes a year that will become dated. Some entries like 'Desarrollo web: desarrollo de webs' are truly redundant/awkward. The casing-only variant 'Curso de desarrollo web' vs 'Curso de Desarrollo Web' violates the 'ignore casing' guideline. Despite issues, the core set is solid.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model F provides ~120 alternatives with good variety. Strong systematic coverage including 'Internet' variants (Desarrollo de Páginas de Internet, etc.) which is a nice touch. Includes English equivalents (Web Development, Web Dev). Good coverage of synonyms and framing. However, several issues: 'Desarrollo Full Stack' / 'Programación Full Stack' / 'Desarrollo Fullstack' without 'Web' could be ambiguous or narrower. 'Desarrollo Web con HTML CSS y JavaScript' and 'Desarrollo Web con HTML, CSS y JS' are narrower (specifying particular technologies). 'Desarrollo Web Cliente y Servidor' is a more specific framing. 'Desarrollo Web Frontend y Backend' is acceptable as it's describing the full scope. 'Web Development en Español' is odd. Some entries like 'Laboratorio de Desarrollo Web' are unusual as course titles. Overall solid but with more problematic entries than Model C.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model E provides ~105 alternatives. Good variety including English terms (Web Development, Web Dev). However, several problematic entries: 'Desarrollo Web con HTML CSS y JavaScript', 'Desarrollo Web con HTML y CSS', 'Desarrollo Web con JavaScript', 'Desarrollo Web con HTML5 y CSS3' — these specify particular technologies, making them narrower or at least different courses. 'Desarrollo Web con las Últimas Tecnologías' is vague but could be seen as equivalent. 'Desarrollo Web 2024' will become dated. 'Desarrollo Web Responsivo'/'Desarrollo Web Responsive' is a narrower topic (responsive design is a subset). 'Desarrollo Web Estático' and 'Desarrollo Web Dinámico' individually are narrower subsets. 'Desarrollo Web Frontend y Backend' is acceptable. 'El Arte del Desarrollo Web' is unusual but acceptable. 'Herramientas de Desarrollo Web' is narrower (tools, not the discipline). Several technology-specific entries are clear violations of the narrower rule.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model D provides ~110 alternatives, all in Spanish. The list has good coverage of level variations and framing words. However, there are issues: includes casing-only variants ('Desarrollo Web' vs 'desarrollo web', 'Introducción al Desarrollo Web' vs 'Introducción al desarrollo web') which the prompt says to ignore. Many entries are heavily focused on course-format framing (Diplomado, Certificación, Certificado, Módulo, Unidad, Asignatura, Seminario universitario, Curso universitario, Formación académica, Capacitación académica) — while some framing is fine, this goes overboard with institutional/format-specific terms that describe the delivery format rather than the subject. 'Desarrollo Web (curso)', 'Desarrollo Web (formación)' are awkward. The list lacks some good synonym variations that other models include (like 'Elaboración', 'Internet' variants). Too much padding with format/institutional variants.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model A provides ~110 alternatives. While it has good core synonyms, it includes many problematic entries that are narrower topics or different subjects: 'Desarrollo Web Responsivo' (narrower — responsive design), 'Desarrollo Web Seguro' (narrower — security), 'Desarrollo Web Escalable' (narrower — scalability), 'Desarrollo Web en la Nube' (narrower — cloud), 'Herramientas de Desarrollo Web' (narrower — tools), 'Entornos de Desarrollo Web' (narrower — environments), 'Ecosistema de Desarrollo Web' (different), 'Flujo de Trabajo en Desarrollo Web' (narrower — workflows), 'Metodologías de Desarrollo Web' (narrower), 'Gestión de Desarrollo Web' (narrower — management), 'Optimización de Desarrollo Web' (narrower), 'Arquitectura Web' / 'Arquitectura de Desarrollo Web' / 'Arquitectura de Páginas Web' (narrower — architecture), 'Sistemas Web' / 'Desarrollo de Sistemas Web' (different scope), 'Desarrollo Web Open Source' (narrower), 'Estrategias de Desarrollo Web' (narrower), 'Desarrollo Web de Grado Industrial' (unusual). 'Tecnologías Web' is borderline. 'Programación de Internet' and 'Desarrollo de Internet' are acceptable. Too many entries that would constitute separate, distinct courses rather than duplicates.",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model D followed all instructions perfectly. It strictly adhered to the equivalence rules by avoiding narrower subfields and broader topics (like Web Design). It maintained the correct language without slipping into English, and provided an extensive list of highly relevant framing variations. It is the cleanest and most accurate output.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model C provided a very strong and accurate list. It avoided narrower topics and kept strictly to the target language. Its only minor flaw is the inclusion of titles with 'Diseño' (e.g., 'Diseño y Desarrollo Web'), which technically expands the scope into Web Design (a broader/different topic than pure Web Development).",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model B successfully generated an exhaustive list of over 100 items. However, it included 'Diseño' (expanding the scope), padded the list with simple casing variations (which the prompt stated would be handled by serialization), and included an oddly specific future year ('Desarrollo web 2026'). Still, it is a very comprehensive and mostly accurate list.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model A generated a good volume of titles but failed the 'narrower topic' rule multiple times. It included specific subfields and methodologies like 'Desarrollo Web Responsivo', 'Desarrollo Web en la Nube', 'Desarrollo Web Ágil', and 'Desarrollo Web Open Source', which would have different syllabuses than a general Web Development course.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model F explicitly violated the language constraint rule ('Important: Use the language set by the LANGUAGE input for all alternative titles') by including pure English titles like 'Web Development' and 'Web Dev'. Aside from this major penalty, the scope of its Spanish titles was relatively well-maintained.",
+          "score": 4.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model E performed poorly by violating multiple core rules. Like Model F, it failed the language constraint by including English titles ('Web Development'). Furthermore, it violated the narrower scope rule by including specific subsets and tools like 'Desarrollo Web con JavaScript', 'Desarrollo Web Estático', and 'Desarrollo Web con HTML y CSS'.",
+          "score": 3
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Largest, most exhaustive list (well over 100). Stays in Spanish and mostly within the same-course meaning (desarrollo/creación/programación de sitios/páginas web + acceptable level/format variants). Minor redundancy/casing duplicates and a few potentially shaky phrasings (e.g., some “para Full Stack” awkwardness), but no major scope drift or language violations.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Very strong coverage and variety; all in Spanish and mostly equivalent titles. Good inclusion of course-format variants (curso, taller, bootcamp, diplomado, etc.) and level variants. Minor issues: includes exact casing duplicates (\"Desarrollo Web\" and \"desarrollo web\"), and some items are arguably more like program/module labels than titles, but still plausible for duplicate detection.",
+          "score": 8.7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Good breadth and generally adheres to equivalence. Includes many synonymous formulations and level variants. Less exhaustive than the best (around ~100 or slightly under) and includes a few items that are more role/path oriented (\"Carrera de Desarrollo Web\", \"Ruta de Desarrollador Web\"), which can imply a broader multi-course track rather than a single course.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Good number of alternatives and includes expected ones (\"Desarrollo de Sitios Web\", \"Programación Web\"). However, several entries drift into narrower/broader or different topics/angles (e.g., \"Arquitectura Web\", \"Gestión de Desarrollo Web\", \"Metodologías de Desarrollo Web\", \"Optimización de Desarrollo Web\"), which could change syllabus/goals. Also includes odd/less-equivalent seniority labels (junior/senior) and some potentially ambiguous/broader internet items (\"Programación de Internet\", \"Desarrollo de Internet\").",
+          "score": 7.4
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Decent variety, but has clear rule violations: includes English titles (\"Web Development\", \"Web Dev\", \"Web Development en Español\") despite LANGUAGE=es. Also leans into \"Full Stack\" expansions that can be narrower/meaning-shifting relative to generic \"Desarrollo Web\". Otherwise many good Spanish equivalents.",
+          "score": 6.3
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Contains a direct English alternative (\"Web Development\") violating the language constraint. Also includes multiple narrower/syllabus-specifying titles (e.g., \"con HTML y CSS\", \"con JavaScript\", \"con HTML5 y CSS3\"), which are plausibly separate, narrower courses rather than exact duplicates. Some other items (\"Proyecto de Desarrollo Web\") are not really course titles. Overall least compliant.",
+          "score": 5.6
+        }
+      ]
+    }
+  ],
+  "taskId": "alternative-titles",
+  "testCaseId": "es-desarrollo-web-1"
+}

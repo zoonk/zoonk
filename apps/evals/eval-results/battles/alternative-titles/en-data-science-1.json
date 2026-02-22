@@ -1,0 +1,131 @@
+{
+  "expectations": "\n      - Should NOT include \"Machine Learning\", \"Statistics\", \"Big Data\", etc\n      - Results should be in English\n\n      \n  - Only include titles that are **equivalent** to the base title — i.e., they refer to the **same course** a user would expect to find under that subject.\n  - **Same‑course test** (use all of these):\n    1) Would we merge both titles into one course page? If yes, they are equivalent.\n    2) Would teaching goals, syllabus scope, and prerequisites remain the same? If yes, they are equivalent.\n    3) Is the difference only wording, dialect/variant, audience, abbreviation, or light framing? If yes, they are equivalent.\n  - **Broader/narrower rule**:\n    - **Broader** expands scope beyond the subject’s core boundaries → exclude. Example: \"Web Development\" is broader than \"Frontend Development\".\n    - **Narrower** is a proper subset that we’d plausibly ship as a separate course (different scope/learning goals) → exclude. Example: \"React\" is narrower than \"JavaScript\"; \"Deep Learning\" is narrower than \"Machine Learning\".\n  - **Not narrower (allowed)** when it is still the same course subject:\n    - **Dialect/variant** names (e.g., \"Inglês Americano\", \"Inglês Britânico\", \"French Grammar\", \"Optimisation\" vs \"Optimization\"). Dialects are surface variants of the same language course.\n    - **Audience qualifiers** (e.g., \"IA para Desenvolvedores\", \"UX for Healthcare\"). Audience framing ≠ topic narrowing if the core subject stays the same.\n    - **Series/labeling of the same entity** (e.g., \"Formula One\", \"F1\", \"Formula One Championship\", \"F1 Series\") — these all clearly denote the same sport/competition brand.\n    - **Light framing words** like \"principles\", \"fundamentals\", \"basics\", \"overview\", or \"for beginners\" when the core topic remains unchanged.\n  - **Decision checklist for each candidate title** (answer all):\n    - Does it introduce a different subfield or tool? If yes → narrower → exclude.\n    - Does it expand to an umbrella domain? If yes → broader → exclude.\n    - If we offered both titles simultaneously, would users be confused by two separate courses? If yes → they are equivalent and, therefore, can be included as an alternative title.\n  - **Concrete examples**:\n    - **Include**: \"Client‑Side Web Development\" ↔ \"Frontend Development\"; \"IA\" / \"Inteligência Artificial\" / \"IA para Desenvolvedores\"; \"Inglês\" ↔ \"Inglês Americano\" / \"Inglês Britânico\" / \"Inglês Britânico e Americano\"; \"Formula 1\" ↔ \"Formula One\" / \"F1\" / \"Formula One Championship\" / \"F1 Series\"; \"UX Design\" ↔ \"UX Design Principles\"; \"World War II\" ↔ \"WWII\" / \"Second World War\"; \"Data Science\" ↔ \"Data Science Fundamentals\".\n    - **Exclude**: \"Web Development\" (broader than \"Frontend Development\"); \"Aprendizado de Máquina\" (narrower than \"Inteligência Artificial\"); \"React\" (narrower than \"JavaScript\"); \"Deep Learning\" (narrower than \"Machine Learning\"); \"Motorsport\" (broader than \"Formula 1\"); \"Differential Calculus\" (narrower than \"Calculus\").\n  - Include different locale spellings when applicable (e.g., \"Optimization\" and \"Optimisation\").\n  - Include abbreviations if they mean the same thing (e.g., \"AI\"/\"IA\", \"ML\" when base is \"Machine Learning\").\n  - Levels like \"Beginner\", \"Advanced\", \"Calculus 1\", \"101\", etc., are acceptable if they keep the same subject.\n  - It’s fine to skip spacing/hyphenation/accents variants — serialization will handle those.\n  - Awkward or redundant phrasings are acceptable.\n  - Ignore casing issues (e.g., \"javascript\" vs \"JavaScript\").\n  - Ideally, it should have a huge list of alternative titles, really good ones have more than 100 alternative titles\n\n    ",
+  "judgedAt": "2026-02-22T02:04:14.053Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model C provides a strong, extensive list (145+ titles) that stays well-focused on equivalent titles. It correctly includes 'Data Sciences' (plural variant), level variations, audience framings, and format labels. It avoids the most problematic narrowing titles like 'Data Science with Python/R' or 'Data Science and Machine Learning'. There are a few borderline entries like 'Data Science Engineering' and 'Full Stack Data Science' which could imply a different scope, and 'Data Science Pipeline/Lifecycle/Workflow' which edge toward methodology-specific courses rather than the full discipline. But overall the list is clean, comprehensive, and well-organized. It includes good abbreviation-free alternatives and spelling variants. Minor issues: missing abbreviations like 'DS', and some entries like 'Data Science Academy/Institute' are more organizational names than course titles. But these are minor.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model A provides ~130 titles with good variety. It correctly includes level variations, abbreviations (DS, Data Sci), format labels (bootcamp, crash course), and audience qualifiers. It avoids the explicitly forbidden titles (Machine Learning, Statistics, Big Data). However, some entries are questionable: 'Data Science Capstone' and 'Data Science Project Course' suggest a specific project-focused course rather than the full subject; 'Data Science Syllabus' is odd as a course title; 'Data Science Lab' implies a practical component only. These are relatively minor issues. The list is thorough and generally stays within scope. It includes good variations like 'Data-Science' and 'The Science of Data'. Missing 'Data Sciences' (plural) which is a natural variant.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model F provides ~112 titles with good quality. It stays focused and avoids the forbidden broader/narrower topics. Notable strengths: includes 'Data Scientist' role-based variants extensively (Become a Data Scientist, Data Scientist Bootcamp, etc.), includes 'Data Sciences' plural, and has clean phrasing variations. One slightly problematic entry: 'Introduction to Data Science and its Applications' edges toward a broader framing. 'Introduction to Data Science Methods' is also slightly narrower. But overall the list is clean and well-curated. Missing some abbreviations like 'DS'. The list is slightly shorter than the best outputs but maintains high quality throughout.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model B provides ~140 titles with good coverage. However, it has several problematic entries: 'Data Science and Analytics' / 'Data Science & Analytics' / 'Analytical Data Science' expand the scope beyond pure Data Science; 'Scientific Data Analysis' and 'Scientific Data Processing' are different subjects; 'Data-driven Science' is different from Data Science; 'Statistical Data Science', 'Mathematical Data Science', 'Computational Data Science', 'Quantitative Data Science' are narrower or different framings; 'Data Science and Modelling/Modeling' expands scope. These entries would fail the same-course test. The list also includes some that border on narrowing like 'Exploratory Data Science' and 'Functional Data Science'. Despite being comprehensive in count, the quality suffers from these inclusions that violate the equivalence rules.",
+          "score": 5.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model D has several significant violations of the prompt rules. Most notably: 'Data Science with Python', 'Data Science with R', 'Data Science with SQL', 'Data Science with Excel' are narrower (tool-specific courses); 'Data Science and Machine Learning', 'Data Science and AI', 'Data Science and Artificial Intelligence', 'Data Science and Statistics', 'Data Science and Big Data', 'Data Science and Data Engineering' are all broader combined topics that explicitly violate the task expectations (the prompt specifically says to NOT include Machine Learning, Statistics, Big Data). 'Data Scientist' as a standalone title is ambiguous (could be a role description, not a course). 'Data Science Nanodegree' is a specific Udacity product. 'DS' and 'Data Sc' are very unusual abbreviations. The inclusion of forbidden terms is a major penalty.",
+          "score": 3.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model E provides an extremely long list (250+ titles) but suffers from significant quality issues. Many entries are clearly NOT equivalent courses and would be separate courses: 'Data Science for Marketing', 'Data Science for Finance', 'Data Science for HR', 'Data Science for Healthcare', 'Data Science for Supply Chain', 'Data Science for Retail', 'Data Science for Sports', 'Data Science for Government', 'Data Science for Public Policy' — these are all domain-specific applications that would have different syllabi and learning goals. 'Data Science Interview Prep', 'Data Science Interview Preparation', 'Data Science Exam Prep', 'Data Science Test Prep' are clearly different courses focused on interview/test preparation. 'Corporate Data Science Training', 'Enterprise Data Science Training' are organizational training products. Year-specific entries like 'Data Science for Beginners (2025)' and '(2026)' are odd. The casing variants 'Data science' and 'data-Science' are explicitly excluded by the prompt ('Ignore casing issues'). While the list is long, quantity over quality hurts this output significantly — many entries would fail the same-course test.",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model A followed all instructions perfectly. It generated a highly comprehensive list of over 100 titles that adhere strictly to the 'same-course' test. It successfully applied allowed variations (levels, bootcamps, formal/informal phrasings, light framing) while carefully avoiding specific tools or subfields that would violate the narrower/broader rule.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model F provided an extremely clean and highly accurate list of alternative titles with no violations of the negative constraints. It successfully avoided specific tools, subfields, and broader domains. The only minor flaw is that it generated around 83 titles, falling slightly short of the '100+ titles' target requested in the prompt.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model B generated a good number of titles but included a few that violate the narrower/broader rule. Specifically, 'Statistical Data Science' touches on the explicitly forbidden 'Statistics' topic and implies a narrower focus. Titles like 'Mathematical Data Science', 'Data Science Pipeline', and 'Scientific Data Processing' represent narrower subfields or distinct concepts rather than an overarching Data Science course.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model C reached the volume goal but included titles that fail the 'same-course test'. 'Data Science Engineering' blends the topic with Data Engineering (a distinct subfield). Furthermore, titles like 'Data Science Pipeline' and 'Data Science Lifecycle' represent specific chapters/concepts within data science, making them narrower than the base title.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model E provided a massive list but heavily relied on padding and included courses that fail the 'same-course test'. Courses like 'Data Science Interview Prep' and 'Data Science Exam Prep' have fundamentally different syllabi and prerequisites compared to a standard Data Science course. Padding the list with dozens of specific industries (e.g., 'Data Science for HR/Sports/Retail') and adding years like '(2025)' lowers the overall quality, despite technical adherence to audience framing.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model D completely failed the negative constraints and top penalty criteria. The prompt explicitly stated: 'Should NOT include Machine Learning, Statistics, Big Data, etc.' and warned against introducing specific tools. Model D directly included 'Data Science and Machine Learning', 'Data Science and Statistics', 'Data Science and Big Data', as well as tool-specific titles like 'Data Science with Python/R/SQL/Excel'. This shows a complete disregard for the core rules.",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Strong adherence to the “same meaning” constraint: mostly phrasing/format/level variants of Data Science. Avoids explicit forbidden narrower/broader terms (no “Machine Learning”, “Statistics”, “Big Data” in titles). Language is consistently English. Main weakness: not exhaustive (well under 100), and a few items drift toward different deliverables (e.g., “Capstone”, “Project Course”) that could plausibly be separate scope, but overall the cleanest set among the options.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Good set of near-synonyms and framing variants; includes locale spelling (“Specialisation”). Mostly stays on-topic and in English. However, it contains several titles that are arguably broader/ambiguous or scope-shifting for duplicate detection, e.g., “Data Science and Analytics” (could be a combined/broader course) and “Data Science Engineering” (often a distinct track). Also under 100 alternatives.",
+          "score": 7.6
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Generally relevant synonyms and common variants; mostly English and avoids explicitly listing the forbidden terms. But it heavily drifts into “Data Scientist” career-track titles (e.g., “Data Scientist Bootcamp”, “The Data Scientist”), which is not exactly the same meaning as “Data Science” as a subject area and may imply different syllabus/prereqs. Also includes a few scope-broadening items (“...and its Applications”) and is not exhaustive.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Very large list (meets the exhaustiveness goal), and mostly English variants. Significant issue: includes many items that change the course meaning/scope or purpose (interview prep, exam/test prep, revision/refresher, “for PMs/finance/HR/healthcare”, etc.), which can become distinct courses rather than pure title equivalents. Also includes casing/serialization variants the prompt says can be skipped, adding noise. No explicit ML/Statistics/Big Data, but overall equivalence is inconsistent.",
+          "score": 6.9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Contains multiple clear violations of the broader/narrower constraints: “Data Science and Analytics” / “& Analytics” broadens scope, and “Statistical Data Science” is explicitly tied to statistics (the prompt specifically warns against “Statistics”). Also includes questionable distinct-scope items like “Full Stack Data Science” and various workflow/strategy items that could be separate. Not exhaustive (near/under 100).",
+          "score": 5.6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Major prompt violations: includes explicitly forbidden/narrower/broader additions such as “Data Science and Machine Learning”, “Data Science and Statistics”, and “Data Science and Big Data”. Also includes tool-narrowing titles (“with Python/R/SQL/Excel”) that would plausibly be separate courses per the checklist. Despite having many items, the equivalence constraint is frequently broken.",
+          "score": 3.2
+        }
+      ]
+    }
+  ],
+  "taskId": "alternative-titles",
+  "testCaseId": "en-data-science-1"
+}

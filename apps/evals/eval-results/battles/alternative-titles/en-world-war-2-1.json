@@ -1,0 +1,131 @@
+{
+  "expectations": "\n      - Should include \"World War 2\", \"Second World War\", \"WWII\", \"WW2\"\n      - Should NOT include just \"World War\" or \"World War I\"\n      - Results should be in English\n\n      \n  - Only include titles that are **equivalent** to the base title — i.e., they refer to the **same course** a user would expect to find under that subject.\n  - **Same‑course test** (use all of these):\n    1) Would we merge both titles into one course page? If yes, they are equivalent.\n    2) Would teaching goals, syllabus scope, and prerequisites remain the same? If yes, they are equivalent.\n    3) Is the difference only wording, dialect/variant, audience, abbreviation, or light framing? If yes, they are equivalent.\n  - **Broader/narrower rule**:\n    - **Broader** expands scope beyond the subject’s core boundaries → exclude. Example: \"Web Development\" is broader than \"Frontend Development\".\n    - **Narrower** is a proper subset that we’d plausibly ship as a separate course (different scope/learning goals) → exclude. Example: \"React\" is narrower than \"JavaScript\"; \"Deep Learning\" is narrower than \"Machine Learning\".\n  - **Not narrower (allowed)** when it is still the same course subject:\n    - **Dialect/variant** names (e.g., \"Inglês Americano\", \"Inglês Britânico\", \"French Grammar\", \"Optimisation\" vs \"Optimization\"). Dialects are surface variants of the same language course.\n    - **Audience qualifiers** (e.g., \"IA para Desenvolvedores\", \"UX for Healthcare\"). Audience framing ≠ topic narrowing if the core subject stays the same.\n    - **Series/labeling of the same entity** (e.g., \"Formula One\", \"F1\", \"Formula One Championship\", \"F1 Series\") — these all clearly denote the same sport/competition brand.\n    - **Light framing words** like \"principles\", \"fundamentals\", \"basics\", \"overview\", or \"for beginners\" when the core topic remains unchanged.\n  - **Decision checklist for each candidate title** (answer all):\n    - Does it introduce a different subfield or tool? If yes → narrower → exclude.\n    - Does it expand to an umbrella domain? If yes → broader → exclude.\n    - If we offered both titles simultaneously, would users be confused by two separate courses? If yes → they are equivalent and, therefore, can be included as an alternative title.\n  - **Concrete examples**:\n    - **Include**: \"Client‑Side Web Development\" ↔ \"Frontend Development\"; \"IA\" / \"Inteligência Artificial\" / \"IA para Desenvolvedores\"; \"Inglês\" ↔ \"Inglês Americano\" / \"Inglês Britânico\" / \"Inglês Britânico e Americano\"; \"Formula 1\" ↔ \"Formula One\" / \"F1\" / \"Formula One Championship\" / \"F1 Series\"; \"UX Design\" ↔ \"UX Design Principles\"; \"World War II\" ↔ \"WWII\" / \"Second World War\"; \"Data Science\" ↔ \"Data Science Fundamentals\".\n    - **Exclude**: \"Web Development\" (broader than \"Frontend Development\"); \"Aprendizado de Máquina\" (narrower than \"Inteligência Artificial\"); \"React\" (narrower than \"JavaScript\"); \"Deep Learning\" (narrower than \"Machine Learning\"); \"Motorsport\" (broader than \"Formula 1\"); \"Differential Calculus\" (narrower than \"Calculus\").\n  - Include different locale spellings when applicable (e.g., \"Optimization\" and \"Optimisation\").\n  - Include abbreviations if they mean the same thing (e.g., \"AI\"/\"IA\", \"ML\" when base is \"Machine Learning\").\n  - Levels like \"Beginner\", \"Advanced\", \"Calculus 1\", \"101\", etc., are acceptable if they keep the same subject.\n  - It’s fine to skip spacing/hyphenation/accents variants — serialization will handle those.\n  - Awkward or redundant phrasings are acceptable.\n  - Ignore casing issues (e.g., \"javascript\" vs \"JavaScript\").\n  - Ideally, it should have a huge list of alternative titles, really good ones have more than 100 alternative titles\n\n    ",
+  "judgedAt": "2026-02-22T02:04:09.093Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model B produces a clean, well-organized list of ~118 alternatives. It correctly includes all required titles (World War 2, Second World War, WWII, WW2) and does not include broader or narrower topics. It includes useful variations like 'W.W.II', 'W.W.2', level variations (Beginner, Advanced, Intermediate), framing words (Fundamentals, Essentials, Overview, Studies), and light format variations (Explained, Complete Guide, etc.). All entries pass the same-course test. It avoids problematic inclusions like narrower subtopics (battles, theaters, specific aspects). The list is exhaustive without being padded with questionable entries.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model A produces ~120 alternatives that are all legitimate. It correctly includes the required titles and uses a systematic combinatorial approach with base name variants (World War II/2/Two, WWII, WW2, WW II, WW 2, Second World War, 2nd World War) crossed with framing words (History of, Introduction to, Understanding, for Beginners, 101, etc.). All entries pass the same-course test. No narrower or broader topics are included. However, the list feels somewhat mechanical—it's mostly the same few framings applied to every variant, and it misses some useful alternatives like 'Explained', 'Studies', 'Essentials', 'Basics', 'Fundamentals', 'Course', 'Masterclass', 'Intro to' (shortened form). Still solid and accurate.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model E produces ~108 alternatives. It includes all required titles and many good variations with date ranges (1939-1945), framing words, level variations, and format variations. All entries pass the same-course test. It includes useful entries like 'wwii' and 'ww2' (lowercase, though the prompt says to ignore casing). It has good variety with survey, studies, fundamentals, essentials, and global history framings. No narrower or broader problematic entries. Some entries are slightly redundant (many date-range variants), but overall a strong, accurate list.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model D produces ~140 alternatives. It includes all required titles and a very extensive list. However, some entries are questionable for the same-course test: 'World War II Certification', 'World War II Pathway', 'World War II Track', 'World War II Expert', 'World War II Specialist', 'World War II Training', 'World War II Workshop' — these feel more like course metadata/format descriptors than course titles that would be considered duplicates. 'WWII Narrative' and 'Chronicles of World War II' also stretch the equivalence. 'The World at War (1939-1945)' and 'Global War (1939-1945)' are borderline — they're not standard names for WWII but could refer to it. Overall, the list is large and mostly good but contains some filler that wouldn't truly be considered duplicate course titles.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model F produces a very large list (~250+ alternatives) but has quality issues. 'The WWII War' is awkward and arguably incorrect (it would mean 'The World War II War'). Many entries are extremely padded — 'World War II: Big Picture', 'WWII: Big Picture', 'The Big Picture: World War II', 'A Big-Picture History of World War II' — these feel like marketing slogans rather than genuine alternative course titles. 'World War II: Getting Started', 'WWII: Start Here', 'World War II: A Guided Tour', 'A Guided Tour of WWII' stretch the equivalence test significantly. 'World War II: Major Battles and Campaigns', 'World War II: Key Battles and Campaigns' are actually narrower subtopics. The sheer volume comes at the cost of quality, with many entries that wouldn't genuinely be considered duplicate courses. It does cover all required titles though.",
+          "score": 5.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model C has serious issues with narrower topics that violate the prompt rules. It includes many entries that are clearly subtopics/narrower courses: 'World War II Battles', 'Battles of World War II', 'Major Battles of WWII', 'World War II Military History', 'World War II Strategy', 'World War II Tactics', 'World War II Leaders', 'World War II Generals', 'World War II Politics', 'World War II Diplomacy', 'World War II Europe', 'Pacific War', 'War in the Pacific', 'Pacific Theater World War II', 'World War II Home Front', 'World War II Economy', 'World War II Technology', 'World War II Weapons', 'World War II Aircraft', 'World War II Tanks', 'World War II Navy', 'World War II Air War', 'World War II Holocaust', 'World War II Genocide', 'World War II Resistance', 'World War II Espionage', 'World War II Intelligence', 'World War II Propaganda'. These are all clearly narrower topics that would be separate courses with different syllabi. Also includes problematic broader/different-scope entries like 'The Great Patriotic War' (specifically the Eastern Front, a narrower topic), 'Hitler's War' (narrower/biased perspective), 'War Against Fascism' (different framing/scope), 'The World at War' (ambiguous), 'Causes and Effects of World War II' and 'Causes of World War II' (narrower). 'World War of the 20th Century' is ambiguous (could mean WWI). This is a significant violation of the core rule to exclude narrower topics.",
+          "score": 3.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model D provides an excellent, comprehensive list of over 110 alternative titles. It strictly adheres to the negative constraints (no broader or narrower topics) while successfully incorporating a wide variety of acceptable framings (e.g., 'Masterclass', 'In-Depth', 'Deep Dive', '1939-1945' date variations, 'Certification', 'Track'). It meets all expectations perfectly.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model F provides the most exhaustive list (over 180 titles) and includes highly creative, realistic course framings ('Bootcamp', 'Demystified', 'Primer', 'Guided Tour', 'The War That Changed the World'). It is penalized slightly because it includes a couple of narrower topics ('Major Battles and Campaigns', 'Key Battles and Campaigns'), which violates the prompt's rule against narrower subfields. However, the sheer volume of high-quality, valid titles makes this a very strong output.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model B generates a very solid list of around 90 titles. It uses a natural, varied mix of framings ('Fundamentals', 'All About', 'Beginner to Advanced', 'Survey') and completely avoids any broader or narrower topics. It falls slightly short of the 100+ target but is otherwise excellent.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model E provides a good list of roughly 90 titles. It stands out for including date variations ('1939-1945') and valid synonym phrases like 'The Global Conflict', which are highly relevant. It follows all constraints but lacks the exhaustive length and creative framings seen in the top models.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model A follows all the rules and successfully avoids broader/narrower topics. However, its output is heavily robotic and templated—it simply runs a matrix multiplication of the base synonyms against a rigid set of prefixes/suffixes (e.g., repeating 'The History of X' for every single variant). It lacks natural variety and creative course framing.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model C severely fails the core negative constraint of the prompt: 'Exclude broader or narrower topics'. A significant portion of its output consists of narrower subfields and specific theaters of war, such as 'World War II Tanks', 'World War II Aircraft', 'Pacific War', 'European Theater', 'Holocaust', 'Diplomacy', and 'Strategy'. These would not be equivalent to a general WWII course, resulting in a major penalty.",
+          "score": 2
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Most exhaustive (well over 100). Stays largely within equivalent-title space (WWII/Second World War/1939–1945 + framing like overview, survey, course, beginner/advanced). Minor issues: a few awkward/possibly broader framings (e.g., “World War II: Major Battles and Campaigns”, “Key Events and Timeline”) could be interpreted as narrower sub-courses, and “The WWII War” is redundant, but overall best coverage and adherence.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Solid set with good variant coverage (WWII/WW2/Second World War/2nd, date-range variants, intro/overview/survey, levels). Mostly equivalent and avoids clear scope shifts. Not exhaustive (under 100) and includes a couple slightly off/awkward items (e.g., lowercase duplicates; “World War II: The War of 1939–1945” is fine but some “global conflict” titles could be slightly broader-styled yet still essentially WWII).",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Large list with many safe paraphrases and format variants (WW II, W.W.II, dates, course/series labels, levels). However it includes several items that drift into programmatic packaging rather than titles (“Module/Track/Pathway/Certification/Training”) and a few potentially ambiguous/broader-sounding ones (“The Second World War Era”, “World at War”) that could denote a broader 1930s–40s period course. Still mostly compliant.",
+          "score": 7.4
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Generally clean equivalents and includes required variants. But it’s relatively repetitive (many near-duplicates like “History of …” permutations) and not exhaustive (well under 100). Also includes the base title itself, which is unnecessary for an alternatives list (not prohibited, but reduces utility).",
+          "score": 6.9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Reasonable variety and includes key expected forms plus some punctuation variants (W.W.II). Still under 100 and includes some awkward/incorrect constructions (“The World War II”) and packaging-like titles. Less systematic/exhaustive than A/D/E.",
+          "score": 6.6
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Contains multiple non-equivalent or ambiguous titles that violate the prompt: “The Great Patriotic War” (specifically USSR vs Germany, narrower/region-specific), “Pacific War”/“War in the Pacific” (narrower theater), “World War II Holocaust”/“and the Holocaust” (narrower thematic focus), “World War II Europe/Atlantic” (narrower theaters). Also includes “Second Great War” and “The World at War” which are ambiguous. Despite being long, it fails the same-meaning constraint.",
+          "score": 3.5
+        }
+      ]
+    }
+  ],
+  "taskId": "alternative-titles",
+  "testCaseId": "en-world-war-2-1"
+}
