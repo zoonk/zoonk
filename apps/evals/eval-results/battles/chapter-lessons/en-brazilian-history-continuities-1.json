@@ -1,0 +1,149 @@
+{
+  "expectations": "\n      - MUST be in US English\n      - Should break down each thematic continuity into separate lessons\n      - Should cover slavery's legacy aspects individually\n      - Should separate political, economic, and social themes into distinct lessons\n      - Should NOT create dedicated lessons teaching about museums, monuments, or public history (neighboring chapter \"Public history and collective memory\" covers that) — brief contextual references are fine\n      - Should NOT create dedicated lessons teaching comparative parallels with other countries (neighboring chapter \"Brazil in comparative perspective\" covers that) — brief contextual references are fine\n      - Should NOT create dedicated lessons teaching career advice or academic pathways (neighboring chapter \"Careers in Brazilian history and related fields\" covers that) — brief contextual references are fine\n\n      \n  - Each lesson should cover a SINGLE, SPECIFIC concept that can be explained within 10 short tweets\n  - Break down topics into the smallest, most manageable units possible, so that each lesson can be learned in 2-3 minutes\n  - If a topic is too broad, split it into multiple lessons\n  - Each lesson should be extremely focused on a SINGLE concept\n  - If a lesson is too broad, split it into multiple lessons\n  - If you find yourself using \"AND\", \"OR\", or \"VS\" in a title, you should split it into separate lessons\n  - Lesson titles should be short and specific to the exact concept covered\n  - Build a logical progression from basic to advanced concepts\n  - Ensure lessons build on knowledge from previous lessons\n  - Focus lessons for this specific chapter, not the entire course\n  - Don't include summary or review lessons. For example, do NOT create a lesson title \"Summary of Key Concepts\" or \"Review of Chapter\"\n  - Don't include assessment or quiz lessons\n  - Don't include final project or capstone lessons\n  - Should follow the language specified by language parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Descriptions should be concise and straight to the point, no fluff/filler words (avoid \"learn\", \"understand\", \"explore\", \"introduction to\", etc.)\n  - You don't need to evaluate the output format here, just focus on the lesson content quality\n  - Include an extensive list of lessons to cover all the concepts needed to learn the chapter. Complex topics will usually requiere more than 100 lessons\n\n  Things to check:\n  - Is each lesson too broad? If so, it should be broken down further\n  - Can each concept be explained in 10 short tweets or less? If not, it should be broken down\n  - Does each lesson focus on a single specific concept? If not, it should be split\n  - Does it have lessons that don't belong in this chapter? If so, they should be removed\n\n    ",
+  "judgedAt": "2026-02-22T03:09:43.611Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model G produces the most extensive list (126 lessons) with exceptional granularity and single-concept focus. It covers all four long-run themes thoroughly: slavery's legacies are broken into dozens of lessons (Atlantic slave trade, plantation vs urban slavery, manumission, quilombos, everyday resistance, abolition process, post-abolition exclusion mechanisms like sharecropping, vagrancy laws, whitening ideology, racial democracy ideology, colorism, racial wage gaps, affirmative action, etc.). State capacity is decomposed into extractive/administrative/coercive/infrastructural capacity, plus specific institutions (DASP, labor courts, Petrobras, BNDES, regulatory agencies, audit courts). Inequality covers land concentration, Gini coefficient, regional inequality, urbanization, favelas, education, health, social security, minimum wage, Bolsa Família, taxation. Democracy cycles are broken into detailed episodes and mechanisms (suffrage expansion, literacy exclusion, voto de cabresto, secret ballots, each major constitutional moment, AI-5, abertura, Diretas Já, coalition presidentialism, judicialization, both impeachments). It also has a strong conceptual framework section (path dependence, critical junctures, institutional layering/drift/conversion, counterfactuals). Titles are concise, rarely use 'and/or/vs', and descriptions are tight. It respects neighboring chapter boundaries well. The interconnection lessons at the end tie themes together without being summary lessons. Minor issues: a few lessons might be slightly abstract/theoretical (institutional drift, institutional conversion, policy feedback effects) but these are valid analytical concepts for the chapter. Some descriptions could be slightly more concise. Overall, this is the most comprehensive and well-structured output.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model D provides 86 lessons with very good granularity and conceptual sophistication. It has strong coverage of analytical frameworks (path dependence, critical junctures, gradual change mechanisms, counterfactuals) and all four themes. Slavery coverage includes capital formation, property rights, racial hierarchy, abolition without land reform, coercion after abolition, myths masking inequality, schooling gaps, labor market stratification, racialized policing. State capacity covers extraction, coercion, administrative legibility, territorial integration, clientelism, federalism, elite pacts, bureaucratic staffing. Inequality includes land concentration, regional roots, urban segregation, income vs wealth inequality, measuring categories, health, education, formalization divide, redistribution limits. Democracy covers cycles, electoral vs liberal democracy, exclusion tools, voting rights, party realignments, constitutional moments, states of exception, legitimacy breakdown, accountability shocks, judiciary as actor, coalition governance. It also includes good cross-cutting lessons (commodity dependence, macroeconomic crises, frontier expansion, internal migration, crime as political driver, uneven incorporation). Titles are concise and focused. Some lessons are slightly abstract (e.g., 'Evidence for continuity', 'Normative vs analytical claims') and border on historiography/methodology rather than chapter content, but these are minor. Neighboring chapter awareness is good. Slightly less extensive than Model G but still very strong.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model B provides 61 lessons with good coverage of all four themes. Slavery coverage includes scale, plantation economy, abolition process, legal status, wage labor transition, contract labor/immigration, land concentration, racial classification, Afro-Brazilian culture, maroon communities, demographics, violence/policing, credit access. State capacity covers definition, fiscal capacity, taxation, bureaucracy, civil registration, judicial enforcement, coercive capacity, military, police, territorial integration, infrastructure, patronage, centralization, local autonomy. Inequality covers income distribution, Gini, racial wealth gap, regional disparities, urban-rural, informal labor, education, health, intergenerational mobility, land reform, social policy, taxation/redistribution. Democracy covers suffrage, oligarchic republic, Vargas centralization, 1945 democratization, 1964 coup, military regime, redemocratization, 1988 Constitution, party fragmentation, clientelism, impeachment, social movements, judicialization, corruption scandals. Cross-cutting lessons connect themes well. However, some lessons are somewhat broad (e.g., 'Military regime features' could be split; 'Social movements and democratization' uses 'and'). The title 'Contract labor and immigration' uses 'and'. A few descriptions are longer than ideal. Still, it's a solid output with reasonable granularity. Less extensive than Models G and D but covers the material competently.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model E provides 44 lessons. Coverage is decent but notably less granular than the top models. Several lessons are too broad: 'Slavery as a Foundational Institution' tries to cover economy, demographics, and social hierarchy in one lesson; 'Dictatorship and Abertura' combines the entire military regime with the opening process; 'Redemocratization and the 1988 Constitution' combines two major topics; 'Continuity vs. Change in Brazilian History' uses 'vs.' in the title (explicitly prohibited). Multiple titles use 'and': 'Continuity vs. Change', 'Redemocratization and the 1988 Constitution'. Some descriptions use forbidden words like 'understanding' (in 'What Are Long-Run Themes'). The chapter asks for 100+ lessons for complex topics, and 44 is well short of that. Slavery's legacies get only about 6 dedicated lessons. State capacity gets about 9. Democracy cycles get about 11. Inequality gets about 10. Many of these could be broken down further. The progression is logical and the content is accurate. No significant neighboring chapter violations. But the lack of granularity is a notable weakness given the explicit instructions.",
+          "score": 5.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model C provides only 40 lessons, which is the second-fewest. Many lessons are too broad and violate single-concept rules: 'Colonial Foundations and Their Lasting Imprint' covers extractive economy, slave labor, and weak institutions; 'Slave Labor Across Economic Cycles' covers sugar, gold, coffee, and domestic labor; 'Authoritarian Rule Under the Military Regime' covers repression, economic policy, and institutional arrangements. Several titles and descriptions contain 'and': 'Colonial Foundations and Their Lasting Imprint', 'Slave Labor Across Economic Cycles'. The last two lessons ('Interconnections Among Long-Run Themes' and 'Scale and the Long Run') border on summary/review. Descriptions are longer than ideal and sometimes contain fluff. The chapter description mentions slavery's legacies getting only ~9 lessons, state capacity ~7, inequality ~7, and democracy ~12. These are insufficient for full mastery. However, the content is accurate and the progression is logical. It correctly avoids neighboring chapter content. But the granularity falls well short of requirements.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model A provides 40 lessons with reasonable topic selection but insufficient granularity. Coverage is thin: slavery's legacies get about 10 lessons, state capacity about 10, inequality about 8, and democracy about 12. Many lessons could be split further. Some titles are somewhat broad: 'Institutionalized Racial Disparities' could cover many subtopics; 'Institutional Fragility' is vague. The progression is logical and content is accurate. Descriptions are concise. No 'and/or/vs' violations in titles. Neighboring chapter awareness is good. However, 40 lessons is far too few for the requested extensive coverage. Missing topics include: specific abolition laws, immigration policy, whitening ideology, specific state institutions (BNDES, Petrobras), specific constitutional provisions, specific social programs, gender dimensions, health disparities, land reform attempts, urbanization effects, and many others. The lesson on 'Sesmarias' is good granularity, but this level of specificity is not maintained throughout.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model F provides only 28 lessons, the fewest of all models. This is drastically insufficient for a chapter requiring extensive coverage. The prompt explicitly suggests complex topics may need 100+ lessons. Major gaps: state capacity gets only about 5 lessons; inequality gets about 5; democracy gets about 9; slavery's legacies get about 6. Missing entirely or barely covered: immigration policy, specific abolition laws, quilombos, Afro-Brazilian culture, whitening ideology, specific state institutions, land reform, social programs like Bolsa Família, gender dimensions, health disparities, judicialization, specific constitutional provisions, urbanization in depth, analytical frameworks (path dependence, critical junctures). Some lessons are too broad: 'Modern Institutional Racism' is very vague; 'Democratic Institutional Resilience' is abstract and broad. The content that is present is accurate and well-written. Titles are concise. No major 'and/or/vs' violations. Neighboring chapter awareness is good. But the extreme lack of coverage is the dominant weakness.",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model G is exceptional. It perfectly followed all instructions, including the strict negative constraint to avoid 'AND', 'OR', and 'VS' in lesson titles. Furthermore, it successfully met the 'extensive' requirement by providing a highly granular list of 121 lessons, matching the prompt's note that complex topics require over 100 lessons. The descriptions are concise and completely free of fluff.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model A followed the strict negative constraints perfectly, successfully avoiding 'AND', 'OR', and 'VS' in its lesson titles. It also avoided fluff words. However, it only generated 40 lessons, falling somewhat short of the prompt's request for an extremely granular and extensive list (which explicitly mentioned more than 100 lessons).",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model F correctly followed the negative constraints regarding forbidden words and title formatting (no 'AND', 'OR', 'VS'). However, it generated a mere 28 lessons, which fails the core instruction to provide an extensive, granular list covering a complex chapter.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model D did a great job attempting to be extensive, generating 96 lessons. However, it failed a critical negative constraint: it repeatedly used 'AND' and 'VS' in its lesson titles (e.g., 'Slavery and capital formation', 'Normative vs analytical claims'). The prompt explicitly instructed to split these into separate lessons. This warrants a heavy penalty.",
+          "score": 4.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model B failed the critical negative constraint regarding lesson titles. It included 'AND' in multiple titles (e.g., 'Contract labor and immigration', 'Taxation and redistribution'), completely ignoring the instruction to split such topics. It provided 60 lessons, which is adequately extensive, but the rule violation drops its score significantly.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model C failed the critical negative constraint by repeatedly using 'AND' and 'VS' in lesson titles (e.g., 'Democracy and Authoritarianism', 'National vs. Local Perspectives'). It also only generated 41 lessons, falling short of the extensiveness requirement.",
+          "score": 3.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model E failed the critical negative constraint, utilizing 'VS' and 'AND' in its titles (e.g., 'Continuity vs. Change in Brazilian History', 'Dictatorship and Abertura'). Furthermore, it provided only 44 lessons, lacking the required extensive granularity.",
+          "score": 3.5
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Most granular and extensive while staying tightly within the chapter’s four themes (slavery’s legacies, state capacity, inequality, democracy cycles) plus continuity/turning-point analytic tools. Titles largely avoid banned words and avoid AND/OR/VS. Strong single-concept decomposition (e.g., distinct slavery mechanisms, distinct state-capacity subcomponents, distinct democracy-cycle mechanisms). Only minor scope creep/over-specificity in a few contemporary-policy items (e.g., Real Plan, specific impeachments) but still defensible as democracy-cycle/state-capacity turning points.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Very strong micro-lesson granularity and single-concept discipline; clean separation of political/economic/social mechanisms and lots of conceptual “how historians reason” lessons that fit the chapter’s continuity/turning-point framing. Avoids neighboring-chapter topics. Main weakness: less Brazil-specific content than ideal in places (more general political-science vocabulary), and it’s not as comprehensive on concrete Brazil cases within each theme as the best entry.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Good coverage across all required themes and decent separation of subtopics (slavery scale, abolition, post-abolition credit barriers; multiple state-capacity dimensions; multiple inequality dimensions; multiple democracy-cycle elements). However, many lessons are still too broad for 2–3 minutes (e.g., “Military regime features,” “Social policy expansion,” “Corruption scandals and political crises”), and some titles/descriptions bundle multiple concepts. Not very “extensive” relative to the prompt’s 100+ expectation.",
+          "score": 7.7
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Stays within scope and has several well-chosen Brazil-specific concepts (coronelismo, sesmarias, 1850 Land Law, Moderating Power, 1988 Constitution). But it’s far from extensive, and multiple lessons are broad/abstract (e.g., “Institutional Fragility,” “Top-Down Social Change”). Some slavery-legacy coverage is thin compared with requirements (few distinct aspects).",
+          "score": 7.1
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Generally on-scope and fairly concise, with some good single concepts (AI’s not present; but items like Institutional Acts, coronelismo, patrimonialism). Still not extensive and leaves major gaps (limited state-capacity breakdown; inequality mechanisms are thin; democracy cycles are sketched). A few titles/descriptions drift broad (“Democratic Institutional Resilience,” “State Fiscal Capacity Evolution”).",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Readable and mostly accurate, but lessons are consistently too broad (often multiple mechanisms, long time spans, or several examples in one lesson) and not very granular. Includes some arguably over-specific contemporary political events (Jan 8, 2023) that can exceed chapter scope depending on course level, and ends with meta-lessons (“Interconnections…”, “Scale…”) that start to resemble summary/synthesis rather than single concepts.",
+          "score": 6.2
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Covers the main themes but is the least compliant with the prompt’s constraints: repeated use of banned phrasing (“What Are…”, “Defining…”, “debate”), several titles include “vs” (“Continuity vs. Change”) violating the explicit title rule, and many lessons bundle multiple concepts (e.g., “Redemocratization and the 1988 Constitution,” “Dictatorship and Abertura”). Not extensive enough and includes quasi-summary/historiography lessons that drift from the requested micro-scope.",
+          "score": 4.9
+        }
+      ]
+    }
+  ],
+  "taskId": "chapter-lessons",
+  "testCaseId": "en-brazilian-history-continuities-1"
+}

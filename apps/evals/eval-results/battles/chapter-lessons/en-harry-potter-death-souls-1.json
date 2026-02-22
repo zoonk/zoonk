@@ -1,0 +1,149 @@
+{
+  "expectations": "\n      - MUST be in US English\n      - Should cover each Horcrux-related concept separately\n      - Should distinguish between Deathly Hallows and Horcruxes as separate topics\n      - Should break down moral and philosophical implications as individual lessons\n      - Even though this is pop culture, lessons should still be focused and granular\n      - Should NOT create dedicated lessons teaching Legilimency, Occlumency, or mind magic (neighboring chapter \"Magic: Mind Arts\" covers that) — brief contextual references are fine\n      - Should NOT create dedicated lessons teaching time-turners or time magic (neighboring chapter \"Magic: Time and Paradox\" covers that) — brief contextual references are fine\n      - Should NOT create dedicated lessons teaching protective wards or the Fidelius Charm (neighboring chapter \"Magic: Wards and Secret-Keeping\" covers that) — brief contextual references are fine\n      - Should NOT create dedicated lessons teaching curse-breaking techniques (neighboring chapter \"Magic: Curses and Curse-Breaking\" covers that) — brief contextual references are fine\n\n      \n  - Each lesson should cover a SINGLE, SPECIFIC concept that can be explained within 10 short tweets\n  - Break down topics into the smallest, most manageable units possible, so that each lesson can be learned in 2-3 minutes\n  - If a topic is too broad, split it into multiple lessons\n  - Each lesson should be extremely focused on a SINGLE concept\n  - If a lesson is too broad, split it into multiple lessons\n  - If you find yourself using \"AND\", \"OR\", or \"VS\" in a title, you should split it into separate lessons\n  - Lesson titles should be short and specific to the exact concept covered\n  - Build a logical progression from basic to advanced concepts\n  - Ensure lessons build on knowledge from previous lessons\n  - Focus lessons for this specific chapter, not the entire course\n  - Don't include summary or review lessons. For example, do NOT create a lesson title \"Summary of Key Concepts\" or \"Review of Chapter\"\n  - Don't include assessment or quiz lessons\n  - Don't include final project or capstone lessons\n  - Should follow the language specified by language parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Descriptions should be concise and straight to the point, no fluff/filler words (avoid \"learn\", \"understand\", \"explore\", \"introduction to\", etc.)\n  - You don't need to evaluate the output format here, just focus on the lesson content quality\n  - Include an extensive list of lessons to cover all the concepts needed to learn the chapter. Complex topics will usually requiere more than 100 lessons\n\n  Things to check:\n  - Is each lesson too broad? If so, it should be broken down further\n  - Can each concept be explained in 10 short tweets or less? If not, it should be broken down\n  - Does each lesson focus on a single specific concept? If not, it should be split\n  - Does it have lessons that don't belong in this chapter? If so, they should be removed\n\n    ",
+  "judgedAt": "2026-02-22T03:10:00.380Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model F delivers an excellent, highly granular lesson list of 91 lessons. Each lesson is tightly focused on a single concept. Titles are concise and avoid 'AND/OR/VS' (with rare exceptions like 'Fear of death: Motivator' which is fine). The progression is logical: it starts with death/soul foundations, moves through Horcrux mechanics in great detail (creation process broken into tear→sever→encase, each specific Horcrux vessel with individual lessons, influence mechanics, destruction methods), then covers Deathly Hallows individually, and finishes with moral/philosophical implications. The descriptions are concise, no-fluff, and avoid forbidden words like 'learn/understand/explore'. It respects neighboring chapter boundaries — no dedicated lessons on Legilimency, time-turners, wards, or curse-breaking. The individual Horcrux lessons (diary purpose, diary writing channel, diary persona construct, diary life siphon; ring trap design, ring curse backlash; locket wearable vector, locket mood dampening; etc.) show exceptional granularity. The moral/philosophical implications are broken into separate focused lessons (empathy erosion, cruelty normalization, people as tools, fixation narrows morality, mortality fosters compassion, legacy over persistence). Coverage is comprehensive. Minor issues: some lessons could arguably be split further, but overall this is the most thorough and well-structured output.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model A provides 80 lessons with excellent granularity and single-concept focus. The progression is logical, moving from foundational concepts (deathly magic scope, body death, soul definition) through Horcrux mechanics, influence dynamics, destruction, then Deathly Hallows, and finally moral/philosophical implications. Titles are concise and focused. Descriptions are brief and to-the-point without fluff words. The lesson on Horcrux influence is well broken down (passivity, influence, vulnerability, escalation). The moral/philosophical section is particularly strong with nuanced concepts (moral narrowing, permanence bias, identity reframing, shadow self continuation, dehumanization feedback loop). It respects neighboring chapter boundaries. However, it doesn't break down individual Horcrux objects (diary, ring, locket, cup, diadem, Nagini, Harry) into separate lessons, which is a notable gap in coverage. The 'Remorse vs Regret' title uses 'VS' which violates the rules. Some lessons in the moral section could be seen as somewhat abstract/overlapping.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model C provides 64 lessons with good coverage and logical progression. It covers individual Horcrux objects (diary, ring, locket, cup, diadem, Nagini, Harry) as separate lessons, which is a strength. It includes relevant topics like the Philosopher's Stone, ghosts, the Veil, Priori Incantatem, and sacrificial protection. Descriptions are generally concise. However, there are several issues: the title 'Horcruxes Versus Hallows: Two Paths to Immortality' uses 'Versus' which violates the rules. Some descriptions use slightly fluffy phrasing. The lesson 'Lily's Sacrifice: Love as Lethal Magic' and 'Love as the Ultimate Counter to Deathly Magic' border on overlapping. The overall granularity is moderate — not as finely broken down as Models F or A, but still solid. It respects neighboring chapter boundaries. The moral/philosophical section is present but less extensively broken down than Models F or A.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model B provides 42 lessons, which is below the expected extensiveness for this chapter. The task expectations suggest complex topics may need 100+ lessons, and while that's not always necessary, 42 feels thin. Several lessons are too broad: 'Voldemort's Seven Horcruxes: The Strategy' tries to cover all seven in one lesson, 'The Elder Wand: Power and Allegiance' combines two concepts (violating the AND rule implicitly), 'Comparing Wizarding Approaches to Extended Life' is very broad. Some titles contain colons with subtitles that combine concepts. Descriptions occasionally use slightly fluffy language. However, the content is accurate, the progression is logical, and it covers the major topics. It includes good contextual elements like ghosts, King's Cross, the Philosopher's Stone comparison. It respects neighboring chapter boundaries. The moral/philosophical coverage is present but not deeply granular.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model E provides 38 lessons. While each lesson is reasonably focused, the total count is low for comprehensive coverage. Some lessons venture beyond the chapter's scope into speculative territory not well-grounded in the Harry Potter canon: 'Inequality from selective immortality,' 'Political consolidation through extended life,' 'Legal prohibitions related to immortality,' 'Cultural responses to immortality seekers,' 'Generational consequences of longevity,' 'Responsibility toward the resurrected' — these feel like generic philosophy/ethics lessons rather than Harry Potter-specific content. The chapter description says 'how immortality attempts reshape morality,' but these lessons are too abstract and sociological. It also doesn't cover individual Horcrux objects at all. The Deathly Hallows section is adequate but not deeply granular. On the positive side, each lesson is single-concept focused, descriptions avoid fluff, and it doesn't violate neighboring chapter boundaries. The 'Invisibility Cloak inheritance' lesson has some overlap with neighboring 'Enchanted Objects' chapter.",
+          "score": 5.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model D provides only 27 lessons, which is far too few for comprehensive coverage of this chapter. Many important topics are missing: no individual Horcrux object lessons (diary, ring, locket, cup, diadem, Nagini, Harry), minimal coverage of Horcrux influence mechanics, no discussion of Horcrux hunting strategy, very thin Deathly Hallows coverage (no individual deep dives), minimal moral/philosophical exploration. The lessons that exist are well-focused and concise. 'Unicorn Blood' and 'The Cursed Half-Life' are relevant additions. However, the lesson list is far from extensive and fails the requirement to 'cover everything in the chapter description.' The moral implications of immortality — a key part of the chapter description — get only one lesson ('Accepting Death as True Mastery'). This is the second-least comprehensive output.",
+          "score": 4.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model G provides only 28 lessons, making it one of the least comprehensive outputs. Coverage is thin across all areas. Horcrux mechanics get only basic treatment with no individual object lessons. The Deathly Hallows section is minimal. Moral/philosophical implications get just 3 lessons. The Elixir of Life and Unicorn Blood sections, while relevant, take up space that could have been used for deeper Horcrux/Hallows coverage. Some descriptions are vague: 'The first Hallow' assumes reader knowledge of ordering. 'Fragmented Souls in Limbo' is somewhat vague in description. The lesson list fails to be 'extensive' as required. On the positive side, individual lessons are reasonably focused on single concepts, descriptions are concise, and it doesn't violate neighboring chapter boundaries. But the severe lack of granularity and completeness is a major issue.",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model F flawlessly followed all positive and negative constraints. It produced an incredibly extensive and granular list (90 lessons) that perfectly breaks down each specific concept so it can be taught in 2-3 minutes. It strictly avoided the prohibited words 'AND', 'OR', and 'VS' in the titles, while keeping the descriptions concise and free of fluff. It perfectly balanced the scope, deeply exploring Horcruxes, Hallows, and the moral implications of immortality without drifting into neighboring chapters.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model D followed the strict negative constraints perfectly by avoiding 'AND', 'OR', 'VS' in the titles and keeping descriptions concise and fluff-free. However, it failed to provide an 'extensive' list, offering only 27 lessons. This lack of extreme granularity caused it to miss the depth requested for complex topics. It also slightly strayed from the chapter's core focus by including lessons on the Philosopher's Stone and Unicorn Blood.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model G is very similar to Model D. It adhered to the strict title constraints (no 'AND', 'OR', 'VS') and provided concise descriptions. However, with only 28 lessons, it failed the instruction to provide an extensive, highly granular list. It also included broader immortality topics (Elixir of Life, Unicorn Blood) that were less focused on the specific chapter description.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model A provided excellent content, offering a very extensive and granular list (80 lessons) that brilliantly explored the metaphysical and moral implications of the chapter. However, it explicitly violated the top penalty criteria by using the forbidden word 'vs' in multiple titles (e.g., 'Remorse vs Regret', 'Avoidance vs Acceptance'). As per the prompt's strict rules, this violation results in a heavy penalty, placing it below less comprehensive models that followed the rules.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model C offered a good level of detail (63 lessons) but violated the strict formatting constraints by including 'and' and 'Versus' in multiple lesson titles (e.g., 'Soul Integrity and Its Fragility', 'Myth Versus Reality'). It incurs a heavy penalty for ignoring the top penalty criteria.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model B provided 42 lessons, which is somewhat lacking in granularity, but more importantly, it repeatedly violated the title constraints by using 'vs.' and 'and' across multiple titles (e.g., 'Shades vs. True Resurrection', 'Acceptance of Death vs. Fear of Death').",
+          "score": 4.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model E struggled with the granularity requirement (only 38 lessons) and violated the strict title constraints by using 'and' and 'versus' in its titles (e.g., 'Impact on grieving and closure', 'Narrative motif: acceptance versus defiance'). It falls to the bottom of the rankings due to breaking rules and lacking depth.",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Most granular and extensive while staying on-chapter: clear separation of Horcruxes vs Hallows, many single-concept Horcrux sub-lessons (creation preconditions, vessel choice variants, influence mechanisms, destruction conditions, remorse). Generally avoids neighboring-chapter topics as dedicated lessons. Minor issues: a few titles use colons (fine) and some concepts verge on interpretive speculation (“fragment nourishment”), but overall best adherence to the micro-lesson constraint and progression.",
+          "score": 9.1
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Very strong single-concept discipline and good breadth across souls, Horcrux mechanics, Hallows, and moral reshaping. Stays largely within scope and avoids forbidden neighboring topics. Weaknesses: not as extensive as required (prompt suggests 100+ lessons for complex topics), and a handful of lessons become abstract/overlapping (“Symbol vs Mechanism,” “Identity Reframing”) rather than the smallest possible units; one title includes “vs” (“Remorse vs Regret”) violating the title rule.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Good coverage and decent granularity, including individual Horcruxes and multiple Hallows lessons, plus moral implications. However several lessons are too broad (e.g., “Dumbledore's Horcrux Detection Strategy,” “Love as the Ultimate Counter to Deathly Magic,” “Immortality as the Central Moral Conflict”) and it edges into neighboring-chapter territory with “memory analysis” as a key mechanism. Still generally accurate and on-scope, but not extensive enough.",
+          "score": 7.7
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Accurate high-level coverage and clear separation of Horcruxes and Hallows, but lesson scopes are often too broad for 2–3 minutes (e.g., “Voldemort's Seven Horcruxes: The Strategy,” “Comparing Wizarding Approaches to Extended Life,” “Mortality as the Series' Central Moral Argument”). Also includes significant non-chapter expansion (Philosopher’s Stone as a major comparison axis; extended character/plot-specific analyses). Not extensive enough and violates the granularity requirement repeatedly.",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Has some good single concepts early and distinguishes Hallows from Horcruxes, but drifts into generalized sociology/politics (“Inequality from selective immortality,” “Political consolidation through extended life,” “Generational consequences of longevity”) that go well beyond the chapter description and HP-canon framing. Also insufficient granularity on Horcrux specifics (few lessons) and not extensive.",
+          "score": 6.1
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Concise and mostly single-concept, but far from “extensive” and misses many Horcrux-specific subtopics (influence, vessel choice nuance, multiple Horcrux strategy, accidental Horcrux). Includes dubious/fabricated specificity (“The Horcrux Incantation”) and some overstated claims (“no spell can reawaken the dead” framed as a universal law). Limited moral/philosophical breakdown.",
+          "score": 5.4
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Too short and high-level; not remotely extensive. Several items are broad (“Mortality as a Moral Framework”) and some are inaccurate/overstated (“eternal state of suffering” for fragmented souls; “only known process” phrasing). Minimal moral/philosophical granularity and limited Horcrux/Hallows separation detail compared to stronger outputs.",
+          "score": 4.9
+        }
+      ]
+    }
+  ],
+  "taskId": "chapter-lessons",
+  "testCaseId": "en-harry-potter-death-souls-1"
+}

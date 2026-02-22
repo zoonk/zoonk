@@ -1,0 +1,149 @@
+{
+  "expectations": "\n      - MUST be in US English\n      - Should separate stylized facts from theoretical models\n      - Should cover each type of indicator individually\n      - Should distinguish business cycle measurement from theory\n      - Should NOT create dedicated lessons teaching GDP measurement or national accounts (neighboring chapter \"Macroeconomic statistics\" covers that) — brief contextual references are fine\n      - Should NOT create dedicated lessons teaching money supply or quantity theory of money (neighboring chapter \"Money and inflation\" covers that) — brief contextual references are fine\n      - Should NOT create dedicated lessons teaching IS-LM or aggregate demand/supply models (neighboring chapter \"Short-run macro frameworks\" covers that) — brief contextual references are fine\n      - Should NOT create dedicated lessons teaching consumption theory or life-cycle models (neighboring chapter \"Consumption in macroeconomics\" covers that) — brief contextual references are fine\n\n      \n  - Each lesson should cover a SINGLE, SPECIFIC concept that can be explained within 10 short tweets\n  - Break down topics into the smallest, most manageable units possible, so that each lesson can be learned in 2-3 minutes\n  - If a topic is too broad, split it into multiple lessons\n  - Each lesson should be extremely focused on a SINGLE concept\n  - If a lesson is too broad, split it into multiple lessons\n  - If you find yourself using \"AND\", \"OR\", or \"VS\" in a title, you should split it into separate lessons\n  - Lesson titles should be short and specific to the exact concept covered\n  - Build a logical progression from basic to advanced concepts\n  - Ensure lessons build on knowledge from previous lessons\n  - Focus lessons for this specific chapter, not the entire course\n  - Don't include summary or review lessons. For example, do NOT create a lesson title \"Summary of Key Concepts\" or \"Review of Chapter\"\n  - Don't include assessment or quiz lessons\n  - Don't include final project or capstone lessons\n  - Should follow the language specified by language parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Descriptions should be concise and straight to the point, no fluff/filler words (avoid \"learn\", \"understand\", \"explore\", \"introduction to\", etc.)\n  - You don't need to evaluate the output format here, just focus on the lesson content quality\n  - Include an extensive list of lessons to cover all the concepts needed to learn the chapter. Complex topics will usually requiere more than 100 lessons\n\n  Things to check:\n  - Is each lesson too broad? If so, it should be broken down further\n  - Can each concept be explained in 10 short tweets or less? If not, it should be broken down\n  - Does each lesson focus on a single specific concept? If not, it should be split\n  - Does it have lessons that don't belong in this chapter? If so, they should be removed\n\n    ",
+  "judgedAt": "2026-02-22T03:09:36.663Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model D provides the most comprehensive and granular lesson list (90 lessons) while maintaining excellent single-concept focus throughout. It covers all major areas of the chapter description thoroughly: stylized facts (with individual lessons for each variable's cyclicality), co-movements, detrending methods, measurement tools, and leading/lagging/coincident indicators with individual examples. The titles are concise and focused—almost none use 'AND', 'OR', or 'VS'. Descriptions are terse and to the point without filler words. The logical progression is strong: it moves from basic definitions → measurement concepts → detrending → statistical tools → cyclicality of individual variables → financial indicators → sectoral differences → indicator types → composite indexes → specific leading indicators → evaluation concepts → international facts. It respects neighboring chapter boundaries well (no dedicated lessons on IS-LM, GDP measurement, consumption theory, etc.) while making appropriate contextual references. Minor issues: 'Persistence and autocorrelation' in the title uses 'and' (should be split), and a couple of descriptions could be slightly more concise. The granularity is excellent—individual lessons for durables vs. nondurables, inventories, different spreads, different sentiment measures, etc.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model G provides a very extensive list (roughly 95 lessons) with strong granularity and logical progression. It covers stylized facts, co-movements, and leading indicators thoroughly with individual lessons for each concept. The progression is well-structured, moving from definitions through measurement to specific facts and indicators. It respects neighboring chapter boundaries appropriately. Individual variable cyclicalities are covered well. It includes useful concepts like markup cyclicality, worker flows, vacancy postings, and freight volumes that other models miss. However, there are some issues: several titles use repetitive prefixes like 'A leading-indicator category:' and 'A co-movement fact:' which makes titles less clean. Some descriptions start with 'A stylized fact that...' or 'A leading-indicator category:' which adds slight filler. The title 'Levels vs growth rates in cycle analysis' uses 'vs'. Some lessons feel slightly redundant (e.g., 'Co-movements: overview' followed by individual co-movement lessons). Despite these formatting concerns, the content coverage is excellent and the granularity is appropriate.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model B provides a solid list of about 45 lessons with good coverage of the chapter's scope. It covers detrending methods well (HP filter, band-pass, Baxter-King, linear detrending), includes NBER chronology, and addresses individual variable cyclicalities. It covers leading indicators with specific examples (term spread, stock market, money/credit, initial claims, building permits, surveys, new orders). It includes useful topics like forecast evaluation metrics, Granger causality, principal components, and international synchronization. However, the list is notably shorter than Models D and G, missing some granularity the prompt requests. The title 'Peak and trough' uses 'and' and should be split. 'Persistence and autocorrelation' also uses 'and'. 'Money and credit as leading indicators' uses 'and'. 'Leading versus coincident versus lagging' uses 'versus'. Some descriptions are slightly too long. The lesson 'Money and credit as leading indicators' could border on neighboring chapter territory but is handled as a leading indicator rather than teaching money supply concepts. Overall, good quality but not as extensive as the best outputs.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model F provides about 46 lessons with reasonable coverage. It includes good specific content like NBER dating, Great Moderation, Great Recession, Okun's Law, and various leading indicators. However, there are several violations of the prompt rules: 'Classical Cycles vs. Growth Cycles' uses 'vs'; 'Relative Volatility: Investment vs. Consumption vs. GDP' uses 'vs' twice and combines three concepts; 'Employment and Hours Over the Business Cycle' uses 'and'; 'Leading, Lagging, and Coincident Variables' combines three concepts; 'Consumer and Business Confidence Surveys' uses 'and'; 'Volatility of Government Spending and Net Exports' uses 'and'. Multiple lessons use 'Over the Business Cycle' as a pattern, making descriptions somewhat repetitive. The Great Moderation and Great Recession lessons, while interesting, could be seen as going beyond the chapter's stated scope of 'stylized facts, co-movements, and leading indicators.' Some descriptions use words like 'What...is and how...' which approaches filler language. The list is not as extensive as the top models.",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model E has about 43 lessons with decent topical coverage. However, it has significant prompt rule violations: 'The Four Phases of a Business Cycle' combines four concepts into one lesson; 'Procyclical, Countercyclical, and Acyclical Variables' combines three concepts using 'and'; 'Leading, Coincident, and Lagging Variables' combines three concepts; 'Credit and Money Over the Cycle' uses 'and'; 'Trade and the Business Cycle' is quite broad; 'Net Exports and Capital Flows in Emerging Cycles' uses 'and'. Several descriptions use filler phrases like 'What...is and why...', 'How...is used'. The lesson 'Financial Frictions and Cycle Amplification' starts moving toward theory rather than empirical facts, potentially crossing into neighboring chapter territory. 'Excess Consumption Volatility in Emerging Markets' and 'Net Exports and Capital Flows in Emerging Cycles' add useful emerging market content but the list overall lacks the granularity of top models in core areas. Detrending is covered only by HP filter with no mention of band-pass or other methods. The list is not extensive enough for the chapter's scope.",
+          "score": 6.2
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model C provides only 25 lessons, which is far too few for the chapter's scope. The prompt explicitly states 'complex topics will usually require more than 100 lessons' and asks for an 'extensive' list. While the individual lessons are reasonably well-focused, the coverage is very incomplete. Missing: detrending methods, NBER dating, specific leading indicator examples (only stock market and yield curve mentioned), composite indexes, international facts, many specific variable cyclicalities (no government spending, net exports, inventories, capacity utilization, TFP, etc.), no measurement concepts like cross-correlations, no discussion of cycle asymmetry beyond one lesson, no sentiment indicators, no manufacturing orders, etc. The descriptions are clean and concise, and titles generally follow the rules (no 'and'/'or'/'vs' violations). But the fundamental failure is inadequate extensiveness.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model A provides only 22 lessons, the fewest of all models. This is severely inadequate for the chapter's scope. The coverage is very shallow: only 3 specific leading indicators mentioned (stock prices, building permits, unemployment duration), no detrending methods, no measurement concepts (volatility, cross-correlations), no NBER dating, very few specific variable cyclicalities (only employment and unemployment), no consumption/investment/productivity/real wage cyclicality, no composite indexes, no international facts, no sentiment indicators. While the individual lessons that exist are reasonably well-focused and the descriptions are concise, the list fails the extensiveness requirement dramatically. It barely scratches the surface of the chapter description.",
+          "score": 4.2
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model D perfectly followed all instructions, including the strict negative constraints. It provided an extensive and highly granular list of 89 lessons, breaking down each concept, variable, and indicator into its own lesson. It successfully avoided the prohibited words 'AND', 'OR', and 'VS' in the titles, ensuring each lesson remained strictly single-concept. It properly distinguished stylized facts from theory, avoided overlapping with neighboring chapters, and kept descriptions fluff-free and concise. Exceptional work.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model A followed the formatting constraints and successfully avoided 'AND', 'OR', and 'VS' in the titles. The descriptions are concise and to the point. However, the prompt specifically asked for an 'extensive' list, noting that complex topics usually require many lessons. With only 23 lessons, Model A's breakdown is somewhat superficial and leaves out many specific stylized facts and leading indicators that a more comprehensive list would include.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model C is very similar in quality to Model A. It followed the strict negative constraints, including avoiding 'AND', 'OR', and 'VS' in the titles, and provided concise descriptions. However, it generated only 25 lessons, which falls short of the 'extensive' requirement requested in the prompt. While the content is accurate and well-formatted, it lacks the depth and granularity expected for a complete chapter breakdown.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model G provided a highly extensive list of 94 lessons, showing a deep understanding of the topic and a good attempt at granularity. However, it failed a critical negative constraint: 'If you find yourself using AND, OR, or VS in a title, you should split it into separate lessons.' Titles like 'Levels vs growth rates in cycle analysis' and 'Stock prices and the cycle' violate this rule. Because prompt rule adherence is a top penalty criterion, the score must be significantly reduced despite the comprehensiveness of the content.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model B provided a fairly detailed list but failed the critical negative constraint regarding lesson titles. The prompt explicitly instructed to split lessons if the titles required 'AND', 'OR', or 'VS'. Model B included titles like 'Peak and trough', 'Persistence and autocorrelation', and 'Leading versus coincident versus lagging' (which functions the same as vs). This lack of adherence to strict prompt constraints results in a major penalty.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model E failed the critical negative constraint to avoid 'AND', 'OR', and 'VS' in lesson titles. Titles such as 'Output and Its Long-Run Trend', 'Employment and Hours Over the Cycle', and 'Procyclical, Countercyclical, and Acyclical Variables' violate the instruction to split these into strictly single-concept lessons. Furthermore, some of the titles are formatted as questions rather than standard course sections.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model F failed the top penalty criterion regarding the use of 'AND', 'OR', and 'VS' in titles. Titles like 'Peaks and Troughs', 'Classical Cycles vs. Growth Cycles', and 'Consumer and Business Confidence Surveys' clearly violate the instruction to split such grouped concepts into separate lessons. The failure to adhere to this negative constraint warrants a heavy penalty.",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Most aligned with the chapter scope (stylized facts, co-movements, leading indicators) and provides the most extensive, granular breakdown. Strong separation of measurement concepts (trend/cycle, detrending, correlations, lead-lag) from empirical facts and indicators. Covers many indicator types individually (orders, PMI, sentiment, claims, yield curve, spreads, housing, freight, inventories, etc.) and includes real-time issues (revisions, release lags). Main drawbacks: several titles include prohibited punctuation/wording patterns like “Leading indicators: definition” (colon is fine, but the bigger issue is occasional broader lessons like “Business cycle facts: what they summarize”), and it includes “Money and credit aggregates as leading indicators,” which brushes up against the neighboring “Money and inflation” constraint (though framed as indicator use, not quantity theory). Overall the best fit.",
+          "score": 9.1
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Very granular and fairly comprehensive: strong coverage of measurement (filters, correlations, detrending, log transform), stylized facts across many aggregates, and a substantial leading-indicator section with multiple specific indicator types. Generally stays out of explicit IS–LM/AD–AS theory. Main issues: includes a dedicated “Money growth cyclicality” lesson, which conflicts with the instruction to avoid standalone money-supply content (neighbor chapter). Also less explicit separation between “facts” and “models” (though mostly empirical/measurement), and a few lessons drift toward broader macro/finance topics (tail risk) that may be beyond the chapter description. Still high quality and close to requirements.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Good breadth and decent granularity: includes detrending methods (HP, BK), frequency band, volatility/persistence, a wide set of stylized facts, and several leading indicators plus composite index/PCA and evaluation tools. Also includes NBER chronology (US-specific, appropriate). Key weaknesses: not “extensive” per the prompt expectation (nowhere near 100+ lessons), several lessons bundle multiple concepts (e.g., “Persistence and autocorrelation”), and it includes “Money and credit as leading indicators,” which risks violating the neighboring-chapter restriction. Also some content (forecast evaluation metrics, Granger causality) may be more econometrics than needed for this chapter’s stated scope.",
+          "score": 7.9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Solid coverage of core definitions, stylized facts, co-movement, and a variety of leading indicators. However, multiple titles violate the title rule by using “vs” (\"Classical Cycles vs. Growth Cycles\") and a three-way “Investment vs. Consumption vs. GDP” title; several lessons combine multiple concepts (employment and hours; consumer and business confidence together). Includes “Money Supply as a Leading Indicator,” conflicting with the neighboring money chapter constraint. Not extensive enough.",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Reasonably organized and covers key areas (trend/cycle, HP filter, stylized facts, co-movement, leading indicators). But it repeatedly uses “What is…” and more importantly includes multiple multi-concept lessons (“The Four Phases…”, “Employment and Hours…”, “Procyclical, Countercyclical, and Acyclical Variables”, “Leading, Coincident, and Lagging Variables”). Adds content beyond the chapter description (emerging markets, capital flows, financial frictions) without neighboring-chapter justification. Also includes “Credit and Money Over the Cycle,” which conflicts with the money-chapter avoidance. Not extensive.",
+          "score": 6.2
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Covers only a small set of concepts; far from the required extensive micro-lesson list. Several lessons are fine and single-concept, but it lacks measurement methods, detailed co-movement measurement, and comprehensive indicator coverage. Includes consumption/investment/real wages etc. but at a very surface level. Not compliant with the “extensive” expectation.",
+          "score": 5.4
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Very short list with limited coverage; does not meet the “extensive” requirement. Lacks clear separation of measurement vs facts (almost no measurement content), and indicator coverage is thin (only a few examples). Some titles are acceptable, but overall far too incomplete relative to chapter description and prompt expectations.",
+          "score": 4.7
+        }
+      ]
+    }
+  ],
+  "taskId": "chapter-lessons",
+  "testCaseId": "en-economics-business-cycles-1"
+}

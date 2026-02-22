@@ -1,0 +1,149 @@
+{
+  "expectations": "\n      - MUST be in US English\n      - Should break down networking concepts individually (DNS, HTTP, TLS as separate lessons)\n      - Should separate client-side from server-side concepts\n      - Should cover each protocol and technology as its own lesson\n      - Should not group unrelated concepts (e.g., not \"DNS and HTTP\" but separate lessons)\n      - Should NOT create dedicated lessons teaching browser rendering engines/pipelines (neighboring chapter \"Browsers and rendering pipelines\" covers that) — brief contextual references are fine\n      - Should NOT create dedicated lessons teaching URL parsing or URI components (neighboring chapter \"URL anatomy and addressing\" covers that) — brief contextual references are fine\n      - Should NOT create dedicated lessons teaching HTTP methods, status codes, or headers (neighboring chapter \"HTTP fundamentals\" covers that) — brief contextual references are fine\n\n      \n  - Each lesson should cover a SINGLE, SPECIFIC concept that can be explained within 10 short tweets\n  - Break down topics into the smallest, most manageable units possible, so that each lesson can be learned in 2-3 minutes\n  - If a topic is too broad, split it into multiple lessons\n  - Each lesson should be extremely focused on a SINGLE concept\n  - If a lesson is too broad, split it into multiple lessons\n  - If you find yourself using \"AND\", \"OR\", or \"VS\" in a title, you should split it into separate lessons\n  - Lesson titles should be short and specific to the exact concept covered\n  - Build a logical progression from basic to advanced concepts\n  - Ensure lessons build on knowledge from previous lessons\n  - Focus lessons for this specific chapter, not the entire course\n  - Don't include summary or review lessons. For example, do NOT create a lesson title \"Summary of Key Concepts\" or \"Review of Chapter\"\n  - Don't include assessment or quiz lessons\n  - Don't include final project or capstone lessons\n  - Should follow the language specified by language parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Descriptions should be concise and straight to the point, no fluff/filler words (avoid \"learn\", \"understand\", \"explore\", \"introduction to\", etc.)\n  - You don't need to evaluate the output format here, just focus on the lesson content quality\n  - Include an extensive list of lessons to cover all the concepts needed to learn the chapter. Complex topics will usually requiere more than 100 lessons\n\n  Things to check:\n  - Is each lesson too broad? If so, it should be broken down further\n  - Can each concept be explained in 10 short tweets or less? If not, it should be broken down\n  - Does each lesson focus on a single specific concept? If not, it should be split\n  - Does it have lessons that don't belong in this chapter? If so, they should be removed\n\n    ",
+  "judgedAt": "2026-02-22T03:09:44.147Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model F provides the most comprehensive and well-structured lesson list with 97 lessons. It covers all chapter topics extensively: clients/servers, IP (IPv4/IPv6, public/private, routing, packets, NAT), DNS (hierarchy, root servers, TLD, authoritative, resolver, resolution, caching, TTL, A/AAAA/CNAME/NS/TXT records, propagation, anycast), HTTP/HTTPS (statelessness, request/response - though it treads slightly into neighboring chapter territory here), TLS (confidentiality, integrity, authentication, certificates, chain, CA, expiration, revocation, transparency, ClientHello, ServerHello, key agreement, SNI, ALPN), proxies (forward, reverse, load balancer, transparent, CONNECT tunnel, TLS termination, re-encryption), caching (cache key, freshness, hit/miss, revalidation, stale, browser cache, shared cache, cache busting), cookies (cookie jar, domain scope, path scope, Secure, HttpOnly, SameSite, session, persistent, third-party, sending rules), and CDNs (PoP, edge cache, origin fetch, request routing, anycast, invalidation, reverse proxy, dynamic acceleration). It maintains single-concept focus throughout, avoids 'AND'/'OR'/'VS' in titles, and has concise descriptions. Some lessons like HTTP request/response structure and TCP/UDP may slightly overlap with neighboring chapters, but they're contextual enough. The granularity is excellent - breaking TLS into ClientHello/ServerHello/key agreement, and separating cache hit from cache miss. Minor issues: a few lessons (TCP, UDP, TCP handshake) go beyond the chapter scope into transport layer details not mentioned in the chapter description. Some titles could be slightly more descriptive. Overall the best balance of comprehensiveness, granularity, and adherence to rules.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model D is extremely comprehensive with 126 lessons, meeting the expectation of 100+ lessons. It covers all chapter topics with impressive granularity. DNS coverage is thorough (resolver, recursive resolver, authoritative nameserver, zone, A/AAAA/CNAME/NS/SOA records, TTL, caching, resolution order, reverse DNS, NXDOMAIN, DNS over HTTPS, DNS over TLS, spoofing, DNSSEC). TLS coverage is excellent (confidentiality, integrity, authentication, handshake, TLS 1.3, session resumption, certificates, CA, trust store, certificate chain, root/intermediate certificates, hostname verification, validity period, revocation, CRL, OCSP, OCSP stapling, domain validation). CDN coverage is strong (origin server, edge PoP, edge server, origin fetch, cache warming, latency reduction, traffic absorption, DDoS mitigation, edge computing, request flow, stale content, invalidation). However, there are issues: several lessons go beyond chapter scope (LAN, WAN, ISP, switch, MAC address, ARP, subnet, subnet mask are networking fundamentals not in the chapter description). Some lessons overlap with neighboring chapters (HTTP request, HTTP response, HTTP payload, HTTP request target, 'HTTP as a message protocol' overlap with 'HTTP fundamentals'; tokenization and CORS seem out of scope). The title 'IPv4 vs. IPv6 Format' in the original was a concern but Model D correctly splits them. 'Memory cache' and 'Disk cache' feel like implementation details beyond scope. Despite these scope violations, the overall quality and granularity are very high.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model C provides 42 well-focused lessons. Coverage is good across all chapter topics. Strengths include: proper separation of IPv4/IPv6, individual DNS record types (A, AAAA, CNAME, MX, NS), good TLS breakdown (certificate, CA, handshake, asymmetric/symmetric encryption), thorough cookie coverage (session, persistent, Secure, HttpOnly, SameSite, domain/path scope), and appropriate caching lessons. The lesson on 'What is a socket?' adds useful networking context. 'Stateless versus stateful behavior' is relevant to HTTP concepts. However, there are issues: the title 'Stateless versus stateful behavior' uses 'versus' which the rules say should be split. The lesson count of 42 is below the expected 100+ for this chapter. CDN coverage is minimal (only 3 lessons: what is CDN, edge server, origin server - missing request routing, invalidation, benefits). Proxy coverage is thin (only forward proxy, reverse proxy, load balancing - 3 lessons). Missing some important concepts like DNS TTL, public/private IP distinction, ports, HTTP statelessness explicitly, cookie use cases. Descriptions are concise and well-written. Overall good quality but insufficient granularity.",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model A provides 43 lessons with solid coverage. Strengths: good logical progression, well-separated cookie lessons (session, persistent, scope, security attributes, use cases), decent caching breakdown (browser cache, shared caches, freshness, revalidation), good CDN coverage (edge servers, request routing, what CDNs cache, invalidation, benefits). However, there are issues: 'IPv4 vs. IPv6 Format' title explicitly uses 'vs.' which violates the rules. The final lesson 'Putting It All Together: A Web Request Lifecycle' is essentially a summary lesson, which is prohibited. 'Cookie Security Attributes' groups Secure, HttpOnly, and SameSite together - this should be split into separate lessons. 'DNS Record Types' groups A, AAAA, CNAME, MX together - too broad. 'Common Proxy Use Cases' and 'Common Cookie Use Cases' are somewhat summary-like. The lesson count of 43 is below the expected 100+. Some descriptions use the word 'Common' which is slightly filler-ish. Despite these issues, the content is accurate and the progression is logical.",
+          "score": 6.2
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model E provides 44 lessons with decent coverage. Strengths: good separation of cookie attributes (Secure, HttpOnly, SameSite as individual lessons), proper CDN coverage, certificate authorities as separate lesson. However, there are significant issues: 'IPv4 vs. IPv6' title uses 'vs.' violating the rules. 'HTTP Request Structure' and 'HTTP Response Structure' overlap directly with the neighboring 'HTTP fundamentals' chapter which covers headers and methods - these should not be standalone lessons here. 'HTTP Versions Overview' is too broad and also overlaps with neighboring chapter territory. 'Cookie Expiry: Session vs. Persistent' uses 'vs.' in the description concept. Some titles use forbidden patterns - 'What is...' is acceptable but some descriptions use 'What...is and why...' which borders on fluff. 'CDN Edge Nodes and Request Routing' combines two concepts with 'and'. 'CDN Origin Offloading and Availability' also uses 'and'. The lesson count of 44 is below the 100+ expectation. Missing some depth in DNS (no individual record types), TLS (no symmetric/asymmetric encryption separation clearly), and networking basics (no ports, sockets).",
+          "score": 5.8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model G provides 44 lessons with reasonable coverage but several issues. It covers the main topics but lacks depth. Strengths: clean titles, logical progression. Issues: Missing many DNS record types (only A and CNAME, no AAAA, MX, NS). TLS coverage groups concepts - 'Transport Layer Security (TLS)' as a single lesson is too broad. Missing important concepts like ports, sockets, HTTP statelessness, cookie SameSite attribute, DNS TTL, cache invalidation, cache revalidation. CDN coverage is minimal (5 lessons). 'The HTTP Protocol' and 'The HTTPS Protocol' are somewhat broad. No lesson on TLS certificates vs CA separation is well done, but the handshake and encryption lessons feel thin. Proxy coverage is minimal (forward, reverse, load balancing - 3 lessons). Cookie coverage misses SameSite attribute entirely. Domain names lesson may overlap with neighboring 'URL anatomy and addressing' chapter. The lesson count of 44 is well below the 100+ expectation. Some descriptions are quite terse. Overall adequate but the least granular and extensive of all models.",
+          "score": 5.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model B provides only 28 lessons, making it by far the least extensive. This is a major failing given the prompt explicitly requests an 'extensive' list and the expectation of 100+ lessons. Coverage is severely lacking: DNS has only 5 lessons (missing individual record types, TTL), TLS is completely absent as a standalone topic (no TLS handshake, certificates, symmetric/asymmetric encryption lessons), cookies have only 2 lessons (missing session/persistent distinction, security attributes like Secure, HttpOnly, SameSite), CDN has only 2 lessons (missing invalidation, origin fetch, request routing). Proxy coverage is minimal (2 lessons). Caching has only 2 lessons (missing revalidation, freshness, cache keys). The lesson 'HTTP Statelessness' is good but there's no lesson on what HTTP itself is. No lesson on ports, sockets, or public/private IP addresses. While the lessons that exist are well-written and focused, the extreme lack of coverage makes this output inadequate for the task requirements.",
+          "score": 3.8
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model F followed all instructions perfectly. It produced an extensive and highly granular list of 97 lessons, completely adhering to the single-concept rule. It successfully avoided using 'AND', 'OR', and 'VS' in all titles, and refrained from using any of the forbidden fluff words ('learn', 'understand', etc.). Furthermore, it stayed perfectly within the exact scope of the chapter without stepping into the off-limits neighboring chapters (no HTTP headers, methods, URL parsing, or browser rendering engines).",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model D also did a fantastic job with granularity, providing 115 bite-sized lessons. It successfully avoided 'AND', 'OR', and 'VS' in the titles and did not use any forbidden fluff words. However, it lost points for violating the scope and neighboring chapter constraints. It included 'ETag' and 'Last-Modified', which are HTTP headers/caching directives explicitly designated to a neighboring chapter. It also included 'CORS' (browser security boundary) and went too deep into OSI Layer 2 networking (MAC, ARP, Switch, LAN, WAN) which is beyond the 'How the web works' IP scope provided.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model G successfully followed the negative constraints, avoiding 'AND', 'OR', and 'VS' in lesson titles, and it kept the descriptions concise without forbidden words. However, with only 44 lessons, it is significantly less extensive and granular than Models F and D. It missed the prompt's request for an 'extensive' list where complex topics require many breakdowns.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model B followed the formatting and negative constraints (no 'AND/OR/VS', no forbidden words), but failed significantly on the 'extensive' requirement. With only 28 lessons, it did not break down the concepts to the microscopic level requested, leaving many topics (like TLS and caching) far too broad.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model A provided a decent amount of lessons (44) and concise descriptions, but it explicitly violated a critical formatting rule by including 'AND' and 'VS' in its lesson titles ('IPv4 vs. IPv6 Format' and 'Cookie Scope: Domain and Path').",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model C violated the critical rule against using conjunctions and comparisons in titles by including 'versus' (Stateless versus stateful behavior) and 'and' (Cookie scope: domain and path; Edge and intermediary cache).",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model E repeatedly violated the 'AND/OR/VS' critical constraint in multiple lesson titles (e.g., 'IPv4 vs. IPv6', 'DNS TTL and Caching', 'CDN Edge Nodes and Request Routing'). Failing to split these into single concepts demonstrates poor adherence to the core prompt mechanic.",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Most granular while staying largely within chapter scope: separates client/server/origin, IP/ports/sockets, DNS components, HTTP/HTTPS/TLS with many TLS sub-concepts, proxies (incl. CONNECT), caching primitives, cookie scoping/attributes, and CDN components/routing/invalidation. Generally single-concept titles. Minor scope creep (TCP/UDP, ALPN/SNI, Anycast, certificate transparency) but still relevant to “how the web works” and not in neighboring chapters.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Very extensive and highly granular across DNS/TLS/caching/cookies/CDN, with strong single-concept breakdown and logical progression. However, it clearly violates the neighboring-chapter constraint by including multiple dedicated HTTP message-level lessons (HTTP request/response/payload/target) and other HTTP-adjacent items that drift toward “HTTP fundamentals.” Also includes some out-of-scope web security/app topics (CORS, tokenization) and deeper networking (ARP, MAC, subnets) not required by chapter description.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Good granularity and mostly single-concept lessons; DNS records are split well; caching/proxy/CDN/TLS/cookie attributes are covered cleanly. Some titles use forbidden “versus” (“Stateless versus stateful behavior”), and it omits some helpful cookie mechanics (Set-Cookie/Cookie) and CDN routing/invalidation depth. Overall solid and mostly within scope.",
+          "score": 7.9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Covers all required areas (clients/servers, IP, DNS, HTTP/HTTPS/TLS, proxies, caching, cookies, CDNs) with mostly single-concept lessons and good clarity. Not very extensive (far from the 100+ expectation) and includes a banned title pattern (“IPv4 vs. IPv6 Format”). Also includes some HTTP-fundamentals-adjacent details (ETags/conditional requests) though not methods/status codes/headers-focused.",
+          "score": 7.3
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Reasonably complete coverage but not granular enough and repeatedly groups concepts in titles (e.g., “IPv4 vs. IPv6”, “DNS TTL and Caching”, “CDN Edge Nodes and Request Routing”, “Cookie Expiry: Session vs. Persistent”, “Server-Side and Intermediate Caching”), violating the split-on-AND/VS guidance. Also includes dedicated HTTP request/response structure lessons that belong to the neighboring “HTTP fundamentals” chapter per constraints.",
+          "score": 6.4
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Decent breadth but not extensive and several lessons are too broad (e.g., “Packet Routing”, “Load Balancing”, “CDN Latency Reduction”). Missing key cookie attribute SameSite and DNS AAAA/MX/TTL details. Some content is fine but overall less granular and less complete than top models.",
+          "score": 6.1
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Not extensive and has major omissions (no explicit HTTP lesson; limited caching/cookies/CDN depth; little on IP ports/sockets). Some concepts are broad (“Web Caching Concepts”) and coverage feels uneven. While it avoids HTTP-method/status-code specifics, it fails the chapter’s scope coverage and the “extensive/100+ lessons” expectation by a wide margin.",
+          "score": 5.2
+        }
+      ]
+    }
+  ],
+  "taskId": "chapter-lessons",
+  "testCaseId": "en-web-how-the-web-works-1"
+}

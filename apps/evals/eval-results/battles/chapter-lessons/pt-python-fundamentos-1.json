@@ -1,0 +1,149 @@
+{
+  "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Should break down each data type into separate lessons\n      - Should cover syntax fundamentals as individual concepts\n      - Basic I/O should be separate from data types and operators\n      - Should NOT create dedicated lessons teaching installation, virtual environments, or project setup (neighboring chapter \"Ambiente Python e ferramentas essenciais\" covers that) — brief contextual references are fine\n      - Should NOT create dedicated lessons teaching code style, PEP 8, or linters (neighboring chapter \"Estilo de código e legibilidade\" covers that) — brief contextual references are fine\n      - Should NOT create dedicated lessons teaching operators or precedence in depth (neighboring chapter \"Operadores e expressões\" covers that) — brief contextual references are fine\n      - Should NOT create dedicated lessons teaching control flow or conditionals (neighboring chapter \"Controle de fluxo: condicionais\" covers that) — brief contextual references are fine\n\n      \n  - Each lesson should cover a SINGLE, SPECIFIC concept that can be explained within 10 short tweets\n  - Break down topics into the smallest, most manageable units possible, so that each lesson can be learned in 2-3 minutes\n  - If a topic is too broad, split it into multiple lessons\n  - Each lesson should be extremely focused on a SINGLE concept\n  - If a lesson is too broad, split it into multiple lessons\n  - If you find yourself using \"AND\", \"OR\", or \"VS\" in a title, you should split it into separate lessons\n  - Lesson titles should be short and specific to the exact concept covered\n  - Build a logical progression from basic to advanced concepts\n  - Ensure lessons build on knowledge from previous lessons\n  - Focus lessons for this specific chapter, not the entire course\n  - Don't include summary or review lessons. For example, do NOT create a lesson title \"Summary of Key Concepts\" or \"Review of Chapter\"\n  - Don't include assessment or quiz lessons\n  - Don't include final project or capstone lessons\n  - Should follow the language specified by language parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Descriptions should be concise and straight to the point, no fluff/filler words (avoid \"learn\", \"understand\", \"explore\", \"introduction to\", etc.)\n  - You don't need to evaluate the output format here, just focus on the lesson content quality\n  - Include an extensive list of lessons to cover all the concepts needed to learn the chapter. Complex topics will usually requiere more than 100 lessons\n\n  Things to check:\n  - Is each lesson too broad? If so, it should be broken down further\n  - Can each concept be explained in 10 short tweets or less? If not, it should be broken down\n  - Does each lesson focus on a single specific concept? If not, it should be split\n  - Does it have lessons that don't belong in this chapter? If so, they should be removed\n\n    ",
+  "judgedAt": "2026-02-22T03:10:10.804Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model B provides the most extensive and granular lesson list (100+ items) with excellent single-concept focus. Each lesson is tightly scoped — for example, it separates literal binary (0b), octal (0o), and hexadecimal (0x) into individual lessons, breaks escape sequences into individual lessons (\\n, \\t, \\\\, \\', \\\"), and separates string methods into individual lessons (lower(), upper(), strip(), replace(), split(), find(), count(), startswith(), endswith()). It covers virtually everything in the chapter description: syntax, indentation, comments, numeric types (int, float, complex), booleans, strings, I/O, and basic operations. It respects neighboring chapter boundaries well — it doesn't create dedicated lessons on operators/precedence or control flow, though it does include some operator-adjacent content like 'Parênteses em expressão' which is borderline. The titles are concise and avoid forbidden words. It correctly separates I/O from data types. It includes useful error-related lessons (SyntaxError, IndentationError, TypeError, ValueError) that are relevant to fundamentals. The descriptions are concise and direct. Minor issues: a couple of lessons touch on operators (the 'Parênteses em expressão' and 'Erro de sintaxe: parênteses não fechados' lessons), but these are contextual rather than dedicated operator lessons. Overall the best balance of granularity, scope coverage, and rule adherence.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model C provides a very good, extensive list (~90 lessons) with strong granularity. It covers syntax, indentation, comments, all numeric types, booleans (including truthiness broken into individual concepts like 'Zero como falso', 'String vazia como falso', 'None como falso'), strings with methods, I/O, and some basic operations. The single-concept focus is mostly excellent. However, it significantly violates the neighboring chapter constraint by including dedicated lessons on arithmetic operators (+, -, *, /), division with //, remainder with %, precedence, parentheses in expressions, and augmented assignment operators (+=, -=, *=, /=). The neighboring chapter 'Operadores e expressões' explicitly covers 'Operadores aritméticos' — so these ~12 lessons clearly belong there, not here. The task expectations explicitly say 'Should NOT create dedicated lessons teaching operators or precedence in depth.' This is a notable violation. Otherwise, the lesson structure is logical, titles are concise, descriptions are direct, and it builds well from basic to advanced. The 'Escape de aspas' lesson combines both \\\" and \\' which could be split but is borderline acceptable.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model F provides a decent list (~52 lessons) but has several issues. First, it violates neighboring chapter boundaries significantly: it includes 'Operações aritméticas básicas', 'Divisão inteira e módulo', 'Exponenciação', 'Operadores de atribuição composta', 'Comparações entre valores', and 'Resultado booleano de comparações' — all of which belong in the 'Operadores e expressões' neighboring chapter. Second, some lessons violate the single-concept rule: 'Métodos de capitalização de strings' bundles upper(), lower(), and title() together; 'Métodos de remoção de espaços' bundles strip(), lstrip(), rstrip(); 'Split e join em strings' combines two methods; 'Conversão de tipos (casting)' bundles int(), float(), str(), bool(); 'Operações aritméticas básicas' bundles four operations; 'Divisão inteira e módulo' combines // and %. The title 'Split e join em strings' uses 'e' (and). 'Comentários vs. docstrings' uses 'vs.' which the rules say to avoid. Some descriptions use phrases like 'Como...' which is borderline but not explicitly prohibited. The coverage is reasonable but not as granular as Models B or C. The list size (~52) is moderate — not as extensive as it should be for this chapter.",
+          "score": 5.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model G provides ~54 lessons with generally good single-concept focus and decent coverage. It respects neighboring chapter boundaries reasonably well — no dedicated operator lessons. It covers syntax, indentation, comments, numeric types, booleans, strings, I/O, and variables. However, it has some issues: 'Aspas simples, duplas e triplas em strings' combines three concepts into one lesson (should be split per the rules); 'Comentários vs. docstrings' uses 'vs.' in the title which explicitly violates the rules; 'Declaração e atribuição de variáveis' bundles two concepts with 'e'; the list is not as extensive as it should be for this chapter — string methods are mostly absent (no lower(), upper(), strip(), replace(), split(), find(), etc.), which is a significant gap since the chapter covers 'strings' and their operations. The descriptions sometimes use phrases like 'Como...' which is fine. Overall reasonable structure but lacks the granularity and completeness expected.",
+          "score": 5.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model A provides only 32 lessons, which is insufficient for a chapter this broad. While individual lessons are mostly well-scoped, the coverage is incomplete. String methods are almost entirely missing (no lower(), upper(), strip(), replace(), split(), find(), etc.). Several lessons violate the single-concept rule: 'Expressões e declarações' combines two concepts; 'Atribuição múltipla e desempacotamento' uses 'e' (and); 'Tabs versus espaços' uses 'versus'. The title 'Tipos numéricos: int, float, complex' is too broad and lists three types. 'Strings com aspas simples e duplas' combines two concepts with 'e'. The lesson on 'Literals inteiros (int)' tries to cover four bases (decimal, binary, octal, hex) in one lesson. Missing key concepts: imutabilidade de strings, concatenação/repetição de strings, string formatting details, truthiness details, identifier rules, keywords, common errors. The list is far too short to 'fully master the chapter's scope.' Descriptions are generally concise and direct. No major neighboring chapter violations.",
+          "score": 4.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model E provides only 30 lessons — the least extensive list and far too few for this chapter. Major gaps include: no lessons on escape sequences, no f-strings, no string indexing/slicing, no string methods, no indentation errors, no docstrings, no truthiness, no None, no identifier rules, no keywords, no float precision, no complex number details, no multiple assignment, no type() function details. It also violates neighboring chapter boundaries by including dedicated arithmetic operator lessons (addition, subtraction, multiplication, division) which belong in 'Operadores e expressões.' Several descriptions are unnecessarily verbose and use filler language ('A utilização do sinal de traço para calcular a diferença entre valores numéricos' instead of something more direct). The coverage is severely incomplete — it barely scratches the surface of strings and completely omits many fundamental syntax concepts. While individual lessons are mostly single-concept, the overall list fails to cover the chapter adequately.",
+          "score": 3.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model D provides only 27 lessons — extremely insufficient for this chapter. The coverage has massive gaps: no escape sequences, no f-strings, no string indexing/slicing, no string methods (lower, upper, strip, replace, split, etc.), no string concatenation/repetition, no raw strings, no docstrings, no truthiness/falsy values, no None, no identifier rules, no float precision, no multiple assignment, no line continuation, no common errors. The lesson 'Comentários Multilinhas' has a misleading description ('aspas triplas para documentação de longos trechos de texto') that conflates multiline comments with docstrings inaccurately. The title 'Valores Booleanos' is too broad when True and False get their own lessons — the overview lesson seems redundant. Descriptions are overly abstract and vague (e.g., 'Tipo de dado restrito a dois estados lógicos fundamentais' instead of something concrete). The list completely fails to provide the extensive, granular coverage required by the prompt. It's essentially just a high-level outline, not a detailed lesson plan.",
+          "score": 2.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Exceptional output. Model B followed all instructions perfectly, providing an incredibly granular and extensive list of 104 lessons that break down the chapter into single, bite-sized concepts. It strictly adhered to the rule against using 'and', 'or', and 'vs' in titles (the use of 'Ponto e vírgula' is grammatically correct as it refers to the single entity 'semicolon'). It perfectly respected the negative constraints, avoiding fluff words in descriptions and skipping topics that belong to neighboring chapters. Masterful execution.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Very good output. It provides a highly granular and extensive list (88 lessons) that deeply explores the chapter concepts. However, it slightly violated the strict 'No AND/OR/VS' title rule in a couple of places (e.g., 'Dois pontos e início de bloco', 'Operador * com string e int'). Additionally, it included a dedicated lesson on 'Precedência aritmética básica', which violates the negative constraint stating that operators and precedence in depth should be left to the neighboring chapter. Despite these minor flaws, the structure and granularity are excellent.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Adequate output. The model correctly adhered to the negative constraints and successfully avoided 'AND/OR/VS' in the titles. It also kept descriptions concise and fluff-free. However, it completely failed the 'extensive list' requirement, providing only 28 lessons. The prompt explicitly stated that complex topics usually require more than 100 lessons, and Model D left out many specific sub-topics (like string methods, formatting, specific escapes, etc.), resulting in a list that is too broad.",
+          "score": 5.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Adequate output. Similar to Model D, Model E successfully avoided the forbidden words in titles and provided concise descriptions. However, it also failed the 'extensive list' requirement by generating only 30 lessons. The concepts are still broken down decently, but it lacks the depth and granular scope requested by the prompt.",
+          "score": 5.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Below average output. While the list has a fair number of lessons (54), it failed the critical 'No AND/OR/VS' title constraint multiple times (e.g., 'Valores truthy e falsy', 'Split e join em strings', 'Parâmetros sep e end do print()', 'Divisão inteira e módulo'). When a title contains 'AND' or 'e', it indicates the lesson covers multiple concepts and should have been split.",
+          "score": 4.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Poor output. The model failed the critical 'No AND/OR/VS' title rule on multiple occasions (e.g., 'Comentários vs. docstrings', 'Aspas simples, duplas e triplas em strings', 'Parâmetros sep e end do print()', 'Sensibilidade a maiúsculas e minúsculas'). This shows a clear failure to follow strict prompt formatting and conceptual constraints.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Very poor output. The model blatantly ignored the rule forbidding 'AND/OR/VS' in titles, doing so in almost a third of its generated lessons (e.g., 'Expressões e declarações', 'Tabs versus espaços', 'True e False', 'truthy e falsy', 'aspas simples e duplas', 'input() e cast', 'múltipla e desempacotamento'). Furthermore, it provided a relatively short list (33 lessons) for a prompt that asked for over 100 granular lessons.",
+          "score": 3
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Mais granular e “extenso” entre os candidatos: cobre sintaxe/indentação/comentários com muitas unidades pequenas (ex.: dois-pontos, newline, continuação de linha, regras de identificadores), separa bem tipos numéricos/bool/str e detalha I/O (print/input) em lições próprias. Em geral, cada item é um único conceito. Pequenas derrapadas: inclui alguns tópicos que encostam em \"Operadores e expressões\" (parênteses em expressão) e várias lições de erros (SyntaxError/TypeError/ValueError) que não estão explicitamente no escopo, mas ainda são fundamentos. No conjunto, é o melhor alinhamento ao pedido de alta granularidade.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Boa cobertura e boa granularidade em sintaxe/indentação/comentários, tipos e I/O; também traz métodos de string úteis. Porém viola claramente a restrição de não criar lições dedicadas a operadores/precedência: inclui +, -, *, /, //, %, precedência e atribuições aumentadas (+= etc.) de forma explícita, o que deveria ficar no capítulo vizinho. Ainda assim, a qualidade e o foco por lição são bons na maior parte.",
+          "score": 7.6
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Cobertura ampla (sintaxe, tipos, strings, I/O) e progressão razoável. Mas várias lições são largas demais para o padrão “um conceito” (ex.: \"Operações aritméticas básicas\" junta várias operações; \"Funções numéricas embutidas\" agrupa muitas funções; \"Busca em strings\" mistura find/index/in; \"Split e join\" junta dois conceitos; títulos e descrições usam “Como...” e às vezes linguagem mais de \"aprender\"/tutorial). Também entra demais em operadores/comparações, contrariando o recorte dos capítulos vizinhos.",
+          "score": 6.9
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Cobertura boa de tipos e I/O e alguma atenção a granularidade (ex.: f-strings separadas, truthy/falsy). Problemas importantes: vários títulos usam “e”/listas (“Aspas simples, duplas e triplas…”, “Declaração e atribuição…”) contrariando a regra de dividir; inclui lição dedicada a \"del\" (fora do escopo do capítulo descrito); e a lista não é tão extensa quanto o esperado para microlições (ainda bem abaixo de “100+” sugerido).",
+          "score": 6.4
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Conteúdo correto e relativamente bem focado em fundamentos (indentação, comentários, tipos, strings, print/input). Contudo, não é “extenso” e várias lições ficam amplas demais ou juntam conceitos: \"Tipos numéricos: int, float, complex\" (agrega 3 tipos), \"Atribuição múltipla e desempacotamento\" (2 conceitos), \"Sintaxe do Python\" (muito amplo). Também toca em PEP 8 (4 espaços) de forma mais direta do que o necessário, embora seja só menção.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Lista curta e pouco granular para o objetivo. Títulos/descrições frequentemente genéricos (\"Variáveis em Python\", \"O tipo String\"), e inclui várias lições de operações (+, -, *, /, concatenação) apesar do capítulo vizinho de operadores/expressões. Falta detalhamento de strings (indexação, slicing, escapes), booleanos (truthiness) e nuances de I/O.",
+          "score": 4.8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Muito superficial e pouco extenso; vários títulos em inglês (“Case Sensitivity”) e descrições genéricas. Erro conceitual relevante: trata aspas triplas como “Comentários Multilinhas” (strings triplas não são comentários por si). Cobertura insuficiente de operações básicas, entrada/saída em detalhes, e granularidade baixa no geral.",
+          "score": 3.2
+        }
+      ]
+    }
+  ],
+  "taskId": "chapter-lessons",
+  "testCaseId": "pt-python-fundamentos-1"
+}
