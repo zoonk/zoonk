@@ -25,6 +25,7 @@ const SHARED_EXPECTATIONS = `
   - It’s fine to skip spacing/hyphenation/accents variants — serialization will handle those.
   - Awkward or redundant phrasings are acceptable.
   - Ignore casing issues (e.g., "javascript" vs "JavaScript").
+  - Ideally, it should have a huge list of alternative titles, really good ones have more than 100 alternative titles
 `;
 
 export const TEST_CASES = [
