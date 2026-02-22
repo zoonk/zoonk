@@ -75,9 +75,16 @@ EVALUATION CRITERIA:
    - More/less formal versions of the correct answer that would still work
    - Slightly different phrasings that communicate the same thing
    - "Less polished" versions that a native speaker would still understand
+   - Alternative valid responses a native speaker would accept (e.g., "Goodbye!" when "Thanks, you too!" is correct - both are valid farewells)
+   - Valid answers to open-ended questions (e.g., "Cash, please" marked wrong when "Card, please" is correct for "How will you pay?" - both are valid payment methods)
 
    Example: If ordering coffee, "Where is the bathroom?" is a GOOD distractor (off-topic).
    "I would like your finest coffee" vs "A coffee please" are BOTH correct - don't use one as a distractor for the other.
+
+   AMBIGUOUS CONTEXT TEST: For each step, check whether the context question naturally allows multiple valid responses.
+   If the native speaker says "Anything else?" or "How will you pay?" or "Have a nice day!", almost any on-topic response is valid.
+   Penalize if a step has an open-ended context where 2+ options would be acceptable to a native speaker.
+   The CONTEXT should be specific enough that only one response fits - this is a step design problem, not just a distractor problem.
 
    Penalize SEVERELY if distractors are just stylistic variations that would still accomplish the communication goal.
 
