@@ -16,26 +16,36 @@ const battleRankingSchema = z.object({
 export async function generateBattleRankings(params: {
   judgeId: string;
   expectations: string;
+  systemPrompt: string;
+  userPrompt: string;
   anonymizedOutputs: {
     anonymousId: string;
     output: string;
   }[];
   mapping: { anonymousId: string; modelId: string }[];
 }): Promise<ModelRanking[]> {
-  const { judgeId, expectations, anonymizedOutputs, mapping } = params;
+  const { judgeId, expectations, systemPrompt, userPrompt, anonymizedOutputs, mapping } = params;
 
   const outputsSection = anonymizedOutputs
     .map((output) => `### ${output.anonymousId}\n\`\`\`json\n${output.output}\n\`\`\``)
     .join("\n\n");
 
   const evalPrompt = `
+## Original Task Prompt
+
+### System Prompt
+${systemPrompt}
+
+### User Prompt
+${userPrompt}
+
 ## Task Expectations
 ${expectations}
 
 ## Model Outputs to Compare
 ${outputsSection}
 
-Evaluate each model's output against the expectations and rank them from best to worst.
+Evaluate each model's output against the original task prompt, expectations, and rank them from best to worst.
 Ties are allowed if outputs are truly equivalent in quality.
 `;
 
