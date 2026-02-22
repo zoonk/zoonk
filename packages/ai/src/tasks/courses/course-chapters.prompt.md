@@ -28,7 +28,7 @@ It should cover everything needed to land a job at top firms in this field.
 # Requirements
 
 - Cover all **knowledge and practical skills** required for going from no knowledge to mastery.
-- Include **as many chapters as needed**. Do not limit the number of chapters arbitrarily. For most subjects, a truly comprehensive curriculum should have **100+ chapters**. Broad fields like Computer Science, Law, Medicine, etc. will often need 150–200+. Only very narrow or niche topics should have fewer than 100.
+- Include **as many chapters as needed**. Do not limit the number of chapters arbitrarily.
 - Order from **foundational concepts** to **job-ready skills** to **advanced applications and concepts**, following a logical progression building upon previous chapters.
 - Write **clear, concise** text in the specified `LANGUAGE` input.
 - Avoid fluff/fillers/unnecessary words.
@@ -108,7 +108,7 @@ Before finishing this course, review the entire content and ask yourself:
 
 - "Does this curriculum enable a learner to be at the **top 1%** in this field?" If the answer is "no," identify the gaps and add the necessary content to fill them.
 - "Am I missing any important chapters or topics?" If the answer is "yes," add them.
-- "Does this curriculum have enough depth?" For most subjects, a comprehensive curriculum should have **100+ chapters**. If you have significantly fewer, you are likely grouping too many topics into single chapters — split them into more granular, focused chapters.
+- "Does this curriculum have enough depth?" for this learner to be at the top 1% in this field. If the answer is "no," add more depth to the chapters or add new chapters as needed.
 
 Make sure this is the **BEST** possible curriculum for this subject. No other curriculum should be able to surpass this one.
 
