@@ -1,0 +1,203 @@
+{
+  "expectations": "\n      SPECIAL CONSIDERATION: This is an extremely simple task (cracking a single egg).\n\n      The number of activities should reflect task complexity - a simple task needs fewer activities than a complex one. Over-fragmenting a simple task into many activities is a sign of poor sizing.\n\n      Avoid granular steps like \"hold egg\", \"tap egg\", \"position over bowl\" - these are steps within an activity, not activities themselves.\n\n      \n  EVALUATION CRITERIA (focus on these, not specific phase names):\n\n  1. ACTIVITY SIZING: Each activity must be substantial enough to expand into ~10 detailed steps. If an activity could only be explained in 1-3 steps, it's TOO SMALL.\n\n  2. NO SINGLE ACTIONS: Activities must NOT be single actions like \"boil water\", \"click button\", \"hold item\". These are steps, not activities.\n\n  3. LOGICAL GROUPING: Related actions should be grouped into meaningful phases rather than listed separately.\n\n  4. COMPLETENESS: Activities should cover the full scope of the lesson - check if anything important is missing.\n\n  5. APPROPRIATE SCOPE: Content should match the lesson's scope - not broader, not narrower.\n\n  6. CLEAR TITLES: Titles should be short and action-oriented. No vague words like \"learn about\", \"understand\", \"explore\".\n\n  7. NO FLUFF: No summary, review, or assessment activities.\n\n  IMPORTANT: Do NOT penalize for missing specific phases you might expect. Different valid approaches exist. Focus on whether the activities provided are well-sized and cover the lesson scope.\n\n    ",
+  "judgedAt": "2026-01-15T20:32:26.159Z",
+  "judgments": [
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "This model provides the best breakdown of the task. It strictly follows the advice to limit activities for a simple task, providing 3 well-sized activities. Crucially, it combines 'Strike' and 'Open' into a single 'Crack and Open' activity, adhering to the rule against single actions and creating a phase substantial enough to support detailed steps.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "This model offers a very good structure with 3 activities, avoiding over-fragmentation. It correctly groups the cracking and opening actions into one phase. It is ranked slightly lower than Model E because the transition between Activity 2 (release contents) and Activity 3 (pour contents into bowl) creates a slight logical redundancy or confusion about where the egg is located, but it is still excellent.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "This model correctly groups the 'Crack' and 'Open' actions into a single activity, which is the most important criteria. However, it includes a somewhat fluffy activity ('Inspect the Egg and Choose a Cracking Method') which adds cognitive steps rather than physical action, making it slightly less efficient than the top two.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "This model correctly groups the core physical actions (tap, break, separate) into one substantial activity ('Perform a controlled crack...'). However, it fails on the 'Activity Sizing' for the lesson as a whole by including too many preparatory and peripheral activities (6 total), which contradicts the instruction that a simple task needs fewer activities.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "This model presents clear, professional language but fails the 'No Single Actions' rule by separating 'Crack the Shell' (tapping) and 'Open the Egg' (pulling apart) into distinct activities. It is impossible to write ~10 meaningful steps for just 'tapping an egg' without extreme fluff. It is ranked above the others below because the descriptions are otherwise high quality.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "This model is well-written but suffers from severe over-fragmentation. It splits the process into 'Position', 'Crack', and 'Open'—creating three activities for what should be one. This violates the sizing and granular step guidelines.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Similar to Model J, this model splits the core actions into single steps. It is ranked lower due to a typo in the title of the second activity ('Corrected') and slightly less distinct scoping.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "This model over-fragments the task and uses instructional titles ('Learn proper hand positioning') rather than action-oriented ones. The first activity is purely about 'learning' a grip, which is difficult to expand into a 10-step physical activity.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-2.5-flash-lite",
+          "reasoning": "This model introduces scope creep by adding a step for separating the yolk from the white, which was not requested. It also separates the cracking and opening phases.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "This output is the weakest. The descriptions are extremely brief (single sentences), and it separates the cracking and releasing process in a confusing way. It lacks the detail and quality of the other models.",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Best matches the “simple task” constraint without over-fragmenting: 4 logically grouped, end-to-end activities (setup → inspect/choose method → crack/open → check/fix). Titles are action-oriented and not fluffy. Still somewhat step-like inside descriptions, but activities themselves are appropriately grouped for the scope.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Good minimal set (4) covering setup, crack, open, and cleanup/shell check. Logical grouping and no extra scope. Slight issue: “Crack the Shell” and “Open the Egg” are bordering on being single-action phases and could arguably be one well-sized activity for such a tiny task, but still acceptable.",
+          "score": 8.4
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Clear sequencing and coverage with 4 activities. However it trends too granular for such a simple task (separating “Position and Grip” from “Perform the Crack” is more like steps than substantial activities). Still coherent and on-scope.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Reasonable 4-phase structure and includes sanitation. But one title is problematic/unclear (“Strike the Egg Corrected”), and the middle activities read like single actions rather than sizable phases. Otherwise on-scope.",
+          "score": 7.1
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Appropriately small number of activities (3) and stays on task. Main weakness is activity sizing: each is essentially a single operation (prepare, crack/open, check/remove), unlikely to expand to ~10 steps each without padding.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Only 3 activities and covers the basics, but activities are step-like and somewhat redundant (cracking vs “transfer and clean” repeats content). Also endorses bowl-edge cracking specifically, which is a narrower method choice and less ideal per many best practices (flat surface).",
+          "score": 5.9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Uses “Learn …” phrasing in descriptions and the first activity is essentially a micro-skill (hand positioning) split out as its own activity—too granular for the lesson scope. Overall coverage is fine but sizing is weak and reads like steps.",
+          "score": 5.2
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Over-scoped and over-fragmented for a single-egg crack: 6 activities, optional tools, practice, rescue methods, storing results—turns a tiny task into a mini-course. Some activities are substantial, but it violates the “extremely simple task needs fewer activities” constraint.",
+          "score": 4.6
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-2.5-flash-lite",
+          "reasoning": "Includes an out-of-scope activity for the lesson (“Separate Yolk and White”) which is not required for cracking a single egg. Also over-fragmented into 5 small activities (workspace vs select egg etc.) and several are single-action sized.",
+          "score": 3.8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "Most step-fragmented: 4 activities that are plainly single actions (“Prepare the Egg”, “Release the Contents”, etc.). Fails the sizing requirement and reads as a step list disguised as activities, despite being on-scope.",
+          "score": 2.9
+        }
+      ]
+    },
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model E provides 3 activities for a simple task, which is appropriate sizing. Activities are well-grouped: workspace/egg prep, crack/open, and fragment check. Each activity is substantial enough to expand into steps. The titles are clear and action-oriented. The descriptions provide good detail without being overly complex. This matches the task complexity well without over-fragmenting.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Model G also uses 3 activities which matches task complexity. Activities are logically grouped: preparation, cracking, and transfer/cleanup. The descriptions are clear and the scope is appropriate. Slight issue: 'Transfer and Clean the Egg Contents' combines two somewhat distinct actions, but this is acceptable grouping. Very close to Model E but slightly less precise in describing the cracking technique.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Model A has 4 activities. While reasonable for this task, it slightly over-fragments compared to 3-activity solutions. However, the activities are well-sized and each could expand to ~10 steps. Titles are clear and action-oriented. 'Open the Egg' as a separate activity from 'Crack the Shell' is borderline - these could be one activity, but they're substantial enough individually.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model D has 4 activities with good logical grouping. However, 'Strike the Egg Corrected' appears to be a typo which affects quality. The activities themselves are reasonably sized. The final activity 'Inspect the Egg and Sanitize the Area' goes slightly beyond scope with sanitation, but not excessively. Description quality is good otherwise.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Model J has 4 activities. 'Position and Grip the Egg' is borderline too granular - positioning/gripping could be part of the cracking activity rather than standalone. The other activities are well-sized. The descriptions are clear and appropriate for the task scope, but the separation of grip/position from crack adds unnecessary fragmentation.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model I has 4 activities but introduces scope creep with 'cracking multiple eggs' and 'what to do if you break the yolk' - the task is specifically cracking a single egg. 'Inspect the Egg and Choose a Cracking Method' is somewhat thin as a standalone activity. Otherwise structured reasonably well.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Model B has 4 activities. 'Position Your Hand and Grip the Egg' is too granular - this is a step within cracking, not a standalone activity that could expand to 10 steps. Similarly, the separation between 'Strike and Crack' and 'Open and Release' over-fragments what is naturally one continuous action. This violates the activity sizing principle.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "Model F has 4 activities that are clearly too granular. 'Prepare the Egg' (selecting and positioning), 'Crack the Eggshell' (tapping and opening), and 'Release the Contents' are all steps that should be combined. 'Release the Contents' particularly cannot be expanded into 10 meaningful steps - it's a single action. Violates the NO SINGLE ACTIONS rule.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-2.5-flash-lite",
+          "reasoning": "Model H has 5 activities including 'Separate Yolk and White' which is OUTSIDE the lesson scope - the task is cracking an egg, not separating yolk from white. This is scope expansion. 'Select and Inspect the Egg' and 'Clean Up the Mess' are also quite thin as standalone activities. Significant scope issues.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model C has 6 activities which massively over-fragments this extremely simple task. The special consideration explicitly warns against this. Activities like 'Choose and practice a cracking technique' and 'Gather and inspect eggs and tools' (with separators, strainers) go well beyond the simple task of cracking one egg. 'Inspect, store results, and clean up safely' includes storage which expands scope. This is a clear example of over-engineering a simple task.",
+          "score": 1
+        }
+      ]
+    }
+  ],
+  "taskId": "lesson-activities",
+  "testCaseId": "en-edge-simple-task-1"
+}

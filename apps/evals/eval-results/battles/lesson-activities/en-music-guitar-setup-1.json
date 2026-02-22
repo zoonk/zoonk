@@ -1,0 +1,203 @@
+{
+  "expectations": "\n      Avoid granular steps like \"hold the pick\" or \"place finger on fret\" - these belong inside activities, not as activities themselves.\n\n      \n  EVALUATION CRITERIA (focus on these, not specific phase names):\n\n  1. ACTIVITY SIZING: Each activity must be substantial enough to expand into ~10 detailed steps. If an activity could only be explained in 1-3 steps, it's TOO SMALL.\n\n  2. NO SINGLE ACTIONS: Activities must NOT be single actions like \"boil water\", \"click button\", \"hold item\". These are steps, not activities.\n\n  3. LOGICAL GROUPING: Related actions should be grouped into meaningful phases rather than listed separately.\n\n  4. COMPLETENESS: Activities should cover the full scope of the lesson - check if anything important is missing.\n\n  5. APPROPRIATE SCOPE: Content should match the lesson's scope - not broader, not narrower.\n\n  6. CLEAR TITLES: Titles should be short and action-oriented. No vague words like \"learn about\", \"understand\", \"explore\".\n\n  7. NO FLUFF: No summary, review, or assessment activities.\n\n  IMPORTANT: Do NOT penalize for missing specific phases you might expect. Different valid approaches exist. Focus on whether the activities provided are well-sized and cover the lesson scope.\n\n    ",
+  "judgedAt": "2026-01-15T20:32:31.506Z",
+  "judgments": [
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "This model provides the best balance of granularity and logical flow. It correctly sequences the lesson by establishing posture and hand positioning before attempting to tune (you must hold the guitar to tune it). The activities are perfectly sized—splitting posture (body) and hands into separate activities allows for the required ~10 steps per activity without becoming unwieldy. The titles are clear, short, and action-oriented.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "An excellent output that follows a logical progression (Prepare -> Hold -> Tune). The 'Prepare' activity adds valuable context. It scores slightly lower than Model D because it combines body posture and hand positioning into a single activity, which might make that specific activity dense or less granular than Model D's approach. However, it is still a top-tier response with clear titles and no fluff.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Good grouping of activities that cover the necessary scope. The titles are compliant and action-oriented. However, the logic of the sequence is slightly flawed; it suggests tuning the guitar before establishing proper posture and hand positioning. Typically, a player needs to know how to hold the instrument to tune it effectively. Despite the ordering issue, the content chunks are substantial and appropriate.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "This model is very comprehensive but suffers from wordy titles (violating the 'Short' rule) and potentially excessive scope. Including a dedicated activity for 'Tune by Ear' alongside 'Electronic Tuner' might be too much for a single beginner lesson, though it ensures substantial content. Like Model E, it places tuning before posture in the sequence. Activity 5 is a bit of a 'catch-all' mixing standing posture with final checks.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "This model has a decent breakdown but violates the title constraints by using the vague word 'Understand'. Additionally, the logical flow is poor; 'Prepare Your Guitar' (checking strings/strap) is listed last, whereas preparation should logically be first. Activity 4 also feels somewhat redundant or thin compared to the core activities.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "This model meets the basic requirements but is ranked lower due to poor granularity. It condenses the entire lesson into just two massive activities. While not incorrect, it misses the opportunity to break down 'Holding' into body and hands for better step-by-step instruction, and it places Tuning before Holding, which is illogical.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "This output violates multiple negative constraints. It uses the forbidden word 'Learn' in a title. It includes a 'Final Pre-Practice Check' which is essentially a review/fluff activity (forbidden). It also breaks out 'Learn the Strings' into a separate activity which might be too cognitive/small to support 10 physical steps.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "The flow here is disjointed and illogical; it suggests positioning hands *after* the guitar has already been tuned. It also violates the title constraint with 'Understand'. The structure feels scattered compared to higher-ranked models.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "This output is weak on content. It effectively only has two core activities ('Tune' and 'Posture'). The third activity, 'Prepare for Your First Practice', is described as 'Final checks', which falls under the category of fluff/review and is likely too small to support 10 detailed steps.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-2.5-flash-lite",
+          "reasoning": "The lowest score due to significant scope creep and sizing issues. It introduces 'Practice Strumming', which is a playing technique outside the scope of 'Holding and Tuning'. It also separates 'Verify Tuning' and 'Identify Pegs' into their own activities, which are too small to stand alone as 10-step activities.",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Best meets the sizing and grouping requirements: each item is substantial (inspection/accessories; electronic tuning; ear tuning; seated posture; standing/strap + readiness checks). Covers scope comprehensively without devolving into tiny single-step actions, and titles are clear/action-oriented. Minor risk: last activity bundles a lot (strap, checks, ready hands), but it’s still expandable into a full mini-lesson.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Strong logical sequencing and good coverage (prep space, posture, hands, string/tuning targets, tuning with a tuner, final check). Most activities are substantial enough to expand. The last “final check” is slightly close to a wrap-up/mini-summary activity, but it’s framed as a practical readiness check rather than a review/assessment, so it mostly fits.",
+          "score": 8.7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Solid grouping into three appropriately scoped phases (prep space, posture/hold, tuning). Each can expand into ~10 steps. Slight incompleteness versus scope: doesn’t explicitly include string-name/tuning-target orientation (could be embedded in tuning, but not stated) and lacks a “hands setup” component if that’s part of the lesson expectation (not strictly required, but some scope gap).",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Good coverage and mostly well-sized activities (posture/holding, strings & tuning basics, tuning process, practice prep). However, “Hold Your Guitar Correctly” is close to a single-action title (though description expands it), and “Prepare Your Guitar for Practice” overlaps with posture and tuning prep, making grouping a bit redundant.",
+          "score": 7.4
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Covers key areas (holding/posture, strings & tuning basics, tuning, hand positioning). But the descriptions include fairly granular sub-actions and drift toward technique beyond initial setup (e.g., “smooth chord transitions”), and some activities may struggle to yield ~10 meaningful steps without adding new scope.",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Reasonable set (tuning; sitting posture; hand/arm positioning). However, “Tune…identify the strings and use a tuner…” is a bit compressed, and “Configure your fretting hand and picking arm…” is verging on granular positioning rather than a broader activity plan. Missing explicit practice-space/instrument readiness setup.",
+          "score": 6.2
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-2.5-flash-lite",
+          "reasoning": "Includes a too-granular/technique activity (“Grip the Guitar Pick and Practice Strumming”) that feels like lesson content beyond setup and is closer to smaller skill drills. Also splits tuning into two activities (tune vs verify) where the second can be just a few steps, violating sizing/no-single-actions.",
+          "score": 5.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "Too high-level and borderline undersized: “Tune Your Guitar” is essentially one action; “Prepare for Your First Practice” is vague and reads like fluff/checklist. Missing string/tuning-target orientation and hand setup. Titles are OK but activities may not expand to ~10 steps each without inventing scope.",
+          "score": 4.8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Several activities are too small and step-like (“Establish Playing Posture,” “Position Your Hands,” “Tune the Strings”). They read as single-action directives and lack the breadth needed for ~10 steps each. Also incomplete (no prep/setup context, no string/tuning-target basics).",
+          "score": 3.9
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Only two activities, both overly broad and also essentially single actions (“Tune,” “Hold”). Coverage is incomplete (no prep, no tuning-target/string orientation, no meaningful grouping), and each would require adding new phases to reach the expected depth. Weakest adherence to sizing/completeness.",
+          "score": 2.8
+        }
+      ]
+    },
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model F provides the most comprehensive and well-sized activities. Each activity has substantial scope that could easily expand to ~10 steps. The descriptions are detailed and specific (e.g., 'Tune the Guitar Using an Electronic Tuner' includes reading the tuner, pluck technique, turning pegs safely, and verifying stability). It covers multiple tuning methods (electronic and by ear), both seated and standing positions, and preparation. All activities are appropriately sized - none are single actions. Titles are clear and action-oriented. The only minor issue is activity 5's title is a bit long and combines multiple concepts.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model G has 6 well-structured activities with good coverage of the lesson scope. Activities are appropriately sized - 'Set Your Posture and Guitar Position' and 'Tune the Guitar to Standard Tuning' each could expand to ~10 steps. Descriptions are specific and actionable. The 'Final Pre-Practice Check' activity is borderline fluff/review, which slightly detracts. Titles are clear and action-oriented. Good logical grouping of related actions.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Model A has 4 well-sized activities with good descriptions. 'Hold Your Guitar Correctly' and 'Tune Your Guitar Strings' are substantial enough for ~10 steps. 'Understand Guitar Strings and Tuning Basics' uses the word 'understand' which is somewhat vague, and 'Prepare Your Guitar for Practice' is a bit thin (checking strings, adjusting strap, and 'ensuring comfort' may not expand to 10 steps). Overall solid coverage with minor title and sizing issues.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Model C has only 3 activities but they are reasonably well-sized. 'Position and Hold the Guitar' has a detailed description covering posture, hands, arms, and instrument position. 'Tune the Guitar' covers pegs, intonation, and accuracy. The 'Prepare Your Guitar and Practice Space' activity is appropriate. However, 3 activities may indicate under-coverage of the lesson scope - hand positioning for playing is not explicitly addressed as its own activity.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-2.5-flash-lite",
+          "reasoning": "Model H has 5 activities but has some issues. 'Verify and Refine Guitar Tuning' is essentially a continuation of tuning and could be combined - it's too small as a standalone activity and feels like review/assessment. 'Identify Guitar Tuning Pegs and Strings' with description 'familiarize yourself' is somewhat vague. 'Grip the Guitar Pick and Practice Strumming' may be too granular - holding a pick is close to a single action. However, there's reasonable coverage otherwise.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model I has 4 activities with mixed quality. 'Position Your Hands for Playing' mentions 'place your fretting fingers on the fretboard' which is granular/single action territory. 'Hold the Guitar Properly' has description that lists single actions (position body, place hand, establish posture). 'Tune Your Guitar' is reasonably sized. The descriptions tend toward listing steps rather than describing substantial activities. Some overlap between activities 1 and 4.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model E has only 3 activities and shows gaps. 'Establish Proper Sitting Posture' is quite narrow - only seated position, not standing. 'Set Up Your Hand and Arm Positioning' could be substantial but description is thin. Missing any preparation or string/tuning basics coverage. Activities could work but the coverage feels incomplete and descriptions are less detailed than higher-ranked models.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Model D has only 3 activities with very brief descriptions. 'Position Your Hands' is borderline too small - description mentions only placing hands for 'reach and control'. 'Tune the Strings' is very thin with no detail about the process. 'Establish Playing Posture' is okay but brief. The brevity of descriptions suggests activities may not expand well to 10 steps. Missing preparation and tuning basics coverage.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "Model B has only 3 activities with significant issues. 'Prepare for Your First Practice' is described as 'final checks' which is essentially review/fluff activity explicitly forbidden in criteria. 'Learn to use a tuner' uses 'learn' language. Only 3 activities with thin descriptions suggests incomplete coverage. Activities are vaguely described and may not expand to 10 steps each.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Model J has only 2 activities which is far too few to adequately cover the lesson scope. While the two activities present ('Tune Your Guitar' and 'Hold Your Guitar Correctly') are reasonably sized individually, having only 2 activities means critical aspects are missing - no preparation, no understanding of strings/tuning basics, etc. This is the most incomplete coverage among all models.",
+          "score": 1
+        }
+      ]
+    }
+  ],
+  "taskId": "lesson-activities",
+  "testCaseId": "en-music-guitar-setup-1"
+}

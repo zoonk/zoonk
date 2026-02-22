@@ -1,0 +1,203 @@
+{
+  "expectations": "\n      Avoid granular steps like \"open Excel\" or \"type numbers\" - these belong inside activities, not as activities themselves.\n\n      \n  EVALUATION CRITERIA (focus on these, not specific phase names):\n\n  1. ACTIVITY SIZING: Each activity must be substantial enough to expand into ~10 detailed steps. If an activity could only be explained in 1-3 steps, it's TOO SMALL.\n\n  2. NO SINGLE ACTIONS: Activities must NOT be single actions like \"boil water\", \"click button\", \"hold item\". These are steps, not activities.\n\n  3. LOGICAL GROUPING: Related actions should be grouped into meaningful phases rather than listed separately.\n\n  4. COMPLETENESS: Activities should cover the full scope of the lesson - check if anything important is missing.\n\n  5. APPROPRIATE SCOPE: Content should match the lesson's scope - not broader, not narrower.\n\n  6. CLEAR TITLES: Titles should be short and action-oriented. No vague words like \"learn about\", \"understand\", \"explore\".\n\n  7. NO FLUFF: No summary, review, or assessment activities.\n\n  IMPORTANT: Do NOT penalize for missing specific phases you might expect. Different valid approaches exist. Focus on whether the activities provided are well-sized and cover the lesson scope.\n\n    ",
+  "judgedAt": "2026-01-15T20:32:31.976Z",
+  "judgments": [
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "This model provides the most comprehensive and well-structured response. The activities are perfectly sized, with each description providing enough detail to easily generate 10+ steps (e.g., listing specific columns, formatting conventions, and formulas). It logically covers the entire process from data gathering to creating a tracking system and dashboard. It strikes the perfect balance between spreadsheet technicalities and budgeting principles.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model A is excellent and very close to the top spot. The titles are actionable and punchy, and the descriptions are rich with examples (sinking funds, day-to-day spending). It covers the full scope, including setup, data entry, formulas, and a system for ongoing tracking. It is ranked slightly lower than Model G only because Model G's descriptions offer slightly more specific instructional cues.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Model I offers strong, dense activities. Although it only has 5 activities, the descriptions are packed with technical details like \"data validation,\" \"conditional formatting,\" and creating specific column headers. It demonstrates a high level of spreadsheet proficiency in its lesson plan. It ranks below A and G simply because having slightly more granular phases (like separating fixed and variable expenses) makes for a better lesson flow.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Model B provides a solid, logical list. It correctly separates fixed and variable expenses into different activities, which is a best practice for budgeting lessons. The scope is appropriate, and the activity sizing is good. It lacks some of the advanced features (dashboards, data validation) mentioned in the higher-ranked models but is otherwise a very strong output.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Model D is a competent response with clear titles and a logical order. However, it lumps all expenses into a single activity (Activity 3) or splits them less effectively than Model B. The descriptions are clear but lack the specific examples found in the top models. It meets the requirements but doesn't exceed them.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "Model C is acceptable but feels a bit generic. It suggests a multi-sheet structure (income, expenses, summary), which is a nice touch, but the descriptions are brief. Activity 5 (\"Review and Adjust\") leans slightly towards the \"fluff\" category compared to more concrete construction steps.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model H is a bit thin. Activity 1 focuses partly on \"choosing software,\" which is a low-value step. While it separates fixed and variable expenses, the final activity (\"Analyze\") is vague. It captures the basics but lacks the depth required for a high score.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model J is quite generic. The titles and descriptions are standard and do not offer much insight into *how* the spreadsheet is built (e.g., \"Add formulas to automatically calculate totals\"). It feels like a bare-minimum template rather than a robust lesson plan.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Model E provides only 4 activities. While the descriptions are okay, compressing the entire lesson into 4 phases makes it difficult to expand each into the requested ~10 detailed steps without making them unwieldy. It feels rushed and lacks sufficient granularity.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-2.5-flash-lite",
+          "reasoning": "Model F fails on several criteria. It includes out-of-scope activities like \"Track Your Spending\" (ongoing maintenance) and \"Review and Refine\" (end-of-month review), which violates the \"No Fluff\" rule regarding lesson scope. Additionally, it separates \"Determine Income\" (mental) from \"Populate Budget\" (spreadsheet), leading to poor logical grouping for a technical lesson.",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Best matches the sizing and grouping requirements: each activity is substantial (scope setting/data gathering, layout, income, fixed, variable, savings, formulas/checks, tracking, reconciliation). Covers the full monthly-budget-in-a-spreadsheet lifecycle without devolving into tiny single actions. Clear, action-oriented titles; no fluff/review activity beyond a legitimate reconcile-and-adjust phase.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Very complete and well-grouped with strong scope coverage (goals/timeframe, records, layout, income, categories/fixed, variable/history, formulas, budget-vs-actual variance, visuals + ongoing review routine). Activities are mostly big enough for ~10 steps. Slightly broader/heavier than needed (dashboard, percent-of-income, imports) but still appropriate for a robust lesson; titles are mostly action-oriented though a couple are longer.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Solid end-to-end structure with meaningful chunks (structure, income, expenses, formulas/conditional formatting, visuals + tracking features/template). Generally well-sized and coherent. Minor issue: includes a granular step (“Launch the spreadsheet application”) in an activity description (explicitly discouraged), and the last activity bundles many enhancements that could be too wide for one activity.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Covers core components (setup, income, fixed, variable, formulas, refine). Activities are appropriately grouped and mostly sizeable. Notable gaps versus task scope: lacks explicit ongoing tracking (budget vs actual logging system) and a clearer monthly close/reconciliation loop; also the spreadsheet setup/formatting is a bit generic.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Reasonable grouping and scope (structure, income, expenses, analyze totals, allocations, finalize). However, several activities are somewhat vague (“Finalize and Review”) and could collapse into fewer steps than required unless expanded; also missing explicit actual-spend tracking/reconciliation mechanics beyond a generic review.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-2.5-flash-lite",
+          "reasoning": "Includes tracking and end-of-month refinement, which helps completeness. But sequencing is awkward/redundant (determine income before creating the sheet; then later “populate”); multiple activities are borderline too thin/vague (“Analyze Your Budget”, “Adjust Your Budget”) and risk being only a few steps each.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Covers basics but is light: only five activities and omits key spreadsheet-budget workflow elements like formulas/checks detail and an explicit actual-vs-budget tracking system. Some activities are closer to single outcomes (e.g., ‘Calculate Total Monthly Income’) and may not naturally expand to ~10 steps.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Adequate core outline (setup, income, expenses, calculations, format) but misses major parts of the lesson scope: no record gathering, no savings/goals allocation, and no ongoing tracking/reconciliation. Activities are also fairly generic and may be too small to expand richly.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "Over-compressed and partially redundant: “Categorize Your Expenses” already mentions formulas, then “Create Budget Formulas” repeats. Lacks tracking/variance workflow and savings/goals. Several activities are too broad/vague to meet the ~10-steps sizing expectation cleanly.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Too few activities (4) and incomplete: no explicit income entry/totaling process beyond ‘structure the income section,’ no tracking or reconciliation, and heavy emphasis on styling/charts while missing budgeting mechanics. Activities are underspecified and likely too small or mis-scoped for the lesson.",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "This model provides 6 well-sized activities that appropriately cover budgeting in a spreadsheet. Each activity is substantial enough to expand to ~10 steps (e.g., 'Set Up the Spreadsheet' includes formatting, columns, dates, structure). Activities are logically grouped - separating fixed and variable expenses makes sense. The 'Refine Estimates Based on Actual Spending' activity is borderline review/assessment but focuses on adjustment rather than pure assessment. Titles are clear and action-oriented. Strong coverage without being overly granular or too broad.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model A provides 9 comprehensive activities with excellent scope coverage. Activities are well-sized and substantial. However, 'Track Actual Spending Throughout the Month' and 'Reconcile Results and Adjust for Next Month' extend beyond creating a monthly budget - they're about ongoing usage and next month's preparation. The scope seems slightly broader than just 'creating a monthly budget spreadsheet'. Activities like 'Allocate Savings and Financial Goals' add valuable depth. Some activities could potentially be combined. Overall very thorough but slightly over-scoped.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model G has 9 detailed activities covering extensive ground. However, several activities extend well beyond creating a budget spreadsheet - 'Set budgeting goals and timeframe', 'Gather financial records', and 'Implement budget vs. actual tracking and variance analysis' go beyond the core lesson. 'Build charts and a simple dashboard' and 'establish a monthly review process' are also beyond basic budget creation. While activities are well-described and substantial, the scope is too broad for a lesson on creating a monthly budget in a spreadsheet.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Model D offers 6 balanced activities. Activities are appropriately sized and cover the core elements. 'Set Budget Allocations and Limits' is a good addition. However, 'Finalize and Review the Monthly Budget' leans toward review/assessment territory which was flagged to avoid. The descriptions are somewhat generic and could be more specific. Solid but not exceptional - activities work together logically but lack some depth in descriptions.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model J provides 5 clean, logically grouped activities. Activities are reasonably sized and avoid single actions. However, combining all expenses (fixed and variable) into one activity 'List Your Monthly Expenses' makes this activity quite large while others are smaller. 'Format and Finalize Your Budget' is primarily about aesthetics, which may not be substantial enough for ~10 steps. The activities cover the basics but feel slightly thin in some areas.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model H has 5 activities with decent sizing. Activities are appropriately grouped. However, 'Calculate Total Monthly Income' feels like it could be too small - just listing and summing income sources may not expand to 10 steps. Similarly, 'Analyze and Finalize the Budget Balance' combines analysis (potentially review-like) with finalization. The overall coverage is adequate but some activities feel undersized.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "Model C provides 5 activities but has issues. 'Track Your Income' and 'Categorize Your Expenses' overlap significantly with 'Create Budget Formulas' - the formula work appears in both the categorization activities AND as its own activity. 'Review and Adjust Your Budget' is essentially a review/assessment activity which was explicitly flagged to avoid. Some redundancy in the activity design.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Model I has 5 activities but contains overly granular elements. 'Launch the spreadsheet application' is exactly the type of step that should be inside an activity, not mentioned in the description. The descriptions include step-level details like 'column headers for Category, Budgeted, Actual, and Difference'. 'Enhance with Visuals and Tracking Features' combines unrelated elements (charts, data validation, duplicate sheets). The granularity is inconsistent.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-2.5-flash-lite",
+          "reasoning": "Model F has 8 activities but several are too small. 'Analyze Your Budget' (just analyzing difference) and 'Adjust Your Budget' (making adjustments) are clearly undersized - each could only be explained in 1-3 steps. 'Track Your Spending' extends beyond creating a budget. 'Review and Refine Your Budget' is a review activity. Multiple activities here are too granular or out of scope. The worst balance of all models.",
+          "score": 1
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Model E only has 4 activities, which is the minimum coverage. The activities are heavily consolidated - 'Set Up the Spreadsheet and Income Section' combines two distinct phases, and 'Detail Fixed and Variable Expenses' combines multiple categorization tasks. While each activity could expand to 10 steps, the overall coverage feels incomplete. No savings/goals section, no budget balance analysis beyond the formula. Too sparse.",
+          "score": 10
+        }
+      ]
+    }
+  ],
+  "taskId": "lesson-activities",
+  "testCaseId": "en-finance-budget-1"
+}

@@ -1,0 +1,203 @@
+{
+  "expectations": "\n      Titles and descriptions must be in Portuguese.\n\n      \n  EVALUATION CRITERIA (focus on these, not specific phase names):\n\n  1. ACTIVITY SIZING: Each activity must be substantial enough to expand into ~10 detailed steps. If an activity could only be explained in 1-3 steps, it's TOO SMALL.\n\n  2. NO SINGLE ACTIONS: Activities must NOT be single actions like \"boil water\", \"click button\", \"hold item\". These are steps, not activities.\n\n  3. LOGICAL GROUPING: Related actions should be grouped into meaningful phases rather than listed separately.\n\n  4. COMPLETENESS: Activities should cover the full scope of the lesson - check if anything important is missing.\n\n  5. APPROPRIATE SCOPE: Content should match the lesson's scope - not broader, not narrower.\n\n  6. CLEAR TITLES: Titles should be short and action-oriented. No vague words like \"learn about\", \"understand\", \"explore\".\n\n  7. NO FLUFF: No summary, review, or assessment activities.\n\n  IMPORTANT: Do NOT penalize for missing specific phases you might expect. Different valid approaches exist. Focus on whether the activities provided are well-sized and cover the lesson scope.\n\n    ",
+  "judgedAt": "2026-01-15T20:32:31.918Z",
+  "judgments": [
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "This model provides the most comprehensive and well-structured outline. It breaks the process down into 11 distinct, substantial activities that cover the entire lifecycle from planning and substrate formulation to harvesting. The grouping is logical (e.g., separating watering, fertilizing, and pruning), allowing for the generation of detailed steps for each. Titles are clear and action-oriented.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "This model offers excellent scope (10 activities) and includes critical maintenance phases like pruning, support, and harvesting individually. It loses the top spot because one activity ('Positioning the pot') is too small to justify 10 steps on its own, whereas Model C integrates this into a planning phase. Otherwise, it is a very strong output.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "The activities provided are detailed, well-sized, and logically grouped. It excels in the setup and early maintenance phases, separating support, watering, and fertilizing. It ranks lower than F and C primarily because it lacks a harvest phase, ending at 'early care', which slightly limits the lesson's completeness regarding the full growing cycle.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-2.5-flash-lite",
+          "reasoning": "This model covers the full scope including harvest. However, the grouping is less optimal than the top models; it lumps water and nutrition together, and 'Select Varieties' is arguably a research task rather than a hands-on activity. Still, it is a solid outline that meets most criteria.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "This model covers the full lifecycle but groups all maintenance (watering, fertilizing, pests) into a single final activity ('Continuous Care'). This makes the final activity too broad compared to the others. It nicely separates sowing and transplanting, but the overall granularity is lower than the models above.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "With only 4 activities, this model is quite compressed. However, it ranks above the remaining models because its final activity ('Organize First Cares') explicitly mentions regulating sun, watering routine, and support management, showing an attempt to cover growing requirements better than the generic 'Initial Care' steps of lower models.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "A standard, logical 4-step outline. It separates pot preparation and substrate preparation, which is good. However, it is too brief to fully meet the 'Activity Sizing' expectation for a full course, as the activities are broad and the scope ends at planting.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Similar to Model E but slightly more generic. 'Choose the Ideal Pot' is borderline a single decision rather than a full activity. It lacks specific mention of support structures which are crucial for tomatoes.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "This model violates the 'No Single Actions' rule with its final activity ('Finalize with Rega...'), which is just a step. Furthermore, the scope is strictly limited to the planting day, ignoring the growing process entirely. It avoids last place only because it correctly identifies the need for a support structure.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "This output is unacceptable for the task requirements. It provides only 3 activities, which is insufficient to cover the lesson scope. The activities are extremely broad summaries.",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Melhor atende aos critérios: atividades bem dimensionadas (cada uma comporta facilmente ~10 passos), boa organização lógica (planejamento → preparo → produção de mudas → transplante → tutoramento → rega/nutrição → manejo → colheita) e cobre o ciclo completo do cultivo em vasos. Títulos são acionáveis e específicos, sem “fluff”.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Muito bom em escopo e agrupamento: inclui planejamento (variedade/vaso/local), drenagem, substrato, plantio/transplante, suporte, rotina de rega, adubação e prevenção de problemas. Atividades são razoavelmente “grandes” e acionáveis. Perde pontos por não cobrir colheita/manejo mais avançado (ex.: poda/condução) e por algumas atividades ainda ficarem um pouco próximas de “passos grandes” (p.ex., drenagem).",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-2.5-flash-lite",
+          "reasoning": "Cobre quase todo o ciclo (variedade, preparo, plantio, cuidados, nutrição, pragas/doenças, suporte e colheita) com boa lógica. Porém várias atividades ficam pequenas/demais genéricas para virar ~10 passos (ex.: “Colher os Tomates”, “Oferecer Suporte às Plantas”). Ainda assim, é completo e bem estruturado.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Boa cobertura de tópicos (variedade, plantio, luz, rega, adubação, poda, tutor, pragas, floração/frutificação). Contudo, viola o critério de “NO SINGLE ACTIONS” com itens muito atômicos (ex.: “Posicionar o vaso…”, “Estabelecer rotina de rega”, “Monitorar e controlar pragas”) e há fragmentação onde caberia agrupar em fases maiores (manejo contínuo). Também não fecha com colheita propriamente dita.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "Estrutura em fases faz sentido e evita muita fragmentação. Porém é superficial: poucas atividades e descrições genéricas; várias ficam pequenas para ~10 passos (ex.: “Semear…”, “Realizar o Transplantio”). Falta planejamento (variedade/local/luz), tutoramento, poda e colheita.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Bom agrupamento em macrofases (materiais/vasos, substrato, plantio/transplante, cuidados iniciais). Entretanto é incompleto para o escopo típico do cultivo em vasos: não aborda tutoramento explicitamente como fase, nutrição/adubação contínua, pragas/doenças em detalhe e colheita. Também fica genérico demais para expandir em ~10 passos por atividade sem inventar conteúdo.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Cobre o básico (vaso, substrato, plantio, cuidados iniciais), mas é estreito: não inclui tutoramento, adubação como fase, manejo de pragas/doenças contínuo, poda/condução e colheita. Algumas atividades são mais “procedimentos curtos” do que atividades substanciais.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Poucas atividades e muito genéricas; várias são pequenas e próximas de passos (“Escolher o Vaso Ideal”, “Plantar os Tomates”). Escopo incompleto (sem variedade/local detalhado, tutoramento, poda, colheita, manejo contínuo).",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Apesar de incluir tutoramento, o conjunto é curto e várias atividades são essencialmente ações únicas (“Finalizar com Rega e Posicionamento”). Falta manejo contínuo (rega/nutrição ao longo do ciclo), pragas/doenças, poda/condução e colheita. Agrupamento e cobertura são insuficientes.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Muito incompleto (apenas 3 atividades) e centrado em ações iniciais; não cobre manejo contínuo, nutrição ao longo do tempo, tutoramento contínuo/poda, controle de pragas/doenças nem colheita. As atividades também são relativamente pequenas para expandir em ~10 passos sem extrapolar.",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "This model provides 10 well-scoped activities that comprehensively cover growing tomatoes in pots. Each activity is substantial enough to expand into ~10 steps (e.g., 'Preparar o vaso e o solo' could include selecting pot size, checking drainage holes, adding drainage layer, mixing soil components, etc.). Activities cover the full lifecycle from preparation through harvest. Titles are clear and action-oriented. No fluff activities. Good logical grouping - separates related concerns like watering from fertilizing, pruning from support. The only minor issue is some slight overlap between activities, but overall excellent coverage and sizing.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Offers 11 comprehensive activities with detailed descriptions. Each activity is well-sized and expandable. Very thorough coverage including planning aspects (variety selection, microclimate), preparation, planting, ongoing care, and harvest. Descriptions are rich with specifics. However, some activities may be slightly too detailed in descriptions (almost prescriptive rather than descriptive), and 11 activities might be slightly too many for a single lesson. Some titles are a bit long. Still, excellent substance and completeness.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Provides 8 well-structured activities with good balance between preparation and ongoing care. Activities are appropriately sized - each could expand to ~10 steps. Good coverage including planning, preparation, planting, support, watering, fertilization, and pest prevention. Titles are clear and action-oriented. Descriptions provide good context. Missing explicit colheita/harvest activity, but includes pest/disease prevention which is important. Solid overall approach.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-2.5-flash-lite",
+          "reasoning": "8 activities covering the full scope from preparation to harvest. Activities are generally well-sized, though some like 'Colher os Tomates' might be on the smaller side for expanding into 10 steps. Good logical grouping with clear titles. Covers support installation, health monitoring, and harvest. Some activities could be combined (like activities 4 and 5 seem to overlap on watering/initial care), but overall good coverage and appropriate scope.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "5 activities covering key phases. Activities are decently sized - 'Preparar o Vaso e o Sistema de Drenagem' and 'Preparar o Substrato Nutritivo' are substantial. However, the model is incomplete - missing ongoing care activities like pest control, pruning, fertilization routine, and harvest. 'Finalizar com Rega e Posicionamento' sounds like a single action rather than a substantial activity. Coverage stops at initial setup, missing the maintenance phase entirely.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "5 activities covering basic flow from preparation to maintenance. Activities are reasonably sized but 'Semear as Sementes de Tomate' and descriptions are quite brief. 'Manter os Cuidados Contínuos' is somewhat vague. Missing support/tutoramento which is essential for tomatoes. Focuses only on seeds, not considering mudas as an option. Coverage is adequate but not comprehensive. Titles are clear and action-oriented.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Only 4 activities, which is too few for comprehensive coverage. While each activity is reasonably sized, the scope is incomplete. 'Realizar os Primeiros Cuidados' tries to pack too much (watering, fertilization, pest prevention) into one activity. Missing ongoing care, support/tutoramento, pruning, and harvest phases. The four activities provided are well-titled and described, but the coverage is inadequate for the lesson scope.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Only 4 activities with overly broad scope in each. 'Organizar os Primeiros Cuidados e Manutenção Inicial' tries to cover solar exposure, watering routine, tutoramento, AND initial care - this is too much for one activity and poorly grouped. Missing harvest, pest control, ongoing fertilization. The activities try to cover everything but end up being too broad rather than well-scoped. Some titles use vague words like 'Organizar'.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Only 4 activities. 'Preparar o Vaso' and 'Preparar o Substrato' are separated when they could be combined, yet the model still ends up with too few activities. Missing support/tutoramento (critical for tomatoes), ongoing care, pest management, and harvest. 'Realizar os Cuidados Iniciais' is vague and packs too much. The scope stops at initial setup without covering the growth and maintenance phases.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Only 3 activities, which is far too few. Each activity tries to cover too much scope. Missing crucial elements: variety selection, support/tutoramento, ongoing fertilization, pest control, pruning, and harvest. The three activities provided are okay in isolation, but the coverage is severely incomplete for a lesson on growing tomatoes in pots. Titles are in gerund form which is slightly inconsistent with action-oriented expectation.",
+          "score": 1
+        }
+      ]
+    }
+  ],
+  "taskId": "lesson-activities",
+  "testCaseId": "pt-gardening-tomatoes-1"
+}
