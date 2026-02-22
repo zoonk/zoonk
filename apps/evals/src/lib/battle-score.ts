@@ -13,6 +13,13 @@ const battleRankingSchema = z.object({
   rankings: z.array(modelRankingSchema),
 });
 
+// Judges may return "Model C", "Model C:", or just "C" — normalize for matching.
+const normalizeAnonymousId = (id: string) =>
+  id
+    .replace(/^Model\s+/i, "")
+    .replace(/:$/, "")
+    .trim();
+
 export async function generateBattleRankings(params: {
   judgeId: string;
   expectations: string;
@@ -56,11 +63,14 @@ Ties are allowed if outputs are truly equivalent in quality.
     system: battleSystemPrompt,
   });
 
-  // Map anonymous IDs back to model IDs
+  // Map anonymous IDs back to model IDs, normalizing format variations.
   const rankings: ModelRanking[] = result.rankings.map((ranking) => {
-    const modelMapping = mapping.find((entry) => entry.anonymousId === ranking.anonymousId);
+    const normalizedRanking = normalizeAnonymousId(ranking.anonymousId);
+    const modelMapping = mapping.find(
+      (entry) => normalizeAnonymousId(entry.anonymousId) === normalizedRanking,
+    );
     return {
-      anonymousId: ranking.anonymousId,
+      anonymousId: modelMapping?.anonymousId ?? ranking.anonymousId,
       modelId: modelMapping?.modelId ?? ranking.anonymousId,
       reasoning: ranking.reasoning,
       score: ranking.score,
