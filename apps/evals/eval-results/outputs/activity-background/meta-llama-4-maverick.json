@@ -1,0 +1,115 @@
+{
+  "generatedAt": "2026-01-15T19:15:16.468Z",
+  "modelId": "meta/llama-4-maverick",
+  "outputs": [
+    {
+      "duration": 5604.524541999912,
+      "inputTokens": 1374,
+      "output": "{\n  \"steps\": [\n    {\n      \"text\": \"Imagine writing code as a long list of instructions. As programs grew, this 'spaghetti code' became tangled and hard to maintain.\",\n      \"title\": \"Before Objects\"\n    },\n    {\n      \"text\": \"In the 1960s, software projects were failing. Programs were too complex, too buggy, and too expensive. Something had to change.\",\n      \"title\": \"The Software Crisis\"\n    },\n    {\n      \"text\": \"Researchers in Norway created Simula, a language that introduced 'objects' and 'classes'. It was like organizing code into modular LEGO bricks.\",\n      \"title\": \"Simula's Breakthrough\"\n    },\n    {\n      \"text\": \"Object-Oriented Programming (OOP) was born. It made code reusable, maintainable, and scalable. Complex systems became manageable.\",\n      \"title\": \"Revolution in Software\"\n    },\n    {\n      \"text\": \"Today, OOP is everywhere. From mobile apps to enterprise systems, it helps developers build complex software efficiently. You're using OOP principles in your code already.\",\n      \"title\": \"Why OOP Matters\"\n    }\n  ]\n}",
+      "outputTokens": 244,
+      "systemPrompt": "",
+      "testCaseId": "en-programming-oop-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 5323.007500000065,
+      "inputTokens": 1369,
+      "output": "{\n  \"steps\": [\n    {\n      \"text\": \"For centuries, mathematicians could describe stationary objects — shapes, sizes, and positions. But what about objects in motion? The rules of static geometry weren't enough.\",\n      \"title\": \"The Limits of Static Math\"\n    },\n    {\n      \"text\": \"As astronomy advanced, scientists needed math to describe planetary orbits, acceleration, and rates of change. The existing toolkit fell short.\",\n      \"title\": \"Motion and Change: A New Frontier\"\n    },\n    {\n      \"text\": \"Newton focused on physical motion, while Leibniz worked on rates of change. Though they approached from different angles, both discovered the same underlying principles.\",\n      \"title\": \"Two Paths Converge\"\n    },\n    {\n      \"text\": \"Calculus emerged as a powerful tool to analyze dynamic systems. It allowed mathematicians to model complex phenomena with unprecedented precision.\",\n      \"title\": \"The Breakthrough: Calculus is Born\"\n    },\n    {\n      \"text\": \"From predicting population growth to modeling complex systems, calculus has become a cornerstone of modern science and engineering. It helps us understand and describe the world around us.\",\n      \"title\": \"Why Calculus Matters Today\"\n    }\n  ]\n}",
+      "outputTokens": 249,
+      "systemPrompt": "",
+      "testCaseId": "en-math-calculus-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 6591.192792000016,
+      "inputTokens": 1370,
+      "output": "{\n  \"steps\": [\n    {\n      \"text\": \"Imagine sailing to distant islands, discovering species found nowhere else. How did they get there? Why were they so different?\",\n      \"title\": \"A Mysterious Diversity\"\n    },\n    {\n      \"text\": \"On the HMS Beagle, Charles Darwin collected specimens and made notes. He wondered: were these unique creatures created separately, or was there another explanation?\",\n      \"title\": \"Darwin's Curious Mind\"\n    },\n    {\n      \"text\": \"On the Galapagos Islands, Darwin found finches with different beaks and giant tortoises. Were these variations just random, or did they serve a purpose?\",\n      \"title\": \"Finches and Tortoises\"\n    },\n    {\n      \"text\": \"Darwin realized that species adapt to their environments. Those with helpful traits survive and pass them on. Over time, this could create new species.\",\n      \"title\": \"The Puzzle Pieces Fall\"\n    },\n    {\n      \"text\": \"The Theory of Evolution by Natural Selection was born. It explained how life diversified without needing multiple creations. This changed biology forever.\",\n      \"title\": \"A Revolutionary Idea\"\n    },\n    {\n      \"text\": \"Understanding evolution helps us track disease outbreaks, develop new medicines, and conserve biodiversity. It's the foundation of modern biology.\",\n      \"title\": \"Why It Matters Today\"\n    }\n  ]\n}",
+      "outputTokens": 293,
+      "systemPrompt": "",
+      "testCaseId": "en-science-evolution-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 6492.201834000065,
+      "inputTokens": 1369,
+      "output": "{\n  \"steps\": [\n    {\n      \"text\": \"Imagine trying to navigate a dense forest without a map. Ancient thinkers faced a similar challenge: how to find their way through complex arguments and arrive at reliable conclusions.\",\n      \"title\": \"Thinking in the Dark\"\n    },\n    {\n      \"text\": \"In ancient Greece, philosophers and politicians often found themselves in heated debates. They realized that emotional appeals and charismatic speaking weren't enough to guarantee sound reasoning.\",\n      \"title\": \"The Puzzle of Persuasion\"\n    },\n    {\n      \"text\": \"The philosopher Aristotle pioneered the study of logic by identifying patterns in reasoning. He developed the syllogism, a framework for breaking down arguments into their essential parts.\",\n      \"title\": \"Aristotle's Breakthrough\"\n    },\n    {\n      \"text\": \"As philosophers continued to refine logic, they sought to create a systematic approach to evaluating arguments. This led to the development of formal logic, which focuses on the structure of reasoning rather than its content.\",\n      \"title\": \"The Quest for Clarity\"\n    },\n    {\n      \"text\": \"Today, logic remains essential in various fields, from mathematics and computer science to law and critical thinking. It provides a foundation for clear and effective reasoning, helping us navigate complex issues and make informed decisions.\",\n      \"title\": \"Why Logic Matters\"\n    }\n  ]\n}",
+      "outputTokens": 284,
+      "systemPrompt": "",
+      "testCaseId": "en-philosophy-logic-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 6919.050333000021,
+      "inputTokens": 1376,
+      "output": "{\n  \"steps\": [\n    {\n      \"text\": \"Imagine que você tinha R$ 100 e podia comprar 10 lanches com esse dinheiro. Mas um dia, esses mesmos lanches passaram a custar R$ 120. Seu dinheiro 'encolheu'.\",\n      \"title\": \"O Poder de Compra\"\n    },\n    {\n      \"text\": \"Inflação é quando os preços dos produtos e serviços sobem ao longo do tempo. É como se o valor do dinheiro diminuísse, fazendo com que você precise de mais dinheiro para comprar as mesmas coisas.\",\n      \"title\": \"O que é Inflação?\"\n    },\n    {\n      \"text\": \"A inflação pode ocorrer por vários motivos, como aumento da demanda, escassez de produtos ou até mesmo impressão excessiva de dinheiro. É como se houvesse mais 'concorrentes' comprando os mesmos produtos.\",\n      \"title\": \"Por que isso acontece?\"\n    },\n    {\n      \"text\": \"A inflação afeta o poder de compra das pessoas. Quem tem renda fixa pode perder o poder de compra ao longo do tempo, enquanto quem tem investimentos pode se beneficiar se eles rendem mais que a inflação.\",\n      \"title\": \"Efeitos na vida real\"\n    },\n    {\n      \"text\": \"Entender a inflação ajuda a tomar decisões financeiras mais inteligentes, como poupar, investir ou até mesmo planejar gastos. É essencial para qualquer pessoa que queira manter seu padrão de vida.\",\n      \"title\": \"Por que é importante entender?\"\n    }\n  ]\n}",
+      "outputTokens": 320,
+      "systemPrompt": "",
+      "testCaseId": "pt-economics-inflation-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 7637.633125000051,
+      "inputTokens": 1379,
+      "output": "{\n  \"steps\": [\n    {\n      \"text\": \"Imagina un mundo donde las cosas simplemente 'caían' sin explicación. Los antiguos filósofos se preguntaban: ¿Por qué los objetos caen hacia el suelo y no hacia arriba?\",\n      \"title\": \"Caídas y Caos\"\n    },\n    {\n      \"text\": \"Mientras tanto, en el cielo, los planetas vagaban sin rumbo fijo. Los astrónomos antiguos creían que giraban alrededor de la Tierra en órbitas perfectas.\",\n      \"title\": \"El Misterio de los Planetas\"\n    },\n    {\n      \"text\": \"Isaac Newton, bajo un manzano, tuvo un 'momento eureka'. La misma fuerza que hace caer una manzana mantiene a la Luna en órbita alrededor de la Tierra.\",\n      \"title\": \"La Manzana de Newton\"\n    },\n    {\n      \"text\": \"Newton formuló la Ley de Gravitación Universal: todos los objetos se atraen entre sí. La Tierra te atrae hacia ella, y tú la atraes a ella, aunque no lo notes.\",\n      \"title\": \"La Ley Universal\"\n    },\n    {\n      \"text\": \"Por primera vez, se entendió que las mismas leyes gobiernan tanto la caída de una hoja como el movimiento de los planetas. ¡La física unificaba el universo!\",\n      \"title\": \"Unificando el Cielo y la Tierra\"\n    },\n    {\n      \"text\": \"La gravedad sigue siendo fundamental en nuestra comprensión del universo, desde cómo lanzamos cohetes hasta cómo los planetas orbitan estrellas lejanas.\",\n      \"title\": \"Por Qué Importa Hoy\"\n    }\n  ]\n}",
+      "outputTokens": 352,
+      "systemPrompt": "",
+      "testCaseId": "es-physics-gravity-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 6953.447958000004,
+      "inputTokens": 1373,
+      "output": "{\n  \"steps\": [\n    {\n      \"text\": \"Imagine trying to teach a computer to understand language by writing rules for every grammar exception and idiom. It was like trying to map every route through a dense forest.\",\n      \"title\": \"The Rules-Based Struggle\"\n    },\n    {\n      \"text\": \"The internet grew, and with it, a sea of text data. Researchers realized that with enough examples, a machine could learn language patterns on its own — no rulebooks needed.\",\n      \"title\": \"Data Floods In\"\n    },\n    {\n      \"text\": \"Inspired by the human brain, neural networks were developed. They could process vast amounts of text, finding patterns that rigid rules missed.\",\n      \"title\": \"The Neural Network Spark\"\n    },\n    {\n      \"text\": \"As computing power grew, so did the models. 'Large Language Models' emerged, trained on billions of words. They began to grasp context, nuance, and even creativity.\",\n      \"title\": \"Scaling Up Intelligence\"\n    },\n    {\n      \"text\": \"These models didn't just comprehend language; they started generating it. Human-like text, answers, and even stories began to flow from machines.\",\n      \"title\": \"From Understanding to Creation\"\n    },\n    {\n      \"text\": \"Large Language Models power tools you might already use — from chatbots to writing assistants. They're changing how we interact with technology and access information.\",\n      \"title\": \"Why This Matters Today\"\n    }\n  ]\n}",
+      "outputTokens": 311,
+      "systemPrompt": "",
+      "testCaseId": "en-edge-recent-topic-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 7176.608583999914,
+      "inputTokens": 1365,
+      "output": "{\n  \"steps\": [\n    {\n      \"text\": \"Imagine gathering unique marbles into a bag. You can't count them twice, and their order doesn't matter. This simple idea hides a complex truth: what does it mean for two collections to be the same?\",\n      \"title\": \"Collections Without Order\"\n    },\n    {\n      \"text\": \"As mathematics grew, so did the need for precise language. Describing groups of objects — prime numbers, geometric shapes, or solutions to equations — required a rigorous foundation. Vague descriptions led to paradoxes and contradictions.\",\n      \"title\": \"The Need for Precision\"\n    },\n    {\n      \"text\": \"In the late 1800s, Georg Cantor dared to formalize the notion of a 'collection'. He introduced the concept of a 'set' — a gathering of distinct objects considered as a whole. This wasn't just a new term; it was a new way of thinking.\",\n      \"title\": \"Cantor's Bold Step\"\n    },\n    {\n      \"text\": \"Set theory wasn't just another branch of mathematics; it became its foundation. It provided a common language for disparate fields, from algebra to topology. Suddenly, mathematicians could discuss complex ideas with clarity and precision.\",\n      \"title\": \"Revolutionizing Mathematics\"\n    },\n    {\n      \"text\": \"Today, set theory underpins much of computer science and discrete mathematics. Databases store data in sets, algorithms manipulate them, and programming languages rely on set theory principles. Understanding sets is key to mastering these modern tools.\",\n      \"title\": \"Why It Matters Today\"\n    }\n  ]\n}",
+      "outputTokens": 325,
+      "systemPrompt": "",
+      "testCaseId": "en-edge-abstract-topic-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 6287.287125000032,
+      "inputTokens": 1369,
+      "output": "{\n  \"steps\": [\n    {\n      \"text\": \"Imagine a library with millions of books, but no catalog or shelves. Finding information would be impossible. That's how computers felt before databases.\",\n      \"title\": \"Drowning in Data\"\n    },\n    {\n      \"text\": \"In the 1960s, computers used simple file systems like digital filing cabinets. But as data grew, so did the mess. It was like having thousands of folders with no way to search them.\",\n      \"title\": \"Early Filing Systems\"\n    },\n    {\n      \"text\": \"In 1970, Edgar Codd proposed a revolutionary idea: organize data into tables with rows and columns. It was like creating a super-smart librarian that could instantly find any book.\",\n      \"title\": \"The Database Breakthrough\"\n    },\n    {\n      \"text\": \"Databases brought order to digital chaos. They allowed computers to store, update, and retrieve vast amounts of information efficiently. It was a game-changer for businesses and applications.\",\n      \"title\": \"From Chaos to Order\"\n    },\n    {\n      \"text\": \"Today, databases power everything from your social media feed to online banking. They're the unsung heroes of the digital world, making it possible to access information instantly.\",\n      \"title\": \"Why Databases Matter Today\"\n    }\n  ]\n}",
+      "outputTokens": 277,
+      "systemPrompt": "",
+      "testCaseId": "en-engineering-databases-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 6893.016041000024,
+      "inputTokens": 1373,
+      "output": "{\n  \"steps\": [\n    {\n      \"text\": \"Imagine being an artist in 19th-century France, bound by strict rules about what to paint and how. History paintings were prized, but capturing life as it happened was considered improper.\",\n      \"title\": \"Trapped in Tradition\"\n    },\n    {\n      \"text\": \"Artists like Claude Monet and Pierre-Auguste Renoir broke free from studio constraints by painting en plein air. They observed how light danced across subjects, changing everything.\",\n      \"title\": \"The Outsider's View\"\n    },\n    {\n      \"text\": \"These rebellious artists rejected traditional techniques, using short, broken brushstrokes and vivid colors. Their work was initially ridiculed, but they persisted.\",\n      \"title\": \"Breaking the Rules\"\n    },\n    {\n      \"text\": \"Impressionist paintings became snapshots of modern life. Everyday scenes, landscapes, and people were immortalized with a newfound sense of immediacy and movement.\",\n      \"title\": \"Capturing the Moment\"\n    },\n    {\n      \"text\": \"Impressionism didn't just change art; it changed how we perceive the world. It celebrated the fleeting and the ordinary, showing beauty in unexpected places.\",\n      \"title\": \"A New Way of Seeing\"\n    },\n    {\n      \"text\": \"Today, Impressionism influences everything from advertising to filmmaking. Its emphasis on light and color continues to inspire artists and shape our visual culture.\",\n      \"title\": \"Legacy Lives On\"\n    }\n  ]\n}",
+      "outputTokens": 318,
+      "systemPrompt": "",
+      "testCaseId": "en-art-impressionism-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 6580.74895899999,
+      "inputTokens": 1370,
+      "output": "{\n  \"steps\": [\n    {\n      \"text\": \"Imagine viver em uma época de grandes mudanças: a Revolução Industrial está transformando a forma como as pessoas vivem e trabalham. As cidades estão crescendo rapidamente.\",\n      \"title\": \"Sociedade em Transformação\"\n    },\n    {\n      \"text\": \"As cidades estão superlotadas, com condições de vida precárias para muitos. Isso gera problemas sociais, como pobreza e crime, que desafiam as explicações tradicionais.\",\n      \"title\": \"O Caos Urbano\"\n    },\n    {\n      \"text\": \"Pensadores como Auguste Comte começam a questionar: como podemos entender e melhorar a sociedade de forma científica? Surge a ideia de uma 'física social'.\",\n      \"title\": \"A Busca por Respostas\"\n    },\n    {\n      \"text\": \"Comte cunha o termo 'Sociologia' em 1839. Ele propõe que a sociedade seja estudada com métodos científicos, assim como a natureza, para descobrir suas leis e funcionamentos.\",\n      \"title\": \"O Nascimento da Sociologia\"\n    },\n    {\n      \"text\": \"A Sociologia nos ajuda a entender as complexas relações sociais que moldam nosso mundo. Ela é essencial para enfrentar desafios contemporâneos, como desigualdade e mudanças culturais.\",\n      \"title\": \"Por que isso importa hoje?\"\n    }\n  ]\n}",
+      "outputTokens": 290,
+      "systemPrompt": "",
+      "testCaseId": "pt-social-sociology-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 5066.519500000053,
+      "inputTokens": 1364,
+      "output": "{\n  \"steps\": [\n    {\n      \"text\": \"Imagine standing between two mirrors. Your reflection reflects your reflection, creating an infinite corridor. This self-similar pattern is the essence of recursion.\",\n      \"title\": \"The Mirror Maze\"\n    },\n    {\n      \"text\": \"Complex problems often have smaller versions of themselves. Recursion solves these by having functions call themselves with simpler inputs until reaching a base case.\",\n      \"title\": \"Breaking Down Problems\"\n    },\n    {\n      \"text\": \"Recursion appears in mathematical sequences like factorials and Fibonacci numbers. These sequences define themselves using their own previous values.\",\n      \"title\": \"Mathematical Roots\"\n    },\n    {\n      \"text\": \"Recursion offers an elegant way to solve problems like tree traversals and divide-and-conquer algorithms. It simplifies code by leveraging self-similarity.\",\n      \"title\": \"The Elegant Solution\"\n    },\n    {\n      \"text\": \"Understanding recursion unlocks powerful problem-solving techniques. It trains you to see complex problems as simpler, self-contained pieces.\",\n      \"title\": \"Why Recursion Matters\"\n    }\n  ]\n}",
+      "outputTokens": 229,
+      "systemPrompt": "",
+      "testCaseId": "en-edge-narrow-topic-1",
+      "userPrompt": ""
+    }
+  ],
+  "taskId": "activity-background"
+}

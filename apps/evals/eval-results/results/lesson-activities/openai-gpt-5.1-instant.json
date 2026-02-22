@@ -1,0 +1,366 @@
+{
+  "modelId": "openai/gpt-5.1-instant",
+  "results": [
+    {
+      "steps": [
+        {
+          "conclusion": "The response fails the 'Activity Sizing' constraint significantly. The lesson topic (Carbonara) is a relatively short and simple process, yet it has been broken down into 7 separate activities. Several of these, specifically 'Make the Egg and Cheese Mixture' and 'Plate and Serve the Carbonara', are too small to be expanded into ~10 detailed steps without excessive padding or fluff. For instance, making the egg mixture primarily consists of cracking eggs, grating cheese, and whisking (3-4 steps max), which directly violates the instruction: 'If NO (only 1-3 steps possible) -> It's too small'.",
+          "kind": "majorErrors",
+          "score": 6.5
+        },
+        {
+          "conclusion": "None. The titles are action-oriented and the descriptions are clear, fulfilling the language and style requirements.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The activities should be consolidated to form substantial phases that truly warrant 10+ steps. Recommended structure: 1. 'Prepare Ingredients and Station' (merging Assemble, Prep Guanciale, and Egg Mixture), 2. 'Cook the Pasta and Guanciale' (merging the two cooking steps), and 3. 'Finish and Serve' (merging Emulsify and Plate). This would result in 3-4 robust activities fitting the scope better.",
+          "kind": "potentialImprovements",
+          "score": 7
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      Avoid granular steps like \"boil water\" or \"add salt\" - these belong inside activities, not as activities themselves.\n\n      \n  EVALUATION CRITERIA (focus on these, not specific phase names):\n\n  1. ACTIVITY SIZING: Each activity must be substantial enough to expand into ~10 detailed steps. If an activity could only be explained in 1-3 steps, it's TOO SMALL.\n\n  2. NO SINGLE ACTIONS: Activities must NOT be single actions like \"boil water\", \"click button\", \"hold item\". These are steps, not activities.\n\n  3. LOGICAL GROUPING: Related actions should be grouped into meaningful phases rather than listed separately.\n\n  4. COMPLETENESS: Activities should cover the full scope of the lesson - check if anything important is missing.\n\n  5. APPROPRIATE SCOPE: Content should match the lesson's scope - not broader, not narrower.\n\n  6. CLEAR TITLES: Titles should be short and action-oriented. No vague words like \"learn about\", \"understand\", \"explore\".\n\n  7. NO FLUFF: No summary, review, or assessment activities.\n\n  IMPORTANT: Do NOT penalize for missing specific phases you might expect. Different valid approaches exist. Focus on whether the activities provided are well-sized and cover the lesson scope.\n\n    ",
+        "id": "en-cooking-pasta-1",
+        "userInput": {
+          "chapterTitle": "Italian Classics",
+          "courseTitle": "Home Cooking Basics",
+          "language": "en",
+          "lessonDescription": "Step-by-step guide to making authentic spaghetti carbonara from scratch",
+          "lessonTitle": "Making Spaghetti Carbonara"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      Avoid granular steps like \"open paint can\" or \"dip brush\" - these belong inside activities, not as activities themselves.\n\n      \n  EVALUATION CRITERIA (focus on these, not specific phase names):\n\n  1. ACTIVITY SIZING: Each activity must be substantial enough to expand into ~10 detailed steps. If an activity could only be explained in 1-3 steps, it's TOO SMALL.\n\n  2. NO SINGLE ACTIONS: Activities must NOT be single actions like \"boil water\", \"click button\", \"hold item\". These are steps, not activities.\n\n  3. LOGICAL GROUPING: Related actions should be grouped into meaningful phases rather than listed separately.\n\n  4. COMPLETENESS: Activities should cover the full scope of the lesson - check if anything important is missing.\n\n  5. APPROPRIATE SCOPE: Content should match the lesson's scope - not broader, not narrower.\n\n  6. CLEAR TITLES: Titles should be short and action-oriented. No vague words like \"learn about\", \"understand\", \"explore\".\n\n  7. NO FLUFF: No summary, review, or assessment activities.\n\n  IMPORTANT: Do NOT penalize for missing specific phases you might expect. Different valid approaches exist. Focus on whether the activities provided are well-sized and cover the lesson scope.\n\n    ",
+        "id": "en-diy-paint-wall-1",
+        "userInput": {
+          "chapterTitle": "Interior Painting",
+          "courseTitle": "DIY Home Improvement",
+          "language": "en",
+          "lessonDescription": "How to properly paint an interior wall including preparation, priming, and applying paint",
+          "lessonTitle": "Painting a Wall"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The response is excellent. The breakdown into three distinct phases (Preparation, Positioning, and Tuning) perfectly matches the lesson scope defined in the description. Each activity is substantial enough to support the required ~10 steps without being too granular. The titles are clear and action-oriented.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      Avoid granular steps like \"hold the pick\" or \"place finger on fret\" - these belong inside activities, not as activities themselves.\n\n      \n  EVALUATION CRITERIA (focus on these, not specific phase names):\n\n  1. ACTIVITY SIZING: Each activity must be substantial enough to expand into ~10 detailed steps. If an activity could only be explained in 1-3 steps, it's TOO SMALL.\n\n  2. NO SINGLE ACTIONS: Activities must NOT be single actions like \"boil water\", \"click button\", \"hold item\". These are steps, not activities.\n\n  3. LOGICAL GROUPING: Related actions should be grouped into meaningful phases rather than listed separately.\n\n  4. COMPLETENESS: Activities should cover the full scope of the lesson - check if anything important is missing.\n\n  5. APPROPRIATE SCOPE: Content should match the lesson's scope - not broader, not narrower.\n\n  6. CLEAR TITLES: Titles should be short and action-oriented. No vague words like \"learn about\", \"understand\", \"explore\".\n\n  7. NO FLUFF: No summary, review, or assessment activities.\n\n  IMPORTANT: Do NOT penalize for missing specific phases you might expect. Different valid approaches exist. Focus on whether the activities provided are well-sized and cover the lesson scope.\n\n    ",
+        "id": "en-music-guitar-setup-1",
+        "userInput": {
+          "chapterTitle": "Getting Started",
+          "courseTitle": "Learn Guitar",
+          "language": "en",
+          "lessonDescription": "How to tune your guitar and hold it correctly for your first practice session",
+          "lessonTitle": "Setting Up Your Guitar"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The response perfectly adheres to the instructions. The activities are well-sized (can be expanded into ~10 steps), cover the full scope of the lesson, and follow a logical workflow. The titles are action-oriented and clear.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      Avoid granular steps like \"press shutter button\" or \"adjust ISO dial\" - these belong inside activities, not as activities themselves.\n\n      \n  EVALUATION CRITERIA (focus on these, not specific phase names):\n\n  1. ACTIVITY SIZING: Each activity must be substantial enough to expand into ~10 detailed steps. If an activity could only be explained in 1-3 steps, it's TOO SMALL.\n\n  2. NO SINGLE ACTIONS: Activities must NOT be single actions like \"boil water\", \"click button\", \"hold item\". These are steps, not activities.\n\n  3. LOGICAL GROUPING: Related actions should be grouped into meaningful phases rather than listed separately.\n\n  4. COMPLETENESS: Activities should cover the full scope of the lesson - check if anything important is missing.\n\n  5. APPROPRIATE SCOPE: Content should match the lesson's scope - not broader, not narrower.\n\n  6. CLEAR TITLES: Titles should be short and action-oriented. No vague words like \"learn about\", \"understand\", \"explore\".\n\n  7. NO FLUFF: No summary, review, or assessment activities.\n\n  IMPORTANT: Do NOT penalize for missing specific phases you might expect. Different valid approaches exist. Focus on whether the activities provided are well-sized and cover the lesson scope.\n\n    ",
+        "id": "en-photo-portrait-1",
+        "userInput": {
+          "chapterTitle": "Portrait Photography",
+          "courseTitle": "Photography Fundamentals",
+          "language": "en",
+          "lessonDescription": "How to take a professional-looking portrait photo using natural light",
+          "lessonTitle": "Taking Portrait Photos"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "The proposed activity order contains a significant chronological and technical error regarding the squat stance. Activity 2, 'Establish Your Squat Stance,' is placed before Activity 3 ('Set Up Under the Barbell') and Activity 4 ('Unrack and Step Back'). In a proper barbell squat, the specific 'squat stance' (foot width and angle for the descent) is established *after* the walkout (Activity 4), not before unracking. Before unracking, one assumes a narrower 'unrack stance.' Placing the squat stance setup before the unrack phase is physically impractical and technically incorrect for a step-by-step tutorial.",
+          "kind": "majorErrors",
+          "score": 6.5
+        },
+        {
+          "conclusion": "The response includes an activity titled 'Review and Adjust Your Technique,' which focuses on evaluating performance and identifying errors. This violates the specific negative constraint: 'Don't add assessment or quiz activities' and 'Don't add summary or review activities.' Additionally, Activity 7 ('Rerack the Barbell') is likely too small to support ~10 meaningful, distinct steps without significant fluff, as the action primarily consists of walking forward and lowering the bar.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "To improve, Activity 2 should be removed or renamed to 'Prepare for Unracking' and integrated correctly. A new activity for 'Set Stance and Brace' should be added *after* the walkout phase. Activity 8 should be removed to comply with constraints. Activity 7 could be combined with the ascent or a 'Complete the Rep' phase to ensure sufficient step volume.",
+          "kind": "potentialImprovements",
+          "score": 7
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      Avoid granular cues like \"bend knees\" or \"keep back straight\" - these belong inside activities as steps, not as activities themselves.\n\n      \n  EVALUATION CRITERIA (focus on these, not specific phase names):\n\n  1. ACTIVITY SIZING: Each activity must be substantial enough to expand into ~10 detailed steps. If an activity could only be explained in 1-3 steps, it's TOO SMALL.\n\n  2. NO SINGLE ACTIONS: Activities must NOT be single actions like \"boil water\", \"click button\", \"hold item\". These are steps, not activities.\n\n  3. LOGICAL GROUPING: Related actions should be grouped into meaningful phases rather than listed separately.\n\n  4. COMPLETENESS: Activities should cover the full scope of the lesson - check if anything important is missing.\n\n  5. APPROPRIATE SCOPE: Content should match the lesson's scope - not broader, not narrower.\n\n  6. CLEAR TITLES: Titles should be short and action-oriented. No vague words like \"learn about\", \"understand\", \"explore\".\n\n  7. NO FLUFF: No summary, review, or assessment activities.\n\n  IMPORTANT: Do NOT penalize for missing specific phases you might expect. Different valid approaches exist. Focus on whether the activities provided are well-sized and cover the lesson scope.\n\n    ",
+        "id": "en-fitness-squat-1",
+        "userInput": {
+          "chapterTitle": "Lower Body",
+          "courseTitle": "Strength Training Basics",
+          "language": "en",
+          "lessonDescription": "How to perform a proper barbell squat with correct form and technique",
+          "lessonTitle": "The Barbell Squat"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      Titles and descriptions must be in Portuguese.\n\n      \n  EVALUATION CRITERIA (focus on these, not specific phase names):\n\n  1. ACTIVITY SIZING: Each activity must be substantial enough to expand into ~10 detailed steps. If an activity could only be explained in 1-3 steps, it's TOO SMALL.\n\n  2. NO SINGLE ACTIONS: Activities must NOT be single actions like \"boil water\", \"click button\", \"hold item\". These are steps, not activities.\n\n  3. LOGICAL GROUPING: Related actions should be grouped into meaningful phases rather than listed separately.\n\n  4. COMPLETENESS: Activities should cover the full scope of the lesson - check if anything important is missing.\n\n  5. APPROPRIATE SCOPE: Content should match the lesson's scope - not broader, not narrower.\n\n  6. CLEAR TITLES: Titles should be short and action-oriented. No vague words like \"learn about\", \"understand\", \"explore\".\n\n  7. NO FLUFF: No summary, review, or assessment activities.\n\n  IMPORTANT: Do NOT penalize for missing specific phases you might expect. Different valid approaches exist. Focus on whether the activities provided are well-sized and cover the lesson scope.\n\n    ",
+        "id": "pt-gardening-tomatoes-1",
+        "userInput": {
+          "chapterTitle": "Horta em Casa",
+          "courseTitle": "Jardinagem para Iniciantes",
+          "language": "pt",
+          "lessonDescription": "Como plantar tomates em vasos, desde a preparação do solo até os primeiros cuidados",
+          "lessonTitle": "Plantando Tomates em Vasos"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "The response presents a logical breakdown of the lesson into 5 distinct activities. The sequence follows the standard origami progression for creating a crane: Preparation -> Preliminary Base (Square Base) -> Bird Base -> Shaping Body -> Finishing. This structure is pedagogically sound for a beginner course.",
+          "kind": "potentialImprovements",
+          "score": 10
+        },
+        {
+          "conclusion": "None. The activity sizing is appropriate given the requirement for ~10 detailed steps per activity. While a standard diagram might have fewer steps, a textual tutorial for beginners (as requested) requires breaking down single folds into micro-steps (alignment, holding, creasing, unfolding), making even the 'Preparation' and 'Finishing' phases substantial enough to meet the criteria.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None. Titles are action-oriented and correctly translated into Spanish. Descriptions accurately summarize the content of each phase. The terminology used ('Base preliminar', 'Base de ave') is correct for the domain.",
+          "kind": "minorErrors",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      Titles and descriptions must be in Spanish.\n\n      \n  EVALUATION CRITERIA (focus on these, not specific phase names):\n\n  1. ACTIVITY SIZING: Each activity must be substantial enough to expand into ~10 detailed steps. If an activity could only be explained in 1-3 steps, it's TOO SMALL.\n\n  2. NO SINGLE ACTIONS: Activities must NOT be single actions like \"boil water\", \"click button\", \"hold item\". These are steps, not activities.\n\n  3. LOGICAL GROUPING: Related actions should be grouped into meaningful phases rather than listed separately.\n\n  4. COMPLETENESS: Activities should cover the full scope of the lesson - check if anything important is missing.\n\n  5. APPROPRIATE SCOPE: Content should match the lesson's scope - not broader, not narrower.\n\n  6. CLEAR TITLES: Titles should be short and action-oriented. No vague words like \"learn about\", \"understand\", \"explore\".\n\n  7. NO FLUFF: No summary, review, or assessment activities.\n\n  IMPORTANT: Do NOT penalize for missing specific phases you might expect. Different valid approaches exist. Focus on whether the activities provided are well-sized and cover the lesson scope.\n\n    ",
+        "id": "es-craft-origami-1",
+        "userInput": {
+          "chapterTitle": "Figuras Básicas",
+          "courseTitle": "Origami para Principiantes",
+          "language": "es",
+          "lessonDescription": "Cómo hacer una grulla de papel paso a paso con técnicas básicas de origami",
+          "lessonTitle": "Haciendo una Grulla de Papel"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The breakdown provided is logical and standard for a spreadsheet-based lesson. The activities are well-grouped. For instance, 'Prepare the Budget Spreadsheet Structure' correctly aggregates opening the software, naming the file, and creating headers/layout, rather than listing them individually. 'Record Monthly Income' might be slightly light on steps (closer to 5-7 than 10) compared to 'Document Monthly Expenses' (which usually has more categories), but it is distinct enough to warrant its own section in a beginner lesson. No significant improvements needed.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      Avoid granular steps like \"open Excel\" or \"type numbers\" - these belong inside activities, not as activities themselves.\n\n      \n  EVALUATION CRITERIA (focus on these, not specific phase names):\n\n  1. ACTIVITY SIZING: Each activity must be substantial enough to expand into ~10 detailed steps. If an activity could only be explained in 1-3 steps, it's TOO SMALL.\n\n  2. NO SINGLE ACTIONS: Activities must NOT be single actions like \"boil water\", \"click button\", \"hold item\". These are steps, not activities.\n\n  3. LOGICAL GROUPING: Related actions should be grouped into meaningful phases rather than listed separately.\n\n  4. COMPLETENESS: Activities should cover the full scope of the lesson - check if anything important is missing.\n\n  5. APPROPRIATE SCOPE: Content should match the lesson's scope - not broader, not narrower.\n\n  6. CLEAR TITLES: Titles should be short and action-oriented. No vague words like \"learn about\", \"understand\", \"explore\".\n\n  7. NO FLUFF: No summary, review, or assessment activities.\n\n  IMPORTANT: Do NOT penalize for missing specific phases you might expect. Different valid approaches exist. Focus on whether the activities provided are well-sized and cover the lesson scope.\n\n    ",
+        "id": "en-finance-budget-1",
+        "userInput": {
+          "chapterTitle": "Personal Finance",
+          "courseTitle": "Money Management",
+          "language": "en",
+          "lessonDescription": "How to create a monthly budget using a spreadsheet to track income and expenses",
+          "lessonTitle": "Creating a Monthly Budget"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "There is a significant logical ordering issue between Activity 2 (\"Build the Volcano Structure\") and Activity 3 (\"Install the Reaction Chamber\"). In standard construction of a baking soda volcano (using dough, clay, or papier-mâché), the reaction chamber (bottle) acts as the core armature. One typically secures the bottle first and builds the structure around it. Doing it in the reverse order implies building a hollow cone and trying to fit/secure a bottle inside afterwards, which is technically difficult and poor instructional design.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Activities 5 (\"Prepare the Baking Soda Mixture\") and 6 (\"Activate the Volcano Eruption\") violate the sizing constraints. The instructions explicitly state that actions like \"Pour the Water\" are steps, not activities. Activity 6 is essentially \"Pour the vinegar\". It is extremely difficult to expand \"Add vinegar\" into 10 meaningful steps without excessive fluff. These two should have been combined into a single phase like \"Conduct the Eruption Experiment\".",
+          "kind": "majorErrors",
+          "score": 7.5
+        },
+        {
+          "conclusion": "The response suggests combining activities 2 and 3 into \"Construct the Volcano Assembly\" and activities 5 and 6 into \"Perform the Eruption\". This would result in 4 substantial activities that fit the ~10 step requirement much better than the current 6 thin activities.",
+          "kind": "potentialImprovements",
+          "score": 7
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      Avoid granular steps like \"pour vinegar\" or \"add baking soda\" - these belong inside activities, not as activities themselves.\n\n      \n  EVALUATION CRITERIA (focus on these, not specific phase names):\n\n  1. ACTIVITY SIZING: Each activity must be substantial enough to expand into ~10 detailed steps. If an activity could only be explained in 1-3 steps, it's TOO SMALL.\n\n  2. NO SINGLE ACTIONS: Activities must NOT be single actions like \"boil water\", \"click button\", \"hold item\". These are steps, not activities.\n\n  3. LOGICAL GROUPING: Related actions should be grouped into meaningful phases rather than listed separately.\n\n  4. COMPLETENESS: Activities should cover the full scope of the lesson - check if anything important is missing.\n\n  5. APPROPRIATE SCOPE: Content should match the lesson's scope - not broader, not narrower.\n\n  6. CLEAR TITLES: Titles should be short and action-oriented. No vague words like \"learn about\", \"understand\", \"explore\".\n\n  7. NO FLUFF: No summary, review, or assessment activities.\n\n  IMPORTANT: Do NOT penalize for missing specific phases you might expect. Different valid approaches exist. Focus on whether the activities provided are well-sized and cover the lesson scope.\n\n    ",
+        "id": "en-science-volcano-1",
+        "userInput": {
+          "chapterTitle": "Chemistry at Home",
+          "courseTitle": "Fun Science Experiments",
+          "language": "en",
+          "lessonDescription": "How to build and activate a baking soda volcano for a science project",
+          "lessonTitle": "Making a Baking Soda Volcano"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "The response violates the specific negative constraints provided in the 'Expectations' section regarding the simplicity of the task. The prompt explicitly warned: \"Avoid granular steps like 'hold egg', 'tap egg'... these are steps within an activity, not activities themselves.\" The model generated \"Position and Grip the Egg\" (hold egg) and \"Perform the Crack\" (tap egg) as separate activities. These actions are too small to support the required ~10 detailed steps per activity without absurdity (e.g., breaking down a split-second arm movement into 10 steps). This results in over-fragmentation, which was explicitly identified as a sign of poor sizing.",
+          "kind": "majorErrors",
+          "score": 6.5
+        },
+        {
+          "conclusion": "None. The structure of the JSON is correct, and the text is coherent, but the major structural flaw in the instructional design overshadows other concerns.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The activities should be consolidated to reflect the simplicity of the lesson. A proper breakdown for 'Cracking an Egg' into ~10-step activities would likely be: 1. 'Preparation and Setup' (gathering tools, mise en place) and 2. 'Cracking and Inspecting the Egg' (grouping the grip, the hit, the opening, and the shell inspection into one substantial workflow). This would allow for a realistic set of 10 steps for each activity.",
+          "kind": "potentialImprovements",
+          "score": 6.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      SPECIAL CONSIDERATION: This is an extremely simple task (cracking a single egg).\n\n      The number of activities should reflect task complexity - a simple task needs fewer activities than a complex one. Over-fragmenting a simple task into many activities is a sign of poor sizing.\n\n      Avoid granular steps like \"hold egg\", \"tap egg\", \"position over bowl\" - these are steps within an activity, not activities themselves.\n\n      \n  EVALUATION CRITERIA (focus on these, not specific phase names):\n\n  1. ACTIVITY SIZING: Each activity must be substantial enough to expand into ~10 detailed steps. If an activity could only be explained in 1-3 steps, it's TOO SMALL.\n\n  2. NO SINGLE ACTIONS: Activities must NOT be single actions like \"boil water\", \"click button\", \"hold item\". These are steps, not activities.\n\n  3. LOGICAL GROUPING: Related actions should be grouped into meaningful phases rather than listed separately.\n\n  4. COMPLETENESS: Activities should cover the full scope of the lesson - check if anything important is missing.\n\n  5. APPROPRIATE SCOPE: Content should match the lesson's scope - not broader, not narrower.\n\n  6. CLEAR TITLES: Titles should be short and action-oriented. No vague words like \"learn about\", \"understand\", \"explore\".\n\n  7. NO FLUFF: No summary, review, or assessment activities.\n\n  IMPORTANT: Do NOT penalize for missing specific phases you might expect. Different valid approaches exist. Focus on whether the activities provided are well-sized and cover the lesson scope.\n\n    ",
+        "id": "en-edge-simple-task-1",
+        "userInput": {
+          "chapterTitle": "Kitchen Basics",
+          "courseTitle": "Cooking 101",
+          "language": "en",
+          "lessonDescription": "How to properly crack an egg without getting shell in the bowl",
+          "lessonTitle": "Cracking an Egg"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      SPECIAL CONSIDERATION: This is a complex, multi-phase process. The lesson description explicitly mentions multiple distinct phases.\n\n      Each activity should represent a substantial phase. Complex tasks naturally require more activities than simple ones.\n\n      \n  EVALUATION CRITERIA (focus on these, not specific phase names):\n\n  1. ACTIVITY SIZING: Each activity must be substantial enough to expand into ~10 detailed steps. If an activity could only be explained in 1-3 steps, it's TOO SMALL.\n\n  2. NO SINGLE ACTIONS: Activities must NOT be single actions like \"boil water\", \"click button\", \"hold item\". These are steps, not activities.\n\n  3. LOGICAL GROUPING: Related actions should be grouped into meaningful phases rather than listed separately.\n\n  4. COMPLETENESS: Activities should cover the full scope of the lesson - check if anything important is missing.\n\n  5. APPROPRIATE SCOPE: Content should match the lesson's scope - not broader, not narrower.\n\n  6. CLEAR TITLES: Titles should be short and action-oriented. No vague words like \"learn about\", \"understand\", \"explore\".\n\n  7. NO FLUFF: No summary, review, or assessment activities.\n\n  IMPORTANT: Do NOT penalize for missing specific phases you might expect. Different valid approaches exist. Focus on whether the activities provided are well-sized and cover the lesson scope.\n\n    ",
+        "id": "en-edge-complex-process-1",
+        "userInput": {
+          "chapterTitle": "Bread Making",
+          "courseTitle": "Artisan Baking",
+          "language": "en",
+          "lessonDescription": "Complete guide to making sourdough bread from starter to finished loaf, including feeding the starter, mixing, folding, proofing, shaping, and baking",
+          "lessonTitle": "Making Sourdough Bread"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The activity 'Verificar a instalação e o funcionamento do Git' might be slightly light on steps (often just 1-3 commands like 'git --version'), whereas the instructions request activities expandable to ~10 steps. However, it can be expanded with sufficient rigorous checks (creating a test repo, checking config lists, etc.), and it serves as a distinct milestone, so this is not counted as a negative.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      Avoid granular steps like \"open browser\", \"click download\", \"click next\" - these belong inside activities, not as activities themselves.\n\n      Titles and descriptions must be in Portuguese.\n\n      \n  EVALUATION CRITERIA (focus on these, not specific phase names):\n\n  1. ACTIVITY SIZING: Each activity must be substantial enough to expand into ~10 detailed steps. If an activity could only be explained in 1-3 steps, it's TOO SMALL.\n\n  2. NO SINGLE ACTIONS: Activities must NOT be single actions like \"boil water\", \"click button\", \"hold item\". These are steps, not activities.\n\n  3. LOGICAL GROUPING: Related actions should be grouped into meaningful phases rather than listed separately.\n\n  4. COMPLETENESS: Activities should cover the full scope of the lesson - check if anything important is missing.\n\n  5. APPROPRIATE SCOPE: Content should match the lesson's scope - not broader, not narrower.\n\n  6. CLEAR TITLES: Titles should be short and action-oriented. No vague words like \"learn about\", \"understand\", \"explore\".\n\n  7. NO FLUFF: No summary, review, or assessment activities.\n\n  IMPORTANT: Do NOT penalize for missing specific phases you might expect. Different valid approaches exist. Focus on whether the activities provided are well-sized and cover the lesson scope.\n\n    ",
+        "id": "pt-tech-git-setup-1",
+        "userInput": {
+          "chapterTitle": "Primeiros Passos",
+          "courseTitle": "Git e GitHub",
+          "language": "pt",
+          "lessonDescription": "Guia passo a passo para instalar e configurar o Git no seu computador",
+          "lessonTitle": "Configurando o Git"
+        }
+      }
+    }
+  ],
+  "taskId": "lesson-activities"
+}

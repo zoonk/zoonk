@@ -1,0 +1,115 @@
+{
+  "generatedAt": "2026-01-15T19:15:16.569Z",
+  "modelId": "google/gemini-2.5-flash-lite",
+  "outputs": [
+    {
+      "duration": 1694.3168339999975,
+      "inputTokens": 1631,
+      "output": "{\n  \"activities\": [\n    {\n      \"description\": \"Gather all necessary ingredients and equipment for authentic spaghetti carbonara.\",\n      \"title\": \"Gather Ingredients and Equipment\"\n    },\n    {\n      \"description\": \"Prepare the guanciale or pancetta by dicing and rendering it to a crispy texture.\",\n      \"title\": \"Render the Guanciale/Pancetta\"\n    },\n    {\n      \"description\": \"Cook the spaghetti to al dente perfection while reserving some pasta water.\",\n      \"title\": \"Cook the Spaghetti\"\n    },\n    {\n      \"description\": \"Prepare the egg and cheese mixture, ensuring a smooth and creamy consistency.\",\n      \"title\": \"Prepare the Egg and Cheese Mixture\"\n    },\n    {\n      \"description\": \"Combine the cooked pasta with the rendered guanciale/pancetta and its fat.\",\n      \"title\": \"Combine Pasta and Fat\"\n    },\n    {\n      \"description\": \"Temper the egg mixture with hot pasta water and then combine it with the pasta and guanciale/pancetta.\",\n      \"title\": \"Emulsify the Sauce\"\n    },\n    {\n      \"description\": \"Adjust the consistency of the carbonara with reserved pasta water and serve immediately.\",\n      \"title\": \"Finalize and Serve Carbonara\"\n    }\n  ]\n}",
+      "outputTokens": 298,
+      "systemPrompt": "",
+      "testCaseId": "en-cooking-pasta-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 2032.10487499999,
+      "inputTokens": 1631,
+      "output": "{\n  \"activities\": [\n    {\n      \"description\": \"Prepare the room by clearing furniture, covering the floor, and taping off trim and edges.\",\n      \"title\": \"Prepare the Painting Area\"\n    },\n    {\n      \"description\": \"Clean the wall surface to remove dust, dirt, and grease for optimal paint adhesion.\",\n      \"title\": \"Clean the Wall Surface\"\n    },\n    {\n      \"description\": \"Repair any holes or cracks in the wall and sand down rough patches for a smooth finish.\",\n      \"title\": \"Repair Wall Imperfections\"\n    },\n    {\n      \"description\": \"Apply primer to the wall to ensure even paint coverage and enhance adhesion, especially over repairs or dark colors.\",\n      \"title\": \"Apply Primer\"\n    },\n    {\n      \"description\": \"Mix the paint thoroughly to ensure consistent color and consistency before application.\",\n      \"title\": \"Mix the Paint\"\n    },\n    {\n      \"description\": \"Cut in the edges and corners of the wall with a brush for a clean, precise finish.\",\n      \"title\": \"Cut In Edges and Corners\"\n    },\n    {\n      \"description\": \"Apply the main coat of paint to the wall using a roller for even coverage.\",\n      \"title\": \"Apply Main Paint Coats\"\n    },\n    {\n      \"description\": \"Allow the first coat of paint to dry completely according to the manufacturer's instructions.\",\n      \"title\": \"Allow First Coat to Dry\"\n    },\n    {\n      \"description\": \"Apply a second coat of paint if necessary for full coverage and depth of color.\",\n      \"title\": \"Apply Second Paint Coat\"\n    },\n    {\n      \"description\": \"Clean up the painting tools and remove all protective coverings from the room.\",\n      \"title\": \"Clean Up and Remove Coverings\"\n    }\n  ]\n}",
+      "outputTokens": 413,
+      "systemPrompt": "",
+      "testCaseId": "en-diy-paint-wall-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1455.7846250000002,
+      "inputTokens": 1630,
+      "output": "{\n  \"activities\": [\n    {\n      \"description\": \"Learn the proper posture and hand positions for comfortable and effective guitar playing.\",\n      \"title\": \"Adopt Correct Guitar Posture\"\n    },\n    {\n      \"description\": \"Understand how to hold the guitar pick and how to strum basic open strings.\",\n      \"title\": \"Grip the Guitar Pick and Practice Strumming\"\n    },\n    {\n      \"description\": \"Familiarize yourself with the parts of the guitar and how they relate to tuning.\",\n      \"title\": \"Identify Guitar Tuning Pegs and Strings\"\n    },\n    {\n      \"description\": \"Use a tuner to bring each string to its correct pitch for standard tuning.\",\n      \"title\": \"Tune Your Guitar\"\n    },\n    {\n      \"description\": \"Check the tuning of all strings and make fine adjustments as needed.\",\n      \"title\": \"Verify and Refine Guitar Tuning\"\n    }\n  ]\n}",
+      "outputTokens": 212,
+      "systemPrompt": "",
+      "testCaseId": "en-music-guitar-setup-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1922.1825830000162,
+      "inputTokens": 1627,
+      "output": "{\n  \"activities\": [\n    {\n      \"description\": \"Identify and prepare a suitable location with good natural light, considering background elements and potential distractions.\",\n      \"title\": \"Scout and Prepare Your Location\"\n    },\n    {\n      \"description\": \"Position your subject in relation to the natural light source to achieve flattering illumination and define facial features.\",\n      \"title\": \"Position Your Subject for Light\"\n    },\n    {\n      \"description\": \"Adjust camera settings like aperture, shutter speed, and ISO to capture a well-exposed portrait with a shallow depth of field.\",\n      \"title\": \"Configure Camera Settings\"\n    },\n    {\n      \"description\": \"Guide your subject into natural and comfortable poses that enhance their personality and the overall mood of the portrait.\",\n      \"title\": \"Direct Your Subject's Pose\"\n    },\n    {\n      \"description\": \"Use composition techniques such as the rule of thirds and leading lines to create a visually appealing and balanced portrait.\",\n      \"title\": \"Frame Your Shot Effectively\"\n    },\n    {\n      \"description\": \"Capture multiple shots, experimenting with different angles, expressions, and focal points to ensure you have a variety of options.\",\n      \"title\": \"Shoot and Refine\"\n    },\n    {\n      \"description\": \"Review and select the best portraits from your session, considering technical quality, subject expression, and overall aesthetic.\",\n      \"title\": \"Select Your Best Images\"\n    }\n  ]\n}",
+      "outputTokens": 324,
+      "systemPrompt": "",
+      "testCaseId": "en-photo-portrait-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1963.0965410000063,
+      "inputTokens": 1630,
+      "output": "{\n  \"activities\": [\n    {\n      \"description\": \"Learn how to set up the barbell for your squat by safely removing it from the rack and positioning it correctly on your back.\",\n      \"title\": \"Set Up the Barbell\"\n    },\n    {\n      \"description\": \"Understand the proper foot placement, stance width, and toe angle for a stable and effective squat base.\",\n      \"title\": \"Establish Your Stance\"\n    },\n    {\n      \"description\": \"Learn the correct bracing technique, engaging your core and maintaining a neutral spine throughout the movement.\",\n      \"title\": \"Brace Your Core\"\n    },\n    {\n      \"description\": \"Execute the descent of the squat, focusing on controlled movement, depth, and maintaining proper form as you lower yourself.\",\n      \"title\": \"Perform the Descent\"\n    },\n    {\n      \"description\": \"Drive up from the bottom of the squat, extending your hips and knees to return to the starting position while maintaining technique.\",\n      \"title\": \"Ascend from the Squat\"\n    },\n    {\n      \"description\": \"Safely return the barbell to the rack after completing your set, ensuring stability and control.\",\n      \"title\": \"Return the Barbell to the Rack\"\n    }\n  ]\n}",
+      "outputTokens": 283,
+      "systemPrompt": "",
+      "testCaseId": "en-fitness-squat-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 2096.761916999996,
+      "inputTokens": 1639,
+      "output": "{\n  \"activities\": [\n    {\n      \"description\": \"Selecione os vasos adequados, verifique a drenagem e prepare a mistura de solo ideal para o cultivo de tomates.\",\n      \"title\": \"Preparar os Vasos e o Solo\"\n    },\n    {\n      \"description\": \"Escolha as sementes ou mudas de tomate adequadas para o plantio em vasos, considerando variedades e condições locais.\",\n      \"title\": \"Selecionar as Variedades de Tomate\"\n    },\n    {\n      \"description\": \"Plante as sementes ou transplante as mudas para os vasos, garantindo a profundidade e o espaçamento corretos.\",\n      \"title\": \"Semear ou Transplantar os Tomates\"\n    },\n    {\n      \"description\": \"Realize a rega inicial, posicione os vasos em local com sol adequado e aplique a primeira camada de cobertura morta.\",\n      \"title\": \"Cuidados Iniciais Pós-Plantio\"\n    },\n    {\n      \"description\": \"Monitore a umidade do solo, a exposição solar e comece a adubação conforme a necessidade da planta.\",\n      \"title\": \"Manter a Rega e Nutrição Adequadas\"\n    },\n    {\n      \"description\": \"Acompanhe o desenvolvimento das plantas, identifique pragas e doenças comuns e aplique medidas preventivas e corretivas.\",\n      \"title\": \"Monitorar a Saúde da Planta\"\n    },\n    {\n      \"description\": \"Ofereça suporte às plantas de tomate, como estacas ou gaiolas, para garantir o crescimento vertical e a sustentação dos frutos.\",\n      \"title\": \"Oferecer Suporte às Plantas\"\n    },\n    {\n      \"description\": \"Identifique o momento certo para a colheita dos tomates, colhendo os frutos maduros para consumo.\",\n      \"title\": \"Colher os Tomates\"\n    }\n  ]\n}",
+      "outputTokens": 435,
+      "systemPrompt": "",
+      "testCaseId": "pt-gardening-tomatoes-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1856.7330409999995,
+      "inputTokens": 1640,
+      "output": "{\n  \"activities\": [\n    {\n      \"description\": \"Comienza con un cuadrado de papel y haz los pliegues iniciales necesarios para formar la base de la grulla.\",\n      \"title\": \"Preparar la Base de la Grulla\"\n    },\n    {\n      \"description\": \"Transforma la base cuadrada en una base de cometa, aplanando y doblando las capas según sea necesario.\",\n      \"title\": \"Formar la Base de Cometa\"\n    },\n    {\n      \"description\": \"Convierte la base de cometa en una base de pájaro, creando las formas de las piernas y la cabeza de la grulla.\",\n      \"title\": \"Crear la Base de Pájaro\"\n    },\n    {\n      \"description\": \"Da forma a las alas de la grulla doblando hacia abajo los dos lados de la base de pájaro.\",\n      \"title\": \"Dar Forma a las Alas\"\n    },\n    {\n      \"description\": \"Termina la grulla doblando hacia adentro la cabeza y la cola, y ajustando las alas.\",\n      \"title\": \"Completar la Grulla\"\n    }\n  ]\n}",
+      "outputTokens": 262,
+      "systemPrompt": "",
+      "testCaseId": "es-craft-origami-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1754.5018330000166,
+      "inputTokens": 1630,
+      "output": "{\n  \"activities\": [\n    {\n      \"description\": \"Define your budget period and gather all necessary income sources and amounts.\",\n      \"title\": \"Determine Your Monthly Income\"\n    },\n    {\n      \"description\": \"Identify and categorize all your fixed and variable expenses for the month.\",\n      \"title\": \"List Your Monthly Expenses\"\n    },\n    {\n      \"description\": \"Set up a spreadsheet with appropriate columns and rows for income and expenses.\",\n      \"title\": \"Create Your Budget Spreadsheet\"\n    },\n    {\n      \"description\": \"Input your income and expense data into the spreadsheet and calculate totals.\",\n      \"title\": \"Populate Your Budget\"\n    },\n    {\n      \"description\": \"Analyze the difference between your income and expenses to identify potential adjustments.\",\n      \"title\": \"Analyze Your Budget\"\n    },\n    {\n      \"description\": \"Make necessary adjustments to your spending or income goals based on your analysis.\",\n      \"title\": \"Adjust Your Budget\"\n    },\n    {\n      \"description\": \"Regularly track your spending against your budget throughout the month.\",\n      \"title\": \"Track Your Spending\"\n    },\n    {\n      \"description\": \"Review your budget at the end of the month to assess its effectiveness and plan for the next.\",\n      \"title\": \"Review and Refine Your Budget\"\n    }\n  ]\n}",
+      "outputTokens": 306,
+      "systemPrompt": "",
+      "testCaseId": "en-finance-budget-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1710.9542089999886,
+      "inputTokens": 1632,
+      "output": "{\n  \"activities\": [\n    {\n      \"description\": \"Gather all necessary materials and prepare your workspace for building the volcano.\",\n      \"title\": \"Gather Materials and Prepare Workspace\"\n    },\n    {\n      \"description\": \"Construct the volcano's base and shape, using materials like clay or dough.\",\n      \"title\": \"Build the Volcano Structure\"\n    },\n    {\n      \"description\": \"Create the volcano's inner chamber or container to hold the eruption ingredients.\",\n      \"title\": \"Create the Volcano's Chamber\"\n    },\n    {\n      \"description\": \"Decorate the volcano to give it a realistic appearance, adding details like lava flows or texture.\",\n      \"title\": \"Decorate the Volcano\"\n    },\n    {\n      \"description\": \"Prepare the eruption mixture by combining baking soda and other desired ingredients.\",\n      \"title\": \"Prepare the Eruption Mixture\"\n    },\n    {\n      \"description\": \"Add the activating liquid, such as vinegar, to the volcano's chamber to initiate the eruption.\",\n      \"title\": \"Activate the Volcano Eruption\"\n    },\n    {\n      \"description\": \"Observe and document the chemical reaction and the resulting lava flow.\",\n      \"title\": \"Observe and Document the Eruption\"\n    },\n    {\n      \"description\": \"Clean up the workspace and dispose of materials responsibly after the experiment.\",\n      \"title\": \"Clean Up the Workspace\"\n    }\n  ]\n}",
+      "outputTokens": 324,
+      "systemPrompt": "",
+      "testCaseId": "en-science-volcano-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1474.3167499999981,
+      "inputTokens": 1631,
+      "output": "{\n  \"activities\": [\n    {\n      \"description\": \"Prepare your workspace and gather the necessary tools for cracking eggs cleanly.\",\n      \"title\": \"Prepare Your Workspace\"\n    },\n    {\n      \"description\": \"Select and inspect an egg to ensure it is suitable for cracking.\",\n      \"title\": \"Select and Inspect the Egg\"\n    },\n    {\n      \"description\": \"Execute the crack on the egg using a stable surface to minimize shell fragments.\",\n      \"title\": \"Crack the Egg\"\n    },\n    {\n      \"description\": \"Separate the egg yolk from the egg white cleanly after cracking.\",\n      \"title\": \"Separate Yolk and White\"\n    },\n    {\n      \"description\": \"Clean up any stray shell fragments or spills to ensure a tidy workspace.\",\n      \"title\": \"Clean Up the Mess\"\n    }\n  ]\n}",
+      "outputTokens": 194,
+      "systemPrompt": "",
+      "testCaseId": "en-edge-simple-task-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1947.5488750000077,
+      "inputTokens": 1645,
+      "output": "{\n  \"activities\": [\n    {\n      \"description\": \"Learn how to feed and maintain your sourdough starter to ensure it's active and ready for baking.\",\n      \"title\": \"Prepare and Feed the Sourdough Starter\"\n    },\n    {\n      \"description\": \"Combine your active starter with flour, water, and salt to create the sourdough dough.\",\n      \"title\": \"Mix the Sourdough Dough\"\n    },\n    {\n      \"description\": \"Develop gluten structure through a series of folds over several hours to build dough strength.\",\n      \"title\": \"Perform Dough Folds\"\n    },\n    {\n      \"description\": \"Allow the dough to ferment and rise at room temperature or in the refrigerator.\",\n      \"title\": \"Bulk Ferment the Dough\"\n    },\n    {\n      \"description\": \"Shape the fermented dough into its final form for baking.\",\n      \"title\": \"Shape the Loaf\"\n    },\n    {\n      \"description\": \"Allow the shaped dough to proof, typically in a banneton, to achieve its final rise.\",\n      \"title\": \"Proof the Shaped Loaf\"\n    },\n    {\n      \"description\": \"Bake the sourdough bread in a preheated oven, often using a Dutch oven for optimal crust development.\",\n      \"title\": \"Bake the Sourdough Bread\"\n    },\n    {\n      \"description\": \"Allow the baked bread to cool completely before slicing to set the crumb structure.\",\n      \"title\": \"Cool the Sourdough Loaf\"\n    }\n  ]\n}",
+      "outputTokens": 344,
+      "systemPrompt": "",
+      "testCaseId": "en-edge-complex-process-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1562.9022910000058,
+      "inputTokens": 1633,
+      "output": "{\n  \"activities\": [\n    {\n      \"description\": \"Baixe o instalador do Git a partir do site oficial, escolhendo a versão correta para o seu sistema operacional.\",\n      \"title\": \"Baixar o Git\"\n    },\n    {\n      \"description\": \"Execute o instalador do Git, navegando pelas opções de configuração e concluindo o processo de instalação.\",\n      \"title\": \"Instalar o Git\"\n    },\n    {\n      \"description\": \"Abra o terminal ou prompt de comando e configure seu nome de usuário e endereço de e-mail para que o Git possa identificar você em seus commits.\",\n      \"title\": \"Configurar Identidade do Git\"\n    },\n    {\n      \"description\": \"Verifique se a instalação e a configuração do Git foram bem-sucedidas, executando comandos básicos para confirmar que o Git está funcionando.\",\n      \"title\": \"Verificar Instalação e Configuração\"\n    }\n  ]\n}",
+      "outputTokens": 217,
+      "systemPrompt": "",
+      "testCaseId": "pt-tech-git-setup-1",
+      "userPrompt": ""
+    }
+  ],
+  "taskId": "lesson-activities"
+}

@@ -1,0 +1,67 @@
+{
+  "modelId": "prime-intellect/intellect-3",
+  "results": [
+    {
+      "steps": [
+        {
+          "conclusion": "The pronunciation guide places the stress on the penultimate syllable ('RA'), but 'parabéns' (congratulations) is oxytone, meaning the stress must be on the final syllable. Although the input 'parabens' omitted the accent, an expert linguist should recognize the word and its correct pronunciation. This stress error fundamentally changes the word's sound.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The output violates the formatting instruction 'Exactly one syllable should be in CAPITAL letters'. The result has 'RA' capitalized and also 'SH' capitalized in the final syllable. This makes the stress marking ambiguous and confusing.",
+          "kind": "majorErrors",
+          "score": 6.5
+        },
+        {
+          "conclusion": "The approximation 'ben' for the final syllable is poor. It maps to the English /bɛn/ (rhyming with 'pen'), whereas the Portuguese 'béns' is a nasal diphthong /bẽj̃s/. A better approximation would be 'bains' or 'bayns'. Additionally, 'pa' is ambiguous in English (could be read as 'pad'); 'pah' is safer.",
+          "kind": "minorErrors",
+          "score": 7.5
+        },
+        {
+          "conclusion": "To improve, the stress should be corrected to the final syllable, the capitalization should be restricted to that single syllable, and the nasal diphthong should be better approximated (e.g., 'pah-rah-BAINSH' or 'pah-rah-BAINS').",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
+      ],
+      "testCase": {
+        "expectations": "\nNATIVE LANGUAGE: English (US)\nTARGET LANGUAGE: Portuguese\n\nWORD: \"parabens\"\n\nThis Portuguese word (congratulations) features:\n- Three syllables\n- Nasal ending \"-ens\"\n- The Portuguese \"r\" sound (different from English)\n- Stress on the last syllable\n\nSOUND CHALLENGES:\n- The nasal \"-ens\" ending is challenging for English speakers\n- The \"a\" vowels are open\n- Portuguese \"r\" between vowels\n\nQUALITY CHECK:\n- Should be readable by an English speaker\n- Should indicate stress on the final syllable\n- Should approximate the nasal ending\n- Accept various representations of the nasal sound\n\n\nEVALUATION CRITERIA:\n\n1. NATIVE LANGUAGE PHONEMES ONLY (CRITICAL - highest priority):\n   - The pronunciation MUST use ONLY letters and letter combinations that exist in the native language\n   - A native speaker should be able to read it without any special knowledge\n   - Penalize SEVERELY if IPA symbols, foreign letters, or non-standard diacritics are used\n   - Penalize if letter combinations don't naturally occur in the native language\n\n2. STRESS INDICATION:\n   - Stressed syllable should be marked with CAPITAL letters\n   - For multi-syllable words, exactly one syllable should be capitalized\n   - For single-syllable words, the entire word may be capitalized\n   - Penalize if stress is not indicated at all\n   - Do NOT penalize for different but valid stress placements if linguistically acceptable\n\n3. SYLLABLE SEPARATION:\n   - Multi-syllable words should use hyphens to separate syllables\n   - Single-syllable words do not need hyphens\n   - Penalize if long words are written without syllable breaks\n   - Do NOT penalize for slightly different syllable divisions if they're linguistically reasonable\n\n4. SOUND APPROXIMATION QUALITY:\n   - When target language sounds don't exist in native language, the closest approximation should be used\n   - The approximation should produce a recognizable pronunciation when spoken aloud\n   - Penalize if sounds are simply omitted rather than approximated\n   - Do NOT require specific approximations - accept any reasonable phonetic mapping\n\n5. READABILITY:\n   - The output should look like something a native speaker could naturally pronounce\n   - Avoid awkward letter combinations that would confuse a native reader\n   - The pronunciation should flow naturally when read aloud\n   - Penalize if the output looks unpronounceable or confusing\n\n6. COMPLETENESS:\n   - All sounds in the word should be represented\n   - Silent letters should be appropriately handled (omitted from pronunciation)\n   - Penalize if significant sounds are missing from the pronunciation\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for using different but valid phonetic representations\n- Do NOT require exact matches to any expected pronunciation\n- Do NOT penalize for stylistic choices (e.g., \"ou\" vs \"ow\" for the same sound)\n- Different valid approximations exist for the same sound - assess whether the chosen one is reasonable\n- FOCUS ON: native language compatibility, stress marking, readability, sound completeness\n- The test is whether a native speaker could read this and produce a recognizable approximation of the target word\n\n    ",
+        "id": "en-portuguese-parabens-1",
+        "userInput": {
+          "nativeLanguage": "en",
+          "targetLanguage": "Portuguese",
+          "word": "parabens"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "The model placed the stress on the second syllable (\"ROH\"), but \"ferrocarril\" is an oxytone word (aguda) in Spanish, meaning the stress falls on the last syllable (\"rril\") because it ends in a consonant other than 'n' or 's'. The correct stress should be on the final syllable.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The syllabification and phonetic choice 'fer' and 'kar' encourage an American English 'r-colored' vowel (rhoticity) at the end of syllables 1 and 3 (/fɜr/ and /kɑr/). In Spanish, the vowels should be pure (/e/ and /a/). A better approximation might be 'feh-rroh-kah-REEL' to avoid the learner pronouncing the English 'r' sound in the wrong places.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Change the stress to the final syllable and adjust the phonetics to reduce rhotic coloring on vowels. Suggested output: 'feh-rroh-kah-REEL'.",
+          "kind": "potentialImprovements",
+          "score": 6.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\nNATIVE LANGUAGE: English (US)\nTARGET LANGUAGE: Spanish\n\nWORD: \"ferrocarril\"\n\nThis Spanish word (railroad) features:\n- Four syllables\n- Double \"rr\" (rolled/trilled r)\n- The Spanish \"j\" sound is not present but the \"rr\" is challenging\n- Stress on the final syllable\n\nSOUND CHALLENGES:\n- The \"rr\" requires a trill that doesn't exist in English\n- Two instances of \"r\" sounds (single and double)\n- Stress on final syllable \"-rril\"\n\nQUALITY CHECK:\n- Should be readable by an English speaker\n- Should indicate stress on the last syllable\n- Should provide some approximation for the rolled \"rr\"\n- Should separate syllables clearly for this four-syllable word\n\n\nEVALUATION CRITERIA:\n\n1. NATIVE LANGUAGE PHONEMES ONLY (CRITICAL - highest priority):\n   - The pronunciation MUST use ONLY letters and letter combinations that exist in the native language\n   - A native speaker should be able to read it without any special knowledge\n   - Penalize SEVERELY if IPA symbols, foreign letters, or non-standard diacritics are used\n   - Penalize if letter combinations don't naturally occur in the native language\n\n2. STRESS INDICATION:\n   - Stressed syllable should be marked with CAPITAL letters\n   - For multi-syllable words, exactly one syllable should be capitalized\n   - For single-syllable words, the entire word may be capitalized\n   - Penalize if stress is not indicated at all\n   - Do NOT penalize for different but valid stress placements if linguistically acceptable\n\n3. SYLLABLE SEPARATION:\n   - Multi-syllable words should use hyphens to separate syllables\n   - Single-syllable words do not need hyphens\n   - Penalize if long words are written without syllable breaks\n   - Do NOT penalize for slightly different syllable divisions if they're linguistically reasonable\n\n4. SOUND APPROXIMATION QUALITY:\n   - When target language sounds don't exist in native language, the closest approximation should be used\n   - The approximation should produce a recognizable pronunciation when spoken aloud\n   - Penalize if sounds are simply omitted rather than approximated\n   - Do NOT require specific approximations - accept any reasonable phonetic mapping\n\n5. READABILITY:\n   - The output should look like something a native speaker could naturally pronounce\n   - Avoid awkward letter combinations that would confuse a native reader\n   - The pronunciation should flow naturally when read aloud\n   - Penalize if the output looks unpronounceable or confusing\n\n6. COMPLETENESS:\n   - All sounds in the word should be represented\n   - Silent letters should be appropriately handled (omitted from pronunciation)\n   - Penalize if significant sounds are missing from the pronunciation\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for using different but valid phonetic representations\n- Do NOT require exact matches to any expected pronunciation\n- Do NOT penalize for stylistic choices (e.g., \"ou\" vs \"ow\" for the same sound)\n- Different valid approximations exist for the same sound - assess whether the chosen one is reasonable\n- FOCUS ON: native language compatibility, stress marking, readability, sound completeness\n- The test is whether a native speaker could read this and produce a recognizable approximation of the target word\n\n    ",
+        "id": "en-spanish-ferrocarril-1",
+        "userInput": {
+          "nativeLanguage": "en",
+          "targetLanguage": "Spanish",
+          "word": "ferrocarril"
+        }
+      }
+    }
+  ],
+  "taskId": "activity-pronunciation"
+}

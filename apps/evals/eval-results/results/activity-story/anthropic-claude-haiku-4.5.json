@@ -1,0 +1,706 @@
+{
+  "modelId": "anthropic/claude-haiku-4.5",
+  "results": [
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The instructions explicitly requested the output to be an 'array of scenes'. The provided result wraps this array in a JSON object with a 'steps' key (`{ \"steps\": [...] }`). While the content is parseable, this violates the specific output format requirement. Additionally, the logic in Scene 6 is slightly ambiguous; if a type guard fails (returns false) because of a shape mismatch, the code should ideally reject the transaction explicitly. The description 'silently ignored' implies a specific implementation detail (like optional chaining or loose guard + undefined check) that isn't fully established in the dialogue, making the 'twist' slightly confusing technically.",
+          "kind": "minorErrors",
+          "score": 8.5
+        },
+        {
+          "conclusion": "The 'Plot Twist' occurs in Scene 6 (of 8), which is the third-to-last scene, rather than the requested second-to-last scene. Scene 7 is a reflection on 'any', which works but decelerates the tension before the end. Pushing the twist to Scene 7 or adding a scene would align better with the structural instructions. Technically, clarifying exactly why the bad data was 'ignored' (e.g., 'The guard returned true because it only checked ID, so the code tried to read a missing balance and got undefined') would strengthen the educational value of Scene 6.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: TypeScript typing decisions must reflect genuine type system reasoning. Penalize if:\n   - Type narrowing concepts are incorrectly applied\n   - Union types, generics, or utility types are misrepresented\n   - Decisions don't require understanding when strict typing helps vs. hurts\n\n2. SCENARIO CHECK: The workplace problem should involve realistic TypeScript challenges like: refactoring JavaScript to TypeScript, debugging type errors, designing type-safe APIs, or handling third-party library types.\n\n3. CONCEPTUAL FOCUS: Decisions should require reasoning about type safety trade-offs, not just recall of syntax.\n\n\nEVALUATION CRITERIA:\n\n1. STORY AUTHENTICITY: Dialogue must be pure conversation between colleagues with no narrator text, no character name prefixes (like \"Sarah:\"), and no action descriptions. The learner should feel immersed in a real workplace conversation.\n\n2. EDUCATIONAL ALIGNMENT: Every decision point must require applying lesson concepts through reasoning, not memorizing facts. Wrong options should be plausible but flawed for specific conceptual reasons.\n\n3. PLOT COHERENCE: Scenes must flow naturally as a continuous story where each scene builds from the previous dialogue. The second-to-last scene MUST introduce a genuine plot twist (surprise, complication, or revelation). The final scene must resolve the problem AND reinforce the main learning takeaway.\n\n4. FORMAT COMPLIANCE: Verify these constraints:\n   - context: Maximum 500 characters of pure dialogue\n   - question: Maximum 100 characters\n   - options: Exactly 4 objects, each with: text (max 50 chars), isCorrect (boolean), feedback (max 300 chars)\n   - Exactly 1 option must have isCorrect: true, the other 3 must have isCorrect: false\n\n5. PERSONALIZATION: The {{NAME}} placeholder must be used appropriately in dialogue to personalize the experience.\n\n6. FEEDBACK QUALITY: Each option must have feedback explaining WHY it's right (with insight) or WHY it's wrong (and what would be correct). Feedback should help learners understand the reasoning, not just state correctness.\n\n7. SCENE COUNT: Story must have between 7 and 20 scenes. Let problem complexity dictate length.\n\n8. DISTRACTOR QUALITY: All wrong options must be plausible choices someone might consider. Penalize obviously silly or absurd options that no reasonable person would choose.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific plot choices, character names, or scenario settings you might expect\n- Do NOT require specific scenes like \"investigation\" or \"resolution\" by name - focus on whether the story has good flow\n- Do NOT check against an imagined \"ideal\" story structure\n- ONLY penalize for: format violations, narrator/description text in dialogue, decisions that test memorization instead of reasoning, missing plot twist, poor distractor quality, or factually incorrect lesson application\n- Different valid story approaches exist - assess the quality of what IS provided\n\n    ",
+        "id": "en-cs-typescript-type-safety-1",
+        "userInput": {
+          "chapterTitle": "Type Systems",
+          "courseTitle": "Advanced TypeScript",
+          "explanationSteps": [
+            {
+              "text": "Type safety catches errors at compile time instead of runtime. When TypeScript knows a variable's type, it can prevent operations that would fail — like calling .length on undefined.",
+              "title": "Compile-Time Safety"
+            },
+            {
+              "text": "TypeScript uses structural typing — it cares about shape, not names. Two types are compatible if they have the same structure, even if defined separately.",
+              "title": "Structural Typing"
+            },
+            {
+              "text": "Type narrowing lets TypeScript understand more specific types after checks. Inside an if-block that checks for null, TypeScript knows the value isn't null.",
+              "title": "Type Narrowing"
+            },
+            {
+              "text": "Generic types let you write reusable code that works with multiple types while preserving type information. Array<T> knows what's inside, unlike just 'Array'.",
+              "title": "Generics"
+            },
+            {
+              "text": "The 'any' type disables type checking entirely. It's an escape hatch but defeats the purpose of TypeScript. Use 'unknown' when the type truly isn't known.",
+              "title": "Any vs Unknown"
+            },
+            {
+              "text": "Type guards are functions that narrow types. They return a type predicate that tells TypeScript what the type is after the check passes.",
+              "title": "Type Guards"
+            }
+          ],
+          "language": "en",
+          "lessonDescription": "Applying TypeScript's type system to catch bugs early and write more maintainable code",
+          "lessonTitle": "Type Safety in Practice"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Game theory decisions must reflect genuine strategic reasoning. Penalize if:\n   - Nash equilibrium is incorrectly applied or described\n   - Dominant strategies are confused with dominated strategies\n   - Payoff matrices or strategic interactions are misrepresented\n\n2. SCENARIO CHECK: The workplace problem should involve realistic strategic decisions like: pricing strategy, negotiation tactics, competitive positioning, or resource allocation under competition.\n\n3. CONCEPTUAL FOCUS: Decisions should require reasoning about interdependent choices and anticipating others' responses, not just recalling definitions.\n\n\nEVALUATION CRITERIA:\n\n1. STORY AUTHENTICITY: Dialogue must be pure conversation between colleagues with no narrator text, no character name prefixes (like \"Sarah:\"), and no action descriptions. The learner should feel immersed in a real workplace conversation.\n\n2. EDUCATIONAL ALIGNMENT: Every decision point must require applying lesson concepts through reasoning, not memorizing facts. Wrong options should be plausible but flawed for specific conceptual reasons.\n\n3. PLOT COHERENCE: Scenes must flow naturally as a continuous story where each scene builds from the previous dialogue. The second-to-last scene MUST introduce a genuine plot twist (surprise, complication, or revelation). The final scene must resolve the problem AND reinforce the main learning takeaway.\n\n4. FORMAT COMPLIANCE: Verify these constraints:\n   - context: Maximum 500 characters of pure dialogue\n   - question: Maximum 100 characters\n   - options: Exactly 4 objects, each with: text (max 50 chars), isCorrect (boolean), feedback (max 300 chars)\n   - Exactly 1 option must have isCorrect: true, the other 3 must have isCorrect: false\n\n5. PERSONALIZATION: The {{NAME}} placeholder must be used appropriately in dialogue to personalize the experience.\n\n6. FEEDBACK QUALITY: Each option must have feedback explaining WHY it's right (with insight) or WHY it's wrong (and what would be correct). Feedback should help learners understand the reasoning, not just state correctness.\n\n7. SCENE COUNT: Story must have between 7 and 20 scenes. Let problem complexity dictate length.\n\n8. DISTRACTOR QUALITY: All wrong options must be plausible choices someone might consider. Penalize obviously silly or absurd options that no reasonable person would choose.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific plot choices, character names, or scenario settings you might expect\n- Do NOT require specific scenes like \"investigation\" or \"resolution\" by name - focus on whether the story has good flow\n- Do NOT check against an imagined \"ideal\" story structure\n- ONLY penalize for: format violations, narrator/description text in dialogue, decisions that test memorization instead of reasoning, missing plot twist, poor distractor quality, or factually incorrect lesson application\n- Different valid story approaches exist - assess the quality of what IS provided\n\n    ",
+        "id": "en-economics-game-theory-strategy-1",
+        "userInput": {
+          "chapterTitle": "Strategic Decision Making",
+          "courseTitle": "Microeconomics",
+          "explanationSteps": [
+            {
+              "text": "Game theory studies strategic interactions where your outcome depends on others' choices too. It's not about games — it's about any situation where what you should do depends on what others do.",
+              "title": "Strategic Interdependence"
+            },
+            {
+              "text": "A Nash equilibrium is a stable state where no player can improve by changing only their own strategy. Everyone is doing their best given what everyone else is doing.",
+              "title": "Nash Equilibrium"
+            },
+            {
+              "text": "A dominant strategy is best regardless of what others do. If you have one, use it. But most real situations don't have dominant strategies — you must anticipate others.",
+              "title": "Dominant Strategies"
+            },
+            {
+              "text": "The prisoner's dilemma shows how individual rationality can lead to collective irrationality. Both players choosing their dominant strategy leaves both worse off.",
+              "title": "The Prisoner's Dilemma"
+            },
+            {
+              "text": "Repeated games change the calculus. When you'll interact again, cooperation becomes rational because future punishment makes defection costly.",
+              "title": "Repeated Interactions"
+            }
+          ],
+          "language": "en",
+          "lessonDescription": "Using game theory to analyze competitive situations and make better strategic decisions",
+          "lessonTitle": "Strategic Thinking with Game Theory"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "The response contains critical scientific inaccuracies that contradict the provided lesson and general biological facts. In Scene 8, the story claims and reinforces via feedback that \"Cas9 without guide RNA can have weak, non-specific nuclease activity.\" This is false; Cas9 is inert without a guide RNA. This directly contradicts Lesson Step 1 (\"a guide RNA tells it exactly where to cut\"). Additionally, Scene 6 suggests that using Lentiviral vectors (which typically integrate into the genome) for CRISPR editing carries \"no safety risk\" regarding integration, and prioritizes them over non-integrating methods (LNPs) for editing. In real-world therapeutic editing (like Sickle Cell), permanent integration of Cas9 is a major safety hazard (constitutive expression) and is avoided. These errors fundamentally mis-teach the subject matter.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The output format deviates slightly from the instructions. The prompt requested to \"Return an array of scenes\", but the response wrapped the array in a JSON object with a \"steps\" key. While parseable, it is not the exact requested structure.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "Scene 6 should be rewritten to prioritize non-integrating delivery methods (like LNPs or electroporation of RNPs) for editing to align with current safety standards, or explicitly specify non-integrating viral vectors. Scene 8 must be completely rewritten to remove the falsehood about Cas9 cutting without RNA; the plot twist could instead involve the guide RNA accidentally matching a viral sequence, or a different unexpected interaction that is scientifically plausible.",
+          "kind": "potentialImprovements",
+          "score": 6.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: CRISPR gene editing concepts must be scientifically accurate. Penalize if:\n   - CRISPR is described as directly rewriting DNA (it cuts; cellular repair does the editing)\n   - Off-target effects or guide RNA specificity are misrepresented\n   - Ethical considerations are oversimplified or strawmanned\n\n2. SCENARIO CHECK: The workplace problem should involve realistic biotech challenges like: designing experiments, troubleshooting editing efficiency, addressing off-target concerns, or navigating ethical review.\n\n3. CONCEPTUAL FOCUS: Decisions should require reasoning about the mechanism's limitations and appropriate applications, not just knowing what CRISPR stands for.\n\n\nEVALUATION CRITERIA:\n\n1. STORY AUTHENTICITY: Dialogue must be pure conversation between colleagues with no narrator text, no character name prefixes (like \"Sarah:\"), and no action descriptions. The learner should feel immersed in a real workplace conversation.\n\n2. EDUCATIONAL ALIGNMENT: Every decision point must require applying lesson concepts through reasoning, not memorizing facts. Wrong options should be plausible but flawed for specific conceptual reasons.\n\n3. PLOT COHERENCE: Scenes must flow naturally as a continuous story where each scene builds from the previous dialogue. The second-to-last scene MUST introduce a genuine plot twist (surprise, complication, or revelation). The final scene must resolve the problem AND reinforce the main learning takeaway.\n\n4. FORMAT COMPLIANCE: Verify these constraints:\n   - context: Maximum 500 characters of pure dialogue\n   - question: Maximum 100 characters\n   - options: Exactly 4 objects, each with: text (max 50 chars), isCorrect (boolean), feedback (max 300 chars)\n   - Exactly 1 option must have isCorrect: true, the other 3 must have isCorrect: false\n\n5. PERSONALIZATION: The {{NAME}} placeholder must be used appropriately in dialogue to personalize the experience.\n\n6. FEEDBACK QUALITY: Each option must have feedback explaining WHY it's right (with insight) or WHY it's wrong (and what would be correct). Feedback should help learners understand the reasoning, not just state correctness.\n\n7. SCENE COUNT: Story must have between 7 and 20 scenes. Let problem complexity dictate length.\n\n8. DISTRACTOR QUALITY: All wrong options must be plausible choices someone might consider. Penalize obviously silly or absurd options that no reasonable person would choose.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific plot choices, character names, or scenario settings you might expect\n- Do NOT require specific scenes like \"investigation\" or \"resolution\" by name - focus on whether the story has good flow\n- Do NOT check against an imagined \"ideal\" story structure\n- ONLY penalize for: format violations, narrator/description text in dialogue, decisions that test memorization instead of reasoning, missing plot twist, poor distractor quality, or factually incorrect lesson application\n- Different valid story approaches exist - assess the quality of what IS provided\n\n    ",
+        "id": "en-biology-crispr-applications-1",
+        "userInput": {
+          "chapterTitle": "Genetic Engineering",
+          "courseTitle": "Modern Biotechnology",
+          "explanationSteps": [
+            {
+              "text": "CRISPR-Cas9 is a molecular scissors that cuts DNA at specific locations. The Cas9 protein does the cutting; a guide RNA tells it exactly where to cut.",
+              "title": "The Molecular Scissors"
+            },
+            {
+              "text": "Guide RNA is a short sequence that matches the target DNA. It base-pairs with the DNA sequence you want to edit, bringing Cas9 to the exact spot.",
+              "title": "Guide RNA Targeting"
+            },
+            {
+              "text": "After CRISPR cuts, the cell's repair machinery fixes the break. Non-homologous end joining often introduces errors (knockouts). Homology-directed repair can insert new sequences (knock-ins).",
+              "title": "Cellular Repair Pathways"
+            },
+            {
+              "text": "Off-target effects occur when CRISPR cuts unintended locations. Guide RNA design and delivery methods affect specificity. This is a major safety concern for therapeutic applications.",
+              "title": "Off-Target Effects"
+            },
+            {
+              "text": "Delivery is a key challenge. Getting CRISPR components into the right cells in a living organism is harder than in a lab dish. Viral vectors and lipid nanoparticles are common approaches.",
+              "title": "Delivery Challenges"
+            }
+          ],
+          "language": "en",
+          "lessonDescription": "Understanding how to apply CRISPR gene editing technology effectively and responsibly",
+          "lessonTitle": "CRISPR Gene Editing in Practice"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Several option texts significantly exceed the 50-character limit specified in the instructions. For example, in Scene 9, one option is 69 characters long ('Contar a história do que a gente fez — case real, decisões, resultados'), and in Scene 3, an option is 63 characters long. This violation occurs in almost every scene and would likely break the UI in a mobile context.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "The response violates the output format instructions in two ways. First, it wraps the array of scenes in a JSON object with a 'steps' key (`{\"steps\": [...]}`), whereas the instructions requested a raw array of scenes. Second, the story structure does not strictly follow the 'Plot Twist' requirement. The instructions mandate a twist/complication in the second-to-last scene (Scene 8), but Scene 8 is a resolution scene describing the success of the project. The actual complications occur earlier or in the final meta-discussion.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "The educational content, tone, and application of the Cognitive Load Theory are excellent and well-localized for Portuguese. To improve the score, the option texts must be edited down to <50 characters, the JSON wrapper should be removed, and the narrative arc should be adjusted to place a significant complication exactly in the second-to-last scene as requested.",
+          "kind": "potentialImprovements",
+          "score": 8.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\nLANGUAGE REQUIREMENT: All content must be in Portuguese.\n\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Cognitive load concepts must reflect genuine psychology. Penalize if:\n   - Intrinsic, extraneous, and germane load are confused or misapplied\n   - Working memory limitations are incorrectly represented\n   - Chunking or scaffolding principles are misused\n\n2. SCENARIO CHECK: The workplace problem should involve realistic instructional design challenges like: simplifying complex training, redesigning confusing interfaces, or optimizing learning materials.\n\n3. CONCEPTUAL FOCUS: Decisions should require reasoning about how to reduce unnecessary load while preserving essential complexity.\n\n\nEVALUATION CRITERIA:\n\n1. STORY AUTHENTICITY: Dialogue must be pure conversation between colleagues with no narrator text, no character name prefixes (like \"Sarah:\"), and no action descriptions. The learner should feel immersed in a real workplace conversation.\n\n2. EDUCATIONAL ALIGNMENT: Every decision point must require applying lesson concepts through reasoning, not memorizing facts. Wrong options should be plausible but flawed for specific conceptual reasons.\n\n3. PLOT COHERENCE: Scenes must flow naturally as a continuous story where each scene builds from the previous dialogue. The second-to-last scene MUST introduce a genuine plot twist (surprise, complication, or revelation). The final scene must resolve the problem AND reinforce the main learning takeaway.\n\n4. FORMAT COMPLIANCE: Verify these constraints:\n   - context: Maximum 500 characters of pure dialogue\n   - question: Maximum 100 characters\n   - options: Exactly 4 objects, each with: text (max 50 chars), isCorrect (boolean), feedback (max 300 chars)\n   - Exactly 1 option must have isCorrect: true, the other 3 must have isCorrect: false\n\n5. PERSONALIZATION: The {{NAME}} placeholder must be used appropriately in dialogue to personalize the experience.\n\n6. FEEDBACK QUALITY: Each option must have feedback explaining WHY it's right (with insight) or WHY it's wrong (and what would be correct). Feedback should help learners understand the reasoning, not just state correctness.\n\n7. SCENE COUNT: Story must have between 7 and 20 scenes. Let problem complexity dictate length.\n\n8. DISTRACTOR QUALITY: All wrong options must be plausible choices someone might consider. Penalize obviously silly or absurd options that no reasonable person would choose.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific plot choices, character names, or scenario settings you might expect\n- Do NOT require specific scenes like \"investigation\" or \"resolution\" by name - focus on whether the story has good flow\n- Do NOT check against an imagined \"ideal\" story structure\n- ONLY penalize for: format violations, narrator/description text in dialogue, decisions that test memorization instead of reasoning, missing plot twist, poor distractor quality, or factually incorrect lesson application\n- Different valid story approaches exist - assess the quality of what IS provided\n\n    ",
+        "id": "pt-psychology-cognitive-load-1",
+        "userInput": {
+          "chapterTitle": "Psicologia da Aprendizagem",
+          "courseTitle": "Design Instrucional",
+          "explanationSteps": [
+            {
+              "text": "A memoria de trabalho tem capacidade limitada — cerca de 4 itens simultaneamente. Quando sobrecarregada, a aprendizagem para. O cerebro nao consegue processar mais.",
+              "title": "Limites da Memoria"
+            },
+            {
+              "text": "Carga intrinseca vem da complexidade inerente do conteudo. Algumas coisas sao simplesmente dificeis. Nao da para eliminar, mas da para gerenciar.",
+              "title": "Carga Intrinseca"
+            },
+            {
+              "text": "Carga extrinseca vem do design ruim — instrucoes confusas, distracao visual, navegacao complicada. Essa carga pode e deve ser eliminada.",
+              "title": "Carga Extrinseca"
+            },
+            {
+              "text": "Carga germanica e o esforco produtivo de aprender — criar conexoes, elaborar, integrar. Queremos maximizar essa carga enquanto minimizamos a extrinseca.",
+              "title": "Carga Germanica"
+            },
+            {
+              "text": "Chunking agrupa informacoes em unidades significativas. Um numero de telefone e mais facil de lembrar como blocos (99-8765-4321) do que como 10 digitos soltos.",
+              "title": "Chunking"
+            }
+          ],
+          "language": "pt",
+          "lessonDescription": "Aplicando a teoria da carga cognitiva para criar materiais de aprendizagem mais eficazes",
+          "lessonTitle": "Carga Cognitiva na Pratica"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The instructions explicitly state a maximum of 50 characters for option text. Several options significantly exceed this limit, with some reaching nearly 90 characters (e.g., \"La termodinámica nos guía a soluciones eficientes identificando fuentes reales de energía\"). This violates the UI constraints for the learning app. Additionally, the instructions requested an 'array of scenes' as the output, but the result wrapped this array in a JSON object with a 'steps' key.",
+          "kind": "minorErrors",
+          "score": 7.5
+        },
+        {
+          "conclusion": "To resolve the length constraints, rewrite options to be more concise. For example, change 'Revisar las leyes de termodinámica aplicadas al sistema' to 'Revisar leyes termodinámicas'. Ensure the final JSON output is a raw array as requested, not an object.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\nLANGUAGE REQUIREMENT: All content must be in Spanish.\n\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Thermodynamics concepts must be physically accurate. Penalize if:\n   - Entropy is described only as \"disorder\" without the energy dispersal aspect\n   - The second law is misrepresented or applied to closed vs. open systems incorrectly\n   - Heat and temperature are confused\n\n2. SCENARIO CHECK: The workplace problem should involve realistic engineering challenges like: heat engine efficiency, thermal management, refrigeration design, or energy system optimization.\n\n3. CONCEPTUAL FOCUS: Decisions should require reasoning about energy flow, efficiency limits, and thermodynamic constraints.\n\n\nEVALUATION CRITERIA:\n\n1. STORY AUTHENTICITY: Dialogue must be pure conversation between colleagues with no narrator text, no character name prefixes (like \"Sarah:\"), and no action descriptions. The learner should feel immersed in a real workplace conversation.\n\n2. EDUCATIONAL ALIGNMENT: Every decision point must require applying lesson concepts through reasoning, not memorizing facts. Wrong options should be plausible but flawed for specific conceptual reasons.\n\n3. PLOT COHERENCE: Scenes must flow naturally as a continuous story where each scene builds from the previous dialogue. The second-to-last scene MUST introduce a genuine plot twist (surprise, complication, or revelation). The final scene must resolve the problem AND reinforce the main learning takeaway.\n\n4. FORMAT COMPLIANCE: Verify these constraints:\n   - context: Maximum 500 characters of pure dialogue\n   - question: Maximum 100 characters\n   - options: Exactly 4 objects, each with: text (max 50 chars), isCorrect (boolean), feedback (max 300 chars)\n   - Exactly 1 option must have isCorrect: true, the other 3 must have isCorrect: false\n\n5. PERSONALIZATION: The {{NAME}} placeholder must be used appropriately in dialogue to personalize the experience.\n\n6. FEEDBACK QUALITY: Each option must have feedback explaining WHY it's right (with insight) or WHY it's wrong (and what would be correct). Feedback should help learners understand the reasoning, not just state correctness.\n\n7. SCENE COUNT: Story must have between 7 and 20 scenes. Let problem complexity dictate length.\n\n8. DISTRACTOR QUALITY: All wrong options must be plausible choices someone might consider. Penalize obviously silly or absurd options that no reasonable person would choose.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific plot choices, character names, or scenario settings you might expect\n- Do NOT require specific scenes like \"investigation\" or \"resolution\" by name - focus on whether the story has good flow\n- Do NOT check against an imagined \"ideal\" story structure\n- ONLY penalize for: format violations, narrator/description text in dialogue, decisions that test memorization instead of reasoning, missing plot twist, poor distractor quality, or factually incorrect lesson application\n- Different valid story approaches exist - assess the quality of what IS provided\n\n    ",
+        "id": "es-physics-thermodynamics-applications-1",
+        "userInput": {
+          "chapterTitle": "Termodinamica",
+          "courseTitle": "Fisica para Ingenieros",
+          "explanationSteps": [
+            {
+              "text": "La primera ley dice que la energia se conserva — no se crea ni destruye, solo se transforma. El calor que entra menos el trabajo que sale iguala el cambio de energia interna.",
+              "title": "Conservacion de Energia"
+            },
+            {
+              "text": "La segunda ley establece una direccion: el calor fluye espontaneamente de caliente a frio, nunca al reves. Esto limita la eficiencia de cualquier motor termico.",
+              "title": "Direccion del Calor"
+            },
+            {
+              "text": "La entropia mide la dispersion de energia. Cuando la energia se dispersa (calor fluyendo a lo frio), la entropia aumenta. Concentrar energia requiere trabajo externo.",
+              "title": "Entropia"
+            },
+            {
+              "text": "El ciclo de Carnot define la eficiencia maxima teorica. Ningun motor real puede ser mas eficiente. La eficiencia depende de las temperaturas de las fuentes caliente y fria.",
+              "title": "Limite de Carnot"
+            },
+            {
+              "text": "Los refrigeradores y bombas de calor mueven calor de frio a caliente usando trabajo. No violan la segunda ley — el trabajo compensa el flujo 'antinatural' de calor.",
+              "title": "Refrigeracion"
+            }
+          ],
+          "language": "es",
+          "lessonDescription": "Aplicando las leyes de la termodinamica para entender y disenar sistemas energeticos",
+          "lessonTitle": "Termodinamica Aplicada"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "The response systematically violates the character limit constraint for option text. The instructions specify 'text: The answer choice (max 50 characters)'. The model generated options that are frequently 60-80 characters long (e.g., 'We need to immediately force all servers into strong consistency mode' is 69 characters). This requires significant editing to be usable in the target UI.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The option texts should be rewritten as concise labels to fit the 50-character limit. For example, 'Strong consistency guarantees every read is latest, but can't survive partitions' (80 chars) could be shortened to 'Strong consistency cannot survive partitions' or 'Strong consistency fails during partitions'.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Distributed systems concepts must be technically accurate. Penalize if:\n   - CAP theorem trade-offs are misrepresented\n   - Eventual consistency is confused with strong consistency\n   - Network partition handling is incorrectly described\n\n2. SCENARIO CHECK: The workplace problem should involve realistic distributed systems challenges like: choosing consistency models, handling failover, debugging race conditions, or scaling databases.\n\n3. CONCEPTUAL FOCUS: Decisions should require reasoning about distributed system trade-offs under failure conditions.\n\n\nEVALUATION CRITERIA:\n\n1. STORY AUTHENTICITY: Dialogue must be pure conversation between colleagues with no narrator text, no character name prefixes (like \"Sarah:\"), and no action descriptions. The learner should feel immersed in a real workplace conversation.\n\n2. EDUCATIONAL ALIGNMENT: Every decision point must require applying lesson concepts through reasoning, not memorizing facts. Wrong options should be plausible but flawed for specific conceptual reasons.\n\n3. PLOT COHERENCE: Scenes must flow naturally as a continuous story where each scene builds from the previous dialogue. The second-to-last scene MUST introduce a genuine plot twist (surprise, complication, or revelation). The final scene must resolve the problem AND reinforce the main learning takeaway.\n\n4. FORMAT COMPLIANCE: Verify these constraints:\n   - context: Maximum 500 characters of pure dialogue\n   - question: Maximum 100 characters\n   - options: Exactly 4 objects, each with: text (max 50 chars), isCorrect (boolean), feedback (max 300 chars)\n   - Exactly 1 option must have isCorrect: true, the other 3 must have isCorrect: false\n\n5. PERSONALIZATION: The {{NAME}} placeholder must be used appropriately in dialogue to personalize the experience.\n\n6. FEEDBACK QUALITY: Each option must have feedback explaining WHY it's right (with insight) or WHY it's wrong (and what would be correct). Feedback should help learners understand the reasoning, not just state correctness.\n\n7. SCENE COUNT: Story must have between 7 and 20 scenes. Let problem complexity dictate length.\n\n8. DISTRACTOR QUALITY: All wrong options must be plausible choices someone might consider. Penalize obviously silly or absurd options that no reasonable person would choose.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific plot choices, character names, or scenario settings you might expect\n- Do NOT require specific scenes like \"investigation\" or \"resolution\" by name - focus on whether the story has good flow\n- Do NOT check against an imagined \"ideal\" story structure\n- ONLY penalize for: format violations, narrator/description text in dialogue, decisions that test memorization instead of reasoning, missing plot twist, poor distractor quality, or factually incorrect lesson application\n- Different valid story approaches exist - assess the quality of what IS provided\n\n    ",
+        "id": "en-cs-distributed-systems-consistency-1",
+        "userInput": {
+          "chapterTitle": "Distributed Data",
+          "courseTitle": "System Design",
+          "explanationSteps": [
+            {
+              "text": "The CAP theorem states you can only have two of three: Consistency, Availability, and Partition tolerance. Since network partitions happen, you're really choosing between C and A.",
+              "title": "CAP Theorem"
+            },
+            {
+              "text": "Strong consistency means all nodes see the same data at the same time. Every read returns the most recent write. This requires coordination that can slow things down.",
+              "title": "Strong Consistency"
+            },
+            {
+              "text": "Eventual consistency means replicas will converge given enough time without new writes. Reads might return stale data temporarily, but the system stays available.",
+              "title": "Eventual Consistency"
+            },
+            {
+              "text": "Network partitions occur when nodes can't communicate. The system must decide: reject requests (maintain consistency) or accept requests that might conflict (maintain availability).",
+              "title": "Partition Handling"
+            },
+            {
+              "text": "Quorum-based systems use voting. A write succeeds if enough replicas acknowledge it. Read quorum + write quorum > total nodes ensures reading at least one up-to-date copy.",
+              "title": "Quorum Systems"
+            },
+            {
+              "text": "Conflict resolution strategies handle divergent writes: last-write-wins, vector clocks, or application-specific merge logic. The right choice depends on your data semantics.",
+              "title": "Conflict Resolution"
+            }
+          ],
+          "language": "en",
+          "lessonDescription": "Navigating consistency and availability trade-offs in distributed systems",
+          "lessonTitle": "Consistency in Distributed Systems"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "The content demonstrates a deep understanding of behavioral economics, correctly applying concepts like Default Effects, Loss Aversion, Framing, and Present Bias. The distinction between behavioral barriers and structural/financial constraints (Scenes 13-15) adds significant pedagogical value.",
+          "kind": "potentialImprovements",
+          "score": 10
+        },
+        {
+          "conclusion": "There are pervasive violations of the character limit for option text. The instructions specify 'max 50 characters' for option text. Many options exceed this significantly (e.g., Scene 6 Option 1 is 69 chars; Scene 3 Option 1 is 66 chars; Scene 12 Option 3 is 71 chars). This occurs in almost every scene.",
+          "kind": "minorErrors",
+          "score": 7.5
+        },
+        {
+          "conclusion": "The 'Plot Twist' occurs in Scene 13 (of 16), whereas the instructions require it in the 'second-to-last scene'. While the provided structure actually allows for better pacing and resolution of the twist than the strict instruction would, it is technically a deviation from the specific Story Arc requirements.",
+          "kind": "minorErrors",
+          "score": 8.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Behavioral economics concepts must reflect genuine research. Penalize if:\n   - Loss aversion magnitude is misrepresented (losses hurt roughly 2x gains)\n   - Framing effects are confused with actual preference changes\n   - Nudge principles are applied without understanding choice architecture\n\n2. SCENARIO CHECK: The workplace problem should involve realistic behavioral design challenges like: improving user engagement, designing incentive structures, reducing churn, or encouraging healthy behaviors.\n\n3. CONCEPTUAL FOCUS: Decisions should require reasoning about psychological biases and how to design for real human behavior.\n\n\nEVALUATION CRITERIA:\n\n1. STORY AUTHENTICITY: Dialogue must be pure conversation between colleagues with no narrator text, no character name prefixes (like \"Sarah:\"), and no action descriptions. The learner should feel immersed in a real workplace conversation.\n\n2. EDUCATIONAL ALIGNMENT: Every decision point must require applying lesson concepts through reasoning, not memorizing facts. Wrong options should be plausible but flawed for specific conceptual reasons.\n\n3. PLOT COHERENCE: Scenes must flow naturally as a continuous story where each scene builds from the previous dialogue. The second-to-last scene MUST introduce a genuine plot twist (surprise, complication, or revelation). The final scene must resolve the problem AND reinforce the main learning takeaway.\n\n4. FORMAT COMPLIANCE: Verify these constraints:\n   - context: Maximum 500 characters of pure dialogue\n   - question: Maximum 100 characters\n   - options: Exactly 4 objects, each with: text (max 50 chars), isCorrect (boolean), feedback (max 300 chars)\n   - Exactly 1 option must have isCorrect: true, the other 3 must have isCorrect: false\n\n5. PERSONALIZATION: The {{NAME}} placeholder must be used appropriately in dialogue to personalize the experience.\n\n6. FEEDBACK QUALITY: Each option must have feedback explaining WHY it's right (with insight) or WHY it's wrong (and what would be correct). Feedback should help learners understand the reasoning, not just state correctness.\n\n7. SCENE COUNT: Story must have between 7 and 20 scenes. Let problem complexity dictate length.\n\n8. DISTRACTOR QUALITY: All wrong options must be plausible choices someone might consider. Penalize obviously silly or absurd options that no reasonable person would choose.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific plot choices, character names, or scenario settings you might expect\n- Do NOT require specific scenes like \"investigation\" or \"resolution\" by name - focus on whether the story has good flow\n- Do NOT check against an imagined \"ideal\" story structure\n- ONLY penalize for: format violations, narrator/description text in dialogue, decisions that test memorization instead of reasoning, missing plot twist, poor distractor quality, or factually incorrect lesson application\n- Different valid story approaches exist - assess the quality of what IS provided\n\n    ",
+        "id": "en-economics-behavioral-design-1",
+        "userInput": {
+          "chapterTitle": "Applied Behavioral Economics",
+          "courseTitle": "Product Psychology",
+          "explanationSteps": [
+            {
+              "text": "Loss aversion means losses hurt more than equivalent gains feel good — roughly twice as much. People will take irrational risks to avoid losses they wouldn't take to achieve gains.",
+              "title": "Loss Aversion"
+            },
+            {
+              "text": "Framing effects show that how you present options matters as much as what the options are. '90% survival rate' and '10% mortality rate' are logically identical but feel different.",
+              "title": "Framing Effects"
+            },
+            {
+              "text": "Default effects are powerful because people tend to stick with pre-selected options. Changing the default can dramatically change outcomes without restricting choice.",
+              "title": "Default Effects"
+            },
+            {
+              "text": "Present bias makes us overvalue immediate rewards over future ones. We know we should save for retirement, but the money feels more valuable now. Commitment devices help.",
+              "title": "Present Bias"
+            },
+            {
+              "text": "Social proof drives behavior — we look to others to decide what's appropriate. Showing that 'most people do X' is often more effective than explaining why X is good.",
+              "title": "Social Proof"
+            }
+          ],
+          "language": "en",
+          "lessonDescription": "Applying behavioral economics principles to design products and systems that work with human psychology",
+          "lessonTitle": "Behavioral Design in Practice"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None. The response provides a coherent story that generally follows the organic chemistry logic required.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "1. Format: The output is wrapped in a JSON object `{\"steps\": [...]}` instead of returning a direct JSON array of scenes `[...]` as explicitly requested in the 'Output Format' section.\n2. Language: The response contains non-existent or hallucinated Portuguese words: 'givado' (Scene 1, likely anglicism for 'given'/'dado') and 'começança' (Scene 12, likely meant 'início' or 'partida').\n3. Terminology: 'Cromatografia de massa' (Scene 11/12) is chemically imprecise; the correct term is 'Espectrometria de Massas' (Mass Spectrometry) or 'GC-MS'.\n4. Chemistry Nuance: In Scene 8, the story suggests a secondary substrate with a 'strong nucleophile' (implied Hydroxide from Scene 4 context) favors SN2. Chemically, a strong base like Hydroxide on a secondary substrate typically favors E2 Elimination as the major product. While simplified for teaching Substitution, this is a misleading generalization without specifying a non-basic nucleophile.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "1. Correct the linguistic hallucinations ('dado' instead of 'givado', 'impurezas iniciais' instead of 'regioisômeros de começança').\n2. Remove the outer JSON object wrapper to strictly follow the output format.\n3. In Scene 8, specify a strong nucleophile that is a weak base (like Azide or Thiolate) to accurately justify SN2 dominance over E2 on a secondary substrate, or acknowledge the competition more explicitly.",
+          "kind": "potentialImprovements",
+          "score": 8.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\nLANGUAGE REQUIREMENT: All content must be in Portuguese.\n\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Organic chemistry reaction concepts must be chemically accurate. Penalize if:\n   - Nucleophiles and electrophiles are confused\n   - SN1 vs SN2 mechanism conditions are misrepresented\n   - Stereochemistry outcomes are incorrect\n\n2. SCENARIO CHECK: The workplace problem should involve realistic organic chemistry challenges like: synthesis planning, troubleshooting reactions, optimizing yields, or predicting products.\n\n3. CONCEPTUAL FOCUS: Decisions should require reasoning about electron flow, mechanism steps, and reaction conditions.\n\n\nEVALUATION CRITERIA:\n\n1. STORY AUTHENTICITY: Dialogue must be pure conversation between colleagues with no narrator text, no character name prefixes (like \"Sarah:\"), and no action descriptions. The learner should feel immersed in a real workplace conversation.\n\n2. EDUCATIONAL ALIGNMENT: Every decision point must require applying lesson concepts through reasoning, not memorizing facts. Wrong options should be plausible but flawed for specific conceptual reasons.\n\n3. PLOT COHERENCE: Scenes must flow naturally as a continuous story where each scene builds from the previous dialogue. The second-to-last scene MUST introduce a genuine plot twist (surprise, complication, or revelation). The final scene must resolve the problem AND reinforce the main learning takeaway.\n\n4. FORMAT COMPLIANCE: Verify these constraints:\n   - context: Maximum 500 characters of pure dialogue\n   - question: Maximum 100 characters\n   - options: Exactly 4 objects, each with: text (max 50 chars), isCorrect (boolean), feedback (max 300 chars)\n   - Exactly 1 option must have isCorrect: true, the other 3 must have isCorrect: false\n\n5. PERSONALIZATION: The {{NAME}} placeholder must be used appropriately in dialogue to personalize the experience.\n\n6. FEEDBACK QUALITY: Each option must have feedback explaining WHY it's right (with insight) or WHY it's wrong (and what would be correct). Feedback should help learners understand the reasoning, not just state correctness.\n\n7. SCENE COUNT: Story must have between 7 and 20 scenes. Let problem complexity dictate length.\n\n8. DISTRACTOR QUALITY: All wrong options must be plausible choices someone might consider. Penalize obviously silly or absurd options that no reasonable person would choose.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific plot choices, character names, or scenario settings you might expect\n- Do NOT require specific scenes like \"investigation\" or \"resolution\" by name - focus on whether the story has good flow\n- Do NOT check against an imagined \"ideal\" story structure\n- ONLY penalize for: format violations, narrator/description text in dialogue, decisions that test memorization instead of reasoning, missing plot twist, poor distractor quality, or factually incorrect lesson application\n- Different valid story approaches exist - assess the quality of what IS provided\n\n    ",
+        "id": "pt-chemistry-organic-reactions-1",
+        "userInput": {
+          "chapterTitle": "Reacoes Organicas",
+          "courseTitle": "Quimica Organica II",
+          "explanationSteps": [
+            {
+              "text": "Nucleofilos sao especies ricas em eletrons que doam pares de eletrons. Eletrofilos sao especies pobres em eletrons que aceitam. Reacoes organicas sao geralmente nucleofilos atacando eletrofilos.",
+              "title": "Nucleofilos e Eletrofilos"
+            },
+            {
+              "text": "SN2 e um mecanismo concertado — o nucleofilo ataca enquanto o grupo de saida sai, em um unico passo. Funciona melhor com substratos primarios e nucleofilos fortes.",
+              "title": "Mecanismo SN2"
+            },
+            {
+              "text": "SN1 ocorre em dois passos: primeiro o grupo de saida sai formando um carbocation, depois o nucleofilo ataca. Favorecido por substratos terciarios e solventes polares proticos.",
+              "title": "Mecanismo SN1"
+            },
+            {
+              "text": "A estereoquimica revela o mecanismo. SN2 inverte a configuracao (ataque por tras). SN1 pode dar mistura racemicacon (carbocation planar atacado de ambos os lados).",
+              "title": "Estereoquimica"
+            },
+            {
+              "text": "Grupos de saida precisam ser estaveis apos sair. Bons grupos de saida sao bases fracas — haletos, tosilatos, agua protonada. Grupos de saida ruins sao bases fortes.",
+              "title": "Grupos de Saida"
+            }
+          ],
+          "language": "pt",
+          "lessonDescription": "Aplicando mecanismos de reacao organica para prever e otimizar sinteses quimicas",
+          "lessonTitle": "Mecanismos de Substituicao"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "There are a few typos in the Spanish text in the final scene (Scene 8): 'reentrencamos' should be 'reentrenamos', and 'reflcionando' should be 'reflexionando'. Additionally, in Scene 4, one option text mixes English and Spanish ('fewer filters en capas convolucionales'), which breaks the language consistency.",
+          "kind": "minorErrors",
+          "score": 8.5
+        },
+        {
+          "conclusion": "Correct the typos and ensure full Spanish translation for the option text in Scene 4. The logic regarding the technical explanation of ResNet pooling in Scene 4 is sound (since ResNet uses Global Average Pooling, spatial pooling doesn't reduce dense layer parameters), which is a nice detail.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\nLANGUAGE REQUIREMENT: All content must be in Spanish.\n\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Neural network architecture concepts must be technically accurate. Penalize if:\n   - Convolution operations are incorrectly described\n   - Pooling and stride effects are confused\n   - Transfer learning principles are misrepresented\n\n2. SCENARIO CHECK: The workplace problem should involve realistic deep learning challenges like: choosing architectures, debugging training issues, handling overfitting, or deploying models.\n\n3. CONCEPTUAL FOCUS: Decisions should require reasoning about architecture choices and their trade-offs.\n\n\nEVALUATION CRITERIA:\n\n1. STORY AUTHENTICITY: Dialogue must be pure conversation between colleagues with no narrator text, no character name prefixes (like \"Sarah:\"), and no action descriptions. The learner should feel immersed in a real workplace conversation.\n\n2. EDUCATIONAL ALIGNMENT: Every decision point must require applying lesson concepts through reasoning, not memorizing facts. Wrong options should be plausible but flawed for specific conceptual reasons.\n\n3. PLOT COHERENCE: Scenes must flow naturally as a continuous story where each scene builds from the previous dialogue. The second-to-last scene MUST introduce a genuine plot twist (surprise, complication, or revelation). The final scene must resolve the problem AND reinforce the main learning takeaway.\n\n4. FORMAT COMPLIANCE: Verify these constraints:\n   - context: Maximum 500 characters of pure dialogue\n   - question: Maximum 100 characters\n   - options: Exactly 4 objects, each with: text (max 50 chars), isCorrect (boolean), feedback (max 300 chars)\n   - Exactly 1 option must have isCorrect: true, the other 3 must have isCorrect: false\n\n5. PERSONALIZATION: The {{NAME}} placeholder must be used appropriately in dialogue to personalize the experience.\n\n6. FEEDBACK QUALITY: Each option must have feedback explaining WHY it's right (with insight) or WHY it's wrong (and what would be correct). Feedback should help learners understand the reasoning, not just state correctness.\n\n7. SCENE COUNT: Story must have between 7 and 20 scenes. Let problem complexity dictate length.\n\n8. DISTRACTOR QUALITY: All wrong options must be plausible choices someone might consider. Penalize obviously silly or absurd options that no reasonable person would choose.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific plot choices, character names, or scenario settings you might expect\n- Do NOT require specific scenes like \"investigation\" or \"resolution\" by name - focus on whether the story has good flow\n- Do NOT check against an imagined \"ideal\" story structure\n- ONLY penalize for: format violations, narrator/description text in dialogue, decisions that test memorization instead of reasoning, missing plot twist, poor distractor quality, or factually incorrect lesson application\n- Different valid story approaches exist - assess the quality of what IS provided\n\n    ",
+        "id": "es-cs-neural-network-architecture-1",
+        "userInput": {
+          "chapterTitle": "Arquitecturas de Redes Neuronales",
+          "courseTitle": "Deep Learning Aplicado",
+          "explanationSteps": [
+            {
+              "text": "Las capas convolucionales detectan patrones locales usando filtros que se deslizan sobre la entrada. El mismo filtro se aplica en todas partes, lo que reduce parametros y captura patrones sin importar su posicion.",
+              "title": "Capas Convolucionales"
+            },
+            {
+              "text": "El pooling reduce la dimension espacial tomando el maximo o promedio de regiones. Esto hace la representacion mas compacta y algo invariante a pequenas traslaciones.",
+              "title": "Pooling"
+            },
+            {
+              "text": "Las funciones de activacion introducen no-linealidad. ReLU (max(0,x)) es popular por ser simple y evitar el problema del gradiente desvaneciente en capas profundas.",
+              "title": "Activaciones"
+            },
+            {
+              "text": "El dropout desactiva neuronas aleatoriamente durante el entrenamiento. Esto fuerza redundancia y reduce el sobreajuste — la red no puede depender de ninguna neurona especifica.",
+              "title": "Dropout"
+            },
+            {
+              "text": "El transfer learning usa redes pre-entrenadas en grandes datasets. Las capas tempranas aprenden patrones generales; las tardias se ajustan a tu tarea especifica.",
+              "title": "Transfer Learning"
+            },
+            {
+              "text": "El batch normalization normaliza activaciones entre capas. Estabiliza el entrenamiento, permite tasas de aprendizaje mas altas, y actua como regularizador.",
+              "title": "Batch Normalization"
+            }
+          ],
+          "language": "es",
+          "lessonDescription": "Disenando y optimizando arquitecturas de redes neuronales para problemas reales",
+          "lessonTitle": "Arquitecturas de Deep Learning"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "In Scene 9, the correct option text reads \"Only the primary hypothesis and success criterion\". The use of the word \"Only\" is slightly confusing because the accompanying feedback lists four distinct items that need to be pre-registered (primary comparison, effect size, power target, and handling of multiple comparisons). A better option text would be \"The primary hypothesis and analysis plan\" to avoid contradicting the feedback's comprehensive list.",
+          "kind": "potentialImprovements",
+          "score": 9.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Statistical hypothesis testing concepts must be mathematically sound. Penalize if:\n   - p-values are misinterpreted (not the probability the null is true)\n   - Type I and Type II errors are confused\n   - Statistical vs. practical significance are conflated\n\n2. SCENARIO CHECK: The workplace problem should involve realistic data analysis challenges like: A/B test interpretation, experiment design, multiple comparison issues, or communicating results to stakeholders.\n\n3. CONCEPTUAL FOCUS: Decisions should require reasoning about statistical inference principles, not just plugging numbers into formulas.\n\n\nEVALUATION CRITERIA:\n\n1. STORY AUTHENTICITY: Dialogue must be pure conversation between colleagues with no narrator text, no character name prefixes (like \"Sarah:\"), and no action descriptions. The learner should feel immersed in a real workplace conversation.\n\n2. EDUCATIONAL ALIGNMENT: Every decision point must require applying lesson concepts through reasoning, not memorizing facts. Wrong options should be plausible but flawed for specific conceptual reasons.\n\n3. PLOT COHERENCE: Scenes must flow naturally as a continuous story where each scene builds from the previous dialogue. The second-to-last scene MUST introduce a genuine plot twist (surprise, complication, or revelation). The final scene must resolve the problem AND reinforce the main learning takeaway.\n\n4. FORMAT COMPLIANCE: Verify these constraints:\n   - context: Maximum 500 characters of pure dialogue\n   - question: Maximum 100 characters\n   - options: Exactly 4 objects, each with: text (max 50 chars), isCorrect (boolean), feedback (max 300 chars)\n   - Exactly 1 option must have isCorrect: true, the other 3 must have isCorrect: false\n\n5. PERSONALIZATION: The {{NAME}} placeholder must be used appropriately in dialogue to personalize the experience.\n\n6. FEEDBACK QUALITY: Each option must have feedback explaining WHY it's right (with insight) or WHY it's wrong (and what would be correct). Feedback should help learners understand the reasoning, not just state correctness.\n\n7. SCENE COUNT: Story must have between 7 and 20 scenes. Let problem complexity dictate length.\n\n8. DISTRACTOR QUALITY: All wrong options must be plausible choices someone might consider. Penalize obviously silly or absurd options that no reasonable person would choose.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific plot choices, character names, or scenario settings you might expect\n- Do NOT require specific scenes like \"investigation\" or \"resolution\" by name - focus on whether the story has good flow\n- Do NOT check against an imagined \"ideal\" story structure\n- ONLY penalize for: format violations, narrator/description text in dialogue, decisions that test memorization instead of reasoning, missing plot twist, poor distractor quality, or factually incorrect lesson application\n- Different valid story approaches exist - assess the quality of what IS provided\n\n    ",
+        "id": "en-statistics-hypothesis-testing-1",
+        "userInput": {
+          "chapterTitle": "Statistical Inference",
+          "courseTitle": "Applied Statistics",
+          "explanationSteps": [
+            {
+              "text": "The null hypothesis (H0) is the default assumption of no effect. We try to reject it. The p-value measures how surprising the data would be IF the null were true.",
+              "title": "Null Hypothesis"
+            },
+            {
+              "text": "A p-value is NOT the probability the null is true. It's the probability of seeing data this extreme (or more) if the null IS true. A common and dangerous misinterpretation.",
+              "title": "P-Value Meaning"
+            },
+            {
+              "text": "Type I error (false positive) is rejecting a true null. Type II error (false negative) is failing to reject a false null. You can't minimize both — there's a trade-off.",
+              "title": "Error Types"
+            },
+            {
+              "text": "Statistical power is the probability of detecting a real effect. It depends on sample size, effect size, and significance level. Low-powered studies miss real effects.",
+              "title": "Statistical Power"
+            },
+            {
+              "text": "Statistical significance doesn't mean practical significance. A huge sample can detect tiny effects that don't matter in practice. Always consider effect size.",
+              "title": "Practical Significance"
+            },
+            {
+              "text": "Multiple comparisons inflate Type I errors. Testing 20 hypotheses at alpha=0.05 expects one false positive. Corrections like Bonferroni or FDR control this.",
+              "title": "Multiple Comparisons"
+            }
+          ],
+          "language": "en",
+          "lessonDescription": "Applying statistical hypothesis testing correctly to make sound data-driven decisions",
+          "lessonTitle": "Hypothesis Testing in Practice"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The response contains two structural deviations. First, the output format is a JSON object with a 'steps' key containing the array, whereas the instructions explicitly requested a raw array of scenes. Second, the 'Plot Twist' (the competitor revelation) occurs in Scene 8 of 10. The instructions required the twist to be in the second-to-last scene (Scene 9). Scene 9 instead contains a conceptual question ('Will quantum replace classical?'). While the narrative flow is good, it strictly violates the pacing constraint.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "The narrative structure could be tightened to place the competitor revelation in Scene 9 to meet the strict constraint. Additionally, the specific claim in Scene 6 that protein folding is 'tolerant to small errors' is a useful narrative heuristic for VQE/hybrid algorithms but is technically a significant simplification (protein folding energy landscapes are often quite sensitive). However, for a fundamentals lesson, this is acceptable.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Quantum computing concepts must be physically accurate. Penalize if:\n   - Superposition is described as \"being in two places at once\" (it's about probability amplitudes)\n   - Quantum parallelism benefits are overstated or misrepresented\n   - Decoherence and error correction challenges are minimized\n\n2. SCENARIO CHECK: The workplace problem should involve realistic quantum computing challenges like: algorithm selection, hardware limitations, error mitigation, or identifying suitable problems for quantum advantage.\n\n3. CONCEPTUAL FOCUS: Decisions should require reasoning about when quantum approaches help and their fundamental limitations.\n\n\nEVALUATION CRITERIA:\n\n1. STORY AUTHENTICITY: Dialogue must be pure conversation between colleagues with no narrator text, no character name prefixes (like \"Sarah:\"), and no action descriptions. The learner should feel immersed in a real workplace conversation.\n\n2. EDUCATIONAL ALIGNMENT: Every decision point must require applying lesson concepts through reasoning, not memorizing facts. Wrong options should be plausible but flawed for specific conceptual reasons.\n\n3. PLOT COHERENCE: Scenes must flow naturally as a continuous story where each scene builds from the previous dialogue. The second-to-last scene MUST introduce a genuine plot twist (surprise, complication, or revelation). The final scene must resolve the problem AND reinforce the main learning takeaway.\n\n4. FORMAT COMPLIANCE: Verify these constraints:\n   - context: Maximum 500 characters of pure dialogue\n   - question: Maximum 100 characters\n   - options: Exactly 4 objects, each with: text (max 50 chars), isCorrect (boolean), feedback (max 300 chars)\n   - Exactly 1 option must have isCorrect: true, the other 3 must have isCorrect: false\n\n5. PERSONALIZATION: The {{NAME}} placeholder must be used appropriately in dialogue to personalize the experience.\n\n6. FEEDBACK QUALITY: Each option must have feedback explaining WHY it's right (with insight) or WHY it's wrong (and what would be correct). Feedback should help learners understand the reasoning, not just state correctness.\n\n7. SCENE COUNT: Story must have between 7 and 20 scenes. Let problem complexity dictate length.\n\n8. DISTRACTOR QUALITY: All wrong options must be plausible choices someone might consider. Penalize obviously silly or absurd options that no reasonable person would choose.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific plot choices, character names, or scenario settings you might expect\n- Do NOT require specific scenes like \"investigation\" or \"resolution\" by name - focus on whether the story has good flow\n- Do NOT check against an imagined \"ideal\" story structure\n- ONLY penalize for: format violations, narrator/description text in dialogue, decisions that test memorization instead of reasoning, missing plot twist, poor distractor quality, or factually incorrect lesson application\n- Different valid story approaches exist - assess the quality of what IS provided\n\n    ",
+        "id": "en-physics-quantum-computing-basics-1",
+        "userInput": {
+          "chapterTitle": "Quantum Information",
+          "courseTitle": "Quantum Computing Fundamentals",
+          "explanationSteps": [
+            {
+              "text": "Qubits can exist in superposition — a weighted combination of 0 and 1 states. This isn't 'both at once' — it's a probability amplitude that interferes before measurement.",
+              "title": "Superposition"
+            },
+            {
+              "text": "Entanglement links qubits so measuring one instantly determines the other, regardless of distance. This correlation is a resource for quantum algorithms.",
+              "title": "Entanglement"
+            },
+            {
+              "text": "Quantum parallelism lets algorithms evaluate functions on all inputs simultaneously. But you can only read one result — the art is using interference to amplify the right answer.",
+              "title": "Quantum Parallelism"
+            },
+            {
+              "text": "Decoherence destroys quantum information when qubits interact with their environment. Real qubits are noisy and maintain coherence only briefly.",
+              "title": "Decoherence"
+            },
+            {
+              "text": "Quantum error correction encodes logical qubits in many physical qubits. The overhead is huge — thousands of physical qubits per logical qubit for fault tolerance.",
+              "title": "Error Correction"
+            },
+            {
+              "text": "Quantum advantage requires the right problem type. Factoring, simulation, and certain optimization problems benefit. Most classical algorithms won't be replaced.",
+              "title": "Where Quantum Helps"
+            }
+          ],
+          "language": "en",
+          "lessonDescription": "Understanding quantum computing capabilities and limitations for practical problem-solving",
+          "lessonTitle": "Quantum Computing Fundamentals"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The response systematically violates the character limit constraint for 'options'. The instructions specify a maximum of 50 characters per option text, but nearly all generated options range between 55 and 70 characters (e.g., 'Assíncrono: Pedidos publica eventos que Catálogo e Pagamentos consomem' is 70 chars). This requires significant editing for UI compatibility. Additionally, the output format instruction requested an 'array of scenes', but the model returned a JSON object containing a 'steps' key wrapping the array.",
+          "kind": "minorErrors",
+          "score": 7.5
+        },
+        {
+          "conclusion": "The option texts should be condensed to meet the 50-character limit (e.g., shortening 'Assíncrono: Pedidos publica eventos que Catálogo e Pagamentos consomem' to 'Assíncrono: Pub/Sub de eventos').",
+          "kind": "potentialImprovements",
+          "score": 8.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\nLANGUAGE REQUIREMENT: All content must be in Portuguese.\n\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Microservices architecture concepts must be technically sound. Penalize if:\n   - Service boundaries are drawn incorrectly (by technical layer vs. business domain)\n   - Distributed system challenges are understated\n   - Eventual consistency implications are misrepresented\n\n2. SCENARIO CHECK: The workplace problem should involve realistic architecture decisions like: service decomposition, data consistency, API versioning, or handling distributed failures.\n\n3. CONCEPTUAL FOCUS: Decisions should require reasoning about the trade-offs between monolith and microservices architectures.\n\n\nEVALUATION CRITERIA:\n\n1. STORY AUTHENTICITY: Dialogue must be pure conversation between colleagues with no narrator text, no character name prefixes (like \"Sarah:\"), and no action descriptions. The learner should feel immersed in a real workplace conversation.\n\n2. EDUCATIONAL ALIGNMENT: Every decision point must require applying lesson concepts through reasoning, not memorizing facts. Wrong options should be plausible but flawed for specific conceptual reasons.\n\n3. PLOT COHERENCE: Scenes must flow naturally as a continuous story where each scene builds from the previous dialogue. The second-to-last scene MUST introduce a genuine plot twist (surprise, complication, or revelation). The final scene must resolve the problem AND reinforce the main learning takeaway.\n\n4. FORMAT COMPLIANCE: Verify these constraints:\n   - context: Maximum 500 characters of pure dialogue\n   - question: Maximum 100 characters\n   - options: Exactly 4 objects, each with: text (max 50 chars), isCorrect (boolean), feedback (max 300 chars)\n   - Exactly 1 option must have isCorrect: true, the other 3 must have isCorrect: false\n\n5. PERSONALIZATION: The {{NAME}} placeholder must be used appropriately in dialogue to personalize the experience.\n\n6. FEEDBACK QUALITY: Each option must have feedback explaining WHY it's right (with insight) or WHY it's wrong (and what would be correct). Feedback should help learners understand the reasoning, not just state correctness.\n\n7. SCENE COUNT: Story must have between 7 and 20 scenes. Let problem complexity dictate length.\n\n8. DISTRACTOR QUALITY: All wrong options must be plausible choices someone might consider. Penalize obviously silly or absurd options that no reasonable person would choose.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific plot choices, character names, or scenario settings you might expect\n- Do NOT require specific scenes like \"investigation\" or \"resolution\" by name - focus on whether the story has good flow\n- Do NOT check against an imagined \"ideal\" story structure\n- ONLY penalize for: format violations, narrator/description text in dialogue, decisions that test memorization instead of reasoning, missing plot twist, poor distractor quality, or factually incorrect lesson application\n- Different valid story approaches exist - assess the quality of what IS provided\n\n    ",
+        "id": "pt-cs-microservices-architecture-1",
+        "userInput": {
+          "chapterTitle": "Arquitetura de Software",
+          "courseTitle": "Engenharia de Software Avancada",
+          "explanationSteps": [
+            {
+              "text": "Microservicos sao servicos pequenos e independentes que fazem uma coisa bem. Cada um pode ser desenvolvido, implantado e escalado separadamente.",
+              "title": "Definicao de Microservicos"
+            },
+            {
+              "text": "Limites de servico devem seguir dominios de negocio, nao camadas tecnicas. Um servico de 'Pedidos' faz sentido; um servico de 'Banco de Dados' nao.",
+              "title": "Limites de Servico"
+            },
+            {
+              "text": "A comunicacao entre servicos pode ser sincrona (REST, gRPC) ou assincrona (filas, eventos). Assincrona e mais resiliente mas mais complexa de debugar.",
+              "title": "Comunicacao"
+            },
+            {
+              "text": "Dados descentralizados significam que cada servico tem seu banco. Consistencia eventual e a realidade — transacoes distribuidas sao dificeis e devem ser evitadas.",
+              "title": "Dados Descentralizados"
+            },
+            {
+              "text": "Falhas em cascata acontecem quando um servico lento trava outros. Circuit breakers, timeouts e fallbacks sao essenciais para resiliencia.",
+              "title": "Resiliencia"
+            },
+            {
+              "text": "Observabilidade requer logs centralizados, metricas e tracing distribuido. Sem isso, debugar problemas em producao e quase impossivel.",
+              "title": "Observabilidade"
+            }
+          ],
+          "language": "pt",
+          "lessonDescription": "Projetando e implementando arquiteturas de microservicos com consciencia dos trade-offs",
+          "lessonTitle": "Microservicos na Pratica"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The response contains several Spanish typos and an Anglicism in the dialogue: 1) Scene 10 context uses 'costa 100 pesos' instead of 'cuesta' (costa means coast). 2) Scene 13 context has 'ocurrirmse' instead of 'ocurrirme'. 3) Scene 18 context has 'exicir' instead of 'exigir'. 4) Scene 18 uses 'realiza que' (realize) to mean 'darse cuenta' (to become aware), which is a common False Friend error in Spanish ('realizar' means to perform/do). Additionally, in Scene 13, the feedback for the third option states that minimizing C(n) and C(n)/V 'can give different results' for optimization. Mathematically, if V is a fixed parameter during the optimization step, the critical point n is identical for both functions. While the business distinction is valid, the mathematical justification in the feedback is technically incorrect.",
+          "kind": "minorErrors",
+          "score": 8.5
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\nLANGUAGE REQUIREMENT: All content must be in Spanish.\n\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Calculus optimization concepts must be mathematically correct. Penalize if:\n   - Critical points are confused with extrema\n   - Second derivative test is misapplied\n   - Constraint optimization (Lagrange multipliers) is incorrectly described\n\n2. SCENARIO CHECK: The workplace problem should involve realistic optimization challenges like: minimizing costs, maximizing efficiency, resource allocation, or engineering design constraints.\n\n3. CONCEPTUAL FOCUS: Decisions should require reasoning about when and how to apply optimization techniques.\n\n\nEVALUATION CRITERIA:\n\n1. STORY AUTHENTICITY: Dialogue must be pure conversation between colleagues with no narrator text, no character name prefixes (like \"Sarah:\"), and no action descriptions. The learner should feel immersed in a real workplace conversation.\n\n2. EDUCATIONAL ALIGNMENT: Every decision point must require applying lesson concepts through reasoning, not memorizing facts. Wrong options should be plausible but flawed for specific conceptual reasons.\n\n3. PLOT COHERENCE: Scenes must flow naturally as a continuous story where each scene builds from the previous dialogue. The second-to-last scene MUST introduce a genuine plot twist (surprise, complication, or revelation). The final scene must resolve the problem AND reinforce the main learning takeaway.\n\n4. FORMAT COMPLIANCE: Verify these constraints:\n   - context: Maximum 500 characters of pure dialogue\n   - question: Maximum 100 characters\n   - options: Exactly 4 objects, each with: text (max 50 chars), isCorrect (boolean), feedback (max 300 chars)\n   - Exactly 1 option must have isCorrect: true, the other 3 must have isCorrect: false\n\n5. PERSONALIZATION: The {{NAME}} placeholder must be used appropriately in dialogue to personalize the experience.\n\n6. FEEDBACK QUALITY: Each option must have feedback explaining WHY it's right (with insight) or WHY it's wrong (and what would be correct). Feedback should help learners understand the reasoning, not just state correctness.\n\n7. SCENE COUNT: Story must have between 7 and 20 scenes. Let problem complexity dictate length.\n\n8. DISTRACTOR QUALITY: All wrong options must be plausible choices someone might consider. Penalize obviously silly or absurd options that no reasonable person would choose.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific plot choices, character names, or scenario settings you might expect\n- Do NOT require specific scenes like \"investigation\" or \"resolution\" by name - focus on whether the story has good flow\n- Do NOT check against an imagined \"ideal\" story structure\n- ONLY penalize for: format violations, narrator/description text in dialogue, decisions that test memorization instead of reasoning, missing plot twist, poor distractor quality, or factually incorrect lesson application\n- Different valid story approaches exist - assess the quality of what IS provided\n\n    ",
+        "id": "es-math-calculus-optimization-1",
+        "userInput": {
+          "chapterTitle": "Aplicaciones del Calculo",
+          "courseTitle": "Calculo para Ingenieria",
+          "explanationSteps": [
+            {
+              "text": "Los puntos criticos son donde la derivada es cero o no existe. Son CANDIDATOS a extremos — no todos los puntos criticos son maximos o minimos.",
+              "title": "Puntos Criticos"
+            },
+            {
+              "text": "La prueba de la segunda derivada determina el tipo: si f''(x) > 0 en un punto critico, es minimo local; si f''(x) < 0, es maximo local; si f''(x) = 0, la prueba no concluye.",
+              "title": "Prueba de Segunda Derivada"
+            },
+            {
+              "text": "Los extremos globales pueden estar en puntos criticos O en los extremos del dominio. Siempre evalua tambien los bordes del intervalo.",
+              "title": "Extremos Globales"
+            },
+            {
+              "text": "Optimizacion con restricciones usa multiplicadores de Lagrange. Maximizar f(x,y) sujeto a g(x,y)=0 requiere que los gradientes sean paralelos.",
+              "title": "Multiplicadores de Lagrange"
+            },
+            {
+              "text": "Modelar el problema correctamente es la mitad del trabajo. Define la funcion objetivo, identifica las restricciones, y expresa todo en terminos de las variables relevantes.",
+              "title": "Modelado del Problema"
+            }
+          ],
+          "language": "es",
+          "lessonDescription": "Aplicando tecnicas de calculo para encontrar optimos en problemas de ingenieria y negocios",
+          "lessonTitle": "Optimizacion con Calculo"
+        }
+      }
+    }
+  ],
+  "taskId": "activity-story"
+}

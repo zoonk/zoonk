@@ -1,0 +1,281 @@
+{
+  "modelId": "openai/gpt-5-mini",
+  "results": [
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The instructions specify that each option should have an 'effects' array of 1-3 items. The model provided exactly 4 effects for every single option throughout the response. While the dimensions chosen are relevant, listing all 4 every time violates the specific constraint to limit effects to 1-3 per option.",
+          "kind": "minorErrors",
+          "score": 8.5
+        },
+        {
+          "conclusion": "The response could be improved by selecting only the most pertinent effects (1-3) for each option rather than a full scorecard of all 4 dimensions. This would better highlight the specific trade-offs (e.g., highlighting just 'Time Efficiency' and 'Space Usage' when those are the primary conflicting factors) and adhere to the constraints.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Algorithm complexity trade-offs must reflect genuine CS principles. Penalize if:\n   - Time vs. space trade-offs are misrepresented in consequences\n   - Big-O implications are incorrect\n   - Consequences don't reflect real algorithmic trade-offs\n\n2. DIMENSION CHECK: Dimensions should represent meaningful algorithmic concerns like:\n   - Performance, Memory Efficiency, Code Readability, Maintainability\n   - Should NOT include unrelated dimensions like \"team morale\" for this topic\n\n3. SCENARIO CHECK: The challenge should involve realistic algorithm selection decisions.\n\n4. CONSEQUENCE CHECK: Consequences should explain the real-world impact of algorithmic choices.\n\n\nEVALUATION CRITERIA:\n\n1. DIMENSION QUALITY: Dimension names used across all effects should:\n   - Connect meaningfully to lesson concepts (2-4 unique dimensions total)\n   - Create natural tension (trade-off axes)\n   - Be consistently named across all effects (same concept = same name)\n\n2. CONSEQUENCE QUALITY: Each option's consequence must:\n   - Explain what happens as a result of the choice\n   - Connect to lesson concepts (not generic outcomes)\n   - Teach something about trade-offs\n   - Be consistent with the stated effects (if effect is positive for dimension X, consequence should reflect improvement in X)\n\n3. TRADE-OFF DESIGN: No option should be obviously best. Options should affect multiple dimensions with mixed impacts (e.g., positive for one, negative for another). If one option has all positive effects, penalize.\n\n4. EFFECTS CONSISTENCY: Each option should have 1-3 effects. Dimension names should be reused consistently across options to create meaningful trade-offs (not random unique names for each effect).\n\n5. FORMAT COMPLIANCE: Verify these constraints:\n   - intro: Maximum 500 characters\n   - steps: 4-6 steps, each with context (max 500 chars), question (max 100 chars), and 3-4 options\n   - options: Each with text (max 80 chars), consequence (max 300 chars), effects array (1-3 items with dimension and impact)\n   - reflection: Maximum 500 characters\n\n6. PERSONALIZATION: The {{NAME}} placeholder must be used appropriately in intro and dialogue.\n\n7. CONCEPTUAL ACCURACY: Consequences and effects must make sense given the lesson content. If the lesson teaches that X leads to Y, effects should reflect this.\n\n8. DIALOGUE QUALITY: Context must be pure conversation with NO narrator text, NO character name prefixes, NO action descriptions.\n\n9. REFLECTION QUALITY: The reflection must tie the experience back to lesson principles and acknowledge that different approaches have merit.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific scenario choices or dimension names\n- Do NOT require specific dimensions by name\n- ONLY penalize for: format violations, consequences that don't connect to lesson concepts, obviously dominant options, inconsistent dimension naming, narrator text in dialogue\n- Different valid challenge designs exist - assess the quality of what IS provided\n\n    ",
+        "id": "en-cs-algorithm-complexity-1",
+        "userInput": {
+          "chapterTitle": "Algorithm Analysis",
+          "courseTitle": "Data Structures and Algorithms",
+          "explanationSteps": [
+            {
+              "text": "Time complexity measures how execution time grows with input size. O(n) means linear growth — double the input, double the time. O(n²) means quadratic — double the input, quadruple the time.",
+              "title": "Time Complexity"
+            },
+            {
+              "text": "Space complexity measures memory usage growth. Some algorithms trade time for space — storing precomputed results to avoid recalculation. Others trade space for time — using less memory but computing more.",
+              "title": "Space Complexity"
+            },
+            {
+              "text": "The time-space trade-off is fundamental. Hash tables give O(1) lookup but use extra memory. Binary search uses O(1) space but requires sorted data. Choose based on constraints.",
+              "title": "Time-Space Trade-off"
+            },
+            {
+              "text": "Amortized analysis looks at average performance over many operations. ArrayList append is usually O(1), but occasionally O(n) when resizing. Amortized, it's still O(1).",
+              "title": "Amortized Analysis"
+            },
+            {
+              "text": "Best, average, and worst case can differ dramatically. Quicksort averages O(n log n) but worst-cases to O(n²). Know your data distribution to choose wisely.",
+              "title": "Case Analysis"
+            }
+          ],
+          "language": "en",
+          "lessonDescription": "Understanding and applying algorithm complexity analysis to make informed trade-offs in software design",
+          "lessonTitle": "Algorithm Complexity Trade-offs"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        },
+        {
+          "conclusion": "The response is flawlessly executed. It adheres strictly to all formatting constraints, including character limits and JSON structure. The economic concepts (elasticity, supply shifts vs. movements along the curve, substitution effects) are applied accurately to the scenario. The dimensions selected (Selling Price, Sales Volume, Profit Margin, Inventory Levels) are highly relevant to the lesson and consistent throughout. The trade-offs in every option are realistic and educational (e.g., differentiating products shifts the demand curve but likely comes with costs that keep margins neutral, creating a balanced choice). The dialogue is natural and correctly personalized.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Supply and demand concepts must reflect genuine economics. Penalize if:\n   - Price elasticity effects are misrepresented in consequences\n   - Supply/demand dynamics are incorrectly described\n   - Market equilibrium concepts are misapplied\n\n2. DIMENSION CHECK: Dimensions should represent meaningful market concerns like:\n   - Revenue, Market Share, Customer Satisfaction, Profit Margins\n   - Should reflect the interconnected nature of market decisions\n\n3. SCENARIO CHECK: The challenge should involve realistic pricing and market decisions.\n\n4. CONSEQUENCE CHECK: Consequences should explain the market impact of pricing choices.\n\n\nEVALUATION CRITERIA:\n\n1. DIMENSION QUALITY: Dimension names used across all effects should:\n   - Connect meaningfully to lesson concepts (2-4 unique dimensions total)\n   - Create natural tension (trade-off axes)\n   - Be consistently named across all effects (same concept = same name)\n\n2. CONSEQUENCE QUALITY: Each option's consequence must:\n   - Explain what happens as a result of the choice\n   - Connect to lesson concepts (not generic outcomes)\n   - Teach something about trade-offs\n   - Be consistent with the stated effects (if effect is positive for dimension X, consequence should reflect improvement in X)\n\n3. TRADE-OFF DESIGN: No option should be obviously best. Options should affect multiple dimensions with mixed impacts (e.g., positive for one, negative for another). If one option has all positive effects, penalize.\n\n4. EFFECTS CONSISTENCY: Each option should have 1-3 effects. Dimension names should be reused consistently across options to create meaningful trade-offs (not random unique names for each effect).\n\n5. FORMAT COMPLIANCE: Verify these constraints:\n   - intro: Maximum 500 characters\n   - steps: 4-6 steps, each with context (max 500 chars), question (max 100 chars), and 3-4 options\n   - options: Each with text (max 80 chars), consequence (max 300 chars), effects array (1-3 items with dimension and impact)\n   - reflection: Maximum 500 characters\n\n6. PERSONALIZATION: The {{NAME}} placeholder must be used appropriately in intro and dialogue.\n\n7. CONCEPTUAL ACCURACY: Consequences and effects must make sense given the lesson content. If the lesson teaches that X leads to Y, effects should reflect this.\n\n8. DIALOGUE QUALITY: Context must be pure conversation with NO narrator text, NO character name prefixes, NO action descriptions.\n\n9. REFLECTION QUALITY: The reflection must tie the experience back to lesson principles and acknowledge that different approaches have merit.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific scenario choices or dimension names\n- Do NOT require specific dimensions by name\n- ONLY penalize for: format violations, consequences that don't connect to lesson concepts, obviously dominant options, inconsistent dimension naming, narrator text in dialogue\n- Different valid challenge designs exist - assess the quality of what IS provided\n\n    ",
+        "id": "en-economics-supply-demand-1",
+        "userInput": {
+          "chapterTitle": "Market Dynamics",
+          "courseTitle": "Microeconomics Fundamentals",
+          "explanationSteps": [
+            {
+              "text": "Demand curves slope downward — as price rises, quantity demanded falls. This reflects the law of demand: people buy less when things cost more, all else equal.",
+              "title": "The Demand Curve"
+            },
+            {
+              "text": "Supply curves slope upward — as price rises, quantity supplied increases. Higher prices incentivize producers to make more. Lower prices make production less worthwhile.",
+              "title": "The Supply Curve"
+            },
+            {
+              "text": "Equilibrium occurs where supply meets demand. At this price, quantity supplied equals quantity demanded. Prices above equilibrium create surplus; prices below create shortage.",
+              "title": "Market Equilibrium"
+            },
+            {
+              "text": "Price elasticity measures responsiveness to price changes. Elastic demand (>1) means sales drop sharply with price increases. Inelastic demand (<1) means sales barely change.",
+              "title": "Price Elasticity"
+            },
+            {
+              "text": "Shifts vs. movements: A change in price moves along the curve. Changes in other factors (income, preferences, costs) shift the entire curve. This distinction is crucial.",
+              "title": "Shifts vs. Movements"
+            }
+          ],
+          "language": "en",
+          "lessonDescription": "Applying supply and demand principles to make strategic pricing and market decisions",
+          "lessonTitle": "Supply and Demand in Practice"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "In Step 4, Option 3 ('Create a managed habitat mosaic') appears to logically dominate Option 1 ('Allow natural succession'). Option 3 provides 'positive' Biodiversity (same as Option 1), 'neutral' Productivity (better than Option 1's 'negative'), and 'positive' Stakeholder Support (better than Option 1's absence). This creates a 'best answer' scenario relative to Option 1, which reduces the strategic tension required by the instructions.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "The dialogue in every step consistently starts with '{{NAME}}, ...'. While compliant with the instruction to use the placeholder, varying the sentence structure would make the conversation feel more natural and less robotic.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Ecosystem concepts must reflect genuine ecology. Penalize if:\n   - Trophic level interactions are misrepresented in consequences\n   - Carrying capacity concepts are incorrectly applied\n   - Biodiversity-stability relationships are oversimplified\n\n2. DIMENSION CHECK: Dimensions should represent meaningful ecological concerns like:\n   - Biodiversity, Ecosystem Stability, Resource Sustainability, Population Health\n   - Should reflect the interconnected nature of ecosystems\n\n3. SCENARIO CHECK: The challenge should involve realistic ecosystem management decisions.\n\n4. CONSEQUENCE CHECK: Consequences should explain the ecological impact of management choices.\n\n\nEVALUATION CRITERIA:\n\n1. DIMENSION QUALITY: Dimension names used across all effects should:\n   - Connect meaningfully to lesson concepts (2-4 unique dimensions total)\n   - Create natural tension (trade-off axes)\n   - Be consistently named across all effects (same concept = same name)\n\n2. CONSEQUENCE QUALITY: Each option's consequence must:\n   - Explain what happens as a result of the choice\n   - Connect to lesson concepts (not generic outcomes)\n   - Teach something about trade-offs\n   - Be consistent with the stated effects (if effect is positive for dimension X, consequence should reflect improvement in X)\n\n3. TRADE-OFF DESIGN: No option should be obviously best. Options should affect multiple dimensions with mixed impacts (e.g., positive for one, negative for another). If one option has all positive effects, penalize.\n\n4. EFFECTS CONSISTENCY: Each option should have 1-3 effects. Dimension names should be reused consistently across options to create meaningful trade-offs (not random unique names for each effect).\n\n5. FORMAT COMPLIANCE: Verify these constraints:\n   - intro: Maximum 500 characters\n   - steps: 4-6 steps, each with context (max 500 chars), question (max 100 chars), and 3-4 options\n   - options: Each with text (max 80 chars), consequence (max 300 chars), effects array (1-3 items with dimension and impact)\n   - reflection: Maximum 500 characters\n\n6. PERSONALIZATION: The {{NAME}} placeholder must be used appropriately in intro and dialogue.\n\n7. CONCEPTUAL ACCURACY: Consequences and effects must make sense given the lesson content. If the lesson teaches that X leads to Y, effects should reflect this.\n\n8. DIALOGUE QUALITY: Context must be pure conversation with NO narrator text, NO character name prefixes, NO action descriptions.\n\n9. REFLECTION QUALITY: The reflection must tie the experience back to lesson principles and acknowledge that different approaches have merit.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific scenario choices or dimension names\n- Do NOT require specific dimensions by name\n- ONLY penalize for: format violations, consequences that don't connect to lesson concepts, obviously dominant options, inconsistent dimension naming, narrator text in dialogue\n- Different valid challenge designs exist - assess the quality of what IS provided\n\n    ",
+        "id": "en-biology-ecosystem-balance-1",
+        "userInput": {
+          "chapterTitle": "Ecosystem Dynamics",
+          "courseTitle": "Ecology and Conservation",
+          "explanationSteps": [
+            {
+              "text": "Ecosystems are interconnected networks. Removing one species affects others through food webs. Keystone species have disproportionate impact — their loss cascades through the system.",
+              "title": "Interconnected Networks"
+            },
+            {
+              "text": "Carrying capacity is the maximum population an environment can sustain. Exceed it, and resources deplete, populations crash. Stay well below, and you're not maximizing the ecosystem's potential.",
+              "title": "Carrying Capacity"
+            },
+            {
+              "text": "Biodiversity provides resilience. More species means more ways to respond to change. Monocultures are efficient but fragile. Diverse systems are robust but complex to manage.",
+              "title": "Biodiversity and Resilience"
+            },
+            {
+              "text": "Trophic cascades occur when changes at one level ripple through others. Remove predators, and prey populations explode, overgrazing vegetation, affecting everything that depends on those plants.",
+              "title": "Trophic Cascades"
+            },
+            {
+              "text": "Ecological succession is the process of change over time. Pioneer species prepare the way for later ones. Managing ecosystems means deciding where in succession you want to be.",
+              "title": "Ecological Succession"
+            }
+          ],
+          "language": "en",
+          "lessonDescription": "Applying ecological principles to make informed ecosystem management decisions",
+          "lessonTitle": "Ecosystem Balance and Management"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "In Step 1, Option 3, the word \"Reintentar\" (meaning 'to re-attempt') appears to be a typo or hallucination for \"Reinjetar\" (to re-inject) in the context of a chemical flow. While understandable, it is not standard technical Portuguese. In Step 2, Option 3, the consequence states adding inert gas at constant volume provides \"pouco ganho de rendimento\" (little yield gain). Scientifically, for ideal gases, there is zero equilibrium shift (neutral), which the effect correctly identifies as \"neutral\". The text phrasing is slightly imprecise but acceptable.",
+          "kind": "minorErrors",
+          "score": 9.5
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\nLANGUAGE REQUIREMENT: All content must be in Portuguese.\n\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Le Chatelier's principle must be correctly applied. Penalize if:\n   - Equilibrium shift directions are incorrect in consequences\n   - Temperature, pressure, concentration effects are misrepresented\n   - The principle is applied to situations where it doesn't hold\n\n2. DIMENSION CHECK: Dimensions should represent meaningful chemical process concerns like:\n   - Product Yield, Reaction Efficiency, Energy Consumption, Process Stability\n   - Should reflect how equilibrium adjustments affect industrial processes\n\n3. SCENARIO CHECK: The challenge should involve realistic chemical process decisions.\n\n4. CONSEQUENCE CHECK: Consequences should explain the chemical impact of process choices.\n\n\nEVALUATION CRITERIA:\n\n1. DIMENSION QUALITY: Dimension names used across all effects should:\n   - Connect meaningfully to lesson concepts (2-4 unique dimensions total)\n   - Create natural tension (trade-off axes)\n   - Be consistently named across all effects (same concept = same name)\n\n2. CONSEQUENCE QUALITY: Each option's consequence must:\n   - Explain what happens as a result of the choice\n   - Connect to lesson concepts (not generic outcomes)\n   - Teach something about trade-offs\n   - Be consistent with the stated effects (if effect is positive for dimension X, consequence should reflect improvement in X)\n\n3. TRADE-OFF DESIGN: No option should be obviously best. Options should affect multiple dimensions with mixed impacts (e.g., positive for one, negative for another). If one option has all positive effects, penalize.\n\n4. EFFECTS CONSISTENCY: Each option should have 1-3 effects. Dimension names should be reused consistently across options to create meaningful trade-offs (not random unique names for each effect).\n\n5. FORMAT COMPLIANCE: Verify these constraints:\n   - intro: Maximum 500 characters\n   - steps: 4-6 steps, each with context (max 500 chars), question (max 100 chars), and 3-4 options\n   - options: Each with text (max 80 chars), consequence (max 300 chars), effects array (1-3 items with dimension and impact)\n   - reflection: Maximum 500 characters\n\n6. PERSONALIZATION: The {{NAME}} placeholder must be used appropriately in intro and dialogue.\n\n7. CONCEPTUAL ACCURACY: Consequences and effects must make sense given the lesson content. If the lesson teaches that X leads to Y, effects should reflect this.\n\n8. DIALOGUE QUALITY: Context must be pure conversation with NO narrator text, NO character name prefixes, NO action descriptions.\n\n9. REFLECTION QUALITY: The reflection must tie the experience back to lesson principles and acknowledge that different approaches have merit.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific scenario choices or dimension names\n- Do NOT require specific dimensions by name\n- ONLY penalize for: format violations, consequences that don't connect to lesson concepts, obviously dominant options, inconsistent dimension naming, narrator text in dialogue\n- Different valid challenge designs exist - assess the quality of what IS provided\n\n    ",
+        "id": "pt-chemistry-reaction-equilibrium-1",
+        "userInput": {
+          "chapterTitle": "Equilibrio Quimico",
+          "courseTitle": "Quimica Geral II",
+          "explanationSteps": [
+            {
+              "text": "O principio de Le Chatelier diz que um sistema em equilibrio responde a perturbacoes minimizando a mudanca. Adicione reagente, o equilibrio desloca para consumir esse reagente.",
+              "title": "Principio de Le Chatelier"
+            },
+            {
+              "text": "Mudancas de concentracao deslocam o equilibrio. Adicionar reagentes desloca para produtos. Remover produtos tambem desloca para produtos. O sistema busca restaurar o equilibrio.",
+              "title": "Efeito da Concentracao"
+            },
+            {
+              "text": "A pressao afeta equilibrios gasosos. Aumentar pressao favorece o lado com menos moles de gas. Diminuir pressao favorece o lado com mais moles. Gases inertes nao afetam.",
+              "title": "Efeito da Pressao"
+            },
+            {
+              "text": "Temperatura e diferente — ela muda a constante de equilibrio. Reacoes exotermicas: aumento de temperatura desloca para reagentes. Reacoes endotermicas: aumento favorece produtos.",
+              "title": "Efeito da Temperatura"
+            },
+            {
+              "text": "Catalisadores aceleram ambas as direcoes igualmente. Eles nao deslocam o equilibrio — apenas ajudam a alcancar o equilibrio mais rapido. Util para processos industriais.",
+              "title": "Papel dos Catalisadores"
+            }
+          ],
+          "language": "pt",
+          "lessonDescription": "Aplicando o principio de Le Chatelier para otimizar reacoes quimicas e processos industriais",
+          "lessonTitle": "Equilibrio Quimico na Pratica"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "The introduction establishes a clear scenario (microgrid design) and personalizes it using {{NAME}}. It clearly outlines the stakes (reliability, cost, environment). There is a minor typo ('util' instead of 'útil'), but the Spanish is otherwise natural and professional.",
+          "kind": "minorErrors",
+          "score": 9.5
+        },
+        {
+          "conclusion": "The physics principles regarding energy conservation are applied correctly. The distinction between energy density (fuels vs batteries) and conversion efficiency (AC vs DC, round-trip losses) is accurate. The trade-offs presented (e.g., efficiency vs cost vs reliability) are realistic for energy systems.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The response strictly adheres to the dimension limits (using 4 consistent dimensions: Costo, Fiabilidad, Densidad Energética, Eficiencia). It effectively reuses them across options to create meaningful trade-offs.",
+          "kind": "potentialImprovements",
+          "score": 10
+        },
+        {
+          "conclusion": "The consequences clearly explain the physical and operational results of the choices. For example, explaining that multiple conversion steps (AC/DC) reduce efficiency, or that batteries have lower energy density than fuel. This connects well to the lesson content.",
+          "kind": "potentialImprovements",
+          "score": 10
+        },
+        {
+          "conclusion": "Grammar check: In Step 1, 'el costo operativo y las emisiones son elevados' is grammatically correct (compound subject taking masculine plural). The only detected error is the missing accent on 'útil' in the introduction. The formatting constraints (character limits, step counts) are fully met.",
+          "kind": "minorErrors",
+          "score": 9.8
+        }
+      ],
+      "testCase": {
+        "expectations": "\nLANGUAGE REQUIREMENT: All content must be in Spanish.\n\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Energy conservation principles must be physically accurate. Penalize if:\n   - Energy transformations violate conservation laws in consequences\n   - Efficiency concepts are misrepresented\n   - Entropy/waste heat considerations are ignored\n\n2. DIMENSION CHECK: Dimensions should represent meaningful energy system concerns like:\n   - Energy Output, System Efficiency, Environmental Impact, Operational Reliability\n   - Should reflect the interconnected nature of energy systems\n\n3. SCENARIO CHECK: The challenge should involve realistic energy system decisions.\n\n4. CONSEQUENCE CHECK: Consequences should explain the physical impact of energy choices.\n\n\nEVALUATION CRITERIA:\n\n1. DIMENSION QUALITY: Dimension names used across all effects should:\n   - Connect meaningfully to lesson concepts (2-4 unique dimensions total)\n   - Create natural tension (trade-off axes)\n   - Be consistently named across all effects (same concept = same name)\n\n2. CONSEQUENCE QUALITY: Each option's consequence must:\n   - Explain what happens as a result of the choice\n   - Connect to lesson concepts (not generic outcomes)\n   - Teach something about trade-offs\n   - Be consistent with the stated effects (if effect is positive for dimension X, consequence should reflect improvement in X)\n\n3. TRADE-OFF DESIGN: No option should be obviously best. Options should affect multiple dimensions with mixed impacts (e.g., positive for one, negative for another). If one option has all positive effects, penalize.\n\n4. EFFECTS CONSISTENCY: Each option should have 1-3 effects. Dimension names should be reused consistently across options to create meaningful trade-offs (not random unique names for each effect).\n\n5. FORMAT COMPLIANCE: Verify these constraints:\n   - intro: Maximum 500 characters\n   - steps: 4-6 steps, each with context (max 500 chars), question (max 100 chars), and 3-4 options\n   - options: Each with text (max 80 chars), consequence (max 300 chars), effects array (1-3 items with dimension and impact)\n   - reflection: Maximum 500 characters\n\n6. PERSONALIZATION: The {{NAME}} placeholder must be used appropriately in intro and dialogue.\n\n7. CONCEPTUAL ACCURACY: Consequences and effects must make sense given the lesson content. If the lesson teaches that X leads to Y, effects should reflect this.\n\n8. DIALOGUE QUALITY: Context must be pure conversation with NO narrator text, NO character name prefixes, NO action descriptions.\n\n9. REFLECTION QUALITY: The reflection must tie the experience back to lesson principles and acknowledge that different approaches have merit.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific scenario choices or dimension names\n- Do NOT require specific dimensions by name\n- ONLY penalize for: format violations, consequences that don't connect to lesson concepts, obviously dominant options, inconsistent dimension naming, narrator text in dialogue\n- Different valid challenge designs exist - assess the quality of what IS provided\n\n    ",
+        "id": "es-physics-energy-conservation-1",
+        "userInput": {
+          "chapterTitle": "Energia y Trabajo",
+          "courseTitle": "Fisica Aplicada",
+          "explanationSteps": [
+            {
+              "text": "La energia no se crea ni se destruye, solo se transforma. En cada conversion, la energia total se conserva, pero la energia util disminuye. Parte siempre se convierte en calor no aprovechable.",
+              "title": "Conservacion de la Energia"
+            },
+            {
+              "text": "La eficiencia mide cuanta energia de entrada se convierte en trabajo util. Ningun proceso es 100% eficiente — siempre hay perdidas. La segunda ley de la termodinamica lo garantiza.",
+              "title": "Eficiencia Energetica"
+            },
+            {
+              "text": "Las cadenas de conversion acumulan perdidas. Si cada paso es 90% eficiente, tres pasos dan 0.9³ = 73% eficiencia total. Menos conversiones significa menos perdidas.",
+              "title": "Perdidas en Cadena"
+            },
+            {
+              "text": "El almacenamiento de energia tiene su propio costo energetico. Cargar y descargar baterias pierde energia. Bombear agua cuesta arriba para hidroelectrica tambien. El almacenamiento no es gratis.",
+              "title": "Costo del Almacenamiento"
+            },
+            {
+              "text": "La densidad energetica importa. Combustibles fosiles almacenan mucha energia por kilogramo. Las baterias almacenan menos. Esto afecta que es practico para cada aplicacion.",
+              "title": "Densidad Energetica"
+            }
+          ],
+          "language": "es",
+          "lessonDescription": "Aplicando principios de conservacion de energia para disenar y optimizar sistemas energeticos",
+          "lessonTitle": "Conservacion de Energia en Sistemas Reales"
+        }
+      }
+    }
+  ],
+  "taskId": "activity-challenge"
+}
