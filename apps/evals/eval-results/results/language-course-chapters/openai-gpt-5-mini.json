@@ -1,0 +1,114 @@
+{
+  "modelId": "openai/gpt-5-mini",
+  "results": [
+    {
+      "steps": [
+        {
+          "conclusion": "No major errors found. The curriculum effectively covers the CEFR progression from A1 to C2, rigorously avoids forbidden topics like culture, career skills, or skill-based chapters (pronunciation, reading, etc.), and strictly follows the requested formatting guidelines with excellent, fluff-free descriptions.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "There is a notable omission: 'Ser vs. Estar' is a fundamental Spanish-specific grammar structure that was explicitly requested in the expectations but is missing from the curriculum. Additionally, while the prompt asked to interleave grammar and vocabulary chapters, there are large consecutive blocks of vocabulary (Chapters 15-21) and grammar (Chapters 22-43) that could have been mixed more naturally.",
+          "kind": "minorErrors",
+          "score": 8.5
+        },
+        {
+          "conclusion": "To achieve a perfect score, the curriculum should explicitly include dedicated chapters for critical Spanish grammar topics like 'Ser vs. Estar' and 'Por vs. Para'. Furthermore, the middle section of the curriculum should better interleave the heavy grammar block (Chapters 22-43) with vocabulary themes and communication scenarios to provide a more natural learning flow.",
+          "kind": "potentialImprovements",
+          "score": 8.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English (teaching Spanish)\n      - Should cover Spanish-specific grammar structures (ser vs estar, subjunctive, preterite vs imperfect, etc.)\n      - Should cover vocabulary themes relevant to everyday Spanish (food, travel, family, etc.)\n      - Should cover communication scenarios (greetings, ordering food, asking directions, etc.)\n\n      \n  - Chapters should follow CEFR progression from A1 (beginner) to C2 (mastery)\n  - ALL chapters must be content-domain chapters: grammar structures, vocabulary themes, or communication scenarios\n  - NO skill-based chapters (pronunciation, listening, reading, writing) — those skills are built into every lesson automatically\n  - NO culture chapters (history, traditions, cuisine, music, festivals, customs)\n  - NO career or professional chapters (business language, workplace communication)\n  - NO proficiency exam preparation chapters (DELE, JLPT, DELF, HSK, etc.)\n  - NO literature or media chapters (books, films, songs, poetry)\n  - Should cover grammar structures (verb tenses, nouns, articles, etc.) and vocabulary themes (food, travel, health, etc.)\n  - Should follow the language specified by language parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Titles should be concise, no filler words\n  - Descriptions should be concise, no fluff (avoid \"learn\", \"understand\", \"explore\", etc.)\n  - You don't need to evaluate the output format here, just focus on the chapter content quality\n  - Don't add capstone/final projects, assessments, or exercises\n\n    ",
+        "id": "en-learning-spanish-1",
+        "userInput": {
+          "targetLanguage": "es",
+          "userLanguage": "en"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None. The curriculum perfectly captures the A1-C2 progression for Japanese, covers all necessary grammatical, vocabulary, and communication domains (including writing systems, particles, keigo, and counters), and strictly follows the formatting rules.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "There are a few minor language slips and slight instruction edge-case violations: 1) In Chapter 60, the Spanish word 'Lecturas' is used instead of the Portuguese 'Leituras'. 2) In Chapter 54, the misspelled English term 'embeded clauses' is used instead of a Portuguese equivalent like 'orações subordinadas'. 3) The prompt explicitly forbade topics like 'music' and 'literature', yet Chapter 52 is named 'Arte & música' and Chapter 71 mentions 'literatura'. Even though they focus on vocabulary and advanced linguistics rather than culture/media analysis, they technically brush against the negative constraints.",
+          "kind": "minorErrors",
+          "score": 8.5
+        },
+        {
+          "conclusion": "Fix the language intrusions by translating 'Lecturas' to 'Leituras' and 'embeded' to its proper Portuguese translation. Also, strictly adhere to the negative constraints by replacing 'música' and 'literatura' with more generic vocabulary themes like 'expressão criativa' or 'textos clássicos' to avoid triggering the forbidden topic rules.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese (teaching Japanese)\n      - Should include dedicated chapters for writing systems (hiragana, katakana, kanji)\n      - Should cover Japanese-specific grammar (particles, verb forms, honorifics, counters)\n      - Should cover vocabulary themes and communication scenarios\n\n      \n  - Chapters should follow CEFR progression from A1 (beginner) to C2 (mastery)\n  - ALL chapters must be content-domain chapters: grammar structures, vocabulary themes, or communication scenarios\n  - NO skill-based chapters (pronunciation, listening, reading, writing) — those skills are built into every lesson automatically\n  - NO culture chapters (history, traditions, cuisine, music, festivals, customs)\n  - NO career or professional chapters (business language, workplace communication)\n  - NO proficiency exam preparation chapters (DELE, JLPT, DELF, HSK, etc.)\n  - NO literature or media chapters (books, films, songs, poetry)\n  - Should cover grammar structures (verb tenses, nouns, articles, etc.) and vocabulary themes (food, travel, health, etc.)\n  - Should follow the language specified by language parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Titles should be concise, no filler words\n  - Descriptions should be concise, no fluff (avoid \"learn\", \"understand\", \"explore\", etc.)\n  - You don't need to evaluate the output format here, just focus on the chapter content quality\n  - Don't add capstone/final projects, assessments, or exercises\n\n    ",
+        "id": "pt-learning-japanese-1",
+        "userInput": {
+          "targetLanguage": "ja",
+          "userLanguage": "pt"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "The response significantly violates the explicit instruction to 'Interleave grammar and vocabulary/situation chapters for a natural learning flow rather than grouping all grammar together then all vocabulary together.' Chapters 12 through 33 are almost exclusively grammar-focused, while Chapters 36 through 49 are entirely vocabulary-focused. Additionally, the response includes skill-based chapters such as 'Spoken Fluency, Interaction & Spontaneity' (Chapter 58) and 'Paraphrase, Summarizing & Translation Strategies' (Chapter 55), which violates the negative constraint against skill-based chapters.",
+          "kind": "majorErrors",
+          "score": 6.5
+        },
+        {
+          "conclusion": "Chapter 54 ('Formal Correspondence & Official Formulas') focuses heavily on writing letters and administrative communication, which borders on both the forbidden 'writing skills' and 'career/professional' chapters.",
+          "kind": "minorErrors",
+          "score": 7.5
+        },
+        {
+          "conclusion": "To improve, the curriculum must strictly interleave grammar, vocabulary, and communication chapters to create a natural progression. Furthermore, all chapters heavily reliant on practicing specific skills (like speaking fluency or translation/summarization) must be reframed into content or vocabulary domains (e.g., 'Debate & Opinions' or 'Abstract Concepts'), or removed entirely to comply with the prompt constraints.",
+          "kind": "potentialImprovements",
+          "score": 6.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English (teaching French)\n      - Should cover French-specific grammar (gender/articles, subjunctive, past tenses, etc.)\n      - Should cover vocabulary themes for everyday French situations (food, travel, etc.)\n      - Should cover communication scenarios (greetings, shopping, etc.)\n\n      \n  - Chapters should follow CEFR progression from A1 (beginner) to C2 (mastery)\n  - ALL chapters must be content-domain chapters: grammar structures, vocabulary themes, or communication scenarios\n  - NO skill-based chapters (pronunciation, listening, reading, writing) — those skills are built into every lesson automatically\n  - NO culture chapters (history, traditions, cuisine, music, festivals, customs)\n  - NO career or professional chapters (business language, workplace communication)\n  - NO proficiency exam preparation chapters (DELE, JLPT, DELF, HSK, etc.)\n  - NO literature or media chapters (books, films, songs, poetry)\n  - Should cover grammar structures (verb tenses, nouns, articles, etc.) and vocabulary themes (food, travel, health, etc.)\n  - Should follow the language specified by language parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Titles should be concise, no filler words\n  - Descriptions should be concise, no fluff (avoid \"learn\", \"understand\", \"explore\", etc.)\n  - You don't need to evaluate the output format here, just focus on the chapter content quality\n  - Don't add capstone/final projects, assessments, or exercises\n\n    ",
+        "id": "en-learning-french-1",
+        "userInput": {
+          "targetLanguage": "fr",
+          "userLanguage": "en"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "The model violated two explicit instructions. First, it failed to 'Interleave grammar and vocabulary/situation chapters', instead grouping all vocabulary in chapters 1-14 and all grammar in chapters 15-40. Second, it included skill-based chapters despite the strict prohibition against them (e.g., 'Writing Skills'); Chapter 61 is titled 'Escritura académica y estilo formal' (Academic writing), and chapters 60 and 62 explicitly focus on 'escritura' (writing) and 'producción oral' (speaking).",
+          "kind": "majorErrors",
+          "score": 6.5
+        },
+        {
+          "conclusion": "Some chapters border on the forbidden 'career/professional' topics, such as Chapter 57 ('Presentaciones y discurso público'), though they could arguably fall under communication scenarios. Additionally, there are mentions of 'textos orales y escritos' which leans too closely into the forbidden skill-based domains.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "The curriculum structure needs a complete reorganization to properly alternate between grammar, vocabulary, and communication scenarios (e.g., teaching 'Presente simple' right before or alongside 'Rutinas diarias'). Furthermore, all references to reading, writing, speaking, and listening must be purged from the titles and descriptions to ensure the focus remains purely on content domains (grammar, vocabulary, scenarios).",
+          "kind": "potentialImprovements",
+          "score": 7
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Latin American Spanish (teaching English)\n      - Should cover English grammar structures (tenses, articles, phrasal verbs, conditionals)\n      - Should cover vocabulary themes and communication scenarios\n      - Should interleave grammar and vocabulary/situation chapters\n\n      \n  - Chapters should follow CEFR progression from A1 (beginner) to C2 (mastery)\n  - ALL chapters must be content-domain chapters: grammar structures, vocabulary themes, or communication scenarios\n  - NO skill-based chapters (pronunciation, listening, reading, writing) — those skills are built into every lesson automatically\n  - NO culture chapters (history, traditions, cuisine, music, festivals, customs)\n  - NO career or professional chapters (business language, workplace communication)\n  - NO proficiency exam preparation chapters (DELE, JLPT, DELF, HSK, etc.)\n  - NO literature or media chapters (books, films, songs, poetry)\n  - Should cover grammar structures (verb tenses, nouns, articles, etc.) and vocabulary themes (food, travel, health, etc.)\n  - Should follow the language specified by language parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Titles should be concise, no filler words\n  - Descriptions should be concise, no fluff (avoid \"learn\", \"understand\", \"explore\", etc.)\n  - You don't need to evaluate the output format here, just focus on the chapter content quality\n  - Don't add capstone/final projects, assessments, or exercises\n\n    ",
+        "id": "es-learning-english-1",
+        "userInput": {
+          "targetLanguage": "en",
+          "userLanguage": "es"
+        }
+      }
+    }
+  ],
+  "taskId": "language-course-chapters"
+}
