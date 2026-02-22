@@ -22,39 +22,63 @@ const SHARED_EXPECTATIONS = `
   - Include an extensive list of lessons to cover all the concepts needed for the chapter
 `;
 
+// Chapter titles and descriptions sourced from language-course-chapters
+// eval outputs (openai/gpt-5.2) to test with real upstream data.
+// Chapters picked from different course levels (initial, mid-early, mid-late, final).
 export const TEST_CASES = [
   {
     expectations: `
       - MUST be in US English
-      - Should break down present tense verb conjugations individually
-      - Should have separate lessons for ser and estar
-      - Should cover regular -ar, -er, -ir verb patterns separately
+      - Should have separate lessons for ser and estar uses
+      - Should cover identity, origin, and location as distinct concepts
+      - Should include basic sentence patterns with each verb
+      - Should not go beyond present tense forms
 
       ${SHARED_EXPECTATIONS}
     `,
-    id: "en-spanish-present-tense",
+    id: "en-spanish-ser-estar",
     userInput: {
       chapterDescription:
-        "Regular and irregular verb conjugations in the present tense for everyday actions.",
-      chapterTitle: "Present Tense Verbs",
+        "Ser vs. estar in the present, basic sentence patterns, and describing identity, origin, and location.",
+      chapterTitle: "Ser & Estar (Present)",
       targetLanguage: "es",
       userLanguage: "en",
     },
   },
   {
     expectations: `
-      - MUST be in Brazilian Portuguese
-      - Should break down hiragana by character groups (vowels, k-row, s-row, etc.)
-      - Should cover stroke order and pronunciation for each group
-      - Should not go beyond hiragana into katakana or kanji
+      - MUST be in Latin American Spanish
+      - Should break down present perfect formation (have/has + past participle)
+      - Should cover "ever/never" for experiences as separate lessons from "just/already/yet" for recent results
+      - Should include irregular past participles individually
+      - Should not cover other perfect tenses (past perfect, future perfect)
 
       ${SHARED_EXPECTATIONS}
     `,
-    id: "pt-japanese-hiragana",
+    id: "es-english-present-perfect",
     userInput: {
       chapterDescription:
-        "The hiragana syllabary: basic characters, dakuten, handakuten, and combination characters.",
-      chapterTitle: "Hiragana",
+        'Presente perfecto con "ever/never/just/already/yet" para experiencias y resultados recientes.',
+      chapterTitle: "Presente perfecto: experiencias y resultados",
+      targetLanguage: "en",
+      userLanguage: "es",
+    },
+  },
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese
+      - Should cover the causative form (〜させる) construction
+      - Should have separate lessons for permission and compulsion meanings
+      - Should cover particle combinations with causative verbs
+      - Should not go into causative-passive (〜させられる)
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-japanese-causative",
+    userInput: {
+      chapterDescription:
+        "Causativa: 〜させる, permitir/obrigar e combinações comuns com partículas.",
+      chapterTitle: "Causativa",
       targetLanguage: "ja",
       userLanguage: "pt",
     },
@@ -62,37 +86,20 @@ export const TEST_CASES = [
   {
     expectations: `
       - MUST be in US English
-      - Should separate formal and informal greetings
-      - Should cover common phrases individually
-      - Should include time-of-day greetings as separate lessons
+      - Should cover implicature, presuppositions, and euphemism as distinct concepts
+      - Should include pragmatic inference strategies
+      - Should have lessons on interpreting implied meaning from context
+      - Should not overlap with argumentation or debate topics
 
       ${SHARED_EXPECTATIONS}
     `,
-    id: "en-french-greetings",
+    id: "en-french-implied-meaning",
     userInput: {
       chapterDescription:
-        "Common greetings, introductions, and polite expressions for everyday encounters.",
-      chapterTitle: "Basic Greetings & Introductions",
+        "Understanding and producing implicit meaning and presuppositions. Implication, euphemism, and pragmatic inference.",
+      chapterTitle: "Implied Meaning",
       targetLanguage: "fr",
       userLanguage: "en",
-    },
-  },
-  {
-    expectations: `
-      - MUST be in Latin American Spanish
-      - Should break down past tenses individually (simple past, past continuous, etc.)
-      - Should cover regular and irregular verbs separately
-      - Should not combine multiple tense types in a single lesson
-
-      ${SHARED_EXPECTATIONS}
-    `,
-    id: "es-english-past-tenses",
-    userInput: {
-      chapterDescription:
-        "Simple past, past continuous, present perfect, and past perfect tenses with regular and irregular verbs.",
-      chapterTitle: "Tiempos Pasados",
-      targetLanguage: "en",
-      userLanguage: "es",
     },
   },
 ];
