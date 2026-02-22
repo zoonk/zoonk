@@ -64,11 +64,12 @@ MINOR ISSUES (light penalty or just note):
    - Only penalize if reused scenario makes the question pure recall
 
 ANTI-CHECKLIST GUIDANCE (CRITICAL):
-- Do NOT heavily penalize scenario reuse if the question still tests understanding
+- Do NOT heavily penalize scenario reuse if the question still tests understanding. Scenario reuse that still tests understanding should cost at most 0.5 points total, not 1.5
 - Do NOT require specific concepts to be tested by name
 - Do NOT check against an imagined "complete" set of questions
 - FOCUS penalties on: factual errors, memorization-based questions, wrong tone, format violations
 - Different valid quiz designs exist - assess the quality of what IS provided
+- Reserve scores below 9 for genuine errors (factual mistakes, format violations, wrong language, memorization-based questions), not for stylistic preferences like scenario freshness
 `;
 
 export const TEST_CASES = [
@@ -84,7 +85,7 @@ TOPIC-SPECIFIC GUIDANCE:
    - Deadlock causes or prevention strategies are wrong
    - Atomicity is confused with durability
 
-2. TRANSFER CHECK: The inputs discuss banking transfers, inventory systems, and specific examples. Questions must use completely different scenarios (e.g., airline reservations, multiplayer games, collaborative editing) to test the same concepts.
+2. TRANSFER CHECK: The inputs discuss banking transfers, inventory systems, and specific examples. Ideally, questions use different scenarios (e.g., airline reservations, multiplayer games, collaborative editing). However, reusing a scenario from the input is acceptable if the question still tests understanding rather than recall — do not penalize scenario reuse more than 0.5 points.
 
 3. INTEGRATION CHECK: Look for questions that connect WHY transactions exist (data integrity problems) with HOW they work (locking, logging) and WHERE they apply (novel systems).
 
@@ -194,7 +195,7 @@ TOPIC-SPECIFIC GUIDANCE:
    - Elasticity effects are backwards (e.g., claiming inelastic demand means large quantity changes)
    - Market equilibrium mechanics are misrepresented
 
-2. TRANSFER CHECK: The inputs discuss airline tickets, movie theaters, and specific pricing examples. Questions must use completely different scenarios (e.g., concert venues, software licensing, professional services) to test the same concepts.
+2. TRANSFER CHECK: The inputs discuss airline tickets, movie theaters, and specific pricing examples. Ideally, questions use different scenarios (e.g., concert venues, software licensing, professional services). However, reusing a scenario from the input is acceptable if the question still tests understanding rather than recall — do not penalize scenario reuse more than 0.5 points.
 
 3. INTEGRATION CHECK: Look for questions that connect WHY price discrimination exists (profit maximization, consumer heterogeneity) with HOW firms segment markets and WHERE different strategies appear.
 
@@ -304,7 +305,7 @@ TOPIC-SPECIFIC GUIDANCE:
    - The second law is misstated (e.g., claiming entropy can decrease in closed systems)
    - Energy conservation is misrepresented
 
-2. TRANSFER CHECK: The inputs discuss refrigerators, car engines, and power plants. Questions must use completely different scenarios (e.g., cooking processes, biological systems, weather patterns) to test the same concepts.
+2. TRANSFER CHECK: The inputs discuss refrigerators, car engines, and power plants. Ideally, questions use different scenarios (e.g., cooking processes, biological systems, weather patterns). However, reusing a scenario from the input is acceptable if the question still tests understanding rather than recall — do not penalize scenario reuse more than 0.5 points.
 
 3. INTEGRATION CHECK: Look for questions that connect WHY thermodynamics laws exist (fundamental physics constraints) with HOW engines and processes work (energy flows, efficiency limits) and WHERE these principles manifest.
 
@@ -414,7 +415,7 @@ TOPIC-SPECIFIC GUIDANCE:
    - The role of situational vs dispositional factors is wrong
    - Key experimental findings are incorrectly described
 
-2. TRANSFER CHECK: The inputs discuss Asch's line experiments and Milgram's obedience studies. Questions must use completely different scenarios (e.g., workplace dynamics, online communities, family decisions) to test the same concepts.
+2. TRANSFER CHECK: The inputs discuss Asch's line experiments and Milgram's obedience studies. Ideally, questions use different scenarios (e.g., workplace dynamics, online communities, family decisions). However, reusing a scenario from the input is acceptable if the question still tests understanding rather than recall — do not penalize scenario reuse more than 0.5 points.
 
 3. INTEGRATION CHECK: Look for questions that connect WHY conformity exists (evolutionary benefits, social acceptance) with HOW social pressure operates (unanimity, authority) and WHERE these dynamics appear in modern life.
 
@@ -524,7 +525,7 @@ TOPIC-SPECIFIC GUIDANCE:
    - Framing effects are misrepresented
    - The distinction between System 1 and System 2 thinking is wrong
 
-2. TRANSFER CHECK: The inputs discuss investment decisions and product pricing. Questions must use completely different scenarios (e.g., health choices, environmental behavior, relationship decisions) to test the same concepts.
+2. TRANSFER CHECK: The inputs discuss investment decisions and product pricing. Ideally, questions use different scenarios (e.g., health choices, environmental behavior, relationship decisions). However, reusing a scenario from the input is acceptable if the question still tests understanding rather than recall — do not penalize scenario reuse more than 0.5 points.
 
 3. INTEGRATION CHECK: This is an interdisciplinary topic. Look for questions that connect WHY biases exist (evolutionary psychology, cognitive limitations) with HOW they operate (heuristics, framing) and WHERE they affect decisions across domains.
 
