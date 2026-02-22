@@ -1,0 +1,88 @@
+{
+  "generatedAt": "2026-01-15T19:15:16.577Z",
+  "modelId": "openai/gpt-4.1-nano",
+  "outputs": [
+    {
+      "duration": 2353.1644590000506,
+      "inputTokens": 532,
+      "output": "{\n  \"kind\": \"core\"\n}",
+      "outputTokens": 6,
+      "systemPrompt": "",
+      "testCaseId": "en-core-variables-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1826.7131250000093,
+      "inputTokens": 530,
+      "output": "{\n  \"kind\": \"core\"\n}",
+      "outputTokens": 6,
+      "systemPrompt": "",
+      "testCaseId": "en-core-photosynthesis-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 2049.225124999997,
+      "inputTokens": 531,
+      "output": "{\n  \"kind\": \"language\"\n}",
+      "outputTokens": 6,
+      "systemPrompt": "",
+      "testCaseId": "en-language-spanish-greetings-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1832.2979589999886,
+      "inputTokens": 532,
+      "output": "{\n  \"kind\": \"language\"\n}",
+      "outputTokens": 6,
+      "systemPrompt": "",
+      "testCaseId": "pt-language-english-past-tense-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1814.970457999967,
+      "inputTokens": 532,
+      "output": "{\n  \"kind\": \"custom\"\n}",
+      "outputTokens": 6,
+      "systemPrompt": "",
+      "testCaseId": "en-custom-git-setup-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1859.4796249999781,
+      "inputTokens": 528,
+      "output": "{\n  \"kind\": \"custom\"\n}",
+      "outputTokens": 6,
+      "systemPrompt": "",
+      "testCaseId": "en-custom-react-app-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 3144.544125000015,
+      "inputTokens": 535,
+      "output": "{\n  \"kind\": \"core\"\n}",
+      "outputTokens": 6,
+      "systemPrompt": "",
+      "testCaseId": "en-edge-etymology-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1818.1596249999711,
+      "inputTokens": 529,
+      "output": "{\n  \"kind\": \"custom\"\n}",
+      "outputTokens": 6,
+      "systemPrompt": "",
+      "testCaseId": "es-edge-programming-tutorial-spanish-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1863.1052499999641,
+      "inputTokens": 527,
+      "output": "{\n  \"kind\": \"core\"\n}",
+      "outputTokens": 6,
+      "systemPrompt": "",
+      "testCaseId": "en-edge-linguistics-not-language-1",
+      "userPrompt": ""
+    }
+  ],
+  "taskId": "lesson-kind"
+}
