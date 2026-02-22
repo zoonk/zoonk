@@ -1,0 +1,149 @@
+{
+  "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Should break down each numeric type into separate lessons (int, float, complex, bool, None)\n      - Should cover precision and rounding as individual concepts\n      - Should separate type conversions from arithmetic operations\n      - Operations and methods on numeric types (e.g., bitwise ops on int, cmath functions for complex, Decimal/Fraction methods) ARE within scope — these are behaviors of the numeric types themselves. Only penalize if a lesson's primary focus is a data structure or I/O concept that merely uses numbers as an example\n      - Should NOT create dedicated lessons teaching installation, virtual environments, or IDE setup (neighboring chapter \"Ambiente de desenvolvimento\" covers that) — brief contextual references are fine\n      - Should NOT create dedicated lessons teaching indentation rules, naming conventions, or docstrings (neighboring chapter \"Sintaxe e convenções\" covers that) — brief contextual references are fine\n      - Should NOT create dedicated lessons teaching strings, bytes, or Unicode encoding (neighboring chapter \"Texto e codificação\" covers that) — brief contextual references are fine\n      - Should NOT create dedicated lessons teaching lists, tuples, dictionaries, or sets (neighboring chapter \"Estruturas de dados fundamentais\" covers that) — brief contextual references are fine\n\n      \n  - Each lesson should cover a SINGLE, SPECIFIC concept that can be explained within 10 short tweets\n  - Break down topics into the smallest, most manageable units possible, so that each lesson can be learned in 2-3 minutes\n  - If a topic is too broad, split it into multiple lessons\n  - Each lesson should be extremely focused on a SINGLE concept\n  - If a lesson is too broad, split it into multiple lessons\n  - Each lesson must cover a SINGLE concept. Using \"AND\", \"OR\", \"VS\" (or equivalents in other languages like \"e\", \"ou\", \"y\", \"o\") in a title is a signal it MAY be too broad — but it is acceptable when the comparison or pairing IS the concept itself (e.g., \"DEPT-90 y DEPT-135\" where distinguishing two NMR techniques is the lesson, or \"IPv4 vs. IPv6 Format\" where the format contrast is one concept). Only penalize when AND/OR/VS joins genuinely separate concepts that deserve their own lessons (e.g., \"Strings and Lists\" where each is a full topic)\n  - Lesson titles should be short and specific to the exact concept covered\n  - Build a logical progression from basic to advanced concepts\n  - Ensure lessons build on knowledge from previous lessons\n  - Focus lessons for this specific chapter, not the entire course\n  - Don't include summary or review lessons. For example, do NOT create a lesson title \"Summary of Key Concepts\" or \"Review of Chapter\"\n  - Don't include assessment or quiz lessons\n  - Don't include final project or capstone lessons\n  - Should follow the language specified by language parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Descriptions should be concise and straight to the point, no fluff/filler words (avoid \"learn\", \"understand\", \"explore\", \"introduction to\", etc.)\n  - You don't need to evaluate the output format here, just focus on the lesson content quality\n  - Include an extensive list of lessons to fully cover the chapter's scope. The key metric is completeness: are all concepts in the chapter description adequately covered with sufficient granularity? Broad technical chapters (e.g., web fundamentals, Python basics) typically need 80-120+ lessons. Narrower or more specialized chapters (e.g., legal theory of evidence, NMR spectroscopy) may need fewer if the domain is inherently smaller — do not penalize for fewer lessons if the chapter's scope is fully covered\n\n  Neighboring chapter scope judgment:\n  - The chapter description is the SOURCE OF TRUTH for what is in-scope. Neighboring chapter constraints are guardrails against scope creep, NOT vetoes over topics listed in the chapter description\n  - If a topic is explicitly mentioned in the chapter description, it is in-scope even if it touches on a neighboring chapter's domain (e.g., \"Claisen\" listed in a carbonyls chapter is in-scope even though esters have their own chapter)\n  - The key test: does a lesson teach a topic AS ITS OWN SUBJECT (violation) or through the LENS OF THIS CHAPTER (acceptable)? Documenting empirical patterns/observations of X within this chapter's context is NOT the same as teaching X's theory (e.g., documenting consumption's cyclical behavior is a business cycle fact, not consumption theory)\n  - When a lesson's title mentions a neighboring topic, read the description to determine focus. A lesson titled \"Cortiços as disease ecologies\" focused on disease transmission is health content, not urbanization content\n\n  Things to check:\n  - Is each lesson too broad? If so, it should be broken down further\n  - Can each concept be explained in 10 short tweets or less? If not, it should be broken down\n  - Does each lesson focus on a single specific concept? If not, it should be split\n  - Does it have lessons that don't belong in this chapter? If so, they should be removed\n\n    ",
+  "judgedAt": "2026-02-22T19:47:59.322Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model D provides the most extensive and granular lesson list (roughly 100 lessons) with excellent coverage of every topic in the chapter description. It breaks down each numeric type (int, float, complex, bool, None) into multiple focused lessons, covers precision/rounding as individual concepts (epsilon, ulp, nextafter, cancelamento catastrófico, etc.), separates type conversions thoroughly, and deeply covers Decimal and Fraction including advanced topics like traps, localcontext, as_tuple, NaN/Infinity in Decimal domain, and coercion rules between types. Each lesson is tightly focused on a single concept. Titles are concise and specific. The logical progression from basic to advanced is well-structured. It correctly avoids neighboring chapter topics. It includes sys.float_info, sys.int_info, -0.0, and other nuanced topics that demonstrate thorough coverage. Some minor issues: a few lessons might be slightly narrow (e.g., separate lessons for True as 1 and False as 0), and 'Decimal: rounding modes' uses English in the title, but these are minor. The coercion section is excellently broken down into int→float, int→complex, float→complex. Overall this is the most complete and well-structured output.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model G provides a very extensive list (~90+ lessons) with excellent granularity. It covers all major topics comprehensively: int, float, complex, bool, None, conversions, precision issues, Decimal, Fraction, and also includes bitwise operations (which are in-scope as behaviors of int), float methods like is_integer() and as_integer_ratio(), error types (OverflowError, ZeroDivisionError, ValueError), and formatting considerations. The lessons are well-sequenced and each focuses on a single concept. It includes useful details like -0.0, NaN propagation, repr of floats, precedence in numeric expressions, and unary minus. Some minor issues: a couple of lessons touch on formatting (f-strings) which could border on the neighboring 'Texto e codificação' chapter, though the description frames it through the numeric lens. The lesson 'Efeito de atribuição composta em números' is a bit niche. Overall very thorough and well-organized.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model B provides a solid list (~48 lessons) with good coverage and logical progression. It breaks down types well, covers Decimal and Fraction thoroughly including quantize(), and includes useful comparison lessons. It has some good specific lessons like 'Decimal: evitar Decimal(float)', 'Recomendações para escolher float Decimal Fraction', and separate lessons for creating Fraction from different sources. However, it's not as extensive as Models D or G - it misses bitwise operations on int, sys.float_info, error handling in conversions, float methods like is_integer(), and some precision-related subtleties. The first lesson 'Tipos numéricos do Python' is somewhat of an overview/introduction which the prompt discourages. The final lesson title 'Recomendações para escolher float Decimal Fraction' has three items joined without connectors which could be split. Overall good quality but lacks the depth of the top models.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model E provides a decent list (~46 lessons) with reasonable coverage. It covers all the main types, conversions, Decimal, Fraction, and includes some good additions like sys.float_info, sys.maxsize, math functions (factorial, gcd, lcm), and bin/oct/hex. However, several lessons violate the single-concept rule: 'Funções numéricas embutidas: abs, divmod, pow' bundles three functions, 'math.floor, math.ceil e math.trunc' bundles three functions, 'Funções inteiras em math: factorial, gcd, lcm' bundles three functions, and 'Divisão verdadeira vs divisão inteira' uses 'vs'. The lesson 'Infinito e NaN em floats' combines two concepts. 'Verificação de tipo numérico com type e isinstance' combines two. These are clear violations of the prompt's rules about AND/OR/VS. Some titles also use 'e' to join concepts. The coverage is adequate but the granularity issues are a significant problem given the prompt's strict requirements.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model A provides a reasonable list (~37 lessons) that covers the main topics. The lessons are generally well-focused on single concepts. However, it's not extensive enough for a chapter of this scope - it misses bitwise operations, sys.float_info, float methods, error handling in conversions, type checking functions, cmath module, and several nuances of precision. Some titles violate the rules: 'Divisão real vs. divisão inteira' uses 'vs', 'Exponenciação com ** e pow()' combines two concepts with 'e', 'floor(), ceil() e trunc()' bundles three functions. The lesson 'Valores especiais: inf e nan' combines inf and nan. Coverage of Decimal and Fraction is adequate but not deep - missing quantize(), localcontext(), traps, etc. Overall decent quality but insufficient breadth and some title violations.",
+          "score": 6.2
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model C provides only ~31 lessons which is significantly insufficient for this chapter's scope. While the existing lessons are focused on single concepts and the granularity of individual lessons is good (e.g., separate lessons for binary, octal, hexadecimal), major topics are missing: no coverage of math.isclose(), no round() function, no cmath module, no bitwise operations, no sys.float_info, no type checking, no float methods, no conversion errors, no Decimal quantize() or arredondamento modes, no Fraction arithmetic or limit_denominator, no NaN/inf detection functions, no coercion rules, no division operators, no modulo, no pow/**, no abs/divmod. The Decimal and Fraction sections are very thin. The chapter description explicitly mentions conversions, precision, rounding errors, and decimal/fractions - while touched upon, these are not covered with sufficient depth. The lessons that exist are well-written but the incompleteness is a major issue.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model F provides only ~21 lessons, which is far too few for this chapter. Massive gaps exist: no coverage of round(), math.isclose(), division operators, modulo, pow, abs, divmod, bitwise operations, cmath, type checking, sys.float_info, NaN/inf detection, float methods, conversion errors, Decimal quantize(), Decimal arredondamento modes beyond basic mention, Fraction arithmetic, limit_denominator, coercion rules, notação científica details, and many more. The existing lessons are reasonable in quality and focus but the coverage is woefully incomplete. The chapter description mentions conversions, precision, rounding errors, and decimal/fractions - most of these get only surface treatment. This fails the extensiveness requirement significantly.",
+          "score": 3.8
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model D provides an exceptionally thorough and granular list of 90 lessons, perfectly aligning with the expectation for a broad technical chapter to have 80-120+ lessons. It rigorously follows the single-concept rule, entirely avoiding \"AND/OR/VS\" in titles and splitting concepts down to their smallest logical units (e.g., separating NaN propagation, NaN comparison, and math.isnan()). It stays strictly within the domain of numeric types, their methods, conversions, and precision constraints, without bleeding into general syntax or basic operator theory reserved for neighboring chapters. The titles and descriptions are concise and completely free of fluff.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model C does a fantastic job following the single-concept constraint. Its titles and descriptions are entirely free of fluff, and it avoids any \"AND/OR/VS\" grouping, providing a very clean, logical progression. However, it only generates 31 lessons and misses many of the specific methods, built-in functions, and deeper precision mechanics of Python's numeric types that were explicitly noted as being in-scope. While very good, it lacks the extensiveness and depth seen in Model D.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model A offers a solid breakdown with 38 lessons, but it struggles with the strict single-concept and titling rules. It includes multiple grouped lessons with \"and/vs\" in the titles (e.g., \"floor(), ceil() e trunc()\", \"Valores especiais: inf e nan\", \"Divisão real vs. divisão inteira\"), which violates the core directive to break these down into separate units.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model B provides a decent list of 49 lessons but frequently groups concepts together, violating the single-concept rule. Titles like \"math.isnan/isinf/isfinite\", \"Float: NaN e Infinity\", and \"Recomendações para escolher float Decimal Fraction\" clearly cover multiple topics in a single lesson. It also includes some fluffy language in its descriptions.",
+          "score": 5.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model E breaks the single-concept constraint multiple times throughout its 47 lessons. Titles like \"math.floor, math.ceil e math.trunc\", \"Divisão verdadeira vs divisão inteira\", \"Infinito e NaN em floats\", and \"sys.maxsize e a ausência de limite em int\" are clear violations of the \"AND/OR/VS\" and granularity rules.",
+          "score": 4.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model G generates a highly extensive list (94 lessons), but it violates the negative constraints regarding neighboring chapters. It dedicates lessons to general operator precedence (\"Precedência em expressões numéricas\") which explicitly belongs in the syntax chapter. Additionally, it contains multiple \"AND/VS\" grouping violations (e.g., \"divmod: quociente e resto\", \"pow: potência e potência modular\", \"bin oct hex\").",
+          "score": 4.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model F provides a very superficial list of only 21 lessons, failing the instruction to create an extensive and comprehensive list. It misses critical components of the chapter description (like precision details, rounding errors, and granular decimal/fraction usage) and still manages to violate the single-concept rule (e.g., \"Atributos `real` e `imag`\").",
+          "score": 3.5
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Lista muito extensa e granular, cobrindo int/float/complex/bool/None, valores especiais (NaN/inf, -0.0), precisão (epsilon, ulp, nextafter), arredondamento (round tie-to-even, retorno com ndigits), comparação por tolerância (isclose com abs/rel), e decimal/fractions com bastante detalhamento (contexto, localcontext, traps, quantize, from_float, limit_denominator, coerções). Progressão boa e quase sempre um conceito por lição. Pouca ou nenhuma fuga para capítulos vizinhos. Pequenas oportunidades: alguns títulos/descrições podem ser excessivamente técnicos para 2–3 min (ex.: sys.int_info) e há alguma redundância (math.isnan e NaN: comparação).",
+          "score": 9.4
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Muito completo e bastante granular, incluindo operações e métodos in-scope (bitwise em int, métodos de float, decimal context/flags, Fraction.from_float/limit_denominator), além de precisão, acumulação de erro e NaN/inf. Em geral, lições são single-concept e bem tituladas. Penalidades: algumas fugas para capítulo de “Sintaxe e convenções” (precedência e parênteses) e “Texto e codificação” (formatação com f-strings/format) aparecem como lições dedicadas; também há alguns tópicos discutíveis/factuais ou potencialmente confusos (x += y vs x=x+y como lição; ZeroDivisionError descrição mistura comportamento de Python com “outros contextos”). Ainda assim, cobertura excelente.",
+          "score": 8.7
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Cobertura sólida dos tipos pedidos e dos temas centrais (conversões, precisão/rounding, Decimal/Fraction). Boas lições sobre inf/nan, isclose, divisão / vs //, módulo, pow, divmod. Porém não é “extensa” o bastante para o escopo: falta aprofundar operações/métodos importantes (bitwise em int, cmath para complex, detalhes de Decimal como quantize/localcontext/traps, Fraction.limit_denominator, etc.). Algumas lições ficam um pouco amplas (\"Operações com números complexos\" cobre várias operações).",
+          "score": 7.6
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Boa cobertura geral e adiciona vários pontos úteis (cmath, quantize, sys.float_info, gcd/lcm, bin/oct/hex). Entretanto quebra regras de granularidade e de títulos: vários títulos juntam múltiplos conceitos (\"Literais float e notação científica\", \"Funções numéricas embutidas: abs, divmod, pow\", \"Divisão verdadeira vs divisão inteira\", \"Verificação de tipo... type e isinstance\"). Também inclui tópicos meio fora do capítulo/menos essenciais (sys.maxsize) e não é tão granular quanto poderia em precisão/arredondamento e em Fraction/Decimal.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Conteúdo correto e razoavelmente abrangente, com bons itens (math.fsum, quantize, proibição de ordenação em complex). Mas inclui lições que violam fortemente as regras de título (\"Recomendações para escolher float Decimal Fraction\" mistura 3 tópicos; \"Tipos numéricos do Python\" é amplo). Cobertura de None e de conversões é mais rasa; faltam mais lições sobre precisão numérica além de round/isclose/erros, e pouca granularidade em operações/métodos para int (bitwise) e complex (cmath).",
+          "score": 6.6
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Lista curta e pouco extensa para o capítulo; cobre o básico de int/float/complex/bool/None, conversões e decimal/fractions, mas deixa lacunas grandes (round/isclose, Decimal context/arredondamentos, métodos relevantes, operações de int/bitwise, cmath, NaN/inf detecção, etc.). Também tem deslizes de escopo: \"Objetos avaliados como falsos/verdadeiros\" inclui coleções vazias (tema de estruturas de dados) e é amplo. Há uma imprecisão importante: descreve o módulo decimal como “ponto flutuante totalmente precisa”, o que é enganoso (Decimal é aritmética decimal de precisão finita configurável).",
+          "score": 5.2
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Bem abaixo do esperado em extensividade e granularidade: poucas lições, muito gerais (ex.: conversões sem separar casos, precisão/erros pouco detalhados). Não cobre valores especiais (NaN/inf), round/isclose, detalhes importantes de Decimal/Fraction (quantize, contexto, armadilhas) e operações/métodos in-scope. Alguns títulos usam caixa/estilo inconsistente e várias lições seriam “introdução” disfarçada (embora sem usar a palavra).",
+          "score": 4.6
+        }
+      ]
+    }
+  ],
+  "taskId": "chapter-lessons",
+  "testCaseId": "pt-python-tipos-numericos-1"
+}

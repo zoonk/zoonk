@@ -1,0 +1,438 @@
+{
+  "modelId": "openai/gpt-5.2",
+  "results": [
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The list is strong and generally stays within scope, but there are some minor requirement mismatches: (1) It includes a dedicated lesson on the TCP three-way handshake and related flag details; while TCP is in-scope, this level of handshake mechanics may overlap the neighboring \"HTTPS and TLS\" chapter’s handshake focus (not TLS itself, but the chapter asked to avoid dedicated TLS handshake lessons; TCP handshake is still arguably OK but borderline). (2) A few lessons are slightly multi-concept in practice (e.g., \"Sources of Latency\" covers distance, hops, speed-of-light, and queuing; \"Slow Connections\" bundles several causes). (3) The chapter description mentions \"routing\" broadly but there’s no explicit lesson on \"Routing vs switching\"; switching is introduced, but the boundary concept isn’t explicitly isolated. These are minor because the overall set remains usable and mostly compliant.",
+          "kind": "minorErrors",
+          "score": 8.6
+        },
+        {
+          "conclusion": "Opportunities to improve completeness/granularity while staying in-scope: (1) Add IPv6 as its own micro-set (IPv6 address basics, shorthand notation, /64 mental model, dual-stack troubleshooting) since modern web networking often requires it and it fits \"IP addressing\". (2) Split a few bundled failure/latency lessons into narrower ones (propagation delay vs queuing delay; congestion vs bufferbloat; \"slow but not down\" into distinct symptoms). (3) Add a couple more concrete failure modes explicitly: misconfigured subnet mask, duplicate IP, gateway ARP failure, MTU mismatch on VPN specifically, ICMP blocked as a failure amplifier (separate from general ICMP role). (4) Add one or two explicit mental-model lessons mapping symptoms to OSI layers (e.g., \"Ping works, TCP fails\" as a generic pattern) to align with \"practical mental models\" goal. These are improvements, not blockers.",
+          "kind": "potentialImprovements",
+          "score": 8.3
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n      - Should break down each protocol and networking concept individually (IP, TCP, UDP, NAT as separate lessons)\n      - Should cover different types of failure modes as distinct lessons\n      - Should separate latency concepts from bandwidth concepts\n      - Should NOT create dedicated lessons teaching DNS records, resolvers, or domain configuration (neighboring chapter \"DNS and domains\" covers that) — brief contextual references are fine\n      - Should NOT create dedicated lessons teaching HTTP methods, status codes, or headers (neighboring chapter \"HTTP\" covers that) — brief contextual references are fine\n      - Should NOT create dedicated lessons teaching TLS handshakes, certificates, or HTTPS configuration (neighboring chapter \"HTTPS and TLS\" covers that) — brief contextual references are fine\n\n      \n  - Each lesson should cover a SINGLE, SPECIFIC concept that can be explained within 10 short tweets\n  - Break down topics into the smallest, most manageable units possible, so that each lesson can be learned in 2-3 minutes\n  - If a topic is too broad, split it into multiple lessons\n  - Each lesson should be extremely focused on a SINGLE concept\n  - If a lesson is too broad, split it into multiple lessons\n  - Each lesson must cover a SINGLE concept. Using \"AND\", \"OR\", \"VS\" (or equivalents in other languages like \"e\", \"ou\", \"y\", \"o\") in a title is a signal it MAY be too broad — but it is acceptable when the comparison or pairing IS the concept itself (e.g., \"DEPT-90 y DEPT-135\" where distinguishing two NMR techniques is the lesson, or \"IPv4 vs. IPv6 Format\" where the format contrast is one concept). Only penalize when AND/OR/VS joins genuinely separate concepts that deserve their own lessons (e.g., \"Strings and Lists\" where each is a full topic)\n  - Lesson titles should be short and specific to the exact concept covered\n  - Build a logical progression from basic to advanced concepts\n  - Ensure lessons build on knowledge from previous lessons\n  - Focus lessons for this specific chapter, not the entire course\n  - Don't include summary or review lessons. For example, do NOT create a lesson title \"Summary of Key Concepts\" or \"Review of Chapter\"\n  - Don't include assessment or quiz lessons\n  - Don't include final project or capstone lessons\n  - Should follow the language specified by language parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Descriptions should be concise and straight to the point, no fluff/filler words (avoid \"learn\", \"understand\", \"explore\", \"introduction to\", etc.)\n  - You don't need to evaluate the output format here, just focus on the lesson content quality\n  - Include an extensive list of lessons to fully cover the chapter's scope. The key metric is completeness: are all concepts in the chapter description adequately covered with sufficient granularity? Broad technical chapters (e.g., web fundamentals, Python basics) typically need 80-120+ lessons. Narrower or more specialized chapters (e.g., legal theory of evidence, NMR spectroscopy) may need fewer if the domain is inherently smaller — do not penalize for fewer lessons if the chapter's scope is fully covered\n\n  Neighboring chapter scope judgment:\n  - The chapter description is the SOURCE OF TRUTH for what is in-scope. Neighboring chapter constraints are guardrails against scope creep, NOT vetoes over topics listed in the chapter description\n  - If a topic is explicitly mentioned in the chapter description, it is in-scope even if it touches on a neighboring chapter's domain (e.g., \"Claisen\" listed in a carbonyls chapter is in-scope even though esters have their own chapter)\n  - The key test: does a lesson teach a topic AS ITS OWN SUBJECT (violation) or through the LENS OF THIS CHAPTER (acceptable)? Documenting empirical patterns/observations of X within this chapter's context is NOT the same as teaching X's theory (e.g., documenting consumption's cyclical behavior is a business cycle fact, not consumption theory)\n  - When a lesson's title mentions a neighboring topic, read the description to determine focus. A lesson titled \"Cortiços as disease ecologies\" focused on disease transmission is health content, not urbanization content\n\n  Things to check:\n  - Is each lesson too broad? If so, it should be broken down further\n  - Can each concept be explained in 10 short tweets or less? If not, it should be broken down\n  - Does each lesson focus on a single specific concept? If not, it should be split\n  - Does it have lessons that don't belong in this chapter? If so, they should be removed\n\n    ",
+        "id": "en-web-networking-fundamentals-1",
+        "userInput": {
+          "chapterDescription": "IP addressing, routing, NAT, TCP vs UDP, latency and bandwidth tradeoffs, and common failure modes. Practical mental models for debugging connectivity issues.",
+          "chapterTitle": "Networking fundamentals",
+          "courseTitle": "Web Development",
+          "language": "en",
+          "neighboringChapters": [
+            {
+              "description": "Roles, responsibilities, and interfaces across front-end, back-end, full-stack, QA, DevOps, security, design, and product. How standards bodies and browser vendors shape the platform.",
+              "title": "Web development landscape"
+            },
+            {
+              "description": "DNS records, resolvers, caching, propagation, and common configurations for web apps. Domain strategy, subdomains, and pitfalls with split-horizon DNS.",
+              "title": "DNS and domains"
+            },
+            {
+              "description": "HTTP methods, status codes, headers, content negotiation, caching semantics, cookies, and redirects. HTTP/2 and HTTP/3 concepts and performance implications.",
+              "title": "HTTP"
+            },
+            {
+              "description": "TLS handshakes, certificate chains, HSTS, OCSP stapling, and modern TLS configuration choices. Secure transport patterns for browsers, APIs, and internal services.",
+              "title": "HTTPS and TLS"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Some lessons drift into a neighboring chapter (“Sintaxe e convenções”) by teaching operator precedence and parentheses as standalone subjects (\"Precedência em expressões numéricas\", \"Parênteses em cálculos numéricos\"). These are more general syntax rules than numeric-types-specific behavior. Also, a few titles are ambiguous or slightly mismatched to the concept (\"Quando usar float\" description compares float/Decimal/Fraction rather than focusing purely on float), but this is more of a scoping/granularity issue than a factual error.",
+          "kind": "minorErrors",
+          "score": 8.6
+        },
+        {
+          "conclusion": "Add more single-concept coverage for complex numbers beyond basic operations (e.g., magnitude/phase via abs() and cmath.phase, polar/rect conversions, cmath functions like exp/log/sin specifically for complex). Consider splitting \"Criando NaN e infinito com float()\" into separate lessons (NaN vs infinities). Add a dedicated lesson for Python’s built-in numeric tower relationships (numbers.Number, Integral/Real/Complex) if within scope. If avoiding neighboring-chapter overlap, reframe precedence/parentheses as numeric-expression gotchas (still may be borderline) or drop them. Also, ensure the “when to use” trio stays strictly single-concept or becomes criteria-focused micro-lessons (e.g., “Float: desempenho vs exatidão” rather than comparing three types at once).",
+          "kind": "potentialImprovements",
+          "score": 8.4
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Should break down each numeric type into separate lessons (int, float, complex, bool, None)\n      - Should cover precision and rounding as individual concepts\n      - Should separate type conversions from arithmetic operations\n      - Operations and methods on numeric types (e.g., bitwise ops on int, cmath functions for complex, Decimal/Fraction methods) ARE within scope — these are behaviors of the numeric types themselves. Only penalize if a lesson's primary focus is a data structure or I/O concept that merely uses numbers as an example\n      - Should NOT create dedicated lessons teaching installation, virtual environments, or IDE setup (neighboring chapter \"Ambiente de desenvolvimento\" covers that) — brief contextual references are fine\n      - Should NOT create dedicated lessons teaching indentation rules, naming conventions, or docstrings (neighboring chapter \"Sintaxe e convenções\" covers that) — brief contextual references are fine\n      - Should NOT create dedicated lessons teaching strings, bytes, or Unicode encoding (neighboring chapter \"Texto e codificação\" covers that) — brief contextual references are fine\n      - Should NOT create dedicated lessons teaching lists, tuples, dictionaries, or sets (neighboring chapter \"Estruturas de dados fundamentais\" covers that) — brief contextual references are fine\n\n      \n  - Each lesson should cover a SINGLE, SPECIFIC concept that can be explained within 10 short tweets\n  - Break down topics into the smallest, most manageable units possible, so that each lesson can be learned in 2-3 minutes\n  - If a topic is too broad, split it into multiple lessons\n  - Each lesson should be extremely focused on a SINGLE concept\n  - If a lesson is too broad, split it into multiple lessons\n  - Each lesson must cover a SINGLE concept. Using \"AND\", \"OR\", \"VS\" (or equivalents in other languages like \"e\", \"ou\", \"y\", \"o\") in a title is a signal it MAY be too broad — but it is acceptable when the comparison or pairing IS the concept itself (e.g., \"DEPT-90 y DEPT-135\" where distinguishing two NMR techniques is the lesson, or \"IPv4 vs. IPv6 Format\" where the format contrast is one concept). Only penalize when AND/OR/VS joins genuinely separate concepts that deserve their own lessons (e.g., \"Strings and Lists\" where each is a full topic)\n  - Lesson titles should be short and specific to the exact concept covered\n  - Build a logical progression from basic to advanced concepts\n  - Ensure lessons build on knowledge from previous lessons\n  - Focus lessons for this specific chapter, not the entire course\n  - Don't include summary or review lessons. For example, do NOT create a lesson title \"Summary of Key Concepts\" or \"Review of Chapter\"\n  - Don't include assessment or quiz lessons\n  - Don't include final project or capstone lessons\n  - Should follow the language specified by language parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Descriptions should be concise and straight to the point, no fluff/filler words (avoid \"learn\", \"understand\", \"explore\", \"introduction to\", etc.)\n  - You don't need to evaluate the output format here, just focus on the lesson content quality\n  - Include an extensive list of lessons to fully cover the chapter's scope. The key metric is completeness: are all concepts in the chapter description adequately covered with sufficient granularity? Broad technical chapters (e.g., web fundamentals, Python basics) typically need 80-120+ lessons. Narrower or more specialized chapters (e.g., legal theory of evidence, NMR spectroscopy) may need fewer if the domain is inherently smaller — do not penalize for fewer lessons if the chapter's scope is fully covered\n\n  Neighboring chapter scope judgment:\n  - The chapter description is the SOURCE OF TRUTH for what is in-scope. Neighboring chapter constraints are guardrails against scope creep, NOT vetoes over topics listed in the chapter description\n  - If a topic is explicitly mentioned in the chapter description, it is in-scope even if it touches on a neighboring chapter's domain (e.g., \"Claisen\" listed in a carbonyls chapter is in-scope even though esters have their own chapter)\n  - The key test: does a lesson teach a topic AS ITS OWN SUBJECT (violation) or through the LENS OF THIS CHAPTER (acceptable)? Documenting empirical patterns/observations of X within this chapter's context is NOT the same as teaching X's theory (e.g., documenting consumption's cyclical behavior is a business cycle fact, not consumption theory)\n  - When a lesson's title mentions a neighboring topic, read the description to determine focus. A lesson titled \"Cortiços as disease ecologies\" focused on disease transmission is health content, not urbanization content\n\n  Things to check:\n  - Is each lesson too broad? If so, it should be broken down further\n  - Can each concept be explained in 10 short tweets or less? If not, it should be broken down\n  - Does each lesson focus on a single specific concept? If not, it should be split\n  - Does it have lessons that don't belong in this chapter? If so, they should be removed\n\n    ",
+        "id": "pt-python-tipos-numericos-1",
+        "userInput": {
+          "chapterDescription": "Inteiros, floats, complexos, bool, None; conversões, precisão numérica, erros de arredondamento e uso de decimal/fractions.",
+          "chapterTitle": "Tipos numéricos e valores especiais",
+          "courseTitle": "Python",
+          "language": "pt",
+          "neighboringChapters": [
+            {
+              "description": "Instalação e configuração do Python, múltiplas versões, PATH, virtual environments, VS Code/IDEs, REPL, Jupyter e boas práticas de organização local.",
+              "title": "Ambiente de desenvolvimento"
+            },
+            {
+              "description": "Execução em REPL, scripts e módulos; shebang, codificação, argumentos de linha de comando e status de saída do processo.",
+              "title": "Execução de programas"
+            },
+            {
+              "description": "Regras de indentação, nomes, comentários, docstrings, literais, operadores e precedência; diferenças entre Python interativo e arquivo.",
+              "title": "Sintaxe e convenções"
+            },
+            {
+              "description": "Strings, bytes e bytearray; Unicode, normalização, encodings, f-strings, formatação avançada e manipulação eficiente.",
+              "title": "Texto e codificação"
+            },
+            {
+              "description": "Listas, tuplas, dicionários e conjuntos; mutabilidade, cópia rasa vs profunda, hashing, ordenação e complexidade de operações.",
+              "title": "Estruturas de dados fundamentais"
+            },
+            {
+              "description": "if/elif/else, match/case, loops, break/continue, compreensão de escopo e padrões comuns de controle.",
+              "title": "Controle de fluxo"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "1) Some titles/descriptions are slightly redundant or overlap in concept: e.g., “Aldehídos: mayor reactividad relativa” and “Cetonas: menor reactividad relativa” have identical descriptions; “Condiciones para control cinético/termodinámico” overlap with “Base fuerte y enolato cinético” and “Enolato termodinámico.” 2) One title has a grammar issue: “Regioselectividad por base voluminosas” should be “bases voluminosas.” 3) A few items risk being broader than single-concept given the 2–3 minute constraint, e.g., “Pasos de adición nucleofílica al carbonilo” covers a multi-step mechanism (still arguably acceptable, but borderline against the strictest ‘single concept’ rule).",
+          "kind": "minorErrors",
+          "score": 8.7
+        },
+        {
+          "conclusion": "1) Tighten granularity by splitting multi-step ‘sequence’ lessons into separate micro-lessons when possible (e.g., separate ‘Ataque nucleofílico al carbonilo’ vs ‘Protonación del intermedio’ rather than bundling). 2) Remove or reword duplicates so each lesson adds a distinct concept (especially aldehyde/cetone reactivity pair). 3) Add a few missing selectivity micro-concepts that commonly matter within this chapter’s stated scope: diastereoselectivity in Michael additions (if intended), kinetic vs thermodynamic control in aldol specifically, and explicit conditions that favor 1,2 vs 1,4 beyond HSAB (temperature, catalysts) — while keeping within scope and not turning into a neighboring-chapter ‘alkene addition’ module. 4) Consider adding discrete lessons on “retro-aldol” and “retro-Michael” as selectivity/reversibility controls if those are part of what ‘control de selectividad’ intends here.",
+          "kind": "potentialImprovements",
+          "score": 8.6
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Latin American Spanish\n      - Should separate nucleophilic addition to carbonyls from enolate chemistry\n      - Should break down each named reaction (Aldol, Claisen, Michael) as individual lessons\n      - Should cover selectivity control concepts as distinct lessons\n      - Should NOT create dedicated lessons teaching SN1/SN2 or elimination reactions (neighboring chapter \"Sustitución y eliminación\" covers that) — brief contextual references are fine\n      - Should NOT create dedicated lessons teaching additions to alkenes or alkynes (neighboring chapter \"Adiciones a alquenos y alquinos\" covers that) — brief contextual references are fine\n      - Should NOT create dedicated lessons teaching aromatic chemistry or electrophilic aromatic substitution (neighboring chapter \"Química aromática\" covers that) — brief contextual references are fine\n      - Should NOT create dedicated lessons teaching general carboxylic acid derivative reactivity or acyl substitution chemistry (neighboring chapter \"Ácidos carboxílicos y derivados\" covers that) — brief contextual references are fine. IMPORTANT: The Claisen condensation and Dieckmann cyclization ARE explicitly within this chapter's scope (listed in the chapter description as enolate reactions). Do NOT penalize lessons on Claisen/Dieckmann mechanism, enolate-of-ester formation, or related selectivity — these are enolate chemistry, not acyl substitution\n\n      \n  - Each lesson should cover a SINGLE, SPECIFIC concept that can be explained within 10 short tweets\n  - Break down topics into the smallest, most manageable units possible, so that each lesson can be learned in 2-3 minutes\n  - If a topic is too broad, split it into multiple lessons\n  - Each lesson should be extremely focused on a SINGLE concept\n  - If a lesson is too broad, split it into multiple lessons\n  - Each lesson must cover a SINGLE concept. Using \"AND\", \"OR\", \"VS\" (or equivalents in other languages like \"e\", \"ou\", \"y\", \"o\") in a title is a signal it MAY be too broad — but it is acceptable when the comparison or pairing IS the concept itself (e.g., \"DEPT-90 y DEPT-135\" where distinguishing two NMR techniques is the lesson, or \"IPv4 vs. IPv6 Format\" where the format contrast is one concept). Only penalize when AND/OR/VS joins genuinely separate concepts that deserve their own lessons (e.g., \"Strings and Lists\" where each is a full topic)\n  - Lesson titles should be short and specific to the exact concept covered\n  - Build a logical progression from basic to advanced concepts\n  - Ensure lessons build on knowledge from previous lessons\n  - Focus lessons for this specific chapter, not the entire course\n  - Don't include summary or review lessons. For example, do NOT create a lesson title \"Summary of Key Concepts\" or \"Review of Chapter\"\n  - Don't include assessment or quiz lessons\n  - Don't include final project or capstone lessons\n  - Should follow the language specified by language parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Descriptions should be concise and straight to the point, no fluff/filler words (avoid \"learn\", \"understand\", \"explore\", \"introduction to\", etc.)\n  - You don't need to evaluate the output format here, just focus on the lesson content quality\n  - Include an extensive list of lessons to fully cover the chapter's scope. The key metric is completeness: are all concepts in the chapter description adequately covered with sufficient granularity? Broad technical chapters (e.g., web fundamentals, Python basics) typically need 80-120+ lessons. Narrower or more specialized chapters (e.g., legal theory of evidence, NMR spectroscopy) may need fewer if the domain is inherently smaller — do not penalize for fewer lessons if the chapter's scope is fully covered\n\n  Neighboring chapter scope judgment:\n  - The chapter description is the SOURCE OF TRUTH for what is in-scope. Neighboring chapter constraints are guardrails against scope creep, NOT vetoes over topics listed in the chapter description\n  - If a topic is explicitly mentioned in the chapter description, it is in-scope even if it touches on a neighboring chapter's domain (e.g., \"Claisen\" listed in a carbonyls chapter is in-scope even though esters have their own chapter)\n  - The key test: does a lesson teach a topic AS ITS OWN SUBJECT (violation) or through the LENS OF THIS CHAPTER (acceptable)? Documenting empirical patterns/observations of X within this chapter's context is NOT the same as teaching X's theory (e.g., documenting consumption's cyclical behavior is a business cycle fact, not consumption theory)\n  - When a lesson's title mentions a neighboring topic, read the description to determine focus. A lesson titled \"Cortiços as disease ecologies\" focused on disease transmission is health content, not urbanization content\n\n  Things to check:\n  - Is each lesson too broad? If so, it should be broken down further\n  - Can each concept be explained in 10 short tweets or less? If not, it should be broken down\n  - Does each lesson focus on a single specific concept? If not, it should be split\n  - Does it have lessons that don't belong in this chapter? If so, they should be removed\n\n    ",
+        "id": "es-quimica-carbonilos-enolatos-1",
+        "userInput": {
+          "chapterDescription": "Adición nucleofílica a carbonilos, química de enoles/enolatos, aldol, Claisen, Michael y control de selectividad.",
+          "chapterTitle": "Carbonilos y enolatos",
+          "courseTitle": "Química",
+          "language": "es",
+          "neighboringChapters": [
+            {
+              "description": "SN1/SN2, E1/E2, reactividad, solventes, nucleófilos/bases, rearrangements y control de selectividad.",
+              "title": "Sustitución y eliminación"
+            },
+            {
+              "description": "Hidrogenación, halogenación, hidratación, hidroboración-oxidación, adiciones conjugadas y química de alquinos.",
+              "title": "Adiciones a alquenos y alquinos"
+            },
+            {
+              "description": "Aromaticidad, sustitución electrofílica/nucleofílica aromática, directores, y reactividad de sistemas aromáticos extendidos.",
+              "title": "Química aromática"
+            },
+            {
+              "description": "Reactividad de ácidos carboxílicos, derivados acílicos, química de amidas/ésteres/anhídridos y estrategias de activación.",
+              "title": "Ácidos carboxílicos y derivados"
+            },
+            {
+              "description": "Síntesis y reactividad de heterociclos aromáticos y saturados; aplicaciones en fármacos y materiales.",
+              "title": "Heterociclos"
+            },
+            {
+              "description": "Mecanismos radicalarios, iniciación/propagación/terminación, selectividad, y reacciones fotoquímicas orgánicas.",
+              "title": "Radicales y fotoquímica orgánica"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "1) Some lesson titles/descriptions drift from purely empirical business-cycle facts into theory-like framing, e.g., “Broad demand-driven downturn” and “Broad supply-driven downturn” invoke AD/AS-type interpretation rather than a documented stylized fact; “Expectations in inflation dynamics” also leans toward model mechanism (though still plausibly framed empirically).\n2) A few items are borderline too broad for a 2–3 minute single-concept micro-lesson: “Output decomposition” (often entails an accounting framework and multiple margins), “High-frequency indicators” (bundles multiple indicators), and “Stylized facts” (meta-topic) could be split.\n3) Minor redundancy/overlap: “Labor hoarding” and “Labor hoarding and productivity” cover highly overlapping ground; “Transitory movement” vs “Persistent movement” also could be consolidated or reframed to avoid repetition.\n4) While it avoids dedicated GDP construction lessons, “Output per capita” is close to macro accounting territory; it’s acceptable, but could be more explicitly tied to cyclical measurement to avoid scope ambiguity.",
+          "kind": "minorErrors",
+          "score": 8.6
+        },
+        {
+          "conclusion": "1) Increase separation between (a) measurement tools and (b) empirical stylized facts, per expectations. For example, cluster detrending/output gap/cycle dating separately from comovement/inflation/unemployment facts.\n2) Cover each comovement type more explicitly and uniformly: e.g., add individual lessons for “Consumption comovement,” “Investment comovement,” “Employment comovement,” “Productivity comovement,” “Inflation-output comovement,” rather than relying on volatility lessons plus general correlation concepts.\n3) Add more explicit business-cycle measurement methodology units that are in-scope: band-pass filters vs HP filter, end-point bias, real-time vs revised data vintages, turning-point algorithms, and leading indicator indexes (as single-concept lessons).\n4) Replace theory-leaning AD/AS labels with purely descriptive comovement patterns (e.g., “Output–inflation negative comovement episodes” vs “supply-driven downturn”) unless the chapter explicitly includes theory.\n5) Split broad lessons like “High-frequency indicators” into single-indicator concepts (payrolls, IP, retail sales) or into “Indicator selection criteria” vs “Release timing/nowcasting use.”",
+          "kind": "potentialImprovements",
+          "score": 8.2
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n      - Should separate stylized facts from theoretical models\n      - Should cover each type of comovement individually\n      - Should distinguish business cycle measurement from theory\n      - Should NOT create dedicated lessons teaching national income accounting or GDP measurement (neighboring chapter \"Macroeconomic accounting\" covers that) — brief contextual references are fine. IMPORTANT: Business cycle measurement methodology (e.g., cycle dating, leading/lagging indicators, diffusion indices) IS within scope — these are tools for identifying and characterizing business cycles, not general national accounting concepts. Only penalize if a lesson teaches GDP construction, price index methodology, or sectoral balances as its own subject\n      - Should NOT create dedicated lessons teaching consumption-savings models or life-cycle theory (neighboring chapter \"Consumption and savings\" covers that) — brief contextual references are fine. IMPORTANT: Documenting the empirical cyclical behavior of consumption (e.g., \"Consumption Comovement\") IS within scope as a business cycle fact; only penalize if the lesson teaches consumption theory itself (permanent income hypothesis, life-cycle model, etc.)\n      - Should NOT create dedicated lessons teaching investment theory or q-models (neighboring chapter \"Investment and capital\" covers that) — brief contextual references are fine. IMPORTANT: Documenting the empirical cyclical behavior of investment (e.g., \"Investment Comovement\") IS within scope as a business cycle fact; only penalize if the lesson teaches investment theory itself (q-models, adjustment costs, etc.)\n      - Should NOT create dedicated lessons teaching labor market search models or wage setting (neighboring chapter \"Unemployment and labor in macro\" covers that) — brief contextual references are fine. IMPORTANT: Documenting the empirical cyclical behavior of unemployment/employment IS within scope as a business cycle fact; only penalize if the lesson teaches labor market theory itself (search and matching, wage bargaining, etc.)\n\n      \n  - Each lesson should cover a SINGLE, SPECIFIC concept that can be explained within 10 short tweets\n  - Break down topics into the smallest, most manageable units possible, so that each lesson can be learned in 2-3 minutes\n  - If a topic is too broad, split it into multiple lessons\n  - Each lesson should be extremely focused on a SINGLE concept\n  - If a lesson is too broad, split it into multiple lessons\n  - Each lesson must cover a SINGLE concept. Using \"AND\", \"OR\", \"VS\" (or equivalents in other languages like \"e\", \"ou\", \"y\", \"o\") in a title is a signal it MAY be too broad — but it is acceptable when the comparison or pairing IS the concept itself (e.g., \"DEPT-90 y DEPT-135\" where distinguishing two NMR techniques is the lesson, or \"IPv4 vs. IPv6 Format\" where the format contrast is one concept). Only penalize when AND/OR/VS joins genuinely separate concepts that deserve their own lessons (e.g., \"Strings and Lists\" where each is a full topic)\n  - Lesson titles should be short and specific to the exact concept covered\n  - Build a logical progression from basic to advanced concepts\n  - Ensure lessons build on knowledge from previous lessons\n  - Focus lessons for this specific chapter, not the entire course\n  - Don't include summary or review lessons. For example, do NOT create a lesson title \"Summary of Key Concepts\" or \"Review of Chapter\"\n  - Don't include assessment or quiz lessons\n  - Don't include final project or capstone lessons\n  - Should follow the language specified by language parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Descriptions should be concise and straight to the point, no fluff/filler words (avoid \"learn\", \"understand\", \"explore\", \"introduction to\", etc.)\n  - You don't need to evaluate the output format here, just focus on the lesson content quality\n  - Include an extensive list of lessons to fully cover the chapter's scope. The key metric is completeness: are all concepts in the chapter description adequately covered with sufficient granularity? Broad technical chapters (e.g., web fundamentals, Python basics) typically need 80-120+ lessons. Narrower or more specialized chapters (e.g., legal theory of evidence, NMR spectroscopy) may need fewer if the domain is inherently smaller — do not penalize for fewer lessons if the chapter's scope is fully covered\n\n  Neighboring chapter scope judgment:\n  - The chapter description is the SOURCE OF TRUTH for what is in-scope. Neighboring chapter constraints are guardrails against scope creep, NOT vetoes over topics listed in the chapter description\n  - If a topic is explicitly mentioned in the chapter description, it is in-scope even if it touches on a neighboring chapter's domain (e.g., \"Claisen\" listed in a carbonyls chapter is in-scope even though esters have their own chapter)\n  - The key test: does a lesson teach a topic AS ITS OWN SUBJECT (violation) or through the LENS OF THIS CHAPTER (acceptable)? Documenting empirical patterns/observations of X within this chapter's context is NOT the same as teaching X's theory (e.g., documenting consumption's cyclical behavior is a business cycle fact, not consumption theory)\n  - When a lesson's title mentions a neighboring topic, read the description to determine focus. A lesson titled \"Cortiços as disease ecologies\" focused on disease transmission is health content, not urbanization content\n\n  Things to check:\n  - Is each lesson too broad? If so, it should be broken down further\n  - Can each concept be explained in 10 short tweets or less? If not, it should be broken down\n  - Does each lesson focus on a single specific concept? If not, it should be split\n  - Does it have lessons that don't belong in this chapter? If so, they should be removed\n\n    ",
+        "id": "en-economics-business-cycles-1",
+        "userInput": {
+          "chapterDescription": "Business cycle facts, stylized patterns in output, inflation, unemployment, productivity, and comovements across sectors.",
+          "chapterTitle": "Business cycles",
+          "courseTitle": "Economics",
+          "language": "en",
+          "neighboringChapters": [
+            {
+              "description": "Behavioral biases, bounded rationality, time inconsistency, social preferences, and policy design with behavioral responses.",
+              "title": "Behavioral economics"
+            },
+            {
+              "description": "Laboratory and field experiments, incentive design, external validity, and behavioral/market design evidence.",
+              "title": "Experimental economics"
+            },
+            {
+              "description": "National income and product accounts, sectoral balances, price indices, productivity, and flow-of-funds concepts.",
+              "title": "Macroeconomic accounting"
+            },
+            {
+              "description": "Consumption-saving, life-cycle and permanent income models, liquidity constraints, and empirical puzzles.",
+              "title": "Consumption and savings"
+            },
+            {
+              "description": "Investment theory, q-models, adjustment costs, irreversibility, and firm-level investment dynamics.",
+              "title": "Investment and capital"
+            },
+            {
+              "description": "Labor markets in macro, search and matching, wage setting, unemployment dynamics, and Beveridge curve analysis.",
+              "title": "Unemployment and labor in macro"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Major issues: (1) Violates neighboring-chapter constraint by including a dedicated lesson on refactoring: \"Refatoração arquitetural incremental\". Neighboring chapter \"Dívida técnica e sustentabilidade\" explicitly covers strategic refactoring; this lesson teaches refactoring as its own subject rather than only referencing it in the lens of evolutionary architecture. (2) Several lesson titles bundle multiple distinct concepts with \"e\" in a way that likely exceeds the single-concept requirement, e.g., \"Arquitetura como decisões estruturais que guiam desenvolvimento e operação, mantendo espaço para mudança frequente\" (title: \"Arquitetura em ambientes ágeis\" but description combines multiple ideas), \"Autonomia com coerência\" (two concepts), \"Fronteiras e ownership\" (two concepts), \"Lock-in por tecnologia\" description mentions multiple types (technology, data, operation) though separate lessons exist later—this one is internally inconsistent. These issues materially reduce compliance with the single-concept and scope constraints.",
+          "kind": "majorErrors",
+          "score": 7.2
+        },
+        {
+          "conclusion": "Minor issues: (1) Some lessons are slightly abstract and may be hard to teach in 2–3 minutes without further splitting, e.g., \"Princípios arquiteturais explícitos\", \"Padrões de qualidade arquitetural\", \"Pragmatismo arquitetural\", \"Alavancas arquiteturais\"—each could hide multiple sub-concepts. (2) A few titles/descriptions use English jargon without clarification (\"blast radius\", \"thresholds\"), which is acceptable in PT-BR tech contexts but could reduce accessibility. (3) Coverage is strong but not obviously \"extensive\" for such a broad chapter; list is ~80 lessons, which may be adequate but some core evolutionary-architecture mechanics could be more granular (e.g., separating different kinds of fitness functions by domain more cleanly, or splitting ADR practices further).",
+          "kind": "minorErrors",
+          "score": 8.3
+        },
+        {
+          "conclusion": "Potential improvements: (1) Remove or re-scope \"Refatoração arquitetural incremental\" to avoid teaching refactoring as a standalone topic; instead frame as \"Mudança estrutural em passos pequenos\" tied to evolutionary architecture, or keep refactoring only as a brief reference inside other lessons. (2) Split titles that combine two concepts (e.g., \"Autonomia\" vs \"Coerência global\"; \"Fronteiras\" vs \"Ownership\") and ensure each lesson description maps to exactly one concept. (3) Replace/translate jargon where possible (\"raio de impacto\" for blast radius; \"limiares\" for thresholds) or define it in the description. (4) Increase granularity around decision-making practices (e.g., separate heuristics: cost of delay for architectural decisions, risk classification, decision records lifecycle) and around fitness functions (e.g., \"fitness function de acoplamento\", \"fitness function de coesão\" distinct; clarify \"performance\" vs \"eficiência\" overlap).",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Should break down architectural concepts individually (modularity, coupling, cohesion as separate lessons)\n      - Should cover fitness functions as distinct lessons\n      - Should separate evolutionary architecture theory from practical decision-making\n      - Should NOT create dedicated lessons teaching DevOps pipelines, CI/CD, or infrastructure as code (neighboring chapter \"DevOps e entrega contínua\" covers that) — brief contextual references are fine\n      - Should NOT create dedicated lessons teaching SLIs, SLOs, or error budgets (neighboring chapter \"SRE e confiabilidade em produtos digitais\" covers that) — brief contextual references are fine\n      - Should NOT create dedicated lessons teaching technical debt management or strategic refactoring (neighboring chapter \"Dívida técnica e sustentabilidade\" covers that) — brief contextual references are fine\n      - Should NOT create dedicated lessons teaching test strategies, test pyramids, or automated testing (neighboring chapter \"Estratégias modernas de testes\" covers that) — brief contextual references are fine\n\n      \n  - Each lesson should cover a SINGLE, SPECIFIC concept that can be explained within 10 short tweets\n  - Break down topics into the smallest, most manageable units possible, so that each lesson can be learned in 2-3 minutes\n  - If a topic is too broad, split it into multiple lessons\n  - Each lesson should be extremely focused on a SINGLE concept\n  - If a lesson is too broad, split it into multiple lessons\n  - Each lesson must cover a SINGLE concept. Using \"AND\", \"OR\", \"VS\" (or equivalents in other languages like \"e\", \"ou\", \"y\", \"o\") in a title is a signal it MAY be too broad — but it is acceptable when the comparison or pairing IS the concept itself (e.g., \"DEPT-90 y DEPT-135\" where distinguishing two NMR techniques is the lesson, or \"IPv4 vs. IPv6 Format\" where the format contrast is one concept). Only penalize when AND/OR/VS joins genuinely separate concepts that deserve their own lessons (e.g., \"Strings and Lists\" where each is a full topic)\n  - Lesson titles should be short and specific to the exact concept covered\n  - Build a logical progression from basic to advanced concepts\n  - Ensure lessons build on knowledge from previous lessons\n  - Focus lessons for this specific chapter, not the entire course\n  - Don't include summary or review lessons. For example, do NOT create a lesson title \"Summary of Key Concepts\" or \"Review of Chapter\"\n  - Don't include assessment or quiz lessons\n  - Don't include final project or capstone lessons\n  - Should follow the language specified by language parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Descriptions should be concise and straight to the point, no fluff/filler words (avoid \"learn\", \"understand\", \"explore\", \"introduction to\", etc.)\n  - You don't need to evaluate the output format here, just focus on the lesson content quality\n  - Include an extensive list of lessons to fully cover the chapter's scope. The key metric is completeness: are all concepts in the chapter description adequately covered with sufficient granularity? Broad technical chapters (e.g., web fundamentals, Python basics) typically need 80-120+ lessons. Narrower or more specialized chapters (e.g., legal theory of evidence, NMR spectroscopy) may need fewer if the domain is inherently smaller — do not penalize for fewer lessons if the chapter's scope is fully covered\n\n  Neighboring chapter scope judgment:\n  - The chapter description is the SOURCE OF TRUTH for what is in-scope. Neighboring chapter constraints are guardrails against scope creep, NOT vetoes over topics listed in the chapter description\n  - If a topic is explicitly mentioned in the chapter description, it is in-scope even if it touches on a neighboring chapter's domain (e.g., \"Claisen\" listed in a carbonyls chapter is in-scope even though esters have their own chapter)\n  - The key test: does a lesson teach a topic AS ITS OWN SUBJECT (violation) or through the LENS OF THIS CHAPTER (acceptable)? Documenting empirical patterns/observations of X within this chapter's context is NOT the same as teaching X's theory (e.g., documenting consumption's cyclical behavior is a business cycle fact, not consumption theory)\n  - When a lesson's title mentions a neighboring topic, read the description to determine focus. A lesson titled \"Cortiços as disease ecologies\" focused on disease transmission is health content, not urbanization content\n\n  Things to check:\n  - Is each lesson too broad? If so, it should be broken down further\n  - Can each concept be explained in 10 short tweets or less? If not, it should be broken down\n  - Does each lesson focus on a single specific concept? If not, it should be split\n  - Does it have lessons that don't belong in this chapter? If so, they should be removed\n\n    ",
+        "id": "pt-agile-arquitetura-agil-1",
+        "userInput": {
+          "chapterDescription": "Arquitetura evolutiva, modularidade, acoplamento/cohesão, fitness functions e decisões arquiteturais compatíveis com mudanças frequentes.",
+          "chapterTitle": "Arquitetura em ambientes ágeis",
+          "courseTitle": "Metodologias Ágeis",
+          "language": "pt",
+          "neighboringChapters": [
+            {
+              "description": "Dual Track (Discovery/Delivery), discovery contínuo, e prevenção de 'teatro ágil' com entrega sem aprendizado.",
+              "title": "Discovery e Delivery integrados"
+            },
+            {
+              "description": "DevOps: colaboração Dev+Ops, automação, pipelines, IaC, e redução de handoffs para acelerar e estabilizar entregas.",
+              "title": "DevOps e entrega contínua"
+            },
+            {
+              "description": "SRE: SLIs/SLOs, error budget, confiabilidade como requisito, e equilíbrio entre velocidade e estabilidade.",
+              "title": "SRE e confiabilidade em produtos digitais"
+            },
+            {
+              "description": "Gestão de dívida técnica, qualidade interna, refatoração estratégica, e mecanismos de priorização junto ao valor de negócio.",
+              "title": "Dívida técnica e sustentabilidade"
+            },
+            {
+              "description": "Qualidade e testes: pirâmide de testes, testes automatizados, testes exploratórios, e estratégias para sistemas distribuídos.",
+              "title": "Estratégias modernas de testes"
+            },
+            {
+              "description": "Segurança no ciclo ágil: threat modeling, DevSecOps, shift-left, gestão de vulnerabilidades e resposta a incidentes.",
+              "title": "Segurança e DevSecOps"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The list is generally strong and on-scope, but there are some minor requirement mismatches: (1) A few titles arguably bundle two concepts via contrast framing (e.g., \"Longevity vs invincibility\", \"Acceptance vs domination\", \"Horcrux vs ordinary curse\", \"Survival vs wholeness\", \"Preservation vs predation\"); some of these comparisons are acceptable as a single concept, but several could be split to be maximally single-concept per the spec. (2) A couple items drift into broader thematic/interpretive territory without anchoring tightly to chapter-described concepts (e.g., \"Costs as moral structure\", \"Meaning under endless time\")—still related to immortality myths, but less Harry Potter–specific and potentially too abstract for 2–3 minutes. (3) \"Irreparable magical damage\" reads like a more general magic-systems lesson; it’s relevant to Horcrux destruction, but could be phrased more Horcrux-specifically to avoid scope creep. (4) Extensiveness: for a chapter covering alchemy + immortality myths + Stone symbolism + Horcrux metaphysics + ethical/philosophical costs, ~50 lessons may be adequate, but some users might expect further granularity on Horcrux mechanics/cases; not strictly required, but it slightly limits completeness/granularity.",
+          "kind": "minorErrors",
+          "score": 8.6
+        },
+        {
+          "conclusion": "Potential improvements: (1) Split several contrast titles into single-assertion lessons where possible, or ensure the comparison itself is explicitly the one concept (e.g., separate \"Longevity\" and \"Invincibility\"; separate \"Cursed object\" and \"Horcrux\" then add a comparison lesson if needed). (2) Add a few more granular Horcrux-metaphysics lessons to increase coverage (e.g., \"Why a soul fragment can act independently\", \"What counts as 'death' with anchors present\", \"Limits of Horcrux protection\"). (3) Add more Stone-specific symbolism micro-lessons (e.g., \"Stone as alchemical perfection ideal\", \"Stone as scarcity/power bottleneck\")—some are present but could be expanded. (4) Tighten any general-philosophy lessons so each is clearly tied to the chapter artifacts (Stone/Horcruxes) rather than immortality in fantasy at large. (5) Consider micro-lessons that explicitly distinguish alchemy vs transfiguration (already hinted) and Philosopher’s Stone vs Horcrux routes without using broad wording.",
+          "kind": "potentialImprovements",
+          "score": 8.4
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n      - Should cover each Horcrux-related concept separately\n      - Should distinguish between alchemy, the Philosopher's Stone, and Horcrux concepts\n      - Should break down moral and philosophical implications of soul fragmentation individually\n      - Even though this is pop culture, lessons should still be focused and granular\n      - Should NOT create dedicated lessons teaching Legilimency, Occlumency, or memory manipulation (neighboring chapter \"Mind magic and memory\" covers that) — brief contextual references are fine\n      - Should NOT create dedicated lessons teaching wand woods, cores, or the Elder Wand (neighboring chapter \"Wandlore\" covers that) — brief contextual references are fine\n      - Should NOT create dedicated lessons teaching magical healing or St Mungo's (neighboring chapter \"Healing and magical medicine\" covers that) — brief contextual references are fine\n      - Should NOT create dedicated lessons teaching divination methods or prophecy (neighboring chapter \"Divination and prophecy\" covers that) — brief contextual references are fine\n\n      \n  - Each lesson should cover a SINGLE, SPECIFIC concept that can be explained within 10 short tweets\n  - Break down topics into the smallest, most manageable units possible, so that each lesson can be learned in 2-3 minutes\n  - If a topic is too broad, split it into multiple lessons\n  - Each lesson should be extremely focused on a SINGLE concept\n  - If a lesson is too broad, split it into multiple lessons\n  - Each lesson must cover a SINGLE concept. Using \"AND\", \"OR\", \"VS\" (or equivalents in other languages like \"e\", \"ou\", \"y\", \"o\") in a title is a signal it MAY be too broad — but it is acceptable when the comparison or pairing IS the concept itself (e.g., \"DEPT-90 y DEPT-135\" where distinguishing two NMR techniques is the lesson, or \"IPv4 vs. IPv6 Format\" where the format contrast is one concept). Only penalize when AND/OR/VS joins genuinely separate concepts that deserve their own lessons (e.g., \"Strings and Lists\" where each is a full topic)\n  - Lesson titles should be short and specific to the exact concept covered\n  - Build a logical progression from basic to advanced concepts\n  - Ensure lessons build on knowledge from previous lessons\n  - Focus lessons for this specific chapter, not the entire course\n  - Don't include summary or review lessons. For example, do NOT create a lesson title \"Summary of Key Concepts\" or \"Review of Chapter\"\n  - Don't include assessment or quiz lessons\n  - Don't include final project or capstone lessons\n  - Should follow the language specified by language parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Descriptions should be concise and straight to the point, no fluff/filler words (avoid \"learn\", \"understand\", \"explore\", \"introduction to\", etc.)\n  - You don't need to evaluate the output format here, just focus on the lesson content quality\n  - Include an extensive list of lessons to fully cover the chapter's scope. The key metric is completeness: are all concepts in the chapter description adequately covered with sufficient granularity? Broad technical chapters (e.g., web fundamentals, Python basics) typically need 80-120+ lessons. Narrower or more specialized chapters (e.g., legal theory of evidence, NMR spectroscopy) may need fewer if the domain is inherently smaller — do not penalize for fewer lessons if the chapter's scope is fully covered\n\n  Neighboring chapter scope judgment:\n  - The chapter description is the SOURCE OF TRUTH for what is in-scope. Neighboring chapter constraints are guardrails against scope creep, NOT vetoes over topics listed in the chapter description\n  - If a topic is explicitly mentioned in the chapter description, it is in-scope even if it touches on a neighboring chapter's domain (e.g., \"Claisen\" listed in a carbonyls chapter is in-scope even though esters have their own chapter)\n  - The key test: does a lesson teach a topic AS ITS OWN SUBJECT (violation) or through the LENS OF THIS CHAPTER (acceptable)? Documenting empirical patterns/observations of X within this chapter's context is NOT the same as teaching X's theory (e.g., documenting consumption's cyclical behavior is a business cycle fact, not consumption theory)\n  - When a lesson's title mentions a neighboring topic, read the description to determine focus. A lesson titled \"Cortiços as disease ecologies\" focused on disease transmission is health content, not urbanization content\n\n  Things to check:\n  - Is each lesson too broad? If so, it should be broken down further\n  - Can each concept be explained in 10 short tweets or less? If not, it should be broken down\n  - Does each lesson focus on a single specific concept? If not, it should be split\n  - Does it have lessons that don't belong in this chapter? If so, they should be removed\n\n    ",
+        "id": "en-harry-potter-alchemy-horcruxes-1",
+        "userInput": {
+          "chapterDescription": "Alchemy, immortality myths, and the Philosopher's Stone as symbol. Horcrux metaphysics and the costs of soul fragmentation.",
+          "chapterTitle": "Alchemy, Horcruxes, and immortality",
+          "courseTitle": "Harry Potter",
+          "language": "en",
+          "neighboringChapters": [
+            {
+              "description": "Defense curriculum across eras and how teaching reflects politics. Practical spell selection, threat models, and the pedagogy of fear.",
+              "title": "Defense Against the Dark Arts"
+            },
+            {
+              "description": "Divination's ambiguity, self-fulfilling prophecy, and narrative foreshadowing. Symbol systems: tea leaves, dreams, centaurs, and astronomy.",
+              "title": "Divination and prophecy"
+            },
+            {
+              "description": "Mind magic: Legilimency, Occlumency, memory charms, and Pensieve ethics. Consent, epistemology, and the reliability of recollection.",
+              "title": "Mind magic and memory"
+            },
+            {
+              "description": "Wand woods, cores, allegiance, and the Elder Wand's legend. Comparative magical foci and what wandlore implies about power and identity.",
+              "title": "Wandlore"
+            },
+            {
+              "description": "Magical healing, St Mungo's, and the boundaries of restorative magic. Disability, trauma, and long-term consequences in the series.",
+              "title": "Healing and magical medicine"
+            },
+            {
+              "description": "Werewolves, vampires, giants, goblins, house-elves, centaurs, and merpeople as political subjects. Rights, stereotypes, and allegory across species.",
+              "title": "Beings, creatures, and species politics"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Some lessons drift toward neighboring-chapter territory via operational management framing: e.g., \"Métricas de adoção/qualidade/governança\" can be read as KPIs/Legal Ops (a neighboring chapter). While described in the narrow context of templates, they still risk violating the guardrail. Also, a few titles are slightly broader than a single concept (e.g., \"Escopo de automação: entradas e regras\" combines two items; \"Ambientes: rascunho e produção\" pairs two environments; \"Separação de minutas e assinados\" covers two states) though they are closely related and arguably still tweet-sized.",
+          "kind": "minorErrors",
+          "score": 8.6
+        },
+        {
+          "conclusion": "Add a few more single-concept lessons to fully cover \"gestão documental\" and \"padronização\" distinctly (explicitly requested): e.g., indexing/search, access control taxonomy vs. standardization policy, document retention schedule criteria, and lifecycle states as separate micro-lessons. Consider splitting paired titles into tighter units where feasible (\"entradas\" vs \"regras\"; \"rascunho\" vs \"produção\"), and add explicit lessons on governance mechanics (knowledge owner role definitions, approval matrices) without sliding into Legal Ops KPI/SLAs framing.",
+          "kind": "potentialImprovements",
+          "score": 8.7
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Should break down each legal tech concept individually (templates, document review, version control)\n      - Should cover automation risks and governance as distinct lessons\n      - Should separate document management from quality standardization\n      - Should NOT create dedicated lessons teaching litigation strategy or dispute portfolio management (neighboring chapter \"Estratégia contenciosa e gestão de disputas\" covers that) — brief contextual references are fine\n      - Should NOT create dedicated lessons teaching legal operations management, SLAs, or KPIs (neighboring chapter \"Legal operations e gestão jurídica\" covers that) — brief contextual references are fine\n      - Should NOT create dedicated lessons teaching contract lifecycle management or CLM (neighboring chapter \"Operações contratuais\" covers that) — brief contextual references are fine\n      - Should NOT create dedicated lessons teaching negotiation techniques, BATNA, or ZOPA (neighboring chapter \"Negociação estratégica\" covers that) — brief contextual references are fine\n\n      \n  - Each lesson should cover a SINGLE, SPECIFIC concept that can be explained within 10 short tweets\n  - Break down topics into the smallest, most manageable units possible, so that each lesson can be learned in 2-3 minutes\n  - If a topic is too broad, split it into multiple lessons\n  - Each lesson should be extremely focused on a SINGLE concept\n  - If a lesson is too broad, split it into multiple lessons\n  - Each lesson must cover a SINGLE concept. Using \"AND\", \"OR\", \"VS\" (or equivalents in other languages like \"e\", \"ou\", \"y\", \"o\") in a title is a signal it MAY be too broad — but it is acceptable when the comparison or pairing IS the concept itself (e.g., \"DEPT-90 y DEPT-135\" where distinguishing two NMR techniques is the lesson, or \"IPv4 vs. IPv6 Format\" where the format contrast is one concept). Only penalize when AND/OR/VS joins genuinely separate concepts that deserve their own lessons (e.g., \"Strings and Lists\" where each is a full topic)\n  - Lesson titles should be short and specific to the exact concept covered\n  - Build a logical progression from basic to advanced concepts\n  - Ensure lessons build on knowledge from previous lessons\n  - Focus lessons for this specific chapter, not the entire course\n  - Don't include summary or review lessons. For example, do NOT create a lesson title \"Summary of Key Concepts\" or \"Review of Chapter\"\n  - Don't include assessment or quiz lessons\n  - Don't include final project or capstone lessons\n  - Should follow the language specified by language parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Descriptions should be concise and straight to the point, no fluff/filler words (avoid \"learn\", \"understand\", \"explore\", \"introduction to\", etc.)\n  - You don't need to evaluate the output format here, just focus on the lesson content quality\n  - Include an extensive list of lessons to fully cover the chapter's scope. The key metric is completeness: are all concepts in the chapter description adequately covered with sufficient granularity? Broad technical chapters (e.g., web fundamentals, Python basics) typically need 80-120+ lessons. Narrower or more specialized chapters (e.g., legal theory of evidence, NMR spectroscopy) may need fewer if the domain is inherently smaller — do not penalize for fewer lessons if the chapter's scope is fully covered\n\n  Neighboring chapter scope judgment:\n  - The chapter description is the SOURCE OF TRUTH for what is in-scope. Neighboring chapter constraints are guardrails against scope creep, NOT vetoes over topics listed in the chapter description\n  - If a topic is explicitly mentioned in the chapter description, it is in-scope even if it touches on a neighboring chapter's domain (e.g., \"Claisen\" listed in a carbonyls chapter is in-scope even though esters have their own chapter)\n  - The key test: does a lesson teach a topic AS ITS OWN SUBJECT (violation) or through the LENS OF THIS CHAPTER (acceptable)? Documenting empirical patterns/observations of X within this chapter's context is NOT the same as teaching X's theory (e.g., documenting consumption's cyclical behavior is a business cycle fact, not consumption theory)\n  - When a lesson's title mentions a neighboring topic, read the description to determine focus. A lesson titled \"Cortiços as disease ecologies\" focused on disease transmission is health content, not urbanization content\n\n  Things to check:\n  - Is each lesson too broad? If so, it should be broken down further\n  - Can each concept be explained in 10 short tweets or less? If not, it should be broken down\n  - Does each lesson focus on a single specific concept? If not, it should be split\n  - Does it have lessons that don't belong in this chapter? If so, they should be removed\n\n    ",
+        "id": "pt-direito-legal-tech-1",
+        "userInput": {
+          "chapterDescription": "Automação jurídica e qualidade: templates, revisão assistida, gestão documental e padronização. Riscos de automação, controle de versões e governança de conhecimento.",
+          "chapterTitle": "Legal tech e automação de documentos",
+          "courseTitle": "Direito",
+          "language": "pt",
+          "neighboringChapters": [
+            {
+              "description": "Programas de integridade em terceiros: due diligence, cláusulas anticorrupção e monitoramento. Gestão de contratos, auditoria e encerramento por inadimplemento de compliance.",
+              "title": "Gestão de terceiros e due diligence"
+            },
+            {
+              "description": "Estratégia de litígio: seleção de teses, definição de foro, gestão de portfólio e negociação de acordos. Monitoramento de precedentes, risco financeiro e comunicação com stakeholders.",
+              "title": "Estratégia contenciosa e gestão de disputas"
+            },
+            {
+              "description": "Gestão de escritórios e departamentos jurídicos: triagem, SLAs, indicadores e orçamento. Precificação, honorários, contratação de correspondentes e qualidade.",
+              "title": "Legal operations e gestão jurídica"
+            },
+            {
+              "description": "Gestão de contratos: ciclo de vida, cláusulas padrão, aprovações e controle de obrigações. CLM, auditoria contratual e prevenção de disputas.",
+              "title": "Operações contratuais"
+            },
+            {
+              "description": "Negociação e mediação avançadas: BATNA, ZOPA, técnicas de influência e gestão de impasses. Construção de acordos complexos e multiparte.",
+              "title": "Negociação estratégica"
+            },
+            {
+              "description": "Oratória e atuação em audiência: teoria do caso, exame e contrainterrogatório, sustentação oral e postura profissional. Comunicação com juízes, jurados e peritos.",
+              "title": "Advocacia oral e persuasão"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Major errors found: (1) Several lesson titles include the forbidden word “as” in a way that often indicates multi-concept framing, but the critical requirement only explicitly bans “learn/understand/explore/introduction/basics,” so this is not itself a violation. However, there are concrete scope violations with neighboring chapters: multiple lessons are primarily about urbanization/urban reform dynamics rather than health mechanisms (e.g., “Urban sanitation infrastructure,” “Urban reform as a health risk,” “Urban growth as health pressure”). While sanitation is in-scope, these drift toward urban policy/infrastructure as the main subject rather than health systems/epidemiology; at least “Urban sanitation infrastructure” substantially overlaps the neighboring chapter explicitly covering sanitation. (2) Some lessons are too broad to fit the single-concept / 10-tweets constraint, e.g., “Health policy under dictatorship,” “HIV/AIDS policy model,” “COVID-19 governance conflicts,” “Medicines policy,” each bundles multiple mechanisms and subtopics that would require further splitting; this is a core requirement breach because granularity is central. (3) Coverage is not consistently separated as requested: public health policy vs biomedical politics are mixed in places (e.g., “Vaccination as state policy,” “Biomedical authority in politics,” “Protocols as political instruments” are ok, but other policy lessons embed biomedical politics and vice versa). These issues materially reduce compliance with the prompt’s most important constraints (single-concept focus and neighboring-chapter boundaries).",
+          "kind": "majorErrors",
+          "score": 7.3
+        },
+        {
+          "conclusion": "Minor errors found: (1) Some titles use potentially fluffy/abstract phrasing rather than concrete single concepts (e.g., “Therapeutic revolutions,” “Sanitation as modernization ideology”). (2) A few descriptions contain multiple examples/clauses that may hide more than one concept (e.g., “Imperial-era public health institutions” lists quarantine, ports, hospitals, charity care). (3) Periodization is uneven: early 20th-century epidemics beyond smallpox/yellow fever (e.g., 1918 influenza) are missing, and some disease-specific threads (cholera) are absent; this is a completeness/granularity gap but not necessarily fatal given the broad time span. (4) Some lessons lean toward sociology/politics (e.g., “Media framing of epidemics”) which may be in-scope but could be tighter to “health communication during epidemics” as one mechanism.",
+          "kind": "minorErrors",
+          "score": 8.2
+        },
+        {
+          "conclusion": "Potential improvements: (1) Split broad items into tighter micro-lessons (e.g., dictatorship-era health: financing, infrastructure expansion, surveillance, inequality; HIV/AIDS: activism, prevention, ART universalization, pharma production; COVID-19: ICU collapse, oxygen logistics, vaccine procurement, federalism disputes). (2) Reframe or remove lessons that substantially teach neighboring-chapter topics; keep sanitation/infrastructure only when framed as a health mechanism (waterborne transmission, vector habitat, outbreak correlation) rather than urban policy. (3) Add missing major epidemics and campaign nodes explicitly mentioned/implicit in scope: 1918 influenza in Brazil, yellow fever specifics, cholera waves, polio vaccination campaigns, meningitis outbreak under dictatorship, etc., each as its own single-concept lesson. (4) Enforce the expectation to separate “health systems” vs “sanitation campaigns” vs “epidemics” by creating distinct sub-sequences per period (Empire, First Republic, Vargas, dictatorship, redemocratization/SUS, 21st century) with parallel tracks.",
+          "kind": "potentialImprovements",
+          "score": 7.9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n      - Should break down each historical period's health challenges into separate lessons\n      - Should cover epidemics, sanitation campaigns, and health systems individually\n      - Should separate public health policy from biomedical politics\n      - Should NOT create dedicated lessons teaching urbanization, housing policy, or favela politics/governance (neighboring chapter \"Cities and urban inequality\" covers that) — brief contextual references are fine. IMPORTANT: Lessons about health outcomes and disease transmission mechanisms IN urban settings (e.g., overcrowding as disease vector, sanitation infrastructure gaps) ARE within scope when the focus is on health/epidemiology. Only penalize lessons primarily about urban form, housing policy, or settlement patterns rather than health mechanisms\n      - Should NOT create dedicated lessons teaching environmental history, deforestation, or the Amazon (neighboring chapter \"Environmental history and the Amazon\" covers that) — brief contextual references are fine\n      - Should NOT create dedicated lessons teaching military history, coups, or defense policy (neighboring chapter \"Military and national security\" covers that) — brief contextual references are fine\n      - Should NOT create dedicated lessons teaching historiography, monuments, or public memory (neighboring chapter \"Historiography and public memory\" covers that) — brief contextual references are fine\n\n      \n  - Each lesson should cover a SINGLE, SPECIFIC concept that can be explained within 10 short tweets\n  - Break down topics into the smallest, most manageable units possible, so that each lesson can be learned in 2-3 minutes\n  - If a topic is too broad, split it into multiple lessons\n  - Each lesson should be extremely focused on a SINGLE concept\n  - If a lesson is too broad, split it into multiple lessons\n  - Each lesson must cover a SINGLE concept. Using \"AND\", \"OR\", \"VS\" (or equivalents in other languages like \"e\", \"ou\", \"y\", \"o\") in a title is a signal it MAY be too broad — but it is acceptable when the comparison or pairing IS the concept itself (e.g., \"DEPT-90 y DEPT-135\" where distinguishing two NMR techniques is the lesson, or \"IPv4 vs. IPv6 Format\" where the format contrast is one concept). Only penalize when AND/OR/VS joins genuinely separate concepts that deserve their own lessons (e.g., \"Strings and Lists\" where each is a full topic)\n  - Lesson titles should be short and specific to the exact concept covered\n  - Build a logical progression from basic to advanced concepts\n  - Ensure lessons build on knowledge from previous lessons\n  - Focus lessons for this specific chapter, not the entire course\n  - Don't include summary or review lessons. For example, do NOT create a lesson title \"Summary of Key Concepts\" or \"Review of Chapter\"\n  - Don't include assessment or quiz lessons\n  - Don't include final project or capstone lessons\n  - Should follow the language specified by language parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Descriptions should be concise and straight to the point, no fluff/filler words (avoid \"learn\", \"understand\", \"explore\", \"introduction to\", etc.)\n  - You don't need to evaluate the output format here, just focus on the lesson content quality\n  - Include an extensive list of lessons to fully cover the chapter's scope. The key metric is completeness: are all concepts in the chapter description adequately covered with sufficient granularity? Broad technical chapters (e.g., web fundamentals, Python basics) typically need 80-120+ lessons. Narrower or more specialized chapters (e.g., legal theory of evidence, NMR spectroscopy) may need fewer if the domain is inherently smaller — do not penalize for fewer lessons if the chapter's scope is fully covered\n\n  Neighboring chapter scope judgment:\n  - The chapter description is the SOURCE OF TRUTH for what is in-scope. Neighboring chapter constraints are guardrails against scope creep, NOT vetoes over topics listed in the chapter description\n  - If a topic is explicitly mentioned in the chapter description, it is in-scope even if it touches on a neighboring chapter's domain (e.g., \"Claisen\" listed in a carbonyls chapter is in-scope even though esters have their own chapter)\n  - The key test: does a lesson teach a topic AS ITS OWN SUBJECT (violation) or through the LENS OF THIS CHAPTER (acceptable)? Documenting empirical patterns/observations of X within this chapter's context is NOT the same as teaching X's theory (e.g., documenting consumption's cyclical behavior is a business cycle fact, not consumption theory)\n  - When a lesson's title mentions a neighboring topic, read the description to determine focus. A lesson titled \"Cortiços as disease ecologies\" focused on disease transmission is health content, not urbanization content\n\n  Things to check:\n  - Is each lesson too broad? If so, it should be broken down further\n  - Can each concept be explained in 10 short tweets or less? If not, it should be broken down\n  - Does each lesson focus on a single specific concept? If not, it should be split\n  - Does it have lessons that don't belong in this chapter? If so, they should be removed\n\n    ",
+        "id": "en-brazilian-history-health-disease-1",
+        "userInput": {
+          "chapterDescription": "Public health, epidemics, health systems, and biomedical politics from the 19th century to COVID-19; sanitation campaigns and inequality.",
+          "chapterTitle": "Health and disease",
+          "courseTitle": "Brazilian History",
+          "language": "en",
+          "neighboringChapters": [
+            {
+              "description": "Football history, race and class in sport, club cultures, mega-events, and stadium politics; sport as national narrative.",
+              "title": "Sports and society"
+            },
+            {
+              "description": "Urbanization, housing, sanitation, policing, and informal settlements; favelas, segregation, and metropolitan governance.",
+              "title": "Cities and urban inequality"
+            },
+            {
+              "description": "Amazon, Cerrado, and Atlantic Forest histories: extraction, conservation, Indigenous stewardship, climate politics, and environmental governance.",
+              "title": "Environmental history and the Amazon"
+            },
+            {
+              "description": "Professionalization of the armed forces, coups, doctrine, and defense policy; civil-military relations in democracy.",
+              "title": "Military and national security"
+            },
+            {
+              "description": "Diplomacy from empire to present: borders, regional leadership, multilateralism, South–South ties, and great-power relations.",
+              "title": "Foreign policy and international relations"
+            },
+            {
+              "description": "How Brazil's past is narrated and contested: schools, monuments, museums, reparations debates, transitional justice, and public history.",
+              "title": "Historiography and public memory"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "taskId": "chapter-lessons"
+}

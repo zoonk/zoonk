@@ -18,6 +18,12 @@ const SHARED_EXPECTATIONS = `
   - You don't need to evaluate the output format here, just focus on the lesson content quality
   - Include an extensive list of lessons to fully cover the chapter's scope. The key metric is completeness: are all concepts in the chapter description adequately covered with sufficient granularity? Broad technical chapters (e.g., web fundamentals, Python basics) typically need 80-120+ lessons. Narrower or more specialized chapters (e.g., legal theory of evidence, NMR spectroscopy) may need fewer if the domain is inherently smaller — do not penalize for fewer lessons if the chapter's scope is fully covered
 
+  Neighboring chapter scope judgment:
+  - The chapter description is the SOURCE OF TRUTH for what is in-scope. Neighboring chapter constraints are guardrails against scope creep, NOT vetoes over topics listed in the chapter description
+  - If a topic is explicitly mentioned in the chapter description, it is in-scope even if it touches on a neighboring chapter's domain (e.g., "Claisen" listed in a carbonyls chapter is in-scope even though esters have their own chapter)
+  - The key test: does a lesson teach a topic AS ITS OWN SUBJECT (violation) or through the LENS OF THIS CHAPTER (acceptable)? Documenting empirical patterns/observations of X within this chapter's context is NOT the same as teaching X's theory (e.g., documenting consumption's cyclical behavior is a business cycle fact, not consumption theory)
+  - When a lesson's title mentions a neighboring topic, read the description to determine focus. A lesson titled "Cortiços as disease ecologies" focused on disease transmission is health content, not urbanization content
+
   Things to check:
   - Is each lesson too broad? If so, it should be broken down further
   - Can each concept be explained in 10 short tweets or less? If not, it should be broken down
@@ -76,6 +82,7 @@ export const TEST_CASES = [
       - Should break down each numeric type into separate lessons (int, float, complex, bool, None)
       - Should cover precision and rounding as individual concepts
       - Should separate type conversions from arithmetic operations
+      - Operations and methods on numeric types (e.g., bitwise ops on int, cmath functions for complex, Decimal/Fraction methods) ARE within scope — these are behaviors of the numeric types themselves. Only penalize if a lesson's primary focus is a data structure or I/O concept that merely uses numbers as an example
       - Should NOT create dedicated lessons teaching installation, virtual environments, or IDE setup (neighboring chapter "Ambiente de desenvolvimento" covers that) — brief contextual references are fine
       - Should NOT create dedicated lessons teaching indentation rules, naming conventions, or docstrings (neighboring chapter "Sintaxe e convenções" covers that) — brief contextual references are fine
       - Should NOT create dedicated lessons teaching strings, bytes, or Unicode encoding (neighboring chapter "Texto e codificação" covers that) — brief contextual references are fine
@@ -134,7 +141,7 @@ export const TEST_CASES = [
       - Should NOT create dedicated lessons teaching SN1/SN2 or elimination reactions (neighboring chapter "Sustitución y eliminación" covers that) — brief contextual references are fine
       - Should NOT create dedicated lessons teaching additions to alkenes or alkynes (neighboring chapter "Adiciones a alquenos y alquinos" covers that) — brief contextual references are fine
       - Should NOT create dedicated lessons teaching aromatic chemistry or electrophilic aromatic substitution (neighboring chapter "Química aromática" covers that) — brief contextual references are fine
-      - Should NOT create dedicated lessons teaching carboxylic acid derivatives or acyl chemistry (neighboring chapter "Ácidos carboxílicos y derivados" covers that) — brief contextual references are fine
+      - Should NOT create dedicated lessons teaching general carboxylic acid derivative reactivity or acyl substitution chemistry (neighboring chapter "Ácidos carboxílicos y derivados" covers that) — brief contextual references are fine. IMPORTANT: The Claisen condensation and Dieckmann cyclization ARE explicitly within this chapter's scope (listed in the chapter description as enolate reactions). Do NOT penalize lessons on Claisen/Dieckmann mechanism, enolate-of-ester formation, or related selectivity — these are enolate chemistry, not acyl substitution
 
       ${SHARED_EXPECTATIONS}
     `,
@@ -185,10 +192,10 @@ export const TEST_CASES = [
       - Should separate stylized facts from theoretical models
       - Should cover each type of comovement individually
       - Should distinguish business cycle measurement from theory
-      - Should NOT create dedicated lessons teaching national income accounting or GDP measurement (neighboring chapter "Macroeconomic accounting" covers that) — brief contextual references are fine
-      - Should NOT create dedicated lessons teaching consumption-savings models or life-cycle theory (neighboring chapter "Consumption and savings" covers that) — brief contextual references are fine
-      - Should NOT create dedicated lessons teaching investment theory or q-models (neighboring chapter "Investment and capital" covers that) — brief contextual references are fine
-      - Should NOT create dedicated lessons teaching labor market search models or wage setting (neighboring chapter "Unemployment and labor in macro" covers that) — brief contextual references are fine
+      - Should NOT create dedicated lessons teaching national income accounting or GDP measurement (neighboring chapter "Macroeconomic accounting" covers that) — brief contextual references are fine. IMPORTANT: Business cycle measurement methodology (e.g., cycle dating, leading/lagging indicators, diffusion indices) IS within scope — these are tools for identifying and characterizing business cycles, not general national accounting concepts. Only penalize if a lesson teaches GDP construction, price index methodology, or sectoral balances as its own subject
+      - Should NOT create dedicated lessons teaching consumption-savings models or life-cycle theory (neighboring chapter "Consumption and savings" covers that) — brief contextual references are fine. IMPORTANT: Documenting the empirical cyclical behavior of consumption (e.g., "Consumption Comovement") IS within scope as a business cycle fact; only penalize if the lesson teaches consumption theory itself (permanent income hypothesis, life-cycle model, etc.)
+      - Should NOT create dedicated lessons teaching investment theory or q-models (neighboring chapter "Investment and capital" covers that) — brief contextual references are fine. IMPORTANT: Documenting the empirical cyclical behavior of investment (e.g., "Investment Comovement") IS within scope as a business cycle fact; only penalize if the lesson teaches investment theory itself (q-models, adjustment costs, etc.)
+      - Should NOT create dedicated lessons teaching labor market search models or wage setting (neighboring chapter "Unemployment and labor in macro" covers that) — brief contextual references are fine. IMPORTANT: Documenting the empirical cyclical behavior of unemployment/employment IS within scope as a business cycle fact; only penalize if the lesson teaches labor market theory itself (search and matching, wage bargaining, etc.)
 
       ${SHARED_EXPECTATIONS}
     `,
@@ -403,7 +410,7 @@ export const TEST_CASES = [
       - Should break down each historical period's health challenges into separate lessons
       - Should cover epidemics, sanitation campaigns, and health systems individually
       - Should separate public health policy from biomedical politics
-      - Should NOT create dedicated lessons teaching urbanization, housing, or favelas (neighboring chapter "Cities and urban inequality" covers that) — brief contextual references are fine
+      - Should NOT create dedicated lessons teaching urbanization, housing policy, or favela politics/governance (neighboring chapter "Cities and urban inequality" covers that) — brief contextual references are fine. IMPORTANT: Lessons about health outcomes and disease transmission mechanisms IN urban settings (e.g., overcrowding as disease vector, sanitation infrastructure gaps) ARE within scope when the focus is on health/epidemiology. Only penalize lessons primarily about urban form, housing policy, or settlement patterns rather than health mechanisms
       - Should NOT create dedicated lessons teaching environmental history, deforestation, or the Amazon (neighboring chapter "Environmental history and the Amazon" covers that) — brief contextual references are fine
       - Should NOT create dedicated lessons teaching military history, coups, or defense policy (neighboring chapter "Military and national security" covers that) — brief contextual references are fine
       - Should NOT create dedicated lessons teaching historiography, monuments, or public memory (neighboring chapter "Historiography and public memory" covers that) — brief contextual references are fine

@@ -132,5 +132,6 @@ After creating your lesson list, verify:
 - "Are there any lessons that should be split further?" → Must be NO
 - "Are the titles and descriptions concise and to the point with no fluff?" → Must be YES
 - "Did I stay within the chapter's scope?" → Must be YES
+- "Does any lesson teach a topic that belongs in a neighboring chapter?" → Must be NO
 
 This should be the most **granular**, **focused**, and **extensive** lesson list possible for this chapter.
