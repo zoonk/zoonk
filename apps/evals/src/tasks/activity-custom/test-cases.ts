@@ -6,6 +6,7 @@ ANTI-CHECKLIST GUIDANCE (READ THIS FIRST - CRITICAL):
 - Do NOT interpret rules too literally - use common sense
 - Different valid procedures exist - assess the quality of what IS provided
 - ONLY penalize for actual problems: incorrect sequence, factual errors, missing critical safety steps, or truly confusing instructions
+- Do NOT penalize for JSON output format differences (e.g., wrapping the array in an object like \`{"steps": [...]}\` instead of a raw array). This is a schema/parsing concern, not a content quality issue
 
 EVALUATION CRITERIA:
 
@@ -41,6 +42,7 @@ TOPIC-SPECIFIC GUIDANCE:
 1. ACCURACY CHECK: Git installation involves platform-specific steps. Penalize if:
    - Steps assume wrong operating system without clarification
    - Installation verification is missing (checking git version)
+   NOTE: A Windows-focused workflow that mentions Mac/Linux alternatives is a valid approach. Do NOT treat platform specificity as a major error if the guide acknowledges multiple operating systems. A linear step format cannot perfectly branch for all OSes.
 
 2. SAFETY CHECK: Penalize if:
    - Steps suggest downloading from unofficial sources
@@ -245,9 +247,10 @@ TOPIC-SPECIFIC GUIDANCE:
    - Knee tracking direction is incorrect or missing
 
 2. SAFETY CHECK: Penalize if:
-   - Breathing pattern is not mentioned
+   - No breathing-related cues are provided. Partial cues like "exhale as you rise", "brace your core", or "don't hold your breath" ARE acceptable breathing guidance - do NOT require a full inhale/exhale cycle to avoid penalizing
    - Back position (neutral spine) is not addressed
    - Depth guidance is missing or unsafe
+   NOTE: Common beginner cues like "don't let knees go past toes" are widely accepted in fitness instruction for beginners. Do NOT penalize this as a "myth" - it is standard beginner coaching even if debated in advanced biomechanics.
 
 3. VERIFICATION CHECK: Penalize if no cues for self-checking form are provided (mirror check, how it should feel).
 
@@ -309,7 +312,7 @@ TOPIC-SPECIFIC GUIDANCE:
 
 2. SAFETY CHECK: Penalize if:
    - Draining residual water is skipped
-   - No mention of placing parts in order for reassembly
+   - No guidance on organizing removed parts for reassembly (e.g., placing in order, using a container, noting orientation). Any reasonable organization instruction counts - do NOT require the exact phrase "place parts in order"
 
 3. TOOL SPECIFICITY: Penalize if tools needed are not specified (adjustable wrench, screwdriver type, etc.).
 
