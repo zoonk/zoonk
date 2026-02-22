@@ -26,38 +26,70 @@ const SHARED_EXPECTATIONS = `
 `;
 
 export const TEST_CASES = [
+  // Initial chapters (beginning of courses)
   {
     expectations: `
       - MUST be in US English
-      - Should break down each HTML element type into separate lessons
-      - Should cover attributes, forms, multimedia, and accessibility as distinct concepts
-      - Should not group multiple element types together (e.g., not "Lists and Tables" but separate lessons)
-      
+      - Should break down networking concepts individually (DNS, HTTP, TLS as separate lessons)
+      - Should separate client-side from server-side concepts
+      - Should cover each protocol and technology as its own lesson
+      - Should not group unrelated concepts (e.g., not "DNS and HTTP" but separate lessons)
+      - Should NOT cover browser rendering engines/pipelines (covered in "Browsers and rendering pipelines" chapter)
+      - Should NOT cover URL parsing or URI components (covered in "URL anatomy and addressing" chapter)
+      - Should NOT cover HTTP methods, status codes, or headers in depth (covered in "HTTP fundamentals" chapter)
+
       ${SHARED_EXPECTATIONS}
     `,
-    id: "en-web-html",
+    id: "en-web-how-the-web-works",
     userInput: {
       chapterDescription:
-        "Structure and semantics of web content using HTML: Elements, attributes, forms, multimedia, and accessibility.",
-      chapterTitle: "HTML",
+        "Core concepts of clients, servers, IP, DNS, HTTP/HTTPS, TLS, proxies, caching, cookies, and CDNs.",
+      chapterTitle: "How the web works",
       courseTitle: "Web Development",
       language: "en",
     },
   },
   {
     expectations: `
-      - MUST be in Latin American Spanish
-      - Should break down each type of chemical bond into separate lessons
-      - Should cover VSEPR, hybridization, and polarity as individual topics
-      - Should not combine theoretical models in single lessons
-      
+      - MUST be in Brazilian Portuguese
+      - Should break down each data type into separate lessons
+      - Should cover syntax fundamentals as individual concepts
+      - Basic I/O should be separate from data types and operators
+      - Should NOT cover installation, virtual environments, or project setup (covered in "Ambiente Python e ferramentas essenciais" chapter)
+      - Should NOT cover code style, PEP 8, or linters (covered in "Estilo de código e legibilidade" chapter)
+      - Should NOT cover operators or precedence in depth (covered in "Operadores e expressões" chapter)
+      - Should NOT cover control flow or conditionals (covered in "Controle de fluxo: condicionais" chapter)
+
       ${SHARED_EXPECTATIONS}
     `,
-    id: "es-chemistry-bonds",
+    id: "pt-python-fundamentos",
     userInput: {
       chapterDescription:
-        "Iónico, covalente y metálico; VSEPR, enlace de valencia, orbitales moleculares, hibridación y polaridad.",
-      chapterTitle: "Enlace químico y estructura molecular",
+        "Sintaxe, indentação, comentários, tipos numéricos, booleanos, strings, entrada/saída e operações básicas.",
+      chapterTitle: "Fundamentos da linguagem",
+      courseTitle: "Python",
+      language: "pt",
+    },
+  },
+  // Mid-course chapters
+  {
+    expectations: `
+      - MUST be in Latin American Spanish
+      - Should separate 1D NMR concepts from 2D NMR techniques
+      - Chemical shifts, coupling, and integration should be distinct lessons
+      - Should break down structural elucidation into individual steps/techniques
+      - Should NOT cover UV-Vis spectroscopy (covered in "UV-Vis" chapter)
+      - Should NOT cover IR or Raman spectroscopy (covered in "IR y Raman" chapter)
+      - Should NOT cover EPR/ESR or paramagnetic resonance (covered in "Resonancia paramagnética electrónica" chapter)
+      - Should NOT cover mass spectrometry (covered in "Espectrometría de masas" chapter)
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "es-quimica-resonancia-magnetica",
+    userInput: {
+      chapterDescription:
+        "RMN: desplazamiento químico, acoplamiento, integración, RMN 2D y elucidación estructural.",
+      chapterTitle: "Resonancia magnética nuclear",
       courseTitle: "Química",
       language: "es",
     },
@@ -65,19 +97,21 @@ export const TEST_CASES = [
   {
     expectations: `
       - MUST be in US English
-      - This is a complex theoretical topic that needs careful breakdown
-      - Each econometric concept should be its own lesson
-      - Should separate theory from practical application
-      - Should break down assumptions individually
-      - Should not cover topics that belong to Econometric Theory II: Asymptotics: Fixed and random effects, clustered errors, dynamic panels, and difference-in-differences foundations
-      
+      - Should separate stylized facts from theoretical models
+      - Should cover each type of indicator individually
+      - Should distinguish business cycle measurement from theory
+      - Should NOT cover GDP measurement or national accounts (covered in "Macroeconomic statistics" chapter)
+      - Should NOT cover money supply or quantity theory of money (covered in "Money and inflation" chapter)
+      - Should NOT cover IS-LM or aggregate demand/supply models (covered in "Short-run macro frameworks" chapter)
+      - Should NOT cover consumption theory or life-cycle models (covered in "Consumption in macroeconomics" chapter)
+
       ${SHARED_EXPECTATIONS}
     `,
-    id: "en-economics-econometrics",
+    id: "en-economics-business-cycles",
     userInput: {
       chapterDescription:
-        "OLS geometry, assumptions, identification, Gauss–Markov, hypothesis testing, and model diagnostics.",
-      chapterTitle: "Econometric Theory I: Linear Models",
+        "Business cycle facts: stylized facts, co-movements, and leading indicators.",
+      chapterTitle: "Business cycles",
       courseTitle: "Economics",
       language: "en",
     },
@@ -85,17 +119,20 @@ export const TEST_CASES = [
   {
     expectations: `
       - MUST be in Brazilian Portuguese
-      - This is a methodology chapter, should break down each Scrum element individually
-      - Should cover roles, events, and artifacts as separate lessons
-      - Should address anti-patterns as individual cautionary lessons
-      
+      - Should break down Definition of Ready components individually
+      - Should cover story refinement techniques as separate lessons
+      - Should NOT cover estimation techniques, story points, or planning poker (covered in "Estimativas em ágil" and "Story points e planning poker" chapters)
+      - Should NOT cover no-estimates or throughput forecasting (covered in "No-estimates e previsões por fluxo" chapter)
+      - Should NOT cover risk management or dependency mapping (covered in "Risco e dependências" chapter)
+      - Should NOT cover software architecture or SOLID principles (covered in "Arquitetura em contextos ágeis" chapter)
+
       ${SHARED_EXPECTATIONS}
     `,
-    id: "pt-agile-scrum",
+    id: "pt-agile-definition-of-ready",
     userInput: {
       chapterDescription:
-        "Papéis, eventos e artefatos; Definition of Done/Ready, refinamento eficaz e anti‑padrões comuns.",
-      chapterTitle: "Scrum na Prática",
+        "Refinamento contínuo com DoR, preparação de histórias e alinhamento técnico.",
+      chapterTitle: "Definition of Ready e preparo do trabalho",
       courseTitle: "Metodologias Ágeis",
       language: "pt",
     },
@@ -103,68 +140,67 @@ export const TEST_CASES = [
   {
     expectations: `
       - MUST be in US English
-      - Legal topic requiring careful breakdown of each legal concept
-      - Should cover Brazilian-specific law separately from general principles
-      - Should break down constitutional vs civil vs criminal law topics individually
-      - This chapter has a broad scope that needs many granular lessons
-      
-      ${SHARED_EXPECTATIONS}
-    `,
-    id: "en-brazilian-law-constitutional",
-    userInput: {
-      chapterDescription:
-        "Fundamental principles, fundamental rights and guarantees, State organization, Union powers, constitutionality control.",
-      chapterTitle: "Constitutional Law",
-      courseTitle: "Brazilian Law",
-      language: "en",
-    },
-  },
-  {
-    expectations: `
-      - MUST be in US English
-      - Creative/pop culture topic that still needs structured breakdown
-      - Should cover each spell category separately
-      - Should break down wand lore, magical creatures, and history as individual lessons
+      - Should cover each Horcrux-related concept separately
+      - Should distinguish between Deathly Hallows and Horcruxes as separate topics
+      - Should break down moral and philosophical implications as individual lessons
       - Even though this is pop culture, lessons should still be focused and granular
-      
+      - Should NOT cover Legilimency, Occlumency, or mind magic (covered in "Magic: Mind Arts" chapter)
+      - Should NOT cover time-turners or time magic (covered in "Magic: Time and Paradox" chapter)
+      - Should NOT cover protective wards or the Fidelius Charm (covered in "Magic: Wards and Secret-Keeping" chapter)
+      - Should NOT cover curse-breaking techniques (covered in "Magic: Curses and Curse-Breaking" chapter)
+
       ${SHARED_EXPECTATIONS}
     `,
-    id: "en-harry-potter-magic-system",
+    id: "en-harry-potter-death-souls",
     userInput: {
       chapterDescription:
-        "Types of magic, wand lore, spell categories, nonverbal magic, wandless magic, and the limits of magic.",
-      chapterTitle: "The Magic System",
+        "Deathly magic: Horcruxes, Hallows, and how immortality attempts reshape morality.",
+      chapterTitle: "Magic: Death, Souls, and Immortality",
       courseTitle: "Harry Potter",
       language: "en",
     },
   },
+  // Late/final chapters
   {
     expectations: `
       - MUST be in Brazilian Portuguese
-      
+      - Should cover each type of evidence individually
+      - Should separate burden of proof from standards of proof
+      - Should break down presumptions as individual concepts
+      - Should NOT cover forensic/technical evidence or perícias (covered in "Perícias e prova técnica" chapter)
+      - Should NOT cover legal risk management (covered in "Risk management jurídico" chapter)
+      - Should NOT cover precedent analysis or jurisprudence (covered in "Análise de precedentes" chapter)
+      - Should NOT cover strategic litigation or amici curiae (covered in "Litigância estratégica e impacto" chapter)
+
       ${SHARED_EXPECTATIONS}
     `,
-    id: "pt-mapeando-uma-trajetoria-de-carreira",
+    id: "pt-direito-teoria-geral-da-prova",
     userInput: {
       chapterDescription:
-        "Competências nucleares, portfólio de projetos e branding profissional. Estratégias de estágio, bolsas e entrevistas.",
-      chapterTitle: "Mapeando uma trajetória de carreira",
-      courseTitle: "Neurociência",
+        "Direito probatório: standards de prova, ônus, inversão, presunções e prova estatística.",
+      chapterTitle: "Teoria geral da prova",
+      courseTitle: "Direito",
       language: "pt",
     },
   },
   {
     expectations: `
       - MUST be in US English
-      
+      - Should break down each thematic continuity into separate lessons
+      - Should cover slavery's legacy aspects individually
+      - Should separate political, economic, and social themes into distinct lessons
+      - Should NOT cover museums, monuments, or public history (covered in "Public history and collective memory" chapter)
+      - Should NOT cover comparative parallels with other countries (covered in "Brazil in comparative perspective" chapter)
+      - Should NOT cover career advice or academic pathways (covered in "Careers in Brazilian history and related fields" chapter)
+
       ${SHARED_EXPECTATIONS}
     `,
-    id: "en-portfolio-personal-branding",
+    id: "en-brazilian-history-continuities",
     userInput: {
       chapterDescription:
-        "Project selection, case studies, technical writing, talks, and community presence.",
-      chapterTitle: "Portfolio & personal branding",
-      courseTitle: "Web Development",
+        "Long-run themes: slavery's legacies, state capacity, inequality, and democracy's cycles.",
+      chapterTitle: "Continuities and turning points in Brazilian history",
+      courseTitle: "Brazilian History",
       language: "en",
     },
   },
