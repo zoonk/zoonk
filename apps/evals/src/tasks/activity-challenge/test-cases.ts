@@ -30,10 +30,20 @@ EVALUATION CRITERIA:
 
 9. REFLECTION QUALITY: The reflection must tie the experience back to lesson principles and acknowledge that different approaches have merit.
 
+SEVERITY CALIBRATION (apply consistently):
+
+Dimension count violations (the prompt requires 2-4 unique dimensions):
+- 5-6 unique dimensions: minor error. Deduct lightly (score 8.5-9).
+- 7+ unique dimensions: major error. The more dimensions, the harsher the penalty (score 6-8 depending on count).
+
+Dominant/dominated option violations (no option should be universally best or worst):
+- 1 step with a dominant or dominated option: minor error (score 8.5-9).
+- 2+ steps with dominant or dominated options: major error (score 6-8 depending on how many steps are affected).
+
 ANTI-CHECKLIST GUIDANCE (CRITICAL):
 - Do NOT penalize for specific scenario choices or dimension names
 - Do NOT require specific dimensions by name
-- ONLY penalize for: format violations, consequences that don't connect to lesson concepts, obviously dominant options, inconsistent dimension naming, narrator text in dialogue
+- ONLY penalize for: format violations, exceeding the 2-4 dimension count limit, consequences that don't connect to lesson concepts, obviously dominant or dominated options, inconsistent dimension naming, narrator text in dialogue
 - Different valid challenge designs exist - assess the quality of what IS provided
 `;
 
