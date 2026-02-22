@@ -63,6 +63,7 @@ EVALUATION CRITERIA:
    - A base concept is represented by 5+ specific variants instead of the base term plus 1-2 examples
    - The vocabulary count seems artificially high due to listing every possible variant
    NOTE: This does NOT mean penalize for having many words - penalize only when those words are redundant variants of the same concept. Distinct vocabulary items are fine.
+   NOTE: Distinct practical choices within a category are NOT over-enumeration. For example, different milk types (whole, skim, almond, oat) are genuinely different menu options a learner needs to know - not redundant variants of "milk."
 
 11. ALTERNATIVE TRANSLATIONS: Each word should include alternativeTranslations with other valid translations in the learner's language.
    - Words with multiple common translations MUST list alternatives (e.g., "boa noite" should include ["good night"] when the main translation is "good evening")
@@ -88,12 +89,9 @@ TOPIC: Spanish vocabulary for ordering coffee - focused specifically on coffee d
 
 SCRIPT: Roman (romanization should be null)
 
-TOPIC SCOPE: This is a narrow, focused lesson. Vocabulary should include:
-- Coffee drink types (espresso, latte, cappuccino, americano, etc.)
-- Size options (small, medium, large)
-- Milk options (with milk, without milk, oat milk, etc.)
-- Basic ordering phrases (I would like, please, to go, for here)
+TOPIC SCOPE: This is a narrow, focused lesson. Valid vocabulary categories include coffee drink types, size options, milk options, and basic ordering phrases.
 - Do NOT expect general food vocabulary, restaurant vocabulary, or dining etiquette
+- Do NOT penalize for omitting any specific category - assess only what IS provided
 
 ACCURACY PITFALLS - Penalize SEVERELY if:
 - Coffee-specific terms are mistranslated
@@ -121,11 +119,9 @@ TOPIC: French vocabulary for breads and pastries - focused specifically on baker
 
 SCRIPT: Roman (romanization should be null)
 
-TOPIC SCOPE: This is a narrow, focused lesson. Vocabulary should include:
-- Types of bread (baguette, pain de campagne, brioche, etc.)
-- Pastries (croissant, pain au chocolat, eclair, etc.)
-- Related bakery terms (crust, crumb, fresh, etc.)
+TOPIC SCOPE: This is a narrow, focused lesson. Valid vocabulary categories include types of bread, pastries, and baked goods found in a French boulangerie/patisserie.
 - Do NOT expect general food vocabulary, cooking terms, or restaurant vocabulary
+- Do NOT penalize for omitting any specific category - assess only what IS provided
 
 ACCURACY PITFALLS - Penalize SEVERELY if:
 - Bakery items are mistranslated
@@ -153,15 +149,13 @@ TOPIC: German vocabulary for parents and siblings - focused specifically on imme
 
 SCRIPT: Roman (romanization should be null)
 
-TOPIC SCOPE: This is a narrow, focused lesson. Vocabulary should include:
-- Parents (mother, father, mom, dad, step-parents)
-- Siblings (brother, sister, half-siblings, step-siblings)
-- Related terms (older, younger, twin, only child)
+TOPIC SCOPE: This is a narrow, focused lesson about parents, siblings, and immediate family relationships (as stated in the lesson description). This includes children (Sohn, Tochter, Kind) since they are immediate family.
 - Do NOT expect extended family (grandparents, aunts, uncles, cousins) - those belong in separate lessons
+- Do NOT penalize for omitting any specific terms - assess only what IS provided
 
 ACCURACY PITFALLS - Penalize SEVERELY if:
-- Parent/sibling terms are mistranslated (Mutter=mother, Vater=father, Bruder=brother, Schwester=sister)
-- Vocabulary includes extended family members (this lesson is specifically about parents and siblings)
+- Family terms are mistranslated
+- Vocabulary includes extended family members (grandparents, aunts, uncles, cousins)
 - German articles (der/die/das) are missing from nouns
 - Romanization contains any text (should be null)
 
@@ -185,10 +179,9 @@ TOPIC: Italian vocabulary for common pets - focused specifically on household pe
 
 SCRIPT: Roman (romanization should be null)
 
-TOPIC SCOPE: This is a narrow, focused lesson. Vocabulary should include:
-- Common household pets (dog, cat, fish, bird, hamster, rabbit, turtle, etc.)
-- Basic pet-related terms (pet, owner, food bowl, leash, cage, etc.)
+TOPIC SCOPE: This is a narrow, focused lesson. Valid vocabulary categories include common household pets and basic pet-related terms (care items, accessories).
 - Do NOT expect farm animals, wild animals, or zoo animals - those belong in separate lessons
+- Do NOT penalize for omitting any specific terms - assess only what IS provided
 
 ACCURACY PITFALLS - Penalize SEVERELY if:
 - Pet names are mistranslated (il cane=cachorro/cao, il gatto=gato, etc.)
@@ -220,11 +213,9 @@ TOPIC: Portuguese vocabulary for greetings and farewells - focused specifically 
 
 SCRIPT: Roman (romanization should be null)
 
-TOPIC SCOPE: This lesson specifically tests overlapping translations. Vocabulary should include:
-- Greetings (oi, olá, bom dia, boa tarde, boa noite)
-- Farewells (tchau, adeus, até logo, até mais)
-- Related social phrases (tudo bem, como vai)
+TOPIC SCOPE: This lesson specifically tests overlapping translations. Valid vocabulary categories include greetings, farewells, and related social phrases.
 - Do NOT expect general conversation vocabulary beyond greetings and farewells
+- Do NOT penalize for omitting any specific terms - assess only what IS provided
 
 ALTERNATIVE TRANSLATIONS (CRITICAL FOR THIS TEST):
 - This test specifically validates that overlapping translations are captured in alternativeTranslations
@@ -259,11 +250,11 @@ TOPIC: Japanese vocabulary for basic colors - focused specifically on the primar
 
 SCRIPT: Non-Roman (romanization MUST be included)
 
-TOPIC SCOPE: This is a narrow, focused lesson about COLOR NOUNS ONLY. Vocabulary should include:
-- Primary colors (red, blue, yellow)
-- Common colors (green, orange, purple, pink, brown, black, white, gray)
+TOPIC SCOPE: This is a narrow, focused lesson about colors. Valid vocabulary includes any color names (primary, common, or less common colors like gold, silver, navy, etc.).
+- Do NOT penalize for including less common colors - any valid color name is acceptable
+- Do NOT penalize for omitting any specific colors - assess only what IS provided
 
-SCOPE BOUNDARY (CRITICAL): This lesson is ONLY about color names (nouns). Penalize SEVERELY if:
+SCOPE BOUNDARY: Penalize SEVERELY if:
 - Color-modifying adjectives are included (words meaning bright, dark, light, vivid, pale, deep, etc.)
 - Color-related phrases or compound words are included
 - Any vocabulary that describes HOW a color appears rather than WHAT the color is
