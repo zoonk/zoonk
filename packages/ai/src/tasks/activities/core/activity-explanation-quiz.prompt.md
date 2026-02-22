@@ -103,4 +103,4 @@ Before creating each question, verify:
 - Test each major concept from EXPLANATION_STEPS at least once
 - Vary the contexts — don't reuse scenarios
 - Balance difficulty — some straightforward, some requiring deeper reasoning
-- Aim for 4-8 questions depending on concept count
+- **Minimum 5 questions, always.** Even if there are few explanation steps, test each concept from multiple angles (application, prediction, edge cases). More concepts = more questions, but never fewer than 5

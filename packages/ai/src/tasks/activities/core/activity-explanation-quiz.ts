@@ -52,7 +52,7 @@ LANGUAGE: ${language}
 EXPLANATION_STEPS:
 ${formattedExplanationSteps}
 
-Generate quiz questions that test understanding of these concepts. Use the available tools to create questions in appropriate formats. Aim for 4-8 questions covering the key concepts.`;
+Generate quiz questions that test understanding of these concepts. Use the available tools to create questions in appropriate formats. You MUST generate at least 5 questions covering the key concepts.`;
 
   const providerOptions = buildProviderOptions({
     fallbackModels: FALLBACK_MODELS,
