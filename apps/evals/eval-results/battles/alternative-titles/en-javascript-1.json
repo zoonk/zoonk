@@ -1,0 +1,149 @@
+{
+  "expectations": "\n      - Should include \"JS\", \"JavaScript Programming\", \"JavaScript Language\", etc\n      - Should NOT include \"Web Development\", \"React\" since they're different courses\n      - Results should be in English\n\n      \n  **PURPOSE**: Alternative titles prevent AI from generating duplicate courses for the same subject. If someone creates \"Python for Data Science\", the AI should recognize it as the existing \"Python\" course — not create a separate one. The list catches all title variants that map to the same course.\n\n  **CORE RULE**: If the title still contains the base subject (or a recognized synonym/abbreviation), it is the SAME course — regardless of qualifiers, subtitles, tools, focus areas, or context added to it. We do NOT want separate courses for each variant.\n\n  Examples of this rule:\n  - \"World War II: Normandy and D-Day\" → contains \"World War II\" → same course\n  - \"Python for Data Science\" → contains \"Python\" → same course\n  - \"IA Generativa\" → contains \"IA\" → same course\n  - \"Desarrollo Web con React\" → contains \"Desarrollo Web\" → same course\n  - \"ML with Python\" → contains \"ML\" → same course\n  - \"Differential Calculus\" → contains \"Calculus\" → same course\n  - \"Formula 1 Motorsport\" → contains \"Formula 1\" → same course\n\n  **When to EXCLUDE**:\n  - **Broader**: The title covers a larger domain that encompasses unrelated subjects → exclude. Example: \"Web Development\" is broader than \"Frontend Development\"; \"Programming\" is broader than \"Python\"; standalone \"Motorsport\" is broader than \"Formula 1\".\n  - **Standalone different subject**: The title drops the base subject entirely and represents something else → exclude. Example: \"React\" (no \"JavaScript\" in the title — it’s its own technology); \"Deep Learning\" (no \"Machine Learning\" — it’s its own field); \"Battle of Normandy\" (no \"World War II\" — it’s its own topic); standalone \"Motorsport\" (no \"Formula 1\").\n  - **Ambiguous**: The title could refer to multiple unrelated topics → exclude. Example: just \"Matrix\" without any disambiguator.\n\n  **Also include** (even without the base subject in the title):\n  - **Recognized synonyms/abbreviations**: \"WWII\" / \"Second World War\" ↔ \"World War II\"; \"F1\" ↔ \"Formula 1\"; \"ML\" ↔ \"Machine Learning\"; \"JS\" ↔ \"JavaScript\"; \"UI Development\" / \"Client-Side Development\" ↔ \"Frontend Development\".\n  - **Dialect/variant names**: \"Inglês Americano\", \"Inglês Britânico\", \"Optimisation\" vs \"Optimization\".\n  - **Language learning aspects**: \"Gramática Inglesa\", \"TOEFL\", \"Business English\" — all map to the same language course.\n  - **Light framing words**: \"principles\", \"fundamentals\", \"basics\", \"bootcamp\", \"certification prep\" — these don’t change the subject.\n  - **Descriptive disambiguators**: \"The Matrix (1999 film)\", \"Matrix Movie\" — these clarify which subject, they don’t change it.\n\n  Additional notes:\n  - Include different locale spellings when applicable (e.g., \"Optimization\" and \"Optimisation\").\n  - Include abbreviations if they mean the same thing (e.g., \"AI\"/\"IA\", \"ML\" when base is \"Machine Learning\").\n  - Levels like \"Beginner\", \"Advanced\", \"Calculus 1\", \"101\", etc., are acceptable.\n  - It’s fine to skip spacing/hyphenation/accents variants — serialization will handle those.\n  - Awkward or redundant phrasings are acceptable.\n  - Ignore casing issues (e.g., \"javascript\" vs \"JavaScript\").\n  - Well-known English terms in non-English titles are acceptable (e.g., \"Business English\" in Portuguese, \"TOEFL\", \"IELTS\").\n  - Ideally, it should have a huge list of alternative titles, really good ones have more than 100 alternative titles\n\n  SCORING CALIBRATION:\n  - Apply the CORE RULE above as the PRIMARY lens: does the title still contain the base subject? If yes → it’s the same course, do NOT penalize.\n  - Only penalize for titles that are genuinely broader (umbrella domain), a standalone different subject (base subject dropped entirely), or ambiguous.\n  - Do NOT penalize for qualifiers, subtitles, tools, focus areas, or context added to the base subject — these are all the same course.\n  - Do NOT heavily penalize for missing titles — only penalize for wrong inclusion/exclusion decisions.\n  - A large list is ideal but do NOT heavily penalize shorter lists if all included titles are correct.\n\n    ",
+  "judgedAt": "2026-02-22T18:25:24.727Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model G provides the most extensive list (~200 alternatives) with excellent coverage across all categories: synonyms/abbreviations (JS, ECMAScript), level variants (beginner/intermediate/advanced), application contexts (web dev, backend, automation, testing), sub-areas (DOM, closures, async, OOP, FP), tool framing (with Node.js), locale spelling (Optimization/Optimisation), and light framing words (bootcamp, crash course, masterclass, etc.). It correctly includes ECMAScript variants with JavaScript disambiguators. It avoids broader topics (no 'Web Development' standalone, no 'Programming' standalone) and avoids standalone different subjects (no 'React', 'Node.js' alone). The only minor concerns: 'JavaScript for Computer Science' is a slight stretch, and 'JavaScript Classes' could be ambiguous (JS classes the language feature vs. classroom classes), but these are very minor. Overall the most comprehensive and accurate list.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model D provides a very extensive list (~170 alternatives) with excellent coverage. It includes all the expected basics (JS, ECMAScript, level variants, application contexts, sub-areas). It has good coverage of sub-topics like specific language features (Proxy, Reflect, WeakMap, Decorators, etc.), which are all sub-areas of JavaScript. Some concerns: standalone 'ES2015', 'ES2016', etc. without 'JavaScript' could be slightly ambiguous (though ECMAScript versions are strongly associated with JavaScript, so this is minor). 'JavaScript for Kids' and 'JavaScript for Non-Programmers' are fine. 'JavaScript Seminar', 'JavaScript Reference', 'JavaScript Handbook' are slightly unusual as course titles but not wrong. Very thorough and largely accurate.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model B provides a large list (~155 alternatives) with strong coverage. It correctly includes JS abbreviations, ECMAScript year variants, Vanilla JS, level variants, application contexts, and sub-areas. It avoids broader topics and standalone different subjects. Good coverage of specific language features as sub-areas. Missing ECMAScript as a standalone synonym (which is a recognized synonym for JavaScript). The list of individual ES year versions (ES2016-ES2024) as 'JavaScript ESxxxx' is fine. Overall very solid with no significant errors, just slightly less comprehensive than Models G and D.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model A provides a good list (~80 alternatives) with solid coverage of the key categories. It correctly includes JS, ECMAScript, Vanilla JavaScript, level variants, and application contexts. It includes some good unique entries like 'JavaScript: From Zero to Hero'. However, 'JavaScript: The Definitive Guide (course title variant)' is awkward as it references a specific book. 'ECMAScript 2016/2017/2018/2019/2020 (ES7+ etc)' is oddly formatted as a single entry. The list is smaller than the best models and missing some categories (no testing, no debugging, fewer sub-areas). No major errors though.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model E provides a decent list (~75 alternatives) with the expected basics covered. However, it includes 'JavaScript for React', 'JavaScript for Vue', 'JavaScript for Angular', and 'JavaScript for Node.js'. While these technically contain 'JavaScript' and thus follow the core rule (they're the same course per the prompt's logic), they are borderline - the prompt says tool/language framing is fine for the BASE subject, and these do contain JavaScript. Also includes 'JavaScript for Machine Learning' which is fine. 'JavaScript for Data Science' is fine. The list is relatively short compared to the best models. No major errors but less comprehensive.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model C provides a shorter list (~52 alternatives) with decent coverage of the basics. Includes JS, ECMAScript, Vanilla JS, level variants, and some application contexts. 'ES6 Programming' is slightly odd but acceptable. Missing many sub-areas and variations that other models include. The list is significantly shorter than what's ideal (the prompt says 'really good ones have more than 100'). However, all included titles are correct - no wrong inclusions. Just notably less comprehensive.",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model F provides the shortest list (~52 alternatives). It covers the basics well: JS, ECMAScript, ES6, Vanilla JS, level variants, and some sub-areas. However, it includes 'JavaScript for React' which, while technically containing 'JavaScript', could be considered borderline. Standalone 'ES6' and 'ES6+' without JavaScript could be slightly ambiguous but are generally understood. 'OOJS' as an abbreviation is uncommon. The list is notably short. No major errors but significantly less comprehensive than the best models.",
+          "score": 6.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model G provides an exceptionally exhaustive list (nearly 200 items) that perfectly adheres to all rules. It beautifully handles application contexts, sub-areas, and framing. Moreover, it explicitly paid attention to the prompt's instruction about locale spelling variations, including both 'JavaScript Optimization' and 'JavaScript Optimisation', showcasing excellent detail orientation.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model D provides a massive, highly comprehensive list (over 160 items) covering sub-areas, API specifics, tool framing, and ECMA script version variations perfectly. It adheres strictly to the core rule and does not include any broader or standalone different subjects without the base word.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model B provides a fantastic and very long list (nearly 140 items). It explores various phrasing angles, application contexts, and version numbers (ES6 through ES2024). It is incredibly clean and perfectly aligned with all instructions.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model E provides a strong list of around 70 items. It captures the essential context variants and synonyms without violating any rules. While shorter than the top models, the prompt specifies not to heavily penalize shorter lists if they are accurate.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model C provides a solid, concise list of about 50 items. It cleverly includes valid synonyms like 'ES6 Programming'. The list is completely accurate and free of rule violations, though less exhaustive than the higher-ranked models.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model F provides about 50 items. It includes smart variations like 'OOJS' (Object-Oriented JavaScript) and is entirely accurate regarding the core inclusion/exclusion rules.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model A provides a good list of 75 items but includes an AI artifact/meta-text in its output: 'JavaScript: The Definitive Guide (course title variant)'. Including conversational or descriptive artifacts directly within the generated items lowers its quality compared to the perfectly clean lists provided by the other models.",
+          "score": 8
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Very strong adherence to the rules: all entries clearly stay within “JavaScript” as the subject via synonyms/abbreviations/contexts/levels/sub-areas. No obvious broader-topic-only or different-technology-only titles (e.g., avoids React/Node-only). Also includes many safe variants (ES versions, browser/server framing, DSA, testing, projects) without dropping the base subject. High coverage and low risk.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Extremely exhaustive and mostly on-target, with lots of valid variants, spelling variants (Optimization/Optimisation), and many JS/ECMAScript formulations. Main weakness is some inclusions that edge toward potentially-separate courses (e.g., “JavaScript with Node.js” can be interpreted as a Node course; still contains JavaScript so it’s arguably allowed per CORE RULE). Also has a bit of redundancy/noise but not disqualifying.",
+          "score": 8.9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Large, diverse list with many correct alternates (JS/ECMAScript, ES versions, fundamentals, DOM, async, patterns, projects, etc.). However it includes ambiguous/incorrect items like standalone “ES6”, “ES2015”, “ES2016”… which can refer to the ECMAScript spec version without explicitly being a course on JavaScript (and can be ambiguous outside context). “ECMAScript Programming” is also somewhat awkward/less standard. Still overall strong.",
+          "score": 8.1
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Good set of alternatives, includes JS/ECMAScript and many valid sub-area framings. But it’s noticeably less exhaustive than the best, contains some questionable/unclear entries (e.g., “ECMAScript 2016/2017/2018/2019/2020 (ES7+ etc)” is not a clean title; “JavaScript: The Definitive Guide (course title variant)” looks like a book reference). Also includes “Full JavaScript” which is vague.",
+          "score": 7.6
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Mostly valid JavaScript variants and contexts, but includes multiple framework/tool-specific items that violate the prompt’s explicit expectations (e.g., “JavaScript for React”, “JavaScript for Vue”, “JavaScript for Angular”) and “JavaScript for Node.js” (Node is a distinct platform/tech and the prompt example says not to include React as same course). Those wrong inclusions are significant despite otherwise decent content.",
+          "score": 6.4
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Generally reasonable list, but includes “JavaScript for React” (explicitly disallowed by expectations) and “OOJS” which is not a widely recognized unambiguous synonym for JavaScript (could be unclear to many). Also relatively short compared to others.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Contains some problematic/incorrect inclusions: “ES6 Programming” and especially “JavaScript Algorithms” (could easily be interpreted as a dedicated algorithms course rather than a JavaScript language course; more ambiguous than ‘Algorithms in JavaScript’). Also comparatively short and less exhaustive. Overall weaker compliance and coverage.",
+          "score": 5.6
+        }
+      ]
+    }
+  ],
+  "taskId": "alternative-titles",
+  "testCaseId": "en-javascript-1"
+}

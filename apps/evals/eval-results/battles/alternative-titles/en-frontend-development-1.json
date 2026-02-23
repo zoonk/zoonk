@@ -1,0 +1,149 @@
+{
+  "expectations": "\n      - Should include \"Frontend Engineering\", \"Client-Side Development\"\n      - \"UI Development\" and similar titles are acceptable — they refer to the same discipline\n      - Should NOT include \"Web Development\" (broader) or \"JavaScript\" (different subject)\n      - Results should be in English\n\n      \n  **PURPOSE**: Alternative titles prevent AI from generating duplicate courses for the same subject. If someone creates \"Python for Data Science\", the AI should recognize it as the existing \"Python\" course — not create a separate one. The list catches all title variants that map to the same course.\n\n  **CORE RULE**: If the title still contains the base subject (or a recognized synonym/abbreviation), it is the SAME course — regardless of qualifiers, subtitles, tools, focus areas, or context added to it. We do NOT want separate courses for each variant.\n\n  Examples of this rule:\n  - \"World War II: Normandy and D-Day\" → contains \"World War II\" → same course\n  - \"Python for Data Science\" → contains \"Python\" → same course\n  - \"IA Generativa\" → contains \"IA\" → same course\n  - \"Desarrollo Web con React\" → contains \"Desarrollo Web\" → same course\n  - \"ML with Python\" → contains \"ML\" → same course\n  - \"Differential Calculus\" → contains \"Calculus\" → same course\n  - \"Formula 1 Motorsport\" → contains \"Formula 1\" → same course\n\n  **When to EXCLUDE**:\n  - **Broader**: The title covers a larger domain that encompasses unrelated subjects → exclude. Example: \"Web Development\" is broader than \"Frontend Development\"; \"Programming\" is broader than \"Python\"; standalone \"Motorsport\" is broader than \"Formula 1\".\n  - **Standalone different subject**: The title drops the base subject entirely and represents something else → exclude. Example: \"React\" (no \"JavaScript\" in the title — it’s its own technology); \"Deep Learning\" (no \"Machine Learning\" — it’s its own field); \"Battle of Normandy\" (no \"World War II\" — it’s its own topic); standalone \"Motorsport\" (no \"Formula 1\").\n  - **Ambiguous**: The title could refer to multiple unrelated topics → exclude. Example: just \"Matrix\" without any disambiguator.\n\n  **Also include** (even without the base subject in the title):\n  - **Recognized synonyms/abbreviations**: \"WWII\" / \"Second World War\" ↔ \"World War II\"; \"F1\" ↔ \"Formula 1\"; \"ML\" ↔ \"Machine Learning\"; \"JS\" ↔ \"JavaScript\"; \"UI Development\" / \"Client-Side Development\" ↔ \"Frontend Development\".\n  - **Dialect/variant names**: \"Inglês Americano\", \"Inglês Britânico\", \"Optimisation\" vs \"Optimization\".\n  - **Language learning aspects**: \"Gramática Inglesa\", \"TOEFL\", \"Business English\" — all map to the same language course.\n  - **Light framing words**: \"principles\", \"fundamentals\", \"basics\", \"bootcamp\", \"certification prep\" — these don’t change the subject.\n  - **Descriptive disambiguators**: \"The Matrix (1999 film)\", \"Matrix Movie\" — these clarify which subject, they don’t change it.\n\n  Additional notes:\n  - Include different locale spellings when applicable (e.g., \"Optimization\" and \"Optimisation\").\n  - Include abbreviations if they mean the same thing (e.g., \"AI\"/\"IA\", \"ML\" when base is \"Machine Learning\").\n  - Levels like \"Beginner\", \"Advanced\", \"Calculus 1\", \"101\", etc., are acceptable.\n  - It’s fine to skip spacing/hyphenation/accents variants — serialization will handle those.\n  - Awkward or redundant phrasings are acceptable.\n  - Ignore casing issues (e.g., \"javascript\" vs \"JavaScript\").\n  - Well-known English terms in non-English titles are acceptable (e.g., \"Business English\" in Portuguese, \"TOEFL\", \"IELTS\").\n  - Ideally, it should have a huge list of alternative titles, really good ones have more than 100 alternative titles\n\n  SCORING CALIBRATION:\n  - Apply the CORE RULE above as the PRIMARY lens: does the title still contain the base subject? If yes → it’s the same course, do NOT penalize.\n  - Only penalize for titles that are genuinely broader (umbrella domain), a standalone different subject (base subject dropped entirely), or ambiguous.\n  - Do NOT penalize for qualifiers, subtitles, tools, focus areas, or context added to the base subject — these are all the same course.\n  - Do NOT heavily penalize for missing titles — only penalize for wrong inclusion/exclusion decisions.\n  - A large list is ideal but do NOT heavily penalize shorter lists if all included titles are correct.\n\n    ",
+  "judgedAt": "2026-02-22T18:25:40.581Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model D provides the most exhaustive list (~155 alternatives) with excellent coverage across all categories: spacing/hyphenation variants (Frontend/Front-End/Front End), synonym variants (Client-Side, UI, Browser-Side, Web Interface), level variants (Beginner, Intermediate, Advanced), framing words (Fundamentals, Basics, Foundations, 101, Bootcamp, Masterclass), tool-specific framing (React, Angular, Vue, Svelte, Next.js, TypeScript, Bootstrap, Tailwind CSS), application context variants (for Web Apps, for Websites, for SPAs, for Responsive Websites), and action-oriented variants (Learn, Developing, Building). No genuinely incorrect inclusions — all titles map back to Frontend Development. The only minor issue is some casing variants which the prompt says to ignore, but these don't hurt. The list is thorough and accurate.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model B provides a very large list (~130 alternatives) with excellent coverage. It includes all the expected categories: spacing/hyphenation variants, synonym variants (Client-Side, UI, Browser-Side), level and framing variants, application contexts (SPAs, Web Apps, Websites). All inclusions are correct — no broader topics or different subjects included. Very similar in quality to Model D but slightly less exhaustive (missing tool-specific framing like React/Angular/Vue, and some additional creative variants). Still very strong.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model F provides a good-sized list (~90 alternatives) with solid coverage. It includes FE abbreviation, coding variants, tool-specific framing, HTML/CSS/JS as alternative titles, Browser-Side Development, and various framing words. One potential concern: 'HTML CSS and JavaScript' and 'HTML CSS JS' without 'Frontend' could be considered somewhat different subjects (they're specific technologies, not the discipline itself), though they are commonly used as synonyms for frontend development. 'Browser Development' is slightly ambiguous (could mean browser engine development). 'Web Frontend' without 'Development' is a bit incomplete. Overall a strong list with minor issues. Includes the base title 'Frontend Development' which is unnecessary but not penalizable.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model C provides ~60 alternatives with good coverage. It includes many expected titles. However, 'HTML CSS and JavaScript' and 'HTML CSS JS' without any frontend qualifier could be seen as referring to specific technologies rather than the frontend development discipline — though this is a borderline call. 'Frontend Technologies' and 'Frontend Stack' are acceptable but slightly stretch the meaning. 'Responsive Web Development' without 'Frontend' is somewhat borderline — it could refer to responsive design more broadly. Overall solid but shorter than the top models and with a few borderline inclusions.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model G provides ~65 alternatives with good coverage. It includes FE abbreviation, various synonym variants, tool-specific framing, and application contexts. However, 'Single-Page Application (SPA) Development' and 'Progressive Web App (PWA) Frontend Development' are somewhat borderline — SPA Development without 'Frontend' could be seen as a different subject (it encompasses backend considerations too). 'PWA Frontend Development' is acceptable since it contains 'Frontend'. Overall a solid list with good accuracy and a few borderline items.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model A provides ~48 alternatives, which is the shortest list among all models but still covers the main categories: spacing/hyphenation variants, synonyms (Client-Side, UI), level variants, tool-specific framing, and framing words. All inclusions appear correct with no problematic entries. The main weakness is the relatively small size — it misses FE abbreviation, Browser-Side variants, application context variants (for Web Apps, for SPAs), and many framing word combinations. 'Frontend Architecture' is a slightly different focus but acceptable. Solid accuracy but limited exhaustiveness.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model E provides only ~38 alternatives, the smallest list. While it includes key entries like FE Development/FE Dev (good catch), Client-Side, UI Development, and some level variants, it's notably less exhaustive. 'Responsive Web Development' without 'Frontend' is borderline — it could refer to responsive design as a broader concept. 'Interface Development' without 'UI' or 'User' is ambiguous — it could refer to API interfaces, hardware interfaces, etc. 'HTML and CSS Development' is borderline as it drops the frontend concept entirely and names specific technologies. The list is too short and has a few questionable inclusions.",
+          "score": 6
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model D provides an exceptionally comprehensive list (150 items) that perfectly adheres to all prompt instructions. It strictly follows the core rule by retaining the base subject (Frontend, Client-Side, UI) in every title while exhaustively exploring permitted variations like tool-specific framing ('Frontend Development with React/Svelte/TypeScript'), levels ('101', 'Beginner', 'Advanced'), and application contexts ('for Web Apps', 'for Single-Page Applications'). There are no hallucinations, broader topics, or standalone technologies included.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model B provides a massive and highly accurate list (104 items) of variations. It flawlessly respects the constraints, avoiding any broader terms like 'Web Development' without the 'Frontend' qualifier, and doesn't drop the base subject for standalone technologies. It misses some of the extensive tool-specific framing seen in Model D, but it's an excellent and robust output.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model A perfectly follows the rules and provides a very clean list. Every item correctly contains the base subject or a valid synonym (Client-Side, UI). It appropriately includes tool framing ('Frontend Development with Vue') and levels. It is only ranked slightly lower than B and D because the list is shorter (48 items) and the prompt requested an exhaustive list.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model G provides a good list overall, but includes one notable violation: 'Single-Page Application (SPA) Development'. This drops the base subject ('Frontend') and ventures into a standalone or potentially broader topic (as SPAs also require backend/API development). Aside from this, the rest of the list correctly applies the rules.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model C contains multiple significant violations of the negative constraints. It includes 'HTML CSS and JavaScript' and 'HTML CSS JS', which directly violate the rule against including genuinely different standalone subjects (dropping the base subject entirely). It also includes 'Responsive Web Development', which violates the rule against including broader topics ('Web Development' was an explicit 'Bad' example in the prompt).",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model F suffers from the same major violations as Model C. It includes 'HTML CSS and JavaScript', 'HTML CSS JavaScript', and 'HTML CSS JS', which are standalone technologies missing the base subject. It also includes 'Browser Development', which is ambiguous and broader (it could mean developing an actual web browser software, rather than frontend web development).",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model E provides the shortest list and includes several violations. 'HTML and CSS Development' drops the base subject in favor of standalone languages. 'Responsive Web Development' violates the rule against broader topics. 'Interface Development' is dangerously ambiguous, as it could refer to API interfaces, hardware interfaces, or software design. The output ignores several critical negative constraints.",
+          "score": 4.5
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Very large, highly on-topic list with lots of valid same-meaning variants (frontend/client-side/browser-side/UI/interface phrasing; level and “with React/Angular/Vue/TypeScript” framings). Includes required items. No obvious broader-domain inclusions like “Web Development” alone. Minor risk of a couple entries drifting (e.g., some tool-specific like Bootstrap/Tailwind) but still explicitly “Frontend Development with …”, so acceptable per rules.",
+          "score": 9.4
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Long, diverse set of near-synonyms and phrasing variants (client-side, browser-side, UI, interface) plus course-style variants. Includes required items and avoids “Web Development” standalone. A few items like “Web Interface Development/Engineering” could be slightly broader/ambiguous than “frontend development,” but generally still aligned to the same course in context.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Solid breadth and many acceptable variants, including required ones. However, it includes several borderline/wrong entries: standalone “HTML CSS and JavaScript” / “HTML CSS JS” are different subjects (could be a general web fundamentals course, not necessarily frontend development), and “Web Frontend” is a bit underspecified/awkward. Overall still mostly correct.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Generally good coverage and includes required items. But it contains at least one clear violation: “Single-Page Application (SPA) Development” (without “frontend”) is a broader/different subject. Also “Browser-side Programming” is a bit off/less standard, and list is shorter than top contenders.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Mostly correct and includes required items; avoids the explicitly forbidden “Web Development” standalone. But it’s relatively short and includes some entries that shift focus (e.g., “Frontend Architecture” could be a distinct, narrower course rather than same course title variant). Overall acceptable but less exhaustive.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Includes required items and many good variants, but has clear problematic inclusions: “HTML CSS and JavaScript” / “HTML CSS JS” are not unambiguous synonyms for frontend development and could map to a different course. Also includes “Responsive Web Development” (potentially broader/umbrella vs frontend).",
+          "score": 6.4
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Contains required items and some good variants, but includes multiple questionable/broader items: “Interface Development” is ambiguous, “Responsive Web Development” can be broader than frontend, and “HTML and CSS Development” is a different/narrower topic. Also relatively short/less exhaustive.",
+          "score": 6.1
+        }
+      ]
+    }
+  ],
+  "taskId": "alternative-titles",
+  "testCaseId": "en-frontend-development-1"
+}

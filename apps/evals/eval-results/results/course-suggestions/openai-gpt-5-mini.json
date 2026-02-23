@@ -4,17 +4,17 @@
     {
       "steps": [
         {
-          "conclusion": "None. The model correctly identified that the input was not for language learning, set targetLanguageCode to null, used the correct language (Portuguese), and adhered to all negative constraints regarding titles (no levels, no banned joiners).",
+          "conclusion": "The response perfectly follows all instructions. There are no forbidden words (like levels, joiners, or 'course') in the titles. The targetLanguageCode is correctly set to null for all non-language courses. All content is generated in Brazilian Portuguese as requested.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "None. The titles look like real courses, abbreviations are handled correctly (DevOps), and descriptions are well-formed single sentences in Portuguese.",
+          "conclusion": "There are no minor errors. The AI correctly interpreted the vague input 'I want to code' and included broad canonical titles like 'Ciência da Computação', 'Engenharia de Software', and 'Desenvolvimento Web', as well as many other highly relevant programming and development topics.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "None. The response provides a comprehensive list of broad and specific topics relevant to 'coding', matching the expectations for broad canonical titles like 'Ciência da Computação' and 'Engenharia de Software'.",
+          "conclusion": "The suggestions are diverse, accurate, and meticulously follow all constraints. No improvements are needed.",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -31,19 +31,19 @@
     {
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "The response perfectly follows all instructions. All titles are in US English, do not contain any forbidden level words or joiners, and correctly have targetLanguageCode set to null. The first result is exactly 'Black Holes' as expected.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "None",
+          "conclusion": "There are no minor errors. The descriptions are exactly one sentence, written in English, and highlight why the course is useful.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "None",
+          "conclusion": "The AI provided excellent, highly relevant suggestions. While it included specific branches like 'Relativistic Astrophysics' and 'High-Energy Astrophysics', explicitly including the broader canonical topic 'Astrophysics' (as noted in the expectations) could make the list even better for a learner starting from scratch.",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 9.5
         }
       ],
       "testCase": {
@@ -58,17 +58,17 @@
     {
       "steps": [
         {
-          "conclusion": "No major errors found. The model correctly identified the input as a non-language learning topic ('Derecho Penal') and provided relevant course suggestions. The first suggestion matches the input exactly. All `targetLanguageCode` fields are set to null. Titles do not contain forbidden level markers or joiners.",
+          "conclusion": "None",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "No minor errors found. The descriptions are in Spanish, consist of exactly one sentence, and highlight utility without prohibited prefixes. The titles are formatted correctly and look like real courses.",
+          "conclusion": "None",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "No improvements needed. The response strictly adheres to all constraints and provides a comprehensive list of relevant courses.",
+          "conclusion": "None",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -85,17 +85,17 @@
     {
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "No major errors found. The response strictly follows the negative constraints regarding the absence of level words, joiners, and the word 'course' in the titles. It also perfectly respects the requirement to include the jurisdiction 'Chileno' or 'Chile' in every single title, and properly assigns `targetLanguageCode` to `null`.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "None",
+          "conclusion": "No minor errors found. The Spanish used is correct and suitable for the requested jurisdiction. The first suggestion exactly matches the specific user input 'Derecho Chileno', as instructed.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "None",
+          "conclusion": "No potential improvements needed. The response successfully generates a thorough, relevant list of valid course titles aligned with the user's input and rules.",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -139,19 +139,19 @@
     {
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "No major errors found. The AI correctly separated the user input into 'Física' and 'Química', avoided using 'and' or equivalent joiners in a single title, and successfully applied all formatting and language rules.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "None",
+          "conclusion": "No minor errors found. The descriptions are exactly one sentence each, without unnecessary prefixes, and all `targetLanguageCode` fields correctly report null.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "The suggestion 'Química Física' is a literal translation. In Brazilian Portuguese (the requested dialect), the academic discipline is standardly referred to as 'Físico-Química'. Changing this would make the response fully idiomatic.",
+          "conclusion": "The response perfectly adheres to instructions and expectations. No improvements needed.",
           "kind": "potentialImprovements",
-          "score": 9.5
+          "score": 10
         }
       ],
       "testCase": {
@@ -166,17 +166,17 @@
     {
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "The response perfectly follows all rules and expectations. It includes 'Chemistry' as the first suggestion and correctly avoids level markers like 'Intro' or 'Fundamentals'. All targetLanguageCodes are set to null, and the language is US English.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "None",
+          "conclusion": "No minor errors were found. The titles are clear, do not contain prohibited joiners or words like 'course', and the descriptions are properly formatted as exactly one sentence without introductory filler phrases.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "None",
+          "conclusion": "The generated suggestions are highly relevant, providing an excellent breakdown of topics suitable for someone wanting an introduction to chemistry. No improvements are necessary.",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -193,17 +193,17 @@
     {
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "The response perfectly follows all instructions. It successfully fixes the typo 'dragon bals' to the official IP name 'Dragon Ball' and sets it as the first suggestion. It correctly identifies the subject and generates highly relevant related courses. Target language codes are all appropriately set to null, and there are no prohibited words in the titles.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "None",
+          "conclusion": "No minor errors were found. All descriptions are written in Brazilian Portuguese, are exactly one sentence long, and are formatted as actionable statements as requested.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "None",
+          "conclusion": "The response is excellent, providing a wide and creative range of related topics such as 'Narrativa Shonen', 'Produção de Anime', and 'Design de Personagens de Anime'. No improvements are needed.",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -220,17 +220,17 @@
     {
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "No major errors found. The AI successfully included 'The Beatles' as the first suggestion, provided excellent related topics (such as individual band members and the 'British Invasion'), ensured that all titles are in US English without any forbidden level or joiner words, and correctly set the targetLanguageCode to null for all non-language courses.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "None",
+          "conclusion": "No minor errors found. All instructions regarding title formatting and description guidelines were strictly followed.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "None",
+          "conclusion": "No potential improvements needed. The response comprehensively addresses the specific IP input with highly relevant, perfectly formatted course suggestions.",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -247,19 +247,19 @@
     {
       "steps": [
         {
-          "conclusion": "No major errors found. The response strictly follows the JSON format, uses the correct language (French), and correctly identifies the input 'f1' as a topic rather than a language to learn, setting targetLanguageCode to null.",
+          "conclusion": "The response perfectly follows all instructions. There are no major errors. Titles and descriptions are in French, targetLanguageCode is null for all suggestions, and the primary topic 'Formule 1' is listed as the first suggestion. No prohibited words or joining characters are used in the titles.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "No minor errors found. The titles are well-formatted, avoiding forbidden level words (like 'Introduction' or 'Basics') and conjunctions. The descriptions are concise, single sentences that describe the utility of the course, adhering to the instructions.",
+          "conclusion": "There are no minor errors. Note that the word 'course' in 'Stratégie de course' is the French translation for 'race', not a class, which aligns perfectly with the French language requirements.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "The response is excellent. The suggestions are highly relevant to the topic of Formula 1, covering various aspects like engineering, strategy, history, and driving. The first suggestion matches the specific topic requested.",
+          "conclusion": "While the generated titles provide an excellent deep dive into Formula 1, including a slightly broader topic such as 'Sport automobile' (Motorsport) as suggested in the expectations could offer a bit more variety to a user.",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 9.5
         }
       ],
       "testCase": {
@@ -301,17 +301,17 @@
     {
       "steps": [
         {
-          "conclusion": "The model correctly followed the edge case instructions for language learning/exams. The user input 'quero passar no IELTS Academic' was correctly interpreted as a request to learn English. The model returned exactly one suggestion with the title 'Inglês' (Portuguese for English) and the correct targetLanguageCode 'en', avoiding extra titles or suffixes like 'IELTS' or 'Language' in the title field.",
+          "conclusion": "The model followed all instructions perfectly. It returned exactly one suggestion with the title 'Inglês' and targetLanguageCode 'en' for the IELTS language exam input. The language of the title and description is correctly set to Brazilian Portuguese.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "The description is in the correct language (Portuguese), is exactly one sentence, and effectively highlights the utility of the course regarding the user's specific goal (passing IELTS). There are no minor errors.",
+          "conclusion": "No minor errors were found. The description is exactly one sentence, in the correct language, and highlights the usefulness of the course.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "The response is perfect. It strictly adheres to the complex edge case rules regarding language exams and formatting.",
+          "conclusion": "The response perfectly aligns with all provided expectations and edge cases. No improvements needed.",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -328,17 +328,17 @@
     {
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "The response perfectly follows all instructions. All targetLanguageCodes are correctly set to null. Titles do not contain any forbidden level modifiers or joiners, and they successfully include the expected broad topics like 'Computer Science' and 'Computer Architecture'.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "None",
+          "conclusion": "No minor errors were found. The generated course titles match the query extremely well and follow all formatting constraints.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "The response strictly adheres to all constraints, provides relevant suggestions covering the user's query about how computers work (Architecture, Logic, Hardware, etc.), and avoids prohibited words in titles.",
+          "conclusion": "The generated list of courses provides an excellent breadth of topics to satisfy the vague input 'how do computers work'. No improvements are needed.",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -355,17 +355,17 @@
     {
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "None. The AI correctly included 'Tabela Periódica' as the first suggestion without any articles, successfully avoided level or joiner words in the titles, provided all content in Brazilian Portuguese, and correctly set targetLanguageCode to null for all non-language courses.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "None",
+          "conclusion": "None. The titles look like authentic course names and encompass both the specific topic and broader related fields, such as 'Química Geral' and 'Química Inorgânica'.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "None",
+          "conclusion": "None. The suggestions perfectly align with the user's input, the descriptions are formatted correctly according to the instructions, and no further improvements are necessary.",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -409,17 +409,17 @@
     {
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "No major errors found. The primary title is 'Artificial Intelligence' (not abbreviated), no forbidden joiners or level words are used, and the targetLanguageCode is correctly set to null for all suggestions.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "None",
+          "conclusion": "No minor errors found. The descriptions are correctly formatted in one sentence, in US English, and abbreviations like NLP are successfully expanded as requested.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "None",
+          "conclusion": "None. The generated titles perfectly encompass both the core topic and a robust array of closely related subjects, fully aligning with user expectations.",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -436,17 +436,17 @@
     {
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "The response perfectly follows all rules and expectations. The exact book title 'The Wealth of Nations' is provided as the first suggestion, and all other suggestions are highly relevant. None of the titles contain level words, joiners, or the word 'course'. The targetLanguageCode is correctly set to null for all suggestions.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "None",
+          "conclusion": "There are no minor errors. The titles are appropriately formatted and written in US English, and the descriptions accurately follow the single-sentence and usefulness guidelines.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "None",
+          "conclusion": "The generated response is excellent and fulfills all requirements flawlessly. No improvements are necessary.",
           "kind": "potentialImprovements",
           "score": 10
         }

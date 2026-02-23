@@ -108,6 +108,7 @@ Before finishing this course, review the entire content and ask yourself:
 
 - "Does this curriculum enable a learner to be at the **top 1%** in this field?" If the answer is "no," identify the gaps and add the necessary content to fill them.
 - "Am I missing any important chapters or topics?" If the answer is "yes," add them.
+- "Does this curriculum have enough depth?" for this learner to be at the top 1% in this field. If the answer is "no," add more depth to the chapters or add new chapters as needed.
 
 Make sure this is the **BEST** possible curriculum for this subject. No other curriculum should be able to surpass this one.
 

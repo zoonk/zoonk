@@ -15,10 +15,12 @@ EVALUATION CRITERIA:
    - Grammatical structures should be appropriately adapted between languages
 
 3. ROMANIZATION (required field):
-   - For Japanese, Chinese, Korean, Arabic, Russian, Greek, Thai, Hindi, etc.: romanization MUST contain the Roman letter representation of the sentence
+   - For Japanese, Chinese, Korean, Arabic, Russian, Greek, Thai, Hindi, etc.: romanization MUST contain the Roman letter representation of the FULL sentence (not just keywords)
    - Use standard romanization systems (romaji for Japanese, pinyin for Chinese, etc.)
    - For Roman-script languages (Spanish, French, German, etc.): romanization MUST be null
    - Penalize if romanization is missing for non-Roman scripts or contains text for Roman scripts
+   - Romanization MUST use Latin/Roman characters only - penalize SEVERELY if it copies the original script (e.g., Cyrillic, Hangul, Kana) instead of transliterating
+   - Both lowercase and sentence-case romanization are acceptable - do NOT penalize for capitalization style alone
 
 4. GRAMMATICAL CORRECTNESS:
    - Sentences must be grammatically correct in the target language
@@ -587,6 +589,11 @@ ACCURACY PITFALLS - Penalize SEVERELY if:
 - Politeness particles are missing where required (ครับ/คะ)
 - Translations don't match the Thai sentences
 - Romanization is missing or inconsistent
+
+VOCABULARY NATURALNESS NOTE:
+- ได้โปรด is inherently formal/pleading in Thai. Since it is REQUIRED vocabulary, accept it in various polite request contexts (asking for help, directions, favors, etc.)
+- Only penalize ได้โปรด usage if it appears in completely inappropriate situations (e.g., casual greetings between friends)
+- Prefer contexts where the formality of ได้โปรด fits naturally (urgent requests, formal situations, asking strangers for help)
 
 CONTEXT EXPECTATIONS:
 - Sentences demonstrating polite interactions

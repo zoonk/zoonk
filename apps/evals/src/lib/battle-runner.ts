@@ -14,8 +14,8 @@ const BATTLES_DIR = path.join(EVAL_RESULTS_DIR, "battles");
 
 // Battle judges - easy to extend
 const BATTLE_JUDGES_CONFIG: readonly string[] = [
-  "anthropic/claude-opus-4.5",
-  "google/gemini-3-pro-preview",
+  "anthropic/claude-opus-4.6",
+  "google/gemini-3.1-pro-preview",
   "openai/gpt-5.2",
 ];
 
@@ -116,15 +116,24 @@ type AnonymizedOutput = { anonymousId: string; output: string }[];
 function collectModelOutputsForTestCase(
   testCaseId: string,
   allOutputs: Map<string, ModelOutputs>,
-): ModelOutput[] {
+): { outputs: ModelOutput[]; userPrompt: string; systemPrompt: string } {
   const outputs: ModelOutput[] = [];
+  let userPrompt = "";
+  let systemPrompt = "";
+
   for (const [modelId, modelOutputs] of allOutputs) {
     const output = getOutputForTestCase(modelOutputs, testCaseId);
     if (output) {
       outputs.push({ modelId, output: output.output });
+
+      if (!userPrompt) {
+        userPrompt = output.userPrompt;
+        systemPrompt = output.systemPrompt;
+      }
     }
   }
-  return outputs;
+
+  return { outputs, systemPrompt, userPrompt };
 }
 
 function getAnonymizationForBattle(
@@ -143,16 +152,28 @@ function getAnonymizationForBattle(
   return { anonymizedOutputs, mapping };
 }
 
-async function runJudges(
-  judgesToRun: readonly string[],
-  anonymizedOutputs: AnonymizedOutput,
-  expectations: string,
-  mapping: Mapping,
-): Promise<BattleMatchup["judgments"]> {
+async function runJudges(params: {
+  judgesToRun: readonly string[];
+  anonymizedOutputs: AnonymizedOutput;
+  expectations: string;
+  systemPrompt: string;
+  userPrompt: string;
+  mapping: Mapping;
+}): Promise<BattleMatchup["judgments"]> {
+  const { judgesToRun, anonymizedOutputs, expectations, systemPrompt, userPrompt, mapping } =
+    params;
+
   return Promise.all(
     judgesToRun.map(async (judgeId) => ({
       judgeId,
-      rankings: await generateBattleRankings({ anonymizedOutputs, expectations, judgeId, mapping }),
+      rankings: await generateBattleRankings({
+        anonymizedOutputs,
+        expectations,
+        judgeId,
+        mapping,
+        systemPrompt,
+        userPrompt,
+      }),
     })),
   );
 }
@@ -164,7 +185,11 @@ async function runBattleForTestCase(
   existingMatchup: BattleMatchup | null,
 ): Promise<BattleMatchup> {
   const testCaseId = `${testCase.id}-1`;
-  const modelOutputs = collectModelOutputsForTestCase(testCaseId, allOutputs);
+  const {
+    outputs: modelOutputs,
+    userPrompt,
+    systemPrompt,
+  } = collectModelOutputsForTestCase(testCaseId, allOutputs);
 
   if (modelOutputs.length < 2) {
     throw new Error(`Need at least 2 models with outputs for test case ${testCaseId}`);
@@ -186,12 +211,14 @@ async function runBattleForTestCase(
     return effectiveExisting;
   }
 
-  const newJudgments = await runJudges(
-    judgesToRun,
+  const newJudgments = await runJudges({
     anonymizedOutputs,
-    testCase.expectations,
+    expectations: testCase.expectations,
+    judgesToRun,
     mapping,
-  );
+    systemPrompt,
+    userPrompt,
+  });
   const allJudgments = effectiveExisting
     ? [...effectiveExisting.judgments, ...newJudgments]
     : newJudgments;

@@ -1,0 +1,149 @@
+{
+  "expectations": "\n      - Should include \"Língua Inglesa\", \"A Língua Inglesa\"\n      - Variants like \"Inglês Americano\", \"Inglês Britânico\" are acceptable since they refer to the same language\n      - Terms like \"Inglês Moderno\" and \"Inglês Contemporâneo\" are acceptable since they refer to the same language\n      - Should include any title that a user might search for when wanting to learn English, since our platform consolidates all English learning into one course\n      - This INCLUDES: \"Gramática Inglesa\", \"Vocabulário de Inglês\", \"Pronúncia do Inglês\", \"Conversação em Inglês\", \"TOEFL\", \"IELTS\", \"Cambridge English\" — these all map to the same English course\n      - Professional/purpose context is also acceptable: \"Inglês Técnico\", \"Inglês para Negócios\", \"Business English\", \"Inglês para Entrevistas\", \"Inglês Acadêmico\" — these are all English learning, not separate subjects\n      - Well-known English terms are acceptable even in Portuguese titles (e.g., \"Business English\", \"TOEFL\", \"IELTS\")\n      - Should NOT include: \"Cultura Inglesa\" (culture, not language learning), \"Literatura Inglesa\" (literature, not language learning), \"Spanish\" (different language)\n      - Should be in Portuguese\n\n      \n  **PURPOSE**: Alternative titles prevent AI from generating duplicate courses for the same subject. If someone creates \"Python for Data Science\", the AI should recognize it as the existing \"Python\" course — not create a separate one. The list catches all title variants that map to the same course.\n\n  **CORE RULE**: If the title still contains the base subject (or a recognized synonym/abbreviation), it is the SAME course — regardless of qualifiers, subtitles, tools, focus areas, or context added to it. We do NOT want separate courses for each variant.\n\n  Examples of this rule:\n  - \"World War II: Normandy and D-Day\" → contains \"World War II\" → same course\n  - \"Python for Data Science\" → contains \"Python\" → same course\n  - \"IA Generativa\" → contains \"IA\" → same course\n  - \"Desarrollo Web con React\" → contains \"Desarrollo Web\" → same course\n  - \"ML with Python\" → contains \"ML\" → same course\n  - \"Differential Calculus\" → contains \"Calculus\" → same course\n  - \"Formula 1 Motorsport\" → contains \"Formula 1\" → same course\n\n  **When to EXCLUDE**:\n  - **Broader**: The title covers a larger domain that encompasses unrelated subjects → exclude. Example: \"Web Development\" is broader than \"Frontend Development\"; \"Programming\" is broader than \"Python\"; standalone \"Motorsport\" is broader than \"Formula 1\".\n  - **Standalone different subject**: The title drops the base subject entirely and represents something else → exclude. Example: \"React\" (no \"JavaScript\" in the title — it’s its own technology); \"Deep Learning\" (no \"Machine Learning\" — it’s its own field); \"Battle of Normandy\" (no \"World War II\" — it’s its own topic); standalone \"Motorsport\" (no \"Formula 1\").\n  - **Ambiguous**: The title could refer to multiple unrelated topics → exclude. Example: just \"Matrix\" without any disambiguator.\n\n  **Also include** (even without the base subject in the title):\n  - **Recognized synonyms/abbreviations**: \"WWII\" / \"Second World War\" ↔ \"World War II\"; \"F1\" ↔ \"Formula 1\"; \"ML\" ↔ \"Machine Learning\"; \"JS\" ↔ \"JavaScript\"; \"UI Development\" / \"Client-Side Development\" ↔ \"Frontend Development\".\n  - **Dialect/variant names**: \"Inglês Americano\", \"Inglês Britânico\", \"Optimisation\" vs \"Optimization\".\n  - **Language learning aspects**: \"Gramática Inglesa\", \"TOEFL\", \"Business English\" — all map to the same language course.\n  - **Light framing words**: \"principles\", \"fundamentals\", \"basics\", \"bootcamp\", \"certification prep\" — these don’t change the subject.\n  - **Descriptive disambiguators**: \"The Matrix (1999 film)\", \"Matrix Movie\" — these clarify which subject, they don’t change it.\n\n  Additional notes:\n  - Include different locale spellings when applicable (e.g., \"Optimization\" and \"Optimisation\").\n  - Include abbreviations if they mean the same thing (e.g., \"AI\"/\"IA\", \"ML\" when base is \"Machine Learning\").\n  - Levels like \"Beginner\", \"Advanced\", \"Calculus 1\", \"101\", etc., are acceptable.\n  - It’s fine to skip spacing/hyphenation/accents variants — serialization will handle those.\n  - Awkward or redundant phrasings are acceptable.\n  - Ignore casing issues (e.g., \"javascript\" vs \"JavaScript\").\n  - Well-known English terms in non-English titles are acceptable (e.g., \"Business English\" in Portuguese, \"TOEFL\", \"IELTS\").\n  - Ideally, it should have a huge list of alternative titles, really good ones have more than 100 alternative titles\n\n  SCORING CALIBRATION:\n  - Apply the CORE RULE above as the PRIMARY lens: does the title still contain the base subject? If yes → it’s the same course, do NOT penalize.\n  - Only penalize for titles that are genuinely broader (umbrella domain), a standalone different subject (base subject dropped entirely), or ambiguous.\n  - Do NOT penalize for qualifiers, subtitles, tools, focus areas, or context added to the base subject — these are all the same course.\n  - Do NOT heavily penalize for missing titles — only penalize for wrong inclusion/exclusion decisions.\n  - A large list is ideal but do NOT heavily penalize shorter lists if all included titles are correct.\n\n    ",
+  "judgedAt": "2026-02-22T18:25:32.686Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model A provides an exceptionally comprehensive list with 190+ alternatives. It includes the required 'Língua Inglesa' and 'A Língua Inglesa'. It covers all expected categories: dialect variants (Inglês Americano, Britânico, Canadense, Australiano), language skills (Gramática, Vocabulário, Pronúncia, Conversação, Escrita, Leitura), exam prep (TOEFL, IELTS, TOEIC, Cambridge, FCE, CAE, CPE, PET, KET, BEC, PTE, Duolingo English Test), professional contexts (Business English, Inglês Técnico, Inglês para Negócios, Inglês Jurídico, etc.), level variations (Básico, Intermediário, Avançado, numbered levels), age groups, and many more. It avoids including broader topics or genuinely different subjects. All titles are in Portuguese as required. No problematic inclusions that I can identify. The only minor issue is that standalone exam acronyms like 'TOEFL' and 'IELTS' are included as 'Inglês para TOEFL' and 'Preparatório TOEFL' rather than standalone, but those are fine. It doesn't include standalone 'TOEFL' or 'IELTS' which the task expectations say should be included. However, it has 'Preparatório TOEFL' etc. which partially covers this. Missing 'A Língua Inglesa' - actually it does include it. Missing standalone 'TOEFL', 'IELTS', 'Cambridge English' as standalone entries. This is a minor gap. Overall excellent coverage.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model F provides an extremely comprehensive list with 200+ alternatives. It includes 'Língua Inglesa' but is missing 'A Língua Inglesa' which was specifically expected. It covers dialect variants, all four skills, exam prep (TOEFL, IELTS, Cambridge, FCE, CAE, CPE, PET, PTE, Duolingo English Test, TOEIC), professional contexts, grammar sub-topics (preposições, artigos, substantivos, adjetivos, condicionais, voz passiva, modal verbs, reported speech, relative clauses, etc.), creative learning methods (com Música, com Filmes e Séries, com Podcasts, com Jogos), and marketing-style titles (Inglês Sem Medo, Inglês Descomplicado, etc.). It includes standalone exam names like 'TOEFL (Inglês)', 'IELTS (Inglês)' etc. The grammar sub-topics are very granular but still valid as they're all part of learning English. Missing 'A Língua Inglesa' is a small gap. Some entries like 'Inglês para Erasmus' and 'Inglês para Check-in' are quite niche but still valid. 'Idiomas (expressões idiomáticas) em Inglês' is a bit awkward but acceptable. Overall extremely thorough.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model B provides a solid list of ~107 alternatives. It includes 'Língua Inglesa', 'A Língua Inglesa', and 'Idioma Inglês'. It covers level variations, skills (Gramática, Vocabulário, Pronúncia, Listening, Speaking, Writing, Reading), exam prep (standalone TOEFL, IELTS, TOEIC, Cambridge English, FCE, CAE, CPE), professional/purpose contexts, dialect variants (Americano, Britânico, Australiano), age groups, and CEFR levels (A1-C2). It includes 'English' as a standalone which is fine. It includes 'Phrasal Verbs' both standalone and with 'em Inglês'. Good coverage of all required categories. Missing 'Business English' - wait, it does include it. Missing some of the more niche professional contexts but has the main ones. Solid and correct list with no problematic inclusions. Slightly less exhaustive than Models A and F but all entries are correct.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model D provides a good list of ~85 alternatives. It includes 'Língua Inglesa' and 'A Língua Inglesa'. It covers exam prep (TOEFL, IELTS, TOEIC, Cambridge English, FCE, CAE, First Certificate in English, Certificate in Advanced English), professional contexts, dialect variants, skills, age groups. It includes 'ESL' and 'English as a Second Language' which are valid. However, it's missing 'Business English' as a standalone entry (though has 'Inglês para Negócios'), missing 'Inglês Técnico', missing 'Inglês Instrumental', missing 'CPE', missing 'Phrasal Verbs'. Also missing CEFR levels. 'IELTS Preparation' is in English which is slightly inconsistent but acceptable per the rules. Good list but less comprehensive than top models.",
+          "score": 7.3
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model G provides about 80 alternatives. It includes 'Língua Inglesa' but is missing 'A Língua Inglesa' which was specifically expected. It covers CEFR levels (A1-C2), skills, exam prep (TOEFL, IELTS, Cambridge FCE/CAE/CPE, TOEIC), professional contexts, age groups. Some entries are a bit unusual: 'Business English (em português)' is oddly phrased, 'Inglês por Skype/Online' and 'Inglês Presencial' are more about delivery mode than course content which is slightly off but not wrong per se. Missing standalone 'TOEFL', 'IELTS', 'Cambridge English'. Missing 'Inglês Americano', 'Inglês Britânico' which were specifically mentioned as acceptable in the expectations. Also missing 'Business English' as a clean entry. 'Reciclagem de Inglês' and 'Imersão em Inglês' are creative additions. Overall decent but has notable gaps.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model E provides about 46 alternatives. While concise and correct, it's significantly less comprehensive than other models. It includes 'Língua Inglesa' but is missing 'A Língua Inglesa'. It covers key areas: standalone TOEFL, IELTS, TOEIC, Cambridge exams (FCE, CAE, CPE), Business English, dialect variants, skills. However, it's missing many expected entries: 'Inglês do Zero', 'Curso de Inglês' (wait, it has it), age group variants (para Crianças, etc.), CEFR levels, 'Inglês para Concursos', 'Inglês para Vestibular', 'Inglês para ENEM'. The list is correct but notably thin compared to others. The task asks to be exhaustive and ideally have 100+ entries.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model C provides only about 41 alternatives, making it the shortest list. It's missing 'A Língua Inglesa' which was specifically expected. While the entries it does include are correct, it's missing many important categories: age groups (para Crianças, Adultos), professional contexts beyond basic ones (Inglês para Entrevistas, Business English, Inglês Técnico), CEFR levels, 'Inglês para Concursos', 'Inglês para Vestibular', 'Inglês para ENEM', 'Phrasal Verbs', detailed skill variants, dialect variants beyond Americano/Britânico, and many more. The task specifically asks to be exhaustive. While all included entries are valid, the list is far too short.",
+          "score": 5.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model A provides an exceptionally exhaustive and accurate list of over 150 valid alternative titles. It thoroughly covers different proficiency levels, professional contexts, grammar/vocabulary sub-areas, and exam preparations (TOEFL, IELTS, Cambridge, etc.) without including any invalid or broader topics. It perfectly fulfills the requirement for a 'huge list' of over 100 variations.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model F also provides an outstanding, massive list (over 180 items) that perfectly adheres to the rules. It brilliantly delves into specific grammar sub-areas (e.g., 'Voz Passiva em Inglês', 'Phrasal Verbs', 'Preposições') which perfectly maps to the 'sub-areas are the same course' rule. While some phrasings using parentheses are slightly mechanical, the prompt explicitly allows awkward phrasings.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model B provides a very strong and comprehensive list of around 90 items. It covers all the required bases including levels, dialects, test prep, and professional contexts. It falls just short of the >100 benchmark for a 'huge' list mentioned in the prompt, but the quality of the generated titles is excellent.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model D provides a robust and highly accurate list of over 80 items. It correctly incorporates English acronyms commonly used by Portuguese speakers (ESL, FCE, CAE) and completely avoids any forbidden domains. Like Model B, it is excellent but doesn't quite reach the scale of Models A and F.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model G provides a good list of around 75 items that are conceptually correct. However, it includes a few compound titles like 'Preparação para exames Cambridge (FCE/CAE/CPE)' which are less effective for direct title matching compared to listing each exam separately. It also includes descriptive tags like 'Business English (em português)'. Despite this, it remains highly relevant and accurate.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model E successfully follows all core rules and avoids any broader or unrelated subjects. It correctly captures exam preps, levels, and grammar topics. Its only drawback is the length (under 50 items), which limits its utility as an exhaustive matching list compared to the higher-ranked models.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model C follows all instructions correctly and generates accurate titles with no hallucinations or rule breaks. However, it is the shortest list provided (around 40 items). While the prompt states not to heavily penalize short lists if correct, it also explicitly asks for an exhaustive list, making this the least helpful output among the group.",
+          "score": 8
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Very large, highly exhaustive Portuguese list with strong coverage of required items (\"Língua Inglesa\", \"A Língua Inglesa\", grammar/vocab/pronunciation/conversation, TOEFL/IELTS/Cambridge). Includes many acceptable context framings and dialect variants. Minor issues: a few entries are more like skill labels or mixed-language phrasing (e.g., \"Listening em Inglês\", \"Curso de English\"), but still unambiguous and within allowed rules. Overall best coverage with minimal wrong inclusions.",
+          "score": 9.4
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Also extremely exhaustive (100+), includes all key expectations (language name variants, skills, exams, Business English, dialects). Mostly Portuguese and on-topic. Minor drawbacks: a handful of potentially awkward/marketing-style promises (\"Inglês em 30 Dias\") and some redundancy/odd parentheticals (\"Inglês para ENEM (Inglês)\") but not genuinely different subjects. Very strong overall.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Good breadth and includes required exam terms (TOEFL/IELTS/TOEIC/Cambridge) plus many context variants. However, it includes some titles fully in English (e.g., \"IELTS Preparation\", \"English as a Second Language\") which conflicts with the \"should be in Portuguese\" expectation (though prompt allows well-known English terms; these are more like full English titles). Still largely correct and unambiguous.",
+          "score": 8.1
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Solid list with good inclusion of core required variants and exam names, plus CEFR levels and skills (reading/writing/listening/speaking). Mostly Portuguese, minimal incorrect inclusions. Less exhaustive than top entries and includes a few English-only single words (\"English\") which is acceptable per prompt notes, but overall shorter.",
+          "score": 7.9
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Generally correct Portuguese alternatives with exams and contexts. Some phrasing errors/awkwardness (\"Inglês Escrita\"), and includes modality/logistics variants (online/presencial/Skype) which are arguably still the same course but less aligned with “exact same meaning” than skill/exam/dialect variants. Missing some explicitly requested items like IELTS/TOEFL as standalone titles (has preparation phrases).",
+          "score": 7.4
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Mostly correct and includes many required exam names and Business English. However, it misses explicitly requested \"A Língua Inglesa\" and is relatively short. Includes several English skill labels (Listening/Speaking/Writing/Reading) which are acceptable but list is less comprehensive.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Correct as far as it goes (includes TOEFL/IELTS/TOEIC/Cambridge and major skill/level variants), but notably incomplete versus expectations: missing \"A Língua Inglesa\" and several key search-intent variants (e.g., explicit \"Business English\"), and overall much shorter/less exhaustive. Few to no wrong inclusions, but coverage is limited.",
+          "score": 6.6
+        }
+      ]
+    }
+  ],
+  "taskId": "alternative-titles",
+  "testCaseId": "pt-ingles-1"
+}

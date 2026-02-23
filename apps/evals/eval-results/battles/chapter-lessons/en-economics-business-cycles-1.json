@@ -1,0 +1,149 @@
+{
+  "expectations": "\n      - MUST be in US English\n      - Should separate stylized facts from theoretical models\n      - Should cover each type of comovement individually\n      - Should distinguish business cycle measurement from theory\n      - Should NOT create dedicated lessons teaching national income accounting or GDP measurement (neighboring chapter \"Macroeconomic accounting\" covers that) — brief contextual references are fine. IMPORTANT: Business cycle measurement methodology (e.g., cycle dating, leading/lagging indicators, diffusion indices) IS within scope — these are tools for identifying and characterizing business cycles, not general national accounting concepts. Only penalize if a lesson teaches GDP construction, price index methodology, or sectoral balances as its own subject\n      - Should NOT create dedicated lessons teaching consumption-savings models or life-cycle theory (neighboring chapter \"Consumption and savings\" covers that) — brief contextual references are fine. IMPORTANT: Documenting the empirical cyclical behavior of consumption (e.g., \"Consumption Comovement\") IS within scope as a business cycle fact; only penalize if the lesson teaches consumption theory itself (permanent income hypothesis, life-cycle model, etc.)\n      - Should NOT create dedicated lessons teaching investment theory or q-models (neighboring chapter \"Investment and capital\" covers that) — brief contextual references are fine. IMPORTANT: Documenting the empirical cyclical behavior of investment (e.g., \"Investment Comovement\") IS within scope as a business cycle fact; only penalize if the lesson teaches investment theory itself (q-models, adjustment costs, etc.)\n      - Should NOT create dedicated lessons teaching labor market search models or wage setting (neighboring chapter \"Unemployment and labor in macro\" covers that) — brief contextual references are fine. IMPORTANT: Documenting the empirical cyclical behavior of unemployment/employment IS within scope as a business cycle fact; only penalize if the lesson teaches labor market theory itself (search and matching, wage bargaining, etc.)\n\n      \n  - Each lesson should cover a SINGLE, SPECIFIC concept that can be explained within 10 short tweets\n  - Break down topics into the smallest, most manageable units possible, so that each lesson can be learned in 2-3 minutes\n  - If a topic is too broad, split it into multiple lessons\n  - Each lesson should be extremely focused on a SINGLE concept\n  - If a lesson is too broad, split it into multiple lessons\n  - Each lesson must cover a SINGLE concept. Using \"AND\", \"OR\", \"VS\" (or equivalents in other languages like \"e\", \"ou\", \"y\", \"o\") in a title is a signal it MAY be too broad — but it is acceptable when the comparison or pairing IS the concept itself (e.g., \"DEPT-90 y DEPT-135\" where distinguishing two NMR techniques is the lesson, or \"IPv4 vs. IPv6 Format\" where the format contrast is one concept). Only penalize when AND/OR/VS joins genuinely separate concepts that deserve their own lessons (e.g., \"Strings and Lists\" where each is a full topic)\n  - Lesson titles should be short and specific to the exact concept covered\n  - Build a logical progression from basic to advanced concepts\n  - Ensure lessons build on knowledge from previous lessons\n  - Focus lessons for this specific chapter, not the entire course\n  - Don't include summary or review lessons. For example, do NOT create a lesson title \"Summary of Key Concepts\" or \"Review of Chapter\"\n  - Don't include assessment or quiz lessons\n  - Don't include final project or capstone lessons\n  - Should follow the language specified by language parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Descriptions should be concise and straight to the point, no fluff/filler words (avoid \"learn\", \"understand\", \"explore\", \"introduction to\", etc.)\n  - You don't need to evaluate the output format here, just focus on the lesson content quality\n  - Include an extensive list of lessons to fully cover the chapter's scope. The key metric is completeness: are all concepts in the chapter description adequately covered with sufficient granularity? Broad technical chapters (e.g., web fundamentals, Python basics) typically need 80-120+ lessons. Narrower or more specialized chapters (e.g., legal theory of evidence, NMR spectroscopy) may need fewer if the domain is inherently smaller — do not penalize for fewer lessons if the chapter's scope is fully covered\n\n  Neighboring chapter scope judgment:\n  - The chapter description is the SOURCE OF TRUTH for what is in-scope. Neighboring chapter constraints are guardrails against scope creep, NOT vetoes over topics listed in the chapter description\n  - If a topic is explicitly mentioned in the chapter description, it is in-scope even if it touches on a neighboring chapter's domain (e.g., \"Claisen\" listed in a carbonyls chapter is in-scope even though esters have their own chapter)\n  - The key test: does a lesson teach a topic AS ITS OWN SUBJECT (violation) or through the LENS OF THIS CHAPTER (acceptable)? Documenting empirical patterns/observations of X within this chapter's context is NOT the same as teaching X's theory (e.g., documenting consumption's cyclical behavior is a business cycle fact, not consumption theory)\n  - When a lesson's title mentions a neighboring topic, read the description to determine focus. A lesson titled \"Cortiços as disease ecologies\" focused on disease transmission is health content, not urbanization content\n\n  Things to check:\n  - Is each lesson too broad? If so, it should be broken down further\n  - Can each concept be explained in 10 short tweets or less? If not, it should be broken down\n  - Does each lesson focus on a single specific concept? If not, it should be split\n  - Does it have lessons that don't belong in this chapter? If so, they should be removed\n\n    ",
+  "judgedAt": "2026-02-22T19:47:56.753Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model D provides the most extensive and granular lesson list (108 lessons) with exceptional coverage of the chapter's scope. It covers all major areas: business cycle definition and phases, measurement methodology (detrending, HP filter, band-pass filters via the detrending lesson), stylized facts, comovements across many variables (consumption, investment, hours, wages, profits, credit, asset prices, trade), sectoral comovements (durables, construction, services, cross-sector, supply chain propagation), inflation patterns (cyclicality, slack, stagflation, cost-push, demand-pull, persistence, expectations), unemployment patterns (cyclicality, lag, Okun's law, discouraged workers, labor force participation, scarring), and productivity (labor productivity, TFP, labor hoarding, capacity utilization, composition effects, reallocation, cleansing effect). It properly separates stylized facts from theoretical models and covers each comovement individually. The neighboring chapter boundaries are mostly respected—it documents empirical cyclical behavior of consumption, investment, and unemployment without teaching their underlying theories. Some potential issues: lessons on 'Unemployment: concept', 'Unemployment rate', 'Employment', 'Price level' border on being too basic/definitional and could be seen as belonging to macroeconomic accounting. The lessons on 'Discouraged workers', 'Involuntary part-time work', and 'Scarring effects' push slightly into labor market territory but are presented through a cyclical lens. A few lessons could arguably be combined (e.g., 'Labor hoarding' and 'Labor hoarding and productivity' seem redundant). Some titles use colons with 'concept' which is slightly stylistically inconsistent. Overall, this is the most comprehensive and well-structured output.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model G provides an extensive list (100 lessons) with very strong coverage. It covers business cycle definition, phases, NBER dating, duration/amplitude, measurement tools (detrending, HP filter, band-pass filter, log transformation, growth rate series, linear trend detrending), stylized facts, comovements (procyclical/countercyclical/acyclical, leading/lagging/coincident), and detailed coverage of specific variables (unemployment, employment, hours, labor force participation, inflation including persistence/Phillips curve/stagflation/disinflation/deflation/core vs headline, productivity, capacity utilization, consumption by type, investment, housing, inventories, government spending, trade, sectors). It also covers international synchronization, Great Moderation, regime changes, specific historical episodes (GFC, pandemic), diffusion index, input-output propagation, real-time data revisions, and filter sensitivity. The granularity is excellent—each lesson is well-scoped to a single concept. Neighboring chapter boundaries are well respected; empirical cyclical behavior is documented without teaching underlying theories. Some minor issues: 'Depression', 'Double-dip recession', 'Jobless recovery', 'Slowdown' are somewhat tangential additions. 'Layoff inflows' and 'Job-finding outflows' push slightly into labor market search/matching territory. The specific historical episodes (GFC, pandemic) are nice additions but could be seen as slightly beyond pure stylized facts. Overall very strong.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model A provides 45 lessons with good coverage of the chapter's scope. It covers business cycle definition, phases, dating, classical vs growth cycles, duration, amplitude, stylized facts, detrending (HP filter, band-pass filters), volatility, output fluctuations, persistence, asymmetry, and comovements for consumption, investment, government spending, net exports, inflation, unemployment, productivity (labor and TFP), hours worked, real wages, profits, interest rates, money/credit, asset prices. It covers sectoral comovement including broad-based recessions, manufacturing vs services, durables vs nondurables, housing/construction, and international synchronization. The coverage is solid but less granular than Models D and G. The lesson 'Procyclical, Countercyclical, and Acyclical Variables' combines three concepts with 'and' in the title, violating the single-concept rule. Similarly, 'Leading, Lagging, and Coincident Indicators' combines three concepts. 'Stylized Facts Summary Table' is essentially a summary/review lesson which is explicitly prohibited. 'Procyclical vs. Countercyclical Prices' uses 'vs.' joining two concepts. The lesson 'Classical Cycles vs. Growth Cycles' uses 'vs.' but the comparison IS the concept so this is acceptable. Missing some topics like diffusion indices, output gap, capacity utilization (covered), labor force participation, Great Moderation. Overall good but has some rule violations and less granularity than the top models.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model C provides 35 lessons with decent coverage. It covers business cycle definition, phases, dating, trend vs cycle, detrending, output fluctuations, output gap, comovements for consumption, investment, inflation, unemployment (including Okun's law), labor force participation, hours worked, labor productivity, procyclical productivity, TFP, real wages, price markups, interest rates, money/credit, asset prices, durables vs nondurables, sectoral comovement, trade flows, stylized facts summary, international synchronization, asymmetry, and Great Moderation. Issues: 'Government Spending and Net Exports Over the Cycle' combines two concepts with 'and'. 'Stylized Facts of U.S. Business Cycles' is essentially a summary lesson. 'Durables vs. Nondurables Across Sectors' uses 'vs.' joining two concepts that could be separate. The list is less extensive than Models D, G, or A—missing coverage of inventories, capacity utilization, profits, credit/financial variables in depth, leading/lagging/coincident indicators (mentioned but as one lesson 'Leading, Coincident, and Lagging Indicators' combining three concepts), diffusion indices, and measurement methodology details. Descriptions sometimes use filler language. Overall adequate but less granular and has some rule violations.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model F provides 29 lessons with moderate coverage. It covers business cycle definition, phases (expansion, peak, contraction, trough), recessions, growth trend, cyclical component, comovement, procyclical/countercyclical/acyclical, leading/lagging/coincident indicators, GDP persistence, output volatility, sectoral comovement, consumption cyclicality and relative volatility, investment cyclicality and relative volatility, employment cyclicality, unemployment countercyclicality and lagging pattern, inflation cyclicality and lagging pattern, labor productivity cyclicality, and international cycle correlation. The coverage is quite thin compared to other models. Missing: detrending methods, HP filter, band-pass filters, output gap, Okun's law, TFP, real wages, hours worked, profits, credit/financial variables, asset prices, inventories, government spending, net exports, durables vs nondurables, construction, housing, Great Moderation, diffusion indices, cross-correlations, asymmetry of cycles. The descriptions are concise and follow formatting rules well. No major rule violations in titles. But the lack of completeness is a significant weakness—many topics from the chapter description are not adequately covered.",
+          "score": 5.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model E provides only 28 lessons, making it one of the least extensive outputs. Coverage includes business cycle definition, phases (peak, trough, expansion, contraction), dating, duration and amplitude asymmetry, output persistence, volatility ranking, durable consumption, investment, services vs manufacturing, construction, inventories, employment, hours worked, unemployment, real wages, labor productivity, output-consumption and output-investment comovement, leading/coincident/lagging indicators, stock prices as leading indicator, labor-market lagging behavior, comovement intensifying in recessions, high-cyclicality sectors, and inflation's unstable cyclical behavior. Missing significant topics: detrending methods, HP filter, band-pass filters, output gap, Okun's law, TFP, profits, credit/financial variables, money supply, interest rates, government spending, net exports/trade, international synchronization, Great Moderation, diffusion indices, cross-correlations, capacity utilization, real wages in depth, labor force participation. 'Volatility ranking across aggregates' combines multiple concepts. Some descriptions use comparative language that suggests multiple concepts in one lesson. The list lacks the granularity expected. Coverage gaps are substantial.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model B provides only 28 lessons with the least comprehensive coverage. While the lessons it does include are well-focused and follow the single-concept rule, the coverage is severely limited. It covers: business cycle definition, expansions, recessions, peaks, troughs, amplitude, frequency, trend output, cyclical output, procyclical/countercyclical/acyclical, leading/lagging/coincident indicators, cyclical volatility, macroeconomic comovement, consumption cyclicality, investment volatility, inflation patterns, unemployment countercyclicality, Okun's law, labor productivity, real wages, sectoral synchronization, durables sensitivity, nondurables stability, services sector resilience. Missing: detrending methods, HP filter, band-pass filters, output gap, TFP, hours worked, profits, credit/financial variables, money supply, interest rates, asset prices, government spending, net exports/trade, inventories, construction/housing, international synchronization, Great Moderation, diffusion indices, cross-correlations, capacity utilization, labor force participation, asymmetry of cycles, cycle dating methodology, persistence. The descriptions are quite terse—sometimes just fragments. Coverage is far too thin for a chapter that requires extensive granularity.",
+          "score": 4.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model G is a masterclass in instructional design for micro-learning. It perfectly adheres to all constraints, including the negative constraints (no 'AND/OR/VS' on separate concepts, no summary lessons, no fluff in descriptions). Most importantly, it completely satisfies the requirement to provide an 'extensive' and highly granular list. With 114 lessons, it breaks down the methodology, cycle phases, detrending tools, comovements, and sectoral facts into single, easily digestible concepts that take 2-3 minutes to learn. It avoids teaching the theoretical models of neighboring chapters, strictly focusing on the cyclical facts.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model D is also exceptionally good, offering a highly extensive and granular list of 116 lessons. It brilliantly breaks down complex macroeconomic dynamics (such as upstream/downstream propagation and specific cyclical volatility facts) into bite-sized pieces. It successfully avoids summary lessons and 'AND/OR/VS' violations (its single use of 'and' connects a concept and its mechanism, which is permitted). The only minor difference from Model G is that some titles follow a slightly repetitive 'Topic: concept' naming pattern, but the content quality is outstanding.",
+          "score": 9.8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model B perfectly follows the strict formatting rules, avoids fluff, and correctly splits complex topics (like leading, lagging, and coincident indicators) into their own single-concept lessons, adhering to the 'AND/OR/VS' constraint. However, with only 28 lessons, it misses the explicit prompt requirement to provide an 'extensive' list with maximum granularity for a broad chapter.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model F performs similarly to Model B. It successfully avoids the negative constraints (no 'AND/OR/VS' joining separate concepts, no summary lessons) and features well-written, concise titles and descriptions. Like Model B, it fails to provide the extensive depth and high granularity requested by the prompt, stopping at 29 lessons.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model C provides a decent list but violates the critical negative constraint regarding 'AND/OR/VS'. Titles like 'Government Spending and Net Exports Over the Cycle' and 'Leading, Coincident, and Lagging Indicators' lump genuinely distinct concepts together that should be split into individual micro-lessons. It also lacks the extensive granularity of the top models.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model E also violates the 'AND/OR/VS' rule by grouping multiple concepts into single lessons (e.g., 'Leading, coincident, and lagging indicators'). It is also very brief (28 lessons), missing the core requirement to produce an extensive, highly granular breakdown of the chapter.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model A has multiple severe rule violations. It groups distinct concepts together using 'AND' and commas (e.g., 'Procyclical, Countercyclical, and Acyclical Variables', 'Leading, Lagging, and Coincident Indicators', 'Money and Credit Over the Cycle'), which directly disobeys the single-concept and splitting rules. Furthermore, it includes a 'Stylized Facts Summary Table' lesson, which violates the strict rule against adding summary or review lessons.",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Most extensive and granular while staying largely within scope: clear separation of measurement concepts (detrending, correlations, diffusion index, revisions, NBER dating) from empirical stylized facts (cyclicality of inflation, unemployment, productivity, sectoral comovement). It also covers many comovement types individually (trade, credit, profits, wages, inventories, sector linkages). Minor issues: a few titles are near-duplicates (\"Business cycle dating\" vs earlier items), and some items edge toward theory/propagation mechanisms (common shocks, supply-chain propagation) but still framed as comovement facts rather than full models.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Very complete and measurement-heavy in a good way (filters, trend removal options, cross-correlations, real-time revisions, diffusion indices) and also breaks out many comovements (labor market, inflation variants, consumption components, investment/housing/inventories, trade, sectoral detail, credit spreads/defaults, commodity/energy). Generally respects neighboring-chapter constraints by describing empirical cyclicality rather than teaching consumption/investment/labor models. Minor scope creep into episode-specific items (pandemic recession pattern, global financial crisis pattern) and some density that could be trimmed/merged; a few concepts (Phillips curve correlation) could be seen as bordering on theory.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Strong structure and good coverage of measurement vs facts (dating, detrending, volatility, cross-correlations, leading/lagging). Covers many key stylized facts and several sector comovements (manufacturing/services, durables, housing, international). Weaknesses: less granular than the best (many broad lessons like \"Money and Credit Over the Cycle\"), includes a prohibited-style summary/review lesson (\"Stylized Facts Summary Table\"), and some items drift toward decomposition/attribution that can become model-adjacent (variance decompositions by source).",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Solid, accurate core list with basic measurement and many standard stylized facts. However it’s not very extensive for the chapter scope, several lessons bundle multiple concepts (e.g., \"Government Spending and Net Exports Over the Cycle\"; \"Leading, Coincident, and Lagging Indicators\"), and comovement across sectors is not broken down as individually as requested. Less explicit separation of measurement tools vs empirical patterns than top models.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Covers several key stylized facts and some comovements (output-consumption, output-investment, sectoral comovement, inflation instability) with generally concise titles. But it’s not extensive, omits much of the measurement toolkit explicitly called in-scope (detrending/filtering methods, cross-correlations, diffusion indices, data revisions), and some titles still combine concepts (\"Sector cyclicality: services vs manufacturing\").",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Clear and mostly single-concept lessons, but the list is too short and misses many required parts of the chapter description (productivity breadth, comovements across more sectors, measurement methodology like cycle dating tools/filters/cross-correlations). Also some factual over-specificity (e.g., inflation as generally procyclical lagging indicator) without caveats, and limited separation of measurement vs facts.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Accurate but very minimal and underscoped for \"business cycle facts\" plus measurement and sector comovements. Lacks key measurement methods (dating procedures, detrending tools, diffusion indices), sparse sector-by-sector comovement coverage, and several items are broad/overlapping (multiple volatility lessons, basic definitions) without the extensive granularity requested.",
+          "score": 5.5
+        }
+      ]
+    }
+  ],
+  "taskId": "chapter-lessons",
+  "testCaseId": "en-economics-business-cycles-1"
+}

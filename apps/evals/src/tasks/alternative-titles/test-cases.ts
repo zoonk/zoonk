@@ -1,37 +1,53 @@
 const SHARED_EXPECTATIONS = `
-  - Only include titles that are **equivalent** to the base title — i.e., they refer to the **same course** a user would expect to find under that subject.
-  - **Same‑course test** (use all of these):
-    1) Would we merge both titles into one course page? If yes, they are equivalent.
-    2) Would teaching goals, syllabus scope, and prerequisites remain the same? If yes, they are equivalent.
-    3) Is the difference only wording, dialect/variant, audience, abbreviation, or light framing? If yes, they are equivalent.
-  - **Broader/narrower rule**:
-    - **Broader** expands scope beyond the subject’s core boundaries → exclude. Example: "Web Development" is broader than "Frontend Development".
-    - **Narrower** is a proper subset that we’d plausibly ship as a separate course (different scope/learning goals) → exclude. Example: "React" is narrower than "JavaScript"; "Deep Learning" is narrower than "Machine Learning".
-  - **Not narrower (allowed)** when it is still the same course subject:
-    - **Dialect/variant** names (e.g., "Inglês Americano", "Inglês Britânico", "French Grammar", "Optimisation" vs "Optimization"). Dialects are surface variants of the same language course.
-    - **Audience qualifiers** (e.g., "IA para Desenvolvedores", "UX for Healthcare"). Audience framing ≠ topic narrowing if the core subject stays the same.
-    - **Series/labeling of the same entity** (e.g., "Formula One", "F1", "Formula One Championship", "F1 Series") — these all clearly denote the same sport/competition brand.
-    - **Light framing words** like "principles", "fundamentals", "basics", "overview", or "for beginners" when the core topic remains unchanged.
-  - **Decision checklist for each candidate title** (answer all):
-    - Does it introduce a different subfield or tool? If yes → narrower → exclude.
-    - Does it expand to an umbrella domain? If yes → broader → exclude.
-    - If we offered both titles simultaneously, would users be confused by two separate courses? If yes → they are equivalent and, therefore, can be included as an alternative title.
-  - **Concrete examples**:
-    - **Include**: "Client‑Side Web Development" ↔ "Frontend Development"; "IA" / "Inteligência Artificial" / "IA para Desenvolvedores"; "Inglês" ↔ "Inglês Americano" / "Inglês Britânico" / "Inglês Britânico e Americano"; "Formula 1" ↔ "Formula One" / "F1" / "Formula One Championship" / "F1 Series"; "UX Design" ↔ "UX Design Principles"; "World War II" ↔ "WWII" / "Second World War"; "Data Science" ↔ "Data Science Fundamentals".
-    - **Exclude**: "Web Development" (broader than "Frontend Development"); "Aprendizado de Máquina" (narrower than "Inteligência Artificial"); "React" (narrower than "JavaScript"); "Deep Learning" (narrower than "Machine Learning"); "Motorsport" (broader than "Formula 1"); "Differential Calculus" (narrower than "Calculus").
+  **PURPOSE**: Alternative titles prevent AI from generating duplicate courses for the same subject. If someone creates "Python for Data Science", the AI should recognize it as the existing "Python" course — not create a separate one. The list catches all title variants that map to the same course.
+
+  **CORE RULE**: If the title still contains the base subject (or a recognized synonym/abbreviation), it is the SAME course — regardless of qualifiers, subtitles, tools, focus areas, or context added to it. We do NOT want separate courses for each variant.
+
+  Examples of this rule:
+  - "World War II: Normandy and D-Day" → contains "World War II" → same course
+  - "Python for Data Science" → contains "Python" → same course
+  - "IA Generativa" → contains "IA" → same course
+  - "Desarrollo Web con React" → contains "Desarrollo Web" → same course
+  - "ML with Python" → contains "ML" → same course
+  - "Differential Calculus" → contains "Calculus" → same course
+  - "Formula 1 Motorsport" → contains "Formula 1" → same course
+
+  **When to EXCLUDE**:
+  - **Broader**: The title covers a larger domain that encompasses unrelated subjects → exclude. Example: "Web Development" is broader than "Frontend Development"; "Programming" is broader than "Python"; standalone "Motorsport" is broader than "Formula 1".
+  - **Standalone different subject**: The title drops the base subject entirely and represents something else → exclude. Example: "React" (no "JavaScript" in the title — it’s its own technology); "Deep Learning" (no "Machine Learning" — it’s its own field); "Battle of Normandy" (no "World War II" — it’s its own topic); standalone "Motorsport" (no "Formula 1").
+  - **Ambiguous**: The title could refer to multiple unrelated topics → exclude. Example: just "Matrix" without any disambiguator.
+
+  **Also include** (even without the base subject in the title):
+  - **Recognized synonyms/abbreviations**: "WWII" / "Second World War" ↔ "World War II"; "F1" ↔ "Formula 1"; "ML" ↔ "Machine Learning"; "JS" ↔ "JavaScript"; "UI Development" / "Client-Side Development" ↔ "Frontend Development".
+  - **Dialect/variant names**: "Inglês Americano", "Inglês Britânico", "Optimisation" vs "Optimization".
+  - **Language learning aspects**: "Gramática Inglesa", "TOEFL", "Business English" — all map to the same language course.
+  - **Light framing words**: "principles", "fundamentals", "basics", "bootcamp", "certification prep" — these don’t change the subject.
+  - **Descriptive disambiguators**: "The Matrix (1999 film)", "Matrix Movie" — these clarify which subject, they don’t change it.
+
+  Additional notes:
   - Include different locale spellings when applicable (e.g., "Optimization" and "Optimisation").
   - Include abbreviations if they mean the same thing (e.g., "AI"/"IA", "ML" when base is "Machine Learning").
-  - Levels like "Beginner", "Advanced", "Calculus 1", "101", etc., are acceptable if they keep the same subject.
+  - Levels like "Beginner", "Advanced", "Calculus 1", "101", etc., are acceptable.
   - It’s fine to skip spacing/hyphenation/accents variants — serialization will handle those.
   - Awkward or redundant phrasings are acceptable.
   - Ignore casing issues (e.g., "javascript" vs "JavaScript").
+  - Well-known English terms in non-English titles are acceptable (e.g., "Business English" in Portuguese, "TOEFL", "IELTS").
+  - Ideally, it should have a huge list of alternative titles, really good ones have more than 100 alternative titles
+
+  SCORING CALIBRATION:
+  - Apply the CORE RULE above as the PRIMARY lens: does the title still contain the base subject? If yes → it’s the same course, do NOT penalize.
+  - Only penalize for titles that are genuinely broader (umbrella domain), a standalone different subject (base subject dropped entirely), or ambiguous.
+  - Do NOT penalize for qualifiers, subtitles, tools, focus areas, or context added to the base subject — these are all the same course.
+  - Do NOT heavily penalize for missing titles — only penalize for wrong inclusion/exclusion decisions.
+  - A large list is ideal but do NOT heavily penalize shorter lists if all included titles are correct.
 `;
 
 export const TEST_CASES = [
   {
     expectations: `
-      - Should include "Frontend Engineering"
-      - Should NOT include topics like "Web Development" and "JavaScript Development" since those are separate courses
+      - Should include "Frontend Engineering", "Client-Side Development"
+      - "UI Development" and similar titles are acceptable — they refer to the same discipline
+      - Should NOT include "Web Development" (broader) or "JavaScript" (different subject)
       - Results should be in English
 
       ${SHARED_EXPECTATIONS}
@@ -45,9 +61,9 @@ export const TEST_CASES = [
   {
     expectations: `
       - Should include items like "Formula One", "F1"
-      - Should NOT include "Motorsport", "Racing", etc.
-      - Items like "F1 Racing", "Formula One Championship", "F1 Series", etc. are fine because they clearly refer to Formula 1
-      - A narrower topic in this context would be something like "F1 Engineering" because it focuses is on engineering aspects
+      - Items like "F1 Racing", "Formula One Championship", "F1 Series", "Formula 1 Motorsport" are fine because they clearly refer to Formula 1
+      - Should NOT include standalone "Motorsport" or "Racing" (broader subjects that encompass more than F1)
+      - A genuinely different subject would be something like "F1 Engineering" or "Motorsport Engineering"
       - Results should be in English
 
       ${SHARED_EXPECTATIONS}
@@ -79,9 +95,11 @@ export const TEST_CASES = [
       - Should include "Língua Inglesa", "A Língua Inglesa"
       - Variants like "Inglês Americano", "Inglês Britânico" are acceptable since they refer to the same language
       - Terms like "Inglês Moderno" and "Inglês Contemporâneo" are acceptable since they refer to the same language
-      - Anything that refers to learning English is acceptable
-      - Should NOT include "Cultura Inglesa", "Gramática Inglesa", "Spanish", etc
-      - Should NOT include exams like "TOEFL", "IELTS", etc., since they are different topics
+      - Should include any title that a user might search for when wanting to learn English, since our platform consolidates all English learning into one course
+      - This INCLUDES: "Gramática Inglesa", "Vocabulário de Inglês", "Pronúncia do Inglês", "Conversação em Inglês", "TOEFL", "IELTS", "Cambridge English" — these all map to the same English course
+      - Professional/purpose context is also acceptable: "Inglês Técnico", "Inglês para Negócios", "Business English", "Inglês para Entrevistas", "Inglês Acadêmico" — these are all English learning, not separate subjects
+      - Well-known English terms are acceptable even in Portuguese titles (e.g., "Business English", "TOEFL", "IELTS")
+      - Should NOT include: "Cultura Inglesa" (culture, not language learning), "Literatura Inglesa" (literature, not language learning), "Spanish" (different language)
       - Should be in Portuguese
 
       ${SHARED_EXPECTATIONS}
@@ -95,8 +113,10 @@ export const TEST_CASES = [
   {
     expectations: `
       - Should include "IA"
-      - Should NOT include "Aprendizado de Máquina", "Inteligência Humana", etc
-      - Items like "IA para X" are also acceptable since they refer to the same core subject.
+      - Variants like "IA Generativa", "IA com ChatGPT", "IA com LLMs" are acceptable — they still contain "IA", so they're the same course
+      - Items like "IA para X" are also acceptable since they refer to the same core subject
+      - Should NOT include standalone different subjects like "Aprendizado de Máquina", "Deep Learning", "ChatGPT" — these drop "IA" entirely
+      - Should NOT include "Inteligência Humana" (different subject)
       - All alternatives should be in Brazilian Portuguese
       - Should be in Portuguese
 
@@ -111,7 +131,8 @@ export const TEST_CASES = [
   {
     expectations: `
       - Should include "ML"
-      - Should NOT include "AI", "Deep Learning", etc
+      - "ML with X" variants (e.g., "ML with Python", "ML with TensorFlow", "ML with scikit-learn") are acceptable — the core subject is still Machine Learning
+      - Should NOT include "AI", "Deep Learning", "Data Science" — these are genuinely different fields
       - Results should be in English
 
       ${SHARED_EXPECTATIONS}
@@ -139,7 +160,8 @@ export const TEST_CASES = [
   {
     expectations: `
       - Should include "Python Programming", "Python Language", "Python for Beginners"
-      - Should NOT include "Programming", "Data Science", etc
+      - "Python for X" variants (e.g., "Python for Data Science", "Python for Web Development", "Python for Automation") are acceptable — these are all Python courses, not separate subjects
+      - Should NOT include standalone different subjects like "Data Science", "Web Development", "Programming" — these are broader/different courses
       - Results should be in English
 
       ${SHARED_EXPECTATIONS}
@@ -153,6 +175,10 @@ export const TEST_CASES = [
   {
     expectations: `
       - Should include "Desarrollo de Sitios Web", "Programación Web", etc
+      - "Full Stack" variants like "Desarrollo Web Full Stack" are acceptable — it's still web development
+      - "Diseño y Desarrollo Web" is acceptable — design framing doesn't make it a different course
+      - Tool/framework variants like "Desarrollo Web con React", "Desarrollo Web con Angular", "Desarrollo Web con Django" are acceptable — they still contain "Desarrollo Web", so they're the same course
+      - Should NOT include standalone "Programación" (broader) or standalone "Frontend" / "Backend" / "React" / "Angular" (different subjects — they drop "Desarrollo Web" entirely)
       - All alternatives should be in Spanish
 
       ${SHARED_EXPECTATIONS}
@@ -165,7 +191,8 @@ export const TEST_CASES = [
   },
   {
     expectations: `
-      - Should NOT include "Machine Learning", "Statistics", "Big Data", etc
+      - Variants like "Data Science Certification Prep", "Data Science Bootcamp" are acceptable — they're still data science
+      - Should NOT include "Machine Learning", "Statistics", "Big Data" as standalone subjects — these are genuinely different fields
       - Results should be in English
 
       ${SHARED_EXPECTATIONS}
@@ -180,7 +207,8 @@ export const TEST_CASES = [
     expectations: `
       - Should include "Matrix Movie" (without "The")
       - May include "The Matrix Trilogy" and similar variations since it refers to the same film series
-      - Should NOT include just "Matrix" (ambiguous)
+      - Descriptive disambiguators are acceptable: "The Matrix (1999 film)", "Matrix (1999 film)", "The Matrix (Keanu Reeves film)", "The Matrix (bullet time film)" — these clarify which subject, they don't change it. "Matrix (1999 film)" is NOT ambiguous because the disambiguator makes the subject clear
+      - Should NOT include just "Matrix" alone without any disambiguator (ambiguous — could refer to mathematics, the movie, etc.)
       - Should NOT include broader courses like "Science Fiction Films"
       - Results should be in English
 
@@ -194,8 +222,9 @@ export const TEST_CASES = [
   },
   {
     expectations: `
-      - Should NOT include "Mathematics", "Differential Calculus", etc
+      - Sub-areas like "Differential Calculus", "Integral Calculus", "Limits and Continuity" are acceptable — we wouldn't want separate courses for these, they're all calculus
       - Levels like Calculus I, II, III are acceptable since they refer to the same subject
+      - Should NOT include "Mathematics" (broader) or "Linear Algebra" (different subject)
       - Results should be in English
 
       ${SHARED_EXPECTATIONS}
@@ -209,7 +238,9 @@ export const TEST_CASES = [
   {
     expectations: `
       - Should include "World War 2", "Second World War", "WWII", "WW2"
-      - Should NOT include just "World War" or "World War I"
+      - Subtitled variants like "World War II: Normandy and D-Day", "World War II: Holocaust and Genocide", "European Theater of World War II" are acceptable — they still contain "World War II", so they're the same course
+      - Should NOT include standalone topics that drop "World War II" entirely, like "Battle of Normandy", "D-Day", "Holocaust" — those could be their own courses
+      - Should NOT include just "World War" (broader) or "World War I" (different subject)
       - Results should be in English
 
       ${SHARED_EXPECTATIONS}

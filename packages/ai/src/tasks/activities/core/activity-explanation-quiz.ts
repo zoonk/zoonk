@@ -4,14 +4,13 @@ import { generateText, stepCountIs } from "ai";
 import { type QuizQuestion, type SelectImageQuestion, quizTools } from "../_tools/quiz";
 import systemPrompt from "./activity-explanation-quiz.prompt.md";
 
-const DEFAULT_MODEL =
-  process.env.AI_MODEL_ACTIVITY_EXPLANATION_QUIZ ?? "anthropic/claude-sonnet-4.5";
+const DEFAULT_MODEL = process.env.AI_MODEL_ACTIVITY_EXPLANATION_QUIZ ?? "openai/gpt-5.2";
 
 const FALLBACK_MODELS = [
   "anthropic/claude-opus-4.5",
-  "openai/gpt-5.2",
+  "anthropic/claude-sonnet-4.5",
   "google/gemini-3-flash",
-  "openai/gpt-5-mini",
+  "google/gemini-3-pro-preview",
 ];
 
 export type ActivityExplanationQuizSchema = {
@@ -53,7 +52,7 @@ LANGUAGE: ${language}
 EXPLANATION_STEPS:
 ${formattedExplanationSteps}
 
-Generate quiz questions that test understanding of these concepts. Use the available tools to create questions in appropriate formats. Aim for 4-8 questions covering the key concepts.`;
+Generate quiz questions that test understanding of these concepts. Use the available tools to create questions in appropriate formats. You MUST generate at least 5 questions covering the key concepts.`;
 
   const providerOptions = buildProviderOptions({
     fallbackModels: FALLBACK_MODELS,

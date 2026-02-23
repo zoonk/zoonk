@@ -11,7 +11,7 @@ const SHARED_EXPECTATIONS = `
 
   5. APPROPRIATE SCOPE: Content should match the lesson's scope - not broader, not narrower.
 
-  6. CLEAR TITLES: Titles should be short and action-oriented. No vague words like "learn about", "understand", "explore".
+  6. CLEAR TITLES: Titles must be short and action-oriented. No vague words like "learn about", "understand", "explore" in titles. Descriptions have more flexibility but should prefer action-oriented language.
 
   7. NO FLUFF: No summary, review, or assessment activities.
 
@@ -23,6 +23,8 @@ export const TEST_CASES = [
   {
     expectations: `
       Avoid granular steps like "boil water" or "add salt" - these belong inside activities, not as activities themselves.
+
+      Activity ordering matters for time-sensitive cooking steps. For carbonara, the guanciale should ideally be cooked before or while the pasta cooks so the pasta is hot for the final emulsification. Listing pasta fully before guanciale is a minor sequencing issue, not a fundamental error.
 
       ${SHARED_EXPECTATIONS}
     `,
@@ -173,7 +175,7 @@ export const TEST_CASES = [
     expectations: `
       SPECIAL CONSIDERATION: This is an extremely simple task (cracking a single egg).
 
-      The number of activities should reflect task complexity - a simple task needs fewer activities than a complex one. Over-fragmenting a simple task into many activities is a sign of poor sizing.
+      The number of activities should reflect task complexity - a simple task needs fewer activities than a complex one. Over-fragmenting a simple task into many activities is a sign of poor sizing. For extremely simple tasks like this, 1-2 activities are acceptable even if individual activities cannot fully reach the 10-step threshold. The priority is avoiding over-fragmentation, not hitting a step count.
 
       Avoid granular steps like "hold egg", "tap egg", "position over bowl" - these are steps within an activity, not activities themselves.
 

@@ -1,0 +1,149 @@
+{
+  "expectations": "\n      - Should include \"Matrix Movie\" (without \"The\")\n      - May include \"The Matrix Trilogy\" and similar variations since it refers to the same film series\n      - Descriptive disambiguators are acceptable: \"The Matrix (1999 film)\", \"Matrix (1999 film)\", \"The Matrix (Keanu Reeves film)\", \"The Matrix (bullet time film)\" — these clarify which subject, they don't change it. \"Matrix (1999 film)\" is NOT ambiguous because the disambiguator makes the subject clear\n      - Should NOT include just \"Matrix\" alone without any disambiguator (ambiguous — could refer to mathematics, the movie, etc.)\n      - Should NOT include broader courses like \"Science Fiction Films\"\n      - Results should be in English\n\n      \n  **PURPOSE**: Alternative titles prevent AI from generating duplicate courses for the same subject. If someone creates \"Python for Data Science\", the AI should recognize it as the existing \"Python\" course — not create a separate one. The list catches all title variants that map to the same course.\n\n  **CORE RULE**: If the title still contains the base subject (or a recognized synonym/abbreviation), it is the SAME course — regardless of qualifiers, subtitles, tools, focus areas, or context added to it. We do NOT want separate courses for each variant.\n\n  Examples of this rule:\n  - \"World War II: Normandy and D-Day\" → contains \"World War II\" → same course\n  - \"Python for Data Science\" → contains \"Python\" → same course\n  - \"IA Generativa\" → contains \"IA\" → same course\n  - \"Desarrollo Web con React\" → contains \"Desarrollo Web\" → same course\n  - \"ML with Python\" → contains \"ML\" → same course\n  - \"Differential Calculus\" → contains \"Calculus\" → same course\n  - \"Formula 1 Motorsport\" → contains \"Formula 1\" → same course\n\n  **When to EXCLUDE**:\n  - **Broader**: The title covers a larger domain that encompasses unrelated subjects → exclude. Example: \"Web Development\" is broader than \"Frontend Development\"; \"Programming\" is broader than \"Python\"; standalone \"Motorsport\" is broader than \"Formula 1\".\n  - **Standalone different subject**: The title drops the base subject entirely and represents something else → exclude. Example: \"React\" (no \"JavaScript\" in the title — it’s its own technology); \"Deep Learning\" (no \"Machine Learning\" — it’s its own field); \"Battle of Normandy\" (no \"World War II\" — it’s its own topic); standalone \"Motorsport\" (no \"Formula 1\").\n  - **Ambiguous**: The title could refer to multiple unrelated topics → exclude. Example: just \"Matrix\" without any disambiguator.\n\n  **Also include** (even without the base subject in the title):\n  - **Recognized synonyms/abbreviations**: \"WWII\" / \"Second World War\" ↔ \"World War II\"; \"F1\" ↔ \"Formula 1\"; \"ML\" ↔ \"Machine Learning\"; \"JS\" ↔ \"JavaScript\"; \"UI Development\" / \"Client-Side Development\" ↔ \"Frontend Development\".\n  - **Dialect/variant names**: \"Inglês Americano\", \"Inglês Britânico\", \"Optimisation\" vs \"Optimization\".\n  - **Language learning aspects**: \"Gramática Inglesa\", \"TOEFL\", \"Business English\" — all map to the same language course.\n  - **Light framing words**: \"principles\", \"fundamentals\", \"basics\", \"bootcamp\", \"certification prep\" — these don’t change the subject.\n  - **Descriptive disambiguators**: \"The Matrix (1999 film)\", \"Matrix Movie\" — these clarify which subject, they don’t change it.\n\n  Additional notes:\n  - Include different locale spellings when applicable (e.g., \"Optimization\" and \"Optimisation\").\n  - Include abbreviations if they mean the same thing (e.g., \"AI\"/\"IA\", \"ML\" when base is \"Machine Learning\").\n  - Levels like \"Beginner\", \"Advanced\", \"Calculus 1\", \"101\", etc., are acceptable.\n  - It’s fine to skip spacing/hyphenation/accents variants — serialization will handle those.\n  - Awkward or redundant phrasings are acceptable.\n  - Ignore casing issues (e.g., \"javascript\" vs \"JavaScript\").\n  - Well-known English terms in non-English titles are acceptable (e.g., \"Business English\" in Portuguese, \"TOEFL\", \"IELTS\").\n  - Ideally, it should have a huge list of alternative titles, really good ones have more than 100 alternative titles\n\n  SCORING CALIBRATION:\n  - Apply the CORE RULE above as the PRIMARY lens: does the title still contain the base subject? If yes → it’s the same course, do NOT penalize.\n  - Only penalize for titles that are genuinely broader (umbrella domain), a standalone different subject (base subject dropped entirely), or ambiguous.\n  - Do NOT penalize for qualifiers, subtitles, tools, focus areas, or context added to the base subject — these are all the same course.\n  - Do NOT heavily penalize for missing titles — only penalize for wrong inclusion/exclusion decisions.\n  - A large list is ideal but do NOT heavily penalize shorter lists if all included titles are correct.\n\n    ",
+  "judgedAt": "2026-02-22T18:25:54.971Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model D has the largest list (140+ alternatives), which aligns with the goal of being exhaustive. It correctly includes disambiguated titles like 'The Matrix (1999 film)', 'The Matrix (movie)', 'The Matrix (Wachowski film)', etc. It includes level/framing variations like 'The Matrix 101', 'The Matrix for Beginners', 'The Matrix Fundamentals'. It includes sub-topic variations (philosophy, symbolism, characters, etc.) which are valid same-course alternatives. It does NOT include bare 'Matrix' (avoiding ambiguity). It includes 'Matrix Movie' and 'The Matrix Trilogy' as expected. There are some duplicates ('Beginner's Guide to The Matrix' appears twice, 'The Wachowskis' The Matrix' appears twice) which is minor. Some titles get quite granular ('The Matrix: Agent Smith', 'Red Pill vs Blue Pill in The Matrix') but these still contain the base subject 'The Matrix' so they are valid per the core rule. Overall very strong output.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model E includes good core alternatives like 'The Matrix Movie', 'The Matrix Film', 'The Matrix (1999)', 'Matrix Movie', 'Matrix Film', 'Matrix 1999'. It correctly includes 'Matrix Movie' as expected. However, it includes titles like 'Matrix Film', 'Matrix Explained', 'Matrix Analysis', 'Matrix Overview', 'Matrix Original', 'Matrix Wachowski', 'Matrix Sci-Fi', 'Matrix Philosophy' — these use bare 'Matrix' without a proper disambiguator. 'Matrix Movie' and 'Matrix Film' are acceptable because 'Movie'/'Film' disambiguates, and 'Matrix 1999' is disambiguated by the year. But 'Matrix Original', 'Matrix Wachowski', 'Matrix Sci-Fi', 'Matrix Philosophy', 'Matrix Explained', 'Matrix Analysis', 'Matrix Overview' are more borderline — some could still be ambiguous (e.g., 'Matrix Overview' could be about the mathematical concept). That said, many of these are reasonably disambiguated in context. It includes 'The Matrix Trilogy' is missing but not a heavy penalty. The list is moderate size (41 items). Overall decent but has some ambiguity issues with bare 'Matrix' titles.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model F has a good-sized list (62 alternatives) focusing heavily on disambiguated parenthetical variations. It correctly includes 'Matrix (1999 film)' with disambiguator, 'The Matrix (Keanu Reeves film)' as mentioned in expectations, and many descriptor-based disambiguations. It includes 'Matrix (The Matrix)' which is a bit odd. It does NOT include bare 'Matrix' (good). It does not include 'The Matrix Trilogy' or sequel titles, which is a minor gap. Some titles are quite niche ('The Matrix (hacker sci-fi film)', 'The Matrix (mind-bending sci-fi film)', 'The Matrix (simulation sci-fi film)') but they're technically valid as they contain the base subject and serve as disambiguators. However, the list is somewhat repetitive with many parenthetical variations that are very similar. Missing some expected variants like 'The Matrix Trilogy'. Overall solid but somewhat one-dimensional in its approach.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model B has a small list (24 alternatives) but they are mostly correct. All titles include 'The Matrix' with appropriate disambiguators in parentheses or dashes. It includes expected titles like 'The Matrix (1999 film)', 'The Matrix (Wachowski film)'. However, it's missing 'Matrix Movie' (without 'The') which was specifically called out as expected. It's also missing 'The Matrix Trilogy' which was mentioned as expected. The list is quite short and narrow in scope — almost all are parenthetical disambiguators. No level variations, no sub-topic variations, no framing variations. While all included titles are correct, the list is not exhaustive enough.",
+          "score": 5.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model A includes good alternatives like 'The Matrix Movie', 'The Matrix Trilogy', 'The Matrix (1999)'. It includes sequel titles (Reloaded, Revolutions, Resurrections, The Animatrix) which are valid sub-areas of the same franchise course. However, it does NOT include any 'Matrix' without 'The' with disambiguators like 'Matrix (1999 film)' or 'Matrix Movie' — the expectations specifically mention 'Matrix Movie' (without 'The') should be included. The list is moderate size (35 items). Titles like 'Simulated Reality in The Matrix' are valid since they contain the base subject. No ambiguous bare 'Matrix' included (good). Missing some expected variations like 'The Matrix (1999 film)' with parenthetical disambiguator. Overall decent but missing some key expected variants.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model C has a moderate list (30 items). It includes expected titles like 'The Matrix Movie', 'The Matrix Trilogy'. It includes sequel titles and The Animatrix as sub-areas. However, it includes bare 'The Matrix Cinema' which is a bit odd. It does NOT include 'Matrix Movie' without 'The' — which was specifically expected. Missing 'The Matrix (1999 film)' with proper disambiguator format. 'The Matrix (Film)' is included which is close. The list is not very exhaustive. Overall adequate but not as comprehensive.",
+          "score": 5.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model G includes many good alternatives like 'The Matrix Film', 'The Matrix Movie', 'The Matrix Trilogy', 'The Matrix Franchise'. However, it critically includes bare 'Matrix' without any disambiguator, which the task expectations explicitly say should NOT be included ('Should NOT include just \"Matrix\" alone without any disambiguator'). It also includes 'Matrix Films', 'Matrix Movies', 'Matrix Trilogy', 'Matrix Franchise', 'Matrix Series' — while these have some context that suggests the film, 'Matrix' alone is clearly prohibited. The explicit inclusion of bare 'Matrix' is a significant violation of the stated expectations. The list is moderate size (42 items). It includes 'The Matrix Quadrilogy' and 'The Matrix Quadrology' which are valid variations. Missing 'Matrix Movie' specifically and 'The Matrix (1999 film)' disambiguated format.",
+          "score": 4.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model E is the only model that successfully followed the explicit, highly specific Task Expectation: `Should include \"Matrix Movie\" (without \"The\")`. It also strictly adhered to the negative constraints by ensuring all \"Matrix\" variants included descriptive disambiguators (e.g., \"Matrix 1999\", \"Matrix Sci-Fi\"), avoiding the ambiguous standalone \"Matrix\". The list is well-sized (42 items) and provides great organic variety. It misses a perfect 10 only because it did not include the optional franchise/sequel variations (e.g., \"The Matrix Trilogy\").",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model D provided an incredibly exhaustive and highly organic list of 131 items, perfectly capturing the spirit of the prompt's request for a huge list of variations (themes, characters, cinematic analysis, etc.). However, it missed the explicit Task Expectation to include \"Matrix Movie\" (without \"The\"). Under the Top Penalty Criteria, failing a specific prompt instruction requires a heavy penalty, which drops an otherwise perfect 10/10 list to a 7.5.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model A generated a good, organically varied list (35 items) that smartly included the franchise expansions and sequels (\"The Matrix Trilogy\", \"The Animatrix\", \"The Matrix Reloaded\") as permitted by the prompt. Unfortunately, like most models, it completely missed the strict instruction to include \"Matrix Movie\" without \"The\". This rule violation necessitates a heavy score reduction.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model C is very similar to Model A, offering a solid, organic list of 30 items that includes franchise variations. It suffers from the same rule violation: failing to include the explicitly requested \"Matrix Movie\" (without \"The\").",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model F generated a decent-sized list (61 items), but the variations are highly robotic and mechanical (e.g., repeating the same title with \"movie\", \"film\", \"motion picture\", \"cinema film\", etc., and adding studio names). It also failed the explicit instruction to include \"Matrix Movie\" without \"The\".",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model B produced a very small (24 items) and highly repetitive list limited only to permutations of \"The Matrix (1999 film)\". It lacked the requested exhaustiveness regarding context, application, or sub-topics, and it failed the explicit instruction to include \"Matrix Movie\" without \"The\".",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model G committed a critical failure. The prompt explicitly stated: `Should NOT include just \"Matrix\" alone without any disambiguator (ambiguous)`. Model G included the standalone word \"Matrix\" in its list. This violates the core duplicate detection logic the prompt is trying to establish. It also failed to include \"Matrix Movie\" without \"The\". This major negative constraint violation warrants the heaviest penalty.",
+          "score": 1.5
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Most compliant with the prompt: large, varied set of same-meaning alternatives; consistently keeps the subject unambiguous (always includes “The Matrix” or explicit film disambiguators). Includes many acceptable qualifier variants (analysis, guide, bullet time, etc.). No obvious broader-topic or different-subject inclusions. Only notable gap vs expectations is it does not include the required exact string “Matrix Movie” (without “The”).",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "High-quality list with many unambiguous disambiguated variants, including the explicitly expected “Matrix (1999 film)” and “The Matrix (Keanu Reeves film)”. Stays on-subject. However, it includes “Matrix (The Matrix)”, which is awkward and not a standard clarifying disambiguator, and it still misses the explicitly required exact “Matrix Movie” wording (it has “Matrix (1999 film)” but not “Matrix Movie”). List is substantial but less exhaustive than the best.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Very clean set of unambiguous, correctly disambiguated film-title variants (1999 film/movie/motion picture; Wachowski framing). No bad inclusions. Main weaknesses: relatively short (not exhaustive) and does not include the required “Matrix Movie” (without “The”), nor any trilogy/series variants that the prompt says may be included.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Includes the required “Matrix Movie” (without “The”) and provides several reasonable variants. But it also includes multiple ambiguous entries like “Matrix Film”, “Matrix Philosophy”, “Matrix Analysis”, “Matrix Overview” (these can refer to mathematics/other ‘matrix’ topics without an explicit film disambiguator). Also several entries are telegraphic/unnatural (e.g., “The Matrix Wachowski”).",
+          "score": 6.4
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Generally on-topic and avoids the fully ambiguous standalone “Matrix”. But it misses the required “Matrix Movie” (without “The”) and has some broader/less precise items like “The Matrix Media” and “The Matrix Cinema” that drift toward umbrella coverage beyond the core film/series titling. Overall not very exhaustive.",
+          "score": 6.1
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "On-topic and unambiguous, but misses the required “Matrix Movie” (without “The”) and includes some arguably broader/course-like framings (“The Matrix Lore”, “The Matrix Mythology”, “The Matrix Story and Lore”) that could imply a wider universe study rather than just alternative titles. Also includes separate-installment titles (acceptable per prompt context) but overall list is short.",
+          "score": 5.9
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Contains an explicitly forbidden ambiguous title: standalone “Matrix” with no disambiguator. Also includes “The Matrix Quadrology/Quadrilogy” and “The Matrix Quadrology” (misspelling/inconsistency), and still misses the required exact “Matrix Movie” (without “The”). Despite some good variants, the ambiguous inclusion is a major rule violation.",
+          "score": 3.8
+        }
+      ]
+    }
+  ],
+  "taskId": "alternative-titles",
+  "testCaseId": "en-the-matrix-1"
+}

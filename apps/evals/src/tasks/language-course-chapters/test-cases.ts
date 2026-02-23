@@ -1,8 +1,8 @@
 const SHARED_EXPECTATIONS = `
   - Chapters should follow CEFR progression from A1 (beginner) to C2 (mastery)
   - ALL chapters must be content-domain chapters: grammar structures, vocabulary themes, or communication scenarios
-  - NO skill-based chapters (pronunciation, listening, reading, writing) — those skills are built into every lesson automatically
-  - NO culture chapters (history, traditions, cuisine, music, festivals, customs)
+  - NO skill-based chapters that are explicitly about practicing a skill in isolation (e.g., "Pronunciation Practice", "Listening Exercises", "Writing Workshop", "Reading Comprehension") — those skills are built into every lesson automatically. However, content chapters that USE these skills as a vehicle for teaching language are valid: "Complex Texts & Critical Analysis" (advanced vocabulary/comprehension), "Formal Correspondence" (grammar/expressions for letters), "Academic Discourse" (register/vocabulary). The test: is the chapter about the skill itself, or about language content delivered through that medium?
+  - NO culture chapters that teach about a country/region's history, traditions, or customs as the primary content (e.g., "History of France", "Japanese Festivals", "Brazilian Carnival"). However, vocabulary chapters that teach culture-related words and expressions ARE valid: "Arts & Entertainment Vocabulary" (how to discuss art, music, film in the target language), "Food & Dining" (restaurant vocabulary, ordering expressions), "News & Media Language" (media-related vocabulary/register). The test: is the chapter teaching ABOUT the culture, or teaching language THROUGH cultural topics?
   - NO career or professional chapters (business language, workplace communication)
   - NO proficiency exam preparation chapters (DELE, JLPT, DELF, HSK, etc.)
   - NO literature or media chapters (books, films, songs, poetry)

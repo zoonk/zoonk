@@ -1,0 +1,149 @@
+{
+  "expectations": "\n      - Should include \"Desarrollo de Sitios Web\", \"Programación Web\", etc\n      - \"Full Stack\" variants like \"Desarrollo Web Full Stack\" are acceptable — it's still web development\n      - \"Diseño y Desarrollo Web\" is acceptable — design framing doesn't make it a different course\n      - Tool/framework variants like \"Desarrollo Web con React\", \"Desarrollo Web con Angular\", \"Desarrollo Web con Django\" are acceptable — they still contain \"Desarrollo Web\", so they're the same course\n      - Should NOT include standalone \"Programación\" (broader) or standalone \"Frontend\" / \"Backend\" / \"React\" / \"Angular\" (different subjects — they drop \"Desarrollo Web\" entirely)\n      - All alternatives should be in Spanish\n\n      \n  **PURPOSE**: Alternative titles prevent AI from generating duplicate courses for the same subject. If someone creates \"Python for Data Science\", the AI should recognize it as the existing \"Python\" course — not create a separate one. The list catches all title variants that map to the same course.\n\n  **CORE RULE**: If the title still contains the base subject (or a recognized synonym/abbreviation), it is the SAME course — regardless of qualifiers, subtitles, tools, focus areas, or context added to it. We do NOT want separate courses for each variant.\n\n  Examples of this rule:\n  - \"World War II: Normandy and D-Day\" → contains \"World War II\" → same course\n  - \"Python for Data Science\" → contains \"Python\" → same course\n  - \"IA Generativa\" → contains \"IA\" → same course\n  - \"Desarrollo Web con React\" → contains \"Desarrollo Web\" → same course\n  - \"ML with Python\" → contains \"ML\" → same course\n  - \"Differential Calculus\" → contains \"Calculus\" → same course\n  - \"Formula 1 Motorsport\" → contains \"Formula 1\" → same course\n\n  **When to EXCLUDE**:\n  - **Broader**: The title covers a larger domain that encompasses unrelated subjects → exclude. Example: \"Web Development\" is broader than \"Frontend Development\"; \"Programming\" is broader than \"Python\"; standalone \"Motorsport\" is broader than \"Formula 1\".\n  - **Standalone different subject**: The title drops the base subject entirely and represents something else → exclude. Example: \"React\" (no \"JavaScript\" in the title — it’s its own technology); \"Deep Learning\" (no \"Machine Learning\" — it’s its own field); \"Battle of Normandy\" (no \"World War II\" — it’s its own topic); standalone \"Motorsport\" (no \"Formula 1\").\n  - **Ambiguous**: The title could refer to multiple unrelated topics → exclude. Example: just \"Matrix\" without any disambiguator.\n\n  **Also include** (even without the base subject in the title):\n  - **Recognized synonyms/abbreviations**: \"WWII\" / \"Second World War\" ↔ \"World War II\"; \"F1\" ↔ \"Formula 1\"; \"ML\" ↔ \"Machine Learning\"; \"JS\" ↔ \"JavaScript\"; \"UI Development\" / \"Client-Side Development\" ↔ \"Frontend Development\".\n  - **Dialect/variant names**: \"Inglês Americano\", \"Inglês Britânico\", \"Optimisation\" vs \"Optimization\".\n  - **Language learning aspects**: \"Gramática Inglesa\", \"TOEFL\", \"Business English\" — all map to the same language course.\n  - **Light framing words**: \"principles\", \"fundamentals\", \"basics\", \"bootcamp\", \"certification prep\" — these don’t change the subject.\n  - **Descriptive disambiguators**: \"The Matrix (1999 film)\", \"Matrix Movie\" — these clarify which subject, they don’t change it.\n\n  Additional notes:\n  - Include different locale spellings when applicable (e.g., \"Optimization\" and \"Optimisation\").\n  - Include abbreviations if they mean the same thing (e.g., \"AI\"/\"IA\", \"ML\" when base is \"Machine Learning\").\n  - Levels like \"Beginner\", \"Advanced\", \"Calculus 1\", \"101\", etc., are acceptable.\n  - It’s fine to skip spacing/hyphenation/accents variants — serialization will handle those.\n  - Awkward or redundant phrasings are acceptable.\n  - Ignore casing issues (e.g., \"javascript\" vs \"JavaScript\").\n  - Well-known English terms in non-English titles are acceptable (e.g., \"Business English\" in Portuguese, \"TOEFL\", \"IELTS\").\n  - Ideally, it should have a huge list of alternative titles, really good ones have more than 100 alternative titles\n\n  SCORING CALIBRATION:\n  - Apply the CORE RULE above as the PRIMARY lens: does the title still contain the base subject? If yes → it’s the same course, do NOT penalize.\n  - Only penalize for titles that are genuinely broader (umbrella domain), a standalone different subject (base subject dropped entirely), or ambiguous.\n  - Do NOT penalize for qualifiers, subtitles, tools, focus areas, or context added to the base subject — these are all the same course.\n  - Do NOT heavily penalize for missing titles — only penalize for wrong inclusion/exclusion decisions.\n  - A large list is ideal but do NOT heavily penalize shorter lists if all included titles are correct.\n\n    ",
+  "judgedAt": "2026-02-22T18:25:53.384Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model C provides the most exhaustive list (~160 alternatives), which aligns with the prompt's request to 'be exhaustive' and the note that 'really good ones have more than 100 alternative titles.' The list covers synonyms (Programación Web, Creación de Sitios Web), level variants (Básico, Intermedio, Avanzado), tool/framework framing (con React, con Angular, con Django, etc.), application contexts (para E-commerce, para Empresas, para Startups), sub-areas (Frontend, Backend, Full Stack, SPA, PWA), and light framing words (Bootcamp, Masterclass, 101, Intensivo). It includes items like 'Desarrollo Frontend' and 'Desarrollo Backend' which could be seen as borderline standalone subjects — the task expectations explicitly say standalone 'Frontend' or 'Backend' should NOT be included, but 'Desarrollo Frontend' still contains 'Desarrollo' and implies web context. Some entries like 'Despliegue de Aplicaciones Web', 'Testing en Desarrollo Web', 'SEO Técnico para Desarrollo Web', 'Accesibilidad en Desarrollo Web' are getting into sub-topic territory that might be arguable, but they still contain 'Desarrollo Web' so per the core rule they're acceptable. A few entries like 'Desarrollo Web con Git' or 'Desarrollo Web con Docker' are stretching it but still follow the 'tool framing' pattern. Overall very comprehensive with very few truly problematic inclusions.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model D provides about 100 alternatives, which is a strong count. It covers good ground: synonyms (Programación Web, Ingeniería Web, Creación de Sitios Web), abbreviations (Dev Web, Web Dev, Webdev), level variants, tool/framework framing (extensive list including React, Angular, Vue, Django, Flask, Svelte, Nuxt, Remix, Astro, Gatsby, etc.), application contexts (para Negocios, para Empresas, Empresarial, Corporativo), and sub-areas (SPA, APIs, REST, GraphQL). It includes 'Tecnologías Web' and 'Fundamentos Web' which are borderline — 'Tecnologías Web' could be broader than web development. It also includes 'Desarrollo Web con Go', 'Desarrollo Web con Rust' which are fine under tool framing. No major errors. The list is well-organized and comprehensive. Minor concern: 'Tecnologías Web' might be seen as a different/broader topic, and including the base title 'Desarrollo Web' itself is unnecessary but not harmful.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model F provides about 105 alternatives, meeting the 100+ threshold. Good coverage of synonyms, level variants, tool framing, and application contexts. Includes useful variants like 'Desarrollo web integral', 'Desarrollo web orientado a proyectos', 'Desarrollo web de cero a experto', 'Desarrollo web sin experiencia'. All entries maintain 'Desarrollo Web' or recognized synonyms in the title, following the core rule well. 'Desarrollo web para la web' is redundant/awkward but the prompt says awkward phrasings are acceptable. No problematic broader or standalone different subject inclusions. Solid and clean list. Slightly less varied than Model C in terms of creative alternatives but very safe.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model E provides about 74 alternatives. Decent coverage including synonyms, level variants, tool framing, application contexts, and some interesting additions like 'Desarrollo de tiendas online' and 'Creación de tiendas online' (which are borderline — they don't explicitly contain 'web' but online stores are inherently web). Includes 'Desarrollo front-end para web', 'Desarrollo back-end para web' which properly maintain the web context. The list is clean with no major errors but falls short of the 100+ target. Missing some tool variants and creative phrasings that other models include.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model A provides about 51 alternatives. Reasonable quality with good coverage of key variants. However, it includes some problematic entries: 'HTML CSS y JavaScript' and 'HTML y CSS' are standalone technology titles that don't contain 'Desarrollo Web' — these are genuinely different subjects per the exclusion rules. 'Maquetación Web' is borderline (it's more about layout/markup than full web development). 'Programación del Lado del Cliente' and 'Programación del Lado del Servidor' without 'Web' are borderline standalone subjects. 'Tecnologías Web' is also borderline broader. The list is also relatively short at 51 entries, well below the 100+ ideal. The inclusion of 'Web Development', 'Full Stack Web Development', etc. in English is fine per the rules but doesn't add much.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model G provides only about 33 alternatives, which is the shortest list. While the quality of included titles is mostly good, the list is quite sparse. It includes 'Desarrollo Full Stack' and 'Programación Full Stack' which drop 'Web' — these could be seen as standalone subjects (Full Stack could refer to non-web full stack development in theory, though it's commonly understood as web). 'Web Dev' and 'Web Development' in English are fine. Missing many tool/framework variants, application contexts, and creative phrasings. The brevity significantly limits its utility for duplicate detection.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model B provides only about 37 alternatives, which is quite short. It includes some problematic entries: 'Desarrollo frontend' and 'Desarrollo backend' are standalone subjects per the task expectations — the prompt explicitly says standalone 'Frontend' / 'Backend' should NOT be included. 'Arquitectura web' and 'Arquitectura de aplicaciones web' are arguably different subjects (architecture vs development). The list is also missing many tool/framework variants and application contexts. While the core entries are reasonable, the problematic inclusions and short length bring the score down.",
+          "score": 5.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model F followed all instructions flawlessly. It generated an exhaustive list of over 100 titles, correctly applying the core rule by ensuring every single title contains the base subject ('Web', 'Sitios Web', 'Páginas Web', etc.). It provided excellent variations like 'Desarrollo web con [tecnología]' and 'Desarrollo web [nivel]', and successfully avoided the trap of including standalone 'Frontend' or 'Backend' terms.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model D also followed all instructions perfectly, providing a highly comprehensive and clean list of 83 titles. Every item adheres to the core rule of retaining the base subject ('Web', 'Web Dev', 'Sitios Web', etc.). It correctly kept the word 'Web' in all its Front-End, Back-End, and Full-Stack variants, avoiding any standalone drops.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model E generated a very good list and correctly kept the word 'Web' in its Frontend/Backend variants (e.g., 'Desarrollo web Frontend'). However, it included a few items that drop the base subject entirely, such as 'Desarrollo de tiendas online' and 'Creación de tiendas online'. While these are related, they drop the core word 'Web' or its synonyms, which violates the strict rule that the title must contain the base subject.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model G provided a somewhat short list (34 items) but captured many good variants. However, it violated the core rule by including 'Desarrollo Full Stack' and 'Programación Full Stack', which completely drop the base subject ('Web'). The prompt explicitly noted that Full Stack variants must still contain 'Desarrollo Web' to be acceptable.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model B generated a shorter list and explicitly violated one of the prompt's main negative constraints: 'Should NOT include standalone Frontend / Backend'. It included 'Desarrollo frontend' and 'Desarrollo backend' without the word 'Web', dropping the base subject entirely.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model A violated the core rule by including standalone technologies like 'HTML CSS y JavaScript' and 'HTML y CSS'. These completely drop the base subject ('Desarrollo Web') and represent standalone different subjects, which the prompt explicitly states should be excluded.",
+          "score": 4.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "While Model C provided the longest list, it systematically violated the explicit negative constraints of the prompt. It included over a dozen standalone variants that drop the base subject entirely, such as 'Desarrollo Full Stack', 'Desarrollo Frontend', 'Programación Backend', 'Desarrollo Client-Side', etc. The prompt specifically warned against including standalone Frontend/Backend terms that drop 'Desarrollo Web', warranting a heavy penalty.",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Most exhaustive list (100+), strong adherence to Spanish requirement, includes many acceptable variants: sitios/páginas/aplicaciones web, full stack, responsive/mobile-first, tooling/frameworks, levels, bootcamp, etc. Minor issues: includes several entries that drop the base term entirely (e.g., \"Desarrollo Frontend\", \"Desarrollo Backend\", \"Programación Backend\") which the prompt explicitly says to avoid as standalone subjects; also includes some Spanglish/English phrasing (acceptable per notes, but still deviates from 'all in Spanish' expectation slightly). Despite that, overall best coverage with mostly on-target synonyms/framings.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Large, high-coverage set with many good same-meaning variants (sitios/páginas/aplicaciones, full stack spellings, design+dev, responsive, client/server, many framework/tool framings). Includes some non-Spanish items (\"Web Development\", \"Web Dev\", \"Dev Web\") which conflicts with \"All alternatives should be in Spanish\" expectation, though prompt allows well-known English terms in non-English titles. Also includes potentially ambiguous \"Desarrollo Web con Go\" (\"Go\" can be ambiguous per rules), and includes some broader/less-equivalent items like \"Fundamentos Web\" (could be too broad/ambiguous). Still strong overall.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Very solid breadth and mostly Spanish; good inclusion of synonyms, levels, full stack, tooling, contexts (e-commerce, landing pages, etc.). A few issues: includes English-only \"Full Stack Web Development\" (language mismatch), and a couple awkward/possibly broader/tautological items (e.g., \"Desarrollo web para la web\", \"Desarrollo para la web\") that could be ambiguous/broader. No major hallucinations; overall quite compliant.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Good sized list with many correct variants and tool/framework framings, responsive/PWA, deployment, business contexts. Some entries drift toward different/standalone subjects: \"Diseño web y programación\" is broader/less clearly the same as Desarrollo Web; \"Desarrollo front-end para web\" / \"Desarrollo back-end para web\" arguably narrow to subtracks (still web dev but the prompt warned against standalone Frontend/Backend—these keep 'web' but not 'Desarrollo Web'). Also includes items like \"Desarrollo de tiendas online\" without explicitly keeping 'web', which could be interpreted more broadly as e-commerce building. Still mostly good.",
+          "score": 7.6
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Decent set of core synonyms and many tool variants. However includes multiple English-only titles (\"Web Development\", \"Full Stack Web Development\", etc.) violating the Spanish-only expectation more than necessary. Also includes several items that drop 'web' or 'desarrollo web' and become broader/ambiguous: \"Tecnologías Web\" (could be broader than development), \"HTML y CSS\" and \"HTML CSS y JavaScript\" (can be standalone web basics courses not necessarily 'desarrollo web' as a full course). Also includes \"Programación del Lado del Cliente/Servidor\" which can be broader/CS-topic-like rather than clearly 'desarrollo web'.",
+          "score": 6.9
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Mostly correct and Spanish, but noticeably shorter and includes problematic entries that drop the base subject: \"Programación Full Stack\" and \"Desarrollo Full Stack\" without 'Web' (can be interpreted beyond web). Also includes English \"Web Development\"/\"Web Dev\". Limited variety compared to top outputs.",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Shortest among the mid/short lists and includes explicit violations: \"Desarrollo frontend\" and \"Desarrollo backend\" are standalone different subjects per the task expectations. Also includes \"Arquitectura web\" / \"Arquitectura de aplicaciones web\" which can be a distinct course focus (architecture) rather than general 'Desarrollo Web' duplicates. Coverage is otherwise okay but less exhaustive and with more off-scope inclusions.",
+          "score": 6.1
+        }
+      ]
+    }
+  ],
+  "taskId": "alternative-titles",
+  "testCaseId": "es-desarrollo-web-1"
+}

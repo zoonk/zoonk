@@ -1,0 +1,149 @@
+{
+  "expectations": "\n      - Should include \"Python Programming\", \"Python Language\", \"Python for Beginners\"\n      - \"Python for X\" variants (e.g., \"Python for Data Science\", \"Python for Web Development\", \"Python for Automation\") are acceptable — these are all Python courses, not separate subjects\n      - Should NOT include standalone different subjects like \"Data Science\", \"Web Development\", \"Programming\" — these are broader/different courses\n      - Results should be in English\n\n      \n  **PURPOSE**: Alternative titles prevent AI from generating duplicate courses for the same subject. If someone creates \"Python for Data Science\", the AI should recognize it as the existing \"Python\" course — not create a separate one. The list catches all title variants that map to the same course.\n\n  **CORE RULE**: If the title still contains the base subject (or a recognized synonym/abbreviation), it is the SAME course — regardless of qualifiers, subtitles, tools, focus areas, or context added to it. We do NOT want separate courses for each variant.\n\n  Examples of this rule:\n  - \"World War II: Normandy and D-Day\" → contains \"World War II\" → same course\n  - \"Python for Data Science\" → contains \"Python\" → same course\n  - \"IA Generativa\" → contains \"IA\" → same course\n  - \"Desarrollo Web con React\" → contains \"Desarrollo Web\" → same course\n  - \"ML with Python\" → contains \"ML\" → same course\n  - \"Differential Calculus\" → contains \"Calculus\" → same course\n  - \"Formula 1 Motorsport\" → contains \"Formula 1\" → same course\n\n  **When to EXCLUDE**:\n  - **Broader**: The title covers a larger domain that encompasses unrelated subjects → exclude. Example: \"Web Development\" is broader than \"Frontend Development\"; \"Programming\" is broader than \"Python\"; standalone \"Motorsport\" is broader than \"Formula 1\".\n  - **Standalone different subject**: The title drops the base subject entirely and represents something else → exclude. Example: \"React\" (no \"JavaScript\" in the title — it’s its own technology); \"Deep Learning\" (no \"Machine Learning\" — it’s its own field); \"Battle of Normandy\" (no \"World War II\" — it’s its own topic); standalone \"Motorsport\" (no \"Formula 1\").\n  - **Ambiguous**: The title could refer to multiple unrelated topics → exclude. Example: just \"Matrix\" without any disambiguator.\n\n  **Also include** (even without the base subject in the title):\n  - **Recognized synonyms/abbreviations**: \"WWII\" / \"Second World War\" ↔ \"World War II\"; \"F1\" ↔ \"Formula 1\"; \"ML\" ↔ \"Machine Learning\"; \"JS\" ↔ \"JavaScript\"; \"UI Development\" / \"Client-Side Development\" ↔ \"Frontend Development\".\n  - **Dialect/variant names**: \"Inglês Americano\", \"Inglês Britânico\", \"Optimisation\" vs \"Optimization\".\n  - **Language learning aspects**: \"Gramática Inglesa\", \"TOEFL\", \"Business English\" — all map to the same language course.\n  - **Light framing words**: \"principles\", \"fundamentals\", \"basics\", \"bootcamp\", \"certification prep\" — these don’t change the subject.\n  - **Descriptive disambiguators**: \"The Matrix (1999 film)\", \"Matrix Movie\" — these clarify which subject, they don’t change it.\n\n  Additional notes:\n  - Include different locale spellings when applicable (e.g., \"Optimization\" and \"Optimisation\").\n  - Include abbreviations if they mean the same thing (e.g., \"AI\"/\"IA\", \"ML\" when base is \"Machine Learning\").\n  - Levels like \"Beginner\", \"Advanced\", \"Calculus 1\", \"101\", etc., are acceptable.\n  - It’s fine to skip spacing/hyphenation/accents variants — serialization will handle those.\n  - Awkward or redundant phrasings are acceptable.\n  - Ignore casing issues (e.g., \"javascript\" vs \"JavaScript\").\n  - Well-known English terms in non-English titles are acceptable (e.g., \"Business English\" in Portuguese, \"TOEFL\", \"IELTS\").\n  - Ideally, it should have a huge list of alternative titles, really good ones have more than 100 alternative titles\n\n  SCORING CALIBRATION:\n  - Apply the CORE RULE above as the PRIMARY lens: does the title still contain the base subject? If yes → it’s the same course, do NOT penalize.\n  - Only penalize for titles that are genuinely broader (umbrella domain), a standalone different subject (base subject dropped entirely), or ambiguous.\n  - Do NOT penalize for qualifiers, subtitles, tools, focus areas, or context added to the base subject — these are all the same course.\n  - Do NOT heavily penalize for missing titles — only penalize for wrong inclusion/exclusion decisions.\n  - A large list is ideal but do NOT heavily penalize shorter lists if all included titles are correct.\n\n    ",
+  "judgedAt": "2026-02-22T18:25:40.067Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model D provides an extremely extensive list (230+ alternatives) with excellent coverage across all categories: version variants (Python 3, Python 2), level variants (Beginner, Intermediate, Advanced), application context variants (Python for Data Science, Finance, DevOps, etc.), sub-area variants (Python OOP, Python Concurrency, etc.), tool-framing variants (Python with pandas, NumPy, Jupyter, etc.), and format variants (Bootcamp, Crash Course, Masterclass). All titles correctly contain 'Python' as the base subject or are clearly Python-specific. No genuinely broader or different subjects are included. The list covers very granular sub-topics like 'File Handling in Python', 'Regex in Python', 'Working with JSON in Python' which are all still Python courses. Some might argue titles like 'Python venv and virtualenv' or 'PEP 8 and Python Style' are extremely granular, but they still contain Python and are valid per the rules. The list also includes certification prep (Python Certification, Python Interview Prep) and platform variants (Python on Windows/macOS/Linux). Very thorough and accurate.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model G provides a very extensive list (230+ alternatives) with excellent breadth. It covers version variants, level variants, application contexts, sub-areas, tool framing, and format variants comprehensively. All titles contain 'Python' or are Python-specific. It includes good additions like cloud platform variants (Python for AWS, Azure, GCP), hardware variants (Raspberry Pi, embedded systems), and productivity variants (Python for Excel, PDF Automation). It also includes certification prep (PCEP, PCAP). Some very granular entries like 'Python for Spreadsheets', 'Python for PDF Automation', 'Python for Report Automation' are perhaps unusual but still valid. Includes locale spelling variants (Optimizing/Optimising). Very comprehensive and accurate with no incorrect inclusions.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model F provides a strong list (~130 alternatives) with good coverage. It includes version variants, level variants, application contexts, sub-areas, paradigm variants (OOP, Functional, Async), and format variants. Notably includes certification titles (PCEP, PCAP, Python Certification). However, standalone 'PCEP' and 'PCAP' without 'Python' could be slightly ambiguous to those unfamiliar, but they are recognized Python certifications so this is acceptable per the rules. Includes 'CPython' which is technically an implementation detail but still Python. Includes locale spelling considerations (Python 3.x). Good use of 'Fluent Python', 'Pythonic Programming' as valid variants. Solid list with no incorrect broader or different subject inclusions. Slightly less extensive than D and G but still very good.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model A provides a solid list (~110 alternatives) with good coverage of the main categories: version variants, level variants, application contexts, sub-areas, and format variants. All titles correctly contain 'Python'. Good inclusion of marketing-style titles ('Python from Zero to Hero', 'Python Quick Start'). Covers a wide range of 'Python for X' variants. However, it lacks certification prep titles (PCEP, PCAP) and doesn't include tool-framing variants (Python with pandas, NumPy, etc.). No incorrect inclusions. A good, accurate list that could be more extensive.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model C provides a good list (~85 alternatives) with solid coverage. Includes version variants, level variants, application contexts, and format variants. Notably includes certification prep (PCEP, PCAP) and 'CPython Internals and Implementation'. Has some slightly awkward entries like 'Python for Machine Learning (Python-focused)' and 'Functional Programming with Python (in Python)' which have unnecessary parenthetical qualifiers, but these aren't incorrect. Including 'Python' itself as an alternative is redundant (it's the base title) but not harmful. Good overall accuracy with no incorrect broader/different subject inclusions. Less extensive than the top models.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model E provides a relatively short list (~46 alternatives) but all entries are accurate and relevant. Covers the main categories: version variants, level variants, application contexts, and some sub-areas. No incorrect inclusions. However, it's significantly less extensive than other models - missing many 'Python for X' variants, tool-framing variants, certification prep, format variants, and sub-topic variants. The task asks to 'be exhaustive' and ideally have more than 100 alternatives. While the scoring guidelines say not to heavily penalize shorter lists if all included titles are correct, this list is noticeably sparse compared to others.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model B provides a short list (~47 alternatives) with all correct entries. No incorrect inclusions - all titles properly contain 'Python' or are recognized synonyms. Includes basic coverage of version variants, level variants, and application contexts. However, like Model E, it's significantly less extensive than the top models. Missing many application context variants, tool-framing variants, certification prep, format variants, and sub-topic variants. 'Python Developer' is slightly unusual as a course title (more of a role) but not incorrect. Adequate but not exhaustive.",
+          "score": 6.8
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model G generated an incredibly exhaustive list of 228 titles, far exceeding the >100 target. It perfectly adhered to all instructions, applying the core rule flawlessly (all titles contain 'Python' or are recognized Python certification abbreviations like 'PCEP Prep'). It even successfully included locale spelling variations ('Optimizing' vs 'Optimising') as explicitly requested in the prompt. Exceptional output.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model D also provided an outstanding, highly exhaustive list with 161 alternative titles. It thoroughly explored application contexts, tool combinations (while keeping 'Python' in the title), and skill levels. It followed all rules perfectly and avoided any hallucinations or standalone different subjects.",
+          "score": 9.8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model A generated exactly 101 titles, meeting the 'more than 100' ideal target. The list is very clean, perfectly adhering to the core rule with no broader or entirely different subjects included. A highly reliable and accurate output.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model F provided a robust list of 98 titles, just shy of the 100+ goal but still very comprehensive. It smartly included valid Python-specific certification acronyms ('PCEP', 'PCAP') and spelling/spacing variants ('Python3', 'Python 3'). Very good adherence to the prompt.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model B perfectly followed the negative constraints (no broader topics, no standalone technologies) and applied the core rule correctly. However, it only generated 47 titles, missing the prompt's request for a 'huge list' of ideally more than 100 alternatives. Excellent quality, but lacking in quantity.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model E is very similar to Model B. It followed all rules and provided perfectly accurate titles, but with only 46 items, it fell short of the requested exhaustiveness.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model C provided 76 titles, which is a decent volume. However, it included strange conversational artifacts directly inside the strings, such as 'Python for Machine Learning (Python-focused)' and 'Functional Programming with Python (in Python)'. These parenthetical additions make the titles unnatural and indicate a slight failure in output formatting.",
+          "score": 7
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Very large, highly varied list while staying on-topic (nearly every item clearly maps to learning/using the Python programming language). Good inclusion of spelling variants (Optimizing/Optimising), abbreviations (ML with Python), and many acceptable “Python for X” contexts. Minor issues: a few items drift toward narrowly scoped subtopics that might be construed as separate courses in some catalogs (e.g., AWS/Azure/Kubernetes/Docker with Python, Excel automation), but they still retain “Python” and thus fit the CORE RULE. Overall best mix of exhaustiveness and compliance.",
+          "score": 9.4
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Extremely exhaustive (100+), with broad coverage of levels, contexts, and sub-areas; almost everything retains “Python” or is unambiguously Python-centric. A few entries verge on being more like lesson/module titles (“HTTP Requests in Python”, “Working with CSV in Python”, “Multithreading in Python”), but still clearly same subject and not ambiguous. Strong adherence overall.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Large, solid list with many acceptable variants and “Python for X” framings. Mostly consistent with the prompt and avoids broader standalone subjects. Slight redundancy and a few items that are more like component topics (“Python Data Structures”, “Python Algorithms”) but still within allowed sub-areas. Less exhaustive than D/G.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Long, generally high-quality list with many correct variants, levels, and contexts. Notable prompt violation: includes ambiguous standalone titles “PCEP” and “PCAP” (without “Python”), which could be unclear/ambiguous outside context and conflicts with the rule to NEVER include ambiguous titles. Also includes “CPython” which is Python-implementation-specific and could be interpreted as a separate, narrower course, though still related. Good otherwise.",
+          "score": 7.9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Good variety and includes some useful certification/exam-prep variants. However, includes “Python 102” which is plausible but less standard, and includes “CPython Internals and Implementation” which is significantly narrower (implementation internals) and arguably a different course despite being related. Also includes the base title “Python” itself as an alternative (not harmful but unnecessary). Medium exhaustiveness.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Reasonable set and meets key expectations (Python Programming/Language/for Beginners, several “Python for X”). But relatively short and includes a couple items that are borderline brand/book-like or potentially distinct (“Python Professional”, “Effective Python”) though still Python-focused and not ambiguous. Overall fine but less comprehensive.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Mostly correct and on-topic, but shortest and least exhaustive. Contains “Python Developer” which could imply a career/role-focused track (still Python-related) and otherwise lacks many important variants compared to others. No major rule breaks, just limited coverage.",
+          "score": 6.9
+        }
+      ]
+    }
+  ],
+  "taskId": "alternative-titles",
+  "testCaseId": "en-python-1"
+}

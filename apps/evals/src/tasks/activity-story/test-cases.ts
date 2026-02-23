@@ -5,13 +5,14 @@ EVALUATION CRITERIA:
 
 2. EDUCATIONAL ALIGNMENT: Every decision point must require applying lesson concepts through reasoning, not memorizing facts. Wrong options should be plausible but flawed for specific conceptual reasons.
 
-3. PLOT COHERENCE: Steps must flow naturally as a continuous story where each step builds from the previous dialogue. The second-to-last step MUST introduce a genuine plot twist (surprise, complication, or revelation). The final step must resolve the problem AND reinforce the main learning takeaway.
+3. PLOT COHERENCE: Steps must flow naturally as a continuous story where each step builds from the previous dialogue. Near the end (within the final 2-3 steps), the story should introduce a fun, surprising twist that reframes the narrative — the best twists subvert an assumption the story has been building. The final step must resolve the problem AND reinforce the main learning takeaway. Do NOT penalize for exact twist placement (e.g., 2nd-to-last vs 3rd-to-last) as long as the narrative flow is good.
 
 4. FORMAT COMPLIANCE: Verify these constraints:
    - context: Maximum 500 characters of pure dialogue
    - question: Maximum 100 characters
-   - options: Exactly 4 objects, each with: text (max 50 chars), isCorrect (boolean), feedback (max 300 chars)
+   - options: Exactly 4 objects, each with: text (max 50 chars, allow up to 55 without penalty), isCorrect (boolean), feedback (max 300 chars)
    - Exactly 1 option must have isCorrect: true, the other 3 must have isCorrect: false
+   - Do NOT penalize for output being wrapped in {"steps": [...]} vs a raw array — both are valid formats
 
 5. PERSONALIZATION: The {{NAME}} placeholder must be used appropriately in dialogue to personalize the experience.
 
@@ -25,7 +26,10 @@ ANTI-CHECKLIST GUIDANCE (CRITICAL):
 - Do NOT penalize for specific plot choices, character names, or scenario settings you might expect
 - Do NOT require specific steps like "investigation" or "resolution" by name - focus on whether the story has good flow
 - Do NOT check against an imagined "ideal" story structure
-- ONLY penalize for: format violations, narrator/description text in dialogue, decisions that test memorization instead of reasoning, missing plot twist, poor distractor quality, or factually incorrect lesson application
+- Do NOT penalize for exact twist placement — if the twist occurs anywhere in the final third of the story, that's fine
+- Do NOT penalize for output being wrapped in {"steps": [...]} instead of a raw array
+- Do NOT penalize option text that is 55 characters or fewer — only penalize options clearly exceeding 55 characters
+- ONLY penalize for: format violations (option text over 55 chars, context over 500 chars, etc.), narrator/description text in dialogue, decisions that test memorization instead of reasoning, complete absence of any twist or surprise, poor distractor quality, or factually incorrect lesson application
 - Different valid story approaches exist - assess the quality of what IS provided
 `;
 

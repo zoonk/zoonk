@@ -1,0 +1,149 @@
+{
+  "expectations": "\n      - MUST be in US English\n      - Should break down each historical period's health challenges into separate lessons\n      - Should cover epidemics, sanitation campaigns, and health systems individually\n      - Should separate public health policy from biomedical politics\n      - Should NOT create dedicated lessons teaching urbanization, housing policy, or favela politics/governance (neighboring chapter \"Cities and urban inequality\" covers that) — brief contextual references are fine. IMPORTANT: Lessons about health outcomes and disease transmission mechanisms IN urban settings (e.g., overcrowding as disease vector, sanitation infrastructure gaps) ARE within scope when the focus is on health/epidemiology. Only penalize lessons primarily about urban form, housing policy, or settlement patterns rather than health mechanisms\n      - Should NOT create dedicated lessons teaching environmental history, deforestation, or the Amazon (neighboring chapter \"Environmental history and the Amazon\" covers that) — brief contextual references are fine\n      - Should NOT create dedicated lessons teaching military history, coups, or defense policy (neighboring chapter \"Military and national security\" covers that) — brief contextual references are fine\n      - Should NOT create dedicated lessons teaching historiography, monuments, or public memory (neighboring chapter \"Historiography and public memory\" covers that) — brief contextual references are fine\n\n      \n  - Each lesson should cover a SINGLE, SPECIFIC concept that can be explained within 10 short tweets\n  - Break down topics into the smallest, most manageable units possible, so that each lesson can be learned in 2-3 minutes\n  - If a topic is too broad, split it into multiple lessons\n  - Each lesson should be extremely focused on a SINGLE concept\n  - If a lesson is too broad, split it into multiple lessons\n  - Each lesson must cover a SINGLE concept. Using \"AND\", \"OR\", \"VS\" (or equivalents in other languages like \"e\", \"ou\", \"y\", \"o\") in a title is a signal it MAY be too broad — but it is acceptable when the comparison or pairing IS the concept itself (e.g., \"DEPT-90 y DEPT-135\" where distinguishing two NMR techniques is the lesson, or \"IPv4 vs. IPv6 Format\" where the format contrast is one concept). Only penalize when AND/OR/VS joins genuinely separate concepts that deserve their own lessons (e.g., \"Strings and Lists\" where each is a full topic)\n  - Lesson titles should be short and specific to the exact concept covered\n  - Build a logical progression from basic to advanced concepts\n  - Ensure lessons build on knowledge from previous lessons\n  - Focus lessons for this specific chapter, not the entire course\n  - Don't include summary or review lessons. For example, do NOT create a lesson title \"Summary of Key Concepts\" or \"Review of Chapter\"\n  - Don't include assessment or quiz lessons\n  - Don't include final project or capstone lessons\n  - Should follow the language specified by language parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Descriptions should be concise and straight to the point, no fluff/filler words (avoid \"learn\", \"understand\", \"explore\", \"introduction to\", etc.)\n  - You don't need to evaluate the output format here, just focus on the lesson content quality\n  - Include an extensive list of lessons to fully cover the chapter's scope. The key metric is completeness: are all concepts in the chapter description adequately covered with sufficient granularity? Broad technical chapters (e.g., web fundamentals, Python basics) typically need 80-120+ lessons. Narrower or more specialized chapters (e.g., legal theory of evidence, NMR spectroscopy) may need fewer if the domain is inherently smaller — do not penalize for fewer lessons if the chapter's scope is fully covered\n\n  Neighboring chapter scope judgment:\n  - The chapter description is the SOURCE OF TRUTH for what is in-scope. Neighboring chapter constraints are guardrails against scope creep, NOT vetoes over topics listed in the chapter description\n  - If a topic is explicitly mentioned in the chapter description, it is in-scope even if it touches on a neighboring chapter's domain (e.g., \"Claisen\" listed in a carbonyls chapter is in-scope even though esters have their own chapter)\n  - The key test: does a lesson teach a topic AS ITS OWN SUBJECT (violation) or through the LENS OF THIS CHAPTER (acceptable)? Documenting empirical patterns/observations of X within this chapter's context is NOT the same as teaching X's theory (e.g., documenting consumption's cyclical behavior is a business cycle fact, not consumption theory)\n  - When a lesson's title mentions a neighboring topic, read the description to determine focus. A lesson titled \"Cortiços as disease ecologies\" focused on disease transmission is health content, not urbanization content\n\n  Things to check:\n  - Is each lesson too broad? If so, it should be broken down further\n  - Can each concept be explained in 10 short tweets or less? If not, it should be broken down\n  - Does each lesson focus on a single specific concept? If not, it should be split\n  - Does it have lessons that don't belong in this chapter? If so, they should be removed\n\n    ",
+  "judgedAt": "2026-02-22T19:48:57.658Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model C provides the most extensive and granular lesson list (roughly 90 lessons) with excellent coverage of the chapter's full scope. It breaks down topics into genuinely single-concept lessons — for example, splitting the Vaccine Revolt into the event itself and its aftermath, separating miasma theory from germ theory adoption, distinguishing leprosy isolation policy from leprosy colonies, and separating tuberculosis prevention from tuberculosis sanatoriums. The progression is logical, moving from 19th-century foundations through mid-century campaigns to the SUS era and contemporary crises including COVID-19. Titles are concise and specific. Descriptions are tight, typically one sentence, and avoid fluff words like 'learn' or 'explore.' The chapter description's themes — public health, epidemics, health systems, biomedical politics, sanitation campaigns, and inequality — are all thoroughly covered. It appropriately handles neighboring chapters: urban settings are referenced through health lenses (e.g., 'Coercive health policing,' 'Sanitation infrastructure as health policy') without teaching urbanization per se. It covers important topics others miss: DDT, wartime public health expansion, SESP, eugenics, racialized medicine, venereal disease politics, maternalism, infant mortality campaigns, asylum psychiatry, anti-asylum movement, health bureaucracy growth, community medicine pilots, generic drug policy, dengue resurgence, gendered impacts of Zika, Indigenous health subsystem, Indigenous health barriers, carceral health crisis, violence as a health metric, austerity and SUS capacity, hospital surge capacity, COVID-19 surveillance politics, COVID-19 distancing policy, pandemic federalism, unproven therapies, vaccine procurement, health misinformation, excess mortality, inequality in pandemic outcomes, and COVID-19 memory politics. A minor concern: 'COVID-19 memory politics' edges toward the neighboring 'Historiography and public memory' chapter, but its description focuses on pandemic-era competing narratives rather than formal historiography. Overall the most complete and well-structured output.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model F produces a very extensive list (~90 lessons) with excellent granularity and wide coverage. It addresses many important topics: slavery as health determinant, sanitation as modernization ideology, hygienism as social regulation, nursing workforce, sanitary engineering, disease mapping, harm reduction politics, chronic disease transition, obesity, tobacco control, violence as health burden, disability and health services, psychiatric reform, biomedical authority, emergency powers in epidemics, media framing. The descriptions are well-written and focused, avoiding fluff. Titles are concise. The logical progression is solid. It covers 'biomedical politics' thoroughly with lessons on biomedical authority, protocols as political instruments, biomedical innovation pipeline, emergency powers, and media framing. Some lessons push toward neighboring chapter territory: 'Territorial stigma in health policy' and 'Community responses to COVID-19' (favela mutual aid) edge toward the 'Cities and urban inequality' chapter, though the descriptions keep health focus. A few titles use 'as' constructions that could arguably be split but generally represent single analytical concepts. The coverage of sanitation campaigns, inequality axes (race, gender, Indigenous, carceral), and the full SUS ecosystem is thorough. Minor weaknesses: some lessons feel slightly abstract/conceptual rather than historically grounded (e.g., 'Protocols as political instruments,' 'Biomedical innovation pipeline'), and a few could be more specific in their Brazilian historical anchoring. But overall this is a very strong, comprehensive output.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model D provides a thorough list (~65 lessons) with good historical depth and clear chronological progression. It covers many important topics others miss: the 1855 cholera epidemic specifically, Chagas disease (two lessons), the CPI da COVID, Manaus oxygen crisis, chikungunya, and the end of compulsory leprosy isolation. Descriptions are detailed and historically specific, often including dates and context. However, several lessons are too broad and violate the single-concept rule: 'Major Epidemics of the Brazilian Empire' lumps yellow fever, cholera, and smallpox together; 'The Creation of the SUS' combines principles of universality, equity, and decentralization in one lesson; 'Brazil's AIDS Policy and Generic Drug Production' combines two distinct topics; 'The Family Health Strategy' combines community health agents with the strategy itself; 'COVID-19 Vaccination Campaign' combines Fiocruz, Butantan, rollout challenges, and anti-vaccine sentiment. Some titles use 'and' joining genuinely separate concepts: 'Sanitarism vs. Eugenics,' 'Race, Class, and Epidemic Blame,' 'Zika, Gender, and Reproductive Rights.' Some descriptions are longer than ideal for the format. The 'Health Inequality as a Structural Pattern' final lesson reads like a summary/review lesson, which violates the rules. The Bolsonaro-specific political framing in several lessons edges toward political narrative rather than health policy analysis, though this is a minor concern. 'Sanitation as Urban Displacement' comes close to neighboring chapter territory but keeps health focus. Overall good but needs more splitting for proper granularity.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model B provides a solid list of ~46 lessons with good topical coverage. It properly separates concepts like universality/equity principles, germ theory/bacteriology, SUS creation/decentralization/popular participation. It covers some important topics: blood safety reforms, leprosy segregation, vaccine hesitancy, health activism, telemedicine expansion, vaccination logistics, community health agents. Descriptions are generally concise and focused. However, the list has notable gaps for such an extensive chapter: no mention of Spanish flu/1918 pandemic, no Chagas disease, no eugenics, no Vargas era health policy, no malaria campaigns, no tuberculosis, no mental health/psychiatric reform, no Rockefeller Foundation, no occupational health, no maternal/child health, no COVID-19 vaccine production (Fiocruz/Butantan), no specific COVID-19 death toll or Manaus crisis, no racial health disparities in detail, no indigenous health, no violence as health issue. The 'Sanitation campaigns' lesson is too broad — it should be split into specific campaigns. 'Health inequality patterns' is also quite broad. Some lessons like 'Telemedicine expansion' feel somewhat tangential compared to missing core topics. The coverage of the chapter description's full scope is incomplete, particularly for 19th-century epidemics and mid-20th-century health policy.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model G provides ~49 lessons with decent coverage but several significant issues. Multiple lessons are too broad and violate the single-concept rule: 'Major 19th-Century Epidemics' combines yellow fever, cholera, and smallpox; 'SUS: The Unified Health System' combines structure, funding, and principles; 'COVID-19 Vaccination Campaign' combines Fiocruz, Butantan, rollout, and anti-vaccine sentiment; 'The HIV/AIDS Response and Free Antiretroviral Access' combines the epidemic response with the treatment policy; 'Reproductive Health and Maternal Mortality' joins two substantial topics. Some titles violate the AND rule with genuinely separate concepts: 'Biomedical Politics and Health Governance,' 'The Zika Epidemic and Microcephaly Crisis,' 'Reproductive Health and Maternal Mortality.' The 'Bolsonaro and COVID-19 Denialism' lesson is heavily politically framed. Missing topics include: Spanish flu, specific sanitation infrastructure, SESP, DDT, vital statistics, health financing, gendered Zika impacts, carceral health, violence as health issue, nutrition policy. Some descriptions use fluff-adjacent language. The overall granularity is insufficient for the chapter's scope — many lessons need splitting. Coverage is adequate but not extensive enough.",
+          "score": 5.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model A provides only 30 lessons, which is too few for this chapter's scope. While the lessons that exist are generally well-focused and concise, the coverage has major gaps: no Chagas disease, no leprosy, no malaria, no tuberculosis, no eugenics, no mental health, no maternal/child health, no germ theory transition, no indigenous health, no dengue, no violence as health issue, no health financing, no ANVISA/regulation, no Vargas-era detail beyond occupational health, no detailed SUS principles (universality, equity, integrality), no community health agents, no health judicialization, no generic drug policy beyond patent conflicts, no Manaus crisis, no CPI da COVID. Some lessons could be more specific: 'Sanitary Evictions' is somewhat vague; 'Primary Healthcare Expansion' is too broad; 'Sanitation and Disease Prevalence' is very general. The progression is logical and descriptions are concise, but the list is simply too incomplete to adequately cover the chapter description. The chapter explicitly mentions 'from the 19th century to COVID-19' covering public health, epidemics, health systems, biomedical politics, sanitation campaigns, and inequality — and significant portions of these themes are underrepresented.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model E provides only 36 lessons, which is insufficient for the chapter's scope. While individual lessons are mostly well-focused and concise, the coverage has substantial gaps: no malaria, no Chagas disease, no leprosy, no tuberculosis, no eugenics, no mental health, no maternal/child health, no germ theory (separate from tropical medicine), no Vargas era detail, no health financing, no SUS integrality principle, no health judicialization, no generic drug policy, no dengue detail beyond resurgence, no Manaus crisis, no CPI da COVID, no violence as health issue, no carceral health, no occupational health, no SESP/wartime health. The SUS coverage is thin — only universality, equity, and integrality principles plus Family Health Strategy and community health agents. COVID-19 coverage is minimal (3 lessons). Some descriptions use slightly imprecise language: miasma theory is described as 'diseases spread through bad air emanating from swamps' which is an oversimplification. 'The Federal Response to COVID-19' description ('political disputes over social distancing protocols') doesn't match the title well. 'Indigenous Health Vulnerabilities' is quite broad. The Sérgio Arouca lesson is a nice specific touch, but overall the list lacks the extensiveness and completeness required.",
+          "score": 4.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model F provides an outstanding, extensive list (93 lessons) that perfectly threads the needle on the prompt's complex negative constraints and scope guidelines. It achieves incredible granularity without using 'AND/OR' to lazily group distinct topics. Furthermore, it expertly navigates the neighboring chapter guardrails—for example, covering favelas strictly through the permitted lens of health mechanisms ('Community responses to COVID-19' via mutual aid and local data) and addressing urban reform strictly in terms of epidemic susceptibility. The descriptions are concise, fluff-free, and directly aligned with the required concepts.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model B delivers a highly focused and well-formatted list of 46 lessons. It adheres perfectly to the single-concept rule, avoiding 'AND/OR' entirely in its titles. The descriptions are excellent, fluff-free noun phrases. It respects all negative constraints regarding neighboring chapters. While slightly less extensive than Model F, it breaks down complex topics like the SUS principles into beautifully granular, bite-sized lessons.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model E provides a very clean, compliant list of 36 lessons. It successfully avoids summary lessons, does not use 'AND/OR' in its titles, uses no fluff in its descriptions, and respects all neighboring chapter exclusions. Its only drawback is that it is somewhat brief compared to the more extensive coverage provided by the top models, missing some of the deeper historical nuances.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model A offers a simple but acceptable list of 30 lessons. It avoids negative constraint violations, but it falls short in terms of extensiveness. Additionally, it relies on 'AND' in a few titles (e.g., 'INAMPS and Privatization', 'Sanitation and Disease Prevalence'), which indicates that some concepts could have been broken down further. As the prompt explicitly stated that simpler compliant outputs are preferred over rule-breaking ones, it scores slightly above Model C.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model C is highly extensive (89 lessons) and extremely granular. However, it incurs a major penalty for explicitly violating a negative constraint. The prompt strictly forbade dedicated lessons teaching 'public memory' or 'memorials' (as this belongs to the 'Historiography and public memory' chapter). Model C generated a dedicated lesson titled 'COVID-19 memory politics' focused on 'Public mourning, memorials, and denialism'. Per the top penalty criteria, failing to follow strict constraints warrants a drop of 3+ points, regardless of how good the rest of the output is.",
+          "score": 5.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model G violates the core 'single-concept' requirement multiple times by using 'AND' to group genuinely separate concepts into single lessons. The most egregious example is 'Polio Eradication and Measles Control', which merges two distinct diseases and campaigns into one 2-3 minute lesson. It also groups 'Mental Health Policy and Psychiatric Reform' and 'Reproductive Health and Maternal Mortality'.",
+          "score": 4.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model D has significant issues with prompt adherence. Most notably, it violates the rule against summary lessons by including 'Major Epidemics of the Brazilian Empire' as an overview before breaking them down. Furthermore, it heavily violates the single-concept rule, using 'AND' repeatedly to group distinct, broad topics that deserve their own lessons (e.g., 'Brazil's AIDS Policy and Generic Drug Production', 'Fiocruz, Butantan, and Vaccine Production').",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Most extensive and granular coverage from the 19th century through COVID-19, with many single-concept lessons spanning epidemics, sanitation campaigns, health-system building (insurance to SUS), and biomedical politics (patents, generics, judicialization, COVID therapies/vaccine procurement). Generally strong periodization and progression. Main drawbacks: a few items drift toward neighboring/public memory scope (\"COVID-19 memory politics\"), and a few lessons may be broader than a 2–3 minute target (e.g., \"Health policy under dictatorship\").",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Very comprehensive and highly granular on institutions, surveillance/measurement, sanitation mechanisms, SUS governance, and biomedical politics (ANVISA, medicines policy, innovation pipeline, protocols). Good separation of public health policy vs biomedical politics. Weaknesses: less explicit epidemic-by-epidemic period breakdown than C/D (few named 19th-century epidemics), and some scope creep into broader social policy areas (obesity, tobacco, chronic disease transition) not clearly demanded by the chapter description; one lesson centers favela/community governance-like content (still health-angled, but close to neighboring chapter guardrail).",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Solid breadth across epidemics, sanitation, institutions, SUS principles, and some biomedical politics. Many lessons are reasonably single-concept and avoid most neighboring-chapter traps. Weaknesses: noticeably less historical periodization (many timeless/ahistorical concept buckets), several titles/descriptions bundle multiple concepts (e.g., \"Oswaldo Cruz campaigns\"; \"Sanitary movement\"; \"COVID-19 pandemic\"), and less coverage of specific period-defining events compared with the best lists.",
+          "score": 7.6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Strong chronological narrative with clear separation of major periods and many key events (Empire epidemics, Cruz reforms, Vargas, dictatorship, SUS, HIV/AIDS, Zika, COVID). However, lessons are often too broad for the required micro-lesson granularity (many combine multiple mechanisms/policies), several titles use colon constructions and biographical framing, and there is some drift into non-core politics/events (e.g., detailed Bolsonaro/CPI scandal framing) at the expense of more granular health-system/biomedical-politics decomposition.",
+          "score": 7.1
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Good coverage of the long timeline and hits many required topics (epidemics, sanitation, SUS, inequality, COVID). But it’s less granular, with many lessons combining multiple concepts (\"Major 19th-Century Epidemics\", \"International Organizations in Brazilian Health\", \"SUS Under Strain: Funding and Access Challenges\"). Includes out-of-scope/extra-chapter material (colonial era) and adds sizable topics not requested (mental health policy, reproductive health/abortion legislation) without sufficient linkage to the chapter description.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Covers several core milestones (19th-century epidemics, Vaccine Revolt, rural sanitation, SUS, HIV, Zika, COVID, inequality). But it is not extensive, misses many intermediate periods and system details, and has some problematic scope choices (\"Sanitary Evictions\" leans into urban clearance/housing policy). Also contains likely inaccuracies/oddities (\"Federal Sanitary Institute\" framing; calling Manguinhos that) and multiple lessons remain too coarse (\"Rise of Hygienism\", \"Pandemic Governance Conflicts\").",
+          "score": 5.9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Not extensive and leaves major gaps (limited coverage of mid/late 20th century institutions, surveillance, SUS governance/financing, biomedical politics beyond HIV meds). Several items are biographical or overly generalized, and some concepts are simplified to the point of distortion (miasma attributed specifically to \"swamps\"), reducing historical accuracy/nuance. Overall fails the “extensive, fully cover chapter scope” requirement.",
+          "score": 5.2
+        }
+      ]
+    }
+  ],
+  "taskId": "chapter-lessons",
+  "testCaseId": "en-brazilian-history-health-disease-1"
+}

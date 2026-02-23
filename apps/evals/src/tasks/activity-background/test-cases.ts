@@ -1,15 +1,15 @@
 const SHARED_EXPECTATIONS = `
   EVALUATION CRITERIA (focus on storytelling quality, not specific content):
 
-  1. STORYTELLING FLOW: The steps should build curiosity and follow a narrative arc. Check for tension (the problem/limitation) and resolution (how it was solved).
+  1. STORYTELLING FLOW: The steps should build curiosity and follow a narrative arc. Check for tension (the problem/limitation) and resolution (how it was solved). IMPORTANT: "narrative arc" does NOT require a historical timeline. A conceptual narrative using metaphors and scenarios (e.g., "imagine your money shrinking") is equally valid as a historical narrative (e.g., "in ancient Rome..."). Both approaches can have tension and resolution.
 
   2. STEP SIZING: Each step must have a title (max 50 chars) and text (max 300 chars). Verify lengths are within limits.
 
   3. CONVERSATIONAL TONE: The writing should feel like talking to a curious friend, not reading an encyclopedia. Look for vivid imagery and emotional engagement.
 
-  4. METAPHORS & ANALOGIES: Check for analogies from everyday life (sports, cooking, games, music, travel) that make abstract concepts tangible.
+  4. METAPHORS & ANALOGIES: Check that the writing uses analogies or vivid imagery to make abstract concepts tangible. The prompt suggests everyday life examples (sports, cooking, games, music, travel), but domain-appropriate metaphors are equally valid. For example, art-specific imagery for an art topic or historical scenes for a history topic are perfectly fine. Do NOT penalize for using metaphors outside the suggested categories.
 
-  5. FOCUS ON "WHY": The activity explains the origin and importance of a topic — NOT how it works technically. If the output dives into mechanics or implementation, that's a problem.
+  5. FOCUS ON "WHY": The activity explains the origin and importance of a topic — NOT how it works technically. If the output dives into detailed mechanics, implementation, or jargon, that's a problem. However, high-level conceptual descriptions through analogies (e.g., "like nesting dolls, each containing a smaller version") are acceptable — explaining WHAT a concept does at an intuitive level is often necessary to explain WHY it matters.
 
   6. APPROPRIATE SCOPE: Content should match the lesson's scope exactly — not broader (covering the whole field) and not narrower (covering only a sub-topic).
 
@@ -20,222 +20,229 @@ const SHARED_EXPECTATIONS = `
   IMPORTANT: Do NOT require a specific number of steps. Simple topics may need fewer steps; complex topics may need more. Judge quality, not quantity.
 
   IMPORTANT: Make sure the output is factually correct. It should not include any information that is not true.
+
+  IMPORTANT: Do NOT penalize for JSON structure choices (e.g., returning { "steps": [...] } vs a bare array). Focus exclusively on the content quality of the steps themselves.
+
+  IMPORTANT: A "Background" story can take many valid forms — historical narrative, conceptual metaphor journey, scenario-based explanation, or a mix. Do NOT require a specific approach. A well-crafted conceptual narrative with vivid metaphors and clear tension/resolution is just as valid as a historical origin story.
 `;
 
 export const TEST_CASES = [
-  // Programming concept
+  // Initial chapter (2/105), initial lesson (1/117) — foundational networking concept
   {
     expectations: `
-      Avoid jumping into code syntax or technical implementation. The background should explain WHY object-oriented programming was invented and what problems it solved — not HOW to use classes.
+      Avoid diving into packet header formats, protocol specifications, or byte-level details. The background should explain WHY data needs to be broken into packets and what problems this solved — not HOW packet headers are structured.
 
       ${SHARED_EXPECTATIONS}
     `,
-    id: "en-programming-oop",
+    id: "en-web-packets",
     userInput: {
-      chapterTitle: "Programming Paradigms",
-      courseTitle: "Introduction to Programming",
+      chapterTitle: "Networking fundamentals",
+      courseTitle: "Web Development",
       language: "en",
       lessonDescription:
-        "Understanding the core principles of object-oriented programming and why it revolutionized software development",
-      lessonTitle: "Object-Oriented Programming",
+        "A packet as the unit of data routed across IP networks. What headers exist for delivery versus payload for the next layer.",
+      lessonTitle: "Packets",
     },
   },
-  // Math concept
+  // Initial chapter (2/105), mid lesson (60/117) — technical networking concept
   {
     expectations: `
-      Avoid diving into formulas, derivatives, or mathematical notation. The background should explain WHY calculus was invented and what problems it solved — not HOW to calculate limits.
+      Avoid diving into congestion window algorithms, TCP slow start formulas, or implementation details. The background should explain WHY networks needed congestion control and what happens without it — not HOW TCP congestion algorithms work step by step.
 
       ${SHARED_EXPECTATIONS}
     `,
-    id: "en-math-calculus",
+    id: "en-web-tcp-congestion-control",
     userInput: {
-      chapterTitle: "Foundations",
-      courseTitle: "Calculus I",
+      chapterTitle: "Networking fundamentals",
+      courseTitle: "Web Development",
       language: "en",
       lessonDescription:
-        "The origins of calculus and why mathematicians needed a new way to describe change and motion",
-      lessonTitle: "What is Calculus?",
+        "TCP congestion window as the sender's limit based on perceived network capacity. Why congestion control prevents persistent overload.",
+      lessonTitle: "TCP congestion control",
     },
   },
-  // Science concept
-  {
-    expectations: `
-      Avoid diving into DNA mechanics or genetic terminology. The background should explain WHY the theory of evolution was developed and what questions it answered — not HOW natural selection works at a biological level.
-
-      ${SHARED_EXPECTATIONS}
-    `,
-    id: "en-science-evolution",
-    userInput: {
-      chapterTitle: "Life Science",
-      courseTitle: "Biology Fundamentals",
-      language: "en",
-      lessonDescription:
-        "How Darwin's observations led to a revolutionary understanding of how species change over time",
-      lessonTitle: "The Theory of Evolution",
-    },
-  },
-  // Abstract/philosophical concept
-  {
-    expectations: `
-      Avoid listing logical operators or truth tables. The background should explain WHY formal logic was developed and what human problems it addressed — not HOW to construct syllogisms.
-
-      ${SHARED_EXPECTATIONS}
-    `,
-    id: "en-philosophy-logic",
-    userInput: {
-      chapterTitle: "Foundations of Reasoning",
-      courseTitle: "Introduction to Philosophy",
-      language: "en",
-      lessonDescription:
-        "The ancient quest to find reliable rules for correct thinking and argumentation",
-      lessonTitle: "What is Logic?",
-    },
-  },
-  // Portuguese - Economics
+  // Initial chapter (4/86), initial lesson (3/94) — Portuguese, programming concept
   {
     expectations: `
       Titles and descriptions must be in Portuguese.
 
-      Avoid diving into supply/demand curves or economic formulas. The background should explain WHY inflation matters and what historical problems it caused — not HOW central banks control it.
+      Avoid diving into isinstance() syntax, type hierarchy internals, or code examples. The background should explain WHY checking type membership matters and what problems arise without it — not HOW to call isinstance().
 
       ${SHARED_EXPECTATIONS}
     `,
-    id: "pt-economics-inflation",
+    id: "pt-python-isinstance",
     userInput: {
-      chapterTitle: "Conceitos Básicos",
-      courseTitle: "Economia para Iniciantes",
+      chapterTitle: "Tipos numéricos e valores especiais",
+      courseTitle: "Python",
       language: "pt",
-      lessonDescription: "Entendendo por que os preços sobem e como isso afeta a vida das pessoas",
-      lessonTitle: "O que é Inflação?",
+      lessonDescription:
+        "Teste de pertencimento a uma classe numérica, incluindo relações como bool ser subclasse de int.",
+      lessonTitle: "isinstance() com tipos numéricos",
     },
   },
-  // Spanish - Physics
+  // Mid chapter (47/92), initial lesson (1/179) — Spanish, chemistry concept
   {
     expectations: `
       Titles and descriptions must be in Spanish.
 
-      Avoid diving into formulas or mathematical equations. The background should explain WHY gravity was such a mystery and what questions it answered — not HOW to calculate gravitational force.
+      Avoid diving into electron density diagrams, orbital descriptions, or reaction mechanisms. The background should explain WHY the uneven charge distribution in C=O bonds matters and what it enables in chemistry — not HOW to draw resonance structures.
 
       ${SHARED_EXPECTATIONS}
     `,
-    id: "es-physics-gravity",
+    id: "es-quimica-carbonilo-polarizacion",
     userInput: {
-      chapterTitle: "Mecánica Clásica",
-      courseTitle: "Física para Principiantes",
+      chapterTitle: "Carbonilos y enolatos",
+      courseTitle: "Química",
       language: "es",
       lessonDescription:
-        "La historia de cómo los humanos entendieron por qué las cosas caen y los planetas orbitan",
-      lessonTitle: "La Gravedad",
+        "Distribución desigual de densidad electrónica entre C y O que vuelve al carbono susceptible a ataque nucleofílico.",
+      lessonTitle: "Carbonilo: polarización C=O",
     },
   },
-  // Edge case - very recent topic
+  // Mid chapter (35/104), mid lesson (52/101) — economics concept
   {
     expectations: `
-      SPECIAL CONSIDERATION: This is a very recent topic (large language models). The "history" is short but still has a narrative arc of problems, attempts, and breakthroughs.
-
-      The story should still have tension (what was hard about AI before?) and resolution (what changed?) even if the timeline is compressed.
+      Avoid diving into econometric equations, regression analysis, or mathematical models. The background should explain WHY economists noticed a relationship between inflation and unemployment and what that insight meant for policy — not HOW to estimate or test the Phillips curve.
 
       ${SHARED_EXPECTATIONS}
     `,
-    id: "en-edge-recent-topic",
+    id: "en-economics-phillips-curve",
     userInput: {
-      chapterTitle: "Modern AI",
-      courseTitle: "Introduction to Machine Learning",
+      chapterTitle: "Business cycles",
+      courseTitle: "Economics",
       language: "en",
       lessonDescription:
-        "How AI went from rigid rule-based systems to models that can understand and generate human language",
-      lessonTitle: "Large Language Models",
+        "A negative empirical relationship between inflation and unemployment observed in some periods.",
+      lessonTitle: "Phillips curve correlation",
     },
   },
-  // Edge case - very abstract topic
+  // Mid chapter (35/104), final lesson (101/101) — narrow economics concept
   {
     expectations: `
-      SPECIAL CONSIDERATION: This is a highly abstract mathematical concept. The background should make it relatable through metaphors and real-world problems it solved.
+      SPECIAL CONSIDERATION: This is a narrow, technical topic. The background should still have a narrative, but it may be shorter since the scope is focused.
 
-      Avoid technical definitions or abstract mathematical language. Focus on WHY mathematicians needed this concept and what problems it addressed.
+      Avoid diving into index construction formulas or statistical methodology. The background should explain WHY economists needed a way to summarize whether the economy is broadly expanding or contracting — not HOW to compute a diffusion index.
 
       ${SHARED_EXPECTATIONS}
     `,
-    id: "en-edge-abstract-topic",
+    id: "en-economics-diffusion-index",
     userInput: {
-      chapterTitle: "Advanced Concepts",
-      courseTitle: "Discrete Mathematics",
+      chapterTitle: "Business cycles",
+      courseTitle: "Economics",
       language: "en",
       lessonDescription:
-        "Understanding why mathematicians needed a rigorous way to study collections of objects",
-      lessonTitle: "Set Theory",
+        "A composite index summarizing the share of sectors expanding versus contracting at a point in time.",
+      lessonTitle: "Diffusion index",
     },
   },
-  // Technical/Engineering concept
-  {
-    expectations: `
-      Avoid diving into database schemas or SQL syntax. The background should explain WHY databases were invented and what problems early computer systems faced — not HOW to structure tables.
-
-      ${SHARED_EXPECTATIONS}
-    `,
-    id: "en-engineering-databases",
-    userInput: {
-      chapterTitle: "Data Storage",
-      courseTitle: "Computer Science Fundamentals",
-      language: "en",
-      lessonDescription:
-        "The history of how computers learned to organize and retrieve vast amounts of information",
-      lessonTitle: "Introduction to Databases",
-    },
-  },
-  // Art/Creative concept
-  {
-    expectations: `
-      Avoid jumping into color theory rules or artistic techniques. The background should explain WHY artists became obsessed with light and color — not HOW to mix pigments.
-
-      ${SHARED_EXPECTATIONS}
-    `,
-    id: "en-art-impressionism",
-    userInput: {
-      chapterTitle: "Art Movements",
-      courseTitle: "Art History",
-      language: "en",
-      lessonDescription:
-        "How a group of rebellious painters changed the way we see and capture the world",
-      lessonTitle: "Impressionism",
-    },
-  },
-  // Social Science concept
+  // Mid chapter (33/64), mid lesson (47/93) — Portuguese, agile/architecture concept
   {
     expectations: `
       Titles and descriptions must be in Portuguese.
 
-      Avoid diving into research methodologies or academic frameworks. The background should explain WHY humans started systematically studying society — not HOW sociologists conduct research.
+      Avoid diving into implementation patterns, code examples, or specific architectural frameworks. The background should explain WHY systems need a protective layer when integrating with external models — not HOW to implement an anti-corruption layer.
 
       ${SHARED_EXPECTATIONS}
     `,
-    id: "pt-social-sociology",
+    id: "pt-agile-camada-anticorrupcao",
     userInput: {
-      chapterTitle: "Introdução",
-      courseTitle: "Sociologia",
+      chapterTitle: "Arquitetura em ambientes ágeis",
+      courseTitle: "Metodologias Ágeis",
       language: "pt",
       lessonDescription:
-        "Como surgiu a necessidade de estudar cientificamente a sociedade e as relações humanas",
-      lessonTitle: "O que é Sociologia?",
+        "Camada que traduz modelos e integrações para evitar que conceitos externos contaminem o núcleo. Útil quando integrações mudam com frequência.",
+      lessonTitle: "Camada anticorrupção",
     },
   },
-  // Edge case - very simple/narrow topic
+  // Mid chapter (31/91), mid lesson (44/87) — creative/fiction, philosophical concept
   {
     expectations: `
-      SPECIAL CONSIDERATION: This is a narrow topic (recursion in programming). The background should still have a narrative, but it may be shorter since the scope is focused.
-
-      Avoid explaining how to write recursive functions. Focus on WHY recursion was developed as a concept and what elegant problems it solved.
+      This is a fictional/literary analysis topic. The background should explain the concept within the Harry Potter universe — WHY Horcruxes matter to the story and what they represent thematically. Avoid listing plot points mechanically; focus on the narrative significance and the moral weight of the concept.
 
       ${SHARED_EXPECTATIONS}
     `,
-    id: "en-edge-narrow-topic",
+    id: "en-harry-potter-horcrux-definition",
     userInput: {
-      chapterTitle: "Functions",
-      courseTitle: "Programming Fundamentals",
+      chapterTitle: "Alchemy, Horcruxes, and immortality",
+      courseTitle: "Harry Potter",
       language: "en",
       lessonDescription:
-        "Understanding the elegant idea of functions that call themselves to solve complex problems",
-      lessonTitle: "Recursion",
+        "A Horcrux is a container that holds a severed soul fragment to prevent final death.",
+      lessonTitle: "Horcrux definition",
+    },
+  },
+  // Final chapter (59/63), mid lesson (46/90) — historical/science concept
+  {
+    expectations: `
+      Avoid diving into DDT's chemical composition or detailed toxicology. The background should explain WHY DDT was seen as revolutionary for disease control and what tensions arose around its use — not HOW DDT kills insects at a molecular level.
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "en-brazilian-history-ddt",
+    userInput: {
+      chapterTitle: "Health and disease",
+      courseTitle: "Brazilian History",
+      language: "en",
+      lessonDescription:
+        'The use of DDT as a "miracle" tool and the later controversy over harms and dependency.',
+      lessonTitle: "DDT in vector control",
+    },
+  },
+  // Final chapter (59/63), final lesson (90/90) — recent topic, politically charged
+  {
+    expectations: `
+      SPECIAL CONSIDERATION: This is a very recent topic (COVID-19 pandemic memory). The "history" is still unfolding. The background should explain WHY competing narratives about the pandemic emerged and what they reveal about Brazilian society — not a chronological retelling of the pandemic.
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "en-brazilian-history-covid-memory",
+    userInput: {
+      chapterTitle: "Health and disease",
+      courseTitle: "Brazilian History",
+      language: "en",
+      lessonDescription:
+        "Public mourning, memorials, and denialism as competing narratives that politicized pandemic memory.",
+      lessonTitle: "COVID-19 memory politics",
+    },
+  },
+  // Late chapter (73/108), mid lesson (57/115) — Portuguese, legal/tech concept
+  {
+    expectations: `
+      Titles and descriptions must be in Portuguese.
+
+      Avoid diving into debugging workflows, code inspection techniques, or specific tools. The background should explain WHY distinguishing between data errors and template errors matters in legal document automation — not HOW to run a diagnostic procedure.
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-direito-diagnostico-erro",
+    userInput: {
+      chapterTitle: "Legal tech e automação de documentos",
+      courseTitle: "Direito",
+      language: "pt",
+      lessonDescription:
+        "Separar erro de dados do erro de template. Um procedimento para decidir se corrige o formulário ou a regra de montagem.",
+      lessonTitle: "Diagnóstico de erro",
+    },
+  },
+  // Mid chapter (47/92), final lesson (179/179) — Spanish, very narrow chemistry concept
+  {
+    expectations: `
+      Titles and descriptions must be in Spanish.
+
+      SPECIAL CONSIDERATION: This is a very narrow, advanced topic (selectivity control in Michael reactions). The background should still have a narrative, but it may be shorter since the scope is focused.
+
+      Avoid diving into orbital theory, HSAB calculations, or detailed reaction mechanisms. The background should explain WHY chemists needed to control where reactions happen on a molecule and what the 1,2 vs 1,4 selectivity challenge represents — not HOW to predict selectivity using frontier molecular orbital theory.
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "es-quimica-selectividad-1-2-1-4",
+    userInput: {
+      chapterTitle: "Carbonilos y enolatos",
+      courseTitle: "Química",
+      language: "es",
+      lessonDescription:
+        "En Michael, cambiar nucleófilo de duro a suave desplaza la selectividad entre 1,2 y 1,4.",
+      lessonTitle: "Selectividad: control 1,2-1,4",
     },
   },
 ];

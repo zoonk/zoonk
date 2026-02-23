@@ -1,182 +1,98 @@
 {
-  "expectations": "\n      - It's fine (and expected) to mention popular frameworks like Scrum and Kanban as part of the methodologies\n      - MUST be in Brazilian Portuguese\n\n      \n  - It should assume learners start with no prior knowledge of the subject\n  - Should create a progressive learning path going from basic/beginner to mastery of the subject\n  - By the end of this course, they should be able to lead very complex projects and tasks in this field\n  - They should be prepared for certifications or advanced studies in this subject like a master's degree or PhD\n  - Should include **EVERYTHING** a student needs to be at the top 1% of the field\n  - Should follow the language specified by language parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Should cover latest trends in the field\n  - Don't use vendors in chapter titles or descriptions (e.g. \"npm\", \"yarn\", \"Redux\", etc.)\n    - Except are for widely known tools related to the course (e.g. \"Git\" in a programming course)\n  - This is an eval system for a learning platform, of course the definition of \"ready for a job\" doesn't mean they have the legal requirements to work in the field (eg. medical license, law license, etc.). That's not important here, we're assessing if the course prepares the student with the necessary knowledge and skills.\n  - You don't need to evaluate the output format here, just focus on the chapter content quality.\n  - Titles should be concise and straight to the point, no fluff/filler words. For example:\n    - Just \"HTML\" is better than \"HTML Structure and Semantics\" (structure and semantics are implied if this is the only HTML chapter). Similarly, if we only have one CSS chapter, just \"CSS\" is better than \"CSS Styling and Layout\".\n    - \"Front-end frameworks\" is better than \"Front-End UI Frameworks Overview\" (too verbose) or \"Front-End Frameworks: Core Concepts\" (core concepts is unnecessary fluff)\n    - \"Relational Databases\" is better than \"Relational Databases and SQL\" (SQL is implied, no need to mention)\n    - \"Introduction to Java\" is better than \"Introduction to Java and Setting Up Your Development Environment\" (too verbose)\n    - \"Lean Startup\" is better than \"The Lean Startup Methodology: An Overview\" (too verbose)\n    - \"Introduction to X\" is valid for titles of introductory chapters but we should avoid those words in descriptions\n  - Similarly, descriptions should be concise and straight to the point, no fluff/filler words. For example:\n    - \"Styling with CSS: Selectors, properties, the box model, Flexbox, CSS Grid, and cascade principles.\" is better than \"Master styling and layout with CSS, including selectors, properties, the box model, Flexbox, CSS Grid, and cascade principles.\" - \"Master\" is fluff, and so are words like \"learn\", \"understand\", \"explore\", etc.\n    - \"Properties of matter, states, and phase transitions.\" is better than \"Explore the definition of Chemistry, properties of matter, states, and phase transitions.\" - \"Explore the definition of Chemistry\" are filler/unnecessary words.\n  - Don't add capstone/final projects, assessments, or exercises\n  - It shouldn't mention in title or description references to 1% or similar instructions about being top 1%\n\n    ",
-  "judgedAt": "2026-01-15T22:29:15.764Z",
+  "expectations": "\n      - It's fine (and expected) to mention popular frameworks like Scrum and Kanban as part of the methodologies\n      - MUST be in Brazilian Portuguese\n\n      \n  - It should assume learners start with no prior knowledge of the subject\n  - Should create a progressive learning path going from basic/beginner to mastery of the subject\n  - By the end of this course, they should be able to lead very complex projects and tasks in this field\n  - They should be prepared for certifications or advanced studies in this subject like a master's degree or PhD\n  - Should include **EVERYTHING** a student needs to be at the top 1% of the field\n  - Should follow the language specified by language parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Should cover latest trends in the field\n  - Prefer concept names over vendor names in chapter titles/descriptions (e.g., \"Package management\" instead of \"npm\"). Ecosystem-level tools (npm, yarn, Redux, Zustand) should be avoided in titles\n    - Exception: foundational tools that ARE the course subject matter are allowed (e.g., \"Git\" in a programming course, \"Node.js\" in a web dev course, \"Docker\" in a DevOps course). The test: would a chapter about this subject be incomplete without mentioning this tool?\n    - Vendor name usage is a minor issue — it affects title quality but not pedagogical content. Do NOT treat it as a major error\n  - This is an eval system for a learning platform, of course the definition of \"ready for a job\" doesn't mean they have the legal requirements to work in the field (eg. medical license, law license, etc.). That's not important here, we're assessing if the course prepares the student with the necessary knowledge and skills.\n  - You don't need to evaluate the output format here, just focus on the chapter content quality.\n  - Titles should be concise and straight to the point, no fluff/filler words. For example:\n    - Just \"HTML\" is better than \"HTML Structure and Semantics\" (structure and semantics are implied if this is the only HTML chapter). Similarly, if we only have one CSS chapter, just \"CSS\" is better than \"CSS Styling and Layout\".\n    - \"Front-end frameworks\" is better than \"Front-End UI Frameworks Overview\" (too verbose) or \"Front-End Frameworks: Core Concepts\" (core concepts is unnecessary fluff)\n    - \"Relational Databases\" is better than \"Relational Databases and SQL\" (SQL is implied, no need to mention)\n    - \"Introduction to Java\" is better than \"Introduction to Java and Setting Up Your Development Environment\" (too verbose)\n    - \"Lean Startup\" is better than \"The Lean Startup Methodology: An Overview\" (too verbose)\n    - \"Introduction to X\" is valid for titles of introductory chapters but we should avoid those words in descriptions\n  - Similarly, descriptions should be concise and straight to the point, no fluff/filler words. For example:\n    - \"Styling with CSS: Selectors, properties, the box model, Flexbox, CSS Grid, and cascade principles.\" is better than \"Master styling and layout with CSS, including selectors, properties, the box model, Flexbox, CSS Grid, and cascade principles.\" - \"Master\" is fluff, and so are words like \"learn\", \"understand\", \"explore\", etc.\n    - \"Properties of matter, states, and phase transitions.\" is better than \"Explore the definition of Chemistry, properties of matter, states, and phase transitions.\" - \"Explore the definition of Chemistry\" are filler/unnecessary words.\n  - Don't add assessment-style chapters: no final projects, capstone assignments, exercises, quizzes, or \"test your knowledge\" chapters. A theoretical synthesis chapter (e.g., \"Design Patterns in Architecture\") is fine even if it synthesizes prior material — the rule targets assessment/project chapters, not synthesis of knowledge. If a chapter uses the word \"capstone\" but is theoretical (not an assignment), treat it as a minor issue at most, not a major error\n  - It shouldn't mention in title or description references to 1% or similar instructions about being top 1%\n\n    ",
+  "judgedAt": "2026-02-22T17:23:40.690Z",
   "judgments": [
     {
-      "judgeId": "anthropic/claude-opus-4.5",
+      "judgeId": "anthropic/claude-opus-4.6",
       "rankings": [
         {
-          "anonymousId": "Model F",
-          "modelId": "openai/gpt-5.1-thinking",
-          "reasoning": "Model F provides an exceptionally comprehensive curriculum with 58 chapters covering virtually all aspects from fundamentals through advanced topics. Titles are concise and in Brazilian Portuguese. Descriptions are direct without fluff words. The course covers: fundamentals, Scrum/Kanban/XP, product management, scaling frameworks (SAFe, LeSS, Nexus), DevOps, security, transformation, metrics, OKRs, contracts, regulatory compliance, remote work, ethics, career paths, and future trends. The progressive structure goes from basic to mastery level. It addresses Business Agility, Design Thinking, UX integration, and emerging topics like AI. No vendor names in titles. Excellent breadth and depth for top 1% preparation.",
-          "score": 9.2
-        },
-        {
-          "anonymousId": "Model G",
-          "modelId": "openai/gpt-5-mini",
-          "reasoning": "Model G offers 62 well-structured chapters with excellent coverage. Titles are concise and descriptions are informative without filler. Strong coverage of fundamentals, frameworks (Scrum, Kanban, XP, FDD, Crystal, DSDM), scaling (SAFe, LeSS, Nexus, DAD), product management, discovery techniques, DevOps, quality practices, metrics, governance, transformation, coaching, and career preparation. Includes advanced topics like Monte Carlo forecasting, ethics, AI/ML trends, and academic research preparation. The curriculum flows logically from beginner to expert. Minor deduction for slightly verbose descriptions in some places.",
-          "score": 9.1
-        },
-        {
           "anonymousId": "Model C",
-          "modelId": "anthropic/claude-opus-4.5",
-          "reasoning": "Model C presents 57 comprehensive chapters covering all essential and advanced topics. Strong structure progressing from fundamentals to mastery. Covers manifesto, multiple frameworks (Scrum, Kanban, XP, Lean, Crystal, FDD, DSDM), all scaling frameworks, DevOps, CI/CD, quality, architecture, contracts, metrics, OKRs, compliance, security, antipatterns, case studies, and career paths. Titles are reasonably concise and in Portuguese. Descriptions are informative. Good coverage of future trends and certification preparation. Some descriptions could be slightly more concise but overall excellent quality.",
-          "score": 9
-        },
-        {
-          "anonymousId": "Model I",
-          "modelId": "openai/gpt-5.2",
-          "reasoning": "Model I provides 41 well-organized chapters with a strong theoretical foundation including systems theory, complexity, and lean thinking. Good coverage of Scrum, Kanban, XP, scaling, DevOps, security, governance, coaching, and career strategy. Titles are concise and descriptions are direct. Strong emphasis on metrics, estimation, and practical application. Covers agile beyond IT and regulated environments. The curriculum is well-structured for progressive learning. Slightly fewer chapters than top models but content is dense and comprehensive.",
-          "score": 8.8
-        },
-        {
-          "anonymousId": "Model H",
-          "modelId": "openai/gpt-5",
-          "reasoning": "Model H offers 50 chapters with excellent depth on technical practices and modern topics. Strong coverage of theory (systems thinking, queue theory), frameworks, DevOps, MLOps, security, ethics, and emerging trends like AI in agile. Unique coverage of Product Operations and SRE. Titles are mostly concise. Some chapters have quite technical focus which may be advanced for beginners. Good career and certification coverage. Strong overall but some titles/descriptions slightly less polished.",
-          "score": 8.7
-        },
-        {
-          "anonymousId": "Model J",
           "modelId": "openai/gpt-5.2:high",
-          "reasoning": "Model J presents 58 chapters with thorough coverage from fundamentals to advanced topics. Strong emphasis on Cynefin framework, flow metrics, and practical application. Good coverage of Scrum, Kanban, XP, scaling, DevOps, discovery, and transformation. Includes modern topics like AI generative, DEI, and sustainability. Descriptions are informative and direct. Some chapters could have more concise titles. Good balance between theory and practice. Certification coverage is present but lighter than some competitors.",
-          "score": 8.6
-        },
-        {
-          "anonymousId": "Model A",
-          "modelId": "google/gemini-2.5-flash",
-          "reasoning": "Model A provides 35 chapters with solid coverage of core agile topics. Good structure covering manifesto, Scrum, Kanban, XP, Lean, scaling frameworks, DevOps, coaching, and career paths. Titles are in Portuguese and descriptions are informative. Some descriptions contain slightly more verbose language ('Explanação sobre', 'Exploração do'). Coverage is comprehensive but less extensive than top models - missing some topics like Product Discovery depth, contracts, compliance, and ethics. Good for intermediate level but may lack some advanced topics for true mastery.",
-          "score": 8.2
-        },
-        {
-          "anonymousId": "Model B",
-          "modelId": "google/gemini-3-pro-preview",
-          "reasoning": "Model B offers 29 chapters with focused content. Good coverage of fundamentals, Scrum, Kanban, XP, Lean, metrics, scaling, and career topics. Includes Business Agility and change management. Titles are concise and in Portuguese. However, the chapter count is notably lower than competitors, potentially leaving gaps in advanced topics like security, compliance, contracts, ethics, and some engineering practices. Good for solid foundation but may not fully prepare for top 1% mastery level.",
-          "score": 8
-        },
-        {
-          "anonymousId": "Model K",
-          "modelId": "anthropic/claude-sonnet-4.5",
-          "reasoning": "Model K provides 56 chapters with comprehensive coverage including Scrum, Kanban, XP, Lean, Crystal, FDD, DSDM, SAFe, LeSS, Nexus, Spotify Model, DA. Good coverage of Product Discovery, Design Thinking, Lean Startup, DevSecOps, and ethics. Titles are in Portuguese and reasonably concise. Some descriptions contain minor verbose elements. Strong overall but some chapters overlap in content. Career and certification coverage is good. Solid curriculum for comprehensive learning.",
+          "reasoning": "Model C provides the most comprehensive and well-structured curriculum with 63 chapters covering an extraordinary breadth and depth. It excels in several areas: (1) Excellent progressive structure from fundamentals through mastery, (2) Covers unique and important topics often missed by others: SRE, architecture in agile environments, technical debt sustainability, data-driven agile, ethics, sustainability/burnout, research/P&D, financial aspects, and critical thinking for leaders, (3) Titles are generally concise and professional, (4) Descriptions are straight-to-the-point without fluff words like 'learn' or 'explore', (5) Strong coverage of both technical and organizational aspects, (6) Includes career chapter and certification chapter as required, (7) Covers latest trends including AI, (8) Good vendor neutrality - mentions Scrum, Kanban, XP by name which is appropriate per the exception rules, (9) Covers agile in hardware, R&D, and non-software contexts. Minor issues: some chapters could arguably be consolidated (e.g., separate chapters for daily coordination and sprint review feel overly granular for Scrum events), and a few titles are slightly verbose. The depth on Scrum with separate chapters for each event type may be excessive granularity, but it's thorough. Overall, this is the most complete curriculum.",
           "score": 8.5
         },
         {
-          "anonymousId": "Model E",
-          "modelId": "google/gemini-2.5-pro",
-          "reasoning": "Model E presents 42 chapters with good coverage of fundamentals through advanced topics. Strong structure covering Scrum roles and events in detail, Kanban, XP, scaling frameworks (SAFe, LeSS, Nexus, Scrum@Scale), DevOps, and transformation. Good coverage of Business Agility and future trends. Titles are in Portuguese but some are slightly longer than ideal. Descriptions are informative. Missing some depth in contracts, compliance, and technical practices compared to top models.",
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model B delivers an excellent and comprehensive curriculum with 47 chapters. Strengths: (1) Very thorough coverage from historical context through advanced topics, (2) Good progressive ordering from fundamentals to mastery, (3) Includes often-missed topics like Shape Up, compliance/governance, anti-patterns, hardware agile, distributed teams, and Spotify model, (4) Descriptions are generally well-written and concise, (5) Includes both career and certification chapters, (6) Covers latest trends including AI, (7) Good balance between breadth and depth, (8) Separates Kanban into multiple chapters (fundamentals, design, metrics) showing appropriate depth. Minor issues: a few titles are slightly verbose (e.g., 'A crise do software e o surgimento do Agile', 'Manifesto Ágil: valores e princípios'), and some descriptions could be more concise. The coverage of technical practices (CI/CD, TDD/BDD as separate chapters) is strong. Missing some topics that Model C covers (like architecture, technical debt, financial aspects in depth), but overall very strong.",
           "score": 8.3
         },
         {
-          "anonymousId": "Model L",
-          "modelId": "openai/gpt-5.1-instant",
-          "reasoning": "Model L offers 43 chapters with unique focus on systems theory, complexity, and transformation. Good coverage of Scrum, Kanban, XP, Lean Inception, Design Thinking, scaling, DevOps, and career paths. Titles are concise in Portuguese. Some descriptions are appropriately brief. However, missing some important topics like contracts, specific scaling framework details, and certification preparation depth. Unique inclusion of ethics and regulated environments is positive.",
-          "score": 8
-        },
-        {
-          "anonymousId": "Model M",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Model M provides 31 chapters covering core agile topics adequately. Includes Scrum, Kanban, XP, Lean, scaling (SAFe, Nexus, LeSS, Spotify), DevOps, and career paths. Titles are concise in Portuguese. However, the curriculum is notably shorter than top competitors, missing depth in areas like contracts, security/compliance, advanced metrics, technical practices, and discovery techniques. Adequate for intermediate learners but may not fully prepare for top 1% expertise.",
-          "score": 7.8
-        },
-        {
-          "anonymousId": "Model D",
-          "modelId": "xai/grok-4-fast-reasoning",
-          "reasoning": "Model D offers 30 chapters with basic to intermediate coverage. Includes fundamentals, Scrum, Kanban, XP, and scaling concepts. However, uses English terms in titles ('Scrum Fundamentals', 'Kanban Fundamentals', 'Extreme Programming (XP)') - should be in Portuguese per requirements. Coverage lacks depth in advanced topics like contracts, security, compliance, detailed metrics, and product discovery. Some vendor names mentioned (Jira, Trello, Azure DevOps). Curriculum is adequate but not comprehensive enough for mastery level.",
-          "score": 7.2
-        },
-        {
-          "anonymousId": "Model N",
-          "modelId": "xai/grok-4.1-fast-reasoning",
-          "reasoning": "Model N presents 42 chapters but has several issues. Some titles mix English and Portuguese ('CI/CD Ágil', 'Git em Projetos Ágeis'). Mentions vendor names (Jira, Trello, Azure DevOps, Cucumber) in descriptions/titles which violates requirements. Coverage includes basics and some advanced topics but lacks depth in transformation, contracts, ethics, and career preparation. Some descriptions contain implementation-specific details rather than conceptual coverage. Structure is adequate but execution has notable issues.",
-          "score": 7
-        }
-      ]
-    },
-    {
-      "judgeId": "google/gemini-3-pro-preview",
-      "rankings": [
-        {
-          "anonymousId": "Model H",
-          "modelId": "openai/gpt-5",
-          "reasoning": "This model provides an exceptional, cutting-edge curriculum that perfectly aligns with the goal of reaching the top 1% of the field. It incorporates the most modern trends in Agile, such as Team Topologies, Product Operations, Data/ML Agility, and Legal/IP aspects, which are rarely found in standard courses but essential for mastery. The descriptions are extremely concise and dense with high-value concepts (e.g., Cost of Delay, Monte Carlo, Wardley Maps implied). It fully adheres to all constraints.",
-          "score": 10
-        },
-        {
           "anonymousId": "Model G",
-          "modelId": "openai/gpt-5-mini",
-          "reasoning": "Model G is outstanding and nearly ties for first place. It is comprehensive and specifically addresses the prompt's requirement for preparation for advanced studies (Master's/PhD) with a dedicated chapter on academic research. It also includes unique high-level topics like Executive Communication and Negotiation. Its approach to metrics (Monte Carlo) and complexity (Systems Theory) is top-tier. The descriptions are concise and professional.",
-          "score": 9.9
-        },
-        {
-          "anonymousId": "Model F",
-          "modelId": "openai/gpt-5.1-thinking",
-          "reasoning": "A very thorough curriculum with 64 chapters, offering immense depth. It covers essential advanced topics like Value Stream Mapping, Organizational Design, and Ethics. It excels in breadth, covering various contexts (marketing, regulated environments). The descriptions are excellent lists of topics without fluff. It is a very strong contender for the top spot.",
-          "score": 9.6
-        },
-        {
-          "anonymousId": "Model J",
-          "modelId": "openai/gpt-5.2:high",
-          "reasoning": "This model offers a robust and modern curriculum, with a strong focus on complexity (Cynefin), sustainability, DEI (Diversity, Equity, and Inclusion), and AI. The flow from foundations to advanced engineering and organizational topics is logical. Descriptions are punchy and adhere strictly to the no-fluff rule. It is a high-quality output.",
-          "score": 9.4
-        },
-        {
-          "anonymousId": "Model I",
           "modelId": "openai/gpt-5.2",
-          "reasoning": "Model I provides a very solid, modern curriculum that mentions key concepts like Team Topologies and DORA metrics. It covers the necessary ground for a high-level course, including architecture and security. The descriptions are concise and well-structured. It ranks slightly lower than the top 4 simply because they offer slightly more granular detail on niche advanced topics.",
-          "score": 9
-        },
-        {
-          "anonymousId": "Model K",
-          "modelId": "anthropic/claude-sonnet-4.5",
-          "reasoning": "A comprehensive 'classic' Agile curriculum. It covers a wide range of frameworks (including older ones like Crystal and DSDM, which shows academic completeness). It adheres well to the formatting constraints. While very complete, it feels slightly less focused on the 'bleeding edge' modern product trends compared to Model H, but is still excellent.",
-          "score": 8.8
-        },
-        {
-          "anonymousId": "Model C",
-          "modelId": "anthropic/claude-opus-4.5",
-          "reasoning": "Similar to Model K, this is a very strong, comprehensive curriculum covering all the standard bases plus scaling and transformation. It is well-structured and follows the constraints. It is a high-quality output that would make a great course, though it stands out slightly less in terms of unique 'mastery' topics compared to the very top models.",
-          "score": 8.7
-        },
-        {
-          "anonymousId": "Model B",
-          "modelId": "google/gemini-3-pro-preview",
-          "reasoning": "Model B is excellent in its conciseness. The descriptions are punchy and get straight to the point (e.g., 'Diferença entre ser ágil...'). It covers the core material very well, though it has fewer chapters (29) than the higher-ranked models, resulting in slightly less depth on advanced edge cases and specialized contexts.",
-          "score": 8.5
-        },
-        {
-          "anonymousId": "Model E",
-          "modelId": "google/gemini-2.5-pro",
-          "reasoning": "This model includes some great advanced topics like Cynefin, Systems Thinking, and EBM. The content is high quality. However, the descriptions are slightly more wordy ('Os quatro valores...', 'Aprofundamento no papel...') than the list-style descriptions of the higher-ranked models, though still acceptable.",
+          "reasoning": "Model G provides a very strong curriculum with 49 chapters. Strengths: (1) Excellent topic selection with sophisticated coverage including architecture (both evolutionary and distributed), value stream management, Team Topologies, MLOps/data, security/DevSecOps, documentation/knowledge management, (2) Titles are consistently concise and professional, (3) Descriptions are direct and informative without fluff, (4) Good progressive structure, (5) Strong technical depth alongside organizational/process topics, (6) Covers unique topics like 'Gestão de escopo e trade-offs', 'Economia e finanças para produtos ágeis', and 'Agile para dados e IA', (7) Career chapter included. Minor issues: Some chapters feel slightly overlapping (e.g., 'Agile em escala' and 'Frameworks de escala' could be one chapter), and the curriculum doesn't explicitly separate certification preparation from career guidance. The coverage of agile beyond software could be stronger (no dedicated chapter for non-IT agile). But overall, excellent quality and very comprehensive.",
           "score": 8.2
         },
         {
-          "anonymousId": "Model L",
-          "modelId": "openai/gpt-5.1-instant",
-          "reasoning": "Model L covers a good range of topics, including hardware and data science. However, the descriptions are somewhat abstract and less detailed than the top models. It feels like a high-level overview rather than a deep dive curriculum for the top 1%.",
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model D is extremely comprehensive with 50 chapters covering a wide range of topics. Strengths: (1) Covers many advanced topics like value stream mapping, statistical inference, innovation/intrapreneurship, research methods, and sociotechnical systems, (2) Good coverage of technical practices, (3) Includes career chapter, (4) Covers financial aspects well. Weaknesses: (1) Several titles are verbose (e.g., 'Fundamentos e História das Metodologias Ágeis', 'eXtreme Programming (XP) e Boas Práticas Técnicas', 'Contratos, Procurement e Aspectos Legais para Entregas Ágeis', 'Dashboards, Observabilidade de Processo e Visualização de Métricas'), (2) Some overlap between chapters (e.g., multiple metrics chapters, quality chapters), (3) The chapter on 'Treinamento, Capacitação Corporativa e Difusão de Conhecimento' feels like it could border on an assessment/project chapter, (4) 'Manifesta Ágil' appears to be a typo for 'Manifesto Ágil' in the first description, (5) Some topics like 'Estatística Aplicada, Inferência Causal e Experimentos' may go beyond the core scope of agile methodologies. Generally strong but less polished than top models.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model F provides a very thorough curriculum with 42 chapters. Strengths: (1) Includes Crystal, FDD, and DSDM which are often overlooked but relevant for comprehensive agile coverage, (2) Good progressive structure, (3) Covers financial aspects, risk management, and compliance, (4) Includes both career and certification chapters, (5) Covers latest trends. Weaknesses: (1) Several descriptions are quite verbose and could be more concise (e.g., the Scrum chapter description is very long), (2) Some titles are verbose (e.g., 'História e Evolução dos Modelos de Desenvolvimento', 'Agilidade Além do Software (Business Agility)'), (3) The 'Estudos de Caso e Anti-Patterns' chapter is borderline assessment-style, though it's more of a synthesis chapter, (4) Missing some important topics like security/DevSecOps, architecture, technical debt management, and data/AI beyond trends, (5) While including Crystal, FDD, and DSDM is comprehensive, dedicating full chapters to these less-used frameworks while missing other important topics is a questionable trade-off.",
           "score": 7.5
         },
         {
           "anonymousId": "Model A",
-          "modelId": "google/gemini-2.5-flash",
-          "reasoning": "The content is good, but the descriptions fail the 'no fluff' constraint significantly. Phrases like 'Explanação sobre...', 'Análise detalhada...', and 'Exploração do...' are exactly what the prompt asked to avoid. The curriculum itself is solid, but the presentation lowers the score.",
-          "score": 7
-        },
-        {
-          "anonymousId": "Model M",
           "modelId": "google/gemini-3-flash",
-          "reasoning": "This model follows the formatting constraints well, but the content is too basic for the stated goal of reaching the 'top 1%' and preparing for a PhD. It covers the essentials (Scrum, Kanban, SAFe) but lacks the depth and advanced topics found in other models.",
+          "reasoning": "Model A provides a solid but relatively compact curriculum with only 23 chapters. Strengths: (1) Covers core topics well, (2) Titles are generally concise, (3) Good coverage of key frameworks (Scrum, Kanban, XP), (4) Includes career chapter, AI, and modern topics, (5) Descriptions are direct and well-written. Weaknesses: (1) With only 23 chapters, this is significantly less comprehensive than other models - many important topics are missing or insufficiently covered, (2) No coverage of architecture in agile, technical debt, testing strategies, security/DevSecOps, (3) No dedicated chapters for CI/CD beyond mentioning it in XP, (4) Missing risk management, financial/budgeting aspects, (5) No coverage of agile in hardware, distributed teams, or compliance/governance, (6) Doesn't cover frameworks like DSDM, Crystal, or Shape Up, (7) Missing topics like value stream mapping, documentation practices, and quality strategies. For a curriculum aiming to produce top 1% practitioners, this lacks the depth and breadth needed.",
           "score": 6.5
         },
         {
-          "anonymousId": "Model N",
-          "modelId": "xai/grok-4.1-fast-reasoning",
-          "reasoning": "Model N violates the negative constraint regarding vendors by explicitly listing 'Jira, Trello, Azure DevOps' and 'Cucumber' in the descriptions. The prompt explicitly allowed only widely known tools related to the course (like Git), and while Jira is related, listing it in this manner focuses the chapter on the tool rather than the concept, which is generally discouraged in these prompts. The content is otherwise standard.",
-          "score": 6
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model E provides the most compact curriculum with only 21 chapters. Strengths: (1) Concise titles and descriptions, (2) Covers the essential core topics, (3) Good logical progression, (4) Includes career chapter. Weaknesses: (1) Far too few chapters for a comprehensive mastery-level curriculum - this is the least comprehensive of all models, (2) Missing many critical topics: no architecture, no testing/quality, no CI/CD dedicated chapter, no security, no compliance/governance, no financial aspects, no distributed teams, no documentation, no value stream mapping, (3) No coverage of agile in hardware or non-software contexts beyond a brief mention in Business Agility, (4) Missing Design Thinking/Product Discovery as a proper topic, (5) No coverage of metrics beyond a single chapter, (6) Frameworks coverage is thin - SAFe gets its own chapter but LeSS and Nexus are bundled together, (7) Missing important soft skills topics like communication and stakeholder management in depth. While the content that IS there is solid, the curriculum is simply not comprehensive enough for mastery-level learning.",
+          "score": 5.8
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model G perfectly balances extreme comprehensiveness (50 chapters) with strict adherence to the formatting and conciseness rules. It follows the title guidelines flawlessly by using ultra-concise titles like 'Scrum', 'Kanban', and 'Lean' without adding unnecessary fluff. The curriculum spans from foundational concepts to advanced technical practices (DevSecOps, SRE, Architecture), scaling, financial considerations, and organizational design. The descriptions are straight to the point and free of filler words.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model C provides a phenomenally deep curriculum with 63 chapters, covering an incredible breadth of topics required to reach the top 1% (including team topologies, dual-track agile, AI, data, and ethics). The progression is exceptionally logical, and the descriptions are completely free of fluff. It only slightly trails Model G because some titles are a bit more verbose (e.g., 'Scrum na prática' instead of just 'Scrum'), but it remains an outstanding and highly comprehensive curriculum.",
+          "score": 9.8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model B offers a highly detailed and exhaustive curriculum (46 chapters), covering not only mainstream frameworks but also Shape Up, the Spotify Model, hardware applications, and anti-patterns like 'fake agile'. The content is highly relevant and modern. Its only minor flaw is that the titles use a slightly verbose 'Topic: subtopic' format (e.g., 'Scrum: fundamentos', 'Kanban: fundamentos'), which goes slightly against the prompt's preference for maximal conciseness.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model F is a great, comprehensive output (42 chapters) that uniquely includes older or alternative frameworks like Crystal, FDD, and DSDM, which adds great historical and practical context for true mastery. The progression is very solid. However, the titles are a bit wordier than the higher-ranked models (e.g., 'Scrum: Papéis, Artefatos e Eventos').",
+          "score": 9
         },
         {
           "anonymousId": "Model D",
-          "modelId": "xai/grok-4-fast-reasoning",
-          "reasoning": "Similar to Model N, this model violates the vendor rule by listing 'Jira, Trello, Azure DevOps' in the description. The content is adequate but standard, and the violation of a specific negative constraint impacts the score.",
-          "score": 6
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model D provides a robust and expansive curriculum (51 chapters) with excellent inclusion of metrics, empirical research, and advanced team dynamics. However, the titles are notably more verbose (e.g., 'Fundamentos e História das Metodologias Ágeis', 'eXtreme Programming (XP) e Boas Práticas Técnicas'), which violates the tip to avoid verbosity in titles.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model A has good formatting, concise titles, and fluff-free descriptions. However, with only 23 chapters, it lacks the extreme depth and comprehensiveness expected to take a learner to the 'top 1%' of the field, especially when compared to the 40-60 chapter deep dives provided by the top models.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model E follows the conciseness rules well, but with only 21 chapters, it barely scratches the surface of what is required for absolute mastery in Agile Methodologies. It misses deeper explorations into scaling, specific technical practices, product discovery, and modern trends that are essential for leading complex projects.",
+          "score": 7.5
         }
       ]
     },
@@ -184,88 +100,46 @@
       "judgeId": "openai/gpt-5.2",
       "rankings": [
         {
-          "anonymousId": "Model J",
+          "anonymousId": "Model C",
           "modelId": "openai/gpt-5.2:high",
-          "reasoning": "Trilha muito completa e progressiva: fundamentos (manifesto, mentalidade, complexidade), fluxo/Lean/filas, Scrum e Kanban em profundidade, engenharia (XP, qualidade, CI/CD, DevOps/SRE, incidentes), discovery/produto, métricas e forecasting (Monte Carlo), escala (Nexus/LeSS/SAFe/portfólio), governança/compliance/contratos/finanças, transformação, coaching, IA e tendências. Títulos concisos e descrições diretas. Evita vendors em títulos. Excelente preparo para liderar projetos complexos e para estudos avançados/certificações.",
+          "reasoning": "Cobertura mais completa e coerente para “metodologias ágeis” em nível de domínio: fundamentos (complexidade/empirismo/Lean), produto (estratégia, discovery, métricas), execução (Scrum/Kanban/XP), engenharia moderna (DevOps, SRE, arquitetura evolutiva, testes, DevSecOps), escala/portfólio (LPM, Team Topologies), governança/compliance, áreas não‑TI, pesquisa/rigor científico, ética/bem‑estar, IA, antipadrões e carreira. Progressão bem encadeada e descrições objetivas sem cair em capítulos de avaliação/projeto. Poucas fragilidades: mistura pontual de termos em inglês (ok) e densidade alta, mas apropriada ao objetivo.",
           "score": 9.6
         },
         {
-          "anonymousId": "Model I",
-          "modelId": "openai/gpt-5.2",
-          "reasoning": "Cobertura ampla e moderna com forte base em sistemas/complexidade, produto (discovery/delivery), Lean+Kanban/Scrum, engenharia (DevOps, qualidade, arquitetura), métricas (DORA/SLO), escala, governança, compliance, segurança/privacidade, dados/IA, coaching e carreira. Progressão boa e sem fluff. Um pouco menos profundo que J em alguns tópicos (ex.: incidentes/SRE, finanças), mas ainda nível avançado.",
-          "score": 9.3
-        },
-        {
-          "anonymousId": "Model F",
-          "modelId": "openai/gpt-5.1-thinking",
-          "reasoning": "Extremamente completo e bem estruturado do básico à maestria, incluindo escala, arquitetura, portfólio, governança/risco, UX, transformação, maturidade/diagnóstico, ética e tendências; bom para liderança de grandes iniciativas. Peca levemente por ser longo e ter alguns títulos um pouco mais descritivos, mas ainda concisos. Sem vendors em títulos.",
-          "score": 9.1
-        },
-        {
-          "anonymousId": "Model H",
-          "modelId": "openai/gpt-5",
-          "reasoning": "Conteúdo avançado e alinhado a tendências (Team Topologies, DORA, privacy/LGPD, ML/MLOps, product ops, operações/SRE, IA na prática). Excelente amplitude para topo técnico/organizacional. Porém assume mais bagagem desde cedo (menos “zero conhecimento”) e inclui referência explícita a “topo 1%” em um capítulo, o que viola a regra.",
-          "score": 8.6
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Extremamente abrangente e avançado, incluindo tópicos raros e relevantes (process mining/VSM, inferência causal/estatística, métodos de pesquisa para mestrado/PhD, casos por indústria, finanças, governança, SRE/observabilidade, arquitetura, DevSecOps, tendências). Boa preparação para liderar transformações complexas. Penalidades: alguns termos/capítulos escorregam para “software engineering” profundo (microfrontends/microservices) podendo sair um pouco do escopo de um curso de metodologias, e há pequenos problemas de linguagem/clareza (“Manifesta Ágil”, anglicismos). Ainda assim, altíssima qualidade.",
+          "score": 9.2
         },
         {
           "anonymousId": "Model G",
-          "modelId": "openai/gpt-5-mini",
-          "reasoning": "Muito forte em produto, discovery, estatística (Monte Carlo), engenharia, compliance/finanças, coaching e pesquisa acadêmica. Títulos em geral bons e sem vendors. Pequenas falhas: alguns títulos/descrições com termos em inglês (“knowledge work”), e a progressão inicial é mais conceitual/densa para iniciantes absolutos.",
-          "score": 8.5
-        },
-        {
-          "anonymousId": "Model C",
-          "modelId": "anthropic/claude-opus-4.5",
-          "reasoning": "Uma das trilhas mais abrangentes: além de Scrum/Kanban/XP inclui vários métodos (Crystal, FDD, DSDM, DA), escala (SAFe/LeSS/Nexus/Scrum@Scale), produto, discovery/Design Thinking, DevOps/CI/CD, arquitetura, documentação, remoto, compliance/segurança, tendências e certificações. Boa progressão. Pontos negativos: extensão enorme pode redundar, inclui “estudos de caso” (não é exercício/capstone, mas pode ser visto como extra), e algumas descrições menos objetivas.",
-          "score": 8.3
-        },
-        {
-          "anonymousId": "Model E",
-          "modelId": "google/gemini-2.5-pro",
-          "reasoning": "Cobertura sólida e progressiva (Scrum/Kanban/XP, métricas, escala, liderança/coaching, DevOps, complexidade/sistêmico, portfólio/EBM, tendências e carreira). Títulos em geral bons. Fraquezas: menos profundidade em engenharia/arquitetura/estatística e governança regulatória comparado aos melhores; algumas descrições um pouco mais longas e com parênteses excessivos.",
-          "score": 7.9
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Currículo forte e bem equilibrado entre mindset, produto, delivery e engenharia; inclui arquitetura, CI/CD, observabilidade/SRE, segurança/privacidade, portfólio, scaling, VSM, mudança organizacional, economia, dados/IA, remotos, antipadrões e carreira. Mantém neutralidade de fornecedor e é bem prático para atuação sênior. Faltou aprofundar um pouco mais em frameworks/métodos “além do trio” (ex.: Crystal/FDD/DSDM) e em pesquisa/cientificidade em comparação com C/D.",
+          "score": 8.9
         },
         {
           "anonymousId": "Model B",
-          "modelId": "google/gemini-3-pro-preview",
-          "reasoning": "Boa trilha com tópicos modernos (Monte Carlo, EBM/OKRs, change management, contratos, business agility). Porém inclui vendor no título (“Spotify”), e alguns capítulos têm termos/nomes próprios de métodos de gestão específicos (Management 3.0) no título; também falta mais profundidade em engenharia/arquitetura/segurança para “maestria”.",
-          "score": 7.6
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Muito completo, com boa progressão do histórico ao avançado; cobre Scrum/Kanban/XP, CI/CD, métricas (inclui DORA), escala (SAFe/LeSS/Nexus/Spotify), governança/compliance, remoto, coaching/liderança, antipadrões, certificações/carreira e tendências (IA, PLG). Pontos fracos: várias descrições usam verbos e construções mais “didáticas”/verbosas (“como usar”, “visão geral”), e há certa redundância em Scrum. Ainda assim, excelente amplitude.",
+          "score": 8.6
         },
         {
-          "anonymousId": "Model K",
-          "modelId": "anthropic/claude-sonnet-4.5",
-          "reasoning": "Cobertura ampla e bem organizada, incluindo muitos frameworks, engenharia (TDD/BDD/CI/CD/DevOps), compliance/segurança, discovery/UX/dados, ética e certificações. Problemas: vários títulos em inglês (p.ex. “Crystal Methodologies”, “Spotify Model”, “Data-Driven Decision Making”, “Product Ownership”), o que fere a expectativa de PT-BR consistente; algumas descrições citam ‘ferramentas’ (embora não no título) e há certa redundância.",
-          "score": 7.3
-        },
-        {
-          "anonymousId": "Model L",
-          "modelId": "openai/gpt-5.1-instant",
-          "reasoning": "Estrutura coerente e títulos concisos; cobre produto/projeto, Lean, complexidade, Scrum/Kanban/XP, discovery/delivery, escala/portfólio/OKRs, DevOps, compliance e liderança. Mas fica mais genérico, com menos profundidade prática/avançada (métricas avançadas, engenharia moderna detalhada, segurança/privacidade/IA, contratos).",
-          "score": 7
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Boa cobertura de frameworks (inclui Crystal, FDD, DSDM) e tópicos organizacionais (transformação, contratos, orçamento, riscos, remoto, certificações, carreira, tendências). Também cobre práticas técnicas e arquitetura em nível razoável. Penalidades: algumas descrições têm mais “cara de apostila” (explicativas e longas), e falta aprofundamento em temas modernos que C/D/G trazem com mais força (SRE/observabilidade, DevSecOps, VSM, Team Topologies, governança avançada, IA aplicada de forma mais concreta).",
+          "score": 8.1
         },
         {
           "anonymousId": "Model A",
-          "modelId": "google/gemini-2.5-flash",
-          "reasoning": "Boa cobertura de fundamentos, Scrum/Kanban, engenharia (TDD/BDD/CI/CD), liderança, transformação, escala, DevOps/DevSecOps e carreira. Porém muitos títulos são longos e com excesso de detalhes entre parênteses (contra a diretriz de concisão). “Ferramentas para Gestão…” é vago e não aprofunda tendências recentes (IA, produto/data, estatística). Menos completo para ‘topo’ e pós-graduação.",
-          "score": 6.8
-        },
-        {
-          "anonymousId": "Model M",
           "modelId": "google/gemini-3-flash",
-          "reasoning": "Boa introdução e cobertura intermediária (Scrum/Kanban/Lean/XP, escala, discovery, OKRs, mudança e certificações). Mas falta profundidade em engenharia moderna, métricas avançadas, portfólio/finanças/contratos, compliance/segurança, estatística/forecasting e tendências. Alguns títulos misturam português/inglês.",
-          "score": 6.6
+          "reasoning": "Estrutura sólida e objetiva, cobrindo fundamentos, Lean, Scrum/Kanban/XP, discovery, backlog/estimativas/métricas, facilitação/coaching, escala (SAFe/LeSS/Nexus), organização por squads, OKRs, business agility, DevOps, mudança, Cynefin, segurança psicológica, contratos, IA e carreira. Penalidades: menos abrangente que os melhores (pouco sobre governança/compliance, qualidade/testes mais detalhado, SRE/observabilidade, portfólio/finanças, remoto/distribuído, antipadrões), e algumas escolhas de título são mais “tool/framework-centric” (SAFe) — permitido, mas limita a visão vendor-neutral.",
+          "score": 7.8
         },
         {
-          "anonymousId": "Model D",
-          "modelId": "xai/grok-4-fast-reasoning",
-          "reasoning": "Conteúdo razoável e progressivo, mas viola regra de vendor em título ao listar ferramentas específicas (“Jira, Trello, Azure DevOps”). Também tem títulos em inglês (“Scrum Fundamentals”, “Kanban Fundamentals”). Menos aprofundado em tendências/estatística/arquitetura/segurança para maestria.",
-          "score": 6
-        },
-        {
-          "anonymousId": "Model N",
-          "modelId": "xai/grok-4.1-fast-reasoning",
-          "reasoning": "Cobre muitos tópicos, mas tem violações claras: vendor no título (“Ferramentas… Jira, Trello, Azure DevOps”) e vendor em descrição (“BDD com Cucumber”), além de títulos em inglês e alguns capítulos básicos/repetitivos. Profundidade desigual e menos foco em tendências e conteúdo avançado consistente.",
-          "score": 5.8
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Cobertura boa para nível intermediário/avançado (Cynefin, Scrum/Kanban/XP/Lean, produto, métricas, facilitação/coaching, DevOps, escala, business agility, OKRs, mudança, contratos, carreira). Entretanto é curto para a ambição do prompt (topo da área): falta escala/portfólio com mais profundidade, governança/compliance, riscos, remoto, antipadrões, SRE/observabilidade, segurança/DevSecOps, e tendências além de uma menção indireta. Descrições são concisas e adequadas.",
+          "score": 7.2
         }
       ]
     }

@@ -4,6 +4,7 @@ import { getStatsFromResults } from "@/lib/stats";
 import { type TaskEvalResults } from "@/lib/types";
 import { Accordion } from "@zoonk/ui/components/accordion";
 import { ContainerTitle } from "@zoonk/ui/components/container";
+import { IssuesSummary } from "./issues-summary";
 import { SummaryCard } from "./summary-card";
 import { TestCase } from "./test-case";
 
@@ -25,6 +26,8 @@ export function EvalResults({ results }: { results: TaskEvalResults }) {
         averageScore={averageScore}
         totalCost={stats.totalCost}
       />
+
+      <IssuesSummary results={results.results} />
 
       <div className="flex flex-col gap-4">
         <ContainerTitle>Test Cases</ContainerTitle>

@@ -1,0 +1,149 @@
+{
+  "expectations": "\n      - Sub-areas like \"Differential Calculus\", \"Integral Calculus\", \"Limits and Continuity\" are acceptable — we wouldn't want separate courses for these, they're all calculus\n      - Levels like Calculus I, II, III are acceptable since they refer to the same subject\n      - Should NOT include \"Mathematics\" (broader) or \"Linear Algebra\" (different subject)\n      - Results should be in English\n\n      \n  **PURPOSE**: Alternative titles prevent AI from generating duplicate courses for the same subject. If someone creates \"Python for Data Science\", the AI should recognize it as the existing \"Python\" course — not create a separate one. The list catches all title variants that map to the same course.\n\n  **CORE RULE**: If the title still contains the base subject (or a recognized synonym/abbreviation), it is the SAME course — regardless of qualifiers, subtitles, tools, focus areas, or context added to it. We do NOT want separate courses for each variant.\n\n  Examples of this rule:\n  - \"World War II: Normandy and D-Day\" → contains \"World War II\" → same course\n  - \"Python for Data Science\" → contains \"Python\" → same course\n  - \"IA Generativa\" → contains \"IA\" → same course\n  - \"Desarrollo Web con React\" → contains \"Desarrollo Web\" → same course\n  - \"ML with Python\" → contains \"ML\" → same course\n  - \"Differential Calculus\" → contains \"Calculus\" → same course\n  - \"Formula 1 Motorsport\" → contains \"Formula 1\" → same course\n\n  **When to EXCLUDE**:\n  - **Broader**: The title covers a larger domain that encompasses unrelated subjects → exclude. Example: \"Web Development\" is broader than \"Frontend Development\"; \"Programming\" is broader than \"Python\"; standalone \"Motorsport\" is broader than \"Formula 1\".\n  - **Standalone different subject**: The title drops the base subject entirely and represents something else → exclude. Example: \"React\" (no \"JavaScript\" in the title — it’s its own technology); \"Deep Learning\" (no \"Machine Learning\" — it’s its own field); \"Battle of Normandy\" (no \"World War II\" — it’s its own topic); standalone \"Motorsport\" (no \"Formula 1\").\n  - **Ambiguous**: The title could refer to multiple unrelated topics → exclude. Example: just \"Matrix\" without any disambiguator.\n\n  **Also include** (even without the base subject in the title):\n  - **Recognized synonyms/abbreviations**: \"WWII\" / \"Second World War\" ↔ \"World War II\"; \"F1\" ↔ \"Formula 1\"; \"ML\" ↔ \"Machine Learning\"; \"JS\" ↔ \"JavaScript\"; \"UI Development\" / \"Client-Side Development\" ↔ \"Frontend Development\".\n  - **Dialect/variant names**: \"Inglês Americano\", \"Inglês Britânico\", \"Optimisation\" vs \"Optimization\".\n  - **Language learning aspects**: \"Gramática Inglesa\", \"TOEFL\", \"Business English\" — all map to the same language course.\n  - **Light framing words**: \"principles\", \"fundamentals\", \"basics\", \"bootcamp\", \"certification prep\" — these don’t change the subject.\n  - **Descriptive disambiguators**: \"The Matrix (1999 film)\", \"Matrix Movie\" — these clarify which subject, they don’t change it.\n\n  Additional notes:\n  - Include different locale spellings when applicable (e.g., \"Optimization\" and \"Optimisation\").\n  - Include abbreviations if they mean the same thing (e.g., \"AI\"/\"IA\", \"ML\" when base is \"Machine Learning\").\n  - Levels like \"Beginner\", \"Advanced\", \"Calculus 1\", \"101\", etc., are acceptable.\n  - It’s fine to skip spacing/hyphenation/accents variants — serialization will handle those.\n  - Awkward or redundant phrasings are acceptable.\n  - Ignore casing issues (e.g., \"javascript\" vs \"JavaScript\").\n  - Well-known English terms in non-English titles are acceptable (e.g., \"Business English\" in Portuguese, \"TOEFL\", \"IELTS\").\n  - Ideally, it should have a huge list of alternative titles, really good ones have more than 100 alternative titles\n\n  SCORING CALIBRATION:\n  - Apply the CORE RULE above as the PRIMARY lens: does the title still contain the base subject? If yes → it’s the same course, do NOT penalize.\n  - Only penalize for titles that are genuinely broader (umbrella domain), a standalone different subject (base subject dropped entirely), or ambiguous.\n  - Do NOT penalize for qualifiers, subtitles, tools, focus areas, or context added to the base subject — these are all the same course.\n  - Do NOT heavily penalize for missing titles — only penalize for wrong inclusion/exclusion decisions.\n  - A large list is ideal but do NOT heavily penalize shorter lists if all included titles are correct.\n\n    ",
+  "judgedAt": "2026-02-22T18:26:35.774Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model A provides an extensive list of ~150 alternatives. All titles are correct and follow the rules. It includes excellent coverage of: level variants (Calculus I/II/III/IV), sub-areas (Differential, Integral, Vector, Multivariable), application contexts (for Engineers, Business, Physics, etc.), tool framing (with Python, MATLAB, Mathematica, Excel, Maple), exam variants (AP Calculus AB/BC, IB Calculus), institutional levels (College, University, Honors), and many descriptive/framing variants. The disambiguated forms like 'Differentiation (Calculus)' are smart inclusions. No incorrect inclusions (no broader topics like Mathematics, no different subjects like Linear Algebra). Very thorough and well-organized. Minor note: doesn't include 'Calc' abbreviation or 'Infinitesimal Calculus', but these are minor omissions. Overall excellent.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model G provides ~95 alternatives with excellent coverage. Includes Calc abbreviations (Calc I/II/III, Calc 1/2/3), level variants, sub-areas, application contexts, tool framing, exam variants (AP, IB), institutional levels, and good descriptive variants like 'A First Course in Calculus', 'Freshman Calculus'. Also includes 'Calculus A/B/C' which is a nice touch. Has some potentially borderline items like standalone 'Techniques of Integration' and 'Line Integrals and Surface Integrals' without the (Calculus) disambiguator - these could be ambiguous but are reasonable in context. Includes the base title 'Calculus' itself which is slightly redundant but not wrong. Very comprehensive list with good variety.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model C provides ~110 alternatives with very good coverage. Includes level variants, sub-areas, application contexts, analytic geometry variants, exam prep (AP Calculus), institutional levels. Nice unique additions like 'Calculus Revision', 'Calculus Practice', 'Calculus Problem Solving', 'Calculus Exam Prep', 'Calculus Study Guide', 'Calculus Lecture Series'. Doesn't include 'Calc' abbreviation, 'Infinitesimal Calculus', or IB variants, and is missing tool-framing variants (with Python, MATLAB, etc.). Some items like 'Calculus Help' and 'Calculus Tutoring' are a bit unusual as course titles but not wrong per se. Overall solid and comprehensive.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model D provides ~70 alternatives with good coverage. Includes the 'Calc' abbreviation (Calc I/II/III), which is good. Has 'Multivariate Calculus' and 'Multivariable/Multivariate Calculus' (the slash form is a bit odd). Includes IB variants (SL/HL), 'Calculus 101', 'Calculus (with proofs)'. Missing some application contexts (no Business Calculus standalone, no Calculus for Economics, etc. - though has some). Has fewer tool-framing variants (only Python and Mathematica). The 'Multivariable/Multivariate Calculus' slash entry is unusual formatting. Overall good but not as comprehensive as the top models.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model B provides ~70 alternatives with decent coverage. Includes good basics: level variants, sub-areas, application contexts, exam variants. Has some potentially problematic standalone entries: 'Taylor Series', 'Partial Derivatives', 'Double Integrals', 'Triple Integrals', 'Line Integrals', 'Surface Integrals' without any (Calculus) disambiguator. 'Taylor Series' in particular could be seen as a specific mathematical concept that might warrant its own course or might be ambiguous. 'Precalculus and Calculus' is borderline as it adds Precalculus which is technically a different course. Has 'Infinitesimal Calculus' and 'The Calculus' which are good. Missing tool-framing variants and Calc abbreviations. The standalone topic entries without disambiguators are the main concern.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model F provides ~53 alternatives. Includes Calc abbreviations which is good. Has 'Univariate Calculus' which is a nice synonym. Good coverage of basics but the list is notably shorter than others. Missing many variants that other models include: no analytic geometry variants, no IB variants, no 'Calculus Made Easy' type descriptors, fewer application contexts, no sequence/series variants, no limits/continuity sub-topics. No incorrect inclusions though - all titles are valid. Just not as comprehensive.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model E provides only ~38 alternatives, which is the shortest list. While all entries are correct and there are no wrong inclusions, the list is notably incomplete. Missing: Calc abbreviations, tool-framing variants, exam variants beyond AP (no IB), analytic geometry variants, many descriptive variants (no Crash Course, Bootcamp, Made Easy, etc.), no institutional level variants (College, University), no sub-topic variants like Limits/Continuity, Sequences/Series. Has 'Infinitesimal Calculus' which is a nice inclusion that some others miss. But overall too sparse compared to competitors.",
+          "score": 6
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model G provides an exceptional and comprehensive list of 100 titles, hitting the 'huge list' ideal mentioned in the prompt. It excellently captures standard variations, applied contexts ('Calculus for Machine Learning', 'Business Calculus'), standard sub-areas ('Limits and Derivatives', 'Line Integrals and Surface Integrals'), and crucially includes the widely used abbreviation 'Calc' ('Calc 1', 'Calc I'). The list contains no conversational text, making every string highly usable for exact matching.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model A generates a massive and exhaustive list of 140 titles, showing excellent creativity and adherence to the prompt's rules. It successfully captures nearly every variation of the subject. The only minor drawback is that a few entries include conversational explanations inside the string (e.g., '(standard calculus course framing)', '(as Calculus topic)'), which makes those specific strings slightly less ideal for a 1:1 database match compared to standard descriptive disambiguators.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model C provides a very strong list of 94 titles. It utilizes descriptive disambiguators effectively (e.g., 'Limits (Calculus)') to ensure sub-areas remain unambiguous, which aligns well with the prompt's guidelines. However, it misses the highly common 'Calc' abbreviation (like 'Calc 1' or 'Intro to Calc'), keeping it slightly behind the top models.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model D offers a robust list of 73 titles. It correctly includes the 'Calc' abbreviations ('Calc I', 'Calc II', 'Calc') and accurately captures sub-topics, AP/IB variants, and application contexts. One minor flaw is combining variants with a slash ('Multivariable/Multivariate Calculus'), which is less ideal for exact string matching.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model B delivers a very good list of 69 titles, correctly adhering to the core rules and identifying strong sub-areas ('Taylor Series', 'Partial Derivatives'). However, the list is somewhat smaller than the ideal requested, and it entirely misses the essential and ubiquitous 'Calc' abbreviation.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model F correctly captures the 'Calc' abbreviations and handles the core rules perfectly. However, with only 54 titles, it falls significantly short of the 'huge list' (>100) expectation mentioned in the prompt, offering less coverage than the higher-ranked models.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model E follows the negative constraints perfectly (excluding broader/different subjects) but fails to provide a comprehensive list. With only 38 titles, it lacks the exhaustiveness requested. It completely misses sub-areas that don't explicitly contain the word 'Calculus' and misses common abbreviations like 'Calc'.",
+          "score": 7
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Most exhaustive list with many valid same-meaning variants: intros/fundamentals, levels (I–IV), single/multi-variable, vector calculus, limits/continuity, sequences/series, AP/IB/college framing, and tool/context framings (with Python/MATLAB/etc.). No clear broader/different-topic inclusions; a couple entries are slightly awkward (e.g., parenthetical notes like \"(as Calculus topic)\") but not meaning-changing. Overall best coverage and adherence.",
+          "score": 9.4
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Long, high-quality set of close variants; includes many subareas and application framings while keeping meaning aligned with Calculus. Generally avoids broader/different subjects. Minor issues: some items drift toward study-support resources (e.g., \"Calculus Tutoring\", \"Calculus Help\") which are not exactly course-title synonyms but still plausibly map to the same course; otherwise strong.",
+          "score": 8.7
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Good breadth (levels, Calc abbreviations, applications, tools, limits/integrals, sequences/series, vector topics). A few questionable/incorrect inclusions: \"Pre-Calculus and Calculus\" is broader than Calculus (adds a distinct prerequisite course), and \"Calculus A/B/C\" are ambiguous/not standard (could vary by locale). Still mostly compliant and fairly comprehensive.",
+          "score": 7.9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Solid set with useful abbreviations (Calc), levels, AP/IB, analytic geometry spelling variants, tools, and key subareas. Some minor ambiguity/oddity: \"Multivariable/Multivariate Calculus\" (multivariate is used but can be interpreted differently), and IB SL/HL labels may be region-specific but still calculus-related. Less exhaustive than top entries.",
+          "score": 7.6
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Correct and clean list with good inclusion of common abbreviations (Calc, AP Calc) and context/tool framings. Not very exhaustive. Mostly adheres well; no major wrong-topic items.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Moderate list with several good variants, but includes clear problematic items: \"Precalculus and Calculus\" is broader than Calculus, and \"Taylor Series\" alone is a narrower/standalone topic that does not necessarily denote a calculus course title (ambiguous as its own subject). Also shorter than others.",
+          "score": 6.3
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Shortest/least exhaustive. Also includes some borderline items (e.g., \"Calculus for Social Sciences\" is fine per prompt, but overall coverage is limited). No major blatant wrong inclusions, but provides relatively low utility for duplicate-detection compared with others.",
+          "score": 6
+        }
+      ]
+    }
+  ],
+  "taskId": "alternative-titles",
+  "testCaseId": "en-calculus-1"
+}

@@ -4,13 +4,13 @@ import { z } from "zod";
 import { type ReasoningEffort, buildProviderOptions } from "../../provider-options";
 import systemPrompt from "./alternative-titles.prompt.md";
 
-const DEFAULT_MODEL = process.env.AI_MODEL_ALTERNATIVE_TITLES || "google/gemini-3-flash";
+const DEFAULT_MODEL = process.env.AI_MODEL_ALTERNATIVE_TITLES || "openai/gpt-5.2";
 
 const FALLBACK_MODELS = [
-  "xai/grok-4-fast-reasoning",
-  "google/gemini-2.5-flash",
-  "meta/llama-4-maverick",
-  "openai/gpt-4.1-mini",
+  "openai/gpt-5-mini",
+  "anthropic/claude-opus-4.6",
+  "anthropic/claude-sonnet-4.6",
+  "google/gemini-3.1-pro-preview",
 ];
 
 const schema = z.object({

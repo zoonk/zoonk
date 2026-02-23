@@ -1,0 +1,149 @@
+{
+  "expectations": "\n      - Should include \"ML\"\n      - \"ML with X\" variants (e.g., \"ML with Python\", \"ML with TensorFlow\", \"ML with scikit-learn\") are acceptable — the core subject is still Machine Learning\n      - Should NOT include \"AI\", \"Deep Learning\", \"Data Science\" — these are genuinely different fields\n      - Results should be in English\n\n      \n  **PURPOSE**: Alternative titles prevent AI from generating duplicate courses for the same subject. If someone creates \"Python for Data Science\", the AI should recognize it as the existing \"Python\" course — not create a separate one. The list catches all title variants that map to the same course.\n\n  **CORE RULE**: If the title still contains the base subject (or a recognized synonym/abbreviation), it is the SAME course — regardless of qualifiers, subtitles, tools, focus areas, or context added to it. We do NOT want separate courses for each variant.\n\n  Examples of this rule:\n  - \"World War II: Normandy and D-Day\" → contains \"World War II\" → same course\n  - \"Python for Data Science\" → contains \"Python\" → same course\n  - \"IA Generativa\" → contains \"IA\" → same course\n  - \"Desarrollo Web con React\" → contains \"Desarrollo Web\" → same course\n  - \"ML with Python\" → contains \"ML\" → same course\n  - \"Differential Calculus\" → contains \"Calculus\" → same course\n  - \"Formula 1 Motorsport\" → contains \"Formula 1\" → same course\n\n  **When to EXCLUDE**:\n  - **Broader**: The title covers a larger domain that encompasses unrelated subjects → exclude. Example: \"Web Development\" is broader than \"Frontend Development\"; \"Programming\" is broader than \"Python\"; standalone \"Motorsport\" is broader than \"Formula 1\".\n  - **Standalone different subject**: The title drops the base subject entirely and represents something else → exclude. Example: \"React\" (no \"JavaScript\" in the title — it’s its own technology); \"Deep Learning\" (no \"Machine Learning\" — it’s its own field); \"Battle of Normandy\" (no \"World War II\" — it’s its own topic); standalone \"Motorsport\" (no \"Formula 1\").\n  - **Ambiguous**: The title could refer to multiple unrelated topics → exclude. Example: just \"Matrix\" without any disambiguator.\n\n  **Also include** (even without the base subject in the title):\n  - **Recognized synonyms/abbreviations**: \"WWII\" / \"Second World War\" ↔ \"World War II\"; \"F1\" ↔ \"Formula 1\"; \"ML\" ↔ \"Machine Learning\"; \"JS\" ↔ \"JavaScript\"; \"UI Development\" / \"Client-Side Development\" ↔ \"Frontend Development\".\n  - **Dialect/variant names**: \"Inglês Americano\", \"Inglês Britânico\", \"Optimisation\" vs \"Optimization\".\n  - **Language learning aspects**: \"Gramática Inglesa\", \"TOEFL\", \"Business English\" — all map to the same language course.\n  - **Light framing words**: \"principles\", \"fundamentals\", \"basics\", \"bootcamp\", \"certification prep\" — these don’t change the subject.\n  - **Descriptive disambiguators**: \"The Matrix (1999 film)\", \"Matrix Movie\" — these clarify which subject, they don’t change it.\n\n  Additional notes:\n  - Include different locale spellings when applicable (e.g., \"Optimization\" and \"Optimisation\").\n  - Include abbreviations if they mean the same thing (e.g., \"AI\"/\"IA\", \"ML\" when base is \"Machine Learning\").\n  - Levels like \"Beginner\", \"Advanced\", \"Calculus 1\", \"101\", etc., are acceptable.\n  - It’s fine to skip spacing/hyphenation/accents variants — serialization will handle those.\n  - Awkward or redundant phrasings are acceptable.\n  - Ignore casing issues (e.g., \"javascript\" vs \"JavaScript\").\n  - Well-known English terms in non-English titles are acceptable (e.g., \"Business English\" in Portuguese, \"TOEFL\", \"IELTS\").\n  - Ideally, it should have a huge list of alternative titles, really good ones have more than 100 alternative titles\n\n  SCORING CALIBRATION:\n  - Apply the CORE RULE above as the PRIMARY lens: does the title still contain the base subject? If yes → it’s the same course, do NOT penalize.\n  - Only penalize for titles that are genuinely broader (umbrella domain), a standalone different subject (base subject dropped entirely), or ambiguous.\n  - Do NOT penalize for qualifiers, subtitles, tools, focus areas, or context added to the base subject — these are all the same course.\n  - Do NOT heavily penalize for missing titles — only penalize for wrong inclusion/exclusion decisions.\n  - A large list is ideal but do NOT heavily penalize shorter lists if all included titles are correct.\n\n    ",
+  "judgedAt": "2026-02-22T18:25:41.784Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model C provides the most extensive list (~200 alternatives) with excellent coverage. It includes all the expected entries: ML, ML with Python/TensorFlow/scikit-learn variants, level variations, tool framings, application contexts, sub-areas (supervised, unsupervised, semi-supervised), and many creative but valid variants. It correctly excludes AI, Deep Learning, and Data Science as standalone entries. Some entries have clarifying parentheticals like '(ML framing)' or '(ML focus)' which are slightly awkward but not incorrect—they serve as disambiguators. A few entries push boundaries (e.g., 'Federated Learning (ML framing)', 'Explainable AI for Machine Learning') but they include the base subject 'Machine Learning' or are clearly framed as ML sub-topics. Minor concern: 'AutoML (Automated Machine Learning)' and 'Automated Machine Learning' could be seen as borderline since AutoML has its own identity, but it literally contains 'Machine Learning' so per the core rule it's acceptable. Overall the most comprehensive and accurate list.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model A provides a very extensive list (~180 alternatives) with excellent coverage. It includes ML, M.L., all level variations, tool/language framings, application contexts, sub-areas, and many creative phrasings. All entries correctly contain 'Machine Learning' or 'ML'. No problematic inclusions—it correctly avoids AI, Deep Learning, Data Science as standalone. The list is well-organized and thorough. Very similar quality to Model C but slightly less extensive in some areas (e.g., fewer sub-topic variants like AutoML, explainability). No significant errors.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model E provides a large list (~140+ alternatives) with good coverage. It includes all the expected entries. However, it has some problematic inclusions: 'MLOps' and 'Machine Learning Operations' are arguably a distinct discipline (DevOps for ML, focused on deployment infrastructure), not the same as a Machine Learning course. 'Classification and Regression' without 'Machine Learning' in the title could be ambiguous. 'Model Selection and Evaluation' without ML qualifier is also borderline. 'Statistical Learning' without 'Machine Learning' is a recognized synonym though (from the famous textbook), so that's acceptable. 'Machine Learning Infrastructure' and 'Machine Learning Design Patterns' are also borderline as they could be their own courses focused on engineering rather than ML itself. 'Reinforcement Learning' as standalone (without ML qualifier) is problematic—it's arguably its own field. Overall good but with some questionable standalone inclusions.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model G provides a solid list (~85 alternatives) with good coverage of the essentials. Includes ML, tool framings, application contexts, level variations, and sub-areas. However, it includes some problematic standalone entries: 'Predictive Modeling' and 'Predictive Analytics with Machine Learning'—the latter is fine but 'Predictive Modeling' alone doesn't contain ML and is arguably a different (though overlapping) topic. 'Supervised Learning' and 'Unsupervised Learning' without ML qualifier are borderline. 'Regression and Classification' / 'Classification and Regression' without ML are also borderline. The list is shorter than the top models but generally accurate. Missing M.L. abbreviation variant.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model D provides a shorter list (~50 alternatives) but is mostly accurate. It includes the key entries: ML, tool framings, level variations, application contexts. However, it has some problematic standalone entries without ML qualifier: 'Statistical Learning', 'Predictive Modeling', 'Supervised Learning', 'Unsupervised Learning', 'Semi-Supervised Learning', 'Reinforcement Learning'—these standalone titles could be seen as different subjects or at least ambiguous without the ML qualifier. Also includes the base title 'Machine Learning' itself in the list which is redundant. The list is relatively short compared to others, missing many valid variants (ML abbreviation variants like 'ML Basics', 'ML Fundamentals' are missing, fewer application contexts). 'Machine-Learning' with hyphen is fine.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model F provides a moderate list (~55 alternatives) with decent coverage. It includes the expected core entries. However, it has several problematic inclusions: 'Introduction to Statistical Learning' and 'Principles of Statistical Learning'—while 'Statistical Machine Learning' is fine, 'Statistical Learning' without ML is borderline (though it is a recognized near-synonym from the ESL/ISL textbooks). 'Learning from Data' is very generic and could refer to many things. 'Learning Algorithms' is ambiguous. 'Machine Intelligence' and 'Computational Learning' are different terms that don't clearly map to ML—'Machine Intelligence' is closer to AI, and 'Computational Learning' is a broader/different academic field. 'Reinforcement Learning' as standalone is problematic. The list is shorter than the best models and has more questionable inclusions.",
+          "score": 6.2
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model B provides the shortest list (~40 alternatives). While the entries are mostly correct, the list is quite thin compared to others. It includes the essential entries (ML, tool framings, level variations, some application contexts). However, 'Supervised Learning', 'Unsupervised Learning', and 'Supervised and Unsupervised Learning' as standalone (without ML qualifier) are problematic—they could be seen as sub-topics with their own identity. Missing many valid variants: no ML abbreviation variants beyond 'ML with Python' and 'ML with R' (missing ML Fundamentals, ML Basics, ML Algorithms, etc.), fewer application contexts, fewer tool framings, no level variants like Intermediate. The prompt says ideally >100 alternatives, and this list is well under that. It's functional but not exhaustive.",
+          "score": 5.8
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model A perfectly adhered to all instructions. It provided an exhaustive list (139 items) of highly relevant, natural title variations. Most importantly, it flawlessly followed the core rule: every single title contains the base subject ('Machine Learning' or 'ML'). It correctly framed sub-topics by appending the base subject to them (e.g., 'Supervised Machine Learning') instead of listing them as standalone subjects. Exceptional work.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model C generated the largest and most comprehensive list (161 items) and successfully adhered to the core rule by ensuring 'Machine Learning' or 'ML' was present in every single title. However, it receives a slight penalty because it included artificial LLM artifacts in several titles towards the end (e.g., '(ML course)', '(ML framing)', '(ML focus)'). These descriptive annotations make those specific titles less useful for exact matching, but the overall adherence to the logic of the prompt was excellent.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model E provided a very large and useful list (117 items) with great variations. However, it violated the core constraint regarding standalone subjects. It included titles like 'Supervised Learning', 'Unsupervised Learning', 'Statistical Learning', and 'Classification and Regression', which drop the base subject entirely and can represent broader statistical fields. These should have been excluded or modified to include 'Machine Learning'.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model G generated a good-sized list (89 items) but suffered from the same core rule violations as Model E. It included standalone and broader subjects that drop the base subject entirely, such as 'Supervised Learning', 'Regression and Classification', 'Classification and Regression', and 'Predictive Modeling'.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model B provided a relatively short list (41 items) compared to the top models. It also violated the core rule by including standalone subjects that dropped the base subject ('Supervised Learning', 'Unsupervised Learning'). While it had fewer total violations than the lower-ranked models, its lack of exhaustiveness keeps its score adequate.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model D provided a moderately sized list (51 items) but had a high concentration of violations. It included standalone and broader subjects like 'Statistical Learning', 'Predictive Modeling', 'Supervised Learning', 'Unsupervised Learning', 'Semi-Supervised Learning', and 'Reinforcement Learning', directly ignoring the instruction to exclude titles that drop the base subject.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model F had the poorest adherence to the core rule. In its list of 54 items, it included numerous broader, ambiguous, or standalone topics that completely drop the base subject. Inclusions like 'Learning from Data', 'Machine Intelligence', 'Computational Learning', 'Principles of Statistical Learning', and 'Learning Algorithms' are significant violations that would cause incorrect duplicate mapping for genuinely different or broader courses.",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Very large list with strong coverage of synonym/abbreviation forms (includes ML/M.L.), level variants, “with X” tool framings, and many acceptable application-context framings. Stays mostly on-subject. Minor issues: includes some arguably subtopic-ish items like “Reinforcement Learning (Machine Learning)” that could be interpreted as a separate course by some, but it’s explicitly framed as ML-related. Overall best combination of size + correctness.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Huge, exhaustive list with many safe variants and extensive tool/context/process framings. Generally adheres to rules (no AI/Deep Learning/Data Science as standalone). Some entries drift toward adjacent branded/tool ecosystems or potentially separate topics (e.g., “Machine Learning with Hugging Face” can imply NLP/transformers focus; “Explainable AI for Machine Learning” contains “AI” though constrained by “for Machine Learning”). Still largely compliant and very useful for duplicate detection.",
+          "score": 8.9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Large list with good breadth, includes locale spelling (Optimization/Optimisation) and many tool/context variants. However, it includes several items that are more like adjacent/broader/neighbor subjects rather than strict same-meaning titles for “Machine Learning”, notably “MLOps/Machine Learning Operations” and “Machine Learning Infrastructure/Systems/Design Patterns,” which can reasonably be separate courses. Also includes “Machine Learning and Data Mining” (data mining is often treated as distinct).",
+          "score": 7.7
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Solid medium-large list with many acceptable variants, tools, and level framings. But it contains multiple entries that are not exact same-meaning titles and could be standalone topics: “Predictive Modeling” (can exist without ML / broader), “Predictive Analytics” (broader/adjacent), and various task-specific titles like “Machine Learning Clustering/Regression/Classification” which could be separate focused courses. Still no forbidden AI/Deep Learning inclusions.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Decent set of variants and tool framings, but includes clear off-target/too-broad alternatives: “Predictive Modeling” (not necessarily ML) and “Statistical Learning” (related but can be its own distinct course/title). “Reinforcement Learning” unqualified is typically its own subfield/course. Also shorter than top lists.",
+          "score": 6.6
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Includes multiple problematic broader/adjacent titles not guaranteed to mean the same course: “Machine Intelligence” (often closer to AI), “Learning from Data” (too broad/ambiguous), “Learning Algorithms” (too broad), and “Introduction to Statistical Learning/Principles of Statistical Learning” (distinct established course identity). Also relatively short.",
+          "score": 5.9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Shortest list and includes several titles that violate the ‘same meaning’ constraint: “Supervised Learning,” “Unsupervised Learning,” and “Supervised and Unsupervised Learning” are subtopics that could easily be separate courses without covering full ML; “ML Engineering” is a different discipline; overall less exhaustive and more prone to false matches.",
+          "score": 5.4
+        }
+      ]
+    }
+  ],
+  "taskId": "alternative-titles",
+  "testCaseId": "en-machine-learning-1"
+}

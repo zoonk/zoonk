@@ -11,6 +11,10 @@ EVALUATION CRITERIA:
    - Ask about facts that could only be known by reading this specific text
    - Test vocabulary definitions rather than concept application
 
+   IMPORTANT - "Novel" means a different conceptual context, not just swapping a superficial detail. For technical subjects, using a different specific instance of the same error type (e.g., missing brace vs missing parenthesis) still tests the same concept and is acceptable. What matters is that the learner must APPLY understanding, not recall a specific example from the text.
+
+   DOMAIN TERMINOLOGY: Using standard domain terminology (e.g., "innate/adaptive immunity" in biology, "abstract syntax tree" in compilers, "credit assignment" in ML) is acceptable and even desirable, even if the simplified explanation didn't use those exact terms. Do NOT penalize for introducing correct field-standard vocabulary. Only penalize when questions test recall of explanation-SPECIFIC phrasing, metaphors, or invented analogies.
+
 3. FORMAT APPROPRIATENESS: Evaluate whether the chosen format genuinely tests understanding.
 
    ANTI-PATTERN - "Forced variety": Using different formats just for variety is a serious flaw. Multiple well-crafted questions of the same format are better than poorly-suited formats used for variety's sake. Do NOT penalize for using multiple choice repeatedly if it tests the concepts well.
@@ -59,6 +63,11 @@ ANTI-CHECKLIST GUIDANCE (CRITICAL):
 - Do NOT expect questions to follow any particular order or progression
 - ONLY penalize for: memorization-based questions, factual errors, poor feedback quality, unclear wording, or inappropriate format choices
 - Different valid quiz designs exist - assess the quality of what IS provided
+
+BINARY CHECKS:
+- "Memorization vs understanding" is checked by: does the question reference the explanation text directly or present a novel scenario? Direct text references = penalize. Novel scenarios = do not penalize.
+- Question count is not strictly enforced in this task - quality over quantity. Only penalize if the count is drastically low (under 5).
+- Format choice is only penalized when the format CANNOT test the concept (e.g., sort_order for a non-sequential concept). Repeated use of a well-suited format is NOT penalizable.
 `;
 
 export const TEST_CASES = [
@@ -126,6 +135,8 @@ TOPIC-SPECIFIC GUIDANCE:
    - Optimization being optional or unimportant (it's crucial for performance)
    - Semantic analysis happening before parsing (parsing must complete first)
 
+   NOTE ON ERROR ATTRIBUTION: At this introductory level, reasonable simplifications about which phase catches specific errors are acceptable. For example, whether a misspelled keyword is caught by the lexer or parser depends on the specific compiler implementation. Do NOT heavily penalize phase-to-error attribution unless the mapping is clearly and fundamentally wrong (e.g., claiming semantic analysis catches missing parentheses).
+
 3. FORMAT FIT: Sort order works well for compiler pipeline stages. Match columns work for connecting error types to phases. Multiple choice for "which phase catches this error."
 
 ${SHARED_EXPECTATIONS}
@@ -190,26 +201,26 @@ ${SHARED_EXPECTATIONS}
       courseTitle: "Economia para Iniciantes",
       explanationSteps: [
         {
-          text: "O banco central controla a quantidade de dinheiro circulando na economia. Quando ha dinheiro demais, os precos sobem. Quando ha pouco, a economia desacelera.",
-          title: "Equilibrio Monetario",
+          text: "O banco central controla a quantidade de dinheiro circulando na economia. Quando há dinheiro demais, os preços sobem. Quando há pouco, a economia desacelera.",
+          title: "Equilíbrio Monetário",
         },
         {
-          text: "A taxa basica de juros e a principal ferramenta. Juros altos tornam emprestimos caros, reduzindo gastos. Juros baixos estimulam emprestimos e consumo.",
+          text: "A taxa básica de juros é a principal ferramenta. Juros altos tornam empréstimos caros, reduzindo gastos. Juros baixos estimulam empréstimos e consumo.",
           title: "A Alavanca dos Juros",
         },
         {
-          text: "Mudancas nos juros levam meses para afetar a economia real. Empresas e consumidores ajustam seus planos gradualmente, nao instantaneamente.",
+          text: "Mudanças nos juros levam meses para afetar a economia real. Empresas e consumidores ajustam seus planos gradualmente, não instantaneamente.",
           title: "Efeito com Atraso",
         },
         {
-          text: "Bancos centrais tambem compram e vendem titulos do governo. Comprando titulos, injetam dinheiro na economia. Vendendo, retiram dinheiro de circulacao.",
-          title: "Operacoes de Mercado",
+          text: "Bancos centrais também compram e vendem títulos do governo. Comprando títulos, injetam dinheiro na economia. Vendendo, retiram dinheiro de circulação.",
+          title: "Operações de Mercado",
         },
       ],
       language: "pt",
       lessonDescription:
-        "Entendendo como bancos centrais usam taxas de juros e outras ferramentas para influenciar a economia, incluindo os mecanismos de transmissao da politica monetaria",
-      lessonTitle: "Como Funciona a Politica Monetaria",
+        "Entendendo como bancos centrais usam taxas de juros e outras ferramentas para influenciar a economia, incluindo os mecanismos de transmissão da política monetária",
+      lessonTitle: "Como Funciona a Política Monetária",
     },
   },
   {
@@ -236,30 +247,30 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "es-crypto-hash-functions-quiz",
     userInput: {
-      chapterTitle: "Fundamentos de Criptografia",
-      courseTitle: "Seguridad Informatica",
+      chapterTitle: "Fundamentos de Criptografía",
+      courseTitle: "Seguridad Informática",
       explanationSteps: [
         {
-          text: "Una funcion hash convierte cualquier dato en una cadena de longitud fija. Un archivo de 1KB y uno de 1GB producen hashes del mismo tamano.",
-          title: "Compresion de Datos",
+          text: "Una función hash convierte cualquier dato en una cadena de longitud fija. Un archivo de 1KB y uno de 1GB producen hashes del mismo tamaño.",
+          title: "Compresión de Datos",
         },
         {
           text: "Cambiar un solo bit del archivo original cambia completamente el hash. Esta propiedad se llama efecto avalancha y es crucial para detectar alteraciones.",
           title: "Sensibilidad Extrema",
         },
         {
-          text: "No puedes recuperar el archivo original desde su hash - el proceso es irreversible. Por eso se usan para almacenar contrasenas de forma segura.",
+          text: "No puedes recuperar el archivo original desde su hash - el proceso es irreversible. Por eso se usan para almacenar contraseñas de forma segura.",
           title: "Camino de Ida",
         },
         {
-          text: "Encontrar dos archivos diferentes con el mismo hash deberia ser practicamente imposible. Esta resistencia a colisiones es lo que hace a los hashes confiables.",
-          title: "Unicidad Practica",
+          text: "Encontrar dos archivos diferentes con el mismo hash debería ser prácticamente imposible. Esta resistencia a colisiones es lo que hace a los hashes confiables.",
+          title: "Unicidad Práctica",
         },
       ],
       language: "es",
       lessonDescription:
-        "Entendiendo como funcionan las funciones hash criptograficas, sus propiedades matematicas, y por que son fundamentales para la seguridad digital",
-      lessonTitle: "Funciones Hash Criptograficas",
+        "Entendiendo cómo funcionan las funciones hash criptográficas, sus propiedades matemáticas, y por qué son fundamentales para la seguridad digital",
+      lessonTitle: "Funciones Hash Criptográficas",
     },
   },
   {
@@ -270,7 +281,7 @@ TOPIC-SPECIFIC GUIDANCE:
    - GOOD PATTERN: Training scenarios where learners must diagnose what's happening (overfitting, underfitting, vanishing gradients) based on observed behavior
    - GOOD PATTERN: Situations requiring understanding of why the forward-backward process produces learning
    - BAD PATTERN: Asking for formulas, definitions, or terminology without application context
-   - BAD PATTERN: Questions about specific metaphors like "blame assignment" from the explanation
+   - BAD PATTERN: Questions that test recall of explanation-specific phrasing or invented analogies (note: "credit/blame assignment" is standard ML terminology and is acceptable to use — only penalize if a question tests recall of the exact wording from the explanation rather than applying the concept)
 
 2. ACCURACY PITFALLS - Penalize if any of these are stated or implied:
    - Gradient descent being random trial and error (it follows the mathematical gradient direction)
@@ -382,29 +393,29 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "pt-biology-dna-replication-quiz",
     userInput: {
-      chapterTitle: "Genetica Molecular",
+      chapterTitle: "Genética Molecular",
       courseTitle: "Biologia Celular",
       explanationSteps: [
         {
-          text: "Antes de uma celula se dividir, ela precisa copiar todo seu DNA. O processo comeca quando enzimas separam as duas fitas da dupla helice.",
-          title: "Abrindo o Ziper",
+          text: "Antes de uma célula se dividir, ela precisa copiar todo seu DNA. O processo começa quando enzimas separam as duas fitas da dupla hélice.",
+          title: "Abrindo o Zíper",
         },
         {
           text: "Cada fita original serve de molde para uma nova. Enzimas chamadas DNA polimerases leem a fita antiga e constroem a nova, base por base.",
           title: "Lendo o Molde",
         },
         {
-          text: "Ha um problema: a polimerase so consegue adicionar bases em uma direcao. Uma fita e copiada continuamente, mas a outra precisa ser copiada em pedacos.",
-          title: "O Problema da Direcao",
+          text: "Há um problema: a polimerase só consegue adicionar bases em uma direção. Uma fita é copiada continuamente, mas a outra precisa ser copiada em pedaços.",
+          title: "O Problema da Direção",
         },
         {
-          text: "Enzimas de correcao verificam cada base adicionada. Se encontram um erro, removem e substituem. Esse controle de qualidade mantem a fidelidade genetica.",
+          text: "Enzimas de correção verificam cada base adicionada. Se encontram um erro, removem e substituem. Esse controle de qualidade mantém a fidelidade genética.",
           title: "Corrigindo Erros",
         },
       ],
       language: "pt",
       lessonDescription:
-        "Entendendo o processo de replicacao do DNA, incluindo as enzimas envolvidas e como a informacao genetica e copiada com alta fidelidade",
+        "Entendendo o processo de replicação do DNA, incluindo as enzimas envolvidas e como a informação genética é copiada com alta fidelidade",
       lessonTitle: "Como o DNA se Replica",
     },
   },

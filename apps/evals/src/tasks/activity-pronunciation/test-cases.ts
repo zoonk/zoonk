@@ -41,6 +41,7 @@ ANTI-CHECKLIST GUIDANCE (CRITICAL):
 - Do NOT penalize for using different but valid phonetic representations
 - Do NOT require exact matches to any expected pronunciation
 - Do NOT penalize for stylistic choices (e.g., "ou" vs "ow" for the same sound)
+- Do NOT penalize for using "v" instead of "b" (or vice versa) in Spanish — they are identical phonemes in Spanish and a native speaker pronounces them the same way
 - Different valid approximations exist for the same sound - assess whether the chosen one is reasonable
 - FOCUS ON: native language compatibility, stress marking, readability, sound completeness
 - The test is whether a native speaker could read this and produce a recognizable approximation of the target word
@@ -363,7 +364,7 @@ QUALITY CHECK:
 - Should be readable by an English speaker
 - Should indicate stress on the "-CIÉ-" syllable
 - Should handle the soft "c" before "i"
-- Should separate all four syllables
+- May separate into 4 or 5 syllables; splitting the diphthong "ié" into two segments (e.g., "see-EH") for English readability is acceptable and should NOT be penalized
 
 ${SHARED_EXPECTATIONS}
     `,

@@ -50,9 +50,10 @@ EVALUATION CRITERIA:
 7. STORY ARC AND PROGRESSION:
    - Steps should follow a natural conversation flow
    - Story should have: opening, building, resolution, closing
-   - Complication is optional but adds realism (e.g., item unavailable, clarification needed)
+   - A fun twist or complication adds value (e.g., a surprising reveal, role reversal, misunderstanding payoff, item unavailable). Do NOT penalize for absence, but reward stories that include one
    - Each step should logically follow from the previous
    - The native speaker should acknowledge the learner's previous choice
+   - Story continuity issues (e.g., order forgotten between steps) are MINOR — only penalize severely if the issue makes the dialogue incomprehensible for language learning
    Penalize if steps feel disconnected or conversation doesn't flow naturally.
 
 8. LINGUISTIC ACCURACY (CRITICAL):
@@ -75,9 +76,16 @@ EVALUATION CRITERIA:
    - More/less formal versions of the correct answer that would still work
    - Slightly different phrasings that communicate the same thing
    - "Less polished" versions that a native speaker would still understand
+   - Alternative valid responses a native speaker would accept (e.g., "Goodbye!" when "Thanks, you too!" is correct - both are valid farewells)
+   - Valid answers to open-ended questions (e.g., "Cash, please" marked wrong when "Card, please" is correct for "How will you pay?" - both are valid payment methods)
 
    Example: If ordering coffee, "Where is the bathroom?" is a GOOD distractor (off-topic).
    "I would like your finest coffee" vs "A coffee please" are BOTH correct - don't use one as a distractor for the other.
+
+   AMBIGUOUS CONTEXT TEST: For each step, check whether the context question naturally allows multiple valid responses.
+   If the native speaker says "Anything else?" or "How will you pay?" or "Have a nice day!", almost any on-topic response is valid.
+   Penalize if a step has an open-ended context where 2+ options would be acceptable to a native speaker.
+   The CONTEXT should be specific enough that only one response fits - this is a step design problem, not just a distractor problem.
 
    Penalize SEVERELY if distractors are just stylistic variations that would still accomplish the communication goal.
 
@@ -85,6 +93,9 @@ ANTI-CHECKLIST GUIDANCE (CRITICAL):
 - Do NOT penalize for specific dialogue choices - accept ANY natural conversation
 - Do NOT require specific phrases or sentence structures
 - Do NOT penalize for different valid cultural approaches
+- Do NOT penalize distractors for being "too obviously wrong" or "too nonsensical" — off-topic distractors are valid by design (asking about haircuts at a pharmacy, asking for directions at a cafe). Only penalize if a distractor is grammatically incorrect or breaks immersion
+- Do NOT require a specific feedback format order. The translation can appear anywhere in the feedback (beginning, inline, quoted). Only penalize if the translation is completely absent
+- Do NOT penalize for output being wrapped in {"scenario": ..., "steps": [...]} vs other valid structures
 - FOCUS ON: structural correctness, immersion principle (no translations in options), feedback quality, romanization correctness
 - The eval model should judge whether the activity creates an immersive language experience, not whether it matches predetermined answers
 `;

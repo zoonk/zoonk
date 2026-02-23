@@ -41,21 +41,21 @@ export async function generateScore(params: {
   const { system, prompt, expectations, output } = params;
 
   const evalPrompt = `
-    **User provided variables and values**
-    ${prompt}
-
     **Instructions**
     ${system}
 
     **Expectations**
     ${expectations}
 
+    **User provided variables and values**
+    ${prompt}
+
     **Result**
     ${output}
   `;
 
   const { output: result } = await generateText({
-    model: "google/gemini-3-pro-preview",
+    model: "openai/gpt-5.2",
     output: Output.object({ schema: scoreSchema }),
     prompt: evalPrompt,
     system: systemPrompt,

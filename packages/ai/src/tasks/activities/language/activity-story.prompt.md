@@ -101,6 +101,41 @@ All 4 options must be:
 - **Distinct in meaning** (not just word variations)
 - **Level-appropriate** (using vocabulary/structures the learner knows)
 
+## Step Design: Avoid Ambiguous Contexts
+
+**CRITICAL**: Each step MUST have exactly one correct answer. Before writing options, check whether the context question naturally allows multiple valid responses. If it does, **redesign the context** to narrow the valid answers.
+
+### Problem: Open-ended contexts
+
+Many conversational prompts naturally accept multiple valid answers. If the native speaker asks an open question, almost any on-topic response could work:
+
+| Context                         | Why It's Problematic                                   |
+| ------------------------------- | ------------------------------------------------------ |
+| "Anything else?"                | Both "No, thanks" AND "The check, please" are valid    |
+| "Card or cash?"                 | Both "Card, please" AND "Cash, please" are valid       |
+| "What would you like to drink?" | Any drink order is valid                               |
+| "Have a nice day!"              | Any farewell is valid                                  |
+| "Do you need anything else?"    | Both "Yes, [item]" AND "No, I'd like to pay" are valid |
+
+### Solution: Use specific contexts that constrain the answer
+
+Design the native speaker's dialogue so the **situation itself** makes only one response appropriate:
+
+| Instead of                                        | Use                                                                                                                              |
+| ------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| "What would you like to drink?" (any drink works) | "We have espresso, cappuccino, and tea today. What sounds good?" + make the scenario say the learner wants coffee specifically   |
+| "Anything else?" (yes or no both work)            | "I see you're looking at the pastries too. Which one catches your eye?"                                                          |
+| "How will you pay?" (card or cash both work)      | "We only accept card for amounts over 10 euros. Your total is 5.50. How would you like to pay?" (now cash is the logical answer) |
+| "Have a nice day!" (any farewell works)           | Move to a step where the learner needs to ask one final specific thing before leaving                                            |
+
+### The test: Could a native speaker reasonably pick a different option?
+
+Before finalizing each step, ask yourself: "If a real person were in this conversation, could they reasonably choose one of the other options?" If yes, either:
+
+1. **Rewrite the context** to make only one answer fit
+2. **Replace the valid distractor** with something genuinely off-topic
+3. **Add narrative constraints** (e.g., the scenario says the learner needs a specific item, so only that item is correct to order)
+
 ## Distractor Design
 
 **CRITICAL**: Wrong options must be genuinely inappropriate for the situation - they should lead to miscommunication or confusion if used. Do NOT create distractors that are merely "less polished" versions of the correct answer.
@@ -117,6 +152,7 @@ Wrong options should be **clearly wrong** because they:
 - Just more/less formal versions of the correct answer
 - Slightly different phrasings that would still work
 - Grammatically awkward but still understandable
+- **Alternative valid responses** that a native speaker would accept (e.g., "Goodbye!" as a distractor when "Thanks, you too!" is the correct answer - both are valid farewells)
 
 # Feedback Design
 
@@ -170,18 +206,30 @@ Each story should have 5-10 steps following a natural arc:
 
 1. **Opening** (1-2 steps): Arrive at the location, initial greeting
 2. **Building** (2-4 steps): Main interaction, making requests, clarifying
-3. **Complication** (0-2 steps): Optional challenge that adds realism
+3. **Twist / Complication** (1-2 steps): A fun surprise or unexpected turn that makes the story memorable (see Twist Ideas below)
 4. **Resolution** (1-2 steps): Complete the transaction
 5. **Closing** (1 step): Thank and goodbye
 
-## Complication Ideas (Recommended)
+## Twist Ideas (Recommended)
 
-Adding a complication makes the story more realistic and teaches learners to handle unexpected situations:
+The best language stories have a fun, surprising moment that makes the learner smile. Build an assumption throughout the story, then flip it. This is what makes stories memorable and motivates learners to do more.
+
+**Fun twists that teach language:**
+
+- **The reveal**: You've been confidently ordering at what you thought was a restaurant... turns out it's a pet supply store. Now you need to explain yourself!
+- **The coincidence**: You're struggling to ask for directions... and the person reveals they're from your home country. But you want to keep practicing!
+- **The misunderstanding payoff**: You accidentally ordered something wrong earlier, but it turns out to be the best thing on the menu. The waiter says it's the chef's secret specialty.
+- **The role reversal**: The person you've been asking for help actually needs YOUR help with something, and now you get to be the expert.
+- **The surprise connection**: You're checking into a hotel and it turns out the receptionist is the cousin of someone you met earlier in the story.
+
+**Simple complications also work (but twists are better):**
 
 - **Item unavailable**: "Sorry, we're out of that. Would you like something else?"
 - **Misunderstanding**: "Did you say two or twelve?"
 - **Additional requirement**: "I'll need to see your ID for that."
 - **Clarification needed**: "Which size did you want?"
+
+**The key principle**: The twist should be fun and a little silly — it should make the learner smile while still requiring them to use the target language to navigate the new situation.
 
 ## Pacing Guidelines
 

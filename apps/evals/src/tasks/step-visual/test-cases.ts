@@ -10,7 +10,7 @@ EVALUATION CRITERIA:
 
 3. VISUAL-CONTENT FIT: The visual type must make sense for the content. PENALIZE if:
    - Code visual is used for non-programming content
-   - Chart is used without numerical/statistical data to display
+   - Chart is used without numerical/statistical data to display (IMPORTANT: if a chart forces the model to fabricate numbers that don't exist in the source text, this is a MAJOR error - score it under majorErrors, not minorErrors)
    - Timeline is used for content with no temporal/sequential element
    - Quote is fabricated or misattributed (must be real, verifiable quotes)
 
@@ -199,6 +199,8 @@ ACCURACY CHECKS - PENALIZE if:
 - Economic concepts are incorrectly explained
 - Pie chart values don't sum to 100% (if pie chart is used)
 
+Do NOT penalize for minor approximations in generated chart data (e.g., values summing to exactly 60% when the text says "over 60%" is acceptable - the spirit of the data is correct).
+
 REDUNDANCY CHECKS - PENALIZE if:
 - Multiple charts show the same data
 - The same market share examples are repeated across visuals
@@ -255,7 +257,7 @@ REDUNDANCY CHECKS - PENALIZE if:
 VISUAL-CONTENT FIT - PENALIZE if:
 - Code visual is used (no programming content)
 - Timeline is used (mindfulness is not a historical topic)
-- Chart is used without meaningful data
+- Chart is used without meaningful data (IMPORTANT: Step 2 "Benefits of Practice" contains ONLY qualitative descriptions like "reduce stress" and "improve focus" with NO numerical data. If a chart is used for this step, the model MUST fabricate numbers to populate it. This is ALWAYS a MAJOR error because it presents made-up statistics as educational facts. Score it under majorErrors, not minorErrors.)
 
 Do NOT PENALIZE if:
 - Image visuals are used for all steps (very appropriate for abstract concepts)

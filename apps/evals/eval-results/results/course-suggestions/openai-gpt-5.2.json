@@ -4,19 +4,19 @@
     {
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "The model successfully generated a list of relevant courses based on the vague input 'I want to code'. All titles follow the negative constraints (no levels, no joiners, no 'course' keywords). Target language code is correctly set to null for all, and descriptions are all exactly one sentence in Brazilian Portuguese.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "None",
+          "conclusion": "No minor errors were found. The model successfully adhered to the title formatting rules and language requirements. The expectations mentioned including broad topics like 'Ciência da Computação', 'Programação', 'Desenvolvimento de Software', and the model included very similar broad topics such as 'Programação de Computadores', 'Engenharia de Software', and 'Desenvolvimento Web'.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "None",
+          "conclusion": "While the broad topics provided are excellent, explicitly including 'Ciência da Computação' (Computer Science) as one of the broad canonical titles would align perfectly with the specific examples mentioned in the expectations.",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 9.5
         }
       ],
       "testCase": {
@@ -31,19 +31,19 @@
     {
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "None. The AI correctly followed all core instructions, including generating suggestions in US English, placing 'Black Holes' as the first result, and ensuring 'targetLanguageCode' is null for non-language courses.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "None",
+          "conclusion": "None. All titles strictly conform to the formatting rules, correctly avoiding levels, joiner words, and the word 'course'. The descriptions are exactly one sentence and avoid the forbidden prefix.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "The title 'Quantum Aspects of Black Holes' is acceptable, though 'Quantum Gravity' or 'Black Hole Thermodynamics' might be more standard academic course titles. However, this does not detract significantly from the quality of the response.",
+          "conclusion": "The expectations specifically suggested including broader topics like 'Astrophysics'. While the response does include solid broad topics such as 'General Relativity' and 'Galactic Astronomy', explicitly including an 'Astrophysics' course would perfectly fulfill the stated expectation.",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 9.5
         }
       ],
       "testCase": {
@@ -58,17 +58,17 @@
     {
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "No major errors found. The response perfectly follows all instructions, including the exact title as the first suggestion, valid titles without joiners or level markers, and `targetLanguageCode` set to `null`.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "None",
+          "conclusion": "No minor errors found. The descriptions are exactly one sentence, written in Spanish, and highlight the utility of the courses appropriately.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "None",
+          "conclusion": "The response is excellent and provides a comprehensive and accurate list of course suggestions. No improvements are needed.",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -139,19 +139,19 @@
     {
       "steps": [
         {
-          "conclusion": "No major errors found. The model correctly identified the language (Portuguese) and split the user input 'physics and chemistry' into separate, valid course titles ('Física', 'Química') without using forbidden joiners like 'e' or 'and'. All `targetLanguageCode` fields are correctly set to null.",
+          "conclusion": "None. The model correctly separated 'Física' and 'Química' into distinct courses, omitted target language codes as expected, avoided explicitly prohibited level words like 'Basic' or 'Intro', and ensured all descriptions were exactly one sentence in Brazilian Portuguese.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "No minor errors found. The descriptions are in Brazilian Portuguese, consist of exactly one sentence, and follow the formatting rules. The titles appear to be canonical course names.",
+          "conclusion": "The response includes 'Química Físico-Química' as a title, which is redundant and unnatural in Portuguese (it translates to 'Physical-Chemistry Chemistry'). The correct term 'Físico-Química' was already provided earlier in the list. Additionally, 'Química Geral' (General Chemistry), while a canonical subject, borders on the forbidden 'Fundamentals'/'Intro' level restrictions.",
           "kind": "minorErrors",
-          "score": 10
+          "score": 8.5
         },
         {
-          "conclusion": "No improvements needed. The response strictly follows the instructions, providing the broad canonical titles as well as relevant sub-disciplines.",
+          "conclusion": "Remove the redundant and awkwardly phrased 'Química Físico-Química' suggestion since 'Físico-Química' is already present. Ensure all generated course titles sound like strictly canonical disciplines without redundancy.",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 8.5
         }
       ],
       "testCase": {
@@ -166,17 +166,17 @@
     {
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "The response perfectly follows all instructions. It includes the canonical title 'Chemistry' without using forbidden level words like 'Intro'. No other titles contain forbidden joiners or level indicators. The targetLanguageCode is correctly set to null for all courses.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "The title 'Acids and Bases' technically violates the negative constraint to 'NEVER use \"and\"', although it is a standard topic name in chemistry. A title like 'Acid-Base Chemistry' would have avoided this.",
+          "conclusion": "No minor errors were found. The course titles look authentic, descriptions are in the correct language and format, and the overall structure meets all constraints.",
           "kind": "minorErrors",
-          "score": 9.5
+          "score": 10
         },
         {
-          "conclusion": "None",
+          "conclusion": "The AI provided an excellent and comprehensive list of relevant chemistry topics. No improvements are necessary.",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -193,9 +193,9 @@
     {
       "steps": [
         {
-          "conclusion": "The fifth suggestion's title, \"Akira Toriyama e a Franquia Dragon Ball\", contains the word \"e\" (and) to join two topics (Akira Toriyama and the franchise). The instructions explicitly state to \"NEVER use 'and', 'or', '&', '/' and commas joining topics\" in single-topic titles. While the content is relevant, this is a violation of the strict negative constraints for titles.",
+          "conclusion": "None",
           "kind": "majorErrors",
-          "score": 8.5
+          "score": 10
         },
         {
           "conclusion": "None",
@@ -203,9 +203,9 @@
           "score": 10
         },
         {
-          "conclusion": "The fifth title could be renamed to a single topic such as \"Akira Toriyama\" or \"O Legado de Akira Toriyama\" to adhere to the style guidelines.",
+          "conclusion": "None",
           "kind": "potentialImprovements",
-          "score": 9.5
+          "score": 10
         }
       ],
       "testCase": {
@@ -220,19 +220,19 @@
     {
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "No major errors found. The response correctly identifies 'The Beatles' as an intellectual property, suggests the exact name as the first course, and correctly sets the targetLanguageCode to null for all non-language courses.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "The title 'The Beatles and 1960s Culture' violates the specific negative constraint regarding titles: 'NEVER use \"and\"... joining topics'. While this is a common academic title format, the instructions explicitly forbid the use of 'and' to join topics. A better title compliant with the strict rules would be 'The Beatles in 1960s Culture'.",
+          "conclusion": "There is a minor error in one of the titles. The instruction states to NEVER use 'and', 'or', '&', '/', and commas joining topics. The title 'The Beatles and 1960s Culture' uses the joiner word 'and' to connect two distinct concepts.",
           "kind": "minorErrors",
           "score": 9
         },
         {
-          "conclusion": "None",
+          "conclusion": "To strictly adhere to the rule against joiner words, the title 'The Beatles and 1960s Culture' could be revised to something like 'The Beatles in 1960s Culture' or '1960s Culture through The Beatles'.",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 9
         }
       ],
       "testCase": {
@@ -274,17 +274,17 @@
     {
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "The response perfectly follows the instructions for language exams. It returns exactly one course titled 'Japanese', sets the correct target language code 'ja', and the description is exactly one sentence in English explaining why it is useful.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "None",
+          "conclusion": "No minor errors found. The title has no illegal suffix, level markers, or joiners. The description fits all requirements.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "None",
+          "conclusion": "The output perfectly meets all conditions and expectations. No further improvements are necessary.",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -301,17 +301,17 @@
     {
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "The response perfectly followed all instructions. It recognized that the user is preparing for a language exam (IELTS Academic) and returned exactly one course with the title \"Inglês\" and the correct targetLanguageCode (\"en\"). The title does not include any prohibited words, level indicators, or variant markers.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "None",
+          "conclusion": "No minor errors were found. The description is exactly one sentence, in Brazilian Portuguese, and correctly explains the utility of the course without using prohibited prefixes.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "None",
+          "conclusion": "The output is excellent and meets all requirements flawlessly. There are no improvements needed.",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -328,19 +328,19 @@
     {
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "The response perfectly follows all instructions. There are no levels, joining words, or prohibited abbreviations in the titles. The target language codes are correctly set to null. The requested broad titles are included.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "None",
+          "conclusion": "All descriptions are formatted properly as a single sentence explaining the utility of the course. The language used is correctly set to US English. No minor errors were found.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "None",
+          "conclusion": "The titles are mostly excellent and realistic. The title 'How Programs Run' is slightly conversational and could be replaced with a more standard academic title like 'System Programming' or 'Compiler Construction', but it still works perfectly fine for a general audience.",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 9.5
         }
       ],
       "testCase": {
@@ -355,17 +355,17 @@
     {
       "steps": [
         {
-          "conclusion": "No major errors found. The response correctly identifies the specific topic 'Tabela Periódica' and places it as the first suggestion. It includes relevant related topics (Configuração Eletrônica, Propriedades dos Elementos, etc.). All titles are in Brazilian Portuguese, and `targetLanguageCode` is correctly set to null for all items.",
+          "conclusion": "The AI correctly followed all instructions. The targetLanguageCode is null for all suggestions since the topic is not a language. The first title accurately reflects the requested topic ('Tabela Periódica') without any articles. The other course titles are relevant to chemistry, do not use level markers or joiners, and look like real courses. All titles and descriptions are in Brazilian Portuguese as expected.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "No minor errors found. The titles follow the formatting rules (no forbidden level words, no joiners like 'e' or 'ou'). The descriptions are single sentences in Portuguese highlighting the utility of the courses.",
+          "conclusion": "No minor errors were found. The descriptions are precisely one sentence and the titles are properly structured.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "None. The response is high quality and strictly adheres to the instructions.",
+          "conclusion": "The response is excellent and perfectly aligns with the constraints and expectations. No improvements are needed.",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -382,17 +382,17 @@
     {
       "steps": [
         {
-          "conclusion": "None. The model correctly identified the specific IP 'The Matrix' from the user input 'matrix movie' and placed it as the first suggestion. All titles follow the negative constraints (no levels, no joiners like 'and'). 'targetLanguageCode' is correctly set to null for all items.",
+          "conclusion": "None. The AI perfectly followed all instructions. The first suggestion is exactly 'The Matrix', and targetLanguageCode is null for all results. There are no forbidden words or joiners in the titles.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "None. Descriptions are all exactly one sentence and in US English as requested. Titles are formatted correctly.",
+          "conclusion": "None. All titles are properly formatted and relevant. Descriptions are exactly one sentence and in US English.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "None. The suggestions are relevant, covering the movie itself, genre (Science Fiction Cinema, Cyberpunk), and technical aspects (VFX, Cinematography, Sound Design). The response is high quality.",
+          "conclusion": "None. The suggestions are diverse, highly relevant to 'The Matrix', and formatted flawlessly according to the strict constraints.",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -409,17 +409,17 @@
     {
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "The response perfectly follows all instructions. The title does not contain any levels or joiners, the target language code is correctly set to null for non-language courses, and the main title expands the 'AI' abbreviation to 'Artificial Intelligence' as expected.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "None",
+          "conclusion": "No minor errors found. All the titles appear as real courses, do not use joiners or levels, and do not unnecessarily use abbreviations (with the exception of 'AI Ethics', which is an accepted universal abbreviation).",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "None",
+          "conclusion": "The generated list of courses is highly relevant to the user input and provides a comprehensive overview of AI-related topics.",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -436,19 +436,19 @@
     {
       "steps": [
         {
-          "conclusion": "The suggestion 'Institutions and Economic Development' violates the negative constraint regarding titles: 'Single-topic titles: NEVER use \"and\", \"or\", \"&\", \"/\" and commas joining topics'. It explicitly uses 'and' to join two topics.",
+          "conclusion": "None. The AI followed the instructions well, including keeping `targetLanguageCode` null for non-language courses, providing single-sentence descriptions without prefixes, and avoiding joiners or level indicators in non-book titles.",
           "kind": "majorErrors",
-          "score": 7
+          "score": 10
         },
         {
-          "conclusion": "The first suggestion uses the full archaic title 'An Inquiry into the Nature and Causes of the Wealth of Nations'. While this is the official full title, the expectations specifically noted it 'should include the exact book title (\"The Wealth of Nations\")'. Using the extremely long version also triggers the 'no \"and\"' rule (in 'Nature and Causes'), although proper nouns (book titles) are generally exceptions to formatting rules. Using the standard short title would have been safer and matched expectations better.",
+          "conclusion": "The AI provided the full, official 18th-century title of the book ('An Inquiry into the Nature and Causes of the Wealth of Nations') rather than the expected, widely-recognized exact title ('The Wealth of Nations'). While technically fulfilling the rule to 'use the official name,' it misses the specific expectation.",
           "kind": "minorErrors",
-          "score": 8.5
+          "score": 9.5
         },
         {
-          "conclusion": "The last suggestion should be renamed to a single topic like 'Institutional Economics' or 'Development Economics' to comply with formatting rules. The first suggestion should be shortened to 'The Wealth of Nations'.",
+          "conclusion": "The first suggestion's title should be simplified to 'The Wealth of Nations' to perfectly align with user expectations and common usage, rather than strictly using the lengthy full historical title.",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 9.5
         }
       ],
       "testCase": {
