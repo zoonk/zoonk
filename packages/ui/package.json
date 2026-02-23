@@ -12,6 +12,7 @@
     "./hooks/debounce": "./src/hooks/use-debounce.ts",
     "./hooks/infinite-list": "./src/hooks/use-infinite-list.ts",
     "./hooks/is-mounted": "./src/hooks/use-is-mounted.ts",
+    "./hooks/hide-element": "./src/hooks/use-hide-element.ts",
     "./hooks/keyboard": "./src/hooks/use-keyboard.ts",
     "./hooks/mobile": "./src/hooks/use-mobile.ts",
     "./lib/*": "./src/lib/*.ts",
