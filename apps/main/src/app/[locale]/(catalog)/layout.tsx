@@ -1,5 +1,3 @@
-"use cache";
-
 import { Navbar } from "@zoonk/ui/components/navbar";
 import { setRequestLocale } from "next-intl/server";
 import { Suspense } from "react";
