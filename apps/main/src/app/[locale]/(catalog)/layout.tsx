@@ -20,7 +20,7 @@ export default async function CatalogLayout({ children, params }: LayoutProps<"/
         <UserAvatarMenu />
       </Navbar>
 
-      {children}
+      <Suspense>{children}</Suspense>
     </div>
   );
 }
