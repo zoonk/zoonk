@@ -22,6 +22,7 @@ export async function getChapterForGeneration(chapterId: number) {
       id: true,
       language: true,
       organizationId: true,
+      position: true,
       slug: true,
       title: true,
     },

@@ -36,9 +36,10 @@ export async function GenerateChapterContent({
     notFound();
   }
 
+  const isFirstChapter = chapter.position === 0;
   const t = await getExtracted();
 
-  if (!session) {
+  if (!session && !isFirstChapter) {
     return <LoginRequired title={t("Generate Chapter")} />;
   }
 
@@ -58,7 +59,7 @@ export async function GenerateChapterContent({
       </ContainerHeader>
 
       <ContainerBody>
-        <SubscriptionGate>
+        <SubscriptionGate bypass={isFirstChapter}>
           <GenerationClient
             chapterId={chapterId}
             chapterSlug={chapter.slug}
