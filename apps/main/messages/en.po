@@ -1387,6 +1387,11 @@ msgid "Your activity is ready"
 msgstr "Your activity is ready"
 
 #: src/app/[locale]/generate/a/[id]/generation-client.tsx
+msgctxt "3vY0Zu"
+msgid "This usually takes 1-2 minutes"
+msgstr "This usually takes 1-2 minutes"
+
+#: src/app/[locale]/generate/a/[id]/generation-client.tsx
 #: src/app/[locale]/generate/ch/[id]/generation-client.tsx
 #: src/app/[locale]/generate/cs/[id]/generation-client.tsx
 #: src/app/[locale]/generate/l/[id]/generation-client.tsx
@@ -1431,9 +1436,80 @@ msgstr "Something went wrong. Please try again."
 #: src/app/[locale]/generate/a/[id]/use-generation-phases.ts
 #: src/app/[locale]/generate/ch/[id]/use-generation-phases.ts
 #: src/app/[locale]/generate/cs/[id]/use-generation-phases.ts
+msgctxt "2hb6pr"
+msgid "Adding examples..."
+msgstr "Adding examples..."
+
+#: src/app/[locale]/generate/a/[id]/use-generation-phases.ts
+#: src/app/[locale]/generate/ch/[id]/use-generation-phases.ts
+#: src/app/[locale]/generate/cs/[id]/use-generation-phases.ts
+msgctxt "4xvh9e"
+msgid "Getting the pronunciation right..."
+msgstr "Getting the pronunciation right..."
+
+#: src/app/[locale]/generate/a/[id]/use-generation-phases.ts
+#: src/app/[locale]/generate/ch/[id]/use-generation-phases.ts
+#: src/app/[locale]/generate/cs/[id]/use-generation-phases.ts
+msgctxt "5InW8H"
+msgid "Recording the audio..."
+msgstr "Recording the audio..."
+
+#: src/app/[locale]/generate/a/[id]/use-generation-phases.ts
+#: src/app/[locale]/generate/cs/[id]/use-generation-phases.ts
+#: src/app/[locale]/generate/l/[id]/use-generation-phases.ts
+msgctxt "5nJVpw"
+msgid "Getting everything ready..."
+msgstr "Getting everything ready..."
+
+#: src/app/[locale]/generate/a/[id]/use-generation-phases.ts
+#: src/app/[locale]/generate/ch/[id]/use-generation-phases.ts
+#: src/app/[locale]/generate/cs/[id]/use-generation-phases.ts
+msgctxt "8lInA7"
+msgid "Sketching out ideas..."
+msgstr "Sketching out ideas..."
+
+#: src/app/[locale]/generate/a/[id]/use-generation-phases.ts
+#: src/app/[locale]/generate/ch/[id]/use-generation-phases.ts
+#: src/app/[locale]/generate/cs/[id]/use-generation-phases.ts
+msgctxt "abtOR3"
+msgid "Planning the layout..."
+msgstr "Planning the layout..."
+
+#: src/app/[locale]/generate/a/[id]/use-generation-phases.ts
+#: src/app/[locale]/generate/ch/[id]/use-generation-phases.ts
+#: src/app/[locale]/generate/cs/[id]/use-generation-phases.ts
+#: src/app/[locale]/generate/l/[id]/use-generation-phases.ts
+msgctxt "aeeXxf"
+msgid "Wrapping up..."
+msgstr "Wrapping up..."
+
+#: src/app/[locale]/generate/a/[id]/use-generation-phases.ts
+#: src/app/[locale]/generate/ch/[id]/use-generation-phases.ts
+#: src/app/[locale]/generate/cs/[id]/use-generation-phases.ts
 msgctxt "aKNA/b"
 msgid "Creating images"
 msgstr "Creating images"
+
+#: src/app/[locale]/generate/a/[id]/use-generation-phases.ts
+#: src/app/[locale]/generate/ch/[id]/use-generation-phases.ts
+#: src/app/[locale]/generate/cs/[id]/use-generation-phases.ts
+msgctxt "bJVUNz"
+msgid "Adding some color..."
+msgstr "Adding some color..."
+
+#: src/app/[locale]/generate/a/[id]/use-generation-phases.ts
+#: src/app/[locale]/generate/ch/[id]/use-generation-phases.ts
+#: src/app/[locale]/generate/cs/[id]/use-generation-phases.ts
+msgctxt "dQnsCW"
+msgid "Choosing the right style..."
+msgstr "Choosing the right style..."
+
+#: src/app/[locale]/generate/a/[id]/use-generation-phases.ts
+#: src/app/[locale]/generate/ch/[id]/use-generation-phases.ts
+#: src/app/[locale]/generate/cs/[id]/use-generation-phases.ts
+msgctxt "EAqAX/"
+msgid "Thinking about what to illustrate..."
+msgstr "Thinking about what to illustrate..."
 
 #: src/app/[locale]/generate/a/[id]/use-generation-phases.ts
 #: src/app/[locale]/generate/l/[id]/use-generation-phases.ts
@@ -1449,12 +1525,72 @@ msgid "Preparing practice content"
 msgstr "Preparing practice content"
 
 #: src/app/[locale]/generate/a/[id]/use-generation-phases.ts
+msgctxt "hfXRZ0"
+msgid "Reviewing earlier activities..."
+msgstr "Reviewing earlier activities..."
+
+#: src/app/[locale]/generate/a/[id]/use-generation-phases.ts
 #: src/app/[locale]/generate/ch/[id]/use-generation-phases.ts
 #: src/app/[locale]/generate/cs/[id]/use-generation-phases.ts
 #: src/app/[locale]/generate/l/[id]/use-generation-phases.ts
 msgctxt "HYmCaW"
 msgid "Almost done"
 msgstr "Almost done"
+
+#: src/app/[locale]/generate/a/[id]/use-generation-phases.ts
+#: src/app/[locale]/generate/ch/[id]/use-generation-phases.ts
+#: src/app/[locale]/generate/cs/[id]/use-generation-phases.ts
+msgctxt "i+rNdh"
+msgid "Picking the key vocabulary..."
+msgstr "Picking the key vocabulary..."
+
+#: src/app/[locale]/generate/a/[id]/use-generation-phases.ts
+#: src/app/[locale]/generate/ch/[id]/use-generation-phases.ts
+#: src/app/[locale]/generate/cs/[id]/use-generation-phases.ts
+msgctxt "IdWf9/"
+msgid "Choosing words to practice..."
+msgstr "Choosing words to practice..."
+
+#: src/app/[locale]/generate/a/[id]/use-generation-phases.ts
+msgctxt "JBrEHg"
+msgid "Connecting the pieces..."
+msgstr "Connecting the pieces..."
+
+#: src/app/[locale]/generate/a/[id]/use-generation-phases.ts
+#: src/app/[locale]/generate/ch/[id]/use-generation-phases.ts
+#: src/app/[locale]/generate/cs/[id]/use-generation-phases.ts
+msgctxt "JGNN92"
+msgid "Drawing an illustration..."
+msgstr "Drawing an illustration..."
+
+#: src/app/[locale]/generate/a/[id]/use-generation-phases.ts
+#: src/app/[locale]/generate/ch/[id]/use-generation-phases.ts
+#: src/app/[locale]/generate/cs/[id]/use-generation-phases.ts
+msgctxt "K/JznZ"
+msgid "Writing the explanation..."
+msgstr "Writing the explanation..."
+
+#: src/app/[locale]/generate/a/[id]/use-generation-phases.ts
+#: src/app/[locale]/generate/ch/[id]/use-generation-phases.ts
+#: src/app/[locale]/generate/cs/[id]/use-generation-phases.ts
+#: src/app/[locale]/generate/l/[id]/use-generation-phases.ts
+msgctxt "MNQpiA"
+msgid "Almost there..."
+msgstr "Almost there..."
+
+#: src/app/[locale]/generate/a/[id]/use-generation-phases.ts
+#: src/app/[locale]/generate/ch/[id]/use-generation-phases.ts
+#: src/app/[locale]/generate/cs/[id]/use-generation-phases.ts
+msgctxt "O8xr9p"
+msgid "Working on the visuals..."
+msgstr "Working on the visuals..."
+
+#: src/app/[locale]/generate/a/[id]/use-generation-phases.ts
+#: src/app/[locale]/generate/ch/[id]/use-generation-phases.ts
+#: src/app/[locale]/generate/cs/[id]/use-generation-phases.ts
+msgctxt "r8xznK"
+msgid "Researching the topic..."
+msgstr "Researching the topic..."
 
 #: src/app/[locale]/generate/a/[id]/use-generation-phases.ts
 msgctxt "sISitf"
@@ -1488,6 +1624,34 @@ msgctxt "v4iFHN"
 msgid "Writing the content"
 msgstr "Writing the content"
 
+#: src/app/[locale]/generate/a/[id]/use-generation-phases.ts
+#: src/app/[locale]/generate/ch/[id]/use-generation-phases.ts
+#: src/app/[locale]/generate/cs/[id]/use-generation-phases.ts
+msgctxt "VADOBa"
+msgid "Looking up how each word sounds..."
+msgstr "Looking up how each word sounds..."
+
+#: src/app/[locale]/generate/a/[id]/use-generation-phases.ts
+#: src/app/[locale]/generate/ch/[id]/use-generation-phases.ts
+#: src/app/[locale]/generate/cs/[id]/use-generation-phases.ts
+msgctxt "WnqJeL"
+msgid "Mapping out the pronunciation..."
+msgstr "Mapping out the pronunciation..."
+
+#: src/app/[locale]/generate/a/[id]/use-generation-phases.ts
+#: src/app/[locale]/generate/cs/[id]/use-generation-phases.ts
+#: src/app/[locale]/generate/l/[id]/use-generation-phases.ts
+msgctxt "xrLiIe"
+msgid "Setting things up..."
+msgstr "Setting things up..."
+
+#: src/app/[locale]/generate/a/[id]/use-generation-phases.ts
+#: src/app/[locale]/generate/ch/[id]/use-generation-phases.ts
+#: src/app/[locale]/generate/cs/[id]/use-generation-phases.ts
+msgctxt "Yoev2R"
+msgid "Refining the details..."
+msgstr "Refining the details..."
+
 #: src/app/[locale]/generate/ch/[id]/generate-chapter-content.tsx
 msgctxt "9GwOlW"
 msgid "Generate Chapter"
@@ -1504,9 +1668,41 @@ msgid "Taking you to your chapter..."
 msgstr "Taking you to your chapter..."
 
 #: src/app/[locale]/generate/ch/[id]/generation-client.tsx
+msgctxt "Tp34ZM"
+msgid "This usually takes 2-4 minutes"
+msgstr "This usually takes 2-4 minutes"
+
+#: src/app/[locale]/generate/ch/[id]/generation-client.tsx
 msgctxt "ViO6Dt"
 msgid "Creating your lessons"
 msgstr "Creating your lessons"
+
+#: src/app/[locale]/generate/ch/[id]/use-generation-phases.ts
+#: src/app/[locale]/generate/cs/[id]/use-generation-phases.ts
+#: src/app/[locale]/generate/l/[id]/use-generation-phases.ts
+msgctxt "6xEJTk"
+msgid "Designing practice exercises..."
+msgstr "Designing practice exercises..."
+
+#: src/app/[locale]/generate/ch/[id]/use-generation-phases.ts
+#: src/app/[locale]/generate/cs/[id]/use-generation-phases.ts
+#: src/app/[locale]/generate/l/[id]/use-generation-phases.ts
+msgctxt "GTTucy"
+msgid "Thinking about how to teach this..."
+msgstr "Thinking about how to teach this..."
+
+#: src/app/[locale]/generate/ch/[id]/use-generation-phases.ts
+#: src/app/[locale]/generate/cs/[id]/use-generation-phases.ts
+msgctxt "HWSnYS"
+msgid "Reviewing the flow so far..."
+msgstr "Reviewing the flow so far..."
+
+#: src/app/[locale]/generate/ch/[id]/use-generation-phases.ts
+#: src/app/[locale]/generate/cs/[id]/use-generation-phases.ts
+#: src/app/[locale]/generate/l/[id]/use-generation-phases.ts
+msgctxt "igBmpz"
+msgid "Making it interactive..."
+msgstr "Making it interactive..."
 
 #: src/app/[locale]/generate/ch/[id]/use-generation-phases.ts
 #: src/app/[locale]/generate/cs/[id]/use-generation-phases.ts
@@ -1523,9 +1719,34 @@ msgid "Figuring out the best approach"
 msgstr "Figuring out the best approach"
 
 #: src/app/[locale]/generate/ch/[id]/use-generation-phases.ts
+#: src/app/[locale]/generate/cs/[id]/use-generation-phases.ts
+#: src/app/[locale]/generate/l/[id]/use-generation-phases.ts
+msgctxt "Nhva19"
+msgid "Choosing the right approach..."
+msgstr "Choosing the right approach..."
+
+#: src/app/[locale]/generate/ch/[id]/use-generation-phases.ts
+#: src/app/[locale]/generate/cs/[id]/use-generation-phases.ts
+msgctxt "nwGJ65"
+msgid "Exploring your topic..."
+msgstr "Exploring your topic..."
+
+#: src/app/[locale]/generate/ch/[id]/use-generation-phases.ts
 msgctxt "SF9AtA"
 msgid "Preparing lessons"
 msgstr "Preparing lessons"
+
+#: src/app/[locale]/generate/ch/[id]/use-generation-phases.ts
+#: src/app/[locale]/generate/cs/[id]/use-generation-phases.ts
+msgctxt "VKFa/t"
+msgid "Mapping out the learning path..."
+msgstr "Mapping out the learning path..."
+
+#: src/app/[locale]/generate/ch/[id]/use-generation-phases.ts
+#: src/app/[locale]/generate/cs/[id]/use-generation-phases.ts
+msgctxt "zQWv1/"
+msgid "Writing lesson {number}..."
+msgstr "Writing lesson {number}..."
 
 #: src/app/[locale]/generate/cs/[id]/generation-client.tsx
 msgctxt "0o41MR"
@@ -1538,6 +1759,11 @@ msgid "Your course is ready"
 msgstr "Your course is ready"
 
 #: src/app/[locale]/generate/cs/[id]/generation-client.tsx
+msgctxt "bXKvjZ"
+msgid "This usually takes 4-6 minutes"
+msgstr "This usually takes 4-6 minutes"
+
+#: src/app/[locale]/generate/cs/[id]/generation-client.tsx
 msgctxt "DFlapX"
 msgid "Creating your course"
 msgstr "Creating your course"
@@ -1548,9 +1774,34 @@ msgid "Writing the lesson content"
 msgstr "Writing the lesson content"
 
 #: src/app/[locale]/generate/cs/[id]/use-generation-phases.ts
+msgctxt "9r/4zz"
+msgid "Writing the overview..."
+msgstr "Writing the overview..."
+
+#: src/app/[locale]/generate/cs/[id]/use-generation-phases.ts
+msgctxt "a7FJJd"
+msgid "Summarizing what you'll learn..."
+msgstr "Summarizing what you'll learn..."
+
+#: src/app/[locale]/generate/cs/[id]/use-generation-phases.ts
+msgctxt "AEG3Ol"
+msgid "Planning the course structure..."
+msgstr "Planning the course structure..."
+
+#: src/app/[locale]/generate/cs/[id]/use-generation-phases.ts
+msgctxt "aev/pt"
+msgid "Figuring out the right categories..."
+msgstr "Figuring out the right categories..."
+
+#: src/app/[locale]/generate/cs/[id]/use-generation-phases.ts
 msgctxt "aJev/w"
 msgid "Getting things ready"
 msgstr "Getting things ready"
+
+#: src/app/[locale]/generate/cs/[id]/use-generation-phases.ts
+msgctxt "At4rk1"
+msgid "Adding finishing touches..."
+msgstr "Adding finishing touches..."
 
 #: src/app/[locale]/generate/cs/[id]/use-generation-phases.ts
 msgctxt "bkPdBd"
@@ -1561,6 +1812,11 @@ msgstr "Planning your first lesson"
 msgctxt "CFWOGF"
 msgid "Saving your course"
 msgstr "Saving your course"
+
+#: src/app/[locale]/generate/cs/[id]/use-generation-phases.ts
+msgctxt "EKAN6s"
+msgid "Tagging your course..."
+msgstr "Tagging your course..."
 
 #: src/app/[locale]/generate/cs/[id]/use-generation-phases.ts
 msgctxt "Gjutu+"
@@ -1578,9 +1834,39 @@ msgid "Categorizing your course"
 msgstr "Categorizing your course"
 
 #: src/app/[locale]/generate/cs/[id]/use-generation-phases.ts
-msgctxt "vFYF4v"
-msgid "Outlining chapters"
-msgstr "Outlining chapters"
+msgctxt "lxBtcx"
+msgid "Designing the cover..."
+msgstr "Designing the cover..."
+
+#: src/app/[locale]/generate/cs/[id]/use-generation-phases.ts
+msgctxt "OW9vMd"
+msgid "Writing chapter {number}..."
+msgstr "Writing chapter {number}..."
+
+#: src/app/[locale]/generate/cs/[id]/use-generation-phases.ts
+msgctxt "tXkuD8"
+msgid "Reviewing the overall flow..."
+msgstr "Reviewing the overall flow..."
+
+#: src/app/[locale]/generate/cs/[id]/use-generation-phases.ts
+msgctxt "txvxwS"
+msgid "Saving your progress..."
+msgstr "Saving your progress..."
+
+#: src/app/[locale]/generate/cs/[id]/use-generation-phases.ts
+msgctxt "W8n2i3"
+msgid "Picking the right look..."
+msgstr "Picking the right look..."
+
+#: src/app/[locale]/generate/cs/[id]/use-generation-phases.ts
+msgctxt "WZpB8D"
+msgid "Writing chapters"
+msgstr "Writing chapters"
+
+#: src/app/[locale]/generate/cs/[id]/use-generation-phases.ts
+msgctxt "XxZuJi"
+msgid "Putting it all together..."
+msgstr "Putting it all together..."
 
 #: src/app/[locale]/generate/l/[id]/generate-lesson-content.tsx
 msgctxt "GG4VCc"
@@ -1596,6 +1882,11 @@ msgstr "Your lesson is ready"
 msgctxt "dO1XtE"
 msgid "Creating your activities"
 msgstr "Creating your activities"
+
+#: src/app/[locale]/generate/l/[id]/generation-client.tsx
+msgctxt "kiZUDf"
+msgid "This usually takes about a minute"
+msgstr "This usually takes about a minute"
 
 #: src/app/[locale]/generate/l/[id]/generation-client.tsx
 msgctxt "T2TGxR"

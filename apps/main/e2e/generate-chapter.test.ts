@@ -226,6 +226,7 @@ test.describe("Generate Chapter Page - With Subscription", () => {
       timeout: 10_000,
     });
 
+    await expect(userWithoutProgress.getByText(/this usually takes 2-4 minutes/i)).toBeVisible();
     await expect(userWithoutProgress.getByText(/adding pronunciation/i)).toBeVisible();
     await expect(userWithoutProgress.getByText(/recording audio/i)).toBeVisible();
     await expect(userWithoutProgress.getByText(/writing the content/i)).toHaveCount(0);

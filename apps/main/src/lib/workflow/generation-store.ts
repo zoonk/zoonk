@@ -24,6 +24,7 @@ export function createGenerationStore<TStep extends string = string>(
       currentStep: null as TStep | null,
       error: null as string | null,
       runId: null as string | null,
+      startedSteps: [] as TStep[],
       status: "idle" as GenerationStatus,
       ...initialContext,
     },
@@ -33,6 +34,7 @@ export function createGenerationStore<TStep extends string = string>(
         currentStep: null as TStep | null,
         error: null as string | null,
         runId: null as string | null,
+        startedSteps: [] as TStep[],
         status: "idle" as GenerationStatus,
       }),
 
@@ -53,6 +55,9 @@ export function createGenerationStore<TStep extends string = string>(
       stepStarted: (ctx, event: { step: TStep }) => ({
         ...ctx,
         currentStep: event.step,
+        startedSteps: ctx.startedSteps.includes(event.step)
+          ? ctx.startedSteps
+          : [...ctx.startedSteps, event.step],
       }),
       triggerStart: (ctx) => ({
         ...ctx,

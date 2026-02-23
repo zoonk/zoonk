@@ -13,6 +13,7 @@ export function getPhaseStatus<TPhase extends string, TStep extends string>(
   completedSteps: TStep[],
   currentStep: TStep | null,
   phaseSteps: Record<TPhase, readonly TStep[]>,
+  startedSteps?: TStep[],
 ): PhaseStatus {
   const steps = phaseSteps[phase];
   const completedCount = steps.filter((step) => completedSteps.includes(step)).length;
@@ -29,6 +30,10 @@ export function getPhaseStatus<TPhase extends string, TStep extends string>(
     return "active";
   }
 
+  if (startedSteps && steps.some((step) => startedSteps.includes(step))) {
+    return "active";
+  }
+
   return "pending";
 }
 
@@ -39,6 +44,7 @@ export function calculateWeightedProgress<TPhase extends string, TStep extends s
     phaseSteps: Record<TPhase, readonly TStep[]>;
     phaseOrder: readonly TPhase[];
     phaseWeights: Record<TPhase, number>;
+    startedSteps?: TStep[];
   },
 ): number {
   const totalWeight = config.phaseOrder.reduce((sum, phase) => sum + config.phaseWeights[phase], 0);
@@ -50,7 +56,13 @@ export function calculateWeightedProgress<TPhase extends string, TStep extends s
   let weightedSum = 0;
 
   for (const phase of config.phaseOrder) {
-    const status = getPhaseStatus(phase, completedSteps, currentStep, config.phaseSteps);
+    const status = getPhaseStatus(
+      phase,
+      completedSteps,
+      currentStep,
+      config.phaseSteps,
+      config.startedSteps,
+    );
     const weight = config.phaseWeights[phase];
 
     if (status === "completed") {

@@ -28,6 +28,7 @@ type MockApiOptions = {
   triggerResponse?: { runId?: string; error?: string; status?: number };
   streamMessages?: { reason?: string; step: string; status: string }[];
   streamError?: boolean;
+  statusDelayMs?: number;
 };
 
 /**
@@ -42,6 +43,7 @@ function createSSEStream(messages: { reason?: string; step: string; status: stri
  */
 function createRouteHandler(options: MockApiOptions) {
   const {
+    statusDelayMs = 0,
     triggerResponse = { runId: TEST_RUN_ID },
     streamMessages = [],
     streamError = false,
@@ -77,6 +79,11 @@ function createRouteHandler(options: MockApiOptions) {
       if (streamError) {
         await route.abort("failed");
         return;
+      }
+      if (statusDelayMs > 0) {
+        await new Promise<void>((resolve) => {
+          setTimeout(resolve, statusDelayMs);
+        });
       }
       await route.fulfill({
         body: createSSEStream(streamMessages),
@@ -239,6 +246,22 @@ test.describe("Generate Lesson Page - With Subscription", () => {
 
     // Should redirect to lesson page
     await userWithoutProgress.waitForURL(/\/b\/ai\/c\//, { timeout: 10_000 });
+  });
+
+  test("shows time estimate during generation", async ({ userWithoutProgress, noProgressUser }) => {
+    await createTestSubscription(noProgressUser.id);
+    const { lesson } = await createPendingLesson();
+
+    await setupMockApis(userWithoutProgress, {
+      statusDelayMs: 2500,
+      streamMessages: [{ status: "started", step: "getLesson" }],
+    });
+
+    await userWithoutProgress.goto(`/generate/l/${lesson.id}`);
+
+    await expect(userWithoutProgress.getByText(/this usually takes about a minute/i)).toBeVisible({
+      timeout: 10_000,
+    });
   });
 
   test("shows error when stream returns error status", async ({

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 
-const MAX_DRIFT = 20;
+const MAX_DRIFT = 8;
 const HALF_LIFE = 15_000;
 const CAP = 97;
 
@@ -10,22 +10,31 @@ const CAP = 97;
  * Wraps a real progress value and slowly ticks it forward
  * while streaming is active, creating the illusion of movement
  * during long-running backend steps.
+ *
+ * Uses a high-water mark to ensure the displayed value never decreases,
+ * preventing visual "snap-back" when real progress drops after drift inflation.
  */
 export function useAnimatedProgress(realProgress: number, active: boolean): number {
   const [display, setDisplay] = useState(realProgress);
   const rafRef = useRef<number>(0);
   const startTimeRef = useRef<number>(0);
   const baseRef = useRef(realProgress);
+  const highWaterRef = useRef(realProgress);
 
-  // Reset the drift timer whenever realProgress changes
+  // Only reset the drift timer when realProgress exceeds the high-water mark
   useEffect(() => {
     baseRef.current = realProgress;
-    startTimeRef.current = performance.now();
+
+    if (realProgress > highWaterRef.current) {
+      highWaterRef.current = realProgress;
+      startTimeRef.current = performance.now();
+    }
   }, [realProgress]);
 
   useEffect(() => {
     if (!active) {
       setDisplay(realProgress);
+      highWaterRef.current = realProgress;
       cancelAnimationFrame(rafRef.current);
       return;
     }
@@ -35,10 +44,12 @@ export function useAnimatedProgress(realProgress: number, active: boolean): numb
       const drift = MAX_DRIFT * (1 - 1 / (1 + elapsed / HALF_LIFE));
       const animated = baseRef.current + drift;
       const capped = Math.min(animated, CAP);
-      const final = Math.max(capped, baseRef.current);
+      const monotonic = Math.max(capped, highWaterRef.current);
+
+      highWaterRef.current = monotonic;
 
       setDisplay((prev) => {
-        const rounded = Math.floor(final);
+        const rounded = Math.floor(monotonic);
         return rounded === Math.floor(prev) ? prev : rounded;
       });
 

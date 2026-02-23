@@ -8,10 +8,12 @@ import {
   GenerationTimelineProgress,
   GenerationTimelineStep,
   GenerationTimelineSteps,
+  GenerationTimelineSubtitle,
   GenerationTimelineTitle,
 } from "@/components/generation/generation-progress";
 import { useAnimatedProgress } from "@/lib/workflow/use-animated-progress";
 import { useCompletionRedirect } from "@/lib/workflow/use-completion-redirect";
+import { useThinkingMessages } from "@/lib/workflow/use-thinking-messages";
 import { useWorkflowGeneration } from "@/lib/workflow/use-workflow-generation";
 import {
   ACTIVITY_GENERATION_COMPLETION_STEP,
@@ -48,15 +50,18 @@ export function GenerationClient({
     triggerUrl: `${API_URL}/v1/workflows/course-generation/trigger`,
   });
 
-  const { phases, progress } = useGenerationPhases(
+  const { activePhaseNames, phases, progress, thinkingGenerators } = useGenerationPhases(
     generation.completedSteps,
     generation.currentStep,
     targetLanguage,
+    generation.startedSteps,
   );
 
-  const displayProgress = useAnimatedProgress(
-    progress,
-    generation.status === "triggering" || generation.status === "streaming",
+  const isActive = generation.status === "triggering" || generation.status === "streaming";
+  const displayProgress = useAnimatedProgress(progress, isActive);
+  const thinkingMessages = useThinkingMessages(
+    thinkingGenerators,
+    isActive ? activePhaseNames : [],
   );
 
   useCompletionRedirect({
@@ -64,17 +69,21 @@ export function GenerationClient({
     url: `/${locale}/b/${AI_ORG_SLUG}/c/${courseSlug}`,
   });
 
-  if (generation.status === "triggering" || generation.status === "streaming") {
+  if (isActive) {
     return (
       <GenerationTimeline>
         <GenerationTimelineHeader>
           <GenerationTimelineTitle>{t("Creating your course")}</GenerationTimelineTitle>
+          <GenerationTimelineSubtitle>
+            {t("This usually takes 4-6 minutes")}
+          </GenerationTimelineSubtitle>
           <GenerationTimelineProgress label={t("Progress")} value={displayProgress} />
         </GenerationTimelineHeader>
 
         <GenerationTimelineSteps>
           {phases.map((phase, index) => (
             <GenerationTimelineStep
+              detail={thinkingMessages[phase.name]}
               icon={phase.icon}
               isLast={index === phases.length - 1}
               key={phase.name}

@@ -56,17 +56,20 @@ export function getPhaseStatus(
   phase: PhaseName,
   completedSteps: LessonStepName[],
   currentStep: LessonStepName | null,
+  startedSteps?: LessonStepName[],
 ): PhaseStatus {
-  return getStatus(phase, completedSteps, currentStep, PHASE_STEPS);
+  return getStatus(phase, completedSteps, currentStep, PHASE_STEPS, startedSteps);
 }
 
 export function calculateWeightedProgress(
   completedSteps: LessonStepName[],
   currentStep: LessonStepName | null,
+  startedSteps?: LessonStepName[],
 ): number {
   return calculateProgress(completedSteps, currentStep, {
     phaseOrder: PHASE_ORDER,
     phaseSteps: PHASE_STEPS,
     phaseWeights: PHASE_WEIGHTS,
+    startedSteps,
   });
 }

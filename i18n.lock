@@ -203,6 +203,10 @@ checksums:
     Position%20%7Bposition%7D%3A%20%7Bitem%7D.%20Tap%20to%20remove./singular: a1b3d3e026bfff43bff3d3e85ccdb952
     Correct%20answer%3A%20%7Banswer%7D/singular: 7745b2664e841dffff4568203ee443b2
     Incorrect/singular: a86cfbe7b86f19dc8df14a67df073d22
+    Belt/singular: fa36e8e36732c223d2876c0337d372e9
+    Level%20progress/singular: 286f095acd17006787247db0b69270e3
+    "%7Bvalue%7D%20BP%20to%20level%20up/singular": 755c2fe6e435645cb35b57bf92af09d3
+    Level/singular: 1e3bf31d5c6083e898dd3e3359fbb0c2
     Back%20to%20Lesson/singular: e2dbef5a2fefae8f9cee708e53e61cb9
     Challenge%20Complete/singular: 7854472cc9245aaa8a13f54514968506
     Final%20dimension%20scores/singular: aa4efa7ecef99d375c1daf4c6585ba98
@@ -249,10 +253,6 @@ checksums:
     Check/singular: 023cc2ba432775c38e3efc004ad7b9ef
     BP/singular: 842ed01b3a4d0efa6fe96ae8c595726c
     Energy/singular: 958809db5050650b97519e0f1f3e1951
-    Belt/singular: fa36e8e36732c223d2876c0337d372e9
-    Level%20progress/singular: 286f095acd17006787247db0b69270e3
-    "%7Bvalue%7D%20BP%20to%20level%20up/singular": 755c2fe6e435645cb35b57bf92af09d3
-    Level/singular: 1e3bf31d5c6083e898dd3e3359fbb0c2
     Image%20options/singular: 64a1aee44b26dbaff851cb846eb4274d
     Drag%20items%20into%20the%20correct%20order/singular: 8ccab82ee3ba645ac23da4ca14a0dd2a
     Sort%20items/singular: 3b1072a596203b5acdc5718d38161392
@@ -454,42 +454,89 @@ checksums:
     Generate%20content%20for%20this%20activity/singular: 0ac20ea56d4391004d976cd8f377a645
     Generate%20Activity/singular: e386c80be3da0ee0b54a940afc4de373
     Your%20activity%20is%20ready/singular: e7385c4096b843839bb9a96023f0eea9
+    This%20usually%20takes%201-2%20minutes/singular: bd7260323fa4b3a50a0300ed136fcbd2
     Try%20again/singular: 33dd8820e743e35a66e6977f69e9d3b5
     Something%20went%20wrong/singular: a3cd2f01c073f1f5ff436d4b132d39cf
     Taking%20you%20to%20your%20activity.../singular: c6714da27762cce70a0e2465878abaed
     Creating%20your%20activity/singular: cac8f88defaeee245484bd91660d32d6
     Progress/singular: dd0200d5849ebb7d64c15098ae91d229
     Something%20went%20wrong.%20Please%20try%20again./singular: c62a7718d9a1e9c4ffb707807550f836
+    Adding%20examples.../singular: 1aa5528fd3cd9a20a6bdd6eb35a33305
+    Getting%20the%20pronunciation%20right.../singular: a809bb5d01620f015cae9a4f0eeede13
+    Recording%20the%20audio.../singular: e6e8da2d75c102373fec6056189d54ba
+    Getting%20everything%20ready.../singular: 8695db1d7ae8e0b7774c0a2b57a26e99
+    Sketching%20out%20ideas.../singular: 26ec605c90c1c3b83e6d489330a8f623
+    Planning%20the%20layout.../singular: 034a73e1a9ece4ec350cbcd36dd16f99
+    Wrapping%20up.../singular: f53e2507f652df36db205a5201fe5008
     Creating%20images/singular: ab6fe5010daa5a4deb52eabed6ca071f
+    Adding%20some%20color.../singular: 80aec5cf210399ff202a166190660fa2
+    Choosing%20the%20right%20style.../singular: 7c273483546943a1553fbc762646c079
+    Thinking%20about%20what%20to%20illustrate.../singular: fe3a341a8fba909f02f4a26fb4510637
     Getting%20started/singular: 8e5e7bd026b5bec46bbfdce02ab9e0b8
     Preparing%20practice%20content/singular: 00fb505f6c2aec84f56054b9ab972655
+    Reviewing%20earlier%20activities.../singular: a2d03625de1081bf8df82bd87f1e9873
     Almost%20done/singular: fa5f270ea4b185be8dd47cfb91b87810
+    Picking%20the%20key%20vocabulary.../singular: 0cf4cef9dc1941ff8fedefd7a632ed3f
+    Choosing%20words%20to%20practice.../singular: b412e7e986b60c99cb7481686615c820
+    Connecting%20the%20pieces.../singular: 5ce9df0f436e6012f7142adf94006327
+    Drawing%20an%20illustration.../singular: 5b6fbaeca062dc204a246839c499d5d4
+    Writing%20the%20explanation.../singular: cb3b01d1dc07a25447ee138dde5bfdde
+    Almost%20there.../singular: decd6d1e84363cf4c89e5446eab55dc9
+    Working%20on%20the%20visuals.../singular: 21d3d631b915edf6c2c2c1882f387a12
+    Researching%20the%20topic.../singular: 54c9981da59b1efccfbba3c40bb1fdd5
     Processing%20earlier%20activities/singular: 162ae4b3d730c56cf76023bb37004e59
     Preparing%20illustrations/singular: ebb0d8d739dd029c1ac7327ab6adf8b7
     Recording%20audio/singular: 528bf44d9d7b8a1c8be7ec526307a703
     Adding%20pronunciation/singular: f4a57ae308d27a1b5d4214f4cbf0370c
     Writing%20the%20content/singular: 8c98570945250d1750e3b95270cbecae
+    Looking%20up%20how%20each%20word%20sounds.../singular: 2417013c03464cbb2d4aa6d0ad6dcee0
+    Mapping%20out%20the%20pronunciation.../singular: 6f8b9708ba6726ef8e471bbba8b38f8b
+    Setting%20things%20up.../singular: 4696c8e1048ec21837f886410864dfe2
+    Refining%20the%20details.../singular: eaf7a7ca135f8919dc93f80095040ab0
     Generate%20Chapter/singular: 12160bab066da65413de4b511e402446
     Your%20lessons%20are%20ready/singular: fe8d9df59ba42f451b249fd750813cba
     Taking%20you%20to%20your%20chapter.../singular: fc59b426c3d393ec40f534253309ee9f
+    This%20usually%20takes%202-4%20minutes/singular: a5cf03e3d2ed405722955fde29b1fef0
     Creating%20your%20lessons/singular: 93571965dc04dcef0bf92f212b3b34d3
+    Designing%20practice%20exercises.../singular: 9f1ddddd3324e1586eb427a2c96ee399
+    Thinking%20about%20how%20to%20teach%20this.../singular: e71e60276db8c3d5ddb63542b0c7251e
+    Reviewing%20the%20flow%20so%20far.../singular: 4412a2800906a2b7ea847a9493cd5ac4
+    Making%20it%20interactive.../singular: 1379852e804db4736e71c068cd50982e
     Setting%20up%20activities/singular: a644864fddf71801feef8c789333456a
     Figuring%20out%20the%20best%20approach/singular: 0cbd8e2d3c43eb874e25dd6b30fff474
+    Choosing%20the%20right%20approach.../singular: 2ed5698b6fd002b38e10035a29a815dc
+    Exploring%20your%20topic.../singular: 01c8bbcee210a5270bd7629f2fe35e4b
     Preparing%20lessons/singular: efa9d3dc1167beadeae4a660574c8696
+    Mapping%20out%20the%20learning%20path.../singular: 92e90eda50e4c4dea6701f916ef2e853
+    Writing%20lesson%20%7Bnumber%7D.../singular: 9a81f245c815438ea4e925777f711894
     Taking%20you%20to%20your%20course.../singular: f1522561681357abdaad3936d36fdfe7
     Your%20course%20is%20ready/singular: b54659084218a9b9bcf7b5f1cfcf3fbf
+    This%20usually%20takes%204-6%20minutes/singular: bd0d37fe2b4aaa9dd8f1a6ffae3824c5
     Creating%20your%20course/singular: 02c33db1106e7478e5cbd00fa5f20532
     Writing%20the%20lesson%20content/singular: 2b3243b19b65a83cfe355bef089b7ce8
+    Writing%20the%20overview.../singular: 14d71db32539c19803e72da8a4553a0f
+    Summarizing%20what%20you'll%20learn.../singular: bb6b58ff4b46ee6e8c59789464e9bced
+    Planning%20the%20course%20structure.../singular: 752a256e319aa780a5116e8981d4dffb
+    Figuring%20out%20the%20right%20categories.../singular: 6ba5a3ad0241d1b53ad3df38af600d96
     Getting%20things%20ready/singular: eeb67bd061dfaf280e6971c00e7b7999
+    Adding%20finishing%20touches.../singular: 071e61c7a9adfabf2ea37b921bcd7a6d
     Planning%20your%20first%20lesson/singular: 7f427574ea313b46b889fdef3253d5c6
     Saving%20your%20course/singular: 52dd36a207730a97e851bd6571fffd85
+    Tagging%20your%20course.../singular: 3e5051038112611e998fe0787b804c20
     Creating%20the%20cover%20image/singular: f58c3380093e8204ad6ade3b6a0a2691
     Writing%20your%20course%20description/singular: 0d9406e9cd2914a068892907337cae61
     Categorizing%20your%20course/singular: a7ff108a5a4721c5550cec3cc67acede
-    Outlining%20chapters/singular: c18531fa3b5a68df4e28cab77650db8f
+    Designing%20the%20cover.../singular: 1a65a35fdfdc5c38c17b7c03054f6c33
+    Writing%20chapter%20%7Bnumber%7D.../singular: 1634bab54867d26fb32455bfe4e2a98f
+    Reviewing%20the%20overall%20flow.../singular: 35a915dd127d3ebd503cfc6b8a3e5082
+    Saving%20your%20progress.../singular: 15fd06dcc4a2ae41403787c26babdc83
+    Picking%20the%20right%20look.../singular: 697bdd3a4fa077ddd50c64d57775baf6
+    Writing%20chapters/singular: b2e7e149ee761e4e5a45225e37e5441a
+    Putting%20it%20all%20together.../singular: 12349256a2104ecf09b213ba1437c636
     Generate%20Lesson/singular: 741a967eb90694565df5e9b44991f58e
     Your%20lesson%20is%20ready/singular: 3d745fd67b57e47ed10851f1e5404ccc
     Creating%20your%20activities/singular: 6651e663a48e18486f5f873e614cd512
+    This%20usually%20takes%20about%20a%20minute/singular: 8b679d39d752ba8a57fbabd4eb745f28
     Taking%20you%20to%20your%20lesson.../singular: 7a47c8664a900646ef51c9f27e2886e0
     Read%20Zoonk's%20privacy%20policy%20to%20understand%20how%20we%20collect%2C%20use%2C%20and%20protect%20your%20personal%20information./singular: 044f3586abe7d9915820a6629cef08e4
     Privacy%20Policy/singular: 7459744a63ef8af4e517a09024bd7c08

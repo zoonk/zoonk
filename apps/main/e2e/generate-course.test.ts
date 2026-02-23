@@ -140,6 +140,8 @@ test.describe("Generate Course Page", () => {
       await expect(page.getByText(/creating your course/i)).toBeVisible({
         timeout: 10_000,
       });
+
+      await expect(page.getByText(/this usually takes 4-6 minutes/i)).toBeVisible();
     });
 
     test("shows vocabulary-specific activity phases for language courses", async ({ page }) => {
