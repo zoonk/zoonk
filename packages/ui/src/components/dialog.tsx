@@ -2,12 +2,27 @@
 
 import { Dialog as DialogPrimitive } from "@base-ui/react/dialog";
 import { Button } from "@zoonk/ui/components/button";
+import { useHideElement } from "@zoonk/ui/hooks/hide-element";
 import { cn } from "@zoonk/ui/lib/utils";
 import { XIcon } from "lucide-react";
+import { createContext, useContext } from "react";
 import type * as React from "react";
 
-function Dialog({ ...props }: DialogPrimitive.Root.Props) {
-  return <DialogPrimitive.Root data-slot="dialog" {...props} />;
+/**
+ * Passes the `open` state from Dialog to DialogPortal so it can hide the portal
+ * on Activity cleanup (preventing flash on back-navigation) and only remove
+ * the hidden class on genuine close-to-open transitions.
+ *
+ * Workaround for: https://github.com/vercel/next.js/issues/86577
+ */
+const DialogOpenContext = createContext<boolean | undefined>(undefined);
+
+function Dialog({ open, ...props }: DialogPrimitive.Root.Props) {
+  return (
+    <DialogOpenContext.Provider value={open}>
+      <DialogPrimitive.Root data-slot="dialog" open={open} {...props} />
+    </DialogOpenContext.Provider>
+  );
 }
 
 function DialogTrigger({ ...props }: DialogPrimitive.Trigger.Props) {
@@ -15,7 +30,9 @@ function DialogTrigger({ ...props }: DialogPrimitive.Trigger.Props) {
 }
 
 function DialogPortal({ ...props }: DialogPrimitive.Portal.Props) {
-  return <DialogPrimitive.Portal data-slot="dialog-portal" {...props} />;
+  const open = useContext(DialogOpenContext);
+  const ref = useHideElement<HTMLDivElement>(open);
+  return <DialogPrimitive.Portal data-slot="dialog-portal" ref={ref} {...props} />;
 }
 
 function DialogClose({ ...props }: DialogPrimitive.Close.Props) {

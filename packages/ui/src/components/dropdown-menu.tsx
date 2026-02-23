@@ -1,6 +1,7 @@
 "use client";
 
 import { Menu as MenuPrimitive } from "@base-ui/react/menu";
+import { useHideElement } from "@zoonk/ui/hooks/hide-element";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CheckIcon, ChevronRightIcon } from "lucide-react";
 import type * as React from "react";
@@ -34,8 +35,10 @@ function DropdownMenuContent({
   ...props
 }: MenuPrimitive.Popup.Props &
   Pick<MenuPrimitive.Positioner.Props, "align" | "alignOffset" | "side" | "sideOffset">) {
+  const ref = useHideElement<HTMLDivElement>();
+
   return (
-    <MenuPrimitive.Portal>
+    <MenuPrimitive.Portal ref={ref}>
       <MenuPrimitive.Positioner
         align={align}
         alignOffset={alignOffset}
