@@ -108,7 +108,7 @@ async function setupMockApis(page: Page, options: MockApiOptions = {}): Promise<
 /**
  * Creates a chapter with pending generation status for testing the generation workflow.
  */
-async function createPendingChapter() {
+async function createPendingChapter(position = 0) {
   const org = await getAiOrganization();
 
   const uniqueId = randomUUID().slice(0, 8);
@@ -130,6 +130,7 @@ async function createPendingChapter() {
     isPublished: true,
     normalizedTitle: normalizeString(chapterTitle),
     organizationId: org.id,
+    position,
     slug: `e2e-gen-chapter-${uniqueId}`,
     title: chapterTitle,
   });
@@ -158,7 +159,7 @@ async function createTestSubscription(userId: number) {
 
 test.describe("Generate Chapter Page - Unauthenticated", () => {
   test("shows login prompt with link to login page", async ({ page }) => {
-    const { chapter } = await createPendingChapter();
+    const { chapter } = await createPendingChapter(1);
     await page.goto(`/generate/ch/${chapter.id}`);
 
     await expect(page.getByRole("alert").filter({ hasText: /logged in/i })).toBeVisible();
@@ -171,7 +172,7 @@ test.describe("Generate Chapter Page - Unauthenticated", () => {
 
 test.describe("Generate Chapter Page - No Subscription", () => {
   test("shows upgrade CTA with link to subscription page", async ({ authenticatedPage }) => {
-    const { chapter } = await createPendingChapter();
+    const { chapter } = await createPendingChapter(1);
     await authenticatedPage.goto(`/generate/ch/${chapter.id}`);
 
     await expect(authenticatedPage.getByText(/upgrade to generate/i)).toBeVisible();
@@ -306,6 +307,38 @@ test.describe("Generate Chapter Page - With Subscription", () => {
     await expect(userWithoutProgress.getByText(/something went wrong/i)).toBeVisible({
       timeout: 10_000,
     });
+  });
+});
+
+test.describe("Generate Chapter Page - First Chapter Free", () => {
+  test("unauthenticated user sees generation UI for first chapter", async ({ page }) => {
+    const { chapter } = await createPendingChapter(0);
+
+    await setupMockApis(page, {
+      statusDelayMs: 2500,
+      streamMessages: [{ status: "started", step: "getChapter" }],
+    });
+
+    await page.goto(`/generate/ch/${chapter.id}`);
+
+    await expect(page.getByRole("alert").filter({ hasText: /logged in/i })).toHaveCount(0);
+    await expect(page.getByRole("heading", { name: chapter.title })).toBeVisible();
+  });
+
+  test("authenticated user without subscription sees generation UI for first chapter", async ({
+    authenticatedPage,
+  }) => {
+    const { chapter } = await createPendingChapter(0);
+
+    await setupMockApis(authenticatedPage, {
+      statusDelayMs: 2500,
+      streamMessages: [{ status: "started", step: "getChapter" }],
+    });
+
+    await authenticatedPage.goto(`/generate/ch/${chapter.id}`);
+
+    await expect(authenticatedPage.getByText(/upgrade to generate/i)).toHaveCount(0);
+    await expect(authenticatedPage.getByRole("heading", { name: chapter.title })).toBeVisible();
   });
 });
 

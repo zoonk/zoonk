@@ -38,6 +38,7 @@ describe(getChapterForGeneration, () => {
       id: chapter.id,
       language: chapter.language,
       organizationId: chapter.organizationId,
+      position: chapter.position,
       title: chapter.title,
     });
   });

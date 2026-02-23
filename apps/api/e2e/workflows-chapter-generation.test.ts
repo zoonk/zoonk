@@ -93,7 +93,7 @@ test.describe("Chapter Generation Workflow API", () => {
         language: "en",
         normalizedTitle: normalizeString("Test Chapter"),
         organizationId: aiOrgId,
-        position: 0,
+        position: 1,
         slug: `e2e-chapter-${uniqueId}`,
         title: "Test Chapter",
       },
@@ -104,7 +104,7 @@ test.describe("Chapter Generation Workflow API", () => {
       data: { chapterId: chapter.id },
     });
 
-    // Without a valid session cookie, should return 402
+    // Non-first chapter without subscription should return 402
     expect(response.status()).toBe(402);
 
     const body = await response.json();
@@ -116,6 +116,51 @@ test.describe("Chapter Generation Workflow API", () => {
     // Cleanup
     await prisma.chapter.delete({ where: { id: chapter.id } });
     await prisma.course.delete({ where: { id: course.id } });
+    await apiContext.dispose();
+  });
+
+  test("allows first chapter generation without subscription", async () => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const courseTitle = `E2E First Chapter Free ${uniqueId}`;
+
+    const course = await prisma.course.create({
+      data: {
+        description: "Test course for first chapter free generation",
+        isPublished: true,
+        language: "en",
+        normalizedTitle: normalizeString(courseTitle),
+        organizationId: aiOrgId,
+        slug: `e2e-first-ch-free-${uniqueId}`,
+        title: courseTitle,
+      },
+    });
+
+    const chapter = await prisma.chapter.create({
+      data: {
+        courseId: course.id,
+        description: "First chapter - should be free",
+        isPublished: true,
+        language: "en",
+        normalizedTitle: normalizeString("First Chapter Free"),
+        organizationId: aiOrgId,
+        position: 0,
+        slug: `e2e-first-ch-free-${uniqueId}`,
+        title: "First Chapter Free",
+      },
+    });
+
+    const apiContext = await request.newContext({ baseURL });
+    const response = await apiContext.post("/v1/workflows/chapter-generation/trigger", {
+      data: { chapterId: chapter.id },
+    });
+
+    expect(response.status()).toBe(200);
+
+    const body = await response.json();
+
+    expect(body.message).toBe("Workflow started");
+    expect(body.runId).toBeDefined();
+
     await apiContext.dispose();
   });
 
