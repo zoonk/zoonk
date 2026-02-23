@@ -1,0 +1,203 @@
+{
+  "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Monetary policy transmission involves multiple channels with time lags. Penalize if:\n   - Interest rate changes are described as immediately affecting inflation (transmission takes 12-24 months)\n   - The central bank is described as directly controlling commercial interest rates (it influences them through the policy rate)\n\n2. DEPTH CHECK: Penalize if the explanation treats it as \"central bank changes rates, economy responds\" without showing the chain of effects through banks, lending, spending, and prices.\n\n3. DISTINCTION FROM EXPLANATION: The explanation covered WHAT policy rates, reserve requirements, and open market operations ARE. This should show HOW policy changes ripple through the financial system to affect the real economy.\n\n\nEVALUATION CRITERIA:\n\n1. FACTUAL ACCURACY: Any process descriptions, mechanisms, or cause-effect relationships must be correct. Penalize hallucinations, incorrect sequences, or wrong causal chains.\n\n2. PROCESS FOCUS: Content must show things HAPPENING, not just describe parts. Look for action verbs, cause-effect language, and sequential flow.\n\n3. DEPTH: Complex processes require multi-step explanations showing how one action triggers the next. Penalize oversimplified \"just happens\" explanations.\n\n4. FORMAT: Each step must have a title (max 50 chars) and text (max 300 chars).\n\n5. TONE: Conversational, like giving a behind-the-scenes tour. Include process metaphors from everyday life (assembly lines, relay races, domino chains).\n\n6. FOCUS: Explains HOW something works (processes in action), not WHAT it is (definitions) or WHY it exists (history).\n\n7. NO OVERLAP: Must not repeat content from the EXPLANATION_STEPS which covered the WHAT.\n\n8. SCOPE: Content matches the lesson scope exactly.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for missing process phases or steps you might expect\n- Do NOT require a specific number of steps\n- Do NOT check against an imagined \"complete\" process description\n- ONLY penalize for: factual errors, static descriptions instead of action-oriented content, missing cause-effect relationships, or poor process flow\n- Different valid process explanations exist - assess the quality of what IS provided\n\n    ",
+  "judgedAt": "2026-01-17T01:21:19.779Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Model A provides an exceptional 13-step process explanation that thoroughly traces monetary policy transmission. Strengths: (1) Correctly shows time lag - mentions 'months pass' and shows gradual inflation build, (2) Clear multi-channel transmission including interest rate channel, wealth effect, and exchange rate channel, (3) Excellent cause-effect chains showing how rate cuts → bank repricing → business/consumer borrowing → spending → hiring → multiplier → asset prices → wealth effect → wage pressure → inflation, (4) Includes exchange rate effects on trade, (5) Strong process language with action verbs throughout, (6) Good metaphors ('first domino', 'feedback loop'), (7) Conversational tone. Minor issue: Step 2 says banks adjust 'immediately' and 'within days' which slightly overstates the speed of full pass-through, though overnight rates do move quickly. Does not claim central bank 'directly controls' commercial rates - correctly uses 'adjust' language.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Model B offers a strong 9-step explanation with excellent process focus. Strengths: (1) Correctly addresses time lags implicitly, (2) Unique and valuable addition of portfolio rebalancing channel (Step 2), (3) Importantly includes the liquidity trap scenario where transmission can stall - excellent depth, (4) Shows both easing and tightening directions, (5) Strong action-oriented language ('rush to bond desks', 'game is afoot'), (6) Good chain of effects from banks to real economy. Minor issues: Step 3 says banks 'competing fiercely' and rates fall - slightly simplified but not inaccurate. Step 1 mentions 'central bank's window' which is technically accurate for discount window but policy rate typically operates through open market operations. Overall excellent depth and process focus with unique insights on transmission failures.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model D provides a well-structured 9-step explanation. Key strengths: (1) Explicitly addresses the 12-18 month lag which is crucial and often missed - direct quote about central bankers acting on 'forecasts, not current conditions', (2) Correctly distinguishes that policy rate 'influences' rather than controls commercial rates, (3) Includes important step on transmission failures ('When the Signal Gets Stuck'), (4) Good multiplier effect explanation, (5) Clear sequential flow. The interbank rate step (Step 2) is accurate and adds depth. Metaphors are apt ('like steering a ship'). Slightly less comprehensive than A or B in covering all channels (no explicit wealth effect or exchange rate), but what's covered is accurate and well-explained. Process focus is strong throughout.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model H provides a comprehensive 14-step explanation covering multiple policy tools. Strengths: (1) Covers all three main tools (policy rate, open market operations, reserve requirements), (2) Excellent detail on transmission channels, (3) Includes credit standards tightening/loosening beyond just rate changes, (4) Explicitly addresses lag ('drift shows up later'), (5) Includes feedback loops and expectations channel, (6) Good metaphors throughout. The comprehensiveness is a strength but some steps could be tighter. Minor issues: Some metaphors feel slightly forced ('like a bouncer'), and the sheer number of steps risks losing the narrative flow. Process language is strong but occasionally more descriptive than action-oriented. Accurately shows the central bank influences rather than controls rates.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model I provides a 12-step explanation with good breadth. Strengths: (1) Covers multiple channels comprehensively, (2) Includes transmission failures and unconventional tools - adds depth, (3) Expectations channel explicitly covered, (4) Good process language with action verbs, (5) Mentions monitoring and feedback loop. Issues: Some language is more abstract ('balance sheets flex like springs') and could be clearer. The step on 'C&I' assumes reader knows this means consumption and investment. The unconventional tools step goes slightly beyond core transmission mechanism scope. Generally accurate but slightly less accessible than top performers. Does acknowledge timing issues implicitly.",
+          "score": 7.7
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Model F provides a solid 9-step explanation. Strengths: (1) Clear sequential flow with good cause-effect relationships, (2) Includes expectations channel (Step 8), (3) Addresses transmission failures (Step 9), (4) Good metaphors ('like adjusting all the shelves', 'traffic light switching colors'), (5) Process-oriented language throughout. Issues: Somewhat shorter and less detailed than top performers - covers main chain but with less depth on each step. Missing explicit coverage of wealth effect and exchange rate channels. Time lag not explicitly addressed but doesn't claim immediate effects either. Overall accurate but less comprehensive.",
+          "score": 7.4
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Model C provides a 10-step explanation. Strengths: (1) Good process language with action verbs, (2) Includes money multiplier effect, (3) Covers multiple channels, (4) Mentions reversal process. Issues: (1) Step 3 conflates reserve requirements and open market operations in a confusing way, (2) Some inaccuracies - 'Banks rush to tap cheaper central bank funds' oversimplifies how policy rate transmission works (banks don't typically 'rush' to borrow from central bank), (3) The phrase 'draining a reserve tank' for loosening requirements is awkward/unclear metaphor. Time lag not explicitly addressed. The wealth effect and asset price discussion is somewhat rushed. Overall decent but some conceptual muddiness.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Model G provides a focused 7-step explanation of rate hiking specifically. Strengths: (1) Good process flow, (2) Clear cause-effect chains, (3) Includes exchange rate effect, (4) Good metaphors ('main water valve'). Issues: (1) Only covers tightening direction, not full transmission mechanism, (2) Scope is narrower than competitors, (3) Missing wealth effect as explicit channel, (4) No mention of time lags, (5) Step 3 may overstate how 'immediately' banks pass costs on. Accurate but less comprehensive than others. Process language is good but limited scope holds it back.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model E provides a 6-step explanation focused on rate hikes. Strengths: (1) Clear thermostat metaphor, (2) Good explanation of wealth effect (Step 4), (3) Exchange rate channel covered, (4) Process-oriented language. Issues: (1) Only covers tightening, not full mechanism, (2) Fewer steps means less depth, (3) No explicit mention of time lags (though doesn't claim immediacy), (4) Missing credit channel details and multiplier effect. Step 2 says banks 'pass those costs down the line' but could be clearer about HOW this happens. Accessible but limited in scope compared to others.",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "Model J provides a basic 8-step explanation. Critical issues: (1) Very surface-level - describes WHAT happens without showing HOW the chain works in detail, (2) Violates the 'no overlap' requirement by including steps on 'Money Supply Increases' via OMOs and 'Reserve Requirements Shift' which were explicitly covered in the EXPLANATION_STEPS the prompt says to avoid repeating, (3) Lacks depth - 'banks lend more' without showing the mechanism, (4) No time lags mentioned, (5) Missing wealth effect and exchange rate channels, (6) Lacks the conversational tone and metaphors requested, (7) More like bullet points than a behind-the-scenes tour. The process descriptions are too superficial - 'credit flows into the economy' is not process depth. This fails the core requirement of showing HOW policy ripples through rather than just stating it does.",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "This output is exceptional. It captures the complete transmission mechanism (interest rate channel, credit channel, wealth effect, exchange rate channel) in a highly logical, sequential narrative. It explicitly addresses the critical constraint regarding time lags ('Months pass...'), avoiding the error of immediate inflation impact. The tone is conversational and uses effective metaphors ('flipping the first domino'). The distinction between the central bank's action and the commercial banks' reaction is clear and accurate.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Model B offers the most engaging and vivid tone ('rush to their bond desks', 'game is now afoot'), providing excellent behind-the-scenes detail on how banks actually manage liquidity and bonds. It correctly identifies the 'liquidity trap' risk. While it misses the exchange rate channel (unlike Model A), its depth regarding bank behavior and the vividness of the process make it a superior explanation for a general audience.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "This model is highly comprehensive, covering every major channel including forward guidance and expectations. It uses excellent metaphors ('pebble dropped in a pond', 'traffic changing lanes'). It is slightly more academic/abstract than Models A and B, but technically flawless and very thorough regarding the feedback loops and time horizons.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model D is very strong on the 'Accuracy Check' for lags, explicitly stating the '12-18 month' timeframe and explaining *why* (steering a ship). It offers realistic examples of business decision-making. It scores slightly lower than the top models only because it focuses primarily on the interest/credit channel and omits the wealth and exchange rate channels, making it slightly less comprehensive.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model H is comprehensive and accurate, using good metaphors. However, it spends the first 4 steps listing the different tools (rates, OMOs, reserves) effectively re-defining them as entry points. While accurate, this feels slightly repetitive given the prompt's instruction to move past the 'WHAT' and focus on the ripple effects. Once the transmission starts, the content is excellent.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "A solid, competent explanation that hits the main points without errors. It uses good metaphors ('traffic light'). It is ranked lower simply because the top models provided more depth, specific examples (wealth effect, bond desks), or more vivid narratives.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Good explanation focusing on the tightening cycle. It covers the exchange rate and asset prices well. The flow is logical, though the tone is slightly less engaging than the top models. It meets all criteria but doesn't stand out in terms of depth or narrative flair.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Adequate explanation of tightening. It covers the wealth effect and exchange rate, which is a plus. However, it is shorter and less detailed regarding the mechanism of how banks reprice compared to the higher-ranked models. The conclusion is a bit abrupt.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "This model spends steps 1-3 essentially re-stating the tools (reserves, OMOs) rather than showing the transmission flow immediately. While factually okay, it feels a bit more like a list of definitions at the start. The metaphor usage is good, but the structure is less effective than the others.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "This output contains significant sequencing errors. Steps 4 and 5 (OMOs and Reserve Requirements) are listed *after* Step 3 (Credit Becomes Cheaper/Consumers Borrow), implying that the central bank uses these tools after the economy has already responded. This breaks the causal chain. The content is also overly simplistic compared to the others.",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Best meets the brief: clearly process-focused chain (policy signal → reserves/funding → market rates → retail rates/credit standards → C&I → jobs → inflation), strong everyday metaphors, minimal “what it is” definitions. Correctly notes inflation moves with delay (“big ship”). Stays within 300-char/50-char limits.",
+          "score": 9.4
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Very solid transmission sequence with good behind-the-scenes feel, includes an explicit 12–18 month lag (matches expectation) and acknowledges breakdown points. Minor issue: “policy rate acts like a peg” overstates mechanical linkage, but overall accurate and process-driven.",
+          "score": 9.1
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Clean, action-oriented relay from policy signal to markets to banks to demand to prices, plus expectations and failure points. Avoids claiming immediate inflation effects. Slightly generic and a bit close to “what” at moments, but still mostly “how.”",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Comprehensive process map across markets, banks, wealth/exchange-rate/expectations channels, plus feedback loop. Generally accurate and dynamic. Slight scope creep into “unconventional tools” and a bit more descriptive than tour-like in places, but still strong.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Good sequential tightening story with clear cause-effect and metaphors, and doesn’t imply instant inflation. However, it says “immediately, the cost for commercial banks to borrow reserve funds rises,” which is a bit too direct/mechanical (CB influences, not directly sets all bank borrowing costs). Otherwise solid.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Clear channels (interest rate, wealth, FX) with a conversational metaphor. Main weakness: ends with a too-neat ‘process complete’ equilibrium framing and doesn’t mention lags; also leans into quasi-definitional labels (“interest rate channel”). Still mostly correct.",
+          "score": 7.7
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Good narrative and includes stall/liquidity trap and symmetric tightening. But contains questionable/incorrect bond-portfolio mechanics (“banks dump lower-yielding securities” after rate cuts) and implies fairly fast pass-through. Inflation described as a near ‘final destination’ without lag emphasis.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Energetic and processy, but has key accuracy issues: implies rate cut makes banks borrow more from CB ‘immediately’ (not generally), treats reserves as directly ‘unlocking’ lending, and includes a money-multiplier-style “one loan begets more loans” framing that’s oversimplified/misleading in modern systems. Also overlaps with tool “what” (RR/OMO) more.",
+          "score": 6.3
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "Too close to “what” (definitions of OMO/reserve requirements) and a simplistic chain. Also implies central bank directly ‘injects money’ and mixes tools as if they routinely move together. Little on lags and weak behind-the-scenes process detail.",
+          "score": 5.8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Violates key accuracy expectations: claims banks adjust retail rates ‘overnight/within days’ and frames inflation as rising toward target in a relatively direct near-term arc (lag only vaguely ‘months pass’). Also suggests CB move leads quickly to broad retail repricing and inflation, overstating immediacy. Otherwise detailed, but too mechanically immediate.",
+          "score": 5.2
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-mechanics",
+  "testCaseId": "en-economics-monetary-transmission-1"
+}

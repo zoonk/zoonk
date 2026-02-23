@@ -1,0 +1,203 @@
+{
+  "expectations": "\n      SPECIAL CONSIDERATION: This is a highly abstract mathematical concept. The background should make it relatable through metaphors and real-world problems it solved.\n\n      Avoid technical definitions or abstract mathematical language. Focus on WHY mathematicians needed this concept and what problems it addressed.\n\n      \n  EVALUATION CRITERIA (focus on storytelling quality, not specific content):\n\n  1. STORYTELLING FLOW: The steps should build curiosity and follow a narrative arc. Check for tension (the problem/limitation) and resolution (how it was solved).\n\n  2. STEP SIZING: Each step must have a title (max 50 chars) and text (max 300 chars). Verify lengths are within limits.\n\n  3. CONVERSATIONAL TONE: The writing should feel like talking to a curious friend, not reading an encyclopedia. Look for vivid imagery and emotional engagement.\n\n  4. METAPHORS & ANALOGIES: Check for analogies from everyday life (sports, cooking, games, music, travel) that make abstract concepts tangible.\n\n  5. FOCUS ON \"WHY\": The activity explains the origin and importance of a topic — NOT how it works technically. If the output dives into mechanics or implementation, that's a problem.\n\n  6. APPROPRIATE SCOPE: Content should match the lesson's scope exactly — not broader (covering the whole field) and not narrower (covering only a sub-topic).\n\n  7. VIVID SCENES: Each step should feel like a \"scene\" with imagery, not a bullet point of dry facts.\n\n  IMPORTANT: Do NOT penalize for specific historical facts, dates, or phases you might expect. Different valid narrative approaches exist. Focus on whether the story provided is engaging and explains WHY this topic matters.\n\n  IMPORTANT: Do NOT require a specific number of steps. Simple topics may need fewer steps; complex topics may need more. Judge quality, not quantity.\n\n  IMPORTANT: Make sure the output is factually correct. It should not include any information that is not true.\n\n    ",
+  "judgedAt": "2026-01-15T20:51:23.343Z",
+  "judgments": [
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "This model achieves the perfect balance of vivid imagery and conceptual clarity. The metaphors ('slipping like shoes on ice' for failing intuition, 'kitchen safety code' for axioms) are original and perfectly illustrate *why* the math was necessary. It explains the complex Russell's Paradox simply ('logic Möbius strip') and maintains a highly engaging narrative flow.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Excellent storytelling with a consistent 'home repair' theme (messy desk, taping a cracked pipe, clean countertop). The tone is warm and conversational, making the abstract need for rigor feel like a relatable household problem. It clearly explains the 'why' without getting bogged down in jargon.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Strong narrative structure with a brilliant opening metaphor ('chefs lacking bowls') that perfectly explains the concept of sets as containers. The transition from the 'Wild West' of logic to the 'source code' of modern math is compelling. It effectively communicates the tension of the paradoxes.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Features high-quality, dramatic imagery ('storm inside a bottle', 'logic eating its own tail'). The storytelling is gripping and clearly outlines the crisis that paradoxes caused. It is slightly less metaphorically consistent than the top three but still outstanding.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "High energy and very engaging tone. It successfully uses multiple metaphors ('bomb', 'house of cards', 'cookbook') to drive the point home. While the rapid-fire switching of metaphors makes it slightly chaotic, the excitement is contagious and fits the 'curious friend' persona well.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "A solid, relatable entry. The metaphor of 'counting clouds with a ruler' is excellent for describing the problem with infinity. The narrative flow is logical, though the tone is slightly gentler and less dramatic than the higher-ranked models.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Good dramatic writing ('Identity Crisis', 'built on sand'). It leans heavily on the historical narrative and the emotional backlash against Cantor. While effective, it relies more on historical facts than on metaphors to explain the mathematical concepts themselves compared to higher-ranked outputs.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-2.5-flash-lite",
+          "reasoning": "The writing is engaging, but the narrative sequence is logically confusing. It introduces the Barber Paradox before introducing Cantor, implying that Set Theory was created to solve the paradoxes, whereas historically/logically the paradoxes broke Cantor's early theory. This muddles the 'why' slightly.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-4.1-mini",
+          "reasoning": "Adheres to the constraints but lacks depth. The 'toy box' metaphor is cliché, and the narrative skips over the dramatic tension (the paradoxes) that actually necessitated formal set theory. It feels more like a summary than a story.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "Fails the 'Conversational Tone' criterion. The writing is academic and dry ('formalize the notion', 'disparate fields'), sounding more like a textbook introduction than a story for a friend. It lacks the vivid imagery required by the prompt.",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Strong narrative arc with clear tension (vague collections → infinity → paradox) and satisfying resolution (axioms as safety rails). Conversational, vivid metaphors (garage, songs, party, oceans, rulebook/game, kitchen code) and stays mostly on the “why” without getting technical. Step titles/texts appear within limits.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Excellent conversational tone and relatable everyday “boxes” framing; good pacing from ambiguity → infinity → paradox → rulebook → modern relevance. Metaphors are consistent and scene-like. Minor issue: edges slightly closer to “how it works” in the later steps (relations/functions/data structures), but still mostly motivation-focused. Length constraints look met.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Very vivid and dramatic, with strong scenes and a full arc including Russell and axioms. However, it introduces specific technical naming/details (Zermelo–Fraenkel, exact year claims) and a bit more formal math talk (“uncountably”), which nudges away from the “avoid abstract language” requirement. Still compelling and within sizing.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Good storytelling flow and tension (intuitive era → infinity → paradox → rebuild). Strong imagery (“storm inside a bottle,” “logic eating its tail”). But it’s a bit too definitive/oversimplified about “no more paradoxes” after strict rules, and it leans slightly technical with “rigorous rulebook” framing. Otherwise meets constraints well.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Clear arc and good metaphors (“containers,” “source code”), includes paradox and why stricter rules were needed. Weaknesses: some questionable/overstated claims (e.g., implies mathematicians talked about groups constantly yet lacked formal rules; also ‘today set theory is the source code’ a bit grandiose). Slightly more expository than conversational in places.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-2.5-flash-lite",
+          "reasoning": "Relatable opening and nice use of the barber paradox. Flow is decent but less scene-like and more explanatory. It also repeats “universal language/bedrock” without adding much narrative tension or resolution beyond generic statements. Still largely on “why,” and length limits seem fine.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Has energy and conflict (backlash) and a decent arc, but it violates key constraints by giving a technical definition (“define a SET as… well-defined collection of distinct objects”) and more mechanics about countability. Also includes a likely dubious anecdote (“teacher called his work a disease”) stated as fact without care.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Smooth writing and some metaphors (desk, pipe, countertop), but it stays abstract and generic—less vivid scene-by-scene tension, and it never really makes the real-world problem feel urgent. It also gestures toward “clear rules” without showing the motivating crisis as concretely as others.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-4.1-mini",
+          "reasoning": "Friendly and metaphorical (toy box, baseball cards), but the narrative arc is thin: it mostly restates “collections are messy” repeatedly, with little tension/resolution beyond “Cantor introduced sets.” It feels more like a series of slogans than scenes, and the “why” is underdeveloped.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "Most technical/encyclopedic in tone (“rigorous foundation,” “disparate fields,” “principles”), with less storytelling and fewer vivid scenes. It also drifts into modern applications in a generic way and doesn’t build much curiosity or a clear problem→solution arc compared to others.",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Exceptional storytelling flow with a clear narrative arc from 'identity crisis' through backlash to resolution. Strong emotional hooks ('dangerous question,' 'disease'). Excellent metaphors ('built on sand,' 'hand-waving'). Each step builds naturally on the previous. Maintains WHY focus throughout without diving into mechanics. Character limits respected. The Cantor teacher calling it 'disease' adds drama. Only minor issue: the final step slightly shifts toward technical language ('reducible to collections').",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Outstanding metaphors ('messy garage,' 'shoes on ice,' 'oceans'). Strong narrative tension with Russell's paradox as 'bomb' and the 'kitchen safety code' resolution. Excellent conversational tone. Each step feels like a scene. The 'Möbius strip' description of Russell's paradox is vivid. Good WHY focus. Minor issue: slightly more abstract in places ('logic Möbius strip' may confuse some readers). 8 steps is well-justified for the complexity.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Vivid imagery ('bag of mixed marbles,' 'endless beach,' 'house of cards'). Good narrative arc with clear tension (Russell's paradox) and resolution (Zermelo-Fraenkel axioms). Strong conversational tone. However, mentions specific dates (1901, 1922) which slightly shifts toward encyclopedia style. The 'Swiss Army knife' metaphor at the end is excellent. Steps are well-sized. Minor factual concern: ZF axioms were developed over time, not exactly 1922, but this is acceptable.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Good everyday metaphors ('shoes in closet,' 'counting clouds with ruler,' 'cake recipe'). Clear narrative progression. Conversational tone is strong. Addresses the WHY well. 8 steps might be slightly long but justified. The 'wider highways' metaphor for different infinities is creative. Slightly less dramatic tension than top models. The 'rulebook for collections' step is effective. Final steps connect well to modern relevance.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Strong opening metaphor ('chefs without bowls'). Good narrative arc. 'Wild West of logic' and 'shifting sand' are vivid. Russell's paradox explained well as a 'glitch.' The 'source code' metaphor connects to modern audience. However, 'felt that all infinite collections were the same size' is factually questionable - mathematicians were confused about infinity, not uniformly believing this. Step sizing is appropriate. Good balance of tension and resolution.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Strong metaphors ('messy desk,' 'storm in a bottle,' 'logic eating its own tail'). Good dramatic tension. 'Assembly code' metaphor is effective. However, the narrative is slightly compressed - 5 steps feels rushed for the topic's complexity. The transition from Cantor to paradoxes to resolution happens very quickly. The SQL mention is concrete but brief. Good conversational tone throughout.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-2.5-flash-lite",
+          "reasoning": "Uses the barber paradox effectively as a concrete illustration. Good metaphors ('leaky boat,' 'building blocks'). Conversational tone is decent. However, the narrative feels slightly flat - less dramatic tension than stronger entries. The opening ('stars in the sky') is somewhat generic. The 'universal language' concept is good but underdeveloped. Six steps is appropriate but could use more vivid scenes in some places.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Good 'messy desk' opening metaphor. 'Puzzle pieces,' 'loose screws,' 'taping a cracked pipe' - consistent metaphor use. 'Reading the manual' is relatable. However, the narrative lacks specific characters (Cantor is absent!). This is a significant gap - the story feels impersonal. The 'clean countertop' metaphor is nice. Steps are appropriately sized. The anonymity of 'the bold idea' weakens the story's human element.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "Opens with a good marble metaphor but then quickly becomes more formal ('rigorous foundation,' 'disparate fields'). Shifts toward encyclopedia tone in middle steps. Less conversational than others. Metaphors are sparse after the opening. 'Bold Step' title is generic. The narrative arc is present but weak - tension and resolution are understated. Final step on computer science is good but the connection could be more vivid.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-4.1-mini",
+          "reasoning": "Steps are too brief and lack depth. The 'toy box' and 'baseball cards' metaphors are good but underdeveloped. Narrative feels choppy rather than flowing. 'A Revolutionary Idea Emerges' is a weak scene - tells rather than shows. 'Gathering friends for a game by name' is an odd metaphor for sets. Missing the dramatic tension (no mention of paradoxes or struggles). Cantor appears briefly without character development. Feels like bullet points dressed as a story.",
+          "score": 1
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-background",
+  "testCaseId": "en-edge-abstract-topic-1"
+}

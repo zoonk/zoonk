@@ -1,0 +1,185 @@
+{
+  "expectations": "\nLANGUAGE REQUIREMENT: All content must be in Spanish.\n\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Neural network architecture concepts must be technically accurate. Penalize if:\n   - Convolution operations are incorrectly described\n   - Pooling and stride effects are confused\n   - Transfer learning principles are misrepresented\n\n2. SCENARIO CHECK: The workplace problem should involve realistic deep learning challenges like: choosing architectures, debugging training issues, handling overfitting, or deploying models.\n\n3. CONCEPTUAL FOCUS: Decisions should require reasoning about architecture choices and their trade-offs.\n\n\nEVALUATION CRITERIA:\n\n1. STORY AUTHENTICITY: Dialogue must be pure conversation between colleagues with no narrator text, no character name prefixes (like \"Sarah:\"), and no action descriptions. The learner should feel immersed in a real workplace conversation.\n\n2. EDUCATIONAL ALIGNMENT: Every decision point must require applying lesson concepts through reasoning, not memorizing facts. Wrong options should be plausible but flawed for specific conceptual reasons.\n\n3. PLOT COHERENCE: Scenes must flow naturally as a continuous story where each scene builds from the previous dialogue. The second-to-last scene MUST introduce a genuine plot twist (surprise, complication, or revelation). The final scene must resolve the problem AND reinforce the main learning takeaway.\n\n4. FORMAT COMPLIANCE: Verify these constraints:\n   - context: Maximum 500 characters of pure dialogue\n   - question: Maximum 100 characters\n   - options: Exactly 4 objects, each with: text (max 50 chars), isCorrect (boolean), feedback (max 300 chars)\n   - Exactly 1 option must have isCorrect: true, the other 3 must have isCorrect: false\n\n5. PERSONALIZATION: The {{NAME}} placeholder must be used appropriately in dialogue to personalize the experience.\n\n6. FEEDBACK QUALITY: Each option must have feedback explaining WHY it's right (with insight) or WHY it's wrong (and what would be correct). Feedback should help learners understand the reasoning, not just state correctness.\n\n7. SCENE COUNT: Story must have between 7 and 20 scenes. Let problem complexity dictate length.\n\n8. DISTRACTOR QUALITY: All wrong options must be plausible choices someone might consider. Penalize obviously silly or absurd options that no reasonable person would choose.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific plot choices, character names, or scenario settings you might expect\n- Do NOT require specific scenes like \"investigation\" or \"resolution\" by name - focus on whether the story has good flow\n- Do NOT check against an imagined \"ideal\" story structure\n- ONLY penalize for: format violations, narrator/description text in dialogue, decisions that test memorization instead of reasoning, missing plot twist, poor distractor quality, or factually incorrect lesson application\n- Different valid story approaches exist - assess the quality of what IS provided\n\n    ",
+  "judgedAt": "2026-01-17T15:54:11.124Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Excellent story with 8 scenes. Pure dialogue with no narrator text or character prefixes. Technical accuracy is strong: transfer learning, fine-tuning strategy (freeze early/train late), dropout for overfitting, batch normalization effects, and data bias issues are all correctly explained. Scene 7 provides a genuine plot twist (colleague suggests wrong architecture change when the real problem is data imbalance). Educational alignment is excellent - decisions require reasoning about trade-offs, not memorization. Feedback is thorough and explains WHY each option is right/wrong. All format constraints appear met. Distractors are plausible (e.g., adding more conv layers, changing pooling type). Uses {{NAME}} appropriately. Spanish is fluent and natural.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Strong 15-scene story with coherent flow and realistic medical imaging scenario. Pure dialogue format maintained throughout. Technical accuracy is excellent: transfer learning rationale, layer freezing strategy, Global Average Pooling, dropout, batch normalization ordering, ReLU vs sigmoid gradient issues, and inference optimization with MobileNet are all correctly presented. However, the 'plot twist' is weak - the client sending champagne isn't really a complication that changes the story direction. Final scene resolves well and reinforces key learning. All format constraints appear met. Distractors are plausible. Good use of {{NAME}}. The story is perhaps slightly too long but maintains quality throughout.",
+          "score": 8.7
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "9-scene story with excellent technical depth and realistic workplace dialogue. Pure dialogue, no narrator text. Technical concepts are accurate: overfitting diagnosis, dropout, Global Average Pooling vs dense layers, batch normalization for stability, stride/pooling for latency reduction, data augmentation for distribution shift, transfer learning strategy, and fine-tuning approach. Scene 7 provides a good plot twist (legal restriction limiting data access). The story flows naturally with realistic challenges. Format constraints appear met. Distractors are well-reasoned and plausible. Feedback quality is strong, explaining trade-offs. Good {{NAME}} usage. Spanish is natural.",
+          "score": 8.9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "11-scene story with good flow covering medical imaging classification. Pure dialogue format. Technical accuracy is solid: pooling for dimension reduction, dropout for overfitting, batch normalization for stability, transfer learning, layer freezing strategy, data augmentation, ReLU vs sigmoid. Scene 10-11 provides a twist (new task requirement, then doctor revelation). However, the final twist about detecting things doctors can't see feels somewhat forced. Format constraints appear met. Distractors are plausible. Feedback explains reasoning well. Good {{NAME}} usage. Spanish flows naturally.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "10-scene story about recycling plant vision system. Pure dialogue maintained. Technical accuracy is good: CNN vs dense for images, translation invariance, pooling for dimension reduction, non-linearity importance, batch normalization, dropout, transfer learning with freezing strategy. Scene 7 provides the twist (new requirement with only 300 images). Story resolves well. Format constraints appear met. Distractors are reasonable. Feedback quality is good. However, some explanations are slightly simplified. Good {{NAME}} usage. Spanish is natural.",
+          "score": 8.1
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "9-scene story covering medical imaging with edge deployment. Pure dialogue format. Technical accuracy is good: transfer learning, fine-tuning strategies, dropout, batch normalization, Global Average Pooling, and handling BN with small batches. Scene 6-7 introduces complications (recall requirement, BN instability). However, the plot twist is weak - it's more of a gradual problem evolution than a surprising complication. Format constraints appear met. Distractors are plausible. Feedback is concise but explanatory. Good {{NAME}} usage. Spanish is natural but slightly more technical/dry.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "7-scene story (minimum allowed) about drone vision system. Pure dialogue format maintained. Technical accuracy is generally good: small filters for detail, max pooling, batch normalization, dropout, ReLU vs sigmoid, transfer learning. However, the story lacks a genuine plot twist - Scene 6 (transfer learning success) is a resolution, not a complication. The final scene doesn't really resolve a problem; it's more of a knowledge check. The story feels truncated and educational progression is less sophisticated. Format constraints appear met. Distractors are reasonable. Spanish is natural.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "10-scene factory defect detection story. Dialogue is mostly pure but some feedback text is abbreviated/casual (e.g., 'Bien pensado, pero...'). Technical accuracy is solid. However, Scene 7 mentions 'twist' explicitly about data shift which feels forced. Scene 8 about rare class confusion is the actual complication. Some options have abbreviated feedback. The final scene's conclusion is good but brief. Format constraints appear met though some context sections are dense. Distractors are reasonable. Spanish uses some informal language ('jodidos', 'Buena'). The story flows reasonably well.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "8-scene story about production image classification. Pure dialogue format. Technical accuracy is correct: dropout, batch normalization, pooling, transfer learning, fine-tuning. Scene 6 provides a plot twist (camera change in production). However, the final scene (Scene 8) is just a confirmation/conclusion without real problem resolution. Feedback is quite brief compared to other models (e.g., 'Correcto: ...' pattern is repetitive and less educational). Some feedback lacks depth in explaining WHY alternatives are wrong. Format constraints appear met. Distractors are plausible but less nuanced. Spanish is natural but concise to a fault.",
+          "score": 7
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "This model provides the most sophisticated and realistic workplace scenario. It addresses advanced architectural decisions like replacing dense layers with Global Average Pooling to reduce parameters and overfitting, which shows deep understanding of the topic beyond basic concepts. It also incorporates realistic constraints like mobile latency and legal restrictions on data usage. The feedback is excellent, explaining clearly why specific architectural choices (like strides vs pooling) affect performance and cost.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Excellent technical depth. It captures subtle but critical nuances, such as the need to freeze Batch Normalization statistics when fine-tuning with small batches to avoid instability. The plot flows logically from architecture design to fine-tuning strategies and handling specific metric requirements (recall). The educational value is very high.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "A solid, well-structured story that correctly identifies data bias as a root cause for failure, rather than just throwing more architectural changes at the problem. The progression from transfer learning to fine-tuning and then debugging is logical. The plot twist is well-integrated into the debugging process.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "This model adheres perfectly to the structure constraints, placing the plot twist exactly in the second-to-last scene. The technical content is accurate, covering activations, pooling, and augmentation well. While slightly less deep than Model G, it is a very competent and cohesive output.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Strong conceptual focus. It does a great job explaining the 'why' behind basic components like Convolution (invariance) and ReLU (linearity), making it excellent for learners grasping the fundamentals. The transition to transfer learning is handled well.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Adequate and accurate, but the explanations and scenario are somewhat simpler compared to the top models. The feedback is correct but lacks the deeper insight found in Models G or I. It meets all requirements but stands out less.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "While the initial scenes are strong and technically accurate (covering MobileNet and layer ordering), the story drags significantly at the end. The last few scenes turn into a 'pop quiz' defining terms for documentation rather than solving a workplace problem, which breaks the narrative immersion.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "The technical content is actually quite good, but the tone is overly informal for a general professional workplace scenario (using phrases like 'Estamos jodidos'). While realistic for some startups, it risks being seen as unprofessional in a training context.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "This model contains a notable logic flaw in Scene 5. It suggests adding a convolutional layer to fix a class imbalance problem (model predicting only the majority class), which is not the standard or correct solution for that specific issue (usually addressed via loss weighting or sampling).",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Cumple muy bien la “conversación” (sin prefijos de nombres ni narrador), usa {{NAME}}, plantea decisiones con trade-offs reales (regularización, GAP vs densas, BN para estabilidad, latencia móvil, sesgo de fondo, restricción legal) y tiene un giro claro en la penúltima escena (bloqueo legal → solo 800 imágenes). Técnicamente sólido (pooling/stride, BN, transfer learning). Principales fallos: muchos contextos probablemente superan 500 caracteres; no está garantizado el límite de 100/50/300 en question/text/feedback.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Muy buen enfoque de ingeniería real (fine-tuning selectivo, dropout, BN, GAP para edge, recall de clase crítica, congelar BN con batch pequeño). Conversación inmersiva sin narrador y con {{NAME}}. Buen razonamiento conceptual en opciones. Giro en la penúltima escena es débil (no hay sorpresa clara; es más un problema incremental). Probables violaciones de límites de caracteres.",
+          "score": 8.1
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Contenido técnico fuerte y variado (GAP, orden BN→ReLU, MobileNet para inferencia, dropout en inferencia, pooling invariancia). Conversación sin prefijos y con {{NAME}}. Pero casi no hay “giro” genuino en el penúltimo tramo (la “botella de champán” no complica el proyecto). Además es muy largo (17 escenas) y es muy probable que muchos contextos excedan 500 caracteres.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Historia coherente con reto realista (pocos datos, overfitting, BN, transfer learning, augmentation por cambio de contraste). Usa {{NAME}} y tiene giro en la segunda-to-última escena (nuevo requisito: fracturas). Técnicamente correcto en general. Debilidades: algunas decisiones son más generales (p.ej., “revisar arquitectura”) y varios contextos seguramente exceden 500 caracteres; el cierre final es algo grandilocuente pero sigue siendo diálogo.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Diálogo limpio y progresión clara; buen giro (solo 300 fotos para nuevos subtipos) y resolución con transfer learning. Conceptos correctos (convolución/peso compartido, pooling, ReLU, BN, dropout). Pero el paso 2 llama “invarianza de traslación” a algo que es más bien equivarianza; es aceptable en contexto básico, pero técnicamente impreciso. También es probable que varios límites de caracteres no se cumplan.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Conversación fluida y escenario realista (dron), decisiones razonables (filtros, pooling, BN, dropout, ReLU, TL). Sin giro claro en la penúltima escena (solo éxito incremental) y termina sin resolución fuerte. Además incluye signos/exclamaciones y anglicismos, pero sigue en español. Probables violaciones de límites de longitud.",
+          "score": 6.9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Buen arco narrativo y giro claro en la penúltima escena (sesgo de validación 80% patológico). Conceptos en general correctos (TL, BN, dropout, sesgo de datos). Problemas: múltiples violaciones de estilo (usa comillas/explicación tipo “Investigué.” que suena a narración más que diálogo) y varias opciones/textos exceden 50 caracteres; contextos superan 500 caracteres con alta probabilidad. También hay afirmaciones discutibles (pooling vs cuello de botella; y reducir filtros “normalmente apenas impacta precisión”).",
+          "score": 6.6
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Conversación breve y coherente y con giro (cambio de cámara). Pero es superficial: muchas decisiones son genéricas y algunas son conceptualmente flojas (p.ej., ante sesgo a clase mayoritaria propone “agregar conv” en vez de tratar desbalance/función de pérdida/datos). El giro no está en penúltima escena (aparece antes). Probables límites de caracteres no verificados, aunque los contextos parecen más cortos.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Tiene escenas suficientes y un giro (cambio de iluminación; luego clases raras). Sin embargo: lenguaje inapropiado (“Estamos jodidos”), mezcla de spanglish (“accuracy”, “twist”), y varias afirmaciones técnicas cuestionables o mal priorizadas (dice que Flatten “pierde estructura” como razón principal; sugiere que VGG16 tiene BatchNorm “implícito”; para clases raras propone añadir conv/pool en vez de class weights/datos). Además el giro exigido (segunda-to-última escena) no se cumple: el gran giro ocurre antes y luego hay más escenas.",
+          "score": 5.4
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-story",
+  "testCaseId": "es-cs-neural-network-architecture-1"
+}

@@ -1,0 +1,149 @@
+{
+  "expectations": "\nLANGUAGE REQUIREMENT: All content must be in Spanish.\n\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Energy conservation principles must be physically accurate. Penalize if:\n   - Energy transformations violate conservation laws in consequences\n   - Efficiency concepts are misrepresented\n   - Entropy/waste heat considerations are ignored\n\n2. DIMENSION CHECK: Dimensions should represent meaningful energy system concerns like:\n   - Energy Output, System Efficiency, Environmental Impact, Operational Reliability\n   - Should reflect the interconnected nature of energy systems\n\n3. SCENARIO CHECK: The challenge should involve realistic energy system decisions.\n\n4. CONSEQUENCE CHECK: Consequences should explain the physical impact of energy choices.\n\n\nEVALUATION CRITERIA:\n\n1. DIMENSION QUALITY: Dimension names used across all effects should:\n   - Connect meaningfully to lesson concepts (2-4 unique dimensions total)\n   - Create natural tension (trade-off axes)\n   - Be consistently named across all effects (same concept = same name)\n\n2. CONSEQUENCE QUALITY: Each option's consequence must:\n   - Explain what happens as a result of the choice\n   - Connect to lesson concepts (not generic outcomes)\n   - Teach something about trade-offs\n   - Be consistent with the stated effects (if effect is positive for dimension X, consequence should reflect improvement in X)\n\n3. TRADE-OFF DESIGN: No option should be obviously best. Options should affect multiple dimensions with mixed impacts (e.g., positive for one, negative for another). If one option has all positive effects, penalize.\n\n4. EFFECTS CONSISTENCY: Each option should have 1-3 effects. Dimension names should be reused consistently across options to create meaningful trade-offs (not random unique names for each effect).\n\n5. FORMAT COMPLIANCE: Verify these constraints:\n   - intro: Maximum 500 characters\n   - steps: 4-6 steps, each with context (max 500 chars), question (max 100 chars), and 3-4 options\n   - options: Each with text (max 80 chars), consequence (max 300 chars), effects array (1-3 items with dimension and impact)\n   - reflection: Maximum 500 characters\n\n6. PERSONALIZATION: The {{NAME}} placeholder must be used appropriately in intro and dialogue.\n\n7. CONCEPTUAL ACCURACY: Consequences and effects must make sense given the lesson content. If the lesson teaches that X leads to Y, effects should reflect this.\n\n8. DIALOGUE QUALITY: Context must be pure conversation with NO narrator text, NO character name prefixes, NO action descriptions.\n\n9. REFLECTION QUALITY: The reflection must tie the experience back to lesson principles and acknowledge that different approaches have merit.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific scenario choices or dimension names\n- Do NOT require specific dimensions by name\n- ONLY penalize for: format violations, consequences that don't connect to lesson concepts, obviously dominant options, inconsistent dimension naming, narrator text in dialogue\n- Different valid challenge designs exist - assess the quality of what IS provided\n\n    ",
+  "judgedAt": "2026-01-17T19:42:57.829Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Outstanding across all dimensions. Fully in Spanish. Five steps, 3-4 options each—meets format. Dimensions (Eficiencia Energética, Costo Operativo, Complejidad Operativa, Flexibilidad Operativa, Inversión Inicial, Sostenibilidad) are reused consistently and create clear trade-offs. Consequences are detailed, physically accurate, and teach about energy conversions, waste heat, and efficiency losses. Trade-offs are well-balanced—no obviously dominant options. Contexts are pure dialogue, personalized with {{NAME}}, and no narrator text. Reflection ties back to conservation of energy and compromise. Minor: six dimensions is slightly high but all are meaningful and consistently named. Very strong.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Excellent structure and accuracy. Fully in Spanish, five steps with three options each. Dimensions (Eficiencia, Huella de Carbono, Costos Operativos, Viabilidad Técnica) are consistently named and create genuine trade-offs. Consequences are clear and connected to physical principles (minimizing conversions, heat losses, efficiency of motors). Physical accuracy is high (discusses thermoelectric low efficiency at 80°C, hydrogen inefficiency). Dialogue is clean, personalized. Reflection is strong. Trade-offs are balanced. Slight weakness: some options lean somewhat obviously better in certain steps (e.g., step 3 option 1 is nearly dominant). Overall, very strong.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Strong technically and pedagogically. Fully in Spanish, five steps with 3-4 options. Dimensions (Eficiencia Global, Complejidad del Sistema, Confiabilidad Operativa, Costo Total) are consistently named and meaningful. Consequences explain physical trade-offs (conversion losses, battery cycles, density vs. autonomy). Dialogue is personalized and clean. Reflection is conceptually strong. Trade-offs are balanced—no dominant options. Some context sentences are slightly dense but remain conversational. Minor: could have mentioned entropy/waste heat more explicitly. Very good overall.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Good structure and accuracy. Fully in Spanish, five steps with 3-4 options. Dimensions (Costo, Fiabilidad, Densidad Energética, Eficiencia) are reused well. Consequences connect to energy concepts (conversion losses, storage costs). Trade-offs are present but some options lean negative on almost all dimensions (e.g., solar+batteries in step 1 is all negative), which slightly penalizes balance. Context is conversational and uses {{NAME}} appropriately. Reflection is brief but ties to lesson. Minor: some dimension inconsistency (Densidad Energética appears sporadically). Good but not as polished as top models.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Good structure and engaging scenario. Fully in Spanish, five steps with 3 options. Dimensions (Eficiencia del Sistema, Presupuesto, Sostenibilidad) are consistently named. Consequences mention physical realities (35% diesel efficiency, 20% solar efficiency, 95% battery round-trip). Trade-offs are present. One step has only 2 options (step 4), which is a minor format issue. Some options are slightly imbalanced (e.g., step 5 option 3 is clearly best with all positive effects). Dialogue is clean and personalized. Reflection is good. Solid but some balance issues.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Good structure and strong physical accuracy. Fully in Spanish, five steps with 2-3 options. Dimensions (Eficiencia, Estabilidad, Costo) are used consistently. Consequences explain physical principles well (Joule heating, 30% pumping losses, 10% inverter losses). However, step 4 has only 2 options, which is a format issue. Some trade-offs are imbalanced—step 2 option 3 has all negative effects, making it obviously bad. Step 5 has a similar issue. Dialogue is clean and uses {{NAME}}. Reflection is solid. Penalized for format and balance issues.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Adequate but weaker. Fully in Spanish, five steps with 3 options each. Dimensions (Eficiencia, Costo, Confiabilidad) are consistent but limited in scope. Consequences are somewhat generic and less connected to specific physical principles—lacks depth on conversion losses, waste heat, etc. Trade-offs exist but some options are too neutral (multiple 'neutral' impacts make them bland). Context is conversational and personalized. Reflection is brief but appropriate. The scenario and consequences feel less technically rich compared to other models. Acceptable but below average for the set.",
+          "score": 6.8
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model D is the strongest output. It presents a highly engaging scenario (mobile lab) that forces unique trade-offs regarding energy density and weight, concepts central to the lesson but often overlooked. The consequences are written in the second person, providing immediate and clear feedback to the user. It adheres strictly to the dimension count (4), uses consistent naming, and offers 4 distinct options per step, showing high effort and creativity.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Model G is excellent, particularly in its use of quantitative data (e.g., 'efficiency of 35%', 'COP of 3') in the consequences. This adds significant educational value by grounding the physics principles in real-world numbers. It follows all formatting constraints, uses a tight set of 3 dimensions, and covers a good range of technologies (heat pumps, hydrogen).",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model B provides a very strong technical simulation focused on the physics of energy conversion (e.g., direct heat vs. electric heat). The trade-offs are logical and educational. It adheres to the dimension limits (4) and formatting constraints. It is slightly less 'gamified' in tone than Model D but pedagogically solid.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model C offers a solid microgrid simulation with clear distinctions between AC/DC architectures and generation types. It follows all constraints and uses 4 dimensions effectively. A very competent output, just slightly less novel in its scenario execution than D or G.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model F is a good output with a clear scenario (Andes base). It correctly identifies physics issues like the Joule effect. It adheres to constraints. It is ranked lower simply because the top models provided slightly more depth or engagement in their consequence descriptions.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Model A contains high-quality, professional technical content. However, it violates the constraint to use '2-4 unique dimensions total'. It uses at least 6 distinct dimensions (Eficiencia, Complejidad, Costo, Flexibilidad, Inversión, Sostenibilidad), and uses them inconsistently across options. This dilutes the strategic element of the trade-offs.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Model E is the weakest. While it follows the formatting constraints, the content is generic. Consequences like 'Efficiency improves notably' or 'Output stays very stable' lack the physical explanation found in other models. It tells the user the result rather than explaining the physical mechanism.",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Cumple bien el formato (intro, 5 pasos, reflexión; 3 opciones por paso; consecuencias y efectos). El diálogo es conversacional sin narrador ni acotaciones. Dimensiones 3-4 y bastante consistentes (“Eficiencia”, “Costos Operativos”, “Huella de Carbono”, “Viabilidad Técnica”). Trade-offs claros y ninguna opción es obviamente dominante. Buena precisión física: pérdidas por conversiones, almacenamiento con pérdidas, termoeléctricos a baja T con baja eficiencia, y mención implícita de calor residual/entropía. Consecuencias alineadas con efectos.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Muy buen diseño de compromisos y consistencia de dimensiones (“Eficiencia Global”, “Costo Total”, “Confiabilidad Operativa”, “Complejidad del Sistema”). 6 pasos (límite superior permitido), 3-4 opciones por paso y 1-3 efectos. Conversación mayormente limpia. Buena atención a pérdidas por conversiones y almacenamiento. Pequeños detalles: algunas frases suenan levemente metadiscursivas (“última: el comité…”, “informe…”) pero siguen siendo diálogo. En general, sólido y equilibrado.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Formato correcto (5 pasos), usa {{NAME}} en intro y contextos. Consecuencias suelen conectar con eficiencia/pérdidas y decisiones realistas (cogeneración, recuperación de calor, motores, solar). Sin embargo, hay más de 4 dimensiones globales y no se mantienen de forma consistente: aparecen “Costo Operativo”, “Inversión Inicial”, “Sostenibilidad”, “Flexibilidad Operativa”, “Complejidad Operativa”, etc., lo que debilita el eje de trade-offs. Además, algunas valoraciones de “Eficiencia Energética” son discutibles (p. ej., sobredimensionar generación como “eficiencia positiva” no siempre es cierto a nivel sistema; baterías con 90% round-trip como “eficiencia neutral” es cuestionable).",
+          "score": 7.9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Escenario realista y conversación aceptable. Buen énfasis en conversiones y pérdidas. Pero falla un criterio clave: usa demasiadas dimensiones y de forma inconsistente (mezcla “Eficiencia”, “Costo”, “Fiabilidad”, “Densidad Energética” y no incluye impacto ambiental; además no mantiene 2-4 ejes totales). También varias opciones cargan “Costo” casi siempre negativo, reduciendo la tensión. Intro tiene pequeños errores (“energía util”). Aun así, trade-offs suelen existir.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Cumple formato básico (5 pasos, 3 opciones cada uno; consecuencias y efectos breves). Dimensiones bastante consistentes (Eficiencia, Costo, Confiabilidad), lo cual es bueno. No obstante, las consecuencias son bastante genéricas y enseñan poco sobre física más allá de “hay pérdidas”; casi no aparece impacto ambiental ni consideraciones térmicas/entropía. Varias opciones “neutrales” en todo (triple neutral) reducen el diseño de trade-offs. También algunas decisiones son poco específicas para un sistema real (p. ej., “convertidor adicional” sin contexto técnico).",
+          "score": 6.6
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Buen tono conversacional y decisiones interesantes (AC/DC, almacenamiento, bombas de calor, picos). Pero incumple criterios importantes: efectos a menudo tienen solo 2 dimensiones y cambian el set de dimensiones entre pasos (“Eficiencia del Sistema”, “Presupuesto”, “Sostenibilidad” no aparecen siempre), debilitando consistencia. Varias consecuencias son imprecisas o problemáticas: PV al 20% no implica que el sistema sea “ineficiente” de forma decisiva; en bombeo dice perder 30% pero marca impacto de eficiencia “neutral”; la frase “¡Mágicamente eficiente!” puede confundir (aunque el COP>1 es correcto si se explica mejor). Además, algunas opciones parecen dominantes (gestión de carga con todo positivo y sin coste).",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Viola requisitos: no todo el contenido está en español (usa signos y expresiones tipo “¡Bienvenido!”, “¡Gran trabajo!” que sí son español, pero el mayor problema es el diálogo con tono de narrador y exclamaciones; aun así el incumplimiento más claro es el intro probablemente excede 500 caracteres). También aparece un error factual/terminológico serio: “cada julio de energía cuenta” (debería ser “julio” como unidad pero la frase sugiere mes; además suena incorrecto). Dimensiones inconsistentes (Eficiencia/Estabilidad/Costo) y a veces faltan; varios pasos tienen solo 2 efectos. Aunque menciona efecto Joule y pérdidas, el formato y claridad quedan por debajo.",
+          "score": 4.8
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-challenge",
+  "testCaseId": "es-physics-energy-conservation-1"
+}

@@ -1,0 +1,167 @@
+{
+  "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Probability examples must reflect genuine statistical reasoning. Penalize if:\n   - Examples confuse probability with certainty (e.g., \"you will definitely win\" vs. \"you have a 50% chance\")\n   - Real-world probability claims are mathematically implausible for the context\n\n2. CONTEXT CHECK: Penalize if examples are limited to gambling/games. Probability appears in medicine, weather, insurance, dating, sports, business decisions, and daily risk assessment.\n\n3. DISTINCTION FROM EXPLANATION: The explanation covered WHAT probability is (ratios, likelihood, sample spaces). This should show WHERE probability thinking appears in familiar life situations.\n\n\nEVALUATION CRITERIA:\n\n1. REAL-WORLD RELEVANCE: Examples must be concrete, recognizable situations from everyday life. Penalize abstract or theoretical applications without clear real-world grounding.\n\n2. CONTEXT DIVERSITY: Content should show the topic across different life domains (daily life, work, entertainment, unexpected places, personal interests). Variety helps different learners connect.\n\n3. RECOGNITION FACTOR: Examples should create \"aha moments\" — helping learners see the topic in familiar places they hadn't noticed before.\n\n4. FORMAT: Each step must have a title (max 50 chars) and text (max 300 chars).\n\n5. TONE: Conversational, like pointing out hidden patterns in everyday life. Include metaphors and analogies from familiar activities.\n\n6. FOCUS: Shows WHERE something appears (real-world contexts), not WHAT it is (definitions) or HOW it works (processes).\n\n7. NO OVERLAP: Must not repeat content from the EXPLANATION_STEPS which covered the WHAT.\n\n8. SCOPE: Content matches the lesson scope exactly.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for missing specific life domains or contexts you might expect\n- Do NOT require a specific number of contexts or examples\n- Do NOT check against an imagined \"complete\" list of applications\n- ONLY penalize for: incorrect real-world claims, abstract examples without concrete situations, overlap with explanation content, or lack of variety in context types\n- Different valid sets of examples exist - assess the quality of what IS provided\n\n    ",
+  "judgedAt": "2026-01-17T14:32:22.098Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Exceptional diversity across many life domains: weather, dating, sports, medicine, auto maintenance (worn tire), technology (dying battery, aging hard drive), job hunting, game shows, travel (flight connection), food safety (allergy labels), and poker. The examples are highly concrete and recognizable with specific scenarios that create strong 'aha moments' (the dying phone battery, the tight connection, the worn tire). All probability reasoning is accurate and contextual. The tone is conversational and engaging. Meets all format requirements. The dating app and allergy warning examples are particularly unexpected contexts that add recognition value.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Excellent domain diversity: weather, grocery shopping/food waste (unique angle), commuting, warranties, games, time management (skip-the-line passes, airport buffers), news skepticism (creative application), job searching, health choices, investing, relationships, and sports strategy. Very conversational tone with good metaphors. The 'probability as a skepticism filter' for news is an insightful unexpected application. All probability claims are accurate. Format compliant. Slightly less vivid in scenario specificity compared to Model E (more general descriptions rather than ultra-specific moments), but still very strong.",
+          "score": 8.9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Good diversity across weather, commuting, medical tests, warranties, investments, sports/betting, insurance, game shows, cooking, and streaming. Examples are generally concrete but some feel slightly less vivid or specific (e.g., 'After a medical screening you decide whether to retest or relax' is somewhat abstract). The streaming recommendation example is creative. The recipe/dinner plans example is a nice unexpected context. All probability reasoning is accurate. Format compliant. Conversational tone maintained. Minor weakness: some examples could be more specific in their scenario setup.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Good variety: weather, insurance, targeted advertising, casinos, medical tests, daily decision-making, sports, hiring, fraud detection, streaming. All probability claims are accurate. However, includes casino/gambling which the guidelines noted should be penalized if examples are limited to gambling/games - here it's one of several contexts so acceptable, but the 'Casino Games' step is fairly detailed on gambling. The 'Daily Decision-Making' example (studying vs going out) is somewhat abstract. The fraud detection and targeted advertising examples show probability in unexpected places which is valuable. Format compliant.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Good variety of everyday situations: weather, checkout lines, sports, social media, food delivery, work deadlines, traffic, shopping sales, trip planning, and games. All are relatable and concrete. The social media posting example is a nice unexpected context. However, some examples are slightly vaguer in probability reasoning (e.g., 'choosing a checkout line' is more estimation than clear probability thinking). The 'shopping sales' example (70% off - gauging if your item is included) is clever but stretches probability concept slightly. All format requirements met. Conversational tone is good. Lacks some higher-stakes contexts like medicine or insurance.",
+          "score": 7.7
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Only 6 steps provided, which limits diversity compared to others. Covers weather, insurance, traffic, medicine, sports, and board games. All examples are accurate and well-explained. However, the scope is narrower than competitors. The board game example (Catan/Monopoly with dice probabilities) goes into HOW probability works (explaining that 7 has the most combinations) which borders on overlap with explanation content that should cover WHAT probability is. Insurance example also explains HOW companies calculate rather than just WHERE probability appears. Good concrete examples otherwise, but fewer total contexts.",
+          "score": 7.3
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Decent variety: weather, insurance, medical decisions, streaming, casino/sports betting, traffic, factory quality control, investments, dating apps. The factory quality control example is unique and interesting. However, the gambling/casino example is fairly prominent. Some examples lean toward explaining HOW things work (e.g., 'Companies analyze data on car accidents...to estimate how likely you are to file a claim') rather than focusing purely on WHERE probability appears in relatable situations. The dating apps example is good. Quality control is an industrial/work context that's less personally relatable for most learners. Format compliant.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Only 6 steps provided, limiting diversity. Covers weather, insurance, board games (Catan), sports strategy, medical decisions, and quality control. Several examples venture into HOW probability works rather than WHERE: the weather example explains '3 out of 10 similar historical scenarios' (definitional), the Catan example explains WHY 6 and 8 are red (explaining the math), the basketball example explains expected value calculation (process/how). This overlaps with EXPLANATION content about WHAT probability is. The quality control example is interesting but less personally relatable. Accurate probability claims but format concerns with overlap.",
+          "score": 6.8
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "This model provides the most diverse and relatable set of examples (12 total), capturing 'micro-decisions' like judging a dying phone battery, worn tire treads, or flight connections. These create strong 'aha moments' by highlighting probability in subconscious daily tasks. The tone is conversational and engaging, and it strictly follows all formatting constraints.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Excellent output with high creativity. It highlights unique applications of probability thinking, such as skepticism towards news/rumors and managing food waste (grocery shopping). The tone is punchy and direct. It is nearly equal to the top model but the specific examples in Model E felt slightly more universal and immediate.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Strong variety of contexts (10 steps), moving beyond standard examples to include recipe experiments and streaming autoplay traps. The tone is conversational and the connection to the 'why'—managing risk vs. reward—is clear. A very solid performance.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Provides a good list of 10 relatable examples. The situations (checkout lines, social media likes) are easy to understand. It is a competent and accurate response, though slightly less creative in its specific framing compared to Models E and F.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Covers a good range of topics (10 steps) including fraud detection and hiring. The content is accurate, but the tone leans slightly more towards explaining the system (how algorithms work) rather than the user's personal experience of probability, making it feel a little drier than the top models.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "A solid list of 9 examples. However, it includes 'Factory Quality Control,' which, while an application of probability, is a standard textbook example rather than a personal life context for most learners. The tone is informative but lacks the conversational hook of the higher-ranked models.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "The content is high quality and accurate, but it only provides 6 examples. While the prompt did not specify a number, the lower volume limits the potential for users to connect with different contexts compared to models offering 10-12 diverse scenarios.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Like Model B, this is limited to 6 examples. The selection feels the most 'textbook' (Settlers of Catan, manufacturing quality control), missing the opportunity to show probability in more unexpected, mundane daily aspects of life. It is accurate but the least engaging.",
+          "score": 5.5
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Meets format limits throughout, conversational tone with light metaphors (“betting,” “live odds-and-risk conversation”). Strong context diversity (weather, groceries, commuting, warranties, queues/airports, news skepticism, jobs, health, investing, relationships, sports). Stays focused on WHERE probability shows up, not definitions or mechanics. No implausible claims.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Good variety (weather, commuting, medical, warranties, investing, fantasy sports/betting, insurance, game shows, cooking, streaming). Mostly concrete and “aha” friendly, with a few slightly generic lines. One step includes betting (allowed) but not dominant. Format limits appear respected. Minimal overlap with “what probability is.”",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Very recognizable everyday scenarios with strong “aha” factor (dating, tires, battery, allergy label, hard-drive aging, flights). Probability statements are generally plausible (e.g., 50 candidates for 2 roles ≈4%). Slight over-reliance on numeric examples but still context-focused. Includes poker/game show (not overly dominant). Format seems within limits.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Broad domains (weather, insurance, ads, medical tests, studying choices, hiring, fraud detection, streaming). Generally concrete and context-forward. One step is casino-focused (fine, but gambling is a larger slice here than ideal). Some mild overlap into explanation-style phrasing (“used probability to predict it”). Likely within char limits.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "All steps are concrete and within scope, with decent diversity (weather, checkout, sports, social, work deadlines, traffic, shopping, travel). However several are essentially the same “choose the faster option” intuition (checkout/traffic/routes) and overall feels less “unexpected places.” One explicit game example but not dominant. Conversational tone is OK but fewer metaphors/analogies.",
+          "score": 7.9
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Good domain spread (weather, insurance, medical, recommender systems, traffic, factory QC, investments, dating). However several steps drift into explanatory/definitional language (“probability estimates based on atmospheric data,” “algorithms calculate how likely...”), and the gambling step bundles casino + sports betting, increasing the gambling feel. Format likely OK.",
+          "score": 7.6
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Some strong contexts (insurance, Catan, sports strategy, medical, quality control), but the first step contains a questionable/over-specific interpretation of “30% chance of rain” (the “3 out of 10 similar historical scenarios” claim is not generally what PoP formally means). Also leans into “expected value” explanation (more HOW/WHAT than WHERE). Still mostly concrete.",
+          "score": 6.9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Solid contexts (weather, insurance, navigation, medical, sports, board games), but multiple steps exceed the 300-character text limit by a wide margin and are more lecture-like/definitional. Some aggression/odd tone (“using probability to crush your friends”). Less variety than top entries and more HOW/WHY language.",
+          "score": 5.8
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-examples",
+  "testCaseId": "en-math-probability-basics-1"
+}

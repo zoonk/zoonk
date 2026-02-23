@@ -1,0 +1,131 @@
+{
+  "expectations": "\nLANGUAGE REQUIREMENT: All content must be in English.\n\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Database transaction concepts must be technically accurate. Penalize if:\n   - ACID properties are incorrectly described or conflated\n   - Isolation levels are misrepresented (e.g., claiming serializable has no overhead)\n   - Deadlock causes or prevention strategies are wrong\n   - Atomicity is confused with durability\n\n2. TRANSFER CHECK: The inputs discuss banking transfers, inventory systems, and specific examples. Questions must use completely different scenarios (e.g., airline reservations, multiplayer games, collaborative editing) to test the same concepts.\n\n3. INTEGRATION CHECK: Look for questions that connect WHY transactions exist (data integrity problems) with HOW they work (locking, logging) and WHERE they apply (novel systems).\n\n4. MISCONCEPTION CHECK: Distractors should include common database misconceptions like:\n   - Thinking transactions automatically prevent all data issues\n   - Confusing isolation with atomicity\n   - Believing higher isolation levels are always better\n   - Misunderstanding when locks are acquired vs released\n\n\nEVALUATION CRITERIA:\n\nSEVERITY GUIDE - Use this to calibrate your scoring:\n\nSEVERE ISSUES (heavy penalty):\n- Factual errors or hallucination (inventing facts not in the input)\n- Testing pure memorization (\"What metaphor did the text use?\")\n- Questions that reference \"the lesson,\" \"as explained,\" or similar meta-language\n- Wrong tone (stiff, academic, exam-like instead of conversational)\n- Format violations (wrong question count, missing fields, multiple correct answers)\n- Distractors that are obviously absurd or unrelated\n- Language purity violations (mixing languages)\n\nMODERATE ISSUES (medium penalty):\n- Coverage heavily skewed to one content type (e.g., 15 HOW questions, 0 WHY)\n- No integration questions connecting multiple content types\n- Feedback that just says \"correct/incorrect\" without insight\n- Questions answerable without understanding (too easy)\n\nMINOR ISSUES (light penalty or just note):\n- Reusing a scenario from the input (not ideal, but okay if the question still tests understanding)\n- Some questions slightly easier than others\n- Feedback could be friendlier but is still helpful\n- Minor missed opportunities for deeper insight\n\n1. CONCEPTUAL ACCURACY: Questions must be factually correct. SEVERELY penalize if:\n   - Questions contain factual errors or hallucinated information\n   - Correct answers are actually wrong based on the input content\n   - Feedback explains concepts incorrectly\n\n2. UNDERSTANDING VS MEMORIZATION: Questions must test thinking, not recall. SEVERELY penalize if:\n   - Questions ask \"What did the text say?\" or \"Which example was used?\"\n   - Questions reference \"the lesson,\" \"as explained,\" \"according to the text\"\n   - Questions can be answered by pattern-matching phrases from the input\n\n3. TONE & STYLE: Must feel conversational and friendly. SEVERELY penalize if:\n   - Language is stiff, formal, or exam-like\n   - Feedback sounds academic or preachy\n   - Questions use unexplained jargon\n\n4. FORMAT COMPLIANCE: Must meet structural requirements. SEVERELY penalize if:\n   - Question count outside 15-20 range\n   - Missing required fields or wrong types\n   - Multiple correct answers per question\n   - Character limits exceeded\n\n5. DISTRACTOR QUALITY: Wrong answers must be plausible. Penalize if:\n   - Distractors are obviously absurd or unrelated\n   - The correct answer is obvious without understanding\n   - Distractors don't represent real misconceptions\n\n6. CONTENT COVERAGE: Should test across content types. Penalize if:\n   - Any content type (WHY, WHAT, HOW, WHERE) is completely missing\n   - Coverage is heavily skewed\n\n7. FEEDBACK QUALITY: Should guide learning. Penalize if:\n   - Feedback just says \"correct\" or \"incorrect\" without insight\n   - Wrong answer feedback doesn't point toward the correct answer\n\n8. SCENARIO FRESHNESS (MINOR): Prefer novel scenarios, but don't heavily penalize reuse.\n   - Ideal: Questions use fresh scenarios not in the input\n   - Acceptable: Reusing input scenarios IF the question still tests understanding\n   - Only penalize if reused scenario makes the question pure recall\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT heavily penalize scenario reuse if the question still tests understanding\n- Do NOT require specific concepts to be tested by name\n- Do NOT check against an imagined \"complete\" set of questions\n- FOCUS penalties on: factual errors, memorization-based questions, wrong tone, format violations\n- Different valid quiz designs exist - assess the quality of what IS provided\n\n    ",
+  "judgedAt": "2026-01-17T21:34:48.520Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model A provides 20 well-crafted questions with excellent scenario freshness (hospital, ride-sharing, university, gaming, music streaming, library, hotel, pharmacy, video game, concert venue, accounting, stock trading, etc.). Technical accuracy is strong - ACID properties are correctly explained, isolation levels are properly described with tradeoffs, deadlock causes/resolution are accurate. Questions test understanding rather than memorization, using novel scenarios to probe the same concepts from the input. Distractors are plausible and represent real misconceptions (e.g., confusing isolation with atomicity, thinking higher isolation is always better). Feedback is conversational and educational, explaining WHY the answer is right/wrong. Good integration across content types (WHY transactions exist, HOW they work mechanically, WHAT properties mean, WHERE they apply). No format violations, no meta-references to 'the lesson' or 'as explained'. Minor issue: some questions are slightly easier than others, but overall high quality.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.1-thinking",
+          "reasoning": "Model C provides 18 questions with good scenario diversity (ride-sharing, logistics, ticketing, online game, grocery, photo-sharing, warehouse, financial systems, food delivery, inventory app, payment system, airline booking, banking). Technical accuracy is solid - correctly distinguishes ACID properties, explains write-ahead logging, handles deadlock vs starvation distinction well. Questions integrate multiple concepts (e.g., Q1 asks about atomicity AND durability together). Distractors are plausible and test real misconceptions. Feedback is helpful and conversational. Q11 about temporary violations inside transactions before commit is a sophisticated question testing deeper understanding. Good coverage across WHY/WHAT/HOW/WHERE. One minor issue: Q9 (reporting job isolation level) might be slightly debatable but is defensible. Overall strong quality with good technical depth.",
+          "score": 8.7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Model E provides 15 questions with creative, relatable scenarios (pizza ordering, RPG game trading, shift scheduling, playlist organization, warehouse shelves). Technical accuracy is good, and the tone is notably conversational and friendly ('Bingo!', 'Spot on!', 'That's it!'). The logbook metaphor for WAL is creative and tests transfer of understanding. Questions avoid memorization and test conceptual understanding. Distractors are plausible. However, 15 questions is at the minimum of the 15-20 range. Some questions are relatively straightforward (e.g., Q4 on durability after power loss). The feedback is educational but occasionally brief. Q14 about the 'gold standard' of ACID is a bit abstract but still valid. Good integration of WHY (Q5 on historical problems) and WHERE (various application scenarios). Overall solid with good tone but slightly less depth than top performers.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model D provides 18 questions with good scenario variety (payroll, support tickets, publishing, checkout, video platform, banking, airline). Technical accuracy is strong - correctly explains ACID properties, locking, WAL, deadlock resolution. Q10 about durability claims without WAL is particularly good for testing understanding. Questions are well-written and avoid memorization. Feedback is helpful and conversational. However, Q14 uses a banking transfer example which was present in the input (though the question still tests understanding). Some distractors could be more plausible (e.g., 'Durability removes them' in Q9). The tone is slightly more functional than warm. Good coverage across content types. Overall solid quality with good technical accuracy.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model F provides 16 questions with decent scenario variety (digital library, warehouse, travel agents, e-commerce, employee salaries, social media likes, photo tagging, banking). Technical accuracy is good - ACID properties are correctly explained, deadlock is properly defined, WAL is accurately described. Feedback is conversational ('Spot on!', 'Bingo!', 'Nice!'). Distractors are generally plausible. However, some scenarios are fairly basic or common (library checkout, warehouse inventory). Q13 uses a banking transfer example which was in the input. Some questions are relatively straightforward (Q1-4 are basic ACID property identification). Q12 about serializable slowing things down is good but the 'It allows dirty reads' distractor is slightly absurd for serializable level. Overall competent but slightly less sophisticated than top performers.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model B provides 17 questions with reasonable variety. Technical accuracy is generally good. However, several issues reduce the score: (1) Some questions are very generic without rich context (Q1-3 have short, abstract contexts about 'e-commerce startup', 'government registry', 'a developer proposes'). (2) Feedback tends to be shorter and less insightful than other models. (3) Some distractors are weak or obviously wrong (e.g., 'To scale the system to more users easily' for consistency, 'Isolation levels determine how often backups run'). (4) Q16 about oversell is good but the scenario is close to the input's inventory example. (5) Tone is functional but less engaging than other models. (6) Coverage is decent but several questions feel like they're testing the same concepts repeatedly (multiple questions on isolation/atomicity distinction). Overall adequate but weaker on distractor quality, feedback depth, and scenario richness.",
+          "score": 7.2
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model A is the clear winner. It maximized the question count (20) while maintaining high quality. Most importantly, it adhered strictly to the scenario transfer requirement, generating diverse, practical contexts (hospital allergies, university course credits, fitness apps, music streaming) rather than relying on the banking/inventory examples found in the input. The feedback is conversational, encouraging, and technically precise.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Model E is excellent and very close to Model A. It used highly creative metaphors (a ship captain's log for WAL, robots for deadlocks) which are great for teaching. The tone is friendly and the feedback is insightful. It ranks slightly lower only because it provided fewer questions (15) and included a couple of 'meta' questions about the history of databases rather than testing the concepts directly.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model F has a good, friendly tone and decent feedback. However, it struggled more with the scenario transfer constraint, falling back on prohibited or generic topics like 'Warehouse inventory,' 'Banking apps,' and 'Financial systems' for several questions. While the digital library and social media examples were good, the mix wasn't as fresh as the top two models.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model B provided a solid set of questions but lacked creativity. The scenarios were heavily skewed toward generic e-commerce, marketplaces, and ticket selling, which feels very close to the 'inventory' systems the prompt asked to avoid. The feedback was functional but repetitive, often following a rigid 'Right — [Explanation]' structure.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.1-thinking",
+          "reasoning": "Model C had significant issues with the scenario constraint, heavily utilizing banking, stock trading, and warehouse logistics contexts explicitly discouraged in the prompt. The tone was professional/academic rather than the requested conversational style, making it feel more like a formal exam than a friendly quiz.",
+          "score": 5.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model D is the weakest entry. It relied on abstract scenarios (e.g., 'Transaction A locks row A') which fails the transfer check entirely. When it did use scenarios, it used prohibited ones (Payroll, Banking). The tone was dry and the feedback was minimal.",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Meets format (20 questions). Scenarios are mostly fresh and varied (hospital, rideshare, gaming, library, ticketing, etc.) and generally connect WHY/HOW/WHERE (integrity problems, locking, WAL, recovery, isolation tradeoffs). Technical accuracy is strong: ACID properties are correctly distinguished; deadlock cycle/abort is right; WAL and recovery redo/undo framing is right; isolation-performance tradeoff is right. Distractors are plausible and include common misconceptions (atomicity vs isolation, durability vs isolation, “disable transactions,” “higher isolation always better”). Minor weaknesses: a couple items oversimplify visibility/snapshots (e.g., “other staff see booking only after commit” assumes typical isolation but not universal), and one inventory question reuses the input-like “last item” pattern (still acceptable).",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Strong overall: 20 questions, clear and fairly conversational, good misconception-targeting (atomicity≠isolation, WAL needed for durability, commit vs UI response). Covers ACID, locking, deadlocks, logging/recovery, isolation anomalies and tradeoffs. Mostly technically accurate. Moderate issue: scenario freshness/transfer is weaker because it directly uses a banking transfer example (explicitly dispreferred) and also payroll/inventory patterns close to the input topics; still tests understanding, but violates the “completely different scenarios” preference more than others. Otherwise solid.",
+          "score": 8.4
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.1-thinking",
+          "reasoning": "19 questions with good breadth and several integration questions (isolation levels, dirty reads, shared vs exclusive locks, WAL, cross-database “logical transaction”). Technical accuracy is generally good, and distractors are plausible. Moderate issues: violates the transfer requirement multiple times by using banking/financial transfer and inventory/warehouse scenarios similar to the input; tone is a bit more “textbook” in places than conversational; one or two prompts are slightly muddled (e.g., the discount/loyalty example leading to “negative balance briefly” is more about consistency constraints plus isolation/locking, but it’s framed as isolation-only).",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "18 questions, clear and mostly accurate, with decent misconception distractors (e.g., higher isolation always improves performance, logs don’t prevent deadlocks, atomicity alone doesn’t stop double-booking). Coverage includes ACID, isolation tradeoffs, WAL, rollback, deadlocks. Moderate issues: scenario transfer is mixed—includes multiple inventory/oversell e-commerce cases, which are close to the input domain; some questions are a bit repetitive/definition-y (“What’s consistency?”) and less integrative; fewer concrete “how it works” items than the best sets.",
+          "score": 7.6
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "17 questions with generally correct ACID basics, WAL, rollback, deadlocks, and isolation tradeoffs. Tone is friendly. Moderate issues: transfer requirement is violated repeatedly (bank transfer and warehouse/inventory oversell scenarios are close to the original domains). Also a few questions are more label/definition-focused than reasoning-based (e.g., several “Which property is X?”). Some option text is slightly sloppy (e.g., the isolation question where the correct option is “Faster performance” rather than naming the concept), but not technically wrong in explanation.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "15 questions, friendly tone, and mostly correct on core ideas (atomicity, durability, WAL, deadlocks, commit visibility). However, transfer requirement is violated (warehouse/inventory constraint scenario; also some banking/financial framing via “financial systems rely on ACID” though less direct). There are a couple technically questionable/oversimplified bits: equating slightly stale counters with “lowering isolation” is not necessarily an isolation-level phenomenon (often caching/async aggregation), and one item includes meta/possibly inaccurate historical specifics (“Before the 1970s… Jim Gray”) that drift toward memorization/claims not needed. Overall good but less precise.",
+          "score": 6.6
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-review",
+  "testCaseId": "en-cs-database-transactions-acid-1"
+}

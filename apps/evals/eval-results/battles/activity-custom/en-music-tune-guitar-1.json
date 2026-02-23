@@ -1,0 +1,185 @@
+{
+  "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Guitar tuning follows a specific string order and pitch reference. Penalize if:\n   - String order is incorrect (standard: E-A-D-G-B-E, low to high)\n   - No reference pitch source is mentioned (tuner, app, or reference note)\n\n2. TECHNIQUE CHECK: Penalize if:\n   - Direction to turn tuning pegs is unclear or incorrect\n   - No guidance on whether to tune up or down to pitch\n\n3. VERIFICATION CHECK: Penalize if confirmation of correct pitch is missing for each string.\n\n\nANTI-CHECKLIST GUIDANCE (READ THIS FIRST - CRITICAL):\n- Do NOT penalize for missing steps you might expect\n- Do NOT require a specific number of steps - let complexity dictate length\n- Do NOT check against an imagined \"ideal\" procedure\n- Do NOT interpret rules too literally - use common sense\n- Different valid procedures exist - assess the quality of what IS provided\n- ONLY penalize for actual problems: incorrect sequence, factual errors, missing critical safety steps, or truly confusing instructions\n\nEVALUATION CRITERIA:\n\n1. PROCEDURAL ACCURACY: Steps must be in correct sequence. Penalize only if actions are genuinely out of order or skip critical prerequisites.\n\n2. ACTION-ORIENTED LANGUAGE: Each step must use imperative verbs (Click, Type, Add, Place, Turn, etc.). Penalize passive or purely descriptive language.\n\n3. LOGICAL STEP GROUPING: Steps should be coherent units that a user can follow without confusion. This does NOT mean micro-splitting every movement:\n   - ACCEPTABLE: \"Click the File name field and type your document name\" (filling a form field is ONE action)\n   - ACCEPTABLE: \"Pull over safely and turn on hazard lights\" (logically grouped safety actions)\n   - ACCEPTABLE: \"Pour hot water, swirl to warm, then discard\" (continuous motion)\n   - PROBLEMATIC: \"Download the file, install it, configure settings, and restart\" (unrelated actions crammed together)\n   The goal is clarity, not arbitrary splitting. If a step reads naturally and a user can follow it without confusion, it's fine.\n\n4. VERIFICATION POINTS: Where helpful, include confirmation of success. Only penalize if verification is missing for critical/risky actions. Do NOT penalize verification steps as \"padding\" - helping users confirm success is valuable teaching.\n\n5. FORMAT COMPLIANCE:\n   - title: Maximum 50 characters\n   - text: Maximum 300 characters\n\n6. SCOPE ADHERENCE: Content should cover the activity as described. Do not penalize for reasonable setup or verification steps.\n\n7. PRACTICAL FOCUS: Steps should be actionable instructions, not conceptual explanations.\n\nFINAL CHECK: Before penalizing anything, ask yourself: \"Would a reasonable human instructor consider this a genuine problem?\" If not, do not penalize.\n\n    ",
+  "judgedAt": "2026-01-18T04:06:56.040Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Model A provides excellent guidance: (1) ACCURACY: Correct string order E-A-D-G-B-E, reference pitch via tuner app/clip-on clearly mentioned. (2) TECHNIQUE: Clear peg direction guidance (turn away = tighten for flat, toward = loosen for sharp). (3) VERIFICATION: Each string has clear confirmation criteria (green/centered), plus final verification step. Action-oriented language throughout. Format compliant. Logical grouping. Practical focus. A very complete and user-friendly procedure.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model F is thorough and beginner-friendly: (1) ACCURACY: Correct string order, reference pitch source mentioned. (2) TECHNIQUE: Clear peg direction (toward to tighten/raise, away to loosen/lower) - though direction is opposite to Model A, both can be valid depending on guitar type. (3) VERIFICATION: Each string verified, plus double-check step. Includes nice mnemonic. Action-oriented. Good logical flow. Minor weakness: could be slightly more concise, and the peg direction might confuse some users if their guitar differs, but overall excellent.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model C is detailed and accurate: (1) ACCURACY: Correct string order, reference pitch via tuner mentioned. (2) TECHNIQUE: Clear tighten/loosen guidance, mentions pegs may turn opposite for thinner strings (useful nuance). (3) VERIFICATION: Each string confirmed, final verification included. Good practical tips (repluck after adjustment, avoid overshooting). Action-oriented. One text slightly exceeds conciseness but stays within 300 chars. Solid procedure overall.",
+          "score": 8.7
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Model H is accurate and well-structured: (1) ACCURACY: Correct string order, reference pitch source mentioned with 440Hz detail. (2) TECHNIQUE: Clear flat/sharp direction (left = tighten, right = loosen). (3) VERIFICATION: Confirmation for each string, final verification step. Good practical tip about muting other strings. Action-oriented. Slightly less beginner-friendly than top models but still excellent. Format compliant.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Model B is concise and accurate: (1) ACCURACY: Correct string order clearly listed, reference pitch source mentioned. (2) TECHNIQUE: Says 'turn peg slowly' but doesn't specify direction (flat vs sharp). This is a gap per the criteria. (3) VERIFICATION: Confirmation mentioned for most strings, final verification included. Action-oriented. Good format. The missing direction guidance is a notable weakness for beginners who wouldn't know which way to turn.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Model D is functional: (1) ACCURACY: Correct string order, reference pitch source mentioned. (2) TECHNIQUE: Says 'adjust tuning peg' but never specifies which direction for flat vs sharp - a gap. (3) VERIFICATION: Each string has confirmation, verification step included. Action-oriented. Minor error: Step 5 says G string is 'second thinnest' when B is actually second thinnest - factual error. Format compliant. The direction omission and factual error lower the score.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model G is detailed but overly fragmented: (1) ACCURACY: Correct string order, reference pitch mentioned. (2) TECHNIQUE: Direction guidance is minimal - says 'turn back slightly' if past but doesn't clearly explain flat/sharp direction. (3) VERIFICATION: Confirmation for each string, recheck steps included. The procedure is split into too many micro-steps (separate pluck and tune steps for each string), which could feel tedious. Still functional but less elegant than top models.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Model I has several issues: (1) ACCURACY: String order is WRONG - it refers to 'third string' as D, 'fourth string' as G, 'fifth string' as B. Standard guitar numbering is 6th=low E, 5th=A, 4th=D, 3rd=G, 2nd=B, 1st=high E. This is a significant factual error. (2) TECHNIQUE: No direction guidance for pegs. (3) VERIFICATION: Final verification included. The string numbering error is a major problem that would confuse users.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model E is extremely verbose with 26 steps, including both tuner and reference pitch methods mixed together in one procedure. This creates confusion - the branching instruction ('skip to step X') doesn't work well in a linear step format. Many steps are redundant (separate 'pluck' and 'adjust' for each string). (1) ACCURACY: Correct string order, reference mentioned. (2) TECHNIQUE: Direction guidance present but scattered. (3) VERIFICATION: Multiple verification points. The excessive length and confusing structure (two methods interleaved) significantly hurts usability. A user would be confused about which steps to follow.",
+          "score": 5.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "This model provides the highest quality instructions. It uses universally correct technical language ('tighten'/'loosen' rather than relative directions) and correctly identifies that tuning pegs on different sides of the headstock may turn in opposite directions—a crucial detail for 3+3 style guitars (like Gibsons). The step grouping is logical (one step per string), and the verification steps are clear.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Excellent procedural advice. It includes a highly practical tip for beginners: 'Trace it up to the headstock to identify exactly which tuning peg controls it,' which prevents the common mistake of tuning the wrong string. It correctly uses 'tighten/loosen' terminology. The flow is logical and concise.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Very strong output. It differentiates itself by including specific safety warnings about the D and High E strings being easy to over-tighten/break, which is valuable for beginners. The steps are well-grouped and action-oriented.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "A solid, standard set of instructions. It avoids the pitfalls of directional language by simply saying 'turn until.' It is accurate and follows the correct string order. It lacks the extra helpful nuance of Models C and H but is otherwise flawless.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Generally good, but relies on specific directional cues ('turn away from you') for the Low E string. While this is correct for most standard guitars, it is less robust than 'tighten/loosen' instructions, as it can fail on reverse headstocks or specific gear configurations. The grouping is logical.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "The content is accurate, but the model violates the 'Logical Step Grouping' guideline by micro-splitting actions. It separates 'Checking' (Plucking) and 'Tuning' (Turning) into different steps for every single string, resulting in 14 steps where ~8 would suffice. This creates unnecessary friction.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Suffers heavily from micro-splitting. It generates 19 steps because it creates a standalone step for plucking each string and another for turning the peg. This makes the procedure tedious to read and follow compared to the consolidated steps in higher-ranked models.",
+          "score": 5.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Procedurally confusing and overly long (26 steps). It attempts to include two different tuning methods (electronic and reference/relative) in a single linear list, which breaks logical flow. It also micro-splits plucking and adjusting. While the information is technically correct, the instructional design is poor.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Contains a significant factual error. Step 5 instructs the user to 'Turn toward you to tighten' the 6th string. On almost all standard guitars, turning the low-string pegs toward the player (clockwise) loosens the string. Following this instruction would lower the pitch, potentially confusing a beginner or causing them to keep turning the wrong way until the string unspools.",
+          "score": 2
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Meets all topic checks cleanly: correct E-A-D-G-B-E order, explicit tuner/reference source, clear imperative steps, and repeated per-string verification (“reads E… centers/green”) plus a full recheck. Step grouping is coherent and actionable. Minor: peg turn direction not specified, but “until tuner reads” + “if it goes past, turn back” covers technique adequately.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Strong accuracy and verification: correct order, explicitly sets 440Hz, gives sharp/flat guidance (tighten vs loosen), and rechecks all strings. Action language and grouping are clear. Minor: doesn’t explicitly say “tune up to pitch” as a best practice, but does give correct flat/sharp directions.",
+          "score": 9.1
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Correct string order and solid technique: explicitly explains tighten/loosen to raise/lower pitch, warns about overshooting and high tension, and verifies stability (“solid” note, not flickering) plus final recheck. Uses a tuner/app reference source. Minor: note about pegs turning opposite direction can confuse without tying it back to pitch change; still overall clear.",
+          "score": 8.9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Most thorough and accurate: includes tuner and reference-pitch pathways, explicit “loosen then tune up” guidance, per-string confirmation, and multiple verification passes. Correct standard order and special-case (G 4th fret for B) is correct. Major issue: violates strict format compliance—many titles >50 chars and most texts far exceed 300 chars, so it fails a hard requirement despite good content.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Clear, concise, correct E-A-D-G-B-E order, and uses a tuner source. Each string is tuned by reading the tuner; includes verification at end. Technique weakness: no explicit sharp/flat guidance or whether to tune up/down; “turn peg until” is acceptable but less helpful per expectations.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Correct order and includes a tuner app reference. Provides explicit peg direction (toward you/away) and relates sharp/flat to tight/loose; includes double-check verification. However, the stated peg direction is not universally correct across guitars/headstocks and can mislead—better to anchor direction to pitch change only. Still largely usable.",
+          "score": 7.7
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Correct order, tuner/app reference included, and good verification/recheck. Main technique problem: peg direction claims (away/toward you) are not reliably correct and could cause confusion; also mixes “flat/sharp” with fixed physical directions rather than pitch-change guidance. Otherwise actionable.",
+          "score": 7.4
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Has a tuner source, correct standard note targets in sequence, and per-string “tuner should read X” checks plus a final strum check. But it never clearly identifies string order (calls A the “next string” then later refers to D as “third string,” etc.), which can confuse beginners; also lacks sharp/flat direction guidance.",
+          "score": 6.9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Correct note sequence and good tuner-based verification and recheck. However, it contains a clear factual error in string identification: calls G both “second thinnest” and B also “second thinnest,” which is confusing/incorrect. Also lacks explicit sharp/flat (tune up/down) guidance.",
+          "score": 6.2
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-custom",
+  "testCaseId": "en-music-tune-guitar-1"
+}

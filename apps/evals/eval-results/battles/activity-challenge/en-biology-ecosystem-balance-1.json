@@ -1,0 +1,149 @@
+{
+  "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Ecosystem concepts must reflect genuine ecology. Penalize if:\n   - Trophic level interactions are misrepresented in consequences\n   - Carrying capacity concepts are incorrectly applied\n   - Biodiversity-stability relationships are oversimplified\n\n2. DIMENSION CHECK: Dimensions should represent meaningful ecological concerns like:\n   - Biodiversity, Ecosystem Stability, Resource Sustainability, Population Health\n   - Should reflect the interconnected nature of ecosystems\n\n3. SCENARIO CHECK: The challenge should involve realistic ecosystem management decisions.\n\n4. CONSEQUENCE CHECK: Consequences should explain the ecological impact of management choices.\n\n\nEVALUATION CRITERIA:\n\n1. DIMENSION QUALITY: Dimension names used across all effects should:\n   - Connect meaningfully to lesson concepts (2-4 unique dimensions total)\n   - Create natural tension (trade-off axes)\n   - Be consistently named across all effects (same concept = same name)\n\n2. CONSEQUENCE QUALITY: Each option's consequence must:\n   - Explain what happens as a result of the choice\n   - Connect to lesson concepts (not generic outcomes)\n   - Teach something about trade-offs\n   - Be consistent with the stated effects (if effect is positive for dimension X, consequence should reflect improvement in X)\n\n3. TRADE-OFF DESIGN: No option should be obviously best. Options should affect multiple dimensions with mixed impacts (e.g., positive for one, negative for another). If one option has all positive effects, penalize.\n\n4. EFFECTS CONSISTENCY: Each option should have 1-3 effects. Dimension names should be reused consistently across options to create meaningful trade-offs (not random unique names for each effect).\n\n5. FORMAT COMPLIANCE: Verify these constraints:\n   - intro: Maximum 500 characters\n   - steps: 4-6 steps, each with context (max 500 chars), question (max 100 chars), and 3-4 options\n   - options: Each with text (max 80 chars), consequence (max 300 chars), effects array (1-3 items with dimension and impact)\n   - reflection: Maximum 500 characters\n\n6. PERSONALIZATION: The {{NAME}} placeholder must be used appropriately in intro and dialogue.\n\n7. CONCEPTUAL ACCURACY: Consequences and effects must make sense given the lesson content. If the lesson teaches that X leads to Y, effects should reflect this.\n\n8. DIALOGUE QUALITY: Context must be pure conversation with NO narrator text, NO character name prefixes, NO action descriptions.\n\n9. REFLECTION QUALITY: The reflection must tie the experience back to lesson principles and acknowledge that different approaches have merit.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific scenario choices or dimension names\n- Do NOT require specific dimensions by name\n- ONLY penalize for: format violations, consequences that don't connect to lesson concepts, obviously dominant options, inconsistent dimension naming, narrator text in dialogue\n- Different valid challenge designs exist - assess the quality of what IS provided\n\n    ",
+  "judgedAt": "2026-01-17T19:43:06.384Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Model A delivers a comprehensive 5-step challenge with excellent ecological content. The scenario (Redwood Valley Nature Reserve) is realistic and engaging. Dimensions used are: Ecosystem Health, Community Relations, Biodiversity, Budget, and Habitat Connectivity - these are meaningful and consistently applied across options. Trade-offs are well-designed: wolf reintroduction helps ecosystem but hurts community relations; education center helps budget/community but hurts ecosystem. Consequences are detailed and explain the ecological reasoning (e.g., trophic cascade effects, carrying capacity concepts). The dialogue is pure conversation without narrator text. The {{NAME}} placeholder is used appropriately throughout. All format constraints appear to be met. Minor weakness: some options have 3 effects which pushes the upper limit, and occasionally the consequences are quite long. The budget crisis step creates genuine difficult trade-offs with no obvious best choice. Excellent ecological accuracy throughout.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model B presents a solid 5-step challenge with good ecological concepts. Dimensions used are: Ecosystem Balance, Stakeholder Relations, Long-term Stability, and Biodiversity - these create meaningful trade-offs. The beaver scenario correctly illustrates keystone species concepts. The meadow succession step thoughtfully addresses the complexity of ecological management. Consequences connect well to lesson concepts and explain ecological mechanisms. The third option in Step 3 (mosaic approach) might be slightly too positive overall, but still has the complexity note. Format compliance is good. The orchid scenario is creative and addresses real conservation dilemmas. Dialogue is clean without narrator text. The {{NAME}} placeholder is used well. One minor issue: some consequences could be more detailed in explaining the ecological mechanisms, and the 'Long-term Stability' dimension concept slightly overlaps with Ecosystem Balance.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model G provides a well-structured 5-step challenge with strong ecological grounding. Dimensions (Ecosystem Resilience, Species Balance, Community Support, Management Cost) are consistently applied and create clear trade-offs. The 4-option format for each step provides good variety. Ecological concepts like carrying capacity (fish scenario), trophic cascades (deer/predator), and succession (post-fire, meadow) are accurately represented. Trade-offs are well-balanced - no obviously dominant options. Consequences explain mechanisms well. The fish stocking scenario excellently illustrates carrying capacity concepts. Dialogue is conversational. The reflection ties concepts together nicely. Minor weaknesses: some consequences could be more specific, and the intro is somewhat brief. The format with 4 options per step is handled well.",
+          "score": 8.4
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Model D has only 4 steps, which is within the 4-6 range but on the low end. The scenarios are ecologically sound and address good concepts: invasive species with erosion trade-offs, deer overpopulation with trophic cascade mentioned explicitly, beaver reintroduction, and fire management. Dimensions used (Biodiversity, Ecosystem Stability, Budget, Public Support) are meaningful and consistently applied. The kudzu scenario is particularly well-designed showing the trade-off between biodiversity and stability. Consequences are concise but connect to ecological concepts. The reflection appropriately references carrying capacity and trophic cascades. No narrator text in dialogue. Format compliance is good. Weakness: only 4 steps limits depth of experience, and some consequences could be more detailed in explaining mechanisms.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model E delivers 5 steps with consistent ecological themes. Dimensions (Biodiversity, Public Support, Ecosystem Health) are used consistently. The intro explicitly mentions food webs, carrying capacity, and biodiversity - good lesson connection. The goat/carrying capacity scenario is excellent and accurate. Reforestation options correctly show biodiversity-stability relationships. Trade-offs are well-designed. However, some issues: the 'avoid predator introduction' option in step 1 has two negative effects (Biodiversity negative, Ecosystem Health negative) making it obviously the worst choice with no upside, which slightly violates the trade-off design principle. The biological control option in step 5 has mixed neutral/negative effects. Consequences connect to concepts well. Dialogue is clean. Overall solid but the obviously bad option in step 1 is a weakness.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model F uses 4 options per step throughout 5 steps, with dimensions Biodiversity, Productivity, Resilience, and Stakeholder Support. The scenarios address invasive species, deer management, predator reintroduction, habitat restoration, and tourism - all relevant. Trade-offs are generally well-designed. The 'Productivity' dimension is somewhat less directly ecological compared to others but is contextually appropriate for a mixed-use reserve. The habitat mosaic option in step 4 has all positive/neutral effects (Biodiversity positive, Productivity neutral, Stakeholder Support positive), which approaches a dominant option. Consequences are adequate but sometimes brief. The intro is quite short. Dialogue is conversational without narrator text. The reflection appropriately connects to ecological concepts. Overall competent but some trade-offs could be sharper.",
+          "score": 7.6
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Model C provides 5 steps with 3 options each. Dimensions (Biodiversity, Ecosystem Stability, Stakeholder Support) are used consistently. However, several issues: Step 2 has the 'Reseed with diverse native plant mix' option showing positive for both Biodiversity and Ecosystem Stability with no negative dimension - this is an obviously dominant option, violating trade-off design. Some consequences are quite brief and less explanatory (e.g., 'Trails clear up' doesn't explain the ecological mechanism). The intro and reflection are also brief and less engaging. The scenarios are ecologically accurate but less detailed than other models. Context statements are shorter and less immersive. The {{NAME}} placeholder is used appropriately. Format compliance is met. The flow device option in step 3 only has negative impacts (Ecosystem Stability negative) with neutral stakeholder support, making it oddly unbalanced. Overall functional but less polished.",
+          "score": 7
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model G is the strongest output. It demonstrates sophisticated ecological reasoning in its consequences (e.g., explicitly explaining that invasive plants stabilize soil, so removing them causes erosion; or that fast tree planting might lock in a less diverse stand). It strictly adheres to all constraints, including the dimension count (4) and character limits. The dialogue is natural and perfectly conversational without narrator text. The dimensions chosen (Ecosystem Resilience, Species Balance, Community Support, Management Cost) are distinct and create meaningful tension.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model F is excellent, providing four distinct options per step, which adds significant depth. The dimensions are well-chosen (including 'Productivity' and 'Resilience'), and the scenarios cover a wide range of ecological issues. The dialogue is clean and conversational. It follows all formatting and dimension constraints perfectly.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model B provides a very solid simulation. The trade-offs are clear and ecologically valid (e.g., succession vs. meadow preservation). It adheres to the dimension count (4) and naming consistency. The dialogue is immersive, and the consequences effectively teach the lesson concepts.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model E is a strong entry that explicitly integrates lesson concepts like 'carrying capacity' into the narrative well. The dialogue is natural, and the trade-offs are balanced. It is slightly less detailed in its ecological explanations than Model G, but still a high-quality output.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Model D is good and ecologically accurate. However, the tone in some consequences feels slightly less natural (e.g., exclaiming 'A classic trophic cascade!'). While accurate, it breaks the immersion slightly compared to the top models. It adheres to constraints well.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Model A features excellent writing and very strong scenario design. However, it violates the dimension count constraint. The criteria required 2-4 unique dimensions, but Model A used 5 (Ecosystem Health, Community Relations, Biodiversity, Budget, Habitat Connectivity). While the content is high quality, this specific constraint violation lowers its score relative to the fully compliant models.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Model C is compliant with all constraints but is significantly simpler than the other models. The consequences are brief and lack the rich ecological detail found in Model G or F. While it passes the dimension check and formatting rules, it offers the least educational depth.",
+          "score": 7
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Strong overall compliance and ecology. Consistent 3–4 dimensions reused across all steps (Ecosystem Resilience, Species Balance, Community Support, Management Cost) creating clear trade-offs without a dominant option. Consequences are specific, connected to food webs/carrying capacity/succession, and generally match stated effects. Dialogue contexts are conversational with no narrator/action beats. Format meets 5 steps and 4 options/step, and {{NAME}} is used in intro/contexts. Minor nit: a few effects lean \"neutral\" where consequences describe meaningful change, but not severe.",
+          "score": 9.3
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Very good trade-off design and format compliance (5 steps, 4 options each; option text lengths look within bounds). Dimensions are mostly consistent and limited (Biodiversity, Resilience, Productivity, Stakeholder Support), producing repeated axes of tension. Consequences usually align with effects and reference core concepts (keystone species, carrying capacity, succession). Main weakness: dimension set is 4 (upper end but allowed) and “Productivity” is sometimes a proxy for budget/revenue and can be a bit ambiguous; a couple consequences feel more socio-economic than ecological while still plausible.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Ecologically grounded scenarios (carrying capacity, beavers as keystone engineers, succession, invasives, orchid access) with clear instructional consequences. Dimension naming is mostly consistent and limited to 3–4 (Ecosystem Balance, Stakeholder Relations, Long-term Stability, plus Biodiversity). Trade-offs are generally balanced with no obvious always-best option. Biggest issue: inconsistent dimension usage across steps (sometimes Biodiversity appears as an extra axis rather than part of the core set) and a few effect labels don’t fully match consequences (e.g., “Long-term Stability negative” for hunting permit expansion is asserted but not well justified in consequence). Dialogue is clean.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Rich, realistic management decisions with generally accurate ecology (trophic cascade framing, fire/fuels, invasives, enforcement/poaching). Consequences are detailed and usually consistent with effects. However, dimension set is too large and inconsistent across the experience (Ecosystem Health, Community Relations, Biodiversity, Budget, Habitat Connectivity appear, and not all reused consistently), weakening the intended trade-off axes requirement. Still solid format (5 steps) and dialogue quality; minor risk of some options feeling better (e.g., “strategic firebreaks and let natural fires burn” reads a bit dominant with two positives, though it has a community negative).",
+          "score": 7.9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Good topical coverage (trophic cascades, carrying capacity, biodiversity-resilience, succession, invasive control) and decent trade-offs. But dimension naming is inconsistent across steps (mixing Biodiversity/Ecosystem Health/Public Support, with only 2 dimensions used in most steps but not consistently anchored), and some options are close to dominated or overly punitive (e.g., “avoid predator introduction” yields two negatives with little offset). A couple ecological claims are oversimplified (e.g., cull framed as leaving riparian zones still damaged because elk ‘hide in the woods’—possible, but it reads shaky without stronger mechanism). Format otherwise fine.",
+          "score": 7.3
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Scenarios are plausible and consequences generally connect to ecology (invasives vs erosion, carrying capacity for deer, beavers/wetlands, prescribed fire). Trade-offs exist, but dimension naming is inconsistent (Biodiversity/Ecosystem Stability/Budget/Public Support) and not used consistently across all steps. Reflection violates the “no flattery” spirit and adds evaluative praise (“You balanced the system well”), and several contexts/consequences include light narrator/action beats (“Last one,” “heavy rain last night”) that edge away from pure dialogue. Still serviceable.",
+          "score": 6.9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Clean structure and mostly consistent small dimension set (Biodiversity, Ecosystem Stability, Stakeholder Support). However, trade-off design breaks the rubric in places: Step 2 has an option with both Biodiversity and Ecosystem Stability positive (diverse native mix), making it an obviously best ecological choice with no stated downside. Several effects-consequence mismatches (e.g., monoculture reseeding marked Ecosystem Stability positive while consequence says it weakens long-term resilience; invasive removal marked Stability negative where consequence suggests a temporary dip but long-term stability likely improves). Consequences are also relatively generic compared to other models.",
+          "score": 6.2
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-challenge",
+  "testCaseId": "en-biology-ecosystem-balance-1"
+}

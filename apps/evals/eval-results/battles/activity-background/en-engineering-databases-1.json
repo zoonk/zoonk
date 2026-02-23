@@ -1,0 +1,203 @@
+{
+  "expectations": "\n      Avoid diving into database schemas or SQL syntax. The background should explain WHY databases were invented and what problems early computer systems faced — not HOW to structure tables.\n\n      \n  EVALUATION CRITERIA (focus on storytelling quality, not specific content):\n\n  1. STORYTELLING FLOW: The steps should build curiosity and follow a narrative arc. Check for tension (the problem/limitation) and resolution (how it was solved).\n\n  2. STEP SIZING: Each step must have a title (max 50 chars) and text (max 300 chars). Verify lengths are within limits.\n\n  3. CONVERSATIONAL TONE: The writing should feel like talking to a curious friend, not reading an encyclopedia. Look for vivid imagery and emotional engagement.\n\n  4. METAPHORS & ANALOGIES: Check for analogies from everyday life (sports, cooking, games, music, travel) that make abstract concepts tangible.\n\n  5. FOCUS ON \"WHY\": The activity explains the origin and importance of a topic — NOT how it works technically. If the output dives into mechanics or implementation, that's a problem.\n\n  6. APPROPRIATE SCOPE: Content should match the lesson's scope exactly — not broader (covering the whole field) and not narrower (covering only a sub-topic).\n\n  7. VIVID SCENES: Each step should feel like a \"scene\" with imagery, not a bullet point of dry facts.\n\n  IMPORTANT: Do NOT penalize for specific historical facts, dates, or phases you might expect. Different valid narrative approaches exist. Focus on whether the story provided is engaging and explains WHY this topic matters.\n\n  IMPORTANT: Do NOT require a specific number of steps. Simple topics may need fewer steps; complex topics may need more. Judge quality, not quantity.\n\n  IMPORTANT: Make sure the output is factually correct. It should not include any information that is not true.\n\n    ",
+  "judgedAt": "2026-01-15T20:51:20.121Z",
+  "judgments": [
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "This model achieves the best balance of storytelling, tone, and metaphor. The imagery is exceptional—describing sequential access as 'flipping every page in a phone book... by flashlight... in the rain' perfectly captures the frustration without needing technical jargon. The flow from the problem (messy pantry) to the resolution (city map/menu) is seamless. It adheres strictly to all constraints while maintaining a highly engaging, conversational voice.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model B is an excellent contender with rich metaphors ('fragile paper mansions,' 'chef with no labels'). It clearly explains concepts like indexing ('a librarian's trick') and relational data ('Lego blocks') in a way that is accessible and vivid. The narrative arc is strong, moving effectively from chaos to modern scalability. It falls just slightly behind Model F in pure conversational voice but is otherwise outstanding.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model A delivers a solid narrative with clear metaphors, such as comparing tape storage to rewinding a cassette. It focuses well on the 'why'—the explosion of business data. The tone is conversational and the step sizing is appropriate. It is a very strong response, though slightly less evocative in its imagery than the top two models.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "This model excels at explaining the specific pain point of redundancy—the 'tangled web' of updating multiple files. The 'digital shoebox' metaphor is effective. While the writing is clear and follows the narrative arc well, it feels slightly more educational and less 'story-like' than the top three. However, its clarity on the 'why' is commendable.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Model G provides a very clear, logical progression. It explains the redundancy problem well and adheres to the scope. However, the tone is a bit drier and feels more like a textbook explanation than a conversation with a friend. It lacks the vivid, emotive imagery found in the higher-ranked models but is factually and structurally sound.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Model D uses good metaphors like the 'sinking boat with tape' and 'city map.' The narrative flow works, but the writing is occasionally a bit generic (e.g., 'structured containers'). It meets the requirements but lacks the polish and distinct voice of the higher-ranked outputs.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "google/gemini-2.5-flash-lite",
+          "reasoning": "Model J is a competent attempt. The analogy of 'loading a whole movie just to find a single word' is a strong way to explain sequential access. However, other parts of the text rely on clichés ('needle in a haystack') and the explanation of the solution is somewhat dry. It meets the basic criteria but doesn't stand out.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-4.1-mini",
+          "reasoning": "This output is adequate but vague. Phrases like 'Information deserts' and 'digital chaos' are a bit abstract compared to the specific imagery requested. It follows the structure but fails to build a compelling narrative or explain the 'why' with enough depth.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "Model I represents the bare minimum. It follows the length constraints but lacks creativity, relying on the standard 'library' metaphor without adding any unique flavor or vivid scenes. It is factually correct but boring and fails the 'conversational/engaging' criteria.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Model E violated the negative constraints explicitly provided in the prompt. The instructions stated to 'Avoid diving into database schemas or SQL syntax,' yet this model included specific SQL syntax ('SELECT * FROM...') and technical schema discussion ('Hierarchic databases... rigid trees'). Despite lively writing, failing a direct negative constraint results in the lowest score.",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Strong narrative arc with clear tension (batch jobs/flat files/constant breakage) and resolution (shared truth → relational model → modern impact). Conversational, vivid scenes, and multiple everyday metaphors (pantry, phone book, cassette, house remodel, library). Stays mostly on “why” without getting bogged down in implementation. All titles/text appear within limits.",
+          "score": 9.6
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Excellent flow and imagery (index cards on the floor, tape like a cassette), plus a crisp historical spine. It edges into “how” with “rows and columns” and “plain logic,” but still mainly explains why databases mattered. Step sizing looks within limits. Slightly more expository than F.",
+          "score": 9.1
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Good scene-based storytelling with consistent tension→resolution and some strong analogies (sinking boat with tape, city grid). Keeps technical mechanics vague (good for this task). A bit generic in places (“structured containers”) and less vivid than A/F, but solid and on-scope.",
+          "score": 8.4
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Vivid office scenes and clear motivation (errors, conflicting records). However it slips into questionable/overstrong claims (“instantly without searching through every file,” “linked by math”) and leans more into mechanics/benefits than origin-story curiosity. Still within length limits and generally engaging.",
+          "score": 7.7
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "google/gemini-2.5-flash-lite",
+          "reasoning": "Clean, friendly narrative with familiar analogies (needle in haystack, chaotic library). But it becomes somewhat generic and drifts toward describing capabilities (“store, retrieve, update… with speed”) rather than dramatizing the why. Also introduces tables/linked together (light mechanics).",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-4.1-mini",
+          "reasoning": "Meets the “why” focus and uses a city-planning metaphor, but the steps are repetitive (clutter/search/frustration all similar) and lack specific scenes or escalating tension. Feels more like inspirational summary than a story arc.",
+          "score": 6.4
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "Very concise and readable, but mostly generic statements with minimal scene-setting and limited narrative tension/resolution. Metaphors are present (library) but not developed. Less conversational/immersive than higher-ranked outputs.",
+          "score": 5.8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Strong analogies and generally good arc, but it repeatedly drifts into “how” (indexes, caching, partitioning) and broader scope (modern performance engineering) rather than focusing on the origin/why. Still well-written, but violates the task expectation to avoid implementation details.",
+          "score": 5.1
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Clear progression, but gets more technical than desired (tables, avoiding repetition, SQL as a standard language). Also includes an arguably misleading simplification that SQL lets humans “have a conversation with their data.” Storytelling is decent but more textbook-like.",
+          "score": 4.3
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Most violates constraints: explicitly includes SQL syntax (\"SELECT * FROM...\") and leans heavily into database types/implementation details (IMS, keys, random access disks). Also contains a factual issue (“Oracle births the first commercial relational DB with SQL” is not accurate). Despite vivid metaphors, it breaks the core ‘avoid SQL/mechanics’ requirement.",
+          "score": 2.9
+        }
+      ]
+    },
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Excellent storytelling with vivid, varied analogies (messy pantry, cassette tapes, city map, public library, ordering from a menu). Strong conversational tone with emotional hooks ('by flashlight...in the rain'). Maintains WHY focus throughout without diving into technical implementation. Each step feels like a scene with clear tension-resolution arc. All character limits respected. Great balance of historical context and engaging narrative. The 'change one thing, break ten' step brilliantly captures the problem. One of the few that explains the separation of data from programs - a key conceptual insight.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Strong narrative arc with excellent scene-setting ('towering filing cabinets', 'dusty folders'). The 'digital shoebox' and 'tangled web' metaphors are particularly effective. Maintains focus on WHY without diving into SQL. Good emotional engagement and conversational tone. The progression from paper to digital chaos to solution flows naturally. Minor issue: slightly less vivid than Model F in some transitions. All limits respected.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Good storytelling with memorable imagery ('millions of index cards scattered', 'rewind and fast-forward through miles of tape'). Cassette analogy is relatable. Covers the WHY effectively with good tension-building. Historical accuracy with Codd reference. However, step 5 mentions 'rows and columns' and 'plain logic' which edges toward HOW. Strong conclusion tying to modern relevance. All limits respected.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Solid narrative with good imagery and progression. The redundancy problem is well-explained with the address example. However, Step 5 mentions SQL explicitly and discusses 'asking complex questions' - this edges into technical HOW territory, which the task specifically asked to avoid. Good scene-setting overall. The 'flat files' and 'redundancy nightmare' steps are strong. All limits respected.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Good variety of metaphors (chef with no labels, Lego blocks, librarian's trick). Comprehensive narrative covering indexing and scaling. However, gets somewhat technical in later steps (mentioning 'caching', 'partitioning', 'smarter indexes') which drifts into HOW territory. 8 steps feels slightly elongated for the narrative. Still engaging overall with good conversational tone.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Decent storytelling with the 'city grid' metaphor being a highlight. 'Fixing a sinking boat with tape' is vivid. However, the narrative feels somewhat rushed and less developed in imagery compared to top entries. Some steps lack the vivid scene-setting that distinguishes the best outputs. Still maintains WHY focus appropriately. All limits respected.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Good historical accuracy and varied analogies (junkyard treasure hunt, solitaire, VHS tape, Lego bricks). However, significant issues: Step 7 includes actual SQL syntax ('SELECT * FROM customers WHERE city='NYC'') which directly violates the task requirement to avoid SQL syntax. Also mentions 'hierarchic databases like IMS' which is too technical. Otherwise engaging narrative.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "google/gemini-2.5-flash-lite",
+          "reasoning": "Readable but lacks vivid imagery compared to competitors. Metaphors are present but somewhat generic ('needle in haystack', 'chaotic library'). The narrative is functional but doesn't create strong emotional engagement or tension. Step 4 ('treat data like a structured collection of tables') starts edging toward HOW. Less memorable scene-setting overall.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-4.1-mini",
+          "reasoning": "Decent but underdeveloped. The 'well-planned city' metaphor is good, but other imagery feels vague ('digital chaos', 'information deserts'). Lacks specific historical grounding that adds credibility. The narrative arc is present but not as compelling. 'Phone books with torn pages' is good but the overall storytelling lacks the vivid scenes of better entries.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "The weakest entry. Very brief and lacks vivid scene-setting. Metaphors are present but underdeveloped ('super-smart librarian'). Only 5 steps feel rushed for the topic. Minimal emotional engagement or tension-building. Reads more like bullet points than scenes. The 'organize data into tables with rows and columns' in step 3 also edges into HOW. Least memorable narrative overall.",
+          "score": 1
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-background",
+  "testCaseId": "en-engineering-databases-1"
+}

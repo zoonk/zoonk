@@ -1,0 +1,203 @@
+{
+  "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: DNA transcription involves specific molecular machinery moving along the DNA strand. Penalize if:\n   - RNA polymerase is described as copying both DNA strands simultaneously (it reads one template strand)\n   - The process confuses transcription with translation (transcription produces mRNA; translation produces proteins)\n\n2. DEPTH CHECK: Penalize if the process is presented as simply \"DNA is copied to RNA\" without showing the unwinding, reading, and assembly happening in sequence.\n\n3. DISTINCTION FROM EXPLANATION: The explanation covered WHAT RNA polymerase, nucleotides, and promoters ARE. This should show HOW they move, bind, assemble, and release in the active process.\n\n\nEVALUATION CRITERIA:\n\n1. FACTUAL ACCURACY: Any process descriptions, mechanisms, or cause-effect relationships must be correct. Penalize hallucinations, incorrect sequences, or wrong causal chains.\n\n2. PROCESS FOCUS: Content must show things HAPPENING, not just describe parts. Look for action verbs, cause-effect language, and sequential flow.\n\n3. DEPTH: Complex processes require multi-step explanations showing how one action triggers the next. Penalize oversimplified \"just happens\" explanations.\n\n4. FORMAT: Each step must have a title (max 50 chars) and text (max 300 chars).\n\n5. TONE: Conversational, like giving a behind-the-scenes tour. Include process metaphors from everyday life (assembly lines, relay races, domino chains).\n\n6. FOCUS: Explains HOW something works (processes in action), not WHAT it is (definitions) or WHY it exists (history).\n\n7. NO OVERLAP: Must not repeat content from the EXPLANATION_STEPS which covered the WHAT.\n\n8. SCOPE: Content matches the lesson scope exactly.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for missing process phases or steps you might expect\n- Do NOT require a specific number of steps\n- Do NOT check against an imagined \"complete\" process description\n- ONLY penalize for: factual errors, static descriptions instead of action-oriented content, missing cause-effect relationships, or poor process flow\n- Different valid process explanations exist - assess the quality of what IS provided\n\n    ",
+  "judgedAt": "2026-01-17T01:21:29.189Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Excellent process-focused content with clear action verbs and sequential flow. The steps show cause-effect relationships well (e.g., 'binding triggers the final separation'). Good metaphors ('train pulling into station', 'zipper pull'). Factually accurate with proper distinction between template and coding strands. The 'First Nucleotide Locks On' step adds nice granularity. Tone is conversational and engaging. All format requirements met. Strong showing of HOW the process works through active descriptions.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Very strong process-oriented content with excellent action verbs ('pries apart', 'snaps into place', 'fuses'). The metaphors are fresh and apt ('conveyor belt', 'stitching a thread', 'tape from dispenser'). Shows clear cause-effect relationships and sequential flow. Factually accurate. The 'Forward Motion Unzips and Re-zips' step elegantly captures the bubble movement. Slightly less detail than Model E on some transitions, but overall excellent quality.",
+          "score": 8.7
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Strong action-oriented language with vivid metaphors ('high-speed zipper pull', 'rapid-fire assembly line'). Good cause-effect descriptions ('forces the DNA's tightly wound double helix to begin prying open'). Factually accurate about reading one strand. The final step is slightly static (describing what mRNA IS rather than the process), which slightly detracts. Overall excellent process focus with good sequential flow.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Good process focus with nice metaphors ('train coupling to tracks', 'like unzipping a jacket'). Includes a valuable troubleshooting step about jamming/rewinding which adds depth. Factually accurate. Some steps could have stronger action verbs - 'A gene sits zipped' is somewhat static. The error correction mention adds authenticity. Good cause-effect relationships shown. Slightly less polished language than top models but solid overall.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Good process focus with clear sequential flow. Metaphors are effective ('landing lights on a runway', 'chugs down the DNA track'). Factually accurate including the U-for-T swap. Cause-effect relationships shown well. The 'Closing the Wake' step nicely captures the rezipping. Some language is slightly less dynamic than top models ('It starts when...' is a weak opener). Overall solid execution.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Solid process-oriented content with good metaphors ('zipper', 'train cars coupling'). Clear sequential flow with accurate facts. The 'Choosing the Reading Strand' step is slightly static/definitional rather than showing action. Good coverage of the bubble movement. 'The other strand just hangs out' is casual but not very action-oriented. Meets requirements but less vivid action language than higher-ranked models.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Good process coverage with accurate facts. Has some nice action verbs ('unzips', 'snaps into place'). The 'rapid-fire matching game' is a good metaphor. However, 'A promoter sequence sits quietly' is static language. Contains a factual issue: states 'T pairs with A' when in RNA there is no T - RNA uses U. This is confusing since we're describing RNA synthesis. The error reduces the score. Otherwise good sequential flow.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Good action-oriented language with nice metaphors ('like unzipping a blueprint scroll'). Mentions proofreading which is accurate for some contexts. However, has some issues: 'Energy from incoming nucleotides fuels the unwind' is imprecise - DNA unwinding is primarily done by the polymerase mechanism. The hairpin termination description is only one type (intrinsic/Rho-independent) presented as universal. Good process focus overall but some accuracy concerns.",
+          "score": 7.3
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "Basic process coverage but weaker on the key requirements. Contains a factual error: 'A pairs with U, T pairs with A' - in transcription, the template DNA has T which pairs with A in RNA, and template A pairs with U. This is confusingly stated. Steps lack strong cause-effect language ('The process has started' is telling not showing). Metaphors are minimal. RNA processing step ventures beyond core transcription. Less dynamic action language overall.",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "While impressively detailed with advanced content (chromatin remodelers, abortive starts, mediator complex, poly(A) processing), it likely exceeds the lesson scope. The complexity may not match what was covered. Some steps are process-oriented but others are more explanatory. The 'When the line jams' step is interesting but feels like an appendix rather than core process. For an intro lesson, this may be too advanced. The depth is valuable but scope matching is concerning.",
+          "score": 6.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "This model provides the most vivid, process-oriented description. It excels at adhering to the 'Process Focus' criteria by using strong, tactile metaphors (locking on like a key, high-speed zipper pull, cellular soup, prying open) that visualize the mechanics effectively. It explicitly describes the critical concept of the DNA re-zipping behind the polymerase, ensuring depth. The tone is engaging and conversational without sacrificing accuracy.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "A very strong output that rivals Model B. It uses excellent analogies ('scanner searching for a barcode', 'unzipping just enough of a jacket', 'conveyor belt') to explain the mechanics. The sequential flow is clear, and it covers all required depth aspects (unwinding, reading, assembly, rewinding, release). It is only slightly less dynamic in its language than Model B.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "This model offers a strong narrative with good flow and metaphors ('landing lights', 'molecular red light'). It effectively explains the base-pairing mechanism (swapping U for T) in a way that is easy to understand. The description of the 'transcription bubble' and the closing wake is accurate and visual.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "This model provides good depth, specifically by including the realistic detail of the enzyme pausing or backtracking (Step 8), which adds to the process realism. The metaphor of the 'moving window' for the bubble is excellent. It is slightly less conversational in tone than the top three but highly effective.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "A solid, standard explanation that hits all the requirements. The metaphor of the 'self-healing zipper' is particularly good for describing the rewinding DNA. It lacks the vivid, kinetic energy of the top models but is factually accurate and clear.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "A competent and accurate description. It uses the train metaphor effectively ('train cars coupling'). It meets all criteria but feels slightly more generic compared to the rich imagery in Models B and C.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "This model is accurate and conversational but feels a bit repetitive in the middle steps ('Engine Keeps Running'). It adheres to the requirements but doesn't stand out with unique imagery or deep mechanical insight.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "This model uses strong active verbs ('ratchets', 'catalyzes'), which is good. However, the statement 'Energy from incoming nucleotides fuels the unwind' is a simplification that borders on inaccuracy regarding the thermodynamics of the process. It is otherwise a strong, technical explanation.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "While factually correct and properly formatted, this model is the driest of the group. It reads more like a textbook summary than a 'behind-the-scenes tour.' It lacks the engaging metaphors and dynamic process language requested in the prompt.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "This model contains high-quality writing but suffers significantly from scope creep. The prompt requested a focus on DNA transcription machinery. This model dedicates steps to chromatin remodeling (pre-transcription) and mRNA processing/export (post-transcription), diluting the focus on the specific mechanism requested.",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Meets all constraints cleanly: clear stepwise action with cause→effect, good “tour” metaphors, explicitly states only one template strand is read, no transcription/translation confusion, and no extra scope creep beyond transcription. Titles and texts are within limits.",
+          "score": 9.4
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Strong process narration with moving-bubble/rezip dynamics and correct “one strand, one direction” detail. Includes a brief “jam/rewind” step that stays process-focused and plausible. Minor risk of overlapping into regulation in step 1, but still framed as action rather than definitions.",
+          "score": 9.1
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Very solid sequential mechanics (bind → bubble → match → catalyze → unzip/rezip → release). Good everyday metaphors. Slightly less explicit about template-vs-coding strand than the best ones, but doesn’t imply copying both strands.",
+          "score": 8.9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Excellent action verbs, strong metaphors, and clearly states polymerase focuses on one strand. Good bubble and rezipping description. The final “protein factories/nucleus” framing is slightly more ‘what it’s for/where it goes’ than needed, but still acceptable.",
+          "score": 8.7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Good flow and metaphors, accurate matching rules (though incomplete list is fine). Step 6 adds “journey out of the nucleus,” which is slightly beyond pure transcription mechanics but not egregious. Overall process is clear and dynamic.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Clear stepwise process with good metaphors and correct pairing note about U vs T. Some scope drift into “protein construction” handoff at the end (translation-adjacent, though not confused). Less mechanistic detail than top group but still solid.",
+          "score": 8.4
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Accurate and process-oriented, includes template strand and base pairing. However, it’s somewhat repetitive (“engine keeps running”) without adding new mechanism, and the last step leans into purpose/where it goes (protein machinery) rather than how it operates.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "Mostly accurate and sequential, but has two notable issues: (1) base-pair line includes an awkward/incorrect phrasing (“T pairs with A” stated as RNA pairing; it should be DNA T pairs with RNA A—easy to misread), and (2) includes eukaryotic RNA processing (capping/splicing/tailing), which likely overlaps prior “WHAT” content and extends scope beyond core transcription mechanics.",
+          "score": 7.4
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Good overall flow and includes abortive/commit idea. Main factual problem: termination described via RNA hairpin as if general; that’s bacteria-specific, yet earlier steps imply eukaryotic TF guidance. Also overclaims “proofreads” (polymerase has limited proofreading) and “energy from incoming nucleotides fuels the unwind” is questionable framing. Mixed specificity hurts accuracy.",
+          "score": 6.7
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Rich and processy, but scope and specificity are messy: heavy eukaryotic regulation machinery (mediator, chromatin remodeling), then mixes bacterial termination mechanisms, QC/export, and damage/collision scenarios. This goes well beyond lesson scope and increases chances of overlap with “WHAT” content, despite being action-oriented.",
+          "score": 6.1
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-mechanics",
+  "testCaseId": "en-biology-dna-transcription-1"
+}

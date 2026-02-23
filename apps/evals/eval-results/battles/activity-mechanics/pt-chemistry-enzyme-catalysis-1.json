@@ -1,0 +1,203 @@
+{
+  "expectations": "\nLANGUAGE REQUIREMENT: Titles and text must be in Portuguese.\n\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Enzyme catalysis involves specific binding and conformational changes. Penalize if:\n   - Enzymes are described as being consumed in the reaction (they are catalysts and are regenerated)\n   - The lock-and-key model is presented without acknowledging induced fit (modern understanding includes conformational change)\n\n2. DEPTH CHECK: Penalize if the explanation treats it as \"enzymes speed up reactions\" without showing the molecular dance of binding, catalysis, and release.\n\n3. DISTINCTION FROM EXPLANATION: The explanation covered WHAT active sites, substrates, and activation energy ARE. This should show HOW enzymes grab substrates, lower barriers, and release products.\n\n\nEVALUATION CRITERIA:\n\n1. FACTUAL ACCURACY: Any process descriptions, mechanisms, or cause-effect relationships must be correct. Penalize hallucinations, incorrect sequences, or wrong causal chains.\n\n2. PROCESS FOCUS: Content must show things HAPPENING, not just describe parts. Look for action verbs, cause-effect language, and sequential flow.\n\n3. DEPTH: Complex processes require multi-step explanations showing how one action triggers the next. Penalize oversimplified \"just happens\" explanations.\n\n4. FORMAT: Each step must have a title (max 50 chars) and text (max 300 chars).\n\n5. TONE: Conversational, like giving a behind-the-scenes tour. Include process metaphors from everyday life (assembly lines, relay races, domino chains).\n\n6. FOCUS: Explains HOW something works (processes in action), not WHAT it is (definitions) or WHY it exists (history).\n\n7. NO OVERLAP: Must not repeat content from the EXPLANATION_STEPS which covered the WHAT.\n\n8. SCOPE: Content matches the lesson scope exactly.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for missing process phases or steps you might expect\n- Do NOT require a specific number of steps\n- Do NOT check against an imagined \"complete\" process description\n- ONLY penalize for: factual errors, static descriptions instead of action-oriented content, missing cause-effect relationships, or poor process flow\n- Different valid process explanations exist - assess the quality of what IS provided\n\n    ",
+  "judgedAt": "2026-01-17T01:26:34.902Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Exceptional process explanation. Covers the full catalytic cycle with excellent depth: includes multiple catalytic mechanisms (acid-base catalysis, covalent intermediates, cofactor involvement). Each step shows clear action with cause-effect relationships. Excellent metaphors ('passa-e-repassa de batata quente', 'grampo', 'linha de montagem'). Properly addresses induced fit, enzyme regeneration, and mentions when the process fails. Language is conversational and engaging. Correctly describes stabilization of transition state as the key to lowering activation energy. All steps fit format requirements. Covers what other responses miss - the actual chemical mechanisms at play.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Very comprehensive and mechanistically detailed. Covers multiple catalytic strategies (acid-base, covalent, metal coordination) which shows excellent depth. Good action verbs throughout. Includes proper discussion of transition state stabilization. Addresses both inhibition and when process fails. Format is correct, though some metaphors are less evocative than Model H. Slightly more technical language reduces conversational tone. Good coverage of the polarization and tension mechanisms.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Strong process explanation with good depth. Explicitly mentions induced fit model. Includes good mechanistic detail (acid donation/acceptance, transition state stabilization). Uses strong action verbs. Good metaphors (chef positioning ingredients, domino effect). Includes enzyme regeneration correctly. Mentions competitive inhibition as disruption scenario. All format requirements met. Slightly less depth than H and I on the actual catalytic mechanisms, but very solid overall.",
+          "score": 8.7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Very solid explanation with clear process flow. Explicitly addresses induced fit and enzyme regeneration. Good action language throughout. Discusses amino acid involvement in catalysis. Includes transition state formation. Covers failure conditions (temperature, pH). Metaphors are effective ('dobrar um galho'). Format correct. Slightly less depth on the actual chemical mechanisms compared to top models, but excellent on the overall flow and accessibility.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Good process flow with engaging language. Addresses induced fit ('dedos moldando uma massa'). Shows atomic repositioning as action. Explains product release mechanism well. Includes enzyme regeneration and failure conditions. Format correct. However, slightly less mechanistic depth than top models - doesn't explain the chemical basis of catalysis as clearly (acid-base, covalent mechanisms). Still a strong response with good metaphors.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Good overall process description with clear action orientation. Addresses induced fit correctly. Uses effective metaphors (elástico, linha de montagem). Shows enzyme regeneration. Format correct. However, step 4 says 'o ambiente protegido dentro da enzima funciona como um catalisador' which is circular reasoning - the enzyme IS the catalyst. Also lacks depth on specific catalytic mechanisms. Missing discussion of failure conditions.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Solid process explanation with good flow. Correctly addresses induced fit. Good action verbs. Explains product release mechanism. Shows enzyme regeneration. Fewer steps (6) but covers essential process well. Format correct. However, lacks depth on catalytic mechanisms and doesn't include discussion of failure conditions. Step 3 description of 'tensão' is less detailed than other models.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Good descriptive language and engaging tone. Addresses molecular recognition and induced fit. Explains transition state distortion. Shows enzyme regeneration. However, step 3 says 'encaixa perfeitamente' with lock-and-key language before step 4 mentions distortion - this sequencing is slightly awkward. Step 8 ('Por que Enzimas Mudam o Jogo') focuses on WHY rather than HOW, which violates the focus requirement. Some text exceeds conversational tone toward explanatory. Several steps approach or slightly exceed 300 char limit.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Covers the essential catalytic process with good action language. Addresses induced fit correctly. Shows enzyme regeneration. Good format compliance. However, missing accents throughout (sitio, forcas, ligacoes) which is a significant issue for Portuguese text requirement. Also less depth on specific catalytic mechanisms. No discussion of failure conditions or what can disrupt the process.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "Covers basic process but has issues. Uses 'chave entrando na fechadura' metaphor without properly contextualizing induced fit - presents lock-and-key without the modern understanding of conformational change. Less action-oriented than other models. Step 7 about factors is quite static ('afetam a atividade') rather than showing how they disrupt the process. Less depth on catalytic mechanisms. Adequate but lacks the dynamism and depth of better responses.",
+          "score": 6.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "This model provides the most scientifically robust explanation while maintaining the requested conversational tone. It excels in the 'Depth Check' by explaining specific chemical mechanisms (acid-base catalysis, stabilizing charges, covalent intermediates) rather than just saying 'it lowers energy.' It explicitly addresses induced fit ('glove adjusting') and uses excellent step titles. The metaphors are effective and the flow is logical.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Model D offers a high-quality explanation with vivid metaphors ('chef positioning ingredients', 'twisting a spring'). It correctly identifies induced fit immediately after the lock-and-key analogy. It strikes a great balance between chemical accuracy (mentioning proton donation) and accessible narrative. The inclusion of an inhibition step adds value without losing focus.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "This model stands out for its tone and visualization. It uses strong action verbs ('pulling bonds', 'pushing reagents') that strictly adhere to the 'Process Focus' criteria. The metaphors ('fingers molding dough') are intuitive and accurately represent induced fit. It is slightly less chemically detailed than Model H but excellent for a general explanation.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model I is scientifically impressive, detailing specific catalytic strategies like polarization and transition state stabilization. It meets the 'Depth Check' perfectly. However, the tone is slightly more clinical and list-like compared to the top three, which feel more like a 'tour.' Ideally, it would be slightly more conversational, but the content is top-tier.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "A solid, well-written response that adheres to all guidelines. It correctly explains induced fit and the stretching of bonds. It flows well but lacks the specific chemical depth of Models H and I, and the metaphors are slightly more standard ('handshake').",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Very similar in quality to Model F. It is accurate, follows the process flow well, and correctly distinguishes between the static 'lock' concept and the dynamic 'induced fit'. It is a good output that meets expectations without exceeding them in creativity or depth.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Another solid entry that is functionally equivalent to F and E. It uses the 'glove' metaphor effectively for induced fit. It ranks slightly lower only because the prose is marginally less engaging than the others in this tier, but it is still a passing, good quality response.",
+          "score": 7.7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "This model leans too heavily on the 'lock and key' / 'perfect fit' terminology in the early steps, which contradicts the modern understanding of induced fit (where the perfect fit happens at the transition state). While it corrects this later by mentioning distortion, the initial framing is slightly misleading compared to better models.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "The weakest of the grammatically correct models. It fails to explicitly describe the shape change of the enzyme (induced fit), relying instead on a static description ('complementary shape') followed by a vague 'applies tension'. It lacks the 'molecular dance' requested in the Depth Check.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "This model failed the basic language requirement due to a total lack of Portuguese accentuation (e.g., 'celula', 'ate', 'sitio', 'sao'). This makes the text unprofessional and grammatically incorrect.",
+          "score": 2
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Mais forte no foco de processo: mostra uma sequência clara de eventos (colisão→ajuste induzido→orientação→estabilização do estado de transição→catálises possíveis→formação de produto→liberação→regeneração). Linguagem bem “tour dos bastidores” com metáforas (linha de montagem, batata quente, cortador de biscoito). Evita erro de enzima ser consumida e não fica preso só no “chave-fechadura” (inclui ajuste induzido). Formato OK (títulos <50, textos <300).",
+          "score": 9.6
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Excelente detalhamento mecanístico sem virar lista estática: ajuste induzido, alinhamento, polarização/tensão, estratégias catalíticas (ácido-base/covalente/metal), estabilização do estado de transição e liberação/regeneração. Boas metáforas e verbos de ação. Leve risco de “puxa ou doa elétrons” soar genérico, mas não incorreto no nível didático. Formato e limites aparentam OK.",
+          "score": 9.3
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Fluxo bem encadeado e correto, incluindo explicitamente ajuste induzido e estabilização do estado de transição. Metáforas variadas (chef, dominós, rampa). Inclui ácido-base de forma plausível. Extra de inibição competitiva é pertinente ao “quando falha”. Pequena sobreposição com “complexo ES se forma” (um pouco mais ‘o que é’), mas ainda processual.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Muito bom em induced fit, estado de transição e catálise ácido-base, com tom conversacional e metáforas. Afirma explicitamente que a enzima não é consumida. Pequeno exagero/hipérbole em “o que levaria anos… instantaneamente” (pode soar impreciso), mas não quebra a mecânica. Passo final de pH/temperatura ok.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Boa coreografia (encontro→ajuste→reposicionamento→atalho energético→transformação→liberação→reset). Induced fit bem retratado e enzima regenerada. O passo “atalho energético” é correto, mas fica um pouco abstrato; ainda assim mantém ação. Inclui pH/temperatura (ok). Menos mecanístico que H/I/D (não menciona estado de transição explicitamente).",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Processo claro, induced fit presente e boa narrativa de tensão/distorção e liberação. Um ponto fraco: “ambiente protegido dentro da enzima funciona como um catalisador” é linguagem confusa (a enzima já é o catalisador). Fora isso, está correto e dentro do formato.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Bom tour sequencial com induced fit e tensão/torção, liberação e regeneração. Contudo, é mais genérico: não explicita estabilização do estado de transição nem mecanismos (ácido-base/covalente), ficando próximo do ‘enzimas facilitam’ sem tanta micro-coreografia quanto os melhores.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Boa sequência e inclui encaixe induzido e distorção do substrato. Problemas: português com muitos erros de acentuação/ortografia (“celula”, “ate”, “forcas”), e afirmação forte de que a barreira “desaparece” (o correto é diminuir, não zerar). Ainda assim, não diz que enzima é consumida e mantém processo.",
+          "score": 7.6
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "Correto no geral e com alguma ação (tensão/estado de transição), mas escorrega no modelo “chave-fechadura” sem mencionar ajuste induzido (critério pede não tratar lock-and-key como único). Também inclui passos mais definicionais (“complexo se forma”, “fatores que influenciam”) com menos ‘dança molecular’.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Boa narrativa e correta em vários pontos (interações fracas, tensão, liberação, enzima intacta), mas usa repetidamente “encaixe perfeito”/fechadura-chave sem reconhecer ajuste induzido (penalidade esperada). Último passo (“Por que…”) é mais justificativa/porquê do que como funciona, aumentando sobreposição com explicação e fugindo do foco de processo.",
+          "score": 6.6
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-mechanics",
+  "testCaseId": "pt-chemistry-enzyme-catalysis-1"
+}

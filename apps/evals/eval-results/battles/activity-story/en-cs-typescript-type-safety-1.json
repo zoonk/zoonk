@@ -1,0 +1,185 @@
+{
+  "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: TypeScript typing decisions must reflect genuine type system reasoning. Penalize if:\n   - Type narrowing concepts are incorrectly applied\n   - Union types, generics, or utility types are misrepresented\n   - Decisions don't require understanding when strict typing helps vs. hurts\n\n2. SCENARIO CHECK: The workplace problem should involve realistic TypeScript challenges like: refactoring JavaScript to TypeScript, debugging type errors, designing type-safe APIs, or handling third-party library types.\n\n3. CONCEPTUAL FOCUS: Decisions should require reasoning about type safety trade-offs, not just recall of syntax.\n\n\nEVALUATION CRITERIA:\n\n1. STORY AUTHENTICITY: Dialogue must be pure conversation between colleagues with no narrator text, no character name prefixes (like \"Sarah:\"), and no action descriptions. The learner should feel immersed in a real workplace conversation.\n\n2. EDUCATIONAL ALIGNMENT: Every decision point must require applying lesson concepts through reasoning, not memorizing facts. Wrong options should be plausible but flawed for specific conceptual reasons.\n\n3. PLOT COHERENCE: Scenes must flow naturally as a continuous story where each scene builds from the previous dialogue. The second-to-last scene MUST introduce a genuine plot twist (surprise, complication, or revelation). The final scene must resolve the problem AND reinforce the main learning takeaway.\n\n4. FORMAT COMPLIANCE: Verify these constraints:\n   - context: Maximum 500 characters of pure dialogue\n   - question: Maximum 100 characters\n   - options: Exactly 4 objects, each with: text (max 50 chars), isCorrect (boolean), feedback (max 300 chars)\n   - Exactly 1 option must have isCorrect: true, the other 3 must have isCorrect: false\n\n5. PERSONALIZATION: The {{NAME}} placeholder must be used appropriately in dialogue to personalize the experience.\n\n6. FEEDBACK QUALITY: Each option must have feedback explaining WHY it's right (with insight) or WHY it's wrong (and what would be correct). Feedback should help learners understand the reasoning, not just state correctness.\n\n7. SCENE COUNT: Story must have between 7 and 20 scenes. Let problem complexity dictate length.\n\n8. DISTRACTOR QUALITY: All wrong options must be plausible choices someone might consider. Penalize obviously silly or absurd options that no reasonable person would choose.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific plot choices, character names, or scenario settings you might expect\n- Do NOT require specific scenes like \"investigation\" or \"resolution\" by name - focus on whether the story has good flow\n- Do NOT check against an imagined \"ideal\" story structure\n- ONLY penalize for: format violations, narrator/description text in dialogue, decisions that test memorization instead of reasoning, missing plot twist, poor distractor quality, or factually incorrect lesson application\n- Different valid story approaches exist - assess the quality of what IS provided\n\n    ",
+  "judgedAt": "2026-01-17T15:53:50.871Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Model D delivers an excellent 15-scene story with pure dialogue, no narrator text, and strong conceptual focus. The scenario (production bug in OrderSummary component) is realistic TypeScript work. Key strengths: (1) Decisions test genuine reasoning about type safety trade-offs (e.g., why 'unknown' vs 'any', when to use type predicates, incremental strict mode migration). (2) Scene 9 provides a genuine plot twist (enabling strict mode reveals 847 errors). (3) All 4 options per scene are plausible - wrong options are things developers actually consider. (4) Feedback explains WHY choices are right/wrong with insight. (5) Good use of {{NAME}} throughout. (6) Natural story progression from fixing one bug to discovering systemic issues. Minor issues: Some feedback is slightly verbose but still educational. Format compliance is strong.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Model B provides a strong 9-scene story with realistic debugging scenario (checkout flow crashes, discount feature issues). Excellent conceptual coverage: union types, type narrowing, unknown vs any, generics, type guards, and even structural typing collision (a sophisticated topic). Scene 7 introduces a genuine plot twist (Refund/Payment structural typing bug). Strong distractor quality - all wrong options are things developers might actually try. Feedback is explanatory and educational. Good {{NAME}} usage. Minor issues: Some dialogue feels slightly didactic (explaining concepts rather than naturally discovering them), and the structural typing collision, while realistic, is introduced somewhat abruptly. Format compliance is solid.",
+          "score": 8.9
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model G provides a 12-scene story with realistic scenario (checkout API runtime errors). Strong progression through type annotations, structural typing, narrowing, generics, any vs unknown, and type guards. Scene 10 serves as plot twist (Slack message interruption with API changes). Good {{NAME}} usage and natural dialogue flow. Distractors are plausible. Strong educational value in feedback. Minor issues: Scene 10 is a bit weak as a 'twist' - asking 'what could go wrong now' before the actual twist is revealed in Scene 11 is somewhat artificial. The intern character adds realism but occasionally makes the protagonist seem like a teacher rather than a colleague. Format compliance is good.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Model A delivers an 8-scene story with realistic scenario (user profile function crashes with API inconsistencies). Good coverage of union types, type guards, generics, and handling cached data. Scene 7 provides a clear plot twist (cached objects have extra userRoleId field not in API). Dialogue is natural and conversational. Feedback is clear and educational. Distractors are plausible. Good {{NAME}} usage. Minor issues: Story is on the shorter end (8 scenes), and some concepts could be explored more deeply. The plot twist, while valid, is somewhat predictable. Format compliance is solid.",
+          "score": 8.4
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model I provides a 9-scene story focused on third-party promo service integration - a realistic TypeScript challenge. Strong conceptual coverage of union types, narrowing, type guards, generics, and handling external JSON with unknown. Scene 8 introduces a twist (vendor sends numeric codes instead of strings). Dialogue is efficient and focused. Feedback is educational. Minor issues: Context strings sometimes have escaped quotes which appear slightly awkward in JSON. The story feels more like a troubleshooting session than a continuous narrative. Some scenes are quite terse. Plot twist is decent but somewhat predictable. Overall solid but less immersive than top entries.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Model F delivers an 8-scene story with realistic scenario (payment processing pipeline crashes). Good coverage of union types, narrowing, type guards, and generics. Scene 6 introduces a plot twist (different payment shape slipped through due to structural typing). Strong educational focus in feedback. Distractors are plausible. Good {{NAME}} usage. Minor issues: Story is on the shorter end and feels somewhat tutorial-like at times. The final scene's question about 'real value of type safety' feels more philosophical than practical. Some transitions between scenes are abrupt. Overall solid but less comprehensive than higher-ranked entries.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model H provides an 8-scene story with realistic scenario (checkout page crashes, API casting as 'any'). Covers key concepts: interfaces, structural typing, generics, type narrowing, unknown type, and type guards. Scene 7 serves as a twist (type guard passing but null value causing bugs). Dialogue is natural and conversational. Good {{NAME}} usage. Minor issues: Context has quotation marks around dialogue which is a format quirk (though not strictly prohibited). Story is relatively short. Some concepts could use deeper exploration. The twist (null value bypassing type guard) is good but feels more like an extension of existing problem rather than a surprise revelation. Overall solid work.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model E delivers a 9-scene story that covers essential TypeScript concepts (type annotations, interfaces, narrowing, type guards, generics, unknown vs any, discriminated unions). The plot twist in scene 8 (API returning 'error' string instead of object) is appropriate. Good {{NAME}} usage. However, the dialogue feels somewhat terse and clinical - more like bullet points than natural conversation. Some context strings are very abbreviated ('The API response has extra fields and sometimes missing ones'). Feedback is adequate but sometimes brief. The story flows logically but lacks the immersive quality of higher-ranked entries. Format compliance is good.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Model C provides an 11-scene story but has significant issues. The dialogue is extremely terse and abbreviated to the point of being unnatural ('Nice, TS now flags posts.map() outside checks'). Many context strings read like abbreviated notes rather than actual workplace conversation. Feedback is also very terse ('Wrong. any[] loses type info, defeats generics.'). While it covers relevant concepts (union types, narrowing, generics, structural typing, type guards), the presentation lacks the immersive dialogue quality expected. Scene 9 has a plot twist (AdminStats vs UserStats structural match) but it's delivered abruptly. The truncated style significantly hurts readability and educational value.",
+          "score": 6.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "This model followed all instructions perfectly, specifically the structural constraints. The dialogue was natural and immersive, avoiding the robotic tone found in other models. The educational progression was logical, covering structural typing, generics, and type guards. Crucially, it correctly placed the plot twist (API ID change from number to string) in the second-to-last scene (Scene 11 of 12) and used the final scene to resolve the issue and summarize the lesson, exactly as requested. The distractors were high-quality and tested conceptual understanding.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model I provided a very strong, technically accurate output. The scenario (handling untrusted third-party vendor data) is highly relevant. It correctly placed the twist (vendor sending numbers instead of strings) in the second-to-last scene (Scene 8 of 9). The dialogue was concise and professional. It ranks slightly below Model G only because Model G's narrative flow felt slightly more 'storied' with the intern character arc, whereas Model I was a bit more purely technical.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model E adhered well to the format constraints, placing a valid twist (API returning a string 'error' instead of object) in the second-to-last scene (Scene 8 of 9). The content was accurate and covered good ground (library boundaries, discriminated unions). The dialogue was decent, though slightly less engaging than G or I.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Model B had excellent educational content, particularly the plot point about structural typing causing a `Refund` vs `Payment` collision, which is a sophisticated lesson. However, it missed the specific structural instruction regarding the twist placement. The twist occurred in Scene 7, followed by a resolution scene (8), and a takeaway scene (9). The prompt required the final scene to resolve the problem *and* reinforce the takeaway, implying the twist should be immediately before the end. Despite this minor structural deviation, the quality was very high.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Model F provided a solid story with good dialogue. The twist (structural typing being too permissive) was intelligent. However, like Model B, the pacing at the end was slightly off regarding the 'second-to-last scene' constraint, with a philosophical filler scene inserted before the end. The content was otherwise strong.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Model A followed the format well, but the plot twist (cache having an *extra* field) was weak technically. In TypeScript, an extra field usually doesn't cause a type error or crash due to structural typing unless strict object literal checks are triggered, which wouldn't likely apply to a cached object read. This made the twist feel forced and the technical reasoning slightly suspect compared to others.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Model D was too long (14 scenes) and the pacing felt dragged out. The 'twist' (finding more bugs) was weak and didn't really complicate the plot, just expanded the scope. It felt more like a lecture than a narrative with a climax.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model H contained a confusing logical error in the twist description: 'The type guard only checked if (obj.percentage), and since null is falsy, it passed the check.' If a check evaluates to falsy (failure), it usually means the guard *rejects* the data or the `if` block is skipped. Saying it 'passed' implies the opposite. This muddied the educational value.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Model C failed the 'Story Authenticity' criteria significantly. The dialogue was robotic and quiz-like ('Wrong. any[] bypasses...', 'Correct! Type as...'), completely breaking the immersion of a workplace conversation. It did not feel like a story.",
+          "score": 3
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Best overall compliance with the required interactive-story format: pure colleague dialogue (no narrator or name prefixes), {{NAME}} used naturally, 9 scenes (within 7–20), clear plot twist in the second-to-last scene, and a resolving final takeaway. Decision points test real TypeScript trade-offs (boundary typing with unknown, type guards, generics, containing third-party any). Options are plausible and feedback explains why. Also respects the context/question/options length constraints better than most.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Strong TypeScript reasoning (nullable/undefined modeling, narrowing, discriminated/shape unions, type guards for vendor JSON, generics). Dialogue-only and coherent, with a clear twist near the end and a resolution. Minor drawback: context strings are wrapped in quotation marks, which can feel slightly \"scripted\" but still dialogue; otherwise format is solid and distractors are plausible.",
+          "score": 8.9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Good workplace realism and meaningful trade-offs (number|null, narrowing vs !, generic guard concept, when any is justified). Has a genuine twist (unexpected different shape slipping through) and resolves with a takeaway. Some choices are a bit hand-wavy conceptually (\"generic type guard\" requires extra machinery like schemas) but still directionally correct. Format mostly compliant and dialogue feels natural.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Excellent TypeScript concept coverage (eliminating any, interfaces, narrowing, unknown + guards, generics, structural typing collision + discriminators). Story flow is coherent and workplace-realistic. Main issue: violates the “no narrator/character prefixes” rule by using lots of backticked code and a slightly monologue/lecture tone; also no explicit plot twist positioned in the second-to-last scene (the twist happens earlier).",
+          "score": 7.9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Deep, realistic TypeScript migration narrative (nullability, strictNullChecks/strict mode, structural typing, generics, unknown + predicates, incremental adoption). Dialogue-only and coherent. Biggest problems: the second-to-last scene is not a plot twist (twist occurs earlier when discovering strict:false / 847 errors), and the conversation becomes very long/lecture-like. Likely also exceeds the 500-character max for context in multiple steps.",
+          "score": 7.4
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Solid TypeScript fundamentals (structural typing, narrowing, generics, unknown, type guards, generic constraints). Includes a clear late plot twist (Order ID type changed) and a resolution. Weaknesses: includes a filler decision point (“What could possibly go wrong now?”) with low educational value and one correct option that’s vague; several contexts likely exceed the 500-character limit.",
+          "score": 7.1
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Meets many core requirements: pure dialogue, {{NAME}} usage, coherent progression, and a clear second-to-last twist with a resolving takeaway. TypeScript concepts are mostly sound (union modeling, type guards, unknown vs any, generics). However, several contexts appear longer than the 500-character max, and some reasoning is slightly off/oversimplified (e.g., “TypeScript ignores extra fields structurally” is true in many assignment contexts, but “cache validation failing because extra field” implies runtime validator rejecting it—then the TS structural-typing explanation is mismatched).",
+          "score": 6.9
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Covers key TS concepts (structural typing, generics, narrowing unions, unknown + guards, fixing a flawed guard). But it violates the “pure conversation” constraint by wrapping every context in quotation marks and reads more like scripted lines than organic coworker chat. Also the supposed twist is conceptually confused: a guard checking `if (obj.percentage)` would not “pass” when null is returned; it would fail the truthy check. Twist placement is also not clearly second-to-last.",
+          "score": 6.4
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Has multiple TypeScript inaccuracies/confusions: optional chaining criticism is wrong (it can be a valid runtime-safe choice and doesn’t inherently “hide errors”); misunderstanding of “wrong T inference” due to structural typing; claims UserStats {posts} compatible with ReportData {items} (they aren’t structurally compatible); suggesting explicit generic arg `<Post>` to fix a shape mismatch is misguided. Dialogue is terse and unnatural, and several decision points feel like memorization. Twist exists late, but overall accuracy issues are significant.",
+          "score": 4.2
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-story",
+  "testCaseId": "en-cs-typescript-type-safety-1"
+}

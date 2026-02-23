@@ -1,0 +1,149 @@
+{
+  "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Supply and demand concepts must reflect genuine economics. Penalize if:\n   - Price elasticity effects are misrepresented in consequences\n   - Supply/demand dynamics are incorrectly described\n   - Market equilibrium concepts are misapplied\n\n2. DIMENSION CHECK: Dimensions should represent meaningful market concerns like:\n   - Revenue, Market Share, Customer Satisfaction, Profit Margins\n   - Should reflect the interconnected nature of market decisions\n\n3. SCENARIO CHECK: The challenge should involve realistic pricing and market decisions.\n\n4. CONSEQUENCE CHECK: Consequences should explain the market impact of pricing choices.\n\n\nEVALUATION CRITERIA:\n\n1. DIMENSION QUALITY: Dimension names used across all effects should:\n   - Connect meaningfully to lesson concepts (2-4 unique dimensions total)\n   - Create natural tension (trade-off axes)\n   - Be consistently named across all effects (same concept = same name)\n\n2. CONSEQUENCE QUALITY: Each option's consequence must:\n   - Explain what happens as a result of the choice\n   - Connect to lesson concepts (not generic outcomes)\n   - Teach something about trade-offs\n   - Be consistent with the stated effects (if effect is positive for dimension X, consequence should reflect improvement in X)\n\n3. TRADE-OFF DESIGN: No option should be obviously best. Options should affect multiple dimensions with mixed impacts (e.g., positive for one, negative for another). If one option has all positive effects, penalize.\n\n4. EFFECTS CONSISTENCY: Each option should have 1-3 effects. Dimension names should be reused consistently across options to create meaningful trade-offs (not random unique names for each effect).\n\n5. FORMAT COMPLIANCE: Verify these constraints:\n   - intro: Maximum 500 characters\n   - steps: 4-6 steps, each with context (max 500 chars), question (max 100 chars), and 3-4 options\n   - options: Each with text (max 80 chars), consequence (max 300 chars), effects array (1-3 items with dimension and impact)\n   - reflection: Maximum 500 characters\n\n6. PERSONALIZATION: The {{NAME}} placeholder must be used appropriately in intro and dialogue.\n\n7. CONCEPTUAL ACCURACY: Consequences and effects must make sense given the lesson content. If the lesson teaches that X leads to Y, effects should reflect this.\n\n8. DIALOGUE QUALITY: Context must be pure conversation with NO narrator text, NO character name prefixes, NO action descriptions.\n\n9. REFLECTION QUALITY: The reflection must tie the experience back to lesson principles and acknowledge that different approaches have merit.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific scenario choices or dimension names\n- Do NOT require specific dimensions by name\n- ONLY penalize for: format violations, consequences that don't connect to lesson concepts, obviously dominant options, inconsistent dimension naming, narrator text in dialogue\n- Different valid challenge designs exist - assess the quality of what IS provided\n\n    ",
+  "judgedAt": "2026-01-17T19:43:31.561Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Model B excels across all evaluation criteria. Dimensions (Revenue, Market Share, Profit Margin, Customer Satisfaction, Brand Position) are meaningful and consistently named throughout, creating genuine trade-offs. The streaming service scenario with 5 steps (within 4-6 requirement) offers realistic market challenges including competitor price cuts, content costs, exclusive content leverage, recession response, and strategic direction. Consequences are detailed, concept-connected (mentions elasticity, demand curves, market segmentation, equilibrium), and consistent with effects. Trade-offs are well-designed with no obviously dominant options - each choice involves mixed impacts. The 4-option format in each step adds depth. Format compliance is excellent with appropriate character limits. The reflection meaningfully ties back to supply/demand principles. Minor weakness: some dimension names are inconsistent ('Financial Stability' vs 'Strategic Flexibility' vs 'Operational Complexity' appear in later steps), but core dimensions remain consistent.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model G demonstrates sophisticated understanding of supply/demand economics with a cold-brew brand scenario. The dimensions (Profit Margin, Sales Volume, Retailer Relationship, Brand Strength) are well-chosen and consistently used throughout. The 5 steps cover cost increases, competitor pricing, shortage management, demand shifts, and channel elasticity - all highly relevant market decisions. Consequences are rich with economic reasoning (mentions elasticity, demand shifts, promo dependency, price sensitivity). The 4-option format provides good depth. Trade-offs are genuinely difficult with mixed impacts across dimensions. Strong reflection connects to distinguishing curve movements from shifts. Format compliance is good. Dialogue quality is natural and professional. Minor issues: some dimension inconsistency in later steps and the intro is slightly less engaging.",
+          "score": 8.9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model A presents a comprehensive electric bicycle startup scenario with 5 well-designed steps covering launch pricing, supply shocks, demand surges, viral marketing, and supply-side breakthroughs. Dimensions (Revenue Growth, Market Share, Customer Loyalty) are meaningful and mostly consistent. Consequences connect well to economics concepts (mentions supply curve shifts, law of demand, equilibrium, inelastic demand). Trade-offs are generally well-balanced with mixed impacts. The scenario is creative and engaging. However, Step 4 Option 3 (premium add-ons) has two positive effects with no negative, which slightly weakens trade-off design. Step 5 Option 3 also has two positives. Context sections appropriately use {{NAME}} and maintain dialogue format. Reflection is strong. Format appears compliant.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model C offers a specialty coffee roaster scenario with 5 steps covering cost increases, grocery chain partnerships, demand surges, cold brew repositioning, and competitor price wars. Dimensions (Revenue, Brand Perception, Customer Loyalty, Market Share) are well-chosen and mostly consistent. Consequences are thoughtful and connect to business realities. Trade-offs are well-designed. Step 3 Option 3 (limited bundle deal) has all positive effects (Market Share+, Revenue+, Brand Perception+), which violates the trade-off design principle - this is a significant issue. The dialogue is natural and context-appropriate. Reflection is strong with multiple concept references. Format compliance appears good. The scenarios feel realistic for a mid-sized coffee company.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Model D features a coffee shop manager scenario with only 4 steps (minimum acceptable), which limits depth. Dimensions (Profitability, Brand Reputation, Customer Volume) are consistent and meaningful. The scenario covers elastic demand pricing, supply shocks, substitute competition, and surge demand - all relevant concepts. Consequences connect to economics (mentions elastic demand, supply curve shifts, movement along demand curve). Trade-offs are reasonably balanced. However, the scenario feels more basic than others. Step 1 Option 1 and Step 2 Option 2 have somewhat predictable outcomes. The intro and reflection are adequate but less polished. Format compliance is good. Context maintains dialogue format appropriately. The {{NAME}} usage is correct throughout.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model E presents a consumer device scenario with 5 steps. The dimensions include 'Selling Price' which is unusual - price is typically the decision variable, not a dimension affected by decisions. Having 'Selling Price' as a dimension with positive/negative impacts creates some conceptual confusion (e.g., 'positive' impact on selling price when you raise prices feels redundant). The 'Inventory Levels' dimension with positive/negative impacts is also somewhat unclear in meaning. Consequences are functional but less rich with economic reasoning than top models. Trade-offs exist but dimension choices make them less intuitive. The intro is notably brief. Reflection is adequate but generic. Format compliance is acceptable. Scenarios are relevant but feel less developed.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Model F presents a specialty beverage scenario with 5 steps. Dimensions (Revenue, Inventory Stability, Customer Reach) are somewhat unusual - 'Customer Reach' and 'Inventory Stability' are less standard market dimensions than revenue/market share/profit margin. The dimension naming is consistent but the choices are weaker. Consequences are functional but lack depth in connecting to supply/demand economics - they describe outcomes without explaining the underlying economic principles (no mentions of elasticity, equilibrium, curves, etc.). Trade-offs exist but feel less substantive. The intro and reflection are notably brief and generic. Some options feel somewhat similar across steps. Format compliance is acceptable. Overall, the output is functional but lacks the depth, economic reasoning, and engagement of higher-ranked models.",
+          "score": 6.8
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model G is the strongest output. It demonstrates sophisticated economic reasoning by correctly distinguishing between Profit Margin and Sales Volume effects, avoiding the common error of conflating revenue and profit. It consistently uses 4 meaningful dimensions (Profit Margin, Sales Volume, Retailer Relationship, Brand Strength) that add realistic business depth (e.g., retailer pressure). The dialogue is natural, and it strictly adheres to all formatting constraints.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model E is excellent and technically precise. It correctly models economic outcomes (e.g., recognizing that absorbing costs hurts margins but not sales volume). It follows all dimension consistency rules. It ranks slightly lower than G only because it treats 'Selling Price' as an outcome dimension in the effects table, which is somewhat redundant as it is the decision variable, whereas Model G uses that slot for more distinct outcomes like 'Retailer Relationship'.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Model D provides a solid, error-free execution. It uses a consistent set of 3 dimensions and correctly identifies the trade-offs in every scenario (e.g., supply shocks affecting profitability vs. brand reputation). The scenarios are simple but accurate, making it a very good educational tool. It lacks the slight extra layer of complexity found in Model G but meets all criteria well.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model A has the most engaging narrative voice and excellent dialogue. However, it contains a notable economic logic error in Step 1. It states that an aggressive low price which generates 'massive' demand results in 'negative' Revenue Growth. Economically, high volume usually increases Revenue (Top Line), even if Profit (Bottom Line) is negative. This confusion between Revenue and Profit is a significant educational flaw.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model C writes good dialogue and follows formatting rules, but it makes the same economic error as Model A. In Step 1, it claims that holding prices steady (absorbing costs) while volume remains stable or grows results in 'Revenue: negative'. Since Revenue is Price × Quantity, Revenue should be neutral or positive; only Profit would be negative. This undermines the lesson accuracy.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Model F is adequate but suffers from similar conceptual looseness regarding Revenue vs. Profit. In Step 2, it suggests that absorbing a cost increase leads to negative Revenue, which is mathematically incorrect if price and volume remain steady. Its dimension choice 'Inventory Stability' is valid but slightly less central to the core lesson than the metrics used by higher-ranked models.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Model B fails the specific formatting constraints regarding dimension consistency. The prompt explicitly requires 2-4 unique dimensions total, used consistently across all options. Model B uses over 10 different dimension names (e.g., Financial Stability, Market Complexity, Strategic Position, Brand Position, etc.), changing them in almost every step. This violates the 'Effects Consistency' rule.",
+          "score": 3
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Strong overall: 5 steps (within 4–6), each has 4 options, and dialogue is conversational with no narrator/action tags. Dimensions are reused consistently (Profit Margin, Sales Volume, Retailer Relationship, Brand Strength) creating clear trade-offs without a dominant option. Consequences correctly reference elasticity, supply shocks, shortages, and demand shifts (preference shift), generally matching effects. Minor nit: some options have many “neutral” effects (Step 1 option 3) reducing tension slightly, but still acceptable.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Meets format well (intro/reflection, 5 steps, 4 options each). Dialogue tone is mostly conversational and economics concepts are used accurately (elastic demand, segmentation, demand shifts from recession, tiers). Trade-offs are generally non-dominant. Main weakness: dimension sprawl/inconsistency—uses many one-off dimensions (Brand Position, Financial Stability, Strategic Position, Market Complexity, Operational Complexity, Long-term Flexibility, Strategic Flexibility). This violates the “2–4 unique dimensions total” expectation and weakens cross-step comparability.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Solid economics and realistic pricing/market scenarios; trade-offs are clear and no option is obviously best. Dialogue is clean and conversational. 5 steps with 3 options each is allowed. However, dimension naming is inconsistent and exceeds the desired 2–4 core dimensions (Revenue, Customer Loyalty, Market Share, Brand Perception used variably; some steps omit key ones), reducing the intended tension across a small set of reused metrics.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Conceptually strong and realistic (supply shocks, demand shifts, inelasticity after influencer, equilibrium/shortage framing). Effects are mostly consistent with consequences. But it violates key constraints: intro is clearly over 500 characters. Dialogue also reads more like expository narration at times (still no name prefixes, but long lecture-like blocks). Dimension set is mostly consistent (Revenue Growth/Market Share/Customer Loyalty), but there are a couple of problematic trade-off designs: Step 4 “premium add-ons” is all-positive (Customer Loyalty +, Revenue Growth +) creating a dominant-looking option.",
+          "score": 7.4
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Good conversational style and generally accurate supply/demand language (elasticity, supply shock, substitute good shifting demand). Dimensions are consistent and limited (Profitability, Brand Reputation, Customer Volume). Trade-offs are mostly mixed. Weaknesses: only 4 steps (minimum OK), but several effect–consequence mismatches/oddities: e.g., Step 1 low price claims high revenue due to volume yet only marks Profitability positive and Brand Reputation negative (reputation hit is plausible but not tied to stated consequence of slow service); Step 2 “raise prices” says margins protected but sets Profitability to neutral. Some options feel a bit simplistic.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Meets step count (5) and dialogue purity. Economics references are mostly fine but are often vague (“inelasticity varies by region” without tying to clearer demand/supply mechanics). Dimension set is not very market-standard and is somewhat inconsistent in meaning (Customer Reach, Inventory Stability, Revenue), and trade-offs are sometimes weak: Step 3 option 1 is all-positive (Inventory Stability +, Revenue +) despite acknowledging quality issues—so effects don’t reflect the stated downside. Overall educational linkage is lighter than top models.",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Format mostly compliant (5 steps, 3 options each) and uses {{NAME}}. However, it breaks key expectations: dimensions are not meaningful/consistent market concerns in the intended sense—“Selling Price” is treated as a performance dimension with positive/negative impacts, which is conceptually off (price is a decision lever, not an outcome metric). Also includes an effect inconsistency: Step 2 promotion has Inventory Levels marked positive even though consequence implies inventory moves faster (inventory would typically fall). Dialogue is quite generic and less tied to equilibrium/curve logic than others.",
+          "score": 6
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-challenge",
+  "testCaseId": "en-economics-supply-demand-1"
+}

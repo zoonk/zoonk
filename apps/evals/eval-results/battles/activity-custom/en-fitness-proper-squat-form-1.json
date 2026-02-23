@@ -1,0 +1,185 @@
+{
+  "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Squat form involves specific body positioning. Penalize if:\n   - Foot placement width and angle are not specified\n   - Knee tracking direction is incorrect or missing\n\n2. SAFETY CHECK: Penalize if:\n   - Breathing pattern is not mentioned\n   - Back position (neutral spine) is not addressed\n   - Depth guidance is missing or unsafe\n\n3. VERIFICATION CHECK: Penalize if no cues for self-checking form are provided (mirror check, how it should feel).\n\n\nANTI-CHECKLIST GUIDANCE (READ THIS FIRST - CRITICAL):\n- Do NOT penalize for missing steps you might expect\n- Do NOT require a specific number of steps - let complexity dictate length\n- Do NOT check against an imagined \"ideal\" procedure\n- Do NOT interpret rules too literally - use common sense\n- Different valid procedures exist - assess the quality of what IS provided\n- ONLY penalize for actual problems: incorrect sequence, factual errors, missing critical safety steps, or truly confusing instructions\n\nEVALUATION CRITERIA:\n\n1. PROCEDURAL ACCURACY: Steps must be in correct sequence. Penalize only if actions are genuinely out of order or skip critical prerequisites.\n\n2. ACTION-ORIENTED LANGUAGE: Each step must use imperative verbs (Click, Type, Add, Place, Turn, etc.). Penalize passive or purely descriptive language.\n\n3. LOGICAL STEP GROUPING: Steps should be coherent units that a user can follow without confusion. This does NOT mean micro-splitting every movement:\n   - ACCEPTABLE: \"Click the File name field and type your document name\" (filling a form field is ONE action)\n   - ACCEPTABLE: \"Pull over safely and turn on hazard lights\" (logically grouped safety actions)\n   - ACCEPTABLE: \"Pour hot water, swirl to warm, then discard\" (continuous motion)\n   - PROBLEMATIC: \"Download the file, install it, configure settings, and restart\" (unrelated actions crammed together)\n   The goal is clarity, not arbitrary splitting. If a step reads naturally and a user can follow it without confusion, it's fine.\n\n4. VERIFICATION POINTS: Where helpful, include confirmation of success. Only penalize if verification is missing for critical/risky actions. Do NOT penalize verification steps as \"padding\" - helping users confirm success is valuable teaching.\n\n5. FORMAT COMPLIANCE:\n   - title: Maximum 50 characters\n   - text: Maximum 300 characters\n\n6. SCOPE ADHERENCE: Content should cover the activity as described. Do not penalize for reasonable setup or verification steps.\n\n7. PRACTICAL FOCUS: Steps should be actionable instructions, not conceptual explanations.\n\nFINAL CHECK: Before penalizing anything, ask yourself: \"Would a reasonable human instructor consider this a genuine problem?\" If not, do not penalize.\n\n    ",
+  "judgedAt": "2026-01-18T04:06:58.982Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Excellent comprehensive coverage. Includes all critical safety elements: breathing (step 4 inhale, step 7 exhale), neutral spine (step 4), depth guidance (step 5 parallel to floor with flexibility), foot placement with specific angles (10-15 degrees), knee tracking (steps 5-6), and explicit self-check mechanisms (mirror/video review in setup and final step). Action-oriented language throughout. Has practical setup steps and verification. Only minor issues: occasionally uses colons awkwardly, but instructions remain clear.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Strong comprehensive guide with all key elements. Breathing is not explicitly mentioned (minor issue), but has bracing (step 4). Excellent coverage of: foot placement with angles (10-30°), knee tracking (step 7), neutral spine implied through posture cues, depth guidance with flexibility (step 9), and strong self-check mechanisms (mirror/recording setup and form check step). Good troubleshooting with heel lift fix. Action-oriented imperatives throughout. Very practical approach.",
+          "score": 8.7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Thorough coverage with extensive self-checking mechanisms (mirror/camera setup, pause and check alignment, video recording). Covers foot placement (shoulder-width with 5-15° angle), knee tracking (step 15 troubleshooting), depth (parallel to floor), breathing mentioned in step 7, core bracing. Provides good correction guidance. However, breathing pattern during the actual movement (exhale on rise) is missing. Some steps feel slightly over-split but not confusing. Good troubleshooting section.",
+          "score": 8.4
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Good overall coverage. Includes breathing implicitly (no explicit inhale/exhale pattern but has core bracing), foot placement with angles (15-30 degrees), knee tracking (step 6), depth guidance with flexibility (step 7), and self-check at bottom position. The explicit bottom position check is valuable. Missing explicit breathing pattern during movement. Practice reps with tempo guidance is helpful. All steps use action-oriented language.",
+          "score": 8.1
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Solid coverage with foot placement (5-20 degrees), knee tracking (step 5), depth (parallel to floor), exhale on ascent (step 6). Bracing covered well. Self-check cues present but less explicit than top models ('you should feel quads and glutes'). Missing dedicated verification/mirror check step. All imperatives used appropriately. Clear and concise. Good but lacks the comprehensive self-checking that higher-ranked models have.",
+          "score": 7.9
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Good coverage of fundamentals: foot placement (15 degrees), knee tracking (step 4), depth (parallel or below), neutral spine mentioned, exhale on rise (step 6). Has verification step (step 5) with good cues like 'wiggle your toes.' Core engagement explained. However, 'knees haven't moved past your toes' is outdated cueing (knees past toes is generally acceptable). Self-check cues present but no mirror/video recommendation. Breathing partially addressed.",
+          "score": 7.7
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Good fundamentals with foot placement (5-15 degrees), hips-first initiation, knee tracking (step 5), depth guidance with heel-lift modification. Has explicit neutral spine mention for back protection. However, breathing pattern is completely missing. Self-check is limited to glancing down at knees - no mirror/video or 'how it should feel' cues beyond knee alignment. 'Knees should not extend excessively past your toes' is slightly outdated cuing. Otherwise solid action-oriented steps.",
+          "score": 7.4
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Covers foot placement (5-10 degrees - specific), knee tracking (step 4), depth (parallel), neutral spine (dedicated step 5). Good action-oriented language. However, breathing pattern is only partially addressed (mentions 'without holding your breath' but no inhale/exhale timing). Self-check cues are minimal - mostly describes what should happen but lacks mirror/video verification suggestions. The 'knees not extending beyond toes' cue in step 4 is somewhat outdated advice.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Covers basic elements: foot placement with slight outward toes (no specific angle given - problematic), knee tracking (step 8), depth (parallel or comfortable). Has verification cues ('you should feel/see'). However, missing critical elements: no breathing pattern mentioned at all, neutral spine only implied ('back straight'), foot angle not specified with degrees. Core engagement is completely missing. Less comprehensive than others.",
+          "score": 6.3
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "This model represents the gold standard for this task. It strictly adheres to all requirements, particularly the 'Verification Points' by including a 'You should...' sensory or visual check in literally every step. It covers setup thoroughly (shoes, space, mirror), addresses safety (bracing, knee tracking), and troubleshooting (correcting inward knees). While 16 steps is long, the logical grouping makes it easy to follow.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "An excellent, highly professional output. It provides the best physiological instructions for breathing (Inhale/Brace -> Exhale), which is critical for safety. It logically groups actions and includes specific steps for setup and self-review using a mirror. It is slightly less rigid in its verification structure than Model C but flows more naturally.",
+          "score": 9.3
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Very strong adherence to formatting and verification. Like Model C, it uses 'You should...' cues effectively in every step to help the user self-correct. It loses points slightly against Model B for being less explicit about breathing timing (only mentions bracing, not the inhale/exhale rhythm), but is otherwise exceptional.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "A solid, safe, and accurate procedure. It correctly identifies the breathing pattern (exhale on push), uses arm counterbalance for stability (good for beginners), and includes good verification language ('You should end...'). It is concise while covering all safety bases.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "A good, competent guide. It includes necessary safety steps (neutral spine, knee tracking) and breathing (exhale). It uses verification points well. It is slightly less detailed in the setup phase (mirror/shoes) than the top models but contains no errors.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Good physical cues and use of the counterbalance arm position. Step 7 is a dedicated check step, which is helpful. However, it is penalized for completely missing breathing instructions, which is a specified safety check in the prompt.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "The steps are clear and action-oriented, and it uses verification phrasing ('You should...'). However, it fails to mention breathing entirely and is less descriptive regarding core bracing than the higher-ranked models.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "The procedure is generally accurate, but it gives potentially problematic safety advice: 'without holding your breath.' In a squat, holding the breath (Valsalva) while bracing is the standard for spinal stability. Advising against it without nuance is a safety deduction. It also lacks specific setup cues.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "The weakest of the group. It is too brief, missing breathing instructions entirely, and lacks the explicit verification points or 'how it should feel' cues present in almost all other models.",
+          "score": 5.5
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Strong procedural flow with clear imperatives. Specifies stance width and toe angle, includes knee-tracking cues, neutral posture cues, and safe depth guidance. Provides self-check via mirror/recording and iterative adjustment. Main miss: no explicit inhale/exhale pattern (only bracing).",
+          "score": 8.9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Very complete: stance width/angle, knee tracking, neutral spine, explicit inhale/brace and exhale on rise, safe depth. Includes strong self-check (mirror/video). Minor issue: several steps bundle multiple actions (e.g., space+shoes+lighting+mirror; arm options+posture cues), but still followable. Slight inconsistency: “shoulder-width (about hip distance)”.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Excellent verification/self-check structure (mirror/camera, alignment check, corrective action) and good stance/toe angle plus knee tracking and neutral spine checks. Depth guidance is safe. Main deficiency: breathing pattern isn’t clearly specified beyond “take a breath and brace.” Some step verbosity/grouping is borderline but coherent.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Clear, well-sequenced cues with stance width/angle, knee tracking, neutral spine checks, safe depth guidance, and a bottom-position verification step. Missing explicit breathing instructions and lacks mirror/video self-check (only internal “check” cues).",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Good concise sequence with stance width/angle, knee tracking, neutral spine, and explicit exhale on ascent. Depth guidance is present. Missing explicit inhale/brace breathing pattern (partial), and lacks concrete self-check method (mirror/video/how it should feel) beyond “check.”",
+          "score": 7.7
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Covers stance width/angle, knee tracking, neutral spine, and safe depth (“if heels lift, don’t go as low”). Has a basic self-check cue (“glance down”). Missing breathing guidance and some cues are a bit rigid (“hips must move back first”), but generally safe and actionable.",
+          "score": 7.4
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Actionable and well ordered; includes knee direction and parallel-depth guidance and some feel-based verification (wiggle toes, tension/stability). Missing foot angle specification, missing explicit breathing guidance, and neutral spine is only implied (“back straight”) rather than clearly “neutral spine.”",
+          "score": 6.6
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Solid stance width/angle and knee tracking cue, and includes neutral-spine guidance. However, breathing pattern is not provided (only “without holding your breath”), depth guidance is somewhat mixed (parallel “or as close as comfortable” but also “knees not beyond toes,” which is an unreliable rule), and self-check cues are limited (no mirror/video/how-it-should-feel guidance).",
+          "score": 6.4
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Has stance angle and knee tracking plus exhale on rise, and includes a bottom-position verification step. Major issues: no stance width specified, promotes “knees haven’t moved past your toes” as a check (can be misleading), and lacks explicit neutral-spine cue beyond “natural curve.” No clear self-check method (mirror/video).",
+          "score": 6
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-custom",
+  "testCaseId": "en-fitness-proper-squat-form-1"
+}

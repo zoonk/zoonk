@@ -1,0 +1,167 @@
+{
+  "expectations": "\nLANGUAGE REQUIREMENT: Titles and text must be in Portuguese.\n\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Dopamine examples must reflect current neuroscience accurately. Penalize if:\n   - Dopamine is oversimplified as just \"the pleasure chemical\" (it's about motivation/reward prediction)\n   - Examples attribute behaviors to dopamine that involve multiple neurotransmitter systems\n\n2. CONTEXT CHECK: Penalize if examples are limited to addiction. Dopamine is involved in motivation, learning, movement, social behavior, creativity, and goal-directed action.\n\n3. DISTINCTION FROM EXPLANATION: The explanation covered WHAT dopamine is (a neurotransmitter involved in reward). This should show WHERE dopamine influences behaviors and experiences in daily life.\n\n\nEVALUATION CRITERIA:\n\n1. REAL-WORLD RELEVANCE: Examples must be concrete, recognizable situations from everyday life. Penalize abstract or theoretical applications without clear real-world grounding.\n\n2. CONTEXT DIVERSITY: Content should show the topic across different life domains (daily life, work, entertainment, unexpected places, personal interests). Variety helps different learners connect.\n\n3. RECOGNITION FACTOR: Examples should create \"aha moments\" — helping learners see the topic in familiar places they hadn't noticed before.\n\n4. FORMAT: Each step must have a title (max 50 chars) and text (max 300 chars).\n\n5. TONE: Conversational, like pointing out hidden patterns in everyday life. Include metaphors and analogies from familiar activities.\n\n6. FOCUS: Shows WHERE something appears (real-world contexts), not WHAT it is (definitions) or HOW it works (processes).\n\n7. NO OVERLAP: Must not repeat content from the EXPLANATION_STEPS which covered the WHAT.\n\n8. SCOPE: Content matches the lesson scope exactly.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for missing specific life domains or contexts you might expect\n- Do NOT require a specific number of contexts or examples\n- Do NOT check against an imagined \"complete\" list of applications\n- ONLY penalize for: incorrect real-world claims, abstract examples without concrete situations, overlap with explanation content, or lack of variety in context types\n- Different valid sets of examples exist - assess the quality of what IS provided\n\n    ",
+  "judgedAt": "2026-01-17T14:32:30.049Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Excellent variety of contexts (12 examples): daily rituals, habit tracking, social media, notifications, shopping, streaming, music habituation, food cravings, procrastination/novelty-seeking, gaming, social recognition. Strong neuroscience accuracy - consistently frames dopamine as anticipation/motivation rather than just pleasure (e.g., 'empolgação antes de acontecer', 'próxima recompensa está logo ali'). The habituation example ('Quando algo perde a graça') is particularly sophisticated, showing reward prediction error. Concrete, recognizable situations with good metaphors ('caça ao tesouro', 'combustível'). All titles under 50 chars, all texts under 300 chars. Conversational tone throughout. No overlap with explanation content - focuses entirely on WHERE dopamine appears. Minor weakness: some examples lean toward addictive behaviors, but includes enough diverse contexts (elogios/recognition, procrastination, music) to avoid the addiction-only penalty.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Strong variety (8 examples): streaming, social media, productivity, gaming, food anticipation, travel planning, shopping urgency, exercise apps. Excellent neuroscience accuracy - consistently emphasizes anticipation over consumption ('dopamina é liberada na antecipação, não só na primeira mordida', 'expectativa da viagem muitas vezes traz mais alegria que a viagem em si'). Good insight about uncertainty amplifying dopamine ('Seu cérebro libera mais dopamina na incerteza do que na certeza'). Clever recognition factors ('O algoritmo sabe disso'). All format requirements met. Good conversational tone. Minor issue: slightly more focused on tech/digital contexts, but includes enough variety (pizza, travel planning, exercise) to be well-rounded.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Good variety (7 examples): notifications, social media scrolling, food cravings, task lists, online shopping, gaming, music. Strong neuroscience accuracy - excellent framing of dopamine as motor impulse and anticipation ('não é sobre o gosto em si, mas sobre o impulso motor', 'a expectativa da chegada e o processo de caça são frequentemente a melhor parte'). The musical 'arrepio' example is unique and scientifically grounded. Clear 'aha moments'. All format requirements met. Good conversational tone with metaphors ('caça-níqueis'). Slight weakness: fewer examples than top performers and could have more unexpected contexts.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Good variety (7 examples): notifications, online shopping, gaming, task lists, social media scrolling, sales/work, food aromas. Accurate neuroscience - consistently frames dopamine as anticipation/expectation ('antecipação que faz você checar', 'expectativa da entrega'). Good use of slot machine metaphor for variable rewards. Unique workplace example (sales) adds diversity. All format requirements met. Clear, conversational tone. Minor weaknesses: some examples slightly overlap in theme (notifications and social scrolling both about social media/phones), and the 'recompensa variável' explanation borders on 'how it works' rather than 'where it appears'.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Good variety (8 examples): checklists, work progress, social media, food anticipation, gaming, notifications, gym, travel planning. Accurate neuroscience approach - focuses on anticipation and motivation ('cérebro antecipando o prazer', 'empurrão interno'). Appropriately avoids calling dopamine 'pleasure chemical'. Unique examples: gym/physical training and travel planning add diversity. All format requirements met. Conversational, accessible tone. Weakness: some explanations feel slightly less vivid/concrete than top performers (e.g., 'aquele impulso de continuar um projeto' is somewhat abstract). Generally solid but lacks the memorable metaphors of higher-ranked models.",
+          "score": 8.1
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Good variety (12 examples): notifications, gaming, social media, exercise, coffee, shopping urgency, task lists, fast food, music, streaming, gamification, relationships. Generally accurate neuroscience. However, some issues: the exercise example mentions 'exercício → endorfinas → bem-estar' which incorrectly conflates dopamine with endorphins (different neurotransmitter systems). The fast food example ('engenharia de dopamina: açúcar, sal e gordura') oversimplifies - taste involves multiple systems. The relationship example is good but slightly ventures into explanation territory. Title 'Gamificação no Trabalho' doesn't match content well (discusses games generally). Some examples feel more like explanations of mechanisms than real-world contexts. Format requirements met.",
+          "score": 7.6
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Decent variety (10 examples): notifications, shopping, checklists, exercise, gaming, social media, cooking, work goals, hobbies, professional perspective. The final step ('O olhar do profissional') breaks the pattern - it's about professionals observing behavior rather than a personal real-world context, which is less effective for learners. Some examples are less concrete ('colore a curiosidade' is somewhat abstract). The exercise example ('aquele bem-estar') is vague about dopamine's specific role. The gaming step has an odd phrase 'como se cada conquista fosse música' that's confusing. Generally accurate but some descriptions feel surface-level. Format requirements met.",
+          "score": 7.4
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Decent variety (9 examples): smartphone use, gym plateau, social media, sweets habituation, studying, gaming, new hobbies, event anticipation, work motivation. However, significant issues: the content often explains HOW dopamine works (mechanisms like tolerance, reward prediction) rather than simply showing WHERE it appears in daily life. Examples like 'tolerância dopaminérgica em ação' and discussions of 'platô' are more educational explanations than recognition of everyday contexts. This overlaps with what an EXPLANATION step would cover (the WHAT/HOW). The tone is also slightly more lecturing than conversational. Some examples are good (event anticipation, new hobby excitement) but the overall approach leans too explanatory. Format requirements met.",
+          "score": 6.8
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "This model provides the most scientifically nuanced examples while remaining accessible. It explicitly addresses the 'movement/motor' function of dopamine (Step 3: 'impulso motor'), which correctly distinguishes 'wanting' from 'liking'—a key requirement of the prompt. It also accurately explains the mechanism behind music chills (prediction error). The tone is perfect, and the formatting is correct.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Excellent conversational tone and accurate scientific grounding. It shines by including the 'Sales/Work' example (Step 6), which illustrates dopamine's role in persistence and resilience (effort-based reward) rather than just passive consumption. This demonstrates great context diversity beyond screens and food.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Strong real-world diversity. It moves effectively beyond the standard 'phone and food' examples to include cooking (anticipation/labor) and learning an instrument (skill acquisition/neuroplasticity). This helps learners connect the topic to personal growth and hobbies, not just habits.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "The most relatable and conversational tone ('momentinho gostoso', 'do nada'). It captures the feeling of the concepts very well. While slightly less diverse in context than Model F (mostly focuses on daily tasks and consumption), the execution is flawless and highly engaging for a learner.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "A very comprehensive list that covers valid concepts like habituation ('When things lose their fun') and procrastination. However, the sheer volume (12 steps) is a bit overwhelming compared to the tighter curation of the top models. The content itself is high quality and accurate.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Solid and accurate performance. It covers the basics (Netflix, social media, travel planning) well. It ranks lower simply because the examples are somewhat standard and lack the unique 'aha moments' found in Models D (motor impulse), A (sales resilience), or F (learning instruments).",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "While accurate, this model leans heavily into framing dopamine through the lens of 'addiction', 'traps', and 'vices' (using words like 'Vício', 'Preso', 'Caça-níqueis' repeatedly). While these are valid contexts, the tone feels more cynical and less about the broad spectrum of human motivation compared to the others.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "This model leans too far into explanation/theory rather than just pointing out the application. It frequently explains 'tolerance' and technical mechanisms ('tolerância dopaminérgica') within the text blocks. This violates the guideline to focus on WHERE it appears rather than HOW it works, making it feel more like a textbook than a conversational guide.",
+          "score": 6
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Cumpre bem o foco em “onde aparece” com exemplos cotidianos e variados (tarefas, trabalho/projeto, feed, cheiro de comida, games, mensagens, treino, planejar viagem). Tom conversacional e concreto. Evita reduzir dopamina a “prazer” puro e destaca antecipação/motivação. O principal problema é FORMATO: vários textos parecem exceder 300 caracteres.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Boa diversidade de contextos (compras, tarefas, exercício, cozinhar, trabalho, hobbies, UX). Linguagem em português e exemplos reconhecíveis. Em geral mantém dopamina como impulso/curiosidade/progresso. Porém alguns textos tendem ao abstrato (“dopamina colore a curiosidade”, “o olhar do profissional”) e há chance de excesso de caracteres em alguns passos; metáforas ok, mas às vezes menos “aha” por ficar genérico.",
+          "score": 8.1
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Exemplos concretos e bons “aha” (notificação, scroll variável, comida/impulso motor, lista, compra online, games, música). Mantém bem a ideia de antecipação/predição. Problema forte de FORMATO: vários textos provavelmente >300 caracteres. Pequenos exageros (“pura busca por dopamina”) e “dose”/“descarga” soam mais simplificadores, mas sem cair totalmente em “química do prazer”.",
+          "score": 7.9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Bem ancorado em situações reais e com variedade (celular, compras, games, tarefas, vendas, comida). Traz antecipação e recompensa variável. Contudo repete bastante o tema redes sociais/celular (2 passos muito próximos) e usa linguagem neuroquímica simplificada (“shot”, “pico”) e afirmações mais fortes do que o necessário. FORMATO: textos longos, muitos devem ultrapassar 300 caracteres.",
+          "score": 7.4
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Conjunto sólido e concreto (autoplay, redes, checklist, loot aleatório, pizza/delivery, planejar férias, ofertas, corrida). Boa ênfase em antecipação. Ainda assim, várias frases soam explicativas (“algoritmo sabe disso”) e algumas alegações são assertivas demais (“libera mais dopamina na incerteza do que na certeza”) sem nuance. Provável violação do limite de 300 caracteres em alguns itens.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Muitos exemplos cotidianos e reconhecíveis, com boa variedade (redes, compras, séries, música, comida, procrastinação, elogios). Porém há redundância alta em checagem/notificações (vários passos muito parecidos) e alguns passos escorregam para “explicar como funciona” (novidade/tolerância) mais do que apenas “onde aparece”. Grande problema de FORMATO: vários textos claramente >300 caracteres.",
+          "score": 6.9
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Variedade decente (smartphone, treino, social, estudos, games, hobby, encontro, trabalho), mas cai com frequência em explicação de mecanismo (“tolerância dopaminérgica”, “surpresa positiva”, “se virasse rotina…”) e generalizações. Algumas afirmações são simplificadas/arriscadas (tolerância dopaminérgica como regra em doces/treino). Também viola o limite de 300 caracteres em vários passos.",
+          "score": 6.2
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Apesar de exemplos variados, tem problemas de precisão e simplificação: mistura causalidade e sistemas (exercício ‘dopamina cria circuito: exercício → endorfinas → bem-estar’ é reducionista/inexato), e “fast food é engenharia de dopamina” exagera e ignora múltiplos sistemas. Também entra mais em “como funciona” (tolerância em relacionamentos) e vários textos excedem 300 caracteres. Títulos como “Vício em…” puxam demais para vício/addiction framing.",
+          "score": 5.6
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-examples",
+  "testCaseId": "pt-neuroscience-dopamine-life-1"
+}

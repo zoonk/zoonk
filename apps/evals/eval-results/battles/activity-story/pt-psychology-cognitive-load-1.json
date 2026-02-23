@@ -1,0 +1,185 @@
+{
+  "expectations": "\nLANGUAGE REQUIREMENT: All content must be in Portuguese.\n\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Cognitive load concepts must reflect genuine psychology. Penalize if:\n   - Intrinsic, extraneous, and germane load are confused or misapplied\n   - Working memory limitations are incorrectly represented\n   - Chunking or scaffolding principles are misused\n\n2. SCENARIO CHECK: The workplace problem should involve realistic instructional design challenges like: simplifying complex training, redesigning confusing interfaces, or optimizing learning materials.\n\n3. CONCEPTUAL FOCUS: Decisions should require reasoning about how to reduce unnecessary load while preserving essential complexity.\n\n\nEVALUATION CRITERIA:\n\n1. STORY AUTHENTICITY: Dialogue must be pure conversation between colleagues with no narrator text, no character name prefixes (like \"Sarah:\"), and no action descriptions. The learner should feel immersed in a real workplace conversation.\n\n2. EDUCATIONAL ALIGNMENT: Every decision point must require applying lesson concepts through reasoning, not memorizing facts. Wrong options should be plausible but flawed for specific conceptual reasons.\n\n3. PLOT COHERENCE: Scenes must flow naturally as a continuous story where each scene builds from the previous dialogue. The second-to-last scene MUST introduce a genuine plot twist (surprise, complication, or revelation). The final scene must resolve the problem AND reinforce the main learning takeaway.\n\n4. FORMAT COMPLIANCE: Verify these constraints:\n   - context: Maximum 500 characters of pure dialogue\n   - question: Maximum 100 characters\n   - options: Exactly 4 objects, each with: text (max 50 chars), isCorrect (boolean), feedback (max 300 chars)\n   - Exactly 1 option must have isCorrect: true, the other 3 must have isCorrect: false\n\n5. PERSONALIZATION: The {{NAME}} placeholder must be used appropriately in dialogue to personalize the experience.\n\n6. FEEDBACK QUALITY: Each option must have feedback explaining WHY it's right (with insight) or WHY it's wrong (and what would be correct). Feedback should help learners understand the reasoning, not just state correctness.\n\n7. SCENE COUNT: Story must have between 7 and 20 scenes. Let problem complexity dictate length.\n\n8. DISTRACTOR QUALITY: All wrong options must be plausible choices someone might consider. Penalize obviously silly or absurd options that no reasonable person would choose.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific plot choices, character names, or scenario settings you might expect\n- Do NOT require specific scenes like \"investigation\" or \"resolution\" by name - focus on whether the story has good flow\n- Do NOT check against an imagined \"ideal\" story structure\n- ONLY penalize for: format violations, narrator/description text in dialogue, decisions that test memorization instead of reasoning, missing plot twist, poor distractor quality, or factually incorrect lesson application\n- Different valid story approaches exist - assess the quality of what IS provided\n\n    ",
+  "judgedAt": "2026-01-17T15:54:17.435Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Excellent 13-scene story about redesigning an online programming course with 68% dropout rate. Pure dialogue throughout with no narrator text or character prefixes. Strong educational alignment: every decision point requires reasoning about cognitive load concepts (extraneous, intrinsic, germane). The plot twist in scene 11 (CEO wants to apply principles to advanced course, questioning if experts need CLT) is genuine and creates meaningful discussion. Concepts are accurately applied: redundancy effect, working memory limits (~4 items), chunking (phone number example is clever), split-attention effect, and the distinction between types of load. Feedback is detailed and educational, explaining WHY each option is correct or incorrect. Distractors are plausible. Format appears compliant. The final scene effectively reinforces the main takeaway about managing where to spend limited attention. Uses {{NAME}} appropriately throughout.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Strong 8-scene story about converting a 60-page PDF into a micro-course for a sales team. Pure dialogue format with no narrator intrusions. All three types of cognitive load are correctly applied and distinguished. The plot twist (scene 7: legal requiring the full PDF text) is realistic and creates a genuine instructional design dilemma. The solution (moving PDF to reference section) demonstrates practical application of CLT principles. Decisions require reasoning about extraneous load, chunking, germane load, and mobile design constraints. Feedback quality is high, explaining the reasoning behind each answer. Good use of {{NAME}}. Distractors are plausible. Slightly shorter than Model B but covers all essential concepts well. The context is concise and fits within limits.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Very strong 15-scene story about redesigning an onboarding course with 23% completion rate. Pure dialogue format throughout. Excellent coverage of CLT concepts: extraneous load (music + narration + text), working memory limits (~4 items), chunking (47 policies into categories), split-attention effect (flowchart on separate page from text), germane load (need for active processing). The plot twist (scene 12-13: data reveals 67% drop out at first module specifically) is authentic and changes the strategy meaningfully. Decisions require conceptual reasoning, not memorization. Feedback is explanatory. Uses {{NAME}} naturally. One minor issue: some feedback could be more detailed in explaining correct answers. The compliance integration scenario is realistic.",
+          "score": 8.7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Good 8-scene story about a 'Banco Futuro' compliance training with 70% dropout at slide 4. Pure dialogue with no narration. Concepts are accurately applied: extraneous load (excessive simultaneous stimuli), split-attention effect, redundancy principle, intrinsic load (complex credit risk formula), chunking, germane load (practical application activities). Plot twist (scene 7: legal requiring 5-paragraph disclaimer on every screen) is realistic and well-handled. The solution (icon that opens pop-up) is practical. Feedback quality is good. The story is shorter (8 scenes) but covers essentials. Uses {{NAME}} appropriately. Minor weakness: some distractors could be more plausible (e.g., 'The blue background color is too sad').",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Solid 9-scene story about redesigning a calculus module where students are dropping off. Pure dialogue throughout. Cognitive load concepts are correctly applied: working memory limits (~4 items), distinguishing intrinsic from extraneous load, chunking, scaffolding, germane load. Good progression through the problem-solving process. The 'twist' in the final scene (training the team about CLT without overloading them) is clever but perhaps not as dramatic as other models' twists. Feedback is clear and educational. Uses {{NAME}} appropriately. Minor issue: some context descriptions are slightly brief and could use more naturalistic dialogue. The storyline flows logically.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Good 8-scene story about a failing Information Security course with 80% failure rate. Pure dialogue format with no narrator text. Concepts are correctly applied: removing distractions (extraneous load), chunking 15 password rules, managing intrinsic load by 'slicing' complex content, the dancing mascot example is a clear extraneous load case. The timer pressure twist (scene 7: 10 seconds per complex question) is believable and creates good learning opportunity. However, the story feels somewhat predictable and the plot twist is less surprising than others. Feedback is clear but occasionally brief. Uses {{NAME}} appropriately. Distractors are generally plausible. The final resolution is satisfying but the overall narrative arc is simpler than top performers.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Competent 9-scene story about a module with low completion rates and poor quiz performance. Pure dialogue format. Covers cognitive load concepts correctly: intrinsic load management, extraneous load (split-attention), chunking by objective, germane load through guided practice. The mobile design adaptation scenario is realistic. Client conflict (scene 7: demanding all technical spec content) provides good tension. However, the story feels somewhat formulaic and lacks a strong plot twist - the closest is the mobile analytics reveal in scene 6, which isn't very dramatic. Dialogue is functional but less natural than top performers. Feedback is adequate but sometimes terse. Uses {{NAME}} but sparingly.",
+          "score": 7.4
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Adequate 11-scene story about fixing a Psychology of Learning module with high abandonment. The concepts are correctly applied (extraneous, intrinsic, germane load, chunking, working memory limits). However, the dialogue feels somewhat stiff and instructional rather than natural conversation. Some feedback is quite terse ('Errado. Não só visual.', 'Errado. Tudo integrado.'). The twist (scene 8: chunks in examples not meaningful) is legitimate but the execution feels rushed. The story structure is logical but the immersive quality suffers from overly brief responses and mechanical-feeling dialogue. Uses {{NAME}} appropriately. Distractors are generally plausible but some options feel obvious.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Brief 8-scene story about fixing a module with excessive content on screen. The dialogue is natural and pure (no narrator). Concepts are applied correctly (extraneous load, chunking, germane load, removing irrelevant animations). The twist (scene 7: author secretly added complex graphics) is functional but feels forced and somewhat artificial. The main weakness is brevity - feedback explanations are very short (e.g., 'Só formatar não resolve se o problema é estrutural.'), limiting learning value. The story feels rushed, moving through concepts quickly without deep exploration. The final scene resolution is abrupt. Uses {{NAME}} appropriately but the overall educational depth is lower than competitors.",
+          "score": 6.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model A is the strongest output. It followed all formatting constraints perfectly, including option text lengths and scene count. The dialogue is immersive and authentic to an instructional design workplace setting. It integrates the specific Cognitive Load Theory concepts (Extraneous, Intrinsic, Germane) accurately and meaningfully into the decision points. The plot twist (Scene 7/8) was positioned exactly as requested (second-to-last scene) and represented a realistic challenge (legal compliance).",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model C is excellent and nearly tied with Model A. It adheres to all constraints, including the tricky text length limits and the specific positioning of the plot twist. The dialogue is natural and the scenario is clear. It scores slightly lower than A only because Model A's feedback and options felt slightly more rigorous in their application of the terminology, but Model C is still a flawless execution of the prompt.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Model B provides high-quality educational content and a very strong narrative arc. The application of CLT to a coding context is insightful, and the 'twist' regarding expertise reversal is clever. However, it failed the specific structural constraint regarding the plot twist's location; the twist occurred in scene 11 of 14, rather than the second-to-last scene. Despite this structural error, the quality of the content keeps it high in the rankings.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Model I is a solid, concise entry. The narrative flow is logical, and the twist is correctly positioned. It loses points due to a minor formatting violation (one option text exceeded the 50-character limit: 51 characters), but otherwise, it is a compliant and effective learning experience.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model G features very natural dialogue and a good scenario. However, it failed the formatting check with a significant text length violation in the final scene (61 characters), and the plot twist timing was slightly off (occurring in the third-to-last scene rather than the second-to-last).",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Model E presents a coherent story and correctly positions the plot twist. However, it suffers from multiple text length violations in the options (several exceeding 50 characters). While the content is good, the failure to adhere to strict formatting constraints lowers its score.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Model D includes meta-text inside the scenario content (e.g., labels like 'Twist!' in the question fields), which breaks immersion and violates the 'Story Authenticity' criteria. While the cognitive load concepts are correct, the execution feels less professional.",
+          "score": 5.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model F fails on 'Story Authenticity'; the dialogue reads like a narrator description or a dry textbook rather than a conversation between colleagues. It also contains multiple text length violations in the options.",
+          "score": 4.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Model H has severe formatting violations, with many options significantly exceeding the 50-character limit (some reaching 70 characters). This disregard for the specific constraints makes it the lowest-ranked output.",
+          "score": 3
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Melhor aderência geral: 8 cenas (ok), diálogo contínuo e sem narrador, sem prefixos de fala, cenário realista (microcurso de vendas + exigência do jurídico), decisões exigem raciocínio claro sobre reduzir carga extrínseca, gerenciar intrínseca (segmentação/chunking) e aumentar germânica (cenários + feedback). Penúltima cena traz twist real (compliance/jurídico) e a última resolve e reforça o takeaway. Respeita limites de options (4) e 1 correta. Pequenas fragilidades: alguns contexts e questions parecem longos demais para os limites exigidos; e “limite ~4 itens” é uma simplificação discutível, mas aceitável no nível de treinamento.",
+          "score": 8.7
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "História bem coerente e totalmente em diálogo; muitas cenas (13) com progressão natural; decisões exigem aplicação (split-attention, chunking, germânica vs passivo, gestão de intrínseca). Twist aparece tarde (pedido do diretor + documento jurídico) e a conclusão resolve e reforça. Distratores plausíveis. Problemas: provável violação de limites de caracteres em vários contexts/questions; e há uma leve repetição de “começar por carga extrânseca” em alguns pontos.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Muito forte em alinhamento educacional e explicações (extrínseca vs intrínseca vs germânica, redundância, segmentação). Arco longo (13 cenas) com twist (CEO pedindo curso avançado) e resolução conceitual. Porém viola requisito crítico de autenticidade: várias falas soam como mini-aulas/monólogos, menos “conversa” real entre colegas. Também é muito provável que exceda limites de 500/100/50/300 por cena. Ainda assim, conceitualmente é sólido e os distratores são plausíveis.",
+          "score": 7.7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Cenário corporativo realista (treinamento de compliance bancário) e twist bom (jurídico exigindo termo em todas as telas) com solução razoável (ícone/pop-up) e final de reforço. Conceitos aplicados corretamente (atenção dividida, redundância, intrínseca alta + chunking, germânica via simulação). Fragilidades: em um ponto afirma “cortei o texto da tela e deixei só o áudio… carga extrínseca eliminada” (exagero e pode piorar acessibilidade/controle do aprendiz). Provável violação de limites de caracteres.",
+          "score": 7.4
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Conceitos em geral corretos e cenário plausível (curso de Segurança da Informação). Tem 8 cenas, com alguma progressão e um twist (cronômetro de 10s) no penúltimo bloco, e final resolve. Porém falha forte em autenticidade: uso frequente de exclamações e tom caricatural (“bonequinho dançando”), soando menos como conversa real de colegas. Também é muito provável que exceda limites de caracteres e há opções com texto aparentemente >50 caracteres.",
+          "score": 6.9
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Boa coerência e decisões bem baseadas em raciocínio (sequenciar, scaffolding, chunking com intrínseca alta). Última cena tem um meta-desafio interessante. Mas falha requisito de enredo: não há um twist claro na segunda-to-last cena; a complicação principal surge antes (módulo 4 pior) e a penúltima é mais explicativa do que surpresa. Também provável violação dos limites de caracteres e alguns trechos soam pouco naturais.",
+          "score": 6.6
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Tecnicamente consistente e decisões exigem aplicação real (split-attention, microlearning mobile, exemplos guiados/fading). Contudo falha fortemente em autenticidade e coerência narrativa: é mais uma lista de prompts do que conversa contínua; falta um twist explícito penúltimo; e a personalização {{NAME}} aparece pouco e sem integração natural. Também mistura português com termos em inglês (“extraneous load”, “analytics”, “mobile”), o que pode ser aceito mas reduz aderência ao requisito de “todo conteúdo em português”.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Vários problemas: embora tenha 11 cenas e inclua um “Twist!”, a aplicação conceitual é inconsistente (na cena 2 marca como correta “carga intrínseca alta do tema” apesar de depois dizer que há muitos elementos e, na cena 3, identificar extrínseca como principal; isso confunde diagnóstico). Autenticidade ruim: frases meta (“Twist!”) e feedbacks muito telegráficos. Também provável violação de limites de caracteres; e há opção marcada como false com feedback “Correto, mas…”, o que é incoerente (ainda que não viole a regra de 1 correta, prejudica qualidade).",
+          "score": 4.8
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Estrutura dialogal ok e tem 8 cenas com um twist (autor adicionou telas secretamente) e final de fechamento. Porém cenário é genérico e menos “workplace” específico; algumas decisões são superficiais (p.ex., glossário “estático” vs pop-up sem discutir alternativas como revelação sob demanda bem desenhada). Feedbacks frequentemente curtos e pouco explicativos para o nível exigido. Além disso, provável violação de limites de caracteres. Conceitos em geral não estão errados, mas são tratados de forma rasa.",
+          "score": 4.5
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-story",
+  "testCaseId": "pt-psychology-cognitive-load-1"
+}

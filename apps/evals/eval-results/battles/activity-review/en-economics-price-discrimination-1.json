@@ -1,0 +1,131 @@
+{
+  "expectations": "\nLANGUAGE REQUIREMENT: All content must be in English.\n\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Economic pricing and market concepts must be accurate. Penalize if:\n   - Price discrimination types are incorrectly described\n   - Consumer/producer surplus calculations are wrong\n   - Elasticity effects are backwards (e.g., claiming inelastic demand means large quantity changes)\n   - Market equilibrium mechanics are misrepresented\n\n2. TRANSFER CHECK: The inputs discuss airline tickets, movie theaters, and specific pricing examples. Questions must use completely different scenarios (e.g., concert venues, software licensing, professional services) to test the same concepts.\n\n3. INTEGRATION CHECK: Look for questions that connect WHY price discrimination exists (profit maximization, consumer heterogeneity) with HOW firms segment markets and WHERE different strategies appear.\n\n4. MISCONCEPTION CHECK: Distractors should include common economics misconceptions like:\n   - Thinking lower prices always increase revenue\n   - Confusing price discrimination with illegal pricing\n   - Believing all customers pay the same \"fair\" price\n   - Misunderstanding the relationship between elasticity and pricing power\n\n\nEVALUATION CRITERIA:\n\nSEVERITY GUIDE - Use this to calibrate your scoring:\n\nSEVERE ISSUES (heavy penalty):\n- Factual errors or hallucination (inventing facts not in the input)\n- Testing pure memorization (\"What metaphor did the text use?\")\n- Questions that reference \"the lesson,\" \"as explained,\" or similar meta-language\n- Wrong tone (stiff, academic, exam-like instead of conversational)\n- Format violations (wrong question count, missing fields, multiple correct answers)\n- Distractors that are obviously absurd or unrelated\n- Language purity violations (mixing languages)\n\nMODERATE ISSUES (medium penalty):\n- Coverage heavily skewed to one content type (e.g., 15 HOW questions, 0 WHY)\n- No integration questions connecting multiple content types\n- Feedback that just says \"correct/incorrect\" without insight\n- Questions answerable without understanding (too easy)\n\nMINOR ISSUES (light penalty or just note):\n- Reusing a scenario from the input (not ideal, but okay if the question still tests understanding)\n- Some questions slightly easier than others\n- Feedback could be friendlier but is still helpful\n- Minor missed opportunities for deeper insight\n\n1. CONCEPTUAL ACCURACY: Questions must be factually correct. SEVERELY penalize if:\n   - Questions contain factual errors or hallucinated information\n   - Correct answers are actually wrong based on the input content\n   - Feedback explains concepts incorrectly\n\n2. UNDERSTANDING VS MEMORIZATION: Questions must test thinking, not recall. SEVERELY penalize if:\n   - Questions ask \"What did the text say?\" or \"Which example was used?\"\n   - Questions reference \"the lesson,\" \"as explained,\" \"according to the text\"\n   - Questions can be answered by pattern-matching phrases from the input\n\n3. TONE & STYLE: Must feel conversational and friendly. SEVERELY penalize if:\n   - Language is stiff, formal, or exam-like\n   - Feedback sounds academic or preachy\n   - Questions use unexplained jargon\n\n4. FORMAT COMPLIANCE: Must meet structural requirements. SEVERELY penalize if:\n   - Question count outside 15-20 range\n   - Missing required fields or wrong types\n   - Multiple correct answers per question\n   - Character limits exceeded\n\n5. DISTRACTOR QUALITY: Wrong answers must be plausible. Penalize if:\n   - Distractors are obviously absurd or unrelated\n   - The correct answer is obvious without understanding\n   - Distractors don't represent real misconceptions\n\n6. CONTENT COVERAGE: Should test across content types. Penalize if:\n   - Any content type (WHY, WHAT, HOW, WHERE) is completely missing\n   - Coverage is heavily skewed\n\n7. FEEDBACK QUALITY: Should guide learning. Penalize if:\n   - Feedback just says \"correct\" or \"incorrect\" without insight\n   - Wrong answer feedback doesn't point toward the correct answer\n\n8. SCENARIO FRESHNESS (MINOR): Prefer novel scenarios, but don't heavily penalize reuse.\n   - Ideal: Questions use fresh scenarios not in the input\n   - Acceptable: Reusing input scenarios IF the question still tests understanding\n   - Only penalize if reused scenario makes the question pure recall\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT heavily penalize scenario reuse if the question still tests understanding\n- Do NOT require specific concepts to be tested by name\n- Do NOT check against an imagined \"complete\" set of questions\n- FOCUS penalties on: factual errors, memorization-based questions, wrong tone, format violations\n- Different valid quiz designs exist - assess the quality of what IS provided\n\n    ",
+  "judgedAt": "2026-01-17T21:34:53.558Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model F delivers 20 questions with excellent conceptual accuracy, fresh scenarios (streaming platforms, SaaS pricing, massage therapists, handbag brands at airports), and strong integration across WHY/WHAT/HOW/WHERE content types. The tone is conversational and friendly ('Bingo!', 'Nice!', 'Spot on!') without being stiff. Distractors include real misconceptions (e.g., thinking cost differences drive price discrimination, confusing types of discrimination). Feedback is insightful—explaining why wrong answers are wrong and guiding toward correct understanding. No factual errors detected. Questions test genuine understanding through novel application scenarios rather than recall. Minor weakness: a couple questions could integrate concepts more deeply, but overall this is an excellent quiz.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Model B provides 15 questions with creative, fresh scenarios (mechanic haggling, shipping company, coffee coupons, VPN for textbooks, luxury brand burning inventory). Excellent conceptual accuracy throughout—correctly explains first/second/third-degree discrimination, arbitrage, elasticity effects, and bundling. Tone is conversational with good feedback that explains reasoning ('Bingo!', 'Exactly!', 'Right'). Strong distractor quality with plausible misconceptions. Good integration of concepts. The luxury brand burning inventory question is particularly insightful. Minor issues: at question count boundary (15), and a few questions are slightly easier than ideal. Overall excellent quality.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model C has 15 questions with good scenario freshness (baker with time-based pricing, antique market, pharmaceutical pricing, pizza pricing psychology). Concepts are accurate—correctly explains discrimination types, elasticity, bundling, and arbitrage prevention. Tone is friendly and conversational ('Bingo!', 'Spot on!', 'Nice!'). Good feedback quality explaining why answers are right or wrong. Distractors represent real misconceptions. Coverage across content types is adequate. Minor weaknesses: some questions are slightly straightforward, and the airline ticket question reuses a concept from inputs (though the question still tests understanding). Solid overall quality.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model D delivers 19 questions with accurate economics throughout. Good scenario freshness (museum pricing, car wash versioning, ferry operator, cloud service tiers). Correctly handles discrimination types, elasticity, arbitrage, and bundling. Tone is slightly more formal than ideal but still acceptable ('Right', 'Not quite', 'Backwards'). Feedback is helpful and guides learning. Good distractor quality. Coverage is balanced across content types. Minor weaknesses: tone could be warmer/friendlier, and some questions feel a bit more exam-like than conversational. Still a high-quality quiz with no factual errors.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model A provides 18 questions with accurate economics and decent scenario variety (concert promoter, online shoe store, museum tourists, used-car haggling, video service tiers). Concepts are correctly explained. However, the tone is somewhat dry and less conversational—questions like 'What's the firm's goal?' and 'What does the data allow?' feel more exam-like. Feedback is helpful but brief. One question about a cinema with student/adult/senior pricing closely mirrors input examples. Distractors are plausible. Coverage is adequate. The overall quality is good but lacks the warmth and engagement of top models.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.1-thinking",
+          "reasoning": "Model E has 17 questions with accurate economics and reasonable scenario freshness (streaming service, theme park, boutique gym, ski resort). Concepts are correctly explained. However, the tone is notably more formal and exam-like—feedback uses clipped phrases like 'Cost isn't changing', 'Legal contracts help', 'Costs per skier don't differ enough'. Questions feel more like test items than conversational learning checks. Distractors are plausible but feedback could be warmer. Some questions are straightforward. Coverage is acceptable but integration could be stronger. Solid accuracy but weaker on tone and engagement compared to other models.",
+          "score": 7.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Model B provides an exceptional set of questions that perfectly meets all criteria. It strictly adheres to the negative constraints by avoiding airline and movie theater scenarios, instead using creative examples like an island shipping service, a mechanic, and luxury handbag inventory destruction. The tone is highly conversational and friendly ('Bingo!', 'Spot on!'), making the feedback engaging and educational. It specifically tests deep conceptual understanding, such as distinguishing between price discrimination and cost-based pricing (Question 2), which directly addresses the accuracy check requirements.",
+          "score": 9.8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model F is nearly equal to Model B in quality. It adheres to the transfer check by avoiding forbidden scenarios (airlines, movie theaters) and uses a wide variety of fresh contexts like app store arbitrage and software enterprise pricing. The tone is enthusiastic and supportive. The questions cover the 'Why', 'How', and 'Where' of the topic effectively. It ranks slightly lower than B only because Model B's question regarding cost-based pricing vs. discrimination was a particularly sharp way to test a common misconception.",
+          "score": 9.7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model C captures the requested conversational tone well ('Nice!', 'Right on!') and generally tests the concepts accurately. However, it fails the specific 'Transfer Check' instruction to avoid scenarios found in the input, as Question 12 explicitly uses an airline ticket scenario. Despite this minor violation, the overall quality of the distractors and feedback is strong.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model A provides a solid, accurate quiz with good conceptual coverage. However, it violates the negative constraint regarding scenario reuse by including a 'cinema' question (Question 6), which matches the 'movie theater' input. Additionally, the tone is more formal and professional compared to the requested friendly/conversational style found in Models B, C, and F.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.1-thinking",
+          "reasoning": "Model E produces a functional quiz but lacks the creativity of the top models. It violates the scenario constraint by including an airline question (Question 13). The tone is standard and lacks the engaging, friendly personality requested in the prompt. The feedback is correct but purely explanatory without the encouraging style seen in higher-ranked models.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model D is accurate but suffers from a dry, somewhat robotic tone. It fails the scenario constraint by explicitly using a 'movie theater' (Question 15). While the economics are correct, the lack of conversational flair and the violation of the freshness constraint place it at the bottom.",
+          "score": 6
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Strong overall set: all-English, 20 questions with clear context/options/feedback, mostly conversational tone, and strong integration of WHY (profit/surplus), HOW (signals, fences, menus, degradation), and WHERE (many varied markets). Scenarios are largely transferred (concerts, SaaS, medical services, hotels, parking, ebooks). Distractors are plausible and often target real misconceptions (cost-based vs WTP, quality differences, “lower price always better,” legality). Economic concepts (degrees of discrimination, elasticity, arbitrage, bundling, dynamic pricing) are largely accurate. Minor issues: a couple items blur “arbitrage” with platform bypass/price control (app store example is more vertical restraint than classic resale arbitrage), and one feedback line uses mild meta-language (“The lesson states…”), but overall highest quality.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Very solid: 20 questions, clear structure, accurate economics, good distractors, and good coverage across segmentation, elasticity, arbitrage, bundling, versioning, and dynamic pricing. Tone is a bit more formal/exam-like than desired but still readable. Transfer check is mostly good (car wash, consultant, ferry, stadium), but it reuses a movie theater scenario explicitly, which is allowed but less ideal. No major factual problems; strong integration of why/how/where.",
+          "score": 8.7
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Accurate and well-structured (18 questions). Good variety of fresh scenarios (concert promoter, museum locals/tourists, parking lot, app bundling, DRM, auctions) and strong integration of motivations and mechanisms. Distractors are generally plausible and include misconceptions (fairness, cost-based pricing, “lower prices stop resale”). Main weaknesses: it includes a cinema example (explicitly in the user’s transfer list), so it violates the “completely different scenarios” expectation. Tone is mostly friendly. Overall high quality but marked down for scenario reuse against explicit guidance.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "15 questions, generally strong conceptual accuracy and very good misconception-based distractors (coupon as a hurdle, consumer surplus under first-degree, VPN defeating fences, elasticity-based cross-country pricing). Tone is fairly conversational and explanations are helpful. Transfer requirement is mostly met, though it uses ride-sharing and a museum again (not in the user’s listed inputs, but common). Minor issues: a couple explanations are slightly overconfident/generalized (e.g., drug pricing across countries framed purely by elasticity without noting regulatory/ethical constraints—still fine economically). Overall good but less comprehensive than the top sets.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.1-thinking",
+          "reasoning": "18 questions, clear and accurate core economics, good spread across degrees, dynamic pricing, bundling, elasticity, and arbitrage. Tone is a bit dry but acceptable. Transfer check: largely different scenarios (theme park, online courses, hotel refundability, ski resort) though it also uses airline twice, which was explicitly in the inputs list, so that’s a noticeable violation of the “completely different scenarios” guidance. Distractors are plausible but sometimes less misconception-targeted than the best models.",
+          "score": 7.6
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "15 questions with generally friendly tone and mostly accurate concepts (versioning, bundling, surge pricing as sorting by inelastic demand, pay-what-you-want as near first-degree). However, it directly uses the airline ticket example from the input list (transfer violation). A few distractors are weaker/odd (e.g., calling negotiated pricing “inefficient because no fixed rate”). Some items are slightly muddled in classification language (time-based discounts described without clearly tying to degree types). Still decent, but less rigorous.",
+          "score": 7
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-review",
+  "testCaseId": "en-economics-price-discrimination-1"
+}

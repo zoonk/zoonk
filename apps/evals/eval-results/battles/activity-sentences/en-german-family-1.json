@@ -1,0 +1,167 @@
+{
+  "expectations": "\nLANGUAGE: English output required for translations.\n\nTOPIC: German sentences for family members - using family vocabulary.\n\nSCRIPT: Roman (romanization should be empty string \"\")\n\nVOCABULARY WORDS PROVIDED: die Mutter, der Vater, die Schwester, der Bruder, die Familie\nThese words MUST appear in the generated sentences.\n\nACCURACY PITFALLS - Penalize SEVERELY if:\n- Any sentence doesn't use at least one of the provided vocabulary words\n- Case endings are incorrect (nominative, accusative, dative contexts)\n- Article-noun agreement is wrong\n- Translations don't accurately convey the German meaning\n- Romanization contains any text (should be empty string)\n\nCONTEXT EXPECTATIONS:\n- Sentences about family relationships and activities\n- Talking about or introducing family members\n- Family-related situations and conversations\n\n\nEVALUATION CRITERIA:\n\n1. VOCABULARY WORD USAGE (CRITICAL - highest priority):\n   - Each generated sentence MUST use at least one of the provided vocabulary words\n   - The words should be used in their natural form (conjugated verbs, declined nouns are acceptable)\n   - Penalize SEVERELY if sentences don't incorporate the provided vocabulary\n   - Penalize if words are used incorrectly or out of context\n\n2. TRANSLATION ACCURACY (CRITICAL):\n   - Each sentence-translation pair MUST be linguistically accurate\n   - The translation must convey the same meaning as the original sentence\n   - Consider regional variations (Brazilian Portuguese vs European, Latin American Spanish vs Castilian)\n   - Penalize SEVERELY if translations are incorrect, incomplete, or misleading\n   - Grammatical structures should be appropriately adapted between languages\n\n3. ROMANIZATION (required field):\n   - For Japanese, Chinese, Korean, Arabic, Russian, Greek, Thai, Hindi, etc.: romanization MUST contain the Roman letter representation of the sentence\n   - Use standard romanization systems (romaji for Japanese, pinyin for Chinese, etc.)\n   - For Roman-script languages (Spanish, French, German, etc.): romanization MUST be an empty string \"\"\n   - Penalize if romanization is missing for non-Roman scripts or contains text for Roman scripts\n\n4. GRAMMATICAL CORRECTNESS:\n   - Sentences must be grammatically correct in the target language\n   - Verb conjugations must match the subject\n   - Gender agreement must be correct where applicable\n   - Word order should follow natural patterns of the target language\n   - Penalize for grammar errors, incorrect conjugations, or unnatural constructions\n\n5. SENTENCE NATURALNESS:\n   - Sentences should sound natural to native speakers\n   - Avoid overly literal translations or awkward phrasing\n   - Use appropriate register (formal/informal) for the context\n   - Penalize if sentences sound robotic, unnatural, or like machine translation\n\n6. CONTEXT DIVERSITY:\n   - Sentences should present different contexts or situations\n   - Avoid repetitive sentence structures\n   - Use variety in sentence types (statements, questions, commands where appropriate)\n   - Do NOT penalize for covering similar themes if vocabulary words naturally relate to each other\n\n7. LESSON RELEVANCE:\n   - Sentences should relate to the lesson topic\n   - The contexts should be appropriate for the lesson's educational goals\n   - Avoid straying into unrelated topics\n   - Do NOT require every sentence to explicitly reference the lesson topic - implicit relevance is fine\n\n8. APPROPRIATE DIFFICULTY:\n   - Sentences should be appropriate for language learners\n   - Avoid overly complex grammatical structures unless the lesson specifically targets advanced learners\n   - Vocabulary beyond the provided words should be at a similar or simpler level\n   - Penalize if sentences are incomprehensible to learners or use excessive advanced vocabulary\n\n9. NO DUPLICATES:\n   - Each sentence should be unique\n   - Avoid near-duplicates (same sentence with minor word changes)\n   - Penalize if essentially the same sentence appears multiple times\n\n10. LANGUAGE CORRECTNESS:\n    - Sentences should be in the TARGET language (courseTitle)\n    - Translations should be in the NATIVE language (language code)\n    - Penalize if languages are swapped or mixed incorrectly\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific sentence choices - accept ANY valid sentences that use the vocabulary\n- Do NOT penalize for not including specific contexts you might expect\n- Do NOT require a specific number of sentences\n- Do NOT expect sentences to follow any particular template or pattern\n- Different valid sentence constructions exist - assess the quality of what IS provided\n- FOCUS ON: vocabulary usage, translation accuracy, romanization correctness, grammatical correctness, naturalness\n\n    ",
+  "judgedAt": "2026-01-21T17:29:54.151Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Excellent output with 15 sentences. All sentences correctly use the provided vocabulary words (die Mutter, der Vater, die Schwester, der Bruder, die Familie). Grammar is consistently correct with proper case endings (e.g., 'Rufst du deinen Vater' - accusative correct, 'Der Bruder meiner Mutter' - genitive correct). Translations are accurate and natural. Good variety of sentence structures including questions, statements, and different contexts. Romanization correctly empty. Sentence 9 cleverly uses both 'Bruder' and 'Mutter' to explain uncle relationship. Excellent context diversity covering cooking, sports, education, travel, phone calls, etc.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Strong output with 15 varied sentences. All vocabulary words are used correctly. Grammar is accurate with proper case endings. Translations are natural and convey meaning well ('ich drücke ihr die Daumen' for 'keeping my fingers crossed'). Good variety of complex sentences with subordinate clauses. Sentence 12 has a minor awkwardness: 'hat heute Geburtstag' is grammatically correct but 'hat heute Geburtstag' means 'has a birthday today' which sounds slightly odd in English - 'It's my father's birthday today' would be more natural. All romanizations correctly empty. Excellent diversity of realistic family situations.",
+          "score": 9.3
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Very good output with 20 sentences. All vocabulary words are used correctly throughout. Grammar is consistently correct. Translations are accurate. Sentence 6 'Wie viele Geschwister hast du?' doesn't use the exact provided vocabulary words (uses 'Geschwister' instead of the specific terms), but this is acceptable as it's still family vocabulary in context. Good variety of sentence types and structures. Romanization correctly empty. The output covers many different contexts appropriately. Some sentences are simpler than others but all are appropriate for learners.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Solid output with 10 sentences. All sentences correctly incorporate the vocabulary words. Grammar is accurate with proper case usage (e.g., 'seinem Sohn' - dative correct, 'beim Autoreparieren' - dative with contraction correct). Translations are natural and accurate. Good variety including past tense sentences. Romanization correctly empty. Sentence 8 'Beim Familienfest hat die Schwester das Kuchenbuffet organisiert' uses 'die Schwester' appropriately. Slightly less variety in sentence structures compared to top performers, but all sentences are high quality.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Good output with 10 sentences. All vocabulary words are used correctly. Grammar is accurate throughout. Translations are natural and convey the correct meaning. Romanization correctly empty. Sentence 7 nicely uses both 'Mutter' and 'Vater' together. Slightly less complex sentence structures overall, but appropriate for learners. All contexts are family-related and relevant. Minor point: the sentence variety is good but slightly less diverse than top performers.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Good output with 10 sentences. All vocabulary words are used correctly. Grammar is accurate with proper case endings. Translations are natural and correct. Romanization correctly empty. Sentence 7 'hat nächste Woche Geburtstag' - the translation 'has a birthday next week' is slightly awkward in English (would be more natural as 'her birthday is next week'), similar to Model E's issue. Good coverage of family contexts. Sentence 8 identical to Model A's sentence 9, showing it's a natural construction. Overall solid but slightly less varied than top performers.",
+          "score": 8.7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Good output with 10 sentences. All vocabulary words are used correctly. Grammar is accurate with proper case endings (e.g., 'einen Bruder' - accusative correct). Translations are natural and accurate. Romanization correctly empty. Good mix of sentence types including questions. Sentences are simpler and more straightforward, which is appropriate for learners but offers less variety. Sentence 8 is very similar to Model A's sentence 3, just with word order switched. Overall solid but less complex than top performers.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Adequate output but only 5 sentences, which is notably fewer than other models. All sentences correctly use the vocabulary words. Grammar is accurate with proper case endings. Translations are natural and correct. Romanization correctly empty. The sentences that are provided are of good quality with varied contexts. However, the limited number of sentences means less practice material and less demonstration of vocabulary usage variety. Each vocabulary word only appears once rather than in multiple contexts.",
+          "score": 7.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "This model provides the highest quality output. It generates 15 sentences that are grammatically complex, natural, and contextually rich (referencing situations like job interviews, sharing rooms, and borrowing items). It strictly adheres to all constraints, including vocabulary usage and empty romanization. The use of possessive articles ('Meine Mutter') makes the sentences sound very natural for the topic.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model A provides a high volume of sentences (15) that cover all vocabulary requirements perfectly. The translations are accurate, and the sentences vary well in structure. It is slightly less conversational than Model E (occasionally using generic articles like 'Die Mutter' instead of 'Meine Mutter'), but it is an excellent resource for learners.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Model B produced flawless sentences with high grammatical quality and natural contexts (using subordinate clauses like 'um... zu' and 'wenn'). Although it only provided 5 sentences, the quality is superior to the remaining models. It adhered to all constraints.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "This model offers good sentence variety and complexity. It adheres to all constraints. It ranks slightly lower than A and B because the phrasing occasionally feels a bit detached (using 'Die Schwester' instead of a possessive), which is grammatically correct but less typical for personal family narratives.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model G provides 10 solid, accurate sentences. The grammar is correct, and the translations are good. The sentence structures are somewhat simpler than the top-tier models, mostly following standard Subject-Verb-Object patterns, but it is a reliable output.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Model H is generally good but contains minor phrasing choices that are slightly less idiomatic (e.g., 'macht einen Urlaub' instead of 'macht Urlaub', or the structure 'mag es, früh aufzustehen'). It meets all vocabulary constraints.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Model C meets the constraints but provides the simplest sentences (e.g., 'My mother cooks the best food', 'Is your father home?'). While accurate, the lack of complexity and variety makes it less useful for learners compared to the other models.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Model F generated a large volume of sentences (20), but sentence #6 ('Wie viele Geschwister hast du?') fails the critical vocabulary constraint. 'Geschwister' is not in the provided mandatory word list. While the rest of the content is good, the failure to follow the strict negative constraint regarding vocabulary usage results in a significant penalty.",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "All sentences are grammatical and natural, every sentence includes at least one required vocab item (Mutter/Vater/Schwester/Bruder/Familie), case/article usage is correct (e.g., „Der Bruder meiner Mutter“, „Rufst du deinen Vater…“), translations are accurate, and romanization is correctly empty. Good variety and no duplicates.",
+          "score": 9.6
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Consistently correct German with natural phrasing; each sentence contains one of the target words, including correct genitive/dative structures (e.g., „Der Bruder meiner Mutter“). Translations match well; romanization empty. Slightly less diverse/ambitious than the very best, but no real faults.",
+          "score": 9.3
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Grammatically solid and varied contexts; every sentence uses a required vocab word with correct case (e.g., „für die ganze Familie“, „Der Vater liest seinem Sohn… vor“). Translations accurate; romanization empty. Minor nit: a couple sentences are a bit heavy/advanced (e.g., „Kuchenbuffet“), but still natural.",
+          "score": 9.1
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Strong set: all sentences include required vocab and are generally natural with accurate translations and empty romanization. Notable grammar issue: „Die Mutter von meiner Freundin“ is nonstandard/colloquial; expected is „Die Mutter meiner Freundin“ (genitive) or „Die Mutter von meiner Freundin“ is often flagged as incorrect in formal grammar-focused materials. Everything else is good.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Mostly excellent grammar and translations; romanization empty. However, one sentence (“Wie viele Geschwister hast du?”) does not contain any of the provided vocabulary words (Mutter/Vater/Schwester/Bruder/Familie), which is a critical requirement violation.",
+          "score": 6.2
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "All sentences grammatical with accurate translations and empty romanization; each sentence uses a required vocab word. Overall simpler and slightly more repetitive than top sets, but still solid and fully compliant.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "All five sentences are grammatical, natural, and translations are accurate; romanization empty. Each sentence contains a required vocab word. Slightly limited diversity/quantity compared with others, but no violations.",
+          "score": 8.7
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Mostly fine and compliant with required vocab and empty romanization, but contains a clear language/grammar error: “Die ganze Familie isst am Sonntag zusammen.” is correct, yet the model wrote “is” (English) instead of “isst” (“Die ganze Familie isst…”). This is a significant German correctness issue; rest is okay.",
+          "score": 7.2
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-sentences",
+  "testCaseId": "en-german-family-1"
+}

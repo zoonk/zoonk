@@ -1,0 +1,203 @@
+{
+  "expectations": "\nLANGUAGE REQUIREMENT: Titles and text must be in Spanish.\n\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Electrolysis involves specific electrode reactions with correct ion migration. Penalize if:\n   - Cations are described as moving to the anode (cations move to the cathode; anions move to the anode)\n   - The process is described as spontaneous (electrolysis requires external energy input)\n\n2. DEPTH CHECK: Penalize if the explanation treats it as \"electricity splits compounds\" without showing the ion migration and electrode reactions.\n\n3. DISTINCTION FROM EXPLANATION: The explanation covered WHAT electrodes, electrolytes, and ions ARE. This should show HOW the electric current drives ion movement and forces non-spontaneous reactions.\n\n\nEVALUATION CRITERIA:\n\n1. FACTUAL ACCURACY: Any process descriptions, mechanisms, or cause-effect relationships must be correct. Penalize hallucinations, incorrect sequences, or wrong causal chains.\n\n2. PROCESS FOCUS: Content must show things HAPPENING, not just describe parts. Look for action verbs, cause-effect language, and sequential flow.\n\n3. DEPTH: Complex processes require multi-step explanations showing how one action triggers the next. Penalize oversimplified \"just happens\" explanations.\n\n4. FORMAT: Each step must have a title (max 50 chars) and text (max 300 chars).\n\n5. TONE: Conversational, like giving a behind-the-scenes tour. Include process metaphors from everyday life (assembly lines, relay races, domino chains).\n\n6. FOCUS: Explains HOW something works (processes in action), not WHAT it is (definitions) or WHY it exists (history).\n\n7. NO OVERLAP: Must not repeat content from the EXPLANATION_STEPS which covered the WHAT.\n\n8. SCOPE: Content matches the lesson scope exactly.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for missing process phases or steps you might expect\n- Do NOT require a specific number of steps\n- Do NOT check against an imagined \"complete\" process description\n- ONLY penalize for: factual errors, static descriptions instead of action-oriented content, missing cause-effect relationships, or poor process flow\n- Different valid process explanations exist - assess the quality of what IS provided\n\n    ",
+  "judgedAt": "2026-01-17T01:21:13.804Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Excellent process explanation with strong cause-effect language throughout. Correctly describes ion migration (cationes toward cathode where there are excess electrons, aniones toward anode). Uses great metaphors ('bomba de electrones', 'banda transportadora', traffic analogy). Shows multi-step process flow with clear triggers. Addresses non-spontaneous nature ('cuesta arriba'). Step 9 adds good depth about voltage-dependent selectivity. All titles under 50 chars, texts under 300 chars. Strong process focus with action verbs throughout. Includes the critical 'relevo iónico' concept explaining why ion movement matters. One minor issue: step 2's 'muelles' metaphor is slightly unclear. Overall exceptional coverage of the electrolysis process.",
+          "score": 9.3
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Strong process explanation with correct ion migration (cationes to cátodo, aniones to ánodo). Excellent metaphors ('bomba de agua', 'imanes respondiendo a una señal', 'viajero sediento'). Good cause-effect chains showing how one step triggers the next. Clearly explains non-spontaneous nature. Covers both electrode reactions with correct chemistry. Good flow from energy input to final products. Format requirements met. Slightly less depth than Model A (fewer advanced concepts like selectivity or rate limitations), but very solid overall. Clear action-oriented language throughout.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Good process flow with correct ion migration. Uses effective metaphors ('compuerta', 'agua detrás de una presa', 'carrusel de energía'). Correctly identifies the non-spontaneous nature. Clear cause-effect relationships between steps. Good description of both electrode reactions. Format requirements met. The 'agua y sal' example is concrete and helpful. Slight weakness: some descriptions are more outcome-focused than process-focused (step 7 lists products rather than showing how they form). Overall strong but slightly less dynamic than Models A and G.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Correct ion migration (cationes to cátodo, aniones to ánodo). Good metaphors ('bomba de electrones', 'pista de baile'). Proper process flow with cause-effect language. Correctly notes the non-spontaneous nature. Format requirements met. Good action verbs throughout. Slightly less depth than top models - doesn't explain concepts like selectivity or rate limitations. Step 3 correctly shows oxidation at anode with electron release. Overall solid but could use more depth on the mechanism.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Correct ion migration throughout. Good process flow with cause-effect language. Uses effective metaphors ('imán invisible', 'río de tráfico iónico', 'empujar agua cuesta arriba'). Correctly explains non-spontaneous nature. Includes specific example (cloruro to cloro gas). Step 9 adds good depth about minimum voltage requirements. Format requirements met. Slightly weaker metaphors than top models, and some steps feel more descriptive than action-oriented. Overall good quality.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Correct ion migration (cationes to cátodo, aniones to ánodo). Good process structure with clear steps. Metaphors present ('bombear agua cuesta arriba', 'cinta transportadora', 'imanes opuestos'). Correctly addresses non-spontaneous nature. Step 7 adds interesting quantitative relationship (Faraday's law concept). Format requirements met. However, tone is slightly more textbook-like than conversational compared to top models. Less vivid action language. Solid but not exceptional.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Correct ion migration (cationes to cátodo, aniones to ánodo). Good process flow. Uses some metaphors ('imán atrayendo metales', 'autos hacia un estacionamiento'). Correctly notes the non-spontaneous nature in step 7. Format requirements met. However, explanations are somewhat shorter and less detailed than top models. Less depth in explaining the 'why' behind each step. Step 1 has a minor issue - electrons flow TO the cátodo, not FROM the batería toward cátodo (the batería pushes electrons, but the phrase could be clearer). Overall decent but lacks the richness of better models.",
+          "score": 7.4
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Correct ion migration concepts. Includes advanced concepts like double layer, diffusion limitations, and passivation. Good metaphors ('corredores pasando un testigo', 'coches que toman rutas guiadas'). However, some steps are more observational than action-oriented (e.g., 'Fíjate cómo...'). Step 5 about double layer is quite advanced and may be beyond typical scope. Some steps lack clear cause-effect chains. The 'you' perspective feels more like watching than understanding the mechanism. Format requirements met. Good depth but process flow is less clear.",
+          "score": 7.3
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Correct ion migration direction. Process-oriented with action verbs. Good metaphors ('limaduras de hierro corriendo hacia un imán', 'ventanilla'). Correctly describes reduction/oxidation. Format requirements met. However, step descriptions are somewhat vague - 'iones positivos' instead of 'cationes' sometimes makes it less precise. The 'contraatacan' title for anions is slightly odd. Less depth than top models. Adequate but not exceptional.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "CRITICAL ERROR: Step 1 states 'Los electrones fluyen desde la fuente de poder hacia el ánodo.' This is incorrect - electrons flow FROM the anode TO the external circuit, then to the cathode. The anode loses electrons to the external circuit; it doesn't receive them from the power source. This fundamental error about electron flow direction is a significant factual problem. Otherwise, ion migration is correctly described (step 4). The tone is also more textbook-like than conversational, lacking the metaphors and engagement of other models. Steps are shorter and less detailed. Format requirements met but content has significant accuracy issues.",
+          "score": 5.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "This model provides the best explanation of the 'how' and 'why' behind the process. It uses excellent metaphors (opening a floodgate, water behind a dam, vacuum/hunger) to explain how voltage drives the non-spontaneous reaction. It clearly distinguishes the roles of the battery pushing/pulling electrons and correctly maps the ion migration. The tone is engaging and strictly process-oriented.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Excellent use of vivid metaphors ('campo de batalla', 'viajero sediento') that make the abstract concepts concrete. It accurately describes the battery as a pump creating pressure/suction, which is the correct way to conceptualize the driving force. The step-by-step flow is logical and accurate.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Scientifically the most thorough, incorporating details about kinetics and overpotential ('ruta menos costosa') while maintaining a conversational tone. It effectively explains the mechanism of the electron 'pump'. It is ranked slightly below D and G only because the narrative flow in D/G felt slightly more cohesive for a general explanation, whereas A is a list of very high-quality specific facts.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Very strong output with clear accuracy and good metaphors ('pista de baile'). It correctly identifies the direction of electron flow and ion migration. The narrative is smooth and easy to follow, meeting all criteria effectively.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Clear, accurate, and systematic. It explicitly describes the circuit closing and the energy barrier being overcome ('empujar agua cuesta arriba'). A solid explanation without major flaws, though slightly less imaginative in its imagery than the top tier.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Contains sophisticated concepts (double layer, diffusion, nucleation) which adds great depth. However, the phrasing in Step 2 regarding electron flow ('salen del otro para recibirlos') is slightly clunky and harder to parse than the other models. It meets all requirements but is slightly less accessible.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Accurate and follows the correct sequence. It uses decent metaphors ('autos hacia un estacionamiento'). It is a good, standard explanation but lacks the depth of mechanism (the 'push/pull' physics) found in the higher-ranked models.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Factually correct but functionally dry. It lists what happens ('ions move', 'oxidation occurs') without as much emphasis on the *driving force* or vivid process language as the others. It meets the criteria but doesn't excel.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "While factually consistent regarding directions, the descriptions are somewhat vague ('cambia de identidad', 'intercambio de electrones') compared to the specific reduction/oxidation descriptions in other models. It feels a bit repetitive and less detailed.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "Contains a critical factual error in Step 1 and text: 'Los electrones fluyen desde la fuente de poder hacia el ánodo.' In electrolysis, electrons flow from the source to the cathode (reduction), and from the anode (oxidation) to the source. Stating that electrons flow from the source to the anode contradicts the fundamental operation of an electrolytic cell.",
+          "score": 2
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Muy buen “tour” del proceso: deja claro que es no espontáneo, muestra migración iónica correcta (cationes→cátodo, aniones→ánodo), separa bien circuito externo vs relevo iónico interno y describe reacciones en cada electrodo. Buenas metáforas y flujo causal. Cumple límites de título/texto.",
+          "score": 9.4
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Proceso claro y accionado: diferencia de potencial, migración iónica correcta, reducción/oxidación en electrodos y retorno de electrones por el cable. Metáforas útiles y menciona umbral de voltaje. Ligero riesgo de “cloruro libera su electrón extra” (formulación simplista), pero globalmente correcto.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Buen encadenamiento causa‑efecto con metáforas; migración correcta y explica el cierre del circuito. No espontáneo bien remarcado. Pequeña debilidad: ejemplo “agua y sal” puede inducir productos incorrectos según condiciones, pero lo mantiene general. Formato ok.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Sólido y correcto en migración (cationes→cátodo), reacciones (reducción/oxidación) y circuito externo. Añade relación corriente‑cantidad (leyes de Faraday) sin salirse mucho. Metáforas presentes. Algo más “manual” que tour, pero cumple.",
+          "score": 8.4
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Muy buen enfoque dinámico (interfase, doble capa, limitación por transporte, pasivación) y metáforas. Correcto en no espontaneidad. Pero es menos explícito en quién va a qué electrodo (cationes/aniones) y mezcla algo de descripción estructural (doble capa) que puede rozar el “qué es” más que “cómo”.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Explica bien el flujo: fuente→cátodo, cationes→cátodo, aniones→ánodo, reducción/oxidación. Conversacional con metáforas. Peca de antropomorfismos tipo “roban electrones” y simplifica productos en el ánodo, pero sin errores de migración ni espontaneidad.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Buen hilo narrativo y metáforas; migración correcta y no espontáneo. Sin embargo, algunos títulos/textos son más vagos (p.ej., “la transformación se completa”) y hay leve confusión de agencia en “El ánodo recolecta electrones” (en realidad la oxidación entrega e− al ánodo). Aun así, globalmente correcto.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Proceso mayormente correcto con buenas metáforas y cierre del circuito. Problema: afirma que los aniones “se vuelven neutros” de forma general; en electrólisis muchas oxidaciones producen especies no neutras o moléculas (p.ej., 2Cl−→Cl2). Simplificación excesiva en la química del ánodo.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Buen tono y enfoque en movimiento/reacción, pero es demasiado genérico: no nombra explícitamente cátodo/ánodo ni asigna con claridad reducción vs oxidación a cada electrodo, lo que reduce la ‘profundidad de mecanismo’. Aun así, no contiene errores directos de migración o espontaneidad.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "Contiene errores/confusión en el sentido del flujo electrónico: dice que los electrones fluyen desde la fuente hacia el ánodo y que ‘entran por el ánodo’, lo cual contradice la convención típica en electrólisis (la fuente extrae e− del ánodo y los entrega al cátodo). Además es más estático y con menos metáforas.",
+          "score": 4.2
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-mechanics",
+  "testCaseId": "es-chemistry-electrolysis-1"
+}

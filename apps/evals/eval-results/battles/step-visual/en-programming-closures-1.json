@@ -1,0 +1,221 @@
+{
+  "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\nThis test covers JavaScript closures - a programming concept.\n\nACCURACY CHECKS - PENALIZE if:\n- Code snippets have syntax errors\n- Code doesn't actually demonstrate closures (must show inner function accessing outer scope)\n- Technical explanations are incorrect\n\nREDUNDANCY CHECKS - PENALIZE if:\n- Multiple code snippets show essentially the same pattern\n- The same closure example is repeated across visuals\n\nVISUAL-CONTENT FIT - PENALIZE if:\n- Timeline is used (closures are not a historical/sequential topic)\n- Chart is used without numerical data\n\nDo NOT PENALIZE if:\n- Image visuals are used (can show conceptual diagrams of scope)\n- Diagram is used to show scope chains\n- Not all steps use code visuals\n\n\nEVALUATION CRITERIA:\n\n1. COVERAGE: Every step must have exactly one visual. Check that the number of visuals equals the number of steps and stepIndex values are unique and complete (0 to N-1).\n\n2. NO REDUNDANCY: Each visual must add UNIQUE information. PENALIZE if:\n   - Multiple visuals repeat the same data points, events, or concepts\n   - A visual restates what another visual already showed\n   - Example: Two timelines covering overlapping periods with the same events\n\n3. VISUAL-CONTENT FIT: The visual type must make sense for the content. PENALIZE if:\n   - Code visual is used for non-programming content\n   - Chart is used without numerical/statistical data to display\n   - Timeline is used for content with no temporal/sequential element\n   - Quote is fabricated or misattributed (must be real, verifiable quotes)\n\n   Do NOT penalize if:\n   - Image is used for any content (image can visualize anything)\n   - Diagram is used instead of timeline (relationships can be shown multiple ways)\n   - Any visual type is used multiple times (if each instance adds unique value)\n\n4. TECHNICAL ACCURACY: Visual content must be factually correct:\n   - Code must be syntactically valid\n   - Historical dates and events must be accurate\n   - Scientific processes must be correctly represented\n   - Chart data must be realistic and internally consistent\n\n5. LANGUAGE CONSISTENCY: All text in visuals must match the specified language. PENALIZE any mixed-language content.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT expect specific visual types based on topic (history does not require timeline; programming does not require code)\n- Do NOT penalize for using \"image\" as the visual type - it is a valid choice for any content\n- Do NOT penalize for using the same visual type multiple times IF each adds unique information\n- Do NOT require variety in visual types - consistency is fine if appropriate\n- ONLY penalize for: redundant information across visuals, visual type that cannot represent the content, technical inaccuracies, language errors, missing steps\n\n    ",
+  "judgedAt": "2026-01-16T22:58:33.326Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Excellent coverage with 3 steps (0-2), all unique. Step 0 is a conceptual diagram showing closure formation clearly. Steps 1 and 2 are distinct code examples - counter pattern and private state/data encapsulation pattern respectively. The code is syntactically correct, well-annotated, and each visual adds unique information. The diagram is well-structured with labeled edges showing the relationship flow. No redundancy - the two code examples demonstrate different closure use cases (simple counter vs object with multiple methods for encapsulation).",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Complete 3-step coverage (0-2). Good conceptual diagram at step 0. Two code examples that are distinct: step 1 shows a greeter pattern with string interpolation, step 2 shows the counter/privacy pattern with object methods. Code is syntactically correct with helpful annotations. Well-structured diagram with clear labels. Minor overlap in that both code examples demonstrate closure for data privacy, but they show different patterns (template literal vs counter object).",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Complete 3-step coverage (0-2). Good balance of code and diagram. Step 0 has a clean closure demonstration with proper annotations. Step 1 diagram effectively shows the relationship between outer function, environment, inner function, and returned function. Step 2 demonstrates the privacy/encapsulation pattern. All code is syntactically correct. The two code examples are somewhat similar (both basic closure patterns), but step 2 adds the object-with-methods variation. Slight redundancy between the two code examples as they both essentially show closure-based state.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Complete 3-step coverage (0-2). Good diagram at step 0, correct code at step 1, and an interesting table at step 2 comparing global vs closure variables. The table provides unique educational value about privacy benefits. Code is correct. However, having only one code example means less demonstration of closure patterns. The table is appropriate for the content and adds genuine value without redundancy.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Complete 3-step coverage (0-2). Two code examples and one diagram. Code at step 0 is correct and shows basic closure. Diagram at step 1 complements the code well. Step 2 counter example is distinct from step 0 (mutable state vs static value). However, there's notable redundancy: both code snippets (steps 0 and 2) show essentially the same pattern - outer function with variable, inner function accessing it, return inner function. The difference (returning static value vs incrementing counter) is minor.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Complete 3-step coverage (0-2). Uses a quote (step 0) from MDN which is verifiable and accurate. Code at step 1 is correct and demonstrates closures well. Diagram at step 2 is simple but shows the encapsulation pattern. The quote adds authentic educational value. However, having only one code example limits the demonstration depth, and the diagram at step 2 is somewhat basic. Overall solid but less comprehensive in showing closure patterns.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Complete 3-step coverage (0-2). Two diagrams and one code example. The code at step 1 is correct and well-annotated. However, having two diagrams (steps 0 and 2) creates some redundancy - both show the relationship between outer function, inner function, and variables, just with slightly different framing (generic closure vs factory/accessor pattern). The second diagram adds the 'external code' perspective but still overlaps conceptually with the first. Only one actual code demonstration.",
+          "score": 7.3
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Complete 3-step coverage (0-2). All three visuals are code examples, which is acceptable but creates significant redundancy. All three examples show essentially the same pattern: outer function defines variable, returns inner function that accesses it. The variation is minimal (returning x vs logging y vs incrementing count). While all code is syntactically correct, this is a clear violation of the redundancy principle - three code snippets showing nearly identical patterns.",
+          "score": 5.5
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-4.1-mini",
+          "reasoning": "Complete 3-step coverage (0-2). However, all three steps are diagrams with no code examples. For a JavaScript closures topic, this is a significant weakness - the guidance states 'Code doesn't actually demonstrate closures (must show inner function accessing outer scope)' as a penalization criterion. While diagrams can show concepts, the absence of any actual code demonstration is a major gap. Additionally, the three diagrams have considerable overlap in what they represent.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Only 1 step (stepIndex 0). This is incomplete - missing steps means significant coverage failure. The single diagram is reasonable but doesn't demonstrate actual closure code. For a programming concept, having no code at all and only one step is inadequate. The diagram itself is simple but correct in showing the relationship between outer scope, inner function, and variables.",
+          "score": 3.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "moonshotai/kimi-k2-0905",
+          "reasoning": "Only 1 step (stepIndex 0). Severely incomplete coverage. The single diagram has structural issues - the 'memory' node is defined but has no edges connecting to it, making it orphaned. No code examples at all for a JavaScript programming topic. The diagram only partially explains closures without the crucial code demonstration.",
+          "score": 2.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "This model provides the best variety and conceptual depth. It starts with a clear diagram of the concept, follows with a correct code example, and concludes with a comparison table. The table is particularly effective for the 'Visual-Content Fit' criterion, as it uses a structured format to compare the properties of closures versus global variables (privacy, persistence, etc.), adding unique educational value without repeating code or abstract diagrams.",
+          "score": 9.8
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Excellent use of diverse visual types. It begins with a relevant, verifiable quote from MDN to define the concept, uses a clear code snippet to demonstrate implementation, and finishes with a diagram illustrating the public/private interface. This approach covers the 'what', 'how', and 'conceptual structure' without any redundancy.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Strong ranking because it avoids the redundancy of showing multiple code blocks. Instead, it uses a diagram in the final step to visualize the 'Factory/Module' pattern structure. This visually explains *why* the privacy works (external code cannot reach the private variable node directly), which adds unique value compared to just showing the code for a counter.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "A solid, standard output. It uses a diagram to show the scope chain and two code snippets. The second code snippet (Bank Account) is well-chosen to demonstrate the practical application of data privacy, distinct from the basic example in the first step. The annotations are helpful and accurate.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Very good quality, similar to Model B. It uses a diagram, a basic code example, and a more complex 'privacy' code example. The execution is flawless, though slightly less creative in visual selection than the top models.",
+          "score": 8.7
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Equivalent quality to Model G. The diagram correctly identifies the relationships between outer/inner functions and the environment. The code examples are syntactically correct and demonstrate the concept well.",
+          "score": 8.7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Good execution. The mix of code and diagrams is appropriate. The diagram in step 1 is a bit simple compared to others, but the overall accuracy and adherence to the task are high.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "The output is technically accurate but suffers from redundancy. It presents three code snippets that illustrate very similar patterns. While valid code, it fails to utilize the visual medium to explain the *concept* or *structure* differently, making it less effective for a learner.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-4.1-mini",
+          "reasoning": "This model provides three diagrams that are conceptually repetitive. Each diagram essentially draws boxes and arrows showing 'function remembers variable'. Without code to ground the concept or a different visual type to explain implications, the redundancy is high.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Technically accurate diagram, but fails the 'Coverage' expectation significantly. While other models deduced a 3-step sequence, this model provided only a single step, resulting in an incomplete explanation of the topic.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "moonshotai/kimi-k2-0905",
+          "reasoning": "Like Model A, this output is too sparse. It provides a single diagram with less detail than Model A, failing to adequately cover the topic or meet the implied multi-step structure.",
+          "score": 2
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Meets coverage (3 visuals with stepIndex 0–2). Visuals are non-redundant: conceptual diagram, then two distinct closure use-cases (stateful counter; data-privacy/account object). Code is valid JS and clearly demonstrates closures (inner functions access outer variables, persist across calls). Language consistent. Overall strongest combination of clarity and unique information per step.",
+          "score": 9.4
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Complete coverage (0–2). Non-redundant: first code shows basic closure, diagram explains environment/return, third code shows privacy via returned methods. Code is syntactically valid and accurately demonstrates closures. Slightly more standard/overlapping conceptually than B, but still distinct enough and well-annotated.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Complete coverage (0–2). Good mix: diagram of mechanism, code example, then a different diagram emphasizing private variable/accessor pattern. Accurate and language-consistent. Step 0 and step 2 are both diagrams and somewhat concept-adjacent (mechanism vs privacy), but they do add different structure, so only minor redundancy concern.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Complete coverage (0–2). Step 0 diagram + two code examples that are meaningfully different (greeter capturing two vars; counter object with private state). Code is valid and demonstrates closure correctly. Slight redundancy with many other submissions’ “greeter/counter” archetypes, but internally its steps are distinct and accurate.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Complete coverage (0–2). Accurate code and diagram. However, step 0 and step 2 are very similar patterns (return inner function capturing a variable; step 2 is essentially a counter variant of the same idea). Still acceptable but less unique information across steps than top-ranked outputs.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Complete coverage (0–2). Diagram + closure code + a table contrasting global vs closure variables. All English, and code is valid/closure-correct. The table is a reasonable fit (qualitative comparison), though it’s more general and not as directly demonstrative as another concrete closure example; still non-redundant.",
+          "score": 7.7
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Complete coverage (0–2). Includes a quote, a code example, and a simple diagram. Code demonstrates closure correctly and is valid. Main issue: the MDN quote is not presented with a verifiable URL/citation and could be slightly paraphrased; per guidance, fabricated/misattributed quotes are a risk. Diagram is also quite generic compared to others.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Complete coverage (0–2) with valid JS. However, all three visuals are code and largely repeat the same closure pattern (outer returns inner capturing one variable). The counter arrow-function variant adds a little, but overall redundancy is high and unique informational gain per step is limited.",
+          "score": 6.6
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-4.1-mini",
+          "reasoning": "Complete coverage (0–2) but all three visuals are diagrams that are highly repetitive (each depicts outer/inner/variables/return/access). No code to concretely demonstrate closure behavior (not required, but here it contributes to redundancy and weaker demonstration). Some nodes/edges are generic and don’t add distinct new information per step.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Only one visual (stepIndex 0) so coverage fails if the task expects multiple steps (others consistently provide 3 steps). Diagram is simplistic and doesn’t clearly show the key idea of variable capture/persistence over time; still not wrong, just incomplete relative to expectations.",
+          "score": 4.2
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "moonshotai/kimi-k2-0905",
+          "reasoning": "Only one visual (stepIndex 0) so coverage fails. Diagram also has an issue: node 'memory' exists but is unused by edges, making it internally inconsistent/unclear. Overall too minimal and less technically communicative than even Model A.",
+          "score": 3.8
+        }
+      ]
+    }
+  ],
+  "taskId": "step-visual",
+  "testCaseId": "en-programming-closures-1"
+}

@@ -1,0 +1,185 @@
+{
+  "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Git installation involves platform-specific steps. Penalize if:\n   - Steps assume wrong operating system without clarification\n   - Installation verification is missing (checking git version)\n\n2. SAFETY CHECK: Penalize if:\n   - Steps suggest downloading from unofficial sources\n   - PATH configuration is skipped without noting it's handled by installer\n\n3. SPECIFICITY CHECK: Penalize vague instructions like \"install Git\" without specifying what to click, download, or run.\n\n\nANTI-CHECKLIST GUIDANCE (READ THIS FIRST - CRITICAL):\n- Do NOT penalize for missing steps you might expect\n- Do NOT require a specific number of steps - let complexity dictate length\n- Do NOT check against an imagined \"ideal\" procedure\n- Do NOT interpret rules too literally - use common sense\n- Different valid procedures exist - assess the quality of what IS provided\n- ONLY penalize for actual problems: incorrect sequence, factual errors, missing critical safety steps, or truly confusing instructions\n\nEVALUATION CRITERIA:\n\n1. PROCEDURAL ACCURACY: Steps must be in correct sequence. Penalize only if actions are genuinely out of order or skip critical prerequisites.\n\n2. ACTION-ORIENTED LANGUAGE: Each step must use imperative verbs (Click, Type, Add, Place, Turn, etc.). Penalize passive or purely descriptive language.\n\n3. LOGICAL STEP GROUPING: Steps should be coherent units that a user can follow without confusion. This does NOT mean micro-splitting every movement:\n   - ACCEPTABLE: \"Click the File name field and type your document name\" (filling a form field is ONE action)\n   - ACCEPTABLE: \"Pull over safely and turn on hazard lights\" (logically grouped safety actions)\n   - ACCEPTABLE: \"Pour hot water, swirl to warm, then discard\" (continuous motion)\n   - PROBLEMATIC: \"Download the file, install it, configure settings, and restart\" (unrelated actions crammed together)\n   The goal is clarity, not arbitrary splitting. If a step reads naturally and a user can follow it without confusion, it's fine.\n\n4. VERIFICATION POINTS: Where helpful, include confirmation of success. Only penalize if verification is missing for critical/risky actions. Do NOT penalize verification steps as \"padding\" - helping users confirm success is valuable teaching.\n\n5. FORMAT COMPLIANCE:\n   - title: Maximum 50 characters\n   - text: Maximum 300 characters\n\n6. SCOPE ADHERENCE: Content should cover the activity as described. Do not penalize for reasonable setup or verification steps.\n\n7. PRACTICAL FOCUS: Steps should be actionable instructions, not conceptual explanations.\n\nFINAL CHECK: Before penalizing anything, ask yourself: \"Would a reasonable human instructor consider this a genuine problem?\" If not, do not penalize.\n\n    ",
+  "judgedAt": "2026-01-18T04:06:27.938Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Clean, concise, and complete. Uses action-oriented language (Click, Find, Type). Covers all essential steps: download from official site, run installer, accept defaults, verify with git --version. Good OS coverage (Windows/Mac) without being overly verbose. Steps are in correct sequence. Character limits respected. Only minor gap is no mention of closing the installer, but installation 'Complete Installation' step implies finality.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Excellent coverage of the process with clear action-oriented steps. Mentions official site, handles both Windows and macOS paths well, includes verification. Good step grouping - not too granular or too compressed. Mentions macOS .pkg file detail which is helpful. The 'uncheck View Release Notes' tip is practical. All character limits appear met. Very solid overall.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Very thorough with good OS detection step at the start. Strong action-oriented language. Includes PATH verification which is excellent. Good verification steps. However, some steps are slightly verbose but still within limits. The first step about confirming OS might be overkill since git-scm.com auto-detects, but it's not wrong. Good troubleshooting tip about reopening terminal. Minor issue: step 10 with where/which git is nice but perhaps beyond basic installation verification.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Very concise and efficient - only 5 steps. All essential elements covered: official download, installer location, running installation, completion, verification. Action-oriented language used throughout. Good OS coverage in each step. The compression is done well - steps are grouped logically without cramming unrelated actions. Minor weakness: doesn't explicitly mention git-scm.com is the official site (just mentions the URL), but this is minor.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Good structure with proper verification step. Action-oriented language. Mentions official site. However, step 5 about selecting default editor is very Windows-specific and doesn't help Mac/Linux users. The instruction to 'select Vim' could be problematic for beginners who may get stuck in Vim. Step 4 says 'Ensure Git Bash component is selected' which is helpful. Some steps are Windows-focused without clear Mac equivalents.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Decent coverage but starts with a somewhat unnecessary prerequisite step about internet connection - while not wrong, it's not particularly actionable. Steps are otherwise clear and in correct order. Verification included. However, lacks some specificity (e.g., 'Open the downloaded installer file' without mentioning where to find it). Step 7 'Open your terminal' doesn't specify how to do this on different OSes. Adequate but not as polished as top performers.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Good overall coverage with verification step. However, step 5 tries to cram too much information about installation options into one step - the detailed list format within the text field is unusual and potentially confusing. The line 'include backticks if shown' in the verification step is confusing and incorrect advice. Otherwise decent OS coverage and proper sequence.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Very detailed with 14 steps, which provides thorough coverage but may be overly granular. Steps like 'Wait for Download' (step 3), 'Accept License' (step 5), 'Configure HTTPS' (step 9), 'Set Line Endings' (step 10) break things down perhaps more than necessary. The verification is split into two steps (13 and 14) which is somewhat redundant. While not incorrect, this level of detail may overwhelm a user doing a simple installation. Some steps like HTTPS backend configuration are very Windows-specific without noting that.",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Comprehensive with 14 steps covering Windows, macOS (including Homebrew), and Linux separately. This is thorough but creates a confusing flow - users need to mentally skip steps not relevant to their OS. Steps 4-7 are Windows, 8-10 are macOS, 11 is Linux. This interleaved structure makes it harder to follow. Good troubleshooting step at end. Individual steps are well-written with action verbs. The prerequisites step is reasonable. However, the branching structure hurts usability significantly.",
+          "score": 6.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "This model provides the most balanced and robust instructions. It correctly distinguishes between Operating Systems for critical steps (downloading, running the installer, opening the specific terminal app). It wisely directs Windows users to 'Git Bash' rather than the generic Command Prompt, which is best practice for Git on Windows. The verification steps are thorough, checking both the version and the path.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "This output is excellent for users who might be intimidated by the Git installer wizard. It breaks down the specific configuration screens (Line Endings, Default Editor, etc.) and advises on defaults, which reduces anxiety. The instructions are accurate and imperative.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "This model is extremely comprehensive, covering Windows, macOS (both Installer and Homebrew), and Linux. While the content is high quality and technically accurate, cramming all these variations into a single linear numbered list makes it slightly harder to follow than a single-path guide. However, the instruction quality is very high.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "A solid, standard set of instructions. It correctly identifies the need for 'Git Bash' on Windows and provides a clear path for verification. It lacks the helpful detail of Model C regarding the wizard steps but is otherwise error-free and easy to follow.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Concise and accurate. It glosses over the specific settings in the installer (just saying 'accept default options'), which is acceptable but less helpful than Model C. The verification step is correct.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Generally good instructions, but Step 2 assumes the download starts automatically (which varies by browser/OS and specific link clicked). Step 7 mixes instructions for Windows (cmd) and Mac (Terminal) in a way that might be slightly confusing, and misses the opportunity to recommend Git Bash for Windows.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "The instructions are a bit vague. Step 1 is unnecessary 'fluff' (check internet). Step 7 tells the user to 'Open your terminal' without explaining how to find it on Windows or Mac, which is a common stumbling block for beginners. It is actionable but lacks the specificity of higher-ranked models.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "This model contains a dangerous instruction in the verification step: 'include backticks if shown'. If a user literally types backticks around the command, it will fail in Command Prompt or cause unexpected behavior in Bash. This confusing syntax advice significantly lowers the score.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "This model contains a factual error regarding the macOS installation. It instructs users to 'drag Git to Applications', but the official installer from git-scm.com is a `.pkg` installer wizard, not a drag-and-drop `.app` bundle. Following these instructions would leave a Mac user confused.",
+          "score": 3
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Clear, platform-aware (Windows vs Mac), uses official site, action-oriented, and includes critical verification via `git --version`. Steps are logically grouped and not overly prescriptive. Main issue: does not mention PATH handling, but not strictly required here.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Uses official downloads page, distinguishes Windows vs macOS, gives a reasonable note about .pkg inside disk image, and includes `git --version` verification. Action language is good. Slightly vague on Linux and PATH handling, but overall solid and safe.",
+          "score": 8.4
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Stays on official source, has straightforward imperative steps, and includes `git --version` verification. Some steps are a bit generic (\"Open the downloaded installer file\" without OS-specific detail) but not unsafe or wrong.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Official source and includes verification. Reasonably specific about wizard flow and editor selection, but it mixes in Linux without providing real Linux install steps (just \"follow the link\"), which reduces platform-specific accuracy/specificity.",
+          "score": 7.7
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Concise and includes `git --version`. However, macOS instruction \"drag Git to Applications\" is often not the actual Git install flow from git-scm (commonly a .pkg installer), so this introduces accuracy risk. Otherwise safe (official site) and clear.",
+          "score": 7.1
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Includes verification and decent Windows-centric installer details (PATH, line endings). But it implies a similar \"installer\" experience for Linux via git-scm, which is often not how Linux installs Git (typically package manager). Some guidance becomes inaccurate across OSes.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Very thorough, uses official downloads, includes both `git --version` and PATH confirmation. Major compliance problem: step titles exceed 50 characters and many step texts exceed 300 characters, violating the strict format limits. Also combines macOS and Windows details in ways that can be verbose/confusing.",
+          "score": 6.6
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Provides the most platform-specific coverage (Windows/macOS via Homebrew or installer/Linux package managers) and includes verification plus troubleshooting. However, it frequently violates the 50/300 character limits and includes conditional branches that make the procedure longer and less coherent for a single user path.",
+          "score": 6.4
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Actionable and includes verification, but contains an instruction error: \"Type `git --version` (include backticks if shown)\"—users should not type backticks. Also the long multi-bullet step risks being too dense, and it likely violates the 300-character text cap.",
+          "score": 5.8
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-custom",
+  "testCaseId": "en-tech-install-git-1"
+}

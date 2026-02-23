@@ -1,0 +1,131 @@
+{
+  "expectations": "\nLANGUAGE REQUIREMENT: All content must be in English.\n\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Behavioral economics concepts must be accurate. Penalize if:\n   - Heuristics are incorrectly described or conflated\n   - Loss aversion is confused with risk aversion\n   - Framing effects are misrepresented\n   - The distinction between System 1 and System 2 thinking is wrong\n\n2. TRANSFER CHECK: The inputs discuss investment decisions and product pricing. Questions must use completely different scenarios (e.g., health choices, environmental behavior, relationship decisions) to test the same concepts.\n\n3. INTEGRATION CHECK: This is an interdisciplinary topic. Look for questions that connect WHY biases exist (evolutionary psychology, cognitive limitations) with HOW they operate (heuristics, framing) and WHERE they affect decisions across domains.\n\n4. MISCONCEPTION CHECK: Distractors should include common behavioral economics misconceptions like:\n   - Thinking biases only affect unintelligent people\n   - Believing awareness of bias eliminates its effect\n   - Confusing heuristics (shortcuts) with errors (biases)\n   - Assuming rational choice theory accurately predicts behavior\n\n\nEVALUATION CRITERIA:\n\nSEVERITY GUIDE - Use this to calibrate your scoring:\n\nSEVERE ISSUES (heavy penalty):\n- Factual errors or hallucination (inventing facts not in the input)\n- Testing pure memorization (\"What metaphor did the text use?\")\n- Questions that reference \"the lesson,\" \"as explained,\" or similar meta-language\n- Wrong tone (stiff, academic, exam-like instead of conversational)\n- Format violations (wrong question count, missing fields, multiple correct answers)\n- Distractors that are obviously absurd or unrelated\n- Language purity violations (mixing languages)\n\nMODERATE ISSUES (medium penalty):\n- Coverage heavily skewed to one content type (e.g., 15 HOW questions, 0 WHY)\n- No integration questions connecting multiple content types\n- Feedback that just says \"correct/incorrect\" without insight\n- Questions answerable without understanding (too easy)\n\nMINOR ISSUES (light penalty or just note):\n- Reusing a scenario from the input (not ideal, but okay if the question still tests understanding)\n- Some questions slightly easier than others\n- Feedback could be friendlier but is still helpful\n- Minor missed opportunities for deeper insight\n\n1. CONCEPTUAL ACCURACY: Questions must be factually correct. SEVERELY penalize if:\n   - Questions contain factual errors or hallucinated information\n   - Correct answers are actually wrong based on the input content\n   - Feedback explains concepts incorrectly\n\n2. UNDERSTANDING VS MEMORIZATION: Questions must test thinking, not recall. SEVERELY penalize if:\n   - Questions ask \"What did the text say?\" or \"Which example was used?\"\n   - Questions reference \"the lesson,\" \"as explained,\" \"according to the text\"\n   - Questions can be answered by pattern-matching phrases from the input\n\n3. TONE & STYLE: Must feel conversational and friendly. SEVERELY penalize if:\n   - Language is stiff, formal, or exam-like\n   - Feedback sounds academic or preachy\n   - Questions use unexplained jargon\n\n4. FORMAT COMPLIANCE: Must meet structural requirements. SEVERELY penalize if:\n   - Question count outside 15-20 range\n   - Missing required fields or wrong types\n   - Multiple correct answers per question\n   - Character limits exceeded\n\n5. DISTRACTOR QUALITY: Wrong answers must be plausible. Penalize if:\n   - Distractors are obviously absurd or unrelated\n   - The correct answer is obvious without understanding\n   - Distractors don't represent real misconceptions\n\n6. CONTENT COVERAGE: Should test across content types. Penalize if:\n   - Any content type (WHY, WHAT, HOW, WHERE) is completely missing\n   - Coverage is heavily skewed\n\n7. FEEDBACK QUALITY: Should guide learning. Penalize if:\n   - Feedback just says \"correct\" or \"incorrect\" without insight\n   - Wrong answer feedback doesn't point toward the correct answer\n\n8. SCENARIO FRESHNESS (MINOR): Prefer novel scenarios, but don't heavily penalize reuse.\n   - Ideal: Questions use fresh scenarios not in the input\n   - Acceptable: Reusing input scenarios IF the question still tests understanding\n   - Only penalize if reused scenario makes the question pure recall\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT heavily penalize scenario reuse if the question still tests understanding\n- Do NOT require specific concepts to be tested by name\n- Do NOT check against an imagined \"complete\" set of questions\n- FOCUS penalties on: factual errors, memorization-based questions, wrong tone, format violations\n- Different valid quiz designs exist - assess the quality of what IS provided\n\n    ",
+  "judgedAt": "2026-01-17T21:35:09.020Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model D provides 20 questions (top of acceptable range) with excellent conceptual accuracy throughout. The scenarios are fresh and completely different from the inputs (car dealership, surgery framing, plane crashes, phone subscriptions, soup cans, etc.). Tone is conversational and friendly ('Bingo!', 'Spot on!', 'Right!'). Distractors are plausible and represent real misconceptions. Feedback is insightful and explains why wrong answers are wrong and points toward correct understanding. Good coverage across WHY (evolutionary underpinning of biases), WHAT (defining concepts), HOW (mechanisms), and WHERE (applications). No factual errors detected. The System 1/System 2 distinction is correctly explained. Loss aversion vs risk aversion is properly distinguished. Minor issue: some questions could probe integration more deeply, but overall excellent quality.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model B delivers 18 questions with strong conceptual accuracy and fresh scenarios (salary negotiation, cryptocurrency holding, cafeteria nudges, hotel towel signs, home renovation, streaming password sharing). The tone is consistently conversational ('Nice.', 'Yes.', 'Right!'). All core behavioral economics concepts are accurately presented - loss aversion, framing, anchoring, defaults, social proof, availability, System 1/2 distinction. Feedback provides genuine insight and guides learning. Distractors are plausible misconceptions. Good coverage across content types. One question specifically addresses the misconception that biases mean unpredictability ('Biases are systematic, so behavior is still predictable'). The distinction between nudges and mandates is well-handled. Very slight deduction for slightly less depth in some integration questions compared to Model D.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.1-thinking",
+          "reasoning": "Model A provides 17 questions with accurate behavioral economics concepts. Scenarios are mostly fresh (charity emails, savings apps, freelancer tax problem, energy defaults, game show jelly beans). The tone is professional but slightly less conversational than Models B and D - feedback uses phrases like 'This is a classic default nudge' which is informative but a bit textbook-ish. All concepts are accurately explained. Good coverage of loss aversion, anchoring, framing, present bias, defaults, commitment devices, System 1/2. The investor scenario in question 11 reuses investment context from inputs, which is a minor issue but the question still tests understanding not recall. Distractors are plausible. Feedback explains concepts correctly. Slight penalty for slightly stiffer tone and one scenario that overlaps with input domain (investing).",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Model C provides 16 questions with good conceptual accuracy. Fresh scenarios include concert ticket/blizzard, meat labeling, driving in rain, shark attacks, hotel towel signs, streaming free trials. Tone is friendly ('Spot on!', 'You got it!', 'Exactly.'). All behavioral economics concepts are correctly explained. Good integration question connecting System 1/2 with defaults. The free trial question nicely shows how loss aversion is exploited. However, one issue: Question 12 (concert in blizzard) attributes the behavior to loss aversion, but this is actually a better example of sunk cost fallacy - you're not really 'losing' the $100 by staying home since it's already spent. This is a minor conceptual quibble but worth noting. Coverage is good across content types. Distractors are plausible.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model E delivers 15 questions (minimum acceptable) with accurate concepts and fresh scenarios (concert ticket trade, real estate showing, sneakers vs vacation savings, mall cinnamon roll, hotel towel signs). Tone is conversational ('You've got it!', 'Spot on!', 'Classic!'). Concepts are accurately explained. Good question on the core disagreement between classical and behavioral economics. The coffee shop decoy pricing question is clever. However, coverage feels slightly thinner than top models with fewer questions. The feedback is helpful but occasionally could be more insightful. All required content types are represented but less depth in integration questions. No factual errors detected. Distractors are plausible misconceptions.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model F provides 18 questions but with notably more concise questions and feedback. The tone is quite terse - feedback like 'Right —', 'No —', 'Yes —' feels more like shorthand than conversational. Questions themselves are short ('Why small tweaks help?', 'Which mechanism explains this?'). While concepts are accurate, the brevity of feedback sometimes limits learning value - e.g., 'Wrong — fines restrict or punish' doesn't fully explain the principle. Some scenarios are fresh (bridge collapse, energy bills, jacket pricing, organ donation). The left-digit bias question is a good addition not seen in other models. However, the overly compressed style makes feedback less insightful and the experience feels more like a rapid-fire quiz than an engaging learning activity. Coverage is adequate but the minimal explanations reduce educational value.",
+          "score": 7.2
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Model C is the strongest output. It adheres strictly to the 'Transfer Check' by avoiding the specific investment and product pricing scenarios found in the input, instead using diverse contexts like driving safety, app usage, dieting, and data privacy. The tone is conversational and friendly ('Spot on!', 'Exactly'), and the feedback provides clear, insightful explanations of why the correct answer is right and distractors are wrong. It meets all formatting and accuracy requirements.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model B has excellent tone and very high-quality feedback ('Bingo', 'Yep'). It creates a friendly, engaging user experience. However, it fails the 'Transfer Check' on one question (Q3) by using a cryptocurrency/investment scenario, which was explicitly restricted to force transfer of knowledge. Aside from this slip, the scenarios are fresh and the pedagogical value is high.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.1-thinking",
+          "reasoning": "Model A is a solid, compliant entry. It follows the formatting rules and most accuracy constraints. Like Model B, it fails the 'Transfer Check' once (Q11 uses a stock market investor scenario). It ranks lower than B because its tone is slightly drier and more academic ('This fits expected value logic...'), whereas the prompt requested a conversational and friendly style.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model E has a pleasant, friendly tone, but it violates the 'Transfer Check' twice (Q11 on stock investors and Q12 on coffee pricing). While the questions are well-constructed, relying on the exact domains mentioned in the input reduces the quiz's ability to test conceptual transfer. The explanations are good, but the scenario overlap penalizes the score.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model F has a robotic, stiff tone compared to the others ('Right — ...', 'No — ...'), which violates the style requirements. It also fails the 'Transfer Check' twice (Q12 on investors, Q13 on retail pricing). The feedback is functional but lacks the warmth and insight found in the higher-ranked models.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model D is well-written with great tone, but it significantly fails the 'Transfer Check.' Despite the instruction to use 'completely different scenarios' from the investment and pricing inputs, nearly a quarter of its questions rely directly on those topics (Financial advisors, 401ks, coffee menu pricing, car sticker prices). This failure to test concept transfer across domains is a major deviation from the specific prompt instructions.",
+          "score": 5.5
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Strong overall: 18 questions (in-range), clear JSON structure, mostly fresh non-investment scenarios (refund framing, medical test framing, shark attacks, towels, utilities, overdraft alerts). Concepts are accurate (anchoring, framing, availability, present bias, defaults, social proof, commitment devices). Tone is fairly conversational. Best on the MISCONCEPTION CHECK: includes an explicit misconception item about predictability of biased behavior (\"if people aren’t rational, we can’t predict anything\"). Distractors are plausible and feedback is explanatory. Minor issues: a couple scenarios still touch finance/retirement (acceptable), and some items are a bit leading (defaults almost always correct), but still solid.",
+          "score": 9.3
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "18 questions (in-range) with good cross-domain transfer (recycling, health vaccination, bridges, gyms, negotiations). Generally accurate on key concepts and includes some less-common but valid BE ideas (left-digit bias, choice overload-ish). Feedback is clear and distractors are mostly plausible. Integration is decent (mentions friction, inertia, System 1/2, present bias). Main weaknesses: one item has a confusing/incorrect setup around loss aversion and the bet framing (context mixes gain/loss in a way that could mis-teach risk-seeking-in-losses), and a couple explanations are a bit overconfident/general (e.g., “nudges weak when System 2 deliberation” can be true but is not universally). Still high quality overall.",
+          "score": 8.4
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.1-thinking",
+          "reasoning": "18 questions (in-range), strong accuracy on core constructs (defaults, framing vs anchoring, availability, System 1/2, commitment devices). Tone is mostly friendly and explanations are solid. Good transfer overall (energy defaults, walking app, jelly beans, safety policy), but it repeatedly returns to savings/retirement/investing; also includes an explicit investor loss-aversion item (less aligned with the transfer requirement). Integration on “why biases exist” is lighter than others; mostly tests identification/application. Distractors are generally plausible.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "20 questions (upper end, OK). Generally accurate on anchoring, framing, availability, defaults, present bias, commitment devices, social proof; tone is conversational. Some integration appears (System 1/2 item, predictable patterns vs “irrational”). However, TRANSFER requirement is often violated: many scenarios are explicitly investment/financial/price/menu negotiation oriented (dealership, advisor/investments, retirement plan, coffee shop pricing, lotteries). A few explanations slightly overstate claims (e.g., “participation typically jumps to 90%+” is context-dependent). Distractors are mostly plausible.",
+          "score": 7.6
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "15 questions (in-range) with clear structure and mostly accurate core concepts. Tone is friendly. But it violates TRANSFER more than B/F: includes multiple investment/pricing-style items (investor holding losers; coffee shop decoy pricing; Econ vs behavioral econ). Limited interdisciplinary “why” integration beyond brief System 1/2 mentions. One subtle accuracy issue: calling the concert-ticket refusal purely loss aversion is plausible, but it’s more canonically endowment effect/status quo; still defensible but slightly muddy. Distractors are generally plausible.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "15 questions (in-range) and generally accurate on anchoring, framing, defaults, availability, present bias, System 1/2. However, TRANSFER requirement is frequently violated: many scenarios are explicitly retirement saving/investing/streaming subscription pricing-like contexts, close to the input themes. Also has a notable conceptual error: the blizzard concert-ticket scenario is labeled “Loss aversion,” but it is more directly the sunk cost fallacy/escalation of commitment; mislabeling here is a meaningful accuracy hit. Some wording is a bit more “textbooky” than conversational.",
+          "score": 6.4
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-review",
+  "testCaseId": "en-interdisciplinary-behavioral-economics-1"
+}

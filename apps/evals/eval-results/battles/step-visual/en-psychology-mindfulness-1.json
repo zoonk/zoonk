@@ -1,0 +1,221 @@
+{
+  "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\nThis test covers mindfulness - an abstract psychological/wellness concept.\n\nACCURACY CHECKS - PENALIZE if:\n- Quotes are fabricated or misattributed (if quotes are used, they must be real)\n- Scientific claims about mindfulness benefits are inaccurate\n\nREDUNDANCY CHECKS - PENALIZE if:\n- Multiple visuals depict the same mindfulness concept\n- The same breathing/meditation technique is shown repeatedly\n\nVISUAL-CONTENT FIT - PENALIZE if:\n- Code visual is used (no programming content)\n- Timeline is used (mindfulness is not a historical topic)\n- Chart is used without meaningful data\n\nDo NOT PENALIZE if:\n- Image visuals are used for all steps (very appropriate for abstract concepts)\n- No specialized visual types are used\n- Quotes from meditation teachers are used (if real and properly attributed)\n\n\nEVALUATION CRITERIA:\n\n1. COVERAGE: Every step must have exactly one visual. Check that the number of visuals equals the number of steps and stepIndex values are unique and complete (0 to N-1).\n\n2. NO REDUNDANCY: Each visual must add UNIQUE information. PENALIZE if:\n   - Multiple visuals repeat the same data points, events, or concepts\n   - A visual restates what another visual already showed\n   - Example: Two timelines covering overlapping periods with the same events\n\n3. VISUAL-CONTENT FIT: The visual type must make sense for the content. PENALIZE if:\n   - Code visual is used for non-programming content\n   - Chart is used without numerical/statistical data to display\n   - Timeline is used for content with no temporal/sequential element\n   - Quote is fabricated or misattributed (must be real, verifiable quotes)\n\n   Do NOT penalize if:\n   - Image is used for any content (image can visualize anything)\n   - Diagram is used instead of timeline (relationships can be shown multiple ways)\n   - Any visual type is used multiple times (if each instance adds unique value)\n\n4. TECHNICAL ACCURACY: Visual content must be factually correct:\n   - Code must be syntactically valid\n   - Historical dates and events must be accurate\n   - Scientific processes must be correctly represented\n   - Chart data must be realistic and internally consistent\n\n5. LANGUAGE CONSISTENCY: All text in visuals must match the specified language. PENALIZE any mixed-language content.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT expect specific visual types based on topic (history does not require timeline; programming does not require code)\n- Do NOT penalize for using \"image\" as the visual type - it is a valid choice for any content\n- Do NOT penalize for using the same visual type multiple times IF each adds unique information\n- Do NOT require variety in visual types - consistency is fine if appropriate\n- ONLY penalize for: redundant information across visuals, visual type that cannot represent the content, technical inaccuracies, language errors, missing steps\n\n    ",
+  "judgedAt": "2026-01-16T22:58:37.994Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Coverage: 3 visuals for 3 steps (0-2), complete. No redundancy: Quote (definition), diagram (meditation cycle), and table (react vs respond) each cover unique concepts. Visual-content fit: Quote from Jon Kabat-Zinn is real and properly attributed. Diagram effectively shows the meditation cycle. Table is appropriate for comparing concepts. Technical accuracy: The quote is accurate (this is Kabat-Zinn's well-known definition). All content is factually sound. Language: Consistent English. This is an excellent response with varied, appropriate visuals that each add unique value.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Coverage: 3 visuals for 3 steps (0-2), complete. No redundancy: Quote, diagram, and table each address different aspects. Visual-content fit: Quote from Jon Kabat-Zinn is real and accurate. Diagram shows the breath-focus cycle well. Table is appropriate for describing benefits. Technical accuracy: Quote is verified. The table avoids problematic numerical claims. Language: Consistent English. Very similar quality to Model A, with slightly less detailed diagram structure but equally valid approach.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Coverage: 3 visuals for 3 steps (0-2), complete. No redundancy: Quote, diagram, and chart each cover unique content. Visual-content fit: Quote from Jon Kabat-Zinn (1994) is real and accurately attributed. Diagram effectively shows the breath-wandering-return cycle. Chart shows benefits with percentages. Technical accuracy: The quote is authentic. The chart claims 'Reported Benefits' with specific percentages - while these aren't cited, presenting them as 'reported' rather than absolute scientific claims is acceptable. Language: Consistent English. Strong response with good attribution.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Coverage: 3 visuals for 3 steps (0-2), complete. No redundancy: Image (present moment concept), diagram (meditation cycle), chart (benefits) are all distinct. Visual-content fit: Image is appropriate for abstract concept. Diagram is well-structured with 5 nodes showing the full cycle. Chart shows benefits. Technical accuracy: The chart presents specific percentages without clear sourcing - claims like '68% stress reduction' and '72% improved focus' are presented as if factual, which is problematic without attribution. The values are plausible but unsourced. Language: Consistent English. Good structure but chart data accuracy is questionable.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Coverage: 3 visuals for 3 steps (0-2), complete. No redundancy: Image, diagram, and chart cover different concepts. Visual-content fit: Image appropriate for abstract concept. Diagram effectively shows the breath anchor cycle. Chart shows benefits. Technical accuracy: Chart presents specific percentages (45%, 52%, etc.) for 'Effects of Regular Mindfulness Practice' without clear sourcing. These appear to be fabricated values. Language: Consistent English. Similar issues to Model B with unsourced statistical claims.",
+          "score": 7.7
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Coverage: 3 visuals for 3 steps (0-2), complete. No redundancy: Image, diagram, and chart are distinct. Visual-content fit: Image is appropriate. Diagram shows the cycle effectively. Technical accuracy: Chart shows very high values (85%, 78%, 82%, 75%) for benefits without any sourcing or context. These seem inflated and fabricated. The chart lacks any indicator of what these percentages represent. Language: Consistent English. The unsourced high percentages are concerning.",
+          "score": 7.3
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Coverage: 3 visuals for 3 steps (0-2), complete. No redundancy: First diagram (mindfulness concept), second diagram (breath practice cycle), and chart (benefits) are distinct enough conceptually. Visual-content fit: Both diagrams are appropriate for showing relationships. Chart is appropriate. Technical accuracy: Chart data appears reasonable. The use of arrows in category names (↓, ↑) is clever. Language: Consistent English. Slight concern that two diagrams could be seen as overlapping in depicting mindfulness processes, but they do focus on different aspects.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Coverage: 3 visuals for 3 steps (0-2), complete. Redundancy concern: Two diagrams both deal with mindfulness attention/awareness processes - step 0 shows attention to present moment, step 1 shows breath anchor cycle. These are related but distinct concepts. Visual-content fit: Diagrams are appropriate. Chart is appropriate. Technical accuracy: Chart values (30%, 25%, 35%) are modest and plausible. Language: Consistent English. The two diagrams are borderline redundant as both deal with attention and awareness processes.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-4.1-mini",
+          "reasoning": "Coverage: 3 visuals for 3 steps (0-2), complete. No redundancy: Image, diagram, and chart cover different aspects. Visual-content fit: Image is appropriate. Diagram is somewhat weak - it shows 'Mindfulness' as a central node connecting to three concepts, which is less insightful than showing a process cycle. Chart shows benefits with percentages. Technical accuracy: Chart claims 75% stress reduction, 65% improved focus, etc. without sourcing. These specific high percentages are problematic. The diagram structure is less useful than a cyclical process view. Language: Consistent English.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Coverage: 3 visuals for 3 steps (0-2), complete. Redundancy issue: Steps 0 and 1 both use images depicting very similar concepts - person observing present moment (step 0) and person noticing breath while returning attention (step 1). These are conceptually overlapping. Visual-content fit: Images are appropriate for abstract concepts. Chart is appropriate. Technical accuracy: Chart values (30, 25, 20) have no units specified, making them unclear. Language: Consistent English. The image redundancy and unclear chart units are issues.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "moonshotai/kimi-k2-0905",
+          "reasoning": "Coverage FAILURE: Only 1 visual provided for what appears to be a 3-step explanation (based on other models). This is a critical failure - missing visuals for steps 1 and 2. Visual-content fit: The single diagram is appropriate. Technical accuracy: The diagram content is reasonable. Language: Consistent English. The incomplete coverage is a major issue that significantly impacts the score regardless of the quality of the single visual provided.",
+          "score": 3
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "This is the best output. It follows all instructions perfectly. Critically, it uses a 'table' for the third step to compare 'Reacting vs. Responding', which is the appropriate way to display text-based qualitative information. It avoids the pitfall of using a chart with arbitrary numbers. The diagram in step 1 is accurate and well-labeled.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Excellent output that also correctly uses a table for the benefits section instead of a chart with fake numbers. The diagram is accurate. It is ranked slightly below Model A only because Model A's table content (Comparison) offers higher information density than Model J's table (List of benefits), and Model A's diagram edges are more descriptive.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Strong output. It uses a Quote for the definition step, which is accurate and verifiable. The diagram is good. It is ranked lower than A and J because it uses a Chart for benefits with arbitrary percentage values (e.g., Sleep Quality: 25), which violates the 'meaningful data' expectation for charts.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Good visual selection using an Image for the abstract concept and a Diagram for the process. The diagram logic is clear and accurate. However, it is penalized for using a bar chart with arbitrary values (68, 72, etc.) to quantify qualitative benefits.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Very similar to Model B in quality and structure (Image -> Diagram -> Chart). The diagram is clear. It receives the same penalty for using a chart with fabricated statistical data for abstract benefits.",
+          "score": 7.7
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Uses diagrams for the first two steps, which is acceptable but perhaps less visually engaging than an image for the opening step. The diagrams are conceptually accurate. It incurs the penalty for using a chart with arbitrary numbers in step 3.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Competent output using two diagrams and a chart. The first diagram is a bit abstract but accurate. It is penalized for the use of a chart without meaningful data in the final step.",
+          "score": 7.4
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Meets most requirements. The diagram labels in step 1 ('Serves as', 'Can experience') are slightly verbose and clunky compared to other models. It also uses a chart with arbitrary data, incurring a penalty.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-4.1-mini",
+          "reasoning": "The diagram in step 1 is structural/semantic (showing relationships) rather than a process flow, which makes it less effective for explaining 'how to' practice mindfulness. Includes the chart penalty.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Weaker selection of visuals. It uses images for the first two steps, which reduces information density compared to a diagram for the process step. It also uses a chart with very sparse and arbitrary data.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "moonshotai/kimi-k2-0905",
+          "reasoning": "Major failure in coverage. The model provided only a single step/visual, whereas the task implies a multi-step explanation (Definition, Process, Benefits) similar to the other outputs. The single diagram provided is okay, but the output is incomplete.",
+          "score": 2
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Meets coverage (3 visuals for steps 0–2). Visuals are non-redundant: a (realistic) Kabat‑Zinn definition quote, a clear attention-wandering-return loop diagram, and a distinct reacting-vs-responding table. Visual-content fit is strong (no meaningless charts). Technical/language consistency looks fine. Main risk: quote attribution wording is commonly cited and appears correct; no obvious fabrication signals.",
+          "score": 9.3
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Meets coverage (0–2) with unique visuals: Kabat‑Zinn quote, breath/notice/return diagram, and a benefits table (not a dubious numeric chart). Good fit for abstract topic and avoids unsupported quantified claims. Minor weakness: benefits table includes broad claims (“Lowers anxiety”) without nuance, but it’s qualitative rather than pseudo-statistical.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Complete coverage (0–2). Image + diagram are appropriate and non-redundant. Weakness: the bar chart presents precise benefit values (68, 72, etc.) with no source/context—this is “chart without meaningful data” / pseudo-quantification and risks scientific inaccuracy. Otherwise language consistent and structure sound.",
+          "score": 7.6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Complete coverage (0–2). Image and diagram fit well. Same key issue as B: chart gives numeric “effects” values without provenance; could mislead as measured effect sizes. Still internally consistent and not redundant.",
+          "score": 7.4
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Complete coverage (0–2). Image and diagram fit. Chart again uses high, specific percentages (85, 82, etc.) with no basis; more exaggerated-looking than some others, increasing technical/scientific credibility concerns.",
+          "score": 7.1
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Complete coverage and good non-redundant structure (quote + diagram + chart). However, quote includes “1994” and a slightly different phrasing; while Kabat‑Zinn has multiple similar definitions, the exact citation/year may be unreliable without a clear source, raising misattribution risk per the rules. Chart also has unsourced percentages.",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Coverage OK (0–2) and visuals are distinct (concept map of present-moment, practice loop, then benefits). Main weakness: benefits chart uses arbitrary numbers and mixed symbol notation in labels (↑/↓); still English, but data are ungrounded. Also step 0 and 1 both diagrams and conceptually close (attention/present + wandering/return), slightly edging toward redundancy though still different focus.",
+          "score": 6.6
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Coverage OK (0–2). Step 0 and step 1 are both diagrams with overlapping content (present-moment + noticing + breath anchor), creating more redundancy than better entries. Chart again has arbitrary values with no context/source.",
+          "score": 6.2
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-4.1-mini",
+          "reasoning": "Coverage OK (0–2). Step 1 diagram is somewhat poorly structured conceptually (Mindfulness pointing to multiple nodes rather than showing the actual wandering-notice-return loop), reducing instructional clarity/fit. Benefits chart uses specific percentages with no basis.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Coverage OK, but step 0 and step 1 are both images depicting very similar mindfulness/breath-return scenes—redundancy per guidance (repeats the same technique/concept visually). Chart has arbitrary small values without units/context (meaningless data risk).",
+          "score": 5.8
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "moonshotai/kimi-k2-0905",
+          "reasoning": "Fails coverage: only provides stepIndex 0 (missing steps 1 and 2), violating the requirement of exactly one visual per step across all steps. Diagram itself is acceptable, but incompleteness is a major failure.",
+          "score": 2
+        }
+      ]
+    }
+  ],
+  "taskId": "step-visual",
+  "testCaseId": "en-psychology-mindfulness-1"
+}
