@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 export type ThinkingMessageGenerator = (index: number) => string;
 
@@ -67,7 +67,6 @@ export function useThinkingMessages<TPhase extends string>(
   activePhases: TPhase[],
 ): Record<string, string> {
   const [index, setIndex] = useState(0);
-  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const hasActive = activePhases.length > 0;
 
   useEffect(() => {
@@ -76,35 +75,22 @@ export function useThinkingMessages<TPhase extends string>(
       return;
     }
 
-    function scheduleNext() {
-      timeoutRef.current = setTimeout(() => {
-        setIndex((prev) => prev + 1);
-        scheduleNext();
-      }, getRandomInterval());
-    }
-
-    scheduleNext();
+    const timeout = setTimeout(() => {
+      setIndex((prev) => prev + 1);
+    }, getRandomInterval());
 
     return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
+      clearTimeout(timeout);
     };
-  }, [hasActive]);
+  }, [hasActive, index]);
 
   if (!hasActive) {
     return {};
   }
 
-  const messages: Record<string, string> = {};
-
-  for (const phase of activePhases) {
-    const generator = generators[phase];
-
-    if (generator) {
-      messages[phase] = generator(index);
-    }
-  }
-
-  return messages;
+  return Object.fromEntries(
+    activePhases
+      .map((phase) => [phase, generators[phase]?.(index)] as const)
+      .filter(([, message]) => message !== undefined),
+  );
 }
