@@ -1,6 +1,7 @@
 "use client";
 
 import { type PhaseStatus } from "@/lib/generation-phases";
+import { type ThinkingMessageGenerator, cycleMessage } from "@/lib/workflow/use-thinking-messages";
 import { type LessonStepName } from "@/workflows/config";
 import { useExtracted } from "next-intl";
 import {
@@ -14,6 +15,7 @@ import {
 export function useGenerationPhases(
   completedSteps: LessonStepName[],
   currentStep: LessonStepName | null,
+  startedSteps?: LessonStepName[],
 ) {
   const t = useExtracted();
 
@@ -33,11 +35,27 @@ export function useGenerationPhases(
     icon: PHASE_ICONS[phase],
     label: labels[phase],
     name: phase,
-    status: getPhaseStatus(phase, completedSteps, currentStep),
+    status: getPhaseStatus(phase, completedSteps, currentStep, startedSteps),
   }));
 
-  const progress = calculateWeightedProgress(completedSteps, currentStep);
-  const activePhase = phases.find((phase) => phase.status === "active");
+  const progress = calculateWeightedProgress(completedSteps, currentStep, startedSteps);
 
-  return { activePhase, phases, progress };
+  const activePhaseNames = phases
+    .filter((phase) => phase.status === "active")
+    .map((phase) => phase.name);
+
+  const thinkingGenerators: Record<PhaseName, ThinkingMessageGenerator> = {
+    figuringOutApproach: (index) =>
+      cycleMessage(
+        [t("Thinking about how to teach this..."), t("Choosing the right approach...")],
+        index,
+      ),
+    finishing: (index) => cycleMessage([t("Wrapping up..."), t("Almost there...")], index),
+    gettingStarted: (index) =>
+      cycleMessage([t("Getting everything ready..."), t("Setting things up...")], index),
+    settingUpActivities: (index) =>
+      cycleMessage([t("Designing practice exercises..."), t("Making it interactive...")], index),
+  };
+
+  return { activePhaseNames, phases, progress, thinkingGenerators };
 }

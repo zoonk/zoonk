@@ -32,14 +32,14 @@ describe(useAnimatedProgress, () => {
     expect(result.current).toBeGreaterThan(10);
   });
 
-  it("never exceeds realProgress + MAX_DRIFT (20)", () => {
+  it("never exceeds realProgress + MAX_DRIFT (8)", () => {
     const { result } = renderHook(() => useAnimatedProgress(10, true));
 
     act(() => {
       vi.advanceTimersByTime(300_000);
     });
 
-    expect(result.current).toBeLessThanOrEqual(30);
+    expect(result.current).toBeLessThanOrEqual(18);
   });
 
   it("never exceeds CAP (97)", () => {
@@ -72,6 +72,50 @@ describe(useAnimatedProgress, () => {
     });
 
     expect(result.current).toBeGreaterThanOrEqual(50);
+  });
+
+  it("never decreases when realProgress drops", () => {
+    const { result, rerender } = renderHook(
+      ({ progress, active }) => useAnimatedProgress(progress, active),
+      { initialProps: { active: true, progress: 10 } },
+    );
+
+    act(() => {
+      vi.advanceTimersByTime(15_000);
+    });
+
+    const driftedValue = result.current;
+    expect(driftedValue).toBeGreaterThan(10);
+
+    rerender({ active: true, progress: 5 });
+
+    act(() => {
+      vi.advanceTimersByTime(100);
+    });
+
+    expect(result.current).toBeGreaterThanOrEqual(driftedValue);
+  });
+
+  it("continues drifting when realProgress stays below high water mark", () => {
+    const { result, rerender } = renderHook(
+      ({ progress, active }) => useAnimatedProgress(progress, active),
+      { initialProps: { active: true, progress: 20 } },
+    );
+
+    act(() => {
+      vi.advanceTimersByTime(10_000);
+    });
+
+    const firstDrift = result.current;
+    expect(firstDrift).toBeGreaterThan(20);
+
+    rerender({ active: true, progress: 15 });
+
+    act(() => {
+      vi.advanceTimersByTime(5000);
+    });
+
+    expect(result.current).toBeGreaterThanOrEqual(firstDrift);
   });
 
   it("stops drifting when active becomes false", () => {

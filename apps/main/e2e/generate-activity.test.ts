@@ -1334,6 +1334,8 @@ test.describe("Generate Activity Page - With Subscription", () => {
     await expect(userWithoutProgress.getByText(/recording audio/i)).toBeVisible({
       timeout: 10_000,
     });
+
+    await expect(userWithoutProgress.getByText(/this usually takes 1-2 minutes/i)).toBeVisible();
   });
 
   test("shows practice-content phase and skips pronunciation phase for reading", async ({

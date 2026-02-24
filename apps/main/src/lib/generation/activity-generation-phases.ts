@@ -46,18 +46,21 @@ export function getPhaseStatus(
   completedSteps: ActivityStepName[],
   currentStep: ActivityStepName | null,
   activityKind: ActivityKind,
+  startedSteps?: ActivityStepName[],
 ): PhaseStatus {
-  return getStatus(phase, completedSteps, currentStep, getPhaseSteps(activityKind));
+  return getStatus(phase, completedSteps, currentStep, getPhaseSteps(activityKind), startedSteps);
 }
 
 export function calculateWeightedProgress(
   completedSteps: ActivityStepName[],
   currentStep: ActivityStepName | null,
   activityKind: ActivityKind,
+  startedSteps?: ActivityStepName[],
 ): number {
   return calculateProgress(completedSteps, currentStep, {
     phaseOrder: getPhaseOrder(activityKind),
     phaseSteps: getPhaseSteps(activityKind),
     phaseWeights: getPhaseWeights(activityKind),
+    startedSteps,
   });
 }

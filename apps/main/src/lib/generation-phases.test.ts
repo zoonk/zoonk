@@ -36,6 +36,19 @@ describe(getPhaseStatus, () => {
     expect(getPhaseStatus("phase1", ["stepC", "stepD"], null, testPhaseSteps)).toBe("pending");
   });
 
+  it("returns 'active' when a step has been started via startedSteps", () => {
+    expect(getPhaseStatus("phase1", [], null, testPhaseSteps, ["stepA"])).toBe("active");
+  });
+
+  it("returns 'active' via startedSteps even when currentStep is in another phase", () => {
+    expect(getPhaseStatus("phase1", [], "stepC", testPhaseSteps, ["stepA"])).toBe("active");
+  });
+
+  it("backward-compatible when startedSteps is omitted", () => {
+    expect(getPhaseStatus("phase1", [], null, testPhaseSteps)).toBe("pending");
+    expect(getPhaseStatus("phase1", [], null, testPhaseSteps)).toBe("pending");
+  });
+
   it("returns 'completed' for single-step phase when that step is done", () => {
     expect(getPhaseStatus("phase2", ["stepC"], null, testPhaseSteps)).toBe("completed");
   });

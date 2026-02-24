@@ -235,15 +235,17 @@ export function getPhaseStatus(
   completedSteps: CourseWorkflowStepName[],
   currentStep: CourseWorkflowStepName | null,
   targetLanguage: string | null,
+  startedSteps?: CourseWorkflowStepName[],
 ): PhaseStatus {
   const kind = getInferredFirstActivityKind(completedSteps, currentStep, targetLanguage);
-  return getStatus(phase, completedSteps, currentStep, getPhaseSteps(kind));
+  return getStatus(phase, completedSteps, currentStep, getPhaseSteps(kind), startedSteps);
 }
 
 export function calculateWeightedProgress(
   completedSteps: CourseWorkflowStepName[],
   currentStep: CourseWorkflowStepName | null,
   targetLanguage: string | null,
+  startedSteps?: CourseWorkflowStepName[],
 ): number {
   const kind = getInferredFirstActivityKind(completedSteps, currentStep, targetLanguage);
 
@@ -251,5 +253,6 @@ export function calculateWeightedProgress(
     phaseOrder: getPhaseOrder({ completedSteps, currentStep, targetLanguage }),
     phaseSteps: getPhaseSteps(kind),
     phaseWeights: getPhaseWeights(kind),
+    startedSteps,
   });
 }

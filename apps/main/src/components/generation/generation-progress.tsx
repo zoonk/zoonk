@@ -90,13 +90,34 @@ function GenerationTimelineStepIndicator({
   );
 }
 
+function GenerationTimelineSubtitle({ children }: { children: ReactNode }) {
+  return (
+    <p className="text-muted-foreground text-sm" data-slot="generation-timeline-subtitle">
+      {children}
+    </p>
+  );
+}
+
+function GenerationTimelineStepDetail({ children }: { children: ReactNode }) {
+  return (
+    <span
+      className="text-muted-foreground/50 block text-xs transition-opacity duration-300"
+      data-slot="generation-timeline-step-detail"
+    >
+      {children}
+    </span>
+  );
+}
+
 function GenerationTimelineStep({
   children,
+  detail,
   icon,
   isLast,
   status,
 }: {
   children: ReactNode;
+  detail?: string | null;
   icon: LucideIcon;
   isLast?: boolean;
   status: PhaseStatus;
@@ -115,17 +136,22 @@ function GenerationTimelineStep({
           />
         )}
       </div>
-      <span
-        className={cn(
-          "pt-0.5 text-sm",
-          status === "completed" && "text-muted-foreground",
-          status === "active" &&
-            "animate-shimmer-text motion-reduce:text-foreground bg-[linear-gradient(90deg,var(--foreground)_0%,var(--foreground)_40%,var(--muted-foreground)_50%,var(--foreground)_60%,var(--foreground)_100%)] bg-size-[200%_100%] bg-clip-text font-medium text-transparent motion-reduce:animate-none motion-reduce:bg-none",
-          status === "pending" && "text-muted-foreground/60",
+      <div className="flex flex-col gap-0.5">
+        <span
+          className={cn(
+            "pt-0.5 text-sm",
+            status === "completed" && "text-muted-foreground",
+            status === "active" &&
+              "animate-shimmer-text motion-reduce:text-foreground bg-[linear-gradient(90deg,var(--foreground)_0%,var(--foreground)_40%,var(--muted-foreground)_50%,var(--foreground)_60%,var(--foreground)_100%)] bg-size-[200%_100%] bg-clip-text font-medium text-transparent motion-reduce:animate-none motion-reduce:bg-none",
+            status === "pending" && "text-muted-foreground/60",
+          )}
+        >
+          {children}
+        </span>
+        {status === "active" && detail && (
+          <GenerationTimelineStepDetail>{detail}</GenerationTimelineStepDetail>
         )}
-      >
-        {children}
-      </span>
+      </div>
     </div>
   );
 }
@@ -183,5 +209,6 @@ export {
   GenerationTimelineProgress,
   GenerationTimelineStep,
   GenerationTimelineSteps,
+  GenerationTimelineSubtitle,
   GenerationTimelineTitle,
 };

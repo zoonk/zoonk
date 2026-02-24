@@ -36,6 +36,7 @@ export function useWorkflowGeneration<TStep extends string = string>(config: {
   const currentStep = useSelector(store, (state) => state.context.currentStep);
   const error = useSelector(store, (state) => state.context.error);
   const runId = useSelector(store, (state) => state.context.runId);
+  const startedSteps = useSelector(store, (state) => state.context.startedSteps);
   const status = useSelector(store, (state) => state.context.status);
 
   const handleMessage = useCallback(
@@ -127,6 +128,7 @@ export function useWorkflowGeneration<TStep extends string = string>(config: {
     currentStep,
     error,
     retry,
+    startedSteps,
     status,
   };
 }
