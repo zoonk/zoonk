@@ -1,6 +1,6 @@
 {
   "$schema": "./node_modules/knip/schema.json",
-  "ignore": [],
+  "ignore": ["**/*.d.**.ts"],
   "ignoreBinaries": ["stripe", "build-and-start", "turbo"],
   "ignoreDependencies": [
     "@prisma/client",
