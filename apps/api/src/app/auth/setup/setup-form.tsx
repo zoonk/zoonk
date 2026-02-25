@@ -50,7 +50,7 @@ function UsernameDescription({ status, username }: { status: UsernameStatus; use
         "text-muted-foreground": status === "idle",
       })}
     >
-      {t("3-30 characters. Letters, numbers, underscores, and dots only.")}
+      {t("3-30 characters. Letters, numbers, and underscores only.")}
     </p>
   );
 }

@@ -49,14 +49,14 @@ function UsernameStatus({ status, username }: { status: UsernameStatusType; user
   if (status === "invalid") {
     return (
       <p className="text-destructive text-sm">
-        {t("3-30 characters. Letters, numbers, underscores, and dots only.")}
+        {t("3-30 characters. Letters, numbers, and underscores only.")}
       </p>
     );
   }
 
   return (
     <FieldDescription>
-      {t("3-30 characters. Letters, numbers, underscores, and dots only.")}
+      {t("3-30 characters. Letters, numbers, and underscores only.")}
     </FieldDescription>
   );
 }

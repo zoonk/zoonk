@@ -1154,11 +1154,6 @@ msgid "{username} is available"
 msgstr "{username} está disponible"
 
 #: src/app/[locale]/(settings)/profile/profile-form.tsx
-msgctxt "aW6DOm"
-msgid "3-30 characters. Letters, numbers, underscores, and dots only."
-msgstr "3-30 caracteres. Solo letras, números, guiones bajos y puntos."
-
-#: src/app/[locale]/(settings)/profile/profile-form.tsx
 msgctxt "HAlOn1"
 msgid "Name"
 msgstr "Nombre"
@@ -1172,6 +1167,11 @@ msgstr "Nombre de usuario"
 msgctxt "R76cpj"
 msgid "{username} is already taken"
 msgstr "{username} ya está en uso"
+
+#: src/app/[locale]/(settings)/profile/profile-form.tsx
+msgctxt "vLl7z0"
+msgid "3-30 characters. Letters, numbers, and underscores only."
+msgstr "3-30 caracteres. Solo letras, números y guiones bajos."
 
 #: src/app/[locale]/(settings)/profile/profile-form.tsx
 msgctxt "VT+G/7"

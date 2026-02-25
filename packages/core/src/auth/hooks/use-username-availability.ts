@@ -7,7 +7,7 @@ export type UsernameStatus = "idle" | "checking" | "available" | "taken" | "inva
 
 export const USERNAME_MIN_LENGTH = 3;
 export const USERNAME_MAX_LENGTH = 30;
-const USERNAME_REGEX = /^[a-z0-9_.]{3,30}$/;
+const USERNAME_REGEX = /^[a-z0-9_]{3,30}$/;
 const DEBOUNCE_MS = 300;
 
 export function useUsernameAvailability(currentUsername?: string | null) {

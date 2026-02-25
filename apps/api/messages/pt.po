@@ -103,11 +103,6 @@ msgid "{username} is available"
 msgstr "{username} está disponível"
 
 #: src/app/auth/setup/setup-form.tsx
-msgctxt "aW6DOm"
-msgid "3-30 characters. Letters, numbers, underscores, and dots only."
-msgstr "3-30 caracteres. Apenas letras, números, underscores e pontos."
-
-#: src/app/auth/setup/setup-form.tsx
 msgctxt "HAlOn1"
 msgid "Name"
 msgstr "Nome"
@@ -121,6 +116,11 @@ msgstr "Nome de usuário"
 msgctxt "R76cpj"
 msgid "{username} is already taken"
 msgstr "{username} já está em uso"
+
+#: src/app/auth/setup/setup-form.tsx
+msgctxt "vLl7z0"
+msgid "3-30 characters. Letters, numbers, and underscores only."
+msgstr "3-30 caracteres. Apenas letras, números e sublinhados."
 
 #: src/app/auth/setup/setup-form.tsx
 msgctxt "XLl/pd"

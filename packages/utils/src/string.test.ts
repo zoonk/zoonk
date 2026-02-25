@@ -8,6 +8,7 @@ import {
   parseNumericId,
   removeAccents,
   replaceNamePlaceholder,
+  toSlug,
 } from "./string";
 
 describe(removeAccents, () => {
@@ -193,6 +194,13 @@ describe(ensureLocaleSuffix, () => {
     expect(ensureLocaleSuffix("machine-learning", "es")).toBe("machine-learning-es");
     expect(ensureLocaleSuffix("machine-learning", "fr")).toBe("machine-learning-fr");
     expect(ensureLocaleSuffix("machine-learning", "ja")).toBe("machine-learning-ja");
+  });
+});
+
+describe(toSlug, () => {
+  test("strips dots from input", () => {
+    expect(toSlug("dev.ops")).toBe("devops");
+    expect(toSlug("john.doe.smith")).toBe("johndoesmith");
   });
 });
 

@@ -37,6 +37,15 @@ describe(isUsernameAllowed, () => {
     });
   });
 
+  describe("invalid characters", () => {
+    it("blocks usernames containing dots", () => {
+      expect(isUsernameAllowed("dev.ops")).toBeFalsy();
+      expect(isUsernameAllowed("john.doe")).toBeFalsy();
+      expect(isUsernameAllowed(".leading")).toBeFalsy();
+      expect(isUsernameAllowed("trailing.")).toBeFalsy();
+    });
+  });
+
   describe("valid usernames", () => {
     it("allows common names", () => {
       expect(isUsernameAllowed("johndoe")).toBeTruthy();
@@ -46,9 +55,8 @@ describe(isUsernameAllowed, () => {
       expect(isUsernameAllowed("pierre")).toBeTruthy();
     });
 
-    it("allows usernames with numbers and special chars", () => {
+    it("allows usernames with numbers and underscores", () => {
       expect(isUsernameAllowed("user123")).toBeTruthy();
-      expect(isUsernameAllowed("dev.ops")).toBeTruthy();
       expect(isUsernameAllowed("j_smith")).toBeTruthy();
     });
 
