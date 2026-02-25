@@ -120,6 +120,7 @@ test.describe("Courses Page - Locale", () => {
       title,
     });
 
+    await setLocale(page, "pt");
     await page.goto("/courses");
 
     await expect(page.getByText(unpublishedCourse.title)).not.toBeVisible();
