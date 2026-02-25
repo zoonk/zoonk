@@ -16,7 +16,7 @@ async function createTestCourse() {
 }
 
 async function navigateToCoursePage(page: Page, slug: string) {
-  await page.goto(`/${AI_ORG_SLUG}/c/en/${slug}`);
+  await page.goto(`/${AI_ORG_SLUG}/c/${slug}`);
 
   await expect(page.getByRole("textbox", { name: /edit course title/i })).toBeVisible();
 }
@@ -134,7 +134,7 @@ test.describe("Course Categories Editor", () => {
       .context()
       .addCookies([{ domain: "localhost", name: LOCALE_COOKIE, path: "/", value: "es" }]);
 
-    await authenticatedPage.goto(`/${AI_ORG_SLUG}/c/en/${course.slug}`);
+    await authenticatedPage.goto(`/${AI_ORG_SLUG}/c/${course.slug}`);
 
     await expect(
       authenticatedPage.getByRole("textbox", {

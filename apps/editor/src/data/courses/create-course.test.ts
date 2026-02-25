@@ -115,7 +115,7 @@ describe("admins", () => {
     expect(result.data).toBeNull();
   });
 
-  test("returns error when slug already exists for same language and org", async () => {
+  test("returns error when slug already exists for same org", async () => {
     const attrs = courseAttrs();
 
     await createCourse({
@@ -133,7 +133,7 @@ describe("admins", () => {
     expect(result.error).not.toBeNull();
   });
 
-  test("allows same slug for different language", async () => {
+  test("returns error when slug already exists even for different language", async () => {
     const attrs = courseAttrs();
 
     await createCourse({
@@ -150,8 +150,7 @@ describe("admins", () => {
       orgSlug: organization.slug,
     });
 
-    expect(result.error).toBeNull();
-    expect(result.data?.language).toBe("pt");
+    expect(result.error).not.toBeNull();
   });
 });
 

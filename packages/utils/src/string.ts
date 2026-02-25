@@ -42,6 +42,20 @@ export function emptyToNull(value?: string | null): string | null {
   return value?.trim() || null;
 }
 
+export function ensureLocaleSuffix(slug: string, language: string): string {
+  if (language === "en") {
+    return slug;
+  }
+
+  const suffix = `-${language}`;
+
+  if (slug.endsWith(suffix)) {
+    return slug;
+  }
+
+  return `${slug}${suffix}`;
+}
+
 export function replaceNamePlaceholder(text: string, name: string | null): string {
   if (!text.includes(NAME_PLACEHOLDER)) {
     return text;

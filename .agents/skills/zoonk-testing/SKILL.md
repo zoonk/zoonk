@@ -351,10 +351,26 @@ Use `locator.dragTo()` with the `steps` parameter. The `steps` option emits inte
 const firstHandle = page.getByRole("button", { name: "Drag to reorder" }).first();
 const secondHandle = page.getByRole("button", { name: "Drag to reorder" }).nth(1);
 
-await firstHandle.dragTo(secondHandle, { steps: 10 });
+await firstHandle.dragTo(secondHandle, { steps: 20 });
 ```
 
-**Why `steps` matters**: Without `steps`, Playwright emits a single `mousemove` at the destination, which isn't enough for dnd-kit's PointerSensor to recognize a drag gesture. Use `steps: 10` to generate enough intermediate movements.
+**Why `steps` matters**: Without `steps`, Playwright emits a single `mousemove` at the destination, which isn't enough for dnd-kit's PointerSensor to recognize a drag gesture. Use `steps: 20` for smooth, reliable drags.
+
+**Non-deterministic landing position**: `dragTo` between adjacent items can produce different results across runs (swap vs move-to-end). This happens because dnd-kit's `closestCenter` collision detection is sensitive to layout shifts — when an item is "lifted" into the DragOverlay, remaining items shift to fill the gap, moving the drop target. Assert that the order **changed**, not a specific final order:
+
+```typescript
+// BAD: Asserts a specific order — flaky because drag can land in different positions
+const reorderedItems = [
+  { position: 1, title: "Item 2" },
+  { position: 2, title: "Item 1" },
+  { position: 3, title: "Item 3" },
+];
+await expectItemsVisible(page, reorderedItems);
+
+// GOOD: Asserts that reordering happened — stable regardless of exact landing position
+const firstItem = page.getByRole("listitem").filter({ hasText: /01/ });
+await expect(firstItem.getByRole("link", { name: /item 1/i })).not.toBeVisible();
+```
 
 ## Common Thinking Mistakes
 

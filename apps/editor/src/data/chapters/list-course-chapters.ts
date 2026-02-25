@@ -8,7 +8,6 @@ import { cache } from "react";
 const cachedListCourseChapters = cache(
   async (
     courseSlug: string,
-    language: string,
     orgSlug: string,
     headers?: Headers,
   ): Promise<{ data: Chapter[]; error: Error | null }> => {
@@ -23,7 +22,6 @@ const cachedListCourseChapters = cache(
           orderBy: { position: "asc" },
           where: {
             course: {
-              language,
               organization: { slug: orgSlug },
               slug: courseSlug,
             },
@@ -49,13 +47,7 @@ const cachedListCourseChapters = cache(
 export function listCourseChapters(params: {
   courseSlug: string;
   headers?: Headers;
-  language: string;
   orgSlug: string;
 }): Promise<{ data: Chapter[]; error: Error | null }> {
-  return cachedListCourseChapters(
-    params.courseSlug,
-    params.language,
-    params.orgSlug,
-    params.headers,
-  );
+  return cachedListCourseChapters(params.courseSlug, params.orgSlug, params.headers);
 }

@@ -78,7 +78,7 @@ export const coursesData = [
     isPublished: true,
     language: "pt",
     normalizedTitle: normalizeString("Machine Learning"),
-    slug: "machine-learning",
+    slug: "machine-learning-pt",
     title: "Machine Learning",
   },
 ];
@@ -106,7 +106,6 @@ export async function seedCourses(prisma: PrismaClient, orgs: SeedOrganizations)
         update: {},
         where: {
           orgSlug: {
-            language: course.language,
             organizationId: orgs.ai.id,
             slug: course.slug,
           },
@@ -122,7 +121,6 @@ export async function seedCourses(prisma: PrismaClient, orgs: SeedOrganizations)
         update: {},
         where: {
           orgSlug: {
-            language: course.language,
             organizationId: orgs.testOrg.id,
             slug: course.slug,
           },

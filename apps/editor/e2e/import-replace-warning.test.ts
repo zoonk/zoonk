@@ -27,7 +27,7 @@ test.describe("Import Replace Warning", () => {
     authenticatedPage,
   }) => {
     const course = await createTestCourse();
-    await authenticatedPage.goto(`/${AI_ORG_SLUG}/c/en/${course.slug}`);
+    await authenticatedPage.goto(`/${AI_ORG_SLUG}/c/${course.slug}`);
     await expect(
       authenticatedPage.getByRole("textbox", { name: /edit course title/i }),
     ).toBeVisible();
@@ -43,7 +43,7 @@ test.describe("Import Replace Warning", () => {
     authenticatedPage,
   }) => {
     const course = await createTestCourse();
-    await authenticatedPage.goto(`/${AI_ORG_SLUG}/c/en/${course.slug}`);
+    await authenticatedPage.goto(`/${AI_ORG_SLUG}/c/${course.slug}`);
     await expect(
       authenticatedPage.getByRole("textbox", { name: /edit course title/i }),
     ).toBeVisible();
@@ -62,7 +62,7 @@ test.describe("Import Replace Warning", () => {
     authenticatedPage,
   }) => {
     const course = await createTestCourse();
-    await authenticatedPage.goto(`/${AI_ORG_SLUG}/c/en/${course.slug}`);
+    await authenticatedPage.goto(`/${AI_ORG_SLUG}/c/${course.slug}`);
     await expect(
       authenticatedPage.getByRole("textbox", { name: /edit course title/i }),
     ).toBeVisible();

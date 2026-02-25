@@ -33,7 +33,6 @@ describe("unauthenticated users", () => {
       chapterSlug: chapter.slug,
       courseSlug: course.slug,
       headers: new Headers(),
-      language: lesson.language,
       lessonSlug: lesson.slug,
       orgSlug: organization.slug,
     });
@@ -66,7 +65,6 @@ describe("members", () => {
       chapterSlug: chapter.slug,
       courseSlug: course.slug,
       headers,
-      language: lesson.language,
       lessonSlug: lesson.slug,
       orgSlug: organization.slug,
     });
@@ -113,7 +111,6 @@ describe("admins", () => {
       chapterSlug: chapter.slug,
       courseSlug: course.slug,
       headers,
-      language: lesson.language,
       lessonSlug: lesson.slug,
       orgSlug: organization.slug,
     });
@@ -128,22 +125,7 @@ describe("admins", () => {
       chapterSlug: chapter.slug,
       courseSlug: course.slug,
       headers,
-      language: lesson.language,
       lessonSlug: "non-existent-slug",
-      orgSlug: organization.slug,
-    });
-
-    expect(result.error).toBeNull();
-    expect(result.data).toBeNull();
-  });
-
-  test("returns null when language doesn't match", async () => {
-    const result = await getLesson({
-      chapterSlug: chapter.slug,
-      courseSlug: course.slug,
-      headers,
-      language: "xx",
-      lessonSlug: lesson.slug,
       orgSlug: organization.slug,
     });
 
@@ -156,7 +138,6 @@ describe("admins", () => {
       chapterSlug: "non-existent-chapter",
       courseSlug: course.slug,
       headers,
-      language: lesson.language,
       lessonSlug: lesson.slug,
       orgSlug: organization.slug,
     });
@@ -183,7 +164,6 @@ describe("admins", () => {
       chapterSlug: chapter2.slug,
       courseSlug: course.slug,
       headers,
-      language: lesson2.language,
       lessonSlug: lesson2.slug,
       orgSlug: organization.slug,
     });
@@ -213,7 +193,6 @@ describe("admins", () => {
       chapterSlug: otherChapter.slug,
       courseSlug: otherCourse.slug,
       headers,
-      language: otherLesson.language,
       lessonSlug: otherLesson.slug,
       orgSlug: otherOrg.slug,
     });

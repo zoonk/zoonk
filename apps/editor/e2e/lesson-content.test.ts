@@ -44,7 +44,7 @@ async function navigateToLessonPage(
   chapterSlug: string,
   lessonSlug: string,
 ) {
-  await page.goto(`/${AI_ORG_SLUG}/c/en/${courseSlug}/ch/${chapterSlug}/l/${lessonSlug}`);
+  await page.goto(`/${AI_ORG_SLUG}/c/${courseSlug}/ch/${chapterSlug}/l/${lessonSlug}`);
 
   await expect(page.getByRole("textbox", { name: /edit lesson title/i })).toBeVisible();
 }
@@ -177,6 +177,7 @@ test.describe("Lesson Content Page", () => {
     const uniqueSlug = `test-slug-${randomUUID().slice(0, 8)}`;
 
     await slugInput.fill(uniqueSlug);
+    await authenticatedPage.waitForLoadState("networkidle");
 
     const saveButton = authenticatedPage.getByRole("button", {
       name: /^save$/i,
@@ -184,10 +185,11 @@ test.describe("Lesson Content Page", () => {
     await expect(saveButton).toBeEnabled();
     await saveButton.click();
 
-    await expect(authenticatedPage).toHaveURL(
-      new RegExp(`/${AI_ORG_SLUG}/c/en/${course.slug}/ch/${chapter.slug}/l/${uniqueSlug}`),
-    );
+    // Assert value first — proves the redirect completed and new page loaded
     await expect(slugInput).toHaveValue(uniqueSlug);
+    await expect(authenticatedPage).toHaveURL(
+      new RegExp(`/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${uniqueSlug}`),
+    );
   });
 
   test("reverts changes on cancel", async ({ authenticatedPage }) => {
@@ -222,7 +224,7 @@ test.describe("Lesson Content Page", () => {
     await slugInput.press("Enter");
 
     await expect(authenticatedPage).toHaveURL(
-      new RegExp(`/${AI_ORG_SLUG}/c/en/${course.slug}/ch/${chapter.slug}/l/${uniqueSlug}`),
+      new RegExp(`/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${uniqueSlug}`),
     );
   });
 
@@ -256,7 +258,7 @@ test.describe("Lesson Content Page", () => {
     await backLink.click();
 
     await expect(authenticatedPage).toHaveURL(
-      new RegExp(`/${AI_ORG_SLUG}/c/en/${fixtureCourseSlug}/ch/${fixtureChapterSlug}$`),
+      new RegExp(`/${AI_ORG_SLUG}/c/${fixtureCourseSlug}/ch/${fixtureChapterSlug}$`),
     );
     await expect(
       authenticatedPage.getByRole("textbox", { name: /edit chapter title/i }),
@@ -287,7 +289,7 @@ test.describe("Lesson Content Page", () => {
     await backLink.click();
 
     await expect(authenticatedPage).toHaveURL(
-      new RegExp(`/${AI_ORG_SLUG}/c/en/${course.slug}/ch/${chapter.slug}$`),
+      new RegExp(`/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}$`),
     );
 
     // Verify the updated title shows in the lesson list
@@ -318,7 +320,7 @@ test.describe("Lesson Content Page", () => {
     await backLink.click();
 
     await expect(authenticatedPage).toHaveURL(
-      new RegExp(`/${AI_ORG_SLUG}/c/en/${course.slug}/ch/${chapter.slug}$`),
+      new RegExp(`/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}$`),
     );
 
     // Verify the updated description shows in the lesson list

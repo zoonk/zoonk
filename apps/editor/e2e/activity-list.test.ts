@@ -70,7 +70,7 @@ async function navigateToLessonPage(
   chapterSlug: string,
   lessonSlug: string,
 ) {
-  await page.goto(`/${AI_ORG_SLUG}/c/en/${courseSlug}/ch/${chapterSlug}/l/${lessonSlug}`);
+  await page.goto(`/${AI_ORG_SLUG}/c/${courseSlug}/ch/${chapterSlug}/l/${lessonSlug}`);
 
   await expect(page.getByRole("textbox", { name: /edit lesson title/i })).toBeVisible();
 }
@@ -166,7 +166,7 @@ test.describe("Activity List", () => {
       await expect(authenticatedPage.getByText(/activity editor coming soon/i)).toBeVisible();
 
       await authenticatedPage.goto(
-        `/${AI_ORG_SLUG}/c/en/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`,
+        `/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`,
       );
 
       await expect(

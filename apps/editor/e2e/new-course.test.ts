@@ -421,6 +421,9 @@ test.describe("Course Creation Wizard - Successful Creation", () => {
     // Navigate back to home via the home button (soft navigation, uses router cache)
     await authenticatedPage.getByRole("link", { name: /home page/i }).click();
 
+    // Wait for the page to fully settle after soft navigation
+    await authenticatedPage.waitForLoadState("networkidle");
+
     // Verify we're on the home page
     await expect(authenticatedPage.getByRole("heading", { name: /draft courses/i })).toBeVisible();
 

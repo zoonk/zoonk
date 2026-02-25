@@ -39,7 +39,7 @@ async function navigateToLessonPage(
   chapterSlug: string,
   lessonSlug: string,
 ) {
-  await page.goto(`/${AI_ORG_SLUG}/c/en/${courseSlug}/ch/${chapterSlug}/l/${lessonSlug}`);
+  await page.goto(`/${AI_ORG_SLUG}/c/${courseSlug}/ch/${chapterSlug}/l/${lessonSlug}`);
 
   await expect(page.getByRole("textbox", { name: /edit lesson title/i })).toBeVisible();
 }

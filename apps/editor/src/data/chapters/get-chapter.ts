@@ -9,7 +9,6 @@ const cachedGetChapter = cache(
   async (
     chapterSlug: string,
     courseSlug: string,
-    language: string,
     orgSlug: string,
     headers?: Headers,
   ): Promise<SafeReturn<Chapter | null>> => {
@@ -17,7 +16,6 @@ const cachedGetChapter = cache(
       prisma.chapter.findFirst({
         where: {
           course: {
-            language,
             organization: { slug: orgSlug },
             slug: courseSlug,
           },
@@ -52,14 +50,7 @@ export function getChapter(params: {
   chapterSlug: string;
   courseSlug: string;
   headers?: Headers;
-  language: string;
   orgSlug: string;
 }): Promise<SafeReturn<Chapter | null>> {
-  return cachedGetChapter(
-    params.chapterSlug,
-    params.courseSlug,
-    params.language,
-    params.orgSlug,
-    params.headers,
-  );
+  return cachedGetChapter(params.chapterSlug, params.courseSlug, params.orgSlug, params.headers);
 }

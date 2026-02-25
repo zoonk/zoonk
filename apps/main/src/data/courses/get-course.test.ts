@@ -50,7 +50,6 @@ describe(getCourse, () => {
     const result = await getCourse({
       brandSlug: brandOrg.slug,
       courseSlug: publishedCourse.slug,
-      language: "en",
     });
 
     expect(result).not.toBeNull();
@@ -68,7 +67,6 @@ describe(getCourse, () => {
     const result = await getCourse({
       brandSlug: brandOrg.slug,
       courseSlug: "non-existent-course",
-      language: "en",
     });
 
     expect(result).toBeNull();
@@ -78,7 +76,6 @@ describe(getCourse, () => {
     const result = await getCourse({
       brandSlug: brandOrg.slug,
       courseSlug: draftCourse.slug,
-      language: "en",
     });
 
     expect(result).toBeNull();
@@ -88,7 +85,6 @@ describe(getCourse, () => {
     const result = await getCourse({
       brandSlug: schoolOrg.slug,
       courseSlug: schoolCourse.slug,
-      language: "en",
     });
 
     expect(result).toBeNull();
@@ -100,32 +96,37 @@ describe(getCourse, () => {
     const result = await getCourse({
       brandSlug: otherBrandOrg.slug,
       courseSlug: publishedCourse.slug,
-      language: "en",
     });
 
     expect(result).toBeNull();
   });
 
-  test("filters by language", async () => {
-    const ptCourse = await courseFixture({
-      isPublished: true,
-      language: "pt",
-      organizationId: brandOrg.id,
-    });
+  test("finds courses with different language slugs independently", async () => {
+    const baseSlug = `lang-test-${crypto.randomUUID()}`;
 
-    const enResult = await getCourse({
-      brandSlug: brandOrg.slug,
-      courseSlug: ptCourse.slug,
-      language: "en",
-    });
+    const [enCourse, ptCourse] = await Promise.all([
+      courseFixture({
+        isPublished: true,
+        language: "en",
+        organizationId: brandOrg.id,
+        slug: baseSlug,
+      }),
+      courseFixture({
+        isPublished: true,
+        language: "pt",
+        organizationId: brandOrg.id,
+        slug: `${baseSlug}-pt`,
+      }),
+    ]);
 
-    const ptResult = await getCourse({
-      brandSlug: brandOrg.slug,
-      courseSlug: ptCourse.slug,
-      language: "pt",
-    });
+    const [enResult, ptResult] = await Promise.all([
+      getCourse({ brandSlug: brandOrg.slug, courseSlug: baseSlug }),
+      getCourse({ brandSlug: brandOrg.slug, courseSlug: `${baseSlug}-pt` }),
+    ]);
 
-    expect(enResult).toBeNull();
+    expect(enResult).not.toBeNull();
+    expect(enResult?.id).toBe(enCourse.id);
+
     expect(ptResult).not.toBeNull();
     expect(ptResult?.id).toBe(ptCourse.id);
   });

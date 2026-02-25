@@ -9,7 +9,6 @@ const cachedGetLesson = cache(
   async (
     chapterSlug: string,
     courseSlug: string,
-    language: string,
     lessonSlug: string,
     orgSlug: string,
     headers?: Headers,
@@ -18,7 +17,7 @@ const cachedGetLesson = cache(
       prisma.lesson.findFirst({
         where: {
           chapter: {
-            course: { language, slug: courseSlug },
+            course: { slug: courseSlug },
             slug: chapterSlug,
           },
           organization: { slug: orgSlug },
@@ -53,14 +52,12 @@ export function getLesson(params: {
   chapterSlug: string;
   courseSlug: string;
   headers?: Headers;
-  language: string;
   lessonSlug: string;
   orgSlug: string;
 }): Promise<SafeReturn<Lesson | null>> {
   return cachedGetLesson(
     params.chapterSlug,
     params.courseSlug,
-    params.language,
     params.lessonSlug,
     params.orgSlug,
     params.headers,

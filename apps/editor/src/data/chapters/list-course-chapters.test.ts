@@ -14,7 +14,6 @@ describe("unauthenticated users", () => {
     const result = await listCourseChapters({
       courseSlug: course.slug,
       headers: new Headers(),
-      language: course.language,
       orgSlug: organization.slug,
     });
 
@@ -35,7 +34,6 @@ describe("members", () => {
     const result = await listCourseChapters({
       courseSlug: course.slug,
       headers,
-      language: course.language,
       orgSlug: organization.slug,
     });
 
@@ -86,7 +84,6 @@ describe("admins", () => {
     const result = await listCourseChapters({
       courseSlug: newCourse.slug,
       headers,
-      language: newCourse.language,
       orgSlug: organization.slug,
     });
 
@@ -110,7 +107,6 @@ describe("admins", () => {
     const result = await listCourseChapters({
       courseSlug: emptyCourse.slug,
       headers,
-      language: emptyCourse.language,
       orgSlug: organization.slug,
     });
 
@@ -122,7 +118,6 @@ describe("admins", () => {
     const result = await listCourseChapters({
       courseSlug: "non-existent-course",
       headers,
-      language: "en",
       orgSlug: organization.slug,
     });
 
@@ -137,7 +132,6 @@ describe("admins", () => {
     const result = await listCourseChapters({
       courseSlug: otherCourse.slug,
       headers,
-      language: otherCourse.language,
       orgSlug: otherOrg.slug,
     });
 

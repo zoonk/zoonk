@@ -27,7 +27,7 @@ async function createTestCourse(imageUrl: string | null = null) {
 }
 
 async function navigateToCoursePage(page: Page, slug: string) {
-  await page.goto(`/${AI_ORG_SLUG}/c/en/${slug}`);
+  await page.goto(`/${AI_ORG_SLUG}/c/${slug}`);
 
   await expect(page.getByRole("textbox", { name: /edit course title/i })).toBeVisible();
 }

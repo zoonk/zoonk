@@ -183,7 +183,7 @@ describe(findExistingCourse, () => {
       courseFixture({
         language: "pt",
         organizationId: aiOrg.id,
-        slug: uniqueSlug,
+        slug: `${uniqueSlug}-pt`,
       }),
     ]);
 
@@ -197,5 +197,25 @@ describe(findExistingCourse, () => {
 
     expect(ptResult.error).toBeNull();
     expect(ptResult.data?.id).toBe(ptCourse.id);
+  });
+
+  test("finds non-English course by suffixed slug", async () => {
+    const uniqueSlug = `test-course-${randomUUID()}`;
+
+    const ptCourse = await courseFixture({
+      language: "pt",
+      organizationId: aiOrg.id,
+      slug: `${uniqueSlug}-pt`,
+    });
+
+    const result = await findExistingCourse({
+      language: "pt",
+      slug: uniqueSlug,
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data).not.toBeNull();
+    expect(result.data?.id).toBe(ptCourse.id);
+    expect(result.data?.slug).toBe(`${uniqueSlug}-pt`);
   });
 });

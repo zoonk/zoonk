@@ -18,7 +18,7 @@ async function createTestCourse() {
 }
 
 async function navigateToCoursePage(page: Page, slug: string) {
-  await page.goto(`/${AI_ORG_SLUG}/c/en/${slug}`);
+  await page.goto(`/${AI_ORG_SLUG}/c/${slug}`);
 
   await expect(page.getByRole("textbox", { name: /edit course title/i })).toBeVisible();
 }
@@ -131,7 +131,7 @@ test.describe("Course Content Page", () => {
     await expect(saveButton).toBeEnabled();
     await saveButton.click();
 
-    await expect(authenticatedPage).toHaveURL(new RegExp(`/${AI_ORG_SLUG}/c/en/${uniqueSlug}`));
+    await expect(authenticatedPage).toHaveURL(new RegExp(`/${AI_ORG_SLUG}/c/${uniqueSlug}`));
     await expect(slugInput).toHaveValue(uniqueSlug);
   });
 
@@ -161,7 +161,7 @@ test.describe("Course Content Page", () => {
     await expect(saveButton).toBeEnabled();
     await slugInput.press("Enter");
 
-    await expect(authenticatedPage).toHaveURL(new RegExp(`/${AI_ORG_SLUG}/c/en/${uniqueSlug}`));
+    await expect(authenticatedPage).toHaveURL(new RegExp(`/${AI_ORG_SLUG}/c/${uniqueSlug}`));
   });
 
   test("cancels on Escape key", async ({ authenticatedPage }) => {

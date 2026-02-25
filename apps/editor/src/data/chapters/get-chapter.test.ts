@@ -26,7 +26,6 @@ describe("unauthenticated users", () => {
       chapterSlug: chapter.slug,
       courseSlug: course.slug,
       headers: new Headers(),
-      language: chapter.language,
       orgSlug: organization.slug,
     });
 
@@ -53,7 +52,6 @@ describe("members", () => {
       chapterSlug: chapter.slug,
       courseSlug: course.slug,
       headers,
-      language: chapter.language,
       orgSlug: organization.slug,
     });
 
@@ -92,7 +90,6 @@ describe("admins", () => {
       chapterSlug: chapter.slug,
       courseSlug: course.slug,
       headers,
-      language: chapter.language,
       orgSlug: organization.slug,
     });
 
@@ -106,7 +103,6 @@ describe("admins", () => {
       chapterSlug: "non-existent-slug",
       courseSlug: course.slug,
       headers,
-      language: chapter.language,
       orgSlug: organization.slug,
     });
 
@@ -123,7 +119,6 @@ describe("admins", () => {
       chapterSlug: chapter.slug,
       courseSlug: otherCourse.slug,
       headers,
-      language: chapter.language,
       orgSlug: organization.slug,
     });
 
@@ -146,7 +141,6 @@ describe("admins", () => {
       chapterSlug: chapter.slug,
       courseSlug: otherCourse.slug,
       headers,
-      language: otherCourse.language,
       orgSlug: organization.slug,
     });
 
@@ -167,7 +161,6 @@ describe("admins", () => {
       chapterSlug: otherChapter.slug,
       courseSlug: otherCourse.slug,
       headers,
-      language: otherChapter.language,
       orgSlug: otherOrg.slug,
     });
 

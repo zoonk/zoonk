@@ -144,7 +144,7 @@ test.describe("Command Palette - Static Items", () => {
       slug: `e2e-nav-${randomUUID().slice(0, 8)}`,
     });
 
-    courseUrl = `/${AI_ORG_SLUG}/c/en/${course.slug}`;
+    courseUrl = `/${AI_ORG_SLUG}/c/${course.slug}`;
   });
 
   test("shows Pages group with Home, Create course, Logout", async ({ ownerPage }) => {
@@ -246,7 +246,7 @@ test.describe("Command Palette - Course Search", () => {
 
     await dialog.getByText(course.title).click();
 
-    await expect(ownerPage).toHaveURL(new RegExp(`/${AI_ORG_SLUG}/c/en/${course.slug}`));
+    await expect(ownerPage).toHaveURL(new RegExp(`/${AI_ORG_SLUG}/c/${course.slug}`));
   });
 
   test("shows No results found for non-matching query", async ({ ownerPage }) => {
@@ -313,7 +313,7 @@ test.describe("Command Palette - Chapter Search", () => {
     await dialog.getByText(chapter.title).click();
 
     await expect(ownerPage).toHaveURL(
-      new RegExp(`/${AI_ORG_SLUG}/c/en/${course.slug}/ch/${chapter.slug}`),
+      new RegExp(`/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}`),
     );
   });
 });
@@ -342,7 +342,7 @@ test.describe("Command Palette - Lesson Search", () => {
     await dialog.getByText(lesson.title).click();
 
     await expect(ownerPage).toHaveURL(
-      new RegExp(`/${AI_ORG_SLUG}/c/en/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`),
+      new RegExp(`/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`),
     );
   });
 });
@@ -359,7 +359,7 @@ test.describe("Command Palette - Keyboard Navigation", () => {
       slug: `e2e-kbd-${randomUUID().slice(0, 8)}`,
     });
 
-    courseUrl = `/${AI_ORG_SLUG}/c/en/${course.slug}`;
+    courseUrl = `/${AI_ORG_SLUG}/c/${course.slug}`;
   });
 
   test("focuses input on open", async ({ ownerPage }) => {

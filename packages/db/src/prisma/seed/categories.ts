@@ -23,7 +23,7 @@ const categoriesData: {
   },
   {
     categories: ["tech", "math", "science"],
-    courseSlug: "machine-learning",
+    courseSlug: "machine-learning-pt",
     language: "pt",
   },
   {
@@ -48,9 +48,7 @@ export async function seedCategories(prisma: PrismaClient, org: Organization): P
   });
 
   const categoryRecords = categoriesData.flatMap((data) => {
-    const course = courses.find(
-      (item) => item.slug === data.courseSlug && item.language === data.language,
-    );
+    const course = courses.find((item) => item.slug === data.courseSlug);
 
     if (!course) {
       return [];

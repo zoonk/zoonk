@@ -9,7 +9,7 @@ import { normalizeString } from "@zoonk/utils/string";
 import { cache } from "react";
 
 type ChapterWithCourse = Chapter & {
-  course: { slug: string; language: string };
+  course: { slug: string };
 };
 
 const cachedSearchOrgChapters = cache(
@@ -31,7 +31,7 @@ const cachedSearchOrgChapters = cache(
         prisma.chapter.findMany({
           include: {
             course: {
-              select: { language: true, slug: true },
+              select: { slug: true },
             },
           },
           orderBy: { createdAt: "desc" },

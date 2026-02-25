@@ -1,6 +1,7 @@
 import { describe, expect, test } from "vitest";
 import {
   emptyToNull,
+  ensureLocaleSuffix,
   formatPosition,
   normalizeString,
   parseBigIntId,
@@ -172,6 +173,26 @@ describe(formatPosition, () => {
   test("formats double digit positions without leading zero", () => {
     expect(formatPosition(9)).toBe("10");
     expect(formatPosition(99)).toBe("100");
+  });
+});
+
+describe(ensureLocaleSuffix, () => {
+  test("returns slug unchanged for English", () => {
+    expect(ensureLocaleSuffix("machine-learning", "en")).toBe("machine-learning");
+  });
+
+  test("appends language suffix for non-English", () => {
+    expect(ensureLocaleSuffix("machine-learning", "pt")).toBe("machine-learning-pt");
+  });
+
+  test("is idempotent when suffix already present", () => {
+    expect(ensureLocaleSuffix("machine-learning-pt", "pt")).toBe("machine-learning-pt");
+  });
+
+  test("appends suffix for different languages", () => {
+    expect(ensureLocaleSuffix("machine-learning", "es")).toBe("machine-learning-es");
+    expect(ensureLocaleSuffix("machine-learning", "fr")).toBe("machine-learning-fr");
+    expect(ensureLocaleSuffix("machine-learning", "ja")).toBe("machine-learning-ja");
   });
 });
 

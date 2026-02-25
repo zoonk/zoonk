@@ -41,7 +41,7 @@ async function navigateToLessonPage(
   chapterSlug: string,
   lessonSlug: string,
 ) {
-  await page.goto(`/${AI_ORG_SLUG}/c/en/${courseSlug}/ch/${chapterSlug}/l/${lessonSlug}`);
+  await page.goto(`/${AI_ORG_SLUG}/c/${courseSlug}/ch/${chapterSlug}/l/${lessonSlug}`);
 
   await expect(page.getByRole("textbox", { name: /edit lesson title/i })).toBeVisible();
 }
@@ -91,7 +91,7 @@ test.describe("Lesson Delete", () => {
       await confirmDelete(authenticatedPage);
 
       await expect(authenticatedPage).toHaveURL(
-        new RegExp(`/${AI_ORG_SLUG}/c/en/${course.slug}/ch/${chapter.slug}$`),
+        new RegExp(`/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}$`),
       );
       await verifyLessonDeleted(lesson.id);
     });
@@ -104,7 +104,7 @@ test.describe("Lesson Delete", () => {
       await confirmDelete(ownerPage);
 
       await expect(ownerPage).toHaveURL(
-        new RegExp(`/${AI_ORG_SLUG}/c/en/${course.slug}/ch/${chapter.slug}$`),
+        new RegExp(`/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}$`),
       );
       await verifyLessonDeleted(lesson.id);
     });
@@ -117,7 +117,7 @@ test.describe("Lesson Delete", () => {
       await confirmDelete(ownerPage);
 
       await expect(ownerPage).toHaveURL(
-        new RegExp(`/${AI_ORG_SLUG}/c/en/${course.slug}/ch/${chapter.slug}$`),
+        new RegExp(`/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}$`),
       );
       await verifyLessonDeleted(lesson.id);
     });

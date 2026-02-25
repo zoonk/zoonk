@@ -9,7 +9,7 @@ import { normalizeString } from "@zoonk/utils/string";
 import { cache } from "react";
 
 type LessonWithChapter = Lesson & {
-  chapter: { slug: string; course: { slug: string; language: string } };
+  chapter: { slug: string; course: { slug: string } };
 };
 
 const cachedSearchOrgLessons = cache(
@@ -32,7 +32,7 @@ const cachedSearchOrgLessons = cache(
           include: {
             chapter: {
               select: {
-                course: { select: { language: true, slug: true } },
+                course: { select: { slug: true } },
                 slug: true,
               },
             },

@@ -10,11 +10,10 @@ describe("courseSlugExists()", () => {
     organization = await organizationFixture();
   });
 
-  test("returns true when slug exists for same language and org", async () => {
+  test("returns true when slug exists for same org", async () => {
     const course = await courseFixture({ organizationId: organization.id });
 
     const exists = await courseSlugExists({
-      language: course.language,
       orgSlug: organization.slug,
       slug: course.slug,
     });
@@ -24,7 +23,6 @@ describe("courseSlugExists()", () => {
 
   test("returns false when slug does not exist", async () => {
     const exists = await courseSlugExists({
-      language: "en",
       orgSlug: organization.slug,
       slug: "non-existent-slug",
     });
@@ -32,19 +30,18 @@ describe("courseSlugExists()", () => {
     expect(exists).toBeFalsy();
   });
 
-  test("returns false when slug exists but language differs", async () => {
+  test("returns true when slug exists regardless of language", async () => {
     const course = await courseFixture({
-      language: "en",
+      language: "pt",
       organizationId: organization.id,
     });
 
     const exists = await courseSlugExists({
-      language: "pt",
       orgSlug: organization.slug,
       slug: course.slug,
     });
 
-    expect(exists).toBeFalsy();
+    expect(exists).toBeTruthy();
   });
 
   test("returns false when slug exists but organization differs", async () => {
@@ -52,7 +49,6 @@ describe("courseSlugExists()", () => {
     const course = await courseFixture({ organizationId: organization.id });
 
     const exists = await courseSlugExists({
-      language: course.language,
       orgSlug: otherOrg.slug,
       slug: course.slug,
     });

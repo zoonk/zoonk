@@ -10,7 +10,7 @@ const alternativeTitlesData = [
   },
   // Portuguese - Machine Learning
   {
-    courseSlug: "machine-learning",
+    courseSlug: "machine-learning-pt",
     language: "pt",
     titles: ["ML", "Aprendizado de Máquina", "Introdução ao Machine Learning"],
   },
@@ -26,7 +26,6 @@ export async function seedAlternativeTitles(
         select: { id: true },
         where: {
           orgSlug: {
-            language: item.language,
             organizationId: org.id,
             slug: item.courseSlug,
           },

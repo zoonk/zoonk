@@ -71,7 +71,6 @@ describe(listCourseChapters, () => {
     const result = await listCourseChapters({
       brandSlug: brandOrg.slug,
       courseSlug: publishedCourse.slug,
-      language: "en",
     });
 
     expect(result).toHaveLength(2);
@@ -92,7 +91,6 @@ describe(listCourseChapters, () => {
     const result = await listCourseChapters({
       brandSlug: brandOrg.slug,
       courseSlug: publishedCourse.slug,
-      language: "en",
     });
 
     const draftChapterInResult = result.find((chapter) => chapter.id === draftChapter.id);
@@ -103,7 +101,6 @@ describe(listCourseChapters, () => {
     const result = await listCourseChapters({
       brandSlug: schoolOrg.slug,
       courseSlug: schoolCourse.slug,
-      language: "en",
     });
 
     expect(result).toEqual([]);
@@ -113,41 +110,56 @@ describe(listCourseChapters, () => {
     const result = await listCourseChapters({
       brandSlug: brandOrg.slug,
       courseSlug: draftCourse.slug,
-      language: "en",
     });
 
     expect(result).toEqual([]);
   });
 
-  test("filters by language correctly", async () => {
-    const ptCourse = await courseFixture({
-      isPublished: true,
-      language: "pt",
-      organizationId: brandOrg.id,
-    });
+  test("finds chapters for courses with different language slugs independently", async () => {
+    const baseSlug = `lang-chapters-test-${crypto.randomUUID()}`;
 
-    await chapterFixture({
-      courseId: ptCourse.id,
-      isPublished: true,
-      language: "pt",
-      organizationId: brandOrg.id,
-      position: 0,
-      title: "Portuguese Chapter",
-    });
+    const [enCourse, ptCourse] = await Promise.all([
+      courseFixture({
+        isPublished: true,
+        language: "en",
+        organizationId: brandOrg.id,
+        slug: baseSlug,
+      }),
+      courseFixture({
+        isPublished: true,
+        language: "pt",
+        organizationId: brandOrg.id,
+        slug: `${baseSlug}-pt`,
+      }),
+    ]);
 
-    const enResult = await listCourseChapters({
-      brandSlug: brandOrg.slug,
-      courseSlug: ptCourse.slug,
-      language: "en",
-    });
+    await Promise.all([
+      chapterFixture({
+        courseId: enCourse.id,
+        isPublished: true,
+        language: "en",
+        organizationId: brandOrg.id,
+        position: 0,
+        title: "English Chapter",
+      }),
+      chapterFixture({
+        courseId: ptCourse.id,
+        isPublished: true,
+        language: "pt",
+        organizationId: brandOrg.id,
+        position: 0,
+        title: "Portuguese Chapter",
+      }),
+    ]);
 
-    const ptResult = await listCourseChapters({
-      brandSlug: brandOrg.slug,
-      courseSlug: ptCourse.slug,
-      language: "pt",
-    });
+    const [enResult, ptResult] = await Promise.all([
+      listCourseChapters({ brandSlug: brandOrg.slug, courseSlug: baseSlug }),
+      listCourseChapters({ brandSlug: brandOrg.slug, courseSlug: `${baseSlug}-pt` }),
+    ]);
 
-    expect(enResult).toEqual([]);
+    expect(enResult).toHaveLength(1);
+    expect(enResult[0]?.title).toBe("English Chapter");
+
     expect(ptResult).toHaveLength(1);
     expect(ptResult[0]?.title).toBe("Portuguese Chapter");
   });
@@ -162,7 +174,6 @@ describe(listCourseChapters, () => {
     const result = await listCourseChapters({
       brandSlug: brandOrg.slug,
       courseSlug: courseWithoutChapters.slug,
-      language: "en",
     });
 
     expect(result).toEqual([]);
@@ -174,7 +185,6 @@ describe(listCourseChapters, () => {
     const result = await listCourseChapters({
       brandSlug: otherBrandOrg.slug,
       courseSlug: publishedCourse.slug,
-      language: "en",
     });
 
     expect(result).toEqual([]);

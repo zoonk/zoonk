@@ -1,7 +1,8 @@
 "use client";
 
 import { WizardContent, useWizard, useWizardKeyboard } from "@zoonk/ui/components/wizard";
-import { toSlug } from "@zoonk/utils/string";
+import { AI_ORG_SLUG } from "@zoonk/utils/constants";
+import { ensureLocaleSuffix, toSlug } from "@zoonk/utils/string";
 import { useRouter } from "next/navigation";
 import { useCallback, useState, useTransition } from "react";
 import { createCourseAction } from "./actions";
@@ -17,6 +18,7 @@ const STEPS = ["title", "language", "description", "slug"] as const;
 export function CreateCourseWizard({ orgSlug }: { orgSlug: string }) {
   const router = useRouter();
   const wizard = useWizard({ steps: STEPS });
+  const isAiOrg = orgSlug === AI_ORG_SLUG;
 
   const [isPending, startTransition] = useTransition();
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -36,11 +38,14 @@ export function CreateCourseWizard({ orgSlug }: { orgSlug: string }) {
 
     // Auto-fill slug from title when entering the slug step
     if (wizard.currentStepName === "description" && !formData.slug) {
-      updateField("slug", toSlug(formData.title));
+      const baseSlug = toSlug(formData.title);
+      const slug = isAiOrg ? ensureLocaleSuffix(baseSlug, formData.language) : baseSlug;
+
+      updateField("slug", slug);
     }
 
     wizard.goToNext();
-  }, [canProceed, formData.slug, formData.title, updateField, wizard]);
+  }, [canProceed, formData.language, formData.slug, formData.title, isAiOrg, updateField, wizard]);
 
   const handleSubmit = useCallback(() => {
     if (!canProceed || isPending) {

@@ -8,7 +8,6 @@ import { cache } from "react";
 const cachedGetCourse = cache(
   async (
     courseSlug: string,
-    language: string,
     orgSlug: string,
     headers?: Headers,
   ): Promise<SafeReturn<Course | null>> => {
@@ -21,7 +20,6 @@ const cachedGetCourse = cache(
         }),
         prisma.course.findFirst({
           where: {
-            language,
             organization: { slug: orgSlug },
             slug: courseSlug,
           },
@@ -49,9 +47,8 @@ const cachedGetCourse = cache(
 
 export function getCourse(params: {
   courseSlug: string;
-  language: string;
   orgSlug: string;
   headers?: Headers;
 }): Promise<SafeReturn<Course | null>> {
-  return cachedGetCourse(params.courseSlug, params.language, params.orgSlug, params.headers);
+  return cachedGetCourse(params.courseSlug, params.orgSlug, params.headers);
 }
