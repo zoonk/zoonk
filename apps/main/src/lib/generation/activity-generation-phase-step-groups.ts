@@ -1,4 +1,4 @@
-import { type ActivityStepName } from "@/workflows/config";
+import { type ActivityStepName } from "@/lib/workflow/config";
 
 const ALL_CONTENT_STEPS: ActivityStepName[] = [
   "generateBackgroundContent",

@@ -16,7 +16,7 @@ import {
   type ChapterStepName,
   type ChapterWorkflowStepName,
   type LessonStepName,
-} from "@/workflows/config";
+} from "@/lib/workflow/config";
 import {
   BookOpenIcon,
   CheckCircleIcon,

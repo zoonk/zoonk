@@ -30,6 +30,8 @@
     ".github/skills": true,
     ".opencode": true,
     "**/eval-results/**": true,
+    "**/.next/**": true,
+    "**/.next-e2e/**": true,
     "pnpm-lock.yaml": true
   },
   "typescript.experimental.useTsgo": true
