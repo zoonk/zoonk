@@ -32,7 +32,8 @@
     "**/eval-results/**": true,
     "**/.next/**": true,
     "**/.next-e2e/**": true,
-    "pnpm-lock.yaml": true
+    "pnpm-lock.yaml": true,
+    "**/tsconfig.tsbuildinfo": true
   },
   "typescript.experimental.useTsgo": true
 }
