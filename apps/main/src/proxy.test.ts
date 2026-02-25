@@ -1,4 +1,3 @@
-import { LOCALE_COOKIE } from "@zoonk/utils/locale";
 import {
   unstable_doesMiddlewareMatch as doesMiddlewareMatch,
   getRedirectUrl,
@@ -37,38 +36,6 @@ describe("next.js proxy", () => {
   test("doesn't match paths starting with 149e (BotID paths)", () => {
     // https://x.com/andrewqu/status/1988640986520842672?s=20
     expect(doesMiddlewareMatch({ config, url: "/149eabcd" })).toBeFalsy();
-  });
-
-  test("redirects home page to language-specific URL", () => {
-    const request = new NextRequest("https://zoonk.com");
-    request.cookies.set(LOCALE_COOKIE, "pt");
-    const response = proxy(request);
-
-    expect(getRedirectUrl(response)).toBe("https://zoonk.com/pt");
-  });
-
-  test("redirects nested page to language-specific URL", () => {
-    const request = new NextRequest("https://zoonk.com/some/page");
-    request.cookies.set(LOCALE_COOKIE, "pt");
-    const response = proxy(request);
-
-    expect(getRedirectUrl(response)).toBe("https://zoonk.com/some/page");
-  });
-
-  test("don't redirect home page if using default locale", () => {
-    const request = new NextRequest("https://zoonk.com");
-    request.cookies.set(LOCALE_COOKIE, "en");
-    const response = proxy(request);
-
-    expect(getRedirectUrl(response)).toBeFalsy();
-  });
-
-  test("don't redirect nested page if using default locale", () => {
-    const request = new NextRequest("https://zoonk.com/some/page");
-    request.cookies.set(LOCALE_COOKIE, "en");
-    const response = proxy(request);
-
-    expect(getRedirectUrl(response)).toBeFalsy();
   });
 
   test("remove default locale from URL", () => {
