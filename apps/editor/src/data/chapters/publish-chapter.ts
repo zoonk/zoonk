@@ -11,7 +11,6 @@ export async function toggleChapterPublished(params: {
 }): Promise<SafeReturn<Chapter>> {
   const { data: chapter, error: findError } = await safeAsync(() =>
     prisma.chapter.findUnique({
-      select: { id: true, organizationId: true },
       where: { id: params.chapterId },
     }),
   );

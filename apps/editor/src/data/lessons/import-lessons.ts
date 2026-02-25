@@ -67,10 +67,8 @@ export async function importLessons(params: {
   const { data: chapter, error: findError } = await safeAsync(() =>
     prisma.chapter.findUnique({
       include: {
-        course: {
-          select: { categories: { select: { category: true } } },
-        },
-        organization: { select: { slug: true } },
+        course: { include: { categories: true } },
+        organization: true,
       },
       where: { id: params.chapterId },
     }),
@@ -108,7 +106,6 @@ export async function importLessons(params: {
       } else {
         const existingLessons = await tx.lesson.findMany({
           orderBy: { position: "desc" },
-          select: { position: true },
           take: 1,
           where: { chapterId: params.chapterId },
         });

@@ -27,7 +27,6 @@ export async function exportAlternativeTitles(params: { courseId: number }): Pro
   const { data: titles, error: titlesError } = await safeAsync(() =>
     prisma.courseAlternativeTitle.findMany({
       orderBy: { slug: "asc" },
-      select: { slug: true },
       where: { courseId: params.courseId },
     }),
   );

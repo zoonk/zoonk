@@ -8,13 +8,9 @@ import { safeAsync } from "@zoonk/utils/error";
 export async function getNextLessonId(activityId: bigint): Promise<number | null> {
   const { data: activity, error } = await safeAsync(() =>
     prisma.activity.findUnique({
-      select: {
+      include: {
         lesson: {
-          select: {
-            chapter: { select: { courseId: true, id: true, position: true } },
-            id: true,
-            position: true,
-          },
+          include: { chapter: true },
         },
       },
       where: { id: activityId },
@@ -31,7 +27,6 @@ export async function getNextLessonId(activityId: bigint): Promise<number | null
   const { data: nextLesson } = await safeAsync(() =>
     prisma.lesson.findFirst({
       orderBy: [{ chapter: { position: "asc" } }, { position: "asc" }],
-      select: { id: true },
       where: {
         OR: [
           {

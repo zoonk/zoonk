@@ -10,7 +10,7 @@ import {
   CatalogListSearch,
 } from "@/components/catalog/catalog-list";
 import { LessonCompletion } from "@/components/catalog/lesson-completion";
-import { type LessonForList } from "@/data/lessons/list-chapter-lessons";
+import { type Lesson } from "@zoonk/db";
 import { formatPosition } from "@zoonk/utils/string";
 import { getExtracted } from "next-intl/server";
 
@@ -25,7 +25,7 @@ export async function LessonList({
   chapterId: number;
   chapterSlug: string;
   courseSlug: string;
-  lessons: LessonForList[];
+  lessons: Lesson[];
 }) {
   if (lessons.length === 0) {
     return null;

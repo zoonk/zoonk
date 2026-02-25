@@ -117,7 +117,6 @@ export async function importActivities(params: {
       } else {
         const existingActivities = await tx.activity.findMany({
           orderBy: { position: "desc" },
-          select: { position: true },
           take: 1,
           where: { lessonId: params.lessonId },
         });

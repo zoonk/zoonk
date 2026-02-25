@@ -6,7 +6,6 @@ import { cache } from "react";
 const cachedLessonSlugExists = cache(async (chapterId: number, slug: string): Promise<boolean> => {
   const { data } = await safeAsync(() =>
     prisma.lesson.findFirst({
-      select: { id: true },
       where: { chapterId, slug },
     }),
   );

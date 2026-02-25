@@ -156,28 +156,8 @@ export async function generateCourseSuggestions({
   });
 }
 
-export async function getCourseSuggestionById(
-  id: number,
-): Promise<Pick<
-  CourseSuggestion,
-  | "description"
-  | "generationRunId"
-  | "generationStatus"
-  | "language"
-  | "slug"
-  | "targetLanguage"
-  | "title"
-> | null> {
+export async function getCourseSuggestionById(id: number): Promise<CourseSuggestion | null> {
   return prisma.courseSuggestion.findUnique({
-    select: {
-      description: true,
-      generationRunId: true,
-      generationStatus: true,
-      language: true,
-      slug: true,
-      targetLanguage: true,
-      title: true,
-    },
     where: { id },
   });
 }
@@ -188,9 +168,8 @@ export async function getCourseSuggestionBySlug({
 }: {
   slug: string;
   language: string;
-}): Promise<Pick<CourseSuggestion, "id"> | null> {
+}): Promise<CourseSuggestion | null> {
   return prisma.courseSuggestion.findUnique({
-    select: { id: true },
     where: { languageSlug: { language, slug } },
   });
 }

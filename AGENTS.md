@@ -83,6 +83,13 @@ For detailed UX guidelines (interactions, animation, layout, accessibility), see
 - When adding e2e tests, use `*Fixture()` functions to create unique test data per test - do not modify seed files
 - Avoid inline imports like `await import()`, only do it when dynamic imports are absolutely necessary
 
+## Prisma Queries
+
+- **Don't use `select` by default.** Return the full model — most models have only small columns and `select` adds maintenance cost (manual types, updating selects when adding fields) with negligible performance benefit
+- **Use `omit`** only for models with large columns (`Step.content`, `Step.visualContent`, `StepAttempt.answer`, `StepAttempt.effects`) when you don't need those fields
+- **Use `include`** to load relations. Use `select` on included relations when you only need specific fields from the related model
+- **Don't define manual types** that mirror Prisma query shapes. Use Prisma's generated types (`Course`, `Chapter`, etc.) or derive types from queries using `NonNullable<Awaited<ReturnType<typeof myQueryFn>>>`
+
 ## Compound Components
 
 When writing React components, use compound components. Always read this before creating components:

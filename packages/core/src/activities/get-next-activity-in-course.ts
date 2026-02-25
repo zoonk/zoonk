@@ -27,26 +27,16 @@ const cachedGetNextActivity = cache(
   ): Promise<NextActivityInCourse | null> => {
     const { data: activity, error } = await safeAsync(() =>
       prisma.activity.findFirst({
+        include: {
+          lesson: {
+            include: { chapter: true },
+          },
+        },
         orderBy: [
           { lesson: { chapter: { position: "asc" } } },
           { lesson: { position: "asc" } },
           { position: "asc" },
         ],
-        select: {
-          id: true,
-          kind: true,
-          lesson: {
-            select: {
-              chapter: { select: { id: true, slug: true } },
-              description: true,
-              id: true,
-              slug: true,
-              title: true,
-            },
-          },
-          position: true,
-          title: true,
-        },
         where: {
           OR: [
             {

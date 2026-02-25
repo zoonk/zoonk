@@ -11,7 +11,6 @@ export async function getLessonActivityCompletion(
 
   const { data, error } = await safeAsync(() =>
     prisma.activityProgress.findMany({
-      select: { activityId: true },
       where: {
         activity: { isPublished: true, lessonId },
         completedAt: { not: null },

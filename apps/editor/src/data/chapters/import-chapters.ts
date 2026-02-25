@@ -96,7 +96,6 @@ export async function importChapters(params: {
       } else {
         const existingChapters = await tx.chapter.findMany({
           orderBy: { position: "desc" },
-          select: { position: true },
           take: 1,
           where: { courseId: params.courseId },
         });

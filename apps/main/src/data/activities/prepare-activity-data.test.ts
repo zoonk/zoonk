@@ -11,11 +11,6 @@ import { stepFixture } from "@zoonk/testing/fixtures/steps";
 import { wordFixture } from "@zoonk/testing/fixtures/words";
 import { beforeAll, describe, expect, expectTypeOf, test } from "vitest";
 import { getActivity } from "./get-activity";
-import { type getLessonSentences } from "./get-lesson-sentences";
-import { type getLessonWords } from "./get-lesson-words";
-
-type ActivityWithSteps = NonNullable<Awaited<ReturnType<typeof getActivity>>>;
-type LessonWordData = Awaited<ReturnType<typeof getLessonWords>>[number];
 
 describe(prepareActivityData, () => {
   let org: Awaited<ReturnType<typeof organizationFixture>>;
@@ -300,7 +295,7 @@ describe(prepareActivityData, () => {
       lessonSentenceFixture({ lessonId: lesson.id, sentenceId: sentence1.id }),
     ]);
 
-    const lessonWords: LessonWordData[] = [
+    const lessonWords = [
       {
         alternativeTranslations: word1.alternativeTranslations,
         audioUrl: word1.audioUrl,
@@ -321,7 +316,7 @@ describe(prepareActivityData, () => {
       },
     ];
 
-    const lessonSentences: Awaited<ReturnType<typeof getLessonSentences>>[number][] = [
+    const lessonSentences = [
       {
         audioUrl: sentence1.audioUrl,
         id: sentence1.id,
@@ -448,9 +443,9 @@ describe(prepareActivityData, () => {
         },
       ],
       title: "Vocabulary",
-    } satisfies ActivityWithSteps;
+    };
 
-    const lessonWords: LessonWordData[] = [stepWord, lessonWord];
+    const lessonWords = [stepWord, lessonWord];
     const result = prepareActivityData(activity, lessonWords, []);
     const vocabularyStep = result.steps[0];
     const vocabularyOptions = vocabularyStep?.vocabularyOptions ?? [];
@@ -503,7 +498,7 @@ describe(prepareActivityData, () => {
       sentenceId: sentence.id,
     });
 
-    const lessonWords: LessonWordData[] = [
+    const lessonWords = [
       {
         alternativeTranslations: [],
         audioUrl: null,
@@ -577,7 +572,7 @@ describe(prepareActivityData, () => {
       sentenceId: sentence.id,
     });
 
-    const lessonWords: LessonWordData[] = [
+    const lessonWords = [
       {
         alternativeTranslations: [],
         audioUrl: null,
@@ -641,10 +636,10 @@ describe(prepareActivityData, () => {
         },
       ],
       title: "Reading",
-    } satisfies ActivityWithSteps;
+    };
 
     // Distractor word "hola" overlaps with correct word "Hola" (case-insensitive)
-    const lessonWords: LessonWordData[] = [
+    const lessonWords = [
       {
         alternativeTranslations: [],
         audioUrl: null,
@@ -702,10 +697,10 @@ describe(prepareActivityData, () => {
         },
       ],
       title: "Punctuation Reading",
-    } satisfies ActivityWithSteps;
+    };
 
     // Distractor "you" (from .word) overlaps with correct word "you?" after stripping punctuation
-    const lessonWords: LessonWordData[] = [
+    const lessonWords = [
       {
         alternativeTranslations: [],
         audioUrl: null,
@@ -763,10 +758,10 @@ describe(prepareActivityData, () => {
         },
       ],
       title: "Distractor Dedup",
-    } satisfies ActivityWithSteps;
+    };
 
     // Two lesson words produce distractors "tu" and "tu?" after splitting
-    const lessonWords: LessonWordData[] = [
+    const lessonWords = [
       {
         alternativeTranslations: [],
         audioUrl: null,
@@ -850,7 +845,7 @@ describe(prepareActivityData, () => {
         },
       ],
       title: "Sort Order",
-    } satisfies ActivityWithSteps;
+    };
 
     const result = prepareActivityData(activity, [], []);
     const step = result.steps[0];
@@ -887,7 +882,7 @@ describe(prepareActivityData, () => {
         },
       ],
       title: "Fill Blank",
-    } satisfies ActivityWithSteps;
+    };
 
     const result = prepareActivityData(activity, [], []);
     const step = result.steps[0];
@@ -926,7 +921,7 @@ describe(prepareActivityData, () => {
         },
       ],
       title: "Match Columns",
-    } satisfies ActivityWithSteps;
+    };
 
     const result = prepareActivityData(activity, [], []);
     const step = result.steps[0];
@@ -958,7 +953,7 @@ describe(prepareActivityData, () => {
         },
       ],
       title: "Static",
-    } satisfies ActivityWithSteps;
+    };
 
     const result = prepareActivityData(activity, [], []);
     const step = result.steps[0];

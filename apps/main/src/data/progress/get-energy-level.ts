@@ -21,7 +21,6 @@ export const getEnergyLevel = cache(
 
     const { data: progress, error } = await safeAsync(() =>
       prisma.userProgress.findUnique({
-        select: { currentEnergy: true, lastActiveAt: true },
         where: { userId },
       }),
     );

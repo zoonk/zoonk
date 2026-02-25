@@ -10,7 +10,7 @@ import {
   CatalogListSearch,
 } from "@/components/catalog/catalog-list";
 import { ChapterCompletion } from "@/components/catalog/chapter-completion";
-import { type ChapterForList } from "@/data/chapters/list-course-chapters";
+import { type Chapter } from "@zoonk/db";
 import { formatPosition } from "@zoonk/utils/string";
 import { getExtracted } from "next-intl/server";
 
@@ -21,7 +21,7 @@ export async function ChapterList({
   courseSlug,
 }: {
   brandSlug: string;
-  chapters: ChapterForList[];
+  chapters: Chapter[];
   courseId: number;
   courseSlug: string;
 }) {

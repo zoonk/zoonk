@@ -1,32 +1,15 @@
 import "server-only";
-import { type GenerationStatus, prisma } from "@zoonk/db";
+import { type Lesson, prisma } from "@zoonk/db";
 import { cache } from "react";
 
-export type LessonForList = {
-  id: number;
-  slug: string;
-  title: string;
-  description: string;
-  position: number;
-  generationStatus: GenerationStatus;
-};
-
 const cachedListChapterLessons = cache(
-  async (chapterId: number): Promise<LessonForList[]> =>
+  async (chapterId: number): Promise<Lesson[]> =>
     prisma.lesson.findMany({
       orderBy: { position: "asc" },
-      select: {
-        description: true,
-        generationStatus: true,
-        id: true,
-        position: true,
-        slug: true,
-        title: true,
-      },
       where: { chapterId, isPublished: true },
     }),
 );
 
-export function listChapterLessons(params: { chapterId: number }): Promise<LessonForList[]> {
+export function listChapterLessons(params: { chapterId: number }): Promise<Lesson[]> {
   return cachedListChapterLessons(params.chapterId);
 }

@@ -5,51 +5,37 @@ import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { ensureLocaleSuffix, toSlug } from "@zoonk/utils/string";
 import { cache } from "react";
 
-type ExistingCourse = {
-  id: number;
-  slug: string;
-  generationStatus: string;
-  description: string | null;
-  imageUrl: string | null;
+const courseInclude = {
   _count: {
-    alternativeTitles: number;
-    categories: number;
-    chapters: number;
-  };
-};
+    select: {
+      alternativeTitles: true,
+      categories: true,
+      chapters: true,
+    },
+  },
+} as const;
+
+type ExistingCourse = NonNullable<
+  Awaited<ReturnType<typeof prisma.course.findFirst<{ include: typeof courseInclude }>>>
+>;
 
 const cachedFindExistingCourse = cache(
   async (slug: string, language: string): Promise<SafeReturn<ExistingCourse | null>> => {
     const normalizedSlug = toSlug(slug);
 
-    const courseSelect = {
-      _count: {
-        select: {
-          alternativeTitles: true,
-          categories: true,
-          chapters: true,
-        },
-      },
-      description: true,
-      generationStatus: true,
-      id: true,
-      imageUrl: true,
-      slug: true,
-    } as const;
-
     const { data, error } = await safeAsync(() =>
       Promise.all([
         prisma.course.findFirst({
-          select: courseSelect,
+          include: courseInclude,
           where: {
             organization: { slug: AI_ORG_SLUG },
             slug: ensureLocaleSuffix(normalizedSlug, language),
           },
         }),
         prisma.courseAlternativeTitle.findUnique({
-          select: {
+          include: {
             course: {
-              select: courseSelect,
+              include: courseInclude,
             },
           },
           where: {

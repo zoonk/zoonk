@@ -5,7 +5,6 @@ import { cache } from "react";
 const cachedListAlternativeTitlesById = cache(async (courseId: number): Promise<string[]> => {
   const results = await prisma.courseAlternativeTitle.findMany({
     orderBy: { slug: "asc" },
-    select: { slug: true },
     where: { courseId },
   });
 
@@ -15,7 +14,6 @@ const cachedListAlternativeTitlesById = cache(async (courseId: number): Promise<
 const cachedListAlternativeTitlesBySlug = cache(async (courseSlug: string): Promise<string[]> => {
   const results = await prisma.courseAlternativeTitle.findMany({
     orderBy: { slug: "asc" },
-    select: { slug: true },
     where: { course: { slug: courseSlug } },
   });
 

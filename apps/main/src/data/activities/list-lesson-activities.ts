@@ -1,30 +1,15 @@
 import "server-only";
-import { type ActivityKind, prisma } from "@zoonk/db";
+import { type Activity, prisma } from "@zoonk/db";
 import { cache } from "react";
 
-export type ActivityForList = {
-  id: bigint;
-  kind: ActivityKind;
-  title: string | null;
-  description: string | null;
-  position: number;
-};
-
 const cachedListLessonActivities = cache(
-  async (lessonId: number): Promise<ActivityForList[]> =>
+  async (lessonId: number): Promise<Activity[]> =>
     prisma.activity.findMany({
       orderBy: { position: "asc" },
-      select: {
-        description: true,
-        id: true,
-        kind: true,
-        position: true,
-        title: true,
-      },
       where: { isPublished: true, lessonId },
     }),
 );
 
-export function listLessonActivities(params: { lessonId: number }): Promise<ActivityForList[]> {
+export function listLessonActivities(params: { lessonId: number }): Promise<Activity[]> {
   return cachedListLessonActivities(params.lessonId);
 }

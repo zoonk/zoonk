@@ -7,8 +7,8 @@ import {
   CatalogListItemDescription,
   CatalogListItemTitle,
 } from "@/components/catalog/catalog-list";
-import { type ActivityForList } from "@/data/activities/list-lesson-activities";
 import { type ActivityKindInfo } from "@/lib/activities";
+import { type Activity } from "@zoonk/db";
 import { getExtracted } from "next-intl/server";
 
 export async function ActivityList({
@@ -17,7 +17,7 @@ export async function ActivityList({
   kindMeta,
   lessonId,
 }: {
-  activities: ActivityForList[];
+  activities: Activity[];
   baseHref: string;
   kindMeta: Map<string, ActivityKindInfo>;
   lessonId: number;
