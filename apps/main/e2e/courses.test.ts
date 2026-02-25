@@ -1,10 +1,9 @@
 import { randomUUID } from "node:crypto";
-import { getAiOrganization, revalidateCacheTags } from "@zoonk/e2e/helpers";
+import { getAiOrganization, revalidateCacheTags, setLocale } from "@zoonk/e2e/helpers";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { cacheTagCoursesList } from "@zoonk/utils/cache";
 import { AI_ORG_SLUG } from "@zoonk/utils/constants";
-import { LOCALE_COOKIE } from "@zoonk/utils/locale";
 import { normalizeString } from "@zoonk/utils/string";
 import { expect, test } from "./fixtures";
 
@@ -101,9 +100,7 @@ test.describe("Courses Page - Infinite Loading", () => {
 
 test.describe("Courses Page - Locale", () => {
   test("Portuguese locale shows translated content", async ({ page }) => {
-    await page
-      .context()
-      .addCookies([{ domain: "localhost", name: LOCALE_COOKIE, path: "/", value: "pt" }]);
+    await setLocale(page, "pt");
     await page.goto("/courses");
 
     await expect(page.getByRole("heading", { name: /explorar cursos/i })).toBeVisible();

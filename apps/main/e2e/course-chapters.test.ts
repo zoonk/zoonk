@@ -1,10 +1,9 @@
 import { randomUUID } from "node:crypto";
-import { getAiOrganization } from "@zoonk/e2e/helpers";
+import { getAiOrganization, setLocale } from "@zoonk/e2e/helpers";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { AI_ORG_SLUG } from "@zoonk/utils/constants";
-import { LOCALE_COOKIE } from "@zoonk/utils/locale";
 import { normalizeString } from "@zoonk/utils/string";
 import { expect, test } from "./fixtures";
 
@@ -163,9 +162,7 @@ test.describe("Course Chapters List", () => {
 
 test.describe("Course Chapters - Locale", () => {
   test("shows chapters in Portuguese for Portuguese locale", async ({ page }) => {
-    await page
-      .context()
-      .addCookies([{ domain: "localhost", name: LOCALE_COOKIE, path: "/", value: "pt" }]);
+    await setLocale(page, "pt");
     await page.goto(ptCourseUrl);
 
     await expect(page.getByRole("link", { name: ptChapterNames.first })).toBeVisible();
@@ -220,9 +217,7 @@ test.describe("Course Chapter Search", () => {
   test("matches Portuguese chapters without accents (accent-insensitive search)", async ({
     page,
   }) => {
-    await page
-      .context()
-      .addCookies([{ domain: "localhost", name: LOCALE_COOKIE, path: "/", value: "pt" }]);
+    await setLocale(page, "pt");
     await page.goto(ptCourseUrl);
 
     await page.getByLabel(/buscar capítulos/i).fill("introducao");

@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { type Locator, expect, request } from "@playwright/test";
+import { type Locator, type Page, expect, request } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
@@ -8,6 +8,7 @@ import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { dailyProgressFixtureMany, userProgressFixture } from "@zoonk/testing/fixtures/progress";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
 import { AI_ORG_SLUG } from "@zoonk/utils/constants";
+import { LOCALE_COOKIE } from "@zoonk/utils/locale";
 
 const UUID_SHORT_LENGTH = 8;
 
@@ -16,6 +17,12 @@ const UUID_SHORT_LENGTH = 8;
  * to revalidate cached pages via the /api/revalidate endpoint.
  */
 export const E2E_REVALIDATE_SECRET = "e2e-revalidate-secret";
+
+export async function setLocale(page: Page, locale: string) {
+  await page
+    .context()
+    .addCookies([{ domain: "localhost", name: LOCALE_COOKIE, path: "/", value: locale }]);
+}
 
 export function getBaseURL(): string {
   const url = process.env.E2E_BASE_URL;

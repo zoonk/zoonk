@@ -1,11 +1,5 @@
-import { LOCALE_COOKIE } from "@zoonk/utils/locale";
-import { type Page, expect, test } from "./fixtures";
-
-async function setPortugueseLocale(page: Page) {
-  await page
-    .context()
-    .addCookies([{ domain: "localhost", name: LOCALE_COOKIE, path: "/", value: "pt" }]);
-}
+import { setLocale } from "@zoonk/e2e/helpers";
+import { expect, test } from "./fixtures";
 
 test.describe("Locale Behavior - English", () => {
   test("home page shows English content", async ({ page }) => {
@@ -25,7 +19,7 @@ test.describe("Locale Behavior - English", () => {
 
 test.describe("Locale Behavior - Portuguese", () => {
   test("Portuguese home shows Portuguese content", async ({ page }) => {
-    await setPortugueseLocale(page);
+    await setLocale(page, "pt");
     await page.goto("/");
 
     const nav = page.getByRole("navigation");
@@ -44,7 +38,7 @@ test.describe("Locale Behavior - Portuguese", () => {
 
 test.describe("Locale Navigation", () => {
   test("clicking navbar links keeps user in Portuguese", async ({ page }) => {
-    await setPortugueseLocale(page);
+    await setLocale(page, "pt");
     await page.goto("/");
 
     // Click Courses link in navbar (scoped to navigation to avoid hero links)

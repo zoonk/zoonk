@@ -1,11 +1,10 @@
 import { randomUUID } from "node:crypto";
 import { type Route } from "@playwright/test";
-import { getAiOrganization } from "@zoonk/e2e/helpers";
+import { getAiOrganization, setLocale } from "@zoonk/e2e/helpers";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseSuggestionFixture } from "@zoonk/testing/fixtures/course-suggestions";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { AI_ORG_SLUG } from "@zoonk/utils/constants";
-import { LOCALE_COOKIE } from "@zoonk/utils/locale";
 import { normalizeString } from "@zoonk/utils/string";
 import { expect, test } from "./fixtures";
 
@@ -194,9 +193,7 @@ test.describe("Course Detail Page", () => {
 
 test.describe("Course Detail Page - Locale", () => {
   test("course page renders in Portuguese locale", async ({ page }) => {
-    await page
-      .context()
-      .addCookies([{ domain: "localhost", name: LOCALE_COOKIE, path: "/", value: "pt" }]);
+    await setLocale(page, "pt");
     await page.goto(testData.ptCourseUrl);
 
     await expect(page).toHaveURL(new RegExp(`/b/${AI_ORG_SLUG}/c/`));
