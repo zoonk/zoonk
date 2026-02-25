@@ -18,6 +18,7 @@ const STEPS = ["title", "language", "description", "slug"] as const;
 export function CreateCourseWizard({ orgSlug }: { orgSlug: string }) {
   const router = useRouter();
   const wizard = useWizard({ steps: STEPS });
+  const isAiOrg = orgSlug === AI_ORG_SLUG;
 
   const [isPending, startTransition] = useTransition();
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -38,14 +39,13 @@ export function CreateCourseWizard({ orgSlug }: { orgSlug: string }) {
     // Auto-fill slug from title when entering the slug step
     if (wizard.currentStepName === "description" && !formData.slug) {
       const baseSlug = toSlug(formData.title);
-      const slug =
-        orgSlug === AI_ORG_SLUG ? ensureLocaleSuffix(baseSlug, formData.language) : baseSlug;
+      const slug = isAiOrg ? ensureLocaleSuffix(baseSlug, formData.language) : baseSlug;
 
       updateField("slug", slug);
     }
 
     wizard.goToNext();
-  }, [canProceed, formData.language, formData.slug, formData.title, orgSlug, updateField, wizard]);
+  }, [canProceed, formData.language, formData.slug, formData.title, isAiOrg, updateField, wizard]);
 
   const handleSubmit = useCallback(() => {
     if (!canProceed || isPending) {

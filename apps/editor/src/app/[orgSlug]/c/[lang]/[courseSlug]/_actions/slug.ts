@@ -14,10 +14,11 @@ export async function checkCourseSlugExists(params: {
   orgSlug: string;
   slug: string;
 }): Promise<boolean> {
-  const normalizedSlug =
-    params.orgSlug === AI_ORG_SLUG
-      ? ensureLocaleSuffix(toSlug(params.slug), params.language)
-      : toSlug(params.slug);
+  const isAiOrg = params.orgSlug === AI_ORG_SLUG;
+
+  const normalizedSlug = isAiOrg
+    ? ensureLocaleSuffix(toSlug(params.slug), params.language)
+    : toSlug(params.slug);
 
   return courseSlugExists({ orgSlug: params.orgSlug, slug: normalizedSlug });
 }
@@ -29,7 +30,8 @@ export async function updateCourseSlugAction(
   courseId: number,
   data: { slug: string },
 ): Promise<{ error: string | null; newSlug?: string }> {
-  const slugValue = orgSlug === AI_ORG_SLUG ? ensureLocaleSuffix(data.slug, language) : data.slug;
+  const isAiOrg = orgSlug === AI_ORG_SLUG;
+  const slugValue = isAiOrg ? ensureLocaleSuffix(data.slug, language) : data.slug;
 
   const { data: course, error } = await updateCourse({
     courseId,

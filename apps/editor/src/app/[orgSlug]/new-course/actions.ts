@@ -26,8 +26,8 @@ export async function checkSlugExists({
     return false;
   }
 
-  const normalizedSlug =
-    orgSlug === AI_ORG_SLUG ? ensureLocaleSuffix(toSlug(slug), language) : toSlug(slug);
+  const isAiOrg = orgSlug === AI_ORG_SLUG;
+  const normalizedSlug = isAiOrg ? ensureLocaleSuffix(toSlug(slug), language) : toSlug(slug);
 
   return courseSlugExists({ orgSlug, slug: normalizedSlug });
 }
@@ -44,8 +44,8 @@ export async function createCourseAction(formData: CourseFormData, orgSlug: stri
     return { error: t("All fields are required") };
   }
 
-  const courseSlug =
-    orgSlug === AI_ORG_SLUG ? ensureLocaleSuffix(toSlug(slug), language) : toSlug(slug);
+  const isAiOrg = orgSlug === AI_ORG_SLUG;
+  const courseSlug = isAiOrg ? ensureLocaleSuffix(toSlug(slug), language) : toSlug(slug);
 
   const { data: course, error } = await createCourse({
     description,
