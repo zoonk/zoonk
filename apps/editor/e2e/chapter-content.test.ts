@@ -145,6 +145,7 @@ test.describe("Chapter Content Page", () => {
     const uniqueSlug = `test-slug-${randomUUID().slice(0, 8)}`;
 
     await slugInput.fill(uniqueSlug);
+    await authenticatedPage.waitForLoadState("networkidle");
 
     const saveButton = authenticatedPage.getByRole("button", {
       name: /^save$/i,
