@@ -29,8 +29,8 @@ export async function ChapterList({
   const t = await getExtracted();
 
   const [{ data: chapters, error }, { data: course }] = await Promise.all([
-    listCourseChapters({ courseSlug, language: lang, orgSlug }),
-    getCourse({ courseSlug, language: lang, orgSlug }),
+    listCourseChapters({ courseSlug, orgSlug }),
+    getCourse({ courseSlug, orgSlug }),
   ]);
 
   if (error || !course) {

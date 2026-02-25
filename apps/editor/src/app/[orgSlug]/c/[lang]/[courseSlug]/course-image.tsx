@@ -28,11 +28,7 @@ export async function CourseImage({
   const { courseSlug, lang, orgSlug } = await params;
   const t = await getExtracted();
 
-  const { data: course, error } = await getCourse({
-    courseSlug,
-    language: lang,
-    orgSlug,
-  });
+  const { data: course, error } = await getCourse({ courseSlug, orgSlug });
 
   if (error || !course) {
     return notFound();

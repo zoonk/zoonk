@@ -24,8 +24,8 @@ export async function generateStaticParams() {
 export async function generateMetadata({
   params,
 }: PageProps<"/[locale]/b/[brandSlug]/c/[courseSlug]">): Promise<Metadata> {
-  const { brandSlug, courseSlug, locale } = await params;
-  const course = await getCourse({ brandSlug, courseSlug, language: locale });
+  const { brandSlug, courseSlug } = await params;
+  const course = await getCourse({ brandSlug, courseSlug });
 
   if (!course) {
     return {};
@@ -44,8 +44,8 @@ export default async function CoursePage({
   setRequestLocale(locale);
 
   const [course, chapters] = await Promise.all([
-    getCourse({ brandSlug, courseSlug, language: locale }),
-    listCourseChapters({ brandSlug, courseSlug, language: locale }),
+    getCourse({ brandSlug, courseSlug }),
+    listCourseChapters({ brandSlug, courseSlug }),
   ]);
 
   cacheTag(cacheTagCourse({ courseSlug }));

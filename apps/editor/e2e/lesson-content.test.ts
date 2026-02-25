@@ -184,10 +184,11 @@ test.describe("Lesson Content Page", () => {
     await expect(saveButton).toBeEnabled();
     await saveButton.click();
 
+    // Assert value first — proves the redirect completed and new page loaded
+    await expect(slugInput).toHaveValue(uniqueSlug);
     await expect(authenticatedPage).toHaveURL(
       new RegExp(`/${AI_ORG_SLUG}/c/en/${course.slug}/ch/${chapter.slug}/l/${uniqueSlug}`),
     );
-    await expect(slugInput).toHaveValue(uniqueSlug);
   });
 
   test("reverts changes on cancel", async ({ authenticatedPage }) => {

@@ -1,7 +1,7 @@
 import { prisma } from "@zoonk/db";
 import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import { safeAsync } from "@zoonk/utils/error";
-import { toSlug } from "@zoonk/utils/string";
+import { ensureLocaleSuffix, toSlug } from "@zoonk/utils/string";
 import { streamError, streamStatus } from "../stream-status";
 import { type CourseSuggestionData } from "../types";
 
@@ -47,9 +47,8 @@ export async function checkExistingCourseStep(
       prisma.course.findFirst({
         select: courseSelect,
         where: {
-          language: suggestion.language,
           organization: { slug: AI_ORG_SLUG },
-          slug: normalizedSlug,
+          slug: ensureLocaleSuffix(normalizedSlug, suggestion.language),
         },
       }),
       prisma.courseAlternativeTitle.findUnique({

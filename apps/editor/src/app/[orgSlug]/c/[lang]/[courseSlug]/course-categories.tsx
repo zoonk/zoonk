@@ -12,8 +12,8 @@ export async function CourseCategories({
   const { courseSlug, lang, orgSlug } = await params;
 
   const [{ data: course, error }, { data: categories }] = await Promise.all([
-    getCourse({ courseSlug, language: lang, orgSlug }),
-    listCourseCategories({ courseSlug, language: lang, orgSlug }),
+    getCourse({ courseSlug, orgSlug }),
+    listCourseCategories({ courseSlug, orgSlug }),
   ]);
 
   if (error || !course) {

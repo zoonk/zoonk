@@ -10,7 +10,6 @@ describe(listCourseCategories, () => {
 
     const result = await listCourseCategories({
       courseSlug: course.slug,
-      language: course.language,
       orgSlug: organization.slug,
     });
 
@@ -30,7 +29,6 @@ describe(listCourseCategories, () => {
 
     const result = await listCourseCategories({
       courseSlug: course.slug,
-      language: course.language,
       orgSlug: organization.slug,
     });
 
@@ -50,7 +48,6 @@ describe(listCourseCategories, () => {
 
     const result = await listCourseCategories({
       courseSlug: course.slug,
-      language: course.language,
       orgSlug: organization.slug,
     });
 
@@ -76,7 +73,6 @@ describe(listCourseCategories, () => {
 
     const result = await listCourseCategories({
       courseSlug: course1.slug,
-      language: course1.language,
       orgSlug: organization.slug,
     });
 
@@ -90,7 +86,6 @@ describe(listCourseCategories, () => {
 
     const result = await listCourseCategories({
       courseSlug: "non-existent-course",
-      language: "en",
       orgSlug: organization.slug,
     });
 

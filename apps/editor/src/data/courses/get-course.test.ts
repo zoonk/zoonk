@@ -16,7 +16,6 @@ describe("unauthenticated users", () => {
     const result = await getCourse({
       courseSlug: course.slug,
       headers: new Headers(),
-      language: course.language,
       orgSlug: organization.slug,
     });
 
@@ -43,7 +42,6 @@ describe("non members", () => {
     const result = await getCourse({
       courseSlug: course.slug,
       headers,
-      language: course.language,
       orgSlug: organization.slug,
     });
 
@@ -68,7 +66,6 @@ describe("org members", () => {
     const result = await getCourse({
       courseSlug: course.slug,
       headers,
-      language: course.language,
       orgSlug: organization.slug,
     });
 
@@ -99,7 +96,6 @@ describe("org admins", () => {
     const result = await getCourse({
       courseSlug: course.slug,
       headers,
-      language: course.language,
       orgSlug: organization.slug,
     });
 
@@ -112,7 +108,6 @@ describe("org admins", () => {
     const result = await getCourse({
       courseSlug: "non-existent-course",
       headers,
-      language: "en",
       orgSlug: organization.slug,
     });
 
@@ -120,16 +115,21 @@ describe("org admins", () => {
     expect(result.data).toBeNull();
   });
 
-  test("returns null when language does not match", async () => {
-    const result = await getCourse({
-      courseSlug: course.slug,
-      headers,
+  test("returns course regardless of language", async () => {
+    const ptCourse = await courseFixture({
+      isPublished: false,
       language: "pt",
+      organizationId: organization.id,
+    });
+
+    const result = await getCourse({
+      courseSlug: ptCourse.slug,
+      headers,
       orgSlug: organization.slug,
     });
 
     expect(result.error).toBeNull();
-    expect(result.data).toBeNull();
+    expect(result.data?.id).toBe(ptCourse.id);
   });
 
   test("returns null when organization does not match", async () => {
@@ -138,7 +138,6 @@ describe("org admins", () => {
     const result = await getCourse({
       courseSlug: course.slug,
       headers,
-      language: course.language,
       orgSlug: otherOrg.slug,
     });
 

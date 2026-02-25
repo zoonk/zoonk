@@ -17,11 +17,7 @@ export type CourseWithDetails = {
 };
 
 const cachedGetCourse = cache(
-  async (
-    brandSlug: string,
-    courseSlug: string,
-    language: string,
-  ): Promise<CourseWithDetails | null> =>
+  async (brandSlug: string, courseSlug: string): Promise<CourseWithDetails | null> =>
     prisma.course.findFirst({
       select: {
         categories: {
@@ -38,7 +34,6 @@ const cachedGetCourse = cache(
       },
       where: {
         isPublished: true,
-        language,
         organization: {
           kind: "brand",
           slug: brandSlug,
@@ -51,7 +46,6 @@ const cachedGetCourse = cache(
 export function getCourse(params: {
   brandSlug: string;
   courseSlug: string;
-  language: string;
 }): Promise<CourseWithDetails | null> {
-  return cachedGetCourse(params.brandSlug, params.courseSlug, params.language);
+  return cachedGetCourse(params.brandSlug, params.courseSlug);
 }

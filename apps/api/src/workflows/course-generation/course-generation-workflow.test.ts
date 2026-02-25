@@ -748,4 +748,29 @@ describe(courseGenerationWorkflow, () => {
       expect(categoryNames).not.toContain("languages");
     });
   });
+
+  describe("non-English course slug suffix", () => {
+    test("creates non-English course with suffixed slug", async () => {
+      const title = `Aprendizado de Máquina ${randomUUID()}`;
+      const slug = toSlug(title);
+
+      const suggestion = await courseSuggestionFixture({
+        generationStatus: "pending",
+        language: "pt",
+        slug,
+        title,
+      });
+
+      await courseGenerationWorkflow(suggestion.id);
+
+      const expectedSlug = `${slug}-pt`;
+      const course = await prisma.course.findFirst({
+        where: { slug: expectedSlug },
+      });
+
+      expect(course).not.toBeNull();
+      expect(course?.slug).toBe(expectedSlug);
+      expect(course?.language).toBe("pt");
+    });
+  });
 });

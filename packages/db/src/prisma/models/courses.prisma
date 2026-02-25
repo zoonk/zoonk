@@ -68,8 +68,8 @@ model Course {
   chapters          Chapter[]
   users             CourseUser[]
 
-  @@unique([organizationId, language, slug], name: "orgSlug")
-  @@unique([userId, language, slug], name: "userSlug")
+  @@unique([organizationId, slug], name: "orgSlug")
+  @@unique([userId, slug], name: "userSlug")
   @@index([organizationId, language, isPublished])
   @@index([organizationId, normalizedTitle])
   @@index([userId])

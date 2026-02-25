@@ -2,7 +2,7 @@ import "server-only";
 import { prisma } from "@zoonk/db";
 import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
-import { toSlug } from "@zoonk/utils/string";
+import { ensureLocaleSuffix, toSlug } from "@zoonk/utils/string";
 import { cache } from "react";
 
 type ExistingCourse = {
@@ -42,9 +42,8 @@ const cachedFindExistingCourse = cache(
         prisma.course.findFirst({
           select: courseSelect,
           where: {
-            language,
             organization: { slug: AI_ORG_SLUG },
-            slug: normalizedSlug,
+            slug: ensureLocaleSuffix(normalizedSlug, language),
           },
         }),
         prisma.courseAlternativeTitle.findUnique({

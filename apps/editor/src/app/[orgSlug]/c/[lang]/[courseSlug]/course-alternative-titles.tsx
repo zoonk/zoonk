@@ -20,11 +20,7 @@ export async function CourseAlternativeTitles({
     return null;
   }
 
-  const { data: course } = await getCourse({
-    courseSlug,
-    language: lang,
-    orgSlug,
-  });
+  const { data: course } = await getCourse({ courseSlug, orgSlug });
 
   if (!course) {
     return null;

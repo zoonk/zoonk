@@ -13,11 +13,7 @@ export async function CourseActions({ params }: PageProps<"/[orgSlug]/c/[lang]/[
   const t = await getExtracted();
   const courseUrl = `/${orgSlug}/c/${lang}/${courseSlug}`;
 
-  const { data: course } = await getCourse({
-    courseSlug,
-    language: lang,
-    orgSlug,
-  });
+  const { data: course } = await getCourse({ courseSlug, orgSlug });
 
   if (!course) {
     return notFound();

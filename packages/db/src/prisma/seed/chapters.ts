@@ -107,7 +107,7 @@ const chaptersData: CourseChapters[] = [
         title: "Redes Neurais",
       },
     ],
-    courseSlug: "machine-learning",
+    courseSlug: "machine-learning-pt",
     language: "pt",
   },
   {
@@ -227,7 +227,6 @@ async function seedChaptersForCourse(
 ): Promise<void> {
   const course = await prisma.course.findFirst({
     where: {
-      language: data.language,
       organizationId: org.id,
       slug: data.courseSlug,
     },

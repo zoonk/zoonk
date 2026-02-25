@@ -9,11 +9,7 @@ export async function CourseSlug({
 }) {
   const { courseSlug, lang, orgSlug } = await params;
 
-  const { data: course } = await getCourse({
-    courseSlug,
-    language: lang,
-    orgSlug,
-  });
+  const { data: course } = await getCourse({ courseSlug, orgSlug });
 
   if (!course) {
     return null;
@@ -25,7 +21,7 @@ export async function CourseSlug({
       entityId={course.id}
       initialSlug={course.slug}
       language={lang}
-      onSave={updateCourseSlugAction.bind(null, courseSlug)}
+      onSave={updateCourseSlugAction.bind(null, courseSlug, lang, orgSlug)}
       orgSlug={orgSlug}
       redirectPrefix={`/${orgSlug}/c/${lang}/`}
     />

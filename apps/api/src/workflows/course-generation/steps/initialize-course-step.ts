@@ -1,7 +1,7 @@
 import { prisma } from "@zoonk/db";
 import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import { safeAsync } from "@zoonk/utils/error";
-import { normalizeString, toSlug } from "@zoonk/utils/string";
+import { ensureLocaleSuffix, normalizeString, toSlug } from "@zoonk/utils/string";
 import { streamError, streamStatus } from "../stream-status";
 import { type CourseContext, type CourseSuggestionData } from "../types";
 
@@ -37,7 +37,7 @@ export async function initializeCourseStep(input: {
   }
 
   // Create the course
-  const slug = toSlug(suggestion.title);
+  const slug = ensureLocaleSuffix(toSlug(suggestion.title), suggestion.language);
   const normalizedTitle = normalizeString(suggestion.title);
 
   const { data: course, error: createError } = await safeAsync(() =>

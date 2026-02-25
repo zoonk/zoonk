@@ -7,11 +7,7 @@ export async function ChapterBackLink({
   params: PageProps<"/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]">["params"];
 }) {
   const { courseSlug, lang, orgSlug } = await params;
-  const { data: course } = await getCourse({
-    courseSlug,
-    language: lang,
-    orgSlug,
-  });
+  const { data: course } = await getCourse({ courseSlug, orgSlug });
 
   if (!course) {
     return null;

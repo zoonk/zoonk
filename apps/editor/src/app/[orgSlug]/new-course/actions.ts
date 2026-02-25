@@ -5,7 +5,8 @@ import { createCourse } from "@/data/courses/create-course";
 import { getErrorMessage } from "@/lib/error-messages";
 import { revalidateMainApp } from "@zoonk/core/cache/revalidate";
 import { cacheTagOrgCourses } from "@zoonk/utils/cache";
-import { toSlug } from "@zoonk/utils/string";
+import { AI_ORG_SLUG } from "@zoonk/utils/constants";
+import { ensureLocaleSuffix, toSlug } from "@zoonk/utils/string";
 import { getExtracted } from "next-intl/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
@@ -25,7 +26,10 @@ export async function checkSlugExists({
     return false;
   }
 
-  return courseSlugExists({ language, orgSlug, slug: toSlug(slug) });
+  const normalizedSlug =
+    orgSlug === AI_ORG_SLUG ? ensureLocaleSuffix(toSlug(slug), language) : toSlug(slug);
+
+  return courseSlugExists({ orgSlug, slug: normalizedSlug });
 }
 
 export async function createCourseAction(formData: CourseFormData, orgSlug: string) {
@@ -40,11 +44,14 @@ export async function createCourseAction(formData: CourseFormData, orgSlug: stri
     return { error: t("All fields are required") };
   }
 
+  const courseSlug =
+    orgSlug === AI_ORG_SLUG ? ensureLocaleSuffix(toSlug(slug), language) : toSlug(slug);
+
   const { data: course, error } = await createCourse({
     description,
     language,
     orgSlug,
-    slug: toSlug(slug),
+    slug: courseSlug,
     title,
   });
 
