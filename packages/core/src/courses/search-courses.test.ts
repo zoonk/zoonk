@@ -110,32 +110,77 @@ describe(searchCourses, () => {
     expect(withoutAccentIds).toContain(accentedCourse.id);
   });
 
-  test("filters by required language parameter", async () => {
-    const ptCourse = await courseFixture({
-      isPublished: true,
-      language: "pt",
-      normalizedTitle: normalizeString("JavaScript em Português"),
-      organizationId: brandOrg.id,
-      title: "JavaScript em Português",
-    });
+  test("returns all languages but sorts user's language first", async () => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const searchTerm = `langorder${uniqueId}`;
+
+    const [enCourse, ptCourse] = await Promise.all([
+      courseFixture({
+        isPublished: true,
+        language: "en",
+        normalizedTitle: searchTerm,
+        organizationId: brandOrg.id,
+        title: searchTerm,
+      }),
+      courseFixture({
+        isPublished: true,
+        language: "pt",
+        normalizedTitle: searchTerm,
+        organizationId: brandOrg.id,
+        title: searchTerm,
+      }),
+    ]);
 
     const enResult = await searchCourses({
       language: "en",
-      query: "JavaScript",
+      query: searchTerm,
     });
 
     const ptResult = await searchCourses({
       language: "pt",
-      query: "JavaScript",
+      query: searchTerm,
     });
 
     const enIds = enResult.map((course) => course.id);
     const ptIds = ptResult.map((course) => course.id);
 
-    expect(enIds).toContain(publishedCourse.id);
-    expect(enIds).not.toContain(ptCourse.id);
+    // Both results contain courses from all languages
+    expect(enIds).toContain(enCourse.id);
+    expect(enIds).toContain(ptCourse.id);
+    expect(ptIds).toContain(enCourse.id);
     expect(ptIds).toContain(ptCourse.id);
-    expect(ptIds).not.toContain(publishedCourse.id);
+
+    // User's language appears first
+    expect(enResult[0]?.language).toBe("en");
+    expect(ptResult[0]?.language).toBe("pt");
+  });
+
+  test("returns all languages when no language is specified", async () => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const searchTerm = `nolang${uniqueId}`;
+
+    const [enCourse, ptCourse] = await Promise.all([
+      courseFixture({
+        isPublished: true,
+        language: "en",
+        normalizedTitle: searchTerm,
+        organizationId: brandOrg.id,
+        title: searchTerm,
+      }),
+      courseFixture({
+        isPublished: true,
+        language: "pt",
+        normalizedTitle: searchTerm,
+        organizationId: brandOrg.id,
+        title: searchTerm,
+      }),
+    ]);
+
+    const result = await searchCourses({ query: searchTerm });
+    const ids = result.map((course) => course.id);
+
+    expect(ids).toContain(enCourse.id);
+    expect(ids).toContain(ptCourse.id);
   });
 
   test("returns only published courses from brand orgs", async () => {
