@@ -53,7 +53,7 @@ async function createTestChapter(lessonCount = 0) {
 }
 
 async function navigateToChapterPage(page: Page, courseSlug: string, chapterSlug: string) {
-  await page.goto(`/${AI_ORG_SLUG}/c/en/${courseSlug}/ch/${chapterSlug}`);
+  await page.goto(`/${AI_ORG_SLUG}/c/${courseSlug}/ch/${chapterSlug}`);
 
   await expect(page.getByRole("textbox", { name: /edit chapter title/i })).toBeVisible();
 }
@@ -163,7 +163,7 @@ test.describe("Lesson List", () => {
       ).toBeVisible();
 
       // Navigate back to chapter page to verify insertion
-      await authenticatedPage.goto(`/${AI_ORG_SLUG}/c/en/${course.slug}/ch/${chapter.slug}`);
+      await authenticatedPage.goto(`/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}`);
 
       await expect(
         authenticatedPage.getByRole("textbox", { name: /edit chapter title/i }),

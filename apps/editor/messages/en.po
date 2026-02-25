@@ -5,293 +5,293 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "X-Generator: next-intl\n"
 
-#: src/app/[orgSlug]/@navbarActions/c/[lang]/[courseSlug]/ch/[chapterSlug]/chapter-actions.tsx
+#: src/app/[orgSlug]/@navbarActions/c/[courseSlug]/ch/[chapterSlug]/chapter-actions.tsx
 msgctxt "kcCZue"
 msgid "Delete chapter"
 msgstr "Delete chapter"
 
-#: src/app/[orgSlug]/@navbarActions/c/[lang]/[courseSlug]/ch/[chapterSlug]/chapter-actions.tsx
+#: src/app/[orgSlug]/@navbarActions/c/[courseSlug]/ch/[chapterSlug]/chapter-actions.tsx
 msgctxt "MXg41w"
 msgid "Delete chapter?"
 msgstr "Delete chapter?"
 
-#: src/app/[orgSlug]/@navbarActions/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-actions.tsx
+#: src/app/[orgSlug]/@navbarActions/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-actions.tsx
 msgctxt "52DE8l"
 msgid "Delete lesson?"
 msgstr "Delete lesson?"
 
-#: src/app/[orgSlug]/@navbarActions/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-actions.tsx
+#: src/app/[orgSlug]/@navbarActions/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-actions.tsx
 msgctxt "g5DE4z"
 msgid "Delete lesson"
 msgstr "Delete lesson"
 
-#: src/app/[orgSlug]/@navbarActions/c/[lang]/[courseSlug]/course-actions.tsx
+#: src/app/[orgSlug]/@navbarActions/c/[courseSlug]/course-actions.tsx
 msgctxt "Ljsy5D"
 msgid "Delete course"
 msgstr "Delete course"
 
-#: src/app/[orgSlug]/@navbarActions/c/[lang]/[courseSlug]/course-actions.tsx
+#: src/app/[orgSlug]/@navbarActions/c/[courseSlug]/course-actions.tsx
 msgctxt "ZFXb/x"
 msgid "Delete course?"
 msgstr "Delete course?"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/_actions/alternative-titles.ts
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/_actions/chapters.ts
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/_actions/image.ts
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/actions.ts
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/activity-actions.ts
+#: src/app/[orgSlug]/c/[courseSlug]/_actions/alternative-titles.ts
+#: src/app/[orgSlug]/c/[courseSlug]/_actions/chapters.ts
+#: src/app/[orgSlug]/c/[courseSlug]/_actions/image.ts
+#: src/app/[orgSlug]/c/[courseSlug]/ch/[chapterSlug]/actions.ts
+#: src/app/[orgSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/activity-actions.ts
 msgctxt "lgvvCe"
 msgid "No file provided"
 msgstr "No file provided"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/_actions/alternative-titles.ts
+#: src/app/[orgSlug]/c/[courseSlug]/_actions/alternative-titles.ts
 msgctxt "Lp3DO2"
 msgid "Title is required"
 msgstr "Title is required"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/_actions/alternative-titles.ts
+#: src/app/[orgSlug]/c/[courseSlug]/_actions/alternative-titles.ts
 msgctxt "PAqOAW"
 msgid "Failed to add alternative title"
 msgstr "Failed to add alternative title"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/_actions/chapters.ts
+#: src/app/[orgSlug]/c/[courseSlug]/_actions/chapters.ts
 msgctxt "BAkmPD"
 msgid "Untitled chapter"
 msgstr "Untitled chapter"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/_actions/chapters.ts
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/actions.ts
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/activity-actions.ts
+#: src/app/[orgSlug]/c/[courseSlug]/_actions/chapters.ts
+#: src/app/[orgSlug]/c/[courseSlug]/ch/[chapterSlug]/actions.ts
+#: src/app/[orgSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/activity-actions.ts
 msgctxt "sGJpuF"
 msgid "Add a description…"
 msgstr "Add a description…"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/_actions/image.ts
+#: src/app/[orgSlug]/c/[courseSlug]/_actions/image.ts
 msgctxt "E+/68R"
 msgid "Invalid file type. Please upload a JPEG, PNG, WebP, or GIF image."
 msgstr "Invalid file type. Please upload a JPEG, PNG, WebP, or GIF image."
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/_actions/image.ts
+#: src/app/[orgSlug]/c/[courseSlug]/_actions/image.ts
 msgctxt "in2TjU"
 msgid "File is too large. Maximum size is 5MB."
 msgstr "File is too large. Maximum size is 5MB."
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/_actions/image.ts
+#: src/app/[orgSlug]/c/[courseSlug]/_actions/image.ts
 msgctxt "JkrKUt"
 msgid "Failed to upload image. Please try again."
 msgstr "Failed to upload image. Please try again."
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/_actions/image.ts
+#: src/app/[orgSlug]/c/[courseSlug]/_actions/image.ts
 msgctxt "Q1jVC0"
 msgid "Failed to process image. Please try again."
 msgstr "Failed to process image. Please try again."
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/actions.ts
+#: src/app/[orgSlug]/c/[courseSlug]/ch/[chapterSlug]/actions.ts
 msgctxt "oUJv8w"
 msgid "Untitled lesson"
 msgstr "Untitled lesson"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/chapter-content.tsx
+#: src/app/[orgSlug]/c/[courseSlug]/ch/[chapterSlug]/chapter-content.tsx
 msgctxt "b3c9gA"
 msgid "Edit chapter description"
 msgstr "Edit chapter description"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/chapter-content.tsx
+#: src/app/[orgSlug]/c/[courseSlug]/ch/[chapterSlug]/chapter-content.tsx
 msgctxt "fuhIMT"
 msgid "Edit chapter title"
 msgstr "Edit chapter title"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/chapter-content.tsx
+#: src/app/[orgSlug]/c/[courseSlug]/ch/[chapterSlug]/chapter-content.tsx
 msgctxt "kYfPBA"
 msgid "Chapter description…"
 msgstr "Chapter description…"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/chapter-content.tsx
+#: src/app/[orgSlug]/c/[courseSlug]/ch/[chapterSlug]/chapter-content.tsx
 msgctxt "yNvug5"
 msgid "Chapter title…"
 msgstr "Chapter title…"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/a/[activityId]/page.tsx
+#: src/app/[orgSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/a/[activityId]/page.tsx
 msgctxt "PJivSX"
 msgid "Lesson"
 msgstr "Lesson"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/a/[activityId]/page.tsx
+#: src/app/[orgSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/a/[activityId]/page.tsx
 msgctxt "Y7nk1I"
 msgid "Activity editor coming soon"
 msgstr "Activity editor coming soon"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/activity-actions.ts
+#: src/app/[orgSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/activity-actions.ts
 msgctxt "BhBMMj"
 msgid "Untitled activity"
 msgstr "Untitled activity"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/activity-list-row.tsx
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/lesson-list-row.tsx
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/chapter-list-row.tsx
+#: src/app/[orgSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/activity-list-row.tsx
+#: src/app/[orgSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list-row.tsx
+#: src/app/[orgSlug]/c/[courseSlug]/chapter-list-row.tsx
 msgctxt "aJ/bsX"
 msgid "Drag to reorder"
 msgstr "Drag to reorder"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/activity-list-row.tsx
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/lesson-list-row.tsx
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/chapter-list-row.tsx
+#: src/app/[orgSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/activity-list-row.tsx
+#: src/app/[orgSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list-row.tsx
+#: src/app/[orgSlug]/c/[courseSlug]/chapter-list-row.tsx
 msgctxt "geXvrp"
 msgid "Insert below"
 msgstr "Insert below"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/activity-list-row.tsx
+#: src/app/[orgSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/activity-list-row.tsx
 msgctxt "Lhaog4"
 msgid "Activity actions"
 msgstr "Activity actions"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/activity-list-row.tsx
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/lesson-list-row.tsx
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/chapter-list-row.tsx
+#: src/app/[orgSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/activity-list-row.tsx
+#: src/app/[orgSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list-row.tsx
+#: src/app/[orgSlug]/c/[courseSlug]/chapter-list-row.tsx
 msgctxt "vTz4RU"
 msgid "Insert above"
 msgstr "Insert above"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/activity-list.tsx
+#: src/app/[orgSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/activity-list.tsx
 msgctxt "30g9Ie"
 msgid "We couldn't load the activities. Please try again."
 msgstr "We couldn't load the activities. Please try again."
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/activity-list.tsx
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/chapter-list.tsx
+#: src/app/[orgSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/activity-list.tsx
+#: src/app/[orgSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
+#: src/app/[orgSlug]/c/[courseSlug]/chapter-list.tsx
 msgctxt "5CI3KH"
 msgid "Contact support"
 msgstr "Contact support"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/activity-list.tsx
+#: src/app/[orgSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/activity-list.tsx
 msgctxt "9IwZ+U"
 msgid "Add activity"
 msgstr "Add activity"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/activity-list.tsx
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/chapter-list.tsx
+#: src/app/[orgSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/activity-list.tsx
+#: src/app/[orgSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
+#: src/app/[orgSlug]/c/[courseSlug]/chapter-list.tsx
 msgctxt "FazwRl"
 msgid "Try again"
 msgstr "Try again"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/activity-list.tsx
+#: src/app/[orgSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/activity-list.tsx
 msgctxt "ivVUmr"
 msgid "Failed to load activities"
 msgstr "Failed to load activities"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-content.tsx
+#: src/app/[orgSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-content.tsx
 msgctxt "AHvdBa"
 msgid "Edit lesson description"
 msgstr "Edit lesson description"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-content.tsx
+#: src/app/[orgSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-content.tsx
 msgctxt "AmPWks"
 msgid "Lesson description…"
 msgstr "Lesson description…"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-content.tsx
+#: src/app/[orgSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-content.tsx
 msgctxt "jrinBZ"
 msgid "Lesson title…"
 msgstr "Lesson title…"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-content.tsx
+#: src/app/[orgSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-content.tsx
 msgctxt "kdZUaI"
 msgid "Edit lesson title"
 msgstr "Edit lesson title"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/lesson-list-row.tsx
+#: src/app/[orgSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list-row.tsx
 msgctxt "drUbPJ"
 msgid "Lesson actions"
 msgstr "Lesson actions"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
+#: src/app/[orgSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
 msgctxt "2VCKc7"
 msgid "We couldn't load the lessons. Please try again."
 msgstr "We couldn't load the lessons. Please try again."
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
+#: src/app/[orgSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
 msgctxt "6ssHZM"
 msgid "Failed to load lessons"
 msgstr "Failed to load lessons"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
+#: src/app/[orgSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
 msgctxt "RWzfUY"
 msgid "Add lesson"
 msgstr "Add lesson"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/chapter-list-row.tsx
+#: src/app/[orgSlug]/c/[courseSlug]/chapter-list-row.tsx
 msgctxt "BxygZD"
 msgid "Chapter actions"
 msgstr "Chapter actions"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/chapter-list.tsx
+#: src/app/[orgSlug]/c/[courseSlug]/chapter-list.tsx
 msgctxt "dlQpGl"
 msgid "Add chapter"
 msgstr "Add chapter"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/chapter-list.tsx
+#: src/app/[orgSlug]/c/[courseSlug]/chapter-list.tsx
 msgctxt "sHQNSR"
 msgid "We couldn't load the chapters. Please try again."
 msgstr "We couldn't load the chapters. Please try again."
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/chapter-list.tsx
+#: src/app/[orgSlug]/c/[courseSlug]/chapter-list.tsx
 msgctxt "xA68iL"
 msgid "Failed to load chapters"
 msgstr "Failed to load chapters"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/course-content.tsx
+#: src/app/[orgSlug]/c/[courseSlug]/course-content.tsx
 msgctxt "2Pphvx"
 msgid "Course title…"
 msgstr "Course title…"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/course-content.tsx
+#: src/app/[orgSlug]/c/[courseSlug]/course-content.tsx
 msgctxt "Ek5KLE"
 msgid "Edit course description"
 msgstr "Edit course description"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/course-content.tsx
+#: src/app/[orgSlug]/c/[courseSlug]/course-content.tsx
 msgctxt "FKa6ED"
 msgid "Edit course title"
 msgstr "Edit course title"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/course-content.tsx
+#: src/app/[orgSlug]/c/[courseSlug]/course-content.tsx
 msgctxt "RX7tLA"
 msgid "Course description…"
 msgstr "Course description…"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/course-image.tsx
+#: src/app/[orgSlug]/c/[courseSlug]/course-image.tsx
 msgctxt "+MD59T"
 msgid "Change course image"
 msgstr "Change course image"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/course-image.tsx
+#: src/app/[orgSlug]/c/[courseSlug]/course-image.tsx
 msgctxt "09WQsL"
 msgid "Invalid file type. Please upload a {formats} image."
 msgstr "Invalid file type. Please upload a {formats} image."
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/course-image.tsx
+#: src/app/[orgSlug]/c/[courseSlug]/course-image.tsx
 msgctxt "4pIjq5"
 msgid "File is too large. Maximum size is {max}MB."
 msgstr "File is too large. Maximum size is {max}MB."
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/course-image.tsx
+#: src/app/[orgSlug]/c/[courseSlug]/course-image.tsx
 msgctxt "7vM5rK"
 msgid "Remove image"
 msgstr "Remove image"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/course-image.tsx
+#: src/app/[orgSlug]/c/[courseSlug]/course-image.tsx
 msgctxt "N8c7X3"
 msgid "Upload course image"
 msgstr "Upload course image"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/course-image.tsx
+#: src/app/[orgSlug]/c/[courseSlug]/course-image.tsx
 msgctxt "P4DaWb"
 msgid "Image removed"
 msgstr "Image removed"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/course-image.tsx
+#: src/app/[orgSlug]/c/[courseSlug]/course-image.tsx
 msgctxt "TcTp+J"
 msgid "Image uploaded"
 msgstr "Image uploaded"

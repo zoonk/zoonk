@@ -27,7 +27,7 @@ async function createTestChapter(isPublished: boolean) {
 }
 
 async function navigateToChapterPage(page: Page, courseSlug: string, chapterSlug: string) {
-  await page.goto(`/${AI_ORG_SLUG}/c/en/${courseSlug}/ch/${chapterSlug}`);
+  await page.goto(`/${AI_ORG_SLUG}/c/${courseSlug}/ch/${chapterSlug}`);
 
   await expect(page.getByRole("textbox", { name: /edit chapter title/i })).toBeVisible();
 }
@@ -76,7 +76,7 @@ test.describe("Chapter Delete", () => {
       await openDeleteDialog(authenticatedPage);
       await confirmDelete(authenticatedPage);
 
-      await expect(authenticatedPage).toHaveURL(new RegExp(`/${AI_ORG_SLUG}/c/en/${course.slug}$`));
+      await expect(authenticatedPage).toHaveURL(new RegExp(`/${AI_ORG_SLUG}/c/${course.slug}$`));
       await verifyChapterDeleted(chapter.id);
     });
 
@@ -87,7 +87,7 @@ test.describe("Chapter Delete", () => {
       await openDeleteDialog(ownerPage);
       await confirmDelete(ownerPage);
 
-      await expect(ownerPage).toHaveURL(new RegExp(`/${AI_ORG_SLUG}/c/en/${course.slug}$`));
+      await expect(ownerPage).toHaveURL(new RegExp(`/${AI_ORG_SLUG}/c/${course.slug}$`));
       await verifyChapterDeleted(chapter.id);
     });
 
@@ -98,7 +98,7 @@ test.describe("Chapter Delete", () => {
       await openDeleteDialog(ownerPage);
       await confirmDelete(ownerPage);
 
-      await expect(ownerPage).toHaveURL(new RegExp(`/${AI_ORG_SLUG}/c/en/${course.slug}$`));
+      await expect(ownerPage).toHaveURL(new RegExp(`/${AI_ORG_SLUG}/c/${course.slug}$`));
       await verifyChapterDeleted(chapter.id);
     });
   });

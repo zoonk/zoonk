@@ -227,7 +227,6 @@ describe("admins", () => {
     expect(lesson?.chapter).toBeDefined();
     expect(lesson?.chapter.slug).toBe(chapter.slug);
     expect(lesson?.chapter.course.slug).toBe(course.slug);
-    expect(lesson?.chapter.course.language).toBe(course.language);
   });
 
   test("limits results to default of 10", async () => {

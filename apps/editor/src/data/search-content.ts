@@ -50,7 +50,7 @@ const cachedSearchContent = cache(
       imageUrl: course.imageUrl,
       title: course.title,
       type: "course",
-      url: `/${orgSlug}/c/${course.language}/${course.slug}`,
+      url: `/${orgSlug}/c/${course.slug}`,
     }));
 
     const chapters: ResultWithPosition[] = chaptersResult.data.map((chapter) => ({
@@ -59,7 +59,7 @@ const cachedSearchContent = cache(
       position: chapter.position,
       title: chapter.title,
       type: "chapter",
-      url: `/${orgSlug}/c/${chapter.course.language}/${chapter.course.slug}/ch/${chapter.slug}`,
+      url: `/${orgSlug}/c/${chapter.course.slug}/ch/${chapter.slug}`,
     }));
 
     const lessons: ResultWithPosition[] = lessonsResult.data.map((lesson) => ({
@@ -68,7 +68,7 @@ const cachedSearchContent = cache(
       position: lesson.position,
       title: lesson.title,
       type: "lesson",
-      url: `/${orgSlug}/c/${lesson.chapter.course.language}/${lesson.chapter.course.slug}/ch/${lesson.chapter.slug}/l/${lesson.slug}`,
+      url: `/${orgSlug}/c/${lesson.chapter.course.slug}/ch/${lesson.chapter.slug}/l/${lesson.slug}`,
     }));
 
     return { chapters, courses, lessons };

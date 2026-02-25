@@ -64,5 +64,5 @@ export async function createCourseAction(formData: CourseFormData, orgSlug: stri
   });
 
   revalidatePath(`/${orgSlug}`);
-  redirect(`/${orgSlug}/c/${course.language}/${course.slug}`);
+  redirect(`/${orgSlug}/c/${course.slug}`);
 }
