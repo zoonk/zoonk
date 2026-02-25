@@ -22,7 +22,6 @@ export async function listSitemapLessons(page: number): Promise<
     brandSlug: string;
     chapterSlug: string;
     courseSlug: string;
-    language: string;
     lessonSlug: string;
     updatedAt: Date;
   }[]
@@ -34,7 +33,6 @@ export async function listSitemapLessons(page: number): Promise<
         select: {
           course: {
             select: {
-              language: true,
               organization: { select: { slug: true } },
               slug: true,
             },
@@ -63,7 +61,6 @@ export async function listSitemapLessons(page: number): Promise<
     brandSlug: lesson.chapter.course.organization?.slug ?? "",
     chapterSlug: lesson.chapter.slug,
     courseSlug: lesson.chapter.course.slug,
-    language: lesson.chapter.course.language,
     lessonSlug: lesson.slug,
     updatedAt: lesson.updatedAt,
   }));

@@ -101,9 +101,9 @@ test.describe("Courses Page - Infinite Loading", () => {
 
 test.describe("Courses Page - Locale", () => {
   test("Portuguese locale shows translated content", async ({ page }) => {
-    await page.context().addCookies([
-      { name: LOCALE_COOKIE, value: "pt", domain: "localhost", path: "/" },
-    ]);
+    await page
+      .context()
+      .addCookies([{ domain: "localhost", name: LOCALE_COOKIE, path: "/", value: "pt" }]);
     await page.goto("/courses");
 
     await expect(page.getByRole("heading", { name: /explorar cursos/i })).toBeVisible();

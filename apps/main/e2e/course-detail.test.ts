@@ -194,9 +194,9 @@ test.describe("Course Detail Page", () => {
 
 test.describe("Course Detail Page - Locale", () => {
   test("course page renders in Portuguese locale", async ({ page }) => {
-    await page.context().addCookies([
-      { name: LOCALE_COOKIE, value: "pt", domain: "localhost", path: "/" },
-    ]);
+    await page
+      .context()
+      .addCookies([{ domain: "localhost", name: LOCALE_COOKIE, path: "/", value: "pt" }]);
     await page.goto(testData.ptCourseUrl);
 
     await expect(page).toHaveURL(new RegExp(`/b/${AI_ORG_SLUG}/c/`));

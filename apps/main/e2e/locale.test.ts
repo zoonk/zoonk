@@ -1,10 +1,10 @@
 import { LOCALE_COOKIE } from "@zoonk/utils/locale";
-import { expect, test } from "./fixtures";
+import { type Page, expect, test } from "./fixtures";
 
-async function setPortugueseLocale(page: import("@playwright/test").Page) {
-  await page.context().addCookies([
-    { name: LOCALE_COOKIE, value: "pt", domain: "localhost", path: "/" },
-  ]);
+async function setPortugueseLocale(page: Page) {
+  await page
+    .context()
+    .addCookies([{ domain: "localhost", name: LOCALE_COOKIE, path: "/", value: "pt" }]);
 }
 
 test.describe("Locale Behavior - English", () => {

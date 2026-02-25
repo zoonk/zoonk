@@ -4,7 +4,6 @@ import { SITEMAP_BATCH_SIZE } from "@/data/sitemaps/courses";
 import { countSitemapLessons, listSitemapLessons } from "@/data/sitemaps/lessons";
 import { cacheTagSitemap } from "@zoonk/utils/cache";
 import { SITE_URL } from "@zoonk/utils/constants";
-import { DEFAULT_LOCALE } from "@zoonk/utils/locale";
 import { type MetadataRoute } from "next";
 import { cacheLife, cacheTag } from "next/cache";
 
@@ -26,12 +25,8 @@ export default async function sitemap(props: {
   const id = Number(await props.id);
   const lessons = await listSitemapLessons(id);
 
-  return lessons.map(({ brandSlug, chapterSlug, courseSlug, language, lessonSlug, updatedAt }) => {
-    const prefix = language === DEFAULT_LOCALE ? "" : `/${language}`;
-
-    return {
-      lastModified: updatedAt,
-      url: `${SITE_URL}${prefix}/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}/l/${lessonSlug}`,
-    };
-  });
+  return lessons.map(({ brandSlug, chapterSlug, courseSlug, lessonSlug, updatedAt }) => ({
+    lastModified: updatedAt,
+    url: `${SITE_URL}/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}/l/${lessonSlug}`,
+  }));
 }
