@@ -12,7 +12,7 @@ export type ChapterForList = {
 };
 
 const cachedListCourseChapters = cache(
-  async (brandSlug: string, courseSlug: string): Promise<ChapterForList[]> =>
+  async (courseId: number): Promise<ChapterForList[]> =>
     prisma.chapter.findMany({
       orderBy: { position: "asc" },
       select: {
@@ -23,23 +23,10 @@ const cachedListCourseChapters = cache(
         slug: true,
         title: true,
       },
-      where: {
-        course: {
-          isPublished: true,
-          organization: {
-            kind: "brand",
-            slug: brandSlug,
-          },
-          slug: courseSlug,
-        },
-        isPublished: true,
-      },
+      where: { courseId, isPublished: true },
     }),
 );
 
-export function listCourseChapters(params: {
-  brandSlug: string;
-  courseSlug: string;
-}): Promise<ChapterForList[]> {
-  return cachedListCourseChapters(params.brandSlug, params.courseSlug);
+export function listCourseChapters(params: { courseId: number }): Promise<ChapterForList[]> {
+  return cachedListCourseChapters(params.courseId);
 }

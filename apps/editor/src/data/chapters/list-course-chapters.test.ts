@@ -12,9 +12,9 @@ describe("unauthenticated users", () => {
     const course = await courseFixture({ organizationId: organization.id });
 
     const result = await listCourseChapters({
-      courseSlug: course.slug,
+      courseId: course.id,
       headers: new Headers(),
-      orgSlug: organization.slug,
+      orgId: organization.id,
     });
 
     expect(result.error?.message).toBe(ErrorCode.forbidden);
@@ -32,9 +32,9 @@ describe("members", () => {
     ]);
 
     const result = await listCourseChapters({
-      courseSlug: course.slug,
+      courseId: course.id,
       headers,
-      orgSlug: organization.slug,
+      orgId: organization.id,
     });
 
     expect(result.error?.message).toBe(ErrorCode.forbidden);
@@ -45,16 +45,12 @@ describe("members", () => {
 describe("admins", () => {
   let organization: Awaited<ReturnType<typeof memberFixture>>["organization"];
   let headers: Headers;
-  let _course: Awaited<ReturnType<typeof courseFixture>>;
 
   beforeAll(async () => {
     const fixture = await memberFixture({ role: "admin" });
     organization = fixture.organization;
 
-    [headers, _course] = await Promise.all([
-      signInAs(fixture.user.email, fixture.user.password),
-      courseFixture({ organizationId: fixture.organization.id }),
-    ]);
+    headers = await signInAs(fixture.user.email, fixture.user.password);
   });
 
   test("lists chapters for a course ordered by position", async () => {
@@ -82,9 +78,9 @@ describe("admins", () => {
     ]);
 
     const result = await listCourseChapters({
-      courseSlug: newCourse.slug,
+      courseId: newCourse.id,
       headers,
-      orgSlug: organization.slug,
+      orgId: organization.id,
     });
 
     const expectedChapterCount = 3;
@@ -105,20 +101,9 @@ describe("admins", () => {
     });
 
     const result = await listCourseChapters({
-      courseSlug: emptyCourse.slug,
+      courseId: emptyCourse.id,
       headers,
-      orgSlug: organization.slug,
-    });
-
-    expect(result.error).toBeNull();
-    expect(result.data).toEqual([]);
-  });
-
-  test("returns empty array when course not found", async () => {
-    const result = await listCourseChapters({
-      courseSlug: "non-existent-course",
-      headers,
-      orgSlug: organization.slug,
+      orgId: organization.id,
     });
 
     expect(result.error).toBeNull();
@@ -130,9 +115,9 @@ describe("admins", () => {
     const otherCourse = await courseFixture({ organizationId: otherOrg.id });
 
     const result = await listCourseChapters({
-      courseSlug: otherCourse.slug,
+      courseId: otherCourse.id,
       headers,
-      orgSlug: otherOrg.slug,
+      orgId: otherOrg.id,
     });
 
     expect(result.error?.message).toBe(ErrorCode.forbidden);

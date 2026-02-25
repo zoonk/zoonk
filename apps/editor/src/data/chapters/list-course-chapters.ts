@@ -7,25 +7,20 @@ import { cache } from "react";
 
 const cachedListCourseChapters = cache(
   async (
-    courseSlug: string,
-    orgSlug: string,
+    courseId: number,
+    orgId: number | null,
     headers?: Headers,
   ): Promise<{ data: Chapter[]; error: Error | null }> => {
     const { data, error } = await safeAsync(() =>
       Promise.all([
         hasCoursePermission({
           headers,
-          orgSlug,
+          orgId,
           permission: "update",
         }),
         prisma.chapter.findMany({
           orderBy: { position: "asc" },
-          where: {
-            course: {
-              organization: { slug: orgSlug },
-              slug: courseSlug,
-            },
-          },
+          where: { courseId },
         }),
       ]),
     );
@@ -45,9 +40,9 @@ const cachedListCourseChapters = cache(
 );
 
 export function listCourseChapters(params: {
-  courseSlug: string;
+  courseId: number;
   headers?: Headers;
-  orgSlug: string;
+  orgId: number | null;
 }): Promise<{ data: Chapter[]; error: Error | null }> {
-  return cachedListCourseChapters(params.courseSlug, params.orgSlug, params.headers);
+  return cachedListCourseChapters(params.courseId, params.orgId, params.headers);
 }

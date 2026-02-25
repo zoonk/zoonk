@@ -8,10 +8,7 @@ describe(listCourseCategories, () => {
     const organization = await organizationFixture();
     const course = await courseFixture({ organizationId: organization.id });
 
-    const result = await listCourseCategories({
-      courseSlug: course.slug,
-      orgSlug: organization.slug,
-    });
+    const result = await listCourseCategories({ courseId: course.id });
 
     expect(result.error).toBeNull();
     expect(result.data).toEqual([]);
@@ -27,10 +24,7 @@ describe(listCourseCategories, () => {
       courseCategoryFixture({ category: "math", courseId: course.id }),
     ]);
 
-    const result = await listCourseCategories({
-      courseSlug: course.slug,
-      orgSlug: organization.slug,
-    });
+    const result = await listCourseCategories({ courseId: course.id });
 
     expect(result.error).toBeNull();
     expect(result.data?.length).toBe(3);
@@ -46,10 +40,7 @@ describe(listCourseCategories, () => {
       courseCategoryFixture({ category: "math", courseId: course.id }),
     ]);
 
-    const result = await listCourseCategories({
-      courseSlug: course.slug,
-      orgSlug: organization.slug,
-    });
+    const result = await listCourseCategories({ courseId: course.id });
 
     expect(result.error).toBeNull();
     expect(result.data?.[0]?.category).toBe("arts");
@@ -71,25 +62,10 @@ describe(listCourseCategories, () => {
       courseCategoryFixture({ category: "arts", courseId: course2.id }),
     ]);
 
-    const result = await listCourseCategories({
-      courseSlug: course1.slug,
-      orgSlug: organization.slug,
-    });
+    const result = await listCourseCategories({ courseId: course1.id });
 
     expect(result.error).toBeNull();
     expect(result.data?.length).toBe(2);
     expect(result.data?.every((category) => category.courseId === course1.id)).toBeTruthy();
-  });
-
-  test("returns empty array for non-existent course", async () => {
-    const organization = await organizationFixture();
-
-    const result = await listCourseCategories({
-      courseSlug: "non-existent-course",
-      orgSlug: organization.slug,
-    });
-
-    expect(result.error).toBeNull();
-    expect(result.data).toEqual([]);
   });
 });
