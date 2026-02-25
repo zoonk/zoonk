@@ -17,10 +17,8 @@ export async function createLesson(params: {
   const { data: chapter, error: findError } = await safeAsync(() =>
     prisma.chapter.findUnique({
       include: {
-        course: {
-          select: { categories: { select: { category: true } } },
-        },
-        organization: { select: { slug: true } },
+        course: { include: { categories: true } },
+        organization: true,
       },
       where: { id: params.chapterId },
     }),

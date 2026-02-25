@@ -173,7 +173,7 @@ describe(getActivity, () => {
 
     const result = await getActivity({ lessonId: wordLesson.id, position: 0 });
 
-    expect(result?.steps[0]?.word).toEqual({
+    expect(result?.steps[0]?.word).toMatchObject({
       alternativeTranslations: [],
       audioUrl: "https://example.com/audio.mp3",
       id: word.id,
@@ -220,7 +220,7 @@ describe(getActivity, () => {
 
     const result = await getActivity({ lessonId: sentLesson.id, position: 0 });
 
-    expect(result?.steps[0]?.sentence).toEqual({
+    expect(result?.steps[0]?.sentence).toMatchObject({
       audioUrl: "https://example.com/sent-audio.mp3",
       id: sentence.id,
       romanization: "test-sent-roman",

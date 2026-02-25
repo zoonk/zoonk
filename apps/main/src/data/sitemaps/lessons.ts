@@ -27,22 +27,14 @@ export async function listSitemapLessons(page: number): Promise<
   }[]
 > {
   const lessons = await prisma.lesson.findMany({
-    orderBy: { id: "asc" },
-    select: {
+    include: {
       chapter: {
-        select: {
-          course: {
-            select: {
-              organization: { select: { slug: true } },
-              slug: true,
-            },
-          },
-          slug: true,
+        include: {
+          course: { include: { organization: true } },
         },
       },
-      slug: true,
-      updatedAt: true,
     },
+    orderBy: { id: "asc" },
     skip: page * SITEMAP_BATCH_SIZE,
     take: SITEMAP_BATCH_SIZE,
     where: {

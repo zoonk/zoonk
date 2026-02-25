@@ -3,19 +3,10 @@ import { prisma } from "@zoonk/db";
 
 export async function getLessonForGeneration(lessonId: number) {
   return prisma.lesson.findUnique({
-    select: {
+    include: {
       chapter: {
-        select: {
-          course: { select: { slug: true } },
-          slug: true,
-        },
+        include: { course: true },
       },
-      description: true,
-      generationRunId: true,
-      generationStatus: true,
-      id: true,
-      slug: true,
-      title: true,
     },
     where: { id: lessonId },
   });

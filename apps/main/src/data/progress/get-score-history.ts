@@ -59,7 +59,6 @@ async function fetchDailyData(
   const result = await safeAsync(() =>
     prisma.dailyProgress.findMany({
       orderBy: { date: "asc" },
-      select: { correctAnswers: true, date: true, incorrectAnswers: true },
       where: { date: { gte: start, lte: end }, userId },
     }),
   );
@@ -115,7 +114,6 @@ function getPreviousAverage(
 async function hasEarlierScoreData(userId: number, beforeDate: Date): Promise<boolean> {
   const { data } = await safeAsync(() =>
     prisma.dailyProgress.findFirst({
-      select: { id: true },
       where: {
         OR: [{ correctAnswers: { gt: 0 } }, { incorrectAnswers: { gt: 0 } }],
         date: { lt: beforeDate },

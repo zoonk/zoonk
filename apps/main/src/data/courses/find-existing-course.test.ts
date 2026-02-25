@@ -50,7 +50,7 @@ describe(findExistingCourse, () => {
 
     expect(result.error).toBeNull();
 
-    expect(result.data).toEqual({
+    expect(result.data).toMatchObject({
       _count: {
         alternativeTitles: 0,
         categories: 0,
@@ -88,7 +88,7 @@ describe(findExistingCourse, () => {
 
     expect(result.error).toBeNull();
 
-    expect(result.data).toEqual({
+    expect(result.data).toMatchObject({
       _count: {
         alternativeTitles: 1,
         categories: 0,

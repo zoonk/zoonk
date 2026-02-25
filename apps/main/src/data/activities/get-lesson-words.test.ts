@@ -92,7 +92,7 @@ describe(getLessonWords, () => {
     const result = await getLessonWords({ lessonId: newLesson.id });
 
     expect(result).toHaveLength(1);
-    expect(result[0]).toEqual({
+    expect(result[0]).toMatchObject({
       alternativeTranslations: [],
       audioUrl: "https://example.com/perro.mp3",
       id: word.id,

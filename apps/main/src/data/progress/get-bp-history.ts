@@ -40,7 +40,6 @@ async function fetchDailyBpData(
   const result = await safeAsync(() =>
     prisma.dailyProgress.findMany({
       orderBy: { date: "asc" },
-      select: { brainPowerEarned: true, date: true },
       where: { date: { gte: start, lte: end }, userId },
     }),
   );
@@ -90,7 +89,6 @@ function getPreviousPeriodTotal(previousData: RawDataPoint[] | null): number | n
 async function hasEarlierData(userId: number, beforeDate: Date): Promise<boolean> {
   const { data } = await safeAsync(() =>
     prisma.dailyProgress.findFirst({
-      select: { id: true },
       where: { date: { lt: beforeDate }, userId },
     }),
   );
@@ -117,7 +115,6 @@ const cachedGetBpHistory = cache(
       fetchDailyBpData(userId, previous.start, previous.end),
       safeAsync(() =>
         prisma.userProgress.findUnique({
-          select: { totalBrainPower: true },
           where: { userId },
         }),
       ),

@@ -20,12 +20,8 @@ export async function listSitemapCourses(page: number): Promise<
   }[]
 > {
   const courses = await prisma.course.findMany({
+    include: { organization: true },
     orderBy: { id: "asc" },
-    select: {
-      organization: { select: { slug: true } },
-      slug: true,
-      updatedAt: true,
-    },
     skip: page * SITEMAP_BATCH_SIZE,
     take: SITEMAP_BATCH_SIZE,
     where: {

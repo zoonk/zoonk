@@ -247,7 +247,7 @@ describe("course-suggestions", () => {
 
     const result = await getCourseSuggestionById(item.id);
 
-    expect(result).toEqual({
+    expect(result).toMatchObject({
       description: "Test description",
       generationRunId: null,
       generationStatus: "pending",
@@ -282,7 +282,7 @@ describe("course-suggestions", () => {
 
     const result = await getCourseSuggestionBySlug({ language, slug });
 
-    expect(result).toEqual({ id: item.id });
+    expect(result).toMatchObject({ id: item.id });
   });
 
   test("getCourseSuggestionBySlug distinguishes between languages", async () => {
@@ -309,8 +309,8 @@ describe("course-suggestions", () => {
     const enResult = await getCourseSuggestionBySlug({ language: "en", slug });
     const ptResult = await getCourseSuggestionBySlug({ language: "pt", slug });
 
-    expect(enResult).toEqual({ id: enItem.id });
-    expect(ptResult).toEqual({ id: ptItem.id });
+    expect(enResult).toMatchObject({ id: enItem.id });
+    expect(ptResult).toMatchObject({ id: ptItem.id });
     expect(enResult?.id).not.toBe(ptResult?.id);
   });
 });

@@ -46,40 +46,27 @@ export async function findLastCompleted(
 ): Promise<LastCompletedActivity | null> {
   const { data: progress, error } = await safeAsync(() =>
     prisma.activityProgress.findFirst({
+      include: {
+        activity: {
+          include: {
+            lesson: {
+              include: {
+                chapter: {
+                  include: {
+                    course: { include: { organization: true } },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
       orderBy: [
         { completedAt: "desc" },
         { activity: { lesson: { chapter: { position: "desc" } } } },
         { activity: { lesson: { position: "desc" } } },
         { activity: { position: "desc" } },
       ],
-      select: {
-        activity: {
-          select: {
-            lesson: {
-              select: {
-                chapter: {
-                  select: {
-                    course: {
-                      select: {
-                        id: true,
-                        organization: { select: { slug: true } },
-                        slug: true,
-                      },
-                    },
-                    id: true,
-                    position: true,
-                    slug: true,
-                  },
-                },
-                id: true,
-                position: true,
-                slug: true,
-              },
-            },
-            position: true,
-          },
-        },
-      },
       where: {
         activity: {
           isPublished: true,

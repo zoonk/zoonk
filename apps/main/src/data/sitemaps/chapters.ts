@@ -23,17 +23,10 @@ export async function listSitemapChapters(page: number): Promise<
   }[]
 > {
   const chapters = await prisma.chapter.findMany({
-    orderBy: { id: "asc" },
-    select: {
-      course: {
-        select: {
-          organization: { select: { slug: true } },
-          slug: true,
-        },
-      },
-      slug: true,
-      updatedAt: true,
+    include: {
+      course: { include: { organization: true } },
     },
+    orderBy: { id: "asc" },
     skip: page * SITEMAP_BATCH_SIZE,
     take: SITEMAP_BATCH_SIZE,
     where: {

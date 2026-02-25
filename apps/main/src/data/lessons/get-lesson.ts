@@ -2,43 +2,13 @@ import "server-only";
 import { prisma } from "@zoonk/db";
 import { cache } from "react";
 
-export type LessonWithDetails = {
-  id: number;
-  slug: string;
-  title: string;
-  description: string;
-  position: number;
-  chapter: {
-    id: number;
-    position: number;
-    slug: string;
-    title: string;
-    course: {
-      id: number;
-      slug: string;
-      title: string;
-    };
-  };
-};
-
 const cachedGetLesson = cache(
-  async (brandSlug: string, courseSlug: string, chapterSlug: string, lessonSlug: string) => {
-    const data = await prisma.lesson.findFirst({
-      select: {
+  async (brandSlug: string, courseSlug: string, chapterSlug: string, lessonSlug: string) =>
+    prisma.lesson.findFirst({
+      include: {
         chapter: {
-          select: {
-            course: { select: { id: true, slug: true, title: true } },
-            id: true,
-            position: true,
-            slug: true,
-            title: true,
-          },
+          include: { course: true },
         },
-        description: true,
-        id: true,
-        position: true,
-        slug: true,
-        title: true,
       },
       where: {
         chapter: {
@@ -53,10 +23,7 @@ const cachedGetLesson = cache(
         isPublished: true,
         slug: lessonSlug,
       },
-    });
-
-    return data;
-  },
+    }),
 );
 
 export function getLesson(params: {
@@ -64,7 +31,7 @@ export function getLesson(params: {
   chapterSlug: string;
   courseSlug: string;
   lessonSlug: string;
-}): Promise<LessonWithDetails | null> {
+}) {
   return cachedGetLesson(
     params.brandSlug,
     params.courseSlug,
@@ -72,3 +39,5 @@ export function getLesson(params: {
     params.lessonSlug,
   );
 }
+
+export type LessonWithDetails = NonNullable<Awaited<ReturnType<typeof getLesson>>>;

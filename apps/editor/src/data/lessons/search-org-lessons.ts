@@ -1,7 +1,7 @@
 import "server-only";
 import { ErrorCode } from "@/lib/app-error";
 import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
-import { type Lesson, prisma } from "@zoonk/db";
+import { type Chapter, type Course, type Lesson, prisma } from "@zoonk/db";
 import { clampQueryItems } from "@zoonk/db/utils";
 import { DEFAULT_SEARCH_LIMIT } from "@zoonk/utils/constants";
 import { AppError, safeAsync } from "@zoonk/utils/error";
@@ -9,7 +9,7 @@ import { normalizeString } from "@zoonk/utils/string";
 import { cache } from "react";
 
 type LessonWithChapter = Lesson & {
-  chapter: { slug: string; course: { slug: string } };
+  chapter: Chapter & { course: Course };
 };
 
 const cachedSearchOrgLessons = cache(
@@ -31,10 +31,7 @@ const cachedSearchOrgLessons = cache(
         prisma.lesson.findMany({
           include: {
             chapter: {
-              select: {
-                course: { select: { slug: true } },
-                slug: true,
-              },
+              include: { course: true },
             },
           },
           orderBy: { createdAt: "desc" },

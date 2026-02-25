@@ -35,11 +35,14 @@ export type {
   Invitation,
   Lesson,
   LessonKind,
+  LessonSentence,
+  LessonWord,
   Member,
   Organization,
   RateLimit,
   SearchPrompt,
   SearchPromptSuggestion,
+  Sentence,
   Session,
   Step,
   StepAttempt,
@@ -50,6 +53,7 @@ export type {
   UserLearningProfile,
   UserProgress,
   Verification,
+  Word,
 } from "./generated/prisma/client";
 
 export type { BatchPayload } from "./generated/prisma/internal/prismaNamespace";

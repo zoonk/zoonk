@@ -35,30 +35,22 @@ async function findFirstActivity(scope: ActivityScope): Promise<{
 } | null> {
   const { data: activity, error } = await safeAsync(() =>
     prisma.activity.findFirst({
+      include: {
+        lesson: {
+          include: {
+            chapter: {
+              include: {
+                course: { include: { organization: true } },
+              },
+            },
+          },
+        },
+      },
       orderBy: [
         { lesson: { chapter: { position: "asc" } } },
         { lesson: { position: "asc" } },
         { position: "asc" },
       ],
-      select: {
-        lesson: {
-          select: {
-            chapter: {
-              select: {
-                course: {
-                  select: {
-                    organization: { select: { slug: true } },
-                    slug: true,
-                  },
-                },
-                slug: true,
-              },
-            },
-            slug: true,
-          },
-        },
-        position: true,
-      },
       where: { isPublished: true, ...scopeWhere(scope) },
     }),
   );
