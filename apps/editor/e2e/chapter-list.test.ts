@@ -197,15 +197,13 @@ test.describe("Chapter List", () => {
       await expect(firstItem.getByRole("link", { name: /chapter 1/i })).not.toBeVisible();
 
       // Verify the new order persisted to the database
-      await expect(async () => {
-        const chapters = await prisma.chapter.findMany({
-          orderBy: { position: "asc" },
-          select: { title: true },
-          where: { courseId: course.id },
-        });
+      const chapters = await prisma.chapter.findMany({
+        orderBy: { position: "asc" },
+        select: { title: true },
+        where: { courseId: course.id },
+      });
 
-        expect(chapters[0]?.title).not.toBe("Chapter 1");
-      }).toPass({ timeout: 10_000 });
+      expect(chapters[0]?.title).not.toBe("Chapter 1");
     });
   });
 
