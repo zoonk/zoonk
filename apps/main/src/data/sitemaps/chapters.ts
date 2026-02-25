@@ -19,7 +19,6 @@ export async function listSitemapChapters(page: number): Promise<
     brandSlug: string;
     chapterSlug: string;
     courseSlug: string;
-    language: string;
     updatedAt: Date;
   }[]
 > {
@@ -28,7 +27,6 @@ export async function listSitemapChapters(page: number): Promise<
     select: {
       course: {
         select: {
-          language: true,
           organization: { select: { slug: true } },
           slug: true,
         },
@@ -51,7 +49,6 @@ export async function listSitemapChapters(page: number): Promise<
     brandSlug: chapter.course.organization?.slug ?? "",
     chapterSlug: chapter.slug,
     courseSlug: chapter.course.slug,
-    language: chapter.course.language,
     updatedAt: chapter.updatedAt,
   }));
 }

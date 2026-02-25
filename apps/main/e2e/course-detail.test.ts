@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { type Route } from "@playwright/test";
-import { getAiOrganization } from "@zoonk/e2e/helpers";
+import { getAiOrganization, setLocale } from "@zoonk/e2e/helpers";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseSuggestionFixture } from "@zoonk/testing/fixtures/course-suggestions";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
@@ -124,7 +124,7 @@ test.beforeAll(async () => {
 
   testData.courseWithImageUrl = `/b/${AI_ORG_SLUG}/c/${courseWithImage.slug}`;
   testData.courseNoImageUrl = `/b/${AI_ORG_SLUG}/c/${courseNoImage.slug}`;
-  testData.ptCourseUrl = `/pt/b/${AI_ORG_SLUG}/c/${ptCourse.slug}`;
+  testData.ptCourseUrl = `/b/${AI_ORG_SLUG}/c/${ptCourse.slug}`;
 });
 
 test.describe("Course Detail Page", () => {
@@ -192,9 +192,10 @@ test.describe("Course Detail Page", () => {
 });
 
 test.describe("Course Detail Page - Locale", () => {
-  test("clicking course from PT list preserves locale", async ({ page }) => {
+  test("course page renders in Portuguese locale", async ({ page }) => {
+    await setLocale(page, "pt");
     await page.goto(testData.ptCourseUrl);
 
-    await expect(page).toHaveURL(/\/pt\/b\/ai\/c\//);
+    await expect(page).toHaveURL(new RegExp(`/b/${AI_ORG_SLUG}/c/`));
   });
 });

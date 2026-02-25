@@ -1,3 +1,4 @@
+import { setLocale } from "@zoonk/e2e/helpers";
 import { expect, test } from "./fixtures";
 
 test.describe("Locale Behavior - English", () => {
@@ -18,7 +19,8 @@ test.describe("Locale Behavior - English", () => {
 
 test.describe("Locale Behavior - Portuguese", () => {
   test("Portuguese home shows Portuguese content", async ({ page }) => {
-    await page.goto("/pt");
+    await setLocale(page, "pt");
+    await page.goto("/");
 
     const nav = page.getByRole("navigation");
 
@@ -35,14 +37,14 @@ test.describe("Locale Behavior - Portuguese", () => {
 });
 
 test.describe("Locale Navigation", () => {
-  test("clicking navbar links from /pt keeps user in Portuguese", async ({ page }) => {
-    await page.goto("/pt");
+  test("clicking navbar links keeps user in Portuguese", async ({ page }) => {
+    await setLocale(page, "pt");
+    await page.goto("/");
 
     // Click Courses link in navbar (scoped to navigation to avoid hero links)
     await page.getByRole("navigation").getByRole("link", { exact: true, name: "Cursos" }).click();
 
-    // Should be on Portuguese courses page
-    await expect(page).toHaveURL(/\/pt\/courses/);
+    await expect(page).toHaveURL(/\/courses/);
 
     await expect(page.getByRole("heading", { name: /explorar cursos/i })).toBeVisible();
   });

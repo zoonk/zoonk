@@ -4,7 +4,6 @@ import { countSitemapChapters, listSitemapChapters } from "@/data/sitemaps/chapt
 import { SITEMAP_BATCH_SIZE } from "@/data/sitemaps/courses";
 import { cacheTagSitemap } from "@zoonk/utils/cache";
 import { SITE_URL } from "@zoonk/utils/constants";
-import { DEFAULT_LOCALE } from "@zoonk/utils/locale";
 import { type MetadataRoute } from "next";
 import { cacheLife, cacheTag } from "next/cache";
 
@@ -26,12 +25,8 @@ export default async function sitemap(props: {
   const id = Number(await props.id);
   const chapters = await listSitemapChapters(id);
 
-  return chapters.map(({ brandSlug, chapterSlug, courseSlug, language, updatedAt }) => {
-    const prefix = language === DEFAULT_LOCALE ? "" : `/${language}`;
-
-    return {
-      lastModified: updatedAt,
-      url: `${SITE_URL}${prefix}/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}`,
-    };
-  });
+  return chapters.map(({ brandSlug, chapterSlug, courseSlug, updatedAt }) => ({
+    lastModified: updatedAt,
+    url: `${SITE_URL}/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}`,
+  }));
 }

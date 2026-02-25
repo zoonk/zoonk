@@ -33,7 +33,8 @@
     "**/.next/**": true,
     "**/.next-e2e/**": true,
     "pnpm-lock.yaml": true,
-    "**/tsconfig.tsbuildinfo": true
+    "**/tsconfig.tsbuildinfo": true,
+    "**/turbo-*": true
   },
   "typescript.experimental.useTsgo": true
 }

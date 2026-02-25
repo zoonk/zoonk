@@ -47,7 +47,6 @@ describe(listSitemapLessons, () => {
       brandSlug: org.slug,
       chapterSlug: chapter.slug,
       courseSlug: course.slug,
-      language: "pt",
       lessonSlug: lesson.slug,
       updatedAt: expect.any(Date),
     });

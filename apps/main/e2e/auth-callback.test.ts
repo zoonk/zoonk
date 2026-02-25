@@ -44,10 +44,10 @@ test.describe("Auth Callback - Invalid Token", () => {
       }
     });
 
-    await page.goto("/pt/auth/callback/invalid-token");
+    await page.goto("/auth/callback/invalid-token");
 
     // Check for link to Portuguese login page
-    await expect(page.locator('a[href="/pt/login"]')).toBeVisible();
+    await expect(page.locator('a[href="/login"]')).toBeVisible();
   });
 });
 

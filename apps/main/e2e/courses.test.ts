@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { getAiOrganization, revalidateCacheTags } from "@zoonk/e2e/helpers";
+import { getAiOrganization, revalidateCacheTags, setLocale } from "@zoonk/e2e/helpers";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { cacheTagCoursesList } from "@zoonk/utils/cache";
@@ -100,7 +100,8 @@ test.describe("Courses Page - Infinite Loading", () => {
 
 test.describe("Courses Page - Locale", () => {
   test("Portuguese locale shows translated content", async ({ page }) => {
-    await page.goto("/pt/courses");
+    await setLocale(page, "pt");
+    await page.goto("/courses");
 
     await expect(page.getByRole("heading", { name: /explorar cursos/i })).toBeVisible();
   });
@@ -119,7 +120,8 @@ test.describe("Courses Page - Locale", () => {
       title,
     });
 
-    await page.goto("/pt/courses");
+    await setLocale(page, "pt");
+    await page.goto("/courses");
 
     await expect(page.getByText(unpublishedCourse.title)).not.toBeVisible();
   });
