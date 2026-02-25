@@ -12,6 +12,7 @@ import { getCourse } from "@/data/courses/get-course";
 import { ErrorView } from "@zoonk/ui/patterns/error";
 import { SUPPORT_URL } from "@zoonk/utils/constants";
 import { getExtracted } from "next-intl/server";
+import { notFound } from "next/navigation";
 import {
   exportChaptersAction,
   handleImportChaptersAction,
@@ -28,12 +29,18 @@ export async function ChapterList({
   const { courseSlug, orgSlug } = await params;
   const t = await getExtracted();
 
-  const [{ data: chapters, error }, { data: course }] = await Promise.all([
-    listCourseChapters({ courseSlug, orgSlug }),
-    getCourse({ courseSlug, orgSlug }),
-  ]);
+  const { data: course } = await getCourse({ courseSlug, orgSlug });
 
-  if (error || !course) {
+  if (!course) {
+    notFound();
+  }
+
+  const { data: chapters, error } = await listCourseChapters({
+    courseId: course.id,
+    orgId: course.organizationId,
+  });
+
+  if (error) {
     return (
       <ErrorView
         description={t("We couldn't load the chapters. Please try again.")}

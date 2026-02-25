@@ -4,16 +4,11 @@ import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
 
 const cachedListCourseCategories = cache(
-  async (courseSlug: string, orgSlug: string): Promise<SafeReturn<CourseCategory[]>> => {
+  async (courseId: number): Promise<SafeReturn<CourseCategory[]>> => {
     const { data, error } = await safeAsync(() =>
       prisma.courseCategory.findMany({
         orderBy: { category: "asc" },
-        where: {
-          course: {
-            organization: { slug: orgSlug },
-            slug: courseSlug,
-          },
-        },
+        where: { courseId },
       }),
     );
 
@@ -26,8 +21,7 @@ const cachedListCourseCategories = cache(
 );
 
 export function listCourseCategories(params: {
-  courseSlug: string;
-  orgSlug: string;
+  courseId: number;
 }): Promise<SafeReturn<CourseCategory[]>> {
-  return cachedListCourseCategories(params.courseSlug, params.orgSlug);
+  return cachedListCourseCategories(params.courseId);
 }

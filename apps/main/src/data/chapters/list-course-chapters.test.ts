@@ -6,37 +6,19 @@ import { listCourseChapters } from "./list-course-chapters";
 
 describe(listCourseChapters, () => {
   let brandOrg: Awaited<ReturnType<typeof organizationFixture>>;
-  let schoolOrg: Awaited<ReturnType<typeof organizationFixture>>;
   let publishedCourse: Awaited<ReturnType<typeof courseFixture>>;
-  let draftCourse: Awaited<ReturnType<typeof courseFixture>>;
-  let schoolCourse: Awaited<ReturnType<typeof courseFixture>>;
   let publishedChapter1: Awaited<ReturnType<typeof chapterFixture>>;
   let publishedChapter2: Awaited<ReturnType<typeof chapterFixture>>;
   let draftChapter: Awaited<ReturnType<typeof chapterFixture>>;
 
   beforeAll(async () => {
-    [brandOrg, schoolOrg] = await Promise.all([
-      organizationFixture({ kind: "brand" }),
-      organizationFixture({ kind: "school" }),
-    ]);
+    brandOrg = await organizationFixture({ kind: "brand" });
 
-    [publishedCourse, draftCourse, schoolCourse] = await Promise.all([
-      courseFixture({
-        isPublished: true,
-        language: "en",
-        organizationId: brandOrg.id,
-      }),
-      courseFixture({
-        isPublished: false,
-        language: "en",
-        organizationId: brandOrg.id,
-      }),
-      courseFixture({
-        isPublished: true,
-        language: "en",
-        organizationId: schoolOrg.id,
-      }),
-    ]);
+    publishedCourse = await courseFixture({
+      isPublished: true,
+      language: "en",
+      organizationId: brandOrg.id,
+    });
 
     [publishedChapter1, publishedChapter2, draftChapter] = await Promise.all([
       chapterFixture({
@@ -68,10 +50,7 @@ describe(listCourseChapters, () => {
   });
 
   test("returns published chapters ordered by position", async () => {
-    const result = await listCourseChapters({
-      brandSlug: brandOrg.slug,
-      courseSlug: publishedCourse.slug,
-    });
+    const result = await listCourseChapters({ courseId: publishedCourse.id });
 
     expect(result).toHaveLength(2);
 
@@ -88,80 +67,10 @@ describe(listCourseChapters, () => {
   });
 
   test("excludes unpublished chapters", async () => {
-    const result = await listCourseChapters({
-      brandSlug: brandOrg.slug,
-      courseSlug: publishedCourse.slug,
-    });
+    const result = await listCourseChapters({ courseId: publishedCourse.id });
 
     const draftChapterInResult = result.find((chapter) => chapter.id === draftChapter.id);
     expect(draftChapterInResult).toBeUndefined();
-  });
-
-  test("returns empty array for non-brand organizations", async () => {
-    const result = await listCourseChapters({
-      brandSlug: schoolOrg.slug,
-      courseSlug: schoolCourse.slug,
-    });
-
-    expect(result).toEqual([]);
-  });
-
-  test("returns empty array for unpublished course", async () => {
-    const result = await listCourseChapters({
-      brandSlug: brandOrg.slug,
-      courseSlug: draftCourse.slug,
-    });
-
-    expect(result).toEqual([]);
-  });
-
-  test("finds chapters for courses with different language slugs independently", async () => {
-    const baseSlug = `lang-chapters-test-${crypto.randomUUID()}`;
-
-    const [enCourse, ptCourse] = await Promise.all([
-      courseFixture({
-        isPublished: true,
-        language: "en",
-        organizationId: brandOrg.id,
-        slug: baseSlug,
-      }),
-      courseFixture({
-        isPublished: true,
-        language: "pt",
-        organizationId: brandOrg.id,
-        slug: `${baseSlug}-pt`,
-      }),
-    ]);
-
-    await Promise.all([
-      chapterFixture({
-        courseId: enCourse.id,
-        isPublished: true,
-        language: "en",
-        organizationId: brandOrg.id,
-        position: 0,
-        title: "English Chapter",
-      }),
-      chapterFixture({
-        courseId: ptCourse.id,
-        isPublished: true,
-        language: "pt",
-        organizationId: brandOrg.id,
-        position: 0,
-        title: "Portuguese Chapter",
-      }),
-    ]);
-
-    const [enResult, ptResult] = await Promise.all([
-      listCourseChapters({ brandSlug: brandOrg.slug, courseSlug: baseSlug }),
-      listCourseChapters({ brandSlug: brandOrg.slug, courseSlug: `${baseSlug}-pt` }),
-    ]);
-
-    expect(enResult).toHaveLength(1);
-    expect(enResult[0]?.title).toBe("English Chapter");
-
-    expect(ptResult).toHaveLength(1);
-    expect(ptResult[0]?.title).toBe("Portuguese Chapter");
   });
 
   test("returns empty array when no chapters exist", async () => {
@@ -171,21 +80,7 @@ describe(listCourseChapters, () => {
       organizationId: brandOrg.id,
     });
 
-    const result = await listCourseChapters({
-      brandSlug: brandOrg.slug,
-      courseSlug: courseWithoutChapters.slug,
-    });
-
-    expect(result).toEqual([]);
-  });
-
-  test("returns empty array when brandSlug does not match", async () => {
-    const otherBrandOrg = await organizationFixture({ kind: "brand" });
-
-    const result = await listCourseChapters({
-      brandSlug: otherBrandOrg.slug,
-      courseSlug: publishedCourse.slug,
-    });
+    const result = await listCourseChapters({ courseId: courseWithoutChapters.id });
 
     expect(result).toEqual([]);
   });

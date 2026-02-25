@@ -11,14 +11,13 @@ export async function CourseCategories({
 }) {
   const { courseSlug, orgSlug } = await params;
 
-  const [{ data: course, error }, { data: categories }] = await Promise.all([
-    getCourse({ courseSlug, orgSlug }),
-    listCourseCategories({ courseSlug, orgSlug }),
-  ]);
+  const { data: course, error } = await getCourse({ courseSlug, orgSlug });
 
   if (error || !course) {
     return notFound();
   }
+
+  const { data: categories } = await listCourseCategories({ courseId: course.id });
 
   const routeParams = {
     courseId: course.id,

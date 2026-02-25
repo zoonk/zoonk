@@ -43,16 +43,15 @@ export default async function CoursePage({
   const { brandSlug, courseSlug, locale } = await params;
   setRequestLocale(locale);
 
-  const [course, chapters] = await Promise.all([
-    getCourse({ brandSlug, courseSlug }),
-    listCourseChapters({ brandSlug, courseSlug }),
-  ]);
+  const course = await getCourse({ brandSlug, courseSlug });
 
   cacheTag(cacheTagCourse({ courseSlug }));
 
   if (!course) {
     notFound();
   }
+
+  const chapters = await listCourseChapters({ courseId: course.id });
 
   if (chapters.length === 0) {
     redirect({ href: `/generate/c/${course.slug}`, locale });
