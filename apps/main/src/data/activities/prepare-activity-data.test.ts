@@ -295,7 +295,7 @@ describe(prepareActivityData, () => {
       lessonSentenceFixture({ lessonId: lesson.id, sentenceId: sentence1.id }),
     ]);
 
-    const lessonWords =[
+    const lessonWords = [
       {
         alternativeTranslations: word1.alternativeTranslations,
         audioUrl: word1.audioUrl,
@@ -445,7 +445,7 @@ describe(prepareActivityData, () => {
       title: "Vocabulary",
     };
 
-    const lessonWords =[stepWord, lessonWord];
+    const lessonWords = [stepWord, lessonWord];
     const result = prepareActivityData(activity, lessonWords, []);
     const vocabularyStep = result.steps[0];
     const vocabularyOptions = vocabularyStep?.vocabularyOptions ?? [];
@@ -498,7 +498,7 @@ describe(prepareActivityData, () => {
       sentenceId: sentence.id,
     });
 
-    const lessonWords =[
+    const lessonWords = [
       {
         alternativeTranslations: [],
         audioUrl: null,
@@ -572,7 +572,7 @@ describe(prepareActivityData, () => {
       sentenceId: sentence.id,
     });
 
-    const lessonWords =[
+    const lessonWords = [
       {
         alternativeTranslations: [],
         audioUrl: null,
@@ -639,7 +639,7 @@ describe(prepareActivityData, () => {
     };
 
     // Distractor word "hola" overlaps with correct word "Hola" (case-insensitive)
-    const lessonWords =[
+    const lessonWords = [
       {
         alternativeTranslations: [],
         audioUrl: null,
@@ -700,7 +700,7 @@ describe(prepareActivityData, () => {
     };
 
     // Distractor "you" (from .word) overlaps with correct word "you?" after stripping punctuation
-    const lessonWords =[
+    const lessonWords = [
       {
         alternativeTranslations: [],
         audioUrl: null,
@@ -761,7 +761,7 @@ describe(prepareActivityData, () => {
     };
 
     // Two lesson words produce distractors "tu" and "tu?" after splitting
-    const lessonWords =[
+    const lessonWords = [
       {
         alternativeTranslations: [],
         audioUrl: null,
