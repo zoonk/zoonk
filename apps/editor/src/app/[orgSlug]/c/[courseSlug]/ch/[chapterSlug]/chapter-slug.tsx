@@ -1,6 +1,5 @@
 import { SlugEditor } from "@/components/slug-editor";
 import { getChapter } from "@/data/chapters/get-chapter";
-import { getCourse } from "@/data/courses/get-course";
 import { checkChapterSlugExists, updateChapterSlugAction } from "./actions";
 
 export async function ChapterSlug({
@@ -9,13 +8,13 @@ export async function ChapterSlug({
   params: PageProps<"/[orgSlug]/c/[courseSlug]/ch/[chapterSlug]">["params"];
 }) {
   const { chapterSlug, courseSlug, orgSlug } = await params;
+  const { data: chapter } = await getChapter({
+    chapterSlug,
+    courseSlug,
+    orgSlug,
+  });
 
-  const [{ data: chapter }, { data: course }] = await Promise.all([
-    getChapter({ chapterSlug, courseSlug, orgSlug }),
-    getCourse({ courseSlug, orgSlug }),
-  ]);
-
-  if (!chapter || !course) {
+  if (!chapter) {
     return null;
   }
 
@@ -25,7 +24,7 @@ export async function ChapterSlug({
       courseId={chapter.courseId}
       entityId={chapter.id}
       initialSlug={chapter.slug}
-      language={course.language}
+      language={chapter.language}
       onSave={updateChapterSlugAction.bind(null, chapterSlug, courseSlug)}
       orgSlug={orgSlug}
       redirectPrefix={`/${orgSlug}/c/${courseSlug}/ch/`}
