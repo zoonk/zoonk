@@ -28,9 +28,9 @@ test.describe("sitemap.xml", () => {
   });
 });
 
-test.describe("sitemap-courses", () => {
+test.describe("course sitemaps", () => {
   test("returns valid sitemap XML", async () => {
-    const response = await fetch(`${getBaseURL()}/sitemap-courses/sitemap/0.xml`);
+    const response = await fetch(`${getBaseURL()}/sitemaps/courses/sitemap/0.xml`);
     expect(response.status).toBe(200);
 
     const body = await response.text();

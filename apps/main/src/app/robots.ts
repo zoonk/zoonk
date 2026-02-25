@@ -23,9 +23,9 @@ export default function robots(): MetadataRoute.Robots {
     },
     sitemap: [
       `${SITE_URL}/sitemap.xml`,
-      `${SITE_URL}/sitemap-courses/sitemap/0.xml`,
-      `${SITE_URL}/sitemap-chapters/sitemap/0.xml`,
-      `${SITE_URL}/sitemap-lessons/sitemap/0.xml`,
+      `${SITE_URL}/sitemaps/courses/sitemap/0.xml`,
+      `${SITE_URL}/sitemaps/chapters/sitemap/0.xml`,
+      `${SITE_URL}/sitemaps/lessons/sitemap/0.xml`,
     ],
   };
 }
