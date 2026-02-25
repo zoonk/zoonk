@@ -270,6 +270,7 @@ test.describe("Step Visual Content", () => {
     await expect(page.getByText(/1 \/ 2/)).toBeVisible();
 
     // Keyboard navigation still works
+    await page.waitForLoadState("networkidle");
     await page.keyboard.press("ArrowRight");
 
     await expect(
@@ -355,6 +356,7 @@ test.describe("Step Visual Content", () => {
     await expect(page.getByText(/1 \/ 2/)).toBeVisible();
 
     // Keyboard navigation still works
+    await page.waitForLoadState("networkidle");
     await page.keyboard.press("ArrowRight");
 
     await expect(
@@ -480,6 +482,7 @@ test.describe("Step Visual Content", () => {
     await expect(page.getByText(/1 \/ 2/)).toBeVisible();
 
     // Keyboard navigation still works
+    await page.waitForLoadState("networkidle");
     await page.keyboard.press("ArrowRight");
 
     await expect(
@@ -599,6 +602,7 @@ test.describe("Step Visual Content", () => {
     await expect(page.getByText(/1 \/ 2/)).toBeVisible();
 
     // Keyboard navigation still works
+    await page.waitForLoadState("networkidle");
     await page.keyboard.press("ArrowRight");
 
     await expect(
@@ -776,6 +780,7 @@ test.describe("Step Visual Content", () => {
     await expect(page.getByText(/1 \/ 2/)).toBeVisible();
 
     // Keyboard navigation still works
+    await page.waitForLoadState("networkidle");
     await page.keyboard.press("ArrowRight");
 
     await expect(

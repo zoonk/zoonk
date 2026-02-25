@@ -39,8 +39,7 @@ function getModifierKey(): "Meta" | "Control" {
 test.describe("Command Palette - Unauthenticated", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/");
-    // Wait for the page to be fully interactive before testing keyboard shortcuts
-    // Scoped to navigation to avoid strict mode violation
+    await page.waitForLoadState("networkidle");
     await expect(
       page.getByRole("navigation").getByRole("button", { name: /search/i }),
     ).toBeVisible();

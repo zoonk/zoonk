@@ -119,13 +119,23 @@ test.describe("Continue Learning Revalidation", () => {
     await page.waitForURL(new RegExp(`/a/1`));
     await page.waitForLoadState("networkidle");
 
-    // 3. Complete the static activity
-    await page.keyboard.press("ArrowRight");
-    await expect(page.getByRole("status")).toBeVisible();
+    // Listen for the server action response BEFORE triggering completion.
+    // The server action (submitCompletion) is fire-and-forget from the UI,
+    // so waitForResponse is the only way to know it finished and revalidatePath ran.
+    const serverActionResponse = page.waitForResponse(
+      (resp) => resp.request().method() === "POST" && resp.ok(),
+    );
+
+    // 3. Complete the static activity — retry handles hydration delay under parallel load
+    await expect(async () => {
+      await page.keyboard.press("ArrowRight");
+      await expect(page.getByRole("status")).toBeVisible({ timeout: 1000 });
+    }).toPass({ timeout: 10_000 });
+
     await expect(page.getByText(/completed/i)).toBeVisible();
 
-    // Wait for the server action to finish (reward badges appear only after server responds with revalidatePath)
-    await expect(page.getByText(/\+\d+ BP/)).toBeVisible();
+    // Wait for the server action response (includes the revalidatePath signal for Router Cache)
+    await serverActionResponse;
 
     // 4. Click "Back to Lesson" (client-side navigation)
     await page.getByRole("link", { name: /back to lesson/i }).click();
@@ -134,6 +144,7 @@ test.describe("Continue Learning Revalidation", () => {
     // 5. Click the Home link in the navbar (client-side navigation — Router Cache)
     await page.getByRole("link", { name: /home page/i }).click();
     await page.waitForURL(/\/$/);
+    await page.waitForLoadState("networkidle");
 
     // 6. Continue learning should show the NEW next activity, not the old one
     await expect(page.getByText(new RegExp(`Next:.*After Next ${uniqueId}`)).first()).toBeVisible();

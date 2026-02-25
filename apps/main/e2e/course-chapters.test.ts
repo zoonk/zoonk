@@ -7,7 +7,7 @@ import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import { normalizeString } from "@zoonk/utils/string";
 import { expect, test } from "./fixtures";
 
-const uniqueId = randomUUID().slice(0, 8);
+const uniqueId = randomUUID();
 
 let courseUrl: string;
 let ptCourseUrl: string;
