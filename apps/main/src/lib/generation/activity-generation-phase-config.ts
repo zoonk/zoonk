@@ -1,4 +1,4 @@
-import { ACTIVITY_STEPS, type ActivityStepName } from "@/workflows/config";
+import { ACTIVITY_STEPS, type ActivityStepName } from "@/lib/workflow/config";
 import { type ActivityKind } from "@zoonk/db";
 import {
   EXPLANATION_DEPS,

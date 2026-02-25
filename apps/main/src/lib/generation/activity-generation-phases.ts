@@ -11,7 +11,7 @@ import {
   getPhaseWeights,
   inferFirstActivityKind,
 } from "@/lib/generation/activity-generation-phase-config";
-import { type ActivityStepName } from "@/workflows/config";
+import { type ActivityStepName } from "@/lib/workflow/config";
 import { type ActivityKind } from "@zoonk/db";
 import {
   AudioLinesIcon,

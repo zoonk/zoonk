@@ -8,8 +8,8 @@ import {
   getPhaseOrder,
   getPhaseStatus,
 } from "@/lib/generation/activity-generation-phases";
+import { type ActivityStepName } from "@/lib/workflow/config";
 import { type ThinkingMessageGenerator, cycleMessage } from "@/lib/workflow/use-thinking-messages";
-import { type ActivityStepName } from "@/workflows/config";
 import { type ActivityKind } from "@zoonk/db";
 import { useExtracted } from "next-intl";
 

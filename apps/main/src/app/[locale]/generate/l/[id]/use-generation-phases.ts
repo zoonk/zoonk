@@ -1,8 +1,8 @@
 "use client";
 
 import { type PhaseStatus } from "@/lib/generation-phases";
+import { type LessonStepName } from "@/lib/workflow/config";
 import { type ThinkingMessageGenerator, cycleMessage } from "@/lib/workflow/use-thinking-messages";
-import { type LessonStepName } from "@/workflows/config";
 import { useExtracted } from "next-intl";
 import {
   PHASE_ICONS,
