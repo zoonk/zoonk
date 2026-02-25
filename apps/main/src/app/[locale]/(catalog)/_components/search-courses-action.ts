@@ -8,12 +8,13 @@ export type CourseSearchResult = {
   description: string | null;
   slug: string;
   imageUrl: string | null;
+  language: string;
   brandSlug: string;
 };
 
 export async function searchCoursesAction(params: {
   query: string;
-  language: string;
+  language?: string;
 }): Promise<CourseSearchResult[]> {
   const courses = await searchCourses(params);
 
@@ -22,6 +23,7 @@ export async function searchCoursesAction(params: {
     description: course.description,
     id: course.id,
     imageUrl: course.imageUrl,
+    language: course.language,
     slug: course.slug,
     title: course.title,
   }));

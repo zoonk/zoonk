@@ -11,7 +11,7 @@ export type CourseWithOrganization = Course & {
 
 export async function searchCourses(params: {
   query: string;
-  language: string;
+  language?: string;
   limit?: number;
   offset?: number;
 }): Promise<CourseWithOrganization[]> {
@@ -25,7 +25,6 @@ export async function searchCourses(params: {
 
   const baseWhere = {
     isPublished: true,
-    language: params.language,
     organization: { kind: "brand" } as const,
   };
 
@@ -50,7 +49,17 @@ export async function searchCourses(params: {
 
   const merged = mergeSearchResults(exactMatch, containsMatches);
 
-  return merged
-    .filter((course): course is CourseWithOrganization => course.organization !== null)
-    .slice(offset, offset + limit);
+  const filtered = merged.filter(
+    (course): course is CourseWithOrganization => course.organization !== null,
+  );
+
+  const sorted = params.language
+    ? filtered.toSorted((a, b) => {
+        const aMatch = a.language === params.language ? 0 : 1;
+        const bMatch = b.language === params.language ? 0 : 1;
+        return aMatch - bMatch;
+      })
+    : filtered;
+
+  return sorted.slice(offset, offset + limit);
 }

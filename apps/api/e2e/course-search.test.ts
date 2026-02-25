@@ -90,7 +90,7 @@ test.describe("Course Search API", () => {
     await apiContext.dispose();
   });
 
-  test("filters courses by language", async () => {
+  test("returns all languages but sorts user's language first", async () => {
     const uniqueId = randomUUID().slice(0, 8);
     const enTitle = `E2E Language EN ${uniqueId}`;
     const ptTitle = `E2E Language PT ${uniqueId}`;
@@ -135,12 +135,12 @@ test.describe("Course Search API", () => {
     const enBody = await enResponse.json();
     const ptBody = await ptResponse.json();
 
-    expect(enBody.data).toHaveLength(1);
-    expect(enBody.data[0].title).toBe(enTitle);
-    expect(enBody.data[0].language).toBe("en");
+    // Both responses return courses from all languages
+    expect(enBody.data).toHaveLength(2);
+    expect(ptBody.data).toHaveLength(2);
 
-    expect(ptBody.data).toHaveLength(1);
-    expect(ptBody.data[0].title).toBe(ptTitle);
+    // User's language is sorted first
+    expect(enBody.data[0].language).toBe("en");
     expect(ptBody.data[0].language).toBe("pt");
 
     await apiContext.dispose();
@@ -230,16 +230,33 @@ test.describe("Course Search API", () => {
     await apiContext.dispose();
   });
 
-  test("returns validation error when language is missing", async () => {
-    const apiContext = await request.newContext({ baseURL });
-    const response = await apiContext.get("/v1/courses/search?query=test");
+  test("returns results without language parameter", async () => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const courseTitle = `E2E No Lang ${uniqueId}`;
 
-    expect(response.status()).toBe(400);
+    await prisma.course.create({
+      data: {
+        description: "Course without language param",
+        isPublished: true,
+        language: "en",
+        normalizedTitle: normalizeString(courseTitle),
+        organizationId: brandOrgId,
+        slug: `e2e-no-lang-${uniqueId}`,
+        title: courseTitle,
+      },
+    });
+
+    const apiContext = await request.newContext({ baseURL });
+    const response = await apiContext.get(
+      `/v1/courses/search?query=${encodeURIComponent(uniqueId)}`,
+    );
+
+    expect(response.status()).toBe(200);
 
     const body = await response.json();
 
-    expect(body.error).toBeDefined();
-    expect(body.error.code).toBe("VALIDATION_ERROR");
+    expect(body.data).toHaveLength(1);
+    expect(body.data[0].title).toBe(courseTitle);
 
     await apiContext.dispose();
   });
