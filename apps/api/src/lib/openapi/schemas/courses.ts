@@ -5,8 +5,9 @@ export const courseSearchQuerySchema = z
     cursor: z.string().optional().meta({ description: "Pagination cursor" }),
     language: z
       .string()
-      .min(2, "Language code is required")
-      .meta({ description: "Language code", example: "en" }),
+      .min(2, "Language code must be at least 2 characters")
+      .optional()
+      .meta({ description: "Language code for sorting preference", example: "en" }),
     limit: z.coerce
       .number()
       .int()
