@@ -69,9 +69,9 @@ jobs:
             ${{ runner.os }}-nextjs-main-
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061
+        uses: pnpm/action-setup@9b5745cdf0a2e8c2620f0746130f809adb911c19
         with:
-          version: 10.29.3
+          version: 10.30.2
 
       - name: Use Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v5
