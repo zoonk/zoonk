@@ -271,7 +271,8 @@ test.describe("Command Palette - Course Search", () => {
 
     await dialog.getByPlaceholder(/search/i).fill(course.title);
 
-    await expect(dialog.getByText(course.title)).toBeVisible();
+    // Search results depend on API response which can be slow under parallel test load
+    await expect(dialog.getByText(course.title)).toBeVisible({ timeout: 10_000 });
   });
 });
 
