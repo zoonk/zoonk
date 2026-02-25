@@ -124,7 +124,7 @@ test.beforeAll(async () => {
 
   testData.courseWithImageUrl = `/b/${AI_ORG_SLUG}/c/${courseWithImage.slug}`;
   testData.courseNoImageUrl = `/b/${AI_ORG_SLUG}/c/${courseNoImage.slug}`;
-  testData.ptCourseUrl = `/pt/b/${AI_ORG_SLUG}/c/${ptCourse.slug}`;
+  testData.ptCourseUrl = `/b/${AI_ORG_SLUG}/c/${ptCourse.slug}`;
 });
 
 test.describe("Course Detail Page", () => {

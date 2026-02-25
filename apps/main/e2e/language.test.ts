@@ -17,7 +17,7 @@ test.describe("Language settings page", () => {
     const selector = page.getByRole("combobox", { name: /update language/i });
     await selector.selectOption("es");
 
-    await page.waitForURL("**/es/language");
+    await page.waitForURL("**/language");
 
     await expect(page.getByRole("heading", { level: 1, name: /^idioma$/i })).toBeVisible();
   });
@@ -28,7 +28,7 @@ test.describe("Language settings page", () => {
     const selector = page.getByRole("combobox", { name: /update language/i });
     await selector.selectOption("pt");
 
-    await page.waitForURL("**/pt/language");
+    await page.waitForURL("**/language");
 
     await expect(page.getByRole("heading", { level: 1, name: /^idioma$/i })).toBeVisible();
 

@@ -142,7 +142,7 @@ test.beforeAll(async () => {
     title: `Introdução ao E2E ${uniqueId}`,
   });
 
-  ptChapterUrl = `/pt/b/${AI_ORG_SLUG}/c/${ptCourse.slug}/ch/${ptChapter.slug}`;
+  ptChapterUrl = `/b/${AI_ORG_SLUG}/c/${ptCourse.slug}/ch/${ptChapter.slug}`;
 
   ptLessonNames = {
     first: `O que é E2E Testing ${uniqueId}`,

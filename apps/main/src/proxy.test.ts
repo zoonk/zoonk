@@ -52,7 +52,7 @@ describe("next.js proxy", () => {
     request.cookies.set(LOCALE_COOKIE, "pt");
     const response = proxy(request);
 
-    expect(getRedirectUrl(response)).toBe("https://zoonk.com/pt/some/page");
+    expect(getRedirectUrl(response)).toBe("https://zoonk.com/some/page");
   });
 
   test("don't redirect home page if using default locale", () => {

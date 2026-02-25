@@ -100,7 +100,7 @@ test.describe("Courses Page - Infinite Loading", () => {
 
 test.describe("Courses Page - Locale", () => {
   test("Portuguese locale shows translated content", async ({ page }) => {
-    await page.goto("/pt/courses");
+    await page.goto("/courses");
 
     await expect(page.getByRole("heading", { name: /explorar cursos/i })).toBeVisible();
   });
@@ -119,7 +119,7 @@ test.describe("Courses Page - Locale", () => {
       title,
     });
 
-    await page.goto("/pt/courses");
+    await page.goto("/courses");
 
     await expect(page.getByText(unpublishedCourse.title)).not.toBeVisible();
   });
