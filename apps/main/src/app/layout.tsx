@@ -5,6 +5,7 @@ import { type Metadata } from "next";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale } from "next-intl/server";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
+import { Suspense } from "react";
 import "@zoonk/ui/globals.css";
 
 export const metadata: Metadata = {
@@ -15,18 +16,23 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function RootLayout({ children }: LayoutProps<"/">) {
+async function HtmlDocument({ children }: React.PropsWithChildren) {
   const locale = await getLocale();
+  return <html lang={locale}>{children}</html>;
+}
 
+export default async function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang={locale}>
-      <body className="font-sans antialiased">
-        <NuqsAdapter>
-          <NextIntlClientProvider>{children}</NextIntlClientProvider>
-        </NuqsAdapter>
-        <Analytics />
-        <Toaster />
-      </body>
-    </html>
+    <Suspense>
+      <HtmlDocument>
+        <body className="font-sans antialiased">
+          <NuqsAdapter>
+            <NextIntlClientProvider>{children}</NextIntlClientProvider>
+          </NuqsAdapter>
+          <Analytics />
+          <Toaster />
+        </body>
+      </HtmlDocument>
+    </Suspense>
   );
 }
