@@ -142,7 +142,7 @@ export function CatalogListItem({
           "hover:bg-muted/30 -mx-3 flex items-start gap-3 rounded-lg px-3 py-3.5 text-left transition-colors",
           className,
         )}
-        href={href}
+        href={href as never}
         prefetch={prefetch}
       >
         {children}
