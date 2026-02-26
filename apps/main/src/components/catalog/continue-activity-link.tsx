@@ -36,14 +36,15 @@ export function ContinueActivityLink({
 
   if (!data) {
     return (
-      <Link className={cn(buttonVariants(), "min-w-0 flex-1 gap-2")} href={fallbackHref}>
+      <Link className={cn(buttonVariants(), "min-w-0 flex-1 gap-2")} href={fallbackHref as never}>
         {t("Start")}
         <ChevronRightIcon aria-hidden="true" />
       </Link>
     );
   }
 
-  const href = `/b/${data.brandSlug}/c/${data.courseSlug}/ch/${data.chapterSlug}/l/${data.lessonSlug}/a/${data.activityPosition}`;
+  const href =
+    `/b/${data.brandSlug}/c/${data.courseSlug}/ch/${data.chapterSlug}/l/${data.lessonSlug}/a/${data.activityPosition}` as const;
 
   const getLabel = () => {
     if (data.completed) {
