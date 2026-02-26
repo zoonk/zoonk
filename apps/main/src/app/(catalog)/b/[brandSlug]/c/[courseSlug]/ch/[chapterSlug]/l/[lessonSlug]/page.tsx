@@ -56,7 +56,6 @@ export default async function LessonPage({
 
   const activityKinds = await getActivityKinds();
   const kindMeta = new Map(activityKinds.map((kind) => [kind.key, kind]));
-  const baseHref = `/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}/l/${lessonSlug}`;
 
   return (
     <main className="flex flex-1 flex-col">
@@ -71,16 +70,19 @@ export default async function LessonPage({
       <CatalogContainer>
         <CatalogToolbar>
           <ContinueActivityLink
-            fallbackHref={`${baseHref}/a/${activities[0]?.position}`}
+            fallbackHref={`/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}/l/${lessonSlug}/a/${activities[0]?.position}`}
             lessonId={lesson.id}
           />
           <CatalogActions contentId={`${courseSlug}/${chapterSlug}/${lessonSlug}`} kind="lesson" />
         </CatalogToolbar>
         <ActivityList
           activities={activities}
-          baseHref={baseHref}
+          brandSlug={brandSlug}
+          chapterSlug={chapterSlug}
+          courseSlug={courseSlug}
           kindMeta={kindMeta}
           lessonId={lesson.id}
+          lessonSlug={lessonSlug}
         />
       </CatalogContainer>
     </main>

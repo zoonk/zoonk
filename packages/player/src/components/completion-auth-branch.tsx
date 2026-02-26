@@ -6,6 +6,7 @@ import { Kbd } from "@zoonk/ui/components/kbd";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
+import Link from "next/link";
 import { type CompletionResult } from "../completion-input-schema";
 import { usePlayer } from "../player-context";
 import { BeltProgressHint, BeltProgressSkeleton } from "./belt-progress";
@@ -35,11 +36,11 @@ function SecondaryActions({
   variant: "inline" | "stacked";
 }) {
   const t = useExtracted();
-  const { LinkComponent } = usePlayer();
+
   const isInline = variant === "inline";
 
   const backLink = (
-    <LinkComponent
+    <Link
       className={cn(
         buttonVariants({ variant: isInline ? "outline" : "default" }),
         isInline ? "flex-1 lg:justify-between" : "w-full lg:justify-between",
@@ -55,7 +56,7 @@ function SecondaryActions({
       >
         Esc
       </Kbd>
-    </LinkComponent>
+    </Link>
   );
 
   const restartButton = (
@@ -100,7 +101,7 @@ function AuthenticatedContent({
   showRewards: boolean;
 }) {
   const t = useExtracted();
-  const { LinkComponent } = usePlayer();
+
   const isLoading = !completionResult || completionResult.status !== "success";
 
   return (
@@ -128,7 +129,7 @@ function AuthenticatedContent({
       <CompletionActions>
         {nextActivityHref ? (
           <>
-            <LinkComponent
+            <Link
               className={cn(buttonVariants({ size: "lg" }), "w-full lg:justify-between")}
               href={nextActivityHref}
             >
@@ -136,7 +137,7 @@ function AuthenticatedContent({
               <Kbd className="bg-primary-foreground/15 text-primary-foreground hidden opacity-70 lg:inline-flex">
                 Enter
               </Kbd>
-            </LinkComponent>
+            </Link>
 
             <SecondaryActions lessonHref={lessonHref} onRestart={onRestart} variant="inline" />
           </>
@@ -158,16 +159,15 @@ function UnauthenticatedContent({
   onRestart: () => void;
 }) {
   const t = useExtracted();
-  const { LinkComponent } = usePlayer();
 
   return (
     <>
       <p className="text-muted-foreground text-sm">{t("Sign up to track your progress")}</p>
 
       <CompletionActions>
-        <LinkComponent className={cn(buttonVariants(), "w-full")} href={loginHref}>
+        <Link className={cn(buttonVariants(), "w-full")} href={loginHref}>
           {t("Login")}
-        </LinkComponent>
+        </Link>
 
         <SecondaryActions lessonHref={lessonHref} onRestart={onRestart} variant="inline" />
       </CompletionActions>
@@ -177,7 +177,6 @@ function UnauthenticatedContent({
 
 function PendingContent({ lessonHref }: { lessonHref: string }) {
   const t = useExtracted();
-  const { LinkComponent } = usePlayer();
 
   return (
     <>
@@ -187,12 +186,9 @@ function PendingContent({ lessonHref }: { lessonHref: string }) {
       </div>
 
       <CompletionActions>
-        <LinkComponent
-          className={cn(buttonVariants({ variant: "outline" }), "w-full")}
-          href={lessonHref}
-        >
+        <Link className={cn(buttonVariants({ variant: "outline" }), "w-full")} href={lessonHref}>
           {t("Back to Lesson")}
-        </LinkComponent>
+        </Link>
       </CompletionActions>
     </>
   );

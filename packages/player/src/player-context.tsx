@@ -10,15 +10,6 @@ import {
 } from "./player-reducer";
 import { type SerializedStep } from "./prepare-activity-data";
 
-export type PlayerLinkProps = {
-  "aria-label"?: string;
-  children?: React.ReactNode;
-  className?: string;
-  href: string;
-};
-
-export type PlayerLinkComponent = React.ComponentType<PlayerLinkProps>;
-
 export type PlayerContextValue = {
   activityId: string;
   completionResult: CompletionResult | null;
@@ -53,7 +44,6 @@ export type PlayerContextValue = {
   completionFooter?: React.ReactNode;
   lessonHref: string;
   levelHref?: string;
-  LinkComponent: PlayerLinkComponent;
   loginHref?: string;
   nextActivityHref: string | null;
 };

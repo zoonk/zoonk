@@ -3,7 +3,7 @@
 import { useCallback, useReducer } from "react";
 import { type CompletionInput, type CompletionResult } from "./completion-input-schema";
 import { hasNegativeDimension } from "./has-negative-dimension";
-import { PlayerContext, type PlayerContextValue, type PlayerLinkComponent } from "./player-context";
+import { PlayerContext, type PlayerContextValue } from "./player-context";
 import { type PlayerState, createInitialState, playerReducer } from "./player-reducer";
 import { type SerializedActivity } from "./prepare-activity-data";
 import { usePlayerActions } from "./use-player-actions";
@@ -48,7 +48,6 @@ export function PlayerProvider({
   completionFooter,
   lessonHref,
   levelHref,
-  linkComponent,
   loginHref,
   nextActivityHref,
   onComplete,
@@ -60,7 +59,6 @@ export function PlayerProvider({
   completionFooter?: React.ReactNode;
   lessonHref: string;
   levelHref?: string;
-  linkComponent: PlayerLinkComponent;
   loginHref?: string;
   nextActivityHref: string | null;
   onComplete: (input: CompletionInput) => Promise<CompletionResult>;
@@ -92,7 +90,6 @@ export function PlayerProvider({
   const contextValue: PlayerContextValue = {
     ...actions,
     ...view,
-    LinkComponent: linkComponent,
     activityId: state.activityId,
     completionFooter,
     completionResult: actions.completionResult,

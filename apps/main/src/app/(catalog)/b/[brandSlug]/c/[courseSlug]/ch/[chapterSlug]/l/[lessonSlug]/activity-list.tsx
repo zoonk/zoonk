@@ -13,14 +13,20 @@ import { getExtracted } from "next-intl/server";
 
 export async function ActivityList({
   activities,
-  baseHref,
+  brandSlug,
+  chapterSlug,
+  courseSlug,
   kindMeta,
   lessonId,
+  lessonSlug,
 }: {
   activities: Activity[];
-  baseHref: string;
+  brandSlug: string;
+  chapterSlug: string;
+  courseSlug: string;
   kindMeta: Map<string, ActivityKindInfo>;
   lessonId: number;
+  lessonSlug: string;
 }) {
   if (activities.length === 0) {
     return null;
@@ -43,7 +49,7 @@ export async function ActivityList({
 
           return (
             <CatalogListItem
-              href={`${baseHref}/a/${activity.position}`}
+              href={`/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}/l/${lessonSlug}/a/${activity.position}`}
               id={activity.id}
               key={String(activity.id)}
             >

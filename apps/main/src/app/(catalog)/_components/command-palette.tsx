@@ -13,6 +13,7 @@ import {
 } from "@zoonk/ui/components/command";
 import { useCommandPaletteSearch } from "@zoonk/ui/hooks/command-palette-search";
 import { BookOpenIcon, LogOut, Search } from "lucide-react";
+import { type Route } from "next";
 import { useExtracted, useLocale } from "next-intl";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -45,12 +46,10 @@ export function CommandPalette() {
     onSearch: handleSearch,
   });
 
-  const handleSelect = (url: string) => {
+  function handleSelect<T extends string>(url: Route<T>) {
     onSelectItem();
-
-    // oxlint-disable-next-line typescript/no-unsafe-type-assertion)
-    router.push(url as never);
-  };
+    router.push(url);
+  }
 
   const getStarted = [
     { key: t("Home page"), ...getMenu("home") },
@@ -164,14 +163,12 @@ function CourseItem({
   onSelect,
 }: {
   course: CourseSearchResult;
-  onSelect: (url: string) => void;
+  onSelect: <T extends string>(url: Route<T>) => void;
 }) {
-  const url = `/b/${course.brandSlug}/c/${course.slug}`;
-
   return (
     <CommandItem
       className="flex items-start gap-3"
-      onSelect={() => onSelect(url)}
+      onSelect={() => onSelect(`/b/${course.brandSlug}/c/${course.slug}`)}
       value={`${course.title}-${course.id}`}
     >
       {course.imageUrl ? (
