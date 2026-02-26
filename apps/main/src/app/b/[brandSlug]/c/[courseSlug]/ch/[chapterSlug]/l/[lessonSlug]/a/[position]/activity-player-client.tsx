@@ -10,14 +10,26 @@ import { submitCompletion } from "./submit-completion-action";
 
 export function ActivityPlayerClient({
   activity,
-  lessonHref,
-  nextActivityHref,
+  brandSlug,
+  courseSlug,
+  chapterSlug,
+  lessonSlug,
+  nextActivity,
 }: {
   activity: SerializedActivity;
-  lessonHref: string;
-  nextActivityHref: string | null;
+  brandSlug: string;
+  courseSlug: string;
+  chapterSlug: string;
+  lessonSlug: string;
+  nextActivity: { chapterSlug: string; lessonSlug: string; activityPosition: number } | null;
 }) {
   const router = useRouter();
+
+  const lessonHref = `/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}/l/${lessonSlug}` as const;
+
+  const nextActivityHref = nextActivity
+    ? (`/b/${brandSlug}/c/${courseSlug}/ch/${nextActivity.chapterSlug}/l/${nextActivity.lessonSlug}/a/${nextActivity.activityPosition}` as const)
+    : null;
 
   return (
     <PlayerProvider

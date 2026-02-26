@@ -79,16 +79,15 @@ export default async function ActivityPage({ params }: Props) {
   }
 
   const serialized = prepareActivityData(activity, lessonWords, lessonSentences);
-  const lessonHref = `/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}/l/${lessonSlug}`;
-  const nextActivityHref = nextActivity
-    ? `/b/${brandSlug}/c/${courseSlug}/ch/${nextActivity.chapterSlug}/l/${nextActivity.lessonSlug}/a/${nextActivity.activityPosition}`
-    : null;
 
   return (
     <ActivityPlayerClient
       activity={serialized}
-      lessonHref={lessonHref}
-      nextActivityHref={nextActivityHref}
+      brandSlug={brandSlug}
+      courseSlug={courseSlug}
+      chapterSlug={chapterSlug}
+      lessonSlug={lessonSlug}
+      nextActivity={nextActivity}
     />
   );
 }
