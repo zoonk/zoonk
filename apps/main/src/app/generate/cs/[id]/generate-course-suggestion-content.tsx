@@ -1,6 +1,5 @@
 import { getCourseSuggestionById } from "@/data/courses/course-suggestions";
 import { findExistingCourse } from "@/data/courses/find-existing-course";
-import { redirect } from "@/i18n/navigation";
 import {
   Container,
   ContainerBody,
@@ -13,7 +12,7 @@ import { Empty, EmptyContent, EmptyHeader } from "@zoonk/ui/components/empty";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import { parseNumericId } from "@zoonk/utils/string";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { GenerationClient } from "./generation-client";
 
 export async function GenerateCourseSuggestionContent({
@@ -40,7 +39,7 @@ export async function GenerateCourseSuggestionContent({
   });
 
   if (existingCourse.data?.generationStatus === "completed") {
-    redirect({ href: `/b/${AI_ORG_SLUG}/c/${existingCourse.data.slug}`, locale });
+    redirect(`/b/${AI_ORG_SLUG}/c/${existingCourse.data.slug}`);
   }
 
   return (

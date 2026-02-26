@@ -1,6 +1,6 @@
 import { AIWarning } from "@/components/catalog/ai-warning";
 import { type ChapterWithDetails } from "@/data/chapters/get-chapter";
-import { Link } from "@/i18n/navigation";
+import Link from "next/link";
 import {
   MediaCard,
   MediaCardBreadcrumb,

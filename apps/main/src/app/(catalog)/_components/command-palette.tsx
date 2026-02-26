@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "@/i18n/navigation";
 import { getMenu } from "@/lib/menu";
 import { authClient, logout } from "@zoonk/core/auth/client";
 import { Button } from "@zoonk/ui/components/button";
@@ -16,11 +15,12 @@ import { useCommandPaletteSearch } from "@zoonk/ui/hooks/command-palette-search"
 import { BookOpenIcon, LogOut, Search } from "lucide-react";
 import { useExtracted, useLocale } from "next-intl";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useCallback } from "react";
 import { type CourseSearchResult, searchCoursesAction } from "./search-courses-action";
 
 export function CommandPalette() {
-  const { push } = useRouter();
+  const router = useRouter();
   const t = useExtracted();
   const locale = useLocale();
 
@@ -47,7 +47,9 @@ export function CommandPalette() {
 
   const handleSelect = (url: string) => {
     onSelectItem();
-    push(url);
+
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion)
+    router.push(url as never);
   };
 
   const getStarted = [

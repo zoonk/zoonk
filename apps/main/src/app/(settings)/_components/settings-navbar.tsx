@@ -1,6 +1,6 @@
 "use client";
 
-import { Link } from "@/i18n/navigation";
+import Link from "next/link";
 import { getMenu } from "@/lib/menu";
 import { authClient, logout } from "@zoonk/core/auth/client";
 import { Button, buttonVariants } from "@zoonk/ui/components/button";

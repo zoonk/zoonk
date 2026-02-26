@@ -1,6 +1,6 @@
 import { ContentFeedback } from "@/components/feedback/content-feedback";
 import { generateCourseSuggestions } from "@/data/courses/course-suggestions";
-import { Link } from "@/i18n/navigation";
+import Link from "next/link";
 import {
   Container,
   ContainerBody,

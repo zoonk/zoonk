@@ -6,13 +6,12 @@ import { ContinueActivityLink } from "@/components/catalog/continue-activity-lin
 import { ProgressPreloader } from "@/components/catalog/progress-preloader";
 import { getChapter } from "@/data/chapters/get-chapter";
 import { listChapterLessons } from "@/data/lessons/list-chapter-lessons";
-import { redirect } from "@/i18n/navigation";
 import { cacheTagChapter } from "@zoonk/utils/cache";
 import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import { type Metadata } from "next";
 import { setRequestLocale } from "next-intl/server";
 import { cacheTag } from "next/cache";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { Suspense } from "react";
 import { ChapterHeader } from "./chapter-header";
 import { LessonList } from "./lesson-list";
@@ -65,7 +64,7 @@ export default async function ChapterPage({
   const lessons = await listChapterLessons({ chapterId: chapter.id });
 
   if (lessons.length === 0) {
-    redirect({ href: `/generate/ch/${chapter.id}`, locale });
+    redirect(`/generate/ch/${chapter.id}`);
   }
 
   return (

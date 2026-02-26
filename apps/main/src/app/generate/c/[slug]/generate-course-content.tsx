@@ -1,7 +1,6 @@
 import { getCourseSuggestionBySlug } from "@/data/courses/course-suggestions";
-import { redirect } from "@/i18n/navigation";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
 export async function GenerateCourseContent({
   params,
@@ -19,7 +18,7 @@ export async function GenerateCourseContent({
     notFound();
   }
 
-  redirect({ href: `/generate/cs/${suggestion.id}`, locale });
+  redirect(`/generate/cs/${suggestion.id}`);
 
   return null;
 }

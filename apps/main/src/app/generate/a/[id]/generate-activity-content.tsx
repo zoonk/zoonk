@@ -1,7 +1,6 @@
 import { LoginRequired } from "@/components/auth/login-required";
 import { SubscriptionGate } from "@/components/subscription/subscription-gate";
 import { getActivityForGeneration } from "@/data/activities/get-activity-for-generation";
-import { redirect } from "@/i18n/navigation";
 import { getSession } from "@zoonk/core/users/session/get";
 import {
   Container,
@@ -15,7 +14,7 @@ import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import { parseBigIntId } from "@zoonk/utils/string";
 import { getExtracted } from "next-intl/server";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { GenerationClient } from "./generation-client";
 
 export async function GenerateActivityContent({
@@ -46,10 +45,9 @@ export async function GenerateActivityContent({
   }
 
   if (activity.generationStatus === "completed") {
-    redirect({
-      href: `/b/${AI_ORG_SLUG}/c/${activity.lesson.chapter.course.slug}/ch/${activity.lesson.chapter.slug}/l/${activity.lesson.slug}/a/${activity.position}`,
-      locale,
-    });
+    redirect(
+      `/b/${AI_ORG_SLUG}/c/${activity.lesson.chapter.course.slug}/ch/${activity.lesson.chapter.slug}/l/${activity.lesson.slug}/a/${activity.position}`,
+    );
   }
 
   return (

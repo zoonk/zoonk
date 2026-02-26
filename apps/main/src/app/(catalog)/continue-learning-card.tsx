@@ -1,5 +1,5 @@
 import { type ContinueLearningItem } from "@/data/courses/get-continue-learning";
-import { Link } from "@/i18n/navigation";
+import Link from "next/link";
 import {
   FeatureCard,
   FeatureCardBody,

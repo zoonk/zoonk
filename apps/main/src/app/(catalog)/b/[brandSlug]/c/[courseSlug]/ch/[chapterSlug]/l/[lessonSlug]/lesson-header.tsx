@@ -1,6 +1,6 @@
 import { AIWarning } from "@/components/catalog/ai-warning";
 import { type LessonWithDetails } from "@/data/lessons/get-lesson";
-import { Link } from "@/i18n/navigation";
+import Link from "next/link";
 import {
   BreadcrumbItem,
   BreadcrumbList,

@@ -2,7 +2,7 @@
 
 import { ContentFeedback } from "@/components/feedback/content-feedback";
 import { ClientLink } from "@/i18n/client-link";
-import { useRouter } from "@/i18n/navigation";
+import { useRouter } from "next/navigation";
 import { type SerializedActivity } from "@zoonk/player/prepare-activity-data";
 import { PlayerProvider } from "@zoonk/player/provider";
 import { PlayerShell } from "@zoonk/player/shell";

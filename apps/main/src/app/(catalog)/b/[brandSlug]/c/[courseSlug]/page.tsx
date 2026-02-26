@@ -6,13 +6,12 @@ import { ContinueActivityLink } from "@/components/catalog/continue-activity-lin
 import { ProgressPreloader } from "@/components/catalog/progress-preloader";
 import { listCourseChapters } from "@/data/chapters/list-course-chapters";
 import { getCourse } from "@/data/courses/get-course";
-import { redirect } from "@/i18n/navigation";
 import { cacheTagCourse } from "@zoonk/utils/cache";
 import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import { type Metadata } from "next";
 import { setRequestLocale } from "next-intl/server";
 import { cacheTag } from "next/cache";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { Suspense } from "react";
 import { ChapterList } from "./chapter-list";
 import { CourseHeader } from "./course-header";
@@ -54,7 +53,7 @@ export default async function CoursePage({
   const chapters = await listCourseChapters({ courseId: course.id });
 
   if (chapters.length === 0) {
-    redirect({ href: `/generate/c/${course.slug}`, locale });
+    redirect(`/generate/c/${course.slug}`);
   }
 
   return (

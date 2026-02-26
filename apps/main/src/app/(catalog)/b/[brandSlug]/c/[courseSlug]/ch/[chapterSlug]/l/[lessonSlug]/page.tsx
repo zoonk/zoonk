@@ -6,14 +6,13 @@ import { ContinueActivityLink } from "@/components/catalog/continue-activity-lin
 import { ProgressPreloader } from "@/components/catalog/progress-preloader";
 import { listLessonActivities } from "@/data/activities/list-lesson-activities";
 import { getLesson } from "@/data/lessons/get-lesson";
-import { redirect } from "@/i18n/navigation";
 import { getActivityKinds } from "@/lib/activities";
 import { cacheTagLesson } from "@zoonk/utils/cache";
 import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import { type Metadata } from "next";
 import { setRequestLocale } from "next-intl/server";
 import { cacheTag } from "next/cache";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { ActivityList } from "./activity-list";
 import { LessonHeader } from "./lesson-header";
 
@@ -72,7 +71,7 @@ export default async function LessonPage({
   const activities = await listLessonActivities({ lessonId: lesson.id });
 
   if (activities.length === 0) {
-    redirect({ href: `/generate/l/${lesson.id}`, locale });
+    redirect(`/generate/l/${lesson.id}`);
   }
 
   const activityKinds = await getActivityKinds({ locale });

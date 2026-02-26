@@ -1,4 +1,4 @@
-import { Link } from "@/i18n/navigation";
+import Link from "next/link";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import {
   Container,

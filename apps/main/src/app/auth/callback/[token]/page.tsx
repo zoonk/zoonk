@@ -1,6 +1,7 @@
 "use client";
 
-import { Link, redirect } from "@/i18n/navigation";
+import Link from "next/link";
+import { redirect } from "next/navigation";
 import { authClient } from "@zoonk/core/auth/client";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import {
@@ -13,7 +14,7 @@ import {
 } from "@zoonk/ui/components/empty";
 import { FullPageLoading } from "@zoonk/ui/components/loading";
 import { AlertCircleIcon } from "lucide-react";
-import { useExtracted, useLocale } from "next-intl";
+import { useExtracted } from "next-intl";
 import { use, useEffect, useEffectEvent, useState } from "react";
 
 type CallbackErrorType = "invalid";
@@ -50,7 +51,6 @@ function CallbackError({ type }: { type: CallbackErrorType }) {
 
 export default function AuthCallbackPage(props: PageProps<"/[locale]/auth/callback/[token]">) {
   const { token } = use(props.params);
-  const locale = useLocale();
   const [error, setError] = useState<CallbackErrorType | null>(null);
 
   const handleVerify = useEffectEvent(async (userToken: string) => {
@@ -64,7 +64,7 @@ export default function AuthCallbackPage(props: PageProps<"/[locale]/auth/callba
       return;
     }
 
-    redirect({ href: "/", locale });
+    redirect("/");
   });
 
   useEffect(() => {

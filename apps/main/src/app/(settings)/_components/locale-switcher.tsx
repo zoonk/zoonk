@@ -1,11 +1,10 @@
 "use client";
 
-import { usePathname, useRouter } from "@/i18n/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Field, FieldContent, FieldLabel } from "@zoonk/ui/components/field";
 import { NativeSelect, NativeSelectOption } from "@zoonk/ui/components/native-select";
 import { LOCALE_LABELS, SUPPORTED_LOCALES } from "@zoonk/utils/locale";
 import { useExtracted, useLocale } from "next-intl";
-import { useParams } from "next/navigation";
 import { useTransition } from "react";
 
 export function LocaleSwitcher() {
@@ -14,19 +13,14 @@ export function LocaleSwitcher() {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const pathname = usePathname();
-  const params = useParams();
 
   function onSelectChange(event: React.ChangeEvent<HTMLSelectElement>) {
     const nextLocale = event.target.value;
+    document.cookie = `NEXT_LOCALE=${nextLocale};path=/;max-age=31536000`;
 
     startTransition(() => {
-      router.replace(
-        // @ts-expect-error -- TypeScript will validate that only known `params`
-        // Are used in combination with a given `pathname`. Since the two will
-        // Always match for the current route, we can skip runtime checks.
-        { params, pathname },
-        { locale: nextLocale },
-      );
+      router.replace(pathname);
+      router.refresh();
     });
   }
 
