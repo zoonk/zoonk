@@ -5,20 +5,7 @@ export default function robots(): MetadataRoute.Robots {
   return {
     rules: {
       allow: "/",
-      disallow: [
-        "/auth/",
-        "/generate/",
-        "/login",
-        "/my",
-        "/energy",
-        "/level",
-        "/score",
-        "/support",
-        "/language",
-        "/profile",
-        "/subscription",
-        "/p/",
-      ],
+      disallow: ["/auth/", "/generate/", "/login", "/p/"],
       userAgent: "*",
     },
     sitemap: [
