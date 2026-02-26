@@ -9,11 +9,12 @@ import {
   ContainerTitle,
 } from "@zoonk/ui/components/container";
 import { ItemGroup } from "@zoonk/ui/components/item";
-import { getExtracted } from "next-intl/server";
+import { getExtracted, getLocale } from "next-intl/server";
 import Link from "next/link";
 import { CourseSuggestionItem } from "./course-suggestion-item";
 
-export async function CourseSuggestions({ locale, prompt }: { locale: string; prompt: string }) {
+export async function CourseSuggestions({ prompt }: { prompt: string }) {
+  const locale = await getLocale();
   const t = await getExtracted();
   const { suggestions } = await generateCourseSuggestions({
     language: locale,

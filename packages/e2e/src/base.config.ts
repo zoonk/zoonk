@@ -1,5 +1,4 @@
 import { defineConfig, devices } from "@playwright/test";
-import { E2E_REVALIDATE_SECRET } from "./helpers";
 
 const E2E_DATABASE_URL =
   process.env.DATABASE_URL ?? "postgres://postgres:postgres@localhost:5432/zoonk_e2e";
@@ -35,7 +34,6 @@ export function createBaseConfig(options: {
         DATABASE_URL_UNPOOLED: E2E_DATABASE_URL,
         E2E_TESTING: "true",
         NEXT_PUBLIC_API_URL: E2E_API_URL,
-        REVALIDATE_SECRET: E2E_REVALIDATE_SECRET,
         ...options.webServerEnv,
       },
       timeout: 120_000,

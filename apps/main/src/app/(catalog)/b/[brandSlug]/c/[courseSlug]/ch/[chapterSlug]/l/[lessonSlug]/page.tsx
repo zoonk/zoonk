@@ -5,23 +5,10 @@ import { ProgressPreloader } from "@/components/catalog/progress-preloader";
 import { listLessonActivities } from "@/data/activities/list-lesson-activities";
 import { getLesson } from "@/data/lessons/get-lesson";
 import { getActivityKinds } from "@/lib/activities";
-import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import { type Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { ActivityList } from "./activity-list";
 import { LessonHeader } from "./lesson-header";
-
-export async function generateStaticParams() {
-  return [
-    {
-      brandSlug: AI_ORG_SLUG,
-      chapterSlug: "sample",
-      courseSlug: "sample",
-      lessonSlug: "sample",
-      locale: "en",
-    },
-  ];
-}
 
 export async function generateMetadata({
   params,

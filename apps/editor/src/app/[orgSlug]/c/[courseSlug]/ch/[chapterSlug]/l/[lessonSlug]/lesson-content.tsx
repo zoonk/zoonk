@@ -23,7 +23,7 @@ export async function LessonContent({
     return notFound();
   }
 
-  const slugs = { chapterSlug, courseSlug, lessonSlug, orgSlug };
+  const slugs = { chapterSlug, courseSlug, orgSlug };
 
   return (
     <ContentEditor

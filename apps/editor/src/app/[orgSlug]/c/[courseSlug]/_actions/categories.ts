@@ -3,10 +3,7 @@
 import { addCategoryToCourse } from "@/data/categories/add-category-to-course";
 import { removeCategoryFromCourse } from "@/data/categories/remove-category-from-course";
 import { getErrorMessage } from "@/lib/error-messages";
-import { revalidateMainApp } from "@zoonk/core/cache/revalidate";
-import { cacheTagCourse } from "@zoonk/utils/cache";
 import { revalidatePath } from "next/cache";
-import { after } from "next/server";
 
 type CourseRouteParams = {
   courseId: number;
@@ -29,10 +26,6 @@ export async function addCourseCategoryAction(
     return { error: await getErrorMessage(error) };
   }
 
-  after(async () => {
-    await revalidateMainApp([cacheTagCourse({ courseSlug })]);
-  });
-
   revalidatePath(`/${orgSlug}/c/${courseSlug}`);
 
   return { error: null };
@@ -52,10 +45,6 @@ export async function removeCourseCategoryAction(
   if (error) {
     return { error: await getErrorMessage(error) };
   }
-
-  after(async () => {
-    await revalidateMainApp([cacheTagCourse({ courseSlug })]);
-  });
 
   revalidatePath(`/${orgSlug}/c/${courseSlug}`);
 

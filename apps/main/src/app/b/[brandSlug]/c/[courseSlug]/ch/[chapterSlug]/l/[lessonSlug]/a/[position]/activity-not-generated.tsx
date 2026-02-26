@@ -11,13 +11,7 @@ import { SparklesIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
 import Link from "next/link";
 
-export async function ActivityNotGenerated({
-  activityId,
-  locale,
-}: {
-  activityId: bigint;
-  locale: string;
-}) {
+export async function ActivityNotGenerated({ activityId }: { activityId: bigint }) {
   const t = await getExtracted();
 
   return (
@@ -35,7 +29,7 @@ export async function ActivityNotGenerated({
       <EmptyContent>
         <Link
           className={buttonVariants({ variant: "outline" })}
-          href={`/${locale}/generate/a/${activityId}`}
+          href={`/generate/a/${activityId}`}
           prefetch={false}
           rel="nofollow"
         >

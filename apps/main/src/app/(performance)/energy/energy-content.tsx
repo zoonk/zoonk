@@ -2,6 +2,7 @@ import { validatePeriod } from "@/data/progress/_utils";
 import { getEnergyHistory } from "@/data/progress/get-energy-history";
 import { getSession } from "@zoonk/core/users/session/get";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
+import { getLocale } from "next-intl/server";
 import { PerformanceChartSkeleton } from "../_components/performance-chart-skeleton";
 import { PerformanceEmptyState } from "../_components/performance-empty-state";
 import { EnergyChart } from "./energy-chart";
@@ -9,14 +10,13 @@ import { EnergyExplanation } from "./energy-explanation";
 import { EnergyStats, EnergyStatsSkeleton } from "./energy-stats";
 
 export async function EnergyContent({
-  locale,
   searchParams,
 }: {
-  locale: string;
   searchParams: Promise<{ offset?: string; period?: string }>;
 }) {
   const { offset = "0", period = "month" } = await searchParams;
   const validPeriod = validatePeriod(period);
+  const locale = await getLocale();
 
   const [data, session] = await Promise.all([
     getEnergyHistory({

@@ -8,12 +8,9 @@ import { importLessons } from "@/data/lessons/import-lessons";
 import { reorderLessons } from "@/data/lessons/reorder-lessons";
 import { getErrorMessage } from "@/lib/error-messages";
 import { isImportMode } from "@/lib/import-mode";
-import { revalidateMainApp } from "@zoonk/core/cache/revalidate";
-import { cacheTagChapter, cacheTagCourse } from "@zoonk/utils/cache";
 import { getExtracted } from "next-intl/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { after } from "next/server";
 
 export async function checkChapterSlugExists(params: {
   courseId?: number;
@@ -28,15 +25,11 @@ export async function checkChapterSlugExists(params: {
 }
 
 export async function updateChapterTitleAction(
-  slugs: {
-    chapterSlug: string;
-    courseSlug: string;
-    orgSlug: string;
-  },
+  slugs: { courseSlug: string; orgSlug: string },
   chapterId: number,
   data: { title: string },
 ): Promise<{ error: string | null }> {
-  const { chapterSlug, courseSlug, orgSlug } = slugs;
+  const { courseSlug, orgSlug } = slugs;
 
   const { error } = await updateChapter({
     chapterId,
@@ -47,24 +40,16 @@ export async function updateChapterTitleAction(
     return { error: await getErrorMessage(error) };
   }
 
-  after(async () => {
-    await revalidateMainApp([cacheTagChapter({ chapterSlug }), cacheTagCourse({ courseSlug })]);
-  });
-
   revalidatePath(`/${orgSlug}/c/${courseSlug}`);
   return { error: null };
 }
 
 export async function updateChapterDescriptionAction(
-  slugs: {
-    chapterSlug: string;
-    courseSlug: string;
-    orgSlug: string;
-  },
+  slugs: { courseSlug: string; orgSlug: string },
   chapterId: number,
   data: { description: string },
 ): Promise<{ error: string | null }> {
-  const { chapterSlug, courseSlug, orgSlug } = slugs;
+  const { courseSlug, orgSlug } = slugs;
 
   const { error } = await updateChapter({
     chapterId,
@@ -75,17 +60,11 @@ export async function updateChapterDescriptionAction(
     return { error: await getErrorMessage(error) };
   }
 
-  after(async () => {
-    await revalidateMainApp([cacheTagChapter({ chapterSlug }), cacheTagCourse({ courseSlug })]);
-  });
-
   revalidatePath(`/${orgSlug}/c/${courseSlug}`);
   return { error: null };
 }
 
 export async function updateChapterSlugAction(
-  currentSlug: string,
-  courseSlug: string,
   chapterId: number,
   data: { slug: string },
 ): Promise<{ error: string | null; newSlug?: string }> {
@@ -98,20 +77,10 @@ export async function updateChapterSlugAction(
     return { error: await getErrorMessage(error) };
   }
 
-  after(async () => {
-    await revalidateMainApp([
-      cacheTagChapter({ chapterSlug: currentSlug }),
-      cacheTagChapter({ chapterSlug: chapter.slug }),
-      cacheTagCourse({ courseSlug }),
-    ]);
-  });
-
   return { error: null, newSlug: chapter.slug };
 }
 
 async function createLessonAction(
-  chapterSlug: string,
-  courseSlug: string,
   chapterId: number,
   position: number,
 ): Promise<{ error: string | null; slug?: string }> {
@@ -132,16 +101,10 @@ async function createLessonAction(
     return { error: await getErrorMessage(error) };
   }
 
-  after(async () => {
-    await revalidateMainApp([cacheTagChapter({ chapterSlug }), cacheTagCourse({ courseSlug })]);
-  });
-
   return { error: null, slug: data.slug };
 }
 
 async function importLessonsAction(
-  chapterSlug: string,
-  courseSlug: string,
   chapterId: number,
   formData: FormData,
 ): Promise<{ error: string | null }> {
@@ -163,10 +126,6 @@ async function importLessonsAction(
   if (error) {
     return { error: await getErrorMessage(error) };
   }
-
-  after(async () => {
-    await revalidateMainApp([cacheTagChapter({ chapterSlug }), cacheTagCourse({ courseSlug })]);
-  });
 
   return { error: null };
 }
@@ -196,7 +155,7 @@ export async function insertLessonAction(
   position: number,
 ): Promise<void> {
   const { chapterId, chapterSlug, courseSlug, orgSlug } = params;
-  const { slug, error } = await createLessonAction(chapterSlug, courseSlug, chapterId, position);
+  const { slug, error } = await createLessonAction(chapterId, position);
 
   if (error) {
     throw new Error(error);
@@ -213,7 +172,7 @@ export async function handleImportLessonsAction(
   formData: FormData,
 ): Promise<{ error: string | null }> {
   const { chapterId, chapterSlug, courseSlug, orgSlug } = params;
-  const { error } = await importLessonsAction(chapterSlug, courseSlug, chapterId, formData);
+  const { error } = await importLessonsAction(chapterId, formData);
 
   if (error) {
     return { error };
@@ -237,10 +196,6 @@ export async function reorderLessonsAction(
   if (error) {
     return { error: await getErrorMessage(error) };
   }
-
-  after(async () => {
-    await revalidateMainApp([cacheTagChapter({ chapterSlug }), cacheTagCourse({ courseSlug })]);
-  });
 
   revalidatePath(`/${orgSlug}/c/${courseSlug}/ch/${chapterSlug}`);
   return { error: null };

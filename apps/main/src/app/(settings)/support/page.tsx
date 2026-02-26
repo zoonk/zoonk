@@ -1,14 +1,9 @@
-"use cache";
-
 import { type Metadata } from "next";
-import { getExtracted, setRequestLocale } from "next-intl/server";
+import { getExtracted } from "next-intl/server";
 import { SupportContent } from "./support-content";
 
-export async function generateMetadata({
-  params,
-}: PageProps<"/[locale]/support">): Promise<Metadata> {
-  const { locale } = await params;
-  const t = await getExtracted({ locale });
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getExtracted();
 
   return {
     description: t(
@@ -18,9 +13,6 @@ export async function generateMetadata({
   };
 }
 
-export default async function Support({ params }: PageProps<"/[locale]/support">) {
-  const { locale } = await params;
-  setRequestLocale(locale);
-
+export default async function Support() {
   return <SupportContent />;
 }

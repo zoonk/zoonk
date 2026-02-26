@@ -1,5 +1,3 @@
-"use cache";
-
 import {
   Container,
   ContainerBody,
@@ -9,15 +7,12 @@ import {
   ContainerTitle,
 } from "@zoonk/ui/components/container";
 import { type Metadata } from "next";
-import { getExtracted, setRequestLocale } from "next-intl/server";
+import { getExtracted } from "next-intl/server";
 import { ProtectedSection } from "../_components/protected-section";
 import { ProfileForm } from "./profile-form";
 
-export async function generateMetadata({
-  params,
-}: PageProps<"/[locale]/profile">): Promise<Metadata> {
-  const { locale } = await params;
-  const t = await getExtracted({ locale });
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getExtracted();
 
   return {
     description: t("Update your name and username on Zoonk."),
@@ -25,9 +20,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function ProfilePage({ params }: PageProps<"/[locale]/profile">) {
-  const { locale } = await params;
-  setRequestLocale(locale);
+export default async function ProfilePage() {
   const t = await getExtracted();
 
   return (

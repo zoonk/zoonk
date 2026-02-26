@@ -102,12 +102,8 @@ export async function getActivityKinds(): Promise<ActivityKindInfo[]> {
   ];
 }
 
-async function getSeoDescription(
-  kind: ActivityKind,
-  topic: string,
-  params?: { locale: string },
-): Promise<string> {
-  const t = await getExtracted(params);
+async function getSeoDescription(kind: ActivityKind, topic: string): Promise<string> {
+  const t = await getExtracted();
 
   const descriptions: Record<ActivityKind, string> = {
     background: t(

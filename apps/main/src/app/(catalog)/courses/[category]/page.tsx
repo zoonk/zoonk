@@ -7,15 +7,11 @@ import {
   ContainerHeaderGroup,
   ContainerTitle,
 } from "@zoonk/ui/components/container";
-import { COURSE_CATEGORIES, isValidCategory } from "@zoonk/utils/categories";
+import { isValidCategory } from "@zoonk/utils/categories";
 import { type Metadata } from "next";
 import { getLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { CourseListClient } from "../course-list-client";
-
-export async function generateStaticParams() {
-  return COURSE_CATEGORIES.map((category) => ({ category }));
-}
 
 export async function generateMetadata({
   params,

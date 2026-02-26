@@ -1,14 +1,14 @@
 import { type Metadata } from "next";
-import { getExtracted, setRequestLocale } from "next-intl/server";
+import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
 import { CourseSuggestions } from "./course-suggestions";
 import { CourseSuggestionsFallback } from "./course-suggestions-fallback";
 
 export async function generateMetadata({
   params,
-}: PageProps<"/[locale]/learn/[prompt]">): Promise<Metadata> {
-  const { locale, prompt: rawPrompt } = await params;
-  const t = await getExtracted({ locale });
+}: PageProps<"/learn/[prompt]">): Promise<Metadata> {
+  const { prompt: rawPrompt } = await params;
+  const t = await getExtracted();
   const prompt = decodeURIComponent(rawPrompt);
 
   return {
@@ -20,15 +20,13 @@ export async function generateMetadata({
   };
 }
 
-export default async function Learn({ params }: PageProps<"/[locale]/learn/[prompt]">) {
-  const { locale, prompt: rawPrompt } = await params;
-  setRequestLocale(locale);
-
+export default async function Learn({ params }: PageProps<"/learn/[prompt]">) {
+  const { prompt: rawPrompt } = await params;
   const prompt = decodeURIComponent(rawPrompt);
 
   return (
     <Suspense fallback={<CourseSuggestionsFallback />}>
-      <CourseSuggestions locale={locale} prompt={prompt} />
+      <CourseSuggestions prompt={prompt} />
     </Suspense>
   );
 }

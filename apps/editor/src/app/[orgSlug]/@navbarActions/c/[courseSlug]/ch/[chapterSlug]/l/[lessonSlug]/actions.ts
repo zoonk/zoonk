@@ -3,15 +3,11 @@
 import { deleteLesson } from "@/data/lessons/delete-lesson";
 import { toggleLessonPublished } from "@/data/lessons/publish-lesson";
 import { getErrorMessage } from "@/lib/error-messages";
-import { revalidateMainApp } from "@zoonk/core/cache/revalidate";
-import { cacheTagChapter, cacheTagCourse, cacheTagLesson } from "@zoonk/utils/cache";
 import { type Route } from "next";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { after } from "next/server";
 
 export async function togglePublishAction(
-  slugs: { lessonSlug: string; chapterSlug: string; courseSlug: string },
   lessonUrl: string,
   lessonId: number,
   isPublished: boolean,
@@ -25,21 +21,12 @@ export async function togglePublishAction(
     return { error: await getErrorMessage(error) };
   }
 
-  after(async () => {
-    await revalidateMainApp([
-      cacheTagLesson({ lessonSlug: slugs.lessonSlug }),
-      cacheTagChapter({ chapterSlug: slugs.chapterSlug }),
-      cacheTagCourse({ courseSlug: slugs.courseSlug }),
-    ]);
-  });
-
   revalidatePath(lessonUrl);
 
   return { error: null };
 }
 
 export async function deleteLessonAction(
-  slugs: { lessonSlug: string; chapterSlug: string; courseSlug: string },
   lessonId: number,
   chapterUrl: Route,
 ): Promise<{ error: string | null }> {
@@ -48,14 +35,6 @@ export async function deleteLessonAction(
   if (error) {
     return { error: await getErrorMessage(error) };
   }
-
-  after(async () => {
-    await revalidateMainApp([
-      cacheTagLesson({ lessonSlug: slugs.lessonSlug }),
-      cacheTagChapter({ chapterSlug: slugs.chapterSlug }),
-      cacheTagCourse({ courseSlug: slugs.courseSlug }),
-    ]);
-  });
 
   revalidatePath(chapterUrl);
   redirect(chapterUrl);

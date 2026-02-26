@@ -38,10 +38,6 @@ vi.mock("@zoonk/ai/tasks/lessons/activities", () => ({
   }),
 }));
 
-vi.mock("@zoonk/core/cache/revalidate", () => ({
-  revalidateMainApp: vi.fn().mockResolvedValue(null),
-}));
-
 describe(lessonGenerationWorkflow, () => {
   let organizationId: number;
   let course: Awaited<ReturnType<typeof courseFixture>>;

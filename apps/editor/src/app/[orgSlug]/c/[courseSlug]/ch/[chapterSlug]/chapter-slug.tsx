@@ -25,7 +25,7 @@ export async function ChapterSlug({
       entityId={chapter.id}
       initialSlug={chapter.slug}
       language={chapter.language}
-      onSave={updateChapterSlugAction.bind(null, chapterSlug, courseSlug)}
+      onSave={updateChapterSlugAction}
       orgSlug={orgSlug}
       redirectPrefix={`/${orgSlug}/c/${courseSlug}/ch/`}
     />

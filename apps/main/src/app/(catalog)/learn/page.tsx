@@ -1,10 +1,9 @@
 import { type Metadata } from "next";
-import { getExtracted, setRequestLocale } from "next-intl/server";
+import { getExtracted } from "next-intl/server";
 import { LearnForm } from "./learn-form";
 
-export async function generateMetadata({ params }: PageProps<"/learn">): Promise<Metadata> {
-  const { locale } = await params;
-  const t = await getExtracted({ locale });
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getExtracted();
 
   return {
     description: t(
@@ -14,10 +13,7 @@ export async function generateMetadata({ params }: PageProps<"/learn">): Promise
   };
 }
 
-export default async function Learn({ params }: PageProps<"/[locale]/learn">) {
-  const { locale } = await params;
-  setRequestLocale(locale);
-
+export default async function Learn() {
   const t = await getExtracted();
 
   return (

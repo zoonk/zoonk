@@ -49,7 +49,7 @@ function CallbackError({ type }: { type: CallbackErrorType }) {
   );
 }
 
-export default function AuthCallbackPage(props: PageProps<"/[locale]/auth/callback/[token]">) {
+export default function AuthCallbackPage(props: PageProps<"/auth/callback/[token]">) {
   const { token } = use(props.params);
   const [error, setError] = useState<CallbackErrorType | null>(null);
 

@@ -3,10 +3,7 @@
 import { lessonSlugExists } from "@/data/lessons/lesson-slug";
 import { updateLesson } from "@/data/lessons/update-lesson";
 import { getErrorMessage } from "@/lib/error-messages";
-import { revalidateMainApp } from "@zoonk/core/cache/revalidate";
-import { cacheTagChapter, cacheTagCourse, cacheTagLesson } from "@zoonk/utils/cache";
 import { revalidatePath } from "next/cache";
-import { after } from "next/server";
 
 export async function checkLessonSlugExists(params: {
   chapterId?: number;
@@ -20,16 +17,11 @@ export async function checkLessonSlugExists(params: {
 }
 
 export async function updateLessonTitleAction(
-  slugs: {
-    chapterSlug: string;
-    courseSlug: string;
-    lessonSlug: string;
-    orgSlug: string;
-  },
+  slugs: { chapterSlug: string; courseSlug: string; orgSlug: string },
   lessonId: number,
   data: { title: string },
 ): Promise<{ error: string | null }> {
-  const { chapterSlug, courseSlug, lessonSlug, orgSlug } = slugs;
+  const { chapterSlug, courseSlug, orgSlug } = slugs;
 
   const { error } = await updateLesson({
     lessonId,
@@ -40,29 +32,16 @@ export async function updateLessonTitleAction(
     return { error: await getErrorMessage(error) };
   }
 
-  after(async () => {
-    await revalidateMainApp([
-      cacheTagLesson({ lessonSlug }),
-      cacheTagChapter({ chapterSlug }),
-      cacheTagCourse({ courseSlug }),
-    ]);
-  });
-
   revalidatePath(`/${orgSlug}/c/${courseSlug}/ch/${chapterSlug}`);
   return { error: null };
 }
 
 export async function updateLessonDescriptionAction(
-  slugs: {
-    chapterSlug: string;
-    courseSlug: string;
-    lessonSlug: string;
-    orgSlug: string;
-  },
+  slugs: { chapterSlug: string; courseSlug: string; orgSlug: string },
   lessonId: number,
   data: { description: string },
 ): Promise<{ error: string | null }> {
-  const { chapterSlug, courseSlug, lessonSlug, orgSlug } = slugs;
+  const { chapterSlug, courseSlug, orgSlug } = slugs;
 
   const { error } = await updateLesson({
     description: data.description,
@@ -72,14 +51,6 @@ export async function updateLessonDescriptionAction(
   if (error) {
     return { error: await getErrorMessage(error) };
   }
-
-  after(async () => {
-    await revalidateMainApp([
-      cacheTagLesson({ lessonSlug }),
-      cacheTagChapter({ chapterSlug }),
-      cacheTagCourse({ courseSlug }),
-    ]);
-  });
 
   revalidatePath(`/${orgSlug}/c/${courseSlug}/ch/${chapterSlug}`);
   return { error: null };
@@ -98,15 +69,6 @@ export async function updateLessonSlugAction(
   if (error) {
     return { error: await getErrorMessage(error) };
   }
-
-  after(async () => {
-    await revalidateMainApp([
-      cacheTagLesson({ lessonSlug: slugs.lessonSlug }),
-      cacheTagLesson({ lessonSlug: lesson.slug }),
-      cacheTagChapter({ chapterSlug: slugs.chapterSlug }),
-      cacheTagCourse({ courseSlug: slugs.courseSlug }),
-    ]);
-  });
 
   return { error: null, newSlug: lesson.slug };
 }

@@ -6,10 +6,8 @@ import {
   ContainerHeaderGroup,
   ContainerTitle,
 } from "@zoonk/ui/components/container";
-import { cacheTagCoursesList } from "@zoonk/utils/cache";
 import { type Metadata } from "next";
-import { getExtracted, setRequestLocale } from "next-intl/server";
-import { cacheTag } from "next/cache";
+import { getExtracted, getLocale } from "next-intl/server";
 import { CourseListClient } from "./course-list-client";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -23,11 +21,8 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default async function Courses({ params }: PageProps<"/courses">) {
-  const { locale } = await params;
-  setRequestLocale(locale);
-  cacheTag(cacheTagCoursesList({ language: locale }));
-
+export default async function Courses() {
+  const locale = await getLocale();
   const t = await getExtracted();
   const courses = await listCourses({ language: locale });
 

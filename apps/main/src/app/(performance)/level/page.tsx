@@ -7,15 +7,12 @@ import {
   ContainerTitle,
 } from "@zoonk/ui/components/container";
 import { type Metadata } from "next";
-import { getExtracted, setRequestLocale } from "next-intl/server";
+import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
 import { LevelContent, LevelContentSkeleton } from "./level-content";
 
-export async function generateMetadata({
-  params,
-}: PageProps<"/[locale]/level">): Promise<Metadata> {
-  const { locale } = await params;
-  const t = await getExtracted({ locale });
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getExtracted();
 
   return {
     description: t("Track your level progress and see how you advance."),
@@ -23,9 +20,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function LevelPage({ params, searchParams }: PageProps<"/[locale]/level">) {
-  const { locale } = await params;
-  setRequestLocale(locale);
+export default async function LevelPage({ searchParams }: PageProps<"/level">) {
   const t = await getExtracted();
 
   return (
@@ -39,7 +34,7 @@ export default async function LevelPage({ params, searchParams }: PageProps<"/[l
 
       <ContainerBody>
         <Suspense fallback={<LevelContentSkeleton />}>
-          <LevelContent locale={locale} searchParams={searchParams} />
+          <LevelContent searchParams={searchParams} />
         </Suspense>
       </ContainerBody>
     </Container>

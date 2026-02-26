@@ -1,13 +1,8 @@
-"use cache";
-
 import { type Metadata } from "next";
-import { getExtracted } from "next-intl/server";
+import { getExtracted, getLocale } from "next-intl/server";
 
-export async function generateMetadata({
-  params,
-}: PageProps<"/[locale]/privacy">): Promise<Metadata> {
-  const { locale } = await params;
-  const t = await getExtracted({ locale });
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getExtracted();
 
   return {
     description: t(
@@ -17,8 +12,8 @@ export async function generateMetadata({
   };
 }
 
-export default async function Privacy({ params }: PageProps<"/[locale]/privacy">) {
-  const { locale } = await params;
+export default async function Privacy() {
+  const locale = await getLocale();
   // oxlint-disable-next-line typescript/no-unsafe-assignment -- dynamic import returns any
   const { default: PrivacyPolicy } = await import(`./${locale}.mdx`);
 

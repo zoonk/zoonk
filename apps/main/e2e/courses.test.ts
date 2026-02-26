@@ -1,8 +1,7 @@
 import { randomUUID } from "node:crypto";
-import { getAiOrganization, revalidateCacheTags, setLocale } from "@zoonk/e2e/helpers";
+import { getAiOrganization, setLocale } from "@zoonk/e2e/helpers";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
-import { cacheTagCoursesList } from "@zoonk/utils/cache";
 import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import { normalizeString } from "@zoonk/utils/string";
 import { expect, test } from "./fixtures";
@@ -32,11 +31,6 @@ async function createPublishedCourse(language: string) {
     position: 0,
   });
 
-  await revalidateCacheTags(
-    [cacheTagCoursesList({ language })],
-    [`/${language === "en" ? "" : `${language}/`}courses`],
-  );
-
   return course;
 }
 
@@ -46,9 +40,6 @@ test.describe("Courses Page - Basic", () => {
 
     const courseLink = page.getByRole("link", { name: new RegExp(course.title, "i") });
 
-    // Cache revalidation uses background regeneration, so the first load
-    // after invalidation may still serve stale content. Retry navigation
-    // until the newly created course appears.
     await expect(async () => {
       await page.goto("/courses");
       await expect(courseLink).toBeVisible({ timeout: 5000 });
@@ -75,8 +66,6 @@ test.describe("Courses Page - Infinite Loading", () => {
         }),
       ),
     );
-
-    await revalidateCacheTags([cacheTagCoursesList({ language: "en" })], ["/courses"]);
 
     const courseList = page.getByRole("main").getByRole("list");
     const courseLinks = courseList.getByRole("link");

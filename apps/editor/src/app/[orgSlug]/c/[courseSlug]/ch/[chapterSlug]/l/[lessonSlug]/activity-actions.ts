@@ -6,12 +6,9 @@ import { importActivities } from "@/data/activities/import-activities";
 import { reorderActivities } from "@/data/activities/reorder-activities";
 import { getErrorMessage } from "@/lib/error-messages";
 import { isImportMode } from "@/lib/import-mode";
-import { revalidateMainApp } from "@zoonk/core/cache/revalidate";
-import { cacheTagLesson } from "@zoonk/utils/cache";
 import { getExtracted } from "next-intl/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { after } from "next/server";
 
 async function createActivityAction(
   lessonSlug: string,
@@ -33,10 +30,6 @@ async function createActivityAction(
   if (error) {
     return { activityId: null, error: await getErrorMessage(error) };
   }
-
-  after(async () => {
-    await revalidateMainApp([cacheTagLesson({ lessonSlug })]);
-  });
 
   return { activityId: data.id, error: null };
 }
@@ -64,10 +57,6 @@ async function importActivitiesAction(
   if (error) {
     return { error: await getErrorMessage(error) };
   }
-
-  after(async () => {
-    await revalidateMainApp([cacheTagLesson({ lessonSlug })]);
-  });
 
   return { error: null };
 }
@@ -142,10 +131,6 @@ export async function reorderActivitiesAction(
   if (error) {
     return { error: await getErrorMessage(error) };
   }
-
-  after(async () => {
-    await revalidateMainApp([cacheTagLesson({ lessonSlug })]);
-  });
 
   revalidatePath(`/${orgSlug}/c/${courseSlug}/ch/${chapterSlug}/l/${lessonSlug}`);
   return { error: null };

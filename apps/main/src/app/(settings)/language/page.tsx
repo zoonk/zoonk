@@ -1,5 +1,3 @@
-"use cache";
-
 import {
   Container,
   ContainerBody,
@@ -9,14 +7,11 @@ import {
   ContainerTitle,
 } from "@zoonk/ui/components/container";
 import { type Metadata } from "next";
-import { getExtracted, setRequestLocale } from "next-intl/server";
+import { getExtracted } from "next-intl/server";
 import { LocaleSwitcher } from "../_components/locale-switcher";
 
-export async function generateMetadata({
-  params,
-}: PageProps<"/[locale]/language">): Promise<Metadata> {
-  const { locale } = await params;
-  const t = await getExtracted({ locale });
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getExtracted();
 
   return {
     description: t(
@@ -26,10 +21,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function Language({ params }: PageProps<"/[locale]/language">) {
-  const { locale } = await params;
-  setRequestLocale(locale);
-
+export default async function Language() {
   const t = await getExtracted();
 
   return (
