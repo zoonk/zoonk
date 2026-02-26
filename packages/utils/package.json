@@ -6,7 +6,6 @@
     "./belt-level": "./src/belt-level.ts",
     "./cookies": "./src/cookies.ts",
     "./download": "./src/download.ts",
-    "./cache": "./src/cache.ts",
     "./chart": "./src/chart.ts",
     "./categories": "./src/categories.ts",
     "./constants": "./src/constants.ts",
