@@ -1,5 +1,3 @@
-"use cache";
-
 import { Suspense } from "react";
 import { CategoryPills, CategoryPillsSkeleton } from "./category-pills";
 

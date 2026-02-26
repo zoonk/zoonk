@@ -5,9 +5,6 @@ import { type NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
 
 const CACHE_IMAGE_DAYS = 30;
-const CACHE_EXPIRE_DAYS = 365;
-const CACHE_STALE_MINUTES = 5;
-const CACHE_REVALIDATE_DAYS = 30;
 
 const isE2E = process.env.E2E_TESTING === "true";
 
@@ -18,13 +15,6 @@ const e2eAliases: Record<string, string> = isE2E
 
 const nextConfig: NextConfig = {
   cacheComponents: true,
-  cacheLife: {
-    default: {
-      expire: 60 * 60 * 24 * CACHE_EXPIRE_DAYS,
-      revalidate: 60 * 60 * 24 * CACHE_REVALIDATE_DAYS,
-      stale: 60 * CACHE_STALE_MINUTES,
-    },
-  },
   devIndicators: false,
   // Use separate build directories so E2E and production builds don't conflict
   distDir: isE2E ? ".next-e2e" : ".next",

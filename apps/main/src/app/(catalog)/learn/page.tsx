@@ -1,12 +1,8 @@
-"use cache";
-
 import { type Metadata } from "next";
 import { getExtracted, setRequestLocale } from "next-intl/server";
 import { LearnForm } from "./learn-form";
 
-export async function generateMetadata({
-  params,
-}: PageProps<"/[locale]/learn">): Promise<Metadata> {
+export async function generateMetadata({ params }: PageProps<"/learn">): Promise<Metadata> {
   const { locale } = await params;
   const t = await getExtracted({ locale });
 

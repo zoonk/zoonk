@@ -1,5 +1,3 @@
-"use cache";
-
 import { LIST_COURSES_LIMIT, listCourses } from "@/data/courses/list-courses";
 import { getCategoryHeader, getCategoryMeta } from "@/lib/categories/category-server";
 import {
@@ -9,11 +7,9 @@ import {
   ContainerHeaderGroup,
   ContainerTitle,
 } from "@zoonk/ui/components/container";
-import { cacheTagCoursesListByCategory } from "@zoonk/utils/cache";
 import { COURSE_CATEGORIES, isValidCategory } from "@zoonk/utils/categories";
 import { type Metadata } from "next";
-import { setRequestLocale } from "next-intl/server";
-import { cacheTag } from "next/cache";
+import { getLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { CourseListClient } from "../course-list-client";
 
@@ -23,27 +19,23 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({
   params,
-}: PageProps<"/[locale]/courses/[category]">): Promise<Metadata> {
-  const { category, locale } = await params;
+}: PageProps<"/courses/[category]">): Promise<Metadata> {
+  const { category } = await params;
 
   if (!isValidCategory(category)) {
     return {};
   }
 
-  return getCategoryMeta({ category, locale });
+  return getCategoryMeta({ category });
 }
 
-export default async function CategoryCourses({
-  params,
-}: PageProps<"/[locale]/courses/[category]">) {
-  const { category, locale } = await params;
+export default async function CategoryCourses({ params }: PageProps<"/courses/[category]">) {
+  const locale = await getLocale();
+  const { category } = await params;
 
   if (!isValidCategory(category)) {
     notFound();
   }
-
-  setRequestLocale(locale);
-  cacheTag(cacheTagCoursesListByCategory({ category, language: locale }));
 
   const header = await getCategoryHeader(category);
   const courses = await listCourses({ category, language: locale });

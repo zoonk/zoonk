@@ -1,5 +1,3 @@
-"use cache";
-
 import { LIST_COURSES_LIMIT, listCourses } from "@/data/courses/list-courses";
 import {
   Container,
@@ -14,11 +12,8 @@ import { getExtracted, setRequestLocale } from "next-intl/server";
 import { cacheTag } from "next/cache";
 import { CourseListClient } from "./course-list-client";
 
-export async function generateMetadata({
-  params,
-}: PageProps<"/[locale]/courses">): Promise<Metadata> {
-  const { locale } = await params;
-  const t = await getExtracted({ locale });
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getExtracted();
 
   return {
     description: t(
@@ -28,7 +23,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function Courses({ params }: PageProps<"/[locale]/courses">) {
+export default async function Courses({ params }: PageProps<"/courses">) {
   const { locale } = await params;
   setRequestLocale(locale);
   cacheTag(cacheTagCoursesList({ language: locale }));
