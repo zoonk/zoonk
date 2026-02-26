@@ -20,7 +20,6 @@ import {
   MediaCardTrigger,
 } from "@zoonk/ui/components/media-card";
 import { NotebookPenIcon } from "lucide-react";
-import { getLocale } from "next-intl/server";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -31,8 +30,7 @@ export async function CourseHeader({
   brandSlug: string;
   course: CourseWithDetails;
 }) {
-  const locale = await getLocale();
-  const categoryLabels = await getCategories({ locale });
+  const categoryLabels = await getCategories();
   const courseCategoryKeys = new Set(course.categories.map((item) => item.category));
 
   const displayCategories = categoryLabels.filter((cat) => courseCategoryKeys.has(cat.key));
