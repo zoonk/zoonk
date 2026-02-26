@@ -2,6 +2,7 @@
 
 import { cn } from "@zoonk/ui/lib/utils";
 import { CircleCheck } from "lucide-react";
+import { type Route } from "next";
 import { useExtracted } from "next-intl";
 import { type CompletionResult } from "../completion-input-schema";
 import { computeScore } from "../compute-score";
@@ -71,8 +72,8 @@ export function CompletionScreenContent({
 }: {
   completionResult: CompletionResult | null;
   dimensions: DimensionInventory;
-  lessonHref: string;
-  nextActivityHref: string | null;
+  lessonHref: Route;
+  nextActivityHref: Route | null;
   onRestart: () => void;
   results: Record<string, StepResult>;
 }) {

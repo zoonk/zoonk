@@ -1,5 +1,6 @@
 "use client";
 
+import { type Route } from "next";
 import { useCallback, useReducer } from "react";
 import { type CompletionInput, type CompletionResult } from "./completion-input-schema";
 import { hasNegativeDimension } from "./has-negative-dimension";
@@ -42,7 +43,7 @@ function deriveViewState(state: PlayerState) {
   };
 }
 
-export function PlayerProvider({
+export function PlayerProvider<Href extends string>({
   activity,
   children,
   completionFooter,
@@ -57,10 +58,10 @@ export function PlayerProvider({
   activity: SerializedActivity;
   children: React.ReactNode;
   completionFooter?: React.ReactNode;
-  lessonHref: string;
-  levelHref?: string;
-  loginHref?: string;
-  nextActivityHref: string | null;
+  lessonHref: Route<Href>;
+  levelHref?: Route<Href>;
+  loginHref?: Route<Href>;
+  nextActivityHref: Route<Href> | null;
   onComplete: (input: CompletionInput) => Promise<CompletionResult>;
   onEscape: () => void;
   onNext?: () => void;
@@ -87,7 +88,7 @@ export function PlayerProvider({
     phase: state.phase,
   });
 
-  const contextValue: PlayerContextValue = {
+  const contextValue: PlayerContextValue<Href> = {
     ...actions,
     ...view,
     activityId: state.activityId,

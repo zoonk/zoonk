@@ -5,6 +5,7 @@ import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import { Kbd } from "@zoonk/ui/components/kbd";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
+import { type Route } from "next";
 import { useExtracted } from "next-intl";
 import Link from "next/link";
 import { type CompletionResult } from "../completion-input-schema";
@@ -31,7 +32,7 @@ function SecondaryActions({
   onRestart,
   variant,
 }: {
-  lessonHref: string;
+  lessonHref: Route;
   onRestart: () => void;
   variant: "inline" | "stacked";
 }) {
@@ -95,8 +96,8 @@ function AuthenticatedContent({
   showRewards,
 }: {
   completionResult: CompletionResult | null;
-  lessonHref: string;
-  nextActivityHref: string | null;
+  lessonHref: Route;
+  nextActivityHref: Route | null;
   onRestart: () => void;
   showRewards: boolean;
 }) {
@@ -154,8 +155,8 @@ function UnauthenticatedContent({
   loginHref,
   onRestart,
 }: {
-  lessonHref: string;
-  loginHref: string;
+  lessonHref: Route;
+  loginHref: Route;
   onRestart: () => void;
 }) {
   const t = useExtracted();
@@ -175,7 +176,7 @@ function UnauthenticatedContent({
   );
 }
 
-function PendingContent({ lessonHref }: { lessonHref: string }) {
+function PendingContent({ lessonHref }: { lessonHref: Route }) {
   const t = useExtracted();
 
   return (
@@ -202,8 +203,8 @@ export function AuthBranch({
   showRewards = true,
 }: {
   completionResult: CompletionResult | null;
-  lessonHref: string;
-  nextActivityHref: string | null;
+  lessonHref: Route;
+  nextActivityHref: Route | null;
   onRestart: () => void;
   showRewards?: boolean;
 }) {

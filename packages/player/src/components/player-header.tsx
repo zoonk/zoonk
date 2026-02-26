@@ -3,6 +3,7 @@
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronLeft, ChevronRight, XIcon } from "lucide-react";
+import { type Route } from "next";
 import { useExtracted } from "next-intl";
 import Link from "next/link";
 
@@ -19,7 +20,13 @@ export function PlayerHeader({ className, ...props }: React.ComponentProps<"head
   );
 }
 
-export function PlayerCloseLink({ className, href }: { className?: string; href: string }) {
+export function PlayerCloseLink<T extends string>({
+  className,
+  href,
+}: {
+  className?: string;
+  href: Route<T>;
+}) {
   const t = useExtracted();
 
   return (

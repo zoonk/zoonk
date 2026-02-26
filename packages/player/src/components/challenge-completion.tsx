@@ -4,6 +4,7 @@ import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import { Kbd } from "@zoonk/ui/components/kbd";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CircleCheck } from "lucide-react";
+import { type Route } from "next";
 import { useExtracted } from "next-intl";
 import Link from "next/link";
 import { type CompletionResult } from "../completion-input-schema";
@@ -110,7 +111,7 @@ export function ChallengeFailureContent({
 }: {
   completionResult: CompletionResult | null;
   dimensions: DimensionInventory;
-  lessonHref: string;
+  lessonHref: Route;
   onRestart: () => void;
 }) {
   const t = useExtracted();

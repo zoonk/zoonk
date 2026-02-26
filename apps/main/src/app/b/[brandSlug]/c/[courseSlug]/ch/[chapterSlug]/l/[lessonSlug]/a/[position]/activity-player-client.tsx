@@ -27,7 +27,7 @@ export function ActivityPlayerClient({
   const lessonHref = `/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}/l/${lessonSlug}` as const;
 
   const nextActivityHref = nextActivity
-    ? (`/b/${brandSlug}/c/${courseSlug}/ch/${nextActivity.chapterSlug}/l/${nextActivity.lessonSlug}/a/${nextActivity.activityPosition}` as const)
+    ? (`/b/${brandSlug}/c/${courseSlug}/ch/${nextActivity.chapterSlug}/l/${nextActivity.lessonSlug}/a/${String(nextActivity.activityPosition)}` as const)
     : null;
 
   return (
