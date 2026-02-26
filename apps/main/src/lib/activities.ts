@@ -7,8 +7,8 @@ export type ActivityKindInfo = {
   description: string;
 };
 
-export async function getActivityKinds(params?: { locale: string }): Promise<ActivityKindInfo[]> {
-  const t = await getExtracted(params);
+export async function getActivityKinds(): Promise<ActivityKindInfo[]> {
+  const t = await getExtracted();
 
   return [
     {
@@ -168,11 +168,10 @@ async function getSeoDescription(
 export async function getActivitySeoMeta(
   activity: { kind: ActivityKind; title: string | null; description: string | null },
   lessonTitle: string,
-  params?: { locale: string },
 ): Promise<{ title: string; description: string }> {
   const [title, description] = await Promise.all([
-    getSeoTitle(activity, lessonTitle, params),
-    getSeoActivityDescription(activity, lessonTitle, params),
+    getSeoTitle(activity, lessonTitle),
+    getSeoActivityDescription(activity, lessonTitle),
   ]);
 
   return { description, title };
@@ -181,15 +180,14 @@ export async function getActivitySeoMeta(
 async function getSeoTitle(
   activity: { kind: ActivityKind; title: string | null },
   lessonTitle: string,
-  params?: { locale: string },
 ): Promise<string> {
-  const t = await getExtracted(params);
+  const t = await getExtracted();
 
   if (activity.kind === "custom" && activity.title) {
     return t("{activity} - {lesson}", { activity: activity.title, lesson: lessonTitle });
   }
 
-  const kinds = await getActivityKinds(params);
+  const kinds = await getActivityKinds();
   const kindInfo = kinds.find((kind) => kind.key === activity.kind);
 
   if (kindInfo) {
@@ -202,11 +200,10 @@ async function getSeoTitle(
 async function getSeoActivityDescription(
   activity: { kind: ActivityKind; description: string | null },
   lessonTitle: string,
-  params?: { locale: string },
 ): Promise<string> {
   if (activity.kind === "custom" && activity.description) {
     return activity.description;
   }
 
-  return getSeoDescription(activity.kind, lessonTitle, params);
+  return getSeoDescription(activity.kind, lessonTitle);
 }

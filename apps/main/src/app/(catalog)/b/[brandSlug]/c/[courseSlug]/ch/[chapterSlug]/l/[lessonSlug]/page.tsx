@@ -1,5 +1,3 @@
-"use cache";
-
 import { CatalogActions } from "@/components/catalog/catalog-actions";
 import { CatalogContainer, CatalogToolbar } from "@/components/catalog/catalog-list";
 import { ContinueActivityLink } from "@/components/catalog/continue-activity-link";
@@ -7,11 +5,8 @@ import { ProgressPreloader } from "@/components/catalog/progress-preloader";
 import { listLessonActivities } from "@/data/activities/list-lesson-activities";
 import { getLesson } from "@/data/lessons/get-lesson";
 import { getActivityKinds } from "@/lib/activities";
-import { cacheTagLesson } from "@zoonk/utils/cache";
 import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import { type Metadata } from "next";
-import { setRequestLocale } from "next-intl/server";
-import { cacheTag } from "next/cache";
 import { notFound, redirect } from "next/navigation";
 import { ActivityList } from "./activity-list";
 import { LessonHeader } from "./lesson-header";
@@ -30,8 +25,9 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({
   params,
-}: PageProps<"/[locale]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]">): Promise<Metadata> {
+}: PageProps<"/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]">): Promise<Metadata> {
   const { brandSlug, chapterSlug, courseSlug, lessonSlug } = await params;
+
   const lesson = await getLesson({
     brandSlug,
     chapterSlug,
@@ -51,9 +47,8 @@ export async function generateMetadata({
 
 export default async function LessonPage({
   params,
-}: PageProps<"/[locale]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]">) {
-  const { brandSlug, chapterSlug, courseSlug, lessonSlug, locale } = await params;
-  setRequestLocale(locale);
+}: PageProps<"/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]">) {
+  const { brandSlug, chapterSlug, courseSlug, lessonSlug } = await params;
 
   const lesson = await getLesson({
     brandSlug,
@@ -61,8 +56,6 @@ export default async function LessonPage({
     courseSlug,
     lessonSlug,
   });
-
-  cacheTag(cacheTagLesson({ lessonSlug }));
 
   if (!lesson) {
     notFound();
@@ -74,7 +67,7 @@ export default async function LessonPage({
     redirect(`/generate/l/${lesson.id}`);
   }
 
-  const activityKinds = await getActivityKinds({ locale });
+  const activityKinds = await getActivityKinds();
   const kindMeta = new Map(activityKinds.map((kind) => [kind.key, kind]));
   const baseHref = `/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}/l/${lessonSlug}`;
 

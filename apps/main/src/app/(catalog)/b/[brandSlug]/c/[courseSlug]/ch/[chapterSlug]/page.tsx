@@ -1,36 +1,20 @@
-"use cache";
-
 import { CatalogActions } from "@/components/catalog/catalog-actions";
 import { CatalogContainer, CatalogToolbar } from "@/components/catalog/catalog-list";
 import { ContinueActivityLink } from "@/components/catalog/continue-activity-link";
 import { ProgressPreloader } from "@/components/catalog/progress-preloader";
 import { getChapter } from "@/data/chapters/get-chapter";
 import { listChapterLessons } from "@/data/lessons/list-chapter-lessons";
-import { cacheTagChapter } from "@zoonk/utils/cache";
-import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import { type Metadata } from "next";
-import { setRequestLocale } from "next-intl/server";
-import { cacheTag } from "next/cache";
 import { notFound, redirect } from "next/navigation";
 import { Suspense } from "react";
 import { ChapterHeader } from "./chapter-header";
 import { LessonList } from "./lesson-list";
 
-export async function generateStaticParams() {
-  return [
-    {
-      brandSlug: AI_ORG_SLUG,
-      chapterSlug: "sample",
-      courseSlug: "sample",
-      locale: "en",
-    },
-  ];
-}
-
 export async function generateMetadata({
   params,
-}: PageProps<"/[locale]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]">): Promise<Metadata> {
+}: PageProps<"/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]">): Promise<Metadata> {
   const { brandSlug, chapterSlug, courseSlug } = await params;
+
   const chapter = await getChapter({
     brandSlug,
     chapterSlug,
@@ -49,13 +33,10 @@ export async function generateMetadata({
 
 export default async function ChapterPage({
   params,
-}: PageProps<"/[locale]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]">) {
-  const { brandSlug, chapterSlug, courseSlug, locale } = await params;
-  setRequestLocale(locale);
+}: PageProps<"/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]">) {
+  const { brandSlug, chapterSlug, courseSlug } = await params;
 
   const chapter = await getChapter({ brandSlug, chapterSlug, courseSlug });
-
-  cacheTag(cacheTagChapter({ chapterSlug }));
 
   if (!chapter) {
     notFound();

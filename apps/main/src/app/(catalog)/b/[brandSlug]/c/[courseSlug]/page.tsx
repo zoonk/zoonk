@@ -1,28 +1,18 @@
-"use cache";
-
 import { CatalogActions } from "@/components/catalog/catalog-actions";
 import { CatalogContainer, CatalogToolbar } from "@/components/catalog/catalog-list";
 import { ContinueActivityLink } from "@/components/catalog/continue-activity-link";
 import { ProgressPreloader } from "@/components/catalog/progress-preloader";
 import { listCourseChapters } from "@/data/chapters/list-course-chapters";
 import { getCourse } from "@/data/courses/get-course";
-import { cacheTagCourse } from "@zoonk/utils/cache";
-import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import { type Metadata } from "next";
-import { setRequestLocale } from "next-intl/server";
-import { cacheTag } from "next/cache";
 import { notFound, redirect } from "next/navigation";
 import { Suspense } from "react";
 import { ChapterList } from "./chapter-list";
 import { CourseHeader } from "./course-header";
 
-export async function generateStaticParams() {
-  return [{ brandSlug: AI_ORG_SLUG, courseSlug: "sample", locale: "en" }];
-}
-
 export async function generateMetadata({
   params,
-}: PageProps<"/[locale]/b/[brandSlug]/c/[courseSlug]">): Promise<Metadata> {
+}: PageProps<"/b/[brandSlug]/c/[courseSlug]">): Promise<Metadata> {
   const { brandSlug, courseSlug } = await params;
   const course = await getCourse({ brandSlug, courseSlug });
 
@@ -36,15 +26,10 @@ export async function generateMetadata({
   };
 }
 
-export default async function CoursePage({
-  params,
-}: PageProps<"/[locale]/b/[brandSlug]/c/[courseSlug]">) {
-  const { brandSlug, courseSlug, locale } = await params;
-  setRequestLocale(locale);
+export default async function CoursePage({ params }: PageProps<"/b/[brandSlug]/c/[courseSlug]">) {
+  const { brandSlug, courseSlug } = await params;
 
   const course = await getCourse({ brandSlug, courseSlug });
-
-  cacheTag(cacheTagCourse({ courseSlug }));
 
   if (!course) {
     notFound();
