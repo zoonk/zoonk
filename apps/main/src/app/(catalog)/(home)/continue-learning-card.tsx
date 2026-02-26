@@ -24,19 +24,20 @@ function getCourseHrefs(item: ContinueLearningItem) {
   const { activity, chapter, course, lesson } = item;
 
   if (course.organization) {
-    const lessonHref = `/b/${course.organization.slug}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`;
+    const lessonHref =
+      `/b/${course.organization.slug}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}` as const;
 
     return {
-      activityHref: `${lessonHref}/a/${activity.position}`,
-      courseHref: `/b/${course.organization.slug}/c/${course.slug}`,
+      activityHref: `${lessonHref}/a/${activity.position}` as const,
+      courseHref: `/b/${course.organization.slug}/c/${course.slug}` as const,
       lessonHref,
     };
   }
 
   return {
-    activityHref: `/p/${course.id}`,
-    courseHref: `/p/${course.id}`,
-    lessonHref: `/p/${course.id}`,
+    activityHref: `/p/${course.id}` as const,
+    courseHref: `/p/${course.id}` as const,
+    lessonHref: `/p/${course.id}` as const,
   };
 }
 

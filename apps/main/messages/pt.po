@@ -70,7 +70,7 @@ msgid "{value} BP to level up"
 msgstr "{value} PM para subir de nível"
 
 #: ../../packages/player/src/components/belt-progress.tsx
-#: src/app/(catalog)/level.tsx
+#: src/app/(catalog)/(home)/level.tsx
 #: src/app/(performance)/_components/metric-pills.tsx
 #: src/app/(performance)/level/page.tsx
 msgctxt "y1Qr81"
@@ -317,7 +317,7 @@ msgid "BP"
 msgstr "PM"
 
 #: ../../packages/player/src/components/reward-badges.tsx
-#: src/app/(catalog)/energy.tsx
+#: src/app/(catalog)/(home)/energy.tsx
 #: src/app/(performance)/_components/metric-pills.tsx
 #: src/app/(performance)/energy/page.tsx
 msgctxt "cVpmV7"
@@ -546,6 +546,165 @@ msgctxt "R/6nsx"
 msgid "Subscription"
 msgstr "Assinatura"
 
+#: src/app/(catalog)/(home)/best-day.tsx
+#: src/app/(performance)/score/score-insights.tsx
+msgctxt "bcsugq"
+msgid "{day} with {value}%"
+msgstr "{day} com {value}%"
+
+#: src/app/(catalog)/(home)/best-day.tsx
+#: src/app/(performance)/score/score-insights.tsx
+msgctxt "HHFpcy"
+msgid "Best day"
+msgstr "Melhor dia"
+
+#: src/app/(catalog)/(home)/best-day.tsx
+#: src/app/(catalog)/(home)/best-time.tsx
+#: src/app/(catalog)/(home)/score.tsx
+msgctxt "zml1/y"
+msgid "Past 3 months"
+msgstr "Últimos 3 meses"
+
+#: src/app/(catalog)/(home)/best-time.tsx
+#: src/app/(performance)/score/score-insights.tsx
+msgctxt "/kzk/m"
+msgid "Morning"
+msgstr "Manhã"
+
+#: src/app/(catalog)/(home)/best-time.tsx
+#: src/app/(performance)/score/score-insights.tsx
+msgctxt "00/IyC"
+msgid "Night"
+msgstr "Madrugada"
+
+#: src/app/(catalog)/(home)/best-time.tsx
+#: src/app/(performance)/score/score-insights.tsx
+msgctxt "dFW9lU"
+msgid "Best time"
+msgstr "Melhor horário"
+
+#: src/app/(catalog)/(home)/best-time.tsx
+#: src/app/(performance)/score/score-insights.tsx
+msgctxt "mF+J9o"
+msgid "Afternoon"
+msgstr "Tarde"
+
+#: src/app/(catalog)/(home)/best-time.tsx
+#: src/app/(performance)/score/score-insights.tsx
+msgctxt "mPEpnN"
+msgid "Evening"
+msgstr "Noite"
+
+#: src/app/(catalog)/(home)/best-time.tsx
+#: src/app/(performance)/score/score-insights.tsx
+msgctxt "vG7kPp"
+msgid "{period} with {value}%"
+msgstr "{period} com {value}%"
+
+#: src/app/(catalog)/(home)/continue-learning-card.tsx
+msgctxt "TyANVg"
+msgid "Next: {activity}"
+msgstr "Próximo: {activity}"
+
+#: src/app/(catalog)/(home)/continue-learning-card.tsx
+#: src/app/generate/a/[id]/generate-activity-content.tsx
+msgctxt "ZmlNQ3"
+msgid "Activity"
+msgstr "Atividade"
+
+#: src/app/(catalog)/(home)/continue-learning.tsx
+msgctxt "0X+xfW"
+msgid "Continue learning"
+msgstr "Continue aprendendo"
+
+#: src/app/(catalog)/(home)/energy.tsx
+msgctxt "C7ROJx"
+msgid "Your energy is {value}%"
+msgstr "Sua energia está em {value}%"
+
+#: src/app/(catalog)/(home)/energy.tsx
+msgctxt "soDmlG"
+msgid "Keep learning to increase it"
+msgstr "Continue aprendendo para aumentá-lo"
+
+#: src/app/(catalog)/(home)/energy.tsx
+msgctxt "WgeB0r"
+msgid "Keep learning to maintain it"
+msgstr "Continue aprendendo para mantê-lo"
+
+#: src/app/(catalog)/(home)/hero.tsx
+msgctxt "nlT+zW"
+msgid "Learn anything"
+msgstr "Aprenda qualquer coisa"
+
+#: src/app/(catalog)/(home)/hero.tsx
+msgctxt "qvmpye"
+msgid "Learn anything with AI"
+msgstr "Aprenda qualquer coisa com IA"
+
+#: src/app/(catalog)/(home)/hero.tsx
+#: src/app/(catalog)/courses/page.tsx
+#: src/app/(catalog)/my/user-course-list.tsx
+msgctxt "s+Ncqj"
+msgid "Explore courses"
+msgstr "Explorar cursos"
+
+#: src/app/(catalog)/(home)/hero.tsx
+msgctxt "VcxnWX"
+msgid "Interactive courses built for you. Just tell us what you want to learn."
+msgstr "Cursos interativos criados para você. Apenas nos diga o que você quer aprender."
+
+#: src/app/(catalog)/(home)/level.tsx
+#: src/app/(performance)/level/level-stats.tsx
+msgctxt "3UK8wh"
+msgid "{color} belt"
+msgstr "faixa {color}"
+
+#: src/app/(catalog)/(home)/level.tsx
+#: src/app/(performance)/level/level-stats.tsx
+msgctxt "8N9BRu"
+msgid "{value} BP to next level"
+msgstr "{value} PM para o próximo nível"
+
+#: src/app/(catalog)/(home)/level.tsx
+#: src/app/(performance)/level/level-stats.tsx
+msgctxt "pgt3eW"
+msgid "Max level reached"
+msgstr "Nível máximo alcançado"
+
+#: src/app/(catalog)/(home)/level.tsx
+#: src/app/(performance)/level/level-stats.tsx
+msgctxt "uiwFZe"
+msgid "{color} Belt - Level {level}"
+msgstr "Faixa {color} - Nível {level}"
+
+#: src/app/(catalog)/(home)/page.tsx
+msgctxt "qsfeMJ"
+msgid "Zoonk: AI Learning Platform"
+msgstr "Zoonk: plataforma de aprendizagem com IA"
+
+#: src/app/(catalog)/(home)/page.tsx
+msgctxt "ZgSctJ"
+msgid "Zoonk is an AI-powered learning platform where you can learn anything through interactive courses, lessons, and activities."
+msgstr "O Zoonk é uma plataforma de aprendizagem com IA onde você pode aprender qualquer coisa através de cursos interativos, aulas e atividades."
+
+#: src/app/(catalog)/(home)/performance.tsx
+msgctxt "AA5h7P"
+msgid "Performance"
+msgstr "Desempenho"
+
+#: src/app/(catalog)/(home)/score.tsx
+msgctxt "4dsZTc"
+msgid "{value}% correct answers"
+msgstr "{value}% de respostas corretas"
+
+#: src/app/(catalog)/(home)/score.tsx
+#: src/app/(performance)/_components/metric-pills.tsx
+#: src/app/(performance)/score/page.tsx
+msgctxt "oLkLww"
+msgid "Score"
+msgstr "Acertos"
+
 #: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/chapter-header.tsx
 msgctxt "B9hCYt"
 msgid "Chapter {position}"
@@ -580,77 +739,6 @@ msgstr "Buscar capítulos..."
 msgctxt "8udPa+"
 msgid "No chapters found"
 msgstr "Nenhum capítulo encontrado"
-
-#: src/app/(catalog)/best-day.tsx
-#: src/app/(performance)/score/score-insights.tsx
-msgctxt "bcsugq"
-msgid "{day} with {value}%"
-msgstr "{day} com {value}%"
-
-#: src/app/(catalog)/best-day.tsx
-#: src/app/(performance)/score/score-insights.tsx
-msgctxt "HHFpcy"
-msgid "Best day"
-msgstr "Melhor dia"
-
-#: src/app/(catalog)/best-day.tsx
-#: src/app/(catalog)/best-time.tsx
-#: src/app/(catalog)/score.tsx
-msgctxt "zml1/y"
-msgid "Past 3 months"
-msgstr "Últimos 3 meses"
-
-#: src/app/(catalog)/best-time.tsx
-#: src/app/(performance)/score/score-insights.tsx
-msgctxt "/kzk/m"
-msgid "Morning"
-msgstr "Manhã"
-
-#: src/app/(catalog)/best-time.tsx
-#: src/app/(performance)/score/score-insights.tsx
-msgctxt "00/IyC"
-msgid "Night"
-msgstr "Madrugada"
-
-#: src/app/(catalog)/best-time.tsx
-#: src/app/(performance)/score/score-insights.tsx
-msgctxt "dFW9lU"
-msgid "Best time"
-msgstr "Melhor horário"
-
-#: src/app/(catalog)/best-time.tsx
-#: src/app/(performance)/score/score-insights.tsx
-msgctxt "mF+J9o"
-msgid "Afternoon"
-msgstr "Tarde"
-
-#: src/app/(catalog)/best-time.tsx
-#: src/app/(performance)/score/score-insights.tsx
-msgctxt "mPEpnN"
-msgid "Evening"
-msgstr "Noite"
-
-#: src/app/(catalog)/best-time.tsx
-#: src/app/(performance)/score/score-insights.tsx
-msgctxt "vG7kPp"
-msgid "{period} with {value}%"
-msgstr "{period} com {value}%"
-
-#: src/app/(catalog)/continue-learning-card.tsx
-msgctxt "TyANVg"
-msgid "Next: {activity}"
-msgstr "Próximo: {activity}"
-
-#: src/app/(catalog)/continue-learning-card.tsx
-#: src/app/generate/a/[id]/generate-activity-content.tsx
-msgctxt "ZmlNQ3"
-msgid "Activity"
-msgstr "Atividade"
-
-#: src/app/(catalog)/continue-learning.tsx
-msgctxt "0X+xfW"
-msgid "Continue learning"
-msgstr "Continue aprendendo"
 
 #: src/app/(catalog)/courses/category-pills.tsx
 msgctxt "tuZsq+"
@@ -688,46 +776,9 @@ msgid "Online Courses using AI"
 msgstr "Cursos online usando IA"
 
 #: src/app/(catalog)/courses/page.tsx
-#: src/app/(catalog)/hero.tsx
-#: src/app/(catalog)/my/user-course-list.tsx
-msgctxt "s+Ncqj"
-msgid "Explore courses"
-msgstr "Explorar cursos"
-
-#: src/app/(catalog)/courses/page.tsx
 msgctxt "z6saPZ"
 msgid "Explore all Zoonk courses to learn anything using AI. Find interactive lessons, challenges, and activities to learn subjects like science, math, technology, and more."
 msgstr "Explore todos os cursos do Zoonk para aprender qualquer coisa usando IA. Encontre aulas interativas, desafios e atividades para aprender matérias como ciência, matemática, tecnologia e muito mais."
-
-#: src/app/(catalog)/energy.tsx
-msgctxt "C7ROJx"
-msgid "Your energy is {value}%"
-msgstr "Sua energia está em {value}%"
-
-#: src/app/(catalog)/energy.tsx
-msgctxt "soDmlG"
-msgid "Keep learning to increase it"
-msgstr "Continue aprendendo para aumentá-lo"
-
-#: src/app/(catalog)/energy.tsx
-msgctxt "WgeB0r"
-msgid "Keep learning to maintain it"
-msgstr "Continue aprendendo para mantê-lo"
-
-#: src/app/(catalog)/hero.tsx
-msgctxt "nlT+zW"
-msgid "Learn anything"
-msgstr "Aprenda qualquer coisa"
-
-#: src/app/(catalog)/hero.tsx
-msgctxt "qvmpye"
-msgid "Learn anything with AI"
-msgstr "Aprenda qualquer coisa com IA"
-
-#: src/app/(catalog)/hero.tsx
-msgctxt "VcxnWX"
-msgid "Interactive courses built for you. Just tell us what you want to learn."
-msgstr "Cursos interativos criados para você. Apenas nos diga o que você quer aprender."
 
 #: src/app/(catalog)/learn/[prompt]/course-suggestion-item.tsx
 msgctxt "Pc+tM3"
@@ -801,30 +852,6 @@ msgctxt "Zs1QEq"
 msgid "Learn Anything with AI"
 msgstr "Aprenda qualquer coisa com IA"
 
-#: src/app/(catalog)/level.tsx
-#: src/app/(performance)/level/level-stats.tsx
-msgctxt "3UK8wh"
-msgid "{color} belt"
-msgstr "faixa {color}"
-
-#: src/app/(catalog)/level.tsx
-#: src/app/(performance)/level/level-stats.tsx
-msgctxt "8N9BRu"
-msgid "{value} BP to next level"
-msgstr "{value} PM para o próximo nível"
-
-#: src/app/(catalog)/level.tsx
-#: src/app/(performance)/level/level-stats.tsx
-msgctxt "pgt3eW"
-msgid "Max level reached"
-msgstr "Nível máximo alcançado"
-
-#: src/app/(catalog)/level.tsx
-#: src/app/(performance)/level/level-stats.tsx
-msgctxt "uiwFZe"
-msgid "{color} Belt - Level {level}"
-msgstr "Faixa {color} - Nível {level}"
-
 #: src/app/(catalog)/my/page.tsx
 msgctxt "Dr13kE"
 msgid "Continue where you left off"
@@ -859,33 +886,6 @@ msgstr "Cursos personalizados em breve."
 msgctxt "e61Jf3"
 msgid "Coming soon"
 msgstr "Em breve"
-
-#: src/app/(catalog)/page.tsx
-msgctxt "qsfeMJ"
-msgid "Zoonk: AI Learning Platform"
-msgstr "Zoonk: plataforma de aprendizagem com IA"
-
-#: src/app/(catalog)/page.tsx
-msgctxt "ZgSctJ"
-msgid "Zoonk is an AI-powered learning platform where you can learn anything through interactive courses, lessons, and activities."
-msgstr "O Zoonk é uma plataforma de aprendizagem com IA onde você pode aprender qualquer coisa através de cursos interativos, aulas e atividades."
-
-#: src/app/(catalog)/performance.tsx
-msgctxt "AA5h7P"
-msgid "Performance"
-msgstr "Desempenho"
-
-#: src/app/(catalog)/score.tsx
-msgctxt "4dsZTc"
-msgid "{value}% correct answers"
-msgstr "{value}% de respostas corretas"
-
-#: src/app/(catalog)/score.tsx
-#: src/app/(performance)/_components/metric-pills.tsx
-#: src/app/(performance)/score/page.tsx
-msgctxt "oLkLww"
-msgid "Score"
-msgstr "Acertos"
 
 #: src/app/(performance)/_components/metric-comparison.tsx
 #: src/app/(performance)/energy/energy-chart-client.tsx
