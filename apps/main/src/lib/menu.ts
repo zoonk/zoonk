@@ -30,6 +30,6 @@ const menu = {
   support: { icon: LifeBuoy, url: "/support" },
 } as const;
 
-export function getMenu(key: keyof typeof menu) {
+export function getMenu<Key extends keyof typeof menu>(key: Key) {
   return menu[key];
 }
