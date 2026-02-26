@@ -583,7 +583,7 @@ test.describe("Completion Screen", () => {
     await page.waitForLoadState("networkidle");
 
     // Header and progress bar visible before completion
-    await expect(page.getByLabel(/close/i)).toBeVisible();
+    await expect(page.getByRole("link", { name: /close/i })).toBeVisible();
     await expect(page.getByText(/1 \/ 1/)).toBeVisible();
     await expect(page.getByRole("progressbar", { name: /activity progress/i })).toBeVisible();
 
@@ -591,7 +591,7 @@ test.describe("Completion Screen", () => {
 
     // All chrome hidden on completion
     await expect(page.getByRole("status")).toBeVisible();
-    await expect(page.getByLabel(/close/i)).not.toBeVisible();
+    await expect(page.getByRole("link", { name: /close/i })).not.toBeVisible();
     await expect(page.getByText(/1 \/ 1/)).not.toBeVisible();
     await expect(page.getByRole("progressbar", { name: /activity progress/i })).not.toBeVisible();
   });
@@ -731,6 +731,6 @@ test.describe("Completion Screen", () => {
     await expect(page.getByText(/1 \/ 2/)).toBeVisible();
 
     // Header should be visible again
-    await expect(page.getByLabel(/close/i)).toBeVisible();
+    await expect(page.getByRole("link", { name: /close/i })).toBeVisible();
   });
 });
