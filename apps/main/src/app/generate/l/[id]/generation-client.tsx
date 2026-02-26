@@ -28,7 +28,6 @@ export function GenerationClient({
   generationStatus,
   lessonId,
   lessonSlug,
-  locale,
 }: {
   chapterSlug: string;
   courseSlug: string;
@@ -36,7 +35,6 @@ export function GenerationClient({
   generationStatus: GenerationStatus;
   lessonId: number;
   lessonSlug: string;
-  locale: string;
 }) {
   const t = useExtracted();
 
@@ -64,7 +62,7 @@ export function GenerationClient({
 
   useCompletionRedirect({
     status: generation.status,
-    url: `/${locale}/b/${AI_ORG_SLUG}/c/${courseSlug}/ch/${chapterSlug}/l/${lessonSlug}`,
+    url: `/b/${AI_ORG_SLUG}/c/${courseSlug}/ch/${chapterSlug}/l/${lessonSlug}`,
   });
 
   if (isActive) {

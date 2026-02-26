@@ -28,14 +28,12 @@ export function GenerationClient({
   courseSlug,
   generationRunId,
   generationStatus,
-  locale,
   suggestionId,
   targetLanguage,
 }: {
   courseSlug: string;
   generationRunId: string | null;
   generationStatus: GenerationStatus;
-  locale: string;
   suggestionId: number;
   targetLanguage: string | null;
 }) {
@@ -66,7 +64,7 @@ export function GenerationClient({
 
   useCompletionRedirect({
     status: generation.status,
-    url: `/${locale}/b/${AI_ORG_SLUG}/c/${courseSlug}`,
+    url: `/b/${AI_ORG_SLUG}/c/${courseSlug}`,
   });
 
   if (isActive) {

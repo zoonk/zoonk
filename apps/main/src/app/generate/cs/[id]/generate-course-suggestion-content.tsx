@@ -18,9 +18,9 @@ import { GenerationClient } from "./generation-client";
 export async function GenerateCourseSuggestionContent({
   params,
 }: {
-  params: Promise<{ id: string; locale: string }>;
+  params: Promise<{ id: string }>;
 }) {
-  const { id, locale } = await params;
+  const { id } = await params;
   const suggestionId = parseNumericId(id);
 
   if (suggestionId === null) {
@@ -56,7 +56,6 @@ export async function GenerateCourseSuggestionContent({
           courseSlug={suggestion.slug}
           generationRunId={suggestion.generationRunId}
           generationStatus={suggestion.generationStatus}
-          locale={locale}
           suggestionId={suggestionId}
           targetLanguage={suggestion.targetLanguage}
         />

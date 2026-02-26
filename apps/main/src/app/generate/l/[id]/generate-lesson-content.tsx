@@ -17,12 +17,8 @@ import { getExtracted } from "next-intl/server";
 import { notFound, redirect } from "next/navigation";
 import { GenerationClient } from "./generation-client";
 
-export async function GenerateLessonContent({
-  params,
-}: {
-  params: Promise<{ id: string; locale: string }>;
-}) {
-  const { id, locale } = await params;
+export async function GenerateLessonContent({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const lessonId = parseNumericId(id);
 
   if (lessonId === null) {
@@ -65,7 +61,6 @@ export async function GenerateLessonContent({
             generationStatus={lesson.generationStatus}
             lessonId={lessonId}
             lessonSlug={lesson.slug}
-            locale={locale}
           />
         </SubscriptionGate>
       </ContainerBody>

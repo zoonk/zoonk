@@ -29,7 +29,6 @@ export function GenerationClient({
   generationStatus,
   lessonId,
   lessonSlug,
-  locale,
   position,
 }: {
   activityKind: ActivityKind;
@@ -39,7 +38,6 @@ export function GenerationClient({
   generationStatus: GenerationStatus;
   lessonId: number;
   lessonSlug: string;
-  locale: string;
   position: number;
 }) {
   const t = useExtracted();
@@ -71,7 +69,7 @@ export function GenerationClient({
 
   useCompletionRedirect({
     status: generation.status,
-    url: `/${locale}/b/${AI_ORG_SLUG}/c/${courseSlug}/ch/${chapterSlug}/l/${lessonSlug}/a/${position}`,
+    url: `/b/${AI_ORG_SLUG}/c/${courseSlug}/ch/${chapterSlug}/l/${lessonSlug}/a/${position}`,
   });
 
   if (isActive) {

@@ -17,12 +17,8 @@ import { getExtracted } from "next-intl/server";
 import { notFound, redirect } from "next/navigation";
 import { GenerationClient } from "./generation-client";
 
-export async function GenerateChapterContent({
-  params,
-}: {
-  params: Promise<{ id: string; locale: string }>;
-}) {
-  const { id, locale } = await params;
+export async function GenerateChapterContent({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const chapterId = parseNumericId(id);
 
   if (chapterId === null) {
@@ -65,7 +61,6 @@ export async function GenerateChapterContent({
             courseSlug={chapter.course.slug}
             generationRunId={chapter.generationRunId}
             generationStatus={chapter.generationStatus}
-            locale={locale}
             targetLanguage={chapter.course.targetLanguage}
           />
         </SubscriptionGate>

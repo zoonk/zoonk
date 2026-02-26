@@ -1,13 +1,11 @@
 import { getCourseSuggestionBySlug } from "@/data/courses/course-suggestions";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
+import { getLocale } from "next-intl/server";
 import { notFound, redirect } from "next/navigation";
 
-export async function GenerateCourseContent({
-  params,
-}: {
-  params: Promise<{ locale: string; slug: string }>;
-}) {
-  const { locale, slug } = await params;
+export async function GenerateCourseContent({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const locale = await getLocale();
 
   const suggestion = await getCourseSuggestionBySlug({
     language: locale,
