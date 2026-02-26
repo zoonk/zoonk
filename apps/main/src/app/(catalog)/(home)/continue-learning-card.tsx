@@ -1,5 +1,4 @@
 import { type ContinueLearningItem } from "@/data/courses/get-continue-learning";
-import Link from "next/link";
 import {
   FeatureCard,
   FeatureCardBody,
@@ -19,6 +18,7 @@ import {
 import { PlayCircleIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
 import Image from "next/image";
+import Link from "next/link";
 
 function getCourseHrefs(item: ContinueLearningItem) {
   const { activity, chapter, course, lesson } = item;

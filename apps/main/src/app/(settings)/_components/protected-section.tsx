@@ -1,11 +1,11 @@
 "use client";
 
-import Link from "next/link";
 import { useAuthState } from "@zoonk/core/auth/hooks/auth-state";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ProtectedSection as ProtectedSectionPattern } from "@zoonk/ui/patterns/auth/protected";
 import { useExtracted } from "next-intl";
+import Link from "next/link";
 
 export function ProtectedSection({ children }: React.ComponentProps<"section">) {
   const authState = useAuthState();

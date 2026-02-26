@@ -1,9 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import { getMenu } from "@/lib/menu";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
+import Link from "next/link";
 import { useSelectedLayoutSegment } from "next/navigation";
 
 export function MetricPillLinks() {

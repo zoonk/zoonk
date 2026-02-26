@@ -1,11 +1,11 @@
 "use client";
 
 import { ContentFeedback } from "@/components/feedback/content-feedback";
-import { ClientLink } from "@/i18n/client-link";
-import { useRouter } from "next/navigation";
 import { type SerializedActivity } from "@zoonk/player/prepare-activity-data";
 import { PlayerProvider } from "@zoonk/player/provider";
 import { PlayerShell } from "@zoonk/player/shell";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { submitCompletion } from "./submit-completion-action";
 
 export function ActivityPlayerClient({
@@ -32,7 +32,7 @@ export function ActivityPlayerClient({
       }
       lessonHref={lessonHref}
       levelHref="/level"
-      linkComponent={ClientLink}
+      linkComponent={Link}
       loginHref="/login"
       nextActivityHref={nextActivityHref}
       onComplete={submitCompletion}

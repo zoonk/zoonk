@@ -1,6 +1,5 @@
 import { AIWarning } from "@/components/catalog/ai-warning";
 import { type ChapterWithDetails } from "@/data/chapters/get-chapter";
-import Link from "next/link";
 import {
   MediaCard,
   MediaCardBreadcrumb,
@@ -17,6 +16,7 @@ import {
 } from "@zoonk/ui/components/media-card";
 import { formatPosition } from "@zoonk/utils/string";
 import { getExtracted } from "next-intl/server";
+import Link from "next/link";
 
 export async function ChapterHeader({
   brandSlug,

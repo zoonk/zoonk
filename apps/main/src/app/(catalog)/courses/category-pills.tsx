@@ -1,11 +1,11 @@
 "use client";
 
-import Link from "next/link";
 import { useCategories } from "@/lib/categories/category-client";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { HorizontalScroll, HorizontalScrollContent } from "@zoonk/ui/components/horizontal-scroll";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { useExtracted } from "next-intl";
+import Link from "next/link";
 import { useSelectedLayoutSegment } from "next/navigation";
 
 export function CategoryPillsSkeleton() {

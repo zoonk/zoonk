@@ -1,11 +1,11 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { getMenu } from "@/lib/menu";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { useExtracted } from "next-intl";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { CommandPalette } from "./command-palette";
 
 function getVariant(href: string, pathname: string): "outline" | "secondary" | "default" {

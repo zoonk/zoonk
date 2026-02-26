@@ -1,7 +1,7 @@
-import Link from "next/link";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { ArrowRightIcon, SparklesIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
+import Link from "next/link";
 
 export async function Hero() {
   const t = await getExtracted();

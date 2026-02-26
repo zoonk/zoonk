@@ -1,4 +1,3 @@
-import { ClientLink } from "@/i18n/client-link";
 import { getMenu } from "@/lib/menu";
 import {
   FeatureCard,
@@ -14,6 +13,7 @@ import {
 } from "@zoonk/ui/components/feature";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { getExtracted, getLocale } from "next-intl/server";
+import Link from "next/link";
 
 export async function Score({ score }: { score: number }) {
   const t = await getExtracted();
@@ -26,7 +26,7 @@ export async function Score({ score }: { score: number }) {
   }).format(score);
 
   return (
-    <FeatureCardLink render={<ClientLink href={scoreMenu.url} />}>
+    <FeatureCardLink render={<Link href={scoreMenu.url} />}>
       <FeatureCard>
         <FeatureCardHeader className="text-score">
           <FeatureCardHeaderContent>

@@ -1,11 +1,11 @@
 "use client";
 
-import { ClientLink } from "@/i18n/client-link";
 import { buildNextActivityKey, fetchNextActivity } from "@/lib/progress-fetchers";
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronRightIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import Link from "next/link";
 import useSWR from "swr";
 
 export function ContinueActivityLink({
@@ -36,10 +36,10 @@ export function ContinueActivityLink({
 
   if (!data) {
     return (
-      <ClientLink className={cn(buttonVariants(), "min-w-0 flex-1 gap-2")} href={fallbackHref}>
+      <Link className={cn(buttonVariants(), "min-w-0 flex-1 gap-2")} href={fallbackHref}>
         {t("Start")}
         <ChevronRightIcon aria-hidden="true" />
-      </ClientLink>
+      </Link>
     );
   }
 
@@ -58,9 +58,9 @@ export function ContinueActivityLink({
   };
 
   return (
-    <ClientLink className={cn(buttonVariants(), "min-w-0 flex-1 gap-2")} href={href}>
+    <Link className={cn(buttonVariants(), "min-w-0 flex-1 gap-2")} href={href}>
       {getLabel()}
       <ChevronRightIcon aria-hidden="true" />
-    </ClientLink>
+    </Link>
   );
 }

@@ -1,12 +1,12 @@
 "use client";
 
-import Link from "next/link";
 import { getMenu } from "@/lib/menu";
 import { authClient, logout } from "@zoonk/core/auth/client";
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import { HorizontalScroll, HorizontalScrollContent } from "@zoonk/ui/components/horizontal-scroll";
 import { LogOutIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import Link from "next/link";
 import { SettingsPillLinks } from "./settings-pills";
 
 const homeMenu = getMenu("home");

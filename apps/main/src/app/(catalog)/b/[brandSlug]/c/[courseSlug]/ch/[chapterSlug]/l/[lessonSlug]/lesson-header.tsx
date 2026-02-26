@@ -1,6 +1,5 @@
 import { AIWarning } from "@/components/catalog/ai-warning";
 import { type LessonWithDetails } from "@/data/lessons/get-lesson";
-import Link from "next/link";
 import {
   BreadcrumbItem,
   BreadcrumbList,
@@ -22,6 +21,7 @@ import {
 } from "@zoonk/ui/components/media-card";
 import { formatPosition } from "@zoonk/utils/string";
 import { getExtracted } from "next-intl/server";
+import Link from "next/link";
 
 export async function LessonHeader({
   brandSlug,

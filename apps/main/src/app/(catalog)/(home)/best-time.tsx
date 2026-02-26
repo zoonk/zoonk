@@ -1,4 +1,3 @@
-import { ClientLink } from "@/i18n/client-link";
 import {
   FeatureCard,
   FeatureCardBody,
@@ -14,6 +13,7 @@ import {
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { Clock } from "lucide-react";
 import { getExtracted, getLocale } from "next-intl/server";
+import Link from "next/link";
 
 export async function BestTime({ score, period }: { score: number; period: number }) {
   const t = await getExtracted();
@@ -29,7 +29,7 @@ export async function BestTime({ score, period }: { score: number; period: numbe
   }).format(score);
 
   return (
-    <FeatureCardLink render={<ClientLink href="/score" />}>
+    <FeatureCardLink render={<Link href="/score" />}>
       <FeatureCard>
         <FeatureCardHeader className="text-score">
           <FeatureCardHeaderContent>

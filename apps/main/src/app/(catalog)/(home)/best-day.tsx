@@ -1,4 +1,3 @@
-import { ClientLink } from "@/i18n/client-link";
 import {
   FeatureCard,
   FeatureCardBody,
@@ -15,6 +14,7 @@ import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { EPOCH_YEAR, FIRST_SUNDAY_OFFSET } from "@zoonk/utils/constants";
 import { CalendarDays } from "lucide-react";
 import { getExtracted, getLocale } from "next-intl/server";
+import Link from "next/link";
 
 export async function BestDay({ score, dayOfWeek }: { score: number; dayOfWeek: number }) {
   const t = await getExtracted();
@@ -30,7 +30,7 @@ export async function BestDay({ score, dayOfWeek }: { score: number; dayOfWeek: 
   }).format(score);
 
   return (
-    <FeatureCardLink render={<ClientLink href="/score" />}>
+    <FeatureCardLink render={<Link href="/score" />}>
       <FeatureCard>
         <FeatureCardHeader className="text-score">
           <FeatureCardHeaderContent>

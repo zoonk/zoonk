@@ -1,4 +1,3 @@
-import { ClientLink } from "@/i18n/client-link";
 import { getMenu } from "@/lib/menu";
 import {
   FeatureCard,
@@ -14,6 +13,7 @@ import {
 } from "@zoonk/ui/components/feature";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { getExtracted, getLocale } from "next-intl/server";
+import Link from "next/link";
 
 export async function Energy({ energy }: { energy: number }) {
   const t = await getExtracted();
@@ -29,7 +29,7 @@ export async function Energy({ energy }: { energy: number }) {
     energy < 100 ? t("Keep learning to increase it") : t("Keep learning to maintain it");
 
   return (
-    <FeatureCardLink render={<ClientLink href={energyMenu.url} />}>
+    <FeatureCardLink render={<Link href={energyMenu.url} />}>
       <FeatureCard>
         <FeatureCardHeader className="text-energy">
           <FeatureCardHeaderContent>

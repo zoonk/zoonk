@@ -1,10 +1,10 @@
 "use client";
 
-import Link from "next/link";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { HorizontalScroll, HorizontalScrollContent } from "@zoonk/ui/components/horizontal-scroll";
 import { HomeIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import Link from "next/link";
 import { MetricPillLinks } from "./metric-pills";
 
 export function PerformanceNavbar() {

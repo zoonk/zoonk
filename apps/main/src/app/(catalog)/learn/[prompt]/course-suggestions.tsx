@@ -1,6 +1,5 @@
 import { ContentFeedback } from "@/components/feedback/content-feedback";
 import { generateCourseSuggestions } from "@/data/courses/course-suggestions";
-import Link from "next/link";
 import {
   Container,
   ContainerBody,
@@ -11,6 +10,7 @@ import {
 } from "@zoonk/ui/components/container";
 import { ItemGroup } from "@zoonk/ui/components/item";
 import { getExtracted } from "next-intl/server";
+import Link from "next/link";
 import { CourseSuggestionItem } from "./course-suggestion-item";
 
 export async function CourseSuggestions({ locale, prompt }: { locale: string; prompt: string }) {

@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import {
   Item,
@@ -10,6 +9,7 @@ import {
 } from "@zoonk/ui/components/item";
 import { SparklesIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
+import Link from "next/link";
 
 export async function CourseSuggestionItem({
   course,

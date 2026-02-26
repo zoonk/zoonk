@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import {
   Empty,
@@ -10,6 +9,7 @@ import {
 } from "@zoonk/ui/components/empty";
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { getExtracted } from "next-intl/server";
+import Link from "next/link";
 
 export async function CourseSuggestionsFallback() {
   const t = await getExtracted();

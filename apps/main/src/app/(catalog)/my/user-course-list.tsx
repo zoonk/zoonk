@@ -1,5 +1,4 @@
 import { type UserCourse, listUserCourses } from "@/data/courses/list-user-courses";
-import Link from "next/link";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import {
   Empty,
@@ -17,6 +16,7 @@ import {
 import { NotebookPenIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
 import Image from "next/image";
+import Link from "next/link";
 
 function toCourseListItem(course: UserCourse) {
   return {

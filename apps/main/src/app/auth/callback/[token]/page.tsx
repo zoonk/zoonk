@@ -1,7 +1,5 @@
 "use client";
 
-import Link from "next/link";
-import { redirect } from "next/navigation";
 import { authClient } from "@zoonk/core/auth/client";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import {
@@ -15,6 +13,8 @@ import {
 import { FullPageLoading } from "@zoonk/ui/components/loading";
 import { AlertCircleIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import Link from "next/link";
+import { redirect } from "next/navigation";
 import { use, useEffect, useEffectEvent, useState } from "react";
 
 type CallbackErrorType = "invalid";

@@ -1,4 +1,3 @@
-import { ClientLink } from "@/i18n/client-link";
 import { getBeltColorLabel } from "@/lib/belt-colors";
 import { getMenu } from "@/lib/menu";
 import { BeltIndicator } from "@zoonk/ui/components/belt-indicator";
@@ -16,6 +15,7 @@ import {
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type BeltColor } from "@zoonk/utils/belt-level";
 import { getExtracted, getLocale } from "next-intl/server";
+import Link from "next/link";
 
 export async function Level({
   bpToNextLevel,
@@ -43,7 +43,7 @@ export async function Level({
   const beltLabel = t("{color} belt", { color: colorName });
 
   return (
-    <FeatureCardLink render={<ClientLink href={levelMenu.url} />}>
+    <FeatureCardLink render={<Link href={levelMenu.url} />}>
       <FeatureCard>
         <FeatureCardHeader>
           <FeatureCardHeaderContent>

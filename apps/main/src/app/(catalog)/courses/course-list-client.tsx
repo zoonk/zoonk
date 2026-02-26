@@ -1,7 +1,6 @@
 "use client";
 
 import { type CourseWithOrg } from "@/data/courses/list-courses";
-import { ClientLink } from "@/i18n/client-link";
 import { useInfiniteList } from "@zoonk/ui/hooks/infinite-list";
 import {
   CourseListGroup,
@@ -13,6 +12,7 @@ import { type CourseCategory } from "@zoonk/utils/categories";
 import { Loader2Icon, NotebookPenIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import Image from "next/image";
+import Link from "next/link";
 import { loadMoreCourses } from "./actions";
 
 function toCourseListItem(course: CourseWithOrg): CourseListItem {
@@ -71,7 +71,7 @@ export function CourseListClient({
               ) : undefined
             }
             key={course.id}
-            linkComponent={<ClientLink href={`/b/${course.organization?.slug}/c/${course.slug}`} />}
+            linkComponent={<Link href={`/b/${course.organization?.slug}/c/${course.slug}`} />}
           />
         ))}
       </CourseListGroup>
