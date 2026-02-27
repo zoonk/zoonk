@@ -117,6 +117,7 @@ test.describe("Command Palette - Unauthenticated", () => {
 
   test("selecting Home shows home content", async ({ page }) => {
     await page.goto("/courses"); // Start from different page
+    await expect(page.getByRole("heading", { name: /explore courses/i })).toBeVisible();
     await openCommandPalette(page);
 
     await page
@@ -269,6 +270,7 @@ test.describe("Command Palette - Course Search", () => {
     });
 
     await page.goto("/");
+    await expect(page.getByRole("heading", { name: /learn anything with ai/i })).toBeVisible();
     await openCommandPalette(page);
 
     const dialog = page.getByRole("dialog");
@@ -415,6 +417,7 @@ test.describe("Command Palette - Keyboard Navigation", () => {
 
   test("Enter to select navigates correctly", async ({ page }) => {
     await page.goto("/courses"); // Start from courses page so Home navigation is verifiable
+    await expect(page.getByRole("heading", { name: /explore courses/i })).toBeVisible();
     await openCommandPalette(page);
     await expect(page.getByRole("dialog")).toBeVisible();
 
