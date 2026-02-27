@@ -888,8 +888,7 @@ msgid "Photography"
 msgstr "Fotografia"
 
 #: src/app/(catalog)/learn/page.tsx
-#: src/lib/categories/category-client.ts
-#: src/lib/categories/category-server.ts
+#: src/lib/categories/category.ts
 msgctxt "djJp6c"
 msgid "History"
 msgstr "História"
@@ -915,8 +914,7 @@ msgid "Deep sea creatures"
 msgstr "Criaturas do fundo do mar"
 
 #: src/app/(catalog)/learn/page.tsx
-#: src/lib/categories/category-client.ts
-#: src/lib/categories/category-server.ts
+#: src/lib/categories/category.ts
 msgctxt "KOuDOE"
 msgid "Economics"
 msgstr "Economia"
@@ -2379,94 +2377,10 @@ msgctxt "ypy024"
 msgid "Tests your understanding with questions. Uses new scenarios to check if you grasped the concept, not just memorized it."
 msgstr "Testa sua compreensão com perguntas. Usa cenários novos pra verificar se você entendeu o conceito, não só memorizou ele."
 
-#: src/lib/categories/category-client.ts
-#: src/lib/categories/category-server.ts
-msgctxt "dPgwrL"
-msgid "Math"
-msgstr "Matemática"
-
-#: src/lib/categories/category-client.ts
-#: src/lib/categories/category-server.ts
-msgctxt "fFt3il"
-msgid "Arts"
-msgstr "Artes"
-
-#: src/lib/categories/category-client.ts
-#: src/lib/categories/category-server.ts
-msgctxt "GsBRWL"
-msgid "Languages"
-msgstr "Idiomas"
-
-#: src/lib/categories/category-client.ts
-#: src/lib/categories/category-server.ts
-msgctxt "hlmkcL"
-msgid "Health"
-msgstr "Saúde"
-
-#: src/lib/categories/category-client.ts
-#: src/lib/categories/category-server.ts
-msgctxt "hwL7a0"
-msgid "Engineering"
-msgstr "Engenharia"
-
-#: src/lib/categories/category-client.ts
-#: src/lib/categories/category-server.ts
-msgctxt "I1ZCPK"
-msgid "Technology"
-msgstr "Tecnologia"
-
-#: src/lib/categories/category-client.ts
-#: src/lib/categories/category-server.ts
-msgctxt "mn6pIm"
-msgid "Culture"
-msgstr "Cultura"
-
-#: src/lib/categories/category-client.ts
-#: src/lib/categories/category-server.ts
-msgctxt "n5D/Ku"
-msgid "Communication"
-msgstr "Comunicação"
-
-#: src/lib/categories/category-client.ts
-#: src/lib/categories/category-server.ts
-msgctxt "OV/2+4"
-msgid "Society"
-msgstr "Sociedade"
-
-#: src/lib/categories/category-client.ts
-#: src/lib/categories/category-server.ts
-msgctxt "qydxOd"
-msgid "Science"
-msgstr "Ciências"
-
-#: src/lib/categories/category-client.ts
-#: src/lib/categories/category-server.ts
-msgctxt "u3ovjm"
-msgid "Law"
-msgstr "Direito"
-
-#: src/lib/categories/category-client.ts
-#: src/lib/categories/category-server.ts
-msgctxt "w1Fanr"
-msgid "Business"
-msgstr "Negócios"
-
-#: src/lib/categories/category-client.ts
-#: src/lib/categories/category-server.ts
-msgctxt "YMDBNH"
-msgid "Geography"
-msgstr "Geografia"
-
-#: src/lib/categories/category-server.ts
 #: src/lib/categories/category.ts
 msgctxt "4HKnmB"
 msgid "{category} Courses"
 msgstr "Cursos de {category}"
-
-#: src/lib/categories/category.ts
-msgctxt "djJp6c"
-msgid "History"
-msgstr "História"
 
 #: src/lib/categories/category.ts
 msgctxt "dPgwrL"
@@ -2502,11 +2416,6 @@ msgstr "Engenharia"
 msgctxt "I1ZCPK"
 msgid "Technology"
 msgstr "Tecnologia"
-
-#: src/lib/categories/category.ts
-msgctxt "KOuDOE"
-msgid "Economics"
-msgstr "Economia"
 
 #: src/lib/categories/category.ts
 msgctxt "mn6pIm"
