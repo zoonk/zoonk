@@ -12,7 +12,7 @@ const FALLBACK_MODELS = [
   "openai/gpt-5-mini",
   "anthropic/claude-sonnet-4.5",
   "anthropic/claude-opus-4.5",
-  "google/gemini-3-pro-preview",
+  "google/gemini-3.1-pro-preview",
 ];
 
 export type StepVisualSchema = {
