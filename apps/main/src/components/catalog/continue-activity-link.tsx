@@ -1,7 +1,6 @@
 import { type ActivityScope } from "@zoonk/core/activities/last-completed";
 import { getNextActivity } from "@zoonk/core/progress/next-activity";
-import { buttonVariants } from "@zoonk/ui/components/button";
-import { Skeleton } from "@zoonk/ui/components/skeleton";
+import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronRightIcon } from "lucide-react";
 import { type Route } from "next";
@@ -71,6 +70,13 @@ export async function ContinueActivityLink<Href extends string>({
   );
 }
 
-export function ContinueActivityLinkSkeleton() {
-  return <Skeleton className="h-9 min-w-0 flex-1 rounded-md" />;
+export async function ContinueActivityLinkSkeleton() {
+  const t = await getExtracted();
+
+  return (
+    <Button className="min-w-0 flex-1 gap-2" disabled>
+      {t("Start")}
+      <ChevronRightIcon aria-hidden="true" />
+    </Button>
+  );
 }
