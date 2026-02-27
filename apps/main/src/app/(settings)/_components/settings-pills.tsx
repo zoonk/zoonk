@@ -25,6 +25,7 @@ export function SettingsPillLinks() {
       })}
       href={item.url}
       key={item.segment}
+      prefetch
     >
       <item.icon aria-hidden className="size-4" />
       {item.label}

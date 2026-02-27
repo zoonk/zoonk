@@ -37,6 +37,7 @@ export function CategoryPills() {
             variant: segment === null ? "default" : "outline",
           })}
           href="/courses"
+          prefetch
         >
           {t("All")}
         </Link>
@@ -51,6 +52,7 @@ export function CategoryPills() {
               })}
               href={`/courses/${category.key}`}
               key={category.key}
+              prefetch
             >
               <category.icon aria-hidden className="size-4" />
               {category.label}

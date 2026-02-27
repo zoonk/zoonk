@@ -26,6 +26,7 @@ export async function Hero() {
             variant: "default",
           })}
           href="/learn"
+          prefetch
         >
           <SparklesIcon aria-hidden="true" />
           {t("Learn anything")}
@@ -38,6 +39,7 @@ export async function Hero() {
             variant: "outline",
           })}
           href="/courses"
+          prefetch
         >
           {t("Explore courses")}
           <ArrowRightIcon aria-hidden="true" />

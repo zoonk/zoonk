@@ -43,7 +43,7 @@ export async function Level({
   const beltLabel = t("{color} belt", { color: colorName });
 
   return (
-    <FeatureCardLink render={<Link href={levelMenu.url} />}>
+    <FeatureCardLink render={<Link href={levelMenu.url} prefetch />}>
       <FeatureCard>
         <FeatureCardHeader>
           <FeatureCardHeaderContent>

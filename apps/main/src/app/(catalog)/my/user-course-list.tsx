@@ -44,7 +44,7 @@ export async function UserCourseList() {
         </EmptyHeader>
 
         <EmptyContent>
-          <Link className={buttonVariants({ variant: "outline" })} href="/courses">
+          <Link className={buttonVariants({ variant: "outline" })} href="/courses" prefetch>
             {t("Explore courses")}
           </Link>
         </EmptyContent>
@@ -64,7 +64,7 @@ export async function UserCourseList() {
           }
           key={course.id}
           linkComponent={
-            <Link href={`/b/${course.organization?.slug}/c/${course.slug}`} prefetch={false} />
+            <Link href={`/b/${course.organization?.slug}/c/${course.slug}`} prefetch />
           }
         />
       ))}

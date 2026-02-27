@@ -49,7 +49,7 @@ export async function LessonList({
                 href={`/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}/l/${lesson.slug}`}
                 id={lesson.id}
                 key={lesson.id}
-                prefetch={lesson.generationStatus === "completed"}
+                prefetch={false}
               >
                 <CatalogListItemPosition>{formatPosition(lesson.position)}</CatalogListItemPosition>
 
