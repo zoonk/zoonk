@@ -1,9 +1,10 @@
 "use client";
 
-import { type CategoryInfo } from "@/lib/categories/category-icons";
+import { CATEGORY_ICONS } from "@/lib/categories/category-icons";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { HorizontalScroll, HorizontalScrollContent } from "@zoonk/ui/components/horizontal-scroll";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
+import { type CourseCategory } from "@zoonk/utils/categories";
 import { useExtracted } from "next-intl";
 import Link from "next/link";
 import { useSelectedLayoutSegment } from "next/navigation";
@@ -23,7 +24,11 @@ export function CategoryPillsSkeleton() {
   );
 }
 
-export function CategoryPills({ categories }: { categories: CategoryInfo[] }) {
+type CategoryPillsProps = {
+  categories: { key: CourseCategory; label: string }[];
+}
+
+export function CategoryPills({ categories }: CategoryPillsProps) {
   const segment = useSelectedLayoutSegment();
   const t = useExtracted();
 
@@ -43,20 +48,24 @@ export function CategoryPills({ categories }: { categories: CategoryInfo[] }) {
 
         {categories
           .toSorted((a, b) => a.label.localeCompare(b.label))
-          .map((category) => (
-            <Link
-              className={buttonVariants({
-                size: "sm",
-                variant: segment === category.key ? "default" : "outline",
-              })}
-              href={`/courses/${category.key}`}
-              key={category.key}
-              prefetch
-            >
-              <category.icon aria-hidden className="size-4" />
-              {category.label}
-            </Link>
-          ))}
+          .map((category) => {
+            const Icon = CATEGORY_ICONS[category.key];
+
+            return (
+              <Link
+                className={buttonVariants({
+                  size: "sm",
+                  variant: segment === category.key ? "default" : "outline",
+                })}
+                href={`/courses/${category.key}`}
+                key={category.key}
+                prefetch
+              >
+                <Icon aria-hidden className="size-4" />
+                {category.label}
+              </Link>
+            );
+          })}
       </HorizontalScrollContent>
     </HorizontalScroll>
   );

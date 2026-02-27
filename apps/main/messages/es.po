@@ -2220,97 +2220,97 @@ msgctxt "ypy024"
 msgid "Tests your understanding with questions. Uses new scenarios to check if you grasped the concept, not just memorized it."
 msgstr "Evalúa tu comprensión con preguntas. Usa nuevos escenarios para verificar si captaste el concepto, no solo lo memorizaste."
 
-#: src/lib/categories/category-server.ts
+#: src/lib/categories/category.ts
 msgctxt "4HKnmB"
 msgid "{category} Courses"
 msgstr "Cursos de {category}"
 
-#: src/lib/categories/category-server.ts
+#: src/lib/categories/category.ts
 msgctxt "djJp6c"
 msgid "History"
 msgstr "Historia"
 
-#: src/lib/categories/category-server.ts
+#: src/lib/categories/category.ts
 msgctxt "dPgwrL"
 msgid "Math"
 msgstr "Matemáticas"
 
-#: src/lib/categories/category-server.ts
+#: src/lib/categories/category.ts
 msgctxt "EMi23I"
 msgid "Explore all {category} courses"
 msgstr "Explorar todos los cursos de {category}"
 
-#: src/lib/categories/category-server.ts
+#: src/lib/categories/category.ts
 msgctxt "fFt3il"
 msgid "Arts"
 msgstr "Artes"
 
-#: src/lib/categories/category-server.ts
+#: src/lib/categories/category.ts
 msgctxt "GsBRWL"
 msgid "Languages"
 msgstr "Idiomas"
 
-#: src/lib/categories/category-server.ts
+#: src/lib/categories/category.ts
 msgctxt "hlmkcL"
 msgid "Health"
 msgstr "Salud"
 
-#: src/lib/categories/category-server.ts
+#: src/lib/categories/category.ts
 msgctxt "hwL7a0"
 msgid "Engineering"
 msgstr "Ingeniería"
 
-#: src/lib/categories/category-server.ts
+#: src/lib/categories/category.ts
 msgctxt "I1ZCPK"
 msgid "Technology"
 msgstr "Tecnología"
 
-#: src/lib/categories/category-server.ts
+#: src/lib/categories/category.ts
 msgctxt "KOuDOE"
 msgid "Economics"
 msgstr "Economía"
 
-#: src/lib/categories/category-server.ts
+#: src/lib/categories/category.ts
 msgctxt "mn6pIm"
 msgid "Culture"
 msgstr "Cultura"
 
-#: src/lib/categories/category-server.ts
+#: src/lib/categories/category.ts
 msgctxt "n5D/Ku"
 msgid "Communication"
 msgstr "Comunicación"
 
-#: src/lib/categories/category-server.ts
+#: src/lib/categories/category.ts
 msgctxt "OV/2+4"
 msgid "Society"
 msgstr "Sociedad"
 
-#: src/lib/categories/category-server.ts
+#: src/lib/categories/category.ts
 msgctxt "qydxOd"
 msgid "Science"
 msgstr "Ciencia"
 
-#: src/lib/categories/category-server.ts
+#: src/lib/categories/category.ts
 msgctxt "Rz9oL+"
 msgid "{category} courses"
 msgstr "Cursos de {category}"
 
-#: src/lib/categories/category-server.ts
+#: src/lib/categories/category.ts
 msgctxt "u3ovjm"
 msgid "Law"
 msgstr "Derecho"
 
-#: src/lib/categories/category-server.ts
+#: src/lib/categories/category.ts
 msgctxt "w1Fanr"
 msgid "Business"
 msgstr "Negocios"
 
-#: src/lib/categories/category-server.ts
+#: src/lib/categories/category.ts
 msgctxt "XL8IWT"
 msgid "{category} courses. The best {category} online courses, interactive lessons to learn."
 msgstr "Cursos de {category}. Los mejores cursos en línea de {category}, lecciones interactivas para aprender."
 
-#: src/lib/categories/category-server.ts
+#: src/lib/categories/category.ts
 msgctxt "YMDBNH"
 msgid "Geography"
 msgstr "Geografía"
