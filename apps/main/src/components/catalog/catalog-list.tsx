@@ -266,7 +266,7 @@ export function CatalogListItemProgress({
   );
 }
 
-export function CatalogListItemSkeleton() {
+function CatalogListItemSkeleton() {
   return (
     <li className="-mx-3 flex items-start gap-3 px-3 py-3.5">
       <Skeleton className="h-4 w-6 shrink-0" />
@@ -278,7 +278,7 @@ export function CatalogListItemSkeleton() {
   );
 }
 
-export function CatalogListItemIndicatorSkeleton() {
+function CatalogListItemIndicatorSkeleton() {
   return (
     <li className="-mx-3 flex items-start gap-3 px-3 py-3.5">
       <div className="flex min-w-0 flex-1 flex-col gap-1">
