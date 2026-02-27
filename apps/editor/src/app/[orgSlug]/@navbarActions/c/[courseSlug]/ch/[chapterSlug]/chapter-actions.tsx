@@ -41,17 +41,12 @@ export async function ChapterActions({
     <ChapterActionsContainer>
       <PublishToggle
         isPublished={chapter.isPublished}
-        onToggle={togglePublishAction.bind(null, {
-          chapterId: chapter.id,
-          chapterSlug,
-          chapterUrl,
-          courseSlug,
-        })}
+        onToggle={togglePublishAction.bind(null, { chapterId: chapter.id, chapterUrl })}
       />
 
       {canDelete && (
         <DeleteItemButton
-          onDelete={deleteChapterAction.bind(null, chapterSlug, courseSlug, chapter.id, courseUrl)}
+          onDelete={deleteChapterAction.bind(null, chapter.id, courseUrl)}
           srLabel={t("Delete chapter")}
           title={t("Delete chapter?")}
         />

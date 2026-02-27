@@ -3,14 +3,11 @@
 import { courseSlugExists } from "@/data/courses/course-slug";
 import { createCourse } from "@/data/courses/create-course";
 import { getErrorMessage } from "@/lib/error-messages";
-import { revalidateMainApp } from "@zoonk/core/cache/revalidate";
-import { cacheTagOrgCourses } from "@zoonk/utils/cache";
 import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import { ensureLocaleSuffix, toSlug } from "@zoonk/utils/string";
 import { getExtracted } from "next-intl/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { after } from "next/server";
 import { type CourseFormData } from "./use-course-form";
 
 export async function checkSlugExists({
@@ -58,10 +55,6 @@ export async function createCourseAction(formData: CourseFormData, orgSlug: stri
   if (error || !course) {
     return { error: await getErrorMessage(error) };
   }
-
-  after(async () => {
-    await revalidateMainApp([cacheTagOrgCourses({ orgSlug })]);
-  });
 
   revalidatePath(`/${orgSlug}`);
   redirect(`/${orgSlug}/c/${course.slug}`);

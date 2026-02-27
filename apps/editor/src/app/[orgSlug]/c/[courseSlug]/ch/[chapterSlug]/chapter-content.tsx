@@ -22,7 +22,7 @@ export async function ChapterContent({
     return notFound();
   }
 
-  const slugs = { chapterSlug, courseSlug, orgSlug };
+  const slugs = { courseSlug, orgSlug };
 
   return (
     <ContentEditor

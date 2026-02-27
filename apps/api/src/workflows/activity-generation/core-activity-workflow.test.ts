@@ -207,10 +207,6 @@ vi.mock("@zoonk/core/steps/image", () => ({
   }),
 }));
 
-vi.mock("@zoonk/core/cache/revalidate", () => ({
-  revalidateMainApp: vi.fn().mockResolvedValue(null),
-}));
-
 describe("core activity workflow", () => {
   let organizationId: number;
   let course: Awaited<ReturnType<typeof courseFixture>>;

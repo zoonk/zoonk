@@ -27,11 +27,7 @@
       "ignore": ["e2e/**", "setup-tests.ts"]
     },
     "apps/main": {
-      "entry": [
-        "src/i18n/codec.ts",
-        "src/app/[locale]/privacy/*.mdx",
-        "src/app/[locale]/terms/*.mdx"
-      ],
+      "entry": ["src/i18n/codec.ts", "src/app/privacy/*.mdx", "src/app/terms/*.mdx"],
       "ignore": ["e2e/**", "setup-tests.ts"]
     },
     "packages/core": {

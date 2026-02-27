@@ -1,0 +1,84 @@
+import { AIWarning } from "@/components/catalog/ai-warning";
+import { type LessonWithDetails } from "@/data/lessons/get-lesson";
+import {
+  BreadcrumbItem,
+  BreadcrumbList,
+  BreadcrumbSeparator,
+} from "@zoonk/ui/components/breadcrumb";
+import {
+  MediaCard,
+  MediaCardBreadcrumb,
+  MediaCardContent,
+  MediaCardDescription,
+  MediaCardHeader,
+  MediaCardIcon,
+  MediaCardIconText,
+  MediaCardIndicator,
+  MediaCardPopover,
+  MediaCardPopoverText,
+  MediaCardTitle,
+  MediaCardTrigger,
+} from "@zoonk/ui/components/media-card";
+import { formatPosition } from "@zoonk/utils/string";
+import { getExtracted } from "next-intl/server";
+import Link from "next/link";
+
+export async function LessonHeader({
+  brandSlug,
+  chapterSlug,
+  courseSlug,
+  lesson,
+}: {
+  brandSlug: string;
+  chapterSlug: string;
+  courseSlug: string;
+  lesson: LessonWithDetails;
+}) {
+  const t = await getExtracted();
+  const lessonPosition = formatPosition(lesson.position);
+
+  return (
+    <MediaCard>
+      <MediaCardIcon aria-label={t("Lesson {position}", { position: lessonPosition })} role="img">
+        <MediaCardIconText>{lessonPosition}</MediaCardIconText>
+      </MediaCardIcon>
+
+      <MediaCardContent>
+        <MediaCardBreadcrumb>
+          <BreadcrumbList className="flex-nowrap text-xs">
+            <BreadcrumbItem className="min-w-0">
+              <Link
+                className="hover:text-foreground truncate transition-colors"
+                href={`/b/${brandSlug}/c/${courseSlug}`}
+              >
+                {lesson.chapter.course.title}
+              </Link>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator className="shrink-0" />
+            <BreadcrumbItem className="min-w-0">
+              <Link
+                className="hover:text-foreground truncate transition-colors"
+                href={`/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}`}
+              >
+                {lesson.chapter.title}
+              </Link>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </MediaCardBreadcrumb>
+
+        <MediaCardTrigger>
+          <MediaCardHeader>
+            <MediaCardTitle>{lesson.title}</MediaCardTitle>
+            <MediaCardIndicator />
+          </MediaCardHeader>
+          <MediaCardDescription>{lesson.description}</MediaCardDescription>
+        </MediaCardTrigger>
+      </MediaCardContent>
+
+      <MediaCardPopover>
+        <AIWarning brandSlug={brandSlug} />
+        <MediaCardPopoverText>{lesson.description}</MediaCardPopoverText>
+      </MediaCardPopover>
+    </MediaCard>
+  );
+}

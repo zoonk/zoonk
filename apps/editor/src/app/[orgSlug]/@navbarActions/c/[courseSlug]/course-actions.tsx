@@ -29,17 +29,12 @@ export async function CourseActions({ params }: PageProps<"/[orgSlug]/c/[courseS
     <CourseActionsContainer>
       <PublishToggle
         isPublished={course.isPublished}
-        onToggle={togglePublishAction.bind(null, {
-          courseId: course.id,
-          courseSlug,
-          courseUrl,
-          orgSlug,
-        })}
+        onToggle={togglePublishAction.bind(null, { courseId: course.id, courseUrl })}
       />
 
       {canDelete && (
         <DeleteItemButton
-          onDelete={deleteCourseAction.bind(null, courseSlug, orgSlug, course.id)}
+          onDelete={deleteCourseAction.bind(null, orgSlug, course.id)}
           srLabel={t("Delete course")}
           title={t("Delete course?")}
         />

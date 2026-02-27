@@ -6,6 +6,7 @@ import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
 import { calculateBeltLevel, getBeltProgressPercent } from "@zoonk/utils/belt-level";
 import { useExtracted } from "next-intl";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { usePlayer } from "../player-context";
 import { useBeltColorLabel } from "../use-belt-color-label";
@@ -43,7 +44,7 @@ export function BeltProgressHint({
   newTotalBp: number;
 }) {
   const t = useExtracted();
-  const { levelHref, LinkComponent } = usePlayer();
+  const { levelHref } = usePlayer();
   const currentBelt = calculateBeltLevel(newTotalBp);
   const previousBelt = calculateBeltLevel(newTotalBp - brainPower);
   const didLevelUp =
@@ -86,7 +87,7 @@ export function BeltProgressHint({
   }
 
   return (
-    <LinkComponent className="flex flex-col gap-1.5" href={levelHref}>
+    <Link className="flex flex-col gap-1.5" href={levelHref}>
       <div className="flex items-center gap-1.5">
         <BeltIndicator
           className={didLevelUp ? "animate-dot-pulse motion-reduce:animate-none" : undefined}
@@ -116,7 +117,7 @@ export function BeltProgressHint({
       <span className="text-muted-foreground text-xs tabular-nums">
         {t("{value} BP to level up", { value: String(currentBelt.bpToNextLevel) })}
       </span>
-    </LinkComponent>
+    </Link>
   );
 }
 

@@ -1,5 +1,6 @@
 "use client";
 
+import { type Route } from "next";
 import { createContext, useContext } from "react";
 import { type CompletionResult } from "./completion-input-schema";
 import {
@@ -10,16 +11,7 @@ import {
 } from "./player-reducer";
 import { type SerializedStep } from "./prepare-activity-data";
 
-export type PlayerLinkProps = {
-  "aria-label"?: string;
-  children?: React.ReactNode;
-  className?: string;
-  href: string;
-};
-
-export type PlayerLinkComponent = React.ComponentType<PlayerLinkProps>;
-
-export type PlayerContextValue = {
+export type PlayerContextValue<Href extends string> = {
   activityId: string;
   completionResult: CompletionResult | null;
   currentResult: StepResult | undefined;
@@ -51,23 +43,22 @@ export type PlayerContextValue = {
   startChallenge: () => void;
 
   completionFooter?: React.ReactNode;
-  lessonHref: string;
-  levelHref?: string;
-  LinkComponent: PlayerLinkComponent;
-  loginHref?: string;
-  nextActivityHref: string | null;
+  lessonHref: Route<Href>;
+  levelHref?: Route<Href>;
+  loginHref?: Route<Href>;
+  nextActivityHref: Route<Href> | null;
 };
 
-const PlayerContext = createContext<PlayerContextValue | null>(null);
+const PlayerContext = createContext<PlayerContextValue<string> | null>(null);
 
-export function usePlayer(): PlayerContextValue {
+export function usePlayer<Href extends string = string>(): PlayerContextValue<Href> {
   const context = useContext(PlayerContext);
 
   if (!context) {
     throw new Error("usePlayer must be used within a PlayerProvider");
   }
 
-  return context;
+  return context as PlayerContextValue<Href>;
 }
 
 export { PlayerContext };

@@ -1,7 +1,5 @@
 import { type ActivityStepName } from "@/workflows/config";
-import { revalidateMainApp } from "@zoonk/core/cache/revalidate";
 import { type ActivityKind, prisma } from "@zoonk/db";
-import { cacheTagActivity } from "@zoonk/utils/cache";
 import { safeAsync } from "@zoonk/utils/error";
 import { streamError, streamStatus } from "../stream-status";
 import { findActivityByKind } from "./_utils/find-activity-by-kind";
@@ -62,8 +60,6 @@ export async function completeActivityStep(
     await streamStatus({ status: "error", step: "setActivityAsCompleted" });
     return;
   }
-
-  await revalidateMainApp([cacheTagActivity({ activityId: BigInt(activity.id) })]);
 
   await streamStatus({ status: "completed", step: stepName });
   await streamStatus({ status: "completed", step: "setActivityAsCompleted" });

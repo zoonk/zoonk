@@ -2,12 +2,9 @@
 
 import { updateCourse } from "@/data/courses/update-course";
 import { getErrorMessage } from "@/lib/error-messages";
-import { revalidateMainApp } from "@zoonk/core/cache/revalidate";
 import { processAndUploadImage } from "@zoonk/core/images/process-and-upload";
-import { cacheTagCourse } from "@zoonk/utils/cache";
 import { getExtracted } from "next-intl/server";
 import { revalidatePath } from "next/cache";
-import { after } from "next/server";
 
 type CourseRouteParams = {
   courseId: number;
@@ -52,10 +49,6 @@ export async function uploadCourseImageAction(
     return { error: await getErrorMessage(updateError) };
   }
 
-  after(async () => {
-    await revalidateMainApp([cacheTagCourse({ courseSlug })]);
-  });
-
   revalidatePath(`/${orgSlug}/c/${courseSlug}`);
   return { error: null };
 }
@@ -72,10 +65,6 @@ export async function removeCourseImageAction(
   if (error) {
     return { error: await getErrorMessage(error) };
   }
-
-  after(async () => {
-    await revalidateMainApp([cacheTagCourse({ courseSlug })]);
-  });
 
   revalidatePath(`/${orgSlug}/c/${courseSlug}`);
   return { error: null };

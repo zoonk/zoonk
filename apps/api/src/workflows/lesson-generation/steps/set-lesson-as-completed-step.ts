@@ -1,6 +1,4 @@
-import { revalidateMainApp } from "@zoonk/core/cache/revalidate";
 import { prisma } from "@zoonk/db";
-import { cacheTagLesson } from "@zoonk/utils/cache";
 import { safeAsync } from "@zoonk/utils/error";
 import { streamError, streamStatus } from "../stream-status";
 import { type LessonContext } from "./get-lesson-step";
@@ -28,8 +26,6 @@ export async function setLessonAsCompletedStep(input: {
     await streamError({ reason: "dbSaveFailed", step: "setLessonAsCompleted" });
     throw error;
   }
-
-  await revalidateMainApp([cacheTagLesson({ lessonSlug: input.context.slug })]);
 
   await streamStatus({ status: "completed", step: "setLessonAsCompleted" });
 }

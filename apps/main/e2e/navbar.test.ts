@@ -3,6 +3,7 @@ import { expect, test } from "./fixtures";
 test.describe("Navbar - Unauthenticated", () => {
   test("Home link navigates to home page", async ({ page }) => {
     await page.goto("/courses");
+    await expect(page.getByRole("heading", { name: /explore courses/i })).toBeVisible();
 
     // Scope to navigation to avoid conflicts with links in main content
     await page.getByRole("navigation").getByRole("link", { name: /home/i }).click();
@@ -12,6 +13,7 @@ test.describe("Navbar - Unauthenticated", () => {
 
   test("Courses link navigates to courses page", async ({ page }) => {
     await page.goto("/");
+    await expect(page.getByRole("heading", { name: /learn anything with ai/i })).toBeVisible();
 
     // Scope to navigation to avoid conflicts with "Explore courses" in hero
     await page.getByRole("navigation").getByRole("link", { exact: true, name: "Courses" }).click();
@@ -21,6 +23,7 @@ test.describe("Navbar - Unauthenticated", () => {
 
   test("Learn link navigates to learn page", async ({ page }) => {
     await page.goto("/");
+    await expect(page.getByRole("heading", { name: /learn anything with ai/i })).toBeVisible();
 
     // Scope to navigation to avoid conflicts with "Learn anything" in hero
     await page.getByRole("navigation").getByRole("link", { exact: true, name: "Learn" }).click();
@@ -60,6 +63,7 @@ test.describe("Navbar - Unauthenticated", () => {
 test.describe("Navbar - Authenticated", () => {
   test("My courses menu item navigates to my courses page", async ({ authenticatedPage }) => {
     await authenticatedPage.goto("/");
+    await authenticatedPage.waitForLoadState("networkidle");
 
     await authenticatedPage.getByRole("button", { name: /user menu/i }).click();
 
@@ -70,6 +74,7 @@ test.describe("Navbar - Authenticated", () => {
 
   test("Subscription menu item navigates to subscription page", async ({ authenticatedPage }) => {
     await authenticatedPage.goto("/");
+    await authenticatedPage.waitForLoadState("networkidle");
 
     await authenticatedPage.getByRole("button", { name: /user menu/i }).click();
 
@@ -82,6 +87,7 @@ test.describe("Navbar - Authenticated", () => {
 
   test("Profile menu item navigates to profile page", async ({ authenticatedPage }) => {
     await authenticatedPage.goto("/");
+    await authenticatedPage.waitForLoadState("networkidle");
 
     await authenticatedPage.getByRole("button", { name: /user menu/i }).click();
 
@@ -94,6 +100,7 @@ test.describe("Navbar - Authenticated", () => {
 
   test("Support menu item navigates to support page", async ({ authenticatedPage }) => {
     await authenticatedPage.goto("/");
+    await authenticatedPage.waitForLoadState("networkidle");
 
     await authenticatedPage.getByRole("button", { name: /user menu/i }).click();
 

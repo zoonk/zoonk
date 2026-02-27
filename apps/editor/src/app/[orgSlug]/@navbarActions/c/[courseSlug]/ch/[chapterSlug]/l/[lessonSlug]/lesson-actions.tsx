@@ -39,18 +39,16 @@ export async function LessonActions({
     `/${orgSlug}/c/${courseSlug}/ch/${chapterSlug}` as Route;
   const lessonUrl = `/${orgSlug}/c/${courseSlug}/ch/${chapterSlug}/l/${lessonSlug}`;
 
-  const slugs = { chapterSlug, courseSlug, lessonSlug };
-
   return (
     <LessonActionsContainer>
       <PublishToggle
         isPublished={lesson.isPublished}
-        onToggle={togglePublishAction.bind(null, slugs, lessonUrl, lesson.id)}
+        onToggle={togglePublishAction.bind(null, lessonUrl, lesson.id)}
       />
 
       {canDelete && (
         <DeleteItemButton
-          onDelete={deleteLessonAction.bind(null, slugs, lesson.id, chapterUrl)}
+          onDelete={deleteLessonAction.bind(null, lesson.id, chapterUrl)}
           srLabel={t("Delete lesson")}
           title={t("Delete lesson?")}
         />

@@ -1,6 +1,4 @@
-import { revalidateMainApp } from "@zoonk/core/cache/revalidate";
 import { prisma } from "@zoonk/db";
-import { cacheTagActivity } from "@zoonk/utils/cache";
 import { safeAsync } from "@zoonk/utils/error";
 import { streamError, streamStatus } from "../stream-status";
 import { type LessonActivity } from "./get-lesson-activities-step";
@@ -26,7 +24,6 @@ async function saveActivity(activity: LessonActivity, workflowRunId: string): Pr
     return false;
   }
 
-  await revalidateMainApp([cacheTagActivity({ activityId: BigInt(activity.id) })]);
   return true;
 }
 

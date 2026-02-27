@@ -1,9 +1,10 @@
 "use client";
 
+import { type Route } from "next";
 import { useCallback, useReducer } from "react";
 import { type CompletionInput, type CompletionResult } from "./completion-input-schema";
 import { hasNegativeDimension } from "./has-negative-dimension";
-import { PlayerContext, type PlayerContextValue, type PlayerLinkComponent } from "./player-context";
+import { PlayerContext, type PlayerContextValue } from "./player-context";
 import { type PlayerState, createInitialState, playerReducer } from "./player-reducer";
 import { type SerializedActivity } from "./prepare-activity-data";
 import { usePlayerActions } from "./use-player-actions";
@@ -42,13 +43,12 @@ function deriveViewState(state: PlayerState) {
   };
 }
 
-export function PlayerProvider({
+export function PlayerProvider<Href extends string>({
   activity,
   children,
   completionFooter,
   lessonHref,
   levelHref,
-  linkComponent,
   loginHref,
   nextActivityHref,
   onComplete,
@@ -58,11 +58,10 @@ export function PlayerProvider({
   activity: SerializedActivity;
   children: React.ReactNode;
   completionFooter?: React.ReactNode;
-  lessonHref: string;
-  levelHref?: string;
-  linkComponent: PlayerLinkComponent;
-  loginHref?: string;
-  nextActivityHref: string | null;
+  lessonHref: Route<Href>;
+  levelHref?: Route<Href>;
+  loginHref?: Route<Href>;
+  nextActivityHref: Route<Href> | null;
   onComplete: (input: CompletionInput) => Promise<CompletionResult>;
   onEscape: () => void;
   onNext?: () => void;
@@ -89,10 +88,9 @@ export function PlayerProvider({
     phase: state.phase,
   });
 
-  const contextValue: PlayerContextValue = {
+  const contextValue: PlayerContextValue<Href> = {
     ...actions,
     ...view,
-    LinkComponent: linkComponent,
     activityId: state.activityId,
     completionFooter,
     completionResult: actions.completionResult,

@@ -1,10 +1,11 @@
 "use client";
 
-import { ClientLink } from "@/i18n/client-link";
 import { Input } from "@zoonk/ui/components/input";
 import { cn } from "@zoonk/ui/lib/utils";
 import { normalizeString } from "@zoonk/utils/string";
 import { CheckIcon, SearchIcon } from "lucide-react";
+import { type Route } from "next";
+import Link from "next/link";
 import { useQueryState } from "nuqs";
 import { type ReactNode, createContext, use, useMemo } from "react";
 
@@ -115,7 +116,7 @@ export function CatalogListContent({ className, ...props }: React.ComponentProps
   );
 }
 
-export function CatalogListItem({
+export function CatalogListItem<Href extends string>({
   children,
   className,
   href,
@@ -124,7 +125,7 @@ export function CatalogListItem({
 }: {
   children: ReactNode;
   className?: string;
-  href: string;
+  href: Route<Href>;
   id: string | number | bigint;
   prefetch?: boolean;
 }) {
@@ -137,7 +138,7 @@ export function CatalogListItem({
 
   return (
     <li data-slot="catalog-list-item">
-      <ClientLink
+      <Link
         className={cn(
           "hover:bg-muted/30 -mx-3 flex items-start gap-3 rounded-lg px-3 py-3.5 text-left transition-colors",
           className,
@@ -146,7 +147,7 @@ export function CatalogListItem({
         prefetch={prefetch}
       >
         {children}
-      </ClientLink>
+      </Link>
     </li>
   );
 }

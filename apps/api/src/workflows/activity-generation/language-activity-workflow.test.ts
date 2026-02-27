@@ -215,10 +215,6 @@ vi.mock("@zoonk/core/steps/image", () => ({
   generateStepImage: vi.fn().mockResolvedValue({ data: null, error: null }),
 }));
 
-vi.mock("@zoonk/core/cache/revalidate", () => ({
-  revalidateMainApp: vi.fn().mockResolvedValue(null),
-}));
-
 describe("language activity generation", () => {
   let organizationId: number;
   let course: Awaited<ReturnType<typeof courseFixture>>;

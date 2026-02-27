@@ -6,15 +6,11 @@ import { importChapters } from "@/data/chapters/import-chapters";
 import { reorderChapters } from "@/data/chapters/reorder-chapters";
 import { getErrorMessage } from "@/lib/error-messages";
 import { isImportMode } from "@/lib/import-mode";
-import { revalidateMainApp } from "@zoonk/core/cache/revalidate";
-import { cacheTagCourse } from "@zoonk/utils/cache";
 import { getExtracted } from "next-intl/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { after } from "next/server";
 
 async function createChapterAction(
-  courseSlug: string,
   courseId: number,
   position: number,
 ): Promise<{ error: string | null; slug?: string }> {
@@ -35,15 +31,10 @@ async function createChapterAction(
     return { error: await getErrorMessage(error) };
   }
 
-  after(async () => {
-    await revalidateMainApp([cacheTagCourse({ courseSlug })]);
-  });
-
   return { error: null, slug: data.slug };
 }
 
 async function importChaptersAction(
-  courseSlug: string,
   courseId: number,
   formData: FormData,
 ): Promise<{ error: string | null }> {
@@ -65,10 +56,6 @@ async function importChaptersAction(
   if (error) {
     return { error: await getErrorMessage(error) };
   }
-
-  after(async () => {
-    await revalidateMainApp([cacheTagCourse({ courseSlug })]);
-  });
 
   return { error: null };
 }
@@ -97,7 +84,7 @@ export async function insertChapterAction(
   position: number,
 ): Promise<void> {
   const { courseId, courseSlug, orgSlug } = params;
-  const { slug, error } = await createChapterAction(courseSlug, courseId, position);
+  const { slug, error } = await createChapterAction(courseId, position);
 
   if (error) {
     throw new Error(error);
@@ -114,7 +101,7 @@ export async function handleImportChaptersAction(
   formData: FormData,
 ): Promise<{ error: string | null }> {
   const { courseId, courseSlug, orgSlug } = params;
-  const { error } = await importChaptersAction(courseSlug, courseId, formData);
+  const { error } = await importChaptersAction(courseId, formData);
 
   if (error) {
     return { error };
@@ -138,10 +125,6 @@ export async function reorderChaptersAction(
   if (error) {
     return { error: await getErrorMessage(error) };
   }
-
-  after(async () => {
-    await revalidateMainApp([cacheTagCourse({ courseSlug })]);
-  });
 
   revalidatePath(`/${orgSlug}/c/${courseSlug}`);
   return { error: null };

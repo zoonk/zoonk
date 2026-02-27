@@ -1,5 +1,6 @@
 "use client";
 
+import { type Route } from "next";
 import { type PlayerState } from "../player-reducer";
 import { DimensionStatusButton } from "./dimension-status-button";
 import {
@@ -29,7 +30,7 @@ export function InPlayStickyHeader({
   hasDimensions: boolean;
   isFirstStep: boolean;
   isStaticStep: boolean;
-  lessonHref: string;
+  lessonHref: Route;
   onNavigateNext: () => void;
   onNavigatePrev: () => void;
   progressValue: number;

@@ -8,27 +8,11 @@ initBotId({
     },
     {
       method: "GET",
-      path: "/*/learn/*",
-    },
-    {
-      method: "GET",
       path: "/learn/*",
     },
     {
       method: "GET",
-      path: "/*/generate/*",
-    },
-    {
-      method: "GET",
       path: "/generate/*",
-    },
-    {
-      method: "GET",
-      path: "/api/workflows/*",
-    },
-    {
-      method: "POST",
-      path: "/api/workflows/*",
     },
   ],
 });

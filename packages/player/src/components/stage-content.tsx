@@ -1,4 +1,5 @@
 import { parseStepContent } from "@zoonk/core/steps/content-contract";
+import { type Route } from "next";
 import { type CompletionResult } from "../completion-input-schema";
 import {
   type DimensionInventory,
@@ -47,8 +48,8 @@ export function StageContent({
   dimensions: DimensionInventory;
   isCompleted: boolean;
   isFirst: boolean;
-  lessonHref: string;
-  nextActivityHref: string | null;
+  lessonHref: Route;
+  nextActivityHref: Route | null;
   onNavigateNext: () => void;
   onNavigatePrev: () => void;
   onRestart: () => void;

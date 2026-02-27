@@ -4,7 +4,9 @@ import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import { Kbd } from "@zoonk/ui/components/kbd";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CircleCheck } from "lucide-react";
+import { type Route } from "next";
 import { useExtracted } from "next-intl";
+import Link from "next/link";
 import { type CompletionResult } from "../completion-input-schema";
 import { usePlayer } from "../player-context";
 import { type DimensionInventory } from "../player-reducer";
@@ -109,11 +111,11 @@ export function ChallengeFailureContent({
 }: {
   completionResult: CompletionResult | null;
   dimensions: DimensionInventory;
-  lessonHref: string;
+  lessonHref: Route;
   onRestart: () => void;
 }) {
   const t = useExtracted();
-  const { completionFooter, LinkComponent } = usePlayer();
+  const { completionFooter } = usePlayer();
   const entries = buildDimensionEntries(dimensions, []);
 
   return (
@@ -135,13 +137,13 @@ export function ChallengeFailureContent({
           </Kbd>
         </Button>
 
-        <LinkComponent
+        <Link
           className={cn(buttonVariants({ variant: "outline" }), "w-full lg:justify-between")}
           href={lessonHref}
         >
           {t("Back to Lesson")}
           <Kbd className="hidden opacity-60 lg:inline-flex">Esc</Kbd>
-        </LinkComponent>
+        </Link>
       </ChallengeActions>
 
       {completionFooter}

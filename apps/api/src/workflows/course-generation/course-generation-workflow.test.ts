@@ -80,10 +80,6 @@ vi.mock("@zoonk/core/courses/image", () => ({
   }),
 }));
 
-vi.mock("@zoonk/core/cache/revalidate", () => ({
-  revalidateMainApp: vi.fn().mockResolvedValue(null),
-}));
-
 vi.mock("@zoonk/ai/tasks/chapters/lessons", () => ({
   generateChapterLessons: vi.fn().mockResolvedValue({
     data: {

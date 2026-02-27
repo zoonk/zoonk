@@ -10,7 +10,6 @@
     "./distractor-words": "./src/get-distractor-words.ts",
     "./prepare-activity-data": "./src/prepare-activity-data.ts",
     "./provider": "./src/player-provider.tsx",
-    "./context": "./src/player-context.tsx",
     "./shell": "./src/components/player-shell.tsx",
     "./validate-answers": "./src/validate-answers.ts"
   },

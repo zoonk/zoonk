@@ -16,7 +16,6 @@
     "./auth/next": "./src/auth/next.ts",
     "./auth/stripe-prices": "./src/auth/stripe-prices.ts",
     "./auth/subscription": "./src/auth/subscription.ts",
-    "./cache/revalidate": "./src/cache/revalidate-main-app.ts",
     "./courses/image": "./src/courses/course-image.ts",
     "./courses/search": "./src/courses/search-courses.ts",
     "./images/optimize": "./src/images/optimize-image.ts",

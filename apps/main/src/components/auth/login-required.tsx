@@ -1,4 +1,3 @@
-import { Link } from "@/i18n/navigation";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import {
   Container,
@@ -10,6 +9,7 @@ import {
 import { cn } from "@zoonk/ui/lib/utils";
 import { ProtectedSection } from "@zoonk/ui/patterns/auth/protected";
 import { getExtracted } from "next-intl/server";
+import Link from "next/link";
 
 export async function LoginRequired({ title }: { title: string }) {
   const t = await getExtracted();

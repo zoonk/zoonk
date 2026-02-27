@@ -9,9 +9,6 @@ test.describe("robots.txt", () => {
     const body = await response.text();
     expect(body).toContain("Disallow: /auth/");
     expect(body).toContain("Disallow: /login");
-    expect(body).toContain("Disallow: /my");
-    expect(body).toContain("Disallow: /profile");
-    expect(body).toContain("Disallow: /subscription");
     expect(body).toContain("Disallow: /generate/");
     expect(body).toContain("Sitemap:");
   });
