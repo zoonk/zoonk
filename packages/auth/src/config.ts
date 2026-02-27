@@ -61,6 +61,8 @@ export const baseAuthConfig: Omit<BetterAuthOptions, "rateLimit"> = {
     "https://appleid.apple.com",
     "https://zoonk.com",
     "https://*.zoonk.com",
+    "https://zoonk.dev",
+    "https://*.zoonk.dev",
     "https://zoonk.app",
     "https://*.zoonk.app",
     "https://zoonk.school",
