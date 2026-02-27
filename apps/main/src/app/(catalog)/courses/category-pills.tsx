@@ -24,11 +24,9 @@ export function CategoryPillsSkeleton() {
   );
 }
 
-type CategoryPillsProps = {
+export function CategoryPills({ categories }: {
   categories: { key: CourseCategory; label: string }[];
-}
-
-export function CategoryPills({ categories }: CategoryPillsProps) {
+}) {
   const segment = useSelectedLayoutSegment();
   const t = useExtracted();
 
