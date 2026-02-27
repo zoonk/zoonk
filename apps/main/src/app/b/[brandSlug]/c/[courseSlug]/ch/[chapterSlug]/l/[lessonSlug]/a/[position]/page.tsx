@@ -53,7 +53,7 @@ export default async function ActivityPage({ params }: Props) {
     notFound();
   }
 
-  const [activity, lessonWords, lessonSentences, nextActivity] = await Promise.all([
+  const [activity, lessonWords, lessonSentences, nextActivity, session] = await Promise.all([
     getActivity({ lessonId: lesson.id, position: activityPosition }),
     getLessonWords({ lessonId: lesson.id }),
     getLessonSentences({ lessonId: lesson.id }),
@@ -65,6 +65,7 @@ export default async function ActivityPage({ params }: Props) {
       lessonId: lesson.id,
       lessonPosition: lesson.position,
     }),
+    getSession(),
   ]);
 
   if (!activity) {
@@ -80,7 +81,6 @@ export default async function ActivityPage({ params }: Props) {
   }
 
   const serialized = prepareActivityData(activity, lessonWords, lessonSentences);
-  const session = await getSession();
 
   return (
     <ActivityPlayerClient

@@ -7,11 +7,13 @@ import {
   ContainerHeaderGroup,
   ContainerTitle,
 } from "@zoonk/ui/components/container";
-import { isValidCategory } from "@zoonk/utils/categories";
+import { type CourseCategory, isValidCategory } from "@zoonk/utils/categories";
 import { type Metadata } from "next";
 import { getLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 import { CourseListClient } from "../course-list-client";
+import { CourseListSkeleton } from "../course-list-skeleton";
 
 export async function generateMetadata({
   params,
@@ -25,8 +27,21 @@ export async function generateMetadata({
   return getCategoryMeta({ category });
 }
 
-export default async function CategoryCourses({ params }: PageProps<"/courses/[category]">) {
+async function CategoryCourseListContent({ category }: { category: CourseCategory }) {
   const locale = await getLocale();
+  const courses = await listCourses({ category, language: locale });
+
+  return (
+    <CourseListClient
+      category={category}
+      initialCourses={courses}
+      language={locale}
+      limit={LIST_COURSES_LIMIT}
+    />
+  );
+}
+
+export default async function CategoryCourses({ params }: PageProps<"/courses/[category]">) {
   const { category } = await params;
 
   if (!isValidCategory(category)) {
@@ -34,7 +49,6 @@ export default async function CategoryCourses({ params }: PageProps<"/courses/[c
   }
 
   const header = await getCategoryHeader(category);
-  const courses = await listCourses({ category, language: locale });
 
   return (
     <Container variant="list">
@@ -45,12 +59,9 @@ export default async function CategoryCourses({ params }: PageProps<"/courses/[c
         </ContainerHeaderGroup>
       </ContainerHeader>
 
-      <CourseListClient
-        category={category}
-        initialCourses={courses}
-        language={locale}
-        limit={LIST_COURSES_LIMIT}
-      />
+      <Suspense fallback={<CourseListSkeleton />}>
+        <CategoryCourseListContent category={category} />
+      </Suspense>
     </Container>
   );
 }

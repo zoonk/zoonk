@@ -1,9 +1,6 @@
 import { CatalogActions } from "@/components/catalog/catalog-actions";
-import {
-  CatalogContainer,
-  CatalogListSkeleton,
-  CatalogToolbar,
-} from "@/components/catalog/catalog-list";
+import { CatalogContainer, CatalogToolbar } from "@/components/catalog/catalog-list";
+import { CatalogListSkeleton } from "@/components/catalog/catalog-skeletons";
 import {
   ContinueActivityLink,
   ContinueActivityLinkSkeleton,

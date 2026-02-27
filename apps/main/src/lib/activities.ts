@@ -1,13 +1,13 @@
 import { type ActivityKind } from "@zoonk/db";
 import { getExtracted } from "next-intl/server";
 
-export type ActivityKindInfo = {
-  key: ActivityKind;
-  label: string;
-  description: string;
-};
-
-export async function getActivityKinds(): Promise<ActivityKindInfo[]> {
+export async function getActivityKinds(): Promise<
+  {
+    key: ActivityKind;
+    label: string;
+    description: string;
+  }[]
+> {
   const t = await getExtracted();
 
   return [

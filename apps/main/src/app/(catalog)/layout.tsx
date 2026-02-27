@@ -5,14 +5,17 @@ import { Suspense } from "react";
 import { NavbarLinks, NavbarLinksSkeleton } from "./_components/navbar-links";
 import { UserAvatarMenu } from "./_components/user-avatar-menu";
 
-export default async function CatalogLayout({ children }: LayoutProps<"/">) {
+async function NavbarLinksWithAuth() {
   const session = await getSession();
+  return <NavbarLinks isLoggedIn={Boolean(session)} />;
+}
 
+export default function CatalogLayout({ children }: LayoutProps<"/">) {
   return (
     <div className="flex min-h-dvh flex-col">
       <Navbar>
         <Suspense fallback={<NavbarLinksSkeleton />}>
-          <NavbarLinks isLoggedIn={Boolean(session)} />
+          <NavbarLinksWithAuth />
         </Suspense>
 
         <Suspense fallback={<AvatarSkeleton />}>

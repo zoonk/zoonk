@@ -7,7 +7,7 @@ import {
   CatalogListItemIndicator,
   CatalogListItemTitle,
 } from "@/components/catalog/catalog-list";
-import { type ActivityKindInfo } from "@/lib/activities";
+import { getActivityKinds } from "@/lib/activities";
 import { getActivityProgress } from "@zoonk/core/progress/activities";
 import { type Activity } from "@zoonk/db";
 import { getExtracted } from "next-intl/server";
@@ -17,7 +17,6 @@ export async function ActivityList({
   brandSlug,
   chapterSlug,
   courseSlug,
-  kindMeta,
   lessonId,
   lessonSlug,
 }: {
@@ -25,7 +24,6 @@ export async function ActivityList({
   brandSlug: string;
   chapterSlug: string;
   courseSlug: string;
-  kindMeta: Map<string, ActivityKindInfo>;
   lessonId: number;
   lessonSlug: string;
 }) {
@@ -34,7 +32,12 @@ export async function ActivityList({
   }
 
   const t = await getExtracted();
-  const completedIds = await getActivityProgress({ lessonId });
+  const [activityKinds, completedIds] = await Promise.all([
+    getActivityKinds(),
+    getActivityProgress({ lessonId }),
+  ]);
+
+  const kindMeta = new Map(activityKinds.map((kind) => [kind.key, kind]));
 
   return (
     <CatalogList>

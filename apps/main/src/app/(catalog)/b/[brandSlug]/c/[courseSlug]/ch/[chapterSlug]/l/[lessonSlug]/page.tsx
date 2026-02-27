@@ -1,16 +1,12 @@
 import { CatalogActions } from "@/components/catalog/catalog-actions";
-import {
-  CatalogContainer,
-  CatalogListSkeleton,
-  CatalogToolbar,
-} from "@/components/catalog/catalog-list";
+import { CatalogContainer, CatalogToolbar } from "@/components/catalog/catalog-list";
+import { CatalogListSkeleton } from "@/components/catalog/catalog-skeletons";
 import {
   ContinueActivityLink,
   ContinueActivityLinkSkeleton,
 } from "@/components/catalog/continue-activity-link";
 import { listLessonActivities } from "@/data/activities/list-lesson-activities";
 import { getLesson } from "@/data/lessons/get-lesson";
-import { getActivityKinds } from "@/lib/activities";
 import { getSession } from "@zoonk/core/users/session/get";
 import { type Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
@@ -60,9 +56,6 @@ export default async function LessonPage({
     redirect(`/generate/l/${lesson.id}`);
   }
 
-  const activityKinds = await getActivityKinds();
-  const kindMeta = new Map(activityKinds.map((kind) => [kind.key, kind]));
-
   return (
     <main className="flex flex-1 flex-col">
       <LessonHeader
@@ -86,13 +79,13 @@ export default async function LessonPage({
             kind="lesson"
           />
         </CatalogToolbar>
+
         <Suspense fallback={<CatalogListSkeleton count={activities.length} variant="indicator" />}>
           <ActivityList
             activities={activities}
             brandSlug={brandSlug}
             chapterSlug={chapterSlug}
             courseSlug={courseSlug}
-            kindMeta={kindMeta}
             lessonId={lesson.id}
             lessonSlug={lessonSlug}
           />
