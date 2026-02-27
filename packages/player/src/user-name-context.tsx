@@ -36,7 +36,7 @@ export function UserNameProvider({
     }
   }, [initialName]);
 
-  const name = initialName ?? cachedName;
+  const name = initialName === undefined ? cachedName : initialName;
 
   return <UserNameContext value={name}>{children}</UserNameContext>;
 }
