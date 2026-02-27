@@ -65,7 +65,7 @@ export async function ContinueLearningCard({
         fullWidth ? undefined : "w-[85vw] shrink-0 snap-start sm:w-[45vw] 2xl:w-[calc(25%-1rem)]"
       }
     >
-      <Link href={activityHref}>
+      <Link href={activityHref} prefetch>
         <FeatureCardHeader>
           <FeatureCardHeaderContent>
             <FeatureCardIcon>
@@ -78,7 +78,7 @@ export async function ContinueLearningCard({
       </Link>
 
       <FeatureCardContent>
-        <Link href={activityHref}>
+        <Link href={activityHref} prefetch>
           <FeatureCardThumbnail size="lg">
             {course.imageUrl ? (
               <FeatureCardThumbnailImage>
@@ -94,11 +94,15 @@ export async function ContinueLearningCard({
 
         <FeatureCardBody>
           <FeatureCardTitle>
-            <Link href={lessonHref}>{lesson.title}</Link>
+            <Link href={lessonHref} prefetch>
+              {lesson.title}
+            </Link>
           </FeatureCardTitle>
 
           <FeatureCardSubtitle>
-            <Link href={courseHref}>{course.title}</Link>
+            <Link href={courseHref} prefetch>
+              {course.title}
+            </Link>
           </FeatureCardSubtitle>
 
           <FeatureCardDescription>{lesson.description}</FeatureCardDescription>

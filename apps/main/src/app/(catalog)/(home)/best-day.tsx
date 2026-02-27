@@ -30,7 +30,7 @@ export async function BestDay({ score, dayOfWeek }: { score: number; dayOfWeek: 
   }).format(score);
 
   return (
-    <FeatureCardLink render={<Link href="/score" />}>
+    <FeatureCardLink render={<Link href="/score" prefetch />}>
       <FeatureCard>
         <FeatureCardHeader className="text-score">
           <FeatureCardHeaderContent>

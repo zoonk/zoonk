@@ -21,6 +21,7 @@ export async function SettingsNavbar() {
           <Link
             className={buttonVariants({ size: "icon", variant: "outline" })}
             href={homeMenu.url}
+            prefetch
           >
             <homeMenu.icon aria-hidden="true" />
             <span className="sr-only">{t("Home page")}</span>

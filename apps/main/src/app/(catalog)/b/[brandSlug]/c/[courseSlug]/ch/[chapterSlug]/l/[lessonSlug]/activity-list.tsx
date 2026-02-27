@@ -59,6 +59,7 @@ export async function ActivityList({
               href={`/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}/l/${lessonSlug}/a/${activity.position}`}
               id={activity.id}
               key={String(activity.id)}
+              prefetch
             >
               <CatalogListItemContent>
                 <CatalogListItemTitle>{title}</CatalogListItemTitle>

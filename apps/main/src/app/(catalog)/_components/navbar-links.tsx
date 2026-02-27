@@ -69,6 +69,7 @@ export function NavbarLinks({ isLoggedIn }: { isLoggedIn: boolean }) {
           variant: coursesVariant,
         })}
         href={coursesMenu.url}
+        prefetch
       >
         <coursesMenu.icon aria-hidden="true" />
         <span className="sr-only sm:not-sr-only">{t("Courses")}</span>
@@ -84,6 +85,7 @@ export function NavbarLinks({ isLoggedIn }: { isLoggedIn: boolean }) {
           variant: learnVariant,
         })}
         href={learnMenu.url}
+        prefetch
       >
         <learnMenu.icon aria-hidden="true" />
         <span className="sr-only sm:not-sr-only">{t("Learn")}</span>

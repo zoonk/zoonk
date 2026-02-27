@@ -26,7 +26,7 @@ export async function Score({ score }: { score: number }) {
   }).format(score);
 
   return (
-    <FeatureCardLink render={<Link href={scoreMenu.url} />}>
+    <FeatureCardLink render={<Link href={scoreMenu.url} prefetch />}>
       <FeatureCard>
         <FeatureCardHeader className="text-score">
           <FeatureCardHeaderContent>

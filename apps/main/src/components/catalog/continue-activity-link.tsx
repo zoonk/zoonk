@@ -40,7 +40,7 @@ export async function ContinueActivityLink<Href extends string>({
 
   if (!data) {
     return (
-      <Link className={cn(buttonVariants(), "min-w-0 flex-1 gap-2")} href={fallbackHref}>
+      <Link className={cn(buttonVariants(), "min-w-0 flex-1 gap-2")} href={fallbackHref} prefetch>
         {t("Start")}
         <ChevronRightIcon aria-hidden="true" />
       </Link>
@@ -63,6 +63,7 @@ export async function ContinueActivityLink<Href extends string>({
     <Link
       className={cn(buttonVariants(), "min-w-0 flex-1 gap-2")}
       href={`/b/${data.brandSlug}/c/${data.courseSlug}/ch/${data.chapterSlug}/l/${data.lessonSlug}/a/${data.activityPosition}`}
+      prefetch
     >
       {getLabel()}
       <ChevronRightIcon aria-hidden="true" />

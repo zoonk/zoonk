@@ -22,6 +22,7 @@ export function MetricPillLinks() {
           variant: segment === "energy" ? "default" : "outline",
         })}
         href={energy.url}
+        prefetch
       >
         <energy.icon aria-hidden className="size-4" />
         {t("Energy")}
@@ -33,6 +34,7 @@ export function MetricPillLinks() {
           variant: segment === "level" ? "default" : "outline",
         })}
         href={level.url}
+        prefetch
       >
         <level.icon aria-hidden className="size-4" />
         {t("Level")}
@@ -44,6 +46,7 @@ export function MetricPillLinks() {
           variant: segment === "score" ? "default" : "outline",
         })}
         href={score.url}
+        prefetch
       >
         <score.icon aria-hidden className="size-4" />
         {t("Score")}

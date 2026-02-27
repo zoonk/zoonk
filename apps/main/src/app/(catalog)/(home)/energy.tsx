@@ -29,7 +29,7 @@ export async function Energy({ energy }: { energy: number }) {
     energy < 100 ? t("Keep learning to increase it") : t("Keep learning to maintain it");
 
   return (
-    <FeatureCardLink render={<Link href={energyMenu.url} />}>
+    <FeatureCardLink render={<Link href={energyMenu.url} prefetch />}>
       <FeatureCard>
         <FeatureCardHeader className="text-energy">
           <FeatureCardHeaderContent>

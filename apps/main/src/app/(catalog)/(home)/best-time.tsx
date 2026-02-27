@@ -29,7 +29,7 @@ export async function BestTime({ score, period }: { score: number; period: numbe
   }).format(score);
 
   return (
-    <FeatureCardLink render={<Link href="/score" />}>
+    <FeatureCardLink render={<Link href="/score" prefetch />}>
       <FeatureCard>
         <FeatureCardHeader className="text-score">
           <FeatureCardHeaderContent>
