@@ -13,7 +13,7 @@ const DEFAULT_MODEL = process.env.AI_MODEL_ACTIVITY_REVIEW ?? "openai/gpt-5.2";
 
 const FALLBACK_MODELS = [
   "anthropic/claude-opus-4.6",
-  "google/gemini-3-pro-preview",
+  "google/gemini-3.1-pro-preview",
   "google/gemini-3-flash",
   "openai/gpt-5-mini",
 ];

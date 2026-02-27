@@ -10,7 +10,7 @@ const FALLBACK_MODELS = [
   "anthropic/claude-opus-4.6",
   "anthropic/claude-opus-4.5",
   "openai/gpt-5-mini",
-  "google/gemini-3-pro-preview",
+  "google/gemini-3.1-pro-preview",
 ];
 
 const schema = z.object({

@@ -10,7 +10,7 @@ const FALLBACK_MODELS = [
   "anthropic/claude-opus-4.5",
   "anthropic/claude-sonnet-4.5",
   "google/gemini-3-flash",
-  "google/gemini-3-pro-preview",
+  "google/gemini-3.1-pro-preview",
 ];
 
 export type ActivityExplanationQuizSchema = {

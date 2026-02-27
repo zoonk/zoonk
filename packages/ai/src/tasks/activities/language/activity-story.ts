@@ -11,7 +11,7 @@ const DEFAULT_MODEL = process.env.AI_MODEL_ACTIVITY_STORY_LANGUAGE ?? "anthropic
 const FALLBACK_MODELS = [
   "openai/gpt-5.2",
   "google/gemini-3-flash",
-  "google/gemini-3-pro-preview",
+  "google/gemini-3.1-pro-preview",
   "openai/gpt-5-mini",
   "anthropic/claude-sonnet-4.5",
 ];

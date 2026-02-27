@@ -11,7 +11,7 @@ const FALLBACK_MODELS = [
   "google/gemini-3.1-pro-preview",
   "anthropic/claude-opus-4.5",
   "anthropic/claude-sonnet-4.5",
-  "google/gemini-3-pro-preview",
+  "google/gemini-3.1-pro-preview",
 ];
 
 const schema = z.object({
