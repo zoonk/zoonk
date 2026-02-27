@@ -28,7 +28,15 @@ import {
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 
-export function CatalogActions({ contentId, kind }: { contentId: string; kind: FeedbackKind }) {
+export function CatalogActions({
+  contentId,
+  defaultEmail,
+  kind,
+}: {
+  contentId: string;
+  defaultEmail?: string;
+  kind: FeedbackKind;
+}) {
   const t = useExtracted();
   const [feedback, setFeedback] = useState<FeedbackValue | "">("");
 
@@ -78,7 +86,7 @@ export function CatalogActions({ contentId, kind }: { contentId: string; kind: F
         </DropdownMenuContent>
       </DropdownMenu>
 
-      <FeedbackDialogContent />
+      <FeedbackDialogContent defaultEmail={defaultEmail} />
     </Dialog>
   );
 }

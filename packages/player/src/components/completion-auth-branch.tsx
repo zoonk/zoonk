@@ -1,9 +1,7 @@
 "use client";
 
-import { useAuthState } from "@zoonk/core/auth/hooks/auth-state";
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import { Kbd } from "@zoonk/ui/components/kbd";
-import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type Route } from "next";
 import { useExtracted } from "next-intl";
@@ -176,25 +174,6 @@ function UnauthenticatedContent({
   );
 }
 
-function PendingContent({ lessonHref }: { lessonHref: Route }) {
-  const t = useExtracted();
-
-  return (
-    <>
-      <div className="flex gap-2">
-        <Skeleton className="h-5 w-20" />
-        <Skeleton className="h-5 w-24" />
-      </div>
-
-      <CompletionActions>
-        <Link className={cn(buttonVariants({ variant: "outline" }), "w-full")} href={lessonHref}>
-          {t("Back to Lesson")}
-        </Link>
-      </CompletionActions>
-    </>
-  );
-}
-
 export function AuthBranch({
   completionResult,
   lessonHref,
@@ -208,14 +187,9 @@ export function AuthBranch({
   onRestart: () => void;
   showRewards?: boolean;
 }) {
-  const authState = useAuthState();
-  const { loginHref } = usePlayer();
+  const { isAuthenticated, loginHref } = usePlayer();
 
-  if (authState === "pending") {
-    return <PendingContent lessonHref={lessonHref} />;
-  }
-
-  if (authState === "unauthenticated") {
+  if (!isAuthenticated) {
     return (
       <UnauthenticatedContent
         lessonHref={lessonHref}

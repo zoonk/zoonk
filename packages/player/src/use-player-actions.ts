@@ -1,6 +1,5 @@
 "use client";
 
-import { useAuthState } from "@zoonk/core/auth/hooks/auth-state";
 import { type Dispatch, useCallback, useState } from "react";
 import { checkStep } from "./check-step";
 import { type CompletionInput, type CompletionResult } from "./completion-input-schema";
@@ -30,8 +29,8 @@ export function usePlayerActions(
   state: PlayerState,
   dispatch: Dispatch<Parameters<typeof playerReducer>[1]>,
   onComplete: (input: CompletionInput) => Promise<CompletionResult>,
+  isAuthenticated: boolean,
 ) {
-  const authState = useAuthState();
   const [completionResult, setCompletionResult] = useState<CompletionResult | null>(null);
   const currentStep = state.steps[state.currentStepIndex];
 
@@ -82,28 +81,28 @@ export function usePlayerActions(
     const action = { effects, result, stepId: currentStep.id, type: "CHECK_ANSWER" as const };
     dispatch(action);
 
-    if (matchColumnsWillComplete && authState === "authenticated") {
+    if (matchColumnsWillComplete && isAuthenticated) {
       fireCompletion(playerReducer(state, action));
     }
-  }, [currentStep, state, dispatch, authState, fireCompletion]);
+  }, [currentStep, state, dispatch, isAuthenticated, fireCompletion]);
 
   const handleContinue = useCallback(() => {
     const completing = willComplete(state);
     dispatch({ type: "CONTINUE" });
 
-    if (completing && authState === "authenticated") {
+    if (completing && isAuthenticated) {
       fireCompletion(state);
     }
-  }, [state, dispatch, authState, fireCompletion]);
+  }, [state, dispatch, isAuthenticated, fireCompletion]);
 
   const navigateNext = useCallback(() => {
     const completing = willComplete(state);
     dispatch({ direction: "next", type: "NAVIGATE_STEP" });
 
-    if (completing && authState === "authenticated") {
+    if (completing && isAuthenticated) {
       fireCompletion(state);
     }
-  }, [state, dispatch, authState, fireCompletion]);
+  }, [state, dispatch, isAuthenticated, fireCompletion]);
 
   const navigatePrev = useCallback(() => {
     dispatch({ direction: "prev", type: "NAVIGATE_STEP" });

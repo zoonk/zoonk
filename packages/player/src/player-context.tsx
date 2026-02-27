@@ -19,6 +19,7 @@ export type PlayerContextValue<Href extends string> = {
   currentStepIndex: number;
   dimensions: DimensionInventory;
   hasAnswer: boolean;
+  isAuthenticated: boolean;
   isCompleted: boolean;
   isFirstStep: boolean;
   isGameOver: boolean;

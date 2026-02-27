@@ -1,7 +1,7 @@
 "use client";
 
 import { getMenu } from "@/lib/menu";
-import { authClient, logout } from "@zoonk/core/auth/client";
+import { logout } from "@zoonk/core/auth/client";
 import { Button } from "@zoonk/ui/components/button";
 import {
   CommandDialog,
@@ -20,13 +20,10 @@ import { useRouter } from "next/navigation";
 import { useCallback } from "react";
 import { type CourseSearchResult, searchCoursesAction } from "./search-courses-action";
 
-export function CommandPalette() {
+export function CommandPalette({ isLoggedIn }: { isLoggedIn: boolean }) {
   const router = useRouter();
   const t = useExtracted();
   const locale = useLocale();
-
-  const { data: session } = authClient.useSession();
-  const isLoggedIn = Boolean(session);
 
   const handleSearch = useCallback(
     (searchQuery: string) => searchCoursesAction({ language: locale, query: searchQuery }),

@@ -10,6 +10,7 @@ import {
 } from "@/components/catalog/continue-activity-link";
 import { getChapter } from "@/data/chapters/get-chapter";
 import { listChapterLessons } from "@/data/lessons/list-chapter-lessons";
+import { getSession } from "@zoonk/core/users/session/get";
 import { type Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { Suspense } from "react";
@@ -42,7 +43,10 @@ export default async function ChapterPage({
 }: PageProps<"/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]">) {
   const { brandSlug, chapterSlug, courseSlug } = await params;
 
-  const chapter = await getChapter({ brandSlug, chapterSlug, courseSlug });
+  const [chapter, session] = await Promise.all([
+    getChapter({ brandSlug, chapterSlug, courseSlug }),
+    getSession(),
+  ]);
 
   if (!chapter) {
     notFound();
@@ -66,7 +70,11 @@ export default async function ChapterPage({
               fallbackHref={`/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}/l/${lessons[0]?.slug}`}
             />
           </Suspense>
-          <CatalogActions contentId={`${courseSlug}/${chapterSlug}`} kind="chapter" />
+          <CatalogActions
+            contentId={`${courseSlug}/${chapterSlug}`}
+            defaultEmail={session?.user.email}
+            kind="chapter"
+          />
         </CatalogToolbar>
 
         <Suspense fallback={<CatalogListSkeleton count={lessons.length} search />}>

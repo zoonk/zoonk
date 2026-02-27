@@ -4,6 +4,7 @@ import { getLessonWords } from "@/data/activities/get-lesson-words";
 import { getLesson } from "@/data/lessons/get-lesson";
 import { getActivitySeoMeta } from "@/lib/activities";
 import { getNextActivityInCourse } from "@zoonk/core/activities/next-in-course";
+import { getSession } from "@zoonk/core/users/session/get";
 import { prepareActivityData } from "@zoonk/player/prepare-activity-data";
 import { parseNumericId } from "@zoonk/utils/string";
 import { type Metadata } from "next";
@@ -79,6 +80,7 @@ export default async function ActivityPage({ params }: Props) {
   }
 
   const serialized = prepareActivityData(activity, lessonWords, lessonSentences);
+  const session = await getSession();
 
   return (
     <ActivityPlayerClient
@@ -86,8 +88,11 @@ export default async function ActivityPage({ params }: Props) {
       brandSlug={brandSlug}
       courseSlug={courseSlug}
       chapterSlug={chapterSlug}
+      isAuthenticated={Boolean(session)}
       lessonSlug={lessonSlug}
       nextActivity={nextActivity}
+      userEmail={session?.user.email}
+      userName={session?.user.name ?? null}
     />
   );
 }

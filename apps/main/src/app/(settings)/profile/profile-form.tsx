@@ -1,6 +1,5 @@
 "use client";
 
-import { authClient } from "@zoonk/core/auth/client";
 import {
   USERNAME_MAX_LENGTH,
   USERNAME_MIN_LENGTH,
@@ -67,16 +66,20 @@ const initialState = {
   username: "",
 };
 
-export function ProfileForm() {
-  const { data: session, isPending } = authClient.useSession();
+export function ProfileForm({
+  defaultName,
+  defaultUsername,
+}: {
+  defaultName: string;
+  defaultUsername: string;
+}) {
   const t = useExtracted();
 
-  const currentUsername = session?.user.username ?? "";
-  const { setUsername, status, username } = useUsernameAvailability(currentUsername);
+  const { setUsername, status, username } = useUsernameAvailability(defaultUsername);
 
   const [state, formAction] = useActionState(profileFormAction, initialState);
 
-  const currentName = state.name || session?.user.name || "";
+  const currentName = state.name || defaultName;
 
   const hasError = state.status === "error";
   const isSubmitDisabled = status !== "idle" && status !== "available";
@@ -90,7 +93,6 @@ export function ProfileForm() {
             aria-invalid={hasError}
             autoComplete="name"
             defaultValue={currentName}
-            disabled={isPending}
             id="name"
             key={currentName}
             name="name"
@@ -125,7 +127,6 @@ export function ProfileForm() {
               autoCapitalize="none"
               autoComplete="username"
               autoCorrect="off"
-              disabled={isPending}
               id="username"
               maxLength={USERNAME_MAX_LENGTH}
               minLength={USERNAME_MIN_LENGTH}

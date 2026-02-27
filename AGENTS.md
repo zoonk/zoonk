@@ -36,7 +36,7 @@
 Always run `pnpm turbo quality:fix` and `pnpm typecheck` after making any changes
 
 - Always run e2e tests for ALL apps (`main`, `editor`, `api`), not just the one you changed
-- After e2e changes, run the flakiness check: each app's e2e suite at least 3 times with zero failures
+- After e2e changes, run your tests multiple times to check for flakiness
 
 ## Engineering Mindset
 

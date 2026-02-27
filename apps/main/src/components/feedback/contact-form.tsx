@@ -1,6 +1,5 @@
 "use client";
 
-import { authClient } from "@zoonk/core/auth/client";
 import {
   Field,
   FieldContent,
@@ -22,8 +21,7 @@ const initialState: {
   status: "idle",
 };
 
-export function ContactForm() {
-  const { data: session, isPending } = authClient.useSession();
+export function ContactForm({ defaultEmail }: { defaultEmail?: string }) {
   const t = useExtracted();
   const emailId = useId();
   const messageId = useId();
@@ -39,8 +37,7 @@ export function ContactForm() {
           <FieldLabel htmlFor={emailId}>{t("Email address")}</FieldLabel>
           <Input
             autoComplete="email"
-            defaultValue={session?.user?.email ?? ""}
-            disabled={isPending}
+            defaultValue={defaultEmail ?? ""}
             id={emailId}
             name="email"
             placeholder={t("myemail@gmail.com")}
@@ -55,7 +52,6 @@ export function ContactForm() {
         <FieldContent>
           <FieldLabel htmlFor={messageId}>{t("Message")}</FieldLabel>
           <Textarea
-            disabled={isPending}
             id={messageId}
             name="message"
             placeholder={t("How can we help you?")}

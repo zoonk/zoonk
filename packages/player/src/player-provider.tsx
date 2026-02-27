@@ -47,6 +47,7 @@ export function PlayerProvider<Href extends string>({
   activity,
   children,
   completionFooter,
+  isAuthenticated,
   lessonHref,
   levelHref,
   loginHref,
@@ -54,10 +55,12 @@ export function PlayerProvider<Href extends string>({
   onComplete,
   onEscape,
   onNext,
+  userName,
 }: {
   activity: SerializedActivity;
   children: React.ReactNode;
   completionFooter?: React.ReactNode;
+  isAuthenticated: boolean;
   lessonHref: Route<Href>;
   levelHref?: Route<Href>;
   loginHref?: Route<Href>;
@@ -65,10 +68,11 @@ export function PlayerProvider<Href extends string>({
   onComplete: (input: CompletionInput) => Promise<CompletionResult>;
   onEscape: () => void;
   onNext?: () => void;
+  userName?: string | null;
 }) {
   const [state, dispatch] = useReducer(playerReducer, activity, createInitialState);
   const view = deriveViewState(state);
-  const actions = usePlayerActions(state, dispatch, onComplete);
+  const actions = usePlayerActions(state, dispatch, onComplete, isAuthenticated);
 
   const handleNext = useCallback(() => {
     onNext?.();
@@ -97,6 +101,7 @@ export function PlayerProvider<Href extends string>({
     currentStepIndex: state.currentStepIndex,
     dimensions: state.dimensions,
     escape: onEscape,
+    isAuthenticated,
     lessonHref,
     levelHref,
     loginHref,
@@ -108,7 +113,7 @@ export function PlayerProvider<Href extends string>({
 
   return (
     <PlayerContext value={contextValue}>
-      <UserNameProvider>{children}</UserNameProvider>
+      <UserNameProvider initialName={userName}>{children}</UserNameProvider>
     </PlayerContext>
   );
 }

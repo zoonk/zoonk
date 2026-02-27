@@ -1,5 +1,5 @@
 import { betterAuth } from "better-auth/minimal";
-import { emailOTP } from "better-auth/plugins";
+import { emailOTP, oneTimeToken } from "better-auth/plugins";
 import { baseAuthConfig, baseAuthPlugins, fullPlugins, socialProviders } from "./config";
 import { sendVerificationOTP } from "./plugins/otp";
 
@@ -7,7 +7,7 @@ import { sendVerificationOTP } from "./plugins/otp";
  * E2E-specific auth configuration.
  * - Enables email+password with plain-text matching (no bcrypt overhead)
  * - Disables rate limiting to avoid 429 errors during parallel test runs
- * - Stores OTP in plain text for E2E testing (allows DB queries to verify OTP)
+ * - Stores OTP and one-time tokens in plain text for E2E testing
  */
 export const auth = betterAuth({
   ...baseAuthConfig,
@@ -20,11 +20,14 @@ export const auth = betterAuth({
   },
   plugins: [
     ...baseAuthPlugins,
-    ...fullPlugins.filter((plugin) => plugin.id !== "email-otp"),
+    ...fullPlugins.filter((plugin) => plugin.id !== "email-otp" && plugin.id !== "one-time-token"),
     emailOTP({
       overrideDefaultEmailVerification: true,
       sendVerificationOTP,
       storeOTP: "plain",
+    }),
+    oneTimeToken({
+      storeToken: "plain",
     }),
   ],
   rateLimit: { enabled: false },

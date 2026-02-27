@@ -11,6 +11,7 @@ import {
 import { listLessonActivities } from "@/data/activities/list-lesson-activities";
 import { getLesson } from "@/data/lessons/get-lesson";
 import { getActivityKinds } from "@/lib/activities";
+import { getSession } from "@zoonk/core/users/session/get";
 import { type Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { Suspense } from "react";
@@ -44,12 +45,10 @@ export default async function LessonPage({
 }: PageProps<"/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]">) {
   const { brandSlug, chapterSlug, courseSlug, lessonSlug } = await params;
 
-  const lesson = await getLesson({
-    brandSlug,
-    chapterSlug,
-    courseSlug,
-    lessonSlug,
-  });
+  const [lesson, session] = await Promise.all([
+    getLesson({ brandSlug, chapterSlug, courseSlug, lessonSlug }),
+    getSession(),
+  ]);
 
   if (!lesson) {
     notFound();
@@ -81,7 +80,11 @@ export default async function LessonPage({
               lessonId={lesson.id}
             />
           </Suspense>
-          <CatalogActions contentId={`${courseSlug}/${chapterSlug}/${lessonSlug}`} kind="lesson" />
+          <CatalogActions
+            contentId={`${courseSlug}/${chapterSlug}/${lessonSlug}`}
+            defaultEmail={session?.user.email}
+            kind="lesson"
+          />
         </CatalogToolbar>
         <Suspense fallback={<CatalogListSkeleton count={activities.length} variant="indicator" />}>
           <ActivityList

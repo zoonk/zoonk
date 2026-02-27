@@ -39,7 +39,7 @@ export function NavbarLinksSkeleton() {
   );
 }
 
-export function NavbarLinks() {
+export function NavbarLinks({ isLoggedIn }: { isLoggedIn: boolean }) {
   const pathname = usePathname();
   const t = useExtracted();
 
@@ -74,7 +74,7 @@ export function NavbarLinks() {
         <span className="sr-only sm:not-sr-only">{t("Courses")}</span>
       </Link>
 
-      <CommandPalette />
+      <CommandPalette isLoggedIn={isLoggedIn} />
 
       <Link
         aria-current={learnVariant === "default" ? "page" : undefined}

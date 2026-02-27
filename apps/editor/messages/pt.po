@@ -408,26 +408,6 @@ msgctxt "lP29gk"
 msgid "A course with this URL already exists"
 msgstr "Já existe um curso com este endereço"
 
-#: src/app/auth/callback/[token]/page.tsx
-msgctxt "57VhQb"
-msgid "Authentication Error"
-msgstr "Erro de autenticação"
-
-#: src/app/auth/callback/[token]/page.tsx
-msgctxt "Le3MTe"
-msgid "Return to login"
-msgstr "Voltar para o login"
-
-#: src/app/auth/callback/[token]/page.tsx
-msgctxt "mffe4M"
-msgid "The authentication token is invalid or expired. Please try logging in again."
-msgstr "O token de autenticação é inválido ou expirou. Por favor, tente fazer login novamente."
-
-#: src/app/auth/callback/[token]/page.tsx
-msgctxt "vQjckV"
-msgid "Need help? Contact us at hello@zoonk.com"
-msgstr "Precisa de ajuda? Entre em contato com a gente em contato@zoonk.com"
-
 #: src/app/unauthorized.tsx
 msgctxt "Ajg4UO"
 msgid "You can't edit courses for this organization. Log in with another account or switch to a different organization."

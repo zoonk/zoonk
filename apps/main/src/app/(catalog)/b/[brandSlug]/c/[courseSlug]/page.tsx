@@ -10,6 +10,7 @@ import {
 } from "@/components/catalog/continue-activity-link";
 import { listCourseChapters } from "@/data/chapters/list-course-chapters";
 import { getCourse } from "@/data/courses/get-course";
+import { getSession } from "@zoonk/core/users/session/get";
 import { type Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { Suspense } from "react";
@@ -35,7 +36,7 @@ export async function generateMetadata({
 export default async function CoursePage({ params }: PageProps<"/b/[brandSlug]/c/[courseSlug]">) {
   const { brandSlug, courseSlug } = await params;
 
-  const course = await getCourse({ brandSlug, courseSlug });
+  const [course, session] = await Promise.all([getCourse({ brandSlug, courseSlug }), getSession()]);
 
   if (!course) {
     notFound();
@@ -59,7 +60,7 @@ export default async function CoursePage({ params }: PageProps<"/b/[brandSlug]/c
               fallbackHref={`/b/${brandSlug}/c/${courseSlug}/ch/${chapters[0]?.slug}`}
             />
           </Suspense>
-          <CatalogActions contentId={courseSlug} kind="course" />
+          <CatalogActions contentId={courseSlug} defaultEmail={session?.user.email} kind="course" />
         </CatalogToolbar>
 
         <Suspense fallback={<CatalogListSkeleton count={chapters.length} search />}>

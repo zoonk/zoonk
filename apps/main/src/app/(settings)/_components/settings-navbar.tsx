@@ -1,19 +1,17 @@
-"use client";
-
 import { getMenu } from "@/lib/menu";
-import { authClient, logout } from "@zoonk/core/auth/client";
-import { Button, buttonVariants } from "@zoonk/ui/components/button";
+import { getSession } from "@zoonk/core/users/session/get";
+import { buttonVariants } from "@zoonk/ui/components/button";
 import { HorizontalScroll, HorizontalScrollContent } from "@zoonk/ui/components/horizontal-scroll";
-import { LogOutIcon } from "lucide-react";
-import { useExtracted } from "next-intl";
+import { getExtracted } from "next-intl/server";
 import Link from "next/link";
+import { SettingsLogoutButton } from "./settings-logout-button";
 import { SettingsPillLinks } from "./settings-pills";
 
 const homeMenu = getMenu("home");
 
-export function SettingsNavbar() {
-  const t = useExtracted();
-  const { data: session } = authClient.useSession();
+export async function SettingsNavbar() {
+  const t = await getExtracted();
+  const session = await getSession();
   const isLoggedIn = Boolean(session);
 
   return (
@@ -30,12 +28,7 @@ export function SettingsNavbar() {
 
           <SettingsPillLinks />
 
-          {isLoggedIn && (
-            <Button className="ml-auto" onClick={() => logout()} size="icon" variant="secondary">
-              <LogOutIcon aria-hidden="true" />
-              <span className="sr-only">{t("Logout")}</span>
-            </Button>
-          )}
+          {isLoggedIn && <SettingsLogoutButton label={t("Logout")} />}
         </HorizontalScrollContent>
       </HorizontalScroll>
     </nav>

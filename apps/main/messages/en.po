@@ -1118,11 +1118,6 @@ msgid "This year"
 msgstr "This year"
 
 #: src/app/(settings)/_components/protected-section.tsx
-msgctxt "2jC0rX"
-msgid "Checking if you're logged in..."
-msgstr "Checking if you're logged in..."
-
-#: src/app/(settings)/_components/protected-section.tsx
 #: src/components/auth/login-required.tsx
 msgctxt "yOFm9C"
 msgid "You need to be logged in to access this page."
@@ -1340,26 +1335,6 @@ msgstr "Follow us"
 msgctxt "YdQxfw"
 msgid "Contact Support"
 msgstr "Contact Support"
-
-#: src/app/auth/callback/[token]/page.tsx
-msgctxt "57VhQb"
-msgid "Authentication Error"
-msgstr "Authentication Error"
-
-#: src/app/auth/callback/[token]/page.tsx
-msgctxt "Le3MTe"
-msgid "Return to login"
-msgstr "Return to login"
-
-#: src/app/auth/callback/[token]/page.tsx
-msgctxt "mffe4M"
-msgid "The authentication token is invalid or expired. Please try logging in again."
-msgstr "The authentication token is invalid or expired. Please try logging in again."
-
-#: src/app/auth/callback/[token]/page.tsx
-msgctxt "vQjckV"
-msgid "Need help? Contact us at hello@zoonk.com"
-msgstr "Need help? Contact us at hello@zoonk.com"
 
 #: src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/a/[position]/activity-not-generated.tsx
 msgctxt "Sum1l9"

@@ -1,5 +1,6 @@
 import { FeedbackDialog } from "@/components/feedback/feedback-dialog";
 import { getSocialProfiles } from "@/lib/social";
+import { getSession } from "@zoonk/core/users/session/get";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import {
   Container,
@@ -24,6 +25,7 @@ import { getExtracted, getLocale } from "next-intl/server";
 export async function SupportContent() {
   const t = await getExtracted();
   const locale = await getLocale();
+  const session = await getSession();
   const socials = getSocialProfiles(locale);
 
   return (
@@ -61,7 +63,7 @@ export async function SupportContent() {
           </ItemContent>
         </Item>
 
-        <FeedbackDialog>
+        <FeedbackDialog defaultEmail={session?.user.email}>
           <Item render={<button type="button" />} size="sm">
             <ItemMedia className="bg-muted size-10 rounded-full" variant="icon">
               <Mail aria-hidden="true" />

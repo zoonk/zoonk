@@ -1,16 +1,9 @@
-"use client";
-
-import { authClient } from "@zoonk/core/auth/client";
-import { Avatar, AvatarFallback, AvatarImage, AvatarSkeleton } from "@zoonk/ui/components/avatar";
+import { getSession } from "@zoonk/core/users/session/get";
+import { Avatar, AvatarFallback, AvatarImage } from "@zoonk/ui/components/avatar";
 import { User } from "lucide-react";
 
-export function UserAvatar() {
-  const { isPending, data: session } = authClient.useSession();
-
-  if (isPending) {
-    return <AvatarSkeleton />;
-  }
-
+export async function UserAvatar() {
+  const session = await getSession();
   const userAvatar = session?.user.image || undefined;
   const userName = session?.user.name || session?.user.email;
   const fallback = userName?.[0] || <User size={16} />;
