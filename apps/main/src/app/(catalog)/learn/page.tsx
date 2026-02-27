@@ -1,6 +1,10 @@
+import { shuffle } from "@zoonk/utils/shuffle";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
+import Link from "next/link";
 import { LearnForm } from "./learn-form";
+
+const VISIBLE_SUGGESTIONS = 5;
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getExtracted();
@@ -16,16 +20,68 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function Learn() {
   const t = await getExtracted();
 
+  const allSuggestions = [
+    t("Computer Science"),
+    t("Psychology"),
+    t("Economics"),
+    t("Photography"),
+    t("Philosophy"),
+    t("Data Science"),
+    t("Creative Writing"),
+    t("Biology"),
+    t("Graphic Design"),
+    t("History"),
+    t("Marketing"),
+  ];
+
+  const suggestions = shuffle(allSuggestions).slice(0, VISIBLE_SUGGESTIONS);
+
   return (
-    <main className="mx-auto flex w-full max-w-xl flex-1 flex-col items-center justify-center gap-4 p-4">
-      <h1
-        className="text-foreground/90 md:tracking-tightest pt-4 text-center text-2xl font-semibold -tracking-wide md:pt-8 md:text-3xl md:-tracking-wider"
-        id="learn-title"
-      >
-        {t("What do you want to learn?")}
+    <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col items-center justify-center gap-8 p-4 pb-28 md:gap-10">
+      <h1 className="text-center text-4xl font-bold tracking-tight md:text-5xl" id="learn-title">
+        {t("Learn anything.")}
       </h1>
 
-      <LearnForm />
+      <LearnForm
+        placeholders={shuffle([
+          t("Quantum physics"),
+          t("Ancient philosophy"),
+          t("Machine learning"),
+          t("Creative writing"),
+          t("Molecular biology"),
+          t("Behavioral economics"),
+          t("Organic chemistry"),
+          t("UFOs"),
+          t("Dinosaur extinction"),
+          t("How volcanoes work"),
+          t("World history"),
+          t("Cognitive psychology"),
+          t("Linear algebra"),
+          t("Black holes"),
+          t("How the internet works"),
+          t("Roman Empire"),
+          t("Deep sea creatures"),
+          t("Solar system"),
+          t("Artificial intelligence"),
+          t("Harry Potter"),
+        ])}
+      />
+
+      <nav
+        aria-label={t("Suggested subjects")}
+        className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2"
+      >
+        {suggestions.map((subject) => (
+          <Link
+            key={subject}
+            className="text-muted-foreground/70 hover:text-foreground text-sm transition-colors"
+            href={`/learn/${encodeURIComponent(subject)}`}
+            prefetch={false}
+          >
+            {subject}
+          </Link>
+        ))}
+      </nav>
     </main>
   );
 }

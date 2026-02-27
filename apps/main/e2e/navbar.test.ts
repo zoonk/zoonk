@@ -28,7 +28,7 @@ test.describe("Navbar - Unauthenticated", () => {
     // Scope to navigation to avoid conflicts with "Learn anything" in hero
     await page.getByRole("navigation").getByRole("link", { exact: true, name: "Learn" }).click();
 
-    await expect(page.getByRole("heading", { name: /what do you want to learn/i })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /learn anything/i })).toBeVisible();
   });
 
   test("Home link is active on home page", async ({ page }) => {
