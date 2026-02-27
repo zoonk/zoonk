@@ -1,4 +1,5 @@
 import { getMenu } from "@/lib/menu";
+import { getSession } from "@zoonk/core/users/session/get";
 import {
   DropdownMenuContent,
   DropdownMenuItem,
@@ -9,6 +10,7 @@ import Link from "next/link";
 import { LogoutDropdownItem } from "./logout-dropdown-item";
 
 export async function UserDropdownMenu() {
+  const session = await getSession();
   const t = await getExtracted();
 
   const catalogMenu = [{ key: t("My courses"), ...getMenu("myCourses") }];
@@ -39,7 +41,7 @@ export async function UserDropdownMenu() {
 
       <DropdownMenuSeparator />
 
-      <LogoutDropdownItem />
+      <LogoutDropdownItem isLoggedIn={Boolean(session)} />
     </DropdownMenuContent>
   );
 }

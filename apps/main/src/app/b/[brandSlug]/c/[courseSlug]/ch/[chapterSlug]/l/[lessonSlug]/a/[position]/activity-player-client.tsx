@@ -12,15 +12,19 @@ export function ActivityPlayerClient({
   brandSlug,
   courseSlug,
   chapterSlug,
+  isAuthenticated,
   lessonSlug,
   nextActivity,
+  userName,
 }: {
   activity: SerializedActivity;
   brandSlug: string;
   courseSlug: string;
   chapterSlug: string;
+  isAuthenticated: boolean;
   lessonSlug: string;
   nextActivity: { chapterSlug: string; lessonSlug: string; activityPosition: number } | null;
+  userName: string | null;
 }) {
   const router = useRouter();
 
@@ -33,6 +37,7 @@ export function ActivityPlayerClient({
   return (
     <PlayerProvider
       activity={activity}
+      isAuthenticated={isAuthenticated}
       completionFooter={
         <ContentFeedback
           className="pt-8"
@@ -48,6 +53,7 @@ export function ActivityPlayerClient({
       onComplete={submitCompletion}
       onEscape={() => router.push(lessonHref)}
       onNext={nextActivityHref ? () => router.push(nextActivityHref) : undefined}
+      userName={userName}
     >
       <PlayerShell />
     </PlayerProvider>

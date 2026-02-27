@@ -1,6 +1,7 @@
 "use client";
 
 import { authClient } from "@zoonk/core/auth/client";
+import { type AuthOrganization } from "@zoonk/core/types";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import {
   DropdownMenu,
@@ -8,29 +9,24 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@zoonk/ui/components/dropdown-menu";
-import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
 import { BuildingIcon, ChevronsUpDownIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 
-function OrgSwitcherSkeleton() {
-  return <Skeleton className="h-8 w-36 rounded-full" />;
-}
-
-export function OrgSwitcher({ children }: React.PropsWithChildren) {
+export function OrgSwitcher({
+  children,
+  organizations,
+}: {
+  organizations: AuthOrganization[];
+} & React.PropsWithChildren) {
   const t = useExtracted();
   const params = useParams<{ orgSlug: string }>();
-  const { data: organizations, isPending } = authClient.useListOrganizations();
 
-  if (isPending) {
-    return <OrgSwitcherSkeleton />;
-  }
+  const currentOrg = organizations.find((org) => org.slug === params.orgSlug);
 
-  const currentOrg = organizations?.find((org) => org.slug === params.orgSlug);
-
-  const otherOrgs = organizations?.filter((org) => org.id !== currentOrg?.id) ?? [];
+  const otherOrgs = organizations.filter((org) => org.id !== currentOrg?.id);
 
   function handleOrgClick(orgSlug: string) {
     // Set active org fire-and-forget (don't block navigation)

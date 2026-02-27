@@ -1,16 +1,15 @@
 "use client";
 
-import { authClient, logout } from "@zoonk/core/auth/client";
+import { logout } from "@zoonk/core/auth/client";
 import { DropdownMenuItem } from "@zoonk/ui/components/dropdown-menu";
 import { LogOut, User } from "lucide-react";
 import { useExtracted } from "next-intl";
 import Link from "next/link";
 
-export function LogoutDropdownItem() {
-  const { data: session } = authClient.useSession();
+export function LogoutDropdownItem({ isLoggedIn }: { isLoggedIn: boolean }) {
   const t = useExtracted();
 
-  if (!session) {
+  if (!isLoggedIn) {
     return (
       <DropdownMenuItem render={<Link href="/login" prefetch={false} />}>
         <User aria-hidden="true" />

@@ -1,3 +1,4 @@
+import { getSession } from "@zoonk/core/users/session/get";
 import {
   Container,
   ContainerBody,
@@ -22,6 +23,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function ProfilePage() {
   const t = await getExtracted();
+  const session = await getSession();
 
   return (
     <Container>
@@ -36,7 +38,10 @@ export default async function ProfilePage() {
 
       <ContainerBody>
         <ProtectedSection>
-          <ProfileForm />
+          <ProfileForm
+            defaultName={session?.user.name ?? ""}
+            defaultUsername={session?.user.username ?? ""}
+          />
         </ProtectedSection>
       </ContainerBody>
     </Container>

@@ -6,7 +6,6 @@
     ".": "./src/auth.ts",
     "./client": "./src/client.ts",
     "./e2e": "./src/e2e.ts",
-    "./hooks/auth-state": "./src/hooks/use-auth-state.ts",
     "./next": "./src/next.ts",
     "./testing": "./src/testing.ts",
     "./permissions": "./src/permissions.ts",

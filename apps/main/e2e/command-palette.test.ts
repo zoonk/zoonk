@@ -215,16 +215,12 @@ test.describe("Command Palette - Authenticated", () => {
     await expect(logoutPage.getByRole("dialog").getByText(/^logout$/i)).toBeVisible();
 
     // Click logout - this triggers a hard navigation
-    await Promise.all([
-      logoutPage.waitForURL(/^[^?]*\/$/),
-      logoutPage.waitForResponse(
-        (response) => response.url().includes("/api/auth/get-session") && response.status() === 200,
-      ),
-      logoutPage
-        .getByRole("dialog")
-        .getByText(/^logout$/i)
-        .click(),
-    ]);
+    await logoutPage
+      .getByRole("dialog")
+      .getByText(/^logout$/i)
+      .click();
+    await logoutPage.waitForURL(/^[^?]*\/$/);
+    await logoutPage.waitForLoadState("networkidle");
 
     // Verify user is logged out - command palette should show Login option
     await openCommandPalette(logoutPage);

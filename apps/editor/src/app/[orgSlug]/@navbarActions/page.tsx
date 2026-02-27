@@ -1,11 +1,14 @@
 import { LocaleSwitcher } from "@/components/navbar/locale-switcher";
 import { LogoutMenuItem } from "@/components/navbar/logout-menu-item";
 import { OrgSwitcher } from "@/components/navbar/org-switcher";
+import { listUserOrgs } from "@zoonk/core/users/orgs/list";
 import { DropdownMenuSeparator } from "@zoonk/ui/components/dropdown-menu";
 
-export default function NavbarActionsDefault() {
+export default async function NavbarActionsDefault() {
+  const { data: organizations } = await listUserOrgs();
+
   return (
-    <OrgSwitcher>
+    <OrgSwitcher organizations={organizations}>
       <DropdownMenuSeparator />
       <LocaleSwitcher />
       <DropdownMenuSeparator />

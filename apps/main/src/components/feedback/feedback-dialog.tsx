@@ -13,7 +13,7 @@ import { useExtracted } from "next-intl";
 import { type ReactElement } from "react";
 import { ContactForm } from "./contact-form";
 
-export function FeedbackDialogContent() {
+export function FeedbackDialogContent({ defaultEmail }: { defaultEmail?: string }) {
   const t = useExtracted();
 
   return (
@@ -28,17 +28,23 @@ export function FeedbackDialogContent() {
       </DialogHeader>
 
       <DialogFooter>
-        <ContactForm />
+        <ContactForm defaultEmail={defaultEmail} />
       </DialogFooter>
     </DialogContent>
   );
 }
 
-export function FeedbackDialog({ children }: { children: ReactElement }) {
+export function FeedbackDialog({
+  children,
+  defaultEmail,
+}: {
+  children: ReactElement;
+  defaultEmail?: string;
+}) {
   return (
     <Dialog>
       <DialogTrigger render={children} />
-      <FeedbackDialogContent />
+      <FeedbackDialogContent defaultEmail={defaultEmail} />
     </Dialog>
   );
 }

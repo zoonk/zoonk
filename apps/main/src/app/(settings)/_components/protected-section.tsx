@@ -1,15 +1,14 @@
-"use client";
-
-import { useAuthState } from "@zoonk/core/auth/hooks/auth-state";
+import { getSession } from "@zoonk/core/users/session/get";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ProtectedSection as ProtectedSectionPattern } from "@zoonk/ui/patterns/auth/protected";
-import { useExtracted } from "next-intl";
+import { getExtracted } from "next-intl/server";
 import Link from "next/link";
 
-export function ProtectedSection({ children }: React.ComponentProps<"section">) {
-  const authState = useAuthState();
-  const t = useExtracted();
+export async function ProtectedSection({ children }: React.ComponentProps<"section">) {
+  const session = await getSession();
+  const t = await getExtracted();
+  const state = session ? "authenticated" : "unauthenticated";
 
   return (
     <ProtectedSectionPattern
@@ -19,8 +18,7 @@ export function ProtectedSection({ children }: React.ComponentProps<"section">) 
         </Link>
       }
       alertTitle={t("You need to be logged in to access this page.")}
-      pendingTitle={t("Checking if you're logged in...")}
-      state={authState}
+      state={state}
     >
       {children}
     </ProtectedSectionPattern>

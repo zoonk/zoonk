@@ -8,6 +8,7 @@ import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { dailyProgressFixtureMany, userProgressFixture } from "@zoonk/testing/fixtures/progress";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
 import { AI_ORG_SLUG } from "@zoonk/utils/constants";
+import { getString } from "@zoonk/utils/json";
 import { LOCALE_COOKIE } from "@zoonk/utils/locale";
 
 const UUID_SHORT_LENGTH = 8;
@@ -133,6 +134,32 @@ export async function createE2EUser(
  * Retries the click if the dialog doesn't appear (handles pre-hydration timing).
  * Uses a visibility guard to avoid toggling the dialog closed on retry.
  */
+export async function generateOneTimeToken(baseURL: string, user: E2EUser): Promise<string> {
+  const ctx = await request.newContext({
+    baseURL,
+    storageState: user.storageState,
+  });
+
+  const response = await ctx.get("/api/auth/one-time-token/generate");
+
+  if (!response.ok()) {
+    const body = await response.text();
+    await ctx.dispose();
+    throw new Error(`Failed to generate one-time token: ${response.status()} - ${body}`);
+  }
+
+  const data: unknown = await response.json();
+  await ctx.dispose();
+
+  const token = getString(data, "token");
+
+  if (!token) {
+    throw new Error("No token in one-time token response");
+  }
+
+  return token;
+}
+
 export async function openDialog(trigger: Locator, dialog: Locator) {
   await expect(async () => {
     if (!(await dialog.isVisible())) {

@@ -1,6 +1,5 @@
 "use client";
 
-import { authClient } from "@zoonk/core/auth/client";
 import { STORAGE_KEY_DISPLAY_NAME } from "@zoonk/utils/constants";
 import { replaceNamePlaceholder } from "@zoonk/utils/string";
 import { createContext, useCallback, useContext, useEffect, useSyncExternalStore } from "react";
@@ -20,20 +19,24 @@ function getServerSnapshot(): null {
   return null;
 }
 
-export function UserNameProvider({ children }: { children: React.ReactNode }) {
-  const { data, isPending } = authClient.useSession();
-  const sessionName = data?.user.name ?? null;
+export function UserNameProvider({
+  children,
+  initialName,
+}: {
+  children: React.ReactNode;
+  initialName?: string | null;
+}) {
   const cachedName = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
   useEffect(() => {
-    if (sessionName) {
-      localStorage.setItem(STORAGE_KEY_DISPLAY_NAME, sessionName);
-    } else if (!isPending) {
+    if (initialName) {
+      localStorage.setItem(STORAGE_KEY_DISPLAY_NAME, initialName);
+    } else if (initialName === null) {
       localStorage.removeItem(STORAGE_KEY_DISPLAY_NAME);
     }
-  }, [sessionName, isPending]);
+  }, [initialName]);
 
-  const name = sessionName ?? cachedName;
+  const name = initialName ?? cachedName;
 
   return <UserNameContext value={name}>{children}</UserNameContext>;
 }
