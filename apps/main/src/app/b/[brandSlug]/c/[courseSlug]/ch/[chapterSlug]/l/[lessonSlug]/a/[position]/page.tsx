@@ -91,6 +91,7 @@ export default async function ActivityPage({ params }: Props) {
       isAuthenticated={Boolean(session)}
       lessonSlug={lessonSlug}
       nextActivity={nextActivity}
+      userEmail={session?.user.email}
       userName={session?.user.name ?? null}
     />
   );

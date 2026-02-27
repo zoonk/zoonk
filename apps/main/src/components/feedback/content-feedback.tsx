@@ -11,12 +11,14 @@ import { useState } from "react";
 export function ContentFeedback({
   kind,
   contentId,
+  defaultEmail,
   variant = "default",
   className,
   ...props
 }: {
   kind: FeedbackKind;
   contentId: string;
+  defaultEmail?: string;
   variant?: "default" | "minimal";
 } & React.ComponentProps<"footer">) {
   const t = useExtracted();
@@ -69,7 +71,7 @@ export function ContentFeedback({
         </Button>
       </div>
 
-      <FeedbackDialog>
+      <FeedbackDialog defaultEmail={defaultEmail}>
         <Button className="text-muted-foreground" size="sm" variant="ghost">
           <MessageSquareIcon aria-hidden="true" />
           {t("Send feedback")}

@@ -111,7 +111,10 @@ test.describe("Content Feedback", () => {
 });
 
 test.describe("Content Feedback - Authenticated", () => {
-  test("email field is empty and editable in learn page", async ({ authenticatedPage }) => {
+  test("email field shows authenticated user's email", async ({
+    authenticatedPage,
+    withProgressUser,
+  }) => {
     await authenticatedPage.goto(`/learn/${encodeURIComponent(prompt)}`);
     // Wait for content to load
     await expect(authenticatedPage.getByText(suggestionTitle)).toBeVisible();
@@ -123,6 +126,10 @@ test.describe("Content Feedback - Authenticated", () => {
     const emailInput = dialog.getByRole("textbox", { name: /email address/i });
 
     await expect(emailInput).toBeEnabled();
-    await expect(emailInput).toHaveValue("");
+
+    // Should be pre-filled with user's email
+    await expect(emailInput).toHaveValue(
+      new RegExp(withProgressUser.email.replaceAll(/[.]/g, String.raw`\.`)),
+    );
   });
 });

@@ -15,6 +15,7 @@ export function ActivityPlayerClient({
   isAuthenticated,
   lessonSlug,
   nextActivity,
+  userEmail,
   userName,
 }: {
   activity: SerializedActivity;
@@ -24,6 +25,7 @@ export function ActivityPlayerClient({
   isAuthenticated: boolean;
   lessonSlug: string;
   nextActivity: { chapterSlug: string; lessonSlug: string; activityPosition: number } | null;
+  userEmail?: string;
   userName: string | null;
 }) {
   const router = useRouter();
@@ -42,6 +44,7 @@ export function ActivityPlayerClient({
         <ContentFeedback
           className="pt-8"
           contentId={activity.id}
+          defaultEmail={userEmail}
           kind="activity"
           variant="minimal"
         />
