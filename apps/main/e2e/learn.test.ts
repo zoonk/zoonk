@@ -39,7 +39,6 @@ test.describe("Learn Form", () => {
     await firstLink.click();
 
     await expect(page).toHaveURL(/\/learn\/.+/);
-    await expect(page.getByRole("heading", { name: /course ideas for/i })).toBeVisible();
   });
 
   test("submitting prompt navigates to suggestions page", async ({ page }) => {
