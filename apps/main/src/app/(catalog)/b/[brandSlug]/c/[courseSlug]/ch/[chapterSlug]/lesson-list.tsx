@@ -12,6 +12,7 @@ import {
 } from "@/components/catalog/catalog-list";
 import { getChapterLessonCompletion } from "@zoonk/core/progress/chapter-lesson-completion";
 import { type Lesson } from "@zoonk/db";
+import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { formatPosition } from "@zoonk/utils/string";
 import { getExtracted } from "next-intl/server";
 
@@ -71,5 +72,31 @@ export async function LessonList({
         </CatalogListContent>
       </CatalogListSearch>
     </CatalogList>
+  );
+}
+
+function CatalogListItemSkeleton() {
+  return (
+    <li className="-mx-3 flex items-start gap-3 px-3 py-3.5">
+      <Skeleton className="h-4 w-6 shrink-0" />
+      <div className="flex min-w-0 flex-1 flex-col gap-1">
+        <Skeleton className="h-4 w-3/4" />
+        <Skeleton className="h-3.5 w-full" />
+      </div>
+    </li>
+  );
+}
+
+export function LessonListSkeleton({ count }: { count: number }) {
+  return (
+    <div className="flex flex-col gap-4">
+      <Skeleton className="h-9 w-full rounded-md" />
+      <ul className="flex flex-col">
+        {Array.from({ length: count }).map((_, i) => (
+          // oxlint-disable-next-line eslint/no-array-index-key -- static skeleton
+          <CatalogListItemSkeleton key={i} />
+        ))}
+      </ul>
+    </div>
   );
 }

@@ -9,7 +9,7 @@ import { getCourse } from "@/data/courses/get-course";
 import { type Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { Suspense } from "react";
-import { ChapterList } from "./chapter-list";
+import { ChapterList, ChapterListSkeleton } from "./chapter-list";
 import { CourseHeader } from "./course-header";
 
 export async function generateMetadata({
@@ -58,7 +58,7 @@ export default async function CoursePage({ params }: PageProps<"/b/[brandSlug]/c
           <CatalogActions contentId={courseSlug} kind="course" />
         </CatalogToolbar>
 
-        <Suspense>
+        <Suspense fallback={<ChapterListSkeleton count={chapters.length} />}>
           <ChapterList
             brandSlug={brandSlug}
             chapters={chapters}

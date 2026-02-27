@@ -10,7 +10,7 @@ import { getActivityKinds } from "@/lib/activities";
 import { type Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { Suspense } from "react";
-import { ActivityList } from "./activity-list";
+import { ActivityList, ActivityListSkeleton } from "./activity-list";
 import { LessonHeader } from "./lesson-header";
 
 export async function generateMetadata({
@@ -79,15 +79,17 @@ export default async function LessonPage({
           </Suspense>
           <CatalogActions contentId={`${courseSlug}/${chapterSlug}/${lessonSlug}`} kind="lesson" />
         </CatalogToolbar>
-        <ActivityList
-          activities={activities}
-          brandSlug={brandSlug}
-          chapterSlug={chapterSlug}
-          courseSlug={courseSlug}
-          kindMeta={kindMeta}
-          lessonId={lesson.id}
-          lessonSlug={lessonSlug}
-        />
+        <Suspense fallback={<ActivityListSkeleton count={activities.length} />}>
+          <ActivityList
+            activities={activities}
+            brandSlug={brandSlug}
+            chapterSlug={chapterSlug}
+            courseSlug={courseSlug}
+            kindMeta={kindMeta}
+            lessonId={lesson.id}
+            lessonSlug={lessonSlug}
+          />
+        </Suspense>
       </CatalogContainer>
     </main>
   );
