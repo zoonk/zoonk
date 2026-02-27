@@ -6,9 +6,17 @@ import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { expect, test } from "./fixtures";
 
+/**
+ * Create a chapter with 3 lessons, each having multiple activities.
+ * This allows testing partial completion (fraction indicators).
+ *
+ * Structure:
+ * - Lesson 1: 4 activities
+ * - Lesson 2: 3 activities
+ * - Lesson 3: 2 activities
+ */
 async function createTestChapterWithLessons(userId: number) {
   const org = await getAiOrganization();
-
   const uniqueId = randomUUID().slice(0, 8);
 
   const course = await courseFixture({
@@ -58,7 +66,8 @@ async function createTestChapterWithLessons(userId: number) {
     }),
   ]);
 
-  const [activity1, activity2, activity3] = await Promise.all([
+  // Lesson 1: 4 activities
+  const [l1Act1, l1Act2, l1Act3, l1Act4] = await Promise.all([
     activityFixture({
       isPublished: true,
       lessonId: lesson1.id,
@@ -67,7 +76,51 @@ async function createTestChapterWithLessons(userId: number) {
     }),
     activityFixture({
       isPublished: true,
+      lessonId: lesson1.id,
+      organizationId: org.id,
+      position: 1,
+    }),
+    activityFixture({
+      isPublished: true,
+      lessonId: lesson1.id,
+      organizationId: org.id,
+      position: 2,
+    }),
+    activityFixture({
+      isPublished: true,
+      lessonId: lesson1.id,
+      organizationId: org.id,
+      position: 3,
+    }),
+  ]);
+
+  // Lesson 2: 3 activities
+  const [l2Act1, l2Act2, l2Act3] = await Promise.all([
+    activityFixture({
+      isPublished: true,
       lessonId: lesson2.id,
+      organizationId: org.id,
+      position: 0,
+    }),
+    activityFixture({
+      isPublished: true,
+      lessonId: lesson2.id,
+      organizationId: org.id,
+      position: 1,
+    }),
+    activityFixture({
+      isPublished: true,
+      lessonId: lesson2.id,
+      organizationId: org.id,
+      position: 2,
+    }),
+  ]);
+
+  // Lesson 3: 2 activities
+  const [l3Act1, l3Act2] = await Promise.all([
+    activityFixture({
+      isPublished: true,
+      lessonId: lesson3.id,
       organizationId: org.id,
       position: 0,
     }),
@@ -75,12 +128,12 @@ async function createTestChapterWithLessons(userId: number) {
       isPublished: true,
       lessonId: lesson3.id,
       organizationId: org.id,
-      position: 0,
+      position: 1,
     }),
   ]);
 
   return {
-    activities: { activity1, activity2, activity3 },
+    activities: { l1Act1, l1Act2, l1Act3, l1Act4, l2Act1, l2Act2, l2Act3, l3Act1, l3Act2 },
     chapter,
     course,
     lesson1,
@@ -113,22 +166,58 @@ test.describe("Chapter Progress Indicators", () => {
   }) => {
     const { activities, chapter, course } = await createTestChapterWithLessons(withProgressUser.id);
 
-    // Complete all activities
+    // Complete all activities across all lessons
     await Promise.all([
       activityProgressFixture({
-        activityId: activities.activity1.id,
+        activityId: activities.l1Act1.id,
         completedAt: new Date(),
         durationSeconds: 60,
         userId: withProgressUser.id,
       }),
       activityProgressFixture({
-        activityId: activities.activity2.id,
+        activityId: activities.l1Act2.id,
         completedAt: new Date(),
         durationSeconds: 60,
         userId: withProgressUser.id,
       }),
       activityProgressFixture({
-        activityId: activities.activity3.id,
+        activityId: activities.l1Act3.id,
+        completedAt: new Date(),
+        durationSeconds: 60,
+        userId: withProgressUser.id,
+      }),
+      activityProgressFixture({
+        activityId: activities.l1Act4.id,
+        completedAt: new Date(),
+        durationSeconds: 60,
+        userId: withProgressUser.id,
+      }),
+      activityProgressFixture({
+        activityId: activities.l2Act1.id,
+        completedAt: new Date(),
+        durationSeconds: 60,
+        userId: withProgressUser.id,
+      }),
+      activityProgressFixture({
+        activityId: activities.l2Act2.id,
+        completedAt: new Date(),
+        durationSeconds: 60,
+        userId: withProgressUser.id,
+      }),
+      activityProgressFixture({
+        activityId: activities.l2Act3.id,
+        completedAt: new Date(),
+        durationSeconds: 60,
+        userId: withProgressUser.id,
+      }),
+      activityProgressFixture({
+        activityId: activities.l3Act1.id,
+        completedAt: new Date(),
+        durationSeconds: 60,
+        userId: withProgressUser.id,
+      }),
+      activityProgressFixture({
+        activityId: activities.l3Act2.id,
         completedAt: new Date(),
         durationSeconds: 60,
         userId: withProgressUser.id,
@@ -145,15 +234,31 @@ test.describe("Chapter Progress Indicators", () => {
     await expect(completedIndicators).toHaveCount(3);
   });
 
-  test("shows mix of completed, in-progress, and not-started states", async ({
+  test("shows fraction text for partially completed lessons", async ({
     authenticatedPage,
     withProgressUser,
   }) => {
     const { activities, chapter, course } = await createTestChapterWithLessons(withProgressUser.id);
 
-    // Complete only the first lesson's activity
+    // Lesson 1 (4 activities): complete 2 of 4
+    await Promise.all([
+      activityProgressFixture({
+        activityId: activities.l1Act1.id,
+        completedAt: new Date(),
+        durationSeconds: 60,
+        userId: withProgressUser.id,
+      }),
+      activityProgressFixture({
+        activityId: activities.l1Act2.id,
+        completedAt: new Date(),
+        durationSeconds: 60,
+        userId: withProgressUser.id,
+      }),
+    ]);
+
+    // Lesson 2 (3 activities): complete 1 of 3
     await activityProgressFixture({
-      activityId: activities.activity1.id,
+      activityId: activities.l2Act1.id,
       completedAt: new Date(),
       durationSeconds: 60,
       userId: withProgressUser.id,
@@ -165,8 +270,73 @@ test.describe("Chapter Progress Indicators", () => {
       authenticatedPage.getByRole("heading", { level: 1, name: chapter.title }),
     ).toBeVisible();
 
+    await expect(authenticatedPage.getByLabel("2 of 4 completed")).toBeVisible();
+    await expect(authenticatedPage.getByLabel("1 of 3 completed")).toBeVisible();
+  });
+
+  test("shows mix of completed, in-progress, and not-started states", async ({
+    authenticatedPage,
+    withProgressUser,
+  }) => {
+    const { activities, chapter, course } = await createTestChapterWithLessons(withProgressUser.id);
+
+    // Lesson 1 (4 activities): complete all -> checkmark
+    await Promise.all([
+      activityProgressFixture({
+        activityId: activities.l1Act1.id,
+        completedAt: new Date(),
+        durationSeconds: 60,
+        userId: withProgressUser.id,
+      }),
+      activityProgressFixture({
+        activityId: activities.l1Act2.id,
+        completedAt: new Date(),
+        durationSeconds: 60,
+        userId: withProgressUser.id,
+      }),
+      activityProgressFixture({
+        activityId: activities.l1Act3.id,
+        completedAt: new Date(),
+        durationSeconds: 60,
+        userId: withProgressUser.id,
+      }),
+      activityProgressFixture({
+        activityId: activities.l1Act4.id,
+        completedAt: new Date(),
+        durationSeconds: 60,
+        userId: withProgressUser.id,
+      }),
+    ]);
+
+    // Lesson 2 (3 activities): complete 2 of 3 -> fraction
+    await Promise.all([
+      activityProgressFixture({
+        activityId: activities.l2Act1.id,
+        completedAt: new Date(),
+        durationSeconds: 60,
+        userId: withProgressUser.id,
+      }),
+      activityProgressFixture({
+        activityId: activities.l2Act2.id,
+        completedAt: new Date(),
+        durationSeconds: 60,
+        userId: withProgressUser.id,
+      }),
+    ]);
+
+    // Lesson 3: no progress -> nothing shown
+
+    await authenticatedPage.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}`);
+
+    await expect(
+      authenticatedPage.getByRole("heading", { level: 1, name: chapter.title }),
+    ).toBeVisible();
+
     // Lesson 1: fully completed -> checkmark
     const completedIndicators = authenticatedPage.getByRole("img", { name: /^completed$/i });
     await expect(completedIndicators).toHaveCount(1);
+
+    // Lesson 2: partially completed -> fraction
+    await expect(authenticatedPage.getByLabel("2 of 3 completed")).toBeVisible();
   });
 });
