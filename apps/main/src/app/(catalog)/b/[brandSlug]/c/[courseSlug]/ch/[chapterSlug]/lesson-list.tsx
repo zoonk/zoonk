@@ -10,7 +10,7 @@ import {
   CatalogListItemTitle,
   CatalogListSearch,
 } from "@/components/catalog/catalog-list";
-import { getChapterLessonCompletion } from "@zoonk/core/progress/chapter-lesson-completion";
+import { getLessonProgress } from "@zoonk/core/progress/lessons";
 import { type Lesson } from "@zoonk/db";
 import { formatPosition } from "@zoonk/utils/string";
 import { getExtracted } from "next-intl/server";
@@ -33,7 +33,7 @@ export async function LessonList({
   }
 
   const t = await getExtracted();
-  const completionData = await getChapterLessonCompletion({ chapterId });
+  const completionData = await getLessonProgress({ chapterId });
   const completionMap = new Map(completionData.map((row) => [row.lessonId, row]));
 
   return (

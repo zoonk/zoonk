@@ -3,7 +3,7 @@ import { getChapterLessonCompletion as query } from "@zoonk/db/completion/chapte
 import { safeAsync } from "@zoonk/utils/error";
 import { getSession } from "../users/get-user-session";
 
-export async function getChapterLessonCompletion({
+export async function getLessonProgress({
   chapterId,
   headers,
 }: {

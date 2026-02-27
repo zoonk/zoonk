@@ -6,9 +6,9 @@ import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeAll, describe, expect, test } from "vitest";
-import { getLessonActivityCompletion } from "./get-lesson-activity-completion";
+import { getActivityProgress } from "./get-activity-progress";
 
-describe(getLessonActivityCompletion, () => {
+describe(getActivityProgress, () => {
   let organization: Awaited<ReturnType<typeof organizationFixture>>;
 
   beforeAll(async () => {
@@ -37,7 +37,7 @@ describe(getLessonActivityCompletion, () => {
       position: 0,
     });
 
-    const result = await getLessonActivityCompletion({
+    const result = await getActivityProgress({
       headers: new Headers(),
       lessonId: lesson.id,
     });
@@ -71,7 +71,7 @@ describe(getLessonActivityCompletion, () => {
     });
 
     const headers = await signInAs(user.email, user.password);
-    const result = await getLessonActivityCompletion({ headers, lessonId: lesson.id });
+    const result = await getActivityProgress({ headers, lessonId: lesson.id });
     expect(result).toEqual([]);
   });
 
@@ -125,7 +125,7 @@ describe(getLessonActivityCompletion, () => {
     ]);
 
     const headers = await signInAs(user.email, user.password);
-    const result = await getLessonActivityCompletion({ headers, lessonId: lesson.id });
+    const result = await getActivityProgress({ headers, lessonId: lesson.id });
     expect(result).toEqual(expect.arrayContaining([String(activity1.id), String(activity2.id)]));
     expect(result).toHaveLength(2);
   });
@@ -180,7 +180,7 @@ describe(getLessonActivityCompletion, () => {
     ]);
 
     const headers = await signInAs(user.email, user.password);
-    const result = await getLessonActivityCompletion({ headers, lessonId: lesson.id });
+    const result = await getActivityProgress({ headers, lessonId: lesson.id });
     expect(result).toEqual([String(completedActivity.id)]);
   });
 
@@ -243,7 +243,7 @@ describe(getLessonActivityCompletion, () => {
     ]);
 
     const headers = await signInAs(user.email, user.password);
-    const result = await getLessonActivityCompletion({ headers, lessonId: lesson1.id });
+    const result = await getActivityProgress({ headers, lessonId: lesson1.id });
     expect(result).toEqual([String(activityInLesson1.id)]);
   });
 });

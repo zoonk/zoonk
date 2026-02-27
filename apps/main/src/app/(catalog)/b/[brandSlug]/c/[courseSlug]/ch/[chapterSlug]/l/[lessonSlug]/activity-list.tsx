@@ -8,7 +8,7 @@ import {
   CatalogListItemTitle,
 } from "@/components/catalog/catalog-list";
 import { type ActivityKindInfo } from "@/lib/activities";
-import { getLessonActivityCompletion } from "@zoonk/core/progress/lesson-activity-completion";
+import { getActivityProgress } from "@zoonk/core/progress/activities";
 import { type Activity } from "@zoonk/db";
 import { getExtracted } from "next-intl/server";
 
@@ -34,7 +34,7 @@ export async function ActivityList({
   }
 
   const t = await getExtracted();
-  const completedIds = await getLessonActivityCompletion({ lessonId });
+  const completedIds = await getActivityProgress({ lessonId });
 
   return (
     <CatalogList>

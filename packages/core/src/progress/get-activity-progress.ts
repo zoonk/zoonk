@@ -2,7 +2,7 @@ import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { getSession } from "../users/get-user-session";
 
-export async function getLessonActivityCompletion({
+export async function getActivityProgress({
   lessonId,
   headers,
 }: {

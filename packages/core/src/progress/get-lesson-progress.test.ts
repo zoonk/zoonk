@@ -6,9 +6,9 @@ import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeAll, describe, expect, test } from "vitest";
-import { getChapterLessonCompletion } from "./get-chapter-lesson-completion";
+import { getLessonProgress } from "./get-lesson-progress";
 
-describe(getChapterLessonCompletion, () => {
+describe(getLessonProgress, () => {
   let organization: Awaited<ReturnType<typeof organizationFixture>>;
 
   beforeAll(async () => {
@@ -24,7 +24,7 @@ describe(getChapterLessonCompletion, () => {
       position: 0,
     });
 
-    const result = await getChapterLessonCompletion({
+    const result = await getLessonProgress({
       chapterId: chapter.id,
       headers: new Headers(),
     });
@@ -53,7 +53,7 @@ describe(getChapterLessonCompletion, () => {
     });
 
     const headers = await signInAs(user.email, user.password);
-    const result = await getChapterLessonCompletion({ chapterId: chapter.id, headers });
+    const result = await getLessonProgress({ chapterId: chapter.id, headers });
     expect(result).toEqual([]);
   });
 
@@ -114,7 +114,7 @@ describe(getChapterLessonCompletion, () => {
     ]);
 
     const headers = await signInAs(user.email, user.password);
-    const result = await getChapterLessonCompletion({ chapterId: chapter.id, headers });
+    const result = await getLessonProgress({ chapterId: chapter.id, headers });
     expect(result).toEqual([{ completedActivities: 2, lessonId: lesson.id, totalActivities: 3 }]);
   });
 
@@ -169,7 +169,7 @@ describe(getChapterLessonCompletion, () => {
     ]);
 
     const headers = await signInAs(user.email, user.password);
-    const result = await getChapterLessonCompletion({ chapterId: chapter.id, headers });
+    const result = await getLessonProgress({ chapterId: chapter.id, headers });
     expect(result).toEqual([{ completedActivities: 1, lessonId: lesson.id, totalActivities: 2 }]);
   });
 
@@ -216,7 +216,7 @@ describe(getChapterLessonCompletion, () => {
     });
 
     const headers = await signInAs(user.email, user.password);
-    const result = await getChapterLessonCompletion({ chapterId: chapter.id, headers });
+    const result = await getLessonProgress({ chapterId: chapter.id, headers });
     expect(result).toEqual([{ completedActivities: 1, lessonId: lesson.id, totalActivities: 1 }]);
   });
 
@@ -256,7 +256,7 @@ describe(getChapterLessonCompletion, () => {
     });
 
     const headers = await signInAs(user.email, user.password);
-    const result = await getChapterLessonCompletion({ chapterId: chapter.id, headers });
+    const result = await getLessonProgress({ chapterId: chapter.id, headers });
     // Only the lesson with activities should appear
     expect(result).toEqual([
       { completedActivities: 0, lessonId: lessonWithActivities.id, totalActivities: 1 },

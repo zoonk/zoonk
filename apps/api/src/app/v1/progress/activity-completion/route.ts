@@ -1,7 +1,7 @@
 import { errors } from "@/lib/api-errors";
 import { activityCompletionQuerySchema } from "@/lib/openapi/schemas/progress";
 import { parseQueryParams } from "@/lib/query-params";
-import { getLessonActivityCompletion } from "@zoonk/core/progress/lesson-activity-completion";
+import { getActivityProgress } from "@zoonk/core/progress/activities";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
@@ -13,7 +13,7 @@ export async function GET(request: Request) {
   }
 
   const { lessonId } = parsed.data;
-  const completedActivityIds = await getLessonActivityCompletion({
+  const completedActivityIds = await getActivityProgress({
     headers: request.headers,
     lessonId,
   });
