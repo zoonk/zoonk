@@ -150,7 +150,7 @@ test.describe("Command Palette - Unauthenticated", () => {
       .click();
 
     // Verify user sees learn page content
-    await expect(page.getByRole("heading", { name: /what do you want to learn/i })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /learn anything/i })).toBeVisible();
   });
 });
 

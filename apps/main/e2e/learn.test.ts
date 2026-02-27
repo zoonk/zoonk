@@ -19,14 +19,27 @@ test.beforeAll(async () => {
 });
 
 test.describe("Learn Form", () => {
-  test("shows form with auto-focused input", async ({ page }) => {
+  test("shows form with auto-focused input and reveals button on typing", async ({ page }) => {
     await page.goto("/learn");
 
-    await expect(page.getByRole("heading", { name: /what do you want to learn/i })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /learn anything/i })).toBeVisible();
 
     const input = page.getByRole("textbox");
     await expect(input).toBeFocused();
+
+    await input.fill("test");
     await expect(page.getByRole("button", { name: /start/i })).toBeVisible();
+  });
+
+  test("clicking a suggestion link navigates to the subject page", async ({ page }) => {
+    await page.goto("/learn");
+
+    const suggestions = page.getByRole("navigation", { name: /suggested subjects/i });
+    const firstLink = suggestions.getByRole("link").first();
+    await firstLink.click();
+
+    await expect(page).toHaveURL(/\/learn\/.+/);
+    await expect(page.getByRole("heading", { name: /course ideas for/i })).toBeVisible();
   });
 
   test("submitting prompt navigates to suggestions page", async ({ page }) => {
@@ -72,7 +85,7 @@ test.describe("Course Suggestions", () => {
 
     await page.getByRole("link", { name: /change subject/i }).click();
 
-    await expect(page.getByRole("heading", { name: /what do you want to learn/i })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /learn anything/i })).toBeVisible();
   });
 
   test("submits form using Enter key", async ({ page }) => {

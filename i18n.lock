@@ -292,13 +292,6 @@ checksums:
     Support/singular: 55aab5fd0f31a9cb055a2edeeedfaf63
     Profile/singular: d7878693f91303a438852d617f6d35df
     Subscription/singular: ba9f3675e18987d067d48533c8897343
-    Chapter%20%7Bposition%7D/singular: f6459365d5d8413a99fa97bc803f9024
-    Activities/singular: 1c01b2fc4db670ab174e2220cf5e79f8
-    Lesson%20%7Bposition%7D/singular: 2283c16cc7404682a2380fb8318f42e2
-    No%20lessons%20found/singular: 39a13337bf7998816b2841143d8891e8
-    Search%20lessons.../singular: fad37eaa75cdc3a12e9d13b4974c91d7
-    Search%20chapters.../singular: 6ffe1deeaba59c7a7883c416c1aff611
-    No%20chapters%20found/singular: df124bf6f027ecb93afa5941531a3f39
     "%7Bday%7D%20with%20%7Bvalue%7D%25/singular": 6e5416262bf719f632e31ed1a8236801
     Best%20day/singular: c7d1324abc9d2515ec3bbc955b317404
     Past%203%20months/singular: 0784d60565f6812fce36c72252663412
@@ -311,6 +304,30 @@ checksums:
     Next%3A%20%7Bactivity%7D/singular: 9208679843466247d2161793249e5eda
     Activity/singular: 1948763de8e531483a798b68195e297e
     Continue%20learning/singular: ff5ff528cbacf657af36fb9b711431d6
+    Your%20energy%20is%20%7Bvalue%7D%25/singular: d5ae9aecd778267fbc44c9e681c91637
+    Keep%20learning%20to%20increase%20it/singular: a3c3f15ac29089d9448b0971126cabf7
+    Keep%20learning%20to%20maintain%20it/singular: 0d21c6a7c014a9e42e97c37d4e8d9674
+    Learn%20anything/singular: 1409ee983014ff2deefb61aa0fbc570d
+    Learn%20anything%20with%20AI/singular: 0ee713125135f591c75af6e19f94f03a
+    Explore%20courses/singular: 3a60fa1d4a1a6cfffcc0573e3366cd35
+    Interactive%20courses%20built%20for%20you.%20Just%20tell%20us%20what%20you%20want%20to%20learn./singular: 30ce55333f2080aaf0681647cb26bfbb
+    "%7Bcolor%7D%20belt/singular": 5949446c9b4a223c04cc500fa17a1fe0
+    "%7Bvalue%7D%20BP%20to%20next%20level/singular": dc80ce93407f21e5e909760ec2c9aaef
+    Max%20level%20reached/singular: 5bfdf2d9ba3929b456dcf5c253315e92
+    "%7Bcolor%7D%20Belt%20-%20Level%20%7Blevel%7D/singular": abb5a7600bd66f523906425beffbaff4
+    Zoonk%3A%20AI%20Learning%20Platform/singular: 4a2d25490f4a5e5cd4543f48fcec968d
+    Zoonk%20is%20an%20AI-powered%20learning%20platform%20where%20you%20can%20learn%20anything%20through%20interactive%20courses%2C%20lessons%2C%20and%20activities./singular: e836899ce8100db55d5fa54fe6375970
+    Performance/singular: 28b6d3a3d4a53afa0617a180e318ff4d
+    "%7Bvalue%7D%25%20correct%20answers/singular": 0a95eedb35d1990c8e8af833ddba628f
+    Score/singular: b5e6f7445382f67427b5c48cc9ef33bc
+    Chapter%20%7Bposition%7D/singular: f6459365d5d8413a99fa97bc803f9024
+    Not%20completed/singular: d011b1ae92a1a8a2676a5d6999bbe6d4
+    Activities/singular: 1c01b2fc4db670ab174e2220cf5e79f8
+    Lesson%20%7Bposition%7D/singular: 2283c16cc7404682a2380fb8318f42e2
+    No%20lessons%20found/singular: 39a13337bf7998816b2841143d8891e8
+    Search%20lessons.../singular: fad37eaa75cdc3a12e9d13b4974c91d7
+    Search%20chapters.../singular: 6ffe1deeaba59c7a7883c416c1aff611
+    No%20chapters%20found/singular: df124bf6f027ecb93afa5941531a3f39
     Course%20categories/singular: 3c86af7c305be0c0f5b65077fb06708d
     All/singular: 5e2e93f8e2a5f315b6fecdd0a0e6f55f
     Loading%20more%20courses%E2%80%A6/singular: 290733f8b53c88f64b385ba9dd320acf
@@ -318,14 +335,7 @@ checksums:
     No%20courses/singular: 72fc2629e79529e927834070a26d2a07
     Start%20learning%20something%20new%20today/singular: 727ed4b5249a54fc3975f77b91e96757
     Online%20Courses%20using%20AI/singular: 4e3c619f363cc66f3f2e604e372ca038
-    Explore%20courses/singular: 3a60fa1d4a1a6cfffcc0573e3366cd35
     Explore%20all%20Zoonk%20courses%20to%20learn%20anything%20using%20AI.%20Find%20interactive%20lessons%2C%20challenges%2C%20and%20activities%20to%20learn%20subjects%20like%20science%2C%20math%2C%20technology%2C%20and%20more./singular: c3f4a7dfd17b4523b5535f40170c7731
-    Your%20energy%20is%20%7Bvalue%7D%25/singular: d5ae9aecd778267fbc44c9e681c91637
-    Keep%20learning%20to%20increase%20it/singular: a3c3f15ac29089d9448b0971126cabf7
-    Keep%20learning%20to%20maintain%20it/singular: 0d21c6a7c014a9e42e97c37d4e8d9674
-    Learn%20anything/singular: 1409ee983014ff2deefb61aa0fbc570d
-    Learn%20anything%20with%20AI/singular: 0ee713125135f591c75af6e19f94f03a
-    Interactive%20courses%20built%20for%20you.%20Just%20tell%20us%20what%20you%20want%20to%20learn./singular: 30ce55333f2080aaf0681647cb26bfbb
     Generate/singular: 0345bf322c191e70d01fd6607ec5c2f8
     Cancel/singular: 2e2a849c2223911717de8caa2c71bade
     Cooking%20up%20some%20course%20ideas/singular: a42520f96dbac3580a2ccae4bd6ceb31
@@ -334,16 +344,43 @@ checksums:
     Change%20subject/singular: 8585bb703ba2d857dd9a7b36f97be507
     Discover%20personalized%20courses%20and%20resources%20to%20learn%20%7Bprompt%7D.%20Zoonk%20uses%20AI%20to%20generate%20interactive%20lessons%20and%20activities%20tailored%20to%20you./singular: 7d54c62a9c8d49b713626fa25edff820
     Learn%20%7Bprompt%7D%20with%20AI/singular: 5a8a8ee7f52faf0cb790e0f0cfbcce7d
-    e.g.%2C%20computer%20science%2C%20astronomy%2C%20biology%2C%20.../singular: 73768f931821052e0d43b8b21896b9d0
     Start/singular: dbe56303d9a6d3fad1a8d4cbcc97f365
     Enter%20a%20subject/singular: 4590e12cd42fdc491ab95457e66e13eb
+    Learn%20anything./singular: 6a1858e1c15518444a10d3e3e95b23f6
+    Organic%20chemistry/singular: fcecba9c1b5912b7f7e6cdd1a1d2198c
+    Solar%20system/singular: 684faf696d526eec0e0cc796e4cab959
+    UFOs/singular: 09df9f18916bd2d3b48768d415de2004
+    Creative%20Writing/singular: 8777bd1ffa60ab1acea0ac053d7ddfc1
     Tell%20Zoonk%20what%20you%20want%20to%20learn%20and%20get%20a%20course%20generated%20by%20AI.%20Start%20learning%20any%20subject%20with%20interactive%20lessons%20and%20activities./singular: bce6930e3cd7b20455ea7996a65cbe4f
-    What%20do%20you%20want%20to%20learn%3F/singular: eae5c853dbe20fa2e1eacb1e8396d3de
+    Harry%20Potter/singular: aec9665b12a8723b9946b20f40e4a141
+    Black%20holes/singular: 91313be3a188e7f5307d420d44c1c635
+    Artificial%20intelligence/singular: 9f816a13d925ef0d06d951f9c744ed48
+    Photography/singular: 10e389c296a9c86067a33fb32825ab1f
+    History/singular: b0578d6d225f512e42f823fbca2e3c32
+    Dinosaur%20extinction/singular: 260f9ededdccd0adef9b55eb0aa725a5
+    Psychology/singular: 68dab9afb597537ae98a7b4d63849c58
+    How%20the%20internet%20works/singular: ab755af095b9f5254e62b4c9090f9841
+    Deep%20sea%20creatures/singular: f3c0a0f3b84d1be92fa3642a7a8fdf72
+    Economics/singular: 3931d28200c67977f6ecdf9b2aa61014
+    Computer%20Science/singular: fb0a00d8442f2429c8fab8e20d19ae03
+    How%20volcanoes%20work/singular: fa35b6c9bdc18c39d17f0573e78a62be
+    Molecular%20biology/singular: 5157b95a95d558b7848ceadcf83a9e8b
+    Suggested%20subjects/singular: d2d996b64130d889f9be70a6193443c8
+    Marketing/singular: fcf0f06f8b64b458c7ca6d95541a3cc8
+    Creative%20writing/singular: a76e930eba9f5de736fdc7cfcd229024
+    Graphic%20Design/singular: 5644c7666d8e59fda7c5048ef1bdcc70
+    Ancient%20philosophy/singular: 87597976ae4ac3a987e26c360677a567
+    Machine%20learning/singular: b796872609a026a108216834deb9278f
+    Roman%20Empire/singular: f18c6a0b2728ad6e8dcb15df9f728250
+    Biology/singular: ea9b1565a24f0550e60492076b3af776
+    Linear%20algebra/singular: 67cd4f7b0879e371f2a89f2321af83dd
+    Cognitive%20psychology/singular: 08974521c882d918b9dd1cc8ce732ecc
+    Behavioral%20economics/singular: 2a7613da671404409bbba506970dabc6
+    Data%20Science/singular: 7c70d5b8a6c832689eda012ba1057a51
+    Philosophy/singular: 7cf9797277af96d56c8274dc7ce1d387
+    Quantum%20physics/singular: 5a1f601573f0ab41a9c4bd2b72a079a0
     Learn%20Anything%20with%20AI/singular: af8ba68f4986f321a1025e9b0f4ac794
-    "%7Bcolor%7D%20belt/singular": 5949446c9b4a223c04cc500fa17a1fe0
-    "%7Bvalue%7D%20BP%20to%20next%20level/singular": dc80ce93407f21e5e909760ec2c9aaef
-    Max%20level%20reached/singular: 5bfdf2d9ba3929b456dcf5c253315e92
-    "%7Bcolor%7D%20Belt%20-%20Level%20%7Blevel%7D/singular": abb5a7600bd66f523906425beffbaff4
+    World%20history/singular: 9d467f46d8358a17e85db86fc98b789e
     Continue%20where%20you%20left%20off/singular: c3ef4fd14e046d53816ede13fc5d27fc
     My%20Courses/singular: 3031c7801404796addff2b7d796fa4c2
     View%20all%20the%20courses%20you%20started%20on%20Zoonk.%20Continue%20where%20you%20left%20off%20and%20track%20your%20progress%20across%20interactive%20lessons%20and%20activities./singular: eee1ce9f3b0be49ddc9bb3ce21270796
@@ -351,11 +388,6 @@ checksums:
     No%20courses%20yet/singular: d5fcc38466fdc83a74eab5032a2f85b6
     Personalized%20courses%20are%20coming%20soon./singular: ad21564f7620bc2a553e298a587daccf
     Coming%20soon/singular: ee2b0671e00972773210c5be5a9ccb89
-    Zoonk%3A%20AI%20Learning%20Platform/singular: 4a2d25490f4a5e5cd4543f48fcec968d
-    Zoonk%20is%20an%20AI-powered%20learning%20platform%20where%20you%20can%20learn%20anything%20through%20interactive%20courses%2C%20lessons%2C%20and%20activities./singular: e836899ce8100db55d5fa54fe6375970
-    Performance/singular: 28b6d3a3d4a53afa0617a180e318ff4d
-    "%7Bvalue%7D%25%20correct%20answers/singular": 0a95eedb35d1990c8e8af833ddba628f
-    Score/singular: b5e6f7445382f67427b5c48cc9ef33bc
     "%7Bvalue%7D%25/singular": 35cbe4d3fffd3e6b5415eea333f532d7
     vs%20last%20month/singular: 642c3b71173b2adbd876aa05d53d47cf
     vs%20last%206%20months/singular: 82e8ff0c71a42ab0aa345474035d29b4
@@ -400,7 +432,6 @@ checksums:
     Past%206%20months/singular: 216c1b653ba5908b4df61daa817fc8b1
     This%20month/singular: 50845a38865204a97773c44dcd2ebb90
     This%20year/singular: 1e69651c2ac722f8ce138f43cf2e02f9
-    Checking%20if%20you're%20logged%20in.../singular: b50f05bfcb51cad6913150273e551291
     You%20need%20to%20be%20logged%20in%20to%20access%20this%20page./singular: 759ca522663d8f628718332f756dd6c4
     Choose%20the%20app%20language%20you%20prefer%20for%20this%20device./singular: 4e22090be4b9fda9945e41822872c030
     Update%20your%20Zoonk%20app%20language%20to%20learn%20in%20English%2C%20Portuguese%2C%20Spanish%2C%20French%2C%20or%20other%20supported%20languages./singular: 1c0ee0edf658ce641954e5e20a447905
@@ -444,10 +475,6 @@ checksums:
     Email%20us%20at%20hello%40zoonk.com/singular: f30da451e0bc14b7463bde402c876af9
     Follow%20us/singular: 778f7a4744f77dbcbd31a8c778cb5209
     Contact%20Support/singular: fcbd9e317c7286b3e08752eb73eb1a81
-    Authentication%20Error/singular: f8db504523897fad229a0cfdcc34652c
-    Return%20to%20login/singular: a73bc2aa109b100645c49a3eab040dbf
-    The%20authentication%20token%20is%20invalid%20or%20expired.%20Please%20try%20logging%20in%20again./singular: 9e23335b29f210d8ae14c265aeb6ab1a
-    Need%20help%3F%20Contact%20us%20at%20hello%40zoonk.com/singular: 0053665fad1f58782cc3a6f442b36726
     Generate%20activity/singular: 4fbbc27fc1d296a0414ed0d7f57e4ba0
     Activity%20not%20available/singular: a76f6331aa0aad825903108429b132a0
     This%20activity%20hasn't%20been%20generated%20yet./singular: 631d7c5e190d95c7697df1f6a4bb9a1c
@@ -542,7 +569,6 @@ checksums:
     Privacy%20Policy/singular: 7459744a63ef8af4e517a09024bd7c08
     Read%20Zoonk's%20terms%20of%20use%20to%20understand%20the%20rules%20and%20conditions%20for%20using%20our%20platform%20and%20services/singular: 4b82898d60691839a1999e4a17199895
     Terms%20of%20Use/singular: 9ac262b2eda552beeecd904c0b9f8fa2
-    Not%20completed/singular: d011b1ae92a1a8a2676a5d6999bbe6d4
     This%20content%20was%20generated%20by%20AI.%20It%20may%20contain%20errors%20or%20inaccuracies%20and%20should%20not%20be%20considered%20professional%20advice./singular: 269e7c16a722903b9b434f28aa6cf617
     Not%20helpful/singular: ceb8a457e7e4c62a465cd1dd2620990e
     Helpful/singular: 9a25a3e10315cf4a8c65996e31f6cda6
@@ -608,14 +634,12 @@ checksums:
     Improve%20your%20%7Btopic%7D%20reading%20comprehension%20by%20translating%20sentences%20and%20passages./singular: 60baac4222f76009cc1eb1b6065b403b
     Shows%20WHEN%20to%20apply%20this%20topic.%20A%20dialogue%20with%20a%20colleague%20where%20you%20solve%20a%20real%20problem%20together./singular: 3fb0934c1e0a5ba3e31b6cc5b897b509
     Tests%20your%20understanding%20with%20questions.%20Uses%20new%20scenarios%20to%20check%20if%20you%20grasped%20the%20concept%2C%20not%20just%20memorized%20it./singular: feeb1e59f787035a964dd93290e180e7
-    History/singular: b0578d6d225f512e42f823fbca2e3c32
     Math/singular: 0a604ffa5ef57408918fe98ef05eb05a
     Arts/singular: 9b1845cec1210e57ea990b1a90823228
     Languages/singular: 2d2a54a7cbbf640ba2aff643a8a3c7c1
     Health/singular: db2f8a6e827b5436d1eedaf453eaae8a
     Engineering/singular: 76e841ae8ec3340d7d0a5c2191abbea4
     Technology/singular: 694755ad06c9b0d9bfcd78e1610670b8
-    Economics/singular: 3931d28200c67977f6ecdf9b2aa61014
     Culture/singular: 598e8cf9fdd3ed940090e97eac0674b1
     Communication/singular: 478f3ecaf6419fa9f11f2a83639188c6
     Society/singular: fc07530371cde440aac96dae7a33aad4

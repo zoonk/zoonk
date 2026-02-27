@@ -13,7 +13,7 @@ test.describe("Home Page - Unauthenticated", () => {
     // Test Learn anything CTA
     await hero.getByRole("link", { exact: true, name: "Learn anything" }).click();
 
-    await expect(page.getByRole("heading", { name: /what do you want to learn/i })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /learn anything/i })).toBeVisible();
   });
 
   test("does not show performance section", async ({ page }) => {
