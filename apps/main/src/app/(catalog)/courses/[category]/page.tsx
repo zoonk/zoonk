@@ -1,5 +1,5 @@
 import { LIST_COURSES_LIMIT, listCourses } from "@/data/courses/list-courses";
-import { getCategoryHeader, getCategoryMeta } from "@/lib/categories/category-server";
+import { getCategoryHeader, getCategoryMeta } from "@/lib/categories/category";
 import {
   Container,
   ContainerDescription,
