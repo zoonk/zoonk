@@ -20,9 +20,7 @@ export default async function CatalogLayout({ children }: LayoutProps<"/">) {
         </Suspense>
       </Navbar>
 
-      <Suspense>
-        <div className="flex flex-1 flex-col">{children}</div>
-      </Suspense>
+      {children}
     </div>
   );
 }
