@@ -1,6 +1,6 @@
 "use client";
 
-import { useCategories } from "@/lib/categories/category-client";
+import { type CategoryInfo } from "@/lib/categories/category-icons";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { HorizontalScroll, HorizontalScrollContent } from "@zoonk/ui/components/horizontal-scroll";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
@@ -23,9 +23,8 @@ export function CategoryPillsSkeleton() {
   );
 }
 
-export function CategoryPills() {
+export function CategoryPills({ categories }: { categories: CategoryInfo[] }) {
   const segment = useSelectedLayoutSegment();
-  const categories = useCategories();
   const t = useExtracted();
 
   return (

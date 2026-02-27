@@ -1,14 +1,13 @@
-"use client";
-
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { HorizontalScroll, HorizontalScrollContent } from "@zoonk/ui/components/horizontal-scroll";
+import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { HomeIcon } from "lucide-react";
-import { useExtracted } from "next-intl";
+import { getExtracted } from "next-intl/server";
 import Link from "next/link";
 import { MetricPillLinks } from "./metric-pills";
 
-export function PerformanceNavbar() {
-  const t = useExtracted();
+export async function PerformanceNavbar() {
+  const t = await getExtracted();
 
   return (
     <nav className="bg-background/95 supports-backdrop-filter:bg-background/60 sticky top-0 z-10 pt-4 backdrop-blur">
@@ -22,6 +21,19 @@ export function PerformanceNavbar() {
           <MetricPillLinks />
         </HorizontalScrollContent>
       </HorizontalScroll>
+    </nav>
+  );
+}
+
+export function PerformanceNavbarSkeleton() {
+  return (
+    <nav className="bg-background/95 supports-backdrop-filter:bg-background/60 sticky top-0 z-10 pt-4 backdrop-blur">
+      <div className="flex gap-2 px-4">
+        <Skeleton className="size-9 rounded-md" />
+        <Skeleton className="h-9 w-20 rounded-md" />
+        <Skeleton className="h-9 w-24 rounded-md" />
+        <Skeleton className="h-9 w-20 rounded-md" />
+      </div>
     </nav>
   );
 }

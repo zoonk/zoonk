@@ -1,9 +1,12 @@
-import { PerformanceNavbar } from "./_components/performance-navbar";
+import { Suspense } from "react";
+import { PerformanceNavbar, PerformanceNavbarSkeleton } from "./_components/performance-navbar";
 
 export default async function PerformanceLayout({ children }: LayoutProps<"/">) {
   return (
     <div className="flex min-h-dvh flex-col">
-      <PerformanceNavbar />
+      <Suspense fallback={<PerformanceNavbarSkeleton />}>
+        <PerformanceNavbar />
+      </Suspense>
       {children}
     </div>
   );

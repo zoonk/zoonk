@@ -2220,100 +2220,20 @@ msgctxt "ypy024"
 msgid "Tests your understanding with questions. Uses new scenarios to check if you grasped the concept, not just memorized it."
 msgstr "Tests your understanding with questions. Uses new scenarios to check if you grasped the concept, not just memorized it."
 
-#: src/lib/categories/category-client.ts
+#: src/lib/categories/category-server.ts
+msgctxt "4HKnmB"
+msgid "{category} Courses"
+msgstr "{category} Courses"
+
 #: src/lib/categories/category-server.ts
 msgctxt "djJp6c"
 msgid "History"
 msgstr "History"
 
-#: src/lib/categories/category-client.ts
 #: src/lib/categories/category-server.ts
 msgctxt "dPgwrL"
 msgid "Math"
 msgstr "Math"
-
-#: src/lib/categories/category-client.ts
-#: src/lib/categories/category-server.ts
-msgctxt "fFt3il"
-msgid "Arts"
-msgstr "Arts"
-
-#: src/lib/categories/category-client.ts
-#: src/lib/categories/category-server.ts
-msgctxt "GsBRWL"
-msgid "Languages"
-msgstr "Languages"
-
-#: src/lib/categories/category-client.ts
-#: src/lib/categories/category-server.ts
-msgctxt "hlmkcL"
-msgid "Health"
-msgstr "Health"
-
-#: src/lib/categories/category-client.ts
-#: src/lib/categories/category-server.ts
-msgctxt "hwL7a0"
-msgid "Engineering"
-msgstr "Engineering"
-
-#: src/lib/categories/category-client.ts
-#: src/lib/categories/category-server.ts
-msgctxt "I1ZCPK"
-msgid "Technology"
-msgstr "Technology"
-
-#: src/lib/categories/category-client.ts
-#: src/lib/categories/category-server.ts
-msgctxt "KOuDOE"
-msgid "Economics"
-msgstr "Economics"
-
-#: src/lib/categories/category-client.ts
-#: src/lib/categories/category-server.ts
-msgctxt "mn6pIm"
-msgid "Culture"
-msgstr "Culture"
-
-#: src/lib/categories/category-client.ts
-#: src/lib/categories/category-server.ts
-msgctxt "n5D/Ku"
-msgid "Communication"
-msgstr "Communication"
-
-#: src/lib/categories/category-client.ts
-#: src/lib/categories/category-server.ts
-msgctxt "OV/2+4"
-msgid "Society"
-msgstr "Society"
-
-#: src/lib/categories/category-client.ts
-#: src/lib/categories/category-server.ts
-msgctxt "qydxOd"
-msgid "Science"
-msgstr "Science"
-
-#: src/lib/categories/category-client.ts
-#: src/lib/categories/category-server.ts
-msgctxt "u3ovjm"
-msgid "Law"
-msgstr "Law"
-
-#: src/lib/categories/category-client.ts
-#: src/lib/categories/category-server.ts
-msgctxt "w1Fanr"
-msgid "Business"
-msgstr "Business"
-
-#: src/lib/categories/category-client.ts
-#: src/lib/categories/category-server.ts
-msgctxt "YMDBNH"
-msgid "Geography"
-msgstr "Geography"
-
-#: src/lib/categories/category-server.ts
-msgctxt "4HKnmB"
-msgid "{category} Courses"
-msgstr "{category} Courses"
 
 #: src/lib/categories/category-server.ts
 msgctxt "EMi23I"
@@ -2321,11 +2241,76 @@ msgid "Explore all {category} courses"
 msgstr "Explore all {category} courses"
 
 #: src/lib/categories/category-server.ts
+msgctxt "fFt3il"
+msgid "Arts"
+msgstr "Arts"
+
+#: src/lib/categories/category-server.ts
+msgctxt "GsBRWL"
+msgid "Languages"
+msgstr "Languages"
+
+#: src/lib/categories/category-server.ts
+msgctxt "hlmkcL"
+msgid "Health"
+msgstr "Health"
+
+#: src/lib/categories/category-server.ts
+msgctxt "hwL7a0"
+msgid "Engineering"
+msgstr "Engineering"
+
+#: src/lib/categories/category-server.ts
+msgctxt "I1ZCPK"
+msgid "Technology"
+msgstr "Technology"
+
+#: src/lib/categories/category-server.ts
+msgctxt "KOuDOE"
+msgid "Economics"
+msgstr "Economics"
+
+#: src/lib/categories/category-server.ts
+msgctxt "mn6pIm"
+msgid "Culture"
+msgstr "Culture"
+
+#: src/lib/categories/category-server.ts
+msgctxt "n5D/Ku"
+msgid "Communication"
+msgstr "Communication"
+
+#: src/lib/categories/category-server.ts
+msgctxt "OV/2+4"
+msgid "Society"
+msgstr "Society"
+
+#: src/lib/categories/category-server.ts
+msgctxt "qydxOd"
+msgid "Science"
+msgstr "Science"
+
+#: src/lib/categories/category-server.ts
 msgctxt "Rz9oL+"
 msgid "{category} courses"
 msgstr "{category} courses"
 
 #: src/lib/categories/category-server.ts
+msgctxt "u3ovjm"
+msgid "Law"
+msgstr "Law"
+
+#: src/lib/categories/category-server.ts
+msgctxt "w1Fanr"
+msgid "Business"
+msgstr "Business"
+
+#: src/lib/categories/category-server.ts
 msgctxt "XL8IWT"
 msgid "{category} courses. The best {category} online courses, interactive lessons to learn."
 msgstr "{category} courses. The best {category} online courses, interactive lessons to learn."
+
+#: src/lib/categories/category-server.ts
+msgctxt "YMDBNH"
+msgid "Geography"
+msgstr "Geography"
