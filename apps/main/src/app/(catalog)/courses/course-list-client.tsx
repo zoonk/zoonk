@@ -71,9 +71,7 @@ export function CourseListClient({
               ) : undefined
             }
             key={course.id}
-            linkComponent={
-              <Link href={`/b/${course.organization?.slug}/c/${course.slug}`} prefetch={false} />
-            }
+            linkComponent={<Link href={`/b/${course.organization?.slug}/c/${course.slug}`} />}
           />
         ))}
       </CourseListGroup>

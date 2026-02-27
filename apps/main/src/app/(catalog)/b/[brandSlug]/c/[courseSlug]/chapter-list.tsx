@@ -47,7 +47,7 @@ export async function ChapterList({
                 href={`/b/${brandSlug}/c/${courseSlug}/ch/${chapter.slug}`}
                 id={chapter.id}
                 key={chapter.id}
-                prefetch={false}
+                prefetch={chapter.generationStatus === "completed"}
               >
                 <CatalogListItemPosition>
                   {formatPosition(chapter.position)}
