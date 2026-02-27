@@ -170,9 +170,9 @@ msgid "Sign up to track your progress"
 msgstr "Sign up to track your progress"
 
 #: ../../packages/player/src/components/completion-screen.tsx
-#: src/components/catalog/activity-completion-indicator.tsx
-#: src/components/catalog/chapter-completion.tsx
-#: src/components/catalog/lesson-completion.tsx
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/activity-list.tsx
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/chapter-list.tsx
 msgctxt "95stPq"
 msgid "Completed"
 msgstr "Completed"
@@ -709,6 +709,11 @@ msgstr "Score"
 msgctxt "B9hCYt"
 msgid "Chapter {position}"
 msgstr "Chapter {position}"
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/activity-list.tsx
+msgctxt "4o5CAP"
+msgid "Not completed"
+msgstr "Not completed"
 
 #: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/activity-list.tsx
 msgctxt "UmEsZF"
@@ -1912,11 +1917,6 @@ msgstr "Read Zoonk's terms of use to understand the rules and conditions for usi
 msgctxt "UhkSyx"
 msgid "Terms of Use"
 msgstr "Terms of Use"
-
-#: src/components/catalog/activity-completion-indicator.tsx
-msgctxt "4o5CAP"
-msgid "Not completed"
-msgstr "Not completed"
 
 #: src/components/catalog/ai-warning.tsx
 msgctxt "Dwdx/1"

@@ -6,10 +6,11 @@ import {
   CatalogListItemContent,
   CatalogListItemDescription,
   CatalogListItemPosition,
+  CatalogListItemProgress,
   CatalogListItemTitle,
   CatalogListSearch,
 } from "@/components/catalog/catalog-list";
-import { LessonCompletion } from "@/components/catalog/lesson-completion";
+import { getLessonProgress } from "@zoonk/core/progress/lessons";
 import { type Lesson } from "@zoonk/db";
 import { formatPosition } from "@zoonk/utils/string";
 import { getExtracted } from "next-intl/server";
@@ -32,29 +33,41 @@ export async function LessonList({
   }
 
   const t = await getExtracted();
+  const completionData = await getLessonProgress({ chapterId });
+  const completionMap = new Map(completionData.map((row) => [row.lessonId, row]));
 
   return (
     <CatalogList>
       <CatalogListSearch items={lessons} placeholder={t("Search lessons...")}>
         <CatalogListEmpty>{t("No lessons found")}</CatalogListEmpty>
         <CatalogListContent>
-          {lessons.map((lesson) => (
-            <CatalogListItem
-              href={`/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}/l/${lesson.slug}`}
-              id={lesson.id}
-              key={lesson.id}
-              prefetch={lesson.generationStatus === "completed"}
-            >
-              <CatalogListItemPosition>{formatPosition(lesson.position)}</CatalogListItemPosition>
+          {lessons.map((lesson) => {
+            const completion = completionMap.get(lesson.id);
 
-              <CatalogListItemContent>
-                <CatalogListItemTitle>{lesson.title}</CatalogListItemTitle>
-                <CatalogListItemDescription>{lesson.description}</CatalogListItemDescription>
-              </CatalogListItemContent>
+            return (
+              <CatalogListItem
+                href={`/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}/l/${lesson.slug}`}
+                id={lesson.id}
+                key={lesson.id}
+                prefetch={lesson.generationStatus === "completed"}
+              >
+                <CatalogListItemPosition>{formatPosition(lesson.position)}</CatalogListItemPosition>
 
-              <LessonCompletion chapterId={chapterId} lessonId={lesson.id} />
-            </CatalogListItem>
-          ))}
+                <CatalogListItemContent>
+                  <CatalogListItemTitle>{lesson.title}</CatalogListItemTitle>
+                  <CatalogListItemDescription>{lesson.description}</CatalogListItemDescription>
+                </CatalogListItemContent>
+
+                {completion && (
+                  <CatalogListItemProgress
+                    completed={completion.completedActivities}
+                    completedLabel={t("Completed")}
+                    total={completion.totalActivities}
+                  />
+                )}
+              </CatalogListItem>
+            );
+          })}
         </CatalogListContent>
       </CatalogListSearch>
     </CatalogList>

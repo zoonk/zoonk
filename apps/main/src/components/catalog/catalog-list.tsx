@@ -1,6 +1,7 @@
 "use client";
 
 import { Input } from "@zoonk/ui/components/input";
+import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
 import { normalizeString } from "@zoonk/utils/string";
 import { CheckIcon, SearchIcon } from "lucide-react";
@@ -262,5 +263,54 @@ export function CatalogListItemProgress({
     >
       {completed}/{total}
     </span>
+  );
+}
+
+function CatalogListItemSkeleton() {
+  return (
+    <li className="-mx-3 flex items-start gap-3 px-3 py-3.5">
+      <Skeleton className="h-4 w-6 shrink-0" />
+      <div className="flex min-w-0 flex-1 flex-col gap-1">
+        <Skeleton className="h-4 w-3/4" />
+        <Skeleton className="h-3.5 w-full" />
+      </div>
+    </li>
+  );
+}
+
+function CatalogListItemIndicatorSkeleton() {
+  return (
+    <li className="-mx-3 flex items-start gap-3 px-3 py-3.5">
+      <div className="flex min-w-0 flex-1 flex-col gap-1">
+        <Skeleton className="h-4 w-1/3" />
+        <Skeleton className="h-3.5 w-full" />
+      </div>
+      <Skeleton className="size-3.5 shrink-0 self-center rounded-full" />
+    </li>
+  );
+}
+
+export function CatalogListSkeleton({
+  count,
+  search = false,
+  variant = "position",
+}: {
+  count: number;
+  search?: boolean;
+  variant?: "indicator" | "position";
+}) {
+  const ItemSkeleton =
+    variant === "indicator" ? CatalogListItemIndicatorSkeleton : CatalogListItemSkeleton;
+
+  return (
+    <div className="flex flex-col gap-4">
+      {search && <Skeleton className="h-9 w-full rounded-md" />}
+      <ul className="flex flex-col">
+        {Array.from({ length: count }).map((_, i) => (
+          // oxlint-disable-next-line eslint/no-array-index-key -- static skeleton
+          <ItemSkeleton key={i} />
+        ))}
+      </ul>
+    </div>
   );
 }

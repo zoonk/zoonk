@@ -1,7 +1,13 @@
 import { CatalogActions } from "@/components/catalog/catalog-actions";
-import { CatalogContainer, CatalogToolbar } from "@/components/catalog/catalog-list";
-import { ContinueActivityLink } from "@/components/catalog/continue-activity-link";
-import { ProgressPreloader } from "@/components/catalog/progress-preloader";
+import {
+  CatalogContainer,
+  CatalogListSkeleton,
+  CatalogToolbar,
+} from "@/components/catalog/catalog-list";
+import {
+  ContinueActivityLink,
+  ContinueActivityLinkSkeleton,
+} from "@/components/catalog/continue-activity-link";
 import { listCourseChapters } from "@/data/chapters/list-course-chapters";
 import { getCourse } from "@/data/courses/get-course";
 import { type Metadata } from "next";
@@ -43,19 +49,20 @@ export default async function CoursePage({ params }: PageProps<"/b/[brandSlug]/c
 
   return (
     <main className="flex flex-1 flex-col">
-      <ProgressPreloader courseId={course.id} />
       <CourseHeader brandSlug={brandSlug} course={course} />
 
       <CatalogContainer>
         <CatalogToolbar>
-          <ContinueActivityLink
-            courseId={course.id}
-            fallbackHref={`/b/${brandSlug}/c/${courseSlug}/ch/${chapters[0]?.slug}`}
-          />
+          <Suspense fallback={<ContinueActivityLinkSkeleton />}>
+            <ContinueActivityLink
+              courseId={course.id}
+              fallbackHref={`/b/${brandSlug}/c/${courseSlug}/ch/${chapters[0]?.slug}`}
+            />
+          </Suspense>
           <CatalogActions contentId={courseSlug} kind="course" />
         </CatalogToolbar>
 
-        <Suspense>
+        <Suspense fallback={<CatalogListSkeleton count={chapters.length} search />}>
           <ChapterList
             brandSlug={brandSlug}
             chapters={chapters}

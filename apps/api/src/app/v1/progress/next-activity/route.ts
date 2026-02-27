@@ -1,9 +1,8 @@
-import { getNextActivity } from "@/data/progress/get-next-activity";
 import { errors } from "@/lib/api-errors";
 import { nextActivityQuerySchema } from "@/lib/openapi/schemas/progress";
 import { parseQueryParams } from "@/lib/query-params";
 import { type ActivityScope } from "@zoonk/core/activities/last-completed";
-import { getSession } from "@zoonk/core/users/session/get";
+import { getNextActivity } from "@zoonk/core/progress/next-activity";
 import { NextResponse } from "next/server";
 
 function getScope(params: {
@@ -31,11 +30,8 @@ export async function GET(request: Request) {
   }
 
   const { chapterId, courseId, lessonId } = parsed.data;
-  const session = await getSession(request.headers);
-  const userId = session ? Number(session.user.id) : 0;
-
   const scope = getScope({ chapterId, courseId, lessonId });
-  const result = await getNextActivity(userId, scope);
+  const result = await getNextActivity({ headers: request.headers, scope });
 
   if (!result) {
     return NextResponse.json({ completed: false, hasStarted: false });

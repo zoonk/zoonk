@@ -1,13 +1,14 @@
-import { ActivityCompletionIndicator } from "@/components/catalog/activity-completion-indicator";
 import {
   CatalogList,
   CatalogListContent,
   CatalogListItem,
   CatalogListItemContent,
   CatalogListItemDescription,
+  CatalogListItemIndicator,
   CatalogListItemTitle,
 } from "@/components/catalog/catalog-list";
 import { type ActivityKindInfo } from "@/lib/activities";
+import { getActivityProgress } from "@zoonk/core/progress/activities";
 import { type Activity } from "@zoonk/db";
 import { getExtracted } from "next-intl/server";
 
@@ -33,6 +34,7 @@ export async function ActivityList({
   }
 
   const t = await getExtracted();
+  const completedIds = await getActivityProgress({ lessonId });
 
   return (
     <CatalogList>
@@ -47,6 +49,8 @@ export async function ActivityList({
               ? activity.description
               : meta?.description;
 
+          const completed = completedIds.includes(String(activity.id));
+
           return (
             <CatalogListItem
               href={`/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}/l/${lessonSlug}/a/${activity.position}`}
@@ -58,7 +62,11 @@ export async function ActivityList({
                 <CatalogListItemDescription>{description}</CatalogListItemDescription>
               </CatalogListItemContent>
 
-              <ActivityCompletionIndicator activityId={String(activity.id)} lessonId={lessonId} />
+              <CatalogListItemIndicator
+                completed={completed}
+                completedLabel={t("Completed")}
+                notCompletedLabel={t("Not completed")}
+              />
             </CatalogListItem>
           );
         })}

@@ -1,13 +1,22 @@
 import { randomUUID } from "node:crypto";
-import { type Page } from "@playwright/test";
 import { getAiOrganization } from "@zoonk/e2e/helpers";
+import { activityFixture, activityProgressFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
+import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { expect, test } from "./fixtures";
 
-async function createTestCourseWithChapters() {
+/**
+ * Create a course with 3 chapters, each having multiple lessons with activities.
+ * This allows testing partial completion (fraction indicators).
+ *
+ * Structure per chapter:
+ * - Chapter 1: 3 lessons × 1 activity each
+ * - Chapter 2: 2 lessons × 1 activity each
+ * - Chapter 3: 2 lessons × 1 activity each
+ */
+async function createTestCourseWithChapters(userId: number) {
   const org = await getAiOrganization();
-
   const uniqueId = randomUUID().slice(0, 8);
 
   const course = await courseFixture({
@@ -47,96 +56,276 @@ async function createTestCourseWithChapters() {
     }),
   ]);
 
-  return { chapter1, chapter2, chapter3, course };
-}
+  // Chapter 1: 3 lessons
+  const [ch1Lesson1, ch1Lesson2, ch1Lesson3] = await Promise.all([
+    lessonFixture({
+      chapterId: chapter1.id,
+      isPublished: true,
+      organizationId: org.id,
+      position: 0,
+    }),
+    lessonFixture({
+      chapterId: chapter1.id,
+      isPublished: true,
+      organizationId: org.id,
+      position: 1,
+    }),
+    lessonFixture({
+      chapterId: chapter1.id,
+      isPublished: true,
+      organizationId: org.id,
+      position: 2,
+    }),
+  ]);
 
-function mockCourseCompletionAPI(
-  page: Page,
-  chapters: {
-    chapterId: number;
-    completedLessons: number;
-    totalLessons: number;
-  }[],
-) {
-  return page.route("**/v1/progress/course-completion**", async (route) => {
-    await route.fulfill({
-      body: JSON.stringify({ chapters }),
-      contentType: "application/json",
-      status: 200,
-    });
-  });
+  // Chapter 2: 2 lessons
+  const [ch2Lesson1, ch2Lesson2] = await Promise.all([
+    lessonFixture({
+      chapterId: chapter2.id,
+      isPublished: true,
+      organizationId: org.id,
+      position: 0,
+    }),
+    lessonFixture({
+      chapterId: chapter2.id,
+      isPublished: true,
+      organizationId: org.id,
+      position: 1,
+    }),
+  ]);
+
+  // Chapter 3: 2 lessons
+  const [ch3Lesson1, ch3Lesson2] = await Promise.all([
+    lessonFixture({
+      chapterId: chapter3.id,
+      isPublished: true,
+      organizationId: org.id,
+      position: 0,
+    }),
+    lessonFixture({
+      chapterId: chapter3.id,
+      isPublished: true,
+      organizationId: org.id,
+      position: 1,
+    }),
+  ]);
+
+  // 1 activity per lesson
+  const [ch1Act1, ch1Act2, ch1Act3, ch2Act1, ch2Act2, ch3Act1, ch3Act2] = await Promise.all([
+    activityFixture({
+      isPublished: true,
+      lessonId: ch1Lesson1.id,
+      organizationId: org.id,
+      position: 0,
+    }),
+    activityFixture({
+      isPublished: true,
+      lessonId: ch1Lesson2.id,
+      organizationId: org.id,
+      position: 0,
+    }),
+    activityFixture({
+      isPublished: true,
+      lessonId: ch1Lesson3.id,
+      organizationId: org.id,
+      position: 0,
+    }),
+    activityFixture({
+      isPublished: true,
+      lessonId: ch2Lesson1.id,
+      organizationId: org.id,
+      position: 0,
+    }),
+    activityFixture({
+      isPublished: true,
+      lessonId: ch2Lesson2.id,
+      organizationId: org.id,
+      position: 0,
+    }),
+    activityFixture({
+      isPublished: true,
+      lessonId: ch3Lesson1.id,
+      organizationId: org.id,
+      position: 0,
+    }),
+    activityFixture({
+      isPublished: true,
+      lessonId: ch3Lesson2.id,
+      organizationId: org.id,
+      position: 0,
+    }),
+  ]);
+
+  return {
+    activities: { ch1Act1, ch1Act2, ch1Act3, ch2Act1, ch2Act2, ch3Act1, ch3Act2 },
+    chapter1,
+    chapter2,
+    chapter3,
+    course,
+    userId,
+  };
 }
 
 test.describe("Course Progress Indicators", () => {
-  test("shows no indicators when API returns empty chapters", async ({ page }) => {
-    const { course } = await createTestCourseWithChapters();
+  test("shows no indicators when user has no progress", async ({
+    authenticatedPage,
+    withProgressUser,
+  }) => {
+    const { course } = await createTestCourseWithChapters(withProgressUser.id);
 
-    await mockCourseCompletionAPI(page, []);
-    await page.goto(`/b/ai/c/${course.slug}`);
+    await authenticatedPage.goto(`/b/ai/c/${course.slug}`);
 
-    // Verify page loaded
-    await expect(page.getByRole("heading", { level: 1, name: course.title })).toBeVisible();
+    await expect(
+      authenticatedPage.getByRole("heading", { level: 1, name: course.title }),
+    ).toBeVisible();
 
-    // No completion indicators should be visible
-    await expect(page.getByRole("img", { name: /^completed$/i })).toHaveCount(0);
-    await expect(page.getByLabel(/of .+ completed/)).toHaveCount(0);
+    await expect(authenticatedPage.getByRole("img", { name: /^completed$/i })).toHaveCount(0);
+    await expect(authenticatedPage.getByLabel(/of .+ completed/)).toHaveCount(0);
   });
 
-  test("shows completed checkmarks for chapters with all lessons done", async ({ page }) => {
-    const { chapter1, chapter2, chapter3, course } = await createTestCourseWithChapters();
+  test("shows completed checkmarks for chapters with all lessons done", async ({
+    authenticatedPage,
+    withProgressUser,
+  }) => {
+    const { activities, course } = await createTestCourseWithChapters(withProgressUser.id);
 
-    await mockCourseCompletionAPI(page, [
-      { chapterId: chapter1.id, completedLessons: 5, totalLessons: 5 },
-      { chapterId: chapter2.id, completedLessons: 3, totalLessons: 3 },
-      { chapterId: chapter3.id, completedLessons: 4, totalLessons: 4 },
+    // Complete all activities across all chapters
+    await Promise.all([
+      activityProgressFixture({
+        activityId: activities.ch1Act1.id,
+        completedAt: new Date(),
+        durationSeconds: 60,
+        userId: withProgressUser.id,
+      }),
+      activityProgressFixture({
+        activityId: activities.ch1Act2.id,
+        completedAt: new Date(),
+        durationSeconds: 60,
+        userId: withProgressUser.id,
+      }),
+      activityProgressFixture({
+        activityId: activities.ch1Act3.id,
+        completedAt: new Date(),
+        durationSeconds: 60,
+        userId: withProgressUser.id,
+      }),
+      activityProgressFixture({
+        activityId: activities.ch2Act1.id,
+        completedAt: new Date(),
+        durationSeconds: 60,
+        userId: withProgressUser.id,
+      }),
+      activityProgressFixture({
+        activityId: activities.ch2Act2.id,
+        completedAt: new Date(),
+        durationSeconds: 60,
+        userId: withProgressUser.id,
+      }),
+      activityProgressFixture({
+        activityId: activities.ch3Act1.id,
+        completedAt: new Date(),
+        durationSeconds: 60,
+        userId: withProgressUser.id,
+      }),
+      activityProgressFixture({
+        activityId: activities.ch3Act2.id,
+        completedAt: new Date(),
+        durationSeconds: 60,
+        userId: withProgressUser.id,
+      }),
     ]);
 
-    await page.goto(`/b/ai/c/${course.slug}`);
+    await authenticatedPage.goto(`/b/ai/c/${course.slug}`);
 
-    await expect(page.getByRole("heading", { level: 1, name: course.title })).toBeVisible();
+    await expect(
+      authenticatedPage.getByRole("heading", { level: 1, name: course.title }),
+    ).toBeVisible();
 
-    const completedIndicators = page.getByRole("img", { name: /^completed$/i });
+    const completedIndicators = authenticatedPage.getByRole("img", { name: /^completed$/i });
     await expect(completedIndicators).toHaveCount(3);
   });
 
-  test("shows fraction text for partially completed chapters", async ({ page }) => {
-    const { chapter1, chapter2, chapter3, course } = await createTestCourseWithChapters();
+  test("shows fraction text for partially completed chapters", async ({
+    authenticatedPage,
+    withProgressUser,
+  }) => {
+    const { activities, course } = await createTestCourseWithChapters(withProgressUser.id);
 
-    await mockCourseCompletionAPI(page, [
-      { chapterId: chapter1.id, completedLessons: 3, totalLessons: 10 },
-      { chapterId: chapter2.id, completedLessons: 7, totalLessons: 12 },
-      { chapterId: chapter3.id, completedLessons: 1, totalLessons: 5 },
-    ]);
+    // Chapter 1 (3 lessons): complete 1 of 3 lessons
+    await activityProgressFixture({
+      activityId: activities.ch1Act1.id,
+      completedAt: new Date(),
+      durationSeconds: 60,
+      userId: withProgressUser.id,
+    });
 
-    await page.goto(`/b/ai/c/${course.slug}`);
+    // Chapter 2 (2 lessons): complete 1 of 2 lessons
+    await activityProgressFixture({
+      activityId: activities.ch2Act1.id,
+      completedAt: new Date(),
+      durationSeconds: 60,
+      userId: withProgressUser.id,
+    });
 
-    await expect(page.getByRole("heading", { level: 1, name: course.title })).toBeVisible();
+    await authenticatedPage.goto(`/b/ai/c/${course.slug}`);
 
-    await expect(page.getByLabel("3 of 10 completed")).toBeVisible();
-    await expect(page.getByLabel("7 of 12 completed")).toBeVisible();
-    await expect(page.getByLabel("1 of 5 completed")).toBeVisible();
+    await expect(
+      authenticatedPage.getByRole("heading", { level: 1, name: course.title }),
+    ).toBeVisible();
+
+    await expect(authenticatedPage.getByLabel("1 of 3 completed")).toBeVisible();
+    await expect(authenticatedPage.getByLabel("1 of 2 completed")).toBeVisible();
   });
 
-  test("shows mix of completed, in-progress, and not-started states", async ({ page }) => {
-    const { chapter1, chapter2, chapter3, course } = await createTestCourseWithChapters();
+  test("shows mix of completed, in-progress, and not-started states", async ({
+    authenticatedPage,
+    withProgressUser,
+  }) => {
+    const { activities, course } = await createTestCourseWithChapters(withProgressUser.id);
 
-    await mockCourseCompletionAPI(page, [
-      { chapterId: chapter1.id, completedLessons: 5, totalLessons: 5 },
-      { chapterId: chapter2.id, completedLessons: 3, totalLessons: 8 },
-      { chapterId: chapter3.id, completedLessons: 0, totalLessons: 6 },
+    // Chapter 1 (3 lessons): complete all -> checkmark
+    await Promise.all([
+      activityProgressFixture({
+        activityId: activities.ch1Act1.id,
+        completedAt: new Date(),
+        durationSeconds: 60,
+        userId: withProgressUser.id,
+      }),
+      activityProgressFixture({
+        activityId: activities.ch1Act2.id,
+        completedAt: new Date(),
+        durationSeconds: 60,
+        userId: withProgressUser.id,
+      }),
+      activityProgressFixture({
+        activityId: activities.ch1Act3.id,
+        completedAt: new Date(),
+        durationSeconds: 60,
+        userId: withProgressUser.id,
+      }),
     ]);
 
-    await page.goto(`/b/ai/c/${course.slug}`);
+    // Chapter 2 (2 lessons): complete 1 of 2 -> fraction
+    await activityProgressFixture({
+      activityId: activities.ch2Act1.id,
+      completedAt: new Date(),
+      durationSeconds: 60,
+      userId: withProgressUser.id,
+    });
 
-    await expect(page.getByRole("heading", { level: 1, name: course.title })).toBeVisible();
+    // Chapter 3: no progress -> nothing shown
+
+    await authenticatedPage.goto(`/b/ai/c/${course.slug}`);
+
+    await expect(
+      authenticatedPage.getByRole("heading", { level: 1, name: course.title }),
+    ).toBeVisible();
 
     // Chapter 1: fully completed -> checkmark
-    const completedIndicators = page.getByRole("img", { name: /^completed$/i });
+    const completedIndicators = authenticatedPage.getByRole("img", { name: /^completed$/i });
     await expect(completedIndicators).toHaveCount(1);
 
     // Chapter 2: partially completed -> fraction
-    await expect(page.getByLabel("3 of 8 completed")).toBeVisible();
-
-    // Chapter 3: not started -> nothing shown (0 completed)
+    await expect(authenticatedPage.getByLabel("1 of 2 completed")).toBeVisible();
   });
 });

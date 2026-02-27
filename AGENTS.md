@@ -138,6 +138,7 @@ page.getByLabel(/email/i);
 - Never edit `i18n.lock` manually
 - Manual translation should be done only in PO entries with empty `msgstr`
 - When using `render` prop with base-ui components (e.g., `useRender`), use `ClientLink` instead of `Link` since the render prop requires a client component
+- i18n functions like `getExtracted` can't be called inside `Promise.all`
 
 ## Plan Mode
 

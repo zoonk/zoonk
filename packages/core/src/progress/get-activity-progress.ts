@@ -1,10 +1,17 @@
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
+import { getSession } from "../users/get-user-session";
 
-export async function getLessonActivityCompletion(
-  userId: number,
-  lessonId: number,
-): Promise<string[]> {
+export async function getActivityProgress({
+  lessonId,
+  headers,
+}: {
+  lessonId: number;
+  headers?: Headers;
+}): Promise<string[]> {
+  const session = await getSession(headers);
+  const userId = session ? Number(session.user.id) : 0;
+
   if (userId === 0) {
     return [];
   }
