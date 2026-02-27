@@ -103,6 +103,11 @@ export async function getNextActivity({
   const session = await getSession(headers);
   const userId = session ? Number(session.user.id) : 0;
 
+  if (userId === 0) {
+    const first = await findFirstActivity(scope);
+    return first ? { ...first, completed: false, hasStarted: false } : null;
+  }
+
   const lastCompleted = await findLastCompleted(userId, scope);
 
   if (!lastCompleted) {
