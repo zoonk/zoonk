@@ -10,7 +10,6 @@ import {
 import { type ActivityKindInfo } from "@/lib/activities";
 import { getLessonActivityCompletion } from "@zoonk/core/progress/lesson-activity-completion";
 import { type Activity } from "@zoonk/db";
-import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { getExtracted } from "next-intl/server";
 
 export async function ActivityList({
@@ -73,28 +72,5 @@ export async function ActivityList({
         })}
       </CatalogListContent>
     </CatalogList>
-  );
-}
-
-function ActivityListItemSkeleton() {
-  return (
-    <li className="-mx-3 flex items-start gap-3 px-3 py-3.5">
-      <div className="flex min-w-0 flex-1 flex-col gap-1">
-        <Skeleton className="h-4 w-1/3" />
-        <Skeleton className="h-3.5 w-full" />
-      </div>
-      <Skeleton className="size-3.5 shrink-0 self-center rounded-full" />
-    </li>
-  );
-}
-
-export function ActivityListSkeleton({ count }: { count: number }) {
-  return (
-    <ul className="flex flex-col">
-      {Array.from({ length: count }).map((_, i) => (
-        // oxlint-disable-next-line eslint/no-array-index-key -- static skeleton
-        <ActivityListItemSkeleton key={i} />
-      ))}
-    </ul>
   );
 }

@@ -1,5 +1,9 @@
 import { CatalogActions } from "@/components/catalog/catalog-actions";
-import { CatalogContainer, CatalogToolbar } from "@/components/catalog/catalog-list";
+import {
+  CatalogContainer,
+  CatalogListSkeleton,
+  CatalogToolbar,
+} from "@/components/catalog/catalog-list";
 import {
   ContinueActivityLink,
   ContinueActivityLinkSkeleton,
@@ -9,7 +13,7 @@ import { getCourse } from "@/data/courses/get-course";
 import { type Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { Suspense } from "react";
-import { ChapterList, ChapterListSkeleton } from "./chapter-list";
+import { ChapterList } from "./chapter-list";
 import { CourseHeader } from "./course-header";
 
 export async function generateMetadata({
@@ -58,7 +62,7 @@ export default async function CoursePage({ params }: PageProps<"/b/[brandSlug]/c
           <CatalogActions contentId={courseSlug} kind="course" />
         </CatalogToolbar>
 
-        <Suspense fallback={<ChapterListSkeleton count={chapters.length} />}>
+        <Suspense fallback={<CatalogListSkeleton count={chapters.length} search />}>
           <ChapterList
             brandSlug={brandSlug}
             chapters={chapters}
