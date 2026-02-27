@@ -1,9 +1,3 @@
-import { getContinueLearning } from "@/data/courses/get-continue-learning";
-import { getBeltLevel } from "@/data/progress/get-belt-level";
-import { getBestDay } from "@/data/progress/get-best-day";
-import { getBestTime } from "@/data/progress/get-best-time";
-import { getEnergyLevel } from "@/data/progress/get-energy-level";
-import { getScore } from "@/data/progress/get-score";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
@@ -20,17 +14,7 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default async function Home() {
-  // Preload data for Suspense boundaries
-  void Promise.all([
-    getContinueLearning(),
-    getEnergyLevel(),
-    getBeltLevel(),
-    getScore(),
-    getBestDay(),
-    getBestTime(),
-  ]);
-
+export default function Home() {
   return (
     <Suspense fallback={<HomeContentSkeleton />}>
       <HomeContent />

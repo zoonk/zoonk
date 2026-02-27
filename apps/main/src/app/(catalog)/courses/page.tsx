@@ -8,7 +8,9 @@ import {
 } from "@zoonk/ui/components/container";
 import { type Metadata } from "next";
 import { getExtracted, getLocale } from "next-intl/server";
+import { Suspense } from "react";
 import { CourseListClient } from "./course-list-client";
+import { CourseListSkeleton } from "./course-list-skeleton";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getExtracted();
@@ -21,10 +23,14 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default async function Courses() {
+async function CourseListContent() {
   const locale = await getLocale();
-  const t = await getExtracted();
   const courses = await listCourses({ language: locale });
+  return <CourseListClient initialCourses={courses} language={locale} limit={LIST_COURSES_LIMIT} />;
+}
+
+export default async function Courses() {
+  const t = await getExtracted();
 
   return (
     <Container variant="list">
@@ -35,7 +41,9 @@ export default async function Courses() {
         </ContainerHeaderGroup>
       </ContainerHeader>
 
-      <CourseListClient initialCourses={courses} language={locale} limit={LIST_COURSES_LIMIT} />
+      <Suspense fallback={<CourseListSkeleton />}>
+        <CourseListContent />
+      </Suspense>
     </Container>
   );
 }
