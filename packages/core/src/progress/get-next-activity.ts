@@ -6,6 +6,7 @@ import {
 import { getNextActivityInCourse } from "@zoonk/core/activities/next-in-course";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
+import { getSession } from "../users/get-user-session";
 
 function scopeWhere(scope: ActivityScope) {
   if ("courseId" in scope) {
@@ -84,10 +85,13 @@ function isWithinScope(
   return next.lessonSlug === lastCompleted.lessonSlug;
 }
 
-export async function getNextActivity(
-  userId: number,
-  scope: ActivityScope,
-): Promise<{
+export async function getNextActivity({
+  scope,
+  headers,
+}: {
+  scope: ActivityScope;
+  headers?: Headers;
+}): Promise<{
   activityPosition: number;
   brandSlug: string | null;
   chapterSlug: string;
@@ -96,6 +100,9 @@ export async function getNextActivity(
   hasStarted: boolean;
   lessonSlug: string;
 } | null> {
+  const session = await getSession(headers);
+  const userId = session ? Number(session.user.id) : 0;
+
   const lastCompleted = await findLastCompleted(userId, scope);
 
   if (!lastCompleted) {

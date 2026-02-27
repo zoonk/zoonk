@@ -1,7 +1,6 @@
 import { randomUUID } from "node:crypto";
-import { type Page } from "@playwright/test";
 import { getAiOrganization } from "@zoonk/e2e/helpers";
-import { activityFixture } from "@zoonk/testing/fixtures/activities";
+import { activityFixture, activityProgressFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
@@ -75,16 +74,6 @@ async function createTestLessonWithActivities() {
     course,
     lesson,
   };
-}
-
-function mockActivityCompletionAPI(page: Page, completedActivityIds: string[]) {
-  return page.route("**/v1/progress/activity-completion**", async (route) => {
-    await route.fulfill({
-      body: JSON.stringify({ completedActivityIds }),
-      contentType: "application/json",
-      status: 200,
-    });
-  });
 }
 
 test.describe("Lesson Detail Page", () => {
@@ -228,9 +217,8 @@ test.describe("Lesson Detail Page", () => {
     await expect(page).toHaveURL(new RegExp(`/generate/l/${lesson.id}`));
   });
 
-  test("shows not-completed indicators when API returns empty array", async ({ page }) => {
+  test("shows not-completed indicators for unauthenticated user", async ({ page }) => {
     const { chapter, course, lesson } = await createTestLessonWithActivities();
-    await mockActivityCompletionAPI(page, []);
 
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
 
@@ -239,33 +227,74 @@ test.describe("Lesson Detail Page", () => {
     await expect(notCompletedIndicators).toHaveCount(4);
   });
 
-  test("shows completed indicators for activities in the response", async ({ page }) => {
+  test("shows completed indicators for activities with progress", async ({
+    authenticatedPage,
+    withProgressUser,
+  }) => {
     const { activities, chapter, course, lesson } = await createTestLessonWithActivities();
-    const allIds = [
-      String(activities.background.id),
-      String(activities.explanation.id),
-      String(activities.quiz.id),
-      String(activities.challenge.id),
-    ];
-    await mockActivityCompletionAPI(page, allIds);
 
-    await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
+    await Promise.all([
+      activityProgressFixture({
+        activityId: activities.background.id,
+        completedAt: new Date(),
+        durationSeconds: 60,
+        userId: withProgressUser.id,
+      }),
+      activityProgressFixture({
+        activityId: activities.explanation.id,
+        completedAt: new Date(),
+        durationSeconds: 60,
+        userId: withProgressUser.id,
+      }),
+      activityProgressFixture({
+        activityId: activities.quiz.id,
+        completedAt: new Date(),
+        durationSeconds: 60,
+        userId: withProgressUser.id,
+      }),
+      activityProgressFixture({
+        activityId: activities.challenge.id,
+        completedAt: new Date(),
+        durationSeconds: 60,
+        userId: withProgressUser.id,
+      }),
+    ]);
 
-    const activityList = page.getByRole("list", { name: /activities/i });
+    await authenticatedPage.goto(
+      `/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`,
+    );
+
+    const activityList = authenticatedPage.getByRole("list", { name: /activities/i });
     const completedIndicators = activityList.getByRole("img", { name: /^completed$/i });
     await expect(completedIndicators).toHaveCount(4);
   });
 
-  test("shows mix of completed and not-completed indicators", async ({ page }) => {
+  test("shows mix of completed and not-completed indicators", async ({
+    authenticatedPage,
+    withProgressUser,
+  }) => {
     const { activities, chapter, course, lesson } = await createTestLessonWithActivities();
-    await mockActivityCompletionAPI(page, [
-      String(activities.background.id),
-      String(activities.quiz.id),
+
+    await Promise.all([
+      activityProgressFixture({
+        activityId: activities.background.id,
+        completedAt: new Date(),
+        durationSeconds: 60,
+        userId: withProgressUser.id,
+      }),
+      activityProgressFixture({
+        activityId: activities.quiz.id,
+        completedAt: new Date(),
+        durationSeconds: 60,
+        userId: withProgressUser.id,
+      }),
     ]);
 
-    await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
+    await authenticatedPage.goto(
+      `/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`,
+    );
 
-    const activityList = page.getByRole("list", { name: /activities/i });
+    const activityList = authenticatedPage.getByRole("list", { name: /activities/i });
     const completedIndicators = activityList.getByRole("img", { name: /^completed$/i });
     const notCompletedIndicators = activityList.getByRole("img", { name: /not completed/i });
     await expect(completedIndicators).toHaveCount(2);

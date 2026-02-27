@@ -1,4 +1,5 @@
 import { activityFixture, activityProgressFixture } from "@zoonk/testing/fixtures/activities";
+import { signInAs } from "@zoonk/testing/fixtures/auth";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
@@ -14,7 +15,7 @@ describe("getNextActivity - course scope", () => {
     organization = await organizationFixture();
   });
 
-  test("returns first activity when userId is 0 (unauthenticated)", async () => {
+  test("returns first activity when unauthenticated", async () => {
     const course = await courseFixture({ isPublished: true, organizationId: organization.id });
     const chapter = await chapterFixture({
       courseId: course.id,
@@ -44,7 +45,10 @@ describe("getNextActivity - course scope", () => {
       }),
     ]);
 
-    const result = await getNextActivity(0, { courseId: course.id });
+    const result = await getNextActivity({
+      headers: new Headers(),
+      scope: { courseId: course.id },
+    });
 
     expect(result).toEqual({
       activityPosition: 0,
@@ -91,7 +95,8 @@ describe("getNextActivity - course scope", () => {
       }),
     ]);
 
-    const result = await getNextActivity(Number(user.id), { courseId: course.id });
+    const headers = await signInAs(user.email, user.password);
+    const result = await getNextActivity({ headers, scope: { courseId: course.id } });
 
     expect(result).toEqual({
       activityPosition: 0,
@@ -147,7 +152,8 @@ describe("getNextActivity - course scope", () => {
       userId: Number(user.id),
     });
 
-    const result = await getNextActivity(Number(user.id), { courseId: course.id });
+    const headers = await signInAs(user.email, user.password);
+    const result = await getNextActivity({ headers, scope: { courseId: course.id } });
 
     expect(result).toEqual({
       activityPosition: 1,
@@ -244,7 +250,8 @@ describe("getNextActivity - course scope", () => {
       }),
     ]);
 
-    const result = await getNextActivity(Number(user.id), { courseId: course.id });
+    const headers = await signInAs(user.email, user.password);
+    const result = await getNextActivity({ headers, scope: { courseId: course.id } });
 
     expect(result).toEqual({
       activityPosition: 1,
@@ -306,7 +313,8 @@ describe("getNextActivity - course scope", () => {
       }),
     ]);
 
-    const result = await getNextActivity(Number(user.id), { courseId: course.id });
+    const headers = await signInAs(user.email, user.password);
+    const result = await getNextActivity({ headers, scope: { courseId: course.id } });
 
     expect(result).toEqual({
       activityPosition: 0,
@@ -341,7 +349,10 @@ describe("getNextActivity - course scope", () => {
       position: 0,
     });
 
-    const result = await getNextActivity(0, { courseId: course.id });
+    const result = await getNextActivity({
+      headers: new Headers(),
+      scope: { courseId: course.id },
+    });
 
     expect(result).toBeNull();
   });
@@ -378,7 +389,10 @@ describe("getNextActivity - course scope", () => {
       position: 0,
     });
 
-    const result = await getNextActivity(0, { courseId: course.id });
+    const result = await getNextActivity({
+      headers: new Headers(),
+      scope: { courseId: course.id },
+    });
 
     expect(result).toEqual({
       activityPosition: 0,
@@ -429,7 +443,10 @@ describe("getNextActivity - chapter scope", () => {
       }),
     ]);
 
-    const result = await getNextActivity(0, { chapterId: chapter.id });
+    const result = await getNextActivity({
+      headers: new Headers(),
+      scope: { chapterId: chapter.id },
+    });
 
     expect(result).toEqual({
       activityPosition: 0,
@@ -485,7 +502,8 @@ describe("getNextActivity - chapter scope", () => {
       userId: Number(user.id),
     });
 
-    const result = await getNextActivity(Number(user.id), { chapterId: chapter.id });
+    const headers = await signInAs(user.email, user.password);
+    const result = await getNextActivity({ headers, scope: { chapterId: chapter.id } });
 
     expect(result).toEqual({
       activityPosition: 1,
@@ -558,7 +576,8 @@ describe("getNextActivity - chapter scope", () => {
       userId: Number(user.id),
     });
 
-    const result = await getNextActivity(Number(user.id), { chapterId: chapter1.id });
+    const headers = await signInAs(user.email, user.password);
+    const result = await getNextActivity({ headers, scope: { chapterId: chapter1.id } });
 
     expect(result).toEqual({
       activityPosition: 0,
@@ -609,7 +628,10 @@ describe("getNextActivity - lesson scope", () => {
       }),
     ]);
 
-    const result = await getNextActivity(0, { lessonId: lesson.id });
+    const result = await getNextActivity({
+      headers: new Headers(),
+      scope: { lessonId: lesson.id },
+    });
 
     expect(result).toEqual({
       activityPosition: 0,
@@ -665,7 +687,8 @@ describe("getNextActivity - lesson scope", () => {
       userId: Number(user.id),
     });
 
-    const result = await getNextActivity(Number(user.id), { lessonId: lesson.id });
+    const headers = await signInAs(user.email, user.password);
+    const result = await getNextActivity({ headers, scope: { lessonId: lesson.id } });
 
     expect(result).toEqual({
       activityPosition: 1,
@@ -730,7 +753,8 @@ describe("getNextActivity - lesson scope", () => {
       userId: Number(user.id),
     });
 
-    const result = await getNextActivity(Number(user.id), { lessonId: lesson1.id });
+    const headers = await signInAs(user.email, user.password);
+    const result = await getNextActivity({ headers, scope: { lessonId: lesson1.id } });
 
     expect(result).toEqual({
       activityPosition: 0,

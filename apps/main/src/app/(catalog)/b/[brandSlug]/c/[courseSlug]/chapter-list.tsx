@@ -6,10 +6,11 @@ import {
   CatalogListItemContent,
   CatalogListItemDescription,
   CatalogListItemPosition,
+  CatalogListItemProgress,
   CatalogListItemTitle,
   CatalogListSearch,
 } from "@/components/catalog/catalog-list";
-import { ChapterCompletion } from "@/components/catalog/chapter-completion";
+import { getCourseChapterCompletion } from "@zoonk/core/progress/course-chapter-completion";
 import { type Chapter } from "@zoonk/db";
 import { formatPosition } from "@zoonk/utils/string";
 import { getExtracted } from "next-intl/server";
@@ -30,31 +31,45 @@ export async function ChapterList({
   }
 
   const t = await getExtracted();
+  const completionData = await getCourseChapterCompletion({ courseId });
+  const completionMap = new Map(completionData.map((row) => [row.chapterId, row]));
 
   return (
     <CatalogList>
       <CatalogListSearch items={chapters} placeholder={t("Search chapters...")}>
         <CatalogListEmpty>{t("No chapters found")}</CatalogListEmpty>
         <CatalogListContent>
-          {chapters.map((chapter) => (
-            <CatalogListItem
-              href={`/b/${brandSlug}/c/${courseSlug}/ch/${chapter.slug}`}
-              id={chapter.id}
-              key={chapter.id}
-              prefetch={chapter.generationStatus === "completed"}
-            >
-              <CatalogListItemPosition>{formatPosition(chapter.position)}</CatalogListItemPosition>
+          {chapters.map((chapter) => {
+            const completion = completionMap.get(chapter.id);
 
-              <CatalogListItemContent>
-                <CatalogListItemTitle>{chapter.title}</CatalogListItemTitle>
-                {chapter.description && (
-                  <CatalogListItemDescription>{chapter.description}</CatalogListItemDescription>
+            return (
+              <CatalogListItem
+                href={`/b/${brandSlug}/c/${courseSlug}/ch/${chapter.slug}`}
+                id={chapter.id}
+                key={chapter.id}
+                prefetch={chapter.generationStatus === "completed"}
+              >
+                <CatalogListItemPosition>
+                  {formatPosition(chapter.position)}
+                </CatalogListItemPosition>
+
+                <CatalogListItemContent>
+                  <CatalogListItemTitle>{chapter.title}</CatalogListItemTitle>
+                  {chapter.description && (
+                    <CatalogListItemDescription>{chapter.description}</CatalogListItemDescription>
+                  )}
+                </CatalogListItemContent>
+
+                {completion && (
+                  <CatalogListItemProgress
+                    completed={completion.completedLessons}
+                    completedLabel={t("Completed")}
+                    total={completion.totalLessons}
+                  />
                 )}
-              </CatalogListItemContent>
-
-              <ChapterCompletion chapterId={chapter.id} courseId={courseId} />
-            </CatalogListItem>
-          ))}
+              </CatalogListItem>
+            );
+          })}
         </CatalogListContent>
       </CatalogListSearch>
     </CatalogList>

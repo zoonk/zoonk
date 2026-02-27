@@ -67,40 +67,9 @@ async function openMoreOptions(page: Page) {
   }).toPass();
 }
 
-function mockNextActivityAPI(
-  page: Page,
-  response: {
-    activityPosition: number;
-    brandSlug: string;
-    chapterSlug: string;
-    completed: boolean;
-    courseSlug: string;
-    hasStarted: boolean;
-    lessonSlug: string;
-  },
-) {
-  return page.route("**/v1/progress/next-activity**", async (route) => {
-    await route.fulfill({
-      body: JSON.stringify(response),
-      contentType: "application/json",
-      status: 200,
-    });
-  });
-}
-
 test.describe("Catalog Actions", () => {
   test("course page shows actions button", async ({ page }) => {
-    const { chapter, course, lesson } = await createTestCourseWithActivity();
-
-    await mockNextActivityAPI(page, {
-      activityPosition: 0,
-      brandSlug: AI_ORG_SLUG,
-      chapterSlug: chapter.slug,
-      completed: false,
-      courseSlug: course.slug,
-      hasStarted: false,
-      lessonSlug: lesson.slug,
-    });
+    const { course } = await createTestCourseWithActivity();
 
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
 
@@ -108,17 +77,7 @@ test.describe("Catalog Actions", () => {
   });
 
   test("dropdown opens with feedback item", async ({ page }) => {
-    const { chapter, course, lesson } = await createTestCourseWithActivity();
-
-    await mockNextActivityAPI(page, {
-      activityPosition: 0,
-      brandSlug: AI_ORG_SLUG,
-      chapterSlug: chapter.slug,
-      completed: false,
-      courseSlug: course.slug,
-      hasStarted: false,
-      lessonSlug: lesson.slug,
-    });
+    const { course } = await createTestCourseWithActivity();
 
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
 
@@ -127,17 +86,7 @@ test.describe("Catalog Actions", () => {
   });
 
   test("feedback dialog opens from dropdown", async ({ page }) => {
-    const { chapter, course, lesson } = await createTestCourseWithActivity();
-
-    await mockNextActivityAPI(page, {
-      activityPosition: 0,
-      brandSlug: AI_ORG_SLUG,
-      chapterSlug: chapter.slug,
-      completed: false,
-      courseSlug: course.slug,
-      hasStarted: false,
-      lessonSlug: lesson.slug,
-    });
+    const { course } = await createTestCourseWithActivity();
 
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
 
@@ -150,17 +99,7 @@ test.describe("Catalog Actions", () => {
   });
 
   test("chapter page has actions button", async ({ page }) => {
-    const { chapter, course, lesson } = await createTestCourseWithActivity();
-
-    await mockNextActivityAPI(page, {
-      activityPosition: 0,
-      brandSlug: AI_ORG_SLUG,
-      chapterSlug: chapter.slug,
-      completed: false,
-      courseSlug: course.slug,
-      hasStarted: false,
-      lessonSlug: lesson.slug,
-    });
+    const { chapter, course } = await createTestCourseWithActivity();
 
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}`);
 
@@ -170,33 +109,13 @@ test.describe("Catalog Actions", () => {
   test("lesson page has actions button", async ({ page }) => {
     const { chapter, course, lesson } = await createTestCourseWithActivity();
 
-    await mockNextActivityAPI(page, {
-      activityPosition: 0,
-      brandSlug: AI_ORG_SLUG,
-      chapterSlug: chapter.slug,
-      completed: false,
-      courseSlug: course.slug,
-      hasStarted: false,
-      lessonSlug: lesson.slug,
-    });
-
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
 
     await expect(page.getByRole("button", { name: /more options/i })).toBeVisible();
   });
 
   test("dropdown shows feedback items on course page", async ({ page }) => {
-    const { chapter, course, lesson } = await createTestCourseWithActivity();
-
-    await mockNextActivityAPI(page, {
-      activityPosition: 0,
-      brandSlug: AI_ORG_SLUG,
-      chapterSlug: chapter.slug,
-      completed: false,
-      courseSlug: course.slug,
-      hasStarted: false,
-      lessonSlug: lesson.slug,
-    });
+    const { course } = await createTestCourseWithActivity();
 
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
 
@@ -206,17 +125,7 @@ test.describe("Catalog Actions", () => {
   });
 
   test("clicking helpful shows toast confirmation", async ({ page }) => {
-    const { chapter, course, lesson } = await createTestCourseWithActivity();
-
-    await mockNextActivityAPI(page, {
-      activityPosition: 0,
-      brandSlug: AI_ORG_SLUG,
-      chapterSlug: chapter.slug,
-      completed: false,
-      courseSlug: course.slug,
-      hasStarted: false,
-      lessonSlug: lesson.slug,
-    });
+    const { course } = await createTestCourseWithActivity();
 
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
 
@@ -227,17 +136,7 @@ test.describe("Catalog Actions", () => {
   });
 
   test("clicking helpful marks it as selected", async ({ page }) => {
-    const { chapter, course, lesson } = await createTestCourseWithActivity();
-
-    await mockNextActivityAPI(page, {
-      activityPosition: 0,
-      brandSlug: AI_ORG_SLUG,
-      chapterSlug: chapter.slug,
-      completed: false,
-      courseSlug: course.slug,
-      hasStarted: false,
-      lessonSlug: lesson.slug,
-    });
+    const { course } = await createTestCourseWithActivity();
 
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
 
@@ -251,17 +150,7 @@ test.describe("Catalog Actions", () => {
   });
 
   test("switching feedback changes selection", async ({ page }) => {
-    const { chapter, course, lesson } = await createTestCourseWithActivity();
-
-    await mockNextActivityAPI(page, {
-      activityPosition: 0,
-      brandSlug: AI_ORG_SLUG,
-      chapterSlug: chapter.slug,
-      completed: false,
-      courseSlug: course.slug,
-      hasStarted: false,
-      lessonSlug: lesson.slug,
-    });
+    const { course } = await createTestCourseWithActivity();
 
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
 
@@ -280,17 +169,7 @@ test.describe("Catalog Actions", () => {
   });
 
   test("chapter page shows feedback items", async ({ page }) => {
-    const { chapter, course, lesson } = await createTestCourseWithActivity();
-
-    await mockNextActivityAPI(page, {
-      activityPosition: 0,
-      brandSlug: AI_ORG_SLUG,
-      chapterSlug: chapter.slug,
-      completed: false,
-      courseSlug: course.slug,
-      hasStarted: false,
-      lessonSlug: lesson.slug,
-    });
+    const { chapter, course } = await createTestCourseWithActivity();
 
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}`);
 
@@ -302,16 +181,6 @@ test.describe("Catalog Actions", () => {
   test("lesson page shows feedback items", async ({ page }) => {
     const { chapter, course, lesson } = await createTestCourseWithActivity();
 
-    await mockNextActivityAPI(page, {
-      activityPosition: 0,
-      brandSlug: AI_ORG_SLUG,
-      chapterSlug: chapter.slug,
-      completed: false,
-      courseSlug: course.slug,
-      hasStarted: false,
-      lessonSlug: lesson.slug,
-    });
-
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
 
     await openMoreOptions(page);
@@ -320,17 +189,7 @@ test.describe("Catalog Actions", () => {
   });
 
   test("send feedback dialog still works after selecting feedback", async ({ page }) => {
-    const { chapter, course, lesson } = await createTestCourseWithActivity();
-
-    await mockNextActivityAPI(page, {
-      activityPosition: 0,
-      brandSlug: AI_ORG_SLUG,
-      chapterSlug: chapter.slug,
-      completed: false,
-      courseSlug: course.slug,
-      hasStarted: false,
-      lessonSlug: lesson.slug,
-    });
+    const { course } = await createTestCourseWithActivity();
 
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
 

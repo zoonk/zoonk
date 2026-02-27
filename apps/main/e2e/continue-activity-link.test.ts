@@ -1,7 +1,6 @@
 import { randomUUID } from "node:crypto";
-import { type Page } from "@playwright/test";
 import { getAiOrganization } from "@zoonk/e2e/helpers";
-import { activityFixture } from "@zoonk/testing/fixtures/activities";
+import { activityFixture, activityProgressFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
@@ -38,7 +37,8 @@ async function createTestCourseWithActivity() {
     title: `E2E CAL Lesson ${uniqueId}`,
   });
 
-  await activityFixture({
+  const activity = await activityFixture({
+    generationStatus: "completed",
     isPublished: true,
     kind: "background",
     lessonId: lesson.id,
@@ -47,53 +47,54 @@ async function createTestCourseWithActivity() {
     title: `E2E CAL Activity ${uniqueId}`,
   });
 
-  return { chapter, course, lesson, org };
+  return { activity, chapter, course, lesson, org };
 }
 
-function mockNextActivityAPI(
-  page: Page,
-  response: {
-    activityPosition: number;
-    brandSlug: string;
-    chapterSlug: string;
-    completed: boolean;
-    courseSlug: string;
-    hasStarted: boolean;
-    lessonSlug: string;
-  },
-) {
-  return page.route("**/v1/progress/next-activity**", async (route) => {
-    await route.fulfill({
-      body: JSON.stringify(response),
-      contentType: "application/json",
-      status: 200,
-    });
-  });
-}
+async function createTestCourseWithoutPublishedActivities() {
+  const org = await getAiOrganization();
 
-function mockNoActivitiesAPI(page: Page) {
-  return page.route("**/v1/progress/next-activity**", async (route) => {
-    await route.fulfill({
-      body: JSON.stringify({ completed: false, hasStarted: false }),
-      contentType: "application/json",
-      status: 200,
-    });
+  const uniqueId = randomUUID().slice(0, 8);
+
+  const course = await courseFixture({
+    isPublished: true,
+    organizationId: org.id,
+    slug: `e2e-cal-noact-${uniqueId}`,
+    title: `E2E CAL NoAct ${uniqueId}`,
   });
+
+  const chapter = await chapterFixture({
+    courseId: course.id,
+    isPublished: true,
+    organizationId: org.id,
+    position: 0,
+    slug: `e2e-cal-noact-ch-${uniqueId}`,
+    title: `E2E CAL NoAct Ch ${uniqueId}`,
+  });
+
+  const lesson = await lessonFixture({
+    chapterId: chapter.id,
+    isPublished: true,
+    organizationId: org.id,
+    position: 0,
+    slug: `e2e-cal-noact-l-${uniqueId}`,
+    title: `E2E CAL NoAct Lesson ${uniqueId}`,
+  });
+
+  // Unpublished activity so getNextActivity returns null
+  await activityFixture({
+    isPublished: false,
+    kind: "background",
+    lessonId: lesson.id,
+    organizationId: org.id,
+    position: 0,
+  });
+
+  return { chapter, course, lesson };
 }
 
 test.describe("Continue Activity Link", () => {
   test("course page shows Start link for unauthenticated user", async ({ page }) => {
-    const { chapter, course, lesson } = await createTestCourseWithActivity();
-
-    await mockNextActivityAPI(page, {
-      activityPosition: 0,
-      brandSlug: AI_ORG_SLUG,
-      chapterSlug: chapter.slug,
-      completed: false,
-      courseSlug: course.slug,
-      hasStarted: false,
-      lessonSlug: lesson.slug,
-    });
+    const { course } = await createTestCourseWithActivity();
 
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
 
@@ -102,17 +103,7 @@ test.describe("Continue Activity Link", () => {
   });
 
   test("course page Start link navigates to an activity URL", async ({ page }) => {
-    const { chapter, course, lesson } = await createTestCourseWithActivity();
-
-    await mockNextActivityAPI(page, {
-      activityPosition: 0,
-      brandSlug: AI_ORG_SLUG,
-      chapterSlug: chapter.slug,
-      completed: false,
-      courseSlug: course.slug,
-      hasStarted: false,
-      lessonSlug: lesson.slug,
-    });
+    const { course } = await createTestCourseWithActivity();
 
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
 
@@ -124,17 +115,7 @@ test.describe("Continue Activity Link", () => {
   });
 
   test("chapter page shows Start link for unauthenticated user", async ({ page }) => {
-    const { chapter, course, lesson } = await createTestCourseWithActivity();
-
-    await mockNextActivityAPI(page, {
-      activityPosition: 0,
-      brandSlug: AI_ORG_SLUG,
-      chapterSlug: chapter.slug,
-      completed: false,
-      courseSlug: course.slug,
-      hasStarted: false,
-      lessonSlug: lesson.slug,
-    });
+    const { chapter, course } = await createTestCourseWithActivity();
 
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}`);
 
@@ -145,16 +126,6 @@ test.describe("Continue Activity Link", () => {
   test("lesson page shows Start link for unauthenticated user", async ({ page }) => {
     const { chapter, course, lesson } = await createTestCourseWithActivity();
 
-    await mockNextActivityAPI(page, {
-      activityPosition: 0,
-      brandSlug: AI_ORG_SLUG,
-      chapterSlug: chapter.slug,
-      completed: false,
-      courseSlug: course.slug,
-      hasStarted: false,
-      lessonSlug: lesson.slug,
-    });
-
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
 
     const startLink = page.getByRole("link", { name: /^start$/i });
@@ -162,8 +133,7 @@ test.describe("Continue Activity Link", () => {
   });
 
   test("course page falls back to first chapter when no activity data", async ({ page }) => {
-    const { chapter, course } = await createTestCourseWithActivity();
-    await mockNoActivitiesAPI(page);
+    const { chapter, course } = await createTestCourseWithoutPublishedActivities();
 
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
 
@@ -176,8 +146,7 @@ test.describe("Continue Activity Link", () => {
   });
 
   test("chapter page falls back to first lesson when no activity data", async ({ page }) => {
-    const { chapter, course, lesson } = await createTestCourseWithActivity();
-    await mockNoActivitiesAPI(page);
+    const { chapter, course, lesson } = await createTestCourseWithoutPublishedActivities();
 
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}`);
 
@@ -189,26 +158,14 @@ test.describe("Continue Activity Link", () => {
     );
   });
 
-  test("lesson page falls back to first activity when no activity data", async ({ page }) => {
-    const { chapter, course, lesson } = await createTestCourseWithActivity();
-    await mockNoActivitiesAPI(page);
-
-    await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
-
-    const startLink = page.getByRole("link", { name: /^start$/i });
-    await expect(startLink).toBeVisible();
-    await expect(startLink).toHaveAttribute(
-      "href",
-      expect.stringContaining(`/l/${lesson.slug}/a/0`),
-    );
-  });
-
   test("authenticated user with progress sees Continue on course page", async ({
     authenticatedPage,
+    withProgressUser,
   }) => {
-    const { chapter, course, lesson, org } = await createTestCourseWithActivity();
+    const { activity, course, lesson, org } = await createTestCourseWithActivity();
 
     await activityFixture({
+      generationStatus: "completed",
       isPublished: true,
       kind: "explanation",
       lessonId: lesson.id,
@@ -217,14 +174,11 @@ test.describe("Continue Activity Link", () => {
       title: `E2E CAL Activity 2 ${course.slug}`,
     });
 
-    await mockNextActivityAPI(authenticatedPage, {
-      activityPosition: 1,
-      brandSlug: AI_ORG_SLUG,
-      chapterSlug: chapter.slug,
-      completed: false,
-      courseSlug: course.slug,
-      hasStarted: true,
-      lessonSlug: lesson.slug,
+    await activityProgressFixture({
+      activityId: activity.id,
+      completedAt: new Date(),
+      durationSeconds: 60,
+      userId: withProgressUser.id,
     });
 
     await authenticatedPage.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);

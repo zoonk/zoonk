@@ -1,15 +1,30 @@
-"use client";
-
-import { buildNextActivityKey, fetchNextActivity } from "@/lib/progress-fetchers";
-import { Button, buttonVariants } from "@zoonk/ui/components/button";
+import { type ActivityScope } from "@zoonk/core/activities/last-completed";
+import { getNextActivity } from "@zoonk/core/progress/next-activity";
+import { buttonVariants } from "@zoonk/ui/components/button";
+import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronRightIcon } from "lucide-react";
 import { type Route } from "next";
-import { useExtracted } from "next-intl";
+import { getExtracted } from "next-intl/server";
 import Link from "next/link";
-import useSWR from "swr";
 
-export function ContinueActivityLink<Href extends string>({
+function getScope(props: {
+  chapterId?: number;
+  courseId?: number;
+  lessonId?: number;
+}): ActivityScope {
+  if (props.courseId) {
+    return { courseId: props.courseId };
+  }
+
+  if (props.chapterId) {
+    return { chapterId: props.chapterId };
+  }
+
+  return { lessonId: props.lessonId ?? 0 };
+}
+
+export async function ContinueActivityLink<Href extends string>({
   chapterId,
   courseId,
   fallbackHref,
@@ -20,20 +35,9 @@ export function ContinueActivityLink<Href extends string>({
   fallbackHref: Route<Href>;
   lessonId?: number;
 }) {
-  const t = useExtracted();
-
-  const { data, isLoading } = useSWR(
-    buildNextActivityKey({ chapterId, courseId, lessonId }),
-    fetchNextActivity,
-  );
-
-  if (isLoading) {
-    return (
-      <Button className="min-w-0 flex-1" disabled>
-        {t("Start")}
-      </Button>
-    );
-  }
+  const t = await getExtracted();
+  const scope = getScope({ chapterId, courseId, lessonId });
+  const data = await getNextActivity({ scope });
 
   if (!data) {
     return (
@@ -65,4 +69,8 @@ export function ContinueActivityLink<Href extends string>({
       <ChevronRightIcon aria-hidden="true" />
     </Link>
   );
+}
+
+export function ContinueActivityLinkSkeleton() {
+  return <Skeleton className="h-9 min-w-0 flex-1 rounded-md" />;
 }
