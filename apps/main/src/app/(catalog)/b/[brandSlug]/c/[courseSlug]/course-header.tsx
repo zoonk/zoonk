@@ -1,6 +1,6 @@
 import { AIWarning } from "@/components/catalog/ai-warning";
 import { type CourseWithDetails } from "@/data/courses/get-course";
-import { getCategories } from "@/lib/categories/category-server";
+import { getCategories } from "@/lib/categories/category";
 import { Badge } from "@zoonk/ui/components/badge";
 import {
   MediaCard,
