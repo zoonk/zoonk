@@ -13,7 +13,7 @@ import { SlugStep } from "./steps/slug-step";
 import { TitleStep } from "./steps/title-step";
 import { useCourseForm } from "./use-course-form";
 
-const STEPS = ["title", "language", "description", "slug"] as const;
+const STEPS = ["title", "language", "slug", "description"] as const;
 
 export function CreateCourseWizard({ orgSlug }: { orgSlug: string }) {
   const router = useRouter();
@@ -37,7 +37,7 @@ export function CreateCourseWizard({ orgSlug }: { orgSlug: string }) {
     }
 
     // Auto-fill slug from title when entering the slug step
-    if (wizard.currentStepName === "description" && !formData.slug) {
+    if (wizard.currentStepName === "language" && !formData.slug) {
       const baseSlug = toSlug(formData.title);
       const slug = isAiOrg ? ensureLocaleSuffix(baseSlug, formData.language) : baseSlug;
 
@@ -100,18 +100,18 @@ export function CreateCourseWizard({ orgSlug }: { orgSlug: string }) {
           />
         )}
 
-        {wizard.currentStepName === "description" && (
-          <DescriptionStep
-            onChange={(value) => updateField("description", value)}
-            value={formData.description}
-          />
-        )}
-
         {wizard.currentStepName === "slug" && (
           <SlugStep
             error={submitError || getStepError("slug")}
             onChange={(value) => updateField("slug", value)}
             value={formData.slug}
+          />
+        )}
+
+        {wizard.currentStepName === "description" && (
+          <DescriptionStep
+            onChange={(value) => updateField("description", value)}
+            value={formData.description}
           />
         )}
       </WizardContent>
