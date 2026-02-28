@@ -27,7 +27,7 @@
   "devDependencies": {
     "@testing-library/react": "16.3.2",
     "@types/react": "^19",
-    "@typescript/native-preview": "7.0.0-dev.20260214.1",
+    "@typescript/native-preview": "7.0.0-dev.20260227.1",
     "@zoonk/tsconfig": "workspace:*",
     "jsdom": "28.1.0",
     "vite-tsconfig-paths": "6.1.1",

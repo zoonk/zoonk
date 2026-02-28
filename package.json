@@ -27,15 +27,15 @@
   "devDependencies": {
     "@playwright/test": "1.58.2",
     "@types/node": "^24",
-    "@typescript/native-preview": "7.0.0-dev.20260214.1",
-    "knip": "5.83.1",
-    "oxfmt": "0.32.0",
-    "oxlint": "1.47.0",
-    "oxlint-tsgolint": "0.12.2",
-    "turbo": "2.8.9"
+    "@typescript/native-preview": "7.0.0-dev.20260227.1",
+    "knip": "5.85.0",
+    "oxfmt": "0.35.0",
+    "oxlint": "1.50.0",
+    "oxlint-tsgolint": "0.15.0",
+    "turbo": "2.8.12"
   },
   "engines": {
     "node": "^24"
   },
-  "packageManager": "pnpm@10.30.2"
+  "packageManager": "pnpm@10.30.3"
 }

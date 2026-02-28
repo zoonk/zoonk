@@ -1,9 +1,9 @@
 import "server-only";
 import { getSession } from "@zoonk/core/users/session/get";
 import { prisma } from "@zoonk/db";
-import { DAILY_DECAY, MIN_ENERGY } from "@zoonk/utils/constants";
 import { safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
+import { fillGapsWithDecay } from "./_fill-gaps";
 import {
   type HistoryPeriod,
   aggregateByMonth,
@@ -39,66 +39,6 @@ function calculateAverage(dataPoints: { energy: number }[]): number {
 }
 
 type RawDataPoint = { date: Date; energy: number };
-
-function buildDateEnergyMap(dataPoints: RawDataPoint[]): Map<string, number> {
-  const map = new Map<string, number>();
-  for (const point of dataPoints) {
-    map.set(point.date.toISOString().slice(0, 10), point.energy);
-  }
-  return map;
-}
-
-function getDateBounds(sorted: RawDataPoint[]): { firstDate: Date; lastDate: Date } | null {
-  const first = sorted[0];
-  const last = sorted.at(-1);
-  if (!first || !last) {
-    return null;
-  }
-  return { firstDate: first.date, lastDate: last.date };
-}
-
-function fillDateRange(
-  firstDate: Date,
-  lastDate: Date,
-  dataMap: Map<string, number>,
-): RawDataPoint[] {
-  const result: RawDataPoint[] = [];
-  const current = new Date(firstDate);
-  let previousEnergy: number | null = null;
-
-  while (current <= lastDate) {
-    const key = current.toISOString().slice(0, 10);
-    const existingEnergy = dataMap.get(key);
-
-    if (existingEnergy !== undefined) {
-      result.push({ date: new Date(current), energy: existingEnergy });
-      previousEnergy = existingEnergy;
-    } else if (previousEnergy !== null) {
-      const decayedEnergy = Math.max(MIN_ENERGY, previousEnergy - DAILY_DECAY);
-      result.push({ date: new Date(current), energy: decayedEnergy });
-      previousEnergy = decayedEnergy;
-    }
-
-    current.setDate(current.getDate() + 1);
-  }
-
-  return result;
-}
-
-function fillGapsWithDecay(dataPoints: RawDataPoint[]): RawDataPoint[] {
-  if (dataPoints.length === 0) {
-    return [];
-  }
-
-  const sorted = [...dataPoints].toSorted((a, b) => a.date.getTime() - b.date.getTime());
-  const bounds = getDateBounds(sorted);
-  if (!bounds) {
-    return [];
-  }
-
-  const dataMap = buildDateEnergyMap(sorted);
-  return fillDateRange(bounds.firstDate, bounds.lastDate, dataMap);
-}
 
 function aggregateEnergyByWeek(dataPoints: RawDataPoint[]): RawDataPoint[] {
   return aggregateByWeek(dataPoints, (point) => point.energy, "average").map((item) => ({

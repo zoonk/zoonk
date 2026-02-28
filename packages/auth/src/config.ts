@@ -77,7 +77,7 @@ export const baseAuthConfig: Omit<BetterAuthOptions, "rateLimit"> = {
 export const baseAuthPlugins = [
   adminPlugin(),
   username({
-    usernameValidator: (username) => isUsernameAllowed(username),
+    usernameValidator: (value) => isUsernameAllowed(value),
   }),
   organization({
     ac,

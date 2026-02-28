@@ -3,6 +3,6 @@
   "private": true,
   "type": "module",
   "devDependencies": {
-    "@oxlint/plugins": "1.43.0"
+    "@oxlint/plugins": "1.50.0"
   }
 }

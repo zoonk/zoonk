@@ -1,12 +1,6 @@
 {
   "permissions": {
     "deny": [
-      "Edit(knip.json)",
-      "Edit(.oxlintrc.json)",
-      "Edit(.oxfmtrc.json)",
-      "Write(knip.json)",
-      "Write(.oxlintrc.json)",
-      "Write(.oxfmtrc.json)",
       "Read(.env)",
       "Read(**/.env)",
       "Read(.env.local)",

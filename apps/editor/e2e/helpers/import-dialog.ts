@@ -1,6 +1,6 @@
 import { type Page, expect } from "../fixtures";
 
-export function getMoreOptionsButton(page: Page) {
+function getMoreOptionsButton(page: Page) {
   return page.getByRole("button", { name: /more options/i }).first();
 }
 

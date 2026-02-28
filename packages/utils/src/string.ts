@@ -1,5 +1,5 @@
 import { NAME_PLACEHOLDER } from "@zoonk/utils/constants";
-import slugify from "slugify";
+import slug from "slug";
 
 const NUMERIC_ID_PATTERN = /^\d+$/;
 
@@ -26,7 +26,7 @@ export function normalizeString(str: string): string {
 }
 
 export function toSlug(str: string): string {
-  return slugify(str, { lower: true, strict: true });
+  return slug(str.trim());
 }
 
 /**
@@ -42,18 +42,18 @@ export function emptyToNull(value?: string | null): string | null {
   return value?.trim() || null;
 }
 
-export function ensureLocaleSuffix(slug: string, language: string): string {
+export function ensureLocaleSuffix(value: string, language: string): string {
   if (language === "en") {
-    return slug;
+    return value;
   }
 
   const suffix = `-${language}`;
 
-  if (slug.endsWith(suffix)) {
-    return slug;
+  if (value.endsWith(suffix)) {
+    return value;
   }
 
-  return `${slug}${suffix}`;
+  return `${value}${suffix}`;
 }
 
 export function replaceNamePlaceholder(text: string, name: string | null): string {
