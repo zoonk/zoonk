@@ -1,6 +1,7 @@
 {
   "$schema": "./node_modules/knip/schema.json",
   "ignore": ["**/*.d.**.ts", "**/codec.ts"],
+  "ignoreWorkspaces": ["packages/e2e!", "packages/testing!"],
   "ignoreBinaries": ["stripe", "build-and-start", "turbo!"],
   "ignoreDependencies": [
     "@prisma/client",
@@ -19,14 +20,15 @@
   "workspaces": {
     "apps/api": {
       "ignore": ["src/app/.well-known/workflow/**"],
-      "project": ["src/**/*.{ts,tsx}!"]
+      "project": ["src/**/*.{ts,tsx}!", "e2e/**/*.ts"]
     },
     "apps/editor": {
-      "project": ["src/**/*.{ts,tsx}!"]
+      "ignore": ["e2e/mocks/**"],
+      "project": ["src/**/*.{ts,tsx}!", "e2e/**/*.ts"]
     },
     "apps/main": {
       "entry": ["src/app/privacy/*.mdx", "src/app/terms/*.mdx"],
-      "project": ["src/**/*.{ts,tsx}!"]
+      "project": ["src/**/*.{ts,tsx}!", "e2e/**/*.ts"]
     },
     "packages/core": {
       "project": ["src/**/*.ts!"]
@@ -36,12 +38,6 @@
       "ignore": ["src/prisma/seed.ts", "src/prisma/seed/**"],
       "ignoreDependencies": ["@zoonk/utils"],
       "prisma": false
-    },
-    "packages/e2e": {
-      "includeEntryExports": false
-    },
-    "packages/testing": {
-      "includeEntryExports": false
     },
     "packages/ui": {
       "includeEntryExports": false

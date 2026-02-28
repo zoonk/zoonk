@@ -4,7 +4,7 @@
   "type": "module",
   "exports": {
     "./base.config": "./src/base.config.ts",
-    "./fixtures": "./src/fixtures/index.ts",
+    "./fixtures": "./src/fixtures.ts",
     "./helpers": "./src/helpers.ts"
   },
   "scripts": {

@@ -1,5 +1,5 @@
 import { request } from "@playwright/test";
-import { expect, test } from "./fixtures";
+import { expect, test } from "@zoonk/e2e/fixtures";
 
 test.describe("API Documentation", () => {
   let baseURL: string;

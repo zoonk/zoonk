@@ -18,6 +18,7 @@ if (process.env.NODE_ENV !== "production") {
   globalThis.prisma = prisma;
 }
 
+/** @public */
 export type {
   Activity,
   ActivityKind,

@@ -1,8 +1,8 @@
 import { randomUUID } from "node:crypto";
 import { request } from "@playwright/test";
 import { prisma } from "@zoonk/db";
+import { expect, test } from "@zoonk/e2e/fixtures";
 import { normalizeString } from "@zoonk/utils/string";
-import { expect, test } from "./fixtures";
 
 test.describe("Course Search API", () => {
   let baseURL: string;
