@@ -32,8 +32,8 @@
     "pg": "8.19.0"
   },
   "devDependencies": {
-    "@types/pg": "8.16.0",
-    "@typescript/native-preview": "7.0.0-dev.20260227.1",
+    "@types/pg": "8.18.0",
+    "@typescript/native-preview": "7.0.0-dev.20260228.1",
     "@zoonk/tsconfig": "workspace:*",
     "dotenv": "17.3.1",
     "prisma": "7.4.2",

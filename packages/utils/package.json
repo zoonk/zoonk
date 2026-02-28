@@ -36,7 +36,7 @@
   "devDependencies": {
     "@types/negotiator": "0.6.4",
     "@types/slug": "5.0.9",
-    "@typescript/native-preview": "7.0.0-dev.20260227.1",
+    "@typescript/native-preview": "7.0.0-dev.20260228.1",
     "@zoonk/tsconfig": "workspace:*",
     "vite-tsconfig-paths": "6.1.1",
     "vitest": "4.0.18"

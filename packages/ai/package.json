@@ -39,15 +39,15 @@
     "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
-    "@ai-sdk/gateway": "3.0.58",
-    "@ai-sdk/openai": "3.0.36",
+    "@ai-sdk/gateway": "3.0.59",
+    "@ai-sdk/openai": "3.0.37",
     "@zoonk/utils": "workspace:*",
-    "ai": "6.0.104",
+    "ai": "6.0.105",
     "undici": "7.22.0"
   },
   "devDependencies": {
     "@types/node": "^24",
-    "@typescript/native-preview": "7.0.0-dev.20260227.1",
+    "@typescript/native-preview": "7.0.0-dev.20260228.1",
     "@zoonk/tsconfig": "workspace:*"
   },
   "peerDependencies": {

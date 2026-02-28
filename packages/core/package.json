@@ -53,8 +53,8 @@
     "zod": "4.3.6"
   },
   "devDependencies": {
-    "@types/react": "^19",
-    "@typescript/native-preview": "7.0.0-dev.20260227.1",
+    "@types/react": "^19.2.14",
+    "@typescript/native-preview": "7.0.0-dev.20260228.1",
     "@zoonk/testing": "workspace:*",
     "@zoonk/tsconfig": "workspace:*",
     "vite-tsconfig-paths": "6.1.1",
