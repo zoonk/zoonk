@@ -1,9 +1,9 @@
 import { randomUUID } from "node:crypto";
 import { request } from "@playwright/test";
 import { prisma } from "@zoonk/db";
+import { expect, test } from "@zoonk/e2e/fixtures";
 import { getAiOrganization } from "@zoonk/e2e/helpers";
 import { normalizeString } from "@zoonk/utils/string";
-import { expect, test } from "./fixtures";
 
 test.describe("Chapter Generation Workflow API", () => {
   let baseURL: string;

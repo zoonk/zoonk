@@ -3,7 +3,7 @@ import { type Member, type Organization, prisma } from "@zoonk/db";
 import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import { userFixture } from "./users";
 
-export function organizationAttrs(
+function organizationAttrs(
   attrs?: Partial<Organization>,
 ): Omit<Organization, "id" | "createdAt" | "updatedAt"> {
   return {

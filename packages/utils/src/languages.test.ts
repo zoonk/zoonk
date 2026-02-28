@@ -1,11 +1,7 @@
 import { describe, expect, test } from "vitest";
-import { TTS_SUPPORTED_LANGUAGE_CODES, getLanguageName, isTTSSupportedLanguage } from "./languages";
+import { getLanguageName, isTTSSupportedLanguage } from "./languages";
 
 describe(isTTSSupportedLanguage, () => {
-  test("supported language codes has exactly 57 entries", () => {
-    expect(TTS_SUPPORTED_LANGUAGE_CODES).toHaveLength(57);
-  });
-
   test("returns true for a valid language code", () => {
     expect(isTTSSupportedLanguage("es")).toBeTruthy();
   });

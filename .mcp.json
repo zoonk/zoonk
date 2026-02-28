@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "knip": {
+      "command": "npx",
+      "args": ["-y", "@knip/mcp"]
+    },
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp"]
+    }
+  }
+}

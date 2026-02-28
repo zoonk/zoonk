@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { request } from "@playwright/test";
 import { prisma } from "@zoonk/db";
-import { expect, test } from "./fixtures";
+import { expect, test } from "@zoonk/e2e/fixtures";
 
 test.describe("Next Activity API", () => {
   let baseURL: string;

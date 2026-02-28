@@ -6,6 +6,7 @@ import noObjectParamsInCache from "./rules/no-object-params-in-cache.js";
 import noSingleUseTypeAlias from "./rules/no-single-use-type-alias.js";
 import noTFunctionAsArgument from "./rules/no-t-function-as-argument.js";
 
+/** @public */
 export default eslintCompatPlugin({
   meta: {
     name: "zoonk",

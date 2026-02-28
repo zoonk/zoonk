@@ -32,7 +32,7 @@ type StepData = {
   sentence?: { id: bigint; sentence: string; translation: string } | null;
 };
 
-export type ValidatedStepResult = {
+type ValidatedStepResult = {
   answer: object;
   effects: ChallengeEffect[];
   isCorrect: boolean;

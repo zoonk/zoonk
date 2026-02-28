@@ -2,19 +2,17 @@ import "server-only";
 import { put } from "@vercel/blob";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 
-export type UploadAudioParams = {
-  fileName: string;
-  audio: Uint8Array;
-  access?: "public";
-  addRandomSuffix?: boolean;
-};
-
 export async function uploadAudio({
   fileName,
   audio,
   access = "public",
   addRandomSuffix = true,
-}: UploadAudioParams): Promise<SafeReturn<string>> {
+}: {
+  fileName: string;
+  audio: Uint8Array;
+  access?: "public";
+  addRandomSuffix?: boolean;
+}): Promise<SafeReturn<string>> {
   const buffer = Buffer.from(audio);
 
   const { data: blob, error } = await safeAsync(() =>

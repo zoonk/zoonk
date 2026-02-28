@@ -5,7 +5,7 @@ import { DEFAULT_SEARCH_LIMIT } from "@zoonk/utils/constants";
 import { mergeSearchResults } from "@zoonk/utils/search";
 import { normalizeString } from "@zoonk/utils/string";
 
-export type CourseWithOrganization = Course & {
+type CourseWithOrganization = Course & {
   organization: Organization;
 };
 

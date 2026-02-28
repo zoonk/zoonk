@@ -18,8 +18,8 @@ if (process.env.NODE_ENV !== "production") {
   globalThis.prisma = prisma;
 }
 
+/** @public */
 export type {
-  Account,
   Activity,
   ActivityKind,
   ActivityProgress,
@@ -27,32 +27,16 @@ export type {
   Course,
   CourseAlternativeTitle,
   CourseCategory,
-  CourseMode,
   CourseSuggestion,
   CourseUser,
-  DailyProgress,
   GenerationStatus,
-  Invitation,
   Lesson,
   LessonKind,
-  LessonSentence,
-  LessonWord,
   Member,
   Organization,
-  RateLimit,
-  SearchPrompt,
-  SearchPromptSuggestion,
   Sentence,
-  Session,
-  Step,
-  StepAttempt,
   StepKind,
   StepVisualKind,
-  Subscription,
-  User,
-  UserLearningProfile,
-  UserProgress,
-  Verification,
   Word,
 } from "./generated/prisma/client";
 

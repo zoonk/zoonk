@@ -1,4 +1,4 @@
-import { expect, test } from "./fixtures";
+import { expect, test } from "@zoonk/e2e/fixtures";
 import { cleanupVerifications, disconnectDb, getOTPForEmail } from "./helpers/db";
 
 const TEST_EMAIL = `e2e-trusted-${Date.now()}@zoonk.test`;

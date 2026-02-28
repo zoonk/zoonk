@@ -116,7 +116,7 @@ export const selectImageContentSchema = z
   })
   .strict();
 
-export const staticTextContentSchema = z
+const staticTextContentSchema = z
   .object({
     text: z.string(),
     title: z.string(),
@@ -124,7 +124,7 @@ export const staticTextContentSchema = z
   })
   .strict();
 
-export const staticGrammarExampleContentSchema = z
+const staticGrammarExampleContentSchema = z
   .object({
     highlight: z.string(),
     romanization: z.string().min(1).nullable(),
@@ -134,7 +134,7 @@ export const staticGrammarExampleContentSchema = z
   })
   .strict();
 
-export const staticGrammarRuleContentSchema = z
+const staticGrammarRuleContentSchema = z
   .object({
     ruleName: z.string(),
     ruleSummary: z.string(),
@@ -142,15 +142,15 @@ export const staticGrammarRuleContentSchema = z
   })
   .strict();
 
-export const staticContentSchema = z.discriminatedUnion("variant", [
+const staticContentSchema = z.discriminatedUnion("variant", [
   staticTextContentSchema,
   staticGrammarExampleContentSchema,
   staticGrammarRuleContentSchema,
 ]);
 
-export const vocabularyContentSchema = z.object({}).strict();
-export const readingContentSchema = z.object({}).strict();
-export const listeningContentSchema = z.object({}).strict();
+const vocabularyContentSchema = z.object({}).strict();
+const readingContentSchema = z.object({}).strict();
+const listeningContentSchema = z.object({}).strict();
 
 const stepContentSchemas = {
   fillBlank: fillBlankContentSchema,

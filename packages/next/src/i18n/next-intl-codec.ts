@@ -56,6 +56,7 @@ function getUniqueReferences(references: Entry["references"]): Array<{ path: str
   return uniquePaths.map((path) => ({ path }));
 }
 
+/** @public */
 export default defineCodec(() => {
   const DefaultMetadata = {
     "Content-Transfer-Encoding": "8bit",

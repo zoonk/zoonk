@@ -4,7 +4,7 @@ import { normalizeString } from "@zoonk/utils/string";
 
 const UUID_SHORT_LENGTH = 8;
 
-export function courseSuggestionAttrs(
+function courseSuggestionAttrs(
   attrs?: Partial<CourseSuggestion>,
 ): Omit<CourseSuggestion, "id" | "createdAt" | "updatedAt"> {
   return {

@@ -5,7 +5,7 @@ import promptTemplate from "./select-image-step.prompt.md";
 const DEFAULT_MODEL = "openai/gpt-image-1-mini";
 const DEFAULT_QUALITY = "low";
 
-export function getSelectImageStepPrompt(prompt: string) {
+function getSelectImageStepPrompt(prompt: string) {
   return promptTemplate.replace("{{PROMPT}}", () => prompt);
 }
 

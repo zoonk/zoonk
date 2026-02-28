@@ -8,7 +8,7 @@ type UserAttrs = {
   password: string;
 };
 
-export function userAttrs(attrs?: Partial<UserAttrs>): UserAttrs {
+function userAttrs(attrs?: Partial<UserAttrs>): UserAttrs {
   return {
     email: attrs?.email || `testuser${randomUUID()}@example.test`,
     name: attrs?.name || "Test User",

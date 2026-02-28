@@ -1,6 +1,7 @@
 import { betterAuth } from "better-auth/minimal";
 import { baseAuthConfig, baseAuthPlugins } from "./config";
 
+/** @public */
 export const auth = betterAuth({
   ...baseAuthConfig,
   emailAndPassword: {

@@ -4,6 +4,7 @@ import { baseAuthConfig, baseAuthPlugins, fullPlugins, socialProviders } from ".
 import { sendVerificationOTP } from "./plugins/otp";
 
 /**
+ * @public
  * E2E-specific auth configuration.
  * - Enables email+password with plain-text matching (no bcrypt overhead)
  * - Disables rate limiting to avoid 429 errors during parallel test runs

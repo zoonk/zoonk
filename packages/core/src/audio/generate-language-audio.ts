@@ -5,19 +5,17 @@ import { type SafeReturn } from "@zoonk/utils/error";
 import { toSlug } from "@zoonk/utils/string";
 import { uploadAudio } from "./upload-audio";
 
-export type GenerateLanguageAudioParams = {
-  language?: string;
-  orgSlug?: string;
-  text: string;
-  voice?: TTSVoice;
-};
-
 export async function generateLanguageAudio({
   language,
   orgSlug,
   text,
   voice,
-}: GenerateLanguageAudioParams): Promise<SafeReturn<string>> {
+}: {
+  language?: string;
+  orgSlug?: string;
+  text: string;
+  voice?: TTSVoice;
+}): Promise<SafeReturn<string>> {
   const { data: audioResult, error: generateError } = await generateAudio({
     language,
     text,

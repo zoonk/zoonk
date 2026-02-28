@@ -1,4 +1,4 @@
-import { expect, test } from "./fixtures";
+import { expect, test } from "@zoonk/e2e/fixtures";
 import { cleanupVerifications, disconnectDb, getOTPForEmail } from "./helpers/db";
 
 const REDIRECT_URL = "http://localhost:49152/test";
