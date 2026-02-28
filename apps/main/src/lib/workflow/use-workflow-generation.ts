@@ -34,7 +34,7 @@ export function useWorkflowGeneration<TStep extends string = string>(config: {
 
   const completedSteps = useSelector(store, (state) => state.context.completedSteps);
   const currentStep = useSelector(store, (state) => state.context.currentStep);
-  const error = useSelector(store, (state) => state.context.error);
+  const storeError = useSelector(store, (state) => state.context.error);
   const runId = useSelector(store, (state) => state.context.runId);
   const startedSteps = useSelector(store, (state) => state.context.startedSteps);
   const status = useSelector(store, (state) => state.context.status);
@@ -126,7 +126,7 @@ export function useWorkflowGeneration<TStep extends string = string>(config: {
   return {
     completedSteps,
     currentStep,
-    error,
+    error: storeError,
     retry,
     startedSteps,
     status,

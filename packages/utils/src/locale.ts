@@ -39,7 +39,7 @@ export function getCountryFromAcceptLanguage(acceptLanguage: string | null): str
   const region = acceptLanguage
     .split(",")
     .map((tag) => parseRegion(tag))
-    .find((region) => region !== undefined);
+    .find((found) => found !== undefined);
 
   return region ?? DEFAULT_COUNTRY;
 }

@@ -1,17 +1,15 @@
 {
   "$schema": "./node_modules/knip/schema.json",
   "ignore": ["**/*.d.**.ts"],
-  "ignoreBinaries": ["stripe", "build-and-start", "turbo"],
+  "ignoreBinaries": ["stripe", "build-and-start", "turbo!"],
   "ignoreDependencies": [
     "@prisma/client",
     "@tailwindcss/postcss",
     "@types/react",
     "@types/react-dom",
     "@typescript/native-preview",
-    "@zoonk/tsconfig",
     "next",
     "next-intl",
-    "postcss",
     "postcss-load-config",
     "raw-loader",
     "tsx"
@@ -20,27 +18,25 @@
   "workspaces": {
     "apps/api": {
       "entry": ["src/i18n/codec.ts"],
-      "ignore": ["src/app/.well-known/workflow/**", "e2e/**", "setup-tests.ts", "mocks/**"]
+      "ignore": ["src/app/.well-known/workflow/**"],
+      "project": ["src/**/*.{ts,tsx}!"]
     },
     "apps/editor": {
-      "entry": ["src/i18n/codec.ts", "e2e/mocks/vercel-blob.ts"],
-      "ignore": ["e2e/**", "setup-tests.ts"]
+      "entry": ["src/i18n/codec.ts"],
+      "project": ["src/**/*.{ts,tsx}!"]
     },
     "apps/main": {
       "entry": ["src/i18n/codec.ts", "src/app/privacy/*.mdx", "src/app/terms/*.mdx"],
-      "ignore": ["e2e/**", "setup-tests.ts"]
+      "project": ["src/**/*.{ts,tsx}!"]
     },
     "packages/core": {
-      "ignore": ["setup-tests.ts"]
+      "project": ["src/**/*.ts!"]
     },
     "packages/db": {
       "entry": ["prisma.config.ts"],
-      "ignore": ["src/prisma/**/*.prisma", "src/prisma/seed.ts", "src/prisma/seed/**"],
+      "ignore": ["src/prisma/seed.ts", "src/prisma/seed/**"],
       "ignoreDependencies": ["@zoonk/utils"],
       "prisma": false
-    },
-    "packages/ui": {
-      "ignore": ["src/styles/globals.css"]
     }
   }
 }

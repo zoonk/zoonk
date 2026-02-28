@@ -43,18 +43,18 @@
     "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
-    "@vercel/blob": "2.2.0",
+    "@vercel/blob": "2.3.0",
     "@zoonk/ai": "workspace:*",
     "@zoonk/auth": "workspace:*",
     "@zoonk/db": "workspace:*",
     "@zoonk/mailer": "workspace:*",
     "@zoonk/utils": "workspace:*",
-    "better-auth": "1.4.18",
+    "better-auth": "1.4.19",
     "zod": "4.3.6"
   },
   "devDependencies": {
     "@types/react": "^19",
-    "@typescript/native-preview": "7.0.0-dev.20260214.1",
+    "@typescript/native-preview": "7.0.0-dev.20260227.1",
     "@zoonk/testing": "workspace:*",
     "@zoonk/tsconfig": "workspace:*",
     "vite-tsconfig-paths": "6.1.1",

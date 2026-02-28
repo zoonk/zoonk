@@ -57,29 +57,38 @@ function getDateBounds(sorted: RawDataPoint[]): { firstDate: Date; lastDate: Dat
   return { firstDate: first.date, lastDate: last.date };
 }
 
+function getDayCount(firstDate: Date, lastDate: Date): number {
+  return Math.floor((lastDate.getTime() - firstDate.getTime()) / (1000 * 60 * 60 * 24));
+}
+
+function addDays(date: Date, days: number): Date {
+  const result = new Date(date);
+  result.setDate(result.getDate() + days);
+  return result;
+}
+
 function fillDateRange(
   firstDate: Date,
   lastDate: Date,
   dataMap: Map<string, number>,
 ): RawDataPoint[] {
+  const days = getDayCount(firstDate, lastDate);
   const result: RawDataPoint[] = [];
-  const current = new Date(firstDate);
   let previousEnergy: number | null = null;
 
-  while (current <= lastDate) {
-    const key = current.toISOString().slice(0, 10);
+  for (let i = 0; i <= days; i += 1) {
+    const date = addDays(firstDate, i);
+    const key = date.toISOString().slice(0, 10);
     const existingEnergy = dataMap.get(key);
 
     if (existingEnergy !== undefined) {
-      result.push({ date: new Date(current), energy: existingEnergy });
+      result.push({ date, energy: existingEnergy });
       previousEnergy = existingEnergy;
     } else if (previousEnergy !== null) {
       const decayedEnergy = Math.max(MIN_ENERGY, previousEnergy - DAILY_DECAY);
-      result.push({ date: new Date(current), energy: decayedEnergy });
+      result.push({ date, energy: decayedEnergy });
       previousEnergy = decayedEnergy;
     }
-
-    current.setDate(current.getDate() + 1);
   }
 
   return result;

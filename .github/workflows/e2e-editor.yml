@@ -67,7 +67,7 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@9b5745cdf0a2e8c2620f0746130f809adb911c19
         with:
-          version: 10.30.2
+          version: 10.30.3
 
       - name: Install dependencies
         run: pnpm install
