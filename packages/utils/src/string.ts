@@ -26,7 +26,7 @@ export function normalizeString(str: string): string {
 }
 
 export function toSlug(str: string): string {
-  return slug(str);
+  return slug(str.trim());
 }
 
 /**
