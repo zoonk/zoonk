@@ -18,28 +18,27 @@ function getScheme(domain: string): "http" | "https" {
  * Gets the base URL for the current app based on the environment.
  *
  * Uses the following logic:
- * 1. For localhost domains, uses `http://` scheme
- * 2. In Vercel preview environments, uses `VERCEL_URL` with `https://`
- * 3. Otherwise, uses `NEXT_PUBLIC_APP_DOMAIN` with `https://`
+ * 1. Uses `NEXT_PUBLIC_APP_DOMAIN` when set (with `http://` for localhost, `https://` otherwise)
+ * 2. Falls back to `VERCEL_URL` in Vercel preview environments
+ * 3. Throws if neither is available
  *
  * @returns The full base URL including scheme (e.g., "https://zoonk.com" or "http://localhost:3000")
  */
 export function getBaseUrl(): string {
-  // In Vercel preview deployments, use the deployment URL
+  const domain = process.env.NEXT_PUBLIC_APP_DOMAIN;
+
+  if (domain) {
+    return `${getScheme(domain)}://${domain}`;
+  }
+
   if (process.env.VERCEL_ENV === "preview" && process.env.VERCEL_URL) {
     return `https://${process.env.VERCEL_URL}`;
   }
 
-  const domain = process.env.NEXT_PUBLIC_APP_DOMAIN;
-
-  if (!domain) {
-    throw new Error(
-      "NEXT_PUBLIC_APP_DOMAIN environment variable is not set. " +
-        "Please set it to your app domain (e.g., 'zoonk.com' or 'localhost:3000').",
-    );
-  }
-
-  return `${getScheme(domain)}://${domain}`;
+  throw new Error(
+    "NEXT_PUBLIC_APP_DOMAIN environment variable is not set. " +
+      "Please set it to your app domain (e.g., 'zoonk.com' or 'localhost:3000').",
+  );
 }
 
 /**
