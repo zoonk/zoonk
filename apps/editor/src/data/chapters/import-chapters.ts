@@ -1,6 +1,7 @@
 import "server-only";
 import { ErrorCode } from "@/lib/app-error";
 import { type ImportMode } from "@/lib/import-mode";
+import { deduplicateImportSlugs, resolveImportSlug } from "@/lib/import-slug";
 import { parseJsonFile } from "@/lib/parse-json-file";
 import { isRecord } from "@/lib/validation";
 import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
@@ -42,6 +43,61 @@ function validateImportData(data: unknown): data is {
 async function removeExistingChapters(tx: TransactionClient, courseId: number): Promise<void> {
   await tx.chapter.deleteMany({
     where: { courseId },
+  });
+}
+
+async function resolveChapter(
+  tx: TransactionClient,
+  params: {
+    courseId: number;
+    courseIsPublished: boolean;
+    description: string;
+    existingChapter: Chapter | undefined;
+    hasExplicitSlug: boolean;
+    index: number;
+    language: string;
+    normalizedTitle: string;
+    organizationId: number | null;
+    position: number;
+    slug: string;
+    title: string;
+  },
+): Promise<Chapter> {
+  if (params.hasExplicitSlug && params.existingChapter) {
+    const isPublished =
+      params.courseIsPublished || params.existingChapter.isPublished
+        ? params.existingChapter.isPublished
+        : true;
+
+    return tx.chapter.update({
+      data: {
+        courseId: params.courseId,
+        isPublished,
+        position: params.position,
+      },
+      where: { id: params.existingChapter.id },
+    });
+  }
+
+  const slug = resolveImportSlug({
+    existingRecord: params.existingChapter,
+    hasExplicitSlug: params.hasExplicitSlug,
+    index: params.index,
+    slug: params.slug,
+  });
+
+  return tx.chapter.create({
+    data: {
+      courseId: params.courseId,
+      description: params.description,
+      isPublished: !params.courseIsPublished,
+      language: params.language,
+      normalizedTitle: params.normalizedTitle,
+      organizationId: params.organizationId,
+      position: params.position,
+      slug,
+      title: params.title,
+    },
   });
 }
 
@@ -130,72 +186,30 @@ export async function importChapters(params: {
         existingChaptersInCourse.map((chapter) => [chapter.slug, chapter]),
       );
 
-      // Deduplicate slugs within the batch to prevent unique constraint violations
-      const slugCounts = new Map<string, number>();
-      const deduplicatedChapters = chaptersToImport.map((item) => {
-        const count = slugCounts.get(item.slug) ?? 0;
-        slugCounts.set(item.slug, count + 1);
-
-        // If this slug already appeared in the batch, make it unique
-        const batchUniqueSlug = count > 0 ? `${item.slug}-${Date.now()}-${item.index}` : item.slug;
-
-        return { ...item, slug: batchUniqueSlug };
-      });
-
-      const imported: Chapter[] = [];
+      const deduplicatedChapters = deduplicateImportSlugs(chaptersToImport);
 
       const chapterOperations = deduplicatedChapters.map(async (item, i) => {
-        const existingChapter = existingChapterMap.get(item.slug);
-
-        let chapter: Chapter;
-
-        if (item.hasExplicitSlug && existingChapter) {
-          // If both course and chapter are unpublished, mark chapter as published
-          // Otherwise keep current published state
-          const isPublished =
-            course.isPublished || existingChapter.isPublished ? existingChapter.isPublished : true;
-
-          chapter = await tx.chapter.update({
-            data: {
-              courseId: params.courseId,
-              isPublished,
-              position: startPosition + i,
-            },
-            where: { id: existingChapter.id },
-          });
-        } else {
-          const uniqueSlug =
-            !item.hasExplicitSlug && existingChapter
-              ? `${item.slug}-${Date.now()}-${item.index}`
-              : item.slug;
-
-          chapter = await tx.chapter.create({
-            data: {
-              courseId: params.courseId,
-              description: item.chapterData.description,
-              isPublished: !course.isPublished,
-              language: course.language,
-              normalizedTitle: item.normalizedTitle,
-              organizationId: course.organizationId,
-              position: startPosition + i,
-              slug: uniqueSlug,
-              title: item.chapterData.title,
-            },
-          });
-        }
+        const chapter = await resolveChapter(tx, {
+          courseId: params.courseId,
+          courseIsPublished: course.isPublished,
+          description: item.chapterData.description,
+          existingChapter: existingChapterMap.get(item.slug),
+          hasExplicitSlug: item.hasExplicitSlug,
+          index: item.index,
+          language: course.language,
+          normalizedTitle: item.normalizedTitle,
+          organizationId: course.organizationId,
+          position: startPosition + i,
+          slug: item.slug,
+          title: item.chapterData.title,
+        });
 
         return { chapter, index: i };
       });
 
       const results = await Promise.all(chapterOperations);
 
-      results.sort((a, b) => a.index - b.index);
-
-      for (const chapterResult of results) {
-        imported.push(chapterResult.chapter);
-      }
-
-      return imported;
+      return results.toSorted((a, b) => a.index - b.index).map((item) => item.chapter);
     }),
   );
 

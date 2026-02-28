@@ -124,8 +124,6 @@ export async function importActivities(params: {
         startPosition = (existingActivities[0]?.position ?? -1) + 1;
       }
 
-      const imported: Activity[] = [];
-
       const activityOperations = importData.activities.map(async (activityData, i) => {
         const activity = await tx.activity.create({
           data: {
@@ -145,11 +143,7 @@ export async function importActivities(params: {
 
       const results = await Promise.all(activityOperations);
 
-      results.sort((a, b) => a.index - b.index);
-
-      for (const activityResult of results) {
-        imported.push(activityResult.activity);
-      }
+      const imported = results.toSorted((a, b) => a.index - b.index).map((item) => item.activity);
 
       await tx.lesson.update({
         data: { generationStatus: "completed" },
