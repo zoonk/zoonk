@@ -31,12 +31,12 @@ async function fillCourseForm(
   // Step 2: Language - use default
   await page.keyboard.press("Enter");
 
-  // Step 3: Description
-  await page.getByPlaceholder(/brief description/i).fill(description);
+  // Step 3: Slug
+  await page.getByPlaceholder(/course-title/i).fill(slug);
   await page.keyboard.press("Enter");
 
-  // Step 4: Slug
-  await page.getByPlaceholder(/course-title/i).fill(slug);
+  // Step 4: Description
+  await page.getByPlaceholder(/brief description/i).fill(description);
 }
 
 function getProgressBar(page: Page) {
@@ -288,30 +288,32 @@ test.describe("Course Creation Wizard - Form Validation", () => {
 
     await authenticatedPage.keyboard.press("Enter");
     await authenticatedPage.keyboard.press("Enter");
+    await authenticatedPage.keyboard.press("Enter");
 
     await expect(authenticatedPage.getByText(/course description/i)).toBeVisible();
 
-    await expect(authenticatedPage.getByRole("button", { name: /next/i })).toBeDisabled();
+    await expect(authenticatedPage.getByRole("button", { name: /create/i })).toBeDisabled();
 
     await authenticatedPage.getByPlaceholder(/brief description/i).fill("   ");
-    await expect(authenticatedPage.getByRole("button", { name: /next/i })).toBeDisabled();
+    await expect(authenticatedPage.getByRole("button", { name: /create/i })).toBeDisabled();
 
     await authenticatedPage.getByPlaceholder(/brief description/i).fill("A valid description");
-    await expect(authenticatedPage.getByRole("button", { name: /next/i })).toBeEnabled();
+    await expect(authenticatedPage.getByRole("button", { name: /create/i })).toBeEnabled();
   });
 
   test("slug step shows error for existing slug", async ({ authenticatedPage }) => {
-    await fillCourseForm(authenticatedPage, {
-      description: "Test description",
-      slug: existingCourseSlug,
-      title: "Test Course",
-    });
+    await authenticatedPage.getByPlaceholder(/course title/i).fill("Test Course");
+    await authenticatedPage.keyboard.press("Enter");
+    await authenticatedPage.keyboard.press("Enter");
+
+    // Now on slug step (step 3) - fill with existing slug
+    await authenticatedPage.getByPlaceholder(/course-title/i).fill(existingCourseSlug);
 
     await expect(
       authenticatedPage.getByText(/a course with this url already exists/i),
     ).toBeVisible();
 
-    await expect(authenticatedPage.getByRole("button", { name: /create/i })).toBeDisabled();
+    await expect(authenticatedPage.getByRole("button", { name: /next/i })).toBeDisabled();
   });
 
   test("slug step allows unique slug", async ({ authenticatedPage }) => {
@@ -336,13 +338,9 @@ test.describe("Course Creation Wizard - Form Validation", () => {
     await authenticatedPage.keyboard.press("Enter");
     await authenticatedPage.keyboard.press("Enter");
 
-    await authenticatedPage.getByPlaceholder(/brief description/i).fill("Description");
-
-    await authenticatedPage.keyboard.press("Enter");
-
     await authenticatedPage.getByPlaceholder(/course-title/i).clear();
 
-    await expect(authenticatedPage.getByRole("button", { name: /create/i })).toBeDisabled();
+    await expect(authenticatedPage.getByRole("button", { name: /next/i })).toBeDisabled();
   });
 });
 
@@ -385,10 +383,6 @@ test.describe("Course Creation Wizard - Successful Creation", () => {
     await authenticatedPage.getByPlaceholder(/course title/i).fill("My Amazing Course");
 
     await authenticatedPage.keyboard.press("Enter");
-    await authenticatedPage.keyboard.press("Enter");
-
-    await authenticatedPage.getByPlaceholder(/brief description/i).fill("Description");
-
     await authenticatedPage.keyboard.press("Enter");
 
     await expect(authenticatedPage.getByPlaceholder(/course-title/i)).toHaveValue(
@@ -475,28 +469,25 @@ test.describe("Course Creation Wizard - Input Auto-focus", () => {
     await expect(authenticatedPage.getByPlaceholder(/course title/i)).toBeFocused();
   });
 
-  test("description textarea is auto-focused on step", async ({ authenticatedPage }) => {
-    await authenticatedPage.goto(`/${AI_ORG_SLUG}/new-course`);
-
-    await authenticatedPage.getByPlaceholder(/course title/i).fill("Test Course");
-    await authenticatedPage.keyboard.press("Enter");
-    await authenticatedPage.keyboard.press("Enter");
-
-    await expect(authenticatedPage.getByPlaceholder(/brief description/i)).toBeFocused();
-  });
-
   test("slug input is auto-focused on step", async ({ authenticatedPage }) => {
     await authenticatedPage.goto(`/${AI_ORG_SLUG}/new-course`);
 
     await authenticatedPage.getByPlaceholder(/course title/i).fill("Test Course");
-
     await authenticatedPage.keyboard.press("Enter");
-    await authenticatedPage.keyboard.press("Enter");
-
-    await authenticatedPage.getByPlaceholder(/brief description/i).fill("Description");
-
     await authenticatedPage.keyboard.press("Enter");
 
     await expect(authenticatedPage.getByPlaceholder(/course-title/i)).toBeFocused();
+  });
+
+  test("description textarea is auto-focused on step", async ({ authenticatedPage }) => {
+    await authenticatedPage.goto(`/${AI_ORG_SLUG}/new-course`);
+
+    await authenticatedPage.getByPlaceholder(/course title/i).fill("Test Course");
+
+    await authenticatedPage.keyboard.press("Enter");
+    await authenticatedPage.keyboard.press("Enter");
+    await authenticatedPage.keyboard.press("Enter");
+
+    await expect(authenticatedPage.getByPlaceholder(/brief description/i)).toBeFocused();
   });
 });
