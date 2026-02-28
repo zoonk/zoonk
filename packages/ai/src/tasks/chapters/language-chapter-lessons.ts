@@ -22,18 +22,6 @@ const schema = z.object({
   ),
 });
 
-export type LanguageChapterLessonsSchema = z.infer<typeof schema>;
-
-export type LanguageChapterLessonsParams = {
-  chapterDescription: string;
-  chapterTitle: string;
-  userLanguage: string;
-  targetLanguage: string;
-  model?: string;
-  useFallback?: boolean;
-  reasoningEffort?: ReasoningEffort;
-};
-
 export async function generateLanguageChapterLessons({
   chapterDescription,
   chapterTitle,
@@ -42,7 +30,15 @@ export async function generateLanguageChapterLessons({
   model = DEFAULT_MODEL,
   useFallback = true,
   reasoningEffort,
-}: LanguageChapterLessonsParams) {
+}: {
+  chapterDescription: string;
+  chapterTitle: string;
+  userLanguage: string;
+  targetLanguage: string;
+  model?: string;
+  useFallback?: boolean;
+  reasoningEffort?: ReasoningEffort;
+}) {
   const targetLanguageName = getLanguageName({ targetLanguage, userLanguage });
 
   const userPrompt = `

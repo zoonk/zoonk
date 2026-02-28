@@ -2,11 +2,11 @@ import { match } from "@formatjs/intl-localematcher";
 import Negotiator from "negotiator";
 
 export const SUPPORTED_LOCALES = ["en", "es", "pt"] as const;
-export const DEFAULT_LOCALE = "en";
-export const DEFAULT_COUNTRY = "US";
+const DEFAULT_LOCALE = "en";
+const DEFAULT_COUNTRY = "US";
 export const LOCALE_COOKIE = "NEXT_LOCALE";
 
-export type SupportedLocale = (typeof SUPPORTED_LOCALES)[number];
+type SupportedLocale = (typeof SUPPORTED_LOCALES)[number];
 
 export function isValidLocale(value: string): value is SupportedLocale {
   return SUPPORTED_LOCALES.some((locale) => locale === value);

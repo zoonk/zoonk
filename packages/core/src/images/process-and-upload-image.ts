@@ -8,26 +8,6 @@ import { safeAsync } from "@zoonk/utils/error";
 import { optimizeImage } from "./optimize-image";
 import { uploadImage } from "./upload-image";
 
-export type ProcessAndUploadImageParams = {
-  file: File;
-  fileName: string;
-  acceptedTypes?: string[];
-  addRandomSuffix?: boolean;
-  format?: "webp" | "jpeg" | "png";
-  maxSize?: number;
-  quality?: number;
-};
-
-export type ProcessAndUploadImageError =
-  | "invalidType"
-  | "tooLarge"
-  | "optimizeFailed"
-  | "uploadFailed";
-
-export type ProcessAndUploadImageResult =
-  | { data: string; error: null }
-  | { data: null; error: ProcessAndUploadImageError };
-
 export async function processAndUploadImage({
   file,
   fileName,
@@ -36,7 +16,18 @@ export async function processAndUploadImage({
   format = "webp",
   maxSize = DEFAULT_IMAGE_MAX_SIZE,
   quality = DEFAULT_IMAGE_QUALITY,
-}: ProcessAndUploadImageParams): Promise<ProcessAndUploadImageResult> {
+}: {
+  file: File;
+  fileName: string;
+  acceptedTypes?: string[];
+  addRandomSuffix?: boolean;
+  format?: "webp" | "jpeg" | "png";
+  maxSize?: number;
+  quality?: number;
+}): Promise<
+  | { data: string; error: null }
+  | { data: null; error: "invalidType" | "tooLarge" | "optimizeFailed" | "uploadFailed" }
+> {
   if (!acceptedTypes.includes(file.type)) {
     return { data: null, error: "invalidType" };
   }

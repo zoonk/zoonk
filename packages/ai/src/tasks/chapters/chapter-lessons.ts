@@ -19,19 +19,6 @@ const schema = z.object({
   ),
 });
 
-export type ChapterLessonsSchema = z.infer<typeof schema>;
-
-export type ChapterLessonsParams = {
-  chapterDescription: string;
-  chapterTitle: string;
-  courseTitle: string;
-  language: string;
-  neighboringChapters?: { title: string; description: string }[];
-  model?: string;
-  useFallback?: boolean;
-  reasoningEffort?: ReasoningEffort;
-};
-
 function formatNeighboringChapters(chapters: { title: string; description: string }[]): string {
   if (chapters.length === 0) {
     return "";
@@ -51,7 +38,16 @@ export async function generateChapterLessons({
   model = DEFAULT_MODEL,
   useFallback = true,
   reasoningEffort = DEFAULT_REASONING_EFFORT,
-}: ChapterLessonsParams) {
+}: {
+  chapterDescription: string;
+  chapterTitle: string;
+  courseTitle: string;
+  language: string;
+  neighboringChapters?: { title: string; description: string }[];
+  model?: string;
+  useFallback?: boolean;
+  reasoningEffort?: ReasoningEffort;
+}) {
   const neighboringSection = neighboringChapters
     ? formatNeighboringChapters(neighboringChapters)
     : "";

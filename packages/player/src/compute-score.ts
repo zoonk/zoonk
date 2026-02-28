@@ -7,13 +7,8 @@ import {
   ENERGY_PER_STATIC,
 } from "@zoonk/utils/constants";
 
-export type ActivityScoreInput = {
+type ActivityScoreInput = {
   results: { isCorrect: boolean }[];
-};
-
-export type ChallengeScoreInput = {
-  dimensions: Record<string, number>;
-  isSuccessful: boolean;
 };
 
 export type ScoreResult = {
@@ -52,7 +47,10 @@ function countDimensionOutcomes(dimensions: Record<string, number>) {
   return { correctCount: values.length - incorrectCount, incorrectCount };
 }
 
-export function computeChallengeScore(input: ChallengeScoreInput): ScoreResult {
+export function computeChallengeScore(input: {
+  dimensions: Record<string, number>;
+  isSuccessful: boolean;
+}): ScoreResult {
   const { correctCount, incorrectCount } = countDimensionOutcomes(input.dimensions);
 
   if (input.isSuccessful) {

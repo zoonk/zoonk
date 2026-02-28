@@ -2,8 +2,6 @@ import { type PriceInfo } from "@zoonk/utils/currency";
 import { stripeClient } from "./client";
 import type Stripe from "stripe";
 
-export type { PriceInfo } from "@zoonk/utils/currency";
-
 function extractPrice(price: Stripe.Price, targetCurrency: string): [string, PriceInfo] | null {
   if (!price.lookup_key) {
     return null;

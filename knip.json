@@ -1,6 +1,6 @@
 {
   "$schema": "./node_modules/knip/schema.json",
-  "ignore": ["**/*.d.**.ts"],
+  "ignore": ["**/*.d.**.ts", "**/codec.ts"],
   "ignoreBinaries": ["stripe", "build-and-start", "turbo!"],
   "ignoreDependencies": [
     "@prisma/client",
@@ -14,19 +14,18 @@
     "raw-loader",
     "tsx"
   ],
-  "tags": ["-lintignore"],
+  "includeEntryExports": true,
+  "tags": ["-lintignore", "-internal", "-public"],
   "workspaces": {
     "apps/api": {
-      "entry": ["src/i18n/codec.ts"],
       "ignore": ["src/app/.well-known/workflow/**"],
       "project": ["src/**/*.{ts,tsx}!"]
     },
     "apps/editor": {
-      "entry": ["src/i18n/codec.ts"],
       "project": ["src/**/*.{ts,tsx}!"]
     },
     "apps/main": {
-      "entry": ["src/i18n/codec.ts", "src/app/privacy/*.mdx", "src/app/terms/*.mdx"],
+      "entry": ["src/app/privacy/*.mdx", "src/app/terms/*.mdx"],
       "project": ["src/**/*.{ts,tsx}!"]
     },
     "packages/core": {
@@ -37,6 +36,15 @@
       "ignore": ["src/prisma/seed.ts", "src/prisma/seed/**"],
       "ignoreDependencies": ["@zoonk/utils"],
       "prisma": false
+    },
+    "packages/e2e": {
+      "includeEntryExports": false
+    },
+    "packages/testing": {
+      "includeEntryExports": false
+    },
+    "packages/ui": {
+      "includeEntryExports": false
     }
   }
 }

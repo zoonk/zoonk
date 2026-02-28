@@ -1,1 +1,1 @@
-export { type PriceInfo, getStripePrices } from "@zoonk/auth/stripe-prices";
+export { getStripePrices } from "@zoonk/auth/stripe-prices";

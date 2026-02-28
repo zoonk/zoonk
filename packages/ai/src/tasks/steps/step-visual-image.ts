@@ -5,7 +5,7 @@ import promptTemplate from "./step-visual-image.prompt.md";
 const DEFAULT_MODEL = "openai/gpt-image-1.5";
 const DEFAULT_QUALITY = "low";
 
-export function getStepVisualImagePrompt(prompt: string) {
+function getStepVisualImagePrompt(prompt: string) {
   return promptTemplate.replace("{{PROMPT}}", () => prompt);
 }
 

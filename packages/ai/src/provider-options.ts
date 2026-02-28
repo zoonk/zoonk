@@ -1,5 +1,3 @@
-export type { GeneratedFile } from "ai";
-
 export type ReasoningEffort = "auto" | "low" | "medium" | "high";
 
 type ProviderOptionsResult = {

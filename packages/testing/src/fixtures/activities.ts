@@ -1,6 +1,6 @@
 import { type Activity, type ActivityProgress, prisma } from "@zoonk/db";
 
-export function activityAttrs(
+function activityAttrs(
   attrs?: Partial<Activity>,
 ): Omit<Activity, "id" | "createdAt" | "updatedAt"> {
   return {

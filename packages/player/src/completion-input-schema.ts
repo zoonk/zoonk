@@ -45,7 +45,7 @@ const vocabularyAnswerSchema = z.object({
   selectedWordId: z.string(),
 });
 
-export const selectedAnswerSchema = z.discriminatedUnion("kind", [
+const selectedAnswerSchema = z.discriminatedUnion("kind", [
   fillBlankAnswerSchema,
   listeningAnswerSchema,
   matchColumnsAnswerSchema,

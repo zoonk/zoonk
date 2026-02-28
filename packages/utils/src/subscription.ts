@@ -1,5 +1,5 @@
-export const PLAN_NAMES = ["free", "hobby", "plus", "pro"] as const;
-export type PlanName = (typeof PLAN_NAMES)[number];
+const PLAN_NAMES = ["free", "hobby", "plus", "pro"] as const;
+type PlanName = (typeof PLAN_NAMES)[number];
 
 const PLAN_LOOKUP_KEYS: Record<Exclude<PlanName, "free">, { monthly: string; yearly: string }> = {
   hobby: { monthly: "hobby_monthly", yearly: "hobby_yearly" },
@@ -7,14 +7,14 @@ const PLAN_LOOKUP_KEYS: Record<Exclude<PlanName, "free">, { monthly: string; yea
   pro: { monthly: "pro_monthly", yearly: "pro_yearly" },
 };
 
-export type SubscriptionPlan = {
+type SubscriptionPlan = {
   annualLookupKey: string | null;
   lookupKey: string | null;
   name: PlanName;
   tier: number;
 };
 
-export type PaidPlan = {
+type PaidPlan = {
   annualLookupKey: string;
   lookupKey: string;
   name: PlanName;

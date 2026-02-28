@@ -1,5 +1,3 @@
-export const PERMISSION_ERROR_CODE = 403;
-
 const NEXT_REDIRECT_ERROR_MESSAGE = "NEXT_REDIRECT";
 
 export class AppError<T extends string = string> extends Error {

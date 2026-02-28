@@ -5,7 +5,7 @@ import promptTemplate from "./course-thumbnail.prompt.md";
 const DEFAULT_MODEL = "openai/gpt-image-1-mini";
 const DEFAULT_QUALITY = "low";
 
-export function getCourseThumbnailPrompt(title: string) {
+function getCourseThumbnailPrompt(title: string) {
   return promptTemplate.replace("{{TITLE}}", () => title);
 }
 

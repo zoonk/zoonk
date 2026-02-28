@@ -1,6 +1,7 @@
 import "dotenv/config";
 import { defineConfig, env } from "prisma/config";
 
+/** @internal */
 export default defineConfig({
   datasource: {
     url: env("DATABASE_URL_UNPOOLED"),

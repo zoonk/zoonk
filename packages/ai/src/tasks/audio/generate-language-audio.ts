@@ -6,21 +6,19 @@ import { experimental_generateSpeech as generateSpeech } from "ai";
 
 const DEFAULT_MODEL = openai.speech("gpt-4o-mini-tts");
 
-export type GenerateLanguageAudioParams = {
-  language?: string;
-  text: string;
-  voice?: TTSVoice;
-};
-
-export type GenerateLanguageAudioResult = {
-  audio: Uint8Array;
-};
-
 export async function generateLanguageAudio({
   language,
   text,
   voice = "marin",
-}: GenerateLanguageAudioParams): Promise<SafeReturn<GenerateLanguageAudioResult>> {
+}: {
+  language?: string;
+  text: string;
+  voice?: TTSVoice;
+}): Promise<
+  SafeReturn<{
+    audio: Uint8Array;
+  }>
+> {
   const { data, error } = await safeAsync(async () => {
     const { audio } = await generateSpeech({
       instructions: `Speak clearly and at a moderate pace suitable for language learners. Enunciate each word precisely in this language: ${language}.`,

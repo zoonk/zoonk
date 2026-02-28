@@ -8,15 +8,13 @@ import { toSlug } from "@zoonk/utils/string";
 import { optimizeImage } from "../images/optimize-image";
 import { uploadImage } from "../images/upload-image";
 
-export type GenerateStepImageParams = SelectImageStepParams & {
-  orgSlug?: string;
-};
-
 export async function generateStepImage({
   orgSlug,
   prompt,
   ...rest
-}: GenerateStepImageParams): Promise<SafeReturn<string>> {
+}: SelectImageStepParams & {
+  orgSlug?: string;
+}): Promise<SafeReturn<string>> {
   const { data: image, error: imageGenerationError } = await generateSelectImageStep({
     prompt,
     ...rest,
