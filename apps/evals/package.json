@@ -15,7 +15,7 @@
     "@zoonk/core": "workspace:*",
     "@zoonk/ui": "workspace:*",
     "@zoonk/utils": "workspace:*",
-    "ai": "6.0.104",
+    "ai": "6.0.105",
     "lucide-react": "0.575.0",
     "next": "16.1.6",
     "react": "19.2.4",
@@ -24,12 +24,12 @@
   },
   "devDependencies": {
     "@types/node": "^24",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "@typescript/native-preview": "7.0.0-dev.20260227.1",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@typescript/native-preview": "7.0.0-dev.20260228.1",
     "@zoonk/tsconfig": "workspace:*",
     "babel-plugin-react-compiler": "1.0.0",
     "raw-loader": "4.0.2",
-    "typescript": "^5"
+    "typescript": "^5.9.3"
   }
 }

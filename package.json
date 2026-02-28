@@ -27,7 +27,7 @@
   "devDependencies": {
     "@playwright/test": "1.58.2",
     "@types/node": "^24",
-    "@typescript/native-preview": "7.0.0-dev.20260227.1",
+    "@typescript/native-preview": "7.0.0-dev.20260228.1",
     "knip": "5.85.0",
     "oxfmt": "0.35.0",
     "oxlint": "1.50.0",

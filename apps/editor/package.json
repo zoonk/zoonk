@@ -33,16 +33,16 @@
   },
   "devDependencies": {
     "@types/node": "^24",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
     "@types/tmp": "0.2.6",
-    "@typescript/native-preview": "7.0.0-dev.20260227.1",
+    "@typescript/native-preview": "7.0.0-dev.20260228.1",
     "@zoonk/e2e": "workspace:*",
     "@zoonk/testing": "workspace:*",
     "@zoonk/tsconfig": "workspace:*",
     "babel-plugin-react-compiler": "1.0.0",
     "tmp": "0.2.5",
-    "typescript": "^5",
+    "typescript": "^5.9.3",
     "vite-tsconfig-paths": "6.1.1",
     "vitest": "4.0.18"
   }
