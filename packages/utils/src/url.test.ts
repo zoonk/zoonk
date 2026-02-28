@@ -1,5 +1,57 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { isCorsAllowedOrigin } from "./url";
+import { getBaseUrl, isCorsAllowedOrigin } from "./url";
+
+describe(getBaseUrl, () => {
+  const originalDomain = process.env.NEXT_PUBLIC_APP_DOMAIN;
+  const originalVercelEnv = process.env.VERCEL_ENV;
+  const originalVercelUrl = process.env.VERCEL_URL;
+
+  afterEach(() => {
+    process.env.NEXT_PUBLIC_APP_DOMAIN = originalDomain;
+    process.env.VERCEL_ENV = originalVercelEnv;
+    process.env.VERCEL_URL = originalVercelUrl;
+  });
+
+  it("returns https URL when NEXT_PUBLIC_APP_DOMAIN is set", () => {
+    process.env.NEXT_PUBLIC_APP_DOMAIN = "api.zoonk.com";
+    delete process.env.VERCEL_ENV;
+    delete process.env.VERCEL_URL;
+
+    expect(getBaseUrl()).toBe("https://api.zoonk.com");
+  });
+
+  it("returns http URL for localhost domains", () => {
+    process.env.NEXT_PUBLIC_APP_DOMAIN = "localhost:4000";
+    delete process.env.VERCEL_ENV;
+    delete process.env.VERCEL_URL;
+
+    expect(getBaseUrl()).toBe("http://localhost:4000");
+  });
+
+  it("prioritizes NEXT_PUBLIC_APP_DOMAIN over VERCEL_URL", () => {
+    process.env.NEXT_PUBLIC_APP_DOMAIN = "api.zoonk.dev";
+    process.env.VERCEL_ENV = "preview";
+    process.env.VERCEL_URL = "zoonk-abc123.vercel.app";
+
+    expect(getBaseUrl()).toBe("https://api.zoonk.dev");
+  });
+
+  it("falls back to VERCEL_URL in preview when NEXT_PUBLIC_APP_DOMAIN is not set", () => {
+    delete process.env.NEXT_PUBLIC_APP_DOMAIN;
+    process.env.VERCEL_ENV = "preview";
+    process.env.VERCEL_URL = "zoonk-abc123.vercel.app";
+
+    expect(getBaseUrl()).toBe("https://zoonk-abc123.vercel.app");
+  });
+
+  it("throws when neither NEXT_PUBLIC_APP_DOMAIN nor VERCEL_URL is available", () => {
+    delete process.env.NEXT_PUBLIC_APP_DOMAIN;
+    delete process.env.VERCEL_ENV;
+    delete process.env.VERCEL_URL;
+
+    expect(() => getBaseUrl()).toThrow("NEXT_PUBLIC_APP_DOMAIN environment variable is not set");
+  });
+});
 
 describe(isCorsAllowedOrigin, () => {
   describe("zoonk domains", () => {
