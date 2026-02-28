@@ -1,11 +1,12 @@
 import "server-only";
 import { ErrorCode } from "@/lib/app-error";
 import { type ImportMode } from "@/lib/import-mode";
+import { deduplicateImportSlugs, resolveImportSlug } from "@/lib/import-slug";
 import { getLessonKind } from "@/lib/lesson-kind";
 import { parseJsonFile } from "@/lib/parse-json-file";
 import { isRecord } from "@/lib/validation";
 import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
-import { type Lesson, type TransactionClient, prisma } from "@zoonk/db";
+import { type Lesson, type LessonKind, type TransactionClient, prisma } from "@zoonk/db";
 import { AppError, type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { normalizeString, toSlug } from "@zoonk/utils/string";
 
@@ -43,6 +44,58 @@ function validateImportData(data: unknown): data is {
 async function removeExistingLessons(tx: TransactionClient, chapterId: number): Promise<void> {
   await tx.lesson.deleteMany({
     where: { chapterId },
+  });
+}
+
+async function resolveLesson(
+  tx: TransactionClient,
+  params: {
+    chapterId: number;
+    chapterIsPublished: boolean;
+    description: string;
+    existingLesson: Lesson | undefined;
+    hasExplicitSlug: boolean;
+    index: number;
+    kind: LessonKind;
+    language: string;
+    normalizedTitle: string;
+    organizationId: number | null;
+    position: number;
+    slug: string;
+    title: string;
+  },
+): Promise<Lesson> {
+  if (params.hasExplicitSlug && params.existingLesson) {
+    if (params.chapterIsPublished || params.existingLesson.isPublished) {
+      return params.existingLesson;
+    }
+
+    return tx.lesson.update({
+      data: { isPublished: true },
+      where: { id: params.existingLesson.id },
+    });
+  }
+
+  const slug = resolveImportSlug({
+    existingRecord: params.existingLesson,
+    hasExplicitSlug: params.hasExplicitSlug,
+    index: params.index,
+    slug: params.slug,
+  });
+
+  return tx.lesson.create({
+    data: {
+      chapterId: params.chapterId,
+      description: params.description,
+      isPublished: !params.chapterIsPublished,
+      kind: params.kind,
+      language: params.language,
+      normalizedTitle: params.normalizedTitle,
+      organizationId: params.organizationId,
+      position: params.position,
+      slug,
+      title: params.title,
+    },
   });
 }
 
@@ -140,66 +193,31 @@ export async function importLessons(params: {
         existingLessonsInChapter.map((lesson) => [lesson.slug, lesson]),
       );
 
-      // Deduplicate slugs within the batch to prevent unique constraint violations
-      const slugCounts = new Map<string, number>();
-      const deduplicatedLessons = lessonsToImport.map((item) => {
-        const count = slugCounts.get(item.slug) ?? 0;
-        slugCounts.set(item.slug, count + 1);
-
-        // If this slug already appeared in the batch, make it unique
-        const batchUniqueSlug = count > 0 ? `${item.slug}-${Date.now()}-${item.index}` : item.slug;
-
-        return { ...item, slug: batchUniqueSlug };
-      });
-
-      const imported: Lesson[] = [];
+      const deduplicatedLessons = deduplicateImportSlugs(lessonsToImport);
 
       const lessonOperations = deduplicatedLessons.map(async (item, i) => {
-        const existingLesson = existingLessonMap.get(item.slug);
-
-        let lesson: Lesson;
-
-        if (item.hasExplicitSlug && existingLesson) {
-          if (chapter.isPublished || existingLesson.isPublished) {
-            lesson = existingLesson;
-          } else {
-            lesson = await tx.lesson.update({
-              data: { isPublished: true },
-              where: { id: existingLesson.id },
-            });
-          }
-        } else {
-          const uniqueSlug =
-            !item.hasExplicitSlug && existingLesson
-              ? `${item.slug}-${Date.now()}-${item.index}`
-              : item.slug;
-
-          lesson = await tx.lesson.create({
-            data: {
-              chapterId: params.chapterId,
-              description: item.lessonData.description,
-              isPublished: !chapter.isPublished,
-              kind,
-              language: chapter.language,
-              normalizedTitle: item.normalizedTitle,
-              organizationId: chapter.organizationId,
-              position: startPosition + i,
-              slug: uniqueSlug,
-              title: item.lessonData.title,
-            },
-          });
-        }
+        const lesson = await resolveLesson(tx, {
+          chapterId: params.chapterId,
+          chapterIsPublished: chapter.isPublished,
+          description: item.lessonData.description,
+          existingLesson: existingLessonMap.get(item.slug),
+          hasExplicitSlug: item.hasExplicitSlug,
+          index: item.index,
+          kind,
+          language: chapter.language,
+          normalizedTitle: item.normalizedTitle,
+          organizationId: chapter.organizationId,
+          position: startPosition + i,
+          slug: item.slug,
+          title: item.lessonData.title,
+        });
 
         return { index: i, lesson };
       });
 
       const results = await Promise.all(lessonOperations);
 
-      results.sort((a, b) => a.index - b.index);
-
-      for (const lessonResult of results) {
-        imported.push(lessonResult.lesson);
-      }
+      const imported = results.toSorted((a, b) => a.index - b.index).map((item) => item.lesson);
 
       await tx.chapter.update({
         data: { generationStatus: "completed" },
