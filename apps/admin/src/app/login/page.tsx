@@ -1,6 +1,6 @@
 import { externalRedirect } from "@zoonk/next/navigation/external-redirect";
 import { FullPageLoading } from "@zoonk/ui/components/loading";
-import { buildAuthLoginUrl, getBaseUrl } from "@zoonk/utils/url";
+import { buildAuthLoginUrl, getBaseUrl } from "@zoonk/utils/origin";
 import { Suspense } from "react";
 
 async function Login() {
