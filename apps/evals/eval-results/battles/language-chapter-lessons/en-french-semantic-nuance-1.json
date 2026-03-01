@@ -1,0 +1,131 @@
+{
+  "expectations": "\n      \n  # How to evaluate\n\n  You are evaluating a LANGUAGE CURRICULUM. Think like a language curriculum designer reviewing a colleague's work — use expertise in second language acquisition and professional judgment, not mechanical rule-checking.\n\n  ## Structure\n\n  Output is organized into LESSON UNITS (thematic groups) containing CONCEPTS (individual teachable items).\n  - Each concept should be a single teachable unit appropriate to the chapter's level and topic\n  - Lesson sizes should be 3-8 concepts and should vary naturally across lessons\n  - Total concept coverage should be exhaustive for the chapter's scope\n\n  ## Evaluating concept quality\n\n  Ask: \"Is this ONE teachable thing, or is it secretly a bundle of separate things?\"\n  - A concept is too broad only if it genuinely bundles multiple DISTINCT items that a student would need separate practice for\n  - Use domain expertise: conventions that look like rule violations to a generalist may be standard practice in language teaching. Grammar notation, comparison pairs, and target-language labels are all normal in language curricula\n  - Comparisons and contrasts are natural in language learning — a synonym pair or a form distinction IS a single concept when the contrast itself is what the learner needs to master\n  - Watch for false granularity: the same form repeated across different subjects or contexts is NOT multiple concepts\n  - Watch for factual accuracy: grammar rules, conjugation forms, and usage patterns must be linguistically correct for the target language\n  - Every concept must be anchored in specific target-language items the learner will produce or recognize. Abstract category labels are acceptable as lesson titles but not as individual concepts\n\n  ## Evaluating scope\n\n  The chapter description is the SOURCE OF TRUTH.\n  - Concepts must serve language acquisition — no culture, career, exam prep, or literature content\n  - The curriculum should stay at the chapter's level — an advanced chapter should not include basic content that belongs in earlier chapters\n  - In a language course, content naturally mixes the user's language and the target language — this is expected, not a language violation\n\n  ## Evaluating lesson quality\n\n  - Lesson descriptions should be concise — no filler words like \"introduces\", \"presents\", \"teaches\"\n  - Logical progression from foundational to advanced\n  - No summary, review, or assessment lessons\n  - No duplicate concepts across lessons\n\n  ## Coverage\n\n  Completeness is the key metric. Are all topics in the chapter description covered with sufficient granularity?\n\n  ## How to score\n\n  Start by asking: \"Would this curriculum actually teach the chapter effectively?\" Then look for issues.\n\n  A curriculum that would genuinely teach the chapter well but has some title-phrasing imperfections deserves a high score. A curriculum that looks structurally clean but wouldn't actually help a learner (e.g., abstract categories instead of practicable items, factual errors in grammar) deserves a low score.\n\n  When something looks like a rule violation but makes pedagogical sense in context, favor the pedagogical judgment. The rules exist to produce good curricula — if the curriculum is good despite a technical rule bend, that matters more than the rule.\n\n    ",
+  "judgedAt": "2026-03-01T02:51:09.820Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model B provides the most exhaustive and well-organized curriculum. It covers an impressive range of synonym groups across multiple word classes (nouns, verbs, adjectives, adverbs, connectors), and importantly includes unique and highly relevant lessons like 'Adjective Placement & Meaning Shift' (ancien, propre, seul, etc.), 'Modal & Causative Nuance', 'Commonly Confused Verb Groups' (amener/emmener/apporter/emporter), 'Euphemism, Litotes & Hyperbole', and 'Near-Synonym Adverbial Expressions'. These are all critical for near-native nuance mastery. Each concept is anchored in specific French items. The concepts are presented as comparison chains (e.g., 'Manger vs Bouffer vs Déguster vs Se Restaurer'), which is pedagogically sound for a synonym/nuance chapter — each chain IS a single teachable concept about distinctions. The first lesson on 'Connotation, Register & Tone: Core Framework' has some slightly abstract concepts ('Identifying Register in Written French', 'Identifying Register in Spoken French') that could be seen as not anchored in specific target-language items, but they serve a foundational purpose. Lesson sizes vary naturally (4-8). No duplicates are apparent. Coverage is excellent across connotation, register, and subtle meaning shifts. The progression is logical. Descriptions don't start with forbidden words. Minor issues: some concepts bundle many items in a single concept title (e.g., 'Fatigué vs Épuisé vs Crevé vs Lessivé vs Las' is 5 items), but for a synonym nuance chapter, comparing chains is the point. The first lesson's abstract concepts are the main weakness.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model F is comprehensive and well-structured with 22 lessons covering a wide breadth of topics relevant to semantic nuance and synonyms. It includes register-sensitive grammar variants (nous vs on, ne...pas vs pas), hedges and approximation, discourse markers, suffixes/prefixes with connotation, memory verbs, time/frequency expressions, connectors, and more. Every concept is anchored in French items. The concept format (X vs Y or labeled items) is clear and pedagogically sound. Descriptions are well-written and don't use forbidden opening words. The curriculum is notably thorough in covering not just vocabulary synonyms but also grammar-level register differences and pragmatic markers, which are essential for near-native nuance. Minor issues: the first lesson on 'Register & Connotation Labels' has somewhat abstract concepts (teaching metalinguistic labels rather than language items themselves), though these labels are useful tools. Some lessons are quite large (8 concepts) while the coverage is very broad. The 'Memory & Forgetting' lesson includes syntactic patterns ('Se rappeler que + indicatif') which feels slightly beyond the synonym/nuance scope but is relevant to nuance. Overall excellent coverage with good granularity.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model D takes a thoughtful approach with 15 lessons covering connotation shifts, register signals, politeness, marked vs neutral nouns, evaluation adjectives, emotion vocabulary, opinion verbs, speech verbs, ability descriptors, modality nuance, connectors, negation nuance, vagueness/approximation, phonetic register, and formulaic phrases. The inclusion of phonetic register (liaison, ne-deletion, elisions) is excellent and unique among the models — this is genuinely important for near-native nuance. The formulaic phrases lesson with pragmatic differences (e.g., 'merci bien' as potentially dismissive) shows sophisticated understanding. Concepts are well-anchored in French. The concept naming convention ('Precision contrast: maison vs demeure') is somewhat verbose but clear. Coverage is good but slightly less exhaustive than B or F — fewer synonym chains for verbs and adjectives. The modality lesson overlaps well with the chapter's scope. Some concepts could be seen as slightly basic for a near-native level chapter (e.g., 'Tu vs Vous' in the politeness lesson might belong in earlier chapters, though it's presented within a nuance context). Overall solid and pedagogically sound.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model C provides 13 lessons with good thematic organization. The concept naming convention ('Standard Register: L'argent', 'Informal Register: Le fric') is clear and self-explanatory. The lessons cover register sensitivity (money, work, people), semantic shifts (verbs of looking, walking), connotation (stubbornness, pride/arrogance), nuance (fear, noise, tiredness, speed, importance), verbs of speaking, and idiomatic anger expressions. Each concept is well-anchored in French. Strengths: the connotation lessons on stubbornness and pride/arrogance are creative and genuinely useful for near-native nuance. The fear and noise noun lessons are unique. However, coverage feels incomplete compared to top models — there's no lesson on connectors/discourse markers, no modal nuance, no adjective placement, no hedging/approximation, no register-sensitive grammar, limited coverage of emotion vocabulary beyond fear. The curriculum feels more like a selection of interesting synonym groups rather than exhaustive coverage of the chapter's scope. Some concepts have slightly verbose titles ('To Look Admiringly: Contempler'). Lesson count and concept count are lower than needed for exhaustive coverage.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model A has 16 lessons with reasonable variety. It covers greetings, intensifiers, perception verbs, speech verbs, register for 'die', neutral vs pejorative nouns, friendship terms, positive emotions, anger vocabulary, size/degree adjectives, quantifiers, politeness softeners, discourse markers, collocational verbs, suffixes, and euphemisms. Each concept is anchored in French. However, there are several issues: (1) The first lesson on 'Greetings & Thanks' feels too basic for a near-native nuance chapter — salut, bonjour, merci belong in beginner content. (2) Some concepts lack the comparative framing that's essential for a synonym/nuance chapter — listing 'voir', 'regarder', 'apercevoir' as separate concepts rather than as contrast pairs misses the point of teaching nuance between them. (3) Coverage gaps: no connectors/discourse connectors lesson (beyond fillers), no adjective placement, no modal nuance, no commonly confused verb groups, no register-sensitive grammar. (4) The suffixes lesson has only 3 concepts (-ette, -on, -ard) — while meeting the minimum, it's thin. (5) Some lessons mix parts of speech oddly (positive emotions combines adjectives and verbs). (6) The 'Collocational Verb Choices' lesson concepts (commettre, faire, prendre, assumer, décider) are listed as standalone verbs rather than as collocational pairs, which defeats the purpose. Overall adequate but less thorough and less well-conceived than the top models.",
+          "score": 6.2
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model E provides 12 lessons covering register sensitivity (objects, actions, people), magnitude/scale, movement, knowing/thinking, happiness, sorrow, strength, speech, places, and aesthetics. While the concepts are anchored in French, there are significant issues: (1) Many concepts are presented as standalone vocabulary items rather than synonym comparisons — e.g., 'Large: Grand', 'Huge: Immense', 'Gigantic: Gigantesque' are just individual vocabulary words, not nuance/synonym teaching. This looks more like a vocabulary list than a nuance curriculum. (2) Coverage is notably incomplete — no connectors, no discourse markers, no hedging, no modal nuance, no adjective placement, no suffixes/prefixes, no euphemisms, no register-sensitive grammar. (3) Some concepts feel basic for near-native level (individual adjectives like 'Grand', 'Fort'). (4) The 'Strength and Resilience' and 'Places and Territories' lessons feel tangential to the core chapter theme of connotation and register sensitivity. (5) The concept format ('Strong: Fort', 'Powerful: Puissant') is essentially a bilingual word list — it doesn't teach the nuance BETWEEN the synonyms, which is the chapter's core purpose. (6) 'Navré' listed as 'Heartbroken' is inaccurate — navré means 'deeply sorry/distressed', not heartbroken. This is a factual error. Overall, this curriculum would not effectively teach the chapter's stated goals of connotation, register sensitivity, and subtle meaning shifts.",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model C perfectly follows all instructions. It breaks down the chapter into highly granular concepts and anchors every single one in specific target-language items. It excellently captures the nuance by using a 'Glossary-style' format (e.g., 'Formal Register: Les finances', 'Informal Register: Le fric'), which provides necessary context while remaining focused on a single teachable item. Lesson sizes (5-8) are strictly observed, descriptions contain no fluff, and the thematic progression is logical.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model E is outstanding and successfully fulfills the prompt's requirements. It uses synonym pairings (e.g., 'Money: Argent vs. Fric') which the prompt explicitly allows for contrasts and comparisons. It strictly maintains the 3-8 concept limit per lesson, and its descriptions and titles follow all constraints perfectly. It scores slightly below Model C only because Model C's strategy of separating the terms while retaining the nuance label provides slightly better micro-learning granularity.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model A follows the structural rules well, keeping lesson sizes within bounds and avoiding forbidden words in descriptions. Every concept is a concrete target-language item. However, by simply listing the French words as the concept titles (e.g., 'salut', 'bonjour'), the specific semantic nuances or register differences aren't explicitly captured in the concept titles themselves, relying entirely on the lesson title for context. It is still highly compliant and effective.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model B provides excellent vocabulary coverage in its later lessons, but it suffers a major penalty for violating a critical rule in Lesson 1. Concepts like 'Péjoratif vs Mélioratif' and 'Identifying Register in Written French' are abstract category labels and meta-skills, which explicitly fail the requirement that every concept must be anchored in specific target-language words. The prompt strictly forbids abstract labels as individual concepts.",
+          "score": 4.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model D provides a solid linguistic breakdown of nuances but violates the critical granularity rule by including abstract meta-labels as concepts. Items like 'Connotation: positif vs neutre vs péjoratif' (Lesson 1) and 'Register label: soutenu' (Lesson 2) are not specific target-language vocabulary or grammar forms a learner can practice on a flashcard. This triggers a top penalty for not following the rule regarding target-language anchoring.",
+          "score": 4.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model F has great thematic ideas but severely violates the 'no abstract category labels' rule in Lesson 1. Concepts such as 'Registre: familier', 'Usage label: argot', and 'Connotation label: ironique' are meta-linguistic labels rather than concrete target-language items. The prompt explicitly warns that these labels can be used as headings, but never as the concepts themselves. This structural violation results in a heavy penalty.",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Most aligned with the chapter goal (near-native nuance via connotation, register, and subtle meaning shifts). Concepts are consistently anchored in concrete French items and often framed as near-synonym contrasts (appropriate granularity for this chapter). Lesson structure respects 3–8 concepts per lesson, progression is sensible (labels/framework → common phrase choices → lexicon/grammar nuance), and coverage is broad across adverbs, discourse markers, morphology (affixes), synonym sets, and register-sensitive grammar variants. Minor quibbles: a few concepts are slightly label-y (“Usage label: argot”), and some lessons drift toward general vocab expansion, but still within scope and very usable pedagogically.",
+          "score": 9.4
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Extremely comprehensive and strongly on-scope, including key advanced nuance sources (adjective position meaning shifts, modal/causative nuance, restrictive expressions, connectors, rhetorical strategies). Many “concepts” are packaged as multi-item chains (e.g., 4–5 synonyms in one concept), which can still be defensible as a single contrast set, but it often becomes too large for micro-learning/flashcard practice. Also includes a few abstract/non-target-language-anchored concepts (“Identifying Register in Written/Spoken French”) that violate the strict “concrete items” requirement. Lesson sizes are within limits and no obvious duplicates. Overall excellent coverage with some granularity/format issues.",
+          "score": 8.7
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Good match to the chapter: strong focus on register, connotation, politeness softening, connectors, negation nuance, phonetic register (liaison, ne-deletion, reductions), and formulaic phrases—these are genuinely near-native levers. Concepts are mostly concrete French forms. Weaknesses: a few concepts are inaccurate/oddly labeled (e.g., “Hyperbole: carrément” is not inherently hyperbole; “Intensifier vs neutral word: très vs plutôt” is a shaky contrast), and some items are more like meta-labels (“Register label: soutenu”). Still, structure is solid (3–8 per lesson) and coverage is meaningfully “nuance”-oriented rather than just synonym lists.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Well-structured, all lessons within size limits, and concepts are concrete French words/expressions. However, it undershoots the chapter’s “near-native nuance” ambition: many lessons look like general vocabulary sets (greetings, emotions, quantifiers) without enough explicit synonym-contrast framing, and it misses several major nuance mechanisms (e.g., adjective position meaning shifts, modal nuance like devoir/pouvoir, common confused pairs like apporter/emporter, etc.). Some lesson titles use “&” (not fatal) and overall coverage feels selective rather than exhaustive for the described scope.",
+          "score": 7.1
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Strong lexical focus on connotation/register via tightly themed synonym fields (money, work, people, fear, noise, fatigue, etc.) with concrete items and mostly appropriate lesson sizes—except one lesson has 8 concepts (allowed) but many are heavily “label + word” rather than clean glossary entries. Major issue: not exhaustive for the chapter description’s breadth—little on discourse connectors/markers, politeness strategies, grammar-based meaning shifts, or structural sources of nuance. Also a few classifications feel questionable (e.g., “Un type” labeled slang) and it leans toward thesaurus-style expansion more than register sensitivity practice.",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Generally coherent and within lesson-size constraints, but coverage is comparatively shallow and not especially “near-native nuance.” Many concepts are single words without the contrast (synonym/register/connotation) that the chapter is explicitly about; some are odd/out-of-scope choices for “synonyms” (e.g., adding ‘Infini’ under physical size; ‘Country/Nation’ set veers toward culture-adjacent semantics). Also less attention to discourse markers, politeness framing, and structural meaning shifts. Overall feels like intermediate vocabulary theming rather than an advanced nuance chapter.",
+          "score": 5.9
+        }
+      ]
+    }
+  ],
+  "taskId": "language-chapter-lessons",
+  "testCaseId": "en-french-semantic-nuance-1"
+}

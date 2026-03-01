@@ -1,0 +1,131 @@
+{
+  "expectations": "\n      \n  # How to evaluate\n\n  You are evaluating a LANGUAGE CURRICULUM. Think like a language curriculum designer reviewing a colleague's work — use expertise in second language acquisition and professional judgment, not mechanical rule-checking.\n\n  ## Structure\n\n  Output is organized into LESSON UNITS (thematic groups) containing CONCEPTS (individual teachable items).\n  - Each concept should be a single teachable unit appropriate to the chapter's level and topic\n  - Lesson sizes should be 3-8 concepts and should vary naturally across lessons\n  - Total concept coverage should be exhaustive for the chapter's scope\n\n  ## Evaluating concept quality\n\n  Ask: \"Is this ONE teachable thing, or is it secretly a bundle of separate things?\"\n  - A concept is too broad only if it genuinely bundles multiple DISTINCT items that a student would need separate practice for\n  - Use domain expertise: conventions that look like rule violations to a generalist may be standard practice in language teaching. Grammar notation, comparison pairs, and target-language labels are all normal in language curricula\n  - Comparisons and contrasts are natural in language learning — a synonym pair or a form distinction IS a single concept when the contrast itself is what the learner needs to master\n  - Watch for false granularity: the same form repeated across different subjects or contexts is NOT multiple concepts\n  - Watch for factual accuracy: grammar rules, conjugation forms, and usage patterns must be linguistically correct for the target language\n  - Every concept must be anchored in specific target-language items the learner will produce or recognize. Abstract category labels are acceptable as lesson titles but not as individual concepts\n\n  ## Evaluating scope\n\n  The chapter description is the SOURCE OF TRUTH.\n  - Concepts must serve language acquisition — no culture, career, exam prep, or literature content\n  - The curriculum should stay at the chapter's level — an advanced chapter should not include basic content that belongs in earlier chapters\n  - In a language course, content naturally mixes the user's language and the target language — this is expected, not a language violation\n\n  ## Evaluating lesson quality\n\n  - Lesson descriptions should be concise — no filler words like \"introduces\", \"presents\", \"teaches\"\n  - Logical progression from foundational to advanced\n  - No summary, review, or assessment lessons\n  - No duplicate concepts across lessons\n\n  ## Coverage\n\n  Completeness is the key metric. Are all topics in the chapter description covered with sufficient granularity?\n\n  ## How to score\n\n  Start by asking: \"Would this curriculum actually teach the chapter effectively?\" Then look for issues.\n\n  A curriculum that would genuinely teach the chapter well but has some title-phrasing imperfections deserves a high score. A curriculum that looks structurally clean but wouldn't actually help a learner (e.g., abstract categories instead of practicable items, factual errors in grammar) deserves a low score.\n\n  When something looks like a rule violation but makes pedagogical sense in context, favor the pedagogical judgment. The rules exist to produce good curricula — if the curriculum is good despite a technical rule bend, that matters more than the rule.\n\n    ",
+  "judgedAt": "2026-03-01T02:51:30.790Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model F provides the most thorough and well-structured curriculum. It has 9 lessons covering: そうだ (様態) basic formation, そうだ (様態) inflection/positions, そうだ (様態) negation, そうだ (伝聞) formation, そうだ (伝聞) past/negation/colloquial, らしい inference, らしい typicality, みたい formation, and register differences. The granularity is excellent — it separates negation forms, past forms, and colloquial variants into distinct concepts. It correctly includes irregularities like いい→よさそうだ and even notes the かわいそう lexicalized form (a real teaching point). The lessons stay within 3-8 concepts. It includes そうだって (colloquial hearsay) and らしく/らしさ derivations which are genuinely useful. The lesson descriptions follow the rules (no 'introduces' etc.). Some minor issues: 名詞＋そうだ（様態）is questionable — そうだ (appearance) doesn't typically attach directly to nouns in standard grammar. Also one concept has a typo '推est' instead of '推定'. But overall this is the most complete and pedagogically sound curriculum. It doesn't include ようだ which is arguably implied by the chapter description through みたい's formal counterpart, but the chapter description doesn't explicitly list it.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model D is very thorough with 10 lessons and good granularity. It covers そうだ appearance basics, special forms/negation, そうだ hearsay, appearance vs hearsay contrast, らしい inference, らしい typicality (with good examples like 男らしい, 子供らしい, 春らしい), みたいだ forms, ようだ as formal equivalent, cross-comparisons, and complementary expressions. The inclusion of ようだ is justified since the chapter mentions register differences. The complementary expressions lesson (どうやら〜らしい, 〜そうな顔, 〜って聞いた, 〜っぽい) adds useful practical items though some might be considered outside strict chapter scope. However, there are some issues: some concepts read more like descriptions than glossary entries (e.g., 'Significado de ～そうだ (aparência): parece que vai / parece ser' is explanatory rather than a practicable item). Having separate concepts for 'structural difference' and 'meaning difference' in the contrast lesson creates some redundancy. The lesson 'Comparação Geral: Registro e Nuance' has concepts like 'Escolha da expressão por contexto: fala, escrita, notícia' which is quite abstract. Still, coverage is excellent and the progression is logical.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model C has 5 well-structured lessons with thorough coverage. Each lesson is at the 8-concept maximum, which means good granularity. The concepts are concrete and anchored in Japanese forms. It covers そうだ appearance (including そうな, そうに, そうにない), そうだ hearsay (with past, negative, and polite forms, plus the contrast), らしい (with verb tenses and evidence concept), みたい (with forms, modifiers, and the dual meaning), and register differences. The register lesson has some concepts that are slightly too descriptive/abstract (e.g., 'Registro: 〜そうだ（見た目） é comum em fala e escrita neutra' reads like a description rather than a practicable item). The final concept 'Padrão de escolha' is essentially a summary/decision tree which borders on meta-skill territory. Missing: いい→よさそうだ and ない→なさそうだ irregularities in the appearance lesson. The coverage of らしい as typicality (noun+らしい) is missing as a distinct concept. Still, this is a solid curriculum with good progression.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model A has 5 lessons with reasonable coverage. The concepts are anchored in Japanese with examples, which is good. It covers そうだ appearance (7 concepts including negation and modifiers), そうだ hearsay (4 concepts), らしい (4 concepts including typicality), みたい (6 concepts), and ようだ with register comparisons (5 concepts). Strengths: good use of Japanese examples in parentheses, includes ようだ coverage. Weaknesses: missing いい→よさそうだ irregularity; the らしい lesson has only 4 concepts which is thin — it's missing negative and past verb forms with らしい; the register comparison concepts in lesson 5 are somewhat abstract ('Registro: らしい（聞き伝え・性質の示唆） vs そうだ（視覚的外見 vs 聞き伝えの区別）' bundles multiple contrasts). Some concept titles are quite long and read more like explanations than glossary entries. The lesson descriptions mostly follow rules (no 'introduces').",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model B has 6 lessons with good structure. It covers そうだ appearance with verbs/adj-i, そうだ appearance with adj-na/modifiers, hearsay そうだ, らしい inference, みたい, and politeness levels. Strengths: correctly identifies いい→よさそうだ and ない→なさそうだ exceptions; includes によると as a useful companion expression for hearsay; the split of そうだ appearance into two lessons (verbs/adj-i and adj-na/modifiers) is reasonable. Weaknesses: missing らしい as typicality (noun+らしい meaning 'typical of'); the contrast concepts are good but some are bundled oddly; the final lesson on politeness registers is a bit abstract with concepts like 'Linguagem Falada: Omissão de だ em 〜みたい'; missing ようだ coverage (which is relevant given the chapter mentions register differences and みたい/ようだ is a key register pair); concept titles are in Portuguese which is appropriate but some could be more concise. Coverage is adequate but not as exhaustive as top models.",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model E has only 4 lessons with 4-6 concepts each. This is the least exhaustive curriculum. While the concepts are reasonable, the coverage is notably thin. Missing: そうだ appearance modifiers (そうな, そうに); past forms of hearsay そうだ; らしい verb conjugation variations (past, negative); みたい modifiers (みたいな, みたいに); detailed register comparisons; ようだ coverage is minimal (just one concept 'Registro Formal: 〜ようだ'). The concept 'Advérbio de Comparação: まるで' is a useful addition but doesn't compensate for missing core grammar. Some concepts bundle too much (e.g., 'Verbo/Adjetivo + みたい (Inferência)' covers multiple word classes in one concept). The curriculum would not adequately teach the chapter — a learner would have significant gaps. Lesson descriptions and titles are clean and follow the rules, but coverage is the weakest of all models.",
+          "score": 4.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model B provides an exceptionally well-structured, exhaustive, and linguistically accurate curriculum. It perfectly captures all target language nuances, including critical exceptions like 'よさそうだ' and 'なさそうだ', and properly distinguishes between the roots of i-adjectives and na-adjectives. It strictly adheres to all constraints: the lesson sizes vary naturally (between 4 and 7 concepts), lesson and concept titles are concise and glossary-like without filler words, and it successfully covers the 'differences in register' requested in the prompt. Outstanding work.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model A is outstanding and highly accurate. The inclusion of target-language examples directly in the concept titles (e.g., '例：美味しそうだ') is a pedagogically brilliant touch that perfectly anchors each concept in concrete language. The lesson sizes vary naturally, descriptions are concise, and the grammar rules (such as the negative appearances) are factually precise. It scores slightly below Model B only because it omits the crucial irregular forms ('よさそうだ' / 'なさそうだ'), which are essential for teaching this specific grammar point.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model C provides good coverage and mostly accurate grammar, but it has notable structural and formatting weaknesses. It forces exactly 8 concepts into every single lesson, ignoring the instruction to let lesson sizes vary naturally. Additionally, some of the concept titles are too verbose and read like explanations or sentences rather than concise glossary entries (e.g., 'Padrão de escolha: aparência / rumor / indícios+rumor / coloquial').",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model D suffers from false granularity and violates the rule against using abstract category labels as concepts. For example, concepts like 'diferença estrutural' and 'diferença de significado' are abstract meta-explanations, not specific target-language items. It also pads lessons by treating a single vocabulary example ('おいしそうだ: Parece Delicioso') as a separate grammatical concept right after teaching the rule. The result is a slightly bloated curriculum that misses the micro-learning mark.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model E misses important elements from the chapter description. Most notably, it lacks a dedicated focus on the 'differences in register' (diferenças de registro) across the various forms, which was explicitly requested. With only 18 concepts total, it fails to achieve the exhaustive granularity required for a comprehensive chapter curriculum, leaving out several structural variations and negative forms.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model F receives a heavy penalty for significant factual inaccuracies and linguistic hallucinations. It lists '名詞＋そうだ（様態）' (Noun + souda for appearance), which is highly ungrammatical in Japanese (e.g., you cannot say '学生そうだ'). It also lists 'い形容詞くない＋そうだ' for appearance, which is completely incorrect (the proper form is '〜くなさそうだ'). In a language curriculum, teaching factually wrong grammar is unacceptable and actively harmful to the learner.",
+          "score": 2
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Excelente cobertura e granularidade dentro do escopo: 〜そうだ (aparência vs boato), 〜らしい, 〜みたい, além de um bloco explícito de diferenças de registro/nuance. Conceitos são praticáveis e ancorados em padrões japoneses com exemplos. Estrutura de lições respeita 3–8 conceitos. Pequenas falhas: inclui 〜ようだ (não pedido explicitamente, embora ajude na comparação de registro) e um item potencialmente estranho/menos claro (“らしかった” com exemplo). No geral, currículo muito ensinável e bem organizado.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Muito completo e bem granular, com boa progressão e comparações de registro. Cobre negativos, passado, formas polidas e até derivações úteis de らしい (らしく, らしさ, らしくない) — isso pode ser um leve excesso fora do escopo, mas ainda relacionado. Problemas: inclui itens incorretos/enganosos para そうだ（様態）como “名詞＋そうだ（様態）” (em geral não é o padrão produtivo como está escrito) e “かわいい→かわいそう（別語）” que é confuso e pode induzir erro (かわいそう não é flexão de かわいい). Também a lição com “そうだ／そうです（final de frase）” parece misturar “そうだ” copular/eco (“é isso mesmo”) com o sufixo evidencial do capítulo. Forte, mas essas imprecisões pesam.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Boa estrutura e cobertura do núcleo (〜そうだ aparência/boato, 〜らしい, 〜みたい, polidez/registro), com lições dentro do limite e conceitos relativamente praticáveis. Contudo, vários conceitos ficam abstratos (“Verbos: Raiz + そうだ” sem notação japonesa), há redundâncias/ambiguidade em “Sufixo de Essência: Substantivo + らしい” vs uso inferencial, e inclui 〜によると/〜によれば (extra ao escopo). Ainda assim, funcional e majoritariamente correto.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Cobertura ampla e bem alinhada ao escopo; inclui contraste e registro. Porém, frequentemente excede o limite de 8 conceitos por lição (várias lições com 8 ok, mas a última tem 8 e ainda inclui um “padrão de escolha” que vira quase metaconceito; as lições 1–4 cravam 8 cada, pouco natural). Há conceitos meio abstratos (“evidência indireta”, “padrão de escolha”) que não são itens linguísticos praticáveis. Menos preciso na organização por microconceitos do que A/B.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Exaustivo em quantidade e inclui comparações/registro, mas viola fortemente regras de design: várias lições contêm conceitos que são exemplos/frases completas (“おいしそうだ: Parece Delicioso”) misturados como ‘conceitos’, e há lições que parecem revisão/contraste excessivo. Inclui muitos extras fora do escopo (〜っぽい, 〜って聞いた, どうやら〜らしい, まるde não; além de “cultura” não, mas são expansões). Também há granularidade inconsistente e repetição do tema 〜そうだ em múltiplas lições com sobreposição. Útil como referência, menos como currículo micro-learning conforme as regras.",
+          "score": 6.4
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Organização limpa, mas não é exaustivo para o escopo: falta 〜そうな/〜そうに, falta distinções formais/coloquiais mais completas, e pouca granularidade para tempos/negação em 〜そうだ (boato) e em 〜らしい/〜みたい. Inclui まるで (extra) e 〜ようだ (não pedido). Conceitos são grandes demais (“Conjetura Baseada em Fatos: らしい”) e alguns títulos têm erro/ruído (“そうda”).",
+          "score": 5.6
+        }
+      ]
+    }
+  ],
+  "taskId": "language-chapter-lessons",
+  "testCaseId": "pt-japanese-appearance-inference-1"
+}
