@@ -215,7 +215,7 @@ function buildDailyProgressInputs(today: Date, orgId: number, userId: number) {
   const seen = new Set<string>();
   return dateEntries
     .filter(({ date }) => {
-      const key = date.toISOString().slice(0, 10);
+      const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
       if (seen.has(key)) {
         return false;
       }
