@@ -1,51 +1,51 @@
 {
-  "expectations": "\n      - MUST be in US English\n      - Should cover each Horcrux-related concept separately\n      - Should distinguish between alchemy, the Philosopher's Stone, and Horcrux concepts\n      - Should break down moral and philosophical implications of soul fragmentation individually\n      - Even though this is pop culture, lessons should still be focused and granular\n      - Should NOT create dedicated lessons teaching Legilimency, Occlumency, or memory manipulation (neighboring chapter \"Mind magic and memory\" covers that) — brief contextual references are fine\n      - Should NOT create dedicated lessons teaching wand woods, cores, or the Elder Wand (neighboring chapter \"Wandlore\" covers that) — brief contextual references are fine\n      - Should NOT create dedicated lessons teaching magical healing or St Mungo's (neighboring chapter \"Healing and magical medicine\" covers that) — brief contextual references are fine\n      - Should NOT create dedicated lessons teaching divination methods or prophecy (neighboring chapter \"Divination and prophecy\" covers that) — brief contextual references are fine\n\n      \n  - Each lesson should cover a SINGLE, SPECIFIC concept that can be explained within 10 short tweets\n  - Break down topics into the smallest, most manageable units possible, so that each lesson can be learned in 2-3 minutes\n  - If a topic is too broad, split it into multiple lessons\n  - Each lesson should be extremely focused on a SINGLE concept\n  - If a lesson is too broad, split it into multiple lessons\n  - Each lesson must cover a SINGLE concept. Using \"AND\", \"OR\", \"VS\" (or equivalents in other languages like \"e\", \"ou\", \"y\", \"o\") in a title is a signal it MAY be too broad — but it is acceptable when the comparison or pairing IS the concept itself (e.g., \"DEPT-90 y DEPT-135\" where distinguishing two NMR techniques is the lesson, or \"IPv4 vs. IPv6 Format\" where the format contrast is one concept). Only penalize when AND/OR/VS joins genuinely separate concepts that deserve their own lessons (e.g., \"Strings and Lists\" where each is a full topic)\n  - Lesson titles should be short and specific to the exact concept covered\n  - Build a logical progression from basic to advanced concepts\n  - Ensure lessons build on knowledge from previous lessons\n  - Focus lessons for this specific chapter, not the entire course\n  - Don't include summary or review lessons. For example, do NOT create a lesson title \"Summary of Key Concepts\" or \"Review of Chapter\"\n  - Don't include assessment or quiz lessons\n  - Don't include final project or capstone lessons\n  - Should follow the language specified by language parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Descriptions should be concise and straight to the point, no fluff/filler words (avoid \"learn\", \"understand\", \"explore\", \"introduction to\", etc.)\n  - You don't need to evaluate the output format here, just focus on the lesson content quality\n  - Include an extensive list of lessons to fully cover the chapter's scope. The key metric is completeness: are all concepts in the chapter description adequately covered with sufficient granularity? Broad technical chapters (e.g., web fundamentals, Python basics) typically need 80-120+ lessons. Narrower or more specialized chapters (e.g., legal theory of evidence, NMR spectroscopy) may need fewer if the domain is inherently smaller — do not penalize for fewer lessons if the chapter's scope is fully covered\n\n  Neighboring chapter scope judgment:\n  - The chapter description is the SOURCE OF TRUTH for what is in-scope. Neighboring chapter constraints are guardrails against scope creep, NOT vetoes over topics listed in the chapter description\n  - If a topic is explicitly mentioned in the chapter description, it is in-scope even if it touches on a neighboring chapter's domain (e.g., \"Claisen\" listed in a carbonyls chapter is in-scope even though esters have their own chapter)\n  - The key test: does a lesson teach a topic AS ITS OWN SUBJECT (violation) or through the LENS OF THIS CHAPTER (acceptable)? Documenting empirical patterns/observations of X within this chapter's context is NOT the same as teaching X's theory (e.g., documenting consumption's cyclical behavior is a business cycle fact, not consumption theory)\n  - When a lesson's title mentions a neighboring topic, read the description to determine focus. A lesson titled \"Cortiços as disease ecologies\" focused on disease transmission is health content, not urbanization content\n\n  Things to check:\n  - Is each lesson too broad? If so, it should be broken down further\n  - Can each concept be explained in 10 short tweets or less? If not, it should be broken down\n  - Does each lesson focus on a single specific concept? If not, it should be split\n  - Does it have lessons that don't belong in this chapter? If so, they should be removed\n\n    ",
-  "judgedAt": "2026-02-22T19:48:00.217Z",
+  "expectations": "\n      - MUST be in US English\n      - Even though this is pop culture, concepts should still be focused and granular\n\n      \n  # How to evaluate\n\n  You are evaluating a CURRICULUM, not a glossary. Think like a curriculum designer reviewing a colleague's work — use domain expertise and professional judgment, not mechanical rule-checking.\n\n  ## Structure\n\n  Output is organized into LESSON UNITS (thematic groups) containing CONCEPTS (individual teachable items).\n  - Each concept should be a single, specific idea — something a domain expert would consider one teachable unit\n  - Lesson sizes should be 3-8 concepts and should vary naturally across lessons\n  - Total concept coverage should be exhaustive for the chapter's scope\n\n  ## Evaluating concept quality\n\n  Ask: \"Is this ONE teachable thing, or is it secretly a bundle of separate things?\"\n  - A concept is too broad only if it genuinely bundles multiple DISTINCT teachable items that a student would need separate lessons for\n  - Use domain expertise: terms that sound broad to a generalist may be a single well-defined concept in the field\n  - Conjunctions (AND/OR/VS and equivalents in any language) signal potential broadness, but only penalize when they join genuinely separate topics — not when the comparison itself IS the concept, or when \"and\" connects an entity to its work\n  - Concept titles should be concrete and self-explanatory, not interpretive thesis statements or vague abstractions\n\n  ## Evaluating scope\n\n  The chapter description is the SOURCE OF TRUTH. Neighboring chapters are guardrails against scope creep, not vetoes.\n\n  The key principle: **judge by framing, not by keywords.** A concept belongs in THIS chapter if its primary teaching purpose serves THIS chapter's learning goals — even if the concept mentions words that appear in a neighboring chapter's title. Ask: \"What is this concept primarily TEACHING?\" not \"Does this concept MENTION a neighboring topic?\"\n\n  When in doubt, favor the chapter description. If a concept is framed through this chapter's lens and serves its learning goals, it is in-scope.\n\n  ## Evaluating lesson quality\n\n  - Lesson descriptions should be concise and go straight to the content — no filler words like \"introduces\", \"presents\", \"teaches\", \"explores\"\n  - Logical progression from foundational to advanced\n  - No summary, review, or assessment lessons\n  - Should follow the specified language (proper nouns and established technical terms may remain in their original language)\n\n  ## Coverage\n\n  Completeness is the key metric. Are all topics in the chapter description covered with sufficient granularity? Don't penalize for fewer concepts if the chapter's scope is inherently narrow.\n\n  ## Proportionality\n\n  Weight your scoring proportionally. A curriculum that covers the chapter exhaustively with good structure but has a few overly-broad concept titles is fundamentally different from one that misses entire topics or systematically violates scope. Minor title-phrasing issues should not dominate the score when the overall curriculum quality is strong.\n\n    ",
+  "judgedAt": "2026-03-01T01:46:01.588Z",
   "judgments": [
     {
       "judgeId": "anthropic/claude-opus-4.6",
       "rankings": [
         {
           "anonymousId": "Model D",
-          "modelId": "openai/gpt-5.2",
-          "reasoning": "Model D provides an exceptionally granular and well-structured lesson list (57 lessons) that thoroughly covers alchemy, the Philosopher's Stone, immortality myths, Horcrux metaphysics, and soul fragmentation costs. Each lesson is tightly focused on a single concept. Titles are concise and specific without fluff words like 'learn' or 'explore.' The progression is logical, moving from alchemy fundamentals through immortality themes, then into Horcrux definition, creation, effects, destruction, and philosophical implications. It avoids neighboring chapter topics (no dedicated lessons on wands, healing, divination, or mind magic). It correctly avoids AND/OR/VS in titles joining separate concepts. Descriptions are crisp, 1-2 sentences, no filler. Some lessons are quite abstract/philosophical (e.g., 'Meaning under endless time,' 'Identity as immortality project') which could feel slightly beyond the chapter's direct scope, but they're defensible as explorations of 'immortality myths' and 'costs of soul fragmentation.' The model handles the comparison between Stone and Horcrux paths without combining them inappropriately. It covers Horcrux corruption, living Horcruxes, accidental Horcruxes, destruction methods, remorse, and afterlife implications—all individually. Very strong coverage of moral/philosophical dimensions broken into individual lessons. Minor weakness: a few lessons like 'Stable transformation' and 'Longevity vs invincibility' could feel slightly redundant or abstract, and it doesn't cover specific Horcrux objects (diary, locket, etc.) which is a valid scope choice but reduces concreteness.",
-          "score": 8.5
-        },
-        {
-          "anonymousId": "Model F",
           "modelId": "openai/gpt-5.2:high",
-          "reasoning": "Model F is the most extensive list at ~90 lessons, covering the chapter with remarkable granularity. Each lesson is tightly scoped to a single concept. The progression is well-structured, moving from broad immortality themes through alchemy, the Stone, Elixir, unicorn blood, soul metaphysics, Horcrux creation, individual Horcrux behaviors/tactics, destruction methods, and philosophical consequences. Titles are concise and avoid fluff. It avoids neighboring chapter content appropriately. Particularly strong on breaking down Horcrux influence patterns (diary as text-based tactic, locket as wearable exposure, ring as temptation trap, etc.) without explicitly naming them as standalone Horcrux-object lessons—instead framing them as behavioral/tactical concepts, which is clever. The alchemical stages (Nigredo, Albedo, Citrinitas, Rubedo) are covered, which is relevant to alchemy symbolism. Unicorn blood is covered as a parallel immortality method. Some lessons are quite abstract ('Legacy distortion,' 'Identity under immortality') but defensible. However, the opening section (lessons 1-9) on generic immortality themes before getting to alchemy feels slightly unusual in ordering and some of these lessons ('Regeneration as survival strategy,' 'Resurrection as a broken promise') feel somewhat tangential or overly abstract for the chapter scope. 'Alchemical circle meaning' and 'Laboratory as transformation space' may be stretching beyond what the chapter covers. A few descriptions verge on being too metaphorical/abstract rather than concrete. The 'Stages of the Great Work' lessons (Nigredo, Albedo, Citrinitas, Rubedo) are relevant but Citrinitas is a deep-cut that may exceed chapter scope. Some lessons like 'Violence as upkeep' are a bit cryptic. Overall very strong but slightly over-extended in places.",
-          "score": 8.2
-        },
-        {
-          "anonymousId": "Model C",
-          "modelId": "anthropic/claude-opus-4.6",
-          "reasoning": "Model C provides 43 lessons with excellent coverage. It handles alchemy, the Stone, Elixir, immortality myths, individual Horcruxes (diary, ring, locket, cup, diadem, Nagini, Harry), destruction methods, moral comparisons, and philosophical themes. The progression is logical and builds well. Titles are clear and specific. It covers the Tale of the Three Brothers and the Resurrection Stone, which are relevant to the immortality theme. Each specific Horcrux gets its own lesson, providing good granularity on that front. Strong coverage of the moral/philosophical dimension (Flamel vs Voldemort, love as immortality, Harry's sacrifice). However, some lessons arguably combine concepts: 'Methods of Horcrux Destruction' lists three methods in one lesson (basilisk venom, Fiendfyre, Sword of Gryffindor), which could be split further. 'Immortality Myths in Real-World Folklore' is somewhat broad. The Deathly Hallows content (Tale of Three Brothers, Resurrection Stone) is arguably straying into territory that could belong elsewhere, though it's defensible as 'immortality myths.' 'Surviving the Killing Curse Again' and 'The Mangled Soul at King's Cross' are very specific plot points that are relevant but narrow. A few titles use the forbidden 'VS' pattern: 'Flamel's Choice Versus Voldemort's Obsession'—though the comparison IS the concept. Descriptions are mostly concise but a few are slightly long. Overall very solid coverage with good balance of concrete and thematic content.",
+          "reasoning": "Model D provides the most exhaustive and granular coverage of the chapter's scope. It has 17 lessons with a very high concept count, covering alchemy foundations, immortality myths, death metaphysics, alchemical operations, magnum opus stages, the Philosopher's Stone in canon and as symbol, Elixir of Life constraints, Horcrux fundamentals, creation logic, vessel strategy, canonical Horcruxes, influence mechanics, soul fragmentation costs, destruction logic, soul repair, and a contrast lesson. The granularity is excellent — concepts like 'Elixir dosing cycle', 'Elixir withdrawal death', 'Fragment extraction step', 'Container preparation step' are appropriately fine-grained. Lesson descriptions avoid filler words and go straight to content. Progression is logical from foundational metaphysics through alchemy to Horcruxes. However, there are some issues: (1) The alchemical operations lesson (Calcination, Dissolution, Separation, Conjunction, Fermentation, Distillation, Coagulation) is arguably over-detailed for a Harry Potter course — these are real-world alchemy concepts with limited direct relevance to the series. (2) Some concepts like 'Ghost persistence choice' could arguably overlap with neighboring chapters, though it's framed through the death metaphysics lens. (3) 'Citrinitas stage' is included alongside Nigredo/Albedo/Rubedo — this stage is rarely discussed in HP context. (4) A few concept titles are slightly abstract ('Death obsession reinforcement', 'Proximity deterioration marker'). (5) 'Mirror of Erised selection rule' is somewhat tangential. Despite these minor issues, the coverage is the most comprehensive and the structure is the most thoughtfully organized.",
           "score": 7.8
         },
         {
-          "anonymousId": "Model B",
-          "modelId": "openai/gpt-5-mini",
-          "reasoning": "Model B provides 34 lessons with solid coverage of alchemy, the Stone, immortality myths, Horcrux metaphysics, and moral implications. Titles are concise and appropriately scoped. Good coverage of the philosophical dimensions (identity after fragmentation, ethics of pursuing immortality, societal reaction). The lesson on 'Why healing can't restore a shattered soul' is a nice touch that references the healing chapter's domain without teaching it—it's framed through the Horcrux lens. The 'Alchemy's external approach' vs 'Horcruxes' internal approach' split is well done. However, 34 lessons feels slightly under-extensive compared to the chapter's scope. It doesn't cover individual Horcrux objects (diary, locket, etc.), specific destruction methods (basilisk venom, Fiendfyre), unicorn blood, the significance of the number seven, or the accidental Horcrux concept in detail. 'Fountain of Youth' as a standalone lesson feels somewhat tangential. Some descriptions still have minor filler ('A concise definition of...'). Overall good quality but could be more granular and complete in several areas.",
-          "score": 7.2
-        },
-        {
-          "anonymousId": "Model G",
-          "modelId": "anthropic/claude-sonnet-4.6",
-          "reasoning": "Model G provides 35 lessons with generally good coverage. It includes alchemy, stages of the Great Work, the Stone, Elixir, Flamel, individual Horcruxes, destruction methods, and thematic content. However, several issues: 'Stages of the Great Work' combines Nigredo, Albedo, and Rubedo into one lesson—this is explicitly too broad and should be split (the description even mentions 'three (or four) stages'). 'Basilisk Venom and Fiendfyre as Destroyers' uses AND to combine two separate concepts. 'Voldemort's Seven Horcruxes' tries to cover all seven in one lesson, which is too broad. 'Horcruxes and Tolkien's One Ring: A Parallel' is interesting but potentially outside the chapter's scope. 'Immortality Myths Across Cultures' is very broad. Some descriptions are longer than ideal. The lesson on the Ring mentions 'its concealed identity as the Resurrection Stone, linking two major magical artifacts'—this touches on Deathly Hallows content that may stray. The title 'Fear of Death vs. Desire for Life' uses 'vs.' though the contrast IS the concept. Overall decent but has notable granularity violations and some scope issues.",
-          "score": 6.5
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model F provides 13 lessons with excellent granularity and thematic organization. Coverage is thorough: alchemy motifs, Philosopher's Stone symbolism, Flamel as thematic foil, immortality as desire/pathology, soul metaphysics, Horcrux fundamentals, agency/influence, containers/design, costs of fragmentation, immortality mechanics, destruction principles, limits/failure modes, and an immortality contrast lesson. Concept titles are generally good and specific ('Fragment autonomy level', 'Horcrux sentience gradient', 'Vessel permanence value'). Lesson descriptions are well-written and avoid filler. The 'Flamel as thematic foil' lesson has concepts that are somewhat interpretive rather than factual ('Flamel as ethical immortal', 'Flamel as counterpoint to dark immortality') — these read more like thesis statements than glossary entries. Some concept titles are slightly abstract ('Immortality as narrative corruption engine', 'Violence reinforcement loop'). The contrast lesson at the end is thematic rather than introducing new concepts, which slightly violates the 'every lesson should teach new concepts' rule, though the concepts within it are distinct enough. No significant neighboring-chapter overlap. Good logical progression. Overall very strong but slightly less exhaustive than Model D and with some interpretive concept titles.",
+          "score": 7.5
         },
         {
           "anonymousId": "Model A",
-          "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "Model A provides only 17 lessons, which is significantly under-extensive for this chapter's scope. While the lessons that exist are well-focused and concise, major gaps include: no coverage of immortality myths, no specific Horcrux objects (diary, locket, etc.), no destruction methods, no coverage of the number seven's significance, no unicorn blood, no comparison between Stone and Horcrux paths to immortality, no coverage of Horcrux influence/corruption on others, no accidental Horcrux concept, minimal philosophical/moral dimension beyond direct fragmentation costs. 'Alchemy Fundamentals' as a title uses a word that borders on too broad. The lessons that are present are generally well-scoped to single concepts with clean descriptions. But the list is far too short to 'fully master the chapter's scope' as required. Many important sub-topics are simply missing.",
-          "score": 5
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model A has 9 lessons with solid coverage. Strengths: good granularity on Horcrux mechanics, consequences, interactions, and detection/destruction. Includes alchemical stages (Nigredo, Albedo, Rubedo), Philosopher's Stone functions, and immortality myths. Concept titles are mostly clear and specific. Lesson descriptions avoid filler words. The 'Canonical Examples and Case Studies' lesson lists all Horcruxes plus Flamel — this is fine as it provides concrete examples. However, some concept titles are slightly verbose or interpretive: 'Narrative function of artifacts externalizing moral corruption', 'Immortality devices as critique of legacy obsession', 'Horcruxes as metaphor for refusal to accept death' read more like thesis statements. A few concepts use comparative language that borders on AND/VS violations: 'Biological longevity versus invulnerability distinction', 'Flamel's longevity contrasted with obsessive immortality'. The 'Symbolism and Thematic Contrasts' lesson has concepts that are interpretive rather than factual. Coverage is good but not as exhaustive as Models D or F — missing some details on Horcrux creation steps, vessel strategy, Elixir mechanics, and destruction methods. No significant neighboring-chapter issues.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model G has 15 lessons with very detailed coverage. It includes dedicated lessons for Flamel, Horcrux selection/symbolism, Horcrux defenses, Voldemort's strategy, Deathly Hallows, and character responses to mortality. Coverage is broad but has some issues: (1) The Deathly Hallows lesson arguably drifts from the chapter's core scope — while tangentially related to immortality, the Hallows are their own topic (though the chapter description doesn't explicitly exclude them). (2) 'Character Responses to Mortality' lesson feels like it's about character analysis rather than teaching new concepts about alchemy/Horcruxes/immortality. (3) 'Nigredo, Albedo, and Rubedo in Harry Potter' violates the AND rule and bundles three concepts. (4) 'Contrast Between Hallows and Horcruxes' and 'Ethical Contrast Between the Stone and Horcruxes' use comparison language. (5) Some concept titles are verbose: 'Voldemort's Inability to Feel Horcrux Destruction', 'Why Ordinary Magic Cannot Destroy a Horcrux'. (6) The Nicolas Flamel lesson has 5 concepts but some are thin ('The Age of Nicolas Flamel'). (7) The Horcrux Defenses lesson is very specific to plot details rather than metaphysical concepts. Lesson descriptions sometimes use filler ('How the desire for immortality functions as...'). Despite these issues, coverage is quite thorough.",
+          "score": 6.8
         },
         {
           "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model E has 9 lessons with reasonable coverage. Strengths: covers alchemy foundations, Philosopher's Stone, immortality myths, Horcrux mechanics, Voldemort's Horcruxes, costs of fragmentation, diminished existence, destruction, and alchemical symbolism. However, several issues: (1) 'Nigredo, Albedo, and Rubedo Stages' bundles three concepts using AND — violates the rule. (2) 'Historical Alchemists (Paracelsus, Flamel)' bundles multiple figures. (3) 'The Deathly Hallows and Immortality' and 'The Resurrection Stone vs. True Immortality' may overlap with neighboring chapters or at least drift from the core scope. (4) Some concepts are verbose: 'Flamel's Extended Life as Cautionary Tale', 'Death as the Next Great Adventure'. (5) 'Immortality Myths Across Cultures' is very broad for a single concept. (6) Lesson descriptions sometimes use filler words: 'How the Harry Potter series engages with...'. (7) 'The Four Classical Elements in Alchemy' and 'Alchemy as Protoscience' are real-world alchemy concepts with limited HP relevance. Coverage is adequate but less granular than top models on Horcrux mechanics and soul metaphysics. The 'Diminished and Incorporeal Existence' lesson is a nice addition covering wraith forms.",
+          "score": 6.3
+        },
+        {
+          "anonymousId": "Model C",
           "modelId": "google/gemini-3-flash",
-          "reasoning": "Model E provides 24 lessons. Coverage has notable gaps: no immortality myths beyond alchemy, no comparison between Stone and Horcrux paths, no coverage of individual Horcrux objects (diary, locket, etc.), no destruction methods, no Horcrux influence/corruption mechanics, no accidental Horcrux concept, limited philosophical/moral content. It does include the alchemical stages (Nigredo, Albedo, Rubedo) which is a nice touch, and unicorn blood. However, the lesson 'Stunted Afterlife' and 'The State of Limbo' seem to overlap with 'The Fate of the Fragmented'—these three cover very similar ground. 'Master Soul Fragility' is a focused concept but arguably obscure. Some descriptions use slightly vague language. The list lacks the extensiveness required—24 lessons is too few for this chapter. Missing key topics like specific Horcrux objects, destruction methods, Horcrux influence on others, comparison of immortality paths, and broader moral/philosophical implications significantly weakens completeness.",
+          "reasoning": "Model C has only 6 lessons with 30 total concepts, making it the least exhaustive. While the concepts it does include are generally well-scoped and appropriate, the coverage has significant gaps: (1) No lesson on immortality myths/philosophy despite the chapter description explicitly mentioning 'immortality myths'. (2) No coverage of alchemical symbolism (Nigredo, Albedo, Rubedo). (3) No discussion of Horcrux influence on handlers/possessors. (4) No coverage of Horcrux vessel strategy or concealment. (5) No thematic contrast between Stone and Horcrux approaches. (6) Limited treatment of Flamel. (7) 'Eternal Life Myths' is too broad as a single concept. (8) 'Unicorn Blood Properties' — while relevant to immortality, it's a fairly tangential detail that gets a concept while major topics are missing. The concepts that are included are mostly well-titled and appropriately granular. Lesson descriptions are clean. But the overall coverage falls well short of 'exhaustive' as required by the prompt.",
           "score": 5.2
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model B has only 6 lessons with 32 total concepts, making it one of the least exhaustive. Several significant issues: (1) Many concept titles are too vague or broad: 'Historical Alchemy', 'Alchemical Symbolism', 'The Quest for Immortality', 'Fear of Death', 'Cursed Life' — these lack the specificity required ('Historical Alchemy' could be a whole course). (2) 'Ghostly Imprints' likely belongs more in death metaphysics or neighboring chapters. (3) 'Historical Artifact Anchors' and 'Weaponized Soul Fragments' are vague. (4) Coverage gaps: no alchemical stages (Nigredo, Albedo, Rubedo), no thematic symbolism, limited treatment of Flamel, no Horcrux influence mechanics, no discussion of immortality myths as the chapter description requires. (5) 'Horcrux Vessel Archetypes' lesson has only 4 concepts and doesn't list the actual canonical Horcruxes. (6) Some concept titles need context: 'The Act of Murder', 'Soul Tearing', 'Magical Irreparability' are too generic without qualifiers. (7) 'Venom-Absorbing Artifacts' is oddly specific while major topics are missing. The lesson structure is reasonable but the granularity and coverage are insufficient for the chapter's scope.",
+          "score": 4.8
         }
       ]
     },
@@ -53,46 +53,46 @@
       "judgeId": "google/gemini-3.1-pro-preview",
       "rankings": [
         {
-          "anonymousId": "Model F",
+          "anonymousId": "Model D",
           "modelId": "openai/gpt-5.2:high",
-          "reasoning": "Model F is an absolute masterpiece of instructional design and perfectly follows all instructions. It provides an incredibly extensive and granular list of 97 lessons that meticulously dissect the metaphysical, symbolic, and thematic elements of the chapter. It avoids all neighboring chapter topics, adheres strictly to the single-concept rule, features zero fluff in titles and descriptions, and flawlessly captures the tone of a high-level, focused micro-learning course.",
+          "reasoning": "Outstanding execution. The curriculum is incredibly exhaustive, breaking down complex topics into perfectly scoped, tweet-length concepts. It adheres strictly to all negative constraints, naturally varies lesson sizes, and organizes the material logically from foundational metaphysics to specific lore applications. This reads like a syllabus designed by a domain expert.",
           "score": 10
         },
         {
-          "anonymousId": "Model D",
-          "modelId": "openai/gpt-5.2",
-          "reasoning": "Model D is exceptional, offering a deeply analytical and highly granular list of 58 lessons. It perfectly understands the prompt's request to focus on 'metaphysics and costs,' breaking down philosophical themes into bite-sized concepts. It correctly uses 'vs' only for direct conceptual contrasts (which the prompt allows) and successfully avoids all negative constraints.",
-          "score": 9.5
-        },
-        {
-          "anonymousId": "Model B",
-          "modelId": "openai/gpt-5-mini",
-          "reasoning": "Model B provides a very strong, well-structured response. With 34 lessons, it effectively covers the chapter description—including the specific mention of immortality myths—while maintaining a strict single-concept focus and concise writing style. It is slightly less extensive than Models F and D, but still an excellent output.",
-          "score": 8.5
-        },
-        {
-          "anonymousId": "Model C",
+          "anonymousId": "Model G",
           "modelId": "anthropic/claude-opus-4.6",
-          "reasoning": "Model C is good but struggles slightly with the granularity requirement. For example, it groups 'Basilisk venom, Fiendfyre, and the Sword of Gryffindor' into a single lesson titled 'Methods of Horcrux Destruction,' which should have been split into individual lessons according to the prompt's strict single-concept rule. It also leans a bit heavily into plot summaries rather than isolating the metaphysical concepts.",
-          "score": 7.5
-        },
-        {
-          "anonymousId": "Model E",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Model E follows the formatting and negative constraints well, and its breakdown of alchemical stages is interesting. However, at only 24 lessons, it misses a significant portion of the chapter's scope, entirely omitting the 'immortality myths' requested in the prompt.",
-          "score": 7
+          "reasoning": "Excellent granularity and exhaustive coverage (15 lessons). The concepts are well-defined and appropriately scoped, moving far beyond superficial summaries. The progression is logical and the descriptions are concise and direct. The minor use of 'Versus' is acceptable according to the evaluation guidelines, as the contrast itself is the teachable concept.",
+          "score": 9
         },
         {
           "anonymousId": "Model A",
-          "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "Model A correctly follows the formatting rules and provides fluff-free titles and descriptions. However, it fails the 'extensive' requirement. Providing only 17 lessons for a complex chapter covering alchemy, immortality myths, and horcrux metaphysics is far too brief, resulting in a superficial coverage of the material.",
-          "score": 6
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "A strong curriculum with great coverage and granularity. Lesson sizes vary naturally and descriptions are well-crafted, jumping straight into the content. The use of 'versus' is correctly applied to explicit distinctions rather than arbitrarily bundling separate topics. Very solid overall.",
+          "score": 8.5
         },
         {
-          "anonymousId": "Model G",
+          "anonymousId": "Model E",
           "modelId": "anthropic/claude-sonnet-4.6",
-          "reasoning": "Model G violates a critical negative constraint. The prompt strictly warns against using 'AND' to join genuinely separate concepts that deserve their own lessons. Model G includes 'Basilisk Venom and Fiendfyre as Destroyers', which groups two distinct methods of destruction that should be separated. Furthermore, it brings in out-of-universe material (Tolkien's One Ring) which falls outside the scope of a Harry Potter specific course chapter.",
-          "score": 4
+          "reasoning": "Very good coverage and granularity. It successfully breaks down broad topics (like individual Horcruxes and alchemical stages) into distinct, single-concept items. It uses 'vs.' for comparisons, which is permissible under the evaluation guide since the dichotomies themselves are the concepts being taught.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Well-written and adheres cleanly to all formatting rules and negative constraints. However, it falls short on the 'exhaustive coverage' and 'granularity' requirements compared to the higher-ranked models. Concepts like 'Historical Alchemy' are too broad and could easily act as headings for further sub-items.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Clean and follows the structural constraints well, but with only 6 lessons and 29 concepts, it lacks the exhaustive granularity requested by the prompt. Many of its concepts remain broad enough to be chapter sub-headings rather than tweet-length ideas.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "While the concepts themselves are granular and well-titled, this model rigidly forces exactly 6 concepts per lesson across all 13 lessons. This directly violates the instruction to let lesson sizes vary naturally and fails the explicit quality check. Additionally, the final lesson description includes meta-commentary ('without drifting into spellcraft or politics'), violating the rule against fluff.",
+          "score": 6
         }
       ]
     },
@@ -100,46 +100,46 @@
       "judgeId": "openai/gpt-5.2",
       "rankings": [
         {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Strong curriculum structure with clear thematic lessons, mostly 3–8 concepts per lesson, and good progression from alchemy foundations to Stone canon to Horcrux mechanics, consequences, destruction, then symbolism and cases. Concept titles are generally granular and concrete. Minor issues: a few concepts drift into interpretive/essay framing (e.g., some symbolism items), and a couple are speculative beyond firm canon (e.g., \"limits to soul division and diminishing returns\" as stated like a rule). Still the most consistently well-designed and exhaustive for the chapter scope.",
+          "score": 9
+        },
+        {
           "anonymousId": "Model D",
-          "modelId": "openai/gpt-5.2",
-          "reasoning": "Strongest adherence to the prompt’s micro-lesson intent: highly granular, single-concept lessons with a clear progression from alchemy/Stone to Horcrux metaphysics and then to moral/philosophical costs. It distinguishes alchemy vs Stone vs Horcruxes well and breaks ethical implications into many separate lessons (isolation, dependency, externalized vulnerability, diminished existence, remorse, taboo knowledge, etc.). Minimal scope creep into neighboring chapters. Minor issues: a few titles use contrast framing (e.g., “Acceptance vs domination”) and some abstractions may feel slightly essay-like, but each still maps to one concept.",
-          "score": 9.2
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Very comprehensive and well-organized with good granularity and natural lesson sizing. Strong coverage of alchemical symbolism and Horcrux metaphysics, influence, destruction, and remorse-based repair. Main drawbacks: several concepts are either speculative/not clearly canon (“Elixir dosing cycle,” “destruction feedback pain,” “magical mortality law”) or phrased as invented systemization; also occasional abstraction. Despite that, it adheres well to curriculum intent and chapter scope.",
+          "score": 8.6
         },
         {
           "anonymousId": "Model F",
-          "modelId": "openai/gpt-5.2:high",
-          "reasoning": "Very extensive and granular, with excellent separation of Horcrux-related concepts (intent, vessel binding, proximity effects, irreparable damage rule, specific destroyers, accidental Horcrux, etc.) and a strong distinction between alchemy/Stone and Horcrux approaches to immortality. Also avoids dedicated lessons on neighboring-chapter topics. Main drawbacks: some content drifts into plot-device details (Mirror desire condition, protections as character filter) and a few lessons are more thematic than chapter-specific (“Regeneration as survival strategy”). Still largely on-scope and single-concept.",
-          "score": 8.9
-        },
-        {
-          "anonymousId": "Model B",
-          "modelId": "openai/gpt-5-mini",
-          "reasoning": "Good coverage and generally good granularity, especially for metaphysical/ethical implications (identity continuity, irreversibility, autonomy of fragments, object corruption). Clear separation between alchemy/Stone/Horcruxes. Weaknesses: multiple titles/descriptions are somewhat broad (“Why immortality myths endure,” “Societal reaction…”) and the set is not as extensive as the best two for a chapter that asks for maximal granularity. One neighboring-scope risk: “Why healing can’t restore a shattered soul” brushes close to the healing chapter (though kept conceptual).",
-          "score": 8
-        },
-        {
-          "anonymousId": "Model G",
-          "modelId": "anthropic/claude-sonnet-4.6",
-          "reasoning": "Covers major required topics and includes concrete Horcrux items and destruction methods, plus some immortality-myth framing. However, many lessons are too broad for 2–3 minutes (e.g., “Immortality Myths Across Cultures,” “Voldemort’s Seven Horcruxes”), and several titles bundle multiple concepts (e.g., “Basilisk Venom and Fiendfyre as Destroyers”). Also includes off-scope comparative literature (“Horcruxes and Tolkien’s One Ring”) and heavier plot-structure lessons that aren’t single-concept metaphysics.",
-          "score": 6.9
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Good thematic sequencing and mostly granular, single-idea concepts with appropriate lesson sizes. Stays focused on alchemy/Stone symbolism and Horcrux metaphysics/costs. Weaknesses: many concepts are interpretive thesis-like framings (e.g., “Immortality as narrative corruption engine,” “Hubris signal in over-fragmentation”), reducing teachability as single factual units; also less explicit coverage of key canon specifics (e.g., concrete Horcrux list) compared to top models.",
+          "score": 7.9
         },
         {
           "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Clean, readable structure and largely in-scope. However, concepts are often too broad (“Creation of the Philosopher’s Stone,” “Methods of Immortality,” “Psychological Instability of the Creator”), and coverage is less exhaustive (limited alchemical symbolism; fewer Horcrux interaction/influence concepts). Includes some adjacent-topic material but not egregiously.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model G",
           "modelId": "anthropic/claude-opus-4.6",
-          "reasoning": "Reasonable topical coverage and distinguishes alchemy/Stone/Horcruxes, but repeatedly violates prompt constraints: many titles contain AND/VS pairings that join separate concepts (“Alchemy, the Philosopher's Stone, and Horcruxes…,” “Flamel's Choice Versus Voldemort's Obsession”), several lessons are broad/compound, and it leans into plot summaries (Horcrux hunt, mapping timeline) rather than focused concepts. Also includes Deathly Hallows/Resurrection Stone content that goes beyond the stated chapter description’s scope.",
-          "score": 6.2
+          "reasoning": "Very expansive and detailed with many relevant subtopics, but it violates multiple prompt constraints: many lesson descriptions begin with “How…,” which is explicitly disallowed; several concept titles contain “as” constructions that read interpretive; and it adds substantial material that plausibly belongs elsewhere or beyond chapter scope (extended Deathly Hallows unit, many location-specific defense/hiding details). Lesson count is high and some lessons risk becoming “application/case” heavy rather than single-concept teaching.",
+          "score": 6.6
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Meets basic structure but concept granularity is poor (many are umbrella headings like “Historical Alchemy,” “Fear of Death,” “Physical Deformity”). Coverage is patchy and includes questionable or inaccurate items (“Venom-Absorbing Artifacts,” “Ghostly Imprints”) and some concepts that feel invented rather than grounded. Less coherent progression and less exhaustive treatment of Stone symbolism and Horcrux costs/interactions.",
+          "score": 5.6
         },
         {
           "anonymousId": "Model E",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Moderate granularity and includes some alchemical-stage detail, but it’s not very extensive and several items are either scope drift or questionable emphasis relative to the chapter description (deep dive into Nigredo/Albedo/Rubedo; “Unicorn Blood” isn’t in the chapter description). Horcrux metaphysics is present but incomplete (limited coverage of influence, destruction constraints, identity issues). Some descriptions are vague (“metaphysical act of tearing the human essence through intentional harm”).",
-          "score": 5.8
-        },
-        {
-          "anonymousId": "Model A",
-          "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "Too short and not “extensive”; misses many key Horcrux sub-concepts required by the expectations (e.g., influence/corruption mechanisms, destruction rules/methods, multiple-Horcrux implications, identity continuity, container choice rationale). Some titles are too broad (“Alchemy Fundamentals”) and several claims are shaky or overstated for canon (“Container Dependency,” “Physical Degradation” as a direct causal rule, “trapping it in eternal Limbo”). Overall insufficient coverage and granularity.",
-          "score": 4.6
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Multiple prompt violations and scope creep: lesson descriptions start with “The…” frequently and the first begins with “The foundational…,” which is disallowed (“introduces/presents/teaches/covers/explains” avoidance is met, but it still reads like intro-fluff). Many concept titles use banned “vs.” and “and” (“Transformation vs. Corruption Symbolism,” “The Resurrection Stone vs. True Immortality,” “Voldemort's Fear of Death vs. Acceptance”). Several concepts are overly broad or essay-like (“J.K. Rowling's Use of Alchemical Symbolism,” “Harry's Arc as Alchemical Transformation”), and it brings in Deathly Hallows material heavily, which is not central to the given chapter description. Overall less compliant despite decent topic coverage.",
+          "score": 4.8
         }
       ]
     }

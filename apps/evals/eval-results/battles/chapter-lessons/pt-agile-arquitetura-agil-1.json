@@ -1,6 +1,6 @@
 {
-  "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Should break down architectural concepts individually (modularity, coupling, cohesion as separate lessons)\n      - Should cover fitness functions as distinct lessons\n      - Should separate evolutionary architecture theory from practical decision-making\n      - Should NOT create dedicated lessons teaching DevOps pipelines, CI/CD, or infrastructure as code (neighboring chapter \"DevOps e entrega contínua\" covers that) — brief contextual references are fine\n      - Should NOT create dedicated lessons teaching SLIs, SLOs, or error budgets (neighboring chapter \"SRE e confiabilidade em produtos digitais\" covers that) — brief contextual references are fine\n      - Should NOT create dedicated lessons teaching technical debt management or strategic refactoring (neighboring chapter \"Dívida técnica e sustentabilidade\" covers that) — brief contextual references are fine\n      - Should NOT create dedicated lessons teaching test strategies, test pyramids, or automated testing (neighboring chapter \"Estratégias modernas de testes\" covers that) — brief contextual references are fine\n\n      \n  - Each lesson should cover a SINGLE, SPECIFIC concept that can be explained within 10 short tweets\n  - Break down topics into the smallest, most manageable units possible, so that each lesson can be learned in 2-3 minutes\n  - If a topic is too broad, split it into multiple lessons\n  - Each lesson should be extremely focused on a SINGLE concept\n  - If a lesson is too broad, split it into multiple lessons\n  - Each lesson must cover a SINGLE concept. Using \"AND\", \"OR\", \"VS\" (or equivalents in other languages like \"e\", \"ou\", \"y\", \"o\") in a title is a signal it MAY be too broad — but it is acceptable when the comparison or pairing IS the concept itself (e.g., \"DEPT-90 y DEPT-135\" where distinguishing two NMR techniques is the lesson, or \"IPv4 vs. IPv6 Format\" where the format contrast is one concept). Only penalize when AND/OR/VS joins genuinely separate concepts that deserve their own lessons (e.g., \"Strings and Lists\" where each is a full topic)\n  - Lesson titles should be short and specific to the exact concept covered\n  - Build a logical progression from basic to advanced concepts\n  - Ensure lessons build on knowledge from previous lessons\n  - Focus lessons for this specific chapter, not the entire course\n  - Don't include summary or review lessons. For example, do NOT create a lesson title \"Summary of Key Concepts\" or \"Review of Chapter\"\n  - Don't include assessment or quiz lessons\n  - Don't include final project or capstone lessons\n  - Should follow the language specified by language parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Descriptions should be concise and straight to the point, no fluff/filler words (avoid \"learn\", \"understand\", \"explore\", \"introduction to\", etc.)\n  - You don't need to evaluate the output format here, just focus on the lesson content quality\n  - Include an extensive list of lessons to fully cover the chapter's scope. The key metric is completeness: are all concepts in the chapter description adequately covered with sufficient granularity? Broad technical chapters (e.g., web fundamentals, Python basics) typically need 80-120+ lessons. Narrower or more specialized chapters (e.g., legal theory of evidence, NMR spectroscopy) may need fewer if the domain is inherently smaller — do not penalize for fewer lessons if the chapter's scope is fully covered\n\n  Neighboring chapter scope judgment:\n  - The chapter description is the SOURCE OF TRUTH for what is in-scope. Neighboring chapter constraints are guardrails against scope creep, NOT vetoes over topics listed in the chapter description\n  - If a topic is explicitly mentioned in the chapter description, it is in-scope even if it touches on a neighboring chapter's domain (e.g., \"Claisen\" listed in a carbonyls chapter is in-scope even though esters have their own chapter)\n  - The key test: does a lesson teach a topic AS ITS OWN SUBJECT (violation) or through the LENS OF THIS CHAPTER (acceptable)? Documenting empirical patterns/observations of X within this chapter's context is NOT the same as teaching X's theory (e.g., documenting consumption's cyclical behavior is a business cycle fact, not consumption theory)\n  - When a lesson's title mentions a neighboring topic, read the description to determine focus. A lesson titled \"Cortiços as disease ecologies\" focused on disease transmission is health content, not urbanization content\n\n  Things to check:\n  - Is each lesson too broad? If so, it should be broken down further\n  - Can each concept be explained in 10 short tweets or less? If not, it should be broken down\n  - Does each lesson focus on a single specific concept? If not, it should be split\n  - Does it have lessons that don't belong in this chapter? If so, they should be removed\n\n    ",
-  "judgedAt": "2026-02-22T19:48:09.716Z",
+  "expectations": "\n      - MUST be in Brazilian Portuguese\n\n      \n  # How to evaluate\n\n  You are evaluating a CURRICULUM, not a glossary. Think like a curriculum designer reviewing a colleague's work — use domain expertise and professional judgment, not mechanical rule-checking.\n\n  ## Structure\n\n  Output is organized into LESSON UNITS (thematic groups) containing CONCEPTS (individual teachable items).\n  - Each concept should be a single, specific idea — something a domain expert would consider one teachable unit\n  - Lesson sizes should be 3-8 concepts and should vary naturally across lessons\n  - Total concept coverage should be exhaustive for the chapter's scope\n\n  ## Evaluating concept quality\n\n  Ask: \"Is this ONE teachable thing, or is it secretly a bundle of separate things?\"\n  - A concept is too broad only if it genuinely bundles multiple DISTINCT teachable items that a student would need separate lessons for\n  - Use domain expertise: terms that sound broad to a generalist may be a single well-defined concept in the field\n  - Conjunctions (AND/OR/VS and equivalents in any language) signal potential broadness, but only penalize when they join genuinely separate topics — not when the comparison itself IS the concept, or when \"and\" connects an entity to its work\n  - Concept titles should be concrete and self-explanatory, not interpretive thesis statements or vague abstractions\n\n  ## Evaluating scope\n\n  The chapter description is the SOURCE OF TRUTH. Neighboring chapters are guardrails against scope creep, not vetoes.\n\n  The key principle: **judge by framing, not by keywords.** A concept belongs in THIS chapter if its primary teaching purpose serves THIS chapter's learning goals — even if the concept mentions words that appear in a neighboring chapter's title. Ask: \"What is this concept primarily TEACHING?\" not \"Does this concept MENTION a neighboring topic?\"\n\n  When in doubt, favor the chapter description. If a concept is framed through this chapter's lens and serves its learning goals, it is in-scope.\n\n  ## Evaluating lesson quality\n\n  - Lesson descriptions should be concise and go straight to the content — no filler words like \"introduces\", \"presents\", \"teaches\", \"explores\"\n  - Logical progression from foundational to advanced\n  - No summary, review, or assessment lessons\n  - Should follow the specified language (proper nouns and established technical terms may remain in their original language)\n\n  ## Coverage\n\n  Completeness is the key metric. Are all topics in the chapter description covered with sufficient granularity? Don't penalize for fewer concepts if the chapter's scope is inherently narrow.\n\n  ## Proportionality\n\n  Weight your scoring proportionally. A curriculum that covers the chapter exhaustively with good structure but has a few overly-broad concept titles is fundamentally different from one that misses entire topics or systematically violates scope. Minor title-phrasing issues should not dominate the score when the overall curriculum quality is strong.\n\n    ",
+  "judgedAt": "2026-03-01T01:46:17.175Z",
   "judgments": [
     {
       "judgeId": "anthropic/claude-opus-4.6",
@@ -8,44 +8,44 @@
         {
           "anonymousId": "Model B",
           "modelId": "openai/gpt-5.2:high",
-          "reasoning": "Model B provides the most extensive and granular lesson list (88 lessons) with exceptional coverage of all chapter topics. It breaks down each concept into genuinely single-concept lessons: modularity, coupling, cohesion, fitness functions, ADRs, and architectural decisions are all thoroughly decomposed. Specific strengths: (1) Coupling is broken into 7+ distinct types (temporal, shared data, synchronous, message format, implementation knowledge) — excellent granularity. (2) Coesão is split into functional, sequential, coincidental types plus signals of low cohesion. (3) Fitness functions are covered across multiple dimensions (binary, continuous, manual, automated) with practical examples like dependency rules, module size budgets, performance budgets, and startup budgets. (4) ADRs are decomposed into structure, status, context, and consequences. (5) Includes advanced concepts like afferent/efferent coupling, module instability metrics, seams, plugability, and C4 diagrams — all within scope. (6) Properly avoids neighboring chapter topics (no dedicated DevOps, SRE, testing, or tech debt lessons). (7) Titles are concise and mostly avoid 'and/or/vs'. A few minor issues: the lesson 'Refatoração arquitetural' slightly touches neighboring chapter territory but is framed through an architectural lens. 'C4 nível contexto' and 'C4 nível container' are slightly tangential but still within architecture scope. Overall, this is the most comprehensive and well-structured output.",
-          "score": 9
+          "reasoning": "Model B provides the most exhaustive and well-structured curriculum. It has 14 lessons with approximately 107 concepts, covering all chapter topics thoroughly. Key strengths: (1) Excellent granularity — concepts like different types of coesão (funcional, sequencial, comunicacional, procedural, temporal, lógica, coincidente) and acoplamento (dados, controle, comum, externo, conteúdo, temporal, implantação) are broken down comprehensively. (2) Good coverage of all chapter description topics: arquitetura evolutiva, modularidade, acoplamento/coesão, fitness functions, and decisões arquiteturais. (3) Includes valuable lessons on padrões de evolução incremental (Strangler Fig, Branch by Abstraction, etc.), governança leve, e arquitetura sociotécnica. (4) Lesson descriptions follow the rules — no 'introduces' or filler words. (5) Logical progression from foundational to advanced. Minor issues: Some concept titles could be more concrete (e.g., 'Mudança como premissa' is slightly abstract), and 'Arquitetura como hipótese' is somewhat interpretive. A few lessons have 7-8 very specific fitness function concepts that might feel slightly repetitive. One lesson on 'Funções de fitness para modularidade' has 7 concepts that are all very narrow examples — but this is acceptable granularity. No significant neighboring chapter overlap. The lesson on governança arquitetural leve is borderline but framed through architecture lens, not DevOps.",
+          "score": 8.5
         },
         {
           "anonymousId": "Model E",
           "modelId": "openai/gpt-5.2",
-          "reasoning": "Model E provides a very extensive list (97 lessons) with strong granularity and thorough coverage. Strengths: (1) Excellent breakdown of fitness functions into multiple lessons covering types, selection criteria, automation, thresholds, reliability, and execution time — very thorough. (2) Good separation of acoplamento types (static, dynamic, data, organizational). (3) Coesão broken into change-based, concept-based, and signals of low cohesion. (4) Includes valuable unique concepts like blast radius, hotspots, lock-in types (technology, data, operational), migration planning with intermediate states, and toggles/feature flags. (5) ADR coverage includes scope, when to write, and alignment aspects. (6) Avoids neighboring chapter topics well. Concerns: (1) Some lessons feel slightly overlapping or repetitive (e.g., 'Mudança segura' vs 'Facilidade de evolução' vs 'Evolução sem ruptura'). (2) Some titles are somewhat abstract/vague (e.g., 'O eixo da mudança', 'Alavancas arquiteturais'). (3) The toggles section (3 lessons) slightly stretches the chapter scope. (4) A few lessons like 'Pronto arquitetural' feel borderline outside scope. Still, excellent depth and mostly well-focused.",
-          "score": 8.5
+          "reasoning": "Model E is very comprehensive with 14 lessons and roughly 99 concepts. Strengths: (1) Excellent coverage of all chapter topics with strong granularity. (2) Dedicated lessons for different aspects of acoplamento, coesão, modularidade, fitness functions, decisões arquiteturais, and governança. (3) Unique and valuable lessons like 'Mudança como unidade de análise arquitetural' and 'Evolução de interfaces e contratos entre módulos' that add depth. (4) Lesson descriptions are well-written and content-focused. (5) Good logical progression. Issues: (1) Some concept titles are slightly abstract or verbose — 'Emersão arquitetural orientada a feedback', 'Custo de coordenação como força arquitetural'. (2) The lesson 'Responsabilidades e dados em uma arquitetura modular' with concepts like 'Duplicação deliberada', 'Sincronização entre módulos' is getting into data architecture territory that's somewhat tangential. (3) 'Observabilidade arquitetural' and 'Entropia de dependências' push into monitoring territory that could overlap with SRE chapter. (4) Some concepts feel like they could be merged (e.g., 'Decisões reversíveis' and 'Decisões irreversíveis' appear in two different lessons — lesson 8 and lesson 9). Overall very strong but slightly less clean than Model B.",
+          "score": 8
         },
         {
           "anonymousId": "Model A",
           "modelId": "anthropic/claude-opus-4.6",
-          "reasoning": "Model A provides 37 well-structured lessons with good logical progression. Strengths: (1) Clean progression from BDUF critique to evolutionary architecture, then modularidade, acoplamento, coesão, fitness functions, decisions, and organizational alignment. (2) Good separation of coupling and cohesion concepts. (3) Fitness functions are broken into atomic, holistic, automated, examples, and tools — reasonable coverage. (4) ADRs and decision documentation well covered. (5) Includes Conway's Law, Inverse Conway, and monólito modular. (6) Avoids neighboring chapter topics properly. (7) Titles are concise and descriptions are well-written. Concerns: (1) 37 lessons is somewhat below what's expected for fully mastering this chapter — some areas could use more granularity. (2) Coupling types could be broken down further (only one lesson for 'Tipos comuns de acoplamento'). (3) The title 'Decisões irreversíveis vs. reversíveis' contains 'vs.' but arguably this comparison IS the concept. (4) Fitness functions could have more granular coverage. Overall solid but not as extensive as Models B or E.",
+          "reasoning": "Model A has 11 lessons with approximately 66 concepts. Strengths: (1) Good overall structure with logical progression. (2) Covers all major chapter topics: arquitetura evolutiva, modularidade, acoplamento/coesão, fitness functions, ADRs, decisões arquiteturais. (3) Includes valuable additions like estilos arquiteturais, princípios de design, and arquitetura sociotécnica. (4) Concept titles are generally clear and concrete. (5) ADR coverage is particularly thorough with a dedicated lesson. Issues: (1) Some concept titles violate the 'no AND/OR/VS' rule — 'Comunicação entre Times e Comunicação entre Serviços' uses 'e'. (2) 'Equilíbrio entre Emergência e Intencionalidade' is somewhat abstract/interpretive. (3) Coesão coverage is somewhat thin (only funcional and comunicacional mentioned, missing other types). (4) Acoplamento coverage could be deeper — missing some common types like acoplamento de controle, acoplamento de conteúdo. (5) Lesson descriptions sometimes start with 'Definição e princípios' or similar patterns that border on filler. (6) 'Diferença entre Arquitetura Evolutiva e Arquitetura Planejada' uses implicit comparison. Overall solid but less exhaustive than the top models.",
           "score": 7.5
         },
         {
-          "anonymousId": "Model C",
-          "modelId": "openai/gpt-5-mini",
-          "reasoning": "Model C provides 36 lessons with reasonable coverage but some issues. Strengths: (1) Good coverage of fitness functions with specific examples (modularidade, tempo de entrega, desempenho). (2) Includes bounded contexts, anti-corruption layer, hexagonal architecture, and vertical slice architecture. (3) ADR and spike coverage present. (4) Conway's Law included. Concerns: (1) Coupling and cohesion each get only ONE definition lesson plus one techniques lesson — insufficient granularity for such central chapter topics. The description says 'acoplamento/coesão' explicitly, warranting deeper breakdown. (2) 'Técnicas para aumentar coesão' and 'Técnicas para reduzir acoplamento' are too broad — each could be multiple lessons. (3) 'Microservices' as a standalone lesson risks going beyond chapter scope. (4) Some titles use filler patterns ('definição') repeatedly. (5) 36 lessons is borderline for full coverage. (6) Missing important subtopics like types of coupling, types of cohesion, reversible vs irreversible decisions. (7) 'Tech radar como guia de evolução' feels somewhat tangential.",
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model F has 11 lessons with approximately 76 concepts. Strengths: (1) Good coverage of the chapter's main topics. (2) Includes a dedicated lesson on 'Características Arquiteturais' which is valuable. (3) Good lesson on padrões para evolução (Strangler Fig, Branch by Abstraction). (4) Fronteiras e contratos lesson is well-structured. Issues: (1) Several concept titles violate the AND/OR/VS rule: 'Arquitetura Planejada vs. Arquitetura Emergente', 'Decisões Reversíveis vs. Irreversíveis', 'Connascence Estática vs. Dinâmica', 'Fitness Functions Estáticas vs. Dinâmicas'. (2) 'Tipos de Acoplamento (Temporal, Espacial, por Dados)' bundles three types into one concept — clear violation of granularity. (3) 'Acoplamento Aferente e Eferente' uses 'e'. (4) Some concepts are too list-like: 'Escalabilidade como Característica Arquitetural', 'Manutenibilidade como Característica Arquitetural' etc. — these feel repetitive and could have been better structured. (5) 'Revisão e Revisão de Decisões Anteriores' appears to be a typo/duplicate. (6) 'Tolerância a Falhas entre Componentes' might overlap with SRE chapter. Overall decent coverage but several rule violations.",
           "score": 6.5
         },
         {
           "anonymousId": "Model G",
-          "modelId": "anthropic/claude-sonnet-4.6",
-          "reasoning": "Model G provides 30 lessons that cover the main topics but with insufficient granularity. Strengths: (1) Covers all main chapter topics. (2) Includes Conway's Law, Inverse Conway, bounded contexts, strangler fig. (3) ADR lifecycle covered. Concerns: (1) Only 30 lessons — not extensive enough. (2) Title 'BDUF vs. arquitetura incremental' uses 'vs.' joining two separate concepts. (3) 'Modularidade: dividindo sistemas em partes independentes' — subtitle format and too broad. (4) 'Tipos de acoplamento' as a single lesson is too broad. (5) 'Tipos de coesão' as a single lesson is too broad. (6) 'Dívida arquitetural: conceito e origem' creates a dedicated lesson on a neighboring chapter topic (Dívida técnica e sustentabilidade). (7) 'Arquitetura orientada a eventos e desacoplamento' is somewhat tangential to the chapter scope. (8) Several descriptions use prohibited words like 'O que é' combined with lengthy explanations. (9) Fitness functions coverage is limited to 4 lessons. (10) Some colons in titles act as subtitles which adds fluff.",
-          "score": 5.5
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model G has 11 lessons with approximately 59 concepts. Strengths: (1) Includes C4 Model and documentation which is a nice addition. (2) Has a lesson on trade-offs and costs. (3) Concept titles are generally clear. (4) Good structural progression. Issues: (1) Many concept titles are in English with Portuguese translations in parentheses, which is inconsistent with the Brazilian Portuguese requirement — 'Data coupling (acoplamento por dados)', 'Temporal coupling (acoplamento temporal)', 'Semantic coupling (acoplamento semântico)', 'Separation of Concerns', 'Conway's Law' etc. While technical terms can stay in English, having the primary title in English with Portuguese as secondary is backwards. (2) 'Padron estrangulador' appears to be a typo (should be 'padrão'). (3) Coverage of fitness functions, while present, is less granular than other models. (4) Coesão coverage is thin (only funcional and lógica mentioned). (5) 'Extrair módulo (refatoração)' and 'Introduzir abstração (refatoração)' may overlap with the neighboring dívida técnica chapter on refatoração. (6) Some concepts use arrows: 'Alinhamento time↔módulo (team-per-module)' which is unusual formatting. (7) Total concept count is relatively low for the chapter's scope.",
+          "score": 6
         },
         {
           "anonymousId": "Model D",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Model D provides only 23 lessons, which is clearly insufficient for full chapter coverage. Strengths: (1) Clean structure and logical progression. (2) Covers basic topics: BDUF, evolutionary architecture, modularity, cohesion, coupling, fitness functions, ADRs. (3) Includes emergent vs. intentional architecture distinction. Concerns: (1) Only 23 lessons — far too few for extensive coverage. (2) Coupling gets only 3 lessons (definition, risks, advantages of low coupling) — missing types of coupling entirely. (3) Cohesion gets only 2 lessons — no types or deeper breakdown. (4) Fitness functions get only 4 lessons — missing types (binary/continuous), examples, and tools. (5) ADRs get 3 lessons which is reasonable but could be more. (6) Missing important concepts: Conway's Law, strangler fig pattern, bounded contexts, abstractions, interfaces, dependency management, decision types. (7) 'Fitness Functions Automáticas' description mentions 'pipeline' which is close to neighboring chapter territory but acceptable as contextual reference. (8) Title 'Fitness Functions como Guardrails' is acceptable. Overall too shallow for the chapter's scope.",
-          "score": 4.5
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model D has only 5 lessons with approximately 26 concepts. This is by far the least exhaustive output. Major issues: (1) Coverage is severely lacking — the chapter description mentions arquitetura evolutiva, modularidade, acoplamento/coesão, fitness functions, and decisões arquiteturais, but each topic gets only superficial treatment. (2) Acoplamento and coesão are collapsed into a single lesson with only the terms 'Acoplamento' and 'Coesão' as individual concepts — no breakdown into types (temporal, aferente, eferente, funcional, etc.). (3) Fitness functions gets only 3 concepts total (Fitness Functions, Atômicas, Holísticas) — missing automatizadas, manuais, estáticas, dinâmicas, thresholds, etc. (4) Many concepts are too broad: 'Modularidade', 'Acoplamento', 'Coesão' should each be broken down into multiple sub-concepts. (5) 'Sistemas Monolíticos' and 'Arquitetura de Microsserviços' are bundled into the modularidade lesson without sufficient granularity. (6) Missing important topics: ADR structure details, reversibilidade, padrões de evolução incremental, princípios de design. The curriculum feels like an outline rather than an exhaustive breakdown. Lesson descriptions are acceptable and lesson titles are fine, but the fundamental requirement of exhaustive coverage is not met.",
+          "score": 4
         },
         {
-          "anonymousId": "Model F",
-          "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "Model F provides only 22 lessons, the smallest set, with clearly insufficient coverage. Strengths: (1) Clean titles and descriptions. (2) Covers basic concepts. (3) Includes Conway's Law and its inverse. Concerns: (1) Only 22 lessons — severely insufficient for comprehensive coverage. (2) Coupling gets only 3 lessons — no types breakdown. (3) Cohesion gets only 2 lessons — no types or signals. (4) Fitness functions get only 4 lessons (atomic, holistic, continuous) — missing automated vs manual, examples, tools, practical applications. (5) ADRs get 2 lessons — minimal coverage. (6) Missing many important concepts: strangler fig, bounded contexts, monólito modular, dependency management, spike/PoC, abstractions, evolution strategies, migration patterns. (7) Many titles use 'O Conceito de...' pattern which borders on filler language. (8) 'Projetando para a Substituibilidade' is a good unique concept but doesn't compensate for missing breadth. (9) The chapter description mentions fitness functions and modularidade/acoplamento/coesão as core topics deserving deep treatment, which is not achieved here.",
-          "score": 4
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model C has only 8 lessons with approximately 37 concepts. Major issues: (1) Very thin coverage — many topics from the chapter description receive minimal treatment. (2) Fitness functions are split into two lessons (good), but total only 9 concepts, missing important aspects like thresholds, integration with build, examples of application. (3) Acoplamento lesson has only 5 concepts, missing important types like acoplamento temporal (though covered in coesão lesson oddly), acoplamento de conteúdo, acoplamento externo, etc. (4) Coesão lesson has only 5 concepts and is somewhat thin — 'Alta Coesão' and 'Baixa Coesão' are not really separate teachable concepts in the same way specific types are. (5) The last lesson 'Ferramentas de Evolução Arquitetural' has only 4 concepts and bundles ADRs, Strangler Fig, schema evolution, and refatoração arquitetural together — very different topics. (6) 'Refatoração Arquitetural' likely overlaps with the neighboring 'Dívida técnica e sustentabilidade' chapter which covers refatoração estratégica. (7) Missing important topics: Lei de Conway, princípios de design, estilos arquiteturais, governança, reversibilidade, protótipos/spikes. (8) 'Categorias de Fitness Functions' lesson has only 4 concepts, below the 3-8 minimum guidance but especially thin. Overall, this curriculum is incomplete and lacks the exhaustive coverage required.",
+          "score": 4.5
         }
       ]
     },
@@ -55,44 +55,44 @@
         {
           "anonymousId": "Model B",
           "modelId": "openai/gpt-5.2:high",
-          "reasoning": "Model B provides an exceptionally granular and extensive list of 106 lessons, perfectly adhering to the prompt's instructions. It breaks down complex architectural concepts into their smallest logical units (e.g., separating cohesion into functional, sequential, and coincidental; coupling into temporal, data, synchronous, etc.). The titles are incredibly concise and punchy, avoiding all fluff and forbidden words like 'and/or/vs'. The progression from basic to advanced concepts is logical, and it strictly respects the neighboring chapter constraints by focusing on the evolutionary architecture perspective.",
-          "score": 10
+          "reasoning": "Flawlessly followed all negative constraints, completely avoiding compound concepts ('e', 'ou', 'vs'), and generated an incredibly exhaustive list of 111 highly granular concepts. It broke down topics like coupling, cohesion, and fitness functions to their smallest teachable parts. The only minor critique is that the lesson sizes lack natural variation (almost all are exactly 8 concepts), but the content quality is exceptional.",
+          "score": 9.5
         },
         {
           "anonymousId": "Model E",
           "modelId": "openai/gpt-5.2",
-          "reasoning": "Model E is also an outstanding output, delivering 104 highly granular lessons. It breaks down the chapter's scope brilliantly, covering pragmatic and modern architectural concepts like blast radius, lock-in, toggle hygiene, and various specific fitness functions. The titles and descriptions are completely devoid of fluff and get straight to the point. It perfectly understands the boundaries of the neighboring chapters, even explicitly mentioning how to handle team coordination without bleeding into DevOps or SRE territory. A flawless execution of the prompt.",
-          "score": 10
+          "reasoning": "Excellent output that is highly exhaustive (104 concepts) and well-structured. It followed almost all negative constraints perfectly, with only one single violation of the NO 'AND' rule in concept titles ('Alinhamento entre módulos e times'). Lesson descriptions and titles are straight to the point and perfectly aligned with the prompt rules.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Very good execution. It followed all formatting and negative constraints perfectly, completely avoiding compound concepts and forbidden words. However, it is noticeably less exhaustive than the top models (only 38 concepts), missing a deeper breakdown of all coupling and cohesion types. It meets most requirements but lacks the ultimate granularity and completeness requested.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Adequate, but fails the strict granularity requirement for key topics. By listing 'Acoplamento' and 'Coesão' as single concepts instead of breaking them down into their specific types, it violates the rule against using concepts that could serve as headings. The total coverage (26 concepts) is far from exhaustive.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Poor. Violates the strict compound concept rule multiple times by using 'versus' and slashes ('Visão de runtime versus estrutura estática', 'Risco técnico versus risco de negócio', 'Ports-and-Adapters / Hexagonal'). It also overlaps with the technical debt neighboring chapter by including a refactoring concept ('Extrair módulo (refatoração)').",
+          "score": 4.5
         },
         {
           "anonymousId": "Model A",
           "modelId": "anthropic/claude-opus-4.6",
-          "reasoning": "Model A provides a very solid list of 38 lessons. It successfully breaks down the main topics (modularity, coupling, cohesion, fitness functions, ADRs) into distinct, single-concept lessons and avoids fluff words. While the quality is very high, it leaves some granularity on the table compared to Models B and E, missing the opportunity to break down the types of coupling, cohesion, and modularity into their deepest atomic levels. Nonetheless, it perfectly respects the scope and constraints.",
-          "score": 8.5
-        },
-        {
-          "anonymousId": "Model C",
-          "modelId": "openai/gpt-5-mini",
-          "reasoning": "Model C delivers a well-structured list of 36 lessons. It covers the required topics and correctly dedicates multiple lessons to fitness functions, coupling, and cohesion. However, some titles are slightly less concise (e.g., using 'definição' or 'Como definir' in the title), and the overall granularity is good but not as exhaustive as the top models.",
-          "score": 8
-        },
-        {
-          "anonymousId": "Model G",
-          "modelId": "anthropic/claude-sonnet-4.6",
-          "reasoning": "Model G offers 30 lessons. While it covers the chapter's scope, its descriptions are a bit repetitive (almost all begin with 'O que é' or 'Como'). The titles are also slightly longer and use colons to explain the concept rather than relying on the description. It includes a lesson on 'Dívida arquitetural' which borders closely on the excluded neighboring chapter 'Dívida técnica'. It's a decent output but lacks the extreme granularity requested.",
-          "score": 7
-        },
-        {
-          "anonymousId": "Model D",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Model D provides only 23 lessons, which is insufficient to fully break down this broad technical chapter into 2-minute, single-concept lessons as requested. Because the list is short, concepts like coupling and cohesion are kept relatively broad rather than being broken down into their specific types and nuances. It meets the formatting requirements but fails the 'extensive' and 'granular' scope constraints.",
-          "score": 6
+          "reasoning": "Poor. Contains multiple direct violations of the NO 'AND' rule in concept titles (e.g., 'Equilíbrio entre Emergência e Intencionalidade', 'Relação entre Acoplamento e Coesão', 'Decisões de Tipo 1 e Tipo 2'). Additionally, it includes an overlap with the DevOps neighboring chapter ('Integração de Fitness Functions no Processo de Build').",
+          "score": 4
         },
         {
           "anonymousId": "Model F",
-          "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "Model F provides the shortest list with only 22 lessons. The titles are formatted more like long phrases or book chapters (e.g., 'A Falha do Big Design Up-Front', 'O Papel da Arquitetura Ágil') rather than focused, atomic micro-learning concepts. It lacks the required granularity to effectively teach these concepts in 2-3 minute increments.",
-          "score": 5.5
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Very Poor. Completely ignored the top-penalty rule against using 'VS' and 'AND', with multiple blatant violations (e.g., 'Arquitetura Planejada vs. Arquitetura Emergente', 'Acoplamento Aferente e Eferente', 'Fitness Functions Estáticas vs. Dinâmicas'). It also improperly bundled concepts together using parentheses.",
+          "score": 3
         }
       ]
     },
@@ -100,46 +100,46 @@
       "judgeId": "openai/gpt-5.2",
       "rankings": [
         {
-          "anonymousId": "Model E",
-          "modelId": "openai/gpt-5.2",
-          "reasoning": "Lista extensa e bem granular, cobrindo arquitetura evolutiva, modularidade, acoplamento, coesão, fitness functions e tomada de decisão compatível com mudanças frequentes. Em geral mantém um conceito por lição e boa progressão. Pequenos deslizes: alguns títulos/descrições chegam perto de assuntos vizinhos (ex.: toggles, “resiliência”, ‘lock-in operacional’) e algumas entradas podem estar amplas demais, mas quase sempre pelo viés arquitetural do capítulo.",
-          "score": 9
-        },
-        {
           "anonymousId": "Model B",
           "modelId": "openai/gpt-5.2:high",
-          "reasoning": "Muito completa e bastante granular (métricas de acoplamento, tipos de coesão, boundaries, ADR em partes, tipos de fitness functions). Boa aderência ao escopo e evita, na maior parte, virar aula de DevOps/SRE/testes. Pontos a descontar: inclui C4 (contexto/container) e alguns tópicos que podem ser considerados fora do núcleo do capítulo (framework de documentação/diagramação), e alguns títulos ainda são um pouco genéricos/abrangentes.",
-          "score": 8.7
+          "reasoning": "Currículo mais completo e granular dentro do escopo: arquitetura evolutiva, modularidade, acoplamento/coesão, métricas/heurísticas de dependência, fitness functions (definição e exemplos), decisões arquiteturais com ADRs e orientação a experimentos, padrões de evolução incremental e governança leve. Estrutura consistente com 3–8 conceitos por lição e progressão lógica. Pequenos pontos: alguns itens podem tangenciar DevOps (conformidade contínua) e há muitos anglicismos, mas o enquadramento permanece arquitetural.",
+          "score": 9.3
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Muito abrangente e bem organizado, com boa profundidade em modularidade, impacto de mudança, contratos/interfaces, medição/monitoramento arquitetural, governança leve, ADRs e fitness functions. Mantém lições em 6–8 conceitos, com progressão clara. Penalidades: alguns conceitos ficam abstratos/vagos (ex.: “Arquitetura de fluxo de mudanças”, “Superfícies de mudança”), e há leve sobreposição entre lições (decisões reversíveis aparecem em duas).",
+          "score": 9
         },
         {
           "anonymousId": "Model A",
           "modelId": "anthropic/claude-opus-4.6",
-          "reasoning": "Boa cobertura dos tópicos centrais e com separação clara (modularidade, acoplamento, coesão, fitness functions, ADRs, decisões). Porém é menos “extensiva” e menos granular do que o esperado para dominar o capítulo; também inclui lições que tangenciam DevOps (“pipelines automatizados”) e tem algumas lições amplas (“Características arquiteturais”, “Trade-offs”). Ainda assim, bem alinhada e com boa progressão.",
-          "score": 7.9
-        },
-        {
-          "anonymousId": "Model G",
-          "modelId": "anthropic/claude-sonnet-4.6",
-          "reasoning": "Cobre os temas principais e inclui ADRs, Conway e strangler. Mas falha mais nas regras de títulos (usa “vs.”; vários títulos com escopo grande), e introduz tópicos mais fora do escopo/guardrails de capítulos vizinhos (ex.: “Arquitetura orientada a eventos” vira assunto próprio; “dívida arquitetural” encosta no capítulo de dívida técnica). Granularidade e completude medianas.",
-          "score": 6.8
-        },
-        {
-          "anonymousId": "Model C",
-          "modelId": "openai/gpt-5-mini",
-          "reasoning": "Cobertura razoável de arquitetura evolutiva, modularidade/acoplamento/coesão e fitness functions, mas é pouco extensa e várias lições são amplas demais para 2–3 minutos (ex.: arquitetura hexagonal, microservices como conceito geral). Também usa muitos termos em inglês nos títulos (não é necessariamente proibido, mas foge do ‘pt-BR’ esperado para títulos) e traz tópicos potencialmente fora do foco do capítulo (tech radar).",
-          "score": 6.2
+          "reasoning": "Boa cobertura dos tópicos centrais do capítulo e boa estrutura geral, incluindo ADRs, timing de decisão, modularidade, acoplamento/coesão, fitness functions e estilos arquiteturais. Porém, inclui itens mais fora do foco do capítulo ou potencialmente vizinhos (fitness para segurança/performance pode encostar em capítulos de Segurança/SRE/DevOps; “integração no processo de build” também). Alguns conceitos são comparativos ou amplos (“Diferença entre...”, “Critérios para Escolha...”), e há um lesson com 8 conceitos no limite com títulos menos granulares.",
+          "score": 8.2
         },
         {
           "anonymousId": "Model F",
-          "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "Boa aderência de linguagem e sem grandes violações de capítulos vizinhos, mas a lista é curta e não cobre o capítulo com a profundidade exigida (fitness functions sem detalhamento prático, modularidade/acoplamento/coesão com pouca decomposição, ausência de várias nuances de decisões arquiteturais para mudanças frequentes). Alguns títulos são genéricos.",
-          "score": 5.8
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Cobertura sólida dos eixos pedidos (evolutiva, modularidade, acoplamento/coesão, fitness functions, ADRs, governança). Boa quantidade de lições e geralmente respeita tamanhos. Principais problemas: várias violações diretas de título (uso de “vs.” e parênteses com listas), conceitos compostos (“Tipos de Acoplamento (Temporal, Espacial, por Dados)”), e alguns itens mais amplos/processuais (“Processo de Decisão Arquitetural”). Ainda assim, em conteúdo, fica próximo do escopo.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Inclui tópicos relevantes (modularidade, acoplamento, coesão, ADR, fitness functions, técnicas incrementais, trade-offs) e adiciona documentação/modelagem (C4) útil para decisões. Porém, várias lições ficam com poucos conceitos (uma com 4), e há mistura de idiomas nos títulos/conceitos. Alguns conceitos são amplos e meio meta (“Arquitetura como conjunto de decisões”, “Interpretação de resultados”), e parte de documentação/modelagem pode ser vista como escopo extra se o capítulo não a mencionar explicitamente.",
+          "score": 7.1
         },
         {
           "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Estrutura curta e não exaustiva para o escopo do capítulo: pouco detalhamento de modularidade, acoplamento/coesão e fitness functions; decisões arquiteturais aparecem, mas superficialmente. Muitos conceitos estão muito amplos (ex.: “Governança Arquitetural”, “Arquitetura Evolutiva”) e algumas lições têm poucos itens para a quantidade de temas agregados. Falta granularidade e cobertura.",
+          "score": 5.8
+        },
+        {
+          "anonymousId": "Model C",
           "modelId": "google/gemini-3-flash",
-          "reasoning": "Muito pouco extensa e com granularidade insuficiente. Várias lições são genéricas/abrangentes (ex.: “Arquitetura no Contexto Ágil”, “Evolução Guiada”), e falta cobertura adequada de decisões arquiteturais compatíveis com mudanças frequentes e detalhamento de fitness functions/modularidade/acoplamento/coesão. Também há um título com ‘entre’ que combina conceitos (“Sincronia entre Emergente e Intencional”).",
-          "score": 4.9
+          "reasoning": "Cobertura parcial e pouco granular: modularidade, acoplamento, coesão e fitness functions aparecem, mas sem detalhes essenciais (métricas, limites/thresholds, integração contínua de verificações, trade-offs explícitos, governança leve). Última lição tem apenas 4 conceitos (e mistura ADR com padrões e refatoração em nível alto). Também inclui “Refatoração Arquitetural”, que encosta no capítulo de dívida técnica/sustentabilidade. Menos progressão e menos exaustividade.",
+          "score": 5.2
         }
       ]
     }

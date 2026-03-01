@@ -1,51 +1,51 @@
 {
-  "expectations": "\n      - MUST be in US English\n      - Should break down each protocol and networking concept individually (IP, TCP, UDP, NAT as separate lessons)\n      - Should cover different types of failure modes as distinct lessons\n      - Should separate latency concepts from bandwidth concepts\n      - Should NOT create dedicated lessons teaching DNS records, resolvers, or domain configuration (neighboring chapter \"DNS and domains\" covers that) — brief contextual references are fine\n      - Should NOT create dedicated lessons teaching HTTP methods, status codes, or headers (neighboring chapter \"HTTP\" covers that) — brief contextual references are fine\n      - Should NOT create dedicated lessons teaching TLS handshakes, certificates, or HTTPS configuration (neighboring chapter \"HTTPS and TLS\" covers that) — brief contextual references are fine\n\n      \n  - Each lesson should cover a SINGLE, SPECIFIC concept that can be explained within 10 short tweets\n  - Break down topics into the smallest, most manageable units possible, so that each lesson can be learned in 2-3 minutes\n  - If a topic is too broad, split it into multiple lessons\n  - Each lesson should be extremely focused on a SINGLE concept\n  - If a lesson is too broad, split it into multiple lessons\n  - Each lesson must cover a SINGLE concept. Using \"AND\", \"OR\", \"VS\" (or equivalents in other languages like \"e\", \"ou\", \"y\", \"o\") in a title is a signal it MAY be too broad — but it is acceptable when the comparison or pairing IS the concept itself (e.g., \"DEPT-90 y DEPT-135\" where distinguishing two NMR techniques is the lesson, or \"IPv4 vs. IPv6 Format\" where the format contrast is one concept). Only penalize when AND/OR/VS joins genuinely separate concepts that deserve their own lessons (e.g., \"Strings and Lists\" where each is a full topic)\n  - Lesson titles should be short and specific to the exact concept covered\n  - Build a logical progression from basic to advanced concepts\n  - Ensure lessons build on knowledge from previous lessons\n  - Focus lessons for this specific chapter, not the entire course\n  - Don't include summary or review lessons. For example, do NOT create a lesson title \"Summary of Key Concepts\" or \"Review of Chapter\"\n  - Don't include assessment or quiz lessons\n  - Don't include final project or capstone lessons\n  - Should follow the language specified by language parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Descriptions should be concise and straight to the point, no fluff/filler words (avoid \"learn\", \"understand\", \"explore\", \"introduction to\", etc.)\n  - You don't need to evaluate the output format here, just focus on the lesson content quality\n  - Include an extensive list of lessons to fully cover the chapter's scope. The key metric is completeness: are all concepts in the chapter description adequately covered with sufficient granularity? Broad technical chapters (e.g., web fundamentals, Python basics) typically need 80-120+ lessons. Narrower or more specialized chapters (e.g., legal theory of evidence, NMR spectroscopy) may need fewer if the domain is inherently smaller — do not penalize for fewer lessons if the chapter's scope is fully covered\n\n  Neighboring chapter scope judgment:\n  - The chapter description is the SOURCE OF TRUTH for what is in-scope. Neighboring chapter constraints are guardrails against scope creep, NOT vetoes over topics listed in the chapter description\n  - If a topic is explicitly mentioned in the chapter description, it is in-scope even if it touches on a neighboring chapter's domain (e.g., \"Claisen\" listed in a carbonyls chapter is in-scope even though esters have their own chapter)\n  - The key test: does a lesson teach a topic AS ITS OWN SUBJECT (violation) or through the LENS OF THIS CHAPTER (acceptable)? Documenting empirical patterns/observations of X within this chapter's context is NOT the same as teaching X's theory (e.g., documenting consumption's cyclical behavior is a business cycle fact, not consumption theory)\n  - When a lesson's title mentions a neighboring topic, read the description to determine focus. A lesson titled \"Cortiços as disease ecologies\" focused on disease transmission is health content, not urbanization content\n\n  Things to check:\n  - Is each lesson too broad? If so, it should be broken down further\n  - Can each concept be explained in 10 short tweets or less? If not, it should be broken down\n  - Does each lesson focus on a single specific concept? If not, it should be split\n  - Does it have lessons that don't belong in this chapter? If so, they should be removed\n\n    ",
-  "judgedAt": "2026-02-22T19:48:05.475Z",
+  "expectations": "\n      - MUST be in US English\n\n      \n  # How to evaluate\n\n  You are evaluating a CURRICULUM, not a glossary. Think like a curriculum designer reviewing a colleague's work — use domain expertise and professional judgment, not mechanical rule-checking.\n\n  ## Structure\n\n  Output is organized into LESSON UNITS (thematic groups) containing CONCEPTS (individual teachable items).\n  - Each concept should be a single, specific idea — something a domain expert would consider one teachable unit\n  - Lesson sizes should be 3-8 concepts and should vary naturally across lessons\n  - Total concept coverage should be exhaustive for the chapter's scope\n\n  ## Evaluating concept quality\n\n  Ask: \"Is this ONE teachable thing, or is it secretly a bundle of separate things?\"\n  - A concept is too broad only if it genuinely bundles multiple DISTINCT teachable items that a student would need separate lessons for\n  - Use domain expertise: terms that sound broad to a generalist may be a single well-defined concept in the field\n  - Conjunctions (AND/OR/VS and equivalents in any language) signal potential broadness, but only penalize when they join genuinely separate topics — not when the comparison itself IS the concept, or when \"and\" connects an entity to its work\n  - Concept titles should be concrete and self-explanatory, not interpretive thesis statements or vague abstractions\n\n  ## Evaluating scope\n\n  The chapter description is the SOURCE OF TRUTH. Neighboring chapters are guardrails against scope creep, not vetoes.\n\n  The key principle: **judge by framing, not by keywords.** A concept belongs in THIS chapter if its primary teaching purpose serves THIS chapter's learning goals — even if the concept mentions words that appear in a neighboring chapter's title. Ask: \"What is this concept primarily TEACHING?\" not \"Does this concept MENTION a neighboring topic?\"\n\n  When in doubt, favor the chapter description. If a concept is framed through this chapter's lens and serves its learning goals, it is in-scope.\n\n  ## Evaluating lesson quality\n\n  - Lesson descriptions should be concise and go straight to the content — no filler words like \"introduces\", \"presents\", \"teaches\", \"explores\"\n  - Logical progression from foundational to advanced\n  - No summary, review, or assessment lessons\n  - Should follow the specified language (proper nouns and established technical terms may remain in their original language)\n\n  ## Coverage\n\n  Completeness is the key metric. Are all topics in the chapter description covered with sufficient granularity? Don't penalize for fewer concepts if the chapter's scope is inherently narrow.\n\n  ## Proportionality\n\n  Weight your scoring proportionally. A curriculum that covers the chapter exhaustively with good structure but has a few overly-broad concept titles is fundamentally different from one that misses entire topics or systematically violates scope. Minor title-phrasing issues should not dominate the score when the overall curriculum quality is strong.\n\n    ",
+  "judgedAt": "2026-03-01T01:45:39.355Z",
   "judgments": [
     {
       "judgeId": "anthropic/claude-opus-4.6",
       "rankings": [
         {
-          "anonymousId": "Model F",
+          "anonymousId": "Model D",
           "modelId": "openai/gpt-5.2:high",
-          "reasoning": "Model F provides the most extensive and granular lesson list (110+ lessons) while maintaining excellent single-concept focus throughout. It covers every topic in the chapter description thoroughly: IP addressing (IPv4, IPv6, CIDR, subnet masks, private/public, loopback, link-local, broadcast, multicast, interface addressing), routing (routing tables, route entries, longest prefix match, directly connected routes, next hop, default route, forwarding, TTL, routing loops, asymmetric routing), NAT (SNAT, DNAT, PAT, NAT state tables, NAT timeouts, port forwarding, hairpin NAT, double NAT, CGNAT), TCP (byte stream, handshake, sequence numbers, ACKs, retransmissions, flow control, congestion control, slow start, FIN close, RST, keepalive), UDP (datagrams, message boundaries, loss behavior, reordering), latency/bandwidth (latency, RTT, bandwidth, throughput, goodput, serialization delay, propagation delay, queuing delay, BDP, handshake tax), failure modes (connection refused, timeout, no route, host unreachable, port unreachable, blackhole drops, firewall allowlists, stateful firewall, egress/ingress filtering, NAT table exhaustion, ephemeral port exhaustion, half-open connections), MTU/fragmentation (MTU, IP fragmentation, path MTU, MSS, MSS clamping, tunnel overhead), and debugging (localhost isolation, subnet testing, gateway testing, hop-by-hop isolation, ping, TCP/UDP port testing, DNS bypass, route lookup, interface inspection, ARP cache, packet capture, capture location, SYN-only observation, SYN-ACK without ACK, retransmission clues, ICMP diagnosis, layered debugging workflow). Titles are concise and focused. Descriptions are informative without fluff. It properly avoids dedicated DNS, HTTP, and TLS lessons. The progression is logical. A few minor issues: some lessons like 'Client role' and 'Server role' are somewhat generic and border on course-level rather than chapter-level content, and a couple of titles could be slightly more specific, but overall this is the strongest output.",
-          "score": 9
-        },
-        {
-          "anonymousId": "Model E",
-          "modelId": "openai/gpt-5.2",
-          "reasoning": "Model E provides a very extensive list (~107 lessons) with excellent granularity and strong single-concept focus. It covers IP addressing, routing, NAT, TCP, UDP, latency/bandwidth, failure modes, and debugging mental models comprehensively. Particularly strong points: it includes excellent debugging-oriented lessons (binary search for network faults, one-variable debugging, source matters, five-tuple, middlebox state, binding to wrong interface, binding to 0.0.0.0, hairpin NAT, clock skew as false lead), which aligns perfectly with the chapter's emphasis on 'practical mental models for debugging connectivity issues.' It separates failure modes into distinct lessons well (timeouts as symptom, connection refused, no route to host, host unreachable, intermittent connectivity, loss patterns, slow connections, variable throughput, MTU blackholes, UDP blockage clues, TCP handshake failures). It covers firewalls adequately (stateful firewalls, allow rules, deny rules, silent drops, explicit rejects, ACLs). Minor issues: some descriptions use quotation marks heavily which is a stylistic choice, and 'TCP Handshake Flags' as a separate lesson from 'TCP Three-Way Handshake' might be slightly redundant. The 'Traffic Observation Mindset' lesson at the end is somewhat abstract. But overall this is very strong and comprehensive.",
+          "reasoning": "Model D provides the most exhaustive and granular coverage of the chapter's scope. It has 21 lessons with ~150 concepts, covering IP addressing, subnetting, DHCP/SLAAC, local link delivery (ARP, MAC), routing, ICMP, NAT, ports/sockets, TCP setup, TCP teardown, TCP reliability, TCP flow control, TCP congestion control, UDP, MTU/fragmentation, latency/throughput, firewalls, misconfiguration failures, path failures, and debugging mental models. The granularity is excellent — TCP is properly broken into setup, teardown, reliability, flow control, and congestion control as separate lessons. Concepts are genuinely single-idea items (e.g., 'SYN flag', 'ACK flag', 'Initial sequence number'). Lesson sizes vary naturally (6-8). No compound concepts with AND/OR/VS. Lesson descriptions go straight to content without filler words. The progression is logical from layers → addressing → routing → protocols → performance → failures → debugging. Minor concerns: DHCP lesson could arguably be considered outside scope (though IP address assignment is relevant to IP addressing), and the Internet networking layers lesson is somewhat foundational/general. Some concepts like 'Gratuitous ARP' and 'IPv6 neighbor solicitation' are quite deep for a web development course but not wrong. No neighboring chapter overlap issues. Overall this is the most thorough and well-structured curriculum.",
           "score": 8.8
         },
         {
-          "anonymousId": "Model D",
-          "modelId": "anthropic/claude-opus-4.6",
-          "reasoning": "Model D provides a solid list of ~68 lessons with good coverage. It covers IP addressing (IPv4, IPv6, subnet masks, CIDR, private/public, special IPs, DHCP, subnetting), routing (what is routing, routers, static routes, dynamic routing, routing tables, default gateway, hop-by-hop, TTL), NAT (what is NAT, PAT, port forwarding, NAT traversal challenges), TCP (what is TCP, handshake, reliable delivery, flow control/congestion control, teardown), UDP (what is UDP, when to use UDP), latency/bandwidth (latency, delay types, propagation delay, bandwidth, throughput vs bandwidth, tradeoffs, geographic distance, RTT, impact on TCP, CDNs, jitter, packet loss, retransmission, congestion), failure modes (host unreachable, timeouts, connection refused, black holes, asymmetric routing, firewall blocking, missing return routes, port exhaustion, MTU), and debugging (ping, traceroute, netstat/ss, ncat/netcat, curl, layered debugging, bottom-up, top-down, checklist). Good separation of concerns. However, some lessons combine concepts: 'TCP Flow Control and Congestion Control' should be split (uses 'and'). 'Why CDNs Reduce Latency' is somewhat outside the core networking fundamentals scope. 'Testing Endpoints with curl' borders on HTTP territory. The lesson count (~68) is adequate but not as extensive as the best outputs for this broad chapter. Some areas could use more granularity (NAT could have more lessons on state tables, timeouts; TCP could have more on sequence numbers, RST packets).",
-          "score": 7.5
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model B provides excellent coverage with 12 lessons and ~80 concepts. Very granular treatment of topics: subnetting operations, link layer/ARP, routing mechanics, NAT types, TCP mechanisms, UDP/sockets, latency components, performance pathologies, failure modes, diagnostic tools, and troubleshooting workflows. Good concept granularity overall. Lesson descriptions avoid filler words mostly. Some concerns: A few concept titles are slightly verbose or action-oriented rather than noun-phrase style (e.g., 'Calculating network address from IP and prefix', 'Check routing table with ip route (or route)', 'Inspect ARP table with arp -a'). The 'Diagnostic tools' lesson has concepts that read more like instructions ('Check interface status with ip link / ethtool'). The last lesson 'Troubleshooting mental models and workflows' has some concepts that are more meta-skills than single concepts ('Reproduce issue and isolate one variable at a time', 'Correlate packet captures with system logs and timestamps'). VLSM and APIPA are quite deep for web dev context but acceptable. Good neighboring chapter awareness. Overall very thorough with minor title formatting issues.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model F provides solid coverage with 16 lessons and ~105 concepts. Good granularity across topics. Covers data movement, IP types, subnets, routing, bidirectional connectivity, ports/flows, TCP, UDP, selection criteria, latency, bandwidth, NAT, diagnostics, firewalls, failure modes, and debugging. Concept titles are generally concise and well-formed. A few concerns: The lesson 'TCP Selection Criteria' has a misleading title (it's really about TCP vs UDP selection), and concepts like 'Latency sensitivity', 'Loss tolerance', 'Ordering requirement' are somewhat abstract. 'UDP application reliability' is a bit vague. The lesson 'Bidirectional Connectivity' is a creative grouping but some concepts there (like 'Stateful device') are quite vague. Some NAT concepts use abbreviations without explanation (SNAT, DNAT). Missing some depth in areas like TCP flow control details. Overall well-structured with good progression and reasonable exhaustiveness.",
+          "score": 7.8
         },
         {
           "anonymousId": "Model C",
           "modelId": "anthropic/claude-sonnet-4.6",
-          "reasoning": "Model C provides 47 lessons with reasonable coverage but is less granular than top performers. It covers the main topics: IP addressing (IPv4 structure, dotted-decimal, subnet masks, CIDR, private vs public, IPv6), routing (how routing works, default gateway, routing tables, packet hops), NAT (why NAT exists, how NAT translates, PAT, inbound connections, implications for web apps), TCP (what TCP provides, handshake, reliability/retransmission, flow control, congestion control, teardown), UDP (what UDP provides, when to choose, QUIC), latency/bandwidth (latency, propagation delay, transmission delay, queuing/processing delay, bandwidth, tradeoffs, bufferbloat, measuring with ping/traceroute), failure modes (packet loss, IP misconfiguration, routing black holes, NAT table exhaustion, timeout vs refused, asymmetric routing, MTU issues), and debugging (layered model, ping output, traceroute output, netstat/ss, packet capture, checklist). The lesson 'Private vs. Public IP Ranges' uses 'vs.' joining two concepts but the comparison IS the concept so it's borderline acceptable. 'TCP vs. UDP Tradeoffs' similarly. However, 47 lessons is insufficient for this broad chapter. Missing: loopback address, link-local addresses, ARP, MAC addresses, port numbers, sockets, static vs dynamic routing details, SNAT/DNAT distinction, port forwarding, hairpin NAT, firewall blocking, port exhaustion details, jitter, RTT as separate concept. The 'What is a Network?' lesson is too basic/broad for this chapter.",
-          "score": 6.5
+          "reasoning": "Model C provides good coverage with 8 lessons and ~88 concepts. Covers IP addressing, routing, NAT, TCP/UDP, latency/bandwidth, packets/ports/tools, failure modes, and debugging. However, several lessons exceed the 8-concept maximum (IP Addressing has 15, TCP and UDP has 15, Latency and Bandwidth has 13, Packets/Ports/Tools has 15, NAT has 10, Routing has 10, Debugging has 10). This violates the critical requirement that lessons with >8 concepts should be split. The prompt says 'If a group would exceed 8 concepts, split it into two lessons with more specific themes.' This is a significant structural violation. Some concepts use 'vs' ('IPv4 vs IPv6 Compatibility', 'Latency vs Bandwidth Tradeoffs') which violates the no-VS rule. 'When to Use TCP' and 'When to Use UDP' are somewhat meta rather than concrete concepts. Otherwise the content coverage is reasonable and concept granularity is mostly appropriate. The OSI Model Overview concept in the TCP/UDP lesson feels misplaced.",
+          "score": 6.2
         },
         {
-          "anonymousId": "Model A",
-          "modelId": "openai/gpt-5-mini",
-          "reasoning": "Model A provides 59 lessons with decent coverage. Covers IP addressing (IP address, IPv4, IPv6, subnet mask, CIDR, private ranges, loopback, APIPA, broadcast/multicast, ARP, MAC), routing (router, routing table entry, default gateway, route lookup, static route, dynamic routing), NAT (purpose, SNAT, DNAT, PAT, port forwarding, hairpin NAT, traversal issues), ports, TCP (fundamental property, handshake, flow control, congestion control, reliable delivery), UDP (fundamental property, when to use), latency/bandwidth (distinction, latency definition, bandwidth definition, BDP, sources of latency, jitter, packet loss impact, MTU/fragmentation), failure modes (blackholing, asymmetric routing, IP conflict, firewall blocking, port exhaustion, interface errors), debugging (layered model, ping, traceroute, TCP connect test, ARP table, routing table, packet capture, TCP handshake failures, bandwidth test, MTU testing, network emulation, device stats, latency vs loss patterns). Good debugging section. However: 'Broadcast and multicast addresses' uses 'and' joining two distinct concepts. 'APIPA / link-local auto-assigned address' uses '/'. 'Latency versus bandwidth distinction' combines two concepts in one lesson (though the comparison is arguably the point). Some lessons like 'Network emulation with tc/netem' and 'Bandwidth test with iperf' are tool-specific and could be seen as going beyond conceptual networking fundamentals. Overall solid but not as extensive or granular as the top outputs.",
-          "score": 7
-        },
-        {
-          "anonymousId": "Model B",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Model B provides only 33 lessons, which is significantly insufficient for this broad chapter. While it covers the main topics at a high level (IP addresses, IPv4/IPv6, public/private, loopback, subnetting, subnet masks, routers, default gateway, routing tables, hops, NAT, PAT, ports, ephemeral ports, TCP, handshake, UDP, use cases, latency, RTT, bandwidth, throughput, jitter, packet loss, timeouts, connection refused, congestion, MTU, ping, traceroute, port testing), the coverage is too shallow. Many important topics are missing: CIDR notation, link-local addresses, ARP, static vs dynamic routing, SNAT/DNAT, port forwarding, hairpin NAT, NAT traversal, TCP flow control, TCP congestion control, TCP teardown, TCP retransmission as separate concept, sources of latency (propagation/queuing/processing), BDP, asymmetric routing, blackholing, firewall blocking, port exhaustion, packet capture, layered debugging model. The descriptions are adequate but some are slightly vague. The lesson count is far below what's needed for comprehensive coverage of this chapter.",
-          "score": 4.5
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model E provides broad coverage with 13 lessons but has several issues. Multiple lessons exceed 8 concepts (IP Addressing has 10, Latency and Bandwidth has 11, Debugging has 10, TCP has 9). The 'TCP vs UDP Tradeoffs' lesson has concepts with 'vs' in titles ('TCP vs UDP Reliability Tradeoff', 'TCP vs UDP Overhead Tradeoff', 'TCP vs UDP Latency Tradeoff') which directly violates the no-VS rule. 'Forward Proxy vs Reverse Proxy' also violates this. The 'Local Development Networking' lesson contains 'Docker Networking Basics for Web Developers' which is arguably outside the chapter scope — this is more about dev tooling than networking fundamentals. 'CDN at the Network Level' and 'Load Balancer at the Network Level' could overlap with other web development chapters. 'WebRTC and UDP' is quite application-specific. 'The nslookup/dig Command for Quick Checks' overlaps with the DNS neighboring chapter. Some lesson descriptions use filler language. Coverage is otherwise reasonable but the scope creep and rule violations are notable.",
+          "score": 5.8
         },
         {
           "anonymousId": "Model G",
           "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "Model G provides only 31 lessons, the fewest of all outputs, which is clearly insufficient for this broad chapter. Coverage is very shallow. Missing many critical topics: CIDR notation, subnet masks in detail, link-local addresses, ARP, static/dynamic routing, routing tables in detail, SNAT/DNAT, PAT, port forwarding, hairpin NAT, NAT traversal, TCP flow control, TCP congestion control, TCP teardown, multiple sources of latency, BDP, jitter, asymmetric routing, blackholing, firewall blocking, port exhaustion, MTU/fragmentation, packet capture, detailed debugging approaches. Several lessons are too broad: 'TCP Reliability' covers tracking, requesting missing data, AND reordering in one lesson. 'How NAT Works' is quite broad. 'Isolating Connectivity Issues' tries to cover too much. 'Packet Switching' is somewhat tangential to the chapter's focus. The output lacks the granularity and extensiveness required by the prompt.",
-          "score": 4
+          "reasoning": "Model G provides a clean but insufficient curriculum with only 8 lessons and ~52 concepts. While the concepts are well-titled and follow naming conventions, the coverage is not exhaustive enough for the chapter. Missing significant detail on: subnetting (no network address, broadcast address, host ranges), TCP flow control and congestion control are absent as separate concepts, no MTU/fragmentation coverage, limited failure modes, no port/socket concepts, minimal latency breakdown (missing propagation/queuing/serialization delays), no ARP or link-layer concepts, no firewall concepts. 'Border Gateway Protocol' is quite deep for this context while missing more fundamental concepts. The curriculum feels like a high-level overview rather than exhaustive coverage. Concept granularity is reasonable for what's included but too much is missing.",
+          "score": 5.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model A provides the most minimal curriculum with only 7 lessons and ~41 concepts. While clean and well-organized, it severely lacks exhaustiveness. Missing: detailed subnetting (network/broadcast addresses), ARP/link layer, TCP details (sequence numbers, acknowledgments, retransmission specifics), port numbers/sockets, MTU/fragmentation, firewall concepts, detailed latency breakdown, ICMP, many failure modes, and debugging mental models. Some concepts are too broad: 'Reliable Delivery' and 'Ordered Data Transfer' could be broken down further. 'Minimal Overhead' for UDP is vague. 'IP Overlap' is unclear without context. The NAT section includes 'Static NAT' and 'Dynamic NAT' but misses PAT which is the most common form. Coverage is simply insufficient for 'exhaustive' requirements. The prompt emphasizes 'It's better to have more fine-grained concepts than fewer broad ones' and this curriculum does the opposite.",
+          "score": 4.8
         }
       ]
     },
@@ -54,45 +54,45 @@
       "rankings": [
         {
           "anonymousId": "Model F",
-          "modelId": "openai/gpt-5.2:high",
-          "reasoning": "Model F perfectly followed all instructions, including the negative constraints. It generated an exceptionally granular, comprehensive list of 115 lessons. It successfully avoided the forbidden words ('learn', 'understand', 'basics', etc.) and completely avoided using 'and', 'or', or 'vs' in its titles, fully adhering to the single-concept constraint. The coverage of failure modes and debugging mental models is outstanding.",
-          "score": 10
-        },
-        {
-          "anonymousId": "Model E",
           "modelId": "openai/gpt-5.2",
-          "reasoning": "Model E also performed spectacularly well, providing 117 highly granular lessons. It adhered strictly to the negative constraints and produced no fluff in titles or descriptions. It broke down complex topics (like TCP flags and NAT varieties) perfectly into bite-sized concepts. It only used 'vs' once ('Name vs Network Separation'), which was entirely justified by the prompt's exception for conceptual comparisons. It ties with Model F for best output.",
+          "reasoning": "Model F is an exceptional output. It perfectly adheres to all negative constraints (no forbidden words in descriptions, no AND/OR/VS in concept titles, strict adherence to the 3-8 concepts per lesson rule). Furthermore, it handles the 'TCP vs UDP tradeoffs' requirement brilliantly by splitting the comparison into single concepts ('TCP use cases', 'UDP use cases', 'Latency sensitivity', 'Loss tolerance') without violating the 'no VS' rule. The curriculum is highly exhaustive (103 concepts), granular, and well-tailored to the chapter's scope.",
           "score": 10
-        },
-        {
-          "anonymousId": "Model A",
-          "modelId": "openai/gpt-5-mini",
-          "reasoning": "Model A provides a solid and relatively extensive list of 64 lessons. It correctly covers a wide range of failure modes and protocols. However, it violates the strict 'AND/OR' constraint in several titles (e.g., 'Broadcast and multicast addresses', 'Interface errors and drops', 'MTU testing with ping and path MTU discovery'), indicating a failure to break down these topics into their absolute smallest units.",
-          "score": 7.5
         },
         {
           "anonymousId": "Model D",
-          "modelId": "anthropic/claude-opus-4.6",
-          "reasoning": "Model D generated a good number of lessons (81) and covers the scope reasonably well. However, it violates several negative constraints. It includes the forbidden word 'Basics' in its titles (e.g., 'Subnetting Basics'). It also contains multiple 'AND' violations where distinct concepts should have been split (e.g., 'Transport Layer: TCP and UDP', 'TCP Flow Control and Congestion Control').",
-          "score": 6.5
-        },
-        {
-          "anonymousId": "Model C",
-          "modelId": "anthropic/claude-sonnet-4.6",
-          "reasoning": "Model C only produced 49 lessons, which is a bit light for the expected granularity of this chapter. More importantly, it repeatedly violates the negative constraints. It uses the forbidden word 'Basics' multiple times ('IPv6 Address Basics', 'Packet Capture Basics') and fails to split topics accurately (e.g., 'Measuring Latency with Ping and Traceroute', 'TCP Reliability and Retransmission').",
-          "score": 5.5
-        },
-        {
-          "anonymousId": "Model B",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Model B produced only 33 lessons, completely missing the 'extensive' requirement for a broad technical chapter. It failed to break down specific networking failure modes and practical debugging mental models as explicitly requested. The granularity is much too broad for the 2-3 minute micro-learning constraint.",
-          "score": 4.5
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model D is incredibly exhaustive (164 concepts spread across 21 lessons) while miraculously maintaining perfect adherence to the 3-8 concepts per lesson constraint. It also strictly follows the negative constraints regarding forbidden words in descriptions and avoids AND/OR/VS in concept titles. It's slightly less tailored to the explicit 'tradeoffs' wording of the prompt than Model F, diving very deep into transport mechanisms instead, but it remains an outstanding and highly rigorous curriculum.",
+          "score": 9.5
         },
         {
           "anonymousId": "Model G",
           "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "Model G is very similar to Model B in its shortcomings. With only 31 lessons, it fails to provide an extensive breakdown of the subject. It completely glosses over the 'practical mental models for debugging connectivity issues' and groups concepts far too broadly.",
-          "score": 4.5
+          "reasoning": "Model G completely respects all formatting and structural rules. It avoids all forbidden words in descriptions, contains no AND/OR/VS in concept titles, and keeps all lessons within the 3-8 concept limit. It is well-scoped and logical, though slightly less granular and exhaustive (52 concepts) than Models F and D.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model A follows all instructions perfectly, including the strict negative constraints and lesson size rules. However, it is the least exhaustive of the fully-compliant models, producing only 41 concepts. While good, the prompt specifically requested an exhaustive breakdown at the most granular level possible, which other models achieved better.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model B followed the lesson size constraints perfectly and its descriptions are well-written without forbidden words. However, it failed the critical negative constraint prohibiting compound concepts. It frequently used 'and' and 'or' in its concept titles (e.g., 'Supernetting and route aggregation', 'MTU mismatch causing fragmentation or drops'), failing to split them into single granular ideas as requested.",
+          "score": 5.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model E failed multiple critical instructions. It violated the lesson size constraints in 5 out of its 13 lessons (having up to 11 concepts in a single lesson). It also heavily violated the prohibition on AND/OR/VS in concept titles, retaining explicit comparison titles like 'TCP vs UDP Reliability Tradeoff' and 'Bandwidth vs Throughput'.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model C completely ignored the lesson size constraints, with every single lesson containing 10 to 15 concepts (violating the 3-8 rule). It also failed the concept title constraints, frequently using 'VS' to group comparative concepts together ('Throughput vs Bandwidth', 'Inbound vs Outbound NAT Traffic') instead of splitting them as instructed.",
+          "score": 3
         }
       ]
     },
@@ -100,46 +100,46 @@
       "judgeId": "openai/gpt-5.2",
       "rankings": [
         {
-          "anonymousId": "Model F",
-          "modelId": "openai/gpt-5.2:high",
-          "reasoning": "Most complete and granular coverage of the chapter scope: IP addressing (v4/v6 incl. special ranges), routing mechanics (tables, longest-prefix, default route, TTL, loops, asymmetry), NAT variants/state/timeouts/CGNAT, TCP/UDP internals, latency vs bandwidth separated with supporting sub-concepts, and many distinct failure modes with practical debugging mental models and observational cues. Stays largely within scope; DNS is only mentioned as a variable to bypass, not taught. Minor issues: a few titles are a bit generic/capitalization, and some content goes slightly beyond basics (e.g., QUIC not present here; VPN/tunnel overhead is adjacent but still relevant to MTU failure modes).",
-          "score": 9.4
-        },
-        {
-          "anonymousId": "Model E",
-          "modelId": "openai/gpt-5.2",
-          "reasoning": "Extensive, highly granular, strong conceptual progression (layers → IP addressing → routing → ICMP/MTU → transport → perf → NAT/firewalls → failure signatures → debugging mindset). Excellent separation of latency/bandwidth and lots of distinct failure-mode lessons. Generally respects neighboring chapters (DNS only as “name vs network separation”). Minor scope creep: switching internals (\"Switch Forwarding Tables\") and some security-ish items (ARP poisoning symptoms) are adjacent; still plausibly “common failure modes” but slightly beyond the chapter description. Overall very strong.",
-          "score": 9.2
-        },
-        {
-          "anonymousId": "Model A",
-          "modelId": "openai/gpt-5-mini",
-          "reasoning": "Good breadth and mostly single-concept lessons across IP addressing, routing, NAT, TCP/UDP, performance (latency/bandwidth/BDP/jitter/loss/MTU), and multiple failure modes plus practical debugging tools (ping, traceroute, tcpdump, iperf). Generally within scope and avoids DNS/HTTP/TLS topics. Weaknesses: not as extensive as best-in-class for an “extensive” chapter (fewer micro-lessons on TCP/UDP internals and routing nuances), a couple titles are slightly broad (e.g., “Broadcast and multicast addresses”), and includes named routing protocols (OSPF/BGP) but only at a concept level (acceptable).",
-          "score": 8.5
-        },
-        {
           "anonymousId": "Model D",
-          "modelId": "anthropic/claude-opus-4.6",
-          "reasoning": "Solid coverage of core topics and many failure modes plus troubleshooting approaches. However, several lessons are too broad for the single-concept rule (e.g., “Transport Layer: TCP and UDP”, “TCP Flow Control and Congestion Control”, “Special IP Addresses”). Some scope creep into HTTP tooling (“Testing Endpoints with curl”) and CDN content (“Why CDNs Reduce Latency”) which is more web-architecture/performance than networking fundamentals. Still fairly complete compared to shorter lists.",
-          "score": 7.4
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Most exhaustive while staying aligned to “networking fundamentals” and the debugging mental-model goal. Strong granularity (mostly single mechanisms like “Longest prefix match”, “ICMP time exceeded”, “TIME_WAIT state”), logical progression, and every lesson stays within 3–8 concepts. Great coverage of IP addressing/subnetting, L2/ARP/ND, routing, NAT, TCP/UDP internals, MTU/PMTUD, performance metrics, middleboxes, concrete failure modes, and debugging heuristics. Minor nits: a couple concept titles are a bit abstract (“Protocol layer”) and “Five-tuple” violates the prompt’s ‘no AND/OR/VS’ only indirectly (not present), but overall it’s the closest to the spec.",
+          "score": 9.6
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Very strong coverage and good curriculum feel, including subnet calculations, ARP/MTU/PMTUD, TCP mechanics, delay components, congestion pathologies, failure modes, and a solid troubleshooting workflow. Main issue: multiple lessons exceed the 8-concept cap (several have 8 exactly, but “IP addressing fundamentals”, “Link layer…”, “Latency, bandwidth…”, “Diagnostic tools”, “Troubleshooting mental models…” hit 8; that’s fine; however overall organization is slightly heavy and some items drift toward procedural/broader (“Use time-series metrics to spot trends”). Also includes fairly deep subnetting/VLSM which may be more than “fundamentals” for web dev, but still defensible. Overall excellent.",
+          "score": 9.1
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Meets constraints well (all lessons 5–8 concepts), good progression, and good alignment to debugging connectivity. Solid set: IP/CIDR/routing, bidirectional path, ports/flows, TCP/UDP, latency/bandwidth, NAT, ICMP signals, firewalls, failure modes, mental models. Gaps vs best: less detail on ARP/neighbor discovery and routing failure specifics; some concept titles are a bit vague (“Connection state”, “Route propagation”) and “Head-of-line blocking avoidance” is slightly interpretive. Still a strong, usable chapter curriculum.",
+          "score": 8.6
         },
         {
           "anonymousId": "Model C",
           "modelId": "anthropic/claude-sonnet-4.6",
-          "reasoning": "Covers the main items in the chapter description and includes a reasonable set of failure modes and debugging steps. But it’s not very extensive (far fewer lessons than needed for the breadth), and multiple lessons are too broad/combined (“TCP vs. UDP Tradeoffs”, “Measuring Latency with Ping and Traceroute”, “Layered Debugging Mental Model” is ok but big). Also explicitly teaches DNS as a topic inside “When to Choose UDP” (DNS lookups) and uses QUIC as a dedicated lesson—both are borderline scope creep given neighboring chapters (DNS) and chapter description (no QUIC).",
-          "score": 6.8
+          "reasoning": "Broad coverage of the requested topics and includes practical debugging. However, multiple lessons violate the 3–8 concept rule badly (15 concepts in IP Addressing, 15 in TCP and UDP, 13 in Latency and Bandwidth, 15 in Packets/Ports/Tools). Granularity also slips into broad/compound items (“Subnetting a Network”, “IPv4 vs IPv6 Compatibility”, “Latency vs Bandwidth Tradeoffs”, “When to Use TCP”). Overall content is decent but structurally far from the prompt requirements.",
+          "score": 6.6
         },
         {
-          "anonymousId": "Model B",
+          "anonymousId": "Model A",
           "modelId": "google/gemini-3-flash",
-          "reasoning": "Clear and mostly accurate, but far too short and not granular enough to meet the chapter’s completeness requirement. Missing many required areas (routing mechanics like longest-prefix/TTL/asymmetry, NAT variants/state/timeouts, TCP flow/congestion control, MTU/fragmentation failure patterns, systematic debugging mental models). Several titles are plural/broad (“Routers”, “Routing Tables”, “IP Addresses”), weakening the single-concept constraint.",
-          "score": 5.6
+          "reasoning": "Clean, readable, and respects the 3–8 concept size constraint, but coverage is not exhaustive relative to the chapter description and debugging goal. Missing key fundamentals like ARP/link-layer resolution, ICMP meanings, ports/sockets, MTU/PMTUD (fragmentation is mentioned but not framed with MTU/DF), and richer failure modes (firewalls/ACLs, routing loops, asymmetric routing). NAT lesson includes “IP Overlap” (unclear) but omits SNAT/DNAT/PAT distinctions. Troubleshooting is limited to ping/traceroute plus a few errors.",
+          "score": 6.4
         },
         {
           "anonymousId": "Model G",
           "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "Too shallow and not extensive; misses large parts of routing, NAT details, TCP/UDP mechanics, latency/bandwidth tradeoffs, and practical debugging mental models beyond a generic item. Some lessons are broad (“Isolating Connectivity Issues”). Mostly accurate, but overall insufficient coverage for the prompt’s scope.",
-          "score": 5.2
+          "reasoning": "Reasonable high-level coverage and lesson sizing is within limits, but it’s not exhaustive and stays somewhat shallow. Missing ARP/MTU/fragmentation/PMTUD, ports/sockets detail is minimal, NAT variants incomplete, failure modes lack breadth, and debugging mental models are light. Some concepts are vague (“Traceroute Mechanism”) or drift into deeper internet routing (“Border Gateway Protocol”) without supporting primitives.",
+          "score": 6.2
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Multiple major prompt violations: many lessons exceed 8 concepts (e.g., IP Addressing has 10; Latency and Bandwidth has 11; Debugging has 10). Significant scope creep into neighboring chapters and beyond chapter focus: DNS tools (nslookup/dig), proxies/reverse proxy/CDN/load balancers, Docker networking, /etc/hosts, QUIC, WebRTC. Also includes an entire “TCP vs UDP Tradeoffs” lesson with repeated ‘vs’ phrasing (explicitly disallowed in concept titles) and several concept titles contain “vs”. Despite some good items, overall adherence is weakest.",
+          "score": 4.3
         }
       ]
     }
