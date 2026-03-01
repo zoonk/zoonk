@@ -61,7 +61,7 @@ This is the most critical aspect. Each concept must be **one single, specific id
 
 - Each lesson groups related concepts under a thematic title
 - Include **as many concepts as the theme naturally requires** — some themes need 4, others need 8. Don't force every lesson to the same size
-- If a group would exceed 8 concepts, split it into two lessons with more specific themes
+- **NEVER exceed 8 concepts per lesson** — if a group has more than 8, split it into two lessons with more specific themes. This is a hard limit
 - If a group would have fewer than 3 concepts, merge it with a related group
 - Lessons should follow a logical progression from foundational to advanced
 - Don't add "applications", "integrated practice", or "putting it all together" lessons — every lesson should teach new concepts, not revisit previous ones

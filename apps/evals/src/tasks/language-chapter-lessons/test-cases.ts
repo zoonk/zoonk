@@ -5,36 +5,46 @@ const SHARED_EXPECTATIONS = `
 
   ## Structure
 
-  Output is organized into LESSON UNITS (thematic groups) containing CONCEPTS (individual language items).
-  - Each concept should be a single, specific language item — one word/phrase, one grammar rule, one conjugation form, one pronunciation point, one dialogue pattern
+  Output is organized into LESSON UNITS (thematic groups) containing CONCEPTS (individual teachable items).
+  - Each concept should be a single teachable unit appropriate to the chapter's level and topic
   - Lesson sizes should be 3-8 concepts and should vary naturally across lessons
   - Total concept coverage should be exhaustive for the chapter's scope
 
   ## Evaluating concept quality
 
-  Ask: "Is this ONE teachable language item, or is it secretly a bundle of separate items?"
-  - A concept is too broad only if it genuinely bundles multiple DISTINCT language items that a student would need separate practice for
-  - Conjunctions (AND/OR/VS and equivalents in any language) signal potential broadness, but only penalize when they join genuinely separate topics — not when the comparison itself IS the concept (e.g., "Ser vs Estar: Listo" where the meaning change IS the single concept)
-  - Concept titles should be concrete and self-explanatory
+  Ask: "Is this ONE teachable thing, or is it secretly a bundle of separate things?"
+  - A concept is too broad only if it genuinely bundles multiple DISTINCT items that a student would need separate practice for
+  - Use domain expertise: conventions that look like rule violations to a generalist may be standard practice in language teaching. Grammar notation, comparison pairs, and target-language labels are all normal in language curricula
+  - Comparisons and contrasts are natural in language learning — a synonym pair or a form distinction IS a single concept when the contrast itself is what the learner needs to master
+  - Watch for false granularity: the same form repeated across different subjects or contexts is NOT multiple concepts
+  - Watch for factual accuracy: grammar rules, conjugation forms, and usage patterns must be linguistically correct for the target language
+  - Every concept must be anchored in specific target-language items the learner will produce or recognize. Abstract category labels are acceptable as lesson titles but not as individual concepts
 
-  ## Content restrictions
+  ## Evaluating scope
 
-  ALL concepts must be about pure language acquisition: vocabulary, grammar, pronunciation, sentences, conjugations, dialogues. No culture, career, exam prep, or literature content.
+  The chapter description is the SOURCE OF TRUTH.
+  - Concepts must serve language acquisition — no culture, career, exam prep, or literature content
+  - The curriculum should stay at the chapter's level — an advanced chapter should not include basic content that belongs in earlier chapters
+  - In a language course, content naturally mixes the user's language and the target language — this is expected, not a language violation
 
   ## Evaluating lesson quality
 
-  - Lesson descriptions should be concise and go straight to the content — no filler words like "introduces", "presents", "teaches", "explores"
+  - Lesson descriptions should be concise — no filler words like "introduces", "presents", "teaches"
   - Logical progression from foundational to advanced
   - No summary, review, or assessment lessons
-  - Should follow the specified language
+  - No duplicate concepts across lessons
 
   ## Coverage
 
-  Completeness is the key metric. Are all language items in the chapter description covered with sufficient granularity?
+  Completeness is the key metric. Are all topics in the chapter description covered with sufficient granularity?
 
-  ## Proportionality
+  ## How to score
 
-  Weight your scoring proportionally. A curriculum with strong coverage and structure but a few overly-broad concept titles is fundamentally different from one that misses entire topics. Minor title-phrasing issues should not dominate the score.
+  Start by asking: "Would this curriculum actually teach the chapter effectively?" Then look for issues.
+
+  A curriculum that would genuinely teach the chapter well but has some title-phrasing imperfections deserves a high score. A curriculum that looks structurally clean but wouldn't actually help a learner (e.g., abstract categories instead of practicable items, factual errors in grammar) deserves a low score.
+
+  When something looks like a rule violation but makes pedagogical sense in context, favor the pedagogical judgment. The rules exist to produce good curricula — if the curriculum is good despite a technical rule bend, that matters more than the rule.
 `;
 
 // Chapter titles and descriptions sourced from language-course-chapters
@@ -43,8 +53,6 @@ const SHARED_EXPECTATIONS = `
 export const TEST_CASES = [
   {
     expectations: `
-      - MUST be in US English
-
       ${SHARED_EXPECTATIONS}
     `,
     id: "en-spanish-present-tense",
@@ -58,8 +66,6 @@ export const TEST_CASES = [
   },
   {
     expectations: `
-      - MUST be in Latin American Spanish
-
       ${SHARED_EXPECTATIONS}
     `,
     id: "es-english-hypothetical-conditionals",
@@ -73,8 +79,6 @@ export const TEST_CASES = [
   },
   {
     expectations: `
-      - MUST be in Brazilian Portuguese
-
       ${SHARED_EXPECTATIONS}
     `,
     id: "pt-japanese-appearance-inference",
@@ -88,8 +92,6 @@ export const TEST_CASES = [
   },
   {
     expectations: `
-      - MUST be in US English
-
       ${SHARED_EXPECTATIONS}
     `,
     id: "en-french-semantic-nuance",
