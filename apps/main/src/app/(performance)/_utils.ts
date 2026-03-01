@@ -1,4 +1,4 @@
-import { type HistoryPeriod } from "@/data/progress/_utils";
+import { type HistoryPeriod } from "@zoonk/utils/date-ranges";
 
 export function formatPeriodLabel(
   periodStart: Date,

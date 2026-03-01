@@ -21,6 +21,7 @@
     "./string": "./src/string.ts",
     "./subscription": "./src/subscription.ts",
     "./currency": "./src/currency.ts",
+    "./date-ranges": "./src/date-ranges.ts",
     "./url": "./src/url.ts"
   },
   "scripts": {

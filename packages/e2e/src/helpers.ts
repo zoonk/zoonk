@@ -8,6 +8,7 @@ import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { dailyProgressFixtureMany, userProgressFixture } from "@zoonk/testing/fixtures/progress";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
 import { AI_ORG_SLUG } from "@zoonk/utils/constants";
+import { calculateDateRanges } from "@zoonk/utils/date-ranges";
 import { getString } from "@zoonk/utils/json";
 import { LOCALE_COOKIE } from "@zoonk/utils/locale";
 
@@ -170,8 +171,8 @@ export async function openDialog(trigger: Locator, dialog: Locator) {
 }
 
 // Daily progress test fixture constants
-const PROGRESS_DAYS = 60;
-const PROGRESS_LAST_INDEX = 59;
+const DAYS_PER_GROUP = 5;
+const MID_MONTH_DAY = 15;
 const CURRENT_MONTH_CORRECT = 17;
 const PREVIOUS_MONTH_CORRECT = 13;
 const CURRENT_MONTH_ENERGY = 75;
@@ -179,22 +180,49 @@ const PREVIOUS_MONTH_ENERGY = 65;
 const CURRENT_MONTH_INCORRECT = 3;
 const PREVIOUS_MONTH_INCORRECT = 7;
 
-function buildDailyProgressInputs(today: Date, orgId: number, userId: number) {
-  return Array.from({ length: PROGRESS_DAYS }, (_, reverseIdx) => {
-    const idx = PROGRESS_LAST_INDEX - reverseIdx;
-    const date = new Date(today.getTime() - idx * 24 * 60 * 60 * 1000);
-    const isCurrentMonth = idx < 30;
+const ALL_PERIODS = ["month", "6months", "year"] as const;
+
+function buildGroupDates(today: Date, range: { start: Date; end: Date }, isCurrent: boolean) {
+  const baseDate = isCurrent
+    ? today
+    : new Date(range.start.getFullYear(), range.start.getMonth(), MID_MONTH_DAY);
+
+  return Array.from({ length: DAYS_PER_GROUP }, (_, i) => {
+    const date = new Date(baseDate);
+    date.setDate(baseDate.getDate() - i);
+    date.setHours(0, 0, 0, 0);
+
+    if (date < range.start || date > range.end) {
+      return null;
+    }
 
     return {
       brainPowerEarned: 250,
-      correctAnswers: isCurrentMonth ? CURRENT_MONTH_CORRECT : PREVIOUS_MONTH_CORRECT,
+      correctAnswers: isCurrent ? CURRENT_MONTH_CORRECT : PREVIOUS_MONTH_CORRECT,
       date,
-      energyAtEnd: isCurrentMonth ? CURRENT_MONTH_ENERGY : PREVIOUS_MONTH_ENERGY,
-      incorrectAnswers: isCurrentMonth ? CURRENT_MONTH_INCORRECT : PREVIOUS_MONTH_INCORRECT,
-      organizationId: orgId,
-      userId,
+      energyAtEnd: isCurrent ? CURRENT_MONTH_ENERGY : PREVIOUS_MONTH_ENERGY,
+      incorrectAnswers: isCurrent ? CURRENT_MONTH_INCORRECT : PREVIOUS_MONTH_INCORRECT,
     };
+  }).filter((entry): entry is NonNullable<typeof entry> => entry !== null);
+}
+
+function buildDailyProgressInputs(today: Date, orgId: number, userId: number) {
+  const dateEntries = ALL_PERIODS.flatMap((period) => {
+    const { current, previous } = calculateDateRanges(period, 0);
+    return [...buildGroupDates(today, current, true), ...buildGroupDates(today, previous, false)];
   });
+
+  const seen = new Set<string>();
+  return dateEntries
+    .filter(({ date }) => {
+      const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+      if (seen.has(key)) {
+        return false;
+      }
+      seen.add(key);
+      return true;
+    })
+    .map((entry) => ({ ...entry, organizationId: orgId, userId }));
 }
 
 async function createStepAttempts(

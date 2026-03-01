@@ -1,5 +1,5 @@
-import { type HistoryPeriod } from "@/data/progress/_utils";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
+import { type HistoryPeriod } from "@zoonk/utils/date-ranges";
 import { getExtracted, getLocale } from "next-intl/server";
 import { MetricComparison } from "../_components/metric-comparison";
 import { formatPeriodLabel } from "../_utils";

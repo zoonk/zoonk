@@ -2,9 +2,9 @@ import "server-only";
 import { getSession } from "@zoonk/core/users/session/get";
 import { prisma } from "@zoonk/db";
 import { getPeakTime as getPeakTimeQuery } from "@zoonk/db/peak-time";
+import { type ScoredRow, findBestByScore, getDefaultStartDate } from "@zoonk/utils/date-ranges";
 import { safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
-import { type ScoredRow, findBestByScore, getDefaultStartDate } from "./_utils";
 
 type BestTimeData = {
   score: number;
