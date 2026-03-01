@@ -1,6 +1,6 @@
+import { prismaAdapter } from "@better-auth/prisma-adapter";
 import { prisma } from "@zoonk/db";
 import { getBaseUrl, getDevTrustedOrigins, getVercelTrustedOrigins } from "@zoonk/utils/url";
-import { prismaAdapter } from "better-auth/adapters/prisma";
 import { nextCookies } from "better-auth/next-js";
 import {
   admin as adminPlugin,

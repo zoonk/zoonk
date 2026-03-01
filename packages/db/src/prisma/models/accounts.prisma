@@ -154,6 +154,8 @@ model Subscription {
   canceledAt           DateTime? @map("canceled_at")
   endedAt              DateTime? @map("ended_at")
   seats                Int?
+  billingInterval      String?   @map("billing_interval")
+  stripeScheduleId     String?   @map("stripe_schedule_id")
 
   @@map("subscriptions")
 }
