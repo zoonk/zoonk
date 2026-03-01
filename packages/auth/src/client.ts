@@ -1,7 +1,6 @@
 import { stripeClient } from "@better-auth/stripe/client";
 import {
   adminClient,
-  apiKeyClient,
   emailOTPClient,
   inferOrgAdditionalFields,
   oneTimeTokenClient,
@@ -27,7 +26,6 @@ export const authClient = createAuthClient({
   basePath: BETTER_AUTH_BASE_PATH,
   plugins: [
     adminClient(),
-    apiKeyClient(),
     emailOTPClient(),
     oneTimeTokenClient(),
     organizationClient({

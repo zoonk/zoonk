@@ -1,6 +1,7 @@
+import { prismaAdapter } from "@better-auth/prisma-adapter";
 import { prisma } from "@zoonk/db";
-import { getBaseUrl, getDevTrustedOrigins, getVercelTrustedOrigins } from "@zoonk/utils/url";
-import { prismaAdapter } from "better-auth/adapters/prisma";
+import { isLocalhostSupported } from "@zoonk/utils/environment";
+import { getAllowedHosts } from "@zoonk/utils/origin";
 import { nextCookies } from "better-auth/next-js";
 import {
   admin as adminPlugin,
@@ -14,7 +15,6 @@ import {
 } from "better-auth/plugins";
 import { type BetterAuthOptions } from "better-auth/types";
 import { BETTER_AUTH_BASE_PATH } from "./constants";
-import { getCrossSubDomainCookies } from "./env";
 import { ac, admin, member, owner } from "./permissions";
 import { sendVerificationOTP } from "./plugins/otp";
 import { trustedOriginPlugin } from "./plugins/trusted-origin";
@@ -40,12 +40,15 @@ export const baseAuthConfig: Omit<BetterAuthOptions, "rateLimit"> = {
     accountLinking: { enabled: true },
   },
   advanced: {
-    crossSubDomainCookies: getCrossSubDomainCookies(),
+    crossSubDomainCookies: { enabled: true },
     database: { generateId: "serial" },
   },
   appName: "Zoonk",
   basePath: BETTER_AUTH_BASE_PATH,
-  baseURL: getBaseUrl(),
+  baseURL: {
+    allowedHosts: getAllowedHosts(),
+    protocol: isLocalhostSupported() ? "http" : "https",
+  },
   database: prismaAdapter(prisma, { provider: "postgresql" }),
   experimental: {
     joins: true,
@@ -57,21 +60,7 @@ export const baseAuthConfig: Omit<BetterAuthOptions, "rateLimit"> = {
     },
     expiresIn: 60 * 60 * 24 * SESSION_EXPIRES_IN_DAYS,
   },
-  trustedOrigins: [
-    "https://appleid.apple.com",
-    "https://zoonk.com",
-    "https://*.zoonk.com",
-    "https://zoonk.dev",
-    "https://*.zoonk.dev",
-    "https://zoonk.app",
-    "https://*.zoonk.app",
-    "https://zoonk.school",
-    "https://*.zoonk.school",
-    "https://zoonk.team",
-    "https://*.zoonk.team",
-    ...getDevTrustedOrigins(),
-    ...getVercelTrustedOrigins(),
-  ],
+  trustedOrigins: ["https://appleid.apple.com"],
 };
 
 export const baseAuthPlugins = [

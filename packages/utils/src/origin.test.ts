@@ -1,59 +1,89 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { getBaseUrl, isCorsAllowedOrigin } from "./url";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { getAllowedHosts, getBaseUrl, isCorsAllowedOrigin } from "./origin";
 
 describe(getBaseUrl, () => {
-  const originalDomain = process.env.NEXT_PUBLIC_APP_DOMAIN;
-  const originalVercelEnv = process.env.VERCEL_ENV;
-  const originalVercelUrl = process.env.VERCEL_URL;
-
   afterEach(() => {
-    process.env.NEXT_PUBLIC_APP_DOMAIN = originalDomain;
-    process.env.VERCEL_ENV = originalVercelEnv;
-    process.env.VERCEL_URL = originalVercelUrl;
+    vi.unstubAllEnvs();
   });
 
   it("returns https URL when NEXT_PUBLIC_APP_DOMAIN is set", () => {
-    process.env.NEXT_PUBLIC_APP_DOMAIN = "api.zoonk.com";
-    delete process.env.VERCEL_ENV;
-    delete process.env.VERCEL_URL;
-
+    vi.stubEnv("NEXT_PUBLIC_APP_DOMAIN", "api.zoonk.com");
     expect(getBaseUrl()).toBe("https://api.zoonk.com");
   });
 
   it("returns http URL for localhost domains", () => {
-    process.env.NEXT_PUBLIC_APP_DOMAIN = "localhost:4000";
-    delete process.env.VERCEL_ENV;
-    delete process.env.VERCEL_URL;
-
+    vi.stubEnv("NEXT_PUBLIC_APP_DOMAIN", "localhost:4000");
     expect(getBaseUrl()).toBe("http://localhost:4000");
   });
 
   it("prioritizes NEXT_PUBLIC_APP_DOMAIN over VERCEL_URL", () => {
-    process.env.NEXT_PUBLIC_APP_DOMAIN = "api.zoonk.dev";
-    process.env.VERCEL_ENV = "preview";
-    process.env.VERCEL_URL = "zoonk-abc123.vercel.app";
-
+    vi.stubEnv("NEXT_PUBLIC_APP_DOMAIN", "api.zoonk.dev");
+    vi.stubEnv("VERCEL_ENV", "preview");
+    vi.stubEnv("VERCEL_URL", "zoonk-abc123.vercel.app");
     expect(getBaseUrl()).toBe("https://api.zoonk.dev");
   });
 
   it("falls back to VERCEL_URL in preview when NEXT_PUBLIC_APP_DOMAIN is not set", () => {
-    delete process.env.NEXT_PUBLIC_APP_DOMAIN;
-    process.env.VERCEL_ENV = "preview";
-    process.env.VERCEL_URL = "zoonk-abc123.vercel.app";
-
+    vi.stubEnv("NEXT_PUBLIC_APP_DOMAIN", "");
+    vi.stubEnv("VERCEL_ENV", "preview");
+    vi.stubEnv("VERCEL_URL", "zoonk-abc123.vercel.app");
     expect(getBaseUrl()).toBe("https://zoonk-abc123.vercel.app");
   });
 
   it("throws when neither NEXT_PUBLIC_APP_DOMAIN nor VERCEL_URL is available", () => {
-    delete process.env.NEXT_PUBLIC_APP_DOMAIN;
-    delete process.env.VERCEL_ENV;
-    delete process.env.VERCEL_URL;
-
+    vi.stubEnv("NEXT_PUBLIC_APP_DOMAIN", "");
+    vi.stubEnv("VERCEL_ENV", "");
+    vi.stubEnv("VERCEL_URL", "");
     expect(() => getBaseUrl()).toThrow("NEXT_PUBLIC_APP_DOMAIN environment variable is not set");
   });
 });
 
+describe(getAllowedHosts, () => {
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  it("always includes all zoonk hosts", () => {
+    const hosts = getAllowedHosts();
+    expect(hosts).toContain("zoonk.com");
+    expect(hosts).toContain("*.zoonk.com");
+    expect(hosts).toContain("zoonk.dev");
+    expect(hosts).toContain("*.zoonk.dev");
+  });
+
+  it("includes localhost:* in non-production", () => {
+    vi.stubEnv("NODE_ENV", "development");
+    expect(getAllowedHosts()).toContain("localhost:*");
+  });
+
+  it("includes localhost:* in production with E2E_TESTING=true", () => {
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("E2E_TESTING", "true");
+    expect(getAllowedHosts()).toContain("localhost:*");
+  });
+
+  it("excludes localhost:* in production (non-e2e)", () => {
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("E2E_TESTING", "false");
+    expect(getAllowedHosts()).not.toContain("localhost:*");
+  });
+
+  it("includes *-zoonk.vercel.app when not Vercel production", () => {
+    vi.stubEnv("VERCEL_ENV", "preview");
+    expect(getAllowedHosts()).toContain("*-zoonk.vercel.app");
+  });
+
+  it("excludes *-zoonk.vercel.app in Vercel production", () => {
+    vi.stubEnv("VERCEL_ENV", "production");
+    expect(getAllowedHosts()).not.toContain("*-zoonk.vercel.app");
+  });
+});
+
 describe(isCorsAllowedOrigin, () => {
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
   describe("zoonk domains", () => {
     it("allows https://zoonk.com", () => {
       expect(isCorsAllowedOrigin("https://zoonk.com")).toBeTruthy();
@@ -65,19 +95,9 @@ describe(isCorsAllowedOrigin, () => {
       expect(isCorsAllowedOrigin("https://app.zoonk.com")).toBeTruthy();
     });
 
-    it("allows zoonk.app and subdomains", () => {
-      expect(isCorsAllowedOrigin("https://zoonk.app")).toBeTruthy();
-      expect(isCorsAllowedOrigin("https://api.zoonk.app")).toBeTruthy();
-    });
-
-    it("allows zoonk.school and subdomains", () => {
-      expect(isCorsAllowedOrigin("https://zoonk.school")).toBeTruthy();
-      expect(isCorsAllowedOrigin("https://learn.zoonk.school")).toBeTruthy();
-    });
-
-    it("allows zoonk.team and subdomains", () => {
-      expect(isCorsAllowedOrigin("https://zoonk.team")).toBeTruthy();
-      expect(isCorsAllowedOrigin("https://dev.zoonk.team")).toBeTruthy();
+    it("allows zoonk.dev and subdomains", () => {
+      expect(isCorsAllowedOrigin("https://zoonk.dev")).toBeTruthy();
+      expect(isCorsAllowedOrigin("https://api.zoonk.dev")).toBeTruthy();
     });
 
     it("rejects non-zoonk domains", () => {
@@ -114,35 +134,17 @@ describe(isCorsAllowedOrigin, () => {
       expect(isCorsAllowedOrigin("http://localhost:3000/path")).toBeFalsy();
       expect(isCorsAllowedOrigin("http://localhost:3000@evil.com")).toBeFalsy();
     });
-  });
 
-  describe("localhost in production", () => {
-    const originalNodeEnv = process.env.NODE_ENV;
-    const originalE2E = process.env.E2E_TESTING;
-
-    beforeEach(() => {
-      vi.resetModules();
+    it("rejects localhost in production (non-e2e)", () => {
+      vi.stubEnv("NODE_ENV", "production");
+      vi.stubEnv("E2E_TESTING", "false");
+      expect(isCorsAllowedOrigin("http://localhost:3000")).toBeFalsy();
     });
 
-    afterEach(() => {
-      process.env.NODE_ENV = originalNodeEnv;
-      process.env.E2E_TESTING = originalE2E;
-    });
-
-    it("rejects localhost in production (non-e2e)", async () => {
-      process.env.NODE_ENV = "production";
-      process.env.E2E_TESTING = "false";
-
-      const { isCorsAllowedOrigin: prodFn } = await import("./url");
-      expect(prodFn("http://localhost:3000")).toBeFalsy();
-    });
-
-    it("allows localhost in production when E2E_TESTING is true", async () => {
-      process.env.NODE_ENV = "production";
-      process.env.E2E_TESTING = "true";
-
-      const { isCorsAllowedOrigin: e2eFn } = await import("./url");
-      expect(e2eFn("http://localhost:3000")).toBeTruthy();
+    it("allows localhost in production when E2E_TESTING is true", () => {
+      vi.stubEnv("NODE_ENV", "production");
+      vi.stubEnv("E2E_TESTING", "true");
+      expect(isCorsAllowedOrigin("http://localhost:3000")).toBeTruthy();
     });
   });
 
@@ -160,24 +162,10 @@ describe(isCorsAllowedOrigin, () => {
     it("rejects http vercel preview deployments", () => {
       expect(isCorsAllowedOrigin("http://my-branch-zoonk.vercel.app")).toBeFalsy();
     });
-  });
 
-  describe("vercel previews in production", () => {
-    const originalVercelEnv = process.env.VERCEL_ENV;
-
-    beforeEach(() => {
-      vi.resetModules();
-    });
-
-    afterEach(() => {
-      process.env.VERCEL_ENV = originalVercelEnv;
-    });
-
-    it("rejects vercel preview deployments in production", async () => {
-      process.env.VERCEL_ENV = "production";
-
-      const { isCorsAllowedOrigin: prodFn } = await import("./url");
-      expect(prodFn("https://my-branch-zoonk.vercel.app")).toBeFalsy();
+    it("rejects vercel preview deployments in production", () => {
+      vi.stubEnv("VERCEL_ENV", "production");
+      expect(isCorsAllowedOrigin("https://my-branch-zoonk.vercel.app")).toBeFalsy();
     });
   });
 

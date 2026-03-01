@@ -1,4 +1,4 @@
-import { isCorsAllowedOrigin } from "@zoonk/utils/url";
+import { isCorsAllowedOrigin } from "@zoonk/utils/origin";
 import { type NextRequest, NextResponse } from "next/server";
 
 const corsHeaders = {
