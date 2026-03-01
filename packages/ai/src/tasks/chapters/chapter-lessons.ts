@@ -13,6 +13,7 @@ const DEFAULT_REASONING_EFFORT: ReasoningEffort = "high";
 const schema = z.object({
   lessons: z.array(
     z.object({
+      concepts: z.array(z.string()),
       description: z.string(),
       title: z.string(),
     }),
