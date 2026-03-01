@@ -1,34 +1,45 @@
 const SHARED_EXPECTATIONS = `
-  - Each lesson should cover a SINGLE, SPECIFIC concept that can be explained within 10 short tweets
-  - Break down topics into the smallest, most manageable units possible, so that each lesson can be learned in 2-3 minutes
-  - If a topic is too broad, split it into multiple lessons
-  - Each lesson should be extremely focused on a SINGLE concept
-  - If a lesson is too broad, split it into multiple lessons
-  - Each lesson must cover a SINGLE concept. Using "AND", "OR", "VS" (or equivalents in other languages like "e", "ou", "y", "o") in a title is a signal it MAY be too broad — but it is acceptable when the comparison or pairing IS the concept itself (e.g., "DEPT-90 y DEPT-135" where distinguishing two NMR techniques is the lesson, or "IPv4 vs. IPv6 Format" where the format contrast is one concept). Only penalize when AND/OR/VS joins genuinely separate concepts that deserve their own lessons (e.g., "Strings and Lists" where each is a full topic)
-  - Lesson titles should be short and specific to the exact concept covered
-  - Build a logical progression from basic to advanced concepts
-  - Ensure lessons build on knowledge from previous lessons
-  - Focus lessons for this specific chapter, not the entire course
-  - Don't include summary or review lessons. For example, do NOT create a lesson title "Summary of Key Concepts" or "Review of Chapter"
-  - Don't include assessment or quiz lessons
-  - Don't include final project or capstone lessons
-  - Should follow the language specified by language parameter
-  - Should follow title and description guidelines: no fluff, be concise, straight to the point
-  - Descriptions should be concise and straight to the point, no fluff/filler words (avoid "learn", "understand", "explore", "introduction to", etc.)
-  - You don't need to evaluate the output format here, just focus on the lesson content quality
-  - Include an extensive list of lessons to fully cover the chapter's scope. The key metric is completeness: are all concepts in the chapter description adequately covered with sufficient granularity? Broad technical chapters (e.g., web fundamentals, Python basics) typically need 80-120+ lessons. Narrower or more specialized chapters (e.g., legal theory of evidence, NMR spectroscopy) may need fewer if the domain is inherently smaller — do not penalize for fewer lessons if the chapter's scope is fully covered
+  # How to evaluate
 
-  Neighboring chapter scope judgment:
-  - The chapter description is the SOURCE OF TRUTH for what is in-scope. Neighboring chapter constraints are guardrails against scope creep, NOT vetoes over topics listed in the chapter description
-  - If a topic is explicitly mentioned in the chapter description, it is in-scope even if it touches on a neighboring chapter's domain (e.g., "Claisen" listed in a carbonyls chapter is in-scope even though esters have their own chapter)
-  - The key test: does a lesson teach a topic AS ITS OWN SUBJECT (violation) or through the LENS OF THIS CHAPTER (acceptable)? Documenting empirical patterns/observations of X within this chapter's context is NOT the same as teaching X's theory (e.g., documenting consumption's cyclical behavior is a business cycle fact, not consumption theory)
-  - When a lesson's title mentions a neighboring topic, read the description to determine focus. A lesson titled "Cortiços as disease ecologies" focused on disease transmission is health content, not urbanization content
+  You are evaluating a CURRICULUM, not a glossary. Think like a curriculum designer reviewing a colleague's work — use domain expertise and professional judgment, not mechanical rule-checking.
 
-  Things to check:
-  - Is each lesson too broad? If so, it should be broken down further
-  - Can each concept be explained in 10 short tweets or less? If not, it should be broken down
-  - Does each lesson focus on a single specific concept? If not, it should be split
-  - Does it have lessons that don't belong in this chapter? If so, they should be removed
+  ## Structure
+
+  Output is organized into LESSON UNITS (thematic groups) containing CONCEPTS (individual teachable items).
+  - Each concept should be a single, specific idea — something a domain expert would consider one teachable unit
+  - Lesson sizes should be 3-8 concepts and should vary naturally across lessons
+  - Total concept coverage should be exhaustive for the chapter's scope
+
+  ## Evaluating concept quality
+
+  Ask: "Is this ONE teachable thing, or is it secretly a bundle of separate things?"
+  - A concept is too broad only if it genuinely bundles multiple DISTINCT teachable items that a student would need separate lessons for
+  - Use domain expertise: terms that sound broad to a generalist may be a single well-defined concept in the field
+  - Conjunctions (AND/OR/VS and equivalents in any language) signal potential broadness, but only penalize when they join genuinely separate topics — not when the comparison itself IS the concept, or when "and" connects an entity to its work
+  - Concept titles should be concrete and self-explanatory, not interpretive thesis statements or vague abstractions
+
+  ## Evaluating scope
+
+  The chapter description is the SOURCE OF TRUTH. Neighboring chapters are guardrails against scope creep, not vetoes.
+
+  The key principle: **judge by framing, not by keywords.** A concept belongs in THIS chapter if its primary teaching purpose serves THIS chapter's learning goals — even if the concept mentions words that appear in a neighboring chapter's title. Ask: "What is this concept primarily TEACHING?" not "Does this concept MENTION a neighboring topic?"
+
+  When in doubt, favor the chapter description. If a concept is framed through this chapter's lens and serves its learning goals, it is in-scope.
+
+  ## Evaluating lesson quality
+
+  - Lesson descriptions should be concise and go straight to the content — no filler words like "introduces", "presents", "teaches", "explores"
+  - Logical progression from foundational to advanced
+  - No summary, review, or assessment lessons
+  - Should follow the specified language (proper nouns and established technical terms may remain in their original language)
+
+  ## Coverage
+
+  Completeness is the key metric. Are all topics in the chapter description covered with sufficient granularity? Don't penalize for fewer concepts if the chapter's scope is inherently narrow.
+
+  ## Proportionality
+
+  Weight your scoring proportionally. A curriculum that covers the chapter exhaustively with good structure but has a few overly-broad concept titles is fundamentally different from one that misses entire topics or systematically violates scope. Minor title-phrasing issues should not dominate the score when the overall curriculum quality is strong.
 `;
 
 export const TEST_CASES = [
@@ -36,12 +47,6 @@ export const TEST_CASES = [
   {
     expectations: `
       - MUST be in US English
-      - Should break down each protocol and networking concept individually (IP, TCP, UDP, NAT as separate lessons)
-      - Should cover different types of failure modes as distinct lessons
-      - Should separate latency concepts from bandwidth concepts
-      - Should NOT create dedicated lessons teaching DNS records, resolvers, or domain configuration (neighboring chapter "DNS and domains" covers that) — brief contextual references are fine
-      - Should NOT create dedicated lessons teaching HTTP methods, status codes, or headers (neighboring chapter "HTTP" covers that) — brief contextual references are fine
-      - Should NOT create dedicated lessons teaching TLS handshakes, certificates, or HTTPS configuration (neighboring chapter "HTTPS and TLS" covers that) — brief contextual references are fine
 
       ${SHARED_EXPECTATIONS}
     `,
@@ -79,14 +84,6 @@ export const TEST_CASES = [
   {
     expectations: `
       - MUST be in Brazilian Portuguese
-      - Should break down each numeric type into separate lessons (int, float, complex, bool, None)
-      - Should cover precision and rounding as individual concepts
-      - Should separate type conversions from arithmetic operations
-      - Operations and methods on numeric types (e.g., bitwise ops on int, cmath functions for complex, Decimal/Fraction methods) ARE within scope — these are behaviors of the numeric types themselves. Only penalize if a lesson's primary focus is a data structure or I/O concept that merely uses numbers as an example
-      - Should NOT create dedicated lessons teaching installation, virtual environments, or IDE setup (neighboring chapter "Ambiente de desenvolvimento" covers that) — brief contextual references are fine
-      - Should NOT create dedicated lessons teaching indentation rules, naming conventions, or docstrings (neighboring chapter "Sintaxe e convenções" covers that) — brief contextual references are fine
-      - Should NOT create dedicated lessons teaching strings, bytes, or Unicode encoding (neighboring chapter "Texto e codificação" covers that) — brief contextual references are fine
-      - Should NOT create dedicated lessons teaching lists, tuples, dictionaries, or sets (neighboring chapter "Estruturas de dados fundamentais" covers that) — brief contextual references are fine
 
       ${SHARED_EXPECTATIONS}
     `,
@@ -135,13 +132,6 @@ export const TEST_CASES = [
   {
     expectations: `
       - MUST be in Latin American Spanish
-      - Should separate nucleophilic addition to carbonyls from enolate chemistry
-      - Should break down each named reaction (Aldol, Claisen, Michael) as individual lessons
-      - Should cover selectivity control concepts as distinct lessons
-      - Should NOT create dedicated lessons teaching SN1/SN2 or elimination reactions (neighboring chapter "Sustitución y eliminación" covers that) — brief contextual references are fine
-      - Should NOT create dedicated lessons teaching additions to alkenes or alkynes (neighboring chapter "Adiciones a alquenos y alquinos" covers that) — brief contextual references are fine
-      - Should NOT create dedicated lessons teaching aromatic chemistry or electrophilic aromatic substitution (neighboring chapter "Química aromática" covers that) — brief contextual references are fine
-      - Should NOT create dedicated lessons teaching general carboxylic acid derivative reactivity or acyl substitution chemistry (neighboring chapter "Ácidos carboxílicos y derivados" covers that) — brief contextual references are fine. IMPORTANT: The Claisen condensation and Dieckmann cyclization ARE explicitly within this chapter's scope (listed in the chapter description as enolate reactions). Do NOT penalize lessons on Claisen/Dieckmann mechanism, enolate-of-ester formation, or related selectivity — these are enolate chemistry, not acyl substitution
 
       ${SHARED_EXPECTATIONS}
     `,
@@ -189,13 +179,6 @@ export const TEST_CASES = [
   {
     expectations: `
       - MUST be in US English
-      - Should separate stylized facts from theoretical models
-      - Should cover each type of comovement individually
-      - Should distinguish business cycle measurement from theory
-      - Should NOT create dedicated lessons teaching national income accounting or GDP measurement (neighboring chapter "Macroeconomic accounting" covers that) — brief contextual references are fine. IMPORTANT: Business cycle measurement methodology (e.g., cycle dating, leading/lagging indicators, diffusion indices) IS within scope — these are tools for identifying and characterizing business cycles, not general national accounting concepts. Only penalize if a lesson teaches GDP construction, price index methodology, or sectoral balances as its own subject
-      - Should NOT create dedicated lessons teaching consumption-savings models or life-cycle theory (neighboring chapter "Consumption and savings" covers that) — brief contextual references are fine. IMPORTANT: Documenting the empirical cyclical behavior of consumption (e.g., "Consumption Comovement") IS within scope as a business cycle fact; only penalize if the lesson teaches consumption theory itself (permanent income hypothesis, life-cycle model, etc.)
-      - Should NOT create dedicated lessons teaching investment theory or q-models (neighboring chapter "Investment and capital" covers that) — brief contextual references are fine. IMPORTANT: Documenting the empirical cyclical behavior of investment (e.g., "Investment Comovement") IS within scope as a business cycle fact; only penalize if the lesson teaches investment theory itself (q-models, adjustment costs, etc.)
-      - Should NOT create dedicated lessons teaching labor market search models or wage setting (neighboring chapter "Unemployment and labor in macro" covers that) — brief contextual references are fine. IMPORTANT: Documenting the empirical cyclical behavior of unemployment/employment IS within scope as a business cycle fact; only penalize if the lesson teaches labor market theory itself (search and matching, wage bargaining, etc.)
 
       ${SHARED_EXPECTATIONS}
     `,
@@ -243,13 +226,6 @@ export const TEST_CASES = [
   {
     expectations: `
       - MUST be in Brazilian Portuguese
-      - Should break down architectural concepts individually (modularity, coupling, cohesion as separate lessons)
-      - Should cover fitness functions as distinct lessons
-      - Should separate evolutionary architecture theory from practical decision-making
-      - Should NOT create dedicated lessons teaching DevOps pipelines, CI/CD, or infrastructure as code (neighboring chapter "DevOps e entrega contínua" covers that) — brief contextual references are fine
-      - Should NOT create dedicated lessons teaching SLIs, SLOs, or error budgets (neighboring chapter "SRE e confiabilidade em produtos digitais" covers that) — brief contextual references are fine
-      - Should NOT create dedicated lessons teaching technical debt management or strategic refactoring (neighboring chapter "Dívida técnica e sustentabilidade" covers that) — brief contextual references are fine
-      - Should NOT create dedicated lessons teaching test strategies, test pyramids, or automated testing (neighboring chapter "Estratégias modernas de testes" covers that) — brief contextual references are fine
 
       ${SHARED_EXPECTATIONS}
     `,
@@ -297,14 +273,7 @@ export const TEST_CASES = [
   {
     expectations: `
       - MUST be in US English
-      - Should cover each Horcrux-related concept separately
-      - Should distinguish between alchemy, the Philosopher's Stone, and Horcrux concepts
-      - Should break down moral and philosophical implications of soul fragmentation individually
-      - Even though this is pop culture, lessons should still be focused and granular
-      - Should NOT create dedicated lessons teaching Legilimency, Occlumency, or memory manipulation (neighboring chapter "Mind magic and memory" covers that) — brief contextual references are fine
-      - Should NOT create dedicated lessons teaching wand woods, cores, or the Elder Wand (neighboring chapter "Wandlore" covers that) — brief contextual references are fine
-      - Should NOT create dedicated lessons teaching magical healing or St Mungo's (neighboring chapter "Healing and magical medicine" covers that) — brief contextual references are fine
-      - Should NOT create dedicated lessons teaching divination methods or prophecy (neighboring chapter "Divination and prophecy" covers that) — brief contextual references are fine
+      - Even though this is pop culture, concepts should still be focused and granular
 
       ${SHARED_EXPECTATIONS}
     `,
@@ -353,13 +322,6 @@ export const TEST_CASES = [
   {
     expectations: `
       - MUST be in Brazilian Portuguese
-      - Should break down each legal tech concept individually (templates, document review, version control)
-      - Should cover automation risks and governance as distinct lessons
-      - Should separate document management from quality standardization
-      - Should NOT create dedicated lessons teaching litigation strategy or dispute portfolio management (neighboring chapter "Estratégia contenciosa e gestão de disputas" covers that) — brief contextual references are fine
-      - Should NOT create dedicated lessons teaching legal operations management, SLAs, or KPIs (neighboring chapter "Legal operations e gestão jurídica" covers that) — brief contextual references are fine
-      - Should NOT create dedicated lessons teaching contract lifecycle management or CLM (neighboring chapter "Operações contratuais" covers that) — brief contextual references are fine
-      - Should NOT create dedicated lessons teaching negotiation techniques, BATNA, or ZOPA (neighboring chapter "Negociação estratégica" covers that) — brief contextual references are fine
 
       ${SHARED_EXPECTATIONS}
     `,
@@ -406,14 +368,7 @@ export const TEST_CASES = [
   },
   {
     expectations: `
-      - MUST be in US English
-      - Should break down each historical period's health challenges into separate lessons
-      - Should cover epidemics, sanitation campaigns, and health systems individually
-      - Should separate public health policy from biomedical politics
-      - Should NOT create dedicated lessons teaching urbanization, housing policy, or favela politics/governance (neighboring chapter "Cities and urban inequality" covers that) — brief contextual references are fine. IMPORTANT: Lessons about health outcomes and disease transmission mechanisms IN urban settings (e.g., overcrowding as disease vector, sanitation infrastructure gaps) ARE within scope when the focus is on health/epidemiology. Only penalize lessons primarily about urban form, housing policy, or settlement patterns rather than health mechanisms
-      - Should NOT create dedicated lessons teaching environmental history, deforestation, or the Amazon (neighboring chapter "Environmental history and the Amazon" covers that) — brief contextual references are fine
-      - Should NOT create dedicated lessons teaching military history, coups, or defense policy (neighboring chapter "Military and national security" covers that) — brief contextual references are fine
-      - Should NOT create dedicated lessons teaching historiography, monuments, or public memory (neighboring chapter "Historiography and public memory" covers that) — brief contextual references are fine
+      - MUST be in US English (proper nouns of Brazilian institutions remain in Portuguese)
 
       ${SHARED_EXPECTATIONS}
     `,

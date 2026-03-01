@@ -1,0 +1,131 @@
+{
+  "expectations": "\n      \n  # How to evaluate\n\n  You are evaluating a LANGUAGE CURRICULUM. Think like a language curriculum designer reviewing a colleague's work — use expertise in second language acquisition and professional judgment, not mechanical rule-checking.\n\n  ## Structure\n\n  Output is organized into LESSON UNITS (thematic groups) containing CONCEPTS (individual teachable items).\n  - Each concept should be a single teachable unit appropriate to the chapter's level and topic\n  - Lesson sizes should be 3-8 concepts and should vary naturally across lessons\n  - Total concept coverage should be exhaustive for the chapter's scope\n\n  ## Evaluating concept quality\n\n  Ask: \"Is this ONE teachable thing, or is it secretly a bundle of separate things?\"\n  - A concept is too broad only if it genuinely bundles multiple DISTINCT items that a student would need separate practice for\n  - Use domain expertise: conventions that look like rule violations to a generalist may be standard practice in language teaching. Grammar notation, comparison pairs, and target-language labels are all normal in language curricula\n  - Comparisons and contrasts are natural in language learning — a synonym pair or a form distinction IS a single concept when the contrast itself is what the learner needs to master\n  - Watch for false granularity: the same form repeated across different subjects or contexts is NOT multiple concepts\n  - Watch for factual accuracy: grammar rules, conjugation forms, and usage patterns must be linguistically correct for the target language\n  - Every concept must be anchored in specific target-language items the learner will produce or recognize. Abstract category labels are acceptable as lesson titles but not as individual concepts\n\n  ## Evaluating scope\n\n  The chapter description is the SOURCE OF TRUTH.\n  - Concepts must serve language acquisition — no culture, career, exam prep, or literature content\n  - The curriculum should stay at the chapter's level — an advanced chapter should not include basic content that belongs in earlier chapters\n  - In a language course, content naturally mixes the user's language and the target language — this is expected, not a language violation\n\n  ## Evaluating lesson quality\n\n  - Lesson descriptions should be concise — no filler words like \"introduces\", \"presents\", \"teaches\"\n  - Logical progression from foundational to advanced\n  - No summary, review, or assessment lessons\n  - No duplicate concepts across lessons\n\n  ## Coverage\n\n  Completeness is the key metric. Are all topics in the chapter description covered with sufficient granularity?\n\n  ## How to score\n\n  Start by asking: \"Would this curriculum actually teach the chapter effectively?\" Then look for issues.\n\n  A curriculum that would genuinely teach the chapter well but has some title-phrasing imperfections deserves a high score. A curriculum that looks structurally clean but wouldn't actually help a learner (e.g., abstract categories instead of practicable items, factual errors in grammar) deserves a low score.\n\n  When something looks like a rule violation but makes pedagogical sense in context, favor the pedagogical judgment. The rules exist to produce good curricula — if the curriculum is good despite a technical rule bend, that matters more than the rule.\n\n    ",
+  "judgedAt": "2026-03-01T02:52:15.496Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model B provides the most comprehensive and well-structured curriculum. It covers: subject pronouns (1 lesson), regular verb endings for -ar/-er/-ir (3 lessons), common verbs for each type (3 lessons), all four irregular verbs with both conjugation AND usage lessons (8 lessons), stem-changing verbs (2 lessons), daily routine and general activity verbs (2 lessons), and a sentence-building lesson covering negation, questions, and present-tense usage. The separation of conjugation from usage for ser/estar/tener/ir is pedagogically sound and provides genuine granularity. The stem-changing verbs section goes somewhat beyond the chapter description (which only mentions ser, estar, tener, ir as irregulars), but these are commonly taught alongside present tense and are reasonable given 'everyday action verbs' in the description. The 'Irregular Yo-Form Verbs' lesson also extends beyond the stated scope. The last lesson title is a bit long ('Sentence Building: Negation, Questions & Present-Tense Usage') and bundles somewhat unrelated concepts. Some concept titles like 'Tener Hambre / Sed / Frío / Calor / Sueño' bundle multiple expressions into one concept, which is borderline. 'Ser vs Estar: Key Distinction' is somewhat abstract. The '-ar Verb Stem Identification' concepts are reasonable but slightly abstract. Overall, this is the most thorough curriculum with good pedagogical progression, though it slightly overreaches the chapter scope with stem-changing verbs and yo-form irregulars.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model A is very well-organized and comprehensive within scope. It covers subject pronouns (singular and plural in 2 lessons), regular verb conjugation patterns for all three types (3 lessons with proper granularity per person), all four irregular verbs with full conjugation (4 lessons), usage patterns for ser/estar and tener/ir (2 lessons), and everyday action verbs for each verb type (3 lessons). Total: 14 lessons. The concept granularity is generally good - each conjugation form is its own concept with the ending and example. The usage pattern lessons (Ser & Estar patterns, Tener & Ir patterns) are well-conceived with concrete examples. The everyday verb lessons have 8 concepts each, which is at the maximum but within limits. One issue: the prompt says to use US region / Latin American Spanish, but vosotros/vosotras forms are included throughout (though this is common in Spanish curricula even for Latin American focus). The subject pronoun lessons list nosotras/vosotras as separate concepts from nosotros/vosotros, which is slightly false granularity since they're gender variants of the same pronoun. Missing: no coverage of negation or question formation, which would be useful but isn't explicitly required by the chapter description. Overall, solid and well-scoped.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model D has good structure with 13 lessons covering present tense meanings, subject pronouns (2 lessons), regular verb conjugations (3 lessons), all four irregular verbs (4 lessons), and everyday action verbs (3 lessons). Strong points: includes useful concepts like negation, questions, subject omission, and the a+el=al contraction. The irregular verb lessons nicely combine conjugation with usage in single lessons. However, there's a significant granularity issue: 'Regular -ar endings: -o, -as, -a, -amos, -áis, -an' bundles ALL six endings into one concept, which is too broad per the prompt's rules. The same applies to the other regular verb ending concepts and the irregular verb conjugation concepts (e.g., 'Irregular verb: ser (soy, eres, es, somos, sois, son)'). This directly violates the prompt's granularity requirement - these should be individual concepts per form. The 'Spelling: stem + endings pattern' concepts appear in multiple lessons, which creates a sense of repetition. Some concepts like negation and question formation are scattered across the conjugation lessons rather than grouped thematically, which is an odd organizational choice. The everyday verb lessons use 'Everyday -ar verb: hablar' format which is verbose.",
+          "score": 5.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model C is clean and well-organized with 10 lessons. It covers regular verb conjugation patterns (3 lessons), everyday verbs for each type (3 lessons), and all four irregular verbs (4 lessons). The structure is logical and progression is clear. However, it's notably lacking in coverage: no subject pronouns lesson, no usage patterns for ser/estar/tener/ir (no ser vs estar distinction, no tener expressions, no ir a + infinitive), no negation, no question formation. The concept titles in the conjugation lessons (e.g., 'Yo form: -o') are somewhat ambiguous since -o is the same for all three verb types. The everyday verb concepts are just verb infinitives without translations (e.g., 'Hablar' instead of 'Hablar (to speak)'), which is less helpful. The descriptions are concise and clean. But the lack of usage patterns for the four essential irregulars is a significant gap - knowing conjugation forms without knowing when to use ser vs estar, or tener expressions, leaves the chapter incomplete. Coverage is insufficient for 'fully mastering the chapter's scope.'",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model F has 12 lessons with a clean structure. It covers subject pronouns (2 lessons), regular verb endings (3 lessons with stem identification), all four irregular verbs (4 lessons), and everyday verbs (3 lessons). The structure is logical. However, there are issues: the subject pronoun lessons miss gender variants (nosotras, vosotras, ellas in the plural lesson are missing the feminine forms explicitly - 'Nosotros' without 'Nosotras'). No usage patterns for ser/estar/tener/ir are included - just conjugation forms. This means no ser vs estar distinction, no tener expressions, no ir a + infinitive pattern. The everyday verb lessons only present infinitives without any indication of meaning, which limits their utility. The infinitive stem concepts ('Infinitive stem: hablar → habl-') are useful additions. The lesson titles use parenthetical '(Present)' which is fine. Coverage is incomplete due to missing usage patterns. The lesson descriptions occasionally start with 'How to' which is borderline but acceptable. Overall, structurally sound but missing important usage content.",
+          "score": 5.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model E has only 9 lessons and is the least comprehensive. Issues: missing vosotros forms entirely in the irregular verb lessons (only 5 forms instead of 6 for ser, estar, tener, ir), which is a factual incompleteness. No subject pronouns lesson. No usage patterns for any of the four irregular verbs. The regular verb lessons mix endings with common verbs in the same lesson, which creates an odd pairing (verb endings are grammar; specific verbs are vocabulary). 'Verb Stem' as a standalone concept in the -ar lesson is abstract. The everyday verb lessons ('Action Verbs: Social and Work', 'Action Verbs: Home and Leisure') mix -ar, -er, and -ir verbs together, which isn't wrong but loses the pedagogical connection to the conjugation patterns. Only 2 common verbs per verb type in the conjugation lessons is quite sparse. Missing: negation, questions, ser vs estar, tener expressions, ir a + infinitive. The concept titles for endings repeat across lessons (e.g., 'Yo Ending: -o' appears in all three verb type lessons) which technically counts as duplicates. Coverage is the weakest of all models.",
+          "score": 3.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model A followed every single instruction perfectly. The concept granularity is excellent, correctly avoiding false granularity by grouping pronouns that share the same form (e.g., 'ustedes/ellos/ellas -an'), while breaking down the endings across the different person slots. It stayed completely within the chapter's scope, provided excellent thematic lesson groupings (including highly practical pattern lessons for the irregular verbs), and adhered strictly to all negative constraints regarding forbidden words and lesson sizes. It is an exceptional and highly effective curriculum.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model F also provides a very strong curriculum that adheres well to the formatting and granularity constraints. It successfully breaks down conjugations and groups everyday verbs thematically. However, it misses a few essential elements, such as the feminine plural pronouns ('nosotras', 'vosotras'), and does not cover the usage patterns of the essential irregular verbs as comprehensively as Model A. Still, it is a clean, rule-compliant output.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model E has an acceptable structure but notable weaknesses. It completely misses a foundational lesson on subject pronouns (introducing the pronouns merely as labels within conjugation concepts). It appropriately omits 'vosotros' (fitting Latin American Spanish), but it includes abstract concepts like 'Verb Stem' which lack a concrete target-language anchor. The lesson sizes are well within limits, but the curriculum feels slightly incomplete.",
+          "score": 5.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model C successfully adheres to the granularity constraints for conjugations but artificially forces exactly 6 concepts into every single lesson, ignoring the instruction to let lesson sizes vary naturally. Furthermore, it completely skips subject pronouns—a crucial foundational topic for present tense conjugations. The descriptions are also overly repetitive.",
+          "score": 4.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model B breaks the 'Exhaustive Coverage' rule by failing to stay within the described scope. It includes multiple lessons on stem-changing verbs (boot verbs), irregular yo-form verbs, and sentence building (questions/negation). The prompt strictly instructed to 'not add unrelated forms not mentioned or implied'. Additionally, it includes abstract concepts not anchored in target-language items (e.g., 'Ser for Identity').",
+          "score": 3.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model D severely violates the most critical rule of the prompt: Concept Granularity. It bundles all 6 verb endings into a single concept ('Regular -ar endings: -o, -as, -a, -amos, -áis, -an') and bundles entire irregular verb conjugations into single concepts ('Irregular verb: ser (soy, eres, es, somos, sois, son)'). The prompt explicitly warned that such concepts are too broad and must be split. It also strays out of scope by introducing negation and question formations.",
+          "score": 2.5
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Strong coverage of stated scope: regular present endings (-ar/-er/-ir), essential irregulars (ser/estar/tener/ir), and a sizable set of everyday regular verbs. Concept granularity is mostly good and anchored in concrete forms/patterns (e.g., specific endings with examples; core sentence frames like “Ser + de”). Lesson sizes respect 3–8. Minor issues: includes full subject-pronoun inventory (incl. vosotros) which isn’t required by the description (but still relevant); some lesson descriptions start with “The…”, which is fine, and overall it’s slightly more expansive than necessary, but remains on-topic and highly usable.",
+          "score": 8.9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Good alignment to chapter scope with regular endings, the four required irregulars, and everyday action verbs. Adds a small, relevant set of present-tense functions (habits/general truths/near future) plus negation and question patterns; arguably slightly beyond the description but still tightly connected to “present tense” mastery. Granularity mostly solid, but a few concepts bundle multiple items (e.g., “Regular -ar endings: -o, -as, -a, -amos, -áis, -an” is several distinct endings in one concept; “Irregular verb: ser (soy, eres, es, somos, sois, son)” bundles all forms). Still pedagogically coherent and within lesson-size rules.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Clean structure, accurate forms, lesson sizes within limits, and stays close to the described scope (regular endings, the 4 essential irregulars, everyday verbs). Weaknesses: less exhaustive than A/D (fewer everyday verbs, no concrete high-frequency patterns like “ir a + infinitivo” or “tener + hambre/edad”); includes pronoun lessons not demanded by description (though relevant). Overall effective but a bit sparse for “exhaustive.”",
+          "score": 7.6
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Accurate and well-organized for the core conjugation endings and the four irregulars; includes some everyday verbs. However, it’s not exhaustive relative to the description: no concrete usage patterns for ser/estar/tener/ir (e.g., “ser + de”, “tener + años”, “ir a + infinitivo”), and the everyday verb lists are limited. Otherwise follows lesson sizing and avoids major rule violations.",
+          "score": 7.1
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "High detail and generally accurate, but it substantially violates the scope: adds many additional irregular-yo verbs, stem-changing verbs, reflexives/daily routine expansions, and broader sentence-building topics not implied by the chapter description (which only specifies regular present, essential irregulars, and everyday action verbs). Also includes several concepts that are too abstract/not anchored in specific target-language items (e.g., “Ser for Identity”, “Negation with No”, “Question Word + Verb Structure” without specific forms) and some bundling. Despite richness, it’s not aligned to the prompt’s “exhaustive within scope” requirement.",
+          "score": 6.4
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Not exhaustive and has multiple structural/prompt issues: several lessons exceed the 8-concept maximum (first lesson has 8 but mixes endings + sample verbs; overall concept selection is thin). Many concepts are too abstract/unanchored (e.g., “Verb Stem”), and it omits vosotros forms throughout conjugation sets while including vosotros elsewhere implicitly in the course context—making paradigms incomplete for a present-tense chapter. Also includes a forbidden area (“Action Verbs: Social and Work”) leaning toward professional/work framing, and overall provides weak coverage of the required everyday-verb scope and key patterns.",
+          "score": 4.9
+        }
+      ]
+    }
+  ],
+  "taskId": "language-chapter-lessons",
+  "testCaseId": "en-spanish-present-tense-1"
+}

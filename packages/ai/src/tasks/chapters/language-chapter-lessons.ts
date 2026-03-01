@@ -9,6 +9,7 @@ const DEFAULT_MODEL = process.env.AI_MODEL_LANGUAGE_CHAPTER_LESSONS ?? "openai/g
 
 const FALLBACK_MODELS = [
   "google/gemini-3.1-pro-preview",
+  "openai/gpt-5-mini",
   "google/gemini-3-flash",
   "anthropic/claude-sonnet-4.6",
 ];
@@ -16,6 +17,7 @@ const FALLBACK_MODELS = [
 const schema = z.object({
   lessons: z.array(
     z.object({
+      concepts: z.array(z.string()),
       description: z.string(),
       title: z.string(),
     }),

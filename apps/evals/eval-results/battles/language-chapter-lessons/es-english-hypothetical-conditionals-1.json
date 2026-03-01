@@ -1,0 +1,131 @@
+{
+  "expectations": "\n      \n  # How to evaluate\n\n  You are evaluating a LANGUAGE CURRICULUM. Think like a language curriculum designer reviewing a colleague's work — use expertise in second language acquisition and professional judgment, not mechanical rule-checking.\n\n  ## Structure\n\n  Output is organized into LESSON UNITS (thematic groups) containing CONCEPTS (individual teachable items).\n  - Each concept should be a single teachable unit appropriate to the chapter's level and topic\n  - Lesson sizes should be 3-8 concepts and should vary naturally across lessons\n  - Total concept coverage should be exhaustive for the chapter's scope\n\n  ## Evaluating concept quality\n\n  Ask: \"Is this ONE teachable thing, or is it secretly a bundle of separate things?\"\n  - A concept is too broad only if it genuinely bundles multiple DISTINCT items that a student would need separate practice for\n  - Use domain expertise: conventions that look like rule violations to a generalist may be standard practice in language teaching. Grammar notation, comparison pairs, and target-language labels are all normal in language curricula\n  - Comparisons and contrasts are natural in language learning — a synonym pair or a form distinction IS a single concept when the contrast itself is what the learner needs to master\n  - Watch for false granularity: the same form repeated across different subjects or contexts is NOT multiple concepts\n  - Watch for factual accuracy: grammar rules, conjugation forms, and usage patterns must be linguistically correct for the target language\n  - Every concept must be anchored in specific target-language items the learner will produce or recognize. Abstract category labels are acceptable as lesson titles but not as individual concepts\n\n  ## Evaluating scope\n\n  The chapter description is the SOURCE OF TRUTH.\n  - Concepts must serve language acquisition — no culture, career, exam prep, or literature content\n  - The curriculum should stay at the chapter's level — an advanced chapter should not include basic content that belongs in earlier chapters\n  - In a language course, content naturally mixes the user's language and the target language — this is expected, not a language violation\n\n  ## Evaluating lesson quality\n\n  - Lesson descriptions should be concise — no filler words like \"introduces\", \"presents\", \"teaches\"\n  - Logical progression from foundational to advanced\n  - No summary, review, or assessment lessons\n  - No duplicate concepts across lessons\n\n  ## Coverage\n\n  Completeness is the key metric. Are all topics in the chapter description covered with sufficient granularity?\n\n  ## How to score\n\n  Start by asking: \"Would this curriculum actually teach the chapter effectively?\" Then look for issues.\n\n  A curriculum that would genuinely teach the chapter well but has some title-phrasing imperfections deserves a high score. A curriculum that looks structurally clean but wouldn't actually help a learner (e.g., abstract categories instead of practicable items, factual errors in grammar) deserves a low score.\n\n  When something looks like a rule violation but makes pedagogical sense in context, favor the pedagogical judgment. The rules exist to produce good curricula — if the curriculum is good despite a technical rule bend, that matters more than the rule.\n\n    ",
+  "judgedAt": "2026-03-01T02:51:35.001Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model B provides the most thorough and well-organized curriculum. It has 10 lessons covering all aspects of the chapter description with excellent granularity. Key strengths: (1) Exhaustive coverage — it addresses the structure of the second conditional, were vs was, would forms/contractions/pronunciation, negation, questions, could variations, might variations, the comparison between would/could/might, and the 'were to' variation. (2) Granularity is appropriate — concepts are specific and anchored in target-language items (e.g., actual example sentences and patterns). (3) Lesson sizes vary naturally (4-7 concepts) and stay within the 3-8 limit. (4) Logical progression from uses → structure → were/was → would forms → negation → questions → could → might → comparison → advanced variation. (5) Descriptions avoid forbidden words like 'introduces' or 'teaches'. (6) No duplicate concepts across lessons. Minor issues: some concepts include long example sentences which make titles a bit verbose, and the 'were to' lesson has only 4 concepts but that's within bounds. The pronunciation concepts for would are a nice touch. The inclusion of 'might not (may not)' is slightly inaccurate since 'might not' and 'may not' are not exactly interchangeable in this context, but this is minor. Overall, this is the most complete and pedagogically sound curriculum.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model D offers good coverage with 11 lessons and a solid logical progression. Strengths: (1) Covers the core structure, past simple in if-clause, were/was, would, could, might, questions, communicative functions, and alternative connectors. (2) Good granularity in most lessons. (3) The comparison with first conditional is useful context. (4) Alternative connectors (even if, if only, unless, suppose, what if) add depth. However, there are notable issues: (1) Lesson 7 'Oraciones completas: segunda condicional' is essentially a practice/application lesson with full sentences rather than teaching new concepts — this borders on the forbidden 'putting it all together' lesson type. (2) Some concepts like 'If I worked…' and 'If you/we/they lived…' in lesson 2 create false granularity by splitting the same regular past simple form across different subject pronouns. (3) Lesson 10 'Funciones comunicativas' has concepts that are more like usage contexts than concrete language items (e.g., 'Quejas hipotéticas'). (4) Some lesson descriptions start with forbidden patterns. Despite these issues, the overall coverage is thorough and the organization is logical.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model A provides a well-organized curriculum with 6 lessons. Strengths: (1) Good granularity on structure, contractions, and the would/could/might comparison. (2) Concepts are clearly anchored in target-language items. (3) Lesson descriptions are concise and avoid forbidden words. (4) The would vs could and would vs might comparisons are well-placed as single concepts. Weaknesses: (1) Only 6 lessons feels somewhat limited for exhaustive coverage. (2) Lesson 4 'Would: verbos frecuentes en resultados hipotéticos' has 8 concepts that are essentially the same pattern (would + verb) repeated with different verbs — this is false granularity since the grammar form is the same, and these are just vocabulary items. (3) Lesson 6 similarly has templates that overlap significantly (e.g., 'If I had time' and 'If I had money' are the same pattern with different nouns). (4) Missing coverage of questions with would (wh-questions, yes/no questions), the 'were to' variation, and formal register distinctions. (5) No pronunciation concepts. The false granularity in lessons 4 and 6 is a significant issue since it inflates concept count without teaching new structural concepts.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model C has 8 lessons with reasonable coverage. Strengths: (1) Includes 'would be + -ing' (progressive hypothetical) which is a useful addition. (2) Good coverage of questions and requests. (3) Includes pronunciation concept for question intonation. Weaknesses: (1) Lesson 2 'Pasado simple en cláusulas if' includes individual irregular verbs (Went, Had, Made, Took, Thought) as separate concepts — this creates false granularity since knowing one irregular verb in past simple doesn't differ structurally from another in this context. (2) Concept titles are inconsistently formatted — some are in English, some in Spanish, mixing languages without clear pattern. (3) 'Tag question with would' is somewhat beyond the chapter scope. (4) Missing deeper coverage of the would/could/might comparison. (5) The were to + inversion lesson has only 3 concepts, which is the minimum. (6) Some concepts like 'Past simple regular: -ed (worked)' may be too basic for a chapter on hypotheticals (assumes prior knowledge of past simple). Overall decent but has granularity issues and less thorough coverage than the top models.",
+          "score": 6.3
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model E is concise with only 4 lessons and approximately 20 concepts. Strengths: (1) Clean organization with clear lesson themes. (2) Concept titles are specific and follow good naming conventions. (3) No false granularity. Weaknesses: (1) Only 4 lessons is too few for exhaustive coverage of this chapter. (2) Missing: questions with wh-words (What would you do if...?), 'were to' variation, pronunciation, clause order details, the comparison/gradient between would/could/might, and many common patterns. (3) Some concepts are somewhat abstract — 'Contexto: Situaciones Irreales en el Presente' and 'Contexto: Situaciones Improbables en el Futuro' are not anchored in specific target-language items. (4) The last lesson mixes expressions with abstract context descriptions. Coverage is insufficient for what the chapter description requires.",
+          "score": 5.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model F has 6 lessons but is the least thorough. Strengths: (1) Includes pronunciation of would/could (silent L), which is a practical detail. (2) Clean lesson organization. Weaknesses: (1) Only about 23 concepts total — insufficient for exhaustive coverage. (2) Last lesson 'Usos y Contextos de Hipótesis' has only 3 concepts that are abstract and not anchored in target-language items ('Hipótesis sobre el presente', 'Deseos imaginarios'). (3) Missing: wh-questions, 'were to' variation, detailed contraction forms for different pronouns, the gradient comparison between would/could/might, common fixed expressions, and many patterns. (4) 'Inversión de cláusulas' is vague as a concept title. (5) The description for the last lesson ('diferenciar entre realidades actuales y sueños futuros') is somewhat fluffy. (6) Several concepts are too broad — 'Cláusula de condición: Past Simple' could encompass many sub-concepts. Coverage gaps are significant.",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model B perfectly follows all instructions. It breaks down the second conditional into granular, teachable items, all rigorously anchored in target-language examples. It covers syntax, pronunciation, contractions, negations, questions, and the semantic nuances between 'would', 'could', and 'might' exhaustively. The progression is highly logical from start to finish, and it masterfully avoids false granularity or duplicate concepts.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model C provides a solid curriculum with good granularity and comprehensive coverage. However, it suffers from a logical progression flaw by placing basic elements like contractions and negative short answers in Lesson 7, long after introducing advanced variations like 'were to' and 'could/might' in Lessons 5 and 6. It also contains a minor duplicate concept regarding the past simple negative ('didn't') across Lessons 2 and 7.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model A has a good fundamental structure but struggles with false granularity and duplicate concepts. Lesson 6 consists largely of permuted vocabulary using the identical grammatical form ('If I had time', 'If I had money', 'If I could'), which violates the false granularity rule. It also improperly duplicates the concept 'If I were' (present in both L2 and L6) and the negative contraction 'wouldn't' (L1 and L3).",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model D suffers from significant false granularity by listing full permuted sentences as individual concepts (Lessons 7 and 10) and permuting the same grammatical form across different subject pronouns as separate concepts (Lessons 2 and 3). Additionally, Lesson 11 introduces topics entirely outside the strict scope of the chapter description (Even if, Unless, Suppose), violating the exhaustiveness constraint regarding scope.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model E violates a critical top penalty constraint in Lesson 4 by using abstract category labels ('Contexto: Situaciones Irreales en el Presente') without anchoring them in specific target-language items. A learner cannot practice an abstract label in a flashcard. The overall curriculum is also relatively sparse and lacks the necessary depth to be truly exhaustive.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model F repeatedly violates the target-language anchor rule. Lesson 6 consists entirely of abstract category labels ('Hipótesis sobre el presente', 'Deseos imaginarios') with no concrete target-language items attached. It also uses unanchored concepts earlier on (e.g., 'Inversión de cláusulas'). Furthermore, it is the least exhaustive curriculum provided, missing significant structural and lexical detail.",
+          "score": 3.5
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Most complete and well-structured for the stated scope (2nd conditional for present/future, would + could/might). Strong granularity: clear form/meaning split, includes ordering/punctuation, key rule “no would/will in if-clause,” questions (yes/no + wh-), negatives/short answers, and semantic contrasts would/could/might. Adds a relevant within-scope variation (“if … were to …”) and some pronunciation/weak form items; those are acceptable and accurate. Minor issues: “John’d” is unusual/arguable in standard writing; the “gradiente” would>could>might is a simplification (context-dependent), but still pedagogically useful if framed as tendency.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Good coverage of core mechanics (structure, clause order, comma, would forms incl. questions/short answers, could/might contrasts). Generally accurate. Main weaknesses: several lessons drift into example/template lists (“Would: verbos frecuentes…”, “If-clause: plantillas…”) which is not very “conceptual” and risks non-exhaustive/biased vocab selection; also includes some unnecessary false granularity (separate concepts for clause order variants and comma could arguably be one) while missing an explicit “no would in if-clause” constraint and question formation with wh- patterns. Still solid overall.",
+          "score": 8.1
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Broadly covers required scope and adds some useful extensions (even if/if only/unless/suppose/what if). However, it repeatedly violates the single-concept granularity by listing full sentences as “concepts” (hard to practice as a single item, more like examples). Also includes a whole lesson contrasting 1st vs 2nd conditional, which is arguably outside the described scope (chapter is specifically 2nd conditional + would/could/might). Some concepts are duplicated in spirit across lessons (many repeated example patterns).",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Covers the basics and includes some relevant variations (were to, past continuous, inversion). But there are notable issues: several concepts are just isolated past forms (Went/Had/Made/Took/Thought) without anchoring them explicitly to the conditional pattern; “Might not (may not)” is incorrect equivalence (might not ≠ may not). Includes tag questions and question intonation—arguably peripheral to chapter scope. Overall less coherent/exhaustive than A/B.",
+          "score": 6.6
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Clean, readable, and mostly on-scope, but not exhaustive enough: little on clause order/punctuation beyond one combined concept; limited treatment of questions (only would yes/no, no wh- patterns), no explicit rule about avoiding would/will in if-clause, no “were to” variation, and limited comparison/decision-making between would/could/might. Some concepts are a bit broad (“Verbos irregulares en pasado simple”).",
+          "score": 6.3
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Too shallow and sometimes inaccurate. “would + infinitivo” is wrong phrasing (should be base verb / bare infinitive). Several concepts are abstract (“Hipótesis sobre el presente”) and not anchored in concrete target-language forms as required. Pronunciation points are fine, but overall coverage is incomplete (missing key rules like no would in if-clause, limited question/wh- coverage, limited semantic contrasts).",
+          "score": 4.9
+        }
+      ]
+    }
+  ],
+  "taskId": "language-chapter-lessons",
+  "testCaseId": "es-english-hypothetical-conditionals-1"
+}
