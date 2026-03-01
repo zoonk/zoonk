@@ -1,5 +1,5 @@
-import { type HistoryPeriod } from "@/data/progress/_utils";
 import { cn } from "@zoonk/ui/lib/utils";
+import { type HistoryPeriod } from "@zoonk/utils/date-ranges";
 import { TrendingDownIcon, TrendingUpIcon } from "lucide-react";
 import { getExtracted, getLocale } from "next-intl/server";
 

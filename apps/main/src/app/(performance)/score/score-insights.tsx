@@ -1,4 +1,3 @@
-import { type HistoryPeriod } from "@/data/progress/_utils";
 import { getBestDay } from "@/data/progress/get-best-day";
 import { getBestTime } from "@/data/progress/get-best-time";
 import {
@@ -13,6 +12,7 @@ import {
 } from "@zoonk/ui/components/feature";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { EPOCH_YEAR, FIRST_SUNDAY_OFFSET } from "@zoonk/utils/constants";
+import { type HistoryPeriod } from "@zoonk/utils/date-ranges";
 import { CalendarDays, Clock } from "lucide-react";
 import { getExtracted, getLocale } from "next-intl/server";
 
