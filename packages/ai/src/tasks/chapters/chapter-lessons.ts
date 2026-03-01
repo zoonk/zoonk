@@ -8,8 +8,6 @@ const DEFAULT_MODEL = process.env.AI_MODEL_CHAPTER_LESSONS ?? "openai/gpt-5.2";
 
 const FALLBACK_MODELS = ["anthropic/claude-opus-4.6", "openai/gpt-5-mini"];
 
-const DEFAULT_REASONING_EFFORT: ReasoningEffort = "high";
-
 const schema = z.object({
   lessons: z.array(
     z.object({
@@ -38,7 +36,7 @@ export async function generateChapterLessons({
   neighboringChapters,
   model = DEFAULT_MODEL,
   useFallback = true,
-  reasoningEffort = DEFAULT_REASONING_EFFORT,
+  reasoningEffort,
 }: {
   chapterDescription: string;
   chapterTitle: string;
