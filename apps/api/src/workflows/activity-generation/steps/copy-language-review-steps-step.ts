@@ -20,7 +20,6 @@ export async function copyLanguageReviewStepsStep(
   }
 
   const current = await prisma.activity.findUnique({
-    select: { generationStatus: true },
     where: { id: languageReview.id },
   });
 

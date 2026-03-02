@@ -13,7 +13,6 @@ export async function updateLessonKindStep(input: {
   const { error } = await safeAsync(() =>
     prisma.lesson.update({
       data: { kind: input.kind },
-      select: { id: true, kind: true },
       where: { id: input.lessonId },
     }),
   );

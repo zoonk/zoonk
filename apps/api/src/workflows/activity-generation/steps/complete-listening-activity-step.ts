@@ -26,7 +26,6 @@ export async function completeListeningActivityStep(
   }
 
   const readingActivity = await prisma.activity.findUnique({
-    select: { generationStatus: true },
     where: { id: reading.id },
   });
 

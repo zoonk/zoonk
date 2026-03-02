@@ -16,7 +16,6 @@ export async function initializeCourseStep(input: {
   const { suggestion, workflowRunId } = input;
 
   const aiOrg = await prisma.organization.findUniqueOrThrow({
-    select: { id: true },
     where: { slug: AI_ORG_SLUG },
   });
 
@@ -53,7 +52,6 @@ export async function initializeCourseStep(input: {
         targetLanguage: suggestion.targetLanguage,
         title: suggestion.title,
       },
-      select: { id: true, slug: true },
     }),
   );
 

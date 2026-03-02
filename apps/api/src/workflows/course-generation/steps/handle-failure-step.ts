@@ -29,7 +29,6 @@ export async function handleChapterFailureStep(input: { chapterId: number }): Pr
   await safeAsync(() =>
     prisma.chapter.update({
       data: { generationStatus: "failed" },
-      select: { generationStatus: true, id: true },
       where: { id: input.chapterId },
     }),
   );

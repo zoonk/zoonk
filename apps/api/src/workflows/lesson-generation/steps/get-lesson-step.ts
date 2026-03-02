@@ -4,32 +4,9 @@ import { streamError, streamStatus } from "../stream-status";
 
 async function getLessonForGeneration(lessonId: number) {
   return prisma.lesson.findUnique({
-    select: {
-      _count: {
-        select: {
-          activities: true,
-        },
-      },
-      chapter: {
-        select: {
-          course: {
-            select: {
-              targetLanguage: true,
-              title: true,
-            },
-          },
-          title: true,
-        },
-      },
-      description: true,
-      generationRunId: true,
-      generationStatus: true,
-      id: true,
-      kind: true,
-      language: true,
-      organizationId: true,
-      slug: true,
-      title: true,
+    include: {
+      _count: { select: { activities: true } },
+      chapter: { include: { course: true } },
     },
     where: { id: lessonId },
   });

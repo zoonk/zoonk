@@ -17,7 +17,6 @@ export async function setLessonAsCompletedStep(input: {
         generationRunId: input.workflowRunId,
         generationStatus: "completed",
       },
-      select: { generationStatus: true, id: true },
       where: { id: input.context.id },
     }),
   );

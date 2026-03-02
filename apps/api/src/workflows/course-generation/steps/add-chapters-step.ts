@@ -1,13 +1,13 @@
-import { prisma } from "@zoonk/db";
+import { type Chapter, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { normalizeString, toSlug } from "@zoonk/utils/string";
 import { streamError, streamStatus } from "../stream-status";
-import { type CourseContext, type CreatedChapter, type GeneratedChapter } from "../types";
+import { type CourseContext, type GeneratedChapter } from "../types";
 
 export async function addChaptersStep(input: {
   course: CourseContext;
   chapters: GeneratedChapter[];
-}): Promise<CreatedChapter[]> {
+}): Promise<Chapter[]> {
   "use step";
 
   await streamStatus({ status: "started", step: "addChapters" });
@@ -28,13 +28,6 @@ export async function addChaptersStep(input: {
   const { data: createdChapters, error } = await safeAsync(() =>
     prisma.chapter.createManyAndReturn({
       data: chaptersData,
-      select: {
-        description: true,
-        id: true,
-        position: true,
-        slug: true,
-        title: true,
-      },
     }),
   );
 

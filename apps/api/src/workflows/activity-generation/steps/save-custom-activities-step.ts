@@ -5,7 +5,6 @@ import { type LessonActivity } from "./get-lesson-activities-step";
 
 async function saveActivity(activity: LessonActivity, workflowRunId: string): Promise<boolean> {
   const current = await prisma.activity.findUnique({
-    select: { generationStatus: true },
     where: { id: activity.id },
   });
 

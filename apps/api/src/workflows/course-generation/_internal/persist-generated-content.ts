@@ -1,9 +1,10 @@
+import { type Chapter } from "@zoonk/db";
 import { addAlternativeTitlesStep } from "../steps/add-alternative-titles-step";
 import { addCategoriesStep } from "../steps/add-categories-step";
 import { addChaptersStep } from "../steps/add-chapters-step";
 import { updateCourseStep } from "../steps/update-course-step";
 import { streamStatus } from "../stream-status";
-import { type CourseContext, type CreatedChapter, type ExistingCourseContent } from "../types";
+import { type CourseContext, type ExistingCourseContent } from "../types";
 import { type GeneratedContent } from "./generate-missing-content";
 
 async function emitSkippedPersistSteps(
@@ -30,7 +31,7 @@ export async function persistGeneratedContent(
   course: CourseContext,
   content: GeneratedContent,
   existing: ExistingCourseContent,
-): Promise<CreatedChapter[]> {
+): Promise<Chapter[]> {
   const needsCourseUpdate = !(existing.description && existing.imageUrl);
 
   const needsAlternativeTitles =
@@ -65,7 +66,7 @@ export async function persistGeneratedContent(
   const [chapters] = await Promise.all([
     needsChapters
       ? addChaptersStep({ chapters: content.chapters, course })
-      : Promise.resolve<CreatedChapter[]>([]),
+      : Promise.resolve<Chapter[]>([]),
     ...metadataOps,
   ]);
 

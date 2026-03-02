@@ -20,7 +20,6 @@ export async function copyListeningStepsStep(
   }
 
   const current = await prisma.activity.findUnique({
-    select: { generationStatus: true },
     where: { id: listening.id },
   });
 

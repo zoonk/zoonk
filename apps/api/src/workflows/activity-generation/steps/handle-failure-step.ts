@@ -9,7 +9,6 @@ export async function handleActivityFailureStep(input: {
   await safeAsync(() =>
     prisma.activity.update({
       data: { generationStatus: "failed" },
-      select: { generationStatus: true, id: true },
       where: { id: input.activityId },
     }),
   );

@@ -4,29 +4,9 @@ import { streamError, streamStatus } from "../stream-status";
 
 async function getChapterForGeneration(chapterId: number) {
   return prisma.chapter.findUnique({
-    select: {
-      _count: {
-        select: {
-          lessons: true,
-        },
-      },
-      course: {
-        select: {
-          slug: true,
-          targetLanguage: true,
-          title: true,
-        },
-      },
-      courseId: true,
-      description: true,
-      generationRunId: true,
-      generationStatus: true,
-      id: true,
-      language: true,
-      organizationId: true,
-      position: true,
-      slug: true,
-      title: true,
+    include: {
+      _count: { select: { lessons: true } },
+      course: true,
     },
     where: { id: chapterId },
   });
