@@ -1,7 +1,4 @@
-import {
-  type QuizQuestion,
-  type SelectImageQuestion,
-} from "@zoonk/ai/tasks/activities/core/explanation-quiz";
+import { type QuizQuestion, type SelectImageQuestion } from "@zoonk/ai/tasks/activities/core/quiz";
 import { assertStepContent } from "@zoonk/core/steps/content-contract";
 import { generateStepImage } from "@zoonk/core/steps/image";
 import { prisma } from "@zoonk/db";

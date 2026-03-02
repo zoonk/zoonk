@@ -2,9 +2,9 @@ import "server-only";
 import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-options";
 import { generateText, stepCountIs } from "ai";
 import { type QuizQuestion, type SelectImageQuestion, quizTools } from "../_tools/quiz";
-import systemPrompt from "./activity-explanation-quiz.prompt.md";
+import systemPrompt from "./activity-quiz.prompt.md";
 
-const DEFAULT_MODEL = process.env.AI_MODEL_ACTIVITY_EXPLANATION_QUIZ ?? "openai/gpt-5.2";
+const DEFAULT_MODEL = process.env.AI_MODEL_ACTIVITY_QUIZ ?? "openai/gpt-5.2";
 
 const FALLBACK_MODELS = [
   "anthropic/claude-opus-4.5",
@@ -13,11 +13,11 @@ const FALLBACK_MODELS = [
   "google/gemini-3.1-pro-preview",
 ];
 
-export type ActivityExplanationQuizSchema = {
+export type ActivityQuizSchema = {
   questions: QuizQuestion[];
 };
 
-export type ActivityExplanationQuizParams = {
+export type ActivityQuizParams = {
   lessonTitle: string;
   lessonDescription: string;
   chapterTitle: string;
@@ -29,7 +29,7 @@ export type ActivityExplanationQuizParams = {
   reasoningEffort?: ReasoningEffort;
 };
 
-export async function generateActivityExplanationQuiz({
+export async function generateActivityQuiz({
   lessonTitle,
   lessonDescription,
   chapterTitle,
@@ -39,7 +39,7 @@ export async function generateActivityExplanationQuiz({
   model = DEFAULT_MODEL,
   useFallback = true,
   reasoningEffort,
-}: ActivityExplanationQuizParams) {
+}: ActivityQuizParams) {
   const formattedExplanationSteps = explanationSteps
     .map((step, index) => `${index + 1}. ${step.title}: ${step.text}`)
     .join("\n");

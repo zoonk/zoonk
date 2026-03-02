@@ -3,10 +3,10 @@ import {
   getAIResultErrorReason,
 } from "@/workflows/_shared/stream-status";
 import {
-  type ActivityExplanationQuizSchema,
+  type ActivityQuizSchema,
   type QuizQuestion,
-  generateActivityExplanationQuiz,
-} from "@zoonk/ai/tasks/activities/core/explanation-quiz";
+  generateActivityQuiz,
+} from "@zoonk/ai/tasks/activities/core/quiz";
 import { assertStepContent } from "@zoonk/core/steps/content-contract";
 import { prisma } from "@zoonk/db";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
@@ -88,17 +88,16 @@ export async function generateQuizContentStep(
   await streamStatus({ status: "started", step: "generateQuizContent" });
   await setActivityAsRunningStep({ activityId: activity.id, workflowRunId });
 
-  const { data: result, error }: SafeReturn<{ data: ActivityExplanationQuizSchema }> =
-    await safeAsync(() =>
-      generateActivityExplanationQuiz({
-        chapterTitle: activity.lesson.chapter.title,
-        courseTitle: activity.lesson.chapter.course.title,
-        explanationSteps,
-        language: activity.language,
-        lessonDescription: activity.lesson.description ?? "",
-        lessonTitle: activity.lesson.title,
-      }),
-    );
+  const { data: result, error }: SafeReturn<{ data: ActivityQuizSchema }> = await safeAsync(() =>
+    generateActivityQuiz({
+      chapterTitle: activity.lesson.chapter.title,
+      courseTitle: activity.lesson.chapter.course.title,
+      explanationSteps,
+      language: activity.language,
+      lessonDescription: activity.lesson.description ?? "",
+      lessonTitle: activity.lesson.title,
+    }),
+  );
 
   if (error || !result || result.data.questions.length === 0) {
     const reason = getAIResultErrorReason(error, result);
