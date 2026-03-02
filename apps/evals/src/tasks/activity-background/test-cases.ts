@@ -27,222 +27,106 @@ const SHARED_EXPECTATIONS = `
 `;
 
 export const TEST_CASES = [
-  // Initial chapter (2/105), initial lesson (1/117) — foundational networking concept
   {
     expectations: `
-      Avoid diving into packet header formats, protocol specifications, or byte-level details. The background should explain WHY data needs to be broken into packets and what problems this solved — not HOW packet headers are structured.
+      Avoid diving into protocol specifics, packet header formats, or byte-level details. The background should explain WHY data needs encapsulation and hop-by-hop forwarding — not HOW specific protocols implement it.
 
       ${SHARED_EXPECTATIONS}
     `,
-    id: "en-web-packets",
+    id: "en-web-data-movement",
     userInput: {
       chapterTitle: "Networking fundamentals",
       courseTitle: "Web Development",
       language: "en",
       lessonDescription:
-        "A packet as the unit of data routed across IP networks. What headers exist for delivery versus payload for the next layer.",
-      lessonTitle: "Packets",
+        "Core building blocks for how data moves across networks, from encapsulation to hop-by-hop forwarding constraints.",
+      lessonTitle: "How Data Moves on Networks",
     },
   },
-  // Initial chapter (2/105), mid lesson (60/117) — technical networking concept
-  {
-    expectations: `
-      Avoid diving into congestion window algorithms, TCP slow start formulas, or implementation details. The background should explain WHY networks needed congestion control and what happens without it — not HOW TCP congestion algorithms work step by step.
-
-      ${SHARED_EXPECTATIONS}
-    `,
-    id: "en-web-tcp-congestion-control",
-    userInput: {
-      chapterTitle: "Networking fundamentals",
-      courseTitle: "Web Development",
-      language: "en",
-      lessonDescription:
-        "TCP congestion window as the sender's limit based on perceived network capacity. Why congestion control prevents persistent overload.",
-      lessonTitle: "TCP congestion control",
-    },
-  },
-  // Initial chapter (4/86), initial lesson (3/94) — Portuguese, programming concept
   {
     expectations: `
       Titles and descriptions must be in Portuguese.
 
-      Avoid diving into isinstance() syntax, type hierarchy internals, or code examples. The background should explain WHY checking type membership matters and what problems arise without it — not HOW to call isinstance().
+      Avoid diving into IEEE 754 representation, bit-level details, or type conversion syntax. The background should explain WHY floating-point numbers and booleans exist as distinct numeric types and what problems they solve — not HOW they are implemented internally.
 
       ${SHARED_EXPECTATIONS}
     `,
-    id: "pt-python-isinstance",
+    id: "pt-python-float-bool",
     userInput: {
       chapterTitle: "Tipos numéricos e valores especiais",
       courseTitle: "Python",
       language: "pt",
       lessonDescription:
-        "Teste de pertencimento a uma classe numérica, incluindo relações como bool ser subclasse de int.",
-      lessonTitle: "isinstance() com tipos numéricos",
+        "Valores de ponto flutuante e booleanos, sintaxe de literais e a relação estrutural entre bool e int.",
+      lessonTitle: "Float e bool como tipos numéricos",
     },
   },
-  // Mid chapter (47/92), initial lesson (1/179) — Spanish, chemistry concept
+  {
+    expectations: `
+      Avoid diving into econometric models, regression specifications, or search-and-matching theory. The background should explain WHY economists study how labor markets behave during economic downturns and what empirical patterns emerge — not HOW to model unemployment dynamics.
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "en-economics-labor-cycles",
+    userInput: {
+      chapterTitle: "Business cycles",
+      courseTitle: "Economics",
+      language: "en",
+      lessonDescription:
+        "Empirical regularities linking downturns to labor market outcomes at the level of aggregate fluctuations, without modeling search or wage-setting mechanisms.",
+      lessonTitle: "Labor market aggregates over the cycle",
+    },
+  },
   {
     expectations: `
       Titles and descriptions must be in Spanish.
 
-      Avoid diving into electron density diagrams, orbital descriptions, or reaction mechanisms. The background should explain WHY the uneven charge distribution in C=O bonds matters and what it enables in chemistry — not HOW to draw resonance structures.
+      Avoid diving into orbital theory, pKa calculations, or detailed reaction mechanisms. The background should explain WHY α-hydrogen acidity matters and what role enolates play as nucleophiles in carbon-carbon bond formation — not HOW to calculate acidity or draw mechanisms step by step.
 
       ${SHARED_EXPECTATIONS}
     `,
-    id: "es-quimica-carbonilo-polarizacion",
+    id: "es-quimica-acidez-enolatos",
     userInput: {
       chapterTitle: "Carbonilos y enolatos",
       courseTitle: "Química",
       language: "es",
       lessonDescription:
-        "Distribución desigual de densidad electrónica entre C y O que vuelve al carbono susceptible a ataque nucleofílico.",
-      lessonTitle: "Carbonilo: polarización C=O",
+        "Origen de la acidez en α y cómo se forma el enolato como nucleófilo clave en reacciones de construcción C–C.",
+      lessonTitle: "Acidez en α y formación de enolatos",
     },
   },
-  // Mid chapter (35/104), mid lesson (52/101) — economics concept
-  {
-    expectations: `
-      Avoid diving into econometric equations, regression analysis, or mathematical models. The background should explain WHY economists noticed a relationship between inflation and unemployment and what that insight meant for policy — not HOW to estimate or test the Phillips curve.
-
-      ${SHARED_EXPECTATIONS}
-    `,
-    id: "en-economics-phillips-curve",
-    userInput: {
-      chapterTitle: "Business cycles",
-      courseTitle: "Economics",
-      language: "en",
-      lessonDescription:
-        "A negative empirical relationship between inflation and unemployment observed in some periods.",
-      lessonTitle: "Phillips curve correlation",
-    },
-  },
-  // Mid chapter (35/104), final lesson (101/101) — narrow economics concept
-  {
-    expectations: `
-      SPECIAL CONSIDERATION: This is a narrow, technical topic. The background should still have a narrative, but it may be shorter since the scope is focused.
-
-      Avoid diving into index construction formulas or statistical methodology. The background should explain WHY economists needed a way to summarize whether the economy is broadly expanding or contracting — not HOW to compute a diffusion index.
-
-      ${SHARED_EXPECTATIONS}
-    `,
-    id: "en-economics-diffusion-index",
-    userInput: {
-      chapterTitle: "Business cycles",
-      courseTitle: "Economics",
-      language: "en",
-      lessonDescription:
-        "A composite index summarizing the share of sectors expanding versus contracting at a point in time.",
-      lessonTitle: "Diffusion index",
-    },
-  },
-  // Mid chapter (33/64), mid lesson (47/93) — Portuguese, agile/architecture concept
   {
     expectations: `
       Titles and descriptions must be in Portuguese.
 
-      Avoid diving into implementation patterns, code examples, or specific architectural frameworks. The background should explain WHY systems need a protective layer when integrating with external models — not HOW to implement an anti-corruption layer.
+      Avoid diving into specific software platforms, dashboard configurations, or audit log schemas. The background should explain WHY measuring and monitoring document automation matters for legal practice quality and safety — not HOW to implement specific metrics systems.
 
       ${SHARED_EXPECTATIONS}
     `,
-    id: "pt-agile-camada-anticorrupcao",
-    userInput: {
-      chapterTitle: "Arquitetura em ambientes ágeis",
-      courseTitle: "Metodologias Ágeis",
-      language: "pt",
-      lessonDescription:
-        "Camada que traduz modelos e integrações para evitar que conceitos externos contaminem o núcleo. Útil quando integrações mudam com frequência.",
-      lessonTitle: "Camada anticorrupção",
-    },
-  },
-  // Mid chapter (31/91), mid lesson (44/87) — creative/fiction, philosophical concept
-  {
-    expectations: `
-      This is a fictional/literary analysis topic. The background should explain the concept within the Harry Potter universe — WHY Horcruxes matter to the story and what they represent thematically. Avoid listing plot points mechanically; focus on the narrative significance and the moral weight of the concept.
-
-      ${SHARED_EXPECTATIONS}
-    `,
-    id: "en-harry-potter-horcrux-definition",
-    userInput: {
-      chapterTitle: "Alchemy, Horcruxes, and immortality",
-      courseTitle: "Harry Potter",
-      language: "en",
-      lessonDescription:
-        "A Horcrux is a container that holds a severed soul fragment to prevent final death.",
-      lessonTitle: "Horcrux definition",
-    },
-  },
-  // Final chapter (59/63), mid lesson (46/90) — historical/science concept
-  {
-    expectations: `
-      Avoid diving into DDT's chemical composition or detailed toxicology. The background should explain WHY DDT was seen as revolutionary for disease control and what tensions arose around its use — not HOW DDT kills insects at a molecular level.
-
-      ${SHARED_EXPECTATIONS}
-    `,
-    id: "en-brazilian-history-ddt",
-    userInput: {
-      chapterTitle: "Health and disease",
-      courseTitle: "Brazilian History",
-      language: "en",
-      lessonDescription:
-        'The use of DDT as a "miracle" tool and the later controversy over harms and dependency.',
-      lessonTitle: "DDT in vector control",
-    },
-  },
-  // Final chapter (59/63), final lesson (90/90) — recent topic, politically charged
-  {
-    expectations: `
-      SPECIAL CONSIDERATION: This is a very recent topic (COVID-19 pandemic memory). The "history" is still unfolding. The background should explain WHY competing narratives about the pandemic emerged and what they reveal about Brazilian society — not a chronological retelling of the pandemic.
-
-      ${SHARED_EXPECTATIONS}
-    `,
-    id: "en-brazilian-history-covid-memory",
-    userInput: {
-      chapterTitle: "Health and disease",
-      courseTitle: "Brazilian History",
-      language: "en",
-      lessonDescription:
-        "Public mourning, memorials, and denialism as competing narratives that politicized pandemic memory.",
-      lessonTitle: "COVID-19 memory politics",
-    },
-  },
-  // Late chapter (73/108), mid lesson (57/115) — Portuguese, legal/tech concept
-  {
-    expectations: `
-      Titles and descriptions must be in Portuguese.
-
-      Avoid diving into debugging workflows, code inspection techniques, or specific tools. The background should explain WHY distinguishing between data errors and template errors matters in legal document automation — not HOW to run a diagnostic procedure.
-
-      ${SHARED_EXPECTATIONS}
-    `,
-    id: "pt-direito-diagnostico-erro",
+    id: "pt-direito-medicao-automacao",
     userInput: {
       chapterTitle: "Legal tech e automação de documentos",
       courseTitle: "Direito",
       language: "pt",
       lessonDescription:
-        "Separar erro de dados do erro de template. Um procedimento para decidir se corrige o formulário ou a regra de montagem.",
-      lessonTitle: "Diagnóstico de erro",
+        "Métricas operacionais focadas em qualidade e segurança da automação documental, com rastros para auditoria.",
+      lessonTitle: "Medição e monitoramento da automação",
     },
   },
-  // Mid chapter (47/92), final lesson (179/179) — Spanish, very narrow chemistry concept
   {
     expectations: `
-      Titles and descriptions must be in Spanish.
-
-      SPECIAL CONSIDERATION: This is a very narrow, advanced topic (selectivity control in Michael reactions). The background should still have a narrative, but it may be shorter since the scope is focused.
-
-      Avoid diving into orbital theory, HSAB calculations, or detailed reaction mechanisms. The background should explain WHY chemists needed to control where reactions happen on a molecule and what the 1,2 vs 1,4 selectivity challenge represents — not HOW to predict selectivity using frontier molecular orbital theory.
+      Avoid diving into specific CLI tools, traceroute output interpretation, or protocol-level diagnostics. The background should explain WHY developers need mental models for connectivity debugging and what happens without systematic approaches — not HOW to use specific debugging tools.
 
       ${SHARED_EXPECTATIONS}
     `,
-    id: "es-quimica-selectividad-1-2-1-4",
+    id: "en-web-debugging-mental-models",
     userInput: {
-      chapterTitle: "Carbonilos y enolatos",
-      courseTitle: "Química",
-      language: "es",
+      chapterTitle: "Networking fundamentals",
+      courseTitle: "Web Development",
+      language: "en",
       lessonDescription:
-        "En Michael, cambiar nucleófilo de duro a suave desplaza la selectividad entre 1,2 y 1,4.",
-      lessonTitle: "Selectividad: control 1,2-1,4",
+        "Practical mental models for narrowing a problem to host, subnet, gateway, path, or service-layer reachability without relying on protocol-specific details.",
+      lessonTitle: "Connectivity Debugging Mental Models",
     },
   },
 ];

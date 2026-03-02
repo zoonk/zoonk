@@ -31,152 +31,38 @@ export const TEST_CASES = [
     expectations: `
 TOPIC-SPECIFIC GUIDANCE:
 
-1. ACCURACY CHECK: The immune response involves specific cell types acting in sequence. Penalize if:
-   - T cells are described as producing antibodies (B cells produce antibodies; T cells have different roles)
-   - The process skips the critical recognition phase where pathogens are identified
+1. ACCURACY CHECK: Network data movement involves active processes of wrapping, routing, and unwrapping. Penalize if:
+   - Forwarding decisions are described as centralized (each hop makes independent decisions)
+   - Encapsulation and decapsulation are not shown as inverse processes at source and destination
 
-2. DEPTH CHECK: Penalize if the response treats immunity as "cells attack germs" without showing the cascade of signals, recognition, and coordinated response.
+2. DEPTH CHECK: Penalize if the explanation treats data movement as a single action rather than a multi-hop process with encapsulation at each layer.
 
-3. DISTINCTION FROM EXPLANATION: The explanation covered WHAT immune cells and antibodies ARE. This should show HOW they detect, signal, coordinate, and eliminate threats in real-time.
+3. DISTINCTION FROM EXPLANATION: The explanation covered WHAT encapsulation and forwarding are. This should show HOW data actively moves through the network — the step-by-step process of wrapping, routing, and unwrapping.
 
 ${SHARED_EXPECTATIONS}
     `,
-    id: "en-biology-immune-response",
+    id: "en-web-data-movement",
     userInput: {
-      chapterTitle: "Body Systems",
-      courseTitle: "Human Biology",
+      chapterTitle: "Networking fundamentals",
+      courseTitle: "Web Development",
       explanationSteps: [
         {
-          text: "White blood cells are specialized defenders in your bloodstream. Different types handle different tasks — some patrol, some remember, some attack directly.",
-          title: "The Cellular Army",
+          text: "Encapsulation wraps data with headers at each network layer. Each layer adds its own addressing and control information, like putting a letter in a series of labeled envelopes.",
+          title: "Encapsulation",
         },
         {
-          text: "Antibodies are Y-shaped proteins that act like molecular handcuffs. Each type fits one specific pathogen shape, marking it for destruction.",
-          title: "Antibody Recognition",
+          text: "Each network device along the path reads only its layer's header, makes a forwarding decision, and passes the data to the next hop. No device sees the full picture.",
+          title: "Hop-by-Hop Forwarding",
         },
         {
-          text: "Memory cells are veterans that remember past invaders. They remain dormant for years, ready to rapidly respond if the same threat returns.",
-          title: "Immune Memory",
+          text: "The maximum transmission unit limits how much data fits in a single frame. Data larger than the MTU must be fragmented into smaller pieces for transit.",
+          title: "Size Constraints",
         },
       ],
       language: "en",
       lessonDescription:
-        "Understanding the step-by-step process of how the immune system detects, responds to, and eliminates pathogens",
-      lessonTitle: "The Immune Response Process",
-    },
-  },
-  {
-    expectations: `
-TOPIC-SPECIFIC GUIDANCE:
-
-1. ACCURACY CHECK: DNA transcription involves specific molecular machinery moving along the DNA strand. Penalize if:
-   - RNA polymerase is described as copying both DNA strands simultaneously (it reads one template strand)
-   - The process confuses transcription with translation (transcription produces mRNA; translation produces proteins)
-
-2. DEPTH CHECK: Penalize if the process is presented as simply "DNA is copied to RNA" without showing the unwinding, reading, and assembly happening in sequence.
-
-3. DISTINCTION FROM EXPLANATION: The explanation covered WHAT RNA polymerase, nucleotides, and promoters ARE. This should show HOW they move, bind, assemble, and release in the active process.
-
-${SHARED_EXPECTATIONS}
-    `,
-    id: "en-biology-dna-transcription",
-    userInput: {
-      chapterTitle: "Molecular Biology",
-      courseTitle: "Cell Biology",
-      explanationSteps: [
-        {
-          text: "RNA polymerase is the molecular machine that reads DNA and builds RNA. It's a large protein complex that moves along the DNA strand.",
-          title: "The Transcription Machine",
-        },
-        {
-          text: "Promoters are special DNA sequences that signal 'start here.' They tell RNA polymerase exactly where to begin reading a gene.",
-          title: "Start Signals",
-        },
-        {
-          text: "Nucleotides are the building blocks — A, U, G, C for RNA. Each matches a complementary base on the DNA template being read.",
-          title: "The Building Blocks",
-        },
-      ],
-      language: "en",
-      lessonDescription:
-        "Understanding how genetic information flows from DNA to messenger RNA through the transcription process",
-      lessonTitle: "DNA Transcription",
-    },
-  },
-  {
-    expectations: `
-TOPIC-SPECIFIC GUIDANCE:
-
-1. ACCURACY CHECK: HTTP requests involve specific phases with distinct purposes. Penalize if:
-   - The handshake is described as happening after data transfer begins (handshake establishes connection first)
-   - DNS resolution is skipped or placed incorrectly in the sequence
-
-2. DEPTH CHECK: Penalize if the explanation presents it as "browser asks, server responds" without showing the layered network operations that make this possible.
-
-3. DISTINCTION FROM EXPLANATION: The explanation covered WHAT HTTP methods, status codes, and headers ARE. This should show HOW a request travels, transforms, and returns through the network stack.
-
-${SHARED_EXPECTATIONS}
-    `,
-    id: "en-cs-http-request-flow",
-    userInput: {
-      chapterTitle: "Web Protocols",
-      courseTitle: "Web Development Fundamentals",
-      explanationSteps: [
-        {
-          text: "HTTP methods define what action you want — GET retrieves data, POST sends data, PUT updates, DELETE removes. Each tells the server your intent.",
-          title: "Request Methods",
-        },
-        {
-          text: "Status codes are three-digit responses from the server. 200 means success, 404 means not found, 500 means server error. They summarize what happened.",
-          title: "Response Codes",
-        },
-        {
-          text: "Headers carry metadata about the request and response — content type, authentication tokens, caching rules. They travel alongside the main data.",
-          title: "Headers as Metadata",
-        },
-      ],
-      language: "en",
-      lessonDescription:
-        "Understanding the complete lifecycle of an HTTP request from browser to server and back",
-      lessonTitle: "The HTTP Request Lifecycle",
-    },
-  },
-  {
-    expectations: `
-TOPIC-SPECIFIC GUIDANCE:
-
-1. ACCURACY CHECK: Garbage collection involves specific phases that must occur in order. Penalize if:
-   - Objects are described as being freed while still reachable (only unreachable objects are collected)
-   - The marking phase is confused with the sweeping phase (marking identifies live objects; sweeping reclaims dead ones)
-
-2. DEPTH CHECK: Penalize if garbage collection is presented as "automatic memory cleanup" without showing how the runtime traces references and determines what to keep.
-
-3. DISTINCTION FROM EXPLANATION: The explanation covered WHAT the heap, stack, and references ARE. This should show HOW the garbage collector actively scans, marks, and reclaims memory.
-
-${SHARED_EXPECTATIONS}
-    `,
-    id: "en-cs-garbage-collection",
-    userInput: {
-      chapterTitle: "Memory Management",
-      courseTitle: "Programming Language Internals",
-      explanationSteps: [
-        {
-          text: "The heap is where dynamically allocated objects live. Unlike the stack, objects here persist until explicitly freed or garbage collected.",
-          title: "The Heap",
-        },
-        {
-          text: "References are pointers to objects in memory. When nothing references an object anymore, it becomes eligible for garbage collection.",
-          title: "Object References",
-        },
-        {
-          text: "Root objects are the starting points — global variables, stack variables, CPU registers. Everything reachable from roots is considered alive.",
-          title: "GC Roots",
-        },
-      ],
-      language: "en",
-      lessonDescription:
-        "Understanding how automatic garbage collection identifies and reclaims unused memory in managed runtimes",
-      lessonTitle: "How Garbage Collection Works",
+        "Core building blocks for how data moves across networks, from encapsulation to hop-by-hop forwarding constraints.",
+      lessonTitle: "How Data Moves on Networks",
     },
   },
   {
@@ -185,310 +71,186 @@ LANGUAGE REQUIREMENT: Titles and text must be in Portuguese.
 
 TOPIC-SPECIFIC GUIDANCE:
 
-1. ACCURACY CHECK: Photosynthesis light reactions involve electron flow through specific complexes. Penalize if:
-   - ATP is described as being produced by chlorophyll directly (ATP synthase produces ATP using the proton gradient)
-   - Water splitting is placed after the electron transport chain (it happens at Photosystem II to replace lost electrons)
+1. ACCURACY CHECK: Float and bool operations involve specific runtime behaviors. Penalize if:
+   - Float arithmetic is described as exact (floating-point has inherent precision limitations)
+   - Bool arithmetic results are described incorrectly (True + True = 2, not True)
 
-2. DEPTH CHECK: Penalize if the explanation treats it as "light makes energy" without showing the cascade of electron transfers and proton pumping.
+2. DEPTH CHECK: Penalize if the explanation treats type usage as static definitions rather than showing how Python processes float literals, bool operations, and type coercion in action.
 
-3. DISTINCTION FROM EXPLANATION: The explanation covered WHAT chlorophyll, photosystems, and ATP synthase ARE. This should show HOW light energy drives electron flow and creates the proton gradient.
+3. DISTINCTION FROM EXPLANATION: The explanation covered WHAT floats and bools are. This should show HOW Python processes these types — parsing literals, performing arithmetic, and handling the bool-int relationship at runtime.
 
 ${SHARED_EXPECTATIONS}
     `,
-    id: "pt-biology-photosynthesis-light",
+    id: "pt-python-float-bool",
     userInput: {
-      chapterTitle: "Biologia Celular",
-      courseTitle: "Biologia Vegetal",
+      chapterTitle: "Tipos numéricos e valores especiais",
+      courseTitle: "Python",
       explanationSteps: [
         {
-          text: "A clorofila é o pigmento verde que captura luz. Ela absorve principalmente luz vermelha e azul, refletindo verde — por isso as plantas parecem verdes.",
-          title: "Clorofila",
+          text: "Floats representam números com parte decimal usando ponto flutuante. A notação 3.14 ou 2.0e10 cria literais float em Python.",
+          title: "Literais Float",
         },
         {
-          text: "Os fotossistemas são complexos de proteínas nas membranas dos tilacoides. Fotossistema I e II trabalham juntos para capturar energia luminosa.",
-          title: "Fotossistemas",
-        },
-        {
-          text: "A ATP sintase é uma turbina molecular que produz ATP. Ela usa o gradiente de prótons para fosforilar ADP em ATP, a moeda energética celular.",
-          title: "ATP Sintase",
+          text: "Bool é uma subclasse de int em Python. True equivale a 1 e False equivale a 0, permitindo operações aritméticas diretas com booleanos.",
+          title: "Bool como Inteiro",
         },
       ],
       language: "pt",
       lessonDescription:
-        "Entendendo como a fase clara da fotossíntese converte energia luminosa em energia química através do transporte de elétrons",
-      lessonTitle: "Reações Luminosas da Fotossíntese",
-    },
-  },
-  {
-    expectations: `
-LANGUAGE REQUIREMENT: Titles and text must be in Spanish.
-
-TOPIC-SPECIFIC GUIDANCE:
-
-1. ACCURACY CHECK: Market price discovery involves buyers and sellers adjusting behavior based on signals. Penalize if:
-   - Prices are described as being set by a central authority (in free markets, prices emerge from decentralized interactions)
-   - Supply and demand are described as static rather than dynamically adjusting
-
-2. DEPTH CHECK: Penalize if the explanation presents it as "supply meets demand" without showing the iterative signaling and adjustment process.
-
-3. DISTINCTION FROM EXPLANATION: The explanation covered WHAT supply curves, demand curves, and equilibrium ARE. This should show HOW individual decisions aggregate into market prices through continuous adjustment.
-
-${SHARED_EXPECTATIONS}
-    `,
-    id: "es-economics-price-discovery",
-    userInput: {
-      chapterTitle: "Mercados y Precios",
-      courseTitle: "Economía Básica",
-      explanationSteps: [
-        {
-          text: "La curva de oferta muestra cuánto producirán los vendedores a cada precio. Precios más altos incentivan mayor producción porque aumentan las ganancias potenciales.",
-          title: "Curva de Oferta",
-        },
-        {
-          text: "La curva de demanda muestra cuánto comprarán los consumidores a cada precio. Precios más bajos aumentan la cantidad demandada porque el producto se vuelve más accesible.",
-          title: "Curva de Demanda",
-        },
-        {
-          text: "El equilibrio es el punto donde oferta y demanda se cruzan. A este precio, la cantidad que los vendedores quieren vender iguala lo que los compradores quieren comprar.",
-          title: "Punto de Equilibrio",
-        },
-      ],
-      language: "es",
-      lessonDescription:
-        "Entendiendo cómo los precios de mercado emergen de las interacciones entre compradores y vendedores",
-      lessonTitle: "El Proceso de Descubrimiento de Precios",
+        "Valores de ponto flutuante e booleanos, sintaxe de literais e a relação estrutural entre bool e int.",
+      lessonTitle: "Float e bool como tipos numéricos",
     },
   },
   {
     expectations: `
 TOPIC-SPECIFIC GUIDANCE:
 
-1. ACCURACY CHECK: Nuclear fission chain reactions require specific conditions to sustain. Penalize if:
-   - Neutrons are described as being absorbed by all materials equally (only fissile materials sustain the chain)
-   - Critical mass is described as a fixed number rather than depending on geometry and material purity
+1. ACCURACY CHECK: Labor market adjustment during cycles involves specific dynamic processes. Penalize if:
+   - Layoffs are described as the first response to downturns (firms typically reduce hours and overtime first)
+   - Recovery is described as symmetric to contraction (labor markets recover more slowly than they contract)
 
-2. DEPTH CHECK: Penalize if the explanation treats it as "atoms split and release energy" without showing how one fission event triggers the next.
+2. DEPTH CHECK: Penalize if the explanation treats cyclical labor adjustment as a single event rather than a staged process of hours reduction, hiring freezes, layoffs, and discouraged worker effects.
 
-3. DISTINCTION FROM EXPLANATION: The explanation covered WHAT fissile materials, neutrons, and binding energy ARE. This should show HOW the chain reaction propagates and either runs away or remains controlled.
-
-${SHARED_EXPECTATIONS}
-    `,
-    id: "en-physics-fission-chain",
-    userInput: {
-      chapterTitle: "Nuclear Physics",
-      courseTitle: "Modern Physics",
-      explanationSteps: [
-        {
-          text: "Fissile materials like U-235 have nuclei that split when struck by neutrons. Not all heavy elements are fissile — it depends on nuclear structure.",
-          title: "Fissile Materials",
-        },
-        {
-          text: "Neutrons are uncharged particles that can penetrate nuclei. When absorbed by fissile atoms, they destabilize the nucleus and trigger fission.",
-          title: "Neutrons as Triggers",
-        },
-        {
-          text: "Binding energy is the glue holding nuclei together. When fission occurs, some mass converts to energy according to E=mc2, releasing enormous power.",
-          title: "Energy Release",
-        },
-      ],
-      language: "en",
-      lessonDescription:
-        "Understanding how nuclear fission chain reactions start, propagate, and are controlled or allowed to run away",
-      lessonTitle: "Nuclear Fission Chain Reactions",
-    },
-  },
-  {
-    expectations: `
-TOPIC-SPECIFIC GUIDANCE:
-
-1. ACCURACY CHECK: Electromagnetic induction requires changing magnetic flux, not static fields. Penalize if:
-   - A stationary magnet in a stationary coil is described as inducing current (relative motion or changing flux is required)
-   - The direction of induced current is described incorrectly relative to the field change (Lenz's law)
-
-2. DEPTH CHECK: Penalize if the explanation presents it as "magnets make electricity" without showing how motion or changing flux creates the EMF.
-
-3. DISTINCTION FROM EXPLANATION: The explanation covered WHAT magnetic flux, EMF, and Faraday's law ARE. This should show HOW moving conductors or changing fields actively induce current.
+3. DISTINCTION FROM EXPLANATION: The explanation covered WHAT unemployment rate, hours, and participation are. This should show HOW these aggregates actively change during a downturn — the sequence and timing of adjustments.
 
 ${SHARED_EXPECTATIONS}
     `,
-    id: "en-physics-electromagnetic-induction",
+    id: "en-economics-labor-cycles",
     userInput: {
-      chapterTitle: "Electromagnetism",
-      courseTitle: "Physics Fundamentals",
-      explanationSteps: [
-        {
-          text: "Magnetic flux measures how much magnetic field passes through a surface. It depends on field strength, area, and the angle between them.",
-          title: "Magnetic Flux",
-        },
-        {
-          text: "EMF (electromotive force) is the voltage that drives current. In induction, changing magnetic flux creates this voltage without any battery.",
-          title: "Induced EMF",
-        },
-        {
-          text: "Faraday's law states that induced EMF equals the rate of change of magnetic flux. Faster changes produce larger voltages.",
-          title: "Faraday's Law",
-        },
-      ],
-      language: "en",
-      lessonDescription:
-        "Understanding how changing magnetic fields induce electric currents in conductors",
-      lessonTitle: "Electromagnetic Induction",
-    },
-  },
-  {
-    expectations: `
-LANGUAGE REQUIREMENT: Titles and text must be in Portuguese.
-
-TOPIC-SPECIFIC GUIDANCE:
-
-1. ACCURACY CHECK: Enzyme catalysis involves specific binding and conformational changes. Penalize if:
-   - Enzymes are described as being consumed in the reaction (they are catalysts and are regenerated)
-   - The lock-and-key model is presented without acknowledging induced fit (modern understanding includes conformational change)
-
-2. DEPTH CHECK: Penalize if the explanation treats it as "enzymes speed up reactions" without showing the molecular dance of binding, catalysis, and release.
-
-3. DISTINCTION FROM EXPLANATION: The explanation covered WHAT active sites, substrates, and activation energy ARE. This should show HOW enzymes grab substrates, lower barriers, and release products.
-
-${SHARED_EXPECTATIONS}
-    `,
-    id: "pt-chemistry-enzyme-catalysis",
-    userInput: {
-      chapterTitle: "Bioquímica",
-      courseTitle: "Química Orgânica",
-      explanationSteps: [
-        {
-          text: "O sítio ativo é a região da enzima onde a catálise acontece. Sua forma tridimensional complementa o substrato, permitindo ligação específica.",
-          title: "Sítio Ativo",
-        },
-        {
-          text: "Substratos são as moléculas que as enzimas transformam. Eles se ligam ao sítio ativo e passam pela reação química catalisada.",
-          title: "Substratos",
-        },
-        {
-          text: "A energia de ativação é a barreira energética que as reações precisam superar. Enzimas reduzem essa barreira, acelerando reações milhões de vezes.",
-          title: "Energia de Ativação",
-        },
-      ],
-      language: "pt",
-      lessonDescription:
-        "Entendendo o processo molecular pelo qual enzimas catalisam reações bioquímicas",
-      lessonTitle: "Como Enzimas Catalisam Reações",
-    },
-  },
-  {
-    expectations: `
-LANGUAGE REQUIREMENT: Titles and text must be in Spanish.
-
-TOPIC-SPECIFIC GUIDANCE:
-
-1. ACCURACY CHECK: Electrolysis involves specific electrode reactions with correct ion migration. Penalize if:
-   - Cations are described as moving to the anode (cations move to the cathode; anions move to the anode)
-   - The process is described as spontaneous (electrolysis requires external energy input)
-
-2. DEPTH CHECK: Penalize if the explanation treats it as "electricity splits compounds" without showing the ion migration and electrode reactions.
-
-3. DISTINCTION FROM EXPLANATION: The explanation covered WHAT electrodes, electrolytes, and ions ARE. This should show HOW the electric current drives ion movement and forces non-spontaneous reactions.
-
-${SHARED_EXPECTATIONS}
-    `,
-    id: "es-chemistry-electrolysis",
-    userInput: {
-      chapterTitle: "Electroquímica",
-      courseTitle: "Química General",
-      explanationSteps: [
-        {
-          text: "Los electrodos son conductores que conectan el circuito externo con la solución. El cátodo es negativo y el ánodo es positivo.",
-          title: "Electrodos",
-        },
-        {
-          text: "Los electrolitos son sustancias que se disocian en iones cuando se disuelven. Estos iones libres permiten que la corriente fluya a través de la solución.",
-          title: "Electrolitos",
-        },
-        {
-          text: "Los iones son átomos o moléculas con carga eléctrica. Los cationes tienen carga positiva, los aniones tienen carga negativa.",
-          title: "Iones",
-        },
-      ],
-      language: "es",
-      lessonDescription:
-        "Entendiendo cómo la corriente eléctrica fuerza reacciones químicas no espontáneas en celdas electrolíticas",
-      lessonTitle: "El Proceso de Electrólisis",
-    },
-  },
-  {
-    expectations: `
-TOPIC-SPECIFIC GUIDANCE:
-
-1. ACCURACY CHECK: Monetary policy transmission involves multiple channels with time lags. Penalize if:
-   - Interest rate changes are described as immediately affecting inflation (transmission takes 12-24 months)
-   - The central bank is described as directly controlling commercial interest rates (it influences them through the policy rate)
-
-2. DEPTH CHECK: Penalize if the explanation treats it as "central bank changes rates, economy responds" without showing the chain of effects through banks, lending, spending, and prices.
-
-3. DISTINCTION FROM EXPLANATION: The explanation covered WHAT policy rates, reserve requirements, and open market operations ARE. This should show HOW policy changes ripple through the financial system to affect the real economy.
-
-${SHARED_EXPECTATIONS}
-    `,
-    id: "en-economics-monetary-transmission",
-    userInput: {
-      chapterTitle: "Macroeconomic Policy",
+      chapterTitle: "Business cycles",
       courseTitle: "Economics",
       explanationSteps: [
         {
-          text: "The policy rate is the interest rate the central bank charges commercial banks. It serves as the baseline for all other rates in the economy.",
-          title: "Policy Rate",
+          text: "The unemployment rate measures the share of the labor force actively seeking work but unable to find it. It rises during recessions but typically lags behind GDP declines.",
+          title: "Unemployment Rate",
         },
         {
-          text: "Reserve requirements determine what fraction of deposits banks must hold. Lower requirements mean banks can lend more of their deposits.",
-          title: "Reserve Requirements",
+          text: "Average hours worked per employee often fall before headcount does. Firms reduce overtime first, making hours a leading indicator of labor market stress.",
+          title: "Hours Worked",
         },
         {
-          text: "Open market operations involve buying and selling government bonds. Purchases inject money into the economy; sales withdraw it.",
-          title: "Open Market Operations",
+          text: "Labor force participation measures who is working or looking for work. It drops during prolonged downturns as discouraged workers stop searching entirely.",
+          title: "Participation Rate",
         },
       ],
       language: "en",
       lessonDescription:
-        "Understanding how central bank policy decisions transmit through the financial system to affect economic activity and inflation",
-      lessonTitle: "Monetary Policy Transmission",
+        "Empirical regularities linking downturns to labor market outcomes at the level of aggregate fluctuations, without modeling search or wage-setting mechanisms.",
+      lessonTitle: "Labor market aggregates over the cycle",
+    },
+  },
+  {
+    expectations: `
+LANGUAGE REQUIREMENT: Titles and text must be in Spanish.
+
+TOPIC-SPECIFIC GUIDANCE:
+
+1. ACCURACY CHECK: Enolate formation involves a specific sequence of proton abstraction and resonance stabilization. Penalize if:
+   - The base is described as attacking the carbon rather than abstracting the α-hydrogen
+   - Resonance stabilization is described as occurring before deprotonation (it results from deprotonation)
+
+2. DEPTH CHECK: Penalize if the explanation treats enolate formation as a single step rather than showing the process of base approach, proton abstraction, electron delocalization, and nucleophilic attack.
+
+3. DISTINCTION FROM EXPLANATION: The explanation covered WHAT α-acidity and enolates are. This should show HOW the deprotonation process occurs and HOW the enolate actively attacks electrophiles to form C–C bonds.
+
+${SHARED_EXPECTATIONS}
+    `,
+    id: "es-quimica-acidez-enolatos",
+    userInput: {
+      chapterTitle: "Carbonilos y enolatos",
+      courseTitle: "Química",
+      explanationSteps: [
+        {
+          text: "Los hidrógenos en posición α, junto al carbonilo, son inusualmente ácidos. La base sustrae este hidrógeno y el par de electrones se deslocaliza hacia el oxígeno del carbonilo.",
+          title: "Acidez en Posición α",
+        },
+        {
+          text: "El enolato resultante es un carbanión estabilizado por resonancia. La carga negativa se reparte entre el carbono α y el oxígeno, creando un nucleófilo ambidente.",
+          title: "Estabilización por Resonancia",
+        },
+        {
+          text: "Como nucleófilo, el enolato ataca electrófilos en el carbono α, formando nuevos enlaces C–C. Esta reactividad es la base de condensaciones aldólicas y de Claisen.",
+          title: "Enolato como Nucleófilo",
+        },
+      ],
+      language: "es",
+      lessonDescription:
+        "Origen de la acidez en α y cómo se forma el enolato como nucleófilo clave en reacciones de construcción C–C.",
+      lessonTitle: "Acidez en α y formación de enolatos",
+    },
+  },
+  {
+    expectations: `
+LANGUAGE REQUIREMENT: Titles and text must be in Portuguese.
+
+TOPIC-SPECIFIC GUIDANCE:
+
+1. ACCURACY CHECK: Automation monitoring involves active measurement and feedback processes. Penalize if:
+   - Monitoring is described as a one-time setup rather than an ongoing process
+   - Audit trails are described without showing how they capture the generation pipeline in action
+
+2. DEPTH CHECK: Penalize if the explanation treats monitoring as simply "looking at dashboards" without showing how metrics are collected, how errors are detected, and how audit trails trace document generation step by step.
+
+3. DISTINCTION FROM EXPLANATION: The explanation covered WHAT quality metrics and audit trails are. This should show HOW they actively work — the process of measuring, detecting anomalies, and tracing document generation.
+
+${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-direito-medicao-automacao",
+    userInput: {
+      chapterTitle: "Legal tech e automação de documentos",
+      courseTitle: "Direito",
+      explanationSteps: [
+        {
+          text: "Métricas de qualidade medem a taxa de erros em documentos automatizados — cláusulas faltantes, dados incorretos ou formatação quebrada. Cada erro é classificado por gravidade.",
+          title: "Métricas de Qualidade",
+        },
+        {
+          text: "Rastros de auditoria registram cada etapa da geração documental: quem solicitou, qual template foi usado, quais dados alimentaram o documento e quando foi revisado.",
+          title: "Rastros de Auditoria",
+        },
+      ],
+      language: "pt",
+      lessonDescription:
+        "Métricas operacionais focadas em qualidade e segurança da automação documental, com rastros para auditoria.",
+      lessonTitle: "Medição e monitoramento da automação",
     },
   },
   {
     expectations: `
 TOPIC-SPECIFIC GUIDANCE:
 
-1. ACCURACY CHECK: The compilation pipeline has distinct phases that must occur in order. Penalize if:
-   - Optimization is described as happening before parsing (parsing must occur first to create the IR)
-   - Lexical analysis and parsing are conflated (lexing produces tokens; parsing builds the AST)
+1. ACCURACY CHECK: Connectivity debugging involves a systematic process of elimination. Penalize if:
+   - The debugging process skips layers or tests them out of order (systematic approaches work layer by layer)
+   - Reachability tests are described without explaining what each result tells you about where the problem lies
 
-2. DEPTH CHECK: Penalize if the explanation treats it as "code becomes machine code" without showing how each phase transforms the representation.
+2. DEPTH CHECK: Penalize if the explanation treats debugging as a single check rather than showing the sequential process of testing host config, local subnet, gateway, path, and service-layer reachability.
 
-3. DISTINCTION FROM EXPLANATION: The explanation covered WHAT tokens, ASTs, and intermediate representations ARE. This should show HOW the compiler actively transforms code through each phase.
+3. DISTINCTION FROM EXPLANATION: The explanation covered WHAT the debugging mental models are. This should show HOW you actively work through a connectivity problem — the step-by-step process of testing each layer and interpreting results to narrow the fault.
 
 ${SHARED_EXPECTATIONS}
     `,
-    id: "en-cs-compilation-pipeline",
+    id: "en-web-debugging-mental-models",
     userInput: {
-      chapterTitle: "Language Implementation",
-      courseTitle: "Compiler Design",
+      chapterTitle: "Networking fundamentals",
+      courseTitle: "Web Development",
       explanationSteps: [
         {
-          text: "Tokens are the smallest meaningful units of code — keywords, identifiers, operators, literals. The lexer breaks source code into this stream of tokens.",
-          title: "Tokens",
+          text: "Start at the host: check if the network interface is up and has a valid IP. If the machine itself is misconfigured, nothing beyond it will work.",
+          title: "Host-Level Check",
         },
         {
-          text: "The AST (Abstract Syntax Tree) represents code structure hierarchically. It captures how expressions nest and statements compose.",
-          title: "Abstract Syntax Tree",
+          text: "Test the local subnet by reaching the default gateway. If this fails, the problem is between your machine and the first router — a local network issue.",
+          title: "Subnet and Gateway",
         },
         {
-          text: "Intermediate representation (IR) is a platform-independent format. It's lower-level than the AST but higher-level than machine code.",
-          title: "Intermediate Representation",
+          text: "If the gateway responds but the destination doesn't, the problem is somewhere along the path — a routing issue, a firewall, or the remote host itself.",
+          title: "Path and Service Layer",
         },
       ],
       language: "en",
       lessonDescription:
-        "Understanding how compilers transform source code through multiple phases of analysis and synthesis",
-      lessonTitle: "The Compilation Pipeline",
+        "Practical mental models for narrowing a problem to host, subnet, gateway, path, or service-layer reachability without relying on protocol-specific details.",
+      lessonTitle: "Connectivity Debugging Mental Models",
     },
   },
 ];
