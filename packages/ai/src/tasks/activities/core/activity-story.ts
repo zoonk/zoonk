@@ -41,7 +41,8 @@ export type ActivityStoryParams = {
   chapterTitle: string;
   courseTitle: string;
   language: string;
-  explanationSteps: { title: string; text: string }[];
+  concepts: string[];
+  neighboringConcepts: string[];
   model?: string;
   useFallback?: boolean;
   reasoningEffort?: ReasoningEffort;
@@ -53,22 +54,19 @@ export async function generateActivityStory({
   chapterTitle,
   courseTitle,
   language,
-  explanationSteps,
+  concepts,
+  neighboringConcepts,
   model = DEFAULT_MODEL,
   useFallback = true,
   reasoningEffort,
 }: ActivityStoryParams) {
-  const formattedExplanationSteps = explanationSteps
-    .map((step, index) => `${index + 1}. ${step.title}: ${step.text}`)
-    .join("\n");
-
   const userPrompt = `LESSON_TITLE: ${lessonTitle}
 LESSON_DESCRIPTION: ${lessonDescription}
 CHAPTER_TITLE: ${chapterTitle}
 COURSE_TITLE: ${courseTitle}
 LANGUAGE: ${language}
-EXPLANATION_STEPS:
-${formattedExplanationSteps}`;
+CONCEPTS: ${concepts.join(", ")}
+NEIGHBORING_CONCEPTS: ${neighboringConcepts.join(", ")}`;
 
   const providerOptions = buildProviderOptions({
     fallbackModels: FALLBACK_MODELS,

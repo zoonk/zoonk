@@ -1,68 +1,97 @@
 import { generateActivityExplanation } from "@zoonk/ai/tasks/activities/core/explanation";
 import { safeAsync } from "@zoonk/utils/error";
-import { streamError, streamStatus } from "../stream-status";
+import { settledValues } from "@zoonk/utils/settled";
+import { streamStatus } from "../stream-status";
 import { resolveActivityForGeneration, saveContentSteps } from "./_utils/content-step-helpers";
+import { findActivitiesByKind } from "./_utils/find-activity-by-kind";
 import { type ActivitySteps } from "./_utils/get-activity-steps";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
 import { setActivityAsRunningStep } from "./set-activity-as-running-step";
 
-export async function generateExplanationContentStep(
-  activities: LessonActivity[],
-  backgroundSteps: ActivitySteps,
-  workflowRunId: string,
-): Promise<{ steps: ActivitySteps }> {
-  "use step";
+export type ExplanationResult = {
+  activityId: number;
+  concept: string;
+  steps: ActivitySteps;
+};
 
-  const resolved = await resolveActivityForGeneration(activities, "explanation");
+async function generateSingleExplanation(
+  activity: LessonActivity,
+  concept: string,
+  otherLessonConcepts: string[],
+  neighboringConcepts: string[],
+  workflowRunId: string,
+): Promise<ExplanationResult> {
+  const resolved = await resolveActivityForGeneration(activity);
 
   if (!resolved.shouldGenerate) {
-    return { steps: resolved.existingSteps };
+    return { activityId: activity.id, concept, steps: resolved.existingSteps };
   }
 
-  const { activity } = resolved;
-
-  if (backgroundSteps.length === 0) {
-    await handleActivityFailureStep({ activityId: activity.id });
-    return { steps: [] };
-  }
-
-  await streamStatus({ status: "started", step: "generateExplanationContent" });
   await setActivityAsRunningStep({ activityId: activity.id, workflowRunId });
 
   const { data: result, error } = await safeAsync(() =>
     generateActivityExplanation({
-      backgroundSteps,
       chapterTitle: activity.lesson.chapter.title,
+      concept,
       courseTitle: activity.lesson.chapter.course.title,
       language: activity.language,
       lessonDescription: activity.lesson.description ?? "",
       lessonTitle: activity.lesson.title,
+      neighboringConcepts,
+      otherLessonConcepts,
     }),
   );
 
   if (error || !result) {
-    const reason = error ? "aiGenerationFailed" : "aiEmptyResult";
-    await streamError({ reason, step: "generateExplanationContent" });
     await handleActivityFailureStep({ activityId: activity.id });
-    return { steps: [] };
+    return { activityId: activity.id, concept, steps: [] };
   }
 
-  return saveAndStreamResult(activity.id, result.data.steps);
+  const { error: saveError } = await saveContentSteps(activity.id, result.data.steps);
+
+  if (saveError) {
+    await handleActivityFailureStep({ activityId: activity.id });
+    return { activityId: activity.id, concept, steps: [] };
+  }
+
+  return { activityId: activity.id, concept, steps: result.data.steps };
 }
 
-async function saveAndStreamResult(
-  activityId: bigint | number,
-  steps: ActivitySteps,
-): Promise<{ steps: ActivitySteps }> {
-  const { error } = await saveContentSteps(activityId, steps);
+export async function generateExplanationContentStep(
+  activities: LessonActivity[],
+  concepts: string[],
+  neighboringConcepts: string[],
+  workflowRunId: string,
+): Promise<{ results: ExplanationResult[] }> {
+  "use step";
 
-  if (error) {
-    await streamError({ reason: "dbSaveFailed", step: "generateExplanationContent" });
-    await handleActivityFailureStep({ activityId });
-    return { steps: [] };
+  const explanationActivities = findActivitiesByKind(activities, "explanation");
+
+  if (explanationActivities.length === 0) {
+    return { results: [] };
   }
 
+  await streamStatus({ status: "started", step: "generateExplanationContent" });
+
+  const settled = await Promise.allSettled(
+    explanationActivities.map((activity) => {
+      const concept = activity.title ?? "";
+      const otherLessonConcepts = concepts.filter((item) => item !== concept);
+
+      return generateSingleExplanation(
+        activity,
+        concept,
+        otherLessonConcepts,
+        neighboringConcepts,
+        workflowRunId,
+      );
+    }),
+  );
+
+  const results = settledValues(settled);
+
   await streamStatus({ status: "completed", step: "generateExplanationContent" });
-  return { steps };
+
+  return { results };
 }

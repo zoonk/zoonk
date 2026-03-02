@@ -7,6 +7,7 @@ import { type ChapterContext } from "./get-chapter-step";
 export type GeneratedLesson = {
   title: string;
   description: string;
+  concepts: string[];
 };
 
 function generateLessons(context: ChapterContext) {

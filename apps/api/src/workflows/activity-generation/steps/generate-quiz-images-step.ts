@@ -6,7 +6,7 @@ import { safeAsync } from "@zoonk/utils/error";
 import { isJsonObject, toRecord } from "@zoonk/utils/json";
 import { rejected } from "@zoonk/utils/settled";
 import { streamStatus } from "../stream-status";
-import { findActivityByKind } from "./_utils/find-activity-by-kind";
+import { findActivitiesByKind } from "./_utils/find-activity-by-kind";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
 
@@ -67,10 +67,11 @@ async function generateOptionImages(
 export async function generateQuizImagesStep(
   activities: LessonActivity[],
   questions: QuizQuestion[],
+  quizIndex = 0,
 ): Promise<QuizQuestionWithUrls[]> {
   "use step";
 
-  const activity = findActivityByKind(activities, "quiz");
+  const activity = findActivitiesByKind(activities, "quiz")[quizIndex];
 
   if (!activity || questions.length === 0) {
     return [];

@@ -24,6 +24,7 @@ export const ACTIVITY_GENERATION_COMPLETION_STEP: ActivityStepName = "setActivit
 
 export const ACTIVITY_STEPS = [
   "getLessonActivities",
+  "getNeighboringConcepts",
   "generateBackgroundContent",
   "generateChallengeContent",
   "generateCustomContent",

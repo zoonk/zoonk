@@ -2,7 +2,7 @@ import { type ActivityStepName } from "@/workflows/config";
 import { type ActivityKind, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { streamError, streamStatus } from "../stream-status";
-import { findActivityByKind } from "./_utils/find-activity-by-kind";
+import { findActivitiesByKind, findActivityByKind } from "./_utils/find-activity-by-kind";
 import { type LessonActivity } from "./get-lesson-activities-step";
 
 const kindToStepName: Partial<Record<ActivityKind, ActivityStepName>> = {
@@ -59,6 +59,56 @@ export async function completeActivityStep(
     await streamStatus({ status: "error", step: "setActivityAsCompleted" });
     return;
   }
+
+  await streamStatus({ status: "completed", step: stepName });
+  await streamStatus({ status: "completed", step: "setActivityAsCompleted" });
+}
+
+async function completeSingleActivity(
+  activity: LessonActivity,
+  workflowRunId: string,
+  stepName: ActivityStepName,
+): Promise<void> {
+  const current = await prisma.activity.findUnique({
+    where: { id: activity.id },
+  });
+
+  if (current?.generationStatus !== "running") {
+    return;
+  }
+
+  const { error } = await safeAsync(() =>
+    prisma.activity.update({
+      data: { generationRunId: workflowRunId, generationStatus: "completed" },
+      where: { id: activity.id },
+    }),
+  );
+
+  if (error) {
+    await streamError({ reason: "dbSaveFailed", step: stepName });
+  }
+}
+
+export async function completeActivitiesByKindStep(
+  activities: LessonActivity[],
+  workflowRunId: string,
+  activityKind: ActivityKind,
+): Promise<void> {
+  "use step";
+
+  const matchingActivities = findActivitiesByKind(activities, activityKind);
+  const stepName = kindToStepName[activityKind];
+
+  if (matchingActivities.length === 0 || !stepName) {
+    return;
+  }
+
+  await streamStatus({ status: "started", step: stepName });
+  await streamStatus({ status: "started", step: "setActivityAsCompleted" });
+
+  await Promise.allSettled(
+    matchingActivities.map((activity) => completeSingleActivity(activity, workflowRunId, stepName)),
+  );
 
   await streamStatus({ status: "completed", step: stepName });
   await streamStatus({ status: "completed", step: "setActivityAsCompleted" });

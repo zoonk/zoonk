@@ -51,25 +51,18 @@ ${SHARED_EXPECTATIONS}
     id: "en-web-data-movement",
     userInput: {
       chapterTitle: "Networking fundamentals",
-      courseTitle: "Web Development",
-      explanationSteps: [
-        {
-          text: "Encapsulation wraps data with headers at each network layer. Each layer adds its own addressing and control information, like putting a letter in a series of labeled envelopes.",
-          title: "Encapsulation",
-        },
-        {
-          text: "Each network device along the path reads only its layer's header, makes a forwarding decision, and passes the data to the next hop. No device sees the full picture.",
-          title: "Hop-by-Hop Forwarding",
-        },
-        {
-          text: "The maximum transmission unit limits how much data fits in a single frame. Data larger than the MTU must be fragmented into smaller pieces for transit.",
-          title: "Size Constraints",
-        },
+      concepts: [
+        "Encapsulation",
+        "Hop-by-Hop Forwarding",
+        "Maximum Transmission Unit",
+        "Packet Fragmentation",
       ],
+      courseTitle: "Web Development",
       language: "en",
       lessonDescription:
         "Core building blocks for how data moves across networks, from encapsulation to hop-by-hop forwarding constraints.",
       lessonTitle: "How Data Moves on Networks",
+      neighboringConcepts: ["DNS Resolution", "TCP Handshake", "Socket Programming"],
     },
   },
   {
@@ -91,21 +84,22 @@ ${SHARED_EXPECTATIONS}
     id: "pt-python-float-bool",
     userInput: {
       chapterTitle: "Tipos numéricos e valores especiais",
-      courseTitle: "Python",
-      explanationSteps: [
-        {
-          text: "Floats representam números com parte decimal usando ponto flutuante. A notação 3.14 ou 2.0e10 cria literais float em Python.",
-          title: "Literais Float",
-        },
-        {
-          text: "Bool é uma subclasse de int em Python. True equivale a 1 e False equivale a 0, permitindo operações aritméticas diretas com booleanos.",
-          title: "Bool como Inteiro",
-        },
+      concepts: [
+        "Ponto Flutuante",
+        "Booleanos como Inteiros",
+        "Literais Numéricos",
+        "Hierarquia de Tipos",
       ],
+      courseTitle: "Python",
       language: "pt",
       lessonDescription:
         "Valores de ponto flutuante e booleanos, sintaxe de literais e a relação estrutural entre bool e int.",
       lessonTitle: "Float e bool como tipos numéricos",
+      neighboringConcepts: [
+        "Conversão de Tipos",
+        "Operadores Aritméticos",
+        "Comparação de Valores",
+      ],
     },
   },
   {
@@ -125,25 +119,18 @@ ${SHARED_EXPECTATIONS}
     id: "en-economics-labor-cycles",
     userInput: {
       chapterTitle: "Business cycles",
-      courseTitle: "Economics",
-      explanationSteps: [
-        {
-          text: "The unemployment rate measures the share of the labor force actively seeking work but unable to find it. It rises during recessions but typically lags behind GDP declines.",
-          title: "Unemployment Rate",
-        },
-        {
-          text: "Average hours worked per employee often fall before headcount does. Firms reduce overtime first, making hours a leading indicator of labor market stress.",
-          title: "Hours Worked",
-        },
-        {
-          text: "Labor force participation measures who is working or looking for work. It drops during prolonged downturns as discouraged workers stop searching entirely.",
-          title: "Participation Rate",
-        },
+      concepts: [
+        "Unemployment Rate",
+        "Hours Worked",
+        "Labor Force Participation",
+        "Discouraged Workers",
       ],
+      courseTitle: "Economics",
       language: "en",
       lessonDescription:
         "Empirical regularities linking downturns to labor market outcomes at the level of aggregate fluctuations, without modeling search or wage-setting mechanisms.",
       lessonTitle: "Labor market aggregates over the cycle",
+      neighboringConcepts: ["GDP Growth Rate", "Inflation Targeting", "Fiscal Multiplier"],
     },
   },
   {
@@ -165,25 +152,22 @@ ${SHARED_EXPECTATIONS}
     id: "es-quimica-acidez-enolatos",
     userInput: {
       chapterTitle: "Carbonilos y enolatos",
-      courseTitle: "Química",
-      explanationSteps: [
-        {
-          text: "Los hidrógenos en posición α, junto al carbonilo, son inusualmente ácidos. La base sustrae este hidrógeno y el par de electrones se deslocaliza hacia el oxígeno del carbonilo.",
-          title: "Acidez en Posición α",
-        },
-        {
-          text: "El enolato resultante es un carbanión estabilizado por resonancia. La carga negativa se reparte entre el carbono α y el oxígeno, creando un nucleófilo ambidente.",
-          title: "Estabilización por Resonancia",
-        },
-        {
-          text: "Como nucleófilo, el enolato ataca electrófilos en el carbono α, formando nuevos enlaces C–C. Esta reactividad es la base de condensaciones aldólicas y de Claisen.",
-          title: "Enolato como Nucleófilo",
-        },
+      concepts: [
+        "Acidez en Posición Alfa",
+        "Estabilización por Resonancia",
+        "Enolato como Nucleófilo",
+        "Condensación Aldólica",
       ],
+      courseTitle: "Química",
       language: "es",
       lessonDescription:
         "Origen de la acidez en α y cómo se forma el enolato como nucleófilo clave en reacciones de construcción C–C.",
       lessonTitle: "Acidez en α y formación de enolatos",
+      neighboringConcepts: [
+        "Adición Nucleofílica",
+        "Reducción de Carbonilos",
+        "Protección de Grupos Funcionales",
+      ],
     },
   },
   {
@@ -205,21 +189,22 @@ ${SHARED_EXPECTATIONS}
     id: "pt-direito-medicao-automacao",
     userInput: {
       chapterTitle: "Legal tech e automação de documentos",
-      courseTitle: "Direito",
-      explanationSteps: [
-        {
-          text: "Métricas de qualidade medem a taxa de erros em documentos automatizados — cláusulas faltantes, dados incorretos ou formatação quebrada. Cada erro é classificado por gravidade.",
-          title: "Métricas de Qualidade",
-        },
-        {
-          text: "Rastros de auditoria registram cada etapa da geração documental: quem solicitou, qual template foi usado, quais dados alimentaram o documento e quando foi revisado.",
-          title: "Rastros de Auditoria",
-        },
+      concepts: [
+        "Métricas de Qualidade Documental",
+        "Rastros de Auditoria",
+        "Classificação de Erros",
+        "Indicadores de Segurança",
       ],
+      courseTitle: "Direito",
       language: "pt",
       lessonDescription:
         "Métricas operacionais focadas em qualidade e segurança da automação documental, com rastros para auditoria.",
       lessonTitle: "Medição e monitoramento da automação",
+      neighboringConcepts: [
+        "Templates Jurídicos",
+        "Integração com Sistemas Judiciais",
+        "Assinatura Digital",
+      ],
     },
   },
   {
@@ -239,25 +224,18 @@ ${SHARED_EXPECTATIONS}
     id: "en-web-debugging-mental-models",
     userInput: {
       chapterTitle: "Networking fundamentals",
-      courseTitle: "Web Development",
-      explanationSteps: [
-        {
-          text: "Start at the host: check if the network interface is up and has a valid IP. If the machine itself is misconfigured, nothing beyond it will work.",
-          title: "Host-Level Check",
-        },
-        {
-          text: "Test the local subnet by reaching the default gateway. If this fails, the problem is between your machine and the first router — a local network issue.",
-          title: "Subnet and Gateway",
-        },
-        {
-          text: "If the gateway responds but the destination doesn't, the problem is somewhere along the path — a routing issue, a firewall, or the remote host itself.",
-          title: "Path and Service Layer",
-        },
+      concepts: [
+        "Layer-by-Layer Isolation",
+        "Host Configuration Check",
+        "Gateway Reachability",
+        "Service-Layer Diagnosis",
       ],
+      courseTitle: "Web Development",
       language: "en",
       lessonDescription:
         "Practical mental models for narrowing a problem to host, subnet, gateway, path, or service-layer reachability without relying on protocol-specific details.",
       lessonTitle: "Connectivity Debugging Mental Models",
+      neighboringConcepts: ["Latency Measurement", "Load Balancing", "Network Address Translation"],
     },
   },
 ];

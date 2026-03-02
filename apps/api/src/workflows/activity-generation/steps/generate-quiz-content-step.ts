@@ -12,6 +12,7 @@ import { prisma } from "@zoonk/db";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { streamError, streamStatus } from "../stream-status";
 import { resolveActivityForGeneration } from "./_utils/content-step-helpers";
+import { findActivitiesByKind } from "./_utils/find-activity-by-kind";
 import { type ActivitySteps } from "./_utils/get-activity-steps";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
@@ -69,10 +70,17 @@ export async function generateQuizContentStep(
   activities: LessonActivity[],
   explanationSteps: ActivitySteps,
   workflowRunId: string,
+  quizIndex = 0,
 ): Promise<{ questions: QuizQuestion[] }> {
   "use step";
 
-  const resolved = await resolveActivityForGeneration(activities, "quiz");
+  const quizActivity = findActivitiesByKind(activities, "quiz")[quizIndex];
+
+  if (!quizActivity) {
+    return { questions: [] };
+  }
+
+  const resolved = await resolveActivityForGeneration(quizActivity);
 
   if (!resolved.shouldGenerate) {
     return { questions: [] };

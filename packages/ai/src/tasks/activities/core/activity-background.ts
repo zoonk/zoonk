@@ -32,6 +32,8 @@ export type ActivityBackgroundParams = {
   chapterTitle: string;
   courseTitle: string;
   language: string;
+  concepts: string[];
+  neighboringConcepts: string[];
   model?: string;
   useFallback?: boolean;
   reasoningEffort?: ReasoningEffort;
@@ -43,6 +45,8 @@ export async function generateActivityBackground({
   chapterTitle,
   courseTitle,
   language,
+  concepts,
+  neighboringConcepts,
   model = DEFAULT_MODEL,
   useFallback = true,
   reasoningEffort,
@@ -51,7 +55,9 @@ export async function generateActivityBackground({
 LESSON_DESCRIPTION: ${lessonDescription}
 CHAPTER_TITLE: ${chapterTitle}
 COURSE_TITLE: ${courseTitle}
-LANGUAGE: ${language}`;
+LANGUAGE: ${language}
+CONCEPTS: ${concepts.join(", ")}
+NEIGHBORING_CONCEPTS: ${neighboringConcepts.join(", ")}`;
 
   const providerOptions = buildProviderOptions({
     fallbackModels: FALLBACK_MODELS,

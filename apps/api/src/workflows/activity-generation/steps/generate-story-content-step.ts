@@ -11,7 +11,6 @@ import { prisma } from "@zoonk/db";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { streamError, streamStatus } from "../stream-status";
 import { resolveActivityForGeneration } from "./_utils/content-step-helpers";
-import { type ActivitySteps } from "./_utils/get-activity-steps";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
 import { setActivityAsRunningStep } from "./set-activity-as-running-step";
@@ -68,7 +67,8 @@ async function saveAndCompleteStory(
 
 export async function generateStoryContentStep(
   activities: LessonActivity[],
-  explanationSteps: ActivitySteps,
+  concepts: string[],
+  neighboringConcepts: string[],
   workflowRunId: string,
 ): Promise<void> {
   "use step";
@@ -81,7 +81,7 @@ export async function generateStoryContentStep(
 
   const { activity } = resolved;
 
-  if (explanationSteps.length === 0) {
+  if (concepts.length === 0) {
     await handleActivityFailureStep({ activityId: activity.id });
     return;
   }
@@ -92,11 +92,12 @@ export async function generateStoryContentStep(
   const { data: result, error }: SafeReturn<{ data: ActivityStorySchema }> = await safeAsync(() =>
     generateActivityStory({
       chapterTitle: activity.lesson.chapter.title,
+      concepts,
       courseTitle: activity.lesson.chapter.course.title,
-      explanationSteps,
       language: activity.language,
       lessonDescription: activity.lesson.description ?? "",
       lessonTitle: activity.lesson.title,
+      neighboringConcepts,
     }),
   );
 

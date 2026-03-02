@@ -29,9 +29,11 @@ export type ActivityVocabularySchema = z.infer<typeof schema>;
 
 export type ActivityVocabularyParams = {
   chapterTitle: string;
+  concepts?: string[];
   lessonDescription: string;
   lessonTitle: string;
   model?: string;
+  neighboringConcepts?: string[];
   reasoningEffort?: ReasoningEffort;
   targetLanguage: string;
   userLanguage: string;
@@ -40,9 +42,11 @@ export type ActivityVocabularyParams = {
 
 export async function generateActivityVocabulary({
   chapterTitle,
+  concepts = [],
   lessonDescription,
   lessonTitle,
   model = DEFAULT_MODEL,
+  neighboringConcepts = [],
   reasoningEffort,
   targetLanguage,
   userLanguage,
@@ -50,11 +54,19 @@ export async function generateActivityVocabulary({
 }: ActivityVocabularyParams) {
   const promptContext = getLanguagePromptContext({ targetLanguage, userLanguage });
 
+  const conceptLines = [
+    concepts.length > 0 ? `CONCEPTS: ${concepts.join(", ")}` : "",
+    neighboringConcepts.length > 0 ? `NEIGHBORING_CONCEPTS: ${neighboringConcepts.join(", ")}` : "",
+  ]
+    .filter(Boolean)
+    .join("\n");
+
   const userPrompt = `TARGET_LANGUAGE: ${promptContext.targetLanguageName}
 USER_LANGUAGE: ${promptContext.userLanguage}
 CHAPTER_TITLE: ${chapterTitle}
 LESSON_TITLE: ${lessonTitle}
 LESSON_DESCRIPTION: ${lessonDescription}
+${conceptLines}
 
 Generate a focused, representative vocabulary list for this language lesson. Include essential words for this specific topic - quality over quantity.`;
 

@@ -41,9 +41,11 @@ export type ActivityStoryLanguageSchema = z.infer<typeof schema>;
 
 export type ActivityStoryLanguageParams = {
   chapterTitle: string;
+  concepts?: string[];
   lessonDescription: string;
   lessonTitle: string;
   model?: string;
+  neighboringConcepts?: string[];
   reasoningEffort?: ReasoningEffort;
   targetLanguage: string;
   userLanguage: string;
@@ -52,9 +54,11 @@ export type ActivityStoryLanguageParams = {
 
 export async function generateActivityStoryLanguage({
   chapterTitle,
+  concepts = [],
   lessonDescription,
   lessonTitle,
   model = DEFAULT_MODEL,
+  neighboringConcepts = [],
   reasoningEffort = "high",
   targetLanguage,
   userLanguage,
@@ -62,11 +66,19 @@ export async function generateActivityStoryLanguage({
 }: ActivityStoryLanguageParams) {
   const promptContext = getLanguagePromptContext({ targetLanguage, userLanguage });
 
+  const conceptLines = [
+    concepts.length > 0 ? `CONCEPTS: ${concepts.join(", ")}` : "",
+    neighboringConcepts.length > 0 ? `NEIGHBORING_CONCEPTS: ${neighboringConcepts.join(", ")}` : "",
+  ]
+    .filter(Boolean)
+    .join("\n");
+
   const userPrompt = `TARGET_LANGUAGE: ${promptContext.targetLanguageName}
 USER_LANGUAGE: ${promptContext.userLanguage}
 CHAPTER_TITLE: ${chapterTitle}
 LESSON_TITLE: ${lessonTitle}
 LESSON_DESCRIPTION: ${lessonDescription}
+${conceptLines}
 
 Generate an immersive dialogue-driven story activity for this language lesson. Create a realistic everyday scenario where learners practice language production in situations they'd face in a foreign country.`;
 

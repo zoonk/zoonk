@@ -45,12 +45,8 @@ export async function ActivityList({
         {activities.map((activity) => {
           const meta = kindMeta.get(activity.kind);
 
-          const title = activity.kind === "custom" && activity.title ? activity.title : meta?.label;
-
-          const description =
-            activity.kind === "custom" && activity.description
-              ? activity.description
-              : meta?.description;
+          const title = activity.title ?? meta?.label;
+          const description = activity.description ?? meta?.description;
 
           const completed = completedIds.includes(String(activity.id));
 

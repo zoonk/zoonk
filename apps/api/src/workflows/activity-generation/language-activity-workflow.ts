@@ -11,6 +11,7 @@ import { generateVocabularyAudioStep } from "./steps/generate-vocabulary-audio-s
 import { generateVocabularyContentStep } from "./steps/generate-vocabulary-content-step";
 import { generateVocabularyPronunciationStep } from "./steps/generate-vocabulary-pronunciation-step";
 import { type LessonActivity } from "./steps/get-lesson-activities-step";
+import { getNeighboringConceptsStep } from "./steps/get-neighboring-concepts-step";
 import { saveReadingSentencesStep } from "./steps/save-reading-sentences-step";
 import { saveVocabularyWordsStep } from "./steps/save-vocabulary-words-step";
 import { updateReadingEnrichmentsStep } from "./steps/update-reading-enrichments-step";
@@ -20,11 +21,15 @@ export async function languageActivityWorkflow(
   activities: LessonActivity[],
   workflowRunId: string,
 ): Promise<void> {
+  const lesson = activities[0]?.lesson;
+  const concepts = lesson?.concepts ?? [];
+  const neighboringConcepts = await getNeighboringConceptsStep(activities);
+
   // Wave 1: Generate language activities independently
   const [vocabularyResult] = await Promise.allSettled([
-    generateVocabularyContentStep(activities, workflowRunId),
-    generateGrammarContentStep(activities, workflowRunId),
-    generateLanguageStoryContentStep(activities, workflowRunId),
+    generateVocabularyContentStep(activities, workflowRunId, concepts, neighboringConcepts),
+    generateGrammarContentStep(activities, workflowRunId, concepts, neighboringConcepts),
+    generateLanguageStoryContentStep(activities, workflowRunId, concepts, neighboringConcepts),
   ]);
 
   const { words } = settled(vocabularyResult, { words: [] });
@@ -36,7 +41,13 @@ export async function languageActivityWorkflow(
       saveVocabularyWordsStep(activities, words),
       generateVocabularyPronunciationStep(activities, words),
       generateVocabularyAudioStep(activities, words),
-      generateReadingContentStep(activities, workflowRunId, currentRunWords),
+      generateReadingContentStep(
+        activities,
+        workflowRunId,
+        currentRunWords,
+        concepts,
+        neighboringConcepts,
+      ),
       completeActivityStep(activities, workflowRunId, "grammar"),
       completeActivityStep(activities, workflowRunId, "languageStory"),
     ]);

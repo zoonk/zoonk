@@ -9,6 +9,8 @@ import { setActivityAsRunningStep } from "./set-activity-as-running-step";
 
 export async function generateBackgroundContentStep(
   activities: LessonActivity[],
+  concepts: string[],
+  neighboringConcepts: string[],
   workflowRunId: string,
 ): Promise<{ steps: ActivitySteps }> {
   "use step";
@@ -27,10 +29,12 @@ export async function generateBackgroundContentStep(
   const { data: result, error } = await safeAsync(() =>
     generateActivityBackground({
       chapterTitle: activity.lesson.chapter.title,
+      concepts,
       courseTitle: activity.lesson.chapter.course.title,
       language: activity.language,
       lessonDescription: activity.lesson.description ?? "",
       lessonTitle: activity.lesson.title,
+      neighboringConcepts,
     }),
   );
 

@@ -26,8 +26,10 @@ const schema = z.object({
 export type ActivitySentencesSchema = z.infer<typeof schema>;
 
 export type ActivitySentencesParams = {
+  concepts?: string[];
   lessonTitle: string;
   model?: string;
+  neighboringConcepts?: string[];
   reasoningEffort?: ReasoningEffort;
   targetLanguage: string;
   userLanguage: string;
@@ -36,8 +38,10 @@ export type ActivitySentencesParams = {
 };
 
 export async function generateActivitySentences({
+  concepts = [],
   lessonTitle,
   model = DEFAULT_MODEL,
+  neighboringConcepts = [],
   reasoningEffort,
   targetLanguage,
   userLanguage,
@@ -46,10 +50,18 @@ export async function generateActivitySentences({
 }: ActivitySentencesParams) {
   const promptContext = getLanguagePromptContext({ targetLanguage, userLanguage });
 
+  const conceptLines = [
+    concepts.length > 0 ? `CONCEPTS: ${concepts.join(", ")}` : "",
+    neighboringConcepts.length > 0 ? `NEIGHBORING_CONCEPTS: ${neighboringConcepts.join(", ")}` : "",
+  ]
+    .filter(Boolean)
+    .join("\n");
+
   const userPrompt = `TARGET_LANGUAGE: ${promptContext.targetLanguageName}
 USER_LANGUAGE: ${promptContext.userLanguage}
 LESSON_TITLE: ${lessonTitle}
 VOCABULARY_WORDS: ${words.join(", ")}
+${conceptLines}
 
 Generate practice sentences using these vocabulary words in everyday situations.`;
 
