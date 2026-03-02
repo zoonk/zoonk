@@ -12,6 +12,7 @@ model Lesson {
   title            String
   normalizedTitle  String           @map("normalized_title")
   description      String
+  concepts         String[]         @default([])
   generationStatus GenerationStatus @default(pending) @map("generation_status")
   generationRunId  String?          @map("generation_run_id")
   position         Int
