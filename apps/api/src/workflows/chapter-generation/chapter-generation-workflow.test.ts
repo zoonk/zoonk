@@ -10,13 +10,15 @@ import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { chapterGenerationWorkflow } from "./chapter-generation-workflow";
 
+const writeMock = vi.fn().mockResolvedValue(null);
+
 vi.mock("workflow", () => ({
   FatalError: class FatalError extends Error {},
   getWorkflowMetadata: vi.fn().mockReturnValue({ workflowRunId: "test-run-id" }),
   getWritable: vi.fn().mockReturnValue({
     getWriter: () => ({
       releaseLock: vi.fn(),
-      write: vi.fn().mockResolvedValue(null),
+      write: writeMock,
     }),
   }),
 }));
@@ -306,7 +308,7 @@ describe(chapterGenerationWorkflow, () => {
       expect(dbChapter?.generationStatus).toBe("completed");
     });
 
-    test("marks chapter as 'failed' when AI generation throws", async () => {
+    test("marks chapter as 'failed' when AI generation throws and streams error", async () => {
       vi.mocked(generateChapterLessons).mockRejectedValueOnce(new Error("AI generation failed"));
 
       const title = `Error Chapter ${randomUUID()}`;
@@ -324,6 +326,12 @@ describe(chapterGenerationWorkflow, () => {
       });
 
       expect(dbChapter?.generationStatus).toBe("failed");
+
+      const errorCall = writeMock.mock.calls.find(
+        (call: string[]) =>
+          call[0]?.includes('"status":"error"') && call[0]?.includes('"step":"workflowError"'),
+      );
+      expect(errorCall).toBeDefined();
     });
 
     test("throws FatalError when chapter not found", async () => {

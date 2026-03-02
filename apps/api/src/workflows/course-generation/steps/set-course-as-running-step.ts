@@ -1,5 +1,4 @@
 import { prisma } from "@zoonk/db";
-import { safeAsync } from "@zoonk/utils/error";
 import { streamError, streamStatus } from "../stream-status";
 
 export async function setCourseAsRunningStep(input: {
@@ -11,29 +10,25 @@ export async function setCourseAsRunningStep(input: {
 
   await streamStatus({ status: "started", step: "setCourseAsRunning" });
 
-  const [courseResult, suggestionResult] = await Promise.all([
-    safeAsync(() =>
-      prisma.course.update({
-        data: { generationStatus: "running" },
-        where: { id: input.courseId },
-      }),
-    ),
-    safeAsync(() =>
-      prisma.courseSuggestion.update({
-        data: {
-          generationRunId: input.workflowRunId,
-          generationStatus: "running",
-        },
-        where: { id: input.courseSuggestionId },
-      }),
-    ),
+  const results = await Promise.allSettled([
+    prisma.course.update({
+      data: { generationStatus: "running" },
+      where: { id: input.courseId },
+    }),
+    prisma.courseSuggestion.update({
+      data: {
+        generationRunId: input.workflowRunId,
+        generationStatus: "running",
+      },
+      where: { id: input.courseSuggestionId },
+    }),
   ]);
 
-  const error = courseResult.error || suggestionResult.error;
+  const rejected = results.find((result) => result.status === "rejected");
 
-  if (error) {
+  if (rejected) {
     await streamError({ reason: "dbSaveFailed", step: "setCourseAsRunning" });
-    throw error;
+    throw rejected.reason;
   }
 
   await streamStatus({ status: "completed", step: "setCourseAsRunning" });

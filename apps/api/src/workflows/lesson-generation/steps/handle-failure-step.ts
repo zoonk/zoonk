@@ -1,3 +1,4 @@
+import { streamError } from "@/workflows/_shared/stream-error";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 
@@ -10,4 +11,6 @@ export async function handleLessonFailureStep(input: { lessonId: number }): Prom
       where: { id: input.lessonId },
     }),
   );
+
+  await streamError({ reason: "aiGenerationFailed", step: "workflowError" });
 }
