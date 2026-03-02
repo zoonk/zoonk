@@ -1,6 +1,7 @@
 import { generateVisualStepImage } from "@zoonk/core/steps/visual-image";
 import { prisma } from "@zoonk/db";
 import { getString, toRecord } from "@zoonk/utils/json";
+import { rejected } from "@zoonk/utils/settled";
 import { streamStatus } from "../stream-status";
 import { type CustomVisualResult } from "./generate-custom-visuals-step";
 import { type LessonActivity } from "./get-lesson-activities-step";
@@ -48,9 +49,7 @@ async function generateImagesForActivity(activity: LessonActivity): Promise<void
     }),
   );
 
-  const hadFailure =
-    results.some((result) => result.status === "rejected" || result.value.error) ||
-    updateResults.some((result) => result.status === "rejected");
+  const hadFailure = rejected(results) || rejected(updateResults);
 
   if (hadFailure) {
     await handleActivityFailureStep({ activityId: activity.id });
