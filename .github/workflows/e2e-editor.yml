@@ -12,6 +12,9 @@ on:
 permissions:
   contents: read
 
+env:
+  NODE_VERSION: 24
+
 jobs:
   e2e:
     runs-on: ubuntu-latest
@@ -68,6 +71,12 @@ jobs:
         uses: pnpm/action-setup@9b5745cdf0a2e8c2620f0746130f809adb911c19
         with:
           version: 10.30.3
+
+      - name: Use Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v5
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "pnpm"
 
       - name: Install dependencies
         run: pnpm install
