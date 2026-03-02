@@ -54,153 +54,42 @@ export const TEST_CASES = [
     expectations: `
 TOPIC-SPECIFIC GUIDANCE:
 
-1. ACCURACY CHECK: Algorithm complexity trade-offs must reflect genuine CS principles. Penalize if:
-   - Time vs. space trade-offs are misrepresented in consequences
-   - Big-O implications are incorrect
-   - Consequences don't reflect real algorithmic trade-offs
+1. ACCURACY CHECK: Network data movement trade-offs must reflect genuine networking principles. Penalize if:
+   - Encapsulation overhead effects are misrepresented in consequences
+   - MTU and fragmentation trade-offs are incorrectly described
 
-2. DIMENSION CHECK: Dimensions should represent meaningful algorithmic concerns like:
-   - Performance, Memory Efficiency, Code Readability, Maintainability
-   - Should NOT include unrelated dimensions like "team morale" for this topic
+2. DIMENSION CHECK: Dimensions should represent meaningful networking concerns like:
+   - Throughput, Latency, Reliability, Overhead
+   - Should reflect the interconnected nature of data movement decisions
 
-3. SCENARIO CHECK: The challenge should involve realistic algorithm selection decisions.
+3. SCENARIO CHECK: The challenge should involve realistic network architecture or troubleshooting decisions.
 
-4. CONSEQUENCE CHECK: Consequences should explain the real-world impact of algorithmic choices.
+4. CONSEQUENCE CHECK: Consequences should explain the real-world impact of data movement choices.
 
 ${SHARED_EXPECTATIONS}
     `,
-    id: "en-cs-algorithm-complexity",
+    id: "en-web-data-movement",
     userInput: {
-      chapterTitle: "Algorithm Analysis",
-      courseTitle: "Data Structures and Algorithms",
+      chapterTitle: "Networking fundamentals",
+      courseTitle: "Web Development",
       explanationSteps: [
         {
-          text: "Time complexity measures how execution time grows with input size. O(n) means linear growth — double the input, double the time. O(n²) means quadratic — double the input, quadruple the time.",
-          title: "Time Complexity",
+          text: "Encapsulation wraps data with headers at each network layer. Each layer adds its own addressing and control information, like putting a letter in a series of labeled envelopes.",
+          title: "Encapsulation",
         },
         {
-          text: "Space complexity measures memory usage growth. Some algorithms trade time for space — storing precomputed results to avoid recalculation. Others trade space for time — using less memory but computing more.",
-          title: "Space Complexity",
+          text: "Each network device along the path reads only its layer's header, makes a forwarding decision, and passes the data to the next hop. No device sees the full picture.",
+          title: "Hop-by-Hop Forwarding",
         },
         {
-          text: "The time-space trade-off is fundamental. Hash tables give O(1) lookup but use extra memory. Binary search uses O(1) space but requires sorted data. Choose based on constraints.",
-          title: "Time-Space Trade-off",
-        },
-        {
-          text: "Amortized analysis looks at average performance over many operations. ArrayList append is usually O(1), but occasionally O(n) when resizing. Amortized, it's still O(1).",
-          title: "Amortized Analysis",
-        },
-        {
-          text: "Best, average, and worst case can differ dramatically. Quicksort averages O(n log n) but worst-cases to O(n²). Know your data distribution to choose wisely.",
-          title: "Case Analysis",
+          text: "The maximum transmission unit limits how much data fits in a single frame. Data larger than the MTU must be fragmented into smaller pieces for transit.",
+          title: "Size Constraints",
         },
       ],
       language: "en",
       lessonDescription:
-        "Understanding and applying algorithm complexity analysis to make informed trade-offs in software design",
-      lessonTitle: "Algorithm Complexity Trade-offs",
-    },
-  },
-  {
-    expectations: `
-TOPIC-SPECIFIC GUIDANCE:
-
-1. ACCURACY CHECK: Supply and demand concepts must reflect genuine economics. Penalize if:
-   - Price elasticity effects are misrepresented in consequences
-   - Supply/demand dynamics are incorrectly described
-   - Market equilibrium concepts are misapplied
-
-2. DIMENSION CHECK: Dimensions should represent meaningful market concerns like:
-   - Revenue, Market Share, Customer Satisfaction, Profit Margins
-   - Should reflect the interconnected nature of market decisions
-
-3. SCENARIO CHECK: The challenge should involve realistic pricing and market decisions.
-
-4. CONSEQUENCE CHECK: Consequences should explain the market impact of pricing choices.
-
-${SHARED_EXPECTATIONS}
-    `,
-    id: "en-economics-supply-demand",
-    userInput: {
-      chapterTitle: "Market Dynamics",
-      courseTitle: "Microeconomics Fundamentals",
-      explanationSteps: [
-        {
-          text: "Demand curves slope downward — as price rises, quantity demanded falls. This reflects the law of demand: people buy less when things cost more, all else equal.",
-          title: "The Demand Curve",
-        },
-        {
-          text: "Supply curves slope upward — as price rises, quantity supplied increases. Higher prices incentivize producers to make more. Lower prices make production less worthwhile.",
-          title: "The Supply Curve",
-        },
-        {
-          text: "Equilibrium occurs where supply meets demand. At this price, quantity supplied equals quantity demanded. Prices above equilibrium create surplus; prices below create shortage.",
-          title: "Market Equilibrium",
-        },
-        {
-          text: "Price elasticity measures responsiveness to price changes. Elastic demand (>1) means sales drop sharply with price increases. Inelastic demand (<1) means sales barely change.",
-          title: "Price Elasticity",
-        },
-        {
-          text: "Shifts vs. movements: A change in price moves along the curve. Changes in other factors (income, preferences, costs) shift the entire curve. This distinction is crucial.",
-          title: "Shifts vs. Movements",
-        },
-      ],
-      language: "en",
-      lessonDescription:
-        "Applying supply and demand principles to make strategic pricing and market decisions",
-      lessonTitle: "Supply and Demand in Practice",
-    },
-  },
-  {
-    expectations: `
-TOPIC-SPECIFIC GUIDANCE:
-
-1. ACCURACY CHECK: Ecosystem concepts must reflect genuine ecology. Penalize if:
-   - Trophic level interactions are misrepresented in consequences
-   - Carrying capacity concepts are incorrectly applied
-   - Biodiversity-stability relationships are oversimplified
-
-2. DIMENSION CHECK: Dimensions should represent meaningful ecological concerns like:
-   - Biodiversity, Ecosystem Stability, Resource Sustainability, Population Health
-   - Should reflect the interconnected nature of ecosystems
-
-3. SCENARIO CHECK: The challenge should involve realistic ecosystem management decisions.
-
-4. CONSEQUENCE CHECK: Consequences should explain the ecological impact of management choices.
-
-${SHARED_EXPECTATIONS}
-    `,
-    id: "en-biology-ecosystem-balance",
-    userInput: {
-      chapterTitle: "Ecosystem Dynamics",
-      courseTitle: "Ecology and Conservation",
-      explanationSteps: [
-        {
-          text: "Ecosystems are interconnected networks. Removing one species affects others through food webs. Keystone species have disproportionate impact — their loss cascades through the system.",
-          title: "Interconnected Networks",
-        },
-        {
-          text: "Carrying capacity is the maximum population an environment can sustain. Exceed it, and resources deplete, populations crash. Stay well below, and you're not maximizing the ecosystem's potential.",
-          title: "Carrying Capacity",
-        },
-        {
-          text: "Biodiversity provides resilience. More species means more ways to respond to change. Monocultures are efficient but fragile. Diverse systems are robust but complex to manage.",
-          title: "Biodiversity and Resilience",
-        },
-        {
-          text: "Trophic cascades occur when changes at one level ripple through others. Remove predators, and prey populations explode, overgrazing vegetation, affecting everything that depends on those plants.",
-          title: "Trophic Cascades",
-        },
-        {
-          text: "Ecological succession is the process of change over time. Pioneer species prepare the way for later ones. Managing ecosystems means deciding where in succession you want to be.",
-          title: "Ecological Succession",
-        },
-      ],
-      language: "en",
-      lessonDescription:
-        "Applying ecological principles to make informed ecosystem management decisions",
-      lessonTitle: "Ecosystem Balance and Management",
+        "Core building blocks for how data moves across networks, from encapsulation to hop-by-hop forwarding constraints.",
+      lessonTitle: "How Data Moves on Networks",
     },
   },
   {
@@ -209,51 +98,80 @@ LANGUAGE REQUIREMENT: All content must be in Portuguese.
 
 TOPIC-SPECIFIC GUIDANCE:
 
-1. ACCURACY CHECK: Le Chatelier's principle must be correctly applied. Penalize if:
-   - Equilibrium shift directions are incorrect in consequences
-   - Temperature, pressure, concentration effects are misrepresented
-   - The principle is applied to situations where it doesn't hold
+1. ACCURACY CHECK: Python numeric type trade-offs must reflect genuine programming concerns. Penalize if:
+   - Float precision consequences are misrepresented
+   - Bool-int relationship implications are incorrect
 
-2. DIMENSION CHECK: Dimensions should represent meaningful chemical process concerns like:
-   - Product Yield, Reaction Efficiency, Energy Consumption, Process Stability
-   - Should reflect how equilibrium adjustments affect industrial processes
+2. DIMENSION CHECK: Dimensions should represent meaningful programming concerns like:
+   - Precision, Readability, Performance, Type Safety
+   - Should reflect trade-offs in choosing numeric types
 
-3. SCENARIO CHECK: The challenge should involve realistic chemical process decisions.
+3. SCENARIO CHECK: The challenge should involve realistic Python development decisions about numeric types.
 
-4. CONSEQUENCE CHECK: Consequences should explain the chemical impact of process choices.
+4. CONSEQUENCE CHECK: Consequences should explain how type choices affect code behavior and correctness.
 
 ${SHARED_EXPECTATIONS}
     `,
-    id: "pt-chemistry-reaction-equilibrium",
+    id: "pt-python-float-bool",
     userInput: {
-      chapterTitle: "Equilibrio Quimico",
-      courseTitle: "Quimica Geral II",
+      chapterTitle: "Tipos numéricos e valores especiais",
+      courseTitle: "Python",
       explanationSteps: [
         {
-          text: "O principio de Le Chatelier diz que um sistema em equilibrio responde a perturbacoes minimizando a mudanca. Adicione reagente, o equilibrio desloca para consumir esse reagente.",
-          title: "Principio de Le Chatelier",
+          text: "Floats representam números com parte decimal usando ponto flutuante. A notação 3.14 ou 2.0e10 cria literais float em Python.",
+          title: "Literais Float",
         },
         {
-          text: "Mudancas de concentracao deslocam o equilibrio. Adicionar reagentes desloca para produtos. Remover produtos tambem desloca para produtos. O sistema busca restaurar o equilibrio.",
-          title: "Efeito da Concentracao",
-        },
-        {
-          text: "A pressao afeta equilibrios gasosos. Aumentar pressao favorece o lado com menos moles de gas. Diminuir pressao favorece o lado com mais moles. Gases inertes nao afetam.",
-          title: "Efeito da Pressao",
-        },
-        {
-          text: "Temperatura e diferente — ela muda a constante de equilibrio. Reacoes exotermicas: aumento de temperatura desloca para reagentes. Reacoes endotermicas: aumento favorece produtos.",
-          title: "Efeito da Temperatura",
-        },
-        {
-          text: "Catalisadores aceleram ambas as direcoes igualmente. Eles nao deslocam o equilibrio — apenas ajudam a alcancar o equilibrio mais rapido. Util para processos industriais.",
-          title: "Papel dos Catalisadores",
+          text: "Bool é uma subclasse de int em Python. True equivale a 1 e False equivale a 0, permitindo operações aritméticas diretas com booleanos.",
+          title: "Bool como Inteiro",
         },
       ],
       language: "pt",
       lessonDescription:
-        "Aplicando o principio de Le Chatelier para otimizar reacoes quimicas e processos industriais",
-      lessonTitle: "Equilibrio Quimico na Pratica",
+        "Valores de ponto flutuante e booleanos, sintaxe de literais e a relação estrutural entre bool e int.",
+      lessonTitle: "Float e bool como tipos numéricos",
+    },
+  },
+  {
+    expectations: `
+TOPIC-SPECIFIC GUIDANCE:
+
+1. ACCURACY CHECK: Labor market policy trade-offs must reflect genuine economic principles. Penalize if:
+   - Policy effects on unemployment vs participation are misrepresented
+   - Timing of labor market adjustments is incorrect in consequences
+
+2. DIMENSION CHECK: Dimensions should represent meaningful labor market concerns like:
+   - Employment Level, Worker Welfare, Economic Output, Fiscal Cost
+   - Should reflect the interconnected nature of labor market interventions
+
+3. SCENARIO CHECK: The challenge should involve realistic labor market policy or management decisions during a downturn.
+
+4. CONSEQUENCE CHECK: Consequences should explain how decisions affect labor market aggregates.
+
+${SHARED_EXPECTATIONS}
+    `,
+    id: "en-economics-labor-cycles",
+    userInput: {
+      chapterTitle: "Business cycles",
+      courseTitle: "Economics",
+      explanationSteps: [
+        {
+          text: "The unemployment rate measures the share of the labor force actively seeking work but unable to find it. It rises during recessions but typically lags behind GDP declines.",
+          title: "Unemployment Rate",
+        },
+        {
+          text: "Average hours worked per employee often fall before headcount does. Firms reduce overtime first, making hours a leading indicator of labor market stress.",
+          title: "Hours Worked",
+        },
+        {
+          text: "Labor force participation measures who is working or looking for work. It drops during prolonged downturns as discouraged workers stop searching entirely.",
+          title: "Participation Rate",
+        },
+      ],
+      language: "en",
+      lessonDescription:
+        "Empirical regularities linking downturns to labor market outcomes at the level of aggregate fluctuations, without modeling search or wage-setting mechanisms.",
+      lessonTitle: "Labor market aggregates over the cycle",
     },
   },
   {
@@ -262,51 +180,84 @@ LANGUAGE REQUIREMENT: All content must be in Spanish.
 
 TOPIC-SPECIFIC GUIDANCE:
 
-1. ACCURACY CHECK: Energy conservation principles must be physically accurate. Penalize if:
-   - Energy transformations violate conservation laws in consequences
-   - Efficiency concepts are misrepresented
-   - Entropy/waste heat considerations are ignored
+1. ACCURACY CHECK: Enolate chemistry trade-offs must reflect genuine organic chemistry principles. Penalize if:
+   - Selectivity consequences are chemically incorrect
+   - Base strength effects on enolate formation are misrepresented
 
-2. DIMENSION CHECK: Dimensions should represent meaningful energy system concerns like:
-   - Energy Output, System Efficiency, Environmental Impact, Operational Reliability
-   - Should reflect the interconnected nature of energy systems
+2. DIMENSION CHECK: Dimensions should represent meaningful synthesis concerns like:
+   - Selectivity, Yield, Reaction Speed, Side Products
+   - Should reflect trade-offs in enolate chemistry conditions
 
-3. SCENARIO CHECK: The challenge should involve realistic energy system decisions.
+3. SCENARIO CHECK: The challenge should involve realistic synthesis planning decisions involving enolate reactions.
 
-4. CONSEQUENCE CHECK: Consequences should explain the physical impact of energy choices.
+4. CONSEQUENCE CHECK: Consequences should explain how reaction condition choices affect enolate selectivity and yield.
 
 ${SHARED_EXPECTATIONS}
     `,
-    id: "es-physics-energy-conservation",
+    id: "es-quimica-acidez-enolatos",
     userInput: {
-      chapterTitle: "Energia y Trabajo",
-      courseTitle: "Fisica Aplicada",
+      chapterTitle: "Carbonilos y enolatos",
+      courseTitle: "Química",
       explanationSteps: [
         {
-          text: "La energia no se crea ni se destruye, solo se transforma. En cada conversion, la energia total se conserva, pero la energia util disminuye. Parte siempre se convierte en calor no aprovechable.",
-          title: "Conservacion de la Energia",
+          text: "Los hidrógenos en posición α, junto al carbonilo, son inusualmente ácidos. La base sustrae este hidrógeno y el par de electrones se deslocaliza hacia el oxígeno del carbonilo.",
+          title: "Acidez en Posición α",
         },
         {
-          text: "La eficiencia mide cuanta energia de entrada se convierte en trabajo util. Ningun proceso es 100% eficiente — siempre hay perdidas. La segunda ley de la termodinamica lo garantiza.",
-          title: "Eficiencia Energetica",
+          text: "El enolato resultante es un carbanión estabilizado por resonancia. La carga negativa se reparte entre el carbono α y el oxígeno, creando un nucleófilo ambidente.",
+          title: "Estabilización por Resonancia",
         },
         {
-          text: "Las cadenas de conversion acumulan perdidas. Si cada paso es 90% eficiente, tres pasos dan 0.9³ = 73% eficiencia total. Menos conversiones significa menos perdidas.",
-          title: "Perdidas en Cadena",
-        },
-        {
-          text: "El almacenamiento de energia tiene su propio costo energetico. Cargar y descargar baterias pierde energia. Bombear agua cuesta arriba para hidroelectrica tambien. El almacenamiento no es gratis.",
-          title: "Costo del Almacenamiento",
-        },
-        {
-          text: "La densidad energetica importa. Combustibles fosiles almacenan mucha energia por kilogramo. Las baterias almacenan menos. Esto afecta que es practico para cada aplicacion.",
-          title: "Densidad Energetica",
+          text: "Como nucleófilo, el enolato ataca electrófilos en el carbono α, formando nuevos enlaces C–C. Esta reactividad es la base de condensaciones aldólicas y de Claisen.",
+          title: "Enolato como Nucleófilo",
         },
       ],
       language: "es",
       lessonDescription:
-        "Aplicando principios de conservacion de energia para disenar y optimizar sistemas energeticos",
-      lessonTitle: "Conservacion de Energia en Sistemas Reales",
+        "Origen de la acidez en α y cómo se forma el enolato como nucleófilo clave en reacciones de construcción C–C.",
+      lessonTitle: "Acidez en α y formación de enolatos",
+    },
+  },
+  {
+    expectations: `
+TOPIC-SPECIFIC GUIDANCE:
+
+1. ACCURACY CHECK: Connectivity debugging trade-offs must reflect genuine networking principles. Penalize if:
+   - Debugging approach consequences are technically inaccurate
+   - Layer isolation trade-offs are misrepresented
+
+2. DIMENSION CHECK: Dimensions should represent meaningful debugging concerns like:
+   - Diagnosis Speed, Thoroughness, Disruption Risk, Confidence
+   - Should reflect trade-offs in different debugging approaches and strategies
+
+3. SCENARIO CHECK: The challenge should involve realistic network troubleshooting decisions where different debugging strategies have different costs and benefits.
+
+4. CONSEQUENCE CHECK: Consequences should explain how debugging approach choices affect time to resolution, accuracy of diagnosis, and impact on running systems.
+
+${SHARED_EXPECTATIONS}
+    `,
+    id: "en-web-debugging-mental-models",
+    userInput: {
+      chapterTitle: "Networking fundamentals",
+      courseTitle: "Web Development",
+      explanationSteps: [
+        {
+          text: "Start at the host: check if the network interface is up and has a valid IP. If the machine itself is misconfigured, nothing beyond it will work.",
+          title: "Host-Level Check",
+        },
+        {
+          text: "Test the local subnet by reaching the default gateway. If this fails, the problem is between your machine and the first router — a local network issue.",
+          title: "Subnet and Gateway",
+        },
+        {
+          text: "If the gateway responds but the destination doesn't, the problem is somewhere along the path — a routing issue, a firewall, or the remote host itself.",
+          title: "Path and Service Layer",
+        },
+      ],
+      language: "en",
+      lessonDescription:
+        "Practical mental models for narrowing a problem to host, subnet, gateway, path, or service-layer reachability without relying on protocol-specific details.",
+      lessonTitle: "Connectivity Debugging Mental Models",
     },
   },
 ];

@@ -31,114 +31,38 @@ export const TEST_CASES = [
     expectations: `
 TOPIC-SPECIFIC GUIDANCE:
 
-1. ACCURACY CHECK: Probability examples must reflect genuine statistical reasoning. Penalize if:
-   - Examples confuse probability with certainty (e.g., "you will definitely win" vs. "you have a 50% chance")
-   - Real-world probability claims are mathematically implausible for the context
+1. ACCURACY CHECK: Data movement examples must reflect genuine networking scenarios. Penalize if:
+   - Examples confuse data movement with data storage or processing
+   - Real-world networking claims are technically inaccurate
 
-2. CONTEXT CHECK: Penalize if examples are limited to gambling/games. Probability appears in medicine, weather, insurance, dating, sports, business decisions, and daily risk assessment.
+2. CONTEXT CHECK: Penalize if examples are limited to web browsing. Data movement concepts appear in video streaming, online gaming, IoT devices, video calls, cloud computing, and mobile apps.
 
-3. DISTINCTION FROM EXPLANATION: The explanation covered WHAT probability is (ratios, likelihood, sample spaces). This should show WHERE probability thinking appears in familiar life situations.
+3. DISTINCTION FROM EXPLANATION: The explanation covered WHAT encapsulation and forwarding are. This should show WHERE these concepts visibly operate in everyday technology use.
 
 ${SHARED_EXPECTATIONS}
     `,
-    id: "en-math-probability-basics",
+    id: "en-web-data-movement",
     userInput: {
-      chapterTitle: "Introduction to Statistics",
-      courseTitle: "Mathematics for Life",
+      chapterTitle: "Networking fundamentals",
+      courseTitle: "Web Development",
       explanationSteps: [
         {
-          text: "Probability measures how likely something is to happen, expressed as a number between 0 and 1. Zero means impossible, one means certain, and values in between show varying degrees of likelihood.",
-          title: "What Is Probability?",
+          text: "Encapsulation wraps data with headers at each network layer. Each layer adds its own addressing and control information, like putting a letter in a series of labeled envelopes.",
+          title: "Encapsulation",
         },
         {
-          text: "The sample space is the set of all possible outcomes. For a coin flip, it's heads or tails. For a die roll, it's 1 through 6. Knowing the sample space is the first step in calculating probabilities.",
-          title: "Sample Space",
+          text: "Each network device along the path reads only its layer's header, makes a forwarding decision, and passes the data to the next hop. No device sees the full picture.",
+          title: "Hop-by-Hop Forwarding",
         },
         {
-          text: "To find the probability of an event, divide favorable outcomes by total possible outcomes. If 2 out of 6 die faces are even, the probability of rolling an even number is 2/6 or about 33%.",
-          title: "Calculating Probability",
+          text: "The maximum transmission unit limits how much data fits in a single frame. Data larger than the MTU must be fragmented into smaller pieces for transit.",
+          title: "Size Constraints",
         },
       ],
       language: "en",
       lessonDescription:
-        "Understanding how probability thinking helps us make better decisions in uncertain situations",
-      lessonTitle: "Probability in Everyday Life",
-    },
-  },
-  {
-    expectations: `
-TOPIC-SPECIFIC GUIDANCE:
-
-1. ACCURACY CHECK: Supply and demand examples must reflect genuine economic dynamics. Penalize if:
-   - Price changes are attributed to single-cause explanations when multiple factors interact
-   - Examples suggest prices are arbitrarily set rather than emerging from market forces
-
-2. CONTEXT CHECK: Penalize only if ALL examples are simple store-purchase scenarios (e.g., "buy X at the store" repeatedly). Diverse market contexts — such as housing, rideshare surge pricing, concert tickets, seasonal goods, or gig economy — count as variety even though they involve transactions. Supply and demand inherently involves markets, so the bar is whether examples show different TYPES of market forces, not whether they go beyond transactions entirely.
-
-3. DISTINCTION FROM EXPLANATION: The explanation covered WHAT supply and demand curves are. This should show WHERE these forces visibly shape real-world situations.
-
-${SHARED_EXPECTATIONS}
-    `,
-    id: "en-economics-supply-demand",
-    userInput: {
-      chapterTitle: "Market Fundamentals",
-      courseTitle: "Economics 101",
-      explanationSteps: [
-        {
-          text: "Supply represents how much producers are willing to sell at different prices. Higher prices encourage more production because potential profits increase.",
-          title: "The Supply Side",
-        },
-        {
-          text: "Demand represents how much consumers want to buy at different prices. Lower prices attract more buyers because products become more affordable.",
-          title: "The Demand Side",
-        },
-        {
-          text: "Market equilibrium occurs where supply and demand curves intersect. At this price, sellers sell exactly what buyers want to buy — no shortages, no surpluses.",
-          title: "Finding Equilibrium",
-        },
-      ],
-      language: "en",
-      lessonDescription:
-        "Recognizing how supply and demand forces shape prices and availability in markets all around us",
-      lessonTitle: "Supply and Demand in Action",
-    },
-  },
-  {
-    expectations: `
-TOPIC-SPECIFIC GUIDANCE:
-
-1. ACCURACY CHECK: Recursion examples must genuinely involve self-reference or self-similarity. Penalize if:
-   - Examples describe simple repetition or loops instead of true recursion
-   - The base case concept is missing from examples that claim to show recursion
-
-2. CONTEXT CHECK: Penalize if examples are limited to coding. Recursion appears in nature (fractals, tree branches), art (Droste effect, mise en abyme), language (nested sentences), organizations (hierarchies), and problem-solving.
-
-3. DISTINCTION FROM EXPLANATION: The explanation covered WHAT recursion is (functions calling themselves). This should show WHERE recursive patterns appear in nature, art, and daily life.
-
-${SHARED_EXPECTATIONS}
-    `,
-    id: "en-cs-recursion-concept",
-    userInput: {
-      chapterTitle: "Problem-Solving Patterns",
-      courseTitle: "Computer Science Fundamentals",
-      explanationSteps: [
-        {
-          text: "Recursion is when something is defined in terms of itself. A function calling itself, a definition referencing itself, or a structure containing smaller versions of itself.",
-          title: "Self-Reference",
-        },
-        {
-          text: "Every recursion needs a base case — the simplest version that doesn't recurse further. Without it, the recursion would continue forever.",
-          title: "The Base Case",
-        },
-        {
-          text: "Recursive solutions break big problems into smaller identical problems. Solve the small ones, combine the results, and the big problem solves itself.",
-          title: "Divide and Conquer",
-        },
-      ],
-      language: "en",
-      lessonDescription:
-        "Discovering recursive patterns in programming, nature, art, and everyday problem-solving",
-      lessonTitle: "Recursion: The Pattern Within",
+        "Core building blocks for how data moves across networks, from encapsulation to hop-by-hop forwarding constraints.",
+      lessonTitle: "How Data Moves on Networks",
     },
   },
   {
@@ -147,38 +71,72 @@ LANGUAGE REQUIREMENT: Titles and text must be in Portuguese.
 
 TOPIC-SPECIFIC GUIDANCE:
 
-1. ACCURACY CHECK: Cognitive bias examples must reflect genuine psychological phenomena. Penalize if:
-   - Examples describe rational behavior and mislabel it as bias
-   - Specific biases are incorrectly named or conflated with each other
+1. ACCURACY CHECK: Float and bool examples must reflect genuine Python behavior. Penalize if:
+   - Examples misrepresent floating-point precision issues
+   - Bool arithmetic examples are mathematically incorrect
 
-2. CONTEXT CHECK: Penalize if examples are limited to business/marketing. Cognitive biases affect relationships, health decisions, politics, self-perception, memory, and everyday judgments.
+2. CONTEXT CHECK: Penalize if examples are limited to basic math. Float and bool types appear in data analysis, conditional logic, scientific computing, web forms, configuration flags, and game development.
 
-3. DISTINCTION FROM EXPLANATION: The explanation covered WHAT cognitive biases are (systematic thinking errors). This should show WHERE these biases quietly influence decisions we make daily.
+3. DISTINCTION FROM EXPLANATION: The explanation covered WHAT floats and bools are. This should show WHERE these types appear in real programming scenarios and daily computing.
 
 ${SHARED_EXPECTATIONS}
     `,
-    id: "pt-psychology-cognitive-biases",
+    id: "pt-python-float-bool",
     userInput: {
-      chapterTitle: "Tomada de Decisao",
-      courseTitle: "Psicologia Aplicada",
+      chapterTitle: "Tipos numéricos e valores especiais",
+      courseTitle: "Python",
       explanationSteps: [
         {
-          text: "Vieses cognitivos sao erros sistematicos no pensamento que afetam nossas decisoes. Nao sao estupidez — sao atalhos mentais que funcionam na maioria das vezes, mas falham em certas situacoes.",
-          title: "O Que Sao Vieses",
+          text: "Floats representam números com parte decimal usando ponto flutuante. A notação 3.14 ou 2.0e10 cria literais float em Python.",
+          title: "Literais Float",
         },
         {
-          text: "Heuristicas sao regras praticas que nosso cerebro usa para decidir rapidamente. Elas economizam energia mental, mas podem nos levar a conclusoes erradas quando aplicadas no contexto errado.",
-          title: "Atalhos Mentais",
-        },
-        {
-          text: "O vies de confirmacao nos faz buscar informacoes que confirmam o que ja acreditamos. Ignoramos evidencias contrarias e supervalorizamos as que apoiam nossa visao.",
-          title: "Vies de Confirmacao",
+          text: "Bool é uma subclasse de int em Python. True equivale a 1 e False equivale a 0, permitindo operações aritméticas diretas com booleanos.",
+          title: "Bool como Inteiro",
         },
       ],
       language: "pt",
       lessonDescription:
-        "Reconhecendo como vieses cognitivos afetam nossas decisoes em compras, relacionamentos, politica e vida cotidiana",
-      lessonTitle: "Vieses no Dia a Dia",
+        "Valores de ponto flutuante e booleanos, sintaxe de literais e a relação estrutural entre bool e int.",
+      lessonTitle: "Float e bool como tipos numéricos",
+    },
+  },
+  {
+    expectations: `
+TOPIC-SPECIFIC GUIDANCE:
+
+1. ACCURACY CHECK: Labor market cycle examples must reflect genuine economic dynamics. Penalize if:
+   - Examples attribute unemployment changes to single causes when multiple factors interact
+   - Historical claims about specific recessions are factually inaccurate
+
+2. CONTEXT CHECK: Penalize if examples are limited to factory layoffs. Labor market cycles affect gig workers, recent graduates, service industries, construction, retail hiring, and government employment.
+
+3. DISTINCTION FROM EXPLANATION: The explanation covered WHAT unemployment rate, hours, and participation are. This should show WHERE these cyclical patterns visibly affect people's lives and communities.
+
+${SHARED_EXPECTATIONS}
+    `,
+    id: "en-economics-labor-cycles",
+    userInput: {
+      chapterTitle: "Business cycles",
+      courseTitle: "Economics",
+      explanationSteps: [
+        {
+          text: "The unemployment rate measures the share of the labor force actively seeking work but unable to find it. It rises during recessions but typically lags behind GDP declines.",
+          title: "Unemployment Rate",
+        },
+        {
+          text: "Average hours worked per employee often fall before headcount does. Firms reduce overtime first, making hours a leading indicator of labor market stress.",
+          title: "Hours Worked",
+        },
+        {
+          text: "Labor force participation measures who is working or looking for work. It drops during prolonged downturns as discouraged workers stop searching entirely.",
+          title: "Participation Rate",
+        },
+      ],
+      language: "en",
+      lessonDescription:
+        "Empirical regularities linking downturns to labor market outcomes at the level of aggregate fluctuations, without modeling search or wage-setting mechanisms.",
+      lessonTitle: "Labor market aggregates over the cycle",
     },
   },
   {
@@ -187,114 +145,38 @@ LANGUAGE REQUIREMENT: Titles and text must be in Spanish.
 
 TOPIC-SPECIFIC GUIDANCE:
 
-1. ACCURACY CHECK: Natural selection examples must reflect genuine evolutionary dynamics. Penalize if:
-   - Examples suggest intentional evolution or "design" (natural selection is blind)
-   - Lamarckian inheritance is implied (giraffes stretching their necks doesn't change genes)
+1. ACCURACY CHECK: Enolate chemistry examples must reflect genuine chemical applications. Penalize if:
+   - Examples misrepresent where enolate reactions occur in synthesis
+   - Industrial or pharmaceutical applications are factually inaccurate
 
-2. CONTEXT CHECK: Penalize if examples are limited to textbook animals. Natural selection is visible in antibiotic resistance, pesticide resistance, dog breeds, crop development, and even cultural evolution.
+2. CONTEXT CHECK: Penalize if examples are limited to textbook reactions. α-acidity and enolates appear in pharmaceutical synthesis, fragrance chemistry, polymer production, natural product biosynthesis, and food chemistry.
 
-3. DISTINCTION FROM EXPLANATION: The explanation covered WHAT natural selection is (differential survival and reproduction). This should show WHERE we can observe selection in action today.
+3. DISTINCTION FROM EXPLANATION: The explanation covered WHAT α-acidity and enolates are. This should show WHERE these concepts appear in real chemical applications and industries.
 
 ${SHARED_EXPECTATIONS}
     `,
-    id: "es-biology-natural-selection",
+    id: "es-quimica-acidez-enolatos",
     userInput: {
-      chapterTitle: "Evolucion",
-      courseTitle: "Biologia General",
+      chapterTitle: "Carbonilos y enolatos",
+      courseTitle: "Química",
       explanationSteps: [
         {
-          text: "La seleccion natural ocurre cuando individuos con ciertos rasgos sobreviven y se reproducen mas que otros. Estos rasgos se vuelven mas comunes en generaciones futuras.",
-          title: "Supervivencia Diferencial",
+          text: "Los hidrógenos en posición α, junto al carbonilo, son inusualmente ácidos. La base sustrae este hidrógeno y el par de electrones se deslocaliza hacia el oxígeno del carbonilo.",
+          title: "Acidez en Posición α",
         },
         {
-          text: "La variacion es esencial — sin diferencias entre individuos, no hay nada que seleccionar. Las mutaciones y la reproduccion sexual generan esta variacion.",
-          title: "Variacion Genetica",
+          text: "El enolato resultante es un carbanión estabilizado por resonancia. La carga negativa se reparte entre el carbono α y el oxígeno, creando un nucleófilo ambidente.",
+          title: "Estabilización por Resonancia",
         },
         {
-          text: "La aptitud biologica mide el exito reproductivo, no la fuerza fisica. Un organismo 'apto' es el que deja mas descendientes viables, no necesariamente el mas fuerte.",
-          title: "Aptitud Biologica",
+          text: "Como nucleófilo, el enolato ataca electrófilos en el carbono α, formando nuevos enlaces C–C. Esta reactividad es la base de condensaciones aldólicas y de Claisen.",
+          title: "Enolato como Nucleófilo",
         },
       ],
       language: "es",
       lessonDescription:
-        "Observando como la seleccion natural moldea la vida a nuestro alrededor, desde bacterias hasta mascotas",
-      lessonTitle: "Seleccion Natural en Accion",
-    },
-  },
-  {
-    expectations: `
-TOPIC-SPECIFIC GUIDANCE:
-
-1. ACCURACY CHECK: Machine learning examples must reflect genuine ML applications. Penalize if:
-   - Examples describe simple rule-based systems as ML (if-then rules aren't learning)
-   - Claims about ML capabilities are exaggerated beyond current technology
-
-2. CONTEXT CHECK: Penalize if examples are limited to tech companies. ML appears in medicine, agriculture, music recommendations, email filters, translation, photo organization, and fraud detection.
-
-3. DISTINCTION FROM EXPLANATION: The explanation covered WHAT machine learning is (learning from data vs explicit programming). This should show WHERE ML quietly powers everyday tools and services.
-
-${SHARED_EXPECTATIONS}
-    `,
-    id: "en-cs-machine-learning-intro",
-    userInput: {
-      chapterTitle: "Artificial Intelligence Basics",
-      courseTitle: "Technology in Modern Life",
-      explanationSteps: [
-        {
-          text: "Machine learning is when computers learn from examples rather than following explicit rules. Show a system thousands of cat photos, and it learns to recognize cats without being told what a cat looks like.",
-          title: "Learning from Data",
-        },
-        {
-          text: "Training data is the set of examples the system learns from. The quality and quantity of training data largely determines how well the model performs.",
-          title: "Training Data",
-        },
-        {
-          text: "Models are mathematical patterns extracted from data. Once trained, they can make predictions on new data they haven't seen before — that's the real power of ML.",
-          title: "Models and Predictions",
-        },
-      ],
-      language: "en",
-      lessonDescription:
-        "Discovering where machine learning already works in apps, devices, and services you use daily",
-      lessonTitle: "Machine Learning All Around You",
-    },
-  },
-  {
-    expectations: `
-TOPIC-SPECIFIC GUIDANCE:
-
-1. ACCURACY CHECK: Compound interest examples must reflect accurate financial math. Penalize if:
-   - Examples confuse simple and compound interest
-   - Time horizons or rates produce mathematically implausible results
-
-2. CONTEXT CHECK: Penalize if examples are limited to savings accounts. Compound interest/growth appears in debt, population, viral spread, skill development, relationship investment, and content creation.
-
-3. DISTINCTION FROM EXPLANATION: The explanation covered WHAT compound interest is (earning interest on interest). This should show WHERE compounding effects shape finances, growth, and life outcomes.
-
-${SHARED_EXPECTATIONS}
-    `,
-    id: "en-finance-compound-interest",
-    userInput: {
-      chapterTitle: "Building Wealth",
-      courseTitle: "Personal Finance",
-      explanationSteps: [
-        {
-          text: "Compound interest is earning interest on your interest. Unlike simple interest that only grows the original amount, compound interest grows the total including previous interest earned.",
-          title: "Interest on Interest",
-        },
-        {
-          text: "The compounding period determines how often interest is calculated. Monthly compounding adds interest 12 times per year; daily compounding adds it 365 times. More frequent = faster growth.",
-          title: "Compounding Frequency",
-        },
-        {
-          text: "The Rule of 72 estimates doubling time: divide 72 by the interest rate. At 8% annual return, money doubles roughly every 9 years. This quick mental math reveals compounding's power.",
-          title: "The Rule of 72",
-        },
-      ],
-      language: "en",
-      lessonDescription:
-        "Recognizing how compound growth shapes wealth building, debt accumulation, and many other life phenomena",
-      lessonTitle: "The Power of Compounding",
+        "Origen de la acidez en α y cómo se forma el enolato como nucleófilo clave en reacciones de construcción C–C.",
+      lessonTitle: "Acidez en α y formación de enolatos",
     },
   },
   {
@@ -303,194 +185,72 @@ LANGUAGE REQUIREMENT: Titles and text must be in Portuguese.
 
 TOPIC-SPECIFIC GUIDANCE:
 
-1. ACCURACY CHECK: Photosynthesis application examples must be scientifically accurate. Penalize if:
-   - Examples overstate or understate photosynthesis's role in specific contexts
-   - Carbon cycle connections are incorrectly described
+1. ACCURACY CHECK: Legal automation monitoring examples must reflect genuine legal practice. Penalize if:
+   - Examples misrepresent how legal documents are generated or reviewed
+   - Audit trail descriptions don't match real compliance requirements
 
-2. CONTEXT CHECK: Penalize if examples are limited to forests/plants. Photosynthesis impacts food supply, oxygen production, fossil fuel origins, aquatic ecosystems, agriculture, and climate solutions.
+2. CONTEXT CHECK: Penalize if examples are limited to contract generation. Automation monitoring appears in litigation document assembly, regulatory filings, due diligence reports, corporate governance documents, and notarial acts.
 
-3. DISTINCTION FROM EXPLANATION: The explanation covered WHAT photosynthesis is (converting light to chemical energy). This should show WHERE photosynthesis affects human life and global systems.
+3. DISTINCTION FROM EXPLANATION: The explanation covered WHAT quality metrics and audit trails are. This should show WHERE automation monitoring matters in real legal practice scenarios.
 
 ${SHARED_EXPECTATIONS}
     `,
-    id: "pt-biology-photosynthesis-importance",
+    id: "pt-direito-medicao-automacao",
     userInput: {
-      chapterTitle: "Energia nos Seres Vivos",
-      courseTitle: "Biologia Celular",
+      chapterTitle: "Legal tech e automação de documentos",
+      courseTitle: "Direito",
       explanationSteps: [
         {
-          text: "A fotossintese converte luz solar em energia quimica. Plantas capturam fotons e usam essa energia para transformar agua e CO2 em glicose — o combustivel da vida.",
-          title: "Captura de Luz",
+          text: "Métricas de qualidade medem a taxa de erros em documentos automatizados — cláusulas faltantes, dados incorretos ou formatação quebrada. Cada erro é classificado por gravidade.",
+          title: "Métricas de Qualidade",
         },
         {
-          text: "A clorofila e o pigmento que absorve luz. Ela captura principalmente luz vermelha e azul, refletindo verde — por isso as plantas tem essa cor.",
-          title: "O Papel da Clorofila",
-        },
-        {
-          text: "O oxigenio que respiramos e um subproduto da fotossintese. Quando plantas quebram agua para obter hidrogenio, liberam O2 como residuo.",
-          title: "Origem do Oxigenio",
+          text: "Rastros de auditoria registram cada etapa da geração documental: quem solicitou, qual template foi usado, quais dados alimentaram o documento e quando foi revisado.",
+          title: "Rastros de Auditoria",
         },
       ],
       language: "pt",
       lessonDescription:
-        "Descobrindo como a fotossintese sustenta a vida na Terra e afeta nosso ar, comida e clima",
-      lessonTitle: "Fotossintese e a Vida na Terra",
-    },
-  },
-  {
-    expectations: `
-LANGUAGE REQUIREMENT: Titles and text must be in Spanish.
-
-TOPIC-SPECIFIC GUIDANCE:
-
-1. ACCURACY CHECK: Encryption examples must reflect genuine security applications. Penalize if:
-   - Examples confuse encryption with other security measures (passwords, firewalls)
-   - Claims about encryption strength or applications are technically inaccurate
-
-2. CONTEXT CHECK: Penalize if examples are limited to banking. Encryption protects messaging, medical records, voting systems, e-commerce, streaming services, and even car key fobs.
-
-3. DISTINCTION FROM EXPLANATION: The explanation covered WHAT encryption is (scrambling data with keys). This should show WHERE encryption silently protects information in daily digital life.
-
-${SHARED_EXPECTATIONS}
-    `,
-    id: "es-cs-encryption-applications",
-    userInput: {
-      chapterTitle: "Seguridad Digital",
-      courseTitle: "Tecnologia para Todos",
-      explanationSteps: [
-        {
-          text: "La encriptacion transforma datos legibles en codigo ilegible. Solo quien tiene la clave correcta puede revertir el proceso y leer el contenido original.",
-          title: "Datos Codificados",
-        },
-        {
-          text: "Las claves son como llaves digitales. La encriptacion simetrica usa una clave compartida; la asimetrica usa un par de claves — una publica y una privada.",
-          title: "Claves de Encriptacion",
-        },
-        {
-          text: "HTTPS en sitios web significa que la conexion esta encriptada. El candado en tu navegador indica que los datos viajan protegidos entre tu dispositivo y el servidor.",
-          title: "HTTPS y Conexiones Seguras",
-        },
-      ],
-      language: "es",
-      lessonDescription:
-        "Descubriendo donde la encriptacion protege silenciosamente tu informacion en aplicaciones, sitios y dispositivos cotidianos",
-      lessonTitle: "Encriptacion en Tu Vida Digital",
+        "Métricas operacionais focadas em qualidade e segurança da automação documental, com rastros para auditoria.",
+      lessonTitle: "Medição e monitoramento da automação",
     },
   },
   {
     expectations: `
 TOPIC-SPECIFIC GUIDANCE:
 
-1. ACCURACY CHECK: Feedback loop examples must genuinely involve circular causation. Penalize if:
-   - Examples describe simple cause-effect chains without feedback
-   - Positive and negative feedback are conflated or mislabeled
+1. ACCURACY CHECK: Connectivity debugging examples must reflect genuine troubleshooting scenarios. Penalize if:
+   - Examples misattribute connectivity failures to the wrong network layer
+   - Mental model applications are technically inaccurate
 
-2. CONTEXT CHECK: Penalize if examples are limited to engineering/biology. Feedback loops appear in social media, economics, relationships, climate, habits, and organizational behavior.
+2. CONTEXT CHECK: Penalize if examples are limited to web server issues. Debugging mental models appear in home Wi-Fi troubleshooting, cloud deployments, mobile app connectivity, IoT device setup, VPN problems, and microservice communication failures.
 
-3. DISTINCTION FROM EXPLANATION: The explanation covered WHAT feedback loops are (outputs affecting inputs). This should show WHERE feedback dynamics shape systems and behaviors around us.
+3. DISTINCTION FROM EXPLANATION: The explanation covered WHAT the debugging mental models are. This should show WHERE these systematic approaches help in real-world connectivity problems people encounter.
 
 ${SHARED_EXPECTATIONS}
     `,
-    id: "en-systems-feedback-loops",
+    id: "en-web-debugging-mental-models",
     userInput: {
-      chapterTitle: "Systems Thinking",
-      courseTitle: "Understanding Complex Systems",
+      chapterTitle: "Networking fundamentals",
+      courseTitle: "Web Development",
       explanationSteps: [
         {
-          text: "A feedback loop occurs when a system's output circles back to influence its input. The result of an action affects the conditions that produced it, creating a cycle.",
-          title: "Circular Causation",
+          text: "Start at the host: check if the network interface is up and has a valid IP. If the machine itself is misconfigured, nothing beyond it will work.",
+          title: "Host-Level Check",
         },
         {
-          text: "Negative feedback stabilizes systems by counteracting change. When temperature rises, a thermostat activates cooling. The response opposes the initial change.",
-          title: "Negative Feedback",
+          text: "Test the local subnet by reaching the default gateway. If this fails, the problem is between your machine and the first router — a local network issue.",
+          title: "Subnet and Gateway",
         },
         {
-          text: "Positive feedback amplifies change. A microphone near a speaker creates a growing screech — sound feeds back and gets louder. Positive feedback often leads to rapid escalation.",
-          title: "Positive Feedback",
+          text: "If the gateway responds but the destination doesn't, the problem is somewhere along the path — a routing issue, a firewall, or the remote host itself.",
+          title: "Path and Service Layer",
         },
       ],
       language: "en",
       lessonDescription:
-        "Recognizing feedback loops in technology, nature, society, and personal habits that amplify or stabilize outcomes",
-      lessonTitle: "Feedback Loops Everywhere",
-    },
-  },
-  {
-    expectations: `
-TOPIC-SPECIFIC GUIDANCE:
-
-1. ACCURACY CHECK: Opportunity cost examples must correctly identify what's being given up. Penalize if:
-   - Examples confuse sunk costs with opportunity costs
-   - The "next best alternative" concept is missing or incorrectly applied
-
-2. CONTEXT CHECK: Penalize if examples are limited to money. Opportunity cost applies to time, attention, energy, relationships, career paths, and any scarce resource allocation.
-
-3. DISTINCTION FROM EXPLANATION: The explanation covered WHAT opportunity cost is (the value of the next best alternative). This should show WHERE we unconsciously make trade-offs daily.
-
-${SHARED_EXPECTATIONS}
-    `,
-    id: "en-economics-opportunity-cost",
-    userInput: {
-      chapterTitle: "Economic Thinking",
-      courseTitle: "Microeconomics",
-      explanationSteps: [
-        {
-          text: "Opportunity cost is what you give up when you choose one option over another. It's not just about money — it's about the value of your next best alternative.",
-          title: "The Trade-Off",
-        },
-        {
-          text: "Every choice has an opportunity cost because resources are scarce. Choosing to spend an hour on Netflix means not spending it on exercise, reading, or side projects.",
-          title: "Scarcity Forces Choices",
-        },
-        {
-          text: "Explicit costs are obvious — the price you pay. Implicit costs are hidden — the opportunities you forgo. True cost includes both.",
-          title: "Explicit vs Implicit",
-        },
-      ],
-      language: "en",
-      lessonDescription:
-        "Seeing how opportunity cost thinking reveals the hidden trade-offs in everyday decisions about time, money, and attention",
-      lessonTitle: "The Hidden Cost of Every Choice",
-    },
-  },
-  {
-    expectations: `
-LANGUAGE REQUIREMENT: Titles and text must be in Portuguese.
-
-TOPIC-SPECIFIC GUIDANCE:
-
-1. ACCURACY CHECK: Dopamine examples must reflect current neuroscience accurately. Penalize if:
-   - Dopamine is oversimplified as just "the pleasure chemical" (it's about motivation/reward prediction)
-   - Examples attribute behaviors to dopamine that involve multiple neurotransmitter systems
-
-2. CONTEXT CHECK: Penalize if examples are limited to addiction. Dopamine is involved in motivation, learning, movement, social behavior, creativity, and goal-directed action.
-
-3. DISTINCTION FROM EXPLANATION: The explanation covered WHAT dopamine is (a neurotransmitter involved in reward). This should show WHERE dopamine influences behaviors and experiences in daily life.
-
-${SHARED_EXPECTATIONS}
-    `,
-    id: "pt-neuroscience-dopamine-life",
-    userInput: {
-      chapterTitle: "Neurotransmissores",
-      courseTitle: "Neurociencia do Comportamento",
-      explanationSteps: [
-        {
-          text: "A dopamina e um neurotransmissor envolvido em recompensa e motivacao. Ela nao apenas sinaliza prazer — ela antecipa recompensas e nos motiva a busca-las.",
-          title: "O Papel da Dopamina",
-        },
-        {
-          text: "O sistema de recompensa do cerebro usa dopamina para reforcar comportamentos. Quando algo e melhor do que esperado, ha um pico de dopamina que fortalece a conexao.",
-          title: "Aprendizado por Recompensa",
-        },
-        {
-          text: "A tolerancia ocorre quando o cerebro se adapta a estimulos frequentes. O mesmo estimulo produz menos dopamina com o tempo, exigindo mais para o mesmo efeito.",
-          title: "Adaptacao e Tolerancia",
-        },
-      ],
-      language: "pt",
-      lessonDescription:
-        "Descobrindo como a dopamina influencia motivacao, habitos, redes sociais e comportamentos do dia a dia",
-      lessonTitle: "Dopamina no Cotidiano",
+        "Practical mental models for narrowing a problem to host, subnet, gateway, path, or service-layer reachability without relying on protocol-specific details.",
+      lessonTitle: "Connectivity Debugging Mental Models",
     },
   },
 ];

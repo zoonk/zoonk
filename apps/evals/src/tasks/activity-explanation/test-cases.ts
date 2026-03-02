@@ -32,107 +32,33 @@ export const TEST_CASES = [
     expectations: `
 TOPIC-SPECIFIC GUIDANCE:
 
-1. ACCURACY CHECK: The immune system involves verifiable biological mechanisms with specific cell types and processes. Penalize if:
-   - Antibodies are described as directly killing pathogens (they mark them for destruction by other cells)
+1. ACCURACY CHECK: Network data movement involves specific concepts like encapsulation, protocol layers, and hop-by-hop forwarding. Penalize if:
+   - Encapsulation is confused with encryption (encapsulation wraps data with headers at each layer)
 
-2. DEPTH CHECK: Penalize if the explanation treats immune response as a simple "body fights germs" narrative without showing how different components work together.
+2. DEPTH CHECK: Penalize if the explanation treats data movement as simply "data goes from A to B" without showing how encapsulation and forwarding constraints work together.
 
-3. DISTINCTION FROM BACKGROUND: The background covered historical discovery of microbes and defense mapping. This should explain the actual mechanisms of how immunity works.
-
-${SHARED_EXPECTATIONS}
-    `,
-    id: "en-biology-immune-system",
-    userInput: {
-      backgroundSteps: [
-        {
-          text: "For millennia, plagues swept through populations unchecked. Why did some survive while others perished? The answer was invisible.",
-          title: "The Invisible War",
-        },
-        {
-          text: "In the 1800s, scientists discovered microbes. Suddenly, the enemy had a face — and the body's defense system began revealing its secrets.",
-          title: "Seeing the Unseen",
-        },
-        {
-          text: "From Pasteur's vaccines to modern immunology, we've mapped an internal army more sophisticated than any human military.",
-          title: "Mapping the Defense",
-        },
-      ],
-      chapterTitle: "Body Systems",
-      courseTitle: "Human Biology",
-      language: "en",
-      lessonDescription:
-        "Understanding how the immune system protects the body through multiple layers of defense, from physical barriers to specialized cells and antibodies",
-      lessonTitle: "How the Immune System Works",
-    },
-  },
-  {
-    expectations: `
-TOPIC-SPECIFIC GUIDANCE:
-
-1. ACCURACY CHECK: Photosynthesis involves specific chemical processes in distinct cellular locations. Penalize if:
-   - Chlorophyll is described as producing energy rather than capturing light energy
-
-2. DEPTH CHECK: Penalize if the explanation presents photosynthesis as simply "plants make food from sunlight" without showing how light energy becomes chemical energy.
-
-3. DISTINCTION FROM BACKGROUND: The background covered the historical mystery of where plant mass comes from. This should explain the actual process of energy conversion.
+3. DISTINCTION FROM BACKGROUND: The background covered WHY data needs layered packaging. This should explain WHAT encapsulation, protocol layers, and hop-by-hop forwarding actually are.
 
 ${SHARED_EXPECTATIONS}
     `,
-    id: "en-biology-photosynthesis",
+    id: "en-web-data-movement",
     userInput: {
       backgroundSteps: [
         {
-          text: "Plants don't eat, yet they grow massive. Where does a tree's mass come from? For centuries, scientists guessed wrong — soil, water, air?",
-          title: "The Mass Mystery",
+          text: "Early computer networks were a tangle of incompatible systems. Sending a message across networks was like mailing a letter through countries with different postal rules.",
+          title: "The Compatibility Problem",
         },
         {
-          text: "Jan van Helmont's willow experiment showed soil wasn't the answer. Joseph Priestley found plants restore 'injured' air. The puzzle pieces emerged.",
-          title: "Clues Accumulate",
+          text: "Engineers realized data needed to be wrapped in layers, each handling one part of the journey. This layered approach let the internet scale to billions of devices.",
+          title: "Layers of Wrapping",
         },
       ],
-      chapterTitle: "Plant Biology",
-      courseTitle: "Biology Fundamentals",
+      chapterTitle: "Networking fundamentals",
+      courseTitle: "Web Development",
       language: "en",
       lessonDescription:
-        "Understanding the process by which plants convert light energy into chemical energy, including the role of chloroplasts, light reactions, and carbon fixation",
-      lessonTitle: "Photosynthesis",
-    },
-  },
-  {
-    expectations: `
-TOPIC-SPECIFIC GUIDANCE:
-
-1. ACCURACY CHECK: CRISPR-Cas9 involves specific molecular components with distinct roles. Penalize if:
-   - CRISPR is described as "rewriting" DNA directly (it cuts; cellular repair mechanisms do the editing)
-
-2. DEPTH CHECK: Penalize if the explanation treats gene editing as a single "cut and paste" action without showing the multi-step process of targeting, cutting, and repair.
-
-3. DISTINCTION FROM BACKGROUND: The background covered the history of gene editing challenges and CRISPR's discovery. This should explain how the molecular system actually works.
-
-${SHARED_EXPECTATIONS}
-    `,
-    id: "en-biotech-crispr",
-    userInput: {
-      backgroundSteps: [
-        {
-          text: "For decades, editing genes was like editing a book with a sledgehammer — imprecise and dangerous. Scientists dreamed of surgical precision.",
-          title: "The Precision Problem",
-        },
-        {
-          text: "Bacteria had already solved this problem. Their immune system could recognize and cut specific viral DNA. Scientists Jennifer Doudna and Emmanuelle Charpentier saw the potential.",
-          title: "Nature's Solution",
-        },
-        {
-          text: "In 2012, they adapted bacterial CRISPR into a programmable gene-editing tool. The revolution in genetics had begun.",
-          title: "A New Era",
-        },
-      ],
-      chapterTitle: "Genetic Engineering",
-      courseTitle: "Modern Biotechnology",
-      language: "en",
-      lessonDescription:
-        "Understanding how CRISPR-Cas9 gene editing works, including the role of guide RNA, the Cas9 protein, and cellular repair mechanisms",
-      lessonTitle: "How CRISPR Gene Editing Works",
+        "Core building blocks for how data moves across networks, from encapsulation to hop-by-hop forwarding constraints.",
+      lessonTitle: "How Data Moves on Networks",
     },
   },
   {
@@ -141,33 +67,66 @@ LANGUAGE REQUIREMENT: Titles and text must be in Portuguese.
 
 TOPIC-SPECIFIC GUIDANCE:
 
-1. ACCURACY CHECK: Neurotransmission involves both electrical and chemical signaling phases. Penalize if:
-   - Neurons are described as physically touching to transmit signals (they communicate across synaptic gaps)
+1. ACCURACY CHECK: Python numeric types involve specific relationships between float, bool, and int. Penalize if:
+   - bool is described as unrelated to int (bool is a subclass of int in Python)
 
-2. DEPTH CHECK: Penalize if the explanation presents neural communication as simply "electrical signals in the brain" without distinguishing the electrical phase within neurons from the chemical phase between neurons.
+2. DEPTH CHECK: Penalize if the explanation treats floats and bools as simple "number types" without showing the structural relationship between bool and int, or the significance of floating-point representation.
 
-3. DISTINCTION FROM BACKGROUND: The background covered historical debates about thought transmission. This should explain the actual mechanisms of neural signaling.
+3. DISTINCTION FROM BACKGROUND: The background covered WHY different numeric types exist. This should explain WHAT floats and bools are, their literal syntax, and how bool relates structurally to int.
 
 ${SHARED_EXPECTATIONS}
     `,
-    id: "pt-biology-neurotransmission",
+    id: "pt-python-float-bool",
     userInput: {
       backgroundSteps: [
         {
-          text: "Como o pensamento viaja pelo corpo? Por seculos, cientistas debatiam se era eletricidade, fluidos, ou algo totalmente diferente.",
-          title: "O Misterio do Pensamento",
+          text: "Computadores precisam representar diferentes tipos de números. Inteiros são simples, mas e quando precisamos de frações? Ou de verdadeiro/falso? Cada necessidade gerou um tipo numérico distinto.",
+          title: "Além dos Inteiros",
         },
         {
-          text: "Luigi Galvani fez pernas de ras se moverem com eletricidade. Santiago Ramon y Cajal mapeou celulas nervosas individuais. O quebra-cabeca comecou a se formar.",
-          title: "Pistas Eletricas",
+          text: "Python unificou esses tipos em uma hierarquia elegante. Entender essa relação revela por que operações aparentemente estranhas, como somar True + True, funcionam perfeitamente.",
+          title: "Uma Família de Tipos",
         },
       ],
-      chapterTitle: "Sistema Nervoso",
-      courseTitle: "Neurociencia Basica",
+      chapterTitle: "Tipos numéricos e valores especiais",
+      courseTitle: "Python",
       language: "pt",
       lessonDescription:
-        "Entendendo como os neuronios se comunicam atraves de sinais eletricos e quimicos, incluindo o papel dos neurotransmissores e sinapses",
-      lessonTitle: "Como Funciona a Neurotransmissao",
+        "Valores de ponto flutuante e booleanos, sintaxe de literais e a relação estrutural entre bool e int.",
+      lessonTitle: "Float e bool como tipos numéricos",
+    },
+  },
+  {
+    expectations: `
+TOPIC-SPECIFIC GUIDANCE:
+
+1. ACCURACY CHECK: Labor market aggregates involve specific empirical patterns during business cycles. Penalize if:
+   - Unemployment is described as moving inversely with output without acknowledging lags (unemployment typically lags GDP changes)
+
+2. DEPTH CHECK: Penalize if the explanation treats labor markets during downturns as simply "people lose jobs" without showing the empirical regularities in employment, hours, and participation rates.
+
+3. DISTINCTION FROM BACKGROUND: The background covered WHY labor markets fluctuate with the business cycle. This should explain WHAT the specific empirical patterns are — how unemployment, hours worked, and labor force participation move during downturns.
+
+${SHARED_EXPECTATIONS}
+    `,
+    id: "en-economics-labor-cycles",
+    userInput: {
+      backgroundSteps: [
+        {
+          text: "Economies don't grow steadily — they surge and contract in waves. During each downturn, the pain isn't spread evenly. Labor markets absorb much of the shock.",
+          title: "The Boom-Bust Pattern",
+        },
+        {
+          text: "Economists noticed that certain labor market indicators move in predictable patterns during recessions. These regularities became essential for understanding how downturns affect real people.",
+          title: "Patterns in the Pain",
+        },
+      ],
+      chapterTitle: "Business cycles",
+      courseTitle: "Economics",
+      language: "en",
+      lessonDescription:
+        "Empirical regularities linking downturns to labor market outcomes at the level of aggregate fluctuations, without modeling search or wage-setting mechanisms.",
+      lessonTitle: "Labor market aggregates over the cycle",
     },
   },
   {
@@ -176,103 +135,34 @@ LANGUAGE REQUIREMENT: Titles and text must be in Spanish.
 
 TOPIC-SPECIFIC GUIDANCE:
 
-1. ACCURACY CHECK: Blockchain consensus involves cryptographic and game-theoretic mechanisms. Penalize if:
-   - Mining is described as "solving equations" (it involves finding hash values that meet specific criteria)
+1. ACCURACY CHECK: α-acidity and enolate chemistry involve specific chemical concepts. Penalize if:
+   - Enolates are described as electrophiles (they are nucleophiles)
+   - α-hydrogen acidity is attributed to inductive effects alone (resonance stabilization of the enolate is the primary factor)
 
-2. DEPTH CHECK: Penalize if the explanation presents consensus as simply "computers agreeing" without showing how trustless agreement is achieved through incentives and cryptography.
+2. DEPTH CHECK: Penalize if the explanation treats enolate formation as simply "removing a hydrogen" without showing why the α-position is specifically acidic and how the resulting enolate acts as a nucleophile.
 
-3. DISTINCTION FROM BACKGROUND: The background covered the Byzantine Generals problem and centralization issues. This should explain how consensus mechanisms actually work.
+3. DISTINCTION FROM BACKGROUND: The background covered WHY carbon-carbon bond formation matters in organic chemistry. This should explain WHAT α-acidity is and how enolates form as key nucleophiles.
 
 ${SHARED_EXPECTATIONS}
     `,
-    id: "es-tech-blockchain-consensus",
+    id: "es-quimica-acidez-enolatos",
     userInput: {
       backgroundSteps: [
         {
-          text: "En sistemas centralizados, un servidor dice la verdad. Pero sin centro, como pueden miles de computadoras ponerse de acuerdo sobre que transacciones son validas?",
-          title: "El Problema del Consenso",
+          text: "Construir moléculas complejas requiere formar enlaces carbono-carbono. Pero el carbono no es naturalmente reactivo — los químicos necesitaron encontrar posiciones especialmente activadas.",
+          title: "El Desafío del Enlace C–C",
         },
         {
-          text: "Los generales bizantinos enfrentaban el mismo dilema: como coordinar sin saber quien es traidor. Este problema teorico inspiro soluciones practicas.",
-          title: "Generales y Traidores",
+          text: "Junto a un grupo carbonilo, ciertos hidrógenos se vuelven sorprendentemente ácidos. Esta acidez inesperada abrió la puerta a toda una familia de reacciones de construcción molecular.",
+          title: "Un Hidrógeno Especial",
         },
       ],
-      chapterTitle: "Fundamentos de Blockchain",
-      courseTitle: "Tecnologias Descentralizadas",
+      chapterTitle: "Carbonilos y enolatos",
+      courseTitle: "Química",
       language: "es",
       lessonDescription:
-        "Entendiendo como las redes blockchain logran consenso sin autoridad central, incluyendo Proof of Work y como se validan las transacciones",
-      lessonTitle: "Mecanismos de Consenso en Blockchain",
-    },
-  },
-  {
-    expectations: `
-TOPIC-SPECIFIC GUIDANCE:
-
-1. ACCURACY CHECK: Compilation involves distinct transformation phases with specific purposes. Penalize if:
-   - Parsing and lexical analysis are conflated (tokenization identifies tokens; parsing builds syntax structure)
-
-2. DEPTH CHECK: Penalize if the explanation presents compilation as simply "turning code into machine code" without showing the transformation pipeline.
-
-3. DISTINCTION FROM BACKGROUND: The background covered the history of machine code and Grace Hopper's vision. This should explain how modern compilers actually transform code.
-
-${SHARED_EXPECTATIONS}
-    `,
-    id: "en-cs-compilers",
-    userInput: {
-      backgroundSteps: [
-        {
-          text: "Early programmers wrote in machine code — endless strings of 1s and 0s. One wrong digit meant hours of debugging. There had to be a better way.",
-          title: "The Machine Code Nightmare",
-        },
-        {
-          text: "Grace Hopper believed computers could understand more human-friendly instructions. Her A-0 system proved that automatic translation was possible.",
-          title: "Hopper's Vision",
-        },
-      ],
-      chapterTitle: "Language Implementation",
-      courseTitle: "Programming Language Theory",
-      language: "en",
-      lessonDescription:
-        "Understanding how compilers transform human-readable code into machine-executable instructions through multiple phases of analysis and transformation",
-      lessonTitle: "How Compilers Work",
-    },
-  },
-  {
-    expectations: `
-TOPIC-SPECIFIC GUIDANCE:
-
-1. ACCURACY CHECK: Backpropagation involves specific mathematical operations applied systematically. Penalize if:
-   - Gradient descent is described as random trial and error (it follows the gradient direction mathematically)
-
-2. DEPTH CHECK: Penalize if the explanation presents neural network learning as simply "adjusting connections" without showing how error information flows backward through the network.
-
-3. DISTINCTION FROM BACKGROUND: The background covered why learning from data is needed and the historical challenge of training networks. This should explain how backpropagation actually calculates and propagates error.
-
-${SHARED_EXPECTATIONS}
-    `,
-    id: "en-ml-backpropagation",
-    userInput: {
-      backgroundSteps: [
-        {
-          text: "Early AI systems were hand-programmed with explicit rules. But complex tasks like recognizing faces had too many rules to write manually.",
-          title: "The Rule Explosion",
-        },
-        {
-          text: "What if systems could learn from examples instead? The challenge: how do you tell a network of artificial neurons which connections to strengthen?",
-          title: "Learning from Data",
-        },
-        {
-          text: "The backpropagation algorithm, refined in the 1980s, solved this. It showed how to assign 'blame' to each connection for mistakes.",
-          title: "The Breakthrough",
-        },
-      ],
-      chapterTitle: "Neural Network Training",
-      courseTitle: "Machine Learning Fundamentals",
-      language: "en",
-      lessonDescription:
-        "Understanding how neural networks learn through backpropagation, including forward passes, loss calculation, and gradient-based weight updates",
-      lessonTitle: "How Neural Networks Learn",
+        "Origen de la acidez en α y cómo se forma el enolato como nucleófilo clave en reacciones de construcción C–C.",
+      lessonTitle: "Acidez en α y formación de enolatos",
     },
   },
   {
@@ -281,170 +171,67 @@ LANGUAGE REQUIREMENT: Titles and text must be in Portuguese.
 
 TOPIC-SPECIFIC GUIDANCE:
 
-1. ACCURACY CHECK: Monetary policy involves specific transmission mechanisms with measurable effects. Penalize if:
-   - Interest rate effects are described as immediate (transmission mechanisms have significant time lags)
-   - NOTE: Not explicitly mentioning time lags is acceptable as long as effects are not described as immediate. Do NOT penalize for the absence of explicit time lag discussion
+1. ACCURACY CHECK: Automation measurement in legal tech involves specific operational metrics. Penalize if:
+   - Metrics are described without connection to quality or safety concerns (the focus should be on quality assurance and audit trails)
 
-2. DEPTH CHECK: Penalize if the explanation presents monetary policy as simply "central banks controlling money" without showing the chain from policy action to economic effect.
+2. DEPTH CHECK: Penalize if the explanation treats automation monitoring as simply "checking if it works" without showing what specific metrics matter for document quality and safety.
 
-3. DISTINCTION FROM BACKGROUND: The background covered the history of financial chaos and the Federal Reserve's creation. This should explain how monetary policy tools actually influence the economy.
+3. DISTINCTION FROM BACKGROUND: The background covered WHY monitoring legal document automation matters. This should explain WHAT operational metrics, quality indicators, and audit trails look like in practice.
 
 ${SHARED_EXPECTATIONS}
     `,
-    id: "pt-economics-monetary-policy",
+    id: "pt-direito-medicao-automacao",
     userInput: {
       backgroundSteps: [
         {
-          text: "Antes dos bancos centrais, crises financeiras eram frequentes e devastadoras. Panico bancario podia destruir economias inteiras da noite para o dia.",
-          title: "Era do Caos Financeiro",
+          text: "Escritórios de advocacia adotaram automação documental para ganhar eficiência. Mas automatizar sem monitorar é como dirigir de olhos fechados — rápido, mas perigoso.",
+          title: "Velocidade sem Controle",
         },
         {
-          text: "O Federal Reserve surgiu em 1913 apos uma crise brutal. Bancos centrais ganharam poder para estabilizar economias — mas como exatamente?",
-          title: "O Nascimento do Fed",
+          text: "Erros em documentos jurídicos podem custar processos inteiros. A profissão percebeu que precisava de métricas para garantir que a automação mantivesse a qualidade que clientes esperam.",
+          title: "O Custo do Erro Silencioso",
         },
       ],
-      chapterTitle: "Macroeconomia",
-      courseTitle: "Economia para Iniciantes",
+      chapterTitle: "Legal tech e automação de documentos",
+      courseTitle: "Direito",
       language: "pt",
       lessonDescription:
-        "Entendendo como bancos centrais usam taxas de juros e outras ferramentas para influenciar a economia, incluindo os mecanismos de transmissao da politica monetaria",
-      lessonTitle: "Como Funciona a Politica Monetaria",
+        "Métricas operacionais focadas em qualidade e segurança da automação documental, com rastros para auditoria.",
+      lessonTitle: "Medição e monitoramento da automação",
     },
   },
   {
     expectations: `
 TOPIC-SPECIFIC GUIDANCE:
 
-1. ACCURACY CHECK: Vaccine immunology involves specific cellular and molecular mechanisms. Penalize if:
-   - mRNA vaccines are described as altering DNA (mRNA never enters the cell nucleus)
+1. ACCURACY CHECK: Connectivity debugging involves systematic layer-by-layer reasoning. Penalize if:
+   - Debugging is described as starting from the application layer down (systematic models typically start from physical/link layer up)
+   - Mental models are confused with specific tool outputs (the focus is on reasoning frameworks, not tool usage)
 
-2. DEPTH CHECK: Penalize if the explanation presents vaccines as simply "teaching the body to fight disease" without showing how immune memory develops.
+2. DEPTH CHECK: Penalize if the explanation treats debugging as simply "check if it works" without showing how to systematically narrow a connectivity problem to a specific layer — host, subnet, gateway, path, or service.
 
-3. DISTINCTION FROM BACKGROUND: The background covered the historical discovery of vaccination through Jenner and Pasteur. This should explain the immunological mechanisms of how vaccines create protection.
+3. DISTINCTION FROM BACKGROUND: The background covered WHY systematic debugging approaches matter. This should explain WHAT the mental models are — how to reason about reachability at each layer to isolate where connectivity breaks.
 
 ${SHARED_EXPECTATIONS}
     `,
-    id: "en-biology-vaccines",
+    id: "en-web-debugging-mental-models",
     userInput: {
       backgroundSteps: [
         {
-          text: "Smallpox killed 30% of those infected. Edward Jenner noticed milkmaids who caught cowpox seemed immune. Could a mild infection protect against a deadly one?",
-          title: "The Milkmaid's Secret",
+          text: "When a web app can't reach a server, the problem could be anywhere — your machine, the local network, a router along the path, or the server itself. Without a system, debugging is guesswork.",
+          title: "The Needle in the Stack",
         },
         {
-          text: "Jenner's experiment worked. Pasteur extended the principle to other diseases. Vaccination became humanity's most powerful weapon against infectious disease.",
-          title: "From Cowpox to COVID",
+          text: "Experienced engineers don't try random fixes. They use mental models to systematically narrow the problem layer by layer, turning a haystack into a checklist.",
+          title: "Thinking in Layers",
         },
       ],
-      chapterTitle: "Immunology",
-      courseTitle: "Medical Science Basics",
+      chapterTitle: "Networking fundamentals",
+      courseTitle: "Web Development",
       language: "en",
       lessonDescription:
-        "Understanding how vaccines train the immune system to recognize and fight specific pathogens, including different vaccine types and how immunity develops",
-      lessonTitle: "How Vaccines Work",
-    },
-  },
-  {
-    expectations: `
-LANGUAGE REQUIREMENT: Titles and text must be in Spanish.
-
-TOPIC-SPECIFIC GUIDANCE:
-
-1. ACCURACY CHECK: Cryptographic hash functions have specific mathematical properties that define their security. Penalize if:
-   - Hashing is conflated with encryption (hashing is one-way and irreversible; encryption is designed to be reversible with a key)
-
-2. DEPTH CHECK: Penalize if the explanation presents hash functions as simply "creating fingerprints" without showing why properties like collision resistance matter for security.
-
-3. DISTINCTION FROM BACKGROUND: The background covered the data integrity problem and the concept of digital fingerprints. This should explain how hash functions achieve their security properties.
-
-${SHARED_EXPECTATIONS}
-    `,
-    id: "es-crypto-hash-functions",
-    userInput: {
-      backgroundSteps: [
-        {
-          text: "Como verificas que un archivo no fue alterado sin compararlo byte por byte? El problema de la integridad de datos parecia no tener solucion eficiente.",
-          title: "El Problema de Integridad",
-        },
-        {
-          text: "Los matematicos descubrieron funciones que comprimen cualquier dato en una 'huella digital' unica. Cambiar un bit del original cambia completamente la huella.",
-          title: "Huellas Digitales",
-        },
-      ],
-      chapterTitle: "Fundamentos de Criptografia",
-      courseTitle: "Seguridad Informatica",
-      language: "es",
-      lessonDescription:
-        "Entendiendo como funcionan las funciones hash criptograficas, sus propiedades matematicas, y por que son fundamentales para la seguridad digital",
-      lessonTitle: "Funciones Hash Criptograficas",
-    },
-  },
-  {
-    expectations: `
-TOPIC-SPECIFIC GUIDANCE:
-
-1. ACCURACY CHECK: Plate tectonics involves specific geological mechanisms and processes. Penalize if:
-   - The mantle is described as liquid (it is solid rock that flows very slowly over geological time)
-
-2. DEPTH CHECK: Penalize if the explanation presents plate tectonics as simply "continents moving" without showing the driving mechanisms and how different boundary types create different geological features.
-
-3. DISTINCTION FROM BACKGROUND: The background covered the continental puzzle and Wegener's theory. This should explain how plate tectonics actually works as a mechanism.
-
-${SHARED_EXPECTATIONS}
-    `,
-    id: "en-geology-plate-tectonics",
-    userInput: {
-      backgroundSteps: [
-        {
-          text: "South America and Africa fit together like puzzle pieces. Fossils of the same species appear on continents separated by oceans. Coincidence?",
-          title: "The Continental Puzzle",
-        },
-        {
-          text: "Alfred Wegener proposed continents drift, but couldn't explain how. He was ridiculed. Decades later, seafloor mapping revealed the answer.",
-          title: "Wegener's Vindication",
-        },
-      ],
-      chapterTitle: "Earth's Structure",
-      courseTitle: "Earth Science",
-      language: "en",
-      lessonDescription:
-        "Understanding how Earth's tectonic plates move and interact, including the mechanisms that drive plate motion and the geological features they create",
-      lessonTitle: "Plate Tectonics",
-    },
-  },
-  {
-    expectations: `
-LANGUAGE REQUIREMENT: Titles and text must be in Portuguese.
-
-TOPIC-SPECIFIC GUIDANCE:
-
-1. ACCURACY CHECK: DNA replication involves specific enzymes with distinct roles in a coordinated process. Penalize if:
-   - Both DNA strands are described as being copied the same way (leading and lagging strands are synthesized differently)
-
-2. DEPTH CHECK: Penalize if the explanation presents DNA replication as simply "unzipping and copying" without showing how multiple enzymes coordinate the process.
-
-3. DISTINCTION FROM BACKGROUND: The background covered the discovery of DNA structure and the templating concept. This should explain the actual molecular machinery of replication.
-
-${SHARED_EXPECTATIONS}
-    `,
-    id: "pt-biology-dna-replication",
-    userInput: {
-      backgroundSteps: [
-        {
-          text: "Watson e Crick revelaram a estrutura do DNA em 1953. Mas saber a forma nao explicava como a informacao genetica e copiada fielmente a cada divisao celular.",
-          title: "Alem da Estrutura",
-        },
-        {
-          text: "A dupla helice sugeriu a resposta: cada fita serve de molde para a outra. Mas como exatamente as celulas executam essa copia?",
-          title: "O Molde Perfeito",
-        },
-      ],
-      chapterTitle: "Genetica Molecular",
-      courseTitle: "Biologia Celular",
-      language: "pt",
-      lessonDescription:
-        "Entendendo o processo de replicacao do DNA, incluindo as enzimas envolvidas e como a informacao genetica e copiada com alta fidelidade",
-      lessonTitle: "Como o DNA se Replica",
+        "Practical mental models for narrowing a problem to host, subnet, gateway, path, or service-layer reachability without relying on protocol-specific details.",
+      lessonTitle: "Connectivity Debugging Mental Models",
     },
   },
 ];
