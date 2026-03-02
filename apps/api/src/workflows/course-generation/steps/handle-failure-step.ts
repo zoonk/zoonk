@@ -1,26 +1,34 @@
+import { streamError } from "@/workflows/_shared/stream-error";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 
 export async function handleCourseFailureStep(input: {
-  courseId: number;
+  courseId: number | null;
   courseSuggestionId: number;
 }): Promise<void> {
   "use step";
 
-  await Promise.all([
-    safeAsync(() =>
+  const { courseId, courseSuggestionId } = input;
+
+  if (courseId) {
+    await Promise.allSettled([
       prisma.course.update({
         data: { generationStatus: "failed" },
-        where: { id: input.courseId },
+        where: { id: courseId },
       }),
-    ),
-    safeAsync(() =>
       prisma.courseSuggestion.update({
         data: { generationStatus: "failed" },
-        where: { id: input.courseSuggestionId },
+        where: { id: courseSuggestionId },
       }),
-    ),
-  ]);
+    ]);
+  } else {
+    await prisma.courseSuggestion.update({
+      data: { generationStatus: "failed" },
+      where: { id: courseSuggestionId },
+    });
+  }
+
+  await streamError({ reason: "aiGenerationFailed", step: "workflowError" });
 }
 
 export async function handleChapterFailureStep(input: { chapterId: number }): Promise<void> {
@@ -32,4 +40,6 @@ export async function handleChapterFailureStep(input: { chapterId: number }): Pr
       where: { id: input.chapterId },
     }),
   );
+
+  await streamError({ reason: "aiGenerationFailed", step: "workflowError" });
 }

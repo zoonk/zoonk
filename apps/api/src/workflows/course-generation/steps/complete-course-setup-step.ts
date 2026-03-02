@@ -1,5 +1,4 @@
 import { prisma } from "@zoonk/db";
-import { safeAsync } from "@zoonk/utils/error";
 import { streamError, streamStatus } from "../stream-status";
 
 export async function completeCourseSetupStep(input: {
@@ -10,26 +9,22 @@ export async function completeCourseSetupStep(input: {
 
   await streamStatus({ status: "started", step: "completeCourseSetup" });
 
-  const [courseResult, suggestionResult] = await Promise.all([
-    safeAsync(() =>
-      prisma.course.update({
-        data: { generationStatus: "completed" },
-        where: { id: input.courseId },
-      }),
-    ),
-    safeAsync(() =>
-      prisma.courseSuggestion.update({
-        data: { generationStatus: "completed" },
-        where: { id: input.courseSuggestionId },
-      }),
-    ),
+  const results = await Promise.allSettled([
+    prisma.course.update({
+      data: { generationStatus: "completed" },
+      where: { id: input.courseId },
+    }),
+    prisma.courseSuggestion.update({
+      data: { generationStatus: "completed" },
+      where: { id: input.courseSuggestionId },
+    }),
   ]);
 
-  const error = courseResult.error || suggestionResult.error;
+  const rejected = results.find((result) => result.status === "rejected");
 
-  if (error) {
+  if (rejected) {
     await streamError({ reason: "dbSaveFailed", step: "completeCourseSetup" });
-    throw error;
+    throw rejected.reason;
   }
 
   await streamStatus({ status: "completed", step: "completeCourseSetup" });

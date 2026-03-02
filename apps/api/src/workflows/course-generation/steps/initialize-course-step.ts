@@ -15,9 +15,16 @@ export async function initializeCourseStep(input: {
 
   const { suggestion, workflowRunId } = input;
 
-  const aiOrg = await prisma.organization.findUniqueOrThrow({
-    where: { slug: AI_ORG_SLUG },
-  });
+  const { data: aiOrg, error: orgError } = await safeAsync(() =>
+    prisma.organization.findUniqueOrThrow({
+      where: { slug: AI_ORG_SLUG },
+    }),
+  );
+
+  if (orgError || !aiOrg) {
+    await streamError({ reason: "dbFetchFailed", step: "initializeCourse" });
+    throw orgError ?? new Error("AI organization not found");
+  }
 
   // Update course suggestion status to running
   const { error: updateError } = await safeAsync(() =>

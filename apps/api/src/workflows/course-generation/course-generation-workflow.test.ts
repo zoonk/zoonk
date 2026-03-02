@@ -18,7 +18,10 @@ import {
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { toSlug } from "@zoonk/utils/string";
 import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { getOrCreateCourse } from "./_internal/get-or-create-course";
 import { courseGenerationWorkflow } from "./course-generation-workflow";
+
+const writeMock = vi.fn().mockResolvedValue(null);
 
 vi.mock("workflow", () => ({
   FatalError: class FatalError extends Error {},
@@ -26,7 +29,7 @@ vi.mock("workflow", () => ({
   getWritable: vi.fn().mockReturnValue({
     getWriter: () => ({
       releaseLock: vi.fn(),
-      write: vi.fn().mockResolvedValue(null),
+      write: writeMock,
     }),
   }),
 }));
@@ -113,6 +116,15 @@ vi.mock("@zoonk/ai/tasks/lessons/activities", () => ({
     data: { activities: [] },
   }),
 }));
+
+vi.mock("./_internal/get-or-create-course", async (importOriginal) => {
+  const mod = await importOriginal();
+  return {
+    getOrCreateCourse: vi.fn(
+      (mod as { getOrCreateCourse: typeof getOrCreateCourse }).getOrCreateCourse,
+    ),
+  };
+});
 
 describe(courseGenerationWorkflow, () => {
   let organizationId: number;
@@ -441,7 +453,7 @@ describe(courseGenerationWorkflow, () => {
   });
 
   describe("error handling", () => {
-    test("marks course and suggestion as 'failed' on error", async () => {
+    test("marks course and suggestion as 'failed' on error and streams error", async () => {
       vi.mocked(generateCourseDescription).mockRejectedValueOnce(new Error("AI generation failed"));
 
       const title = `Error Course ${randomUUID()}`;
@@ -465,6 +477,39 @@ describe(courseGenerationWorkflow, () => {
 
       expect(course?.generationStatus).toBe("failed");
       expect(dbSuggestion?.generationStatus).toBe("failed");
+
+      const errorCall = writeMock.mock.calls.find(
+        (call: string[]) =>
+          call[0]?.includes('"status":"error"') && call[0]?.includes('"step":"workflowError"'),
+      );
+      expect(errorCall).toBeDefined();
+    });
+
+    test("marks suggestion as 'failed' when getOrCreateCourse fails", async () => {
+      vi.mocked(getOrCreateCourse).mockRejectedValueOnce(new Error("Organization not found"));
+
+      const title = `Init Fail Course ${randomUUID()}`;
+      const slug = toSlug(title);
+
+      const suggestion = await courseSuggestionFixture({
+        generationStatus: "pending",
+        slug,
+        title,
+      });
+
+      await expect(courseGenerationWorkflow(suggestion.id)).rejects.toThrow();
+
+      const dbSuggestion = await prisma.courseSuggestion.findUnique({
+        where: { id: suggestion.id },
+      });
+
+      expect(dbSuggestion?.generationStatus).toBe("failed");
+
+      const errorCall = writeMock.mock.calls.find(
+        (call: string[]) =>
+          call[0]?.includes('"status":"error"') && call[0]?.includes('"step":"workflowError"'),
+      );
+      expect(errorCall).toBeDefined();
     });
 
     test("marks course and suggestion as 'failed' when generateCourseCategories throws", async () => {

@@ -32,7 +32,16 @@ export async function courseGenerationWorkflow(courseSuggestionId: number): Prom
     suggestion,
     courseSuggestionId,
     workflowRunId,
-  );
+  ).catch(async (error: unknown) => {
+    await handleCourseFailureStep({
+      courseId: existingCourse?.id ?? null,
+      courseSuggestionId,
+    });
+
+    console.error(`[workflow ${workflowRunId}] Course initialization failed`, error);
+
+    throw FatalError;
+  });
 
   const chapters = await setupCourse(course, courseSuggestionId, existing).catch(
     async (error: unknown) => {
