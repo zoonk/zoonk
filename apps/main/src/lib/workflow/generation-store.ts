@@ -1,5 +1,3 @@
-import { createStore } from "@xstate/store";
-
 export type StepStatus = "started" | "completed" | "error";
 export type GenerationStatus = "idle" | "triggering" | "streaming" | "completed" | "error";
 
@@ -9,102 +7,96 @@ export type StreamMessage<TStep extends string = string> = {
   status: StepStatus;
 };
 
-export function createGenerationStore<TStep extends string = string>(
-  initialContext?: Partial<{
-    completedSteps: TStep[];
-    currentStep: TStep | null;
-    error: string | null;
-    runId: string | null;
-    status: GenerationStatus;
-  }>,
-) {
-  return createStore({
-    context: {
-      completedSteps: [] as TStep[],
-      currentStep: null as TStep | null,
-      error: null as string | null,
-      runId: null as string | null,
-      startedSteps: [] as TStep[],
-      status: "idle" as GenerationStatus,
-      ...initialContext,
-    },
-    on: {
-      reset: () => ({
-        completedSteps: [] as TStep[],
-        currentStep: null as TStep | null,
-        error: null as string | null,
-        runId: null as string | null,
-        startedSteps: [] as TStep[],
-        status: "idle" as GenerationStatus,
-      }),
+export type GenerationState<TStep extends string = string> = {
+  completedSteps: TStep[];
+  currentStep: TStep | null;
+  error: string | null;
+  runId: string | null;
+  startedSteps: TStep[];
+  status: GenerationStatus;
+};
 
-      setError: (ctx, event: { error: string }) => ({
-        ...ctx,
-        error: event.error,
-        status: "error" as const,
-      }),
+export type GenerationAction<TStep extends string = string> =
+  | { type: "reset" }
+  | { type: "setError"; error: string }
+  | { type: "stepCompleted"; step: TStep }
+  | { type: "stepStarted"; step: TStep }
+  | { type: "triggerStart" }
+  | { type: "triggerSuccess"; runId: string }
+  | { type: "workflowCompleted" };
 
-      stepCompleted: (ctx, event: { step: TStep }) => ({
-        ...ctx,
-        completedSteps: ctx.completedSteps.includes(event.step)
-          ? ctx.completedSteps
-          : [...ctx.completedSteps, event.step],
-        currentStep: ctx.currentStep === event.step ? null : ctx.currentStep,
-      }),
+export function initialGenerationState<TStep extends string = string>(
+  overrides?: Partial<GenerationState<TStep>>,
+): GenerationState<TStep> {
+  return {
+    completedSteps: [] as TStep[],
+    currentStep: null,
+    error: null,
+    runId: null,
+    startedSteps: [] as TStep[],
+    status: "idle",
+    ...overrides,
+  };
+}
 
-      stepStarted: (ctx, event: { step: TStep }) => ({
-        ...ctx,
-        currentStep: event.step,
-        startedSteps: ctx.startedSteps.includes(event.step)
-          ? ctx.startedSteps
-          : [...ctx.startedSteps, event.step],
-      }),
-      triggerStart: (ctx) => ({
-        ...ctx,
-        error: null,
-        status: "triggering" as const,
-      }),
-
-      triggerSuccess: (ctx, event: { runId: string }) => ({
-        ...ctx,
-        runId: event.runId,
-        status: "streaming" as const,
-      }),
-
-      workflowCompleted: (ctx) => {
-        // Don't transition to completed if there was an error
-        if (ctx.status === "error") {
-          return ctx;
-        }
-        return {
-          ...ctx,
-          status: "completed" as const,
-        };
-      },
-    },
-  });
+export function generationReducer<TStep extends string>(
+  state: GenerationState<TStep>,
+  action: GenerationAction<TStep>,
+): GenerationState<TStep> {
+  switch (action.type) {
+    case "reset":
+      return initialGenerationState<TStep>();
+    case "setError":
+      return { ...state, error: action.error, status: "error" };
+    case "stepCompleted":
+      return {
+        ...state,
+        completedSteps: state.completedSteps.includes(action.step)
+          ? state.completedSteps
+          : [...state.completedSteps, action.step],
+        currentStep: state.currentStep === action.step ? null : state.currentStep,
+      };
+    case "stepStarted":
+      return {
+        ...state,
+        currentStep: action.step,
+        startedSteps: state.startedSteps.includes(action.step)
+          ? state.startedSteps
+          : [...state.startedSteps, action.step],
+      };
+    case "triggerStart":
+      return { ...state, error: null, status: "triggering" };
+    case "triggerSuccess":
+      return { ...state, runId: action.runId, status: "streaming" };
+    case "workflowCompleted":
+      return state.status === "error" ? state : { ...state, status: "completed" };
+    default: {
+      const exhaustiveCheck: never = action;
+      throw new Error(`Unexpected action: ${JSON.stringify(exhaustiveCheck)}`);
+    }
+  }
 }
 
 export function handleStreamMessage<TStep extends string>(
   message: StreamMessage<TStep>,
-  store: ReturnType<typeof createGenerationStore<TStep>>,
+  dispatch: (action: GenerationAction<TStep>) => void,
   completionStep?: TStep,
 ) {
   switch (message.status) {
     case "started":
-      store.send({ step: message.step, type: "stepStarted" });
+      dispatch({ step: message.step, type: "stepStarted" });
       break;
     case "completed":
-      store.send({ step: message.step, type: "stepCompleted" });
+      dispatch({ step: message.step, type: "stepCompleted" });
       if (completionStep && message.step === completionStep) {
-        store.send({ type: "workflowCompleted" });
+        dispatch({ type: "workflowCompleted" });
       }
       break;
     case "error": {
       const errorMessage = message.reason
         ? `${message.step}: ${message.reason}`
         : `Step "${message.step}" failed`;
-      store.send({ error: errorMessage, type: "setError" });
+      dispatch({ error: errorMessage, type: "setError" });
       break;
     }
     default: {

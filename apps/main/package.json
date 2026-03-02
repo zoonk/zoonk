@@ -21,8 +21,6 @@
     "@dnd-kit/utilities": "3.2.2",
     "@tabler/icons-react": "3.37.1",
     "@vercel/analytics": "1.6.1",
-    "@xstate/store": "3.16.0",
-    "@xstate/store-react": "1.0.1",
     "@zoonk/ai": "workspace:*",
     "@zoonk/core": "workspace:*",
     "@zoonk/db": "workspace:*",
