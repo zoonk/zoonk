@@ -101,6 +101,7 @@ export async function generateReviewContentStep(
     generateActivityReview({
       backgroundSteps,
       chapterTitle: activity.lesson.chapter.title,
+      concepts: activity.lesson.concepts,
       courseTitle: activity.lesson.chapter.course.title,
       examplesSteps,
       explanationSteps,
@@ -108,6 +109,7 @@ export async function generateReviewContentStep(
       lessonDescription: activity.lesson.description ?? "",
       lessonTitle: activity.lesson.title,
       mechanicsSteps,
+      neighboringConcepts: activity.lesson.neighboringConcepts,
     }),
   );
 

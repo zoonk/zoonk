@@ -2,6 +2,7 @@ import "server-only";
 import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-options";
 import { Output, generateText } from "ai";
 import { z } from "zod";
+import { formatConceptSections, formatTextStepSection } from "../_utils/prompt-sections";
 import {
   ACTIVITY_OPTIONS_COUNT,
   ACTIVITY_REVIEW_MAX_QUESTIONS,
@@ -44,6 +45,8 @@ export type ActivityReviewParams = {
   lessonDescription: string;
   chapterTitle: string;
   courseTitle: string;
+  concepts: string[];
+  neighboringConcepts: string[];
   language: string;
   backgroundSteps: { title: string; text: string }[];
   explanationSteps: { title: string; text: string }[];
@@ -54,15 +57,13 @@ export type ActivityReviewParams = {
   reasoningEffort?: ReasoningEffort;
 };
 
-function formatSteps(steps: { title: string; text: string }[]): string {
-  return steps.map((step, index) => `${index + 1}. ${step.title}: ${step.text}`).join("\n");
-}
-
 export async function generateActivityReview({
   lessonTitle,
   lessonDescription,
   chapterTitle,
   courseTitle,
+  concepts,
+  neighboringConcepts,
   language,
   backgroundSteps,
   explanationSteps,
@@ -77,18 +78,15 @@ LESSON_DESCRIPTION: ${lessonDescription}
 CHAPTER_TITLE: ${chapterTitle}
 COURSE_TITLE: ${courseTitle}
 LANGUAGE: ${language}
+${formatConceptSections({ concepts, neighboringConcepts })}
 
-BACKGROUND_STEPS:
-${formatSteps(backgroundSteps)}
+${formatTextStepSection("BACKGROUND_STEPS", backgroundSteps)}
 
-EXPLANATION_STEPS:
-${formatSteps(explanationSteps)}
+${formatTextStepSection("EXPLANATION_STEPS", explanationSteps)}
 
-MECHANICS_STEPS:
-${formatSteps(mechanicsSteps)}
+${formatTextStepSection("MECHANICS_STEPS", mechanicsSteps)}
 
-EXAMPLES_STEPS:
-${formatSteps(examplesSteps)}`;
+${formatTextStepSection("EXAMPLES_STEPS", examplesSteps)}`;
 
   const providerOptions = buildProviderOptions({
     fallbackModels: FALLBACK_MODELS,

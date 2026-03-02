@@ -99,7 +99,9 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "en-spanish-greetings",
     userInput: {
+      concepts: ["Primary lesson concepts"],
       lessonTitle: "Greetings and Introductions",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
       targetLanguage: "Spanish",
       userLanguage: "en",
       words: ["hola", "buenos dias", "buenas noches", "adios", "gracias"],
@@ -132,7 +134,9 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "en-french-food",
     userInput: {
+      concepts: ["Primary lesson concepts"],
       lessonTitle: "Food and Dining",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
       targetLanguage: "French",
       userLanguage: "en",
       words: ["le pain", "le fromage", "le vin", "la soupe", "le dessert"],
@@ -165,7 +169,9 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "en-german-family",
     userInput: {
+      concepts: ["Primary lesson concepts"],
       lessonTitle: "Family Members",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
       targetLanguage: "German",
       userLanguage: "en",
       words: ["die Mutter", "der Vater", "die Schwester", "der Bruder", "die Familie"],
@@ -204,7 +210,9 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "en-japanese-numbers",
     userInput: {
+      concepts: ["Primary lesson concepts"],
       lessonTitle: "Numbers and Counting",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
       targetLanguage: "Japanese",
       userLanguage: "en",
       words: ["一", "二", "三", "五", "十"],
@@ -242,7 +250,9 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "en-korean-colors",
     userInput: {
+      concepts: ["Primary lesson concepts"],
       lessonTitle: "Colors",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
       targetLanguage: "Korean",
       userLanguage: "en",
       words: ["빨간색", "파란색", "노란색", "초록색", "검은색"],
@@ -275,7 +285,9 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "pt-italian-travel",
     userInput: {
+      concepts: ["Primary lesson concepts"],
       lessonTitle: "Viagens e Transporte",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
       targetLanguage: "Italian",
       userLanguage: "pt",
       words: ["il treno", "l'aereo", "la macchina", "il biglietto", "la stazione"],
@@ -308,7 +320,9 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "pt-spanish-shopping",
     userInput: {
+      concepts: ["Primary lesson concepts"],
       lessonTitle: "Compras",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
       targetLanguage: "Spanish",
       userLanguage: "pt",
       words: ["comprar", "la tienda", "el precio", "caro", "barato"],
@@ -340,7 +354,9 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "es-french-weather",
     userInput: {
+      concepts: ["Primary lesson concepts"],
       lessonTitle: "El Clima",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
       targetLanguage: "French",
       userLanguage: "es",
       words: ["le soleil", "la pluie", "le vent", "il fait chaud", "il fait froid"],
@@ -378,7 +394,9 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "es-japanese-time",
     userInput: {
+      concepts: ["Primary lesson concepts"],
       lessonTitle: "Expresiones de Tiempo",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
       targetLanguage: "Japanese",
       userLanguage: "es",
       words: ["今日", "明日", "昨日", "朝", "夜"],
@@ -417,7 +435,9 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "en-chinese-verbs",
     userInput: {
+      concepts: ["Primary lesson concepts"],
       lessonTitle: "Common Verbs",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
       targetLanguage: "Mandarin Chinese",
       userLanguage: "en",
       words: ["吃", "喝", "看", "听", "说"],
@@ -456,7 +476,9 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "en-russian-places",
     userInput: {
+      concepts: ["Primary lesson concepts"],
       lessonTitle: "Places in the City",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
       targetLanguage: "Russian",
       userLanguage: "en",
       words: ["магазин", "ресторан", "парк", "школа", "библиотека"],
@@ -495,7 +517,9 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "en-arabic-adjectives",
     userInput: {
+      concepts: ["Primary lesson concepts"],
       lessonTitle: "Common Adjectives",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
       targetLanguage: "Arabic",
       userLanguage: "en",
       words: ["كبير", "صغير", "جميل", "جديد", "قديم"],
@@ -528,7 +552,9 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "en-portuguese-emotions",
     userInput: {
+      concepts: ["Primary lesson concepts"],
       lessonTitle: "Emotions and Feelings",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
       targetLanguage: "Portuguese",
       userLanguage: "en",
       words: ["feliz", "triste", "cansado", "com fome", "com sede"],
@@ -561,7 +587,9 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "pt-german-routines",
     userInput: {
+      concepts: ["Primary lesson concepts"],
       lessonTitle: "Rotinas Diarias",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
       targetLanguage: "German",
       userLanguage: "pt",
       words: ["aufstehen", "fruhstucken", "arbeiten", "schlafen", "essen"],
@@ -604,7 +632,9 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "en-thai-politeness",
     userInput: {
+      concepts: ["Primary lesson concepts"],
       lessonTitle: "Polite Expressions",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
       targetLanguage: "Thai",
       userLanguage: "en",
       words: ["ขอบคุณ", "ขอโทษ", "ได้โปรด", "สวัสดี", "ลาก่อน"],

@@ -2,6 +2,7 @@ import "server-only";
 import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-options";
 import { Output, generateText } from "ai";
 import { z } from "zod";
+import { formatConceptSections } from "../_utils/prompt-sections";
 import { ACTIVITY_OPTIONS_COUNT } from "../constants";
 import { getLanguagePromptContext } from "./_utils/language-prompt-context";
 import systemPrompt from "./activity-story.prompt.md";
@@ -41,9 +42,11 @@ export type ActivityStoryLanguageSchema = z.infer<typeof schema>;
 
 export type ActivityStoryLanguageParams = {
   chapterTitle: string;
+  concepts: string[];
   lessonDescription: string;
   lessonTitle: string;
   model?: string;
+  neighboringConcepts: string[];
   reasoningEffort?: ReasoningEffort;
   targetLanguage: string;
   userLanguage: string;
@@ -52,9 +55,11 @@ export type ActivityStoryLanguageParams = {
 
 export async function generateActivityStoryLanguage({
   chapterTitle,
+  concepts,
   lessonDescription,
   lessonTitle,
   model = DEFAULT_MODEL,
+  neighboringConcepts,
   reasoningEffort = "high",
   targetLanguage,
   userLanguage,
@@ -67,6 +72,7 @@ USER_LANGUAGE: ${promptContext.userLanguage}
 CHAPTER_TITLE: ${chapterTitle}
 LESSON_TITLE: ${lessonTitle}
 LESSON_DESCRIPTION: ${lessonDescription}
+${formatConceptSections({ concepts, neighboringConcepts })}
 
 Generate an immersive dialogue-driven story activity for this language lesson. Create a realistic everyday scenario where learners practice language production in situations they'd face in a foreign country.`;
 

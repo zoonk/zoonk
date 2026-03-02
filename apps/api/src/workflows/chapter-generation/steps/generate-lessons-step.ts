@@ -5,6 +5,7 @@ import { streamError, streamStatus } from "../stream-status";
 import { type ChapterContext } from "./get-chapter-step";
 
 export type GeneratedLesson = {
+  concepts: string[];
   title: string;
   description: string;
 };

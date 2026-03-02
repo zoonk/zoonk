@@ -3,7 +3,7 @@ import { type StepVisualSchema, generateStepVisuals } from "@zoonk/ai/tasks/step
 import { type ActivityKind, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { streamError, streamStatus } from "../stream-status";
-import { findActivityByKind } from "./_utils/find-activity-by-kind";
+import { findActivityById, findActivityByKind } from "./_utils/find-activity-by-kind";
 import { type ActivitySteps } from "./_utils/get-activity-steps";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
@@ -44,12 +44,15 @@ export async function generateVisualsStep(
   activities: LessonActivity[],
   steps: ActivitySteps,
   activityKind: ActivityKind,
+  activityId?: bigint | number,
 ): Promise<{ visuals: StepVisual[] }> {
   "use step";
 
-  const activity = findActivityByKind(activities, activityKind);
+  const activity = activityId
+    ? findActivityById(activities, activityId)
+    : findActivityByKind(activities, activityKind);
 
-  if (!activity || steps.length === 0) {
+  if (!activity || activity.kind !== activityKind || steps.length === 0) {
     return { visuals: [] };
   }
 

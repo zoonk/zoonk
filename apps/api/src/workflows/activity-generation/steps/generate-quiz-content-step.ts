@@ -3,15 +3,15 @@ import {
   getAIResultErrorReason,
 } from "@/workflows/_shared/stream-status";
 import {
-  type ActivityExplanationQuizSchema,
+  type ActivityQuizSchema,
   type QuizQuestion,
-  generateActivityExplanationQuiz,
-} from "@zoonk/ai/tasks/activities/core/explanation-quiz";
+  generateActivityQuiz,
+} from "@zoonk/ai/tasks/activities/core/quiz";
 import { assertStepContent } from "@zoonk/core/steps/content-contract";
 import { prisma } from "@zoonk/db";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { streamError, streamStatus } from "../stream-status";
-import { resolveActivityForGeneration } from "./_utils/content-step-helpers";
+import { resolveActivitiesForGeneration } from "./_utils/content-step-helpers";
 import { type ActivitySteps } from "./_utils/get-activity-steps";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
@@ -45,16 +45,16 @@ async function saveQuizSteps(
 async function handleQuizError(
   activityId: bigint | number,
   reason: WorkflowErrorReason,
-): Promise<{ questions: [] }> {
+): Promise<{ activityId: bigint | number; questions: [] }> {
   await streamError({ reason, step: "generateQuizContent" });
   await handleActivityFailureStep({ activityId });
-  return { questions: [] };
+  return { activityId, questions: [] };
 }
 
 async function saveAndCompleteQuiz(
   activityId: bigint | number,
   questions: QuizQuestion[],
-): Promise<{ questions: QuizQuestion[] }> {
+): Promise<{ activityId: bigint | number; questions: QuizQuestion[] }> {
   const { error } = await saveQuizSteps(activityId, questions);
 
   if (error) {
@@ -62,48 +62,87 @@ async function saveAndCompleteQuiz(
   }
 
   await streamStatus({ status: "completed", step: "generateQuizContent" });
-  return { questions };
+  return { activityId, questions };
+}
+
+function getExplanationStepsByQuizActivity(params: {
+  activities: LessonActivity[];
+  explanationResults: { activityId: bigint | number; steps: ActivitySteps }[];
+}): Map<string, ActivitySteps> {
+  const explanationStepsByActivity = new Map(
+    params.explanationResults.map((result) => [String(result.activityId), result.steps]),
+  );
+
+  const explanationStepsByQuiz = new Map<string, ActivitySteps>();
+  const currentExplanationSteps: ActivitySteps = [];
+
+  for (const activity of params.activities) {
+    if (activity.kind === "explanation") {
+      const explanationSteps = explanationStepsByActivity.get(String(activity.id)) ?? [];
+      currentExplanationSteps.push(...explanationSteps);
+    } else if (activity.kind === "quiz") {
+      explanationStepsByQuiz.set(String(activity.id), [...currentExplanationSteps]);
+      currentExplanationSteps.length = 0;
+    }
+  }
+
+  return explanationStepsByQuiz;
 }
 
 export async function generateQuizContentStep(
   activities: LessonActivity[],
-  explanationSteps: ActivitySteps,
+  explanationResults: { activityId: bigint | number; steps: ActivitySteps }[],
   workflowRunId: string,
-): Promise<{ questions: QuizQuestion[] }> {
+): Promise<{ results: { activityId: bigint | number; questions: QuizQuestion[] }[] }> {
   "use step";
 
-  const resolved = await resolveActivityForGeneration(activities, "quiz");
+  const resolvedActivities = await resolveActivitiesForGeneration(activities, "quiz");
 
-  if (!resolved.shouldGenerate) {
-    return { questions: [] };
+  if (resolvedActivities.length === 0) {
+    return { results: [] };
   }
 
-  const { activity } = resolved;
+  const explanationStepsByQuiz = getExplanationStepsByQuizActivity({
+    activities,
+    explanationResults,
+  });
 
-  if (explanationSteps.length === 0) {
-    await handleActivityFailureStep({ activityId: activity.id });
-    return { questions: [] };
-  }
+  const results = await Promise.all(
+    resolvedActivities.map(async (resolved) => {
+      if (!resolved.shouldGenerate) {
+        return { activityId: resolved.activity.id, questions: [] };
+      }
 
-  await streamStatus({ status: "started", step: "generateQuizContent" });
-  await setActivityAsRunningStep({ activityId: activity.id, workflowRunId });
+      const activity = resolved.activity;
+      const explanationSteps = explanationStepsByQuiz.get(String(activity.id)) ?? [];
 
-  const { data: result, error }: SafeReturn<{ data: ActivityExplanationQuizSchema }> =
-    await safeAsync(() =>
-      generateActivityExplanationQuiz({
-        chapterTitle: activity.lesson.chapter.title,
-        courseTitle: activity.lesson.chapter.course.title,
-        explanationSteps,
-        language: activity.language,
-        lessonDescription: activity.lesson.description ?? "",
-        lessonTitle: activity.lesson.title,
-      }),
-    );
+      if (explanationSteps.length === 0) {
+        return handleQuizError(activity.id, "noSourceData");
+      }
 
-  if (error || !result || result.data.questions.length === 0) {
-    const reason = getAIResultErrorReason(error, result);
-    return handleQuizError(activity.id, reason);
-  }
+      await streamStatus({ status: "started", step: "generateQuizContent" });
+      await setActivityAsRunningStep({ activityId: activity.id, workflowRunId });
 
-  return saveAndCompleteQuiz(activity.id, result.data.questions);
+      const { data: result, error }: SafeReturn<{ data: ActivityQuizSchema }> = await safeAsync(
+        () =>
+          generateActivityQuiz({
+            chapterTitle: activity.lesson.chapter.title,
+            courseTitle: activity.lesson.chapter.course.title,
+            explanationSteps,
+            language: activity.language,
+            lessonDescription: activity.lesson.description ?? "",
+            lessonTitle: activity.lesson.title,
+          }),
+      );
+
+      if (error || !result || result.data.questions.length === 0) {
+        const reason = getAIResultErrorReason(error, result);
+        return handleQuizError(activity.id, reason);
+      }
+
+      return saveAndCompleteQuiz(activity.id, result.data.questions);
+    }),
+  );
+
+  return { results };
 }

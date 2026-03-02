@@ -37,11 +37,13 @@ export const TEST_CASES = [
     id: "en-web-packets",
     userInput: {
       chapterTitle: "Networking fundamentals",
+      concepts: ["Primary lesson concepts"],
       courseTitle: "Web Development",
       language: "en",
       lessonDescription:
         "A packet as the unit of data routed across IP networks. What headers exist for delivery versus payload for the next layer.",
       lessonTitle: "Packets",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
     },
   },
   // Initial chapter (2/105), mid lesson (60/117) — technical networking concept
@@ -54,11 +56,13 @@ export const TEST_CASES = [
     id: "en-web-tcp-congestion-control",
     userInput: {
       chapterTitle: "Networking fundamentals",
+      concepts: ["Primary lesson concepts"],
       courseTitle: "Web Development",
       language: "en",
       lessonDescription:
         "TCP congestion window as the sender's limit based on perceived network capacity. Why congestion control prevents persistent overload.",
       lessonTitle: "TCP congestion control",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
     },
   },
   // Initial chapter (4/86), initial lesson (3/94) — Portuguese, programming concept
@@ -73,11 +77,13 @@ export const TEST_CASES = [
     id: "pt-python-isinstance",
     userInput: {
       chapterTitle: "Tipos numéricos e valores especiais",
+      concepts: ["Primary lesson concepts"],
       courseTitle: "Python",
       language: "pt",
       lessonDescription:
         "Teste de pertencimento a uma classe numérica, incluindo relações como bool ser subclasse de int.",
       lessonTitle: "isinstance() com tipos numéricos",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
     },
   },
   // Mid chapter (47/92), initial lesson (1/179) — Spanish, chemistry concept
@@ -92,11 +98,13 @@ export const TEST_CASES = [
     id: "es-quimica-carbonilo-polarizacion",
     userInput: {
       chapterTitle: "Carbonilos y enolatos",
+      concepts: ["Primary lesson concepts"],
       courseTitle: "Química",
       language: "es",
       lessonDescription:
         "Distribución desigual de densidad electrónica entre C y O que vuelve al carbono susceptible a ataque nucleofílico.",
       lessonTitle: "Carbonilo: polarización C=O",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
     },
   },
   // Mid chapter (35/104), mid lesson (52/101) — economics concept
@@ -109,11 +117,13 @@ export const TEST_CASES = [
     id: "en-economics-phillips-curve",
     userInput: {
       chapterTitle: "Business cycles",
+      concepts: ["Primary lesson concepts"],
       courseTitle: "Economics",
       language: "en",
       lessonDescription:
         "A negative empirical relationship between inflation and unemployment observed in some periods.",
       lessonTitle: "Phillips curve correlation",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
     },
   },
   // Mid chapter (35/104), final lesson (101/101) — narrow economics concept
@@ -128,11 +138,13 @@ export const TEST_CASES = [
     id: "en-economics-diffusion-index",
     userInput: {
       chapterTitle: "Business cycles",
+      concepts: ["Primary lesson concepts"],
       courseTitle: "Economics",
       language: "en",
       lessonDescription:
         "A composite index summarizing the share of sectors expanding versus contracting at a point in time.",
       lessonTitle: "Diffusion index",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
     },
   },
   // Mid chapter (33/64), mid lesson (47/93) — Portuguese, agile/architecture concept
@@ -147,11 +159,13 @@ export const TEST_CASES = [
     id: "pt-agile-camada-anticorrupcao",
     userInput: {
       chapterTitle: "Arquitetura em ambientes ágeis",
+      concepts: ["Primary lesson concepts"],
       courseTitle: "Metodologias Ágeis",
       language: "pt",
       lessonDescription:
         "Camada que traduz modelos e integrações para evitar que conceitos externos contaminem o núcleo. Útil quando integrações mudam com frequência.",
       lessonTitle: "Camada anticorrupção",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
     },
   },
   // Mid chapter (31/91), mid lesson (44/87) — creative/fiction, philosophical concept
@@ -164,11 +178,13 @@ export const TEST_CASES = [
     id: "en-harry-potter-horcrux-definition",
     userInput: {
       chapterTitle: "Alchemy, Horcruxes, and immortality",
+      concepts: ["Primary lesson concepts"],
       courseTitle: "Harry Potter",
       language: "en",
       lessonDescription:
         "A Horcrux is a container that holds a severed soul fragment to prevent final death.",
       lessonTitle: "Horcrux definition",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
     },
   },
   // Final chapter (59/63), mid lesson (46/90) — historical/science concept
@@ -181,11 +197,13 @@ export const TEST_CASES = [
     id: "en-brazilian-history-ddt",
     userInput: {
       chapterTitle: "Health and disease",
+      concepts: ["Primary lesson concepts"],
       courseTitle: "Brazilian History",
       language: "en",
       lessonDescription:
         'The use of DDT as a "miracle" tool and the later controversy over harms and dependency.',
       lessonTitle: "DDT in vector control",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
     },
   },
   // Final chapter (59/63), final lesson (90/90) — recent topic, politically charged
@@ -198,11 +216,13 @@ export const TEST_CASES = [
     id: "en-brazilian-history-covid-memory",
     userInput: {
       chapterTitle: "Health and disease",
+      concepts: ["Primary lesson concepts"],
       courseTitle: "Brazilian History",
       language: "en",
       lessonDescription:
         "Public mourning, memorials, and denialism as competing narratives that politicized pandemic memory.",
       lessonTitle: "COVID-19 memory politics",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
     },
   },
   // Late chapter (73/108), mid lesson (57/115) — Portuguese, legal/tech concept
@@ -217,11 +237,13 @@ export const TEST_CASES = [
     id: "pt-direito-diagnostico-erro",
     userInput: {
       chapterTitle: "Legal tech e automação de documentos",
+      concepts: ["Primary lesson concepts"],
       courseTitle: "Direito",
       language: "pt",
       lessonDescription:
         "Separar erro de dados do erro de template. Um procedimento para decidir se corrige o formulário ou a regra de montagem.",
       lessonTitle: "Diagnóstico de erro",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
     },
   },
   // Mid chapter (47/92), final lesson (179/179) — Spanish, very narrow chemistry concept
@@ -238,11 +260,13 @@ export const TEST_CASES = [
     id: "es-quimica-selectividad-1-2-1-4",
     userInput: {
       chapterTitle: "Carbonilos y enolatos",
+      concepts: ["Primary lesson concepts"],
       courseTitle: "Química",
       language: "es",
       lessonDescription:
         "En Michael, cambiar nucleófilo de duro a suave desplaza la selectividad entre 1,2 y 1,4.",
       lessonTitle: "Selectividad: control 1,2-1,4",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
     },
   },
 ];

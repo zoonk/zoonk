@@ -118,6 +118,7 @@ ${SHARED_EXPECTATIONS}
         },
       ],
       chapterTitle: "Data Integrity",
+      concepts: ["Primary lesson concepts"],
       courseTitle: "Database Systems",
       examplesSteps: [
         {
@@ -185,6 +186,7 @@ ${SHARED_EXPECTATIONS}
           title: "Rollback Process",
         },
       ],
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
     },
   },
   {
@@ -228,6 +230,7 @@ ${SHARED_EXPECTATIONS}
         },
       ],
       chapterTitle: "Pricing Strategy",
+      concepts: ["Primary lesson concepts"],
       courseTitle: "Microeconomics",
       examplesSteps: [
         {
@@ -295,6 +298,7 @@ ${SHARED_EXPECTATIONS}
           title: "Bundling Strategy",
         },
       ],
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
     },
   },
   {
@@ -338,6 +342,7 @@ ${SHARED_EXPECTATIONS}
         },
       ],
       chapterTitle: "Termodinamica",
+      concepts: ["Primary lesson concepts"],
       courseTitle: "Fisica Geral",
       examplesSteps: [
         {
@@ -405,6 +410,7 @@ ${SHARED_EXPECTATIONS}
           title: "Mecanismos de Transferencia",
         },
       ],
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
     },
   },
   {
@@ -448,6 +454,7 @@ ${SHARED_EXPECTATIONS}
         },
       ],
       chapterTitle: "Influencia Social",
+      concepts: ["Primary lesson concepts"],
       courseTitle: "Psicologia Social",
       examplesSteps: [
         {
@@ -515,6 +522,7 @@ ${SHARED_EXPECTATIONS}
           title: "Desindividuacion",
         },
       ],
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
     },
   },
   {
@@ -558,6 +566,7 @@ ${SHARED_EXPECTATIONS}
         },
       ],
       chapterTitle: "Decision Making",
+      concepts: ["Primary lesson concepts"],
       courseTitle: "Behavioral Economics",
       examplesSteps: [
         {
@@ -625,6 +634,7 @@ ${SHARED_EXPECTATIONS}
           title: "Social Proof Nudges",
         },
       ],
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
     },
   },
 ];

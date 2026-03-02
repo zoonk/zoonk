@@ -8,6 +8,8 @@ Generate a focused, representative vocabulary list for a language lesson. Qualit
 
 Focus ONLY on the specific topic defined in the lesson title and description. Include vocabulary directly relevant to this exact topic - nothing more, nothing less.
 
+Use `CONCEPTS` as the required lesson scope and treat `NEIGHBORING_CONCEPTS` as out-of-scope content that must be avoided.
+
 # Language Handling
 
 - **TARGET_LANGUAGE**: The language being learned (from `targetLanguage`). Words come from this language.

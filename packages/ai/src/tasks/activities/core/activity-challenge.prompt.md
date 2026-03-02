@@ -19,7 +19,8 @@ Great challenges don't quiz — they immerse. Learners face realistic scenarios 
 - `CHAPTER_TITLE`: The chapter context (for understanding scope)
 - `COURSE_TITLE`: The course context (for understanding audience level)
 - `LANGUAGE`: Output language
-- `EXPLANATION_STEPS`: What the learner has already studied
+- `CONCEPTS`: Concepts covered in this lesson
+- `NEIGHBORING_CONCEPTS`: Concepts from nearby lessons that must NOT be taught here
 
 ## Language Guidelines
 
@@ -119,15 +120,7 @@ The `reflection` field (max 500 characters) provides closing insight after all s
 
 ## Relationship to Previous Activities
 
-The learner has completed:
-
-- **Background**: WHY this exists
-- **Explanation**: WHAT it is
-- **Mechanics**: HOW it works
-- **Examples**: WHERE it appears
-- **Story**: WHEN to apply this
-
-Your Challenge activity is the capstone: **CAN YOU NAVIGATE THIS?** It tests whether learners can apply concepts strategically. This should feel like a meaningful simulation, not a test.
+Use `CONCEPTS` as your scope boundary and avoid teaching any `NEIGHBORING_CONCEPTS`. Your Challenge activity should test strategic application of this lesson's concepts only.
 
 # Example
 

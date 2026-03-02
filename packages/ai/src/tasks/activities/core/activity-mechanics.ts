@@ -2,6 +2,7 @@ import "server-only";
 import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-options";
 import { Output, generateText } from "ai";
 import { z } from "zod";
+import { formatConceptSections } from "../_utils/prompt-sections";
 import systemPrompt from "./activity-mechanics.prompt.md";
 
 const DEFAULT_MODEL = process.env.AI_MODEL_ACTIVITY_MECHANICS ?? "openai/gpt-5.2";
@@ -31,8 +32,9 @@ export type ActivityMechanicsParams = {
   lessonDescription: string;
   chapterTitle: string;
   courseTitle: string;
+  concepts: string[];
+  neighboringConcepts: string[];
   language: string;
-  explanationSteps: { title: string; text: string }[];
   model?: string;
   useFallback?: boolean;
   reasoningEffort?: ReasoningEffort;
@@ -43,23 +45,19 @@ export async function generateActivityMechanics({
   lessonDescription,
   chapterTitle,
   courseTitle,
+  concepts,
+  neighboringConcepts,
   language,
-  explanationSteps,
   model = DEFAULT_MODEL,
   useFallback = true,
   reasoningEffort,
 }: ActivityMechanicsParams) {
-  const formattedExplanationSteps = explanationSteps
-    .map((step, index) => `${index + 1}. ${step.title}: ${step.text}`)
-    .join("\n");
-
   const userPrompt = `LESSON_TITLE: ${lessonTitle}
 LESSON_DESCRIPTION: ${lessonDescription}
 CHAPTER_TITLE: ${chapterTitle}
 COURSE_TITLE: ${courseTitle}
 LANGUAGE: ${language}
-EXPLANATION_STEPS:
-${formattedExplanationSteps}`;
+${formatConceptSections({ concepts, neighboringConcepts })}`;
 
   const providerOptions = buildProviderOptions({
     fallbackModels: FALLBACK_MODELS,

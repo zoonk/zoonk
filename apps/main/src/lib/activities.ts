@@ -179,7 +179,7 @@ async function getSeoTitle(
 ): Promise<string> {
   const t = await getExtracted();
 
-  if (activity.kind === "custom" && activity.title) {
+  if (activity.title) {
     return t("{activity} - {lesson}", { activity: activity.title, lesson: lessonTitle });
   }
 

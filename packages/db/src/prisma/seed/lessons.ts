@@ -10,6 +10,7 @@ const lessonsData: {
   chapterSlug: string;
   language: string;
   lessons: {
+    concepts: string[];
     description: string;
     generationStatus: GenerationStatus;
     isPublished: boolean;
@@ -23,6 +24,11 @@ const lessonsData: {
     language: "en",
     lessons: [
       {
+        concepts: [
+          "Machine learning definition",
+          "Pattern-based learning",
+          "ML vs rule-based programming",
+        ],
         description:
           "Learn what machine learning is and how it differs from traditional programming.",
         generationStatus: "completed",
@@ -31,6 +37,11 @@ const lessonsData: {
         title: "What is Machine Learning?",
       },
       {
+        concepts: [
+          "Early AI and perceptrons",
+          "AI winters and setbacks",
+          "Modern deep learning resurgence",
+        ],
         description:
           "Explore the history of machine learning from its origins to modern developments.",
         generationStatus: "completed",
@@ -39,6 +50,11 @@ const lessonsData: {
         title: "History of Machine Learning",
       },
       {
+        concepts: [
+          "Supervised learning overview",
+          "Unsupervised learning overview",
+          "Reinforcement learning overview",
+        ],
         description: "Understand supervised, unsupervised, and reinforcement learning approaches.",
         generationStatus: "completed",
         isPublished: false,
@@ -53,6 +69,11 @@ const lessonsData: {
     language: "pt",
     lessons: [
       {
+        concepts: [
+          "Definicao de machine learning",
+          "Aprendizado por padroes",
+          "ML vs programacao tradicional",
+        ],
         description:
           "Aprenda o que é machine learning e como ele difere da programação tradicional.",
         generationStatus: "completed",
@@ -61,6 +82,7 @@ const lessonsData: {
         title: "O que é Machine Learning?",
       },
       {
+        concepts: ["Primeiros marcos da IA", "Invernos da IA", "Renascimento do deep learning"],
         description:
           "Explore a história do machine learning desde suas origens até os desenvolvimentos modernos.",
         generationStatus: "completed",
@@ -75,6 +97,7 @@ const lessonsData: {
     language: "en",
     lessons: [
       {
+        concepts: ["Tipos de dataset", "Fontes de dados", "Qualidade de dados"],
         description:
           "Learn about different types of datasets and where to find quality data for your projects.",
         generationStatus: "pending",
@@ -83,6 +106,7 @@ const lessonsData: {
         title: "Understanding Datasets",
       },
       {
+        concepts: ["Missing values handling", "Outlier treatment", "Data normalization basics"],
         description: "Master techniques for cleaning and preprocessing raw data before training.",
         generationStatus: "pending",
         isPublished: true,
@@ -96,6 +120,7 @@ const lessonsData: {
     language: "en",
     lessons: [
       {
+        concepts: ["Spanish alphabet letters", "Spanish vowel sounds", "Basic pronunciation rules"],
         description: "Learn the Spanish alphabet, vowel sounds, and basic pronunciation rules.",
         generationStatus: "completed",
         isPublished: true,
@@ -103,6 +128,7 @@ const lessonsData: {
         title: "The Spanish Alphabet",
       },
       {
+        concepts: ["Formal greetings", "Informal greetings", "Self-introduction phrases"],
         description: "Master common greetings and introductions for everyday conversations.",
         generationStatus: "pending",
         isPublished: true,
@@ -116,6 +142,7 @@ const lessonsData: {
     language: "en",
     lessons: [
       {
+        concepts: ["Sun structure", "Nuclear fusion in the Sun", "Sun's role in the solar system"],
         description: "Learn about the Sun, its structure, and its importance to our solar system.",
         generationStatus: "completed",
         isPublished: true,
@@ -123,6 +150,7 @@ const lessonsData: {
         title: "The Sun",
       },
       {
+        concepts: ["Mercury characteristics", "Venus characteristics", "Earth and Mars comparison"],
         description: "Explore the inner planets: Mercury, Venus, Earth, and Mars.",
         generationStatus: "pending",
         isPublished: true,
@@ -136,6 +164,7 @@ const lessonsData: {
     language: "en",
     lessons: [
       {
+        concepts: ["Python installation", "Running first script", "Hello world structure"],
         description: "Set up Python on your computer and write your first Hello World program.",
         generationStatus: "completed",
         isPublished: true,
@@ -143,6 +172,7 @@ const lessonsData: {
         title: "Getting Started with Python",
       },
       {
+        concepts: ["Variables in Python", "Primitive data types", "Basic operations"],
         description: "Understand variables, data types, and basic operations in Python.",
         generationStatus: "pending",
         isPublished: true,
@@ -156,6 +186,7 @@ const lessonsData: {
     language: "en",
     lessons: [
       {
+        concepts: ["HTML document structure", "Common HTML elements", "First web page setup"],
         description:
           "Understand HTML document structure, elements, and create your first web page.",
         generationStatus: "completed",
@@ -164,6 +195,11 @@ const lessonsData: {
         title: "Introduction to HTML",
       },
       {
+        concepts: [
+          "Semantic sectioning elements",
+          "Meaningful content structure",
+          "Accessibility benefits of semantics",
+        ],
         description:
           "Learn about semantic HTML elements and how to structure content meaningfully.",
         generationStatus: "pending",
@@ -178,6 +214,11 @@ const lessonsData: {
     language: "en",
     lessons: [
       {
+        concepts: [
+          "Data science definition",
+          "Data scientist responsibilities",
+          "Business value of data science",
+        ],
         description:
           "Understand what data science is and the role of a data scientist in modern organizations.",
         generationStatus: "completed",
@@ -186,6 +227,11 @@ const lessonsData: {
         title: "What is Data Science?",
       },
       {
+        concepts: [
+          "Structured vs unstructured data",
+          "Common data sources",
+          "Data collection basics",
+        ],
         description:
           "Learn about different types of data, data sources, and how to collect data for analysis.",
         generationStatus: "pending",
@@ -217,6 +263,7 @@ export async function seedLessons(prisma: PrismaClient, org: Organization): Prom
             prisma.lesson.upsert({
               create: {
                 chapterId: chapter.id,
+                concepts: lessonData.concepts,
                 description: lessonData.description,
                 generationStatus: lessonData.generationStatus,
                 isPublished: lessonData.isPublished,

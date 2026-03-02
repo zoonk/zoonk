@@ -21,6 +21,7 @@ async function getLessonForGeneration(lessonId: number) {
           title: true,
         },
       },
+      concepts: true,
       description: true,
       generationRunId: true,
       generationStatus: true,

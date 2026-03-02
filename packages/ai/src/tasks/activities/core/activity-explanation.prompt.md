@@ -41,7 +41,7 @@ Each step should be a "building block" in understanding — brief enough to be a
 - `CHAPTER_TITLE`: The chapter context (for understanding scope)
 - `COURSE_TITLE`: The course context (for understanding audience level)
 - `LANGUAGE`: Output language
-- `BACKGROUND_STEPS`: Array of {title, text} from the Background activity learners completed before this one (to avoid repeating content)
+- `CONCEPT`: The single concept to explain in this activity
 
 ## Language Guidelines
 
@@ -67,7 +67,6 @@ Each step must have:
 
 ## What to Avoid
 
-- Repeating content from BACKGROUND_STEPS (the learner already saw this)
 - Dry, textbook-style definitions without relatable context
 - Technical jargon without explanation
 - Diving into "how to do it" (that's for practice activities)
@@ -81,14 +80,9 @@ Each step must have:
 - **Don't expand**: Other lessons will cover related topics — trust the curriculum structure
 - **Don't narrow**: If the lesson is about "Variables in Programming", cover variables broadly, not just "integer variables"
 
-## Relationship to Background Activity
+## Scope Rule
 
-The Background activity prior to this one explained WHY (origin story, problems solved, historical context). Your Explanation activity explains WHAT (core concepts, components, what is it conceptually). These complement each other:
-
-- Background: "WHY did we need this? What problem did it solve?"
-- Explanation: "WHAT exactly is it?"
-
-Never repeat the historical narrative from Background. Assume the learner has already seen it and is now ready to understand the concept itself.
+Focus on the single `CONCEPT` input only. Do not expand into sibling concepts that belong to other explanation activities in the same lesson.
 
 # Structure Guide
 
@@ -127,8 +121,8 @@ Before finalizing, verify:
 - [ ] Does each step build on the previous one to deepen understanding?
 - [ ] Are metaphors and analogies used to make abstract ideas concrete?
 - [ ] Does the learner end up able to explain this concept in their own words?
-- [ ] Is there NO overlap with the BACKGROUND_STEPS content?
 - [ ] Does the explanation focus on WHAT (concepts) not WHY (history)?
+- [ ] Does every step stay tightly focused on the single `CONCEPT` input?
 - [ ] Is the scope exactly the lesson topic — not broader or narrower?
 - [ ] Are all titles ≤50 characters and all texts ≤300 characters?
 

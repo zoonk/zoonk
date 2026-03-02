@@ -46,7 +46,13 @@ If no, the question tests memorization, not understanding.
 
 # Using the Inputs
 
-You receive content from four activities. Here's how to use each:
+You receive content from four activities plus concept boundaries. Here's how to use each:
+
+## CONCEPTS and NEIGHBORING_CONCEPTS
+
+- Use `CONCEPTS` as the required scope for questions
+- Avoid testing or teaching `NEIGHBORING_CONCEPTS`
+- If a question primarily belongs to a neighboring lesson, replace it
 
 ## BACKGROUND_STEPS (WHY)
 

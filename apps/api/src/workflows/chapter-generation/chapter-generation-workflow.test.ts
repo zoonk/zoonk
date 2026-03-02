@@ -25,8 +25,16 @@ vi.mock("@zoonk/ai/tasks/chapters/lessons", () => ({
   generateChapterLessons: vi.fn().mockResolvedValue({
     data: {
       lessons: [
-        { description: "Lesson 1 description", title: "Lesson 1" },
-        { description: "Lesson 2 description", title: "Lesson 2" },
+        {
+          concepts: ["Concept 1.1", "Concept 1.2"],
+          description: "Lesson 1 description",
+          title: "Lesson 1",
+        },
+        {
+          concepts: ["Concept 2.1", "Concept 2.2"],
+          description: "Lesson 2 description",
+          title: "Lesson 2",
+        },
       ],
     },
   }),
@@ -36,8 +44,16 @@ vi.mock("@zoonk/ai/tasks/chapters/language-lessons", () => ({
   generateLanguageChapterLessons: vi.fn().mockResolvedValue({
     data: {
       lessons: [
-        { description: "Lang Lesson 1 description", title: "Lang Lesson 1" },
-        { description: "Lang Lesson 2 description", title: "Lang Lesson 2" },
+        {
+          concepts: ["Language concept 1", "Language concept 2"],
+          description: "Lang Lesson 1 description",
+          title: "Lang Lesson 1",
+        },
+        {
+          concepts: ["Language concept 3", "Language concept 4"],
+          description: "Lang Lesson 2 description",
+          title: "Lang Lesson 2",
+        },
       ],
     },
   }),

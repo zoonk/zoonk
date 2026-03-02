@@ -9,7 +9,6 @@ import { setActivityAsRunningStep } from "./set-activity-as-running-step";
 
 export async function generateMechanicsContentStep(
   activities: LessonActivity[],
-  explanationSteps: ActivitySteps,
   workflowRunId: string,
 ): Promise<{ steps: ActivitySteps }> {
   "use step";
@@ -22,22 +21,18 @@ export async function generateMechanicsContentStep(
 
   const { activity } = resolved;
 
-  if (explanationSteps.length === 0) {
-    await handleActivityFailureStep({ activityId: activity.id });
-    return { steps: [] };
-  }
-
   await streamStatus({ status: "started", step: "generateMechanicsContent" });
   await setActivityAsRunningStep({ activityId: activity.id, workflowRunId });
 
   const { data: result, error } = await safeAsync(() =>
     generateActivityMechanics({
       chapterTitle: activity.lesson.chapter.title,
+      concepts: activity.lesson.concepts,
       courseTitle: activity.lesson.chapter.course.title,
-      explanationSteps,
       language: activity.language,
       lessonDescription: activity.lesson.description ?? "",
       lessonTitle: activity.lesson.title,
+      neighboringConcepts: activity.lesson.neighboringConcepts,
     }),
   );
 

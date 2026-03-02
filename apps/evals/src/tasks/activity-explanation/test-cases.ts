@@ -58,6 +58,7 @@ ${SHARED_EXPECTATIONS}
         },
       ],
       chapterTitle: "Body Systems",
+      concept: "Primary lesson concept",
       courseTitle: "Human Biology",
       language: "en",
       lessonDescription:
@@ -91,6 +92,7 @@ ${SHARED_EXPECTATIONS}
         },
       ],
       chapterTitle: "Plant Biology",
+      concept: "Primary lesson concept",
       courseTitle: "Biology Fundamentals",
       language: "en",
       lessonDescription:
@@ -128,6 +130,7 @@ ${SHARED_EXPECTATIONS}
         },
       ],
       chapterTitle: "Genetic Engineering",
+      concept: "Primary lesson concept",
       courseTitle: "Modern Biotechnology",
       language: "en",
       lessonDescription:
@@ -163,6 +166,7 @@ ${SHARED_EXPECTATIONS}
         },
       ],
       chapterTitle: "Sistema Nervoso",
+      concept: "Primary lesson concept",
       courseTitle: "Neurociencia Basica",
       language: "pt",
       lessonDescription:
@@ -198,6 +202,7 @@ ${SHARED_EXPECTATIONS}
         },
       ],
       chapterTitle: "Fundamentos de Blockchain",
+      concept: "Primary lesson concept",
       courseTitle: "Tecnologias Descentralizadas",
       language: "es",
       lessonDescription:
@@ -231,6 +236,7 @@ ${SHARED_EXPECTATIONS}
         },
       ],
       chapterTitle: "Language Implementation",
+      concept: "Primary lesson concept",
       courseTitle: "Programming Language Theory",
       language: "en",
       lessonDescription:
@@ -268,6 +274,7 @@ ${SHARED_EXPECTATIONS}
         },
       ],
       chapterTitle: "Neural Network Training",
+      concept: "Primary lesson concept",
       courseTitle: "Machine Learning Fundamentals",
       language: "en",
       lessonDescription:
@@ -304,6 +311,7 @@ ${SHARED_EXPECTATIONS}
         },
       ],
       chapterTitle: "Macroeconomia",
+      concept: "Primary lesson concept",
       courseTitle: "Economia para Iniciantes",
       language: "pt",
       lessonDescription:
@@ -337,6 +345,7 @@ ${SHARED_EXPECTATIONS}
         },
       ],
       chapterTitle: "Immunology",
+      concept: "Primary lesson concept",
       courseTitle: "Medical Science Basics",
       language: "en",
       lessonDescription:
@@ -372,6 +381,7 @@ ${SHARED_EXPECTATIONS}
         },
       ],
       chapterTitle: "Fundamentos de Criptografia",
+      concept: "Primary lesson concept",
       courseTitle: "Seguridad Informatica",
       language: "es",
       lessonDescription:
@@ -405,6 +415,7 @@ ${SHARED_EXPECTATIONS}
         },
       ],
       chapterTitle: "Earth's Structure",
+      concept: "Primary lesson concept",
       courseTitle: "Earth Science",
       language: "en",
       lessonDescription:
@@ -440,6 +451,7 @@ ${SHARED_EXPECTATIONS}
         },
       ],
       chapterTitle: "Genetica Molecular",
+      concept: "Primary lesson concept",
       courseTitle: "Biologia Celular",
       language: "pt",
       lessonDescription:

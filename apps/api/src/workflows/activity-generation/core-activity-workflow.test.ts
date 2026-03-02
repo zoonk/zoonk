@@ -3,8 +3,8 @@ import { generateActivityBackground } from "@zoonk/ai/tasks/activities/core/back
 import { generateActivityChallenge } from "@zoonk/ai/tasks/activities/core/challenge";
 import { generateActivityExamples } from "@zoonk/ai/tasks/activities/core/examples";
 import { generateActivityExplanation } from "@zoonk/ai/tasks/activities/core/explanation";
-import { generateActivityExplanationQuiz } from "@zoonk/ai/tasks/activities/core/explanation-quiz";
 import { generateActivityMechanics } from "@zoonk/ai/tasks/activities/core/mechanics";
+import { generateActivityQuiz } from "@zoonk/ai/tasks/activities/core/quiz";
 import { generateActivityReview } from "@zoonk/ai/tasks/activities/core/review";
 import { generateActivityStory } from "@zoonk/ai/tasks/activities/core/story";
 import { generateStepVisuals } from "@zoonk/ai/tasks/steps/visual";
@@ -163,8 +163,8 @@ vi.mock("@zoonk/ai/tasks/activities/core/review", () => ({
   }),
 }));
 
-vi.mock("@zoonk/ai/tasks/activities/core/explanation-quiz", () => ({
-  generateActivityExplanationQuiz: vi.fn().mockResolvedValue({
+vi.mock("@zoonk/ai/tasks/activities/core/quiz", () => ({
+  generateActivityQuiz: vi.fn().mockResolvedValue({
     data: {
       questions: [
         {
@@ -599,7 +599,7 @@ describe("core activity workflow", () => {
       expect(generateActivityExplanation).not.toHaveBeenCalled();
     });
 
-    test("doesn't call generateActivityExplanation if background steps are empty", async () => {
+    test("calls generateActivityExplanation even if background steps are empty", async () => {
       vi.mocked(generateActivityBackground).mockResolvedValueOnce({
         data: { steps: [] },
         systemPrompt: "test",
@@ -613,6 +613,8 @@ describe("core activity workflow", () => {
         title: `Empty BG Steps Lesson ${randomUUID()}`,
       });
 
+      const explanationTitle = `Explanation ${randomUUID()}`;
+
       await Promise.all([
         activityFixture({
           generationStatus: "pending",
@@ -626,22 +628,26 @@ describe("core activity workflow", () => {
           kind: "explanation",
           lessonId: testLesson.id,
           organizationId,
-          title: `Explanation ${randomUUID()}`,
+          title: explanationTitle,
         }),
       ]);
 
       await activityGenerationWorkflow(testLesson.id);
 
       expect(generateActivityBackground).toHaveBeenCalledOnce();
-      expect(generateActivityExplanation).not.toHaveBeenCalled();
+      expect(generateActivityExplanation).toHaveBeenCalledWith(
+        expect.objectContaining({ concept: explanationTitle }),
+      );
     });
 
-    test("passes background steps to generateActivityExplanation", async () => {
+    test("passes activity title as concept to generateActivityExplanation", async () => {
       const testLesson = await lessonFixture({
         chapterId: chapter.id,
         organizationId,
         title: `BG Steps Pass Lesson ${randomUUID()}`,
       });
+
+      const explanationTitle = `Explanation ${randomUUID()}`;
 
       await Promise.all([
         activityFixture({
@@ -656,7 +662,7 @@ describe("core activity workflow", () => {
           kind: "explanation",
           lessonId: testLesson.id,
           organizationId,
-          title: `Explanation ${randomUUID()}`,
+          title: explanationTitle,
         }),
       ]);
 
@@ -664,10 +670,7 @@ describe("core activity workflow", () => {
 
       expect(generateActivityExplanation).toHaveBeenCalledWith(
         expect.objectContaining({
-          backgroundSteps: [
-            { text: "Background step 1 text", title: "Background Step 1" },
-            { text: "Background step 2 text", title: "Background Step 2" },
-          ],
+          concept: explanationTitle,
         }),
       );
     });
@@ -839,7 +842,7 @@ describe("core activity workflow", () => {
   });
 
   describe("quiz generation", () => {
-    test("doesn't call generateActivityExplanationQuiz if lesson has no quiz activity", async () => {
+    test("doesn't call generateActivityQuiz if lesson has no quiz activity", async () => {
       const testLesson = await lessonFixture({
         chapterId: chapter.id,
         organizationId,
@@ -865,10 +868,10 @@ describe("core activity workflow", () => {
 
       await activityGenerationWorkflow(testLesson.id);
 
-      expect(generateActivityExplanationQuiz).not.toHaveBeenCalled();
+      expect(generateActivityQuiz).not.toHaveBeenCalled();
     });
 
-    test("doesn't call generateActivityExplanationQuiz if explanation steps are empty", async () => {
+    test("doesn't call generateActivityQuiz if explanation steps are empty", async () => {
       vi.mocked(generateActivityExplanation).mockResolvedValueOnce({
         data: { steps: [] },
         systemPrompt: "test",
@@ -888,6 +891,7 @@ describe("core activity workflow", () => {
           kind: "background",
           lessonId: testLesson.id,
           organizationId,
+          position: 0,
           title: `Background ${randomUUID()}`,
         }),
         activityFixture({
@@ -895,6 +899,7 @@ describe("core activity workflow", () => {
           kind: "explanation",
           lessonId: testLesson.id,
           organizationId,
+          position: 1,
           title: `Explanation ${randomUUID()}`,
         }),
         activityFixture({
@@ -902,16 +907,17 @@ describe("core activity workflow", () => {
           kind: "quiz",
           lessonId: testLesson.id,
           organizationId,
+          position: 2,
           title: `Quiz ${randomUUID()}`,
         }),
       ]);
 
       await activityGenerationWorkflow(testLesson.id);
 
-      expect(generateActivityExplanationQuiz).not.toHaveBeenCalled();
+      expect(generateActivityQuiz).not.toHaveBeenCalled();
     });
 
-    test("passes explanation steps to generateActivityExplanationQuiz", async () => {
+    test("passes explanation steps to generateActivityQuiz", async () => {
       const testLesson = await lessonFixture({
         chapterId: chapter.id,
         organizationId,
@@ -924,6 +930,7 @@ describe("core activity workflow", () => {
           kind: "background",
           lessonId: testLesson.id,
           organizationId,
+          position: 0,
           title: `Background ${randomUUID()}`,
         }),
         activityFixture({
@@ -931,6 +938,7 @@ describe("core activity workflow", () => {
           kind: "explanation",
           lessonId: testLesson.id,
           organizationId,
+          position: 1,
           title: `Explanation ${randomUUID()}`,
         }),
         activityFixture({
@@ -938,13 +946,14 @@ describe("core activity workflow", () => {
           kind: "quiz",
           lessonId: testLesson.id,
           organizationId,
+          position: 2,
           title: `Quiz ${randomUUID()}`,
         }),
       ]);
 
       await activityGenerationWorkflow(testLesson.id);
 
-      expect(generateActivityExplanationQuiz).toHaveBeenCalledWith(
+      expect(generateActivityQuiz).toHaveBeenCalledWith(
         expect.objectContaining({
           explanationSteps: [
             { text: "Explanation step 1 text", title: "Explanation Step 1" },
@@ -954,10 +963,8 @@ describe("core activity workflow", () => {
       );
     });
 
-    test("sets quiz status to 'failed' when generateActivityExplanationQuiz throws", async () => {
-      vi.mocked(generateActivityExplanationQuiz).mockRejectedValueOnce(
-        new Error("Quiz generation failed"),
-      );
+    test("sets quiz status to 'failed' when generateActivityQuiz throws", async () => {
+      vi.mocked(generateActivityQuiz).mockRejectedValueOnce(new Error("Quiz generation failed"));
 
       const testLesson = await lessonFixture({
         chapterId: chapter.id,
@@ -971,6 +978,7 @@ describe("core activity workflow", () => {
           kind: "background",
           lessonId: testLesson.id,
           organizationId,
+          position: 0,
           title: `Background ${randomUUID()}`,
         }),
         activityFixture({
@@ -978,6 +986,7 @@ describe("core activity workflow", () => {
           kind: "explanation",
           lessonId: testLesson.id,
           organizationId,
+          position: 1,
           title: `Explanation ${randomUUID()}`,
         }),
         activityFixture({
@@ -985,6 +994,7 @@ describe("core activity workflow", () => {
           kind: "quiz",
           lessonId: testLesson.id,
           organizationId,
+          position: 2,
           title: `Error Quiz ${randomUUID()}`,
         }),
       ]);
@@ -1012,6 +1022,7 @@ describe("core activity workflow", () => {
           kind: "background",
           lessonId: testLesson.id,
           organizationId,
+          position: 0,
           title: `Background ${randomUUID()}`,
         }),
         activityFixture({
@@ -1019,6 +1030,7 @@ describe("core activity workflow", () => {
           kind: "explanation",
           lessonId: testLesson.id,
           organizationId,
+          position: 1,
           title: `Explanation ${randomUUID()}`,
         }),
         activityFixture({
@@ -1026,6 +1038,7 @@ describe("core activity workflow", () => {
           kind: "quiz",
           lessonId: testLesson.id,
           organizationId,
+          position: 2,
           title: `Quiz ${randomUUID()}`,
         }),
       ]);
@@ -1062,6 +1075,7 @@ describe("core activity workflow", () => {
           kind: "background",
           lessonId: testLesson.id,
           organizationId,
+          position: 0,
           title: `Background ${randomUUID()}`,
         }),
         activityFixture({
@@ -1069,6 +1083,7 @@ describe("core activity workflow", () => {
           kind: "explanation",
           lessonId: testLesson.id,
           organizationId,
+          position: 1,
           title: `Explanation ${randomUUID()}`,
         }),
         activityFixture({
@@ -1076,6 +1091,7 @@ describe("core activity workflow", () => {
           kind: "quiz",
           lessonId: testLesson.id,
           organizationId,
+          position: 2,
           title: `Quiz ${randomUUID()}`,
         }),
       ]);
@@ -1110,6 +1126,7 @@ describe("core activity workflow", () => {
           kind: "background",
           lessonId: testLesson.id,
           organizationId,
+          position: 0,
           title: `Background ${randomUUID()}`,
         }),
         activityFixture({
@@ -1117,6 +1134,7 @@ describe("core activity workflow", () => {
           kind: "explanation",
           lessonId: testLesson.id,
           organizationId,
+          position: 1,
           title: `Explanation ${randomUUID()}`,
         }),
         activityFixture({
@@ -1124,6 +1142,7 @@ describe("core activity workflow", () => {
           kind: "quiz",
           lessonId: testLesson.id,
           organizationId,
+          position: 2,
           title: `Quiz ${randomUUID()}`,
         }),
       ]);
@@ -1141,9 +1160,10 @@ describe("core activity workflow", () => {
   });
 
   describe("mechanics generation", () => {
-    test("passes explanation steps to generateActivityMechanics", async () => {
+    test("passes concepts to generateActivityMechanics", async () => {
       const testLesson = await lessonFixture({
         chapterId: chapter.id,
+        concepts: ["Core concept"],
         organizationId,
         title: `Mech Steps Lesson ${randomUUID()}`,
       });
@@ -1176,10 +1196,8 @@ describe("core activity workflow", () => {
 
       expect(generateActivityMechanics).toHaveBeenCalledWith(
         expect.objectContaining({
-          explanationSteps: [
-            { text: "Explanation step 1 text", title: "Explanation Step 1" },
-            { text: "Explanation step 2 text", title: "Explanation Step 2" },
-          ],
+          concepts: ["Core concept"],
+          neighboringConcepts: [],
         }),
       );
     });
@@ -1256,7 +1274,7 @@ describe("core activity workflow", () => {
       expect(generateActivityExamples).not.toHaveBeenCalled();
     });
 
-    test("doesn't call generateActivityExamples if explanation steps are empty", async () => {
+    test("calls generateActivityExamples even if explanation steps are empty", async () => {
       vi.mocked(generateActivityExplanation).mockResolvedValueOnce({
         data: { steps: [] },
         systemPrompt: "test",
@@ -1296,12 +1314,13 @@ describe("core activity workflow", () => {
 
       await activityGenerationWorkflow(testLesson.id);
 
-      expect(generateActivityExamples).not.toHaveBeenCalled();
+      expect(generateActivityExamples).toHaveBeenCalledOnce();
     });
 
-    test("passes explanation steps to generateActivityExamples", async () => {
+    test("passes concepts to generateActivityExamples", async () => {
       const testLesson = await lessonFixture({
         chapterId: chapter.id,
+        concepts: ["Example concept"],
         organizationId,
         title: `Examples Steps Lesson ${randomUUID()}`,
       });
@@ -1334,10 +1353,8 @@ describe("core activity workflow", () => {
 
       expect(generateActivityExamples).toHaveBeenCalledWith(
         expect.objectContaining({
-          explanationSteps: [
-            { text: "Explanation step 1 text", title: "Explanation Step 1" },
-            { text: "Explanation step 2 text", title: "Explanation Step 2" },
-          ],
+          concepts: ["Example concept"],
+          neighboringConcepts: [],
         }),
       );
     });
@@ -1518,7 +1535,7 @@ describe("core activity workflow", () => {
       expect(generateActivityStory).not.toHaveBeenCalled();
     });
 
-    test("doesn't call generateActivityStory if explanation steps are empty", async () => {
+    test("calls generateActivityStory even if explanation steps are empty", async () => {
       vi.mocked(generateActivityExplanation).mockResolvedValueOnce({
         data: { steps: [] },
         systemPrompt: "test",
@@ -1558,12 +1575,13 @@ describe("core activity workflow", () => {
 
       await activityGenerationWorkflow(testLesson.id);
 
-      expect(generateActivityStory).not.toHaveBeenCalled();
+      expect(generateActivityStory).toHaveBeenCalledOnce();
     });
 
-    test("passes explanation steps to generateActivityStory", async () => {
+    test("passes concepts to generateActivityStory", async () => {
       const testLesson = await lessonFixture({
         chapterId: chapter.id,
+        concepts: ["Story concept"],
         organizationId,
         title: `Story Steps Lesson ${randomUUID()}`,
       });
@@ -1596,10 +1614,8 @@ describe("core activity workflow", () => {
 
       expect(generateActivityStory).toHaveBeenCalledWith(
         expect.objectContaining({
-          explanationSteps: [
-            { text: "Explanation step 1 text", title: "Explanation Step 1" },
-            { text: "Explanation step 2 text", title: "Explanation Step 2" },
-          ],
+          concepts: ["Story concept"],
+          neighboringConcepts: [],
         }),
       );
     });
@@ -1776,7 +1792,7 @@ describe("core activity workflow", () => {
       expect(generateActivityChallenge).not.toHaveBeenCalled();
     });
 
-    test("doesn't call generateActivityChallenge if explanation steps are empty", async () => {
+    test("calls generateActivityChallenge even if explanation steps are empty", async () => {
       vi.mocked(generateActivityExplanation).mockResolvedValueOnce({
         data: { steps: [] },
         systemPrompt: "test",
@@ -1816,12 +1832,13 @@ describe("core activity workflow", () => {
 
       await activityGenerationWorkflow(testLesson.id);
 
-      expect(generateActivityChallenge).not.toHaveBeenCalled();
+      expect(generateActivityChallenge).toHaveBeenCalledOnce();
     });
 
-    test("passes explanation steps to generateActivityChallenge", async () => {
+    test("passes concepts to generateActivityChallenge", async () => {
       const testLesson = await lessonFixture({
         chapterId: chapter.id,
+        concepts: ["Challenge concept"],
         organizationId,
         title: `Challenge Steps Lesson ${randomUUID()}`,
       });
@@ -1854,10 +1871,8 @@ describe("core activity workflow", () => {
 
       expect(generateActivityChallenge).toHaveBeenCalledWith(
         expect.objectContaining({
-          explanationSteps: [
-            { text: "Explanation step 1 text", title: "Explanation Step 1" },
-            { text: "Explanation step 2 text", title: "Explanation Step 2" },
-          ],
+          concepts: ["Challenge concept"],
+          neighboringConcepts: [],
         }),
       );
     });
@@ -2403,7 +2418,7 @@ describe("core activity workflow", () => {
       expect(generateActivityBackground).not.toHaveBeenCalled();
     });
 
-    test("uses existing background steps for explanation when resuming", async () => {
+    test("uses activity title as concept for explanation when resuming", async () => {
       const testLesson = await lessonFixture({
         chapterId: chapter.id,
         organizationId,
@@ -2424,12 +2439,14 @@ describe("core activity workflow", () => {
         position: 0,
       });
 
+      const explanationTitle = `Pending Exp ${randomUUID()}`;
+
       await activityFixture({
         generationStatus: "pending",
         kind: "explanation",
         lessonId: testLesson.id,
         organizationId,
-        title: `Pending Exp ${randomUUID()}`,
+        title: explanationTitle,
       });
 
       await activityGenerationWorkflow(testLesson.id);
@@ -2437,7 +2454,7 @@ describe("core activity workflow", () => {
       expect(generateActivityBackground).not.toHaveBeenCalled();
       expect(generateActivityExplanation).toHaveBeenCalledWith(
         expect.objectContaining({
-          backgroundSteps: [{ text: "Existing BG text", title: "Existing BG" }],
+          concept: explanationTitle,
         }),
       );
     });
@@ -2556,7 +2573,7 @@ describe("core activity workflow", () => {
 
       await activityGenerationWorkflow(testLesson.id);
 
-      expect(generateActivityExplanationQuiz).not.toHaveBeenCalled();
+      expect(generateActivityQuiz).not.toHaveBeenCalled();
     });
 
     test("re-runs failed background when re-triggered", async () => {
@@ -2688,6 +2705,7 @@ describe("core activity workflow", () => {
         kind: "explanation",
         lessonId: testLesson.id,
         organizationId,
+        position: 1,
         title: `Partial Complete Exp ${randomUUID()}`,
       });
 
@@ -2696,6 +2714,7 @@ describe("core activity workflow", () => {
         kind: "quiz",
         lessonId: testLesson.id,
         organizationId,
+        position: 2,
         title: `Partial Complete Quiz ${randomUUID()}`,
       });
 
@@ -2704,10 +2723,10 @@ describe("core activity workflow", () => {
       expect(generateActivityBackground).not.toHaveBeenCalled();
       expect(generateActivityExplanation).toHaveBeenCalledWith(
         expect.objectContaining({
-          backgroundSteps: [{ text: "Partial complete BG text", title: "Partial BG" }],
+          concept: explanationActivity.title,
         }),
       );
-      expect(generateActivityExplanationQuiz).toHaveBeenCalled();
+      expect(generateActivityQuiz).toHaveBeenCalled();
 
       const [dbExplanation, dbQuiz] = await Promise.all([
         prisma.activity.findUnique({ where: { id: explanationActivity.id } }),
@@ -2720,7 +2739,7 @@ describe("core activity workflow", () => {
   });
 
   describe("dependency cascade failures", () => {
-    test("background returns empty → explanation marked as failed", async () => {
+    test("background returns empty → explanation still completes", async () => {
       vi.mocked(generateActivityBackground).mockResolvedValueOnce({
         data: { steps: [] },
         systemPrompt: "test",
@@ -2759,11 +2778,11 @@ describe("core activity workflow", () => {
       ]);
 
       expect(dbBg?.generationStatus).toBe("failed");
-      expect(dbExp?.generationStatus).toBe("failed");
-      expect(generateActivityExplanation).not.toHaveBeenCalled();
+      expect(dbExp?.generationStatus).toBe("completed");
+      expect(generateActivityExplanation).toHaveBeenCalled();
     });
 
-    test("explanation returns empty → mechanics, quiz, examples, story, and challenge marked as failed", async () => {
+    test("explanation returns empty → quiz fails but other activities still complete", async () => {
       vi.mocked(generateActivityExplanation).mockResolvedValueOnce({
         data: { steps: [] },
         systemPrompt: "test",
@@ -2791,6 +2810,7 @@ describe("core activity workflow", () => {
           kind: "background",
           lessonId: testLesson.id,
           organizationId,
+          position: 0,
           title: `Background ${randomUUID()}`,
         }),
         activityFixture({
@@ -2798,6 +2818,7 @@ describe("core activity workflow", () => {
           kind: "explanation",
           lessonId: testLesson.id,
           organizationId,
+          position: 1,
           title: `Explanation ${randomUUID()}`,
         }),
         activityFixture({
@@ -2805,6 +2826,7 @@ describe("core activity workflow", () => {
           kind: "mechanics",
           lessonId: testLesson.id,
           organizationId,
+          position: 2,
           title: `Mechanics ${randomUUID()}`,
         }),
         activityFixture({
@@ -2812,6 +2834,7 @@ describe("core activity workflow", () => {
           kind: "quiz",
           lessonId: testLesson.id,
           organizationId,
+          position: 3,
           title: `Quiz ${randomUUID()}`,
         }),
         activityFixture({
@@ -2819,6 +2842,7 @@ describe("core activity workflow", () => {
           kind: "examples",
           lessonId: testLesson.id,
           organizationId,
+          position: 4,
           title: `Examples ${randomUUID()}`,
         }),
         activityFixture({
@@ -2826,6 +2850,7 @@ describe("core activity workflow", () => {
           kind: "story",
           lessonId: testLesson.id,
           organizationId,
+          position: 5,
           title: `Story ${randomUUID()}`,
         }),
         activityFixture({
@@ -2833,6 +2858,7 @@ describe("core activity workflow", () => {
           kind: "challenge",
           lessonId: testLesson.id,
           organizationId,
+          position: 6,
           title: `Challenge ${randomUUID()}`,
         }),
       ]);
@@ -2849,17 +2875,17 @@ describe("core activity workflow", () => {
       ]);
 
       expect(dbExp?.generationStatus).toBe("failed");
-      expect(dbMech?.generationStatus).toBe("failed");
+      expect(dbMech?.generationStatus).toBe("completed");
       expect(dbQuiz?.generationStatus).toBe("failed");
-      expect(dbExamples?.generationStatus).toBe("failed");
-      expect(dbStory?.generationStatus).toBe("failed");
-      expect(dbChallenge?.generationStatus).toBe("failed");
+      expect(dbExamples?.generationStatus).toBe("completed");
+      expect(dbStory?.generationStatus).toBe("completed");
+      expect(dbChallenge?.generationStatus).toBe("completed");
 
-      expect(generateActivityMechanics).not.toHaveBeenCalled();
-      expect(generateActivityExplanationQuiz).not.toHaveBeenCalled();
-      expect(generateActivityExamples).not.toHaveBeenCalled();
-      expect(generateActivityStory).not.toHaveBeenCalled();
-      expect(generateActivityChallenge).not.toHaveBeenCalled();
+      expect(generateActivityMechanics).toHaveBeenCalled();
+      expect(generateActivityQuiz).not.toHaveBeenCalled();
+      expect(generateActivityExamples).toHaveBeenCalled();
+      expect(generateActivityStory).toHaveBeenCalled();
+      expect(generateActivityChallenge).toHaveBeenCalled();
     });
   });
 
@@ -2924,6 +2950,7 @@ describe("core activity workflow", () => {
           kind: "background",
           lessonId: testLesson.id,
           organizationId,
+          position: 0,
           title: `Background ${randomUUID()}`,
         }),
         activityFixture({
@@ -2931,6 +2958,7 @@ describe("core activity workflow", () => {
           kind: "explanation",
           lessonId: testLesson.id,
           organizationId,
+          position: 1,
           title: `Explanation ${randomUUID()}`,
         }),
         activityFixture({
@@ -2938,6 +2966,7 @@ describe("core activity workflow", () => {
           kind: "mechanics",
           lessonId: testLesson.id,
           organizationId,
+          position: 2,
           title: `Mechanics ${randomUUID()}`,
         }),
         activityFixture({
@@ -2945,6 +2974,7 @@ describe("core activity workflow", () => {
           kind: "quiz",
           lessonId: testLesson.id,
           organizationId,
+          position: 3,
           title: `Quiz ${randomUUID()}`,
         }),
         activityFixture({
@@ -2952,6 +2982,7 @@ describe("core activity workflow", () => {
           kind: "examples",
           lessonId: testLesson.id,
           organizationId,
+          position: 4,
           title: `Examples ${randomUUID()}`,
         }),
         activityFixture({
@@ -2959,6 +2990,7 @@ describe("core activity workflow", () => {
           kind: "story",
           lessonId: testLesson.id,
           organizationId,
+          position: 5,
           title: `Story ${randomUUID()}`,
         }),
         activityFixture({
@@ -2966,6 +2998,7 @@ describe("core activity workflow", () => {
           kind: "challenge",
           lessonId: testLesson.id,
           organizationId,
+          position: 6,
           title: `Challenge ${randomUUID()}`,
         }),
       ]);
@@ -2993,7 +3026,7 @@ describe("core activity workflow", () => {
       expect(generateActivityBackground).toHaveBeenCalledOnce();
       expect(generateActivityExplanation).toHaveBeenCalledOnce();
       expect(generateActivityMechanics).toHaveBeenCalledOnce();
-      expect(generateActivityExplanationQuiz).toHaveBeenCalledOnce();
+      expect(generateActivityQuiz).toHaveBeenCalledOnce();
       expect(generateActivityExamples).toHaveBeenCalledOnce();
       expect(generateActivityStory).toHaveBeenCalledOnce();
       expect(generateActivityChallenge).toHaveBeenCalledOnce();

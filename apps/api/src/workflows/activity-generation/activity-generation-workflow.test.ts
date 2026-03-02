@@ -154,8 +154,8 @@ vi.mock("@zoonk/ai/tasks/activities/core/review", () => ({
   }),
 }));
 
-vi.mock("@zoonk/ai/tasks/activities/core/explanation-quiz", () => ({
-  generateActivityExplanationQuiz: vi.fn().mockResolvedValue({
+vi.mock("@zoonk/ai/tasks/activities/core/quiz", () => ({
+  generateActivityQuiz: vi.fn().mockResolvedValue({
     data: {
       questions: [
         {

@@ -44,6 +44,7 @@ ${SHARED_EXPECTATIONS}
     id: "en-biology-immune-response",
     userInput: {
       chapterTitle: "Body Systems",
+      concepts: ["Primary lesson concepts"],
       courseTitle: "Human Biology",
       explanationSteps: [
         {
@@ -63,6 +64,7 @@ ${SHARED_EXPECTATIONS}
       lessonDescription:
         "Understanding the step-by-step process of how the immune system detects, responds to, and eliminates pathogens",
       lessonTitle: "The Immune Response Process",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
     },
   },
   {
@@ -82,6 +84,7 @@ ${SHARED_EXPECTATIONS}
     id: "en-biology-dna-transcription",
     userInput: {
       chapterTitle: "Molecular Biology",
+      concepts: ["Primary lesson concepts"],
       courseTitle: "Cell Biology",
       explanationSteps: [
         {
@@ -101,6 +104,7 @@ ${SHARED_EXPECTATIONS}
       lessonDescription:
         "Understanding how genetic information flows from DNA to messenger RNA through the transcription process",
       lessonTitle: "DNA Transcription",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
     },
   },
   {
@@ -120,6 +124,7 @@ ${SHARED_EXPECTATIONS}
     id: "en-cs-http-request-flow",
     userInput: {
       chapterTitle: "Web Protocols",
+      concepts: ["Primary lesson concepts"],
       courseTitle: "Web Development Fundamentals",
       explanationSteps: [
         {
@@ -139,6 +144,7 @@ ${SHARED_EXPECTATIONS}
       lessonDescription:
         "Understanding the complete lifecycle of an HTTP request from browser to server and back",
       lessonTitle: "The HTTP Request Lifecycle",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
     },
   },
   {
@@ -158,6 +164,7 @@ ${SHARED_EXPECTATIONS}
     id: "en-cs-garbage-collection",
     userInput: {
       chapterTitle: "Memory Management",
+      concepts: ["Primary lesson concepts"],
       courseTitle: "Programming Language Internals",
       explanationSteps: [
         {
@@ -177,6 +184,7 @@ ${SHARED_EXPECTATIONS}
       lessonDescription:
         "Understanding how automatic garbage collection identifies and reclaims unused memory in managed runtimes",
       lessonTitle: "How Garbage Collection Works",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
     },
   },
   {
@@ -198,6 +206,7 @@ ${SHARED_EXPECTATIONS}
     id: "pt-biology-photosynthesis-light",
     userInput: {
       chapterTitle: "Biologia Celular",
+      concepts: ["Primary lesson concepts"],
       courseTitle: "Biologia Vegetal",
       explanationSteps: [
         {
@@ -217,6 +226,7 @@ ${SHARED_EXPECTATIONS}
       lessonDescription:
         "Entendendo como a fase clara da fotossíntese converte energia luminosa em energia química através do transporte de elétrons",
       lessonTitle: "Reações Luminosas da Fotossíntese",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
     },
   },
   {
@@ -238,6 +248,7 @@ ${SHARED_EXPECTATIONS}
     id: "es-economics-price-discovery",
     userInput: {
       chapterTitle: "Mercados y Precios",
+      concepts: ["Primary lesson concepts"],
       courseTitle: "Economía Básica",
       explanationSteps: [
         {
@@ -257,6 +268,7 @@ ${SHARED_EXPECTATIONS}
       lessonDescription:
         "Entendiendo cómo los precios de mercado emergen de las interacciones entre compradores y vendedores",
       lessonTitle: "El Proceso de Descubrimiento de Precios",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
     },
   },
   {
@@ -276,6 +288,7 @@ ${SHARED_EXPECTATIONS}
     id: "en-physics-fission-chain",
     userInput: {
       chapterTitle: "Nuclear Physics",
+      concepts: ["Primary lesson concepts"],
       courseTitle: "Modern Physics",
       explanationSteps: [
         {
@@ -295,6 +308,7 @@ ${SHARED_EXPECTATIONS}
       lessonDescription:
         "Understanding how nuclear fission chain reactions start, propagate, and are controlled or allowed to run away",
       lessonTitle: "Nuclear Fission Chain Reactions",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
     },
   },
   {
@@ -314,6 +328,7 @@ ${SHARED_EXPECTATIONS}
     id: "en-physics-electromagnetic-induction",
     userInput: {
       chapterTitle: "Electromagnetism",
+      concepts: ["Primary lesson concepts"],
       courseTitle: "Physics Fundamentals",
       explanationSteps: [
         {
@@ -333,6 +348,7 @@ ${SHARED_EXPECTATIONS}
       lessonDescription:
         "Understanding how changing magnetic fields induce electric currents in conductors",
       lessonTitle: "Electromagnetic Induction",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
     },
   },
   {
@@ -354,6 +370,7 @@ ${SHARED_EXPECTATIONS}
     id: "pt-chemistry-enzyme-catalysis",
     userInput: {
       chapterTitle: "Bioquímica",
+      concepts: ["Primary lesson concepts"],
       courseTitle: "Química Orgânica",
       explanationSteps: [
         {
@@ -373,6 +390,7 @@ ${SHARED_EXPECTATIONS}
       lessonDescription:
         "Entendendo o processo molecular pelo qual enzimas catalisam reações bioquímicas",
       lessonTitle: "Como Enzimas Catalisam Reações",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
     },
   },
   {
@@ -394,6 +412,7 @@ ${SHARED_EXPECTATIONS}
     id: "es-chemistry-electrolysis",
     userInput: {
       chapterTitle: "Electroquímica",
+      concepts: ["Primary lesson concepts"],
       courseTitle: "Química General",
       explanationSteps: [
         {
@@ -413,6 +432,7 @@ ${SHARED_EXPECTATIONS}
       lessonDescription:
         "Entendiendo cómo la corriente eléctrica fuerza reacciones químicas no espontáneas en celdas electrolíticas",
       lessonTitle: "El Proceso de Electrólisis",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
     },
   },
   {
@@ -432,6 +452,7 @@ ${SHARED_EXPECTATIONS}
     id: "en-economics-monetary-transmission",
     userInput: {
       chapterTitle: "Macroeconomic Policy",
+      concepts: ["Primary lesson concepts"],
       courseTitle: "Economics",
       explanationSteps: [
         {
@@ -451,6 +472,7 @@ ${SHARED_EXPECTATIONS}
       lessonDescription:
         "Understanding how central bank policy decisions transmit through the financial system to affect economic activity and inflation",
       lessonTitle: "Monetary Policy Transmission",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
     },
   },
   {
@@ -470,6 +492,7 @@ ${SHARED_EXPECTATIONS}
     id: "en-cs-compilation-pipeline",
     userInput: {
       chapterTitle: "Language Implementation",
+      concepts: ["Primary lesson concepts"],
       courseTitle: "Compiler Design",
       explanationSteps: [
         {
@@ -489,6 +512,7 @@ ${SHARED_EXPECTATIONS}
       lessonDescription:
         "Understanding how compilers transform source code through multiple phases of analysis and synthesis",
       lessonTitle: "The Compilation Pipeline",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
     },
   },
 ];

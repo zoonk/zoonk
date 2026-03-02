@@ -44,6 +44,7 @@ ${SHARED_EXPECTATIONS}
     id: "en-math-probability-basics",
     userInput: {
       chapterTitle: "Introduction to Statistics",
+      concepts: ["Primary lesson concepts"],
       courseTitle: "Mathematics for Life",
       explanationSteps: [
         {
@@ -63,6 +64,7 @@ ${SHARED_EXPECTATIONS}
       lessonDescription:
         "Understanding how probability thinking helps us make better decisions in uncertain situations",
       lessonTitle: "Probability in Everyday Life",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
     },
   },
   {
@@ -82,6 +84,7 @@ ${SHARED_EXPECTATIONS}
     id: "en-economics-supply-demand",
     userInput: {
       chapterTitle: "Market Fundamentals",
+      concepts: ["Primary lesson concepts"],
       courseTitle: "Economics 101",
       explanationSteps: [
         {
@@ -101,6 +104,7 @@ ${SHARED_EXPECTATIONS}
       lessonDescription:
         "Recognizing how supply and demand forces shape prices and availability in markets all around us",
       lessonTitle: "Supply and Demand in Action",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
     },
   },
   {
@@ -120,6 +124,7 @@ ${SHARED_EXPECTATIONS}
     id: "en-cs-recursion-concept",
     userInput: {
       chapterTitle: "Problem-Solving Patterns",
+      concepts: ["Primary lesson concepts"],
       courseTitle: "Computer Science Fundamentals",
       explanationSteps: [
         {
@@ -139,6 +144,7 @@ ${SHARED_EXPECTATIONS}
       lessonDescription:
         "Discovering recursive patterns in programming, nature, art, and everyday problem-solving",
       lessonTitle: "Recursion: The Pattern Within",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
     },
   },
   {
@@ -160,6 +166,7 @@ ${SHARED_EXPECTATIONS}
     id: "pt-psychology-cognitive-biases",
     userInput: {
       chapterTitle: "Tomada de Decisao",
+      concepts: ["Primary lesson concepts"],
       courseTitle: "Psicologia Aplicada",
       explanationSteps: [
         {
@@ -179,6 +186,7 @@ ${SHARED_EXPECTATIONS}
       lessonDescription:
         "Reconhecendo como vieses cognitivos afetam nossas decisoes em compras, relacionamentos, politica e vida cotidiana",
       lessonTitle: "Vieses no Dia a Dia",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
     },
   },
   {
@@ -200,6 +208,7 @@ ${SHARED_EXPECTATIONS}
     id: "es-biology-natural-selection",
     userInput: {
       chapterTitle: "Evolucion",
+      concepts: ["Primary lesson concepts"],
       courseTitle: "Biologia General",
       explanationSteps: [
         {
@@ -219,6 +228,7 @@ ${SHARED_EXPECTATIONS}
       lessonDescription:
         "Observando como la seleccion natural moldea la vida a nuestro alrededor, desde bacterias hasta mascotas",
       lessonTitle: "Seleccion Natural en Accion",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
     },
   },
   {
@@ -238,6 +248,7 @@ ${SHARED_EXPECTATIONS}
     id: "en-cs-machine-learning-intro",
     userInput: {
       chapterTitle: "Artificial Intelligence Basics",
+      concepts: ["Primary lesson concepts"],
       courseTitle: "Technology in Modern Life",
       explanationSteps: [
         {
@@ -257,6 +268,7 @@ ${SHARED_EXPECTATIONS}
       lessonDescription:
         "Discovering where machine learning already works in apps, devices, and services you use daily",
       lessonTitle: "Machine Learning All Around You",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
     },
   },
   {
@@ -276,6 +288,7 @@ ${SHARED_EXPECTATIONS}
     id: "en-finance-compound-interest",
     userInput: {
       chapterTitle: "Building Wealth",
+      concepts: ["Primary lesson concepts"],
       courseTitle: "Personal Finance",
       explanationSteps: [
         {
@@ -295,6 +308,7 @@ ${SHARED_EXPECTATIONS}
       lessonDescription:
         "Recognizing how compound growth shapes wealth building, debt accumulation, and many other life phenomena",
       lessonTitle: "The Power of Compounding",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
     },
   },
   {
@@ -316,6 +330,7 @@ ${SHARED_EXPECTATIONS}
     id: "pt-biology-photosynthesis-importance",
     userInput: {
       chapterTitle: "Energia nos Seres Vivos",
+      concepts: ["Primary lesson concepts"],
       courseTitle: "Biologia Celular",
       explanationSteps: [
         {
@@ -335,6 +350,7 @@ ${SHARED_EXPECTATIONS}
       lessonDescription:
         "Descobrindo como a fotossintese sustenta a vida na Terra e afeta nosso ar, comida e clima",
       lessonTitle: "Fotossintese e a Vida na Terra",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
     },
   },
   {
@@ -356,6 +372,7 @@ ${SHARED_EXPECTATIONS}
     id: "es-cs-encryption-applications",
     userInput: {
       chapterTitle: "Seguridad Digital",
+      concepts: ["Primary lesson concepts"],
       courseTitle: "Tecnologia para Todos",
       explanationSteps: [
         {
@@ -375,6 +392,7 @@ ${SHARED_EXPECTATIONS}
       lessonDescription:
         "Descubriendo donde la encriptacion protege silenciosamente tu informacion en aplicaciones, sitios y dispositivos cotidianos",
       lessonTitle: "Encriptacion en Tu Vida Digital",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
     },
   },
   {
@@ -394,6 +412,7 @@ ${SHARED_EXPECTATIONS}
     id: "en-systems-feedback-loops",
     userInput: {
       chapterTitle: "Systems Thinking",
+      concepts: ["Primary lesson concepts"],
       courseTitle: "Understanding Complex Systems",
       explanationSteps: [
         {
@@ -413,6 +432,7 @@ ${SHARED_EXPECTATIONS}
       lessonDescription:
         "Recognizing feedback loops in technology, nature, society, and personal habits that amplify or stabilize outcomes",
       lessonTitle: "Feedback Loops Everywhere",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
     },
   },
   {
@@ -432,6 +452,7 @@ ${SHARED_EXPECTATIONS}
     id: "en-economics-opportunity-cost",
     userInput: {
       chapterTitle: "Economic Thinking",
+      concepts: ["Primary lesson concepts"],
       courseTitle: "Microeconomics",
       explanationSteps: [
         {
@@ -451,6 +472,7 @@ ${SHARED_EXPECTATIONS}
       lessonDescription:
         "Seeing how opportunity cost thinking reveals the hidden trade-offs in everyday decisions about time, money, and attention",
       lessonTitle: "The Hidden Cost of Every Choice",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
     },
   },
   {
@@ -472,6 +494,7 @@ ${SHARED_EXPECTATIONS}
     id: "pt-neuroscience-dopamine-life",
     userInput: {
       chapterTitle: "Neurotransmissores",
+      concepts: ["Primary lesson concepts"],
       courseTitle: "Neurociencia do Comportamento",
       explanationSteps: [
         {
@@ -491,6 +514,7 @@ ${SHARED_EXPECTATIONS}
       lessonDescription:
         "Descobrindo como a dopamina influencia motivacao, habitos, redes sociais e comportamentos do dia a dia",
       lessonTitle: "Dopamina no Cotidiano",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
     },
   },
 ];

@@ -1,10 +1,10 @@
 import { ACTIVITY_STEPS, type ActivityStepName } from "@/lib/workflow/config";
 import { type ActivityKind } from "@zoonk/db";
 import {
-  EXPLANATION_DEPS,
   LANGUAGE_REVIEW_DEPENDENCY_STEPS,
   LISTENING_DEPENDENCY_STEPS,
   LISTENING_WRITING_STEPS,
+  QUIZ_DEPENDENCY_STEPS,
   getFinishingSteps,
 } from "./activity-generation-phase-step-groups";
 
@@ -252,9 +252,9 @@ export function getPhaseSteps(kind: ActivityKind): Record<PhaseName, ActivitySte
   if (kind === "explanation") {
     return {
       ...SHARED_PHASE_STEPS,
-      finishing: getFinishingSteps(["generateBackgroundContent", "generateExplanationContent"]),
-      processingDependencies: ["setActivityAsRunning", "generateBackgroundContent"],
-      writingContent: ["generateExplanationContent"],
+      finishing: getFinishingSteps(["generateExplanationContent"]),
+      processingDependencies: [],
+      writingContent: ["setActivityAsRunning", "generateExplanationContent"],
     };
   }
 
@@ -269,15 +269,20 @@ export function getPhaseSteps(kind: ActivityKind): Record<PhaseName, ActivitySte
 
   const writingStep = contentStepMap[kind] ?? "generateQuizContent";
 
+  if (kind === "quiz") {
+    return {
+      ...SHARED_PHASE_STEPS,
+      finishing: getFinishingSteps(["generateExplanationContent", "generateQuizContent"]),
+      processingDependencies: QUIZ_DEPENDENCY_STEPS,
+      writingContent: ["generateQuizContent"],
+    };
+  }
+
   return {
     ...SHARED_PHASE_STEPS,
-    finishing: getFinishingSteps([
-      "generateBackgroundContent",
-      "generateExplanationContent",
-      writingStep,
-    ]),
-    processingDependencies: EXPLANATION_DEPS,
-    writingContent: [writingStep],
+    finishing: getFinishingSteps([writingStep]),
+    processingDependencies: [],
+    writingContent: ["setActivityAsRunning", writingStep],
   };
 }
 

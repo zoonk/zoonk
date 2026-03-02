@@ -27,10 +27,12 @@ export async function generateBackgroundContentStep(
   const { data: result, error } = await safeAsync(() =>
     generateActivityBackground({
       chapterTitle: activity.lesson.chapter.title,
+      concepts: activity.lesson.concepts,
       courseTitle: activity.lesson.chapter.course.title,
       language: activity.language,
       lessonDescription: activity.lesson.description ?? "",
       lessonTitle: activity.lesson.title,
+      neighboringConcepts: activity.lesson.neighboringConcepts,
     }),
   );
 

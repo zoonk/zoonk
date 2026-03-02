@@ -2,6 +2,7 @@ import "server-only";
 import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-options";
 import { Output, generateText } from "ai";
 import { z } from "zod";
+import { formatConceptSections } from "../_utils/prompt-sections";
 import { getLanguagePromptContext } from "./_utils/language-prompt-context";
 import systemPrompt from "./activity-sentences.prompt.md";
 
@@ -26,8 +27,10 @@ const schema = z.object({
 export type ActivitySentencesSchema = z.infer<typeof schema>;
 
 export type ActivitySentencesParams = {
+  concepts: string[];
   lessonTitle: string;
   model?: string;
+  neighboringConcepts: string[];
   reasoningEffort?: ReasoningEffort;
   targetLanguage: string;
   userLanguage: string;
@@ -36,8 +39,10 @@ export type ActivitySentencesParams = {
 };
 
 export async function generateActivitySentences({
+  concepts,
   lessonTitle,
   model = DEFAULT_MODEL,
+  neighboringConcepts,
   reasoningEffort,
   targetLanguage,
   userLanguage,
@@ -50,6 +55,7 @@ export async function generateActivitySentences({
 USER_LANGUAGE: ${promptContext.userLanguage}
 LESSON_TITLE: ${lessonTitle}
 VOCABULARY_WORDS: ${words.join(", ")}
+${formatConceptSections({ concepts, neighboringConcepts })}
 
 Generate practice sentences using these vocabulary words in everyday situations.`;
 

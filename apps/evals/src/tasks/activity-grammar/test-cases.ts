@@ -113,9 +113,11 @@ ${SHARED_EXPECTATIONS}
     id: "en-japanese-topic-marker-wa",
     userInput: {
       chapterTitle: "Basic Particles",
+      concepts: ["Primary lesson concepts"],
       lessonDescription:
         "The topic marker particle は (wa) and how it indicates what the sentence is about",
       lessonTitle: "Topic Marker は",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
       targetLanguage: "Japanese",
       userLanguage: "en",
     },
@@ -152,9 +154,11 @@ ${SHARED_EXPECTATIONS}
     id: "en-spanish-ar-verb-conjugation",
     userInput: {
       chapterTitle: "Present Tense Verbs",
+      concepts: ["Primary lesson concepts"],
       lessonDescription:
         "How to conjugate regular -ar verbs in the present tense, matching verb endings to subjects",
       lessonTitle: "Regular -ar Verbs",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
       targetLanguage: "Spanish",
       userLanguage: "en",
     },
@@ -182,9 +186,11 @@ ${SHARED_EXPECTATIONS}
     id: "en-german-verb-second",
     userInput: {
       chapterTitle: "Sentence Structure",
+      concepts: ["Primary lesson concepts"],
       lessonDescription:
         "Understanding German verb-second word order in main clauses and how it differs from English",
       lessonTitle: "Verb Second Word Order",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
       targetLanguage: "German",
       userLanguage: "en",
     },
@@ -213,9 +219,11 @@ ${SHARED_EXPECTATIONS}
     id: "pt-french-gender-agreement",
     userInput: {
       chapterTitle: "Adjetivos",
+      concepts: ["Primary lesson concepts"],
       lessonDescription:
         "Como os adjetivos em frances concordam em genero com os substantivos que modificam",
       lessonTitle: "Concordancia de Genero",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
       targetLanguage: "French",
       userLanguage: "pt",
     },
@@ -254,9 +262,11 @@ ${SHARED_EXPECTATIONS}
     id: "es-korean-subject-marker",
     userInput: {
       chapterTitle: "Particulas Basicas",
+      concepts: ["Primary lesson concepts"],
       lessonDescription:
         "Los marcadores de sujeto coreanos 이 y 가 y como elegir cual usar segun la palabra",
       lessonTitle: "Marcadores de Sujeto",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
       targetLanguage: "Korean",
       userLanguage: "es",
     },

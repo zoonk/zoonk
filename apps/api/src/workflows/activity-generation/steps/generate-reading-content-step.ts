@@ -120,7 +120,9 @@ export async function generateReadingContentStep(
 
   const { data: result, error } = await safeAsync(() =>
     generateActivitySentences({
+      concepts: activity.lesson.concepts,
       lessonTitle: activity.lesson.title,
+      neighboringConcepts: activity.lesson.neighboringConcepts,
       targetLanguage: course.targetLanguage ?? course.title,
       userLanguage,
       words: sourceWords.words,

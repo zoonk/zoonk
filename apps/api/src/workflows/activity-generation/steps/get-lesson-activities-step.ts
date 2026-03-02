@@ -3,6 +3,22 @@ import { safeAsync } from "@zoonk/utils/error";
 import { FatalError } from "workflow";
 import { streamError, streamStatus } from "../stream-status";
 
+const NEIGHBOR_RANGE = 3;
+
+async function getNeighboringLessonConcepts(chapterId: number, position: number) {
+  return prisma.lesson.findMany({
+    select: { concepts: true },
+    where: {
+      chapterId,
+      position: {
+        gte: position - NEIGHBOR_RANGE,
+        lte: position + NEIGHBOR_RANGE,
+        not: position,
+      },
+    },
+  });
+}
+
 async function getLessonActivities(lessonId: number) {
   const activities = await prisma.activity.findMany({
     orderBy: { position: "asc" },
@@ -27,8 +43,11 @@ async function getLessonActivities(lessonId: number) {
               title: true,
             },
           },
+          chapterId: true,
+          concepts: true,
           description: true,
           kind: true,
+          position: true,
           title: true,
         },
       },
@@ -38,8 +57,36 @@ async function getLessonActivities(lessonId: number) {
     where: { lessonId },
   });
 
-  // Convert bigint IDs to number for JSON serialization in workflow steps
-  return activities.map((activity) => ({ ...activity, id: Number(activity.id) }));
+  if (activities.length === 0) {
+    return [];
+  }
+
+  const firstLesson = activities[0]?.lesson;
+
+  if (!firstLesson) {
+    return [];
+  }
+
+  const neighboringLessons = await getNeighboringLessonConcepts(
+    firstLesson.chapterId,
+    firstLesson.position,
+  );
+  const neighboringConcepts = [
+    ...new Set(
+      neighboringLessons.flatMap((lesson) =>
+        lesson.concepts.map((concept) => concept.trim()).filter((concept) => concept.length > 0),
+      ),
+    ),
+  ];
+
+  return activities.map((activity) => ({
+    ...activity,
+    id: Number(activity.id),
+    lesson: {
+      ...activity.lesson,
+      neighboringConcepts,
+    },
+  }));
 }
 
 export type LessonActivity = Awaited<ReturnType<typeof getLessonActivities>>[number];

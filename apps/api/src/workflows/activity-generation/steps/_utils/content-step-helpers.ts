@@ -2,7 +2,7 @@ import { assertStepContent } from "@zoonk/core/steps/content-contract";
 import { type ActivityKind, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { type LessonActivity } from "../get-lesson-activities-step";
-import { findActivityByKind } from "./find-activity-by-kind";
+import { findActivitiesByKind, findActivityByKind } from "./find-activity-by-kind";
 import { type ActivitySteps, parseActivitySteps } from "./get-activity-steps";
 
 /**
@@ -58,6 +58,55 @@ export async function resolveActivityForGeneration(
   }
 
   return { activity, shouldGenerate: true };
+}
+
+export async function resolveActivitiesForGeneration(
+  activities: LessonActivity[],
+  kind: ActivityKind,
+): Promise<
+  {
+    activity: LessonActivity;
+    existingSteps: ActivitySteps;
+    shouldGenerate: boolean;
+  }[]
+> {
+  const matchingActivities = findActivitiesByKind(activities, kind);
+
+  if (matchingActivities.length === 0) {
+    return [];
+  }
+
+  const resolved = await Promise.all(
+    matchingActivities.map(async (activity) => {
+      if (activity.generationStatus === "completed") {
+        return {
+          activity,
+          existingSteps: (await getExistingContentSteps(activity.id)) ?? [],
+          shouldGenerate: false,
+        };
+      }
+
+      if (activity.generationStatus === "running") {
+        return {
+          activity,
+          existingSteps: [],
+          shouldGenerate: false,
+        };
+      }
+
+      if (activity.generationStatus === "failed") {
+        await prisma.step.deleteMany({ where: { activityId: activity.id } });
+      }
+
+      return {
+        activity,
+        existingSteps: [],
+        shouldGenerate: true,
+      };
+    }),
+  );
+
+  return resolved;
 }
 
 /**

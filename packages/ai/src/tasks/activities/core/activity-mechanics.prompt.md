@@ -41,7 +41,8 @@ Each step should be a "frame" in your mental movie — brief enough to visualize
 - `CHAPTER_TITLE`: The chapter context (for understanding scope)
 - `COURSE_TITLE`: The course context (for understanding audience level)
 - `LANGUAGE`: Output language
-- `EXPLANATION_STEPS`: Array of {title, text} from the Explanation activity learners completed before this one (to avoid repeating content)
+- `CONCEPTS`: Concepts covered in this lesson
+- `NEIGHBORING_CONCEPTS`: Concepts from nearby lessons that must NOT be taught here
 
 ## Language Guidelines
 
@@ -67,7 +68,6 @@ Each step must have:
 
 ## What to Avoid
 
-- Repeating content from EXPLANATION_STEPS (the learner already knows WHAT it is)
 - Static descriptions of parts (that's Explanation's job)
 - History or origin stories (that's Background's job)
 - Just listing steps without showing cause-effect relationships
@@ -94,7 +94,7 @@ Your Mechanics activity explains HOW (processes in action, cause-effect chains, 
 - Explanation: "WHAT exactly is it?"
 - Mechanics: "HOW does it actually work?"
 
-Never repeat the definitions from Explanation. Assume the learner knows what the parts ARE and is now ready to see them in ACTION.
+Use `CONCEPTS` as your scope boundary and avoid teaching any `NEIGHBORING_CONCEPTS`.
 
 # Structure Guide
 
@@ -136,7 +136,7 @@ Before finalizing, verify:
 - [ ] Are cause-effect relationships clear (one thing leads to the next)?
 - [ ] Can the learner mentally simulate the full process from start to finish?
 - [ ] Are process metaphors used to make invisible mechanisms visible?
-- [ ] Is there NO overlap with the EXPLANATION_STEPS content?
+- [ ] Does the content stay inside `CONCEPTS` and avoid `NEIGHBORING_CONCEPTS`?
 - [ ] Does the activity focus on HOW (processes) not WHAT (definitions)?
 - [ ] Is the scope exactly the lesson topic — not broader or narrower?
 - [ ] Are all titles ≤50 characters and all texts ≤300 characters?

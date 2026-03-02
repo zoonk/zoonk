@@ -156,8 +156,10 @@ export async function generateGrammarContentStep(
   const { data: result, error }: SafeReturn<{ data: ActivityGrammarSchema }> = await safeAsync(() =>
     generateActivityGrammar({
       chapterTitle: activity.lesson.chapter.title,
+      concepts: activity.lesson.concepts,
       lessonDescription: activity.lesson.description ?? "",
       lessonTitle: activity.lesson.title,
+      neighboringConcepts: activity.lesson.neighboringConcepts,
       targetLanguage:
         activity.lesson.chapter.course.targetLanguage ?? activity.lesson.chapter.course.title,
       userLanguage: activity.language,

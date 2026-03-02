@@ -128,14 +128,16 @@ describe(lessonGenerationWorkflow, () => {
   });
 
   describe("core lesson flow", () => {
-    test("generates 8 fixed activities for core lesson", async () => {
+    test("creates one explanation per concept and one quiz for lessons with fewer than 4 concepts", async () => {
       vi.mocked(generateLessonKind).mockResolvedValueOnce({
         data: { kind: "core" },
       } as Awaited<ReturnType<typeof generateLessonKind>>);
 
+      const concepts = ["Concept A", "Concept B", "Concept C"];
       const title = `Core Lesson ${randomUUID()}`;
       const lesson = await lessonFixture({
         chapterId: chapter.id,
+        concepts,
         generationStatus: "pending",
         organizationId,
         title,
@@ -155,9 +157,11 @@ describe(lessonGenerationWorkflow, () => {
         where: { lessonId: lesson.id },
       });
 
-      expect(activities).toHaveLength(8);
+      expect(activities).toHaveLength(10);
       expect(activities.map((a) => a.kind)).toEqual([
         "background",
+        "explanation",
+        "explanation",
         "explanation",
         "quiz",
         "mechanics",
@@ -170,11 +174,78 @@ describe(lessonGenerationWorkflow, () => {
       for (const activity of activities) {
         expect(activity.generationStatus).toBe("pending");
         expect(activity.isPublished).toBeTruthy();
-        expect(activity.title).toBeNull();
         expect(activity.description).toBeNull();
       }
 
+      const explanationActivities = activities.filter(
+        (activity) => activity.kind === "explanation",
+      );
+      expect(explanationActivities.map((activity) => activity.title)).toEqual(concepts);
+
+      const nonExplanationActivities = activities.filter(
+        (activity) => activity.kind !== "explanation",
+      );
+      for (const activity of nonExplanationActivities) {
+        expect(activity.title).toBeNull();
+      }
+
       expect(generateLessonActivities).not.toHaveBeenCalled();
+    });
+
+    test("creates two quizzes for lessons with 4+ concepts using a balanced split", async () => {
+      vi.mocked(generateLessonKind).mockResolvedValueOnce({
+        data: { kind: "core" },
+      } as Awaited<ReturnType<typeof generateLessonKind>>);
+
+      const concepts = [
+        "Concept 1",
+        "Concept 2",
+        "Concept 3",
+        "Concept 4",
+        "Concept 5",
+        "Concept 6",
+        "Concept 7",
+      ];
+
+      const lesson = await lessonFixture({
+        chapterId: chapter.id,
+        concepts,
+        generationStatus: "pending",
+        organizationId,
+        title: `Balanced Split Lesson ${randomUUID()}`,
+      });
+
+      await lessonGenerationWorkflow(lesson.id);
+
+      const activities = await prisma.activity.findMany({
+        orderBy: { position: "asc" },
+        where: { lessonId: lesson.id },
+      });
+
+      expect(activities.map((activity) => activity.kind)).toEqual([
+        "background",
+        "explanation",
+        "explanation",
+        "explanation",
+        "quiz",
+        "explanation",
+        "explanation",
+        "explanation",
+        "explanation",
+        "quiz",
+        "mechanics",
+        "examples",
+        "story",
+        "challenge",
+        "review",
+      ]);
+
+      const explanationActivities = activities.filter(
+        (activity) => activity.kind === "explanation",
+      );
+      expect(explanationActivities.map((activity) => activity.title)).toEqual(concepts);
+
+      expect(activities.filter((activity) => activity.kind === "quiz")).toHaveLength(2);
     });
   });
 
@@ -497,6 +568,7 @@ describe(lessonGenerationWorkflow, () => {
 
       const lesson = await lessonFixture({
         chapterId: chapter.id,
+        concepts: ["Core concept 1", "Core concept 2", "Core concept 3"],
         generationStatus: "pending",
         organizationId,
         title: `Non-Lang Core Lesson ${randomUUID()}`,
@@ -521,6 +593,7 @@ describe(lessonGenerationWorkflow, () => {
       const title = `Status Transition Lesson ${randomUUID()}`;
       const lesson = await lessonFixture({
         chapterId: chapter.id,
+        concepts: ["Status concept 1", "Status concept 2", "Status concept 3"],
         generationStatus: "pending",
         organizationId,
         title,

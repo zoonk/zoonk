@@ -1,14 +1,11 @@
-import {
-  type QuizQuestion,
-  type SelectImageQuestion,
-} from "@zoonk/ai/tasks/activities/core/explanation-quiz";
+import { type QuizQuestion, type SelectImageQuestion } from "@zoonk/ai/tasks/activities/core/quiz";
 import { assertStepContent } from "@zoonk/core/steps/content-contract";
 import { generateStepImage } from "@zoonk/core/steps/image";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { isJsonObject, toRecord } from "@zoonk/utils/json";
 import { streamStatus } from "../stream-status";
-import { findActivityByKind } from "./_utils/find-activity-by-kind";
+import { findActivityById, findActivityByKind } from "./_utils/find-activity-by-kind";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
 
@@ -71,12 +68,15 @@ async function generateOptionImages(
 export async function generateQuizImagesStep(
   activities: LessonActivity[],
   questions: QuizQuestion[],
+  activityId?: bigint | number,
 ): Promise<QuizQuestionWithUrls[]> {
   "use step";
 
-  const activity = findActivityByKind(activities, "quiz");
+  const activity = activityId
+    ? findActivityById(activities, activityId)
+    : findActivityByKind(activities, "quiz");
 
-  if (!activity || questions.length === 0) {
+  if (!activity || activity.kind !== "quiz" || questions.length === 0) {
     return [];
   }
 

@@ -104,9 +104,11 @@ ${SHARED_EXPECTATIONS}
     id: "en-spanish-ordering-coffee",
     userInput: {
       chapterTitle: "At the Cafe",
+      concepts: ["Primary lesson concepts"],
       lessonDescription:
         "Words and phrases for ordering coffee drinks, specifying sizes, and requesting milk options at a cafe",
       lessonTitle: "Ordering Coffee",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
       targetLanguage: "Spanish",
       userLanguage: "en",
     },
@@ -134,9 +136,11 @@ ${SHARED_EXPECTATIONS}
     id: "en-french-bakery-items",
     userInput: {
       chapterTitle: "French Cuisine",
+      concepts: ["Primary lesson concepts"],
       lessonDescription:
         "Names of breads, pastries, and baked goods commonly found in French bakeries",
       lessonTitle: "Breads and Pastries",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
       targetLanguage: "French",
       userLanguage: "en",
     },
@@ -164,9 +168,11 @@ ${SHARED_EXPECTATIONS}
     id: "en-german-parents-siblings",
     userInput: {
       chapterTitle: "Family",
+      concepts: ["Primary lesson concepts"],
       lessonDescription:
         "Words for parents, siblings, and immediate family relationships in German",
       lessonTitle: "Parents and Siblings",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
       targetLanguage: "German",
       userLanguage: "en",
     },
@@ -198,9 +204,11 @@ ${SHARED_EXPECTATIONS}
     id: "pt-italian-common-pets",
     userInput: {
       chapterTitle: "Animais",
+      concepts: ["Primary lesson concepts"],
       lessonDescription:
         "Nomes de animais de estimacao comuns e termos basicos relacionados a cuidados com pets",
       lessonTitle: "Animais de Estimacao",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
       targetLanguage: "Italian",
       userLanguage: "pt",
     },
@@ -235,9 +243,11 @@ ${SHARED_EXPECTATIONS}
     id: "en-portuguese-greetings-farewells",
     userInput: {
       chapterTitle: "Social Basics",
+      concepts: ["Primary lesson concepts"],
       lessonDescription:
         "Common greetings, farewells, and social phrases in Portuguese including formal and informal variants",
       lessonTitle: "Greetings and Farewells",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
       targetLanguage: "Portuguese",
       userLanguage: "en",
     },
@@ -275,9 +285,11 @@ ${SHARED_EXPECTATIONS}
     id: "es-japanese-basic-colors",
     userInput: {
       chapterTitle: "Describir Cosas",
+      concepts: ["Primary lesson concepts"],
       lessonDescription:
         "Los colores basicos en japones - rojo, azul, verde, amarillo, y otros colores comunes",
       lessonTitle: "Colores Basicos",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
       targetLanguage: "Japanese",
       userLanguage: "es",
     },

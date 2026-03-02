@@ -193,8 +193,8 @@ vi.mock("@zoonk/ai/tasks/activities/core/review", () => ({
   generateActivityReview: vi.fn().mockResolvedValue({ data: { questions: [] } }),
 }));
 
-vi.mock("@zoonk/ai/tasks/activities/core/explanation-quiz", () => ({
-  generateActivityExplanationQuiz: vi.fn().mockResolvedValue({ data: { questions: [] } }),
+vi.mock("@zoonk/ai/tasks/activities/core/quiz", () => ({
+  generateActivityQuiz: vi.fn().mockResolvedValue({ data: { questions: [] } }),
 }));
 
 vi.mock("@zoonk/ai/tasks/activities/custom", () => ({
@@ -314,13 +314,17 @@ describe("language activity generation", () => {
 
     await activityGenerationWorkflow(testLesson.id);
 
-    expect(generateActivityVocabulary).toHaveBeenCalledWith({
-      chapterTitle: chapter.title,
-      lessonDescription: "Learn basic greetings",
-      lessonTitle: testLesson.title,
-      targetLanguage: "es",
-      userLanguage: "en",
-    });
+    expect(generateActivityVocabulary).toHaveBeenCalledWith(
+      expect.objectContaining({
+        chapterTitle: chapter.title,
+        concepts: [],
+        lessonDescription: "Learn basic greetings",
+        lessonTitle: testLesson.title,
+        neighboringConcepts: [],
+        targetLanguage: "es",
+        userLanguage: "en",
+      }),
+    );
   });
 
   test("creates word records in the words table with correct targetLanguage and userLanguage", async () => {
@@ -862,13 +866,17 @@ describe("language activity generation", () => {
 
     await activityGenerationWorkflow(testLesson.id);
 
-    expect(generateActivityGrammar).toHaveBeenCalledWith({
-      chapterTitle: chapter.title,
-      lessonDescription: "Learn present tense in Spanish",
-      lessonTitle: testLesson.title,
-      targetLanguage: "es",
-      userLanguage: "en",
-    });
+    expect(generateActivityGrammar).toHaveBeenCalledWith(
+      expect.objectContaining({
+        chapterTitle: chapter.title,
+        concepts: [],
+        lessonDescription: "Learn present tense in Spanish",
+        lessonTitle: testLesson.title,
+        neighboringConcepts: [],
+        targetLanguage: "es",
+        userLanguage: "en",
+      }),
+    );
   });
 
   test("creates grammar steps in order with expected kinds and content", async () => {
@@ -1156,13 +1164,17 @@ describe("language activity generation", () => {
 
     await activityGenerationWorkflow(testLesson.id);
 
-    expect(generateActivityStoryLanguage).toHaveBeenCalledWith({
-      chapterTitle: chapter.title,
-      lessonDescription: "Practice ordering in a cafe",
-      lessonTitle: testLesson.title,
-      targetLanguage: "es",
-      userLanguage: "en",
-    });
+    expect(generateActivityStoryLanguage).toHaveBeenCalledWith(
+      expect.objectContaining({
+        chapterTitle: chapter.title,
+        concepts: [],
+        lessonDescription: "Practice ordering in a cafe",
+        lessonTitle: testLesson.title,
+        neighboringConcepts: [],
+        targetLanguage: "es",
+        userLanguage: "en",
+      }),
+    );
   });
 
   test("creates language story steps in order with expected kinds and content", async () => {
@@ -1421,12 +1433,16 @@ describe("language activity generation", () => {
 
     await activityGenerationWorkflow(testLesson.id);
 
-    expect(generateActivitySentences).toHaveBeenCalledWith({
-      lessonTitle: testLesson.title,
-      targetLanguage: "es",
-      userLanguage: "en",
-      words: ["hola", "gato"],
-    });
+    expect(generateActivitySentences).toHaveBeenCalledWith(
+      expect.objectContaining({
+        concepts: [],
+        lessonTitle: testLesson.title,
+        neighboringConcepts: [],
+        targetLanguage: "es",
+        userLanguage: "en",
+        words: ["hola", "gato"],
+      }),
+    );
   });
 
   test("falls back to lesson words when reading has no current-run vocabulary words", async () => {
@@ -1452,12 +1468,16 @@ describe("language activity generation", () => {
 
     await activityGenerationWorkflow(testLesson.id);
 
-    expect(generateActivitySentences).toHaveBeenCalledWith({
-      lessonTitle: testLesson.title,
-      targetLanguage: "es",
-      userLanguage: "en",
-      words: expectedWords,
-    });
+    expect(generateActivitySentences).toHaveBeenCalledWith(
+      expect.objectContaining({
+        concepts: [],
+        lessonTitle: testLesson.title,
+        neighboringConcepts: [],
+        targetLanguage: "es",
+        userLanguage: "en",
+        words: expectedWords,
+      }),
+    );
   });
 
   test("creates sentence records in sentences table and lesson_sentences junction records", async () => {

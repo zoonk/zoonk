@@ -40,6 +40,8 @@ Each step should be a "scene" in your story — brief enough to maintain momentu
 - `CHAPTER_TITLE`: The chapter context (for understanding scope)
 - `COURSE_TITLE`: The course context (for understanding audience level)
 - `LANGUAGE`: Output language
+- `CONCEPTS`: Concepts covered in this lesson
+- `NEIGHBORING_CONCEPTS`: Concepts from nearby lessons that must NOT be taught here
 
 ## Language Guidelines
 
@@ -76,6 +78,7 @@ Each step must have:
 - **Stay focused**: Cover only THIS lesson's topic, not the broader chapter or course
 - **Don't expand**: Other lessons will cover related topics — trust the curriculum structure
 - **Don't narrow**: If the lesson is about "Variables in Programming", cover variables broadly, not just "integer variables"
+- **Respect concept boundaries**: Keep the story aligned with `CONCEPTS` and avoid teaching `NEIGHBORING_CONCEPTS`
 
 # Story Structure Guide
 

@@ -8,7 +8,7 @@
     "./tasks/activities/core/challenge": "./src/tasks/activities/core/activity-challenge.ts",
     "./tasks/activities/core/examples": "./src/tasks/activities/core/activity-examples.ts",
     "./tasks/activities/core/explanation": "./src/tasks/activities/core/activity-explanation.ts",
-    "./tasks/activities/core/explanation-quiz": "./src/tasks/activities/core/activity-explanation-quiz.ts",
+    "./tasks/activities/core/quiz": "./src/tasks/activities/core/activity-quiz.ts",
     "./tasks/activities/core/mechanics": "./src/tasks/activities/core/activity-mechanics.ts",
     "./tasks/activities/core/review": "./src/tasks/activities/core/activity-review.ts",
     "./tasks/activities/core/story": "./src/tasks/activities/core/activity-story.ts",

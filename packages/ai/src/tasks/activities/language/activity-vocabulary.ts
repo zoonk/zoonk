@@ -2,6 +2,7 @@ import "server-only";
 import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-options";
 import { Output, generateText } from "ai";
 import { z } from "zod";
+import { formatConceptSections } from "../_utils/prompt-sections";
 import { getLanguagePromptContext } from "./_utils/language-prompt-context";
 import systemPrompt from "./activity-vocabulary.prompt.md";
 
@@ -29,9 +30,11 @@ export type ActivityVocabularySchema = z.infer<typeof schema>;
 
 export type ActivityVocabularyParams = {
   chapterTitle: string;
+  concepts: string[];
   lessonDescription: string;
   lessonTitle: string;
   model?: string;
+  neighboringConcepts: string[];
   reasoningEffort?: ReasoningEffort;
   targetLanguage: string;
   userLanguage: string;
@@ -40,9 +43,11 @@ export type ActivityVocabularyParams = {
 
 export async function generateActivityVocabulary({
   chapterTitle,
+  concepts,
   lessonDescription,
   lessonTitle,
   model = DEFAULT_MODEL,
+  neighboringConcepts,
   reasoningEffort,
   targetLanguage,
   userLanguage,
@@ -55,6 +60,7 @@ USER_LANGUAGE: ${promptContext.userLanguage}
 CHAPTER_TITLE: ${chapterTitle}
 LESSON_TITLE: ${lessonTitle}
 LESSON_DESCRIPTION: ${lessonDescription}
+${formatConceptSections({ concepts, neighboringConcepts })}
 
 Generate a focused, representative vocabulary list for this language lesson. Include essential words for this specific topic - quality over quantity.`;
 

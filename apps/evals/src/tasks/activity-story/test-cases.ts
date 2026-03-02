@@ -52,6 +52,7 @@ ${SHARED_EXPECTATIONS}
     id: "en-cs-typescript-type-safety",
     userInput: {
       chapterTitle: "Type Systems",
+      concepts: ["Primary lesson concepts"],
       courseTitle: "Advanced TypeScript",
       explanationSteps: [
         {
@@ -83,6 +84,7 @@ ${SHARED_EXPECTATIONS}
       lessonDescription:
         "Applying TypeScript's type system to catch bugs early and write more maintainable code",
       lessonTitle: "Type Safety in Practice",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
     },
   },
   {
@@ -103,6 +105,7 @@ ${SHARED_EXPECTATIONS}
     id: "en-economics-game-theory-strategy",
     userInput: {
       chapterTitle: "Strategic Decision Making",
+      concepts: ["Primary lesson concepts"],
       courseTitle: "Microeconomics",
       explanationSteps: [
         {
@@ -130,6 +133,7 @@ ${SHARED_EXPECTATIONS}
       lessonDescription:
         "Using game theory to analyze competitive situations and make better strategic decisions",
       lessonTitle: "Strategic Thinking with Game Theory",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
     },
   },
   {
@@ -150,6 +154,7 @@ ${SHARED_EXPECTATIONS}
     id: "en-biology-crispr-applications",
     userInput: {
       chapterTitle: "Genetic Engineering",
+      concepts: ["Primary lesson concepts"],
       courseTitle: "Modern Biotechnology",
       explanationSteps: [
         {
@@ -177,6 +182,7 @@ ${SHARED_EXPECTATIONS}
       lessonDescription:
         "Understanding how to apply CRISPR gene editing technology effectively and responsibly",
       lessonTitle: "CRISPR Gene Editing in Practice",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
     },
   },
   {
@@ -199,6 +205,7 @@ ${SHARED_EXPECTATIONS}
     id: "pt-psychology-cognitive-load",
     userInput: {
       chapterTitle: "Psicologia da Aprendizagem",
+      concepts: ["Primary lesson concepts"],
       courseTitle: "Design Instrucional",
       explanationSteps: [
         {
@@ -226,6 +233,7 @@ ${SHARED_EXPECTATIONS}
       lessonDescription:
         "Aplicando a teoria da carga cognitiva para criar materiais de aprendizagem mais eficazes",
       lessonTitle: "Carga Cognitiva na Pratica",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
     },
   },
   {
@@ -248,6 +256,7 @@ ${SHARED_EXPECTATIONS}
     id: "es-physics-thermodynamics-applications",
     userInput: {
       chapterTitle: "Termodinamica",
+      concepts: ["Primary lesson concepts"],
       courseTitle: "Fisica para Ingenieros",
       explanationSteps: [
         {
@@ -275,6 +284,7 @@ ${SHARED_EXPECTATIONS}
       lessonDescription:
         "Aplicando las leyes de la termodinamica para entender y disenar sistemas energeticos",
       lessonTitle: "Termodinamica Aplicada",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
     },
   },
   {
@@ -295,6 +305,7 @@ ${SHARED_EXPECTATIONS}
     id: "en-cs-distributed-systems-consistency",
     userInput: {
       chapterTitle: "Distributed Data",
+      concepts: ["Primary lesson concepts"],
       courseTitle: "System Design",
       explanationSteps: [
         {
@@ -326,6 +337,7 @@ ${SHARED_EXPECTATIONS}
       lessonDescription:
         "Navigating consistency and availability trade-offs in distributed systems",
       lessonTitle: "Consistency in Distributed Systems",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
     },
   },
   {
@@ -346,6 +358,7 @@ ${SHARED_EXPECTATIONS}
     id: "en-economics-behavioral-design",
     userInput: {
       chapterTitle: "Applied Behavioral Economics",
+      concepts: ["Primary lesson concepts"],
       courseTitle: "Product Psychology",
       explanationSteps: [
         {
@@ -373,6 +386,7 @@ ${SHARED_EXPECTATIONS}
       lessonDescription:
         "Applying behavioral economics principles to design products and systems that work with human psychology",
       lessonTitle: "Behavioral Design in Practice",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
     },
   },
   {
@@ -395,6 +409,7 @@ ${SHARED_EXPECTATIONS}
     id: "pt-chemistry-organic-reactions",
     userInput: {
       chapterTitle: "Reacoes Organicas",
+      concepts: ["Primary lesson concepts"],
       courseTitle: "Quimica Organica II",
       explanationSteps: [
         {
@@ -422,6 +437,7 @@ ${SHARED_EXPECTATIONS}
       lessonDescription:
         "Aplicando mecanismos de reacao organica para prever e otimizar sinteses quimicas",
       lessonTitle: "Mecanismos de Substituicao",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
     },
   },
   {
@@ -444,6 +460,7 @@ ${SHARED_EXPECTATIONS}
     id: "es-cs-neural-network-architecture",
     userInput: {
       chapterTitle: "Arquitecturas de Redes Neuronales",
+      concepts: ["Primary lesson concepts"],
       courseTitle: "Deep Learning Aplicado",
       explanationSteps: [
         {
@@ -475,6 +492,7 @@ ${SHARED_EXPECTATIONS}
       lessonDescription:
         "Disenando y optimizando arquitecturas de redes neuronales para problemas reales",
       lessonTitle: "Arquitecturas de Deep Learning",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
     },
   },
   {
@@ -495,6 +513,7 @@ ${SHARED_EXPECTATIONS}
     id: "en-statistics-hypothesis-testing",
     userInput: {
       chapterTitle: "Statistical Inference",
+      concepts: ["Primary lesson concepts"],
       courseTitle: "Applied Statistics",
       explanationSteps: [
         {
@@ -526,6 +545,7 @@ ${SHARED_EXPECTATIONS}
       lessonDescription:
         "Applying statistical hypothesis testing correctly to make sound data-driven decisions",
       lessonTitle: "Hypothesis Testing in Practice",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
     },
   },
   {
@@ -546,6 +566,7 @@ ${SHARED_EXPECTATIONS}
     id: "en-physics-quantum-computing-basics",
     userInput: {
       chapterTitle: "Quantum Information",
+      concepts: ["Primary lesson concepts"],
       courseTitle: "Quantum Computing Fundamentals",
       explanationSteps: [
         {
@@ -577,6 +598,7 @@ ${SHARED_EXPECTATIONS}
       lessonDescription:
         "Understanding quantum computing capabilities and limitations for practical problem-solving",
       lessonTitle: "Quantum Computing Fundamentals",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
     },
   },
   {
@@ -599,6 +621,7 @@ ${SHARED_EXPECTATIONS}
     id: "pt-cs-microservices-architecture",
     userInput: {
       chapterTitle: "Arquitetura de Software",
+      concepts: ["Primary lesson concepts"],
       courseTitle: "Engenharia de Software Avancada",
       explanationSteps: [
         {
@@ -630,6 +653,7 @@ ${SHARED_EXPECTATIONS}
       lessonDescription:
         "Projetando e implementando arquiteturas de microservicos com consciencia dos trade-offs",
       lessonTitle: "Microservicos na Pratica",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
     },
   },
   {
@@ -652,6 +676,7 @@ ${SHARED_EXPECTATIONS}
     id: "es-math-calculus-optimization",
     userInput: {
       chapterTitle: "Aplicaciones del Calculo",
+      concepts: ["Primary lesson concepts"],
       courseTitle: "Calculo para Ingenieria",
       explanationSteps: [
         {
@@ -679,6 +704,7 @@ ${SHARED_EXPECTATIONS}
       lessonDescription:
         "Aplicando tecnicas de calculo para encontrar optimos en problemas de ingenieria y negocios",
       lessonTitle: "Optimizacion con Calculo",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
     },
   },
 ];

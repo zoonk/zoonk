@@ -72,6 +72,7 @@ ${SHARED_EXPECTATIONS}
     id: "en-cs-algorithm-complexity",
     userInput: {
       chapterTitle: "Algorithm Analysis",
+      concepts: ["Primary lesson concepts"],
       courseTitle: "Data Structures and Algorithms",
       explanationSteps: [
         {
@@ -99,6 +100,7 @@ ${SHARED_EXPECTATIONS}
       lessonDescription:
         "Understanding and applying algorithm complexity analysis to make informed trade-offs in software design",
       lessonTitle: "Algorithm Complexity Trade-offs",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
     },
   },
   {
@@ -123,6 +125,7 @@ ${SHARED_EXPECTATIONS}
     id: "en-economics-supply-demand",
     userInput: {
       chapterTitle: "Market Dynamics",
+      concepts: ["Primary lesson concepts"],
       courseTitle: "Microeconomics Fundamentals",
       explanationSteps: [
         {
@@ -150,6 +153,7 @@ ${SHARED_EXPECTATIONS}
       lessonDescription:
         "Applying supply and demand principles to make strategic pricing and market decisions",
       lessonTitle: "Supply and Demand in Practice",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
     },
   },
   {
@@ -174,6 +178,7 @@ ${SHARED_EXPECTATIONS}
     id: "en-biology-ecosystem-balance",
     userInput: {
       chapterTitle: "Ecosystem Dynamics",
+      concepts: ["Primary lesson concepts"],
       courseTitle: "Ecology and Conservation",
       explanationSteps: [
         {
@@ -201,6 +206,7 @@ ${SHARED_EXPECTATIONS}
       lessonDescription:
         "Applying ecological principles to make informed ecosystem management decisions",
       lessonTitle: "Ecosystem Balance and Management",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
     },
   },
   {
@@ -227,6 +233,7 @@ ${SHARED_EXPECTATIONS}
     id: "pt-chemistry-reaction-equilibrium",
     userInput: {
       chapterTitle: "Equilibrio Quimico",
+      concepts: ["Primary lesson concepts"],
       courseTitle: "Quimica Geral II",
       explanationSteps: [
         {
@@ -254,6 +261,7 @@ ${SHARED_EXPECTATIONS}
       lessonDescription:
         "Aplicando o principio de Le Chatelier para otimizar reacoes quimicas e processos industriais",
       lessonTitle: "Equilibrio Quimico na Pratica",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
     },
   },
   {
@@ -280,6 +288,7 @@ ${SHARED_EXPECTATIONS}
     id: "es-physics-energy-conservation",
     userInput: {
       chapterTitle: "Energia y Trabajo",
+      concepts: ["Primary lesson concepts"],
       courseTitle: "Fisica Aplicada",
       explanationSteps: [
         {
@@ -307,6 +316,7 @@ ${SHARED_EXPECTATIONS}
       lessonDescription:
         "Aplicando principios de conservacion de energia para disenar y optimizar sistemas energeticos",
       lessonTitle: "Conservacion de Energia en Sistemas Reales",
+      neighboringConcepts: ["Out-of-scope neighboring concept"],
     },
   },
 ];

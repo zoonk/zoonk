@@ -22,6 +22,7 @@ export async function addLessonsStep(input: {
 
   const lessonsData = input.lessons.map((lesson, index) => ({
     chapterId: input.context.id,
+    concepts: lesson.concepts,
     description: lesson.description,
     generationStatus: "pending" as const,
     isPublished: true,

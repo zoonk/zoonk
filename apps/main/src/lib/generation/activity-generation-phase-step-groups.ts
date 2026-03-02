@@ -50,9 +50,8 @@ const ALL_COMPLETION_STEPS: ActivityStepName[] = [
   "setActivityAsCompleted",
 ];
 
-export const EXPLANATION_DEPS: ActivityStepName[] = [
+export const QUIZ_DEPENDENCY_STEPS: ActivityStepName[] = [
   "setActivityAsRunning",
-  "generateBackgroundContent",
   "generateExplanationContent",
 ];
 
