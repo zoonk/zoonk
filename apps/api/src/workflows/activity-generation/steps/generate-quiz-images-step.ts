@@ -4,6 +4,7 @@ import { generateStepImage } from "@zoonk/core/steps/image";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { isJsonObject, toRecord } from "@zoonk/utils/json";
+import { rejected } from "@zoonk/utils/settled";
 import { streamStatus } from "../stream-status";
 import { findActivityByKind } from "./_utils/find-activity-by-kind";
 import { type LessonActivity } from "./get-lesson-activities-step";
@@ -60,9 +61,7 @@ async function generateOptionImages(
     return option;
   });
 
-  const hadFailure = results.some((result) => result.status === "rejected" || result.value.error);
-
-  return { hadFailure, updatedOptions };
+  return { hadFailure: rejected(results), updatedOptions };
 }
 
 export async function generateQuizImagesStep(
@@ -124,12 +123,12 @@ export async function generateQuizImagesStep(
     }),
   );
 
-  const hadFailure = stepResults.some(
-    (result) =>
-      result.status === "rejected" ||
-      (result.status === "fulfilled" && result.value?.imageFailed) ||
-      (result.status === "fulfilled" && result.value?.updateFailed),
-  );
+  const hadFailure =
+    rejected(stepResults) ||
+    stepResults.some(
+      (result) =>
+        result.status === "fulfilled" && (result.value?.imageFailed || result.value?.updateFailed),
+    );
 
   if (hadFailure) {
     await handleActivityFailureStep({ activityId: activity.id });

@@ -1,4 +1,5 @@
 import { prisma } from "@zoonk/db";
+import { rejected } from "@zoonk/utils/settled";
 import { streamError, streamStatus } from "../stream-status";
 
 export async function completeCourseSetupStep(input: {
@@ -20,11 +21,9 @@ export async function completeCourseSetupStep(input: {
     }),
   ]);
 
-  const rejected = results.find((result) => result.status === "rejected");
-
-  if (rejected) {
+  if (rejected(results)) {
     await streamError({ reason: "dbSaveFailed", step: "completeCourseSetup" });
-    throw rejected.reason;
+    throw new Error("DB save failed in completeCourseSetup");
   }
 
   await streamStatus({ status: "completed", step: "completeCourseSetup" });

@@ -1,29 +1,21 @@
 import { prisma } from "@zoonk/db";
-import { safeAsync } from "@zoonk/utils/error";
+import { rejected } from "@zoonk/utils/settled";
 import { streamError, streamStatus } from "../stream-status";
 import { type LessonActivity } from "./get-lesson-activities-step";
 
-async function saveActivity(activity: LessonActivity, workflowRunId: string): Promise<boolean> {
+async function saveActivity(activity: LessonActivity, workflowRunId: string): Promise<void> {
   const current = await prisma.activity.findUnique({
     where: { id: activity.id },
   });
 
   if (current?.generationStatus !== "running") {
-    return true;
+    return;
   }
 
-  const { error } = await safeAsync(() =>
-    prisma.activity.update({
-      data: { generationRunId: workflowRunId, generationStatus: "completed" },
-      where: { id: activity.id },
-    }),
-  );
-
-  if (error) {
-    return false;
-  }
-
-  return true;
+  await prisma.activity.update({
+    data: { generationRunId: workflowRunId, generationStatus: "completed" },
+    where: { id: activity.id },
+  });
 }
 
 export async function saveCustomActivitiesStep(
@@ -45,11 +37,7 @@ export async function saveCustomActivitiesStep(
     customActivities.map((act) => saveActivity(act, workflowRunId)),
   );
 
-  const hasFailure = results.some(
-    (result) => result.status === "rejected" || (result.status === "fulfilled" && !result.value),
-  );
-
-  if (hasFailure) {
+  if (rejected(results)) {
     await streamError({ reason: "dbSaveFailed", step: "setCustomAsCompleted" });
     await streamStatus({ status: "error", step: "setActivityAsCompleted" });
     return;

@@ -1,14 +1,16 @@
 import { type StepVisualSchema, generateStepVisuals } from "@zoonk/ai/tasks/steps/visual";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
+import { settledValues } from "@zoonk/utils/settled";
 import { streamStatus } from "../stream-status";
 import { type CustomContentResult } from "./generate-custom-content-step";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
 
-type StepVisual = StepVisualSchema["visuals"][number];
-
-export type CustomVisualResult = { activityId: number; visuals: StepVisual[] };
+export type CustomVisualResult = {
+  activityId: number;
+  visuals: StepVisualSchema["visuals"][number][];
+};
 
 async function generateVisualsForActivity(
   activity: LessonActivity,
@@ -96,11 +98,7 @@ export async function generateCustomVisualsStep(
     }),
   );
 
-  const settled = results.map((result) =>
-    result.status === "fulfilled" ? result.value : { activityId: 0, visuals: [] as StepVisual[] },
-  );
-
   await streamStatus({ status: "completed", step: "generateVisuals" });
 
-  return settled.filter((result) => result.activityId !== 0);
+  return settledValues(results);
 }

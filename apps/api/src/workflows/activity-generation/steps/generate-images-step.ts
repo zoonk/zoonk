@@ -1,6 +1,7 @@
 import { generateVisualStepImage } from "@zoonk/core/steps/visual-image";
 import { type ActivityKind, prisma } from "@zoonk/db";
 import { getString, toRecord } from "@zoonk/utils/json";
+import { rejected } from "@zoonk/utils/settled";
 import { streamStatus } from "../stream-status";
 import { findActivityByKind } from "./_utils/find-activity-by-kind";
 import { type StepVisual } from "./generate-visuals-step";
@@ -41,9 +42,7 @@ async function generateAndSaveImages(
     }),
   );
 
-  const hadFailure =
-    results.some((result) => result.status === "rejected" || result.value.error) ||
-    updateResults.some((result) => result.status === "rejected");
+  const hadFailure = rejected(results) || rejected(updateResults);
 
   return { hadFailure, results };
 }
