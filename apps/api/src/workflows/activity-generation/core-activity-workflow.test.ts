@@ -2480,6 +2480,137 @@ describe("core activity workflow", () => {
       expect(examplesSteps.length).toBeGreaterThan(0);
       expect(storySteps.length).toBeGreaterThan(0);
       expect(challengeSteps.length).toBeGreaterThan(0);
+
+      for (const steps of [bgSteps, expSteps, mechSteps, examplesSteps]) {
+        const imageSteps = steps.filter((step) => step.visualKind === "image");
+        expect(imageSteps.length).toBeGreaterThan(0);
+
+        for (const step of imageSteps) {
+          expect(step.visualContent).toEqual(expect.objectContaining({ url: expect.any(String) }));
+        }
+      }
+    });
+  });
+
+  describe("data integrity", () => {
+    test("completed background has image URLs on all image steps", async () => {
+      const testLesson = await lessonFixture({
+        chapterId: chapter.id,
+        concepts: ["Test Concept"],
+        organizationId,
+        title: `DI Background Lesson ${randomUUID()}`,
+      });
+
+      const activity = await activityFixture({
+        generationStatus: "pending",
+        kind: "background",
+        lessonId: testLesson.id,
+        organizationId,
+        title: `DI Background ${randomUUID()}`,
+      });
+
+      await activityGenerationWorkflow(testLesson.id);
+
+      const steps = await prisma.step.findMany({ where: { activityId: activity.id } });
+      const imageSteps = steps.filter((step) => step.visualKind === "image");
+      expect(imageSteps.length).toBeGreaterThan(0);
+
+      for (const step of imageSteps) {
+        expect(step.visualContent).toEqual(expect.objectContaining({ url: expect.any(String) }));
+      }
+
+      const dbActivity = await prisma.activity.findUnique({ where: { id: activity.id } });
+      expect(dbActivity?.generationStatus).toBe("completed");
+    });
+
+    test("completed explanation has image URLs on all image steps", async () => {
+      const testLesson = await lessonFixture({
+        chapterId: chapter.id,
+        concepts: ["Test Concept"],
+        organizationId,
+        title: `DI Explanation Lesson ${randomUUID()}`,
+      });
+
+      const activity = await activityFixture({
+        generationStatus: "pending",
+        kind: "explanation",
+        lessonId: testLesson.id,
+        organizationId,
+        title: `DI Explanation ${randomUUID()}`,
+      });
+
+      await activityGenerationWorkflow(testLesson.id);
+
+      const steps = await prisma.step.findMany({ where: { activityId: activity.id } });
+      const imageSteps = steps.filter((step) => step.visualKind === "image");
+      expect(imageSteps.length).toBeGreaterThan(0);
+
+      for (const step of imageSteps) {
+        expect(step.visualContent).toEqual(expect.objectContaining({ url: expect.any(String) }));
+      }
+
+      const dbActivity = await prisma.activity.findUnique({ where: { id: activity.id } });
+      expect(dbActivity?.generationStatus).toBe("completed");
+    });
+
+    test("completed mechanics has image URLs on all image steps", async () => {
+      const testLesson = await lessonFixture({
+        chapterId: chapter.id,
+        concepts: ["Test Concept"],
+        organizationId,
+        title: `DI Mechanics Lesson ${randomUUID()}`,
+      });
+
+      const activity = await activityFixture({
+        generationStatus: "pending",
+        kind: "mechanics",
+        lessonId: testLesson.id,
+        organizationId,
+        title: `DI Mechanics ${randomUUID()}`,
+      });
+
+      await activityGenerationWorkflow(testLesson.id);
+
+      const steps = await prisma.step.findMany({ where: { activityId: activity.id } });
+      const imageSteps = steps.filter((step) => step.visualKind === "image");
+      expect(imageSteps.length).toBeGreaterThan(0);
+
+      for (const step of imageSteps) {
+        expect(step.visualContent).toEqual(expect.objectContaining({ url: expect.any(String) }));
+      }
+
+      const dbActivity = await prisma.activity.findUnique({ where: { id: activity.id } });
+      expect(dbActivity?.generationStatus).toBe("completed");
+    });
+
+    test("completed examples has image URLs on all image steps", async () => {
+      const testLesson = await lessonFixture({
+        chapterId: chapter.id,
+        concepts: ["Test Concept"],
+        organizationId,
+        title: `DI Examples Lesson ${randomUUID()}`,
+      });
+
+      const activity = await activityFixture({
+        generationStatus: "pending",
+        kind: "examples",
+        lessonId: testLesson.id,
+        organizationId,
+        title: `DI Examples ${randomUUID()}`,
+      });
+
+      await activityGenerationWorkflow(testLesson.id);
+
+      const steps = await prisma.step.findMany({ where: { activityId: activity.id } });
+      const imageSteps = steps.filter((step) => step.visualKind === "image");
+      expect(imageSteps.length).toBeGreaterThan(0);
+
+      for (const step of imageSteps) {
+        expect(step.visualContent).toEqual(expect.objectContaining({ url: expect.any(String) }));
+      }
+
+      const dbActivity = await prisma.activity.findUnique({ where: { id: activity.id } });
+      expect(dbActivity?.generationStatus).toBe("completed");
     });
   });
 

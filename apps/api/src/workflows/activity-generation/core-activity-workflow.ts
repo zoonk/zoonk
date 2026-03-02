@@ -185,11 +185,11 @@ export async function coreActivityWorkflow(
     ...expImagePromises,
     generateQuizImagesStep(activities, quizzes.quiz1.questions, 0),
     ...(totalQuizzes >= 2 ? [generateQuizImagesStep(activities, quizzes.quiz2.questions, 1)] : []),
-    completeActivityStep(activities, workflowRunId, "background"),
   ]);
 
   // Wave 4: save all remaining
   await Promise.allSettled([
+    completeActivityStep(activities, workflowRunId, "background"),
     completeActivitiesByKindStep(activities, workflowRunId, "explanation"),
     completeActivitiesByKindStep(activities, workflowRunId, "quiz"),
     completeActivityStep(activities, workflowRunId, "review"),
