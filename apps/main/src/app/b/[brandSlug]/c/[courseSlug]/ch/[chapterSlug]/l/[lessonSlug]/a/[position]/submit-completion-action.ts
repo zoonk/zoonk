@@ -47,20 +47,12 @@ export async function submitCompletion(rawInput: CompletionInput): Promise<Compl
 
   const { data, error } = await safeAsync(async () => {
     const activity = await prisma.activity.findUnique({
-      select: {
-        id: true,
-        kind: true,
-        lesson: { select: { chapter: { select: { courseId: true } } } },
-        organizationId: true,
+      include: {
+        lesson: { include: { chapter: true } },
         steps: {
+          include: { sentence: true, word: true },
+          omit: { visualContent: true },
           orderBy: { position: "asc" },
-          select: {
-            content: true,
-            id: true,
-            kind: true,
-            sentence: { select: { id: true, sentence: true, translation: true } },
-            word: { select: { id: true } },
-          },
           where: { isPublished: true },
         },
       },

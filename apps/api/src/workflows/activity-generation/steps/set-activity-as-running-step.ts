@@ -16,7 +16,6 @@ export async function setActivityAsRunningStep(input: {
         generationRunId: input.workflowRunId,
         generationStatus: "running",
       },
-      select: { generationStatus: true, id: true },
       where: { id: input.activityId },
     }),
   );

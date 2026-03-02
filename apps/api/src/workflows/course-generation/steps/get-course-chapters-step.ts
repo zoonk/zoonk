@@ -1,9 +1,8 @@
-import { prisma } from "@zoonk/db";
+import { type Chapter, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { streamError, streamStatus } from "../stream-status";
-import { type CreatedChapter } from "../types";
 
-export async function getCourseChaptersStep(courseId: number): Promise<CreatedChapter[]> {
+export async function getCourseChaptersStep(courseId: number): Promise<Chapter[]> {
   "use step";
 
   await streamStatus({ status: "started", step: "getExistingChapters" });
@@ -11,13 +10,6 @@ export async function getCourseChaptersStep(courseId: number): Promise<CreatedCh
   const { data: chapters, error } = await safeAsync(() =>
     prisma.chapter.findMany({
       orderBy: { position: "asc" },
-      select: {
-        description: true,
-        id: true,
-        position: true,
-        slug: true,
-        title: true,
-      },
       where: { courseId },
     }),
   );

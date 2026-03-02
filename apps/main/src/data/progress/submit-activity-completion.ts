@@ -107,7 +107,6 @@ async function upsertDailyProgress(
   // When organizationId is null, the compound unique can't be used.
   // Find an existing record by individual fields instead.
   const existing = await tx.dailyProgress.findFirst({
-    select: { id: true },
     where: {
       date: params.date,
       organizationId: null,
@@ -208,7 +207,6 @@ export async function submitActivityCompletion(input: {
 
     // Find existing UserProgress to apply decay
     const existingProgress = await tx.userProgress.findUnique({
-      select: { currentEnergy: true, lastActiveAt: true },
       where: { userId: input.userId },
     });
 

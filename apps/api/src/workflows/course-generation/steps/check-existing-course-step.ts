@@ -5,18 +5,19 @@ import { ensureLocaleSuffix, toSlug } from "@zoonk/utils/string";
 import { streamError, streamStatus } from "../stream-status";
 import { type CourseSuggestionData } from "../types";
 
-export type ExistingCourse = {
-  id: number;
-  slug: string;
-  generationStatus: string;
-  description: string | null;
-  imageUrl: string | null;
+const courseInclude = {
   _count: {
-    alternativeTitles: number;
-    categories: number;
-    chapters: number;
-  };
-};
+    select: {
+      alternativeTitles: true,
+      categories: true,
+      chapters: true,
+    },
+  },
+} as const;
+
+export type ExistingCourse = NonNullable<
+  Awaited<ReturnType<typeof prisma.course.findFirst<{ include: typeof courseInclude }>>>
+>;
 
 export async function checkExistingCourseStep(
   suggestion: CourseSuggestionData,
@@ -27,35 +28,18 @@ export async function checkExistingCourseStep(
 
   const normalizedSlug = toSlug(suggestion.slug);
 
-  const courseSelect = {
-    _count: {
-      select: {
-        alternativeTitles: true,
-        categories: true,
-        chapters: true,
-      },
-    },
-    description: true,
-    generationStatus: true,
-    id: true,
-    imageUrl: true,
-    slug: true,
-  } as const;
-
   const { data, error } = await safeAsync(() =>
     Promise.all([
       prisma.course.findFirst({
-        select: courseSelect,
+        include: courseInclude,
         where: {
           organization: { slug: AI_ORG_SLUG },
           slug: ensureLocaleSuffix(normalizedSlug, suggestion.language),
         },
       }),
       prisma.courseAlternativeTitle.findUnique({
-        select: {
-          course: {
-            select: courseSelect,
-          },
+        include: {
+          course: { include: courseInclude },
         },
         where: {
           languageSlug: { language: suggestion.language, slug: normalizedSlug },

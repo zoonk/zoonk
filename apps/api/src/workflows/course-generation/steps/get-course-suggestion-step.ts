@@ -11,15 +11,6 @@ export async function getCourseSuggestionStep(
   await streamStatus({ status: "started", step: "getCourseSuggestion" });
 
   const suggestion = await prisma.courseSuggestion.findUnique({
-    select: {
-      description: true,
-      generationRunId: true,
-      generationStatus: true,
-      language: true,
-      slug: true,
-      targetLanguage: true,
-      title: true,
-    },
     where: { id: courseSuggestionId },
   });
 
@@ -37,14 +28,5 @@ export async function getCourseSuggestionStep(
 
   await streamStatus({ status: "completed", step: "getCourseSuggestion" });
 
-  return {
-    description: suggestion.description,
-    generationRunId: suggestion.generationRunId,
-    generationStatus: suggestion.generationStatus,
-    id: courseSuggestionId,
-    language: suggestion.language,
-    slug: suggestion.slug,
-    targetLanguage: suggestion.targetLanguage,
-    title: suggestion.title,
-  };
+  return suggestion;
 }

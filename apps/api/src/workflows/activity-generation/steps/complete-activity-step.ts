@@ -37,7 +37,6 @@ export async function completeActivityStep(
   }
 
   const current = await prisma.activity.findUnique({
-    select: { generationStatus: true },
     where: { id: activity.id },
   });
 

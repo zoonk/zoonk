@@ -32,11 +32,3 @@ export type GeneratedChapter = {
   title: string;
   description: string;
 };
-
-export type CreatedChapter = {
-  id: number;
-  slug: string;
-  title: string;
-  description: string;
-  position: number;
-};

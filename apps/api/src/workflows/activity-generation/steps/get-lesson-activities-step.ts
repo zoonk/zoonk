@@ -5,36 +5,19 @@ import { streamError, streamStatus } from "../stream-status";
 
 async function getLessonActivities(lessonId: number) {
   const activities = await prisma.activity.findMany({
-    orderBy: { position: "asc" },
-    select: {
+    include: {
       _count: { select: { steps: true } },
-      description: true,
-      generationStatus: true,
-      id: true,
-      kind: true,
-      language: true,
       lesson: {
-        select: {
+        include: {
           chapter: {
-            select: {
-              course: {
-                select: {
-                  organization: { select: { id: true, slug: true } },
-                  targetLanguage: true,
-                  title: true,
-                },
-              },
-              title: true,
+            include: {
+              course: { include: { organization: true } },
             },
           },
-          description: true,
-          kind: true,
-          title: true,
         },
       },
-      lessonId: true,
-      title: true,
     },
+    orderBy: { position: "asc" },
     where: { lessonId },
   });
 
