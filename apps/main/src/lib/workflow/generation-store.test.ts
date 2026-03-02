@@ -1,110 +1,152 @@
 import { describe, expect, it } from "vitest";
-import { type StreamMessage, createGenerationStore, handleStreamMessage } from "./generation-store";
+import {
+  type GenerationAction,
+  type GenerationState,
+  type StreamMessage,
+  generationReducer,
+  handleStreamMessage,
+  initialGenerationState,
+} from "./generation-store";
 
-describe(createGenerationStore, () => {
+describe(generationReducer, () => {
   describe("stepCompleted", () => {
     it("adds step to completedSteps", () => {
-      const store = createGenerationStore<"stepA" | "stepB">();
-      store.send({ step: "stepA", type: "stepCompleted" });
-      expect(store.getSnapshot().context.completedSteps).toEqual(["stepA"]);
+      const state = generationReducer(initialGenerationState(), {
+        step: "stepA",
+        type: "stepCompleted",
+      });
+      expect(state.completedSteps).toEqual(["stepA"]);
     });
 
     it("does not add duplicate steps", () => {
-      const store = createGenerationStore<"stepA" | "stepB">();
-      store.send({ step: "stepA", type: "stepCompleted" });
-      store.send({ step: "stepA", type: "stepCompleted" });
-      expect(store.getSnapshot().context.completedSteps).toEqual(["stepA"]);
+      const first = generationReducer(initialGenerationState(), {
+        step: "stepA",
+        type: "stepCompleted",
+      });
+      const second = generationReducer(first, { step: "stepA", type: "stepCompleted" });
+      expect(second.completedSteps).toEqual(["stepA"]);
     });
 
     it("clears currentStep when it matches the completed step", () => {
-      const store = createGenerationStore<"stepA" | "stepB">({
-        currentStep: "stepA",
+      const state = generationReducer(initialGenerationState({ currentStep: "stepA" }), {
+        step: "stepA",
+        type: "stepCompleted",
       });
-      store.send({ step: "stepA", type: "stepCompleted" });
-      expect(store.getSnapshot().context.currentStep).toBeNull();
+      expect(state.currentStep).toBeNull();
     });
 
     it("does NOT clear currentStep when a different step completes", () => {
-      const store = createGenerationStore<"stepA" | "stepB">({
-        currentStep: "stepB",
+      const state = generationReducer(initialGenerationState({ currentStep: "stepB" }), {
+        step: "stepA",
+        type: "stepCompleted",
       });
-      store.send({ step: "stepA", type: "stepCompleted" });
-      expect(store.getSnapshot().context.currentStep).toBe("stepB");
+      expect(state.currentStep).toBe("stepB");
     });
   });
 
   describe("stepStarted", () => {
     it("sets currentStep", () => {
-      const store = createGenerationStore<"stepA" | "stepB">();
-      store.send({ step: "stepA", type: "stepStarted" });
-      expect(store.getSnapshot().context.currentStep).toBe("stepA");
+      const state = generationReducer(initialGenerationState(), {
+        step: "stepA",
+        type: "stepStarted",
+      });
+      expect(state.currentStep).toBe("stepA");
     });
   });
 
-  describe("workflowCompleted", () => {
+  describe("streamEnded", () => {
     it("does not transition from error state", () => {
-      const store = createGenerationStore({
-        error: "Some error",
-        status: "error",
+      const state = generationReducer(
+        initialGenerationState({ error: "Some error", status: "error" }),
+        { type: "streamEnded" },
+      );
+      expect(state.status).toBe("error");
+    });
+
+    it("does not transition from completed state", () => {
+      const state = generationReducer(initialGenerationState({ status: "completed" }), {
+        type: "streamEnded",
       });
-      store.send({ type: "workflowCompleted" });
-      expect(store.getSnapshot().context.status).toBe("error");
+      expect(state.status).toBe("completed");
     });
 
     it("transitions to completed from streaming state", () => {
-      const store = createGenerationStore({ status: "streaming" });
-      store.send({ type: "workflowCompleted" });
-      expect(store.getSnapshot().context.status).toBe("completed");
+      const state = generationReducer(initialGenerationState({ status: "streaming" }), {
+        type: "streamEnded",
+      });
+      expect(state.status).toBe("completed");
+    });
+
+    it("transitions to completed when completionStep is in completedSteps", () => {
+      const state = generationReducer(
+        initialGenerationState({ completedSteps: ["done"], status: "streaming" }),
+        { completionStep: "done", type: "streamEnded" },
+      );
+      expect(state.status).toBe("completed");
+    });
+
+    it("transitions to error when completionStep is missing from completedSteps", () => {
+      const state = generationReducer(initialGenerationState({ status: "streaming" }), {
+        completionStep: "done",
+        type: "streamEnded",
+      });
+      expect(state.status).toBe("error");
+      expect(state.error).toBe("Generation ended unexpectedly. Please try again.");
     });
   });
 });
 
 describe(handleStreamMessage, () => {
+  function applyActions(actions: GenerationAction[], initial: GenerationState) {
+    let state = initial;
+    for (const action of actions) {
+      state = generationReducer(state, action);
+    }
+    return state;
+  }
+
+  function applyMessage(
+    message: StreamMessage,
+    initial?: Parameters<typeof initialGenerationState>[0],
+  ) {
+    const actions: GenerationAction[] = [];
+    handleStreamMessage(message, (a) => actions.push(a));
+    return applyActions(actions, initialGenerationState(initial));
+  }
+
   it("routes 'started' to stepStarted", () => {
-    const store = createGenerationStore<"stepA">();
-    const message: StreamMessage<"stepA"> = { status: "started", step: "stepA" };
-    handleStreamMessage(message, store);
-    expect(store.getSnapshot().context.currentStep).toBe("stepA");
+    const state = applyMessage({ status: "started", step: "stepA" });
+    expect(state.currentStep).toBe("stepA");
   });
 
   it("routes 'completed' to stepCompleted", () => {
-    const store = createGenerationStore<"stepA">();
-    const message: StreamMessage<"stepA"> = { status: "completed", step: "stepA" };
-    handleStreamMessage(message, store);
-    expect(store.getSnapshot().context.completedSteps).toEqual(["stepA"]);
+    const state = applyMessage({ status: "completed", step: "stepA" });
+    expect(state.completedSteps).toEqual(["stepA"]);
   });
 
-  it("triggers workflowCompleted on completionStep match", () => {
-    const store = createGenerationStore<"stepA" | "done">({ status: "streaming" });
-    const message: StreamMessage<"stepA" | "done"> = { status: "completed", step: "done" };
-    handleStreamMessage(message, store, "done");
-    expect(store.getSnapshot().context.status).toBe("completed");
+  it("triggers streamEnded on completionStep match", () => {
+    const actions: GenerationAction[] = [];
+    handleStreamMessage({ status: "completed", step: "done" }, (a) => actions.push(a), "done");
+    const state = applyActions(actions, initialGenerationState({ status: "streaming" }));
+    expect(state.status).toBe("completed");
   });
 
-  it("does not trigger workflowCompleted for non-completion steps", () => {
-    const store = createGenerationStore<"stepA" | "done">({ status: "streaming" });
-    const message: StreamMessage<"stepA" | "done"> = { status: "completed", step: "stepA" };
-    handleStreamMessage(message, store, "done");
-    expect(store.getSnapshot().context.status).toBe("streaming");
+  it("does not trigger streamEnded for non-completion steps", () => {
+    const actions: GenerationAction[] = [];
+    handleStreamMessage({ status: "completed", step: "stepA" }, (a) => actions.push(a), "done");
+    const state = applyActions(actions, initialGenerationState({ status: "streaming" }));
+    expect(state.status).toBe("streaming");
   });
 
   it("routes 'error' to setError with step name", () => {
-    const store = createGenerationStore<"stepA">();
-    const message: StreamMessage<"stepA"> = { status: "error", step: "stepA" };
-    handleStreamMessage(message, store);
-    expect(store.getSnapshot().context.status).toBe("error");
-    expect(store.getSnapshot().context.error).toBe('Step "stepA" failed');
+    const state = applyMessage({ status: "error", step: "stepA" });
+    expect(state.status).toBe("error");
+    expect(state.error).toBe('Step "stepA" failed');
   });
 
   it("routes 'error' with reason to setError", () => {
-    const store = createGenerationStore<"stepA">();
-    const message: StreamMessage<"stepA"> = {
-      reason: "aiGenerationFailed",
-      status: "error",
-      step: "stepA",
-    };
-    handleStreamMessage(message, store);
-    expect(store.getSnapshot().context.status).toBe("error");
-    expect(store.getSnapshot().context.error).toBe("stepA: aiGenerationFailed");
+    const state = applyMessage({ reason: "aiGenerationFailed", status: "error", step: "stepA" });
+    expect(state.status).toBe("error");
+    expect(state.error).toBe("stepA: aiGenerationFailed");
   });
 });

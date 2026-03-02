@@ -1,13 +1,15 @@
 "use client";
 
-import { useSelector } from "@xstate/store-react";
 import { getString } from "@zoonk/utils/json";
-import { useCallback, useEffect, useEffectEvent, useMemo, useRef } from "react";
+import { useCallback, useEffect, useEffectEvent, useReducer, useRef } from "react";
 import {
+  type GenerationAction,
+  type GenerationState,
   type GenerationStatus,
   type StreamMessage,
-  createGenerationStore,
+  generationReducer,
   handleStreamMessage,
+  initialGenerationState,
 } from "./generation-store";
 import { useSSE } from "./use-sse";
 
@@ -23,54 +25,30 @@ export function useWorkflowGeneration<TStep extends string = string>(config: {
   const { autoTrigger = true, completionStep, statusUrl, triggerBody, triggerUrl } = config;
   const hasTriggeredRef = useRef(false);
 
-  const store = useMemo(
-    () =>
-      createGenerationStore<TStep>({
-        runId: config.initialRunId ?? null,
-        status: config.initialRunId ? "streaming" : (config.initialStatus ?? "idle"),
-      }),
-    [config.initialRunId, config.initialStatus],
+  // Wrapper preserves the TStep generic that useReducer would otherwise widen to string.
+  const [state, dispatch] = useReducer(
+    (prev: GenerationState<TStep>, action: GenerationAction<TStep>) =>
+      generationReducer(prev, action),
+    initialGenerationState<TStep>({
+      runId: config.initialRunId ?? null,
+      status: config.initialRunId ? "streaming" : (config.initialStatus ?? "idle"),
+    }),
   );
 
-  const completedSteps = useSelector(store, (state) => state.context.completedSteps);
-  const currentStep = useSelector(store, (state) => state.context.currentStep);
-  const storeError = useSelector(store, (state) => state.context.error);
-  const runId = useSelector(store, (state) => state.context.runId);
-  const startedSteps = useSelector(store, (state) => state.context.startedSteps);
-  const status = useSelector(store, (state) => state.context.status);
-
-  const handleMessage = useCallback(
-    (msg: StreamMessage<TStep>) => handleStreamMessage(msg, store, completionStep),
-    [store, completionStep],
+  const handleMessage = useEffectEvent((msg: StreamMessage<TStep>) =>
+    handleStreamMessage(msg, dispatch, completionStep),
   );
 
-  const handleComplete = useCallback(() => {
-    const snapshot = store.getSnapshot();
+  const handleComplete = useEffectEvent(() => {
+    dispatch({ completionStep, type: "streamEnded" });
+  });
 
-    // If handleStreamMessage already transitioned to completed or error, do nothing.
-    if (snapshot.context.status === "completed" || snapshot.context.status === "error") {
-      return;
-    }
-
-    // Stream ended without the completion step — premature close.
-    if (completionStep && !snapshot.context.completedSteps.includes(completionStep)) {
-      store.send({
-        error: "Generation ended unexpectedly. Please try again.",
-        type: "setError",
-      });
-      return;
-    }
-
-    store.send({ type: "workflowCompleted" });
-  }, [store, completionStep]);
-
-  const handleError = useCallback(
-    (err: Error) => store.send({ error: err.message, type: "setError" }),
-    [store],
+  const handleError = useEffectEvent((err: Error) =>
+    dispatch({ error: err.message, type: "setError" }),
   );
 
   const { resetIndex } = useSSE<StreamMessage<TStep>>(
-    status === "streaming" && runId ? `${statusUrl}?runId=${runId}` : null,
+    state.status === "streaming" && state.runId ? `${statusUrl}?runId=${state.runId}` : null,
     {
       onComplete: handleComplete,
       onError: handleError,
@@ -79,7 +57,7 @@ export function useWorkflowGeneration<TStep extends string = string>(config: {
   );
 
   const startTrigger = useEffectEvent(async () => {
-    store.send({ type: "triggerStart" });
+    dispatch({ type: "triggerStart" });
 
     try {
       const response = await fetch(triggerUrl, {
@@ -100,9 +78,9 @@ export function useWorkflowGeneration<TStep extends string = string>(config: {
         throw new Error("Invalid response: missing runId");
       }
 
-      store.send({ runId: newRunId, type: "triggerSuccess" });
+      dispatch({ runId: newRunId, type: "triggerSuccess" });
     } catch (error) {
-      store.send({
+      dispatch({
         error: error instanceof Error ? error.message : "Failed to start",
         type: "setError",
       });
@@ -110,25 +88,25 @@ export function useWorkflowGeneration<TStep extends string = string>(config: {
   });
 
   useEffect(() => {
-    if (!autoTrigger || status !== "idle" || hasTriggeredRef.current) {
+    if (!autoTrigger || state.status !== "idle" || hasTriggeredRef.current) {
       return;
     }
     hasTriggeredRef.current = true;
     void startTrigger();
-  }, [autoTrigger, status]);
+  }, [autoTrigger, state.status]);
 
   const retry = useCallback(() => {
     hasTriggeredRef.current = false;
     resetIndex();
-    store.send({ type: "reset" });
-  }, [resetIndex, store]);
+    dispatch({ type: "reset" });
+  }, [resetIndex]);
 
   return {
-    completedSteps,
-    currentStep,
-    error: storeError,
+    completedSteps: state.completedSteps,
+    currentStep: state.currentStep,
+    error: state.error,
     retry,
-    startedSteps,
-    status,
+    startedSteps: state.startedSteps,
+    status: state.status,
   };
 }
