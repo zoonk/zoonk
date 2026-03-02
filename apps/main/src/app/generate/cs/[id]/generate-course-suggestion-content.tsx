@@ -11,7 +11,7 @@ import {
 import { Empty, EmptyContent, EmptyHeader } from "@zoonk/ui/components/empty";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { AI_ORG_SLUG } from "@zoonk/utils/constants";
-import { parseNumericId } from "@zoonk/utils/string";
+import { ensureLocaleSuffix, parseNumericId } from "@zoonk/utils/string";
 import { notFound, redirect } from "next/navigation";
 import { GenerationClient } from "./generation-client";
 
@@ -53,7 +53,7 @@ export async function GenerateCourseSuggestionContent({
 
       <ContainerBody>
         <GenerationClient
-          courseSlug={suggestion.slug}
+          courseSlug={ensureLocaleSuffix(suggestion.slug, suggestion.language)}
           generationRunId={suggestion.generationRunId}
           generationStatus={suggestion.generationStatus}
           suggestionId={suggestionId}
