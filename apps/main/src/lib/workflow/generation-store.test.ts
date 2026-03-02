@@ -54,22 +54,44 @@ describe(generationReducer, () => {
     });
   });
 
-  describe("workflowCompleted", () => {
+  describe("streamEnded", () => {
     it("does not transition from error state", () => {
       const state = generationReducer(
         initialGenerationState({ error: "Some error", status: "error" }),
-        {
-          type: "workflowCompleted",
-        },
+        { type: "streamEnded" },
       );
       expect(state.status).toBe("error");
     });
 
-    it("transitions to completed from streaming state", () => {
-      const state = generationReducer(initialGenerationState({ status: "streaming" }), {
-        type: "workflowCompleted",
+    it("does not transition from completed state", () => {
+      const state = generationReducer(initialGenerationState({ status: "completed" }), {
+        type: "streamEnded",
       });
       expect(state.status).toBe("completed");
+    });
+
+    it("transitions to completed from streaming state", () => {
+      const state = generationReducer(initialGenerationState({ status: "streaming" }), {
+        type: "streamEnded",
+      });
+      expect(state.status).toBe("completed");
+    });
+
+    it("transitions to completed when completionStep is in completedSteps", () => {
+      const state = generationReducer(
+        initialGenerationState({ completedSteps: ["done"], status: "streaming" }),
+        { completionStep: "done", type: "streamEnded" },
+      );
+      expect(state.status).toBe("completed");
+    });
+
+    it("transitions to error when completionStep is missing from completedSteps", () => {
+      const state = generationReducer(initialGenerationState({ status: "streaming" }), {
+        completionStep: "done",
+        type: "streamEnded",
+      });
+      expect(state.status).toBe("error");
+      expect(state.error).toBe("Generation ended unexpectedly. Please try again.");
     });
   });
 });
@@ -102,14 +124,14 @@ describe(handleStreamMessage, () => {
     expect(state.completedSteps).toEqual(["stepA"]);
   });
 
-  it("triggers workflowCompleted on completionStep match", () => {
+  it("triggers streamEnded on completionStep match", () => {
     const actions: GenerationAction[] = [];
     handleStreamMessage({ status: "completed", step: "done" }, (a) => actions.push(a), "done");
     const state = applyActions(actions, initialGenerationState({ status: "streaming" }));
     expect(state.status).toBe("completed");
   });
 
-  it("does not trigger workflowCompleted for non-completion steps", () => {
+  it("does not trigger streamEnded for non-completion steps", () => {
     const actions: GenerationAction[] = [];
     handleStreamMessage({ status: "completed", step: "stepA" }, (a) => actions.push(a), "done");
     const state = applyActions(actions, initialGenerationState({ status: "streaming" }));

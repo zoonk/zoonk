@@ -40,19 +40,7 @@ export function useWorkflowGeneration<TStep extends string = string>(config: {
   );
 
   const handleComplete = useEffectEvent(() => {
-    if (state.status === "completed" || state.status === "error") {
-      return;
-    }
-
-    if (completionStep && !state.completedSteps.includes(completionStep)) {
-      dispatch({
-        error: "Generation ended unexpectedly. Please try again.",
-        type: "setError",
-      });
-      return;
-    }
-
-    dispatch({ type: "workflowCompleted" });
+    dispatch({ completionStep, type: "streamEnded" });
   });
 
   const handleError = useEffectEvent((err: Error) =>

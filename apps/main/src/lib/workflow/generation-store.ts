@@ -21,9 +21,9 @@ export type GenerationAction<TStep extends string = string> =
   | { type: "setError"; error: string }
   | { type: "stepCompleted"; step: TStep }
   | { type: "stepStarted"; step: TStep }
+  | { type: "streamEnded"; completionStep?: TStep }
   | { type: "triggerStart" }
-  | { type: "triggerSuccess"; runId: string }
-  | { type: "workflowCompleted" };
+  | { type: "triggerSuccess"; runId: string };
 
 export function initialGenerationState<TStep extends string = string>(
   overrides?: Partial<GenerationState<TStep>>,
@@ -64,12 +64,23 @@ export function generationReducer<TStep extends string>(
           ? state.startedSteps
           : [...state.startedSteps, action.step],
       };
+    case "streamEnded":
+      if (state.status === "completed" || state.status === "error") {
+        return state;
+      }
+      if (action.completionStep && !state.completedSteps.includes(action.completionStep)) {
+        return {
+          ...state,
+          error: "Generation ended unexpectedly. Please try again.",
+          status: "error",
+        };
+      }
+      return { ...state, status: "completed" };
+
     case "triggerStart":
       return { ...state, error: null, status: "triggering" };
     case "triggerSuccess":
       return { ...state, runId: action.runId, status: "streaming" };
-    case "workflowCompleted":
-      return state.status === "error" ? state : { ...state, status: "completed" };
     default: {
       const exhaustiveCheck: never = action;
       throw new Error(`Unexpected action: ${JSON.stringify(exhaustiveCheck)}`);
@@ -89,7 +100,7 @@ export function handleStreamMessage<TStep extends string>(
     case "completed":
       dispatch({ step: message.step, type: "stepCompleted" });
       if (completionStep && message.step === completionStep) {
-        dispatch({ type: "workflowCompleted" });
+        dispatch({ completionStep, type: "streamEnded" });
       }
       break;
     case "error": {
