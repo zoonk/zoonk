@@ -223,6 +223,62 @@ test.describe("Generate Course Page", () => {
       // Should complete and redirect to course page
       await page.waitForURL(/\/b\/ai\/c\//, { timeout: 10_000 });
     });
+
+    test("redirects to suffixed slug for non-English courses", async ({ page }) => {
+      const slug = `e2e-locale-${randomUUID().slice(0, 8)}`;
+      const suffixedSlug = `${slug}-pt`;
+      const org = await getAiOrganization();
+
+      const [suggestion] = await Promise.all([
+        courseSuggestionFixture({
+          generationStatus: "pending",
+          language: "pt",
+          slug,
+          title: "E2E Locale Redirect Test",
+        }),
+        // Use generationStatus "running" so the server-side redirect is skipped
+        // and the client-side redirect (the one we're testing) fires instead.
+        courseFixture({
+          generationStatus: "running",
+          isPublished: true,
+          organizationId: org.id,
+          slug: suffixedSlug,
+          title: "E2E Locale Redirect Test",
+        }).then(async (course) => {
+          const chapter = await chapterFixture({
+            courseId: course.id,
+            isPublished: true,
+            organizationId: org.id,
+          });
+
+          await lessonFixture({
+            chapterId: chapter.id,
+            isPublished: true,
+            organizationId: org.id,
+          });
+        }),
+      ]);
+
+      await setupMockApis(page, {
+        streamMessages: [
+          { status: "started", step: "getCourseSuggestion" },
+          { status: "completed", step: "getCourseSuggestion" },
+          { status: "started", step: "addLessons" },
+          { status: "completed", step: "addLessons" },
+          { status: "started", step: "setLessonAsCompleted" },
+          { status: "completed", step: "setLessonAsCompleted" },
+          { status: "started", step: "setActivityAsCompleted" },
+          { status: "completed", step: "setActivityAsCompleted" },
+        ],
+      });
+
+      await page.goto(`/generate/cs/${suggestion.id}`);
+
+      // Should redirect to the suffixed slug, not the raw suggestion slug
+      await page.waitForURL(new RegExp(`/b/ai/c/${suffixedSlug}`), {
+        timeout: 10_000,
+      });
+    });
   });
 
   test.describe("Error handling", () => {
