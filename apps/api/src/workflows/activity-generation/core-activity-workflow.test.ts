@@ -2615,4 +2615,705 @@ describe("core activity workflow", () => {
       });
     });
   });
+
+  describe("multi-explanation behavior", () => {
+    test("generates multiple explanation activities in parallel", async () => {
+      const testLesson = await lessonFixture({
+        chapterId: chapter.id,
+        concepts: ["Concept A", "Concept B", "Concept C"],
+        organizationId,
+        title: `Multi Exp Lesson ${randomUUID()}`,
+      });
+
+      const [expA, expB, expC] = await Promise.all([
+        activityFixture({
+          generationStatus: "pending",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          position: 1,
+          title: "Concept A",
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          position: 2,
+          title: "Concept B",
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          position: 3,
+          title: "Concept C",
+        }),
+      ]);
+
+      await activityGenerationWorkflow(testLesson.id);
+
+      expect(generateActivityExplanation).toHaveBeenCalledTimes(3);
+
+      expect(generateActivityExplanation).toHaveBeenCalledWith(
+        expect.objectContaining({
+          concept: "Concept A",
+          otherLessonConcepts: ["Concept B", "Concept C"],
+        }),
+      );
+
+      expect(generateActivityExplanation).toHaveBeenCalledWith(
+        expect.objectContaining({
+          concept: "Concept B",
+          otherLessonConcepts: ["Concept A", "Concept C"],
+        }),
+      );
+
+      expect(generateActivityExplanation).toHaveBeenCalledWith(
+        expect.objectContaining({
+          concept: "Concept C",
+          otherLessonConcepts: ["Concept A", "Concept B"],
+        }),
+      );
+
+      const [dbA, dbB, dbC] = await Promise.all([
+        prisma.activity.findUnique({ where: { id: expA.id } }),
+        prisma.activity.findUnique({ where: { id: expB.id } }),
+        prisma.activity.findUnique({ where: { id: expC.id } }),
+      ]);
+
+      expect(dbA?.generationStatus).toBe("completed");
+      expect(dbB?.generationStatus).toBe("completed");
+      expect(dbC?.generationStatus).toBe("completed");
+    });
+
+    test("one explanation failure doesn't block others", async () => {
+      vi.mocked(generateActivityExplanation).mockImplementation(async (params) => {
+        if (params.concept === "Fail Concept") {
+          throw new Error("First explanation failed");
+        }
+        return {
+          data: { steps: [{ text: "Second exp text", title: "Second Exp" }] },
+          systemPrompt: "test",
+          usage: {} as Awaited<ReturnType<typeof generateActivityExplanation>>["usage"],
+          userPrompt: "test",
+        };
+      });
+
+      const testLesson = await lessonFixture({
+        chapterId: chapter.id,
+        concepts: ["Fail Concept", "Pass Concept"],
+        organizationId,
+        title: `Partial Exp Fail Lesson ${randomUUID()}`,
+      });
+
+      const [failExp, passExp] = await Promise.all([
+        activityFixture({
+          generationStatus: "pending",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          position: 1,
+          title: "Fail Concept",
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          position: 2,
+          title: "Pass Concept",
+        }),
+      ]);
+
+      await activityGenerationWorkflow(testLesson.id);
+
+      const [dbFail, dbPass] = await Promise.all([
+        prisma.activity.findUnique({ where: { id: failExp.id } }),
+        prisma.activity.findUnique({ where: { id: passExp.id } }),
+      ]);
+
+      expect(dbFail?.generationStatus).toBe("failed");
+      expect(dbPass?.generationStatus).toBe("completed");
+    });
+  });
+
+  describe("explanation visuals and images", () => {
+    test("generates visuals for each explanation activity", async () => {
+      const testLesson = await lessonFixture({
+        chapterId: chapter.id,
+        concepts: ["Visual Concept A", "Visual Concept B"],
+        organizationId,
+        title: `Exp Visuals Lesson ${randomUUID()}`,
+      });
+
+      await Promise.all([
+        activityFixture({
+          generationStatus: "pending",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          position: 1,
+          title: "Visual Concept A",
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          position: 2,
+          title: "Visual Concept B",
+        }),
+      ]);
+
+      await activityGenerationWorkflow(testLesson.id);
+
+      // 2 explanation activities + background/mechanics/examples = 5 calls total
+      // but only if bg/mech/examples activities exist. Here we only have explanations,
+      // so generateStepVisuals should be called once per explanation
+      const calls = vi.mocked(generateStepVisuals).mock.calls;
+      const explanationVisualCalls = calls.length;
+
+      expect(explanationVisualCalls).toBeGreaterThanOrEqual(2);
+    });
+
+    test("generates images for explanation activities", async () => {
+      const testLesson = await lessonFixture({
+        chapterId: chapter.id,
+        concepts: ["Image Exp Concept"],
+        organizationId,
+        title: `Exp Images Lesson ${randomUUID()}`,
+      });
+
+      const expActivity = await activityFixture({
+        generationStatus: "pending",
+        kind: "explanation",
+        lessonId: testLesson.id,
+        organizationId,
+        position: 1,
+        title: "Image Exp Concept",
+      });
+
+      await activityGenerationWorkflow(testLesson.id);
+
+      const expSteps = await prisma.step.findMany({
+        orderBy: { position: "asc" },
+        where: { activityId: expActivity.id },
+      });
+
+      const imageStep = expSteps.find((step) => step.visualKind === "image");
+
+      expect(imageStep).toBeDefined();
+      expect(imageStep?.visualContent).toEqual(
+        expect.objectContaining({
+          prompt: expect.any(String),
+          url: "https://example.com/image.webp",
+        }),
+      );
+    });
+  });
+
+  describe("multi-quiz behavior", () => {
+    test("creates two quizzes when lesson has 4+ concepts", async () => {
+      const testLesson = await lessonFixture({
+        chapterId: chapter.id,
+        concepts: ["Q1", "Q2", "Q3", "Q4"],
+        organizationId,
+        title: `Two Quiz Lesson ${randomUUID()}`,
+      });
+
+      await Promise.all([
+        activityFixture({
+          generationStatus: "pending",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          position: 1,
+          title: "Q1",
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          position: 2,
+          title: "Q2",
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          position: 3,
+          title: "Q3",
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          position: 4,
+          title: "Q4",
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "quiz",
+          lessonId: testLesson.id,
+          organizationId,
+          position: 5,
+          title: `Quiz 1 ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "quiz",
+          lessonId: testLesson.id,
+          organizationId,
+          position: 6,
+          title: `Quiz 2 ${randomUUID()}`,
+        }),
+      ]);
+
+      await activityGenerationWorkflow(testLesson.id);
+
+      expect(generateActivityQuiz).toHaveBeenCalledTimes(2);
+    });
+
+    test("quiz 1 gets first half of explanation steps, quiz 2 gets second half", async () => {
+      const testLesson = await lessonFixture({
+        chapterId: chapter.id,
+        concepts: ["Half1A", "Half1B", "Half2A", "Half2B"],
+        organizationId,
+        title: `Quiz Split Lesson ${randomUUID()}`,
+      });
+
+      const conceptToStep: Record<string, { text: string; title: string }> = {
+        Half1A: { text: "H1A text", title: "H1A" },
+        Half1B: { text: "H1B text", title: "H1B" },
+        Half2A: { text: "H2A text", title: "H2A" },
+        Half2B: { text: "H2B text", title: "H2B" },
+      };
+
+      vi.mocked(generateActivityExplanation).mockImplementation(async (params) => {
+        const step = conceptToStep[params.concept] ?? { text: "unknown", title: "unknown" };
+        return {
+          data: { steps: [step] },
+          systemPrompt: "test",
+          usage: {} as Awaited<ReturnType<typeof generateActivityExplanation>>["usage"],
+          userPrompt: "test",
+        };
+      });
+
+      await Promise.all([
+        activityFixture({
+          generationStatus: "pending",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          position: 1,
+          title: "Half1A",
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          position: 2,
+          title: "Half1B",
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          position: 3,
+          title: "Half2A",
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          position: 4,
+          title: "Half2B",
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "quiz",
+          lessonId: testLesson.id,
+          organizationId,
+          position: 5,
+          title: `Quiz 1 ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "quiz",
+          lessonId: testLesson.id,
+          organizationId,
+          position: 6,
+          title: `Quiz 2 ${randomUUID()}`,
+        }),
+      ]);
+
+      await activityGenerationWorkflow(testLesson.id);
+
+      expect(generateActivityQuiz).toHaveBeenCalledTimes(2);
+
+      // Quiz 1 should get first half explanation steps (H1A, H1B)
+      expect(generateActivityQuiz).toHaveBeenCalledWith(
+        expect.objectContaining({
+          explanationSteps: [
+            { text: "H1A text", title: "H1A" },
+            { text: "H1B text", title: "H1B" },
+          ],
+        }),
+      );
+
+      // Quiz 2 should get second half explanation steps (H2A, H2B)
+      expect(generateActivityQuiz).toHaveBeenCalledWith(
+        expect.objectContaining({
+          explanationSteps: [
+            { text: "H2A text", title: "H2A" },
+            { text: "H2B text", title: "H2B" },
+          ],
+        }),
+      );
+    });
+
+    test("single quiz gets all explanation steps when < 4 concepts", async () => {
+      const testLesson = await lessonFixture({
+        chapterId: chapter.id,
+        concepts: ["Single A", "Single B"],
+        organizationId,
+        title: `Single Quiz Lesson ${randomUUID()}`,
+      });
+
+      vi.mocked(generateActivityExplanation).mockImplementation(async (params) => {
+        const step =
+          params.concept === "Single A"
+            ? { text: "SA text", title: "SA" }
+            : { text: "SB text", title: "SB" };
+        return {
+          data: { steps: [step] },
+          systemPrompt: "test",
+          usage: {} as Awaited<ReturnType<typeof generateActivityExplanation>>["usage"],
+          userPrompt: "test",
+        };
+      });
+
+      await Promise.all([
+        activityFixture({
+          generationStatus: "pending",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          position: 1,
+          title: "Single A",
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          position: 2,
+          title: "Single B",
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "quiz",
+          lessonId: testLesson.id,
+          organizationId,
+          position: 3,
+          title: `Single Quiz ${randomUUID()}`,
+        }),
+      ]);
+
+      await activityGenerationWorkflow(testLesson.id);
+
+      expect(generateActivityQuiz).toHaveBeenCalledOnce();
+      expect(generateActivityQuiz).toHaveBeenCalledWith(
+        expect.objectContaining({
+          explanationSteps: [
+            { text: "SA text", title: "SA" },
+            { text: "SB text", title: "SB" },
+          ],
+        }),
+      );
+    });
+
+    test("completes both quiz activities when lesson has two quizzes", async () => {
+      const testLesson = await lessonFixture({
+        chapterId: chapter.id,
+        concepts: ["QC1", "QC2", "QC3", "QC4"],
+        organizationId,
+        title: `Both Quizzes Complete Lesson ${randomUUID()}`,
+      });
+
+      const activities = await Promise.all([
+        activityFixture({
+          generationStatus: "pending",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          position: 1,
+          title: "QC1",
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          position: 2,
+          title: "QC2",
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          position: 3,
+          title: "QC3",
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          position: 4,
+          title: "QC4",
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "quiz",
+          lessonId: testLesson.id,
+          organizationId,
+          position: 5,
+          title: `Quiz Complete 1 ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "quiz",
+          lessonId: testLesson.id,
+          organizationId,
+          position: 6,
+          title: `Quiz Complete 2 ${randomUUID()}`,
+        }),
+      ]);
+
+      const quiz1 = activities[4];
+      const quiz2 = activities[5];
+
+      await activityGenerationWorkflow(testLesson.id);
+
+      const [dbQuiz1, dbQuiz2] = await Promise.all([
+        prisma.activity.findUnique({ where: { id: quiz1?.id } }),
+        prisma.activity.findUnique({ where: { id: quiz2?.id } }),
+      ]);
+
+      expect(dbQuiz1?.generationStatus).toBe("completed");
+      expect(dbQuiz2?.generationStatus).toBe("completed");
+    });
+  });
+
+  describe("completeActivitiesByKindStep", () => {
+    test("completes multiple explanation activities in parallel", async () => {
+      const testLesson = await lessonFixture({
+        chapterId: chapter.id,
+        concepts: ["Complete A", "Complete B", "Complete C"],
+        organizationId,
+        title: `Multi Exp Complete Lesson ${randomUUID()}`,
+      });
+
+      const [expA, expB, expC] = await Promise.all([
+        activityFixture({
+          generationStatus: "pending",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          position: 1,
+          title: "Complete A",
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          position: 2,
+          title: "Complete B",
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          position: 3,
+          title: "Complete C",
+        }),
+      ]);
+
+      await activityGenerationWorkflow(testLesson.id);
+
+      const [dbA, dbB, dbC] = await Promise.all([
+        prisma.activity.findUnique({ where: { id: expA.id } }),
+        prisma.activity.findUnique({ where: { id: expB.id } }),
+        prisma.activity.findUnique({ where: { id: expC.id } }),
+      ]);
+
+      expect(dbA?.generationStatus).toBe("completed");
+      expect(dbB?.generationStatus).toBe("completed");
+      expect(dbC?.generationStatus).toBe("completed");
+    });
+
+    test("completes multiple quiz activities in parallel", async () => {
+      const testLesson = await lessonFixture({
+        chapterId: chapter.id,
+        concepts: ["MQ1", "MQ2", "MQ3", "MQ4"],
+        organizationId,
+        title: `Multi Quiz Complete Lesson ${randomUUID()}`,
+      });
+
+      const activities = await Promise.all([
+        activityFixture({
+          generationStatus: "pending",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          position: 1,
+          title: "MQ1",
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          position: 2,
+          title: "MQ2",
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          position: 3,
+          title: "MQ3",
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          position: 4,
+          title: "MQ4",
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "quiz",
+          lessonId: testLesson.id,
+          organizationId,
+          position: 5,
+          title: `Multi Quiz 1 ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "quiz",
+          lessonId: testLesson.id,
+          organizationId,
+          position: 6,
+          title: `Multi Quiz 2 ${randomUUID()}`,
+        }),
+      ]);
+
+      const quiz1 = activities[4];
+      const quiz2 = activities[5];
+
+      await activityGenerationWorkflow(testLesson.id);
+
+      const [dbQuiz1, dbQuiz2] = await Promise.all([
+        prisma.activity.findUnique({ where: { id: quiz1?.id } }),
+        prisma.activity.findUnique({ where: { id: quiz2?.id } }),
+      ]);
+
+      expect(dbQuiz1?.generationStatus).toBe("completed");
+      expect(dbQuiz2?.generationStatus).toBe("completed");
+    });
+  });
+
+  describe("neighboring concepts", () => {
+    test("passes neighboring concepts to all wave 1 generation steps", async () => {
+      vi.mocked(getNeighboringConceptsStep).mockResolvedValueOnce(["Neighbor A"]);
+
+      const testLesson = await lessonFixture({
+        chapterId: chapter.id,
+        concepts: ["Main Concept"],
+        organizationId,
+        title: `Neighboring Concepts Lesson ${randomUUID()}`,
+      });
+
+      await Promise.all([
+        activityFixture({
+          generationStatus: "pending",
+          kind: "background",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Background ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          title: "Main Concept",
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "mechanics",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Mechanics ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "examples",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Examples ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "story",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Story ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "challenge",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Challenge ${randomUUID()}`,
+        }),
+      ]);
+
+      await activityGenerationWorkflow(testLesson.id);
+
+      expect(generateActivityBackground).toHaveBeenCalledWith(
+        expect.objectContaining({ neighboringConcepts: ["Neighbor A"] }),
+      );
+      expect(generateActivityExplanation).toHaveBeenCalledWith(
+        expect.objectContaining({ neighboringConcepts: ["Neighbor A"] }),
+      );
+      expect(generateActivityMechanics).toHaveBeenCalledWith(
+        expect.objectContaining({ neighboringConcepts: ["Neighbor A"] }),
+      );
+      expect(generateActivityExamples).toHaveBeenCalledWith(
+        expect.objectContaining({ neighboringConcepts: ["Neighbor A"] }),
+      );
+      expect(generateActivityStory).toHaveBeenCalledWith(
+        expect.objectContaining({ neighboringConcepts: ["Neighbor A"] }),
+      );
+      expect(generateActivityChallenge).toHaveBeenCalledWith(
+        expect.objectContaining({ neighboringConcepts: ["Neighbor A"] }),
+      );
+    });
+  });
 });

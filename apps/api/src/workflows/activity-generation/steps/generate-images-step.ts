@@ -89,6 +89,19 @@ export async function generateImagesStep(
     return [];
   }
 
+  return generateImagesForActivityStep(activity, visuals);
+}
+
+export async function generateImagesForActivityStep(
+  activity: LessonActivity,
+  visuals: StepVisual[],
+): Promise<StepVisualWithUrl[]> {
+  "use step";
+
+  if (visuals.length === 0) {
+    return [];
+  }
+
   if (activity.generationStatus === "completed" || activity.generationStatus === "running") {
     return [];
   }

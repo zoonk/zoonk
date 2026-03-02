@@ -10,7 +10,7 @@ import {
   type ExplanationResult,
   generateExplanationContentStep,
 } from "./steps/generate-explanation-content-step";
-import { generateImagesStep } from "./steps/generate-images-step";
+import { generateImagesForActivityStep, generateImagesStep } from "./steps/generate-images-step";
 import { generateMechanicsContentStep } from "./steps/generate-mechanics-content-step";
 import { generateQuizContentStep } from "./steps/generate-quiz-content-step";
 import { generateQuizImagesStep } from "./steps/generate-quiz-images-step";
@@ -79,27 +79,43 @@ async function generateAllVisuals(
   expResults: ExplanationResult[],
 ): Promise<{
   bg: { visuals: StepVisual[] };
-  mech: { visuals: StepVisual[] };
+  exp: { activityId: number; visuals: StepVisual[] }[];
   examples: { visuals: StepVisual[] };
+  mech: { visuals: StepVisual[] };
 }> {
-  const expVisualPromises = expResults.flatMap((result) => {
+  const expEntries = expResults.flatMap((result) => {
     const activity = activities.find((a) => a.id === result.activityId);
     if (!activity || result.steps.length === 0) {
       return [];
     }
-    return [generateVisualsForActivityStep(activity, result.steps)];
+    return [{ activity, result }];
   });
 
-  const [bgResult, mechResult, examplesResult] = await Promise.allSettled([
+  const fixedCount = 3;
+  const allResults = await Promise.allSettled([
     generateVisualsStep(activities, bgSteps, "background"),
     generateVisualsStep(activities, mechSteps, "mechanics"),
     generateVisualsStep(activities, examplesSteps, "examples"),
-    ...expVisualPromises,
+    ...expEntries.map((entry) =>
+      generateVisualsForActivityStep(entry.activity, entry.result.steps),
+    ),
   ]);
+
+  const [bgResult, mechResult, examplesResult] = allResults;
+  const expVisualResults = allResults.slice(fixedCount);
+
+  const exp = expEntries.map((entry, index) => {
+    const result = expVisualResults[index];
+    return {
+      activityId: entry.result.activityId,
+      visuals: result ? settled(result, { visuals: [] }).visuals : [],
+    };
+  });
 
   return {
     bg: settled(bgResult, { visuals: [] }),
     examples: settled(examplesResult, { visuals: [] }),
+    exp,
     mech: settled(mechResult, { visuals: [] }),
   };
 }
@@ -146,6 +162,14 @@ export async function coreActivityWorkflow(
   ]);
 
   // Wave 3: review + images + quiz images
+  const expImagePromises = visuals.exp.flatMap((expVisual) => {
+    const activity = activities.find((a) => a.id === expVisual.activityId);
+    if (!activity) {
+      return [];
+    }
+    return [generateImagesForActivityStep(activity, expVisual.visuals)];
+  });
+
   await Promise.allSettled([
     generateReviewContentStep(
       activities,
@@ -158,6 +182,7 @@ export async function coreActivityWorkflow(
     generateImagesStep(activities, visuals.bg.visuals, "background"),
     generateImagesStep(activities, visuals.mech.visuals, "mechanics"),
     generateImagesStep(activities, visuals.examples.visuals, "examples"),
+    ...expImagePromises,
     generateQuizImagesStep(activities, quizzes.quiz1.questions, 0),
     ...(totalQuizzes >= 2 ? [generateQuizImagesStep(activities, quizzes.quiz2.questions, 1)] : []),
     completeActivityStep(activities, workflowRunId, "background"),
