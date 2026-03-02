@@ -10,6 +10,7 @@ export function lessonAttrs(
 
   return {
     chapterId: 0,
+    concepts: [],
     description: "Test lesson description",
     generationRunId: null,
     generationStatus: "completed",
