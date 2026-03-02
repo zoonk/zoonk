@@ -3,8 +3,8 @@ import { generateActivityBackground } from "@zoonk/ai/tasks/activities/core/back
 import { generateActivityChallenge } from "@zoonk/ai/tasks/activities/core/challenge";
 import { generateActivityExamples } from "@zoonk/ai/tasks/activities/core/examples";
 import { generateActivityExplanation } from "@zoonk/ai/tasks/activities/core/explanation";
-import { generateActivityExplanationQuiz } from "@zoonk/ai/tasks/activities/core/explanation-quiz";
 import { generateActivityMechanics } from "@zoonk/ai/tasks/activities/core/mechanics";
+import { generateActivityQuiz } from "@zoonk/ai/tasks/activities/core/quiz";
 import { generateActivityReview } from "@zoonk/ai/tasks/activities/core/review";
 import { generateActivityStory } from "@zoonk/ai/tasks/activities/core/story";
 import { generateStepVisuals } from "@zoonk/ai/tasks/steps/visual";
@@ -163,8 +163,8 @@ vi.mock("@zoonk/ai/tasks/activities/core/review", () => ({
   }),
 }));
 
-vi.mock("@zoonk/ai/tasks/activities/core/explanation-quiz", () => ({
-  generateActivityExplanationQuiz: vi.fn().mockResolvedValue({
+vi.mock("@zoonk/ai/tasks/activities/core/quiz", () => ({
+  generateActivityQuiz: vi.fn().mockResolvedValue({
     data: {
       questions: [
         {
@@ -839,7 +839,7 @@ describe("core activity workflow", () => {
   });
 
   describe("quiz generation", () => {
-    test("doesn't call generateActivityExplanationQuiz if lesson has no quiz activity", async () => {
+    test("doesn't call generateActivityQuiz if lesson has no quiz activity", async () => {
       const testLesson = await lessonFixture({
         chapterId: chapter.id,
         organizationId,
@@ -865,10 +865,10 @@ describe("core activity workflow", () => {
 
       await activityGenerationWorkflow(testLesson.id);
 
-      expect(generateActivityExplanationQuiz).not.toHaveBeenCalled();
+      expect(generateActivityQuiz).not.toHaveBeenCalled();
     });
 
-    test("doesn't call generateActivityExplanationQuiz if explanation steps are empty", async () => {
+    test("doesn't call generateActivityQuiz if explanation steps are empty", async () => {
       vi.mocked(generateActivityExplanation).mockResolvedValueOnce({
         data: { steps: [] },
         systemPrompt: "test",
@@ -908,10 +908,10 @@ describe("core activity workflow", () => {
 
       await activityGenerationWorkflow(testLesson.id);
 
-      expect(generateActivityExplanationQuiz).not.toHaveBeenCalled();
+      expect(generateActivityQuiz).not.toHaveBeenCalled();
     });
 
-    test("passes explanation steps to generateActivityExplanationQuiz", async () => {
+    test("passes explanation steps to generateActivityQuiz", async () => {
       const testLesson = await lessonFixture({
         chapterId: chapter.id,
         organizationId,
@@ -944,7 +944,7 @@ describe("core activity workflow", () => {
 
       await activityGenerationWorkflow(testLesson.id);
 
-      expect(generateActivityExplanationQuiz).toHaveBeenCalledWith(
+      expect(generateActivityQuiz).toHaveBeenCalledWith(
         expect.objectContaining({
           explanationSteps: [
             { text: "Explanation step 1 text", title: "Explanation Step 1" },
@@ -954,10 +954,8 @@ describe("core activity workflow", () => {
       );
     });
 
-    test("sets quiz status to 'failed' when generateActivityExplanationQuiz throws", async () => {
-      vi.mocked(generateActivityExplanationQuiz).mockRejectedValueOnce(
-        new Error("Quiz generation failed"),
-      );
+    test("sets quiz status to 'failed' when generateActivityQuiz throws", async () => {
+      vi.mocked(generateActivityQuiz).mockRejectedValueOnce(new Error("Quiz generation failed"));
 
       const testLesson = await lessonFixture({
         chapterId: chapter.id,
@@ -2556,7 +2554,7 @@ describe("core activity workflow", () => {
 
       await activityGenerationWorkflow(testLesson.id);
 
-      expect(generateActivityExplanationQuiz).not.toHaveBeenCalled();
+      expect(generateActivityQuiz).not.toHaveBeenCalled();
     });
 
     test("re-runs failed background when re-triggered", async () => {
@@ -2707,7 +2705,7 @@ describe("core activity workflow", () => {
           backgroundSteps: [{ text: "Partial complete BG text", title: "Partial BG" }],
         }),
       );
-      expect(generateActivityExplanationQuiz).toHaveBeenCalled();
+      expect(generateActivityQuiz).toHaveBeenCalled();
 
       const [dbExplanation, dbQuiz] = await Promise.all([
         prisma.activity.findUnique({ where: { id: explanationActivity.id } }),
@@ -2856,7 +2854,7 @@ describe("core activity workflow", () => {
       expect(dbChallenge?.generationStatus).toBe("failed");
 
       expect(generateActivityMechanics).not.toHaveBeenCalled();
-      expect(generateActivityExplanationQuiz).not.toHaveBeenCalled();
+      expect(generateActivityQuiz).not.toHaveBeenCalled();
       expect(generateActivityExamples).not.toHaveBeenCalled();
       expect(generateActivityStory).not.toHaveBeenCalled();
       expect(generateActivityChallenge).not.toHaveBeenCalled();
@@ -2993,7 +2991,7 @@ describe("core activity workflow", () => {
       expect(generateActivityBackground).toHaveBeenCalledOnce();
       expect(generateActivityExplanation).toHaveBeenCalledOnce();
       expect(generateActivityMechanics).toHaveBeenCalledOnce();
-      expect(generateActivityExplanationQuiz).toHaveBeenCalledOnce();
+      expect(generateActivityQuiz).toHaveBeenCalledOnce();
       expect(generateActivityExamples).toHaveBeenCalledOnce();
       expect(generateActivityStory).toHaveBeenCalledOnce();
       expect(generateActivityChallenge).toHaveBeenCalledOnce();
