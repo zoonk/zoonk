@@ -143,7 +143,7 @@ function shuffleMultipleChoiceContent(
     case "core":
       return { ...content, options: shuffle(content.options) };
     case "challenge":
-      return { ...content, options: shuffle(content.options) };
+      return content;
     case "language":
       return { ...content, options: shuffle(content.options) };
     default:

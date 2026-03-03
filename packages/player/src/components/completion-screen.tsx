@@ -6,7 +6,7 @@ import { type Route } from "next";
 import { useExtracted } from "next-intl";
 import { type CompletionResult } from "../completion-input-schema";
 import { computeScore } from "../compute-score";
-import { hasNegativeDimension } from "../has-negative-dimension";
+import { hasNegativeDimension } from "../dimensions";
 import { usePlayer } from "../player-context";
 import { type DimensionInventory, type StepResult } from "../player-reducer";
 import { ChallengeFailureContent, ChallengeSuccessContent } from "./challenge-completion";

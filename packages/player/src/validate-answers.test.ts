@@ -39,7 +39,7 @@ describe(validateAnswers, () => {
     const steps = [{ content: coreMultipleChoiceContent, id: 1n, kind: "multipleChoice" }];
 
     const results = validateAnswers(steps, {
-      "1": { kind: "multipleChoice", selectedIndex: 0 },
+      "1": { kind: "multipleChoice", selectedIndex: 0, selectedText: "Option A" },
     });
 
     expect(results).toHaveLength(1);
@@ -52,7 +52,7 @@ describe(validateAnswers, () => {
     const steps = [{ content: coreMultipleChoiceContent, id: 1n, kind: "multipleChoice" }];
 
     const results = validateAnswers(steps, {
-      "1": { kind: "multipleChoice", selectedIndex: 1 },
+      "1": { kind: "multipleChoice", selectedIndex: 1, selectedText: "Option B" },
     });
 
     expect(results).toHaveLength(1);
@@ -74,11 +74,34 @@ describe(validateAnswers, () => {
     const steps = [{ content: challengeMultipleChoiceContent, id: 3n, kind: "multipleChoice" }];
 
     const results = validateAnswers(steps, {
-      "3": { kind: "multipleChoice", selectedIndex: 0 },
+      "3": { kind: "multipleChoice", selectedIndex: 0, selectedText: "Option A" },
     });
 
     expect(results).toHaveLength(1);
     expect(results[0]?.effects).toEqual([{ dimension: "Courage", impact: "positive" }]);
+  });
+
+  test("challenge multipleChoice resolves correct option by text when index is shuffled", () => {
+    const steps = [{ content: challengeMultipleChoiceContent, id: 3n, kind: "multipleChoice" }];
+
+    const results = validateAnswers(steps, {
+      "3": { kind: "multipleChoice", selectedIndex: 0, selectedText: "Option B" },
+    });
+
+    expect(results).toHaveLength(1);
+    expect(results[0]?.effects).toEqual([{ dimension: "Diplomacy", impact: "negative" }]);
+  });
+
+  test("unmatched selectedText returns incorrect with no effects", () => {
+    const steps = [{ content: challengeMultipleChoiceContent, id: 3n, kind: "multipleChoice" }];
+
+    const results = validateAnswers(steps, {
+      "3": { kind: "multipleChoice", selectedIndex: 0, selectedText: "Nonexistent" },
+    });
+
+    expect(results).toHaveLength(1);
+    expect(results[0]?.isCorrect).toBeFalsy();
+    expect(results[0]?.effects).toEqual([]);
   });
 
   test("skips steps with no client answer", () => {
@@ -88,7 +111,7 @@ describe(validateAnswers, () => {
     ];
 
     const results = validateAnswers(steps, {
-      "1": { kind: "multipleChoice", selectedIndex: 0 },
+      "1": { kind: "multipleChoice", selectedIndex: 0, selectedText: "Option A" },
     });
 
     expect(results).toHaveLength(1);
@@ -171,7 +194,7 @@ describe(validateAnswers, () => {
     const steps = [{ content: {}, id: 7n, kind: "unknownKind" }];
 
     const results = validateAnswers(steps, {
-      "7": { kind: "multipleChoice", selectedIndex: 0 },
+      "7": { kind: "multipleChoice", selectedIndex: 0, selectedText: "Option A" },
     });
 
     expect(results).toHaveLength(0);

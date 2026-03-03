@@ -2,7 +2,8 @@
 
 import { type ChallengeEffect } from "@zoonk/core/steps/content-contract";
 import { cn } from "@zoonk/ui/lib/utils";
-import { type DimensionInventory as DimensionInventoryType, effectDelta } from "../player-reducer";
+import { IMPACT_DELTA } from "../dimensions";
+import { type DimensionInventory as DimensionInventoryType } from "../player-reducer";
 
 type DimensionEntry = {
   delta: number;
@@ -33,7 +34,7 @@ export function buildDimensionEntries(
   const deltas: Record<string, number> = {};
 
   for (const effect of effects) {
-    deltas[effect.dimension] = (deltas[effect.dimension] ?? 0) + effectDelta(effect.impact);
+    deltas[effect.dimension] = (deltas[effect.dimension] ?? 0) + IMPACT_DELTA[effect.impact];
   }
 
   return Object.entries(dimensions)

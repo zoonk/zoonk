@@ -236,7 +236,8 @@ export function MultipleChoiceStep({
       return;
     }
 
-    onSelectAnswer(step.id, { kind: "multipleChoice", selectedIndex: index });
+    const selectedText = content.options[index]?.text ?? "";
+    onSelectAnswer(step.id, { kind: "multipleChoice", selectedIndex: index, selectedText });
   };
 
   useOptionKeyboard({
