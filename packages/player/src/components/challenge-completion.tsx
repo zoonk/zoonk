@@ -82,7 +82,7 @@ export function ChallengeSuccessContent({
   dimensions: DimensionInventory;
 }) {
   const t = useExtracted();
-  const { completionFooter } = usePlayer();
+  const { completionFooter, isAuthenticated } = usePlayer();
   const entries = buildDimensionEntries(dimensions, []);
 
   return (
@@ -94,7 +94,7 @@ export function ChallengeSuccessContent({
 
       <DimensionList aria-label={t("Final dimension scores")} entries={entries} variant="success" />
 
-      <ChallengeRewardBadges completionResult={completionResult} isSuccess />
+      {isAuthenticated && <ChallengeRewardBadges completionResult={completionResult} isSuccess />}
 
       {children}
 
@@ -115,7 +115,7 @@ export function ChallengeFailureContent({
   onRestart: () => void;
 }) {
   const t = useExtracted();
-  const { completionFooter } = usePlayer();
+  const { completionFooter, isAuthenticated } = usePlayer();
   const entries = buildDimensionEntries(dimensions, []);
 
   return (
@@ -127,7 +127,9 @@ export function ChallengeFailureContent({
 
       <DimensionList aria-label={t("Final dimension scores")} entries={entries} variant="failure" />
 
-      <ChallengeRewardBadges completionResult={completionResult} isSuccess={false} />
+      {isAuthenticated && (
+        <ChallengeRewardBadges completionResult={completionResult} isSuccess={false} />
+      )}
 
       <ChallengeActions>
         <Button className="w-full lg:justify-between" onClick={onRestart} size="lg">

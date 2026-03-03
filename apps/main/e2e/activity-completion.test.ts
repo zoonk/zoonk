@@ -261,4 +261,56 @@ test.describe("Activity Completion", () => {
 
     await browserContext.close();
   });
+
+  test("guest user sees login prompt, no reward skeletons on challenge completion", async ({
+    page,
+  }) => {
+    const { buildUrl, lesson, org, uniqueId } = await createTestHierarchy("chguest");
+    const dim = `Grit ${uniqueId}`;
+
+    const activity = await activityFixture({
+      generationStatus: "completed",
+      isPublished: true,
+      kind: "challenge",
+      lessonId: lesson.id,
+      organizationId: org.id,
+      position: 0,
+    });
+
+    await stepFixture({
+      activityId: activity.id,
+      content: {
+        context: `Guest challenge ${uniqueId}`,
+        kind: "challenge",
+        options: [
+          {
+            consequence: `Great outcome ${uniqueId}`,
+            effects: [{ dimension: dim, impact: "positive" }],
+            text: `Good ${uniqueId}`,
+          },
+          {
+            consequence: "Bad outcome",
+            effects: [{ dimension: dim, impact: "negative" }],
+            text: "Bad",
+          },
+        ],
+        question: `Guest Q ${uniqueId}`,
+      },
+      isPublished: true,
+      kind: "multipleChoice",
+    });
+
+    await page.goto(buildUrl());
+    await page.getByRole("button", { name: /begin/i }).click();
+    await page.waitForLoadState("networkidle");
+
+    await page.getByRole("radio", { name: new RegExp(`Good ${uniqueId}`) }).click();
+    await page.getByRole("button", { name: /check/i }).click();
+    await page.getByRole("button", { name: /continue/i }).click();
+
+    await expect(page.getByText(/challenge complete/i)).toBeVisible();
+    await expect(page.getByText(/sign up to track your progress/i)).toBeVisible();
+    await expect(page.getByRole("progressbar", { name: /level progress/i })).not.toBeVisible();
+    await expect(page.getByText(/\+\d+ BP/)).not.toBeVisible();
+  });
 });
