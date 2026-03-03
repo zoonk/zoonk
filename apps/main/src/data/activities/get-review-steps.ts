@@ -5,6 +5,14 @@ import { shuffle } from "@zoonk/utils/shuffle";
 const REVIEW_TARGET_COUNT = 10;
 const EXCLUDED_ACTIVITY_KINDS: ActivityKind[] = ["review", "challenge"];
 
+function reviewableStepFilter(lessonId: number) {
+  return {
+    activity: { kind: { notIn: EXCLUDED_ACTIVITY_KINDS }, lessonId },
+    isPublished: true,
+    kind: { not: "static" as const },
+  };
+}
+
 /**
  * Assembles review steps based on a user's mistakes (incorrect StepAttempt records).
  *
@@ -24,11 +32,7 @@ export async function getReviewSteps({
   lessonId: number;
   userId: number | null;
 }) {
-  const lessonStepFilter = {
-    activity: { kind: { notIn: EXCLUDED_ACTIVITY_KINDS }, lessonId },
-    isPublished: true,
-    kind: { not: "static" as const },
-  };
+  const lessonStepFilter = reviewableStepFilter(lessonId);
 
   if (!userId) {
     const allSteps = await prisma.step.findMany({
@@ -81,4 +85,17 @@ export async function getReviewSteps({
   const fillerCount = Math.max(0, REVIEW_TARGET_COUNT - prioritizedSteps.length);
 
   return shuffle([...prioritizedSteps, ...shuffle(fillerSteps).slice(0, fillerCount)]);
+}
+
+/**
+ * Fetches steps for validating a review activity submission.
+ * Only returns steps that are eligible for review — excludes
+ * steps from review/challenge activities and static steps.
+ */
+export async function getReviewValidationSteps(lessonId: number, stepIds: bigint[]) {
+  return prisma.step.findMany({
+    include: { sentence: true, word: true },
+    omit: { visualContent: true },
+    where: { ...reviewableStepFilter(lessonId), id: { in: stepIds } },
+  });
 }

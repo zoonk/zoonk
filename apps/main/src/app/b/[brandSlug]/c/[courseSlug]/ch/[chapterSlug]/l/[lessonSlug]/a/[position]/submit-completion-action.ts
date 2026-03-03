@@ -1,5 +1,6 @@
 "use server";
 
+import { getReviewValidationSteps } from "@/data/activities/get-review-steps";
 import { preloadNextLesson } from "@/data/progress/preload-next-lesson";
 import { submitActivityCompletion } from "@/data/progress/submit-activity-completion";
 import { auth } from "@zoonk/core/auth";
@@ -65,15 +66,7 @@ export async function submitCompletion(rawInput: CompletionInput): Promise<Compl
 
     const stepsForValidation =
       activity.kind === "review"
-        ? await prisma.step.findMany({
-            include: { sentence: true, word: true },
-            omit: { visualContent: true },
-            where: {
-              activity: { lessonId: activity.lessonId },
-              id: { in: Object.keys(input.answers).map(BigInt) },
-              isPublished: true,
-            },
-          })
+        ? await getReviewValidationSteps(activity.lessonId, Object.keys(input.answers).map(BigInt))
         : activity.steps;
 
     const stepResults = validateAnswers(stepsForValidation, input.answers);
