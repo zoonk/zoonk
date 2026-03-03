@@ -53,47 +53,7 @@ export async function generateVisualsStep(
     return { visuals: [] };
   }
 
-  if (activity.generationStatus === "completed" || activity.generationStatus === "running") {
-    return { visuals: [] };
-  }
-
-  const dbSteps = await prisma.step.findMany({
-    orderBy: { position: "asc" },
-    select: { id: true },
-    where: { activityId: activity.id },
-  });
-
-  if (dbSteps.length === 0) {
-    return { visuals: [] };
-  }
-
-  await streamStatus({ status: "started", step: "generateVisuals" });
-
-  const { data: result, error } = await safeAsync(() =>
-    generateStepVisuals({
-      chapterTitle: activity.lesson.chapter.title,
-      courseTitle: activity.lesson.chapter.course.title,
-      language: activity.language,
-      lessonDescription: activity.lesson.description ?? "",
-      lessonTitle: activity.lesson.title,
-      steps,
-    }),
-  );
-
-  if (error || !result) {
-    const reason = error ? "aiGenerationFailed" : "aiEmptyResult";
-    return handleVisualsError(activity.id, reason);
-  }
-
-  const { error: saveError } = await saveVisualsToDB(result.data.visuals, dbSteps);
-
-  if (saveError) {
-    return handleVisualsError(activity.id, "dbSaveFailed");
-  }
-
-  await streamStatus({ status: "completed", step: "generateVisuals" });
-
-  return { visuals: result.data.visuals };
+  return generateVisualsForActivityStep(activity, steps);
 }
 
 export async function generateVisualsForActivityStep(
