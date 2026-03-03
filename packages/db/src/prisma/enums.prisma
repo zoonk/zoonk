@@ -16,7 +16,6 @@ enum ActivityKind {
   background
   explanation
   quiz
-  mechanics
   examples
   story
   challenge

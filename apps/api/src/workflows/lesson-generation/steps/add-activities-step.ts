@@ -38,7 +38,6 @@ function getCoreActivities(concepts: string[]): ActivityEntry[] {
   const allExplanations = [...fallbackExplanation, ...explanations];
 
   const background: ActivityEntry = { description: null, kind: "background", title: null };
-  const mechanics: ActivityEntry = { description: null, kind: "mechanics", title: null };
   const examples: ActivityEntry = { description: null, kind: "examples", title: null };
   const story: ActivityEntry = { description: null, kind: "story", title: null };
   const challenge: ActivityEntry = { description: null, kind: "challenge", title: null };
@@ -48,7 +47,7 @@ function getCoreActivities(concepts: string[]): ActivityEntry[] {
   const minConceptsForTwoQuizzes = 4;
 
   if (concepts.length < minConceptsForTwoQuizzes) {
-    return [background, ...allExplanations, quiz, mechanics, examples, story, challenge, review];
+    return [background, ...allExplanations, quiz, examples, story, challenge, review];
   }
 
   const splitIndex = Math.floor(concepts.length / 2);
@@ -61,7 +60,6 @@ function getCoreActivities(concepts: string[]): ActivityEntry[] {
     quiz,
     ...secondGroup,
     quiz,
-    mechanics,
     examples,
     story,
     challenge,

@@ -3,7 +3,6 @@ import { generateActivityBackground } from "@zoonk/ai/tasks/activities/core/back
 import { generateActivityChallenge } from "@zoonk/ai/tasks/activities/core/challenge";
 import { generateActivityExamples } from "@zoonk/ai/tasks/activities/core/examples";
 import { generateActivityExplanation } from "@zoonk/ai/tasks/activities/core/explanation";
-import { generateActivityMechanics } from "@zoonk/ai/tasks/activities/core/mechanics";
 import { generateActivityQuiz } from "@zoonk/ai/tasks/activities/core/quiz";
 import { generateActivityStory } from "@zoonk/ai/tasks/activities/core/story";
 import { generateStepVisuals } from "@zoonk/ai/tasks/steps/visual";
@@ -71,17 +70,6 @@ vi.mock("@zoonk/ai/tasks/activities/core/explanation", () => ({
       steps: [
         { text: "Explanation step 1 text", title: "Explanation Step 1" },
         { text: "Explanation step 2 text", title: "Explanation Step 2" },
-      ],
-    },
-  }),
-}));
-
-vi.mock("@zoonk/ai/tasks/activities/core/mechanics", () => ({
-  generateActivityMechanics: vi.fn().mockResolvedValue({
-    data: {
-      steps: [
-        { text: "Mechanics step 1 text", title: "Mechanics Step 1" },
-        { text: "Mechanics step 2 text", title: "Mechanics Step 2" },
       ],
     },
   }),
@@ -1036,60 +1024,6 @@ describe("core activity workflow", () => {
     });
   });
 
-  describe("mechanics generation", () => {
-    test("passes concepts and neighboringConcepts to generateActivityMechanics", async () => {
-      const testLesson = await lessonFixture({
-        chapterId: chapter.id,
-        concepts: ["Concept X"],
-        organizationId,
-        title: `Mech Steps Lesson ${randomUUID()}`,
-      });
-
-      await activityFixture({
-        generationStatus: "pending",
-        kind: "mechanics",
-        lessonId: testLesson.id,
-        organizationId,
-        title: `Mechanics ${randomUUID()}`,
-      });
-
-      vi.mocked(getNeighboringConceptsStep).mockResolvedValueOnce(["Neighbor X"]);
-
-      await activityGenerationWorkflow(testLesson.id);
-
-      expect(generateActivityMechanics).toHaveBeenCalledWith(
-        expect.objectContaining({
-          concepts: ["Concept X"],
-          neighboringConcepts: ["Neighbor X"],
-        }),
-      );
-    });
-
-    test("sets mechanics status to 'completed' after full pipeline", async () => {
-      const testLesson = await lessonFixture({
-        chapterId: chapter.id,
-        concepts: ["Test Concept"],
-        organizationId,
-        title: `Mech Complete Lesson ${randomUUID()}`,
-      });
-
-      const mechActivity = await activityFixture({
-        generationStatus: "pending",
-        kind: "mechanics",
-        lessonId: testLesson.id,
-        organizationId,
-        title: `Mechanics ${randomUUID()}`,
-      });
-
-      await activityGenerationWorkflow(testLesson.id);
-
-      const dbActivity = await prisma.activity.findUnique({
-        where: { id: mechActivity?.id },
-      });
-      expect(dbActivity?.generationStatus).toBe("completed");
-    });
-  });
-
   describe("examples generation", () => {
     test("doesn't call generateActivityExamples if lesson has no examples activity", async () => {
       const testLesson = await lessonFixture({
@@ -1968,7 +1902,7 @@ describe("core activity workflow", () => {
       expect(generateActivityQuiz).not.toHaveBeenCalled();
     });
 
-    test("empty concepts → mechanics, examples, story, and challenge marked as failed", async () => {
+    test("empty concepts → examples, story, and challenge marked as failed", async () => {
       const testLesson = await lessonFixture({
         chapterId: chapter.id,
         concepts: [],
@@ -1976,14 +1910,7 @@ describe("core activity workflow", () => {
         title: `Empty Concepts Cascade Lesson ${randomUUID()}`,
       });
 
-      const [mechActivity, examplesActivity, storyActivity, challengeActivity] = await Promise.all([
-        activityFixture({
-          generationStatus: "pending",
-          kind: "mechanics",
-          lessonId: testLesson.id,
-          organizationId,
-          title: `Mechanics ${randomUUID()}`,
-        }),
+      const [examplesActivity, storyActivity, challengeActivity] = await Promise.all([
         activityFixture({
           generationStatus: "pending",
           kind: "examples",
@@ -2009,19 +1936,16 @@ describe("core activity workflow", () => {
 
       await activityGenerationWorkflow(testLesson.id);
 
-      const [dbMech, dbExamples, dbStory, dbChallenge] = await Promise.all([
-        prisma.activity.findUnique({ where: { id: mechActivity.id } }),
+      const [dbExamples, dbStory, dbChallenge] = await Promise.all([
         prisma.activity.findUnique({ where: { id: examplesActivity.id } }),
         prisma.activity.findUnique({ where: { id: storyActivity.id } }),
         prisma.activity.findUnique({ where: { id: challengeActivity.id } }),
       ]);
 
-      expect(dbMech?.generationStatus).toBe("failed");
       expect(dbExamples?.generationStatus).toBe("failed");
       expect(dbStory?.generationStatus).toBe("failed");
       expect(dbChallenge?.generationStatus).toBe("failed");
 
-      expect(generateActivityMechanics).not.toHaveBeenCalled();
       expect(generateActivityExamples).not.toHaveBeenCalled();
       expect(generateActivityStory).not.toHaveBeenCalled();
       expect(generateActivityChallenge).not.toHaveBeenCalled();
@@ -2068,7 +1992,7 @@ describe("core activity workflow", () => {
   });
 
   describe("full pipeline", () => {
-    test("generates all 7 activities end to end", async () => {
+    test("generates all 6 activities end to end", async () => {
       const testLesson = await lessonFixture({
         chapterId: chapter.id,
         concepts: ["Test Concept"],
@@ -2079,7 +2003,6 @@ describe("core activity workflow", () => {
       const [
         bgActivity,
         expActivity,
-        mechActivity,
         quizActivity,
         examplesActivity,
         storyActivity,
@@ -2098,13 +2021,6 @@ describe("core activity workflow", () => {
           lessonId: testLesson.id,
           organizationId,
           title: `Explanation ${randomUUID()}`,
-        }),
-        activityFixture({
-          generationStatus: "pending",
-          kind: "mechanics",
-          lessonId: testLesson.id,
-          organizationId,
-          title: `Mechanics ${randomUUID()}`,
         }),
         activityFixture({
           generationStatus: "pending",
@@ -2138,10 +2054,9 @@ describe("core activity workflow", () => {
 
       await activityGenerationWorkflow(testLesson.id);
 
-      const [dbBg, dbExp, dbMech, dbQuiz, dbExamples, dbStory, dbChallenge] = await Promise.all([
+      const [dbBg, dbExp, dbQuiz, dbExamples, dbStory, dbChallenge] = await Promise.all([
         prisma.activity.findUnique({ where: { id: bgActivity.id } }),
         prisma.activity.findUnique({ where: { id: expActivity.id } }),
-        prisma.activity.findUnique({ where: { id: mechActivity.id } }),
         prisma.activity.findUnique({ where: { id: quizActivity.id } }),
         prisma.activity.findUnique({ where: { id: examplesActivity.id } }),
         prisma.activity.findUnique({ where: { id: storyActivity.id } }),
@@ -2150,7 +2065,6 @@ describe("core activity workflow", () => {
 
       expect(dbBg?.generationStatus).toBe("completed");
       expect(dbExp?.generationStatus).toBe("completed");
-      expect(dbMech?.generationStatus).toBe("completed");
       expect(dbQuiz?.generationStatus).toBe("completed");
       expect(dbExamples?.generationStatus).toBe("completed");
       expect(dbStory?.generationStatus).toBe("completed");
@@ -2158,17 +2072,15 @@ describe("core activity workflow", () => {
 
       expect(generateActivityBackground).toHaveBeenCalledOnce();
       expect(generateActivityExplanation).toHaveBeenCalledOnce();
-      expect(generateActivityMechanics).toHaveBeenCalledOnce();
       expect(generateActivityQuiz).toHaveBeenCalledOnce();
       expect(generateActivityExamples).toHaveBeenCalledOnce();
       expect(generateActivityStory).toHaveBeenCalledOnce();
       expect(generateActivityChallenge).toHaveBeenCalledOnce();
 
-      const [bgSteps, expSteps, mechSteps, quizSteps, examplesSteps, storySteps, challengeSteps] =
+      const [bgSteps, expSteps, quizSteps, examplesSteps, storySteps, challengeSteps] =
         await Promise.all([
           prisma.step.findMany({ where: { activityId: bgActivity.id } }),
           prisma.step.findMany({ where: { activityId: expActivity.id } }),
-          prisma.step.findMany({ where: { activityId: mechActivity.id } }),
           prisma.step.findMany({ where: { activityId: quizActivity.id } }),
           prisma.step.findMany({ where: { activityId: examplesActivity.id } }),
           prisma.step.findMany({ where: { activityId: storyActivity.id } }),
@@ -2177,13 +2089,12 @@ describe("core activity workflow", () => {
 
       expect(bgSteps.length).toBeGreaterThan(0);
       expect(expSteps.length).toBeGreaterThan(0);
-      expect(mechSteps.length).toBeGreaterThan(0);
       expect(quizSteps.length).toBeGreaterThan(0);
       expect(examplesSteps.length).toBeGreaterThan(0);
       expect(storySteps.length).toBeGreaterThan(0);
       expect(challengeSteps.length).toBeGreaterThan(0);
 
-      for (const steps of [bgSteps, expSteps, mechSteps, examplesSteps]) {
+      for (const steps of [bgSteps, expSteps, examplesSteps]) {
         const imageSteps = steps.filter((step) => step.visualKind === "image");
         expect(imageSteps.length).toBeGreaterThan(0);
 
@@ -2239,36 +2150,6 @@ describe("core activity workflow", () => {
         lessonId: testLesson.id,
         organizationId,
         title: `DI Explanation ${randomUUID()}`,
-      });
-
-      await activityGenerationWorkflow(testLesson.id);
-
-      const steps = await prisma.step.findMany({ where: { activityId: activity.id } });
-      const imageSteps = steps.filter((step) => step.visualKind === "image");
-      expect(imageSteps.length).toBeGreaterThan(0);
-
-      for (const step of imageSteps) {
-        expect(step.visualContent).toEqual(expect.objectContaining({ url: expect.any(String) }));
-      }
-
-      const dbActivity = await prisma.activity.findUnique({ where: { id: activity.id } });
-      expect(dbActivity?.generationStatus).toBe("completed");
-    });
-
-    test("completed mechanics has image URLs on all image steps", async () => {
-      const testLesson = await lessonFixture({
-        chapterId: chapter.id,
-        concepts: ["Test Concept"],
-        organizationId,
-        title: `DI Mechanics Lesson ${randomUUID()}`,
-      });
-
-      const activity = await activityFixture({
-        generationStatus: "pending",
-        kind: "mechanics",
-        lessonId: testLesson.id,
-        organizationId,
-        title: `DI Mechanics ${randomUUID()}`,
       });
 
       await activityGenerationWorkflow(testLesson.id);
@@ -2648,8 +2529,8 @@ describe("core activity workflow", () => {
 
       await activityGenerationWorkflow(testLesson.id);
 
-      // 2 explanation activities + background/mechanics/examples = 5 calls total
-      // but only if bg/mech/examples activities exist. Here we only have explanations,
+      // 2 explanation activities + background/examples = 4 calls total
+      // but only if bg/examples activities exist. Here we only have explanations,
       // so generateStepVisuals should be called once per explanation
       const calls = vi.mocked(generateStepVisuals).mock.calls;
       const explanationVisualCalls = calls.length;
@@ -3343,13 +3224,6 @@ describe("core activity workflow", () => {
         }),
         activityFixture({
           generationStatus: "pending",
-          kind: "mechanics",
-          lessonId: testLesson.id,
-          organizationId,
-          title: `Mechanics ${randomUUID()}`,
-        }),
-        activityFixture({
-          generationStatus: "pending",
           kind: "examples",
           lessonId: testLesson.id,
           organizationId,
@@ -3377,9 +3251,6 @@ describe("core activity workflow", () => {
         expect.objectContaining({ neighboringConcepts: ["Neighbor A"] }),
       );
       expect(generateActivityExplanation).toHaveBeenCalledWith(
-        expect.objectContaining({ neighboringConcepts: ["Neighbor A"] }),
-      );
-      expect(generateActivityMechanics).toHaveBeenCalledWith(
         expect.objectContaining({ neighboringConcepts: ["Neighbor A"] }),
       );
       expect(generateActivityExamples).toHaveBeenCalledWith(

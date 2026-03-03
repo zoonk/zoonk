@@ -15,7 +15,6 @@ const kindToStepName: Partial<Record<ActivityKind, ActivityStepName>> = {
   grammar: "setGrammarAsCompleted",
   languageStory: "setLanguageStoryAsCompleted",
   listening: "setListeningAsCompleted",
-  mechanics: "setMechanicsAsCompleted",
   quiz: "setQuizAsCompleted",
   reading: "setReadingAsCompleted",
   story: "setStoryAsCompleted",

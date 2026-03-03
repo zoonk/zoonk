@@ -238,7 +238,6 @@ export function getPhaseSteps(kind: ActivityKind): Record<PhaseName, ActivitySte
   const contentStepMap: Partial<Record<ActivityKind, ActivityStepName>> = {
     challenge: "generateChallengeContent",
     examples: "generateExamplesContent",
-    mechanics: "generateMechanicsContent",
     quiz: "generateQuizContent",
     story: "generateStoryContent",
   };
@@ -266,7 +265,6 @@ const SUPPORTED_KINDS: ActivityKind[] = [
   "grammar",
   "languageStory",
   "listening",
-  "mechanics",
   "quiz",
   "reading",
   "story",

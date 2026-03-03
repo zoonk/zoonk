@@ -24,7 +24,7 @@ describe(findActivitiesByKind, () => {
   test("returns empty array when no activities match", () => {
     const activities = [
       makeMockActivity({ id: 1, kind: "background" }),
-      makeMockActivity({ id: 2, kind: "mechanics" }),
+      makeMockActivity({ id: 2, kind: "examples" }),
     ];
 
     const result = findActivitiesByKind(activities, "explanation");
