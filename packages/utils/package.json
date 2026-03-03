@@ -23,8 +23,7 @@
     "./settled": "./src/settled.ts",
     "./shuffle": "./src/shuffle.ts",
     "./string": "./src/string.ts",
-    "./subscription": "./src/subscription.ts",
-    "./url": "./src/url.ts"
+    "./subscription": "./src/subscription.ts"
   },
   "scripts": {
     "test": "vitest run",
