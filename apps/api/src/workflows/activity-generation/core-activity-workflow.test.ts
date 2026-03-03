@@ -636,7 +636,6 @@ describe("core activity workflow", () => {
         expect.objectContaining({
           concept: "Concept A",
           neighboringConcepts: ["Neighbor 1"],
-          otherLessonConcepts: [],
         }),
       );
     });
@@ -2798,21 +2797,21 @@ describe("core activity workflow", () => {
       expect(generateActivityExplanation).toHaveBeenCalledWith(
         expect.objectContaining({
           concept: "Concept A",
-          otherLessonConcepts: ["Concept B", "Concept C"],
+          neighboringConcepts: ["Concept B", "Concept C"],
         }),
       );
 
       expect(generateActivityExplanation).toHaveBeenCalledWith(
         expect.objectContaining({
           concept: "Concept B",
-          otherLessonConcepts: ["Concept A", "Concept C"],
+          neighboringConcepts: ["Concept A", "Concept C"],
         }),
       );
 
       expect(generateActivityExplanation).toHaveBeenCalledWith(
         expect.objectContaining({
           concept: "Concept C",
-          otherLessonConcepts: ["Concept A", "Concept B"],
+          neighboringConcepts: ["Concept A", "Concept B"],
         }),
       );
 
@@ -2825,6 +2824,52 @@ describe("core activity workflow", () => {
       expect(dbA?.generationStatus).toBe("completed");
       expect(dbB?.generationStatus).toBe("completed");
       expect(dbC?.generationStatus).toBe("completed");
+    });
+
+    test("merges other lesson concepts with neighboring concepts", async () => {
+      const testLesson = await lessonFixture({
+        chapterId: chapter.id,
+        concepts: ["Concept A", "Concept B"],
+        organizationId,
+        title: `Merge Concepts Lesson ${randomUUID()}`,
+      });
+
+      await Promise.all([
+        activityFixture({
+          generationStatus: "pending",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          position: 1,
+          title: "Concept A",
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          position: 2,
+          title: "Concept B",
+        }),
+      ]);
+
+      vi.mocked(getNeighboringConceptsStep).mockResolvedValueOnce(["Neighbor X", "Neighbor Y"]);
+
+      await activityGenerationWorkflow(testLesson.id);
+
+      expect(generateActivityExplanation).toHaveBeenCalledWith(
+        expect.objectContaining({
+          concept: "Concept A",
+          neighboringConcepts: ["Concept B", "Neighbor X", "Neighbor Y"],
+        }),
+      );
+
+      expect(generateActivityExplanation).toHaveBeenCalledWith(
+        expect.objectContaining({
+          concept: "Concept B",
+          neighboringConcepts: ["Concept A", "Neighbor X", "Neighbor Y"],
+        }),
+      );
     });
 
     test("one explanation failure doesn't block others", async () => {

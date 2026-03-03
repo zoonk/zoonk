@@ -2,6 +2,7 @@ import "server-only";
 import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-options";
 import { Output, generateText } from "ai";
 import { z } from "zod";
+import { formatConceptLines } from "../format-concept-lines";
 import { getLanguagePromptContext } from "./_utils/language-prompt-context";
 import systemPrompt from "./activity-grammar.prompt.md";
 
@@ -77,19 +78,12 @@ export async function generateActivityGrammar({
 }: ActivityGrammarParams) {
   const promptContext = getLanguagePromptContext({ targetLanguage, userLanguage });
 
-  const conceptLines = [
-    concepts.length > 0 ? `CONCEPTS: ${concepts.join(", ")}` : "",
-    neighboringConcepts.length > 0 ? `NEIGHBORING_CONCEPTS: ${neighboringConcepts.join(", ")}` : "",
-  ]
-    .filter(Boolean)
-    .join("\n");
-
   const userPrompt = `TARGET_LANGUAGE: ${promptContext.targetLanguageName}
 USER_LANGUAGE: ${promptContext.userLanguage}
 CHAPTER_TITLE: ${chapterTitle}
 LESSON_TITLE: ${lessonTitle}
 LESSON_DESCRIPTION: ${lessonDescription}
-${conceptLines}
+${formatConceptLines(concepts, neighboringConcepts)}
 
 Generate a Pattern Discovery grammar activity for this lesson. Include 3-4 examples demonstrating the grammar pattern, one discovery task, a brief rule summary, and 2-3 fill-in-the-blank practice exercises.`;
 

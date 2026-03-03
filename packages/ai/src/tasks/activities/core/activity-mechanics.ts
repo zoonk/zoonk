@@ -2,6 +2,7 @@ import "server-only";
 import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-options";
 import { Output, generateText } from "ai";
 import { z } from "zod";
+import { formatConceptLines } from "../format-concept-lines";
 import systemPrompt from "./activity-mechanics.prompt.md";
 
 const DEFAULT_MODEL = process.env.AI_MODEL_ACTIVITY_MECHANICS ?? "openai/gpt-5.2";
@@ -56,8 +57,7 @@ LESSON_DESCRIPTION: ${lessonDescription}
 CHAPTER_TITLE: ${chapterTitle}
 COURSE_TITLE: ${courseTitle}
 LANGUAGE: ${language}
-CONCEPTS: ${concepts.join(", ")}
-NEIGHBORING_CONCEPTS: ${neighboringConcepts.join(", ")}`;
+${formatConceptLines(concepts, neighboringConcepts)}`;
 
   const providerOptions = buildProviderOptions({
     fallbackModels: FALLBACK_MODELS,

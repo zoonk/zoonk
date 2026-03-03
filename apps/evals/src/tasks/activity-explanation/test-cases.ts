@@ -50,8 +50,10 @@ ${SHARED_EXPECTATIONS}
       lessonDescription:
         "Core building blocks for how data moves across networks, from encapsulation to hop-by-hop forwarding constraints.",
       lessonTitle: "How Data Moves on Networks",
-      neighboringConcepts: ["DNS Resolution", "TCP Handshake", "Socket Programming"],
-      otherLessonConcepts: [
+      neighboringConcepts: [
+        "DNS Resolution",
+        "TCP Handshake",
+        "Socket Programming",
         "Hop-by-Hop Forwarding",
         "Maximum Transmission Unit",
         "Packet Fragmentation",
@@ -86,8 +88,10 @@ ${SHARED_EXPECTATIONS}
         "Conversão de Tipos",
         "Operadores Aritméticos",
         "Comparação de Valores",
+        "Booleanos como Inteiros",
+        "Literais Numéricos",
+        "Hierarquia de Tipos",
       ],
-      otherLessonConcepts: ["Booleanos como Inteiros", "Literais Numéricos", "Hierarquia de Tipos"],
     },
   },
   {
@@ -112,8 +116,14 @@ ${SHARED_EXPECTATIONS}
       lessonDescription:
         "Empirical regularities linking downturns to labor market outcomes at the level of aggregate fluctuations, without modeling search or wage-setting mechanisms.",
       lessonTitle: "Labor market aggregates over the cycle",
-      neighboringConcepts: ["GDP Growth Rate", "Inflation Targeting", "Fiscal Multiplier"],
-      otherLessonConcepts: ["Hours Worked", "Labor Force Participation", "Discouraged Workers"],
+      neighboringConcepts: [
+        "GDP Growth Rate",
+        "Inflation Targeting",
+        "Fiscal Multiplier",
+        "Hours Worked",
+        "Labor Force Participation",
+        "Discouraged Workers",
+      ],
     },
   },
   {
@@ -145,8 +155,6 @@ ${SHARED_EXPECTATIONS}
         "Adición Nucleofílica",
         "Reducción de Carbonilos",
         "Protección de Grupos Funcionales",
-      ],
-      otherLessonConcepts: [
         "Estabilización por Resonancia",
         "Enolato como Nucleófilo",
         "Condensación Aldólica",
@@ -181,8 +189,6 @@ ${SHARED_EXPECTATIONS}
         "Templates Jurídicos",
         "Integração com Sistemas Judiciais",
         "Assinatura Digital",
-      ],
-      otherLessonConcepts: [
         "Rastros de Auditoria",
         "Classificação de Erros",
         "Indicadores de Segurança",
@@ -212,8 +218,10 @@ ${SHARED_EXPECTATIONS}
       lessonDescription:
         "Practical mental models for narrowing a problem to host, subnet, gateway, path, or service-layer reachability without relying on protocol-specific details.",
       lessonTitle: "Connectivity Debugging Mental Models",
-      neighboringConcepts: ["Latency Measurement", "Load Balancing", "Network Address Translation"],
-      otherLessonConcepts: [
+      neighboringConcepts: [
+        "Latency Measurement",
+        "Load Balancing",
+        "Network Address Translation",
         "Host Configuration Check",
         "Gateway Reachability",
         "Service-Layer Diagnosis",

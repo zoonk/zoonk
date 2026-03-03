@@ -18,7 +18,6 @@ export type ExplanationResult = {
 async function generateSingleExplanation(
   activity: LessonActivity,
   concept: string,
-  otherLessonConcepts: string[],
   neighboringConcepts: string[],
   workflowRunId: string,
 ): Promise<ExplanationResult> {
@@ -39,7 +38,6 @@ async function generateSingleExplanation(
       lessonDescription: activity.lesson.description ?? "",
       lessonTitle: activity.lesson.title,
       neighboringConcepts,
-      otherLessonConcepts,
     }),
   );
 
@@ -82,8 +80,7 @@ export async function generateExplanationContentStep(
       return generateSingleExplanation(
         activity,
         concept,
-        otherLessonConcepts,
-        neighboringConcepts,
+        [...otherLessonConcepts, ...neighboringConcepts],
         workflowRunId,
       );
     }),

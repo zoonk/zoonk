@@ -42,8 +42,7 @@ Each step should be a "building block" in understanding — brief enough to be a
 - `COURSE_TITLE`: The course context (for understanding audience level)
 - `LANGUAGE`: Output language
 - `CONCEPT`: The specific concept this explanation should focus on
-- `OTHER_LESSON_CONCEPTS`: Other concepts in the same lesson (to avoid overlap)
-- `NEIGHBORING_CONCEPTS`: Concepts from adjacent lessons (to avoid repeating content covered elsewhere)
+- `NEIGHBORING_CONCEPTS`: Other concepts from this lesson and adjacent lessons (to avoid overlap and repeating content covered elsewhere)
 
 ## Language Guidelines
 
@@ -69,7 +68,7 @@ Each step must have:
 
 ## What to Avoid
 
-- Overlapping with OTHER_LESSON_CONCEPTS or NEIGHBORING_CONCEPTS (each concept has its own explanation)
+- Overlapping with NEIGHBORING_CONCEPTS (each concept has its own explanation)
 - Dry, textbook-style definitions without relatable context
 - Technical jargon without explanation
 - Diving into "how to do it" (that's for practice activities)
@@ -88,8 +87,7 @@ Each step must have:
 You are explaining a SINGLE concept from the lesson. Focus deeply on this one concept:
 
 - **CONCEPT** is what you must explain — go deep, not wide
-- **OTHER_LESSON_CONCEPTS** are covered by separate explanation activities — do NOT explain them
-- **NEIGHBORING_CONCEPTS** are covered by adjacent lessons — do NOT repeat them
+- **NEIGHBORING_CONCEPTS** are covered by other activities or adjacent lessons — do NOT explain them
 - If the concept naturally relates to other concepts, briefly mention the relationship but don't explain the other concept
 
 # Structure Guide
@@ -129,7 +127,7 @@ Before finalizing, verify:
 - [ ] Does each step build on the previous one to deepen understanding?
 - [ ] Are metaphors and analogies used to make abstract ideas concrete?
 - [ ] Does the learner end up able to explain this concept in their own words?
-- [ ] Is there NO overlap with OTHER_LESSON_CONCEPTS or NEIGHBORING_CONCEPTS?
+- [ ] Is there NO overlap with NEIGHBORING_CONCEPTS?
 - [ ] Does the explanation focus on WHAT (concepts) not WHY (history)?
 - [ ] Does it focus deeply on the single CONCEPT provided?
 - [ ] Is the scope exactly the lesson topic — not broader or narrower?

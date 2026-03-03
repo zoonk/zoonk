@@ -2,6 +2,7 @@ import "server-only";
 import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-options";
 import { Output, generateText } from "ai";
 import { z } from "zod";
+import { formatConceptLines } from "../format-concept-lines";
 import { getLanguagePromptContext } from "./_utils/language-prompt-context";
 import systemPrompt from "./activity-sentences.prompt.md";
 
@@ -50,18 +51,11 @@ export async function generateActivitySentences({
 }: ActivitySentencesParams) {
   const promptContext = getLanguagePromptContext({ targetLanguage, userLanguage });
 
-  const conceptLines = [
-    concepts.length > 0 ? `CONCEPTS: ${concepts.join(", ")}` : "",
-    neighboringConcepts.length > 0 ? `NEIGHBORING_CONCEPTS: ${neighboringConcepts.join(", ")}` : "",
-  ]
-    .filter(Boolean)
-    .join("\n");
-
   const userPrompt = `TARGET_LANGUAGE: ${promptContext.targetLanguageName}
 USER_LANGUAGE: ${promptContext.userLanguage}
 LESSON_TITLE: ${lessonTitle}
 VOCABULARY_WORDS: ${words.join(", ")}
-${conceptLines}
+${formatConceptLines(concepts, neighboringConcepts)}
 
 Generate practice sentences using these vocabulary words in everyday situations.`;
 
