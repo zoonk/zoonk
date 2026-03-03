@@ -56,6 +56,16 @@ export function ensureLocaleSuffix(value: string, language: string): string {
   return `${value}${suffix}`;
 }
 
+export function removeLocaleSuffix(value: string, language: string): string {
+  if (language === "en") {
+    return value;
+  }
+
+  const suffix = `-${language}`;
+
+  return value.endsWith(suffix) ? value.slice(0, -suffix.length) : value;
+}
+
 export function replaceNamePlaceholder(text: string, name: string | null): string {
   if (!text.includes(NAME_PLACEHOLDER)) {
     return text;
