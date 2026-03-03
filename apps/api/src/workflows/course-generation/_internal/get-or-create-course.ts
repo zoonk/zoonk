@@ -1,13 +1,17 @@
+import { type CourseSuggestion } from "@zoonk/db";
 import { type ExistingCourse } from "../steps/check-existing-course-step";
 import { getAIOrganizationStep } from "../steps/get-ai-organization-step";
-import { initializeCourseStep } from "../steps/initialize-course-step";
+import { type CourseContext, initializeCourseStep } from "../steps/initialize-course-step";
 import { setCourseAsRunningStep } from "../steps/set-course-as-running-step";
 import { streamStatus } from "../stream-status";
-import {
-  type CourseContext,
-  type CourseSuggestionData,
-  type ExistingCourseContent,
-} from "../types";
+
+export type ExistingCourseContent = {
+  description: string | null;
+  imageUrl: string | null;
+  hasAlternativeTitles: boolean;
+  hasCategories: boolean;
+  hasChapters: boolean;
+};
 
 const DEFAULT_EXISTING_CONTENT: ExistingCourseContent = {
   description: null,
@@ -19,7 +23,7 @@ const DEFAULT_EXISTING_CONTENT: ExistingCourseContent = {
 
 export async function getOrCreateCourse(
   existingCourse: ExistingCourse | null,
-  suggestion: CourseSuggestionData,
+  suggestion: CourseSuggestion,
   courseSuggestionId: number,
   workflowRunId: string,
 ): Promise<{

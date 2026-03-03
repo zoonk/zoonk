@@ -1,17 +1,13 @@
-import { generateActivityVocabulary } from "@zoonk/ai/tasks/activities/language/vocabulary";
+import {
+  type VocabularyWord,
+  generateActivityVocabulary,
+} from "@zoonk/ai/tasks/activities/language/vocabulary";
 import { safeAsync } from "@zoonk/utils/error";
 import { streamError, streamStatus } from "../stream-status";
 import { resolveActivityForGeneration } from "./_utils/content-step-helpers";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
 import { setActivityAsRunningStep } from "./set-activity-as-running-step";
-
-export type VocabularyWord = {
-  alternativeTranslations: string[];
-  romanization: string | null;
-  translation: string;
-  word: string;
-};
 
 export async function generateVocabularyContentStep(
   activities: LessonActivity[],

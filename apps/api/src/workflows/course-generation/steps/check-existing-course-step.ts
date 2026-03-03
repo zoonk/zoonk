@@ -1,9 +1,8 @@
-import { prisma } from "@zoonk/db";
+import { type CourseSuggestion, prisma } from "@zoonk/db";
 import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import { safeAsync } from "@zoonk/utils/error";
 import { ensureLocaleSuffix, toSlug } from "@zoonk/utils/string";
 import { streamError, streamStatus } from "../stream-status";
-import { type CourseSuggestionData } from "../types";
 
 const courseInclude = {
   _count: {
@@ -20,7 +19,7 @@ export type ExistingCourse = NonNullable<
 >;
 
 export async function checkExistingCourseStep(
-  suggestion: CourseSuggestionData,
+  suggestion: CourseSuggestion,
 ): Promise<ExistingCourse | null> {
   "use step";
 

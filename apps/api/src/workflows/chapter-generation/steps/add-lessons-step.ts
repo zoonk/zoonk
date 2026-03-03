@@ -1,13 +1,13 @@
+import { type ChapterLesson } from "@zoonk/ai/tasks/chapters/lessons";
 import { type Lesson, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { normalizeString, toSlug } from "@zoonk/utils/string";
 import { streamError, streamStatus } from "../stream-status";
-import { type GeneratedLesson } from "./generate-lessons-step";
 import { type ChapterContext } from "./get-chapter-step";
 
 export async function addLessonsStep(input: {
   context: ChapterContext;
-  lessons: GeneratedLesson[];
+  lessons: ChapterLesson[];
 }): Promise<Lesson[]> {
   "use step";
 

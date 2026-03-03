@@ -1,11 +1,10 @@
-import { prisma } from "@zoonk/db";
+import { type CourseSuggestion, prisma } from "@zoonk/db";
 import { FatalError } from "workflow";
 import { streamError, streamStatus } from "../stream-status";
-import { type CourseSuggestionData } from "../types";
 
 export async function getCourseSuggestionStep(
   courseSuggestionId: number,
-): Promise<CourseSuggestionData | null> {
+): Promise<CourseSuggestion | null> {
   "use step";
 
   await streamStatus({ status: "started", step: "getCourseSuggestion" });

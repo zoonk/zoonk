@@ -1,12 +1,10 @@
-import { generateLessonActivities } from "@zoonk/ai/tasks/lessons/activities";
+import {
+  type GeneratedActivity,
+  generateLessonActivities,
+} from "@zoonk/ai/tasks/lessons/activities";
 import { safeAsync } from "@zoonk/utils/error";
 import { streamError, streamStatus } from "../stream-status";
 import { type LessonContext } from "./get-lesson-step";
-
-export type GeneratedActivity = {
-  title: string;
-  description: string;
-};
 
 export async function generateCustomActivitiesStep(
   context: LessonContext,
