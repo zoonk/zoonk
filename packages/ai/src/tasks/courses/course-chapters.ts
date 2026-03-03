@@ -26,6 +26,7 @@ const schema = z.object({
 });
 
 export type CourseChaptersSchema = z.infer<typeof schema>;
+export type CourseChapter = CourseChaptersSchema["chapters"][number];
 
 export type CourseChaptersParams = {
   language: string;

@@ -18,6 +18,9 @@ const schema = z.object({
   ),
 });
 
+export type ChapterLessonsSchema = z.infer<typeof schema>;
+export type ChapterLesson = ChapterLessonsSchema["lessons"][number];
+
 function formatNeighboringChapters(chapters: { title: string; description: string }[]): string {
   if (chapters.length === 0) {
     return "";

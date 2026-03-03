@@ -1,8 +1,8 @@
-import { generateCourseChapters } from "@zoonk/ai/tasks/courses/chapters";
+import { type CourseChapter, generateCourseChapters } from "@zoonk/ai/tasks/courses/chapters";
 import { generateLanguageCourseChapters } from "@zoonk/ai/tasks/courses/language-chapters";
 import { safeAsync } from "@zoonk/utils/error";
 import { streamError, streamStatus } from "../stream-status";
-import { type CourseContext, type GeneratedChapter } from "../types";
+import { type CourseContext } from "./initialize-course-step";
 
 function generateChapters(course: CourseContext) {
   if (course.targetLanguage) {
@@ -18,7 +18,7 @@ function generateChapters(course: CourseContext) {
   });
 }
 
-export async function generateChaptersStep(course: CourseContext): Promise<GeneratedChapter[]> {
+export async function generateChaptersStep(course: CourseContext): Promise<CourseChapter[]> {
   "use step";
 
   await streamStatus({ status: "started", step: "generateChapters" });

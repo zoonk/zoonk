@@ -24,6 +24,7 @@ const schema = z.object({
 });
 
 export type LessonActivitiesSchema = z.infer<typeof schema>;
+export type GeneratedActivity = LessonActivitiesSchema["activities"][number];
 
 export type LessonActivitiesParams = {
   lessonTitle: string;

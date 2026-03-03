@@ -27,6 +27,7 @@ const schema = z.object({
 });
 
 export type ActivityVocabularySchema = z.infer<typeof schema>;
+export type VocabularyWord = ActivityVocabularySchema["words"][number];
 
 export type ActivityVocabularyParams = {
   chapterTitle: string;

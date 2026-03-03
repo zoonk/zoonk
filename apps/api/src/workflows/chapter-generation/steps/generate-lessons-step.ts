@@ -1,14 +1,8 @@
 import { generateLanguageChapterLessons } from "@zoonk/ai/tasks/chapters/language-lessons";
-import { generateChapterLessons } from "@zoonk/ai/tasks/chapters/lessons";
+import { type ChapterLesson, generateChapterLessons } from "@zoonk/ai/tasks/chapters/lessons";
 import { safeAsync } from "@zoonk/utils/error";
 import { streamError, streamStatus } from "../stream-status";
 import { type ChapterContext } from "./get-chapter-step";
-
-export type GeneratedLesson = {
-  title: string;
-  description: string;
-  concepts: string[];
-};
 
 function generateLessons(context: ChapterContext) {
   if (context.course.targetLanguage) {
@@ -29,7 +23,7 @@ function generateLessons(context: ChapterContext) {
   });
 }
 
-export async function generateLessonsStep(context: ChapterContext): Promise<GeneratedLesson[]> {
+export async function generateLessonsStep(context: ChapterContext): Promise<ChapterLesson[]> {
   "use step";
 
   await streamStatus({ status: "started", step: "generateLessons" });

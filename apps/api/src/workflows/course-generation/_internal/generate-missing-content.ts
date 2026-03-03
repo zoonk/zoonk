@@ -1,17 +1,19 @@
+import { type CourseChapter } from "@zoonk/ai/tasks/courses/chapters";
 import { generateAlternativeTitlesStep } from "../steps/generate-alternative-titles-step";
 import { generateCategoriesStep } from "../steps/generate-categories-step";
 import { generateChaptersStep } from "../steps/generate-chapters-step";
 import { generateDescriptionStep } from "../steps/generate-description-step";
 import { generateImageStep } from "../steps/generate-image-step";
+import { type CourseContext } from "../steps/initialize-course-step";
 import { streamStatus } from "../stream-status";
-import { type CourseContext, type ExistingCourseContent, type GeneratedChapter } from "../types";
+import { type ExistingCourseContent } from "./get-or-create-course";
 
 export type GeneratedContent = {
   description: string;
   imageUrl: string;
   alternativeTitles: string[];
   categories: string[];
-  chapters: GeneratedChapter[];
+  chapters: CourseChapter[];
 };
 
 async function descriptionOrSkip(
@@ -69,7 +71,7 @@ async function categoriesOrSkip(
 async function chaptersOrSkip(
   course: CourseContext,
   existing: ExistingCourseContent,
-): Promise<GeneratedChapter[]> {
+): Promise<CourseChapter[]> {
   if (existing.hasChapters) {
     await streamStatus({ status: "completed", step: "generateChapters" });
     return [];

@@ -1,8 +1,8 @@
+import { type GeneratedActivity } from "@zoonk/ai/tasks/lessons/activities";
 import { type ActivityKind, type LessonKind, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { isTTSSupportedLanguage } from "@zoonk/utils/languages";
 import { streamError, streamStatus } from "../stream-status";
-import { type GeneratedActivity } from "./generate-custom-activities-step";
 import { type LessonContext } from "./get-lesson-step";
 
 type ActivityEntry = {

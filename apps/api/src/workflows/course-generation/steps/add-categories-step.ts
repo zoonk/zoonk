@@ -1,7 +1,7 @@
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { streamError, streamStatus } from "../stream-status";
-import { type CourseContext } from "../types";
+import { type CourseContext } from "./initialize-course-step";
 
 export async function addCategoriesStep(input: {
   course: CourseContext;

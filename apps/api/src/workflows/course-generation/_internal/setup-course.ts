@@ -1,9 +1,10 @@
 import { type Chapter } from "@zoonk/db";
 import { completeCourseSetupStep } from "../steps/complete-course-setup-step";
 import { getCourseChaptersStep } from "../steps/get-course-chapters-step";
+import { type CourseContext } from "../steps/initialize-course-step";
 import { streamStatus } from "../stream-status";
-import { type CourseContext, type ExistingCourseContent } from "../types";
 import { generateMissingContent } from "./generate-missing-content";
+import { type ExistingCourseContent } from "./get-or-create-course";
 import { persistGeneratedContent } from "./persist-generated-content";
 
 async function getChapters(

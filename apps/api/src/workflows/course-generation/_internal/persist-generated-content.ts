@@ -2,10 +2,11 @@ import { type Chapter } from "@zoonk/db";
 import { addAlternativeTitlesStep } from "../steps/add-alternative-titles-step";
 import { addCategoriesStep } from "../steps/add-categories-step";
 import { addChaptersStep } from "../steps/add-chapters-step";
+import { type CourseContext } from "../steps/initialize-course-step";
 import { updateCourseStep } from "../steps/update-course-step";
 import { streamStatus } from "../stream-status";
-import { type CourseContext, type ExistingCourseContent } from "../types";
 import { type GeneratedContent } from "./generate-missing-content";
+import { type ExistingCourseContent } from "./get-or-create-course";
 
 async function emitSkippedPersistSteps(
   needsCourseUpdate: boolean,
