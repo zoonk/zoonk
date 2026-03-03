@@ -5,9 +5,10 @@ import { type LessonActivity } from "../get-lesson-activities-step";
 import { findActivityByKind } from "./find-activity-by-kind";
 import { type ActivitySteps, parseActivitySteps } from "./get-activity-steps";
 
-/**
- * Resume from DB: returns existing steps if found, null otherwise.
- */
+type ShouldGenerate =
+  | { activity: LessonActivity; shouldGenerate: true; existingSteps?: undefined }
+  | { activity?: undefined; shouldGenerate: false; existingSteps: ActivitySteps };
+
 async function getExistingContentSteps(activityId: bigint | number): Promise<ActivitySteps | null> {
   const { data: existingSteps } = await safeAsync(() =>
     prisma.step.findMany({
@@ -24,24 +25,7 @@ async function getExistingContentSteps(activityId: bigint | number): Promise<Act
   return null;
 }
 
-/**
- * Resolves the activity for a given kind and handles status-based branching.
- * Returns `shouldGenerate: true` when the step should proceed with AI generation,
- * or `shouldGenerate: false` with existing steps (possibly empty) when it should skip.
- */
-export async function resolveActivityForGeneration(
-  activities: LessonActivity[],
-  kind: ActivityKind,
-): Promise<
-  | { activity: LessonActivity; shouldGenerate: true; existingSteps?: undefined }
-  | { activity?: undefined; shouldGenerate: false; existingSteps: ActivitySteps }
-> {
-  const activity = findActivityByKind(activities, kind);
-
-  if (!activity) {
-    return { existingSteps: [], shouldGenerate: false };
-  }
-
+async function resolveActivity(activity: LessonActivity): Promise<ShouldGenerate> {
   if (activity.generationStatus === "completed") {
     return {
       existingSteps: (await getExistingContentSteps(activity.id)) ?? [],
@@ -60,10 +44,23 @@ export async function resolveActivityForGeneration(
   return { activity, shouldGenerate: true };
 }
 
-/**
- * Save generated steps to DB.
- * Returns null on success, error on failure.
- */
+export async function resolveActivityForGeneration(
+  activitiesOrActivity: LessonActivity[] | LessonActivity,
+  kind?: ActivityKind,
+): Promise<ShouldGenerate> {
+  if (!Array.isArray(activitiesOrActivity)) {
+    return resolveActivity(activitiesOrActivity);
+  }
+
+  const activity = kind ? findActivityByKind(activitiesOrActivity, kind) : activitiesOrActivity[0];
+
+  if (!activity) {
+    return { existingSteps: [], shouldGenerate: false };
+  }
+
+  return resolveActivity(activity);
+}
+
 export async function saveContentSteps(
   activityId: bigint | number,
   steps: ActivitySteps,

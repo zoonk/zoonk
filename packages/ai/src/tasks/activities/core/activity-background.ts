@@ -2,6 +2,7 @@ import "server-only";
 import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-options";
 import { Output, generateText } from "ai";
 import { z } from "zod";
+import { formatConceptLines } from "../format-concept-lines";
 import systemPrompt from "./activity-background.prompt.md";
 
 const DEFAULT_MODEL = process.env.AI_MODEL_ACTIVITY_BACKGROUND ?? "openai/gpt-5.2";
@@ -32,6 +33,8 @@ export type ActivityBackgroundParams = {
   chapterTitle: string;
   courseTitle: string;
   language: string;
+  concepts: string[];
+  neighboringConcepts: string[];
   model?: string;
   useFallback?: boolean;
   reasoningEffort?: ReasoningEffort;
@@ -43,6 +46,8 @@ export async function generateActivityBackground({
   chapterTitle,
   courseTitle,
   language,
+  concepts,
+  neighboringConcepts,
   model = DEFAULT_MODEL,
   useFallback = true,
   reasoningEffort,
@@ -51,7 +56,8 @@ export async function generateActivityBackground({
 LESSON_DESCRIPTION: ${lessonDescription}
 CHAPTER_TITLE: ${chapterTitle}
 COURSE_TITLE: ${courseTitle}
-LANGUAGE: ${language}`;
+LANGUAGE: ${language}
+${formatConceptLines(concepts, neighboringConcepts)}`;
 
   const providerOptions = buildProviderOptions({
     fallbackModels: FALLBACK_MODELS,

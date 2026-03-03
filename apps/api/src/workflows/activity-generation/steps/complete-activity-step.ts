@@ -1,9 +1,11 @@
 import { type ActivityStepName } from "@/workflows/config";
 import { type ActivityKind, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
-import { streamError, streamStatus } from "../stream-status";
-import { findActivityByKind } from "./_utils/find-activity-by-kind";
+import { rejected } from "@zoonk/utils/settled";
+import { streamStatus } from "../stream-status";
+import { findActivitiesByKind } from "./_utils/find-activity-by-kind";
 import { type LessonActivity } from "./get-lesson-activities-step";
+import { handleActivityFailureStep } from "./handle-failure-step";
 
 const kindToStepName: Partial<Record<ActivityKind, ActivityStepName>> = {
   background: "setBackgroundAsCompleted",
@@ -22,20 +24,10 @@ const kindToStepName: Partial<Record<ActivityKind, ActivityStepName>> = {
   vocabulary: "setVocabularyAsCompleted",
 };
 
-export async function completeActivityStep(
-  activities: LessonActivity[],
+async function completeSingleActivity(
+  activity: LessonActivity,
   workflowRunId: string,
-  activityKind: ActivityKind,
 ): Promise<void> {
-  "use step";
-
-  const activity = findActivityByKind(activities, activityKind);
-  const stepName = kindToStepName[activityKind];
-
-  if (!activity || !stepName) {
-    return;
-  }
-
   const current = await prisma.activity.findUnique({
     where: { id: activity.id },
   });
@@ -43,9 +35,6 @@ export async function completeActivityStep(
   if (current?.generationStatus !== "running") {
     return;
   }
-
-  await streamStatus({ status: "started", step: stepName });
-  await streamStatus({ status: "started", step: "setActivityAsCompleted" });
 
   const { error } = await safeAsync(() =>
     prisma.activity.update({
@@ -55,11 +44,34 @@ export async function completeActivityStep(
   );
 
   if (error) {
-    await streamError({ reason: "dbSaveFailed", step: stepName });
-    await streamStatus({ status: "error", step: "setActivityAsCompleted" });
+    await handleActivityFailureStep({ activityId: activity.id });
+    throw error;
+  }
+}
+
+export async function completeActivityStep(
+  activities: LessonActivity[],
+  workflowRunId: string,
+  activityKind: ActivityKind,
+): Promise<void> {
+  "use step";
+
+  const matchingActivities = findActivitiesByKind(activities, activityKind);
+  const stepName = kindToStepName[activityKind];
+
+  if (matchingActivities.length === 0 || !stepName) {
     return;
   }
 
-  await streamStatus({ status: "completed", step: stepName });
-  await streamStatus({ status: "completed", step: "setActivityAsCompleted" });
+  await streamStatus({ status: "started", step: stepName });
+  await streamStatus({ status: "started", step: "setActivityAsCompleted" });
+
+  const allSettled = await Promise.allSettled(
+    matchingActivities.map((activity) => completeSingleActivity(activity, workflowRunId)),
+  );
+
+  const status = rejected(allSettled) ? "error" : "completed";
+
+  await streamStatus({ status, step: stepName });
+  await streamStatus({ status, step: "setActivityAsCompleted" });
 }

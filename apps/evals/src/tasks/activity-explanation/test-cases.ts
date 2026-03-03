@@ -43,22 +43,21 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "en-web-data-movement",
     userInput: {
-      backgroundSteps: [
-        {
-          text: "Early computer networks were a tangle of incompatible systems. Sending a message across networks was like mailing a letter through countries with different postal rules.",
-          title: "The Compatibility Problem",
-        },
-        {
-          text: "Engineers realized data needed to be wrapped in layers, each handling one part of the journey. This layered approach let the internet scale to billions of devices.",
-          title: "Layers of Wrapping",
-        },
-      ],
       chapterTitle: "Networking fundamentals",
+      concept: "Encapsulation",
       courseTitle: "Web Development",
       language: "en",
       lessonDescription:
         "Core building blocks for how data moves across networks, from encapsulation to hop-by-hop forwarding constraints.",
       lessonTitle: "How Data Moves on Networks",
+      neighboringConcepts: [
+        "DNS Resolution",
+        "TCP Handshake",
+        "Socket Programming",
+        "Hop-by-Hop Forwarding",
+        "Maximum Transmission Unit",
+        "Packet Fragmentation",
+      ],
     },
   },
   {
@@ -78,22 +77,21 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "pt-python-float-bool",
     userInput: {
-      backgroundSteps: [
-        {
-          text: "Computadores precisam representar diferentes tipos de números. Inteiros são simples, mas e quando precisamos de frações? Ou de verdadeiro/falso? Cada necessidade gerou um tipo numérico distinto.",
-          title: "Além dos Inteiros",
-        },
-        {
-          text: "Python unificou esses tipos em uma hierarquia elegante. Entender essa relação revela por que operações aparentemente estranhas, como somar True + True, funcionam perfeitamente.",
-          title: "Uma Família de Tipos",
-        },
-      ],
       chapterTitle: "Tipos numéricos e valores especiais",
+      concept: "Ponto Flutuante",
       courseTitle: "Python",
       language: "pt",
       lessonDescription:
         "Valores de ponto flutuante e booleanos, sintaxe de literais e a relação estrutural entre bool e int.",
       lessonTitle: "Float e bool como tipos numéricos",
+      neighboringConcepts: [
+        "Conversão de Tipos",
+        "Operadores Aritméticos",
+        "Comparação de Valores",
+        "Booleanos como Inteiros",
+        "Literais Numéricos",
+        "Hierarquia de Tipos",
+      ],
     },
   },
   {
@@ -111,22 +109,21 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "en-economics-labor-cycles",
     userInput: {
-      backgroundSteps: [
-        {
-          text: "Economies don't grow steadily — they surge and contract in waves. During each downturn, the pain isn't spread evenly. Labor markets absorb much of the shock.",
-          title: "The Boom-Bust Pattern",
-        },
-        {
-          text: "Economists noticed that certain labor market indicators move in predictable patterns during recessions. These regularities became essential for understanding how downturns affect real people.",
-          title: "Patterns in the Pain",
-        },
-      ],
       chapterTitle: "Business cycles",
+      concept: "Unemployment Rate",
       courseTitle: "Economics",
       language: "en",
       lessonDescription:
         "Empirical regularities linking downturns to labor market outcomes at the level of aggregate fluctuations, without modeling search or wage-setting mechanisms.",
       lessonTitle: "Labor market aggregates over the cycle",
+      neighboringConcepts: [
+        "GDP Growth Rate",
+        "Inflation Targeting",
+        "Fiscal Multiplier",
+        "Hours Worked",
+        "Labor Force Participation",
+        "Discouraged Workers",
+      ],
     },
   },
   {
@@ -147,22 +144,21 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "es-quimica-acidez-enolatos",
     userInput: {
-      backgroundSteps: [
-        {
-          text: "Construir moléculas complejas requiere formar enlaces carbono-carbono. Pero el carbono no es naturalmente reactivo — los químicos necesitaron encontrar posiciones especialmente activadas.",
-          title: "El Desafío del Enlace C–C",
-        },
-        {
-          text: "Junto a un grupo carbonilo, ciertos hidrógenos se vuelven sorprendentemente ácidos. Esta acidez inesperada abrió la puerta a toda una familia de reacciones de construcción molecular.",
-          title: "Un Hidrógeno Especial",
-        },
-      ],
       chapterTitle: "Carbonilos y enolatos",
+      concept: "Acidez en Posición Alfa",
       courseTitle: "Química",
       language: "es",
       lessonDescription:
         "Origen de la acidez en α y cómo se forma el enolato como nucleófilo clave en reacciones de construcción C–C.",
       lessonTitle: "Acidez en α y formación de enolatos",
+      neighboringConcepts: [
+        "Adición Nucleofílica",
+        "Reducción de Carbonilos",
+        "Protección de Grupos Funcionales",
+        "Estabilización por Resonancia",
+        "Enolato como Nucleófilo",
+        "Condensación Aldólica",
+      ],
     },
   },
   {
@@ -182,22 +178,21 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "pt-direito-medicao-automacao",
     userInput: {
-      backgroundSteps: [
-        {
-          text: "Escritórios de advocacia adotaram automação documental para ganhar eficiência. Mas automatizar sem monitorar é como dirigir de olhos fechados — rápido, mas perigoso.",
-          title: "Velocidade sem Controle",
-        },
-        {
-          text: "Erros em documentos jurídicos podem custar processos inteiros. A profissão percebeu que precisava de métricas para garantir que a automação mantivesse a qualidade que clientes esperam.",
-          title: "O Custo do Erro Silencioso",
-        },
-      ],
       chapterTitle: "Legal tech e automação de documentos",
+      concept: "Métricas de Qualidade Documental",
       courseTitle: "Direito",
       language: "pt",
       lessonDescription:
         "Métricas operacionais focadas em qualidade e segurança da automação documental, com rastros para auditoria.",
       lessonTitle: "Medição e monitoramento da automação",
+      neighboringConcepts: [
+        "Templates Jurídicos",
+        "Integração com Sistemas Judiciais",
+        "Assinatura Digital",
+        "Rastros de Auditoria",
+        "Classificação de Erros",
+        "Indicadores de Segurança",
+      ],
     },
   },
   {
@@ -216,22 +211,21 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "en-web-debugging-mental-models",
     userInput: {
-      backgroundSteps: [
-        {
-          text: "When a web app can't reach a server, the problem could be anywhere — your machine, the local network, a router along the path, or the server itself. Without a system, debugging is guesswork.",
-          title: "The Needle in the Stack",
-        },
-        {
-          text: "Experienced engineers don't try random fixes. They use mental models to systematically narrow the problem layer by layer, turning a haystack into a checklist.",
-          title: "Thinking in Layers",
-        },
-      ],
       chapterTitle: "Networking fundamentals",
+      concept: "Layer-by-Layer Isolation",
       courseTitle: "Web Development",
       language: "en",
       lessonDescription:
         "Practical mental models for narrowing a problem to host, subnet, gateway, path, or service-layer reachability without relying on protocol-specific details.",
       lessonTitle: "Connectivity Debugging Mental Models",
+      neighboringConcepts: [
+        "Latency Measurement",
+        "Load Balancing",
+        "Network Address Translation",
+        "Host Configuration Check",
+        "Gateway Reachability",
+        "Service-Layer Diagnosis",
+      ],
     },
   },
 ];

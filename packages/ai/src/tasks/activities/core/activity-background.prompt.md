@@ -40,6 +40,8 @@ Each step should be a "scene" in your story — brief enough to maintain momentu
 - `CHAPTER_TITLE`: The chapter context (for understanding scope)
 - `COURSE_TITLE`: The course context (for understanding audience level)
 - `LANGUAGE`: Output language
+- `CONCEPTS`: The key concepts this lesson will teach (use these to ground the story in relevant context)
+- `NEIGHBORING_CONCEPTS`: Concepts from adjacent lessons (avoid overlapping with these)
 
 ## Language Guidelines
 

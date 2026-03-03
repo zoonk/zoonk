@@ -18,6 +18,10 @@ import { activityGenerationWorkflow } from "./activity-generation-workflow";
 import { completeListeningActivityStep } from "./steps/complete-listening-activity-step";
 import { getLessonActivitiesStep } from "./steps/get-lesson-activities-step";
 
+vi.mock("./steps/get-neighboring-concepts-step", () => ({
+  getNeighboringConceptsStep: vi.fn().mockResolvedValue([]),
+}));
+
 vi.mock("workflow", () => ({
   FatalError: class FatalError extends Error {},
   getWorkflowMetadata: vi.fn().mockReturnValue({ workflowRunId: "test-run-id" }),
@@ -316,8 +320,10 @@ describe("language activity generation", () => {
 
     expect(generateActivityVocabulary).toHaveBeenCalledWith({
       chapterTitle: chapter.title,
+      concepts: [],
       lessonDescription: "Learn basic greetings",
       lessonTitle: testLesson.title,
+      neighboringConcepts: [],
       targetLanguage: "es",
       userLanguage: "en",
     });
@@ -864,8 +870,10 @@ describe("language activity generation", () => {
 
     expect(generateActivityGrammar).toHaveBeenCalledWith({
       chapterTitle: chapter.title,
+      concepts: [],
       lessonDescription: "Learn present tense in Spanish",
       lessonTitle: testLesson.title,
+      neighboringConcepts: [],
       targetLanguage: "es",
       userLanguage: "en",
     });
@@ -1158,8 +1166,10 @@ describe("language activity generation", () => {
 
     expect(generateActivityStoryLanguage).toHaveBeenCalledWith({
       chapterTitle: chapter.title,
+      concepts: [],
       lessonDescription: "Practice ordering in a cafe",
       lessonTitle: testLesson.title,
+      neighboringConcepts: [],
       targetLanguage: "es",
       userLanguage: "en",
     });
@@ -1422,7 +1432,9 @@ describe("language activity generation", () => {
     await activityGenerationWorkflow(testLesson.id);
 
     expect(generateActivitySentences).toHaveBeenCalledWith({
+      concepts: [],
       lessonTitle: testLesson.title,
+      neighboringConcepts: [],
       targetLanguage: "es",
       userLanguage: "en",
       words: ["hola", "gato"],
@@ -1453,7 +1465,9 @@ describe("language activity generation", () => {
     await activityGenerationWorkflow(testLesson.id);
 
     expect(generateActivitySentences).toHaveBeenCalledWith({
+      concepts: [],
       lessonTitle: testLesson.title,
+      neighboringConcepts: [],
       targetLanguage: "es",
       userLanguage: "en",
       words: expectedWords,

@@ -1,7 +1,7 @@
 import { type StepVisualSchema, generateStepVisuals } from "@zoonk/ai/tasks/steps/visual";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
-import { settledValues } from "@zoonk/utils/settled";
+import { rejected, settledValues } from "@zoonk/utils/settled";
 import { streamStatus } from "../stream-status";
 import { type CustomContentResult } from "./generate-custom-content-step";
 import { type LessonActivity } from "./get-lesson-activities-step";
@@ -49,7 +49,7 @@ async function generateVisualsForActivity(
 
   if (error || !result) {
     await handleActivityFailureStep({ activityId: activity.id });
-    return empty;
+    throw error ?? new Error("Empty visual result");
   }
 
   const { error: saveError } = await safeAsync(() =>
@@ -70,7 +70,7 @@ async function generateVisualsForActivity(
 
   if (saveError) {
     await handleActivityFailureStep({ activityId: activity.id });
-    return empty;
+    throw saveError;
   }
 
   return { activityId: activity.id, visuals: result.data.visuals };
@@ -88,7 +88,7 @@ export async function generateCustomVisualsStep(
 
   await streamStatus({ status: "started", step: "generateVisuals" });
 
-  const results = await Promise.allSettled(
+  const allSettled = await Promise.allSettled(
     customContentResults.map((contentResult) => {
       const activity = activities.find((act) => act.id === contentResult.activityId);
       if (!activity) {
@@ -98,7 +98,10 @@ export async function generateCustomVisualsStep(
     }),
   );
 
-  await streamStatus({ status: "completed", step: "generateVisuals" });
+  await streamStatus({
+    status: rejected(allSettled) ? "error" : "completed",
+    step: "generateVisuals",
+  });
 
-  return settledValues(results);
+  return settledValues(allSettled);
 }

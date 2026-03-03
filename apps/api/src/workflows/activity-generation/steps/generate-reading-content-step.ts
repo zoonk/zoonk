@@ -87,6 +87,8 @@ export async function generateReadingContentStep(
   activities: LessonActivity[],
   workflowRunId: string,
   currentRunWords: string[],
+  concepts: string[] = [],
+  neighboringConcepts: string[] = [],
 ): Promise<{ sentences: ReadingSentence[] }> {
   "use step";
 
@@ -120,7 +122,9 @@ export async function generateReadingContentStep(
 
   const { data: result, error } = await safeAsync(() =>
     generateActivitySentences({
+      concepts,
       lessonTitle: activity.lesson.title,
+      neighboringConcepts,
       targetLanguage: course.targetLanguage ?? course.title,
       userLanguage,
       words: sourceWords.words,

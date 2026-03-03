@@ -46,7 +46,6 @@ async function createTestActivity(options?: {
     lessonId: lesson.id,
     organizationId: org.id,
     position: 0,
-    title: `E2E Activity ${uniqueId}`,
   });
 
   if (options?.generationStatus !== "pending") {

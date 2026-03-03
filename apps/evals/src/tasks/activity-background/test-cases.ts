@@ -36,11 +36,18 @@ export const TEST_CASES = [
     id: "en-web-data-movement",
     userInput: {
       chapterTitle: "Networking fundamentals",
+      concepts: [
+        "Encapsulation",
+        "Hop-by-Hop Forwarding",
+        "Maximum Transmission Unit",
+        "Packet Fragmentation",
+      ],
       courseTitle: "Web Development",
       language: "en",
       lessonDescription:
         "Core building blocks for how data moves across networks, from encapsulation to hop-by-hop forwarding constraints.",
       lessonTitle: "How Data Moves on Networks",
+      neighboringConcepts: ["DNS Resolution", "TCP Handshake", "Socket Programming"],
     },
   },
   {
@@ -54,11 +61,22 @@ export const TEST_CASES = [
     id: "pt-python-float-bool",
     userInput: {
       chapterTitle: "Tipos numéricos e valores especiais",
+      concepts: [
+        "Ponto Flutuante",
+        "Booleanos como Inteiros",
+        "Literais Numéricos",
+        "Hierarquia de Tipos",
+      ],
       courseTitle: "Python",
       language: "pt",
       lessonDescription:
         "Valores de ponto flutuante e booleanos, sintaxe de literais e a relação estrutural entre bool e int.",
       lessonTitle: "Float e bool como tipos numéricos",
+      neighboringConcepts: [
+        "Conversão de Tipos",
+        "Operadores Aritméticos",
+        "Comparação de Valores",
+      ],
     },
   },
   {
@@ -70,11 +88,18 @@ export const TEST_CASES = [
     id: "en-economics-labor-cycles",
     userInput: {
       chapterTitle: "Business cycles",
+      concepts: [
+        "Unemployment Rate",
+        "Hours Worked",
+        "Labor Force Participation",
+        "Discouraged Workers",
+      ],
       courseTitle: "Economics",
       language: "en",
       lessonDescription:
         "Empirical regularities linking downturns to labor market outcomes at the level of aggregate fluctuations, without modeling search or wage-setting mechanisms.",
       lessonTitle: "Labor market aggregates over the cycle",
+      neighboringConcepts: ["GDP Growth Rate", "Inflation Targeting", "Fiscal Multiplier"],
     },
   },
   {
@@ -88,11 +113,22 @@ export const TEST_CASES = [
     id: "es-quimica-acidez-enolatos",
     userInput: {
       chapterTitle: "Carbonilos y enolatos",
+      concepts: [
+        "Acidez en Posición Alfa",
+        "Estabilización por Resonancia",
+        "Enolato como Nucleófilo",
+        "Condensación Aldólica",
+      ],
       courseTitle: "Química",
       language: "es",
       lessonDescription:
         "Origen de la acidez en α y cómo se forma el enolato como nucleófilo clave en reacciones de construcción C–C.",
       lessonTitle: "Acidez en α y formación de enolatos",
+      neighboringConcepts: [
+        "Adición Nucleofílica",
+        "Reducción de Carbonilos",
+        "Protección de Grupos Funcionales",
+      ],
     },
   },
   {
@@ -106,11 +142,22 @@ export const TEST_CASES = [
     id: "pt-direito-medicao-automacao",
     userInput: {
       chapterTitle: "Legal tech e automação de documentos",
+      concepts: [
+        "Métricas de Qualidade Documental",
+        "Rastros de Auditoria",
+        "Classificação de Erros",
+        "Indicadores de Segurança",
+      ],
       courseTitle: "Direito",
       language: "pt",
       lessonDescription:
         "Métricas operacionais focadas em qualidade e segurança da automação documental, com rastros para auditoria.",
       lessonTitle: "Medição e monitoramento da automação",
+      neighboringConcepts: [
+        "Templates Jurídicos",
+        "Integração com Sistemas Judiciais",
+        "Assinatura Digital",
+      ],
     },
   },
   {
@@ -122,11 +169,18 @@ export const TEST_CASES = [
     id: "en-web-debugging-mental-models",
     userInput: {
       chapterTitle: "Networking fundamentals",
+      concepts: [
+        "Layer-by-Layer Isolation",
+        "Host Configuration Check",
+        "Gateway Reachability",
+        "Service-Layer Diagnosis",
+      ],
       courseTitle: "Web Development",
       language: "en",
       lessonDescription:
         "Practical mental models for narrowing a problem to host, subnet, gateway, path, or service-layer reachability without relying on protocol-specific details.",
       lessonTitle: "Connectivity Debugging Mental Models",
+      neighboringConcepts: ["Latency Measurement", "Load Balancing", "Network Address Translation"],
     },
   },
 ];

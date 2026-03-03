@@ -105,7 +105,7 @@ const SHARED_PHASE_STEPS = {
   addingPronunciation: [] as ActivityStepName[],
   buildingWordList: [] as ActivityStepName[],
   creatingImages: ["generateImages", "generateQuizImages"] as ActivityStepName[],
-  gettingStarted: ["getLessonActivities"] as ActivityStepName[],
+  gettingStarted: ["getLessonActivities", "getNeighboringConcepts"] as ActivityStepName[],
   preparingVisuals: ["generateVisuals"] as ActivityStepName[],
   recordingAudio: [] as ActivityStepName[],
 };
@@ -140,7 +140,7 @@ function getLanguagePhaseSteps(kind: ActivityKind): Record<PhaseName, ActivitySt
           "generateVocabularyAudio",
         ]),
       ],
-      gettingStarted: ["getLessonActivities"],
+      gettingStarted: ["getLessonActivities", "getNeighboringConcepts"],
       processingDependencies: [],
       recordingAudio: ["generateVocabularyAudio"],
       writingContent: [],

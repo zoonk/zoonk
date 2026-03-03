@@ -19,7 +19,8 @@ Great challenges don't quiz — they immerse. Learners face realistic scenarios 
 - `CHAPTER_TITLE`: The chapter context (for understanding scope)
 - `COURSE_TITLE`: The course context (for understanding audience level)
 - `LANGUAGE`: Output language
-- `EXPLANATION_STEPS`: What the learner has already studied
+- `CONCEPTS`: The key concepts this lesson teaches (use these to create meaningful trade-off scenarios)
+- `NEIGHBORING_CONCEPTS`: Concepts from adjacent lessons (avoid overlapping with these)
 
 ## Language Guidelines
 

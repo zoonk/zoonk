@@ -44,7 +44,8 @@ Each step should be a "spotlight" on one context — brief enough to recognize i
 - `CHAPTER_TITLE`: The chapter context (for understanding scope)
 - `COURSE_TITLE`: The course context (for understanding audience level)
 - `LANGUAGE`: Output language
-- `EXPLANATION_STEPS`: Array of {title, text} from the Explanation activity learners completed before this one (to avoid repeating content)
+- `CONCEPTS`: The key concepts this lesson teaches (use these to focus the real-world examples)
+- `NEIGHBORING_CONCEPTS`: Concepts from adjacent lessons (avoid overlapping with these)
 
 ## Language Guidelines
 
@@ -70,7 +71,7 @@ Each step must have:
 
 ## What to Avoid
 
-- Repeating content from EXPLANATION_STEPS (the learner already knows WHAT it is)
+- Repeating definitions of CONCEPTS (the learner already knows WHAT they are)
 - Process explanations (that's Mechanics' job — HOW it works)
 - History or origin stories (that's Background's job — WHY it exists)
 - Abstract or theoretical applications without concrete situations
@@ -98,7 +99,7 @@ Your Examples activity shows WHERE (real-world contexts, applications, everyday 
 - Mechanics: "HOW does it actually work?"
 - Examples: "WHERE will I encounter this in my life?"
 
-Never repeat the definitions from Explanation or processes from Mechanics. Assume the learner knows what it IS and how it WORKS, and is now ready to see where it APPEARS.
+Never repeat definitions of CONCEPTS or processes from Mechanics. Assume the learner knows what it IS and how it WORKS, and is now ready to see where it APPEARS. Avoid overlapping with NEIGHBORING_CONCEPTS from adjacent lessons.
 
 # Structure Guide
 
@@ -135,7 +136,7 @@ Before finalizing, verify:
 - [ ] Does each step place the learner in a recognizable real-world situation?
 - [ ] Are contexts diverse (daily life, work, entertainment, unexpected, personal)?
 - [ ] Does the learner get "aha moments" — recognizing the topic in familiar places?
-- [ ] Is there NO overlap with EXPLANATION_STEPS content (definitions) or Mechanics (processes)?
+- [ ] Is there NO overlap with CONCEPTS definitions, Mechanics (processes), or NEIGHBORING_CONCEPTS?
 - [ ] Does the activity focus on WHERE (contexts) not WHAT (definitions) or HOW (processes)?
 - [ ] Is the scope exactly the lesson topic — not broader or narrower?
 - [ ] Are both obvious and unexpected applications included?

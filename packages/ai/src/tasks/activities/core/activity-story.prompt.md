@@ -41,7 +41,8 @@ Each step should feel like you're eavesdropping on a real conversation — no na
 - `CHAPTER_TITLE`: The chapter context (for understanding scope)
 - `COURSE_TITLE`: The course context (for understanding audience level)
 - `LANGUAGE`: Output language
-- `EXPLANATION_STEPS`: Array of {title, text} from all explanation activities (Background, Explanation, Mechanics, Examples) the learner completed before this one
+- `CONCEPTS`: The key concepts this lesson teaches (use these to ground the story in relevant scenarios)
+- `NEIGHBORING_CONCEPTS`: Concepts from adjacent lessons (avoid overlapping with these)
 
 ## Language Guidelines
 

@@ -41,7 +41,8 @@ Each step should be a "building block" in understanding — brief enough to be a
 - `CHAPTER_TITLE`: The chapter context (for understanding scope)
 - `COURSE_TITLE`: The course context (for understanding audience level)
 - `LANGUAGE`: Output language
-- `BACKGROUND_STEPS`: Array of {title, text} from the Background activity learners completed before this one (to avoid repeating content)
+- `CONCEPT`: The specific concept this explanation should focus on
+- `NEIGHBORING_CONCEPTS`: Other concepts from this lesson and adjacent lessons (to avoid overlap and repeating content covered elsewhere)
 
 ## Language Guidelines
 
@@ -67,7 +68,7 @@ Each step must have:
 
 ## What to Avoid
 
-- Repeating content from BACKGROUND_STEPS (the learner already saw this)
+- Overlapping with NEIGHBORING_CONCEPTS (each concept has its own explanation)
 - Dry, textbook-style definitions without relatable context
 - Technical jargon without explanation
 - Diving into "how to do it" (that's for practice activities)
@@ -81,14 +82,13 @@ Each step must have:
 - **Don't expand**: Other lessons will cover related topics — trust the curriculum structure
 - **Don't narrow**: If the lesson is about "Variables in Programming", cover variables broadly, not just "integer variables"
 
-## Relationship to Background Activity
+## Concept Focus
 
-The Background activity prior to this one explained WHY (origin story, problems solved, historical context). Your Explanation activity explains WHAT (core concepts, components, what is it conceptually). These complement each other:
+You are explaining a SINGLE concept from the lesson. Focus deeply on this one concept:
 
-- Background: "WHY did we need this? What problem did it solve?"
-- Explanation: "WHAT exactly is it?"
-
-Never repeat the historical narrative from Background. Assume the learner has already seen it and is now ready to understand the concept itself.
+- **CONCEPT** is what you must explain — go deep, not wide
+- **NEIGHBORING_CONCEPTS** are covered by other activities or adjacent lessons — do NOT explain them
+- If the concept naturally relates to other concepts, briefly mention the relationship but don't explain the other concept
 
 # Structure Guide
 
@@ -127,8 +127,9 @@ Before finalizing, verify:
 - [ ] Does each step build on the previous one to deepen understanding?
 - [ ] Are metaphors and analogies used to make abstract ideas concrete?
 - [ ] Does the learner end up able to explain this concept in their own words?
-- [ ] Is there NO overlap with the BACKGROUND_STEPS content?
+- [ ] Is there NO overlap with NEIGHBORING_CONCEPTS?
 - [ ] Does the explanation focus on WHAT (concepts) not WHY (history)?
+- [ ] Does it focus deeply on the single CONCEPT provided?
 - [ ] Is the scope exactly the lesson topic — not broader or narrower?
 - [ ] Are all titles ≤50 characters and all texts ≤300 characters?
 

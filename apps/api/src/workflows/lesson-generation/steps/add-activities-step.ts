@@ -5,16 +5,11 @@ import { streamError, streamStatus } from "../stream-status";
 import { type GeneratedActivity } from "./generate-custom-activities-step";
 import { type LessonContext } from "./get-lesson-step";
 
-const CORE_ACTIVITY_KINDS: ActivityKind[] = [
-  "background",
-  "explanation",
-  "quiz",
-  "mechanics",
-  "examples",
-  "story",
-  "challenge",
-  "review",
-];
+type ActivityEntry = {
+  kind: ActivityKind;
+  title: string | null;
+  description: string | null;
+};
 
 const LANGUAGE_ACTIVITY_KINDS: ActivityKind[] = [
   "vocabulary",
@@ -24,6 +19,50 @@ const LANGUAGE_ACTIVITY_KINDS: ActivityKind[] = [
   "languageStory",
   "languageReview",
 ];
+
+function getCoreActivities(concepts: string[]): ActivityEntry[] {
+  const explanations: ActivityEntry[] = concepts.map((concept) => ({
+    description: null,
+    kind: "explanation",
+    title: concept,
+  }));
+
+  const fallbackExplanation: ActivityEntry[] =
+    explanations.length === 0 ? [{ description: null, kind: "explanation", title: null }] : [];
+
+  const allExplanations = [...fallbackExplanation, ...explanations];
+
+  const background: ActivityEntry = { description: null, kind: "background", title: null };
+  const mechanics: ActivityEntry = { description: null, kind: "mechanics", title: null };
+  const examples: ActivityEntry = { description: null, kind: "examples", title: null };
+  const story: ActivityEntry = { description: null, kind: "story", title: null };
+  const challenge: ActivityEntry = { description: null, kind: "challenge", title: null };
+  const review: ActivityEntry = { description: null, kind: "review", title: null };
+  const quiz: ActivityEntry = { description: null, kind: "quiz", title: null };
+
+  const minConceptsForTwoQuizzes = 4;
+
+  if (concepts.length < minConceptsForTwoQuizzes) {
+    return [background, ...allExplanations, quiz, mechanics, examples, story, challenge, review];
+  }
+
+  const splitIndex = Math.floor(concepts.length / 2);
+  const firstGroup = explanations.slice(0, splitIndex);
+  const secondGroup = explanations.slice(splitIndex);
+
+  return [
+    background,
+    ...firstGroup,
+    quiz,
+    ...secondGroup,
+    quiz,
+    mechanics,
+    examples,
+    story,
+    challenge,
+    review,
+  ];
+}
 
 function getLanguageActivities(targetLanguage: string | null): ActivityKind[] {
   if (isTTSSupportedLanguage(targetLanguage)) {
@@ -37,17 +76,10 @@ function getActivitiesForKind(
   lessonKind: LessonKind,
   customActivities: GeneratedActivity[],
   targetLanguage: string | null,
-): {
-  kind: ActivityKind;
-  title: string | null;
-  description: string | null;
-}[] {
+  concepts: string[],
+): ActivityEntry[] {
   if (lessonKind === "core") {
-    return CORE_ACTIVITY_KINDS.map((kind) => ({
-      description: null,
-      kind,
-      title: null,
-    }));
+    return getCoreActivities(concepts);
   }
 
   if (lessonKind === "language") {
@@ -66,6 +98,7 @@ function getActivitiesForKind(
 }
 
 export async function addActivitiesStep(input: {
+  concepts: string[];
   context: LessonContext;
   lessonKind: LessonKind;
   customActivities: GeneratedActivity[];
@@ -79,6 +112,7 @@ export async function addActivitiesStep(input: {
     input.lessonKind,
     input.customActivities,
     input.targetLanguage,
+    input.concepts,
   );
 
   const activitiesData = activitiesToCreate.map((activity, index) => ({

@@ -42,6 +42,7 @@ async function generateActivities(
 
   const customActivities = await getCustomActivities(context, lessonKind);
   await addActivitiesStep({
+    concepts: context.concepts,
     context,
     customActivities,
     lessonKind,

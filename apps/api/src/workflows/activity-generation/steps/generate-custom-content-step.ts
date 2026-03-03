@@ -1,7 +1,7 @@
 import { generateActivityCustom } from "@zoonk/ai/tasks/activities/custom";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
-import { settledValues } from "@zoonk/utils/settled";
+import { rejected, settledValues } from "@zoonk/utils/settled";
 import { streamStatus } from "../stream-status";
 import { saveContentSteps } from "./_utils/content-step-helpers";
 import { type ActivitySteps, parseActivitySteps } from "./_utils/get-activity-steps";
@@ -75,7 +75,7 @@ async function generateForActivity(
 
   if (steps.length === 0) {
     await handleActivityFailureStep({ activityId: activity.id });
-    return empty;
+    throw new Error("Content generation failed");
   }
 
   return { activityId: activity.id, steps };
@@ -95,11 +95,14 @@ export async function generateCustomContentStep(
 
   await streamStatus({ status: "started", step: "generateCustomContent" });
 
-  const results = await Promise.allSettled(
+  const allSettled = await Promise.allSettled(
     customActivities.map((act) => generateForActivity(act, workflowRunId)),
   );
 
-  await streamStatus({ status: "completed", step: "generateCustomContent" });
+  await streamStatus({
+    status: rejected(allSettled) ? "error" : "completed",
+    step: "generateCustomContent",
+  });
 
-  return settledValues(results);
+  return settledValues(allSettled);
 }

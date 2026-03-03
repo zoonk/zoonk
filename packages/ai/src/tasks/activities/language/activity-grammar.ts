@@ -2,6 +2,7 @@ import "server-only";
 import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-options";
 import { Output, generateText } from "ai";
 import { z } from "zod";
+import { formatConceptLines } from "../format-concept-lines";
 import { getLanguagePromptContext } from "./_utils/language-prompt-context";
 import systemPrompt from "./activity-grammar.prompt.md";
 
@@ -52,9 +53,11 @@ export type ActivityGrammarSchema = z.infer<typeof schema>;
 
 export type ActivityGrammarParams = {
   chapterTitle: string;
+  concepts?: string[];
   lessonDescription: string;
   lessonTitle: string;
   model?: string;
+  neighboringConcepts?: string[];
   reasoningEffort?: ReasoningEffort;
   targetLanguage: string;
   userLanguage: string;
@@ -63,9 +66,11 @@ export type ActivityGrammarParams = {
 
 export async function generateActivityGrammar({
   chapterTitle,
+  concepts = [],
   lessonDescription,
   lessonTitle,
   model = DEFAULT_MODEL,
+  neighboringConcepts = [],
   reasoningEffort = "high",
   targetLanguage,
   userLanguage,
@@ -78,6 +83,7 @@ USER_LANGUAGE: ${promptContext.userLanguage}
 CHAPTER_TITLE: ${chapterTitle}
 LESSON_TITLE: ${lessonTitle}
 LESSON_DESCRIPTION: ${lessonDescription}
+${formatConceptLines(concepts, neighboringConcepts)}
 
 Generate a Pattern Discovery grammar activity for this lesson. Include 3-4 examples demonstrating the grammar pattern, one discovery task, a brief rule summary, and 2-3 fill-in-the-blank practice exercises.`;
 

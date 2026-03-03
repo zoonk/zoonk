@@ -16,6 +16,8 @@ export type VocabularyWord = {
 export async function generateVocabularyContentStep(
   activities: LessonActivity[],
   workflowRunId: string,
+  concepts: string[] = [],
+  neighboringConcepts: string[] = [],
 ): Promise<{ words: VocabularyWord[] }> {
   "use step";
 
@@ -33,8 +35,10 @@ export async function generateVocabularyContentStep(
   const { data: result, error } = await safeAsync(() =>
     generateActivityVocabulary({
       chapterTitle: activity.lesson.chapter.title,
+      concepts,
       lessonDescription: activity.lesson.description ?? "",
       lessonTitle: activity.lesson.title,
+      neighboringConcepts,
       targetLanguage:
         activity.lesson.chapter.course.targetLanguage ?? activity.lesson.chapter.course.title,
       userLanguage: activity.language,

@@ -4,7 +4,7 @@ function activityAttrs(
   attrs?: Partial<Activity>,
 ): Omit<Activity, "id" | "createdAt" | "updatedAt"> {
   return {
-    description: "Test activity description",
+    description: null,
     generationRunId: null,
     generationStatus: "completed",
     isPublished: false,
@@ -13,7 +13,7 @@ function activityAttrs(
     lessonId: 0,
     organizationId: 0,
     position: 0,
-    title: "Test Activity",
+    title: null,
     ...attrs,
   };
 }

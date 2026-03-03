@@ -53,6 +53,19 @@ export async function generateVisualsStep(
     return { visuals: [] };
   }
 
+  return generateVisualsForActivityStep(activity, steps);
+}
+
+export async function generateVisualsForActivityStep(
+  activity: LessonActivity,
+  steps: ActivitySteps,
+): Promise<{ visuals: StepVisual[] }> {
+  "use step";
+
+  if (steps.length === 0) {
+    return { visuals: [] };
+  }
+
   if (activity.generationStatus === "completed" || activity.generationStatus === "running") {
     return { visuals: [] };
   }
