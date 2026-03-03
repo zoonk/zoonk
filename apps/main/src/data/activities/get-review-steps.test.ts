@@ -225,7 +225,7 @@ describe(getReviewSteps, () => {
     }
   });
 
-  test("prioritizes tier 1 over tier 2 (tier 1 steps come first before shuffle)", async () => {
+  test("includes all tier 1 and tier 2 steps even when combined count exceeds target", async () => {
     const newLesson = await createLessonWithSteps(org.id, 12);
     const newUser = await userFixture();
 
@@ -273,8 +273,14 @@ describe(getReviewSteps, () => {
       userId: Number(newUser.id),
     });
 
-    // All 12 steps should be included (8 tier 1 + 4 tier 2)
+    const resultIds = result.map((step) => step.id);
+
+    // All 12 mistake steps should be included (8 tier 1 + 4 tier 2), no fillers
     expect(result).toHaveLength(12);
+
+    for (const step of newLesson.steps) {
+      expect(resultIds).toContain(step.id);
+    }
   });
 
   test("when tier 1 >= 10, does NOT include tier 2 or fillers", async () => {
