@@ -33,7 +33,7 @@ function getExplanationStepsForQuiz(
     return explanationResults.flatMap((result) => result.steps);
   }
 
-  const splitIndex = Math.floor(explanationResults.length / 2);
+  const splitIndex = Math.max(1, Math.floor(explanationResults.length / 2));
   const group =
     quizIndex === 0
       ? explanationResults.slice(0, splitIndex)
