@@ -98,6 +98,29 @@ describe(getReviewSteps, () => {
       position: 0,
     });
 
+    // Also create a challenge activity (its steps should be excluded)
+    const challengeActivity = await activityFixture({
+      generationStatus: "completed",
+      isPublished: true,
+      kind: "challenge",
+      language: "en",
+      lessonId: lesson.id,
+      organizationId: org.id,
+      position: 2,
+    });
+
+    await stepFixture({
+      activityId: challengeActivity.id,
+      content: {
+        kind: "challenge",
+        options: [{ effects: [{ dimension: "speed", value: 1 }], text: "Option A" }],
+        question: "Challenge Q",
+      },
+      isPublished: true,
+      kind: "multipleChoice",
+      position: 0,
+    });
+
     // Also create an unpublished step (should be excluded)
     stepPromises.push(
       stepFixture({
@@ -349,6 +372,20 @@ describe(getReviewSteps, () => {
     });
 
     // All results should come from non-review activities
+    const validStepIds = new Set(interactiveSteps.map((step) => step.id));
+
+    for (const resultStep of result) {
+      expect(validStepIds.has(resultStep.id)).toBeTruthy();
+    }
+  });
+
+  test("excludes challenge activity steps", async () => {
+    const result = await getReviewSteps({
+      lessonId: lesson.id,
+      userId: Number(user.id),
+    });
+
+    // All results should come from non-challenge activities
     const validStepIds = new Set(interactiveSteps.map((step) => step.id));
 
     for (const resultStep of result) {

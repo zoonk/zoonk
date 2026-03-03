@@ -1,8 +1,9 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { type ActivityKind, prisma } from "@zoonk/db";
 import { shuffle } from "@zoonk/utils/shuffle";
 
 const REVIEW_TARGET_COUNT = 10;
+const EXCLUDED_ACTIVITY_KINDS: ActivityKind[] = ["review", "challenge"];
 
 /**
  * Assembles review steps based on a user's mistakes (incorrect StepAttempt records).
@@ -24,7 +25,7 @@ export async function getReviewSteps({
   userId: number | null;
 }) {
   const lessonStepFilter = {
-    activity: { kind: { not: "review" as const }, lessonId },
+    activity: { kind: { notIn: EXCLUDED_ACTIVITY_KINDS }, lessonId },
     isPublished: true,
     kind: { not: "static" as const },
   };
@@ -38,11 +39,14 @@ export async function getReviewSteps({
     return shuffle(allSteps).slice(0, REVIEW_TARGET_COUNT);
   }
 
-  // Simplified "never corrected" check: a step is a tier-1 mistake if it has
-  // at least one incorrect attempt AND zero correct attempts. This avoids
-  // complex timestamp comparisons while effectively capturing "user still
-  // hasn't gotten this right."
-  const [incorrectAttempts, correctAttempts] = await Promise.all([
+  // Fetch all eligible steps and attempt data in a single parallel round trip.
+  // Lesson step counts are small, so fetching all steps upfront is efficient
+  // and avoids extra queries for prioritized/filler IDs.
+  const [allSteps, incorrectAttempts, correctAttempts] = await Promise.all([
+    prisma.step.findMany({
+      include: { sentence: true, word: true },
+      where: lessonStepFilter,
+    }),
     prisma.stepAttempt.findMany({
       distinct: ["stepId"],
       orderBy: { answeredAt: "desc" },
@@ -57,38 +61,24 @@ export async function getReviewSteps({
   ]);
 
   const correctStepIds = new Set(correctAttempts.map((attempt) => attempt.stepId));
-  const allMistakeIds = incorrectAttempts.map((attempt) => attempt.stepId);
+  const mistakeStepIds = incorrectAttempts.map((attempt) => attempt.stepId);
 
-  // Tier 1: most recent attempt was incorrect (never corrected)
-  const recentMistakes = allMistakeIds.filter((stepId) => !correctStepIds.has(stepId));
+  // Tier 1: never corrected. Tier 2: had an incorrect attempt but later corrected.
+  const recentMistakes = mistakeStepIds.filter((stepId) => !correctStepIds.has(stepId));
+  const fixedMistakes = mistakeStepIds.filter((stepId) => correctStepIds.has(stepId));
 
-  // Tier 2: had an incorrect attempt but later corrected
-  const fixedMistakes = allMistakeIds.filter((stepId) => correctStepIds.has(stepId));
+  // When tier 1 alone meets the target, skip tier 2 and fillers
+  const prioritizedIds =
+    recentMistakes.length >= REVIEW_TARGET_COUNT
+      ? recentMistakes
+      : [...recentMistakes, ...fixedMistakes];
 
-  // Combine tiers, tier 1 first
-  let selectedIds = [...recentMistakes, ...fixedMistakes];
+  const prioritizedIdSet = new Set(prioritizedIds);
 
-  // If tier 1 alone is >= target, skip tier 2 and fillers
-  if (recentMistakes.length >= REVIEW_TARGET_COUNT) {
-    selectedIds = recentMistakes;
-  }
+  // Partition steps: prioritized first, then random fillers from the remainder
+  const prioritizedSteps = allSteps.filter((step) => prioritizedIdSet.has(step.id));
+  const fillerSteps = allSteps.filter((step) => !prioritizedIdSet.has(step.id));
+  const fillerCount = Math.max(0, REVIEW_TARGET_COUNT - prioritizedSteps.length);
 
-  // Fill with random if needed
-  if (selectedIds.length < REVIEW_TARGET_COUNT) {
-    const fillerSteps = await prisma.step.findMany({
-      select: { id: true },
-      where: { ...lessonStepFilter, id: { notIn: selectedIds } },
-    });
-
-    const shuffledFillers = shuffle(fillerSteps).slice(0, REVIEW_TARGET_COUNT - selectedIds.length);
-    selectedIds = [...selectedIds, ...shuffledFillers.map((step) => step.id)];
-  }
-
-  // Fetch full step data for the selected IDs
-  const steps = await prisma.step.findMany({
-    include: { sentence: true, word: true },
-    where: { id: { in: selectedIds } },
-  });
-
-  return shuffle(steps);
+  return shuffle([...prioritizedSteps, ...shuffle(fillerSteps).slice(0, fillerCount)]);
 }
