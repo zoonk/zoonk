@@ -92,6 +92,18 @@ describe(validateAnswers, () => {
     expect(results[0]?.effects).toEqual([{ dimension: "Diplomacy", impact: "negative" }]);
   });
 
+  test("unmatched selectedText returns incorrect with no effects", () => {
+    const steps = [{ content: challengeMultipleChoiceContent, id: 3n, kind: "multipleChoice" }];
+
+    const results = validateAnswers(steps, {
+      "3": { kind: "multipleChoice", selectedIndex: 0, selectedText: "Nonexistent" },
+    });
+
+    expect(results).toHaveLength(1);
+    expect(results[0]?.isCorrect).toBeFalsy();
+    expect(results[0]?.effects).toEqual([]);
+  });
+
   test("skips steps with no client answer", () => {
     const steps = [
       { content: coreMultipleChoiceContent, id: 1n, kind: "multipleChoice" },

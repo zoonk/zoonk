@@ -48,8 +48,12 @@ function validateMultipleChoice(
   }
 
   const content = parseStepContent("multipleChoice", step.content);
-  const originalIndex = content.options.findIndex((option) => option.text === answer.selectedText);
-  const index = originalIndex === -1 ? answer.selectedIndex : originalIndex;
+  const index = content.options.findIndex((option) => option.text === answer.selectedText);
+
+  if (index === -1) {
+    return { answer, effects: [], isCorrect: false, stepId: step.id };
+  }
+
   const result = checkMultipleChoiceAnswer(content, index);
   const effects = content.kind === "challenge" ? (content.options[index]?.effects ?? []) : [];
 
