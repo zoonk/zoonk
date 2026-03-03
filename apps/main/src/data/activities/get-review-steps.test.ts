@@ -16,8 +16,9 @@ describe(getReviewSteps, () => {
   let org: Awaited<ReturnType<typeof organizationFixture>>;
   let user: Awaited<ReturnType<typeof userFixture>>;
 
-  // Interactive steps on a non-review activity (source steps for review)
-  let interactiveSteps: Awaited<ReturnType<typeof stepFixture>>[];
+  let challengeStepId: bigint;
+  let reviewStepId: bigint;
+  let unpublishedStepId: bigint;
 
   beforeAll(async () => {
     org = await organizationFixture({ kind: "brand" });
@@ -90,13 +91,15 @@ describe(getReviewSteps, () => {
       position: 1,
     });
 
-    await stepFixture({
+    const reviewStep = await stepFixture({
       activityId: reviewActivity.id,
       content: { kind: "core", options: [], question: "Review Q", text: "Review step" },
       isPublished: true,
       kind: "multipleChoice",
       position: 0,
     });
+
+    reviewStepId = reviewStep.id;
 
     // Also create a challenge activity (its steps should be excluded)
     const challengeActivity = await activityFixture({
@@ -109,7 +112,7 @@ describe(getReviewSteps, () => {
       position: 2,
     });
 
-    await stepFixture({
+    const challengeStep = await stepFixture({
       activityId: challengeActivity.id,
       content: {
         kind: "challenge",
@@ -120,6 +123,8 @@ describe(getReviewSteps, () => {
       kind: "multipleChoice",
       position: 0,
     });
+
+    challengeStepId = challengeStep.id;
 
     // Also create an unpublished step (should be excluded)
     stepPromises.push(
@@ -133,9 +138,7 @@ describe(getReviewSteps, () => {
     );
 
     const allSteps = await Promise.all(stepPromises);
-
-    // First 12 are the interactive published steps
-    interactiveSteps = allSteps.slice(0, 12);
+    unpublishedStepId = allSteps[13]!.id;
   });
 
   test("returns steps where user only has incorrect attempts (tier 1)", async () => {
@@ -162,7 +165,10 @@ describe(getReviewSteps, () => {
       userId: Number(newUser.id),
     });
 
-    // Should include the 3 mistake steps
+    // Should have 10 total (3 mistakes + 7 fillers)
+    expect(result).toHaveLength(REVIEW_TARGET_COUNT);
+
+    // The 3 mistake steps should be included
     const resultIds = result.map((step) => step.id);
     for (const step of newLesson.steps.slice(0, 3)) {
       expect(resultIds).toContain(step.id);
@@ -217,9 +223,11 @@ describe(getReviewSteps, () => {
       userId: Number(newUser.id),
     });
 
-    const resultIds = result.map((step) => step.id);
+    // Should have 10 total (5 mistakes + 5 fillers)
+    expect(result).toHaveLength(REVIEW_TARGET_COUNT);
 
     // All 5 mistake steps (tier 1 + tier 2) should be included
+    const resultIds = result.map((step) => step.id);
     for (const step of newLesson.steps.slice(0, 5)) {
       expect(resultIds).toContain(step.id);
     }
@@ -377,12 +385,8 @@ describe(getReviewSteps, () => {
       userId: Number(user.id),
     });
 
-    // All results should come from non-review activities
-    const validStepIds = new Set(interactiveSteps.map((step) => step.id));
-
-    for (const resultStep of result) {
-      expect(validStepIds.has(resultStep.id)).toBeTruthy();
-    }
+    const resultIds = result.map((step) => step.id);
+    expect(resultIds).not.toContain(reviewStepId);
   });
 
   test("excludes challenge activity steps", async () => {
@@ -391,12 +395,8 @@ describe(getReviewSteps, () => {
       userId: Number(user.id),
     });
 
-    // All results should come from non-challenge activities
-    const validStepIds = new Set(interactiveSteps.map((step) => step.id));
-
-    for (const resultStep of result) {
-      expect(validStepIds.has(resultStep.id)).toBeTruthy();
-    }
+    const resultIds = result.map((step) => step.id);
+    expect(resultIds).not.toContain(challengeStepId);
   });
 
   test("excludes static steps", async () => {
@@ -435,11 +435,13 @@ describe(getReviewSteps, () => {
       userId: Number(newUser.id),
     });
 
-    // Should have exactly REVIEW_TARGET_COUNT (10) steps
+    // Should have exactly REVIEW_TARGET_COUNT (10) unique steps
     expect(result).toHaveLength(REVIEW_TARGET_COUNT);
 
-    // The 2 mistake steps should be included
     const resultIds = result.map((step) => step.id);
+    expect(new Set(resultIds).size).toBe(REVIEW_TARGET_COUNT);
+
+    // The 2 mistake steps should be included
     for (const step of newLesson.steps.slice(0, 2)) {
       expect(resultIds).toContain(step.id);
     }
@@ -451,11 +453,9 @@ describe(getReviewSteps, () => {
       userId: null,
     });
 
-    // Should return up to REVIEW_TARGET_COUNT random interactive steps
-    expect(result.length).toBeGreaterThan(0);
-    expect(result.length).toBeLessThanOrEqual(REVIEW_TARGET_COUNT);
+    // Shared lesson has 12 interactive steps, so result should be exactly 10
+    expect(result).toHaveLength(REVIEW_TARGET_COUNT);
 
-    // No static steps
     for (const step of result) {
       expect(step.kind).not.toBe("static");
     }
@@ -469,9 +469,12 @@ describe(getReviewSteps, () => {
       userId: Number(newUser.id),
     });
 
-    // Should return up to REVIEW_TARGET_COUNT random interactive steps
-    expect(result.length).toBeGreaterThan(0);
-    expect(result.length).toBeLessThanOrEqual(REVIEW_TARGET_COUNT);
+    // No attempts means all steps are fillers, capped at REVIEW_TARGET_COUNT
+    expect(result).toHaveLength(REVIEW_TARGET_COUNT);
+
+    for (const step of result) {
+      expect(step.kind).not.toBe("static");
+    }
   });
 
   test("handles lesson with fewer than 10 interactive steps", async () => {
@@ -486,19 +489,147 @@ describe(getReviewSteps, () => {
     expect(result).toHaveLength(5);
   });
 
-  test("only includes published steps from the given lesson", async () => {
-    // The shared lesson already has unpublished steps and review steps set up in beforeAll
+  test("excludes unpublished steps", async () => {
     const result = await getReviewSteps({
       lessonId: lesson.id,
       userId: null,
     });
 
-    // Verify all returned steps are from interactiveSteps (published, non-static, non-review)
-    const validIds = new Set(interactiveSteps.map((step) => step.id));
+    const resultIds = result.map((step) => step.id);
+    expect(resultIds).not.toContain(unpublishedStepId);
+  });
 
-    for (const step of result) {
-      expect(validIds.has(step.id)).toBeTruthy();
+  test("when tier 1 is exactly 10, excludes tier 2", async () => {
+    const newLesson = await createLessonWithSteps(org.id, 12);
+    const newUser = await userFixture();
+
+    // Tier 1: exactly 10 steps with only incorrect attempts
+    await Promise.all(
+      newLesson.steps.slice(0, 10).map((step) =>
+        stepAttemptFixture({
+          answer: {},
+          dayOfWeek: 1,
+          durationSeconds: 10,
+          hourOfDay: 12,
+          isCorrect: false,
+          stepId: step.id,
+          userId: Number(newUser.id),
+        }),
+      ),
+    );
+
+    // Tier 2: 2 steps with incorrect then correct
+    await Promise.all(
+      newLesson.steps.slice(10, 12).flatMap((step) => [
+        stepAttemptFixture({
+          answer: {},
+          dayOfWeek: 1,
+          durationSeconds: 10,
+          hourOfDay: 12,
+          isCorrect: false,
+          stepId: step.id,
+          userId: Number(newUser.id),
+        }),
+        stepAttemptFixture({
+          answer: {},
+          dayOfWeek: 1,
+          durationSeconds: 10,
+          hourOfDay: 12,
+          isCorrect: true,
+          stepId: step.id,
+          userId: Number(newUser.id),
+        }),
+      ]),
+    );
+
+    const result = await getReviewSteps({
+      lessonId: newLesson.lesson.id,
+      userId: Number(newUser.id),
+    });
+
+    // Exactly 10 tier 1 hits the >= threshold, so tier 2 should be excluded
+    expect(result).toHaveLength(10);
+
+    const resultIds = result.map((step) => step.id);
+
+    for (const step of newLesson.steps.slice(0, 10)) {
+      expect(resultIds).toContain(step.id);
     }
+
+    for (const step of newLesson.steps.slice(10, 12)) {
+      expect(resultIds).not.toContain(step.id);
+    }
+  });
+
+  test("steps with only correct attempts are not prioritized", async () => {
+    const newLesson = await createLessonWithSteps(org.id, 12);
+    const newUser = await userFixture();
+
+    // 1 tier 1 step (incorrect only)
+    await stepAttemptFixture({
+      answer: {},
+      dayOfWeek: 1,
+      durationSeconds: 10,
+      hourOfDay: 12,
+      isCorrect: false,
+      stepId: newLesson.steps[0]!.id,
+      userId: Number(newUser.id),
+    });
+
+    // 1 step with only correct attempts (should NOT be tier 1 or tier 2)
+    await stepAttemptFixture({
+      answer: {},
+      dayOfWeek: 1,
+      durationSeconds: 10,
+      hourOfDay: 12,
+      isCorrect: true,
+      stepId: newLesson.steps[1]!.id,
+      userId: Number(newUser.id),
+    });
+
+    const result = await getReviewSteps({
+      lessonId: newLesson.lesson.id,
+      userId: Number(newUser.id),
+    });
+
+    // Should have 10 steps (1 prioritized + 9 fillers)
+    expect(result).toHaveLength(REVIEW_TARGET_COUNT);
+
+    // The correct-only step may appear as a filler but should not be guaranteed;
+    // the tier 1 step must always be present
+    const resultIds = result.map((step) => step.id);
+    expect(resultIds).toContain(newLesson.steps[0]!.id);
+  });
+
+  test("does not return duplicate steps when mixing prioritized and fillers", async () => {
+    const newLesson = await createLessonWithSteps(org.id, 12);
+    const newUser = await userFixture();
+
+    // 5 tier 1 steps
+    await Promise.all(
+      newLesson.steps.slice(0, 5).map((step) =>
+        stepAttemptFixture({
+          answer: {},
+          dayOfWeek: 1,
+          durationSeconds: 10,
+          hourOfDay: 12,
+          isCorrect: false,
+          stepId: step.id,
+          userId: Number(newUser.id),
+        }),
+      ),
+    );
+
+    const result = await getReviewSteps({
+      lessonId: newLesson.lesson.id,
+      userId: Number(newUser.id),
+    });
+
+    // 5 prioritized + 5 fillers = 10, all unique
+    expect(result).toHaveLength(REVIEW_TARGET_COUNT);
+
+    const resultIds = result.map((step) => step.id);
+    expect(new Set(resultIds).size).toBe(REVIEW_TARGET_COUNT);
   });
 });
 
