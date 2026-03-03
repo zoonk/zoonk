@@ -32,7 +32,6 @@ export const ACTIVITY_STEPS = [
   "generateExamplesContent",
   "generateMechanicsContent",
   "generateQuizContent",
-  "generateReviewContent",
   "generateStoryContent",
   "generateGrammarContent",
   "generateLanguageStoryContent",
@@ -48,7 +47,6 @@ export const ACTIVITY_STEPS = [
   "setExplanationAsCompleted",
   "setMechanicsAsCompleted",
   "setQuizAsCompleted",
-  "setReviewAsCompleted",
   "setStoryAsCompleted",
   "setGrammarAsCompleted",
   "setLanguageStoryAsCompleted",
@@ -61,11 +59,9 @@ export const ACTIVITY_STEPS = [
   "generateAudio",
   "updateSentenceEnrichments",
   "copyListeningSteps",
-  "copyLanguageReviewSteps",
   "setVocabularyAsCompleted",
   "setReadingAsCompleted",
   "setListeningAsCompleted",
-  "setLanguageReviewAsCompleted",
   "setActivityAsCompleted",
   "workflowError",
 ] as const;
@@ -80,14 +76,12 @@ type ActivityCompletionStep =
   | "setExplanationAsCompleted"
   | "setMechanicsAsCompleted"
   | "setQuizAsCompleted"
-  | "setReviewAsCompleted"
   | "setStoryAsCompleted"
   | "setGrammarAsCompleted"
   | "setLanguageStoryAsCompleted"
   | "setVocabularyAsCompleted"
   | "setReadingAsCompleted"
-  | "setListeningAsCompleted"
-  | "setLanguageReviewAsCompleted";
+  | "setListeningAsCompleted";
 
 const activityCompletionSteps: Partial<Record<string, ActivityCompletionStep>> = {
   background: "setBackgroundAsCompleted",
@@ -96,13 +90,11 @@ const activityCompletionSteps: Partial<Record<string, ActivityCompletionStep>> =
   examples: "setExamplesAsCompleted",
   explanation: "setExplanationAsCompleted",
   grammar: "setGrammarAsCompleted",
-  languageReview: "setLanguageReviewAsCompleted",
   languageStory: "setLanguageStoryAsCompleted",
   listening: "setListeningAsCompleted",
   mechanics: "setMechanicsAsCompleted",
   quiz: "setQuizAsCompleted",
   reading: "setReadingAsCompleted",
-  review: "setReviewAsCompleted",
   story: "setStoryAsCompleted",
   vocabulary: "setVocabularyAsCompleted",
 };

@@ -17,7 +17,7 @@ const LANGUAGE_ACTIVITY_KINDS: ActivityKind[] = [
   "reading",
   "listening",
   "languageStory",
-  "languageReview",
+  "review",
 ];
 
 function getCoreActivities(concepts: string[]): ActivityEntry[] {
@@ -117,7 +117,7 @@ export async function addActivitiesStep(input: {
 
   const activitiesData = activitiesToCreate.map((activity, index) => ({
     description: activity.description,
-    generationStatus: "pending" as const,
+    generationStatus: activity.kind === "review" ? ("completed" as const) : ("pending" as const),
     isPublished: true,
     kind: activity.kind,
     language: input.context.language,

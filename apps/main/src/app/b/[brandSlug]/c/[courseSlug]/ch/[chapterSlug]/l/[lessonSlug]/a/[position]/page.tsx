@@ -1,6 +1,7 @@
 import { getActivity } from "@/data/activities/get-activity";
 import { getLessonSentences } from "@/data/activities/get-lesson-sentences";
 import { getLessonWords } from "@/data/activities/get-lesson-words";
+import { getReviewSteps } from "@/data/activities/get-review-steps";
 import { getLesson } from "@/data/lessons/get-lesson";
 import { getActivitySeoMeta } from "@/lib/activities";
 import { getNextActivityInCourse } from "@zoonk/core/activities/next-in-course";
@@ -80,7 +81,19 @@ export default async function ActivityPage({ params }: Props) {
     );
   }
 
-  const serialized = prepareActivityData(activity, lessonWords, lessonSentences);
+  const reviewSteps =
+    activity.kind === "review"
+      ? await getReviewSteps({
+          lessonId: lesson.id,
+          userId: session ? Number(session.user.id) : null,
+        })
+      : null;
+
+  const serialized = prepareActivityData(
+    reviewSteps ? { ...activity, steps: reviewSteps } : activity,
+    lessonWords,
+    lessonSentences,
+  );
 
   return (
     <ActivityPlayerClient

@@ -14,7 +14,6 @@ import { generateImagesForActivityStep, generateImagesStep } from "./steps/gener
 import { generateMechanicsContentStep } from "./steps/generate-mechanics-content-step";
 import { generateQuizContentStep } from "./steps/generate-quiz-content-step";
 import { generateQuizImagesStep } from "./steps/generate-quiz-images-step";
-import { generateReviewContentStep } from "./steps/generate-review-content-step";
 import { generateStoryContentStep } from "./steps/generate-story-content-step";
 import {
   type StepVisual,
@@ -146,7 +145,6 @@ export async function coreActivityWorkflow(
   const explanationContent = settled(explanationResult, { results: [] });
   const mechanicsContent = settled(mechanicsResult, { steps: [] });
   const examplesContent = settled(examplesResult, { steps: [] });
-  const allExplanationSteps = explanationContent.results.flatMap((result) => result.steps);
 
   // Wave 2: quizzes + visuals + save story/challenge (parallel)
   const [quizzes, visuals] = await Promise.all([
@@ -162,7 +160,7 @@ export async function coreActivityWorkflow(
     completeActivityStep(activities, workflowRunId, "challenge"),
   ]);
 
-  // Wave 3: review + images + quiz images
+  // Wave 3: images + quiz images
   const explanationImagePromises = visuals.explanation.flatMap((explanationVisual) => {
     const activity = activities.find((a) => a.id === explanationVisual.activityId);
     if (!activity) {
@@ -172,14 +170,6 @@ export async function coreActivityWorkflow(
   });
 
   await Promise.allSettled([
-    generateReviewContentStep(
-      activities,
-      backgroundContent.steps,
-      allExplanationSteps,
-      mechanicsContent.steps,
-      examplesContent.steps,
-      workflowRunId,
-    ),
     generateImagesStep(activities, visuals.background.visuals, "background"),
     generateImagesStep(activities, visuals.mechanics.visuals, "mechanics"),
     generateImagesStep(activities, visuals.examples.visuals, "examples"),
@@ -193,7 +183,6 @@ export async function coreActivityWorkflow(
     completeActivityStep(activities, workflowRunId, "background"),
     completeActivityStep(activities, workflowRunId, "explanation"),
     completeActivityStep(activities, workflowRunId, "quiz"),
-    completeActivityStep(activities, workflowRunId, "review"),
     completeActivityStep(activities, workflowRunId, "mechanics"),
     completeActivityStep(activities, workflowRunId, "examples"),
   ]);

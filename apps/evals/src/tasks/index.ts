@@ -8,7 +8,6 @@ import { activityGrammarTask } from "./activity-grammar/task";
 import { activityMechanicsTask } from "./activity-mechanics/task";
 import { activityPronunciationTask } from "./activity-pronunciation/task";
 import { activityQuizTask } from "./activity-quiz/task";
-import { activityReviewTask } from "./activity-review/task";
 import { activitySentencesTask } from "./activity-sentences/task";
 import { activityStoryLanguageTask } from "./activity-story-language/task";
 import { activityStoryTask } from "./activity-story/task";
@@ -35,7 +34,6 @@ export const TASKS: readonly Task[] = [
   activityGrammarTask,
   activityMechanicsTask,
   activityPronunciationTask,
-  activityReviewTask,
   activitySentencesTask,
   activityStoryTask,
   activityStoryLanguageTask,
