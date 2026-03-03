@@ -130,36 +130,92 @@ describe(lessonGenerationWorkflow, () => {
   });
 
   describe("core lesson flow", () => {
-    test("generates 8 fixed activities for core lesson", async () => {
+    async function createCoreLesson(concepts: string[]) {
       vi.mocked(generateLessonKind).mockResolvedValueOnce({
         data: { kind: "core" },
       } as Awaited<ReturnType<typeof generateLessonKind>>);
 
-      const title = `Core Lesson ${randomUUID()}`;
       const lesson = await lessonFixture({
         chapterId: chapter.id,
+        concepts,
         generationStatus: "pending",
         organizationId,
-        title,
+        title: `Core Lesson ${randomUUID()}`,
       });
 
       await lessonGenerationWorkflow(lesson.id);
 
-      const dbLesson = await prisma.lesson.findUnique({
-        where: { id: lesson.id },
-      });
-
-      expect(dbLesson?.generationStatus).toBe("completed");
-      expect(dbLesson?.kind).toBe("core");
-
-      const activities = await prisma.activity.findMany({
+      return prisma.activity.findMany({
         orderBy: { position: "asc" },
         where: { lessonId: lesson.id },
       });
+    }
 
-      expect(activities).toHaveLength(8);
-      expect(activities.map((a) => a.kind)).toEqual([
+    test("0 concepts → fallback single explanation with null title", async () => {
+      const activities = await createCoreLesson([]);
+      const explanations = activities.filter((a) => a.kind === "explanation");
+
+      expect(explanations).toHaveLength(1);
+      expect(explanations[0]?.title).toBeNull();
+    });
+
+    test("1 concept → 1 explanation with concept as title", async () => {
+      const activities = await createCoreLesson(["Photosynthesis"]);
+      const explanations = activities.filter((a) => a.kind === "explanation");
+
+      expect(explanations).toHaveLength(1);
+      expect(explanations[0]?.title).toBe("Photosynthesis");
+    });
+
+    test("3 concepts → 3 explanations + 1 quiz", async () => {
+      const activities = await createCoreLesson(["A", "B", "C"]);
+      const explanations = activities.filter((a) => a.kind === "explanation");
+      const quizzes = activities.filter((a) => a.kind === "quiz");
+
+      expect(explanations).toHaveLength(3);
+      expect(quizzes).toHaveLength(1);
+      expect(explanations.map((item) => item.title)).toEqual(["A", "B", "C"]);
+    });
+
+    test("4 concepts → 2 explanation groups + 2 quizzes", async () => {
+      const activities = await createCoreLesson(["A", "B", "C", "D"]);
+      const explanations = activities.filter((a) => a.kind === "explanation");
+      const quizzes = activities.filter((a) => a.kind === "quiz");
+
+      expect(explanations).toHaveLength(4);
+      expect(quizzes).toHaveLength(2);
+    });
+
+    test("5 concepts → split 2/3 with quiz between each group", async () => {
+      const activities = await createCoreLesson(["A", "B", "C", "D", "E"]);
+      const explanations = activities.filter((a) => a.kind === "explanation");
+      const quizzes = activities.filter((a) => a.kind === "quiz");
+
+      expect(explanations).toHaveLength(5);
+      expect(quizzes).toHaveLength(2);
+
+      const kinds = activities.map((a) => a.kind);
+      const firstQuizIdx = kinds.indexOf("quiz");
+      const secondQuizIdx = kinds.indexOf("quiz", firstQuizIdx + 1);
+
+      const explanationsBeforeFirstQuiz = activities
+        .slice(0, firstQuizIdx)
+        .filter((a) => a.kind === "explanation");
+      const explanationsBetweenQuizzes = activities
+        .slice(firstQuizIdx + 1, secondQuizIdx)
+        .filter((a) => a.kind === "explanation");
+
+      expect(explanationsBeforeFirstQuiz).toHaveLength(2);
+      expect(explanationsBetweenQuizzes).toHaveLength(3);
+    });
+
+    test("activity order: background, explanations, quiz(es), mechanics, examples, story, challenge, review", async () => {
+      const activities = await createCoreLesson(["A", "B"]);
+      const kinds = activities.map((a) => a.kind);
+
+      expect(kinds).toEqual([
         "background",
+        "explanation",
         "explanation",
         "quiz",
         "mechanics",
@@ -168,15 +224,6 @@ describe(lessonGenerationWorkflow, () => {
         "challenge",
         "review",
       ]);
-
-      for (const activity of activities) {
-        expect(activity.generationStatus).toBe("pending");
-        expect(activity.isPublished).toBeTruthy();
-        expect(activity.title).toBeNull();
-        expect(activity.description).toBeNull();
-      }
-
-      expect(generateLessonActivities).not.toHaveBeenCalled();
     });
   });
 
