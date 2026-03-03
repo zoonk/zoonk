@@ -135,25 +135,6 @@ vi.mock("@zoonk/ai/tasks/activities/core/challenge", () => ({
   }),
 }));
 
-vi.mock("@zoonk/ai/tasks/activities/core/review", () => ({
-  generateActivityReview: vi.fn().mockResolvedValue({
-    data: {
-      questions: [
-        {
-          context: "Review context about the lesson content...",
-          options: [
-            { feedback: "Correct!", isCorrect: true, text: "Option A" },
-            { feedback: "Not quite.", isCorrect: false, text: "Option B" },
-            { feedback: "Try again.", isCorrect: false, text: "Option C" },
-            { feedback: "Nope.", isCorrect: false, text: "Option D" },
-          ],
-          question: "What is the correct answer?",
-        },
-      ],
-    },
-  }),
-}));
-
 vi.mock("@zoonk/ai/tasks/activities/core/quiz", () => ({
   generateActivityQuiz: vi.fn().mockResolvedValue({
     data: {

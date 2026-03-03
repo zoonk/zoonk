@@ -8,14 +8,12 @@ const ALL_CONTENT_STEPS: ActivityStepName[] = [
   "generateExplanationContent",
   "generateMechanicsContent",
   "generateQuizContent",
-  "generateReviewContent",
   "generateStoryContent",
   "generateGrammarContent",
   "generateLanguageStoryContent",
   "generateSentences",
   "generateVocabularyContent",
   "copyListeningSteps",
-  "copyLanguageReviewSteps",
 ];
 
 const ALL_VOCABULARY_STEPS: ActivityStepName[] = [
@@ -39,14 +37,12 @@ const ALL_COMPLETION_STEPS: ActivityStepName[] = [
   "setExplanationAsCompleted",
   "setMechanicsAsCompleted",
   "setQuizAsCompleted",
-  "setReviewAsCompleted",
   "setStoryAsCompleted",
   "setGrammarAsCompleted",
   "setLanguageStoryAsCompleted",
   "setVocabularyAsCompleted",
   "setReadingAsCompleted",
   "setListeningAsCompleted",
-  "setLanguageReviewAsCompleted",
   "setActivityAsCompleted",
 ];
 
@@ -65,20 +61,6 @@ export const LISTENING_DEPENDENCY_STEPS: ActivityStepName[] = [
   "updateVocabularyEnrichments",
   "generateGrammarContent",
   "generateSentences",
-  "setGrammarAsCompleted",
-  "setActivityAsCompleted",
-];
-
-export const LANGUAGE_REVIEW_DEPENDENCY_STEPS: ActivityStepName[] = [
-  "setActivityAsRunning",
-  "generateVocabularyContent",
-  "saveVocabularyWords",
-  "generateVocabularyPronunciation",
-  "generateVocabularyAudio",
-  "updateVocabularyEnrichments",
-  "generateGrammarContent",
-  "generateSentences",
-  "saveSentences",
   "setGrammarAsCompleted",
   "setActivityAsCompleted",
 ];

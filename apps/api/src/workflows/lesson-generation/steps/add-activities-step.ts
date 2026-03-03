@@ -1,5 +1,10 @@
 import { type GeneratedActivity } from "@zoonk/ai/tasks/lessons/activities";
-import { type ActivityKind, type LessonKind, prisma } from "@zoonk/db";
+import {
+  type ActivityCreateManyInput,
+  type ActivityKind,
+  type LessonKind,
+  prisma,
+} from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { isTTSSupportedLanguage } from "@zoonk/utils/languages";
 import { streamError, streamStatus } from "../stream-status";
@@ -17,7 +22,7 @@ const LANGUAGE_ACTIVITY_KINDS: ActivityKind[] = [
   "reading",
   "listening",
   "languageStory",
-  "languageReview",
+  "review",
 ];
 
 function getCoreActivities(concepts: string[]): ActivityEntry[] {
@@ -115,9 +120,9 @@ export async function addActivitiesStep(input: {
     input.concepts,
   );
 
-  const activitiesData = activitiesToCreate.map((activity, index) => ({
+  const activitiesData: ActivityCreateManyInput[] = activitiesToCreate.map((activity, index) => ({
     description: activity.description,
-    generationStatus: "pending" as const,
+    generationStatus: activity.kind === "review" ? "completed" : "pending",
     isPublished: true,
     kind: activity.kind,
     language: input.context.language,

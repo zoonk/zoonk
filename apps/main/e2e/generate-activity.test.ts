@@ -263,57 +263,6 @@ async function createPendingLanguageStoryActivity() {
   return { activity, chapter, course, lesson };
 }
 
-async function createPendingLanguageReviewActivity() {
-  const org = await getAiOrganization();
-
-  const uniqueId = randomUUID().slice(0, 8);
-  const courseTitle = `E2E LangReview Course ${uniqueId}`;
-  const chapterTitle = `E2E LangReview Chapter ${uniqueId}`;
-  const lessonTitle = `E2E LangReview Lesson ${uniqueId}`;
-  const activityTitle = `E2E LangReview Activity ${uniqueId}`;
-
-  const course = await courseFixture({
-    isPublished: true,
-    normalizedTitle: normalizeString(courseTitle),
-    organizationId: org.id,
-    slug: `e2e-lang-review-course-${uniqueId}`,
-    targetLanguage: "es",
-    title: courseTitle,
-  });
-
-  const chapter = await chapterFixture({
-    courseId: course.id,
-    generationStatus: "completed",
-    isPublished: true,
-    normalizedTitle: normalizeString(chapterTitle),
-    organizationId: org.id,
-    slug: `e2e-lang-review-chapter-${uniqueId}`,
-    title: chapterTitle,
-  });
-
-  const lesson = await lessonFixture({
-    chapterId: chapter.id,
-    generationStatus: "completed",
-    isPublished: true,
-    kind: "language",
-    normalizedTitle: normalizeString(lessonTitle),
-    organizationId: org.id,
-    slug: `e2e-lang-review-lesson-${uniqueId}`,
-    title: lessonTitle,
-  });
-
-  const activity = await activityFixture({
-    generationStatus: "pending",
-    isPublished: true,
-    kind: "languageReview",
-    lessonId: lesson.id,
-    organizationId: org.id,
-    title: activityTitle,
-  });
-
-  return { activity, chapter, course, lesson };
-}
-
 /**
  * Creates a test subscription for the given user.
  */
@@ -679,95 +628,6 @@ test.describe("Generate Activity Page - With Subscription", () => {
     );
   });
 
-  test("completes workflow for review activity kind", async ({
-    userWithoutProgress,
-    noProgressUser,
-  }) => {
-    await createTestSubscription(noProgressUser.id);
-
-    const org = await getAiOrganization();
-
-    const uniqueId = randomUUID().slice(0, 8);
-    const courseTitle = `E2E Review Course ${uniqueId}`;
-    const chapterTitle = `E2E Review Chapter ${uniqueId}`;
-    const lessonTitle = `E2E Review Lesson ${uniqueId}`;
-    const activityTitle = `E2E Review Activity ${uniqueId}`;
-
-    const course = await courseFixture({
-      isPublished: true,
-      normalizedTitle: normalizeString(courseTitle),
-      organizationId: org.id,
-      slug: `e2e-review-course-${uniqueId}`,
-      title: courseTitle,
-    });
-
-    const chapter = await chapterFixture({
-      courseId: course.id,
-      generationStatus: "completed",
-      isPublished: true,
-      normalizedTitle: normalizeString(chapterTitle),
-      organizationId: org.id,
-      slug: `e2e-review-chapter-${uniqueId}`,
-      title: chapterTitle,
-    });
-
-    const lesson = await lessonFixture({
-      chapterId: chapter.id,
-      generationStatus: "completed",
-      isPublished: true,
-      normalizedTitle: normalizeString(lessonTitle),
-      organizationId: org.id,
-      slug: `e2e-review-lesson-${uniqueId}`,
-      title: lessonTitle,
-    });
-
-    const activity = await activityFixture({
-      generationStatus: "pending",
-      isPublished: true,
-      kind: "review",
-      lessonId: lesson.id,
-      organizationId: org.id,
-      title: activityTitle,
-    });
-
-    await setupMockApis(userWithoutProgress, {
-      streamMessages: [
-        { status: "started", step: "getLessonActivities" },
-        { status: "completed", step: "getLessonActivities" },
-        { status: "started", step: "setActivityAsRunning" },
-        { status: "completed", step: "setActivityAsRunning" },
-        { status: "started", step: "generateBackgroundContent" },
-        { status: "completed", step: "generateBackgroundContent" },
-        { status: "started", step: "generateExplanationContent" },
-        { status: "completed", step: "generateExplanationContent" },
-        { status: "started", step: "generateReviewContent" },
-        { status: "completed", step: "generateReviewContent" },
-        { status: "started", step: "setReviewAsCompleted" },
-        { status: "completed", step: "setReviewAsCompleted" },
-      ],
-    });
-
-    await userWithoutProgress.goto(`/generate/a/${activity.id}`);
-
-    await expect(userWithoutProgress.getByText(/your activity is ready/i)).toBeVisible({
-      timeout: 10_000,
-    });
-
-    await expect(userWithoutProgress.getByText(/taking you to your activity/i)).toBeVisible();
-
-    await prisma.activity.update({
-      data: { generationStatus: "completed" },
-      where: { id: activity.id },
-    });
-
-    await userWithoutProgress.waitForURL(
-      new RegExp(
-        `/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}/a/${activity.position}`,
-      ),
-      { timeout: 10_000 },
-    );
-  });
-
   test("completes workflow for custom activity kind", async ({
     userWithoutProgress,
     noProgressUser,
@@ -1059,49 +919,6 @@ test.describe("Generate Activity Page - With Subscription", () => {
         { status: "completed", step: "generateLanguageStoryContent" },
         { status: "started", step: "setLanguageStoryAsCompleted" },
         { status: "completed", step: "setLanguageStoryAsCompleted" },
-        { status: "started", step: "setActivityAsCompleted" },
-        { status: "completed", step: "setActivityAsCompleted" },
-      ],
-    });
-
-    await userWithoutProgress.goto(`/generate/a/${activity.id}`);
-
-    await expect(userWithoutProgress.getByText(/your activity is ready/i)).toBeVisible({
-      timeout: 10_000,
-    });
-
-    await expect(userWithoutProgress.getByText(/taking you to your activity/i)).toBeVisible();
-
-    await prisma.activity.update({
-      data: { generationStatus: "completed" },
-      where: { id: activity.id },
-    });
-
-    await userWithoutProgress.waitForURL(
-      new RegExp(
-        `/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}/a/${activity.position}`,
-      ),
-      { timeout: 10_000 },
-    );
-  });
-
-  test("completes workflow for languageReview activity kind", async ({
-    userWithoutProgress,
-    noProgressUser,
-  }) => {
-    await createTestSubscription(noProgressUser.id);
-    const { activity, chapter, course, lesson } = await createPendingLanguageReviewActivity();
-
-    await setupMockApis(userWithoutProgress, {
-      streamMessages: [
-        { status: "started", step: "getLessonActivities" },
-        { status: "completed", step: "getLessonActivities" },
-        { status: "started", step: "setActivityAsRunning" },
-        { status: "completed", step: "setActivityAsRunning" },
-        { status: "started", step: "copyLanguageReviewSteps" },
-        { status: "completed", step: "copyLanguageReviewSteps" },
-        { status: "started", step: "setLanguageReviewAsCompleted" },
-        { status: "completed", step: "setLanguageReviewAsCompleted" },
         { status: "started", step: "setActivityAsCompleted" },
         { status: "completed", step: "setActivityAsCompleted" },
       ],

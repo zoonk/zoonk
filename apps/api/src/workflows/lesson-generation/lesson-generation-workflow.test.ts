@@ -270,11 +270,12 @@ describe(lessonGenerationWorkflow, () => {
         "reading",
         "listening",
         "languageStory",
-        "languageReview",
+        "review",
       ]);
 
       for (const activity of activities) {
-        expect(activity.generationStatus).toBe("pending");
+        const expectedStatus = activity.kind === "review" ? "completed" : "pending";
+        expect(activity.generationStatus).toBe(expectedStatus);
         expect(activity.isPublished).toBeTruthy();
         expect(activity.title).toBeNull();
         expect(activity.description).toBeNull();
@@ -324,11 +325,12 @@ describe(lessonGenerationWorkflow, () => {
         "grammar",
         "reading",
         "languageStory",
-        "languageReview",
+        "review",
       ]);
 
       for (const activity of activities) {
-        expect(activity.generationStatus).toBe("pending");
+        const expectedStatus = activity.kind === "review" ? "completed" : "pending";
+        expect(activity.generationStatus).toBe(expectedStatus);
         expect(activity.isPublished).toBeTruthy();
         expect(activity.title).toBeNull();
         expect(activity.description).toBeNull();

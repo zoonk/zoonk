@@ -15,6 +15,7 @@
     "./fixtures/orgs": "./src/fixtures/orgs.ts",
     "./fixtures/progress": "./src/fixtures/progress.ts",
     "./fixtures/sentences": "./src/fixtures/sentences.ts",
+    "./fixtures/step-attempts": "./src/fixtures/step-attempts.ts",
     "./fixtures/steps": "./src/fixtures/steps.ts",
     "./fixtures/users": "./src/fixtures/users.ts",
     "./fixtures/words": "./src/fixtures/words.ts"

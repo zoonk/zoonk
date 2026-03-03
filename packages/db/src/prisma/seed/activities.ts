@@ -125,9 +125,9 @@ const activitiesData: {
         kind: "languageStory",
       },
       {
-        generationStatus: "pending",
+        generationStatus: "completed",
         isPublished: true,
-        kind: "languageReview",
+        kind: "review",
       },
     ],
     language: "en",

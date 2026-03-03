@@ -63,7 +63,20 @@ export async function submitCompletion(rawInput: CompletionInput): Promise<Compl
       return null;
     }
 
-    const stepResults = validateAnswers(activity.steps, input.answers);
+    const stepsForValidation =
+      activity.kind === "review"
+        ? await prisma.step.findMany({
+            include: { sentence: true, word: true },
+            omit: { visualContent: true },
+            where: {
+              activity: { lessonId: activity.lessonId },
+              id: { in: Object.keys(input.answers).map(BigInt) },
+              isPublished: true,
+            },
+          })
+        : activity.steps;
+
+    const stepResults = validateAnswers(stepsForValidation, input.answers);
     const isChallenge = activity.kind === "challenge";
     const isSuccessful = !hasNegativeDimension(input.dimensions);
 

@@ -2,7 +2,6 @@ import { ACTIVITY_STEPS, type ActivityStepName } from "@/lib/workflow/config";
 import { type ActivityKind } from "@zoonk/db";
 import {
   EXPLANATION_DEPS,
-  LANGUAGE_REVIEW_DEPENDENCY_STEPS,
   LISTENING_DEPENDENCY_STEPS,
   LISTENING_WRITING_STEPS,
   getFinishingSteps,
@@ -75,10 +74,6 @@ export function getPhaseOrder(kind: ActivityKind): PhaseName[] {
     ];
   }
 
-  if (kind === "languageReview") {
-    return ["gettingStarted", "processingDependencies", "writingContent", "finishing"];
-  }
-
   if (kind === "grammar" || kind === "languageStory") {
     return ["gettingStarted", "writingContent", "finishing"];
   }
@@ -87,7 +82,7 @@ export function getPhaseOrder(kind: ActivityKind): PhaseName[] {
     return ["gettingStarted", "writingContent", "preparingVisuals", "creatingImages", "finishing"];
   }
 
-  if (kind === "story" || kind === "challenge" || kind === "review") {
+  if (kind === "story" || kind === "challenge") {
     return ["gettingStarted", "processingDependencies", "writingContent", "finishing"];
   }
 
@@ -144,24 +139,6 @@ function getLanguagePhaseSteps(kind: ActivityKind): Record<PhaseName, ActivitySt
       processingDependencies: [],
       recordingAudio: ["generateVocabularyAudio"],
       writingContent: [],
-    };
-  }
-
-  if (kind === "languageReview") {
-    return {
-      ...SHARED_PHASE_STEPS,
-      ...NO_VISUALS_OVERRIDE,
-      finishing: [
-        ...VISUALS_AS_FINISHING,
-        ...getFinishingSteps([
-          ...LANGUAGE_REVIEW_DEPENDENCY_STEPS,
-          "copyLanguageReviewSteps",
-          "setLanguageReviewAsCompleted",
-        ]),
-        "setLanguageReviewAsCompleted",
-      ],
-      processingDependencies: LANGUAGE_REVIEW_DEPENDENCY_STEPS,
-      writingContent: ["copyLanguageReviewSteps"],
     };
   }
 
@@ -263,7 +240,6 @@ export function getPhaseSteps(kind: ActivityKind): Record<PhaseName, ActivitySte
     examples: "generateExamplesContent",
     mechanics: "generateMechanicsContent",
     quiz: "generateQuizContent",
-    review: "generateReviewContent",
     story: "generateStoryContent",
   };
 
@@ -288,13 +264,11 @@ const SUPPORTED_KINDS: ActivityKind[] = [
   "examples",
   "explanation",
   "grammar",
-  "languageReview",
   "languageStory",
   "listening",
   "mechanics",
   "quiz",
   "reading",
-  "review",
   "story",
   "vocabulary",
 ];

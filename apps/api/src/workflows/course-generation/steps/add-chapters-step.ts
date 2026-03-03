@@ -1,5 +1,5 @@
 import { type CourseChapter } from "@zoonk/ai/tasks/courses/chapters";
-import { type Chapter, prisma } from "@zoonk/db";
+import { type Chapter, type ChapterCreateManyInput, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { normalizeString, toSlug } from "@zoonk/utils/string";
 import { streamError, streamStatus } from "../stream-status";
@@ -13,10 +13,10 @@ export async function addChaptersStep(input: {
 
   await streamStatus({ status: "started", step: "addChapters" });
 
-  const chaptersData = input.chapters.map((chapter, index) => ({
+  const chaptersData: ChapterCreateManyInput[] = input.chapters.map((chapter, index) => ({
     courseId: input.course.courseId,
     description: chapter.description,
-    generationStatus: "pending" as const,
+    generationStatus: "pending",
     isPublished: true,
     language: input.course.language,
     normalizedTitle: normalizeString(chapter.title),

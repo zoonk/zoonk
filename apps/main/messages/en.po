@@ -2313,11 +2313,6 @@ msgid "Learn about {topic} through an interactive activity."
 msgstr "Learn about {topic} through an interactive activity."
 
 #: src/lib/activities.ts
-msgctxt "SM2LhV"
-msgid "Review vocabulary and skills from {topic} with a comprehensive assessment."
-msgstr "Review vocabulary and skills from {topic} with a comprehensive assessment."
-
-#: src/lib/activities.ts
 msgctxt "T24ZU7"
 msgid "Apply your knowledge of {topic} through analytical decisions with real trade-offs."
 msgstr "Apply your knowledge of {topic} through analytical decisions with real trade-offs."
@@ -2336,11 +2331,6 @@ msgstr "Practice {topic} grammar rules with exercises designed to help you remem
 msgctxt "tzNRA/"
 msgid "Explains WHAT this topic is. Breaks down core concepts and definitions using metaphors and analogies."
 msgstr "Explains WHAT this topic is. Breaks down core concepts and definitions using metaphors and analogies."
-
-#: src/lib/activities.ts
-msgctxt "U9yVH/"
-msgid "A comprehensive review covering vocabulary and skills from this lesson."
-msgstr "A comprehensive review covering vocabulary and skills from this lesson."
 
 #: src/lib/activities.ts
 msgctxt "UDijXW"

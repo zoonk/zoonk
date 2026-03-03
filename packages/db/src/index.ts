@@ -40,6 +40,10 @@ export type {
   Word,
 } from "./generated/prisma/client";
 
+export type { ActivityCreateManyInput } from "./generated/prisma/models/Activity";
+export type { ChapterCreateManyInput } from "./generated/prisma/models/Chapter";
+export type { LessonCreateManyInput } from "./generated/prisma/models/Lesson";
+
 export type { BatchPayload } from "./generated/prisma/internal/prismaNamespace";
 
 export { prisma };

@@ -22,7 +22,6 @@ const validActivityKinds = new Set<ActivityKind>([
   "listening",
   "review",
   "languageStory",
-  "languageReview",
 ]);
 
 type ActivityImportData = {

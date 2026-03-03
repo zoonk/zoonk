@@ -94,11 +94,6 @@ export async function getActivityKinds(): Promise<
       key: "languageStory",
       label: t("Story"),
     },
-    {
-      description: t("A comprehensive review covering vocabulary and skills from this lesson."),
-      key: "languageReview",
-      label: t("Review"),
-    },
   ];
 }
 
@@ -125,10 +120,6 @@ async function getSeoDescription(kind: ActivityKind, topic: string): Promise<str
     ),
     grammar: t(
       "Practice {topic} grammar rules with exercises designed to help you remember and apply them.",
-      { topic },
-    ),
-    languageReview: t(
-      "Review vocabulary and skills from {topic} with a comprehensive assessment.",
       { topic },
     ),
     languageStory: t(
