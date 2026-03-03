@@ -3225,6 +3225,59 @@ describe("core activity workflow", () => {
       );
     });
 
+    test("quiz 1 gets content when only one explanation result exists with two quizzes", async () => {
+      const testLesson = await lessonFixture({
+        chapterId: chapter.id,
+        concepts: ["OnlyConcept"],
+        organizationId,
+        title: `Single Explanation Two Quizzes ${randomUUID()}`,
+      });
+
+      vi.mocked(generateActivityExplanation).mockResolvedValue({
+        data: { steps: [{ text: "Only text", title: "Only" }] },
+        systemPrompt: "test",
+        usage: {} as Awaited<ReturnType<typeof generateActivityExplanation>>["usage"],
+        userPrompt: "test",
+      });
+
+      await Promise.all([
+        activityFixture({
+          generationStatus: "pending",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          position: 1,
+          title: "OnlyConcept",
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "quiz",
+          lessonId: testLesson.id,
+          organizationId,
+          position: 2,
+          title: `Quiz 1 ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "quiz",
+          lessonId: testLesson.id,
+          organizationId,
+          position: 3,
+          title: `Quiz 2 ${randomUUID()}`,
+        }),
+      ]);
+
+      await activityGenerationWorkflow(testLesson.id);
+
+      // Quiz 1 must get the single explanation result (not an empty array)
+      expect(generateActivityQuiz).toHaveBeenCalledOnce();
+      expect(generateActivityQuiz).toHaveBeenCalledWith(
+        expect.objectContaining({
+          explanationSteps: [{ text: "Only text", title: "Only" }],
+        }),
+      );
+    });
+
     test("completes both quiz activities when lesson has two quizzes", async () => {
       const testLesson = await lessonFixture({
         chapterId: chapter.id,
