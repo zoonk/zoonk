@@ -114,16 +114,27 @@ function buildInitialAnswers(steps: SerializedStep[]): Record<string, SelectedAn
   );
 }
 
+function getInitialPhase(steps: SerializedStep[], dimensions: DimensionInventory): PlayerPhase {
+  if (steps.length === 0) {
+    return "completed";
+  }
+
+  if (Object.keys(dimensions).length > 0) {
+    return "intro";
+  }
+
+  return "playing";
+}
+
 export function createInitialState(activity: SerializedActivity): PlayerState {
   const dimensions = collectAllDimensions(activity.steps);
-  const isChallenge = Object.keys(dimensions).length > 0;
   const now = Date.now();
 
   return {
     activityId: activity.id,
     currentStepIndex: 0,
     dimensions,
-    phase: isChallenge ? "intro" : "playing",
+    phase: getInitialPhase(activity.steps, dimensions),
     results: {},
     selectedAnswers: buildInitialAnswers(activity.steps),
     startedAt: now,
