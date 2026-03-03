@@ -2,7 +2,7 @@ import { type QuizQuestion } from "@zoonk/ai/tasks/activities/core/quiz";
 import { settled } from "@zoonk/utils/settled";
 import { findActivitiesByKind } from "./steps/_utils/find-activity-by-kind";
 import { type ActivitySteps } from "./steps/_utils/get-activity-steps";
-import { completeActivitiesByKindStep, completeActivityStep } from "./steps/complete-activity-step";
+import { completeActivityStep } from "./steps/complete-activity-step";
 import { generateBackgroundContentStep } from "./steps/generate-background-content-step";
 import { generateChallengeContentStep } from "./steps/generate-challenge-content-step";
 import { generateExamplesContentStep } from "./steps/generate-examples-content-step";
@@ -190,8 +190,8 @@ export async function coreActivityWorkflow(
   // Wave 4: save all remaining
   await Promise.allSettled([
     completeActivityStep(activities, workflowRunId, "background"),
-    completeActivitiesByKindStep(activities, workflowRunId, "explanation"),
-    completeActivitiesByKindStep(activities, workflowRunId, "quiz"),
+    completeActivityStep(activities, workflowRunId, "explanation"),
+    completeActivityStep(activities, workflowRunId, "quiz"),
     completeActivityStep(activities, workflowRunId, "review"),
     completeActivityStep(activities, workflowRunId, "mechanics"),
     completeActivityStep(activities, workflowRunId, "examples"),

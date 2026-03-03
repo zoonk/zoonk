@@ -20,9 +20,17 @@ import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { activityGenerationWorkflow } from "./activity-generation-workflow";
 import { getNeighboringConceptsStep } from "./steps/get-neighboring-concepts-step";
 
+function getStreamedMessages(): Record<string, string>[] {
+  return mockStreamWrite.mock.calls.map(
+    (call: string[]) => JSON.parse(call[0]!.replace("data: ", "").trim()) as Record<string, string>,
+  );
+}
+
 vi.mock("./steps/get-neighboring-concepts-step", () => ({
   getNeighboringConceptsStep: vi.fn().mockResolvedValue([]),
 }));
+
+const mockStreamWrite = vi.hoisted(() => vi.fn().mockResolvedValue(null));
 
 vi.mock("workflow", () => ({
   FatalError: class FatalError extends Error {},
@@ -30,7 +38,7 @@ vi.mock("workflow", () => ({
   getWritable: vi.fn().mockReturnValue({
     getWriter: () => ({
       releaseLock: vi.fn(),
-      write: vi.fn().mockResolvedValue(null),
+      write: mockStreamWrite,
     }),
   }),
   workflowStep: vi.fn().mockImplementation((_name: string, fn: unknown) => fn),
@@ -3246,7 +3254,7 @@ describe("core activity workflow", () => {
     });
   });
 
-  describe("completeActivitiesByKindStep", () => {
+  describe("completeActivityStep", () => {
     test("completes multiple explanation activities in parallel", async () => {
       const testLesson = await lessonFixture({
         chapterId: chapter.id,
@@ -3293,6 +3301,18 @@ describe("core activity workflow", () => {
       expect(dbA?.generationStatus).toBe("completed");
       expect(dbB?.generationStatus).toBe("completed");
       expect(dbC?.generationStatus).toBe("completed");
+
+      const streamedMessages = getStreamedMessages();
+
+      expect(streamedMessages).toContainEqual({
+        status: "completed",
+        step: "setExplanationAsCompleted",
+      });
+
+      expect(streamedMessages).not.toContainEqual({
+        status: "error",
+        step: "setActivityAsCompleted",
+      });
     });
 
     test("completes multiple quiz activities in parallel", async () => {
@@ -3366,6 +3386,139 @@ describe("core activity workflow", () => {
 
       expect(dbQuiz1?.generationStatus).toBe("completed");
       expect(dbQuiz2?.generationStatus).toBe("completed");
+    });
+
+    test("sets explanation to 'failed' when generateActivityExplanation rejects for one of multiple explanations", async () => {
+      const failConcept = `Exp Fail ${randomUUID()}`;
+
+      vi.mocked(generateActivityExplanation).mockImplementation(async (params) => {
+        if (params.concept === failConcept) {
+          throw new Error("AI generation failed");
+        }
+        return {
+          data: {
+            steps: [{ text: "Step text", title: "Step Title" }],
+          },
+          systemPrompt: "test",
+          usage: {} as Awaited<ReturnType<typeof generateActivityExplanation>>["usage"],
+          userPrompt: "test",
+        };
+      });
+
+      const okConcept1 = `Exp OK 1 ${randomUUID()}`;
+      const okConcept2 = `Exp OK 2 ${randomUUID()}`;
+
+      const testLesson = await lessonFixture({
+        chapterId: chapter.id,
+        concepts: [okConcept1, failConcept, okConcept2],
+        organizationId,
+        title: `Partial Exp Fail Lesson ${randomUUID()}`,
+      });
+
+      const [expA, expB, expC] = await Promise.all([
+        activityFixture({
+          generationStatus: "pending",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          position: 1,
+          title: okConcept1,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          position: 2,
+          title: failConcept,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          position: 3,
+          title: okConcept2,
+        }),
+      ]);
+
+      await activityGenerationWorkflow(testLesson.id);
+
+      const [dbA, dbB, dbC] = await Promise.all([
+        prisma.activity.findUnique({ where: { id: expA.id } }),
+        prisma.activity.findUnique({ where: { id: expB.id } }),
+        prisma.activity.findUnique({ where: { id: expC.id } }),
+      ]);
+
+      expect(dbA?.generationStatus).toBe("completed");
+      expect(dbB?.generationStatus).toBe("failed");
+      expect(dbC?.generationStatus).toBe("completed");
+
+      const streamedMessages = getStreamedMessages();
+
+      expect(streamedMessages).toContainEqual({
+        status: "error",
+        step: "generateExplanationContent",
+      });
+
+      expect(streamedMessages).not.toContainEqual({
+        status: "completed",
+        step: "generateExplanationContent",
+      });
+
+      // Completion step should still succeed (A and C updated, B skipped as "failed")
+      expect(streamedMessages).toContainEqual({
+        status: "completed",
+        step: "setExplanationAsCompleted",
+      });
+    });
+
+    test("streams error when activity completion DB update fails", async () => {
+      const testLesson = await lessonFixture({
+        chapterId: chapter.id,
+        concepts: ["DB Fail Concept"],
+        organizationId,
+        title: `Complete DB Fail Lesson ${randomUUID()}`,
+      });
+
+      const activity = await activityFixture({
+        generationStatus: "pending",
+        kind: "explanation",
+        lessonId: testLesson.id,
+        organizationId,
+        title: "DB Fail Concept",
+      });
+
+      // Add a CHECK constraint that prevents this specific activity from being set to "completed"
+      await prisma.$executeRawUnsafe(
+        `ALTER TABLE activities ADD CONSTRAINT prevent_completion_test CHECK (NOT (id = ${String(activity.id)} AND generation_status = 'completed'))`,
+      );
+
+      try {
+        await activityGenerationWorkflow(testLesson.id);
+
+        const dbActivity = await prisma.activity.findUnique({
+          where: { id: activity.id },
+        });
+
+        expect(dbActivity?.generationStatus).toBe("failed");
+
+        const streamedMessages = getStreamedMessages();
+
+        expect(streamedMessages).toContainEqual({
+          status: "error",
+          step: "setExplanationAsCompleted",
+        });
+
+        expect(streamedMessages).not.toContainEqual({
+          status: "completed",
+          step: "setExplanationAsCompleted",
+        });
+      } finally {
+        await prisma.$executeRawUnsafe(
+          `ALTER TABLE activities DROP CONSTRAINT IF EXISTS prevent_completion_test`,
+        );
+      }
     });
   });
 

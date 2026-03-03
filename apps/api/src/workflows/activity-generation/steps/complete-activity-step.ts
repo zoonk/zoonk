@@ -1,9 +1,11 @@
 import { type ActivityStepName } from "@/workflows/config";
 import { type ActivityKind, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
-import { streamError, streamStatus } from "../stream-status";
-import { findActivitiesByKind, findActivityByKind } from "./_utils/find-activity-by-kind";
+import { rejected } from "@zoonk/utils/settled";
+import { streamStatus } from "../stream-status";
+import { findActivitiesByKind } from "./_utils/find-activity-by-kind";
 import { type LessonActivity } from "./get-lesson-activities-step";
+import { handleActivityFailureStep } from "./handle-failure-step";
 
 const kindToStepName: Partial<Record<ActivityKind, ActivityStepName>> = {
   background: "setBackgroundAsCompleted",
@@ -22,52 +24,9 @@ const kindToStepName: Partial<Record<ActivityKind, ActivityStepName>> = {
   vocabulary: "setVocabularyAsCompleted",
 };
 
-export async function completeActivityStep(
-  activities: LessonActivity[],
-  workflowRunId: string,
-  activityKind: ActivityKind,
-): Promise<void> {
-  "use step";
-
-  const activity = findActivityByKind(activities, activityKind);
-  const stepName = kindToStepName[activityKind];
-
-  if (!activity || !stepName) {
-    return;
-  }
-
-  const current = await prisma.activity.findUnique({
-    where: { id: activity.id },
-  });
-
-  if (current?.generationStatus !== "running") {
-    return;
-  }
-
-  await streamStatus({ status: "started", step: stepName });
-  await streamStatus({ status: "started", step: "setActivityAsCompleted" });
-
-  const { error } = await safeAsync(() =>
-    prisma.activity.update({
-      data: { generationRunId: workflowRunId, generationStatus: "completed" },
-      where: { id: activity.id },
-    }),
-  );
-
-  if (error) {
-    await streamError({ reason: "dbSaveFailed", step: stepName });
-    await streamStatus({ status: "error", step: "setActivityAsCompleted" });
-    return;
-  }
-
-  await streamStatus({ status: "completed", step: stepName });
-  await streamStatus({ status: "completed", step: "setActivityAsCompleted" });
-}
-
 async function completeSingleActivity(
   activity: LessonActivity,
   workflowRunId: string,
-  stepName: ActivityStepName,
 ): Promise<void> {
   const current = await prisma.activity.findUnique({
     where: { id: activity.id },
@@ -85,11 +44,12 @@ async function completeSingleActivity(
   );
 
   if (error) {
-    await streamError({ reason: "dbSaveFailed", step: stepName });
+    await handleActivityFailureStep({ activityId: activity.id });
+    throw error;
   }
 }
 
-export async function completeActivitiesByKindStep(
+export async function completeActivityStep(
   activities: LessonActivity[],
   workflowRunId: string,
   activityKind: ActivityKind,
@@ -106,10 +66,12 @@ export async function completeActivitiesByKindStep(
   await streamStatus({ status: "started", step: stepName });
   await streamStatus({ status: "started", step: "setActivityAsCompleted" });
 
-  await Promise.allSettled(
-    matchingActivities.map((activity) => completeSingleActivity(activity, workflowRunId, stepName)),
+  const allSettled = await Promise.allSettled(
+    matchingActivities.map((activity) => completeSingleActivity(activity, workflowRunId)),
   );
 
-  await streamStatus({ status: "completed", step: stepName });
-  await streamStatus({ status: "completed", step: "setActivityAsCompleted" });
+  const status = rejected(allSettled) ? "error" : "completed";
+
+  await streamStatus({ status, step: stepName });
+  await streamStatus({ status, step: "setActivityAsCompleted" });
 }

@@ -1,6 +1,6 @@
 import { generateActivityExplanation } from "@zoonk/ai/tasks/activities/core/explanation";
 import { safeAsync } from "@zoonk/utils/error";
-import { settledValues } from "@zoonk/utils/settled";
+import { rejected, settledValues } from "@zoonk/utils/settled";
 import { streamStatus } from "../stream-status";
 import { resolveActivityForGeneration, saveContentSteps } from "./_utils/content-step-helpers";
 import { findActivitiesByKind } from "./_utils/find-activity-by-kind";
@@ -45,14 +45,14 @@ async function generateSingleExplanation(
 
   if (error || !result) {
     await handleActivityFailureStep({ activityId: activity.id });
-    return { activityId: activity.id, concept, steps: [] };
+    throw error ?? new Error("Empty AI result");
   }
 
   const { error: saveError } = await saveContentSteps(activity.id, result.data.steps);
 
   if (saveError) {
     await handleActivityFailureStep({ activityId: activity.id });
-    return { activityId: activity.id, concept, steps: [] };
+    throw saveError;
   }
 
   return { activityId: activity.id, concept, steps: result.data.steps };
@@ -74,7 +74,7 @@ export async function generateExplanationContentStep(
 
   await streamStatus({ status: "started", step: "generateExplanationContent" });
 
-  const settled = await Promise.allSettled(
+  const allSettled = await Promise.allSettled(
     explanationActivities.map((activity) => {
       const concept = activity.title ?? "";
       const otherLessonConcepts = concepts.filter((item) => item !== concept);
@@ -89,9 +89,10 @@ export async function generateExplanationContentStep(
     }),
   );
 
-  const results = settledValues(settled);
+  await streamStatus({
+    status: rejected(allSettled) ? "error" : "completed",
+    step: "generateExplanationContent",
+  });
 
-  await streamStatus({ status: "completed", step: "generateExplanationContent" });
-
-  return { results };
+  return { results: settledValues(allSettled) };
 }
