@@ -26,7 +26,7 @@ export async function checkSlugExists({
   const isAiOrg = orgSlug === AI_ORG_SLUG;
   const normalizedSlug = isAiOrg ? ensureLocaleSuffix(toSlug(slug), language) : toSlug(slug);
 
-  return courseSlugExists({ orgSlug, slug: normalizedSlug });
+  return courseSlugExists({ language, orgSlug, slug: normalizedSlug });
 }
 
 export async function createCourseAction(formData: CourseFormData, orgSlug: string) {

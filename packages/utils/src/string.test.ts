@@ -7,6 +7,7 @@ import {
   parseBigIntId,
   parseNumericId,
   removeAccents,
+  removeLocaleSuffix,
   replaceNamePlaceholder,
   toSlug,
 } from "./string";
@@ -194,6 +195,31 @@ describe(ensureLocaleSuffix, () => {
     expect(ensureLocaleSuffix("machine-learning", "es")).toBe("machine-learning-es");
     expect(ensureLocaleSuffix("machine-learning", "fr")).toBe("machine-learning-fr");
     expect(ensureLocaleSuffix("machine-learning", "ja")).toBe("machine-learning-ja");
+  });
+});
+
+describe(removeLocaleSuffix, () => {
+  test("returns slug unchanged for English", () => {
+    expect(removeLocaleSuffix("machine-learning", "en")).toBe("machine-learning");
+  });
+
+  test("strips suffix for non-English languages", () => {
+    expect(removeLocaleSuffix("machine-learning-pt", "pt")).toBe("machine-learning");
+    expect(removeLocaleSuffix("machine-learning-es", "es")).toBe("machine-learning");
+    expect(removeLocaleSuffix("machine-learning-fr", "fr")).toBe("machine-learning");
+    expect(removeLocaleSuffix("machine-learning-ja", "ja")).toBe("machine-learning");
+  });
+
+  test("returns slug unchanged if suffix not present", () => {
+    expect(removeLocaleSuffix("machine-learning", "pt")).toBe("machine-learning");
+  });
+
+  test("handles empty string", () => {
+    expect(removeLocaleSuffix("", "pt")).toBe("");
+  });
+
+  test("does not strip partial suffix match", () => {
+    expect(removeLocaleSuffix("report", "pt")).toBe("report");
   });
 });
 

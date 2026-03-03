@@ -17,7 +17,11 @@ export async function checkCourseSlugExists(params: {
     ? ensureLocaleSuffix(toSlug(params.slug), params.language)
     : toSlug(params.slug);
 
-  return courseSlugExists({ orgSlug: params.orgSlug, slug: normalizedSlug });
+  return courseSlugExists({
+    language: params.language,
+    orgSlug: params.orgSlug,
+    slug: normalizedSlug,
+  });
 }
 
 export async function updateCourseSlugAction(
