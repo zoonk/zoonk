@@ -70,7 +70,11 @@ function buildState(overrides: Partial<PlayerState> = {}): PlayerState {
   };
 }
 
-const multipleChoiceAnswer: SelectedAnswer = { kind: "multipleChoice", selectedIndex: 0 };
+const multipleChoiceAnswer: SelectedAnswer = {
+  kind: "multipleChoice",
+  selectedIndex: 0,
+  selectedText: "Option A",
+};
 
 const challengeContent = {
   context: "A scenario",
@@ -202,7 +206,9 @@ describe("SELECT_ANSWER", () => {
 
   test("overwrites previous answer for same step", () => {
     const state = buildState({
-      selectedAnswers: { "step-1": { kind: "multipleChoice", selectedIndex: 1 } },
+      selectedAnswers: {
+        "step-1": { kind: "multipleChoice", selectedIndex: 1, selectedText: "Option B" },
+      },
     });
     const next = playerReducer(state, {
       answer: multipleChoiceAnswer,
@@ -776,7 +782,11 @@ describe("edge cases", () => {
 
   test("results include the stored StepResult structure", () => {
     const step = buildMultipleChoiceStep({ id: "mc-1" });
-    const answer: SelectedAnswer = { kind: "multipleChoice", selectedIndex: 2 };
+    const answer: SelectedAnswer = {
+      kind: "multipleChoice",
+      selectedIndex: 2,
+      selectedText: "Option C",
+    };
     const state = buildState({ selectedAnswers: { "mc-1": answer }, steps: [step] });
     const next = playerReducer(state, {
       effects: [{ dimension: "Quality", impact: "positive" }],

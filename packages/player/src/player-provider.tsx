@@ -3,7 +3,7 @@
 import { type Route } from "next";
 import { useCallback, useReducer } from "react";
 import { type CompletionInput, type CompletionResult } from "./completion-input-schema";
-import { hasNegativeDimension } from "./has-negative-dimension";
+import { hasNegativeDimension } from "./dimensions";
 import { PlayerContext, type PlayerContextValue } from "./player-context";
 import { type PlayerState, createInitialState, playerReducer } from "./player-reducer";
 import { type SerializedActivity } from "./prepare-activity-data";

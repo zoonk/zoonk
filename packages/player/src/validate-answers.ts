@@ -18,7 +18,7 @@ type SelectedAnswer =
   | { kind: "fillBlank"; userAnswers: string[] }
   | { kind: "listening"; arrangedWords: string[] }
   | { kind: "matchColumns"; userPairs: { left: string; right: string }[]; mistakes: number }
-  | { kind: "multipleChoice"; selectedIndex: number }
+  | { kind: "multipleChoice"; selectedIndex: number; selectedText: string }
   | { kind: "reading"; arrangedWords: string[] }
   | { kind: "selectImage"; selectedIndex: number }
   | { kind: "sortOrder"; userOrder: string[] }
@@ -48,9 +48,10 @@ function validateMultipleChoice(
   }
 
   const content = parseStepContent("multipleChoice", step.content);
-  const result = checkMultipleChoiceAnswer(content, answer.selectedIndex);
-  const effects =
-    content.kind === "challenge" ? (content.options[answer.selectedIndex]?.effects ?? []) : [];
+  const originalIndex = content.options.findIndex((option) => option.text === answer.selectedText);
+  const index = originalIndex === -1 ? answer.selectedIndex : originalIndex;
+  const result = checkMultipleChoiceAnswer(content, index);
+  const effects = content.kind === "challenge" ? (content.options[index]?.effects ?? []) : [];
 
   return { answer, effects, isCorrect: result.isCorrect, stepId: step.id };
 }

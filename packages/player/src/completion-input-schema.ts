@@ -23,6 +23,7 @@ const matchColumnsAnswerSchema = z.object({
 const multipleChoiceAnswerSchema = z.object({
   kind: z.literal("multipleChoice"),
   selectedIndex: z.number(),
+  selectedText: z.string(),
 });
 
 const readingAnswerSchema = z.object({

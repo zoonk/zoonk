@@ -38,7 +38,11 @@ describe(checkStep, () => {
     });
 
     test("correct answer returns isCorrect true with empty effects", () => {
-      const answer: SelectedAnswer = { kind: "multipleChoice", selectedIndex: 0 };
+      const answer: SelectedAnswer = {
+        kind: "multipleChoice",
+        selectedIndex: 0,
+        selectedText: "4",
+      };
       const { effects, result } = checkStep(step, answer);
       expect(result.isCorrect).toBeTruthy();
       expect(result.feedback).toBe("Correct!");
@@ -46,7 +50,11 @@ describe(checkStep, () => {
     });
 
     test("incorrect answer returns isCorrect false", () => {
-      const answer: SelectedAnswer = { kind: "multipleChoice", selectedIndex: 1 };
+      const answer: SelectedAnswer = {
+        kind: "multipleChoice",
+        selectedIndex: 1,
+        selectedText: "3",
+      };
       const { result } = checkStep(step, answer);
       expect(result.isCorrect).toBeFalsy();
       expect(result.feedback).toBe("Wrong!");
@@ -77,14 +85,22 @@ describe(checkStep, () => {
     });
 
     test("returns effects from selected option", () => {
-      const answer: SelectedAnswer = { kind: "multipleChoice", selectedIndex: 0 };
+      const answer: SelectedAnswer = {
+        kind: "multipleChoice",
+        selectedIndex: 0,
+        selectedText: "Option A",
+      };
       const { effects, result } = checkStep(step, answer);
       expect(result.isCorrect).toBeTruthy();
       expect(effects).toEqual([{ dimension: "Quality", impact: "positive" }]);
     });
 
     test("returns effects from second option", () => {
-      const answer: SelectedAnswer = { kind: "multipleChoice", selectedIndex: 1 };
+      const answer: SelectedAnswer = {
+        kind: "multipleChoice",
+        selectedIndex: 1,
+        selectedText: "Option B",
+      };
       const { effects } = checkStep(step, answer);
       expect(effects).toEqual([{ dimension: "Quality", impact: "negative" }]);
     });
@@ -320,7 +336,7 @@ describe(checkStep, () => {
 
     test("static step returns mismatch result", () => {
       const step = buildStep();
-      const answer: SelectedAnswer = { kind: "multipleChoice", selectedIndex: 0 };
+      const answer: SelectedAnswer = { kind: "multipleChoice", selectedIndex: 0, selectedText: "" };
       const { effects, result } = checkStep(step, answer);
       expect(result.isCorrect).toBeFalsy();
       expect(result.feedback).toBeNull();

@@ -11,7 +11,7 @@ import {
   completionInputSchema,
 } from "@zoonk/player/completion-input-schema";
 import { computeChallengeScore, computeScore } from "@zoonk/player/compute-score";
-import { hasNegativeDimension } from "@zoonk/player/has-negative-dimension";
+import { computeDimensions, hasNegativeDimension } from "@zoonk/player/dimensions";
 import { validateAnswers } from "@zoonk/player/validate-answers";
 import { safeAsync } from "@zoonk/utils/error";
 import { getLocale } from "next-intl/server";
@@ -71,10 +71,15 @@ export async function submitCompletion(rawInput: CompletionInput): Promise<Compl
 
     const stepResults = validateAnswers(stepsForValidation, input.answers);
     const isChallenge = activity.kind === "challenge";
-    const isSuccessful = !hasNegativeDimension(input.dimensions);
+
+    const dimensions = isChallenge
+      ? computeDimensions(stepResults.map((result) => result.effects))
+      : {};
+
+    const isSuccessful = !hasNegativeDimension(dimensions);
 
     const score = isChallenge
-      ? computeChallengeScore({ dimensions: input.dimensions, isSuccessful })
+      ? computeChallengeScore({ dimensions, isSuccessful })
       : computeScore({
           results: stepResults.map((step) => ({ isCorrect: step.isCorrect })),
         });

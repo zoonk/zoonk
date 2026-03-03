@@ -1,5 +1,6 @@
 import { type ChallengeEffect, parseStepContent } from "@zoonk/core/steps/content-contract";
 import { type AnswerResult } from "./check-answer";
+import { IMPACT_DELTA } from "./dimensions";
 import { type SerializedActivity, type SerializedStep } from "./prepare-activity-data";
 
 export type PlayerPhase = "intro" | "playing" | "feedback" | "completed";
@@ -8,7 +9,7 @@ export type SelectedAnswer =
   | { kind: "fillBlank"; userAnswers: string[] }
   | { kind: "listening"; arrangedWords: string[] }
   | { kind: "matchColumns"; userPairs: { left: string; right: string }[]; mistakes: number }
-  | { kind: "multipleChoice"; selectedIndex: number }
+  | { kind: "multipleChoice"; selectedIndex: number; selectedText: string }
   | { kind: "reading"; arrangedWords: string[] }
   | { kind: "selectImage"; selectedIndex: number }
   | { kind: "sortOrder"; userOrder: string[] }
@@ -53,18 +54,6 @@ type PlayerAction =
   | { type: "RESTART" }
   | { type: "START_CHALLENGE" };
 
-export function effectDelta(impact: ChallengeEffect["impact"]): number {
-  if (impact === "positive") {
-    return 1;
-  }
-
-  if (impact === "negative") {
-    return -1;
-  }
-
-  return 0;
-}
-
 function applyEffects(
   dimensions: DimensionInventory,
   effects: ChallengeEffect[],
@@ -76,7 +65,7 @@ function applyEffects(
   const next = { ...dimensions };
 
   for (const effect of effects) {
-    next[effect.dimension] = (next[effect.dimension] ?? 0) + effectDelta(effect.impact);
+    next[effect.dimension] = (next[effect.dimension] ?? 0) + IMPACT_DELTA[effect.impact];
   }
 
   return next;
