@@ -77,7 +77,7 @@ const activitiesData: {
       {
         generationStatus: "pending",
         isPublished: false,
-        kind: "mechanics",
+        kind: "examples",
       },
     ],
     language: "en",

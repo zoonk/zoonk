@@ -2173,11 +2173,6 @@ msgid "Generating content with AI requires an active subscription."
 msgstr "Generar contenido con IA requiere una suscripción activa."
 
 #: src/lib/activities.ts
-msgctxt "/yPM2g"
-msgid "Explains HOW things work under the hood. Shows the processes, sequences, and cause-effect chains in action."
-msgstr "Explica CÓMO funcionan las cosas por dentro. Muestra los procesos, secuencias y cadenas de causa-efecto en acción."
-
-#: src/lib/activities.ts
 msgctxt "1TOMnj"
 msgid "Listening"
 msgstr "Escucha"
@@ -2191,6 +2186,11 @@ msgstr "Experimenta cuándo aplicar {topic} a través de un escenario de diálog
 msgctxt "3GLH+d"
 msgid "Examples"
 msgstr "Ejemplos"
+
+#: src/lib/activities.ts
+msgctxt "7Jwa/p"
+msgid "Shows HOW things work through practical demonstrations and WHERE they appear in real life."
+msgstr "Muestra CÓMO funcionan las cosas a través de demostraciones prácticas y DÓNDE aparecen en la vida real."
 
 #: src/lib/activities.ts
 msgctxt "BB51/R"
@@ -2233,11 +2233,6 @@ msgid "Learn new words and their translations to build your vocabulary."
 msgstr "Aprende nuevas palabras y sus traducciones para ampliar tu vocabulario."
 
 #: src/lib/activities.ts
-msgctxt "G/JvLV"
-msgid "See where {topic} appears in real life — in daily routines, work, pop culture, and unexpected places."
-msgstr "Mira dónde aparece {topic} en la vida real: en rutinas diarias, trabajo, cultura popular y lugares inesperados."
-
-#: src/lib/activities.ts
 msgctxt "gAYlHX"
 msgid "Sharpen your {topic} listening skills by translating audio sentences."
 msgstr "Afina tus habilidades de escucha en {topic} traduciendo oraciones de audio."
@@ -2278,11 +2273,6 @@ msgid "Vocabulary"
 msgstr "Vocabulario"
 
 #: src/lib/activities.ts
-msgctxt "M4zx2O"
-msgid "Shows WHERE this topic appears in real life. Helps you recognize it in daily routines, work, pop culture, and unexpected places."
-msgstr "Muestra DÓNDE aparece este tema en la vida real. Te ayuda a reconocerlo en rutinas diarias, trabajo, cultura popular y lugares inesperados."
-
-#: src/lib/activities.ts
 msgctxt "MfGqY2"
 msgid "{lesson} {activity}"
 msgstr "{lesson} {activity}"
@@ -2293,9 +2283,9 @@ msgid "Reading"
 msgstr "Lectura"
 
 #: src/lib/activities.ts
-msgctxt "NoV4pb"
-msgid "Mechanics"
-msgstr "Mecánica"
+msgctxt "olZHUk"
+msgid "See how {topic} works through practical demonstrations and where it appears in real life."
+msgstr "Mira cómo funciona {topic} a través de demostraciones prácticas y dónde aparece en la vida real."
 
 #: src/lib/activities.ts
 msgctxt "OuR/Ij"
@@ -2341,11 +2331,6 @@ msgstr "{activity} - {lesson}"
 msgctxt "WD76vM"
 msgid "Explains WHY this topic exists. Tells the origin story, the problems it solved, and why it matters today."
 msgstr "Explica POR QUÉ existe este tema. Cuenta la historia de origen, los problemas que resolvió y por qué importa hoy."
-
-#: src/lib/activities.ts
-msgctxt "Wg8Pln"
-msgid "Learn how {topic} works under the hood — processes, sequences, and cause-effect chains explained."
-msgstr "Aprende cómo funciona {topic} por dentro: procesos, secuencias y cadenas de causa-efecto explicados."
 
 #: src/lib/activities.ts
 msgctxt "XQZA8e"

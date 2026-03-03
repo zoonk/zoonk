@@ -44,17 +44,6 @@ vi.mock("@zoonk/ai/tasks/activities/core/explanation", () => ({
   }),
 }));
 
-vi.mock("@zoonk/ai/tasks/activities/core/mechanics", () => ({
-  generateActivityMechanics: vi.fn().mockResolvedValue({
-    data: {
-      steps: [
-        { text: "Mechanics step 1 text", title: "Mechanics Step 1" },
-        { text: "Mechanics step 2 text", title: "Mechanics Step 2" },
-      ],
-    },
-  }),
-}));
-
 vi.mock("@zoonk/ai/tasks/activities/core/examples", () => ({
   generateActivityExamples: vi.fn().mockResolvedValue({
     data: {
@@ -311,7 +300,7 @@ describe(activityGenerationWorkflow, () => {
 
       const pendingActivity = await activityFixture({
         generationStatus: "pending",
-        kind: "mechanics",
+        kind: "examples",
         lessonId: testLesson.id,
         organizationId,
         title: `Pending Activity ${randomUUID()}`,

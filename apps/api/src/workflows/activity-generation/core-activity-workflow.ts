@@ -11,7 +11,6 @@ import {
   generateExplanationContentStep,
 } from "./steps/generate-explanation-content-step";
 import { generateImagesForActivityStep, generateImagesStep } from "./steps/generate-images-step";
-import { generateMechanicsContentStep } from "./steps/generate-mechanics-content-step";
 import { generateQuizContentStep } from "./steps/generate-quiz-content-step";
 import { generateQuizImagesStep } from "./steps/generate-quiz-images-step";
 import { generateStoryContentStep } from "./steps/generate-story-content-step";
@@ -73,14 +72,12 @@ async function generateQuizzes(
 async function generateAllVisuals(
   activities: LessonActivity[],
   backgroundSteps: ActivitySteps,
-  mechanicsSteps: ActivitySteps,
   examplesSteps: ActivitySteps,
   explanationResults: ExplanationResult[],
 ): Promise<{
   background: { visuals: StepVisual[] };
   explanation: { activityId: number; visuals: StepVisual[] }[];
   examples: { visuals: StepVisual[] };
-  mechanics: { visuals: StepVisual[] };
 }> {
   const explanationEntries = explanationResults.flatMap((result) => {
     const activity = activities.find((a) => a.id === result.activityId);
@@ -90,17 +87,16 @@ async function generateAllVisuals(
     return [{ activity, result }];
   });
 
-  const categoryVisualCount = 3;
+  const categoryVisualCount = 2;
   const allResults = await Promise.allSettled([
     generateVisualsStep(activities, backgroundSteps, "background"),
-    generateVisualsStep(activities, mechanicsSteps, "mechanics"),
     generateVisualsStep(activities, examplesSteps, "examples"),
     ...explanationEntries.map((entry) =>
       generateVisualsForActivityStep(entry.activity, entry.result.steps),
     ),
   ]);
 
-  const [backgroundResult, mechanicsResult, examplesResult] = allResults;
+  const [backgroundResult, examplesResult] = allResults;
   const explanationVisualResults = allResults.slice(categoryVisualCount);
 
   const explanation = explanationEntries.map((entry, index) => {
@@ -115,7 +111,6 @@ async function generateAllVisuals(
     background: settled(backgroundResult, { visuals: [] }),
     examples: settled(examplesResult, { visuals: [] }),
     explanation,
-    mechanics: settled(mechanicsResult, { visuals: [] }),
   };
 }
 
@@ -131,19 +126,16 @@ export async function coreActivityWorkflow(
   const neighboringConcepts = await getNeighboringConceptsStep(activities);
 
   // Wave 1: massive parallel — no interdependencies
-  const [backgroundResult, explanationResult, mechanicsResult, examplesResult] =
-    await Promise.allSettled([
-      generateBackgroundContentStep(activities, concepts, neighboringConcepts, workflowRunId),
-      generateExplanationContentStep(activities, concepts, neighboringConcepts, workflowRunId),
-      generateMechanicsContentStep(activities, concepts, neighboringConcepts, workflowRunId),
-      generateExamplesContentStep(activities, concepts, neighboringConcepts, workflowRunId),
-      generateStoryContentStep(activities, concepts, neighboringConcepts, workflowRunId),
-      generateChallengeContentStep(activities, concepts, neighboringConcepts, workflowRunId),
-    ]);
+  const [backgroundResult, explanationResult, examplesResult] = await Promise.allSettled([
+    generateBackgroundContentStep(activities, concepts, neighboringConcepts, workflowRunId),
+    generateExplanationContentStep(activities, concepts, neighboringConcepts, workflowRunId),
+    generateExamplesContentStep(activities, concepts, neighboringConcepts, workflowRunId),
+    generateStoryContentStep(activities, concepts, neighboringConcepts, workflowRunId),
+    generateChallengeContentStep(activities, concepts, neighboringConcepts, workflowRunId),
+  ]);
 
   const backgroundContent = settled(backgroundResult, { steps: [] });
   const explanationContent = settled(explanationResult, { results: [] });
-  const mechanicsContent = settled(mechanicsResult, { steps: [] });
   const examplesContent = settled(examplesResult, { steps: [] });
 
   // Wave 2: quizzes + visuals + save story/challenge (parallel)
@@ -152,7 +144,6 @@ export async function coreActivityWorkflow(
     generateAllVisuals(
       activities,
       backgroundContent.steps,
-      mechanicsContent.steps,
       examplesContent.steps,
       explanationContent.results,
     ),
@@ -171,7 +162,6 @@ export async function coreActivityWorkflow(
 
   await Promise.allSettled([
     generateImagesStep(activities, visuals.background.visuals, "background"),
-    generateImagesStep(activities, visuals.mechanics.visuals, "mechanics"),
     generateImagesStep(activities, visuals.examples.visuals, "examples"),
     ...explanationImagePromises,
     generateQuizImagesStep(activities, quizzes.quiz1.questions, 0),
@@ -183,7 +173,6 @@ export async function coreActivityWorkflow(
     completeActivityStep(activities, workflowRunId, "background"),
     completeActivityStep(activities, workflowRunId, "explanation"),
     completeActivityStep(activities, workflowRunId, "quiz"),
-    completeActivityStep(activities, workflowRunId, "mechanics"),
     completeActivityStep(activities, workflowRunId, "examples"),
   ]);
 }

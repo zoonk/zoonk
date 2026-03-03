@@ -7,7 +7,8 @@ import {
 import { TEST_CASES } from "./test-cases";
 
 export const activityExamplesTask: Task<ActivityExamplesParams, ActivityExamplesSchema> = {
-  description: "Generate an examples activity showing where a topic appears in real-world contexts",
+  description:
+    "Generate an examples activity showing how a topic works through practical demonstrations and real-world contexts",
   generate: generateActivityExamples,
   id: "activity-examples",
   name: "Activity Examples",

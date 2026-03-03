@@ -1,29 +1,29 @@
 const SHARED_EXPECTATIONS = `
 EVALUATION CRITERIA:
 
-1. REAL-WORLD RELEVANCE: Examples must be concrete, recognizable situations from everyday life. Penalize abstract or theoretical applications without clear real-world grounding.
+1. PRACTICAL DEMONSTRATIONS: Content must include concrete, hands-on demonstrations appropriate to the subject (code snippets for programming, formulas for math, worked calculations for science, analysis frameworks for humanities). Penalize abstract descriptions without concrete examples.
 
-2. CONTEXT DIVERSITY: Content should show the topic across different life domains (daily life, work, entertainment, unexpected places, personal interests). Variety helps different learners connect.
+2. PROCESS EXPLANATION: Content should show HOW things work — processes in action, cause-effect relationships, what happens under the hood. Look for action verbs and sequential flow alongside demonstrations.
 
-3. RECOGNITION FACTOR: Examples should create "aha moments" — helping learners see the topic in familiar places they hadn't noticed before.
+3. REAL-WORLD RELEVANCE: At least 1-2 steps must connect the topic to real-world contexts — daily life, work, entertainment, or unexpected places. Penalize if ALL steps are purely abstract/academic.
 
 4. FORMAT: Each step must have a title (max 50 chars) and text (max 300 chars).
 
-5. TONE: Conversational, like pointing out hidden patterns in everyday life. Include metaphors and analogies from familiar activities.
+5. TONE: Conversational, like a tutor demonstrating and pointing out real-world connections. Include specific examples, not vague generalities.
 
-6. FOCUS: Shows WHERE something appears (real-world contexts), not WHAT it is (definitions) or HOW it works (processes).
+6. FOCUS: Shows HOW something works (practical demonstrations, processes) and WHERE it appears (real-world contexts), not WHAT it is (definitions) or WHY it exists (history).
 
 7. NO OVERLAP: Must not repeat content from the EXPLANATION_STEPS which covered the WHAT.
 
 8. SCOPE: Content matches the lesson scope exactly.
 
 ANTI-CHECKLIST GUIDANCE (CRITICAL):
-- Do NOT penalize for missing specific life domains or contexts you might expect
-- Do NOT require a specific number of contexts or examples
-- Do NOT check against an imagined "complete" list of applications
+- Do NOT penalize for missing specific demonstrations or contexts you might expect
+- Do NOT require a specific number of steps or specific balance between demonstration and context
+- Do NOT check against an imagined "complete" list of demonstrations or applications
 - Do NOT penalize for JSON structure or output format (e.g., wrapping in an object vs returning a raw array). The output uses a structured schema — evaluate ONLY the content quality of titles and text, not how the data is structured
-- ONLY penalize for: incorrect real-world claims, abstract examples without concrete situations, overlap with explanation content, or lack of variety in context types
-- Different valid sets of examples exist - assess the quality of what IS provided
+- ONLY penalize for: incorrect claims, abstract content without concrete demonstrations, missing real-world connection entirely, overlap with explanation content, or lack of practical examples
+- Different valid demonstration sets exist - assess the quality of what IS provided
 `;
 
 export const TEST_CASES = [
@@ -31,13 +31,15 @@ export const TEST_CASES = [
     expectations: `
 TOPIC-SPECIFIC GUIDANCE:
 
-1. ACCURACY CHECK: Data movement examples must reflect genuine networking scenarios. Penalize if:
-   - Examples confuse data movement with data storage or processing
-   - Real-world networking claims are technically inaccurate
+1. ACCURACY CHECK: Data movement demonstrations must reflect genuine networking behavior. Penalize if:
+   - Demonstrations confuse data movement with data storage or processing
+   - Process descriptions have incorrect sequences (e.g., centralized forwarding decisions instead of hop-by-hop)
 
-2. CONTEXT CHECK: Penalize if examples are limited to web browsing. Data movement concepts appear in video streaming, online gaming, IoT devices, video calls, cloud computing, and mobile apps.
+2. DEMONSTRATION CHECK: Should include practical examples of how encapsulation, forwarding, or fragmentation work — packet structure examples, hop-by-hop routing visualization, MTU-related behavior. Penalize if content only describes what these concepts are without showing them in action.
 
-3. DISTINCTION FROM EXPLANATION: The explanation covered WHAT encapsulation and forwarding are. This should show WHERE these concepts visibly operate in everyday technology use.
+3. REAL-WORLD CHECK: Should connect to contexts beyond web browsing — video streaming, online gaming, IoT devices, video calls, cloud computing, mobile apps.
+
+4. DISTINCTION FROM EXPLANATION: The explanation covered WHAT encapsulation and forwarding are. This should show HOW data actively moves through the network and WHERE these concepts visibly operate in everyday technology.
 
 ${SHARED_EXPECTATIONS}
     `,
@@ -64,13 +66,15 @@ LANGUAGE REQUIREMENT: Titles and text must be in Portuguese.
 
 TOPIC-SPECIFIC GUIDANCE:
 
-1. ACCURACY CHECK: Float and bool examples must reflect genuine Python behavior. Penalize if:
-   - Examples misrepresent floating-point precision issues
-   - Bool arithmetic examples are mathematically incorrect
+1. ACCURACY CHECK: Float and bool demonstrations must reflect genuine Python behavior. Penalize if:
+   - Float arithmetic is described as exact (floating-point has inherent precision limitations)
+   - Bool arithmetic results are described incorrectly (True + True = 2, not True)
 
-2. CONTEXT CHECK: Penalize if examples are limited to basic math. Float and bool types appear in data analysis, conditional logic, scientific computing, web forms, configuration flags, and game development.
+2. DEMONSTRATION CHECK: Should include practical code examples showing float operations, bool arithmetic, type coercion, or literal syntax. Penalize if content only describes what these types are without showing them working in code.
 
-3. DISTINCTION FROM EXPLANATION: The explanation covered WHAT floats and bools are. This should show WHERE these types appear in real programming scenarios and daily computing.
+3. REAL-WORLD CHECK: Should connect beyond basic math — data analysis, conditional logic, scientific computing, web forms, configuration flags, game development.
+
+4. DISTINCTION FROM EXPLANATION: The explanation covered WHAT floats and bools are. This should show HOW Python processes these types in practice and WHERE they appear in real programming scenarios.
 
 ${SHARED_EXPECTATIONS}
     `,
@@ -99,13 +103,15 @@ ${SHARED_EXPECTATIONS}
     expectations: `
 TOPIC-SPECIFIC GUIDANCE:
 
-1. ACCURACY CHECK: Labor market cycle examples must reflect genuine economic dynamics. Penalize if:
-   - Examples attribute unemployment changes to single causes when multiple factors interact
-   - Historical claims about specific recessions are factually inaccurate
+1. ACCURACY CHECK: Labor market cycle demonstrations must reflect genuine economic dynamics. Penalize if:
+   - Layoffs are described as the first response to downturns (firms typically reduce hours first)
+   - Recovery is described as symmetric to contraction (labor markets recover more slowly)
 
-2. CONTEXT CHECK: Penalize if examples are limited to factory layoffs. Labor market cycles affect gig workers, recent graduates, service industries, construction, retail hiring, and government employment.
+2. DEMONSTRATION CHECK: Should include practical examples of how labor aggregates change — staged adjustment sequences, specific indicator movements during downturns, or worked-through scenarios of economic cycles. Penalize if content only lists where cycles happen without showing the process.
 
-3. DISTINCTION FROM EXPLANATION: The explanation covered WHAT unemployment rate, hours, and participation are. This should show WHERE these cyclical patterns visibly affect people's lives and communities.
+3. REAL-WORLD CHECK: Should connect beyond factory layoffs — gig workers, recent graduates, service industries, construction, retail hiring, government employment.
+
+4. DISTINCTION FROM EXPLANATION: The explanation covered WHAT unemployment rate, hours, and participation are. This should show HOW these aggregates actively change during cycles and WHERE cyclical patterns visibly affect people's lives.
 
 ${SHARED_EXPECTATIONS}
     `,
@@ -132,13 +138,15 @@ LANGUAGE REQUIREMENT: Titles and text must be in Spanish.
 
 TOPIC-SPECIFIC GUIDANCE:
 
-1. ACCURACY CHECK: Enolate chemistry examples must reflect genuine chemical applications. Penalize if:
-   - Examples misrepresent where enolate reactions occur in synthesis
-   - Industrial or pharmaceutical applications are factually inaccurate
+1. ACCURACY CHECK: Enolate chemistry demonstrations must reflect genuine chemical behavior. Penalize if:
+   - The base is described as attacking the carbon rather than abstracting the α-hydrogen
+   - Resonance stabilization is described as occurring before deprotonation
 
-2. CONTEXT CHECK: Penalize if examples are limited to textbook reactions. α-acidity and enolates appear in pharmaceutical synthesis, fragrance chemistry, polymer production, natural product biosynthesis, and food chemistry.
+2. DEMONSTRATION CHECK: Should include practical demonstrations of the enolate formation process — deprotonation steps, electron delocalization, nucleophilic attack on electrophiles, or worked-through reaction mechanisms. Penalize if content only lists where enolates are used without showing how the chemistry works.
 
-3. DISTINCTION FROM EXPLANATION: The explanation covered WHAT α-acidity and enolates are. This should show WHERE these concepts appear in real chemical applications and industries.
+3. REAL-WORLD CHECK: Should connect beyond textbook reactions — pharmaceutical synthesis, fragrance chemistry, polymer production, natural product biosynthesis, food chemistry.
+
+4. DISTINCTION FROM EXPLANATION: The explanation covered WHAT α-acidity and enolates are. This should show HOW the deprotonation and C–C bond formation processes work and WHERE these reactions appear in real chemical applications.
 
 ${SHARED_EXPECTATIONS}
     `,
@@ -169,13 +177,15 @@ LANGUAGE REQUIREMENT: Titles and text must be in Portuguese.
 
 TOPIC-SPECIFIC GUIDANCE:
 
-1. ACCURACY CHECK: Legal automation monitoring examples must reflect genuine legal practice. Penalize if:
-   - Examples misrepresent how legal documents are generated or reviewed
+1. ACCURACY CHECK: Legal automation monitoring demonstrations must reflect genuine legal practice. Penalize if:
+   - Monitoring is described as a one-time setup rather than an ongoing process
    - Audit trail descriptions don't match real compliance requirements
 
-2. CONTEXT CHECK: Penalize if examples are limited to contract generation. Automation monitoring appears in litigation document assembly, regulatory filings, due diligence reports, corporate governance documents, and notarial acts.
+2. DEMONSTRATION CHECK: Should include practical examples of monitoring in action — how metrics are collected, how errors are detected and classified, how audit trails trace document generation. Penalize if content only lists where monitoring exists without showing how it works.
 
-3. DISTINCTION FROM EXPLANATION: The explanation covered WHAT quality metrics and audit trails are. This should show WHERE automation monitoring matters in real legal practice scenarios.
+3. REAL-WORLD CHECK: Should connect beyond contract generation — litigation document assembly, regulatory filings, due diligence reports, corporate governance documents, notarial acts.
+
+4. DISTINCTION FROM EXPLANATION: The explanation covered WHAT quality metrics and audit trails are. This should show HOW monitoring processes actively work and WHERE automation monitoring matters in real legal practice.
 
 ${SHARED_EXPECTATIONS}
     `,
@@ -204,13 +214,15 @@ ${SHARED_EXPECTATIONS}
     expectations: `
 TOPIC-SPECIFIC GUIDANCE:
 
-1. ACCURACY CHECK: Connectivity debugging examples must reflect genuine troubleshooting scenarios. Penalize if:
-   - Examples misattribute connectivity failures to the wrong network layer
-   - Mental model applications are technically inaccurate
+1. ACCURACY CHECK: Connectivity debugging demonstrations must reflect genuine troubleshooting. Penalize if:
+   - The debugging process skips layers or tests them out of order
+   - Reachability tests are described without explaining what each result tells you
 
-2. CONTEXT CHECK: Penalize if examples are limited to web server issues. Debugging mental models appear in home Wi-Fi troubleshooting, cloud deployments, mobile app connectivity, IoT device setup, VPN problems, and microservice communication failures.
+2. DEMONSTRATION CHECK: Should include practical examples of working through connectivity problems — step-by-step layer isolation, specific commands or checks at each layer, interpreting results to narrow faults. Penalize if content only describes what mental models are without showing the debugging process.
 
-3. DISTINCTION FROM EXPLANATION: The explanation covered WHAT the debugging mental models are. This should show WHERE these systematic approaches help in real-world connectivity problems people encounter.
+3. REAL-WORLD CHECK: Should connect beyond web server issues — home Wi-Fi troubleshooting, cloud deployments, mobile app connectivity, IoT device setup, VPN problems, microservice communication failures.
+
+4. DISTINCTION FROM EXPLANATION: The explanation covered WHAT the debugging mental models are. This should show HOW you actively work through a connectivity problem and WHERE these approaches help in real-world scenarios.
 
 ${SHARED_EXPECTATIONS}
     `,

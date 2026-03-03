@@ -34,14 +34,7 @@ export async function getActivityKinds(): Promise<
     },
     {
       description: t(
-        "Explains HOW things work under the hood. Shows the processes, sequences, and cause-effect chains in action.",
-      ),
-      key: "mechanics",
-      label: t("Mechanics"),
-    },
-    {
-      description: t(
-        "Shows WHERE this topic appears in real life. Helps you recognize it in daily routines, work, pop culture, and unexpected places.",
+        "Shows HOW things work through practical demonstrations and WHERE they appear in real life.",
       ),
       key: "examples",
       label: t("Examples"),
@@ -111,7 +104,7 @@ async function getSeoDescription(kind: ActivityKind, topic: string): Promise<str
     ),
     custom: t("Learn about {topic} through an interactive activity.", { topic }),
     examples: t(
-      "See where {topic} appears in real life — in daily routines, work, pop culture, and unexpected places.",
+      "See how {topic} works through practical demonstrations and where it appears in real life.",
       { topic },
     ),
     explanation: t(
@@ -129,10 +122,6 @@ async function getSeoDescription(kind: ActivityKind, topic: string): Promise<str
     listening: t("Sharpen your {topic} listening skills by translating audio sentences.", {
       topic,
     }),
-    mechanics: t(
-      "Learn how {topic} works under the hood — processes, sequences, and cause-effect chains explained.",
-      { topic },
-    ),
     quiz: t(
       "Test your understanding of {topic} with questions designed to check real comprehension, not just memorization.",
       { topic },

@@ -5,7 +5,6 @@ import { activityCustomTask } from "./activity-custom/task";
 import { activityExamplesTask } from "./activity-examples/task";
 import { activityExplanationTask } from "./activity-explanation/task";
 import { activityGrammarTask } from "./activity-grammar/task";
-import { activityMechanicsTask } from "./activity-mechanics/task";
 import { activityPronunciationTask } from "./activity-pronunciation/task";
 import { activityQuizTask } from "./activity-quiz/task";
 import { activitySentencesTask } from "./activity-sentences/task";
@@ -32,7 +31,6 @@ export const TASKS: readonly Task[] = [
   activityQuizTask,
   activityExplanationTask,
   activityGrammarTask,
-  activityMechanicsTask,
   activityPronunciationTask,
   activitySentencesTask,
   activityStoryTask,
