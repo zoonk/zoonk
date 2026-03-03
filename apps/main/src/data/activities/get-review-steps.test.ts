@@ -7,7 +7,7 @@ import { stepAttemptFixture } from "@zoonk/testing/fixtures/step-attempts";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeAll, describe, expect, test } from "vitest";
-import { getReviewSteps } from "./get-review-steps";
+import { getReviewSteps, getReviewValidationSteps } from "./get-review-steps";
 
 const REVIEW_TARGET_COUNT = 10;
 
@@ -630,6 +630,85 @@ describe(getReviewSteps, () => {
 
     const resultIds = result.map((step) => step.id);
     expect(new Set(resultIds).size).toBe(REVIEW_TARGET_COUNT);
+  });
+});
+
+describe(getReviewValidationSteps, () => {
+  let lesson: Awaited<ReturnType<typeof lessonFixture>>;
+  let quizStep: Awaited<ReturnType<typeof stepFixture>>;
+  let challengeStep: Awaited<ReturnType<typeof stepFixture>>;
+  let reviewStep: Awaited<ReturnType<typeof stepFixture>>;
+  let staticStep: Awaited<ReturnType<typeof stepFixture>>;
+
+  beforeAll(async () => {
+    const org = await organizationFixture();
+    const course = await courseFixture({ organizationId: org.id });
+    const chapter = await chapterFixture({ courseId: course.id, organizationId: org.id });
+    lesson = await lessonFixture({ chapterId: chapter.id, organizationId: org.id });
+
+    const mcContent = {
+      kind: "core",
+      options: [
+        { feedback: "Correct!", isCorrect: true, text: "A" },
+        { feedback: "Wrong.", isCorrect: false, text: "B" },
+      ],
+    };
+
+    const [quizActivity, challengeActivity, reviewActivity] = await Promise.all([
+      activityFixture({ kind: "quiz", lessonId: lesson.id, organizationId: org.id }),
+      activityFixture({ kind: "challenge", lessonId: lesson.id, organizationId: org.id }),
+      activityFixture({ kind: "review", lessonId: lesson.id, organizationId: org.id }),
+    ]);
+
+    [quizStep, challengeStep, reviewStep, staticStep] = await Promise.all([
+      stepFixture({
+        activityId: quizActivity.id,
+        content: mcContent,
+        isPublished: true,
+        kind: "multipleChoice",
+      }),
+      stepFixture({
+        activityId: challengeActivity.id,
+        content: mcContent,
+        isPublished: true,
+        kind: "multipleChoice",
+      }),
+      stepFixture({
+        activityId: reviewActivity.id,
+        content: mcContent,
+        isPublished: true,
+        kind: "multipleChoice",
+      }),
+      stepFixture({
+        activityId: quizActivity.id,
+        content: mcContent,
+        isPublished: true,
+        kind: "static",
+      }),
+    ]);
+  });
+
+  test("excludes steps from challenge and review activities", async () => {
+    const steps = await getReviewValidationSteps(lesson.id, [
+      quizStep.id,
+      challengeStep.id,
+      reviewStep.id,
+    ]);
+
+    const stepIds = steps.map((step) => step.id);
+
+    expect(stepIds).toContain(quizStep.id);
+    expect(stepIds).not.toContain(challengeStep.id);
+    expect(stepIds).not.toContain(reviewStep.id);
+  });
+
+  test("excludes static steps", async () => {
+    const steps = await getReviewValidationSteps(lesson.id, [quizStep.id, staticStep.id]);
+
+    const stepIds = steps.map((step) => step.id);
+
+    expect(stepIds).toContain(quizStep.id);
+    expect(stepIds).not.toContain(staticStep.id);
   });
 });
 
