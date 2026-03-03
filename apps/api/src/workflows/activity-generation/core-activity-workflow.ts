@@ -44,21 +44,21 @@ function getExplanationStepsForQuiz(
 
 async function generateQuizzes(
   activities: LessonActivity[],
-  expResults: ExplanationResult[],
+  explanationResults: ExplanationResult[],
   totalQuizzes: number,
   workflowRunId: string,
 ): Promise<{ quiz1: { questions: QuizQuestion[] }; quiz2: { questions: QuizQuestion[] } }> {
   const [quiz1Result, quiz2Result] = await Promise.allSettled([
     generateQuizContentStep(
       activities,
-      getExplanationStepsForQuiz(expResults, 0, totalQuizzes),
+      getExplanationStepsForQuiz(explanationResults, 0, totalQuizzes),
       workflowRunId,
       0,
     ),
     totalQuizzes >= 2
       ? generateQuizContentStep(
           activities,
-          getExplanationStepsForQuiz(expResults, 1, totalQuizzes),
+          getExplanationStepsForQuiz(explanationResults, 1, totalQuizzes),
           workflowRunId,
           1,
         )
@@ -73,17 +73,17 @@ async function generateQuizzes(
 
 async function generateAllVisuals(
   activities: LessonActivity[],
-  bgSteps: ActivitySteps,
-  mechSteps: ActivitySteps,
+  backgroundSteps: ActivitySteps,
+  mechanicsSteps: ActivitySteps,
   examplesSteps: ActivitySteps,
-  expResults: ExplanationResult[],
+  explanationResults: ExplanationResult[],
 ): Promise<{
-  bg: { visuals: StepVisual[] };
-  exp: { activityId: number; visuals: StepVisual[] }[];
+  background: { visuals: StepVisual[] };
+  explanation: { activityId: number; visuals: StepVisual[] }[];
   examples: { visuals: StepVisual[] };
-  mech: { visuals: StepVisual[] };
+  mechanics: { visuals: StepVisual[] };
 }> {
-  const expEntries = expResults.flatMap((result) => {
+  const explanationEntries = explanationResults.flatMap((result) => {
     const activity = activities.find((a) => a.id === result.activityId);
     if (!activity || result.steps.length === 0) {
       return [];
@@ -91,21 +91,21 @@ async function generateAllVisuals(
     return [{ activity, result }];
   });
 
-  const fixedCount = 3;
+  const categoryVisualCount = 3;
   const allResults = await Promise.allSettled([
-    generateVisualsStep(activities, bgSteps, "background"),
-    generateVisualsStep(activities, mechSteps, "mechanics"),
+    generateVisualsStep(activities, backgroundSteps, "background"),
+    generateVisualsStep(activities, mechanicsSteps, "mechanics"),
     generateVisualsStep(activities, examplesSteps, "examples"),
-    ...expEntries.map((entry) =>
+    ...explanationEntries.map((entry) =>
       generateVisualsForActivityStep(entry.activity, entry.result.steps),
     ),
   ]);
 
-  const [bgResult, mechResult, examplesResult] = allResults;
-  const expVisualResults = allResults.slice(fixedCount);
+  const [backgroundResult, mechanicsResult, examplesResult] = allResults;
+  const explanationVisualResults = allResults.slice(categoryVisualCount);
 
-  const exp = expEntries.map((entry, index) => {
-    const result = expVisualResults[index];
+  const explanation = explanationEntries.map((entry, index) => {
+    const result = explanationVisualResults[index];
     return {
       activityId: entry.result.activityId,
       visuals: result ? settled(result, { visuals: [] }).visuals : [],
@@ -113,10 +113,10 @@ async function generateAllVisuals(
   });
 
   return {
-    bg: settled(bgResult, { visuals: [] }),
+    background: settled(backgroundResult, { visuals: [] }),
     examples: settled(examplesResult, { visuals: [] }),
-    exp,
-    mech: settled(mechResult, { visuals: [] }),
+    explanation,
+    mechanics: settled(mechanicsResult, { visuals: [] }),
   };
 }
 
@@ -132,57 +132,58 @@ export async function coreActivityWorkflow(
   const neighboringConcepts = await getNeighboringConceptsStep(activities);
 
   // Wave 1: massive parallel — no interdependencies
-  const [bgResult, expResult, mechResult, examplesResult] = await Promise.allSettled([
-    generateBackgroundContentStep(activities, concepts, neighboringConcepts, workflowRunId),
-    generateExplanationContentStep(activities, concepts, neighboringConcepts, workflowRunId),
-    generateMechanicsContentStep(activities, concepts, neighboringConcepts, workflowRunId),
-    generateExamplesContentStep(activities, concepts, neighboringConcepts, workflowRunId),
-    generateStoryContentStep(activities, concepts, neighboringConcepts, workflowRunId),
-    generateChallengeContentStep(activities, concepts, neighboringConcepts, workflowRunId),
-  ]);
+  const [backgroundResult, explanationResult, mechanicsResult, examplesResult] =
+    await Promise.allSettled([
+      generateBackgroundContentStep(activities, concepts, neighboringConcepts, workflowRunId),
+      generateExplanationContentStep(activities, concepts, neighboringConcepts, workflowRunId),
+      generateMechanicsContentStep(activities, concepts, neighboringConcepts, workflowRunId),
+      generateExamplesContentStep(activities, concepts, neighboringConcepts, workflowRunId),
+      generateStoryContentStep(activities, concepts, neighboringConcepts, workflowRunId),
+      generateChallengeContentStep(activities, concepts, neighboringConcepts, workflowRunId),
+    ]);
 
-  const bgContent = settled(bgResult, { steps: [] });
-  const expContent = settled(expResult, { results: [] });
-  const mechContent = settled(mechResult, { steps: [] });
+  const backgroundContent = settled(backgroundResult, { steps: [] });
+  const explanationContent = settled(explanationResult, { results: [] });
+  const mechanicsContent = settled(mechanicsResult, { steps: [] });
   const examplesContent = settled(examplesResult, { steps: [] });
-  const allExpSteps = expContent.results.flatMap((result) => result.steps);
+  const allExplanationSteps = explanationContent.results.flatMap((result) => result.steps);
 
   // Wave 2: quizzes + visuals + save story/challenge (parallel)
   const [quizzes, visuals] = await Promise.all([
-    generateQuizzes(activities, expContent.results, totalQuizzes, workflowRunId),
+    generateQuizzes(activities, explanationContent.results, totalQuizzes, workflowRunId),
     generateAllVisuals(
       activities,
-      bgContent.steps,
-      mechContent.steps,
+      backgroundContent.steps,
+      mechanicsContent.steps,
       examplesContent.steps,
-      expContent.results,
+      explanationContent.results,
     ),
     completeActivityStep(activities, workflowRunId, "story"),
     completeActivityStep(activities, workflowRunId, "challenge"),
   ]);
 
   // Wave 3: review + images + quiz images
-  const expImagePromises = visuals.exp.flatMap((expVisual) => {
-    const activity = activities.find((a) => a.id === expVisual.activityId);
+  const explanationImagePromises = visuals.explanation.flatMap((explanationVisual) => {
+    const activity = activities.find((a) => a.id === explanationVisual.activityId);
     if (!activity) {
       return [];
     }
-    return [generateImagesForActivityStep(activity, expVisual.visuals)];
+    return [generateImagesForActivityStep(activity, explanationVisual.visuals)];
   });
 
   await Promise.allSettled([
     generateReviewContentStep(
       activities,
-      bgContent.steps,
-      allExpSteps,
-      mechContent.steps,
+      backgroundContent.steps,
+      allExplanationSteps,
+      mechanicsContent.steps,
       examplesContent.steps,
       workflowRunId,
     ),
-    generateImagesStep(activities, visuals.bg.visuals, "background"),
-    generateImagesStep(activities, visuals.mech.visuals, "mechanics"),
+    generateImagesStep(activities, visuals.background.visuals, "background"),
+    generateImagesStep(activities, visuals.mechanics.visuals, "mechanics"),
     generateImagesStep(activities, visuals.examples.visuals, "examples"),
-    ...expImagePromises,
+    ...explanationImagePromises,
     generateQuizImagesStep(activities, quizzes.quiz1.questions, 0),
     ...(totalQuizzes >= 2 ? [generateQuizImagesStep(activities, quizzes.quiz2.questions, 1)] : []),
   ]);
