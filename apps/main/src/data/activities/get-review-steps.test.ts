@@ -489,6 +489,17 @@ describe(getReviewSteps, () => {
     expect(result).toHaveLength(5);
   });
 
+  test("returns empty array when lesson has no eligible interactive steps", async () => {
+    const newLesson = await createLessonWithSteps(org.id, 0);
+
+    const result = await getReviewSteps({
+      lessonId: newLesson.lesson.id,
+      userId: null,
+    });
+
+    expect(result).toHaveLength(0);
+  });
+
   test("excludes unpublished steps", async () => {
     const result = await getReviewSteps({
       lessonId: lesson.id,

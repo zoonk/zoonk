@@ -751,11 +751,12 @@ describe("edge cases", () => {
     expect(next).toBe(state);
   });
 
-  test("empty steps array", () => {
+  test("empty steps array sets phase to completed", () => {
     const activity = buildActivity({ steps: [] });
     const state = createInitialState(activity);
     expect(state.steps).toEqual([]);
     expect(state.currentStepIndex).toBe(0);
+    expect(state.phase).toBe("completed");
   });
 
   test("CHECK_ANSWER with multiple effects on different dimensions", () => {
