@@ -1,0 +1,228 @@
+import { randomUUID } from "node:crypto";
+import { generateActivityCustom } from "@zoonk/ai/tasks/activities/custom";
+import { prisma } from "@zoonk/db";
+import { activityFixture } from "@zoonk/testing/fixtures/activities";
+import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
+import { courseFixture } from "@zoonk/testing/fixtures/courses";
+import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
+import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
+import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { type LessonActivity } from "../steps/get-lesson-activities-step";
+import { customActivityWorkflow } from "./custom-workflow";
+
+vi.mock("workflow", () => ({
+  FatalError: class FatalError extends Error {},
+  getWorkflowMetadata: vi.fn().mockReturnValue({ workflowRunId: "test-run-id" }),
+  getWritable: vi.fn().mockReturnValue({
+    getWriter: () => ({
+      releaseLock: vi.fn(),
+      write: vi.fn().mockResolvedValue(null),
+    }),
+  }),
+  workflowStep: vi.fn().mockImplementation((_name: string, fn: unknown) => fn),
+}));
+
+vi.mock("@zoonk/ai/tasks/activities/custom", () => ({
+  generateActivityCustom: vi.fn().mockResolvedValue({
+    data: {
+      steps: [
+        { text: "Custom step 1 text", title: "Custom Step 1" },
+        { text: "Custom step 2 text", title: "Custom Step 2" },
+      ],
+    },
+  }),
+}));
+
+vi.mock("@zoonk/ai/tasks/steps/visual", () => ({
+  generateStepVisuals: vi.fn().mockResolvedValue({
+    data: {
+      visuals: [
+        { kind: "image", prompt: "A visual prompt", stepIndex: 0 },
+        { code: "const x = 1;", kind: "code", language: "typescript", stepIndex: 1 },
+      ],
+    },
+  }),
+}));
+
+vi.mock("@zoonk/core/steps/visual-image", () => ({
+  generateVisualStepImage: vi.fn().mockResolvedValue({
+    data: "https://example.com/image.webp",
+    error: null,
+  }),
+}));
+
+async function fetchLessonActivities(lessonId: number): Promise<LessonActivity[]> {
+  const activities = await prisma.activity.findMany({
+    include: {
+      _count: { select: { steps: true } },
+      lesson: {
+        include: {
+          chapter: {
+            include: {
+              course: { include: { organization: true } },
+            },
+          },
+        },
+      },
+    },
+    orderBy: { position: "asc" },
+    where: { lessonId },
+  });
+
+  return activities.map((activity) => ({ ...activity, id: Number(activity.id) }));
+}
+
+describe(customActivityWorkflow, () => {
+  let organizationId: number;
+  let course: Awaited<ReturnType<typeof courseFixture>>;
+  let chapter: Awaited<ReturnType<typeof chapterFixture>>;
+
+  beforeAll(async () => {
+    const org = await aiOrganizationFixture();
+    organizationId = org.id;
+    course = await courseFixture({ organizationId });
+    chapter = await chapterFixture({
+      courseId: course.id,
+      organizationId,
+      title: `Custom Chapter ${randomUUID()}`,
+    });
+  });
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  test("creates steps with visuals and images for custom activity", async () => {
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      kind: "custom",
+      organizationId,
+      title: `Custom Steps ${randomUUID()}`,
+    });
+
+    const activity = await activityFixture({
+      generationStatus: "pending",
+      kind: "custom",
+      lessonId: lesson.id,
+      organizationId,
+      title: `Custom ${randomUUID()}`,
+    });
+
+    const activities = await fetchLessonActivities(lesson.id);
+    await customActivityWorkflow(activities, "test-run-id");
+
+    const steps = await prisma.step.findMany({
+      orderBy: { position: "asc" },
+      where: { activityId: activity.id },
+    });
+
+    expect(steps).toHaveLength(2);
+
+    expect(steps[0]?.kind).toBe("static");
+    expect(steps[0]?.content).toEqual({
+      text: "Custom step 1 text",
+      title: "Custom Step 1",
+      variant: "text",
+    });
+    expect(steps[0]?.visualKind).toBe("image");
+
+    expect(steps[1]?.kind).toBe("static");
+    expect(steps[1]?.content).toEqual({
+      text: "Custom step 2 text",
+      title: "Custom Step 2",
+      variant: "text",
+    });
+    expect(steps[1]?.visualKind).toBe("code");
+  });
+
+  test("sets custom status to 'completed' after saving", async () => {
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      kind: "custom",
+      organizationId,
+      title: `Custom Complete ${randomUUID()}`,
+    });
+
+    const activity = await activityFixture({
+      generationStatus: "pending",
+      kind: "custom",
+      lessonId: lesson.id,
+      organizationId,
+      title: `Custom ${randomUUID()}`,
+    });
+
+    const activities = await fetchLessonActivities(lesson.id);
+    await customActivityWorkflow(activities, "test-run-id");
+
+    const dbActivity = await prisma.activity.findUnique({ where: { id: activity.id } });
+    expect(dbActivity?.generationStatus).toBe("completed");
+  });
+
+  test("sets custom status to 'failed' when AI throws", async () => {
+    vi.mocked(generateActivityCustom).mockRejectedValueOnce(new Error("AI failed"));
+
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      kind: "custom",
+      organizationId,
+      title: `Custom Fail ${randomUUID()}`,
+    });
+
+    const activity = await activityFixture({
+      generationStatus: "pending",
+      kind: "custom",
+      lessonId: lesson.id,
+      organizationId,
+      title: `Custom ${randomUUID()}`,
+    });
+
+    const activities = await fetchLessonActivities(lesson.id);
+    await customActivityWorkflow(activities, "test-run-id");
+
+    const dbActivity = await prisma.activity.findUnique({ where: { id: activity.id } });
+    expect(dbActivity?.generationStatus).toBe("failed");
+  });
+
+  test("handles multiple custom activities in parallel", async () => {
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      kind: "custom",
+      organizationId,
+      title: `Custom Multi ${randomUUID()}`,
+    });
+
+    const [activity1, activity2] = await Promise.all([
+      activityFixture({
+        description: "First custom",
+        generationStatus: "pending",
+        kind: "custom",
+        lessonId: lesson.id,
+        organizationId,
+        position: 0,
+        title: `Custom One ${randomUUID()}`,
+      }),
+      activityFixture({
+        description: "Second custom",
+        generationStatus: "pending",
+        kind: "custom",
+        lessonId: lesson.id,
+        organizationId,
+        position: 1,
+        title: `Custom Two ${randomUUID()}`,
+      }),
+    ]);
+
+    const activities = await fetchLessonActivities(lesson.id);
+    await customActivityWorkflow(activities, "test-run-id");
+
+    expect(generateActivityCustom).toHaveBeenCalledTimes(2);
+
+    const [dbActivity1, dbActivity2] = await Promise.all([
+      prisma.activity.findUnique({ where: { id: activity1.id } }),
+      prisma.activity.findUnique({ where: { id: activity2.id } }),
+    ]);
+
+    expect(dbActivity1?.generationStatus).toBe("completed");
+    expect(dbActivity2?.generationStatus).toBe("completed");
+  });
+});
