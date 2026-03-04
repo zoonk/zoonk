@@ -23,13 +23,6 @@ export async function listUsers(params: { limit: number; offset: number; search?
 
   const [users, total] = await Promise.all([
     prisma.user.findMany({
-      include: {
-        sessions: {
-          orderBy: { updatedAt: "desc" },
-          select: { updatedAt: true },
-          take: 1,
-        },
-      },
       orderBy: { createdAt: "desc" },
       skip: offset,
       take: limit,
@@ -38,5 +31,24 @@ export async function listUsers(params: { limit: number; offset: number; search?
     prisma.user.count({ where }),
   ]);
 
-  return { total, users };
+  const userIds = users.map((user) => String(user.id));
+
+  const subscriptions =
+    userIds.length > 0
+      ? await prisma.subscription.findMany({
+          distinct: ["referenceId"],
+          orderBy: { id: "desc" },
+          select: { plan: true, referenceId: true },
+          where: { referenceId: { in: userIds } },
+        })
+      : [];
+
+  const subscriptionByUserId = new Map(subscriptions.map((sub) => [sub.referenceId, sub.plan]));
+
+  const usersWithPlan = users.map((user) => ({
+    ...user,
+    plan: subscriptionByUserId.get(String(user.id)) ?? "free",
+  }));
+
+  return { total, users: usersWithPlan };
 }
