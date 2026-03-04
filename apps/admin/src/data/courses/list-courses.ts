@@ -1,15 +1,18 @@
 import "server-only";
 import { getSession } from "@zoonk/core/users/session/get";
 import { prisma } from "@zoonk/db";
+import { cache } from "react";
 
-export async function listCourses(params: { limit: number; offset: number; search?: string }) {
+const cachedListCourses = cache(async function cachedListCourses(
+  limit: number,
+  offset: number,
+  search: string | undefined,
+) {
   const session = await getSession();
 
   if (session?.user.role !== "admin") {
     return { courses: [], total: 0 };
   }
-
-  const { limit, offset, search } = params;
 
   const where = search
     ? { normalizedTitle: { contains: search, mode: "insensitive" as const } }
@@ -27,4 +30,8 @@ export async function listCourses(params: { limit: number; offset: number; searc
   ]);
 
   return { courses, total };
+});
+
+export async function listCourses(params: { limit: number; offset: number; search?: string }) {
+  return cachedListCourses(params.limit, params.offset, params.search);
 }
