@@ -6,6 +6,7 @@ import { getSession } from "@zoonk/core/users/session/get";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { parseFormField } from "@zoonk/utils/form";
+import { parseBigIntId } from "@zoonk/utils/string";
 import { redirect } from "next/navigation";
 
 export async function markNeedsChangesAction(formData: FormData) {
@@ -18,11 +19,11 @@ export async function markNeedsChangesAction(formData: FormData) {
   const taskType = parseFormField(formData, "taskType");
   const entityIdRaw = parseFormField(formData, "entityId");
 
-  if (!taskType || !entityIdRaw || !isValidTaskType(taskType)) {
+  const entityId = entityIdRaw ? parseBigIntId(entityIdRaw) : null;
+
+  if (!taskType || !entityId || !isValidTaskType(taskType)) {
     throw new Error("Invalid form data");
   }
-
-  const entityId = BigInt(entityIdRaw);
   const userId = Number(session.user.id);
 
   const { error } = await safeAsync(() =>

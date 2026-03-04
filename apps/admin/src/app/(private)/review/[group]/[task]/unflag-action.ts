@@ -4,6 +4,7 @@ import { getSession } from "@zoonk/core/users/session/get";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { parseFormField } from "@zoonk/utils/form";
+import { parseBigIntId } from "@zoonk/utils/string";
 import { revalidatePath } from "next/cache";
 
 export async function unflagAction(formData: FormData) {
@@ -16,11 +17,11 @@ export async function unflagAction(formData: FormData) {
   const taskType = parseFormField(formData, "taskType");
   const entityIdRaw = parseFormField(formData, "entityId");
 
-  if (!taskType || !entityIdRaw) {
+  const entityId = entityIdRaw ? parseBigIntId(entityIdRaw) : null;
+
+  if (!taskType || !entityId) {
     throw new Error("Invalid form data");
   }
-
-  const entityId = BigInt(entityIdRaw);
 
   const { error } = await safeAsync(() =>
     prisma.contentReview.delete({
