@@ -19,14 +19,9 @@ export async function UserList({
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Name</TableHead>
+              <TableHead>User</TableHead>
               <TableHead>Username</TableHead>
-              <TableHead>Email</TableHead>
-              <TableHead>Role</TableHead>
-              <TableHead>Email Verified</TableHead>
-              <TableHead>Banned</TableHead>
-              <TableHead>Last Login</TableHead>
-              <TableHead>Created At</TableHead>
+              <TableHead>Subscription</TableHead>
             </TableRow>
           </TableHeader>
 
