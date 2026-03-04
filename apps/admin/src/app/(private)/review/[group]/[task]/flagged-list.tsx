@@ -45,7 +45,7 @@ export async function FlaggedList({
   searchParams,
 }: {
   taskType: ReviewTaskType;
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
+  searchParams: PageProps<"/review/[group]/[task]">["searchParams"];
 }) {
   const { page, limit, offset } = parseSearchParams(await searchParams);
   const { items, total } = await listReviewedItems({

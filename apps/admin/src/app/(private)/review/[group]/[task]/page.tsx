@@ -26,10 +26,7 @@ function QueueSkeleton() {
 export default async function ReviewTaskPage({
   params,
   searchParams,
-}: {
-  params: Promise<{ group: string; task: string }>;
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
-}) {
+}: PageProps<"/review/[group]/[task]">) {
   const { group, task } = await params;
   const taskType = resolveTaskType(group, task);
 
