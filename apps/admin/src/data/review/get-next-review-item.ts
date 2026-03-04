@@ -23,18 +23,15 @@ async function getNextCourseSuggestion(skipIds: bigint[]): Promise<ReviewQueueRe
   const reviewedIds = await reviewedEntityIds("courseSuggestions");
   const excludeIds = [...reviewedIds, ...skipIds];
 
+  const baseWhere = { suggestions: { some: {} } };
+
   const [next, total] = await Promise.all([
-    prisma.courseSuggestion.findFirst({
+    prisma.searchPrompt.findFirst({
       orderBy: { createdAt: "asc" },
       select: { id: true },
-      where: {
-        NOT: { id: { in: excludeIds.map(Number) } },
-        generationStatus: "completed",
-      },
+      where: { ...baseWhere, NOT: { id: { in: excludeIds.map(Number) } } },
     }),
-    prisma.courseSuggestion.count({
-      where: { generationStatus: "completed" },
-    }),
+    prisma.searchPrompt.count({ where: baseWhere }),
   ]);
 
   return {

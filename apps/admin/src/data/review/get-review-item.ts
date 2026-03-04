@@ -12,7 +12,13 @@ export async function getCourseSuggestionReview(entityId: bigint) {
     return null;
   }
 
-  return prisma.courseSuggestion.findUnique({
+  return prisma.searchPrompt.findUnique({
+    include: {
+      suggestions: {
+        include: { courseSuggestion: true },
+        orderBy: { position: "asc" },
+      },
+    },
     where: { id: Number(entityId) },
   });
 }

@@ -9,10 +9,10 @@ async function countUnreviewed(taskType: ReviewTaskType): Promise<number> {
 
   switch (taskType) {
     case "courseSuggestions":
-      return prisma.courseSuggestion.count({
+      return prisma.searchPrompt.count({
         where: {
           NOT: { id: { in: excludeIds.map(Number) } },
-          generationStatus: "completed",
+          suggestions: { some: {} },
         },
       });
 
