@@ -1,24 +1,42 @@
 import "server-only";
-import { auth } from "@zoonk/core/auth";
-import { headers } from "next/headers";
+import { getSession } from "@zoonk/core/users/session/get";
+import { prisma } from "@zoonk/db";
 
 export async function listUsers(params: { limit: number; offset: number; search?: string }) {
+  const session = await getSession();
+
+  if (session?.user.role !== "admin") {
+    return { total: 0, users: [] };
+  }
+
   const { limit, offset, search } = params;
 
-  const result = await auth.api.listUsers({
-    headers: await headers(),
-    query: {
-      limit,
-      offset,
-      sortBy: "createdAt",
-      sortDirection: "desc",
-      ...(search && {
-        searchField: "email",
-        searchOperator: "contains",
-        searchValue: search,
-      }),
-    },
-  });
+  const where = search
+    ? {
+        OR: [
+          { name: { contains: search, mode: "insensitive" as const } },
+          { email: { contains: search, mode: "insensitive" as const } },
+          { username: { contains: search, mode: "insensitive" as const } },
+        ],
+      }
+    : undefined;
 
-  return { total: result.total, users: result.users };
+  const [users, total] = await Promise.all([
+    prisma.user.findMany({
+      include: {
+        sessions: {
+          orderBy: { updatedAt: "desc" },
+          select: { updatedAt: true },
+          take: 1,
+        },
+      },
+      orderBy: { createdAt: "desc" },
+      skip: offset,
+      take: limit,
+      where,
+    }),
+    prisma.user.count({ where }),
+  ]);
+
+  return { total, users };
 }

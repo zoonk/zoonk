@@ -1,10 +1,17 @@
-import { type UserWithRole } from "@zoonk/core/types";
+import { type listUsers } from "@/data/users/list-users";
 import { TableCell, TableRow } from "@zoonk/ui/components/table";
 
-export function UserRow({ user }: { user: UserWithRole }) {
+export function UserRow({
+  user,
+}: {
+  user: Awaited<ReturnType<typeof listUsers>>["users"][number];
+}) {
+  const lastLogin = user.sessions[0]?.updatedAt;
+
   return (
     <TableRow>
       <TableCell className="font-medium">{user.name || "—"}</TableCell>
+      <TableCell>{user.username || "—"}</TableCell>
       <TableCell>{user.email}</TableCell>
       <TableCell className="capitalize">{user.role || "user"}</TableCell>
 
@@ -22,6 +29,10 @@ export function UserRow({ user }: { user: UserWithRole }) {
         ) : (
           <span className="text-muted-foreground">—</span>
         )}
+      </TableCell>
+
+      <TableCell className="text-muted-foreground">
+        {lastLogin ? new Date(lastLogin).toLocaleDateString() : "—"}
       </TableCell>
 
       <TableCell className="text-muted-foreground">

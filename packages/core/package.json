@@ -49,7 +49,6 @@
     "@zoonk/db": "workspace:*",
     "@zoonk/mailer": "workspace:*",
     "@zoonk/utils": "workspace:*",
-    "better-auth": "1.5.0",
     "zod": "4.3.6"
   },
   "devDependencies": {
