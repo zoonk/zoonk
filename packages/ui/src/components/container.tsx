@@ -123,7 +123,9 @@ export type ContainerBodyProps = React.ComponentProps<"div">;
 
 export function ContainerBody({ children, className }: ContainerBodyProps) {
   return (
-    <section className={cn("flex w-full flex-1 flex-col gap-4 px-4 sm:flex-initial", className)}>
+    <section
+      className={cn("flex w-full flex-1 flex-col gap-4 px-4 pb-4 sm:flex-initial", className)}
+    >
       {children}
     </section>
   );

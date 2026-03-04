@@ -63,7 +63,7 @@ export function AdminPagination({
   const pagesWithEllipses = addEllipsesToPages(visiblePages);
 
   return (
-    <Pagination className="mt-6">
+    <Pagination>
       <PaginationContent>
         <PaginationItem>
           <PaginationPrevious
