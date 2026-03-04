@@ -9,7 +9,7 @@ type ShouldGenerate =
   | { activity: LessonActivity; shouldGenerate: true; existingSteps?: undefined }
   | { activity?: undefined; shouldGenerate: false; existingSteps: ActivitySteps };
 
-async function getExistingContentSteps(activityId: bigint | number): Promise<ActivitySteps | null> {
+async function getExistingContentSteps(activityId: bigint | number): Promise<ActivitySteps> {
   const { data: existingSteps } = await safeAsync(() =>
     prisma.step.findMany({
       orderBy: { position: "asc" },
@@ -18,17 +18,21 @@ async function getExistingContentSteps(activityId: bigint | number): Promise<Act
     }),
   );
 
-  if (existingSteps && existingSteps.length > 0) {
-    return parseActivitySteps(existingSteps);
+  if (!existingSteps?.length) {
+    return [];
   }
 
-  return null;
+  try {
+    return parseActivitySteps(existingSteps);
+  } catch {
+    return [];
+  }
 }
 
 async function resolveActivity(activity: LessonActivity): Promise<ShouldGenerate> {
   if (activity.generationStatus === "completed") {
     return {
-      existingSteps: (await getExistingContentSteps(activity.id)) ?? [],
+      existingSteps: await getExistingContentSteps(activity.id),
       shouldGenerate: false,
     };
   }

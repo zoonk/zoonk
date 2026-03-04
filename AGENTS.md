@@ -19,6 +19,7 @@
 - Never cut corners or do hacks. Aim for maintainable, clean code
 - Think about the big picture—how your changes fit into the overall architecture and future growth
 - **Think from first principles.** Don't accept patterns just because they're common. For every piece of code, ask: "What is this actually doing? Is there a simpler, more declarative way?" For every test, ask: "Am I testing my business logic or just testing that React/the browser works?" Before finishing any change, review everything again: "Is this the best way to implement this? Is this the best way to test this? Am I missing anything?" Think like a top 0.1% engineer who deeply cares about quality and details, not just getting things working. Think like the best engineer in the world
+- **Verify before fixing.** When evaluating review comments (AI or human), trace the actual code path to determine if the reported issue can happen in practice. Answer "can this actually happen?" before "should we fix it?" Distinguish real bugs from theoretical issues from code style — and say which one it is upfront. Don't default to agreement; apply the same rigor you'd apply to your own code
 
 ## Quality Control
 
