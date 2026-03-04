@@ -6,9 +6,10 @@ import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 
 type ReviewQueueResult = {
   entityId: bigint | null;
-  reviewed: number;
-  total: number;
+  remaining: number;
 };
+
+const EMPTY_RESULT: ReviewQueueResult = { entityId: null, remaining: 0 };
 
 async function reviewedEntityIds(taskType: ReviewTaskType): Promise<bigint[]> {
   const reviews = await prisma.aiContentReview.findMany({
@@ -23,85 +24,75 @@ async function getNextCourseSuggestion(skipIds: bigint[]): Promise<ReviewQueueRe
   const reviewedIds = await reviewedEntityIds("courseSuggestions");
   const excludeIds = [...reviewedIds, ...skipIds];
 
-  const baseWhere = { suggestions: { some: {} } };
+  const where = {
+    NOT: { id: { in: excludeIds.map(Number) } },
+    suggestions: { some: {} },
+  };
 
-  const [next, total] = await Promise.all([
+  const [next, remaining] = await Promise.all([
     prisma.searchPrompt.findFirst({
       orderBy: { createdAt: "asc" },
       select: { id: true },
-      where: { ...baseWhere, NOT: { id: { in: excludeIds.map(Number) } } },
+      where,
     }),
-    prisma.searchPrompt.count({ where: baseWhere }),
+    prisma.searchPrompt.count({ where }),
   ]);
 
-  return {
-    entityId: next ? BigInt(next.id) : null,
-    reviewed: reviewedIds.length,
-    total,
-  };
+  return { entityId: next ? BigInt(next.id) : null, remaining };
 }
 
 async function getNextStepVisual(skipIds: bigint[]): Promise<ReviewQueueResult> {
   const reviewedIds = await reviewedEntityIds("stepVisual");
   const excludeIds = [...reviewedIds, ...skipIds];
 
-  const baseWhere = {
+  const where = {
+    NOT: { id: { in: excludeIds } },
     activity: { organization: { slug: AI_ORG_SLUG } },
     visualKind: { not: null } as const,
   };
 
-  const [next, total] = await Promise.all([
-    prisma.step.findFirst({
-      orderBy: { createdAt: "asc" },
-      select: { id: true },
-      where: { ...baseWhere, NOT: { id: { in: excludeIds } } },
-    }),
-    prisma.step.count({ where: baseWhere }),
+  const [next, remaining] = await Promise.all([
+    prisma.step.findFirst({ orderBy: { createdAt: "asc" }, select: { id: true }, where }),
+    prisma.step.count({ where }),
   ]);
 
-  return { entityId: next?.id ?? null, reviewed: reviewedIds.length, total };
+  return { entityId: next?.id ?? null, remaining };
 }
 
 async function getNextStepVisualImage(skipIds: bigint[]): Promise<ReviewQueueResult> {
   const reviewedIds = await reviewedEntityIds("stepVisualImage");
   const excludeIds = [...reviewedIds, ...skipIds];
 
-  const baseWhere = {
+  const where = {
+    NOT: { id: { in: excludeIds } },
     activity: { organization: { slug: AI_ORG_SLUG } },
     visualKind: "image" as const,
   };
 
-  const [next, total] = await Promise.all([
-    prisma.step.findFirst({
-      orderBy: { createdAt: "asc" },
-      select: { id: true },
-      where: { ...baseWhere, NOT: { id: { in: excludeIds } } },
-    }),
-    prisma.step.count({ where: baseWhere }),
+  const [next, remaining] = await Promise.all([
+    prisma.step.findFirst({ orderBy: { createdAt: "asc" }, select: { id: true }, where }),
+    prisma.step.count({ where }),
   ]);
 
-  return { entityId: next?.id ?? null, reviewed: reviewedIds.length, total };
+  return { entityId: next?.id ?? null, remaining };
 }
 
 async function getNextWordAudio(skipIds: bigint[]): Promise<ReviewQueueResult> {
   const reviewedIds = await reviewedEntityIds("wordAudio");
   const excludeIds = [...reviewedIds, ...skipIds];
 
-  const baseWhere = {
+  const where = {
+    NOT: { id: { in: excludeIds } },
     audioUrl: { not: null },
     organization: { slug: AI_ORG_SLUG },
   };
 
-  const [next, total] = await Promise.all([
-    prisma.word.findFirst({
-      orderBy: { createdAt: "asc" },
-      select: { id: true },
-      where: { ...baseWhere, NOT: { id: { in: excludeIds } } },
-    }),
-    prisma.word.count({ where: baseWhere }),
+  const [next, remaining] = await Promise.all([
+    prisma.word.findFirst({ orderBy: { createdAt: "asc" }, select: { id: true }, where }),
+    prisma.word.count({ where }),
   ]);
 
-  return { entityId: next?.id ?? null, reviewed: reviewedIds.length, total };
+  return { entityId: next?.id ?? null, remaining };
 }
 
 export async function getNextReviewItem(
@@ -111,7 +102,7 @@ export async function getNextReviewItem(
   const session = await getSession();
 
   if (session?.user.role !== "admin") {
-    return { entityId: null, reviewed: 0, total: 0 };
+    return EMPTY_RESULT;
   }
 
   switch (taskType) {
@@ -124,6 +115,6 @@ export async function getNextReviewItem(
     case "wordAudio":
       return getNextWordAudio(skipIds);
     default:
-      return { entityId: null, reviewed: 0, total: 0 };
+      return EMPTY_RESULT;
   }
 }

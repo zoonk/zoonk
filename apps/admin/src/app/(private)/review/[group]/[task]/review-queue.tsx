@@ -85,7 +85,7 @@ export async function ReviewQueue({
 
   return (
     <div className="flex flex-col gap-6">
-      <ReviewProgress reviewed={queue.reviewed} total={queue.total} />
+      <ReviewProgress remaining={queue.remaining} />
 
       {content}
 
