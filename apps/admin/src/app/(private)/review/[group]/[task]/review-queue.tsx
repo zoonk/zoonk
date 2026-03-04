@@ -5,6 +5,7 @@ import {
   getWordAudioReview,
 } from "@/data/review/get-review-item";
 import { type ReviewTaskType, getTaskPath } from "@/lib/review-utils";
+import { parseBigIntId } from "@zoonk/utils/string";
 import { redirect } from "next/navigation";
 import { CourseSuggestionReview } from "../../_components/content/course-suggestion-review";
 import { StepVisualImageReview } from "../../_components/content/step-visual-image-review";
@@ -49,7 +50,7 @@ export async function ReviewQueue({
   currentId: string | undefined;
 }) {
   const queue = await getNextReviewItem(taskType);
-  const entityId = currentId ? BigInt(currentId) : queue.entityId;
+  const entityId = (currentId ? parseBigIntId(currentId) : null) ?? queue.entityId;
 
   if (!entityId) {
     return <ReviewEmpty />;
