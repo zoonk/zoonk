@@ -3,6 +3,7 @@ import { type ReviewTaskType } from "@/lib/review-utils";
 import { getSession } from "@zoonk/core/users/session/get";
 import { prisma } from "@zoonk/db";
 import { AI_ORG_SLUG } from "@zoonk/utils/constants";
+import { reviewedEntityIds } from "./count-pending-reviews";
 
 type ReviewQueueResult = {
   entityId: bigint | null;
@@ -11,18 +12,8 @@ type ReviewQueueResult = {
 
 const EMPTY_RESULT: ReviewQueueResult = { entityId: null, remaining: 0 };
 
-async function reviewedEntityIds(taskType: ReviewTaskType): Promise<bigint[]> {
-  const reviews = await prisma.aiContentReview.findMany({
-    select: { entityId: true },
-    where: { taskType },
-  });
-
-  return reviews.map((review) => review.entityId);
-}
-
-async function getNextCourseSuggestion(skipIds: bigint[]): Promise<ReviewQueueResult> {
-  const reviewedIds = await reviewedEntityIds("courseSuggestions");
-  const excludeIds = [...reviewedIds, ...skipIds];
+async function getNextCourseSuggestion(): Promise<ReviewQueueResult> {
+  const excludeIds = await reviewedEntityIds("courseSuggestions");
 
   const where = {
     NOT: { id: { in: excludeIds.map(Number) } },
@@ -41,9 +32,8 @@ async function getNextCourseSuggestion(skipIds: bigint[]): Promise<ReviewQueueRe
   return { entityId: next ? BigInt(next.id) : null, remaining };
 }
 
-async function getNextStepVisual(skipIds: bigint[]): Promise<ReviewQueueResult> {
-  const reviewedIds = await reviewedEntityIds("stepVisual");
-  const excludeIds = [...reviewedIds, ...skipIds];
+async function getNextStepVisual(): Promise<ReviewQueueResult> {
+  const excludeIds = await reviewedEntityIds("stepVisual");
 
   const where = {
     NOT: { id: { in: excludeIds } },
@@ -59,9 +49,8 @@ async function getNextStepVisual(skipIds: bigint[]): Promise<ReviewQueueResult> 
   return { entityId: next?.id ?? null, remaining };
 }
 
-async function getNextStepVisualImage(skipIds: bigint[]): Promise<ReviewQueueResult> {
-  const reviewedIds = await reviewedEntityIds("stepVisualImage");
-  const excludeIds = [...reviewedIds, ...skipIds];
+async function getNextStepVisualImage(): Promise<ReviewQueueResult> {
+  const excludeIds = await reviewedEntityIds("stepVisualImage");
 
   const where = {
     NOT: { id: { in: excludeIds } },
@@ -77,9 +66,8 @@ async function getNextStepVisualImage(skipIds: bigint[]): Promise<ReviewQueueRes
   return { entityId: next?.id ?? null, remaining };
 }
 
-async function getNextWordAudio(skipIds: bigint[]): Promise<ReviewQueueResult> {
-  const reviewedIds = await reviewedEntityIds("wordAudio");
-  const excludeIds = [...reviewedIds, ...skipIds];
+async function getNextWordAudio(): Promise<ReviewQueueResult> {
+  const excludeIds = await reviewedEntityIds("wordAudio");
 
   const where = {
     NOT: { id: { in: excludeIds } },
@@ -97,7 +85,6 @@ async function getNextWordAudio(skipIds: bigint[]): Promise<ReviewQueueResult> {
 
 export async function getNextReviewItem(
   taskType: ReviewTaskType,
-  skipIds: bigint[] = [],
 ): Promise<ReviewQueueResult> {
   const session = await getSession();
 
@@ -107,13 +94,13 @@ export async function getNextReviewItem(
 
   switch (taskType) {
     case "courseSuggestions":
-      return getNextCourseSuggestion(skipIds);
+      return getNextCourseSuggestion();
     case "stepVisual":
-      return getNextStepVisual(skipIds);
+      return getNextStepVisual();
     case "stepVisualImage":
-      return getNextStepVisualImage(skipIds);
+      return getNextStepVisualImage();
     case "wordAudio":
-      return getNextWordAudio(skipIds);
+      return getNextWordAudio();
     default:
       return EMPTY_RESULT;
   }

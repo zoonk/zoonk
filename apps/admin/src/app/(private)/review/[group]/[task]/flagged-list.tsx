@@ -11,36 +11,36 @@ import {
   TableRow,
 } from "@zoonk/ui/components/table";
 import { SubmitButton } from "@zoonk/ui/patterns/buttons/submit";
-import { unmarkReviewedAction } from "./unmark-reviewed";
+import { unflagAction } from "./unflag-action";
 
-function ReviewedRow({
+function FlaggedRow({
   entityId,
-  reviewerName,
-  reviewedAt,
+  flaggedBy,
+  flaggedAt,
   taskType,
 }: {
   entityId: string;
-  reviewerName: string;
-  reviewedAt: string;
+  flaggedBy: string;
+  flaggedAt: string;
   taskType: string;
 }) {
   return (
     <TableRow>
       <TableCell>{entityId}</TableCell>
-      <TableCell>{reviewerName}</TableCell>
-      <TableCell>{reviewedAt}</TableCell>
+      <TableCell>{flaggedBy}</TableCell>
+      <TableCell>{flaggedAt}</TableCell>
       <TableCell>
-        <form action={unmarkReviewedAction}>
+        <form action={unflagAction}>
           <input type="hidden" name="taskType" value={taskType} />
           <input type="hidden" name="entityId" value={entityId} />
-          <SubmitButton>Unmark</SubmitButton>
+          <SubmitButton>Return to queue</SubmitButton>
         </form>
       </TableCell>
     </TableRow>
   );
 }
 
-export async function ReviewedList({
+export async function FlaggedList({
   taskType,
   searchParams,
 }: {
@@ -51,12 +51,13 @@ export async function ReviewedList({
   const { items, total } = await listReviewedItems({
     limit,
     offset,
+    status: "needsChanges",
     taskType,
   });
   const totalPages = Math.ceil(total / limit);
 
   if (items.length === 0) {
-    return <p className="text-muted-foreground text-sm">No reviewed items yet.</p>;
+    return <p className="text-muted-foreground text-sm">No flagged items.</p>;
   }
 
   return (
@@ -66,19 +67,19 @@ export async function ReviewedList({
           <TableHeader>
             <TableRow>
               <TableHead>Entity ID</TableHead>
-              <TableHead>Reviewer</TableHead>
-              <TableHead>Reviewed At</TableHead>
+              <TableHead>Flagged by</TableHead>
+              <TableHead>Date</TableHead>
               <TableHead />
             </TableRow>
           </TableHeader>
 
           <TableBody>
             {items.map((item) => (
-              <ReviewedRow
+              <FlaggedRow
                 key={item.id.toString()}
                 entityId={item.entityId.toString()}
-                reviewerName={item.user.name}
-                reviewedAt={item.reviewedAt.toLocaleDateString()}
+                flaggedBy={item.user.name}
+                flaggedAt={item.reviewedAt.toLocaleDateString()}
                 taskType={item.taskType}
               />
             ))}
@@ -87,7 +88,7 @@ export async function ReviewedList({
       </div>
 
       <AdminPagination
-        basePath={`${getTaskPath(taskType)}/reviewed`}
+        basePath={`${getTaskPath(taskType)}?view=flagged`}
         limit={limit}
         page={page}
         totalPages={totalPages}

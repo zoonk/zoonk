@@ -5,6 +5,7 @@ import { prisma } from "@zoonk/db";
 
 export async function listReviewedItems(params: {
   taskType: ReviewTaskType;
+  status: string;
   limit: number;
   offset: number;
 }) {
@@ -14,8 +15,8 @@ export async function listReviewedItems(params: {
     return { items: [], total: 0 };
   }
 
-  const { taskType, limit, offset } = params;
-  const where = { taskType };
+  const { taskType, status, limit, offset } = params;
+  const where = { status, taskType };
 
   const [items, total] = await Promise.all([
     prisma.aiContentReview.findMany({

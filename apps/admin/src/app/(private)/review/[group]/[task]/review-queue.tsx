@@ -14,21 +14,6 @@ import { ReviewActions } from "../../_components/review-actions";
 import { ReviewEmpty } from "../../_components/review-empty";
 import { ReviewProgress } from "../../_components/review-progress";
 
-function parseSkipIds(raw: string | string[] | undefined): bigint[] {
-  if (!raw) {
-    return [];
-  }
-  const value = typeof raw === "string" ? raw : raw[0];
-  if (!value) {
-    return [];
-  }
-
-  return value
-    .split(",")
-    .filter(Boolean)
-    .map((id) => BigInt(id));
-}
-
 async function renderContent(taskType: ReviewTaskType, entityId: bigint) {
   switch (taskType) {
     case "courseSuggestions": {
@@ -58,17 +43,13 @@ async function renderContent(taskType: ReviewTaskType, entityId: bigint) {
 
 export async function ReviewQueue({
   taskType,
-  searchParams,
+  currentId,
 }: {
   taskType: ReviewTaskType;
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
+  currentId: string | undefined;
 }) {
-  const resolvedParams = await searchParams;
-  const currentIdRaw = typeof resolvedParams.current === "string" ? resolvedParams.current : null;
-  const skipIds = parseSkipIds(resolvedParams.skipped);
-
-  const queue = await getNextReviewItem(taskType, skipIds);
-  const entityId = currentIdRaw ? BigInt(currentIdRaw) : queue.entityId;
+  const queue = await getNextReviewItem(taskType);
+  const entityId = currentId ? BigInt(currentId) : queue.entityId;
 
   if (!entityId) {
     return <ReviewEmpty />;
@@ -80,16 +61,13 @@ export async function ReviewQueue({
     redirect(getTaskPath(taskType));
   }
 
-  const newSkipped = [...skipIds, entityId].join(",");
-  const skipUrl = `${getTaskPath(taskType)}?skipped=${newSkipped}`;
-
   return (
     <div className="flex flex-col gap-6">
       <ReviewProgress remaining={queue.remaining} />
 
       {content}
 
-      <ReviewActions taskType={taskType} entityId={entityId.toString()} skipUrl={skipUrl} />
+      <ReviewActions taskType={taskType} entityId={entityId.toString()} />
     </div>
   );
 }

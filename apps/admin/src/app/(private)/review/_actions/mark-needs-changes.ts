@@ -8,7 +8,7 @@ import { safeAsync } from "@zoonk/utils/error";
 import { parseFormField } from "@zoonk/utils/form";
 import { redirect } from "next/navigation";
 
-export async function markReviewedAction(formData: FormData) {
+export async function markNeedsChangesAction(formData: FormData) {
   const session = await getSession();
 
   if (session?.user.role !== "admin") {
@@ -27,8 +27,8 @@ export async function markReviewedAction(formData: FormData) {
 
   const { error } = await safeAsync(() =>
     prisma.aiContentReview.upsert({
-      create: { entityId, status: "approved", taskType, userId },
-      update: { reviewedAt: new Date(), status: "approved", userId },
+      create: { entityId, status: "needsChanges", taskType, userId },
+      update: { reviewedAt: new Date(), status: "needsChanges", userId },
       where: { taskEntity: { entityId, taskType } },
     }),
   );

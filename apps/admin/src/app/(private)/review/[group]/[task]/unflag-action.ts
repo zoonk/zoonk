@@ -6,7 +6,7 @@ import { safeAsync } from "@zoonk/utils/error";
 import { parseFormField } from "@zoonk/utils/form";
 import { revalidatePath } from "next/cache";
 
-export async function unmarkReviewedAction(formData: FormData) {
+export async function unflagAction(formData: FormData) {
   const session = await getSession();
 
   if (session?.user.role !== "admin") {
