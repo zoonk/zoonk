@@ -14,7 +14,9 @@ function statusVariant(status: string) {
   }
 }
 
-export function CourseSuggestionReview({ item }: {
+export function CourseSuggestionReview({
+  item,
+}: {
   item: NonNullable<Awaited<ReturnType<typeof getCourseSuggestionReview>>>;
 }) {
   return (
@@ -25,7 +27,7 @@ export function CourseSuggestionReview({ item }: {
       </div>
 
       <div className="flex flex-col gap-4">
-        <h3 className="text-muted-foreground text-sm font-medium uppercase tracking-wider">
+        <h3 className="text-muted-foreground text-sm font-medium tracking-wider uppercase">
           Suggestions ({item.suggestions.length})
         </h3>
 

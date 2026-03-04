@@ -4,9 +4,7 @@ import { getSession } from "@zoonk/core/users/session/get";
 import { prisma } from "@zoonk/db";
 import { countPendingForTask } from "./count-pending-reviews";
 
-export async function countReviewStatuses(
-  taskType: ReviewTaskType,
-): Promise<{
+export async function countReviewStatuses(taskType: ReviewTaskType): Promise<{
   pending: number;
   needsChanges: number;
 }> {

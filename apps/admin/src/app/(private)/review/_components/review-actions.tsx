@@ -18,13 +18,7 @@ function NeedsChangesButton() {
   );
 }
 
-export function ReviewActions({
-  taskType,
-  entityId,
-}: {
-  taskType: string;
-  entityId: string;
-}) {
+export function ReviewActions({ taskType, entityId }: { taskType: string; entityId: string }) {
   return (
     <div className="flex items-center justify-between pt-4">
       <form action={markNeedsChangesAction}>

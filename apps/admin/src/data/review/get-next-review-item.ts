@@ -83,9 +83,7 @@ async function getNextWordAudio(): Promise<ReviewQueueResult> {
   return { entityId: next?.id ?? null, remaining };
 }
 
-export async function getNextReviewItem(
-  taskType: ReviewTaskType,
-): Promise<ReviewQueueResult> {
+export async function getNextReviewItem(taskType: ReviewTaskType): Promise<ReviewQueueResult> {
   const session = await getSession();
 
   if (session?.user.role !== "admin") {
