@@ -16,7 +16,7 @@ export async function countReviewStatuses(taskType: ReviewTaskType): Promise<{
 
   const [pending, needsChanges] = await Promise.all([
     countPendingForTask(taskType),
-    prisma.aiContentReview.count({
+    prisma.contentReview.count({
       where: { status: "needsChanges", taskType },
     }),
   ]);

@@ -1,4 +1,4 @@
-model AiContentReview {
+model ContentReview {
   id         BigInt   @id @default(autoincrement())
   taskType   String   @map("task_type")
   entityId   BigInt   @map("entity_id")
@@ -11,5 +11,5 @@ model AiContentReview {
   @@index([taskType])
   @@index([taskType, status])
   @@index([userId])
-  @@map("ai_content_reviews")
+  @@map("content_reviews")
 }

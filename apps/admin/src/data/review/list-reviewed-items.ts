@@ -19,14 +19,14 @@ export async function listReviewedItems(params: {
   const where = { status, taskType };
 
   const [items, total] = await Promise.all([
-    prisma.aiContentReview.findMany({
+    prisma.contentReview.findMany({
       include: { user: { select: { name: true } } },
       orderBy: { reviewedAt: "desc" },
       skip: offset,
       take: limit,
       where,
     }),
-    prisma.aiContentReview.count({ where }),
+    prisma.contentReview.count({ where }),
   ]);
 
   return { items, total };

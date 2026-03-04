@@ -20,7 +20,7 @@ if (process.env.NODE_ENV !== "production") {
 
 /** @public */
 export type {
-  AiContentReview,
+  ContentReview,
   Activity,
   ActivityKind,
   ActivityProgress,

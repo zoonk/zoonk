@@ -13,7 +13,7 @@ import { Suspense } from "react";
 import { ReviewLanding } from "./review-landing";
 
 export const metadata: Metadata = {
-  title: "AI Content Review",
+  title: "Content Review",
 };
 
 function ReviewLandingSkeleton() {
@@ -34,7 +34,7 @@ export default function ReviewPage() {
     <Container>
       <ContainerHeader variant="sidebar">
         <ContainerHeaderGroup>
-          <ContainerTitle>AI Content Review</ContainerTitle>
+          <ContainerTitle>Content Review</ContainerTitle>
           <ContainerDescription>
             Review AI-generated content before it goes live.
           </ContainerDescription>

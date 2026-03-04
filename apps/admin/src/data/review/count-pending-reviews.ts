@@ -5,7 +5,7 @@ import { prisma } from "@zoonk/db";
 import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 
 export async function reviewedEntityIds(taskType: ReviewTaskType): Promise<bigint[]> {
-  const reviews = await prisma.aiContentReview.findMany({
+  const reviews = await prisma.contentReview.findMany({
     select: { entityId: true },
     where: { taskType },
   });

@@ -26,7 +26,7 @@ export async function markNeedsChangesAction(formData: FormData) {
   const userId = Number(session.user.id);
 
   const { error } = await safeAsync(() =>
-    prisma.aiContentReview.upsert({
+    prisma.contentReview.upsert({
       create: { entityId, status: "needsChanges", taskType, userId },
       update: { reviewedAt: new Date(), status: "needsChanges", userId },
       where: { taskEntity: { entityId, taskType } },

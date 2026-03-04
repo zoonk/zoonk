@@ -23,7 +23,7 @@ export async function unflagAction(formData: FormData) {
   const entityId = BigInt(entityIdRaw);
 
   const { error } = await safeAsync(() =>
-    prisma.aiContentReview.delete({
+    prisma.contentReview.delete({
       where: { taskEntity: { entityId, taskType } },
     }),
   );
