@@ -1,5 +1,4 @@
 import { type VocabularyWord } from "@zoonk/ai/tasks/activities/language/vocabulary";
-import { safeAsync } from "@zoonk/utils/error";
 import { completeActivityStep } from "../steps/complete-activity-step";
 import { generateReadingAudioStep } from "../steps/generate-reading-audio-step";
 import { generateReadingContentStep } from "../steps/generate-reading-content-step";
@@ -26,8 +25,7 @@ export async function readingActivityWorkflow(
     neighboringConcepts,
   );
 
-  const { data } = await safeAsync(() => saveReadingSentencesStep(activities, sentences));
-  const savedSentences = data?.savedSentences ?? [];
+  const { savedSentences } = await saveReadingSentencesStep(activities, sentences);
 
   const { audioUrls } = await generateReadingAudioStep(activities, savedSentences);
   await updateReadingEnrichmentsStep(activities, savedSentences, audioUrls);
