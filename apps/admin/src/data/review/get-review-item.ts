@@ -1,13 +1,16 @@
 import "server-only";
 import { getSession } from "@zoonk/core/users/session/get";
 import { prisma } from "@zoonk/db";
+import { cache } from "react";
 
 async function adminGuard() {
   const session = await getSession();
   return session?.user.role === "admin";
 }
 
-export async function getCourseSuggestionReview(entityId: bigint) {
+export const getCourseSuggestionReview = cache(async function getCourseSuggestionReview(
+  entityId: bigint,
+) {
   if (!(await adminGuard())) {
     return null;
   }
@@ -21,9 +24,9 @@ export async function getCourseSuggestionReview(entityId: bigint) {
     },
     where: { id: Number(entityId) },
   });
-}
+});
 
-export async function getStepVisualReview(entityId: bigint) {
+export const getStepVisualReview = cache(async function getStepVisualReview(entityId: bigint) {
   if (!(await adminGuard())) {
     return null;
   }
@@ -32,9 +35,9 @@ export async function getStepVisualReview(entityId: bigint) {
     include: { activity: { select: { title: true } } },
     where: { id: entityId },
   });
-}
+});
 
-export async function getWordAudioReview(entityId: bigint) {
+export const getWordAudioReview = cache(async function getWordAudioReview(entityId: bigint) {
   if (!(await adminGuard())) {
     return null;
   }
@@ -42,4 +45,4 @@ export async function getWordAudioReview(entityId: bigint) {
   return prisma.word.findUnique({
     where: { id: entityId },
   });
-}
+});

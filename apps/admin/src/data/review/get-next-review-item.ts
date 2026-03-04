@@ -3,6 +3,7 @@ import { type ReviewTaskType } from "@/lib/review-utils";
 import { getSession } from "@zoonk/core/users/session/get";
 import { prisma } from "@zoonk/db";
 import { AI_ORG_SLUG } from "@zoonk/utils/constants";
+import { cache } from "react";
 import { reviewedEntityIds } from "./count-pending-reviews";
 
 type ReviewQueueResult = {
@@ -83,7 +84,9 @@ async function getNextWordAudio(): Promise<ReviewQueueResult> {
   return { entityId: next?.id ?? null, remaining };
 }
 
-export async function getNextReviewItem(taskType: ReviewTaskType): Promise<ReviewQueueResult> {
+export const getNextReviewItem = cache(async function getNextReviewItem(
+  taskType: ReviewTaskType,
+): Promise<ReviewQueueResult> {
   const session = await getSession();
 
   if (session?.user.role !== "admin") {
@@ -102,4 +105,4 @@ export async function getNextReviewItem(taskType: ReviewTaskType): Promise<Revie
     default:
       return EMPTY_RESULT;
   }
-}
+});

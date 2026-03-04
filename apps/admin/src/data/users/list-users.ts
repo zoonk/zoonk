@@ -1,15 +1,18 @@
 import "server-only";
 import { getSession } from "@zoonk/core/users/session/get";
 import { prisma } from "@zoonk/db";
+import { cache } from "react";
 
-export async function listUsers(params: { limit: number; offset: number; search?: string }) {
+const cachedListUsers = cache(async function cachedListUsers(
+  limit: number,
+  offset: number,
+  search: string | undefined,
+) {
   const session = await getSession();
 
   if (session?.user.role !== "admin") {
     return { total: 0, users: [] };
   }
-
-  const { limit, offset, search } = params;
 
   const where = search
     ? {
@@ -51,4 +54,8 @@ export async function listUsers(params: { limit: number; offset: number; search?
   }));
 
   return { total, users: usersWithPlan };
+});
+
+export async function listUsers(params: { limit: number; offset: number; search?: string }) {
+  return cachedListUsers(params.limit, params.offset, params.search);
 }

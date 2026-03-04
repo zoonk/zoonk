@@ -2,9 +2,12 @@ import "server-only";
 import { type ReviewTaskType } from "@/lib/review-utils";
 import { getSession } from "@zoonk/core/users/session/get";
 import { prisma } from "@zoonk/db";
+import { cache } from "react";
 import { countPendingForTask } from "./count-pending-reviews";
 
-export async function countReviewStatuses(taskType: ReviewTaskType): Promise<{
+export const countReviewStatuses = cache(async function countReviewStatuses(
+  taskType: ReviewTaskType,
+): Promise<{
   pending: number;
   needsChanges: number;
 }> {
@@ -22,4 +25,4 @@ export async function countReviewStatuses(taskType: ReviewTaskType): Promise<{
   ]);
 
   return { needsChanges, pending };
-}
+});

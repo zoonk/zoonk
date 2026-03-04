@@ -3,17 +3,22 @@ import { REVIEW_TASK_TYPES, type ReviewTaskType } from "@/lib/review-utils";
 import { getSession } from "@zoonk/core/users/session/get";
 import { prisma } from "@zoonk/db";
 import { AI_ORG_SLUG } from "@zoonk/utils/constants";
+import { cache } from "react";
 
-export async function reviewedEntityIds(taskType: ReviewTaskType): Promise<bigint[]> {
+export const reviewedEntityIds = cache(async function reviewedEntityIds(
+  taskType: ReviewTaskType,
+): Promise<bigint[]> {
   const reviews = await prisma.contentReview.findMany({
     select: { entityId: true },
     where: { taskType },
   });
 
   return reviews.map((review) => review.entityId);
-}
+});
 
-export async function countPendingForTask(taskType: ReviewTaskType): Promise<number> {
+export const countPendingForTask = cache(async function countPendingForTask(
+  taskType: ReviewTaskType,
+): Promise<number> {
   const excludeIds = await reviewedEntityIds(taskType);
 
   switch (taskType) {
@@ -55,7 +60,7 @@ export async function countPendingForTask(taskType: ReviewTaskType): Promise<num
     default:
       return 0;
   }
-}
+});
 
 function emptyCountRecord(): Record<ReviewTaskType, number> {
   return {
@@ -66,7 +71,9 @@ function emptyCountRecord(): Record<ReviewTaskType, number> {
   };
 }
 
-export async function countPendingReviews(): Promise<Record<ReviewTaskType, number>> {
+export const countPendingReviews = cache(async function countPendingReviews(): Promise<
+  Record<ReviewTaskType, number>
+> {
   const session = await getSession();
 
   if (session?.user.role !== "admin") {
@@ -81,4 +88,4 @@ export async function countPendingReviews(): Promise<Record<ReviewTaskType, numb
   );
 
   return { ...emptyCountRecord(), ...Object.fromEntries(counts) };
-}
+});
