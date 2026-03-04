@@ -49,8 +49,9 @@ function PlacedWordTile({
         hasResult && "pointer-events-none",
         !hasResult &&
           "hover:bg-accent focus-visible:border-ring focus-visible:ring-ring/50 outline-none focus-visible:ring-[3px]",
-        resultState === "correct" && "border-l-success border-l-2",
-        resultState === "incorrect" && "border-l-destructive border-l-2",
+        resultState === "correct" && "bg-success/5 text-success border-transparent opacity-75",
+        resultState === "incorrect" &&
+          "bg-destructive/5 text-destructive border-transparent opacity-75",
       )}
       disabled={hasResult}
       onClick={onClick}

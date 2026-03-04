@@ -5,6 +5,7 @@ export function OptionCard({
   children,
   disabled,
   index,
+  isDimmed,
   isSelected,
   onSelect,
   resultState,
@@ -12,6 +13,7 @@ export function OptionCard({
   children: React.ReactNode;
   disabled?: boolean;
   index: number;
+  isDimmed?: boolean;
   isSelected: boolean;
   onSelect: () => void;
   resultState?: "correct" | "incorrect";
@@ -24,8 +26,10 @@ export function OptionCard({
         !disabled && !isSelected && "border-border hover:bg-accent",
         !disabled && isSelected && "border-primary bg-primary/5",
         disabled && "pointer-events-none",
-        resultState === "correct" && "border-l-success border-l-2",
-        resultState === "incorrect" && "border-l-destructive border-l-2",
+        isDimmed && "opacity-40",
+        resultState === "correct" && "bg-success/5 text-success border-transparent opacity-75",
+        resultState === "incorrect" &&
+          "bg-destructive/5 text-destructive border-transparent opacity-75",
       )}
       disabled={disabled}
       onClick={onSelect}

@@ -2,7 +2,6 @@
 
 import { parseStepContent } from "@zoonk/core/steps/content-contract";
 import { cn } from "@zoonk/ui/lib/utils";
-import { CircleCheck } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { Fragment, useCallback, useMemo, useRef, useState } from "react";
 import { checkSingleMatchPair } from "../check-answer";
@@ -47,7 +46,7 @@ function getItemVisualState({
 
 function getItemClassName(state: ItemVisualState): string {
   if (state === "correct") {
-    return "border-success bg-success/5 pointer-events-none";
+    return "bg-success/5 border-transparent text-success opacity-75 pointer-events-none";
   }
 
   if (state === "incorrectFlash") {
@@ -77,17 +76,14 @@ function MatchItem({
       aria-label={label}
       aria-pressed={state === "selected"}
       className={cn(
-        "border-border flex min-h-11 items-center gap-2 rounded-lg border px-2.5 py-2.5 text-left text-sm wrap-break-word transition-all duration-150 sm:px-4 sm:py-3.5 sm:text-base",
+        "border-border flex min-h-11 items-center rounded-lg border px-2.5 py-2.5 text-left text-sm wrap-break-word transition-all duration-150 sm:px-4 sm:py-3.5 sm:text-base",
         getItemClassName(state),
       )}
+      aria-disabled={isLocked || undefined}
       disabled={isLocked}
       onClick={onTap}
       type="button"
     >
-      {state === "correct" && (
-        <CircleCheck aria-hidden="true" className="text-success size-3.5 shrink-0" />
-      )}
-
       <span>{label}</span>
     </button>
   );

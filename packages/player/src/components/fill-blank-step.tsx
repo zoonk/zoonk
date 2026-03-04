@@ -58,8 +58,8 @@ function BlankSlot({
           "inline-flex min-w-16 items-center justify-center border-b-2 px-1 font-medium transition-all duration-150",
           hasResult && "pointer-events-none",
           !resultState && "border-primary/30 text-primary",
-          resultState === "correct" && "border-success text-success",
-          resultState === "incorrect" && "border-destructive text-destructive",
+          resultState === "correct" && "border-success/50 text-success opacity-75",
+          resultState === "incorrect" && "border-destructive/50 text-destructive opacity-75",
         )}
         disabled={hasResult}
         onClick={onRemove}
