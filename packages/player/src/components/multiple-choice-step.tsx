@@ -77,25 +77,29 @@ function OptionList({
 
   return (
     <div aria-label={t("Answer options")} className="flex flex-col gap-3" role="radiogroup">
-      {options.map((option, index) => (
-        <OptionCard
-          disabled={disabled}
-          index={index}
-          isSelected={selectedIndex === index}
-          key={option.text}
-          onSelect={() => onSelect(index)}
-          resultState={
-            disabled && selectedIndex !== null
-              ? getOptionResultState(index, content, selectedIndex)
-              : undefined
-          }
-        >
-          <OptionContent
-            romanization={"textRomanization" in option ? option.textRomanization : undefined}
-            text={option.text}
-          />
-        </OptionCard>
-      ))}
+      {options.map((option, index) => {
+        const resultState =
+          disabled && selectedIndex !== null
+            ? getOptionResultState(index, content, selectedIndex)
+            : undefined;
+
+        return (
+          <OptionCard
+            disabled={disabled}
+            index={index}
+            isDimmed={disabled && selectedIndex !== null && !resultState}
+            isSelected={selectedIndex === index}
+            key={option.text}
+            onSelect={() => onSelect(index)}
+            resultState={resultState}
+          >
+            <OptionContent
+              romanization={"textRomanization" in option ? option.textRomanization : undefined}
+              text={option.text}
+            />
+          </OptionCard>
+        );
+      })}
     </div>
   );
 }

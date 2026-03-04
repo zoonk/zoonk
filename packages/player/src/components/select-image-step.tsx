@@ -2,7 +2,6 @@
 
 import { type SelectImageStepContent, parseStepContent } from "@zoonk/core/steps/content-contract";
 import { cn } from "@zoonk/ui/lib/utils";
-import { CircleCheck, CircleX } from "lucide-react";
 import { useExtracted } from "next-intl";
 import Image from "next/image";
 import { useState } from "react";
@@ -61,23 +60,6 @@ function ImageWithFallback({ alt, url }: { alt: string; url: string | undefined 
   );
 }
 
-function ResultBadge({ state }: { state: "correct" | "incorrect" }) {
-  return (
-    <div
-      className={cn(
-        "absolute top-2 right-2 rounded-full p-0.5",
-        state === "correct" ? "bg-success text-success-foreground" : "bg-destructive text-white",
-      )}
-    >
-      {state === "correct" ? (
-        <CircleCheck aria-hidden="true" className="size-4" />
-      ) : (
-        <CircleX aria-hidden="true" className="size-4" />
-      )}
-    </div>
-  );
-}
-
 function ImageOptionCard({
   disabled,
   isDimmed,
@@ -104,8 +86,8 @@ function ImageOptionCard({
         isDimmed && "opacity-50",
         !resultState && isSelected && "border-primary bg-primary/5",
         !resultState && !isSelected && "border-border hover:bg-accent",
-        resultState === "correct" && "border-success",
-        resultState === "incorrect" && "border-destructive",
+        resultState === "correct" && "border-success/60 opacity-80",
+        resultState === "incorrect" && "border-destructive/60 opacity-80",
       )}
       disabled={disabled}
       onClick={onSelect}
@@ -113,8 +95,6 @@ function ImageOptionCard({
       type="button"
     >
       <ImageWithFallback alt={prompt} url={url} />
-
-      {resultState && <ResultBadge state={resultState} />}
     </button>
   );
 }
