@@ -665,8 +665,10 @@ describe("explanation activity workflow", () => {
         title: "DB Fail Concept",
       });
 
+      const constraintName = `prevent_completion_${randomUUID().replaceAll("-", "")}`;
+
       await prisma.$executeRawUnsafe(
-        `ALTER TABLE activities ADD CONSTRAINT prevent_completion_test CHECK (NOT (id = ${String(activity.id)} AND generation_status = 'completed'))`,
+        `ALTER TABLE activities ADD CONSTRAINT ${constraintName} CHECK (NOT (id = ${String(activity.id)} AND generation_status = 'completed'))`,
       );
 
       try {
@@ -694,7 +696,7 @@ describe("explanation activity workflow", () => {
         });
       } finally {
         await prisma.$executeRawUnsafe(
-          `ALTER TABLE activities DROP CONSTRAINT IF EXISTS prevent_completion_test`,
+          `ALTER TABLE activities DROP CONSTRAINT IF EXISTS ${constraintName}`,
         );
       }
     });
