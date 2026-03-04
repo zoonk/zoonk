@@ -1,8 +1,9 @@
 import "server-only";
 import { getSession } from "@zoonk/core/users/session/get";
 import { prisma } from "@zoonk/db";
+import { cache } from "react";
 
-export async function getUser(id: number) {
+export const getUser = cache(async function getUser(id: number) {
   const session = await getSession();
 
   if (session?.user.role !== "admin") {
@@ -19,4 +20,4 @@ export async function getUser(id: number) {
     },
     where: { id },
   });
-}
+});
