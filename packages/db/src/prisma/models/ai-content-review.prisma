@@ -1,0 +1,13 @@
+model AiContentReview {
+  id         BigInt   @id @default(autoincrement())
+  taskType   String   @map("task_type")
+  entityId   BigInt   @map("entity_id")
+  reviewedAt DateTime @default(now()) @map("reviewed_at")
+  userId     Int      @map("user_id")
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([taskType, entityId], name: "taskEntity")
+  @@index([taskType])
+  @@index([userId])
+  @@map("ai_content_reviews")
+}

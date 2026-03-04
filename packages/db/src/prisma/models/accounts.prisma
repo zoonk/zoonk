@@ -26,6 +26,7 @@ model User {
   stepAttempts     StepAttempt[]
   progress         UserProgress?
   dailyProgress    DailyProgress[]
+  aiContentReviews AiContentReview[]
 
   @@unique([email])
   @@unique([username])

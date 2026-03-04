@@ -19,7 +19,7 @@ const nextConfig: NextConfig = {
     ],
   },
   reactCompiler: true,
-  typedRoutes: true,
+  typedRoutes: false,
 };
 
 export default nextConfig;
