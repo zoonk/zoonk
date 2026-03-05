@@ -1,45 +1,40 @@
 import { getNextReviewItem } from "@/data/review/get-next-review-item";
-import {
-  getCourseSuggestionReview,
-  getStepVisualReview,
-  getWordAudioReview,
-} from "@/data/review/get-review-item";
-import { type ReviewTaskType, getTaskPath } from "@/lib/review-utils";
+import { getCourseSuggestionReview, getStepVisualReview } from "@/data/review/get-review-item";
+import { type ReviewTaskType, getTaskPath, getVisualKindFromTaskType } from "@/lib/review-utils";
 import { parseBigIntId } from "@zoonk/utils/string";
 import { redirect } from "next/navigation";
 import { CourseSuggestionReview } from "../../_components/content/course-suggestion-review";
+import { StepSelectImageReview } from "../../_components/content/step-select-image-review";
 import { StepVisualImageReview } from "../../_components/content/step-visual-image-review";
-import { StepVisualReview } from "../../_components/content/step-visual-review";
-import { WordAudioReview } from "../../_components/content/word-audio-review";
 import { ReviewActions } from "../../_components/review-actions";
 import { ReviewEmpty } from "../../_components/review-empty";
 import { ReviewProgress } from "../../_components/review-progress";
 
 async function renderContent(taskType: ReviewTaskType, entityId: bigint) {
-  switch (taskType) {
-    case "courseSuggestions": {
-      const item = await getCourseSuggestionReview(entityId);
-      return item ? <CourseSuggestionReview item={item} /> : null;
-    }
+  const visualKind = getVisualKindFromTaskType(taskType);
 
-    case "stepVisual": {
-      const item = await getStepVisualReview(entityId);
-      return item ? <StepVisualReview item={item} /> : null;
-    }
-
-    case "stepVisualImage": {
-      const item = await getStepVisualReview(entityId);
-      return item ? <StepVisualImageReview item={item} /> : null;
-    }
-
-    case "wordAudio": {
-      const item = await getWordAudioReview(entityId);
-      return item ? <WordAudioReview item={item} /> : null;
-    }
-
-    default:
+  if (visualKind) {
+    const item = await getStepVisualReview(entityId);
+    if (!item) {
       return null;
+    }
+    return <StepVisualImageReview item={item} />;
   }
+
+  if (taskType === "courseSuggestions") {
+    const item = await getCourseSuggestionReview(entityId);
+    return item ? <CourseSuggestionReview item={item} /> : null;
+  }
+
+  if (taskType === "stepSelectImage") {
+    const item = await getStepVisualReview(entityId);
+    if (!item) {
+      return null;
+    }
+    return <StepSelectImageReview item={item} />;
+  }
+
+  return null;
 }
 
 export async function ReviewQueue({

@@ -1,5 +1,6 @@
 import { Badge } from "@zoonk/ui/components/badge";
 import { isJsonObject } from "@zoonk/utils/json";
+import Image from "next/image";
 
 function getStringField(data: unknown, field: string): string | null {
   if (!isJsonObject(data)) {
@@ -31,10 +32,11 @@ export function StepVisualImageReview({
 
       {imageUrl && (
         <div className="flex justify-center">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
+          <Image
             src={imageUrl}
             alt={prompt ?? "AI generated image"}
+            width={600}
+            height={384}
             className="max-h-96 rounded-md object-contain"
           />
         </div>

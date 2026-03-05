@@ -49,6 +49,7 @@ Always run `pnpm turbo quality:fix` and `pnpm typecheck` after making any change
 - **Plans must include tests.** Every implementation plan should identify which tests need to be added or updated — integration tests for data/workflow logic, e2e tests for UI flows, and unit tests for utilities. If a plan doesn't mention tests, it's incomplete. Tests must give us the confidence that everything is working as expected and help prevent regressions in the future.
 - **Zero tolerance for flakiness.** If a test fails once in any number of runs, it's broken — investigate and fix it. Never dismiss failures as "intermittent" or "pre-existing". A flaky test is worse than no test because it erodes trust in the entire suite. Run e2e tests multiple times before considering them done. Zero tolerance for flakiness means fixing ALL failures, not just the ones in your plan.
 - **Own the whole build.** When making changes, run ALL quality checks across ALL apps — not just the ones you modified. A change to a shared package can break any consumer. "I didn't modify that file" is never an excuse for leaving something broken. Always leave the codebase better than you found it, even if it's outside your direct change area.
+- **Never copy bad patterns.** When existing code has a bad pattern, fix it instead of replicating it. Always evaluate whether existing patterns are correct before following them. "Leave the codebase better than you found it" means actively fixing bad patterns you encounter, not propagating them.
 
 ## Design Style
 
