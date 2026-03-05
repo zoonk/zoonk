@@ -9,12 +9,13 @@ import {
   SidebarMenu,
   SidebarTrigger,
 } from "@zoonk/ui/components/sidebar";
-import { BookOpen, CheckSquareIcon, HomeIcon, Users } from "lucide-react";
+import { BarChart3Icon, BookOpen, CheckSquareIcon, HomeIcon, Users } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { AppSidebarMenuItem } from "./app-sidebar-menu-item";
 
 const menuItems = [
   { icon: HomeIcon, label: "Home", url: "/" },
+  { icon: BarChart3Icon, label: "Stats", url: "/stats" },
   { icon: Users, label: "Users", url: "/users" },
   { icon: BookOpen, label: "Courses", url: "/courses" },
   { icon: CheckSquareIcon, label: "Review", url: "/review" },
