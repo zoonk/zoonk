@@ -1,6 +1,6 @@
 import "server-only";
+import { isAdmin } from "@/lib/admin-guard";
 import { type ReviewTaskType } from "@/lib/review-utils";
-import { getSession } from "@zoonk/core/users/session/get";
 import { prisma } from "@zoonk/db";
 import { cache } from "react";
 
@@ -10,9 +10,7 @@ const cachedListReviewedItems = cache(async function cachedListReviewedItems(
   limit: number,
   offset: number,
 ) {
-  const session = await getSession();
-
-  if (session?.user.role !== "admin") {
+  if (!(await isAdmin())) {
     return { items: [], total: 0 };
   }
   const where = { status, taskType };

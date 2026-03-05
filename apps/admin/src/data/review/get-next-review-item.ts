@@ -1,6 +1,6 @@
 import "server-only";
+import { isAdmin } from "@/lib/admin-guard";
 import { type ReviewTaskType, getVisualKindFromTaskType } from "@/lib/review-utils";
-import { getSession } from "@zoonk/core/users/session/get";
 import { type StepVisualKind, prisma } from "@zoonk/db";
 import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import { cache } from "react";
@@ -73,9 +73,7 @@ async function getNextStepSelectImage(): Promise<ReviewQueueResult> {
 export const getNextReviewItem = cache(async function getNextReviewItem(
   taskType: ReviewTaskType,
 ): Promise<ReviewQueueResult> {
-  const session = await getSession();
-
-  if (session?.user.role !== "admin") {
+  if (!(await isAdmin())) {
     return EMPTY_RESULT;
   }
 
