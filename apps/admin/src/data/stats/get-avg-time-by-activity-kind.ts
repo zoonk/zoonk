@@ -2,7 +2,7 @@ import "server-only";
 import { prisma } from "@zoonk/db";
 import { cache } from "react";
 
-export const getAvgTimeByActivityKind = cache(async () => {
+export const getAvgTimeByActivityKind = cache(async (start: Date, end: Date) => {
   const results = await prisma.$queryRaw<
     { kind: string; avg_duration: number; completed: bigint; started: bigint }[]
   >`
@@ -14,6 +14,7 @@ export const getAvgTimeByActivityKind = cache(async () => {
     FROM activity_progress ap
     JOIN activities a ON a.id = ap.activity_id
     WHERE ap.duration_seconds IS NOT NULL
+      AND ap.started_at >= ${start} AND ap.started_at <= ${end}
     GROUP BY a.kind
     ORDER BY avg_duration DESC
   `;

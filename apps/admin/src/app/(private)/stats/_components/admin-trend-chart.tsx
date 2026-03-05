@@ -1,6 +1,7 @@
 "use client";
 
 import { isValidChartPayload } from "@zoonk/utils/chart";
+import { useId } from "react";
 import {
   Area,
   AreaChart,
@@ -27,12 +28,14 @@ export function AdminTrendChart({
   dataPoints: DataPoint[];
   valueLabel: string;
 }) {
+  const gradientId = useId();
+
   return (
     <figure aria-label={`${valueLabel} chart`} className="h-64 w-full">
       <ResponsiveContainer height="100%" width="100%">
         <AreaChart data={dataPoints} margin={{ bottom: 0, left: 0, right: 0, top: 10 }}>
           <defs>
-            <linearGradient id="trendGradient" x1="0" x2="0" y1="0" y2="1">
+            <linearGradient id={gradientId} x1="0" x2="0" y1="0" y2="1">
               <stop offset="5%" stopColor="var(--foreground)" stopOpacity={0.15} />
               <stop offset="95%" stopColor="var(--foreground)" stopOpacity={0} />
             </linearGradient>
@@ -91,7 +94,7 @@ export function AdminTrendChart({
 
           <Area
             dataKey="value"
-            fill="url(#trendGradient)"
+            fill={`url(#${gradientId})`}
             fillOpacity={1}
             stroke="var(--foreground)"
             strokeWidth={2}

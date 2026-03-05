@@ -42,7 +42,7 @@ export async function EngagementMetrics({
     getPeriodLearningTime(current.start, current.end),
     getPeriodLearningTime(previous.start, previous.end),
     getDailyActiveLearners(current.start, current.end),
-    getAvgTimeByActivityKind(),
+    getAvgTimeByActivityKind(current.start, current.end),
   ]);
 
   const chartData = dailyActive.map((point) => ({

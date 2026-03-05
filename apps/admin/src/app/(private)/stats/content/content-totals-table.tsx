@@ -11,7 +11,7 @@ export function ContentTotalsTable({
   totals,
   periodCreated,
 }: {
-  totals: { chapters: number; lessons: number; activities: number; steps: number };
+  totals: { courses: number; chapters: number; lessons: number; activities: number; steps: number };
   periodCreated: { courses: number; lessons: number; activities: number };
 }) {
   return (
@@ -25,7 +25,7 @@ export function ContentTotalsTable({
       </TableHeader>
 
       <TableBody>
-        <ContentRow count={periodCreated.courses} title="Courses" total={totals.chapters} />
+        <ContentRow count={periodCreated.courses} title="Courses" total={totals.courses} />
         <ContentRow title="Chapters" total={totals.chapters} />
         <ContentRow count={periodCreated.lessons} title="Lessons" total={totals.lessons} />
         <ContentRow count={periodCreated.activities} title="Activities" total={totals.activities} />
