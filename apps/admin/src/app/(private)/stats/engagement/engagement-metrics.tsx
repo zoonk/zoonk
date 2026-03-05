@@ -7,7 +7,7 @@ import { getPeriodCompletionRate } from "@/data/stats/get-period-completion-rate
 import { getPeriodLearningTime } from "@/data/stats/get-period-learning-time";
 import { formatDuration } from "@/lib/format-duration";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
-import { calculateDateRanges, formatLabel, validatePeriod } from "@zoonk/utils/date-ranges";
+import { buildChartData, calculateDateRanges, validatePeriod } from "@zoonk/utils/date-ranges";
 import { ActivityIcon, CheckCircleIcon, ClockIcon, TargetIcon, TimerIcon } from "lucide-react";
 import { AdminMetricCard, AdminMetricCardSkeleton } from "../_components/admin-metric-card";
 import { AdminTrendChart } from "../_components/admin-trend-chart";
@@ -50,16 +50,11 @@ export async function EngagementMetrics({
     getAvgTimeByActivityKind(current.start, current.end),
   ]);
 
-  const chartData = dailyActive.map((point) => ({
-    date: point.date.toISOString(),
-    label: formatLabel(point.date, period, "en"),
-    value: point.count,
-  }));
-
-  const chartAverage =
-    chartData.length === 0
-      ? 0
-      : Math.round(chartData.reduce((sum, point) => sum + point.value, 0) / chartData.length);
+  const { average: chartAverage, dataPoints: chartData } = buildChartData(
+    dailyActive,
+    period,
+    "en",
+  );
 
   return (
     <div className="flex flex-col gap-8">

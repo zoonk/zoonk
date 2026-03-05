@@ -237,6 +237,45 @@ export function getDefaultStartDate(startDateIso?: string): Date {
   );
 }
 
+export function buildChartData(
+  rawPoints: { date: Date; count: number }[],
+  period: HistoryPeriod,
+  locale: string,
+): { average: number; dataPoints: { date: string; label: string; value: number }[] } {
+  if (rawPoints.length === 0) {
+    return { average: 0, dataPoints: [] };
+  }
+
+  const aggregated = getAggregatedPoints(rawPoints, period);
+
+  const dataPoints = aggregated.map((point) => ({
+    date: point.date.toISOString(),
+    label: formatLabel(point.date, period, locale),
+    value: point.value,
+  }));
+
+  const average = Math.round(
+    dataPoints.reduce((sum, point) => sum + point.value, 0) / dataPoints.length,
+  );
+
+  return { average, dataPoints };
+}
+
+function getAggregatedPoints(
+  rawPoints: { date: Date; count: number }[],
+  period: HistoryPeriod,
+): { date: Date; value: number }[] {
+  if (period === "6months") {
+    return aggregateByWeek(rawPoints, (point) => point.count, "sum");
+  }
+
+  if (period === "year") {
+    return aggregateByMonth(rawPoints, (point) => point.count, "sum");
+  }
+
+  return rawPoints.map((point) => ({ date: point.date, value: point.count }));
+}
+
 export type ScoredRow = { key: number; correct: number; incorrect: number };
 
 export function findBestByScore(rows: ScoredRow[]): { key: number; score: number } | null {
