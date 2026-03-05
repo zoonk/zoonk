@@ -13,8 +13,7 @@ export const getAvgTimeByActivityKind = cache(async (start: Date, end: Date) => 
       COUNT(*) as started
     FROM activity_progress ap
     JOIN activities a ON a.id = ap.activity_id
-    WHERE ap.duration_seconds IS NOT NULL
-      AND ap.started_at >= ${start} AND ap.started_at <= ${end}
+    WHERE ap.started_at >= ${start} AND ap.started_at <= ${end}
     GROUP BY a.kind
     ORDER BY avg_duration DESC
   `;

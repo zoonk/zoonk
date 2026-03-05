@@ -3,6 +3,7 @@ import { getLessonSentences } from "@/data/activities/get-lesson-sentences";
 import { getLessonWords } from "@/data/activities/get-lesson-words";
 import { getReviewSteps } from "@/data/activities/get-review-steps";
 import { getLesson } from "@/data/lessons/get-lesson";
+import { startActivity } from "@/data/progress/start-activity";
 import { getActivitySeoMeta } from "@/lib/activities";
 import { getNextActivityInCourse } from "@zoonk/core/activities/next-in-course";
 import { getSession } from "@zoonk/core/users/session/get";
@@ -10,6 +11,7 @@ import { prepareActivityData } from "@zoonk/player/prepare-activity-data";
 import { parseNumericId } from "@zoonk/utils/string";
 import { type Metadata } from "next";
 import { notFound } from "next/navigation";
+import { after } from "next/server";
 import { ActivityNotGenerated } from "./activity-not-generated";
 import { ActivityPlayerClient } from "./activity-player-client";
 
@@ -94,6 +96,10 @@ export default async function ActivityPage({ params }: Props) {
     lessonWords,
     lessonSentences,
   );
+
+  if (session) {
+    after(() => startActivity(Number(session.user.id), activity.id));
+  }
 
   return (
     <ActivityPlayerClient

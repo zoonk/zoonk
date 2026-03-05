@@ -3,11 +3,12 @@ import { getDailyActiveLearners } from "@/data/stats/get-daily-active-learners";
 import { getPeriodAccuracyRate } from "@/data/stats/get-period-accuracy-rate";
 import { getPeriodActiveLearners } from "@/data/stats/get-period-active-learners";
 import { getPeriodAvgActivityTime } from "@/data/stats/get-period-avg-activity-time";
+import { getPeriodCompletionRate } from "@/data/stats/get-period-completion-rate";
 import { getPeriodLearningTime } from "@/data/stats/get-period-learning-time";
 import { formatDuration } from "@/lib/format-duration";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { calculateDateRanges, formatLabel, validatePeriod } from "@zoonk/utils/date-ranges";
-import { ActivityIcon, ClockIcon, TargetIcon, TimerIcon } from "lucide-react";
+import { ActivityIcon, CheckCircleIcon, ClockIcon, TargetIcon, TimerIcon } from "lucide-react";
 import { AdminMetricCard, AdminMetricCardSkeleton } from "../_components/admin-metric-card";
 import { AdminTrendChart } from "../_components/admin-trend-chart";
 import { ActivityBreakdownTable } from "./activity-breakdown-table";
@@ -28,6 +29,8 @@ export async function EngagementMetrics({
     previousAccuracy,
     currentAvgTime,
     previousAvgTime,
+    currentCompletionRate,
+    previousCompletionRate,
     currentLearningTime,
     previousLearningTime,
     dailyActive,
@@ -39,6 +42,8 @@ export async function EngagementMetrics({
     getPeriodAccuracyRate(previous.start, previous.end),
     getPeriodAvgActivityTime(current.start, current.end),
     getPeriodAvgActivityTime(previous.start, previous.end),
+    getPeriodCompletionRate(current.start, current.end),
+    getPeriodCompletionRate(previous.start, previous.end),
     getPeriodLearningTime(current.start, current.end),
     getPeriodLearningTime(previous.start, previous.end),
     getDailyActiveLearners(current.start, current.end),
@@ -58,7 +63,7 @@ export async function EngagementMetrics({
 
   return (
     <div className="flex flex-col gap-8">
-      <div className="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2 lg:grid-cols-5">
         <AdminMetricCard
           change={{ current: currentActiveLearners, period, previous: previousActiveLearners }}
           help="Distinct users with learning activity"
@@ -73,6 +78,14 @@ export async function EngagementMetrics({
           icon={<TargetIcon />}
           title="Accuracy Rate"
           value={`${currentAccuracy.toFixed(1)}%`}
+        />
+
+        <AdminMetricCard
+          change={{ current: currentCompletionRate, period, previous: previousCompletionRate }}
+          help="Activities completed vs started"
+          icon={<CheckCircleIcon />}
+          title="Completion Rate"
+          value={`${currentCompletionRate.toFixed(1)}%`}
         />
 
         <AdminMetricCard
@@ -116,7 +129,8 @@ export async function EngagementMetrics({
 export function EngagementMetricsSkeleton() {
   return (
     <div className="flex flex-col gap-8">
-      <div className="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2 lg:grid-cols-5">
+        <AdminMetricCardSkeleton />
         <AdminMetricCardSkeleton />
         <AdminMetricCardSkeleton />
         <AdminMetricCardSkeleton />

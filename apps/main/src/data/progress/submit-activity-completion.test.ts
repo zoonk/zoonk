@@ -507,6 +507,42 @@ describe(submitActivityCompletion, () => {
     expect(decayRecords).toHaveLength(0);
   });
 
+  test("completes a pre-started record: sets completedAt and durationSeconds, preserves startedAt", async () => {
+    const user = await userFixture();
+    const userId = Number(user.id);
+
+    // Simulate startActivity() creating a start-only record
+    await prisma.activityProgress.create({
+      data: { activityId: activity.id, userId },
+    });
+
+    const startRecord = await prisma.activityProgress.findUnique({
+      where: { userActivity: { activityId: activity.id, userId } },
+    });
+
+    expect(startRecord?.completedAt).toBeNull();
+
+    await submitActivityCompletion({
+      activityId: activity.id,
+      courseId: course.id,
+      durationSeconds: 20,
+      isChallenge: false,
+      organizationId: org.id,
+      score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
+      startedAt: new Date(Date.now() - 20_000),
+      stepResults: [stepResult(true)],
+      userId,
+    });
+
+    const progress = await prisma.activityProgress.findUnique({
+      where: { userActivity: { activityId: activity.id, userId } },
+    });
+
+    expect(progress?.completedAt).not.toBeNull();
+    expect(progress?.durationSeconds).toBe(20);
+    expect(progress?.startedAt).toEqual(startRecord?.startedAt);
+  });
+
   test("applies decay and fills DailyProgress gaps for inactive days", async () => {
     const user = await userFixture();
     const userId = Number(user.id);
