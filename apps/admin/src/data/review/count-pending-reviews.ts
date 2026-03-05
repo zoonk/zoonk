@@ -1,7 +1,11 @@
 import "server-only";
-import { REVIEW_TASK_TYPES, type ReviewTaskType } from "@/lib/review-utils";
+import {
+  REVIEW_TASK_TYPES,
+  type ReviewTaskType,
+  getVisualKindFromTaskType,
+} from "@/lib/review-utils";
 import { getSession } from "@zoonk/core/users/session/get";
-import { prisma } from "@zoonk/db";
+import { type StepVisualKind, prisma } from "@zoonk/db";
 import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import { cache } from "react";
 
@@ -16,59 +20,51 @@ export const reviewedEntityIds = cache(async function reviewedEntityIds(
   return reviews.map((review) => review.entityId);
 });
 
+function countPendingStepVisual(kind: StepVisualKind, excludeIds: bigint[]): Promise<number> {
+  return prisma.step.count({
+    where: {
+      NOT: { id: { in: excludeIds } },
+      activity: { organization: { slug: AI_ORG_SLUG } },
+      visualKind: kind,
+    },
+  });
+}
+
 export const countPendingForTask = cache(async function countPendingForTask(
   taskType: ReviewTaskType,
 ): Promise<number> {
   const excludeIds = await reviewedEntityIds(taskType);
+  const visualKind = getVisualKindFromTaskType(taskType);
 
-  switch (taskType) {
-    case "courseSuggestions":
-      return prisma.searchPrompt.count({
-        where: {
-          NOT: { id: { in: excludeIds.map(Number) } },
-          suggestions: { some: {} },
-        },
-      });
-
-    case "stepVisual":
-      return prisma.step.count({
-        where: {
-          NOT: { id: { in: excludeIds } },
-          activity: { organization: { slug: AI_ORG_SLUG } },
-          visualKind: { not: null },
-        },
-      });
-
-    case "stepVisualImage":
-      return prisma.step.count({
-        where: {
-          NOT: { id: { in: excludeIds } },
-          activity: { organization: { slug: AI_ORG_SLUG } },
-          visualKind: "image",
-        },
-      });
-
-    case "wordAudio":
-      return prisma.word.count({
-        where: {
-          NOT: { id: { in: excludeIds } },
-          audioUrl: { not: null },
-          organization: { slug: AI_ORG_SLUG },
-        },
-      });
-
-    default:
-      return 0;
+  if (visualKind) {
+    return countPendingStepVisual(visualKind, excludeIds);
   }
+
+  if (taskType === "courseSuggestions") {
+    return prisma.searchPrompt.count({
+      where: {
+        NOT: { id: { in: excludeIds.map(Number) } },
+        suggestions: { some: {} },
+      },
+    });
+  }
+
+  if (taskType === "stepSelectImage") {
+    return prisma.step.count({
+      where: {
+        NOT: { id: { in: excludeIds } },
+        activity: { organization: { slug: AI_ORG_SLUG } },
+        kind: "selectImage",
+      },
+    });
+  }
+
+  return 0;
 });
 
 function emptyCountRecord(): Record<ReviewTaskType, number> {
-  return {
-    courseSuggestions: 0,
-    stepVisual: 0,
-    stepVisualImage: 0,
-    wordAudio: 0,
-  };
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- entries are generated from REVIEW_TASK_TYPES
+  return Object.fromEntries(REVIEW_TASK_TYPES.map((t) => [t, 0])) as Record<ReviewTaskType, number>;
 }
 
 export const countPendingReviews = cache(async function countPendingReviews(): Promise<

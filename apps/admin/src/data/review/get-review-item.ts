@@ -36,13 +36,3 @@ export const getStepVisualReview = cache(async function getStepVisualReview(enti
     where: { id: entityId },
   });
 });
-
-export const getWordAudioReview = cache(async function getWordAudioReview(entityId: bigint) {
-  if (!(await adminGuard())) {
-    return null;
-  }
-
-  return prisma.word.findUnique({
-    where: { id: entityId },
-  });
-});

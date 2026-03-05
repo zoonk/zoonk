@@ -8,7 +8,7 @@ function getCourseUrl(course: Course & { organization: Organization | null }) {
     return null;
   }
 
-  return `${EDITOR_URL}/${course.organization.slug}/c/${course.language}/${course.slug}`;
+  return `${EDITOR_URL}/${course.organization.slug}/c/${course.slug}`;
 }
 
 export function CourseRow({ course }: { course: Course & { organization: Organization | null } }) {

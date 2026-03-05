@@ -1,7 +1,7 @@
 import "server-only";
-import { type ReviewTaskType } from "@/lib/review-utils";
+import { type ReviewTaskType, getVisualKindFromTaskType } from "@/lib/review-utils";
 import { getSession } from "@zoonk/core/users/session/get";
-import { prisma } from "@zoonk/db";
+import { type StepVisualKind, prisma } from "@zoonk/db";
 import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import { cache } from "react";
 import { reviewedEntityIds } from "./count-pending-reviews";
@@ -33,13 +33,16 @@ async function getNextCourseSuggestion(): Promise<ReviewQueueResult> {
   return { entityId: next ? BigInt(next.id) : null, remaining };
 }
 
-async function getNextStepVisual(): Promise<ReviewQueueResult> {
-  const excludeIds = await reviewedEntityIds("stepVisual");
+async function getNextStepVisualByKind(
+  kind: StepVisualKind,
+  taskType: ReviewTaskType,
+): Promise<ReviewQueueResult> {
+  const excludeIds = await reviewedEntityIds(taskType);
 
   const where = {
     NOT: { id: { in: excludeIds } },
     activity: { organization: { slug: AI_ORG_SLUG } },
-    visualKind: { not: null } as const,
+    visualKind: kind,
   };
 
   const [next, remaining] = await Promise.all([
@@ -50,35 +53,18 @@ async function getNextStepVisual(): Promise<ReviewQueueResult> {
   return { entityId: next?.id ?? null, remaining };
 }
 
-async function getNextStepVisualImage(): Promise<ReviewQueueResult> {
-  const excludeIds = await reviewedEntityIds("stepVisualImage");
+async function getNextStepSelectImage(): Promise<ReviewQueueResult> {
+  const excludeIds = await reviewedEntityIds("stepSelectImage");
 
   const where = {
     NOT: { id: { in: excludeIds } },
     activity: { organization: { slug: AI_ORG_SLUG } },
-    visualKind: "image" as const,
+    kind: "selectImage" as const,
   };
 
   const [next, remaining] = await Promise.all([
     prisma.step.findFirst({ orderBy: { createdAt: "asc" }, select: { id: true }, where }),
     prisma.step.count({ where }),
-  ]);
-
-  return { entityId: next?.id ?? null, remaining };
-}
-
-async function getNextWordAudio(): Promise<ReviewQueueResult> {
-  const excludeIds = await reviewedEntityIds("wordAudio");
-
-  const where = {
-    NOT: { id: { in: excludeIds } },
-    audioUrl: { not: null },
-    organization: { slug: AI_ORG_SLUG },
-  };
-
-  const [next, remaining] = await Promise.all([
-    prisma.word.findFirst({ orderBy: { createdAt: "asc" }, select: { id: true }, where }),
-    prisma.word.count({ where }),
   ]);
 
   return { entityId: next?.id ?? null, remaining };
@@ -93,16 +79,19 @@ export const getNextReviewItem = cache(async function getNextReviewItem(
     return EMPTY_RESULT;
   }
 
-  switch (taskType) {
-    case "courseSuggestions":
-      return getNextCourseSuggestion();
-    case "stepVisual":
-      return getNextStepVisual();
-    case "stepVisualImage":
-      return getNextStepVisualImage();
-    case "wordAudio":
-      return getNextWordAudio();
-    default:
-      return EMPTY_RESULT;
+  const visualKind = getVisualKindFromTaskType(taskType);
+
+  if (visualKind) {
+    return getNextStepVisualByKind(visualKind, taskType);
   }
+
+  if (taskType === "courseSuggestions") {
+    return getNextCourseSuggestion();
+  }
+
+  if (taskType === "stepSelectImage") {
+    return getNextStepSelectImage();
+  }
+
+  return EMPTY_RESULT;
 });
