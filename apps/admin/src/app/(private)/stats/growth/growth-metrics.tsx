@@ -1,0 +1,102 @@
+import { countSubscribersByPlan } from "@/data/stats/count-subscribers-by-plan";
+import { getActivationRate } from "@/data/stats/get-activation-rate";
+import { getConversionRate } from "@/data/stats/get-conversion-rate";
+import { getDailySignups } from "@/data/stats/get-daily-signups";
+import { getNewSignups } from "@/data/stats/get-new-signups";
+import { Skeleton } from "@zoonk/ui/components/skeleton";
+import { calculateDateRanges, formatLabel, validatePeriod } from "@zoonk/utils/date-ranges";
+import { CreditCardIcon, TargetIcon, UsersIcon } from "lucide-react";
+import { AdminMetricCard, AdminMetricCardSkeleton } from "../_components/admin-metric-card";
+import { AdminTrendChart } from "../_components/admin-trend-chart";
+import { SubscribersTable } from "./subscribers-table";
+
+export async function GrowthMetrics({
+  searchParams,
+}: {
+  searchParams: Promise<{ period?: string }>;
+}) {
+  const { period: rawPeriod } = await searchParams;
+  const period = validatePeriod(rawPeriod ?? "month");
+  const { current, previous } = calculateDateRanges(period, 0);
+
+  const [
+    currentSignups,
+    previousSignups,
+    currentActivation,
+    currentConversion,
+    dailySignups,
+    subscribers,
+  ] = await Promise.all([
+    getNewSignups(current.start, current.end),
+    getNewSignups(previous.start, previous.end),
+    getActivationRate(),
+    getConversionRate(),
+    getDailySignups(current.start, current.end),
+    countSubscribersByPlan(),
+  ]);
+
+  const chartData = dailySignups.map((point) => ({
+    date: point.date.toISOString(),
+    label: formatLabel(point.date, period, "en"),
+    value: point.count,
+  }));
+
+  const chartAverage =
+    chartData.length === 0
+      ? 0
+      : Math.round(chartData.reduce((sum, point) => sum + point.value, 0) / chartData.length);
+
+  return (
+    <div className="flex flex-col gap-8">
+      <div className="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2 lg:grid-cols-3">
+        <AdminMetricCard
+          change={{ current: currentSignups, period, previous: previousSignups }}
+          help="New user registrations in this period"
+          icon={<UsersIcon />}
+          title="New Signups"
+          value={currentSignups.toLocaleString()}
+        />
+
+        <AdminMetricCard
+          description={`${currentActivation.activated.toLocaleString()} of ${currentActivation.total.toLocaleString()} users`}
+          help="Users who completed at least 1 lesson"
+          icon={<TargetIcon />}
+          title="Activation Rate"
+          value={`${currentActivation.rate.toFixed(1)}%`}
+        />
+
+        <AdminMetricCard
+          description={`${currentConversion.paid.toLocaleString()} paid of ${currentConversion.total.toLocaleString()} total`}
+          help="Active paid subscribers vs all users"
+          icon={<CreditCardIcon />}
+          title="Free-to-Paid"
+          value={`${currentConversion.rate.toFixed(1)}%`}
+        />
+      </div>
+
+      {chartData.length > 0 && (
+        <AdminTrendChart average={chartAverage} dataPoints={chartData} valueLabel="signups" />
+      )}
+
+      {subscribers.length > 0 && (
+        <div className="rounded-lg border">
+          <SubscribersTable data={subscribers} />
+        </div>
+      )}
+    </div>
+  );
+}
+
+export function GrowthMetricsSkeleton() {
+  return (
+    <div className="flex flex-col gap-8">
+      <div className="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2 lg:grid-cols-3">
+        <AdminMetricCardSkeleton />
+        <AdminMetricCardSkeleton />
+        <AdminMetricCardSkeleton />
+      </div>
+      <Skeleton className="h-64 w-full rounded-xl" />
+      <Skeleton className="h-32 w-full rounded-lg" />
+    </div>
+  );
+}
