@@ -1,12 +1,26 @@
 import { countContent } from "@/data/stats/count-content";
-import { countTotalPendingReviews } from "@/data/stats/count-total-pending-reviews";
+import { getDailyContentCreated } from "@/data/stats/get-daily-content-created";
 import { getPeriodContentCreated } from "@/data/stats/get-period-content-created";
-import { getPeriodReviewsResolved } from "@/data/stats/get-period-reviews-resolved";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
-import { calculateDateRanges, validatePeriod } from "@zoonk/utils/date-ranges";
-import { AlertCircleIcon, BookOpenIcon, CheckCircleIcon, LayersIcon } from "lucide-react";
+import { type HistoryPeriod, calculateDateRanges, validatePeriod } from "@zoonk/utils/date-ranges";
+import { BookOpenIcon, LayersIcon } from "lucide-react";
+import { Suspense } from "react";
 import { AdminMetricCard, AdminMetricCardSkeleton } from "../_components/admin-metric-card";
+import { ContentChart } from "./content-chart-filter";
 import { ContentTotalsTable } from "./content-totals-table";
+
+async function ContentChartSection({
+  start,
+  end,
+  period,
+}: {
+  start: Date;
+  end: Date;
+  period: HistoryPeriod;
+}) {
+  const dailyContent = await getDailyContentCreated(start, end);
+  return <ContentChart dailyContent={dailyContent} period={period} />;
+}
 
 export async function ContentMetrics({
   searchParams,
@@ -17,19 +31,15 @@ export async function ContentMetrics({
   const period = validatePeriod(rawPeriod ?? "month");
   const { current, previous } = calculateDateRanges(period, 0);
 
-  const [currentCreated, previousCreated, currentReviews, previousReviews, pendingReviews, totals] =
-    await Promise.all([
-      getPeriodContentCreated(current.start, current.end),
-      getPeriodContentCreated(previous.start, previous.end),
-      getPeriodReviewsResolved(current.start, current.end),
-      getPeriodReviewsResolved(previous.start, previous.end),
-      countTotalPendingReviews(),
-      countContent(),
-    ]);
+  const [currentCreated, previousCreated, totals] = await Promise.all([
+    getPeriodContentCreated(current.start, current.end),
+    getPeriodContentCreated(previous.start, previous.end),
+    countContent(),
+  ]);
 
   return (
     <div className="flex flex-col gap-8">
-      <div className="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
         <AdminMetricCard
           change={{ current: currentCreated.courses, period, previous: previousCreated.courses }}
           help="Courses created in this period"
@@ -45,22 +55,11 @@ export async function ContentMetrics({
           title="New Lessons"
           value={currentCreated.lessons.toLocaleString()}
         />
-
-        <AdminMetricCard
-          change={{ current: currentReviews, period, previous: previousReviews }}
-          help="Content reviews completed in this period"
-          icon={<CheckCircleIcon />}
-          title="Reviews Resolved"
-          value={currentReviews.toLocaleString()}
-        />
-
-        <AdminMetricCard
-          help="Content awaiting admin review"
-          icon={<AlertCircleIcon />}
-          title="Pending Reviews"
-          value={pendingReviews.toLocaleString()}
-        />
       </div>
+
+      <Suspense fallback={<Skeleton className="h-64 w-full rounded-xl" />}>
+        <ContentChartSection end={current.end} period={period} start={current.start} />
+      </Suspense>
 
       <div className="flex flex-col gap-3">
         <h3 className="text-base font-semibold tracking-tight">Content Totals</h3>
@@ -76,12 +75,11 @@ export async function ContentMetrics({
 export function ContentMetricsSkeleton() {
   return (
     <div className="flex flex-col gap-8">
-      <div className="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2 lg:grid-cols-4">
-        <AdminMetricCardSkeleton />
-        <AdminMetricCardSkeleton />
+      <div className="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
         <AdminMetricCardSkeleton />
         <AdminMetricCardSkeleton />
       </div>
+      <Skeleton className="h-64 w-full rounded-xl" />
       <Skeleton className="h-48 w-full rounded-lg" />
     </div>
   );

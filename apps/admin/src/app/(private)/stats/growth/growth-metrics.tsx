@@ -4,7 +4,7 @@ import { getConversionRate } from "@/data/stats/get-conversion-rate";
 import { getDailySignups } from "@/data/stats/get-daily-signups";
 import { getNewSignups } from "@/data/stats/get-new-signups";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
-import { calculateDateRanges, formatLabel, validatePeriod } from "@zoonk/utils/date-ranges";
+import { buildChartData, calculateDateRanges, validatePeriod } from "@zoonk/utils/date-ranges";
 import { CreditCardIcon, TargetIcon, UsersIcon } from "lucide-react";
 import { AdminMetricCard, AdminMetricCardSkeleton } from "../_components/admin-metric-card";
 import { AdminTrendChart } from "../_components/admin-trend-chart";
@@ -35,16 +35,11 @@ export async function GrowthMetrics({
     countSubscribersByPlan(),
   ]);
 
-  const chartData = dailySignups.map((point) => ({
-    date: point.date.toISOString(),
-    label: formatLabel(point.date, period, "en"),
-    value: point.count,
-  }));
-
-  const chartAverage =
-    chartData.length === 0
-      ? 0
-      : Math.round(chartData.reduce((sum, point) => sum + point.value, 0) / chartData.length);
+  const { average: chartAverage, dataPoints: chartData } = buildChartData(
+    dailySignups,
+    period,
+    "en",
+  );
 
   return (
     <div className="flex flex-col gap-8">

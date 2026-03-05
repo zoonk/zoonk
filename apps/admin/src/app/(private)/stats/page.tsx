@@ -38,7 +38,7 @@ const sections = [
     title: "Engagement & Learning",
   },
   {
-    description: "New courses and lessons, review resolution, pending reviews, and content totals.",
+    description: "New courses and lessons, content creation trends, and content totals.",
     href: "/stats/content",
     icon: BookOpenIcon,
     title: "Content & Operations",

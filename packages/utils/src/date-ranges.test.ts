@@ -5,6 +5,7 @@ import {
   aggregateByWeek,
   aggregateScoreByMonth,
   aggregateScoreByWeek,
+  buildChartData,
   calculateDateRanges,
   findBestByScore,
   formatLabel,
@@ -261,6 +262,49 @@ describe(getDefaultStartDate, () => {
     expect(result.toISOString().slice(0, 10)).toBe(expected.toISOString().slice(0, 10));
 
     vi.useRealTimers();
+  });
+});
+
+describe(buildChartData, () => {
+  const rawPoints = [
+    { count: 10, date: new Date(2026, 0, 5) },
+    { count: 20, date: new Date(2026, 0, 6) },
+    { count: 30, date: new Date(2026, 0, 20) },
+    { count: 40, date: new Date(2026, 1, 10) },
+  ];
+
+  it("returns daily data points for 'month' period (no aggregation)", () => {
+    const result = buildChartData(rawPoints, "month", "en");
+    expect(result.dataPoints).toHaveLength(4);
+    expect(result.dataPoints.map((dp) => dp.value)).toEqual([10, 20, 30, 40]);
+  });
+
+  it("aggregates to weekly sums for '6months' period", () => {
+    const result = buildChartData(rawPoints, "6months", "en");
+    expect(result.dataPoints.length).toBeLessThan(4);
+    const totalValue = result.dataPoints.reduce((sum, dp) => sum + dp.value, 0);
+    expect(totalValue).toBe(100);
+  });
+
+  it("aggregates to monthly sums for 'year' period", () => {
+    const result = buildChartData(rawPoints, "year", "en");
+    expect(result.dataPoints).toHaveLength(2);
+    expect(result.dataPoints.map((dp) => dp.value)).toEqual([60, 40]);
+  });
+
+  it("returns empty data points and zero average for empty input", () => {
+    const result = buildChartData([], "month", "en");
+    expect(result).toEqual({ average: 0, dataPoints: [] });
+  });
+
+  it("calculates average correctly", () => {
+    const result = buildChartData(rawPoints, "month", "en");
+    expect(result.average).toBe(Math.round((10 + 20 + 30 + 40) / 4));
+  });
+
+  it("calculates average correctly for aggregated data", () => {
+    const result = buildChartData(rawPoints, "year", "en");
+    expect(result.average).toBe(Math.round((60 + 40) / 2));
   });
 });
 
