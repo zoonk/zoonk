@@ -1,6 +1,6 @@
 "use server";
 
-import { getSession } from "@zoonk/core/users/session/get";
+import { assertAdmin } from "@/lib/admin-guard";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { parseFormField } from "@zoonk/utils/form";
@@ -8,11 +8,7 @@ import { parseBigIntId } from "@zoonk/utils/string";
 import { revalidatePath } from "next/cache";
 
 export async function unflagAction(formData: FormData) {
-  const session = await getSession();
-
-  if (session?.user.role !== "admin") {
-    throw new Error("Unauthorized");
-  }
+  await assertAdmin();
 
   const taskType = parseFormField(formData, "taskType");
   const entityIdRaw = parseFormField(formData, "entityId");

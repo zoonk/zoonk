@@ -1,12 +1,10 @@
 import "server-only";
-import { getSession } from "@zoonk/core/users/session/get";
+import { isAdmin } from "@/lib/admin-guard";
 import { prisma } from "@zoonk/db";
 import { cache } from "react";
 
 export const getUser = cache(async function getUser(id: number) {
-  const session = await getSession();
-
-  if (session?.user.role !== "admin") {
+  if (!(await isAdmin())) {
     return null;
   }
 

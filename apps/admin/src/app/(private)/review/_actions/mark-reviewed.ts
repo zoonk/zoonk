@@ -1,8 +1,8 @@
 "use server";
 
 import { getNextReviewItem } from "@/data/review/get-next-review-item";
+import { assertAdmin } from "@/lib/admin-guard";
 import { getTaskPath, isValidTaskType } from "@/lib/review-utils";
-import { getSession } from "@zoonk/core/users/session/get";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { parseFormField } from "@zoonk/utils/form";
@@ -10,11 +10,7 @@ import { parseBigIntId } from "@zoonk/utils/string";
 import { redirect } from "next/navigation";
 
 export async function markReviewedAction(formData: FormData) {
-  const session = await getSession();
-
-  if (session?.user.role !== "admin") {
-    throw new Error("Unauthorized");
-  }
+  const session = await assertAdmin();
 
   const taskType = parseFormField(formData, "taskType");
   const entityIdRaw = parseFormField(formData, "entityId");

@@ -1,10 +1,10 @@
 import "server-only";
+import { isAdmin } from "@/lib/admin-guard";
 import {
   REVIEW_TASK_TYPES,
   type ReviewTaskType,
   getVisualKindFromTaskType,
 } from "@/lib/review-utils";
-import { getSession } from "@zoonk/core/users/session/get";
 import { type StepVisualKind, prisma } from "@zoonk/db";
 import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import { cache } from "react";
@@ -70,9 +70,7 @@ function emptyCountRecord(): Record<ReviewTaskType, number> {
 export const countPendingReviews = cache(async function countPendingReviews(): Promise<
   Record<ReviewTaskType, number>
 > {
-  const session = await getSession();
-
-  if (session?.user.role !== "admin") {
+  if (!(await isAdmin())) {
     return emptyCountRecord();
   }
 

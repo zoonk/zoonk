@@ -10,32 +10,28 @@ import {
   TableHeader,
   TableRow,
 } from "@zoonk/ui/components/table";
-import { SubmitButton } from "@zoonk/ui/patterns/buttons/submit";
-import { unflagAction } from "./unflag-action";
+import Link from "next/link";
 
 function FlaggedRow({
   entityId,
   flaggedBy,
   flaggedAt,
-  taskType,
+  taskPath,
 }: {
   entityId: string;
   flaggedBy: string;
   flaggedAt: string;
-  taskType: string;
+  taskPath: string;
 }) {
   return (
     <TableRow>
-      <TableCell>{entityId}</TableCell>
+      <TableCell>
+        <Link href={`${taskPath}/${entityId}`} className="underline">
+          {entityId}
+        </Link>
+      </TableCell>
       <TableCell>{flaggedBy}</TableCell>
       <TableCell>{flaggedAt}</TableCell>
-      <TableCell>
-        <form action={unflagAction}>
-          <input type="hidden" name="taskType" value={taskType} />
-          <input type="hidden" name="entityId" value={entityId} />
-          <SubmitButton>Return to queue</SubmitButton>
-        </form>
-      </TableCell>
     </TableRow>
   );
 }
@@ -56,6 +52,8 @@ export async function FlaggedList({
   });
   const totalPages = Math.ceil(total / limit);
 
+  const taskPath = getTaskPath(taskType);
+
   if (items.length === 0) {
     return <p className="text-muted-foreground text-sm">No flagged items.</p>;
   }
@@ -69,7 +67,6 @@ export async function FlaggedList({
               <TableHead>Entity ID</TableHead>
               <TableHead>Flagged by</TableHead>
               <TableHead>Date</TableHead>
-              <TableHead />
             </TableRow>
           </TableHeader>
 
@@ -80,7 +77,7 @@ export async function FlaggedList({
                 entityId={item.entityId.toString()}
                 flaggedBy={item.user.name}
                 flaggedAt={item.reviewedAt.toLocaleDateString()}
-                taskType={item.taskType}
+                taskPath={taskPath}
               />
             ))}
           </TableBody>
@@ -88,7 +85,7 @@ export async function FlaggedList({
       </div>
 
       <AdminPagination
-        basePath={`${getTaskPath(taskType)}?view=flagged`}
+        basePath={`${taskPath}?view=flagged`}
         limit={limit}
         page={page}
         totalPages={totalPages}

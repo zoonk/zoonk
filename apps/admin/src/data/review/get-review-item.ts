@@ -1,17 +1,12 @@
 import "server-only";
-import { getSession } from "@zoonk/core/users/session/get";
+import { isAdmin } from "@/lib/admin-guard";
 import { prisma } from "@zoonk/db";
 import { cache } from "react";
-
-async function adminGuard() {
-  const session = await getSession();
-  return session?.user.role === "admin";
-}
 
 export const getCourseSuggestionReview = cache(async function getCourseSuggestionReview(
   entityId: bigint,
 ) {
-  if (!(await adminGuard())) {
+  if (!(await isAdmin())) {
     return null;
   }
 
@@ -27,7 +22,7 @@ export const getCourseSuggestionReview = cache(async function getCourseSuggestio
 });
 
 export const getStepVisualReview = cache(async function getStepVisualReview(entityId: bigint) {
-  if (!(await adminGuard())) {
+  if (!(await isAdmin())) {
     return null;
   }
 
