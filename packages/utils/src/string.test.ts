@@ -99,6 +99,10 @@ describe(validateOffset, () => {
     expect(validateOffset("-5")).toBe(0);
   });
 
+  test("returns 0 for negative decimals", () => {
+    expect(validateOffset("-0.5")).toBe(0);
+  });
+
   test("returns 0 for empty string", () => {
     expect(validateOffset("")).toBe(0);
   });

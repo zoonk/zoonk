@@ -9,7 +9,7 @@ export function removeAccents(str: string): string {
 
 export function validateOffset(value?: unknown): number {
   const parsed = Number(value);
-  return Number.isFinite(parsed) ? Math.max(0, Math.floor(parsed)) : 0;
+  return Number.isFinite(parsed) ? Math.max(0, Math.trunc(parsed)) : 0;
 }
 
 export function parseNumericId(value: string): number | null {
