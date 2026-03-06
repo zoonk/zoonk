@@ -161,6 +161,9 @@ export async function submitActivityCompletion(input: {
   const now = new Date();
   const today = parseLocalDate(input.localDate);
 
+  // localDate is client-provided, so a malicious client could send a far-future
+  // date and cause fillDecayGaps to create millions of records. The ±48h window
+  // is generous enough for all real timezone differences (max ~14h).
   if (Math.abs(today.getTime() - now.getTime()) > MAX_LOCAL_DATE_DRIFT_MS) {
     throw new Error("localDate is too far from server time");
   }
