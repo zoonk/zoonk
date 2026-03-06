@@ -2,8 +2,8 @@ import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { getAiOrganization, openDialog } from "@zoonk/e2e/helpers";
 import { courseCategoryFixture, courseFixture } from "@zoonk/testing/fixtures/courses";
-import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import { LOCALE_COOKIE } from "@zoonk/utils/locale";
+import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { type Page, expect, test } from "./fixtures";
 
 async function createTestCourse() {

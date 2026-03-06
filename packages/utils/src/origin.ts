@@ -1,5 +1,5 @@
-import { API_URL } from "./constants";
 import { getEnvironment, isLocalhostSupported } from "./environment";
+import { API_URL } from "./url";
 
 /**
  * Determines the appropriate scheme (http/https) for a domain.

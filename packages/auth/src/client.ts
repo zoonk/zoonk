@@ -9,7 +9,7 @@ import {
 } from "better-auth/client/plugins";
 import { createAuthClient } from "better-auth/react";
 import { type auth } from "./auth";
-import { BETTER_AUTH_BASE_PATH } from "./constants";
+import { BETTER_AUTH_BASE_PATH } from "./config";
 import { ac, admin, member, owner } from "./permissions";
 
 export function logout() {

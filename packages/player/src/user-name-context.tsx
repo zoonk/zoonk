@@ -1,8 +1,9 @@
 "use client";
 
-import { STORAGE_KEY_DISPLAY_NAME } from "@zoonk/utils/constants";
 import { replaceNamePlaceholder } from "@zoonk/utils/string";
 import { createContext, useCallback, useContext, useEffect, useSyncExternalStore } from "react";
+
+const STORAGE_KEY_DISPLAY_NAME = "zoonk:displayName";
 
 const UserNameContext = createContext<string | null>(null);
 

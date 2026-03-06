@@ -32,7 +32,7 @@
     "./steps/content-contract": "./src/steps/content-contract.ts",
     "./steps/visual-content-contract": "./src/steps/visual-content-contract.ts",
     "./steps/visual-image": "./src/steps/step-visual-image.ts",
-    "./types": "./src/types.ts",
+    "./orgs/org": "./src/orgs/org.ts",
     "./users/orgs/list": "./src/users/list-user-orgs.ts",
     "./users/otp/send": "./src/users/send-otp.ts",
     "./users/session/get": "./src/users/get-user-session.ts"

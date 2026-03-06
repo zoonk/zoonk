@@ -1,4 +1,4 @@
-import { DEFAULT_PROGRESS_LOOKBACK_DAYS } from "./constants";
+export const DEFAULT_PROGRESS_LOOKBACK_DAYS = 90;
 
 const HISTORY_PERIODS = ["month", "6months", "year", "all"] as const;
 const APP_LAUNCH_YEAR = 2025;

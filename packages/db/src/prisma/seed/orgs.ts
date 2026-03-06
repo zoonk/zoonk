@@ -1,4 +1,4 @@
-import { AI_ORG_SLUG } from "@zoonk/utils/constants";
+import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { type Organization, type PrismaClient } from "../../generated/prisma/client";
 import { type SeedUsers } from "./users";
 

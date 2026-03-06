@@ -10,7 +10,7 @@ import { EntityListActions } from "@/components/entity/entity-list-actions";
 import { listCourseChapters } from "@/data/chapters/list-course-chapters";
 import { getCourse } from "@/data/courses/get-course";
 import { ErrorView } from "@zoonk/ui/patterns/error";
-import { SUPPORT_URL } from "@zoonk/utils/constants";
+import { SUPPORT_URL } from "@zoonk/utils/url";
 import { getExtracted } from "next-intl/server";
 import { notFound } from "next/navigation";
 import {

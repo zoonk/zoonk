@@ -1,7 +1,7 @@
 import { betterAuth } from "better-auth/minimal";
 import { emailOTP, oneTimeToken } from "better-auth/plugins";
-import { baseAuthConfig, baseAuthPlugins, fullPlugins, socialProviders } from "./config";
 import { sendVerificationOTP } from "./plugins/otp";
+import { baseAuthConfig, baseAuthPlugins, fullPlugins, socialProviders } from "./server";
 
 /**
  * @public

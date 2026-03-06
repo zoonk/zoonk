@@ -3,8 +3,8 @@ import { ErrorCode } from "@/lib/app-error";
 import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
 import { type Chapter, type Course, type Lesson, prisma } from "@zoonk/db";
 import { clampQueryItems } from "@zoonk/db/utils";
-import { DEFAULT_SEARCH_LIMIT } from "@zoonk/utils/constants";
 import { AppError, safeAsync } from "@zoonk/utils/error";
+import { DEFAULT_SEARCH_LIMIT } from "@zoonk/utils/search";
 import { normalizeString } from "@zoonk/utils/string";
 import { cache } from "react";
 

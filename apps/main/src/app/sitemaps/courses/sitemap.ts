@@ -5,7 +5,7 @@ import {
   countSitemapCourses,
   listSitemapCourses,
 } from "@/data/sitemaps/courses";
-import { SITE_URL } from "@zoonk/utils/constants";
+import { SITE_URL } from "@zoonk/utils/url";
 import { type MetadataRoute } from "next";
 import { cacheLife, cacheTag } from "next/cache";
 

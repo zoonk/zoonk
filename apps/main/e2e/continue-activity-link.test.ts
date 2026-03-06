@@ -4,7 +4,7 @@ import { activityFixture, activityProgressFixture } from "@zoonk/testing/fixture
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
-import { AI_ORG_SLUG } from "@zoonk/utils/constants";
+import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { expect, test } from "./fixtures";
 
 async function createTestCourseWithActivity() {

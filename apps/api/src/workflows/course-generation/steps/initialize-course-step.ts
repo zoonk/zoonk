@@ -1,6 +1,6 @@
 import { type CourseSuggestion, prisma } from "@zoonk/db";
-import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import { safeAsync } from "@zoonk/utils/error";
+import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { ensureLocaleSuffix, normalizeString, toSlug } from "@zoonk/utils/string";
 import { streamError, streamStatus } from "../stream-status";
 

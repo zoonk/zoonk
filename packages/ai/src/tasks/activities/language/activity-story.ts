@@ -2,8 +2,7 @@ import "server-only";
 import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-options";
 import { Output, generateText } from "ai";
 import { z } from "zod";
-import { ACTIVITY_OPTIONS_COUNT } from "../constants";
-import { formatConceptLines } from "../format-concept-lines";
+import { ACTIVITY_OPTIONS_COUNT, formatConceptLines } from "../config";
 import { getLanguagePromptContext } from "./_utils/language-prompt-context";
 import systemPrompt from "./activity-story.prompt.md";
 

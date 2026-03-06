@@ -6,7 +6,7 @@ import {
   getVisualKindFromTaskType,
 } from "@/lib/review-utils";
 import { type StepVisualKind, prisma } from "@zoonk/db";
-import { AI_ORG_SLUG } from "@zoonk/utils/constants";
+import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { cache } from "react";
 
 export const reviewedEntityIds = cache(async function reviewedEntityIds(

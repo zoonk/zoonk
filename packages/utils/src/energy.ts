@@ -1,4 +1,12 @@
-import { DAILY_DECAY, MAX_ENERGY, MIN_ENERGY, MS_PER_DAY } from "./constants";
+import { MS_PER_DAY } from "./date";
+
+export const DAILY_DECAY = 1;
+export const ENERGY_PER_CORRECT = 0.2;
+export const ENERGY_PER_INCORRECT = -0.1;
+export const ENERGY_PER_STATIC = 0.1;
+const MAX_ENERGY = 100;
+export const MIN_ENERGY = 0;
+export const CHALLENGE_FAILURE_ENERGY = 0.1;
 
 export function toUTCMidnight(date: Date): Date {
   return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));

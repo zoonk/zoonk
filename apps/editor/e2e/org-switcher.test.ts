@@ -1,4 +1,4 @@
-import { AI_ORG_SLUG } from "@zoonk/utils/constants";
+import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { expect, test } from "./fixtures";
 
 test.describe("Org Switcher - Multi-org user", () => {

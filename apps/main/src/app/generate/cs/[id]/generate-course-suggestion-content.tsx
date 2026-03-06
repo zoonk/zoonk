@@ -10,8 +10,8 @@ import {
 } from "@zoonk/ui/components/container";
 import { Empty, EmptyContent, EmptyHeader } from "@zoonk/ui/components/empty";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
-import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import { parseNumericId } from "@zoonk/utils/number";
+import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { ensureLocaleSuffix } from "@zoonk/utils/string";
 import { notFound, redirect } from "next/navigation";
 import { GenerationClient } from "./generation-client";

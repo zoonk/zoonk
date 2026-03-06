@@ -1,5 +1,5 @@
 import { MediaCardPopoverAIWarning } from "@zoonk/ui/components/media-card";
-import { AI_ORG_SLUG } from "@zoonk/utils/constants";
+import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { getExtracted } from "next-intl/server";
 
 export async function AIWarning({ brandSlug }: { brandSlug: string }) {

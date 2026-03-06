@@ -1,10 +1,10 @@
 import "server-only";
+import { safeAsync } from "@zoonk/utils/error";
 import {
   DEFAULT_IMAGE_ACCEPTED_TYPES,
   DEFAULT_IMAGE_MAX_SIZE,
   DEFAULT_IMAGE_QUALITY,
-} from "@zoonk/utils/constants";
-import { safeAsync } from "@zoonk/utils/error";
+} from "@zoonk/utils/upload";
 import { optimizeImage } from "./optimize-image";
 import { uploadImage } from "./upload-image";
 

@@ -1,4 +1,4 @@
-import { API_URL } from "@zoonk/utils/constants";
+import { API_URL } from "@zoonk/utils/url";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { getNextLessonId } from "./get-next-lesson-id";
 import { preloadNextLesson } from "./preload-next-lesson";

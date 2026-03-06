@@ -1,4 +1,4 @@
-import { DAILY_DECAY, MIN_ENERGY } from "@zoonk/utils/constants";
+import { DAILY_DECAY, MIN_ENERGY } from "@zoonk/utils/energy";
 
 type DataPoint = { date: Date; energy: number };
 

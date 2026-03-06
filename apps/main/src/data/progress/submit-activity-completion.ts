@@ -2,8 +2,14 @@ import "server-only";
 import { type TransactionClient, prisma } from "@zoonk/db";
 import { type ScoreResult } from "@zoonk/player/compute-score";
 import { type BeltLevelResult, calculateBeltLevel } from "@zoonk/utils/belt-level";
-import { DAILY_DECAY, MIN_ENERGY, MS_PER_DAY } from "@zoonk/utils/constants";
-import { clampEnergy, computeDecayedEnergy, toUTCMidnight } from "@zoonk/utils/energy";
+import { MS_PER_DAY } from "@zoonk/utils/date";
+import {
+  DAILY_DECAY,
+  MIN_ENERGY,
+  clampEnergy,
+  computeDecayedEnergy,
+  toUTCMidnight,
+} from "@zoonk/utils/energy";
 
 function getCompletionField(input: {
   isChallenge: boolean;

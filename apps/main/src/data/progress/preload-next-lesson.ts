@@ -1,4 +1,4 @@
-import { API_URL } from "@zoonk/utils/constants";
+import { API_URL } from "@zoonk/utils/url";
 import { getNextLessonId } from "./get-next-lesson-id";
 
 /**

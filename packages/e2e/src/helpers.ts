@@ -7,10 +7,10 @@ import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { dailyProgressFixtureMany, userProgressFixture } from "@zoonk/testing/fixtures/progress";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
-import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import { calculateDateRanges } from "@zoonk/utils/date-ranges";
 import { getString } from "@zoonk/utils/json";
 import { LOCALE_COOKIE } from "@zoonk/utils/locale";
+import { AI_ORG_SLUG } from "@zoonk/utils/org";
 
 const UUID_SHORT_LENGTH = 8;
 
