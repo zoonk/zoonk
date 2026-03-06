@@ -8,6 +8,7 @@ import { getPeriodLearningTime } from "@/data/stats/get-period-learning-time";
 import { formatDuration } from "@/lib/format-duration";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { buildChartData, calculateDateRanges, validatePeriod } from "@zoonk/utils/date-ranges";
+import { validateOffset } from "@zoonk/utils/string";
 import { ActivityIcon, CheckCircleIcon, ClockIcon, TargetIcon, TimerIcon } from "lucide-react";
 import { AdminMetricCard, AdminMetricCardSkeleton } from "../_components/admin-metric-card";
 import { AdminTrendChart } from "../_components/admin-trend-chart";
@@ -20,7 +21,7 @@ export async function EngagementMetrics({
 }) {
   const { period: rawPeriod, offset: rawOffset } = await searchParams;
   const period = validatePeriod(rawPeriod ?? "month");
-  const offset = Number(rawOffset) || 0;
+  const offset = validateOffset(rawOffset);
   const { current, previous } = calculateDateRanges(period, offset);
 
   const [

@@ -7,6 +7,11 @@ export function removeAccents(str: string): string {
   return str.normalize("NFD").replaceAll(/[\u0300-\u036F]/g, "");
 }
 
+export function validateOffset(value?: unknown): number {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? Math.max(0, Math.floor(parsed)) : 0;
+}
+
 export function parseNumericId(value: string): number | null {
   if (!NUMERIC_ID_PATTERN.test(value)) {
     return null;

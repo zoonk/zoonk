@@ -3,6 +3,7 @@ import { getDailyContentCreated } from "@/data/stats/get-daily-content-created";
 import { getPeriodContentCreated } from "@/data/stats/get-period-content-created";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type HistoryPeriod, calculateDateRanges, validatePeriod } from "@zoonk/utils/date-ranges";
+import { validateOffset } from "@zoonk/utils/string";
 import { BookOpenIcon, LayersIcon } from "lucide-react";
 import { Suspense } from "react";
 import { AdminMetricCard, AdminMetricCardSkeleton } from "../_components/admin-metric-card";
@@ -29,7 +30,7 @@ export async function ContentMetrics({
 }) {
   const { period: rawPeriod, offset: rawOffset } = await searchParams;
   const period = validatePeriod(rawPeriod ?? "month");
-  const offset = Number(rawOffset) || 0;
+  const offset = validateOffset(rawOffset);
   const { current, previous } = calculateDateRanges(period, offset);
 
   const [currentCreated, previousCreated, totals] = await Promise.all([
