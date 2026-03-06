@@ -32,20 +32,13 @@ function getMonthDateRanges(now: Date, offset: number): DateRanges {
 }
 
 function getHalfYearDateRanges(now: Date, offset: number): DateRanges {
-  const currentHalf = Math.floor(now.getMonth() / MONTHS_PER_HALF_YEAR) - offset;
-  const currentYear =
-    now.getFullYear() + Math.floor((now.getMonth() - offset * MONTHS_PER_HALF_YEAR) / 12);
-  const normalizedHalf = ((currentHalf % 2) + 2) % 2;
+  const startMonth =
+    (Math.floor(now.getMonth() / MONTHS_PER_HALF_YEAR) - offset) * MONTHS_PER_HALF_YEAR;
 
-  const currentStartMonth = normalizedHalf * MONTHS_PER_HALF_YEAR;
-  const currentStart = new Date(currentYear, currentStartMonth, 1);
-  const currentEnd = new Date(currentYear, currentStartMonth + MONTHS_PER_HALF_YEAR, 0);
-
-  const previousHalf = normalizedHalf === 0 ? 1 : 0;
-  const previousYear = normalizedHalf === 0 ? currentYear - 1 : currentYear;
-  const previousStartMonth = previousHalf * MONTHS_PER_HALF_YEAR;
-  const previousStart = new Date(previousYear, previousStartMonth, 1);
-  const previousEnd = new Date(previousYear, previousStartMonth + MONTHS_PER_HALF_YEAR, 0);
+  const currentStart = new Date(now.getFullYear(), startMonth, 1);
+  const currentEnd = new Date(now.getFullYear(), startMonth + MONTHS_PER_HALF_YEAR, 0);
+  const previousStart = new Date(now.getFullYear(), startMonth - MONTHS_PER_HALF_YEAR, 1);
+  const previousEnd = new Date(now.getFullYear(), startMonth, 0);
 
   return {
     current: { end: currentEnd, start: currentStart },
