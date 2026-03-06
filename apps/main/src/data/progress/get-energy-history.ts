@@ -1,7 +1,7 @@
 import "server-only";
 import { getSession } from "@zoonk/core/users/session/get";
 import { prisma } from "@zoonk/db";
-import { aggregateByMonth, aggregateByWeek, aggregateByYear } from "@zoonk/utils/aggregation";
+import { type TimePeriod, aggregateByPeriod } from "@zoonk/utils/aggregation";
 import { formatLabel } from "@zoonk/utils/chart";
 import { type HistoryPeriod, calculateDateRanges } from "@zoonk/utils/date-ranges";
 import { safeAsync } from "@zoonk/utils/error";
@@ -36,15 +36,8 @@ function calculateAverage(dataPoints: { energy: number }[]): number {
 
 type RawDataPoint = { date: Date; energy: number };
 
-function aggregateEnergyByWeek(dataPoints: RawDataPoint[]): RawDataPoint[] {
-  return aggregateByWeek(dataPoints, (point) => point.energy, "average").map((item) => ({
-    date: item.date,
-    energy: item.value,
-  }));
-}
-
-function aggregateEnergyByMonth(dataPoints: RawDataPoint[]): RawDataPoint[] {
-  return aggregateByMonth(dataPoints, (point) => point.energy, "average").map((item) => ({
+function aggregateEnergy(dataPoints: RawDataPoint[], period: TimePeriod): RawDataPoint[] {
+  return aggregateByPeriod(dataPoints, (point) => point.energy, "average", period).map((item) => ({
     date: item.date,
     energy: item.value,
   }));
@@ -152,26 +145,19 @@ async function fetchDailyData(
   };
 }
 
-function aggregateEnergyByYear(dataPoints: RawDataPoint[]): RawDataPoint[] {
-  return aggregateByYear(dataPoints, (point) => point.energy, "average").map((item) => ({
-    date: item.date,
-    energy: item.value,
-  }));
-}
-
 function processEnergyData(rawData: RawDataPoint[], period: EnergyPeriod): RawDataPoint[] {
   const withDecay = fillGapsWithDecay(rawData);
 
   if (period === "all") {
-    return aggregateEnergyByYear(withDecay);
+    return aggregateEnergy(withDecay, "year");
   }
 
   if (period === "6months") {
-    return aggregateEnergyByWeek(withDecay);
+    return aggregateEnergy(withDecay, "week");
   }
 
   if (period === "year") {
-    return aggregateEnergyByMonth(withDecay);
+    return aggregateEnergy(withDecay, "month");
   }
 
   return withDecay;

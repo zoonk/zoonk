@@ -1,16 +1,12 @@
 import { describe, expect, it } from "vitest";
 import {
   type ScoredRow,
-  aggregateByMonth,
-  aggregateByWeek,
-  aggregateByYear,
-  aggregateScoreByMonth,
-  aggregateScoreByWeek,
-  aggregateScoreByYear,
+  aggregateByPeriod,
+  aggregateScoreByPeriod,
   findBestByScore,
 } from "./aggregation";
 
-describe(aggregateByWeek, () => {
+describe("aggregateByPeriod - week", () => {
   const dataPoints = [
     { date: new Date(2026, 2, 2), value: 10 }, // Monday
     { date: new Date(2026, 2, 3), value: 20 }, // Tuesday (same week)
@@ -18,24 +14,24 @@ describe(aggregateByWeek, () => {
   ];
 
   it("aggregates by sum", () => {
-    const result = aggregateByWeek(dataPoints, (point) => point.value, "sum");
+    const result = aggregateByPeriod(dataPoints, (point) => point.value, "sum", "week");
     expect(result.map((row) => row.value)).toEqual([30, 30]); // 10+20, 30
   });
 
   it("aggregates by average", () => {
-    const result = aggregateByWeek(dataPoints, (point) => point.value, "average");
+    const result = aggregateByPeriod(dataPoints, (point) => point.value, "average", "week");
     expect(result.map((row) => row.value)).toEqual([15, 30]); // (10+20)/2, 30/1
   });
 
   it("returns sorted results", () => {
     const reversed = [...dataPoints].toReversed();
-    const result = aggregateByWeek(reversed, (point) => point.value, "sum");
+    const result = aggregateByPeriod(reversed, (point) => point.value, "sum", "week");
     const times = result.map((row) => row.date.getTime());
     expect(times).toEqual([...times].toSorted((left, right) => left - right));
   });
 });
 
-describe(aggregateByMonth, () => {
+describe("aggregateByPeriod - month", () => {
   const dataPoints = [
     { date: new Date(2026, 0, 5), value: 10 },
     { date: new Date(2026, 0, 20), value: 20 },
@@ -43,24 +39,24 @@ describe(aggregateByMonth, () => {
   ];
 
   it("aggregates by sum", () => {
-    const result = aggregateByMonth(dataPoints, (point) => point.value, "sum");
+    const result = aggregateByPeriod(dataPoints, (point) => point.value, "sum", "month");
     expect(result.map((row) => row.value)).toEqual([30, 30]); // Jan: 10+20, Feb: 30
   });
 
   it("aggregates by average", () => {
-    const result = aggregateByMonth(dataPoints, (point) => point.value, "average");
+    const result = aggregateByPeriod(dataPoints, (point) => point.value, "average", "month");
     expect(result.map((row) => row.value)).toEqual([15, 30]); // Jan: (10+20)/2, Feb: 30/1
   });
 
   it("returns sorted results", () => {
     const reversed = [...dataPoints].toReversed();
-    const result = aggregateByMonth(reversed, (point) => point.value, "sum");
+    const result = aggregateByPeriod(reversed, (point) => point.value, "sum", "month");
     const times = result.map((row) => row.date.getTime());
     expect(times).toEqual([...times].toSorted((left, right) => left - right));
   });
 });
 
-describe(aggregateByYear, () => {
+describe("aggregateByPeriod - year", () => {
   const dataPoints = [
     { date: new Date(2025, 3, 10), value: 10 },
     { date: new Date(2025, 8, 20), value: 20 },
@@ -68,18 +64,18 @@ describe(aggregateByYear, () => {
   ];
 
   it("aggregates by sum", () => {
-    const result = aggregateByYear(dataPoints, (point) => point.value, "sum");
+    const result = aggregateByPeriod(dataPoints, (point) => point.value, "sum", "year");
     expect(result.map((row) => row.value)).toEqual([30, 30]); // 2025: 10+20, 2026: 30
   });
 
   it("aggregates by average", () => {
-    const result = aggregateByYear(dataPoints, (point) => point.value, "average");
+    const result = aggregateByPeriod(dataPoints, (point) => point.value, "average", "year");
     expect(result.map((row) => row.value)).toEqual([15, 30]); // 2025: (10+20)/2, 2026: 30/1
   });
 
   it("returns sorted results", () => {
     const reversed = [...dataPoints].toReversed();
-    const result = aggregateByYear(reversed, (point) => point.value, "sum");
+    const result = aggregateByPeriod(reversed, (point) => point.value, "sum", "year");
     const times = result.map((row) => row.date.getTime());
     expect(times).toEqual([...times].toSorted((left, right) => left - right));
   });
@@ -89,7 +85,7 @@ function calcScore(correct: number, incorrect: number) {
   return (correct / (correct + incorrect)) * 100;
 }
 
-describe(aggregateScoreByYear, () => {
+describe("aggregateScoreByPeriod - year", () => {
   it("aggregates correct/incorrect by year and calculates score", () => {
     const dataPoints = [
       { correct: 8, date: new Date(2025, 3, 10), incorrect: 2 },
@@ -97,7 +93,7 @@ describe(aggregateScoreByYear, () => {
       { correct: 9, date: new Date(2026, 1, 5), incorrect: 1 },
     ];
 
-    const result = aggregateScoreByYear(dataPoints, calcScore);
+    const result = aggregateScoreByPeriod(dataPoints, calcScore, "year");
 
     expect(result.map((row) => row.score)).toEqual([
       calcScore(14, 6), // 2025: 8+6=14 correct, 2+4=6 incorrect
@@ -106,7 +102,7 @@ describe(aggregateScoreByYear, () => {
   });
 });
 
-describe(aggregateScoreByWeek, () => {
+describe("aggregateScoreByPeriod - week", () => {
   it("aggregates correct/incorrect by week and calculates score", () => {
     const dataPoints = [
       { correct: 8, date: new Date(2026, 2, 2), incorrect: 2 }, // Monday
@@ -114,7 +110,7 @@ describe(aggregateScoreByWeek, () => {
       { correct: 9, date: new Date(2026, 2, 9), incorrect: 1 }, // Next Monday
     ];
 
-    const result = aggregateScoreByWeek(dataPoints, calcScore);
+    const result = aggregateScoreByPeriod(dataPoints, calcScore, "week");
 
     expect(result.map((row) => row.score)).toEqual([
       calcScore(14, 6), // Week 1: 8+6=14 correct, 2+4=6 incorrect
@@ -123,7 +119,7 @@ describe(aggregateScoreByWeek, () => {
   });
 });
 
-describe(aggregateScoreByMonth, () => {
+describe("aggregateScoreByPeriod - month", () => {
   it("aggregates correct/incorrect by month and calculates score", () => {
     const dataPoints = [
       { correct: 8, date: new Date(2026, 0, 5), incorrect: 2 },
@@ -131,7 +127,7 @@ describe(aggregateScoreByMonth, () => {
       { correct: 9, date: new Date(2026, 1, 10), incorrect: 1 },
     ];
 
-    const result = aggregateScoreByMonth(dataPoints, calcScore);
+    const result = aggregateScoreByPeriod(dataPoints, calcScore, "month");
 
     expect(result.map((row) => row.score)).toEqual([
       calcScore(14, 6), // Jan

@@ -1,4 +1,4 @@
-import { aggregateByMonth, aggregateByWeek, aggregateByYear } from "./aggregation";
+import { aggregateByPeriod } from "./aggregation";
 import { type HistoryPeriod } from "./date-ranges";
 
 const MILLISECONDS_PER_WEEK = 7 * 24 * 60 * 60 * 1000;
@@ -43,15 +43,15 @@ function getAggregatedPoints(
   period: HistoryPeriod,
 ): { date: Date; value: number }[] {
   if (period === "all") {
-    return aggregateByYear(rawPoints, (point) => point.count, "sum");
+    return aggregateByPeriod(rawPoints, (point) => point.count, "sum", "year");
   }
 
   if (period === "6months") {
-    return aggregateByWeek(rawPoints, (point) => point.count, "sum");
+    return aggregateByPeriod(rawPoints, (point) => point.count, "sum", "week");
   }
 
   if (period === "year") {
-    return aggregateByMonth(rawPoints, (point) => point.count, "sum");
+    return aggregateByPeriod(rawPoints, (point) => point.count, "sum", "month");
   }
 
   return rawPoints.map((point) => ({ date: point.date, value: point.count }));
