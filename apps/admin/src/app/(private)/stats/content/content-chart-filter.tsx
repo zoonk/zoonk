@@ -57,7 +57,12 @@ export function ContentChart({
       </nav>
 
       {dataPoints.length > 0 && (
-        <AdminTrendChart average={average} dataPoints={dataPoints} valueLabel="items" />
+        <AdminTrendChart
+          average={average}
+          dataPoints={dataPoints}
+          valueLabel="items"
+          variant="bar"
+        />
       )}
     </div>
   );
