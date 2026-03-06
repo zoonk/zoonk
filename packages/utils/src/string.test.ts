@@ -10,6 +10,7 @@ import {
   removeLocaleSuffix,
   replaceNamePlaceholder,
   toSlug,
+  validateOffset,
 } from "./string";
 
 describe(removeAccents, () => {
@@ -70,6 +71,40 @@ describe(normalizeString, () => {
 
   test("handles string with only spaces", () => {
     expect(normalizeString("   ")).toBe("");
+  });
+});
+
+describe(validateOffset, () => {
+  test("parses valid positive integer", () => {
+    expect(validateOffset("3")).toBe(3);
+  });
+
+  test("floors decimal values", () => {
+    expect(validateOffset("3.7")).toBe(3);
+  });
+
+  test("returns 0 for undefined", () => {
+    expect(validateOffset()).toBe(0);
+  });
+
+  test("returns 0 for NaN", () => {
+    expect(validateOffset("abc")).toBe(0);
+  });
+
+  test("returns 0 for Infinity", () => {
+    expect(validateOffset("Infinity")).toBe(0);
+  });
+
+  test("returns 0 for negative values", () => {
+    expect(validateOffset("-5")).toBe(0);
+  });
+
+  test("returns 0 for negative decimals", () => {
+    expect(validateOffset("-0.5")).toBe(0);
+  });
+
+  test("returns 0 for empty string", () => {
+    expect(validateOffset("")).toBe(0);
   });
 });
 

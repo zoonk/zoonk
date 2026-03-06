@@ -1,7 +1,7 @@
 import { type EnergyDataPoint, type EnergyPeriod } from "@/data/progress/get-energy-history";
+import { formatPeriodLabel } from "@zoonk/utils/date-ranges";
 import { getLocale } from "next-intl/server";
 import { PerformanceChartLayout } from "../_components/performance-chart-layout";
-import { formatPeriodLabel } from "../_utils";
 import { EnergyChartClient } from "./energy-chart-client";
 
 export async function EnergyChart({

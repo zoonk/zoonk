@@ -36,16 +36,25 @@ function StatsBreadcrumb({ title }: { title: string }) {
   );
 }
 
-export function StatsPageLayout({ children, title }: { children: React.ReactNode; title: string }) {
+export function StatsPageLayout({
+  children,
+  navigation,
+  title,
+}: {
+  children: React.ReactNode;
+  navigation?: React.ReactNode;
+  title: string;
+}) {
   return (
     <Container>
       <ContainerHeader variant="sidebar">
-        <ContainerHeaderGroup>
+        <ContainerHeaderGroup className="flex-1">
           <StatsBreadcrumb title={title} />
+          <ContainerTitle>{title}</ContainerTitle>
 
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <ContainerTitle>{title}</ContainerTitle>
+          <div className="flex flex-wrap items-center justify-between gap-3 pt-3">
             <AdminPeriodTabs />
+            {navigation}
           </div>
         </ContainerHeaderGroup>
       </ContainerHeader>

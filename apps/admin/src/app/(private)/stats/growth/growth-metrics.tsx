@@ -5,6 +5,7 @@ import { getDailySignups } from "@/data/stats/get-daily-signups";
 import { getNewSignups } from "@/data/stats/get-new-signups";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { buildChartData, calculateDateRanges, validatePeriod } from "@zoonk/utils/date-ranges";
+import { validateOffset } from "@zoonk/utils/string";
 import { CreditCardIcon, TargetIcon, UsersIcon } from "lucide-react";
 import { AdminMetricCard, AdminMetricCardSkeleton } from "../_components/admin-metric-card";
 import { AdminTrendChart } from "../_components/admin-trend-chart";
@@ -13,11 +14,12 @@ import { SubscribersTable } from "./subscribers-table";
 export async function GrowthMetrics({
   searchParams,
 }: {
-  searchParams: Promise<{ period?: string }>;
+  searchParams: Promise<{ period?: string; offset?: string }>;
 }) {
-  const { period: rawPeriod } = await searchParams;
+  const { period: rawPeriod, offset: rawOffset } = await searchParams;
   const period = validatePeriod(rawPeriod ?? "month");
-  const { current, previous } = calculateDateRanges(period, 0);
+  const offset = validateOffset(rawOffset);
+  const { current, previous } = calculateDateRanges(period, offset);
 
   const [
     currentSignups,
@@ -43,7 +45,7 @@ export async function GrowthMetrics({
 
   return (
     <div className="flex flex-col gap-8">
-      <div className="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2 lg:grid-cols-3">
         <AdminMetricCard
           change={{ current: currentSignups, period, previous: previousSignups }}
           help="New user registrations in this period"
@@ -74,8 +76,12 @@ export async function GrowthMetrics({
       )}
 
       {subscribers.length > 0 && (
-        <div className="rounded-lg border">
-          <SubscribersTable data={subscribers} />
+        <div className="flex flex-col gap-3">
+          <h3 className="text-base font-semibold tracking-tight">Subscribers by Plan</h3>
+
+          <div className="rounded-lg border">
+            <SubscribersTable data={subscribers} />
+          </div>
         </div>
       )}
     </div>
@@ -85,7 +91,7 @@ export async function GrowthMetrics({
 export function GrowthMetricsSkeleton() {
   return (
     <div className="flex flex-col gap-8">
-      <div className="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2 lg:grid-cols-3">
         <AdminMetricCardSkeleton />
         <AdminMetricCardSkeleton />
         <AdminMetricCardSkeleton />

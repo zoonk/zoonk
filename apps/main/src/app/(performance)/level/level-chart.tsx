@@ -1,8 +1,7 @@
 import { type BpDataPoint } from "@/data/progress/get-bp-history";
-import { type HistoryPeriod } from "@zoonk/utils/date-ranges";
+import { type HistoryPeriod, formatPeriodLabel } from "@zoonk/utils/date-ranges";
 import { getLocale } from "next-intl/server";
 import { PerformanceChartLayout } from "../_components/performance-chart-layout";
-import { formatPeriodLabel } from "../_utils";
 import { LevelChartClient } from "./level-chart-client";
 
 export async function LevelChart({

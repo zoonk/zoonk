@@ -71,7 +71,7 @@ export function AdminMetricCard({
   change?: { current: number; previous: number; period: HistoryPeriod };
 }) {
   return (
-    <div className="flex w-full flex-col gap-1">
+    <div className="flex w-full flex-col gap-1.5">
       <header className="text-muted-foreground flex items-center gap-1.5">
         {icon && <span className="flex size-4 items-center justify-center">{icon}</span>}
         <StatsTitle help={help} title={title} />
@@ -94,7 +94,7 @@ export function AdminMetricCard({
 
 export function AdminMetricCardSkeleton() {
   return (
-    <div className="flex w-full flex-col gap-1">
+    <div className="flex w-full flex-col gap-1.5">
       <header className="flex items-center gap-1.5">
         <Skeleton className="size-4 rounded-lg" />
         <Skeleton className="h-4 w-24 rounded" />

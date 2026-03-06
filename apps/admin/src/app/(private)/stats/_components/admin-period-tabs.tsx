@@ -17,12 +17,19 @@ export function AdminPeriodTabs() {
     shallow: false,
   });
 
+  const [, setOffset] = useQueryState("offset", { shallow: false });
+
+  function handlePeriodChange(newPeriod: HistoryPeriod) {
+    void setOffset(null);
+    void setPeriod(newPeriod);
+  }
+
   return (
     <nav aria-label="Period selection" className="flex gap-1">
       {periods.map((item) => (
         <Button
           key={item.value}
-          onClick={() => void setPeriod(item.value)}
+          onClick={() => handlePeriodChange(item.value)}
           size="sm"
           variant={period === item.value ? "default" : "outline"}
         >

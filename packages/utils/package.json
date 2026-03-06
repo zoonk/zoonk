@@ -19,6 +19,7 @@
     "./languages": "./src/languages.ts",
     "./locale": "./src/locale.ts",
     "./origin": "./src/origin.ts",
+    "./score-aggregation": "./src/score-aggregation.ts",
     "./search": "./src/search.ts",
     "./settled": "./src/settled.ts",
     "./shuffle": "./src/shuffle.ts",

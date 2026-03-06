@@ -1,14 +1,13 @@
 import { DEFAULT_PROGRESS_LOOKBACK_DAYS } from "./constants";
 
 const HISTORY_PERIODS = ["month", "6months", "year", "all"] as const;
-
 const APP_LAUNCH_YEAR = 2025;
-
 const MONTHS_PER_HALF_YEAR = 6;
 const DECEMBER_INDEX = 11;
 const LAST_DAY_OF_DECEMBER = 31;
 const SUNDAY_TO_MONDAY_OFFSET = -6;
 const MILLISECONDS_PER_WEEK = 7 * 24 * 60 * 60 * 1000;
+
 export type HistoryPeriod = (typeof HISTORY_PERIODS)[number];
 
 function isHistoryPeriod(value: string): value is HistoryPeriod {
@@ -19,11 +18,7 @@ export function validatePeriod(value: string): HistoryPeriod {
   return isHistoryPeriod(value) ? value : "month";
 }
 
-type DateRange = {
-  start: Date;
-  end: Date;
-};
-
+type DateRange = { start: Date; end: Date };
 type DateRanges = { current: DateRange; previous: DateRange };
 
 function getMonthDateRanges(now: Date, offset: number): DateRanges {
@@ -221,59 +216,6 @@ export function aggregateByYear<T extends { date: Date }>(
   return aggregateByPeriod(dataPoints, getValue, strategy, yearConfig);
 }
 
-type ScoreDataPoint = { date: Date; correct: number; incorrect: number };
-
-function aggregateScoreByPeriod(
-  dataPoints: ScoreDataPoint[],
-  calculateScore: (correct: number, incorrect: number) => number,
-  { getKey, getNormalizedDate }: TimePeriodConfig,
-): { date: Date; score: number }[] {
-  const map = new Map<string, { correct: number; incorrect: number; date: Date }>();
-
-  for (const point of dataPoints) {
-    const key = getKey(point.date);
-    const existing = map.get(key);
-    if (existing) {
-      existing.correct += point.correct;
-      existing.incorrect += point.incorrect;
-    } else {
-      map.set(key, {
-        correct: point.correct,
-        date: getNormalizedDate(point.date),
-        incorrect: point.incorrect,
-      });
-    }
-  }
-
-  return [...map.values()]
-    .map((item) => ({
-      date: item.date,
-      score: calculateScore(item.correct, item.incorrect),
-    }))
-    .toSorted((a, b) => a.date.getTime() - b.date.getTime());
-}
-
-export function aggregateScoreByWeek(
-  dataPoints: ScoreDataPoint[],
-  calculateScore: (correct: number, incorrect: number) => number,
-): { date: Date; score: number }[] {
-  return aggregateScoreByPeriod(dataPoints, calculateScore, weekConfig);
-}
-
-export function aggregateScoreByMonth(
-  dataPoints: ScoreDataPoint[],
-  calculateScore: (correct: number, incorrect: number) => number,
-): { date: Date; score: number }[] {
-  return aggregateScoreByPeriod(dataPoints, calculateScore, monthConfig);
-}
-
-export function aggregateScoreByYear(
-  dataPoints: ScoreDataPoint[],
-  calculateScore: (correct: number, incorrect: number) => number,
-): { date: Date; score: number }[] {
-  return aggregateScoreByPeriod(dataPoints, calculateScore, yearConfig);
-}
-
 export function getDefaultStartDate(startDateIso?: string): Date {
   if (startDateIso) {
     return new Date(startDateIso);
@@ -329,21 +271,28 @@ function getAggregatedPoints(
   return rawPoints.map((point) => ({ date: point.date, value: point.count }));
 }
 
-export type ScoredRow = { key: number; correct: number; incorrect: number };
-
-export function findBestByScore(rows: ScoredRow[]): { key: number; score: number } | null {
-  const scored = rows
-    .filter((row) => row.correct + row.incorrect > 0)
-    .map((row) => {
-      const total = row.correct + row.incorrect;
-      return { key: row.key, score: (row.correct / total) * 100, total };
-    });
-
-  const best = scored.toSorted((a, b) => b.score - a.score || b.total - a.total).at(0);
-
-  if (!best) {
-    return null;
+export function formatPeriodLabel(
+  periodStart: Date,
+  periodEnd: Date,
+  period: HistoryPeriod,
+  locale: string,
+): string {
+  if (period === "all") {
+    return `${periodStart.getFullYear()} - ${periodEnd.getFullYear()}`;
   }
 
-  return { key: best.key, score: best.score };
+  if (period === "month") {
+    return new Intl.DateTimeFormat(locale, {
+      month: "long",
+      year: "numeric",
+    }).format(periodStart);
+  }
+
+  if (period === "6months") {
+    const startMonth = new Intl.DateTimeFormat(locale, { month: "short" }).format(periodStart);
+    const endMonth = new Intl.DateTimeFormat(locale, { month: "short" }).format(periodEnd);
+    return `${startMonth} - ${endMonth} ${periodStart.getFullYear()}`;
+  }
+
+  return String(periodStart.getFullYear());
 }

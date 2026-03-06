@@ -2,10 +2,9 @@ import { getBeltColorLabel } from "@/lib/belt-colors";
 import { BeltIndicator } from "@zoonk/ui/components/belt-indicator";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type BeltLevelResult } from "@zoonk/utils/belt-level";
-import { type HistoryPeriod } from "@zoonk/utils/date-ranges";
+import { type HistoryPeriod, formatPeriodLabel } from "@zoonk/utils/date-ranges";
 import { getExtracted, getLocale } from "next-intl/server";
 import { MetricComparison } from "../_components/metric-comparison";
-import { formatPeriodLabel } from "../_utils";
 
 export async function LevelStats({
   currentBelt,
