@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@zoonk/ui/components/select";
-import { TTS_VOICES } from "@zoonk/utils/constants";
+import { TTS_VOICES } from "@zoonk/utils/languages";
 import { Loader2 } from "lucide-react";
 import { useState, useTransition } from "react";
 import { generateAudioAction } from "./actions";

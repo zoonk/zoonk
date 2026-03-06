@@ -14,7 +14,7 @@ import {
   MediaCardTitle,
   MediaCardTrigger,
 } from "@zoonk/ui/components/media-card";
-import { formatPosition } from "@zoonk/utils/string";
+import { formatPosition } from "@zoonk/utils/number";
 import { getExtracted } from "next-intl/server";
 import Link from "next/link";
 

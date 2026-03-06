@@ -7,8 +7,9 @@ import { getPeriodCompletionRate } from "@/data/stats/get-period-completion-rate
 import { getPeriodLearningTime } from "@/data/stats/get-period-learning-time";
 import { formatDuration } from "@/lib/format-duration";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
-import { buildChartData, calculateDateRanges, validatePeriod } from "@zoonk/utils/date-ranges";
-import { validateOffset } from "@zoonk/utils/string";
+import { buildChartData } from "@zoonk/utils/chart";
+import { calculateDateRanges, validatePeriod } from "@zoonk/utils/date-ranges";
+import { validateOffset } from "@zoonk/utils/number";
 import { ActivityIcon, CheckCircleIcon, ClockIcon, TargetIcon, TimerIcon } from "lucide-react";
 import { AdminMetricCard, AdminMetricCardSkeleton } from "../_components/admin-metric-card";
 import { AdminTrendChart } from "../_components/admin-trend-chart";

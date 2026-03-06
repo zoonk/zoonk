@@ -2,7 +2,8 @@
 
 import { type DailyContentRow } from "@/data/stats/get-daily-content-created";
 import { Button } from "@zoonk/ui/components/button";
-import { type HistoryPeriod, buildChartData } from "@zoonk/utils/date-ranges";
+import { buildChartData } from "@zoonk/utils/chart";
+import { type HistoryPeriod } from "@zoonk/utils/date-ranges";
 import { useMemo, useState } from "react";
 import { AdminTrendChart } from "../_components/admin-trend-chart";
 

@@ -6,7 +6,7 @@ import { getTaskPath, isValidTaskType } from "@/lib/review-utils";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { parseFormField } from "@zoonk/utils/form";
-import { parseBigIntId } from "@zoonk/utils/string";
+import { parseBigIntId } from "@zoonk/utils/number";
 import { redirect } from "next/navigation";
 
 export async function markReviewedAction(formData: FormData) {

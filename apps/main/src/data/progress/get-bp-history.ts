@@ -1,15 +1,10 @@
 import "server-only";
 import { getSession } from "@zoonk/core/users/session/get";
 import { prisma } from "@zoonk/db";
+import { aggregateByPeriod } from "@zoonk/utils/aggregation";
 import { type BeltLevelResult, calculateBeltLevel } from "@zoonk/utils/belt-level";
-import {
-  type HistoryPeriod,
-  aggregateByMonth,
-  aggregateByWeek,
-  aggregateByYear,
-  calculateDateRanges,
-  formatLabel,
-} from "@zoonk/utils/date-ranges";
+import { formatLabel } from "@zoonk/utils/chart";
+import { type HistoryPeriod, calculateDateRanges } from "@zoonk/utils/date-ranges";
 import { safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
 
@@ -60,21 +55,21 @@ async function fetchDailyBpData(
 
 function processBpData(rawData: RawDataPoint[], period: HistoryPeriod): RawDataPoint[] {
   if (period === "all") {
-    return aggregateByYear(rawData, (point) => point.bp, "sum").map((item) => ({
+    return aggregateByPeriod(rawData, (point) => point.bp, "sum", "year").map((item) => ({
       bp: item.value,
       date: item.date,
     }));
   }
 
   if (period === "6months") {
-    return aggregateByWeek(rawData, (point) => point.bp, "sum").map((item) => ({
+    return aggregateByPeriod(rawData, (point) => point.bp, "sum", "week").map((item) => ({
       bp: item.value,
       date: item.date,
     }));
   }
 
   if (period === "year") {
-    return aggregateByMonth(rawData, (point) => point.bp, "sum").map((item) => ({
+    return aggregateByPeriod(rawData, (point) => point.bp, "sum", "month").map((item) => ({
       bp: item.value,
       date: item.date,
     }));

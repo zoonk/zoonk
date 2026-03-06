@@ -12,7 +12,7 @@ import {
 } from "@zoonk/ui/components/container";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { AI_ORG_SLUG } from "@zoonk/utils/constants";
-import { parseNumericId } from "@zoonk/utils/string";
+import { parseNumericId } from "@zoonk/utils/number";
 import { getExtracted } from "next-intl/server";
 import { notFound, redirect } from "next/navigation";
 import { GenerationClient } from "./generation-client";

@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@zoonk/ui/lib/utils";
-import { formatPosition } from "@zoonk/utils/string";
+import { formatPosition } from "@zoonk/utils/number";
 import { useContext } from "react";
 import { EditorSortableItemContext } from "./editor-sortable-item-context";
 

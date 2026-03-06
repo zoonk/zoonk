@@ -36,24 +36,6 @@ export const DEFAULT_IMAGE_ACCEPTED_TYPES = ["image/jpeg", "image/png", "image/w
 
 export const DEFAULT_SEARCH_LIMIT = 10;
 
-export const TTS_VOICES = [
-  "alloy",
-  "ash",
-  "ballad",
-  "cedar",
-  "coral",
-  "echo",
-  "fable",
-  "marin",
-  "nova",
-  "onyx",
-  "sage",
-  "shimmer",
-  "verse",
-] as const;
-
-export type TTSVoice = (typeof TTS_VOICES)[number];
-
 export const BRAIN_POWER_PER_ACTIVITY = 10;
 export const BRAIN_POWER_PER_CHALLENGE = 100;
 export const CHALLENGE_FAILURE_ENERGY = 0.1;

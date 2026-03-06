@@ -3,7 +3,7 @@ import { getDailyContentCreated } from "@/data/stats/get-daily-content-created";
 import { getPeriodContentCreated } from "@/data/stats/get-period-content-created";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type HistoryPeriod, calculateDateRanges, validatePeriod } from "@zoonk/utils/date-ranges";
-import { validateOffset } from "@zoonk/utils/string";
+import { validateOffset } from "@zoonk/utils/number";
 import { BookOpenIcon, LayersIcon } from "lucide-react";
 import { Suspense } from "react";
 import { AdminMetricCard, AdminMetricCardSkeleton } from "../_components/admin-metric-card";

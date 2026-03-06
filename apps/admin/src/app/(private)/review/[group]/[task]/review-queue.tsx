@@ -1,7 +1,7 @@
 import { getNextReviewItem } from "@/data/review/get-next-review-item";
 import { getCourseSuggestionReview, getStepVisualReview } from "@/data/review/get-review-item";
 import { type ReviewTaskType, getTaskPath, getVisualKindFromTaskType } from "@/lib/review-utils";
-import { parseBigIntId } from "@zoonk/utils/string";
+import { parseBigIntId } from "@zoonk/utils/number";
 import { redirect } from "next/navigation";
 import { CourseSuggestionReview } from "../../_components/content/course-suggestion-review";
 import { StepSelectImageReview } from "../../_components/content/step-select-image-review";

@@ -1,13 +1,10 @@
 import "server-only";
 import { getSession } from "@zoonk/core/users/session/get";
 import { prisma } from "@zoonk/db";
-import { type HistoryPeriod, calculateDateRanges, formatLabel } from "@zoonk/utils/date-ranges";
+import { aggregateScoreByPeriod } from "@zoonk/utils/aggregation";
+import { formatLabel } from "@zoonk/utils/chart";
+import { type HistoryPeriod, calculateDateRanges } from "@zoonk/utils/date-ranges";
 import { safeAsync } from "@zoonk/utils/error";
-import {
-  aggregateScoreByMonth,
-  aggregateScoreByWeek,
-  aggregateScoreByYear,
-} from "@zoonk/utils/score-aggregation";
 import { cache } from "react";
 
 export type ScorePeriod = HistoryPeriod;
@@ -88,14 +85,14 @@ function processScoreData(
   }
 
   if (period === "6months") {
-    return aggregateScoreByWeek(rawData, calculateScore);
+    return aggregateScoreByPeriod(rawData, calculateScore, "week");
   }
 
   if (period === "all") {
-    return aggregateScoreByYear(rawData, calculateScore);
+    return aggregateScoreByPeriod(rawData, calculateScore, "year");
   }
 
-  return aggregateScoreByMonth(rawData, calculateScore);
+  return aggregateScoreByPeriod(rawData, calculateScore, "month");
 }
 
 function filterValidData(data: RawDataPoint[]): RawDataPoint[] {
