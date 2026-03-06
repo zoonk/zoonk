@@ -73,7 +73,7 @@
     },
     "db:generate": {
       "cache": false,
-      "dependsOn": ["^db:deploy", "^db:generate"],
+      "dependsOn": ["^db:generate"],
       "outputs": ["src/generated/**"]
     },
     "db:setup:test": {

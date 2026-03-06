@@ -4,16 +4,11 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
-    "./continue-learning": "./src/generated/prisma/sql/getContinueLearning.ts",
-    "./peak-time": "./src/generated/prisma/sql/getPeakTime.ts",
-    "./completion/chapter-lessons": "./src/generated/prisma/sql/getChapterLessonCompletion.ts",
-    "./completion/course-chapters": "./src/generated/prisma/sql/getCourseChapterCompletion.ts",
     "./utils": "./src/utils.ts"
   },
   "scripts": {
     "db:deploy": "prisma migrate deploy",
-    "db:generate": "prisma generate --sql",
-    "db:generate:e2e": "env $(cat .env.e2e | xargs) prisma generate --sql",
+    "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:reset": "prisma migrate reset",
     "db:reset:e2e": "env $(cat .env.e2e | xargs) prisma migrate reset",

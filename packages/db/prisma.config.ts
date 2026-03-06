@@ -11,5 +11,4 @@ export default defineConfig({
     seed: "tsx src/prisma/seed.ts",
   },
   schema: "src/prisma",
-  typedSql: { path: "src/prisma/sql" },
 });
