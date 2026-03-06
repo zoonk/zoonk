@@ -47,8 +47,13 @@
   "tasks": {
     "//#format": {},
     "//#format:fix": { "cache": false },
-    "//#lint": {},
-    "//#lint:fix": { "cache": false },
+    "//#lint": {
+      "dependsOn": ["@zoonk/db#db:generate"]
+    },
+    "//#lint:fix": {
+      "cache": false,
+      "dependsOn": ["@zoonk/db#db:generate"]
+    },
     "//#quality": {
       "dependsOn": ["//#lint", "//#format"]
     },
@@ -97,7 +102,7 @@
       "persistent": true
     },
     "typecheck": {
-      "dependsOn": ["^typecheck"],
+      "dependsOn": ["^db:generate", "^typecheck"],
       "outputs": [".next/types/**"]
     }
   },
