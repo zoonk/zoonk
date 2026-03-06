@@ -1,15 +1,13 @@
 import "server-only";
 import { getSession } from "@zoonk/core/users/session/get";
 import { prisma } from "@zoonk/db";
+import { type HistoryPeriod, calculateDateRanges, formatLabel } from "@zoonk/utils/date-ranges";
+import { safeAsync } from "@zoonk/utils/error";
 import {
-  type HistoryPeriod,
   aggregateScoreByMonth,
   aggregateScoreByWeek,
   aggregateScoreByYear,
-  calculateDateRanges,
-  formatLabel,
-} from "@zoonk/utils/date-ranges";
-import { safeAsync } from "@zoonk/utils/error";
+} from "@zoonk/utils/score-aggregation";
 import { cache } from "react";
 
 export type ScorePeriod = HistoryPeriod;

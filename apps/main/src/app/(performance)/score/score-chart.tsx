@@ -1,7 +1,7 @@
 import { type ScoreDataPoint, type ScorePeriod } from "@/data/progress/get-score-history";
+import { formatPeriodLabel } from "@zoonk/utils/date-ranges";
 import { getLocale } from "next-intl/server";
 import { PerformanceChartLayout } from "../_components/performance-chart-layout";
-import { formatPeriodLabel } from "../_utils";
 import { ScoreChartClient } from "./score-chart-client";
 
 export async function ScoreChart({

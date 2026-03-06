@@ -25,11 +25,12 @@ async function ContentChartSection({
 export async function ContentMetrics({
   searchParams,
 }: {
-  searchParams: Promise<{ period?: string }>;
+  searchParams: Promise<{ period?: string; offset?: string }>;
 }) {
-  const { period: rawPeriod } = await searchParams;
+  const { period: rawPeriod, offset: rawOffset } = await searchParams;
   const period = validatePeriod(rawPeriod ?? "month");
-  const { current, previous } = calculateDateRanges(period, 0);
+  const offset = Number(rawOffset) || 0;
+  const { current, previous } = calculateDateRanges(period, offset);
 
   const [currentCreated, previousCreated, totals] = await Promise.all([
     getPeriodContentCreated(current.start, current.end),
@@ -39,7 +40,7 @@ export async function ContentMetrics({
 
   return (
     <div className="flex flex-col gap-8">
-      <div className="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
         <AdminMetricCard
           change={{ current: currentCreated.courses, period, previous: previousCreated.courses }}
           help="Courses created in this period"
@@ -75,7 +76,7 @@ export async function ContentMetrics({
 export function ContentMetricsSkeleton() {
   return (
     <div className="flex flex-col gap-8">
-      <div className="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
         <AdminMetricCardSkeleton />
         <AdminMetricCardSkeleton />
       </div>

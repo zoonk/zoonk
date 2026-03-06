@@ -16,11 +16,12 @@ import { ActivityBreakdownTable } from "./activity-breakdown-table";
 export async function EngagementMetrics({
   searchParams,
 }: {
-  searchParams: Promise<{ period?: string }>;
+  searchParams: Promise<{ period?: string; offset?: string }>;
 }) {
-  const { period: rawPeriod } = await searchParams;
+  const { period: rawPeriod, offset: rawOffset } = await searchParams;
   const period = validatePeriod(rawPeriod ?? "month");
-  const { current, previous } = calculateDateRanges(period, 0);
+  const offset = Number(rawOffset) || 0;
+  const { current, previous } = calculateDateRanges(period, offset);
 
   const [
     currentActiveLearners,
@@ -58,7 +59,7 @@ export async function EngagementMetrics({
 
   return (
     <div className="flex flex-col gap-8">
-      <div className="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2 lg:grid-cols-5">
+      <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2 lg:grid-cols-5">
         <AdminMetricCard
           change={{ current: currentActiveLearners, period, previous: previousActiveLearners }}
           help="Distinct users with learning activity"
@@ -124,7 +125,7 @@ export async function EngagementMetrics({
 export function EngagementMetricsSkeleton() {
   return (
     <div className="flex flex-col gap-8">
-      <div className="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2 lg:grid-cols-5">
+      <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2 lg:grid-cols-5">
         <AdminMetricCardSkeleton />
         <AdminMetricCardSkeleton />
         <AdminMetricCardSkeleton />

@@ -1,7 +1,8 @@
 import "server-only";
 import { getSession } from "@zoonk/core/users/session/get";
 import { prisma } from "@zoonk/db";
-import { type ScoredRow, findBestByScore, getDefaultStartDate } from "@zoonk/utils/date-ranges";
+import { getDefaultStartDate } from "@zoonk/utils/date-ranges";
+import { type ScoredRow, findBestByScore } from "@zoonk/utils/score-aggregation";
 import { cache } from "react";
 
 type BestDayData = {
