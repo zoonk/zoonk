@@ -35,110 +35,110 @@ describe(validatePeriod, () => {
 describe(calculateDateRanges, () => {
   it("returns current and previous month for 'month' period in March", () => {
     vi.useFakeTimers();
-    vi.setSystemTime(new Date(2026, 2, 15)); // March 15, 2026
+    vi.setSystemTime(new Date(Date.UTC(2026, 2, 15)));
 
     const ranges = calculateDateRanges("month", 0);
 
-    expect(ranges.current.start).toEqual(new Date(2026, 2, 1));
-    expect(ranges.current.end).toEqual(new Date(2026, 2, 31));
-    expect(ranges.previous.start).toEqual(new Date(2026, 1, 1));
-    expect(ranges.previous.end).toEqual(new Date(2026, 1, 28));
+    expect(ranges.current.start).toEqual(new Date(Date.UTC(2026, 2, 1)));
+    expect(ranges.current.end).toEqual(new Date(Date.UTC(2026, 2, 31)));
+    expect(ranges.previous.start).toEqual(new Date(Date.UTC(2026, 1, 1)));
+    expect(ranges.previous.end).toEqual(new Date(Date.UTC(2026, 1, 28)));
 
     vi.useRealTimers();
   });
 
   it("returns offset month for 'month' period with offset=1", () => {
     vi.useFakeTimers();
-    vi.setSystemTime(new Date(2026, 2, 15)); // March 15, 2026
+    vi.setSystemTime(new Date(Date.UTC(2026, 2, 15)));
 
     const ranges = calculateDateRanges("month", 1);
 
-    expect(ranges.current.start).toEqual(new Date(2026, 1, 1));
-    expect(ranges.current.end).toEqual(new Date(2026, 1, 28));
-    expect(ranges.previous.start).toEqual(new Date(2026, 0, 1));
-    expect(ranges.previous.end).toEqual(new Date(2026, 0, 31));
+    expect(ranges.current.start).toEqual(new Date(Date.UTC(2026, 1, 1)));
+    expect(ranges.current.end).toEqual(new Date(Date.UTC(2026, 1, 28)));
+    expect(ranges.previous.start).toEqual(new Date(Date.UTC(2026, 0, 1)));
+    expect(ranges.previous.end).toEqual(new Date(Date.UTC(2026, 0, 31)));
 
     vi.useRealTimers();
   });
 
   it("returns correct half-year ranges in January (H1)", () => {
     vi.useFakeTimers();
-    vi.setSystemTime(new Date(2026, 0, 15)); // January 15, 2026
+    vi.setSystemTime(new Date(Date.UTC(2026, 0, 15)));
 
     const ranges = calculateDateRanges("6months", 0);
 
-    expect(ranges.current.start).toEqual(new Date(2026, 0, 1));
-    expect(ranges.current.end).toEqual(new Date(2026, 5, 30));
-    expect(ranges.previous.start).toEqual(new Date(2025, 6, 1));
-    expect(ranges.previous.end).toEqual(new Date(2025, 11, 31));
+    expect(ranges.current.start).toEqual(new Date(Date.UTC(2026, 0, 1)));
+    expect(ranges.current.end).toEqual(new Date(Date.UTC(2026, 5, 30)));
+    expect(ranges.previous.start).toEqual(new Date(Date.UTC(2025, 6, 1)));
+    expect(ranges.previous.end).toEqual(new Date(Date.UTC(2025, 11, 31)));
 
     vi.useRealTimers();
   });
 
   it("returns correct half-year ranges in July (H2)", () => {
     vi.useFakeTimers();
-    vi.setSystemTime(new Date(2026, 6, 15)); // July 15, 2026
+    vi.setSystemTime(new Date(Date.UTC(2026, 6, 15)));
 
     const ranges = calculateDateRanges("6months", 0);
 
-    expect(ranges.current.start).toEqual(new Date(2026, 6, 1));
-    expect(ranges.current.end).toEqual(new Date(2026, 11, 31));
-    expect(ranges.previous.start).toEqual(new Date(2026, 0, 1));
-    expect(ranges.previous.end).toEqual(new Date(2026, 5, 30));
+    expect(ranges.current.start).toEqual(new Date(Date.UTC(2026, 6, 1)));
+    expect(ranges.current.end).toEqual(new Date(Date.UTC(2026, 11, 31)));
+    expect(ranges.previous.start).toEqual(new Date(Date.UTC(2026, 0, 1)));
+    expect(ranges.previous.end).toEqual(new Date(Date.UTC(2026, 5, 30)));
 
     vi.useRealTimers();
   });
 
   it("returns correct year ranges in March", () => {
     vi.useFakeTimers();
-    vi.setSystemTime(new Date(2026, 2, 15)); // March 15, 2026
+    vi.setSystemTime(new Date(Date.UTC(2026, 2, 15)));
 
     const ranges = calculateDateRanges("year", 0);
 
-    expect(ranges.current.start).toEqual(new Date(2026, 0, 1));
-    expect(ranges.current.end).toEqual(new Date(2026, 11, 31));
-    expect(ranges.previous.start).toEqual(new Date(2025, 0, 1));
-    expect(ranges.previous.end).toEqual(new Date(2025, 11, 31));
+    expect(ranges.current.start).toEqual(new Date(Date.UTC(2026, 0, 1)));
+    expect(ranges.current.end).toEqual(new Date(Date.UTC(2026, 11, 31)));
+    expect(ranges.previous.start).toEqual(new Date(Date.UTC(2025, 0, 1)));
+    expect(ranges.previous.end).toEqual(new Date(Date.UTC(2025, 11, 31)));
 
     vi.useRealTimers();
   });
 
   it("returns correct year ranges in December", () => {
     vi.useFakeTimers();
-    vi.setSystemTime(new Date(2026, 11, 25)); // December 25, 2026
+    vi.setSystemTime(new Date(Date.UTC(2026, 11, 25)));
 
     const ranges = calculateDateRanges("year", 0);
 
-    expect(ranges.current.start).toEqual(new Date(2026, 0, 1));
-    expect(ranges.current.end).toEqual(new Date(2026, 11, 31));
-    expect(ranges.previous.start).toEqual(new Date(2025, 0, 1));
-    expect(ranges.previous.end).toEqual(new Date(2025, 11, 31));
+    expect(ranges.current.start).toEqual(new Date(Date.UTC(2026, 0, 1)));
+    expect(ranges.current.end).toEqual(new Date(Date.UTC(2026, 11, 31)));
+    expect(ranges.previous.start).toEqual(new Date(Date.UTC(2025, 0, 1)));
+    expect(ranges.previous.end).toEqual(new Date(Date.UTC(2025, 11, 31)));
 
     vi.useRealTimers();
   });
 
   it("returns offset year ranges with offset=1", () => {
     vi.useFakeTimers();
-    vi.setSystemTime(new Date(2026, 2, 15)); // March 15, 2026
+    vi.setSystemTime(new Date(Date.UTC(2026, 2, 15)));
 
     const ranges = calculateDateRanges("year", 1);
 
-    expect(ranges.current.start).toEqual(new Date(2025, 0, 1));
-    expect(ranges.current.end).toEqual(new Date(2025, 11, 31));
-    expect(ranges.previous.start).toEqual(new Date(2024, 0, 1));
-    expect(ranges.previous.end).toEqual(new Date(2024, 11, 31));
+    expect(ranges.current.start).toEqual(new Date(Date.UTC(2025, 0, 1)));
+    expect(ranges.current.end).toEqual(new Date(Date.UTC(2025, 11, 31)));
+    expect(ranges.previous.start).toEqual(new Date(Date.UTC(2024, 0, 1)));
+    expect(ranges.previous.end).toEqual(new Date(Date.UTC(2024, 11, 31)));
 
     vi.useRealTimers();
   });
 
   it("returns all-time range for 'all' period", () => {
     vi.useFakeTimers();
-    vi.setSystemTime(new Date(2026, 2, 15)); // March 15, 2026
+    vi.setSystemTime(new Date(Date.UTC(2026, 2, 15)));
 
     const ranges = calculateDateRanges("all", 0);
 
-    expect(ranges.current.start).toEqual(new Date(2025, 0, 1));
-    expect(ranges.current.end).toEqual(new Date(2026, 11, 31));
+    expect(ranges.current.start).toEqual(new Date(Date.UTC(2025, 0, 1)));
+    expect(ranges.current.end).toEqual(new Date(Date.UTC(2026, 11, 31)));
     expect(ranges.previous.start).toEqual(new Date(0));
     expect(ranges.previous.end).toEqual(new Date(0));
 
@@ -155,11 +155,10 @@ describe(getDefaultStartDate, () => {
 
   it("returns lookback date when no ISO string provided", () => {
     vi.useFakeTimers();
-    vi.setSystemTime(new Date(2026, 2, 15));
+    vi.setSystemTime(new Date(Date.UTC(2026, 2, 15)));
 
     const result = getDefaultStartDate();
-    const expected = new Date(2026, 2, 15);
-    expected.setDate(expected.getDate() - 90);
+    const expected = new Date(Date.UTC(2026, 2, 15 - 90));
 
     expect(result.toISOString().slice(0, 10)).toBe(expected.toISOString().slice(0, 10));
 
@@ -169,30 +168,37 @@ describe(getDefaultStartDate, () => {
 
 describe(formatPeriodLabel, () => {
   it("formats month period as full month and year", () => {
-    const start = new Date(2026, 2, 1);
-    const end = new Date(2026, 2, 31);
+    const start = new Date(Date.UTC(2026, 2, 1));
+    const end = new Date(Date.UTC(2026, 2, 31));
     const result = formatPeriodLabel(start, end, "month", "en");
     expect(result).toBe("March 2026");
   });
 
   it("formats 6months period as short month range with year", () => {
-    const start = new Date(2026, 0, 1);
-    const end = new Date(2026, 5, 30);
+    const start = new Date(Date.UTC(2026, 0, 1));
+    const end = new Date(Date.UTC(2026, 5, 30));
     const result = formatPeriodLabel(start, end, "6months", "en");
     expect(result).toBe("Jan - Jun 2026");
   });
 
   it("formats year period as year number", () => {
-    const start = new Date(2026, 0, 1);
-    const end = new Date(2026, 11, 31);
+    const start = new Date(Date.UTC(2026, 0, 1));
+    const end = new Date(Date.UTC(2026, 11, 31));
     const result = formatPeriodLabel(start, end, "year", "en");
     expect(result).toBe("2026");
   });
 
   it("formats all period as year range", () => {
-    const start = new Date(2025, 0, 1);
-    const end = new Date(2026, 11, 31);
+    const start = new Date(Date.UTC(2025, 0, 1));
+    const end = new Date(Date.UTC(2026, 11, 31));
     const result = formatPeriodLabel(start, end, "all", "en");
     expect(result).toBe("2025 - 2026");
+  });
+
+  it("formats UTC midnight date correctly (no timezone shift)", () => {
+    const start = new Date("2026-03-01T00:00:00Z");
+    const end = new Date("2026-03-31T00:00:00Z");
+    const result = formatPeriodLabel(start, end, "month", "en");
+    expect(result).toBe("March 2026");
   });
 });

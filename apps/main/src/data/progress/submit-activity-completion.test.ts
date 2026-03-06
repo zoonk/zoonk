@@ -7,8 +7,14 @@ import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { userProgressFixture } from "@zoonk/testing/fixtures/progress";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { parseLocalDate } from "@zoonk/utils/date";
 import { beforeAll, describe, expect, test } from "vitest";
 import { submitActivityCompletion } from "./submit-activity-completion";
+
+function todayLocalDate(): string {
+  const now = new Date();
+  return `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, "0")}-${String(now.getUTCDate()).padStart(2, "0")}`;
+}
 
 describe(submitActivityCompletion, () => {
   let org: Awaited<ReturnType<typeof organizationFixture>>;
@@ -64,6 +70,7 @@ describe(submitActivityCompletion, () => {
       courseId: course.id,
       durationSeconds: 10,
       isChallenge: false,
+      localDate: todayLocalDate(),
       organizationId: org.id,
       score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
       startedAt: new Date(Date.now() - 10_000),
@@ -91,6 +98,7 @@ describe(submitActivityCompletion, () => {
       courseId: course.id,
       durationSeconds: 15,
       isChallenge: false,
+      localDate: todayLocalDate(),
       organizationId: org.id,
       score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
       startedAt: new Date(Date.now() - 15_000),
@@ -116,6 +124,7 @@ describe(submitActivityCompletion, () => {
       courseId: course.id,
       durationSeconds: 10,
       isChallenge: false,
+      localDate: todayLocalDate(),
       organizationId: org.id,
       score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
       startedAt: new Date(Date.now() - 10_000),
@@ -139,6 +148,7 @@ describe(submitActivityCompletion, () => {
       courseId: course.id,
       durationSeconds: 10,
       isChallenge: false,
+      localDate: todayLocalDate(),
       organizationId: org.id,
       score: { brainPower: 10, correctCount: 3, energyDelta: 0.4, incorrectCount: 2 },
       startedAt: new Date(Date.now() - 10_000),
@@ -169,6 +179,7 @@ describe(submitActivityCompletion, () => {
       courseId: course.id,
       durationSeconds: 10,
       isChallenge: false,
+      localDate: todayLocalDate(),
       organizationId: org.id,
       score: { brainPower: 10, correctCount: 5, energyDelta: 1, incorrectCount: 0 },
       startedAt: new Date(Date.now() - 10_000),
@@ -191,6 +202,7 @@ describe(submitActivityCompletion, () => {
       courseId: course.id,
       durationSeconds: 10,
       isChallenge: false,
+      localDate: todayLocalDate(),
       organizationId: org.id,
       score: { brainPower: 10, correctCount: 0, energyDelta: -0.5, incorrectCount: 5 },
       startedAt: new Date(Date.now() - 10_000),
@@ -211,6 +223,7 @@ describe(submitActivityCompletion, () => {
       courseId: course.id,
       durationSeconds: 10,
       isChallenge: true,
+      localDate: todayLocalDate(),
       organizationId: org.id,
       score: { brainPower: 100, correctCount: 0, energyDelta: 3, incorrectCount: 0 },
       startedAt: new Date(Date.now() - 10_000),
@@ -237,6 +250,7 @@ describe(submitActivityCompletion, () => {
       courseId: course.id,
       durationSeconds: 10,
       isChallenge: true,
+      localDate: todayLocalDate(),
       organizationId: org.id,
       score: { brainPower: 10, correctCount: 0, energyDelta: 0.1, incorrectCount: 0 },
       startedAt: new Date(Date.now() - 10_000),
@@ -257,6 +271,7 @@ describe(submitActivityCompletion, () => {
       courseId: course.id,
       durationSeconds: 10,
       isChallenge: false,
+      localDate: todayLocalDate(),
       organizationId: org.id,
       score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
       startedAt: new Date(Date.now() - 10_000),
@@ -291,6 +306,7 @@ describe(submitActivityCompletion, () => {
       courseId: course.id,
       durationSeconds: 5,
       isChallenge: false,
+      localDate: todayLocalDate(),
       organizationId: org.id,
       score: { brainPower: 10, correctCount: 0, energyDelta: 0.1, incorrectCount: 0 },
       startedAt: new Date(Date.now() - 5000),
@@ -317,6 +333,7 @@ describe(submitActivityCompletion, () => {
       courseId: course.id,
       durationSeconds: 10,
       isChallenge: false,
+      localDate: todayLocalDate(),
       organizationId: org.id,
       score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
       startedAt: new Date(Date.now() - 10_000),
@@ -338,6 +355,7 @@ describe(submitActivityCompletion, () => {
       courseId: course.id,
       durationSeconds: 10,
       isChallenge: false,
+      localDate: todayLocalDate(),
       organizationId: null,
       score: { brainPower: 10, correctCount: 2, energyDelta: 0.3, incorrectCount: 1 },
       startedAt: new Date(Date.now() - 10_000),
@@ -365,6 +383,7 @@ describe(submitActivityCompletion, () => {
       courseId: course.id,
       durationSeconds: 10,
       isChallenge: false,
+      localDate: todayLocalDate(),
       organizationId: null as number | null,
       score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
       startedAt: new Date(Date.now() - 10_000),
@@ -394,6 +413,7 @@ describe(submitActivityCompletion, () => {
       courseId: course.id,
       durationSeconds: 10,
       isChallenge: false,
+      localDate: todayLocalDate(),
       organizationId: null,
       score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
       startedAt: new Date(Date.now() - 10_000),
@@ -420,6 +440,7 @@ describe(submitActivityCompletion, () => {
       courseId: course.id,
       durationSeconds: 10,
       isChallenge: false,
+      localDate: todayLocalDate(),
       organizationId: org.id,
       score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
       startedAt: new Date(Date.now() - 10_000),
@@ -445,6 +466,7 @@ describe(submitActivityCompletion, () => {
       courseId: course.id,
       durationSeconds: 10,
       isChallenge: false,
+      localDate: todayLocalDate(),
       organizationId: org.id,
       score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
       startedAt: new Date(Date.now() - 10_000),
@@ -490,6 +512,7 @@ describe(submitActivityCompletion, () => {
       courseId: course.id,
       durationSeconds: 10,
       isChallenge: false,
+      localDate: todayLocalDate(),
       organizationId: org.id,
       score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
       startedAt: new Date(Date.now() - 10_000),
@@ -527,6 +550,7 @@ describe(submitActivityCompletion, () => {
       courseId: course.id,
       durationSeconds: 20,
       isChallenge: false,
+      localDate: todayLocalDate(),
       organizationId: org.id,
       score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
       startedAt: new Date(Date.now() - 20_000),
@@ -541,6 +565,121 @@ describe(submitActivityCompletion, () => {
     expect(progress?.completedAt).not.toBeNull();
     expect(progress?.durationSeconds).toBe(20);
     expect(progress?.startedAt).toEqual(startRecord?.startedAt);
+  });
+
+  test("stores DailyProgress date from localDate, not server UTC", async () => {
+    const user = await userFixture();
+    const userId = Number(user.id);
+
+    await submitActivityCompletion({
+      activityId: activity.id,
+      courseId: course.id,
+      durationSeconds: 10,
+      isChallenge: false,
+      localDate: "2026-03-05",
+      organizationId: org.id,
+      score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
+      startedAt: new Date(Date.now() - 10_000),
+      stepResults: [stepResult(true)],
+      userId,
+    });
+
+    const daily = await prisma.dailyProgress.findFirst({
+      where: { organizationId: org.id, userId },
+    });
+
+    expect(daily).not.toBeNull();
+    expect(daily?.date).toEqual(new Date(Date.UTC(2026, 2, 5)));
+  });
+
+  test("rejects localDate too far in the future", async () => {
+    const user = await userFixture();
+    const userId = Number(user.id);
+
+    await expect(
+      submitActivityCompletion({
+        activityId: activity.id,
+        courseId: course.id,
+        durationSeconds: 10,
+        isChallenge: false,
+        localDate: "9999-12-31",
+        organizationId: org.id,
+        score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
+        startedAt: new Date(Date.now() - 10_000),
+        stepResults: [stepResult(true)],
+        userId,
+      }),
+    ).rejects.toThrow("localDate is too far from server time");
+  });
+
+  test("rejects localDate too far in the past", async () => {
+    const user = await userFixture();
+    const userId = Number(user.id);
+
+    await expect(
+      submitActivityCompletion({
+        activityId: activity.id,
+        courseId: course.id,
+        durationSeconds: 10,
+        isChallenge: false,
+        localDate: "2020-01-01",
+        organizationId: org.id,
+        score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
+        startedAt: new Date(Date.now() - 10_000),
+        stepResults: [stepResult(true)],
+        userId,
+      }),
+    ).rejects.toThrow("localDate is too far from server time");
+  });
+
+  test("decay uses localDate so gaps and energy stay consistent", async () => {
+    const user = await userFixture();
+    const userId = Number(user.id);
+
+    const localDate = todayLocalDate();
+    const todayMs = parseLocalDate(localDate).getTime();
+    const fiveDaysBefore = new Date(todayMs - 5 * 86_400_000);
+
+    await userProgressFixture({
+      currentEnergy: 50,
+      lastActiveAt: fiveDaysBefore,
+      userId,
+    });
+
+    await submitActivityCompletion({
+      activityId: activity.id,
+      courseId: course.id,
+      durationSeconds: 10,
+      isChallenge: false,
+      localDate,
+      organizationId: org.id,
+      score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
+      startedAt: new Date(Date.now() - 10_000),
+      stepResults: [stepResult(true)],
+      userId,
+    });
+
+    // 5 day gap → 4 inactive days → decay=4 → base=46, +0.2 → 46.2
+    const userProgress = await prisma.userProgress.findUnique({ where: { userId } });
+    expect(userProgress?.currentEnergy).toBeCloseTo(46.2);
+
+    // 4 gap records (one per inactive day)
+    const gapRecords = await prisma.dailyProgress.findMany({
+      orderBy: { date: "asc" },
+      where: { organizationId: null, userId },
+    });
+
+    expect(gapRecords).toHaveLength(4);
+    expect(gapRecords[0]?.energyAtEnd).toBe(49);
+    expect(gapRecords[3]?.energyAtEnd).toBe(46);
+
+    // Today's record uses localDate
+    const todayRecord = await prisma.dailyProgress.findFirst({
+      where: { organizationId: org.id, userId },
+    });
+
+    expect(todayRecord?.date).toEqual(parseLocalDate(localDate));
+    expect(todayRecord?.energyAtEnd).toBeCloseTo(46.2);
   });
 
   test("applies decay and fills DailyProgress gaps for inactive days", async () => {
@@ -564,6 +703,7 @@ describe(submitActivityCompletion, () => {
       courseId: course.id,
       durationSeconds: 10,
       isChallenge: false,
+      localDate: todayLocalDate(),
       organizationId: org.id,
       score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
       startedAt: new Date(Date.now() - 10_000),

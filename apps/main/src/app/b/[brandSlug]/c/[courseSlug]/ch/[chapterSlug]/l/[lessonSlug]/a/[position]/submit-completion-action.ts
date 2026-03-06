@@ -107,6 +107,7 @@ export async function submitCompletion(rawInput: CompletionInput): Promise<Compl
       courseId: activity.lesson.chapter.courseId,
       durationSeconds,
       isChallenge,
+      localDate: input.localDate,
       organizationId: activity.organizationId,
       score,
       startedAt: new Date(input.startedAt),

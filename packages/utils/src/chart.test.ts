@@ -45,37 +45,44 @@ describe(isValidChartPayload, () => {
 
 describe(formatLabel, () => {
   it("formats month period as day + short month", () => {
-    const date = new Date(2026, 2, 15);
+    const date = new Date(Date.UTC(2026, 2, 15));
     const result = formatLabel(date, "month", "en");
     expect(result).toContain("Mar");
     expect(result).toContain("15");
   });
 
   it("formats 6months period as week number", () => {
-    const date = new Date(2026, 0, 15);
+    const date = new Date(Date.UTC(2026, 0, 15));
     const result = formatLabel(date, "6months", "en");
     expect(result).toMatch(/^W\d+$/);
   });
 
   it("formats year period as short month", () => {
-    const date = new Date(2026, 2, 15);
+    const date = new Date(Date.UTC(2026, 2, 15));
     const result = formatLabel(date, "year", "en");
     expect(result).toBe("Mar");
   });
 
   it("formats all period as year string", () => {
-    const date = new Date(2026, 0, 1);
+    const date = new Date(Date.UTC(2026, 0, 1));
     const result = formatLabel(date, "all", "en");
     expect(result).toBe("2026");
+  });
+
+  it("formats UTC midnight date correctly (no timezone shift)", () => {
+    const date = new Date("2026-03-01T00:00:00Z");
+    const result = formatLabel(date, "month", "en");
+    expect(result).toContain("Mar");
+    expect(result).toContain("1");
   });
 });
 
 describe(buildChartData, () => {
   const rawPoints = [
-    { count: 10, date: new Date(2026, 0, 5) },
-    { count: 20, date: new Date(2026, 0, 6) },
-    { count: 30, date: new Date(2026, 0, 20) },
-    { count: 40, date: new Date(2026, 1, 10) },
+    { count: 10, date: new Date(Date.UTC(2026, 0, 5)) },
+    { count: 20, date: new Date(Date.UTC(2026, 0, 6)) },
+    { count: 30, date: new Date(Date.UTC(2026, 0, 20)) },
+    { count: 40, date: new Date(Date.UTC(2026, 1, 10)) },
   ];
 
   it("returns daily data points for 'month' period (no aggregation)", () => {
@@ -99,9 +106,9 @@ describe(buildChartData, () => {
 
   it("aggregates to yearly sums for 'all' period", () => {
     const crossYearPoints = [
-      { count: 10, date: new Date(2025, 3, 5) },
-      { count: 20, date: new Date(2025, 8, 6) },
-      { count: 30, date: new Date(2026, 1, 10) },
+      { count: 10, date: new Date(Date.UTC(2025, 3, 5)) },
+      { count: 20, date: new Date(Date.UTC(2025, 8, 6)) },
+      { count: 30, date: new Date(Date.UTC(2026, 1, 10)) },
     ];
     const result = buildChartData(crossYearPoints, "all", "en");
     expect(result.dataPoints).toHaveLength(2);
