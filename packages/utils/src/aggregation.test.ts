@@ -8,9 +8,9 @@ import {
 
 describe("aggregateByPeriod - week", () => {
   const dataPoints = [
-    { date: new Date(2026, 2, 2), value: 10 }, // Monday
-    { date: new Date(2026, 2, 3), value: 20 }, // Tuesday (same week)
-    { date: new Date(2026, 2, 9), value: 30 }, // Next Monday (different week)
+    { date: new Date(Date.UTC(2026, 2, 2)), value: 10 }, // Monday
+    { date: new Date(Date.UTC(2026, 2, 3)), value: 20 }, // Tuesday (same week)
+    { date: new Date(Date.UTC(2026, 2, 9)), value: 30 }, // Next Monday (different week)
   ];
 
   it("aggregates by sum", () => {
@@ -33,9 +33,9 @@ describe("aggregateByPeriod - week", () => {
 
 describe("aggregateByPeriod - month", () => {
   const dataPoints = [
-    { date: new Date(2026, 0, 5), value: 10 },
-    { date: new Date(2026, 0, 20), value: 20 },
-    { date: new Date(2026, 1, 10), value: 30 },
+    { date: new Date(Date.UTC(2026, 0, 5)), value: 10 },
+    { date: new Date(Date.UTC(2026, 0, 20)), value: 20 },
+    { date: new Date(Date.UTC(2026, 1, 10)), value: 30 },
   ];
 
   it("aggregates by sum", () => {
@@ -58,9 +58,9 @@ describe("aggregateByPeriod - month", () => {
 
 describe("aggregateByPeriod - year", () => {
   const dataPoints = [
-    { date: new Date(2025, 3, 10), value: 10 },
-    { date: new Date(2025, 8, 20), value: 20 },
-    { date: new Date(2026, 1, 5), value: 30 },
+    { date: new Date(Date.UTC(2025, 3, 10)), value: 10 },
+    { date: new Date(Date.UTC(2025, 8, 20)), value: 20 },
+    { date: new Date(Date.UTC(2026, 1, 5)), value: 30 },
   ];
 
   it("aggregates by sum", () => {
@@ -88,9 +88,9 @@ function calcScore(correct: number, incorrect: number) {
 describe("aggregateScoreByPeriod - year", () => {
   it("aggregates correct/incorrect by year and calculates score", () => {
     const dataPoints = [
-      { correct: 8, date: new Date(2025, 3, 10), incorrect: 2 },
-      { correct: 6, date: new Date(2025, 8, 20), incorrect: 4 },
-      { correct: 9, date: new Date(2026, 1, 5), incorrect: 1 },
+      { correct: 8, date: new Date(Date.UTC(2025, 3, 10)), incorrect: 2 },
+      { correct: 6, date: new Date(Date.UTC(2025, 8, 20)), incorrect: 4 },
+      { correct: 9, date: new Date(Date.UTC(2026, 1, 5)), incorrect: 1 },
     ];
 
     const result = aggregateScoreByPeriod(dataPoints, calcScore, "year");
@@ -105,9 +105,9 @@ describe("aggregateScoreByPeriod - year", () => {
 describe("aggregateScoreByPeriod - week", () => {
   it("aggregates correct/incorrect by week and calculates score", () => {
     const dataPoints = [
-      { correct: 8, date: new Date(2026, 2, 2), incorrect: 2 }, // Monday
-      { correct: 6, date: new Date(2026, 2, 3), incorrect: 4 }, // Tuesday (same week)
-      { correct: 9, date: new Date(2026, 2, 9), incorrect: 1 }, // Next Monday
+      { correct: 8, date: new Date(Date.UTC(2026, 2, 2)), incorrect: 2 }, // Monday
+      { correct: 6, date: new Date(Date.UTC(2026, 2, 3)), incorrect: 4 }, // Tuesday (same week)
+      { correct: 9, date: new Date(Date.UTC(2026, 2, 9)), incorrect: 1 }, // Next Monday
     ];
 
     const result = aggregateScoreByPeriod(dataPoints, calcScore, "week");
@@ -122,9 +122,9 @@ describe("aggregateScoreByPeriod - week", () => {
 describe("aggregateScoreByPeriod - month", () => {
   it("aggregates correct/incorrect by month and calculates score", () => {
     const dataPoints = [
-      { correct: 8, date: new Date(2026, 0, 5), incorrect: 2 },
-      { correct: 6, date: new Date(2026, 0, 20), incorrect: 4 },
-      { correct: 9, date: new Date(2026, 1, 10), incorrect: 1 },
+      { correct: 8, date: new Date(Date.UTC(2026, 0, 5)), incorrect: 2 },
+      { correct: 6, date: new Date(Date.UTC(2026, 0, 20)), incorrect: 4 },
+      { correct: 9, date: new Date(Date.UTC(2026, 1, 10)), incorrect: 1 },
     ];
 
     const result = aggregateScoreByPeriod(dataPoints, calcScore, "month");

@@ -36,10 +36,14 @@ export function usePlayerActions(
 
   const fireCompletion = useCallback(
     (completionState: PlayerState) => {
+      const now = new Date();
+      const localDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+
       void onComplete({
         activityId: completionState.activityId,
         answers: completionState.selectedAnswers,
         dimensions: completionState.dimensions,
+        localDate,
         startedAt: completionState.startedAt,
         stepTimings: completionState.stepTimings,
       })

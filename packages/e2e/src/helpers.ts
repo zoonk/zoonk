@@ -185,12 +185,12 @@ const ALL_PERIODS = ["month", "6months", "year"] as const;
 function buildGroupDates(today: Date, range: { start: Date; end: Date }, isCurrent: boolean) {
   const baseDate = isCurrent
     ? today
-    : new Date(range.start.getFullYear(), range.start.getMonth(), MID_MONTH_DAY);
+    : new Date(Date.UTC(range.start.getUTCFullYear(), range.start.getUTCMonth(), MID_MONTH_DAY));
 
   return Array.from({ length: DAYS_PER_GROUP }, (_, i) => {
-    const date = new Date(baseDate);
-    date.setDate(baseDate.getDate() - i);
-    date.setHours(0, 0, 0, 0);
+    const date = new Date(
+      Date.UTC(baseDate.getUTCFullYear(), baseDate.getUTCMonth(), baseDate.getUTCDate() - i),
+    );
 
     if (date < range.start || date > range.end) {
       return null;
@@ -215,7 +215,7 @@ function buildDailyProgressInputs(today: Date, orgId: number, userId: number) {
   const seen = new Set<string>();
   return dateEntries
     .filter(({ date }) => {
-      const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+      const key = `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, "0")}-${String(date.getUTCDate()).padStart(2, "0")}`;
       if (seen.has(key)) {
         return false;
       }
@@ -269,7 +269,7 @@ async function createE2EProgressData(userId: number): Promise<void> {
   const org = await getAiOrganization();
   const uniqueId = randomUUID().slice(0, UUID_SHORT_LENGTH);
   const now = new Date();
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const today = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
 
   const course = await courseFixture({
     isPublished: true,

@@ -8,20 +8,19 @@ type TimePeriodConfig = {
 const SUNDAY_DAYS_SINCE_MONDAY = 6;
 
 function getMondayOfWeek(date: Date): Date {
-  const monday = new Date(date);
-  const dayOfWeek = monday.getDay();
+  const dayOfWeek = date.getUTCDay();
   const daysSinceMonday = dayOfWeek === 0 ? SUNDAY_DAYS_SINCE_MONDAY : dayOfWeek - 1;
-  monday.setDate(date.getDate() - daysSinceMonday);
-  monday.setHours(0, 0, 0, 0);
-  return monday;
+  return new Date(
+    Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate() - daysSinceMonday),
+  );
 }
 
 function getFirstOfMonth(date: Date): Date {
-  return new Date(date.getFullYear(), date.getMonth(), 1);
+  return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), 1));
 }
 
 function getFirstOfYear(date: Date): Date {
-  return new Date(date.getFullYear(), 0, 1);
+  return new Date(Date.UTC(date.getUTCFullYear(), 0, 1));
 }
 
 function getWeekKey(date: Date): string {
@@ -29,11 +28,11 @@ function getWeekKey(date: Date): string {
 }
 
 function getMonthKey(date: Date): string {
-  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
+  return `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, "0")}`;
 }
 
 function getYearKey(date: Date): string {
-  return date.getFullYear().toString();
+  return date.getUTCFullYear().toString();
 }
 
 const PERIOD_CONFIGS: Record<TimePeriod, TimePeriodConfig> = {

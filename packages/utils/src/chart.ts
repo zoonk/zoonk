@@ -17,25 +17,25 @@ export function isValidChartPayload<T>(
 
 export function formatLabel(date: Date, period: HistoryPeriod, locale: string): string {
   if (period === "all") {
-    return date.getFullYear().toString();
+    return date.getUTCFullYear().toString();
   }
 
   if (period === "month") {
     return new Intl.DateTimeFormat(locale, {
       day: "numeric",
       month: "short",
+      timeZone: "UTC",
     }).format(date);
   }
 
   if (period === "6months") {
-    const weekNum = Math.ceil(
-      (date.getTime() - new Date(date.getFullYear(), 0, 1).getTime()) / MILLISECONDS_PER_WEEK,
-    );
+    const yearStart = new Date(Date.UTC(date.getUTCFullYear(), 0, 1));
+    const weekNum = Math.ceil((date.getTime() - yearStart.getTime()) / MILLISECONDS_PER_WEEK);
     return `W${weekNum}`;
   }
 
   // Year - show month name
-  return new Intl.DateTimeFormat(locale, { month: "short" }).format(date);
+  return new Intl.DateTimeFormat(locale, { month: "short", timeZone: "UTC" }).format(date);
 }
 
 function getAggregatedPoints(

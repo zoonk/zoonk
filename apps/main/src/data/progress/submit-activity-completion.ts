@@ -2,7 +2,7 @@ import "server-only";
 import { type TransactionClient, prisma } from "@zoonk/db";
 import { type ScoreResult } from "@zoonk/player/compute-score";
 import { type BeltLevelResult, calculateBeltLevel } from "@zoonk/utils/belt-level";
-import { MS_PER_DAY } from "@zoonk/utils/date";
+import { MS_PER_DAY, parseLocalDate } from "@zoonk/utils/date";
 import {
   DAILY_DECAY,
   MIN_ENERGY,
@@ -10,6 +10,8 @@ import {
   computeDecayedEnergy,
   toUTCMidnight,
 } from "@zoonk/utils/energy";
+
+const MAX_LOCAL_DATE_DRIFT_MS = 2 * MS_PER_DAY;
 
 function getCompletionField(input: {
   isChallenge: boolean;
@@ -135,6 +137,7 @@ export async function submitActivityCompletion(input: {
   courseId: number;
   durationSeconds: number;
   isChallenge: boolean;
+  localDate: string;
   organizationId: number | null;
   score: ScoreResult;
   startedAt: Date;
@@ -156,7 +159,14 @@ export async function submitActivityCompletion(input: {
   newTotalBp: number;
 }> {
   const now = new Date();
-  const today = toUTCMidnight(now);
+  const today = parseLocalDate(input.localDate);
+
+  // localDate is client-provided, so a malicious client could send a far-future
+  // date and cause fillDecayGaps to create millions of records. The ±48h window
+  // is generous enough for all real timezone differences (max ~14h).
+  if (Math.abs(today.getTime() - now.getTime()) > MAX_LOCAL_DATE_DRIFT_MS) {
+    throw new Error("localDate is too far from server time");
+  }
 
   return prisma.$transaction(async (tx) => {
     // Create StepAttempt records
@@ -217,7 +227,7 @@ export async function submitActivityCompletion(input: {
     });
 
     const decayedBase = existingProgress
-      ? computeDecayedEnergy(existingProgress.currentEnergy, existingProgress.lastActiveAt, now)
+      ? computeDecayedEnergy(existingProgress.currentEnergy, existingProgress.lastActiveAt, today)
       : 0;
 
     // Fill DailyProgress records for inactive days
@@ -252,7 +262,7 @@ export async function submitActivityCompletion(input: {
     await upsertDailyProgress(tx, {
       clampedEnergy,
       date: today,
-      dayOfWeek: now.getUTCDay(),
+      dayOfWeek: today.getUTCDay(),
       durationSeconds: input.durationSeconds,
       field,
       organizationId: input.organizationId,
