@@ -80,3 +80,21 @@ export function getLanguageName(params: { targetLanguage: string; userLanguage?:
   const name = displayNames.of(params.targetLanguage) ?? params.targetLanguage;
   return name.charAt(0).toUpperCase() + name.slice(1);
 }
+
+export const TTS_VOICES = [
+  "alloy",
+  "ash",
+  "ballad",
+  "cedar",
+  "coral",
+  "echo",
+  "fable",
+  "marin",
+  "nova",
+  "onyx",
+  "sage",
+  "shimmer",
+  "verse",
+] as const;
+
+export type TTSVoice = (typeof TTS_VOICES)[number];

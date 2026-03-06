@@ -19,7 +19,7 @@ import {
   ContainerHeaderGroup,
 } from "@zoonk/ui/components/container";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
-import { parseBigIntId } from "@zoonk/utils/string";
+import { parseBigIntId } from "@zoonk/utils/number";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";

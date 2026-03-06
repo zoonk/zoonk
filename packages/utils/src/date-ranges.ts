@@ -5,8 +5,6 @@ const APP_LAUNCH_YEAR = 2025;
 const MONTHS_PER_HALF_YEAR = 6;
 const DECEMBER_INDEX = 11;
 const LAST_DAY_OF_DECEMBER = 31;
-const SUNDAY_TO_MONDAY_OFFSET = -6;
-const MILLISECONDS_PER_WEEK = 7 * 24 * 60 * 60 * 1000;
 
 export type HistoryPeriod = (typeof HISTORY_PERIODS)[number];
 
@@ -98,124 +96,6 @@ export function calculateDateRanges(period: HistoryPeriod, offset: number): Date
   return getYearDateRanges(now, offset);
 }
 
-export function formatLabel(date: Date, period: HistoryPeriod, locale: string): string {
-  if (period === "all") {
-    return date.getFullYear().toString();
-  }
-
-  if (period === "month") {
-    return new Intl.DateTimeFormat(locale, {
-      day: "numeric",
-      month: "short",
-    }).format(date);
-  }
-
-  if (period === "6months") {
-    const weekNum = Math.ceil(
-      (date.getTime() - new Date(date.getFullYear(), 0, 1).getTime()) / MILLISECONDS_PER_WEEK,
-    );
-    return `W${weekNum}`;
-  }
-
-  // Year - show month name
-  return new Intl.DateTimeFormat(locale, { month: "short" }).format(date);
-}
-
-function getMondayOfWeek(date: Date): Date {
-  const monday = new Date(date);
-  const day = monday.getDay();
-  const diff = monday.getDate() - day + (day === 0 ? SUNDAY_TO_MONDAY_OFFSET : 1);
-  monday.setDate(diff);
-  monday.setHours(0, 0, 0, 0);
-  return monday;
-}
-
-function getFirstOfMonth(date: Date): Date {
-  return new Date(date.getFullYear(), date.getMonth(), 1);
-}
-
-function getWeekKey(date: Date): string {
-  return getMondayOfWeek(date).toISOString().slice(0, 10);
-}
-
-function getMonthKey(date: Date): string {
-  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
-}
-
-type TimePeriodConfig = {
-  getKey: (date: Date) => string;
-  getNormalizedDate: (date: Date) => Date;
-};
-
-function getYearKey(date: Date): string {
-  return date.getFullYear().toString();
-}
-
-function getFirstOfYear(date: Date): Date {
-  return new Date(date.getFullYear(), 0, 1);
-}
-
-const weekConfig: TimePeriodConfig = { getKey: getWeekKey, getNormalizedDate: getMondayOfWeek };
-const monthConfig: TimePeriodConfig = { getKey: getMonthKey, getNormalizedDate: getFirstOfMonth };
-const yearConfig: TimePeriodConfig = { getKey: getYearKey, getNormalizedDate: getFirstOfYear };
-
-type AggregationStrategy = "sum" | "average";
-
-function aggregateByPeriod<T extends { date: Date }>(
-  dataPoints: T[],
-  getValue: (point: T) => number,
-  strategy: AggregationStrategy,
-  { getKey, getNormalizedDate }: TimePeriodConfig,
-): { date: Date; value: number }[] {
-  const map = new Map<string, { total: number; count: number; date: Date }>();
-
-  for (const point of dataPoints) {
-    const key = getKey(point.date);
-    const existing = map.get(key);
-    if (existing) {
-      existing.total += getValue(point);
-      existing.count += 1;
-    } else {
-      map.set(key, {
-        count: 1,
-        date: getNormalizedDate(point.date),
-        total: getValue(point),
-      });
-    }
-  }
-
-  return [...map.values()]
-    .map((item) => ({
-      date: item.date,
-      value: strategy === "sum" ? item.total : item.total / item.count,
-    }))
-    .toSorted((a, b) => a.date.getTime() - b.date.getTime());
-}
-
-export function aggregateByWeek<T extends { date: Date }>(
-  dataPoints: T[],
-  getValue: (point: T) => number,
-  strategy: AggregationStrategy,
-): { date: Date; value: number }[] {
-  return aggregateByPeriod(dataPoints, getValue, strategy, weekConfig);
-}
-
-export function aggregateByMonth<T extends { date: Date }>(
-  dataPoints: T[],
-  getValue: (point: T) => number,
-  strategy: AggregationStrategy,
-): { date: Date; value: number }[] {
-  return aggregateByPeriod(dataPoints, getValue, strategy, monthConfig);
-}
-
-export function aggregateByYear<T extends { date: Date }>(
-  dataPoints: T[],
-  getValue: (point: T) => number,
-  strategy: AggregationStrategy,
-): { date: Date; value: number }[] {
-  return aggregateByPeriod(dataPoints, getValue, strategy, yearConfig);
-}
-
 export function getDefaultStartDate(startDateIso?: string): Date {
   if (startDateIso) {
     return new Date(startDateIso);
@@ -226,49 +106,6 @@ export function getDefaultStartDate(startDateIso?: string): Date {
     now.getMonth(),
     now.getDate() - DEFAULT_PROGRESS_LOOKBACK_DAYS,
   );
-}
-
-export function buildChartData(
-  rawPoints: { date: Date; count: number }[],
-  period: HistoryPeriod,
-  locale: string,
-): { average: number; dataPoints: { date: string; label: string; value: number }[] } {
-  if (rawPoints.length === 0) {
-    return { average: 0, dataPoints: [] };
-  }
-
-  const aggregated = getAggregatedPoints(rawPoints, period);
-
-  const dataPoints = aggregated.map((point) => ({
-    date: point.date.toISOString(),
-    label: formatLabel(point.date, period, locale),
-    value: point.value,
-  }));
-
-  const average = Math.round(
-    dataPoints.reduce((sum, point) => sum + point.value, 0) / dataPoints.length,
-  );
-
-  return { average, dataPoints };
-}
-
-function getAggregatedPoints(
-  rawPoints: { date: Date; count: number }[],
-  period: HistoryPeriod,
-): { date: Date; value: number }[] {
-  if (period === "all") {
-    return aggregateByYear(rawPoints, (point) => point.count, "sum");
-  }
-
-  if (period === "6months") {
-    return aggregateByWeek(rawPoints, (point) => point.count, "sum");
-  }
-
-  if (period === "year") {
-    return aggregateByMonth(rawPoints, (point) => point.count, "sum");
-  }
-
-  return rawPoints.map((point) => ({ date: point.date, value: point.count }));
 }
 
 export function formatPeriodLabel(

@@ -6,7 +6,7 @@ import { parseStepContent } from "@zoonk/core/steps/content-contract";
 import { parseVisualContent } from "@zoonk/core/steps/visual-content-contract";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
-import { parseBigIntId } from "@zoonk/utils/string";
+import { parseBigIntId } from "@zoonk/utils/number";
 import { revalidatePath } from "next/cache";
 
 export async function uploadStepImageAction(

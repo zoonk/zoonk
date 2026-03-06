@@ -4,7 +4,7 @@ import { assertAdmin } from "@/lib/admin-guard";
 import { type ReviewTaskType, getTaskPath, isValidTaskType } from "@/lib/review-utils";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
-import { parseBigIntId } from "@zoonk/utils/string";
+import { parseBigIntId } from "@zoonk/utils/number";
 import { redirect } from "next/navigation";
 
 export async function approveFlaggedAction(taskType: ReviewTaskType, rawEntityId: string) {

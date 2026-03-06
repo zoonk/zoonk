@@ -1,14 +1,9 @@
 import "server-only";
 import { getSession } from "@zoonk/core/users/session/get";
 import { prisma } from "@zoonk/db";
-import {
-  type HistoryPeriod,
-  aggregateByMonth,
-  aggregateByWeek,
-  aggregateByYear,
-  calculateDateRanges,
-  formatLabel,
-} from "@zoonk/utils/date-ranges";
+import { aggregateByMonth, aggregateByWeek, aggregateByYear } from "@zoonk/utils/aggregation";
+import { formatLabel } from "@zoonk/utils/chart";
+import { type HistoryPeriod, calculateDateRanges } from "@zoonk/utils/date-ranges";
 import { safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
 import { fillGapsWithDecay } from "./_fill-gaps";

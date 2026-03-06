@@ -1,5 +1,5 @@
 import { calculateDateRanges, formatPeriodLabel, validatePeriod } from "@zoonk/utils/date-ranges";
-import { validateOffset } from "@zoonk/utils/string";
+import { validateOffset } from "@zoonk/utils/number";
 import { type Metadata } from "next";
 import { Suspense } from "react";
 import { AdminPeriodNavigation } from "../_components/admin-period-navigation";

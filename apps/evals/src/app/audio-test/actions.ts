@@ -1,8 +1,8 @@
 "use server";
 
 import { generateLanguageAudio } from "@zoonk/core/audio/generate";
-import { type TTSVoice } from "@zoonk/utils/constants";
 import { parseFormField } from "@zoonk/utils/form";
+import { type TTSVoice } from "@zoonk/utils/languages";
 
 export async function generateAudioAction(formData: FormData) {
   const text = parseFormField(formData, "text");

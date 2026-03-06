@@ -1,9 +1,9 @@
+const SUNDAY_TO_MONDAY_OFFSET = -6;
+
 type TimePeriodConfig = {
   getKey: (date: Date) => string;
   getNormalizedDate: (date: Date) => Date;
 };
-
-const SUNDAY_TO_MONDAY_OFFSET = -6;
 
 function getMondayOfWeek(date: Date): Date {
   const monday = new Date(date);
@@ -14,6 +14,14 @@ function getMondayOfWeek(date: Date): Date {
   return monday;
 }
 
+function getFirstOfMonth(date: Date): Date {
+  return new Date(date.getFullYear(), date.getMonth(), 1);
+}
+
+function getFirstOfYear(date: Date): Date {
+  return new Date(date.getFullYear(), 0, 1);
+}
+
 function getWeekKey(date: Date): string {
   return getMondayOfWeek(date).toISOString().slice(0, 10);
 }
@@ -22,21 +30,70 @@ function getMonthKey(date: Date): string {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
 }
 
-function getFirstOfMonth(date: Date): Date {
-  return new Date(date.getFullYear(), date.getMonth(), 1);
-}
-
 function getYearKey(date: Date): string {
   return date.getFullYear().toString();
-}
-
-function getFirstOfYear(date: Date): Date {
-  return new Date(date.getFullYear(), 0, 1);
 }
 
 const weekConfig: TimePeriodConfig = { getKey: getWeekKey, getNormalizedDate: getMondayOfWeek };
 const monthConfig: TimePeriodConfig = { getKey: getMonthKey, getNormalizedDate: getFirstOfMonth };
 const yearConfig: TimePeriodConfig = { getKey: getYearKey, getNormalizedDate: getFirstOfYear };
+
+type AggregationStrategy = "sum" | "average";
+
+function aggregateByPeriod<T extends { date: Date }>(
+  dataPoints: T[],
+  getValue: (point: T) => number,
+  strategy: AggregationStrategy,
+  { getKey, getNormalizedDate }: TimePeriodConfig,
+): { date: Date; value: number }[] {
+  const map = new Map<string, { total: number; count: number; date: Date }>();
+
+  for (const point of dataPoints) {
+    const key = getKey(point.date);
+    const existing = map.get(key);
+    if (existing) {
+      existing.total += getValue(point);
+      existing.count += 1;
+    } else {
+      map.set(key, {
+        count: 1,
+        date: getNormalizedDate(point.date),
+        total: getValue(point),
+      });
+    }
+  }
+
+  return [...map.values()]
+    .map((item) => ({
+      date: item.date,
+      value: strategy === "sum" ? item.total : item.total / item.count,
+    }))
+    .toSorted((a, b) => a.date.getTime() - b.date.getTime());
+}
+
+export function aggregateByWeek<T extends { date: Date }>(
+  dataPoints: T[],
+  getValue: (point: T) => number,
+  strategy: AggregationStrategy,
+): { date: Date; value: number }[] {
+  return aggregateByPeriod(dataPoints, getValue, strategy, weekConfig);
+}
+
+export function aggregateByMonth<T extends { date: Date }>(
+  dataPoints: T[],
+  getValue: (point: T) => number,
+  strategy: AggregationStrategy,
+): { date: Date; value: number }[] {
+  return aggregateByPeriod(dataPoints, getValue, strategy, monthConfig);
+}
+
+export function aggregateByYear<T extends { date: Date }>(
+  dataPoints: T[],
+  getValue: (point: T) => number,
+  strategy: AggregationStrategy,
+): { date: Date; value: number }[] {
+  return aggregateByPeriod(dataPoints, getValue, strategy, yearConfig);
+}
 
 type ScoreDataPoint = { date: Date; correct: number; incorrect: number };
 

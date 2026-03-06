@@ -8,7 +8,7 @@ import { getActivitySeoMeta } from "@/lib/activities";
 import { getNextActivityInCourse } from "@zoonk/core/activities/next-in-course";
 import { getSession } from "@zoonk/core/users/session/get";
 import { prepareActivityData } from "@zoonk/player/prepare-activity-data";
-import { parseNumericId } from "@zoonk/utils/string";
+import { parseNumericId } from "@zoonk/utils/number";
 import { type Metadata } from "next";
 import { notFound } from "next/navigation";
 import { after } from "next/server";

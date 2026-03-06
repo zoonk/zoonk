@@ -3,6 +3,7 @@
   "private": true,
   "type": "module",
   "exports": {
+    "./aggregation": "./src/aggregation.ts",
     "./belt-level": "./src/belt-level.ts",
     "./categories": "./src/categories.ts",
     "./chart": "./src/chart.ts",
@@ -18,8 +19,8 @@
     "./json": "./src/json.ts",
     "./languages": "./src/languages.ts",
     "./locale": "./src/locale.ts",
+    "./number": "./src/number.ts",
     "./origin": "./src/origin.ts",
-    "./score-aggregation": "./src/score-aggregation.ts",
     "./search": "./src/search.ts",
     "./settled": "./src/settled.ts",
     "./shuffle": "./src/shuffle.ts",

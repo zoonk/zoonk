@@ -12,7 +12,7 @@ import {
 } from "@/components/catalog/catalog-list";
 import { getLessonProgress } from "@zoonk/core/progress/lessons";
 import { type Lesson } from "@zoonk/db";
-import { formatPosition } from "@zoonk/utils/string";
+import { formatPosition } from "@zoonk/utils/number";
 import { getExtracted } from "next-intl/server";
 
 export async function LessonList({
