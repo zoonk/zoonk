@@ -1,7 +1,6 @@
 import "server-only";
 import { getSession } from "@zoonk/core/users/session/get";
 import { prisma } from "@zoonk/db";
-import { getPeakTime as getPeakTimeQuery } from "@zoonk/db/peak-time";
 import { type ScoredRow, findBestByScore, getDefaultStartDate } from "@zoonk/utils/date-ranges";
 import { safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
@@ -21,8 +20,25 @@ const cachedGetBestTime = cache(
     const userId = Number(session.user.id);
     const startDate = getDefaultStartDate(startDateIso);
 
-    const { data: results, error } = await safeAsync(() =>
-      prisma.$queryRawTyped(getPeakTimeQuery(userId, startDate)),
+    const { data: results, error } = await safeAsync(
+      () =>
+        prisma.$queryRaw<
+          { period: number | null; correct: number | null; incorrect: number | null }[]
+        >`
+        SELECT
+          CASE
+            WHEN hour_of_day BETWEEN 0 AND 5 THEN 0
+            WHEN hour_of_day BETWEEN 6 AND 11 THEN 1
+            WHEN hour_of_day BETWEEN 12 AND 17 THEN 2
+            ELSE 3
+          END AS "period",
+          COUNT(*) FILTER (WHERE is_correct = true)::int AS "correct",
+          COUNT(*) FILTER (WHERE is_correct = false)::int AS "incorrect"
+        FROM step_attempts
+        WHERE user_id = ${userId} AND answered_at >= ${startDate}
+        GROUP BY 1
+        HAVING COUNT(*) FILTER (WHERE is_correct = true) + COUNT(*) FILTER (WHERE is_correct = false) > 0
+      `,
     );
 
     if (error || !results || results.length === 0) {
@@ -30,9 +46,9 @@ const cachedGetBestTime = cache(
     }
 
     const rows: ScoredRow[] = results.map((row) => ({
-      correct: Number(row.correct),
-      incorrect: Number(row.incorrect),
-      key: Number(row.period),
+      correct: row.correct ?? 0,
+      incorrect: row.incorrect ?? 0,
+      key: row.period ?? 0,
     }));
 
     const best = findBestByScore(rows);

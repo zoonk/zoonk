@@ -12,10 +12,6 @@ import {
   type Organization,
   prisma,
 } from "@zoonk/db";
-import {
-  type getContinueLearning as GetContinueLearningQuery,
-  getContinueLearning as getContinueLearningQuery,
-} from "@zoonk/db/continue-learning";
 import { safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
 
@@ -25,6 +21,19 @@ const MAX_CONTINUE_LEARNING_ITEMS = 4;
  * Over-fetch to account for completed courses being filtered out.
  */
 const SQL_LIMIT = 10;
+
+type ContinueLearningRow = {
+  courseId: number;
+  courseSlug: string;
+  courseTitle: string;
+  courseImageUrl: string | null;
+  orgSlug: string | null;
+  activityPosition: number;
+  lessonId: number;
+  lessonPosition: number;
+  chapterId: number;
+  chapterPosition: number;
+};
 
 export type ContinueLearningActivity = Pick<Activity, "id" | "kind" | "title" | "position">;
 
@@ -43,13 +52,7 @@ export type ContinueLearningItem = {
   activity: ContinueLearningActivity;
 };
 
-function toItem(
-  row: GetContinueLearningQuery.Result,
-  next: NextActivityInCourse,
-): ContinueLearningItem {
-  // orgSlug is typed as string by Prisma's generated SQL, but LEFT JOIN can return null at runtime
-  const orgSlug = row.orgSlug as string | null;
-
+function toItem(row: ContinueLearningRow, next: NextActivityInCourse): ContinueLearningItem {
   return {
     activity: {
       id: next.activityId,
@@ -64,7 +67,7 @@ function toItem(
     course: {
       id: row.courseId,
       imageUrl: row.courseImageUrl,
-      organization: orgSlug ? { slug: orgSlug } : null,
+      organization: row.orgSlug ? { slug: row.orgSlug } : null,
       slug: row.courseSlug,
       title: row.courseTitle,
     },
@@ -87,8 +90,46 @@ export const getContinueLearning = cache(
 
     const userId = Number(session.user.id);
 
-    const { data: rows, error } = await safeAsync(() =>
-      prisma.$queryRawTyped(getContinueLearningQuery(userId, SQL_LIMIT)),
+    const { data: rows, error } = await safeAsync(
+      () =>
+        prisma.$queryRaw<ContinueLearningRow[]>`
+        WITH last_per_course AS (
+          SELECT DISTINCT ON (ch.course_id)
+            ch.course_id,
+            ap.completed_at,
+            c.slug as course_slug,
+            c.title as course_title,
+            c.image_url as course_image_url,
+            o.slug as org_slug,
+            a.position as activity_position,
+            a.lesson_id,
+            l.position as lesson_position,
+            l.chapter_id,
+            ch.position as chapter_position
+          FROM activity_progress ap
+          JOIN activities a ON a.id = ap.activity_id AND a.is_published = true
+          JOIN lessons l ON l.id = a.lesson_id AND l.is_published = true
+          JOIN chapters ch ON ch.id = l.chapter_id AND ch.is_published = true
+          JOIN courses c ON c.id = ch.course_id
+          LEFT JOIN organizations o ON o.id = c.organization_id
+          WHERE ap.user_id = ${userId} AND ap.completed_at IS NOT NULL AND (o.kind = 'brand' OR o.id IS NULL)
+          ORDER BY ch.course_id, ap.completed_at DESC
+        )
+        SELECT
+          lpc.course_id as "courseId",
+          lpc.course_slug as "courseSlug",
+          lpc.course_title as "courseTitle",
+          lpc.course_image_url as "courseImageUrl",
+          lpc.org_slug as "orgSlug",
+          lpc.activity_position as "activityPosition",
+          lpc.lesson_id as "lessonId",
+          lpc.lesson_position as "lessonPosition",
+          lpc.chapter_id as "chapterId",
+          lpc.chapter_position as "chapterPosition"
+        FROM last_per_course lpc
+        ORDER BY lpc.completed_at DESC
+        LIMIT ${SQL_LIMIT}
+      `,
     );
 
     if (error || !rows) {
