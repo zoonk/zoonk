@@ -13,7 +13,7 @@ import {
   BYTES_PER_MB,
   DEFAULT_IMAGE_ACCEPTED_TYPES,
   DEFAULT_IMAGE_MAX_SIZE,
-} from "@zoonk/utils/constants";
+} from "@zoonk/utils/upload";
 import { ImageIcon, Trash2Icon, UploadIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
 import Image from "next/image";

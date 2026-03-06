@@ -1,4 +1,4 @@
-import { AI_ORG_SLUG } from "@zoonk/utils/constants";
+import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { describe, expect, test } from "vitest";
 import { getLessonKind } from "./lesson-kind";
 

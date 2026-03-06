@@ -1,7 +1,7 @@
 import "server-only";
 import { getSession } from "@zoonk/core/users/session/get";
 import { prisma } from "@zoonk/db";
-import { DEFAULT_PROGRESS_LOOKBACK_DAYS } from "@zoonk/utils/constants";
+import { DEFAULT_PROGRESS_LOOKBACK_DAYS } from "@zoonk/utils/date-ranges";
 import { safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
 

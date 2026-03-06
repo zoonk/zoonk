@@ -1,7 +1,7 @@
 "use client";
 
 import { authClient } from "@zoonk/core/auth/client";
-import { type AuthOrganization } from "@zoonk/core/types";
+import { type AuthOrganization } from "@zoonk/core/orgs/org";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import {
   DropdownMenu,

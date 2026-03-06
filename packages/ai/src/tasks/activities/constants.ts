@@ -1,1 +1,0 @@
-export const ACTIVITY_OPTIONS_COUNT = 4;

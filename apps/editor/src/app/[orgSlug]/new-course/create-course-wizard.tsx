@@ -1,7 +1,7 @@
 "use client";
 
 import { WizardContent, useWizard, useWizardKeyboard } from "@zoonk/ui/components/wizard";
-import { AI_ORG_SLUG } from "@zoonk/utils/constants";
+import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { ensureLocaleSuffix, toSlug } from "@zoonk/utils/string";
 import { useRouter } from "next/navigation";
 import { useCallback, useState, useTransition } from "react";

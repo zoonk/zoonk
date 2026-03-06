@@ -1,5 +1,5 @@
 import { type LessonKind } from "@zoonk/db";
-import { AI_ORG_SLUG } from "@zoonk/utils/constants";
+import { AI_ORG_SLUG } from "@zoonk/utils/org";
 
 export function getLessonKind(params: {
   orgSlug?: string;

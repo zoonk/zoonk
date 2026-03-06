@@ -17,7 +17,8 @@ import { useCompletionRedirect } from "@/lib/workflow/use-completion-redirect";
 import { useThinkingMessages } from "@/lib/workflow/use-thinking-messages";
 import { useWorkflowGeneration } from "@/lib/workflow/use-workflow-generation";
 import { type GenerationStatus } from "@zoonk/db";
-import { AI_ORG_SLUG, API_URL } from "@zoonk/utils/constants";
+import { AI_ORG_SLUG } from "@zoonk/utils/org";
+import { API_URL } from "@zoonk/utils/url";
 import { useExtracted } from "next-intl";
 import { useGenerationPhases } from "./use-generation-phases";
 

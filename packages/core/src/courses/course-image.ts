@@ -2,8 +2,8 @@ import {
   type CourseThumbnailParams,
   generateCourseThumbnail,
 } from "@zoonk/ai/tasks/courses/thumbnail";
-import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import { type SafeReturn } from "@zoonk/utils/error";
+import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { toSlug } from "@zoonk/utils/string";
 import { optimizeImage } from "../images/optimize-image";
 import { uploadImage } from "../images/upload-image";

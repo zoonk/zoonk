@@ -1,6 +1,6 @@
 "use client";
 
-import { DEFAULT_IMAGE_ACCEPTED_TYPES, DEFAULT_IMAGE_MAX_SIZE } from "@zoonk/utils/constants";
+import { DEFAULT_IMAGE_ACCEPTED_TYPES, DEFAULT_IMAGE_MAX_SIZE } from "@zoonk/utils/upload";
 import { LoaderCircleIcon } from "lucide-react";
 import { createContext, useCallback, useContext, useMemo, useRef, useTransition } from "react";
 import { cn } from "../lib/utils";

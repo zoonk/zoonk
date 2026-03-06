@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { courseAlternativeTitleFixture, courseFixture } from "@zoonk/testing/fixtures/courses";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { AI_ORG_SLUG } from "@zoonk/utils/constants";
+import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { toSlug } from "@zoonk/utils/string";
 import { beforeAll, describe, expect, test } from "vitest";
 import { findExistingCourse } from "./find-existing-course";

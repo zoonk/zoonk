@@ -1,5 +1,7 @@
-import { NAME_PLACEHOLDER } from "@zoonk/utils/constants";
 import slug from "slug";
+
+export const SLUG_MAX_LENGTH = 50;
+const NAME_PLACEHOLDER = "{{NAME}}";
 
 export function removeAccents(str: string): string {
   return str.normalize("NFD").replaceAll(/[\u0300-\u036F]/g, "");

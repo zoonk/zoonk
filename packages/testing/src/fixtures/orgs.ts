@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { type Member, type Organization, prisma } from "@zoonk/db";
-import { AI_ORG_SLUG } from "@zoonk/utils/constants";
+import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { userFixture } from "./users";
 
 function organizationAttrs(

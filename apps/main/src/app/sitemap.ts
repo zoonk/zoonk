@@ -1,4 +1,4 @@
-import { SITE_URL } from "@zoonk/utils/constants";
+import { SITE_URL } from "@zoonk/utils/url";
 import { type MetadataRoute } from "next";
 
 const STATIC_PATHS = ["/", "/courses", "/learn", "/privacy", "/terms"];

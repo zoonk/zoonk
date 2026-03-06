@@ -3,7 +3,7 @@
 import { courseSlugExists } from "@/data/courses/course-slug";
 import { createCourse } from "@/data/courses/create-course";
 import { getErrorMessage } from "@/lib/error-messages";
-import { AI_ORG_SLUG } from "@zoonk/utils/constants";
+import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { ensureLocaleSuffix, toSlug } from "@zoonk/utils/string";
 import { getExtracted } from "next-intl/server";
 import { revalidatePath } from "next/cache";

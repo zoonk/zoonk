@@ -7,7 +7,8 @@
     "./belt-level": "./src/belt-level.ts",
     "./categories": "./src/categories.ts",
     "./chart": "./src/chart.ts",
-    "./constants": "./src/constants.ts",
+    "./brain-power": "./src/brain-power.ts",
+    "./date": "./src/date.ts",
     "./cookies": "./src/cookies.ts",
     "./currency": "./src/currency.ts",
     "./date-ranges": "./src/date-ranges.ts",
@@ -20,12 +21,15 @@
     "./languages": "./src/languages.ts",
     "./locale": "./src/locale.ts",
     "./number": "./src/number.ts",
+    "./org": "./src/org.ts",
     "./origin": "./src/origin.ts",
     "./search": "./src/search.ts",
     "./settled": "./src/settled.ts",
     "./shuffle": "./src/shuffle.ts",
     "./string": "./src/string.ts",
-    "./subscription": "./src/subscription.ts"
+    "./subscription": "./src/subscription.ts",
+    "./upload": "./src/upload.ts",
+    "./url": "./src/url.ts"
   },
   "scripts": {
     "test": "vitest run",

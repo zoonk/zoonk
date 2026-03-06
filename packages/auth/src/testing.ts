@@ -1,5 +1,5 @@
 import { betterAuth } from "better-auth/minimal";
-import { baseAuthConfig, baseAuthPlugins } from "./config";
+import { baseAuthConfig, baseAuthPlugins } from "./server";
 
 /** @public */
 export const auth = betterAuth({

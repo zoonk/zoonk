@@ -1,11 +1,10 @@
+import { BRAIN_POWER_PER_ACTIVITY, BRAIN_POWER_PER_CHALLENGE } from "@zoonk/utils/brain-power";
 import {
-  BRAIN_POWER_PER_ACTIVITY,
-  BRAIN_POWER_PER_CHALLENGE,
   CHALLENGE_FAILURE_ENERGY,
   ENERGY_PER_CORRECT,
   ENERGY_PER_INCORRECT,
   ENERGY_PER_STATIC,
-} from "@zoonk/utils/constants";
+} from "@zoonk/utils/energy";
 
 type ActivityScoreInput = {
   results: { isCorrect: boolean }[];

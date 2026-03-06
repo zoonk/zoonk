@@ -2,7 +2,7 @@ import "server-only";
 import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-options";
 import { Output, generateText } from "ai";
 import { z } from "zod";
-import { formatConceptLines } from "../format-concept-lines";
+import { formatConceptLines } from "../config";
 import { getLanguagePromptContext } from "./_utils/language-prompt-context";
 import systemPrompt from "./activity-grammar.prompt.md";
 

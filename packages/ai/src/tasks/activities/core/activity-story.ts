@@ -2,8 +2,7 @@ import "server-only";
 import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-options";
 import { Output, generateText } from "ai";
 import { z } from "zod";
-import { ACTIVITY_OPTIONS_COUNT } from "../constants";
-import { formatConceptLines } from "../format-concept-lines";
+import { ACTIVITY_OPTIONS_COUNT, formatConceptLines } from "../config";
 import systemPrompt from "./activity-story.prompt.md";
 
 const DEFAULT_MODEL = process.env.AI_MODEL_ACTIVITY_STORY ?? "openai/gpt-5.2";

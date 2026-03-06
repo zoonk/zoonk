@@ -11,7 +11,7 @@ import {
   FeatureCardTitle,
 } from "@zoonk/ui/components/feature";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
-import { EPOCH_YEAR, FIRST_SUNDAY_OFFSET } from "@zoonk/utils/constants";
+import { EPOCH_YEAR, FIRST_SUNDAY_OFFSET } from "@zoonk/utils/date";
 import { type HistoryPeriod } from "@zoonk/utils/date-ranges";
 import { CalendarDays, Clock } from "lucide-react";
 import { getExtracted, getLocale } from "next-intl/server";

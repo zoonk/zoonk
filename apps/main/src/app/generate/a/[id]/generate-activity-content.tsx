@@ -11,8 +11,8 @@ import {
   ContainerTitle,
 } from "@zoonk/ui/components/container";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
-import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import { parseBigIntId } from "@zoonk/utils/number";
+import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { getExtracted } from "next-intl/server";
 import { notFound, redirect } from "next/navigation";
 import { GenerationClient } from "./generation-client";

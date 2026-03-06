@@ -1,7 +1,7 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
-import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
+import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { ensureLocaleSuffix, toSlug } from "@zoonk/utils/string";
 import { cache } from "react";
 

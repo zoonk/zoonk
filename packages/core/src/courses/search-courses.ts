@@ -1,8 +1,7 @@
 import "server-only";
 import { type Course, type Organization, prisma } from "@zoonk/db";
 import { MAX_QUERY_ITEMS, clampQueryItems } from "@zoonk/db/utils";
-import { DEFAULT_SEARCH_LIMIT } from "@zoonk/utils/constants";
-import { mergeSearchResults } from "@zoonk/utils/search";
+import { DEFAULT_SEARCH_LIMIT, mergeSearchResults } from "@zoonk/utils/search";
 import { normalizeString } from "@zoonk/utils/string";
 
 type CourseWithOrganization = Course & {

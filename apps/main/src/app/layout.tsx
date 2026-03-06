@@ -1,6 +1,6 @@
 import { Analytics } from "@vercel/analytics/next";
 import { Toaster } from "@zoonk/ui/components/sonner";
-import { SITE_URL } from "@zoonk/utils/constants";
+import { SITE_URL } from "@zoonk/utils/url";
 import { type Metadata } from "next";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale } from "next-intl/server";

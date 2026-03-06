@@ -2,9 +2,9 @@ import {
   type SelectImageStepParams,
   generateSelectImageStep,
 } from "@zoonk/ai/tasks/steps/select-image";
-import { AI_ORG_SLUG, SLUG_MAX_LENGTH } from "@zoonk/utils/constants";
 import { type SafeReturn } from "@zoonk/utils/error";
-import { toSlug } from "@zoonk/utils/string";
+import { AI_ORG_SLUG } from "@zoonk/utils/org";
+import { SLUG_MAX_LENGTH, toSlug } from "@zoonk/utils/string";
 import { optimizeImage } from "../images/optimize-image";
 import { uploadImage } from "../images/upload-image";
 

@@ -1,5 +1,5 @@
-import { DEFAULT_IMAGE_QUALITY } from "@zoonk/utils/constants";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
+import { DEFAULT_IMAGE_QUALITY } from "@zoonk/utils/upload";
 import sharp from "sharp";
 
 export async function optimizeImage({
