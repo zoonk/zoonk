@@ -1,6 +1,8 @@
 import { DEFAULT_PROGRESS_LOOKBACK_DAYS } from "./constants";
 
-const HISTORY_PERIODS = ["month", "6months", "year"] as const;
+const HISTORY_PERIODS = ["month", "6months", "year", "all"] as const;
+
+const APP_LAUNCH_YEAR = 2025;
 
 const MONTHS_PER_HALF_YEAR = 6;
 const DECEMBER_INDEX = 11;
@@ -71,18 +73,41 @@ function getYearDateRanges(now: Date, offset: number): DateRanges {
   };
 }
 
-export function calculateDateRanges(period: HistoryPeriod, offset: number): DateRanges {
+function getAllDateRanges(): DateRanges {
   const now = new Date();
+
+  return {
+    current: {
+      end: new Date(now.getFullYear(), DECEMBER_INDEX, LAST_DAY_OF_DECEMBER),
+      start: new Date(APP_LAUNCH_YEAR, 0, 1),
+    },
+    previous: { end: new Date(0), start: new Date(0) },
+  };
+}
+
+export function calculateDateRanges(period: HistoryPeriod, offset: number): DateRanges {
+  if (period === "all") {
+    return getAllDateRanges();
+  }
+
+  const now = new Date();
+
   if (period === "month") {
     return getMonthDateRanges(now, offset);
   }
+
   if (period === "6months") {
     return getHalfYearDateRanges(now, offset);
   }
+
   return getYearDateRanges(now, offset);
 }
 
 export function formatLabel(date: Date, period: HistoryPeriod, locale: string): string {
+  if (period === "all") {
+    return date.getFullYear().toString();
+  }
+
   if (period === "month") {
     return new Intl.DateTimeFormat(locale, {
       day: "numeric",
@@ -127,8 +152,17 @@ type TimePeriodConfig = {
   getNormalizedDate: (date: Date) => Date;
 };
 
+function getYearKey(date: Date): string {
+  return date.getFullYear().toString();
+}
+
+function getFirstOfYear(date: Date): Date {
+  return new Date(date.getFullYear(), 0, 1);
+}
+
 const weekConfig: TimePeriodConfig = { getKey: getWeekKey, getNormalizedDate: getMondayOfWeek };
 const monthConfig: TimePeriodConfig = { getKey: getMonthKey, getNormalizedDate: getFirstOfMonth };
+const yearConfig: TimePeriodConfig = { getKey: getYearKey, getNormalizedDate: getFirstOfYear };
 
 type AggregationStrategy = "sum" | "average";
 
@@ -179,6 +213,14 @@ export function aggregateByMonth<T extends { date: Date }>(
   return aggregateByPeriod(dataPoints, getValue, strategy, monthConfig);
 }
 
+export function aggregateByYear<T extends { date: Date }>(
+  dataPoints: T[],
+  getValue: (point: T) => number,
+  strategy: AggregationStrategy,
+): { date: Date; value: number }[] {
+  return aggregateByPeriod(dataPoints, getValue, strategy, yearConfig);
+}
+
 type ScoreDataPoint = { date: Date; correct: number; incorrect: number };
 
 function aggregateScoreByPeriod(
@@ -225,6 +267,13 @@ export function aggregateScoreByMonth(
   return aggregateScoreByPeriod(dataPoints, calculateScore, monthConfig);
 }
 
+export function aggregateScoreByYear(
+  dataPoints: ScoreDataPoint[],
+  calculateScore: (correct: number, incorrect: number) => number,
+): { date: Date; score: number }[] {
+  return aggregateScoreByPeriod(dataPoints, calculateScore, yearConfig);
+}
+
 export function getDefaultStartDate(startDateIso?: string): Date {
   if (startDateIso) {
     return new Date(startDateIso);
@@ -265,6 +314,10 @@ function getAggregatedPoints(
   rawPoints: { date: Date; count: number }[],
   period: HistoryPeriod,
 ): { date: Date; value: number }[] {
+  if (period === "all") {
+    return aggregateByYear(rawPoints, (point) => point.count, "sum");
+  }
+
   if (period === "6months") {
     return aggregateByWeek(rawPoints, (point) => point.count, "sum");
   }

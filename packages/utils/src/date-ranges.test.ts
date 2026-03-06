@@ -3,8 +3,10 @@ import {
   type ScoredRow,
   aggregateByMonth,
   aggregateByWeek,
+  aggregateByYear,
   aggregateScoreByMonth,
   aggregateScoreByWeek,
+  aggregateScoreByYear,
   buildChartData,
   calculateDateRanges,
   findBestByScore,
@@ -36,6 +38,10 @@ describe(validatePeriod, () => {
 
   it("defaults empty string to 'month'", () => {
     expect(validatePeriod("")).toBe("month");
+  });
+
+  it("returns 'all' unchanged", () => {
+    expect(validatePeriod("all")).toBe("all");
   });
 });
 
@@ -137,6 +143,20 @@ describe(calculateDateRanges, () => {
 
     vi.useRealTimers();
   });
+
+  it("returns all-time range for 'all' period", () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(2026, 2, 15)); // March 15, 2026
+
+    const ranges = calculateDateRanges("all", 0);
+
+    expect(ranges.current.start).toEqual(new Date(2025, 0, 1));
+    expect(ranges.current.end).toEqual(new Date(2026, 11, 31));
+    expect(ranges.previous.start).toEqual(new Date(0));
+    expect(ranges.previous.end).toEqual(new Date(0));
+
+    vi.useRealTimers();
+  });
 });
 
 describe(formatLabel, () => {
@@ -157,6 +177,12 @@ describe(formatLabel, () => {
     const date = new Date(2026, 2, 15);
     const result = formatLabel(date, "year", "en");
     expect(result).toBe("Mar");
+  });
+
+  it("formats all period as year string", () => {
+    const date = new Date(2026, 0, 1);
+    const result = formatLabel(date, "all", "en");
+    expect(result).toBe("2026");
   });
 });
 
@@ -207,6 +233,48 @@ describe(aggregateByMonth, () => {
     const result = aggregateByMonth(reversed, (point) => point.value, "sum");
     const times = result.map((row) => row.date.getTime());
     expect(times).toEqual([...times].toSorted((left, right) => left - right));
+  });
+});
+
+describe(aggregateByYear, () => {
+  const dataPoints = [
+    { date: new Date(2025, 3, 10), value: 10 },
+    { date: new Date(2025, 8, 20), value: 20 },
+    { date: new Date(2026, 1, 5), value: 30 },
+  ];
+
+  it("aggregates by sum", () => {
+    const result = aggregateByYear(dataPoints, (point) => point.value, "sum");
+    expect(result.map((row) => row.value)).toEqual([30, 30]); // 2025: 10+20, 2026: 30
+  });
+
+  it("aggregates by average", () => {
+    const result = aggregateByYear(dataPoints, (point) => point.value, "average");
+    expect(result.map((row) => row.value)).toEqual([15, 30]); // 2025: (10+20)/2, 2026: 30/1
+  });
+
+  it("returns sorted results", () => {
+    const reversed = [...dataPoints].toReversed();
+    const result = aggregateByYear(reversed, (point) => point.value, "sum");
+    const times = result.map((row) => row.date.getTime());
+    expect(times).toEqual([...times].toSorted((left, right) => left - right));
+  });
+});
+
+describe(aggregateScoreByYear, () => {
+  it("aggregates correct/incorrect by year and calculates score", () => {
+    const dataPoints = [
+      { correct: 8, date: new Date(2025, 3, 10), incorrect: 2 },
+      { correct: 6, date: new Date(2025, 8, 20), incorrect: 4 },
+      { correct: 9, date: new Date(2026, 1, 5), incorrect: 1 },
+    ];
+
+    const result = aggregateScoreByYear(dataPoints, calcScore);
+
+    expect(result.map((row) => row.score)).toEqual([
+      calcScore(14, 6), // 2025: 8+6=14 correct, 2+4=6 incorrect
+      calcScore(9, 1), // 2026: 9 correct, 1 incorrect
+    ]);
   });
 });
 
@@ -290,6 +358,18 @@ describe(buildChartData, () => {
     const result = buildChartData(rawPoints, "year", "en");
     expect(result.dataPoints).toHaveLength(2);
     expect(result.dataPoints.map((dp) => dp.value)).toEqual([60, 40]);
+  });
+
+  it("aggregates to yearly sums for 'all' period", () => {
+    const crossYearPoints = [
+      { count: 10, date: new Date(2025, 3, 5) },
+      { count: 20, date: new Date(2025, 8, 6) },
+      { count: 30, date: new Date(2026, 1, 10) },
+    ];
+    const result = buildChartData(crossYearPoints, "all", "en");
+    expect(result.dataPoints).toHaveLength(2);
+    expect(result.dataPoints.map((dp) => dp.value)).toEqual([30, 30]);
+    expect(result.dataPoints.map((dp) => dp.label)).toEqual(["2025", "2026"]);
   });
 
   it("returns empty data points and zero average for empty input", () => {

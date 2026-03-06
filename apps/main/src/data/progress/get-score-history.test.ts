@@ -293,6 +293,32 @@ describe("authenticated users", () => {
     });
   });
 
+  describe("all period", () => {
+    test("returns yearly aggregated data points", async () => {
+      const [user, org] = await Promise.all([userFixture(), organizationFixture()]);
+      const headers = await signInAs(user.email, user.password);
+
+      const today = createSafeDate(0);
+
+      await prisma.dailyProgress.create({
+        data: {
+          correctAnswers: 9,
+          date: today,
+          dayOfWeek: today.getDay(),
+          incorrectAnswers: 1,
+          organizationId: org.id,
+          userId: Number(user.id),
+        },
+      });
+
+      const result = await getScoreHistory({ headers, period: "all" });
+
+      expect(result).not.toBeNull();
+      expect(result?.dataPoints.length).toBeGreaterThanOrEqual(1);
+      expect(result?.previousAverage).toBeNull();
+    });
+  });
+
   describe("navigation flags", () => {
     test("hasPreviousPeriod is true when historical data exists", async () => {
       const [user, org] = await Promise.all([userFixture(), organizationFixture()]);

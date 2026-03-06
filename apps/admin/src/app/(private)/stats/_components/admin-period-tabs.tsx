@@ -8,6 +8,7 @@ const periods: { label: string; value: HistoryPeriod }[] = [
   { label: "Month", value: "month" },
   { label: "6 Months", value: "6months" },
   { label: "Year", value: "year" },
+  { label: "All", value: "all" },
 ];
 
 export function AdminPeriodTabs() {

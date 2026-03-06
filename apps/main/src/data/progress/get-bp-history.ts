@@ -6,6 +6,7 @@ import {
   type HistoryPeriod,
   aggregateByMonth,
   aggregateByWeek,
+  aggregateByYear,
   calculateDateRanges,
   formatLabel,
 } from "@zoonk/utils/date-ranges";
@@ -58,6 +59,13 @@ async function fetchDailyBpData(
 }
 
 function processBpData(rawData: RawDataPoint[], period: HistoryPeriod): RawDataPoint[] {
+  if (period === "all") {
+    return aggregateByYear(rawData, (point) => point.bp, "sum").map((item) => ({
+      bp: item.value,
+      date: item.date,
+    }));
+  }
+
   if (period === "6months") {
     return aggregateByWeek(rawData, (point) => point.bp, "sum").map((item) => ({
       bp: item.value,
