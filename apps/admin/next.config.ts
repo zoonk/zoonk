@@ -3,6 +3,7 @@ import { type NextConfig } from "next";
 const CACHE_IMAGE_DAYS = 30;
 
 const nextConfig: NextConfig = {
+  cacheComponents: true,
   devIndicators: false,
   experimental: {
     authInterrupts: true,
