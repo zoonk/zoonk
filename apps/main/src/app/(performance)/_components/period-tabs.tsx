@@ -45,6 +45,14 @@ export function PeriodTabs() {
       >
         {t("Year")}
       </Button>
+
+      <Button
+        onClick={() => handlePeriodChange("all")}
+        size="sm"
+        variant={period === "all" ? "default" : "outline"}
+      >
+        {t("All")}
+      </Button>
     </nav>
   );
 }

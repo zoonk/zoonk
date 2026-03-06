@@ -751,6 +751,7 @@ msgid "Course categories"
 msgstr "Categorías de cursos"
 
 #: src/app/(catalog)/courses/category-pills.tsx
+#: src/app/(performance)/_components/period-tabs.tsx
 msgctxt "zQvVDJ"
 msgid "All"
 msgstr "Todos"
@@ -1048,6 +1049,11 @@ msgstr "Los cursos personalizados llegarán pronto."
 msgctxt "e61Jf3"
 msgid "Coming soon"
 msgstr "Próximamente"
+
+#: src/app/(performance)/_components/metric-comparison.tsx
+msgctxt "HOfw3D"
+msgid "all time"
+msgstr "todo el tiempo"
 
 #: src/app/(performance)/_components/metric-comparison.tsx
 #: src/app/(performance)/energy/energy-chart-client.tsx

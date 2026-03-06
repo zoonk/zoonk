@@ -751,6 +751,7 @@ msgid "Course categories"
 msgstr "Course categories"
 
 #: src/app/(catalog)/courses/category-pills.tsx
+#: src/app/(performance)/_components/period-tabs.tsx
 msgctxt "zQvVDJ"
 msgid "All"
 msgstr "All"
@@ -1048,6 +1049,11 @@ msgstr "Personalized courses are coming soon."
 msgctxt "e61Jf3"
 msgid "Coming soon"
 msgstr "Coming soon"
+
+#: src/app/(performance)/_components/metric-comparison.tsx
+msgctxt "HOfw3D"
+msgid "all time"
+msgstr "all time"
 
 #: src/app/(performance)/_components/metric-comparison.tsx
 #: src/app/(performance)/energy/energy-chart-client.tsx

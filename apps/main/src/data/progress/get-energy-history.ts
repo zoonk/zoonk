@@ -5,6 +5,7 @@ import {
   type HistoryPeriod,
   aggregateByMonth,
   aggregateByWeek,
+  aggregateByYear,
   calculateDateRanges,
   formatLabel,
 } from "@zoonk/utils/date-ranges";
@@ -156,8 +157,19 @@ async function fetchDailyData(
   };
 }
 
+function aggregateEnergyByYear(dataPoints: RawDataPoint[]): RawDataPoint[] {
+  return aggregateByYear(dataPoints, (point) => point.energy, "average").map((item) => ({
+    date: item.date,
+    energy: item.value,
+  }));
+}
+
 function processEnergyData(rawData: RawDataPoint[], period: EnergyPeriod): RawDataPoint[] {
   const withDecay = fillGapsWithDecay(rawData);
+
+  if (period === "all") {
+    return aggregateEnergyByYear(withDecay);
+  }
 
   if (period === "6months") {
     return aggregateEnergyByWeek(withDecay);

@@ -6,6 +6,10 @@ export function formatPeriodLabel(
   period: HistoryPeriod,
   locale: string,
 ): string {
+  if (period === "all") {
+    return `${periodStart.getFullYear()} - ${periodEnd.getFullYear()}`;
+  }
+
   if (period === "month") {
     return new Intl.DateTimeFormat(locale, {
       month: "long",

@@ -5,6 +5,7 @@ import {
   type HistoryPeriod,
   aggregateScoreByMonth,
   aggregateScoreByWeek,
+  aggregateScoreByYear,
   calculateDateRanges,
   formatLabel,
 } from "@zoonk/utils/date-ranges";
@@ -90,6 +91,10 @@ function processScoreData(
 
   if (period === "6months") {
     return aggregateScoreByWeek(rawData, calculateScore);
+  }
+
+  if (period === "all") {
+    return aggregateScoreByYear(rawData, calculateScore);
   }
 
   return aggregateScoreByMonth(rawData, calculateScore);

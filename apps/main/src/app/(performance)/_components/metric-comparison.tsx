@@ -39,6 +39,10 @@ export async function MetricComparison({
       return t("vs last 6 months");
     }
 
+    if (period === "all") {
+      return t("all time");
+    }
+
     return t("vs last year");
   }
 

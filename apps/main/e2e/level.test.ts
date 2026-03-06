@@ -84,6 +84,29 @@ test.describe("Level Page", () => {
       await expect(authenticatedPage.getByText(/vs last 6 months/i)).not.toBeVisible();
     });
 
+    test("switching to all hides comparison text", async ({ authenticatedPage }) => {
+      await authenticatedPage.goto("/level");
+
+      // Verify we start with month comparison
+      await expect(authenticatedPage.getByText(/vs last month/i)).toBeVisible();
+
+      // Switch to all
+      await authenticatedPage.getByRole("button", { name: /^all$/i }).click();
+
+      // No comparison text should be visible
+      await expect(authenticatedPage.getByText(/vs last month/i)).not.toBeVisible();
+      await expect(authenticatedPage.getByText(/vs last 6 months/i)).not.toBeVisible();
+      await expect(authenticatedPage.getByText(/vs last year/i)).not.toBeVisible();
+
+      // Page still shows data
+      await expect(
+        authenticatedPage.getByRole("heading", {
+          level: 1,
+          name: /^level$/i,
+        }),
+      ).toBeVisible();
+    });
+
     test("resets offset when switching periods", async ({ authenticatedPage }) => {
       await authenticatedPage.goto("/level");
 
