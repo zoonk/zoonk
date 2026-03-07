@@ -18,9 +18,9 @@ onlyBuiltDependencies:
   - prisma
 
 overrides:
-  "@types/pg": "8.18.0"
-  fast-xml-parser@<5.3.8: ">=5.3.8"
+  "@hono/node-server@<1.19.10": ">=1.19.10"
+  "@types/pg": 8.18.0
   hono@<4.11.10: ">=4.11.10"
   hono@<4.11.7: ">=4.11.7"
+  hono@<4.12.4: ">=4.12.4"
   lodash@>=4.0.0 <=4.17.22: ">=4.17.23"
-  serialize-javascript@<=7.0.2: ">=7.0.3"
