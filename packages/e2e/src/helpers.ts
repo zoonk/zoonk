@@ -172,7 +172,6 @@ export async function openDialog(trigger: Locator, dialog: Locator) {
 
 // Daily progress test fixture constants
 const DAYS_PER_GROUP = 5;
-const MID_MONTH_DAY = 15;
 const CURRENT_MONTH_CORRECT = 17;
 const PREVIOUS_MONTH_CORRECT = 13;
 const CURRENT_MONTH_ENERGY = 75;
@@ -183,9 +182,9 @@ const PREVIOUS_MONTH_INCORRECT = 7;
 const ALL_PERIODS = ["month", "6months", "year"] as const;
 
 function buildGroupDates(today: Date, range: { start: Date; end: Date }, isCurrent: boolean) {
-  const baseDate = isCurrent
-    ? today
-    : new Date(Date.UTC(range.start.getUTCFullYear(), range.start.getUTCMonth(), MID_MONTH_DAY));
+  const midpointMs = range.start.getTime() + (range.end.getTime() - range.start.getTime()) / 2;
+  const midpoint = new Date(midpointMs);
+  const baseDate = isCurrent ? today : midpoint;
 
   return Array.from({ length: DAYS_PER_GROUP }, (_, i) => {
     const date = new Date(
