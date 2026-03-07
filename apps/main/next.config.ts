@@ -1,5 +1,6 @@
 import path from "node:path";
 import createMDX from "@next/mdx";
+import { withSentryConfig } from "@sentry/nextjs";
 import { withBotId } from "botid/next/config";
 import { type NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
@@ -71,4 +72,14 @@ const withNextIntl = createNextIntlPlugin({
   },
 });
 
-export default withBotId(withNextIntl(withMDX(nextConfig)));
+export default withSentryConfig(withBotId(withNextIntl(withMDX(nextConfig))), {
+  org: "zoonk",
+  project: "zoonk",
+  silent: !process.env.CI,
+  webpack: {
+    treeshake: {
+      removeDebugLogging: true,
+    },
+  },
+  widenClientFileUpload: true,
+});

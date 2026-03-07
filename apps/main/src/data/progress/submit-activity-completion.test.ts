@@ -571,12 +571,20 @@ describe(submitActivityCompletion, () => {
     const user = await userFixture();
     const userId = Number(user.id);
 
+    // Use yesterday's date so it's always within the ±48h drift window
+    // but different from today to prove we use localDate, not server UTC.
+    const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000);
+    const year = yesterday.getUTCFullYear();
+    const month = String(yesterday.getUTCMonth() + 1).padStart(2, "0");
+    const day = String(yesterday.getUTCDate()).padStart(2, "0");
+    const localDate = `${year}-${month}-${day}`;
+
     await submitActivityCompletion({
       activityId: activity.id,
       courseId: course.id,
       durationSeconds: 10,
       isChallenge: false,
-      localDate: "2026-03-05",
+      localDate,
       organizationId: org.id,
       score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
       startedAt: new Date(Date.now() - 10_000),
@@ -589,7 +597,11 @@ describe(submitActivityCompletion, () => {
     });
 
     expect(daily).not.toBeNull();
-    expect(daily?.date).toEqual(new Date(Date.UTC(2026, 2, 5)));
+    expect(daily?.date).toEqual(
+      new Date(
+        Date.UTC(yesterday.getUTCFullYear(), yesterday.getUTCMonth(), yesterday.getUTCDate()),
+      ),
+    );
   });
 
   test("rejects localDate too far in the future", async () => {

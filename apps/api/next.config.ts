@@ -1,4 +1,5 @@
 import path from "node:path";
+import { withSentryConfig } from "@sentry/nextjs";
 import { withBotId } from "botid/next/config";
 import { type NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
@@ -47,4 +48,14 @@ const withNextIntl = createNextIntlPlugin({
   },
 });
 
-export default withWorkflow(withBotId(withNextIntl(nextConfig)));
+export default withSentryConfig(withWorkflow(withBotId(withNextIntl(nextConfig))), {
+  org: "zoonk",
+  project: "zoonk-api",
+  silent: !process.env.CI,
+  webpack: {
+    treeshake: {
+      removeDebugLogging: true,
+    },
+  },
+  widenClientFileUpload: true,
+});

@@ -1,4 +1,5 @@
 import path from "node:path";
+import { withSentryConfig } from "@sentry/nextjs";
 import { type NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
 
@@ -65,4 +66,14 @@ const withNextIntl = createNextIntlPlugin({
   },
 });
 
-export default withNextIntl(nextConfig);
+export default withSentryConfig(withNextIntl(nextConfig), {
+  org: "zoonk",
+  project: "zoonk-editor",
+  silent: !process.env.CI,
+  webpack: {
+    treeshake: {
+      removeDebugLogging: true,
+    },
+  },
+  widenClientFileUpload: true,
+});
