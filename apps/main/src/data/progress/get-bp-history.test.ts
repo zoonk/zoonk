@@ -129,7 +129,7 @@ describe("authenticated users", () => {
       const headers = await signInAs(user.email, user.password);
 
       const currentMonth = createSafeDate(0);
-      const lastMonth = createSafeDate(1);
+      const lastMonth = createSafeDate(1, 14);
 
       await prisma.dailyProgress.createMany({
         data: [

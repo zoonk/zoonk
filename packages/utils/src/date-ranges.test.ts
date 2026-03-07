@@ -6,6 +6,10 @@ import {
   validatePeriod,
 } from "./date-ranges";
 
+function eod(year: number, month: number, day: number): Date {
+  return new Date(Date.UTC(year, month, day, 23, 59, 59, 999));
+}
+
 describe(validatePeriod, () => {
   it("returns 'month' unchanged", () => {
     expect(validatePeriod("month")).toBe("month");
@@ -40,9 +44,23 @@ describe(calculateDateRanges, () => {
     const ranges = calculateDateRanges("month", 0);
 
     expect(ranges.current.start).toEqual(new Date(Date.UTC(2026, 2, 1)));
-    expect(ranges.current.end).toEqual(new Date(Date.UTC(2026, 2, 31)));
+    expect(ranges.current.end).toEqual(eod(2026, 2, 31));
     expect(ranges.previous.start).toEqual(new Date(Date.UTC(2026, 1, 1)));
-    expect(ranges.previous.end).toEqual(new Date(Date.UTC(2026, 1, 28)));
+    expect(ranges.previous.end).toEqual(eod(2026, 1, 15));
+
+    vi.useRealTimers();
+  });
+
+  it("caps previous.end at previous period boundary when current elapsed exceeds it", () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(Date.UTC(2026, 2, 30)));
+
+    const ranges = calculateDateRanges("month", 0);
+
+    expect(ranges.current.start).toEqual(new Date(Date.UTC(2026, 2, 1)));
+    expect(ranges.current.end).toEqual(eod(2026, 2, 31));
+    expect(ranges.previous.start).toEqual(new Date(Date.UTC(2026, 1, 1)));
+    expect(ranges.previous.end).toEqual(eod(2026, 1, 28));
 
     vi.useRealTimers();
   });
@@ -54,9 +72,9 @@ describe(calculateDateRanges, () => {
     const ranges = calculateDateRanges("month", 1);
 
     expect(ranges.current.start).toEqual(new Date(Date.UTC(2026, 1, 1)));
-    expect(ranges.current.end).toEqual(new Date(Date.UTC(2026, 1, 28)));
+    expect(ranges.current.end).toEqual(eod(2026, 1, 28));
     expect(ranges.previous.start).toEqual(new Date(Date.UTC(2026, 0, 1)));
-    expect(ranges.previous.end).toEqual(new Date(Date.UTC(2026, 0, 31)));
+    expect(ranges.previous.end).toEqual(eod(2026, 0, 31));
 
     vi.useRealTimers();
   });
@@ -68,9 +86,9 @@ describe(calculateDateRanges, () => {
     const ranges = calculateDateRanges("6months", 0);
 
     expect(ranges.current.start).toEqual(new Date(Date.UTC(2026, 0, 1)));
-    expect(ranges.current.end).toEqual(new Date(Date.UTC(2026, 5, 30)));
+    expect(ranges.current.end).toEqual(eod(2026, 5, 30));
     expect(ranges.previous.start).toEqual(new Date(Date.UTC(2025, 6, 1)));
-    expect(ranges.previous.end).toEqual(new Date(Date.UTC(2025, 11, 31)));
+    expect(ranges.previous.end).toEqual(eod(2025, 6, 15));
 
     vi.useRealTimers();
   });
@@ -82,9 +100,9 @@ describe(calculateDateRanges, () => {
     const ranges = calculateDateRanges("6months", 0);
 
     expect(ranges.current.start).toEqual(new Date(Date.UTC(2026, 6, 1)));
-    expect(ranges.current.end).toEqual(new Date(Date.UTC(2026, 11, 31)));
+    expect(ranges.current.end).toEqual(eod(2026, 11, 31));
     expect(ranges.previous.start).toEqual(new Date(Date.UTC(2026, 0, 1)));
-    expect(ranges.previous.end).toEqual(new Date(Date.UTC(2026, 5, 30)));
+    expect(ranges.previous.end).toEqual(eod(2026, 0, 15));
 
     vi.useRealTimers();
   });
@@ -96,9 +114,9 @@ describe(calculateDateRanges, () => {
     const ranges = calculateDateRanges("year", 0);
 
     expect(ranges.current.start).toEqual(new Date(Date.UTC(2026, 0, 1)));
-    expect(ranges.current.end).toEqual(new Date(Date.UTC(2026, 11, 31)));
+    expect(ranges.current.end).toEqual(eod(2026, 11, 31));
     expect(ranges.previous.start).toEqual(new Date(Date.UTC(2025, 0, 1)));
-    expect(ranges.previous.end).toEqual(new Date(Date.UTC(2025, 11, 31)));
+    expect(ranges.previous.end).toEqual(eod(2025, 2, 15));
 
     vi.useRealTimers();
   });
@@ -110,9 +128,9 @@ describe(calculateDateRanges, () => {
     const ranges = calculateDateRanges("year", 0);
 
     expect(ranges.current.start).toEqual(new Date(Date.UTC(2026, 0, 1)));
-    expect(ranges.current.end).toEqual(new Date(Date.UTC(2026, 11, 31)));
+    expect(ranges.current.end).toEqual(eod(2026, 11, 31));
     expect(ranges.previous.start).toEqual(new Date(Date.UTC(2025, 0, 1)));
-    expect(ranges.previous.end).toEqual(new Date(Date.UTC(2025, 11, 31)));
+    expect(ranges.previous.end).toEqual(eod(2025, 11, 25));
 
     vi.useRealTimers();
   });
@@ -124,9 +142,9 @@ describe(calculateDateRanges, () => {
     const ranges = calculateDateRanges("year", 1);
 
     expect(ranges.current.start).toEqual(new Date(Date.UTC(2025, 0, 1)));
-    expect(ranges.current.end).toEqual(new Date(Date.UTC(2025, 11, 31)));
+    expect(ranges.current.end).toEqual(eod(2025, 11, 31));
     expect(ranges.previous.start).toEqual(new Date(Date.UTC(2024, 0, 1)));
-    expect(ranges.previous.end).toEqual(new Date(Date.UTC(2024, 11, 31)));
+    expect(ranges.previous.end).toEqual(eod(2024, 11, 31));
 
     vi.useRealTimers();
   });
@@ -138,7 +156,7 @@ describe(calculateDateRanges, () => {
     const ranges = calculateDateRanges("all", 0);
 
     expect(ranges.current.start).toEqual(new Date(Date.UTC(2025, 0, 1)));
-    expect(ranges.current.end).toEqual(new Date(Date.UTC(2026, 11, 31)));
+    expect(ranges.current.end).toEqual(eod(2026, 11, 31));
     expect(ranges.previous.start).toEqual(new Date(0));
     expect(ranges.previous.end).toEqual(new Date(0));
 
