@@ -18,6 +18,7 @@
     "workflow:web": "workflow web"
   },
   "dependencies": {
+    "@sentry/nextjs": "10.42.0",
     "@tabler/icons-react": "3.37.1",
     "@zoonk/ai": "workspace:*",
     "@zoonk/core": "workspace:*",
