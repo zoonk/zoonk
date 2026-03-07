@@ -15,6 +15,9 @@
     "style": "error",
     "suspicious": "error"
   },
+  "options": {
+    "typeAware": true
+  },
   "rules": {
     "eslint/capitalized-comments": "off",
     "eslint/func-style": ["error", "declaration", { "allowArrowFunctions": true }],
