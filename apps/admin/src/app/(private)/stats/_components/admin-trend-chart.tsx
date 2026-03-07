@@ -8,6 +8,7 @@ import {
   Bar,
   BarChart,
   CartesianGrid,
+  LabelList,
   ReferenceLine,
   ResponsiveContainer,
   Tooltip,
@@ -15,6 +16,9 @@ import {
   YAxis,
 } from "recharts";
 
+const BAR_LABEL_THRESHOLD = 12;
+const BAR_MARGIN_TOP = 10;
+const BAR_MARGIN_TOP_WITH_LABELS = 20;
 const BAR_OPACITY = 0.8;
 const BAR_CORNER_RADIUS = 4;
 const BAR_RADIUS: [number, number, number, number] = [BAR_CORNER_RADIUS, BAR_CORNER_RADIUS, 0, 0];
@@ -37,6 +41,7 @@ export function AdminTrendChart({
   variant?: "area" | "bar";
 }) {
   const gradientId = useId();
+  const showBarLabels = variant === "bar" && dataPoints.length <= BAR_LABEL_THRESHOLD;
 
   const sharedElements = (
     <>
@@ -97,14 +102,29 @@ export function AdminTrendChart({
     <figure aria-label={`${valueLabel} chart`} className="h-64 w-full">
       <ResponsiveContainer height="100%" width="100%">
         {variant === "bar" ? (
-          <BarChart data={dataPoints} margin={{ bottom: 0, left: 0, right: 0, top: 10 }}>
+          <BarChart
+            data={dataPoints}
+            margin={{
+              bottom: 0,
+              left: 0,
+              right: 0,
+              top: showBarLabels ? BAR_MARGIN_TOP_WITH_LABELS : BAR_MARGIN_TOP,
+            }}
+          >
             {sharedElements}
-            <Bar
-              dataKey="value"
-              fill="var(--foreground)"
-              opacity={BAR_OPACITY}
-              radius={BAR_RADIUS}
-            />
+            <Bar dataKey="value" fill="var(--foreground)" opacity={BAR_OPACITY} radius={BAR_RADIUS}>
+              {showBarLabels ? (
+                <LabelList
+                  dataKey="value"
+                  fill="var(--muted-foreground)"
+                  formatter={(value) => Number(value).toLocaleString()}
+                  fontSize={11}
+                  offset={8}
+                  position="top"
+                  style={{ fontVariantNumeric: "tabular-nums" }}
+                />
+              ) : null}
+            </Bar>
           </BarChart>
         ) : (
           <AreaChart data={dataPoints} margin={{ bottom: 0, left: 0, right: 0, top: 10 }}>
