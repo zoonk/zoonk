@@ -18,6 +18,7 @@ onlyBuiltDependencies:
   - prisma
 
 overrides:
+  "@types/pg": "8.18.0"
   fast-xml-parser@<5.3.8: ">=5.3.8"
   hono@<4.11.10: ">=4.11.10"
   hono@<4.11.7: ">=4.11.7"
