@@ -11,6 +11,7 @@ ignoredBuiltDependencies:
 
 onlyBuiltDependencies:
   - "@prisma/engines"
+  - "@sentry/cli"
   - "@swc/core"
   - "@tailwindcss/oxide"
   - esbuild
