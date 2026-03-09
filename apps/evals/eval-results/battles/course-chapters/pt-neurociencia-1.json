@@ -1,51 +1,57 @@
 {
   "expectations": "\n      - MUST be in Brazilian Portuguese\n\n      \n  - It should assume learners start with no prior knowledge of the subject\n  - Should create a progressive learning path going from basic/beginner to mastery of the subject\n  - By the end of this course, they should be able to lead very complex projects and tasks in this field\n  - They should be prepared for certifications or advanced studies in this subject like a master's degree or PhD\n  - Should include **EVERYTHING** a student needs to be at the top 1% of the field\n  - Should follow the language specified by language parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Should cover latest trends in the field\n  - Prefer concept names over vendor names in chapter titles/descriptions (e.g., \"Package management\" instead of \"npm\"). Ecosystem-level tools (npm, yarn, Redux, Zustand) should be avoided in titles\n    - Exception: foundational tools that ARE the course subject matter are allowed (e.g., \"Git\" in a programming course, \"Node.js\" in a web dev course, \"Docker\" in a DevOps course). The test: would a chapter about this subject be incomplete without mentioning this tool?\n    - Vendor name usage is a minor issue — it affects title quality but not pedagogical content. Do NOT treat it as a major error\n  - This is an eval system for a learning platform, of course the definition of \"ready for a job\" doesn't mean they have the legal requirements to work in the field (eg. medical license, law license, etc.). That's not important here, we're assessing if the course prepares the student with the necessary knowledge and skills.\n  - You don't need to evaluate the output format here, just focus on the chapter content quality.\n  - Titles should be concise and straight to the point, no fluff/filler words. For example:\n    - Just \"HTML\" is better than \"HTML Structure and Semantics\" (structure and semantics are implied if this is the only HTML chapter). Similarly, if we only have one CSS chapter, just \"CSS\" is better than \"CSS Styling and Layout\".\n    - \"Front-end frameworks\" is better than \"Front-End UI Frameworks Overview\" (too verbose) or \"Front-End Frameworks: Core Concepts\" (core concepts is unnecessary fluff)\n    - \"Relational Databases\" is better than \"Relational Databases and SQL\" (SQL is implied, no need to mention)\n    - \"Introduction to Java\" is better than \"Introduction to Java and Setting Up Your Development Environment\" (too verbose)\n    - \"Lean Startup\" is better than \"The Lean Startup Methodology: An Overview\" (too verbose)\n    - \"Introduction to X\" is valid for titles of introductory chapters but we should avoid those words in descriptions\n  - Similarly, descriptions should be concise and straight to the point, no fluff/filler words. For example:\n    - \"Styling with CSS: Selectors, properties, the box model, Flexbox, CSS Grid, and cascade principles.\" is better than \"Master styling and layout with CSS, including selectors, properties, the box model, Flexbox, CSS Grid, and cascade principles.\" - \"Master\" is fluff, and so are words like \"learn\", \"understand\", \"explore\", etc.\n    - \"Properties of matter, states, and phase transitions.\" is better than \"Explore the definition of Chemistry, properties of matter, states, and phase transitions.\" - \"Explore the definition of Chemistry\" are filler/unnecessary words.\n  - Don't add assessment-style chapters: no final projects, capstone assignments, exercises, quizzes, or \"test your knowledge\" chapters. A theoretical synthesis chapter (e.g., \"Design Patterns in Architecture\") is fine even if it synthesizes prior material — the rule targets assessment/project chapters, not synthesis of knowledge. If a chapter uses the word \"capstone\" but is theoretical (not an assignment), treat it as a minor issue at most, not a major error\n  - It shouldn't mention in title or description references to 1% or similar instructions about being top 1%\n\n    ",
-  "judgedAt": "2026-02-22T17:23:36.997Z",
+  "judgedAt": "2026-03-09T22:15:41.737Z",
   "judgments": [
     {
       "judgeId": "anthropic/claude-opus-4.6",
       "rankings": [
         {
-          "anonymousId": "Model D",
+          "anonymousId": "Model B",
           "modelId": "openai/gpt-5.2:high",
-          "reasoning": "Model D provides the most comprehensive and granular curriculum with 120+ topics spread across its chapters. It excels in several areas: 1) Strong foundational progression from prerequisites (math, physics, biochemistry) through core neuroscience to advanced applications. 2) Exceptional granularity - separating systems that other models combine (e.g., separate chapters for cerebellum, basal ganglia, spinal circuits; separate chapters for each sensory modality; separate chapters for in vitro vs in vivo electrophysiology). 3) Covers niche but important topics like dreams/oneiric cognition, psychophysics, headaches/migraine, neuro-oncology, neuroinfections, peripheral neuropathies, philosophy of mind, software engineering for research, causal inference, data fusion, biosafety. 4) Excellent methodological coverage with separate chapters for signal processing, computational models of behavior, microscopy, histology, fMRI, structural imaging, PET/SPECT, connectomics, optogenetics, chemogenetics. 5) Career chapter included. 6) Titles are generally concise and clear. 7) Descriptions are direct without filler words. 8) Good vendor neutrality (mentions Git appropriately). Minor issues: Some descriptions could be slightly more concise, and having so many chapters (120+) might seem excessive, but the prompt says 'include as many chapters as needed' and this depth is appropriate for a top 1% curriculum. The coverage is the most thorough of all models.",
+          "reasoning": "Model B is the most comprehensive and granular curriculum. It covers 120+ chapters spanning foundational sciences (math, physics, biochemistry), detailed neuroanatomy (separate chapters for cortex, thalamus, ventricular system, neurovasculature), molecular/cellular neuroscience at great depth (separate chapters for receptors/transduction, cytoskeleton/transport, synaptic biology, gene regulation, epigenetics, transcriptomics, post-genomic omics), sensory systems individually broken out, motor systems with cerebellum and basal ganglia separately, cognitive topics well-covered (emotion, stress/trauma, motivation, memory with cellular mechanisms, attention, executive functions, decision-making, language, social cognition, consciousness), extensive methodology coverage (experimental design, statistics, scientific computing, software engineering, data management, signal processing, psychophysics, computational behavior models), imaging/recording techniques thoroughly separated (microscopy, histology, in vitro electrophysiology, in vivo electrophysiology, field electrophysiology, calcium/voltage imaging, fMRI, structural MRI, PET/SPECT, connectivity analysis, circuit mapping, connectomics), manipulation tools individually addressed (optogenetics, chemogenetics, genetic manipulation), clinical chapters well-differentiated (AVC, epilepsy, headaches, movement disorders, demyelinating diseases, neurodegenerative diseases, dementia, trauma, neuro-oncology, neuroinfections, peripheral neuropathies, neurodevelopmental disorders, mood/anxiety, psychosis, addiction), ethics thoroughly covered (human research, animal research, neuroethics, privacy/security, biosafety), and career chapter included. Titles are generally concise. Descriptions are direct without filler words. Language is Brazilian Portuguese throughout. Minor issues: some chapters could arguably be merged (e.g., 'Sinapses elétricas' is very narrow), and a few titles are slightly verbose, but overall this is the most thorough and well-organized curriculum.",
           "score": 9
         },
         {
-          "anonymousId": "Model F",
-          "modelId": "anthropic/claude-opus-4.6",
-          "reasoning": "Model F provides an exceptionally detailed and comprehensive curriculum with ~63 chapters. Strengths: 1) Excellent depth in each chapter description - very specific about what's covered (e.g., naming specific proteins like SNARE, specific pathways, specific theories). 2) Covers unique important topics others miss: neurotrophic factors, multisensory integration, eye movement control, feeding/energy homeostasis, music neuroscience, sexual/reproductive behavior, aggression, exercise neuroscience, gene therapy, forensic neuroscience, translational medicine/precision medicine. 3) Strong progression from cellular to systems to clinical to applied. 4) Good methodological coverage. 5) Career chapter and frontiers chapter included. 6) Descriptions are detailed and specific without being fluffy. Minor issues: Some titles are slightly verbose (e.g., 'Neurociência da Alimentação e Homeostase Energética', 'Lesão Cerebral, AVC e Neuroplasticidade Pós-Lesão'), and some descriptions are quite long (bordering on too detailed for a chapter description). The forensic neuroscience and music chapters add breadth. Overall very strong curriculum.",
-          "score": 8.8
-        },
-        {
-          "anonymousId": "Model G",
-          "modelId": "openai/gpt-5.2",
-          "reasoning": "Model G provides a very solid curriculum with ~61 chapters. Strengths: 1) Excellent logical progression and organization. 2) Good foundational coverage including prerequisites (cell biology, genetics, biophysics). 3) Strong methodological section with appropriate granularity. 4) Covers important topics like biosafety, compliance, data governance, addiction as a separate topic. 5) Titles are concise and professional. 6) Descriptions are direct and avoid filler. 7) Good balance between breadth and depth. 8) Includes career chapter and frontiers. Minor weaknesses: Slightly less granular than Models D and F in some areas (e.g., combines sleep/rhythms/consciousness into one chapter, which is a lot). Some clinical areas could have more depth. Missing some niche topics that D and F cover (forensic, music, exercise). Overall a very well-organized and comprehensive curriculum.",
-          "score": 8.5
-        },
-        {
-          "anonymousId": "Model B",
-          "modelId": "anthropic/claude-sonnet-4.6",
-          "reasoning": "Model B provides a comprehensive curriculum with ~63 chapters covering a wide range of topics. Strengths: 1) Good breadth covering sensory systems individually, clinical topics, applied areas (neuroeducation, neuroeconomics, neuromarketing). 2) Includes unique applied chapters like neurociência positiva/bem-estar, neurobiologia do trauma, neurociência da saúde e estilo de vida. 3) Career chapter included. 4) Good coverage of methodological topics. Weaknesses: 1) Some titles are slightly verbose or could be more concise. 2) Missing some foundational prerequisites (math, physics, biochemistry foundations). 3) Some descriptions use slightly generic language. 4) The neuromarketing chapter, while interesting, may be less essential than other missing clinical topics (e.g., neuro-oncology, peripheral neuropathies are not covered). 5) Psicofarmacologia Clínica feels redundant with Neurofarmacologia. 6) Organization could be slightly better - jumps between topics somewhat. Overall solid but slightly less systematic than the top models.",
-          "score": 8
-        },
-        {
           "anonymousId": "Model A",
-          "modelId": "openai/gpt-5-mini",
-          "reasoning": "Model A provides a solid curriculum with 48 chapters. Strengths: 1) Good logical progression from anatomy through cellular to systems to clinical to methods to career. 2) Strong coverage of computational/data science aspects (signal processing, statistics, ML, data management). 3) Good coverage of translational research and clinical development. 4) Career chapter included with good detail. 5) Titles are generally concise. 6) Includes ethics, regulation, and financing chapters. Weaknesses: 1) Missing foundational prerequisites (math, physics, biochemistry). 2) Sensory systems compressed into one chapter - insufficient granularity for a top-level curriculum. 3) Motor systems also compressed into one chapter. 4) Missing some important clinical topics (peripheral neuropathies, neuro-oncology, headaches, neuroinfections). 5) No separate chapter on autonomic nervous system or neuroendocrinology. 6) Fewer chapters overall means less depth in some areas. 7) 'Ómicas e biologia de sistemas' uses a character that may not render well. Overall good but less comprehensive than the top models.",
-          "score": 7.5
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Model A provides an excellent, comprehensive curriculum with 64 chapters covering the full breadth of neuroscience. It has strong coverage from foundational neuroanatomy (macro, sectional, microscopic) through molecular neurobiology, neurochemistry, plasticity, circuits, connectomics, sensory/motor systems, cognitive neuroscience, clinical topics (vascular, degenerative, epilepsy, neuroimmune, movement disorders, headaches, neuropsychiatry, neurodevelopmental), methods (electrophysiology, neuroimaging, histology, experimental models, statistics, computation), computational neuroscience, AI, neuroethology, genetics, immunology, metabolism, pharmacology, neuromodulation, regeneration, rehabilitation, sleep medicine, lifespan neuroscience, methodology, ethics, communication, management, career, and frontiers. Titles are concise and professional. Descriptions are direct without filler. All in Brazilian Portuguese. It covers slightly less granular detail than Model B in some areas (e.g., methods are more grouped, clinical conditions less separated), but it still provides excellent depth. The progression is logical and well-structured. Minor weakness: some chapters like 'Mielina e nervos periféricos' could be considered too narrow relative to others that are broader.",
+          "score": 8.7
         },
         {
-          "anonymousId": "Model E",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Model E provides a reasonable curriculum with 37 chapters, but it's notably less comprehensive than the other models. Strengths: 1) Clean logical progression. 2) Good cellular/molecular foundation. 3) Includes some unique topics (refinement of circuits as separate chapter). 4) Career chapter included. 5) Titles are concise. Weaknesses: 1) Only 37 chapters - significantly fewer than other models, meaning less depth overall. 2) Missing many important topics: autonomic nervous system and neuroendocrinology coverage is minimal, no peripheral neuropathies, no neuro-oncology, no headaches/migraine, no neuroinfections, no separate neuroimunology chapter, no separate chapters on connectomics, no data management, limited methodological coverage. 3) Computational neuroscience compressed into one chapter. 4) Clinical coverage is thin - only two disease chapters (neurodegenerative + mental disorders). 5) Missing important applied areas (neuroeconomics, social neuroscience depth, education, etc.). 6) Neuroimagem e Métodos Biofísicos combines too many techniques. 7) No statistics/data analysis chapter. 8) Missing genetics/genomics depth beyond one chapter. For a curriculum aiming at top 1%, this lacks the necessary depth and breadth.",
-          "score": 6.5
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model F provides 62 chapters with solid comprehensive coverage. It starts with foundational sciences (cell biology, genetics, biophysics), covers cellular/molecular neuroscience well, includes good neuroanatomy coverage, sensory and motor systems, cognitive topics, clinical disorders well-differentiated, methods (experimental design, statistics, data management, histology, omics, electrophysiology, neuroimaging, neuromodulation, models), computational approaches, neuroengineering, neuropsychology, rehabilitation, education, addiction, ethics split appropriately (neuroethics and compliance), communication, translational neuroscience, career, and frontiers. Titles are concise and professional. Descriptions avoid filler. Brazilian Portuguese throughout. Good logical progression. Slightly less granular than Models B and A in some areas (e.g., some sensory systems grouped, cognitive topics somewhat condensed with sleep/consciousness combined), but still very comprehensive. The inclusion of foundational biophysics/biochemistry and gestão de dados is good.",
+          "score": 8.4
         },
         {
           "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model C provides 65 chapters with good comprehensive coverage. It has detailed treatment of sensory systems (visual, auditory, olfactory/gustatory, vestibular, somatosensory with separate multisensory integration chapter), motor systems well-covered, cognitive topics addressed, clinical topics included, and interesting additions like neurociência da música, neurociência forense, neurociência e exercício físico. However, there are some issues: titles tend to be slightly verbose compared to the best examples (e.g., 'Neuroembriologia e Desenvolvimento Neural', 'Biologia Celular do Neurônio e da Glia'), some descriptions are quite long. The methodology and statistics coverage is less granular than Models B, A, or F. The computational neuroscience coverage is condensed into fewer chapters. Some applied topics (music, forensic, exercise) while interesting, take space that could have been used for deeper methodological or analytical coverage. Still, it's a solid curriculum that covers the field well. The career chapter is included and appropriate.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model D provides 48 chapters covering the field adequately but with notably less granularity than the top models. Strengths: covers foundational through advanced topics, includes ômics, conectômica, methodology, statistics, computational approaches, ML/AI, clinical topics, translational research, neuroengineering, career, and frontiers. Weaknesses: some chapters are too broad and condense too many topics (e.g., 'Neurociência sensorial' groups all sensory systems into one chapter, 'Cognição e funções executivas' groups many cognitive domains, 'Transtornos Psiquiátricos e Neurológicos' lumps many conditions together but then also has a separate chapter on neurodegeneration). The clinical coverage is less differentiated than other models. Some important topics are underrepresented (e.g., consciousness gets minimal coverage, pain is only briefly mentioned, neuroendocrinology is combined with autonomic system). Titles are generally concise. Descriptions are direct. Brazilian Portuguese throughout. The curriculum would work but would leave gaps compared to the more comprehensive offerings.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model E has 63 chapters with broad coverage but some organizational and depth issues. It includes some unique and interesting chapters (neuromarketing, neurociência positiva, neuroeconomia, neurociência social) but these applied topics come at the cost of depth in core areas. Methodology/statistics coverage is relatively thin (one chapter for bioestatística e metodologia). Some chapters seem somewhat redundant or oddly placed (separate chapters for neurofarmacologia and psicofarmacologia clínica). Some titles are slightly verbose. The inclusion of 'Neuropeptídeos e Neuromoduladores' as a separate chapter from 'Neurotransmissores e Receptores' shows good granularity in some areas but not others. The computational neuroscience coverage is split across two chapters which is adequate. Clinical coverage is decent but less differentiated than top models. Some chapters like 'Neurociência Positiva e Bem-Estar' and 'Neuromarketing e Neurociência do Consumidor' feel more like applied extensions rather than core mastery content. Overall solid but not as tightly organized or as deeply comprehensive as the top models.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model G",
           "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "Model C provides the least comprehensive curriculum with only 30 chapters. Strengths: 1) Decent logical flow. 2) Covers core topics. 3) Career chapter included. 4) Some good topic coverage like AI in neuroscience, circuit manipulation. Weaknesses: 1) Only 30 chapters - far too few for a comprehensive neuroscience curriculum aiming at mastery. 2) Many critical topics are missing or severely compressed: sensory systems get one chapter ('Sistemas Sensoriais'), motor control gets one chapter, no separate coverage of pain, language, attention, executive functions, social cognition, consciousness (as standalone topics). 3) Missing many clinical topics: no epilepsy, no stroke/cerebrovascular, no peripheral neuropathies, no neuro-oncology, no headaches, no substance abuse/addiction. 4) No separate statistics chapter. 5) No foundational prerequisites (math, physics). 6) Some descriptions are overly verbose and complex (e.g., 'Manipulação Precisa de Circuitos Neurais' description). 7) Missing neuropsychology, rehabilitation, education applications. 8) Title 'Carreiras, Inovação e Gestão em Neurociência' tries to pack too much into one chapter. This curriculum would not prepare someone to be in the top 1% - too many significant gaps.",
+          "reasoning": "Model G has only 30 chapters, which is significantly fewer than other models and raises serious concerns about depth and comprehensiveness for a curriculum aiming at mastery. While it covers the essential topics, many are at too high a level of abstraction. For example, 'Sistemas Sensoriais' groups all sensory modalities in one chapter, 'Funções Cognitivas Superiores' groups attention, consciousness, language, decision-making, and executive functions into one chapter, and 'Transtornos Psiquiátricos e Neurológicos' lumps all clinical conditions into one chapter. Missing or severely underrepresented topics include: detailed neuroimaging methods, omics, connectomics, data science/statistics (no dedicated chapter), methodology, neuropsychology, rehabilitation, education applications, sleep medicine depth. The descriptions tend to be somewhat verbose and use complex phrasing. The career chapter combines too many topics. While the content that is covered is accurate, the lack of granularity means this curriculum would not achieve the goal of mastery-level preparation. 30 chapters is simply insufficient for the breadth and depth required.",
           "score": 5.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model H has 37 chapters, which is more than Model G but still notably fewer than the top models. Coverage is adequate for core neuroscience topics but lacks depth in several important areas. Strengths: good coverage of basic neuroscience (membrane biophysics, action potential, synapses as separate chapters), sensory systems individually covered, motor systems well-structured. Weaknesses: methodology is condensed into one chapter, statistics not covered separately, computational neuroscience is one chapter, clinical coverage is minimal (only neurodegenerative diseases and 'neurobiologia dos transtornos mentais' without differentiation), no separate chapters for epilepsy, cerebrovascular disease, pain, headaches, neuroimmunology, addiction, or neurodevelopmental disorders in detail. Missing: omics, connectomics, data management, machine learning, rehabilitation, translational research, neuroengineering detail. Some titles could be more concise (e.g., 'Neurofarmacologia Molecular'). The career chapter is included. Overall, while the foundational coverage is decent, the clinical, methodological, and advanced topic coverage is insufficient for a mastery-level curriculum.",
+          "score": 6
         }
       ]
     },
@@ -53,93 +59,105 @@
       "judgeId": "google/gemini-3.1-pro-preview",
       "rankings": [
         {
-          "anonymousId": "Model D",
+          "anonymousId": "Model B",
           "modelId": "openai/gpt-5.2:high",
-          "reasoning": "Model D provides an incredibly exhaustive and perfectly structured curriculum (120 chapters) that truly fulfills the prompt's requirement of taking a learner from 'no knowledge to the top 1%'. It recognizes that modern neuroscience mastery requires foundations in math, physics, and software engineering, and includes dedicated chapters for these. The progression from basic sciences to cellular/molecular, systems, cognitive, clinical, computational, and research methodology is flawless. Titles and descriptions are extremely concise and strictly follow the no-fluff constraints.",
+          "reasoning": "Model B provides an absolutely exceptional and exhaustive curriculum with 104 chapters. It perfectly captures the 'top 1%' and 'Einstein' prompt instructions by deeply breaking down the multidisciplinary nature of neuroscience, including foundational math, physics, and programming specifically for the field, as well as highly advanced topics like transcriptomics, data management (FAIR principles), and neuroethics. The titles and descriptions are completely free of fluff, strictly adhering to all constraints.",
           "score": 10
         },
         {
-          "anonymousId": "Model G",
-          "modelId": "openai/gpt-5.2",
-          "reasoning": "Model G is excellent, offering a very comprehensive curriculum (61 chapters) that also captures the interdisciplinary nature of neuroscience by including chapters on biophysics, statistics, data management, and AI. The titles and descriptions are concise, and the logical progression is very strong. It is slightly less granular than Model D, but still outstanding.",
-          "score": 9
-        },
-        {
-          "anonymousId": "Model F",
+          "anonymousId": "Model C",
           "modelId": "anthropic/claude-opus-4.6",
-          "reasoning": "Model F provides a highly detailed and comprehensive curriculum (69 chapters) with a strong emphasis on the biological, medical, and clinical aspects of neuroscience. It follows all formatting and anti-fluff rules perfectly. It lacks a bit of the foundational hard sciences (math/physics) seen in Models D and G, but it is an exceptionally well-designed course.",
-          "score": 8.5
-        },
-        {
-          "anonymousId": "Model B",
-          "modelId": "anthropic/claude-sonnet-4.6",
-          "reasoning": "Model B offers a very thorough and well-organized curriculum (64 chapters). It covers all the essential systems, cognitive processes, and diseases in great detail. The descriptions are direct and to the point. It is a very good output that meets all requirements.",
-          "score": 8
-        },
-        {
-          "anonymousId": "Model A",
-          "modelId": "openai/gpt-5-mini",
-          "reasoning": "Model A presents a solid curriculum with 49 chapters. It includes good coverage of computational methods and data processing, which is crucial for modern neuroscience. The granularity is good, though not as deep as the higher-ranked models. It follows all formatting constraints well.",
-          "score": 7.5
+          "reasoning": "Model C delivers a highly comprehensive and logically structured curriculum with 72 chapters. It dives deep into both foundational and advanced topics and includes fascinating applied fields such as forensic neuroscience, the neuroscience of music, and exercise. Titles and descriptions are concise, professional, and follow all guidelines perfectly.",
+          "score": 9.5
         },
         {
           "anonymousId": "Model E",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Model E provides a good curriculum (37 chapters) but is significantly less granular than the top models. While it covers the main areas of neuroscience and adheres to the formatting constraints, it doesn't quite reach the depth expected for a 'top 1%' comprehensive course compared to its peers.",
-          "score": 6.5
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model E produces a very strong curriculum with 62 chapters. It covers all essential biological and clinical bases and goes above and beyond by including applied areas like neuromarketing, neuroeconomics, and neuroeducation. The progression is excellent, and it follows the formatting and tone guidelines without any filler words.",
+          "score": 9.2
         },
         {
-          "anonymousId": "Model C",
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model F offers a very solid and expansive curriculum of 61 chapters. It spans molecular biology to systems, computational neuroscience, and ethics. The writing is direct and strictly adheres to the negative constraints regarding fluff and filler words.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Model A provides a great, robust curriculum with 60 chapters. It covers all necessary grounds to reach a very high level of expertise in neuroscience. The descriptions are straight to the point and the progression is logical. It is slightly less granular than the higher-ranked models.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model D presents a solid 48-chapter curriculum. It covers the core areas of neuroscience well and adheres to the prompt's formatting and style rules. However, its scope is slightly less granular than the top models, and the career chapter title ('Como iniciar e avançar a carreira...') is slightly more verbose than necessary.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model H offers a curriculum of 36 chapters. While it accurately represents the standard trajectory of a neuroscience education, it lacks the extreme depth and granularity required to fulfill the 'top 1%' and 'unlimited chapters' directives of the prompt. It remains a good curriculum but is too summarized compared to the best outputs.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model G",
           "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "Model C has the fewest chapters (30) and is the least granular of all the outputs. While the content itself is accurate and well-written, and it strictly follows the formatting and anti-fluff rules, it compresses too many complex topics into broad chapters, missing the extreme depth required to fulfill the 'top 1%' mastery prompt.",
-          "score": 6
+          "reasoning": "Model G provides the shortest curriculum (30 chapters). While the content is accurate and well-written without fluff, it bundles too many complex topics together into single chapters. It fails to provide the sheer comprehensiveness and extent expected for a mastery-level course designed to make someone the 'Einstein' of the field.",
+          "score": 6.5
         }
       ]
     },
     {
-      "judgeId": "openai/gpt-5.2",
+      "judgeId": "openai/gpt-5.4",
       "rankings": [
         {
-          "anonymousId": "Model D",
+          "anonymousId": "Model B",
           "modelId": "openai/gpt-5.2:high",
-          "reasoning": "Currículo extremamente abrangente e bem sequenciado do zero à pesquisa avançada: bases (bioquímica, física, matemática), neuroanatomia multi-escala, fisiologia/sinapses/ômicas, sistemas e cognição, métodos (imagem, eletrofisiologia, opto/quimio/genética), clínica ampla, reprodutibilidade/ciência aberta, ética/privacidade/LGPD, biossegurança, gestão de projetos e carreira. Linguagem concisa, moderna e com boa granularidade; cobre tendências e prática real de pesquisa e tradução.",
-          "score": 9.7
+          "reasoning": "Mais completo, progressivo e alinhado ao pedido de um currículo de neurociência de nível mestre/PhD. Cobre fundamentos, bases quantitativas, neuroanatomia, fisiologia, cognição, métodos experimentais, neuroimagem, modelagem, translacional, clínica, ética, biossegurança, ciência aberta, gestão e carreira. Também inclui tendências modernas como single-cell, multimodalidade, BCI, neuroengenharia e aprendizado de máquina. As descrições são concisas e majoritariamente sem fluff. Pequenos pontos: alguns títulos/descrições são um pouco longos e técnicos para iniciantes, mas isso não compromete muito.",
+          "score": 9.8
         },
         {
           "anonymousId": "Model A",
-          "modelId": "openai/gpt-5-mini",
-          "reasoning": "Muito completo e moderno, com forte cobertura de métodos (ômicas, conectômica, optogenética), computação/ML, rigor científico, neuroengenharia e tradução, além de ética e carreira. Pequenas lacunas/menos granularidade em fundamentos gerais (bioquímica/física/matemática) e em alguns tópicos clínicos específicos; algumas escolhas de escopo poderiam estar mais “do zero” (começa direto em neuroanatomia). Ainda assim, atende muito bem ao objetivo de profundidade e atualidade.",
-          "score": 9.2
-        },
-        {
-          "anonymousId": "Model G",
-          "modelId": "openai/gpt-5.2",
-          "reasoning": "Cobertura ampla e bem balanceada entre fundamentos biológicos, sistemas, clínica, métodos, computação/IA, reprodutibilidade, ética/compliance, translacional e carreira. Boa progressão para iniciantes. Menos profundidade/granularidade do que D em métodos específicos e alguns domínios clínicos (ex.: neurocirurgia, detalhes de sinal/processamento, capítulos de instrumentação), mas globalmente forte e atualizado.",
-          "score": 8.9
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Excelente amplitude e profundidade, com progressão muito boa do básico ao avançado e forte cobertura de sistemas, métodos, clínica, ética, gestão e carreira. É particularmente forte em organização curricular e neutralidade. Fica ligeiramente atrás de B por cobrir menos explicitamente fundamentos quantitativos/matemáticos e algumas frentes metodológicas modernas com menor granularidade. Ainda assim, é muito robusto e muito adequado ao objetivo.",
+          "score": 9.5
         },
         {
           "anonymousId": "Model F",
-          "modelId": "anthropic/claude-opus-4.6",
-          "reasoning": "Muito detalhado em neurofisiologia, sistemas, neuroendócrino, métodos e tendências (organoides/iPSC, terapia gênica, IA, conectômica). Inclui carreira e tópicos emergentes. Penaliza por descrições frequentemente longas (mais de 1–2 frases) e por alguns itens mais especulativos/arriscados (“xenobots”, “gravação e reprodução de memórias”) que podem soar imprecisos para um currículo formal. Ainda assim, conteúdo robusto.",
-          "score": 8.5
-        },
-        {
-          "anonymousId": "Model B",
-          "modelId": "anthropic/claude-sonnet-4.6",
-          "reasoning": "Amplo e bem organizado, com boa cobertura de sistemas, clínica, métodos e algumas aplicações (neuroeconomia, neuromarketing, neuroeducação). Entretanto, há mais “fluff” nas descrições (uso recorrente de formulações introdutórias), certa dispersão para áreas aplicadas sem aprofundar tanto os fundamentos de rigor, dados/reprodutibilidade e pipelines computacionais quanto os melhores. Menos foco em liderança de pesquisa/projetos complexos.",
-          "score": 8
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Currículo muito forte, abrangente e bem estruturado, cobrindo biologia celular, genética, anatomia, sistemas, clínica, métodos, computação, ética, translacional e carreira. Tem boa progressão e inclui tópicos modernos relevantes. Perde um pouco para A e B por ser menos granular em algumas áreas-chave de métodos e cognição, mas continua excelente.",
+          "score": 9.1
         },
         {
           "anonymousId": "Model C",
-          "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "Boa visão geral e inclui métodos modernos (IA, BCM, manipulação de circuitos), clínica e neuroética/carreira. Porém é curto para a ambição do prompt (poucos capítulos), com lacunas importantes: estatística/metodologia/reprodutibilidade, neuroinformática/gestão de dados, neuroimagem/eletrofisiologia mais detalhadas, áreas clínicas específicas e aprofundamento em sistemas/cognição.",
-          "score": 7.3
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Muito abrangente e profundo, com boa cobertura de fundamentos, sistemas, métodos, clínica, translacional, neuroengenharia e tendências futuras. Inclui carreira e metodologia. No entanto, alguns títulos e descrições são mais verbosos do que o ideal e há algumas escolhas menos alinhadas ao foco central do campo em um currículo-base, como capítulos mais periféricos/especulativos ('Neurociência Forense', 'xenobots', 'gravação e reprodução de memórias'), o que reduz um pouco a aderência.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Boa cobertura geral de neurociência básica, métodos, clínica, computação, translacional e carreira. A progressão é razoável e contempla tópicos modernos. Porém, é menos completo que os melhores em sistemas cognitivos/sensoriais específicos, neurodesenvolvimento clínico, neuropsicologia e alguns métodos avançados. Também há problemas de linguagem/ortografia em português ('cortex', 'reproducibilidade', 'limbicas'), o que pesa na aderência ao requisito de português brasileiro bem escrito.",
+          "score": 8.1
         },
         {
           "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Bom currículo, com cobertura ampla de neurociência básica, cognitiva, clínica, métodos e aplicações. Inclui carreira e mantém linguagem acessível. Porém, falta profundidade e granularidade para um objetivo de topo de campo/PhD: métodos experimentais e quantitativos estão subdesenvolvidos, faltam tópicos importantes como desenho experimental avançado, conectômica mais detalhada, ciência aberta, biossegurança, ensaios clínicos e gestão de projetos complexos. Também há algumas redundâncias e capítulos aplicados periféricos como neuromarketing e neurociência positiva, que deslocam espaço de tópicos centrais.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Tem bons tópicos avançados e boa densidade técnica em várias áreas, mas está claramente incompleto para a ambição do prompt. Faltam muitos capítulos essenciais: metodologia científica robusta, estatística, análise de dados, gestão de dados, neuropsicologia, reabilitação, carreira com mais detalhe, várias áreas clínicas e métodos histológicos/ômicos mais completos. A progressão para iniciantes também é menos cuidadosa. Além disso, a linguagem é por vezes excessivamente rebuscada, contrariando a orientação de clareza e concisão.",
+          "score": 6.6
+        },
+        {
+          "anonymousId": "Model H",
           "modelId": "google/gemini-3-flash",
-          "reasoning": "Estrutura sólida para nível intermediário, com principais sistemas e alguns métodos/ética/carreira. Mas é relativamente superficial e condensado para “mastery”: faltam capítulos de metodologia e rigor (pré-registro, reprodutibilidade), estatística/ciência de dados, omicas modernas, conectômica mais profunda, neuroengenharia/neurotecnologias recentes e cobertura clínica mais completa.",
-          "score": 6.9
+          "reasoning": "Adequado como currículo intermediário, mas insuficiente para ser 'completo' e preparar para liderança de projetos complexos ou estudos avançados. Cobre fundamentos e algumas áreas de cognição, clínica e métodos, mas omite muitos tópicos importantes: estatística mais robusta, análise de dados, genética/ômicas modernas em profundidade, neuroimunologia dedicada, ciência aberta, gestão de dados, translacional, reabilitação, biossegurança, desenho metodológico avançado e várias subáreas clínicas. Também é relativamente curto para a abrangência pedida.",
+          "score": 6.1
         }
       ]
     }
