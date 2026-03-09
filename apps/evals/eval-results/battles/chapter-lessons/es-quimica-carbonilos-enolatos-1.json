@@ -1,51 +1,57 @@
 {
   "expectations": "\n      - MUST be in Latin American Spanish\n\n      \n  # How to evaluate\n\n  You are evaluating a CURRICULUM, not a glossary. Think like a curriculum designer reviewing a colleague's work — use domain expertise and professional judgment, not mechanical rule-checking.\n\n  ## Structure\n\n  Output is organized into LESSON UNITS (thematic groups) containing CONCEPTS (individual teachable items).\n  - Each concept should be a single, specific idea — something a domain expert would consider one teachable unit\n  - Lesson sizes should be 3-8 concepts and should vary naturally across lessons\n  - Total concept coverage should be exhaustive for the chapter's scope\n\n  ## Evaluating concept quality\n\n  Ask: \"Is this ONE teachable thing, or is it secretly a bundle of separate things?\"\n  - A concept is too broad only if it genuinely bundles multiple DISTINCT teachable items that a student would need separate lessons for\n  - Use domain expertise: terms that sound broad to a generalist may be a single well-defined concept in the field\n  - Conjunctions (AND/OR/VS and equivalents in any language) signal potential broadness, but only penalize when they join genuinely separate topics — not when the comparison itself IS the concept, or when \"and\" connects an entity to its work\n  - Concept titles should be concrete and self-explanatory, not interpretive thesis statements or vague abstractions\n\n  ## Evaluating scope\n\n  The chapter description is the SOURCE OF TRUTH. Neighboring chapters are guardrails against scope creep, not vetoes.\n\n  The key principle: **judge by framing, not by keywords.** A concept belongs in THIS chapter if its primary teaching purpose serves THIS chapter's learning goals — even if the concept mentions words that appear in a neighboring chapter's title. Ask: \"What is this concept primarily TEACHING?\" not \"Does this concept MENTION a neighboring topic?\"\n\n  When in doubt, favor the chapter description. If a concept is framed through this chapter's lens and serves its learning goals, it is in-scope.\n\n  ## Evaluating lesson quality\n\n  - Lesson descriptions should be concise and go straight to the content — no filler words like \"introduces\", \"presents\", \"teaches\", \"explores\"\n  - Logical progression from foundational to advanced\n  - No summary, review, or assessment lessons\n  - Should follow the specified language (proper nouns and established technical terms may remain in their original language)\n\n  ## Coverage\n\n  Completeness is the key metric. Are all topics in the chapter description covered with sufficient granularity? Don't penalize for fewer concepts if the chapter's scope is inherently narrow.\n\n  ## Proportionality\n\n  Weight your scoring proportionally. A curriculum that covers the chapter exhaustively with good structure but has a few overly-broad concept titles is fundamentally different from one that misses entire topics or systematically violates scope. Minor title-phrasing issues should not dominate the score when the overall curriculum quality is strong.\n\n    ",
-  "judgedAt": "2026-03-01T01:46:07.001Z",
+  "judgedAt": "2026-03-09T22:24:13.471Z",
   "judgments": [
     {
       "judgeId": "anthropic/claude-opus-4.6",
       "rankings": [
         {
-          "anonymousId": "Model B",
-          "modelId": "openai/gpt-5.2",
-          "reasoning": "Model B provides the most exhaustive and granular coverage of the chapter. It has 26 lessons with approximately 200 concepts, covering every topic in the chapter description thoroughly: carbonyl structure, addition mechanisms, enol/enolate chemistry, aldol, Claisen, Michael, selectivity control, stereochemistry, silyl enol ethers, organocatalysis, and 1,3-dicarbonyl chemistry. Concept granularity is excellent — most concepts are single teachable ideas. Lesson sizes vary naturally (5-8 concepts). The progression is logical from fundamentals to advanced selectivity topics. There are a few minor issues: some concept titles could be slightly more specific (e.g., 'Aldolación' is a bit bare), and a couple of concepts like 'Comparación de reactividad aldehído cetona' uses a comparison structure that borders on violating the no-comparison rule. The organocatalysis lesson and some stereochemistry concepts are well-placed within the chapter scope. Lesson descriptions mostly avoid forbidden words. The neighboring chapter filtering is well done — no obvious overlap with acid derivatives, aromatics, or other neighboring chapters. Some concepts about acylation via enolates could border on the 'ácidos carboxílicos y derivados' chapter, but they're framed through the enolate lens. Overall, this is the most complete and well-structured curriculum.",
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model A provides the most exhaustive and well-structured curriculum for this chapter. Key strengths: (1) Excellent granularity — concepts are genuinely single-idea items (e.g., 'Caras Re del carbonilo', 'Caras Si del carbonilo', 'Enolato cinético', 'Enolato termodinámico' as separate concepts). (2) Comprehensive coverage — it covers all topics from the chapter description: nucleophilic addition to carbonyls, enol/enolate chemistry, aldol (including crossed, intramolecular, and stereochemistry), Claisen (including crossed and Dieckmann), Michael, Robinson annulation, and selectivity control. (3) Good lesson progression from fundamentals to advanced topics. (4) Lesson sizes vary naturally (5-8 concepts). (5) Descriptions follow the rules well — they go straight to content without 'introduces' or 'teaches'. (6) Stays within chapter scope without significant overlap with neighboring chapters. (7) Includes important details like Felkin-Anh, Zimmerman-Traxler, Mukaiyama aldol, Stork enamines, tioacetals, cyanhydrins, etc. Minor issues: Some lesson titles use commas to join concepts (e.g., 'Hemiacetales, acetales', 'Iminas, iminios, enaminas', 'Claisen cruzada, Dieckmann') which technically violates the spirit of avoiding compound titles, though this is minor. A few concepts could arguably be split further. The Wittig reaction is absent, which is reasonable since it's not explicitly in the chapter description and could belong elsewhere, but some might consider it part of carbonyl chemistry. Overall, this is the strongest submission.",
           "score": 8.5
         },
         {
-          "anonymousId": "Model E",
-          "modelId": "openai/gpt-5.2:high",
-          "reasoning": "Model E provides very good coverage with 28 lessons and approximately 170 concepts. Granularity is strong — concepts are well-scoped single ideas. The curriculum covers all major topics: carbonyl structure, hydration, reductions with hydrides, organometallics, facial selectivity, cyanohydrins, acetals, thioacetals, imines/enamines, keto-enol tautomerism, enolates (kinetic/thermodynamic separately), halogenation, aldol (base-catalyzed, condensation, crossed, intramolecular, stereochemistry separately), Claisen, Michael, Robinson annulation, and chemoselectivity. The separation of kinetic and thermodynamic enolates into separate lessons is pedagogically sound. Some minor issues: the reduction lesson with hydrides (NaBH4, LiAlH4) could be seen as borderline overlap with a general transformations chapter, but it's framed as carbonyl chemistry. Thioacetals lesson has only 5 concepts which is fine. The chemoselectivity lesson at the end is a good addition. Lesson descriptions are mostly clean though a few could be tighter. A couple of concept titles use commas to join items (e.g., 'Iminas, iminios, enaminas' as a lesson title is fine). Good neighboring chapter awareness. Slightly less organized than Model B in some areas but very thorough.",
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model H is very thorough with 27 lessons and extensive concept coverage. Strengths: (1) Excellent granularity throughout — concepts are well-scoped single ideas. (2) Very comprehensive coverage including detailed treatment of enolates, halogenation, silyl enol ethers, Michael, aldol (mechanism, selectivity, crossed variants, stereochemistry), Claisen (mechanism, variants), and selectivity control. (3) Good logical progression. (4) Includes topics often missed like bisulfite adducts, silyl enol ethers as a dedicated lesson, organocatalysis. (5) Lesson descriptions mostly follow rules. Issues: (1) 27 lessons is quite many, and some could be consolidated. The first lesson 'Estructura electrónica del carbonilo' has 8 concepts which is fine, but some lessons feel slightly overlapping (e.g., the aldol topic is spread across 4 lessons which is thorough but borders on fragmented). (2) Some concepts are slightly verbose (e.g., 'Mecanismo general de adición nucleofílica a carbonilos (ataque → tetraédrico → protonación)' in Model D style). (3) The organocatalysis lesson ventures into territory not explicitly in the chapter description but is reasonable for 'control de selectividad'. (4) Bisulfite adducts are somewhat peripheral. (5) Some lesson descriptions start with action-oriented phrasing that borders on the prohibited style. (6) The 'Enaminas y reactividad en α' lesson includes alquilación and acilación via enamines which overlaps slightly with the enolate equivalents concept. Overall very strong and comprehensive.",
           "score": 8
         },
         {
-          "anonymousId": "Model D",
+          "anonymousId": "Model E",
           "modelId": "anthropic/claude-opus-4.6",
-          "reasoning": "Model D has 20 lessons with approximately 130 concepts. Coverage is quite comprehensive, hitting all major chapter topics. It includes malonic/acetoacetic ester synthesis which is a nice addition. Granularity is generally good, though some concepts are slightly broad: 'Diferencias entre aldehídos y cetonas' could be split, 'Equivalentes sintéticos de enolato' as a concept title within its own lesson is somewhat redundant, and 'Estereocontrol en la reacción aldólica (modelos syn/anti)' bundles multiple ideas. Some concept titles use 'vs.' (e.g., 'Enolatos cinéticos vs. enolatos termodinámicos', 'Alquilación en carbono vs. alquilación en oxígeno', 'Nucleófilos duros vs. blandos en adición conjugada') which violates the prompt rules. The reductions/oxidations lesson could be seen as scope creep since the chapter is about nucleophilic addition and enolate chemistry specifically, not redox. Overall solid structure with logical progression. Lesson descriptions are clean. Some neighboring chapter boundary issues with oxidation reactions.",
-          "score": 7.2
+          "reasoning": "Model E provides solid coverage with 20 lessons. Strengths: (1) Good overall coverage of all major topics in the chapter description. (2) Reasonable granularity for most concepts. (3) Includes malonic and acetoacetic ester synthesis, Wittig/HWE reactions, and equivalents of enolates. (4) Good progression from fundamentals to advanced. (5) Zimmerman-Traxler model and stereochemistry control included. Issues: (1) Some concepts violate the 'no AND/OR/VS' rule: 'Selectividad de NaBH4 vs. LiAlH4', 'Enolatos cinéticos vs. enolatos termodinámicos', 'Control cinético vs. termodinámico en adición 1,2 vs. 1,4', 'Nucleófilos duros vs. blandos'. (2) Some concepts are too broad: 'Mecanismo general de adición nucleofílica' as a single concept, 'Definición de condensación aldólica'. (3) Oxidation reactions (Swern, Jones) and Wittig might overlap with neighboring chapters on carboxylic acid derivatives or could be considered outside strict chapter scope. (4) The 'Reducciones y oxidaciones de carbonilos' lesson mixes oxidation which is borderline for scope. (5) Some lesson titles use prohibited words: 'Reactividad comparada de aldehídos y cetonas' is fine, but a few descriptions start with formulations close to the prohibited style. (6) Malonic/acetoacetic ester synthesis could overlap with carboxylic acid derivatives chapter. Overall solid but with more rule violations than the top submissions.",
+          "score": 7
         },
         {
-          "anonymousId": "Model A",
-          "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "Model A has 9 lessons with approximately 63 concepts. While the concepts are well-scoped individually and the organization is logical, the coverage is notably less exhaustive than the top models. It covers the main topics (carbonyl properties, O-nucleophile additions, N-nucleophile additions, C-nucleophile additions, enol tautomerism, enolate generation, aldol, Claisen, Michael) but misses several important subtopics: no stereochemistry of aldol (Zimmerman-Traxler), no crossed aldol strategies in detail, no Mukaiyama aldol, no silyl enol ethers, no malonic/acetoacetic ester synthesis, no 1,3-dicarbonyl chemistry in depth, no facial selectivity, limited selectivity control discussion. The Robinson annulation is mentioned only as 'Secuencia en tándem de Robinson' which is vague. Concept titles are generally clean and follow the rules well. Lesson descriptions are good. The curriculum feels like a solid outline but not exhaustive as required. For a chapter with this much content, 63 concepts is insufficient.",
-          "score": 6
-        },
-        {
-          "anonymousId": "Model F",
+          "anonymousId": "Model B",
           "modelId": "anthropic/claude-sonnet-4.6",
-          "reasoning": "Model F has 16 lessons with approximately 130 concepts. Coverage is broad, including some topics not explicitly in the chapter description (Reformatsky, Knoevenagel, Mannich, Cannizzaro, Tischenko, Baeyer-Villiger, umpolung/Corey-Seebach, retrosynthetic analysis). While some of these are relevant to carbonyl chemistry broadly, several represent scope creep: Baeyer-Villiger is an oxidation reaction that could belong in acid derivatives, Cannizzaro and Tischenko are niche, and the retrosynthetic analysis lesson feels like a meta-skill lesson which the prompt says to avoid. The 'Adiciones con Nucleófilos de Heteroátomo' lesson has 12 concepts, violating the 8-concept maximum. Several concept titles use 'vs.' (e.g., 'Adición 1,2 vs. adición 1,4', 'Wittig estabilizado vs. no estabilizado', 'Control termodinámico vs. cinético'). Some lesson titles use colons with subtitles which is acceptable but wordy. The nomenclature concepts ('Aldehídos: estructura y nomenclatura', 'Cetonas: estructura y nomenclatura') could overlap with a general organic chemistry naming chapter. The NaBH4/LiAlH4 reductions are included which could be scope creep. Overall decent but with notable rule violations and scope issues.",
-          "score": 6.2
+          "reasoning": "Model B is very comprehensive with 16 lessons and many concepts. Strengths: (1) Broad coverage including Wittig, HWE, Reformatsky, Knoevenagel, Mannich, Baeyer-Villiger, Cannizzaro, Tischenko, umpolung, retrosynthetic analysis, malonic/acetoacetic ester synthesis. (2) Good detail on aldol variants and Claisen. (3) Includes descarboxylation concepts. Issues: (1) Significant scope creep — Wittig, HWE, Reformatsky, Knoevenagel, Mannich, Baeyer-Villiger, Cannizzaro, Tischenko are all named reactions that arguably go beyond the chapter description which focuses on 'Adición nucleofílica a carbonilos, química de enoles/enolatos, aldol, Claisen, Michael y control de selectividad.' Several of these (Baeyer-Villiger, Cannizzaro) could belong in other chapters. (2) Some concepts contain AND/OR/VS: 'Enolatos cinéticos vs. termodinámicos', 'Adición 1,2 vs. adición 1,4 (conjugada)', 'Wittig estabilizado vs. no estabilizado'. (3) Lesson 3 'Adiciones con Nucleófilos de Heteroátomo' has 12 concepts, violating the 8-concept maximum. (4) Lesson 15 'Otras Reacciones de Carbonilos' has 10 concepts and is a grab-bag, violating both size and thematic coherence rules. (5) 'Análisis Retrosintético de Compuestos Carbonílicos' is a meta-strategic lesson that borders on 'putting it all together' rather than teaching new concepts. (6) Some descriptions start with prohibited patterns. (7) Umpolung/dithiane chemistry and retrosynthetic analysis go well beyond chapter scope. The over-inclusion hurts the score despite the ambition.",
+          "score": 6.5
         },
         {
           "anonymousId": "Model C",
-          "modelId": "openai/gpt-5-mini",
-          "reasoning": "Model C has 10 lessons but the first lesson has only 1 concept ('Polarización del enlace carbonilo C=O'), which violates the minimum of 3 concepts per lesson. Several concept titles are excessively long and read like descriptions rather than glossary entries: 'Mecanismo general de adición nucleofílica a carbonilos (ataque → tetraédrico → protonación)', 'Adición de organometálicos a carbonilos (formación de alcoholes tras protonación)', 'Condiciones para obtener enolato cinético (base fuerte, baja T, sustrato impedido)'. Multiple concepts use parenthetical explanations which makes them verbose. Some concepts bundle multiple ideas: 'Halogenación α de enolatos (base y ácido)' combines two separate conditions. The total number of concepts (~60) is insufficient for exhaustive coverage of this chapter. Missing topics include: Wittig reaction, thioacetals, detailed aldol stereochemistry treatment, silyl enol ethers as a separate topic, haloform reaction, Robinson annulation detail, and more. Lesson descriptions sometimes start with forbidden words. The curriculum feels incomplete and violates several formatting rules.",
-          "score": 5
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Model C provides 20 lessons with decent coverage. Strengths: (1) Good logical progression. (2) Covers all major topics from the chapter description. (3) Most concepts are appropriately granular. (4) Lesson descriptions mostly follow rules. Issues: (1) Some concepts are too broad or vague: 'Selectividad quimioselectiva en carbonilos', 'Selectividad regioselectiva en enolatos', 'Selectividad entre adición 1,2', 'Selectividad entre adición 1,4' — these read more like category headers than teachable items. (2) Lesson 19 'Control global de selectividad' feels like a review/synthesis lesson rather than teaching new standalone concepts, approaching 'putting it all together'. (3) Lesson 20 'Nucleófilos estabilizados y estrategia sintética' includes 'Retrosíntesis de desconexión aldólica' which is meta-strategic. (4) Some concepts use terms that are redundant or poorly scoped: 'Formación de hemicetal' and 'Formación de cetal' — while technically correct, these are just hemiacetal/acetal of ketones and most curricula don't separate them this way. (5) Missing some important details like Zimmerman-Traxler model, Felkin-Anh, Mukaiyama aldol, silyl enol ethers, which are all relevant to the chapter's scope. (6) Fewer total concepts than the top models, resulting in less exhaustive coverage. (7) 'Formilación en posición alfa' in the halogenation lesson seems out of place.",
+          "score": 6.5
         },
         {
           "anonymousId": "Model G",
           "modelId": "google/gemini-3-flash",
-          "reasoning": "Model G has only 10 lessons with approximately 56 concepts. This is the least exhaustive output. Many concepts are too broad: 'Estructura del enol', 'Estructura del enolato' could be broken down further. Coverage gaps are significant: no Mukaiyama aldol, no silyl enol ethers, no stereochemistry of aldol (Zimmerman-Traxler), no facial selectivity, no 1,3-dicarbonyl chemistry, no malonic/acetoacetic ester synthesis, minimal selectivity control discussion. The Wolff-Kishner reduction in the nitrogen nucleophiles lesson is scope creep (it's a reduction, not really about N-nucleophile addition to carbonyls in the context of this chapter). 'Alfa-halogenación de ácidos carboxílicos' likely belongs in the neighboring 'Ácidos carboxílicos y derivados' chapter. Some lessons have only 5 concepts which is acceptable but feels thin. The Robinson annulation is mentioned but with minimal detail. Overall, this curriculum is too sparse for exhaustive coverage of a chapter on carbonyls and enolates.",
-          "score": 4.8
+          "reasoning": "Model G provides 10 lessons with reasonable but somewhat limited coverage. Strengths: (1) Clean organization with good logical progression. (2) Concepts are appropriately granular for the most part. (3) Stays within chapter scope. (4) Includes key topics: aldol, Claisen, Dieckmann, Michael, Robinson. Issues: (1) Coverage is not exhaustive enough — missing: Mukaiyama aldol, Zimmerman-Traxler model, stereochemistry of aldol (syn/anti), Felkin-Anh model, selectivity facial, tioacetals, equivalents of enolates beyond Stork enamines, crossed aldol strategies in detail, thioacetals. (2) Only 10 lessons with relatively few concepts — the chapter description calls for more granular treatment. (3) 'Descarboxilación de beta-cetoésteres' and 'Síntesis malónica' in the Claisen lesson could overlap with carboxylic acid derivatives chapter. (4) 'Reducción de Wolff-Kishner' appears in nitrogen nucleophiles lesson — this is a reduction technique that doesn't naturally fit and may overlap with other chapters. (5) 'Alfa-halogenación de ácidos carboxílicos' may overlap with the carboxylic acids chapter. (6) Some concepts lack sufficient specificity. Overall decent but insufficiently exhaustive for the chapter's scope.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model D has 10 lessons but significant structural and granularity issues. Strengths: (1) Covers the main topics from the chapter description. (2) Includes important selectivity concepts. Issues: (1) First lesson has only 1 concept, violating the 3-concept minimum rule. (2) Several concepts are too broad and compound: 'Mecanismo general de adición nucleofílica a carbonilos (ataque → tetraédrico → protonación)' bundles multiple steps into one concept. 'Ataque hidruro a carbonilos (reducción a alcoholes)' and 'Adición de organometálicos a carbonilos (formación de alcoholes tras protonación)' are compound concepts with parenthetical expansions. (3) Many concepts read like descriptions rather than concise titles: 'Condiciones para obtener enolato cinético (base fuerte, baja T, sustrato impedido)', 'Felkin-Anh: modelo para estereoselectividad en adición nucleofílica a carbonilos sustituidos en α'. (4) Some concepts bundle multiple ideas: 'Robinson annulation como secuencia Michael seguida de aldol intramolecular' contains multiple concepts. (5) Coverage is moderate — fewer total concepts and less granularity than the top models. (6) Missing: cyanhydrins as separate topic, thioacetals, detailed aldol crossed strategies, hemiacetals/acetals treatment is minimal. (7) 'Uso de auxiliarios quirales para control diastereo y enantioselectivo' is very broad. The single-concept lesson is a structural violation that significantly impacts the score.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model F provides only 9 lessons with limited coverage. Strengths: (1) Clean organization. (2) Some concepts are well-scoped. Issues: (1) Significantly insufficient coverage — only 9 lessons for a chapter that covers nucleophilic addition, enol/enolate chemistry, aldol, Claisen, Michael, and selectivity control. (2) Missing many critical topics: Mukaiyama aldol, crossed aldol strategies, aldol stereochemistry (Zimmerman-Traxler, syn/anti), Felkin-Anh, Dieckmann is only mentioned briefly, Robinson annulation gets only one concept ('Secuencia en tándem de Robinson'), no equivalents of enolates (silyl enol ethers, boron enolates), no tioacetals, no cyanhydrins as detailed topic. (3) The Wittig reaction is included in 'Adición de nucleófilos carbonados' — while relevant, it may overlap with other chapters and takes space from more core content. (4) The Michael lesson has only 8 concepts and Robinson annulation is compressed into a single 'Secuencia en tándem de Robinson' concept. (5) 'Nucleófilos de Nitrógeno' lesson has only 5 concepts, missing important details. (6) The aldol lesson ('Reacción aldólica') has only 7 concepts and doesn't adequately cover crossed aldol, intramolecular aldol detail, or stereochemistry. (7) No lesson on selectivity control despite it being explicitly in the chapter description. Overall too sparse and incomplete for the chapter's scope.",
+          "score": 5
         }
       ]
     },
@@ -54,92 +60,104 @@
       "rankings": [
         {
           "anonymousId": "Model A",
-          "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "Model A followed every single instruction perfectly. The concepts are extremely granular and specific, completely avoiding the forbidden conjunctions ('y', 'o', 'vs.'). The lesson sizes naturally vary between 5 and 8 concepts, adhering to the sizing rule. The lesson descriptions go straight to the point without using forbidden introductory words. The coverage is exhaustive and stays strictly within the boundaries of the chapter without overlapping into neighboring chapters. An exceptional output.",
-          "score": 10
-        },
-        {
-          "anonymousId": "Model E",
           "modelId": "openai/gpt-5.2:high",
-          "reasoning": "Model E provided a masterclass in granular curriculum design. It took the instruction to 'add as many concepts as needed' and 'break down topics into their smallest logical units' to heart, producing 28 highly detailed lessons. It flawlessly executed the negative constraints: no compound concepts (no 'y', 'o', 'vs.'), no forbidden verbs in descriptions, and strict adherence to the chapter's scope without hallucinating into adjacent chapters. The lesson sizes vary naturally. A phenomenal and truly exhaustive output.",
+          "reasoning": "Model A followed all instructions perfectly. It is exceptionally exhaustive (28 lessons), ensuring every single concept is captured at the granular level requested. It strictly adhered to the negative constraints, completely avoiding 'y', 'o', 'vs', and other banned words in concept titles by creatively reframing comparisons into separate concepts. Lesson sizes vary naturally between 5 and 8 concepts, and the descriptions go straight to the content without using forbidden introductory verbs. This is an outstanding output.",
           "score": 10
         },
         {
-          "anonymousId": "Model B",
-          "modelId": "openai/gpt-5.2",
-          "reasoning": "Model B provides excellent content and mostly respects the concept granularity rules (avoiding 'y' and 'vs.' by using spaces, which is clunky but acceptable). However, it blatantly violates a specific formatting rule: 'Don't force every lesson to the same size' and 'Do lesson sizes vary naturally, or are they all the same number?'. Model B generated 26 lessons and rigidly forced exactly 8 concepts into every single one of them. This is a significant structural penalty, but the content quality keeps the score relatively high.",
-          "score": 7.5
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model F provided a very strong curriculum that adhered nicely to the negative constraints. It successfully avoided banned conjunctions in concept titles and maintained a clean structure with natural variation in lesson sizes. The descriptions are concise and go straight to the point. Its main weakness compared to Model A is that it is noticeably less exhaustive (9 lessons), providing a more synthesized overview rather than the highly granular, exhaustive breakdown requested.",
+          "score": 8.5
         },
         {
           "anonymousId": "Model G",
           "modelId": "google/gemini-3-flash",
-          "reasoning": "Model G is well-structured and mostly avoids compound concept titles (the 'y' in 'hidruro de litio y aluminio' is acceptable as it is a chemical name). The lesson sizes vary naturally. However, it failed the neighboring chapter constraint by including 'Alfa-halogenación de ácidos carboxílicos' (Hell-Volhard-Zelinsky reaction), which belongs in the neighboring 'Ácidos carboxílicos y derivados' chapter. Its coverage is also slightly less exhaustive than the top models.",
-          "score": 7
+          "reasoning": "Model G is a solid output with good progression and well-written lesson descriptions. The lesson sizes vary naturally. It has one very minor violation: the use of 'y' in the concept 'Reducción con hidruro de litio y aluminio'. While this 'y' is part of a chemical name, the prompt strictly forbids it to enforce splitting of compound concepts, and other models showed how to work around it (e.g., 'hidruro de aluminio litio'). Like Model F, it is also somewhat brief.",
+          "score": 8
         },
         {
           "anonymousId": "Model C",
-          "modelId": "openai/gpt-5-mini",
-          "reasoning": "Model C failed the most critical rule regarding concept granularity. It includes numerous compound concepts joined by 'y' or 'o' (e.g., 'Formación de hemiacetales y acetales', 'carga en O y en C'). Additionally, it violated the lesson size constraint by having only 1 concept in Lesson 1 (the rule mandates 3-8 concepts). The concept titles are also often too verbose and contain parentheses with explanations rather than reading like concise glossary entries.",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Model C has excellent, exhaustive coverage (20 lessons) and a very logical progression. However, it explicitly violates one of the top negative constraints. The prompt specifically lists 'frente a' as a banned phrase to prevent comparative concepts, yet Model C includes the concept 'Selectividad 1,2 frente a 1,4'. Despite the high quality of the overall curriculum, this direct rule violation requires a penalty.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model H is highly exhaustive and successfully avoided using banned conjunctions. However, it failed a major structural constraint: 'Include as many concepts as the theme naturally requires... Don't force every lesson to the same size'. Model H forced exactly 8 concepts into every single one of its 26 lessons. This mechanical constraint leads to artificial clustering and awkward phrasing.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model E systematically violated the negative constraint against using 'VS' in concept titles. Titles like 'Reactividad relativa aldehído vs. cetona', 'Selectividad de NaBH4 vs. LiAlH4', and 'Enolatos cinéticos vs. enolatos termodinámicos' show a failure to follow the instruction to split comparative ideas into separate concepts. This triggers a top penalty.",
           "score": 4
         },
         {
-          "anonymousId": "Model D",
-          "modelId": "anthropic/claude-opus-4.6",
-          "reasoning": "Model D severely violated the primary critical constraint by repeatedly using 'vs.' and 'y' to bundle concepts together (e.g., 'Reactividad relativa aldehído vs. cetona', 'Selectividad de NaBH4 vs. LiAlH4', 'Enolatos cinéticos vs. enolatos termodinámicos'). The prompt explicitly warned that if you are comparing two things, they must be split into separate concepts. It also included out-of-scope topics like the oxidation of aldehydes to carboxylic acids, crossing into a neighboring chapter's domain.",
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model B extensively violated the negative constraints by repeatedly using 'y' and 'vs.' in its concept titles (e.g., 'Aldehídos: estructura y nomenclatura', 'Enolatos cinéticos vs. termodinámicos'). It also groups concepts too broadly in some instances.",
           "score": 3.5
         },
         {
-          "anonymousId": "Model F",
-          "modelId": "anthropic/claude-sonnet-4.6",
-          "reasoning": "Model F also completely ignored the core negative constraint against compound concepts. It heavily relies on 'vs.' and 'y' (e.g., 'Enolatos cinéticos vs. termodinámicos', 'Adición 1,2 vs. adición 1,4'). Furthermore, it hallucinated out-of-scope topics such as general nomenclature for aldehydes and ketones, which dilutes the focus of the specific advanced chapter described in the prompt.",
-          "score": 3.5
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model D failed on multiple fronts. It completely ignored the ban on 'y', 'o', 'vs', and 'frente a' in concept titles (e.g., 'O-metalado vs C-metalado', 'ataque por O o por C'). Furthermore, it violated the structural constraint for lesson sizes (3-8 concepts) by including a lesson with only a single concept.",
+          "score": 2.5
         }
       ]
     },
     {
-      "judgeId": "openai/gpt-5.2",
+      "judgeId": "openai/gpt-5.4",
       "rankings": [
         {
-          "anonymousId": "Model E",
+          "anonymousId": "Model A",
           "modelId": "openai/gpt-5.2:high",
-          "reasoning": "Muy buena cobertura del alcance del capítulo: adición nucleofílica 1,2 a carbonilos, enoles/enolatos, aldol, Claisen, Michael, anulación de Robinson y un bloque explícito de quimioselectividad/selectividad. Granularidad generalmente “micro” y lecciones de 3–8 conceptos. Buen manejo de estereoquímica (Felkin–Anh, Re/Si, Zimmerman–Traxler) y de equivalentes de enolato. Fallas menores: algunos títulos con comas (p. ej., “Hemiacetales, acetales”) no violan la regla de AND/OR pero se sienten compuestos; “Competencia de adición 1,2” dentro de Michael podría ser su propia mini-lección, pero aceptable. En general, el mejor equilibrio entre exhaustividad y organización.",
+          "reasoning": "El mejor equilibrio entre exhaustividad, granularidad y ajuste al alcance. Cubre de forma muy completa adición nucleofílica a carbonilos, enoles/enolatos, aldol, Claisen, Michael y control de selectividad, con progresión lógica y lecciones de 5-8 conceptos casi siempre bien dimensionadas. La mayoría de los conceptos son realmente microconceptos. También incluye selectividad facial, Zimmerman–Traxler, Mukaiyama, Dieckmann y Robinson, todos pertinentes. Debilidades: varios títulos violan la regla de no usar equivalentes de “y”/listas comparativas en títulos de concepto o lección (“Iminas, iminios, enaminas”, “Hemiacetales, acetales”, “Caras Re del carbonilo / Caras Si del carbonilo” está bien, pero “Determinantes de reactividad en aldehídos, cetonas” suena raro); hay algo de solapamiento y algunas piezas rozan capítulos vecinos o derivados de ácidos carboxílicos por el peso dado a acetales/tioacetales/iminas. Aun así, es el currículo más sólido y exhaustivo.",
           "score": 9.2
         },
         {
-          "anonymousId": "Model B",
+          "anonymousId": "Model H",
           "modelId": "openai/gpt-5.2",
-          "reasoning": "Extremadamente exhaustivo y bien organizado, con mucha microgranularidad (pKa típicos, paso limitante, E/Z de enolatos, O- vs C-nucleofilia, etc.) y una unidad explícita de control de selectividad. Sin embargo, tiene violaciones claras de reglas del prompt: conceptos con “y” en títulos (p. ej., “Tautomería ceto enol y enolización”, “Estructura y reactividad de enolatos”, “Cianohidrinas y aductos de bisulfito”, “Mecanismo y reversibilidad de la aldol”) y un concepto comparativo (“Comparación de reactividad aldehído cetona”) que el prompt pedía evitar en títulos. Además, incluye contenido más “extra” de lo pedido (organocatálisis asimétrica) que puede sentirse de capítulo avanzado, aunque se puede justificar como control de selectividad. Por calidad curricular sería 9+, pero por incumplimiento de formato baja.",
-          "score": 8.6
-        },
-        {
-          "anonymousId": "Model A",
-          "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "Sólido, conciso y bastante alineado con el capítulo: propiedades del carbonilo, adiciones (O/N/C), enolización/enolatos, aldol, Claisen, Michael y Robinson. Buena disciplina de lecciones 5–8 conceptos y títulos sin “introducción”. Debilidades: cobertura menos exhaustiva que B/E (falta reducción con hidruros, selectividad 1,2 vs 1,4 explícita, estereoquímica/facial, Mukaiyama, equivalentes tipo enol éteres silílicos). Algunas descripciones/títulos podrían ser más precisos (p. ej., “Efecto inductivo estabilizador” es vago). Aun así, cumple bien sin mucho scope creep.",
-          "score": 8.2
-        },
-        {
-          "anonymousId": "Model D",
-          "modelId": "anthropic/claude-opus-4.6",
-          "reasoning": "Cobertura amplia (incluye Wittig/HWE, aldol, Claisen/Dieckmann, Michael/Robinson, selectividad) y estructura razonable. Pero tiene más desviaciones de alcance: bloque grande de “Reducciones y oxidaciones de carbonilos” (Swern, Jones, oxidación de aldehídos a ácidos) no está en la descripción del capítulo y encaja mejor en capítulos generales de carbonilos/redox. También varios conceptos son demasiado “paquetizados” o comparativos (“Reactividad relativa aldehído vs. cetona”, “Alquilación en carbono vs. alquilación en oxígeno”, “Enolatos cinéticos vs. enolatos termodinámicos”), contrario a reglas. Granularidad irregular (algunos conceptos muy amplios).",
-          "score": 7.4
+          "reasoning": "Muy completo, bien organizado y claramente centrado en la química de carbonilos y enolatos. La cobertura de selectividad es particularmente fuerte: control cinético/termodinámico, E/Z de enolatos, selectividad 1,2/1,4, selectividad en aldoles cruzadas, organocatálisis y estereoquímica aldólica. La progresión es razonable y casi todas las lecciones respetan el rango 3-8. Penalizaciones: algunos conceptos son algo demasiado amplios o formulados como mini-explicaciones; hay duplicación notable entre lecciones de aldol, enolatos y selectividad; incluye material más periférico como aductos de bisulfito y organocatálisis avanzada que, aunque defendible, empieza a expandirse más allá del núcleo del capítulo. Aun así, es excelente y muy cercano al mejor.",
+          "score": 8.9
         },
         {
           "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Buen currículo, bastante completo y generalmente dentro del alcance. Cubre mecanismos de adición, acetales, derivados nitrogenados, tautomería, formación y estructura de enolatos, control cinético/termodinámico, halogenación alfa, aldol, Claisen, Michael, Robinson y selectividad. La organización es clara y la mayoría de las lecciones tienen tamaño adecuado. Debilidades importantes: añade alquilación de enolatos y retrosíntesis/‘estrategia sintética’, que no están en la descripción del capítulo; algunas formulaciones son menos precisas (“Oxígeno carbonílico nucleofílico” es discutible frente a basicidad/nucleofilia contextual); faltan varios detalles finos presentes en los mejores, como hidratación/cianohidrinas más matizadas, equivalentes de enolato mejor desarrollados y selectividad facial en adiciones a carbonilos. Muy bueno, pero menos riguroso que A y H.",
+          "score": 8.1
+        },
+        {
+          "anonymousId": "Model D",
           "modelId": "openai/gpt-5-mini",
-          "reasoning": "Buena selección de temas nucleares y progresión lógica; incluye selectividad (Felkin–Anh, quelación, auxiliares quirales) y adición conjugada. Sin embargo, varias lecciones violan el requisito de tamaño (la primera tiene 1 concepto; otras tienen 6–8 pero esa rompe fuerte). También hay muchos títulos de conceptos demasiado largos y compuestos (p. ej., “Mecanismo general de adición nucleofílica a carbonilos (ataque → tetraédrico → protonación)”, “Adición de organometálicos a carbonilos (formación de alcoholes tras protonación)”), que no son estilo “entrada de glosario”. Cobertura menos exhaustiva en detalles de Claisen/Michael/aldol comparada con A/B/E.",
-          "score": 6.9
+          "reasoning": "Estructura compacta, mayormente bien enfocada y con buena progresión conceptual. Cubre fundamentos del carbonilo, adición nucleofílica, enoles/enolatos, control de enolatos, funcionalización alfa, aldol, Claisen, Michael y selectividad. Tiene buen sentido curricular y evita mucho relleno. Sin embargo, incumple una regla estructural crítica: la primera lección tiene solo 1 concepto, cuando el mínimo debía ser 3. Además, varios conceptos son demasiado compuestos y explicativos (“Mecanismo general de adición nucleofílica a carbonilos (ataque → tetraédrico → protonación)”, “Bases fuertes no nucleofílicas…”), lo que reduce la granularidad. También omite varias adiciones importantes del capítulo central como hidratación, acetales/cianohidrinas/iminas de forma más sistemática. Aun así, es fuerte en foco y calidad conceptual.",
+          "score": 7.7
         },
         {
           "anonymousId": "Model F",
-          "modelId": "anthropic/claude-sonnet-4.6",
-          "reasoning": "Incluye muchos temas relevantes (aldol, Claisen, Michael/Robinson, Wittig/HWE, enoles/enolatos), pero incumple varias reglas de estructura: una lección excede 8 conceptos (\"Adiciones con Nucleófilos de Heteroátomo\" tiene 12). Varias unidades incluyen contenido fuera del alcance o al menos no solicitado (Baeyer–Villiger, Cannizzaro, Tischenko, umpolung/retrosíntesis) y esto desplaza foco del capítulo. Granularidad desigual y algunos conceptos son demasiado generales (“Grupo carbonilo”, “Reacción aldol: definición y visión general”).",
-          "score": 6.2
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Bastante bien enfocado en el tema central y con cobertura razonable de adición a carbonilos, tautomería, enolatos, aldol, Claisen y Michael. La progresión es clara y casi todas las lecciones cumplen tamaño. Sin embargo, hay carencias de exhaustividad frente al capítulo: omite bastante control de selectividad detallado, Claisen queda más escueto, Michael no desarrolla bien la competencia 1,2/1,4, y aldol está limitado. Además, incluye Wittig, que pertenece más a olefinación de carbonilos que al alcance dado, y algunas formulaciones son vagas o poco precisas (“Efecto inductivo estabilizador”, “Reacciones aldólicas intramoleculares” sin más). Aceptable, pero menos completo que los mejores.",
+          "score": 7.2
         },
         {
           "anonymousId": "Model G",
           "modelId": "google/gemini-3-flash",
-          "reasoning": "Estructura simple y legible con lecciones en rango 5–7 conceptos, pero es poco exhaustivo para el capítulo: casi no trata selectividad en profundidad (cinético/termodinámico apenas, nada de 1,2 vs 1,4 como unidad, poca estereoquímica de aldol), Claisen muy resumido, y omite temas relevantes comunes del capítulo (Wittig, Mukaiyama, equivalentes de enolato, control quimioselectivo). Además incluye un concepto fuera de alcance (“Alfa-halogenación de ácidos carboxílicos”), que encaja mejor en ácidos carboxílicos/derivados. En general, demasiado superficial.",
-          "score": 5.6
+          "reasoning": "Tiene una estructura limpia y generalmente centrada en el capítulo, con cobertura básica de carbonilos, enoles/enolatos, aldol, Claisen y Michael. Sin embargo, es claramente menos exhaustivo: faltan muchas piezas importantes de control de selectividad, equivalentes de enolato, detalles mecanísticos de Michael/Claisen/aldol, y la adición nucleofílica a carbonilos queda bastante resumida. Además incluye contenido fuera de alcance o cuestionable, como Wolff-Kishner, alfa-halogenación de ácidos carboxílicos, síntesis malónica y descarboxilación de beta-cetoésteres, rozando capítulos vecinos. También varios conceptos son demasiado amplios. Correcto pero superficial para una consigna de currículo exhaustivo.",
+          "score": 6.6
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Cubre muchas áreas y aparenta ser exhaustivo, pero tiene problemas serios de ajuste al prompt. Incluye bastante contenido fuera del alcance del capítulo y/o perteneciente a capítulos vecinos: oxidación de aldehídos a ácidos carboxílicos, Swern, Jones, Wittig/HWE, acetiluros, síntesis malónica y acetoacética. Eso es una violación importante del filtro por capítulos vecinos. También varios conceptos son demasiado amplios o comparativos (“Diferencias entre aldehídos y cetonas”, “Selectividad de NaBH4 vs. LiAlH4”), y hay algo de redundancia. Aunque la organización es buena y la cobertura del núcleo carbonilo-enolato es fuerte, el scope creep le baja mucho la nota.",
+          "score": 6.1
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Amplio y bien presentado, pero viola de manera marcada el alcance del capítulo. Incluye mucha materia que pertenece a otras unidades o que excede lo pedido: nomenclatura de aldehídos/cetonas, alquilación de enolatos, síntesis de malonato y acetoacetato, Wittig/HWE, Reformatsky, Knoevenagel, Mannich, MPV, Baeyer-Villiger, Cannizzaro, Tischenko, retrosíntesis, umpolung, etc. Esto contradice claramente la instrucción de filtrar conceptos de capítulos vecinos y mantenerse en el tema. Además, una lección tiene 12 conceptos y otra 10+, incumpliendo el máximo de 8 por lección. Aunque el contenido químico en sí suele ser correcto y hay buen detalle, el incumplimiento de reglas y el scope creep son demasiado grandes.",
+          "score": 4.7
         }
       ]
     }
