@@ -38,10 +38,24 @@ export const EVAL_MODELS: ModelConfig[] = [
     outputCost: 3,
   },
   {
-    id: "openai/gpt-5-mini",
-    inputCost: 0.25,
-    name: "gpt-5-mini",
-    outputCost: 2,
+    id: "openai/gpt-5.4",
+    inputCost: 1.75,
+    name: "gpt-5.4",
+    outputCost: 14,
+    reasoningEffort: "auto",
+  },
+  {
+    id: "openai/gpt-5.2:high",
+    inputCost: 1.75,
+    name: "gpt-5.2",
+    outputCost: 14,
+    reasoningEffort: "high",
+  },
+  {
+    id: "openai/gpt-5.2",
+    inputCost: 1.75,
+    name: "gpt-5.2",
+    outputCost: 14,
     reasoningEffort: "auto",
   },
   {
@@ -52,18 +66,11 @@ export const EVAL_MODELS: ModelConfig[] = [
     reasoningEffort: "auto",
   },
   {
-    id: "openai/gpt-5.2",
-    inputCost: 1.75,
-    name: "gpt-5.2",
-    outputCost: 14,
+    id: "openai/gpt-5-mini",
+    inputCost: 0.25,
+    name: "gpt-5-mini",
+    outputCost: 2,
     reasoningEffort: "auto",
-  },
-  {
-    id: "openai/gpt-5.2:high",
-    inputCost: 1.75,
-    name: "gpt-5.2",
-    outputCost: 14,
-    reasoningEffort: "high",
   },
 ];
 

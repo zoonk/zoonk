@@ -1,51 +1,57 @@
 {
   "expectations": "\n      - MUST be in Brazilian Portuguese\n\n      \n  # How to evaluate\n\n  You are evaluating a CURRICULUM, not a glossary. Think like a curriculum designer reviewing a colleague's work — use domain expertise and professional judgment, not mechanical rule-checking.\n\n  ## Structure\n\n  Output is organized into LESSON UNITS (thematic groups) containing CONCEPTS (individual teachable items).\n  - Each concept should be a single, specific idea — something a domain expert would consider one teachable unit\n  - Lesson sizes should be 3-8 concepts and should vary naturally across lessons\n  - Total concept coverage should be exhaustive for the chapter's scope\n\n  ## Evaluating concept quality\n\n  Ask: \"Is this ONE teachable thing, or is it secretly a bundle of separate things?\"\n  - A concept is too broad only if it genuinely bundles multiple DISTINCT teachable items that a student would need separate lessons for\n  - Use domain expertise: terms that sound broad to a generalist may be a single well-defined concept in the field\n  - Conjunctions (AND/OR/VS and equivalents in any language) signal potential broadness, but only penalize when they join genuinely separate topics — not when the comparison itself IS the concept, or when \"and\" connects an entity to its work\n  - Concept titles should be concrete and self-explanatory, not interpretive thesis statements or vague abstractions\n\n  ## Evaluating scope\n\n  The chapter description is the SOURCE OF TRUTH. Neighboring chapters are guardrails against scope creep, not vetoes.\n\n  The key principle: **judge by framing, not by keywords.** A concept belongs in THIS chapter if its primary teaching purpose serves THIS chapter's learning goals — even if the concept mentions words that appear in a neighboring chapter's title. Ask: \"What is this concept primarily TEACHING?\" not \"Does this concept MENTION a neighboring topic?\"\n\n  When in doubt, favor the chapter description. If a concept is framed through this chapter's lens and serves its learning goals, it is in-scope.\n\n  ## Evaluating lesson quality\n\n  - Lesson descriptions should be concise and go straight to the content — no filler words like \"introduces\", \"presents\", \"teaches\", \"explores\"\n  - Logical progression from foundational to advanced\n  - No summary, review, or assessment lessons\n  - Should follow the specified language (proper nouns and established technical terms may remain in their original language)\n\n  ## Coverage\n\n  Completeness is the key metric. Are all topics in the chapter description covered with sufficient granularity? Don't penalize for fewer concepts if the chapter's scope is inherently narrow.\n\n  ## Proportionality\n\n  Weight your scoring proportionally. A curriculum that covers the chapter exhaustively with good structure but has a few overly-broad concept titles is fundamentally different from one that misses entire topics or systematically violates scope. Minor title-phrasing issues should not dominate the score when the overall curriculum quality is strong.\n\n    ",
-  "judgedAt": "2026-03-01T01:46:13.990Z",
+  "judgedAt": "2026-03-09T22:25:25.442Z",
   "judgments": [
     {
       "judgeId": "anthropic/claude-opus-4.6",
       "rankings": [
         {
-          "anonymousId": "Model F",
-          "modelId": "openai/gpt-5.2",
-          "reasoning": "Model F delivers excellent coverage of the chapter description with 14 lessons and ~85 concepts. Every topic from the description is thoroughly addressed: templates, revisão assistida, gestão documental, padronização, riscos de automação, controle de versões, and governança de conhecimento. Granularity is strong — concepts like 'Risco de desatualização legislativa', 'Risco de jurisprudência superveniente', 'Risco de uso indevido do template' are well-split single ideas. Lesson titles are concrete and avoid forbidden words ('learn', 'understand', 'explore', 'introduction'). Descriptions go straight to content without starting with 'introduces', 'presents', etc. Lesson sizes vary naturally (5-7). The progression from foundational (escopo, componentes) to advanced (governança, medição) is logical. No neighboring chapter overlap — stays focused on legal tech and document automation. The concept 'Separação entre conteúdo, dados' in Model G would be an issue, but Model F avoids such conjunction problems. One minor issue: a couple of lesson descriptions could be slightly more direct, and 'Fonte única de verdade' is a slightly abstract concept title. Overall very strong.",
-          "score": 8.5
-        },
-        {
-          "anonymousId": "Model G",
-          "modelId": "openai/gpt-5.2:high",
-          "reasoning": "Model G provides very thorough coverage with 15 lessons and ~100+ concepts. Granularity is excellent — concepts like 'Tipo de dado textual', 'Tipo de dado numérico', 'Tipo de dado de data' show appropriate splitting. Coverage of templates, revisão assistida, gestão documental, padronização, riscos, controle de versões, and governança de conhecimento is comprehensive. Lesson progression is logical. However, there are some issues: 'Separação entre conteúdo, dados' appears truncated or uses a comma where it shouldn't (possibly hiding an 'e'/AND). The concept 'Check-in' by itself is too vague without context. Some concepts push into very technical software engineering territory (API de dados, Conector de CRM, Ramificação de template, Mesclagem de alterações) which, while potentially relevant, stretch the chapter's jurídical focus. The lesson on 'Bibliotecas de cláusulas' with 8 concepts is well-structured. Lesson 'Retenção, arquivamento, rastreabilidade' title uses commas as conjunctions, which is borderline. One lesson has 8 concepts (at the limit). Overall excellent but with minor issues.",
-          "score": 8.3
-        },
-        {
-          "anonymousId": "Model A",
-          "modelId": "openai/gpt-5-mini",
-          "reasoning": "Model A offers 14 lessons with ~78 concepts, providing strong coverage. The granularity is generally good, with concepts like 'Seção condicional em template', 'Laço em template', 'Fragmento reutilizável' being well-scoped single ideas. Coverage spans all chapter topics. However, several issues: The first lesson 'Conceitos essenciais da automação de documentos' has only 1 concept ('Automação jurídica'), violating the 3-8 minimum rule. Several concepts are quite technical/engineering-focused rather than legal-tech focused (Conector API, Webhook de evento, ETL leve, Pipeline de implantação, Rollout progressivo). The lesson 'Integração técnica e automação de fluxo' and 'Testes e implantação de templates' feel like they belong more in a software engineering course. 'Segurança, privacidade e conformidade' lesson with concepts like 'Criptografia em repouso', 'Anonimização de dados' pushes beyond the chapter's core scope. The concept 'Transformação de dados (ETL leve)' uses parenthetical explanation in the title. Despite these issues, overall coverage and structure are solid.",
-          "score": 7.5
-        },
-        {
           "anonymousId": "Model B",
-          "modelId": "anthropic/claude-sonnet-4.6",
-          "reasoning": "Model B provides 12 lessons with ~77 concepts. Coverage is comprehensive, hitting all major chapter topics. Granularity is mostly appropriate. However, several issues: Many concept titles start with 'O que é...' which is acceptable but repetitive (7 instances). The lesson 'Implementação de Projetos de Automação Jurídica' feels like it could overlap with the neighboring 'Legal operations e gestão jurídica' chapter (concepts like 'Avaliação de retorno sobre investimento', 'Seleção de ferramentas', 'Gestão da mudança'). The concept 'Cláusulas fixas versus cláusulas parametrizáveis' uses 'versus', violating the no-VS rule. 'Revisão assistida por tecnologia (TAR)' lesson covers e-discovery-style TAR concepts (predictive coding, CAL) which are more about litigation review than document automation — this seems like a misinterpretation of the chapter's 'revisão assistida'. Lesson descriptions generally comply with rules. Some concepts like 'Treinamento de equipes em ferramentas de automação' and 'Gestão da mudança na adoção de legal tech' could belong in the neighboring Legal Operations chapter.",
-          "score": 7
-        },
-        {
-          "anonymousId": "Model C",
-          "modelId": "anthropic/claude-opus-4.6",
-          "reasoning": "Model C provides 11 lessons with ~72 concepts. Coverage is reasonable across the chapter topics. Granularity is mostly appropriate. However, several issues: 'Histórico da Automação Jurídica' is somewhat broad and arguably not essential to the chapter description. 'Comparação entre Versões (Redline)' uses parenthetical which is minor but the concept itself is fine. The lesson on 'Fluxos de Trabalho e Integrações' has only 5 concepts and some feel like they could overlap with neighboring chapters (especially 'Assinatura Eletrônica' and 'Dashboards de Acompanhamento'). 'Mitigação de Riscos em Automação Jurídica' is too broad — it could be a lesson heading itself. Some concepts like 'Melhoria Contínua em Automação Jurídica' are vague. The concept 'Viés Algorítmico em Ferramentas Jurídicas' is reasonable but the title is somewhat verbose. Overall decent but less thorough than top models and with some granularity issues.",
-          "score": 7
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model B provides excellent coverage of the chapter description with strong granularity. It has 14 lessons covering all key topics: templates, generation, review, versioning, document management, knowledge governance, risks, and quality metrics. Concepts are well-scoped single ideas (e.g., 'Baseline de template', 'Reversão de versão', 'Fonte única de verdade'). Lesson sizes vary naturally (5-7 concepts). Descriptions are concise and go straight to content without filler words like 'introduces' or 'teaches'. The progression from scope → templates → generation → quality → versioning → governance → risks → metrics is logical. No neighboring chapter overlap detected. Some concepts could be slightly more specific (e.g., 'Gestão documental' is a bit broad as a concept title, 'Automação de documentos' similarly), but these are minor. The lesson on 'Papéis e processos de governança' with concepts like 'Matriz RACI para automação documental' shows excellent granularity. The separation of risks from controls/mitigation into two lessons is smart. No compound concepts with AND/OR/VS. Strong overall.",
+          "score": 8.2
         },
         {
           "anonymousId": "Model D",
-          "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "Model D provides only 7 lessons with ~39 concepts. While the concepts that exist are generally well-scoped and the content is relevant, the coverage is insufficient for the chapter description. Key gaps: no lesson on padronização (a major topic in the description), no lesson on qualidade documental, limited coverage of gestão documental, no coverage of governance processes/roles/policies, no coverage of quality controls or approval workflows. The lesson sizes are reasonable (4-6 concepts each). Concept titles are generally good — 'Princípio Garbage In Garbage Out' is a nice specific concept. But the chapter description explicitly mentions 'templates, revisão assistida, gestão documental e padronização' and 'controle de versões e governança de conhecimento' — Model D barely scratches the surface of padronização and governance. The total of 39 concepts is far too few for exhaustive coverage of this chapter.",
-          "score": 5.5
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Model D has 15 lessons with very good coverage and granularity. It covers all chapter topics thoroughly: templates, parametrization, review, quality, versioning, governance, risks, exceptions, document management, and metrics. Concept titles are generally well-scoped (e.g., 'Variável de prazo', 'Variável de valor', 'Obsolescência normativa', 'Falsa sensação de conformidade'). The 'Parametrização de conteúdo jurídico' lesson is notably granular with individual variable types broken out. Good lesson on 'Tratamento de exceções' which is a natural part of automation governance. Descriptions are mostly clean, though some could be tighter. A few concepts are slightly broad ('Automação jurídica', 'Automação de documentos', 'Padronização documental', 'Gestão documental' as standalone concept titles). The 'Classificação do acervo documental' lesson adds useful depth. Lesson sizes vary naturally (4-7). No significant neighboring chapter overlap. Progression is logical. Minor issue: 'Controle de qualidade documental' as a concept is somewhat broad.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model H has 15 lessons with very detailed and technically deep coverage. It goes into significant technical depth with concepts like 'Versionamento semântico', 'Ramificação de template', 'Mesclagem de alterações', 'Condição booleana', 'Regra de inclusão de bloco'. The 'Bibliotecas de cláusulas' lesson with 8 concepts is excellent and well-granulated. Coverage of all chapter topics is thorough. However, some issues: the lesson 'Segurança na automação de documentos' with concepts like 'Autenticação multifator', 'Criptografia em repouso', 'Watermarking' goes beyond the chapter's scope into IT security territory. Similarly, 'Integração de dados na automação documental' with 'Conector de CRM', 'API de dados' leans toward technical integration rather than the chapter's focus on templates, review, quality, and governance. The concept 'Separação entre conteúdo, dados' appears to have been truncated or uses a comma awkwardly. The lesson on 'Dados de entrada para montagem' with data types (textual, numérico, data) is very granular but perhaps overly technical for a law course. Some descriptions use words like 'focados em' which is borderline. Overall very thorough but slightly over-scoped in places.",
+          "score": 7.7
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model A has 12 lessons with comprehensive coverage. It covers all main topics from the chapter description: templates, generation, review (TAR), standardization, document management, versioning, risks, governance, quality control, compliance, and implementation. Concepts are generally well-scoped. However, several issues: The TAR lesson with concepts like 'Revisão preditiva de documentos', 'Revisão baseada em palavras-chave', 'Revisão contínua ativa (CAL)' leans heavily into e-discovery terminology which may be beyond this chapter's scope. The 'Conformidade e Segurança Documental' lesson with 'LGPD aplicada a documentos jurídicos' is borderline scope. The 'Implementação de Projetos de Automação Jurídica' lesson with concepts like 'Gestão da mudança na adoção de legal tech', 'Avaliação de retorno sobre investimento em automação' overlaps somewhat with 'Legal operations e gestão jurídica' neighboring chapter. Some concept titles use 'versus' ('Cláusulas fixas versus cláusulas parametrizáveis') which violates the rules. Descriptions mostly follow guidelines. The lesson sizes are consistently 6-7 which lacks natural variation.",
+          "score": 7.3
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model G has 11 lessons with good coverage. It covers templates, automation, review, standardization, document management, versioning, governance, risks, quality, and workflows. Concepts are generally at appropriate granularity. However, some issues: 'Histórico da Automação Jurídica' may be padding. 'Melhoria Contínua em Automação Jurídica' is vague. The 'Fluxos de Trabalho e Integrações' lesson includes 'Assinatura Eletrônica em Documentos Automatizados' and 'Dashboards de Acompanhamento Documental' which could overlap with 'Legal operations e gestão jurídica'. Some concept titles start with 'O que é...' repeatedly which is fine but formulaic. The lesson description for 'Riscos da Automação Jurídica' starts with a list format that's acceptable. 'Comparação entre Versões (Redline)' uses parenthetical which is fine. Some lessons have 7 concepts consistently, lacking natural variation. 'Mitigação de Riscos em Automação Jurídica' is a broad concept that could be split. Overall solid but not as granular or well-organized as the top models.",
+          "score": 7.1
         },
         {
           "anonymousId": "Model E",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model E has 14 lessons with technically detailed coverage. However, it has a critical structural violation: the first lesson 'Conceitos essenciais da automação de documentos' has only 1 concept ('Automação jurídica'), which violates the 3-8 concept per lesson rule. This is a significant structural issue. Several lessons also push into overly technical territory for a law course: 'Motores de template e comportamento em execução' with 'Sintaxe de tokens', 'Binding de dados', 'Renderização de template'; 'Testes e implantação de templates' with 'Teste unitário de template', 'Pipeline de implantação de templates', 'Rollout progressivo de template'; 'Integração técnica e automação de fluxo' with 'Conector API para sistemas externos', 'Webhook de evento', 'Transformação de dados (ETL leve)'. These are software engineering concepts that go well beyond the chapter's scope of document automation for legal professionals. The security lesson with 'Criptografia em repouso', 'Anonimização de dados' also extends beyond scope. Good granularity within individual concepts, but scope issues are significant.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model C has only 7 lessons with 4-6 concepts each, totaling roughly 34 concepts. While the concepts it includes are reasonable, the coverage is noticeably shallow compared to other models. It misses several important topics from the chapter description: control of versions is covered but thinly, quality control processes are underrepresented, template structure and generation mechanics lack depth, and governance of knowledge is only surface-level. The 'Riscos da Automação Jurídica' lesson includes 'Alucinações em Inteligência Artificial' which is relevant but quite specific compared to other risk concepts. 'Vieses Algorítmicos em Softwares' is somewhat generic. Some concepts are appropriately granular ('Reconhecimento Óptico de Caracteres', 'Busca Textual Avançada') but the overall curriculum lacks the exhaustiveness required. The chapter description explicitly mentions 'templates, revisão assistida, gestão documental e padronização' plus 'Riscos de automação, controle de versões e governança de conhecimento' - while all are touched, none are covered with sufficient depth. Lesson descriptions are clean and follow guidelines. No neighboring chapter overlap issues.",
+          "score": 5.5
+        },
+        {
+          "anonymousId": "Model F",
           "modelId": "google/gemini-3-flash",
-          "reasoning": "Model E provides only 7 lessons with ~30 concepts — the least of all models. Coverage is severely lacking. While the concepts that exist are relevant, many are too broad: 'Automação de Documentos' is a lesson-level topic being listed as a single concept, 'Templates Jurídicos' is similarly broad, 'Revisão Assistida' could be broken into many sub-concepts, 'Controle de Versões' is a full topic not a single concept, 'Governança do Conhecimento' same issue. The concept titles frequently violate granularity requirements — several could serve as lesson headings with sub-items under them. Missing major topics: no detailed coverage of quality/validation, no governance roles/processes, no risk mitigation strategies, no padronização details, extremely thin coverage of gestão documental. 'Gestão e Controle Documental' combines two major topics into one lesson with only 5 concepts. The lesson 'Riscos e Controle de Qualidade' combines two distinct themes. Overall, this is far too shallow and broad for the chapter's requirements.",
-          "score": 4.5
+          "reasoning": "Model F has only 7 lessons with 4-5 concepts each, totaling roughly 30 concepts. This is the least granular output. Major coverage gaps: control of versions gets only one concept ('Controle de Versões') which is far too broad - the chapter description explicitly calls out version control as a key topic. Knowledge governance gets only 4 concepts. Risks and quality are merged into one lesson with only 4 concepts. Template structure is shallow. No coverage of metrics/monitoring. No coverage of governance roles/responsibilities. Several concepts are too broad: 'Gestão Eletrônica de Documentos', 'Governança do Conhecimento', 'Revisão Assistida' each could be entire lessons. 'Ganhos de Eficiência' is vague. The 'Document Assembly' lesson title and concept are in English without clear reason. Descriptions are acceptably clean. While nothing is factually wrong, the exhaustiveness requirement is clearly not met for a chapter that covers templates, review, document management, standardization, automation risks, version control, AND knowledge governance.",
+          "score": 5
         }
       ]
     },
@@ -53,93 +59,105 @@
       "judgeId": "google/gemini-3.1-pro-preview",
       "rankings": [
         {
-          "anonymousId": "Model F",
-          "modelId": "openai/gpt-5.2",
-          "reasoning": "Model F follows all instructions perfectly. It provides an exhaustive, highly granular curriculum with 80+ precisely scoped concepts. It strictly adhered to the negative constraint against using 'AND/OR/VS' (and their Portuguese equivalents like 'e', 'ou') in concept titles. The lesson sizes are all within the 3-8 range, and the lesson descriptions are direct and avoid forbidden introductory words. The progression is logical and stays completely within the chapter's scope.",
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Model D provides an exceptional, highly granular, and exhaustive curriculum. It follows all negative constraints perfectly (no forbidden conjunctions in concept titles, no forbidden verbs starting descriptions). The concepts are formulated as concrete noun phrases, reading exactly like a professional glossary. The progression is logical, and the coverage of the chapter description is thorough without stepping into the neighboring chapters. It perfectly captures the framing of legal document automation.",
           "score": 10
         },
         {
-          "anonymousId": "Model G",
-          "modelId": "openai/gpt-5.2:high",
-          "reasoning": "Model G is exceptionally strong and virtually tied with Model F. It offers an exhaustive breakdown of the chapter with extremely granular concepts and fully respects the negative constraints regarding forbidden words in titles and descriptions. The only minor flaw is a slightly awkward use of a comma to avoid the word 'e' ('Separação entre conteúdo, dados'), but this is a clever workaround to follow the strict rules. Excellent work.",
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model B is outstanding and nearly flawless. It provides exhaustive coverage with precise granularity. It fully respects the negative constraints regarding concept titles (avoiding 'and', 'or', 'vs', etc.) and lesson descriptions. The curriculum structure is logical and highly relevant to the specific domain of legal tech and document automation.",
           "score": 9.8
         },
         {
-          "anonymousId": "Model D",
-          "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "Model D provides a clean, well-structured curriculum that strictly adheres to the negative constraints (no 'e/ou/vs' in concept titles, no forbidden words in descriptions). However, it is less exhaustive and slightly less granular than Models F and G, offering only around 40 concepts. Some concepts could have been broken down further, but it still represents a very strong and compliant output.",
-          "score": 8.5
-        },
-        {
-          "anonymousId": "Model A",
-          "modelId": "openai/gpt-5-mini",
-          "reasoning": "Model A has excellent granularity and successfully follows the negative constraints regarding formatting and forbidden words. However, it violates a clear structural rule in Lesson 1, which contains only a single concept ('Automação jurídica'). The prompt explicitly states to merge groups if they have fewer than 3 concepts, and 'Automação jurídica' is also too broad as a standalone concept.",
-          "score": 7.5
-        },
-        {
-          "anonymousId": "Model B",
-          "modelId": "anthropic/claude-sonnet-4.6",
-          "reasoning": "Model B fails a critical negative constraint by including the word 'versus' in a concept title ('Cláusulas fixas versus cláusulas parametrizáveis'). Additionally, some concepts are too broad and read like headings ('Tipos de automação...'). The phrasing is also somewhat repetitive, and the final lesson on project implementation borders on the neighboring 'Legal Operations' chapter scope.",
-          "score": 6
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model H provides a highly exhaustive list of concepts and follows the negative constraints regarding forbidden words in concept titles. However, the strict avoidance of the word 'e' (and) led to a slightly awkward comma splice in one concept ('Separação entre conteúdo, dados'). It also drifts slightly into generic IT security concepts rather than keeping the focus strictly on legal tech, but the overall curriculum design is very strong.",
+          "score": 9
         },
         {
           "anonymousId": "Model C",
-          "modelId": "anthropic/claude-opus-4.6",
-          "reasoning": "Model C repeatedly violates one of the most important negative constraints: it uses the conjunction 'e' in several concept titles (e.g., 'Organização e Classificação de Documentos', 'Retenção e Descarte de Documentos'). Furthermore, several concepts are too broad ('Tipos de Ferramentas...', 'Benefícios da Automação...'). This demonstrates a failure to follow strict prompt instructions.",
-          "score": 4
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model C successfully follows the constraints, avoiding prohibited conjunctions in titles and forbidden verbs in descriptions. However, it is less exhaustive than the top models (only 39 concepts) and relies heavily on repetitive phrasing like 'Conceito de...', which is slightly less elegant than direct, concrete noun phrases.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model F follows the formatting and negative constraints well but falls short on granularity and exhaustiveness. With only 30 concepts total, many are too broad (e.g., 'Automação de Documentos' is presented as a single concept, which violates the rule that concepts should not be broad headings).",
+          "score": 7
         },
         {
           "anonymousId": "Model E",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Model E fails on the most critical requirement: concept granularity and exhaustive coverage. The curriculum is extremely brief (only 30 concepts) and relies on highly broad topics that should be headings, not single concepts (e.g., 'Automação de Documentos', 'Ganhos de Eficiência'). It reads more like a high-level syllabus than an exhaustive, granular micro-learning path.",
-          "score": 3
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model E avoids the prohibited conjunctions in concept titles, but it explicitly violates the structural rule for lesson sizes by having a lesson with only 1 concept (the prompt states to merge groups with fewer than 3 concepts). It also features some awkwardly phrased titles (e.g., 'Separação conteúdo-apresentação') to circumvent the 'e' rule.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model A violates the critical negative constraint by including forbidden conjunctions and comparisons in its concept titles (e.g., 'Cláusulas fixas versus cláusulas parametrizáveis' and 'Atualização e manutenção de bases de conhecimento'). This triggers a top penalty criteria drop, despite the content being otherwise reasonable.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model G repeatedly violates the critical rule prohibiting conjunctions in concept titles (e.g., 'Manutenção e Atualização...', 'Retenção e Descarte...', 'Segurança e Controle...'). Because this is one of the top penalty criteria, the score is heavily reduced, even though the overall structure and coverage are decent.",
+          "score": 4
         }
       ]
     },
     {
-      "judgeId": "openai/gpt-5.2",
+      "judgeId": "openai/gpt-5.4",
       "rankings": [
         {
-          "anonymousId": "Model G",
-          "modelId": "openai/gpt-5.2:high",
-          "reasoning": "Currículo bem estruturado e muito alinhado ao capítulo: templates, regras de montagem, revisão assistida, gestão documental, padronização, riscos, controle de versões e governança do conhecimento. Granularidade geralmente boa (itens como validações, placeholders, logs, retenção). Quase todos os lessons têm 7–8 conceitos e descrições diretas. Pequenos problemas: um conceito truncado/ambíguo (“Separação entre conteúdo, dados”), e alguns conceitos poderiam ser mais “glossário” (ex.: “Automação opaca”). No geral, cobertura e organização excelentes.",
-          "score": 9.2
-        },
-        {
-          "anonymousId": "Model A",
-          "modelId": "openai/gpt-5-mini",
-          "reasoning": "Muito detalhado e técnico, com excelente cobertura de templates (anatomia, lógica, engine), qualidade, revisão assistida por IA, versionamento, DMS, governança, segurança/LGPD, riscos, testes/implantação, integrações e métricas. Boa aderência ao escopo do capítulo e ao nível de granularidade. Problemas relevantes de requisitos: a primeira lição tem apenas 1 conceito (viola 3–8) e há alguma extrapolação para temas tipo DevOps (“Pipeline de implantação”, “Rollout progressivo”) que podem soar fora do foco, embora ainda defensáveis como parte de governança de templates. Ainda assim, é uma das mais completas.",
-          "score": 8.8
-        },
-        {
-          "anonymousId": "Model F",
-          "modelId": "openai/gpt-5.2",
-          "reasoning": "Cobertura muito forte e bem focada: componentes de templates, catalogação/padronização, coleta de dados, mecanismos de geração, qualidade textual, revisão assistida, controle de versões, gestão documental, governança do conhecimento, riscos e métricas. Progressão lógica. Granularidade em geral boa; porém alguns conceitos ficam um pouco amplos/abstratos (“Legal tech no fluxo de trabalho jurídico”, “Gestão documental”) e há várias lições com 7 conceitos (pouca variação). Mesmo assim, atende muito bem ao capítulo.",
-          "score": 8.5
-        },
-        {
           "anonymousId": "Model B",
-          "modelId": "anthropic/claude-sonnet-4.6",
-          "reasoning": "Boa cobertura dos tópicos centrais (templates, geração, revisão assistida, padronização, gestão documental, versões, riscos, governança, qualidade, conformidade/LGPD). Estrutura clara e progressiva. Principais limitações: vários conceitos são formulados como objetivos (“O que é…”) e alguns são amplos (ex.: “Tipos de automação…”, “Ferramentas de geração…”). Inclui bloco de implementação/ROI/seleção de ferramentas que se aproxima de legal ops/gestão de projetos (potencial escopo lateral). Ainda assim, é sólido e relativamente completo.",
-          "score": 7.6
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Melhor equilíbrio entre exaustividade, granularidade e aderência ao escopo do capítulo. Está em português do Brasil, organiza bem a progressão do fundamento à governança, mantém quase todas as aulas com 6-7 conceitos e cobre templates, revisão assistida, gestão documental, padronização, riscos, controle de versões e governança de conhecimento. Também evita bem invadir capítulos vizinhos. Pequenas fragilidades: alguns títulos ainda são um pouco abstratos ou amplos ('Legal tech no fluxo de trabalho jurídico', 'Gestão documental'), e há leve inclinação a operações/governança mais amplas do que estritamente documental, mas sem comprometer o conjunto.",
+          "score": 9.3
         },
         {
-          "anonymousId": "Model C",
-          "modelId": "anthropic/claude-opus-4.6",
-          "reasoning": "Abrange bem os eixos do capítulo (templates, automação, revisão, padronização, gestão documental, versões, governança, riscos, qualidade, workflows/integrações). Entretanto, muitos conceitos são largos (“Tipos de Ferramentas de Legal Tech”, “Fluxo de Geração Automatizada de Documentos”, “Mitigação de Riscos…”, “Melhoria Contínua…”) e vários títulos começam com “O que é”, menos no estilo pedido. Mantém lições no tamanho correto e tem boa coerência, mas com menor granularidade e um pouco mais genérico.",
-          "score": 7.1
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Currículo muito forte, detalhado e tecnicamente consistente. Excelente cobertura de templates, coleta de dados, regras de montagem, bibliotecas de cláusulas, padronização, qualidade, revisão assistida, gestão documental, retenção, versões, governança, riscos, segurança e integrações. A granularidade é geralmente boa e a estrutura progride de forma lógica. Perde pontos por alguns títulos/conceitos mais técnicos ou anglicizados demais para o contexto jurídico-pedagógico ('tagging', 'watermarking', 'check-in'), por uma formulação com vírgula estranha em 'Separação entre conteúdo, dados', e por incluir integração de dados e segurança de modo um pouco mais expansivo que o núcleo do capítulo.",
+          "score": 9
         },
         {
           "anonymousId": "Model D",
-          "modelId": "google/gemini-3.1-pro-preview",
-          "reasoning": "Cobre os pilares principais (automação/templates, revisão assistida, DMS, versionamento, governança do conhecimento, riscos). Porém é menos exaustivo: falta detalhamento de padronização/qualidade (além de menções), controles de governança (papéis, aprovações), privacidade/LGPD, retenção/descarte, métricas e integrações. Alguns conceitos são vagos (“Adoção Tecnológica no Direito”, “Parâmetros de Qualidade…”). Estrutura ok, mas com lacunas de cobertura.",
-          "score": 6.3
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Muito bom em aderência ao capítulo e em organização curricular. Cobre praticamente todos os eixos pedidos, com boa ênfase em templates, padronização, revisão assistida, qualidade, versionamento, gestão documental, governança e riscos. A progressão é clara e o escopo fica bem centrado em automação documental jurídica. Pontos fracos: alguns conceitos são um pouco genéricos demais ('Automação jurídica', 'Legal tech', 'Revisão assistida'), há certa redundância entre blocos de governança/qualidade, e a última parte inclui medição de desempenho de forma um pouco periférica ao enunciado. Ainda assim, é um currículo sólido.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Cobertura ampla e bem distribuída, com todos os temas centrais do capítulo presentes. Estrutura clara, progressão razoável e bom foco em automação documental jurídica. Porém, há alguns problemas relevantes de escopo e precisão curricular: 'Revisão Assistida por Tecnologia' é tratada muito no sentido de TAR/CAL/revisão preditiva, que remete mais a e-discovery e análise documental em massa do que à revisão assistida de documentos automatizados; isso destoa da formulação do capítulo. Também há sobreposição com temas de implementação de projetos e conformidade que podem extrapolar o foco. Vários conceitos são um pouco amplos ('Tipos de automação em escritórios de advocacia', 'Ferramentas de geração automática de documentos').",
+          "score": 8.1
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Currículo robusto, bem organizado e em português adequado, cobrindo os principais tópicos pedidos. Tem boa progressão e presença de quase todos os eixos do capítulo. No entanto, a granularidade é frequentemente insuficiente: muitos conceitos são amplos demais para 'um tweet' e funcionariam como subtópicos de aula, como 'Boas Práticas na Criação de Templates', 'Organização e Classificação de Documentos', 'Mitigação de Riscos em Automação Jurídica' e 'Melhoria Contínua em Automação Jurídica'. Há também algum escopo excessivo em fluxos, notificações, assinatura eletrônica e dashboards, mais próximos de operações/CLM do que do núcleo do capítulo.",
+          "score": 7.6
         },
         {
           "anonymousId": "Model E",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Tem vários pontos fortes: boa cobertura técnica de templates, motores, versionamento, gestão documental, governança, segurança e métricas. Contudo, viola requisitos importantes. A primeira aula tem apenas 1 conceito, descumprindo claramente a regra de 3-8 conceitos por aula. Além disso, o currículo usa muitos anglicismos e termos excessivamente técnicos ('engine', 'binding', 'runtime', 'pipeline', 'webhook', 'ETL leve'), o que prejudica aderência ao estilo solicitado e puxa o conteúdo para implementação de software além do necessário para um capítulo de Direito. Também há expansão indevida para testes, implantação e integração técnica em nível mais de engenharia que jurídico-curricular.",
+          "score": 6.9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Organização razoável e linguagem em português, mas o currículo é pouco exaustivo para o escopo pedido. Faltam vários elementos importantes com granularidade suficiente, especialmente em templates, padronização, controle de qualidade, controle de versões e governança operacional. Alguns conceitos são muito amplos ('Categorias de Tecnologias Jurídicas', 'Adoção Tecnológica no Direito') e há desvio para IA de forma genérica ('Alucinações em Inteligência Artificial') sem ancoragem forte na automação de documentos. Também inclui OCR, que parece mais periférico ao capítulo do que itens essenciais omitidos.",
+          "score": 6.1
+        },
+        {
+          "anonymousId": "Model F",
           "modelId": "google/gemini-3-flash",
-          "reasoning": "Muito resumido e pouco exaustivo para o escopo do capítulo. Conceitos excessivamente amplos (“Ganhos de Eficiência”, “Automação de Documentos”, “Revisão Assistida”) e várias lições com apenas 4–5 itens, sem detalhar controle de versões, governança, gestão documental (ciclo de vida, retenção), riscos específicos e controles. Também mistura inglês (“Document Assembly”) sem necessidade. Atende parcialmente, mas deixa grandes lacunas.",
-          "score": 5.4
+          "reasoning": "Cumpre o idioma e toca nos grandes temas, mas de forma superficial demais para a exigência de currículo exaustivo e granular. Tem só 7 aulas e vários conceitos são amplos ou vagos ('Ganhos de Eficiência', 'Curadoria de Conteúdo', 'Erros de Automação'). Falta detalhamento relevante em templates, padronização, controle de qualidade, governança e riscos específicos da automação documental. Também há excesso de enquadramento em IA genérica e pouca decomposição de conceitos em unidades realmente micro.",
+          "score": 5.8
         }
       ]
     }
