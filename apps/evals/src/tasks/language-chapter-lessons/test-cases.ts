@@ -48,7 +48,7 @@ const SHARED_EXPECTATIONS = `
 `;
 
 // Chapter titles and descriptions sourced from language-course-chapters
-// eval outputs (openai/gpt-5.2) to test with real upstream data.
+// eval outputs to test with real upstream data.
 // Chapters picked from different course levels (initial, mid-early, mid-late, final).
 export const TEST_CASES = [
   {
