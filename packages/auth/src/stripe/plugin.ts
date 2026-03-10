@@ -4,9 +4,13 @@ import { stripeClient } from "./client";
 
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET ?? "";
 
-export function stripePlugin() {
+type StripePluginOptions = {
+  createCustomerOnSignUp?: boolean;
+};
+
+export function stripePlugin({ createCustomerOnSignUp = true }: StripePluginOptions = {}) {
   return stripe({
-    createCustomerOnSignUp: true,
+    createCustomerOnSignUp,
     organization: { enabled: true },
     stripeClient,
     stripeWebhookSecret: webhookSecret,
