@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { type Locator } from "@playwright/test";
 import { getAiOrganization } from "@zoonk/e2e/helpers";
 import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
@@ -7,7 +8,38 @@ import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
 import { expect, test } from "./fixtures";
 
-async function createStaticActivity(options: { steps: { content: object; position: number }[] }) {
+async function swipeHorizontally(
+  locator: Locator,
+  options: { endX: number; startX: number; y: number },
+) {
+  await locator.evaluate((element, gesture) => {
+    const startTouch = { clientX: gesture.startX, clientY: gesture.y };
+    const endTouch = { clientX: gesture.endX, clientY: gesture.y };
+
+    const touchStart = new Event("touchstart", { bubbles: true, cancelable: true });
+    Object.defineProperty(touchStart, "touches", { value: [startTouch] });
+    Object.defineProperty(touchStart, "targetTouches", { value: [startTouch] });
+    Object.defineProperty(touchStart, "changedTouches", { value: [startTouch] });
+
+    element.dispatchEvent(touchStart);
+
+    const touchEnd = new Event("touchend", { bubbles: true, cancelable: true });
+    Object.defineProperty(touchEnd, "touches", { value: [] });
+    Object.defineProperty(touchEnd, "targetTouches", { value: [] });
+    Object.defineProperty(touchEnd, "changedTouches", { value: [endTouch] });
+
+    element.dispatchEvent(touchEnd);
+  }, options);
+}
+
+async function createStaticActivity(options: {
+  steps: {
+    content: object;
+    position: number;
+    visualContent?: object;
+    visualKind?: "chart" | "code" | "diagram" | "image" | "quote" | "table" | "timeline";
+  }[];
+}) {
   const org = await getAiOrganization();
 
   const uniqueId = randomUUID().slice(0, 8);
@@ -53,6 +85,8 @@ async function createStaticActivity(options: { steps: { content: object; positio
         content: step.content,
         isPublished: true,
         position: step.position,
+        visualContent: "visualContent" in step ? step.visualContent : undefined,
+        visualKind: "visualKind" in step ? step.visualKind : undefined,
       }),
     ),
   );
@@ -401,7 +435,7 @@ test.describe("Static Step Navigation", () => {
     await expect(page.getByRole("button", { name: /send feedback/i })).toBeVisible();
   });
 
-  test("clicking outside content area navigates between steps", async ({ page }) => {
+  test("only bottom content clicks navigate between steps", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const { url } = await createStaticActivity({
       steps: [
@@ -412,6 +446,11 @@ test.describe("Static Step Navigation", () => {
             variant: "text",
           },
           position: 0,
+          visualContent: {
+            prompt: `Outside visual ${uniqueId}`,
+            url: "https://to3kaoi21m60hzgu.public.blob.vercel-storage.com/courses/machine_learning-jmaDwiS0MptNV2EGCZzYWU7RBJs3Qg.webp",
+          },
+          visualKind: "image",
         },
         {
           content: {
@@ -431,19 +470,100 @@ test.describe("Static Step Navigation", () => {
       page.getByRole("heading", { name: new RegExp(`Outside 1 ${uniqueId}`) }),
     ).toBeVisible();
 
-    // Click far-right edge of viewport (outside the max-w-2xl content area)
+    await page.getByRole("img", { name: new RegExp(`Outside visual ${uniqueId}`) }).click();
+    await expect(
+      page.getByRole("heading", { name: new RegExp(`Outside 1 ${uniqueId}`) }),
+    ).toBeVisible();
+
     const viewport = page.viewportSize();
     await page.mouse.click(viewport!.width - 10, viewport!.height / 2);
+    await expect(
+      page.getByRole("heading", { name: new RegExp(`Outside 1 ${uniqueId}`) }),
+    ).toBeVisible();
+
+    const bodyText = page.getByText(new RegExp(`Outside 1 body ${uniqueId}`));
+    const bodyBox = await bodyText.boundingBox();
+
+    if (!bodyBox || !viewport) {
+      throw new Error("Missing body text box or viewport");
+    }
+
+    await page.mouse.click(viewport.width / 2, bodyBox.y + bodyBox.height / 2);
 
     await expect(
       page.getByRole("heading", { name: new RegExp(`Outside 2 ${uniqueId}`) }),
     ).toBeVisible();
+  });
 
-    // Click far-left edge to go back
-    await page.mouse.click(10, viewport!.height / 2);
+  test("only bottom content swipes navigate between steps", async ({ page }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const { url } = await createStaticActivity({
+      steps: [
+        {
+          content: {
+            text: `Swipe 1 body ${uniqueId}`,
+            title: `Swipe 1 ${uniqueId}`,
+            variant: "text",
+          },
+          position: 0,
+          visualContent: {
+            prompt: `Swipe visual ${uniqueId}`,
+            url: "https://to3kaoi21m60hzgu.public.blob.vercel-storage.com/courses/machine_learning-jmaDwiS0MptNV2EGCZzYWU7RBJs3Qg.webp",
+          },
+          visualKind: "image",
+        },
+        {
+          content: {
+            text: `Swipe 2 body ${uniqueId}`,
+            title: `Swipe 2 ${uniqueId}`,
+            variant: "text",
+          },
+          position: 1,
+        },
+      ],
+    });
+
+    await page.goto(url);
+    await page.waitForLoadState("networkidle");
 
     await expect(
-      page.getByRole("heading", { name: new RegExp(`Outside 1 ${uniqueId}`) }),
+      page.getByRole("heading", { name: new RegExp(`Swipe 1 ${uniqueId}`) }),
+    ).toBeVisible();
+
+    await swipeHorizontally(
+      page.getByRole("img", { name: new RegExp(`Swipe visual ${uniqueId}`) }),
+      {
+        endX: 20,
+        startX: 140,
+        y: 40,
+      },
+    );
+
+    // still at this step when swiping on visual content
+    await expect(
+      page.getByRole("heading", { name: new RegExp(`Swipe 1 ${uniqueId}`) }),
+    ).toBeVisible();
+
+    await swipeHorizontally(page.getByText(new RegExp(`Swipe 1 body ${uniqueId}`)), {
+      endX: 20,
+      startX: 140,
+      y: 20,
+    });
+
+    // now should be on step 2 after swiping on body text
+    await expect(
+      page.getByRole("heading", { name: new RegExp(`Swipe 2 ${uniqueId}`) }),
+    ).toBeVisible();
+
+    await swipeHorizontally(page.getByText(new RegExp(`Swipe 2 body ${uniqueId}`)), {
+      endX: 140,
+      startX: 20,
+      y: 20,
+    });
+
+    // swiping back to step 1
+    await expect(
+      page.getByRole("heading", { name: new RegExp(`Swipe 1 ${uniqueId}`) }),
     ).toBeVisible();
   });
 

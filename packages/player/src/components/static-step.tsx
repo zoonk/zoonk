@@ -6,6 +6,7 @@ import { type SerializedStep } from "../prepare-activity-data";
 import { useReplaceName } from "../user-name-context";
 import { HighlightText } from "./highlight-text";
 import { ContextText } from "./question-text";
+import { StaticTapZones, useStaticStepNavigation } from "./static-step-navigation";
 import { StaticStepText, StaticStepVisual } from "./step-layouts";
 import { StepVisualRenderer } from "./step-visual-renderer";
 
@@ -74,8 +75,24 @@ function StaticStepContent({ step }: { step: SerializedStep }) {
   return <TextVariant text={content.text} title={content.title} />;
 }
 
-export function StaticStep({ step }: { step: SerializedStep }) {
+export function StaticStep({
+  isFirst,
+  onNavigateNext,
+  onNavigatePrev,
+  step,
+}: {
+  isFirst: boolean;
+  onNavigateNext: () => void;
+  onNavigatePrev: () => void;
+  step: SerializedStep;
+}) {
   const hasVisual = Boolean(step.visualKind && step.visualContent);
+
+  const { onNavigateNextTap, onNavigatePrevTap, swipeHandlers } = useStaticStepNavigation({
+    isFirst,
+    onNavigateNext,
+    onNavigatePrev,
+  });
 
   return (
     <>
@@ -89,10 +106,16 @@ export function StaticStep({ step }: { step: SerializedStep }) {
 
       <StaticStepText
         className={cn(
-          "mx-4 pt-4 pb-6 sm:mx-6 sm:pt-5 sm:pb-8",
+          "relative mx-4 pt-4 pb-6 sm:mx-6 sm:pt-5 sm:pb-8",
           hasVisual && "border-border/40 border-t xl:border-t-0",
         )}
+        {...swipeHandlers}
       >
+        <StaticTapZones
+          isFirst={isFirst}
+          onNavigateNext={onNavigateNextTap}
+          onNavigatePrev={onNavigatePrevTap}
+        />
         <StaticStepContent step={step} />
       </StaticStepText>
     </>

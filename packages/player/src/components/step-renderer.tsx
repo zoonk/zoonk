@@ -10,7 +10,6 @@ import { ReadingStep } from "./reading-step";
 import { SelectImageStep } from "./select-image-step";
 import { SortOrderStep } from "./sort-order-step";
 import { StaticStep } from "./static-step";
-import { StaticTapZones, useSwipeNavigation } from "./static-step-navigation";
 import { StaticStepLayout } from "./step-layouts";
 import { VocabularyStep } from "./vocabulary-step";
 
@@ -31,22 +30,19 @@ export function StepRenderer({
   selectedAnswer: SelectedAnswer | undefined;
   step: SerializedStep;
 }) {
-  const swipeHandlers = useSwipeNavigation({ onNavigateNext, onNavigatePrev });
-
   if (step.kind === "static") {
     const hasVisual = Boolean(step.visualKind && step.visualContent);
 
     return (
-      <div className="relative flex min-h-0 w-full flex-1 justify-center" {...swipeHandlers}>
+      <div className="flex min-h-0 w-full flex-1 justify-center">
         <StaticStepLayout className={hasVisual ? "xl:justify-center xl:gap-4" : "justify-center"}>
-          <StaticStep step={step} />
+          <StaticStep
+            isFirst={isFirst}
+            onNavigateNext={onNavigateNext}
+            onNavigatePrev={onNavigatePrev}
+            step={step}
+          />
         </StaticStepLayout>
-
-        <StaticTapZones
-          isFirst={isFirst}
-          onNavigateNext={onNavigateNext}
-          onNavigatePrev={onNavigatePrev}
-        />
       </div>
     );
   }
