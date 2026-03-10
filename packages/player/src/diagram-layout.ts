@@ -30,6 +30,7 @@ const NODE_PADDING = 32;
 const NODE_SEP = 60;
 const RANK_SEP = 60;
 const LAYOUT_PADDING = 40;
+const LAYOUT_OFFSET = LAYOUT_PADDING / 2;
 
 function estimateNodeWidth(label: string): number {
   return Math.max(MIN_NODE_WIDTH, label.length * CHAR_WIDTH + NODE_PADDING);
@@ -101,14 +102,14 @@ export function computeDiagramLayout(
   dagre.layout(graph);
 
   const positionedNodes = nodes.map((node) => ({
-    ...readNodePosition(graph, node.id),
+    ...translateNode(readNodePosition(graph, node.id)),
     id: node.id,
     label: node.label,
   }));
 
   const positionedEdges = edges.map((edge) => ({
     label: edge.label,
-    points: readEdgePoints(graph, edge.source, edge.target),
+    points: translatePoints(readEdgePoints(graph, edge.source, edge.target)),
     source: edge.source,
     target: edge.target,
   }));
@@ -121,4 +122,19 @@ export function computeDiagramLayout(
     nodes: positionedNodes,
     width: dimensions.width + LAYOUT_PADDING,
   };
+}
+
+function translateNode(node: { height: number; width: number; x: number; y: number }) {
+  return {
+    ...node,
+    x: node.x + LAYOUT_OFFSET,
+    y: node.y + LAYOUT_OFFSET,
+  };
+}
+
+function translatePoints(points: { x: number; y: number }[]) {
+  return points.map((point) => ({
+    x: point.x + LAYOUT_OFFSET,
+    y: point.y + LAYOUT_OFFSET,
+  }));
 }

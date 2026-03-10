@@ -43,7 +43,7 @@ export function PlayerShell() {
   const buttonLabel = phase === "feedback" ? t("Continue") : t("Check");
 
   return (
-    <main className="flex min-h-dvh flex-col">
+    <main className="flex h-dvh flex-col overflow-hidden">
       {isIntro && (
         <div className="bg-background/95 sticky top-0 z-30 backdrop-blur-sm">
           <PlayerHeader>

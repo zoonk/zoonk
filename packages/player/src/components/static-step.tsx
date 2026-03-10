@@ -81,7 +81,9 @@ export function StaticStep({ step }: { step: SerializedStep }) {
     <>
       {hasVisual && (
         <StaticStepVisual>
-          <StepVisualRenderer visualContent={step.visualContent} visualKind={step.visualKind} />
+          <div className="my-auto flex w-full justify-center">
+            <StepVisualRenderer visualContent={step.visualContent} visualKind={step.visualKind} />
+          </div>
         </StaticStepVisual>
       )}
 
