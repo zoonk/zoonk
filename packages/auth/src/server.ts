@@ -38,7 +38,6 @@ export const baseAuthConfig: Omit<BetterAuthOptions, "rateLimit"> = {
     accountLinking: { enabled: true },
   },
   advanced: {
-    crossSubDomainCookies: { enabled: true },
     database: { generateId: "serial" },
   },
   appName: "Zoonk",
