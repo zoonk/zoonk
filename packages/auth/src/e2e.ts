@@ -2,6 +2,7 @@ import { betterAuth } from "better-auth/minimal";
 import { emailOTP, oneTimeToken } from "better-auth/plugins";
 import { sendVerificationOTP } from "./plugins/otp";
 import { baseAuthConfig, baseAuthPlugins, fullPlugins, socialProviders } from "./server";
+import { stripePlugin } from "./stripe/plugin";
 
 /**
  * @public
@@ -21,7 +22,11 @@ export const auth = betterAuth({
   },
   plugins: [
     ...baseAuthPlugins,
-    ...fullPlugins.filter((plugin) => plugin.id !== "email-otp" && plugin.id !== "one-time-token"),
+    ...fullPlugins.filter(
+      (plugin) =>
+        plugin.id !== "email-otp" && plugin.id !== "one-time-token" && plugin.id !== "stripe",
+    ),
+    stripePlugin({ createCustomerOnSignUp: false }),
     emailOTP({
       overrideDefaultEmailVerification: true,
       sendVerificationOTP,
