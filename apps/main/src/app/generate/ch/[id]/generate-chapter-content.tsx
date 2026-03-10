@@ -31,10 +31,12 @@ export async function GenerateChapterContent({ params }: { params: Promise<{ id:
     notFound();
   }
 
+  const hasStarted = chapter.generationStatus !== "pending";
   const isFirstChapter = chapter.position === 0;
+  const bypassAuth = isFirstChapter || hasStarted;
   const t = await getExtracted();
 
-  if (!session && !isFirstChapter) {
+  if (!session && !bypassAuth) {
     return <LoginRequired title={t("Generate Chapter")} />;
   }
 
@@ -54,7 +56,7 @@ export async function GenerateChapterContent({ params }: { params: Promise<{ id:
       </ContainerHeader>
 
       <ContainerBody>
-        <SubscriptionGate bypass={isFirstChapter}>
+        <SubscriptionGate bypass={bypassAuth}>
           <GenerationClient
             chapterId={chapterId}
             chapterSlug={chapter.slug}

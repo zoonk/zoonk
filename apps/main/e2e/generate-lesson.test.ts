@@ -286,6 +286,53 @@ test.describe("Generate Lesson Page - With Subscription", () => {
   });
 });
 
+test.describe("Generate Lesson Page - Running Generation Bypasses Auth", () => {
+  test("unauthenticated user sees generation UI when status is running", async ({ page }) => {
+    const org = await getAiOrganization();
+    const uniqueId = randomUUID().slice(0, 8);
+
+    const course = await courseFixture({
+      isPublished: true,
+      normalizedTitle: normalizeString(`E2E Running Lesson Course ${uniqueId}`),
+      organizationId: org.id,
+      slug: `e2e-running-lesson-course-${uniqueId}`,
+      title: `E2E Running Lesson Course ${uniqueId}`,
+    });
+
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      generationStatus: "completed",
+      isPublished: true,
+      normalizedTitle: normalizeString(`E2E Running Lesson Chapter ${uniqueId}`),
+      organizationId: org.id,
+      slug: `e2e-running-lesson-chapter-${uniqueId}`,
+      title: `E2E Running Lesson Chapter ${uniqueId}`,
+    });
+
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      generationRunId: `run-${uniqueId}`,
+      generationStatus: "running",
+      isPublished: true,
+      normalizedTitle: normalizeString(`E2E Running Lesson ${uniqueId}`),
+      organizationId: org.id,
+      slug: `e2e-running-lesson-${uniqueId}`,
+      title: `E2E Running Lesson ${uniqueId}`,
+    });
+
+    await setupMockApis(page, {
+      statusDelayMs: 2500,
+      streamMessages: [{ status: "started", step: "getLesson" }],
+    });
+
+    await page.goto(`/generate/l/${lesson.id}`);
+
+    await expect(page.getByRole("alert").filter({ hasText: /logged in/i })).toHaveCount(0);
+    await expect(page.getByText(/upgrade to generate/i)).toHaveCount(0);
+    await expect(page.getByRole("heading", { name: lesson.title })).toBeVisible();
+  });
+});
+
 test.describe("Generate Lesson Page - Not Found", () => {
   test("invalid lesson ID shows 404 page", async ({ page }) => {
     await page.goto("/generate/l/999999");
