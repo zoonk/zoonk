@@ -198,7 +198,7 @@ export function DiagramVisual({ content }: { content: unknown }) {
   const description = useMemo(() => buildAccessibleDescription(parsed), [parsed]);
 
   return (
-    <figure aria-label={t("Diagram")} className="w-full max-w-xl">
+    <figure aria-label={t("Diagram")} className="mx-auto w-full max-w-xl">
       <DiagramSvg layout={layout} markerId={markerId} />
       <figcaption className="sr-only">{description}</figcaption>
     </figure>
