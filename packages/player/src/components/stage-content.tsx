@@ -83,7 +83,7 @@ export function StageContent({
   if ((phase === "playing" || phase === "feedback") && currentStep) {
     return (
       <div
-        className="animate-in fade-in flex w-full flex-1 flex-col items-center duration-150 ease-out motion-reduce:animate-none sm:justify-center"
+        className="animate-in fade-in flex min-h-0 w-full flex-1 flex-col items-center duration-150 ease-out motion-reduce:animate-none sm:justify-center"
         key={`step-${currentStepIndex}`}
       >
         <StepRenderer

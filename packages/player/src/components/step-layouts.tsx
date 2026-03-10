@@ -3,7 +3,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 export function StaticStepLayout({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
-      className={cn("flex w-full max-w-2xl flex-1 flex-col", className)}
+      className={cn("flex min-h-0 w-full max-w-2xl flex-1 flex-col", className)}
       data-slot="static-step-layout"
       {...props}
     />
@@ -14,7 +14,7 @@ export function StaticStepVisual({ className, ...props }: React.ComponentProps<"
   return (
     <div
       className={cn(
-        "relative z-20 flex min-h-0 flex-1 items-center justify-center overflow-y-auto px-4 py-6 sm:px-6 sm:py-8 xl:max-h-[50vh] xl:flex-initial xl:py-10",
+        "relative z-20 flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain px-4 py-6 sm:px-6 sm:py-8 xl:max-h-[50vh] xl:flex-initial xl:py-10",
         className,
       )}
       data-slot="static-step-visual"
@@ -26,7 +26,7 @@ export function StaticStepVisual({ className, ...props }: React.ComponentProps<"
 export function StaticStepText({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
-      className={cn("flex flex-col gap-1 text-left", className)}
+      className={cn("flex shrink-0 flex-col gap-1 text-left", className)}
       data-slot="static-step-text"
       {...props}
     />

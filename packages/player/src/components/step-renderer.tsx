@@ -37,7 +37,7 @@ export function StepRenderer({
     const hasVisual = Boolean(step.visualKind && step.visualContent);
 
     return (
-      <div className="relative flex w-full flex-1 justify-center" {...swipeHandlers}>
+      <div className="relative flex min-h-0 w-full flex-1 justify-center" {...swipeHandlers}>
         <StaticStepLayout className={hasVisual ? "xl:justify-center xl:gap-4" : "justify-center"}>
           <StaticStep step={step} />
         </StaticStepLayout>
