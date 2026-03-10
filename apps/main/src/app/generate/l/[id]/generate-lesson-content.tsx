@@ -31,9 +31,10 @@ export async function GenerateLessonContent({ params }: { params: Promise<{ id: 
     notFound();
   }
 
+  const hasStarted = lesson.generationStatus !== "pending";
   const t = await getExtracted();
 
-  if (!session) {
+  if (!session && !hasStarted) {
     return <LoginRequired title={t("Generate Lesson")} />;
   }
 
@@ -53,7 +54,7 @@ export async function GenerateLessonContent({ params }: { params: Promise<{ id: 
       </ContainerHeader>
 
       <ContainerBody>
-        <SubscriptionGate>
+        <SubscriptionGate bypass={hasStarted}>
           <GenerationClient
             chapterSlug={lesson.chapter.slug}
             courseSlug={lesson.chapter.course.slug}

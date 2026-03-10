@@ -343,6 +343,47 @@ test.describe("Generate Chapter Page - First Chapter Free", () => {
   });
 });
 
+test.describe("Generate Chapter Page - Running Generation Bypasses Auth", () => {
+  test("unauthenticated user sees generation UI for non-first chapter when status is running", async ({
+    page,
+  }) => {
+    const org = await getAiOrganization();
+    const uniqueId = randomUUID().slice(0, 8);
+
+    const course = await courseFixture({
+      isPublished: true,
+      normalizedTitle: normalizeString(`E2E Running Chapter Course ${uniqueId}`),
+      organizationId: org.id,
+      slug: `e2e-running-chapter-course-${uniqueId}`,
+      targetLanguage: null,
+      title: `E2E Running Chapter Course ${uniqueId}`,
+    });
+
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      generationRunId: `run-${uniqueId}`,
+      generationStatus: "running",
+      isPublished: true,
+      normalizedTitle: normalizeString(`E2E Running Chapter ${uniqueId}`),
+      organizationId: org.id,
+      position: 1,
+      slug: `e2e-running-chapter-${uniqueId}`,
+      title: `E2E Running Chapter ${uniqueId}`,
+    });
+
+    await setupMockApis(page, {
+      statusDelayMs: 2500,
+      streamMessages: [{ status: "started", step: "getChapter" }],
+    });
+
+    await page.goto(`/generate/ch/${chapter.id}`);
+
+    await expect(page.getByRole("alert").filter({ hasText: /logged in/i })).toHaveCount(0);
+    await expect(page.getByText(/upgrade to generate/i)).toHaveCount(0);
+    await expect(page.getByRole("heading", { name: chapter.title })).toBeVisible();
+  });
+});
+
 test.describe("Generate Chapter Page - Not Found", () => {
   test("invalid chapter ID shows 404 page", async ({ page }) => {
     await page.goto("/generate/ch/999999");

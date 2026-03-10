@@ -1259,6 +1259,62 @@ test.describe("Generate Activity Page - With Subscription", () => {
   });
 });
 
+test.describe("Generate Activity Page - Running Generation Bypasses Auth", () => {
+  test("unauthenticated user sees generation UI when status is running", async ({ page }) => {
+    const org = await getAiOrganization();
+    const uniqueId = randomUUID().slice(0, 8);
+
+    const course = await courseFixture({
+      isPublished: true,
+      normalizedTitle: normalizeString(`E2E Running Activity Course ${uniqueId}`),
+      organizationId: org.id,
+      slug: `e2e-running-activity-course-${uniqueId}`,
+      title: `E2E Running Activity Course ${uniqueId}`,
+    });
+
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      generationStatus: "completed",
+      isPublished: true,
+      normalizedTitle: normalizeString(`E2E Running Activity Chapter ${uniqueId}`),
+      organizationId: org.id,
+      slug: `e2e-running-activity-chapter-${uniqueId}`,
+      title: `E2E Running Activity Chapter ${uniqueId}`,
+    });
+
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      generationStatus: "completed",
+      isPublished: true,
+      normalizedTitle: normalizeString(`E2E Running Activity Lesson ${uniqueId}`),
+      organizationId: org.id,
+      slug: `e2e-running-activity-lesson-${uniqueId}`,
+      title: `E2E Running Activity Lesson ${uniqueId}`,
+    });
+
+    const activity = await activityFixture({
+      generationRunId: `run-${uniqueId}`,
+      generationStatus: "running",
+      isPublished: true,
+      kind: "background",
+      lessonId: lesson.id,
+      organizationId: org.id,
+      title: `E2E Running Activity ${uniqueId}`,
+    });
+
+    await setupMockApis(page, {
+      streamDelayMs: 2500,
+      streamMessages: [{ status: "started", step: "getLessonActivities" }],
+    });
+
+    await page.goto(`/generate/a/${activity.id}`);
+
+    await expect(page.getByRole("alert").filter({ hasText: /logged in/i })).toHaveCount(0);
+    await expect(page.getByText(/upgrade to generate/i)).toHaveCount(0);
+    await expect(page.getByRole("heading", { name: activity.title! })).toBeVisible();
+  });
+});
+
 test.describe("Generate Activity Page - Not Found", () => {
   test("invalid activity ID shows 404 page", async ({ page }) => {
     await page.goto("/generate/a/999999");

@@ -34,9 +34,10 @@ export async function GenerateActivityContent({ params }: { params: Promise<{ id
     notFound();
   }
 
+  const hasStarted = activity.generationStatus !== "pending";
   const t = await getExtracted();
 
-  if (!session) {
+  if (!session && !hasStarted) {
     return <LoginRequired title={t("Generate Activity")} />;
   }
 
@@ -56,7 +57,7 @@ export async function GenerateActivityContent({ params }: { params: Promise<{ id
       </ContainerHeader>
 
       <ContainerBody>
-        <SubscriptionGate>
+        <SubscriptionGate bypass={hasStarted}>
           <GenerationClient
             activityKind={activity.kind}
             chapterSlug={activity.lesson.chapter.slug}
