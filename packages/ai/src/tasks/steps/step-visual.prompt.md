@@ -70,3 +70,4 @@ Choose the visual type that BEST fits each step's content:
 - Use as fallback when no other type fits
 - Describe content only, not style
 - Be specific enough to convey the concept
+- NEVER reference copyrighted or trademarked characters (e.g., Mickey Mouse, Spider-Man, Mario, Pikachu). Describe concepts abstractly or use generic, original characters instead
