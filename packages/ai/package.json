@@ -28,7 +28,7 @@
     "./tasks/courses/thumbnail": "./src/tasks/courses/course-thumbnail.ts",
     "./tasks/lessons/activities": "./src/tasks/lessons/lesson-activities.ts",
     "./tasks/lessons/kind": "./src/tasks/lessons/lesson-kind.ts",
-    "./tasks/steps/select-image": "./src/tasks/steps/select-image-step.ts",
+    "./tasks/steps/select-image": "./src/tasks/steps/step-select-image.ts",
     "./tasks/steps/visual": "./src/tasks/steps/step-visual.ts",
     "./tasks/steps/visual-image": "./src/tasks/steps/step-visual-image.ts",
     "./provider-options": "./src/provider-options.ts"

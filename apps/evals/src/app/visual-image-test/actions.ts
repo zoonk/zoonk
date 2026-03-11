@@ -11,6 +11,7 @@ export async function generateVisualImageAction(formData: FormData) {
   }
 
   const { data: imageUrl, error } = await generateVisualStepImage({
+    language: "en",
     orgSlug: "evals",
     prompt,
   });

@@ -4,4 +4,6 @@ Style: 3D rendered with vivid high-contrast colors, smooth matte surfaces, clean
 
 The image should clearly depict the concept while being visually distinct from other options in a quiz context. Focus on clarity and recognizability.
 
+LANGUAGE: **{{LANGUAGE}}**
+
 CONTENT TO ILLUSTRATE: **{{PROMPT}}**
