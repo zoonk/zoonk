@@ -37,7 +37,7 @@ export async function GenerateChapterContent({ params }: { params: Promise<{ id:
   const t = await getExtracted();
 
   if (!session && !bypassAuth) {
-    return <LoginRequired title={t("Generate Chapter")} />;
+    return <LoginRequired title={t("Create Chapter")} />;
   }
 
   if (chapter.generationStatus === "completed") {

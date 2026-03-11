@@ -39,7 +39,7 @@ export async function CourseSuggestionItem({
             prefetch={false}
           >
             <SparklesIcon aria-hidden="true" className="size-4" />
-            {t("Generate")}
+            {t("Create")}
           </Link>
         </ItemActions>
       </Item>

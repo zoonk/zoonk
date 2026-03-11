@@ -13,7 +13,7 @@ export async function generateMetadata({
 
   return {
     description: t(
-      "Discover personalized courses and resources to learn {prompt}. Zoonk uses AI to generate interactive lessons and activities tailored to you.",
+      "Discover personalized courses and resources to learn {prompt}. Zoonk uses AI to create interactive lessons and activities tailored to you.",
       { prompt },
     ),
     title: t("Learn {prompt} with AI", { prompt }),

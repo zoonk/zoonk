@@ -38,7 +38,7 @@ export async function GenerateActivityContent({ params }: { params: Promise<{ id
   const t = await getExtracted();
 
   if (!session && !hasStarted) {
-    return <LoginRequired title={t("Generate Activity")} />;
+    return <LoginRequired title={t("Create Activity")} />;
   }
 
   if (activity.generationStatus === "completed") {
@@ -52,7 +52,7 @@ export async function GenerateActivityContent({ params }: { params: Promise<{ id
       <ContainerHeader>
         <ContainerHeaderGroup>
           <ContainerTitle>{activity.title ?? t("Activity")}</ContainerTitle>
-          <ContainerDescription>{t("Generate content for this activity")}</ContainerDescription>
+          <ContainerDescription>{t("Create content for this activity")}</ContainerDescription>
         </ContainerHeaderGroup>
       </ContainerHeader>
 

@@ -62,7 +62,7 @@ test.describe("Course Suggestions", () => {
     await expect(page.getByText(suggestionTitle)).toBeVisible();
     await expect(page.getByText(suggestionDescription)).toBeVisible();
 
-    const generateLinks = page.getByRole("link", { name: /generate/i });
+    const generateLinks = page.getByRole("link", { name: /create/i });
     await expect(generateLinks.first()).toBeVisible();
   });
 
@@ -71,7 +71,7 @@ test.describe("Course Suggestions", () => {
 
     await expect(page.getByRole("heading", { name: /course ideas for/i })).toBeVisible();
 
-    const generateLink = page.getByRole("link", { name: /generate/i }).first();
+    const generateLink = page.getByRole("link", { name: /create/i }).first();
     await generateLink.click();
 
     await expect(page).toHaveURL(/\/generate\/cs\/\d+/);
