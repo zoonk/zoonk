@@ -15,7 +15,7 @@ import {
 import { safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
 
-const MAX_CONTINUE_LEARNING_ITEMS = 4;
+export const MAX_CONTINUE_LEARNING_ITEMS = 4;
 
 /**
  * Over-fetch to account for completed courses being filtered out.

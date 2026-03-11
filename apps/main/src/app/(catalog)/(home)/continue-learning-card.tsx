@@ -44,11 +44,9 @@ function getCourseHrefs(item: ContinueLearningItem) {
 export async function ContinueLearningCard({
   item,
   kindLabels,
-  fullWidth,
 }: {
   item: ContinueLearningItem;
   kindLabels: Map<string, string>;
-  fullWidth?: boolean;
 }) {
   const t = await getExtracted();
   const { activity, course, lesson } = item;
@@ -60,11 +58,7 @@ export async function ContinueLearningCard({
   const { activityHref, courseHref, lessonHref } = getCourseHrefs(item);
 
   return (
-    <FeatureCard
-      className={
-        fullWidth ? undefined : "w-[85vw] shrink-0 snap-start sm:w-[45vw] 2xl:w-[calc(25%-1rem)]"
-      }
-    >
+    <FeatureCard>
       <Link href={activityHref} prefetch>
         <FeatureCardHeader>
           <FeatureCardHeaderContent>
