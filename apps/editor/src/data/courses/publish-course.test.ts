@@ -1,8 +1,12 @@
 import { ErrorCode } from "@/lib/app-error";
 import { prisma } from "@zoonk/db";
+import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { signInAs } from "@zoonk/testing/fixtures/auth";
+import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
+import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { memberFixture, organizationFixture } from "@zoonk/testing/fixtures/orgs";
+import { stepFixture } from "@zoonk/testing/fixtures/steps";
 import { beforeAll, describe, expect, test } from "vitest";
 import { toggleCoursePublished } from "./publish-course";
 
@@ -96,6 +100,108 @@ describe("admins", () => {
 
     expect(result.error).toBeNull();
     expect(result.data?.isPublished).toBeFalsy();
+  });
+
+  test("publishes all child content when publishing a course", async () => {
+    const course = await courseFixture({
+      isPublished: false,
+      organizationId: organization.id,
+    });
+
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      isPublished: false,
+      organizationId: organization.id,
+    });
+
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      isPublished: false,
+      organizationId: organization.id,
+    });
+
+    const activity = await activityFixture({
+      isPublished: false,
+      lessonId: lesson.id,
+      organizationId: organization.id,
+    });
+
+    const step = await stepFixture({
+      activityId: activity.id,
+      isPublished: false,
+    });
+
+    const result = await toggleCoursePublished({
+      courseId: course.id,
+      headers,
+      isPublished: true,
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data?.isPublished).toBeTruthy();
+
+    const [updatedChapter, updatedLesson, updatedActivity, updatedStep] = await Promise.all([
+      prisma.chapter.findUniqueOrThrow({ where: { id: chapter.id } }),
+      prisma.lesson.findUniqueOrThrow({ where: { id: lesson.id } }),
+      prisma.activity.findUniqueOrThrow({ where: { id: activity.id } }),
+      prisma.step.findUniqueOrThrow({ where: { id: step.id } }),
+    ]);
+
+    expect(updatedChapter.isPublished).toBeTruthy();
+    expect(updatedLesson.isPublished).toBeTruthy();
+    expect(updatedActivity.isPublished).toBeTruthy();
+    expect(updatedStep.isPublished).toBeTruthy();
+  });
+
+  test("does not cascade unpublish to child content", async () => {
+    const course = await courseFixture({
+      isPublished: true,
+      organizationId: organization.id,
+    });
+
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      isPublished: true,
+      organizationId: organization.id,
+    });
+
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      isPublished: true,
+      organizationId: organization.id,
+    });
+
+    const activity = await activityFixture({
+      isPublished: true,
+      lessonId: lesson.id,
+      organizationId: organization.id,
+    });
+
+    const step = await stepFixture({
+      activityId: activity.id,
+      isPublished: true,
+    });
+
+    const result = await toggleCoursePublished({
+      courseId: course.id,
+      headers,
+      isPublished: false,
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data?.isPublished).toBeFalsy();
+
+    const [updatedChapter, updatedLesson, updatedActivity, updatedStep] = await Promise.all([
+      prisma.chapter.findUniqueOrThrow({ where: { id: chapter.id } }),
+      prisma.lesson.findUniqueOrThrow({ where: { id: lesson.id } }),
+      prisma.activity.findUniqueOrThrow({ where: { id: activity.id } }),
+      prisma.step.findUniqueOrThrow({ where: { id: step.id } }),
+    ]);
+
+    expect(updatedChapter.isPublished).toBeTruthy();
+    expect(updatedLesson.isPublished).toBeTruthy();
+    expect(updatedActivity.isPublished).toBeTruthy();
+    expect(updatedStep.isPublished).toBeTruthy();
   });
 
   test("returns Forbidden for course in different organization", async () => {

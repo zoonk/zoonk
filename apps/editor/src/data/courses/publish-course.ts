@@ -34,10 +34,38 @@ export async function toggleCoursePublished(params: {
   }
 
   const { data, error } = await safeAsync(() =>
-    prisma.course.update({
-      data: { isPublished: params.isPublished },
-      where: { id: course.id },
-    }),
+    params.isPublished
+      ? prisma.$transaction(async (tx) => {
+          const updated = await tx.course.update({
+            data: { isPublished: true },
+            where: { id: course.id },
+          });
+
+          await Promise.all([
+            tx.chapter.updateMany({
+              data: { isPublished: true },
+              where: { courseId: course.id },
+            }),
+            tx.lesson.updateMany({
+              data: { isPublished: true },
+              where: { chapter: { courseId: course.id } },
+            }),
+            tx.activity.updateMany({
+              data: { isPublished: true },
+              where: { lesson: { chapter: { courseId: course.id } } },
+            }),
+            tx.step.updateMany({
+              data: { isPublished: true },
+              where: { activity: { lesson: { chapter: { courseId: course.id } } } },
+            }),
+          ]);
+
+          return updated;
+        })
+      : prisma.course.update({
+          data: { isPublished: false },
+          where: { id: course.id },
+        }),
   );
 
   if (error) {
