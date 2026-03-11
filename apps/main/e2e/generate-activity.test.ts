@@ -300,7 +300,7 @@ test.describe("Generate Activity Page - No Subscription", () => {
     const { activity } = await createPendingActivity();
     await authenticatedPage.goto(`/generate/a/${activity.id}`);
 
-    await expect(authenticatedPage.getByText(/upgrade to generate/i)).toBeVisible();
+    await expect(authenticatedPage.getByText(/upgrade to create/i)).toBeVisible();
 
     const upgradeLink = authenticatedPage.getByRole("link", { name: /upgrade/i });
     await expect(upgradeLink).toBeVisible();
@@ -1310,7 +1310,7 @@ test.describe("Generate Activity Page - Running Generation Bypasses Auth", () =>
     await page.goto(`/generate/a/${activity.id}`);
 
     await expect(page.getByRole("alert").filter({ hasText: /logged in/i })).toHaveCount(0);
-    await expect(page.getByText(/upgrade to generate/i)).toHaveCount(0);
+    await expect(page.getByText(/upgrade to create/i)).toHaveCount(0);
     await expect(page.getByRole("heading", { name: activity.title! })).toBeVisible();
   });
 });

@@ -185,7 +185,7 @@ test.describe("Generate Lesson Page - No Subscription", () => {
     const { lesson } = await createPendingLesson();
     await authenticatedPage.goto(`/generate/l/${lesson.id}`);
 
-    await expect(authenticatedPage.getByText(/upgrade to generate/i)).toBeVisible();
+    await expect(authenticatedPage.getByText(/upgrade to create/i)).toBeVisible();
 
     const upgradeLink = authenticatedPage.getByRole("link", { name: /upgrade/i });
     await expect(upgradeLink).toBeVisible();
@@ -328,7 +328,7 @@ test.describe("Generate Lesson Page - Running Generation Bypasses Auth", () => {
     await page.goto(`/generate/l/${lesson.id}`);
 
     await expect(page.getByRole("alert").filter({ hasText: /logged in/i })).toHaveCount(0);
-    await expect(page.getByText(/upgrade to generate/i)).toHaveCount(0);
+    await expect(page.getByText(/upgrade to create/i)).toHaveCount(0);
     await expect(page.getByRole("heading", { name: lesson.title })).toBeVisible();
   });
 });

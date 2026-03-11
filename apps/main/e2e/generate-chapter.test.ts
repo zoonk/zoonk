@@ -175,7 +175,7 @@ test.describe("Generate Chapter Page - No Subscription", () => {
     const { chapter } = await createPendingChapter(1);
     await authenticatedPage.goto(`/generate/ch/${chapter.id}`);
 
-    await expect(authenticatedPage.getByText(/upgrade to generate/i)).toBeVisible();
+    await expect(authenticatedPage.getByText(/upgrade to create/i)).toBeVisible();
 
     const upgradeLink = authenticatedPage.getByRole("link", { name: /upgrade/i });
     await expect(upgradeLink).toBeVisible();
@@ -338,7 +338,7 @@ test.describe("Generate Chapter Page - First Chapter Free", () => {
 
     await authenticatedPage.goto(`/generate/ch/${chapter.id}`);
 
-    await expect(authenticatedPage.getByText(/upgrade to generate/i)).toHaveCount(0);
+    await expect(authenticatedPage.getByText(/upgrade to create/i)).toHaveCount(0);
     await expect(authenticatedPage.getByRole("heading", { name: chapter.title })).toBeVisible();
   });
 });
@@ -379,7 +379,7 @@ test.describe("Generate Chapter Page - Running Generation Bypasses Auth", () => 
     await page.goto(`/generate/ch/${chapter.id}`);
 
     await expect(page.getByRole("alert").filter({ hasText: /logged in/i })).toHaveCount(0);
-    await expect(page.getByText(/upgrade to generate/i)).toHaveCount(0);
+    await expect(page.getByText(/upgrade to create/i)).toHaveCount(0);
     await expect(page.getByRole("heading", { name: chapter.title })).toBeVisible();
   });
 });

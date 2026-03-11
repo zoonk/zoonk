@@ -187,8 +187,8 @@ test.describe("Activity Detail Page", () => {
     await page.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}/a/0`);
 
     await expect(page.getByText(/activity not available/i)).toBeVisible();
-    await expect(page.getByText(/hasn't been generated yet/i)).toBeVisible();
-    await expect(page.getByRole("link", { name: /generate activity/i })).toBeVisible();
+    await expect(page.getByText(/hasn't been created yet/i)).toBeVisible();
+    await expect(page.getByRole("link", { name: /create activity/i })).toBeVisible();
   });
 
   test("generate link has correct href", async ({ page }) => {
@@ -198,7 +198,7 @@ test.describe("Activity Detail Page", () => {
 
     await page.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}/a/0`);
 
-    const generateLink = page.getByRole("link", { name: /generate activity/i });
+    const generateLink = page.getByRole("link", { name: /create activity/i });
     await expect(generateLink).toHaveAttribute("href", new RegExp(`/generate/a/${activity.id}`));
   });
 
@@ -209,7 +209,7 @@ test.describe("Activity Detail Page", () => {
 
     await page.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}/a/0`);
 
-    const generateLink = page.getByRole("link", { name: /generate activity/i });
+    const generateLink = page.getByRole("link", { name: /create activity/i });
     await expect(generateLink).toHaveAttribute("rel", "nofollow");
   });
 

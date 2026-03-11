@@ -22,10 +22,10 @@ export async function UpgradeCTA() {
           <SparklesIcon />
         </EmptyMedia>
 
-        <EmptyTitle>{t("Upgrade to generate")}</EmptyTitle>
+        <EmptyTitle>{t("Upgrade to create")}</EmptyTitle>
 
         <EmptyDescription>
-          {t("Generating content with AI requires an active subscription.")}
+          {t("Creating content with AI requires an active subscription.")}
         </EmptyDescription>
       </EmptyHeader>
 

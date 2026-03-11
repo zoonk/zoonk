@@ -23,7 +23,7 @@ export async function ActivityNotGenerated({ activityId }: { activityId: bigint 
 
         <EmptyTitle>{t("Activity not available")}</EmptyTitle>
 
-        <EmptyDescription>{t("This activity hasn't been generated yet.")}</EmptyDescription>
+        <EmptyDescription>{t("This activity hasn't been created yet.")}</EmptyDescription>
       </EmptyHeader>
 
       <EmptyContent>
@@ -34,7 +34,7 @@ export async function ActivityNotGenerated({ activityId }: { activityId: bigint 
           rel="nofollow"
         >
           <SparklesIcon data-icon="inline-start" />
-          {t("Generate activity")}
+          {t("Create activity")}
         </Link>
       </EmptyContent>
     </Empty>

@@ -35,7 +35,7 @@ export async function GenerateLessonContent({ params }: { params: Promise<{ id: 
   const t = await getExtracted();
 
   if (!session && !hasStarted) {
-    return <LoginRequired title={t("Generate Lesson")} />;
+    return <LoginRequired title={t("Create Lesson")} />;
   }
 
   if (lesson.generationStatus === "completed") {
