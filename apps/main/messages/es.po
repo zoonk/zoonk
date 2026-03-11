@@ -1158,12 +1158,12 @@ msgstr "Rastrea tu energía de aprendizaje a lo largo del tiempo"
 #: src/app/(performance)/level/level-chart-client.tsx
 msgctxt "GA8RuL"
 msgid "Brain Power chart"
-msgstr "Gráfico de poder mental"
+msgstr "Gráfico de Poder Mental"
 
 #: src/app/(performance)/level/level-chart-client.tsx
 msgctxt "tDbspx"
 msgid "Total Brain Power earned: {total}"
-msgstr "poder mental total ganado: {total}"
+msgstr "Poder Mental total ganado: {total}"
 
 #: src/app/(performance)/level/level-chart-client.tsx
 msgctxt "XdkaHc"
@@ -1173,7 +1173,7 @@ msgstr "{value} PM"
 #: src/app/(performance)/level/level-explanation.tsx
 msgctxt "C6bCZT"
 msgid "Brain Power (BP) represents your knowledge growth. Unlike energy, BP never decreases - it only grows as you learn more."
-msgstr "El poder mental (PM) representa tu crecimiento de conocimiento. A diferencia de la energía, el PM nunca disminuye, solo crece a medida que aprendes más."
+msgstr "El Poder Mental (PM) representa tu crecimiento de conocimiento. A diferencia de la energía, el PM nunca disminuye, solo crece a medida que aprendes más."
 
 #: src/app/(performance)/level/level-explanation.tsx
 msgctxt "J60fb6"
@@ -1188,7 +1188,7 @@ msgstr "Sobre Niveles"
 #: src/app/(performance)/level/level-explanation.tsx
 msgctxt "wPDPFc"
 msgid "Every time you complete an activity, you earn Brain Power. As you accumulate BP, you progress through 10 belt colors, each with 10 levels."
-msgstr "Cada vez que completas una actividad, ganas poder mental. A medida que acumulas PM, avanzas a través de 10 colores de cinturón, cada uno con 10 niveles."
+msgstr "Cada vez que completas una actividad, ganas Poder Mental. A medida que acumulas PM, avanzas a través de 10 colores de cinturón, cada uno con 10 niveles."
 
 #: src/app/(performance)/level/level-progression.tsx
 msgctxt "FM+wHG"
@@ -1206,9 +1206,9 @@ msgid "Belt Progression"
 msgstr "Progresión de cinturón"
 
 #: src/app/(performance)/level/level-progression.tsx
-msgctxt "pabu7K"
-msgid "{color} Belt, Level {level} of 10. {bp} brain power until next level."
-msgstr "Cinturón {color}, nivel {level} de 10. {bp} poder mental hasta el siguiente nivel."
+msgctxt "t2WYIo"
+msgid "{color} Belt, Level {level} of 10. {bp} Brain Power until next level."
+msgstr "Cinturón {color}, nivel {level} de 10. {bp} de Poder Mental hasta el siguiente nivel."
 
 #: src/app/(performance)/level/level-progression.tsx
 msgctxt "VHH0kD"
@@ -1228,7 +1228,7 @@ msgstr "{value} PM ganado"
 #: src/app/(performance)/level/level-stats.tsx
 msgctxt "v5yNm3"
 msgid "Total Brain Power"
-msgstr "poder mental total"
+msgstr "Poder Mental total"
 
 #: src/app/(performance)/level/page.tsx
 msgctxt "4+USpX"

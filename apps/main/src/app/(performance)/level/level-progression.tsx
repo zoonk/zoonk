@@ -18,7 +18,7 @@ export async function LevelProgression({ currentBelt }: { currentBelt: BeltLevel
         color: colorName,
         level: String(currentBelt.level),
       })
-    : t("{color} Belt, Level {level} of 10. {bp} brain power until next level.", {
+    : t("{color} Belt, Level {level} of 10. {bp} Brain Power until next level.", {
         bp: formattedBpToNext,
         color: colorName,
         level: String(currentBelt.level),
