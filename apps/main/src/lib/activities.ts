@@ -12,78 +12,62 @@ export async function getActivityKinds(): Promise<
 
   return [
     {
-      description: t(
-        "Explains WHY this topic exists. Tells the origin story, the problems it solved, and why it matters today.",
-      ),
+      description: t("Why this topic exists and why it matters"),
       key: "background",
       label: t("Background"),
     },
     {
-      description: t(
-        "Explains WHAT this topic is. Breaks down core concepts and definitions using metaphors and analogies.",
-      ),
+      description: t("Core concepts and definitions"),
       key: "explanation",
       label: t("Explanation"),
     },
     {
-      description: t(
-        "Tests your understanding with questions. Uses new scenarios to check if you grasped the concept, not just memorized it.",
-      ),
+      description: t("Test your knowledge"),
       key: "quiz",
       label: t("Quiz"),
     },
     {
-      description: t(
-        "Shows HOW things work through practical demonstrations and WHERE they appear in real life.",
-      ),
+      description: t("See how it works in practice"),
       key: "examples",
       label: t("Examples"),
     },
     {
-      description: t(
-        "Shows WHEN to apply this topic. A dialogue with a colleague where you solve a real problem together.",
-      ),
+      description: t("Apply the topic in a real scenario"),
       key: "story",
       label: t("Story"),
     },
     {
-      description: t(
-        "Tests analytical thinking through decisions with trade-offs. See how each choice impacts different outcomes.",
-      ),
+      description: t("Make decisions with real trade-offs"),
       key: "challenge",
       label: t("Challenge"),
     },
     {
-      description: t("Learn new words and their translations to build your vocabulary."),
+      description: t("Build your vocabulary"),
       key: "vocabulary",
       label: t("Vocabulary"),
     },
     {
-      description: t(
-        "Teaches grammar rules with practical exercises to help you remember and apply them.",
-      ),
+      description: t("Practice grammar rules"),
       key: "grammar",
       label: t("Grammar"),
     },
     {
-      description: t("Read sentences and translate them to practice reading comprehension."),
+      description: t("Practice reading comprehension"),
       key: "reading",
       label: t("Reading"),
     },
     {
-      description: t("Listen to audio sentences and translate them to practice listening skills."),
+      description: t("Practice listening skills"),
       key: "listening",
       label: t("Listening"),
     },
     {
-      description: t("A comprehensive quiz covering everything you learned in this lesson."),
+      description: t("Review everything you learned"),
       key: "review",
       label: t("Review"),
     },
     {
-      description: t(
-        "A dialogue-based story that helps you practice the language in a real-world context.",
-      ),
+      description: t("Practice in a real-world dialogue"),
       key: "languageStory",
       label: t("Story"),
     },

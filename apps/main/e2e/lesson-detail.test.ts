@@ -164,16 +164,16 @@ test.describe("Lesson Detail Page", () => {
     const activityList = page.getByRole("list", { name: /activities/i });
 
     await expect(activityList.getByRole("link", { name: /background/i })).toBeVisible();
-    await expect(activityList.getByText(/explains why this topic exists/i)).toBeVisible();
+    await expect(activityList.getByText(/why this topic exists and why it matters/i)).toBeVisible();
 
     await expect(activityList.getByRole("link", { name: /explanation/i })).toBeVisible();
-    await expect(activityList.getByText(/explains what this topic is/i)).toBeVisible();
+    await expect(activityList.getByText(/core concepts and definitions/i)).toBeVisible();
 
     await expect(activityList.getByRole("link", { name: /quiz/i })).toBeVisible();
-    await expect(activityList.getByText(/tests your understanding/i)).toBeVisible();
+    await expect(activityList.getByText(/test your knowledge/i)).toBeVisible();
 
     await expect(activityList.getByRole("link", { name: /challenge/i })).toBeVisible();
-    await expect(activityList.getByText(/tests analytical thinking/i)).toBeVisible();
+    await expect(activityList.getByText(/make decisions with real trade-offs/i)).toBeVisible();
   });
 
   test("clicking activity link navigates to activity page", async ({ page }) => {
