@@ -285,6 +285,27 @@ describe("course-suggestions", () => {
     expect(result).toMatchObject({ id: item.id });
   });
 
+  test("getCourseSuggestionBySlug finds suggestion when slug has a locale suffix", async () => {
+    const language = "pt";
+    const title = `locale-suffix-${randomUUID()}`;
+    const slug = toSlug(title);
+
+    const item = await prisma.courseSuggestion.create({
+      data: {
+        description: "Test description",
+        language,
+        slug,
+        title,
+      },
+    });
+
+    // Course slugs include a locale suffix (e.g. "my-course-pt"),
+    // but course suggestion slugs don't (e.g. "my-course").
+    const result = await getCourseSuggestionBySlug({ language, slug: `${slug}-${language}` });
+
+    expect(result).toMatchObject({ id: item.id });
+  });
+
   test("getCourseSuggestionBySlug distinguishes between languages", async () => {
     const slug = `multi-lang-${randomUUID()}`;
 

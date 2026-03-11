@@ -2,7 +2,7 @@ import "server-only";
 import { generateCourseSuggestions as generateTask } from "@zoonk/ai/tasks/courses/suggestions";
 import { type CourseSuggestion, prisma } from "@zoonk/db";
 import { getLanguageName } from "@zoonk/utils/languages";
-import { normalizeString, toSlug } from "@zoonk/utils/string";
+import { normalizeString, removeLocaleSuffix, toSlug } from "@zoonk/utils/string";
 
 type SuggestionResult = Pick<CourseSuggestion, "id" | "title" | "description" | "targetLanguage">;
 
@@ -169,7 +169,9 @@ export async function getCourseSuggestionBySlug({
   slug: string;
   language: string;
 }): Promise<CourseSuggestion | null> {
+  const normalizedSlug = removeLocaleSuffix(slug, language);
+
   return prisma.courseSuggestion.findUnique({
-    where: { languageSlug: { language, slug } },
+    where: { languageSlug: { language, slug: normalizedSlug } },
   });
 }
