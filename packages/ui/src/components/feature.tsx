@@ -60,7 +60,7 @@ function FeatureCardHeader({ children, className, ...props }: React.ComponentPro
 function FeatureCardHeaderContent({ children, className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
-      className={cn("flex items-center gap-1.5", className)}
+      className={cn("flex min-w-0 items-center gap-1.5", className)}
       data-slot="feature-card-header-content"
       {...props}
     >
