@@ -1206,9 +1206,9 @@ msgid "Belt Progression"
 msgstr "Belt Progression"
 
 #: src/app/(performance)/level/level-progression.tsx
-msgctxt "pabu7K"
-msgid "{color} Belt, Level {level} of 10. {bp} brain power until next level."
-msgstr "{color} Belt, Level {level} of 10. {bp} brain power until next level."
+msgctxt "t2WYIo"
+msgid "{color} Belt, Level {level} of 10. {bp} Brain Power until next level."
+msgstr "{color} Belt, Level {level} of 10. {bp} Brain Power until next level."
 
 #: src/app/(performance)/level/level-progression.tsx
 msgctxt "VHH0kD"
